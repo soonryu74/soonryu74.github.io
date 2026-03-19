@@ -21,6 +21,46 @@
     li {
         margin: 10px 0;
     }
+    /* Image support styles */
+    img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+    .post-image {
+        margin: 20px 0;
+        text-align: center;
+    }
+    .post-image img {
+        max-width: 800px;
+        width: 100%;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+    }
+    .post-image figcaption {
+        margin-top: 8px;
+        font-size: 0.9em;
+        color: #666;
+        font-style: italic;
+    }
+    .image-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 20px 0;
+    }
+    .image-gallery img {
+        width: calc(50% - 6px);
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    @media (max-width: 600px) {
+        .image-gallery img {
+            width: 100%;
+        }
+    }
 </style>
 </head>
 <body>
@@ -32,6 +72,25 @@
         <li>🎨 Exploring creative projects</li>
         <li>🌟 Sharing knowledge</li>
     </ul>
+
+    <!-- Example: single post image -->
+    <!-- Uncomment and replace the src to use:
+    <figure class="post-image">
+        <img src="assets/images/your-image.jpg" alt="Description of image">
+        <figcaption>Your image caption here</figcaption>
+    </figure>
+    -->
+
+    <!-- Example: image gallery -->
+    <!-- Uncomment and replace the src values to use:
+    <div class="image-gallery">
+        <img src="assets/images/photo1.jpg" alt="Photo 1">
+        <img src="assets/images/photo2.jpg" alt="Photo 2">
+        <img src="assets/images/photo3.jpg" alt="Photo 3">
+        <img src="assets/images/photo4.jpg" alt="Photo 4">
+    </div>
+    -->
+
     <p><a href="about.html">About Me</a></p>
 </body>
 </html>

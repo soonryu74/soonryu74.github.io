@@ -8,10 +8,61 @@
             font-family: Arial, sans-serif;
             line-height: 1.6;
         }
+        /* Image support styles */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        .profile-image {
+            margin: 20px 0;
+        }
+        .profile-image img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        .post-image {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .post-image img {
+            max-width: 800px;
+            width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+        }
+        .post-image figcaption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
     <h1>About Me</h1>
+
+    <!-- Profile image placeholder: replace src with your actual image -->
+    <!-- Uncomment to use:
+    <div class="profile-image">
+        <img src="assets/images/profile.jpg" alt="Profile photo">
+    </div>
+    -->
+
     <p>Hello! I am exploring AI and sharing my projects here.</p>
+
+    <!-- Example: content image with caption -->
+    <!-- Uncomment and replace the src to use:
+    <figure class="post-image">
+        <img src="assets/images/your-image.jpg" alt="Description">
+        <figcaption>Caption for your image</figcaption>
+    </figure>
+    -->
+
+    <p><a href="index.html">Back to Home</a></p>
 </body>
 </html>
