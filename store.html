@@ -80,8 +80,8 @@
 <main class="wrap">
 
   <div class="callout warn" style="margin-top:22px">
-    <span class="t">✍️ 사장님께 — 실제 정보로 바꿔주세요</span>
-    현재 가게 정보·매물은 <strong>예시(샘플)</strong>입니다. <code>data/listings.js</code> 파일에서 <strong>【 】</strong> 부분(상호·등록번호·연락처)과 매물 내용을 실제 값으로 바꾸면 그대로 우리 가게 매장이 됩니다.
+    <span class="t">✍️ 안내</span>
+    <strong>가게 정보(상호·대표·주소·전화)는 실제로 반영</strong>되었습니다. 다만 아래 <strong>매물은 예시</strong>이며, <strong>중개사무소 등록번호</strong>와 <strong>카카오톡</strong>은 아직 등록 전입니다. <code>data/listings.js</code>에서 실제 매물과 등록번호를 넣으면 완성됩니다.
   </div>
 
   <h2>매물 둘러보기</h2>
@@ -144,13 +144,17 @@ document.getElementById('agSlogan').textContent = AGENCY.slogan;
 document.getElementById('agIntro').textContent = AGENCY.intro;
 document.getElementById('agMeta').textContent = `${AGENCY.addr} · ${AGENCY.telView} · ${AGENCY.hours}`;
 document.getElementById('ctaTel').href = "tel:" + AGENCY.tel.replace(/[^0-9]/g,'');
-document.getElementById('ctaKakao').href = AGENCY.kakao;
-const legal = `${AGENCY.name} | ${AGENCY.ceo} | ${AGENCY.regNo} | 소재지 ${AGENCY.addr} | ${AGENCY.telView}`;
+// 카카오톡: URL이 없거나 미입력(【】)이면 버튼 숨김
+const hasKakao = AGENCY.kakao && !/[【】]/.test(AGENCY.kakao) && /^https?:\/\//.test(AGENCY.kakao);
+const ctaKakao = document.getElementById('ctaKakao');
+if(hasKakao){ ctaKakao.href = AGENCY.kakao; } else { ctaKakao.style.display='none'; }
+const regView = /[【】]/.test(AGENCY.regNo) ? "등록번호 준비중" : AGENCY.regNo;
+const legal = `${AGENCY.name} | ${AGENCY.ceo} | ${regView} | 소재지 ${AGENCY.addr} | ${AGENCY.telView}`;
 document.getElementById('legalNote').innerHTML = "⚖️ 공인중개사법에 따른 표기 — " + legal + " · 매물은 사정에 따라 조기 마감될 수 있습니다.";
 document.getElementById('fLegal').textContent = legal;
 
 /* ---------- 지도 ---------- */
-const map = L.map('map',{scrollWheelZoom:false}).setView([37.55,127.0],12);
+const map = L.map('map',{scrollWheelZoom:false}).setView([37.6415,127.1200],13); // 갈매동 기준
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,
   attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> 기여자'}).addTo(map);
 
@@ -212,7 +216,7 @@ function openModal(d){
     </table>
     <div class="cta-row" style="margin-top:8px">
       <a class="cta tel" href="tel:${AGENCY.tel.replace(/[^0-9]/g,'')}" style="background:${color};color:#fff">📞 이 매물 전화문의</a>
-      <a class="cta kakao" href="${AGENCY.kakao}" target="_blank" rel="noopener">💬 카톡문의</a>
+      ${hasKakao ? `<a class="cta kakao" href="${AGENCY.kakao}" target="_blank" rel="noopener">💬 카톡문의</a>` : ``}
     </div>
     <p style="color:#888;font-size:.82rem;margin-top:12px">${AGENCY.name} · ${AGENCY.regNo} · 매물번호 ${d.id}</p>`;
   modalBack.classList.add('open');
