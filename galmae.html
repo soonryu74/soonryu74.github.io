@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>갈매동 아파트 단지 안내 (실거래가 포함) | 갈매역삼성부동산</title>
+<meta name="description" content="구리 갈매지구 아파트 단지별 안내 — LH이스트힐·갈매역아이파크·한라비발디·스타힐스·더샵나인힐스 등. 국토부 실거래가로 보는 진짜 시세와 갈매역삼성부동산 상담.">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .g-hero { background:linear-gradient(120deg,#0e8a6b 0%,#123a6b 100%); color:#fff; padding:44px 18px; text-align:center; }
+  .g-hero h1 { margin:0 0 8px; font-size:1.9rem; letter-spacing:-.03em; }
+  .g-hero p { color:#e6f5ef; max-width:680px; margin:6px auto; }
+  .cta-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+  .cta { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:30px; font-weight:800; text-decoration:none; }
+  .cta.tel { background:#fff; color:#123a6b; } .cta.kakao { background:#FEE500; color:#3c1e1e; }
+  .cta:hover{opacity:.92;text-decoration:none}
+  .points { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:16px 0; }
+  .point { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; box-shadow:var(--shadow); }
+  .point .ic{font-size:1.5rem} .point b{color:var(--navy);display:block;margin:6px 0 2px}
+  .point span{color:var(--muted);font-size:.88rem}
+  .c-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin:14px 0; }
+  .c-card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
+  .c-card h3 { margin:0 0 4px; color:var(--navy); font-size:1.16rem; }
+  .c-card .sub { color:var(--muted); font-size:.85rem; margin-bottom:10px; }
+  .c-card .price { font-size:1.05rem; font-weight:800; color:var(--warn); }
+  .c-card .rows { margin:8px 0; font-size:.9rem; }
+  .c-card .rows div { display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed var(--line); }
+  .c-card .ask { display:inline-block; margin-top:8px; background:var(--blue); color:#fff; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none; font-size:.9rem; }
+  .c-card .ask:hover{opacity:.92;text-decoration:none}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">🏠 대한민국 부동산 종합정보 <span class="tag">생활정보 포털</span></a>
+    <nav class="site-nav">
+      <a href="store.html">우리동네 매물</a>
+      <a href="galmae.html" class="active">갈매동 단지안내</a>
+      <a href="silgeorae-map.html">실거래가 지도</a>
+      <a href="jeonse-sagi.html">전세사기 예방</a>
+      <a href="jaryo.html">자료실</a>
+    </nav>
+  </div>
+</header>
+
+<section class="g-hero">
+  <h1>구리 갈매지구 아파트 단지 안내</h1>
+  <p>경춘선 갈매역·8호선 별내선 시대, 갈매지구 단지별 <strong>진짜 실거래가</strong>로 정리했습니다.</p>
+  <p style="font-size:.9rem">🏢 갈매역삼성부동산 — 갈매지구 시작부터 <strong>한라비발디 후문</strong>에 자리한 동네 터줏대감입니다.</p>
+  <div class="cta-row">
+    <a class="cta tel" id="ctaTel" href="#">📞 031-575-4944 상담</a>
+    <a class="cta kakao" id="ctaKakao" href="#" target="_blank" rel="noopener" style="display:none">💬 카카오톡</a>
+  </div>
+</section>
+
+<main class="wrap">
+  <h2>왜 갈매지구인가</h2>
+  <div class="points">
+    <div class="point"><div class="ic">🚉</div><b>경춘선 갈매역</b><span>서울 접근성·상봉/청량리 연결</span></div>
+    <div class="point"><div class="ic">🚇</div><b>8호선 별내선 효과</b><span>수도권 동북부 교통 개선 수혜</span></div>
+    <div class="point"><div class="ic">🏙️</div><b>대단지 밀집</b><span>생활 인프라·학군이 모인 계획도시</span></div>
+    <div class="point"><div class="ic">🆕</div><b>신축 + 준신축 혼재</b><span>단지별 포지션이 뚜렷한 시장</span></div>
+  </div>
+
+  <div class="callout tip">
+    <span class="t">📊 아래 시세는 진짜입니다</span>
+    각 단지의 가격은 <strong>국토교통부 실거래가 공개시스템</strong>의 <strong>최근 1년 매매 실거래가</strong>입니다(추정·호가 아님). 더 많은 거래는 <a href="silgeorae-map.html">실거래가 지도</a>에서 보세요.
+  </div>
+
+  <h2>갈매동 주요 아파트 단지</h2>
+  <div class="c-grid" id="grid"></div>
+
+  <div class="callout law">
+    <span class="t">🙋 이 단지, 지금 나온 매물 있나요?</span>
+    단지별 <strong>매매·전세·월세 매물</strong>과 <strong>실입주 가능 여부</strong>는 갈매역삼성부동산으로 문의 주세요. 발품은 저희가, 좋은 집만 골라 드립니다. ☎ <strong>031-575-4944</strong>
+  </div>
+
+  <div class="disclaimer">
+    ⚖️ 실거래가는 신고 기반으로 해제·특수거래·신고지연이 있을 수 있습니다(최근 1년, 매매 기준). 개별 단지의 세대수·준공 등 상세와 현재 매물 상황은 상담 시 안내드립니다. 출처: 국토교통부 실거래가 공개시스템.
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <h4>🏢 갈매역삼성부동산</h4>
+    <div class="footer-note" id="fLegal"></div>
+    <div class="footer-note" style="margin-top:10px">
+      <a href="index.html" style="color:#9fc0ea">부동산 생활정보 홈</a> ·
+      <a href="store.html" style="color:#9fc0ea">우리동네 매물</a> ·
+      <a href="silgeorae-map.html" style="color:#9fc0ea">실거래가 지도</a><br>
+      단지 정보는 참고용이며 현재 매물·조건은 상담 시 확정됩니다. © 2026.
+    </div>
+  </div>
+</footer>
+
+<script src="data/listings.js"></script>
+<script src="data/complexes.js"></script>
+<script>
+const AG=(typeof AGENCY!=='undefined')?AGENCY:{name:"갈매역삼성부동산",tel:"0315754944",telView:"031-575-4944",kakao:""};
+function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; return (e?e+"억":"")+(r?(e?" ":"")+r.toLocaleString()+"만":"")||"0"; }
+function eokShort(m){ return (m/10000).toFixed(1)+"억"; }
+
+document.getElementById('ctaTel').href="tel:"+AG.tel.replace(/[^0-9]/g,'');
+const hasKakao=AG.kakao && !/[【】]/.test(AG.kakao) && /^https?:\/\//.test(AG.kakao);
+if(hasKakao){ const k=document.getElementById('ctaKakao'); k.href=AG.kakao; k.style.display='inline-flex'; }
+const regView=/[【】]/.test(AG.regNo||'')?'등록번호 준비중':(AG.regNo||'');
+document.getElementById('fLegal').textContent=`${AG.name} | 대표 ${AG.ceo||''} | ${regView} | ${AG.addr||''} | ${AG.telView||''}`;
+
+const grid=document.getElementById('grid');
+(COMPLEXES||[]).forEach(c=>{
+  const la=c.latest||{};
+  const areas=(c.areas||[]).map(a=>a+'㎡').join(', ');
+  const card=document.createElement('div'); card.className='c-card';
+  card.innerHTML=`
+    <h3>${c.name}</h3>
+    <div class="sub">${c.buildYear?c.buildYear+'년 준공 · ':''}전용 ${areas}</div>
+    <div class="price">시세 약 ${eokShort(c.min)} ~ ${eokShort(c.max)}</div>
+    <div class="rows">
+      <div><span>최근 1년 매매</span><b>${c.count}건</b></div>
+      <div><span>최근 거래</span><b>${la.area||''}㎡ · ${la.floor||''}층 · ${eok(la.price)}</b></div>
+      <div><span>계약일</span><b>${la.date||''}</b></div>
+    </div>
+    <a class="ask" href="tel:${AG.tel.replace(/[^0-9]/g,'')}">📞 이 단지 매물 문의</a>`;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
