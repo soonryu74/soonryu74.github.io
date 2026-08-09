@@ -32,6 +32,9 @@
   .listing:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(18,58,107,.14); }
   .thumb { height:150px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; color:#fff; position:relative; }
   .badge-type { position:absolute; top:10px; left:10px; background:rgba(0,0,0,.55); color:#fff; padding:3px 10px; border-radius:20px; font-size:.8rem; font-weight:700; }
+  .badge-sample { position:absolute; top:10px; right:10px; background:#c0392b; color:#fff; padding:3px 10px; border-radius:20px; font-size:.78rem; font-weight:800; letter-spacing:.02em; }
+  .sample-ribbon { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .sample-ribbon span { background:rgba(192,57,43,.82); color:#fff; font-weight:800; font-size:.95rem; padding:4px 14px; border-radius:6px; transform:rotate(-8deg); }
   .listing .body { padding:14px 15px; }
   .listing .price { font-size:1.15rem; font-weight:800; color:var(--warn); }
   .listing .lt { font-weight:700; color:var(--navy); margin:4px 0 2px; }
@@ -81,7 +84,7 @@
 
   <div class="callout warn" style="margin-top:22px">
     <span class="t">✍️ 안내</span>
-    <strong>가게 정보(상호·대표·주소·전화)는 실제로 반영</strong>되었습니다. 다만 아래 <strong>매물은 예시</strong>이며, <strong>중개사무소 등록번호</strong>와 <strong>카카오톡</strong>은 아직 등록 전입니다. <code>data/listings.js</code>에서 실제 매물과 등록번호를 넣으면 완성됩니다.
+    <strong>가게 정보(상호·대표·주소·전화)는 실제로 반영</strong>되었습니다. 다만 아래 <strong>매물은 예시</strong>이며, <strong>중개사무소 등록번호</strong>와 <strong>카카오톡</strong>은 아직 등록 전입니다. 실제 매물은 <a href="maemul-jeopsu.html"><strong>매물 접수·글쓰기</strong></a>에서 칸만 채우면 등록용 데이터가 자동으로 만들어집니다.
   </div>
 
   <h2>매물 둘러보기</h2>
@@ -178,7 +181,9 @@ function render(){
     card.className='listing';
     card.innerHTML = `
       <div class="thumb" style="background:linear-gradient(135deg,${color},#123a6b)">
-        <span class="badge-type">${d.type} · ${d.category}</span>${CAT_ICON[d.category]||"🏠"}
+        <span class="badge-type">${d.type} · ${d.category}</span>
+        ${d.sample?'<span class="badge-sample">예시</span><span class="sample-ribbon"><span>예시 매물</span></span>':''}
+        ${CAT_ICON[d.category]||"🏠"}
       </div>
       <div class="body">
         <div class="price">${priceText(d)}</div>
@@ -200,6 +205,7 @@ function openModal(d){
   mHead.style.background=`linear-gradient(135deg,${color},#123a6b)`;
   mHead.innerHTML = `<button class="mclose" id="mClose" aria-label="닫기">×</button><span style="font-size:3rem">${CAT_ICON[d.category]||"🏠"}</span>`;
   mBody.innerHTML = `
+    ${d.sample?'<p style="background:#fdecec;color:#c0392b;font-weight:800;padding:8px 12px;border-radius:8px;margin:0 0 8px">⚠️ 예시 매물입니다 — 실제 매물로 교체 예정</p>':''}
     <h3>${d.title}</h3>
     <div class="mprice">${priceText(d)}</div>
     <p style="color:#555">${d.desc}</p>
