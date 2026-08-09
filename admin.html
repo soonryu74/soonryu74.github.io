@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>운영자 전용 · 갈매역삼성부동산 관리 안내</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">🏠 대한민국 부동산 종합정보 <span class="tag">운영자</span></a>
+    <nav class="site-nav">
+      <a href="index.html">홈</a>
+      <a href="store.html">매장</a>
+      <a href="galmae.html">갈매동 단지안내</a>
+      <a href="silgeorae-map.html">실거래가 지도</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head" style="border-color:#c0392b">
+    <h1>🔧 운영자 전용 안내</h1>
+    <p class="lead">이 페이지는 <strong>사이트 관리용</strong>입니다. 손님에게 공유하지 마세요.</p>
+  </div>
+
+  <div class="callout warn">
+    <span class="t">🔒 손님 공유 금지</span>
+    아래 도구·설정 링크는 운영자(소랸·유진)만 사용합니다. 손님에게는 맨 아래 <a href="#promo">손님용 홍보 링크</a>만 보내세요.
+  </div>
+
+  <section class="section" id="promo">
+    <h2>① 손님에게 보낼 홍보 링크 (이것만 공유)</h2>
+    <ul class="source-list">
+      <li><a href="galmae.html">📍 갈매동 단지 안내</a><span class="desc">단지별 진짜 실거래가 + 상담 — 메인 홍보용</span></li>
+      <li><a href="silgeorae-map.html">🗺️ 실거래가 지도</a><span class="desc">구리 아파트 실거래가 지도</span></li>
+      <li><a href="store.html">🏪 매장(매물)</a><span class="desc">진짜 매물 등록 후 홍보</span></li>
+    </ul>
+    <div class="callout tip">
+      <span class="t">📋 카톡/문자 홍보 문구 (복사용)</span>
+      🏢 갈매역삼성부동산 (한라비발디 후문)<br>
+      갈매동 아파트 단지별 진짜 실거래가 👉 soonryu74.github.io/galmae.html<br>
+      전세·월세·매매 상담 ☎ 031-575-4944
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>② 실거래가 자동 연결 (한 번만 설정)</h2>
+    <p>무료 절차 한 번이면, 이후 <strong>구리시 실거래가가 매주 자동으로</strong> 갱신됩니다.</p>
+    <ol class="steps">
+      <li><strong>공공데이터포털 무료 서비스키 발급</strong><br><a href="https://www.data.go.kr" target="_blank" rel="noopener">data.go.kr</a> → 「국토교통부 아파트 매매 실거래가 자료」(오픈API) → <strong>활용신청</strong> → 서비스키 발급.</li>
+      <li><strong>GitHub 비밀값(Secret) 등록</strong><br>저장소 → Settings → Secrets and variables → Actions → New repository secret → 이름 <code>DATA_GO_KR_KEY</code>, 값=서비스키.</li>
+      <li><strong>자동 실행</strong><br>매주 자동 작업이 구리시(41310) 실거래가를 받아 <code>data/deals.json</code> 갱신 → 지도·단지안내에 반영.</li>
+    </ol>
+    <div class="callout tip">
+      <span class="t">🖐 수동 갱신(키 없이도 가능)</span>
+      <a href="https://rt.molit.go.kr" target="_blank" rel="noopener">rt.molit.go.kr</a>에서 구리시 아파트 매매 엑셀을 받아 관리자(Claude)에게 전달 → 즉시 갱신.
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>③ 매물 등록·수정</h2>
+    <ul class="source-list">
+      <li><a href="maemul-jeopsu.html">📝 매물 접수·글쓰기</a><span class="desc">칸 입력 → 블로그/카톡 글 + 사이트 등록용 데이터 자동 생성</span></li>
+    </ul>
+    <p>가게 정보·매물은 <code>data/listings.js</code> 파일로 관리합니다. 다음을 채우면 완성됩니다:</p>
+    <ul>
+      <li><strong>중개사무소 등록번호</strong>(regNo) — 광고 법정 필수(현재 "준비중")</li>
+      <li><strong>카카오톡 채널</strong>(kakao) — 넣으면 카톡 버튼 자동 표시</li>
+      <li><strong>실제 매물</strong>(LISTINGS) — 현재는 예시. 진짜 매물로 교체</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2>④ 홍보 소재 만들기</h2>
+    <ul class="source-list">
+      <li><a href="hongbo.html">📣 홍보 소재</a><span class="desc">릴스·쇼츠 대본, 매물 홍보 문구 자동 생성, 해시태그</span></li>
+    </ul>
+  </section>
+
+  <div class="disclaimer">
+    ⚖️ 이 페이지는 검색엔진에 노출되지 않도록 설정(noindex)되어 있지만, 주소를 아는 사람은 접근할 수 있습니다. 인증키·비밀번호 등 민감정보는 이 페이지가 아니라 GitHub Secret에만 저장하세요.
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <h4>🔧 운영자 전용</h4>
+    <div class="footer-note">갈매역삼성부동산 · 소랸 운영. 손님용 홈은 <a href="index.html" style="color:#9fc0ea">여기</a>. © 2026.</div>
+  </div>
+</footer>
+
+</body>
+</html>
