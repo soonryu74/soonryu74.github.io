@@ -44,7 +44,7 @@
   <div class="breadcrumb"><a href="index.html">홈</a> › 실거래가 지도</div>
   <div class="page-head">
     <h1>🗺️ 실거래가 지도 <span style="font-size:1rem;color:var(--muted)">구리·갈매동</span></h1>
-    <p class="lead">국토교통부 <strong>공식 실거래가</strong>만 표시합니다. 추정·가짜 가격은 넣지 않습니다.</p>
+    <p class="lead">국토교통부 <strong>공식 실거래가</strong>(최근 1년, 구리시 아파트 매매)를 지도로 확인하세요. 추정·가짜 가격은 넣지 않습니다.</p>
   </div>
 
   <!-- 데이터가 아직 연결 전일 때 표시 -->
@@ -56,6 +56,7 @@
   </div>
 
   <div id="ui" style="display:none">
+    <div class="callout tip" id="summary" style="margin:6px 0 10px"></div>
     <div class="filters">
       <label>거래유형 <select id="typeF"><option value="">전체</option><option>매매</option><option>전세</option><option>월세</option></select></label>
       <label>면적 <select id="areaFilter">
@@ -143,7 +144,7 @@ function render(){
   const bounds=[];
   rows.forEach(d=>{
     if(typeof d.lat==='number' && typeof d.lng==='number'){
-      const m=L.marker([d.lat,d.lng]).addTo(map)
+      const m=L.circleMarker([d.lat,d.lng],{radius:6,color:'#1f6fd1',fillColor:'#1f6fd1',fillOpacity:.7,weight:1}).addTo(map)
         .bindPopup(`<b>${d.name}</b><br>${priceText(d)}<br>${d.dong||''} · 전용 ${d.area}㎡ · ${d.floor||'-'}층<br><span style="color:#666">계약 ${d.date||''}</span>`);
       markers.push(m); bounds.push([d.lat,d.lng]);
     }
@@ -163,6 +164,11 @@ function boot(){
   document.getElementById('emptyBox').style.display = hasData ? 'none':'block';
   document.getElementById('ui').style.display = hasData ? 'block':'none';
   if(hasData){
+    const galmae = DEALS.filter(d=>d.dong==='갈매동').length;
+    const prices = DEALS.map(d=>d.price).filter(p=>p>0);
+    const eokMin = (Math.min(...prices)/10000), eokMax=(Math.max(...prices)/10000);
+    document.getElementById('summary').innerHTML =
+      `<span class="t">📊 구리시 아파트 매매 실거래가</span>총 <strong>${DEALS.length.toLocaleString()}건</strong> 표시 (갈매동 <strong>${galmae}건</strong>) · 가격대 약 ${eokMin.toFixed(1)}억~${eokMax.toFixed(1)}억<br><span style="color:var(--muted);font-size:.85rem">출처: 국토교통부 실거래가 공개시스템 · 위치는 법정동 단위 근사치 · 마커를 누르면 상세정보</span>`;
     initMapOnce(); render();
     document.getElementById('typeF').addEventListener('change',render);
     document.getElementById('areaFilter').addEventListener('change',render);
