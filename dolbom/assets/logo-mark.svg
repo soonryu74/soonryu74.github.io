@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="손길 심볼">
+  <defs>
+    <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14b8a6"/>
+      <stop offset="1" stop-color="#0b7d72"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="112" height="112" rx="32" fill="url(#sg)"/>
+  <!-- 하트: 돌봄·사랑 -->
+  <path d="M60 45.5 C53.5 35 37 37.5 37 51.5 C37 62.5 51 70 60 76.5 C69 70 83 62.5 83 51.5 C83 37.5 66.5 35 60 45.5 Z" fill="#ffffff"/>
+  <!-- 감싸는 손: 곁에서 받쳐주는 -->
+  <path d="M33 73 C41 90 79 90 87 73" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round"/>
+  <path d="M33 73 C31.5 79 32.5 84 35 87" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round"/>
+  <path d="M87 73 C88.5 79 87.5 84 85 87" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round"/>
+</svg>
