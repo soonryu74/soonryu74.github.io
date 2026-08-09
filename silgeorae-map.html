@@ -3,28 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>실거래가 지도 | 대한민국 부동산 종합정보</title>
-<meta name="description" content="국토교통부 공공데이터 실거래가를 지도에서 확인. 크롤링 없이 합법적으로, 지역별 아파트 실거래가를 지도와 목록으로 함께 봅니다.">
+<title>실거래가 지도 (구리·갈매동) | 대한민국 부동산 종합정보</title>
+<meta name="description" content="국토교통부 공공데이터 실거래가를 지도와 목록으로. 구리시·갈매동 아파트 실거래가를 확인합니다. 가짜 데이터 없이 공식 자료만 표시합니다.">
 <link rel="stylesheet" href="assets/css/style.css">
-<!-- 지도: Leaflet + OpenStreetMap (API 키 불필요·무료) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
   .map-layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; margin: 18px 0; }
   @media (max-width: 860px){ .map-layout { grid-template-columns: 1fr; } }
-  #map { height: 520px; border-radius: 12px; border: 1px solid var(--line); z-index: 1; }
+  #map { height: 500px; border-radius: 12px; border: 1px solid var(--line); z-index: 1; }
   .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 6px 0 2px; }
   .filters select, .filters button { font: inherit; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); }
-  .filters button { background: var(--blue); color: #fff; border-color: var(--blue); cursor: pointer; font-weight: 600; }
   .filters .count { margin-left: auto; color: var(--muted); font-size: 0.9rem; }
-  .deal-list { max-height: 520px; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
-  .deal-item { padding: 12px 14px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background .12s; }
+  .deal-list { max-height: 500px; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+  .deal-item { padding: 12px 14px; border-bottom: 1px solid var(--line); cursor: pointer; }
   .deal-item:hover, .deal-item.active { background: var(--blue-soft); }
   .deal-item .name { font-weight: 700; color: var(--navy); }
   .deal-item .price { float: right; font-weight: 800; color: var(--warn); }
   .deal-item .meta { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
-  .leaflet-popup-content { font-size: 0.9rem; line-height: 1.5; }
-  .demo-badge { display:inline-block; background: #fff3cd; color:#8a6d1a; border:1px solid #f0e2b6; border-radius:20px; padding:3px 12px; font-size:0.82rem; font-weight:700; }
+  .empty { text-align:center; padding:36px 20px; }
+  .empty .big { font-size:1.2rem; font-weight:800; color:var(--navy); margin-bottom:8px; }
 </style>
 </head>
 <body>
@@ -33,172 +31,155 @@
   <div class="nav-inner">
     <a class="brand" href="index.html">🏠 대한민국 부동산 종합정보 <span class="tag">생활정보 포털</span></a>
     <nav class="site-nav">
-      <a href="jutaek-imdaecha.html">주택임대차</a>
+      <a href="store.html">우리동네 매물</a>
+      <a href="silgeorae-map.html" class="active">실거래가 지도</a>
+      <a href="silgeorae.html">실거래가 정보</a>
       <a href="jeonse-sagi.html">전세사기 예방</a>
-      <a href="maemae.html">부동산 매매</a>
-      <a href="silgeorae.html">실거래가</a>
-      <a href="cheongyak.html">주택청약</a>
-      <a href="sege.html">부동산 세금</a>
       <a href="jaryo.html">자료실</a>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
-  <div class="breadcrumb"><a href="index.html">홈</a> › <a href="silgeorae.html">실거래가</a> › 실거래가 지도</div>
+  <div class="breadcrumb"><a href="index.html">홈</a> › 실거래가 지도</div>
   <div class="page-head">
-    <h1>🗺️ 실거래가 지도</h1>
-    <p class="lead">지역별 아파트 실거래가를 지도와 목록으로 함께 봅니다. <span class="demo-badge">현재 샘플 데이터(데모)</span></p>
+    <h1>🗺️ 실거래가 지도 <span style="font-size:1rem;color:var(--muted)">구리·갈매동</span></h1>
+    <p class="lead">국토교통부 <strong>공식 실거래가</strong>(최근 1년, 구리시 아파트 매매)를 지도로 확인하세요. 추정·가짜 가격은 넣지 않습니다.</p>
   </div>
 
-  <div class="callout tip">
-    <span class="t">💡 이 지도의 데이터 원칙 — 크롤링 아님, 공공데이터 기반</span>
-    이 기능은 민간 포털 매물을 긁어오지 않습니다. <strong>국토교통부 공공데이터포털 실거래가 Open API</strong>(공식·무료)를 근거로 하도록 설계됐습니다. 아래 지도는 개념 확인용 <strong>샘플 데이터</strong>이며, 실데이터 연결 방법은 <a href="#howto">맨 아래</a>에 정리했습니다.
+  <!-- 데이터가 아직 연결 전일 때 표시 -->
+  <div class="callout warn" id="notice" style="display:none">
+    <span class="t">🔌 실거래가 데이터 연결 준비 중</span>
+    아직 국토교통부 공공데이터가 연결되지 않아 표시할 실거래가가 없습니다. <strong>가짜 숫자 대신 아무것도 표시하지 않습니다.</strong>
+    지금 실거래가가 필요하시면 <a href="https://rt.molit.go.kr" target="_blank" rel="noopener">국토부 실거래가 공개시스템</a>에서 바로 확인하실 수 있습니다.
+    (자동 연결 방법은 <a href="#howto">아래</a> 참고)
   </div>
 
-  <div class="filters">
-    <label>자치구
-      <select id="guFilter"><option value="">전체</option></select>
-    </label>
-    <label>면적
-      <select id="areaFilter">
-        <option value="">전체</option>
-        <option value="s">60㎡ 이하(소형)</option>
-        <option value="m">60~85㎡(중형)</option>
-        <option value="l">85㎡ 초과(대형)</option>
-      </select>
-    </label>
-    <button id="resetBtn" type="button">초기화</button>
-    <span class="count" id="countLabel"></span>
+  <div id="ui" style="display:none">
+    <div class="callout tip" id="summary" style="margin:6px 0 10px"></div>
+    <div class="filters">
+      <label>거래유형 <select id="typeF"><option value="">전체</option><option>매매</option><option>전세</option><option>월세</option></select></label>
+      <label>면적 <select id="areaFilter">
+        <option value="">전체</option><option value="s">60㎡ 이하</option><option value="m">60~85㎡</option><option value="l">85㎡ 초과</option>
+      </select></label>
+      <button id="resetBtn" type="button">초기화</button>
+      <span class="count" id="countLabel"></span>
+    </div>
+    <div class="map-layout">
+      <div id="map" role="application" aria-label="실거래가 지도"></div>
+      <div class="deal-list" id="dealList"></div>
+    </div>
   </div>
 
-  <div class="map-layout">
-    <div id="map" role="application" aria-label="실거래가 지도"></div>
-    <div class="deal-list" id="dealList"></div>
+  <!-- 데이터 없을 때 안내 박스 -->
+  <div class="section" id="emptyBox" style="display:none">
+    <div class="empty">
+      <div class="big">📭 표시할 실거래가가 아직 없습니다</div>
+      <p>이 지도는 <strong>진짜 국토부 실거래가</strong>가 연결되면 자동으로 채워집니다. 신뢰를 위해, 데이터가 없을 땐 <strong>가짜 값을 보여주지 않습니다.</strong></p>
+      <p><a href="https://rt.molit.go.kr" target="_blank" rel="noopener">👉 지금 국토부 실거래가 공개시스템에서 확인하기</a></p>
+    </div>
   </div>
 
   <div class="callout warn">
-    <span class="t">⚠️ 표시 데이터 주의</span>
-    실거래가는 신고 기반으로 <strong>해제(취소)·특수관계 거래</strong>가 섞일 수 있고 신고까지 최대 30일 지연됩니다. 협상·판단 전 반드시 <a href="https://rt.molit.go.kr" target="_blank" rel="noopener">국토부 실거래가 공개시스템</a> 원문과 현장 확인을 병행하세요. 실거래가 해석법은 <a href="silgeorae.html">실거래가 확인·활용</a> 참고.
+    <span class="t">⚠️ 실거래가 해석 주의</span>
+    실거래가는 신고 기반으로 <strong>해제(취소)·특수관계 거래</strong>가 섞일 수 있고 신고까지 최대 30일 지연됩니다. 해석법은 <a href="silgeorae.html">실거래가 확인·활용</a> 참고.
   </div>
 
   <section class="section" id="howto">
-    <h2>🔌 실데이터로 연결하는 방법 (다음 단계)</h2>
-    <p>이 데모를 <strong>실제 국토부 실거래가</strong>로 바꾸려면 아래가 필요합니다. 모두 <strong>무료·합법</strong>이며 서버 없이 GitHub Pages만으로 운영할 수 있습니다.</p>
+    <h2>🔌 진짜 실거래가로 자동 연결하는 방법</h2>
+    <p>아래 <strong>무료</strong> 절차 한 번이면, 이후 <strong>구리시 실거래가가 자동으로</strong> 이 지도에 채워집니다(가짜 아님, 국토부 공식 데이터).</p>
     <ol class="steps">
-      <li><strong>공공데이터포털 API 신청</strong><br><a href="https://www.data.go.kr" target="_blank" rel="noopener">data.go.kr</a>에서 「국토교통부 아파트 매매 실거래가 자료」 활용 신청 → 서비스키 발급(무료).</li>
-      <li><strong>GitHub Action으로 정기 수집</strong><br>매일/매주 실행되는 워크플로우가 지역코드·계약월로 API를 호출해 결과를 <code>data/deals.json</code> 정적 파일로 저장(키는 GitHub Secrets에 보관 → 노출 없음).</li>
-      <li><strong>주소 → 좌표 변환(지오코딩)</strong><br>도로명주소/지번을 좌표로 변환해 지도에 표시(카카오/네이버 또는 도로명주소 API 무료 사용).</li>
-      <li><strong>지도에 렌더링</strong><br>이 페이지는 <code>data/deals.json</code>만 불러오도록 구성되어 있어, 데이터만 채우면 그대로 실서비스가 됩니다.</li>
+      <li><strong>공공데이터포털 무료 회원가입 + 활용신청</strong><br><a href="https://www.data.go.kr" target="_blank" rel="noopener">data.go.kr</a> → 「국토교통부 아파트 매매/전월세 실거래가」 검색 → <strong>활용신청</strong>(무료·즉시 승인) → <strong>서비스키</strong> 발급.</li>
+      <li><strong>서비스키를 저장소 비밀값(Secret)에 등록</strong><br>발급받은 키를 관리자에게 전달 → GitHub Secrets에 <code>DATA_GO_KR_KEY</code>로 저장(외부 노출 없음).</li>
+      <li><strong>자동 업데이트 설정</strong><br>매주 자동 실행되는 작업이 구리시(지역코드 41310) 실거래가를 받아 <code>data/deals.json</code>에 저장 → 지도에 표시.</li>
     </ol>
     <div class="callout tip">
-      <span class="t">🏪 중개업소에 주는 이점</span>
-      실거래가 지도 위에, 구독한 <strong>중개업소가 직접 등록한 매물</strong>을 얹으면 크롤링 없이도 광고 채널이 됩니다(로그인·DB는 Supabase 무료 등으로 확장 가능). 원하시면 이 단계도 설계해 드립니다.
+      <span class="t">💡 지금 하실 일</span>
+      <strong>data.go.kr에서 무료 서비스키만 발급</strong>받아 알려주세요. 나머지 자동화(수집·지도 표시)는 관리자가 세팅합니다. 키 발급까지 5분이면 됩니다.
     </div>
   </section>
 
   <div class="disclaimer">
-    ⚖️ 본 지도의 샘플 데이터는 기능 시연용 예시이며 실제 거래가 아닙니다. 실서비스 전환 시 국토교통부 공공데이터 이용약관 및 지도 API 약관을 준수합니다.
+    ⚖️ 표시되는 값은 국토교통부 공공데이터 실거래가입니다. 신고 특성상 오차·지연이 있을 수 있으며, 최종 확인은 국토부 실거래가 공개시스템 원문을 이용하세요.
   </div>
 </main>
 
 <footer class="site-footer">
   <div class="footer-inner">
     <h4>🏠 대한민국 부동산 종합정보</h4>
-    <div class="footer-links">
-      <a href="index.html">홈</a>
-      <a href="silgeorae.html">실거래가</a>
-      <a href="silgeorae-map.html">실거래가 지도</a>
-      <a href="maemae.html">부동산 매매</a>
-      <a href="jeonse-sagi.html">전세사기 예방</a>
-      <a href="sege.html">부동산 세금</a>
-      <a href="jaryo.html">자료실</a>
-    </div>
-    <div class="footer-note">지도: Leaflet · OpenStreetMap 기여자. 데이터 원천(실서비스): 국토교통부 공공데이터포털. 샘플은 시연용입니다. © 2026 대한민국 부동산 종합정보.</div>
+    <div class="footer-note">데이터 원천: 국토교통부 공공데이터포털 실거래가 · 지도: Leaflet·OpenStreetMap. 가짜 데이터를 표시하지 않습니다. © 2026 대한민국 부동산 종합정보.</div>
   </div>
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-/* =========================================================
-   실거래가 지도 — 데모 스크립트
-   실서비스 시 아래 SAMPLE_DEALS를 fetch('data/deals.json')로 교체
-   (데이터 스키마 동일: gu, name, area, floor, price(만원), date, lat, lng)
-   ========================================================= */
-const SAMPLE_DEALS = [
-  { gu:"강남구", name:"대치동 은마아파트", area:84, floor:5, price:255000, date:"2026-07-03", lat:37.4996, lng:127.0602 },
-  { gu:"강남구", name:"도곡동 도곡렉슬", area:59, floor:12, price:238000, date:"2026-06-21", lat:37.4901, lng:127.0490 },
-  { gu:"서초구", name:"반포동 반포자이", area:84, floor:20, price:420000, date:"2026-07-11", lat:37.5045, lng:127.0102 },
-  { gu:"서초구", name:"잠원동 아크로리버뷰", area:78, floor:15, price:465000, date:"2026-06-30", lat:37.5165, lng:127.0110 },
-  { gu:"송파구", name:"잠실동 리센츠", area:84, floor:18, price:268000, date:"2026-07-08", lat:37.5110, lng:127.0850 },
-  { gu:"송파구", name:"잠실동 잠실엘스", area:59, floor:9, price:215000, date:"2026-06-18", lat:37.5150, lng:127.0820 },
-  { gu:"마포구", name:"아현동 마포래미안푸르지오", area:84, floor:14, price:198000, date:"2026-07-05", lat:37.5556, lng:126.9556 },
-  { gu:"마포구", name:"공덕동 공덕자이", area:59, floor:7, price:162000, date:"2026-06-25", lat:37.5445, lng:126.9515 },
-  { gu:"성동구", name:"성수동 트리마제", area:49, floor:22, price:280000, date:"2026-07-02", lat:37.5430, lng:127.0430 },
-  { gu:"영등포구", name:"여의도동 여의도자이", area:100, floor:11, price:245000, date:"2026-06-28", lat:37.5250, lng:126.9240 },
-  { gu:"강동구", name:"고덕동 고덕그라시움", area:84, floor:16, price:172000, date:"2026-07-09", lat:37.5560, lng:127.1560 },
-  { gu:"노원구", name:"상계동 상계주공7단지", area:49, floor:6, price:69000, date:"2026-06-15", lat:37.6600, lng:127.0700 },
-  { gu:"노원구", name:"중계동 중계그린", area:59, floor:10, price:82000, date:"2026-07-01", lat:37.6440, lng:127.0760 },
-  { gu:"강북구", name:"미아동 SK북한산시티", area:84, floor:13, price:78000, date:"2026-06-22", lat:37.6270, lng:127.0290 }
-];
+/* 실거래가 데이터는 data/deals.json 에서 로드합니다.
+   스키마: { type:"매매|전세|월세", dong, name, price(만원), rent(만원), area(㎡), floor, date:"YYYY-MM-DD", lat, lng }
+   데이터가 비어 있으면(=아직 연결 전) 가짜 값 대신 안내를 표시합니다. */
+const GALMAE = [37.6412, 127.1206];
+let DEALS = [];
 
-function eok(manwon){ // 만원 -> "N억 N,NNN만" 표기
-  const eokPart = Math.floor(manwon/10000);
-  const rest = manwon%10000;
-  return eokPart + "억" + (rest ? " " + rest.toLocaleString() + "만" : "");
+function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; return (e?e+"억":"")+(r?(e?" ":"")+r.toLocaleString()+"만":"")||"0"; }
+function priceText(d){
+  if(d.type==="월세") return `월세 ${eok(d.price)} / ${(d.rent||0).toLocaleString()}만`;
+  if(d.type==="전세") return `전세 ${eok(d.price)}`;
+  return `매매 ${eok(d.price)}`;
 }
 function areaBucket(a){ return a<=60 ? "s" : (a<=85 ? "m" : "l"); }
 
-const map = L.map('map', { scrollWheelZoom: true }).setView([37.55, 127.02], 11);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> 기여자'
-}).addTo(map);
-
-const guSel = document.getElementById('guFilter');
-const areaSel = document.getElementById('areaFilter');
-const listEl = document.getElementById('dealList');
-const countEl = document.getElementById('countLabel');
-const resetBtn = document.getElementById('resetBtn');
-
-// 자치구 옵션 채우기
-[...new Set(SAMPLE_DEALS.map(d=>d.gu))].sort().forEach(gu=>{
-  const o=document.createElement('option'); o.value=gu; o.textContent=gu; guSel.appendChild(o);
-});
-
-let markers = [];
-function clearMarkers(){ markers.forEach(m=>map.removeLayer(m)); markers=[]; }
-
-function render(){
-  const gu = guSel.value, ab = areaSel.value;
-  const rows = SAMPLE_DEALS.filter(d=> (!gu||d.gu===gu) && (!ab||areaBucket(d.area)===ab));
-  clearMarkers(); listEl.innerHTML='';
-  const bounds = [];
-  rows.forEach((d, i)=>{
-    const m = L.marker([d.lat, d.lng]).addTo(map)
-      .bindPopup(`<b>${d.name}</b><br>${d.gu} · 전용 ${d.area}㎡ · ${d.floor}층<br><b style="color:#c0392b">${eok(d.price)}</b><br><span style="color:#666">계약일 ${d.date}</span>`);
-    markers.push(m); bounds.push([d.lat, d.lng]);
-
-    const item = document.createElement('div');
-    item.className='deal-item';
-    item.innerHTML = `<span class="price">${eok(d.price)}</span><span class="name">${d.name}</span>
-      <div class="meta">${d.gu} · 전용 ${d.area}㎡ · ${d.floor}층 · 계약 ${d.date}</div>`;
-    item.addEventListener('click', ()=>{
-      map.setView([d.lat, d.lng], 15); m.openPopup();
-      document.querySelectorAll('.deal-item').forEach(el=>el.classList.remove('active'));
-      item.classList.add('active');
-    });
-    listEl.appendChild(item);
-  });
-  countEl.textContent = `${rows.length}건 표시`;
-  if(bounds.length) map.fitBounds(bounds, { padding:[40,40], maxZoom:14 });
+let map, markers=[];
+function initMapOnce(){
+  if(map) return;
+  map = L.map('map',{scrollWheelZoom:true}).setView(GALMAE, 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> 기여자'}).addTo(map);
 }
 
-guSel.addEventListener('change', render);
-areaSel.addEventListener('change', render);
-resetBtn.addEventListener('click', ()=>{ guSel.value=''; areaSel.value=''; render(); });
-render();
+function render(){
+  const typeF=document.getElementById('typeF'), areaF=document.getElementById('areaFilter');
+  const listEl=document.getElementById('dealList'), countEl=document.getElementById('countLabel');
+  const rows = DEALS.filter(d=> (!typeF.value||d.type===typeF.value) && (!areaF.value||areaBucket(d.area)===areaF.value));
+  markers.forEach(m=>map.removeLayer(m)); markers=[]; listEl.innerHTML='';
+  const bounds=[];
+  rows.forEach(d=>{
+    if(typeof d.lat==='number' && typeof d.lng==='number'){
+      const m=L.circleMarker([d.lat,d.lng],{radius:6,color:'#1f6fd1',fillColor:'#1f6fd1',fillOpacity:.7,weight:1}).addTo(map)
+        .bindPopup(`<b>${d.name}</b><br>${priceText(d)}<br>${d.dong||''} · 전용 ${d.area}㎡ · ${d.floor||'-'}층<br><span style="color:#666">계약 ${d.date||''}</span>`);
+      markers.push(m); bounds.push([d.lat,d.lng]);
+    }
+    const item=document.createElement('div'); item.className='deal-item';
+    item.innerHTML=`<span class="price">${priceText(d)}</span><span class="name">${d.name}</span>
+      <div class="meta">${d.dong||''} · 전용 ${d.area}㎡ · ${d.floor||'-'}층 · 계약 ${d.date||''}</div>`;
+    item.addEventListener('click',()=>{ if(d.lat){ map.setView([d.lat,d.lng],16);} });
+    listEl.appendChild(item);
+  });
+  countEl.textContent = `${rows.length}건`;
+  if(bounds.length) map.fitBounds(bounds,{padding:[40,40],maxZoom:15});
+}
+
+function boot(){
+  const hasData = Array.isArray(DEALS) && DEALS.length>0;
+  document.getElementById('notice').style.display = hasData ? 'none':'block';
+  document.getElementById('emptyBox').style.display = hasData ? 'none':'block';
+  document.getElementById('ui').style.display = hasData ? 'block':'none';
+  if(hasData){
+    const galmae = DEALS.filter(d=>d.dong==='갈매동').length;
+    const prices = DEALS.map(d=>d.price).filter(p=>p>0);
+    const eokMin = (Math.min(...prices)/10000), eokMax=(Math.max(...prices)/10000);
+    document.getElementById('summary').innerHTML =
+      `<span class="t">📊 구리시 아파트 매매 실거래가</span>총 <strong>${DEALS.length.toLocaleString()}건</strong> 표시 (갈매동 <strong>${galmae}건</strong>) · 가격대 약 ${eokMin.toFixed(1)}억~${eokMax.toFixed(1)}억<br><span style="color:var(--muted);font-size:.85rem">출처: 국토교통부 실거래가 공개시스템 · 위치는 법정동 단위 근사치 · 마커를 누르면 상세정보</span>`;
+    initMapOnce(); render();
+    document.getElementById('typeF').addEventListener('change',render);
+    document.getElementById('areaFilter').addEventListener('change',render);
+    document.getElementById('resetBtn').addEventListener('click',()=>{ document.getElementById('typeF').value=''; document.getElementById('areaFilter').value=''; render(); });
+  }
+}
+
+fetch('data/deals.json', {cache:'no-store'})
+  .then(r=> r.ok ? r.json() : [])
+  .then(j=>{ DEALS = Array.isArray(j)?j:[]; boot(); })
+  .catch(()=>{ DEALS=[]; boot(); });
 </script>
 </body>
 </html>
