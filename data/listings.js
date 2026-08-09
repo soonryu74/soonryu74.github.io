@@ -28,35 +28,35 @@ const AGENCY = {
    lat·lng: 지도 좌표(갈매동 인근) / photo: 대표 이미지(없으면 "" → 자동 플레이스홀더)
 */
 const LISTINGS = [
-  { id:1, type:"전세", category:"아파트", title:"갈매역 도보권 84㎡ 남향, 즉시입주",
+  { id:1, sample:true, type:"전세", category:"아파트", title:"갈매역 도보권 84㎡ 남향, 즉시입주",
     addr:"구리시 갈매동 ○○아파트", price:38000, rent:0, maintFee:12, areaM2:84, py:25,
     floor:11, totalFloor:20, rooms:3, baths:2, direction:"남향", avail:"즉시입주",
     options:["갈매역 도보권","대단지","올수리"], lat:37.6420, lng:127.1185,
     photo:"", desc:"채광 좋은 남향 로열층. 갈매역(경춘선) 도보권, 초등학교 인접. 깨끗한 세대입니다.",
     regDate:"2026-08-08" },
 
-  { id:2, type:"월세", category:"오피스텔", title:"신축 오피스텔 풀옵션, 관리비 저렴",
+  { id:2, sample:true, type:"월세", category:"오피스텔", title:"신축 오피스텔 풀옵션, 관리비 저렴",
     addr:"구리시 갈매동 ○○시티", price:1000, rent:55, maintFee:7, areaM2:24, py:7,
     floor:8, totalFloor:15, rooms:1, baths:1, direction:"동남향", avail:"2026-09-01",
     options:["풀옵션","에어컨","세탁기","보안"], lat:37.6398, lng:127.1225,
     photo:"", desc:"보증금 1000/월 55. 관리비에 수도·인터넷 포함. 사회초년생·직장인 추천.",
     regDate:"2026-08-08" },
 
-  { id:3, type:"매매", category:"아파트", title:"학군지 59㎡ 급매, 실입주 가능",
+  { id:3, sample:true, type:"매매", category:"아파트", title:"학군지 59㎡ 급매, 실입주 가능",
     addr:"구리시 갈매동 ○○1단지", price:62000, rent:0, maintFee:10, areaM2:59, py:18,
     floor:7, totalFloor:25, rooms:3, baths:1, direction:"남동향", avail:"협의",
     options:["학군 우수","대단지","리모델링"], lat:37.6442, lng:127.1150,
     photo:"", desc:"급매로 나온 실입주 물건. 초·중 도보권, 상권 인접. 대출 상담 가능합니다.",
     regDate:"2026-08-07" },
 
-  { id:4, type:"전세", category:"빌라", title:"보증보험 가입 가능 투룸 전세",
+  { id:4, sample:true, type:"전세", category:"빌라", title:"보증보험 가입 가능 투룸 전세",
     addr:"구리시 갈매동 ○○하우스", price:19000, rent:0, maintFee:5, areaM2:46, py:14,
     floor:3, totalFloor:4, rooms:2, baths:1, direction:"남서향", avail:"2026-10-01",
     options:["전세보증보험 가능","채광 우수","주차 가능"], lat:37.6455, lng:127.1205,
     photo:"", desc:"전세보증금 반환보증 가입 가능한 안전 매물. 신혼·소가족에게 적합합니다.",
     regDate:"2026-08-06" },
 
-  { id:5, type:"월세", category:"상가", title:"갈매순환로 1층 상가, 코너 자리",
+  { id:5, sample:true, type:"월세", category:"상가", title:"갈매순환로 1층 상가, 코너 자리",
     addr:"구리시 갈매동 ○○로", price:3000, rent:180, maintFee:15, areaM2:66, py:20,
     floor:1, totalFloor:10, rooms:0, baths:1, direction:"코너", avail:"즉시입주",
     options:["1층","코너","유동인구 많음"], lat:37.6410, lng:127.1240,
