@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" width="360" height="120" role="img" aria-label="모심 로고">
+  <defs>
+    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16c0af"/>
+      <stop offset="1" stop-color="#0b7d72"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="112" height="112" rx="30" fill="url(#lg)"/>
+  <path d="M60 47 C53.5 36.5 37.5 39 37.5 52.5 C37.5 63 52 70.5 60 77 C68 70.5 82.5 63 82.5 52.5 C82.5 39 66.5 36.5 60 47 Z" fill="#ffffff"/>
+  <path d="M31 74 C40 92 80 92 89 74" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+  <path d="M31 74 C29 80 30 86 33.5 89.5" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+  <path d="M89 74 C91 80 90 86 86.5 89.5" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+  <text x="140" y="62" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="52" font-weight="800" fill="#075e56" letter-spacing="-1">모심</text>
+  <text x="141" y="94" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="18" font-weight="600" fill="#536463">가족처럼, 정성껏 모십니다</text>
+</svg>

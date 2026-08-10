@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>돌봄종사자 구직·프로필 등록 — 요양보호사·간병인·간호사 | 돌봄이음</title>
+<title>돌봄종사자 구직·프로필 등록 — 요양보호사·간병인·간호사 | 모심</title>
 <meta name="description" content="요양보호사·간병인·간호조무사·간호사가 자격·경력·희망지역·가능시간을 무료로 등록하고 가족·기관과 연결되는 돌봄 구직 디렉토리. 프로필 카드와 홍보문구가 자동 완성됩니다.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
 <header class="site-header">
   <div class="nav-inner">
-    <a class="brand" href="index.html">🤝 돌봄이음 <span class="tag">돌봄 종합포털</span></a>
+    <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo-mark.svg" alt="모심 로고"> 모심 <span class="tag">돌봄 종합포털</span></a>
     <nav class="site-nav">
       <a href="gajok.html">환자·가족</a>
       <a href="gujik.html" class="active">돌봄종사자</a>
@@ -146,16 +147,16 @@
     <div class="result-grid" id="dir"></div>
   </section>
 
-  <div class="disclaimer">⚖️ 등록된 프로필은 이용자가 직접 입력한 정보입니다. 채용·계약 전 자격증·경력을 원본 서류로 반드시 확인하세요. 돌봄이음은 개인 간 연결을 돕는 정보 플랫폼이며 고용·근로계약의 당사자가 아닙니다.</div>
+  <div class="disclaimer">⚖️ 등록된 프로필은 이용자가 직접 입력한 정보입니다. 채용·계약 전 자격증·경력을 원본 서류로 반드시 확인하세요. 모심은 개인 간 연결을 돕는 정보 플랫폼이며 고용·근로계약의 당사자가 아닙니다.</div>
 </main>
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <h4>🤝 돌봄이음</h4>
+    <h4>🤲 모심</h4>
     <div class="footer-links">
       <a href="gajok.html">환자·가족</a><a href="gujik.html">돌봄종사자</a><a href="tonghap-dolbom.html">통합돌봄</a><a href="jangki-yoyang.html">장기요양</a><a href="jiyeok.html">지역 찾기</a><a href="partner.html">광고·제휴</a><a href="jaryo.html">자료실</a>
     </div>
-    <div class="footer-note">개인정보는 안전하게 다뤄야 합니다. 민감정보는 입력하지 마세요. © 2026 돌봄이음.</div>
+    <div class="footer-note">개인정보는 안전하게 다뤄야 합니다. 민감정보는 입력하지 마세요. © 2026 모심.</div>
   </div>
 </footer>
 
@@ -194,7 +195,7 @@ function collect(){
 }
 
 function promoText(p){
-  return `[돌봄이음 구직] ${p.name}\n`+
+  return `[모심 구직] ${p.name}\n`+
     `· 직종: ${p.role} (경력 ${p.exp})\n`+
     `· 희망지역: ${p.area}\n`+
     `· 가능 형태: ${p.types.join(', ')||'-'}\n`+
@@ -202,7 +203,7 @@ function promoText(p){
     `· 가능시간: ${p.time}\n`+
     (p.contact?`· 연락: ${p.contact}\n`:'')+
     (p.intro?`· 소개: ${p.intro}\n`:'')+
-    `\n#돌봄이음 #${p.role} #${p.area.replace(/\s/g,'')}`;
+    `\n#모심 #${p.role} #${p.area.replace(/\s/g,'')}`;
 }
 
 document.getElementById('gen').addEventListener('click', ()=>{
@@ -259,5 +260,6 @@ document.getElementById('flt-area').addEventListener('input', render);
 render();
 if(location.hash==='#directory') document.getElementById('directory').scrollIntoView();
 </script>
+<script src="assets/app.js"></script>
 </body>
 </html>
