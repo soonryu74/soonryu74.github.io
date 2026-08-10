@@ -6,6 +6,9 @@
 <title>돌봄종사자 구직·프로필 등록 — 요양보호사·간병인·간호사 | 모심</title>
 <meta name="description" content="요양보호사·간병인·간호조무사·간호사가 자격·경력·희망지역·가능시간을 무료로 등록하고 가족·기관과 연결되는 돌봄 구직 디렉토리. 프로필 카드와 홍보문구가 자동 완성됩니다.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/png/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b7d72">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -39,8 +42,15 @@
 
   <div class="callout warn">
     <span class="t">🔒 개인정보 안내 (꼭 읽어주세요)</span>
-    데모 버전에서는 입력 정보가 <strong>서버로 전송되지 않고, 이 브라우저에만(localStorage) 저장</strong>됩니다. 다른 사람에게 자동 공유되지 않습니다. 실제 운영 시에는 안전한 저장·검증 절차가 적용됩니다. <strong>주민번호·계좌 등 민감정보는 절대 입력하지 마세요.</strong>
+    등록하신 프로필은 <strong>공개 구직 디렉토리에 게시</strong>되어 가족·기관 누구나 볼 수 있습니다(안전한 데이터베이스에 저장). 표시 이름은 <strong>실명 대신 "김○○ 요양보호사"</strong> 형태를 권장하고, <strong>주민번호·상세주소·계좌 등 민감정보는 절대 입력하지 마세요.</strong> 연락처는 원하시는 범위(오픈카톡 등)만 남기세요.
   </div>
+
+  <h2>먼저 등록한 선생님들 이야기 <span class="pill amber">예시 후기</span></h2>
+  <div class="quote-grid">
+    <div class="quote"><div class="stars">★★★★★</div><p>"광고비 한 푼 없이 프로필만 올렸는데 우리 동네 가족분께 연락이 왔어요. 수수료도 없어 좋습니다."</p><div class="who">— 요양보호사 박○○ 님</div></div>
+    <div class="quote"><div class="stars">★★★★★</div><p>"경력과 가능 시간을 적어두니 조건이 맞는 문의만 와서 편했습니다."</p><div class="who">— 간병인 이○○ 님</div></div>
+  </div>
+  <p style="color:var(--muted);font-size:.86rem">※ 서비스 소개를 위한 예시 후기입니다.</p>
 
   <section class="section">
     <h2 style="margin-top:0">내 프로필 만들기</h2>
@@ -160,17 +170,47 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const KEY = 'dolbom_profiles_v1';
+// 모심 구직 디렉토리 — Supabase(실제 DB) 연동 + 로컬 폴백
+const SB_URL = 'https://gancotctztwqsuupektl.supabase.co';
+const SB_KEY = 'sb_publishable_SJHf3habT8mpWmF9vedxuw_g1e3pLkT';
+const LKEY = 'mosim_profiles_local';
+let sb = null;
+try { if (window.supabase && SB_URL) sb = window.supabase.createClient(SB_URL, SB_KEY); } catch(e){}
 const seed = [
   {id:'s1', premium:true, verified:true, name:'박순자 요양보호사', role:'요양보호사', exp:'10년 이상', area:'서울 노원구', types:['방문요양','치매돌봄','방문목욕'], skills:['요양보호사 1급','치매전문교육 이수','와상·욕창 케어'], time:'주간(낮)', contact:'연락처 문의', intro:'치매·와상 어르신 10년 이상 모셨습니다. 가족처럼 정성껏 돌봐드립니다.'},
   {id:'s2', premium:false, verified:true, name:'이영호 간병인', role:'간병인', exp:'5~10년', area:'경기 구리시', types:['병원간병','입주간병','병원동행'], skills:['흡인·석션 가능','콧줄·위루 관리','운전 가능'], time:'24시간 입주', contact:'오픈카톡 문의', intro:'중환자·수술 후 회복 환자 병원간병 전문입니다. 남성 환자 케어 가능.'},
   {id:'s3', premium:false, verified:false, name:'최미경 간호조무사', role:'간호조무사', exp:'3~5년', area:'서울 강북구', types:['방문요양','주야간보호'], skills:['간호조무사 자격','요리 가능'], time:'시간 협의', intro:'꼼꼼한 복약·건강관리와 따뜻한 말벗이 강점입니다.'}
 ];
 
-function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || []; }catch(e){ return []; } }
-function save(list){ localStorage.setItem(KEY, JSON.stringify(list)); }
-function all(){ return [...seed, ...load()]; }
+let cache = [];
+function localLoad(){ try{ return JSON.parse(localStorage.getItem(LKEY)) || []; }catch(e){ return []; } }
+function localSave(list){ try{ localStorage.setItem(LKEY, JSON.stringify(list)); }catch(e){} }
+async function fetchProfiles(){
+  if (sb){
+    const { data, error } = await sb.from('caregivers').select('*')
+      .eq('status','active').order('premium',{ascending:false}).order('created_at',{ascending:false});
+    if (!error && Array.isArray(data)){ cache = data; return true; }
+    console.warn('Supabase select 실패:', error && error.message);
+  }
+  cache = [...seed, ...localLoad()];
+  return false;
+}
+async function saveProfile(p){
+  if (sb){
+    const { error } = await sb.from('caregivers').insert({
+      name:p.name, role:p.role, exp:p.exp, area:p.area,
+      types:p.types, skills:p.skills, time:p.time, contact:p.contact, intro:p.intro
+    });
+    if (!error) return 'db';
+    console.warn('Supabase insert 실패:', error && error.message);
+  }
+  const list = localLoad();
+  list.unshift({...p, id:'u'+Date.now(), premium:false, verified:false, created_at:new Date().toISOString()});
+  localSave(list);
+  return sb ? 'localfail' : 'local';
+}
 
 // 칩 선택 유틸
 function chipVals(id){ return [...document.querySelectorAll('#'+id+' .chip.on')].map(c=>c.dataset.v); }
@@ -220,13 +260,17 @@ document.getElementById('gen').addEventListener('click', ()=>{
   });
 });
 
-document.getElementById('save').addEventListener('click', ()=>{
+document.getElementById('save').addEventListener('click', async ()=>{
   const p = collect();
   if(p.name==='이름 미입력'){ alert('표시 이름을 입력해 주세요.'); return; }
-  p.id = 'u'+Date.now(); p.premium=false; p.verified=false;
-  const list = load(); list.unshift(p); save(list);
-  alert('프로필이 등록되었습니다! 디렉토리에서 확인하세요.');
-  render();
+  if(!p.types.length){ alert('가능한 돌봄 형태를 한 가지 이상 선택해 주세요.'); return; }
+  const btn=document.getElementById('save'); const old=btn.textContent; btn.disabled=true; btn.textContent='등록 중…';
+  const res = await saveProfile(p);
+  await fetchProfiles(); render();
+  btn.disabled=false; btn.textContent=old;
+  alert(res==='db' ? '프로필이 등록되었습니다! 전국 가족·기관에게 공개됩니다.'
+      : res==='local' ? '이 브라우저에 저장되었습니다. (온라인 연결 시 전체 공개)'
+      : '서버 연결에 실패해 임시로 이 브라우저에만 저장했습니다.');
   document.getElementById('directory').scrollIntoView({behavior:'smooth'});
 });
 
@@ -245,9 +289,9 @@ function card(p){
 function render(){
   const roleF = document.getElementById('flt-role').value;
   const areaF = document.getElementById('flt-area').value.trim();
-  let list = all().filter(p=>{
+  let list = cache.filter(p=>{
     if(roleF && p.role!==roleF) return false;
-    if(areaF && !p.area.includes(areaF)) return false;
+    if(areaF && !(p.area||'').includes(areaF)) return false;
     return true;
   });
   list.sort((a,b)=> (b.premium?1:0)-(a.premium?1:0));
@@ -257,8 +301,8 @@ function render(){
 }
 document.getElementById('flt-role').addEventListener('change', render);
 document.getElementById('flt-area').addEventListener('input', render);
-render();
-if(location.hash==='#directory') document.getElementById('directory').scrollIntoView();
+document.getElementById('dir').innerHTML = '<p style="color:var(--muted)">불러오는 중…</p>';
+fetchProfiles().then(()=>{ render(); if(location.hash==='#directory') document.getElementById('directory').scrollIntoView(); });
 </script>
 <script src="assets/app.js"></script>
 </body>
