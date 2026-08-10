@@ -284,6 +284,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--m
 .quote p { font-size: 1.02rem; color: var(--ink); margin: 10px 0 14px; }
 .quote .who { font-size: 0.9rem; color: var(--muted); font-weight: 700; }
 
+/* 공공 평가등급 뱃지 */
+.grade-badge { display:inline-flex; align-items:center; gap:4px; padding:5px 14px; border-radius:22px; font-weight:800; font-size:.92rem; color:#fff; white-space:nowrap; }
+.grade-badge.g1{ background:#0b7d72; }   /* 최우수 */
+.grade-badge.g2{ background:#12a35a; }   /* 우수 */
+.grade-badge.g3{ background:#e0902a; }   /* 양호 */
+.grade-badge.g4{ background:#7b8a88; }   /* 보통 */
+.grade-badge.g5{ background:#e0603f; }   /* 미흡 */
+.grade-badge.g0{ background:#b8c2c0; }   /* 미평가 */
+.score-row { display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:10px; font-size:.84rem; color:var(--muted); }
+.score-row b { color:var(--teal-dark); }
+.inst-source { font-size:.78rem; color:var(--muted); margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; }
+
 /* 안내 배지행(trust) */
 .trust-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 26px; margin: 26px 0 0; }
 .trust-row span { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: #eafaf7; font-size: 0.98rem; }
