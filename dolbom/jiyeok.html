@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>우리 지역 돌봄 찾기 — 시·군·구 신청창구 안내 | 돌봄이음</title>
+<title>우리 지역 돌봄 찾기 — 시·군·구 신청창구 안내 | 모심</title>
 <meta name="description" content="거주하시는 시·도와 시·군·구를 고르면 지역사회 통합돌봄·장기요양 신청 창구(읍·면·동 행정복지센터, 국민건강보험공단 지사)와 전국 공통 상담 전화를 안내합니다.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
 <header class="site-header">
   <div class="nav-inner">
-    <a class="brand" href="index.html">🤝 돌봄이음 <span class="tag">돌봄 종합포털</span></a>
+    <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo-mark.svg" alt="모심 로고"> 모심 <span class="tag">돌봄 종합포털</span></a>
     <nav class="site-nav">
       <a href="gajok.html">환자·가족</a>
       <a href="gujik.html">돌봄종사자</a>
@@ -55,11 +56,11 @@
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <h4>🤝 돌봄이음</h4>
+    <h4>🤲 모심</h4>
     <div class="footer-links">
       <a href="gajok.html">환자·가족</a><a href="gujik.html">돌봄종사자</a><a href="tonghap-dolbom.html">통합돌봄</a><a href="jangki-yoyang.html">장기요양</a><a href="jiyeok.html">지역 찾기</a><a href="partner.html">광고·제휴</a><a href="jaryo.html">자료실</a>
     </div>
-    <div class="footer-note">© 2026 돌봄이음.</div>
+    <div class="footer-note">© 2026 모심.</div>
   </div>
 </footer>
 
@@ -128,6 +129,20 @@ function showResult(){
   const el=document.getElementById('result');
   el.innerHTML=html; el.scrollIntoView({behavior:'smooth'});
 }
+
+// 홈 히어로 검색에서 넘어온 지역 자동 선택
+(function(){
+  const p=new URLSearchParams(location.search);
+  const s=p.get('sido'), g=p.get('gu');
+  if(!s || !REGIONS[s]) return;
+  const btn=[...sidoEl.children].find(b=>b.title===s);
+  if(btn) btn.click();
+  if(g && REGIONS[s].includes(g)){
+    const gb=[...guEl.children].find(b=>b.textContent===g);
+    if(gb) gb.click();
+  }
+})();
 </script>
+<script src="assets/app.js"></script>
 </body>
 </html>

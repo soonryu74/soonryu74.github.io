@@ -1,5 +1,5 @@
 /* =========================================================
-   대한민국 돌봄 포털 (돌봄이음) — 공용 스타일 v2
+   대한민국 돌봄 포털 (모심 · SONGIL) — 공용 스타일 v2
    컨셉: 시니어 친화 · 따뜻한 헬스케어 · 해외 우수사례(A Place for Mom·Caring.com) 벤치마크
    시니어 UX: 큰 글씨(18px+), 강한 대비, 큰 터치영역, 아이콘+라벨, 글자크기 조절
    ========================================================= */
@@ -88,9 +88,14 @@ img { max-width: 100%; }
   box-shadow: 0 2px 14px rgba(0, 0, 0, 0.14);
 }
 .nav-inner { max-width: var(--maxw); margin: 0 auto; padding: 0 18px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; min-height: 68px; }
-.brand { color: #fff; font-weight: 800; font-size: 1.24rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; margin-right: auto; }
+.brand { color: #fff; font-weight: 800; font-size: 1.28rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 9px; margin-right: auto; }
 .brand:hover { text-decoration: none; opacity: 0.92; }
 .brand .tag { font-size: 0.6rem; background: rgba(255, 255, 255, 0.2); padding: 3px 9px; border-radius: 20px; font-weight: 700; }
+.brand-logo { width: 34px; height: 34px; border-radius: 9px; vertical-align: middle; box-shadow: 0 1px 4px rgba(0,0,0,.18); }
+
+/* 히어로 슬로건 */
+.hero .kicker { display: inline-block; background: rgba(255,255,255,.18); color: #fff; font-weight: 700; font-size: 0.92rem; padding: 6px 16px; border-radius: 22px; margin-bottom: 16px; }
+.hero .sub-slogan { font-size: 1.05rem; color: #eafaf7; margin-top: 4px; }
 .nav-toggle { display: none; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 8px; padding: 8px 12px; font-size: 1.1rem; cursor: pointer; }
 .site-nav { display: flex; flex-wrap: wrap; gap: 2px 4px; }
 .site-nav a { color: #e2f4f0; padding: 10px 13px; border-radius: 10px; font-size: 0.98rem; font-weight: 700; }

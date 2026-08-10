@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>광고·제휴 안내 — 요양기관·간병업체 프리미엄 노출 | 돌봄이음</title>
+<title>광고·제휴 안내 — 요양기관·간병업체 프리미엄 노출 | 모심</title>
 <meta name="description" content="요양기관·방문요양센터·간병업체·복지용구 업체를 위한 프리미엄 등록과 배너 광고 안내. 이용자에게는 무료, 양질의 돌봄 서비스는 홍보하고 수익으로 이어지는 선순환 구조.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
 <header class="site-header">
   <div class="nav-inner">
-    <a class="brand" href="index.html">🤝 돌봄이음 <span class="tag">돌봄 종합포털</span></a>
+    <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo-mark.svg" alt="모심 로고"> 모심 <span class="tag">돌봄 종합포털</span></a>
     <nav class="site-nav">
       <a href="gajok.html">환자·가족</a>
       <a href="gujik.html">돌봄종사자</a>
@@ -32,7 +33,7 @@
   </div>
 
   <div class="callout tip">
-    <span class="t">🌱 돌봄이음의 선순환 구조</span>
+    <span class="t">🌱 모심의 선순환 구조</span>
     가족의 검색·종사자의 등록은 모두 무료입니다. 대신 <strong>지역 요양기관·간병업체·복지용구 업체</strong> 등이 프리미엄 노출·배너 광고로 홍보하고, 그 광고비만으로 포털을 운영합니다. 이용자에게 중개수수료를 물리지 않으므로 <strong>정보가 쌓일수록 모두에게 이득</strong>입니다.
   </div>
 
@@ -104,16 +105,16 @@
     <div id="p-out"></div>
   </section>
 
-  <div class="disclaimer">⚖️ 돌봄이음은 정보·광고 플랫폼입니다. 광고 게재는 해당 기관의 서비스 품질을 보증하지 않으며, 이용자는 계약 전 자격·등록 여부를 직접 확인해야 합니다. 광고와 정보 콘텐츠는 명확히 구분해 표기합니다.</div>
+  <div class="disclaimer">⚖️ 모심은 정보·광고 플랫폼입니다. 광고 게재는 해당 기관의 서비스 품질을 보증하지 않으며, 이용자는 계약 전 자격·등록 여부를 직접 확인해야 합니다. 광고와 정보 콘텐츠는 명확히 구분해 표기합니다.</div>
 </main>
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <h4>🤝 돌봄이음</h4>
+    <h4>🤲 모심</h4>
     <div class="footer-links">
       <a href="gajok.html">환자·가족</a><a href="gujik.html">돌봄종사자</a><a href="tonghap-dolbom.html">통합돌봄</a><a href="jangki-yoyang.html">장기요양</a><a href="jiyeok.html">지역 찾기</a><a href="partner.html">광고·제휴</a><a href="about.html">소개</a>
     </div>
-    <div class="footer-note">이용자 무료 · 광고·제휴로 운영. © 2026 돌봄이음.</div>
+    <div class="footer-note">이용자 무료 · 광고·제휴로 운영. © 2026 모심.</div>
   </div>
 </footer>
 
@@ -121,7 +122,7 @@
 function esc(s){ return (s||'').replace(/[<>&]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m])); }
 document.getElementById('p-gen').addEventListener('click',()=>{
   const v=id=>document.getElementById(id).value.trim();
-  const t=`[돌봄이음 제휴·광고 문의]\n`+
+  const t=`[모심 제휴·광고 문의]\n`+
     `· 기관/업체명: ${v('p-name')||'-'}\n`+
     `· 업종: ${document.getElementById('p-type').value}\n`+
     `· 지역: ${v('p-area')||'-'}\n`+
@@ -132,7 +133,7 @@ document.getElementById('p-gen').addEventListener('click',()=>{
     `<div class="callout law" style="margin-top:16px"><span class="t">📋 아래를 복사해 이메일로 보내주세요</span>
      <textarea id="p-txt" rows="8" style="margin-top:8px">${esc(t)}</textarea>
      <div style="margin-top:10px"><button class="btn btn-sm btn-primary" id="p-copy">복사하기</button>
-     <a class="btn btn-sm btn-ghost" href="mailto:soonryu74@gmail.com?subject=돌봄이음 제휴 문의">메일 앱 열기</a></div></div>`;
+     <a class="btn btn-sm btn-ghost" href="mailto:soonryu74@gmail.com?subject=모심 제휴 문의">메일 앱 열기</a></div></div>`;
   document.getElementById('p-copy').addEventListener('click',()=>{
     const ta=document.getElementById('p-txt'); ta.select(); navigator.clipboard?.writeText(ta.value);
     document.getElementById('p-copy').textContent='✓ 복사됨';
@@ -140,5 +141,6 @@ document.getElementById('p-gen').addEventListener('click',()=>{
   document.getElementById('p-out').scrollIntoView({behavior:'smooth'});
 });
 </script>
+<script src="assets/app.js"></script>
 </body>
 </html>
