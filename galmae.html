@@ -27,6 +27,44 @@
   .c-card .rows div { display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed var(--line); }
   .c-card .ask { display:inline-block; margin-top:8px; background:var(--blue); color:#fff; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none; font-size:.9rem; }
   .c-card .ask:hover{opacity:.92;text-decoration:none}
+
+  /* 아파트미+ 카드 */
+  .ap-card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px; box-shadow:var(--shadow); transition:transform .15s,box-shadow .15s; }
+  .ap-card:hover{ transform:translateY(-3px); box-shadow:0 10px 24px rgba(18,58,107,.14); }
+  .ap-head{ display:flex; align-items:center; gap:8px; }
+  .ap-head h3{ margin:0; color:var(--navy); font-size:1.14rem; }
+  .ap-badge{ font-size:.72rem; font-weight:800; padding:2px 8px; border-radius:20px; }
+  .ap-badge.hot{ background:#fdecec; color:#c0392b; } .ap-badge.mid{ background:#eef4fb; color:#1f6fd1; } .ap-badge.low{ background:#f0f2f5; color:#6b7684; }
+  .ap-sub{ color:var(--muted); font-size:.84rem; margin:4px 0 8px; }
+  .ap-price{ font-size:1.7rem; font-weight:800; color:#111; letter-spacing:-.02em; display:flex; align-items:baseline; gap:8px; }
+  .ap-trend{ font-size:.82rem; font-weight:800; padding:2px 8px; border-radius:20px; }
+  .ap-trend.up{ background:#fdeeee; color:#d63031; } .ap-trend.down{ background:#eaf4ff; color:#0984e3; } .ap-trend.flat{ background:#f0f2f5; color:#6b7684; }
+  .ap-meta{ color:#5b6b7b; font-size:.85rem; margin:4px 0 8px; }
+  .ap-chart{ background:linear-gradient(180deg,#fafcff,#fff); border:1px solid #eef1f5; border-radius:10px; padding:6px 8px; margin:6px 0 10px; }
+  .ap-gauge-bar{ position:relative; height:8px; border-radius:8px; background:linear-gradient(90deg,#8fd3ff,#ffd36b,#ff8f8f); }
+  .ap-gauge-bar span{ position:absolute; top:50%; transform:translate(-50%,-50%); width:14px; height:14px; border-radius:50%; background:#fff; border:3px solid var(--navy); box-shadow:0 1px 4px rgba(0,0,0,.2); }
+  .ap-gauge-lbl{ display:flex; justify-content:space-between; align-items:center; font-size:.78rem; color:var(--muted); margin-top:6px; }
+  .ap-gauge-lbl b{ color:var(--navy); }
+  .ap-stat{ display:flex; gap:6px; align-items:center; font-size:.85rem; color:var(--muted); margin:10px 0 4px; flex-wrap:wrap; }
+  .ap-stat b{ color:var(--navy-dark); }
+  .ap-note{ background:#f2f7f4; border:1px solid #cfe6da; border-radius:10px; padding:8px 10px; font-size:.85rem; color:#2c6b52; margin:8px 0; }
+  .ap-note b{ color:#0e8a6b; }
+  .ap-btn{ display:block; text-align:center; margin-top:8px; background:var(--blue); color:#fff; padding:10px; border-radius:10px; font-weight:800; text-decoration:none; }
+  .ap-btn:hover{ opacity:.93; text-decoration:none; }
+  .ap-src{ text-align:center; color:#9aa7b4; font-size:.74rem; margin-top:8px; }
+
+  /* 동네 이야기 */
+  .story{ background:linear-gradient(180deg,#fbfaf6,#fff); border:1px solid #ece7da; border-radius:16px; padding:20px 20px 14px; margin:8px 0 14px; }
+  .story .cap{ display:inline-block; background:#8a6d3b; color:#fff; font-size:.74rem; font-weight:800; padding:3px 10px; border-radius:20px; letter-spacing:.02em; }
+  .story h3{ margin:10px 0 2px; color:#5c4a24; font-size:1.24rem; }
+  .story .lede{ color:#6b5e44; font-size:.9rem; margin:0 0 6px; }
+  .story-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin:12px 0 4px; }
+  .story-item{ background:#fff; border:1px solid #ece7da; border-radius:12px; padding:14px 16px; }
+  .story-item .ic{ font-size:1.35rem; }
+  .story-item b{ display:block; color:#5c4a24; margin:4px 0 3px; font-size:1rem; }
+  .story-item p{ margin:0; color:#5b6b7b; font-size:.88rem; line-height:1.6; }
+  .story-item .old{ display:inline-block; background:#f3ecdd; color:#8a6d3b; border-radius:6px; padding:0 6px; font-weight:700; font-size:.82rem; margin:2px 4px 2px 0; }
+  .story-src{ color:#a99b7d; font-size:.76rem; margin-top:8px; }
 </style>
 </head>
 <body>
@@ -75,6 +113,37 @@
   <h2>갈매동 주요 아파트 단지</h2>
   <div class="c-grid" id="grid"></div>
 
+  <section class="story">
+    <span class="cap">📜 우리 동네 이야기</span>
+    <h3>갈매동, 이름에 담긴 뜻</h3>
+    <p class="lede">시세만큼 알아두면 좋은 갈매동의 유래와 옛 지명입니다.</p>
+    <div class="story-grid">
+      <div class="story-item">
+        <div class="ic">📖</div>
+        <b>‘갈매(葛梅)’라는 이름</b>
+        <p>두 가지 유래 <b>설</b>이 전합니다. 마을을 둘러싼 산세가 <b>칡(葛)과 매화(梅)</b>를 닮았다는 설과, 풍수로 목마른 말이 물을 마시는 <b>갈마음수형(渴馬飮水形)</b>에서 ‘갈마→갈매’로 바뀌었다는 설입니다.</p>
+      </div>
+      <div class="story-item">
+        <div class="ic">🗺️</div>
+        <b>사라진 옛 마을 이름</b>
+        <p>1914년 행정구역 개편 때 옛 양주군의
+          <span class="old">담터(장기리)</span><span class="old">사노리</span>
+          를 합쳐 <b>구리면 갈매리</b>가 되었고, 1986년 구리읍이 시로 승격하며 <b>갈매동</b>이 되었습니다.</p>
+      </div>
+      <div class="story-item">
+        <div class="ic">🚉</div>
+        <b>기찻길이 바꾼 동네</b>
+        <p>2010년 <b>경춘선 복선전철 갈매역</b>이 문을 열고, 2024년 <b>8호선 별내선</b>까지 이어지며 서울 접근성이 크게 좋아진 수도권 동북부 요지입니다.</p>
+      </div>
+      <div class="story-item">
+        <div class="ic">👑</div>
+        <b>왕릉과 숲을 이웃한 자리</b>
+        <p>가까이에 유네스코 세계유산 <b>동구릉</b>(조선왕릉)이 있고, 서쪽으로는 서울 노원구 <b>태릉·불암산</b>과 맞닿아 녹지가 풍부한 계획도시입니다.</p>
+      </div>
+    </div>
+    <p class="story-src">출처 · 디지털구리문화대전, 구리시, 위키백과 (지명 유래는 전해오는 설을 정리한 것입니다)</p>
+  </section>
+
   <div class="callout law">
     <span class="t">🙋 이 단지, 지금 나온 매물 있나요?</span>
     단지별 <strong>매매·전세·월세 매물</strong>과 <strong>실입주 가능 여부</strong>는 갈매역삼성부동산으로 문의 주세요. 발품은 저희가, 좋은 집만 골라 드립니다. ☎ <strong>031-575-4944</strong>
@@ -114,20 +183,78 @@ const regView=/[【】]/.test(AG.regNo||'')?'등록번호 준비중':(AG.regNo||
 document.getElementById('fLegal').textContent=`${AG.name} | 대표 ${AG.ceo||''} | ${regView} | ${AG.addr||''} | ${AG.telView||''}`;
 
 const grid=document.getElementById('grid');
+const TELN=AG.tel.replace(/[^0-9]/g,'');
+
+// 최근 거래가 흐름 스파크라인 (전용면적 혼합 · 시각적 흐름용)
+function spark(series){
+  const s=(series||[]).filter(v=>v>0);
+  if(s.length<2) return '';
+  const W=240,H=44,P=3, n=s.length;
+  const mn=Math.min(...s), mx=Math.max(...s), rng=(mx-mn)||1;
+  const x=i=> P + i*(W-2*P)/(n-1);
+  const y=v=> H-P - (v-mn)/rng*(H-2*P);
+  let d='', area='';
+  s.forEach((v,i)=>{ const px=x(i).toFixed(1), py=y(v).toFixed(1); d+=(i?'L':'M')+px+' '+py+' '; });
+  area=`M${x(0).toFixed(1)} ${H} `+s.map((v,i)=>'L'+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ')+` L${x(n-1).toFixed(1)} ${H} Z`;
+  const lastUp = s[n-1]>=s[0];
+  const col = lastUp?'#e17055':'#0984e3';
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="44" preserveAspectRatio="none" aria-hidden="true">
+    <path d="${area}" fill="${col}" opacity=".08"/>
+    <path d="${d}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${x(n-1).toFixed(1)}" cy="${y(s[n-1]).toFixed(1)}" r="3" fill="${col}"/>
+  </svg>`;
+}
+
+// 활발도(최근 3개월 거래건수) → 배지
+function badge(r3){
+  if(r3>=15) return {cls:'hot', txt:'🔥 거래 활발'};
+  if(r3>=8)  return {cls:'mid', txt:'🙂 거래 보통'};
+  return {cls:'low', txt:'🌙 거래 한산'};
+}
+
+// 최근 거래 흐름 방향 (시작가 대비 최근가)
+function trendOf(series){
+  const s=(series||[]).filter(v=>v>0);
+  if(s.length<4) return {cls:'flat', txt:'—'};
+  const head=s.slice(0,Math.max(2,Math.round(s.length*0.25)));
+  const tail=s.slice(-Math.max(2,Math.round(s.length*0.25)));
+  const a=head.reduce((x,y)=>x+y,0)/head.length;
+  const b=tail.reduce((x,y)=>x+y,0)/tail.length;
+  const pct=(b-a)/a*100;
+  if(pct>=2)  return {cls:'up',   txt:'▲ 최근 강세 +'+pct.toFixed(0)+'%'};
+  if(pct<=-2) return {cls:'down', txt:'▼ 최근 조정 '+pct.toFixed(0)+'%'};
+  return {cls:'flat', txt:'▷ 보합권'};
+}
+
 (COMPLEXES||[]).forEach(c=>{
   const la=c.latest||{};
   const areas=(c.areas||[]).map(a=>a+'㎡').join(', ');
-  const card=document.createElement('div'); card.className='c-card';
+  const bd=badge(c.recent3m||0);
+  const tr=trendOf(c.series);
+  const pct=Math.max(0,Math.min(100,c.highPct||0));
+  const gtype=(la.gtype||'').replace('거래','');
+  const card=document.createElement('div'); card.className='ap-card';
   card.innerHTML=`
-    <h3>${c.name}</h3>
-    <div class="sub">${c.buildYear?c.buildYear+'년 준공 · ':''}전용 ${areas}</div>
-    <div class="price">시세 약 ${eokShort(c.min)} ~ ${eokShort(c.max)}</div>
-    <div class="rows">
-      <div><span>최근 1년 매매</span><b>${c.count}건</b></div>
-      <div><span>최근 거래</span><b>${la.area||''}㎡ · ${la.floor||''}층 · ${eok(la.price)}</b></div>
-      <div><span>계약일</span><b>${la.date||''}</b></div>
+    <div class="ap-head">
+      <h3>${c.name}</h3>
+      <span class="ap-badge ${bd.cls}">${bd.txt}</span>
     </div>
-    <a class="ask" href="tel:${AG.tel.replace(/[^0-9]/g,'')}">📞 이 단지 매물 문의</a>`;
+    <div class="ap-sub">${c.buildYear?c.buildYear+'년 준공 · ':''}전용 ${areas}</div>
+
+    <div class="ap-price">${eok(la.price)}
+      <span class="ap-trend ${tr.cls}">${tr.txt}</span>
+    </div>
+    <div class="ap-meta">최근 실거래 · ${la.area||''}㎡ ${la.floor||''}층 · ${la.date||''}${gtype?' · '+gtype:''}</div>
+
+    <div class="ap-chart">${spark(c.series)}</div>
+
+    <div class="ap-gauge-bar"><span style="left:${pct}%"></span></div>
+    <div class="ap-gauge-lbl"><span>저가 ${eokShort(c.min)}</span><b>최고가 대비 ${pct}%</b><span>고가 ${eokShort(c.max)}</span></div>
+
+    <div class="ap-stat">📊 최근 1년 <b>${c.count}건</b> · 3개월 <b>${c.recent3m||0}건</b> · 시세 <b>${eokShort(c.min)}~${eokShort(c.max)}</b></div>
+
+    <a class="ap-btn" href="tel:${TELN}">📞 이 단지 매물·시세 문의</a>
+    <div class="ap-src">출처 · 국토교통부 실거래가 공개시스템 (최근 1년 매매)</div>`;
   grid.appendChild(card);
 });
 
@@ -140,6 +267,8 @@ function initKakaoMap(){
     const geocoder=new kakao.maps.services.Geocoder();
     const bounds=new kakao.maps.LatLngBounds();
     let done=0, ok=0;
+    let openIw=null;               // 현재 열린 정보창 (하나만 유지)
+    kakao.maps.event.addListener(map,'click',()=>{ if(openIw){openIw.close(); openIw=null;} });
     (COMPLEXES||[]).forEach(c=>{
       geocoder.addressSearch(c.road, function(res,status){
         done++;
@@ -152,7 +281,10 @@ function initKakaoMap(){
               최근 ${c.latest.area||''}㎡·${c.latest.floor||''}층 <b style="color:#c0392b">${eok(c.latest.price)}</b><br>
               <a href="tel:${AG.tel.replace(/[^0-9]/g,'')}" style="color:#1f6fd1">📞 문의 031-575-4944</a>
             </div>`});
-          kakao.maps.event.addListener(marker,'click',()=>iw.open(map,marker));
+          kakao.maps.event.addListener(marker,'click',()=>{
+            if(openIw) openIw.close();   // 이전 정보창 닫기
+            iw.open(map,marker); openIw=iw;
+          });
           bounds.extend(pos); ok++;
         }
         if(done===COMPLEXES.length){
