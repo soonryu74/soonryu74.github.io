@@ -39,22 +39,34 @@
   .ap-badge{ margin-left:auto; font-size:.73rem; font-weight:800; padding:3px 9px; border-radius:20px; }
   .ap-badge.hot{ background:#fdecec; color:#d63031; } .ap-badge.mid{ background:#eef7f0; color:#0e8a6b; } .ap-badge.low{ background:#f0f2f5; color:#6b7684; }
   .ap-info{ color:var(--muted); font-size:.82rem; margin:5px 0 12px; }
-  .ap-mid{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
-  .ap-priceWrap{ min-width:0; }
   .ap-price{ font-size:1.72rem; font-weight:800; color:#111; letter-spacing:-.02em; line-height:1.1; }
-  .ap-trend{ display:inline-block; font-size:.78rem; font-weight:800; padding:1px 7px; border-radius:20px; margin-left:6px; vertical-align:middle; }
-  .ap-trend.up{ background:#fdeeee; color:#d63031; } .ap-trend.down{ background:#eaf4ff; color:#0984e3; } .ap-trend.flat{ background:#f0f2f5; color:#6b7684; }
   .ap-deal{ color:#5b6b7b; font-size:.82rem; margin-top:5px; }
-  .ap-chart{ width:112px; flex:0 0 112px; height:54px; }
-  .ap-grid{ display:grid; grid-template-columns:1fr 1fr; gap:2px 14px; margin:13px 0 4px; padding:12px 0 4px; border-top:1px solid var(--line); }
-  .ap-cell{ display:flex; align-items:baseline; justify-content:space-between; padding:4px 0; }
-  .ap-cell .l{ color:var(--muted); font-size:.83rem; }
-  .ap-cell .v{ color:#1a2b45; font-weight:800; font-size:.95rem; }
-  .ap-cell .v.hi{ color:#d63031; }
-  .ap-gauge-bar{ position:relative; height:7px; border-radius:8px; background:linear-gradient(90deg,#8fd3ff,#ffd36b,#ff8f8f); margin:8px 0 5px; }
+  /* 최저~최고 가격 바 */
+  .ap-range{ margin:14px 0 4px; padding:13px 0 2px; border-top:1px solid var(--line); }
+  .ap-range-head{ display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); margin-bottom:8px; }
+  .ap-range-head b{ color:#1a2b45; }
+  .ap-endcol{ display:flex; flex-direction:column; }
+  .ap-endcol.r{ text-align:right; }
+  .ap-endcol .p{ color:#1a2b45; font-weight:800; font-size:1rem; }
+  .ap-endcol .lo{ color:#0984e3; } .ap-endcol .hi{ color:#d63031; }
+  .ap-endcol .yr{ color:#9aa7b4; font-size:.74rem; margin-top:1px; }
+  .ap-gauge-bar{ position:relative; height:7px; border-radius:8px; background:linear-gradient(90deg,#8fd3ff,#ffd36b,#ff8f8f); }
   .ap-gauge-bar span{ position:absolute; top:50%; transform:translate(-50%,-50%); width:13px; height:13px; border-radius:50%; background:#fff; border:3px solid var(--navy); box-shadow:0 1px 4px rgba(0,0,0,.2); }
-  .ap-gauge-lbl{ display:flex; justify-content:space-between; font-size:.76rem; color:var(--muted); }
-  .ap-gauge-lbl b{ color:var(--navy); }
+  .ap-gauge-now{ text-align:center; font-size:.74rem; color:var(--muted); margin-top:6px; }
+  .ap-gauge-now b{ color:var(--navy); }
+  .ap-quick{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; font-size:.8rem; color:var(--muted); margin:10px 0 2px; }
+  .ap-quick b{ color:#1a2b45; }
+  /* 평형별 상세 (접기) */
+  .ap-more{ margin-top:10px; border-top:1px dashed var(--line); }
+  .ap-more>summary{ list-style:none; cursor:pointer; padding:9px 2px 2px; color:var(--blue); font-weight:700; font-size:.86rem; text-align:center; }
+  .ap-more>summary::-webkit-details-marker{ display:none; }
+  .ap-more>summary::after{ content:' ▾'; }
+  .ap-more[open]>summary::after{ content:' ▴'; }
+  .ap-atbl{ width:100%; border-collapse:collapse; font-size:.83rem; margin:6px 0 2px; }
+  .ap-atbl th,.ap-atbl td{ padding:6px 6px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
+  .ap-atbl th{ color:var(--muted); font-weight:700; font-size:.78rem; }
+  .ap-atbl td:first-child,.ap-atbl th:first-child{ text-align:left; }
+  .ap-atbl td b{ color:#1a2b45; }
   .ap-btn{ display:block; text-align:center; margin-top:11px; background:var(--blue); color:#fff; padding:10px; border-radius:10px; font-weight:800; text-decoration:none; }
   .ap-btn:hover{ opacity:.93; text-decoration:none; }
   .ap-src{ text-align:center; color:#9aa7b4; font-size:.73rem; margin-top:8px; }
@@ -190,26 +202,7 @@ document.getElementById('fLegal').textContent=`${AG.name} | 대표 ${AG.ceo||''}
 
 const grid=document.getElementById('grid');
 const TELN=AG.tel.replace(/[^0-9]/g,'');
-
-// 최근 거래가 흐름 스파크라인 (전용면적 혼합 · 시각적 흐름용)
-function spark(series){
-  const s=(series||[]).filter(v=>v>0);
-  if(s.length<2) return '';
-  const W=240,H=44,P=3, n=s.length;
-  const mn=Math.min(...s), mx=Math.max(...s), rng=(mx-mn)||1;
-  const x=i=> P + i*(W-2*P)/(n-1);
-  const y=v=> H-P - (v-mn)/rng*(H-2*P);
-  let d='', area='';
-  s.forEach((v,i)=>{ const px=x(i).toFixed(1), py=y(v).toFixed(1); d+=(i?'L':'M')+px+' '+py+' '; });
-  area=`M${x(0).toFixed(1)} ${H} `+s.map((v,i)=>'L'+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ')+` L${x(n-1).toFixed(1)} ${H} Z`;
-  const lastUp = s[n-1]>=s[0];
-  const col = lastUp?'#e17055':'#0984e3';
-  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="44" preserveAspectRatio="none" aria-hidden="true">
-    <path d="${area}" fill="${col}" opacity=".08"/>
-    <path d="${d}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="${x(n-1).toFixed(1)}" cy="${y(s[n-1]).toFixed(1)}" r="3" fill="${col}"/>
-  </svg>`;
-}
+const NOW_Y=2026;
 
 // 활발도(최근 3개월 거래건수) → 배지
 function badge(r3){
@@ -217,55 +210,54 @@ function badge(r3){
   if(r3>=8)  return {cls:'mid', txt:'🙂 거래 보통'};
   return {cls:'low', txt:'🌙 거래 한산'};
 }
+// "2025-08-26" → "25.08"
+function ym(d){ return d? d.slice(2,7).replace('-','.') : ''; }
+// 현재가(최근 실거래)의 최저~최고 구간 내 위치(%)
+function posPct(cur,min,max){ if(max<=min) return 100; return Math.max(0,Math.min(100, Math.round((cur-min)/(max-min)*100))); }
 
-// 최근 거래 흐름 방향 (시작가 대비 최근가)
-function trendOf(series){
-  const s=(series||[]).filter(v=>v>0);
-  if(s.length<4) return {cls:'flat', txt:'—'};
-  const head=s.slice(0,Math.max(2,Math.round(s.length*0.25)));
-  const tail=s.slice(-Math.max(2,Math.round(s.length*0.25)));
-  const a=head.reduce((x,y)=>x+y,0)/head.length;
-  const b=tail.reduce((x,y)=>x+y,0)/tail.length;
-  const pct=(b-a)/a*100;
-  if(pct>=2)  return {cls:'up',   txt:'▲ 최근 강세 +'+pct.toFixed(0)+'%'};
-  if(pct<=-2) return {cls:'down', txt:'▼ 최근 조정 '+pct.toFixed(0)+'%'};
-  return {cls:'flat', txt:'▷ 보합권'};
-}
-
-const NOW_Y=2026;
 (COMPLEXES||[]).forEach(c=>{
   const la=c.latest||{};
-  const areas=(c.areas||[]).map(a=>a+'㎡').join('·');
+  const areas=(c.areas||[]).join('㎡·')+'㎡';
   const bd=badge(c.recent3m||0);
-  const tr=trendOf(c.series);
-  const pct=Math.max(0,Math.min(100,c.highPct||0));
-  const gtype=(la.gtype||'');
+  const pos=posPct(la.price, c.min, c.max);
   const age=c.buildYear?(NOW_Y-(+c.buildYear)):null;
+
+  const rows=(c.byArea||[]).map(a=>`
+    <tr><td><b>${a.area}㎡</b></td>
+      <td>${eok(a.lp)} <span style="color:#9aa7b4">${a.lf}층</span></td>
+      <td>${eokShort(a.min)}~${eokShort(a.max)}</td>
+      <td>${a.n}건</td></tr>`).join('');
+
   const card=document.createElement('div'); card.className='ap-card';
   card.innerHTML=`
     <div class="ap-top">
       <h3>${c.name}</h3><span class="ap-type">아파트</span>
       <span class="ap-badge ${bd.cls}">${bd.txt}</span>
     </div>
-    <div class="ap-info">${c.buildYear?c.buildYear+'년'+(age!=null?'('+age+'년차)':'')+' · ':''}전용 ${areas}㎡ · 구리 갈매동</div>
+    <div class="ap-info">${c.buildYear?c.buildYear+'년'+(age!=null?'('+age+'년차)':'')+' · ':''}전용 ${areas} · 구리 갈매동</div>
 
-    <div class="ap-mid">
-      <div class="ap-priceWrap">
-        <div class="ap-price">${eok(la.price)}<span class="ap-trend ${tr.cls}">${tr.txt}</span></div>
-        <div class="ap-deal">${la.area||''}㎡ · ${la.floor||''}층 · ${gtype||''} · ${la.date||''} 계약</div>
+    <div class="ap-price">${eok(la.price)}</div>
+    <div class="ap-deal">최근 실거래 · ${la.area||''}㎡ ${la.floor||''}층 · ${la.date||''} 계약</div>
+
+    <div class="ap-range">
+      <div class="ap-range-head">
+        <div class="ap-endcol"><span class="p lo">${eok(c.min)}</span><span class="yr">최저 · ${ym(c.minDate)}</span></div>
+        <div class="ap-endcol r"><span class="p hi">${eok(c.max)}</span><span class="yr">최고 · ${ym(c.maxDate)}</span></div>
       </div>
-      <div class="ap-chart">${spark(c.series)}</div>
+      <div class="ap-gauge-bar"><span style="left:${pos}%"></span></div>
+      <div class="ap-gauge-now">최근 실거래 <b>${eokShort(la.price)}</b> · 최고가 대비 <b>${c.highPct}%</b></div>
     </div>
 
-    <div class="ap-grid">
-      <div class="ap-cell"><span class="l">최고가 대비</span><span class="v hi">${pct}%</span></div>
-      <div class="ap-cell"><span class="l">3개월 거래</span><span class="v">${c.recent3m||0}건</span></div>
-      <div class="ap-cell"><span class="l">단지 최고가</span><span class="v">${eokShort(c.max)}</span></div>
-      <div class="ap-cell"><span class="l">최근 1년 거래</span><span class="v">${c.count}건</span></div>
-    </div>
+    <div class="ap-quick">📊 최근 1년 <b>${c.count}건</b> · 최근 3개월 <b>${c.recent3m||0}건</b> 거래</div>
 
-    <div class="ap-gauge-bar"><span style="left:${pct}%"></span></div>
-    <div class="ap-gauge-lbl"><span>최저 ${eokShort(c.min)}</span><b>지금 여기</b><span>최고 ${eokShort(c.max)}</span></div>
+    <details class="ap-more">
+      <summary>평형별 상세 시세 보기</summary>
+      <table class="ap-atbl">
+        <thead><tr><th>전용</th><th>최근 실거래</th><th>최저~최고</th><th>1년</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="ap-src" style="margin-top:2px">같은 단지도 전용면적·층·향에 따라 시세가 다릅니다.</div>
+    </details>
 
     <a class="ap-btn" href="tel:${TELN}">📞 이 단지 매물·시세 문의</a>
     <div class="ap-src">출처 · 국토교통부 실거래가 공개시스템 (최근 1년 매매)</div>`;
