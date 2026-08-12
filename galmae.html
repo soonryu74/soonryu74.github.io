@@ -68,6 +68,10 @@
     각 단지의 가격은 <strong>국토교통부 실거래가 공개시스템</strong>의 <strong>최근 1년 매매 실거래가</strong>입니다(추정·호가 아님). 더 많은 거래는 <a href="silgeorae-map.html">실거래가 지도</a>에서 보세요.
   </div>
 
+  <h2>갈매동 단지 지도</h2>
+  <div id="kmap" style="width:100%;height:380px;border-radius:12px;border:1px solid var(--line);background:#eef2f6"></div>
+  <p id="mapNote" style="color:var(--muted);font-size:.85rem;margin:8px 0 0">지도의 핀을 누르면 단지 시세가 나옵니다. (카카오 지도 · 도로명주소 기준 정확 표시)</p>
+
   <h2>갈매동 주요 아파트 단지</h2>
   <div class="c-grid" id="grid"></div>
 
@@ -96,6 +100,8 @@
 
 <script src="data/listings.js"></script>
 <script src="data/complexes.js"></script>
+<!-- 카카오 지도 SDK (도메인 등록: https://soonryu74.github.io) -->
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0e6cb69e47426469d3e99092e2dcce1d&libraries=services&autoload=false"></script>
 <script>
 const AG=(typeof AGENCY!=='undefined')?AGENCY:{name:"갈매역삼성부동산",tel:"0315754944",telView:"031-575-4944",kakao:""};
 function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; return (e?e+"억":"")+(r?(e?" ":"")+r.toLocaleString()+"만":"")||"0"; }
@@ -124,6 +130,40 @@ const grid=document.getElementById('grid');
     <a class="ask" href="tel:${AG.tel.replace(/[^0-9]/g,'')}">📞 이 단지 매물 문의</a>`;
   grid.appendChild(card);
 });
+
+/* ---------- 카카오 지도: 도로명주소로 정확 표시 ---------- */
+function initKakaoMap(){
+  if(!(window.kakao && kakao.maps)){ document.getElementById('mapNote').textContent='지도를 불러오지 못했습니다. (카카오 개발자센터에서 도메인 등록·카카오맵 활성화를 확인하세요)'; return; }
+  kakao.maps.load(function(){
+    const container=document.getElementById('kmap');
+    const map=new kakao.maps.Map(container,{center:new kakao.maps.LatLng(37.6412,127.1206),level:5});
+    const geocoder=new kakao.maps.services.Geocoder();
+    const bounds=new kakao.maps.LatLngBounds();
+    let done=0, ok=0;
+    (COMPLEXES||[]).forEach(c=>{
+      geocoder.addressSearch(c.road, function(res,status){
+        done++;
+        if(status===kakao.maps.services.Status.OK && res[0]){
+          const pos=new kakao.maps.LatLng(res[0].y,res[0].x);
+          const marker=new kakao.maps.Marker({map:map,position:pos});
+          const iw=new kakao.maps.InfoWindow({content:
+            `<div style="padding:8px 10px;font-size:12px;line-height:1.5">
+              <b>${c.name}</b><br>시세 ${eokShort(c.min)}~${eokShort(c.max)}<br>
+              최근 ${c.latest.area||''}㎡·${c.latest.floor||''}층 <b style="color:#c0392b">${eok(c.latest.price)}</b><br>
+              <a href="tel:${AG.tel.replace(/[^0-9]/g,'')}" style="color:#1f6fd1">📞 문의 031-575-4944</a>
+            </div>`});
+          kakao.maps.event.addListener(marker,'click',()=>iw.open(map,marker));
+          bounds.extend(pos); ok++;
+        }
+        if(done===COMPLEXES.length){
+          if(ok) map.setBounds(bounds);
+          document.getElementById('mapNote').textContent=`지도에 ${ok}개 단지 표시. 핀을 누르면 시세가 나옵니다. (카카오 지도 · 도로명주소 기준)`;
+        }
+      });
+    });
+  });
+}
+initKakaoMap();
 </script>
 </body>
 </html>

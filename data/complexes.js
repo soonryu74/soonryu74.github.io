@@ -1,4 +1,4 @@
-/* 갈매동 아파트 단지 실거래가 요약 (국토부 실거래가 공개시스템, 최근 1년, 매매) */
+/* 갈매동 아파트 단지 실거래가 요약 (국토부 실거래가 공개시스템, 최근 1년, 매매) + 도로명주소 */
 const COMPLEXES = [
  {
   "name": "엘에이치이스트힐",
@@ -15,7 +15,8 @@ const COMPLEXES = [
    52,
    60
   ],
-  "buildYear": "2016"
+  "buildYear": "2016",
+  "road": "구리시 갈매동 갈매중앙로 132"
  },
  {
   "name": "갈매역아이파크",
@@ -31,7 +32,8 @@ const COMPLEXES = [
   "areas": [
    85
   ],
-  "buildYear": "2018"
+  "buildYear": "2018",
+  "road": "구리시 갈매동 경춘북로 252"
  },
  {
   "name": "한라비발디",
@@ -48,7 +50,8 @@ const COMPLEXES = [
    75,
    85
   ],
-  "buildYear": "2016"
+  "buildYear": "2016",
+  "road": "구리시 갈매동 갈매중앙로 131"
  },
  {
   "name": "구리갈매스타힐스",
@@ -65,7 +68,8 @@ const COMPLEXES = [
    75,
    85
   ],
-  "buildYear": "2017"
+  "buildYear": "2017",
+  "road": "구리시 갈매동 산마루로 46"
  },
  {
   "name": "갈매6단지",
@@ -83,7 +87,8 @@ const COMPLEXES = [
    75,
    85
   ],
-  "buildYear": "2018"
+  "buildYear": "2018",
+  "road": "구리시 갈매동 갈매중앙로 25"
  },
  {
   "name": "갈매더샵나인힐스",
@@ -101,7 +106,8 @@ const COMPLEXES = [
    84,
    85
   ],
-  "buildYear": "2016"
+  "buildYear": "2016",
+  "road": "구리시 갈매동 갈매순환로 10"
  },
  {
   "name": "구리갈매푸르지오",
@@ -120,7 +126,8 @@ const COMPLEXES = [
    100,
    113
   ],
-  "buildYear": "2017"
+  "buildYear": "2017",
+  "road": "구리시 갈매동 갈매중앙로 16"
  },
  {
   "name": "갈매와이시티",
@@ -137,7 +144,8 @@ const COMPLEXES = [
    75,
    85
   ],
-  "buildYear": "2017"
+  "buildYear": "2017",
+  "road": "구리시 갈매동 갈매중앙로 45"
  },
  {
   "name": "이룸넘버원리치안",
@@ -154,6 +162,7 @@ const COMPLEXES = [
    15,
    30
   ],
-  "buildYear": "2017"
+  "buildYear": "2017",
+  "road": "구리시 갈매동 갈매중앙로 70"
  }
 ];
