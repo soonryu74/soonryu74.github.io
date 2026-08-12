@@ -211,7 +211,7 @@ function badge(r3){
   return {cls:'low', txt:'🌙 거래 한산'};
 }
 // "2025-08-26" → "25.08"
-function ym(d){ return d? d.slice(2,7).replace('-','.') : ''; }
+function ym(d){ return d? "'"+d.slice(2,7).replace('-','.') : ''; }
 // 현재가(최근 실거래)의 최저~최고 구간 내 위치(%)
 function posPct(cur,min,max){ if(max<=min) return 100; return Math.max(0,Math.min(100, Math.round((cur-min)/(max-min)*100))); }
 
