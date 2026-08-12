@@ -41,9 +41,9 @@
         '<button class="a11y-btn" id="a11y-fs-base" aria-label="기본 글자크기">가</button>' +
         '<button class="a11y-btn" id="a11y-fs-lg" aria-label="큰 글자" style="font-size:1rem">가+</button>' +
         '<button class="a11y-btn" id="a11y-fs-xl" aria-label="가장 큰 글자" style="font-size:1.1rem">가++</button>' +
-        '<button class="a11y-btn" id="a11y-contrast" aria-label="고대비 모드">◑ 고대비</button>' +
+        '<button class="a11y-btn" id="a11y-contrast" aria-label="고대비 모드">고대비</button>' +
         '<span class="spacer"></span>' +
-        '<a class="a11y-link" href="tel:129">☎ 복지상담 129</a>' +
+        '<a class="a11y-link" href="tel:129">복지상담 129</a>' +
       '</div>';
     document.body.insertBefore(bar, document.body.firstChild);
 
@@ -61,7 +61,7 @@
     var nav = document.querySelector('.site-nav');
     if (header && nav) {
       var t = document.createElement('button');
-      t.className = 'nav-toggle'; t.setAttribute('aria-label', '메뉴 열기'); t.innerHTML = '☰ 메뉴';
+      t.className = 'nav-toggle'; t.setAttribute('aria-label', '메뉴 열기'); t.innerHTML = '메뉴';
       header.insertBefore(t, nav);
       t.addEventListener('click', function () { nav.classList.toggle('open'); });
     }
@@ -69,7 +69,7 @@
     // 플로팅 상담 버튼
     var help = document.createElement('a');
     help.className = 'float-help'; help.href = 'jaryo.html';
-    help.innerHTML = '<span>☎</span><span class="txt">상담·전화 안내</span>';
+    help.innerHTML = '<span class="txt">상담·전화 안내</span><span>&nbsp;›</span>';
     document.body.appendChild(help);
   }
 
