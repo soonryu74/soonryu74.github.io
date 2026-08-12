@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>구리 아파트 실거래가 분석 (회복률·신고가·거래량) | 갈매역삼성부동산</title>
+<meta name="description" content="국토교통부 실거래가로 보는 구리시 157개 아파트 단지 분석 — 전고점 회복률, 신고가, 거래량 랭킹. 갈매동 터줏대감 갈매역삼성부동산이 만든 우리 동네 실거래가 연구소.">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .lab-hero{ background:linear-gradient(120deg,#0e8a6b,#123a6b); color:#fff; padding:34px 18px; text-align:center; }
+  .lab-hero h1{ margin:0 0 8px; font-size:1.7rem; letter-spacing:-.03em; }
+  .lab-hero p{ color:#e6f5ef; margin:4px auto; max-width:640px; font-size:.95rem; }
+  .lab-hero .asof{ font-size:.82rem; color:#cfe7dd; margin-top:8px; }
+
+  .hl-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0; }
+  @media(max-width:640px){ .hl-row{ grid-template-columns:1fr; } }
+  .hl{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); }
+  .hl .cap{ font-size:.76rem; font-weight:800; padding:2px 8px; border-radius:20px; display:inline-block; }
+  .hl.a .cap{ background:#fdecec; color:#d63031; } .hl.b .cap{ background:#eef7f0; color:#0e8a6b; } .hl.c .cap{ background:#eef4fb; color:#1f6fd1; }
+  .hl b{ display:block; color:var(--navy); font-size:1.08rem; margin:7px 0 2px; }
+  .hl .v{ font-weight:800; color:#111; } .hl .s{ color:var(--muted); font-size:.84rem; }
+
+  .tabs{ display:flex; gap:6px; flex-wrap:wrap; margin:14px 0 8px; }
+  .tabs button{ border:1px solid var(--line); background:#fff; color:var(--navy); padding:9px 14px; border-radius:20px; font-weight:700; font-size:.9rem; cursor:pointer; }
+  .tabs button.on{ background:var(--navy); color:#fff; border-color:var(--navy); }
+  .filt{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:6px 0 4px; }
+  .filt select,.filt input{ font:inherit; padding:9px 12px; border:1px solid var(--line); border-radius:8px; background:#fff; }
+  .filt .cnt{ margin-left:auto; color:var(--muted); font-size:.88rem; }
+
+  .lab-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; margin:10px 0; }
+  .lc{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 15px; box-shadow:var(--shadow); }
+  .lc-top{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .lc-top h3{ margin:0; font-size:1.06rem; color:#1a2b45; }
+  .lc-dong{ font-size:.72rem; background:#eef4fb; color:var(--navy); padding:1px 8px; border-radius:10px; }
+  .lc-sin{ font-size:.72rem; font-weight:800; background:#fdeeee; color:#d63031; padding:1px 8px; border-radius:10px; margin-left:auto; }
+  .lc-info{ color:var(--muted); font-size:.8rem; margin:4px 0 8px; }
+  .lc-price{ font-size:1.3rem; font-weight:800; color:#111; }
+  .lc-price small{ font-size:.8rem; color:var(--muted); font-weight:600; }
+  .lc-bar{ position:relative; height:7px; border-radius:8px; background:linear-gradient(90deg,#8fd3ff,#ffd36b,#ff8f8f); margin:10px 0 4px; }
+  .lc-bar span{ position:absolute; top:50%; transform:translate(-50%,-50%); width:12px; height:12px; border-radius:50%; background:#fff; border:3px solid var(--navy); box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .lc-lbl{ display:flex; justify-content:space-between; font-size:.75rem; color:var(--muted); }
+  .lc-lbl b{ color:var(--navy); }
+  .lc-stat{ display:flex; justify-content:space-between; font-size:.84rem; color:var(--muted); margin-top:8px; padding-top:8px; border-top:1px solid var(--line); }
+  .lc-stat b{ color:#1a2b45; }
+  .lc-ask{ display:block; text-align:center; margin-top:9px; background:var(--blue); color:#fff; padding:8px; border-radius:9px; font-weight:700; text-decoration:none; font-size:.88rem; }
+  .lc-ask:hover{ opacity:.93; text-decoration:none; }
+  .more{ text-align:center; margin:12px 0; } .more button{ background:#eef4fb; color:var(--navy); border:1px solid #cfe0f5; padding:11px 22px; border-radius:10px; font-weight:800; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">🏢 갈매동 부동산 <span class="tag">갈매역삼성부동산</span></a>
+    <nav class="site-nav">
+      <a href="galmae.html">갈매동 시세</a>
+      <a href="silgeorae-lab.html" class="active">실거래가 분석</a>
+      <a href="silgeorae-map.html">전체 표</a>
+      <a href="store.html">매물</a>
+      <a href="jaryo.html">자료실</a>
+    </nav>
+  </div>
+</header>
+
+<section class="lab-hero">
+  <h1>🔬 구리 아파트 실거래가 분석</h1>
+  <p>국토교통부 <strong>실거래가</strong>로 보는 구리시 아파트 — <strong>전고점 회복률·신고가·거래량</strong>을 한눈에.</p>
+  <p style="font-size:.86rem">🏢 갈매역삼성부동산이 만든 우리 동네 실거래가 연구소</p>
+  <div class="asof" id="asof"></div>
+</section>
+
+<main class="wrap">
+
+  <div class="callout tip">
+    <span class="t">💡 이렇게 읽으세요</span>
+    <strong>전고점 회복률</strong> = 지금 실거래가가 단지 최고가의 몇 %인지 (100%면 <strong>신고가</strong>). <strong>거래량</strong>이 많을수록 사고팔기 수월합니다. 호가가 아닌 <strong>실제 신고된 계약가</strong>입니다.
+  </div>
+
+  <h2>오늘의 하이라이트</h2>
+  <div class="hl-row" id="highlights"></div>
+
+  <h2>단지 랭킹</h2>
+  <div class="tabs" id="tabs">
+    <button data-sort="cnt" class="on">거래 많은순</button>
+    <button data-sort="recover">회복률 높은순</button>
+    <button data-sort="high">시세 높은순</button>
+    <button data-sort="recent">최근 거래순</button>
+  </div>
+  <div class="filt">
+    <select id="dongF"><option value="">전체 동</option></select>
+    <input id="q" type="search" placeholder="단지명 검색 (예: 스타힐스)">
+    <span class="cnt" id="cnt"></span>
+  </div>
+
+  <div class="lab-grid" id="grid"></div>
+  <div class="more" id="moreWrap"><button id="moreBtn">더 보기</button></div>
+
+  <div class="callout law">
+    <span class="t">🙋 이 단지, 지금 나온 매물·정확한 시세는?</span>
+    갈매역삼성부동산이 <strong>등기·시세 확인부터 안전한 계약</strong>까지 도와드립니다. ☎ <strong>031-575-4944</strong>
+  </div>
+
+  <div class="disclaimer">
+    ⚖️ 실거래가는 국토교통부 신고 자료로 해제·특수거래·신고지연이 있을 수 있습니다(최근 1년, 매매 기준). 회복률·신고가는 수집된 최근 1년 거래 내 최고가 대비 값으로, 역대 최고가와 다를 수 있습니다. 출처: 국토교통부 실거래가 공개시스템.
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <h4>🏢 갈매역삼성부동산</h4>
+    <div class="footer-note">
+      <a href="index.html" style="color:#9fc0ea">홈</a> ·
+      <a href="galmae.html" style="color:#9fc0ea">갈매동 시세</a> ·
+      <a href="silgeorae-map.html" style="color:#9fc0ea">전체 표</a><br>
+      출처: 국토교통부 실거래가 공개시스템 (구리시 아파트 매매, 최근 1년). © 2026 갈매역삼성부동산.
+    </div>
+  </div>
+</footer>
+
+<script src="data/guri-complexes.js"></script>
+<script>
+function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; return (e?e+"억":"")+(r?(e?" ":"")+r.toLocaleString()+"만":"")||"0"; }
+function eokS(m){ return (m/10000).toFixed(1)+"억"; }
+const TEL="0315754944";
+const RAW=(typeof GURI!=='undefined')?GURI:[];
+// 파생지표 계산: 회복률(recover), 신고가 여부
+const DATA=RAW.map(d=>{
+  const la=d.latest||{};
+  const recover=d.max? Math.round(la.price/d.max*100):0;
+  const singo = la.price>=d.max;               // 최근 실거래가 = 수집기간 최고가
+  return {...d, recover, singo, lp:la.price||0, ld:la.date||'', larea:la.area||'', lfloor:la.floor||''};
+});
+
+// 데이터 기준일 = 가장 최근 거래일
+const asof=DATA.map(d=>d.ld).filter(Boolean).sort().slice(-1)[0]||'';
+document.getElementById('asof').textContent = `데이터 기준일 ${asof} · 구리시 ${DATA.length}개 단지 · 최근 1년 매매`;
+
+// 하이라이트
+function hlCard(cls,cap,d,extra){ return `<div class="hl ${cls}"><span class="cap">${cap}</span>
+  <b>${d.name}</b><span class="s">${d.dong} · 준공 ${d.buildYear||'-'}</span>
+  <div style="margin-top:6px" class="v">${extra}</div></div>`; }
+const topRecover=DATA.filter(d=>d.count>=5).slice().sort((a,b)=>b.recover-a.recover)[0];
+const topCnt=DATA.slice().sort((a,b)=>b.count-a.count)[0];
+const recentSin=DATA.filter(d=>d.singo).slice().sort((a,b)=>(b.ld||'').localeCompare(a.ld||''))[0];
+document.getElementById('highlights').innerHTML =
+  (recentSin?hlCard('a','🔺 최근 신고가',recentSin,`${eok(recentSin.lp)} <span class="s">(${recentSin.larea}㎡·${recentSin.ld})</span>`):'')
++ (topCnt?hlCard('c','🔥 최다 거래',topCnt,`최근 1년 <b class="v">${topCnt.count}건</b> <span class="s">· ${eokS(topCnt.min)}~${eokS(topCnt.max)}</span>`):'')
++ (topRecover?hlCard('b','📈 회복률 1위',topRecover,`전고점 대비 <b class="v">${topRecover.recover}%</b> <span class="s">· ${eok(topRecover.lp)}</span>`):'');
+
+// 필터/정렬/렌더
+const dongF=document.getElementById('dongF'), q=document.getElementById('q'), grid=document.getElementById('grid'), cnt=document.getElementById('cnt');
+[...new Set(DATA.map(d=>d.dong))].sort().forEach(dg=>{ const o=document.createElement('option'); o.value=dg; o.textContent=dg; dongF.appendChild(o); });
+let sortKey='cnt', shown=24;
+
+function sorted(rows){
+  const s=sortKey;
+  return rows.sort((a,b)=> s==='cnt'? b.count-a.count : s==='recover'? b.recover-a.recover : s==='high'? b.max-a.max : (b.ld||'').localeCompare(a.ld||''));
+}
+function card(d){
+  return `<div class="lc">
+    <div class="lc-top"><h3>${d.name}</h3><span class="lc-dong">${d.dong}</span>${d.singo?'<span class="lc-sin">🔺 신고가</span>':''}</div>
+    <div class="lc-info">준공 ${d.buildYear||'-'} · 전용 ${(d.areas||[]).join('·')}㎡</div>
+    <div class="lc-price">${eok(d.lp)} <small>최근 실거래 · ${d.larea}㎡ ${d.lfloor}층 · ${d.ld}</small></div>
+    <div class="lc-bar"><span style="left:${Math.max(0,Math.min(100,d.recover))}%"></span></div>
+    <div class="lc-lbl"><span>최저 ${eokS(d.min)}</span><b>전고점 대비 ${d.recover}%</b><span>최고 ${eokS(d.max)}</span></div>
+    <div class="lc-stat"><span>최근 1년 <b>${d.count}건</b></span><span>시세 <b>${eokS(d.min)}~${eokS(d.max)}</b></span></div>
+    <a class="lc-ask" href="tel:${TEL}">📞 이 단지 문의</a>
+  </div>`;
+}
+function render(){
+  let rows=DATA.filter(d=> (!dongF.value||d.dong===dongF.value) && (!q.value||d.name.includes(q.value.trim())) );
+  rows=sorted(rows);
+  cnt.textContent=`${rows.length}개 단지`;
+  grid.innerHTML=rows.slice(0,shown).map(card).join('');
+  document.getElementById('moreWrap').style.display = rows.length>shown ? 'block':'none';
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); sortKey=b.dataset.sort; shown=24; render();
+}));
+dongF.addEventListener('change',()=>{shown=24;render()});
+q.addEventListener('input',()=>{shown=24;render()});
+document.getElementById('moreBtn').addEventListener('click',()=>{ shown+=24; render(); });
+render();
+</script>
+</body>
+</html>
