@@ -14,10 +14,12 @@
   .cta { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:30px; font-weight:800; text-decoration:none; }
   .cta.tel { background:#fff; color:#123a6b; } .cta.kakao { background:#FEE500; color:#3c1e1e; }
   .cta:hover{opacity:.92;text-decoration:none}
-  .points { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:16px 0; }
-  .point { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; box-shadow:var(--shadow); }
-  .point .ic{font-size:1.5rem} .point b{color:var(--navy);display:block;margin:6px 0 2px}
-  .point span{color:var(--muted);font-size:.88rem}
+  .points { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:14px 0; }
+  .point { display:flex; align-items:flex-start; gap:10px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 13px; box-shadow:var(--shadow); }
+  .point .ic{ font-size:1.35rem; line-height:1; flex:0 0 auto; }
+  .point b{ color:var(--navy); display:block; font-size:.95rem; margin-bottom:2px; }
+  .point span{ color:var(--muted); font-size:.8rem; line-height:1.4; display:block; }
+  @media(min-width:640px){ .points{ grid-template-columns:repeat(4,1fr); } }
   .c-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin:14px 0; }
   .c-card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
   .c-card h3 { margin:0 0 4px; color:var(--navy); font-size:1.16rem; }
@@ -29,29 +31,33 @@
   .c-card .ask:hover{opacity:.92;text-decoration:none}
 
   /* 아파트미+ 카드 */
-  .ap-card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px; box-shadow:var(--shadow); transition:transform .15s,box-shadow .15s; }
+  .ap-card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 18px 15px; box-shadow:var(--shadow); transition:transform .15s,box-shadow .15s; }
   .ap-card:hover{ transform:translateY(-3px); box-shadow:0 10px 24px rgba(18,58,107,.14); }
-  .ap-head{ display:flex; align-items:center; gap:8px; }
-  .ap-head h3{ margin:0; color:var(--navy); font-size:1.14rem; }
-  .ap-badge{ font-size:.72rem; font-weight:800; padding:2px 8px; border-radius:20px; }
-  .ap-badge.hot{ background:#fdecec; color:#c0392b; } .ap-badge.mid{ background:#eef4fb; color:#1f6fd1; } .ap-badge.low{ background:#f0f2f5; color:#6b7684; }
-  .ap-sub{ color:var(--muted); font-size:.84rem; margin:4px 0 8px; }
-  .ap-price{ font-size:1.7rem; font-weight:800; color:#111; letter-spacing:-.02em; display:flex; align-items:baseline; gap:8px; }
-  .ap-trend{ font-size:.82rem; font-weight:800; padding:2px 8px; border-radius:20px; }
+  .ap-top{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .ap-top h3{ margin:0; color:#1a2b45; font-size:1.2rem; letter-spacing:-.01em; }
+  .ap-type{ font-size:.72rem; font-weight:800; color:#1f6fd1; background:#eaf2fb; padding:2px 8px; border-radius:6px; }
+  .ap-badge{ margin-left:auto; font-size:.73rem; font-weight:800; padding:3px 9px; border-radius:20px; }
+  .ap-badge.hot{ background:#fdecec; color:#d63031; } .ap-badge.mid{ background:#eef7f0; color:#0e8a6b; } .ap-badge.low{ background:#f0f2f5; color:#6b7684; }
+  .ap-info{ color:var(--muted); font-size:.82rem; margin:5px 0 12px; }
+  .ap-mid{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
+  .ap-priceWrap{ min-width:0; }
+  .ap-price{ font-size:1.72rem; font-weight:800; color:#111; letter-spacing:-.02em; line-height:1.1; }
+  .ap-trend{ display:inline-block; font-size:.78rem; font-weight:800; padding:1px 7px; border-radius:20px; margin-left:6px; vertical-align:middle; }
   .ap-trend.up{ background:#fdeeee; color:#d63031; } .ap-trend.down{ background:#eaf4ff; color:#0984e3; } .ap-trend.flat{ background:#f0f2f5; color:#6b7684; }
-  .ap-meta{ color:#5b6b7b; font-size:.85rem; margin:4px 0 8px; }
-  .ap-chart{ background:linear-gradient(180deg,#fafcff,#fff); border:1px solid #eef1f5; border-radius:10px; padding:6px 8px; margin:6px 0 10px; }
-  .ap-gauge-bar{ position:relative; height:8px; border-radius:8px; background:linear-gradient(90deg,#8fd3ff,#ffd36b,#ff8f8f); }
-  .ap-gauge-bar span{ position:absolute; top:50%; transform:translate(-50%,-50%); width:14px; height:14px; border-radius:50%; background:#fff; border:3px solid var(--navy); box-shadow:0 1px 4px rgba(0,0,0,.2); }
-  .ap-gauge-lbl{ display:flex; justify-content:space-between; align-items:center; font-size:.78rem; color:var(--muted); margin-top:6px; }
+  .ap-deal{ color:#5b6b7b; font-size:.82rem; margin-top:5px; }
+  .ap-chart{ width:112px; flex:0 0 112px; height:54px; }
+  .ap-grid{ display:grid; grid-template-columns:1fr 1fr; gap:2px 14px; margin:13px 0 4px; padding:12px 0 4px; border-top:1px solid var(--line); }
+  .ap-cell{ display:flex; align-items:baseline; justify-content:space-between; padding:4px 0; }
+  .ap-cell .l{ color:var(--muted); font-size:.83rem; }
+  .ap-cell .v{ color:#1a2b45; font-weight:800; font-size:.95rem; }
+  .ap-cell .v.hi{ color:#d63031; }
+  .ap-gauge-bar{ position:relative; height:7px; border-radius:8px; background:linear-gradient(90deg,#8fd3ff,#ffd36b,#ff8f8f); margin:8px 0 5px; }
+  .ap-gauge-bar span{ position:absolute; top:50%; transform:translate(-50%,-50%); width:13px; height:13px; border-radius:50%; background:#fff; border:3px solid var(--navy); box-shadow:0 1px 4px rgba(0,0,0,.2); }
+  .ap-gauge-lbl{ display:flex; justify-content:space-between; font-size:.76rem; color:var(--muted); }
   .ap-gauge-lbl b{ color:var(--navy); }
-  .ap-stat{ display:flex; gap:6px; align-items:center; font-size:.85rem; color:var(--muted); margin:10px 0 4px; flex-wrap:wrap; }
-  .ap-stat b{ color:var(--navy-dark); }
-  .ap-note{ background:#f2f7f4; border:1px solid #cfe6da; border-radius:10px; padding:8px 10px; font-size:.85rem; color:#2c6b52; margin:8px 0; }
-  .ap-note b{ color:#0e8a6b; }
-  .ap-btn{ display:block; text-align:center; margin-top:8px; background:var(--blue); color:#fff; padding:10px; border-radius:10px; font-weight:800; text-decoration:none; }
+  .ap-btn{ display:block; text-align:center; margin-top:11px; background:var(--blue); color:#fff; padding:10px; border-radius:10px; font-weight:800; text-decoration:none; }
   .ap-btn:hover{ opacity:.93; text-decoration:none; }
-  .ap-src{ text-align:center; color:#9aa7b4; font-size:.74rem; margin-top:8px; }
+  .ap-src{ text-align:center; color:#9aa7b4; font-size:.73rem; margin-top:8px; }
 
   /* 동네 이야기 */
   .story{ background:linear-gradient(180deg,#fbfaf6,#fff); border:1px solid #ece7da; border-radius:16px; padding:20px 20px 14px; margin:8px 0 14px; }
@@ -95,10 +101,10 @@
 <main class="wrap">
   <h2>왜 갈매지구인가</h2>
   <div class="points">
-    <div class="point"><div class="ic">🚉</div><b>경춘선 갈매역</b><span>서울 접근성·상봉/청량리 연결</span></div>
-    <div class="point"><div class="ic">🚇</div><b>8호선 별내선 효과</b><span>수도권 동북부 교통 개선 수혜</span></div>
-    <div class="point"><div class="ic">🏙️</div><b>대단지 밀집</b><span>생활 인프라·학군이 모인 계획도시</span></div>
-    <div class="point"><div class="ic">🆕</div><b>신축 + 준신축 혼재</b><span>단지별 포지션이 뚜렷한 시장</span></div>
+    <div class="point"><div class="ic">🚉</div><div><b>경춘선 갈매역</b><span>상봉·청량리 방면 서울 접근</span></div></div>
+    <div class="point"><div class="ic">🚇</div><div><b>8호선 별내선</b><span>강동·잠실까지 환승 개선</span></div></div>
+    <div class="point"><div class="ic">🏙️</div><div><b>대단지 계획도시</b><span>학교·상권이 모인 갈매지구</span></div></div>
+    <div class="point"><div class="ic">🌳</div><div><b>녹지 프리미엄</b><span>동구릉·불암산 품은 쾌적함</span></div></div>
   </div>
 
   <div class="callout tip">
@@ -226,32 +232,40 @@ function trendOf(series){
   return {cls:'flat', txt:'▷ 보합권'};
 }
 
+const NOW_Y=2026;
 (COMPLEXES||[]).forEach(c=>{
   const la=c.latest||{};
-  const areas=(c.areas||[]).map(a=>a+'㎡').join(', ');
+  const areas=(c.areas||[]).map(a=>a+'㎡').join('·');
   const bd=badge(c.recent3m||0);
   const tr=trendOf(c.series);
   const pct=Math.max(0,Math.min(100,c.highPct||0));
-  const gtype=(la.gtype||'').replace('거래','');
+  const gtype=(la.gtype||'');
+  const age=c.buildYear?(NOW_Y-(+c.buildYear)):null;
   const card=document.createElement('div'); card.className='ap-card';
   card.innerHTML=`
-    <div class="ap-head">
-      <h3>${c.name}</h3>
+    <div class="ap-top">
+      <h3>${c.name}</h3><span class="ap-type">아파트</span>
       <span class="ap-badge ${bd.cls}">${bd.txt}</span>
     </div>
-    <div class="ap-sub">${c.buildYear?c.buildYear+'년 준공 · ':''}전용 ${areas}</div>
+    <div class="ap-info">${c.buildYear?c.buildYear+'년'+(age!=null?'('+age+'년차)':'')+' · ':''}전용 ${areas}㎡ · 구리 갈매동</div>
 
-    <div class="ap-price">${eok(la.price)}
-      <span class="ap-trend ${tr.cls}">${tr.txt}</span>
+    <div class="ap-mid">
+      <div class="ap-priceWrap">
+        <div class="ap-price">${eok(la.price)}<span class="ap-trend ${tr.cls}">${tr.txt}</span></div>
+        <div class="ap-deal">${la.area||''}㎡ · ${la.floor||''}층 · ${gtype||''} · ${la.date||''} 계약</div>
+      </div>
+      <div class="ap-chart">${spark(c.series)}</div>
     </div>
-    <div class="ap-meta">최근 실거래 · ${la.area||''}㎡ ${la.floor||''}층 · ${la.date||''}${gtype?' · '+gtype:''}</div>
 
-    <div class="ap-chart">${spark(c.series)}</div>
+    <div class="ap-grid">
+      <div class="ap-cell"><span class="l">최고가 대비</span><span class="v hi">${pct}%</span></div>
+      <div class="ap-cell"><span class="l">3개월 거래</span><span class="v">${c.recent3m||0}건</span></div>
+      <div class="ap-cell"><span class="l">단지 최고가</span><span class="v">${eokShort(c.max)}</span></div>
+      <div class="ap-cell"><span class="l">최근 1년 거래</span><span class="v">${c.count}건</span></div>
+    </div>
 
     <div class="ap-gauge-bar"><span style="left:${pct}%"></span></div>
-    <div class="ap-gauge-lbl"><span>저가 ${eokShort(c.min)}</span><b>최고가 대비 ${pct}%</b><span>고가 ${eokShort(c.max)}</span></div>
-
-    <div class="ap-stat">📊 최근 1년 <b>${c.count}건</b> · 3개월 <b>${c.recent3m||0}건</b> · 시세 <b>${eokShort(c.min)}~${eokShort(c.max)}</b></div>
+    <div class="ap-gauge-lbl"><span>최저 ${eokShort(c.min)}</span><b>지금 여기</b><span>최고 ${eokShort(c.max)}</span></div>
 
     <a class="ap-btn" href="tel:${TELN}">📞 이 단지 매물·시세 문의</a>
     <div class="ap-src">출처 · 국토교통부 실거래가 공개시스템 (최근 1년 매매)</div>`;
