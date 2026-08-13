@@ -39,13 +39,20 @@
         padding:8px 14px;font-size:.86rem;color:var(--mut)}
   .verif b{color:var(--ink)}
 
-  /* NAV chips */
-  .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:22px 0 6px}
-  .chips a{background:#0e1626;border:1px solid var(--line);border-radius:999px;
-        padding:7px 13px;font-size:.84rem;color:var(--mut)}
-  .chips a:hover{border-color:var(--acc);color:var(--ink);text-decoration:none}
+  /* STICKY SCROLL-SPY NAV */
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(11,15,23,.9);
+        backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+        border-bottom:1px solid var(--line)}
+  .topbar-inner{max-width:1000px;margin:0 auto;display:flex;gap:6px;
+        padding:10px 12px;overflow-x:auto;scrollbar-width:none}
+  .topbar-inner::-webkit-scrollbar{display:none}
+  .topbar a{flex:0 0 auto;background:transparent;border:1px solid transparent;
+        border-radius:999px;padding:7px 13px;font-size:.85rem;color:var(--mut);
+        white-space:nowrap;transition:all .18s ease}
+  .topbar a:hover{color:var(--ink);text-decoration:none}
+  .topbar a.active{background:var(--acc);color:#04120c;font-weight:800}
 
-  section{padding:44px 0}
+  section{padding:44px 0;scroll-margin-top:60px}
   section + section{border-top:1px solid var(--line)}
   h2{font-size:1.55rem;letter-spacing:-.02em;margin:0 0 4px}
   .sub{color:var(--mut);margin:0 0 24px}
@@ -86,7 +93,7 @@
 
   /* case study */
   .case{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);
-        border-radius:16px;padding:24px;margin-top:16px}
+        border-radius:16px;padding:24px;margin-top:16px;scroll-margin-top:64px}
   .case .tag{font-size:.78rem;color:var(--acc);font-weight:800;letter-spacing:.03em}
   .case h3{font-size:1.5rem;margin:6px 0 4px}
   .case .tl{color:var(--mut);margin:0 0 16px}
@@ -149,19 +156,23 @@
       <span><b>링크</b> 119개 생존 검증</span>
       <span><b>최신성</b> 2024–2026</span>
     </div>
-    <nav class="chips">
-      <a href="#category">📊 카테고리</a>
-      <a href="#f0">Pieter Levels</a>
-      <a href="#f1">Danny Postma</a>
-      <a href="#f2">Adavia Davis</a>
-      <a href="#f3">Marc Lou</a>
-      <a href="#more">추가 인물</a>
-      <a href="#cydoc">실패 사례</a>
-      <a href="#lessons">💡 교훈</a>
-      <a href="#factcheck">⚠️ 팩트체크</a>
-    </nav>
   </div>
 </header>
+
+<!-- STICKY SCROLL-SPY NAV -->
+<nav class="topbar" id="topnav">
+  <div class="topbar-inner">
+    <a href="#category" data-t="category">📊 카테고리</a>
+    <a href="#f0" data-t="f0">Pieter Levels</a>
+    <a href="#f1" data-t="f1">Danny Postma</a>
+    <a href="#f2" data-t="f2">Adavia Davis</a>
+    <a href="#f3" data-t="f3">Marc Lou</a>
+    <a href="#more" data-t="more">추가 인물</a>
+    <a href="#cydoc" data-t="cydoc">실패 사례</a>
+    <a href="#lessons" data-t="lessons">💡 교훈</a>
+    <a href="#factcheck" data-t="factcheck">⚠️ 팩트체크</a>
+  </div>
+</nav>
 
 <!-- 충격 요약 -->
 <section>
@@ -446,6 +457,47 @@
     <div class="sec-links"><a href="index.html">← 메인으로</a></div>
   </div>
 </footer>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('#topnav a'));
+  var bar = document.querySelector('.topbar-inner');
+  var targets = links.map(function(a){
+    return { link:a, el:document.getElementById(a.getAttribute('data-t')) };
+  }).filter(function(t){ return t.el; });
+
+  function setActive(link){
+    links.forEach(function(a){ a.classList.remove('active'); });
+    if(!link) return;
+    link.classList.add('active');
+    // keep the active chip visible inside the horizontally-scrolling bar
+    var lb = link.getBoundingClientRect(), bb = bar.getBoundingClientRect();
+    if(lb.left < bb.left || lb.right > bb.right){
+      bar.scrollLeft += (lb.left - bb.left) - (bb.width/2 - lb.width/2);
+    }
+  }
+
+  function onScroll(){
+    var line = 130; // just below the sticky bar
+    var current = targets[0];
+    for(var i=0;i<targets.length;i++){
+      if(targets[i].el.getBoundingClientRect().top <= line) current = targets[i];
+    }
+    // near page bottom → force last item
+    if(window.innerHeight + window.scrollY >= document.body.scrollHeight - 4){
+      current = targets[targets.length-1];
+    }
+    setActive(current ? current.link : null);
+  }
+
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if(!ticking){ window.requestAnimationFrame(function(){ onScroll(); ticking=false; }); ticking=true; }
+  }, {passive:true});
+  window.addEventListener('resize', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
 
 </body>
 </html>
