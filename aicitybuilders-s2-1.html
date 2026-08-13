@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시즌2 · 1강 입학식 교재 | 글로벌 AI 1인 기업가 케이스스터디</title>
+<meta name="description" content="Connect AI LAB 시즌2 1강 교재 — 직원 0명으로 월 수억을 버는 글로벌 AI 1인 기업가들의 실제 수익·제품·채널을 정리한 학습 노트.">
+<meta property="og:title" content="시즌2 · 1강 · 글로벌 AI 1인 기업가 케이스스터디">
+<meta property="og:description" content="직원 0명, 월 수억. Pieter Levels·Danny Postma·Adavia Davis·Marc Lou 외 다수. 실패 사례 Cydoc까지.">
+<style>
+  :root{
+    --bg:#0b0f17; --bg2:#111827; --card:#151d2b; --card2:#1b2536;
+    --line:#26314a; --ink:#e8eef7; --mut:#9fb0c8; --dim:#6f819c;
+    --acc:#33d69f; --acc2:#4f8cff; --warn:#ffb454; --bad:#ff6b6b;
+    --good:#33d69f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--acc2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 18px}
+  .kicker{font-size:.82rem;letter-spacing:.02em;color:var(--acc);font-weight:800}
+  .muted{color:var(--mut)}
+  .dim{color:var(--dim)}
+
+  /* HERO */
+  .hero{background:radial-gradient(1200px 500px at 50% -10%,#16324a 0%,transparent 60%),
+        linear-gradient(160deg,#0b1220 0%,#0b0f17 100%);
+        border-bottom:1px solid var(--line);padding:48px 0 44px;text-align:center}
+  .badge{display:inline-block;border:1px solid var(--line);background:#0e1626;
+        border-radius:999px;padding:6px 14px;font-size:.8rem;color:var(--mut);margin-bottom:18px}
+  .hero h1{font-size:2.3rem;line-height:1.25;margin:.2em 0;letter-spacing:-.03em}
+  .hero h1 .hl{color:var(--acc)}
+  .hero .lead{max-width:620px;margin:14px auto 0;color:var(--mut);font-size:1.05rem}
+  .verif{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .verif span{background:#0e1626;border:1px solid var(--line);border-radius:10px;
+        padding:8px 14px;font-size:.86rem;color:var(--mut)}
+  .verif b{color:var(--ink)}
+
+  /* NAV chips */
+  .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:22px 0 6px}
+  .chips a{background:#0e1626;border:1px solid var(--line);border-radius:999px;
+        padding:7px 13px;font-size:.84rem;color:var(--mut)}
+  .chips a:hover{border-color:var(--acc);color:var(--ink);text-decoration:none}
+
+  section{padding:44px 0}
+  section + section{border-top:1px solid var(--line)}
+  h2{font-size:1.55rem;letter-spacing:-.02em;margin:0 0 4px}
+  .sub{color:var(--mut);margin:0 0 24px}
+
+  /* stat grid */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 16px;text-align:center}
+  .stat .n{font-size:2rem;font-weight:800;color:var(--acc);line-height:1.1}
+  .stat .l{font-weight:700;margin-top:6px}
+  .stat .d{font-size:.82rem;color:var(--mut);margin-top:2px}
+
+  /* bars */
+  .bars{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+  .bar{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:center}
+  .bar .name{font-weight:700;font-size:.95rem}
+  .bar .track{background:#0e1626;border:1px solid var(--line);border-radius:8px;height:34px;position:relative;overflow:hidden}
+  .bar .fill{height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));display:flex;align-items:center;padding:0 10px;
+        font-size:.82rem;font-weight:700;color:#04120c;white-space:nowrap}
+
+  /* cards grid */
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .card h3{margin:0 0 6px;font-size:1.05rem}
+  .card .meta{font-size:.82rem;color:var(--acc);font-weight:700;margin-bottom:6px}
+  .card p{margin:.4em 0;color:var(--mut);font-size:.92rem}
+  .dots{letter-spacing:2px;color:var(--acc)}
+  .dots .off{color:var(--line)}
+
+  /* model cards */
+  .models{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .model{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+  .model .ic{font-size:1.8rem}
+  .model h4{margin:8px 0 4px}
+  .model p{font-size:.85rem;color:var(--mut);margin:2px 0}
+  .model .ex{font-size:.8rem;color:var(--dim);margin-top:6px}
+
+  /* case study */
+  .case{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);
+        border-radius:16px;padding:24px;margin-top:16px}
+  .case .tag{font-size:.78rem;color:var(--acc);font-weight:800;letter-spacing:.03em}
+  .case h3{font-size:1.5rem;margin:6px 0 4px}
+  .case .tl{color:var(--mut);margin:0 0 16px}
+  .case .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+  .case .kpi{background:#0e1626;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+  .case .kpi .n{font-size:1.35rem;font-weight:800;color:var(--acc)}
+  .case .kpi .l{font-size:.76rem;color:var(--mut);margin-top:3px}
+  .case ul{margin:12px 0 0;padding-left:18px}
+  .case li{margin:.5em 0;color:var(--ink);opacity:.92}
+
+  .callout{border-left:3px solid var(--warn);background:#1a1710;border:1px solid #3a2f18;
+        border-left-width:3px;border-radius:10px;padding:14px 16px;margin-top:14px}
+  .callout.bad{border-color:#3a1c1c;border-left-color:var(--bad);background:#1a1010}
+  .callout h4{margin:0 0 6px;color:var(--warn)}
+  .callout.bad h4{color:var(--bad)}
+  .callout ul{margin:8px 0 0;padding-left:18px}
+  .callout li{margin:.4em 0;color:var(--mut);font-size:.92rem}
+
+  .lessons{counter-reset:l;display:grid;gap:12px}
+  .lesson{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+        display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start}
+  .lesson .num{width:38px;height:38px;border-radius:10px;background:#0e1626;border:1px solid var(--line);
+        display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--acc)}
+  .lesson h4{margin:0 0 2px}
+  .lesson p{margin:0;color:var(--mut);font-size:.92rem}
+
+  .cta-band{background:linear-gradient(135deg,#0f2e3f,#122a1f);border:1px solid var(--line);
+        border-radius:16px;padding:32px 24px;text-align:center;margin:8px 0 0}
+  .cta-band h2{font-size:1.7rem}
+  .cta-band .btn{display:inline-block;margin-top:16px;background:var(--acc);color:#04120c;
+        font-weight:800;padding:13px 26px;border-radius:999px}
+  .cta-band .btn:hover{opacity:.9;text-decoration:none}
+
+  .note{background:#0e1626;border:1px dashed var(--line);border-radius:12px;padding:14px 16px;
+        font-size:.86rem;color:var(--mut);margin-top:22px}
+  footer{border-top:1px solid var(--line);padding:28px 0;color:var(--dim);font-size:.82rem;text-align:center}
+  .sec-links{margin-top:8px}
+  .sec-links a{color:var(--mut)}
+
+  @media(max-width:760px){
+    .hero h1{font-size:1.7rem}
+    .stats,.models,.case .kpis{grid-template-columns:repeat(2,1fr)}
+    .g2,.g3{grid-template-columns:1fr}
+    .bar{grid-template-columns:96px 1fr}
+    .lesson{grid-template-columns:38px 1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="badge">🧪 Connect AI LAB · Case Study &nbsp;|&nbsp; 📕 시즌2 · 1강 입학식 교재</div>
+    <h1>직원 0명, 월 수억을 버는<br><span class="hl">글로벌 AI 1인 기업가들</span></h1>
+    <p class="lead">실제로 어떻게 돈을 벌고, 어떤 사이트·채널을 운영하는지 — 모든 링크와 수치를 검증해 정리했습니다. 발표하며 그대로 보여줄 수 있는 자료.</p>
+    <div class="verif">
+      <span><b>검증 인물</b> 4명 + 추가 13명</span>
+      <span><b>제품</b> 55개 추적</span>
+      <span><b>링크</b> 119개 생존 검증</span>
+      <span><b>최신성</b> 2024–2026</span>
+    </div>
+    <nav class="chips">
+      <a href="#category">📊 카테고리</a>
+      <a href="#f0">Pieter Levels</a>
+      <a href="#f1">Danny Postma</a>
+      <a href="#f2">Adavia Davis</a>
+      <a href="#f3">Marc Lou</a>
+      <a href="#more">추가 인물</a>
+      <a href="#cydoc">실패 사례</a>
+      <a href="#lessons">💡 교훈</a>
+      <a href="#factcheck">⚠️ 팩트체크</a>
+    </nav>
+  </div>
+</header>
+
+<!-- 충격 요약 -->
+<section>
+  <div class="wrap">
+    <p class="kicker">충격 요약</p>
+    <h2>숫자로 보는 AI 1인 기업</h2>
+    <p class="sub">인건비가 0이면 방정식이 완전히 달라진다.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">0명</div><div class="l">직원 수</div><div class="d">혼자 또는 1~2명</div></div>
+      <div class="stat"><div class="n">$420K</div><div class="l">월 최대 매출</div><div class="d">약 5.9억 원 (피크)</div></div>
+      <div class="stat"><div class="n">87%</div><div class="l">순이익률</div><div class="d">인건비가 0이니까</div></div>
+      <div class="stat"><div class="n">17일</div><div class="l">→ 연매출 13억</div><div class="d">게임 1개로 ($1M ARR)</div></div>
+    </div>
+
+    <h3 style="margin:32px 0 8px">💰 월 매출 비교</h3>
+    <div class="bars">
+      <div class="bar"><div class="name">Pieter Levels</div><div class="track"><div class="fill" style="width:100%">$420K · 5.9억/월 (피크)</div></div></div>
+      <div class="bar"><div class="name">Danny Postma</div><div class="track"><div class="fill" style="width:72%">$300K · 4.2억/월</div></div></div>
+      <div class="bar"><div class="name">Tony Dinh</div><div class="track"><div class="fill" style="width:38%">$150K · 2.1억/월</div></div></div>
+      <div class="bar"><div class="name">Marc Lou</div><div class="track"><div class="fill" style="width:33%">$130K · 1.8억/월</div></div></div>
+      <div class="bar"><div class="name">Adavia Davis</div><div class="track"><div class="fill" style="width:16%">$58K · 8천만/월</div></div></div>
+    </div>
+    <p class="note">* 대부분 본인 공개(self-reported) 수치이며 피크/평균 시점이 다릅니다 · 원화는 환율 약 1,400원/$ 기준 환산 · 정확한 검증은 아래 각 인물 카드의 ⚠️ 표시 참고.</p>
+  </div>
+</section>
+
+<!-- 수익 모델 -->
+<section>
+  <div class="wrap">
+    <p class="kicker">🛠️ 이렇게 법니다</p>
+    <h2>4가지 수익 모델</h2>
+    <p class="sub">돈이 들어오는 경로는 크게 넷으로 나뉜다.</p>
+    <div class="models">
+      <div class="model"><div class="ic">💳</div><h4>SaaS 구독</h4><p>AI 도구를 월정액으로</p><div class="ex">Photo AI · HeadshotPro</div></div>
+      <div class="model"><div class="ic">📺</div><h4>광고 수익</h4><p>AI로 콘텐츠 양산 → 조회수</p><div class="ex">페이스리스 유튜브</div></div>
+      <div class="model"><div class="ic">📚</div><h4>콘텐츠·정보</h4><p>강의·전자책·뉴스레터</p><div class="ex">스폰서십</div></div>
+      <div class="model"><div class="ic">🏷️</div><h4>매각 (엑싯)</h4><p>만들어 키워서 팔기</p><div class="ex">Headlime $1M · Base44 $80M</div></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:24px">
+      <div class="card">
+        <div class="meta">⚡ 성장 속도 — AI가 시간을 압축한다</div>
+        <p><b>일반 스타트업</b> — 3~7년 걸려도 불확실</p>
+        <p><b>Photo AI</b> — 18개월 만에 월 $100K</p>
+        <p><b>fly.pieter.com</b> — 단 17일 → 연 $1M</p>
+      </div>
+      <div class="card">
+        <div class="meta">🍩 순이익률 비교 — 왜 1인 AI가 강한가</div>
+        <p><b style="color:var(--acc)">87% 순이익</b> — AI 1인 기업 (인건비 0 · API 비용만)</p>
+        <p><b style="color:var(--dim)">~12% 순이익</b> — 일반 스타트업 (인건비·사무실·마케팅)</p>
+        <p class="dim" style="font-size:.8rem">* 1인 AI 마진은 본인 공개 기준, 일반 스타트업은 업계 통상치 예시.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 카테고리 지도 -->
+<section id="category">
+  <div class="wrap">
+    <p class="kicker">카테고리 지도</p>
+    <h2>어떤 걸 만들면 돈이 되나</h2>
+    <p class="sub">실제로 돈을 번 카테고리와, 망하기 쉬운 카테고리. 다음 시즌에 직접 만들 서비스를 고를 때 이 지도를 참고하세요.</p>
+
+    <h3 style="color:var(--good)">💰 잘 버는 카테고리</h3>
+    <div class="grid g3">
+      <div class="card"><h3>📸 AI 사진·이미지</h3><div class="dots">●●●●●</div><p><b>Photo AI $420K · HeadshotPro $300K</b></p><p>"내 사진" 같은 명확한 수요 + 높은 마진. 셀카·헤드샷·프로필.</p></div>
+      <div class="card"><h3>🤖 AI 생산성 도구</h3><div class="dots">●●●●<span class="off">●</span></div><p><b>Chatbase · SiteGPT · TypingMind</b></p><p>챗봇·SEO·글쓰기 등 B2B 반복결제. 페인이 명확할수록 강함.</p></div>
+      <div class="card"><h3>📚 정보·교육·뉴스레터</h3><div class="dots">●●●●<span class="off">●</span></div><p><b>The Rundown AI · Rob Lennon · MAKE</b></p><p>신뢰를 자산화. 원가 거의 0, 강의·전자책·스폰서십.</p></div>
+      <div class="card"><h3>📺 페이스리스 콘텐츠</h3><div class="dots">●●●<span class="off">●●</span></div><p><b>Adavia · Faceless.video</b></p><p>초저비용·고마진. 단 플랫폼 알고리즘 의존·변동성 큼.</p></div>
+      <div class="card"><h3>🎮 바이럴 게임·노벨티</h3><div class="dots">●●●<span class="off">●●</span></div><p><b>fly.pieter.com (17일→$1M)</b></p><p>폭발적 화제성으로 광고 수익. 지속성은 약함, 한 방 성격.</p></div>
+      <div class="card"><h3>🛒 노코드 커머스·예약</h3><div class="dots">●●●<span class="off">●●</span></div><p><b>소상공인 예약·자동화 도구</b></p><p>틈새 업무 자동화. 작지만 꾸준한 구독 매출.</p></div>
+    </div>
+
+    <h3 style="color:var(--bad);margin-top:28px">⚠️ 어렵거나 망하기 쉬운 카테고리</h3>
+    <div class="grid g3">
+      <div class="card"><h3>🏥 원가 &gt; 가격상한</h3><div class="dots"><span style="color:var(--bad)">●</span><span class="off">●●●●</span></div><p><b>Cydoc — 7년, 평생 매출 $27,900</b></p><p>API·호스팅 원가가 고객 지불의향가를 넘으면 마진이 사라짐. 아무리 노력해도 수익화 불가.</p></div>
+      <div class="card"><h3>🪞 단순 기능</h3><div class="dots"><span style="color:var(--warn)">●●</span><span class="off">●●●</span></div><p><b>Avatar AI vs Lensa</b></p><p>첫 주 1억 벌어도 대기업이 들어오면 자본력에 밀려 사망. 차별화·해자 필요.</p></div>
+      <div class="card"><h3>🔌 차별화 없는 GPT 래퍼</h3><div class="dots"><span style="color:var(--warn)">●●</span><span class="off">●●●</span></div><p><b>수백 개 카피캣 시장</b></p><p>누구나 복제 가능 → 가격경쟁·SEO싸움. 유통·데이터·브랜드가 없으면 위험.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 세 가지 유형 -->
+<section>
+  <div class="wrap">
+    <p class="kicker">한눈에</p>
+    <h2>세 가지 유형으로 갈린다</h2>
+    <p class="sub"></p>
+    <div class="grid g3">
+      <div class="card"><div class="meta">① AI SaaS · 인디해커</div><p>트렌드를 빠르게 제품화하고 빌드 인 퍼블릭으로 청중을 자산화. 다작(多作)으로 한 방을 터뜨린다.</p><p class="dim">Pieter Levels · Danny Postma · Marc Lou</p></div>
+      <div class="card"><div class="meta">② AI 콘텐츠 · 페이스리스</div><p>AI로 영상을 공장처럼 찍어 광고 수익. 마진 85%+, 본인은 감독만.</p><p class="dim">Adavia Davis</p></div>
+      <div class="card"><div class="meta">③ 반례 · 실패에서 배우기</div><p>비즈니스 모델이 깨지면 7년·모든 채널을 써도 실패.</p><p class="dim">Cydoc (별도 정리)</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CASE 01 -->
+<section id="f0">
+  <div class="wrap">
+    <div class="case">
+      <div class="tag">CASE 01 · AI SaaS · 다작</div>
+      <h3>Pieter Levels</h3>
+      <p class="tl">70개 실패 후, 혼자 수십 개 AI 제품으로 월 수억을 버는 인디해커의 상징.</p>
+      <div class="kpis">
+        <div class="kpi"><div class="n">$420K</div><div class="l">월 피크 · 약 5.9억원</div></div>
+        <div class="kpi"><div class="n">~87%</div><div class="l">순이익률</div></div>
+        <div class="kpi"><div class="n">Photo AI</div><div class="l">대표 제품</div></div>
+        <div class="kpi"><div class="n">17일→$1M</div><div class="l">ARR 최고 기록</div></div>
+      </div>
+      <ul>
+        <li>직원 0명, 혼자서 월 매출 42만 달러(약 5억 7천만 원). 2024년 9월 본인이 트위터에 매출 스크린샷을 그대로 올렸다 — 'Open Startup'.</li>
+        <li>Photo AI는 단 하나의 index.php 파일(4만 870줄)로 월 매출 10만 달러, 순익 8만 달러를 낸다.</li>
+        <li>Cursor라는 AI에게 말로 설명만 해서 비행 시뮬레이터 게임을 단 3시간 만에 만들고, 17일 만에 연 매출 100만 달러(ARR $1M)를 찍었다 — 이게 'vibe coding'.</li>
+      </ul>
+    </div>
+
+    <!-- CASE 02 -->
+    <div class="case" id="f1">
+      <div class="tag">CASE 02 · AI 사진 SaaS</div>
+      <h3>Danny Postma</h3>
+      <p class="tl">AI 헤드샷 하나로 월 $300K. 만든 제품마다 키워서 매각하는 "AI 셀카 제국".</p>
+      <div class="kpis">
+        <div class="kpi"><div class="n">$300K</div><div class="l">월 · 약 4.2억원 (HeadshotPro)</div></div>
+        <div class="kpi"><div class="n">Headlime $1M</div><div class="l">엑싯</div></div>
+        <div class="kpi"><div class="n">HeadshotPro</div><div class="l">대표 제품</div></div>
+        <div class="kpi"><div class="n">발리</div><div class="l">거점</div></div>
+      </div>
+      <ul>
+        <li>발리에서 혼자 일하는 네덜란드 개발자가 만든 AI 헤드샷 사이트 하나로 '월 30만 달러'(약 4억 원)를 번다 — 직원은 거의 없다.</li>
+        <li>그의 첫 AI 앱 TattoosAI(타투 디자인 생성기)는 2024년 단돈 $98,000에 팔렸다. 트윗 한 줄로 '하터들아, 받아라'며 매각 발표.</li>
+        <li>전작 Headlime은 출시 8개월 만에 100만 달러에 매각 — 출시 첫 주에만 라이프타임 구독으로 $60,000를 벌었다.</li>
+      </ul>
+    </div>
+
+    <!-- CASE 03 -->
+    <div class="case" id="f2">
+      <div class="tag">CASE 03 · AI 콘텐츠 · 페이스리스</div>
+      <h3>Adavia Davis</h3>
+      <p class="tl">얼굴 없이 AI로 영상을 공장처럼 찍어 광고 수익. 본인은 감독만.</p>
+      <div class="kpis">
+        <div class="kpi"><div class="n">$40–60K</div><div class="l">월 · 약 5,600만~8,400만원</div></div>
+        <div class="kpi"><div class="n">85%+</div><div class="l">마진</div></div>
+        <div class="kpi"><div class="n">페이스리스</div><div class="l">유튜브 채널</div></div>
+        <div class="kpi"><div class="n">Fortune 2025</div><div class="l">출처</div></div>
+      </div>
+      <ul>
+        <li>22살 대학 중퇴생이 '아무도 안 보는' AI 영상으로 연 7억 원(약 $700K)을 번다 — 그것도 하루 딱 2시간 일하고.</li>
+        <li>그의 1등 채널은 '6시간짜리 지루한 역사 다큐'. 사람들이 보라고 만든 게 아니라 '잠잘 때 틀어두라고' 만든다. 시청자 대부분이 자고 있다.</li>
+        <li>영상 1편 제작비가 단돈 $60(약 8만 원). 6시간짜리를. Claude로 대본, ElevenLabs로 영국식 내레이션(데이비드 애튼버러 톤), TubeGen으로 자동 조립.</li>
+      </ul>
+    </div>
+
+    <!-- CASE 04 -->
+    <div class="case" id="f3">
+      <div class="tag">CASE 04 · AI SaaS · 다작</div>
+      <h3>Marc Lou</h3>
+      <p class="tl">작은 AI 제품 여러 개로 연 $1M+. 빌드 인 퍼블릭의 대표주자.</p>
+      <div class="kpis">
+        <div class="kpi"><div class="n">~$130K</div><div class="l">월 합산 · 약 1.8억원</div></div>
+        <div class="kpi"><div class="n">다수</div><div class="l">제품</div></div>
+        <div class="kpi"><div class="n">ShipFast</div><div class="l">대표 제품</div></div>
+        <div class="kpi"><div class="n">공개</div><div class="l">매출 투명</div></div>
+      </div>
+      <ul>
+        <li>파리에서 시급 $10 웨이터로 일하던 프랑스 청년이, 30개 넘는 스타트업을 줄줄이 실패한 끝에 지금은 발리에서 1인 회사로 연 10억 원 넘게 번다.</li>
+        <li>그의 첫 대박 ShipFast는 출시 48시간 만에 $6,000(약 800만 원), 첫 달 $40,000, 5개월 만에 $250,000를 벌었다 — 코드 보일러플레이트 하나로.</li>
+        <li>실패한 17개 프로젝트에서 모은 코드 조각을 하나로 묶었더니 그게 100만 달러짜리 제품이 됐다.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 추가 인물 -->
+<section id="more">
+  <div class="wrap">
+    <p class="kicker">더 많은 사례</p>
+    <h2>추가로 추적할 만한 글로벌 1인 AI 창업가</h2>
+    <p class="sub">수익을 공개하거나 잘 문서화된 다른 인물들. Vol. 추가편 후보.</p>
+    <div class="grid g2">
+      <div class="card"><h3>Tony Dinh</h3><div class="meta">TypingMind 월 $130~160K (약 2억원) · 자기공개</div><p>LLM용 고급 채팅 UI(내 API키 사용) + AI 트위터 분석. 매출 전액 투명 공개. 대기업 퇴사 후 1인으로 연 $1M+.</p><p><a href="https://typingmind.com/">typingmind.com</a> · <a href="https://x.com/tdinh_me">@tdinh_me</a></p></div>
+      <div class="card"><h3>Damon Chen</h3><div class="meta">PDF.ai + Testimonial 합산 ARR ~$1.3M</div><p>PDF와 대화(RAG) + 후기 수집 도구. $400K까지 무직원으로 운영. AI 도메인을 사서 chat-with-PDF로 키운 사례 (사용자 35만+).</p><p><a href="https://pdf.ai/">pdf.ai</a> · <a href="https://testimonial.to/">testimonial.to</a> · <a href="https://twitter.com/damengchen">@damengchen</a></p></div>
+      <div class="card"><h3>Jon Yongfook</h3><div class="meta">Bannerbear 연 $1M ARR (월 ~$81K)</div><p>템플릿+데이터로 이미지·영상을 자동 생성하는 API. 외부투자 0, 혼자 $1M ARR 돌파한 부트스트랩 정석.</p><p><a href="https://www.bannerbear.com/">bannerbear.com</a> · <a href="https://x.com/yongfook">@yongfook</a></p></div>
+      <div class="card"><h3>Tibo Louis-Lucas</h3><div class="meta">포트폴리오 월 ~$1M (Revid.ai ~$680K 등)</div><p>AI 페이스리스 숏폼 영상 + SEO 콘텐츠 도구들. Taplio·Tweet Hunter $8M 매각 후 다시 월 $1M 포트폴리오 구축.</p><p><a href="https://www.revid.ai/">revid.ai</a> · <a href="https://x.com/tibo_maker">@tibo_maker</a></p></div>
+      <div class="card"><h3>Steven Tey</h3><div class="meta">Dub.co · 제휴매출 $9M+ 추적 (고객 10만+)</div><p>오픈소스 링크관리·전환추적 플랫폼. 전 Vercel, 오픈소스 사이드프로젝트 → 인프라 제품으로.</p><p><a href="https://dub.co/">dub.co</a> · <a href="https://x.com/steventey">@steventey</a></p></div>
+      <div class="card"><h3>Maor Shlomo</h3><div class="meta">Base44 → Wix에 $80M 현금 매각 (2025.6)</div><p>말(프롬프트)로 완성 앱을 만드는 바이브코딩 플랫폼. 출시 6개월·거의 1인·부트스트랩으로 $80M 엑싯 — 2025 최고 화제작.</p><p><a href="https://base44.com/">base44.com</a> · <a href="https://linkedin.com/in/maor-shlomo">LinkedIn</a></p></div>
+      <div class="card"><h3>Rob Lennon</h3><div class="meta">AI 교육 누적 $1M+ (수강생 4,000+)</div><p>프롬프트 엔지니어링·AI 콘텐츠 강의 + 도구. AI 교육·정보상품으로 1인 $1M+ — SaaS와 다른 길.</p><p><a href="https://lennonlabs.com/">lennonlabs.com</a> · <a href="https://x.com/thatroblennon">@thatroblennon</a></p></div>
+      <div class="card"><h3>Yasser Elsaid</h3><div class="meta">Chatbase $3M→$8~10M ARR (자기공개)</div><p>내 데이터로 학습하는 노코드 AI 고객지원 챗봇. 팔로워 16명에 데모 → 30분 만에 첫 고객, 60일 만에 제작.</p><p><a href="https://www.chatbase.co/">chatbase.co</a> · <a href="https://x.com/yasser_elsaid_">@yasser_elsaid_</a></p></div>
+      <div class="card"><h3>Bhanu Teja</h3><div class="meta">SiteGPT 월 ~$95K (약 1.3억원, 자기공개)</div><p>웹사이트를 학습한 AI 지원 챗봇. 무료 SEO 도구로 무광고 유입. 퇴사·생활비 줄이고 출시 1달 만에 월 $10K 돌파.</p><p><a href="https://sitegpt.ai/">sitegpt.ai</a> · <a href="https://x.com/pbteja1998">@pbteja1998</a></p></div>
+      <div class="card"><h3>Rowan Cheung</h3><div class="meta">The Rundown AI 연 ~$7M 추정 (스폰서)</div><p>구독 200만+ AI 뉴스레터. 광고·강의로 수익. 복잡한 제품 없이 "유통+핫토픽"으로 거대 미디어가 됨.</p><p><a href="https://www.therundown.ai/">therundown.ai</a> · <a href="https://x.com/rowancheung">@rowancheung</a></p></div>
+      <div class="card"><h3>Jacob Seeger</h3><div class="meta">Faceless.video ~$1M ARR 주장 (수치 논쟁)</div><p>페이스리스 숏폼을 찾고·만들고·자동 업로드하는 노코드 도구. 비개발자 2인이 AI 콘텐츠 자동화를 제품화 (사용자 35만+).</p><p><a href="https://faceless.video/">faceless.video</a> · <a href="https://www.linkedin.com/in/jacob-seeger/">LinkedIn</a></p></div>
+      <div class="card"><h3>Cameron Trew</h3><div class="meta">Kleo 월 ~$62K (자기공개)</div><p>Claude로 4주 만에 만든 링크드인 콘텐츠 AI 도구. "AI 코딩으로 엔지니어 1명이 제품을 만든다"의 생생한 사례.</p><p><a href="https://kleo.so/">kleo.so</a> · <a href="https://x.com/camtrew">@camtrew</a></p></div>
+      <div class="card"><h3>Cody Schneider</h3><div class="meta">LandingCat 4주 $100K ARR 주장 (자기보고)</div><p>이커머스용 SEO 랜딩페이지 자동 생성. 기존 검색수요에 빠르게 올라타는 "트렌드 서핑" 방식.</p><p><a href="https://x.com/codyschneiderxx">@codyschneiderxx</a></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CYDOC 실패 사례 -->
+<section id="cydoc">
+  <div class="wrap">
+    <p class="kicker" style="color:var(--bad)">반례 · 결정판</p>
+    <h2>Cydoc — 7년 1인 기업의 죽음</h2>
+    <p class="sub">FAILURE CASE · 헬스 AI 실패 사례</p>
+    <div class="case" style="border-color:#3a1c1c;background:linear-gradient(180deg,#1a1212,#151d2b)">
+      <div class="tag" style="color:var(--bad)">Rachel Draelos (Cydoc)</div>
+      <h3>7년간 혼자, 매출 $27,900로 폐업</h3>
+      <p class="tl">7년간 혼자서 의학 인공지능 스타트업을 고군분투했으나, 매출 2.7만 달러로 쓸쓸히 폐업한 솔로 창업자.</p>
+      <div class="kpis">
+        <div class="kpi"><div class="n" style="color:var(--bad)">$27,900</div><div class="l">7년 누적 평생 매출</div></div>
+        <div class="kpi"><div class="n" style="color:var(--bad)">4명</div><div class="l">평생 유료고객</div></div>
+        <div class="kpi"><div class="n" style="color:var(--bad)">7년</div><div class="l">운영 기간</div></div>
+        <div class="kpi"><div class="n" style="color:var(--bad)">MD/PhD</div><div class="l">창업자 이력</div></div>
+      </div>
+      <p class="muted">헬스 AI. 솔로 창업자 Rachel Draelos(MD/PhD)가 7년간 CEO·CTO·CRO를 겸직하며 운영했지만 2024년 매출 단 $27,900, 평생 유료고객 4명으로 종료. 본인의 종료 포스트모템이 1차 출처.</p>
+      <div class="callout bad">
+        <h4>왜 망했나</h4>
+        <ul>
+          <li><b>비즈니스 모델 자체가 붕괴</b> — 의사당 AI·호스팅 원가 ~$70인데 의사들 지불의향가는 월 $100 미만 → 마진 증발. EHR 연동당 $4,000~$6,000라 손익분기 진료소당 11년.</li>
+          <li><b>1인 겸직의 한계</b> — 가장 싫어한 영업/마케팅이 빵꾸. "제도권 투자자는 복수 창업자 팀에만 투자한다."</li>
+          <li><b>채널을 다 써도 안 됨</b> — 이메일 수천 통, 전화 수백 통, 점심 배달, 우편 팸플릿, 소셜 광고… 그래도 유료 고객 4명.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <h4>🎬 영상 교훈</h4>
+        <p class="muted" style="margin:0">채널을 많이 시도한다고 유입이 풀리지 않는다. AI 원가(API·호스팅)가 가격 상한을 잠식하면 아무리 노력해도 수익화는 불가능하다.</p>
+      </div>
+      <p style="margin-top:14px"><b>출처:</b> <a href="https://glassboxmedicine.com/2026/02/21/why-i-shut-down-my-bootstrapped-health-ai-startup-after-7-years-a-founders-postmortem/">glassboxmedicine.com — 창업자 종료 포스트모템</a> <span class="dim">(2026.2.21 · 1차 출처)</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 팩트체크 -->
+<section id="factcheck">
+  <div class="wrap">
+    <p class="kicker" style="color:var(--warn)">LIVE · ⚠️ 영상 만들 때 주의</p>
+    <h2>팩트체크 가이드</h2>
+    <p class="sub">아래는 검증에서 반박/논쟁/오래됨으로 표시된 항목입니다. 영상에서 단정하면 댓글에서 지적받습니다.</p>
+    <div class="callout">
+      <ul>
+        <li><b>"MRR"이라 단정 금지</b> — Photo AI·HeadshotPro 상당수가 일회성/연간 결제라 진짜 구독 반복매출이 아님.</li>
+        <li><b>Levels 월 $420K는 "피크"</b> — Lex Fridman 팟캐스트 직후 일시 스파이크. 안정 런레이트는 ~$3M ARR. 연 환산 $3~5M은 과장.</li>
+        <li><b>"순이익/마진 87%"는 자기보고</b> — 독립 감사 없음. Latka 등은 더 낮은 수치 제시. 인용 시 "본인 주장" 명시.</li>
+        <li><b>Adavia Davis</b> — Fortune이 AdSense 지급만 3자 검증, 나머지 자기보고. 영상 원가 $60은 "최저치". TubeGen은 파트너가 제작 → 순수 1인 아님.</li>
+        <li><b>모든 SaaS 숫자에 시점(as of YYYY.MM) 표기</b> — 빠르게 변함.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 교훈 -->
+<section id="lessons">
+  <div class="wrap">
+    <p class="kicker">정리</p>
+    <h2>💡 오늘의 핵심 교훈 5</h2>
+    <p class="sub"></p>
+    <div class="lessons">
+      <div class="lesson"><div class="num">01</div><div><h4>직원 대신 'AI'를 고용하라</h4><p>인건비가 0이면 순이익률이 80%+. 1인 기업 최대의 무기는 사람이 아니라 AI 직원이다.</p></div></div>
+      <div class="lesson"><div class="num">02</div><div><h4>'되는 카테고리'를 골라라</h4><p>사진·생산성 도구·콘텐츠·교육은 돈이 된다. 위 카테고리 지도에서 잘 버는 쪽으로 시작하라.</p></div></div>
+      <div class="lesson"><div class="num">03</div><div><h4>원가가 가격을 넘으면 망한다</h4><p>Cydoc은 7년·모든 채널을 써도 실패. AI(API·서버) 원가가 고객 지불의향가를 넘으면 수익화 불가.</p></div></div>
+      <div class="lesson"><div class="num">04</div><div><h4>공개하며 키워라 (빌드 인 퍼블릭)</h4><p>매출·과정·실패를 공개하면 그게 곧 신뢰와 유통 자산이 된다. Levels·Postma의 공통점.</p></div></div>
+      <div class="lesson"><div class="num">05</div><div><h4>빠르게 출시, 트렌드에 올라타라</h4><p>며칠 만에 만들고 즉시 런칭. fly.pieter는 17일 만에 연매출 $1M. 완벽보다 속도.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section>
+  <div class="wrap">
+    <div class="cta-band">
+      <p class="kicker">EZER AI · AI CITY BUILDERS</p>
+      <h2>이건 남의 이야기가 아닙니다</h2>
+      <p class="muted" style="max-width:640px;margin:8px auto 0">위 사람들은 자본도, 직원도 없이 AI 하나로 해냈습니다. 다음은 여러분 차례입니다. EZER AI는 AI 1인 기업가에게 투자하는 회사입니다. AI City Builders가 여러분을 양성하고, 발생한 초과이익을 다시 여러분에게 재투자해 — 함께 키웁니다.</p>
+      <a class="btn" href="https://www.aicitybuilders.com/season2">시즌2에서 내 서비스 만들기 →</a>
+    </div>
+    <p class="note">📌 개인 학습용 정리 노트입니다. 원문 교재 출처: Connect AI LAB · EZER AI · AI CITY BUILDERS 시즌2 1강. 수치 대부분은 자기보고(self-reported)이며 인용 전 각 출처 확인을 권장합니다.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Connect AI LAB · EZER AI · AI CITY BUILDERS · 글로벌 AI 1인 기업 케이스스터디<br>
+    데이터는 AI 에이전트가 웹검색·교차검증한 결과이며 자기보고 수치를 포함합니다. 인용 전 출처 확인 권장.
+    <div class="sec-links"><a href="index.html">← 메인으로</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
