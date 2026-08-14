@@ -54,11 +54,11 @@
 
   <section class="section">
     <h2>② 실거래가 자동 연결 (한 번만 설정)</h2>
-    <p>무료 절차 한 번이면, 이후 <strong>구리시 실거래가가 매주 자동으로</strong> 갱신됩니다.</p>
+    <p>무료 절차 한 번이면, 이후 <strong>구리시 실거래가가 매일 새벽 자동으로</strong> 갱신되어 <strong>갈매동 카드·구리 표·분석·홍보글 시세</strong>가 늘 최신이 됩니다.</p>
     <ol class="steps">
-      <li><strong>공공데이터포털 무료 서비스키 발급</strong><br><a href="https://www.data.go.kr" target="_blank" rel="noopener">data.go.kr</a> → 「국토교통부 아파트 매매 실거래가 자료」(오픈API) → <strong>활용신청</strong> → 서비스키 발급.</li>
-      <li><strong>GitHub 비밀값(Secret) 등록</strong><br>저장소 → Settings → Secrets and variables → Actions → New repository secret → 이름 <code>DATA_GO_KR_KEY</code>, 값=서비스키.</li>
-      <li><strong>자동 실행</strong><br>매주 자동 작업이 구리시(41310) 실거래가를 받아 <code>data/deals.json</code> 갱신 → 지도·단지안내에 반영.</li>
+      <li><strong>공공데이터포털 무료 서비스키 발급</strong><br><a href="https://www.data.go.kr" target="_blank" rel="noopener">data.go.kr</a> → 「아파트 매매 실거래가」(오픈API) → <strong>활용신청</strong> → 인증키 발급.</li>
+      <li><strong>GitHub 비밀값(Secret) 등록</strong><br>저장소 → Settings → Secrets and variables → Actions → New repository secret → 이름 <code>DATA_GO_KR_KEY</code>, 값=인증키. <em>(키는 코드가 아니라 반드시 이 Secret에만 저장)</em></li>
+      <li><strong>자동 실행</strong><br>매일 새벽 자동 작업이 구리시(41310) 실거래가를 받아 <code>data/complexes.js</code>·<code>data/guri-complexes.js</code>를 재생성 → 화면에 자동 반영. Actions 탭에서 「Run workflow」로 즉시 실행도 가능.</li>
     </ol>
     <div class="callout tip">
       <span class="t">🖐 수동 갱신(키 없이도 가능)</span>
