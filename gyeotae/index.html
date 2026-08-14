@@ -247,12 +247,16 @@ footer.foot b{color:#dcebe7}
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SB_URL='https://gancotctztwqsuupektl.supabase.co';
+const SB_KEY='sb_publishable_SJHf3habT8mpWmF9vedxuw_g1e3pLkT';
+let sb=null; try{ if(window.supabase) sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){}
 function esc(s){ return (s||'').replace(/[<>&]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m])); }
-document.getElementById('w-gen').addEventListener('click',()=>{
-  const v=id=>document.getElementById(id).value.trim();
-  const role=document.getElementById('w-role').value;
-  if(!v('w-contact')){ alert('오픈 안내를 받으실 연락처를 입력해 주세요.'); document.getElementById('w-contact').focus(); return; }
+
+const btn=document.getElementById('w-gen'), out=document.getElementById('out');
+
+function fallbackBox(role,v){
   const t=`[곁애 사전등록 신청]\n`+
     `· 구분: ${role}\n`+
     `· 직종/필요 서비스: ${v('w-job')||'-'}\n`+
@@ -260,10 +264,8 @@ document.getElementById('w-gen').addEventListener('click',()=>{
     `· 지역: ${v('w-area')||'-'}\n`+
     `· 연락처: ${v('w-contact')}\n`+
     `· 남길 말: ${v('w-msg')||'-'}\n`;
-  // best-effort 로컬 보관 (중복 방지 없이 간단히)
-  try{ const k='gyeotae_waitlist'; const a=JSON.parse(localStorage.getItem(k)||'[]'); a.push({role,job:v('w-job'),name:v('w-name'),area:v('w-area'),contact:v('w-contact'),msg:v('w-msg')}); localStorage.setItem(k,JSON.stringify(a)); }catch(e){}
-  document.getElementById('out').innerHTML=
-    `<div class="callout" style="margin-top:16px"><span class="t">아래 내용을 복사해 이메일로 보내주시면 사전등록이 완료됩니다</span>
+  out.innerHTML=
+    `<div class="callout" style="margin-top:16px"><span class="t">잠시 연결이 어려워요 — 아래 내용을 복사해 이메일로 보내주시면 접수됩니다</span>
       <textarea id="w-txt" rows="8" style="width:100%;margin-top:8px">${esc(t)}</textarea>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-primary btn-sm" id="w-copy">복사하기</button>
@@ -271,7 +273,33 @@ document.getElementById('w-gen').addEventListener('click',()=>{
       </div></div>`;
   const cb=document.getElementById('w-copy');
   cb.addEventListener('click',()=>{ const ta=document.getElementById('w-txt'); ta.select(); navigator.clipboard&&navigator.clipboard.writeText(ta.value); cb.textContent='복사됨'; });
-  document.getElementById('out').scrollIntoView({behavior:'smooth',block:'center'});
+  out.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function successBox(role){
+  out.innerHTML=
+    `<div class="callout" style="margin-top:16px;border-left-color:var(--gold)">
+      <span class="t">사전등록이 완료되었습니다 ✓</span>
+      <b>${esc(role)}</b>(으)로 접수했어요. 정식 오픈 시 남겨주신 연락처로 가장 먼저 안내드리겠습니다. 감사합니다.
+      <div style="margin-top:10px"><a class="btn btn-ghost dark btn-sm" href="../dolbom/index.html">모심 둘러보기 →</a></div>
+    </div>`;
+  out.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+btn.addEventListener('click', async ()=>{
+  const v=id=>document.getElementById(id).value.trim();
+  const role=document.getElementById('w-role').value;
+  if(!v('w-contact')){ alert('오픈 안내를 받으실 연락처를 입력해 주세요.'); document.getElementById('w-contact').focus(); return; }
+  const row={ role, job:v('w-job')||null, name:v('w-name')||null, area:v('w-area')||null, contact:v('w-contact'), msg:v('w-msg')||null, source:'gyeotae' };
+  // 로컬 백업(선택)
+  try{ const k='gyeotae_waitlist'; const a=JSON.parse(localStorage.getItem(k)||'[]'); a.push(row); localStorage.setItem(k,JSON.stringify(a)); }catch(e){}
+  if(!sb){ fallbackBox(role,v); return; }
+  const old=btn.textContent; btn.disabled=true; btn.textContent='접수 중…';
+  try{
+    const { error } = await sb.from('waitlist').insert(row);
+    if(error){ fallbackBox(role,v); } else { successBox(role); }
+  }catch(e){ fallbackBox(role,v); }
+  btn.disabled=false; btn.textContent=old;
 });
 </script>
 </body>
