@@ -88,6 +88,19 @@
   .card .sub-tag{margin-top:auto; padding-top:6px; font-size:12px; font-weight:700; color:var(--dim)}
   .card .sub-tag::before{content:"# "; opacity:.6}
 
+  /* 강의 카드 자료 묶음 */
+  .card.lecture{border-left:3px solid transparent; border-image:linear-gradient(180deg,var(--accent),var(--accent2)) 1 stretch}
+  .reslist{display:flex; flex-direction:column; gap:6px; margin-top:auto; padding-top:12px; border-top:1px dashed var(--line)}
+  .res{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--txt);
+    background:var(--bg); border:1px solid var(--line); border-radius:11px; padding:9px 11px; transition:.14s}
+  .res:hover{border-color:var(--accent); color:var(--accent); transform:translateX(2px)}
+  .res .ri{font-size:15px; line-height:1}
+  .res .rl{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .res .rext{color:var(--dim); font-size:12px; font-weight:800}
+  .res.soon{color:var(--dim)}
+  .res.soon:hover{border-color:var(--amber); color:var(--amber)}
+  .rsoon{font-size:10px; font-weight:800; color:var(--amber); background:rgba(217,119,6,.14); padding:2px 7px; border-radius:999px}
+
   .placeholder{border:1px dashed var(--line); background:transparent; color:var(--dim);
     align-items:center; justify-content:center; text-align:center; min-height:120px; font-size:13.5px; font-weight:600}
 
@@ -166,59 +179,52 @@ const CATEGORIES = [
          lec(강 번호 뱃지, 선택), status:'new'|'soon'(선택), emoji(선택)
    ============================================================ */
 const ITEMS = [
-  /* ── 정규 강의 · 시즌2 (2-1강 ~ 2-13강, 순서대로) ── */
-  { cat:'season2', lec:'2-1강', sub:'케이스스터디', emoji:'📕',
-    title:'AI 1인 기업 케이스스터디',
+  /* ── 정규 강의 · 시즌2 (2-1강 ~ 2-13강, 순서대로) ──
+     강의별 자료 묶음: resources[] 안에 {kind,label,url,external?,status?} 로 여러 개.
+     kind: page(강의)·video(영상)·folder(자료폴더)·download(다운로드)·link(기타) */
+  { cat:'season2', lec:'2-1강', emoji:'📕', title:'AI 1인 기업 케이스스터디',
     desc:'숫자로 보는 AI 1인 기업 · 뭘 만들면 돈이 되나 · 핵심 교훈 5.',
-    url:'./ai-1in-cases.html' },
-  { cat:'season2', lec:'2-2강', sub:'배포·서비스', emoji:'📗',
-    title:'배포 · 데이터베이스 · 결제로 서비스 완성',
+    resources:[ {kind:'page', label:'강의 노트', url:'./ai-1in-cases.html'} ] },
+  { cat:'season2', lec:'2-2강', emoji:'📗', title:'배포 · DB · 결제로 서비스 완성',
     desc:'배포 → Firebase → 결제까지 글로벌 서비스 만들기.',
-    url:'./ai-1in-build.html' },
-  { cat:'season2', lec:'2-3강', sub:'강의', emoji:'📘', external:true,
-    title:'시즌2 · 3강',
-    desc:'(제목 확인 필요) 시즌2 세 번째 강의.',
-    url:'https://www.aicitybuilders.com/season2-3' },
-  { cat:'season2', lec:'2-4강', sub:'강의', emoji:'📙', external:true,
-    title:'시즌2 · 4강',
+    resources:[ {kind:'page', label:'강의 노트', url:'./ai-1in-build.html'} ] },
+  { cat:'season2', lec:'2-3강', emoji:'📘', title:'시즌2 · 3강 (콘텐츠·자동화 도구)',
+    desc:'(제목 확인 필요) EZER AI 등 자동화 도구 실습 · 자료 포함.',
+    resources:[
+      {kind:'page',     label:'강의 페이지',            url:'https://www.aicitybuilders.com/season2-3', external:true},
+      {kind:'download', label:'EZER AI 다운로드',        url:'https://www.ezerai.xyz/download', external:true},
+      {kind:'folder',   label:'자료 폴더 (Google Drive)', url:'https://drive.google.com/drive/folders/1DTHZUhJA84e3C7l8TyA4cL52QP6SsjmF', external:true}
+    ] },
+  { cat:'season2', lec:'2-4강', emoji:'📙', title:'시즌2 · 4강',
     desc:'(제목 확인 필요) 시즌2 네 번째 강의.',
-    url:'https://www.aicitybuilders.com/season2-4' },
-  { cat:'season2', lec:'2-5강', sub:'강의', emoji:'📓', external:true,
-    title:'시즌2 · 5강',
+    resources:[ {kind:'page', label:'강의 페이지', url:'https://www.aicitybuilders.com/season2-4', external:true} ] },
+  { cat:'season2', lec:'2-5강', emoji:'📓', title:'시즌2 · 5강',
     desc:'(제목 확인 필요) 시즌2 다섯 번째 강의.',
-    url:'https://www.aicitybuilders.com/season2-5' },
-  { cat:'season2', lec:'2-6강', sub:'강의', emoji:'📔', external:true,
-    title:'시즌2 · 6강',
+    resources:[ {kind:'page', label:'강의 페이지', url:'https://www.aicitybuilders.com/season2-5', external:true} ] },
+  { cat:'season2', lec:'2-6강', emoji:'📔', title:'시즌2 · 6강',
     desc:'(제목 확인 필요) 시즌2 여섯 번째 강의.',
-    url:'https://www.aicitybuilders.com/season2-6' },
-  { cat:'season2', lec:'2-7강', sub:'AI 빌딩', emoji:'🏗️', external:true, status:'soon',
-    title:'시즌2 · 7강',
+    resources:[ {kind:'page', label:'강의 페이지', url:'https://www.aicitybuilders.com/season2-6', external:true} ] },
+  { cat:'season2', lec:'2-7강', emoji:'🏗️', title:'시즌2 · 7강', status:'soon',
     desc:'개별 공개 전 — AI 빌딩 허브로 연결.',
-    url:'https://www.aicitybuilders.com/aibuildings' },
-  { cat:'season2', lec:'2-8강', sub:'AI 빌딩', emoji:'🏗️', external:true, status:'soon',
-    title:'시즌2 · 8강',
+    resources:[ {kind:'page', label:'AI 빌딩 허브', url:'https://www.aicitybuilders.com/aibuildings', external:true, status:'soon'} ] },
+  { cat:'season2', lec:'2-8강', emoji:'🏗️', title:'시즌2 · 8강', status:'soon',
     desc:'개별 공개 전 — AI 빌딩 허브로 연결.',
-    url:'https://www.aicitybuilders.com/aibuildings' },
-  { cat:'season2', lec:'2-9강', sub:'AI 빌딩', emoji:'🏗️', external:true, status:'soon',
-    title:'시즌2 · 9강',
+    resources:[ {kind:'page', label:'AI 빌딩 허브', url:'https://www.aicitybuilders.com/aibuildings', external:true, status:'soon'} ] },
+  { cat:'season2', lec:'2-9강', emoji:'🏗️', title:'시즌2 · 9강', status:'soon',
     desc:'개별 공개 전 — AI 빌딩 허브로 연결.',
-    url:'https://www.aicitybuilders.com/aibuildings' },
-  { cat:'season2', lec:'2-10강', sub:'AI 빌딩', emoji:'🏗️', external:true, status:'soon',
-    title:'시즌2 · 10강',
+    resources:[ {kind:'page', label:'AI 빌딩 허브', url:'https://www.aicitybuilders.com/aibuildings', external:true, status:'soon'} ] },
+  { cat:'season2', lec:'2-10강', emoji:'🏗️', title:'시즌2 · 10강', status:'soon',
     desc:'개별 공개 전 — AI 빌딩 허브로 연결.',
-    url:'https://www.aicitybuilders.com/aibuildings' },
-  { cat:'season2', lec:'2-11강', sub:'AI 빌딩', emoji:'🏗️', external:true, status:'soon',
-    title:'시즌2 · 11강',
+    resources:[ {kind:'page', label:'AI 빌딩 허브', url:'https://www.aicitybuilders.com/aibuildings', external:true, status:'soon'} ] },
+  { cat:'season2', lec:'2-11강', emoji:'🏗️', title:'시즌2 · 11강', status:'soon',
     desc:'개별 공개 전 — AI 빌딩 허브로 연결.',
-    url:'https://www.aicitybuilders.com/aibuildings' },
-  { cat:'season2', lec:'2-12강', sub:'AI 빌딩', emoji:'🏗️', external:true, status:'soon',
-    title:'시즌2 · 12강',
+    resources:[ {kind:'page', label:'AI 빌딩 허브', url:'https://www.aicitybuilders.com/aibuildings', external:true, status:'soon'} ] },
+  { cat:'season2', lec:'2-12강', emoji:'🏗️', title:'시즌2 · 12강', status:'soon',
     desc:'개별 공개 전 — AI 빌딩 허브로 연결.',
-    url:'https://www.aicitybuilders.com/aibuildings' },
-  { cat:'season2', lec:'2-13강', sub:'AI 빌딩', emoji:'🏗️', external:true, status:'soon',
-    title:'시즌2 · 13강',
+    resources:[ {kind:'page', label:'AI 빌딩 허브', url:'https://www.aicitybuilders.com/aibuildings', external:true, status:'soon'} ] },
+  { cat:'season2', lec:'2-13강', emoji:'🏗️', title:'시즌2 · 13강', status:'soon',
     desc:'개별 공개 전 — AI 빌딩 허브로 연결.',
-    url:'https://www.aicitybuilders.com/aibuildings' },
+    resources:[ {kind:'page', label:'AI 빌딩 허브', url:'https://www.aicitybuilders.com/aibuildings', external:true, status:'soon'} ] },
 
   { cat:'basics', sub:'개념 실습', emoji:'🐣', status:'new', external:true,
     title:'다마AI — AI 원리를 키우며 배우기',
@@ -351,8 +357,11 @@ function buildChips(){
   });
 }
 
-/* --- 카드 한 장 --- */
+/* --- 카드 한 장 (resources 있으면 강의 카드, 없으면 링크 카드) --- */
+const RES_ICON = { page:'📄', video:'▶️', folder:'📁', download:'⬇️', link:'🔗' };
+
 function cardHTML(it){
+  if(it.resources) return lectureHTML(it);
   const badges = [];
   if(it.lec) badges.push(`<span class="badge lec">${it.lec}</span>`);
   if(it.status==='new') badges.push(`<span class="badge new">NEW</span>`);
@@ -368,6 +377,31 @@ function cardHTML(it){
     <p>${it.desc}</p>
     ${it.sub?`<div class="sub-tag">${it.sub}</div>`:''}
   </a>`;
+}
+
+/* --- 강의 카드: 헤더 + 자료 묶음 링크들 --- */
+function lectureHTML(it){
+  const badges = [`<span class="badge lec">${it.lec}</span>`];
+  if(it.status==='new') badges.push(`<span class="badge new">NEW</span>`);
+  if(it.status==='soon') badges.push(`<span class="badge soon">준비중</span>`);
+  const resLabels = it.resources.map(r=>r.label).join(' ');
+  const search = (it.lec+' '+it.title+' '+it.desc+' '+resLabels+' '+catMeta(it.cat).name).toLowerCase();
+  const res = it.resources.map(r=>{
+    const tgt = r.external ? ` target="_blank" rel="noopener"` : '';
+    const soon = r.status==='soon' ? ' soon' : '';
+    const ext = r.external ? `<span class="rext">↗</span>` : '';
+    const soonTag = r.status==='soon' ? `<span class="rsoon">준비중</span>` : '';
+    return `<a class="res${soon}" href="${r.url}"${tgt}><span class="ri">${RES_ICON[r.kind]||'🔗'}</span><span class="rl">${r.label}</span>${soonTag}${ext}</a>`;
+  }).join('');
+  return `<div class="card item lecture" data-search="${search}">
+    <div class="top">
+      <span class="cemoji">${it.emoji||'🎓'}</span>
+      <div class="badges">${badges.join('')}</div>
+    </div>
+    <h3>${it.title}</h3>
+    <p>${it.desc}</p>
+    <div class="reslist">${res}</div>
+  </div>`;
 }
 
 /* --- 전체 섹션 --- */
