@@ -1,113 +1,39 @@
-name: 실거래가 수집 (구리시)
+name: 실거래가 자동 갱신 (구리시)
 
-# 매주 월요일 새벽 + 수동 실행. DATA_GO_KR_KEY 시크릿이 있어야 동작합니다.
+# 매일 새벽 자동 + 수동 실행. DATA_GO_KR_KEY 시크릿이 있어야 동작합니다.
+# 갈매동 카드/홍보/비교(data/complexes.js) + 구리 표/분석(data/guri-complexes.js)을 재생성합니다.
 on:
   schedule:
-    - cron: '0 19 * * 0'   # UTC 일 19:00 = KST 월 04:00
+    - cron: '0 20 * * *'   # UTC 20:00 = KST 05:00 매일
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  collect:
+  build:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
-      - name: 실거래가 수집 → data/deals.json
+      - name: 실거래가 수집 → 화면 데이터 재생성
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
         run: |
           if [ -z "$DATA_GO_KR_KEY" ]; then
-            echo "::warning::DATA_GO_KR_KEY 시크릿이 없습니다. 공공데이터포털에서 서비스키를 발급받아 등록하세요. (건너뜀)"
+            echo "::warning::DATA_GO_KR_KEY 시크릿이 없습니다. 공공데이터포털에서 서비스키를 발급받아 저장소 Secret으로 등록하세요. (건너뜀)"
             exit 0
           fi
-          python3 - <<'PY'
-          import os, json, hashlib, urllib.request, urllib.parse, datetime
-          import xml.etree.ElementTree as ET
-
-          KEY = os.environ["DATA_GO_KR_KEY"]
-          LAWD = "41310"  # 구리시
-          BASE = "https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade"
-
-          # 구리시 법정동 대략 중심좌표 (위치는 동 단위 근사치)
-          DONG = {
-            "갈매동": (37.6412, 127.1206), "인창동": (37.6039, 127.1440),
-            "교문동": (37.5942, 127.1290), "수택동": (37.5906, 127.1450),
-            "토평동": (37.5820, 127.1550), "사노동": (37.6180, 127.1360),
-            "아천동": (37.5680, 127.1120),
-          }
-          DEFAULT = (37.5943, 127.1297)  # 구리시청 인근
-
-          def txt(item, *names):
-              for n in names:
-                  e = item.find(n)
-                  if e is not None and e.text:
-                      return e.text.strip()
-              return ""
-
-          def jitter(seed):
-              h = int(hashlib.md5(seed.encode()).hexdigest(), 16)
-              return ((h % 1000)/1000 - 0.5)*0.006, (((h//1000) % 1000)/1000 - 0.5)*0.006
-
-          # 최근 3개월
-          today = datetime.date.today()
-          months = []
-          y, m = today.year, today.month
-          for _ in range(3):
-              months.append(f"{y}{m:02d}")
-              m -= 1
-              if m == 0: y, m = y-1, 12
-
-          deals = []
-          for ym in months:
-              q = urllib.parse.urlencode({"serviceKey": KEY, "LAWD_CD": LAWD, "DEAL_YMD": ym, "numOfRows": "1000", "pageNo": "1"}, safe="%")
-              url = f"{BASE}?{q}"
-              try:
-                  with urllib.request.urlopen(url, timeout=30) as r:
-                      xml = r.read().decode("utf-8")
-                  root = ET.fromstring(xml)
-              except Exception as e:
-                  print(f"[{ym}] 요청/파싱 실패: {e}")
-                  continue
-              for item in root.iter("item"):
-                  amt = txt(item, "dealAmount", "거래금액").replace(",", "")
-                  if not amt.isdigit():
-                      continue
-                  dong = txt(item, "umdNm", "법정동")
-                  name = txt(item, "aptNm", "아파트")
-                  area = txt(item, "excluUseAr", "전용면적")
-                  fl   = txt(item, "floor", "층")
-                  yy   = txt(item, "dealYear", "년"); mm = txt(item, "dealMonth", "월"); dd = txt(item, "dealDay", "일")
-                  lat, lng = DONG.get(dong, DEFAULT)
-                  jl, jg = jitter(name + fl + amt)
-                  try: areaf = round(float(area))
-                  except: areaf = 0
-                  deals.append({
-                    "type": "매매", "dong": dong, "name": name,
-                    "price": int(amt), "rent": 0, "area": areaf,
-                    "floor": int(fl) if fl.isdigit() else fl,
-                    "date": f"{yy}-{int(mm):02d}-{int(dd):02d}" if yy and mm and dd else "",
-                    "lat": round(lat + jl, 6), "lng": round(lng + jg, 6),
-                  })
-
-          # 최신순 정렬, 최대 400건
-          deals.sort(key=lambda d: d["date"], reverse=True)
-          deals = deals[:400]
-          with open("data/deals.json", "w", encoding="utf-8") as f:
-              json.dump(deals, f, ensure_ascii=False, indent=1)
-          print(f"수집 완료: {len(deals)}건")
-          PY
+          python3 scripts/build_galmae_data.py
 
       - name: 변경 시 커밋
         run: |
-          if git diff --quiet -- data/deals.json; then
+          if git diff --quiet -- data/complexes.js data/guri-complexes.js; then
             echo "변경 없음"
           else
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add data/deals.json
-            git commit -m "실거래가 자동 갱신 (구리시)"
+            git add data/complexes.js data/guri-complexes.js
+            git commit -m "실거래가 자동 갱신 (구리시, 국토부 실거래가)"
             git push
           fi
