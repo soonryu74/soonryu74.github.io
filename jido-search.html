@@ -143,12 +143,12 @@
         </div>
       </div>
       <div class="fgrp">
-        <span class="lab">평형</span>
+        <span class="lab">평형 <span style="font-weight:600;color:#9aa7b4">· 공급 기준</span></span>
         <div class="pills" id="fArea">
           <span class="pill on" data-v="all">전체</span>
-          <span class="pill" data-v="0-66">소형 ~20평</span>
-          <span class="pill" data-v="66-99">중형 20~30평</span>
-          <span class="pill" data-v="99-999">대형 30평~</span>
+          <span class="pill" data-v="0-50">소형 ~20평</span>
+          <span class="pill" data-v="50-74">중형 20~30평</span>
+          <span class="pill" data-v="74-999">대형 30평~</span>
         </div>
       </div>
       <div class="fspacer"></div>
@@ -177,7 +177,8 @@ const TEL="0315754944", TELV="031-575-4944";
 function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; return (e?e+"억":"")+(r?(e?" ":"")+r.toLocaleString()+"만":"")||"0"; }
 function eokS(m){ return (m/10000).toFixed(1)+"억"; }
 function eokPin(m){ const e=m/10000; return (Math.round(e*10)%10===0? e.toFixed(0): e.toFixed(1))+"억"; }
-function pyeong(ar){ return ar? Math.round(ar/3.3058) : 0; }
+// 평형은 관례상 '공급면적' 기준. 데이터는 전용면적뿐이라 전용률 약 75%로 환산(전용㎡ ÷ 0.75 ÷ 3.3058)
+function pyeong(ar){ return ar? Math.round(ar/2.48) : 0; }
 
 /* ---------- 데이터 통합: 구리(157) + 별내 + 갈매동 road 보강 ---------- */
 const ROADMAP={}; (typeof COMPLEXES!=='undefined'?COMPLEXES:[]).forEach(c=>{ if(c.road) ROADMAP[c.name]=c.road; });
@@ -378,7 +379,7 @@ function render(){
     const c=document.createElement('div'); c.className='lcard'; c.dataset.name=d.name;
     c.innerHTML=`<div><span class="nm">${d.name}</span><span class="dg">${d.dong}</span></div>
       <div class="pr">${eok(d.price)}</div>
-      <div class="sub">최근 ${d.area?d.area+'㎡·':''}${d.floor?d.floor+'층·':''}${d.date?d.date.slice(2).replace(/-/g,'.'):''} · 시세 ${eokS(d.min)}~${eokS(d.max)}</div>
+      <div class="sub">최근 ${d.area?'전용 '+d.area+'㎡·':''}${d.floor?d.floor+'층·':''}${d.date?d.date.slice(2).replace(/-/g,'.'):''} · 시세 ${eokS(d.min)}~${eokS(d.max)}</div>
       <div class="chips">${d.buildYear?`<span class="chip">${d.buildYear}년</span>`:''}
         <span class="chip">거래 ${d.count}건</span>
         ${d.region==='by'?'<span class="chip by">별내</span>':''}</div>`;
@@ -399,7 +400,7 @@ function openPopup(d, p){
   const el=document.createElement('div'); el.className='iw';
   el.innerHTML='<span class="x" aria-label="닫기">✕</span>'
     +'<b class="t">'+d.name+'</b> <span style="color:#88919c">'+d.dong+'</span><br>'
-    +'최근 '+(d.area?d.area+'㎡·':'')+(d.floor?d.floor+'층 ':'')+'<span class="p">'+eok(d.price)+'</span><br>'
+    +'최근 '+(d.area?'전용 '+d.area+'㎡·':'')+(d.floor?d.floor+'층 ':'')+'<span class="p">'+eok(d.price)+'</span><br>'
     +'시세 '+eokS(d.min)+'~'+eokS(d.max)+' · 거래 '+d.count+'건<br>'
     +'<a href="tel:'+TEL+'">📞 문의 '+TELV+'</a>';
   el.querySelector('.x').addEventListener('click', closePopup);
