@@ -214,6 +214,7 @@ details.faq .a { padding: 12px 0; color: var(--ink); }
   h2 { font-size: 1.18rem; }
   .brand .tag { display: none; }
 }
+
 /* ===== 접근성 도구 (a11y.js) ===== */
 #a11y-fab{ position:fixed; right:16px; bottom:16px; z-index:9998; display:flex; align-items:center; gap:6px;
   background:#0e8a6b; color:#fff; border:2px solid #fff; border-radius:999px; padding:10px 14px;
@@ -250,3 +251,10 @@ html.a11y-contrast #a11y-panel, html.a11y-contrast #a11y-panel *{ background-col
 html.a11y-contrast #a11y-panel .a11y-big.on{ background:#0e8a6b; color:#fff; }
 
 .nav-badge{ font-size:.6rem; font-weight:800; background:#fdecec; color:#d63031; padding:1px 6px; border-radius:10px; vertical-align:middle; margin-left:1px; white-space:nowrap; }
+
+/* ===== 가이드(자료실) 2단 고정 서브메뉴 ===== */
+.guide-nav{ background:#eef3f8; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:20; }
+.guide-nav-inner{ max-width:1100px; margin:0 auto; display:flex; gap:4px; overflow-x:auto; padding:8px 12px; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+.guide-nav a{ white-space:nowrap; font-size:.85rem; font-weight:700; color:#4a5a6b; padding:6px 13px; border-radius:20px; text-decoration:none; flex:0 0 auto; }
+.guide-nav a:hover{ background:#dde6ef; text-decoration:none; }
+.guide-nav a.on{ background:#123a6b; color:#fff; }
