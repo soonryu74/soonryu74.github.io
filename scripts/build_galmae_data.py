@@ -15,7 +15,8 @@ import os, re, json, datetime, sys
 from collections import defaultdict, OrderedDict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LAWD = "41310"  # 구리시
+LAWD = "41310"      # 구리시
+NY_LAWD = "41360"   # 남양주시 (별내 추출용)
 BASE = "https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade"
 GALMAE = "갈매동"
 
@@ -37,7 +38,7 @@ def load_meta():
             if c.get("buildYear") and not m.get("buildYear"): m["buildYear"] = str(c["buildYear"])
     return meta
 
-def fetch_records(key):
+def fetch_records(key, lawd=LAWD, sgg_name="구리시"):
     import urllib.request, urllib.parse
     import xml.etree.ElementTree as ET
     def txt(item, *names):
@@ -53,7 +54,7 @@ def fetch_records(key):
         if m == 0: y, m = y-1, 12
     recs = []
     for ym in months:
-        q = urllib.parse.urlencode({"serviceKey": key, "LAWD_CD": LAWD, "DEAL_YMD": ym,
+        q = urllib.parse.urlencode({"serviceKey": key, "LAWD_CD": lawd, "DEAL_YMD": ym,
                                     "numOfRows": "1000", "pageNo": "1"}, safe="%")
         try:
             with urllib.request.urlopen(f"{BASE}?{q}", timeout=40) as r:
@@ -80,7 +81,7 @@ def fetch_records(key):
                 "date": f"{yy}-{int(mm):02d}-{int(dd):02d}",
                 "buildYear": txt(it, "buildYear", "건축년도"),
                 "gtype": txt(it, "dealingGbn") or "중개거래",
-                "road": (f"구리시 {txt(it,'umdNm')} {road_nm} {bonbun}".strip()
+                "road": (f"{sgg_name} {txt(it,'umdNm')} {road_nm} {bonbun}".strip()
                          if road_nm and bonbun else ""),
             })
     return recs
@@ -154,6 +155,11 @@ def write_js(guri, galmae):
         f.write("/* 갈매동 아파트 단지 실거래가(국토부 실거래가 공개시스템, 최근1년 매매) — 평형별 상세 포함 */\n")
         f.write("const COMPLEXES = " + json.dumps(galmae, ensure_ascii=False) + ";\n")
 
+def write_byeollae(byeollae):
+    with open(os.path.join(ROOT, "data/byeollae-complexes.js"), "w", encoding="utf-8") as f:
+        f.write("/* 남양주 별내 아파트 단지별 매매 실거래가 집계 (국토부 실거래가 공개시스템, 최근 1년) */\n")
+        f.write("const BYEOLLAE = " + json.dumps(byeollae, ensure_ascii=False) + ";\n")
+
 def main():
     meta = load_meta()
     local = os.environ.get("LOCAL_RECORDS")
@@ -161,14 +167,18 @@ def main():
         records = json.load(open(os.path.join(ROOT, local), encoding="utf-8"))
         records = [r for r in records if r.get("type", "매매") == "매매"]
         print(f"[local] {len(records)}건으로 검증")
+        ny_records = []
     else:
         key = os.environ.get("DATA_GO_KR_KEY")
         if not key:
             print("::warning::DATA_GO_KR_KEY 없음 — 건너뜀"); return 0
-        records = fetch_records(key)
-        print(f"[api] 수집 {len(records)}건")
+        records = fetch_records(key, LAWD, "구리시")
+        print(f"[api] 구리 수집 {len(records)}건")
         if len(records) < 100:
             print("::error::수집 결과가 너무 적어 파일을 갱신하지 않습니다(안전장치)."); return 1
+        ny_records = fetch_records(key, NY_LAWD, "남양주시")
+        print(f"[api] 남양주 수집 {len(ny_records)}건")
+
     guri, galmae = build(records, meta)
     if not local:
         gset = {d["dong"] for d in guri}
@@ -176,6 +186,15 @@ def main():
             print("::error::갈매동 데이터 부족 — 갱신 중단(안전장치)."); return 1
     write_js(guri, galmae)
     print(f"완료: 구리 {len(guri)}단지 / 갈매동 {len(galmae)}단지")
+
+    # 남양주 → 별내만 추출해서 별도 파일 (구리 스타일 목록)
+    byeollae_recs = [r for r in ny_records if "별내" in r.get("dong", "")]
+    if byeollae_recs:
+        byeollae, _ = build(byeollae_recs, meta)
+        write_byeollae(byeollae)
+        print(f"완료: 별내 {len(byeollae)}단지")
+    else:
+        print("별내 거래 없음/미수집 — byeollae 파일 유지")
     return 0
 
 if __name__ == "__main__":

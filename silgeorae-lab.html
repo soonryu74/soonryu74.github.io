@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>구리 아파트 실거래가 분석 (회복률·신고가·거래량) | 갈매역삼성부동산</title>
+<title>구리·별내 아파트 실거래가 분석 (회복률·신고가·거래량) | 갈매역삼성부동산</title>
 <meta name="description" content="국토교통부 실거래가로 보는 구리시 157개 아파트 단지 분석 — 전고점 회복률, 신고가, 거래량 랭킹. 갈매동 터줏대감 갈매역삼성부동산이 만든 우리 동네 실거래가 연구소.">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
@@ -11,6 +11,20 @@
   .lab-hero h1{ margin:0 0 8px; font-size:1.7rem; letter-spacing:-.03em; }
   .lab-hero p{ color:#e6f5ef; margin:4px auto; max-width:640px; font-size:.95rem; }
   .lab-hero .asof{ font-size:.82rem; color:#cfe7dd; margin-top:8px; }
+
+  /* 지역 전환 탭 (구리 초록 / 별내 보라) */
+  .region-tabs{ display:flex; gap:8px; margin:14px 0 4px; }
+  .region-tabs button{ flex:1; border:2px solid var(--line); background:#fff; padding:12px; border-radius:12px; font-weight:800; cursor:pointer; font-size:.95rem; color:var(--muted); }
+  .region-tabs button[data-region="guri"].on{ background:#0e8a6b; border-color:#0e8a6b; color:#fff; }
+  .region-tabs button[data-region="by"].on{ background:#6b3fa0; border-color:#6b3fa0; color:#fff; }
+  /* 별내 테마 = 보라 */
+  body.by .lab-hero{ background:linear-gradient(120deg,#6b3fa0,#3a2b6b); }
+  body.by .tabs button.on{ background:#6b3fa0; border-color:#6b3fa0; }
+  body.by .lc-brand{ color:#6b3fa0; }
+  body.by .lc-dong{ background:#efeaf7; color:#6b3fa0; }
+  body.by .lc-bar span{ border-color:#6b3fa0; }
+  .region-empty{ background:#f6f2fb; border:1px solid #e0d4f0; border-radius:14px; padding:26px 18px; text-align:center; color:#6b3fa0; }
+  .region-empty b{ display:block; font-size:1.1rem; margin-bottom:4px; }
 
   .hl-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0; }
   @media(max-width:640px){ .hl-row{ grid-template-columns:1fr; } }
@@ -65,13 +79,18 @@
 </header>
 
 <section class="lab-hero">
-  <h1>🔬 구리 아파트 실거래가 분석</h1>
-  <p>국토교통부 <strong>실거래가</strong>로 보는 구리시 아파트 — <strong>전고점 회복률·신고가·거래량</strong>을 한눈에.</p>
+  <h1 id="labTitle">🔬 구리 아파트 실거래가 분석</h1>
+  <p>국토교통부 <strong>실거래가</strong>로 보는 <strong>전고점 회복률·신고가·거래량</strong>을 한눈에.</p>
   <p style="font-size:.86rem">🏢 갈매역삼성부동산이 만든 우리 동네 실거래가 연구소</p>
   <div class="asof" id="asof"></div>
 </section>
 
 <main class="wrap">
+
+  <div class="region-tabs" id="regionTabs">
+    <button data-region="guri" class="on">🟢 구리 (갈매·인창·교문·수택·토평)</button>
+    <button data-region="by">🟣 남양주 별내</button>
+  </div>
 
   <div class="callout tip">
     <span class="t">💡 이렇게 읽으세요</span>
@@ -120,39 +139,60 @@
 </footer>
 
 <script src="data/guri-complexes.js"></script>
+<script src="data/byeollae-complexes.js"></script>
 <script>
 function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; return (e?e+"억":"")+(r?(e?" ":"")+r.toLocaleString()+"만":"")||"0"; }
 function eokS(m){ return (m/10000).toFixed(1)+"억"; }
 const TEL="0315754944";
-const RAW=(typeof GURI!=='undefined')?GURI:[];
-// 파생지표 계산: 회복률(recover), 신고가 여부
-const DATA=RAW.map(d=>{
+function derive(raw){ return (raw||[]).map(d=>{
   const la=d.latest||{};
   const recover=d.max? Math.round(la.price/d.max*100):0;
-  const singo = la.price>=d.max;               // 최근 실거래가 = 수집기간 최고가
-  return {...d, recover, singo, lp:la.price||0, ld:la.date||'', larea:la.area||'', lfloor:la.floor||''};
-});
+  return {...d, recover, singo:(la.price>=d.max), lp:la.price||0, ld:la.date||'', larea:la.area||'', lfloor:la.floor||''};
+}); }
+const REGIONS={
+  guri:{ data:derive((typeof GURI!=='undefined')?GURI:[]), title:'🔬 구리 아파트 실거래가 분석', label:'구리시' },
+  by:  { data:derive((typeof BYEOLLAE!=='undefined')?BYEOLLAE:[]), title:'🔬 남양주 별내 아파트 실거래가 분석', label:'남양주 별내' }
+};
+let region='guri', DATA=REGIONS.guri.data;
 
-// 데이터 기준일 = 가장 최근 거래일
-const asof=DATA.map(d=>d.ld).filter(Boolean).sort().slice(-1)[0]||'';
-document.getElementById('asof').textContent = `데이터 기준일 ${asof} · 구리시 ${DATA.length}개 단지 · 최근 1년 매매`;
-
-// 하이라이트
 function hlCard(cls,cap,d,extra){ return `<div class="hl ${cls}"><span class="cap">${cap}</span>
   <b>${d.name}</b><span class="s">${d.dong} · 준공 ${d.buildYear||'-'}</span>
   <div style="margin-top:6px" class="v">${extra}</div></div>`; }
-const topRecover=DATA.filter(d=>d.count>=5).slice().sort((a,b)=>b.recover-a.recover)[0];
-const topCnt=DATA.slice().sort((a,b)=>b.count-a.count)[0];
-const recentSin=DATA.filter(d=>d.singo).slice().sort((a,b)=>(b.ld||'').localeCompare(a.ld||''))[0];
-document.getElementById('highlights').innerHTML =
-  (recentSin?hlCard('a','🔺 최근 신고가',recentSin,`${eok(recentSin.lp)} <span class="s">(${recentSin.larea}㎡·${recentSin.ld})</span>`):'')
-+ (topCnt?hlCard('c','🔥 최다 거래',topCnt,`최근 1년 <b class="v">${topCnt.count}건</b> <span class="s">· ${eokS(topCnt.min)}~${eokS(topCnt.max)}</span>`):'')
-+ (topRecover?hlCard('b','📈 회복률 1위',topRecover,`전고점 대비 <b class="v">${topRecover.recover}%</b> <span class="s">· ${eok(topRecover.lp)}</span>`):'');
 
-// 필터/정렬/렌더
 const dongF=document.getElementById('dongF'), q=document.getElementById('q'), grid=document.getElementById('grid'), cnt=document.getElementById('cnt');
-[...new Set(DATA.map(d=>d.dong))].sort().forEach(dg=>{ const o=document.createElement('option'); o.value=dg; o.textContent=dg; dongF.appendChild(o); });
 let sortKey='cnt', shown=24;
+
+function renderHighlights(){
+  const topRecover=DATA.filter(d=>d.count>=5).slice().sort((a,b)=>b.recover-a.recover)[0];
+  const topCnt=DATA.slice().sort((a,b)=>b.count-a.count)[0];
+  const recentSin=DATA.filter(d=>d.singo).slice().sort((a,b)=>(b.ld||'').localeCompare(a.ld||''))[0];
+  document.getElementById('highlights').innerHTML =
+    (recentSin?hlCard('a','🔺 최근 신고가',recentSin,`${eok(recentSin.lp)} <span class="s">(${recentSin.larea}㎡·${recentSin.ld})</span>`):'')
+  + (topCnt?hlCard('c','🔥 최다 거래',topCnt,`최근 1년 <b class="v">${topCnt.count}건</b> <span class="s">· ${eokS(topCnt.min)}~${eokS(topCnt.max)}</span>`):'')
+  + (topRecover?hlCard('b','📈 회복률 1위',topRecover,`전고점 대비 <b class="v">${topRecover.recover}%</b> <span class="s">· ${eok(topRecover.lp)}</span>`):'');
+}
+function fillDong(){
+  dongF.innerHTML='<option value="">전체 동</option>';
+  [...new Set(DATA.map(d=>d.dong))].sort().forEach(dg=>{ const o=document.createElement('option'); o.value=dg; o.textContent=dg; dongF.appendChild(o); });
+}
+function applyRegion(r){
+  region=r; DATA=REGIONS[r].data; shown=24; dongF.value=''; q.value='';
+  document.body.classList.toggle('by', r==='by');
+  document.getElementById('labTitle').textContent=REGIONS[r].title;
+  document.querySelectorAll('#regionTabs button').forEach(b=>b.classList.toggle('on', b.dataset.region===r));
+  const asof=DATA.map(d=>d.ld).filter(Boolean).sort().slice(-1)[0]||'';
+  const empty = DATA.length===0;
+  document.getElementById('asof').textContent = empty ? '' : `데이터 기준일 ${asof} · ${REGIONS[r].label} ${DATA.length}개 단지 · 최근 1년 매매`;
+  // 별내 데이터 아직 없을 때 안내
+  const hl=document.getElementById('highlights');
+  if(empty){
+    hl.innerHTML='';
+    grid.innerHTML='<div class="region-empty"><b>별내 실거래가 수집 준비 중</b>매일 새벽 자동으로 별내(남양주) 실거래가가 채워집니다. 잠시만 기다려 주세요.<br><span style="font-size:.86rem">별내 매물·시세 문의 ☎ 031-575-4944</span></div>';
+    cnt.textContent=''; document.getElementById('moreWrap').style.display='none';
+    return;
+  }
+  fillDong(); renderHighlights(); render();
+}
 
 function sorted(rows){
   const s=sortKey;
@@ -171,6 +211,7 @@ function card(d){
   </div>`;
 }
 function render(){
+  if(!DATA.length) return;
   let rows=DATA.filter(d=> (!dongF.value||d.dong===dongF.value) && (!q.value||d.name.includes(q.value.trim())) );
   rows=sorted(rows);
   cnt.textContent=`${rows.length}개 단지`;
@@ -184,7 +225,8 @@ document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',
 dongF.addEventListener('change',()=>{shown=24;render()});
 q.addEventListener('input',()=>{shown=24;render()});
 document.getElementById('moreBtn').addEventListener('click',()=>{ shown+=24; render(); });
-render();
+document.querySelectorAll('#regionTabs button').forEach(b=>b.addEventListener('click',()=>applyRegion(b.dataset.region)));
+applyRegion('guri');
 </script>
 </body>
 </html>
