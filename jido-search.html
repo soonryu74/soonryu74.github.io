@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>지도로 찾기 — 구리·별내 아파트 시세 지도 | 갈매역삼성부동산</title>
-<meta name="description" content="지도 위에서 바로 찾는 구리·별내 아파트 실거래 시세. 지역·가격대·평형으로 좁혀보고, 핀을 누르면 최근 실거래가가 나옵니다. 갈매역삼성부동산.">
+<title>구리·갈매 아파트 시세 지도 (지도로 찾기) | 갈매역삼성부동산</title>
+<meta name="description" content="지도 위에서 바로 찾는 구리·갈매 아파트 실거래 시세. 가격대·평형으로 좁혀보고, 핀을 누르면 최근 실거래가가 나옵니다. 남양주 별내는 상단 메뉴에서. 갈매역삼성부동산.">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
   :root{ --map-h: 62vh; }
@@ -83,6 +83,12 @@
   .iw::after{ content:""; position:absolute; left:50%; bottom:-8px; transform:translateX(-50%);
     border:8px solid transparent; border-top-color:#fff; }
 
+  /* 남양주 별내 = 보라 테마 */
+  body.by-page .pill.on{ background:#6b3fa0; border-color:#6b3fa0; }
+  body.by-page .fcount b{ color:#6b3fa0; }
+  body.by-page .lcard.active{ border-color:#6b3fa0; box-shadow:0 0 0 2px rgba(107,63,160,.15); }
+  body.by-page .jido-head h1{ color:#6b3fa0; }
+
   @media(max-width:820px){
     :root{ --map-h: 52vh; }
     .jido-main{ grid-template-columns:1fr; }
@@ -97,8 +103,8 @@
   <div class="nav-inner">
     <a class="brand" href="budongsan.html">🏢 갈매동 부동산 <span class="tag">갈매역삼성부동산</span></a>
     <nav class="site-nav">
-      <a href="galmae.html">갈매동 시세</a>
-      <a href="jido-search.html" class="active">지도로 찾기</a>
+      <a href="jido-search.html" data-nav="guri">구리·갈매</a>
+      <a href="jido-search.html?region=by" data-nav="by">남양주 별내</a>
       <a href="insight.html">실거래 인사이트</a>
       <a href="silgeorae-lab.html">실거래가 분석</a>
       <a href="store.html">매물</a>
@@ -109,8 +115,9 @@
 
 <div class="jido-wrap">
   <div class="jido-head">
-    <h1>🗺️ 지도로 찾기</h1>
-    <p>지도 위에서 바로 고르세요. 지역·가격대·평형으로 좁히면 딱 맞는 단지만 남습니다. 핀을 누르면 최근 실거래가가 나옵니다.</p>
+    <h1 id="jTitle">🗺️ 지도로 찾기</h1>
+    <p id="jDesc">지도 위에서 바로 고르세요. 가격대·평형으로 좁히면 딱 맞는 단지만 남습니다. 핀을 누르면 최근 실거래가가 나옵니다.</p>
+    <div id="galmaeLink" style="margin-top:8px"><a href="galmae.html" style="display:inline-block;background:#eef4fb;color:#123a6b;font-weight:800;font-size:.86rem;padding:8px 14px;border-radius:20px;text-decoration:none">📖 갈매동 단지 상세 · 동네 이야기 →</a></div>
   </div>
 
   <div class="filters">
@@ -190,19 +197,27 @@ DATA = DATA.filter(d=>{ const k=d.region+'|'+d.dong+'|'+d.name; if(seen.has(k))r
 // 원룸형(도시형생활주택·오피스텔) 제외 — 전용 10평(33㎡) 이상 세대가 있는 '아파트'만
 DATA = DATA.filter(d=>{ const a=(d.areas&&d.areas.length)?d.areas:[d.area]; return Math.max(...a) >= 33; });
 
-/* 지역 필터 옵션: 전체 / 갈매동 / 구리 그 외 / 별내(있으면) */
-const hasBy = DATA.some(d=>d.region==='by');
-const regionOpts=[{v:'all',t:'전체'},{v:'galmae',t:'갈매동'},{v:'guri',t:'구리 그 외'}];
-if(hasBy) regionOpts.push({v:'by',t:'별내 🟣'});
+/* 이 페이지가 다루는 지역: ?region=by 면 남양주 별내, 아니면 구리·갈매 */
+const REGION = /[?&]region=by/.test(location.search) ? 'by' : 'guri';
+if(REGION==='by') document.body.classList.add('by-page');
+DATA = DATA.filter(d => REGION==='by' ? d.region==='by' : d.region==='guri');
 
+/* 지역(동) 필터 옵션 */
+let regionOpts;
+if(REGION==='by'){
+  const dongs=[...new Set(DATA.map(d=>d.dong))].sort();
+  regionOpts=[{v:'all',t:'전체'}].concat(dongs.map(dg=>({v:'dong:'+dg,t:dg})));
+} else {
+  regionOpts=[{v:'all',t:'전체'},{v:'galmae',t:'갈매동'},{v:'guri',t:'구리 그 외'}];
+}
 const F={region:'all', price:'all', area:'all'};
 
 function inRange(v,spec){ if(spec==='all')return true; const [a,b]=spec.split('-').map(Number); return v>=a && v<b; }
 function matchRegion(d){
   if(F.region==='all') return true;
-  if(F.region==='galmae') return d.region==='guri' && d.dong==='갈매동';
-  if(F.region==='guri') return d.region==='guri' && d.dong!=='갈매동';
-  if(F.region==='by') return d.region==='by';
+  if(F.region==='galmae') return d.dong==='갈매동';
+  if(F.region==='guri') return d.dong!=='갈매동';
+  if(F.region.indexOf('dong:')===0) return d.dong===F.region.slice(5);
   return true;
 }
 function matchArea(d){ if(F.area==='all')return true;
@@ -211,6 +226,20 @@ function filtered(){
   return DATA.filter(d=> matchRegion(d) && inRange(d.price,F.price) && matchArea(d))
              .sort((a,b)=> b.count-a.count);
 }
+
+/* 지역별 제목·테마·메뉴 강조 */
+(function(){
+  const t=document.getElementById('jTitle'), ds=document.getElementById('jDesc'), gl=document.getElementById('galmaeLink');
+  if(REGION==='by'){
+    if(t) t.textContent='🟣 남양주 별내 시세';
+    if(ds) ds.textContent='별내 아파트를 지도에서 바로. 가격대·평형으로 좁혀보세요. 핀을 누르면 최근 실거래가가 나옵니다.';
+    if(gl) gl.style.display='none';
+    document.title='남양주 별내 아파트 시세 지도 | 갈매역삼성부동산';
+  } else {
+    if(t) t.textContent='🏠 구리·갈매 시세';
+  }
+  const nav=document.querySelector('[data-nav="'+REGION+'"]'); if(nav) nav.classList.add('active');
+})();
 
 /* ---------- 필터 UI ---------- */
 const fRegionEl=document.getElementById('fRegion');
