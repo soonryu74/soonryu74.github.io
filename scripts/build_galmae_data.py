@@ -132,15 +132,15 @@ def build(records, meta):
         m = meta.get(name, {})
         by_year = (m.get("buildYear")
                    or next((r["buildYear"] for r in recs if r.get("buildYear")), "") or "")
-        latest_min = {"price": latest["price"], "area": latest["area"],
-                      "floor": latest["floor"], "date": latest["date"]}
-        # 구리 전체(표/분석용) — 핵심 필드
+        # 도로명주소 — 지도 핀을 이름검색이 아닌 '정확한 주소'로 찍기 위함
+        road = m.get("road") or next((r["road"] for r in recs if r.get("road")), "")
+        # 구리 전체(표/분석·지도용) — 핵심 필드 + 주소
         guri.append(OrderedDict([
             ("dong", dong), ("name", name), ("count", len(recs)),
             ("min", mn["price"]), ("max", mx["price"]),
             ("latest", OrderedDict([("price", latest["price"]), ("area", latest["area"]),
                                     ("floor", latest["floor"]), ("date", latest["date"])])),
-            ("areas", areas), ("buildYear", by_year),
+            ("areas", areas), ("buildYear", by_year), ("road", road),
         ]))
         # 갈매동(카드/홍보/비교용) — 상세 필드
         if dong == GALMAE:
