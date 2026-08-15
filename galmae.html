@@ -39,6 +39,7 @@
   .ap-badge{ margin-left:auto; font-size:.73rem; font-weight:800; padding:3px 9px; border-radius:20px; }
   .ap-badge.hot{ background:#fdecec; color:#d63031; } .ap-badge.mid{ background:#eef7f0; color:#0e8a6b; } .ap-badge.low{ background:#f0f2f5; color:#6b7684; }
   .ap-info{ color:var(--muted); font-size:.82rem; margin:5px 0 12px; }
+  .ap-brand{ font-size:.68rem; font-weight:800; color:#0e8a6b; letter-spacing:.02em; margin:0 0 7px; padding-bottom:6px; border-bottom:1px solid #eef1f5; }
   .ap-price{ font-size:1.72rem; font-weight:800; color:#111; letter-spacing:-.02em; line-height:1.1; }
   .ap-deal{ color:#5b6b7b; font-size:.82rem; margin-top:5px; }
   /* 최저~최고 가격 바 */
@@ -285,6 +286,7 @@ function posPct(cur,min,max){ if(max<=min) return 100; return Math.max(0,Math.mi
 
   const card=document.createElement('div'); card.className='ap-card';
   card.innerHTML=`
+    <div class="ap-brand">🏢 갈매역삼성부동산</div>
     <div class="ap-top">
       <h3>${c.name}</h3><span class="ap-type">아파트</span>
       <span class="ap-badge ${bd.cls}">${bd.txt}</span>

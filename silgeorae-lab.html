@@ -28,6 +28,7 @@
   .filt .cnt{ margin-left:auto; color:var(--muted); font-size:.88rem; }
 
   .lab-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; margin:10px 0; }
+  .lc-brand{ font-size:.66rem; font-weight:800; color:#0e8a6b; letter-spacing:.02em; margin:0 0 7px; padding-bottom:6px; border-bottom:1px solid #eef1f5; }
   .lc{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 15px; box-shadow:var(--shadow); }
   .lc-top{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
   .lc-top h3{ margin:0; font-size:1.06rem; color:#1a2b45; }
@@ -159,6 +160,7 @@ function sorted(rows){
 }
 function card(d){
   return `<div class="lc">
+    <div class="lc-brand">🏢 갈매역삼성부동산</div>
     <div class="lc-top"><h3>${d.name}</h3><span class="lc-dong">${d.dong}</span>${d.singo?'<span class="lc-sin">🔺 신고가</span>':''}</div>
     <div class="lc-info">준공 ${d.buildYear||'-'} · 전용 ${(d.areas||[]).join('·')}㎡</div>
     <div class="lc-price">${eok(d.lp)} <small>최근 실거래 · ${d.larea}㎡ ${d.lfloor}층 · ${d.ld}</small></div>

@@ -27,7 +27,8 @@
   .hot-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
   @media(max-width:640px){ .hot-row{ grid-template-columns:1fr; } }
   .hot{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 15px; box-shadow:var(--shadow); }
-  .hot .rk{ font-size:.74rem; font-weight:800; color:#d63031; } .hot b{ display:block; color:var(--navy); margin:4px 0 2px; }
+  .hot .rk{ font-size:.74rem; font-weight:800; color:#d63031; }
+  .hot .brand{ font-size:.64rem; font-weight:800; color:#0e8a6b; letter-spacing:.02em; margin-bottom:4px; } .hot b{ display:block; color:var(--navy); margin:4px 0 2px; }
   .hot .s{ color:var(--muted); font-size:.84rem; }
   .cal{ background:#f2f7f4; border:1px solid #cfe6da; border-radius:12px; padding:16px 18px; }
   .cal b.t{ color:#0e8a6b; display:block; margin-bottom:6px; } .cal ul{ margin:0; padding-left:18px; } .cal li{ margin:4px 0; }
@@ -118,7 +119,7 @@ document.getElementById('recent').innerHTML = recent.map(d=>`
 // 거래 활발 단지 TOP3
 const hot=CX.slice().sort((a,b)=>(b.recent3m||0)-(a.recent3m||0)).slice(0,3);
 document.getElementById('hot').innerHTML = hot.map((c,i)=>`
-  <div class="hot"><span class="rk">${i+1}위 · 최근 3개월 ${c.recent3m||0}건</span>
+  <div class="hot"><div class="brand">🏢 갈매역삼성부동산</div><span class="rk">${i+1}위 · 최근 3개월 ${c.recent3m||0}건</span>
     <b>${c.name}</b><span class="s">시세 ${eokS(c.min)}~${eokS(c.max)} · 최근 ${eok(c.latest.price)}</span></div>`).join('');
 
 // 신고가 단지
