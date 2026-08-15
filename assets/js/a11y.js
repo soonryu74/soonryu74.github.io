@@ -97,8 +97,6 @@
       +     '<button id="a11y-plus" type="button" aria-label="크게">+</button>'
       +     '<button id="a11y-rst" type="button" class="a11y-mini">기본</button>'
       +   '</div></div>'
-      + '<div class="a11y-row"><button id="a11y-read" type="button" class="a11y-big" aria-pressed="false">🔊 소리내어 읽기</button>'
-      +   '<div class="a11y-hint">읽고 싶은 부분을 손가락으로 드래그해 선택하면 그 부분만 읽어드려요. 선택 안 하면 페이지 전체를 읽습니다.</div></div>'
       + '<div class="a11y-row"><button id="a11y-hc" type="button" class="a11y-big" aria-pressed="false">🌗 고대비 화면</button></div>';
 
     document.body.appendChild(fab);
@@ -111,14 +109,11 @@
     document.getElementById('a11y-plus').addEventListener('click', zoomIn);
     document.getElementById('a11y-minus').addEventListener('click', zoomOut);
     document.getElementById('a11y-rst').addEventListener('click', zoomReset);
-    document.getElementById('a11y-read').addEventListener('click', toggleSpeak);
     document.getElementById('a11y-hc').addEventListener('click', toggleContrast);
-    document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ close(); if(speaking) stopSpeak(); } });
-    window.addEventListener('beforeunload', stopSpeak);
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
 
     // 저장된 설정 반영
     applyZoom(); applyContrast();
-    if(synth && synth.onvoiceschanged===null){ synth.onvoiceschanged=function(){}; }
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', build);
