@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>갈매동 실거래가 인사이트 (매일 업데이트) | 갈매역삼성부동산</title>
+<title>구리·별내 실거래 인사이트 (매일 업데이트) | 갈매역삼성부동산</title>
 <meta name="description" content="국토교통부 실거래가로 매일 업데이트되는 갈매동 아파트 시세 인사이트 — 최근 실거래, 거래 활발 단지, 신고가, 이달의 부동산 캘린더. 갈매역삼성부동산.">
 <meta property="og:title" content="갈매동 실거래가 인사이트">
 <meta property="og:description" content="매일 업데이트되는 갈매동 실거래가 소식과 이달의 부동산 캘린더.">
@@ -51,8 +51,8 @@
 </header>
 
 <section class="ins-hero">
-  <h1>📰 갈매동 실거래가 인사이트</h1>
-  <p>국토교통부 실거래가로 정리한 갈매동 아파트 소식. 투자·이사 타이밍에 참고하세요.</p>
+  <h1>📰 구리·별내 실거래 인사이트</h1>
+  <p>국토교통부 실거래가로 정리한 갈매동·별내 아파트 소식. 투자·이사 타이밍에 참고하세요.</p>
   <div class="live"><span class="dot"></span> <span id="liveTxt">매일 업데이트</span></div>
 </section>
 
@@ -100,20 +100,24 @@
 </footer>
 
 <script src="data/complexes.js"></script>
+<script src="data/byeollae-complexes.js"></script>
 <script>
 function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; return (e?e+"억":"")+(r?(e?" ":"")+r.toLocaleString()+"만":"")||"0"; }
 function eokS(m){ return (m/10000).toFixed(1)+"억"; }
 function md(d){ return d? (+d.slice(5,7))+"월 "+(+d.slice(8,10))+"일" : ''; }
-const CX=(typeof COMPLEXES!=='undefined')?COMPLEXES.slice():[];
+const CX=[
+  ...((typeof COMPLEXES!=='undefined')?COMPLEXES:[]).map(c=>({...c,_area:'갈매동'})),
+  ...((typeof BYEOLLAE!=='undefined')?BYEOLLAE:[]).map(c=>({...c,_area:(c.dong||'별내')}))
+];
 
 // 데이터 기준일
 const asof=CX.map(c=>c.latest&&c.latest.date).filter(Boolean).sort().slice(-1)[0]||'';
 document.getElementById('asof').textContent = asof? `· 데이터 기준일 ${asof}` : '';
 
 // 최근 실거래(단지별 최신 거래를 날짜순)
-const recent=CX.map(c=>({name:c.name, ...c.latest, singo:(c.highPct>=100)})).sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,6);
+const recent=CX.map(c=>({name:c.name, _area:c._area, ...c.latest, singo:(c.highPct>=100)})).sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,8);
 document.getElementById('recent').innerHTML = recent.map(d=>`
-  <li><span><span class="nm">${d.name}</span>${d.singo?'<span class="sin">신고가</span>':''}<br><span class="meta">${d.area}㎡ · ${d.floor}층 · ${md(d.date)}</span></span>
+  <li><span><span class="nm">${d.name}</span>${d._area&&d._area!=='갈매동'?'<span class="sin" style="background:#efeaf7;color:#6b3fa0">'+d._area+'</span>':''}${d.singo?'<span class="sin">신고가</span>':''}<br><span class="meta">${d.area}㎡ · ${d.floor}층 · ${md(d.date)}</span></span>
     <span class="pr">${eok(d.price)}</span></li>`).join('');
 
 // 거래 활발 단지 TOP3

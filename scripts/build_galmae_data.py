@@ -118,6 +118,45 @@ def agg_common(recs):
     latest = max(recs, key=lambda r: r["date"])
     return by_area, mn, mx, latest
 
+def rich_card(dong, name, recs, meta, cutoff):
+    """카드/상세용 풍부한 단지 데이터(평형별·최저최고·회복률·도로명 포함)."""
+    by_area, mn, mx, latest = agg_common(recs)
+    areas = sorted(by_area.keys())
+    m = meta.get(name, {})
+    by_year = (m.get("buildYear") or next((r["buildYear"] for r in recs if r.get("buildYear")), "") or "")
+    road = m.get("road") or next((r["road"] for r in recs if r.get("road")), "")
+    recent3m = sum(1 for r in recs if r["date"] >= cutoff)
+    byArea = []
+    for a in areas:
+        ar = by_area[a]
+        amn = min(ar, key=lambda r: r["price"]); amx = max(ar, key=lambda r: r["price"])
+        alat = max(ar, key=lambda r: r["date"])
+        byArea.append(OrderedDict([("area", a), ("n", len(ar)),
+            ("min", amn["price"]), ("max", amx["price"]),
+            ("lp", alat["price"]), ("lf", alat["floor"]), ("ld", alat["date"])]))
+    return OrderedDict([
+        ("name", name), ("dong", dong), ("buildYear", by_year), ("areas", areas), ("road", road),
+        ("count", len(recs)), ("recent3m", recent3m),
+        ("min", mn["price"]), ("minDate", mn["date"]),
+        ("max", mx["price"]), ("maxDate", mx["date"]),
+        ("highPct", round(latest["price"] / mx["price"] * 100) if mx["price"] else 0),
+        ("latest", OrderedDict([("area", latest["area"]), ("floor", latest["floor"]),
+            ("price", latest["price"]), ("date", latest["date"]),
+            ("gtype", latest.get("gtype", "중개거래"))])),
+        ("byArea", byArea),
+    ])
+
+def build_rich(records, meta):
+    """별내 등 특정 지역 전체를 카드/상세용 풍부한 데이터로."""
+    cutoff = (datetime.date.today() - datetime.timedelta(days=92)).isoformat()
+    groups = defaultdict(list)
+    for r in records:
+        if r["name"] and r["price"] > 0:
+            groups[(r["dong"], r["name"])].append(r)
+    out = [rich_card(dong, name, recs, meta, cutoff) for (dong, name), recs in groups.items()]
+    out.sort(key=lambda d: -d["count"])
+    return out
+
 def build(records, meta):
     cutoff = (datetime.date.today() - datetime.timedelta(days=92)).isoformat()
     groups = defaultdict(list)
@@ -144,27 +183,7 @@ def build(records, meta):
         ]))
         # 갈매동(카드/홍보/비교용) — 상세 필드
         if dong == GALMAE:
-            recent3m = sum(1 for r in recs if r["date"] >= cutoff)
-            byArea = []
-            for a in areas:
-                ar = by_area[a]
-                amn = min(ar, key=lambda r: r["price"]); amx = max(ar, key=lambda r: r["price"])
-                alat = max(ar, key=lambda r: r["date"])
-                byArea.append(OrderedDict([("area", a), ("n", len(ar)),
-                    ("min", amn["price"]), ("max", amx["price"]),
-                    ("lp", alat["price"]), ("lf", alat["floor"]), ("ld", alat["date"])]))
-            road = m.get("road") or next((r["road"] for r in recs if r.get("road")), "")
-            galmae.append(OrderedDict([
-                ("name", name), ("buildYear", by_year), ("areas", areas), ("road", road),
-                ("count", len(recs)), ("recent3m", recent3m),
-                ("min", mn["price"]), ("minDate", mn["date"]),
-                ("max", mx["price"]), ("maxDate", mx["date"]),
-                ("highPct", round(latest["price"] / mx["price"] * 100) if mx["price"] else 0),
-                ("latest", OrderedDict([("area", latest["area"]), ("floor", latest["floor"]),
-                    ("price", latest["price"]), ("date", latest["date"]),
-                    ("gtype", latest.get("gtype", "중개거래"))])),
-                ("byArea", byArea),
-            ]))
+            galmae.append(rich_card(dong, name, recs, meta, cutoff))
 
     guri.sort(key=lambda d: -d["count"])
     galmae.sort(key=lambda d: -d["count"])
@@ -213,7 +232,7 @@ def main():
     # 남양주 → 별내만 추출해서 별도 파일 (구리 스타일 목록)
     byeollae_recs = [r for r in ny_records if "별내" in r.get("dong", "")]
     if byeollae_recs:
-        byeollae, _ = build(byeollae_recs, meta)
+        byeollae = build_rich(byeollae_recs, meta)
         write_byeollae(byeollae)
         print(f"완료: 별내 {len(byeollae)}단지")
     else:
