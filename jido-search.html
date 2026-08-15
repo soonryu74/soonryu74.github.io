@@ -118,6 +118,7 @@
     <h1 id="jTitle">🗺️ 지도로 찾기</h1>
     <p id="jDesc">지도 위에서 바로 고르세요. 가격대·평형으로 좁히면 딱 맞는 단지만 남습니다. 핀을 누르면 최근 실거래가가 나옵니다.</p>
     <div id="galmaeLink" style="margin-top:8px"><a href="galmae.html" style="display:inline-block;background:#eef4fb;color:#123a6b;font-weight:800;font-size:.86rem;padding:8px 14px;border-radius:20px;text-decoration:none">📖 갈매동 단지 상세 · 동네 이야기 →</a></div>
+    <div id="byeollaeLink" style="margin-top:8px;display:none"><a href="byeollae.html" style="display:inline-block;background:#efeaf7;color:#6b3fa0;font-weight:800;font-size:.86rem;padding:8px 14px;border-radius:20px;text-decoration:none">📖 별내 단지 상세 · 동네 이야기 →</a></div>
   </div>
 
   <div class="filters">
@@ -229,14 +230,17 @@ function filtered(){
 
 /* 지역별 제목·테마·메뉴 강조 */
 (function(){
-  const t=document.getElementById('jTitle'), ds=document.getElementById('jDesc'), gl=document.getElementById('galmaeLink');
+  const t=document.getElementById('jTitle'), ds=document.getElementById('jDesc'),
+        gl=document.getElementById('galmaeLink'), bl=document.getElementById('byeollaeLink');
   if(REGION==='by'){
     if(t) t.textContent='🟣 남양주 별내 시세';
     if(ds) ds.textContent='별내 아파트를 지도에서 바로. 가격대·평형으로 좁혀보세요. 핀을 누르면 최근 실거래가가 나옵니다.';
     if(gl) gl.style.display='none';
+    if(bl) bl.style.display='';
     document.title='남양주 별내 아파트 시세 지도 | 갈매역삼성부동산';
   } else {
     if(t) t.textContent='🏠 구리·갈매 시세';
+    if(bl) bl.style.display='none';
   }
   const nav=document.querySelector('[data-nav="'+REGION+'"]'); if(nav) nav.classList.add('active');
 })();
