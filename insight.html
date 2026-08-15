@@ -152,5 +152,6 @@ const m=(new Date()).getMonth()+1;
 const tips=(CAL[m]||[]).concat([ALWAYS]);
 document.getElementById('cal').innerHTML = `<b class="t">${m}월, 알아두면 좋은 부동산 일정</b><ul>`+tips.map(t=>`<li>${t}</li>`).join('')+`</ul>`;
 </script>
+<script src="assets/js/a11y.js" defer></script>
 </body>
 </html>
