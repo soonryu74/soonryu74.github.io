@@ -38,9 +38,33 @@ def load_meta():
             if c.get("buildYear") and not m.get("buildYear"): m["buildYear"] = str(c["buildYear"])
     return meta
 
+def _force_ipv4():
+    """data.go.kr가 IPv6에서 응답을 안 줘서 타임아웃 나는 문제 회피(IPv4 우선)."""
+    import socket
+    if getattr(socket, "_ipv4_patched", False): return
+    orig = socket.getaddrinfo
+    def v4(host, *a, **k):
+        res = orig(host, *a, **k)
+        v = [r for r in res if r[0] == socket.AF_INET]
+        return v or res
+    socket.getaddrinfo = v4
+    socket._ipv4_patched = True
+
 def fetch_records(key, lawd=LAWD, sgg_name="구리시"):
-    import urllib.request, urllib.parse
+    import urllib.request, urllib.parse, time
     import xml.etree.ElementTree as ET
+    _force_ipv4()
+    def fetch_xml(url):
+        last = None
+        for attempt in range(3):            # 최대 3회 재시도
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": "galmae-budongsan/1.0"})
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    return ET.fromstring(r.read().decode("utf-8"))
+            except Exception as e:
+                last = e
+                if attempt < 2: time.sleep(2 * (attempt + 1))
+        raise last
     def txt(item, *names):
         for n in names:
             e = item.find(n)
@@ -57,8 +81,7 @@ def fetch_records(key, lawd=LAWD, sgg_name="구리시"):
         q = urllib.parse.urlencode({"serviceKey": key, "LAWD_CD": lawd, "DEAL_YMD": ym,
                                     "numOfRows": "1000", "pageNo": "1"}, safe="%")
         try:
-            with urllib.request.urlopen(f"{BASE}?{q}", timeout=40) as r:
-                root = ET.fromstring(r.read().decode("utf-8"))
+            root = fetch_xml(f"{BASE}?{q}")
         except Exception as e:
             print(f"[{ym}] 수집 실패: {e}"); continue
         for it in root.iter("item"):
