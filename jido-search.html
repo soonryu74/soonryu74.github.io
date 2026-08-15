@@ -187,6 +187,8 @@ let DATA = [
 // 중복 제거(같은 동·단지명)
 const seen=new Set();
 DATA = DATA.filter(d=>{ const k=d.region+'|'+d.dong+'|'+d.name; if(seen.has(k))return false; seen.add(k); return true; });
+// 원룸형(도시형생활주택·오피스텔) 제외 — 전용 10평(33㎡) 이상 세대가 있는 '아파트'만
+DATA = DATA.filter(d=>{ const a=(d.areas&&d.areas.length)?d.areas:[d.area]; return Math.max(...a) >= 33; });
 
 /* 지역 필터 옵션: 전체 / 갈매동 / 구리 그 외 / 별내(있으면) */
 const hasBy = DATA.some(d=>d.region==='by');
