@@ -54,21 +54,19 @@
   .lcard .chip.by{ background:#efe7fb; color:#6b3fa0; }
   .empty{ text-align:center; color:var(--muted); padding:30px 10px; font-size:.9rem; }
 
-  /* 지도 마커 — 호갱노노식 집모양(평형 + 가격 두 줄) */
-  .mk{ position:relative; transform:translate(-50%,-100%); cursor:pointer; }
-  .mk .pin{ --mkc:#3b6fd6; position:relative; display:flex; flex-direction:column; align-items:center;
-    justify-content:center; background:var(--mkc); color:#fff; border-radius:8px; padding:4px 9px;
-    min-width:42px; line-height:1; border:1.5px solid #fff; box-shadow:0 2px 7px rgba(0,0,0,.3); }
-  .mk .pin .py{ font-size:9.5px; font-weight:600; opacity:.92; margin-bottom:2px; white-space:nowrap; }
-  .mk .pin .pr{ font-size:13px; font-weight:800; white-space:nowrap; }
-  .mk .pin::before{ content:""; position:absolute; top:-7px; left:50%; transform:translateX(-50%);
-    border:7px solid transparent; border-bottom-color:var(--mkc); }   /* 지붕 */
-  .mk .pin::after{ content:""; position:absolute; bottom:-7px; left:50%; transform:translateX(-50%);
-    border:7px solid transparent; border-top-color:var(--mkc); }      /* 아래 꼭지 */
-  .mk.t1 .pin{ --mkc:#2e9e6b; } .mk.t2 .pin{ --mkc:#3b6fd6; }
-  .mk.t3 .pin{ --mkc:#e0872a; } .mk.t4 .pin{ --mkc:#c0392b; }
-  .mk.by .pin{ --mkc:#7c4dc4; }
-  .mk.active{ z-index:6; } .mk.active .pin{ transform:scale(1.15); box-shadow:0 5px 14px rgba(0,0,0,.45); }
+  /* 지도 마커 — 예쁜 집모양(지붕+몸통+아래 꼭지 한 덩어리, 평형+가격) */
+  .mk{ --hp:polygon(50% 0, 100% 23%, 100% 80%, 57% 80%, 50% 100%, 43% 80%, 0 80%, 0 23%);
+    --mkc:#3b6fd6; position:relative; transform:translate(-50%,-100%); cursor:pointer; }
+  .mk .house{ -webkit-clip-path:var(--hp); clip-path:var(--hp); background:#fff;
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.28)); }
+  .mk .house .in{ -webkit-clip-path:var(--hp); clip-path:var(--hp); background:var(--mkc); color:#fff;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-width:46px; padding:16px 12px 17px; margin:2px; line-height:1.04; }
+  .mk .house .py{ font-size:9.5px; font-weight:600; opacity:.92; white-space:nowrap; }
+  .mk .house .pr{ font-size:13px; font-weight:800; white-space:nowrap; margin-top:2px; }
+  .mk.t1{ --mkc:#2e9e6b; } .mk.t2{ --mkc:#3b6fd6; }
+  .mk.t3{ --mkc:#e0872a; } .mk.t4{ --mkc:#c0392b; } .mk.by{ --mkc:#7c4dc4; }
+  .mk.active{ z-index:6; } .mk.active .house{ transform:scale(1.16); filter:drop-shadow(0 5px 7px rgba(0,0,0,.4)); }
   /* 뭉치(클러스터) 버블 */
   .cl{ transform:translate(-50%,-50%); cursor:pointer; }
   .cl-b{ display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -285,8 +283,8 @@ function clusterCells(items, level){
 function makePill(d){
   const py=pyeong(d.area);
   const el=document.createElement('div'); el.className='mk '+tierClass(d)+(d.name===activeName?' active':'');
-  el.innerHTML='<div class="pin">'+(py?'<span class="py">'+py+'평</span>':'')+'<span class="pr">'+eokPin(d.price)+'</span></div>';
-  el.querySelector('.pin').addEventListener('click',()=>select(d.name,true));
+  el.innerHTML='<div class="house"><div class="in">'+(py?'<span class="py">'+py+'평</span>':'')+'<span class="pr">'+eokPin(d.price)+'</span></div></div>';
+  el.querySelector('.house').addEventListener('click',()=>select(d.name,true));
   return new kakao.maps.CustomOverlay({position:POS[d.name], content:el, yAnchor:1, xAnchor:.5, zIndex:3});
 }
 function makeCluster(g){
