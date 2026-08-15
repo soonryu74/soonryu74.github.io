@@ -43,11 +43,20 @@
 
   .src{ text-align:center; color:#9aa7b4; font-size:10.5px; margin-top:10px; }
 
+  .rankchip{ display:inline-block; margin-top:8px; background:rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.5); color:#fff; font-weight:800; font-size:13px; padding:4px 12px; border-radius:20px; }
+  .pcard{ position:relative; }
+  .pcard .rk{ display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; background:#123a6b; color:#fff; font-size:12px; font-weight:900; margin-right:5px; vertical-align:middle; }
+  .pcard.top .rk{ background:#c0392b; }
   @page{ size:A4; margin:10mm; }
   @media print{
+    html,body{ height:100%; }
     body{ background:#fff; padding:0; }
     .toolbar{ display:none !important; }
-    .sheet{ box-shadow:none; max-width:none; padding:0; border-radius:0; }
+    .sheet{ box-shadow:none; max-width:none; padding:0; border-radius:0;
+      min-height:277mm; display:flex; flex-direction:column; }
+    .grid{ flex:1 0 auto; align-content:space-between; margin:16px 0; }
+    .pcard{ min-height:132px; display:flex; flex-direction:column; justify-content:center; }
+    .p-qr{ margin-top:auto; }
     *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   }
 </style>
@@ -65,6 +74,7 @@
       <div class="t1">🏢 갈매역삼성부동산</div>
       <div class="t2">갈매동 아파트 실거래가</div>
       <div class="t3">국토교통부 실거래가 공개시스템 · 최근 1년 매매 기준</div>
+      <div class="rankchip" id="rankChip"></div>
     </div>
     <div class="asof" id="asof"></div>
   </div>
@@ -92,13 +102,23 @@ function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; ret
 function eokS(m){ return (m/10000).toFixed(1)+"억"; }
 function py(ar){ return ar? Math.round(ar/2.48) : 0; }
 function posPct(cur,mn,mx){ if(mx<=mn) return 100; return Math.max(0,Math.min(100,Math.round((cur-mn)/(mx-mn)*100))); }
-const CX=(typeof COMPLEXES!=='undefined')?COMPLEXES.filter(c=>Math.max.apply(null,(c.areas&&c.areas.length?c.areas:[0]))>=33).sort((a,b)=>b.count-a.count):[];
+function hp(c){ return (c.highPct!=null)?c.highPct:Math.round((c.latest&&c.latest.price||0)/(c.max||1)*100); }
+const SORTS={
+  cnt:{fn:(a,b)=>b.count-a.count, label:'🔥 거래 많은 순'},
+  recover:{fn:(a,b)=>hp(b)-hp(a), label:'📈 전고점 회복률 높은 순'},
+  high:{fn:(a,b)=>b.max-a.max, label:'💎 시세 높은 순'},
+  recent:{fn:(a,b)=>((b.latest&&b.latest.date)||'').localeCompare((a.latest&&a.latest.date)||''), label:'🕒 최근 거래 순'}
+};
+const sk=(location.search.match(/sort=(\w+)/)||[])[1]||'cnt';
+const S=SORTS[sk]||SORTS.cnt;
+document.getElementById('rankChip').textContent='단지 랭킹 · '+S.label;
+const CX=(typeof COMPLEXES!=='undefined')?COMPLEXES.filter(c=>Math.max.apply(null,(c.areas&&c.areas.length?c.areas:[0]))>=33).sort(S.fn):[];
 const asof=CX.map(c=>c.latest&&c.latest.date).filter(Boolean).sort().slice(-1)[0]||'';
 document.getElementById('asof').innerHTML = asof? ('데이터 기준일<br><b style="font-size:14px">'+asof+'</b>') : '';
-document.getElementById('grid').innerHTML = CX.map(c=>{
+document.getElementById('grid').innerHTML = CX.map((c,i)=>{
   const la=c.latest||{}; const pos=posPct(la.price,c.min,c.max); const p=py(la.area);
-  return `<div class="pcard">
-    <div class="nm">${c.name}</div>
+  return `<div class="pcard${i===0?' top':''}">
+    <div class="nm"><span class="rk">${i+1}</span>${c.name}</div>
     <div class="sub">준공 ${c.buildYear||'-'} · 최근 1년 ${c.count}건</div>
     <div class="price">${eok(la.price)} <small>${p?p+'평·':''}${la.floor?la.floor+'층':''}</small></div>
     <div class="bar"><span style="left:${pos}%"></span></div>
