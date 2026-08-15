@@ -66,9 +66,22 @@
   .mk.by .pin{ background:#7c4dc4; }
   .mk.active .pin{ transform:scale(1.12); box-shadow:0 4px 12px rgba(0,0,0,.4); z-index:5; }
 
-  .iwbox{ padding:9px 11px; font-size:12px; line-height:1.55; min-width:150px; }
-  .iwbox b.t{ font-size:13px; } .iwbox .p{ color:#c0392b; font-weight:800; }
-  .iwbox a{ color:#1f6fd1; font-weight:700; text-decoration:none; }
+  .mk .pin{ font-size:11px; padding:3px 7px; }
+  /* 뭉치(클러스터) 버블 */
+  .cl{ transform:translate(-50%,-50%); cursor:pointer; }
+  .cl-b{ display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-width:44px; height:44px; border-radius:50%; background:rgba(18,58,107,.93); color:#fff;
+    border:2px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,.32); padding:0 5px; }
+  .cl-b b{ font-size:14px; line-height:1; } .cl-b span{ font-size:9px; opacity:.92; margin-top:1px; white-space:nowrap; }
+  /* 말풍선 팝업(항상 맨 위) */
+  .iw{ transform:translate(-50%,-100%); background:#fff; border-radius:10px; position:relative;
+    box-shadow:0 5px 18px rgba(0,0,0,.26); border:1px solid #d5dee7; padding:11px 26px 10px 12px;
+    min-width:172px; font-size:12px; line-height:1.6; }
+  .iw .x{ position:absolute; top:5px; right:8px; cursor:pointer; color:#9aa7b4; font-size:14px; line-height:1; }
+  .iw b.t{ font-size:13px; } .iw .p{ color:#c0392b; font-weight:800; }
+  .iw a{ color:#1f6fd1; font-weight:700; text-decoration:none; }
+  .iw::after{ content:""; position:absolute; left:50%; bottom:-8px; transform:translateX(-50%);
+    border:8px solid transparent; border-top-color:#fff; }
 
   @media(max-width:820px){
     :root{ --map-h: 52vh; }
@@ -209,43 +222,92 @@ function wire(groupId, key){
 wire('fRegion','region'); wire('fPrice','price'); wire('fArea','area');
 
 /* ---------- 지도 ---------- */
-let map, geocoder, ps, GEO={}, markers={}, activeName=null;
+let map, geocoder, ps, activeName=null;
+let POS={}, GEOFAIL={}, overlays=[], popup=null;
 const listEl=document.getElementById('list'), cntEl=document.getElementById('cnt'), noteEl=document.getElementById('mapNote');
+const BYNAME={}; DATA.forEach(d=>{ if(!BYNAME[d.name]) BYNAME[d.name]=d; });
 
 function tierClass(d){ if(d.region==='by')return 'by';
   const p=d.price||0; if(p<30000)return 't1'; if(p<50000)return 't2'; if(p<70000)return 't3'; return 't4'; }
 
-function makeMarker(d, pos){
-  const el=document.createElement('div'); el.className='mk '+tierClass(d);
-  el.innerHTML='<div class="pin">'+eokS(d.price)+'</div>';
-  const ov=new kakao.maps.CustomOverlay({position:pos, content:el, yAnchor:1, xAnchor:.5, zIndex:3});
-  el.querySelector('.pin').addEventListener('click',()=>select(d.name,true));
-  markers[d.name]={ov,el,pos,d};
-  return ov;
-}
-
+/* --- 위치 찾기(도로명 우선, 없으면 장소 검색). 결과는 POS에 캐시 --- */
 function geocodeOne(d, cb){
-  if(GEO[d.name]){ cb(GEO[d.name]); return; }
-  const done=p=>{ if(p){GEO[d.name]=p;} cb(p); };
+  if(POS[d.name]){ cb(POS[d.name]); return; }
   if(d.road){
     geocoder.addressSearch(d.road,(res,st)=>{
-      if(st===kakao.maps.services.Status.OK && res[0]) return done(new kakao.maps.LatLng(res[0].y,res[0].x));
-      keywordGeo(d,done);
+      if(st===kakao.maps.services.Status.OK && res[0]) return cb(new kakao.maps.LatLng(res[0].y,res[0].x));
+      keywordGeo(d,cb);
     });
-  } else keywordGeo(d,done);
+  } else keywordGeo(d,cb);
 }
-function keywordGeo(d, done){
+function keywordGeo(d, cb){
   const sgg = d.region==='by' ? '남양주시 별내' : '구리시 '+(d.dong||'');
   ps.keywordSearch(sgg+' '+d.name,(res,st)=>{
-    if(st===kakao.maps.services.Status.OK && res[0]) return done(new kakao.maps.LatLng(res[0].y,res[0].x));
-    done(null);
+    if(st===kakao.maps.services.Status.OK && res[0]) return cb(new kakao.maps.LatLng(res[0].y,res[0].x));
+    cb(null);
   });
 }
+/* 동시에 5개씩만 — 카카오 호출 제한 회피 */
+function geocodeAll(cb){
+  const need = filtered().filter(d=>!POS[d.name] && !GEOFAIL[d.name]);
+  if(!need.length){ cb&&cb(); return; }
+  var i=0, active=0, done=0, total=need.length;
+  noteEl.textContent='단지 위치 확인 중… (0/'+total+')';
+  (function pump(){
+    while(active<5 && i<total){
+      const d=need[i++]; active++;
+      geocodeOne(d, pos=>{
+        if(pos) POS[d.name]=pos; else GEOFAIL[d.name]=1;
+        active--; done++;
+        if(done%10===0) noteEl.textContent='단지 위치 확인 중… ('+done+'/'+total+')';
+        if(done>=total) cb&&cb(); else pump();
+      });
+    }
+  })();
+}
 
-let renderSeq=0;
+/* --- 화면 격자로 겹치는 단지 뭉치기(줌 아웃일수록 크게 묶음) --- */
+function clusterCells(items, level){
+  const size = 0.00016 * Math.pow(2, level);   // 격자 한 칸 크기(도)
+  const cells = new Map();
+  items.forEach(d=>{
+    const p=POS[d.name]; if(!p) return;
+    const k = Math.floor(p.getLng()/size)+'_'+Math.floor(p.getLat()/size);
+    if(!cells.has(k)) cells.set(k, []);
+    cells.get(k).push(d);
+  });
+  return [...cells.values()];
+}
+function makePill(d){
+  const el=document.createElement('div'); el.className='mk '+tierClass(d)+(d.name===activeName?' active':'');
+  el.innerHTML='<div class="pin">'+eokS(d.price)+'</div>';
+  el.querySelector('.pin').addEventListener('click',()=>select(d.name,true));
+  return new kakao.maps.CustomOverlay({position:POS[d.name], content:el, yAnchor:1, xAnchor:.5, zIndex:3});
+}
+function makeCluster(g){
+  let lat=0,lng=0; g.forEach(d=>{const p=POS[d.name]; lat+=p.getLat(); lng+=p.getLng();});
+  const c=new kakao.maps.LatLng(lat/g.length, lng/g.length);
+  const avg = g.reduce((s,d)=>s+d.price,0)/g.length;
+  const el=document.createElement('div'); el.className='cl';
+  el.innerHTML='<div class="cl-b"><b>'+g.length+'</b><span>평균 '+eokS(avg)+'</span></div>';
+  el.addEventListener('click',()=>{ map.setLevel(Math.max(1, map.getLevel()-2), {anchor:c}); map.panTo(c); });
+  return new kakao.maps.CustomOverlay({position:c, content:el, yAnchor:.5, xAnchor:.5, zIndex:4});
+}
+function paint(){
+  if(!map) return;
+  overlays.forEach(o=>o.setMap(null)); overlays=[];
+  const items = filtered().filter(d=>POS[d.name]);
+  clusterCells(items, map.getLevel()).forEach(g=>{
+    const ov = g.length===1 ? makePill(g[0]) : makeCluster(g);
+    overlays.push(ov); ov.setMap(map);
+  });
+  noteEl.textContent = items.length
+    ? '지도에 '+items.length+'개 단지 · 겹친 곳은 숫자(뭉치)를 누르면 확대됩니다.'
+    : '표시할 단지가 없습니다.';
+}
+
 function render(){
   const list=filtered(); cntEl.textContent=list.length;
-  // 목록
   listEl.innerHTML = list.length? '' : '<div class="empty">조건에 맞는 단지가 없습니다.<br>필터를 넓혀보세요.</div>';
   list.forEach(d=>{
     const c=document.createElement('div'); c.className='lcard'; c.dataset.name=d.name;
@@ -259,44 +321,36 @@ function render(){
     listEl.appendChild(c);
   });
   if(!map) return;
-  // 지도 마커 갱신
-  const seq=++renderSeq;
-  Object.values(markers).forEach(m=>m.ov.setMap(null));
-  const keep=new Set(list.map(d=>d.name));
-  Object.keys(markers).forEach(n=>{ if(!keep.has(n)) delete markers[n]; });
-  const bounds=new kakao.maps.LatLngBounds(); let plotted=0, pending=list.length;
-  if(!pending){ noteEl.textContent='표시할 단지가 없습니다.'; return; }
-  noteEl.textContent='지도에 표시하는 중…';
-  list.forEach(d=>{
-    geocodeOne(d,pos=>{
-      if(seq!==renderSeq) return;           // 필터가 바뀌면 이전 렌더 무시
-      pending--;
-      if(pos){ makeMarker(d,pos).setMap(map); bounds.extend(pos); plotted++; }
-      if(pending<=0){
-        if(plotted) map.setBounds(bounds);
-        noteEl.textContent=`지도에 ${plotted}개 단지 표시 · 핀/목록을 누르면 최근 실거래가가 보입니다.`;
-      }
-    });
+  geocodeAll(()=>{
+    const pts=filtered().map(d=>POS[d.name]).filter(Boolean);
+    if(pts.length){ const b=new kakao.maps.LatLngBounds(); pts.forEach(p=>b.extend(p)); map.setBounds(b); }
+    paint();
   });
 }
 
-let openIw=null;
+function closePopup(){ if(popup){ popup.setMap(null); popup=null; } }
+function openPopup(d, p){
+  closePopup();
+  const el=document.createElement('div'); el.className='iw';
+  el.innerHTML='<span class="x" aria-label="닫기">✕</span>'
+    +'<b class="t">'+d.name+'</b> <span style="color:#88919c">'+d.dong+'</span><br>'
+    +'최근 '+(d.area?d.area+'㎡·':'')+(d.floor?d.floor+'층 ':'')+'<span class="p">'+eok(d.price)+'</span><br>'
+    +'시세 '+eokS(d.min)+'~'+eokS(d.max)+' · 거래 '+d.count+'건<br>'
+    +'<a href="tel:'+TEL+'">📞 문의 '+TELV+'</a>';
+  el.querySelector('.x').addEventListener('click', closePopup);
+  popup=new kakao.maps.CustomOverlay({position:p, content:el, yAnchor:1.32, xAnchor:.5, zIndex:10000});
+  popup.setMap(map);
+}
+
 function select(name, fly){
   activeName=name;
   document.querySelectorAll('.lcard').forEach(c=>c.classList.toggle('active', c.dataset.name===name));
-  Object.entries(markers).forEach(([n,m])=>m.el.classList.toggle('active', n===name));
   const card=[...listEl.children].find(c=>c.dataset&&c.dataset.name===name);
   if(card) card.scrollIntoView({block:'nearest',behavior:'smooth'});
-  const m=markers[name]; if(!m)return;
-  if(fly){ map.panTo(m.pos); if(map.getLevel()>5) map.setLevel(5); }
-  const d=m.d;
-  if(openIw) openIw.close();
-  openIw=new kakao.maps.InfoWindow({content:
-    `<div class="iwbox"><b class="t">${d.name}</b> <span style="color:#88919c">${d.dong}</span><br>
-     최근 ${d.area?d.area+'㎡·':''}${d.floor?d.floor+'층 ':''}<span class="p">${eok(d.price)}</span><br>
-     시세 ${eokS(d.min)}~${eokS(d.max)} · 거래 ${d.count}건<br>
-     <a href="tel:${TEL}">📞 문의 ${TELV}</a></div>`});
-  openIw.open(map, new kakao.maps.Marker({position:m.pos, opacity:0}));
+  const p=POS[name]; const d=BYNAME[name]; if(!p||!d) return;
+  if(fly){ map.panTo(p); if(map.getLevel()>4) map.setLevel(4,{anchor:p}); }
+  paint();
+  openPopup(d, p);
 }
 
 function initMap(){
@@ -305,7 +359,8 @@ function initMap(){
     map=new kakao.maps.Map(document.getElementById('kmap'),{center:new kakao.maps.LatLng(37.6412,127.1206),level:6});
     geocoder=new kakao.maps.services.Geocoder();
     ps=new kakao.maps.services.Places();
-    kakao.maps.event.addListener(map,'click',()=>{ if(openIw){openIw.close();openIw=null;} });
+    kakao.maps.event.addListener(map,'click',closePopup);
+    kakao.maps.event.addListener(map,'idle',paint);   // 확대/이동 때마다 다시 묶기
     render();
   });
 }
