@@ -199,13 +199,15 @@ function sorted(rows){
   const s=sortKey;
   return rows.sort((a,b)=> s==='cnt'? b.count-a.count : s==='recover'? b.recover-a.recover : s==='high'? b.max-a.max : (b.ld||'').localeCompare(a.ld||''));
 }
+function posPct(cur,mn,mx){ if(mx<=mn) return 100; return Math.max(0,Math.min(100, Math.round((cur-mn)/(mx-mn)*100))); }
 function card(d){
+  const pos=posPct(d.lp, d.min, d.max);          // 막대 위치 = 최근가가 최저~최고 사이 어디인지
   return `<div class="lc">
     <div class="lc-brand">🏢 갈매역삼성부동산</div>
     <div class="lc-top"><h3>${d.name}</h3><span class="lc-dong">${d.dong}</span>${d.singo?'<span class="lc-sin">🔺 신고가</span>':''}</div>
     <div class="lc-info">준공 ${d.buildYear||'-'} · 전용 ${(d.areas||[]).join('·')}㎡</div>
     <div class="lc-price">${eok(d.lp)} <small>최근 실거래 · ${d.larea}㎡ ${d.lfloor}층 · ${d.ld}</small></div>
-    <div class="lc-bar"><span style="left:${Math.max(0,Math.min(100,d.recover))}%"></span></div>
+    <div class="lc-bar"><span style="left:${pos}%"></span></div>
     <div class="lc-lbl"><span>최저 ${eokS(d.min)}</span><b>전고점 대비 ${d.recover}%</b><span>최고 ${eokS(d.max)}</span></div>
     <div class="lc-stat"><span>최근 1년 <b>${d.count}건</b></span><span>시세 <b>${eokS(d.min)}~${eokS(d.max)}</b></span></div>
     <a class="lc-ask" href="tel:${TEL}">📞 이 단지 문의</a>
