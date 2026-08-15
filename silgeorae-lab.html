@@ -26,6 +26,49 @@
   body.by .lc-bar span{ border-color:#6b3fa0; }
   .region-empty{ background:#f6f2fb; border:1px solid #e0d4f0; border-radius:14px; padding:26px 18px; text-align:center; color:#6b3fa0; }
   .region-empty b{ display:block; font-size:1.1rem; margin-bottom:4px; }
+  /* 아파트미+ 카드 */
+  .ap-card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 18px 15px; box-shadow:var(--shadow); transition:transform .15s,box-shadow .15s; }
+  .ap-card:hover{ transform:translateY(-3px); box-shadow:0 10px 24px rgba(18,58,107,.14); }
+  .ap-top{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .ap-top h3{ margin:0; color:#1a2b45; font-size:1.2rem; letter-spacing:-.01em; }
+  .ap-type{ font-size:.72rem; font-weight:800; color:#1f6fd1; background:#eaf2fb; padding:2px 8px; border-radius:6px; }
+  .ap-badge{ margin-left:auto; font-size:.73rem; font-weight:800; padding:3px 9px; border-radius:20px; }
+  .ap-badge.hot{ background:#fdecec; color:#d63031; } .ap-badge.mid{ background:#eef7f0; color:#0e8a6b; } .ap-badge.low{ background:#f0f2f5; color:#6b7684; }
+  .ap-info{ color:var(--muted); font-size:.82rem; margin:5px 0 12px; }
+  .ap-brand{ font-size:.68rem; font-weight:800; color:#0e8a6b; letter-spacing:.02em; margin:0 0 7px; padding-bottom:6px; border-bottom:1px solid #eef1f5; }
+  .ap-price{ font-size:1.72rem; font-weight:800; color:#111; letter-spacing:-.02em; line-height:1.1; }
+  .ap-deal{ color:#5b6b7b; font-size:.82rem; margin-top:5px; }
+  /* 최저~최고 가격 바 */
+  .ap-range{ margin:14px 0 4px; padding:13px 0 2px; border-top:1px solid var(--line); }
+  .ap-range-head{ display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); margin-bottom:8px; }
+  .ap-range-head b{ color:#1a2b45; }
+  .ap-endcol{ display:flex; flex-direction:column; }
+  .ap-endcol.r{ text-align:right; }
+  .ap-endcol .p{ color:#1a2b45; font-weight:800; font-size:1rem; }
+  .ap-endcol .lo{ color:#0984e3; } .ap-endcol .hi{ color:#d63031; }
+  .ap-endcol .yr{ color:#9aa7b4; font-size:.74rem; margin-top:1px; }
+  .ap-gauge-bar{ position:relative; height:7px; border-radius:8px; background:linear-gradient(90deg,#8fd3ff,#ffd36b,#ff8f8f); }
+  .ap-gauge-bar span{ position:absolute; top:50%; transform:translate(-50%,-50%); width:13px; height:13px; border-radius:50%; background:#fff; border:3px solid var(--navy); box-shadow:0 1px 4px rgba(0,0,0,.2); }
+  .ap-gauge-now{ text-align:center; font-size:.74rem; color:var(--muted); margin-top:6px; }
+  .ap-gauge-now b{ color:var(--navy); }
+  .ap-quick{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; font-size:.8rem; color:var(--muted); margin:10px 0 2px; }
+  .ap-quick b{ color:#1a2b45; }
+  /* 평형별 상세 (접기) */
+  .ap-more{ margin-top:10px; border-top:1px dashed var(--line); }
+  .ap-more>summary{ list-style:none; cursor:pointer; padding:9px 2px 2px; color:var(--blue); font-weight:700; font-size:.86rem; text-align:center; }
+  .ap-more>summary::-webkit-details-marker{ display:none; }
+  .ap-more>summary::after{ content:' ▾'; }
+  .ap-more[open]>summary::after{ content:' ▴'; }
+  .ap-atbl-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; margin:6px 0 2px; }
+  .ap-atbl{ width:100%; min-width:340px; border-collapse:collapse; font-size:.83rem; }
+  .ap-atbl th,.ap-atbl td{ padding:6px 6px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
+  .ap-atbl th{ color:var(--muted); font-weight:700; font-size:.78rem; }
+  .ap-atbl td:first-child,.ap-atbl th:first-child{ text-align:left; }
+  .ap-atbl td b{ color:#1a2b45; }
+  .ap-btn{ display:block; text-align:center; margin-top:11px; background:var(--blue); color:#fff; padding:10px; border-radius:10px; font-weight:800; text-decoration:none; }
+  .ap-btn:hover{ opacity:.93; text-decoration:none; }
+  .ap-src{ text-align:center; color:#9aa7b4; font-size:.73rem; margin-top:8px; }
+  body.by .ap-brand{ color:#6b3fa0; }
 
   .hl-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0; }
   @media(max-width:640px){ .hl-row{ grid-template-columns:1fr; } }
@@ -155,6 +198,7 @@
   </div>
 </footer>
 
+<script src="data/complexes.js"></script>
 <script src="data/guri-complexes.js"></script>
 <script src="data/byeollae-complexes.js"></script>
 <script>
@@ -162,6 +206,10 @@ function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; ret
 function eokS(m){ return (m/10000).toFixed(1)+"억"; }
 function md(d){ return d? (+d.slice(5,7))+"월 "+(+d.slice(8,10))+"일" : ''; }
 const TEL="0315754944";
+const NOW_Y=2026;
+function eokShort(m){ return (m/10000).toFixed(1)+"억"; }
+function ym(d){ return d? "'"+d.slice(2,7).replace('-','.') : ''; }
+function badge(r3){ if(r3>=15) return {cls:'hot',txt:'🔥 거래 활발'}; if(r3>=8) return {cls:'mid',txt:'🙂 거래 보통'}; return {cls:'low',txt:'🌙 거래 한산'}; }
 function derive(raw){ return (raw||[]).map(d=>{
   const la=d.latest||{};
   const recover=d.max? Math.round(la.price/d.max*100):0;
@@ -169,7 +217,7 @@ function derive(raw){ return (raw||[]).map(d=>{
 }); }
 const GURI_ALL=(typeof GURI!=='undefined')?GURI:[];
 const REGIONS={
-  galmae:{ data:derive(GURI_ALL.filter(d=>d.dong==='갈매동')), title:'🔬 갈매동 아파트 실거래가 분석', label:'구리 갈매동' },
+  galmae:{ data:derive((typeof COMPLEXES!=='undefined')?COMPLEXES.map(c=>({...c,dong:c.dong||'갈매동'})):[]), title:'🔬 갈매동 아파트 실거래가 분석', label:'구리 갈매동' },
   guri:{ data:derive(GURI_ALL), title:'🔬 구리 전체 아파트 실거래가 분석', label:'구리시 전체' },
   by:  { data:derive((typeof BYEOLLAE!=='undefined')?BYEOLLAE:[]), title:'🔬 남양주 별내 아파트 실거래가 분석', label:'남양주 별내' }
 };
@@ -245,17 +293,35 @@ function sorted(rows){
   return rows.sort((a,b)=> s==='cnt'? b.count-a.count : s==='recover'? b.recover-a.recover : s==='high'? b.max-a.max : (b.ld||'').localeCompare(a.ld||''));
 }
 function posPct(cur,mn,mx){ if(mx<=mn) return 100; return Math.max(0,Math.min(100, Math.round((cur-mn)/(mx-mn)*100))); }
-function card(d){
-  const pos=posPct(d.lp, d.min, d.max);          // 막대 위치 = 최근가가 최저~최고 사이 어디인지
-  return `<div class="lc">
-    <div class="lc-brand">🏢 갈매역삼성부동산</div>
-    <div class="lc-top"><h3>${d.name}</h3><span class="lc-dong">${d.dong}</span>${d.singo?'<span class="lc-sin">🔺 신고가</span>':''}</div>
-    <div class="lc-info">준공 ${d.buildYear||'-'} · 전용 ${(d.areas||[]).join('·')}㎡</div>
-    <div class="lc-price">${eok(d.lp)} <small>최근 실거래 · ${d.larea}㎡ ${d.lfloor}층 · ${d.ld}</small></div>
-    <div class="lc-bar"><span style="left:${pos}%"></span></div>
-    <div class="lc-lbl"><span>최저 ${eokS(d.min)}</span><b>전고점 대비 ${d.recover}%</b><span>최고 ${eokS(d.max)}</span></div>
-    <div class="lc-stat"><span>최근 1년 <b>${d.count}건</b></span><span>시세 <b>${eokS(d.min)}~${eokS(d.max)}</b></span></div>
-    <a class="lc-ask" href="tel:${TEL}">📞 이 단지 문의</a>
+function card(c){
+  const la=c.latest||{};
+  const areas=(c.areas||[]).join('㎡·')+'㎡';
+  const hasR3=(c.recent3m!==undefined && c.recent3m!==null);
+  const bd=badge(c.recent3m||0);
+  const pos=posPct(la.price, c.min, c.max);
+  const hp=(c.highPct!=null)?c.highPct:(c.max?Math.round((la.price||0)/c.max*100):0);
+  const age=c.buildYear?(NOW_Y-(+c.buildYear)):null;
+  const loc=(region==='by'?'남양주 ':'구리 ')+(c.dong||'');
+  const rows=(c.byArea||[]).map(a=>`<tr><td><b>${a.area}㎡</b></td><td>${eok(a.lp)} <span style="color:#9aa7b4">${a.lf}층</span></td><td>${eokShort(a.min)}~${eokShort(a.max)}</td><td>${a.n}건</td></tr>`).join('');
+  const moreBlock=(c.byArea&&c.byArea.length)?`<details class="ap-more"><summary>평형별 상세 시세 보기</summary><div class="ap-atbl-wrap"><table class="ap-atbl"><thead><tr><th>전용</th><th>최근 실거래</th><th>최저~최고</th><th>1년</th></tr></thead><tbody>${rows}</tbody></table></div><div class="ap-src" style="margin-top:2px">같은 단지도 전용면적·층·향에 따라 시세가 다릅니다.</div></details>`:'';
+  return `<div class="ap-card">
+    <div class="ap-brand">🏢 갈매역삼성부동산</div>
+    <div class="ap-top"><h3>${c.name}</h3><span class="ap-type">아파트</span>${hasR3?'<span class="ap-badge '+bd.cls+'">'+bd.txt+'</span>':(c.singo?'<span class="ap-badge hot">🔺 신고가</span>':'')}</div>
+    <div class="ap-info">${c.buildYear?c.buildYear+'년'+(age!=null?'('+age+'년차)':'')+' · ':''}전용 ${areas} · ${loc}</div>
+    <div class="ap-price">${eok(la.price)}</div>
+    <div class="ap-deal">최근 실거래 · ${la.area||''}㎡ ${la.floor||''}층 · ${la.date||''} 계약</div>
+    <div class="ap-range">
+      <div class="ap-range-head">
+        <div class="ap-endcol"><span class="p lo">${eok(c.min)}</span><span class="yr">${c.minDate?'최저 · '+ym(c.minDate):'최저'}</span></div>
+        <div class="ap-endcol r"><span class="p hi">${eok(c.max)}</span><span class="yr">${c.maxDate?'최고 · '+ym(c.maxDate):'최고'}</span></div>
+      </div>
+      <div class="ap-gauge-bar"><span style="left:${pos}%"></span></div>
+      <div class="ap-gauge-now">최근 실거래 <b>${eokShort(la.price)}</b> · 최고가 대비 <b>${hp}%</b></div>
+    </div>
+    <div class="ap-quick">📊 최근 1년 <b>${c.count}건</b>${hasR3?' · 최근 3개월 <b>'+c.recent3m+'건</b>':''} 거래</div>
+    ${moreBlock}
+    <a class="ap-btn" href="tel:${TEL}">📞 이 단지 매물·시세 문의</a>
+    <div class="ap-src">출처 · 국토교통부 실거래가 공개시스템 (최근 1년 매매)</div>
   </div>`;
 }
 function render(){
