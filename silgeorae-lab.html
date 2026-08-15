@@ -15,6 +15,7 @@
   /* 지역 전환 탭 (구리 초록 / 별내 보라) */
   .region-tabs{ display:flex; gap:8px; margin:14px 0 4px; }
   .region-tabs button{ flex:1; border:2px solid var(--line); background:#fff; padding:12px; border-radius:12px; font-weight:800; cursor:pointer; font-size:.95rem; color:var(--muted); }
+  .region-tabs button[data-region="galmae"].on,
   .region-tabs button[data-region="guri"].on{ background:#0e8a6b; border-color:#0e8a6b; color:#fff; }
   .region-tabs button[data-region="by"].on{ background:#6b3fa0; border-color:#6b3fa0; color:#fff; }
   /* 별내 테마 = 보라 */
@@ -60,6 +61,16 @@
   .lc-ask{ display:block; text-align:center; margin-top:9px; background:var(--blue); color:#fff; padding:8px; border-radius:9px; font-weight:700; text-decoration:none; font-size:.88rem; }
   .lc-ask:hover{ opacity:.93; text-decoration:none; }
   .more{ text-align:center; margin:12px 0; } .more button{ background:#eef4fb; color:var(--navy); border:1px solid #cfe0f5; padding:11px 22px; border-radius:10px; font-weight:800; cursor:pointer; }
+  .deal-list{ list-style:none; padding:0; margin:8px 0; }
+  .deal-list li{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:11px 14px; background:#fff; border:1px solid var(--line); border-radius:10px; margin-bottom:8px; }
+  .deal-list .nm{ font-weight:800; color:var(--navy); }
+  .deal-list .meta{ color:var(--muted); font-size:.84rem; }
+  .deal-list .pr{ font-weight:800; color:#111; white-space:nowrap; }
+  .deal-list .sin{ font-size:.68rem; font-weight:800; background:#fdeeee; color:#d63031; padding:1px 7px; border-radius:10px; margin-left:6px; }
+  .cal{ background:#f2f7f4; border:1px solid #cfe6da; border-radius:12px; padding:16px 18px; }
+  body.by .cal{ background:#f6f2fb; border-color:#e0d4f0; }
+  .cal b.t{ color:#0e8a6b; display:block; margin-bottom:6px; } body.by .cal b.t{ color:#6b3fa0; }
+  .cal ul{ margin:0; padding-left:18px; } .cal li{ margin:4px 0; }
 </style>
 </head>
 <body>
@@ -70,8 +81,7 @@
     <nav class="site-nav">
       <a href="jido-search.html" data-nav="guri">구리·갈매</a>
       <a href="jido-search.html?region=by" data-nav="by">남양주 별내</a>
-      <a href="insight.html">실거래 인사이트 <span class="nav-badge">매일 업데이트</span></a>
-      <a href="silgeorae-lab.html" class="active">실거래가 분석</a>
+      <a href="silgeorae-lab.html" class="active">실거래가 분석 <span class="nav-badge">매일 업데이트</span></a>
       <a href="store.html">매물</a>
       <a href="jaryo.html">자료실</a>
     </nav>
@@ -88,7 +98,8 @@
 <main class="wrap">
 
   <div class="region-tabs" id="regionTabs">
-    <button data-region="guri" class="on">🟢 구리 (갈매·인창·교문·수택·토평)</button>
+    <button data-region="galmae" class="on">🟢 갈매동</button>
+    <button data-region="guri">🟢 구리 전체</button>
     <button data-region="by">🟣 남양주 별내</button>
   </div>
 
@@ -99,6 +110,9 @@
 
   <h2>오늘의 하이라이트</h2>
   <div class="hl-row" id="highlights"></div>
+
+  <h2 style="margin-top:22px">🏙️ 최근 실거래 <span style="font-size:.82rem;color:var(--muted);font-weight:600" id="recentAsof"></span></h2>
+  <ul class="deal-list" id="recent"></ul>
 
   <h2>단지 랭킹</h2>
   <div class="tabs" id="tabs">
@@ -115,6 +129,9 @@
 
   <div class="lab-grid" id="grid"></div>
   <div class="more" id="moreWrap"><button id="moreBtn">더 보기</button></div>
+
+  <h2 style="margin-top:22px">📅 이달의 부동산 캘린더</h2>
+  <div class="cal" id="cal"></div>
 
   <div class="callout law">
     <span class="t">🙋 이 단지, 지금 나온 매물·정확한 시세는?</span>
@@ -143,17 +160,20 @@
 <script>
 function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; return (e?e+"억":"")+(r?(e?" ":"")+r.toLocaleString()+"만":"")||"0"; }
 function eokS(m){ return (m/10000).toFixed(1)+"억"; }
+function md(d){ return d? (+d.slice(5,7))+"월 "+(+d.slice(8,10))+"일" : ''; }
 const TEL="0315754944";
 function derive(raw){ return (raw||[]).map(d=>{
   const la=d.latest||{};
   const recover=d.max? Math.round(la.price/d.max*100):0;
   return {...d, recover, singo:(la.price>=d.max), lp:la.price||0, ld:la.date||'', larea:la.area||'', lfloor:la.floor||''};
 }); }
+const GURI_ALL=(typeof GURI!=='undefined')?GURI:[];
 const REGIONS={
-  guri:{ data:derive((typeof GURI!=='undefined')?GURI:[]), title:'🔬 구리 아파트 실거래가 분석', label:'구리시' },
+  galmae:{ data:derive(GURI_ALL.filter(d=>d.dong==='갈매동')), title:'🔬 갈매동 아파트 실거래가 분석', label:'구리 갈매동' },
+  guri:{ data:derive(GURI_ALL), title:'🔬 구리 전체 아파트 실거래가 분석', label:'구리시 전체' },
   by:  { data:derive((typeof BYEOLLAE!=='undefined')?BYEOLLAE:[]), title:'🔬 남양주 별내 아파트 실거래가 분석', label:'남양주 별내' }
 };
-let region='guri', DATA=REGIONS.guri.data;
+let region='galmae', DATA=REGIONS.galmae.data;
 
 function hlCard(cls,cap,d,extra){ return `<div class="hl ${cls}"><span class="cap">${cap}</span>
   <b>${d.name}</b><span class="s">${d.dong} · 준공 ${d.buildYear||'-'}</span>
@@ -186,13 +206,39 @@ function applyRegion(r){
   // 별내 데이터 아직 없을 때 안내
   const hl=document.getElementById('highlights');
   if(empty){
-    hl.innerHTML='';
-    grid.innerHTML='<div class="region-empty"><b>별내 실거래가 수집 준비 중</b>매일 새벽 자동으로 별내(남양주) 실거래가가 채워집니다. 잠시만 기다려 주세요.<br><span style="font-size:.86rem">별내 매물·시세 문의 ☎ 031-575-4944</span></div>';
+    hl.innerHTML=''; document.getElementById('recent').innerHTML=''; document.getElementById('recentAsof').textContent='';
+    grid.innerHTML='<div class="region-empty"><b>실거래가 수집 준비 중</b>매일 새벽 자동으로 실거래가가 채워집니다. 잠시만 기다려 주세요.<br><span style="font-size:.86rem">매물·시세 문의 ☎ 031-575-4944</span></div>';
     cnt.textContent=''; document.getElementById('moreWrap').style.display='none';
     return;
   }
-  fillDong(); renderHighlights(); render();
+  fillDong(); renderHighlights(); render(); renderRecent();
 }
+
+function renderRecent(){
+  const rec=DATA.slice().sort((a,b)=>(b.ld||'').localeCompare(a.ld||'')).slice(0,8);
+  document.getElementById('recentAsof').textContent = REGIONS[region].label;
+  document.getElementById('recent').innerHTML = rec.map(d=>`
+    <li><span><span class="nm">${d.name}</span> <span class="lc-dong">${d.dong}</span>${d.singo?'<span class="sin">신고가</span>':''}<br>
+      <span class="meta">${d.larea}㎡ · ${d.lfloor}층 · ${md(d.ld)}</span></span>
+    <span class="pr">${eok(d.lp)}</span></li>`).join('');
+}
+
+const CAL={
+ 1:["연말정산 — 월세 세액공제·주택청약저축 소득공제 확인","겨울 비수기, 급매·협상 기회"],
+ 2:["봄 이사철 시작 — 새 학기 전 전세·매매 문의 증가"],
+ 3:["신학기·봄 이사 성수기 — 전세 재계약 시즌"],
+ 4:["5월 종합소득세 대비 — 주택임대소득 자료 정리"],
+ 5:["종합소득세 신고(5/1~5/31)","6월 1일 과세기준일 앞두고 잔금 타이밍 점검"],
+ 6:["⭐ 6월 1일 = 재산세·종부세 과세기준일 (이 날 소유자가 그 해 보유세 부담)"],
+ 7:["재산세 1기분 납부(7/16~7/31, 주택 1/2·건축물)"],
+ 8:["가을 이사철 준비 — 9월 개학·이사 수요 대비","9월 재산세 2기분 앞두고 자금 계획"],
+ 9:["재산세 2기분 납부(9/16~9/30, 주택 나머지 1/2·토지)","가을 이사 성수기"],
+ 10:["가을 이사·전세 재계약 — 갱신청구권(만료 6~2개월 전) 확인"],
+ 11:["종부세 고지(11월)→납부(12월) 대상 확인"],
+ 12:["종합부동산세 납부(12/1~12/15)","연말 이사·잔금 마무리, 내년 봄 계약 준비"]
+};
+(function(){ const m=(new Date()).getMonth()+1; const it=CAL[m]||[];
+  document.getElementById('cal').innerHTML='<b class="t">'+m+'월 체크포인트</b><ul>'+it.map(x=>'<li>'+x+'</li>').join('')+'</ul>'; })();
 
 function sorted(rows){
   const s=sortKey;
@@ -228,7 +274,7 @@ dongF.addEventListener('change',()=>{shown=24;render()});
 q.addEventListener('input',()=>{shown=24;render()});
 document.getElementById('moreBtn').addEventListener('click',()=>{ shown+=24; render(); });
 document.querySelectorAll('#regionTabs button').forEach(b=>b.addEventListener('click',()=>applyRegion(b.dataset.region)));
-applyRegion('guri');
+applyRegion('galmae');
 </script>
 <script src="assets/js/a11y.js" defer></script>
 </body>
