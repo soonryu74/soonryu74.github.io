@@ -63,7 +63,8 @@
   .ap-more>summary::-webkit-details-marker{ display:none; }
   .ap-more>summary::after{ content:' ▾'; }
   .ap-more[open]>summary::after{ content:' ▴'; }
-  .ap-atbl{ width:100%; border-collapse:collapse; font-size:.83rem; margin:6px 0 2px; }
+  .ap-atbl-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; margin:6px 0 2px; }
+  .ap-atbl{ width:100%; min-width:340px; border-collapse:collapse; font-size:.83rem; }
   .ap-atbl th,.ap-atbl td{ padding:6px 6px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
   .ap-atbl th{ color:var(--muted); font-weight:700; font-size:.78rem; }
   .ap-atbl td:first-child,.ap-atbl th:first-child{ text-align:left; }
@@ -255,10 +256,10 @@ function posPct(cur,min,max){ if(max<=min) return 100; return Math.max(0,Math.mi
   const moreBlock=(c.byArea&&c.byArea.length)?`
     <details class="ap-more">
       <summary>평형별 상세 시세 보기</summary>
-      <table class="ap-atbl">
+      <div class="ap-atbl-wrap"><table class="ap-atbl">
         <thead><tr><th>전용</th><th>최근 실거래</th><th>최저~최고</th><th>1년</th></tr></thead>
         <tbody>${rows}</tbody>
-      </table>
+      </table></div>
       <div class="ap-src" style="margin-top:2px">같은 단지도 전용면적·층·향에 따라 시세가 다릅니다.</div>
     </details>`:'';
 
