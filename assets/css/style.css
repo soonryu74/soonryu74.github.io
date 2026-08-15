@@ -248,3 +248,5 @@ html.a11y-contrast .filters, html.a11y-contrast .ap-card{ background:#111 !impor
 html.a11y-contrast .site-header{ background:#000 !important; border-color:#555 !important; }
 html.a11y-contrast #a11y-panel, html.a11y-contrast #a11y-panel *{ background-color:#fff; color:#1c2733; }
 html.a11y-contrast #a11y-panel .a11y-big.on{ background:#0e8a6b; color:#fff; }
+
+.nav-badge{ font-size:.6rem; font-weight:800; background:#fdecec; color:#d63031; padding:1px 6px; border-radius:10px; vertical-align:middle; margin-left:1px; white-space:nowrap; }
