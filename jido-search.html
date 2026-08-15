@@ -82,6 +82,12 @@
   .iw a{ color:#1f6fd1; font-weight:700; text-decoration:none; }
   .iw::after{ content:""; position:absolute; left:50%; bottom:-8px; transform:translateX(-50%);
     border:8px solid transparent; border-top-color:#fff; }
+  .iw .cl-list{ margin-top:6px; max-height:190px; overflow:auto; }
+  .iw .cl-row{ display:flex; align-items:center; gap:6px; padding:6px 2px; border-top:1px solid #eef1f5; cursor:pointer; }
+  .iw .cl-row:hover{ background:#f4f8fc; }
+  .iw .cl-nm{ font-weight:700; color:#1c2733; }
+  .iw .cl-dg{ color:#88919c; font-size:11px; }
+  .iw .cl-pr{ margin-left:auto; color:#c0392b; font-weight:800; white-space:nowrap; }
 
   /* 남양주 별내 = 보라 테마 */
   body.by-page .pill.on{ background:#6b3fa0; border-color:#6b3fa0; }
@@ -321,13 +327,35 @@ function makePill(d){
   el.querySelector('.house').addEventListener('click',()=>select(d.name,true));
   return new kakao.maps.CustomOverlay({position:POS[d.name], content:el, yAnchor:1, xAnchor:.5, zIndex:3});
 }
+function spreadOf(g){ let a0=1e9,a1=-1e9,n0=1e9,n1=-1e9;
+  g.forEach(d=>{const p=POS[d.name]; a0=Math.min(a0,p.getLat());a1=Math.max(a1,p.getLat());n0=Math.min(n0,p.getLng());n1=Math.max(n1,p.getLng());});
+  return Math.max(a1-a0, n1-n0); }
+function clusterPopup(g, c){
+  closePopup();
+  const el=document.createElement('div'); el.className='iw'; el.style.minWidth='196px';
+  el.innerHTML='<span class="x" aria-label="닫기">✕</span><b class="t">이 위치 '+g.length+'개 단지</b><div class="cl-list"></div>';
+  const box=el.querySelector('.cl-list');
+  g.slice().sort((a,b)=>b.price-a.price).forEach(d=>{
+    const r=document.createElement('div'); r.className='cl-row';
+    r.innerHTML='<span class="cl-nm">'+d.name+'</span><span class="cl-dg">'+d.dong+'</span><span class="cl-pr">'+eok(d.price)+'</span>';
+    r.addEventListener('click',()=>select(d.name,true));
+    box.appendChild(r);
+  });
+  el.querySelector('.x').addEventListener('click', closePopup);
+  popup=new kakao.maps.CustomOverlay({position:c, content:el, yAnchor:1.28, xAnchor:.5, zIndex:10000});
+  popup.setMap(map);
+}
 function makeCluster(g){
   let lat=0,lng=0; g.forEach(d=>{const p=POS[d.name]; lat+=p.getLat(); lng+=p.getLng();});
   const c=new kakao.maps.LatLng(lat/g.length, lng/g.length);
   const avg = g.reduce((s,d)=>s+d.price,0)/g.length;
   const el=document.createElement('div'); el.className='cl';
   el.innerHTML='<div class="cl-b"><b>'+g.length+'</b><span>평균 '+eokS(avg)+'</span></div>';
-  el.addEventListener('click',()=>{ map.setLevel(Math.max(1, map.getLevel()-2), {anchor:c}); map.panTo(c); });
+  el.addEventListener('click',()=>{
+    // 더 확대해도 안 나뉘거나(같은 위치) 이미 많이 확대됐으면 → 목록 팝업
+    if(map.getLevel()<=3 || spreadOf(g) < 0.0006){ clusterPopup(g, c); }
+    else { map.setLevel(Math.max(1, map.getLevel()-2), {anchor:c}); map.panTo(c); }
+  });
   return new kakao.maps.CustomOverlay({position:c, content:el, yAnchor:.5, xAnchor:.5, zIndex:4});
 }
 function paint(){
