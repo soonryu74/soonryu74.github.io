@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국정감사 자료 DB</title>
+<meta name="description" content="국정감사 결과보고서·시정처리 결과·회의록을 한곳에서 검색하는 통합 DB. 보건복지부·질병관리청·심평원 등 보건복지위원회 소관기관은 전용 페이지로 제공합니다.">
+<style>
+  :root{ --navy:#12365f; --line:#e3e9f0; --muted:#6b7a8c; --bg:#f5f7fa; --accent:#1f6f5c; --chip:#eef3f8; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:var(--bg); color:#22303e; line-height:1.55; }
+  a{ color:inherit; }
+  .top{ background:var(--navy); color:#fff; padding:26px 18px 22px; }
+  .top-inner{ max-width:1060px; margin:0 auto; }
+  .top h1{ margin:0 0 6px; font-size:1.5rem; }
+  .top p{ margin:0; font-size:.92rem; opacity:.85; }
+  .top-nav{ margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+  .top-nav a{ color:#fff; text-decoration:none; font-size:.85rem; font-weight:700; background:rgba(255,255,255,.14); border-radius:20px; padding:6px 14px; }
+  .top-nav a.on, .top-nav a:hover{ background:rgba(255,255,255,.28); }
+  .wrap{ max-width:1060px; margin:0 auto; padding:20px 18px 60px; }
+  .notice{ background:#fff8e6; border:1px solid #f0dfae; border-radius:10px; padding:10px 14px; font-size:.85rem; margin:14px 0 0; color:#5c4a15; }
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:18px 0; }
+  .stat{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .stat .n{ font-size:1.5rem; font-weight:800; color:var(--navy); }
+  .stat .l{ font-size:.8rem; color:var(--muted); margin-top:2px; }
+  .stat.health .n{ color:var(--accent); }
+  .filters{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .filters select,.filters input{ border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:.9rem; background:#fff; }
+  .filters input{ flex:1; min-width:180px; }
+  .typebtns{ display:flex; gap:6px; flex-wrap:wrap; }
+  .typebtns button{ border:1px solid var(--line); background:#fff; border-radius:20px; padding:7px 14px; font-size:.84rem; font-weight:700; color:#4a5a6b; cursor:pointer; }
+  .typebtns button.on{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .list{ margin-top:16px; }
+  .row{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:13px 16px; margin-bottom:10px; display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; }
+  .row .main{ flex:1; min-width:230px; }
+  .row .title{ font-weight:700; color:var(--navy); font-size:.98rem; }
+  .row .meta{ margin-top:4px; font-size:.79rem; color:var(--muted); display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .badge{ display:inline-block; border-radius:9px; padding:1px 9px; font-size:.74rem; font-weight:800; background:var(--chip); color:#3d4f63; }
+  .badge.result{ background:#e8f0fb; color:#1c4f9c; }
+  .badge.follow{ background:#f3ecfb; color:#6b3fa0; }
+  .badge.minutes{ background:#e9f6ef; color:#1f6f5c; }
+  .badge.health{ background:#dff2ec; color:#136350; }
+  .links{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .links a{ text-decoration:none; font-size:.8rem; font-weight:800; border:1px solid var(--line); border-radius:8px; padding:5px 11px; background:#fafcfe; color:#2a4d7d; }
+  .links a:hover{ border-color:#b9cbe0; }
+  .empty{ text-align:center; color:var(--muted); padding:40px 0; }
+  .more{ display:block; margin:14px auto 0; border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 26px; font-size:.9rem; font-weight:700; cursor:pointer; color:#2a4d7d; }
+  .foot{ font-size:.78rem; color:var(--muted); margin-top:26px; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-inner">
+    <h1>🏛️ 국정감사 자료 DB</h1>
+    <p>국정감사 결과보고서 · 시정 및 처리결과 · 회의록을 한곳에서 검색합니다. 원문은 국회 공식 시스템으로 연결됩니다.</p>
+    <div class="top-nav">
+      <a href="gukgam.html" class="on">통합 DB</a>
+      <a href="gukgam-health.html">보건복지 트랙 (복지부·질병청·심평원)</a>
+    </div>
+    <div class="notice" id="modeNotice" hidden></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="stats" id="stats"></div>
+
+  <div class="filters">
+    <select id="fYear"><option value="">전체 연도</option></select>
+    <select id="fCommittee"><option value="">전체 위원회</option></select>
+    <div class="typebtns" id="fType">
+      <button data-t="" class="on">전체</button>
+      <button data-t="result_report">결과보고서</button>
+      <button data-t="followup">시정·처리결과</button>
+      <button data-t="minutes">회의록</button>
+    </div>
+    <input id="fQuery" type="search" placeholder="제목·위원회 검색">
+  </div>
+
+  <div class="list" id="list"><div class="empty">자료를 불러오는 중입니다…</div></div>
+  <button class="more" id="moreBtn" hidden>더 보기</button>
+
+  <p class="foot">
+    출처: 열린국회정보 Open API(국회사무처) — 국정감사 결과보고서·시정 및 처리 요구사항 결과보고서·국정감사 회의록.
+    본 페이지는 메타데이터와 원문 링크만 제공하며, 원문 파일의 저작권은 대한민국 국회에 있습니다(공공누리 출처표시).
+    의원실 요구자료 원문은 일괄 공개되지 않아 포함되지 않습니다 — <a href="gukgam-health.html">보건복지 트랙</a>에서 기관별 공개자료를 보완 수집합니다.
+  </p>
+</main>
+
+<script>
+(function(){
+  var DOCS = [], SHOWN = 80;
+  var state = { year:'', committee:'', type:'', q:'' };
+  function esc(s){ return (s||'').replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  var TYPE = { result_report:['결과보고서','result'], followup:['시정·처리결과','follow'], minutes:['회의록','minutes'] };
+
+  function render(){
+    var list = document.getElementById('list');
+    var rows = DOCS.filter(function(d){
+      if(state.year && String(d.year)!==state.year) return false;
+      if(state.committee && d.committee!==state.committee) return false;
+      if(state.type && d.doc_type!==state.type) return false;
+      if(state.q){
+        var t=(d.title+' '+d.committee).toLowerCase();
+        if(t.indexOf(state.q.toLowerCase())<0) return false;
+      }
+      return true;
+    });
+    if(!rows.length){ list.innerHTML='<div class="empty">조건에 맞는 자료가 없습니다.</div>'; document.getElementById('moreBtn').hidden=true; return; }
+    var slice = rows.slice(0, SHOWN);
+    list.innerHTML = slice.map(function(d){
+      var t = TYPE[d.doc_type]||[d.doc_type,''];
+      var links = [];
+      if(d.pdf) links.push('<a href="'+esc(d.pdf)+'" target="_blank" rel="noopener">PDF</a>');
+      if(d.hwp) links.push('<a href="'+esc(d.hwp)+'" target="_blank" rel="noopener">HWP</a>');
+      if(d.url) links.push('<a href="'+esc(d.url)+'" target="_blank" rel="noopener">원문 보기</a>');
+      var meta = ['<span class="badge '+t[1]+'">'+t[0]+'</span>'];
+      if(d.year) meta.push('<span>'+d.year+'년</span>');
+      if(d.era) meta.push('<span>'+esc(d.era)+' '+esc(d.sess||'')+' '+esc(d.dgr||'')+'</span>');
+      if(d.date) meta.push('<span>'+esc(d.date)+'</span>');
+      if(/보건복지/.test(d.committee)) meta.push('<a class="badge health" href="gukgam-health.html" style="text-decoration:none;">보건복지 트랙</a>');
+      return '<div class="row"><div class="main">'+
+        '<div class="title">'+esc(d.title||((d.year?d.year+'년 ':'')+d.committee+' '+t[0]))+'</div>'+
+        '<div class="meta"><span>'+esc(d.committee)+'</span>'+meta.join('')+'</div>'+
+        '</div><div class="links">'+links.join('')+'</div></div>';
+    }).join('');
+    document.getElementById('moreBtn').hidden = rows.length<=SHOWN;
+  }
+
+  function fill(sel, values){
+    var el=document.getElementById(sel);
+    values.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; el.appendChild(o); });
+  }
+
+  Promise.all([
+    fetch('data/gukgam/reports.json?_='+Date.now()).then(function(r){return r.json();}),
+    fetch('data/gukgam/minutes.json?_='+Date.now()).then(function(r){return r.json();}),
+    fetch('data/gukgam/index.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
+  ]).then(function(res){
+    var reports=res[0], minutes=res[1], idx=res[2];
+    DOCS = (reports.items||[]).concat((minutes.items||[]).map(function(m){
+      m.doc_type='minutes';
+      m.year = m.date ? parseInt(m.date.slice(0,4),10) : null;
+      m.title = (m.era||'')+' 국정감사 회의록 — '+m.committee+' ('+(m.date||'')+')';
+      return m;
+    }));
+    // 통계
+    var c = idx && idx.counts || {};
+    var h = idx && idx.health || {};
+    document.getElementById('stats').innerHTML =
+      '<div class="stat"><div class="n">'+(c.reports||0)+'</div><div class="l">결과보고서</div></div>'+
+      '<div class="stat"><div class="n">'+(c.followups||0)+'</div><div class="l">시정·처리결과</div></div>'+
+      '<div class="stat"><div class="n">'+(c.minutes||0)+'</div><div class="l">국정감사 회의록</div></div>'+
+      '<div class="stat health"><div class="n">'+((h.reports||0)+(h.minutes||0))+'</div><div class="l">보건복지위 자료</div></div>';
+    if(idx && idx.mode==='sample'){
+      var n=document.getElementById('modeNotice');
+      n.hidden=false;
+      n.innerHTML='⚠️ 현재 <strong>샘플 데이터</strong>입니다(연도별 일부만 표시). 열린국회정보 API 키를 리포 시크릿 <code>ASSEMBLY_API_KEY</code>로 등록하면 전체 자료가 수집됩니다. 최근 갱신 '+(idx.updated||'');
+    } else if(idx){
+      var n2=document.getElementById('modeNotice');
+      n2.hidden=false; n2.style.background='#eef6f0'; n2.style.borderColor='#cfe5d6';
+      n2.textContent='최근 갱신 '+(idx.updated||'')+' · 전체 수집 모드';
+    }
+    // 필터 옵션
+    var years={}, comms={};
+    DOCS.forEach(function(d){ if(d.year) years[d.year]=1; if(d.committee) comms[d.committee]=1; });
+    fill('fYear', Object.keys(years).sort().reverse());
+    fill('fCommittee', Object.keys(comms).sort());
+    render();
+  }).catch(function(){
+    document.getElementById('list').innerHTML='<div class="empty">자료를 불러오지 못했습니다.</div>';
+  });
+
+  document.getElementById('fYear').addEventListener('change', function(){ state.year=this.value; SHOWN=80; render(); });
+  document.getElementById('fCommittee').addEventListener('change', function(){ state.committee=this.value; SHOWN=80; render(); });
+  document.getElementById('fQuery').addEventListener('input', function(){ state.q=this.value.trim(); SHOWN=80; render(); });
+  document.getElementById('fType').addEventListener('click', function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    this.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); state.type=b.dataset.t; SHOWN=80; render();
+  });
+  document.getElementById('moreBtn').addEventListener('click', function(){ SHOWN+=80; render(); });
+})();
+</script>
+</body>
+</html>

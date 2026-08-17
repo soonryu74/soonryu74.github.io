@@ -181,7 +181,24 @@ GitHub Actions (cron)
 
 ---
 
-## 7. 바로 다음 할 일
+## 7. Phase 1 구현 현황 (2026-08-17)
+
+구현 완료: `scripts/gukgam/fetch_assembly.py`, `data/gukgam/`(agencies·seed-health·reports·minutes·index),
+`gukgam.html`(통합 DB), `gukgam-health.html`(보건복지 트랙), `.github/workflows/gukgam.yml`.
+
+확인된 실제 API 엔드포인트 (`https://open.assembly.go.kr/portal/openapi/{서비스명}`):
+
+| 서비스명 | 데이터 | 요청 인자 | 응답 필드 |
+|---|---|---|---|
+| `AUDITREPORTRESULT` | 국정감사 결과보고서 | RPT_YR, RPT_TTL | RPT_YR, CMIT_NM, RPT_TTL, PDF/HWP_DWLD_URL |
+| `AUDITREPORTVISIBILITY` | 시정 및 처리 요구사항 결과보고서 | RPT_YR, RPT_TTL | 위와 동일 |
+| `VCONFAPIGCONFLIST` | 국정감사 회의록 | **ERACO(필수, 예: 제22대)**, CMIT_CD | CONF_ID, SESS, DGR, CONF_DT, CMIT_NM, DOWN_URL |
+| `VCONFATTATBLIST` | 시정조치 결과보고서 목록 | CONF_ID, ERACO | CONF_ID, FILE_CN, DOWN_URL (Phase 3 예정) |
+
+- 키 없이 호출 시 샘플(5건/호출)만 반환 → 전체 수집은 `ASSEMBLY_API_KEY` 필요. 수집기는 샘플 모드에서 full 데이터를 덮어쓰지 않음.
+- likms 국정감사·조사 시스템 내부 API(`/inspections/getAtbFileList.do` POST)로 피감기관 목록·위원회 게시판 파일을 키 없이 얻을 수 있음을 확인(보건복지위 committee_id=10009) → Phase 3 크롤러 소스.
+
+## 8. 바로 다음 할 일
 
 1. [열린국회정보](https://open.assembly.go.kr/portal/openapi/main.do) 회원가입 → API 키 발급 → 리포 시크릿 `ASSEMBLY_API_KEY` 등록
 2. 보건복지위 피감기관 목록(2024·2025) 확정 → `agencies.json` 초안 작성
