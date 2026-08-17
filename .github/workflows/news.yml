@@ -1,0 +1,32 @@
+name: 부동산 뉴스·정책 자동 수집
+
+# 매일 부동산 '정책/제도' 헤드라인(제목+출처+원문링크)만 모아 data/news.json 갱신.
+# 별도 API 키가 필요 없습니다(공개 뉴스 RSS 사용). 저작권 안전(원문 미저장·링크만).
+on:
+  schedule:
+    - cron: '30 21 * * *'   # UTC 21:30 = KST 06:30 매일
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 뉴스 헤드라인 수집 → data/news.json
+        run: python3 scripts/build_news.py
+
+      - name: 변경 시 커밋
+        run: |
+          if git diff --quiet -- data/news.json; then
+            echo "변경 없음"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/news.json
+            git commit -m "부동산 뉴스·정책 헤드라인 자동 갱신"
+            git push
+          fi
