@@ -21,8 +21,9 @@ OUT_DIR = os.path.join(ROOT, "data", "gukgam")
 BASE = "https://open.assembly.go.kr/portal/openapi/"
 KEY = os.environ.get("ASSEMBLY_API_KEY", "").strip()
 MODE = "full" if KEY else "sample"
-# 회의록 수집 대상 대수 (필요 시 환경변수로 확장: GUKGAM_ERAS="제20대,제21대,제22대")
-ERAS = [e.strip() for e in os.environ.get("GUKGAM_ERAS", "제21대,제22대").split(",") if e.strip()]
+# 회의록 수집 대상 대수. API 데이터는 제16대(2000년)부터 존재. (환경변수로 조정 가능: GUKGAM_ERAS="제21대,제22대")
+_DEFAULT_ERAS = "제16대,제17대,제18대,제19대,제20대,제21대,제22대"
+ERAS = [e.strip() for e in os.environ.get("GUKGAM_ERAS", _DEFAULT_ERAS).split(",") if e.strip()]
 PAGE_SIZE = 100 if KEY else 5
 TODAY = datetime.date.today()
 
@@ -81,9 +82,9 @@ def collect_reports():
                               ("AUDITREPORTVISIBILITY", "followup")):
         if KEY:
             rows, total = fetch_all(service)
-        else:  # 샘플 모드: 연도 필터로 최근 연도별 5건씩이라도 확보
+        else:  # 샘플 모드: 연도 필터로 연도별 5건씩이라도 확보 (데이터는 2000년부터 존재)
             rows = []
-            for yr in range(TODAY.year, 2013, -1):
+            for yr in range(TODAY.year, 1999, -1):
                 r, _ = call(service, RPT_YR=str(yr))
                 rows.extend(r)
                 time.sleep(0.6)
