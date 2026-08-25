@@ -1,0 +1,39 @@
+name: 상가 상권정보 자동 갱신 (입지분석)
+
+# 소상공인 상권정보로 영업지역 상가업소를 모아 data/sangga-stores.js 재생성.
+# 실거래가와 같은 DATA_GO_KR_KEY 시크릿을 사용합니다. 상가는 변동이 느려 주1회.
+on:
+  schedule:
+    - cron: '0 19 * * 1'   # UTC 월 19:00 = KST 화 04:00 (주1회)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 상가업소 수집 → data/sangga-stores.js
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: |
+          if [ -z "$DATA_GO_KR_KEY" ]; then
+            echo "::warning::DATA_GO_KR_KEY 시크릿이 없습니다. (건너뜀)"
+            exit 0
+          fi
+          python3 scripts/build_sangga.py
+
+      - name: 변경 시 커밋
+        run: |
+          if git diff --quiet -- data/sangga-stores.js; then
+            echo "변경 없음"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/sangga-stores.js
+            git commit -m "상가 상권정보 자동 갱신 (소상공인 상권정보)"
+            git push
+          fi

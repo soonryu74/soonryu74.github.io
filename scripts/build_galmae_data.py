@@ -56,14 +56,14 @@ def fetch_records(key, lawd=LAWD, sgg_name="구리시"):
     _force_ipv4()
     def fetch_xml(url):
         last = None
-        for attempt in range(3):            # 최대 3회 재시도
+        for attempt in range(5):            # 최대 5회 재시도 (국토부 서버 지연 대비)
             try:
                 req = urllib.request.Request(url, headers={"User-Agent": "galmae-budongsan/1.0"})
-                with urllib.request.urlopen(req, timeout=30) as r:
+                with urllib.request.urlopen(req, timeout=45) as r:
                     return ET.fromstring(r.read().decode("utf-8"))
             except Exception as e:
                 last = e
-                if attempt < 2: time.sleep(2 * (attempt + 1))
+                if attempt < 4: time.sleep(3 * (attempt + 1))
         raise last
     def txt(item, *names):
         for n in names:
