@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>피움 플라워 — 꽃바구니 · 꽃다발 · 화환</title>
+<meta name="description" content="마음을 담는 동네 꽃집, 피움 플라워. 꽃바구니·꽃다발·축하화환·근조화환 주문, 리본·카드 문구 글씨체 미리보기까지 한 번에.">
+<meta property="og:title" content="피움 플라워 — 꽃바구니 · 꽃다발 · 화환">
+<meta property="og:description" content="리본·카드 문구 글씨체를 직접 골라 미리보고 주문하세요.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#8a4d5e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Pen+Script&family=Nanum+Brush+Script&family=Gaegu:wght@400;700&family=Hi+Melody&family=Gamja+Flower&family=Jua&family=Do+Hyeon&family=Song+Myung&family=Yeon+Sung&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --ground:#f6f1ee; --card:#ffffff; --card-2:#faf6f3;
+  --ink:#2a2226; --body:#4a3f45; --muted:#7d6f76;
+  --line:#e7ddd7; --line-soft:#efe7e2;
+  --rose:#8a4d5e; --rose-deep:#6f3547; --rose-soft:#f3e2e6;
+  --leaf:#5a7a52; --leaf-soft:#e6eee2;
+  --gold:#b9905c;
+  --ribbon:#7d3b4e; --ribbon-text:#f5dfa9;
+  --shadow:0 1px 2px rgba(50,30,38,.05),0 10px 30px rgba(50,30,38,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#161114; --card:#201a1e; --card-2:#261f23;
+    --ink:#f3ecef; --body:#d3c6cc; --muted:#96878e;
+    --line:#372c32; --line-soft:#2d242a;
+    --rose:#d99aab; --rose-deep:#e7b6c3; --rose-soft:#3a2830;
+    --leaf:#93b585; --leaf-soft:#25301f;
+    --gold:#d3ad78;
+    --ribbon:#5e2c3c; --ribbon-text:#f0d79e;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#161114; --card:#201a1e; --card-2:#261f23;
+  --ink:#f3ecef; --body:#d3c6cc; --muted:#96878e;
+  --line:#372c32; --line-soft:#2d242a;
+  --rose:#d99aab; --rose-deep:#e7b6c3; --rose-soft:#3a2830;
+  --leaf:#93b585; --leaf-soft:#25301f;
+  --gold:#d3ad78;
+  --ribbon:#5e2c3c; --ribbon-text:#f0d79e;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--body);
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  font-size:17px;line-height:1.7;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 22px}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{color:var(--ink);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.serif{font-family:"Gowun Batang",serif}
+
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.logo{display:flex;align-items:center;gap:10px;font-family:"Gowun Batang",serif;font-weight:700;font-size:1.2rem;color:var(--ink)}
+.logo .mark{font-size:1.4rem}
+.top nav{display:flex;gap:18px;font-size:.92rem;color:var(--muted)}
+.top nav a:hover{color:var(--rose)}
+
+.hero{padding:52px 0 26px;text-align:center}
+.eyebrow{font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;color:var(--rose);font-weight:800;margin-bottom:14px}
+.hero h1{font-family:"Gowun Batang",serif;font-weight:700;font-size:2.5rem;line-height:1.3}
+.hero p{font-size:1.1rem;max-width:46ch;margin:16px auto 0}
+.hero .cta{display:inline-flex;gap:12px;margin-top:26px;flex-wrap:wrap;justify-content:center}
+.btn{display:inline-block;padding:12px 22px;border-radius:999px;font-weight:700;font-size:.98rem;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);box-shadow:var(--shadow);cursor:pointer;
+  transition:transform .14s ease,box-shadow .14s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:var(--rose);border-color:var(--rose);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#2a1219}}
+:root[data-theme="dark"] .btn.primary{color:#2a1219}
+
+section{padding:34px 0}
+.sec-head{margin-bottom:20px}
+.sec-head h2{font-family:"Gowun Batang",serif;font-size:1.6rem}
+.sec-head p{margin:8px 0 0;color:var(--muted)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:6px;transition:transform .14s ease}
+.item:hover{transform:translateY(-3px)}
+.item .emoji{font-size:2rem}
+.item h3{font-size:1.06rem}
+.item .desc{font-size:.9rem;color:var(--muted);flex:1}
+.item .price{font-weight:800;color:var(--rose);font-size:.98rem}
+
+.tool{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);
+  padding:26px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+@media (max-width:760px){.tool{grid-template-columns:1fr}}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.82rem;font-weight:800;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;text-transform:uppercase}
+textarea,input[type=text]{width:100%;border:1px solid var(--line);border-radius:12px;background:var(--card-2);
+  color:var(--ink);font:inherit;padding:12px 14px;resize:vertical}
+textarea:focus,input:focus{outline:2px solid var(--rose);outline-offset:1px;border-color:transparent}
+
+.fonts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.font-opt{border:1.5px solid var(--line);border-radius:12px;background:var(--card-2);padding:10px 12px;cursor:pointer;
+  display:flex;flex-direction:column;gap:2px;transition:border-color .12s ease,background .12s ease}
+.font-opt:hover{border-color:var(--rose)}
+.font-opt.on{border-color:var(--rose);background:var(--rose-soft)}
+.font-opt .sample{font-size:1.25rem;line-height:1.35;color:var(--ink)}
+.font-opt .fname{font-size:.74rem;color:var(--muted)}
+
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card-2)}
+.seg button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:.9rem;font-weight:700;
+  padding:8px 18px;cursor:pointer}
+.seg button.on{background:var(--rose);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button.on{color:#2a1219}}
+:root[data-theme="dark"] .seg button.on{color:#2a1219}
+
+.preview-col{display:flex;flex-direction:column;gap:14px}
+.stage{background:linear-gradient(160deg,var(--card-2),var(--rose-soft));border:1px solid var(--line-soft);
+  border-radius:18px;min-height:330px;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+.stage .flowers{font-size:3rem;letter-spacing:.06em;margin-bottom:6px}
+
+.mock{width:100%;max-width:360px;text-align:center}
+.ribbon-band{background:var(--ribbon);color:var(--ribbon-text);border-radius:6px;padding:16px 20px;
+  box-shadow:0 6px 18px rgba(60,20,32,.25);position:relative}
+.ribbon-band::before,.ribbon-band::after{content:"";position:absolute;top:0;bottom:0;width:14px;background:inherit;filter:brightness(.85)}
+.ribbon-band::before{left:-12px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,60% 50%)}
+.ribbon-band::after{right:-12px;clip-path:polygon(0 0,100% 0,40% 50%,100% 100%,0 100%)}
+.card-mock{background:#fffdf6;color:#3c3229;border:1px solid #e8dcc8;border-radius:12px;padding:26px 22px;
+  box-shadow:0 8px 24px rgba(60,40,20,.15);position:relative}
+.card-mock::before{content:"❀";position:absolute;top:10px;left:14px;color:#c9a2ae;font-size:.9rem}
+.card-mock::after{content:"❀";position:absolute;bottom:10px;right:14px;color:#c9a2ae;font-size:.9rem}
+#previewText{font-size:1.7rem;line-height:1.5;word-break:keep-all;white-space:pre-wrap;margin:0}
+.from-line{margin-top:10px;font-size:1.1rem;opacity:.85}
+
+.size-row{display:flex;align-items:center;gap:12px}
+.size-row input[type=range]{flex:1;accent-color:var(--rose)}
+
+.order-box{background:var(--card-2);border:1px dashed var(--line);border-radius:14px;padding:14px 16px;font-size:.92rem}
+.order-box b{color:var(--ink)}
+.copy-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.copied{color:var(--leaf);font-weight:700;font-size:.9rem;align-self:center}
+
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.how .step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.how .num{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--rose-soft);color:var(--rose);
+  align-items:center;justify-content:center;font-weight:800;margin-bottom:10px}
+.how h3{font-size:1rem;margin-bottom:6px}
+.how p{margin:0;font-size:.9rem;color:var(--muted)}
+
+.info{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.info h3{font-size:.98rem;margin-bottom:6px}
+.info p{margin:0;font-size:.92rem;color:var(--muted)}
+.info a{color:var(--rose);font-weight:700}
+
+footer{padding:40px 0 50px;text-align:center;color:var(--muted);font-size:.85rem}
+footer .flowers{font-size:1.2rem;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="logo"><span class="mark">🌷</span>피움 플라워</div>
+  <nav>
+    <a href="#products">상품</a>
+    <a href="#message">글씨체 고르기</a>
+    <a href="#order">주문 방법</a>
+    <a href="#info">매장 안내</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Flower &amp; Message</div>
+  <h1>마음까지 배달하는<br>동네 꽃집</h1>
+  <p>꽃다발·꽃바구니·화환을 정성껏 만들어 드립니다.
+  리본과 카드에 들어갈 문구는 <b>원하는 글씨체로 미리 보고</b> 주문하세요.</p>
+  <div class="cta">
+    <a class="btn primary" href="#message">✍️ 문구 글씨체 미리보기</a>
+    <a class="btn" href="#products">🌹 상품 보기</a>
+  </div>
+</section>
+
+<section id="products">
+  <div class="sec-head">
+    <h2>상품 안내</h2>
+    <p>계절 꽃 수급에 따라 구성과 가격이 달라질 수 있어요. 예산에 맞춰 제작도 가능합니다.</p>
+  </div>
+  <div class="grid">
+    <div class="item">
+      <div class="emoji">💐</div>
+      <h3>꽃다발</h3>
+      <div class="desc">생일·기념일·프러포즈. 계절 꽃으로 풍성하게.</div>
+      <div class="price">30,000원부터</div>
+    </div>
+    <div class="item">
+      <div class="emoji">🧺</div>
+      <h3>꽃바구니</h3>
+      <div class="desc">개업·병문안·감사 인사. 리본 문구와 함께 오래 두고 보는 선물.</div>
+      <div class="price">50,000원부터</div>
+    </div>
+    <div class="item">
+      <div class="emoji">🎉</div>
+      <h3>축하 화환</h3>
+      <div class="desc">개업식·결혼식·행사장. 당일 배송 가능(지역 문의).</div>
+      <div class="price">80,000원부터</div>
+    </div>
+    <div class="item">
+      <div class="emoji">🕊️</div>
+      <h3>근조 화환</h3>
+      <div class="desc">장례식장 빠른 배송. 정중한 리본 문구로 마음을 전합니다.</div>
+      <div class="price">80,000원부터</div>
+    </div>
+    <div class="item">
+      <div class="emoji">🪴</div>
+      <h3>화분 · 관엽</h3>
+      <div class="desc">개업 선물로 좋은 공기정화 식물, 난, 관엽 화분.</div>
+      <div class="price">40,000원부터</div>
+    </div>
+    <div class="item">
+      <div class="emoji">📅</div>
+      <h3>정기 구독</h3>
+      <div class="desc">매주·격주로 사무실과 매장에 신선한 꽃을 배달해 드려요.</div>
+      <div class="price">월 60,000원부터</div>
+    </div>
+  </div>
+</section>
+
+<section id="message">
+  <div class="sec-head">
+    <h2>리본 · 카드 문구 글씨체 고르기</h2>
+    <p>문구를 쓰고 글씨체를 골라 보세요. 미리본 그대로 리본이나 카드에 담아 드립니다.</p>
+  </div>
+
+  <div class="tool">
+    <div>
+      <div class="field">
+        <label>문구</label>
+        <textarea id="msg" rows="3" maxlength="80" placeholder="예) 축 개업 — 번창하세요!">사랑하는 마음을 담아</textarea>
+      </div>
+      <div class="field">
+        <label>보내는 분 (선택)</label>
+        <input type="text" id="sender" maxlength="30" placeholder="예) 홍길동 올림">
+      </div>
+      <div class="field">
+        <label>글씨체</label>
+        <div class="fonts" id="fontList"></div>
+      </div>
+      <div class="field">
+        <label>글자 크기</label>
+        <div class="size-row">
+          <span style="font-size:.8rem">가</span>
+          <input type="range" id="size" min="18" max="42" value="27">
+          <span style="font-size:1.2rem">가</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-col">
+      <div class="seg" id="modeSeg">
+        <button data-mode="ribbon" class="on">🎀 리본</button>
+        <button data-mode="card">💌 카드</button>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="flowers">🌹🌸🌼🌷🌺</div>
+          <div id="mockBody" class="ribbon-band">
+            <p id="previewText">사랑하는 마음을 담아</p>
+            <div class="from-line" id="previewFrom" hidden></div>
+          </div>
+        </div>
+      </div>
+      <div class="order-box">
+        <div>선택한 글씨체: <b id="pickedFont">나눔 펜 글씨</b></div>
+        <div style="margin-top:4px">주문하실 때 아래 버튼으로 복사해서 문자·카톡으로 보내 주시면 그대로 제작해 드려요.</div>
+        <div class="copy-row">
+          <button class="btn primary" id="copyBtn">📋 주문 문구 복사</button>
+          <span class="copied" id="copiedMsg" hidden>복사됐어요!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="order">
+  <div class="sec-head">
+    <h2>주문 방법</h2>
+  </div>
+  <div class="how">
+    <div class="step">
+      <div class="num">1</div>
+      <h3>상품 · 예산 정하기</h3>
+      <p>꽃다발, 바구니, 화환 중 고르고 예산을 알려 주세요.</p>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <h3>문구 · 글씨체 보내기</h3>
+      <p>위에서 미리 본 문구와 글씨체를 복사해 전화·문자·카카오톡으로 보내 주세요.</p>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <h3>제작 · 배송</h3>
+      <p>사진으로 완성본을 먼저 확인시켜 드린 뒤 원하시는 시간에 배송해 드립니다.</p>
+    </div>
+  </div>
+</section>
+
+<section id="info">
+  <div class="sec-head">
+    <h2>매장 안내</h2>
+  </div>
+  <div class="info">
+    <div>
+      <h3>📞 주문 · 문의</h3>
+      <p><a href="tel:010-0000-0000">010-0000-0000</a><br>카카오톡 채널: 피움플라워</p>
+    </div>
+    <div>
+      <h3>🕐 영업시간</h3>
+      <p>평일 09:00 – 20:00<br>주말·공휴일 10:00 – 18:00</p>
+    </div>
+    <div>
+      <h3>📍 오시는 길</h3>
+      <p>주소를 입력해 주세요<br>(매장 앞 주차 가능)</p>
+    </div>
+    <div>
+      <h3>🚚 배송 안내</h3>
+      <p>인근 지역 당일 배송<br>화환은 전국 제휴 배송 가능</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="flowers">🌷🌼🌷</div>
+  © 피움 플라워 · 꽃과 마음을 함께 전합니다
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var FONTS=[
+    {name:"나눔 펜 글씨", css:'"Nanum Pen Script", cursive', scale:1.25},
+    {name:"나눔 붓글씨", css:'"Nanum Brush Script", cursive', scale:1.3},
+    {name:"개구쟁이", css:'"Gaegu", cursive', scale:1.05},
+    {name:"하이멜로디", css:'"Hi Melody", cursive', scale:1.05},
+    {name:"감자꽃", css:'"Gamja Flower", cursive', scale:1.05},
+    {name:"주아", css:'"Jua", sans-serif', scale:1},
+    {name:"도현", css:'"Do Hyeon", sans-serif', scale:1},
+    {name:"송명", css:'"Song Myung", serif', scale:.95},
+    {name:"연성", css:'"Yeon Sung", cursive', scale:1.05},
+    {name:"고운바탕", css:'"Gowun Batang", serif', scale:.95}
+  ];
+  var current=FONTS[0], mode="ribbon";
+
+  var msg=document.getElementById("msg"),
+      sender=document.getElementById("sender"),
+      size=document.getElementById("size"),
+      fontList=document.getElementById("fontList"),
+      previewText=document.getElementById("previewText"),
+      previewFrom=document.getElementById("previewFrom"),
+      mockBody=document.getElementById("mockBody"),
+      pickedFont=document.getElementById("pickedFont"),
+      modeSeg=document.getElementById("modeSeg"),
+      copyBtn=document.getElementById("copyBtn"),
+      copiedMsg=document.getElementById("copiedMsg");
+
+  FONTS.forEach(function(f,i){
+    var b=document.createElement("button");
+    b.type="button";
+    b.className="font-opt"+(i===0?" on":"");
+    b.innerHTML='<span class="sample" style="font-family:'+f.css.replace(/"/g,"&quot;")+'">꽃처럼 예쁜 하루</span><span class="fname">'+f.name+"</span>";
+    b.addEventListener("click",function(){
+      current=f;
+      fontList.querySelectorAll(".font-opt").forEach(function(el){el.classList.remove("on");});
+      b.classList.add("on");
+      render();
+    });
+    fontList.appendChild(b);
+  });
+
+  modeSeg.addEventListener("click",function(e){
+    var btn=e.target.closest("button");
+    if(!btn) return;
+    mode=btn.dataset.mode;
+    modeSeg.querySelectorAll("button").forEach(function(el){el.classList.toggle("on",el===btn);});
+    render();
+  });
+
+  function render(){
+    var text=msg.value.trim()||"문구를 입력해 보세요";
+    previewText.textContent=text;
+    previewText.style.fontFamily=current.css;
+    previewText.style.fontSize=(size.value*current.scale)+"px";
+    var from=sender.value.trim();
+    previewFrom.hidden=!from;
+    previewFrom.textContent=from?"— "+from:"";
+    previewFrom.style.fontFamily=current.css;
+    mockBody.className=(mode==="ribbon")?"ribbon-band":"card-mock";
+    pickedFont.textContent=current.name;
+  }
+
+  msg.addEventListener("input",render);
+  sender.addEventListener("input",render);
+  size.addEventListener("input",render);
+
+  copyBtn.addEventListener("click",function(){
+    var from=sender.value.trim();
+    var order="[꽃 주문 문구]\n"
+      +"문구: "+(msg.value.trim()||"(없음)")+"\n"
+      +(from?"보내는 분: "+from+"\n":"")
+      +"글씨체: "+current.name+"\n"
+      +"형태: "+(mode==="ribbon"?"리본":"카드");
+    function done(){
+      copiedMsg.hidden=false;
+      setTimeout(function(){copiedMsg.hidden=true;},2000);
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(order).then(done,function(){fallback(order);done();});
+    }else{fallback(order);done();}
+    function fallback(t){
+      var ta=document.createElement("textarea");
+      ta.value=t;document.body.appendChild(ta);ta.select();
+      try{document.execCommand("copy");}catch(e){}
+      document.body.removeChild(ta);
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
