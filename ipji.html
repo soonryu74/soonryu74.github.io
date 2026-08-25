@@ -176,8 +176,9 @@
   var region='guri', radius=300, map, geocoder, ps, circle, marker, aptPos={};
   var pt=null; // {lat,lng}
 
-  // 학원 창업 시 확인할 유해업소 키워드(상권 업종명 기준)
-  var HAZARD = ['유흥주점','단란주점','노래','비디오','디브이디','dvd','전자오락','오락실','성인','룸살롱','나이트','무도','안마시술','키스방','귀청'];
+  // 학원 창업 시 확인할 유해업소 — 상권 소분류(indsSclsNm) 기준으로 정확히 매칭
+  // (요리주점 등 일반음식점은 제외. 유흥·단란·노래방·비디오방·오락장·안마만)
+  var HAZARD = ['유흥 주점','단란','노래방','비디오방','기타 오락장','마사지/안마'];
   // 내 업종 프리셋 → 매칭 키워드(대/중/소분류명에 포함되면 카운트)
   var PRESETS = [
     {k:'학원·교육', words:['학원','교습','교육','보습','어학','예체능','공부방'], edu:true},
@@ -207,7 +208,7 @@
     return p.words.some(function(w){ return t.indexOf(w.toLowerCase())>=0; });
   }
   function isHazard(s){
-    var t=((s.l||'')+' '+(s.m||'')+' '+(s.s||'')).toLowerCase();
+    var t=(s.s||'');            // 소분류만 검사 → 서점·문구 등 오탐 방지
     return HAZARD.some(function(w){ return t.indexOf(w)>=0; });
   }
 
