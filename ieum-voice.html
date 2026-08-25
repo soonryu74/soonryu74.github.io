@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이음보이스 사업기획서</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --paper: #F7F9F8;
+    --card: #FFFFFF;
+    --ink: #22302C;
+    --muted: #5C6B66;
+    --accent: #157A6E;
+    --accent-ink: #0E5A51;
+    --accent-soft: #E3EFEC;
+    --line: #DCE4E1;
+    --warn-soft: #F6EEDF;
+    --warn-ink: #7A5A15;
+  }
+  :root:not([data-theme="light"]) {
+    /* placeholder to keep specificity note; real dark palette below */
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #131D1A;
+      --card: #1A2723;
+      --ink: #E7EDEA;
+      --muted: #94A59F;
+      --accent: #4FB3A4;
+      --accent-ink: #7BCDC0;
+      --accent-soft: #1F332E;
+      --line: #2B3B36;
+      --warn-soft: #33290F;
+      --warn-ink: #D9B45C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #131D1A;
+    --card: #1A2723;
+    --ink: #E7EDEA;
+    --muted: #94A59F;
+    --accent: #4FB3A4;
+    --accent-ink: #7BCDC0;
+    --accent-soft: #1F332E;
+    --line: #2B3B36;
+    --warn-soft: #33290F;
+    --warn-ink: #D9B45C;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    line-height: 1.75;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+
+  header.doc { border-bottom: 1px solid var(--line); padding-bottom: 40px; margin-bottom: 48px; }
+  .eyebrow {
+    font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin: 0 0 14px;
+  }
+  h1 {
+    font-family: "Noto Serif KR", serif;
+    font-size: clamp(30px, 5vw, 42px);
+    font-weight: 700; line-height: 1.3; margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  .lede { font-size: 17px; color: var(--muted); margin: 0 0 24px; max-width: 60ch; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13.5px; color: var(--muted); }
+  .meta strong { color: var(--ink); font-weight: 500; }
+
+  .wave { display: flex; align-items: center; gap: 4px; height: 34px; margin-bottom: 22px; }
+  .wave i { display: block; width: 5px; border-radius: 3px; background: var(--accent); opacity: .85; }
+
+  section { margin: 56px 0; }
+  h2 {
+    font-family: "Noto Serif KR", serif;
+    font-size: 24px; font-weight: 700; line-height: 1.4;
+    margin: 0 0 8px; text-wrap: balance;
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  h2 .no {
+    font-family: "IBM Plex Sans KR", sans-serif;
+    font-size: 14px; font-weight: 700; color: var(--accent);
+    letter-spacing: .06em; font-variant-numeric: tabular-nums;
+  }
+  h3 { font-size: 17px; font-weight: 700; margin: 28px 0 8px; }
+  p { margin: 12px 0; }
+  ul { margin: 12px 0; padding-left: 22px; }
+  li { margin: 6px 0; }
+  li::marker { color: var(--accent); }
+
+  .callout {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    padding: 18px 20px; border-radius: 0 8px 8px 0; margin: 20px 0;
+  }
+  .callout p { margin: 6px 0; }
+  .callout .cl-title { font-weight: 700; color: var(--accent-ink); font-size: 14px; letter-spacing: .04em; }
+
+  .note {
+    background: var(--warn-soft); border-left: 3px solid var(--warn-ink);
+    padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 20px 0;
+    font-size: 14.5px;
+  }
+  .note strong { color: var(--warn-ink); }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+  @media (max-width: 560px) { .stats { grid-template-columns: 1fr; } }
+  .stat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px 18px 14px;
+  }
+  .stat .num {
+    font-family: "Noto Serif KR", serif; font-size: 26px; font-weight: 700;
+    color: var(--accent-ink); font-variant-numeric: tabular-nums; line-height: 1.2;
+  }
+  .stat .lbl { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+  .feature {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 20px 22px; margin: 14px 0;
+  }
+  .feature h3 { margin: 0 0 6px; display: flex; align-items: baseline; gap: 10px; }
+  .feature h3 .fno {
+    font-size: 12.5px; font-weight: 700; color: var(--accent);
+    letter-spacing: .08em; font-variant-numeric: tabular-nums;
+  }
+  .feature p { margin: 6px 0 0; font-size: 15px; color: var(--muted); }
+  .feature p strong { color: var(--ink); font-weight: 500; }
+
+  .tablewrap { overflow-x: auto; margin: 20px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 560px; }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th {
+    font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); font-weight: 700; background: var(--accent-soft);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pill {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .04em;
+    background: var(--accent-soft); color: var(--accent-ink);
+    border-radius: 999px; padding: 2px 10px; margin-right: 6px;
+  }
+
+  .timeline { border-left: 2px solid var(--line); margin: 20px 0 0 6px; padding-left: 24px; }
+  .tstep { position: relative; margin: 0 0 26px; }
+  .tstep::before {
+    content: ""; position: absolute; left: -31px; top: 7px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--accent); border: 3px solid var(--paper);
+  }
+  .tstep .when { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; color: var(--accent); }
+  .tstep .what { font-weight: 700; margin: 2px 0 4px; }
+  .tstep p { margin: 0; font-size: 14.5px; color: var(--muted); }
+
+  footer.doc {
+    border-top: 1px solid var(--line); margin-top: 72px; padding-top: 24px;
+    font-size: 13.5px; color: var(--muted);
+  }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="doc">
+    <div class="wave" aria-hidden="true">
+      <i style="height:8px"></i><i style="height:16px"></i><i style="height:26px"></i><i style="height:12px"></i>
+      <i style="height:32px"></i><i style="height:20px"></i><i style="height:10px"></i><i style="height:24px"></i>
+      <i style="height:14px"></i><i style="height:6px"></i>
+    </div>
+    <p class="eyebrow">사업기획서 · Assistive Voice AI</p>
+    <h1>이음보이스 — 목소리를 잃은 사람에게 다시 목소리를</h1>
+    <p class="lede">언어장애·발화장애가 있는 분들이 자신의 목소리로 대화하고, 전화하고, 세상과 이어지게 하는 한국어 특화 AI 보이스 도우미 사업기획서입니다.</p>
+    <div class="meta">
+      <span><strong>버전</strong> v1.0 (초안)</span>
+      <span><strong>작성일</strong> 2026. 8. 25.</span>
+      <span><strong>작성</strong> soonryu74</span>
+    </div>
+  </header>
+
+  <div class="note">
+    <strong>표현에 대하여.</strong> '벙어리'는 오늘날 장애 비하 표현으로 분류됩니다. 본 문서와 서비스 전반에서는 <strong>언어장애인 · 발화가 어려운 분</strong>이라는 표현을 사용합니다. 서비스 네이밍·마케팅에서도 동일한 원칙을 지킵니다.
+  </div>
+
+  <section>
+    <h2><span class="no">00</span>요약 (Executive Summary)</h2>
+    <p><strong>이음보이스</strong>는 발화가 어려운 사람의 "입"이 되어 주는 모바일 앱입니다. 텍스트나 상용구를 입력하면 <strong>본인의 복원된 목소리</strong>로 즉시 말해 주고, 나아가 <strong>전화 통화까지 대신 수행</strong>합니다. 기존 보완대체의사소통(AAC) 도구가 기계음·느린 입력·통화 불가라는 세 가지 벽에 막혀 있던 지점을, 음성 복제(voice cloning)와 LLM 문장 예측으로 정면 돌파합니다.</p>
+    <div class="callout">
+      <p class="cl-title">한 줄 정의</p>
+      <p>"수술 전에 목소리를 저금하고, 수술 후에도 <em>내 목소리</em>로 가족과 통화하는 앱."</p>
+    </div>
+    <ul>
+      <li><strong>핵심 고객</strong> — 후두적출·루게릭병(ALS)·뇌졸중·뇌성마비 등으로 발화가 어려운 분과 그 가족, 이비인후과·재활의학과 병원</li>
+      <li><strong>수익 모델</strong> — 기본 무료 + 프리미엄 구독(B2C), 병원·복지관 라이선스(B2B), 보조공학기기 지원사업 연계(B2G)</li>
+      <li><strong>초기 전략</strong> — 정부 창업지원(예비창업패키지·사회적기업가 육성사업)으로 MVP 검증 후 임팩트 투자 유치</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="no">01</span>문제 정의</h2>
+    <h3>목소리를 잃는 사람들</h3>
+    <ul>
+      <li><strong>후천적 상실</strong> — 후두암 수술(후두적출), 루게릭병·파킨슨병 진행, 뇌졸중 후 구음장애·실어증. 성인이 된 뒤 "자기 목소리"를 잃는 경우가 많습니다.</li>
+      <li><strong>선천적·발달적 요인</strong> — 뇌성마비, 발달장애 등으로 명료한 발화가 어려운 경우.</li>
+      <li><strong>일시적 상실</strong> — 기관삽관·후두 질환 등으로 일정 기간 말할 수 없는 환자.</li>
+    </ul>
+    <h3>기존 도구의 세 가지 벽</h3>
+    <ul>
+      <li><strong>정체성의 벽</strong> — 기존 AAC와 TTS는 누구의 것도 아닌 기계음을 냅니다. 목소리는 지문만큼 개인적인 정체성인데, 이를 복원해 주는 국내 서비스가 사실상 없습니다.</li>
+      <li><strong>속도의 벽</strong> — 대화는 초 단위로 흐르는데 글자판 입력은 분 단위입니다. 문장을 완성하기 전에 대화가 지나가 버립니다.</li>
+      <li><strong>전화의 벽</strong> — 병원 예약, 관공서 문의, 배달 주문 등 한국 일상의 상당 부분이 아직 전화를 요구하지만, 발화가 어려운 분은 이 전화 앞에서 매번 타인의 도움이 필요합니다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="no">02</span>솔루션 — 4가지 핵심 기능</h2>
+    <div class="feature">
+      <h3><span class="fno">F1</span>내 목소리 은행 (Voice Banking)</h3>
+      <p>진단 직후 또는 수술 전, 짧은 녹음으로 본인 음성을 저장하고 AI로 복원합니다. 이미 목소리를 잃었다면 <strong>과거 영상·통화 녹음에서 복원</strong>하거나, 가족 음성·취향 기반 맞춤 음성을 제작합니다. 병원(이비인후과·신경과)과 제휴해 "수술 전 목소리 저금" 프로토콜을 표준화합니다.</p>
+    </div>
+    <div class="feature">
+      <h3><span class="fno">F2</span>실시간 대화 모드</h3>
+      <p>입력 즉시 자연스러운 억양의 내 목소리로 발화합니다. LLM이 대화 맥락을 읽고 <strong>다음 문장을 예측 제안</strong>해 입력 시간을 크게 줄이고, 자주 쓰는 문장은 원터치 상용구로 등록합니다.</p>
+    </div>
+    <div class="feature">
+      <h3><span class="fno">F3</span>AI 전화 대리</h3>
+      <p>사용자가 텍스트로 입력하면 AI가 <strong>사용자의 목소리로 상대와 통화</strong>합니다. 상대방 발화는 실시간 자막으로 표시되고, 예약·주문 같은 정형 통화는 목적만 입력하면 AI가 대화 전체를 진행한 뒤 결과를 요약합니다.</p>
+    </div>
+    <div class="feature">
+      <h3><span class="fno">F4</span>상황 인식 추천 + 접근성</h3>
+      <p>병원·식당·관공서 등 장소와 상황에 맞는 문장 세트를 자동 추천합니다. 스위치 입력·시선 추적·큰 버튼 모드 등 <strong>운동 기능 제약까지 고려한 접근성</strong>을 1급 요구사항으로 설계합니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">03</span>시장 분석</h2>
+    <div class="stats">
+      <div class="stat"><div class="num">~2만+</div><div class="lbl">국내 등록 언어장애인 (등록장애인 통계 기준, 추정)</div></div>
+      <div class="stat"><div class="num">~50만</div><div class="lbl">TAM — 뇌병변·음성질환·고령 발성 저하 포함 발화 곤란 인구 (자체 추정)</div></div>
+      <div class="stat"><div class="num">8~10%</div><div class="lbl">글로벌 AAC 시장 연평균 성장률 (업계 리포트 추정)</div></div>
+    </div>
+    <ul>
+      <li><strong>TAM(약 50만 명)</strong> — 등록 언어장애인 외에 뇌병변장애 중 발화 곤란군, 후두 질환 환자, 진행성 신경질환 환자, 고령 발성 저하까지 포함한 잠재 시장.</li>
+      <li><strong>SAM(약 20만 명)</strong> — 스마트폰을 스스로 또는 보호자와 함께 사용할 수 있는 층.</li>
+      <li><strong>SOM(3년 내 2만 명)</strong> — 병원 제휴·장애인 단체 채널로 도달 가능한 초기 목표. 유료 전환 10%만으로도 구독 매출 기반이 성립합니다.</li>
+    </ul>
+    <p>보조기술(AT) 시장의 특성상 <strong>사용자 수보다 채널이 중요</strong>합니다. 병원·복지관·특수학교·장애인고용공단이라는 공식 채널에 올라타면 마케팅 비용 없이 신뢰 기반으로 확산됩니다.</p>
+    <div class="note"><strong>수치 주의.</strong> 위 수치는 기획 단계의 추정치입니다. 사업계획서 제출 전 보건복지부 등록장애인 현황, 건강보험 통계, AAC 시장 리포트로 최신 수치를 검증·인용해야 합니다.</div>
+  </section>
+
+  <section>
+    <h2><span class="no">04</span>경쟁 분석</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>제품</th><th>강점</th><th>한계 (이음보이스의 기회)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Proloquo2Go</strong><br>(글로벌 AAC 앱)</td>
+            <td>상징 기반 AAC의 표준, 풍부한 어휘판</td>
+            <td>고가(수십만 원), 한국어·한국 생활맥락 지원 약함, 기계음, 전화 불가</td>
+          </tr>
+          <tr>
+            <td><strong>국내 무료 AAC 앱</strong><br>(나의AAC 등 공공·복지형)</td>
+            <td>무료, 국내 기관 보급</td>
+            <td>합성음 품질·문장 예측 부재, 성인 후천적 상실군에 부적합, 전화 불가</td>
+          </tr>
+          <tr>
+            <td><strong>ElevenLabs 등</strong><br>(음성 복제 플랫폼)</td>
+            <td>음성 복제 품질 우수</td>
+            <td>개발자·크리에이터용 도구, 장애 접근성·대화 UX·국내 결제/채널 부재</td>
+          </tr>
+          <tr>
+            <td><strong>통신사 AI 통화 기능</strong><br>(AI 비서 전화 등)</td>
+            <td>통화 인프라 보유</td>
+            <td>비장애인 편의 기능 중심, 목소리 복원·AAC 통합 없음</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <p class="cl-title">차별점 요약</p>
+      <p>① 한국어·한국 생활맥락 특화 ② 내 목소리 복원 ③ 전화 통화까지 한 앱에서 — 이 세 가지를 동시에 제공하는 사업자는 현재 없습니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">05</span>비즈니스 모델</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>트랙</th><th>내용</th><th>가격 (안)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pill">B2C</span>구독</td>
+            <td>기본 대화 모드는 <strong>영구 무료</strong>(사회적 책무이자 확산 엔진). 프리미엄: 목소리 복원, AI 전화 대리, 무제한 상용구</td>
+            <td class="num">월 9,900원<br>연 99,000원</td>
+          </tr>
+          <tr>
+            <td><span class="pill">B2G</span>지원사업 연계</td>
+            <td>고용노동부 보조공학기기 지원, 복지부 장애인 보조기기 교부사업에 <strong>공식 품목 등록</strong> → 본인 부담 최소화로 구매 장벽 제거</td>
+            <td class="num">기기+SW 패키지<br>정부 보조</td>
+          </tr>
+          <tr>
+            <td><span class="pill">B2B</span>기관 라이선스</td>
+            <td>이비인후과·재활병원 "수술 전 목소리 저금" 패키지, 복지관·특수학교 단체 라이선스</td>
+            <td class="num">기관당 연간<br>협의 단가</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>초기 매출은 B2B/B2G가 견인하고, B2C 구독이 뒤따라 성장하는 구조입니다. 보조기기 공식 등록은 진입장벽이 높은 만큼, 일단 등록되면 그 자체가 <strong>강력한 해자</strong>가 됩니다.</p>
+  </section>
+
+  <section>
+    <h2><span class="no">06</span>기술 구성</h2>
+    <ul>
+      <li><strong>음성 복원(TTS)</strong> — 소량 샘플 기반 한국어 voice cloning. 초기에는 검증된 상용 API로 시작하고, 데이터가 쌓이면 한국어 장애 발화 특화 모델을 자체 미세조정.</li>
+      <li><strong>문장 예측(LLM)</strong> — 대화 맥락·사용자 어휘 습관 기반 다음 문장 추천. 개인 상용구는 온디바이스 저장.</li>
+      <li><strong>통화(STT + VoIP)</strong> — 상대 발화 실시간 자막(STT), 발신은 VoIP 게이트웨이 경유로 일반 전화망 연결.</li>
+      <li><strong>프라이버시</strong> — 음성 원본·대화 기록은 기본 단말 저장, 클라우드 학습은 명시적 동의 시에만. 복원 음성에는 <strong>비가청 워터마크</strong>를 삽입해 악용을 차단.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="no">07</span>로드맵</h2>
+    <div class="timeline">
+      <div class="tstep">
+        <div class="when">1단계 · 0–3개월</div>
+        <div class="what">MVP — 대화 모드</div>
+        <p>고품질 한국어 TTS + 상용구 + 문장 예측. 장애인 단체·온라인 커뮤니티 베타 30명 심층 검증.</p>
+      </div>
+      <div class="tstep">
+        <div class="when">2단계 · 4–6개월</div>
+        <div class="what">목소리 은행 베타</div>
+        <p>음성 복원 파이프라인 구축, 이비인후과 1–2곳과 "수술 전 녹음" 파일럿 제휴.</p>
+      </div>
+      <div class="tstep">
+        <div class="when">3단계 · 7–9개월</div>
+        <div class="what">AI 전화 대리</div>
+        <p>VoIP 연동, 예약·주문 시나리오 우선 출시. 프리미엄 구독 오픈.</p>
+      </div>
+      <div class="tstep">
+        <div class="when">4단계 · 10–12개월</div>
+        <div class="what">B2G 등록 + 투자 유치</div>
+        <p>보조공학기기 품목 등록 신청, 사용 성과 데이터로 임팩트 투자 라운드 추진.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">08</span>재무 추정 (3개년, 보수적 가정)</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>구분</th><th>1차년</th><th>2차년</th><th>3차년</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>누적 사용자</td><td class="num">1,000명</td><td class="num">8,000명</td><td class="num">25,000명</td></tr>
+          <tr><td>유료 전환율</td><td class="num">5%</td><td class="num">8%</td><td class="num">10%</td></tr>
+          <tr><td>B2C 구독 매출</td><td class="num">0.05억</td><td class="num">0.7억</td><td class="num">2.5억</td></tr>
+          <tr><td>B2B/B2G 매출</td><td class="num">0.3억</td><td class="num">2.5억</td><td class="num">8억</td></tr>
+          <tr><td><strong>매출 합계</strong></td><td class="num"><strong>0.35억</strong></td><td class="num"><strong>3.2억</strong></td><td class="num"><strong>10.5억</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>초기 소요 자금은 약 <strong>3억 원</strong>(개발 인건비 2억, API·인프라 0.5억, 운영·인증 0.5억)으로 추정하며, 정부 창업지원금 + 시드 투자로 조달합니다. 수치는 검증용 가정이며 파일럿 결과로 갱신합니다.</p>
+  </section>
+
+  <section>
+    <h2><span class="no">09</span>정부지원 · 사회적 가치 트랙</h2>
+    <ul>
+      <li><strong>창업 단계</strong> — 예비창업패키지, 사회적기업가 육성사업(장애인 접근성 분야 가점), 소셜벤처 판별 → 임팩트 펀드 접근.</li>
+      <li><strong>R&D</strong> — 보조공학·장애인 접근성 관련 국가 R&D 과제(복지부·과기부) 매칭.</li>
+      <li><strong>확산</strong> — 장애인고용공단(근로지원), 발달장애인지원센터, 병원 사회사업실을 통한 공공 보급.</li>
+      <li><strong>임팩트 지표</strong> — 월간 발화 대행 횟수, 독립 통화 성공률, 사용자 자립도 설문 — 투자 유치와 지원사업 성과 보고에 동일하게 사용.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="no">10</span>리스크와 대응</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>리스크</th><th>대응</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>음성 복제 악용 (보이스피싱 등)</td>
+            <td>본인 인증 후에만 복원, 비가청 워터마크, 복원 음성 사용 로그, 제3자 목소리 복제 차단 정책</td>
+          </tr>
+          <tr>
+            <td>대형 플랫폼(통신사·빅테크)의 유사 기능 출시</td>
+            <td>장애 접근성 UX·병원 채널·보조기기 등록이라는 비기술 해자 선점, 필요 시 플랫폼과 제휴 전환</td>
+          </tr>
+          <tr>
+            <td>규제 (의료기기 해당 여부, 개인정보)</td>
+            <td>의료 진단·치료 기능 배제로 의료기기 비해당 포지셔닝 사전 검토, 음성 데이터는 민감정보 수준으로 취급·국내 보관</td>
+          </tr>
+          <tr>
+            <td>수요 검증 실패 (실사용 이탈)</td>
+            <td>MVP 단계에서 당사자 30명 심층 베타 — 주 3회 이상 실사용이 확인될 때만 다음 단계 투자</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">11</span>다음 액션</h2>
+    <ul>
+      <li>보건복지부 등록장애인 통계·AAC 시장 리포트로 <strong>03장 수치 검증</strong></li>
+      <li>언어장애 당사자·언어재활사 <strong>인터뷰 10건</strong> — 기능 우선순위 확정</li>
+      <li>한국어 voice cloning API 2–3종 <strong>품질 비교 PoC</strong></li>
+      <li>예비창업패키지 등 <strong>지원사업 공고 일정 확인</strong> 및 신청서 초안 작성</li>
+    </ul>
+  </section>
+
+  <footer class="doc">
+    <p>이음보이스 사업기획서 v1.0 — 본 문서의 시장·재무 수치는 기획 단계 추정치이며, 실제 사업계획서 제출 전 공식 통계로 검증이 필요합니다.</p>
+  </footer>
+</div>
+</body>
+</html>
