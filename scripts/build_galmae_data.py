@@ -197,6 +197,18 @@ def write_js(guri, galmae):
         f.write("/* 갈매동 아파트 단지 실거래가(국토부 실거래가 공개시스템, 최근1년 매매) — 평형별 상세 포함 */\n")
         f.write("const COMPLEXES = " + json.dumps(galmae, ensure_ascii=False) + ";\n")
 
+def write_deals(records):
+    """리포트(report.html)용 개별 거래 원본 — 최근 1년 매매, 최신순."""
+    deals = [OrderedDict([
+        ("type", "매매"), ("dong", r["dong"]), ("name", r["name"]),
+        ("price", r["price"]), ("rent", 0), ("area", r["area"]),
+        ("floor", r["floor"]), ("date", r["date"]),
+    ]) for r in records if r["name"] and r["price"] > 0]
+    deals.sort(key=lambda d: d["date"], reverse=True)
+    with open(os.path.join(ROOT, "data/deals.json"), "w", encoding="utf-8") as f:
+        json.dump(deals, f, ensure_ascii=False, indent=1)
+        f.write("\n")
+
 def write_byeollae(byeollae):
     with open(os.path.join(ROOT, "data/byeollae-complexes.js"), "w", encoding="utf-8") as f:
         f.write("/* 남양주 별내 아파트 단지별 매매 실거래가 집계 (국토부 실거래가 공개시스템, 최근 1년) */\n")
@@ -227,6 +239,8 @@ def main():
         if GALMAE not in gset or len(galmae) < 3:
             print("::error::갈매동 데이터 부족 — 갱신 중단(안전장치)."); return 1
     write_js(guri, galmae)
+    if not local:
+        write_deals(records)
     print(f"완료: 구리 {len(guri)}단지 / 갈매동 {len(galmae)}단지")
 
     # 남양주 → 별내만 추출해서 별도 파일 (구리 스타일 목록)

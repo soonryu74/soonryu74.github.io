@@ -1,12 +1,21 @@
 name: Jekyll Site CI
 
+# 봇(GITHUB_TOKEN)이 만든 데이터 갱신 커밋은 push 이벤트로 이 워크플로를 트리거하지
+# 못하므로(깃허브 재귀 방지 정책), 데이터 수집 워크플로가 끝나면 workflow_run으로도 배포한다.
 on:
   push:
     branches:
       - main
+  workflow_run:
+    workflows:
+      - "실거래가 자동 갱신 (구리시)"
+      - "부동산 뉴스·정책 자동 수집"
+    types: [completed]
+  workflow_dispatch:
 
 jobs:
   build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
