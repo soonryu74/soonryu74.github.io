@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>국정감사 자료 DB 구축 기획서 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="국정감사 자료 DB 구축 기획서" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="국정감사 자료 DB 구축 기획서" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"국정감사 자료 DB 구축 기획서","url":"/docs/gukgam-db-plan.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=3faa358e894f4a4b783f95b2090de4bdef5d8e06">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="국정감사-자료-db-구축-기획서">국정감사 자료 DB 구축 기획서</h1>
+
+<blockquote>
+  <p>목표: 매년 국정감사에서 오가는 자료(요구자료·제출자료·서면답변·결과보고서·회의록 등)를 한곳에 모은
+검색 가능한 DB를 만들고, <strong>보건복지부·질병관리청·심평원 등 보건복지위원회 소관기관은 별도 트랙으로 구분</strong>하여
+깊이 있게 수집·조회할 수 있게 한다.</p>
+</blockquote>
+
+<p>작성일: 2026-08-17 · 대상 리포: <code class="language-plaintext highlighter-rouge">soonryu74.github.io</code> (GitHub Pages 정적 사이트 + GitHub Actions 자동수집 패턴 재사용)</p>
+
+<hr />
+
+<h2 id="1-배경과-목표">1. 배경과 목표</h2>
+
+<p>국정감사(매년 정기회 기간, 통상 10월)는 상임위원회별로 피감기관을 감사하며, 그 과정에서 다음 자료가 생산된다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>자료 유형</th>
+      <th>생산 주체</th>
+      <th>공개 여부</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>① 국정감사 계획서·피감기관 목록</td>
+      <td>각 상임위</td>
+      <td>공개</td>
+    </tr>
+    <tr>
+      <td>② 요구자료 목록(의원실 → 기관)</td>
+      <td>의원실/위원회</td>
+      <td><strong>원문은 대부분 비공개</strong> (목록·건수 일부 공개, 기관 도서관에 소장되는 경우 있음)</td>
+    </tr>
+    <tr>
+      <td>③ 제출자료·업무보고 자료</td>
+      <td>피감기관</td>
+      <td>기관별 사전정보공표로 상당수 공개</td>
+    </tr>
+    <tr>
+      <td>④ 서면질의 답변서</td>
+      <td>피감기관</td>
+      <td>기관별 공개 + 국회도서관 전자자료</td>
+    </tr>
+    <tr>
+      <td>⑤ 국정감사 회의록</td>
+      <td>국회사무처</td>
+      <td>공개 (Open API 존재)</td>
+    </tr>
+    <tr>
+      <td>⑥ 국정감사 결과보고서</td>
+      <td>각 상임위</td>
+      <td>공개 (Open API 존재)</td>
+    </tr>
+    <tr>
+      <td>⑦ 시정·처리요구 및 처리결과 보고</td>
+      <td>위원회/기관</td>
+      <td>공개</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>핵심 현실 체크:</strong> “국회의원들이 요구했던 자료”의 원문 전체(②)는 시스템으로 일괄 공개되지 않는다.
+따라서 DB의 뼈대는 <strong>공개 API가 있는 ⑤⑥ + 기관이 스스로 공개하는 ③④⑦</strong>로 잡고,
+②는 목록 수준 수집 + 정보공개청구(정보공개포털 open.go.kr)로 보완하는 전략을 쓴다.
+(예: 국민건강보험공단 전문도서관에는 회기별 “국정감사 요구자료” 묶음이 소장되어 있음 → 기관 도서관/자료실이 우회 소스가 됨)</p>
+
+<h3 id="목표">목표</h3>
+<ol>
+  <li>국정감사 관련 공개 자료의 <strong>통합 메타데이터 DB</strong> (연도·대수·위원회·기관·자료유형·원문링크)</li>
+  <li><strong>보건복지 트랙 별도 구분</strong>: 보건복지부 + 소속기관(질병관리청 등) + 산하 공공기관(심평원·건보공단 등)을
+전용 필터·전용 페이지로 심층 수집</li>
+  <li>정적 사이트에서 동작하는 <strong>검색/필터 UI</strong> (서버 불필요, 기존 리포 패턴 그대로)</li>
+</ol>
+
+<hr />
+
+<h2 id="2-데이터-소스-정리">2. 데이터 소스 정리</h2>
+
+<h3 id="21-국회-공식-전-위원회-공통--db의-뼈대">2.1 국회 공식 (전 위원회 공통 — DB의 뼈대)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>소스</th>
+      <th>내용</th>
+      <th>접근 방법</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://open.assembly.go.kr/portal/openapi/main.do">열린국회정보 Open API</a></td>
+      <td>국정감사 결과보고서, 위원회 회의록, 의원 정보 등</td>
+      <td>무료 API 키 발급 (JSON/XML)</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.data.go.kr/data/15126116/openapi.do">공공데이터포털 – 국정감사결과보고서</a></td>
+      <td>국회사무처 제공, 결과보고서 메타데이터</td>
+      <td>LINK형 → 열린국회정보로 연결, XML</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.data.go.kr/data/15126142/openapi.do">공공데이터포털 – 국정감사 회의록</a></td>
+      <td>국정감사 회의록</td>
+      <td>동일</td>
+    </tr>
+    <tr>
+      <td><a href="https://likms.assembly.go.kr/inspections/main.do">국정감사·조사 정보시스템</a></td>
+      <td>연도별 일정·피감기관·계획서·결과보고서 원문</td>
+      <td>크롤링 (API 없음)</td>
+    </tr>
+    <tr>
+      <td><a href="https://likms.assembly.go.kr/record/">국회회의록 시스템</a></td>
+      <td>2025.3월부터 XML 기반 회의록</td>
+      <td>크롤링/다운로드</td>
+    </tr>
+    <tr>
+      <td><a href="https://dl.nanet.go.kr/">국회도서관(NANET)</a></td>
+      <td>“국정감사 서면질의 답변서” 전자자료 등</td>
+      <td>검색·수동 수집</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="22-보건복지-트랙-전용-기관별-사전정보공표자료실">2.2 보건복지 트랙 전용 (기관별 사전정보공표·자료실)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>기관</th>
+      <th>구분</th>
+      <th>주요 공개물</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://www.mohw.go.kr">보건복지부</a></td>
+      <td>부처</td>
+      <td>국정감사 업무보고 자료(사전정보공표), 서면답변, 시정처리결과</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.kdca.go.kr">질병관리청</a></td>
+      <td>복지부 소속 외청</td>
+      <td>업무보고·서면답변 (사전정보공표)</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.hira.or.kr">건강보험심사평가원(심평원)</a></td>
+      <td>산하 공공기관</td>
+      <td>서면질의 답변서 (홈페이지 게시)</td>
+    </tr>
+    <tr>
+      <td>국민건강보험공단</td>
+      <td>산하 공공기관</td>
+      <td>서면답변 + <strong>전문도서관에 회기별 요구자료 소장</strong></td>
+    </tr>
+    <tr>
+      <td>국민연금공단, 한국보건산업진흥원, 국립암센터 등</td>
+      <td>산하 공공기관</td>
+      <td>기관별 자료실/사전정보공표</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>식품의약품안전처(총리 소속)도 보건복지위 피감기관이므로 보건복지 트랙에 포함할지 선택 필요 → <strong>포함 권장</strong> (위원회 기준으로 트랙을 정의하면 자연스럽게 포함됨).</p>
+</blockquote>
+
+<h3 id="23-트랙-정의-원칙">2.3 트랙 정의 원칙</h3>
+
+<p>트랙은 “부처 소속” 기준이 아니라 <strong>상임위원회(보건복지위원회) 피감기관 기준</strong>으로 정의한다.
+피감기관 목록은 매년 국정감사·조사 정보시스템의 계획서에서 갱신한다.</p>
+
+<hr />
+
+<h2 id="3-데이터-모델-스키마">3. 데이터 모델 (스키마)</h2>
+
+<p>정적 사이트이므로 물리적으로는 JSON 파일이지만, 논리 스키마를 먼저 고정한다.</p>
+
+<h3 id="31-기관-마스터-datagukgamagenciesjson">3.1 기관 마스터 <code class="language-plaintext highlighter-rouge">data/gukgam/agencies.json</code></h3>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hira"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"건강보험심사평가원"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"short"</span><span class="p">:</span><span class="w"> </span><span class="s2">"심평원"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public_org"</span><span class="p">,</span><span class="w">            </span><span class="err">//</span><span class="w"> </span><span class="err">ministry</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">agency(소속기관)</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">public_org(산하)</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">etc</span><span class="w">
+  </span><span class="nl">"parent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mohw"</span><span class="p">,</span><span class="w">                 </span><span class="err">//</span><span class="w"> </span><span class="err">계층:</span><span class="w"> </span><span class="err">심평원</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="err">복지부</span><span class="w">
+  </span><span class="nl">"committee"</span><span class="p">:</span><span class="w"> </span><span class="s2">"보건복지위원회"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"track"</span><span class="p">:</span><span class="w"> </span><span class="s2">"health"</span><span class="p">,</span><span class="w">                </span><span class="err">//</span><span class="w"> </span><span class="err">★</span><span class="w"> </span><span class="err">보건복지</span><span class="w"> </span><span class="err">트랙</span><span class="w"> </span><span class="err">구분자.</span><span class="w"> </span><span class="err">그</span><span class="w"> </span><span class="err">외는</span><span class="w"> </span><span class="s2">"general"</span><span class="w">
+  </span><span class="nl">"homepage"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.hira.or.kr"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"audit_years"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2023</span><span class="p">,</span><span class="w"> </span><span class="mi">2024</span><span class="p">,</span><span class="w"> </span><span class="mi">2025</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="32-자료-레코드-datagukgamdocs-연도json-연도별-샤딩">3.2 자료 레코드 <code class="language-plaintext highlighter-rouge">data/gukgam/docs-{연도}.json</code> (연도별 샤딩)</h3>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-hira-0012"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"year"</span><span class="p">:</span><span class="w"> </span><span class="mi">2025</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"assembly"</span><span class="p">:</span><span class="w"> </span><span class="mi">22</span><span class="p">,</span><span class="w">                   </span><span class="err">//</span><span class="w"> </span><span class="err">대수</span><span class="w">
+  </span><span class="nl">"committee"</span><span class="p">:</span><span class="w"> </span><span class="s2">"보건복지위원회"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"agency_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hira"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"doc_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"written_answer"</span><span class="p">,</span><span class="w">     </span><span class="err">//</span><span class="w"> </span><span class="err">plan</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">request_list</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">submission</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">briefing</span><span class="w"> </span><span class="err">|</span><span class="w">
+                                    </span><span class="err">//</span><span class="w"> </span><span class="err">written_answer</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">minutes</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">result_report</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">followup</span><span class="w">
+  </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025년 국정감사 서면질의 답변서"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"member"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">                   </span><span class="err">//</span><span class="w"> </span><span class="err">질의</span><span class="w"> </span><span class="err">의원</span><span class="w"> </span><span class="err">(파싱</span><span class="w"> </span><span class="err">가능한</span><span class="w"> </span><span class="err">경우)</span><span class="w">
+  </span><span class="nl">"party"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-11-20"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hira_website"</span><span class="p">,</span><span class="w">         </span><span class="err">//</span><span class="w"> </span><span class="err">수집</span><span class="w"> </span><span class="err">출처</span><span class="w"> </span><span class="err">식별자</span><span class="w">
+  </span><span class="nl">"source_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.hira.or.kr/..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"file_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pdf"</span><span class="p">,</span><span class="w">               </span><span class="err">//</span><span class="w"> </span><span class="err">pdf</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">hwp</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">hwpx</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">html</span><span class="w">
+  </span><span class="nl">"file_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"text_extracted"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">          </span><span class="err">//</span><span class="w"> </span><span class="err">Phase</span><span class="w"> </span><span class="mi">4</span><span class="err">에서</span><span class="w"> </span><span class="err">본문</span><span class="w"> </span><span class="err">추출</span><span class="w"> </span><span class="err">여부</span><span class="w">
+  </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"비급여"</span><span class="p">,</span><span class="w"> </span><span class="s2">"실손보험"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="33-인덱스-datagukgamindexjson">3.3 인덱스 <code class="language-plaintext highlighter-rouge">data/gukgam/index.json</code></h3>
+<p>연도·위원회·트랙별 건수 요약. 첫 화면 통계와 필터 UI 초기화용.</p>
+
+<p><strong>용량 전략:</strong> 메타데이터만 저장(원문은 링크). 연도별 샤딩으로 파일당 수백 KB 유지.
+전문검색이 필요해지는 Phase 4에서 SQLite + sql.js(브라우저 로딩) 또는 연도별 검색 인덱스(lunr/minisearch) 도입.</p>
+
+<hr />
+
+<h2 id="4-아키텍처">4. 아키텍처</h2>
+
+<p>기존 리포의 <code class="language-plaintext highlighter-rouge">silgeorae.yml</code>/<code class="language-plaintext highlighter-rouge">news.yml</code> 패턴을 그대로 확장한다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GitHub Actions (cron)
+ ├─ scripts/gukgam/fetch_assembly.py   ← 열린국회정보/공공데이터포털 API (결과보고서·회의록)
+ ├─ scripts/gukgam/fetch_inspections.py← likms 국정감사·조사 시스템 크롤링 (계획서·피감기관)
+ ├─ scripts/gukgam/fetch_health.py     ← 복지부/질병청/심평원/건보공단 게시판 크롤링 (보건복지 트랙)
+ └─ scripts/gukgam/build_index.py      ← 정합성 검사 + index.json 생성
+        ↓ 변경 시 자동 커밋
+ data/gukgam/*.json
+        ↓ GitHub Pages
+ gukgam.html        (전체 DB: 연도·위원회·기관·유형 필터 + 검색)
+ gukgam-health.html (★보건복지 전용: 기관 계층 트리 + 심층 필터)
+</code></pre></div></div>
+
+<ul>
+  <li><strong>스케줄:</strong> 평시 주 1회, 국감 시즌(9~12월) 매일 새벽. cron 두 개로 분리.</li>
+  <li><strong>시크릿:</strong> <code class="language-plaintext highlighter-rouge">ASSEMBLY_API_KEY</code> (열린국회정보), <code class="language-plaintext highlighter-rouge">DATA_GO_KR_KEY</code> (기존 시크릿 재사용 가능)</li>
+  <li><strong>크롤링 예절:</strong> robots.txt 준수, 요청 간격 1~2초, User-Agent 명시, 원문 파일은 저장하지 않고 링크만(저작권·용량 안전 — 뉴스 수집기와 동일 원칙. 공공저작물은 공공누리 유형 확인 후 필요 시 캐시).</li>
+</ul>
+
+<h3 id="화면-기획">화면 기획</h3>
+
+<p><strong><code class="language-plaintext highlighter-rouge">gukgam.html</code> (통합 DB)</strong></p>
+<ul>
+  <li>상단: 연도 탭(2019~현재) + 통계 카드(총 자료 수 / 위원회 수 / 기관 수)</li>
+  <li>필터: 위원회 / 기관 / 자료유형 / 키워드</li>
+  <li>목록: [연도] [위원회] [기관] [유형 배지] 제목 → 원문 링크</li>
+  <li>보건복지 트랙 자료엔 전용 배지 + <code class="language-plaintext highlighter-rouge">gukgam-health.html</code> 링크</li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">gukgam-health.html</code> (보건복지 전용)</strong></p>
+<ul>
+  <li>기관 계층 트리: 보건복지부 ─ 소속기관(질병관리청…) ─ 산하기관(심평원·건보공단·연금공단…) ─ 기타 피감기관(식약처…)</li>
+  <li>기관 선택 → 연도별 자료 타임라인 (업무보고 → 회의록 → 서면답변 → 결과보고서 → 처리결과 순 스토리라인)</li>
+  <li>연도 간 비교: 같은 기관의 작년/올해 지적사항·처리결과 나란히 보기 (Phase 3)</li>
+</ul>
+
+<hr />
+
+<h2 id="5-단계별-로드맵">5. 단계별 로드맵</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Phase</th>
+      <th>내용</th>
+      <th>산출물</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. 뼈대</strong> (1~2일 작업)</td>
+      <td>열린국회정보 API 키 발급 → 국정감사 결과보고서·회의록 메타데이터 수집 (21~22대, 2020~현재) + 기관 마스터 수작업 작성(복지위 피감기관 우선)</td>
+      <td><code class="language-plaintext highlighter-rouge">fetch_assembly.py</code>, <code class="language-plaintext highlighter-rouge">agencies.json</code>, <code class="language-plaintext highlighter-rouge">docs-*.json</code>, 기본 <code class="language-plaintext highlighter-rouge">gukgam.html</code></td>
+    </tr>
+    <tr>
+      <td><strong>2. 보건복지 트랙</strong></td>
+      <td>복지부·질병청·심평원·건보공단 사전정보공표/자료실 크롤러. 게시판 구조가 제각각이므로 기관별 어댑터 방식</td>
+      <td><code class="language-plaintext highlighter-rouge">fetch_health.py</code>, <code class="language-plaintext highlighter-rouge">gukgam-health.html</code></td>
+    </tr>
+    <tr>
+      <td><strong>3. 자동화·확장</strong></td>
+      <td>GitHub Actions cron 가동, likms 크롤러로 매년 피감기관 자동 갱신, 타 위원회로 확대</td>
+      <td><code class="language-plaintext highlighter-rouge">gukgam.yml</code> 워크플로</td>
+    </tr>
+    <tr>
+      <td><strong>4. 심화</strong></td>
+      <td>PDF/HWP 본문 추출(pdfplumber, hwp5txt) → 키워드 태깅·전문검색, 의원별 질의 파싱, 연도별 지적사항 추적</td>
+      <td>검색 인덱스, 태그</td>
+    </tr>
+    <tr>
+      <td><strong>5. 보완</strong></td>
+      <td>비공개 요구자료: 정보공개청구 결과물 수동 등록 UI(admin.html 확장) + 국회도서관/기관 도서관 소장자료 링크</td>
+      <td>수동 등록 파이프라인</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Phase 1 완료 기준(MVP):</strong> “2024년 보건복지위 국정감사”를 선택하면 결과보고서·회의록 원문 링크와 복지부/질병청/심평원 서면답변(수동 시드 10건)이 한 화면에 나온다.</p>
+
+<hr />
+
+<h2 id="6-리스크와-대응">6. 리스크와 대응</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>리스크</th>
+      <th>대응</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>의원실 요구자료 원문 비공개</td>
+      <td>뼈대는 공개자료로. 요구자료는 목록화 + 정보공개청구 + 기관 도서관 소장본 링크로 보완. “전부 가져오기”는 불가능함을 UI에 명시</td>
+    </tr>
+    <tr>
+      <td>HWP/HWPX 파일 다수</td>
+      <td>Phase 1~3은 메타데이터+링크만. 본문 추출은 Phase 4에서 hwp5txt/pyhwp로</td>
+    </tr>
+    <tr>
+      <td>기관 게시판 개편으로 크롤러 파손</td>
+      <td>기관별 어댑터 분리 + Actions 실패 알림 + 수집 건수 급감 감지</td>
+    </tr>
+    <tr>
+      <td>API가 LINK형(문서 가이드 기반)이라 스펙 확인 필요</td>
+      <td>Phase 1 착수 시 열린국회정보에서 실제 엔드포인트·필드 확정 후 스키마 미세조정</td>
+    </tr>
+    <tr>
+      <td>데이터 용량 증가</td>
+      <td>연도별 샤딩 + 메타데이터만 저장. 100MB 근접 시 별도 데이터 리포 분리</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="7-phase-1-구현-현황-2026-08-17">7. Phase 1 구현 현황 (2026-08-17)</h2>
+
+<p>구현 완료: <code class="language-plaintext highlighter-rouge">scripts/gukgam/fetch_assembly.py</code>, <code class="language-plaintext highlighter-rouge">data/gukgam/</code>(agencies·seed-health·reports·minutes·index),
+<code class="language-plaintext highlighter-rouge">gukgam.html</code>(통합 DB), <code class="language-plaintext highlighter-rouge">gukgam-health.html</code>(보건복지 트랙), <code class="language-plaintext highlighter-rouge">.github/workflows/gukgam.yml</code>.</p>
+
+<p>확인된 실제 API 엔드포인트 (<code class="language-plaintext highlighter-rouge">https://open.assembly.go.kr/portal/openapi/{서비스명}</code>):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>서비스명</th>
+      <th>데이터</th>
+      <th>요청 인자</th>
+      <th>응답 필드</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AUDITREPORTRESULT</code></td>
+      <td>국정감사 결과보고서</td>
+      <td>RPT_YR, RPT_TTL</td>
+      <td>RPT_YR, CMIT_NM, RPT_TTL, PDF/HWP_DWLD_URL</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AUDITREPORTVISIBILITY</code></td>
+      <td>시정 및 처리 요구사항 결과보고서</td>
+      <td>RPT_YR, RPT_TTL</td>
+      <td>위와 동일</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">VCONFAPIGCONFLIST</code></td>
+      <td>국정감사 회의록</td>
+      <td><strong>ERACO(필수, 예: 제22대)</strong>, CMIT_CD</td>
+      <td>CONF_ID, SESS, DGR, CONF_DT, CMIT_NM, DOWN_URL</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">VCONFATTATBLIST</code></td>
+      <td>시정조치 결과보고서 목록</td>
+      <td>CONF_ID, ERACO</td>
+      <td>CONF_ID, FILE_CN, DOWN_URL (Phase 3 예정)</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>키 없이 호출 시 샘플(5건/호출)만 반환 → 전체 수집은 <code class="language-plaintext highlighter-rouge">ASSEMBLY_API_KEY</code> 필요. 수집기는 샘플 모드에서 full 데이터를 덮어쓰지 않음.</li>
+  <li>likms 국정감사·조사 시스템 내부 API(<code class="language-plaintext highlighter-rouge">/inspections/getAtbFileList.do</code> POST)로 피감기관 목록·위원회 게시판 파일을 키 없이 얻을 수 있음을 확인(보건복지위 committee_id=10009) → Phase 3 크롤러 소스.</li>
+</ul>
+
+<h2 id="8-바로-다음-할-일">8. 바로 다음 할 일</h2>
+
+<ol>
+  <li><a href="https://open.assembly.go.kr/portal/openapi/main.do">열린국회정보</a> 회원가입 → API 키 발급 → 리포 시크릿 <code class="language-plaintext highlighter-rouge">ASSEMBLY_API_KEY</code> 등록</li>
+  <li>보건복지위 피감기관 목록(2024·2025) 확정 → <code class="language-plaintext highlighter-rouge">agencies.json</code> 초안 작성</li>
+  <li>Phase 1 수집 스크립트 + <code class="language-plaintext highlighter-rouge">gukgam.html</code> 구현 (별도 세션에서 “국정감사 DB Phase 1 구현해줘”로 진행)</li>
+</ol>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
