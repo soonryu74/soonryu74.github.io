@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 소상공인시장진흥공단 상가(상권)정보 수집 → data/sangga-stores.js
-- 구리시(41310)·남양주시(41360)의 상가업소를 받아 '영업지역 반경(bbox)'만 남깁니다.
+- '반경(storeListInRadius)' 조회로 갈매·별내·구리 상권 클러스터를 중심점마다 훑어 병합.
 - 브라우저는 이 파일만 읽어 반경 내 업종분포·유해업소·경쟁도를 계산합니다(라이브 호출 없음).
 실행: DATA_GO_KR_KEY=<서비스키(인코딩형)> python3 scripts/build_sangga.py
 """
@@ -10,14 +10,32 @@ import os, json, socket, datetime, time
 import urllib.request, urllib.parse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE = "https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInAdmi"
 
-# 수집 대상 시군구 (구리·남양주 전체 → 아래 bbox로 영업지역만 필터)
-SIGNGU = [("41310", "구리시"), ("41360", "남양주시")]
+# API 경로 후보 (계정 버전에 따라 sdsc2 또는 sdsc). 첫 성공 응답에 고정.
+BASE_CANDIDATES = [
+    "https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInRadius",
+    "https://apis.data.go.kr/B553077/api/open/sdsc/storeListInRadius",
+]
 
-# 영업지역 경계(갈매·별내·구리 인접). 이 사각형 안 상가만 저장 → 파일 경량화.
+# 상권 클러스터 중심점 (반경 1500m로 훑음) — 갈매·별내·구리·다산 커버
+CENTERS = [
+    ("갈매역",   37.6403, 127.1447),
+    ("갈매북",   37.6470, 127.1432),
+    ("갈매동편", 37.6360, 127.1520),
+    ("별내역",   37.6479, 127.1503),
+    ("별내북",   37.6570, 127.1495),
+    ("별내동편", 37.6540, 127.1600),
+    ("다산",     37.6120, 127.1520),
+    ("구리역",   37.6035, 127.1400),
+    ("인창동",   37.6110, 127.1360),
+]
+RADIUS = 1500  # m
+
+# 영업지역 경계(최종 안전 필터)
 LAT_MIN, LAT_MAX = 37.585, 37.690
 LON_MIN, LON_MAX = 127.090, 127.205
+
+_base = {"url": None}  # 성공한 base 고정
 
 def force_ipv4():
     if getattr(socket, "_v4", False): return
@@ -25,60 +43,67 @@ def force_ipv4():
     socket.getaddrinfo = lambda h,*a,**k: [r for r in orig(h,*a,**k) if r[0]==socket.AF_INET] or orig(h,*a,**k)
     socket._v4 = True
 
-def fetch_json(url):
+def http_json(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "galmae-budongsan/1.0"})
+    with urllib.request.urlopen(req, timeout=45) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+def api_get(params):
+    """base 후보를 순회하며 첫 성공 응답을 사용. 성공 base는 고정."""
+    q = urllib.parse.urlencode(params, safe="%")
+    bases = [_base["url"]] if _base["url"] else BASE_CANDIDATES
     last = None
-    for attempt in range(3):
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "galmae-budongsan/1.0"})
-            with urllib.request.urlopen(req, timeout=30) as r:
-                return json.loads(r.read().decode("utf-8"))
-        except Exception as e:
-            last = e
-            if attempt < 2: time.sleep(2*(attempt+1))
+    for base in bases:
+        url = f"{base}?{q}"
+        for attempt in range(4):
+            try:
+                data = http_json(url)
+                _base["url"] = base
+                return data
+            except Exception as e:
+                last = e
+                # 400 등 요청형식 오류는 재시도 무의미 → 다음 base로
+                if "400" in str(e) or "404" in str(e): break
+                if attempt < 3: time.sleep(2*(attempt+1))
     raise last
 
-def extract_items(data):
-    """sdsc2 응답에서 상가 목록을 유연하게 추출."""
+def extract(data):
     body = (data or {}).get("body") or (data or {}).get("response", {}).get("body") or {}
     items = body.get("items")
     if items is None: return [], body
-    if isinstance(items, dict):  # {"item":[...]} 형태 방어
-        items = items.get("item", [])
-    if isinstance(items, dict):
-        items = [items]
+    if isinstance(items, dict): items = items.get("item", [])
+    if isinstance(items, dict): items = [items]
     return (items or []), body
 
 def num(v):
     try: return float(v)
     except Exception: return None
 
-def collect_signgu(key, code, name):
+def collect_center(key, name, cy, cx):
     got, page, total = [], 1, None
     while True:
-        q = urllib.parse.urlencode({
-            "serviceKey": key, "divId": "signguCd", "key": code,
-            "type": "json", "numOfRows": "1000", "pageNo": str(page),
-        }, safe="%")
+        params = {"serviceKey": key, "radius": str(RADIUS), "cx": f"{cx}", "cy": f"{cy}",
+                  "type": "json", "numOfRows": "1000", "pageNo": str(page)}
         try:
-            data = fetch_json(f"{BASE}?{q}")
+            data = api_get(params)
         except Exception as e:
             print(f"[{name}] {page}p 수집 실패: {e}"); break
-        items, body = extract_items(data)
+        items, body = extract(data)
         if page == 1:
             total = body.get("totalCount")
             hdr = (data or {}).get("header") or (data or {}).get("response", {}).get("header") or {}
-            print(f"[{name}] totalCount={total} resultCode={hdr.get('resultCode')} {hdr.get('resultMsg','')}")
+            print(f"[{name}] base={_base['url'].split('/open/')[-1]} totalCount={total} "
+                  f"resultCode={hdr.get('resultCode')} {hdr.get('resultMsg','')}")
             if items:
-                print(f"[{name}] sample keys: {sorted(list(items[0].keys()))[:20]}")
-        if not items:
-            break
+                print(f"[{name}] sample keys: {sorted(list(items[0].keys()))[:18]}")
+        if not items: break
         got.extend(items)
         try: tc = int(total)
         except Exception: tc = None
         if tc is not None and len(got) >= tc: break
         if len(items) < 1000: break
         page += 1
-        if page > 200: print(f"[{name}] 페이지 상한 도달"); break
+        if page > 50: break
     return got
 
 def main():
@@ -89,9 +114,9 @@ def main():
 
     kept, seen = [], set()
     lcls_count = {}
-    for code, name in SIGNGU:
-        rows = collect_signgu(key, code, name)
-        inbox = 0
+    for name, cy, cx in CENTERS:
+        rows = collect_center(key, name, cy, cx)
+        added = 0
         for it in rows:
             la = num(it.get("lat")); lo = num(it.get("lon"))
             if la is None or lo is None: continue
@@ -102,16 +127,19 @@ def main():
             l = (it.get("indsLclsNm") or "").strip()
             m = (it.get("indsMclsNm") or "").strip()
             s = (it.get("indsSclsNm") or "").strip()
-            rec = {
+            kept.append({
                 "n": (it.get("bizesNm") or "").strip(),
                 "l": l, "m": m, "s": s,
                 "la": round(la, 6), "lo": round(lo, 6),
                 "r": (it.get("rdnmAdr") or it.get("lnoAdr") or "").strip(),
-            }
-            kept.append(rec)
+            })
             lcls_count[l] = lcls_count.get(l, 0) + 1
-            inbox += 1
-        print(f"[{name}] 영업지역 내 {inbox}건")
+            added += 1
+        print(f"[{name}] 신규 {added}건 (누적 {len(kept)})")
+
+    if len(kept) < 50:
+        print(f"::error::상가 수집이 너무 적어({len(kept)}건) 파일을 갱신하지 않습니다(안전장치).")
+        return 1
 
     kept.sort(key=lambda r: (r["l"], r["m"], r["n"]))
     out = {
@@ -123,7 +151,7 @@ def main():
     }
     path = os.path.join(ROOT, "data/sangga-stores.js")
     with open(path, "w", encoding="utf-8") as f:
-        f.write("/* 소상공인시장진흥공단 상가(상권)정보 — 갈매·별내·구리 인접 영업지역 */\n")
+        f.write("/* 소상공인시장진흥공단 상가(상권)정보 — 갈매·별내·구리 영업지역 (반경조회 병합) */\n")
         f.write("window.SANGGA = " + json.dumps(out, ensure_ascii=False) + ";\n")
     print(f"완료: 상가 {len(kept)}건 저장 → data/sangga-stores.js")
     print("대분류 분포:", out["byLcls"])
