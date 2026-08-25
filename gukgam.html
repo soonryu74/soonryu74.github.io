@@ -93,7 +93,8 @@
   var DOCS = [], SHOWN = 80;
   var state = { year:'', committee:'', type:'', q:'' };
   function esc(s){ return (s||'').replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
-  var TYPE = { result_report:['결과보고서','result'], followup:['시정·처리결과','follow'], minutes:['회의록','minutes'] };
+  var TYPE = { result_report:['결과보고서','result'], followup:['시정·처리결과','follow'], minutes:['회의록','minutes'],
+               plan:['계획서',''], briefing:['업무보고',''], written_answer:['서면답변',''], reference:['참고자료',''] };
 
   function render(){
     var list = document.getElementById('list');
@@ -115,6 +116,10 @@
       if(d.pdf) links.push('<a href="'+esc(d.pdf)+'" target="_blank" rel="noopener">PDF</a>');
       if(d.hwp) links.push('<a href="'+esc(d.hwp)+'" target="_blank" rel="noopener">HWP</a>');
       if(d.url) links.push('<a href="'+esc(d.url)+'" target="_blank" rel="noopener">원문 보기</a>');
+      (d.files||[]).forEach(function(f){
+        var lb=/pdf$/i.test(f.name||'')?'PDF':(/hwpx?$/i.test(f.name||'')?'HWP':'파일');
+        links.push('<a href="'+esc(f.url)+'" target="_blank" rel="noopener" title="'+esc(f.name||'')+'">'+lb+'</a>');
+      });
       var meta = ['<span class="badge '+t[1]+'">'+t[0]+'</span>'];
       if(d.year) meta.push('<span>'+d.year+'년</span>');
       if(d.era) meta.push('<span>'+esc(d.era)+' '+esc(d.sess||'')+' '+esc(d.dgr||'')+'</span>');
@@ -136,15 +141,17 @@
   Promise.all([
     fetch('data/gukgam/reports.json?_='+Date.now()).then(function(r){return r.json();}),
     fetch('data/gukgam/minutes.json?_='+Date.now()).then(function(r){return r.json();}),
-    fetch('data/gukgam/index.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
+    fetch('data/gukgam/index.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('data/gukgam/likms-bulletins.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};})
   ]).then(function(res){
-    var reports=res[0], minutes=res[1], idx=res[2];
+    var reports=res[0], minutes=res[1], idx=res[2], likms=res[3];
     DOCS = (reports.items||[]).concat((minutes.items||[]).map(function(m){
       m.doc_type='minutes';
       m.year = m.date ? parseInt(m.date.slice(0,4),10) : null;
       m.title = (m.era||'')+' 국정감사 회의록 — '+m.committee+' ('+(m.date||'')+')';
       return m;
-    }));
+    })).concat(likms.items||[]);
+    DOCS.sort(function(a,b){ return (b.year||0)-(a.year||0); });
     // 통계
     var c = idx && idx.counts || {};
     var h = idx && idx.health || {};

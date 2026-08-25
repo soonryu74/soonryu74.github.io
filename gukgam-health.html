@@ -96,7 +96,7 @@
 (function(){
   var esc = function(s){ return (s||'').replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
   var TYPE = { result_report:['결과보고서','result'], followup:['시정·처리결과','follow'], minutes:['회의록','minutes'],
-               briefing:['업무보고','briefing'], written_answer:['서면답변','answer'], request_list:['요구자료','request'], reference:['참고자료',''] };
+               plan:['계획서',''], briefing:['업무보고','briefing'], written_answer:['서면답변','answer'], request_list:['요구자료','request'], reference:['참고자료',''] };
   var AG = {}, DOCS = [];
   var state = { year:'', type:'', agency:'' };
 
@@ -136,6 +136,10 @@
       if(d.pdf) links.push('<a href="'+esc(d.pdf)+'" target="_blank" rel="noopener">PDF</a>');
       if(d.hwp) links.push('<a href="'+esc(d.hwp)+'" target="_blank" rel="noopener">HWP</a>');
       if(d.url) links.push('<a href="'+esc(d.url)+'" target="_blank" rel="noopener">원문 보기</a>');
+      (d.files||[]).forEach(function(f){
+        var lb=/pdf$/i.test(f.name||'')?'PDF':(/hwpx?$/i.test(f.name||'')?'HWP':'파일');
+        links.push('<a href="'+esc(f.url)+'" target="_blank" rel="noopener" title="'+esc(f.name||'')+'">'+lb+'</a>');
+      });
       var meta=['<span class="badge '+t[1]+'">'+t[0]+'</span>'];
       if(d.year) meta.push('<span>'+d.year+'년</span>');
       if(d.date) meta.push('<span>'+esc(d.date)+'</span>');
@@ -150,7 +154,8 @@
     fetch('data/gukgam/agencies.json?_='+Date.now()).then(function(r){return r.json();}),
     fetch('data/gukgam/reports.json?_='+Date.now()).then(function(r){return r.json();}),
     fetch('data/gukgam/minutes.json?_='+Date.now()).then(function(r){return r.json();}),
-    fetch('data/gukgam/seed-health.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};})
+    fetch('data/gukgam/seed-health.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
+    fetch('data/gukgam/likms-bulletins.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};})
   ]).then(function(res){
     var agencies=res[0].items||[];
     agencies.forEach(function(a){ AG[a.id]=a; });
@@ -164,7 +169,8 @@
         m.title=(m.era||'')+' 보건복지위원회 국정감사 회의록 ('+(m.date||'')+')';
         return m;
       }))
-      .concat(res[3].items||[]);
+      .concat(res[3].items||[])
+      .concat((res[4].items||[]).filter(function(d){ return isHealth(d.committee); }));
     DOCS.sort(function(a,b){ return (b.year||0)-(a.year||0); });
 
     var years={};

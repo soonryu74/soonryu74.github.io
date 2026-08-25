@@ -23,6 +23,9 @@ jobs:
           ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
         run: python3 scripts/gukgam/fetch_assembly.py
 
+      - name: likms 위원회 게시판 최신 자료 수집 (키 불필요, 누적)
+        run: python3 scripts/gukgam/fetch_likms.py
+
       - name: 변경 시 커밋
         run: |
           if git diff --quiet -- data/gukgam; then
