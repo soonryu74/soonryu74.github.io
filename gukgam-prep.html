@@ -51,6 +51,10 @@
   .a .links a{ font-size:.8rem; font-weight:800; color:#2a4d7d; }
   .hint{ font-size:.78rem; color:var(--muted); margin:8px 2px 16px; }
   .empty{ text-align:center; color:var(--muted); padding:36px 0; background:#fff; border:1px dashed var(--line); border-radius:12px; }
+  .row{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 16px; margin-bottom:8px; display:flex; gap:12px; }
+  .row .main{ flex:1; min-width:0; }
+  .row .meta{ display:flex; gap:6px; flex-wrap:wrap; }
+  .more{ display:block; margin:14px auto 0; border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 26px; font-size:.9rem; font-weight:700; cursor:pointer; color:#2a4d7d; }
   .flow{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 18px; font-size:.88rem; }
   .flow ol{ margin:6px 0 0; padding-left:20px; }
   @media print{
@@ -100,6 +104,19 @@
       <li><strong>당일</strong> — 이 페이지 인쇄본 지참(인쇄하면 답변 요지가 모두 펼쳐짐), 약속한 서면답변 실시간 기록</li>
     </ol>
   </div>
+
+  <h2 id="findingsTitle">📋 작년 지적사항 전수 목록</h2>
+  <p class="hint" id="findingsHint">결과보고서 PDF에서 자동 추출한 시정·처리요구사항입니다. 질의의 8할이 여기서 다시 나옵니다 — 기관 필터로 소관 기관을 골라 이행현황을 점검하세요.</p>
+  <div class="filters" style="position:static;">
+    <select id="gAgency"><option value="">전체 기관</option></select>
+    <input id="gQuery" type="search" placeholder="지적사항 키워드 검색">
+    <label style="font-size:.84rem;font-weight:700;display:flex;align-items:center;gap:6px;">
+      <input type="checkbox" id="gAsQuestion"> 질의형으로 보기
+    </label>
+    <span id="gCount" style="font-size:.82rem;color:var(--muted);"></span>
+  </div>
+  <div id="findings" style="margin-top:12px;"></div>
+  <button class="more" id="gMore" hidden>더 보기</button>
 
   <h2>❓ 예상 질의 카드</h2>
   <div class="filters">
@@ -168,6 +185,53 @@
   document.getElementById('fAngle').addEventListener('change', function(){ state.angle=this.value; render(); });
   document.getElementById('fRisk').addEventListener('change', function(){ state.risk=this.value; render(); });
   document.getElementById('fQuery').addEventListener('input', function(){ state.q=this.value.trim(); render(); });
+  // ---- 작년 지적사항 전수 목록 (결과보고서 자동 추출) ----
+  var FIND=[], gShown=100, gState={agency:'', q:'', asQ:false};
+  function tryYears(years){
+    if(!years.length){ document.getElementById('findings').innerHTML='<div class="empty">추출된 지적사항 데이터가 없습니다. <code>scripts/gukgam/build_findings.py</code>를 실행하세요.</div>'; return; }
+    fetch('data/gukgam/findings-'+years[0]+'.json?_='+Date.now())
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(d){
+        FIND=d.items||[];
+        document.getElementById('findingsTitle').textContent='📋 '+d.year+'년 지적사항 전수 목록 ('+FIND.length+'건 자동 추출)';
+        var ags={};
+        FIND.forEach(function(i){ if(i.agency) ags[i.agency]=1; });
+        var sel=document.getElementById('gAgency');
+        Object.keys(ags).sort().forEach(function(a){ var o=document.createElement('option'); o.value=a; o.textContent=a; sel.appendChild(o); });
+        var hint=document.getElementById('findingsHint');
+        hint.innerHTML+=' 출처: <a href="'+esc(d.source_pdf)+'" target="_blank" rel="noopener">'+d.year+'년 '+esc(d.committee)+' 결과보고서 원문(PDF)</a>';
+        renderFindings();
+      }).catch(function(){ tryYears(years.slice(1)); });
+  }
+  function toQuestion(t){
+    return '지난 국정감사에서 "'+t.replace(/(할 것|바람|질의)$/, '').trim()+'"을(를) 요구받으셨습니다. 지난 1년간의 조치 결과를 구체적으로 답변해 주시기 바랍니다.';
+  }
+  function renderFindings(){
+    var rows=FIND.filter(function(i){
+      if(gState.agency && i.agency!==gState.agency) return false;
+      if(gState.q){ var t=(i.text+' '+(i.dept||'')+' '+(i.topic||'')).toLowerCase(); if(t.indexOf(gState.q.toLowerCase())<0) return false; }
+      return true;
+    });
+    document.getElementById('gCount').textContent='조건 일치 '+rows.length+'건';
+    var box=document.getElementById('findings');
+    if(!rows.length){ box.innerHTML='<div class="empty">조건에 맞는 지적사항이 없습니다.</div>'; document.getElementById('gMore').hidden=true; return; }
+    box.innerHTML=rows.slice(0,gShown).map(function(i,n){
+      var meta=[];
+      if(i.agency) meta.push('<span class="badge">'+esc(i.agency)+'</span>');
+      if(i.dept) meta.push('<span class="badge">'+esc(i.dept)+'</span>');
+      if(i.topic) meta.push('<span class="badge">'+esc(i.topic)+'</span>');
+      return '<div class="row"><div class="main"><div style="font-size:.92rem;line-height:1.55;">'+
+        (gState.asQ?'<strong>Q. </strong>'+esc(toQuestion(i.text)):esc(i.text))+
+        '</div><div class="meta" style="margin-top:6px;">'+meta.join('')+'</div></div></div>';
+    }).join('');
+    document.getElementById('gMore').hidden=rows.length<=gShown;
+  }
+  tryYears([2026,2025,2024]);
+  document.getElementById('gAgency').addEventListener('change', function(){ gState.agency=this.value; gShown=100; renderFindings(); });
+  document.getElementById('gQuery').addEventListener('input', function(){ gState.q=this.value.trim(); gShown=100; renderFindings(); });
+  document.getElementById('gAsQuestion').addEventListener('change', function(){ gState.asQ=this.checked; renderFindings(); });
+  document.getElementById('gMore').addEventListener('click', function(){ gShown+=100; renderFindings(); });
+
   document.getElementById('rehearseBtn').addEventListener('click', function(){
     rehearse=!rehearse;
     this.classList.toggle('off', !rehearse);
