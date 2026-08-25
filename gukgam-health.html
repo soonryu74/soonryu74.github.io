@@ -155,7 +155,8 @@
     fetch('data/gukgam/reports.json?_='+Date.now()).then(function(r){return r.json();}),
     fetch('data/gukgam/minutes.json?_='+Date.now()).then(function(r){return r.json();}),
     fetch('data/gukgam/seed-health.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
-    fetch('data/gukgam/likms-bulletins.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};})
+    fetch('data/gukgam/likms-bulletins.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
+    fetch('data/gukgam/health-agency-docs.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};})
   ]).then(function(res){
     var agencies=res[0].items||[];
     agencies.forEach(function(a){ AG[a.id]=a; });
@@ -170,7 +171,8 @@
         return m;
       }))
       .concat(res[3].items||[])
-      .concat((res[4].items||[]).filter(function(d){ return isHealth(d.committee); }));
+      .concat((res[4].items||[]).filter(function(d){ return isHealth(d.committee); }))
+      .concat(res[5].items||[]);
     DOCS.sort(function(a,b){ return (b.year||0)-(a.year||0); });
 
     var years={};
