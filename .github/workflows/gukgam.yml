@@ -26,6 +26,9 @@ jobs:
       - name: likms 위원회 게시판 최신 자료 수집 (키 불필요, 누적)
         run: python3 scripts/gukgam/fetch_likms.py
 
+      - name: 보건복지 트랙 기관 게시판 수집 (키 불필요, 누적)
+        run: python3 scripts/gukgam/fetch_health.py
+
       - name: 변경 시 커밋
         run: |
           if git diff --quiet -- data/gukgam; then
