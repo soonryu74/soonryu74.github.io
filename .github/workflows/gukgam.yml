@@ -1,0 +1,39 @@
+name: 국정감사 자료 DB 자동 갱신
+
+# 열린국회정보 Open API에서 국정감사 결과보고서·시정처리결과·회의록 메타데이터를 수집합니다.
+# ASSEMBLY_API_KEY 시크릿(https://open.assembly.go.kr 무료 발급)이 있으면 전체 수집,
+# 없으면 샘플 모드로 동작하되 기존 full 데이터는 덮어쓰지 않습니다.
+on:
+  schedule:
+    - cron: '10 20 * * 0'      # 평시: 매주 월요일 KST 05:10
+    - cron: '40 20 * 9-12 1-6' # 국감 시즌(9~12월): 화~일 매일 KST 05:40 추가
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 국정감사 자료 수집 → data/gukgam/
+        env:
+          ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
+        run: python3 scripts/gukgam/fetch_assembly.py
+
+      - name: likms 위원회 게시판 최신 자료 수집 (키 불필요, 누적)
+        run: python3 scripts/gukgam/fetch_likms.py
+
+      - name: 변경 시 커밋
+        run: |
+          if git diff --quiet -- data/gukgam; then
+            echo "변경 없음"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/gukgam
+            git commit -m "국정감사 자료 DB 자동 갱신"
+            git push
+          fi
