@@ -39,6 +39,9 @@ jobs:
           pip install --quiet pypdf
           python3 scripts/gukgam/build_summaries.py
 
+      - name: 의원별 관심 분야 분석 (국감 회의록 발언, 증분)
+        run: python3 scripts/gukgam/build_member_topics.py
+
       - name: 변경 시 커밋
         run: |
           if git diff --quiet -- data/gukgam; then

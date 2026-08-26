@@ -57,6 +57,11 @@
   .mem summary{ font-size:.75rem; font-weight:800; color:#2a4d7d; cursor:pointer; }
   .mem .brf{ font-size:.75rem; color:#3d4f63; white-space:pre-line; margin-top:5px; max-height:180px; overflow-y:auto; line-height:1.5; }
   .pty{ display:inline-block; border-radius:8px; padding:1px 8px; font-size:.72rem; font-weight:800; background:var(--chip); color:#3d4f63; }
+  .tchips{ display:flex; gap:4px; flex-wrap:wrap; margin-top:6px; }
+  .tchip{ font-size:.7rem; font-weight:800; background:#eef8f3; color:#136350; border:1px solid #d5ebdf; border-radius:8px; padding:1px 7px; }
+  .tchip.turns{ background:#f1f5fa; color:#3d4f63; border-color:var(--line); }
+  .mlinks{ display:flex; gap:6px; flex-wrap:wrap; margin-top:7px; }
+  .mlinks a{ font-size:.72rem; font-weight:800; text-decoration:none; border:1px solid var(--line); border-radius:8px; padding:3px 9px; background:#fafcfe; color:#2a4d7d; }
   .foot{ font-size:.78rem; color:var(--muted); margin-top:26px; }
 </style>
 </head>
@@ -191,10 +196,12 @@
     fetch('data/gukgam/likms-bulletins.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
     fetch('data/gukgam/health-agency-docs.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
     fetch('data/gukgam/summaries.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:{}};}),
-    fetch('data/gukgam/members.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
+    fetch('data/gukgam/members.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('data/gukgam/member-topics.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {members:{}};})
   ]).then(function(res){
     SUM = (res[6]||{}).items || {};
     var mem = res[7];
+    var MT = (res[8]||{}).members || {};
     if(mem && (mem.items||[]).length){
       document.getElementById('memTitle').textContent='🧑‍⚖️ '+(mem.era||'')+' '+(mem.committee||'보건복지위원회')+' 위원 ('+mem.items.length+'명)';
       document.getElementById('memHint').textContent=(mem.note||'')+' · 갱신 '+(mem.updated||'');
@@ -206,6 +213,16 @@
           '<div class="mn">'+esc(m.name)+(m.hanja?' <small>'+esc(m.hanja)+'</small>':'')+'</div>'+
           '<div class="mp"><span class="pty">'+esc(m.party||'-')+'</span>'+(m.duty?' <span class="pty">'+esc(m.duty)+'</span>':'')+'</div>'+
           '<div class="md">'+esc(meta)+'</div>'+
+          (function(){
+            var t=MT[m.name]; if(!t) return '';
+            var chips=['<span class="tchip turns">국감 발언 '+t.turns+'회 · '+t.days+'일</span>'];
+            (t.topics||[]).slice(0,4).forEach(function(x){ chips.push('<span class="tchip" title="발언 중 언급 '+x.c+'회">'+esc(x.t)+'</span>'); });
+            return '<div class="tchips">'+chips.join('')+'</div>';
+          })()+
+          '<div class="mlinks">'+
+            (m.homepage?'<a href="'+esc(m.homepage)+'" target="_blank" rel="noopener">홈페이지</a>':'')+
+            '<a href="https://search.naver.com/search.naver?where=news&query='+encodeURIComponent(m.name+' 의원 국정감사')+'" target="_blank" rel="noopener">보도자료·뉴스</a>'+
+          '</div>'+
           (m.brf?'<details><summary>약력 보기</summary><div class="brf">'+esc(m.brf)+'</div></details>':'')+
           '</div></div>';
       }).join('');
