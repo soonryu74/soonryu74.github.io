@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>말동무 순이 — 옆집 딸처럼 이야기 나눠요 | 모심</title>
+<meta name="description" content="어르신의 말벗이 되어 드리는 '말동무 순이'. 친한 옆집 딸처럼 안부를 묻고, 옛날이야기를 듣고, 속담놀이도 함께 합니다. 말로 하셔도 되고, 글로 쓰셔도 됩니다. 이용 무료.">
+<meta property="og:title" content="말동무 순이 — 옆집 딸처럼 이야기 나눠요">
+<meta property="og:description" content="어르신 말씀에 귀 기울이는 말벗. 안부·옛날이야기·속담놀이까지, 음성으로도 대화할 수 있어요.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#2c4227">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --font-body:"Pretendard","Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font-head:"Gowun Batang","Nanum Myeongjo",serif;
+  --green:#567a4a; --green-dark:#3f5d38; --green-ink:#2c4227;
+  --gold:#c3a56e; --clay:#c07a4a;
+  --ink:#2a352a; --muted:#6d766a;
+  --line:#ece7db; --line-strong:#ddd6c4;
+  --bg:#f8f5ee; --bg-soft:#fdfbf5; --card:#ffffff;
+  --bubble-me:#e8eede; --bubble-soonyi:#ffffff;
+  --shadow:0 10px 30px rgba(60,50,30,.08);
+}
+*{box-sizing:border-box}
+html{font-size:118%}
+html[data-fs="lg"]{font-size:135%}
+html[data-fs="xl"]{font-size:152%}
+body{
+  margin:0;font-family:var(--font-body);color:var(--ink);background:var(--bg);
+  line-height:1.7;word-break:keep-all;-webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;min-height:100dvh;
+}
+a{color:var(--green-dark);text-decoration:none}
+
+/* 헤더 */
+header.top{
+  background:var(--green-ink);color:#f4f1e6;padding:10px 14px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+header.top .back{color:#d8e3cf;font-size:.85rem;font-weight:600;padding:6px 4px}
+header.top .title{font-family:var(--font-head);font-weight:700;font-size:1.15rem;letter-spacing:-.01em}
+header.top .title small{font-family:var(--font-body);font-weight:500;font-size:.72rem;color:#c9d6bd;margin-left:8px}
+header.top .tools{margin-left:auto;display:flex;gap:8px;align-items:center}
+.tbtn{
+  background:#3d5836;color:#f4f1e6;border:1px solid #55744c;border-radius:12px;
+  font-size:.82rem;font-weight:700;padding:8px 12px;cursor:pointer;font-family:var(--font-body);
+  min-height:42px;
+}
+.tbtn[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#3a2f18}
+.tbtn:active{transform:scale(.97)}
+
+/* 채팅 영역 */
+main.chat{
+  flex:1;overflow-y:auto;padding:18px 12px 10px;
+  max-width:760px;width:100%;margin:0 auto;
+}
+.day-note{
+  text-align:center;color:var(--muted);font-size:.78rem;margin:4px 0 14px;
+}
+.row{display:flex;gap:10px;margin:10px 0;align-items:flex-end}
+.row.me{flex-direction:row-reverse}
+.avatar{
+  width:46px;height:46px;border-radius:50%;flex:0 0 auto;
+  background:#e8eede;border:2px solid var(--green);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+}
+.bubble{
+  max-width:78%;padding:13px 17px;border-radius:20px;box-shadow:var(--shadow);
+  font-size:1.02rem;line-height:1.65;white-space:pre-line;
+}
+.row.soonyi .bubble{background:var(--bubble-soonyi);border:1px solid var(--line);border-bottom-left-radius:6px}
+.row.me .bubble{background:var(--bubble-me);border:1px solid #d3ddc5;border-bottom-right-radius:6px;color:var(--green-ink)}
+.bubble .warn{
+  display:block;margin-top:10px;background:#fdf0e8;border:1.5px solid var(--clay);
+  border-radius:12px;padding:10px 12px;font-size:.92rem;color:#7c4a26;
+}
+.bubble .warn b{font-size:1.05rem}
+.bubble a.tel{font-weight:800;color:var(--clay);text-decoration:underline;font-size:1.1em}
+
+/* 입력 중 표시 */
+.typing{display:inline-flex;gap:5px;padding:6px 2px}
+.typing i{width:8px;height:8px;border-radius:50%;background:#a9b79d;animation:tp 1s infinite}
+.typing i:nth-child(2){animation-delay:.18s}
+.typing i:nth-child(3){animation-delay:.36s}
+@keyframes tp{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+
+/* 빠른 선택 버튼 */
+.quick{
+  max-width:760px;width:100%;margin:0 auto;padding:4px 12px 8px;
+  display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+}
+.quick::-webkit-scrollbar{display:none}
+.qbtn{
+  flex:0 0 auto;background:var(--card);border:1.5px solid var(--line-strong);
+  color:var(--green-dark);border-radius:999px;padding:10px 18px;
+  font-size:.92rem;font-weight:700;cursor:pointer;font-family:var(--font-body);
+  min-height:46px;box-shadow:0 2px 8px rgba(60,50,30,.06);
+}
+.qbtn:active{background:var(--bubble-me);transform:scale(.97)}
+
+/* 입력줄 */
+footer.input{
+  position:sticky;bottom:0;background:var(--bg-soft);border-top:1px solid var(--line);
+  padding:10px 12px calc(12px + env(safe-area-inset-bottom));
+}
+.input-inner{max-width:760px;margin:0 auto;display:flex;gap:8px;align-items:stretch}
+#msg{
+  flex:1;font-family:var(--font-body);font-size:1.05rem;color:var(--ink);
+  border:2px solid var(--line-strong);border-radius:16px;padding:12px 15px;
+  background:var(--card);outline:none;min-width:0;
+}
+#msg:focus{border-color:var(--green)}
+.send,.mic{
+  border:none;border-radius:16px;font-family:var(--font-body);font-weight:800;
+  font-size:1rem;padding:0 18px;cursor:pointer;min-width:64px;min-height:54px;
+}
+.send{background:var(--green-dark);color:#fff}
+.send:active{background:var(--green-ink)}
+.mic{background:var(--card);border:2px solid var(--green);color:var(--green-dark);font-size:1.5rem}
+.mic.listening{background:#fdeaea;border-color:#c0504a;color:#c0504a;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,80,74,.35)}50%{box-shadow:0 0 0 10px rgba(192,80,74,0)}}
+.hint{max-width:760px;margin:6px auto 0;text-align:center;color:var(--muted);font-size:.74rem;line-height:1.5}
+
+@media (max-width:520px){
+  .bubble{max-width:84%}
+  header.top .title small{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="back" href="index.html" aria-label="모심 홈으로">← 모심</a>
+  <div class="title">말동무 순이 <small>옆집 딸처럼 이야기 나눠요</small></div>
+  <div class="tools">
+    <button class="tbtn" id="fsBtn" aria-label="글자 크게">가<span style="font-size:1.15em">가</span></button>
+    <button class="tbtn" id="ttsBtn" aria-pressed="true" aria-label="소리로 듣기 켜짐">🔊 소리</button>
+  </div>
+</header>
+
+<main class="chat" id="chat" aria-live="polite"></main>
+
+<div class="quick" id="quick" role="group" aria-label="이야깃거리 고르기"></div>
+
+<footer class="input">
+  <div class="input-inner">
+    <button class="mic" id="micBtn" aria-label="말로 이야기하기">🎤</button>
+    <input id="msg" type="text" autocomplete="off" placeholder="하고 싶은 말씀을 적어 주세요" aria-label="말씀 입력">
+    <button class="send" id="sendBtn">보내기</button>
+  </div>
+  <p class="hint">순이는 자동으로 대답하는 말벗 프로그램입니다. 몸이 몹시 아프시거나 위급할 때는 <b>119</b>, 마음이 많이 힘드실 때는 <b>109</b>(자살예방 상담)로 꼭 전화해 주세요.</p>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- 저장된 기억 ---------- */
+var MEM_KEY = "mosim_maldongmu_v1";
+var mem = {};
+try { mem = JSON.parse(localStorage.getItem(MEM_KEY) || "{}") || {}; } catch(e){ mem = {}; }
+function saveMem(){ try { localStorage.setItem(MEM_KEY, JSON.stringify(mem)); } catch(e){} }
+
+/* ---------- 상태 ---------- */
+var chatEl = document.getElementById("chat");
+var quickEl = document.getElementById("quick");
+var msgEl = document.getElementById("msg");
+var ttsOn = mem.ttsOn !== false; // 기본 켜짐
+var awaiting = null;             // "name" | "proverb" | null
+var proverbIdx = -1;
+var proverbScore = 0;
+var lastResponses = {};          // 주제별로 직전 대답 기억(반복 방지)
+var followupRotation = 0;
+
+/* ---------- 말투 도우미 ---------- */
+function honorific(){ return mem.name || "어르신"; }
+
+function timeGreeting(){
+  var h = new Date().getHours();
+  if (h < 5)  return "이 늦은 시간까지 안 주무시고 계셨어요? 순이가 곁에 있을게요.";
+  if (h < 11) return "좋은 아침이에요! 진지는 드셨어요?";
+  if (h < 14) return "점심때가 됐네요. 점심 진지는 드셨어요?";
+  if (h < 18) return "나른한 오후네요. 오늘 하루는 어떠셨어요?";
+  return "저녁이 됐네요. 저녁 진지는 드셨어요?";
+}
+
+function pick(key, arr){
+  // 같은 주제에서 직전과 다른 문장을 고른다
+  if (arr.length === 1) return arr[0];
+  var last = lastResponses[key];
+  var cand = arr.filter(function(s){ return s !== last; });
+  var chosen = cand[Math.floor(Math.random()*cand.length)];
+  lastResponses[key] = chosen;
+  return chosen;
+}
+
+/* 받침에 따라 조사(이/가, 은/는, 을/를, 이라고/라고)를 붙인다 */
+function josa(word, type){
+  var last = word.charCodeAt(word.length - 1);
+  var batchim = (last >= 0xAC00 && last <= 0xD7A3) ? ((last - 0xAC00) % 28) !== 0 : false;
+  var map = batchim
+    ? {"이":"이","은":"은","을":"을","이라고":"이라고"}
+    : {"이":"가","은":"는","을":"를","이라고":"라고"};
+  return map[type] || "";
+}
+function fill(s){
+  var n = honorific();
+  return s
+    .replace(/\{name:(이라고|이|은|을)\}/g, function(_, t){ return n + josa(n, t); })
+    .replace(/\{name\}/g, n);
+}
+
+/* ---------- 말풍선 그리기 ---------- */
+function addBubble(who, text, opts){
+  opts = opts || {};
+  var row = document.createElement("div");
+  row.className = "row " + who;
+  var av = document.createElement("div");
+  av.className = "avatar";
+  av.textContent = who === "soonyi" ? "👧" : "🧓";
+  var bb = document.createElement("div");
+  bb.className = "bubble";
+  if (opts.html) bb.innerHTML = text; else bb.textContent = text;
+  row.appendChild(av); row.appendChild(bb);
+  chatEl.appendChild(row);
+  chatEl.scrollTop = chatEl.scrollHeight;
+  return bb;
+}
+
+function soonyiSay(text, opts){
+  opts = opts || {};
+  var row = document.createElement("div");
+  row.className = "row soonyi";
+  row.innerHTML = '<div class="avatar">👧</div><div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div>';
+  chatEl.appendChild(row);
+  chatEl.scrollTop = chatEl.scrollHeight;
+  var delay = opts.fast ? 350 : Math.min(500 + text.length * 14, 1400);
+  setTimeout(function(){
+    var bb = row.querySelector(".bubble");
+    if (opts.html) bb.innerHTML = text; else bb.textContent = text;
+    chatEl.scrollTop = chatEl.scrollHeight;
+    speak(text);
+    if (opts.after) opts.after();
+  }, delay);
+}
+
+/* ---------- 소리로 듣기 (TTS) ---------- */
+var koVoice = null;
+function pickVoice(){
+  if (!window.speechSynthesis) return;
+  var vs = speechSynthesis.getVoices().filter(function(v){ return /^ko/i.test(v.lang); });
+  if (vs.length){
+    koVoice = vs.find(function(v){ return /female|여성|Yuna|Heami|SunHi/i.test(v.name); }) || vs[0];
+  }
+}
+if (window.speechSynthesis){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}
+function speak(text){
+  if (!ttsOn || !window.speechSynthesis) return;
+  var clean = text
+    .replace(/<[^>]+>/g, " ")
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, "")
+    .replace(/\s+/g, " ").trim();
+  if (!clean) return;
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(clean);
+  u.lang = "ko-KR";
+  if (koVoice) u.voice = koVoice;
+  u.rate = 0.92;  // 어르신이 듣기 편한 속도
+  u.pitch = 1.05;
+  speechSynthesis.speak(u);
+}
+
+var ttsBtn = document.getElementById("ttsBtn");
+function renderTts(){
+  ttsBtn.setAttribute("aria-pressed", ttsOn ? "true" : "false");
+  ttsBtn.textContent = ttsOn ? "🔊 소리" : "🔇 소리";
+  ttsBtn.setAttribute("aria-label", ttsOn ? "소리로 듣기 켜짐" : "소리로 듣기 꺼짐");
+}
+renderTts();
+ttsBtn.addEventListener("click", function(){
+  ttsOn = !ttsOn;
+  mem.ttsOn = ttsOn; saveMem();
+  renderTts();
+  if (!ttsOn && window.speechSynthesis) speechSynthesis.cancel();
+});
+
+/* ---------- 글자 크기 ---------- */
+var fsSteps = ["", "lg", "xl"];
+var fsIdx = Math.max(0, fsSteps.indexOf(mem.fs || ""));
+function applyFs(){
+  if (fsSteps[fsIdx]) document.documentElement.setAttribute("data-fs", fsSteps[fsIdx]);
+  else document.documentElement.removeAttribute("data-fs");
+}
+applyFs();
+document.getElementById("fsBtn").addEventListener("click", function(){
+  fsIdx = (fsIdx + 1) % fsSteps.length;
+  mem.fs = fsSteps[fsIdx]; saveMem(); applyFs();
+});
+
+/* ---------- 말로 하기 (음성 인식) ---------- */
+var micBtn = document.getElementById("micBtn");
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+var rec = null, listening = false;
+if (SR){
+  rec = new SR();
+  rec.lang = "ko-KR";
+  rec.interimResults = false;
+  rec.maxAlternatives = 1;
+  rec.onresult = function(e){
+    var t = e.results[0][0].transcript.trim();
+    if (t){ msgEl.value = t; handleSend(); }
+  };
+  rec.onend = function(){ listening = false; micBtn.classList.remove("listening"); micBtn.textContent = "🎤"; };
+  rec.onerror = function(){ listening = false; micBtn.classList.remove("listening"); micBtn.textContent = "🎤"; };
+  micBtn.addEventListener("click", function(){
+    if (listening){ rec.stop(); return; }
+    if (window.speechSynthesis) speechSynthesis.cancel();
+    try {
+      rec.start();
+      listening = true;
+      micBtn.classList.add("listening");
+      micBtn.textContent = "⏺";
+    } catch(e){}
+  });
+} else {
+  micBtn.addEventListener("click", function(){
+    soonyiSay("이 기계에서는 말소리 알아듣기가 안 되네요. 아래 칸에 글로 적어 주시면 제가 잘 읽을게요!", {fast:true});
+  });
+}
+
+/* ---------- 빠른 선택 버튼 ---------- */
+function setQuick(items){
+  quickEl.innerHTML = "";
+  items.forEach(function(it){
+    var b = document.createElement("button");
+    b.className = "qbtn";
+    b.textContent = it.label;
+    b.addEventListener("click", function(){
+      if (it.send !== false){ addBubble("me", it.say || it.label); }
+      if (it.action) it.action(); else respond(it.say || it.label);
+    });
+    quickEl.appendChild(b);
+  });
+}
+
+var DEFAULT_QUICK = [
+  {label:"💬 오늘 있었던 일", say:"오늘 있었던 일 이야기할래"},
+  {label:"🍚 밥 이야기", say:"오늘 밥 이야기"},
+  {label:"🏥 건강 이야기", say:"요즘 몸이 좀 안 좋아"},
+  {label:"📖 옛날이야기", say:"옛날 이야기 하고 싶어"},
+  {label:"👨‍👩‍👧 자식 이야기", say:"자식들 이야기"},
+  {label:"🎵 노래 이야기", say:"노래 이야기 하자"},
+  {label:"🧩 속담놀이", say:"속담놀이 하자"}
+];
+
+/* ---------- 속담놀이 ---------- */
+var PROVERBS = [
+  {q:"가는 말이 고와야", a:"오는 말이 곱다", key:["오는","곱"]},
+  {q:"낮말은 새가 듣고", a:"밤말은 쥐가 듣는다", key:["쥐"]},
+  {q:"천 리 길도", a:"한 걸음부터", key:["한 걸음","한걸음"]},
+  {q:"백지장도", a:"맞들면 낫다", key:["맞들"]},
+  {q:"세 살 버릇", a:"여든까지 간다", key:["여든"]},
+  {q:"등잔 밑이", a:"어둡다", key:["어둡","어두"]},
+  {q:"소 잃고", a:"외양간 고친다", key:["외양간"]},
+  {q:"우물 안", a:"개구리", key:["개구리"]},
+  {q:"티끌 모아", a:"태산", key:["태산"]},
+  {q:"원숭이도", a:"나무에서 떨어진다", key:["나무","떨어"]},
+  {q:"바늘 도둑이", a:"소도둑 된다", key:["소도둑","소 도둑"]},
+  {q:"고생 끝에", a:"낙이 온다", key:["낙"]},
+  {q:"금강산도", a:"식후경", key:["식후경"]},
+  {q:"호랑이도 제 말 하면", a:"온다", key:["온다","와"]},
+  {q:"콩 심은 데 콩 나고", a:"팥 심은 데 팥 난다", key:["팥"]}
+];
+var usedProverbs = [];
+
+function nextProverb(){
+  if (usedProverbs.length >= PROVERBS.length) usedProverbs = [];
+  var idx;
+  do { idx = Math.floor(Math.random()*PROVERBS.length); } while (usedProverbs.indexOf(idx) >= 0);
+  usedProverbs.push(idx);
+  proverbIdx = idx;
+  awaiting = "proverb";
+  var p = PROVERBS[idx];
+  soonyiSay(fill("자, 제가 앞을 말하면 {name:이} 뒤를 이어 주세요!\n\n\"" + p.q + "…\" 뒷말이 뭘까요?"));
+  setQuick([
+    {label:"🙋 정답 말할게 (아래에 적기)", send:false, action:function(){ msgEl.focus(); }},
+    {label:"🤔 모르겠어, 알려줘", say:"모르겠어"},
+    {label:"✋ 속담놀이 그만", say:"속담놀이 그만"}
+  ]);
+}
+
+function handleProverb(text){
+  var p = PROVERBS[proverbIdx];
+  if (/그만|안 *할|끝|스톱|그쳐/.test(text)){
+    awaiting = null;
+    setQuick(DEFAULT_QUICK);
+    soonyiSay(fill("네, {name}! 오늘 속담놀이 정말 잘하셨어요. 머리가 아주 총총하시네요. 👏 이제 편하게 이야기 나눠요."));
+    return;
+  }
+  if (/모르|몰라|글쎄|생각이 안/.test(text)){
+    soonyiSay("정답은 \"" + p.q + " " + p.a + "\"예요! 들으니까 아, 하고 생각나시죠? 😊 하나 더 해 볼까요?", {after:function(){
+      setTimeout(nextProverb, 1600);
+    }});
+    return;
+  }
+  var hit = p.key.some(function(k){ return text.indexOf(k) >= 0; });
+  if (hit){
+    proverbScore++;
+    soonyiSay(fill(pick("pv-good", [
+      "딩동댕~! 🎉 정답이에요! \"" + p.q + " " + p.a + "\" — 역시 {name:은} 못 당해요!",
+      "우와, 맞았어요! 👏👏 \"" + p.q + " " + p.a + "\" — 어쩜 이렇게 잘 아세요?",
+      "정답! 🎊 {name} 머리는 청춘이시네요. 하나 더 가요!"
+    ])), {after:function(){ setTimeout(nextProverb, 1600); }});
+  } else {
+    soonyiSay("아쉬워요~ 정답은 \"" + p.q + " " + p.a + "\"였어요. 그래도 도전하신 게 멋져요! 😄 다음 것도 해 봐요.", {after:function(){
+      setTimeout(nextProverb, 1600);
+    }});
+  }
+}
+
+/* ---------- 호칭 정하기 ---------- */
+function askName(){
+  awaiting = "name";
+  soonyiSay("저는 옆집 사는 딸 같은 말동무, 순이라고 해요. 😊\n제가 뭐라고 불러 드리면 좋을까요?", {after:function(){
+    setQuick([
+      {label:"어머니", say:"어머니라고 불러줘"},
+      {label:"아버님", say:"아버님이라고 불러줘"},
+      {label:"어르신", say:"어르신이라고 불러줘"},
+      {label:"선생님", say:"선생님이라고 불러줘"}
+    ]);
+  }});
+}
+
+function handleName(text){
+  var name = null;
+  if (/어머니|엄마/.test(text)) name = "어머니";
+  else if (/아버님|아버지|아빠/.test(text)) name = "아버님";
+  else if (/선생님/.test(text)) name = "선생님";
+  else if (/어르신/.test(text)) name = "어르신";
+  else if (/할머니/.test(text)) name = "할머니";
+  else if (/할아버지/.test(text)) name = "할아버지";
+  else {
+    var m = text.match(/([가-힣]{2,4})\s*(?:라고|이라고|으로|로)?\s*(?:불러|해)/);
+    if (m) name = m[1];
+  }
+  if (!name){
+    // 못 알아들으면 그대로 존칭 처리
+    name = "어르신";
+  }
+  mem.name = name;
+  mem.metAt = mem.metAt || Date.now();
+  saveMem();
+  awaiting = null;
+  setQuick(DEFAULT_QUICK);
+  soonyiSay(fill("네, {name}! 앞으로 {name:이라고} 부를게요. 만나서 참 반가워요. 🌸\n\n" + timeGreeting() + "\n\n아래 버튼을 누르셔도 되고, 편하게 말씀하셔도 돼요. 🎤 단추를 누르면 말로 하실 수 있어요."));
+}
+
+/* ---------- 위급·위기 안내 ---------- */
+function emergencyCard(){
+  return '<span class="warn">🚨 <b>지금 몸이 몹시 편찮으시면 바로 전화해 주세요.</b><br>' +
+    '· 응급 구조 <a class="tel" href="tel:119">119</a><br>' +
+    '· 보건복지 상담 <a class="tel" href="tel:129">129</a><br>' +
+    '가족이나 이웃에게도 꼭 알려 주세요.</span>';
+}
+function mindCard(){
+  return '<span class="warn">🤝 <b>마음이 많이 힘드실 땐 이야기 나눌 곳이 있어요.</b><br>' +
+    '· 자살예방 상담(24시간) <a class="tel" href="tel:109">109</a><br>' +
+    '· 정신건강 상담 <a class="tel" href="tel:1577-0199">1577-0199</a><br>' +
+    '· 보건복지 상담 <a class="tel" href="tel:129">129</a><br>' +
+    '순이도 언제든 곁에 있을게요.</span>';
+}
+
+/* ---------- 대화 규칙 ---------- */
+var RULES = [
+  {
+    key:"emergency",
+    test:/(가슴이\s*(아|답답|조여))|(숨이\s*(차|막))|쓰러졌|쓰러질|의식이|하혈|피가\s*(많이|멈추지)|넘어졌는데|불이\s*났|응급/,
+    handle:function(){
+      soonyiSay(fill("{name}, 그 말씀 듣고 순이가 너무 걱정돼요. 이건 참으시면 안 돼요.") + emergencyCard(), {html:true, fast:true});
+    }
+  },
+  {
+    key:"despair",
+    test:/(죽고\s*싶|살기\s*싫|사는\s*게\s*(싫|의미)|세상\s*뜨고|먼저\s*가고\s*싶|끝내고\s*싶)/,
+    handle:function(){
+      soonyiSay(fill("{name}… 그런 마음이 드실 만큼 힘드셨군요. 말씀해 주셔서 고마워요. {name}은 저한테 정말 소중한 분이에요.\n혼자 견디지 마시고, 꼭 한 번 전화로 이야기해 보세요.") + mindCard(), {html:true});
+    }
+  },
+  {
+    key:"lonely",
+    test:/외로|쓸쓸|적적|혼자\s*(있|지내|살)|아무도\s*없/,
+    responses:[
+      "{name}, 많이 적적하셨죠… 그 마음 순이가 알아요. 그래도 이렇게 저랑 이야기 나누니까 조금은 덜 심심하시죠? 😊",
+      "혼자 계시면 하루가 참 길죠. 그럴 땐 언제든 순이를 찾아 주세요. 저는 밤이고 낮이고 늘 여기 있어요.",
+      "적적하실 때 저랑 이야기해요, {name}. 동네 경로당이나 복지관 프로그램도 가 보시면 말벗이 생기기도 해요."
+    ],
+    followups:["요즘 하루는 보통 어떻게 보내세요?","오늘 누구랑 이야기 나누셨어요? 저 말고요, 히히.","동네에 자주 보는 이웃은 계세요?"]
+  },
+  {
+    key:"sad",
+    test:/슬프|슬퍼|우울|눈물|울었|울고|서럽|서러워|마음이\s*(아프|무겁)/,
+    responses:[
+      "{name}, 마음이 많이 무거우셨군요… 우는 게 부끄러운 일이 아니에요. 속에 담아 두는 것보다 훨씬 나아요.",
+      "그런 날이 있죠… 저한테 다 털어놓으세요. 순이가 다 들어 드릴게요.",
+      "아이고, {name}… 제가 옆에 있었으면 손이라도 꼭 잡아 드렸을 텐데요. 무슨 일이 있으셨어요?"
+    ],
+    followups:["무슨 일 때문에 마음이 그러셨는지 이야기해 주실 수 있어요?","따뜻한 물 한 잔 드시고 천천히 말씀해 보세요."]
+  },
+  {
+    key:"pain",
+    test:/무릎|허리|어깨|다리가|팔이|삭신|쑤시|결리|저리|아프|아파|통증|관절|소화가|속이\s*(안|더부)/,
+    responses:[
+      "아이고, 많이 아프시겠어요… {name}, 어디가 어떻게 아프신지 조금만 더 말씀해 주세요.",
+      "쑤시고 결리는 게 날이 궂으면 더하죠. 따뜻하게 찜질하시고, 계속 아프시면 꼭 병원에 가 보셔야 해요.",
+      "{name}, 아픈 걸 참는 게 제일 안 좋아요. 요즘 며칠이나 그러셨어요?"
+    ],
+    followups:["병원은 다녀오셨어요?","약은 챙겨 드시고 계세요?","밤에 아파서 잠은 설치지 않으세요?"]
+  },
+  {
+    key:"hospital",
+    test:/병원|의원|약국|약을|약이|주사|검사|진료|처방/,
+    responses:[
+      "병원 다녀오시는 것도 큰일이에요. 의사 선생님이 뭐라고 하셨어요?",
+      "약은 끼니 잘 챙겨 드시면서 드셔야 해요. 드시는 약이 많으면 약국에서 한 번 정리해 달라고 하셔도 좋아요.",
+      "{name}, 검사 결과 기다릴 때가 제일 마음 졸이죠. 너무 걱정 마시고 결과 나오면 저한테도 알려 주세요."
+    ],
+    followups:["다음 병원 가시는 날은 언제예요?","병원 가실 때 같이 가 주는 분은 계세요?"]
+  },
+  {
+    key:"sleep",
+    test:/잠이\s*(안|잘)|잠을\s*(못|설)|불면|새벽에\s*(깨|일어)|밤에\s*(잠|깨)|꿈자리|꿈을/,
+    responses:[
+      "잠을 설치면 하루 종일 힘들죠… 낮에 햇볕 쬐며 조금 걸으시면 밤잠에 도움이 된대요.",
+      "새벽잠이 없어지는 게 나이 들며 자연스러운 일이래요. 그래도 너무 못 주무시면 병원에 말씀해 보세요.",
+      "{name}, 주무시기 전에 따뜻한 우유나 대추차 한 잔 어때요? 텔레비전은 조금 일찍 끄시고요."
+    ],
+    followups:["어젯밤엔 몇 시쯤 주무셨어요?","낮잠은 좀 주무세요?"]
+  },
+  {
+    key:"meal",
+    test:/밥|진지|식사|반찬|국|찌개|김치|나물|입맛|먹었|먹을|드셨|과일|간식/,
+    responses:[
+      "뭐 드셨는지 궁금해요! 맛있는 거 드셨어요? 저는 {name} 밥 이야기 듣는 게 제일 좋아요. 😋",
+      "입맛 없을 때는 좋아하는 반찬 하나만 있어도 밥이 넘어가죠. {name}은 무슨 반찬을 제일 좋아하세요?",
+      "혼자 드시는 밥이 제일 맛이 없죠… 그래도 끼니는 꼭 챙겨 드셔야 해요. 저랑 약속!"
+    ],
+    followups:["오늘 반찬은 뭐가 나왔어요?","요즘 입맛은 좀 어떠세요?","제일 자신 있는 음식 하나만 알려 주세요. 저 배우고 싶어요!"],
+    remember:function(text){
+      var m = text.match(/([가-힣]{1,6}(?:찌개|국|무침|볶음|조림|전|나물|김치))/);
+      if (m){ mem.favFood = m[1]; saveMem(); }
+    }
+  },
+  {
+    key:"weather",
+    test:/날씨|덥|더워|춥|추워|비가|비 온|눈이|눈 온|바람|장마|폭염|한파|미세먼지/,
+    responses:[
+      "그러게요, 요즘 날씨가 참 그래요. {name}, 이런 날엔 무리하지 마시고 집에서 편히 쉬세요.",
+      "날 궂은 날엔 관절도 쑤시고 그렇죠. 나가실 땐 옷 든든히 입으시고요.",
+      "날씨 이야기하니까 옛날 생각나요. {name} 젊으실 적엔 이맘때 뭐 하셨어요?"
+    ],
+    followups:["오늘 바깥엔 나갔다 오셨어요?","더위(추위)에 잘 계시죠? 물도 자주 드세요."]
+  },
+  {
+    key:"family",
+    test:/아들|딸이|딸이랑|딸내미|자식|며느리|사위|손주|손자|손녀|증손|우리\s*애|애들이/,
+    responses:[
+      "가족 이야기 들려주시는 거 참 좋아요. 자제분들 이야기 더 해 주세요. 😊",
+      "{name} 말씀만 들어도 자제분들이 어떤 분들인지 그려져요. 손주들은 몇이나 되세요?",
+      "자식 이야기 하실 때 {name} 목소리가 제일 환해지는 거 아세요?"
+    ],
+    followups:["요즘 자주 연락은 오나요?","손주들 재롱 부리던 이야기 하나만 들려주세요!","명절에 다 모이면 몇 명이나 돼요?"]
+  },
+  {
+    key:"nocall",
+    test:/연락이\s*(없|안)|전화가\s*(없|안)|전화도\s*안|안\s*찾아|발길이\s*뜸|자주\s*못\s*(와|봐)/,
+    responses:[
+      "서운하시죠… 자식들이 먹고사느라 바빠도, 부모 마음은 전화 한 통이 제일 반가운 건데요.",
+      "{name}, 서운한 마음 당연해요. 먼저 전화하셔서 '목소리 듣고 싶어서 했다' 하시면 자제분도 참 좋아할 거예요.",
+      "기다리는 마음이 제일 길죠… 그동안은 순이가 자주 말 걸어 드릴게요."
+    ],
+    followups:["마지막으로 통화하신 게 언제예요?","전화하면 주로 무슨 이야기 나누세요?"]
+  },
+  {
+    key:"spouse",
+    test:/영감|할멈|할아범|남편|아내|집사람|바깥양반|먼저\s*(간|보냈|떠나)|사별/,
+    responses:[
+      "그 세월을 함께하신 분 이야기군요… 천천히, 편하게 들려주세요. 순이가 귀 기울여 들을게요.",
+      "{name}, 두 분이 어떻게 만나셨는지 저 정말 궁금해요. 그 시절 이야기 해 주세요.",
+      "오래 같이 산 정이라는 게 말로 다 못 하죠…"
+    ],
+    followups:["두 분 처음 만나셨을 때 이야기 해 주세요.","그분은 어떤 분이셨어요?"]
+  },
+  {
+    key:"memory",
+    test:/옛날|예전|젊었을|왕년|그\s*시절|어릴\s*(적|때)|시집|장가|피난|보릿고개|국민학교/,
+    responses:[
+      "와, 옛날이야기다! 저 이런 이야기 제일 좋아해요. {name}, 천천히 다 들려주세요. 📖",
+      "그 시절엔 정말 고생 많으셨죠… 지금 젊은 사람들은 상상도 못 할 거예요. 그래서 더 듣고 싶어요.",
+      "{name} 젊으셨을 땐 동네에서 인기 많으셨을 것 같은데요? 😄"
+    ],
+    followups:["그때 제일 기억에 남는 일이 뭐예요?","어릴 적 살던 동네는 어디셨어요?","그 시절 즐겨 드시던 음식은 뭐였어요?"]
+  },
+  {
+    key:"bored",
+    test:/심심|무료|할\s*일이\s*없|따분|재미없|하루가\s*길/,
+    responses:[
+      "심심하실 땐 순이랑 놀아요! 속담놀이 한 판 어때요? 아래 '속담놀이' 단추를 눌러 보세요. 🧩",
+      "하루가 길게 느껴지는 날이 있죠. 옛날이야기 하나 들려주시면 제가 신나게 들을게요!",
+      "{name}, 심심할 때 가볍게 동네 한 바퀴 걷고 오시는 것도 좋아요. 다녀오셔서 뭐 보셨는지 이야기해 주세요."
+    ],
+    followups:["요즘 소일거리로 뭐 하세요?","텔레비전에선 뭐 재밌는 거 해요?"]
+  },
+  {
+    key:"tv",
+    test:/텔레비|티비|TV|드라마|연속극|뉴스를|트로트|노래자랑|가요무대|미스터트롯|프로그램/,
+    responses:[
+      "저도 그거 알아요! {name}은 어떤 프로그램을 제일 즐겨 보세요?",
+      "요즘 트로트가 참 좋죠~ 🎵 {name}은 어느 가수를 제일 좋아하세요?",
+      "드라마는 한 번 보기 시작하면 다음 회가 어찌나 궁금한지요!"
+    ],
+    followups:["18번 애창곡은 뭐예요? 한 소절만 알려 주세요!","좋아하는 가수 이야기 해 주세요."]
+  },
+  {
+    key:"song",
+    test:/노래|음악|한\s*곡|애창곡|불러|음악\s*듣/,
+    responses:[
+      "노래 이야기 좋아요! 🎵 {name} 애창곡이 뭐예요? 제목 들으면 저도 아는 노래일지 몰라요.",
+      "옛날 노래는 가사가 다 시(詩) 같아요. 즐겨 부르시던 노래 있으세요?",
+      "노래 한 자락 뽑고 나면 속이 시원해지죠~ {name}은 어디서 노래 부르는 걸 좋아하세요?"
+    ],
+    followups:["그 노래에 얽힌 추억도 있으세요?","젊을 적엔 노래 잘한다는 소리 많이 들으셨죠?"]
+  },
+  {
+    key:"money",
+    test:/돈이|돈도|생활비|연금|기초연금|병원비|약값|형편|살림이/,
+    responses:[
+      "살림 걱정이 제일 무겁죠… {name}, 기초연금이나 지원 제도는 챙겨 받고 계세요? 주민센터에 물어보면 친절히 알려 줘요.",
+      "돈 걱정은 말만 해도 한숨이 나오죠. 보건복지 상담 129에 전화하면 받을 수 있는 지원을 알려 준대요.",
+      "{name} 혼자 끙끙 앓지 마세요. 자제분들이나 주민센터에 꼭 한 번 이야기해 보세요."
+    ],
+    followups:["주민센터에는 가 보신 적 있으세요?"]
+  },
+  {
+    key:"farm",
+    test:/밭|농사|텃밭|고추|배추|상추|모종|화분|화초|꽃이|꽃을|나무를/,
+    responses:[
+      "손수 키우시는 거예요? 대단하세요! 🌱 자식 키우는 것만큼 정성이 들죠.",
+      "흙 만지면 잡생각이 없어진다고 하시더라고요. {name}은 뭐 키우고 계세요?",
+      "물 주고 들여다보는 재미가 쏠쏠하죠~ 올해는 잘 자라요?"
+    ],
+    followups:["수확하면 뭐부터 해 드실 거예요?","키우면서 제일 뿌듯했던 순간은 언제예요?"]
+  },
+  {
+    key:"faith",
+    test:/교회|성당|절에|법당|기도|예배|미사|불공|하나님|부처님/,
+    responses:[
+      "믿음이 큰 위로가 되죠. {name}, 다녀오시면 마음이 한결 편안해지세요?",
+      "기도하는 마음으로 하루하루 지내시는 모습이 참 곱네요.",
+      "거기 가면 반가운 얼굴들도 만나시죠? 그런 정이 제일 귀해요."
+    ],
+    followups:["얼마나 오래 다니셨어요?"]
+  },
+  {
+    key:"good",
+    test:/기분이\s*좋|좋았|행복|신난|즐거|재밌었|반가|고마운\s*일|웃었/,
+    responses:[
+      "와, 저까지 기분이 좋아져요! 😊 무슨 좋은 일이 있으셨어요? 자세히 들려주세요!",
+      "{name:이} 웃으시면 저도 좋아요. 오늘 같은 날이 자주자주 있었으면 좋겠어요!",
+      "좋은 일은 나눠야 배가 된대요~ 어서 이야기해 주세요!"
+    ],
+    followups:[]
+  },
+  {
+    key:"thanks",
+    test:/고맙|고마워|감사|덕분|착하|예쁘네|이쁘네|기특/,
+    responses:[
+      "아유, 뭘요~ 😊 {name:이} 이렇게 말씀해 주시니 제가 더 고맙죠. 언제든 또 찾아 주세요!",
+      "그런 말씀 들으니 순이가 다 쑥스럽네요. 헤헤. {name} 말벗 하는 게 제 낙인걸요!",
+      "제가 더 감사해요, {name}. 오늘도 이야기 나눠 주셔서요. 🌸"
+    ],
+    followups:[]
+  },
+  {
+    key:"bye",
+    test:/잘\s*있어|갈게|끊을게|이만|자야|주무|잘게|다음에\s*(또|보)/,
+    handle:function(){
+      var h = new Date().getHours();
+      var night = (h >= 20 || h < 5);
+      soonyiSay(fill(night
+        ? "네, {name}. 오늘도 이야기 나눠서 참 좋았어요. 따뜻하게 덮고 편히 주무세요. 🌙 내일 또 놀러 오세요!"
+        : "네, {name}! 오늘 이야기 즐거웠어요. 끼니 잘 챙겨 드시고요, 심심하면 언제든 또 오세요. 🌸"));
+    }
+  },
+  {
+    key:"who",
+    test:/너는?\s*누구|누구세요|누구니|이름이\s*뭐|정체가|사람이야|로봇|기계야|몇\s*살/,
+    responses:[
+      "저는 말동무 순이예요! 옆집 사는 딸이라고 생각해 주세요. 😊 {name} 이야기 듣는 게 제 일이자 낙이랍니다.",
+      "저는 컴퓨터 속에 사는 말벗 순이예요. 사람은 아니지만, {name} 말씀을 듣고 싶은 마음은 진짜예요!",
+      "나이요? 헤헤, 저는 늘 스물몇 살 옆집 딸이에요. {name:이} 불러 주시면 언제든 달려오고요!"
+    ],
+    followups:[]
+  },
+  {
+    key:"greet",
+    test:/^(안녕|반가|왔어|왔다|나\s*왔|순이야|순아|있니|있어\?)/,
+    handle:function(){
+      soonyiSay(fill(pick("greet", [
+        "{name}, 어서 오세요! 기다리고 있었어요. 😊 " + timeGreeting(),
+        "아이고, {name} 오셨어요! 얼굴 보니(글씨 보니) 반갑네요~ 오늘 기분은 어떠세요?",
+        "네, {name}! 순이 여기 있어요. 오늘은 무슨 이야기 나눠 볼까요?"
+      ])));
+    }
+  },
+  {
+    key:"today",
+    test:/오늘\s*(있었던|하루|일과|뭐\s*했)|있었던\s*일/,
+    responses:[
+      "네네, 다 듣고 싶어요! 오늘 아침부터 뭐 하셨는지 차근차근 들려주세요. 😊",
+      "{name}의 하루 이야기, 순이가 제일 좋아하는 시간이에요. 오늘은 어떤 하루였어요?",
+      "사소한 것도 다 좋아요. 오늘 드신 것, 보신 것, 만난 사람… 뭐든 말씀해 주세요!"
+    ],
+    followups:[]
+  }
+];
+
+/* 아무 규칙에도 안 걸릴 때 — 경청 + 되묻기 */
+var LISTEN = [
+  "그러셨군요, {name}. 조금 더 자세히 듣고 싶어요.",
+  "아하, 그래서요? 그다음엔 어떻게 됐어요?",
+  "네네, 듣고 있어요. {name} 이야기는 언제 들어도 좋아요. 😊",
+  "그 말씀 들으니 저도 마음이 쓰이네요. 더 이야기해 주세요.",
+  "음~ 그렇군요. {name}은 그때 기분이 어떠셨어요?"
+];
+var OPEN_QUESTIONS = [
+  "참, 오늘 진지는 뭐 드셨어요?",
+  "요즘 밤에 잠은 잘 주무세요?",
+  "요즘 제일 자주 생각나는 사람이 있으세요?",
+  "젊으셨을 때 이야기도 궁금해요. 나중에 들려주세요!",
+  "심심하실 땐 저랑 속담놀이도 해요. 아래 단추 눌러 보세요!",
+  "오늘 바깥 공기는 좀 쐬셨어요?"
+];
+
+function respond(text){
+  text = (text || "").trim();
+  if (!text) return;
+
+  // 위급·위기 말씀은 어떤 상황(속담놀이 중 포함)에서도 가장 먼저 살핀다
+  for (var u = 0; u < RULES.length; u++){
+    var ur = RULES[u];
+    if ((ur.key === "emergency" || ur.key === "despair") && ur.test.test(text)){
+      awaiting = null;
+      setQuick(DEFAULT_QUICK);
+      ur.handle(text);
+      return;
+    }
+  }
+
+  if (awaiting === "name"){ handleName(text); return; }
+  if (awaiting === "proverb"){ handleProverb(text); return; }
+
+  if (/속담/.test(text)){
+    proverbScore = 0;
+    soonyiSay(fill("좋아요, {name}! 속담놀이 해요. 🧩 머리 운동에도 그만이래요."), {after:function(){
+      setTimeout(nextProverb, 900);
+    }});
+    return;
+  }
+
+  for (var i = 0; i < RULES.length; i++){
+    var r = RULES[i];
+    if (r.test.test(text)){
+      if (r.remember) r.remember(text);
+      if (r.handle){ r.handle(text); return; }
+      var out = fill(pick(r.key, r.responses));
+      if (r.followups && r.followups.length && Math.random() < 0.65){
+        out += "\n\n" + fill(r.followups[followupRotation++ % r.followups.length]);
+      }
+      soonyiSay(out);
+      return;
+    }
+  }
+
+  // 경청 모드
+  var out2 = fill(pick("listen", LISTEN));
+  if (Math.random() < 0.4){
+    out2 += "\n\n" + fill(pick("openq", OPEN_QUESTIONS));
+  }
+  soonyiSay(out2);
+}
+
+/* ---------- 보내기 ---------- */
+function handleSend(){
+  var t = msgEl.value.trim();
+  if (!t) return;
+  msgEl.value = "";
+  addBubble("me", t);
+  respond(t);
+}
+document.getElementById("sendBtn").addEventListener("click", handleSend);
+msgEl.addEventListener("keydown", function(e){ if (e.key === "Enter") handleSend(); });
+
+/* ---------- 시작 인사 ---------- */
+function start(){
+  var note = document.createElement("div");
+  note.className = "day-note";
+  var now = new Date();
+  note.textContent = now.getFullYear() + "년 " + (now.getMonth()+1) + "월 " + now.getDate() + "일 · 순이와의 대화";
+  chatEl.appendChild(note);
+
+  if (!mem.name){
+    soonyiSay("안녕하세요! 🌸", {fast:true, after:function(){ setTimeout(askName, 700); }});
+  } else {
+    var days = mem.lastVisit ? Math.round((Date.now() - mem.lastVisit) / 86400000) : 0;
+    var hello;
+    if (days >= 2) hello = "{name}! 며칠 만이에요~ 순이가 얼마나 기다렸는데요. 😊 그동안 별일 없으셨죠?";
+    else if (days === 1) hello = "{name}, 어제도 오시더니 오늘도 와 주셨네요! 반가워요. 😊";
+    else hello = "{name}, 또 만나서 반가워요! 😊";
+    hello += "\n\n" + timeGreeting();
+    if (mem.favFood && Math.random() < 0.4){
+      hello += "\n참, 지난번에 " + mem.favFood + " 말씀하셨잖아요. 요즘도 종종 드세요?";
+    }
+    soonyiSay(fill(hello));
+    setQuick(DEFAULT_QUICK);
+  }
+  mem.lastVisit = Date.now();
+  saveMem();
+}
+start();
+
+})();
+</script>
+</body>
+</html>
