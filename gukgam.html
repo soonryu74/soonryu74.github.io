@@ -45,6 +45,19 @@
   .links a:hover{ border-color:#b9cbe0; }
   .empty{ text-align:center; color:var(--muted); padding:40px 0; }
   .sum{ margin-top:7px; font-size:.8rem; color:#3d5a4e; background:#f0f7f3; border:1px solid #dcebe2; border-radius:8px; padding:6px 10px; line-height:1.5; }
+  h2{ font-size:1.1rem; color:var(--navy); margin:24px 0 12px; }
+  .mem-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; }
+  .mem{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:flex-start; }
+  .mem img{ width:56px; height:72px; object-fit:cover; border-radius:8px; background:#eef1f5; flex:0 0 auto; }
+  .mem .mn{ font-weight:800; color:var(--navy); font-size:.96rem; }
+  .mem .mn small{ font-weight:400; color:var(--muted); }
+  .mem .mp{ font-size:.76rem; margin-top:2px; }
+  .mem .md{ font-size:.76rem; color:var(--muted); margin-top:2px; line-height:1.45; }
+  .mem details{ margin-top:6px; }
+  .mem summary{ font-size:.75rem; font-weight:800; color:#2a4d7d; cursor:pointer; }
+  .mem .brf{ font-size:.75rem; color:#3d4f63; white-space:pre-line; margin-top:5px; max-height:180px; overflow-y:auto; line-height:1.5; }
+  .pty{ display:inline-block; border-radius:8px; padding:1px 8px; font-size:.72rem; font-weight:800; background:var(--chip); color:#3d4f63; }
+  .mem-toggle{ border:1px solid var(--line); background:#fff; border-radius:10px; padding:8px 16px; font-size:.86rem; font-weight:800; cursor:pointer; color:#2a4d7d; margin-bottom:10px; }
   .more{ display:block; margin:14px auto 0; border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 26px; font-size:.9rem; font-weight:700; cursor:pointer; color:#2a4d7d; }
   .foot{ font-size:.78rem; color:var(--muted); margin-top:26px; }
 </style>
@@ -67,6 +80,13 @@
 <main class="wrap">
   <div class="stats" id="stats"></div>
 
+  <section id="memSection" hidden>
+    <h2 id="memTitle">🧑‍⚖️ 보건복지위원회 위원</h2>
+    <p id="memHint" style="font-size:.78rem;color:var(--muted);margin:-6px 2px 10px;"></p>
+    <div class="mem-grid" id="members"></div>
+  </section>
+
+  <h2>📄 국정감사 자료</h2>
   <div class="filters">
     <select id="fYear"><option value="">전체 연도</option></select>
     <select id="fCommittee"><option value="">전체 위원회</option></select>
@@ -162,10 +182,28 @@
     fetch('data/gukgam/minutes.json?_='+Date.now()).then(function(r){return r.json();}),
     fetch('data/gukgam/index.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
     fetch('data/gukgam/likms-bulletins.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
-    fetch('data/gukgam/summaries.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:{}};})
+    fetch('data/gukgam/summaries.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:{}};}),
+    fetch('data/gukgam/members.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(res){
     var reports=res[0], minutes=res[1], idx=res[2], likms=res[3];
     SUM = res[4].items || {};
+    var mem = res[5];
+    if(mem && (mem.items||[]).length){
+      document.getElementById('memSection').hidden=false;
+      document.getElementById('memTitle').textContent='🧑‍⚖️ '+(mem.era||'')+' '+(mem.committee||'보건복지위원회')+' 위원 ('+mem.items.length+'명)';
+      document.getElementById('memHint').textContent=(mem.note||'')+' · 갱신 '+(mem.updated||'');
+      document.getElementById('members').innerHTML = mem.items.map(function(m){
+        var mt=[m.rlct, m.elecd].filter(Boolean).join(' · ');
+        return '<div class="mem">'+
+          (m.photo?'<img src="'+esc(m.photo)+'" alt="'+esc(m.name)+'" loading="lazy" onerror="this.style.display=\'none\'">':'')+
+          '<div style="min-width:0;flex:1;">'+
+          '<div class="mn">'+esc(m.name)+(m.hanja?' <small>'+esc(m.hanja)+'</small>':'')+'</div>'+
+          '<div class="mp"><span class="pty">'+esc(m.party||'-')+'</span>'+(m.duty?' <span class="pty">'+esc(m.duty)+'</span>':'')+'</div>'+
+          '<div class="md">'+esc(mt)+'</div>'+
+          (m.brf?'<details><summary>약력 보기</summary><div class="brf">'+esc(m.brf)+'</div></details>':'')+
+          '</div></div>';
+      }).join('');
+    }
     DOCS = (reports.items||[]).concat((minutes.items||[]).map(function(m){
       m.doc_type='minutes';
       m.year = m.date ? parseInt(m.date.slice(0,4),10) : null;
