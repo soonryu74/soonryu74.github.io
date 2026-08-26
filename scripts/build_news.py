@@ -72,6 +72,8 @@ def main():
                           "link": link, "date": parse_date(it.findtext("pubDate") or "")})
     items.sort(key=lambda x: x["date"], reverse=True)
     items = items[:18]
+    if not items:
+        print("::warning::뉴스 수집 0건 — 기존 뉴스를 유지하고 건너뜁니다."); return 0
     out = {"updated": datetime.date.today().isoformat(), "items": items}
     with open(os.path.join(ROOT, "data/news.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
