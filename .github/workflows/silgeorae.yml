@@ -4,7 +4,7 @@ name: 실거래가 자동 갱신 (구리시)
 # 갈매동 카드/홍보/비교(data/complexes.js) + 구리 표/분석(data/guri-complexes.js)을 재생성합니다.
 on:
   schedule:
-    - cron: '0 20 * * *'   # UTC 20:00 = KST 05:00 매일
+    - cron: '0 1 * * *'    # UTC 01:00 = KST 10:00 매일 (국토부 API가 안정적인 오전)
   workflow_dispatch:
 
 permissions:
@@ -13,6 +13,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
 

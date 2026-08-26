@@ -56,14 +56,14 @@ def fetch_records(key, lawd=LAWD, sgg_name="구리시"):
     _force_ipv4()
     def fetch_xml(url):
         last = None
-        for attempt in range(5):            # 최대 5회 재시도 (국토부 서버 지연 대비)
+        for attempt in range(3):            # 최대 3회 재시도 (실패 시 빠르게 포기)
             try:
                 req = urllib.request.Request(url, headers={"User-Agent": "galmae-budongsan/1.0"})
-                with urllib.request.urlopen(req, timeout=45) as r:
+                with urllib.request.urlopen(req, timeout=20) as r:
                     return ET.fromstring(r.read().decode("utf-8"))
             except Exception as e:
                 last = e
-                if attempt < 4: time.sleep(3 * (attempt + 1))
+                if attempt < 2: time.sleep(2 * (attempt + 1))
         raise last
     def txt(item, *names):
         for n in names:
@@ -214,18 +214,24 @@ def main():
         key = os.environ.get("DATA_GO_KR_KEY")
         if not key:
             print("::warning::DATA_GO_KR_KEY 없음 — 건너뜀"); return 0
-        records = fetch_records(key, LAWD, "구리시")
+        try:
+            records = fetch_records(key, LAWD, "구리시")
+        except Exception as e:
+            print(f"::warning::국토부 API 응답 지연으로 이번 실행은 건너뜁니다(기존 데이터 유지): {e}"); return 0
         print(f"[api] 구리 수집 {len(records)}건")
         if len(records) < 100:
-            print("::error::수집 결과가 너무 적어 파일을 갱신하지 않습니다(안전장치)."); return 1
-        ny_records = fetch_records(key, NY_LAWD, "남양주시")
+            print("::warning::수집이 적어 이번 실행은 건너뜁니다(기존 데이터 유지·안전장치)."); return 0
+        try:
+            ny_records = fetch_records(key, NY_LAWD, "남양주시")
+        except Exception as e:
+            print(f"::warning::남양주 수집 지연 — 별내는 건너뜁니다: {e}"); ny_records = []
         print(f"[api] 남양주 수집 {len(ny_records)}건")
 
     guri, galmae = build(records, meta)
     if not local:
         gset = {d["dong"] for d in guri}
         if GALMAE not in gset or len(galmae) < 3:
-            print("::error::갈매동 데이터 부족 — 갱신 중단(안전장치)."); return 1
+            print("::warning::갈매동 데이터 부족 — 이번 실행 건너뜀(기존 데이터 유지·안전장치)."); return 0
     write_js(guri, galmae)
     print(f"완료: 구리 {len(guri)}단지 / 갈매동 {len(galmae)}단지")
 
