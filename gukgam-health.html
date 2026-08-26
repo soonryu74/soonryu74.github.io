@@ -45,6 +45,18 @@
   .links{ display:flex; gap:6px; flex-wrap:wrap; }
   .links a{ text-decoration:none; font-size:.8rem; font-weight:800; border:1px solid var(--line); border-radius:8px; padding:5px 11px; background:#fafcfe; color:#2a4d7d; }
   .empty{ text-align:center; color:var(--muted); padding:32px 0; background:#fff; border:1px dashed var(--line); border-radius:12px; }
+  .sum{ margin-top:7px; font-size:.8rem; color:#3d5a4e; background:#f0f7f3; border:1px solid #dcebe2; border-radius:8px; padding:6px 10px; line-height:1.5; }
+  .mem-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; }
+  .mem{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:flex-start; }
+  .mem img{ width:56px; height:72px; object-fit:cover; border-radius:8px; background:#eef1f5; flex:0 0 auto; }
+  .mem .mn{ font-weight:800; color:var(--navy); font-size:.96rem; }
+  .mem .mn small{ font-weight:400; color:var(--muted); }
+  .mem .mp{ font-size:.76rem; margin-top:2px; }
+  .mem .md{ font-size:.76rem; color:var(--muted); margin-top:2px; line-height:1.45; }
+  .mem details{ margin-top:6px; }
+  .mem summary{ font-size:.75rem; font-weight:800; color:#2a4d7d; cursor:pointer; }
+  .mem .brf{ font-size:.75rem; color:#3d4f63; white-space:pre-line; margin-top:5px; max-height:180px; overflow-y:auto; line-height:1.5; }
+  .pty{ display:inline-block; border-radius:8px; padding:1px 8px; font-size:.72rem; font-weight:800; background:var(--chip); color:#3d4f63; }
   .foot{ font-size:.78rem; color:var(--muted); margin-top:26px; }
 </style>
 </head>
@@ -69,6 +81,10 @@
 <main class="wrap">
   <h2>🏥 기관 지도 (보건복지위원회 소관)</h2>
   <div id="tree"></div>
+
+  <h2 id="memTitle">🧑‍⚖️ 보건복지위원회 위원</h2>
+  <p class="hint" id="memHint" style="font-size:.78rem;color:var(--muted);margin:-6px 2px 12px;"></p>
+  <div class="mem-grid" id="members"></div>
 
   <h2>📄 국정감사 자료</h2>
   <div class="filters">
@@ -97,8 +113,25 @@
   var esc = function(s){ return (s||'').replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
   var TYPE = { result_report:['결과보고서','result'], followup:['시정·처리결과','follow'], minutes:['회의록','minutes'],
                plan:['계획서',''], briefing:['업무보고','briefing'], written_answer:['서면답변','answer'], request_list:['요구자료','request'], reference:['참고자료',''] };
-  var AG = {}, DOCS = [];
+  var AG = {}, DOCS = [], SUM = {};
   var state = { year:'', type:'', agency:'' };
+  function sumLine(d){
+    var s = SUM[d.pdf] || SUM[d.url];
+    if(!s) return '';
+    var parts=[];
+    if(s.kind==='minutes'){
+      if(s.targets&&s.targets.length) parts.push('피감기관: '+s.targets.join(', '));
+      if(s.where) parts.push(s.where);
+      if(s.pages) parts.push(s.pages+'쪽');
+    }else{
+      if(s.period) parts.push('감사기간 '+s.period);
+      if(s.target_count) parts.push('대상기관 '+s.target_count+'곳');
+      if(s.demand_count) parts.push('시정·처리요구 '+s.demand_count+'건');
+      if(s.top_agencies) parts.push('최다 지적: '+s.top_agencies.slice(0,3).map(function(t){return t.name+' '+t.count+'건';}).join(', '));
+      if(s.pages) parts.push(s.pages+'쪽');
+    }
+    return parts.length?'<div class="sum">📄 '+esc(parts.join(' · '))+'</div>':'';
+  }
 
   function renderTree(items){
     var groups = [
@@ -146,7 +179,7 @@
       if(d.agency_id && AG[d.agency_id]) meta.push('<span>'+esc(AG[d.agency_id].name)+'</span>');
       if(d.source) meta.push('<span>'+esc(d.source)+'</span>');
       return '<div class="row"><div class="main"><div class="title">'+esc(d.title)+'</div>'+
-             '<div class="meta">'+meta.join('')+'</div></div><div class="links">'+links.join('')+'</div></div>';
+             '<div class="meta">'+meta.join('')+'</div>'+sumLine(d)+'</div><div class="links">'+links.join('')+'</div></div>';
     }).join('');
   }
 
@@ -156,8 +189,30 @@
     fetch('data/gukgam/minutes.json?_='+Date.now()).then(function(r){return r.json();}),
     fetch('data/gukgam/seed-health.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
     fetch('data/gukgam/likms-bulletins.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
-    fetch('data/gukgam/health-agency-docs.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};})
+    fetch('data/gukgam/health-agency-docs.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
+    fetch('data/gukgam/summaries.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:{}};}),
+    fetch('data/gukgam/members.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(res){
+    SUM = (res[6]||{}).items || {};
+    var mem = res[7];
+    if(mem && (mem.items||[]).length){
+      document.getElementById('memTitle').textContent='🧑‍⚖️ '+(mem.era||'')+' '+(mem.committee||'보건복지위원회')+' 위원 ('+mem.items.length+'명)';
+      document.getElementById('memHint').textContent=(mem.note||'')+' · 갱신 '+(mem.updated||'');
+      document.getElementById('members').innerHTML = mem.items.map(function(m){
+        var meta=[m.rlct, m.elecd].filter(Boolean).join(' · ');
+        return '<div class="mem">'+
+          (m.photo?'<img src="'+esc(m.photo)+'" alt="'+esc(m.name)+'" loading="lazy" onerror="this.style.display=\'none\'">':'')+
+          '<div style="min-width:0;flex:1;">'+
+          '<div class="mn">'+esc(m.name)+(m.hanja?' <small>'+esc(m.hanja)+'</small>':'')+'</div>'+
+          '<div class="mp"><span class="pty">'+esc(m.party||'-')+'</span>'+(m.duty?' <span class="pty">'+esc(m.duty)+'</span>':'')+'</div>'+
+          '<div class="md">'+esc(meta)+'</div>'+
+          (m.brf?'<details><summary>약력 보기</summary><div class="brf">'+esc(m.brf)+'</div></details>':'')+
+          '</div></div>';
+      }).join('');
+    } else {
+      document.getElementById('memTitle').style.display='none';
+      document.getElementById('memHint').style.display='none';
+    }
     var agencies=res[0].items||[];
     agencies.forEach(function(a){ AG[a.id]=a; });
     renderTree(agencies);

@@ -23,11 +23,21 @@ jobs:
           ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
         run: python3 scripts/gukgam/fetch_assembly.py
 
+      - name: 보건복지위 위원 프로필 수집
+        env:
+          ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
+        run: python3 scripts/gukgam/fetch_members.py
+
       - name: likms 위원회 게시판 최신 자료 수집 (키 불필요, 누적)
         run: python3 scripts/gukgam/fetch_likms.py
 
       - name: 보건복지 트랙 기관 게시판 수집 (키 불필요, 누적)
         run: python3 scripts/gukgam/fetch_health.py
+
+      - name: 문서 요약 추출 (보건복지위 회의록·결과보고서, 증분)
+        run: |
+          pip install --quiet pypdf
+          python3 scripts/gukgam/build_summaries.py
 
       - name: 변경 시 커밋
         run: |
