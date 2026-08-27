@@ -8,6 +8,8 @@
 
 실행: python3 scripts/gukgam/build_findings.py            # 기본: 최신 연도
       GUKGAM_YEAR=2023 python3 scripts/gukgam/build_findings.py
+      # Open API에 아직 없는 보고서는 PDF 주소를 직접 지정:
+      GUKGAM_YEAR=2025 GUKGAM_PDF_URL="https://..." python3 scripts/gukgam/build_findings.py
 의존성: pypdf (pip install pypdf) — 연 1회 수동/디스패치 실행 용도
 출력: data/gukgam/findings-{연도}.json
 """
@@ -90,7 +92,14 @@ def parse(text):
 
 
 def main():
-    rpt = find_report()
+    direct = os.environ.get("GUKGAM_PDF_URL", "").strip()
+    if direct:
+        rpt = {"year": int(os.environ.get("GUKGAM_YEAR", "0")) or None,
+               "committee": COMMITTEE, "pdf": direct}
+        if not rpt["year"]:
+            raise SystemExit("GUKGAM_PDF_URL 사용 시 GUKGAM_YEAR 필수")
+    else:
+        rpt = find_report()
     print(f"대상: {rpt['year']}년 {rpt['committee']} 결과보고서")
     items = parse(pdf_text(rpt["pdf"]))
     out = {

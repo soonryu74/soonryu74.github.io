@@ -109,6 +109,7 @@
   <h2 id="findingsTitle">📋 작년 지적사항 전수 목록</h2>
   <p class="hint" id="findingsHint">결과보고서 PDF에서 자동 추출한 시정·처리요구사항입니다. 질의의 8할이 여기서 다시 나옵니다 — 기관 필터로 소관 기관을 골라 이행현황을 점검하세요.</p>
   <div class="filters" style="position:static;">
+    <select id="gYear" title="연도 선택"></select>
     <select id="gAgency"><option value="">전체 기관</option></select>
     <input id="gQuery" type="search" placeholder="지적사항 키워드 검색">
     <label style="font-size:.84rem;font-weight:700;display:flex;align-items:center;gap:6px;">
@@ -188,21 +189,39 @@
   document.getElementById('fQuery').addEventListener('input', function(){ state.q=this.value.trim(); render(); });
   // ---- 작년 지적사항 전수 목록 (결과보고서 자동 추출) ----
   var FIND=[], gShown=100, gState={agency:'', q:'', asQ:false};
-  function tryYears(years){
-    if(!years.length){ document.getElementById('findings').innerHTML='<div class="empty">추출된 지적사항 데이터가 없습니다. <code>scripts/gukgam/build_findings.py</code>를 실행하세요.</div>'; return; }
-    fetch('data/gukgam/findings-'+years[0]+'.json?_='+Date.now())
+  var srcLinks={};
+  function loadYear(y){
+    fetch('data/gukgam/findings-'+y+'.json?_='+Date.now())
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(d){
-        FIND=d.items||[];
+        FIND=d.items||[]; gShown=100; gState.agency='';
         document.getElementById('findingsTitle').textContent='📋 '+d.year+'년 지적사항 전수 목록 ('+FIND.length+'건 자동 추출)';
+        var sel=document.getElementById('gAgency');
+        sel.innerHTML='<option value="">전체 기관</option>';
         var ags={};
         FIND.forEach(function(i){ if(i.agency) ags[i.agency]=1; });
-        var sel=document.getElementById('gAgency');
         Object.keys(ags).sort().forEach(function(a){ var o=document.createElement('option'); o.value=a; o.textContent=a; sel.appendChild(o); });
         var hint=document.getElementById('findingsHint');
-        hint.innerHTML+=' 출처: <a href="'+esc(d.source_pdf)+'" target="_blank" rel="noopener">'+d.year+'년 '+esc(d.committee)+' 결과보고서 원문(PDF)</a>';
+        hint.innerHTML='결과보고서 PDF에서 자동 추출한 시정·처리요구사항입니다. 질의의 8할이 여기서 다시 나옵니다 — 기관 필터로 소관 기관을 골라 이행현황을 점검하세요. 출처: <a href="'+esc(d.source_pdf)+'" target="_blank" rel="noopener">'+d.year+'년 '+esc(d.committee)+' 결과보고서 원문(PDF)</a>';
         renderFindings();
-      }).catch(function(){ tryYears(years.slice(1)); });
+      }).catch(function(){
+        document.getElementById('findings').innerHTML='<div class="empty">'+y+'년 데이터를 불러오지 못했습니다.</div>';
+      });
+  }
+  function initYears(){
+    // 존재하는 연도 파일 탐색(2020~2026) → 연도 선택 셀렉트 구성, 최신 연도 기본
+    var cands=[2026,2025,2024,2023,2022,2021,2020];
+    Promise.all(cands.map(function(y){
+      return fetch('data/gukgam/findings-'+y+'.json',{method:'HEAD'}).then(function(r){ return r.ok?y:null; }).catch(function(){ return null; });
+    })).then(function(res){
+      var years=res.filter(Boolean);
+      if(!years.length){ document.getElementById('findings').innerHTML='<div class="empty">추출된 지적사항 데이터가 없습니다.</div>'; return; }
+      var sel=document.getElementById('gYear');
+      sel.innerHTML=years.map(function(y){ return '<option value="'+y+'">'+y+'년 국감</option>'; }).join('');
+      sel.value=String(years[0]);
+      sel.addEventListener('change', function(){ loadYear(this.value); });
+      loadYear(years[0]);
+    });
   }
   function toQuestion(t){
     return '지난 국정감사에서 "'+t.replace(/(할 것|바람|질의)$/, '').trim()+'"을(를) 요구받으셨습니다. 지난 1년간의 조치 결과를 구체적으로 답변해 주시기 바랍니다.';
@@ -227,7 +246,7 @@
     }).join('');
     document.getElementById('gMore').hidden=rows.length<=gShown;
   }
-  tryYears([2026,2025,2024]);
+  initYears();
   document.getElementById('gAgency').addEventListener('change', function(){ gState.agency=this.value; gShown=100; renderFindings(); });
   document.getElementById('gQuery').addEventListener('input', function(){ gState.q=this.value.trim(); gShown=100; renderFindings(); });
   document.getElementById('gAsQuestion').addEventListener('change', function(){ gState.asQ=this.checked; renderFindings(); });
