@@ -22,14 +22,16 @@
   /* ===== 카드 ===== */
   #card{ width:760px; background:#fff; border-radius:0; font-family:'Malgun Gothic','맑은 고딕',sans-serif; color:#1c2733; position:relative; overflow:hidden; box-sizing:border-box; }
   #card *{ box-sizing:border-box; }
-  .c-top{ background:#20272e; color:#fff; padding:20px 26px; display:flex; align-items:center; gap:12px; }
-  .c-top .ico{ font-size:2rem; }
-  .c-top .t{ font-size:1.9rem; font-weight:900; letter-spacing:-.02em; }
-  .c-hero{ padding:18px 26px 6px; }
-  .c-hero .nm{ font-size:2.2rem; font-weight:900; color:#20272e; line-height:1.1; letter-spacing:-.03em; word-break:keep-all; }
-  .c-hero .price{ margin-top:2px; font-size:2.9rem; font-weight:900; color:#c0392b; line-height:1.05; letter-spacing:-.03em; }
-  .c-hero .price small{ font-size:1.5rem; color:#20272e; }
-  .c-hero .sub{ margin-top:6px; font-size:1.05rem; color:#5a6673; font-weight:700; }
+  .c-hero-p{ position:relative; overflow:hidden; background:radial-gradient(130% 150% at 18% -10%, #1d55a0 0%, #0f2f57 46%, #071528 100%); color:#fff; padding:22px 28px 28px; }
+  .c-hero-p .sky{ position:absolute; left:-2%; right:-2%; bottom:-1px; width:104%; height:60%; opacity:.20; filter:blur(1.1px); }
+  .c-hero-p .top{ position:relative; display:flex; align-items:center; gap:9px; }
+  .c-hero-p .top .ico{ font-size:1.55rem; }
+  .c-hero-p .top .t{ font-size:1.28rem; font-weight:900; color:#ffd85e; letter-spacing:-.01em; }
+  .c-hero-p .nm{ position:relative; margin-top:14px; font-size:2.35rem; font-weight:900; color:#fff; line-height:1.12; letter-spacing:-.03em; word-break:keep-all; text-shadow:0 2px 12px rgba(0,0,0,.4); }
+  .c-hero-p .price{ position:relative; margin-top:4px; font-size:4.4rem; font-weight:900; color:#ffe259; line-height:1; letter-spacing:-.03em;
+    text-shadow:0 0 24px rgba(255,224,89,.8), 0 0 8px rgba(255,224,89,.95), 0 3px 4px rgba(0,0,0,.35); }
+  .c-hero-p .price small{ font-size:1.75rem; color:#fff; font-weight:900; text-shadow:0 2px 8px rgba(0,0,0,.4); }
+  .c-hero-p .sub{ position:relative; margin-top:9px; font-size:1.02rem; color:#cfe0f5; font-weight:700; }
   .c-body{ padding:8px 26px 0; display:flex; gap:14px; }
   .c-info{ flex:1; min-width:0; }
   .c-tag{ display:inline-block; background:#20272e; color:#fff; font-weight:800; border-radius:8px; padding:5px 12px; font-size:1.05rem; margin-bottom:8px; }
@@ -133,7 +135,7 @@
 <script src="data/complexes.js"></script>
 <script src="data/guri-complexes.js"></script>
 <script src="data/byeollae-complexes.js"></script>
-<script src="assets/js/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 (function(){
   var region='galmae', sortKey='recent', list=[], cur=null;
@@ -143,7 +145,16 @@
   function eok1(man){ return (Math.round((man||0)/1000)/10).toFixed(1)+'억'; }
   function pyeong(ar){ return Math.max(1, Math.round((ar||0)/2.48)); } // 공급면적 환산 평형
   function esc(s){ return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function nowY(){ return new Date().getFullYear(); }
+  function nowY(){ return 2026; }
+  function skyline(){
+    var bx=[{x:5,w:38,h:92},{x:48,w:30,h:66},{x:82,w:44,h:112},{x:130,w:28,h:58},{x:162,w:40,h:98},{x:206,w:34,h:78},{x:244,w:48,h:118},{x:296,w:30,h:64},{x:330,w:42,h:104},{x:376,w:22,h:52}];
+    var s='<svg class="sky" viewBox="0 0 400 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">';
+    bx.forEach(function(b){
+      s+='<rect x="'+b.x+'" y="'+(120-b.h)+'" width="'+b.w+'" height="'+b.h+'" rx="1.5" fill="#cfe0f5"/>';
+      for(var yy=120-b.h+6; yy<116; yy+=10){ for(var xx=b.x+4; xx<b.x+b.w-4; xx+=8){ s+='<rect x="'+xx+'" y="'+yy+'" width="4" height="5" fill="#0f2f57" opacity="0.55"/>'; } }
+    });
+    return s+'</svg>';
+  }
 
   function dataOf(reg){
     if(reg==='by')     return (typeof BYEOLLAE!=='undefined'?BYEOLLAE:[]).map(function(c){return Object.assign({dong:c.dong||'별내동',region:'by'},c);});
@@ -186,10 +197,12 @@
     }
 
     cardEl.innerHTML =
-      '<div class="c-top"><span class="ico">🏙️</span><span class="t">주목할 만한 오늘의 실거래</span></div>'
-      + '<div class="c-hero"><div class="nm">'+esc(c.name)+'</div>'
-      +   '<div class="price"><small>'+py+'평</small> '+eok1(L.price)+'</div>'
-      +   '<div class="sub">'+esc((c.region==='by'?'남양주시 별내 · ':(c.region==='guri'?'구리시 · ':'구리시 갈매동 · '))+(c.dong||''))+' 실거래</div></div>'
+      '<div class="c-hero-p">'+skyline()
+      + '<div class="top"><span class="ico">🏆</span><span class="t">주목할 만한 오늘의 실거래</span></div>'
+      + '<div class="nm">'+esc(c.name)+'</div>'
+      + '<div class="price"><small>'+py+'평</small> '+eok1(L.price)+'</div>'
+      + '<div class="sub">'+esc((c.region==='by'?'남양주시 별내 · ':(c.region==='guri'?'구리시 · ':'구리시 갈매동 · '))+(c.dong||''))+' 실거래</div>'
+      + '</div>'
       + '<div class="c-body"><div class="c-info">'
       +   '<span class="c-tag">'+esc(c.name)+'</span><span class="c-dong">'+esc(c.dong||'')+'</span>'
       +   '<ul>'
@@ -202,13 +215,21 @@
       +     '<span class="c-badge dark">평당 '+eok(pd)+'</span>'
       +   '</div>'
       + '</div></div>'
-      + '<div class="c-shdr">'+(high?'🔥 신고가 실거래':'최근 실거래')+'</div>'
+      + '<div class="c-shdr">'+(high?'🔥 최근 1년 내 최고가':'최근 실거래')+'</div>'
       + '<table class="c-tbl"><colgroup><col class="w1"><col class="w2"><col class="w3"><col class="w4"></colgroup><thead><tr><th>평형</th><th>층수</th><th class="hi">실거래가</th><th>거래일자</th></tr></thead>'
       +   '<tbody><tr><td>'+py+'평</td><td>'+(L.floor||'-')+'층</td><td class="hi">'+eok1(L.price)+' 원</td><td>'+esc((L.date||'').replace(/-/g,'.'))+'</td></tr></tbody></table>'
       + '<div class="c-foot"><div class="l"><div class="b">🏢 갈매역삼성부동산</div><div class="s">매일 최신 시세는 galmae-budongsan.com</div></div>'
       +   '<div class="r"><div class="p">031-575-4944</div><div class="u">전화·카톡 문의</div></div></div>'
-      + '<div class="c-src">📄 출처: 국토교통부 실거래가 공개시스템 · 평당가는 공급면적 환산 참고치</div>';
+      + '<div class="c-src">📄 출처: 국토교통부 실거래가 공개시스템 · 최근 1년 매매 기준 · 평당가는 공급면적 환산 참고치</div>';
   }
+  function gridWin(x,y,w,cols,rows,color){
+    var s='',gap=w/cols;
+    for(var r=0;r<rows;r++)for(var i=0;i<cols;i++){
+      s+='<rect x="'+(x+i*gap+1)+'" y="'+(y+r*13+4)+'" width="'+(gap-3)+'" height="8" fill="'+color+'"/>';
+    }
+    return s;
+  }
+
   function makeImage(){
     outEl.innerHTML='<div class="save-hint">이미지 만드는 중…</div>';
     html2canvas(cardEl,{scale:2,backgroundColor:'#ffffff',useCORS:true}).then(function(cv){
