@@ -179,8 +179,10 @@
     document.getElementById('list').innerHTML='<div class="empty">Q&A 데이터가 아직 없습니다. scripts/gukgam/build_kdca_qa.py 실행 후 생성됩니다.</div>';
   });
 
-  // 시정·처리요구 (결과보고서)
-  fetch('data/gukgam/findings-2024.json?_='+Date.now()).then(function(r){return r.json();}).then(function(d){
+  // 시정·처리요구 (결과보고서) — 최신 연도 우선
+  fetch('data/gukgam/findings-2025.json?_='+Date.now()).then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .catch(function(){ return fetch('data/gukgam/findings-2024.json?_='+Date.now()).then(function(r){return r.json();}); })
+    .then(function(d){
     var rows=(d.items||[]).filter(function(i){ return (i.group==='질병관리청') || (i.agency||'').indexOf('질병관리청')>=0; });
     var box=document.getElementById('findList');
     if(!rows.length){ box.innerHTML='<div class="empty">추출된 항목이 없습니다.</div>'; return; }
