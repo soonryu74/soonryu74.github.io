@@ -133,7 +133,7 @@
 <script src="data/complexes.js"></script>
 <script src="data/guri-complexes.js"></script>
 <script src="data/byeollae-complexes.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="assets/js/html2canvas.min.js"></script>
 <script>
 (function(){
   var region='galmae', sortKey='recent', list=[], cur=null;
@@ -143,7 +143,7 @@
   function eok1(man){ return (Math.round((man||0)/1000)/10).toFixed(1)+'억'; }
   function pyeong(ar){ return Math.max(1, Math.round((ar||0)/2.48)); } // 공급면적 환산 평형
   function esc(s){ return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function nowY(){ return 2026; }
+  function nowY(){ return new Date().getFullYear(); }
 
   function dataOf(reg){
     if(reg==='by')     return (typeof BYEOLLAE!=='undefined'?BYEOLLAE:[]).map(function(c){return Object.assign({dong:c.dong||'별내동',region:'by'},c);});
@@ -209,14 +209,6 @@
       +   '<div class="r"><div class="p">031-575-4944</div><div class="u">전화·카톡 문의</div></div></div>'
       + '<div class="c-src">📄 출처: 국토교통부 실거래가 공개시스템 · 평당가는 공급면적 환산 참고치</div>';
   }
-  function gridWin(x,y,w,cols,rows,color){
-    var s='',gap=w/cols;
-    for(var r=0;r<rows;r++)for(var i=0;i<cols;i++){
-      s+='<rect x="'+(x+i*gap+1)+'" y="'+(y+r*13+4)+'" width="'+(gap-3)+'" height="8" fill="'+color+'"/>';
-    }
-    return s;
-  }
-
   function makeImage(){
     outEl.innerHTML='<div class="save-hint">이미지 만드는 중…</div>';
     html2canvas(cardEl,{scale:2,backgroundColor:'#ffffff',useCORS:true}).then(function(cv){
