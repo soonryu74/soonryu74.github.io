@@ -6,7 +6,7 @@
 - 브라우저는 이 파일만 읽어 반경 내 업종분포·유해업소·경쟁도를 계산합니다(라이브 호출 없음).
 실행: DATA_GO_KR_KEY=<서비스키(인코딩형)> python3 scripts/build_sangga.py
 """
-import os, json, socket, datetime, time
+import os, json, socket, datetime, time, re
 import urllib.request, urllib.parse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -106,6 +106,15 @@ def collect_center(key, name, cy, cx):
         if page > 50: break
     return got
 
+def _prev_count(path):
+    """기존 data 파일의 count를 읽어 직전 수집량을 파악(급감 방지용)."""
+    try:
+        s = open(path, encoding="utf-8").read()
+        m = re.search(r'"count"\s*:\s*(\d+)', s)
+        return int(m.group(1)) if m else 0
+    except Exception:
+        return 0
+
 def main():
     force_ipv4()
     key = os.environ.get("DATA_GO_KR_KEY")
@@ -137,9 +146,13 @@ def main():
             added += 1
         print(f"[{name}] 신규 {added}건 (누적 {len(kept)})")
 
+    path = os.path.join(ROOT, "data/sangga-stores.js")
+    prev = _prev_count(path)
+    # 안전장치: 절대 하한 + 직전 대비 급감(비율) 방지 → 부분 수집으로 기존 데이터를 덮어쓰지 않음
     if len(kept) < 50:
-        print(f"::error::상가 수집이 너무 적어({len(kept)}건) 파일을 갱신하지 않습니다(안전장치).")
-        return 1
+        print(f"::warning::상가 수집이 너무 적어({len(kept)}건) — 이번 갱신을 건너뜁니다(기존 데이터 유지)."); return 0
+    if prev >= 200 and len(kept) < prev * 0.7:
+        print(f"::warning::상가 수집이 직전({prev}건) 대비 급감({len(kept)}건, 70% 미만) — 이번 갱신을 건너뜁니다(기존 데이터 유지)."); return 0
 
     kept.sort(key=lambda r: (r["l"], r["m"], r["n"]))
     out = {
@@ -149,7 +162,6 @@ def main():
         "byLcls": dict(sorted(lcls_count.items(), key=lambda x: -x[1])),
         "stores": kept,
     }
-    path = os.path.join(ROOT, "data/sangga-stores.js")
     with open(path, "w", encoding="utf-8") as f:
         f.write("/* 소상공인시장진흥공단 상가(상권)정보 — 갈매·별내·구리 영업지역 (반경조회 병합) */\n")
         f.write("window.SANGGA = " + json.dumps(out, ensure_ascii=False) + ";\n")
