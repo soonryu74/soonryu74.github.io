@@ -50,10 +50,15 @@ jobs:
       - name: 질병관리청 Q&A 추출 (국감 회의록, 증분)
         run: python3 scripts/gukgam/build_kdca_qa.py
 
-      - name: 질병청 이슈 연대기 집계
+      - name: 보건복지부 Q&A 추출 (국감 회의록, 증분)
+        run: python3 scripts/gukgam/build_mohw_qa.py
+
+      - name: 이슈 연대기 집계 (질병청·복지부)
         env:
           ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
-        run: python3 scripts/gukgam/build_timeline.py
+        run: |
+          python3 scripts/gukgam/build_timeline.py
+          GUKGAM_TL_AGENCY=mohw python3 scripts/gukgam/build_timeline.py
 
       - name: 변경 시 커밋
         run: |

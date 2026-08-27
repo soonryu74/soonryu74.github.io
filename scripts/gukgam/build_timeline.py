@@ -8,15 +8,17 @@
   위성정당은 모정당 계열로 봅니다. 그 외(정의당·조국혁신당·무소속 등)는 야당으로 집계.
 - 위원 정당은 국회의원 통합 API(보건복지위 소속 이력자 전체)에서 조회합니다.
 
-실행: ASSEMBLY_API_KEY=키 python3 scripts/gukgam/build_timeline.py
-출력: data/gukgam/kdca-timeline.json
+실행: ASSEMBLY_API_KEY=키 python3 scripts/gukgam/build_timeline.py            # 질병청(기본)
+      GUKGAM_TL_AGENCY=mohw ASSEMBLY_API_KEY=키 python3 scripts/gukgam/build_timeline.py  # 복지부
+출력: data/gukgam/kdca-timeline.json 또는 mohw-timeline.json
 """
 import os, json, time, datetime
 import urllib.request, urllib.parse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA = os.path.join(ROOT, "data", "gukgam")
-OUT = os.path.join(DATA, "kdca-timeline.json")
+AGENCY = os.environ.get("GUKGAM_TL_AGENCY", "kdca")
+OUT = os.path.join(DATA, f"{AGENCY}-timeline.json")
 KEY = os.environ.get("ASSEMBLY_API_KEY", "").strip()
 UA = {"User-Agent": "Mozilla/5.0 (gukgam-db collector)"}
 
@@ -91,9 +93,21 @@ def fetch_party_by_name(name):
     return None
 
 
+def load_qa():
+    if AGENCY == "kdca":
+        with open(os.path.join(DATA, "kdca-qa.json"), encoding="utf-8") as f:
+            return json.load(f)["items"]
+    # mohw: 연도별 샤드 병합
+    import glob
+    items = []
+    for p in sorted(glob.glob(os.path.join(DATA, "mohw-qa-2*.json"))):
+        with open(p, encoding="utf-8") as f:
+            items += json.load(f)["items"]
+    return items
+
+
 def main():
-    with open(os.path.join(DATA, "kdca-qa.json"), encoding="utf-8") as f:
-        qa = json.load(f)["items"]
+    qa = load_qa()
     parties = fetch_parties()
     print(f"정당 맵 {len(parties)}명 확보")
     for name in sorted({i["member"] for i in qa} - set(parties)):
