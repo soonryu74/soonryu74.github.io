@@ -91,7 +91,9 @@ def fetch_records(key, lawd=LAWD, sgg_name="구리시"):
             if not amt.isdigit(): continue
             yy, mm, dd = txt(it,"dealYear","년"), txt(it,"dealMonth","월"), txt(it,"dealDay","일")
             if not (yy and mm and dd): continue
-            try: area = round(float(txt(it, "excluUseAr", "전용면적")))
+            # 전용면적은 소수1자리 보존 — 정수 반올림 시 84.6㎡가 85로 올라
+            # 국민주택규모(85㎡ 이하) 세금 분기점을 흐리는 것을 방지
+            try: area = round(float(txt(it, "excluUseAr", "전용면적")), 1)
             except: area = 0
             fl = txt(it, "floor", "층")
             road_nm = txt(it, "roadNm")
