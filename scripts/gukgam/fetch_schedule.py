@@ -3,7 +3,8 @@
 """
 국정감사 자료 DB — 국회 주요 일정 수집기
 - 열린국회정보 '국회일정 통합 API'(ALLSCHEDULE)에서 앞으로 35일치 일정을 받아
-  ① 국정감사 관련 ② 보건복지위원회 ③ 본회의 일정만 추려 저장합니다.
+  국정감사·본회의·위원회(보건복지위/예결위/법사위 구분) 일정을 추려 저장합니다.
+  (의장단 동정·의원실 행사 등은 제외)
 
 실행: ASSEMBLY_API_KEY=키 python3 scripts/gukgam/fetch_schedule.py
 출력: data/gukgam/schedule.json
@@ -47,6 +48,12 @@ def classify(r):
         return "보건복지위"
     if "본회의" in cn or kind == "본회의":
         return "본회의"
+    if kind == "위원회" or cmit:  # 그 외 모든 위원회 회의 (결산·예산 심사 포함)
+        if "예산결산" in cmit:
+            return "예결위"
+        if "법제사법" in cmit:
+            return "법사위"
+        return "위원회"
     return None
 
 
