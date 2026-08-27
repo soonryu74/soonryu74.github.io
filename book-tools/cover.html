@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1600px; height:2400px; }
+  body {
+    font-family: "Noto Serif CJK KR", serif;
+    background: linear-gradient(175deg, #0b1d33 0%, #10294a 46%, #0a1729 100%);
+    color: #e8edf4;
+    position: relative;
+    overflow: hidden;
+  }
+  /* 역학곡선(epi curve) 모티프 */
+  svg.curve { position:absolute; left:0; bottom:340px; width:1600px; height:760px; opacity:.9; }
+  /* 접촉망 점 */
+  svg.net { position:absolute; inset:0; width:1600px; height:2400px; opacity:.35; }
+  .frame {
+    position:absolute; inset:70px; border:1px solid rgba(215,183,120,.35);
+  }
+  .label {
+    position:absolute; top:190px; left:0; width:100%;
+    text-align:center; letter-spacing:.55em; text-indent:.55em;
+    font-size:44px; color:#d7b778; font-weight:600;
+  }
+  .title {
+    position:absolute; top:420px; left:0; width:100%;
+    text-align:center; font-weight:900; font-size:260px;
+    letter-spacing:.06em; text-indent:.06em; color:#f4f7fb;
+    text-shadow: 0 6px 40px rgba(0,0,0,.45);
+  }
+  .subtitle {
+    position:absolute; top:770px; left:0; width:100%;
+    text-align:center; font-size:54px; font-weight:600;
+    color:#aebfd6; letter-spacing:.18em; text-indent:.18em;
+  }
+  .vols {
+    position:absolute; top:900px; left:0; width:100%;
+    display:flex; justify-content:center; gap:60px;
+    font-size:46px; color:#d7b778; letter-spacing:.1em;
+  }
+  .vols span { border-top:1px solid rgba(215,183,120,.5); padding-top:26px; }
+  .tag {
+    position:absolute; bottom:200px; left:0; width:100%;
+    text-align:center; font-size:40px; color:#8fa3bd; letter-spacing:.3em; text-indent:.3em;
+  }
+  .quote {
+    position:absolute; bottom:300px; left:0; width:100%;
+    text-align:center; font-size:46px; line-height:1.7; color:#cfdaе8;
+    color:#cfdae8; font-weight:400;
+  }
+</style>
+</head>
+<body>
+  <svg class="net" viewBox="0 0 1600 2400">
+    <g stroke="#3d5b82" stroke-width="2" fill="none">
+      <path d="M180 1500 L420 1370 L700 1450 L980 1330 L1250 1430 L1460 1320"/>
+      <path d="M420 1370 L520 1210 M980 1330 L1060 1180 M700 1450 L760 1610 M1250 1430 L1330 1590"/>
+    </g>
+    <g fill="#5d81ab">
+      <circle cx="180" cy="1500" r="9"/><circle cx="420" cy="1370" r="12"/>
+      <circle cx="700" cy="1450" r="9"/><circle cx="980" cy="1330" r="14"/>
+      <circle cx="1250" cy="1430" r="9"/><circle cx="1460" cy="1320" r="7"/>
+      <circle cx="520" cy="1210" r="7"/><circle cx="1060" cy="1180" r="8"/>
+      <circle cx="760" cy="1610" r="7"/><circle cx="1330" cy="1590" r="7"/>
+    </g>
+  </svg>
+  <svg class="curve" viewBox="0 0 1600 760" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#c8503c" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#c8503c" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="M0 740 C 260 720, 420 660, 560 520 C 700 380, 760 160, 860 140 C 960 120, 1040 320, 1180 480 C 1320 640, 1460 710, 1600 730 L1600 760 L0 760 Z" fill="url(#g)"/>
+    <path d="M0 740 C 260 720, 420 660, 560 520 C 700 380, 760 160, 860 140 C 960 120, 1040 320, 1180 480 C 1320 640, 1460 710, 1600 730" fill="none" stroke="#e06a52" stroke-width="6"/>
+  </svg>
+  <div class="frame"></div>
+  <div class="label">장 편 소 설</div>
+  <div class="title">역학조사관</div>
+  <div class="subtitle">숫자를 감추는 유행이 제일 크다</div>
+  <div class="vols">
+    <span>제1권 · 전설의 훈련단</span>
+    <span>제2권 · 일천일야</span>
+  </div>
+  <div class="tag">감량 개고 확정본</div>
+</body>
+</html>
