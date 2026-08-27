@@ -92,6 +92,7 @@
     <div class="top-nav">
       <a href="gukgam.html" class="on">통합 DB</a>
       <a href="gukgam-health.html">보건복지 트랙 (복지부·질병청·심평원)</a>
+      <a href="gukgam-mohw.html">복지부 Q&amp;A</a>
       <a href="gukgam-kdca.html">질병청 Q&amp;A</a>
       <a href="gukgam-prep.html">답변 대비 워크북</a>
     </div>
@@ -103,7 +104,13 @@
   <div class="stats" id="stats"></div>
 
   <section id="tlSection" hidden>
-    <h2>🦠 질병청 국감 이슈 연대기 <span style="font-size:.75rem;color:var(--muted);font-weight:400;">2020~2025 · 질의 발언 자동 분석</span></h2>
+    <h2 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">국감 이슈 연대기
+      <span class="typebtns" id="tlTabs" style="display:inline-flex;gap:6px;">
+        <button data-a="kdca" class="on">🦠 질병청</button>
+        <button data-a="mohw">🏥 복지부</button>
+      </span>
+      <span style="font-size:.75rem;color:var(--muted);font-weight:400;">2020~2025 · 질의 발언 자동 분석</span>
+    </h2>
     <div class="tl-wrap">
       <div class="tl-legend">
         <span><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#fff" stroke="#22303e" stroke-width="1.5"/></svg> 여당 질의</span>
@@ -113,8 +120,8 @@
       </div>
       <div style="overflow-x:auto;"><svg id="tlSvg"></svg></div>
       <p style="font-size:.75rem;color:var(--muted);margin:8px 2px 0;">
-        보건복지위 국감 회의록에서 질병관리청 관련 질의를 추출해 주제별로 집계한 것입니다.
-        이슈명을 누르면 <a href="gukgam-kdca.html" style="font-weight:800;color:#2a4d7d;">질병청 Q&amp;A</a>에서 원문 질의를 볼 수 있습니다.
+        보건복지위 국감 회의록에서 해당 기관 관련 질의를 추출해 주제별로 집계한 것입니다.
+        이슈명을 누르면 <a id="tlLink" href="gukgam-kdca.html" style="font-weight:800;color:#2a4d7d;">Q&amp;A 페이지</a>에서 원문 질의를 볼 수 있습니다.
       </p>
     </div>
   </section>
@@ -230,13 +237,17 @@
     fetch('data/gukgam/members.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
     fetch('data/gukgam/member-topics.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {members:{}};}),
     fetch('data/gukgam/schedule.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
-    fetch('data/gukgam/kdca-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
+    fetch('data/gukgam/kdca-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('data/gukgam/mohw-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(res){
-    // 질병청 이슈 연대기 (흰=여당, 검=야당 동그라미 매트릭스)
-    (function(tl){
-      if(!tl || !(tl.issues||[]).length) return;
+    // 이슈 연대기 (흰=여당, 검=야당 동그라미 매트릭스) — 질병청/복지부 전환
+    var TL={kdca:res[8], mohw:res[9]};
+    var QAPAGE={kdca:'gukgam-kdca.html', mohw:'gukgam-mohw.html'};
+    function renderTimeline(tl, page){
+      if(!tl || !(tl.issues||[]).length){ document.getElementById('tlSvg').innerHTML=''; return; }
       document.getElementById('tlSection').hidden=false;
       document.getElementById('tlNote').textContent='※ '+(tl.note||'');
+      document.getElementById('tlLink').href=page;
       var years=tl.years, issues=tl.issues;
       var LBL=150, CELL=118, ROW=64, TOPH=46, PADR=10;
       var W=LBL+CELL*years.length+PADR, H=TOPH+ROW*issues.length+8;
@@ -253,7 +264,7 @@
       issues.forEach(function(is,r){
         var cy=TOPH+ROW*r+ROW/2;
         if(r%2===0) s+='<rect x="0" y="'+(TOPH+ROW*r)+'" width="'+W+'" height="'+ROW+'" fill="#f7f9fb"/>';
-        s+='<a href="gukgam-kdca.html"><text x="'+(LBL-12)+'" y="'+(cy+4)+'" text-anchor="end" font-size="12.5" font-weight="800" fill="#22303e">'+esc(is.name)+'</text></a>';
+        s+='<a href="'+page+'"><text x="'+(LBL-12)+'" y="'+(cy+4)+'" text-anchor="end" font-size="12.5" font-weight="800" fill="#22303e">'+esc(is.name)+'</text></a>';
         years.forEach(function(y,i){
           var c=is.cells[String(y)]||{ruling:0,opp:0};
           var cx=LBL+CELL*i+CELL/2;
@@ -273,7 +284,14 @@
       svg.setAttribute('width',W); svg.setAttribute('height',H);
       svg.style.minWidth=W+'px';
       svg.innerHTML=s;
-    })(res[8]);
+    }
+    renderTimeline(TL.kdca, QAPAGE.kdca);
+    document.getElementById('tlTabs').addEventListener('click', function(e){
+      var b=e.target.closest('button'); if(!b) return;
+      this.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      renderTimeline(TL[b.dataset.a], QAPAGE[b.dataset.a]);
+    });
     // 국회 주요 일정
     (function(sc){
       var box=document.getElementById('schedList');
