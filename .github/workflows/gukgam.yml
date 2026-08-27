@@ -23,6 +23,11 @@ jobs:
           ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
         run: python3 scripts/gukgam/fetch_assembly.py
 
+      - name: 국회 주요 일정 수집
+        env:
+          ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
+        run: python3 scripts/gukgam/fetch_schedule.py
+
       - name: 보건복지위 위원 프로필 수집
         env:
           ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
@@ -41,6 +46,9 @@ jobs:
 
       - name: 의원별 관심 분야 분석 (국감 회의록 발언, 증분)
         run: python3 scripts/gukgam/build_member_topics.py
+
+      - name: 질병관리청 Q&A 추출 (국감 회의록, 증분)
+        run: python3 scripts/gukgam/build_kdca_qa.py
 
       - name: 변경 시 커밋
         run: |
