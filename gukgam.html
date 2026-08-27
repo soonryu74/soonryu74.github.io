@@ -75,6 +75,10 @@
   .scat.k5{ background:#fdeee3; color:#a35b1e; }
   .scat.k6{ background:#f1f3f5; color:#5a6673; }
   .sched-empty{ background:#fff; border:1px dashed var(--line); border-radius:12px; padding:14px 16px; font-size:.86rem; color:var(--muted); }
+  .tl-wrap{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .tl-legend{ display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-size:.8rem; color:#3d4f63; font-weight:700; margin-bottom:6px; }
+  .tl-legend svg{ vertical-align:-2px; margin-right:3px; }
+  #tlSvg text{ font-family:inherit; }
   .more{ display:block; margin:14px auto 0; border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 26px; font-size:.9rem; font-weight:700; cursor:pointer; color:#2a4d7d; }
   .foot{ font-size:.78rem; color:var(--muted); margin-top:26px; }
 </style>
@@ -97,6 +101,23 @@
 
 <main class="wrap">
   <div class="stats" id="stats"></div>
+
+  <section id="tlSection" hidden>
+    <h2>🦠 질병청 국감 이슈 연대기 <span style="font-size:.75rem;color:var(--muted);font-weight:400;">2020~2025 · 질의 발언 자동 분석</span></h2>
+    <div class="tl-wrap">
+      <div class="tl-legend">
+        <span><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#fff" stroke="#22303e" stroke-width="1.5"/></svg> 여당 질의</span>
+        <span><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#22303e"/></svg> 야당 질의</span>
+        <span>원 크기 = 질의 수</span>
+        <span id="tlNote"></span>
+      </div>
+      <div style="overflow-x:auto;"><svg id="tlSvg"></svg></div>
+      <p style="font-size:.75rem;color:var(--muted);margin:8px 2px 0;">
+        보건복지위 국감 회의록에서 질병관리청 관련 질의를 추출해 주제별로 집계한 것입니다.
+        이슈명을 누르면 <a href="gukgam-kdca.html" style="font-weight:800;color:#2a4d7d;">질병청 Q&amp;A</a>에서 원문 질의를 볼 수 있습니다.
+      </p>
+    </div>
+  </section>
 
   <section id="schedSection">
     <h2>📅 국회 주요 일정 <span style="font-size:.75rem;color:var(--muted);font-weight:400;" id="schedRange"></span></h2>
@@ -208,8 +229,51 @@
     fetch('data/gukgam/summaries.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:{}};}),
     fetch('data/gukgam/members.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
     fetch('data/gukgam/member-topics.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {members:{}};}),
-    fetch('data/gukgam/schedule.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
+    fetch('data/gukgam/schedule.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('data/gukgam/kdca-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(res){
+    // 질병청 이슈 연대기 (흰=여당, 검=야당 동그라미 매트릭스)
+    (function(tl){
+      if(!tl || !(tl.issues||[]).length) return;
+      document.getElementById('tlSection').hidden=false;
+      document.getElementById('tlNote').textContent='※ '+(tl.note||'');
+      var years=tl.years, issues=tl.issues;
+      var LBL=150, CELL=118, ROW=64, TOPH=46, PADR=10;
+      var W=LBL+CELL*years.length+PADR, H=TOPH+ROW*issues.length+8;
+      var maxN=1;
+      issues.forEach(function(is){ years.forEach(function(y){ var c=is.cells[String(y)]||{}; maxN=Math.max(maxN,c.ruling||0,c.opp||0); }); });
+      var R=function(n){ return n?Math.max(4, 22*Math.sqrt(n/maxN)):0; };
+      var s='';
+      // 연도 헤더 + 여당 표기
+      years.forEach(function(y,i){
+        var x=LBL+CELL*i+CELL/2;
+        s+='<text x="'+x+'" y="18" text-anchor="middle" font-size="14" font-weight="800" fill="#12365f">'+y+'</text>';
+        s+='<text x="'+x+'" y="34" text-anchor="middle" font-size="10" fill="#6b7a8c">여당: '+esc((tl.ruling||{})[String(y)]||'')+'</text>';
+      });
+      issues.forEach(function(is,r){
+        var cy=TOPH+ROW*r+ROW/2;
+        if(r%2===0) s+='<rect x="0" y="'+(TOPH+ROW*r)+'" width="'+W+'" height="'+ROW+'" fill="#f7f9fb"/>';
+        s+='<a href="gukgam-kdca.html"><text x="'+(LBL-12)+'" y="'+(cy+4)+'" text-anchor="end" font-size="12.5" font-weight="800" fill="#22303e">'+esc(is.name)+'</text></a>';
+        years.forEach(function(y,i){
+          var c=is.cells[String(y)]||{ruling:0,opp:0};
+          var cx=LBL+CELL*i+CELL/2;
+          var rr=R(c.ruling), ro=R(c.opp);
+          var tip=y+'년 '+is.name+' — 여당 '+c.ruling+'건 · 야당 '+c.opp+'건';
+          s+='<g><title>'+esc(tip)+'</title>';
+          if(rr) s+='<circle cx="'+(cx-14)+'" cy="'+cy+'" r="'+rr+'" fill="#fff" stroke="#22303e" stroke-width="1.6"/>';
+          if(ro) s+='<circle cx="'+(cx+14)+'" cy="'+cy+'" r="'+ro+'" fill="#22303e" stroke="#fff" stroke-width="2"/>';
+          if(!rr&&!ro) s+='<circle cx="'+cx+'" cy="'+cy+'" r="1.5" fill="#d5dde6"/>';
+          if(c.ruling>=10) s+='<text x="'+(cx-14)+'" y="'+(cy+4)+'" text-anchor="middle" font-size="10.5" font-weight="800" fill="#22303e">'+c.ruling+'</text>';
+          if(c.opp>=10) s+='<text x="'+(cx+14)+'" y="'+(cy+4)+'" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">'+c.opp+'</text>';
+          s+='</g>';
+        });
+      });
+      var svg=document.getElementById('tlSvg');
+      svg.setAttribute('viewBox','0 0 '+W+' '+H);
+      svg.setAttribute('width',W); svg.setAttribute('height',H);
+      svg.style.minWidth=W+'px';
+      svg.innerHTML=s;
+    })(res[8]);
     // 국회 주요 일정
     (function(sc){
       var box=document.getElementById('schedList');
