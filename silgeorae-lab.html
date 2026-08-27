@@ -155,7 +155,7 @@
 
   <div class="callout tip">
     <span class="t">💡 이렇게 읽으세요</span>
-    <strong>전고점 회복률</strong> = 지금 실거래가가 단지 최고가의 몇 %인지 (100%면 <strong>신고가</strong>). <strong>거래량</strong>이 많을수록 사고팔기 수월합니다. 호가가 아닌 <strong>실제 신고된 계약가</strong>입니다.
+    <strong>전고점 회복률</strong> = 지금 실거래가가 단지 최고가의 몇 %인지 (100%면 <strong>최근 1년 내 최고가</strong>). <strong>거래량</strong>이 많을수록 사고팔기 수월합니다. 호가가 아닌 <strong>실제 신고된 계약가</strong>입니다.
   </div>
 
   <h2>오늘의 하이라이트</h2>
@@ -242,7 +242,7 @@ function renderHighlights(){
   const topCnt=DATA.slice().sort((a,b)=>b.count-a.count)[0];
   const recentSin=DATA.filter(d=>d.singo).slice().sort((a,b)=>(b.ld||'').localeCompare(a.ld||''))[0];
   document.getElementById('highlights').innerHTML =
-    (recentSin?hlCard('a','🔺 최근 신고가',recentSin,`${eok(recentSin.lp)} <span class="s">(${recentSin.larea}㎡·${recentSin.ld})</span>`):'')
+    (recentSin?hlCard('a','🔺 최근 1년 최고가',recentSin,`${eok(recentSin.lp)} <span class="s">(${recentSin.larea}㎡·${recentSin.ld})</span>`):'')
   + (topCnt?hlCard('c','🔥 최다 거래',topCnt,`최근 1년 <b class="v">${topCnt.count}건</b> <span class="s">· ${eokS(topCnt.min)}~${eokS(topCnt.max)}</span>`):'')
   + (topRecover?hlCard('b','📈 회복률 1위',topRecover,`전고점 대비 <b class="v">${topRecover.recover}%</b> <span class="s">· ${eok(topRecover.lp)}</span>`):'');
 }
@@ -273,7 +273,7 @@ function renderRecent(){
   const rec=DATA.slice().sort((a,b)=>(b.ld||'').localeCompare(a.ld||'')).slice(0,8);
   document.getElementById('recentAsof').textContent = REGIONS[region].label;
   document.getElementById('recent').innerHTML = rec.map(d=>`
-    <li><span><span class="nm">${d.name}</span> <span class="lc-dong">${d.dong}</span>${d.singo?'<span class="sin">신고가</span>':''}<br>
+    <li><span><span class="nm">${d.name}</span> <span class="lc-dong">${d.dong}</span>${d.singo?'<span class="sin">1년 최고</span>':''}<br>
       <span class="meta">${d.larea}㎡ · ${d.lfloor}층 · ${md(d.ld)}</span></span>
     <span class="pr">${eok(d.lp)}</span></li>`).join('');
 }
@@ -313,7 +313,7 @@ function card(c){
   const moreBlock=(c.byArea&&c.byArea.length)?`<details class="ap-more"><summary>평형별 상세 시세 보기</summary><div class="ap-atbl-wrap"><table class="ap-atbl"><thead><tr><th>전용</th><th>최근 실거래</th><th>최저~최고</th><th>1년</th></tr></thead><tbody>${rows}</tbody></table></div><div class="ap-src" style="margin-top:2px">같은 단지도 전용면적·층·향에 따라 시세가 다릅니다.</div></details>`:'';
   return `<div class="ap-card">
     <div class="ap-brand">🏢 갈매역삼성부동산</div>
-    <div class="ap-top"><h3>${c.name}</h3><span class="ap-type">아파트</span>${hasR3?'<span class="ap-badge '+bd.cls+'">'+bd.txt+'</span>':(c.singo?'<span class="ap-badge hot">🔺 신고가</span>':'')}</div>
+    <div class="ap-top"><h3>${c.name}</h3><span class="ap-type">아파트</span>${hasR3?'<span class="ap-badge '+bd.cls+'">'+bd.txt+'</span>':(c.singo?'<span class="ap-badge hot">🔺 1년 최고가</span>':'')}</div>
     <div class="ap-info">${c.buildYear?c.buildYear+'년'+(age!=null?'('+age+'년차)':'')+' · ':''}전용 ${areas} · ${loc}</div>
     <div class="ap-price">${eok(la.price)}</div>
     <div class="ap-deal">최근 실거래 · ${la.area||''}㎡ ${la.floor||''}층 · ${la.date||''} 계약</div>
