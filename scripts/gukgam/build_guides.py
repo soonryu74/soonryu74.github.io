@@ -53,6 +53,78 @@ def load(name):
         return json.load(f)
 
 
+# 용어 추출용 불용어 (국감 발언에 범용적으로 나오는 말)
+STOP = set("""위원 위원장 장관 차관 청장 대통령 답변 질의 말씀 생각 부분 관련 문제 정도 경우 때문
+지금 오늘 이제 그냥 저희 우리 여러 이런 그런 어떤 사실 정말 굉장히 계속 대해 대한 있습니다 있고
+있는 하는 하고 해서 있어서 그리고 그래서 그런데 하지만 우리나라 국민 정부 국회 국정감사 보건복지부
+복지부 질병관리청 질병청 자료 요청 부탁 필요 검토 마련 말씀드리 보시 주시 얘기 요청드리
+어쨌든 상당히 가지 이렇게 그렇게 어떻게 솔직히 당연히 반드시 그것 이것 저것 무엇 부분 정도로""".split())
+
+_PARTICLE = re.compile(r"(에서|에게|으로|이라|라는|하고|까지|부터|에|를|을|은|는|이|가|도|의|로|과|와|만|요)$")
+
+
+def norm_word(w):
+    """조사 제거 후 정규화. 불용어·기관명 파생어는 None."""
+    s = _PARTICLE.sub("", w)
+    if len(s) < 2 or s in STOP:
+        return None
+    if s.startswith(("보건복지", "질병관리", "복지부", "질병청")):
+        return None
+    # 동사·어미형 잡음 제거 (명사성 용어만 남김)
+    if re.search(r"(습니다|합니다|입니다|는데|은데|겠|드리|드립|해서|하면|하게|하지|시지|보시|주시|했|였)", s):
+        return None
+    return s
+
+
+def style_of(items):
+    """질의 텍스트에서 작성 스타일 지표와 특징 용어를 계산."""
+    qs = [i["q"] for i in items]
+    n = len(qs) or 1
+    num_rate = sum(1 for q in qs if re.search(r"\d", q)) / n
+    ppt_rate = sum(1 for q in qs if ("PPT" in q or "피피티" in q or "영상" in q or "자료 화면" in q)) / n
+    deadline_rate = sum(1 for q in qs if re.search(r"언제까지|기한|시한|연내|올해 안|임기 내", q)) / n
+    case_rate = sum(1 for q in qs if re.search(r"사례|제보|민원|현장", q)) / n
+    avg_len = round(sum(len(q) for q in qs) / n)
+    tips = []
+    if num_rate >= 0.5:
+        tips.append(f"질의의 {round(num_rate*100)}%에 구체 수치가 포함됨 → 답변서도 통계·수치 중심으로 작성하고 단위·기준연도를 명확히.")
+    if ppt_rate >= 0.12:
+        tips.append("PPT·영상 등 시각자료를 자주 활용하는 위원 → 답변서에 도표·그래프 첨부가 효과적이며, 위원이 제시할 자료의 출처 데이터를 미리 확보해둘 것.")
+    if deadline_rate >= 0.08:
+        tips.append("이행 기한을 특정해 묻는 빈도가 높음 → '검토하겠습니다'보다 시점을 명시한 답변(예: ○월까지 보고)이 재질의를 줄임.")
+    if case_rate >= 0.25:
+        tips.append("개별 사례·현장 민원 기반 질의가 많음 → 해당 사례의 사실관계 타임라인과 조치 경과를 사전 확인.")
+    if avg_len >= 260:
+        tips.append("질의가 긴 서술형(평균 " + str(avg_len) + "자) → 핵심 논지를 메모하며 듣고, 쟁점별로 나눠 답변.")
+    elif avg_len <= 170 and n >= 20:
+        tips.append("짧은 속사포형 질의(평균 " + str(avg_len) + "자) → 두괄식 단답 후 부연하는 리듬으로 대응.")
+    if not tips:
+        tips.append("표준형 질의 스타일 → 답변 10계명(두괄식·수치 정확·짧게)을 기본으로.")
+    return {"num_rate": round(num_rate, 2), "ppt_rate": round(ppt_rate, 2),
+            "deadline_rate": round(deadline_rate, 2), "case_rate": round(case_rate, 2),
+            "avg_len": avg_len, "tips": tips}
+
+
+def terms_of(items, global_freq, global_total):
+    """다른 위원 대비 유독 자주 쓰는 용어(선호 용어) 추출."""
+    cnt = collections.Counter()
+    for i in items:
+        for w in re.findall(r"[가-힣]{2,6}", i["q"]):
+            s2 = norm_word(w)
+            if s2:
+                cnt[s2] += 1
+    total = sum(cnt.values()) or 1
+    scored = []
+    for w, c in cnt.items():
+        if c < 6:
+            continue
+        lift = (c / total) / ((global_freq.get(w, 1) / global_total) or 1e-9)
+        if lift >= 2.5:
+            scored.append((w, c, lift))
+    scored.sort(key=lambda x: -(x[1] * x[2]))
+    return [{"w": w, "c": c} for w, c, _ in scored[:10]]
+
+
 def main():
     members = load("members.json")["items"]
     topics_map = load("member-topics.json").get("members", {})
@@ -64,6 +136,15 @@ def main():
     by_member = collections.defaultdict(list)
     for i in qa:
         by_member[i["member"]].append(i)
+
+    # 전체 코퍼스 용어 빈도 (선호 용어의 상대 비교 기준)
+    global_freq = collections.Counter()
+    for i in qa:
+        for w in re.findall(r"[가-힣]{2,6}", i["q"]):
+            s2 = norm_word(w)
+            if s2:
+                global_freq[s2] += 1
+    global_total = sum(global_freq.values()) or 1
 
     # 발언량 순위 (현직 위원 기준)
     ranks = sorted(members, key=lambda m: -len(by_member.get(m["name"], [])))
@@ -109,6 +190,8 @@ def main():
             "summary": " ".join(summary),
             "quotes": quotes,
             "prep": prep,
+            "style": style_of(items) if items else None,
+            "terms": terms_of(items, global_freq, global_total) if items else [],
         })
     guides.sort(key=lambda g: -g["stats"]["n"])
     with open(OUT, "w", encoding="utf-8") as f:
