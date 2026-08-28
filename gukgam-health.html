@@ -97,6 +97,9 @@
 
 <main class="wrap">
   <h2>🏥 기관 지도 (보건복지위원회 소관)</h2>
+  <p style="font-size:.78rem;color:var(--muted);margin:-6px 2px 10px;">
+    카드 왼쪽 <span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;vertical-align:-1px;"></span> 초록 표시 = <strong>부·처·청(중앙행정기관, 기관장이 직접 답변대에 서는 곳)</strong> · 표시 없음 = 소속기관·산하 공공기관
+  </p>
   <div id="tree"></div>
 
   <h2 id="memTitle">🧑‍⚖️ 보건복지위원회 위원</h2>
@@ -175,11 +178,33 @@
     var rows = DOCS.filter(function(d){
       if(state.year && String(d.year)!==state.year) return false;
       if(state.type && d.doc_type!==state.type) return false;
-      if(state.agency && d.agency_id!==state.agency) return false;
+      if(state.agency){
+        var a=AG[state.agency]||{};
+        var byId = d.agency_id===state.agency;
+        var byTitle = a.name && (d.title||'').indexOf(a.name)>=0;
+        if(!byId && !byTitle) return false;
+      }
       return true;
     });
     var list=document.getElementById('list');
-    if(!rows.length){ list.innerHTML='<div class="empty">조건에 맞는 자료가 없습니다.</div>'; return; }
+    if(!rows.length){
+      // 빈 결과 안내: 선택 조건을 완화했을 때 실제로 존재하는 자료를 알려줌
+      var hint='';
+      if(state.agency){
+        var ag=DOCS.filter(function(d){ return d.agency_id===state.agency; });
+        var types={}; ag.forEach(function(d){ types[d.doc_type]=(types[d.doc_type]||0)+1; });
+        var tn={result_report:'결과보고서',followup:'시정·처리결과',minutes:'회의록',plan:'계획서',briefing:'업무보고',written_answer:'서면답변',request_list:'요구자료',reference:'참고자료'};
+        var have=Object.keys(types).map(function(t){ return (tn[t]||t)+' '+types[t]+'건'; });
+        hint = have.length
+          ? '이 기관의 보유 자료: <strong>'+have.join(' · ')+'</strong> — 유형·연도 필터를 조정해 보세요.'
+          : '이 기관 명의의 개별 자료는 아직 수집되지 않았습니다. 위원회 단위 자료(결과보고서·회의록)는 기관 필터를 "전체 기관"으로 두면 보입니다.';
+        hint += '<br>업무보고는 현재 <strong>복지부 것만 공개·수집</strong>됩니다(질병청은 자체 공개 게시판 없음). 질병청 질의·답변은 <a href="gukgam-kdca.html" style="font-weight:800;color:#2a4d7d;">질병청 Q&amp;A</a>, 지적사항은 <a href="gukgam-prep.html" style="font-weight:800;color:#2a4d7d;">답변 워크북</a>에서 보세요.';
+      } else {
+        hint='유형·연도 필터를 조정해 보세요.';
+      }
+      list.innerHTML='<div class="empty">조건에 맞는 자료가 없습니다.<div style="font-size:.82rem;margin-top:10px;line-height:1.7;color:#4a5a6b;">'+hint+'</div></div>';
+      return;
+    }
     list.innerHTML = rows.map(function(d){
       var t = TYPE[d.doc_type]||[d.doc_type,''];
       var links=[];
