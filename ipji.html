@@ -48,6 +48,7 @@
   .block{ margin-top:18px; padding-top:16px; border-top:1px dashed var(--line); }
   .haz{ background:#fff5f5; border:1px solid #f3c9c9; border-radius:12px; padding:14px 16px; }
   .haz.ok{ background:#f2fbf4; border-color:#bfe6c8; }
+  .haz.warn{ background:#fff8e6; border-color:#f0d98a; }
   .haz .ht{ font-weight:800; color:#c0392b; margin-bottom:6px; }
   .haz.ok .ht{ color:#218a46; }
   .haz ul{ margin:6px 0 0; padding-left:2px; list-style:none; }
@@ -185,14 +186,18 @@
 <script src="data/complexes.js"></script>
 <script src="data/guri-complexes.js"></script>
 <script src="data/byeollae-complexes.js"></script>
+<script src="data/complex-coords.js"></script><!-- 배후 아파트 좌표(미리 계산본) — 런타임 지오코딩 생략 -->
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0e6cb69e47426469d3e99092e2dcce1d&libraries=services&autoload=false"></script>
 <script>
 (function(){
   var STORES = (window.SANGGA && window.SANGGA.stores) || [];
   var META = window.SANGGA || {};
-  var CENTERS = { guri:{lat:37.6412,lng:127.1447,z:5}, by:{lat:37.6555,lng:127.1530,z:5} };
+  var CENTERS = { guri:{lat:37.6345,lng:127.1180,z:5}, by:{lat:37.6555,lng:127.1530,z:5} };
   var region='guri', radius=300, map, geocoder, ps, circle, marker, aptPos={};
   var pt=null; // {lat,lng}
+  // 배후 아파트 좌표를 미리 계산본(window.COORDS: {단지명:[위도,경도]})에서 선적재 → 런타임 지오코딩 최소화
+  (function seedApt(){ try{ if(window.COORDS){ for(var n in COORDS){ var a=COORDS[n];
+    if(a&&a.length===2){ aptPos['guri|'+n]={lat:a[0],lng:a[1]}; aptPos['by|'+n]={lat:a[0],lng:a[1]}; } } } }catch(e){} })();
 
   // 학원 창업 시 확인할 유해업소 — 상권 소분류(indsSclsNm) 기준으로 정확히 매칭
   // (요리주점 등 일반음식점은 제외. 유흥·단란·노래방·비디오방·오락장·안마만)
@@ -218,8 +223,16 @@
   }
   function inRadius(){
     if(!pt) return [];
-    return STORES.filter(function(s){ return dist(pt.lat,pt.lng,s.la,s.lo) <= radius; })
-                 .map(function(s){ s._d=Math.round(dist(pt.lat,pt.lng,s.la,s.lo)); return s; });
+    // 값싼 사각형(bbox) 선필터로 대부분 제외 후, 남은 것만 정확한 거리(하버사인) 1회 계산
+    var dLat=radius/111000, dLng=radius/(111000*Math.cos(pt.lat*Math.PI/180));
+    var out=[];
+    for(var i=0;i<STORES.length;i++){
+      var s=STORES[i];
+      if(Math.abs(s.la-pt.lat)>dLat || Math.abs(s.lo-pt.lng)>dLng) continue;
+      var d=dist(pt.lat,pt.lng,s.la,s.lo);
+      if(d<=radius){ s._d=Math.round(d); out.push(s); }
+    }
+    return out;
   }
   function matchPreset(s,p){
     var t=((s.l||'')+' '+(s.m||'')+' '+(s.s||'')+' '+(s.n||'')).toLowerCase();
@@ -256,8 +269,12 @@
         ? '🎓 학원 창업 시 확인 — 반경 내 유해업소'
         : '🚫 반경 내 유해업소 (노래방·유흥 등)';
       if(hz.length===0){
-        hazBlock.innerHTML='<div class="block"><div class="haz ok"><div class="ht">✅ '+head+'</div>'
-          +'<div style="font-size:.9rem;color:#33475b">반경 '+radius+'m <b>확인 범위 내에서는</b> 노래방·유흥주점 등 유해업소가 <b>발견되지 않았습니다</b>. (같은 건물·인접 거리 규제는 교육지원청 최종 확인이 필요하며, "미확인 = 문제없음"이 아닙니다)</div></div></div>';
+        hazBlock.innerHTML='<div class="block"><div class="haz warn"><div class="ht" style="color:#9a6a00">🔎 '+head+' — 이 데이터에선 미확인</div>'
+          +'<div style="font-size:.9rem;color:#5a4a2a;line-height:1.6">반경 '+radius+'m 안에서 <b>공개 상가데이터상</b>으로는 노래방·유흥주점 등이 잡히지 않았습니다. '
+          +'<b style="color:#c0392b">하지만 이건 "안전"이 아닙니다.</b> 공개데이터는 신규·미등록·분류가 다른 업소를 놓칠 수 있어 '
+          +'<b>같은 건물·바로 옆에 유흥시설이 있어도 여기 안 나올 수 있습니다.</b><br>'
+          +'👉 학원 가능 여부는 <b>반드시 관할 교육지원청</b>(교육환경보호구역·인접 유해업소)과 <b>현장 확인</b>으로 확정하세요. '
+          +'대신 확인이 필요하면 갈매역삼성부동산 ☎ <a href="tel:0315754944">031-575-4944</a></div></div></div>';
       } else {
         hazBlock.innerHTML='<div class="block"><div class="haz"><div class="ht">⚠️ '+head+' — '+hz.length+'곳</div>'
           +'<div style="font-size:.86rem;color:#7a4a4a;margin-bottom:4px">학원은 같은 건물이나 일정 거리 내 유해업소가 있으면 <b>등록이 제한</b>될 수 있습니다.</div>'
@@ -377,8 +394,13 @@
 
     document.getElementById('goBtn').onclick=doSearch;
     document.getElementById('addr').addEventListener('keydown',function(e){ if(e.key==='Enter') doSearch(); });
-    var rad=document.getElementById('rad');
-    rad.oninput=function(){ radius=+rad.value; document.getElementById('radLbl').textContent=radius+'m'; if(pt) setPoint(pt.lat,pt.lng,false); };
+    var rad=document.getElementById('rad'), radTimer=null;
+    rad.oninput=function(){
+      radius=+rad.value; document.getElementById('radLbl').textContent=radius+'m';
+      if(circle) circle.setRadius(radius);              // 원은 즉시 갱신(가벼움)
+      if(radTimer) clearTimeout(radTimer);
+      radTimer=setTimeout(function(){ if(pt) render(); }, 160); // 무거운 분석은 멈춘 뒤 1회
+    };
     Array.prototype.forEach.call(document.querySelectorAll('#regionSeg button'),function(b){
       b.onclick=function(){
         region=b.getAttribute('data-r');
