@@ -125,6 +125,29 @@ def terms_of(items, global_freq, global_total):
     return [{"w": w, "c": c} for w, c, _ in scored[:10]]
 
 
+def member_tag(m, items, rank):
+    """카드 우측 상단 구별 배지 (위원당 1개, 우선순위순). cls는 페이지 CSS 클래스."""
+    duty = m.get("duty") or ""
+    if "위원장" in duty:
+        return {"label": "👑 위원장", "cls": "chair"}
+    if "간사" in duty:
+        return {"label": "⭐ 간사", "cls": "whip"}
+    if not items:
+        return {"label": "🆕 첫 국감", "cls": "new"}
+    if rank and rank <= 3:
+        return {"label": "🔥 질의 TOP3", "cls": "hot"}
+    st = style_of(items)
+    if st["num_rate"] >= 0.55:
+        return {"label": "📊 데이터형", "cls": "data"}
+    if st["ppt_rate"] >= 0.12:
+        return {"label": "🖥️ 시각자료형", "cls": "ppt"}
+    if st["deadline_rate"] >= 0.08:
+        return {"label": "⏰ 기한추궁형", "cls": "ddl"}
+    if st["case_rate"] >= 0.25:
+        return {"label": "🧭 현장형", "cls": "field"}
+    return None
+
+
 def main():
     members = load("members.json")["items"]
     topics_map = load("member-topics.json").get("members", {})
@@ -192,6 +215,7 @@ def main():
             "prep": prep,
             "style": style_of(items) if items else None,
             "terms": terms_of(items, global_freq, global_total) if items else [],
+            "tag": member_tag(m, items, rank_of.get(name)),
         })
     guides.sort(key=lambda g: -g["stats"]["n"])
     with open(OUT, "w", encoding="utf-8") as f:
