@@ -57,6 +57,7 @@ jobs:
         run: |
           python3 scripts/gukgam/build_highlights.py
           python3 scripts/gukgam/build_guides.py
+          python3 scripts/gukgam/build_extra_records.py
 
       - name: 이슈 연대기 집계 (질병청·복지부)
         env:

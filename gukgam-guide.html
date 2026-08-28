@@ -94,7 +94,7 @@
 <script>
 (function(){
   var esc=function(s){ return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
-  var G=[], cur=null;
+  var G=[], cur=null, EXTRA={};
 
   function renderRoster(){
     document.getElementById('roster').innerHTML=
@@ -143,6 +143,25 @@
       (g.prep.length?'<div class="sec"><h3>주제별 대응 포인트</h3>'+
         g.prep.map(function(p){ return '<div class="prep-item"><span class="pt">'+esc(p.topic)+'</span><span>'+esc(p.guide)+'</span></div>'; }).join('')+
         '</div>':'')+
+      (function(){
+        var ex=EXTRA[g.name]; if(!ex||!ex.turns) return '';
+        var yrs=ex.dates.length?ex.dates[0].slice(0,4)+'~'+ex.dates[ex.dates.length-1].slice(0,4):'';
+        return '<div class="sec"><h3>전 상임위 국감 기록 (참고 — '+esc(ex.committee)+')</h3>'+
+          '<div style="font-size:.8rem;color:#6b7a8c;margin-bottom:6px;">복지위 발언 기록이 없는 신규 위원의 이전 상임위 국감 활동입니다. 질의 스타일·태도 파악용 참고 자료.</div>'+
+          '<div class="statrow" style="margin-bottom:10px;">'+
+            '<div class="st"><div class="n">'+ex.turns+'</div><div class="l">국감 발언 횟수</div></div>'+
+            '<div class="st"><div class="n">'+ex.dates.length+'일</div><div class="l">출석 감사일</div></div>'+
+            '<div class="st"><div class="n">'+yrs+'</div><div class="l">활동 기간</div></div>'+
+          '</div>'+
+          ((ex.top_terms||[]).length?'<div style="font-size:.78rem;color:#6b7a8c;margin-bottom:4px;">자주 쓴 용어:</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">'+
+            ex.top_terms.map(function(t){ return '<span class="badge" title="'+t.c+'회">'+esc(t.w)+' <small>'+t.c+'</small></span>'; }).join('')+'</div>':'')+
+          (ex.quotes||[]).map(function(q){
+            return '<div class="quote"><div class="qm"><span>'+esc(q.date)+'</span><span>'+esc(ex.committee)+' 국감</span>'+
+              '<a href="'+esc(q.minutes_url)+'" target="_blank" rel="noopener" style="font-weight:800;color:#2a4d7d;">원문 ↗</a></div>'+
+              '<div class="qq">'+esc(q.q)+'</div>'+(q.a?'<div class="qa">'+esc(q.a)+'</div>':'')+'</div>';
+          }).join('')+
+          '</div>';
+      })()+
       (g.style?'<div class="sec"><h3>답변서 작성 가이드 (실무자용)</h3>'+
         (g.terms&&g.terms.length?'<div style="font-size:.8rem;color:#6b7a8c;margin-bottom:5px;">이 위원이 질의에서 유독 자주 쓰는 용어 — <b>답변서·구두답변에 같은 용어를 쓰면 논점이 정확히 맞물립니다</b>:</div>'+
           '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">'+
@@ -175,8 +194,12 @@
     window.scrollTo({top:0});
   }
 
-  fetch('data/gukgam/guides.json?_='+Date.now()).then(function(r){return r.json();}).then(function(d){
-    G=d.items||[];
+  Promise.all([
+    fetch('data/gukgam/guides.json?_='+Date.now()).then(function(r){return r.json();}),
+    fetch('data/gukgam/extra-records.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:{}};})
+  ]).then(function(res){
+    G=res[0].items||[];
+    EXTRA=(res[1]||{}).items||{};
     if(!G.length){ document.getElementById('brief').innerHTML='<div style="text-align:center;color:#6b7a8c;padding:40px 0;">가이드 데이터가 없습니다.</div>'; return; }
     renderBrief(0);
   });
