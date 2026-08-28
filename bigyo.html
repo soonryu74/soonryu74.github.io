@@ -88,7 +88,7 @@ function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; ret
 function eokS(m){ return (m/10000).toFixed(1)+"억"; }
 const TELV="031-575-4944", AGN="갈매역삼성부동산";
 const RAW=(typeof GURI!=='undefined')?GURI:[];
-const D=RAW.map(d=>{ const la=d.latest||{}; return {...d, la, recover: d.max?Math.round(la.price/d.max*100):0, singo: la.price>=d.max, age: d.buildYear?(2026-(+d.buildYear)):null }; });
+const D=RAW.map(d=>{ const la=d.latest||{}; const hi=(d.latHi!=null)?d.latHi:d.max; return {...d, la, recover: (d.highPct!=null)?d.highPct:(hi?Math.round(la.price/hi*100):0), singo: (la.price>=(hi||0) && !!hi), age: d.buildYear?(2026-(+d.buildYear)):null }; });
 
 // 동별 그룹 셀렉트
 function fillSel(sel, def){

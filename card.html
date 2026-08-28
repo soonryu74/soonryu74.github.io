@@ -175,7 +175,8 @@
     cur=list[0]||null; sel.value='0';
     render();
   }
-  function isHigh(c){ return c.latest && c.max && c.latest.price>=c.max*0.999; }
+  // 신고가 판정은 '최근 거래된 평형'의 최고가(latHi) 기준. 구버전 데이터는 단지 최고가로 폴백.
+  function isHigh(c){ var hi=(c&&c.latHi!=null)?c.latHi:(c&&c.max); return !!(c&&c.latest&&hi&&c.latest.price>=hi*0.999); }
 
   function render(){
     if(!cur){ cardEl.innerHTML='<div style="padding:40px;text-align:center;color:#888">데이터가 없습니다.</div>'; return; }

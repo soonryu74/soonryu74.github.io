@@ -97,11 +97,15 @@
   var G=[], cur=null;
 
   function renderRoster(){
-    document.getElementById('roster').innerHTML=G.map(function(g,i){
+    document.getElementById('roster').innerHTML=
+      '<div style="font-size:.7rem;color:#6b7a8c;padding:4px 9px 8px;line-height:1.5;border-bottom:1px solid #e3e9f0;margin-bottom:6px;">'+
+      '숫자 = <b>2020~2025년(제21~22대) 국감</b> 복지부·질병청 질의 수.<br><b>신규</b> = 2026년 사보임으로 새로 온 위원 (올해가 복지위 국감 첫 출석 — 과거 발언 기록 없음).</div>'+
+      G.map(function(g,i){
       return '<div class="r-item'+(cur===i?' on':'')+'" data-i="'+i+'">'+
         (g.photo?'<img src="'+esc(g.photo)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':'')+
         '<div><div class="rn">'+esc(g.name)+'</div><div class="rp">'+esc(g.party)+(g.duty?' · '+esc(g.duty):'')+'</div></div>'+
-        '<span class="rc">'+g.stats.n+'</span></div>';
+        (g.stats.n?'<span class="rc">'+g.stats.n+'</span>':'<span class="rc" style="background:#fdeee3;color:#a35b1e;border-radius:7px;padding:1px 7px;opacity:1;">신규</span>')+
+        '</div>';
     }).join('');
   }
   function renderBrief(i){

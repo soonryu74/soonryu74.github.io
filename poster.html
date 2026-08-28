@@ -102,7 +102,7 @@ function eok(m){ m=Math.round(m||0); const e=Math.floor(m/10000), r=m%10000; ret
 function eokS(m){ return (m/10000).toFixed(1)+"억"; }
 function py(ar){ return ar? Math.round(ar/2.48) : 0; }
 function posPct(cur,mn,mx){ if(mx<=mn) return 100; return Math.max(0,Math.min(100,Math.round((cur-mn)/(mx-mn)*100))); }
-function hp(c){ return (c.highPct!=null)?c.highPct:Math.round((c.latest&&c.latest.price||0)/(c.max||1)*100); }
+function hp(c){ const hi=(c.latHi!=null)?c.latHi:(c.max||1); return (c.highPct!=null)?c.highPct:Math.round((c.latest&&c.latest.price||0)/hi*100); }
 const SORTS={
   cnt:{fn:(a,b)=>b.count-a.count, label:'🔥 거래 많은 순'},
   recover:{fn:(a,b)=>hp(b)-hp(a), label:'📈 전고점 회복률 높은 순'},
@@ -123,7 +123,7 @@ document.getElementById('grid').innerHTML = CX.map((c,i)=>{
     <div class="price">${eok(la.price)} <small>${p?p+'평·':''}${la.floor?la.floor+'층':''}</small></div>
     <div class="bar"><span style="left:${pos}%"></span></div>
     <div class="lbl"><span>최저 <b>${eokS(c.min)}</b></span><span>최고 <b>${eokS(c.max)}</b></span></div>
-    <div class="cnt">전고점 대비 <b>${c.highPct||Math.round((la.price||0)/(c.max||1)*100)}%</b> · 최근 실거래 ${(la.date||'').slice(2)}</div>
+    <div class="cnt">전고점 대비 <b>${hp(c)}%</b> · 최근 실거래 ${(la.date||'').slice(2)}</div>
   </div>`;
 }).join('');
 </script>

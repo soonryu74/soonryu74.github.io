@@ -128,6 +128,10 @@ def rich_card(dong, name, recs, meta, cutoff):
     by_year = (m.get("buildYear") or next((r["buildYear"] for r in recs if r.get("buildYear")), "") or "")
     road = m.get("road") or next((r["road"] for r in recs if r.get("road")), "")
     recent3m = sum(1 for r in recs if r["date"] >= cutoff)
+    # 회복률·게이지는 '최근 거래된 평형' 기준으로 계산(서로 다른 평형을 섞은 오독 방지)
+    lar = by_area[latest["area"]]
+    lat_hi = max(lar, key=lambda r: r["price"])
+    lat_lo = min(lar, key=lambda r: r["price"])
     byArea = []
     for a in areas:
         ar = by_area[a]
@@ -135,13 +139,15 @@ def rich_card(dong, name, recs, meta, cutoff):
         alat = max(ar, key=lambda r: r["date"])
         byArea.append(OrderedDict([("area", a), ("n", len(ar)),
             ("min", amn["price"]), ("max", amx["price"]),
-            ("lp", alat["price"]), ("lf", alat["floor"]), ("ld", alat["date"])]))
+            ("lp", alat["price"]), ("lf", alat["floor"]), ("ld", alat["date"]),
+            ("hp", round(alat["price"] / amx["price"] * 100) if amx["price"] else 0)]))
     return OrderedDict([
         ("name", name), ("dong", dong), ("buildYear", by_year), ("areas", areas), ("road", road),
         ("count", len(recs)), ("recent3m", recent3m),
         ("min", mn["price"]), ("minDate", mn["date"]),
         ("max", mx["price"]), ("maxDate", mx["date"]),
-        ("highPct", round(latest["price"] / mx["price"] * 100) if mx["price"] else 0),
+        ("highPct", round(latest["price"] / lat_hi["price"] * 100) if lat_hi["price"] else 0),
+        ("latHi", lat_hi["price"]), ("latLo", lat_lo["price"]), ("latHiDate", lat_hi["date"]),
         ("latest", OrderedDict([("area", latest["area"]), ("floor", latest["floor"]),
             ("price", latest["price"]), ("date", latest["date"]),
             ("gtype", latest.get("gtype", "중개거래"))])),
@@ -175,10 +181,16 @@ def build(records, meta):
                    or next((r["buildYear"] for r in recs if r.get("buildYear")), "") or "")
         # 도로명주소 — 지도 핀을 이름검색이 아닌 '정확한 주소'로 찍기 위함
         road = m.get("road") or next((r["road"] for r in recs if r.get("road")), "")
+        # 회복률·게이지 기준: 최근 거래된 평형의 최저~최고(평형 혼합 오독 방지)
+        lar = by_area[latest["area"]]
+        lat_hi = max(lar, key=lambda r: r["price"])
+        lat_lo = min(lar, key=lambda r: r["price"])
         # 구리 전체(표/분석·지도용) — 핵심 필드 + 주소
         guri.append(OrderedDict([
             ("dong", dong), ("name", name), ("count", len(recs)),
             ("min", mn["price"]), ("max", mx["price"]),
+            ("latHi", lat_hi["price"]), ("latLo", lat_lo["price"]), ("latHiDate", lat_hi["date"]),
+            ("highPct", round(latest["price"] / lat_hi["price"] * 100) if lat_hi["price"] else 0),
             ("latest", OrderedDict([("price", latest["price"]), ("area", latest["area"]),
                                     ("floor", latest["floor"]), ("date", latest["date"])])),
             ("areas", areas), ("buildYear", by_year), ("road", road),
