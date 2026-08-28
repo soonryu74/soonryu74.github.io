@@ -84,6 +84,20 @@
   .scat.k5{ background:#fdeee3; color:#a35b1e; }
   .scat.k6{ background:#f1f3f5; color:#5a6673; }
   .sched-empty{ background:#fff; border:1px dashed var(--line); border-radius:12px; padding:14px 16px; font-size:.86rem; color:var(--muted); }
+  .gsearch{ margin:2px 0 18px; }
+  .gs-bar{ display:flex; gap:8px; }
+  .gs-bar input{ flex:1; border:2px solid var(--navy); border-radius:12px; padding:13px 16px; font-size:1rem; background:#fff; }
+  .gs-bar button{ border:0; background:var(--navy); color:#fff; border-radius:12px; padding:0 26px; font-size:.95rem; font-weight:800; cursor:pointer; }
+  #gsOut{ margin-top:12px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .gs-group{ margin-bottom:14px; }
+  .gs-group:last-child{ margin-bottom:0; }
+  .gs-group h4{ margin:0 0 7px; font-size:.85rem; color:var(--navy); }
+  .gs-group h4 a{ font-weight:800; color:#2a4d7d; font-size:.78rem; margin-left:6px; }
+  .gs-item{ padding:7px 0; border-bottom:1px dashed var(--line); font-size:.87rem; line-height:1.55; }
+  .gs-item:last-child{ border-bottom:0; }
+  .gs-item .gm{ font-size:.74rem; color:var(--muted); display:flex; gap:8px; flex-wrap:wrap; margin-top:2px; }
+  .gs-item mark{ background:#ffe9a8; padding:0 1px; }
+  .gs-loading{ color:var(--muted); font-size:.88rem; }
   .hl-scroll{ display:flex; gap:12px; overflow-x:auto; padding:4px 2px 10px; scroll-snap-type:x mandatory; }
   .hl-card{ flex:0 0 250px; scroll-snap-align:start; border-radius:14px; overflow:hidden; background:#fff; border:1px solid var(--line); text-decoration:none; display:block; transition:transform .12s; }
   .hl-card:hover{ transform:translateY(-3px); }
@@ -122,6 +136,14 @@
 </div>
 
 <main class="wrap">
+  <section class="gsearch">
+    <div class="gs-bar">
+      <input id="gsInput" type="search" placeholder="🔍 통합 검색 — 위원·질의·답변·지적사항·자료 전체에서 찾기 (예: 백신 폐기, 남인순, 장기요양)">
+      <button id="gsBtn">검색</button>
+    </div>
+    <div id="gsOut" hidden></div>
+  </section>
+
   <div class="stats" id="stats"></div>
 
   <section id="hlSection" hidden>
@@ -419,6 +441,7 @@
       n2.hidden=false; n2.style.background='#eef6f0'; n2.style.borderColor='#cfe5d6';
       n2.textContent='최근 갱신 '+(idx.updated||'')+' · 전체 수집 모드';
     }
+    window.__DOCS = DOCS;
     // 필터 옵션
     var years={}, comms={};
     DOCS.forEach(function(d){ if(d.year) years[d.year]=1; if(d.committee) comms[d.committee]=1; });
@@ -438,6 +461,94 @@
     b.classList.add('on'); state.type=b.dataset.t; SHOWN=80; render();
   });
   document.getElementById('moreBtn').addEventListener('click', function(){ SHOWN+=80; render(); });
+})();
+
+// ===== 통합 검색 =====
+(function(){
+  var esc=function(s){ return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+  var SDATA=null, loading=false;
+  var out=document.getElementById('gsOut');
+
+  function ensureData(){
+    if(SDATA) return Promise.resolve(SDATA);
+    var jobs=[
+      fetch('data/gukgam/members.json').then(function(r){return r.json();}).catch(function(){return {items:[]};}),
+      fetch('data/gukgam/kdca-qa.json').then(function(r){return r.json();}).catch(function(){return {items:[]};}),
+      fetch('data/gukgam/mohw-qa-index.json').then(function(r){return r.json();}).catch(function(){return null;}),
+      fetch('data/gukgam/findings-2025.json').then(function(r){return r.json();}).catch(function(){return null;}),
+      fetch('data/gukgam/findings-2024.json').then(function(r){return r.json();}).catch(function(){return null;})
+    ];
+    return Promise.all(jobs).then(function(res){
+      var qa=(res[1].items||[]).map(function(i){ i._src='질병청'; i._page='gukgam-kdca.html'; return i; });
+      var years=(res[2]&&res[2].years)||[];
+      return Promise.all(years.map(function(y){
+        return fetch('data/gukgam/mohw-qa-'+y+'.json').then(function(r){return r.json();}).catch(function(){return {items:[]};});
+      })).then(function(shards){
+        shards.forEach(function(s){ (s.items||[]).forEach(function(i){ i._src='복지부'; i._page='gukgam-mohw.html'; qa.push(i); }); });
+        var fnd=[];
+        [res[3],res[4]].forEach(function(f){ if(f) (f.items||[]).forEach(function(i){ i._year=f.year; fnd.push(i); }); });
+        SDATA={ members:res[0].items||[], qa:qa, findings:fnd };
+        return SDATA;
+      });
+    });
+  }
+  function hl(text, q, ctx){
+    var i=text.toLowerCase().indexOf(q.toLowerCase());
+    if(i<0) return esc(text.slice(0, ctx*2));
+    var s=Math.max(0, i-ctx), e=Math.min(text.length, i+q.length+ctx);
+    return (s>0?'…':'')+esc(text.slice(s,i))+'<mark>'+esc(text.slice(i,i+q.length))+'</mark>'+esc(text.slice(i+q.length,e))+(e<text.length?'…':'');
+  }
+  function run(){
+    var q=document.getElementById('gsInput').value.trim();
+    if(q.length<2){ out.hidden=false; out.innerHTML='<div class="gs-loading">두 글자 이상 입력해 주세요.</div>'; return; }
+    out.hidden=false;
+    if(!SDATA && !loading){ loading=true; out.innerHTML='<div class="gs-loading">전체 데이터를 불러오는 중입니다… (최초 1회, 몇 초 소요)</div>'; }
+    ensureData().then(function(d){
+      loading=false;
+      var terms=q.toLowerCase().split(/\s+/).filter(Boolean);
+      var hit=function(text){ var t=text.toLowerCase(); return terms.every(function(w){ return t.indexOf(w)>=0; }); };
+      var q1=terms[0]||q; // 하이라이트는 첫 단어 기준
+      var html='';
+      // 위원
+      var mems=d.members.filter(function(m){ return hit(m.name+' '+m.party+' '+m.elecd+' '+(m.brf||'')); });
+      if(mems.length){
+        html+='<div class="gs-group"><h4>🧑‍⚖️ 위원 '+mems.length+'명 <a href="gukgam-guide.html">가이드북 →</a></h4>'+
+          mems.slice(0,4).map(function(m){ return '<div class="gs-item"><b>'+esc(m.name)+'</b> · '+esc(m.party)+' · '+esc(m.elecd)+(m.duty?' · '+esc(m.duty):'')+'</div>'; }).join('')+'</div>';
+      }
+      // Q&A
+      var qa=d.qa.filter(function(i){ return hit(i.q+' '+(i.a||'')+' '+i.member); });
+      if(qa.length){
+        qa.sort(function(a,b){ return b.date<a.date?-1:1; });
+        html+='<div class="gs-group"><h4>💬 질의·답변 '+qa.length+'건 <a href="gukgam-mohw.html">복지부 →</a><a href="gukgam-kdca.html">질병청 →</a></h4>'+
+          qa.slice(0,8).map(function(i){
+            return '<div class="gs-item">'+hl(i.q+' '+(i.a||''), q1, 55)+
+              '<div class="gm"><span>'+esc(i.member)+' 위원</span><span>'+esc(i.date)+'</span><span>'+i._src+' 국감</span>'+
+              '<a href="'+i._page+'" style="font-weight:800;color:#2a4d7d;">해당 페이지 →</a></div></div>';
+          }).join('')+'</div>';
+      }
+      // 지적사항
+      var fnd=d.findings.filter(function(i){ return hit(i.text+' '+(i.agency||'')); });
+      if(fnd.length){
+        html+='<div class="gs-group"><h4>📋 시정·처리요구(지적사항) '+fnd.length+'건 <a href="gukgam-prep.html">워크북 →</a></h4>'+
+          fnd.slice(0,6).map(function(i){
+            return '<div class="gs-item">'+hl(i.text, q1, 55)+'<div class="gm"><span>'+i._year+'년</span>'+(i.agency?'<span>'+esc(i.agency)+'</span>':'')+'</div></div>';
+          }).join('')+'</div>';
+      }
+      // 자료 (제목)
+      var docs=(window.__DOCS||[]).filter(function(dcc){ return hit((dcc.title||'')+' '+(dcc.committee||'')); });
+      if(docs.length){
+        html+='<div class="gs-group"><h4>📄 자료 '+docs.length+'건</h4>'+
+          docs.slice(0,6).map(function(dcc){
+            var link=dcc.pdf||dcc.url||((dcc.files||[])[0]||{}).url||'';
+            return '<div class="gs-item">'+hl(dcc.title||'', q1, 60)+'<div class="gm"><span>'+(dcc.year||'')+'</span><span>'+esc(dcc.committee||'')+'</span>'+
+              (link?'<a href="'+esc(link)+'" target="_blank" rel="noopener" style="font-weight:800;color:#2a4d7d;">원문 →</a>':'')+'</div></div>';
+          }).join('')+'</div>';
+      }
+      out.innerHTML = html || '<div class="gs-loading">"'+esc(q)+'"에 대한 결과가 없습니다.</div>';
+    });
+  }
+  document.getElementById('gsBtn').addEventListener('click', run);
+  document.getElementById('gsInput').addEventListener('keydown', function(e){ if(e.key==='Enter') run(); });
 })();
 </script>
 </body>
