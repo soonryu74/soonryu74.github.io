@@ -139,6 +139,28 @@
       (g.prep.length?'<div class="sec"><h3>주제별 대응 포인트</h3>'+
         g.prep.map(function(p){ return '<div class="prep-item"><span class="pt">'+esc(p.topic)+'</span><span>'+esc(p.guide)+'</span></div>'; }).join('')+
         '</div>':'')+
+      (g.style?'<div class="sec"><h3>답변서 작성 가이드 (실무자용)</h3>'+
+        (g.terms&&g.terms.length?'<div style="font-size:.8rem;color:#6b7a8c;margin-bottom:5px;">이 위원이 질의에서 유독 자주 쓰는 용어 — <b>답변서·구두답변에 같은 용어를 쓰면 논점이 정확히 맞물립니다</b>:</div>'+
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">'+
+          g.terms.map(function(t){ return '<span class="badge" style="background:#fdf6ec;color:#8a5a17;" title="질의 중 '+t.c+'회 언급">'+esc(t.w)+' <small>'+t.c+'</small></span>'; }).join('')+'</div>':'')+
+        '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:#6b7a8c;margin-bottom:8px;">'+
+          '<span>수치 인용률 <b style="color:#1c1c28">'+Math.round(g.style.num_rate*100)+'%</b></span>'+
+          '<span>시각자료 활용 <b style="color:#1c1c28">'+Math.round(g.style.ppt_rate*100)+'%</b></span>'+
+          '<span>기한 추궁 <b style="color:#1c1c28">'+Math.round(g.style.deadline_rate*100)+'%</b></span>'+
+          '<span>사례·민원 기반 <b style="color:#1c1c28">'+Math.round(g.style.case_rate*100)+'%</b></span>'+
+          '<span>평균 질의 길이 <b style="color:#1c1c28">'+g.style.avg_len+'자</b></span>'+
+        '</div>'+
+        g.style.tips.map(function(t){ return '<div class="prep-item"><span class="pt">✍️ 작성 지침</span><span>'+esc(t)+'</span></div>'; }).join('')+
+        '<details class="brfd" style="margin-top:10px;"><summary>공통 답변서 작성 수칙 (전 위원 공통)</summary><div class="brf" style="max-height:none;">'+
+        '· 두괄식: 결론 한 문장 → 근거 수치 → 향후 계획 순.\n'+
+        '· 확정 표현 구분: 이행 확정 시 "하겠습니다", 미확정 시 "적극 검토하겠습니다", 타기관 협의 필요 시 "관계부처와 협의하겠습니다" — 혼용 금지 (약속은 시정처리결과로 회수됨).\n'+
+        '· 수치는 기준시점 병기: "23.4% (2025.12월 기준)" 형식. 단위·연도 누락 금지.\n'+
+        '· 피할 표현: "문제없습니다"(단정), "전임 정부에서…"(책임 전가), "그건 지자체 소관"(떠넘김), "검토해 보겠습니다"만 반복.\n'+
+        '· 지적 수용형 문두: "위원님 지적 취지에 공감합니다" → 사실관계 → 개선 계획.\n'+
+        '· 서면답변은 1쟁점 1문단, A4 반 장 이내. 붙임 통계표는 최근 5년 추이로.\n'+
+        '· 위원이 과거 질의한 사안이면 반드시 "작년 지적 이후 조치 경과"부터 언급 (이 페이지 대표 질의와 워크북 지적사항 목록에서 확인).'+
+        '</div></details>'+
+        '</div>':'')+
       (g.brf?'<div class="sec"><h3>약력 (국회 공개 프로필)</h3><details class="brfd"><summary>펼쳐 보기</summary><div class="brf">'+esc(g.brf)+'</div></details></div>':'')+
       '<div class="sec"><h3>참고 링크</h3><div class="mlinks">'+
         (g.homepage?'<a href="'+esc(g.homepage)+'" target="_blank" rel="noopener">의원 홈페이지</a>':'')+
