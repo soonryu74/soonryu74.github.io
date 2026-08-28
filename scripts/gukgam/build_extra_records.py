@@ -25,12 +25,13 @@ RECORDS = [
 ]
 
 SPEAKER = re.compile(
-    r"◯\s*(?:(위원장|간사)\s*([가-힣]{2,4})"
+    r"◯\s*(?:(위원장|간사|참고인|진술인|증인)\s*([가-힣]{2,4})"
     r"|([가-힣]{2,12}?)\s*(위원장|위원|청장|차장|장관|차관|처장|원장|이사장|본부장|실장|국장|과장|서기관|진술인|참고인|증인)\s*([가-힣]{2,4})?)")
 
 STOP = set("""위원 위원장 장관 차관 청장 답변 질의 말씀 생각 부분 관련 문제 정도 경우 때문 지금 오늘
 이제 그냥 저희 우리 여러 이런 그런 어떤 사실 정말 굉장히 계속 대해 대한 그리고 그래서 그런데 하지만
-우리나라 국민 정부 국회 국정감사 자료 요청 부탁 필요 검토 마련 얘기 어쨌든 상당히 이렇게 그렇게""".split())
+우리나라 국민 정부 국회 국정감사 자료 요청 부탁 필요 검토 마련 얘기 어쨌든 상당히 이렇게 그렇게
+가지고 가지 한번 여기 보면 내용 지난번 지난해 올해 작년 정도로 그거 이거 저거 다음 관련해서""".split())
 _PARTICLE = re.compile(r"(에서|에게|으로|이라|라는|하고|까지|부터|에|를|을|은|는|이|가|도|의|로|과|와|만|요)$")
 
 
@@ -38,6 +39,11 @@ def parse_mark(m):
     if m.group(1):
         return (m.group(2) or "", m.group(1))
     return (m.group(3) or "", m.group(4) or "")
+
+
+def strip_headers(text):
+    """페이지 머리글('2024년도국감-농림축산식품해양수산…(2024년10월7일) 3') 제거."""
+    return re.sub(r"\d{4}\s*년도\s*국감[-–ㆍ·]?[가-힣A-Za-z\s]{0,25}(\(\d{4}년\d{1,2}월\d{1,2}일\))?\s*\d*", " ", text)
 
 
 def clean(s, limit=360):
@@ -52,9 +58,11 @@ def clean(s, limit=360):
 
 def norm_word(w):
     s = _PARTICLE.sub("", w)
-    if len(s) < 2 or s in STOP:
+    if len(s) < 2 or s in STOP or "국감" in s:
         return None
-    if re.search(r"(습니다|합니다|입니다|는데|은데|겠|드리|드립|해서|하면|하게|하지|시지|보시|주시|했|였)", s):
+    if s in ("농림축산식품", "해양수산", "농림축산", "축산식품"):
+        return None
+    if re.search(r"(습니다|합니다|입니다|는데|은데|겠|드리|드립|해서|하면|하게|하지|시지|보시|주시|했|였|니다)", s):
         return None
     return s
 
@@ -88,7 +96,7 @@ def main():
             if mt["conf_id"] in done:
                 continue
             try:
-                text = pdf_text(mt["url"])
+                text = strip_headers(pdf_text(mt["url"]))
             except Exception as e:
                 print(f"{name} {mt['date']} 실패: {e}")
                 continue
@@ -106,7 +114,7 @@ def main():
                     if s2:
                         st["term_counts"][s2] = st["term_counts"].get(s2, 0) + 1
                 qc = clean(q)
-                if len(qc) >= 150:
+                if len(qc) >= 150 and "◯" not in qc and not re.match(r"(예[.,]|알겠|네[.,]|얘기하|정리하|다음)", qc):
                     ans = ""
                     if i + 1 < len(marks) and marks[i + 1][3] in ("장관", "차관", "청장", "처장", "원장", "이사장"):
                         seg_end = marks[i + 2][0] if i + 2 < len(marks) else len(text)
