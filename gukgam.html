@@ -75,6 +75,17 @@
   .scat.k5{ background:#fdeee3; color:#a35b1e; }
   .scat.k6{ background:#f1f3f5; color:#5a6673; }
   .sched-empty{ background:#fff; border:1px dashed var(--line); border-radius:12px; padding:14px 16px; font-size:.86rem; color:var(--muted); }
+  .hl-scroll{ display:flex; gap:12px; overflow-x:auto; padding:4px 2px 10px; scroll-snap-type:x mandatory; }
+  .hl-card{ flex:0 0 250px; scroll-snap-align:start; border-radius:14px; overflow:hidden; background:#fff; border:1px solid var(--line); text-decoration:none; display:block; transition:transform .12s; }
+  .hl-card:hover{ transform:translateY(-3px); }
+  .hl-thumb{ position:relative; height:130px; background:linear-gradient(135deg,#12365f,#1c5a6b); color:#fff; padding:12px 14px; display:flex; flex-direction:column; justify-content:flex-end; }
+  .hl-thumb .ht{ font-size:1.18rem; font-weight:900; line-height:1.25; letter-spacing:-.02em; text-shadow:0 1px 3px rgba(0,0,0,.4); }
+  .hl-thumb .hn{ position:absolute; top:10px; left:12px; background:#c0392b; color:#fff; font-size:.72rem; font-weight:900; border-radius:6px; padding:2px 8px; }
+  .hl-thumb img{ position:absolute; right:10px; top:10px; width:44px; height:56px; object-fit:cover; border-radius:7px; border:2px solid rgba(255,255,255,.85); }
+  .hl-body{ padding:10px 13px 12px; }
+  .hl-body .hd{ font-size:.76rem; font-weight:800; color:#12365f; }
+  .hl-body .hg{ font-size:.73rem; color:var(--muted); margin-top:2px; line-height:1.45; }
+  .hl-body .hq{ font-size:.75rem; color:#3d4f63; margin-top:6px; line-height:1.5; border-left:3px solid #e3e9f0; padding-left:8px; }
   .tl-wrap{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
   .tl-legend{ display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-size:.8rem; color:#3d4f63; font-weight:700; margin-bottom:6px; }
   .tl-legend svg{ vertical-align:-2px; margin-right:3px; }
@@ -95,6 +106,7 @@
       <a href="gukgam-mohw.html">복지부 Q&amp;A</a>
       <a href="gukgam-kdca.html">질병청 Q&amp;A</a>
       <a href="gukgam-prep.html">답변 대비 워크북</a>
+      <a href="gukgam-guide.html">의원별 가이드북</a>
     </div>
     <div class="notice" id="modeNotice" hidden></div>
   </div>
@@ -102,6 +114,11 @@
 
 <main class="wrap">
   <div class="stats" id="stats"></div>
+
+  <section id="hlSection" hidden>
+    <h2>🎬 국감 하이라이트 <span style="font-size:.75rem;color:var(--muted);font-weight:400;">감사일별 핵심 장면 · 회의록 데이터 자동 요약</span></h2>
+    <div class="hl-scroll" id="hlCards"></div>
+  </section>
 
   <section id="tlSection" hidden>
     <h2 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">국감 이슈 연대기
@@ -238,8 +255,26 @@
     fetch('data/gukgam/member-topics.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {members:{}};}),
     fetch('data/gukgam/schedule.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
     fetch('data/gukgam/kdca-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
-    fetch('data/gukgam/mohw-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
+    fetch('data/gukgam/mohw-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('data/gukgam/highlights.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(res){
+    // 국감 하이라이트 카드
+    (function(hl){
+      if(!hl || !(hl.items||[]).length) return;
+      document.getElementById('hlSection').hidden=false;
+      document.getElementById('hlCards').innerHTML=(hl.items||[]).map(function(c){
+        var kdcaOnly=(c.targets||[]).every(function(t){ return t.indexOf('질병')>=0; }) && (c.targets||[]).length;
+        var page=kdcaOnly?'gukgam-kdca.html':'gukgam-mohw.html';
+        return '<a class="hl-card" href="'+page+'">'+
+          '<div class="hl-thumb"><span class="hn">질의 '+c.n+'건</span>'+
+          (c.photo?'<img src="'+esc(c.photo)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':'')+
+          '<div class="ht">'+esc(c.top_topic||'국정감사')+'<br>집중 질의</div></div>'+
+          '<div class="hl-body"><div class="hd">'+esc(c.date)+' · '+esc((c.targets||[]).join('·')||'보건복지위')+'</div>'+
+          '<div class="hg">'+esc((c.top_members||[]).join(' · '))+' 위원 주도</div>'+
+          (c.quote?'<div class="hq">“'+esc(c.quote)+'” — '+esc(c.quote_member)+'</div>':'')+
+          '</div></a>';
+      }).join('');
+    })(res[10]);
     // 이슈 연대기 (흰=여당, 검=야당 동그라미 매트릭스) — 질병청/복지부 전환
     var TL={kdca:res[8], mohw:res[9]};
     var QAPAGE={kdca:'gukgam-kdca.html', mohw:'gukgam-mohw.html'};
