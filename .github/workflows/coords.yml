@@ -1,0 +1,51 @@
+name: 단지 좌표 미리 계산 (지도)
+
+# 카카오 REST 키로 단지 좌표를 미리 계산해 data/complex-coords.js 갱신.
+# 지도(jido-search)가 런타임 지오코딩 없이 즉시 핀을 찍게 합니다.
+# KAKAO_REST_KEY 시크릿이 있어야 동작합니다(없으면 조용히 건너뜀).
+on:
+  schedule:
+    - cron: '30 1 * * 1'   # UTC 월 01:30 = KST 월 10:30 (실거래 갱신 뒤 주 1회)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# 다른 데이터 워크플로와 같은 브랜치 push 경합 방지
+concurrency:
+  group: data-push-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 단지 좌표 미리 계산
+        env:
+          KAKAO_REST_KEY: ${{ secrets.KAKAO_REST_KEY }}
+        run: |
+          if [ -z "$KAKAO_REST_KEY" ]; then
+            echo "::warning::KAKAO_REST_KEY 시크릿이 없습니다. 카카오 개발자센터의 'REST API 키'를 저장소 Secret으로 등록하세요. (건너뜀)"
+            exit 0
+          fi
+          python3 scripts/build_coords.py
+
+      - name: 변경 시 커밋
+        run: |
+          if git diff --quiet -- data/complex-coords.js; then
+            echo "변경 없음"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/complex-coords.js
+            git commit -m "단지 좌표 미리 계산 갱신 (지도)"
+            for i in 1 2 3 4; do
+              if git push; then break; fi
+              echo "push 경합 — pull --rebase 후 재시도 ($i)"
+              git pull --rebase origin "${GITHUB_REF_NAME}" || true
+              sleep $((i*3))
+            done
+          fi
