@@ -44,6 +44,9 @@
   .qa .src{ margin-top:8px; font-size:.75rem; }
   .qa .src a{ color:#2a4d7d; font-weight:800; }
   .empty{ text-align:center; color:var(--muted); padding:36px 0; background:#fff; border:1px dashed var(--line); border-radius:12px; }
+  .fkey{ font-family:'맑은 고딕','Malgun Gothic',sans-serif; font-weight:800; color:#1657b0; background:#eef4fc;
+         border-radius:6px; padding:1px 8px; margin-right:7px; white-space:nowrap; font-size:.85rem; }
+  .fact{ font-size:.72rem; font-weight:800; border-radius:6px; padding:1px 7px; margin-left:6px; background:#f1f3f5; color:#5a6673; white-space:nowrap; }
   .more{ display:block; margin:14px auto 0; border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 26px; font-size:.9rem; font-weight:700; cursor:pointer; color:#2a4d7d; }
   .mchips{ display:flex; gap:6px; flex-wrap:wrap; margin:8px 0 14px; }
   .mchip{ border:1px solid var(--line); background:#fff; border-radius:16px; padding:4px 12px; font-size:.8rem; font-weight:800; color:#3d4f63; cursor:pointer; }
@@ -191,7 +194,11 @@
     box.innerHTML='<div class="qa" style="border-left-color:#a03030;"><div class="who"><span class="nm">'+d.year+'년 결과보고서 — 질병관리청 소관 '+rows.length+'건</span>'+
       '<a class="badge" style="text-decoration:none;" href="'+esc(d.source_pdf)+'" target="_blank" rel="noopener">원문 PDF ↗</a></div>'+
       '<ul style="margin:6px 0 0;padding-left:20px;font-size:.88rem;">'+
-      rows.slice(0,50).map(function(i){ return '<li style="padding:2px 0;">'+esc(i.text)+(i.dept?' <span class="badge">'+esc(i.dept)+'</span>':'')+'</li>'; }).join('')+
+      rows.slice(0,50).map(function(i){
+        var lead=i.key?'<span class="fkey">'+esc(i.key)+'</span>':'';
+        var act=i.act?'<span class="fact">'+esc(i.act)+'</span>':'';
+        return '<li style="padding:3px 0;line-height:1.6;">'+lead+esc(i.text)+act+(i.dept?' <span class="badge">'+esc(i.dept)+'</span>':'')+'</li>';
+      }).join('')+
       '</ul>'+(rows.length>50?'<div style="font-size:.8rem;color:var(--muted);margin-top:6px;">외 '+(rows.length-50)+'건 — 답변 워크북에서 전체 확인</div>':'')+'</div>';
   }).catch(function(){});
 
