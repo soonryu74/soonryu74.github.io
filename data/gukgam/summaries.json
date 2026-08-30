@@ -1,5 +1,5 @@
 {
- "updated": "2026-08-26",
+ "updated": "2026-08-30",
  "items": {
   "https://record.assembly.go.kr/assembly/viewer/minutes/download/pdf.do?id=55603": {
    "kind": "minutes",
@@ -663,6 +663,67 @@
   "https://likms.assembly.go.kr/inspection/result/2000/pdf/000270065.hwp.pdf": {
    "kind": "report",
    "pages": 55
+  },
+  "https://likms.assembly.go.kr/inspection/result/2021/pdf/000624971.PDF": {
+   "kind": "report",
+   "pages": 387,
+   "demand_count": 1247,
+   "top_agencies": [
+    {
+     "name": "보건복지부",
+     "count": 464
+    },
+    {
+     "name": "식품의약품안전처",
+     "count": 341
+    },
+    {
+     "name": "국민건강보험공단",
+     "count": 65
+    },
+    {
+     "name": "건강보험심사평가원",
+     "count": 59
+    },
+    {
+     "name": "국민연금공단",
+     "count": 47
+    }
+   ]
+  },
+  "https://likms.assembly.go.kr/inspection/result/2014/pdf/000618199.PDF": {
+   "kind": "report",
+   "pages": 410,
+   "period": "2014.10.7",
+   "demand_count": 1067,
+   "top_agencies": [
+    {
+     "name": "보건복지부",
+     "count": 372
+    },
+    {
+     "name": "식품의약품안전처",
+     "count": 137
+    },
+    {
+     "name": "국민건강보험공단",
+     "count": 65
+    },
+    {
+     "name": "건강보험심사평가원",
+     "count": 64
+    },
+    {
+     "name": "국민연금공단",
+     "count": 63
+    }
+   ]
+  },
+  "https://likms.assembly.go.kr/inspection/result/2012/pdf/000615593.PDF": {
+   "kind": "report",
+   "pages": 297,
+   "period": "2012.10.5",
+   "demand_count": 0
   }
  }
 }
