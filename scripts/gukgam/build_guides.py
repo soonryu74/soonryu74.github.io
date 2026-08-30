@@ -206,6 +206,7 @@ def main():
             "name": name, "hanja": m.get("hanja", ""), "party": m.get("party", ""),
             "duty": m.get("duty", ""), "rlct": m.get("rlct", ""), "elecd": m.get("elecd", ""),
             "photo": m.get("photo", ""), "homepage": m.get("homepage", ""),
+            "office": m.get("office"),
             "brf": m.get("brf", ""),
             "stats": {"n": len(items), "with_answer": with_a, "years": years,
                       "rank": rank_of.get(name), "days": mt.get("days", 0)},

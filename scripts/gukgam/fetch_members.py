@@ -42,6 +42,11 @@ def call(page):
     return [], 0
 
 
+def split_names(s):
+    """'김도근, 김혜규' → ['김도근','김혜규']"""
+    return [x.strip() for x in (s or "").replace("/", ",").split(",") if x.strip()]
+
+
 def last(s):  # "정당A/정당B/정당C" → 최신값
     parts = [p.strip() for p in (s or "").split("/") if p.strip()]
     return parts[-1] if parts else ""
@@ -72,6 +77,15 @@ def main():
             "photo": r.get("NAAS_PIC") or "",
             "brf": (r.get("BRF_HST") or "").strip(),
             "homepage": r.get("NAAS_HP_URL") or "",
+            # 의원실 구성 — 국회 공식 홈페이지 의원 프로필에 실명 공개되는 항목
+            "office": {
+                "room": (r.get("OFFM_RNUM_NO") or "").strip(),
+                "tel": (r.get("NAAS_TEL_NO") or "").strip(),
+                "email": (r.get("NAAS_EMAIL_ADDR") or "").strip(),
+                "aide": split_names(r.get("AIDE_NM")),
+                "chief_secretary": split_names(r.get("CHF_SCRT_NM")),
+                "secretary": split_names(r.get("SCRT_NM")),
+            },
         })
     items.sort(key=lambda x: x["name"])
     out = {"updated": datetime.date.today().isoformat(), "era": ERA, "committee": COMMITTEE,
