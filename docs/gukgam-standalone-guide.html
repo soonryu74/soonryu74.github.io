@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>국정감사 DB 독립 사이트 이전 가이드 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="국정감사 DB 독립 사이트 이전 가이드" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="국정감사 DB 독립 사이트 이전 가이드" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"국정감사 DB 독립 사이트 이전 가이드","url":"/docs/gukgam-standalone-guide.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=f805e0e30535aec7749017e802cf16ef634a4b82">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="국정감사-db-독립-사이트-이전-가이드">국정감사 DB 독립 사이트 이전 가이드</h1>
+
+<p>목표: 공유 링크에서 <code class="language-plaintext highlighter-rouge">soonryu74</code>를 없애기 — <code class="language-plaintext highlighter-rouge">soonryu74.github.io/gukgam.html</code>
+→ <code class="language-plaintext highlighter-rouge">&lt;조직명&gt;.github.io/gukgam.html</code></p>
+
+<p><strong>부동산 사이트는 건드리지 않습니다.</strong> 리포 전체를 옮기면 부동산 주소까지 바뀌므로,
+국정감사 부분만 새 조직 리포로 분리합니다.</p>
+
+<h2 id="1단계--github-조직-만들기-무료-2분">1단계 — GitHub 조직 만들기 (무료, 2분)</h2>
+
+<ol>
+  <li>https://github.com/account/organizations/new 접속</li>
+  <li><strong>Free</strong> 요금제 선택</li>
+  <li>조직 이름(Organization name) 입력 — 이게 곧 주소가 됩니다
+    <ul>
+      <li>예: <code class="language-plaintext highlighter-rouge">gukgam-db</code> → <code class="language-plaintext highlighter-rouge">gukgam-db.github.io</code></li>
+      <li>예: <code class="language-plaintext highlighter-rouge">gukgam-lab</code>, <code class="language-plaintext highlighter-rouge">audit-db</code>, <code class="language-plaintext highlighter-rouge">nabo-gukgam</code></li>
+      <li>소문자·숫자·하이픈만, 이미 쓰는 이름이면 거부됩니다</li>
+    </ul>
+  </li>
+  <li>연락 이메일 입력 후 생성 (팀원 초대는 건너뛰어도 됨)</li>
+</ol>
+
+<h2 id="2단계--빈-저장소-만들기-1분">2단계 — 빈 저장소 만들기 (1분)</h2>
+
+<ol>
+  <li>만든 조직 페이지에서 <strong>New repository</strong></li>
+  <li>Repository name: <strong>조직명과 똑같이 + <code class="language-plaintext highlighter-rouge">.github.io</code></strong>
+    <ul>
+      <li>조직이 <code class="language-plaintext highlighter-rouge">gukgam-db</code>라면 저장소 이름은 정확히 <code class="language-plaintext highlighter-rouge">gukgam-db.github.io</code></li>
+    </ul>
+  </li>
+  <li><strong>Public</strong> 선택 (Private은 무료 플랜에서 Pages 사용 불가)</li>
+  <li>README·라이선스 등 <strong>아무것도 체크하지 말고</strong> Create repository</li>
+</ol>
+
+<h2 id="3단계--내용-채우기">3단계 — 내용 채우기</h2>
+
+<p>저장소를 만든 뒤 <strong>조직명을 알려주시면</strong> 파일 업로드·워크플로 설정을 대신 처리합니다.
+직접 하실 경우:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash scripts/gukgam/export_standalone.sh ../gukgam-standalone
+<span class="nb">cd</span> ../gukgam-standalone
+git init <span class="o">&amp;&amp;</span> git add <span class="nt">-A</span> <span class="o">&amp;&amp;</span> git commit <span class="nt">-m</span> <span class="s2">"국정감사 자료 DB"</span>
+git branch <span class="nt">-M</span> main
+git remote add origin https://github.com/&lt;조직명&gt;/&lt;조직명&gt;.github.io.git
+git push <span class="nt">-u</span> origin main
+</code></pre></div></div>
+
+<h2 id="4단계--github-pages-켜기">4단계 — GitHub Pages 켜기</h2>
+
+<p>새 저장소 → Settings → Pages → Source: <strong>Deploy from a branch</strong>,
+Branch: <strong>main / (root)</strong> → Save. 1~2분 뒤 <code class="language-plaintext highlighter-rouge">https://&lt;조직명&gt;.github.io</code> 접속 가능.</p>
+
+<h2 id="5단계--자동-갱신용-인증키-등록">5단계 — 자동 갱신용 인증키 등록</h2>
+
+<p>새 저장소 → Settings → Secrets and variables → Actions → New repository secret</p>
+<ul>
+  <li>Name: <code class="language-plaintext highlighter-rouge">ASSEMBLY_API_KEY</code></li>
+  <li>Secret: 열린국회정보 인증키</li>
+</ul>
+
+<p>이후 매주(국감 시즌 9~12월은 매일) 자동으로 데이터가 갱신됩니다.</p>
+
+<h2 id="6단계--기존-주소-정리-선택">6단계 — 기존 주소 정리 (선택)</h2>
+
+<p>기존 <code class="language-plaintext highlighter-rouge">soonryu74.github.io/gukgam*.html</code> 은 그대로 둬도 되고,
+새 주소로 자동 이동시키려면 각 파일을 리다이렉트 페이지로 교체하면 됩니다(요청 시 처리).</p>
+
+<h2 id="참고">참고</h2>
+
+<ul>
+  <li>조직 생성·저장소 모두 <strong>무료</strong>이며, 나중에 커스텀 도메인(예: <code class="language-plaintext highlighter-rouge">gukgam.kr</code>)을
+붙이고 싶어지면 이 저장소에 CNAME만 추가하면 됩니다.</li>
+  <li>조직 이름은 나중에 바꿀 수 있지만 주소가 함께 바뀌므로 처음에 신중히 정하세요.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
