@@ -59,6 +59,12 @@
   .mlinks a{ font-size:.8rem; font-weight:800; text-decoration:none; border:1px solid var(--line); border-radius:8px; padding:5px 12px; background:#fafcfe; color:#2a4d7d; }
   details.brfd summary{ font-size:.8rem; font-weight:800; color:#2a4d7d; cursor:pointer; }
   .brf{ font-size:.82rem; white-space:pre-line; max-height:220px; overflow-y:auto; margin-top:6px; color:#3d4f63; }
+  .office{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .off-box{ background:#f7f9fb; border:1px solid var(--line); border-radius:10px; padding:10px 13px; }
+  .off-box .ot{ font-size:.74rem; font-weight:800; color:var(--muted); margin-bottom:4px; }
+  .off-box .on{ font-size:.9rem; font-weight:700; color:#1c1c28; line-height:1.6; }
+  .off-contact{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:9px; }
+  .off-contact span{ font-size:.82rem; font-weight:800; background:#eef4fc; color:#1657b0; border-radius:8px; padding:3px 11px; }
   .print-btn{ border:1px solid var(--line); background:#fff; border-radius:9px; padding:7px 14px; font-size:.82rem; font-weight:800; color:#2a4d7d; cursor:pointer; margin-left:auto; }
   @media print{
     .top,.roster,.print-btn,.notice{ display:none !important; }
@@ -143,6 +149,25 @@
       (g.prep.length?'<div class="sec"><h3>주제별 대응 포인트</h3>'+
         g.prep.map(function(p){ return '<div class="prep-item"><span class="pt">'+esc(p.topic)+'</span><span>'+esc(p.guide)+'</span></div>'; }).join('')+
         '</div>':'')+
+      (function(){
+        var o=g.office; if(!o) return '';
+        var groups=[['보좌관 (4급)',o.aide],['비서관 (5급)',o.chief_secretary],['비서 (6~9급)',o.secretary]]
+          .filter(function(x){ return (x[1]||[]).length; });
+        if(!groups.length && !o.room && !o.tel) return '';
+        var n=(o.aide||[]).length+(o.chief_secretary||[]).length+(o.secretary||[]).length;
+        return '<div class="sec"><h3>의원실 구성 (자료요구·질의 조율 창구)</h3>'+
+          '<div style="font-size:.78rem;color:var(--muted);margin-bottom:7px;">'+
+          '국회 공식 홈페이지 의원 프로필에 공개된 보좌진 명단입니다'+(n?' (총 '+n+'명)':'')+'. 국감 자료요구·질의 조율은 통상 보좌관·비서관과 진행됩니다.</div>'+
+          '<div class="off-contact">'+
+            (o.room?'<span>🏢 '+esc(o.room)+'</span>':'')+
+            (o.tel?'<span>☎ '+esc(o.tel)+'</span>':'')+
+            (o.email?'<span>✉ '+esc(o.email)+'</span>':'')+
+          '</div>'+
+          (groups.length?'<div class="office">'+groups.map(function(gr){
+            return '<div class="off-box"><div class="ot">'+esc(gr[0])+' · '+gr[1].length+'명</div><div class="on">'+gr[1].map(esc).join(', ')+'</div></div>';
+          }).join('')+'</div>':'')+
+          '</div>';
+      })()+
       (function(){
         var ex=EXTRA[g.name]; if(!ex||!ex.turns) return '';
         var yrs=ex.dates.length?ex.dates[0].slice(0,4)+'~'+ex.dates[ex.dates.length-1].slice(0,4):'';
