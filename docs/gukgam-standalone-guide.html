@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"국정감사 DB 독립 사이트 이전 가이드","url":"/docs/gukgam-standalone-guide.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=b63e4b7658f89af3eac5629466e63225be046da4">
+    <link rel="stylesheet" href="/assets/css/style.css?v=b160e44101ecec7544810c5c6a4a797cc3269db0">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -113,6 +113,46 @@ Branch: <strong>main / (root)</strong> → Save. 1~2분 뒤 <code class="languag
 붙이고 싶어지면 이 저장소에 CNAME만 추가하면 됩니다.</li>
   <li>조직 이름은 나중에 바꿀 수 있지만 주소가 함께 바뀌므로 처음에 신중히 정하세요.</li>
 </ul>
+
+<hr />
+
+<h2 id="새-세션에서-조직-저장소로-옮기기-실행-절차">새 세션에서 조직 저장소로 옮기기 (실행 절차)</h2>
+
+<p>조직 <code class="language-plaintext highlighter-rouge">gukgam-db</code>, 저장소 <code class="language-plaintext highlighter-rouge">gukgam-db.github.io</code> 가 이미 만들어져 있다는 전제.</p>
+
+<h3 id="1-새-claude-code-세션-시작">1) 새 Claude Code 세션 시작</h3>
+<p>claude.ai/code → 새 세션 → 저장소로 <strong><code class="language-plaintext highlighter-rouge">gukgam-db/gukgam-db.github.io</code></strong> 선택.
+목록에 안 보이면 GitHub 연결 화면에서 조직 <code class="language-plaintext highlighter-rouge">gukgam-db</code> 접근을 허용한 뒤 다시 선택.</p>
+
+<h3 id="2-새-세션에-아래-지시문을-그대로-붙여넣기">2) 새 세션에 아래 지시문을 그대로 붙여넣기</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>이 저장소는 국정감사 자료 DB를 서비스할 GitHub Pages 사이트다. 아래를 수행해라.
+
+1. 공개 저장소 https://github.com/soonryu74/soonryu74.github.io 를 /tmp/src 로 clone.
+2. bash /tmp/src/scripts/gukgam/export_standalone.sh /tmp/bundle 실행.
+3. /tmp/bundle 의 내용 전부를 이 저장소 루트에 복사하고 main 브랜치로 커밋·푸시.
+   (.nojekyll, index.html, gukgam*.html, data/gukgam/, scripts/gukgam/,
+    .github/workflows/gukgam.yml, README.md 포함)
+4. 푸시 후 Settings → Pages 에서 "Deploy from a branch / main / (root)" 로
+   설정해야 한다는 안내와, Settings → Secrets and variables → Actions 에
+   ASSEMBLY_API_KEY 를 등록해야 자동 갱신이 돈다는 안내를 알려줘라.
+</code></pre></div></div>
+
+<h3 id="3-푸시-후-저장소-설정-사람이-직접">3) 푸시 후 저장소 설정 (사람이 직접)</h3>
+<ul>
+  <li><strong>Settings → Pages</strong> → Source: <code class="language-plaintext highlighter-rouge">Deploy from a branch</code>, Branch: <code class="language-plaintext highlighter-rouge">main</code> / <code class="language-plaintext highlighter-rouge">/(root)</code> → Save</li>
+  <li><strong>Settings → Secrets and variables → Actions → New repository secret</strong>
+    <ul>
+      <li>Name: <code class="language-plaintext highlighter-rouge">ASSEMBLY_API_KEY</code></li>
+      <li>Secret: 열린국회정보 인증키</li>
+    </ul>
+  </li>
+  <li>몇 분 뒤 <strong>https://gukgam-db.github.io/</strong> 접속 확인</li>
+</ul>
+
+<h3 id="4-기존-사이트">4) 기존 사이트</h3>
+<p><code class="language-plaintext highlighter-rouge">soonryu74.github.io</code> 의 부동산 사이트와 국감 페이지는 그대로 둔다.
+양쪽이 각자 워크플로로 갱신되며, 원본 저장소가 계속 기준(master copy)이다.</p>
 
 
       

@@ -11,7 +11,7 @@
 실행: python3 scripts/gukgam/build_mohw_qa.py   (의존성: pypdf, 키 불필요)
 출력: data/gukgam/mohw-qa-{연도}.json, data/gukgam/mohw-qa-index.json
 """
-import os, re, io, json, time, datetime
+import os, re, io, json, time, datetime, hashlib
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -53,11 +53,37 @@ def load(name):
         return json.load(f)
 
 
+PDF_CACHE = os.environ.get("GUKGAM_PDF_CACHE", "/tmp/gukgam-pdfcache")
+
+
+def pdf_bytes(url):
+    """PDF 원문을 받아온다. 서버가 연결을 끊는 일이 잦아 재시도 + 디스크 캐시."""
+    import time
+    os.makedirs(PDF_CACHE, exist_ok=True)
+    path = os.path.join(PDF_CACHE, hashlib.md5(url.encode()).hexdigest() + ".pdf")
+    if os.path.exists(path) and os.path.getsize(path) > 1000:
+        with open(path, "rb") as f:
+            return f.read()
+    last = None
+    for i in range(5):
+        try:
+            req = urllib.request.Request(url, headers=UA)
+            with urllib.request.urlopen(req, timeout=180) as r:
+                buf = r.read()
+            if len(buf) > 1000:
+                with open(path, "wb") as f:
+                    f.write(buf)
+                return buf
+            last = RuntimeError("too small: %d bytes" % len(buf))
+        except Exception as e:          # noqa: BLE001
+            last = e
+        time.sleep(2 ** i)
+    raise last
+
+
 def pdf_text(url):
     from pypdf import PdfReader
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=120) as r:
-        reader = PdfReader(io.BytesIO(r.read()))
+    reader = PdfReader(io.BytesIO(pdf_bytes(url)))
     return "\n".join((p.extract_text() or "") for p in reader.pages)
 
 

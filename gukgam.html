@@ -128,6 +128,7 @@
       <a href="gukgam-health.html">보건복지 트랙 (복지부·질병청·심평원)</a>
       <a href="gukgam-mohw.html">복지부 Q&amp;A</a>
       <a href="gukgam-kdca.html">질병청 Q&amp;A</a>
+      <a href="gukgam-mfds.html">식약처 Q&amp;A</a>
       <a href="gukgam-prep.html">답변 대비 워크북</a>
       <a href="gukgam-guide.html">의원별 가이드북</a>
     </div>
@@ -156,6 +157,7 @@
       <span class="typebtns" id="tlTabs" style="display:inline-flex;gap:6px;">
         <button data-a="kdca" class="on">🦠 질병청</button>
         <button data-a="mohw">🏥 복지부</button>
+        <button data-a="mfds">💊 식약처</button>
       </span>
       <span style="font-size:.75rem;color:var(--muted);font-weight:400;">2020~2025 · 질의 발언 자동 분석</span>
     </h2>
@@ -288,7 +290,8 @@
     fetch('data/gukgam/kdca-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
     fetch('data/gukgam/mohw-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
     fetch('data/gukgam/highlights.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}),
-    fetch('data/gukgam/guides.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};})
+    fetch('data/gukgam/guides.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return {items:[]};}),
+    fetch('data/gukgam/mfds-timeline.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(res){
     var TAGS={};
     ((res[11]||{}).items||[]).forEach(function(g){ if(g.tag) TAGS[g.name]=g.tag; });
@@ -310,8 +313,8 @@
       }).join('');
     })(res[10]);
     // 이슈 연대기 (흰=여당, 검=야당 동그라미 매트릭스) — 질병청/복지부 전환
-    var TL={kdca:res[8], mohw:res[9]};
-    var QAPAGE={kdca:'gukgam-kdca.html', mohw:'gukgam-mohw.html'};
+    var TL={kdca:res[8], mohw:res[9], mfds:res[12]};
+    var QAPAGE={kdca:'gukgam-kdca.html', mohw:'gukgam-mohw.html', mfds:'gukgam-mfds.html'};
     function renderTimeline(tl, page){
       if(!tl || !(tl.issues||[]).length){ document.getElementById('tlSvg').innerHTML=''; return; }
       document.getElementById('tlSection').hidden=false;
