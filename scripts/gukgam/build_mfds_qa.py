@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-국정감사 자료 DB — 질병관리청 국감 질의·답변(Q&A) 추출기
-- 보건복지위 국정감사 회의록(제21~22대)에서 위원 발언과 질병관리청장·차장의 답변을
+국정감사 자료 DB — 식품의약품안전처 국감 질의·답변(Q&A) 추출기
+- 보건복지위 국정감사 회의록(제21~22대)에서 위원 발언과 식품의약품안전처장·차장의 답변을
   짝지어 연도별·위원별·주제별 Q&A 데이터로 만듭니다.
-- 채택 기준: ① 위원 발언에 질병청 키워드가 있거나 ② 바로 다음 발언자가 질병청 답변자인 경우.
+- 채택 기준: ① 위원 발언에 질병청 키워드가 있거나 ② 바로 다음 발언자가 식약처 답변자인 경우.
 - 처리한 회의록(conf_id)은 기록해 증분 처리합니다.
 
-실행: python3 scripts/gukgam/build_kdca_qa.py   (의존성: pypdf, 키 불필요)
-출력: data/gukgam/kdca-qa.json
+실행: python3 scripts/gukgam/build_mfds_qa.py   (의존성: pypdf, 키 불필요)
+출력: data/gukgam/mfds-qa.json
 """
 import os, re, io, json, time, datetime, hashlib
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA = os.path.join(ROOT, "data", "gukgam")
-OUT = os.path.join(DATA, "kdca-qa.json")
+OUT = os.path.join(DATA, "mfds-qa.json")
 UA = {"User-Agent": "Mozilla/5.0 (gukgam-db collector)"}
-ERAS = ("제21대", "제22대")  # 질병관리청은 2020.9 출범(21대~)
+ERAS = ("제21대", "제22대")
 
-KDCA_KW = ("질병관리청", "질병청", "질병관리본부", "방대본", "방역대책본부", "KDCA")
+MFDS_KW = ("식품의약품안전처", "식약처", "처장님", "식약청")
 # 발언자 마커 두 형태를 모두 처리: "◯남인순 위원", "◯위원장 박주민"
 SPEAKER = re.compile(
     r"◯\s*(?:(위원장|간사)\s*([가-힣]{2,4})"
@@ -33,19 +33,22 @@ def parse_mark(m):
     return (m.group(3) or "", m.group(4) or "")
 
 TOPICS = {
-    "감염병 대응": ["감염병", "코로나", "팬데믹", "방역", "엠폭스", "결핵", "인플루엔자", "홍역"],
-    "백신·예방접종": ["백신", "예방접종", "접종률", "이상반응"],
-    "백신 폐기·수급": ["폐기", "수급", "비축"],
-    "만성·희귀질환": ["만성질환", "희귀질환", "당뇨", "고혈압", "심뇌혈관"],
-    "조직·인력": ["인력", "결원", "조직", "정원", "역학조사관", "처우"],
+    "의약품 안전": ["의약품", "약사법", "허가", "부작용", "회수", "리콜", "제조소", "GMP"],
+    "마약류 관리": ["마약", "펜타닐", "프로포폴", "향정", "졸피뎀", "오남용", "마약류통합관리"],
+    "식품 안전": ["식품", "식중독", "위생", "이물", "잔류농약", "농약", "축산물", "급식"],
+    "수입식품·통관": ["수입식품", "통관", "해외직구", "검사명령", "원산지"],
+    "건강기능식품": ["건강기능식품", "건기식", "기능성", "표시광고"],
+    "의료기기": ["의료기기", "체외진단", "임플란트", "인공지능 의료기기"],
+    "화장품": ["화장품", "유해성분", "기능성화장품"],
+    "임상시험·허가심사": ["임상시험", "심사", "품목허가", "신속심사", "긴급사용"],
+    "첨단바이오·백신": ["첨단바이오", "세포치료", "유전자치료", "백신", "바이오의약품"],
+    "온라인 불법유통": ["온라인", "불법유통", "해외 플랫폼", "테무", "알리", "광고"],
+    "조직·인력": ["인력", "정원", "결원", "조직", "채용", "전문성"],
     "예산·재정": ["예산", "불용", "집행", "결산", "기금"],
-    "연구개발": ["연구개발", "R&D", "국립보건연구원", "치료제 개발", "임상"],
-    "정보시스템": ["시스템", "전산", "데이터", "정보화"],
-    "검역·해외유입": ["검역", "해외유입", "입국"],
-    "피해보상": ["피해보상", "이상사례", "인과성"],
-    "지역·지자체 협력": ["지자체", "보건소", "권역"],
-    "미래 팬데믹 대비": ["신종", "대비", "훈련", "비상"],
+    "위해평가·기준": ["위해평가", "기준규격", "잔류기준", "안전기준"],
+    "제네릭·약가": ["제네릭", "복제약", "공동생동", "약가", "품절"],
 }
+
 
 
 def load(name):
@@ -120,8 +123,8 @@ def extract(text, date):
         q = text[endpos:end]
         nxt = marks[i + 1] if i + 1 < len(marks) else None
         # "◯질병관리청장 지영미"는 name='질병관리'+role='청장'으로 잡히므로 합쳐서 판정
-        nxt_is_kdca = bool(nxt) and (nxt[2] + nxt[3]).startswith("질병관리청")
-        has_kw = any(k in q for k in KDCA_KW)
+        nxt_is_kdca = bool(nxt) and (nxt[2] + nxt[3]).startswith("식품의약품안전처")
+        has_kw = any(k in q for k in MFDS_KW)
         if not (has_kw or nxt_is_kdca):
             continue
         answer = ""
@@ -129,7 +132,7 @@ def extract(text, date):
         j, taken = i + 1, 0
         while j < len(marks) and taken < 3:
             npos, nend, nname, nrole = marks[j]
-            if (nname + nrole).startswith("질병관리청"):
+            if (nname + nrole).startswith("식품의약품안전처"):
                 seg_end = marks[j + 1][0] if j + 1 < len(marks) else len(text)
                 answer += " " + text[nend:seg_end]
                 taken += 1
@@ -186,7 +189,7 @@ def main():
     items.sort(key=lambda x: (x["date"], x["member"]))
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump({"updated": datetime.date.today().isoformat(),
-                   "source": "보건복지위 국정감사 회의록(제21~22대) 발언 자동 추출",
+                   "source": "보건복지위 국정감사 회의록(제21~22대) 식약처 발언 자동 추출",
                    "processed": sorted(processed), "items": items}, f, ensure_ascii=False, indent=1)
     print(f"완료: 회의록 {new}건 신규 처리, Q&A 누적 {len(items)}건")
     return 0
