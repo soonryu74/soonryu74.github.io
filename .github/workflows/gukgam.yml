@@ -53,6 +53,9 @@ jobs:
       - name: 보건복지부 Q&A 추출 (국감 회의록, 증분)
         run: python3 scripts/gukgam/build_mohw_qa.py
 
+      - name: 식품의약품안전처 Q&A 추출 (국감 회의록, 증분)
+        run: python3 scripts/gukgam/build_mfds_qa.py
+
       - name: 하이라이트·의원별 가이드북 생성
         run: |
           python3 scripts/gukgam/build_highlights.py
@@ -65,6 +68,7 @@ jobs:
         run: |
           python3 scripts/gukgam/build_timeline.py
           GUKGAM_TL_AGENCY=mohw python3 scripts/gukgam/build_timeline.py
+          GUKGAM_TL_AGENCY=mfds python3 scripts/gukgam/build_timeline.py
 
       - name: 변경 시 커밋
         run: |

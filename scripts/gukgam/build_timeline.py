@@ -10,7 +10,8 @@
 
 실행: ASSEMBLY_API_KEY=키 python3 scripts/gukgam/build_timeline.py            # 질병청(기본)
       GUKGAM_TL_AGENCY=mohw ASSEMBLY_API_KEY=키 python3 scripts/gukgam/build_timeline.py  # 복지부
-출력: data/gukgam/kdca-timeline.json 또는 mohw-timeline.json
+      GUKGAM_TL_AGENCY=mfds ASSEMBLY_API_KEY=키 python3 scripts/gukgam/build_timeline.py  # 식약처
+출력: data/gukgam/kdca-timeline.json / mohw-timeline.json / mfds-timeline.json
 """
 import os, json, time, datetime
 import urllib.request, urllib.parse
@@ -94,8 +95,8 @@ def fetch_party_by_name(name):
 
 
 def load_qa():
-    if AGENCY == "kdca":
-        with open(os.path.join(DATA, "kdca-qa.json"), encoding="utf-8") as f:
+    if AGENCY in ("kdca", "mfds"):
+        with open(os.path.join(DATA, f"{AGENCY}-qa.json"), encoding="utf-8") as f:
             return json.load(f)["items"]
     # mohw: 연도별 샤드 병합
     import glob

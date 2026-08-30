@@ -61,3 +61,39 @@ Branch: **main / (root)** → Save. 1~2분 뒤 `https://<조직명>.github.io` �
 - 조직 생성·저장소 모두 **무료**이며, 나중에 커스텀 도메인(예: `gukgam.kr`)을
   붙이고 싶어지면 이 저장소에 CNAME만 추가하면 됩니다.
 - 조직 이름은 나중에 바꿀 수 있지만 주소가 함께 바뀌므로 처음에 신중히 정하세요.
+
+---
+
+## 새 세션에서 조직 저장소로 옮기기 (실행 절차)
+
+조직 `gukgam-db`, 저장소 `gukgam-db.github.io` 가 이미 만들어져 있다는 전제.
+
+### 1) 새 Claude Code 세션 시작
+claude.ai/code → 새 세션 → 저장소로 **`gukgam-db/gukgam-db.github.io`** 선택.
+목록에 안 보이면 GitHub 연결 화면에서 조직 `gukgam-db` 접근을 허용한 뒤 다시 선택.
+
+### 2) 새 세션에 아래 지시문을 그대로 붙여넣기
+
+```
+이 저장소는 국정감사 자료 DB를 서비스할 GitHub Pages 사이트다. 아래를 수행해라.
+
+1. 공개 저장소 https://github.com/soonryu74/soonryu74.github.io 를 /tmp/src 로 clone.
+2. bash /tmp/src/scripts/gukgam/export_standalone.sh /tmp/bundle 실행.
+3. /tmp/bundle 의 내용 전부를 이 저장소 루트에 복사하고 main 브랜치로 커밋·푸시.
+   (.nojekyll, index.html, gukgam*.html, data/gukgam/, scripts/gukgam/,
+    .github/workflows/gukgam.yml, README.md 포함)
+4. 푸시 후 Settings → Pages 에서 "Deploy from a branch / main / (root)" 로
+   설정해야 한다는 안내와, Settings → Secrets and variables → Actions 에
+   ASSEMBLY_API_KEY 를 등록해야 자동 갱신이 돈다는 안내를 알려줘라.
+```
+
+### 3) 푸시 후 저장소 설정 (사람이 직접)
+- **Settings → Pages** → Source: `Deploy from a branch`, Branch: `main` / `/(root)` → Save
+- **Settings → Secrets and variables → Actions → New repository secret**
+  - Name: `ASSEMBLY_API_KEY`
+  - Secret: 열린국회정보 인증키
+- 몇 분 뒤 **https://gukgam-db.github.io/** 접속 확인
+
+### 4) 기존 사이트
+`soonryu74.github.io` 의 부동산 사이트와 국감 페이지는 그대로 둔다.
+양쪽이 각자 워크플로로 갱신되며, 원본 저장소가 계속 기준(master copy)이다.
