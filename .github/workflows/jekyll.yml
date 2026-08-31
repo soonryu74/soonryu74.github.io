@@ -1,7 +1,9 @@
 name: Jekyll Site CI
 
 # 봇(GITHUB_TOKEN)이 만든 데이터 갱신 커밋은 push 이벤트로 이 워크플로를 트리거하지
-# 못하므로(깃허브 재귀 방지 정책), 데이터 수집 워크플로가 끝나면 workflow_run으로도 배포한다.
+# 못한다(깃허브 재귀 방지 정책). 그래서 데이터를 커밋·push하는 워크플로가 끝나면
+# workflow_run으로도 배포한다. 아래 목록은 .github/workflows 중 git push를 하는 전부이며,
+# 새 수집 워크플로를 추가하면 여기에도 이름을 그대로 추가해야 한다.
 on:
   push:
     branches:
@@ -10,8 +12,16 @@ on:
     workflows:
       - "실거래가 자동 갱신 (구리시)"
       - "부동산 뉴스·정책 자동 수집"
+      - "국정감사 자료 DB 자동 갱신"
+      - "상가 상권정보 자동 갱신 (입지분석)"
+      - "단지 좌표 미리 계산 (지도)"
     types: [completed]
   workflow_dispatch:
+
+# 여러 수집 워크플로가 비슷한 시각에 끝나면 배포가 겹친다 — 최신 것만 남긴다.
+concurrency:
+  group: pages-deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:

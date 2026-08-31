@@ -234,6 +234,7 @@ tr:last-child td{border-bottom:none}
     if(eok) return eok+"억";
     return rest.toLocaleString("ko-KR")+"만";
   }
+  function fmtArea(a){ return (Math.round(a*10)/10).toString().replace(/\.0$/,""); }
   function fmtDate(d){ return (d.getMonth()+1)+"월 "+d.getDate()+"일"; }
   function parseD(s){ var p=s.split("-"); return new Date(+p[0],+p[1]-1,+p[2]); }
   function copyURL(btn){
@@ -320,7 +321,7 @@ tr:last-child td{border-bottom:none}
     k.innerHTML=
       "<div class='kpi'><div class='k-label'>최근 4주 매매 거래</div><div class='k-value'>"+last4.length+"건</div><div class='k-note'><span class='up'>"+diffTxt+"</span></div></div>"+
       "<div class='kpi'><div class='k-label'>평균 거래가</div><div class='k-value'>"+(last4.length?fmtMan(avg):"—")+"</div><div class='k-note'>최근 4주 · 전체 면적 평균</div></div>"+
-      "<div class='kpi'><div class='k-label'>최고가 거래</div><div class='k-value'>"+(top?fmtMan(top.price):"—")+"</div><div class='k-note'>"+(top?top.name+" 전용 "+top.area+"㎡":"")+"</div></div>";
+      "<div class='kpi'><div class='k-label'>최고가 거래</div><div class='k-value'>"+(top?fmtMan(top.price):"—")+"</div><div class='k-note'>"+(top?top.name+" 전용 "+fmtArea(top.area)+"㎡":"")+"</div></div>";
 
     /* 주간 거래량 차트 (12주) */
     var weeks=[]; // oldest→newest
@@ -359,7 +360,7 @@ tr:last-child td{border-bottom:none}
     recent.forEach(function(x){
       html+="<tr><td>"+x.date.slice(5).replace("-","/")+"</td>"+
         "<td><span class='apt'></span><span class='dong'>"+x.dong+"</span></td>"+
-        "<td class='num'>"+x.area+"㎡</td><td class='num'>"+x.floor+"층</td>"+
+        "<td class='num'>"+fmtArea(x.area)+"㎡</td><td class='num'>"+x.floor+"층</td>"+
         "<td class='num'><b>"+fmtMan(x.price)+"</b></td></tr>";
     });
     tb.innerHTML="<thead><tr><th>계약일</th><th>단지</th><th class='num'>전용</th><th class='num'>층</th><th class='num'>거래가</th></tr></thead><tbody>"+html+"</tbody>";
