@@ -95,6 +95,10 @@ FIND_KEYS = [
 # 순서가 곧 우선순위다. 접종 도입 요구는 백신, 질환 관리·감시 요구는 질환 분류로 간다.
 PRIORITY_KEYS = [
     ("검역", ["검역", "선박위생", "국립검역소", "공항만", "항공기 내 위생", "관능검사"]),
+    # 신종·고위험 감염병은 백신이 소재로 언급돼도 주제는 감염병 대비다.
+    # ("조류인플루엔자 백신 … 제1급 니파바이러스 대비를 철저히 할 것")
+    ("감염병·방역", ["니파", "신종감염병", "신종 감염병", "제1급", "1급 감염병",
+                 "고위험병원체", "인수공통"]),
     ("백신·예방접종", ["백신", "예방접종", "접종률", "이상반응", "NIP", "항체 접종"]),
     ("결핵", ["결핵", "국립마산병원", "국립목포병원"]),
     ("성매개감염병", ["HIV", "에이즈", "후천성면역결핍", "매독", "성매개", "성병", "클라미디아"]),
@@ -118,24 +122,30 @@ ACT_RULES = [
 
 
 def classify(text):
-    """지적사항 → (분류 키워드, 요구 강도)"""
-    best = None
+    """지적사항 → (분류 키워드, 요구 강도, 분류 신뢰도 high|low|None)"""
+    # 분류와 함께 '얼마나 믿을 만한가'를 같이 낸다.
+    # 근거가 한 단어뿐인 분류가 전체의 절반이라, 이를 확실한 분류와 똑같이
+    # 선명하게 보여주면 오분류 하나가 사이트 전체의 신뢰를 깎는다.
+    best, conf = None, None
     for label, kws in PRIORITY_KEYS:
         if any(k in text for k in kws):
-            best = label
+            best, conf = label, "high"      # 소관이 분명한 우선규칙
             break
     if best is None:
-        best_c = 0
-        for label, kws in FIND_KEYS:
-            c = sum(text.count(k) for k in kws)
-            if c > best_c:
-                best, best_c = label, c
+        ranked = sorted(((sum(text.count(k) for k in kws), label) for label, kws in FIND_KEYS),
+                        key=lambda x: -x[0])
+        if ranked and ranked[0][0] > 0:
+            top = ranked[0][0]
+            second = ranked[1][0] if len(ranked) > 1 else 0
+            best = ranked[0][1]
+            # 근거가 2회 이상이고 2위와 벌어져야 '확실'로 본다
+            conf = "high" if (top >= 2 and top > second) else "low"
     act = None
     for label, kws in ACT_RULES:
         if any(k in text for k in kws):
             act = label
             break
-    return best, act
+    return best, act, conf
 
 
 def parse(text):
@@ -154,9 +164,9 @@ def parse(text):
         if buf is not None:
             t = re.sub(r"\s+", " ", buf).strip()
             if len(t) > 8:
-                key, act = classify(t)
+                key, act, conf = classify(t)
                 items.append({"group": group, "agency": agency, "dept": dept, "topic": topic,
-                              "key": key, "act": act, "text": t})
+                              "key": key, "key_conf": conf, "act": act, "text": t})
         buf = None
 
     for raw in sec.split("\n"):
