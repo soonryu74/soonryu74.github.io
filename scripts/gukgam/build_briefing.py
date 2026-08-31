@@ -74,20 +74,30 @@ def jaccard(a, b):
     return i / (len(a) + len(b) - i)
 
 
-def trend(series, years):
-    """앞 절반 대비 뒤 절반 평균으로 상승/하락 판정. 표본이 적으면 판정하지 않는다."""
+SHARE_UP, SHARE_DOWN = 0.25, -0.25   # 비중 기준이라 건수 기준보다 문턱을 낮게 둔다
+
+
+def trend(series, years, totals):
+    """앞 절반 대비 뒤 절반 평균으로 상승/하락 판정.
+
+    반드시 '그해 전체 질의 중 비중'으로 비교한다. 건수로 보면 전체 질의량이
+    늘어난 것(복지부는 2020년 822건 → 2025년 1410건, +56%)에 휩쓸려
+    제자리인 주제까지 전부 '늘고 있음'으로 찍힌다.
+
+    반환: (방향, 비중 증감률) — 방향이 None이어도 증감률은 돌려줘서
+    화면이 빈칸 대신 '변화 없음'을 숫자와 함께 보여줄 수 있게 한다.
+    """
     vals = [series.get(y, 0) for y in years]
     if sum(vals) < 8 or len(years) < 4:
-        return None
+        return None, None            # 표본 부족 — 판정하지 않는다
+    shares = [(series.get(y, 0) / totals[y]) if totals.get(y) else 0.0 for y in years]
     h = len(years) // 2
-    old = sum(vals[:h]) / h
-    new = sum(vals[h:]) / (len(years) - h)
-    if old == 0 and new == 0:
-        return None
+    old = sum(shares[:h]) / h
+    new = sum(shares[h:]) / (len(years) - h)
     if old == 0:
-        return "up"
+        return ("up", None) if new > 0 else (None, None)
     r = (new - old) / old
-    return "up" if r >= 0.4 else ("down" if r <= -0.4 else None)
+    return ("up" if r >= SHARE_UP else ("down" if r <= SHARE_DOWN else None)), round(r, 3)
 
 
 def main():
@@ -194,11 +204,13 @@ def main():
                     y = q.get("year")
                     for tp in (q.get("topics") or []):
                         mat[tp][int(y)] += 1
+                yr_tot = collections.Counter(int(q["year"]) for q in qa if q.get("year"))
                 tr = []
                 for tp, ser in mat.items():
                     s = {y: ser.get(y, 0) for y in yrs}
+                    d, delta = trend(s, yrs, yr_tot)
                     tr.append({"topic": tp, "series": s, "total": sum(s.values()),
-                               "dir": trend(s, yrs)})
+                               "dir": d, "share_delta": delta})
                 tr.sort(key=lambda x: -x["total"])
                 rec["qa_years"] = yrs
                 rec["topics"] = tr[:12]
