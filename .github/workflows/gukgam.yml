@@ -73,6 +73,9 @@ jobs:
           GUKGAM_TL_AGENCY=mohw python3 scripts/gukgam/build_timeline.py
           GUKGAM_TL_AGENCY=mfds python3 scripts/gukgam/build_timeline.py
 
+      - name: 데이터 자가 점검 (경고는 로그와 healthcheck.json에 남는다)
+        run: python3 scripts/gukgam/healthcheck.py
+
       - name: 변경 시 커밋
         run: |
           if git diff --quiet -- data/gukgam; then
