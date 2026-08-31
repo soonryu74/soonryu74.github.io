@@ -38,6 +38,7 @@ cat > "$OUT/README.md" <<'MD'
 | `gukgam-health.html` | 보건복지 트랙 — 기관 지도·위원·기관별 자료 |
 | `gukgam-mohw.html` | 보건복지부 국감 Q&A |
 | `gukgam-kdca.html` | 질병관리청 국감 Q&A |
+| `gukgam-mfds.html` | 식품의약품안전처 국감 Q&A |
 | `gukgam-prep.html` | 답변 대비 워크북 — 지적사항 전수·예상질의·리허설 |
 | `gukgam-guide.html` | 의원별 답변 가이드북 |
 
