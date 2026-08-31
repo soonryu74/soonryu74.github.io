@@ -426,7 +426,8 @@
       "2025": 242
      },
      "total": 1213,
-     "dir": "up"
+     "dir": null,
+     "share_delta": -0.033
     },
     {
      "topic": "연말정산·재정",
@@ -439,7 +440,8 @@
       "2025": 160
      },
      "total": 815,
-     "dir": "up"
+     "dir": null,
+     "share_delta": -0.09
     },
     {
      "topic": "장애인",
@@ -452,7 +454,8 @@
       "2025": 171
      },
      "total": 603,
-     "dir": "up"
+     "dir": null,
+     "share_delta": 0.121
     },
     {
      "topic": "필수·지역의료",
@@ -465,7 +468,8 @@
       "2025": 78
      },
      "total": 488,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 0.479
     },
     {
      "topic": "노인·돌봄",
@@ -478,7 +482,8 @@
       "2025": 110
      },
      "total": 438,
-     "dir": "up"
+     "dir": null,
+     "share_delta": 0.133
     },
     {
      "topic": "연금",
@@ -491,7 +496,8 @@
       "2025": 66
      },
      "total": 362,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 0.355
     },
     {
      "topic": "의약품·제약",
@@ -504,7 +510,8 @@
       "2025": 66
      },
      "total": 353,
-     "dir": null
+     "dir": null,
+     "share_delta": -0.235
     },
     {
      "topic": "의사인력·의대정원",
@@ -517,7 +524,8 @@
       "2025": 63
      },
      "total": 343,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 1.79
     },
     {
      "topic": "저출산·보육",
@@ -530,7 +538,8 @@
       "2025": 28
      },
      "total": 340,
-     "dir": "down"
+     "dir": "down",
+     "share_delta": -0.64
     },
     {
      "topic": "정신건강·자살",
@@ -543,7 +552,8 @@
       "2025": 57
      },
      "total": 246,
-     "dir": "up"
+     "dir": null,
+     "share_delta": 0.129
     },
     {
      "topic": "공공의료",
@@ -556,7 +566,8 @@
       "2025": 55
      },
      "total": 237,
-     "dir": "up"
+     "dir": null,
+     "share_delta": -0.214
     },
     {
      "topic": "아동·청소년",
@@ -569,7 +580,8 @@
       "2025": 47
      },
      "total": 226,
-     "dir": null
+     "dir": "down",
+     "share_delta": -0.327
     }
    ],
    "members": [
@@ -894,7 +906,8 @@
       "2025": 150
      },
      "total": 801,
-     "dir": null
+     "dir": null,
+     "share_delta": -0.132
     },
     {
      "topic": "식품 안전",
@@ -907,7 +920,8 @@
       "2025": 110
      },
      "total": 579,
-     "dir": null
+     "dir": null,
+     "share_delta": 0.052
     },
     {
      "topic": "마약류 관리",
@@ -920,7 +934,8 @@
       "2025": 64
      },
      "total": 427,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 0.701
     },
     {
      "topic": "온라인 불법유통",
@@ -933,7 +948,8 @@
       "2025": 61
      },
      "total": 224,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 0.418
     },
     {
      "topic": "임상시험·허가심사",
@@ -946,7 +962,8 @@
       "2025": 24
      },
      "total": 155,
-     "dir": null
+     "dir": null,
+     "share_delta": -0.147
     },
     {
      "topic": "조직·인력",
@@ -959,7 +976,8 @@
       "2025": 32
      },
      "total": 123,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 0.358
     },
     {
      "topic": "첨단바이오·백신",
@@ -972,7 +990,8 @@
       "2025": 2
      },
      "total": 121,
-     "dir": "down"
+     "dir": "down",
+     "share_delta": -0.885
     },
     {
      "topic": "예산·재정",
@@ -985,7 +1004,8 @@
       "2025": 19
      },
      "total": 99,
-     "dir": null
+     "dir": null,
+     "share_delta": 0.005
     },
     {
      "topic": "화장품",
@@ -998,7 +1018,8 @@
       "2025": 19
      },
      "total": 92,
-     "dir": null
+     "dir": null,
+     "share_delta": 0.209
     },
     {
      "topic": "의료기기",
@@ -1011,7 +1032,8 @@
       "2025": 6
      },
      "total": 81,
-     "dir": "down"
+     "dir": "down",
+     "share_delta": -0.488
     },
     {
      "topic": "수입식품·통관",
@@ -1024,7 +1046,8 @@
       "2025": 8
      },
      "total": 78,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 0.783
     },
     {
      "topic": "건강기능식품",
@@ -1037,7 +1060,8 @@
       "2025": 15
      },
      "total": 76,
-     "dir": null
+     "dir": null,
+     "share_delta": 0.19
     }
    ],
    "members": [
@@ -1567,7 +1591,8 @@
       "2025": 51
      },
      "total": 398,
-     "dir": "down"
+     "dir": "up",
+     "share_delta": 0.306
     },
     {
      "topic": "백신·예방접종",
@@ -1580,7 +1605,8 @@
       "2025": 20
      },
      "total": 390,
-     "dir": "down"
+     "dir": "down",
+     "share_delta": -0.433
     },
     {
      "topic": "예산·재정",
@@ -1593,7 +1619,8 @@
       "2025": 13
      },
      "total": 89,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 2.934
     },
     {
      "topic": "피해보상",
@@ -1606,7 +1633,8 @@
       "2025": 3
      },
      "total": 75,
-     "dir": "down"
+     "dir": "down",
+     "share_delta": -0.467
     },
     {
      "topic": "정보시스템",
@@ -1619,7 +1647,8 @@
       "2025": 4
      },
      "total": 73,
-     "dir": "down"
+     "dir": null,
+     "share_delta": -0.181
     },
     {
      "topic": "조직·인력",
@@ -1632,7 +1661,8 @@
       "2025": 7
      },
      "total": 67,
-     "dir": "down"
+     "dir": null,
+     "share_delta": 0.214
     },
     {
      "topic": "지역·지자체 협력",
@@ -1645,7 +1675,8 @@
       "2025": 4
      },
      "total": 61,
-     "dir": "down"
+     "dir": "down",
+     "share_delta": -0.257
     },
     {
      "topic": "미래 팬데믹 대비",
@@ -1658,7 +1689,8 @@
       "2025": 10
      },
      "total": 48,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 2.3
     },
     {
      "topic": "만성·희귀질환",
@@ -1671,7 +1703,8 @@
       "2025": 9
      },
      "total": 35,
-     "dir": "up"
+     "dir": "up",
+     "share_delta": 7.237
     },
     {
      "topic": "연구개발",
@@ -1684,7 +1717,8 @@
       "2025": 6
      },
      "total": 27,
-     "dir": null
+     "dir": "up",
+     "share_delta": 0.932
     },
     {
      "topic": "검역·해외유입",
@@ -1697,7 +1731,8 @@
       "2025": 13
      },
      "total": 26,
-     "dir": null
+     "dir": "up",
+     "share_delta": 1.508
     },
     {
      "topic": "백신 폐기·수급",
@@ -1710,7 +1745,8 @@
       "2025": 0
      },
      "total": 17,
-     "dir": "down"
+     "dir": "down",
+     "share_delta": -0.687
     }
    ],
    "members": [
