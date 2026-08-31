@@ -645,13 +645,20 @@
           h+='</tbody></table></div>';
         }
         if(a.members&&a.members.length){
-          h+='<div class="br-sec">주로 묻는 위원</div><div>';
-          a.members.slice(0,6).forEach(function(m,i,arr){
+          var ef=a.members_era_from||2024, ys2=a.qa_years||[];
+          h+='<div class="br-sec">우리 기관에 묻는 위원 '+
+             '<span style="font-weight:600;color:var(--muted);">현 위원만 · 막대는 '+ef+'년 이후</span></div>'+
+             '<div>';
+          var mx=Math.max.apply(null,a.members.map(function(m){ return m.recent||0; }))||1;
+          a.members.slice(0,6).forEach(function(m){
+            var cum=(m.n>(m.recent||0))?' <span style="color:var(--muted);font-size:.76rem;">누적 '+m.n+'</span>':'';
             h+='<div class="barrow"><span class="nm">'+esc(m.name)+'</span>'+
-               '<span class="bar"><i style="width:'+Math.round(100*m.n/arr[0].n)+'%"></i></span>'+
-               '<span class="n">'+m.n+'회</span></div>';
+               '<span class="bar"><i style="width:'+Math.round(100*(m.recent||0)/mx)+'%"></i></span>'+
+               '<span class="n">'+(m.recent||0)+'회'+cum+'</span></div>';
           });
-          h+='</div>';
+          h+='</div><div style="font-size:.76rem;color:var(--muted);margin:6px 2px 0;">'+
+             '회의록 '+(ys2[0]||'')+'~'+(ys2[ys2.length-1]||'')+' 중 이 기관 대상 질의만 셉니다. '+
+             '위원 카드의 ‘국감 발언’은 전 기관·전 대수 발언 수라 값이 다릅니다.</div>';
         }
 
         h+='<div class="br-sec">실무자가 바로 쓸 것</div>';
