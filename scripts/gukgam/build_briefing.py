@@ -37,6 +37,7 @@ QA_FILES = {
 MIN_ITEMS = 15          # 이보다 적은 기관은 브리핑을 만들지 않는다(표본 부족)
 REPEAT_SIM = 0.30       # 반복 지적으로 볼 문장 유사도(주제어 기준)
 TOP_REPEAT = 25         # 기관당 반복 지적 보관 수
+ERA_FROM = 2024         # 현 대수(제22대) 시작 연도 — 이 이후가 "지금 물을 사람"이다
 
 
 def load(name):
@@ -96,6 +97,9 @@ def main():
 
     F = {y: (load("findings-%d.json" % y) or {}).get("items", []) for y in FIND_YEARS}
     SUMM = (load("summaries.json") or {}).get("items", {})
+    # 회의록은 제21대부터 쌓여 있어 누적만 세면 이미 위원이 아닌 사람이 상위에 온다.
+    # 국감 대비는 "지금 우리를 물을 사람"을 알아야 하므로 현 위원으로 좁힌다.
+    CUR_MEM = {m["name"] for m in (load("members.json") or {}).get("items", []) if m.get("name")}
 
     # 기관별 지적 건수 / 순위
     counts = {y: collections.Counter(i.get("agency") or "" for i in F[y]) for y in FIND_YEARS}
@@ -198,9 +202,19 @@ def main():
                 tr.sort(key=lambda x: -x["total"])
                 rec["qa_years"] = yrs
                 rec["topics"] = tr[:12]
-                rec["members"] = [{"name": n, "n": c} for n, c in
-                                  collections.Counter(q.get("member") or "" for q in qa
-                                                      if q.get("member")).most_common(8)]
+                cum = collections.Counter(); rec_c = collections.Counter()
+                for q in qa:
+                    nm = q.get("member")
+                    if not nm or (CUR_MEM and nm not in CUR_MEM):
+                        continue
+                    cum[nm] += 1
+                    if int(q.get("year") or 0) >= ERA_FROM:
+                        rec_c[nm] += 1
+                # 현 대수 질의 수를 우선, 같으면 누적 순 — 예측력이 있는 쪽을 앞세운다
+                rec["members"] = [{"name": n, "recent": rec_c.get(n, 0), "n": cum[n]}
+                                  for n in sorted(cum, key=lambda x: (-rec_c.get(x, 0), -cum[x]))][:8]
+                rec["members_era_from"] = ERA_FROM
+                rec["members_note"] = "현 위원 기준"
                 rec["qa_total"] = len(qa)
         out_ag[agency] = rec
 
