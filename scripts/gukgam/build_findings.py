@@ -121,6 +121,40 @@ ACT_RULES = [
 ]
 
 
+# 지적사항을 부를 이름 — 부서 배분·자료요구 회신에서 "몇 번 건"으로 지목하려면
+# 안정적인 번호가 있어야 한다. 결과보고서는 확정 문서라 본문 등장 순서가 바뀌지
+# 않으므로, 연도·기관별 등장 순번을 번호로 쓴다.
+AGENCY_SHORT = {
+    "보건복지부": "복지부", "질병관리청": "질병청", "식품의약품안전처": "식약처",
+    "국민건강보험공단": "건보공단", "건강보험심사평가원": "심평원",
+    "국민연금공단": "연금공단", "한국보건산업진흥원": "보산진",
+    "한국사회보장정보원": "사보정원", "한국보건복지인재원": "인재원",
+    "한국노인인력개발원": "노인인력원", "한국장애인개발원": "장애인개발원",
+    "아동권리보장원": "아동권리원", "대한적십자사": "적십자",
+    "대한결핵협회": "결핵협회", "국립암센터": "암센터",
+}
+
+
+def short_agency(name):
+    n = (name or "").strip()
+    if n in AGENCY_SHORT:
+        return AGENCY_SHORT[n]
+    for suf in ("주식회사", "재단법인", "사단법인"):
+        n = n.replace(suf, "")
+    return n[:6] or "기타"
+
+
+def assign_ids(items, year):
+    """연도·기관별 등장 순번으로 번호를 매긴다. 예: 2025-질병청-014"""
+    seq = {}
+    for it in items:
+        a = short_agency(it.get("agency"))
+        seq[a] = seq.get(a, 0) + 1
+        it["no"] = seq[a]
+        it["id"] = "%s-%s-%03d" % (year, a, seq[a])
+    return items
+
+
 def classify(text):
     """지적사항 → (분류 키워드, 요구 강도, 분류 신뢰도 high|low|None)"""
     # 분류와 함께 '얼마나 믿을 만한가'를 같이 낸다.
@@ -208,7 +242,7 @@ def main():
     else:
         rpt = find_report()
     print(f"대상: {rpt['year']}년 {rpt['committee']} 결과보고서")
-    items = parse(pdf_text(rpt["pdf"]))
+    items = assign_ids(parse(pdf_text(rpt["pdf"])), rpt["year"])
     out = {
         "updated": datetime.date.today().isoformat(),
         "year": rpt["year"],
