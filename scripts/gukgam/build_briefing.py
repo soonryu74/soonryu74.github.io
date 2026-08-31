@@ -107,6 +107,10 @@ def main():
 
     F = {y: (load("findings-%d.json" % y) or {}).get("items", []) for y in FIND_YEARS}
     SUMM = (load("summaries.json") or {}).get("items", {})
+    # summaries 의 when 은 PDF 본문에서 긁은 값이라 "불출석을 양해하였다는" 같은
+    # 문장이 들어오는 경우가 있다. 회의 날짜는 회의록 메타데이터(API)를 기준으로 잡는다.
+    URL2DATE = {m["url"]: m.get("date") for m in (load("minutes.json") or {}).get("items", [])
+                if m.get("url")}
     # 회의록은 제21대부터 쌓여 있어 누적만 세면 이미 위원이 아닌 사람이 상위에 온다.
     # 국감 대비는 "지금 우리를 물을 사람"을 알아야 하므로 현 위원으로 좁힌다.
     CUR_MEM = {m["name"] for m in (load("members.json") or {}).get("items", []) if m.get("name")}
@@ -163,17 +167,21 @@ def main():
         # 국정감사계획서(감사일정×피감기관 표)는 첨부파일이라 아직 파싱하지 않는다.
         # 대신 지난 회의록에 붙은 피감기관 정보로 실제 감사받은 날을 되짚는다.
         # 국감 일정은 해마다 시기가 거의 고정이라 이것만으로도 준비 시점을 잡을 수 있다.
-        days = []
-        for rec_ in (SUMM or {}).values():
+        days, seen = [], set()
+        for url_, rec_ in (SUMM or {}).items():
             if rec_.get("kind") != "minutes":
                 continue
             tg = rec_.get("targets") or []
             if not any(agency in t for t in tg):
                 continue
-            m = re.search(r"(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일", rec_.get("when") or "")
-            if m:
-                days.append({"date": "%s-%02d-%02d" % (m.group(1), int(m.group(2)), int(m.group(3))),
-                             "with": [t for t in tg if agency not in t][:4]})
+            d_ = URL2DATE.get(url_)
+            if not d_:   # 메타데이터에 없으면 본문 표기로 보완
+                m = re.search(r"(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일", rec_.get("when") or "")
+                d_ = "%s-%02d-%02d" % (m.group(1), int(m.group(2)), int(m.group(3))) if m else None
+            if not d_ or d_ in seen:
+                continue
+            seen.add(d_)
+            days.append({"date": d_, "with": [t for t in tg if agency not in t][:4]})
         days.sort(key=lambda x: x["date"])
 
         rec = {
