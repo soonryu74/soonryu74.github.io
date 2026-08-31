@@ -170,6 +170,8 @@
   .dir{ font-size:.72rem; font-weight:800; border-radius:6px; padding:1px 7px; white-space:nowrap; }
   .dir.up{ background:#fbeaea; color:#a03030; }
   .dir.down{ background:#eaf4f0; color:#136350; }
+  .dup{ font-size:.7rem; font-weight:800; border-radius:6px; padding:1px 7px;
+        background:#fdf0e3; color:#8a5a17; white-space:nowrap; }  /* 전년 중복 — 증감 표시와 구분 */
   .br-fold{ margin-top:8px; }
   .br-fold summary{ cursor:pointer; font-size:.84rem; font-weight:700; color:#2a4d7d;
                     padding:9px 13px; background:#fff; border:1px solid var(--line); border-radius:10px; }
@@ -589,7 +591,7 @@
            '</div>';
         h+='<div class="t"><div class="lb">피감기관 중 순위</div><div class="vl">'+a.rank+
            '<small>위</small></div><div class="sub">브리핑 대상 '+a.rank_of+'개 기관 중</div></div>';
-        h+='<div class="t"><div class="lb">'+py+'년에도 지적된 주제</div><div class="vl">'+
+        h+='<div class="t"><div class="lb">'+py+'년과 중복된 주제</div><div class="vl">'+
            a.repeat_key_n+'<small>개</small></div><div class="sub">올해 지적 주제 '+
            a.by_key.length+'개 중</div></div>';
         h+='<div class="t"><div class="lb">계획 제출 필요</div><div class="vl">'+plan+
@@ -675,7 +677,7 @@
              a.by_key.length+'개 분류)</span></summary><div>';
           a.by_key.forEach(function(x,i,arr){
             h+='<div class="barrow"><span class="nm">'+esc(x.key)+
-               (x.repeat?' <span class="dir up" style="font-size:.68rem;">'+py+'년에도</span>':'')+
+               (x.repeat?' <span class="dup">'+py+'년과 중복</span>':'')+
                '</span><span class="bar"><i style="width:'+Math.round(100*x.n/arr[0].n)+'%"></i></span>'+
                '<span class="n">'+x.n+'건</span></div>';
           });
