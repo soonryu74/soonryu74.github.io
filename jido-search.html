@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>구리·갈매 아파트 시세 지도 (지도로 찾기) | 갈매역삼성부동산</title>
 <meta name="description" content="지도 위에서 바로 찾는 구리·갈매 아파트 실거래 시세. 가격대·평형으로 좁혀보고, 핀을 누르면 최근 실거래가가 나옵니다. 남양주 별내는 상단 메뉴에서. 갈매역삼성부동산.">
+<meta property="og:site_name" content="갈매역삼성부동산">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:type" content="website">
+<meta property="og:title" content="구리·갈매 아파트 시세 지도 (지도로 찾기) | 갈매역삼성부동산">
+<meta property="og:description" content="지도 위에서 바로 찾는 구리·갈매 아파트 실거래 시세. 가격대·평형으로 좁혀보고, 핀을 누르면 최근 실거래가가 나옵니다. 남양주 별내는 상단 메뉴에서. 갈매역삼성부동산.">
+<meta property="og:url" content="https://galmae-budongsan.com/jido-search.html">
+<meta property="og:image" content="https://galmae-budongsan.com/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="구리·갈매 아파트 시세 지도 (지도로 찾기) | 갈매역삼성부동산">
+<meta name="twitter:description" content="지도 위에서 바로 찾는 구리·갈매 아파트 실거래 시세. 가격대·평형으로 좁혀보고, 핀을 누르면 최근 실거래가가 나옵니다. 남양주 별내는 상단 메뉴에서. 갈매역삼성부동산.">
+<meta name="twitter:image" content="https://galmae-budongsan.com/assets/og-image.png">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
   :root{ --map-h: 62vh; }
@@ -118,6 +131,11 @@
     </nav>
   </div>
 </header>
+<div class="toheo-note" style="max-width:1100px;margin:10px auto 0;padding:0 18px">
+  <div style="background:#fff8e6;border:1px solid #efd98a;border-radius:12px;padding:11px 15px;font-size:.88rem;color:#5c4a17;line-height:1.5">
+    ⚠️ <b>구리시 토지거래허가구역 안내</b> — 구리시 <b>아파트 매매</b>는 <b>2026.7.5~2027.12.31</b> 기간 중 <b>계약 전 구리시청 허가</b>가 필요합니다(실거주 목적 등 요건). 계약 전 반드시 <a href="https://www.guri.go.kr" target="_blank" rel="noopener" style="color:#8a6d1a;font-weight:800">구리시청</a>·담당 공인중개사에게 확인하세요.
+  </div>
+</div>
 
 <div class="jido-wrap">
   <div class="jido-head">
@@ -172,6 +190,7 @@
 <script src="data/complexes.js"></script>
 <script src="data/guri-complexes.js"></script>
 <script src="data/byeollae-complexes.js"></script>
+<script src="data/complex-coords.js"></script><!-- 미리 계산한 단지 좌표(있으면 즉시 표시, 런타임 지오코딩 생략) -->
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0e6cb69e47426469d3e99092e2dcce1d&libraries=services&autoload=false"></script>
 <script>
 const TEL="0315754944", TELV="031-575-4944";
@@ -274,6 +293,25 @@ const BYNAME={}; DATA.forEach(d=>{ if(!BYNAME[d.name]) BYNAME[d.name]=d; });
 function tierClass(d){ if(d.region==='by')return 'by';
   const p=d.price||0; if(p<30000)return 't1'; if(p<50000)return 't2'; if(p<70000)return 't3'; return 't4'; }
 
+/* --- 좌표 캐시: 빌드시드(COORDS) + 브라우저 localStorage. 한 번 찾은 좌표는 저장해 다음부터 지오코딩 생략 --- */
+var COORD_LS='galmae_coords_v1';
+function inBox(la,lo){ return la>=37.50 && la<=37.75 && lo>=127.00 && lo<=127.30; }
+function seedPOS(){
+  // 1) 빌드 시드(window.COORDS: {단지명:[위도,경도]})
+  try{ if(window.COORDS) for(var k in COORDS){ var a=COORDS[k];
+    if(a&&a.length===2&&inBox(a[0],a[1])&&!POS[k]) POS[k]=new kakao.maps.LatLng(a[0],a[1]); } }catch(e){}
+  // 2) 사용자 브라우저 캐시(이전 방문에서 찾은 좌표)
+  try{ var s=localStorage.getItem(COORD_LS); if(s){ var o=JSON.parse(s);
+    for(var n in o){ var b=o[n]; if(b&&b.length===2&&inBox(b[0],b[1])&&!POS[n]) POS[n]=new kakao.maps.LatLng(b[0],b[1]); } } }catch(e){}
+}
+function cachePut(name, ll){
+  try{
+    var la=ll.getLat(), lo=ll.getLng(); if(!inBox(la,lo)) return;
+    var s=localStorage.getItem(COORD_LS), o=s?JSON.parse(s):{};
+    o[name]=[Math.round(la*1e6)/1e6, Math.round(lo*1e6)/1e6];
+    localStorage.setItem(COORD_LS, JSON.stringify(o));
+  }catch(e){}
+}
 /* --- 위치 찾기(도로명 우선, 없으면 장소 검색). 결과는 POS에 캐시 --- */
 function geocodeOne(d, cb){
   if(POS[d.name]){ cb(POS[d.name]); return; }
@@ -301,7 +339,7 @@ function geocodeAll(cb){
     while(active<5 && i<total){
       const d=need[i++]; active++;
       geocodeOne(d, pos=>{
-        if(pos) POS[d.name]=pos; else GEOFAIL[d.name]=1;
+        if(pos){ POS[d.name]=pos; cachePut(d.name, pos); } else GEOFAIL[d.name]=1;
         active--; done++;
         if(done%10===0) noteEl.textContent='단지 위치 확인 중… ('+done+'/'+total+')';
         if(done>=total) cb&&cb(); else pump();
@@ -428,6 +466,7 @@ function initMap(){
     ps=new kakao.maps.services.Places();
     kakao.maps.event.addListener(map,'click',closePopup);
     kakao.maps.event.addListener(map,'idle',paint);   // 확대/이동 때마다 다시 묶기
+    seedPOS();   // 미리 계산/저장된 좌표를 먼저 채워 지오코딩 호출을 최소화
     render();
   });
 }

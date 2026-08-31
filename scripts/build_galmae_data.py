@@ -56,10 +56,10 @@ def fetch_records(key, lawd=LAWD, sgg_name="구리시"):
     _force_ipv4()
     def fetch_xml(url):
         last = None
-        for attempt in range(3):            # 최대 3회 재시도
+        for attempt in range(3):            # 최대 3회 재시도 (실패 시 빠르게 포기)
             try:
                 req = urllib.request.Request(url, headers={"User-Agent": "galmae-budongsan/1.0"})
-                with urllib.request.urlopen(req, timeout=30) as r:
+                with urllib.request.urlopen(req, timeout=20) as r:
                     return ET.fromstring(r.read().decode("utf-8"))
             except Exception as e:
                 last = e
@@ -91,7 +91,9 @@ def fetch_records(key, lawd=LAWD, sgg_name="구리시"):
             if not amt.isdigit(): continue
             yy, mm, dd = txt(it,"dealYear","년"), txt(it,"dealMonth","월"), txt(it,"dealDay","일")
             if not (yy and mm and dd): continue
-            try: area = round(float(txt(it, "excluUseAr", "전용면적")))
+            # 전용면적은 소수1자리 보존 — 정수 반올림 시 84.6㎡가 85로 올라
+            # 국민주택규모(85㎡ 이하) 세금 분기점을 흐리는 것을 방지
+            try: area = round(float(txt(it, "excluUseAr", "전용면적")), 1)
             except: area = 0
             fl = txt(it, "floor", "층")
             road_nm = txt(it, "roadNm")
@@ -126,6 +128,10 @@ def rich_card(dong, name, recs, meta, cutoff):
     by_year = (m.get("buildYear") or next((r["buildYear"] for r in recs if r.get("buildYear")), "") or "")
     road = m.get("road") or next((r["road"] for r in recs if r.get("road")), "")
     recent3m = sum(1 for r in recs if r["date"] >= cutoff)
+    # 회복률·게이지는 '최근 거래된 평형' 기준으로 계산(서로 다른 평형을 섞은 오독 방지)
+    lar = by_area[latest["area"]]
+    lat_hi = max(lar, key=lambda r: r["price"])
+    lat_lo = min(lar, key=lambda r: r["price"])
     byArea = []
     for a in areas:
         ar = by_area[a]
@@ -133,13 +139,15 @@ def rich_card(dong, name, recs, meta, cutoff):
         alat = max(ar, key=lambda r: r["date"])
         byArea.append(OrderedDict([("area", a), ("n", len(ar)),
             ("min", amn["price"]), ("max", amx["price"]),
-            ("lp", alat["price"]), ("lf", alat["floor"]), ("ld", alat["date"])]))
+            ("lp", alat["price"]), ("lf", alat["floor"]), ("ld", alat["date"]),
+            ("hp", round(alat["price"] / amx["price"] * 100) if amx["price"] else 0)]))
     return OrderedDict([
         ("name", name), ("dong", dong), ("buildYear", by_year), ("areas", areas), ("road", road),
         ("count", len(recs)), ("recent3m", recent3m),
         ("min", mn["price"]), ("minDate", mn["date"]),
         ("max", mx["price"]), ("maxDate", mx["date"]),
-        ("highPct", round(latest["price"] / mx["price"] * 100) if mx["price"] else 0),
+        ("highPct", round(latest["price"] / lat_hi["price"] * 100) if lat_hi["price"] else 0),
+        ("latHi", lat_hi["price"]), ("latLo", lat_lo["price"]), ("latHiDate", lat_hi["date"]),
         ("latest", OrderedDict([("area", latest["area"]), ("floor", latest["floor"]),
             ("price", latest["price"]), ("date", latest["date"]),
             ("gtype", latest.get("gtype", "중개거래"))])),
@@ -173,10 +181,16 @@ def build(records, meta):
                    or next((r["buildYear"] for r in recs if r.get("buildYear")), "") or "")
         # 도로명주소 — 지도 핀을 이름검색이 아닌 '정확한 주소'로 찍기 위함
         road = m.get("road") or next((r["road"] for r in recs if r.get("road")), "")
+        # 회복률·게이지 기준: 최근 거래된 평형의 최저~최고(평형 혼합 오독 방지)
+        lar = by_area[latest["area"]]
+        lat_hi = max(lar, key=lambda r: r["price"])
+        lat_lo = min(lar, key=lambda r: r["price"])
         # 구리 전체(표/분석·지도용) — 핵심 필드 + 주소
         guri.append(OrderedDict([
             ("dong", dong), ("name", name), ("count", len(recs)),
             ("min", mn["price"]), ("max", mx["price"]),
+            ("latHi", lat_hi["price"]), ("latLo", lat_lo["price"]), ("latHiDate", lat_hi["date"]),
+            ("highPct", round(latest["price"] / lat_hi["price"] * 100) if lat_hi["price"] else 0),
             ("latest", OrderedDict([("price", latest["price"]), ("area", latest["area"]),
                                     ("floor", latest["floor"]), ("date", latest["date"])])),
             ("areas", areas), ("buildYear", by_year), ("road", road),
@@ -226,18 +240,24 @@ def main():
         key = os.environ.get("DATA_GO_KR_KEY")
         if not key:
             print("::warning::DATA_GO_KR_KEY 없음 — 건너뜀"); return 0
-        records = fetch_records(key, LAWD, "구리시")
+        try:
+            records = fetch_records(key, LAWD, "구리시")
+        except Exception as e:
+            print(f"::warning::국토부 API 응답 지연으로 이번 실행은 건너뜁니다(기존 데이터 유지): {e}"); return 0
         print(f"[api] 구리 수집 {len(records)}건")
         if len(records) < 100:
-            print("::error::수집 결과가 너무 적어 파일을 갱신하지 않습니다(안전장치)."); return 1
-        ny_records = fetch_records(key, NY_LAWD, "남양주시")
+            print("::warning::수집이 적어 이번 실행은 건너뜁니다(기존 데이터 유지·안전장치)."); return 0
+        try:
+            ny_records = fetch_records(key, NY_LAWD, "남양주시")
+        except Exception as e:
+            print(f"::warning::남양주 수집 지연 — 별내는 건너뜁니다: {e}"); ny_records = []
         print(f"[api] 남양주 수집 {len(ny_records)}건")
 
     guri, galmae = build(records, meta)
     if not local:
         gset = {d["dong"] for d in guri}
         if GALMAE not in gset or len(galmae) < 3:
-            print("::error::갈매동 데이터 부족 — 갱신 중단(안전장치)."); return 1
+            print("::warning::갈매동 데이터 부족 — 이번 실행 건너뜀(기존 데이터 유지·안전장치)."); return 0
     write_js(guri, galmae)
     if not local:
         write_deals(records)

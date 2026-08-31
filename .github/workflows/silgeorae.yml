@@ -4,15 +4,21 @@ name: 실거래가 자동 갱신 (구리시)
 # 갈매동 카드/홍보/비교(data/complexes.js) + 구리 표/분석(data/guri-complexes.js)을 재생성합니다.
 on:
   schedule:
-    - cron: '0 20 * * *'   # UTC 20:00 = KST 05:00 매일
+    - cron: '0 1 * * *'    # UTC 01:00 = KST 10:00 매일 (국토부 API가 안정적인 오전)
   workflow_dispatch:
 
 permissions:
   contents: write
 
+# 동시 실행 방지 — 여러 워크플로가 같은 브랜치에 push할 때 경합(rejected) 방지
+concurrency:
+  group: data-push-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
 
@@ -35,5 +41,11 @@ jobs:
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add data/complexes.js data/guri-complexes.js data/byeollae-complexes.js data/deals.json
             git commit -m "실거래가 자동 갱신 (구리·별내, 국토부 실거래가)"
-            git push
+            # 다른 워크플로가 먼저 push해 원격이 앞서가면 rebase 후 재시도(경합 방지)
+            for i in 1 2 3 4; do
+              if git push; then break; fi
+              echo "push 경합 — pull --rebase 후 재시도 ($i)"
+              git pull --rebase origin "${GITHUB_REF_NAME}" || true
+              sleep $((i*3))
+            done
           fi

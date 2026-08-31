@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>남양주 별내 이야기 (입지·생활 인프라·실거래가) | 갈매역삼성부동산</title>
 <meta name="description" content="남양주 별내신도시 아파트 단지별 안내 — 별내자이더스타·쌍용예가·별내아이파크 등. 국토부 실거래가로 보는 진짜 시세와 갈매역삼성부동산 상담.">
+<meta property="og:site_name" content="갈매역삼성부동산">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:type" content="website">
+<meta property="og:title" content="남양주 별내 이야기 (입지·생활 인프라·실거래가) | 갈매역삼성부동산">
+<meta property="og:description" content="남양주 별내신도시 아파트 단지별 안내 — 별내자이더스타·쌍용예가·별내아이파크 등. 국토부 실거래가로 보는 진짜 시세와 갈매역삼성부동산 상담.">
+<meta property="og:url" content="https://galmae-budongsan.com/byeollae.html">
+<meta property="og:image" content="https://galmae-budongsan.com/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="남양주 별내 이야기 (입지·생활 인프라·실거래가) | 갈매역삼성부동산">
+<meta name="twitter:description" content="남양주 별내신도시 아파트 단지별 안내 — 별내자이더스타·쌍용예가·별내아이파크 등. 국토부 실거래가로 보는 진짜 시세와 갈매역삼성부동산 상담.">
+<meta name="twitter:image" content="https://galmae-budongsan.com/assets/og-image.png">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
   .g-hero { background:linear-gradient(120deg,#6b3fa0 0%,#3a2b6b 100%); color:#fff; padding:44px 18px; text-align:center; }
@@ -245,8 +258,11 @@ function posPct(cur,min,max){ if(max<=min) return 100; return Math.max(0,Math.mi
   const areas=(c.areas||[]).join('㎡·')+'㎡';
   const hasR3=(c.recent3m!==undefined && c.recent3m!==null);
   const bd=badge(c.recent3m||0);
-  const pos=posPct(la.price, c.min, c.max);
-  const hp=(c.highPct!==undefined && c.highPct!==null)? c.highPct : (c.max?Math.round((la.price||0)/c.max*100):0);
+  // 게이지·회복률은 '최근 거래된 평형' 범위로 스코프(평형 혼합 오독 방지). 구버전 데이터는 단지 범위로 폴백.
+  const gHi=(c.latHi!=null)?c.latHi:c.max, gLo=(c.latLo!=null)?c.latLo:c.min;
+  const pos=posPct(la.price, gLo, gHi);
+  const hp=(c.highPct!==undefined && c.highPct!==null)? c.highPct : (gHi?Math.round((la.price||0)/gHi*100):0);
+  const scoped=(c.latHi!=null && (c.min!==gLo || c.max!==gHi));
   const age=c.buildYear?(NOW_Y-(+c.buildYear)):null;
 
   const rows=(c.byArea||[]).map(a=>`
@@ -278,11 +294,12 @@ function posPct(cur,min,max){ if(max<=min) return 100; return Math.max(0,Math.mi
 
     <div class="ap-range">
       <div class="ap-range-head">
-        <div class="ap-endcol"><span class="p lo">${eok(c.min)}</span><span class="yr">${c.minDate?'최저 · '+ym(c.minDate):'최저'}</span></div>
-        <div class="ap-endcol r"><span class="p hi">${eok(c.max)}</span><span class="yr">${c.maxDate?'최고 · '+ym(c.maxDate):'최고'}</span></div>
+        <div class="ap-endcol"><span class="p lo">${eok(gLo)}</span><span class="yr">최저</span></div>
+        <div class="ap-endcol r"><span class="p hi">${eok(gHi)}</span><span class="yr">${c.latHiDate?'최고 · '+ym(c.latHiDate):(c.maxDate?'최고 · '+ym(c.maxDate):'최고')}</span></div>
       </div>
       <div class="ap-gauge-bar"><span style="left:${pos}%"></span></div>
-      <div class="ap-gauge-now">최근 실거래 <b>${eokShort(la.price)}</b> · 최고가 대비 <b>${hp}%</b></div>
+      <div class="ap-gauge-now">최근 실거래 <b>${eokShort(la.price)}</b> · ${scoped?'같은 평형('+(la.area||'')+'㎡) ':''}최고가 대비 <b>${hp}%</b></div>
+      ${scoped?`<div class="ap-src" style="margin-top:3px">단지 전체 시세 ${eokShort(c.min)}~${eokShort(c.max)} (여러 평형)</div>`:''}
     </div>
 
     <div class="ap-quick">📊 최근 1년 <b>${c.count}건</b>${hasR3?' · 최근 3개월 <b>'+c.recent3m+'건</b>':''} 거래</div>
