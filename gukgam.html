@@ -153,6 +153,13 @@
   .kpi .dl.good{ color:#136350; }
   .kpi .dl.flat{ color:var(--muted); }
   .kpi .sub{ font-size:.74rem; color:var(--muted); margin-top:3px; }
+  .aud{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+  .aud .r{ display:flex; gap:10px; align-items:baseline; font-size:.86rem; padding:3px 0; }
+  .aud .y{ font-weight:800; color:var(--navy); flex:0 0 auto; min-width:52px; }
+  .aud .dd{ color:#22303e; }
+  .aud .lastr{ color:#a03030; font-weight:700; }
+  .aud .concl{ font-size:.8rem; color:var(--muted); margin-top:8px; padding-top:8px;
+               border-top:1px solid #eef2f6; line-height:1.6; }
   .trend-tb{ width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line);
              border-radius:12px; overflow:hidden; font-size:.84rem; }
   .trend-tb th{ text-align:left; font-size:.74rem; color:var(--muted); font-weight:700;
@@ -588,6 +595,26 @@
         h+='<div class="t"><div class="lb">계획 제출 필요</div><div class="vl">'+plan+
            '<small>건</small></div><div class="sub">‘마련·수립’ 요구 — 서면 계획 대상</div></div>';
         h+='</div>';
+
+        // 감사일 이력 — 국감 일정은 해마다 시기가 거의 고정이라 준비 시점을 여기서 잡는다
+        if(a.audit_days&&a.audit_days.length){
+          var byY={}; a.audit_days.forEach(function(x){
+            var y=x.date.slice(0,4); (byY[y]=byY[y]||[]).push(x.date.slice(5).replace('-','/').replace(/^0/,'')); });
+          var yl=Object.keys(byY).sort();
+          h+='<div class="br-sec">우리 기관 감사일 <span style="font-weight:600;color:var(--muted);">'+
+             '지난 회의록의 피감기관 기록에서 되짚음</span></div><div class="aud">';
+          yl.forEach(function(y,i){
+            h+='<div class="r"><span class="y">'+y+'</span><span class="dd'+
+               (i===yl.length-1?' lastr':'')+'">'+byY[y].join(' · ')+'</span></div>';
+          });
+          // 월/일 분포로 통상 시기를 요약한다
+          var mds=a.audit_days.map(function(x){ return x.date.slice(5); }).sort();
+          var lo=mds[0].replace('-','/').replace(/^0/,''), hi=mds[mds.length-1].replace('-','/').replace(/^0/,'');
+          var per=(a.audit_days.length/yl.length).toFixed(1);
+          h+='<div class="concl">최근 '+yl.length+'년간 <b>'+lo+' ~ '+hi+
+             '</b> 사이에 실시됐고, 해마다 평균 <b>'+per+'회</b> 감사받았습니다. '+
+             '올해 계획서가 나오기 전이라면 이 시기를 기준으로 준비하면 됩니다.</div></div>';
+        }
 
         // 주제 추세 — 12개나 되므로 차트가 아니라 표로 둔다
         if(a.topics&&a.topics.length){
