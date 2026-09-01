@@ -598,3 +598,29 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
   vertical-align: middle;
   margin-left: 6px;
 }
+
+/* ---------- 브랜드 서명 문구 ---------- */
+.gm-signature {
+  font-family: var(--f-display);
+  font-size: clamp(1.15rem, 3vw, 1.6rem);
+  line-height: 1.65;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin: 30px 0 0;
+  padding: 22px 0 0;
+  border-top: 1px solid var(--line-strong);
+  max-width: 46ch;
+  text-wrap: balance;
+}
+.gm-signature .quiet { display: block; color: var(--accent); font-size: 0.92em; margin-top: 4px; }
+
+.gm-footer-inner .sig {
+  font-family: var(--f-display);
+  font-size: 1.02rem;
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin: 0 0 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  max-width: 44ch;
+}
