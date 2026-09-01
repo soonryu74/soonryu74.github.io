@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중개사무소 파트너 — 사무소 이름으로 나가는 주간 실거래가 리포트</title>
+<meta name="description" content="구리시 중개사무소를 위한 주간 실거래가 리포트 구독 서비스. 사무소 이름과 연락처가 들어간 리포트가 매주 자동으로 만들어집니다. 홈페이지가 없어도, 설치 없이 링크 하나로.">
+<meta property="og:title" content="사무소 이름으로 나가는 주간 실거래가 리포트">
+<meta property="og:description" content="매주 자동 갱신되는 우리 사무소 브랜드 실거래가 리포트 — 카톡·블로그·인쇄 어디든.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1f4d47">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --ground:#f2f1ec; --card:#ffffff; --card-2:#f7f7f3;
+  --ink:#1b2426; --body:#3c4749; --muted:#6a7573;
+  --line:#e2e0d8; --line-soft:#ecebe4;
+  --brand:#0e8a6b; --brand-soft:#e3f1ec;
+  --shadow:0 1px 2px rgba(20,30,32,.05),0 10px 30px rgba(20,30,32,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0f1416; --card:#171d1f; --card-2:#1c2426;
+    --ink:#eef2f0; --body:#c4d0cd; --muted:#8a9694;
+    --line:#28322f; --line-soft:#212a28;
+    --brand:#2fa07f; --brand-soft:#16302a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0f1416; --card:#171d1f; --card-2:#1c2426;
+  --ink:#eef2f0; --body:#c4d0cd; --muted:#8a9694;
+  --line:#28322f; --line-soft:#212a28;
+  --brand:#2fa07f; --brand-soft:#16302a;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--body);
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  font-size:17px;line-height:1.7;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding:0 22px}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{color:var(--ink);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.eyebrow{font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--brand);font-weight:800}
+
+.hero{padding:64px 0 26px}
+.hero h1{font-family:"Gowun Batang",serif;font-weight:700;font-size:2.35rem;line-height:1.35;margin-top:14px}
+.hero p{font-size:1.1rem;max-width:56ch;margin:16px 0 0}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:13px;padding:12px 20px;font-weight:700;font-size:.98rem;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn:active{transform:translateY(1px)}
+
+section{padding:26px 0}
+.sec-title{font-family:"Gowun Batang",serif;font-size:1.5rem;font-weight:700;margin-bottom:6px}
+.sec-sub{color:var(--muted);margin:0 0 18px}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.step .n{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  background:var(--brand-soft);color:var(--brand);font-weight:800;font-size:.95rem;margin-bottom:10px}
+.step h3{font-size:1.02rem;margin-bottom:6px}
+.step p{margin:0;font-size:.93rem;color:var(--body)}
+@media(max-width:640px){.steps{grid-template-columns:1fr}}
+
+.why{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.why .item{background:var(--card-2);border:1px solid var(--line-soft);border-radius:14px;padding:18px 20px}
+.why .item b{color:var(--ink)}
+.why .item p{margin:4px 0 0;font-size:.92rem}
+@media(max-width:640px){.why{grid-template-columns:1fr}}
+
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
+.plan.feature{border-color:var(--brand)}
+.plan .name{font-weight:800;color:var(--ink)}
+.plan .price{font-size:2rem;font-weight:800;color:var(--ink);margin:8px 0 2px;letter-spacing:-.02em}
+.plan .price small{font-size:1rem;color:var(--muted);font-weight:600}
+.plan ul{margin:14px 0 0;padding:0;list-style:none}
+.plan li{padding:6px 0;font-size:.94rem;border-bottom:1px solid var(--line-soft)}
+.plan li:last-child{border-bottom:none}
+.plan .tag{display:inline-block;background:var(--brand-soft);color:var(--brand);font-size:.75rem;font-weight:800;
+  border-radius:99px;padding:3px 11px;margin-bottom:10px}
+@media(max-width:640px){.plans{grid-template-columns:1fr}}
+
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 20px;margin-bottom:10px}
+.faq summary{font-weight:700;color:var(--ink);cursor:pointer}
+.faq p{margin:10px 0 0;font-size:.94rem}
+
+.contact{background:var(--card);border:1px solid var(--brand);border-radius:18px;padding:30px;box-shadow:var(--shadow);text-align:center;margin:10px 0 30px}
+.contact h2{font-family:"Gowun Batang",serif;font-size:1.4rem}
+.contact p{margin:10px auto 18px;max-width:46ch}
+
+footer{padding:26px 0 60px;color:var(--muted);font-size:.82rem;line-height:1.7}
+footer a{border-bottom:1px solid var(--line);color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">For Local Agents · 중개사무소 파트너</div>
+    <h1>사무소 이름으로 나가는<br>주간 실거래가 리포트</h1>
+    <p>손님들은 매주 시세를 궁금해하는데, 리포트를 직접 만들 시간은 없으시죠.
+      국토교통부 실거래가 데이터로 <b>우리 사무소 이름과 연락처가 들어간 리포트</b>가
+      매주 자동으로 만들어집니다. 홈페이지가 없어도, 설치 없이 링크 하나로 시작합니다.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="report.html?office=%EC%83%98%ED%94%8C%EA%B3%B5%EC%9D%B8%EC%A4%91%EA%B0%9C%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C&tel=031-575-4944&dong=%EA%B0%88%EB%A7%A4%EB%8F%99&c=0">라이브 데모 보기</a>
+      <a class="btn" href="report.html">내 사무소 리포트 직접 만들어보기</a>
+    </div>
+  </header>
+
+  <section>
+    <h2 class="sec-title">이렇게 진행됩니다</h2>
+    <p class="sec-sub">신청부터 발행까지 10분이면 충분합니다.</p>
+    <div class="steps">
+      <div class="step"><span class="n">1</span>
+        <h3>사무소 정보 등록</h3>
+        <p>사무소 이름, 전화번호, 원하는 지역(구리시 전체 또는 동 단위)과 브랜드 색을 정합니다.</p>
+      </div>
+      <div class="step"><span class="n">2</span>
+        <h3>전용 링크 발급</h3>
+        <p>우리 사무소 전용 리포트 주소가 만들어집니다. 카카오톡 프로필, 블로그, 문자, 명함 QR 어디든 붙이세요.</p>
+      </div>
+      <div class="step"><span class="n">3</span>
+        <h3>매주 자동 갱신</h3>
+        <p>실거래가가 갱신될 때마다 리포트도 자동으로 바뀝니다. 손님에게는 항상 최신 시세가 보입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title">리포트에 담기는 것</h2>
+    <div class="why">
+      <div class="item"><b>최근 4주 거래 요약</b><p>거래 건수, 평균 거래가, 최고가 거래를 한눈에. 직전 4주 대비 증감까지.</p></div>
+      <div class="item"><b>12주 거래량 그래프</b><p>우리 동네 거래 흐름을 그래프로. "요즘 거래가 도나요?"에 바로 답이 됩니다.</p></div>
+      <div class="item"><b>동별 시세 비교</b><p>갈매·인창·수택·교문·토평 동별 거래량과 평균가·최고가 비교표.</p></div>
+      <div class="item"><b>최근 실거래 내역</b><p>단지·면적·층·가격이 담긴 최신 거래 목록. 인쇄하면 A4 전단이 됩니다.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title">구독 안내</h2>
+    <p class="sec-sub">광고비가 아니라, 매주 손님에게 줄 "이야깃거리"에 대한 구독입니다.</p>
+    <div class="plans">
+      <div class="plan">
+        <div class="name">무료 체험</div>
+        <div class="price">0원 <small>/ 첫 4주</small></div>
+        <ul>
+          <li>사무소 브랜드 리포트 링크 발급</li>
+          <li>매주 자동 갱신</li>
+          <li>카톡·블로그·인쇄 공유</li>
+        </ul>
+      </div>
+      <div class="plan feature">
+        <span class="tag">정식 구독</span>
+        <div class="name">파트너</div>
+        <div class="price">월 33,000원 <small>· 부가세 포함</small></div>
+        <ul>
+          <li>무료 체험의 모든 기능</li>
+          <li>동 단위 맞춤 지역 설정</li>
+          <li>브랜드 색·연락처 표시</li>
+          <li>연 구독 시 2개월 무료 (330,000원/년)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq">
+    <h2 class="sec-title">자주 묻는 질문</h2>
+    <details><summary>데이터는 어디서 오나요?</summary>
+      <p>국토교통부 실거래가 공개시스템의 아파트 매매 데이터입니다. 계약일 기준이며 신고 지연·해제 거래로
+      실제와 차이가 있을 수 있어 리포트에도 출처와 기준일이 함께 표기됩니다.</p></details>
+    <details><summary>홈페이지가 없어도 되나요?</summary>
+      <p>네. 리포트 자체가 하나의 웹페이지라서 링크만 있으면 됩니다. 카카오톡, 문자, 네이버 블로그,
+      명함 QR코드 어디에나 붙일 수 있습니다.</p></details>
+    <details><summary>설치하거나 배워야 할 게 있나요?</summary>
+      <p>없습니다. 발급된 링크를 공유하는 게 전부입니다. 인쇄 버튼을 누르면 A4 리포트로도 출력됩니다.</p></details>
+    <details><summary>다른 지역도 되나요?</summary>
+      <p>현재는 구리시(갈매·인창·수택·교문·토평동)를 서비스하고 있습니다. 다른 지역이 필요하시면
+      문의해 주세요 — 수요가 모이는 지역부터 순차적으로 열 예정입니다.</p></details>
+  </section>
+
+  <div class="contact">
+    <h2>우리 사무소 리포트, 지금 받아보세요</h2>
+    <p>아래에서 직접 만들어보시고, 정식 구독은 전화로 신청하시면 됩니다.</p>
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn primary" href="report.html">리포트 만들어보기</a>
+      <a class="btn" href="tel:0315754944">전화 문의 031-575-4944</a>
+    </div>
+  </div>
+
+  <footer>
+    출처: 국토교통부 실거래가 공개시스템 · 본 서비스의 리포트는 참고용이며 거래의 근거 자료로 사용할 수 없습니다.<br>
+    <a href="index.html">서비스 안내로 돌아가기</a>
+  </footer>
+
+</div>
+</body>
+</html>
