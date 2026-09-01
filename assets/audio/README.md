@@ -29,6 +29,10 @@ window.MUSIC_SRC = "../assets/audio/gomaum.mp3"; // 이렇게
   `ffmpeg -i 원본.wav -b:a 128k -ac 2 gomaum.mp3`
 - **길이는 60~90초 정도**에 자연스럽게 이어지도록(loop) 만드는 편이 좋습니다.
 
+## 지금 들어 있는 파일
+
+- `gomaum.mp3` — Suno 생성곡 "고마움 상조회" (3분 34초, 약 4.9MB, 48kHz 스테레오). 2026-09-02 반영.
+
 ## 저작권
 
 AI로 생성한 음악(Suno 등)은 요금제에 따라 상업적 이용 권리가 다릅니다.
