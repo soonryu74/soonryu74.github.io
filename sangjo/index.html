@@ -236,6 +236,7 @@ a { color: inherit; }
   var STEP = 6;            // 곡선을 그리는 가로 간격(px)
   var HORIZON = 0.30;      // 수평선 높이 (화면 높이 대비)
   var GLOW_X = 0.5;        // 빛이 떠 있는 가로 위치 — 화면 한가운데
+  var DRIFT = 0.028;       // 물결이 발밑으로 흘러오는 속도 (깊이/초). 한 선이 건너오는 데 약 36초
 
   var w = 0, h = 0, dpr = 1;
   var lineColor = "46,90,78", glowColor = "250,244,226", farColor = "214,222,214";
@@ -314,9 +315,11 @@ a { color: inherit; }
     ctx.fillStyle = skyBand;
     ctx.fillRect(0, 0, w, hy);
 
-    // 수평선 너머의 빛
+    // 수평선 너머의 빛 — 아주 천천히 숨 쉰다
+    ctx.globalAlpha = 0.9 + 0.1 * Math.sin(t * 0.35);
     ctx.fillStyle = glowBlob;
     ctx.fillRect(0, 0, w, h);
+    ctx.globalAlpha = 1;
 
     // 건너편 — 강 너머가 있다는 것만 가늘게 알린다
     ctx.strokeStyle = horizonLine;
@@ -326,20 +329,24 @@ a { color: inherit; }
     ctx.lineTo(w, Math.round(hy) + 0.5);
     ctx.stroke();
 
-    // 수면 — 멀수록 촘촘하고, 가까울수록 크게 일렁인다
+    // 수면 — 멀수록 촘촘하고, 가까울수록 크게 일렁인다.
+    // 선들은 수평선 쪽에서 태어나 발밑으로 천천히 흘러온다 (DRIFT).
     ctx.lineCap = "round";
+    var shift = (t * DRIFT) % 1;
     for (var i = 0; i < LINES; i++) {
-      var p = i / (LINES - 1);
+      var p = (i / (LINES - 1) + shift) % 1;          // 지금 이 선의 깊이 0=수평선, 1=발밑
       var y = hy + Math.pow(p, 1.85) * (h - hy) + 6;
-      if (y > h + 8) break;
+      if (y > h + 8) continue;
 
-      var amp = 0.6 + p * 4.6;
+      var amp = 0.8 + p * 7.5;
       var len = 110 + p * 520;
-      var speed = 0.22 + p * 0.85;
+      var speed = 0.35 + p * 1.1;
       var phase = i * 0.55;
+      var fade = Math.min(1, p * 10, (1 - p) * 6);     // 태어나고 사라질 때 부드럽게
 
-      ctx.strokeStyle = gradients[i];
-      ctx.lineWidth = 0.9 + p * 0.9;
+      ctx.globalAlpha = fade;
+      ctx.strokeStyle = gradients[Math.round(p * (LINES - 1))];
+      ctx.lineWidth = 0.9 + p * 1.1;
       ctx.beginPath();
       for (var x = -STEP; x <= w + STEP; x += STEP) {
         // 파장이 다른 두 물결을 겹쳐 규칙적으로 보이지 않게 한다
@@ -352,29 +359,32 @@ a { color: inherit; }
     }
 
     // 빛이 수면에 부서지는 조각들 — 이 한 겹이 '길'을 만든다
-    for (var j = 2; j < LINES; j += 1) {
-      var q = j / (LINES - 1);
+    for (var j = 0; j < LINES; j += 1) {
+      var q = (j / (LINES - 1) + shift) % 1;
+      if (q < 0.04) continue;
       var ly = hy + Math.pow(q, 1.85) * (h - hy) + 6;
-      if (ly > h + 8) break;
+      if (ly > h + 8) continue;
       var band = w * (0.018 + 0.155 * q);      // 아래로 갈수록 넓어지되, 길의 형태는 유지
       var pieces = 1 + Math.round(q * 3);
-      var la = (0.12 + 0.40 * q) * 1;
+      var la = 0.12 + 0.40 * q;
+      ctx.globalAlpha = Math.min(1, (1 - q) * 6);
       ctx.strokeStyle = "rgba(" + lineColor + "," + la.toFixed(3) + ")";
       ctx.lineWidth = 1 + q * 1.4;
       for (var k = 0; k < pieces; k++) {
         // 시간에 따라 좌우로 흔들리되 규칙적으로 보이지 않게 두 파장을 섞는다
         var seed = j * 1.7 + k * 2.9;
-        var off = Math.sin(t * (0.5 + q * 0.5) + seed) * 0.62
-                + Math.sin(t * 0.31 + seed * 2.3) * 0.38;
+        var off = Math.sin(t * (0.6 + q * 0.6) + seed) * 0.62
+                + Math.sin(t * 0.37 + seed * 2.3) * 0.38;
         var cx = w * GLOW_X + off * band;
-        var half = (3 + q * 15) * (0.45 + 0.55 * Math.abs(Math.sin(t * 0.7 + seed)));
-        var wob = Math.sin(cx / (110 + q * 520) + t * (0.22 + q * 0.85) + j * 0.55) * (0.6 + q * 4.6);
+        var half = (3 + q * 15) * (0.45 + 0.55 * Math.abs(Math.sin(t * 0.9 + seed)));
+        var wob = Math.sin(cx / (110 + q * 520) + t * (0.35 + q * 1.1) + j * 0.55) * (0.8 + q * 7.5);
         ctx.beginPath();
         ctx.moveTo(cx - half, ly + wob);
         ctx.lineTo(cx + half, ly + wob);
         ctx.stroke();
       }
     }
+    ctx.globalAlpha = 1;
   }
 
   function frame(ts) {
