@@ -181,6 +181,8 @@
     resume: resume,
     get playing() { return playing; },
     get state() { return ctx ? ctx.state : "closed"; },   // running | suspended | closed
+    get time() { return ctx ? ctx.currentTime % CYCLE : 0; },  // 이번 바퀴에서 흐른 초
+    get duration() { return CYCLE; },
     onstate: function (cb) { if (ctx) ctx.addEventListener("statechange", cb); },
     cycleSeconds: CYCLE,
     render: function (offCtx, t0) { var b = makeBus(offCtx, 0.9); render(offCtx, b.mix, t0); }

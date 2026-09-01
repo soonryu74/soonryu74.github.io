@@ -11,14 +11,14 @@
 ## 넣는 방법
 
 1. 파일을 이 폴더에 `gomaum.mp3` 로 저장합니다.
-2. `sangjo/bugojang.html` 위쪽의 이 줄을 고칩니다.
+2. `assets/js/site-keys.js` 의 이 줄을 고칩니다.
 
 ```js
-var MUSIC_SRC = "";                          // 지금 (합성 나팔이 연주됨)
-var MUSIC_SRC = "../assets/audio/gomaum.mp3"; // 이렇게
+window.MUSIC_SRC = "";                          // 지금 (합성 나팔이 연주됨)
+window.MUSIC_SRC = "../assets/audio/gomaum.mp3"; // 이렇게
 ```
 
-재생 단추는 부고장 오른쪽 위에 항상 있습니다. 경로를 채우면 그 단추가 파일을 틉니다.
+홈(자동 시작, 오른쪽 위 소리 단추)과 부고장(눌러야 재생) 모두 이 파일을 틉니다.
 
 ## 지켜야 할 것
 

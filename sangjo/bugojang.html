@@ -241,11 +241,10 @@
 (function () {
   "use strict";
 
-  /* 음악 파일을 넣으시려면 이 경로만 채우면 됩니다.
-     예) "../assets/audio/gomaum.mp3"
-     비워 두면 브라우저가 직접 연주하는 조용한 나팔(quiet-horn.js)이 쓰입니다.
+  /* 음악 파일 경로는 ../assets/js/site-keys.js 의 MUSIC_SRC 에서 읽습니다.
+     비어 있으면 브라우저가 직접 연주하는 조용한 나팔(quiet-horn.js)이 쓰입니다.
      어느 쪽이든 유족이 단추를 눌렀을 때만 소리가 납니다. */
-  var MUSIC_SRC = "";
+  var MUSIC_SRC = window.MUSIC_SRC || "";
 
   var DAY = ["일", "월", "화", "수", "목", "금", "토"];
   var $ = function (id) { return document.getElementById(id); };
