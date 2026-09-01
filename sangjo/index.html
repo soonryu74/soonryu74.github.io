@@ -55,7 +55,7 @@
 </header>
 
 <section class="gm-hero">
-  <canvas class="gm-hero-canvas" id="ripple" aria-hidden="true"></canvas>
+  <canvas class="gm-hero-canvas" id="river" aria-hidden="true"></canvas>
   <div class="gm-hero-inner">
     <p class="eyebrow">후불제 상조 · 기일 리마인드</p>
     <h1 class="gm-hero-sig">
@@ -406,85 +406,206 @@
 </footer>
 
 <script>
-/* ── 히어로 배경: 파문(波紋) ──────────────────────────────
-   한 사람이 남기고 간 자리에서 조용히 번지는 동심원.
+/* ── 히어로 배경: 강 ─────────────────────────────────────
+   수평선 너머에서 빛이 번지고, 그 빛이 수면에 길을 낸다.
+   건너가는 길. 영상 파일 없이 캔버스로 그린다.
    prefers-reduced-motion이면 정지 화면 한 장만 그린다. */
 (function () {
   "use strict";
-  var cv = document.getElementById("ripple");
+
+  var cv = document.getElementById("river");
   if (!cv || !cv.getContext) return;
   var ctx = cv.getContext("2d");
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var w = 0, h = 0, stroke = "rgba(46,90,78,.5)";
 
-  // 파문의 발원지 — 화면 비율 기준
-  var SOURCES = [
-    { x: 0.16, y: 0.34, phase: 0.0,  gap: 46, speed: 5.5, rings: 7 },
-    { x: 0.74, y: 0.66, phase: 0.45, gap: 62, speed: 4.2, rings: 6 },
-    { x: 0.92, y: 0.18, phase: 0.75, gap: 54, speed: 6.4, rings: 5 }
-  ];
+  var LINES = 46;          // 수면을 이루는 물결 선의 수
+  var STEP = 6;            // 곡선을 그리는 가로 간격(px)
+  var HORIZON = 0.38;      // 수평선 높이 (히어로 높이 대비)
+  var GLOW_X = 0.72;       // 빛이 떠 있는 가로 위치 — 글자를 피해 오른쪽에
 
-  function readStroke() {
-    var c = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
-    return c || "#2E5A4E";
+  var w = 0, h = 0, dpr = 1;
+  var lineColor = "46,90,78", glowColor = "250,244,226", farColor = "214,222,214";
+  var gradients = [];      // 선마다 빛의 길을 그리는 가로 그라디언트 (정적이므로 캐시)
+  var glowBlob = null, skyBand = null, horizonLine = null;
+  var running = false, visible = true, rafId = 0, startTs = null;
+
+  function readPalette() {
+    var cs = getComputedStyle(document.documentElement);
+    lineColor = (cs.getPropertyValue("--river-line") || "46,90,78").trim();
+    glowColor = (cs.getPropertyValue("--river-glow") || "250,244,226").trim();
+    farColor = (cs.getPropertyValue("--river-far") || "214,222,214").trim();
+  }
+
+  // 선의 깊이(p)에 따라 밝기와 빛줄기 폭이 달라진다. 0=수평선, 1=발밑
+  function buildGradients() {
+    // 좁은 화면에서는 글자와 겹치므로 전체를 옅게 그린다
+    var k = w < 760 ? 0.55 : 1;
+    gradients = [];
+    for (var i = 0; i < LINES; i++) {
+      var p = i / (LINES - 1);
+      var peak = (0.16 + 0.30 * p) * k;        // 빛의 길 한가운데
+      var amb = (0.045 + 0.045 * p) * k;       // 그 바깥의 잔물결
+      var mid = amb + (peak - amb) * 0.42;
+      var spread = 0.09 + 0.46 * p;            // 멀수록 좁고, 가까울수록 넓게 퍼진다
+      var g = ctx.createLinearGradient(0, 0, w, 0);
+      function at(x, a) {
+        g.addColorStop(Math.min(1, Math.max(0, x)), "rgba(" + lineColor + "," + a.toFixed(4) + ")");
+      }
+      at(0, amb);
+      at(GLOW_X - spread * 1.7, amb);
+      at(GLOW_X - spread * 0.55, mid);
+      at(GLOW_X, peak);
+      at(GLOW_X + spread * 0.55, mid);
+      at(GLOW_X + spread * 1.7, amb);
+      at(1, amb);
+      gradients.push(g);
+    }
+
+    var hy = h * HORIZON;
+    glowBlob = ctx.createRadialGradient(w * GLOW_X, hy, 0, w * GLOW_X, hy, Math.max(w, h) * 0.52);
+    glowBlob.addColorStop(0, "rgba(" + glowColor + ",1)");
+    glowBlob.addColorStop(0.26, "rgba(" + glowColor + ",0.62)");
+    glowBlob.addColorStop(0.62, "rgba(" + glowColor + ",0.12)");
+    glowBlob.addColorStop(1, "rgba(" + glowColor + ",0)");
+
+    horizonLine = ctx.createLinearGradient(0, 0, w, 0);
+    horizonLine.addColorStop(0, "rgba(" + lineColor + ",0.08)");
+    horizonLine.addColorStop(Math.max(0, GLOW_X - 0.34), "rgba(" + lineColor + ",0.16)");
+    horizonLine.addColorStop(GLOW_X, "rgba(" + lineColor + "," + (0.40 * k).toFixed(3) + ")");
+    horizonLine.addColorStop(Math.min(1, GLOW_X + 0.34), "rgba(" + lineColor + ",0.16)");
+    horizonLine.addColorStop(1, "rgba(" + lineColor + ",0.08)");
+
+    skyBand = ctx.createLinearGradient(0, 0, 0, hy);
+    skyBand.addColorStop(0, "rgba(" + farColor + ",0.42)");
+    skyBand.addColorStop(1, "rgba(" + farColor + ",0)");
   }
 
   function resize() {
     var r = cv.getBoundingClientRect();
+    if (!r.width || !r.height) return false;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
     w = r.width; h = r.height;
     cv.width = Math.round(w * dpr);
     cv.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildGradients();
+    return true;
   }
 
   function draw(t) {
     ctx.clearRect(0, 0, w, h);
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = 1;
-    var maxR = Math.sqrt(w * w + h * h) * 0.62;
+    var hy = h * HORIZON;
 
-    SOURCES.forEach(function (s) {
-      var cx = s.x * w, cy = s.y * h;
-      for (var i = 0; i < s.rings; i++) {
-        // 각 고리는 일정 간격을 두고 바깥으로 번진다
-        var travel = (t * s.speed + s.phase * s.gap * s.rings + i * s.gap) % (s.gap * s.rings);
-        var r = travel;
-        if (r < 2 || r > maxR) continue;
-        // 번질수록 옅어지고, 갓 태어난 고리도 옅게 시작
-        var life = 1 - travel / (s.gap * s.rings);
-        var birth = Math.min(1, travel / 24);
-        ctx.globalAlpha = 0.16 * life * birth;
+    // 하늘 — 먼 곳일수록 옅게 가라앉는다
+    ctx.fillStyle = skyBand;
+    ctx.fillRect(0, 0, w, hy);
+
+    // 수평선 너머의 빛
+    ctx.fillStyle = glowBlob;
+    ctx.fillRect(0, 0, w, h);
+
+    // 건너편 — 강 너머가 있다는 것만 가늘게 알린다
+    ctx.strokeStyle = horizonLine;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, Math.round(hy) + 0.5);
+    ctx.lineTo(w, Math.round(hy) + 0.5);
+    ctx.stroke();
+
+    // 수면 — 멀수록 촘촘하고, 가까울수록 크게 일렁인다
+    ctx.lineCap = "round";
+    for (var i = 0; i < LINES; i++) {
+      var p = i / (LINES - 1);
+      var y = hy + Math.pow(p, 1.85) * (h - hy) + 6;
+      if (y > h + 8) break;
+
+      var amp = 0.6 + p * 4.6;
+      var len = 110 + p * 520;
+      var speed = 0.22 + p * 0.85;
+      var phase = i * 0.55;
+
+      ctx.strokeStyle = gradients[i];
+      ctx.lineWidth = 0.9 + p * 0.9;
+      ctx.beginPath();
+      for (var x = -STEP; x <= w + STEP; x += STEP) {
+        // 파장이 다른 두 물결을 겹쳐 규칙적으로 보이지 않게 한다
+        var yy = y
+          + Math.sin(x / len + t * speed + phase) * amp
+          + Math.sin(x / (len * 0.43) - t * speed * 0.6 + phase * 1.7) * amp * 0.35;
+        if (x <= 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+      }
+      ctx.stroke();
+    }
+
+    // 빛이 수면에 부서지는 조각들 — 이 한 겹이 '길'을 만든다
+    for (var j = 2; j < LINES; j += 1) {
+      var q = j / (LINES - 1);
+      var ly = hy + Math.pow(q, 1.85) * (h - hy) + 6;
+      if (ly > h + 8) break;
+      var band = w * (0.018 + 0.155 * q);      // 아래로 갈수록 넓어지되, 길의 형태는 유지
+      var pieces = 1 + Math.round(q * 3);
+      var la = (0.12 + 0.40 * q) * (w < 760 ? 0.55 : 1);
+      ctx.strokeStyle = "rgba(" + lineColor + "," + la.toFixed(3) + ")";
+      ctx.lineWidth = 1 + q * 1.4;
+      for (var k = 0; k < pieces; k++) {
+        // 시간에 따라 좌우로 흔들리되 규칙적으로 보이지 않게 두 파장을 섞는다
+        var seed = j * 1.7 + k * 2.9;
+        var off = Math.sin(t * (0.5 + q * 0.5) + seed) * 0.62
+                + Math.sin(t * 0.31 + seed * 2.3) * 0.38;
+        var cx = w * GLOW_X + off * band;
+        var half = (3 + q * 15) * (0.45 + 0.55 * Math.abs(Math.sin(t * 0.7 + seed)));
+        var wob = Math.sin(cx / (110 + q * 520) + t * (0.22 + q * 0.85) + j * 0.55) * (0.6 + q * 4.6);
         ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.moveTo(cx - half, ly + wob);
+        ctx.lineTo(cx + half, ly + wob);
         ctx.stroke();
       }
-    });
-    ctx.globalAlpha = 1;
+    }
   }
 
-  var start = null;
   function frame(ts) {
-    if (start === null) start = ts;
-    draw((ts - start) / 1000);
-    requestAnimationFrame(frame);
+    if (startTs === null) startTs = ts;
+    draw((ts - startTs) / 1000);
+    rafId = requestAnimationFrame(frame);
+  }
+
+  function play() {
+    if (running || reduce) return;
+    running = true;
+    rafId = requestAnimationFrame(frame);
+  }
+  function pause() {
+    running = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
   }
 
   function boot() {
-    stroke = readStroke();
-    resize();
-    if (reduce) { draw(3.2); return; }
-    requestAnimationFrame(frame);
+    readPalette();
+    if (!resize()) return;
+    if (reduce) { draw(4.6); return; }
+    play();
   }
 
   var rt;
   window.addEventListener("resize", function () {
     clearTimeout(rt);
-    rt = setTimeout(function () { resize(); if (reduce) draw(3.2); }, 150);
+    rt = setTimeout(function () {
+      if (resize() && reduce) draw(4.6);
+    }, 150);
   });
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
-    setTimeout(function () { stroke = readStroke(); if (reduce) draw(3.2); }, 50);
+
+  // 화면 밖이거나 다른 탭일 때는 그리지 않는다
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) pause();
+    else if (visible) play();
   });
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+      if (visible && !document.hidden) play(); else pause();
+    }, { threshold: 0 }).observe(cv);
+  }
 
   boot();
 })();

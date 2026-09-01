@@ -22,6 +22,11 @@
   --gold-soft: #ede2c8;
   --shadow: 0 1px 2px rgba(23, 28, 25, 0.05), 0 8px 24px -18px rgba(23, 28, 25, 0.35);
 
+  /* 히어로 배경(강) — 캔버스에서 rgba()로 조합하므로 r,g,b 값만 둔다 */
+  --river-line: 46, 90, 78;
+  --river-glow: 250, 244, 226;
+  --river-far: 214, 222, 214;
+
   --f-display: "Gowun Batang", "Nanum Myeongjo", "Apple SD Gothic Neo", serif;
   --f-body: "IBM Plex Sans KR", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
@@ -105,6 +110,11 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
   background: var(--surface);
   border-bottom: 1px solid var(--line);
   padding: 52px 18px 46px;
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(430px, 64vh, 620px);
+  display: flex;
+  align-items: center;
 }
 .gm-hero-inner { max-width: var(--maxw); margin: 0 auto; }
 .gm-hero .eyebrow {
@@ -654,7 +664,6 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
 .gm-alert a:hover { opacity: 0.85; }
 
 /* ---------- 히어로 (파문 배경) ---------- */
-.gm-hero { position: relative; overflow: hidden; }
 .gm-hero-canvas {
   position: absolute;
   inset: 0;
@@ -663,7 +672,19 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
   display: block;
   pointer-events: none;
 }
-.gm-hero-inner { position: relative; z-index: 1; }
+.gm-hero-inner { position: relative; z-index: 1; width: 100%; }
+/* 물빛 위에서도 글자가 읽히도록, 텍스트가 놓인 왼쪽만 아주 옅게 덮는다 */
+.gm-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(104deg,
+    rgba(250, 251, 248, 0.94) 0%,
+    rgba(250, 251, 248, 0.84) 26%,
+    rgba(250, 251, 248, 0.34) 46%,
+    rgba(250, 251, 248, 0) 60%);
+}
 
 .gm-hero-sig {
   font-family: var(--f-display);
@@ -852,4 +873,31 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
   font-size: 0.82rem;
   color: var(--risk);
   white-space: nowrap;
+}
+
+/* ---------- 좁은 화면 ---------- */
+@media (max-width: 760px) {
+  /* 강물 위로 본문이 겹치므로, 아래로 갈수록 덮어 글자를 살린다 */
+  .gm-hero::after {
+    background: linear-gradient(180deg,
+      rgba(250, 251, 248, 0.30) 0%,
+      rgba(250, 251, 248, 0.72) 34%,
+      rgba(250, 251, 248, 0.93) 62%,
+      rgba(250, 251, 248, 0.96) 100%);
+  }
+
+  /* 항목이 아홉이라 좁은 화면에서 세 줄이 된다 — 한 줄로 두고 옆으로 넘긴다 */
+  .gm-nav-inner { flex-wrap: nowrap; gap: 0 10px; }
+  .gm-brand { flex: 0 0 auto; margin-right: 4px; }
+  .gm-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    min-width: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(90deg, #000 88%, transparent 100%);
+  }
+  .gm-nav::-webkit-scrollbar { display: none; }
+  .gm-nav a { white-space: nowrap; flex: 0 0 auto; }
 }
