@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="../assets/css/gomaum.css">
+<script src="../assets/js/site-keys.js"></script>
 </head>
 <body>
 
@@ -387,6 +388,7 @@
       '<div class="bj-body">' +
         '<dl class="bj-rows">' + rows + '</dl>' +
         (d.mo ? '<p class="bj-memo">' + esc(d.mo) + '</p>' : "") +
+        '<div class="bj-map" id="bjMap" hidden aria-label="빈소 위치 지도"></div>' +
         '<div class="bj-actions">' + actions + '</div>' +
         '<p class="bj-word">' + esc(w.close) + '</p>' +
       '</div>' +
@@ -430,6 +432,48 @@
     }
   }
 
+  /* ── 빈소 지도 ────────────────────────────────────────────
+     site-keys.js에 카카오 JavaScript 키가 채워져 있을 때만 나타난다.
+     만들기 화면의 미리보기에서는 그리지 않는다 — 글자를 칠 때마다
+     지도 서버를 부르지 않기 위해서다. */
+  function initMap(root, d) {
+    var key = (window.KAKAO_JS_KEY || "").trim();
+    var box = root.querySelector("#bjMap");
+    if (!key || !box) return;
+    var addr = d.fa || "", keyword = d.fh || "";
+    if (!addr && !keyword) return;
+
+    var sdk = document.createElement("script");
+    sdk.src = "https://dapi.kakao.com/v2/maps/sdk.js?appkey=" +
+              encodeURIComponent(key) + "&libraries=services&autoload=false";
+    sdk.onload = function () {
+      window.kakao.maps.load(function () {
+        var maps = window.kakao.maps;
+        function show(lat, lng) {
+          box.hidden = false;
+          var pos = new maps.LatLng(lat, lng);
+          var map = new maps.Map(box, { center: pos, level: 4 });
+          new maps.Marker({ map: map, position: pos });
+        }
+        function byKeyword() {
+          if (!keyword) return;
+          new maps.services.Places().keywordSearch(keyword, function (res, st) {
+            if (st === maps.services.Status.OK && res[0]) show(+res[0].y, +res[0].x);
+          });
+        }
+        if (addr) {
+          new maps.services.Geocoder().addressSearch(addr, function (res, st) {
+            if (st === maps.services.Status.OK && res[0]) show(+res[0].y, +res[0].x);
+            else byKeyword();
+          });
+        } else {
+          byKeyword();
+        }
+      });
+    };
+    document.head.appendChild(sdk);
+  }
+
   /* ── 보기 화면 ────────────────────────────────────────── */
   var hash = location.hash.replace(/^#/, "");
   if (hash) {
@@ -444,6 +488,7 @@
       var title = "[부고] 故 " + (data.n || "") + "님";
       document.title = title + " — 고마움 상조회";
       wire(card, title);
+      initMap(card, data);
       return;
     }
   }
