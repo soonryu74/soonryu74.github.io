@@ -772,3 +772,84 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
 }
 
 .field input[type="range"]:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---------- 네비 항목이 늘어난 뒤 밀도 조정 ---------- */
+.gm-nav a { padding: 7px 9px; font-size: 0.86rem; }
+
+/* ---------- 미정 금액 표기 ---------- */
+.tbd {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+
+/* ---------- 복사 상자 (부고 문안) ---------- */
+.copybox { margin: 22px 0; }
+.copybox textarea {
+  width: 100%;
+  min-height: 220px;
+  font-family: var(--f-body);
+  font-size: 0.95rem;
+  line-height: 1.85;
+  padding: 18px 20px;
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  resize: vertical;
+  white-space: pre-wrap;
+}
+.copybox .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 12px;
+}
+.copybox button {
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: 0.94rem;
+  padding: 11px 22px;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+.copybox button:hover { background: var(--accent-deep); }
+.copybox button.ghost { background: transparent; color: var(--accent); }
+.copybox button.ghost:hover { background: var(--accent-soft); }
+.copybox .msg { font-size: 0.86rem; color: var(--accent); font-weight: 500; }
+.copybox .msg:empty { display: none; }
+
+/* ---------- 체크 목록 ---------- */
+.checks { list-style: none; padding: 0; margin: 18px 0; }
+.checks li {
+  position: relative;
+  padding: 12px 0 12px 32px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.95rem;
+}
+.checks li::before {
+  content: "□";
+  position: absolute;
+  left: 4px;
+  top: 11px;
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+.checks li:last-child { border-bottom: 0; }
+.checks li b { font-weight: 600; }
+.checks li span.why { display: block; font-size: 0.86rem; color: var(--ink-3); margin-top: 3px; }
+
+/* ---------- 기한 강조 ---------- */
+.deadline {
+  font-family: var(--f-mono);
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--risk);
+  white-space: nowrap;
+}
