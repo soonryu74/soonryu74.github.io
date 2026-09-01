@@ -1081,3 +1081,13 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
   color: var(--ink-2);
   white-space: pre-wrap;
 }
+
+/* ---------- 부고장 빈소 지도 (카카오 키가 있을 때만 나타남) ---------- */
+.bj-map {
+  height: 230px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  margin: 18px 0 0;
+  overflow: hidden;
+  background: var(--paper);
+}
