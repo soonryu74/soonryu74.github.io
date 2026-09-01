@@ -267,7 +267,13 @@ li::marker { color: var(--ink-3); }
   background: #fff;
   user-select: none;
 }
-.seg input { position: absolute; opacity: 0; width: 0; height: 0; }
+.seg input {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip-path: inset(50%);
+  overflow: hidden; white-space: nowrap;
+}
 .seg input:checked + span { color: #fff; }
 .seg label:has(input:checked) { background: var(--accent); border-color: var(--accent); color: #fff; }
 .seg label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
