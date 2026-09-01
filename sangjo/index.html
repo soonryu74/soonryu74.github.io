@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="고마움 상조회 — 사랑하는 이와 이별하는 순간, 함께하겠습니다">
 <meta property="og:description" content="미리 받지 않습니다. 쓰신 만큼만. 해마다 곁에.">
-<meta property="og:image" content="https://soonryu74.github.io/assets/img/cover-lily.jpg">
+<meta property="og:image" content="https://soonryu74.github.io/assets/img/cover-cross-color.jpg">
 <meta property="og:url" content="https://soonryu74.github.io/sangjo/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,9 +45,13 @@ a { color: inherit; }
 .a-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; gap: 22px;
   width: 100%; max-width: 560px; margin: 0 auto; padding: 22px 26px calc(26px + env(safe-area-inset-bottom)); }
 
-.a-cover { display: block; width: min(100%, 330px); aspect-ratio: 1; margin: 0 auto; border-radius: 10px; overflow: hidden;
+.a-cover { display: block; position: relative; width: min(100%, 330px); aspect-ratio: 1; margin: 0 auto; border-radius: 10px; overflow: hidden;
   box-shadow: 0 30px 60px -30px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.06); background: #0b0d0c; }
 .a-cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* 은회색 흑백 위로, 꽃송이만 색이 배어든 같은 사진이 천천히 떠오른다 */
+.a-cover .bloom { position: absolute; inset: 0; opacity: 0; animation: bloom 9s cubic-bezier(0.4, 0, 0.2, 1) 1.2s forwards; }
+@keyframes bloom { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .a-cover .bloom { animation: none; opacity: 1; } }
 
 .a-title { display: flex; flex-direction: column; gap: 6px; }
 .a-title h1 { font-family: var(--f-display); font-weight: 700; font-size: 24px; margin: 0; letter-spacing: -0.01em; }
@@ -143,7 +147,10 @@ a { color: inherit; }
   </div>
 
   <div class="a-body">
-    <div class="a-cover"><img src="../assets/img/cover-lily.jpg" width="880" height="880" alt="젖은 돌 위에 놓인 흰 백합 한 송이, 그 위로 옅은 새벽 하늘"></div>
+    <div class="a-cover">
+      <img src="../assets/img/cover-cross-grey.jpg" width="880" height="880" alt="검은 흙 위에 세운 나무 십자가와 그 둘레에 핀 흰 백합">
+      <img class="bloom" src="../assets/img/cover-cross-color.jpg" width="880" height="880" alt="" aria-hidden="true">
+    </div>
 
     <div class="a-title">
       <h1>고마움 상조회</h1>
