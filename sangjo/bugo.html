@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부고 쓰기 — 고마움 상조회</title>
+<meta name="description" content="항목만 채우면 부고 문안이 완성됩니다. 일반·기독교·천주교·불교 표현을 각각 맞춰 드리고, 복사해서 바로 보내실 수 있습니다. 입력한 내용은 전송되지 않고 브라우저 안에만 남습니다.">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://soonryu74.github.io/sangjo/bugo.html">
+<meta property="og:site_name" content="고마움 상조회">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="부고 쓰기 — 고마움 상조회">
+<meta property="og:description" content="항목만 채우면 부고 문안이 완성됩니다. 종교별 표현까지 맞춰 드립니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/css/gomaum.css">
+</head>
+<body>
+
+<div class="gm-alert">
+  <div class="inner">
+    <b>지금 상을 당하셨다면</b>
+    <span class="soon">24시간 접수 준비 중</span>
+    <span><a href="jeolcha.html">무엇부터 해야 하는지</a> 먼저 보시고, 장례식장 접수 전에 <b>품목별 단가표</b>를 요구하세요.</span>
+  </div>
+</div>
+
+<header class="gm-header">
+  <div class="gm-nav-inner">
+    <a class="gm-brand" href="./"><svg class="gm-brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="26" r="12.4" stroke="currentColor" stroke-width="3.4"/><path d="M6 36c0 10.5 8.5 19 19 19" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><path d="M58 36c0 10.5-8.5 19-19 19" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><path d="M25 55h14" stroke="#D9B76A" stroke-width="3.4" stroke-linecap="round"/></svg><span class="gm-brand-text">고마움 <span class="sub">상조회</span></span></a>
+    <nav class="gm-nav">
+      <a href="./">홈</a>
+      <a href="hubul.html">후불제 장례</a>
+      <a href="danga.html">단가표</a>
+      <a href="jeolcha.html">장례 절차</a>
+      <a href="bugo.html" class="active">부고 쓰기</a>
+      <a href="kiil.html">기일 리마인드</a>
+      <a href="gaeum.html">장례비 계산</a>
+      <a href="jeoul.html">상조 점검</a>
+      <a href="christian.html">기독교 장례</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="gm-wrap">
+
+  <p class="gm-crumb"><a href="./">고마움 상조회</a> › 부고 쓰기</p>
+
+  <div class="gm-page-head">
+    <p class="kicker">무료 도구 · 누구나</p>
+    <h1>부고 쓰기</h1>
+    <p class="lead">상을 당하고 가장 먼저 막히는 지점입니다. 슬픔 속에서 격식을 갖춘 문장을 쓰기는 어렵습니다. <strong>항목만 채우시면</strong> 문안이 완성되고, 종교에 맞는 표현도 함께 맞춰 드립니다.</p>
+  </div>
+
+  <div class="note calm">
+    <p class="lbl">링크로 보내고 싶으시면</p>
+    <p>청첩장처럼 <strong><a href="bugojang.html">모바일 부고장</a></strong>을 만드실 수 있습니다. 받는 분이 빈소 위치와 발인 시각을 보고 <strong>그 자리에서 전화를 걸거나 길을 찾을</strong> 수 있어, 긴 문자보다 편합니다. 이 페이지는 <strong>문자로 보낼 짧은 문안</strong>을 만듭니다.</p>
+  </div>
+
+  <div class="note calm">
+    <p class="lbl">입력하신 내용은 전송되지 않습니다</p>
+    <p>고인과 가족의 정보는 <strong>브라우저 안에서만</strong> 조합됩니다. 서버로 보내지 않고, 저장하지도 않습니다. 페이지를 닫으면 사라집니다.</p>
+  </div>
+
+  <div class="note warn">
+    <p class="lbl">보내기 전에</p>
+    <p><strong>빈소와 발인 시각이 확정된 뒤에</strong> 보내세요. 미확정 상태로 보내면 정정 부고를 다시 보내게 되고, 조문객도 혼란스럽습니다. 급하게 알려야 할 분에게는 우선 전화로 알리는 편이 낫습니다.</p>
+  </div>
+
+  <form class="calc" id="bugoForm" autocomplete="off">
+    <div class="field" style="margin-bottom:20px">
+      <label>종교 · 표현</label>
+      <div class="seg" role="radiogroup" aria-label="종교">
+        <label><input type="radio" name="rel" value="general" checked><span>일반</span></label>
+        <label><input type="radio" name="rel" value="christian"><span>기독교</span></label>
+        <label><input type="radio" name="rel" value="catholic"><span>천주교</span></label>
+        <label><input type="radio" name="rel" value="buddhist"><span>불교</span></label>
+      </div>
+      <span class="hint">별세 표현과 맺음말이 달라집니다. 기독교·천주교에는 '명복'을 쓰지 않습니다.</span>
+    </div>
+
+    <div class="calc-grid">
+      <div class="field">
+        <label for="name">고인 성함</label>
+        <input type="text" id="name" placeholder="홍길동">
+      </div>
+      <div class="field">
+        <label for="honor">고인 호칭</label>
+        <input type="text" id="honor" placeholder="님 · 여사 · 성도 · 집사 · 권사 · 장로">
+        <span class="hint">비워 두면 '님'으로 넣습니다.</span>
+      </div>
+      <div class="field">
+        <label for="dDate">별세 일시</label>
+        <input type="date" id="dDate">
+      </div>
+      <div class="field">
+        <label for="dTime">별세 시각 <span class="hint" style="font-weight:400">(선택)</span></label>
+        <input type="time" id="dTime">
+      </div>
+
+      <div class="field" style="grid-column:1/-1">
+        <label for="chief">상주 — 관계와 이름</label>
+        <input type="text" id="chief" placeholder="장남 홍철수, 차녀 홍영희, 며느리 김미영">
+        <span class="hint">쉼표로 구분해 적으시면 그대로 들어갑니다.</span>
+      </div>
+
+      <div class="field">
+        <label for="hall">장례식장</label>
+        <input type="text" id="hall" placeholder="○○병원 장례식장">
+      </div>
+      <div class="field">
+        <label for="room">빈소 호실</label>
+        <input type="text" id="room" placeholder="특2호실">
+      </div>
+      <div class="field" style="grid-column:1/-1">
+        <label for="addr">장례식장 주소 <span class="hint" style="font-weight:400">(선택)</span></label>
+        <input type="text" id="addr" placeholder="서울시 ○○구 ○○로 00">
+      </div>
+
+      <div class="field">
+        <label for="fDate">발인 일자</label>
+        <input type="date" id="fDate">
+      </div>
+      <div class="field">
+        <label for="fTime">발인 시각</label>
+        <input type="time" id="fTime" value="07:00">
+      </div>
+      <div class="field" id="wField" hidden>
+        <label for="wDate">천국환송예배 일자</label>
+        <input type="date" id="wDate">
+      </div>
+      <div class="field" id="wtField" hidden>
+        <label for="wTime">예배 시각</label>
+        <input type="time" id="wTime">
+      </div>
+
+      <div class="field">
+        <label for="grave">장지</label>
+        <input type="text" id="grave" placeholder="○○추모공원">
+      </div>
+      <div class="field">
+        <label for="tel">상주 연락처 <span class="hint" style="font-weight:400">(선택)</span></label>
+        <input type="text" id="tel" placeholder="010-0000-0000">
+      </div>
+    </div>
+  </form>
+
+  <section class="gm-sec">
+    <h2>완성된 부고</h2>
+    <p class="sec-lead">그대로 복사해 문자·카카오톡으로 보내시면 됩니다. 직접 고쳐 쓰셔도 됩니다.</p>
+
+    <div class="copybox">
+      <textarea id="out" spellcheck="false" aria-label="완성된 부고 문안"></textarea>
+      <div class="row">
+        <button type="button" id="copyBtn">문안 복사하기</button>
+        <button type="button" class="ghost" id="resetBtn">다시 만들기</button>
+        <span class="msg" id="copyMsg" role="status" aria-live="polite"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="gm-sec">
+    <h2>부고에 꼭 들어가야 하는 것</h2>
+    <ul class="checks">
+      <li><b>고인 성함</b><span class="why">호칭을 함께 적습니다. 종교가 있다면 성도·집사·권사·장로 등을 쓰기도 합니다.</span></li>
+      <li><b>상주 이름과 고인과의 관계</b><span class="why">조문객이 누구를 찾아야 하는지 알 수 있어야 합니다.</span></li>
+      <li><b>빈소 위치와 호실</b><span class="why">장례식장 이름만으로는 못 찾습니다. 호실까지 적으세요.</span></li>
+      <li><b>발인 일시</b><span class="why">조문 가능한 마지막 시각을 가늠하는 기준이 됩니다.</span></li>
+      <li><b>장지</b><span class="why">발인에 동행할 분들에게 필요합니다.</span></li>
+    </ul>
+
+    <div class="note">
+      <p class="lbl">부의금 계좌는 넣지 않는 것을 권합니다</p>
+      <p>계좌번호가 적힌 부고는 문자 그대로 <strong>퍼져 나갑니다.</strong> 사칭 부고 문자를 이용한 사기가 있어, 받는 쪽에서도 진위를 의심하게 됩니다. 계좌가 꼭 필요하다면 <strong>물어보신 분께만 따로</strong> 알려드리는 편이 안전합니다.</p>
+      <p>주소와 연락처도 같은 이유로 최소한만 적으세요. 이 도구가 기본값으로 계좌 항목을 두지 않은 이유입니다.</p>
+    </div>
+  </section>
+
+  <section class="gm-sec">
+    <h2>종교에 따라 달라지는 표현</h2>
+    <p class="sec-lead">가장 자주 실수하는 곳입니다. <strong>'명복(冥福)'은 불교식 표현</strong>이라, 고인이나 상주가 기독교·천주교라면 쓰지 않습니다.</p>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>구분</th><th>별세 표현</th><th>맺음말 · 조의 답장</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="k">일반</td>
+            <td>별세 · 운명(殞命)</td>
+            <td>"삼가 고인의 명복을 빕니다"<br>"깊은 위로의 말씀을 드립니다"</td>
+          </tr>
+          <tr>
+            <td class="k">기독교</td>
+            <td><strong>소천(召天)</strong><br><span style="font-size:.82rem;color:var(--ink-3)">하나님의 부르심을 받음</span></td>
+            <td>"주님의 위로가 함께하시기를 기도합니다"<br>"천국에서 안식하시길 바랍니다"<br><span class="dn">'명복'은 쓰지 않습니다</span></td>
+          </tr>
+          <tr>
+            <td class="k">천주교</td>
+            <td><strong>선종(善終)</strong><br><span style="font-size:.82rem;color:var(--ink-3)">착하게 삶을 마침</span></td>
+            <td>"하느님의 품에서 영원한 안식을 누리시기를"<br>"연도로 함께하겠습니다"<br><span class="dn">'명복'은 쓰지 않습니다</span></td>
+          </tr>
+          <tr>
+            <td class="k">불교</td>
+            <td>별세 · 입적(入寂)</td>
+            <td>"삼가 고인의 명복을 빕니다"<br>"극락왕생하시기를 기원합니다"</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>기독교 장례는 임종·입관·<strong>천국환송</strong>·하관 네 번의 예배로 진행됩니다. 부고에 천국환송예배 시각을 함께 적으면 교우들이 참석을 준비하기 좋습니다. 자세한 절차는 <a href="christian.html">기독교 장례 안내</a>에 정리해 두었습니다.</p>
+  </section>
+
+  <section class="gm-sec">
+    <h2>조문 오신 분께 답장할 때</h2>
+    <p class="sec-lead">사흘 내내 답장을 쓰기는 어렵습니다. 하나 만들어 두고 쓰시면 됩니다.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>상황</th><th>문구</th></tr></thead>
+        <tbody>
+          <tr><td class="k">조문 와 주신 분께</td><td>"바쁘신 중에도 먼 걸음 해 주셔서 깊이 감사드립니다. 덕분에 잘 모실 수 있었습니다."</td></tr>
+          <tr><td class="k">조의금만 보내신 분께</td><td>"마음 써 주셔서 감사합니다. 경황이 없어 인사가 늦었습니다."</td></tr>
+          <tr><td class="k">멀리서 연락만 주신 분께</td><td>"연락 주셔서 큰 힘이 되었습니다. 감사합니다."</td></tr>
+          <tr><td class="k">장례를 마치고 (일괄)</td><td>"덕분에 장례를 무사히 마쳤습니다. 베풀어 주신 마음 잊지 않겠습니다."</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>답장은 <strong>발인 후 2~3일 안</strong>에 보내는 것이 일반적입니다. 서두르지 않으셔도 됩니다.</p>
+  </section>
+
+  <p class="gm-signature" style="margin:44px 0 30px">
+    사랑하는 이와 이별하는 순간,
+    <span class="quiet">고마움 상조회가 함께하겠습니다.</span>
+  </p>
+
+  <section class="gm-sec sources">
+    <h2 style="font-size:1.2rem">출처</h2>
+    <ol>
+      <li>부고 필수 기재 항목, 상황별 예시 — <a href="https://www.goifuneral.co.kr/guidebook/tip/ongoing1/3/" rel="noopener">고이 장례 가이드북</a></li>
+      <li>종교별 별세 표현과 조의 문구 — <a href="https://samgolife.co.kr/magazine/blog/f-guide/obituary-message-guide--pWlxb" rel="noopener">부고 문자 작성 안내</a> 등</li>
+      <li>기독교식 부고 표현 — <a href="https://www.christiantoday.co.kr/news/357545" rel="noopener">크리스천투데이</a> 등 교계 자료</li>
+    </ol>
+  </section>
+
+</div>
+</main>
+
+<footer class="gm-footer">
+  <div class="gm-footer-inner">
+    <div class="fnav">
+      <a href="./">홈</a>
+      <a href="hubul.html">후불제 장례</a>
+      <a href="danga.html">단가표</a>
+      <a href="jeolcha.html">장례 절차</a>
+      <a href="bugo.html">부고 쓰기</a>
+      <a href="bugojang.html">모바일 부고장</a>
+      <a href="kiil.html">기일 리마인드</a>
+      <a href="gaeum.html">장례비 계산</a>
+      <a href="jeoul.html">상조 점검</a>
+      <a href="christian.html">기독교 장례</a>
+      <a href="gyeolhap.html">결합상품 판별</a>
+      <a href="../index.html">부동산 정보</a>
+    </div>
+    <p class="sig">사랑하는 이와 이별하는 순간,<br>고마움 상조회가 함께하겠습니다.</p>
+    고마움 상조회 — 장례는 후불로, 기억은 오래.<br>
+    입력하신 내용은 서버로 전송되거나 저장되지 않습니다. 문안은 브라우저 안에서만 조합됩니다.<br>
+    표현과 격식은 지역·가풍·교단에 따라 다를 수 있습니다. 어색한 부분은 직접 고쳐 쓰셔도 됩니다.
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var DAY = ["일", "월", "화", "수", "목", "금", "토"];
+  var $ = function (id) { return document.getElementById(id); };
+
+  var F = {
+    name: $("name"), honor: $("honor"), dDate: $("dDate"), dTime: $("dTime"),
+    chief: $("chief"), hall: $("hall"), room: $("room"), addr: $("addr"),
+    fDate: $("fDate"), fTime: $("fTime"), wDate: $("wDate"), wTime: $("wTime"),
+    grave: $("grave"), tel: $("tel")
+  };
+  var out = $("out");
+  var wField = $("wField"), wtField = $("wtField");
+
+  var WORD = {
+    general:   { verb: "별세하셨기에", close: "생전에 베풀어 주신 은혜에 깊이 감사드립니다." },
+    christian: { verb: "하나님의 부르심을 받아 소천하셨기에", close: "고인의 믿음을 기억하며, 주님의 위로가 함께하시기를 바랍니다." },
+    catholic:  { verb: "선종하셨기에", close: "하느님의 품에서 영원한 안식을 누리시기를 기도합니다." },
+    buddhist:  { verb: "별세하셨기에", close: "생전에 베풀어 주신 은혜에 깊이 감사드립니다." }
+  };
+
+  function religion() {
+    var el = document.querySelector("input[name=rel]:checked");
+    return el ? el.value : "general";
+  }
+
+  function fmtDate(v) {
+    if (!v) return "";
+    var p = v.split("-");
+    if (p.length !== 3) return "";
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    if (isNaN(d.getTime())) return "";
+    return p[0] + "년 " + (+p[1]) + "월 " + (+p[2]) + "일(" + DAY[d.getDay()] + ")";
+  }
+
+  function fmtTime(v) {
+    if (!v) return "";
+    var p = v.split(":");
+    if (p.length < 2) return "";
+    var hh = +p[0], mm = +p[1];
+    var ampm = hh < 12 ? "오전" : "오후";
+    var h12 = hh % 12; if (h12 === 0) h12 = 12;
+    return ampm + " " + h12 + "시" + (mm ? " " + mm + "분" : "");
+  }
+
+  function val(el, fallback) {
+    var v = el && el.value ? el.value.trim() : "";
+    return v || fallback || "";
+  }
+
+  function build() {
+    var rel = religion();
+    var w = WORD[rel];
+
+    var nm = val(F.name, "○○○");
+    var hn = val(F.honor, "님");
+    // '님'은 붙여 쓰고, 성도·여사·집사·권사·장로 등은 띄어 쓴다
+    var titled = nm + (hn === "님" ? "" : " ") + hn;
+    var when = fmtDate(F.dDate.value);
+    var wt = fmtTime(F.dTime.value);
+    var whenTxt = when ? when + (wt ? " " + wt : "") : "○○○○년 ○월 ○일";
+
+    var lines = [];
+    lines.push("부고(訃告)");
+    lines.push("");
+    lines.push(titled + "께서 " + whenTxt + " " + w.verb);
+    lines.push("삼가 알려드립니다.");
+    lines.push("");
+
+    function row(label, value) {
+      if (!value) return;
+      lines.push("· " + label + "  " + value);
+    }
+
+    row("고　인", titled);
+    row("상　주", val(F.chief));
+    var binso = [val(F.hall), val(F.room)].filter(Boolean).join(" ");
+    row("빈　소", binso);
+    row("주　소", val(F.addr));
+
+    if (rel === "christian") {
+      var wd = fmtDate(F.wDate.value), wtm = fmtTime(F.wTime.value);
+      if (wd || wtm) row("천국환송예배", [wd, wtm].filter(Boolean).join(" "));
+    }
+
+    var fd = fmtDate(F.fDate.value), ft = fmtTime(F.fTime.value);
+    row("발　인", [fd, ft].filter(Boolean).join(" "));
+    row("장　지", val(F.grave));
+    row("연락처", val(F.tel));
+
+    lines.push("");
+    lines.push(w.close);
+
+    out.value = lines.join("\n");
+    autoGrow();
+  }
+
+  // 문안이 잘려 보이지 않도록 높이를 내용에 맞춘다
+  function autoGrow() {
+    out.style.height = "auto";
+    out.style.height = Math.max(220, out.scrollHeight + 4) + "px";
+  }
+
+  function syncReligion() {
+    var isChristian = (religion() === "christian");
+    wField.hidden = !isChristian;
+    wtField.hidden = !isChristian;
+    build();
+  }
+
+  Object.keys(F).forEach(function (k) {
+    if (F[k]) F[k].addEventListener("input", build);
+  });
+  Array.prototype.forEach.call(
+    document.querySelectorAll("input[name=rel]"),
+    function (el) { el.addEventListener("change", syncReligion); }
+  );
+
+  var msg = $("copyMsg");
+  function flash(text) {
+    msg.textContent = text;
+    setTimeout(function () { msg.textContent = ""; }, 2600);
+  }
+
+  $("copyBtn").addEventListener("click", function () {
+    var text = out.value;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        function () { flash("복사했습니다. 문자나 카카오톡에 붙여 넣으세요."); },
+        function () { selectFallback(); }
+      );
+    } else {
+      selectFallback();
+    }
+  });
+
+  function selectFallback() {
+    out.focus();
+    out.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    flash(ok ? "복사했습니다." : "문안을 선택했습니다. 직접 복사해 주세요.");
+  }
+
+  out.addEventListener("input", autoGrow);
+
+  $("resetBtn").addEventListener("click", function () {
+    Object.keys(F).forEach(function (k) { if (F[k]) F[k].value = ""; });
+    F.fTime.value = "07:00";
+    build();
+    F.name.focus();
+  });
+
+  syncReligion();
+})();
+</script>
+
+</body>
+</html>

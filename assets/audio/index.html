@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>음악 파일 두는 곳 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="음악 파일 두는 곳" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="음악 파일 두는 곳" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"음악 파일 두는 곳","url":"/assets/audio/"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=2c5b8c92b49a6bffea3f77228af646808796c3bf">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="음악-파일-두는-곳">음악 파일 두는 곳</h1>
+
+<p>모바일 부고장(<code class="language-plaintext highlighter-rouge">sangjo/bugojang.html</code>)에서 유족이 <strong>직접 눌렀을 때만</strong> 재생되는
+조용한 음악을 여기에 둡니다. 자동 재생은 하지 않습니다.</p>
+
+<h2 id="넣는-방법">넣는 방법</h2>
+
+<ol>
+  <li>파일을 이 폴더에 <code class="language-plaintext highlighter-rouge">gomaum.mp3</code> 로 저장합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">sangjo/bugojang.html</code> 위쪽의 이 줄을 고칩니다.</li>
+</ol>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">MUSIC_SRC</span> <span class="o">=</span> <span class="dl">""</span><span class="p">;</span>                          <span class="c1">// 지금 (재생 단추가 나타나지 않음)</span>
+<span class="kd">var</span> <span class="nx">MUSIC_SRC</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">../assets/audio/gomaum.mp3</span><span class="dl">"</span><span class="p">;</span> <span class="c1">// 이렇게</span>
+</code></pre></div></div>
+
+<p>경로를 채우면 부고장 오른쪽 위에 작은 재생 단추가 생깁니다.</p>
+
+<h2 id="지켜야-할-것">지켜야 할 것</h2>
+
+<ul>
+  <li><strong>자동 재생 금지.</strong> 빈소나 병원에서 열어 보는 분이 많습니다. 조용한 곳에서
+갑자기 소리가 나면 큰 실례입니다. 기본은 항상 정지 상태입니다.</li>
+  <li><strong>음량 32%로 시작.</strong> 코드에 그렇게 잡아 두었습니다.</li>
+  <li><strong>용량은 2MB 이하로.</strong> 모바일 데이터로 여는 분을 위해 128kbps 정도면 충분합니다.
+<code class="language-plaintext highlighter-rouge">ffmpeg -i 원본.wav -b:a 128k -ac 2 gomaum.mp3</code></li>
+  <li><strong>길이는 60~90초 정도</strong>에 자연스럽게 이어지도록(loop) 만드는 편이 좋습니다.</li>
+</ul>
+
+<h2 id="저작권">저작권</h2>
+
+<p>AI로 생성한 음악(Suno 등)은 요금제에 따라 상업적 이용 권리가 다릅니다.
+사업용으로 쓰기 전에 가입하신 요금제의 이용 약관을 확인하시고,
+확인된 내용을 이 파일에 적어 두세요.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
