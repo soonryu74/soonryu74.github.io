@@ -322,6 +322,8 @@
 
     var nm = val(F.name, "○○○");
     var hn = val(F.honor, "님");
+    // '님'은 붙여 쓰고, 성도·여사·집사·권사·장로 등은 띄어 쓴다
+    var titled = nm + (hn === "님" ? "" : " ") + hn;
     var when = fmtDate(F.dDate.value);
     var wt = fmtTime(F.dTime.value);
     var whenTxt = when ? when + (wt ? " " + wt : "") : "○○○○년 ○월 ○일";
@@ -329,7 +331,7 @@
     var lines = [];
     lines.push("부고(訃告)");
     lines.push("");
-    lines.push(nm + hn + "께서 " + whenTxt + " " + w.verb);
+    lines.push(titled + "께서 " + whenTxt + " " + w.verb);
     lines.push("삼가 알려드립니다.");
     lines.push("");
 
@@ -338,7 +340,7 @@
       lines.push("· " + label + "  " + value);
     }
 
-    row("고　인", nm + hn);
+    row("고　인", titled);
     row("상　주", val(F.chief));
     var binso = [val(F.hall), val(F.room)].filter(Boolean).join(" ");
     row("빈　소", binso);
@@ -358,6 +360,13 @@
     lines.push(w.close);
 
     out.value = lines.join("\n");
+    autoGrow();
+  }
+
+  // 문안이 잘려 보이지 않도록 높이를 내용에 맞춘다
+  function autoGrow() {
+    out.style.height = "auto";
+    out.style.height = Math.max(220, out.scrollHeight + 4) + "px";
   }
 
   function syncReligion() {
@@ -400,6 +409,8 @@
     try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
     flash(ok ? "복사했습니다." : "문안을 선택했습니다. 직접 복사해 주세요.");
   }
+
+  out.addEventListener("input", autoGrow);
 
   $("resetBtn").addEventListener("click", function () {
     Object.keys(F).forEach(function (k) { if (F[k]) F[k].value = ""; });
