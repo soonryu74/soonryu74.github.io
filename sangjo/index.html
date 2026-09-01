@@ -2,21 +2,127 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>고마움 상조회 — 장례는 후불로, 기억은 오래</title>
-<meta name="description" content="미리 돈을 받지 않는 후불제 상조회입니다. 장례를 치른 뒤 쓰신 만큼만 한 번 정산하고, 그 뒤 해마다 기일에 먼저 연락드립니다. 장례 이후의 모든 서비스는 무료입니다.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>고마움 상조회 — 사랑하는 이와 이별하는 순간, 함께하겠습니다</title>
+<meta name="description" content="상을 당하셨다면 전화 한 통이면 됩니다. 미리 돈을 받지 않는 후불제 상조회. 장례를 치른 뒤 쓰신 만큼만 정산하고, 그 뒤 해마다 기일에 먼저 연락드립니다.">
+<meta name="theme-color" content="#161a18">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://soonryu74.github.io/sangjo/">
 <meta property="og:site_name" content="고마움 상조회">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:type" content="website">
-<meta property="og:title" content="고마움 상조회 — 장례는 후불로, 기억은 오래">
-<meta property="og:description" content="사랑하는 이와 이별하는 순간, 고마움 상조회가 함께하겠습니다. 미리 받지 않고, 쓰신 만큼만 정산합니다.">
+<meta property="og:title" content="고마움 상조회 — 사랑하는 이와 이별하는 순간, 함께하겠습니다">
+<meta property="og:description" content="미리 받지 않습니다. 쓰신 만큼만. 해마다 곁에.">
+<meta property="og:image" content="https://soonryu74.github.io/assets/img/cover-lily.jpg">
 <meta property="og:url" content="https://soonryu74.github.io/sangjo/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="../assets/css/gomaum.css">
+<style>
+/* ── 홈: 커버 한 장, 노래 하나, 전화 하나 ─────────────────
+   음악 앱의 '지금 재생 중' 화면처럼. 사진, 이름, 재생 막대, 그리고 전화. */
+:root { --bg: #161a18; --bg-2: #1f2522; --fg: #f3f5f2; --mute: #9aa79f; --line-d: rgba(255,255,255,0.14); }
+html, body { margin: 0; background: var(--bg); }
+body { font-family: var(--f-body); color: var(--fg); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+
+.a-screen {
+  position: relative; min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column;
+  background: radial-gradient(120% 70% at 50% 0%, #2a3430 0%, var(--bg) 60%);
+  color: var(--fg);
+}
+.a-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: calc(16px + env(safe-area-inset-top)) 22px 0;
+}
+.a-brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--fg); }
+.a-brand svg { width: 24px; height: 24px; }
+.a-brand b { font-family: var(--f-display); font-weight: 700; font-size: 18px; letter-spacing: 0.02em; }
+.a-top .hours { font-size: 12px; color: var(--mute); letter-spacing: 0.04em; }
+
+.a-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; gap: 22px;
+  width: 100%; max-width: 560px; margin: 0 auto; padding: 22px 26px calc(26px + env(safe-area-inset-bottom)); }
+
+.a-cover { display: block; width: min(100%, 330px); aspect-ratio: 1; margin: 0 auto; border-radius: 10px; overflow: hidden;
+  box-shadow: 0 30px 60px -30px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.06); background: #0b0d0c; }
+.a-cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.a-title { display: flex; flex-direction: column; gap: 6px; }
+.a-title h1 { font-family: var(--f-display); font-weight: 700; font-size: 24px; margin: 0; letter-spacing: -0.01em; }
+.a-title p { margin: 0; font-size: 14px; color: var(--mute); line-height: 1.6; }
+
+.a-player { display: flex; flex-direction: column; gap: 10px; }
+.a-bar { position: relative; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.16); overflow: hidden; }
+.a-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--fg); border-radius: 2px; transition: width 0.5s linear; }
+.a-times { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 12px; color: var(--mute); letter-spacing: 0.04em; }
+.a-ctrl { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 2px; }
+.a-play {
+  width: 60px; height: 60px; border-radius: 50%; border: 0; background: var(--fg); color: var(--bg);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+}
+.a-play svg { width: 26px; height: 26px; }
+.a-play .pause { display: none; }
+.a-play[aria-pressed="true"] .play { display: none; }
+.a-play[aria-pressed="true"] .pause { display: block; }
+.a-play:active { transform: scale(0.97); }
+.a-hint { font-size: 12px; color: var(--mute); text-align: center; margin: -4px 0 0; min-height: 1em; }
+
+.a-call {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  height: 58px; background: var(--accent); color: #fff;
+  border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 18px; letter-spacing: 0.01em;
+}
+.a-call svg { width: 22px; height: 22px; flex: none; }
+.a-call:active { background: var(--accent-deep); }
+.a-call.soon { background: rgba(255,255,255,0.06); color: #cfd8d2; border: 1px solid var(--line-d); font-weight: 600; font-size: 16px; cursor: default; }
+.a-call.soon span { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.a-call.soon small { font-size: 12px; font-weight: 400; color: var(--mute); }
+.a-pair { display: flex; gap: 10px; }
+.a-pair a {
+  flex: 1 1 0; display: flex; align-items: center; justify-content: center;
+  height: 46px; border: 1px solid rgba(255,255,255,0.32); border-radius: 6px;
+  color: var(--fg); text-decoration: none; font-weight: 600; font-size: 15px;
+}
+.a-pair a:hover, .a-pair a:focus-visible { border-color: var(--fg); background: rgba(255,255,255,0.05); }
+.a-line { margin: 0; font-size: 12px; color: var(--mute); text-align: center; letter-spacing: 0.02em; }
+
+/* ── 아래: 다른 페이지 ── */
+.a-more { background: var(--paper); color: var(--ink); padding: 34px 22px 8px; }
+.a-more-inner { max-width: 760px; margin: 0 auto; }
+.a-more .cap { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.a-more .cap span { font-size: 11px; letter-spacing: 0.16em; color: var(--ink-3); white-space: nowrap; }
+.a-more .cap i { flex: 1 1 auto; height: 1px; background: var(--line); }
+.a-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.a-links a {
+  display: flex; flex-direction: column; gap: 3px; min-height: 66px; padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 4px; text-decoration: none;
+}
+.a-links a b { font-size: 15px; font-weight: 700; color: var(--ink); }
+.a-links a small { font-size: 12px; color: var(--ink-3); }
+.a-links a:hover, .a-links a:focus-visible { border-color: var(--accent); }
+.a-more + .gm-footer { margin-top: 0; background: var(--paper); border-top: 0; }
+
+@media (min-width: 860px) {
+  .a-top { padding-left: 34px; padding-right: 34px; }
+  .a-brand svg { width: 28px; height: 28px; }
+  .a-brand b { font-size: 20px; }
+  .a-body { max-width: 980px; display: grid; grid-template-columns: 400px 1fr; grid-template-areas: "cover title" "cover player" "cover call" "cover pair" "cover line";
+    column-gap: 56px; row-gap: 20px; align-content: center; padding: 40px 34px 56px; }
+  .a-cover { grid-area: cover; width: 400px; align-self: center; }
+  .a-title { grid-area: title; }
+  .a-title h1 { font-size: 34px; }
+  .a-title p { font-size: 16px; }
+  .a-player { grid-area: player; }
+  .a-call { grid-area: call; height: 62px; font-size: 19px; }
+  .a-pair { grid-area: pair; }
+  .a-line { grid-area: line; text-align: left; }
+  .a-links { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .a-more { padding: 44px 34px 12px; }
+}
+@media (min-width: 1100px) { .a-links { grid-template-columns: repeat(5, minmax(0, 1fr)); } .a-more-inner { max-width: 1000px; } }
+</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -30,441 +136,179 @@
 </head>
 <body>
 
-<div class="gm-alert">
-  <div class="inner">
-    <b>지금 상을 당하셨다면</b>
-    <span class="soon">24시간 접수 준비 중</span>
-    <span><a href="jeolcha.html">무엇부터 해야 하는지</a> 먼저 보시고, 장례식장 접수 전에 <b>품목별 단가표</b>를 요구하세요.</span>
+<section class="a-screen">
+  <div class="a-top">
+    <a class="a-brand" href="./" aria-label="고마움 상조회 홈"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="26" r="12.4" stroke="#fff" stroke-width="3.4"/><path d="M6 36c0 10.5 8.5 19 19 19" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M58 36c0 10.5-8.5 19-19 19" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M25 55h14" stroke="#D9B76A" stroke-width="3.4" stroke-linecap="round"/></svg><b>고마움 상조회</b></a>
+    <span class="hours" id="hours">24시간</span>
   </div>
-</div>
 
-<header class="gm-header">
-  <div class="gm-nav-inner">
-    <a class="gm-brand" href="./"><svg class="gm-brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="26" r="12.4" stroke="currentColor" stroke-width="3.4"/><path d="M6 36c0 10.5 8.5 19 19 19" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><path d="M58 36c0 10.5-8.5 19-19 19" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><path d="M25 55h14" stroke="#D9B76A" stroke-width="3.4" stroke-linecap="round"/></svg><span class="gm-brand-text">고마움 <span class="sub">상조회</span></span></a>
-    <nav class="gm-nav">
-      <a href="./" class="active">홈</a>
-      <a href="hubul.html">후불제 장례</a>
-      <a href="danga.html">단가표</a>
-      <a href="jeolcha.html">장례 절차</a>
-      <a href="bugo.html">부고 쓰기</a>
-      <a href="kiil.html">기일 리마인드</a>
-      <a href="gaeum.html">장례비 계산</a>
-      <a href="jeoul.html">상조 점검</a>
-      <a href="christian.html">기독교 장례</a>
-    </nav>
-  </div>
-</header>
+  <div class="a-body">
+    <div class="a-cover"><img src="../assets/img/cover-lily.jpg" width="880" height="880" alt="젖은 돌 위에 놓인 흰 백합 한 송이, 그 위로 옅은 새벽 하늘"></div>
 
-<section class="gm-hero">
-  <canvas class="gm-hero-canvas" id="river" aria-hidden="true"></canvas>
-  <div class="gm-hero-inner">
-    <p class="eyebrow">후불제 상조 · 기일 리마인드</p>
-    <h1 class="gm-hero-sig">
-      사랑하는 이와 이별하는 순간,
-      <span class="l2">고마움 상조회가 함께하겠습니다.</span>
-    </h1>
-    <p class="gm-hero-sub">
-      미리 받는 것 없이, 필요한 그날 곁에 서겠습니다.
-      그리고 장례가 끝난 뒤에도 — 해마다 기일이 돌아오면 저희가 먼저 연락드립니다.
-    </p>
-    <div class="cta-row">
-      <a class="cta primary" href="jeolcha.html">지금 무엇부터 해야 하나</a>
-      <a class="cta ghost" href="bugojang.html">부고 알리기</a>
+    <div class="a-title">
+      <h1>고마움 상조회</h1>
+      <p>사랑하는 이와 이별하는 순간,<br>함께하겠습니다.</p>
     </div>
+
+    <div class="a-player" id="player">
+      <div class="a-bar" aria-hidden="true"><i id="bar"></i></div>
+      <div class="a-times"><span id="tCur">0:00</span><span id="tDur">--:--</span></div>
+      <div class="a-ctrl">
+        <button type="button" class="a-play" id="play" aria-pressed="false" aria-label="조용한 음악 재생">
+          <svg class="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+        </button>
+      </div>
+      <p class="a-hint" id="hint"></p>
+    </div>
+
+    <a class="a-call" id="call" href="#call">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.8 2z"/></svg>
+      <span id="call-label">전화 접수 준비 중</span>
+    </a>
+    <div class="a-pair">
+      <a href="bugojang.html">부고장 만들기</a>
+      <a href="jeolcha.html">무엇부터 하나</a>
+    </div>
+    <p class="a-line">미리 받지 않습니다 · 쓰신 만큼만 · 해마다 곁에</p>
   </div>
 </section>
 
-<main>
-<div class="gm-wrap">
-
-  <section class="gm-sec">
-    <h2>지금 필요하신 것</h2>
-    <p class="sec-lead">상을 당한 순간 가장 급한 것부터 두었습니다. 전부 무료이고 가입이 필요 없습니다.</p>
-    <div class="gm-cards">
-      <article class="gm-card">
-        <p class="tool">지금</p>
-        <h3>무엇부터 해야 하나</h3>
-        <p>임종 직후 여섯 시간, 3일장 일정, 발인 뒤 기한이 걸린 행정 절차까지. 처음 상을 당한 분을 위해 한 장에 정리했습니다.</p>
-        <a class="go" href="jeolcha.html">장례 절차 보기 →</a>
-      </article>
-      <article class="gm-card">
-        <p class="tool">알리기</p>
-        <h3>모바일 부고장</h3>
-        <p>청첩장처럼 링크 하나로 보냅니다. 받는 분은 빈소 위치를 보고 바로 전화하거나 길을 찾을 수 있습니다.</p>
-        <a class="go" href="bugojang.html">부고장 만들기 →</a>
-      </article>
-      <article class="gm-card">
-        <p class="tool">알리기</p>
-        <h3>부고 문자 쓰기</h3>
-        <p>항목만 채우면 격식을 갖춘 문안이 완성됩니다. 종교에 맞는 표현까지 맞춰 드립니다.</p>
-        <a class="go" href="bugo.html">문안 만들기 →</a>
-      </article>
-      <article class="gm-card">
-        <p class="tool">안내</p>
-        <h3>기독교 장례</h3>
-        <p>임종·입관·천국환송·하관, 네 번의 예배로 진행되는 장례의 절차와 준비를 정리했습니다.</p>
-        <a class="go" href="christian.html">절차 보기 →</a>
-      </article>
-    </div>
-  </section>
-
-  <section class="gm-sec">
-    <h2>맡기시면 이렇게 진행됩니다</h2>
-    <p class="sec-lead">임종에서 정산까지. 가족이 결정하실 것은 세 번째 단계 하나뿐입니다.</p>
-    <div class="flow">
-      <div><p class="n">1</p><h4>접수</h4><p>전화 한 통. 이동하는 동안 단가표를 먼저 보내드립니다</p></div>
-      <div><p class="n">2</p><h4>운구·안치</h4><p>장례식장은 가족이 고르십니다</p></div>
-      <div><p class="n">3</p><h4>품목 결정</h4><p>등급을 올리자는 권유를 하지 않습니다</p></div>
-      <div><p class="n">4</p><h4>의전</h4><p>입관부터 장지까지 함께합니다</p></div>
-      <div><p class="n">5</p><h4>정산</h4><p>쓰지 않은 품목은 빠집니다</p></div>
-    </div>
-    <p><a href="hubul.html">각 단계에서 무엇을 하는지 자세히 보기 →</a></p>
-  </section>
-
-  <section class="gm-sec">
-    <h2>그리고 끝나지 않습니다</h2>
-    <p class="sec-lead">삼일장이 끝나고 사람들이 돌아간 뒤가 실은 가장 조용합니다. 대부분의 상조는 그 지점에서 사라집니다.</p>
-
-    <div class="promises">
-      <article class="promise warm">
-        <p class="no">기일 리마인드 · 전액 무료</p>
-        <h3>해마다 먼저 연락드립니다</h3>
-        <p>장례를 치르는 사흘 동안 가족이 가장 많이 하는 말이 "고맙습니다"입니다. 그런데 장례가 끝나면 그 고마움을 전할 곳이 사라집니다. 한 해에 한 번은 돌아올 자리를 만들어 두는 일입니다.</p>
-        <ul>
-          <li><strong>발인 후 3일</strong> — 사망신고·상속·명의변경 절차 안내</li>
-          <li><strong>한 달 즈음</strong> — 조문객이 흩어지고 가장 조용해질 때, <strong>위로 편지</strong> 한 통</li>
-          <li><strong>첫 명절</strong> — 고인 없이 맞는 첫 설·추석 전에 짧은 안부</li>
-          <li><strong>매년 기일 2주 전</strong> — 알림 (음력·양력 자동 계산)</li>
-          <li><strong>매년 기일</strong> — 추모 영상, 온라인 추모관, 작은 선물</li>
-        </ul>
-        <a class="go" href="kiil.html">기일 리마인드 자세히 →</a>
-      </article>
-
-      <article class="promise">
-        <p class="no">보내지 않을 권리</p>
-        <h3>원하지 않으시면 보내지 않습니다</h3>
-        <p>추모는 좋은 뜻이어도 사람에 따라 부담이 됩니다. 그 부담을 만들지 않기 위해 미리 정해 둔 원칙입니다.</p>
-        <ul>
-          <li>받을지 <strong>먼저 여쭙습니다</strong>. 자동 가입은 없습니다</li>
-          <li>모든 알림에 중단 링크. 누르시면 <strong>이유를 묻지 않습니다</strong></li>
-          <li>알림에 <strong>상품 안내를 끼워 보내지 않습니다</strong></li>
-          <li>가족마다 따로 신청하고 따로 멈춥니다</li>
-          <li>멈춰도 정산에 아무 영향이 없습니다</li>
-        </ul>
-      </article>
-    </div>
-  </section>
-
-  <section class="gm-sec">
-    <h2>비용 이야기는 여기에만</h2>
-    <p class="sec-lead">돈 이야기를 이 한 곳에 모았습니다. 이별의 자리에서 계산기를 들이밀고 싶지 않아서입니다. 다만 세 가지 약속은 분명히 해 둡니다.</p>
-
-    <div class="three" style="border:1px solid var(--line)">
-      <div>
-        <p class="no">하나</p>
-        <h3>미리 받지 않습니다</h3>
-        <p>가입비·예치금·회비, 어떤 명목으로도 받지 않습니다.</p>
-      </div>
-      <div>
-        <p class="no">둘</p>
-        <h3>쓴 만큼만 냅니다</h3>
-        <p>품목별 단가표를 먼저 드리고, 사용하지 않은 품목은 청구하지 않습니다.</p>
-      </div>
-      <div>
-        <p class="no">셋</p>
-        <h3>장례 이후는 전부 무료</h3>
-        <p>위로 편지, 기일 알림, 추모 영상, 온라인 추모관. 구독도 등급도 없습니다.</p>
-      </div>
-    </div>
-
-    <p style="margin-top:22px">비용을 미리 따져 보고 싶으시거나, 이미 가입하신 선불 상조를 점검하고 싶으시면 — 필요할 때만 여세요.</p>
-    <ul>
-      <li><a href="gaeum.html"><strong>장례비 계산기</strong></a> — 실제 총비용이 얼마나 되는지, 조건을 넣어 미리 가늠합니다</li>
-      <li><a href="danga.html"><strong>품목별 단가표</strong></a> — 저희가 제공하는 품목 전부와, 다른 업체에 단가표를 요구하는 법</li>
-      <li><a href="jeoul.html"><strong>해약환급금 계산기</strong></a> — 선불 상조를 지금 해지하면 최소 얼마를 받아야 하는지</li>
-      <li><a href="gyeolhap.html"><strong>결합상품 판별</strong></a> — "적금인 줄 알았다"에 해당하는지 여덟 문항으로 확인</li>
-      <li><a href="hubul.html"><strong>선불제와 무엇이 다른가</strong></a> — 후불제의 유리한 점과 불리한 점을 같이 적었습니다</li>
+<section class="a-more" aria-label="다른 안내">
+  <div class="a-more-inner">
+    <div class="cap"><span>더 알아보기</span><i></i></div>
+    <ul class="a-links">
+      <li><a href="hubul.html"><b>후불제 장례</b><small>접수부터 정산까지</small></a></li>
+      <li><a href="danga.html"><b>단가표</b><small>품목별로 먼저 드립니다</small></a></li>
+      <li><a href="jeolcha.html"><b>장례 절차</b><small>임종 여섯 시간, 3일장</small></a></li>
+      <li><a href="bugo.html"><b>부고 문안</b><small>문자로 보낼 글</small></a></li>
+      <li><a href="bugojang.html"><b>모바일 부고장</b><small>링크 하나로 알리기</small></a></li>
+      <li><a href="kiil.html"><b>기일 리마인드</b><small>해마다 먼저 연락</small></a></li>
+      <li><a href="gaeum.html"><b>장례비 가늠</b><small>대략의 액수</small></a></li>
+      <li><a href="jeoul.html"><b>내 상조 점검</b><small>해약환급금 계산</small></a></li>
+      <li><a href="gyeolhap.html"><b>결합상품 판별</b><small>8문항</small></a></li>
+      <li><a href="christian.html"><b>기독교 장례</b><small>네 번의 예배</small></a></li>
     </ul>
-  </section>
-
-  <section class="gm-sec">
-    <h2>자주 묻는 질문</h2>
-    <div class="faq">
-      <details>
-        <summary>미리 안 받으면 회사가 유지되나요?</summary>
-        <div>
-          <p>선불 상조의 수익 구조는 두 갈래입니다 — 장례 서비스 마진과, 미리 받아 쌓아 둔 선수금의 운용 수익. 저희는 앞의 것만 가져갑니다. 대신 <strong>영업비와 모집수당이 들지 않습니다.</strong> 선불 상조는 가입을 권유하는 데 상당한 비용을 쓰고, 그 몫이 해약환급금에서 공제되는 '모집수당'입니다. 저희에게는 그 항목이 없습니다.</p>
-          <p>기일 리마인드에 값을 받지 않는 이유도 여기 있습니다. 그것은 상품이 아니라 <strong>다음에 다시 찾아주시기를 바라는 마음</strong>입니다. 한 사람이 평생 치르는 장례는 한 번이 아니고, 이 일은 대부분 소개로 이어집니다. 잘 배웅해 드리는 것이 가장 정직한 영업입니다.</p>
-        </div>
-      </details>
-      <details>
-        <summary>기일 리마인드는 부담스럽지 않을까요?</summary>
-        <div>
-          <p>원하지 않으시면 보내지 않습니다. 처음 안내드릴 때 <strong>받을지, 어떤 방식으로 받을지, 언제 멈출지</strong>를 가족이 직접 정하십니다. 언제든 한 번의 클릭으로 중단할 수 있고, 중단해도 아무것도 청구되지 않습니다.</p>
-        </div>
-      </details>
-      <details>
-        <summary>기독교식 장례도 되나요?</summary>
-        <div>
-          <p>됩니다. 기독교 장례는 임종예배 → 입관예배 → 천국환송예배 → 하관예배로 진행되고, 제단 제기·향·조화 같은 항목이 빠집니다. <a href="christian.html">기독교 장례 안내</a>에 절차와 비용 차이를 정리해 두었습니다.</p>
-        </div>
-      </details>
-      <details>
-        <summary>지금 바로 맡길 수 있나요?</summary>
-        <div>
-          <p>아직 아닙니다. 서비스 개설을 준비하고 있어 24시간 접수를 받지 못합니다. 사업자 정보, 접수 연락처, 서비스 가능 지역, 품목별 단가표는 <strong>개설 시점에 이 사이트에 그대로 게시</strong>하겠습니다.</p>
-          <p>확정되지 않은 것을 적어두지 않는 것이 이 사이트가 하려는 이야기 그 자체라서, 그때까지는 비워 둡니다.</p>
-        </div>
-      </details>
-    </div>
-  </section>
-
-  <section class="gm-sec">
-    <h2>급하실 때</h2>
-    <div class="tw">
-      <table>
-        <thead><tr><th>상황</th><th>창구</th></tr></thead>
-        <tbody>
-          <tr><td class="k">상조 피해 상담·분쟁조정</td><td><a href="https://www.ccn.go.kr" rel="noopener">1372 소비자상담센터</a> · 한국소비자원</td></tr>
-          <tr><td class="k">폐업 업체 계약 이어받기</td><td><a href="https://www.mysangjo.or.kr/web/service/introduce.do" rel="noopener">내상조 그대로</a></td></tr>
-          <tr><td class="k">내 상조업체 등록·보전 확인</td><td><a href="https://www.ftc.go.kr" rel="noopener">공정거래위원회</a> 선불식 할부거래업자 정보공개</td></tr>
-          <tr><td class="k">장례식장·화장시설 요금</td><td><a href="https://www.15774129.go.kr" rel="noopener">e하늘 장사정보시스템</a></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-</div>
-</main>
+  </div>
+</section>
 
 <footer class="gm-footer">
   <div class="gm-footer-inner">
-    <div class="fnav">
-      <a href="./">홈</a>
-      <a href="hubul.html">후불제 장례</a>
-      <a href="danga.html">단가표</a>
-      <a href="jeolcha.html">장례 절차</a>
-      <a href="bugo.html">부고 쓰기</a>
-      <a href="bugojang.html">모바일 부고장</a>
-      <a href="kiil.html">기일 리마인드</a>
-      <a href="gaeum.html">장례비 계산</a>
-      <a href="jeoul.html">상조 점검</a>
-      <a href="christian.html">기독교 장례</a>
-      <a href="gyeolhap.html">결합상품 판별</a>
-      <a href="../index.html">부동산 정보</a>
-    </div>
     <p class="sig">사랑하는 이와 이별하는 순간,<br>고마움 상조회가 함께하겠습니다.</p>
-    고마움 상조회 — 장례는 후불로, 기억은 오래.<br>
     미리 돈을 받지 않습니다. 장례를 치른 뒤에 쓰신 만큼만 정산합니다.<br>
-    본 사이트의 계산기는 정보 제공용이며 법률·세무 자문이 아닙니다. 서비스 개설을 준비 중이며, 사업자 정보와 접수 연락처는 개설 시점에 게시합니다.
+    본 사이트의 계산기는 정보 제공용이며 법률·세무 자문이 아닙니다. 서비스 개설을 준비 중이며, 사업자 정보와 접수 연락처는 개설 시점에 게시합니다.<br>
+    <a href="../index.html">부동산 정보</a>
   </div>
 </footer>
 
+<script src="../assets/js/site-keys.js"></script>
+<script src="../assets/js/quiet-horn.js"></script>
 <script>
-/* ── 히어로 배경: 강 ─────────────────────────────────────
-   수평선 너머에서 빛이 번지고, 그 빛이 수면에 길을 낸다.
-   건너가는 길. 영상 파일 없이 캔버스로 그린다.
-   prefers-reduced-motion이면 정지 화면 한 장만 그린다. */
+/* 접수 전화 — site-keys.js의 PHONE이 비어 있으면 '준비 중'으로 둔다.
+   번호가 없는데 전화 버튼이 있는 것보다 낫다. */
 (function () {
-  "use strict";
-
-  var cv = document.getElementById("river");
-  if (!cv || !cv.getContext) return;
-  var ctx = cv.getContext("2d");
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  var LINES = 46;          // 수면을 이루는 물결 선의 수
-  var STEP = 6;            // 곡선을 그리는 가로 간격(px)
-  var HORIZON = 0.38;      // 수평선 높이 (히어로 높이 대비)
-  var GLOW_X = 0.72;       // 빛이 떠 있는 가로 위치 — 글자를 피해 오른쪽에
-
-  var w = 0, h = 0, dpr = 1;
-  var lineColor = "46,90,78", glowColor = "250,244,226", farColor = "214,222,214";
-  var gradients = [];      // 선마다 빛의 길을 그리는 가로 그라디언트 (정적이므로 캐시)
-  var glowBlob = null, skyBand = null, horizonLine = null;
-  var running = false, visible = true, rafId = 0, startTs = null;
-
-  function readPalette() {
-    var cs = getComputedStyle(document.documentElement);
-    lineColor = (cs.getPropertyValue("--river-line") || "46,90,78").trim();
-    glowColor = (cs.getPropertyValue("--river-glow") || "250,244,226").trim();
-    farColor = (cs.getPropertyValue("--river-far") || "214,222,214").trim();
+  var raw = (window.PHONE || "").replace(/[^\d+]/g, "");
+  var btn = document.getElementById("call");
+  var label = document.getElementById("call-label");
+  if (!raw) {
+    btn.classList.add("soon");
+    btn.removeAttribute("href");
+    btn.setAttribute("aria-disabled", "true");
+    label.innerHTML = "전화 접수 준비 중<small>번호는 개설 시 게시합니다</small>";
+    document.getElementById("hours").textContent = "준비 중";
+    return;
   }
-
-  // 선의 깊이(p)에 따라 밝기와 빛줄기 폭이 달라진다. 0=수평선, 1=발밑
-  function buildGradients() {
-    // 좁은 화면에서는 글자와 겹치므로 전체를 옅게 그린다
-    var k = w < 760 ? 0.55 : 1;
-    gradients = [];
-    for (var i = 0; i < LINES; i++) {
-      var p = i / (LINES - 1);
-      var peak = (0.16 + 0.30 * p) * k;        // 빛의 길 한가운데
-      var amb = (0.045 + 0.045 * p) * k;       // 그 바깥의 잔물결
-      var mid = amb + (peak - amb) * 0.42;
-      var spread = 0.09 + 0.46 * p;            // 멀수록 좁고, 가까울수록 넓게 퍼진다
-      var g = ctx.createLinearGradient(0, 0, w, 0);
-      function at(x, a) {
-        g.addColorStop(Math.min(1, Math.max(0, x)), "rgba(" + lineColor + "," + a.toFixed(4) + ")");
-      }
-      at(0, amb);
-      at(GLOW_X - spread * 1.7, amb);
-      at(GLOW_X - spread * 0.55, mid);
-      at(GLOW_X, peak);
-      at(GLOW_X + spread * 0.55, mid);
-      at(GLOW_X + spread * 1.7, amb);
-      at(1, amb);
-      gradients.push(g);
-    }
-
-    var hy = h * HORIZON;
-    glowBlob = ctx.createRadialGradient(w * GLOW_X, hy, 0, w * GLOW_X, hy, Math.max(w, h) * 0.52);
-    glowBlob.addColorStop(0, "rgba(" + glowColor + ",1)");
-    glowBlob.addColorStop(0.26, "rgba(" + glowColor + ",0.62)");
-    glowBlob.addColorStop(0.62, "rgba(" + glowColor + ",0.12)");
-    glowBlob.addColorStop(1, "rgba(" + glowColor + ",0)");
-
-    horizonLine = ctx.createLinearGradient(0, 0, w, 0);
-    horizonLine.addColorStop(0, "rgba(" + lineColor + ",0.08)");
-    horizonLine.addColorStop(Math.max(0, GLOW_X - 0.34), "rgba(" + lineColor + ",0.16)");
-    horizonLine.addColorStop(GLOW_X, "rgba(" + lineColor + "," + (0.40 * k).toFixed(3) + ")");
-    horizonLine.addColorStop(Math.min(1, GLOW_X + 0.34), "rgba(" + lineColor + ",0.16)");
-    horizonLine.addColorStop(1, "rgba(" + lineColor + ",0.08)");
-
-    skyBand = ctx.createLinearGradient(0, 0, 0, hy);
-    skyBand.addColorStop(0, "rgba(" + farColor + ",0.42)");
-    skyBand.addColorStop(1, "rgba(" + farColor + ",0)");
-  }
-
-  function resize() {
-    var r = cv.getBoundingClientRect();
-    if (!r.width || !r.height) return false;
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    w = r.width; h = r.height;
-    cv.width = Math.round(w * dpr);
-    cv.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    buildGradients();
-    return true;
-  }
-
-  function draw(t) {
-    ctx.clearRect(0, 0, w, h);
-    var hy = h * HORIZON;
-
-    // 하늘 — 먼 곳일수록 옅게 가라앉는다
-    ctx.fillStyle = skyBand;
-    ctx.fillRect(0, 0, w, hy);
-
-    // 수평선 너머의 빛
-    ctx.fillStyle = glowBlob;
-    ctx.fillRect(0, 0, w, h);
-
-    // 건너편 — 강 너머가 있다는 것만 가늘게 알린다
-    ctx.strokeStyle = horizonLine;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, Math.round(hy) + 0.5);
-    ctx.lineTo(w, Math.round(hy) + 0.5);
-    ctx.stroke();
-
-    // 수면 — 멀수록 촘촘하고, 가까울수록 크게 일렁인다
-    ctx.lineCap = "round";
-    for (var i = 0; i < LINES; i++) {
-      var p = i / (LINES - 1);
-      var y = hy + Math.pow(p, 1.85) * (h - hy) + 6;
-      if (y > h + 8) break;
-
-      var amp = 0.6 + p * 4.6;
-      var len = 110 + p * 520;
-      var speed = 0.22 + p * 0.85;
-      var phase = i * 0.55;
-
-      ctx.strokeStyle = gradients[i];
-      ctx.lineWidth = 0.9 + p * 0.9;
-      ctx.beginPath();
-      for (var x = -STEP; x <= w + STEP; x += STEP) {
-        // 파장이 다른 두 물결을 겹쳐 규칙적으로 보이지 않게 한다
-        var yy = y
-          + Math.sin(x / len + t * speed + phase) * amp
-          + Math.sin(x / (len * 0.43) - t * speed * 0.6 + phase * 1.7) * amp * 0.35;
-        if (x <= 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
-      }
-      ctx.stroke();
-    }
-
-    // 빛이 수면에 부서지는 조각들 — 이 한 겹이 '길'을 만든다
-    for (var j = 2; j < LINES; j += 1) {
-      var q = j / (LINES - 1);
-      var ly = hy + Math.pow(q, 1.85) * (h - hy) + 6;
-      if (ly > h + 8) break;
-      var band = w * (0.018 + 0.155 * q);      // 아래로 갈수록 넓어지되, 길의 형태는 유지
-      var pieces = 1 + Math.round(q * 3);
-      var la = (0.12 + 0.40 * q) * (w < 760 ? 0.55 : 1);
-      ctx.strokeStyle = "rgba(" + lineColor + "," + la.toFixed(3) + ")";
-      ctx.lineWidth = 1 + q * 1.4;
-      for (var k = 0; k < pieces; k++) {
-        // 시간에 따라 좌우로 흔들리되 규칙적으로 보이지 않게 두 파장을 섞는다
-        var seed = j * 1.7 + k * 2.9;
-        var off = Math.sin(t * (0.5 + q * 0.5) + seed) * 0.62
-                + Math.sin(t * 0.31 + seed * 2.3) * 0.38;
-        var cx = w * GLOW_X + off * band;
-        var half = (3 + q * 15) * (0.45 + 0.55 * Math.abs(Math.sin(t * 0.7 + seed)));
-        var wob = Math.sin(cx / (110 + q * 520) + t * (0.22 + q * 0.85) + j * 0.55) * (0.6 + q * 4.6);
-        ctx.beginPath();
-        ctx.moveTo(cx - half, ly + wob);
-        ctx.lineTo(cx + half, ly + wob);
-        ctx.stroke();
-      }
-    }
-  }
-
-  function frame(ts) {
-    if (startTs === null) startTs = ts;
-    draw((ts - startTs) / 1000);
-    rafId = requestAnimationFrame(frame);
-  }
-
-  function play() {
-    if (running || reduce) return;
-    running = true;
-    rafId = requestAnimationFrame(frame);
-  }
-  function pause() {
-    running = false;
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = 0;
-  }
-
-  function boot() {
-    readPalette();
-    if (!resize()) return;
-    if (reduce) { draw(4.6); return; }
-    play();
-  }
-
-  var rt;
-  window.addEventListener("resize", function () {
-    clearTimeout(rt);
-    rt = setTimeout(function () {
-      if (resize() && reduce) draw(4.6);
-    }, 150);
-  });
-
-  // 화면 밖이거나 다른 탭일 때는 그리지 않는다
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden) pause();
-    else if (visible) play();
-  });
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      visible = entries[0].isIntersecting;
-      if (visible && !document.hidden) play(); else pause();
-    }, { threshold: 0 }).observe(cv);
-  }
-
-  boot();
+  var d = raw.replace(/^\+82/, "0");
+  var shown = d.length === 8 ? d.replace(/^(\d{4})(\d{4})$/, "$1-$2")
+            : d.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, "$1-$2-$3");
+  btn.href = "tel:" + raw;
+  label.textContent = shown;
 })();
 
+/* 조용한 음악 — 들어오면 바로 시작을 시도한다.
+   site-keys.js에 MUSIC_SRC(파일)가 있으면 그 파일을, 없으면 나팔 합성(quiet-horn.js)을 튼다.
+   브라우저가 사용자 동작 전의 소리를 막으면(대부분의 폰이 그렇다)
+   화면 어디든 처음 손대는 순간 이어서 시작한다.
+   한 번 끈 사람에게는 다시 자동으로 틀지 않는다. */
+(function () {
+  var btn = document.getElementById("play"), bar = document.getElementById("bar");
+  var tCur = document.getElementById("tCur"), tDur = document.getElementById("tDur"), hint = document.getElementById("hint");
+  if (!btn) return;
+
+  function mmss(s) { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
+
+  // 파일 재생기 — QuietHorn과 같은 모양(start/stop/resume/playing/state/time/duration)
+  function filePlayer(src) {
+    var el = document.createElement("audio");
+    el.src = src; el.loop = true; el.preload = "auto"; el.volume = 0.32;
+    var want = false, blocked = false;
+    function attempt() {
+      var p = el.play();
+      if (p && p.then) p.then(function () { blocked = false; paint(); }, function () { blocked = true; paint(); });
+    }
+    el.addEventListener("loadedmetadata", paint);
+    return {
+      start: function () { want = true; attempt(); return true; },
+      stop: function () { want = false; el.pause(); },
+      resume: function () { if (want) attempt(); return Promise.resolve(); },
+      onstate: function () {},
+      get playing() { return want; },
+      get state() { return !want ? "closed" : (blocked || el.paused ? "suspended" : "running"); },
+      get time() { return el.currentTime; },
+      get duration() { return el.duration; }
+    };
+  }
+  var player = window.MUSIC_SRC ? filePlayer(window.MUSIC_SRC) : window.QuietHorn;
+  if (!player) { document.getElementById("player").hidden = true; return; }
+
+  var KEY = "gm-sound";
+  function pref() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function save(v) { try { if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY); } catch (e) {} }
+  function running() { return player.playing && player.state === "running"; }
+  function paint() {
+    btn.setAttribute("aria-pressed", running() ? "true" : "false");
+    btn.setAttribute("aria-label", running() ? "음악 멈춤" : "조용한 음악 재생");
+    var d = player.duration;
+    tDur.textContent = isFinite(d) && d > 0 ? mmss(d) : "--:--";
+    tCur.textContent = mmss(player.time);
+    bar.style.width = isFinite(d) && d > 0 ? (Math.min(1, player.time / d) * 100).toFixed(2) + "%" : "0%";
+    hint.textContent = player.playing && player.state === "suspended" ? "화면을 한 번 누르면 소리가 납니다" : "";
+  }
+  setInterval(function () { if (player.playing) paint(); }, 500);
+
+  var gestures = ["pointerdown", "touchend", "keydown"];
+  function onGesture() {
+    gestures.forEach(function (g) { document.removeEventListener(g, onGesture, true); });
+    if (player.playing) player.resume().then(paint, paint);
+  }
+  function autoStart() {
+    if (!player.start()) return;
+    player.onstate(paint);
+    paint();
+    if (player.state !== "running") {
+      gestures.forEach(function (g) { document.addEventListener(g, onGesture, true); });
+    }
+  }
+
+  btn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (running()) {
+      player.stop(); save("off");
+    } else if (player.playing) {
+      player.resume().then(paint, paint); save(null);
+    } else {
+      player.start(); player.onstate(paint); save(null);
+    }
+    paint();
+  });
+
+  if (pref() !== "off") autoStart(); else paint();
+  document.addEventListener("visibilitychange", function () {
+    // 탭을 떠나면 멈추고, 돌아오면 자동 시작 조건이 그대로일 때만 다시 튼다
+    if (document.hidden) { if (player.playing) { player.stop(); paint(); } }
+    else if (pref() !== "off" && !player.playing) autoStart();
+  });
+})();
 </script>
 
 </body>
