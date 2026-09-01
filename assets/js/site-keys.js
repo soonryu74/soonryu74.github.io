@@ -22,4 +22,4 @@ window.PHONE = "";
    Suno 등으로 만든 파일을 assets/audio/ 에 넣고 경로를 적으면
    홈과 부고장 모두 이 파일을 틉니다. 비어 있으면 브라우저가 나팔 선율을 직접 연주합니다.
    예: window.MUSIC_SRC = "../assets/audio/gomaum.mp3"; */
-window.MUSIC_SRC = "";
+window.MUSIC_SRC = "../assets/audio/gomaum.mp3";
