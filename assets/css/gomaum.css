@@ -624,3 +624,151 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
   border-bottom: 1px solid var(--line);
   max-width: 44ch;
 }
+
+/* ---------- 긴급 안내 바 ---------- */
+.gm-alert {
+  background: var(--risk);
+  color: #fff;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+.gm-alert .inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 10px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+}
+.gm-alert b { font-weight: 600; }
+.gm-alert .soon {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  padding: 2px 8px;
+  border-radius: var(--radius);
+}
+.gm-alert a { color: #fff; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+.gm-alert a:hover { opacity: 0.85; }
+
+/* ---------- 히어로 (파문 배경) ---------- */
+.gm-hero { position: relative; overflow: hidden; }
+.gm-hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+.gm-hero-inner { position: relative; z-index: 1; }
+
+.gm-hero-sig {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 5.2vw, 3rem);
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+  margin: 0 0 22px;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+.gm-hero-sig .l2 { display: block; color: var(--accent); }
+.gm-hero-sub {
+  font-size: clamp(0.98rem, 2.2vw, 1.1rem);
+  color: var(--ink-2);
+  max-width: 52ch;
+  margin: 0 0 28px;
+}
+
+.cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.96rem;
+  border: 1px solid var(--accent);
+}
+.cta.primary { background: var(--accent); color: #fff; }
+.cta.primary:hover { background: var(--accent-deep); text-decoration: none; }
+.cta.ghost { background: transparent; color: var(--accent); }
+.cta.ghost:hover { background: var(--accent-soft); text-decoration: none; }
+
+/* ---------- 세 줄 약속 ---------- */
+.three {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 0;
+}
+.three > div { background: var(--paper); padding: 24px 20px; }
+.three .no {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+.three h3 { font-family: var(--f-display); font-weight: 700; font-size: 1.18rem; margin: 0 0 6px; }
+.three p { font-size: 0.9rem; color: var(--ink-2); margin: 0; }
+
+/* ---------- 홈 미니 계산기 ---------- */
+.minicalc {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px 22px;
+  align-items: end;
+  margin: 22px 0;
+}
+.minicalc .out { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 18px; }
+.minicalc .out .amt {
+  font-family: var(--f-mono);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+.minicalc .out .amt small { font-size: 0.5em; font-weight: 500; color: var(--ink-2); }
+.minicalc .out .cond { font-size: 0.85rem; color: var(--ink-3); margin: 0 0 14px; line-height: 1.6; }
+
+/* ---------- 진행 흐름 요약 ---------- */
+.flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin: 22px 0;
+}
+.flow > div { background: var(--surface); padding: 18px 16px; }
+.flow .n {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+.flow h4 { font-size: 0.98rem; font-weight: 600; margin: 0 0 5px; }
+.flow p { font-size: 0.84rem; color: var(--ink-3); margin: 0; line-height: 1.6; }
+
+@media (max-width: 640px) {
+  .gm-alert .inner { padding: 9px 18px; font-size: 0.84rem; }
+  .cta { flex: 1 1 100%; justify-content: center; }
+}
+
+.field input[type="range"]:disabled { opacity: 0.4; cursor: not-allowed; }

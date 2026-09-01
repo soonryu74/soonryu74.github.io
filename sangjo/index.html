@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>고마움 상조회 — 장례는 후불로, 기억은 오래</title>
-<meta name="description" content="미리 돈을 받지 않는 후불제 상조회입니다. 장례를 치른 뒤 쓰신 만큼만 한 번 정산하고, 그 뒤 해마다 기일에 먼저 연락드립니다. 장례 이후의 모든 서비스는 무료입니다. 장례비 계산기·해약환급금 계산기는 누구나 무료로 쓰실 수 있습니다.">
+<meta name="description" content="미리 돈을 받지 않는 후불제 상조회입니다. 장례를 치른 뒤 쓰신 만큼만 한 번 정산하고, 그 뒤 해마다 기일에 먼저 연락드립니다. 장례 이후의 모든 서비스는 무료입니다.">
 <link rel="canonical" href="https://soonryu74.github.io/sangjo/">
 <meta property="og:site_name" content="고마움 상조회">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:type" content="website">
 <meta property="og:title" content="고마움 상조회 — 장례는 후불로, 기억은 오래">
-<meta property="og:description" content="미리 받지 않습니다. 장례를 치른 뒤 쓰신 만큼만 정산하고, 해마다 기일에 먼저 연락드립니다.">
+<meta property="og:description" content="사랑하는 이와 이별하는 순간, 고마움 상조회가 함께하겠습니다. 미리 받지 않고, 쓰신 만큼만 정산합니다.">
 <meta property="og:url" content="https://soonryu74.github.io/sangjo/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,6 +29,14 @@
 </head>
 <body>
 
+<div class="gm-alert">
+  <div class="inner">
+    <b>지금 상을 당하셨다면</b>
+    <span class="soon">24시간 접수 준비 중</span>
+    <span>우선 <a href="gaeum.html">장례비 규모를 확인</a>하시고, 장례식장 접수 전에 <b>품목별 단가표</b>를 요구하세요.</span>
+  </div>
+</div>
+
 <header class="gm-header">
   <div class="gm-nav-inner">
     <a class="gm-brand" href="./">고마움 <span class="sub">상조회</span></a>
@@ -45,82 +53,145 @@
 </header>
 
 <section class="gm-hero">
+  <canvas class="gm-hero-canvas" id="ripple" aria-hidden="true"></canvas>
   <div class="gm-hero-inner">
     <p class="eyebrow">후불제 상조 · 기일 리마인드</p>
-    <h1>장례는 후불로,<br>기억은 오래.</h1>
-    <p class="thesis">
-      상조는 대개 장례 <em>전에</em> 돈을 받고, 장례가 끝나면 연락이 끊깁니다.
-      고마움 상조회는 반대로 합니다. <em>미리 받지 않고</em>, 끝난 뒤에 남습니다.
-    </p>
-    <p class="thesis" style="font-family:var(--f-body);font-size:.95rem;">
-      매달 붓는 돈이 없습니다. 장례를 치른 뒤 쓰신 만큼만 정산합니다.
+    <h1 class="gm-hero-sig">
+      사랑하는 이와 이별하는 순간,
+      <span class="l2">고마움 상조회가 함께하겠습니다.</span>
+    </h1>
+    <p class="gm-hero-sub">
+      가입비도 월 납입금도 없습니다. 장례를 치른 뒤 <strong>실제로 쓰신 품목만</strong> 정산합니다.
       그리고 해마다 기일이 돌아오면, 저희가 먼저 연락드립니다.
     </p>
-    <p class="gm-signature">
-      사랑하는 이와 이별하는 순간,
-      <span class="quiet">고마움 상조회가 함께하겠습니다.</span>
-    </p>
-    <div class="gm-stats">
-      <div class="gm-stat">
-        <div class="n">0<small>원</small></div>
-        <div class="k">가입비 · 월 납입금 · 구독료</div>
-      </div>
-      <div class="gm-stat">
-        <div class="n">1<small>년마다</small></div>
-        <div class="k">기일 리마인드 · 추모 영상 (무료)</div>
-      </div>
-      <div class="gm-stat">
-        <div class="n">11.35<small>조원</small></div>
-        <div class="k">선불식 상조가 미리 받아 둔 돈</div>
-      </div>
-      <div class="gm-stat">
-        <div class="n">66.8<small>%</small></div>
-        <div class="k">상조 피해구제 중 환급 거부 비중</div>
-      </div>
+    <div class="cta-row">
+      <a class="cta primary" href="#minicalc">장례비 미리 계산하기</a>
+      <a class="cta ghost" href="hubul.html">후불제란 무엇인가</a>
     </div>
-    <p style="margin-top:14px"><span class="asof">시장 수치는 공정거래위원회 2026년 3월 말 기준</span></p>
   </div>
 </section>
 
 <main>
+<div class="three">
+  <div>
+    <p class="no">하나</p>
+    <h3>미리 받지 않습니다</h3>
+    <p>가입비·예치금·회비 어느 명목으로도 받지 않습니다. 묶여 있는 내 돈이 없습니다.</p>
+  </div>
+  <div>
+    <p class="no">둘</p>
+    <h3>쓴 만큼만 냅니다</h3>
+    <p>품목별 단가표를 먼저 드리고, 사용하지 않은 품목은 청구하지 않습니다.</p>
+  </div>
+  <div>
+    <p class="no">셋</p>
+    <h3>해마다 함께합니다</h3>
+    <p>기일 알림, 추모 영상, 온라인 추모관. 장례 이후의 모든 것이 무료입니다.</p>
+  </div>
+</div>
+
 <div class="gm-wrap">
 
+  <section class="gm-sec" id="minicalc">
+    <h2>장례비, 여기서 바로</h2>
+    <p class="sec-lead">두 가지만 고르면 대략의 규모가 나옵니다. 상조에 가입돼 있든 아니든, 장례식장·접객·장지 비용은 그날 별도로 나갑니다.</p>
+
+    <form class="minicalc" id="mini" autocomplete="off">
+      <div class="field">
+        <label for="mHall">장례식장 유형</label>
+        <select id="mHall">
+          <option value="public">공설 장례식장</option>
+          <option value="pro" selected>전문 장례식장</option>
+          <option value="univ">대학병원 장례식장</option>
+          <option value="none">무빈소 · 가족장</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="mGuests">예상 조문객 <span class="range-val" id="mGuestsVal">150명</span></label>
+        <input type="range" id="mGuests" min="0" max="400" step="10" value="150">
+      </div>
+      <div class="out">
+        <p class="amt"><span id="mMin">–</span> <small>~</small> <span id="mMax">–</span> <small>만 원</small></p>
+        <p class="cond" id="mCond">3일장 · 관내 화장 · 공설 봉안당 · 기본 등급 기준입니다. 용품 등급을 올리거나 장지를 사설 봉안당·매장으로 잡으면 크게 늘어납니다.</p>
+        <a class="cta ghost" href="gaeum.html">조건 더 넣고 자세히 계산 →</a>
+      </div>
+    </form>
+
+    <div class="note">
+      <p class="lbl">이 숫자를 어떻게 쓰나</p>
+      <p>견적이 아니라 <strong>규모를 가늠하기 위한 추정</strong>입니다. 공표된 평균값으로 계산했고, <a href="gaeum.html">계산에 쓴 기준값을 전부 공개</a>해 두었습니다. 실제 요금은 시설마다 크게 다르므로 <a href="https://www.15774129.go.kr" rel="noopener">e하늘 장사정보시스템</a>에서 확인하실 수 있습니다.</p>
+    </div>
+  </section>
+
   <section class="gm-sec">
-    <h2>두 가지 약속</h2>
-    <p class="sec-lead">고마움 상조회가 다른 상조와 다른 점은 두 가지뿐입니다. 나머지는 다 비슷합니다.</p>
+    <h2>맡기시면 이렇게 진행됩니다</h2>
+    <p class="sec-lead">임종에서 정산까지. 가족이 결정하실 것은 세 번째 단계 하나뿐입니다.</p>
+    <div class="flow">
+      <div><p class="n">1</p><h4>접수</h4><p>전화 한 통. 이동하는 동안 단가표를 먼저 보내드립니다</p></div>
+      <div><p class="n">2</p><h4>운구·안치</h4><p>장례식장은 가족이 고르십니다</p></div>
+      <div><p class="n">3</p><h4>품목 결정</h4><p>등급을 올리자는 권유를 하지 않습니다</p></div>
+      <div><p class="n">4</p><h4>의전</h4><p>입관부터 장지까지 함께합니다</p></div>
+      <div><p class="n">5</p><h4>정산</h4><p>쓰지 않은 품목은 빠집니다</p></div>
+    </div>
+    <p><a href="hubul.html">각 단계에서 무엇을 하는지 자세히 보기 →</a></p>
+  </section>
+
+  <section class="gm-sec">
+    <h2>그리고 끝나지 않습니다</h2>
+    <p class="sec-lead">삼일장이 끝나고 사람들이 돌아간 뒤가 실은 가장 조용합니다. 대부분의 상조는 그 지점에서 사라집니다.</p>
 
     <div class="promises">
-      <article class="promise">
-        <p class="no">약속 하나</p>
-        <h3>미리 받지 않습니다</h3>
-        <p>가입비도, 월 납입금도 없습니다. 장례를 치른 뒤 <strong>실제로 쓰신 품목만</strong> 정산합니다. 쓰지 않은 것은 청구하지 않습니다.</p>
+      <article class="promise warm">
+        <p class="no">기일 리마인드 · 전액 무료</p>
+        <h3>해마다 먼저 연락드립니다</h3>
+        <p>장례를 치르는 사흘 동안 가족이 가장 많이 하는 말이 "고맙습니다"입니다. 그런데 장례가 끝나면 그 고마움을 전할 곳이 사라집니다. 한 해에 한 번은 돌아올 자리를 만들어 두는 일입니다.</p>
         <ul>
-          <li>묶여 있는 내 돈이 없으니 <strong>해약환급금 다툼이 생기지 않습니다</strong></li>
-          <li>저희가 문을 닫아도 <strong>잃을 선수금이 없습니다</strong></li>
-          <li>품목별 단가표를 먼저 드리고 시작합니다</li>
+          <li><strong>발인 후 3일</strong> — 사망신고·상속·명의변경 절차 안내</li>
+          <li><strong>49일 또는 100일</strong> — 짧은 안부 한 번</li>
+          <li><strong>매년 기일 2주 전</strong> — 알림 (음력·양력 자동 계산)</li>
+          <li><strong>매년 기일</strong> — 추모 영상, 온라인 추모관, 작은 선물</li>
         </ul>
-        <a class="go" href="hubul.html">후불제가 어떻게 되는지 →</a>
+        <a class="go" href="kiil.html">기일 리마인드 자세히 →</a>
       </article>
 
-      <article class="promise warm">
-        <p class="no">약속 둘</p>
-        <h3>해마다 먼저 연락드립니다</h3>
-        <p>장례가 끝나면 대부분의 상조는 사라집니다. 고마움 상조회는 그때부터 시작합니다. <strong>기일이 돌아오기 전에</strong> 가족께 먼저 연락드립니다.</p>
+      <article class="promise">
+        <p class="no">보내지 않을 권리</p>
+        <h3>원하지 않으시면 보내지 않습니다</h3>
+        <p>추모는 좋은 뜻이어도 사람에 따라 부담이 됩니다. 그 부담을 만들지 않기 위해 미리 정해 둔 원칙입니다.</p>
         <ul>
-          <li>기일·기제사 <strong>사전 알림</strong> (원하시는 방식으로)</li>
-          <li>장례 때의 사진과 글로 만든 <strong>추모 영상</strong></li>
-          <li>가족이 함께 여는 <strong>온라인 추모관</strong></li>
-          <li>기일에 맞춘 <strong>작은 디지털 선물</strong></li>
-          <li>여기까지 <strong>전부 무료</strong>입니다</li>
+          <li>받을지 <strong>먼저 여쭙습니다</strong>. 자동 가입은 없습니다</li>
+          <li>모든 알림에 중단 링크. 누르시면 <strong>이유를 묻지 않습니다</strong></li>
+          <li>알림에 <strong>상품 안내를 끼워 보내지 않습니다</strong></li>
+          <li>가족마다 따로 신청하고 따로 멈춥니다</li>
+          <li>멈춰도 정산에 아무 영향이 없습니다</li>
         </ul>
-        <a class="go" href="kiil.html">기일 리마인드 보기 →</a>
       </article>
     </div>
   </section>
 
   <section class="gm-sec">
     <h2>선불제와 무엇이 다른가</h2>
-    <p class="sec-lead">선불제가 나쁘다는 뜻은 아닙니다. 다만 구조가 다르고, 그 구조에서 어떤 문제가 생기는지는 통계로 남아 있습니다.</p>
+    <p class="sec-lead">선불제가 나쁘다는 뜻은 아닙니다. 다만 구조가 다르고, 그 구조에서 무엇이 생기는지는 통계로 남아 있습니다.</p>
+
+    <div class="gm-stats">
+      <div class="gm-stat">
+        <div class="n">11.35<small>조원</small></div>
+        <div class="k">선불식 상조가 미리 받아 둔 돈</div>
+      </div>
+      <div class="gm-stat">
+        <div class="n">1,131<small>만명</small></div>
+        <div class="k">선불식 상조 계약자</div>
+      </div>
+      <div class="gm-stat">
+        <div class="n">66.8<small>%</small></div>
+        <div class="k">상조 피해구제 중 환급 거부</div>
+      </div>
+      <div class="gm-stat">
+        <div class="n">50<small>%</small></div>
+        <div class="k">폐업 시 법정 보전 비율</div>
+      </div>
+    </div>
+    <p style="margin-top:12px"><span class="asof">공정거래위원회 2026년 3월 말 기준</span></p>
 
     <div class="versus">
       <div class="them">
@@ -261,16 +332,18 @@
           <p>됩니다. 기독교 장례는 임종예배 → 입관예배 → 천국환송예배 → 하관예배로 진행되고, 제단 제기·향·조화 같은 항목이 빠집니다. <a href="christian.html">기독교 장례 안내</a>에 절차와 비용 차이를 정리해 두었습니다.</p>
         </div>
       </details>
+      <details>
+        <summary>지금 바로 맡길 수 있나요?</summary>
+        <div>
+          <p>아직 아닙니다. 서비스 개설을 준비하고 있어 24시간 접수를 받지 못합니다. 사업자 정보, 접수 연락처, 서비스 가능 지역, 품목별 단가표는 <strong>개설 시점에 이 사이트에 그대로 게시</strong>하겠습니다.</p>
+          <p>확정되지 않은 것을 적어두지 않는 것이 이 사이트가 하려는 이야기 그 자체라서, 그때까지는 비워 둡니다.</p>
+        </div>
+      </details>
     </div>
   </section>
 
   <section class="gm-sec">
     <h2>급하실 때</h2>
-    <div class="note warn">
-      <p class="lbl">지금 상을 당하셨다면</p>
-      <p>서비스 개설을 준비 중이라 아직 24시간 접수를 받지 못합니다. 우선 <a href="gaeum.html">장례비 계산기</a>로 규모를 가늠하시고, 장례식장 접수 전에 <strong>총액이 아니라 품목별 단가표</strong>를 요구하세요. 그것만으로도 마지막 정산이 크게 달라집니다.</p>
-    </div>
-
     <div class="tw">
       <table>
         <thead><tr><th>상황</th><th>창구</th></tr></thead>
@@ -305,6 +378,132 @@
     본 사이트의 계산기는 정보 제공용이며 법률·세무 자문이 아닙니다. 서비스 개설을 준비 중이며, 사업자 정보와 접수 연락처는 개설 시점에 게시합니다.
   </div>
 </footer>
+
+<script>
+/* ── 히어로 배경: 파문(波紋) ──────────────────────────────
+   한 사람이 남기고 간 자리에서 조용히 번지는 동심원.
+   prefers-reduced-motion이면 정지 화면 한 장만 그린다. */
+(function () {
+  "use strict";
+  var cv = document.getElementById("ripple");
+  if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext("2d");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var w = 0, h = 0, stroke = "rgba(46,90,78,.5)";
+
+  // 파문의 발원지 — 화면 비율 기준
+  var SOURCES = [
+    { x: 0.16, y: 0.34, phase: 0.0,  gap: 46, speed: 5.5, rings: 7 },
+    { x: 0.74, y: 0.66, phase: 0.45, gap: 62, speed: 4.2, rings: 6 },
+    { x: 0.92, y: 0.18, phase: 0.75, gap: 54, speed: 6.4, rings: 5 }
+  ];
+
+  function readStroke() {
+    var c = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+    return c || "#2E5A4E";
+  }
+
+  function resize() {
+    var r = cv.getBoundingClientRect();
+    w = r.width; h = r.height;
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 1;
+    var maxR = Math.sqrt(w * w + h * h) * 0.62;
+
+    SOURCES.forEach(function (s) {
+      var cx = s.x * w, cy = s.y * h;
+      for (var i = 0; i < s.rings; i++) {
+        // 각 고리는 일정 간격을 두고 바깥으로 번진다
+        var travel = (t * s.speed + s.phase * s.gap * s.rings + i * s.gap) % (s.gap * s.rings);
+        var r = travel;
+        if (r < 2 || r > maxR) continue;
+        // 번질수록 옅어지고, 갓 태어난 고리도 옅게 시작
+        var life = 1 - travel / (s.gap * s.rings);
+        var birth = Math.min(1, travel / 24);
+        ctx.globalAlpha = 0.16 * life * birth;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  var start = null;
+  function frame(ts) {
+    if (start === null) start = ts;
+    draw((ts - start) / 1000);
+    requestAnimationFrame(frame);
+  }
+
+  function boot() {
+    stroke = readStroke();
+    resize();
+    if (reduce) { draw(3.2); return; }
+    requestAnimationFrame(frame);
+  }
+
+  var rt;
+  window.addEventListener("resize", function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { resize(); if (reduce) draw(3.2); }, 150);
+  });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
+    setTimeout(function () { stroke = readStroke(); if (reduce) draw(3.2); }, 50);
+  });
+
+  boot();
+})();
+
+/* ── 홈 미니 계산기 ───────────────────────────────────────
+   gaeum.html의 기준값 중 일부만 써서 대략의 규모만 보여준다.
+   3일장 · 관내 화장 · 공설 봉안당 · 기본 등급 고정. */
+(function () {
+  "use strict";
+  var HALL = { public: [180, 380], pro: [240, 500], univ: [300, 600], none: [40, 110] };
+  var MEAL = [1.5, 2.5];      // 조문객 1인당
+  var SERVICE = [130, 250];   // 장례 인력·기본 용품 (후불 기준)
+  var ALTAR = [50, 120];      // 기본 제단
+  var CREM = 12;              // 관내 화장
+  var GRAVE = [30, 80];       // 공설 봉안당
+
+  var hall = document.getElementById("mHall");
+  var guests = document.getElementById("mGuests");
+  var gVal = document.getElementById("mGuestsVal");
+  var mn = document.getElementById("mMin");
+  var mx = document.getElementById("mMax");
+  if (!hall || !guests) return;
+
+  function render() {
+    var g = parseInt(guests.value, 10);
+    var noHall = (hall.value === "none");
+    // 무빈소는 접객이 없으므로 조문객 수가 금액에 영향을 주지 않는다
+    guests.disabled = noHall;
+    gVal.textContent = noHall ? "접객 없음" : g + "명";
+
+    var lo = HALL[hall.value][0] + SERVICE[0] + ALTAR[0] + CREM + GRAVE[0];
+    var hi = HALL[hall.value][1] + SERVICE[1] + ALTAR[1] + CREM + GRAVE[1];
+    if (!noHall) {
+      lo += MEAL[0] * g;
+      hi += MEAL[1] * g;
+    }
+    mn.textContent = Math.round(lo).toLocaleString("ko-KR");
+    mx.textContent = Math.round(hi).toLocaleString("ko-KR");
+  }
+
+  hall.addEventListener("change", render);
+  guests.addEventListener("input", render);
+  render();
+})();
+</script>
 
 </body>
 </html>
