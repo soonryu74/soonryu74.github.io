@@ -9,8 +9,13 @@
 <meta property="og:site_name" content="고마움 상조회">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:type" content="article">
-<meta property="og:title" content="모바일 부고장">
-<meta property="og:description" content="링크 하나로 보내는 부고. 빈소 위치와 발인 시각, 전화와 길찾기까지 한 화면에.">
+<meta property="og:title" content="[부고] 삼가 알려드립니다">
+<meta property="og:description" content="부고장을 확인해 주세요. 빈소 위치와 발인 시각, 길찾기와 연락처가 담겨 있습니다.">
+<meta property="og:image" content="https://soonryu74.github.io/assets/img/og-bugo.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://soonryu74.github.io/assets/img/og-bugo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -92,6 +97,21 @@
         <input type="time" id="dTime">
       </div>
 
+      <div class="field">
+        <label for="age">연세 <span class="hint" style="font-weight:400">(선택)</span></label>
+        <input type="text" id="age" placeholder="85세" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="sender">알리는 분</label>
+        <input type="text" id="sender" placeholder="홍철수">
+        <span class="hint">부고를 보내는 상주 한 분의 이름입니다.</span>
+      </div>
+      <div class="field">
+        <label for="srel">알리는 분이 부르는 호칭</label>
+        <input type="text" id="srel" placeholder="모친 · 부친 · 배우자 · 장인 · 시모">
+        <span class="hint">"홍철수의 <b>모친</b> 故 ○○○님께서…"처럼 첫 문장이 만들어집니다.</span>
+      </div>
+
       <div class="field" style="grid-column:1/-1">
         <label for="chief">상주 — 관계와 이름</label>
         <input type="text" id="chief" placeholder="장남 홍철수, 차녀 홍영희">
@@ -135,7 +155,12 @@
       <div class="field">
         <label for="tel">대표 연락처 <span class="hint" style="font-weight:400">(선택)</span></label>
         <input type="tel" id="tel" placeholder="010-0000-0000">
-        <span class="hint">넣으시면 받는 분이 눌러서 바로 전화할 수 있습니다.</span>
+        <span class="hint">넣으시면 받는 분이 눌러서 바로 전화하거나 문자할 수 있습니다.</span>
+      </div>
+      <div class="field" style="grid-column:1/-1">
+        <label for="memo">교통 · 주차 안내 <span class="hint" style="font-weight:400">(선택)</span></label>
+        <input type="text" id="memo" placeholder="지하철 3호선 ○○역 2번 출구 도보 5분 · 주차 300대">
+        <span class="hint">조문객이 가장 많이 묻는 것이 주차입니다. 한 줄이면 충분합니다.</span>
       </div>
     </div>
   </form>
@@ -151,6 +176,13 @@
         <span class="len" id="len"></span>
         <span class="msg" id="msg" style="font-size:.86rem;color:var(--accent);font-weight:500"></span>
       </div>
+    </div>
+
+    <div class="note">
+      <p class="lbl">카카오톡에서 보이는 미리보기</p>
+      <p>링크를 카카오톡에 붙이면 아래 카드가 먼저 뜨고, 누르면 부고장이 열립니다.</p>
+      <p style="margin:12px 0 0"><img src="../assets/img/og-bugo.png" alt="카카오톡 미리보기 카드 — 흰 국화와 謹弔" style="width:100%;max-width:340px;border:1px solid var(--line);display:block"></p>
+      <p style="margin-top:12px">미리보기 카드에는 <strong>고인의 성함이 나오지 않습니다.</strong> 카드 문구를 부고마다 다르게 하려면 서버가 필요한데, 이 도구는 서버에 아무것도 보내지 않는 방식이라 그렇습니다. 대신 <strong>단톡방 목록이나 잠금화면 알림에 고인 성함이 노출되지 않는다</strong>는 이점이 있습니다.</p>
     </div>
 
     <div class="note">
@@ -221,10 +253,33 @@
     buddhist:  { verb: "별세하셨습니다", close: "생전에 베풀어 주신 은혜에 깊이 감사드립니다." }
   };
 
-  var MARK = '<svg class="bj-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">' +
-    '<circle cx="32" cy="24" r="13.2" fill="#FAFBF8" stroke="#2E5A4E" stroke-width="3.2"/>' +
-    '<path d="M5 38.5C13 36.6 22.3 35.6 32 35.6c9.7 0 19 1 27 2.9" stroke="#2E5A4E" stroke-width="2.4" stroke-linecap="round"/>' +
-    '<path d="M25.5 44.5h13M22 51h20M27 57.5h10" stroke="#B08C3A" stroke-width="2.6" stroke-linecap="round"/></svg>';
+  /* 국화 — 사진 대신 선으로 그린다. 꽃잎은 세 겹으로 돌려 만든다 */
+  var FLOWER = (function () {
+    var layers = [
+      { n: 10, r0: 18, r1: 44, w: 7.0, a: 0,    op: 0.95, sw: 2.0 },
+      { n: 14, r0: 26, r1: 66, w: 8.4, a: 12.8, op: 0.82, sw: 1.9 },
+      { n: 18, r0: 34, r1: 88, w: 9.2, a: 6.0,  op: 0.62, sw: 1.7 }
+    ];
+    var out = "";
+    layers.forEach(function (L) {
+      for (var i = 0; i < L.n; i++) {
+        var deg = (360 / L.n) * i + L.a;
+        var d = "M100 " + (100 - L.r0) +
+          " C" + (100 - L.w) + " " + (100 - L.r0 - (L.r1 - L.r0) * 0.45) +
+          " " + (100 - L.w * 0.8) + " " + (100 - L.r1 + 6) +
+          " 100 " + (100 - L.r1) +
+          " C" + (100 + L.w * 0.8) + " " + (100 - L.r1 + 6) +
+          " " + (100 + L.w) + " " + (100 - L.r0 - (L.r1 - L.r0) * 0.45) +
+          " 100 " + (100 - L.r0) + " Z";
+        out += '<path d="' + d + '" transform="rotate(' + deg + ' 100 100)" fill="#FDFCF6" ' +
+               'fill-opacity="' + L.op + '" stroke="#2E5A4E" stroke-width="' + L.sw +
+               '" stroke-opacity="' + (L.op * 0.72).toFixed(2) + '" stroke-linejoin="round"/>';
+      }
+    });
+    return '<svg class="bj-flower" viewBox="0 0 200 200" fill="none" aria-hidden="true">' + out +
+      '<circle cx="100" cy="100" r="13" fill="#FBFAF3" stroke="#2E5A4E" stroke-width="2.2"/>' +
+      '<circle cx="100" cy="100" r="5.4" fill="#B08C3A"/></svg>';
+  })();
 
   /* ── 주소에 데이터를 싣고 내리는 부분 ────────────────────
      한글이 섞이므로 UTF-8로 바꾼 뒤 base64로 옮긴다.
@@ -273,6 +328,19 @@
     var w = WORD[rel] || WORD.general;
     var honor = d.h || "님";
     var titled = (d.n || "○○○") + (honor === "님" ? "" : " ") + honor;
+    var whenTxt = join(fmtDate(d.dd), fmtTime(d.dt));
+
+    // "홍철수의 모친 故 강옥자님께서 별세하셨습니다" — 우리 부고의 관행적인 첫 문장
+    var intro;
+    if (d.sn && d.sr) {
+      intro = esc(d.sn) + "의 " + esc(d.sr) + " <b>故 " + esc(titled) + "</b>께서<br>" +
+              esc(join(whenTxt, w.verb)) + "기에 삼가 알려드립니다.";
+      intro = intro.replace("셨습니다기에", "셨기에");
+    } else {
+      intro = "<b>故 " + esc(titled) + "</b>께서<br>" +
+              esc(join(whenTxt, w.verb)) + "기에 삼가 알려드립니다.";
+      intro = intro.replace("셨습니다기에", "셨기에");
+    }
 
     var rows = "";
     function row(label, value, sub) {
@@ -287,9 +355,13 @@
     row("장지", d.g);
 
     var place = join(d.fh, d.fa) || d.fh || d.fa || "";
+    var tel = d.t ? String(d.t).replace(/[^0-9+]/g, "") : "";
+
     var actions = "";
-    if (d.t) {
-      actions += '<a class="bj-btn solid" href="tel:' + esc(String(d.t).replace(/[^0-9+]/g, "")) + '">상주에게 전화하기</a>';
+    if (tel) {
+      actions += '<div class="bj-two">' +
+        '<a class="bj-btn solid" href="tel:' + esc(tel) + '">전화하기</a>' +
+        '<a class="bj-btn" href="sms:' + esc(tel) + '">문자 보내기</a></div>';
     }
     if (place) {
       var q = encodeURIComponent(place);
@@ -297,28 +369,29 @@
         '<a class="bj-btn" href="https://map.naver.com/p/search/' + q + '" target="_blank" rel="noopener">네이버 지도</a>' +
         '<a class="bj-btn" href="https://map.kakao.com/?q=' + q + '" target="_blank" rel="noopener">카카오맵</a></div>';
     }
-    actions += '<button type="button" class="bj-btn" id="shareBtn">이 부고장 공유하기</button>';
+    actions += '<button type="button" class="bj-btn" id="shareBtn">부고 전하기</button>';
 
     var music = MUSIC_SRC
       ? '<button type="button" class="bj-music" id="musicBtn" aria-label="조용한 음악 재생" title="조용한 음악 재생">▶</button>' +
         '<audio id="bgm" src="' + esc(MUSIC_SRC) + '" loop preload="none"></audio>'
       : "";
 
-    var whenTxt = join(fmtDate(d.dd), fmtTime(d.dt));
-
     return '<div class="bj-card">' +
-      '<div class="bj-top">' + music + MARK +
-        '<p class="bj-label">부 고</p>' +
-        '<h1 class="bj-name">' + esc(titled) + '</h1>' +
-        '<p class="bj-when">' + esc(whenTxt ? whenTxt + " " + w.verb : w.verb) + '</p>' +
+      '<div class="bj-top">' + music + FLOWER +
+        '<p class="bj-hanja">謹弔</p>' +
+        '<h1 class="bj-name">故 ' + esc(titled) +
+          (d.ag ? '<span class="bj-age">' + esc(d.ag) + '</span>' : "") + '</h1>' +
+        '<p class="bj-intro">' + intro + '</p>' +
       '</div>' +
       '<div class="bj-body">' +
         '<dl class="bj-rows">' + rows + '</dl>' +
+        (d.mo ? '<p class="bj-memo">' + esc(d.mo) + '</p>' : "") +
         '<div class="bj-actions">' + actions + '</div>' +
         '<p class="bj-word">' + esc(w.close) + '</p>' +
       '</div>' +
       '<div class="bj-foot">' +
-        '이 부고장은 <a href="./">고마움 상조회</a>에서 만들었습니다.<br>' +
+        '길찾기는 지도 앱에서 <b>길찾기</b>를 누르면 카카오내비·티맵으로 이어집니다.<br>' +
+        '이 부고장은 <a href="./">고마움 상조회</a>에서 만들었습니다. ' +
         '내용은 링크 안에만 담기며 서버에 저장되지 않습니다.' +
       '</div>' +
     '</div>' +
@@ -336,7 +409,7 @@
         } else if (navigator.clipboard) {
           navigator.clipboard.writeText(url).then(function () {
             share.textContent = "링크를 복사했습니다";
-            setTimeout(function () { share.textContent = "이 부고장 공유하기"; }, 2400);
+            setTimeout(function () { share.textContent = "부고 전하기"; }, 2400);
           });
         }
       });
@@ -367,7 +440,7 @@
       v.hidden = false;
       var card = $("viewerCard");
       card.innerHTML = render(data);
-      var title = (data.n || "") + " 부고";
+      var title = "[부고] 故 " + (data.n || "") + "님";
       document.title = title + " — 고마움 상조회";
       wire(card, title);
       return;
@@ -376,7 +449,8 @@
 
   /* ── 만들기 화면 ──────────────────────────────────────── */
   var F = {};
-  ["name","honor","dDate","dTime","chief","hall","room","addr","fDate","fTime","wDate","wTime","grave","tel"]
+  ["name","honor","age","sender","srel","dDate","dTime","chief","hall","room","addr",
+   "fDate","fTime","wDate","wTime","grave","tel","memo"]
     .forEach(function (k) { F[k] = $(k); });
 
   function religion() {
@@ -387,8 +461,9 @@
 
   function collect() {
     var d = { r: religion() };
-    var map = { n: "name", h: "honor", dd: "dDate", dt: "dTime", c: "chief",
-                fh: "hall", fr: "room", fa: "addr", gd: "fDate", gt: "fTime", g: "grave", t: "tel" };
+    var map = { n: "name", h: "honor", ag: "age", sn: "sender", sr: "srel",
+                dd: "dDate", dt: "dTime", c: "chief", fh: "hall", fr: "room", fa: "addr",
+                gd: "fDate", gt: "fTime", g: "grave", t: "tel", mo: "memo" };
     Object.keys(map).forEach(function (k) { var s = v(F[map[k]]); if (s) d[k] = s; });
     if (d.r === "christian") {
       if (v(F.wDate)) d.wd = v(F.wDate);
@@ -409,7 +484,7 @@
 
     var pv = $("preview");
     pv.innerHTML = render(d);
-    wire(pv, (d.n || "") + " 부고");
+    wire(pv, "[부고] 故 " + (d.n || "") + "님");
   }
 
   Object.keys(F).forEach(function (k) { if (F[k]) F[k].addEventListener("input", update); });

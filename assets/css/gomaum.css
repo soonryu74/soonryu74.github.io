@@ -1042,3 +1042,40 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
 }
 .linkbox .row { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; margin-top: 12px; }
 .linkbox .len { font-family: var(--f-mono); font-size: 0.76rem; color: var(--ink-3); }
+
+/* ---------- 부고장 상단 근조 표기 ---------- */
+.bj-top { border-top: 5px solid var(--accent-deep); }
+.bj-top::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--gold);
+}
+.bj-flower { width: 78px; height: 78px; display: block; margin: 0 auto 14px; }
+.bj-hanja {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.34em;
+  color: var(--accent-deep);
+  margin: 0 0 16px 0.34em;
+}
+.bj-intro {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--ink-2);
+  margin: 12px 0 0;
+  text-wrap: balance;
+}
+.bj-age { font-size: 0.86rem; color: var(--ink-3); font-weight: 400; margin-left: 6px; }
+.bj-memo {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  background: var(--paper);
+  border-left: 3px solid var(--line-strong);
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+}
