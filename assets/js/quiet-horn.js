@@ -3,8 +3,9 @@
    부드러운 나팔(플루겔호른에 가까운 음색) 한 줄기와 아주 낮은 현 소리.
    원곡: 고마움 상조회 자체 선율 (F장조, 56bpm, 16마디 + 쉼 2마디, 약 77초 반복)
 
-   사용:  QuietHorn.start()  QuietHorn.stop()  QuietHorn.playing
-   반드시 사용자가 눌렀을 때만 start()를 부르세요. 자동 재생 금지.
+   사용:  QuietHorn.start()  QuietHorn.stop()  QuietHorn.resume()  QuietHorn.playing  QuietHorn.state
+   부고장에서는 사용자가 눌렀을 때만 start()를 부릅니다. 홈에서는 자동으로 시도하되
+   브라우저가 막으면(state "suspended") 첫 터치에 resume()으로 이어 붙입니다.
    QuietHorn.render(ctx, t0) 는 한 바퀴를 주어진 컨텍스트(오프라인 포함)에 예약합니다. */
 (function () {
   "use strict";
@@ -130,13 +131,19 @@
 
   var ctx = null, bus = null, timer = 0, playing = false;
 
-  function schedule(t0) {
-    render(ctx, bus.mix, t0);
-    // 다음 바퀴는 이번 바퀴가 끝나기 3초 전에 예약한다
-    var wait = (t0 + CYCLE - ctx.currentTime - 3) * 1000;
-    timer = setTimeout(function () { if (playing) schedule(t0 + CYCLE); }, Math.max(0, wait));
+  // 0.5초마다 들여다보며, 다음 바퀴가 3초 앞으로 다가오면 예약한다.
+  // 브라우저가 소리를 아직 허락하지 않아(suspended) 시간이 멈춰 있으면 기다린다.
+  function tick(nextT0) {
+    if (!playing || !ctx) return;
+    if (ctx.state === "running" && ctx.currentTime > nextT0 - 3) {
+      render(ctx, bus.mix, nextT0);
+      nextT0 += CYCLE;
+    }
+    timer = setTimeout(function () { tick(nextT0); }, 500);
   }
 
+  /* 시작한다. 브라우저가 사용자 동작 없이는 소리를 막을 수 있는데,
+     그때는 state가 "suspended"로 남고 resume()이 허락되는 순간 이어서 난다. */
   function start() {
     if (playing) return true;
     var AC = window.AudioContext || window.webkitAudioContext;
@@ -146,9 +153,14 @@
     bus.master.gain.setValueAtTime(0.0001, ctx.currentTime);
     bus.master.gain.exponentialRampToValueAtTime(0.9, ctx.currentTime + 2.5);
     playing = true;
-    if (ctx.state === "suspended") ctx.resume();
-    schedule(ctx.currentTime + 0.3);
+    if (ctx.state === "suspended") ctx.resume().catch(function () {});
+    tick(ctx.currentTime + 0.3);
     return true;
+  }
+
+  function resume() {
+    if (ctx && ctx.state === "suspended") return ctx.resume();
+    return Promise.resolve();
   }
 
   function stop() {
@@ -166,7 +178,10 @@
   window.QuietHorn = {
     start: start,
     stop: stop,
+    resume: resume,
     get playing() { return playing; },
+    get state() { return ctx ? ctx.state : "closed"; },   // running | suspended | closed
+    onstate: function (cb) { if (ctx) ctx.addEventListener("statechange", cb); },
     cycleSeconds: CYCLE,
     render: function (offCtx, t0) { var b = makeBus(offCtx, 0.9); render(offCtx, b.mix, t0); }
   };

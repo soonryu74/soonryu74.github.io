@@ -50,7 +50,18 @@ a { color: inherit; }
 .a-brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: #fff; }
 .a-brand svg { width: 24px; height: 24px; }
 .a-brand b { font-family: var(--f-display); font-weight: 700; font-size: 18px; letter-spacing: 0.02em; }
+.a-top .right { display: flex; align-items: center; gap: 14px; }
 .a-top .hours { font-size: 12px; color: #a9c9bc; letter-spacing: 0.04em; }
+.a-sound {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px 0 8px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.28); border-radius: 999px;
+  color: #fff; font: inherit; font-size: 12px; cursor: pointer;
+}
+.a-sound svg { width: 16px; height: 16px; }
+.a-sound .off { display: none; }
+.a-sound[aria-pressed="false"] .on { display: none; }
+.a-sound[aria-pressed="false"] .off { display: inline; }
+.a-sound[aria-pressed="false"] { color: #a9c9bc; }
 
 .a-visual { position: relative; margin-top: 14px; min-height: 240px; }
 .a-visual canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -148,7 +159,13 @@ a { color: inherit; }
 <section class="a-screen">
   <div class="a-top">
     <a class="a-brand" href="./" aria-label="고마움 상조회 홈"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="26" r="12.4" stroke="#fff" stroke-width="3.4"/><path d="M6 36c0 10.5 8.5 19 19 19" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M58 36c0 10.5-8.5 19-19 19" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M25 55h14" stroke="#D9B76A" stroke-width="3.4" stroke-linecap="round"/></svg><b>고마움 상조회</b></a>
-    <span class="hours" id="hours">24시간</span>
+    <div class="right">
+      <button type="button" class="a-sound" id="sound" aria-pressed="false" title="조용한 나팔 소리">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path class="on" d="M15.5 8.5a5 5 0 0 1 0 7"/><path class="on" d="M19 5a9 9 0 0 1 0 14"/><path class="off" d="M22 9l-6 6"/><path class="off" d="M16 9l6 6"/></svg>
+        <span class="on">소리 켜짐</span><span class="off">소리</span>
+      </button>
+      <span class="hours" id="hours">24시간</span>
+    </div>
   </div>
 
   <div class="a-visual">
@@ -197,6 +214,54 @@ a { color: inherit; }
 </footer>
 
 <script src="../assets/js/site-keys.js"></script>
+<script src="../assets/js/quiet-horn.js"></script>
+<script>
+/* 조용한 나팔 — 들어오면 바로 시작을 시도한다.
+   브라우저가 사용자 동작 전의 소리를 막으면(대부분의 폰이 그렇다)
+   화면 어디든 처음 손대는 순간 이어서 시작한다.
+   한 번 끈 사람에게는 다시 자동으로 틀지 않는다. */
+(function () {
+  var btn = document.getElementById("sound");
+  if (!btn || !window.QuietHorn) { if (btn) btn.hidden = true; return; }
+  var KEY = "gm-sound";
+  function pref() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function save(v) { try { if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY); } catch (e) {} }
+  function paint() { btn.setAttribute("aria-pressed", QuietHorn.playing && QuietHorn.state === "running" ? "true" : "false"); }
+
+  var gestures = ["pointerdown", "touchend", "keydown"];
+  function onGesture() {
+    gestures.forEach(function (g) { document.removeEventListener(g, onGesture, true); });
+    if (QuietHorn.playing) QuietHorn.resume().then(paint, paint);
+  }
+  function autoStart() {
+    if (!QuietHorn.start()) return;
+    QuietHorn.onstate(paint);
+    paint();
+    if (QuietHorn.state !== "running") {
+      gestures.forEach(function (g) { document.addEventListener(g, onGesture, true); });
+    }
+  }
+
+  btn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (QuietHorn.playing && QuietHorn.state === "running") {
+      QuietHorn.stop(); save("off");
+    } else if (QuietHorn.playing) {
+      QuietHorn.resume().then(paint, paint); save(null);
+    } else {
+      QuietHorn.start(); QuietHorn.onstate(paint); save(null);
+    }
+    paint();
+  });
+
+  if (pref() !== "off") autoStart();
+  document.addEventListener("visibilitychange", function () {
+    // 탭을 떠나면 멈추고, 돌아오면 자동 시작 조건이 그대로일 때만 다시 튼다
+    if (document.hidden) { if (QuietHorn.playing) { QuietHorn.stop(); paint(); } }
+    else if (pref() !== "off" && !QuietHorn.playing) autoStart();
+  });
+})();
+</script>
 <script>
 /* 접수 전화 — site-keys.js의 PHONE이 비어 있으면 '준비 중'으로 둔다.
    번호가 없는데 전화 버튼이 있는 것보다 낫다. */
