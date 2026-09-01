@@ -28,69 +28,72 @@ body { font-family: var(--f-body); color: var(--fg); -webkit-font-smoothing: ant
 a { color: inherit; }
 
 .a-screen {
-  position: relative; min-height: 100vh; min-height: 100dvh;
-  display: flex; flex-direction: column;
-  background: radial-gradient(120% 70% at 50% 0%, #2a3430 0%, var(--bg) 60%);
-  color: var(--fg);
+  position: relative; min-height: 100vh; min-height: 100dvh; overflow: hidden;
+  display: flex; flex-direction: column; background: var(--bg); color: var(--fg);
+}
+/* 사진이 첫 화면을 꽉 채운다. 여백 없음. 글은 아래쪽 어둠 위에 얹힌다. */
+.a-photo { position: absolute; inset: 0; z-index: 0; }
+.a-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; }
+.a-photo .bloom { opacity: 0; animation: bloom 9s cubic-bezier(0.4, 0, 0.2, 1) 1.2s forwards; }
+@keyframes bloom { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .a-photo .bloom { animation: none; opacity: 1; } }
+.a-photo::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(22,26,24,0.62) 0%, rgba(22,26,24,0.28) 22%, rgba(22,26,24,0) 36%, rgba(22,26,24,0) 58%, rgba(22,26,24,0.72) 76%, rgba(22,26,24,0.96) 100%);
 }
 .a-top {
+  position: relative; z-index: 2;
   display: flex; align-items: center; justify-content: space-between;
   padding: calc(16px + env(safe-area-inset-top)) 22px 0;
 }
 .a-brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--fg); }
 .a-brand svg { width: 24px; height: 24px; }
-.a-brand b { font-family: var(--f-display); font-weight: 700; font-size: 18px; letter-spacing: 0.02em; }
-.a-top .hours { font-size: 12px; color: var(--mute); letter-spacing: 0.04em; }
+.a-brand b { font-family: var(--f-display); font-weight: 700; font-size: 18px; letter-spacing: 0.02em; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+.a-top .hours { font-size: 12px; color: #cfd8d2; letter-spacing: 0.04em; text-shadow: 0 1px 6px rgba(0,0,0,0.6); }
 
-.a-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; gap: 22px;
-  width: 100%; max-width: 560px; margin: 0 auto; padding: 22px 26px calc(26px + env(safe-area-inset-bottom)); }
+.a-body { position: relative; z-index: 2; margin-top: auto; display: flex; flex-direction: column; gap: 14px;
+  width: 100%; max-width: 560px; margin-left: auto; margin-right: auto; padding: 0 22px calc(20px + env(safe-area-inset-bottom)); }
 
-.a-cover { display: block; position: relative; width: min(100%, 330px); aspect-ratio: 1; margin: 0 auto; border-radius: 10px; overflow: hidden;
-  box-shadow: 0 30px 60px -30px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.06); background: #0b0d0c; }
-.a-cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
-/* 은회색 흑백 위로, 꽃송이만 색이 배어든 같은 사진이 천천히 떠오른다 */
-.a-cover .bloom { position: absolute; inset: 0; opacity: 0; animation: bloom 9s cubic-bezier(0.4, 0, 0.2, 1) 1.2s forwards; }
-@keyframes bloom { from { opacity: 0; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .a-cover .bloom { animation: none; opacity: 1; } }
+.a-head { position: relative; z-index: 2; width: 100%; max-width: 560px; margin: 26px auto 0; padding: 0 22px;
+  display: flex; flex-direction: column; gap: 6px; text-shadow: 0 1px 10px rgba(0,0,0,0.55); }
+.a-head h1 { font-family: var(--f-display); font-weight: 700; font-size: 26px; margin: 0; letter-spacing: -0.01em; }
+.a-head p { margin: 0; font-size: 15px; color: #dfe5e1; line-height: 1.55; }
 
-.a-title { display: flex; flex-direction: column; gap: 6px; }
-.a-title h1 { font-family: var(--f-display); font-weight: 700; font-size: 24px; margin: 0; letter-spacing: -0.01em; }
-.a-title p { margin: 0; font-size: 14px; color: var(--mute); line-height: 1.6; }
-
-.a-player { display: flex; flex-direction: column; gap: 10px; }
-.a-bar { position: relative; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.16); overflow: hidden; }
-.a-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--fg); border-radius: 2px; transition: width 0.5s linear; }
-.a-times { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 12px; color: var(--mute); letter-spacing: 0.04em; }
-.a-ctrl { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 2px; }
+.a-player { display: flex; align-items: center; gap: 14px; }
 .a-play {
-  width: 60px; height: 60px; border-radius: 50%; border: 0; background: var(--fg); color: var(--bg);
+  flex: none; width: 50px; height: 50px; border-radius: 50%; border: 0; background: var(--fg); color: var(--bg);
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
 }
-.a-play svg { width: 26px; height: 26px; }
+.a-play svg { width: 22px; height: 22px; }
 .a-play .pause { display: none; }
 .a-play[aria-pressed="true"] .play { display: none; }
 .a-play[aria-pressed="true"] .pause { display: block; }
 .a-play:active { transform: scale(0.97); }
-.a-hint { font-size: 12px; color: var(--mute); text-align: center; margin: -4px 0 0; min-height: 1em; }
+.a-track { flex: 1 1 auto; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.a-bar { position: relative; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.22); overflow: hidden; }
+.a-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--fg); border-radius: 2px; transition: width 0.5s linear; }
+.a-times { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 11px; color: #cfd8d2; letter-spacing: 0.04em; }
+.a-hint { font-size: 11px; color: #cfd8d2; margin: 0; min-height: 0; }
+.a-hint:empty { display: none; }
 
 .a-call {
   display: flex; align-items: center; justify-content: center; gap: 12px;
-  height: 58px; background: var(--accent); color: #fff;
-  border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 18px; letter-spacing: 0.01em;
+  height: 54px; background: var(--accent); color: #fff;
+  border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 17px; letter-spacing: 0.01em;
 }
-.a-call svg { width: 22px; height: 22px; flex: none; }
+.a-call svg { width: 21px; height: 21px; flex: none; }
 .a-call:active { background: var(--accent-deep); }
-.a-call.soon { background: rgba(255,255,255,0.06); color: #cfd8d2; border: 1px solid var(--line-d); font-weight: 600; font-size: 16px; cursor: default; }
-.a-call.soon span { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.a-call.soon small { font-size: 12px; font-weight: 400; color: var(--mute); }
+.a-call.soon { background: rgba(255,255,255,0.08); color: #e6ebe7; border: 1px solid rgba(255,255,255,0.28); font-weight: 600; font-size: 15px; cursor: default; backdrop-filter: blur(6px); }
+.a-call.soon span { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.a-call.soon small { font-size: 11px; font-weight: 400; color: #cfd8d2; }
 .a-pair { display: flex; gap: 10px; }
 .a-pair a {
   flex: 1 1 0; display: flex; align-items: center; justify-content: center;
-  height: 46px; border: 1px solid rgba(255,255,255,0.32); border-radius: 6px;
-  color: var(--fg); text-decoration: none; font-weight: 600; font-size: 15px;
+  height: 44px; border: 1px solid rgba(255,255,255,0.4); border-radius: 6px;
+  color: var(--fg); text-decoration: none; font-weight: 600; font-size: 15px; backdrop-filter: blur(6px);
 }
-.a-pair a:hover, .a-pair a:focus-visible { border-color: var(--fg); background: rgba(255,255,255,0.05); }
-.a-line { margin: 0; font-size: 12px; color: var(--mute); text-align: center; letter-spacing: 0.02em; }
+.a-pair a:hover, .a-pair a:focus-visible { border-color: var(--fg); background: rgba(255,255,255,0.08); }
+.a-line { margin: 0; font-size: 11px; color: #cfd8d2; text-align: center; letter-spacing: 0.02em; }
 
 /* ── 아래: 다른 페이지 ── */
 .a-more { background: var(--paper); color: var(--ink); padding: 34px 22px 8px; }
@@ -112,16 +115,20 @@ a { color: inherit; }
   .a-top { padding-left: 34px; padding-right: 34px; }
   .a-brand svg { width: 28px; height: 28px; }
   .a-brand b { font-size: 20px; }
-  .a-body { max-width: 980px; display: grid; grid-template-columns: 400px 1fr; grid-template-areas: "cover title" "cover player" "cover call" "cover pair" "cover line";
-    column-gap: 56px; row-gap: 20px; align-content: center; padding: 40px 34px 56px; }
-  .a-cover { grid-area: cover; width: 400px; align-self: center; }
-  .a-title { grid-area: title; }
-  .a-title h1 { font-size: 34px; }
-  .a-title p { font-size: 16px; }
-  .a-player { grid-area: player; }
-  .a-call { grid-area: call; height: 62px; font-size: 19px; }
-  .a-pair { grid-area: pair; }
-  .a-line { grid-area: line; text-align: left; }
+  /* 넓은 화면: 십자가를 왼쪽에 두고, 글은 오른쪽 아래에 */
+  .a-photo img { width: 124%; left: -24%; object-position: 50% 40%; }
+  .a-photo::after {
+    background:
+      linear-gradient(90deg, rgba(22,26,24,0) 42%, rgba(22,26,24,0.72) 70%, rgba(22,26,24,0.9) 100%),
+      linear-gradient(180deg, rgba(22,26,24,0.35) 0%, rgba(22,26,24,0) 22%, rgba(22,26,24,0) 60%, rgba(22,26,24,0.7) 100%);
+  }
+  .a-head { margin: auto 6% 22px auto; max-width: 520px; padding: 0; text-shadow: none; }
+  .a-head h1 { font-size: 34px; }
+  .a-head p { font-size: 16px; }
+  .a-body { margin: 0 6% 0 auto; max-width: 520px; gap: 20px; padding: 0 0 56px; }
+  .a-play { width: 56px; height: 56px; }
+  .a-call { height: 60px; font-size: 18px; }
+  .a-line { text-align: left; }
   .a-links { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .a-more { padding: 44px 34px 12px; }
 }
@@ -141,32 +148,31 @@ a { color: inherit; }
 <body>
 
 <section class="a-screen">
+  <div class="a-photo" aria-hidden="true">
+    <img src="../assets/img/cover-cross-grey.jpg" width="880" height="880" alt="">
+    <img class="bloom" src="../assets/img/cover-cross-color.jpg" width="880" height="880" alt="">
+  </div>
   <div class="a-top">
     <a class="a-brand" href="./" aria-label="고마움 상조회 홈"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="26" r="12.4" stroke="#fff" stroke-width="3.4"/><path d="M6 36c0 10.5 8.5 19 19 19" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M58 36c0 10.5-8.5 19-19 19" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M25 55h14" stroke="#D9B76A" stroke-width="3.4" stroke-linecap="round"/></svg><b>고마움 상조회</b></a>
     <span class="hours" id="hours">24시간</span>
   </div>
 
+  <div class="a-head">
+    <h1>고마움 상조회</h1>
+    <p>사랑하는 이와 이별하는 순간,<br>함께하겠습니다.</p>
+  </div>
+
   <div class="a-body">
-    <div class="a-cover">
-      <img src="../assets/img/cover-cross-grey.jpg" width="880" height="880" alt="검은 흙 위에 세운 나무 십자가와 그 둘레에 핀 흰 백합">
-      <img class="bloom" src="../assets/img/cover-cross-color.jpg" width="880" height="880" alt="" aria-hidden="true">
-    </div>
-
-    <div class="a-title">
-      <h1>고마움 상조회</h1>
-      <p>사랑하는 이와 이별하는 순간,<br>함께하겠습니다.</p>
-    </div>
-
     <div class="a-player" id="player">
-      <div class="a-bar" aria-hidden="true"><i id="bar"></i></div>
-      <div class="a-times"><span id="tCur">0:00</span><span id="tDur">--:--</span></div>
-      <div class="a-ctrl">
-        <button type="button" class="a-play" id="play" aria-pressed="false" aria-label="조용한 음악 재생">
-          <svg class="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-        </button>
+      <button type="button" class="a-play" id="play" aria-pressed="false" aria-label="조용한 음악 재생">
+        <svg class="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <div class="a-track">
+        <div class="a-bar" aria-hidden="true"><i id="bar"></i></div>
+        <div class="a-times"><span id="tCur">0:00</span><span id="tDur">--:--</span></div>
+        <p class="a-hint" id="hint"></p>
       </div>
-      <p class="a-hint" id="hint"></p>
     </div>
 
     <a class="a-call" id="call" href="#call">
