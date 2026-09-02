@@ -28,24 +28,31 @@ PAGE_SIZE = 100 if KEY else 5
 TODAY = datetime.date.today()
 
 
+_FAILS = 0   # 연속 실패 수 — API가 죽은 날 서비스마다 3회×30초를 다 기다리지 않게(9/1 실제 사고: 15분 낭비)
+
+
 def call(service, **params):
     """API 1페이지 호출 → (rows, total). 오류·데이터 없음은 ([], 0)."""
+    global _FAILS
     q = {"Type": "json", "pIndex": params.pop("pIndex", 1), "pSize": PAGE_SIZE}
     if KEY:
         q["KEY"] = KEY
     q.update(params)
     url = BASE + service + "?" + urllib.parse.urlencode(q)
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (gukgam-db collector)"})
-    for attempt in range(3):
+    tries, tmo = (3, 30) if _FAILS < 2 else (1, 12)   # 두 번 연속 실패하면 회로 차단: 한 번만 짧게 시도
+    for attempt in range(tries):
         try:
-            with urllib.request.urlopen(req, timeout=30) as r:
+            with urllib.request.urlopen(req, timeout=tmo) as r:
                 data = json.loads(r.read().decode("utf-8"))
+            _FAILS = 0
             break
         except Exception as e:
-            if attempt < 2:
+            if attempt < tries - 1:
                 time.sleep(3 * (attempt + 1))
             else:
-                print(f"[{service}] 호출 실패: {e}")
+                _FAILS += 1
+                print(f"[{service}] 호출 실패: {e}" + (" (회로 차단 중)" if _FAILS >= 2 else ""))
                 return [], 0
     if service not in data:  # {"RESULT":{"CODE":"INFO-200"...}} = 데이터 없음/오류
         code = (data.get("RESULT") or {}).get("CODE", "?")
@@ -145,6 +152,18 @@ def save(name, payload):
                 if json.load(f).get("mode") == "full":
                     print(f"{name}: full 데이터 유지(샘플로 덮어쓰지 않음)")
                     return False
+        except Exception:
+            pass
+    # API가 죽은 날 0건을 받아 기존 자료를 지우는 사고 방지(9/1 실제로 "0건 저장"까지 갔음):
+    # 기존보다 절반 이하로 줄면 수집 실패로 보고 기존 파일을 지킨다
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                old_n = len(json.load(f).get("items", []))
+            new_n = len(payload.get("items", []))
+            if old_n >= 20 and new_n < old_n * 0.5:
+                print(f"{name}: 수집 {new_n}건 < 기존 {old_n}건의 절반 → 수집 실패로 보고 기존 파일 유지")
+                return False
         except Exception:
             pass
     with open(path, "w", encoding="utf-8") as f:
