@@ -22,7 +22,7 @@
       ["gyeolhap.html", "결합상품 판별", "여덟 문항"],
       ["christian.html", "기독교 장례", "네 번의 예배"]
     ]},
-    { t: "고마움 상조회", items: [
+    { t: "고마움 상조", items: [
       ["yaksok.html", "대표의 글", "김병호 · Since 2006"],
       ["./", "홈", ""]
     ]}
@@ -31,7 +31,7 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
   var html = '<div class="gm-menu" id="gmMenu" hidden role="dialog" aria-modal="true" aria-label="전체 메뉴">' +
-    '<div class="gm-menu-top"><span class="gm-menu-brand">고마움 상조회</span>' +
+    '<div class="gm-menu-top"><span class="gm-menu-brand">고마움 상조</span>' +
     '<button type="button" class="gm-menu-close" data-menu-close aria-label="메뉴 닫기">' +
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>' +
     '<div class="gm-menu-body">';
