@@ -17,6 +17,9 @@ on:
 permissions:
   contents: write
 
+env:
+  PYTHONUNBUFFERED: "1"   # 진행 로그가 실시간으로 보이게 (버퍼링되면 6시간 뒤 취소돼도 어디서 멈췄는지 모른다)
+
 jobs:
   build:
     runs-on: ubuntu-24.04
