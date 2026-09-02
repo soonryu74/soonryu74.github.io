@@ -1166,3 +1166,34 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
 .gm-credit span { letter-spacing: 0.18em; }
 .gm-credit a { color: inherit; }
 @media print { .gm-footer, .gm-credit { display: none; } }
+
+/* ---------- 전체 메뉴 (모든 페이지) ---------- */
+.gm-menu-btn { display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 12px 0 10px; margin-left: 4px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--surface); color: var(--ink); font: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
+.gm-menu-btn svg { width: 18px; height: 18px; }
+.gm-menu-btn:hover { border-color: var(--ink-2); }
+.gm-menu { position: fixed; inset: 0; z-index: 200; background: var(--paper); color: var(--ink); overflow-y: auto; display: flex; flex-direction: column; }
+.gm-menu[hidden] { display: none; }
+body.gm-menu-open { overflow: hidden; }
+.gm-menu-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--paper); }
+.gm-menu-brand { font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; color: var(--accent-deep); }
+.gm-menu-close { width: 44px; height: 44px; border: 0; background: transparent; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-right: -10px; }
+.gm-menu-close svg { width: 24px; height: 24px; }
+.gm-menu-body { max-width: var(--maxw); width: 100%; margin: 0 auto; padding: 8px 18px 20px; display: grid; grid-template-columns: 1fr; gap: 6px; }
+.gm-menu-group { padding: 14px 0 6px; }
+.gm-menu-group h2 { margin: 0 0 6px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; color: #fff; background: var(--orange); display: inline-block; padding: 4px 8px; }
+.gm-menu-group ul { list-style: none; margin: 0; padding: 0; }
+.gm-menu-group li a { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--line); text-decoration: none; color: var(--ink); min-height: 48px; justify-content: center; }
+.gm-menu-group li:last-child a { border-bottom: 0; }
+.gm-menu-group b { font-family: var(--f-display); font-size: 1.12rem; font-weight: 700; }
+.gm-menu-group small { font-size: 0.86rem; color: var(--ink-3); }
+.gm-menu-group a[aria-current="page"] b { color: var(--orange-deep); }
+.gm-menu-group a:hover b { color: var(--orange-deep); }
+.gm-menu-foot { margin-top: auto; padding: 16px 18px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+.gm-menu-call { display: flex; align-items: center; justify-content: center; height: 54px; background: var(--orange); color: #fff; font-weight: 700; font-size: 1.05rem; border-radius: 6px; text-decoration: none; }
+.gm-menu-call.soon { background: transparent; color: var(--ink-2); border: 1px solid var(--line-strong); }
+.gm-menu-foot span { font-size: 0.8rem; color: var(--ink-3); text-align: center; }
+@media (min-width: 760px) {
+  .gm-menu-body { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 40px; padding-top: 24px; }
+  .gm-menu-foot { flex-direction: row; align-items: center; justify-content: space-between; }
+  .gm-menu-call { min-width: 220px; }
+}
