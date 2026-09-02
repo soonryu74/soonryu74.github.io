@@ -104,7 +104,14 @@ jobs:
           GUKGAM_TL_AGENCY=mohw python3 scripts/gukgam/build_timeline.py
           GUKGAM_TL_AGENCY=mfds python3 scripts/gukgam/build_timeline.py
 
-      - name: 국정감사계획서 파싱 (plan_url 입력 시에만 — 계획서는 API에 없어 연 1회 수동)
+      - name: 국정감사계획서 자동 탐지 (복지위 게시판 새 계획서 게시글의 PDF 첨부를 파싱 — HWP만 있으면 수동)
+        timeout-minutes: 10
+        continue-on-error: true
+        run: |
+          pip install --quiet pypdf
+          python3 scripts/gukgam/auto_plan.py
+
+      - name: 국정감사계획서 파싱 (plan_url 입력 시 — 자동 탐지가 못 잡은 경우의 수동 경로)
         if: ${{ inputs.plan_url != '' && inputs.plan_url != null }}
         env:
           GUKGAM_PLAN_URL: ${{ inputs.plan_url }}
