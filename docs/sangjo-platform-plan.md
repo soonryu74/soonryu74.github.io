@@ -257,6 +257,9 @@ v0.3에서는 유료 멤버십을 두고 이를 '장례 종료 후 시작하는 
 
 ## 7-1. 브랜드 확정
 
+- **도메인 gomaumsangjo.com** (가비아, 2026-09-02). 저장소 `soonryu74/gomaumsangjo`, GitHub Pages(main / root, CNAME). 옛 주소 soonryu74.github.io/sangjo/* 는 새 주소로 자동 이동(해시 유지).
+
+
 - 대표: **김병호** (장례 현장 2006년~, 20년). 사이트 표기 "SINCE 2006 · 장례 현장 20년"
 - 비전 한 줄: "장례가 돈 걱정이 아니라, 고마움으로 남도록."
 
