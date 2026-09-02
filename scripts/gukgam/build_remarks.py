@@ -21,7 +21,7 @@ import build_kdca_qa as K          # pdf_text · SPEAKER · parse_mark · clean 
 
 ERAS = ("제21대", "제22대")
 MAXLEN = 100000                    # 사실상 전문 — 발췌(600자)로 자르면 뒷부분 질환명이 검색에서 빠진다(1차 색인에서 10%가 잘림)
-FMT = 2                            # 파일 형식 버전 — 바뀌면 전체 재색인 (2: 전문 저장, 회의록 URL은 파일당 날짜→URL 맵)
+FMT = 3                            # 파일 형식 버전 — 바뀌면 전체 재색인 (2: 전문 저장, 회의록 URL은 파일당 날짜→URL 맵 · 3: "…" 필터 비례화)
 INDEX = os.path.join(DATA, "remarks-index.json")
 
 
@@ -40,7 +40,7 @@ def extract(text, date):
             continue
         end = marks[i + 1][0] if i + 1 < len(marks) else len(text)
         t = K.clean(text[endpos:end], limit=MAXLEN)
-        if len(t) < 30 or t.count("…") > 3:
+        if len(t) < 30 or t.count("…") > max(3, len(t) // 150):   # 깨진 텍스트만 거른다 — 전문은 길수록 "…"가 자연히 늘어 비례 기준
             continue
         nxt = marks[i + 1] if i + 1 < len(marks) else None
         answered_by = None
