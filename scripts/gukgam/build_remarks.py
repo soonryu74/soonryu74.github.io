@@ -63,7 +63,8 @@ def main():
     processed = set(idx.get("processed", []))
     by_year = {}
     urls = {}                      # 연도 → {날짜: 회의록 URL}
-    if idx.get("fmt") != FMT:      # 형식이 바뀌면 처음부터 다시 (기존 파일은 무시)
+    rebuild = idx.get("fmt") != FMT
+    if rebuild:                    # 형식이 바뀌면 처음부터 다시 (기존 파일은 무시)
         print("형식 %s → %s: 전체 재색인" % (idx.get("fmt"), FMT))
         processed = set()
         idx["years"] = {}
@@ -76,7 +77,7 @@ def main():
             urls[y] = d.get("urls", {})
         return by_year[y]
 
-    new = 0
+    new = failed = 0
     for mt in sorted(minutes, key=lambda x: x["date"]):
         if mt["conf_id"] in processed:
             continue
@@ -84,6 +85,7 @@ def main():
             got = extract(K.pdf_text(mt["url"]), mt["date"])
         except Exception as e:
             print(f"{mt['date']} 실패: {e}")
+            failed += 1
             continue
         load_year(mt["date"][:4]).extend(got)
         urls[mt["date"][:4]][mt["date"]] = mt["url"]   # 항목마다 URL을 반복 저장하지 않는다(파일 2MB 절약)
@@ -91,6 +93,10 @@ def main():
         print(f"{mt['date']}: 발언 {len(got)}건")
         time.sleep(1)
 
+    if rebuild and failed:
+        # 전체 재색인 중 일부 회의록을 못 받았으면 반쪽짜리를 올리지 않는다 — 기존 파일 유지, 다음 실행에서 다시 전체 시도
+        print("전체 재색인 중 %d건 실패 → 이번 결과는 쓰지 않고 기존 색인 유지" % failed)
+        return 0
     years = {}
     for y in sorted(set(list(by_year) + list(idx.get("years", {}).keys()))):
         items = load_year(y)
