@@ -20,8 +20,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_kdca_qa as K          # pdf_text · SPEAKER · parse_mark · clean 재사용
 
 ERAS = ("제21대", "제22대")
-MAXLEN = 600                       # 검색용 발췌 길이 — 전문은 원문 링크로
+MAXLEN = 100000                    # 사실상 전문 — 발췌(600자)로 자르면 뒷부분 질환명이 검색에서 빠진다(1차 색인에서 10%가 잘림)
+FMT = 2                            # 파일 형식 버전 — 바뀌면 전체 재색인 (2: 전문 저장, 회의록 URL은 파일당 날짜→URL 맵)
 INDEX = os.path.join(DATA, "remarks-index.json")
+
+
+def answerer(name, role):
+    """마커 '◯질병관리청장 지영미'는 (질병관리, 청장)으로 잘려 나온다 → '질병관리청장'으로 붙이고,
+    기관명 뒤에 직위가 더 이어지면 한 칸 띄운다: 보건복지부 장관 · 질병관리청 감염병정책국장 · 식품의약품안전처장."""
+    s = (name + role).strip()
+    return re.sub(r"^(보건복지부|질병관리청|식품의약품안전처)(?=..)", r"\1 ", s)
 
 
 def extract(text, date):
@@ -37,7 +45,7 @@ def extract(text, date):
         nxt = marks[i + 1] if i + 1 < len(marks) else None
         answered_by = None
         if nxt and nxt[3] not in ("위원", "위원장"):
-            answered_by = (nxt[2] + " " + nxt[3]).strip()
+            answered_by = answerer(nxt[2], nxt[3])
         out.append({"date": date, "member": name, "role": role, "text": t,
                     "answered_by": answered_by})
     return out
@@ -54,11 +62,18 @@ def main():
             pass
     processed = set(idx.get("processed", []))
     by_year = {}
+    urls = {}                      # 연도 → {날짜: 회의록 URL}
+    if idx.get("fmt") != FMT:      # 형식이 바뀌면 처음부터 다시 (기존 파일은 무시)
+        print("형식 %s → %s: 전체 재색인" % (idx.get("fmt"), FMT))
+        processed = set()
+        idx["years"] = {}
 
     def load_year(y):
         p = os.path.join(DATA, "remarks-%s.json" % y)
         if y not in by_year:
-            by_year[y] = json.load(open(p, encoding="utf-8"))["items"] if os.path.exists(p) else []
+            d = json.load(open(p, encoding="utf-8")) if (os.path.exists(p) and idx.get("fmt") == FMT) else {}
+            by_year[y] = d.get("items", [])
+            urls[y] = d.get("urls", {})
         return by_year[y]
 
     new = 0
@@ -70,9 +85,8 @@ def main():
         except Exception as e:
             print(f"{mt['date']} 실패: {e}")
             continue
-        for g in got:
-            g["minutes_url"] = mt["url"]
         load_year(mt["date"][:4]).extend(got)
+        urls[mt["date"][:4]][mt["date"]] = mt["url"]   # 항목마다 URL을 반복 저장하지 않는다(파일 2MB 절약)
         processed.add(mt["conf_id"]); new += 1
         print(f"{mt['date']}: 발언 {len(got)}건")
         time.sleep(1)
@@ -82,12 +96,13 @@ def main():
         items = load_year(y)
         items.sort(key=lambda x: (x["date"], x["member"]))
         with io.open(os.path.join(DATA, "remarks-%s.json" % y), "w", encoding="utf-8") as f:
-            json.dump({"updated": datetime.date.today().isoformat(), "year": int(y), "items": items},
+            json.dump({"updated": datetime.date.today().isoformat(), "year": int(y), "fmt": FMT,
+                       "urls": urls.get(y, {}), "items": items},
                       f, ensure_ascii=False, indent=0)
         years[y] = len(items)
     with io.open(INDEX, "w", encoding="utf-8") as f:
-        json.dump({"updated": datetime.date.today().isoformat(),
-                   "note": "보건복지위 국감 회의록(제21~22대) 위원·위원장 발언 전체 색인. 답변이 붙지 않은 발언도 포함. 발췌 %d자." % MAXLEN,
+        json.dump({"updated": datetime.date.today().isoformat(), "fmt": FMT,
+                   "note": "보건복지위 국감 회의록(제21~22대) 위원·위원장 발언 전체 색인(전문). 답변이 붙지 않은 발언도 포함. 회의록 URL은 연도 파일의 urls(날짜→URL).",
                    "processed": sorted(processed), "years": years}, f, ensure_ascii=False, indent=1)
     print("완료: 회의록 %d건 신규 · 연도별 발언 %s" % (new, years))
     return 0
