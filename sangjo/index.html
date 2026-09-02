@@ -136,6 +136,8 @@ a { color: inherit; }
 
 @media (min-width: 860px) {
   .a-top { padding-left: 34px; padding-right: 34px; }
+  .a-nav > a { display: inline; }
+  .a-top .hours { display: inline; }
   .a-brand svg { width: 28px; height: 28px; }
   .a-brand b { font-size: 20px; }
   /* 넓은 화면: 십자가를 왼쪽에 두고, 글은 오른쪽 아래에 */
@@ -193,7 +195,14 @@ a { color: inherit; }
   </div>
   <div class="a-top">
     <a class="a-brand" href="./" aria-label="고마움 상조회 홈"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="26" r="12.4" stroke="#fff" stroke-width="3.4"/><path d="M6 36c0 10.5 8.5 19 19 19" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M58 36c0 10.5-8.5 19-19 19" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M25 55h14" stroke="#D9B76A" stroke-width="3.4" stroke-linecap="round"/></svg><b>고마움 상조회</b></a>
-    <span class="hours" id="hours">24시간</span>
+    <nav class="a-nav" aria-label="주요">
+      <a href="jeolcha.html">지금 할 일</a>
+      <a href="hubul.html">후불제 장례</a>
+      <a href="kiil.html">기일 리마인드</a>
+      <a href="yaksok.html">대표의 글</a>
+      <span class="hours" id="hours">24시간</span>
+      <button type="button" class="a-menu" data-menu-open aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>메뉴</button>
+    </nav>
   </div>
 
   <div class="a-head">
@@ -294,6 +303,7 @@ a { color: inherit; }
 
 <script src="../assets/js/site-keys.js"></script>
 <script src="../assets/js/quiet-horn.js"></script>
+<script src="../assets/js/gm-menu.js"></script>
 <script src="../assets/js/petals.js"></script>
 <script>
 /* 떨어지는 백합 꽃잎 — 사진 위, 글자 위로는 옅어진다 */
