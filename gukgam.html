@@ -287,7 +287,7 @@
 <main class="wrap">
   <section class="gsearch">
     <div class="gs-bar">
-      <input id="gsInput" aria-label="통합 검색" type="search" placeholder="🔍 통합 검색 — 위원·질의·답변·지적사항·자료 전체에서 찾기 (예: 백신 폐기, 남인순, 장기요양)">
+      <input id="gsInput" aria-label="통합 검색" type="search" placeholder="🔍 통합 검색 — 보건복지위 국감 2020~2025의 위원 발언·질의·답변·지적사항·자료 (예: 백신 폐기, 남인순, 장기요양)">
       <button id="gsBtn">검색</button>
     </div>
     <div id="gsOut" hidden></div>
@@ -559,7 +559,7 @@
               (link?'<a href="'+esc(link)+'" target="_blank" rel="noopener" style="font-weight:800;color:#2a4d7d;">원문 →</a>':'')+'</div></div>';
           }).join('')+'</div>';
       }
-      out.innerHTML = html || '<div class="gs-loading">"'+esc(q)+'"에 대한 결과가 없습니다.</div>';
+      out.innerHTML = html || '<div class="gs-loading">"'+esc(q)+'"에 대한 결과가 없습니다.<div style="font-size:.8rem;margin-top:6px;line-height:1.55;color:#3d4f63;">이 검색은 <b>보건복지위원회 국정감사 회의록(2020~2025)</b>의 위원 발언·질의·답변·지적사항·자료 제목에서만 찾습니다. 위원 이름이라면 이 기간 보건복지위 소속이 아니었거나 국감에서 발언하지 않은 경우입니다. 다른 상임위 발언은 <a href="https://record.assembly.go.kr" target="_blank" rel="noopener" style="color:#2a4d7d;font-weight:800;">국회 회의록시스템</a>, 관련 보도는 <a href="https://search.naver.com/search.naver?where=news&query='+encodeURIComponent(q+' 국정감사')+'" target="_blank" rel="noopener" style="color:#2a4d7d;font-weight:800;">뉴스 검색</a>에서 확인하세요.</div></div>';
     });
   }
   document.getElementById('gsBtn').addEventListener('click', run);
