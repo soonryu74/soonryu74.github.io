@@ -77,20 +77,26 @@ def main():
             urls[y] = d.get("urls", {})
         return by_year[y]
 
-    new = failed = 0
+    new = failed = streak = 0
     for mt in sorted(minutes, key=lambda x: x["date"]):
         if mt["conf_id"] in processed:
             continue
+        t0 = time.time()
         try:
             got = extract(K.pdf_text(mt["url"]), mt["date"])
         except Exception as e:
-            print(f"{mt['date']} 실패: {e}")
+            print(f"{mt['date']} 실패 ({time.time() - t0:.0f}초): {e}")
             failed += 1
+            streak += 1
+            if streak >= 3:            # 회의록 서버가 죽은 날 — 47건 × 15분을 다 기다리지 않는다
+                print("연속 3건 실패 → 회의록 서버 불통으로 보고 중단 (다음 실행에서 재시도)")
+                break
             continue
+        streak = 0
         load_year(mt["date"][:4]).extend(got)
         urls[mt["date"][:4]][mt["date"]] = mt["url"]   # 항목마다 URL을 반복 저장하지 않는다(파일 2MB 절약)
         processed.add(mt["conf_id"]); new += 1
-        print(f"{mt['date']}: 발언 {len(got)}건")
+        print(f"{mt['date']}: 발언 {len(got)}건 ({time.time() - t0:.0f}초)")
         time.sleep(1)
 
     if rebuild and failed:
