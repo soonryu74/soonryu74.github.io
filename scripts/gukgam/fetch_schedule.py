@@ -34,7 +34,7 @@ def call(date_str):
         except Exception:
             if attempt < 2:
                 time.sleep(2)
-    return []
+    return None   # 실패는 None — 빈 목록([]=일정 없음)과 구분한다
 
 
 def classify(r):
@@ -62,9 +62,19 @@ def main():
         print("※ ASSEMBLY_API_KEY 미설정 → 샘플 범위만 수집될 수 있음")
     today = datetime.date.today()
     items, seen = [], set()
+    fails, ok_calls = 0, 0
     for i in range(DAYS):
         d = (today + datetime.timedelta(days=i)).isoformat()
-        for r in call(d):
+        rows = call(d)
+        if rows is None:
+            fails += 1
+            if fails >= 3:   # API가 죽은 날 35일×3회×30초(≈52분)를 다 기다리지 않는다 — 9/1 실제 사고
+                print("연속 3일 조회 실패 → 중단, 기존 schedule.json 유지")
+                return 0
+            continue
+        fails = 0
+        ok_calls += 1
+        for r in rows:
             cat = classify(r)
             if not cat:
                 continue
@@ -83,6 +93,9 @@ def main():
                 "place": r.get("EV_PLC") or "",
             })
         time.sleep(0.4)
+    if ok_calls == 0 and os.path.exists(OUT):
+        print("조회 성공 0건 → 기존 schedule.json 유지")
+        return 0
     items.sort(key=lambda x: (x["date"], x["time"]))
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump({"updated": today.isoformat(), "horizon_days": DAYS, "items": items}, f, ensure_ascii=False, indent=1)

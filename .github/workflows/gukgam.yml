@@ -24,24 +24,29 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: 국정감사 자료 수집 → data/gukgam/
+        continue-on-error: true   # 국회 API가 죽은 날에도 뒷단계는 기존 자료로 돈다
         env:
           ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
         run: python3 scripts/gukgam/fetch_assembly.py
 
       - name: 국회 주요 일정 수집
+        continue-on-error: true   # 국회 API가 죽은 날에도 뒷단계는 기존 자료로 돈다
         env:
           ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
         run: python3 scripts/gukgam/fetch_schedule.py
 
       - name: 보건복지위 위원 프로필 수집
+        continue-on-error: true   # 국회 API가 죽은 날에도 뒷단계는 기존 자료로 돈다
         env:
           ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
         run: python3 scripts/gukgam/fetch_members.py
 
       - name: likms 위원회 게시판 최신 자료 수집 (키 불필요, 누적)
+        continue-on-error: true   # 국회 API가 죽은 날에도 뒷단계는 기존 자료로 돈다
         run: python3 scripts/gukgam/fetch_likms.py
 
       - name: 보건복지 트랙 기관 게시판 수집 (키 불필요, 누적)
+        continue-on-error: true   # 국회 API가 죽은 날에도 뒷단계는 기존 자료로 돈다
         run: python3 scripts/gukgam/fetch_health.py
 
       - name: 문서 요약 추출 (보건복지위 회의록·결과보고서, 증분)
