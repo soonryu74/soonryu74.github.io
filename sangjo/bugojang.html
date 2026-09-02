@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="../assets/css/gomaum.css">
 <script src="../assets/js/site-keys.js"></script>
 <script src="../assets/js/quiet-horn.js" defer></script>
+<script src="../assets/js/petals.js"></script>
 </head>
 <body>
 
@@ -215,6 +216,7 @@
     <p class="sig">사랑하는 이와 이별하는 순간,<br>고마움 상조회가 함께하겠습니다.</p>
     고마움 상조회. 장례는 후불로, 기억은 오래.<br>
     입력하신 내용은 링크 주소 안에만 담기며 서버로 전송되거나 저장되지 않습니다.
+    <p class="gm-credit">기획·제작 — 지음 <span>JIEUM</span></p>
   </div>
 </footer>
 
@@ -493,6 +495,8 @@
       document.title = title + " — 고마움 상조회";
       wire(card, title);
       initMap(card, data);
+      // 사진 위로 백합 꽃잎이 천천히 내려온다
+      if (window.Petals) Petals.mount(card.querySelector(".bj-top"), { count: 7, fadeFrom: 0.45, z: 1 });
       return;
     }
   }
