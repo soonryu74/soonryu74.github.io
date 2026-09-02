@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>진짜 장례비 계산기 — 고마움 상조</title>
+<meta name="description" content="장례식장 유형, 조문객 수, 장지 방식을 고르면 3일장 실제 총비용이 나옵니다. 상조 상품이 덮는 부분과 따로 내야 하는 부분을 나눠 보여줍니다. 공표 평균값 기반 무료 계산기.">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://soonryu74.github.io/sangjo/gaeum.html">
+<meta property="og:site_name" content="고마움 상조">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="진짜 장례비 계산기 — 고마움 상조">
+<meta property="og:description" content="상조에 들어도 장례비의 20~40%만 덮입니다. 나머지가 얼마인지 미리 계산해 보세요.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/css/gomaum.css">
+</head>
+<body>
+
+<header class="gm-top">
+  <div class="gm-top-inner">
+    <a class="gm-brand" href="./"><svg class="gm-brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="26" r="12.4" stroke="currentColor" stroke-width="3.4"/><path d="M6 36c0 10.5 8.5 19 19 19" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><path d="M58 36c0 10.5-8.5 19-19 19" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><path d="M25 55h14" stroke="#B08C3A" stroke-width="3.4" stroke-linecap="round"/></svg><span class="gm-brand-text">고마움 상조</span></a>
+    <nav class="gm-top-nav" aria-label="주요">
+      <a href="jeolcha.html" class="hide-s">지금 할 일</a>
+      <a href="hubul.html" class="hide-s">후불제 장례</a>
+      <a href="kiil.html" class="hide-s">기일 리마인드</a>
+      <a href="yaksok.html" class="hide-s">대표의 글</a>
+      <a class="gm-top-call" data-phone href="#">전화</a>
+      <button type="button" class="gm-menu-btn" data-menu-open aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>메뉴</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="gm-wrap">
+
+  <div class="gm-page-head">
+    <p class="kicker">무료 도구 · 누구나</p>
+    <h1>진짜 장례비 계산기</h1>
+    <p class="lead">상조 상품은 장례비의 일부만 덮습니다. 장례식장 사용료, 접객 음식, 장지는 대부분 별도입니다. 몇 가지만 고르면 총액과 함께 <strong>상조가 덮지 않는 몫</strong>이 얼마인지 나옵니다.</p>
+  </div>
+
+  <form class="calc" id="calc" autocomplete="off">
+    <div class="calc-grid">
+
+      <div class="field">
+        <label for="hall">장례식장 유형</label>
+        <select id="hall">
+          <option value="public">공설 장례식장</option>
+          <option value="pro" selected>전문 장례식장</option>
+          <option value="univ">대학병원 장례식장</option>
+          <option value="none">무빈소 · 가족장</option>
+        </select>
+        <span class="hint">시설마다 요금 차이가 큽니다. 실제 요금은 e하늘에서 확인하세요.</span>
+      </div>
+
+      <div class="field">
+        <label for="days">장례 기간</label>
+        <select id="days">
+          <option value="3" selected>3일장</option>
+          <option value="2">2일장</option>
+        </select>
+        <span class="hint">2일장은 시설 사용료가 약 25% 줄어듭니다.</span>
+      </div>
+
+      <div class="field">
+        <label for="guests">예상 조문객 수 <span class="range-val" id="guestsVal">150명</span></label>
+        <input type="range" id="guests" min="0" max="500" step="10" value="150">
+        <span class="hint">1인당 접객 비용 1.5만~2.5만 원으로 계산합니다.</span>
+      </div>
+
+      <div class="field">
+        <label for="sangjo">상조 가입 상태</label>
+        <select id="sangjo">
+          <option value="0">미가입 (인력·용품 개별 준비)</option>
+          <option value="post">후불제 상조 이용</option>
+          <option value="200">선불 상조 · 200만 원 상품</option>
+          <option value="300">선불 상조 · 300만 원 상품</option>
+          <option value="400" selected>선불 상조 · 400만 원 상품</option>
+          <option value="500">선불 상조 · 500만 원 상품</option>
+        </select>
+        <span class="hint">선불 상품 금액은 이미 납입한(또는 납입 중인) 돈입니다.</span>
+      </div>
+
+      <div class="field">
+        <label for="goods">장례용품 등급 <span class="hint" style="font-weight:400">(수의·관)</span></label>
+        <select id="goods">
+          <option value="base" selected>기본 (상품 포함 등급)</option>
+          <option value="mid">중급으로 상향</option>
+          <option value="high">고급으로 상향</option>
+        </select>
+        <span class="hint">현장에서 권유받아 올리는 경우가 가장 흔한 추가금입니다.</span>
+      </div>
+
+      <div class="field">
+        <label for="altar">제단 장식</label>
+        <select id="altar">
+          <option value="base" selected>기본 제단</option>
+          <option value="high">상급 제단으로 상향</option>
+          <option value="christian">기독교식 (십자가·백합)</option>
+          <option value="none">제단 없음 · 무빈소</option>
+        </select>
+        <span class="hint">기독교식은 제기·향·조화가 빠져 대체로 더 저렴합니다.</span>
+      </div>
+
+      <div class="field">
+        <label for="crem">화장</label>
+        <select id="crem">
+          <option value="in" selected>관내 화장 (주민등록지 관할)</option>
+          <option value="out">관외 화장</option>
+          <option value="burial">화장하지 않음 (매장)</option>
+        </select>
+        <span class="hint">관외 화장은 관내의 여덟 배 수준입니다.</span>
+      </div>
+
+      <div class="field">
+        <label for="grave">장지</label>
+        <select id="grave">
+          <option value="none">선산 · 기존 묘 (추가 비용 없음)</option>
+          <option value="pubcol" selected>공설 봉안당</option>
+          <option value="privcol">사설 봉안당</option>
+          <option value="natural">자연장 · 수목장</option>
+          <option value="burial">매장 (묘지 조성)</option>
+        </select>
+        <span class="hint">총비용의 편차를 가장 크게 만드는 항목입니다.</span>
+      </div>
+
+    </div>
+  </form>
+
+  <div class="result" id="result" aria-live="polite">
+    <p class="headline">예상 총 장례비</p>
+    <p class="total"><span id="totMin">–</span> <small>~</small> <span id="totMax">–</span> <small>만 원</small></p>
+    <p class="sub" id="totSub">항목을 고르면 계산됩니다.</p>
+
+    <div class="cover-bar" id="coverBar" role="img" aria-label="상조 포함분과 별도 부담분 비율">
+      <span class="covered" id="barIn" style="flex-basis:0%"></span>
+      <span class="uncovered" id="barOut" style="flex-basis:100%"></span>
+    </div>
+    <div class="cover-legend">
+      <span><i class="c1"></i>상조가 덮는 몫 <b id="legIn">0%</b></span>
+      <span><i class="c2"></i>따로 내야 하는 몫 <b id="legOut">100%</b></span>
+    </div>
+  </div>
+
+  <section class="gm-sec">
+    <h2>항목별 내역</h2>
+    <p class="sec-lead">기준값은 각 항목의 중간값입니다. 최소·최대는 시설 등급과 지역 차이를 반영한 범위입니다.</p>
+    <div class="tw">
+      <table>
+        <caption>3일장 기준 · 단위 만 원</caption>
+        <thead>
+          <tr><th>항목</th><th class="num">최소</th><th class="num">기준</th><th class="num">최대</th><th>부담</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+        <tfoot id="foot"></tfoot>
+      </table>
+    </div>
+
+    <div class="note" id="tip">
+      <p class="lbl">읽는 법</p>
+      <p>"상조 포함"으로 표시된 줄은 이미 납입했거나 납입 중인 돈입니다. 나머지는 <strong>상을 당한 뒤 현장에서 결제하게 되는 금액</strong>입니다.</p>
+    </div>
+  </section>
+
+  <section class="gm-sec">
+    <h2>이 계산의 근거</h2>
+    <p class="sec-lead">추정에 쓴 값을 전부 공개합니다. 동의하지 않는 값이 있다면 실제 견적으로 바꿔 판단하세요.</p>
+    <div class="tw">
+      <table>
+        <caption>계산에 사용한 기준값 · 단위 만 원</caption>
+        <thead><tr><th>항목</th><th>구분</th><th class="num">최소</th><th class="num">기준</th><th class="num">최대</th></tr></thead>
+        <tbody>
+          <tr><td class="k" rowspan="4">장례식장 시설<br><span style="font-size:.82rem;color:var(--ink-3)">빈소·안치·염습·접객실</span></td><td>공설</td><td class="num">180</td><td class="num">275</td><td class="num">380</td></tr>
+          <tr><td>전문</td><td class="num">240</td><td class="num">364</td><td class="num">500</td></tr>
+          <tr><td>대학병원</td><td class="num">300</td><td class="num">427</td><td class="num">600</td></tr>
+          <tr><td>무빈소</td><td class="num">40</td><td class="num">70</td><td class="num">110</td></tr>
+          <tr><td class="k">접객 음식</td><td>조문객 1인당</td><td class="num">1.5</td><td class="num">2.0</td><td class="num">2.5</td></tr>
+          <tr><td class="k" rowspan="2">상조 서비스</td><td>미가입 · 개별 준비</td><td class="num">80</td><td class="num">130</td><td class="num">200</td></tr>
+          <tr><td>후불제</td><td class="num">130</td><td class="num">180</td><td class="num">250</td></tr>
+          <tr><td class="k" rowspan="2">장례용품 상향</td><td>중급</td><td class="num">60</td><td class="num">100</td><td class="num">150</td></tr>
+          <tr><td>고급</td><td class="num">180</td><td class="num">250</td><td class="num">350</td></tr>
+          <tr><td class="k" rowspan="3">제단 장식</td><td>기본 (상조 미가입 시)</td><td class="num">50</td><td class="num">80</td><td class="num">120</td></tr>
+          <tr><td>상급 상향 차액</td><td class="num">100</td><td class="num">140</td><td class="num">200</td></tr>
+          <tr><td>기독교식</td><td class="num">40</td><td class="num">60</td><td class="num">100</td></tr>
+          <tr><td class="k" rowspan="2">화장료</td><td>관내</td><td class="num">12</td><td class="num">12</td><td class="num">12</td></tr>
+          <tr><td>관외</td><td class="num">100</td><td class="num">100</td><td class="num">100</td></tr>
+          <tr><td class="k" rowspan="4">장지</td><td>공설 봉안당</td><td class="num">30</td><td class="num">50</td><td class="num">80</td></tr>
+          <tr><td>사설 봉안당</td><td class="num">300</td><td class="num">600</td><td class="num">1,000</td></tr>
+          <tr><td>자연장 · 수목장</td><td class="num">30</td><td class="num">100</td><td class="num">200</td></tr>
+          <tr><td>매장 (묘지 조성)</td><td class="num">500</td><td class="num">1,200</td><td class="num">2,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note warn">
+      <p class="lbl">한계</p>
+      <p>장례식장 요금은 시설마다 크게 다르고, 공표 평균은 지역·등급을 평탄화한 값입니다. 이 계산기는 <strong>규모를 가늠하기 위한 추정</strong>이지 견적서가 아닙니다. 실제 요금은 <a href="https://www.15774129.go.kr" rel="noopener">e하늘 장사정보시스템</a>에서 시설별로 조회하실 수 있습니다.</p>
+    </div>
+  </section>
+
+  <section class="gm-sec">
+    <h2>현장에서 돈이 새는 세 지점</h2>
+    <h3>1. 용품 등급 상향</h3>
+    <p>수의와 관은 상조 상품에 기본 등급이 포함돼 있습니다. 현장에서 "이 등급은 좀…"이라는 권유를 받고 올리면 100만~350만 원이 추가됩니다. <strong>상품에 포함된 기본 등급이 무엇인지 미리 계약서에서 확인</strong>해 두면 그 자리에서 흔들리지 않습니다.</p>
+
+    <h3>2. 접객 음식 정산</h3>
+    <p>대개 사용한 만큼 정산합니다. 조문객 수를 넉넉히 잡아 준비했다가 남기면 그대로 비용입니다. 반대로 부족하면 급하게 추가 주문하게 됩니다. <strong>1인당 단가와 최소 보장 인원</strong>을 접수 시점에 확인하세요.</p>
+
+    <h3>3. 사용하지 않은 품목</h3>
+    <p>상조 상품에 포함된 품목 중 실제로 쓰지 않은 것이 있다면 공제 대상인지 확인하세요. 품목별 정찰제와 미사용 품목 공제를 원칙으로 내건 사업자들이 있습니다.</p>
+
+    <div class="note calm">
+      <p class="lbl">한 가지만 기억한다면</p>
+      <p>장례식장 접수 전에 <strong>총액이 아니라 품목별 단가표</strong>를 요구하세요. 총액만 듣고 시작하면 마지막 정산에서 항목을 되짚을 수가 없습니다.</p>
+    </div>
+  </section>
+
+  <section class="gm-sec sources">
+    <h2 style="font-size:1.2rem">출처</h2>
+    <ol>
+      <li>장례식장 유형별 평균 비용, 3일장 총비용 범위, <a href="https://jdam.kr/guides/jangrye-biyong-gujo" rel="noopener">장례비용 구조 정리</a>, <a href="https://funeralbaro.co.kr/funeral-hall-cost/" rel="noopener">장례식장 비용 총정리</a></li>
+      <li>장례 항목별 평균·추가 지출, <a href="https://samgolife.co.kr/magazine/blog/f-guide/%EC%9E%A5%EB%A1%80%EB%B9%84%EC%9A%A9%ED%95%AD%EB%AA%A9%EB%B3%84%ED%8F%89%EA%B7%A0" rel="noopener">항목별 평균 정리</a></li>
+      <li>화장시설 요금·화장률, <a href="https://www.15774129.go.kr" rel="noopener">e하늘 장사정보시스템</a>, <a href="https://biz.heraldcorp.com/article/10828569" rel="noopener">화장률 94% 관련 보도</a></li>
+      <li>품목별 정찰제·미사용 품목 공제 사례, <a href="https://platum.kr/archives/195600" rel="noopener">장례 플랫폼 관련 보도</a></li>
+    </ol>
+  </section>
+
+</div>
+</main>
+
+<footer class="gm-footer">
+  <div class="gm-footer-inner">
+    <div class="fnav">
+      <a href="./">홈</a>
+      <a href="yaksok.html">대표의 글</a>
+      <a href="hubul.html">후불제 장례</a>
+      <a href="danga.html">단가표</a>
+      <a href="jeolcha.html">장례 절차</a>
+      <a href="sikjang.html">장례식장·납골당 찾기</a>
+      <a href="bugo.html">부고 쓰기</a>
+      <a href="bugojang.html">모바일 부고장</a>
+      <a href="kiil.html">기일 리마인드</a>
+      <a href="hyeopryeok.html">함께하는 곳</a>
+      <a href="gaeum.html">장례비 계산</a>
+      <a href="jeoul.html">상조 점검</a>
+      <a href="christian.html">기독교 장례</a>
+      <a href="gyeolhap.html">결합상품 판별</a>
+      <a href="../index.html">부동산 정보</a>
+    </div>
+    <p class="sig">사랑하는 이와 이별하는 순간,<br>고마움 상조가 함께하겠습니다.</p>
+    고마움 상조. 장례는 후불로, 기억은 오래.<br>
+    미리 돈을 받지 않습니다. 장례를 치른 뒤에 쓰신 만큼만 정산합니다.<br>
+    계산 결과는 공표된 평균값에 근거한 추정치이며 견적이 아닙니다. 실제 금액은 시설·지역·계약 내용에 따라 달라집니다.
+    <p class="gm-credit">기획·제작 — 지음 <span>JIEUM</span></p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // 단위: 만 원. [최소, 기준, 최대]
+  var HALL = {
+    public: [180, 275, 380],
+    pro:    [240, 364, 500],
+    univ:   [300, 427, 600],
+    none:   [40, 70, 110]
+  };
+  var MEAL_PER_GUEST = [1.5, 2.0, 2.5];
+  var SANGJO_NONE = [80, 130, 200];   // 미가입 — 인력·기본용품 개별 준비
+  var SANGJO_POST = [130, 180, 250];  // 후불제
+  var GOODS = { base: [0, 0, 0], mid: [60, 100, 150], high: [180, 250, 350] };
+  var ALTAR_BASE = [50, 80, 120];     // 상조 미가입 시에만 별도 발생
+  var ALTAR_UP   = [100, 140, 200];   // 상급 상향 차액
+  var ALTAR_CHR  = [40, 60, 100];     // 기독교식 (상조 가입 여부와 무관하게 별도 집계)
+  var CREM = { "in": [12, 12, 12], out: [100, 100, 100], burial: [0, 0, 0] };
+  var GRAVE = {
+    none:    [0, 0, 0],
+    pubcol:  [30, 50, 80],
+    privcol: [300, 600, 1000],
+    natural: [30, 100, 200],
+    burial:  [500, 1200, 2000]
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var els = {
+    hall: $("hall"), days: $("days"), guests: $("guests"), guestsVal: $("guestsVal"),
+    sangjo: $("sangjo"), goods: $("goods"), altar: $("altar"), crem: $("crem"), grave: $("grave"),
+    totMin: $("totMin"), totMax: $("totMax"), totSub: $("totSub"),
+    barIn: $("barIn"), barOut: $("barOut"), legIn: $("legIn"), legOut: $("legOut"),
+    rows: $("rows"), foot: $("foot"), tip: $("tip")
+  };
+
+  function scale(triple, k) { return [triple[0] * k, triple[1] * k, triple[2] * k]; }
+  function add(a, b) { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; }
+  function fmt(n) {
+    var v = Math.round(n);
+    return v.toLocaleString("ko-KR");
+  }
+
+  function build() {
+    var hall = els.hall.value;
+    var days = parseInt(els.days.value, 10);
+    var guests = parseInt(els.guests.value, 10);
+    var sangjo = els.sangjo.value;
+    var noHall = (hall === "none");
+
+    var items = [];
+
+    // 1. 상조 서비스
+    if (sangjo === "0") {
+      items.push({ name: "장례 인력·의전 (개별 준비)", v: SANGJO_NONE, covered: false });
+    } else if (sangjo === "post") {
+      items.push({ name: "후불제 상조 서비스", v: SANGJO_POST, covered: false });
+    } else {
+      var amt = parseInt(sangjo, 10);
+      items.push({ name: "선불 상조 상품 (" + amt + "만 원)", v: [amt, amt, amt], covered: true });
+    }
+
+    // 2. 장례식장 시설
+    var dayK = (days === 3) ? 1 : 0.75;
+    items.push({
+      name: "장례식장 시설 사용료 (" + days + "일)",
+      v: scale(HALL[hall], noHall ? 1 : dayK),
+      covered: false
+    });
+
+    // 3. 접객 음식
+    if (!noHall && guests > 0) {
+      items.push({
+        name: "접객 음식 (" + guests + "명)",
+        v: scale(MEAL_PER_GUEST, guests),
+        covered: false
+      });
+    }
+
+    // 4. 장례용품 상향
+    if (els.goods.value !== "base") {
+      items.push({
+        name: "장례용품 상향 (" + (els.goods.value === "mid" ? "중급" : "고급") + ")",
+        v: GOODS[els.goods.value],
+        covered: false
+      });
+    }
+
+    // 5. 제단 장식
+    var altar = els.altar.value;
+    var hasSangjoProduct = (sangjo !== "0" && sangjo !== "post");
+    if (altar === "base") {
+      if (!hasSangjoProduct) items.push({ name: "기본 제단 장식", v: ALTAR_BASE, covered: false });
+    } else if (altar === "high") {
+      items.push({ name: "제단 상향 차액", v: ALTAR_UP, covered: false });
+      if (!hasSangjoProduct) items.push({ name: "기본 제단 장식", v: ALTAR_BASE, covered: false });
+    } else if (altar === "christian") {
+      items.push({ name: "기독교식 제단 (십자가·백합)", v: ALTAR_CHR, covered: false });
+    }
+
+    // 6. 화장료
+    var crem = els.crem.value;
+    if (crem !== "burial") {
+      items.push({ name: "화장료 (" + (crem === "in" ? "관내" : "관외") + ")", v: CREM[crem], covered: false });
+    }
+
+    // 7. 장지
+    var grave = els.grave.value;
+    if (grave !== "none") {
+      var label = { pubcol: "공설 봉안당", privcol: "사설 봉안당", natural: "자연장·수목장", burial: "매장 (묘지 조성)" }[grave];
+      items.push({ name: "장지 — " + label, v: GRAVE[grave], covered: false });
+    }
+
+    return items;
+  }
+
+  function render() {
+    els.guestsVal.textContent = els.guests.value + "명";
+
+    var items = build();
+    var total = [0, 0, 0];
+    var coveredMid = 0;
+    var html = "";
+
+    items.forEach(function (it) {
+      total = add(total, it.v);
+      if (it.covered) coveredMid += it.v[1];
+      html += "<tr><td class=\"k\">" + it.name + "</td>" +
+              "<td class=\"num\">" + fmt(it.v[0]) + "</td>" +
+              "<td class=\"num\">" + fmt(it.v[1]) + "</td>" +
+              "<td class=\"num\">" + fmt(it.v[2]) + "</td>" +
+              "<td>" + (it.covered
+                  ? "<span class=\"tag-in\">상조 포함</span>"
+                  : "<span class=\"tag-out\">별도 부담</span>") + "</td></tr>";
+    });
+
+    els.rows.innerHTML = html;
+    els.foot.innerHTML = "<tr class=\"sum\"><td>합계</td>" +
+      "<td class=\"num\">" + fmt(total[0]) + "</td>" +
+      "<td class=\"num\">" + fmt(total[1]) + "</td>" +
+      "<td class=\"num\">" + fmt(total[2]) + "</td><td></td></tr>";
+
+    els.totMin.textContent = fmt(total[0]);
+    els.totMax.textContent = fmt(total[2]);
+
+    var outMid = total[1] - coveredMid;
+    var pctIn = total[1] > 0 ? Math.round((coveredMid / total[1]) * 100) : 0;
+    var pctOut = 100 - pctIn;
+
+    els.totSub.textContent =
+      "기준값 " + fmt(total[1]) + "만 원 · 이 가운데 상을 당한 뒤 따로 내야 하는 몫이 " +
+      fmt(outMid) + "만 원입니다.";
+
+    els.barIn.style.flexBasis = pctIn + "%";
+    els.barOut.style.flexBasis = pctOut + "%";
+    els.barIn.textContent = pctIn >= 12 ? pctIn + "%" : "";
+    els.barOut.textContent = pctOut >= 12 ? pctOut + "%" : "";
+    els.legIn.textContent = pctIn + "%";
+    els.legOut.textContent = pctOut + "%";
+
+    var tipHtml;
+    if (pctIn === 0) {
+      tipHtml = "<p class=\"lbl\">상조 미가입 · 후불제</p><p>전액을 장례 시점에 부담하게 됩니다. 대신 미리 납입해 둔 돈이 묶여 있지 않고, 폐업 위험도 지지 않습니다.</p>";
+    } else if (pctIn < 30) {
+      tipHtml = "<p class=\"lbl\">확인하세요</p><p>상조 상품이 덮는 몫은 <strong>" + pctIn + "%</strong>뿐입니다. 나머지 <strong>" + fmt(outMid) + "만 원</strong>은 상을 당한 뒤 현장에서 결제해야 합니다. 이 금액을 어디서 마련할지 미리 정해두는 편이 좋습니다.</p>";
+    } else {
+      tipHtml = "<p class=\"lbl\">확인하세요</p><p>상조가 <strong>" + pctIn + "%</strong>를 덮습니다. 별도 부담은 <strong>" + fmt(outMid) + "만 원</strong>입니다. 상품에 포함된 용품 등급이 무엇인지 계약서에서 미리 확인해 두세요.</p>";
+    }
+    els.tip.innerHTML = tipHtml;
+    els.tip.className = pctIn < 30 ? "note warn" : "note";
+  }
+
+  ["hall", "days", "guests", "sangjo", "goods", "altar", "crem", "grave"].forEach(function (id) {
+    var el = $(id);
+    el.addEventListener("input", render);
+    el.addEventListener("change", render);
+  });
+
+  render();
+})();
+</script>
+
+<script src="../assets/js/site-keys.js"></script>
+<script src="../assets/js/gm-chrome.js"></script>
+<script src="../assets/js/gm-menu.js"></script>
+</body>
+</html>
