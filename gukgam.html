@@ -273,7 +273,7 @@
     <p>보건복지위원회 국정감사 6년치(2020~2025)를 기관별로 정리했습니다. 검색 한 번, 메뉴 한 번이면 됩니다.</p>
     <div class="top-nav">
       <a href="gukgam.html" class="on">홈</a>
-      <a href="gukgam-2025.html">2025 국감</a>
+      <a href="gukgam-year.html">최근 국감</a>
       <a href="gukgam-mohw.html">복지부</a>
       <a href="gukgam-kdca.html">질병청</a>
       <a href="gukgam-mfds.html">식약처</a>
@@ -295,7 +295,7 @@
   <div class="upd" id="updBadge"></div>
 
   <section class="menu" id="menu">
-    <a class="tile big" href="gukgam-2025.html"><span class="go">일정·하이라이트·지적사항·위원 →</span><div class="tk">📅</div><div class="tt">2025년 국정감사</div><div class="ts" id="ts2025">불러오는 중…</div></a>
+    <a class="tile big" href="gukgam-year.html"><span class="go">일정·하이라이트·지적사항·위원 →</span><div class="tk">📅</div><div class="tt">2025년 국정감사</div><div class="ts" id="ts2025">불러오는 중…</div></a>
     <a class="tile" href="gukgam-mohw.html"><span class="go">→</span><div class="tk">🏥</div><div class="tt">보건복지부</div><div class="ts" id="tsMohw">…</div></a>
     <a class="tile" href="gukgam-kdca.html"><span class="go">→</span><div class="tk">🦠</div><div class="tt">질병관리청</div><div class="ts" id="tsKdca">…</div></a>
     <a class="tile" href="gukgam-mfds.html"><span class="go">→</span><div class="tk">💊</div><div class="tt">식품의약품안전처</div><div class="ts" id="tsMfds">…</div></a>
@@ -314,7 +314,7 @@
   </section>
 
   <section id="hlSection" hidden style="margin-top:18px;">
-    <h2>🎬 최근 하이라이트 <span style="font-size:.75rem;color:var(--muted);font-weight:400;">감사일별 자동 요약 · <a href="gukgam-2025.html" style="color:#2a4d7d;font-weight:800;">2025 국감 전체 →</a></span></h2>
+    <h2>🎬 최근 하이라이트 <span style="font-size:.75rem;color:var(--muted);font-weight:400;">감사일별 자동 요약 · <a href="gukgam-year.html" style="color:#2a4d7d;font-weight:800;">최근 국감 전체 →</a></span></h2>
     <div class="hl-scroll" id="hlCards"></div>
     <div style="font-size:.74rem;color:var(--muted);margin:2px 2px 0;line-height:1.5;">감사일마다 회의록에서 자동으로 뽑은 요약 카드 — 큰 글씨는 그날 가장 많이 언급된 주제, 사진은 그날 질의 횟수 상위 위원, 인용은 답변이 붙은 질의 중 가장 긴 것의 앞부분, 발언 수는 짝지은 질의·답변 건수. 영상 캡처가 아니며 편집자의 선정이 아닙니다.</div>
   </section>
@@ -349,11 +349,12 @@
   var today=new Date(); var tz=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
   Promise.all([
     J('briefing.json',null), J('highlights.json',null), J('covid.json',null), J('index.json',null), J('last-run.json',null),
-    J('schedule.json',null), J('plan-2025.json',null), J('rosters.json',null), J('members.json',null), J('findings-2025.json',null),
-    J('plan-2026.json',null), J('member-topics.json',{members:{}}), J('guides.json',{items:[]}), J('remarks-index.json',null)
+    J('schedule.json',null), J('rosters.json',null).then(function(ro){ var ly0=((ro&&ro.years)||[]).map(function(y){return y.year;}).sort(function(a,b){return b-a;})[0]||(new Date().getFullYear()-1); return Promise.all([J('plan-'+ly0+'.json',null), ro, J('findings-'+ly0+'.json',null), J('plan-'+(ly0+1)+'.json',null)]); }), null, J('members.json',null), null,
+    null, J('member-topics.json',{members:{}}), J('guides.json',{items:[]}), J('remarks-index.json',null)
   ]).then(function(r){
-    var BR=r[0], HL=r[1], CV=r[2], IDX=r[3], LR=r[4], SC=r[5], PL=r[6], RO=r[7], MEM=r[8], FD=r[9], PL26=r[10], MT=(r[11]||{}).members||{}, GD=r[12], RI=r[13];
-    var A=(BR&&BR.agencies)||{}; var cy=(BR&&BR.cur_year)||2025;
+    var BR=r[0], HL=r[1], CV=r[2], IDX=r[3], LR=r[4], SC=r[5], PL=r[6][0], RO=r[6][1], MEM=r[8], FD=r[6][2], PL26=r[6][3], MT=(r[11]||{}).members||{}, GD=r[12], RI=r[13];
+    var A=(BR&&BR.agencies)||{}; var cy=(BR&&BR.cur_year)||new Date().getFullYear()-1;
+    var ly=((RO&&RO.years)||[]).map(function(y){return y.year;}).sort(function(a,b){return b-a;})[0]||cy;   // 자료에 있는 가장 최근 국감 연도
     // 갱신 배지
     var up=[]; if(IDX&&IDX.updated) up.push('자료 갱신 '+IDX.updated); if(LR&&LR.checked_kst) up.push('마지막 점검 '+LR.checked_kst);
     if(RI&&RI.years){ var tot=0; for(var k in RI.years) tot+=RI.years[k]; up.push('위원 발언 색인 '+num(tot)+'건'); }
@@ -371,13 +372,13 @@
     document.getElementById('tsMfds').innerHTML=agStat('식품의약품안전처');
     if(CV&&CV.kpi){ var k=CV.kpi; document.getElementById('tsCovid').innerHTML='질병청 질의 중 코로나 비중 정점 <b>'+(k.peak_year||'')+'년 '+pct(k.peak_share)+'</b> → '+(k.latest_year||'')+'년 <b>'+pct(k.latest_share)+'</b><br>관련 질의 <b>'+num(k.qa_n)+'건</b> / 전체 '+num(k.qa_all)+'건 (확실 '+num(k.qa_high)+')'; }
     else document.getElementById('tsCovid').textContent='질병청 국감에서 코로나가 어떻게 줄어들었나';
-    var y25=(RO&&RO.years||[]).filter(function(y){return y.year===2025;})[0];
-    var days25=(A['보건복지부']&&A['보건복지부'].audit_days||[]).filter(function(d){return d.date.indexOf('2025')===0;}).length;
+    var y25=(RO&&RO.years||[]).filter(function(y){return y.year===ly;})[0];
+    var tile=document.querySelector('.tile.big'); tile.href='gukgam-year.html?y='+ly; tile.querySelector('.tt').textContent=ly+'년 국정감사';
     var s25=[]; if(PL&&PL.period) s25.push('<b>'+PL.period.start.slice(5).replace('-','.')+'~'+PL.period.end.slice(5).replace('-','.')+'</b> ('+PL.period.days+'일)');
     if(PL&&PL.targets&&PL.targets.total) s25.push('대상기관 <b>'+PL.targets.total+'곳</b>');
     if(FD&&FD.items) s25.push('지적사항 <b>'+num(FD.items.length)+'건</b>');
     if(y25) s25.push('발언 위원 <b>'+y25.count+'명</b>'+(y25.dates?' · 감사 '+y25.dates.length+'일':''));
-    document.getElementById('ts2025').innerHTML=s25.join(' · ')||'2025년 10월 보건복지위원회 국정감사';
+    document.getElementById('ts2025').innerHTML=s25.join(' · ')||(ly+'년 보건복지위원회 국정감사');
     // 인사이트 카드
     var cards=[];
     // 1) 늘고 있는 주제 (3개 기관, 비중 증가율 상위)
@@ -400,7 +401,7 @@
     var sc=((SC&&SC.items)||[]).filter(function(i){ return i.date>=tz && (/보건복지/.test(i.committee||'')||/국정감사/.test(i.content||'')); }).slice(0,4);
     var scH='';
     if(PL26&&PL26.period) scH+='<li><span><b>2026 국정감사 확정</b> '+esc(PL26.period.start)+' ~ '+esc(PL26.period.end)+'</span><span class="ag">계획서</span></li>';
-    else scH+='<li><span>2026년 국정감사계획서 <b>아직 미공개</b> — 통상 9월 말 채택, 10월 중순 시작</span><span class="ag">2025년은 10.13~10.31</span></li>';
+    else scH+='<li><span>'+(ly+1)+'년 국정감사계획서 <b>아직 미공개</b> — 통상 9월 말 채택, 10월 중순 시작</span><span class="ag">'+(PL&&PL.period?ly+'년은 '+PL.period.start.slice(5).replace('-','.')+'~'+PL.period.end.slice(5).replace('-','.'):'')+'</span></li>';
     scH+=sc.map(function(i){ return '<li><span>'+esc(i.date.slice(5).replace('-','.'))+' '+esc(i.time||'')+' '+esc(i.content||'')+'</span><span class="ag">'+esc((i.committee||'').replace('위원회',''))+'</span></li>'; }).join('');
     cards.push('<div class="ins"><h3>📅 다음 일정 <a href="gukgam-all.html">국회 일정 →</a></h3><ul>'+scH+'</ul><div class="why">열린국회정보 일정 API(향후 '+((SC&&SC.horizon_days)||35)+'일) 중 보건복지위·국정감사 관련만. 갱신 '+esc((SC&&SC.updated)||'')+'</div></div>');
     document.getElementById('insGrid').innerHTML=cards.join('');
@@ -409,7 +410,7 @@
       var items=HL.items.slice().sort(function(a,b){return b.date<a.date?-1:1;}).slice(0,4);
       document.getElementById('hlSection').hidden=false;
       document.getElementById('hlCards').innerHTML=items.map(function(c){
-        return '<a class="hl-card" href="gukgam-2025.html"><div class="hl-thumb"><span class="hn">'+esc(String(c.date||'').slice(0,4))+' 국감</span>'+(c.photo?'<img src="'+esc(c.photo)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':'')+'<div class="ht">'+esc(c.top_topic||'')+'</div></div>'+
+        return '<a class="hl-card" href="gukgam-year.html"><div class="hl-thumb"><span class="hn">'+esc(String(c.date||'').slice(0,4))+' 국감</span>'+(c.photo?'<img src="'+esc(c.photo)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':'')+'<div class="ht">'+esc(c.top_topic||'')+'</div></div>'+
           '<div class="hl-body"><div class="hd">'+esc(c.date||'')+' · 발언 '+num(c.n)+'회</div><div class="hg">'+esc((c.targets||[]).join(', '))+'</div>'+(c.quote?'<div class="hq">“'+esc(c.quote.slice(0,90))+'…”</div>':'')+'</div></a>';
       }).join('');
     }
