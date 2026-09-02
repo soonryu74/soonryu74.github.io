@@ -36,8 +36,9 @@ def find_pdf(html, base):
         h = href.replace("&amp;", "&")
         if re.search(r"\.pdf\b", t, re.I) or re.search(r"\.pdf\b", h, re.I) or ("fileDown" in h and "pdf" in (t + h).lower()):
             cands.append((h, t))
-    # 계획서 본문(변경본 포함)을 우선, 부록·명단은 뒤로
-    cands.sort(key=lambda x: (0 if "계획서" in x[1] else 1, len(x[1])))
+    # 계획서 본문(변경본 포함)만 — 증인 명단 같은 다른 PDF를 계획서로 오인하지 않게
+    cands = [c for c in cands if "계획서" in c[1]]
+    cands.sort(key=lambda x: len(x[1]))
     if not cands:
         return None, None
     h, t = cands[0]
