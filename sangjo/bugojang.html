@@ -54,6 +54,11 @@
     <p class="lead">청첩장처럼 <strong>링크 하나로</strong> 보냅니다. 받은 분은 빈소 위치와 발인 시각을 보고, 그 자리에서 <strong>전화를 걸거나 길을 찾을</strong> 수 있습니다. 긴 문자보다 읽기 쉽고, 조문객이 다시 물어보는 일이 줄어듭니다.</p>
   </div>
 
+  <section class="gm-sec" style="margin-top:8px">
+    <p class="sec-lead" id="pvNote" style="margin-bottom:12px">받는 분에게는 이렇게 보입니다. 아래 칸을 채우면 바로 바뀝니다. <span class="tbd">지금은 예시</span></p>
+    <div id="preview" class="bugojang" style="margin:0 0 8px"></div>
+  </section>
+
   <div class="note calm">
     <p class="lbl">서버에 저장되지 않습니다</p>
     <p>입력하신 내용은 <strong>링크 주소 안에</strong> 담깁니다. 주소의 <code>#</code> 뒤쪽은 인터넷 규약상 서버로 전송되지 않기 때문에, 고인과 가족의 정보가 저희에게 오지 않습니다. 저장할 곳이 없으니 유출될 곳도 없습니다.</p>
@@ -183,12 +188,6 @@
     </div>
   </section>
 
-  <section class="gm-sec">
-    <h2>받는 분에게는 이렇게 보입니다</h2>
-    <p class="sec-lead">아래는 실제 부고장 화면입니다. 위 항목을 채우면 그대로 반영됩니다.</p>
-    <div id="preview" class="bugojang" style="margin:22px 0"></div>
-  </section>
-
   <p class="gm-signature" style="margin:44px 0 30px">
     사랑하는 이와 이별하는 순간,
     <span class="quiet">고마움 상조회가 함께하겠습니다.</span>
@@ -238,6 +237,9 @@
      비어 있으면 브라우저가 직접 연주하는 조용한 나팔(quiet-horn.js)이 쓰입니다.
      어느 쪽이든 유족이 단추를 눌렀을 때만 소리가 납니다. */
   var MUSIC_SRC = window.MUSIC_SRC || "";
+  // 아직 아무것도 적지 않았을 때 보여 주는 예시
+  var SAMPLE = { n: "홍길순", h: "님", ag: "향년 87세", sn: "홍철수", sr: "모친", c: "장남 홍철수 · 차남 홍영수 · 딸 홍미경",
+    dd: "2026-09-02", dt: "06:40", fh: "○○장례식장", fr: "3호실", gd: "2026-09-04", gt: "08:00", g: "○○추모공원", mo: "예시 부고장입니다. 위 칸을 채우면 실제 내용으로 바뀝니다.", r: "general" };
 
   var DAY = ["일", "월", "화", "수", "목", "금", "토"];
   var $ = function (id) { return document.getElementById(id); };
@@ -540,8 +542,15 @@
     $("len").textContent = url.length + "자";
 
     var pv = $("preview");
-    pv.innerHTML = render(d);
-    wire(pv, "[부고] 故 " + (d.n || "") + "님");
+    // 아무것도 안 적었을 때는 예시로 보여 준다. 적기 시작하면 바로 실제 값으로 바뀐다.
+    var empty = !d.n && !d.sn && !d.fh;
+    var shown = empty ? SAMPLE : d;
+    pv.innerHTML = render(shown);
+    var note = $("pvNote");
+    if (note) note.innerHTML = empty
+      ? '받는 분에게는 이렇게 보입니다. 아래 칸을 채우면 바로 바뀝니다. <span class="tbd">지금은 예시</span>'
+      : '받는 분에게는 이렇게 보입니다. 적으시는 대로 바뀝니다.';
+    wire(pv, "[부고] 故 " + (shown.n || "") + "님");
   }
 
   Object.keys(F).forEach(function (k) { if (F[k]) F[k].addEventListener("input", update); });
