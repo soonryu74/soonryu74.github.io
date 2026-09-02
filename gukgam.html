@@ -258,6 +258,8 @@
   .ins .why{ font-size:.73rem; color:var(--muted); margin-top:8px; line-height:1.45; }
   .dir{ font-size:.74rem; font-weight:800; border-radius:8px; padding:1px 8px; white-space:nowrap; }
   .dir.up{ background:#fdeaea; color:#a03030; } .dir.down{ background:#e9f6ef; color:#1f6f5c; } .dir.flat{ background:var(--chip); color:#3d4f63; }
+  .ins.hot{ background:#fffbea; border-color:#ecd89a; border-left:5px solid #e2a04a; }   /* 눈에 띄되 경고색은 아니게 — 크림빛 배경 + 호박색 띠 */
+  .ins.hot h3{ color:#7a4a12; }
   .fold{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px 16px; margin-top:16px; }
   .fold > summary{ cursor:pointer; font-size:.95rem; font-weight:800; color:var(--navy); }
   .fold > summary .cnt{ font-weight:600; color:var(--muted); font-size:.8rem; margin-left:6px; }
@@ -403,7 +405,7 @@
     if(PL26&&PL26.period) scH+='<li><span><b>2026 국정감사 확정</b> '+esc(PL26.period.start)+' ~ '+esc(PL26.period.end)+'</span><span class="ag">계획서</span></li>';
     else scH+='<li><span>'+(ly+1)+'년 국정감사계획서 <b>아직 미공개</b> — 통상 9월 말 채택, 10월 중순 시작</span><span class="ag">'+(PL&&PL.period?ly+'년은 '+PL.period.start.slice(5).replace('-','.')+'~'+PL.period.end.slice(5).replace('-','.'):'')+'</span></li>';
     scH+=sc.map(function(i){ return '<li><span>'+esc(i.date.slice(5).replace('-','.'))+' '+esc(i.time||'')+' '+esc(i.content||'')+'</span><span class="ag">'+esc((i.committee||'').replace('위원회',''))+'</span></li>'; }).join('');
-    cards.push('<div class="ins"><h3>📅 다음 일정 <a href="gukgam-all.html">국회 일정 →</a></h3><ul>'+scH+'</ul><div class="why">열린국회정보 일정 API(향후 '+((SC&&SC.horizon_days)||35)+'일) 중 보건복지위·국정감사 관련만. 갱신 '+esc((SC&&SC.updated)||'')+'</div></div>');
+    cards.push('<div class="ins hot"><h3>📅 다음 일정 <a href="gukgam-all.html">국회 일정 →</a></h3><ul>'+scH+'</ul><div class="why">열린국회정보 일정 API(향후 '+((SC&&SC.horizon_days)||35)+'일) 중 보건복지위·국정감사 관련만. 갱신 '+esc((SC&&SC.updated)||'')+'</div></div>');
     document.getElementById('insGrid').innerHTML=cards.join('');
     // 하이라이트 최신 4장
     if(HL&&(HL.items||[]).length){
