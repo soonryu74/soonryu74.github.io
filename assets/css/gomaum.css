@@ -1091,3 +1091,20 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
   overflow: hidden;
   background: var(--paper);
 }
+
+/* ---------- 속 페이지 머리글 (홈과 같은 톤, 얇게) ---------- */
+.gm-top { background: var(--paper); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 50; }
+.gm-top-inner { max-width: var(--maxw); margin: 0 auto; padding: 0 18px; min-height: 56px; display: flex; align-items: center; gap: 14px; }
+.gm-top .gm-brand { color: var(--accent-deep); font-size: 1.12rem; gap: 8px; margin-right: auto; }
+.gm-top .gm-brand-mark { width: 24px; height: 24px; }
+.gm-top-nav { display: flex; align-items: center; gap: 2px 4px; white-space: nowrap; }
+.gm-top-nav a { color: var(--ink-2); font-size: 0.9rem; font-weight: 500; padding: 7px 10px; border-radius: var(--radius); }
+.gm-top-nav a:hover { background: var(--surface-2); text-decoration: none; color: var(--ink); }
+.gm-top-nav a.gm-top-call { background: var(--accent); color: #fff; font-weight: 700; padding: 7px 14px; margin-left: 6px; }
+.gm-top-nav a.gm-top-call:hover { background: var(--accent-deep); }
+.gm-top-nav a.gm-top-call.soon { background: transparent; color: var(--ink-3); border: 1px solid var(--line-strong); font-weight: 500; cursor: default; }
+@media (max-width: 560px) {
+  .gm-top-inner { padding: 0 14px; gap: 8px; }
+  .gm-top-nav a { padding: 7px 8px; font-size: 0.86rem; }
+  .gm-top-nav a.hide-s { display: none; }
+}
