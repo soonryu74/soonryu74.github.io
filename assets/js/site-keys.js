@@ -23,3 +23,9 @@ window.PHONE = "";
    홈과 부고장 모두 이 파일을 틉니다. 비어 있으면 브라우저가 나팔 선율을 직접 연주합니다.
    예: window.MUSIC_SRC = "../assets/audio/gomaum.mp3"; */
 window.MUSIC_SRC = "../assets/audio/gomaum.mp3";
+
+/* ── 근조화환 협력 업체 ──────────────────────────────────
+   주소를 채우면 부고장 아래에 '근조화환 보내기' 단추가 생깁니다.
+   빈소 이름이 ?place= 로 따라갑니다. 비어 있으면 단추가 나타나지 않습니다.
+   예: window.WREATH_URL = "https://example.com/order?ref=gomaum"; */
+window.WREATH_URL = "";

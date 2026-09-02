@@ -19,7 +19,8 @@
 <meta name="twitter:image" content="https://soonryu74.github.io/assets/img/og-bugo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/css/gomaum.css">
 <script src="../assets/js/site-keys.js"></script>
 <script src="../assets/js/quiet-horn.js" defer></script>
@@ -200,10 +201,11 @@
       <a href="hubul.html">후불제 장례</a>
       <a href="danga.html">단가표</a>
       <a href="jeolcha.html">장례 절차</a>
-      <a href="sikjang.html">장례식장 찾기</a>
+      <a href="sikjang.html">장례식장·납골당 찾기</a>
       <a href="bugo.html">부고 쓰기</a>
       <a href="bugojang.html">모바일 부고장</a>
       <a href="kiil.html">기일 리마인드</a>
+      <a href="hyeopryeok.html">함께하는 곳</a>
       <a href="gaeum.html">장례비 계산</a>
       <a href="jeoul.html">상조 점검</a>
       <a href="christian.html">기독교 장례</a>
@@ -359,16 +361,26 @@
         '<a class="bj-btn" href="https://map.kakao.com/?q=' + q + '" target="_blank" rel="noopener">카카오맵</a></div>';
     }
     actions += '<button type="button" class="bj-btn" id="shareBtn">부고 전하기</button>';
+    // 근조화환: site-keys.js에 협력 화환 업체 주소가 있을 때만. 빈소 이름을 함께 넘긴다.
+    var wreath = (window.WREATH_URL || "").trim();
+    if (wreath && place) {
+      actions += '<a class="bj-btn wreath" href="' + esc(wreath + (wreath.indexOf("?") > -1 ? "&" : "?") + "place=" + encodeURIComponent(place)) + '" target="_blank" rel="noopener">근조화환 보내기</a>';
+    }
 
     var music = '<button type="button" class="bj-music" id="musicBtn" aria-label="조용한 음악 재생" title="조용한 음악 재생">▶</button>' +
       (MUSIC_SRC ? '<audio id="bgm" src="' + esc(MUSIC_SRC) + '" loop preload="none"></audio>' : "");
 
+    var PHOTO = '<div class="bj-photo" aria-hidden="true">' +
+      '<img src="../assets/img/cover-cross-grey.jpg" alt="">' +
+      '<img class="bloom" src="../assets/img/cover-cross-color.jpg" alt=""></div>';
     return '<div class="bj-card">' +
-      '<div class="bj-top">' + music + FLOWER +
+      '<div class="bj-top">' + PHOTO + music +
+        '<div class="bj-head">' +
         '<p class="bj-hanja">謹弔</p>' +
         '<h1 class="bj-name">故 ' + esc(titled) +
           (d.ag ? '<span class="bj-age">' + esc(d.ag) + '</span>' : "") + '</h1>' +
         '<p class="bj-intro">' + intro + '</p>' +
+        '</div>' +
       '</div>' +
       '<div class="bj-body">' +
         '<dl class="bj-rows">' + rows + '</dl>' +

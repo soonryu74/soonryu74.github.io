@@ -27,8 +27,8 @@
   --river-glow: 250, 244, 226;
   --river-far: 214, 222, 214;
 
-  --f-display: "Gowun Batang", "Nanum Myeongjo", "Apple SD Gothic Neo", serif;
-  --f-body: "IBM Plex Sans KR", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --f-display: "Noto Serif KR", "Apple Myungjo", "Nanum Myeongjo", serif;
+  --f-body: "Pretendard Variable", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
   --maxw: 1000px;
@@ -1108,3 +1108,44 @@ tr.sum td { border-top: 1px solid var(--line-strong); font-weight: 600; backgrou
   .gm-top-nav a { padding: 7px 8px; font-size: 0.86rem; }
   .gm-top-nav a.hide-s { display: none; }
 }
+
+/* ---------- 부고장 · 홈과 같은 톤 (어두운 바탕, 십자가·백합 사진) ---------- */
+.bj-card { background: #161a18; color: #f3f5f2; border: 0; box-shadow: 0 30px 60px -30px rgba(0,0,0,0.9); border-radius: 10px; }
+.bj-top { position: relative; padding: 0; text-align: center; background: #0f1311; border-top: 0; border-bottom: 0; min-height: 420px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+.bj-top::before { display: none; }
+.bj-photo { position: absolute; inset: 0; }
+.bj-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.bj-photo .bloom { opacity: 0; animation: bjbloom 9s cubic-bezier(0.4, 0, 0.2, 1) 1s forwards; }
+@keyframes bjbloom { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .bj-photo .bloom { animation: none; opacity: 1; } }
+.bj-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(22,26,24,0.35) 0%, rgba(22,26,24,0) 22%, rgba(22,26,24,0) 42%, rgba(22,26,24,0.82) 70%, #161a18 100%); }
+.bj-head { position: relative; padding: 0 26px 26px; }
+.bj-flower { display: none; }
+.bj-hanja { color: #d9e6df; font-size: 1.15rem; letter-spacing: 0.4em; margin: 0 0 12px 0.4em; font-weight: 600; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+.bj-name { color: #fff; font-size: clamp(1.8rem, 7.5vw, 2.3rem); text-shadow: 0 1px 10px rgba(0,0,0,0.55); }
+.bj-age { color: #a9c9bc; }
+.bj-intro { color: #d9e6df; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+.bj-body { padding: 8px 26px 24px; }
+.bj-row { border-bottom: 1px solid rgba(255,255,255,0.12); }
+.bj-row dt { color: #9aa79f; font-family: var(--f-body); font-size: 0.82rem; letter-spacing: 0.02em; }
+.bj-row dd { color: #f3f5f2; }
+.bj-row dd .sub2 { color: #9aa79f; }
+.bj-memo { background: rgba(255,255,255,0.05); border-left: 2px solid rgba(255,255,255,0.28); color: #d9e6df; }
+.bj-map { border-color: rgba(255,255,255,0.18); background: #0f1311; }
+.bj-btn { border: 1px solid rgba(255,255,255,0.4); color: #f3f5f2; border-radius: 6px; padding: 15px 18px; }
+.bj-btn:hover { background: rgba(255,255,255,0.08); border-color: #fff; }
+.bj-btn.solid { background: var(--accent); border-color: var(--accent); color: #fff; }
+.bj-btn.solid:hover { background: var(--accent-deep); }
+.bj-btn.wreath { border-color: rgba(217,183,106,0.6); color: #e9d9a8; }
+.bj-btn.wreath:hover { border-color: #e9d9a8; background: rgba(217,183,106,0.08); }
+.bj-word { border-top: 1px solid rgba(255,255,255,0.12); color: #d9e6df; font-size: 1.02rem; }
+.bj-foot { background: #0f1311; border-top: 1px solid rgba(255,255,255,0.08); color: #9aa79f; }
+.bj-foot a { color: #d9e6df; }
+.bj-foot b { color: #d9e6df; }
+.bj-music { background: rgba(0,0,0,0.35); border-color: rgba(255,255,255,0.35); color: #fff; z-index: 2; }
+.bj-music:hover { border-color: #fff; color: #fff; }
+#viewer { background: #161a18; min-height: 100vh; padding-bottom: 30px; }
+#viewer .bugojang { padding-top: 0 !important; }
+#viewer .bj-card { border-radius: 0; box-shadow: none; }
+#viewer .bj-hint { color: #9aa79f; }
+@media (min-width: 560px) { #viewer .bugojang { padding-top: 26px !important; } #viewer .bj-card { border-radius: 12px; } }
