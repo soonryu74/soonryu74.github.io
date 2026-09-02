@@ -21,7 +21,7 @@ import build_kdca_qa as K          # pdf_text · SPEAKER · parse_mark · clean 
 
 ERAS = ("제21대", "제22대")
 MAXLEN = 100000                    # 사실상 전문 — 발췌(600자)로 자르면 뒷부분 질환명이 검색에서 빠진다(1차 색인에서 10%가 잘림)
-FMT = 3                            # 파일 형식 버전 — 바뀌면 전체 재색인 (2: 전문 저장, 회의록 URL은 파일당 날짜→URL 맵 · 3: "…" 필터 비례화)
+FMT = 4                            # 파일 형식 버전 — 바뀌면 전체 재색인 (2: 전문 · 3: "…" 필터 비례화 · 4: 위원장대리 이름 정정)
 INDEX = os.path.join(DATA, "remarks-index.json")
 
 
@@ -36,7 +36,9 @@ def extract(text, date):
     marks = [(m.start(), m.end()) + K.parse_mark(m) for m in K.SPEAKER.finditer(text)]
     out = []
     for i, (pos, endpos, name, role) in enumerate(marks):
-        if role not in ("위원", "위원장"):
+        if role not in ("위원", "위원장", "위원장대리"):
+            continue
+        if len(name) < 2 or name.startswith(("참고인", "증인", "진술인", "출석")):   # '◯참고인권영희 위원' 식 오인식은 위원이 아니다
             continue
         end = marks[i + 1][0] if i + 1 < len(marks) else len(text)
         t = K.clean(text[endpos:end], limit=MAXLEN)
@@ -44,7 +46,7 @@ def extract(text, date):
             continue
         nxt = marks[i + 1] if i + 1 < len(marks) else None
         answered_by = None
-        if nxt and nxt[3] not in ("위원", "위원장"):
+        if nxt and nxt[3] not in ("위원", "위원장", "위원장대리"):
             answered_by = answerer(nxt[2], nxt[3])
         out.append({"date": date, "member": name, "role": role, "text": t,
                     "answered_by": answered_by})
