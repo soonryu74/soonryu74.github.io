@@ -10,7 +10,7 @@
 실행: python3 scripts/gukgam/build_highlights.py  (키 불필요)
 출력: data/gukgam/highlights.json
 """
-import re, os, re, json, glob, datetime, collections
+import re, os, json, glob, datetime, collections
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA = os.path.join(ROOT, "data", "gukgam")
