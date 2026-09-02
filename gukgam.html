@@ -66,6 +66,21 @@
   .mem summary{ font-size:.75rem; font-weight:800; color:#2a4d7d; cursor:pointer; }
   .mem .brf{ font-size:.75rem; color:#3d4f63; white-space:pre-line; margin-top:5px; max-height:180px; overflow-y:auto; line-height:1.5; }
   .pty{ display:inline-block; border-radius:8px; padding:1px 8px; font-size:.72rem; font-weight:800; background:var(--chip); color:#3d4f63; }
+  .rtabs{ display:flex; gap:6px; flex-wrap:wrap; margin:0 0 10px; }
+  .rtabs button{ border:1px solid var(--line); background:#fff; border-radius:20px; padding:6px 13px; font-size:.82rem; font-weight:800; color:#4a5a6b; cursor:pointer; }
+  .rtabs button.on{ background:var(--navy); color:#fff; border-color:var(--navy); }
+  .rwrap{ overflow-x:auto; background:#fff; border:1px solid var(--line); border-radius:12px; }
+  .rtable{ width:100%; border-collapse:collapse; font-size:.86rem; min-width:560px; }
+  .rtable th,.rtable td{ padding:7px 10px; border-bottom:1px solid var(--line); text-align:left; white-space:nowrap; }
+  .rtable th{ background:#f4f7fa; font-size:.75rem; color:var(--muted); font-weight:800; }
+  .rtable tr:last-child td{ border-bottom:0; }
+  .rtable td.num{ text-align:right; font-variant-numeric:tabular-nums; }
+  .rtable .rn{ font-weight:800; color:var(--navy); }
+  .rtable .rk{ font-size:.7rem; font-weight:900; border-radius:8px; padding:1px 7px; margin-left:5px; vertical-align:1px; }
+  .rtable .rk.c{ color:#8a5a00; border:1px solid #e2c56b; background:#fff8e2; }
+  .rtable .rk.a{ color:#4a5a6b; border:1px solid #c9d4df; background:#f1f5fa; }
+  .rtable a.rs{ font-size:.76rem; font-weight:800; color:#2a4d7d; text-decoration:none; border:1px solid var(--line); border-radius:8px; padding:2px 8px; background:#fafcfe; }
+  .rnote{ font-size:.78rem; color:var(--muted); margin:0 2px 10px; line-height:1.5; }
   .mem-toggle{ border:1px solid var(--line); background:#fff; border-radius:10px; padding:8px 16px; font-size:.86rem; font-weight:800; cursor:pointer; color:#2a4d7d; margin-bottom:10px; }
   .tchips{ display:flex; gap:4px; flex-wrap:wrap; margin-top:6px; }
   .tchip{ font-size:.7rem; font-weight:800; background:#eef8f3; color:#136350; border:1px solid #d5ebdf; border-radius:8px; padding:1px 7px; }
@@ -287,8 +302,10 @@
 
   <section id="memSection" hidden>
     <h2 id="memTitle">🧑‍⚖️ 보건복지위원회 위원</h2>
+    <div class="rtabs" id="memTabs" hidden></div>
     <p id="memHint" style="font-size:.78rem;color:var(--muted);margin:-6px 2px 10px;"></p>
     <div class="mem-grid" id="members"></div>
+    <div id="rosterBox" hidden></div>
   </section>
 
   <h2>🎯 국감 브리핑 <span style="font-size:.75rem;color:var(--muted);font-weight:400;" id="brNote"></span></h2>
@@ -723,7 +740,11 @@
              '<div style="font-size:.76rem;color:var(--muted);margin:6px 2px 0;">'+
              '추세는 <b>가장 최근 국감의 비중</b>을 이전 연도 평균 비중과 비교합니다(작년에 정점을 찍고 올해 줄어든 주제가 '+
              '‘늘고 있음’으로 잘못 찍히지 않게). 건수 대신 비중을 쓰는 이유: 질의 총량이 해마다 늘어(이 기관은 '+
-             (a.qa_total||0).toLocaleString()+'건) 건수로만 보면 제자리인 주제도 모두 늘어난 것처럼 보입니다.</div>';
+             (a.qa_total||0).toLocaleString()+'건) 건수로만 보면 제자리인 주제도 모두 늘어난 것처럼 보입니다.</div>'+
+             '<div style="font-size:.74rem;color:var(--muted);margin:4px 2px 0;border-top:1px dashed var(--line);padding-top:4px;">'+
+             '<b>산출 근거</b> — 비중 = 그해 이 기관 질의·답변 중 해당 주제 건수 ÷ 그해 이 기관 질의·답변 전체 건수(100%). '+
+             '증감률은 최근 국감 비중이 이전 연도 평균 비중보다 얼마나 늘거나 줄었는지(상대 변화, 비중 자체의 차이가 아님). '+
+             '자료: 국회 국정감사 회의록(열린국회정보 공개 API)에서 위원 질의와 기관 답변을 자동 추출해 키워드로 주제 분류 — 공식 통계가 아니며 분류 오차가 있습니다.</div>';
         }
         if(a.members&&a.members.length){
           var ef=a.members_era_from||2024, ys2=a.qa_years||[];
@@ -837,6 +858,46 @@
           '</div></div>';
       }).join('');
     }
+    // 역대 보건복지위 위원 — 국감 연도별 탭 (rosters.json: 회의록 발언 기준, 정당은 ALLNAMEMBER)
+    fetch('data/gukgam/rosters.json?_='+Date.now()).then(function(r){return r.json();}).catch(function(){return null;}).then(function(ro){
+      var years=(ro&&ro.years)||[]; if(!years.length) return;
+      var sec=document.getElementById('memSection'), tabs=document.getElementById('memTabs'), grid=document.getElementById('members'),
+          box=document.getElementById('rosterBox'), hint=document.getElementById('memHint'), title=document.getElementById('memTitle');
+      var hasCur = !!(mem && (mem.items||[]).length);
+      var curTitle = title.textContent, curHint = hint.textContent;
+      sec.hidden=false; tabs.hidden=false;
+      var h='';
+      if(hasCur) h+='<button type="button" data-t="cur" class="on">'+esc(mem.era||'제22대')+' 현재 <small>'+mem.items.length+'명</small></button>';
+      years.forEach(function(y,i){ h+='<button type="button" data-t="'+i+'"'+(!hasCur&&i===0?' class="on"':'')+'>'+y.year+' 국감 <small>'+y.count+'명</small></button>'; });
+      tabs.innerHTML=h;
+      function searchName(n){
+        var inp=document.getElementById('gsInput'); if(!inp) return;
+        inp.value=n; var ev=document.createEvent('Event'); ev.initEvent('input',true,true); inp.dispatchEvent(ev);
+        inp.scrollIntoView({behavior:'smooth',block:'center'}); inp.focus();
+      }
+      function showYear(y){
+        var d=y.dates||[];
+        title.textContent='🧑‍⚖️ '+y.year+'년 국정감사 '+(y.era||'')+' 보건복지위원회 위원 ('+y.count+'명)';
+        hint.textContent='국정감사 '+d.length+'일('+(d[0]||'')+' ~ '+(d[d.length-1]||'')+') 회의록에 발언이 기록된 위원. 발언하지 않은 위원은 빠질 수 있음 · 정당·지역구는 열린국회정보 기준(확인 '+y.party_known+'/'+y.count+'명)';
+        var rows=y.members.map(function(m){
+          return '<tr><td><span class="rn">'+esc(m.name)+'</span>'+(m.chair?'<span class="rk c">위원장</span>':'')+(m.acting?'<span class="rk a">직무대리</span>':'')+'</td>'+
+            '<td>'+(m.party?'<span class="pty">'+esc(m.party)+'</span>':'<span style="color:var(--muted)">확인 중</span>')+'</td>'+
+            '<td style="color:var(--muted)">'+esc([m.rlct,m.elecd].filter(Boolean).join(' · '))+'</td>'+
+            '<td class="num">'+m.turns+'</td><td class="num">'+m.days+'</td>'+
+            '<td><a href="#gsInput" class="rs" data-n="'+esc(m.name)+'">발언 보기</a></td></tr>';
+        }).join('');
+        box.innerHTML='<div class="rwrap"><table class="rtable"><thead><tr><th>위원</th><th>정당</th><th>선수 · 지역구</th><th style="text-align:right">국감 발언</th><th style="text-align:right">발언일</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+      }
+      box.addEventListener('click', function(e){ var a=e.target; while(a&&a!==box&&!(a.getAttribute&&a.getAttribute('data-n'))) a=a.parentNode; if(a&&a!==box){ e.preventDefault(); searchName(a.getAttribute('data-n')); } });
+      tabs.addEventListener('click', function(e){
+        var b=e.target; while(b&&b!==tabs&&b.tagName!=='BUTTON') b=b.parentNode; if(!b||b===tabs) return;
+        var bs=tabs.querySelectorAll('button'); for(var i=0;i<bs.length;i++) bs[i].className='';
+        b.className='on'; var t=b.getAttribute('data-t');
+        if(t==='cur'){ grid.hidden=false; box.hidden=true; title.textContent=curTitle; hint.textContent=curHint; }
+        else { grid.hidden=true; box.hidden=false; showYear(years[parseInt(t,10)]); }
+      });
+      if(!hasCur){ grid.hidden=true; box.hidden=false; showYear(years[0]); }
+    });
     DOCS = (reports.items||[]).concat((minutes.items||[]).map(function(m){
       m.doc_type='minutes';
       m.year = m.date ? parseInt(m.date.slice(0,4),10) : null;
