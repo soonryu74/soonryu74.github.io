@@ -136,6 +136,15 @@
   .gs-item:last-child{ border-bottom:0; }
   .gs-item .gm{ font-size:.74rem; color:var(--muted); display:flex; gap:8px; flex-wrap:wrap; margin-top:2px; }
   .gs-item mark{ background:#ffe9a8; padding:0 1px; }
+  .gs-sug{ position:relative; }
+  .gs-sug .list{ position:absolute; left:0; right:0; top:4px; z-index:20; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 26px rgba(18,54,95,.14); overflow:hidden; }
+  .gs-sug button{ display:flex; width:100%; justify-content:space-between; align-items:center; gap:10px; border:0; background:#fff; padding:9px 14px; font-size:.92rem; cursor:pointer; text-align:left; border-bottom:1px solid #f0f3f7; }
+  .gs-sug button:last-child{ border-bottom:0; }
+  .gs-sug button:hover, .gs-sug button.on{ background:#f3f7fb; }
+  .gs-sug button b{ color:var(--navy); }
+  .gs-sug button .k{ font-size:.72rem; color:var(--muted); white-space:nowrap; }
+  .gs-sug button .k i{ font-style:normal; font-weight:800; border-radius:7px; padding:1px 6px; margin-right:6px; }
+  .gs-sug button .k i.m{ background:#e8f0fb; color:#1c4f9c; } .gs-sug button .k i.t{ background:#eef8f3; color:#136350; } .gs-sug button .k i.a{ background:#f3ecfb; color:#6b3fa0; }
   .gs-loading{ color:var(--muted); font-size:.88rem; }
   .hl-scroll{ display:flex; gap:12px; overflow-x:auto; padding:4px 2px 10px; scroll-snap-type:x mandatory; }
   .hl-card{ flex:0 0 250px; scroll-snap-align:start; border-radius:14px; overflow:hidden; background:#fff; border:1px solid var(--line); text-decoration:none; display:block; transition:transform .12s; }
@@ -292,6 +301,7 @@
       <input id="gsInput" aria-label="통합 검색" type="search" placeholder="🔍 통합 검색 — 보건복지위 국감 2020~2025의 위원 발언·질의·답변·지적사항·자료 (예: 백신 폐기, 남인순, 장기요양)">
       <button id="gsBtn">검색</button>
     </div>
+    <div class="gs-sug"><div class="list" id="gsSug" hidden></div></div>
     <div id="gsOut" hidden></div>
   </section>
   <div class="upd" id="updBadge"></div>
@@ -572,6 +582,39 @@
   document.getElementById('gsInput').addEventListener('search', run);
   // 다른 페이지에서 ?q=이름 으로 넘어오면 바로 검색 (2025 국감 페이지 '발언 보기')
   (function(){ var m=/[?&]q=([^&#]+)/.exec(location.search||''); if(!m) return; var v=decodeURIComponent(m[1].replace(/\+/g,' ')); var inp=document.getElementById('gsInput'); inp.value=v; run(); setTimeout(function(){ inp.scrollIntoView({block:'center'}); }, 300); })();
+})();
+
+// 연관어 자동완성 — 색인에 실제로 있는 온전한 단어만 보여준다 (없는 말은 안 뜬다 = 이 자료에 없다는 신호)
+(function(){
+  var inp=document.getElementById('gsInput'), box=document.getElementById('gsSug'); if(!inp||!box) return;
+  var TERMS=null, timer=null, sel=-1, skip=false;
+  function esc(s){ return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function norm(s){ return (s||'').toLowerCase().replace(/\s+/g,''); }
+  function load(){ if(TERMS) return Promise.resolve(TERMS); return fetch('data/gukgam/suggest.json').then(function(r){return r.json();}).then(function(d){ TERMS=(d.terms||[]).map(function(r){ return {t:r[0],n:r[1],k:r[2],z:norm(r[0])}; }); return TERMS; }).catch(function(){ TERMS=[]; return TERMS; }); }
+  function hide(){ box.hidden=true; box.innerHTML=''; sel=-1; }
+  function pick(t){ inp.value=t; hide(); skip=true; var ev=document.createEvent('Event'); ev.initEvent('input',true,true); inp.dispatchEvent(ev); }
+  function show(){
+    var q=norm(inp.value); if(q.length<1){ hide(); return; }
+    load().then(function(T){
+      if(norm(inp.value)!==q) return;
+      var pre=[], sub=[];
+      for(var i=0;i<T.length&&(pre.length+sub.length)<400;i++){ var z=T[i].z; if(z===q) continue; var p=z.indexOf(q); if(p===0) pre.push(T[i]); else if(p>0) sub.push(T[i]); }
+      var KIND={m:'위원',t:'주제',a:'기관'};
+      var list=pre.concat(sub).slice(0,8);
+      if(!list.length){ hide(); return; }
+      box.innerHTML=list.map(function(x){ return '<button type="button" data-t="'+esc(x.t)+'"><b>'+esc(x.t)+'</b><span class="k">'+(KIND[x.k]?'<i class="'+x.k+'">'+KIND[x.k]+'</i>':'')+x.n.toLocaleString()+(x.k==='m'?'회 발언':'건')+'</span></button>'; }).join('');
+      box.hidden=false; sel=-1;
+    });
+  }
+  inp.addEventListener('input', function(){ clearTimeout(timer); if(skip){ skip=false; return; } timer=setTimeout(show,120); });
+  inp.addEventListener('keydown', function(e){
+    if(box.hidden) return; var bs=box.querySelectorAll('button'); if(!bs.length) return;
+    if(e.key==='ArrowDown'){ e.preventDefault(); sel=(sel+1)%bs.length; } else if(e.key==='ArrowUp'){ e.preventDefault(); sel=(sel-1+bs.length)%bs.length; }
+    else if(e.key==='Enter'&&sel>=0){ e.preventDefault(); pick(bs[sel].getAttribute('data-t')); return; } else if(e.key==='Escape'){ hide(); return; } else return;
+    for(var i=0;i<bs.length;i++) bs[i].className=(i===sel?'on':'');
+  });
+  box.addEventListener('mousedown', function(e){ var b=e.target; while(b&&b!==box&&b.tagName!=='BUTTON') b=b.parentNode; if(b&&b!==box){ e.preventDefault(); pick(b.getAttribute('data-t')); } });
+  document.addEventListener('click', function(e){ if(e.target!==inp && !box.contains(e.target)) hide(); });
 })();
 </script>
 </body>
