@@ -6,6 +6,7 @@
 <title>전체 자료·도구 — 국정감사 자료 DB</title>
 <meta name="description" content="국정감사 결과보고서·시정처리 결과·회의록을 한곳에서 검색하는 통합 DB. 보건복지부·질병관리청·심평원 등 보건복지위원회 소관기관은 전용 페이지로 제공합니다.">
 <style>
+  [hidden]{ display:none !important; }
   :root{ --navy:#12365f; --line:#e3e9f0; --muted:#5f6e80; --bg:#f5f7fa; --accent:#1f6f5c; --chip:#eef3f8; }
   *{ box-sizing:border-box; }
   body{ margin:0; font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:var(--bg); color:#22303e; line-height:1.55; }
@@ -254,6 +255,7 @@
       <a href="gukgam-kdca.html">질병청</a>
       <a href="gukgam-mfds.html">식약처</a>
       <a href="gukgam-covid.html">코로나19</a>
+      <a href="gukgam-guide.html">의원별 가이드북</a>
       <a href="gukgam-all.html" class="on">전체 자료·도구</a>
     </div>
     <div class="unofficial-note" style="font-size:.74rem;color:rgba(255,255,255,.82);margin:8px 2px 0;">개인이 만든 <b>비공식 참고자료</b>입니다 — 국회·보건복지부·질병관리청·식품의약품안전처 등 어떤 기관의 공식 사이트도 아니며, 모든 자료의 원 출처는 대한민국 국회(열린국회정보·회의록·결과보고서)입니다.</div>
@@ -870,6 +872,7 @@
             return '<div class="tchips">'+chips.join('')+'</div>';
           })()+
           '<div class="mlinks">'+
+            '<a href="gukgam-guide.html?m='+encodeURIComponent(m.name)+'">가이드북 · 의원실</a>'+
             (m.homepage?'<a href="'+esc(m.homepage)+'" target="_blank" rel="noopener">홈페이지</a>':'')+
             '<a href="https://search.naver.com/search.naver?where=news&query='+encodeURIComponent(m.name+' 의원 국정감사')+'" target="_blank" rel="noopener">보도자료·뉴스</a>'+
           '</div>'+
