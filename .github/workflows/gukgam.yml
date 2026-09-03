@@ -13,6 +13,18 @@ on:
         description: '국정감사계획서 PDF 주소 (연 1회 — 입력하면 확정 일정 plan-연도.json 생성)'
         required: false
         type: string
+      scan_year:
+        description: '조사용: 이 연도 전 상임위 국감 회의록을 훑어 지정 위원·키워드 발언을 찾는다 (예: 2019)'
+        required: false
+        type: string
+      scan_members:
+        description: '조사용: 찾을 위원 이름(쉼표 구분, 예: 조경태)'
+        required: false
+        type: string
+      scan_keys:
+        description: '조사용: 찾을 키워드(쉼표 구분, 기본 SFTS,중증열성,진드기)'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -126,6 +138,18 @@ jobs:
         run: |
           pip install --quiet pypdf
           python3 scripts/gukgam/build_plan.py
+
+      - name: 조사용 — 지정 연도 전 상임위 회의록 훑기 (scan_year 입력 시에만)
+        if: ${{ inputs.scan_year != '' && inputs.scan_year != null }}
+        timeout-minutes: 120
+        continue-on-error: true
+        env:
+          GUKGAM_SCAN_YEAR: ${{ inputs.scan_year }}
+          GUKGAM_SCAN_MEMBERS: ${{ inputs.scan_members }}
+          GUKGAM_SCAN_KEYS: ${{ inputs.scan_keys || 'SFTS,중증열성,진드기' }}
+        run: |
+          pip install --quiet pypdf
+          python3 scripts/gukgam/scan_year.py
 
       - name: 데이터 자가 점검 (경고는 로그와 healthcheck.json에 남는다)
         run: python3 scripts/gukgam/healthcheck.py
