@@ -53,6 +53,10 @@
   .rep .ex b{ color:var(--teal); font-size:.78rem; margin-right:6px; }
   .mem{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:10px; }
   .mem .m{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+  .mem .m{ border-top:4px solid #dfe5ec; }
+  .mem .m.recent{ border-top-color:#d97757; }
+  .mem .m .nm{ font-size:1.02rem; }
+  .mem .m .nm .since{ font-size:.7rem; font-weight:800; color:#d97757; margin-left:4px; }
   .mem .m .nm{ font-weight:800; color:var(--navy); }
   .mem .m .cnt{ font-size:.8rem; color:var(--muted); margin:2px 0 6px; }
   .mem .m .lq{ font-size:.8rem; color:#3d4f63; border-top:1px dashed var(--line); padding-top:6px; margin-top:6px; }
@@ -190,7 +194,7 @@
   }
   function renderMembers(){
     document.getElementById('members').innerHTML=D.members.map(function(m){
-      return '<div class="m"><div class="nm">'+esc(m.name)+' <span class="badge pty">'+esc(m.party||'')+'</span>'+(m.duty?' <span class="badge">'+esc(m.duty)+'</span>':'')+'</div>'+
+      return '<div class="m'+(m.recent>0?' recent':'')+'"><div class="nm">'+esc(m.name)+' <span class="badge pty">'+esc(m.party||'')+'</span>'+(m.recent>0?'<span class="since">최근에도 질의</span>':'')+(m.duty?' <span class="badge">'+esc(m.duty)+'</span>':'')+'</div>'+
         '<div class="cnt">코로나 질의 '+m.n+'회 · 2024년 이후 '+m.recent+'회 · '+m.years.join('·')+'</div>'+
         '<div>'+(m.themes||[]).map(function(t){ return '<span class="badge tp">'+esc(t)+'</span> '; }).join('')+'</div>'+
         '<div class="lq">최근('+esc(m.last.year)+'): '+esc(m.last.q)+(m.last.url?' <a href="'+esc(m.last.url)+'" target="_blank" rel="noopener" style="font-weight:800;color:#2a4d7d;">↗</a>':'')+'</div></div>';

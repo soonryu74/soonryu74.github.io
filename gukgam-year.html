@@ -397,13 +397,13 @@
       document.getElementById('fdSec').hidden=false;
       var cnt={}; FD.items.forEach(function(i){ var g=i.agency||i.group||'기타'; cnt[g]=(cnt[g]||0)+1; });
       var arr=Object.keys(cnt).map(function(g){ return [g,cnt[g]]; }).sort(function(a,b){ return b[1]-a[1]; });
-      var mx=arr.length?arr[0][1]:1;
-      document.getElementById('fdBars').innerHTML=arr.slice(0,10).map(function(x){ return '<div class="brow"><div class="bn" title="'+esc(x[0])+'">'+esc(x[0])+'</div><div class="bt"><i style="width:'+Math.max(1,Math.round(100*x[1]/mx))+'%"></i></div><div class="bv">'+num(x[1])+'건</div></div>'; }).join('')+
+      var tot=FD.items.length||1;   // 막대 = 그해 지적사항 전체 중 비중 (막대 전체 100%)
+      document.getElementById('fdBars').innerHTML=arr.slice(0,10).map(function(x){ return '<div class="brow"><div class="bn" title="'+esc(x[0])+'">'+esc(x[0])+'</div><div class="bt"><i style="width:'+Math.max(1,Math.round(100*x[1]/tot))+'%"></i></div><div class="bv">'+num(x[1])+'건 <span style="font-weight:400;color:var(--muted);font-size:.76rem">'+Math.round(100*x[1]/tot)+'%</span></div></div>'; }).join('')+
         (arr.length>10?'<div style="font-size:.76rem;color:var(--muted);margin-top:4px;">외 '+(arr.length-10)+'개 기관 '+num(arr.slice(10).reduce(function(s,x){return s+x[1];},0))+'건</div>':'');
       var kh=''; ['보건복지부','질병관리청','식품의약품안전처'].forEach(function(n){ var a=A[n]; if(!a||!(a.by_key||[]).length) return;
         kh+='<div style="font-size:.84rem;margin-top:6px;"><b style="color:var(--navy)">'+esc(n)+'</b> 주요 분류: '+a.by_key.slice(0,5).map(function(x){ return '<span class="pty">'+esc(x.key)+' '+x.n+(x.repeat?' <span title="전년에도 지적">🔁</span>':'')+'</span>'; }).join(' ')+'</div>'; });
       document.getElementById('fdKeys').innerHTML=kh;
-      document.getElementById('fdWhy').textContent=Y+'년 결과보고서 시정·처리요구 '+num(FD.items.length)+'건을 기관별로 센 것(막대는 최다 기관 대비 길이, 숫자가 실제 건수). 분류는 키워드 자동 분류, 🔁는 전년에도 같은 분류가 지적된 경우.';
+      document.getElementById('fdWhy').textContent=Y+'년 결과보고서 시정·처리요구 '+num(FD.items.length)+'건을 기관별로 센 것. 막대 = 그해 전체 지적사항 중 비중(막대 전체 100%), 숫자가 실제 건수. 분류는 키워드 자동 분류, 🔁는 전년에도 같은 분류가 지적된 경우.';
     }
     // 달라진 주제 — 기준 연도는 자료의 최신 질의 연도, 비교 기준은 그 이전 연도 평균
     var qy=(A['보건복지부']&&A['보건복지부'].qa_years)||[]; var ty=qy.length?qy[qy.length-1]:Y; var by=qy.filter(function(x){return x<ty;});
