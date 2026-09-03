@@ -82,9 +82,13 @@
   .off-contact{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:9px; }
   .off-contact span{ font-size:.82rem; font-weight:800; background:#eef4fc; color:#1657b0; border-radius:8px; padding:3px 11px; }
   .print-btn{ border:1px solid var(--line); background:#fff; border-radius:9px; padding:7px 14px; font-size:.82rem; font-weight:800; color:#2a4d7d; cursor:pointer; margin-left:auto; }
+  .tbar .bar{ border:1px solid #1c1c28; box-sizing:border-box; }   /* 배경색을 안 찍는 프린터에서도 막대 윤곽은 남게 */
   @media print{
+    *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }   /* 막대·배지 배경색을 인쇄에도 그대로 */
     .top,.roster,.print-btn,.notice{ display:none !important; }
     body{ background:#fff; }
+    .sec, .qa, .stat{ break-inside:avoid; }
+    a[href]::after{ content:none !important; }
     .wrap{ display:block; padding:0; }
     .brief{ border:0; }
   }
