@@ -76,6 +76,9 @@ jobs:
       - name: 역대 보건복지위 위원 명단 (국감 연도별, 회의록 발언 기준)
         run: python3 scripts/gukgam/build_rosters.py
 
+      - name: 통합 검색 연관어 사전 (발언 색인 단어·위원·주제·기관)
+        run: python3 scripts/gukgam/build_suggest.py
+
       - name: 코로나19 5년 기록 집계 (질병청 Q&A·지적사항)
         run: python3 scripts/gukgam/build_covid.py
 
