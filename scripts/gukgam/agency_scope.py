@@ -72,28 +72,30 @@ def excerpt(raw, mine, keywords=(), limit=420):
     if len(s) <= limit:
         return s
 
-    pos, m = -1, _COMPILED[mine].search(s)
+    pos, ev = -1, 0                                  # 근거의 위치와 길이
+    m = _COMPILED[mine].search(s)
     if m:
-        pos = m.start()
+        pos, ev = m.start(), m.end() - m.start()
     else:
         for k in keywords:
             i = s.find(k)
             if i >= 0 and (pos < 0 or i < pos):
-                pos = i
+                pos, ev = i, len(k)
 
     head = ""
-    start = 0
-    if pos >= limit - 40:                           # 근거가 잘려 나갈 자리에 있다
+    if pos >= limit - 40:                            # 근거가 잘려 나갈 자리에 있다
         start = max(0, pos - 140)
-        back = s.rfind(". ", 0, start + 1)          # 문장 첫머리로 맞춘다
+        back = s.rfind(". ", 0, start + 1)           # 문장 첫머리로 맞춘다
         if back > start - 120:
             start = back + 2
         if start > 0:
-            head = "… "
-    s = s[start:]
+            head, s, pos = "… ", s[start:], pos - start
 
     if len(s) > limit:
         cut = s[:limit]
         p = max(cut.rfind("."), cut.rfind("?"), cut.rfind("다 "))
-        s = (cut[:p + 1] if p > limit * 0.5 else cut) + " …"
+        # 문장 끝에서 자르되, 그러다 근거까지 잘려 나가면 자르지 않는다
+        if p > limit * 0.5 and (pos < 0 or p >= pos + ev):
+            cut = cut[:p + 1]
+        s = cut + " …"
     return head + s

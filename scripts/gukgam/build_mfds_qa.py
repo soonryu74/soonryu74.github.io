@@ -15,7 +15,7 @@ import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import agency_scope                     # 호칭으로 소관을 가린다 (장관님=복지부·청장님=질병청·처장님=식약처)
-SCOPE_V = 3                            # 판정 규칙 판 번호 — 바뀌면 전체 재추출
+SCOPE_V = 4                            # 판정 규칙 판 번호 — 바뀌면 전체 재추출
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA = os.path.join(ROOT, "data", "gukgam")
