@@ -11,8 +11,13 @@
 실행: python3 scripts/gukgam/build_mohw_qa.py   (의존성: pypdf, 키 불필요)
 출력: data/gukgam/mohw-qa-{연도}.json, data/gukgam/mohw-qa-index.json
 """
-import os, re, io, json, time, datetime, hashlib
+import os, re, io, json, time, datetime, hashlib, sys
+import glob
 import urllib.request
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import agency_scope                     # 호칭으로 소관을 가린다 (장관님=복지부·청장님=질병청·처장님=식약처)
+SCOPE_V = 2                            # 판정 규칙 판 번호 — 바뀌면 전체 재추출
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA = os.path.join(ROOT, "data", "gukgam")
@@ -125,9 +130,10 @@ def extract(text, date):
         end = marks[i + 1][0] if i + 1 < len(marks) else len(text)
         q = text[endpos:end]
         nxt = marks[i + 1] if i + 1 < len(marks) else None
-        nxt_is_ag = bool(nxt) and (nxt[2] + nxt[3]).startswith(AGENCY_PREFIX)
+        nxt_is_mine = bool(nxt) and (nxt[2] + nxt[3]).startswith(AGENCY_PREFIX)
         has_kw = any(k in q for k in AGENCY_KW)
-        if not (has_kw or nxt_is_ag):
+        ok, basis = agency_scope.decide(q, "mohw", nxt_is_mine, has_kw)
+        if not ok:
             continue
         answer, j, taken = "", i + 1, 0
         while j < len(marks) and taken < 2:
@@ -150,6 +156,7 @@ def extract(text, date):
             "q": qc,
             "a": clean(answer) if answer.strip() else "",
             "topics": topics_of(q + " " + answer),
+            "basis": basis,
         })
     return items
 
@@ -163,6 +170,11 @@ def main():
             idx = json.load(open(IDX, encoding="utf-8"))
         except Exception:
             pass
+    if idx.get("scope_v") != SCOPE_V:        # 소관 판정 규칙이 바뀌면 전부 다시 뽑는다
+        print("소관 판정 규칙 %s → %s: 전체 재추출" % (idx.get("scope_v"), SCOPE_V))
+        idx["processed"] = []
+        for _p in glob.glob(os.path.join(DATA, "mohw-qa-2*.json")):
+            os.remove(_p)
     processed = set(idx.get("processed", []))
 
     # 연도별 기존 샤드 로드
@@ -209,7 +221,7 @@ def main():
             "members": len({i["member"] for i in items}),
         }
     with open(IDX, "w", encoding="utf-8") as f:
-        json.dump({"updated": today, "source": "보건복지위 국정감사 회의록(제21~22대) 발언 자동 추출",
+        json.dump({"updated": today, "scope_v": SCOPE_V, "source": "보건복지위 국정감사 회의록(제21~22대) 발언 자동 추출",
                    "processed": sorted(processed), "years": sorted(years), "stats": stats},
                   f, ensure_ascii=False, indent=1)
     total = sum(s["n"] for s in stats.values())
