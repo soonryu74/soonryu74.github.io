@@ -7,6 +7,7 @@ on:
   schedule:
     - cron: '10 20 * * 0'      # 평시: 매주 월요일 KST 05:10
     - cron: '40 20 * 9-12 1-6' # 국감 시즌(9~12월): 화~일 매일 KST 05:40 추가
+    - cron: '0 9 * 9-12 *'     # 국감 시즌: 매일 KST 18:00 한 번 더 (의원실 보도자료가 낮에 쏟아진다)
   workflow_dispatch:
     inputs:
       plan_url:
@@ -31,6 +32,7 @@ permissions:
 
 env:
   PYTHONUNBUFFERED: "1"   # 진행 로그가 실시간으로 보이게 (버퍼링되면 6시간 뒤 취소돼도 어디서 멈췄는지 모른다)
+  TZ: Asia/Seoul          # 러너는 UTC라 KST 새벽에 돌면 '오늘'이 전날로 찍힌다 → 화면 날짜가 하루 늦어 보였다
 
 jobs:
   build:
