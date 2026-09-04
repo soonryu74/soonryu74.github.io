@@ -10,8 +10,12 @@
 실행: python3 scripts/gukgam/build_kdca_qa.py   (의존성: pypdf, 키 불필요)
 출력: data/gukgam/kdca-qa.json
 """
-import os, re, io, json, time, datetime, hashlib
+import os, re, io, json, time, datetime, hashlib, sys
 import urllib.request
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import agency_scope                     # 호칭으로 소관을 가린다 (장관님=복지부·청장님=질병청·처장님=식약처)
+SCOPE_V = 2                            # 판정 규칙 판 번호 — 바뀌면 전체 재추출
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA = os.path.join(ROOT, "data", "gukgam")
@@ -123,9 +127,10 @@ def extract(text, date):
         q = text[endpos:end]
         nxt = marks[i + 1] if i + 1 < len(marks) else None
         # "◯질병관리청장 지영미"는 name='질병관리'+role='청장'으로 잡히므로 합쳐서 판정
-        nxt_is_kdca = bool(nxt) and (nxt[2] + nxt[3]).startswith("질병관리청")
+        nxt_is_mine = bool(nxt) and (nxt[2] + nxt[3]).startswith("질병관리청")
         has_kw = any(k in q for k in KDCA_KW)
-        if not (has_kw or nxt_is_kdca):
+        ok, basis = agency_scope.decide(q, "kdca", nxt_is_mine, has_kw)
+        if not ok:
             continue
         answer = ""
         # 이어지는 질병청 답변(연속 구간 병합, 최대 3발언)
@@ -152,6 +157,7 @@ def extract(text, date):
             "q": qc,
             "a": clean(answer) if answer.strip() else "",
             "topics": topics_of(q + " " + answer),
+            "basis": basis,
         })
     return items
 
@@ -165,6 +171,9 @@ def main():
             state = json.load(open(OUT, encoding="utf-8"))
         except Exception:
             pass
+    if state.get("scope_v") != SCOPE_V:      # 소관 판정 규칙이 바뀌면 전부 다시 뽑는다
+        print("소관 판정 규칙 %s → %s: 전체 재추출" % (state.get("scope_v"), SCOPE_V))
+        state["processed"], state["items"] = [], []
     processed = set(state.get("processed", []))
     items = state.get("items", [])
 
@@ -188,7 +197,7 @@ def main():
 
     items.sort(key=lambda x: (x["date"], x["member"]))
     with open(OUT, "w", encoding="utf-8") as f:
-        json.dump({"updated": datetime.date.today().isoformat(),
+        json.dump({"updated": datetime.date.today().isoformat(), "scope_v": SCOPE_V,
                    "source": "보건복지위 국정감사 회의록(제21~22대) 발언 자동 추출",
                    "processed": sorted(processed), "items": items}, f, ensure_ascii=False, indent=1)
     print(f"완료: 회의록 {new}건 신규 처리, Q&A 누적 {len(items)}건")
