@@ -12,7 +12,6 @@
 출력: data/gukgam/mohw-qa-{연도}.json, data/gukgam/mohw-qa-index.json
 """
 import os, re, io, json, time, datetime, hashlib, sys
-import glob
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -187,10 +186,10 @@ def main():
         except Exception:
             pass
     if idx.get("scope_v") != SCOPE_V:        # 소관 판정 규칙이 바뀌면 전부 다시 뽑는다
+        # 연도별 파일은 지우지 않는다 — 회의록 단위로 갈아 끼워, 재추출이 여러 실행에
+        # 걸쳐도 공개 화면의 건수가 중간에 푹 꺼지지 않게 한다.
         print("소관 판정 규칙 %s → %s: 전체 재추출" % (idx.get("scope_v"), SCOPE_V))
         idx["processed"] = []
-        for _p in glob.glob(os.path.join(DATA, "mohw-qa-2*.json")):
-            os.remove(_p)
     processed = set(idx.get("processed", []))
 
     # 연도별 기존 샤드 로드
@@ -234,13 +233,18 @@ def main():
         except Exception as e:
             print(f"{mt['date']} 실패: {e}")
             continue
+        def shard(y):
+            if y not in shards:
+                sp = os.path.join(DATA, f"mohw-qa-{y}.json")
+                shards[y] = json.load(open(sp, encoding="utf-8"))["items"] if os.path.exists(sp) else []
+            return shards[y]
+
+        # 이 회의록에서 전에 뽑아 둔 항목을 걷어내고 새로 넣는다(같은 회의록을 두 번 세지 않게)
+        for y in {g["year"] for g in got} | {int(mt["date"][:4])}:
+            shard(y)[:] = [i for i in shard(y) if i.get("minutes_url") != mt["url"]]
         for g in got:
             g["minutes_url"] = mt["url"]
-            y = g["year"]
-            if y not in shards:
-                p = os.path.join(DATA, f"mohw-qa-{y}.json")
-                shards[y] = json.load(open(p, encoding="utf-8"))["items"] if os.path.exists(p) else []
-            shards[y].append(g)
+            shard(g["year"]).append(g)
         processed.add(mt["conf_id"])
         new += 1
         print(f"{mt['date']}: {len(got)}건")
