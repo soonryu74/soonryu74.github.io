@@ -40,6 +40,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 회의록 PDF에서 뽑은 본문을 실행 간에 보관한다. 국회 PDF 서버가 느린 날
+      # 한 파일에 십수 분씩 잡아먹던 재추출이, 한 번 받아 두면 몇 분이면 끝난다.
+      - name: 회의록 본문 캐시 복원·보관
+        uses: actions/cache@v4
+        with:
+          path: /tmp/gukgam-textcache
+          key: gukgam-textcache-${{ github.run_id }}
+          restore-keys: |
+            gukgam-textcache-
+
       - name: 국정감사 자료 수집 → data/gukgam/
         timeout-minutes: 25
         continue-on-error: true   # 국회 API가 죽은 날에도 뒷단계는 기존 자료로 돈다
