@@ -86,10 +86,24 @@ def pdf_bytes(url):
     raise last
 
 
+TEXT_CACHE = os.environ.get("GUKGAM_TEXT_CACHE", "/tmp/gukgam-textcache")
+
+
 def pdf_text(url):
+    """PDF에서 뽑은 본문. 회의록은 한 번 확정되면 바뀌지 않으므로 텍스트를 캐시한다.
+    (워크플로가 이 디렉터리를 실행 간에 보관해, 국회 PDF 서버가 느린 날에도 재추출이 몇 분이면 끝난다)"""
+    os.makedirs(TEXT_CACHE, exist_ok=True)
+    path = os.path.join(TEXT_CACHE, hashlib.md5(url.encode()).hexdigest() + ".txt")
+    if os.path.exists(path) and os.path.getsize(path) > 500:
+        with open(path, encoding="utf-8") as f:
+            return f.read()
     from pypdf import PdfReader
     reader = PdfReader(io.BytesIO(pdf_bytes(url)))
-    return "\n".join((p.extract_text() or "") for p in reader.pages)
+    text = "\n".join((p.extract_text() or "") for p in reader.pages)
+    if len(text) > 500:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+    return text
 
 
 def clean(s, limit=360):
@@ -181,6 +195,36 @@ def main():
 
     # 연도별 기존 샤드 로드
     shards = {}
+
+    def save():
+        """받아 둔 데까지 그때그때 저장 — 국회 PDF 서버가 느린 날 단계가 끊겨도
+        다음 실행이 이어서 처리한다(끝에서만 쓰면 재추출이 매번 처음부터다)."""
+        today = datetime.date.today().isoformat()
+        for y, items in shards.items():
+            items.sort(key=lambda x: (x["date"], x["member"]))
+            with open(os.path.join(DATA, f"mohw-qa-{y}.json"), "w", encoding="utf-8") as f:
+                json.dump({"updated": today, "year": y, "items": items}, f, ensure_ascii=False, indent=1)
+
+        # 인덱스(통계) 재계산: 모든 샤드 스캔
+        years, stats = [], {}
+        for fn in sorted(os.listdir(DATA)):
+            m = re.match(r"mohw-qa-(\d{4})\.json$", fn)
+            if not m:
+                continue
+            y = int(m.group(1))
+            items = json.load(open(os.path.join(DATA, fn), encoding="utf-8"))["items"]
+            years.append(y)
+            stats[str(y)] = {
+                "n": len(items),
+                "with_answer": sum(1 for i in items if i["a"]),
+                "members": len({i["member"] for i in items}),
+            }
+        with open(IDX, "w", encoding="utf-8") as f:
+            json.dump({"updated": today, "scope_v": SCOPE_V, "source": "보건복지위 국정감사 회의록(제21~22대) 발언 자동 추출",
+                       "processed": sorted(processed), "years": sorted(years), "stats": stats},
+                      f, ensure_ascii=False, indent=1)
+        return sum(v["n"] for v in stats.values()), len(years)
+
     new = 0
     for mt in sorted(minutes, key=lambda x: x["date"]):
         if mt["conf_id"] in processed:
@@ -200,34 +244,12 @@ def main():
         processed.add(mt["conf_id"])
         new += 1
         print(f"{mt['date']}: {len(got)}건")
+        if new % 10 == 0:
+            save()
         time.sleep(1)
 
-    today = datetime.date.today().isoformat()
-    for y, items in shards.items():
-        items.sort(key=lambda x: (x["date"], x["member"]))
-        with open(os.path.join(DATA, f"mohw-qa-{y}.json"), "w", encoding="utf-8") as f:
-            json.dump({"updated": today, "year": y, "items": items}, f, ensure_ascii=False, indent=1)
-
-    # 인덱스(통계) 재계산: 모든 샤드 스캔
-    years, stats = [], {}
-    for fn in sorted(os.listdir(DATA)):
-        m = re.match(r"mohw-qa-(\d{4})\.json$", fn)
-        if not m:
-            continue
-        y = int(m.group(1))
-        items = json.load(open(os.path.join(DATA, fn), encoding="utf-8"))["items"]
-        years.append(y)
-        stats[str(y)] = {
-            "n": len(items),
-            "with_answer": sum(1 for i in items if i["a"]),
-            "members": len({i["member"] for i in items}),
-        }
-    with open(IDX, "w", encoding="utf-8") as f:
-        json.dump({"updated": today, "scope_v": SCOPE_V, "source": "보건복지위 국정감사 회의록(제21~22대) 발언 자동 추출",
-                   "processed": sorted(processed), "years": sorted(years), "stats": stats},
-                  f, ensure_ascii=False, indent=1)
-    total = sum(s["n"] for s in stats.values())
-    print(f"완료: 회의록 {new}건 신규 처리, Q&A 누적 {total}건 (연도 {len(years)}개)")
+    total, nyears = save()
+    print(f"완료: 회의록 {new}건 신규 처리, Q&A 누적 {total}건 (연도 {nyears}개)")
     return 0
 
 

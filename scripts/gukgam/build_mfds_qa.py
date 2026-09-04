@@ -88,10 +88,24 @@ def pdf_bytes(url):
     raise last
 
 
+TEXT_CACHE = os.environ.get("GUKGAM_TEXT_CACHE", "/tmp/gukgam-textcache")
+
+
 def pdf_text(url):
+    """PDF에서 뽑은 본문. 회의록은 한 번 확정되면 바뀌지 않으므로 텍스트를 캐시한다.
+    (워크플로가 이 디렉터리를 실행 간에 보관해, 국회 PDF 서버가 느린 날에도 재추출이 몇 분이면 끝난다)"""
+    os.makedirs(TEXT_CACHE, exist_ok=True)
+    path = os.path.join(TEXT_CACHE, hashlib.md5(url.encode()).hexdigest() + ".txt")
+    if os.path.exists(path) and os.path.getsize(path) > 500:
+        with open(path, encoding="utf-8") as f:
+            return f.read()
     from pypdf import PdfReader
     reader = PdfReader(io.BytesIO(pdf_bytes(url)))
-    return "\n".join((p.extract_text() or "") for p in reader.pages)
+    text = "\n".join((p.extract_text() or "") for p in reader.pages)
+    if len(text) > 500:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+    return text
 
 
 def clean(s, limit=420):
@@ -179,6 +193,15 @@ def main():
     processed = set(state.get("processed", []))
     items = state.get("items", [])
 
+    def save():
+        """받아 둔 데까지 그때그때 저장 — 국회 PDF 서버가 느린 날 단계가 끊겨도
+        다음 실행이 이어서 처리한다(끝에서만 쓰면 재추출이 매번 처음부터다)."""
+        items.sort(key=lambda x: (x["date"], x["member"]))
+        with open(OUT, "w", encoding="utf-8") as f:
+            json.dump({"updated": datetime.date.today().isoformat(), "scope_v": SCOPE_V,
+                       "source": "보건복지위 국정감사 회의록(제21~22대) 식약처 발언 자동 추출",
+                       "processed": sorted(processed), "items": items}, f, ensure_ascii=False, indent=1)
+
     new = 0
     for mt in sorted(minutes, key=lambda x: x["date"]):
         if mt["conf_id"] in processed:
@@ -195,13 +218,11 @@ def main():
             continue
         processed.add(mt["conf_id"])
         new += 1
+        if new % 10 == 0:
+            save()
         time.sleep(1)
 
-    items.sort(key=lambda x: (x["date"], x["member"]))
-    with open(OUT, "w", encoding="utf-8") as f:
-        json.dump({"updated": datetime.date.today().isoformat(), "scope_v": SCOPE_V,
-                   "source": "보건복지위 국정감사 회의록(제21~22대) 식약처 발언 자동 추출",
-                   "processed": sorted(processed), "items": items}, f, ensure_ascii=False, indent=1)
+    save()
     print(f"완료: 회의록 {new}건 신규 처리, Q&A 누적 {len(items)}건")
     return 0
 
