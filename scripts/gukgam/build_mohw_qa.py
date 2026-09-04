@@ -17,7 +17,7 @@ import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import agency_scope                     # 호칭으로 소관을 가린다 (장관님=복지부·청장님=질병청·처장님=식약처)
-SCOPE_V = 2                            # 판정 규칙 판 번호 — 바뀌면 전체 재추출
+SCOPE_V = 3                            # 판정 규칙 판 번호 — 바뀌면 전체 재추출
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA = os.path.join(ROOT, "data", "gukgam")
@@ -145,7 +145,9 @@ def extract(text, date):
                 j += 1
             else:
                 break
-        qc = clean(q)
+        qc = agency_scope.excerpt(q, "mohw", AGENCY_KW, 360)   # 소관 근거가 보이도록 발췌
+        if agency_scope.is_procedural(qc):      # 개회·산회 선포 등 의사진행 발언
+            continue
         if len(qc) < 60:
             continue
         if qc.count("…") > 3 or qc.count(".") > len(qc) * 0.2:

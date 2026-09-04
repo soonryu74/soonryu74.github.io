@@ -46,3 +46,54 @@ def decide(q, mine, answerer_is_mine, has_keyword):
     if has_keyword:
         return True, "mention"
     return False, None
+
+
+# 개회·산회 선포, 서면질의 안내 같은 의사진행 발언은 '질의'가 아니다.
+PROCEDURAL = re.compile(
+    r"성원이\s*되었으므로|산회를\s*선포|정회를\s*선포|개의를\s*선포"
+    r"|서면질의에\s*대하여\s*답변서|국정감사를\s*모두\s*마치|이상으로\s*오늘"
+    r"|좌석을\s*정돈")
+
+
+def is_procedural(q):
+    return bool(PROCEDURAL.search(q or ""))
+
+
+def excerpt(raw, mine, keywords=(), limit=420):
+    """소관 근거가 보이도록 발췌한다.
+
+    국감 발언은 길어서 앞부분만 잘라 보여 주면 '왜 이 기관 질의인가'가 사라진다.
+    앞머리에서 다른 기관을 부르고 뒤에서 우리 기관장을 부르는 발언이 실제로 있어,
+    앞 420자만 실으면 식약처 질의인데 화면에는 '청장님'만 보이는 일이 생겼다.
+    근거(호칭 → 기관명)가 발췌 안에 들어오도록 창을 옮기고, 잘라낸 쪽에 '…'를 남긴다.
+    """
+    s = re.sub(r"-\s*\d+\s*-", " ", raw or "")     # 페이지 번호
+    s = re.sub(r"\s+", " ", s).strip()
+    if len(s) <= limit:
+        return s
+
+    pos, m = -1, _COMPILED[mine].search(s)
+    if m:
+        pos = m.start()
+    else:
+        for k in keywords:
+            i = s.find(k)
+            if i >= 0 and (pos < 0 or i < pos):
+                pos = i
+
+    head = ""
+    start = 0
+    if pos >= limit - 40:                           # 근거가 잘려 나갈 자리에 있다
+        start = max(0, pos - 140)
+        back = s.rfind(". ", 0, start + 1)          # 문장 첫머리로 맞춘다
+        if back > start - 120:
+            start = back + 2
+        if start > 0:
+            head = "… "
+    s = s[start:]
+
+    if len(s) > limit:
+        cut = s[:limit]
+        p = max(cut.rfind("."), cut.rfind("?"), cut.rfind("다 "))
+        s = (cut[:p + 1] if p > limit * 0.5 else cut) + " …"
+    return head + s
