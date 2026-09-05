@@ -19,7 +19,10 @@
 - 데이터 흐름: 통계청 KOSIS openAPI → 정제 → 분석 → 시각화
 
 ## 기술 결정 (확정)
-- R Shiny 사용 안 함. 웹 표준(현재 순수 HTML/JS, 확장 시 Next.js) + 정적 데이터.
+- R Shiny 사용 안 함. **React(Vite) + 정적 데이터** (2026-09-05 소유자 결정. 확장 시 Next.js 자연 전환).
+  - 소스: app/ (컴포넌트: charts/TileMap/panels/Tooltip). 빌드는 단일 HTML 인라인
+    (vite-plugin-singlefile) → index.html — 파일로 열어도 동작, 어디든 배포 가능.
+  - 빌드: `cd app && npm install`(최초 1회) 후 `python scripts/build_dashboard.py`.
 - 하이브리드 파이프라인: 통계 연산(상관, 핫스팟 등)은 Python으로 사전 계산 → JSON 산출 →
   프론트는 표시만. (통계 데이터는 연 1회 갱신이므로 실시간 연산 불필요)
 - 호스팅: Vercel 또는 GitHub Pages (무료). 수집 자동화: GitHub Actions.
@@ -53,8 +56,10 @@
   - 산출: data/validation_full_report.md, data/validation_details.csv
   - 운영 교훈: KOSIS는 연속 호출 시 수 분간 트래픽 차단 → 호출 간격 3초+와
     백오프 재시도 필수 (scripts/kosis_validate_all.py 에 구현)
-- [진행 중] 실데이터 대시보드 v2 — 핵심 5개 지표 시계열 수집 → index.html 빌드
-  - 지표별 수록 시작연도가 다름(우울감경험률 2017~) → v2 템플릿에 연도 축 분리 반영
+- [완료] 실데이터 대시보드 v2 — 핵심 5개 지표(흡연·고위험음주·걷기·비만·우울) 2008–2025 연결
+  - React(Vite)로 전환 완료. 지표별 연도 축 분리(우울 2017~), 결측 처리(세종 2008–2011,
+    비만율 2019 미수록), 라이트/다크, 모바일 반응형, 출처 표기.
+  - prototype/ 은 디자인 원본 보존용. 이후 수정은 app/src/ 에서.
 - [대기] 김동현 교수 DB 검증 ← 파일 확보 시 착수 (원격 세션에서는 드라이브 업로드 필요)
 - [대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)
 - [대기] Vercel/GitHub Pages 배포 결정
