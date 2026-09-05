@@ -242,3 +242,18 @@ footer { font-size:11.5px; color:var(--muted); margin:18px 0 8px; line-height:1.
 .xbtn:hover { color:var(--series-1); border-color:var(--series-1); }
 .card:has(.exports) > h3, .card:has(.exports) .cardhead h3 { padding-right: 150px; }
 @media (max-width: 480px){ .exports { position:static; margin:-4px 0 6px; } .card:has(.exports) > h3, .card:has(.exports) .cardhead h3 { padding-right:0; } }
+
+/* ===== 프로파일 영역별 순위 ===== */
+.drow2 { padding:8px 0; border-bottom:1px solid var(--grid); }
+.drow2:last-child { border-bottom:none; }
+.drow2 .drow { grid-template-columns: 130px 1fr 36px 70px; }
+.drank { text-align:right; font-variant-numeric: tabular-nums; white-space:nowrap; }
+.drank small { color:var(--muted); }
+.indchips { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; padding-left:130px; }
+@media (max-width: 600px){ .indchips { padding-left:0; } .drow2 .drow { grid-template-columns: 100px 1fr 32px 60px; } }
+.indchip { display:inline-flex; align-items:baseline; gap:6px; border:1px solid var(--border); background:var(--page); border-radius:8px; padding:3px 8px; font-size:11.5px; color:var(--text-secondary); cursor:pointer; }
+.indchip:hover { border-color:var(--series-1); }
+.ic-name { max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ic-val { color:var(--text-primary); font-weight:700; font-variant-numeric: tabular-nums; }
+.ic-val small { font-weight:500; color:var(--muted); margin-left:1px; }
+.ic-rank { font-variant-numeric: tabular-nums; font-size:11px; }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { INDICATORS, DOMAINS, fmt, val, latestYear, percentile, ranked, poolFor, label, RBY } from "../data";
+import { INDICATORS, DOMAINS, fmt, val, latestYear, percentile, ranked, poolFor, label, RBY, domainRanking } from "../data";
 import ExportButtons from "./ExportButtons";
 
 /* 지역 프로파일: 전 지표 백분위 → 영역 점수 · 강점 TOP5 · 개선 TOP · 전체 지표표 */
@@ -26,6 +26,11 @@ export default function Profile({ item, sel, scope, onPick }) {
     return { ind, y, v, pct, rank, n: rk.length, delta, baseY, improve };
   }).filter(Boolean), [item, sel, pool]);
 
+  // 집단 내 영역별·종합 순위 (균등가중, 지표별 최신 연도)
+  const rk = useMemo(() => domainRanking(item, pool), [item, pool]);
+  const mine = rk.byCode.get(sel.c);
+  const byId = Object.fromEntries(rows.map((r) => [r.ind.id, r]));
+
   const scored = rows.filter((r) => r.pct != null);
   const domainScore = DOMAINS.map((d) => {
     const rs = scored.filter((r) => r.ind.domain === d);
@@ -47,24 +52,40 @@ export default function Profile({ item, sel, scope, onPick }) {
           <div className="desc">{poolName} 대비 백분위(높을수록 양호) · 지표별 최신 연도 기준 · {rows.length}개 지표</div>
         </div>
         <div className="prof-score">
-          <div className="k-label">종합 양호도</div>
+          <div className="k-label">종합 양호도 <small className="muted">(영역 균등가중)</small></div>
           <div className="k-value">{overall == null ? "–" : Math.round(overall)}<small> / 100</small></div>
+          {mine?.overallRank && <div className="k-sub">{poolName} <b>{mine.overallRank}위</b> / {rk.n.overall}</div>}
         </div>
       </div>
 
       <div className="grid2">
-        <div className="card">
-          <h3>영역별 양호도</h3>
-          <ExportButtons name={`${label(sel)}_영역별양호도`} kinds={["list"]} />
-          <div className="desc">영역 내 지표 백분위 평균</div>
+        <div className="card span2">
+          <h3>영역별 순위와 수치</h3>
+          <ExportButtons name={`${label(sel)}_영역별순위`} kinds={["list"]} />
+          <div className="desc">영역 점수 = 소속 지표 백분위 평균 · 순위는 {poolName} {rk.n.overall}곳 기준 · 괄호 안은 지표별 순위</div>
           <div className="domains">
-            {domainScore.map(({ d, score, n }) => (
-              <div key={d} className="drow">
-                <div className="dl">{d} <small>{n}</small></div>
-                <div className="bar-track"><div className={`bar ${tone(score)}`} style={{ width: `${score ?? 0}%` }} /></div>
-                <div className="rv">{score == null ? "–" : Math.round(score)}</div>
-              </div>
-            ))}
+            {domainScore.map(({ d, score, n }) => {
+              const dr = mine?.domains?.[d];
+              const inds = INDICATORS.filter((i) => i.domain === d && byId[i.id]);
+              return (
+                <div key={d} className="drow2">
+                  <div className="drow">
+                    <div className="dl"><b>{d}</b> <small>{n}</small></div>
+                    <div className="bar-track"><div className={`bar ${tone(score)}`} style={{ width: `${score ?? 0}%` }} /></div>
+                    <div className="rv">{score == null ? "–" : Math.round(score)}</div>
+                    <div className="drank">{dr?.rank ? <><b>{dr.rank}위</b><small>/{rk.n[d]}</small></> : "–"}</div>
+                  </div>
+                  <div className="indchips">
+                    {inds.map((i) => { const r = byId[i.id]; return (
+                      <button key={i.id} className="indchip" onClick={() => onPick(i, r.y)} title={`${i.name} · ${r.y}년 · 백분위 ${r.pct == null ? "중립" : Math.round(r.pct)}`}>
+                        <span className="ic-name">{i.name}</span>
+                        <span className="ic-val">{fmt(r.v)}<small>{i.unit}</small></span>
+                        <span className={`ic-rank ${r.pct == null ? "" : r.pct >= 75 ? "k-good" : r.pct < 25 ? "k-bad" : ""}`}>{r.rank}/{r.n}</span>
+                      </button>); })}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

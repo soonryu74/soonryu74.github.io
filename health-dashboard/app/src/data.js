@@ -108,3 +108,53 @@ export function classBreaks(vals, k = 7) {
   return br;
 }
 export const classOf = (v, breaks) => (v == null ? 0 : breaks.filter((b) => v > b).length + 1);
+
+/** 집단 전체의 지표 백분위 한 번에 계산: Map(code → pct). 결측 지역은 제외 */
+export function allPercentiles(ind, item, year, pool) {
+  const vals = pool.map((r) => [r.c, val(ind, item, year, r.c)]).filter(([, v]) => v != null);
+  const sorted = vals.map(([, v]) => v).sort((a, b) => a - b);
+  const n = sorted.length, out = new Map();
+  if (!n) return out;
+  // 이분탐색으로 "나보다 나쁜 수" 계산
+  const lower = (x) => { let lo = 0, hi = n; while (lo < hi) { const m = (lo + hi) >> 1; if (sorted[m] < x) lo = m + 1; else hi = m; } return lo; };
+  const upper = (x) => { let lo = 0, hi = n; while (lo < hi) { const m = (lo + hi) >> 1; if (sorted[m] <= x) lo = m + 1; else hi = m; } return lo; };
+  for (const [c, v] of vals) {
+    const below = lower(v), tie = upper(v) - below;
+    const worse = ind.bad ? n - upper(v) : below;
+    out.set(c, ((worse + tie / 2) / n) * 100);
+  }
+  return out;
+}
+
+/**
+ * 집단 내 모든 지역의 영역 점수·종합 점수와 순위.
+ * weights: {영역: 가중치} (없으면 균등). year: 지표별 최신 연도 사용(연도 지정 시 해당 연도, 없으면 최신).
+ * 반환: { byCode: Map(code → {domains:{d:{score,rank}}, overall:{score,rank}}), n: {d: 집단 크기} }
+ */
+export function domainRanking(item, pool, weights = null, year = null) {
+  const pctByInd = {};
+  for (const ind of INDICATORS) {
+    if (ind.bad == null) continue;
+    const y = year != null && ind.years.includes(year) ? year : ind.years[ind.years.length - 1];
+    pctByInd[ind.id] = allPercentiles(ind, item, y, pool);
+  }
+  const rows = pool.map((r) => {
+    const domains = {};
+    for (const d of DOMAINS) {
+      const xs = INDICATORS.filter((i) => i.domain === d && pctByInd[i.id]?.has(r.c)).map((i) => pctByInd[i.id].get(r.c));
+      if (xs.length) domains[d] = { score: xs.reduce((a, b) => a + b, 0) / xs.length, k: xs.length };
+    }
+    let wsum = 0, acc = 0;
+    for (const d in domains) { const w = weights ? (weights[d] ?? 0) : 1; acc += domains[d].score * w; wsum += w; }
+    return { c: r.c, domains, overall: wsum ? acc / wsum : null, k: Object.keys(domains).length };
+  });
+  const byCode = new Map(rows.map((x) => [x.c, x]));
+  const n = {};
+  for (const d of DOMAINS) {
+    const s = rows.filter((x) => x.domains[d]).sort((a, b) => b.domains[d].score - a.domains[d].score);
+    s.forEach((x, i) => (x.domains[d].rank = i + 1)); n[d] = s.length;
+  }
+  const full = rows.filter((x) => x.overall != null && x.k >= DOMAINS.length - 1).sort((a, b) => b.overall - a.overall);
+  full.forEach((x, i) => (x.overallRank = i + 1)); n.overall = full.length;
+  return { byCode, n };
+}
