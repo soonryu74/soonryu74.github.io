@@ -20,6 +20,24 @@ jobs:
           bundle _2.5.23_ install
       - name: Build Site
         run: bundle exec jekyll build
+
+      # Korea Now (React/Vite 앱) — /korea-now/ 경로에 함께 배포
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: korea-now/package-lock.json
+      - name: Build Korea Now
+        working-directory: korea-now
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.KOREA_NOW_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.KOREA_NOW_SUPABASE_ANON_KEY }}
+        run: |
+          npm ci
+          npm run build
+          mkdir -p ../_site/korea-now
+          cp -r dist/. ../_site/korea-now/
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
