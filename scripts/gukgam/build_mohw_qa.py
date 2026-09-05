@@ -248,7 +248,7 @@ def main():
         processed.add(mt["conf_id"])
         new += 1
         print(f"{mt['date']}: {len(got)}건")
-        if new % 10 == 0:
+        if new % 3 == 0:      # 회의록 한 건에 십수 분이 걸리는 날도 있어 자주 저장한다
             save()
         time.sleep(1)
 
