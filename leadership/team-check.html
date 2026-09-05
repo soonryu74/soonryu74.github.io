@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>우리 팀장 리더십 체크</title>
+<meta name="description" content="팀원이 답하는 3분 리더십 체크. 결과 코드는 익명이며, 팀장의 자기 점수와 팀 체감의 간극을 보여줍니다.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lens.css">
+<style>
+  .quiz-shell { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--accent); padding: 28px 28px 24px; margin: 32px 0; }
+  .progress-track { height: 6px; background: var(--code-bg); border-radius: 999px; overflow: hidden; margin: 0 0 6px; }
+  .progress-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 999px; transition: width .25s ease; }
+  .progress-meta { display: flex; justify-content: space-between; font-family: "IBM Plex Mono", monospace; font-size: 11.5px; color: var(--muted); margin-bottom: 22px; }
+  .q-domain { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: .12em; color: var(--accent); margin: 0 0 8px; }
+  .q-text { font-family: "Gowun Batang", serif; font-size: clamp(19px, 3.5vw, 24px); font-weight: 700; line-height: 1.5; margin: 0 0 24px; text-wrap: balance; max-width: none; }
+  .opts { display: grid; gap: 8px; }
+  .opt { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; font-size: 15px; padding: 12px 16px; cursor: pointer; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; }
+  .opt:hover { border-color: var(--accent); }
+  .opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt.picked { background: var(--accent-soft); border-color: var(--accent); }
+  .opt .num { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); width: 16px; flex-shrink: 0; }
+  .quiz-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
+  .btn-ghost { font: inherit; font-size: 13.5px; background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px 0; }
+  .btn-ghost:hover { color: var(--accent); }
+  .btn-ghost[disabled] { visibility: hidden; }
+  .btn-primary { font: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; background: var(--accent); color: var(--paper); border: 1px solid var(--accent); border-radius: 4px; padding: 10px 22px; }
+  .btn-primary:hover { filter: brightness(1.08); }
+
+  .bars { margin: 24px 0 6px; display: grid; gap: 14px; }
+  .bar-row { display: grid; grid-template-columns: 148px 1fr 48px; gap: 12px; align-items: center; }
+  .bar-row .blabel { font-size: 13.5px; line-height: 1.35; }
+  .bar-track { height: 10px; background: var(--code-bg); border-radius: 4px; position: relative; }
+  .bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 0 4px 4px 0; min-width: 2px; transition: width .5s ease; }
+  .bar-row .bval { font-family: "IBM Plex Mono", monospace; font-size: 13px; font-variant-numeric: tabular-nums; text-align: right; }
+  @media (max-width: 560px) { .bar-row { grid-template-columns: 110px 1fr 42px; } }
+  @media (prefers-reduced-motion: reduce) { .progress-fill, .bar-fill { transition: none; } }
+
+  .code-box { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 18px 0 6px; }
+  .code-box code { font-family: "IBM Plex Mono", monospace; font-size: 16px; background: var(--code-bg); padding: 8px 14px; border-radius: 4px; letter-spacing: .02em; user-select: all; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Leadership Lens · 팀원용 체크</p>
+  <h1>우리 팀장, 팀에서는 어떻게 보일까?</h1>
+  <p class="subtitle">3분 · 18문항 · <strong>완전 익명</strong>. 응답은 어디에도 전송·저장되지 않고, 마지막에 나오는 결과 코드(영역 점수 6개)만 팀장에게 전달됩니다. 누가 몇 점을 줬는지는 코드로 알 수 없습니다.</p>
+  <nav class="lens-nav">
+    <a href="test.html">리더 자가 체크</a>
+    <a href="index.html">카드 라이브러리</a>
+    <a href="criteria.html">판정 기준·운영 원칙</a>
+  </nav>
+</header>
+
+<div id="intro">
+  <div class="quiz-shell">
+    <p class="q-domain">시작하기 전에</p>
+    <p class="q-text">솔직하게 답할수록 팀장에게 더 좋은 선물이 됩니다.</p>
+    <p style="max-width:none; font-size:15px;">점수가 낮게 나오는 것이 목적입니다 — 정확히는, 팀장이 <strong>스스로는 볼 수 없는 간극</strong>을 보여주는 것이 목적입니다. 최근 한두 달의 실제 경험을 기준으로 답해 주세요.</p>
+    <div class="quiz-foot">
+      <span></span>
+      <button type="button" class="btn-primary" id="start">시작하기</button>
+    </div>
+  </div>
+</div>
+
+<div id="quiz" hidden>
+  <div class="quiz-shell">
+    <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-meta"><span id="pnum"></span><span id="pdomain-count"></span></div>
+    <p class="q-domain" id="qdomain"></p>
+    <p class="q-text" id="qtext"></p>
+    <div class="opts" id="opts"></div>
+    <div class="quiz-foot">
+      <button type="button" class="btn-ghost" id="back">← 이전 문항</button>
+      <span></span>
+    </div>
+  </div>
+</div>
+
+<div id="result" hidden>
+  <section style="margin-top:36px;">
+    <p class="sec-label">완료 — 이 코드만 팀장에게 보내면 됩니다</p>
+    <h2 class="sec-title">결과 코드</h2>
+    <div class="code-box">
+      <code id="code"></code>
+      <button type="button" class="btn-primary" id="copy-code">코드 복사</button>
+    </div>
+    <p style="font-size:13.5px; color:var(--muted); max-width:none;">코드에는 영역별 점수 6개만 들어 있습니다. 팀장은 <a href="test.html">자가 체크</a> 결과 화면에 이 코드를 붙여 넣어, 자기 점수와 팀 체감의 간극을 봅니다. 여러 팀원의 코드는 평균으로 합산되어 개인 응답은 드러나지 않습니다.</p>
+
+    <h3 style="margin-top:32px;">내가 매긴 영역별 점수</h3>
+    <div class="bars" id="bars" role="img" aria-label="영역별 점수 막대 차트"></div>
+
+    <div class="callout" style="margin-top:26px;">
+      <span class="mono-label">한 가지 부탁</span>
+      <p>코드를 보낼 때 점수 이야기 대신 이렇게만 전하세요 — <strong>"우리 같이 해보면 재밌을 것 같아서요."</strong> 간극은 비난의 재료가 아니라 대화의 시작점입니다.</p>
+    </div>
+  </section>
+</div>
+
+<div class="footnote">
+  <p>팀원용 체크 v0.1 · 자기보고식 간이 체크로 타당화된 심리검사가 아니며, 평가·인사 용도로 쓰면 안 됩니다 · <a href="criteria.html">운영 원칙</a></p>
+</div>
+
+</div>
+
+<script src="../data/leadership-test.js"></script>
+<script>
+(function () {
+  var ITEMS = [];
+  LENS_TEST.domains.forEach(function (d) {
+    d.items.forEach(function (it) {
+      ITEMS.push({ domain: d, text: it.observer, reverse: it.reverse });
+    });
+  });
+  var N = ITEMS.length;
+  var answers = new Array(N).fill(null);
+  var cur = 0;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function show(idScreen) {
+    ["intro", "quiz", "result"].forEach(function (s) { $(s).hidden = (s !== idScreen); });
+    window.scrollTo(0, 0);
+  }
+
+  function renderQuestion() {
+    var it = ITEMS[cur];
+    $("pfill").style.width = (cur / N * 100) + "%";
+    $("pnum").textContent = (cur + 1) + " / " + N;
+    $("pdomain-count").textContent = it.domain.name;
+    $("qdomain").textContent = "영역 · " + it.domain.name;
+    $("qtext").textContent = it.text;
+    var box = $("opts");
+    box.textContent = "";
+    LENS_TEST.scale.forEach(function (label, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "opt" + (answers[cur] === i + 1 ? " picked" : "");
+      var num = document.createElement("span");
+      num.className = "num"; num.textContent = String(i + 1);
+      b.appendChild(num);
+      b.appendChild(document.createTextNode(label));
+      b.addEventListener("click", function () {
+        answers[cur] = i + 1;
+        if (cur < N - 1) { cur++; renderQuestion(); } else { finish(); }
+      });
+      box.appendChild(b);
+    });
+    $("back").disabled = (cur === 0);
+  }
+
+  function scoreOf(idx) {
+    var raw = answers[idx];
+    return ITEMS[idx].reverse ? 6 - raw : raw;
+  }
+
+  function finish() {
+    var scores = LENS_TEST.domains.map(function (d) {
+      var idxs = ITEMS.map(function (it, i) { return it.domain === d ? i : -1; }).filter(function (i) { return i >= 0; });
+      var mean = idxs.reduce(function (s, i) { return s + scoreOf(i); }, 0) / idxs.length;
+      return Math.round((mean - 1) / 4 * 100);
+    });
+    var code = LENS_TEST.codePrefix + "-" + scores.join(".");
+    $("code").textContent = code;
+
+    var bars = $("bars");
+    bars.textContent = "";
+    LENS_TEST.domains.forEach(function (d, i) {
+      var row = document.createElement("div");
+      row.className = "bar-row";
+      var lab = document.createElement("div");
+      lab.className = "blabel"; lab.textContent = d.name;
+      var track = document.createElement("div");
+      track.className = "bar-track";
+      var fill = document.createElement("div");
+      fill.className = "bar-fill"; fill.style.width = "0%";
+      track.appendChild(fill);
+      track.title = d.name + " " + scores[i] + "점";
+      var val = document.createElement("div");
+      val.className = "bval"; val.textContent = scores[i];
+      row.appendChild(lab); row.appendChild(track); row.appendChild(val);
+      bars.appendChild(row);
+      requestAnimationFrame(function () { fill.style.width = scores[i] + "%"; });
+    });
+    show("result");
+  }
+
+  $("start").addEventListener("click", function () { show("quiz"); renderQuestion(); });
+  $("back").addEventListener("click", function () { if (cur > 0) { cur--; renderQuestion(); } });
+  $("copy-code").addEventListener("click", function () {
+    var text = $("code").textContent;
+    var done = function () {
+      var b = $("copy-code"); var old = b.textContent;
+      b.textContent = "복사됨 ✓";
+      setTimeout(function () { b.textContent = old; }, 1500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, done);
+    } else { done(); }
+  });
+})();
+</script>
+</body>
+</html>
