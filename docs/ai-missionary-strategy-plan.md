@@ -1,6 +1,7 @@
 # AI 선교사 전략 기획안 v0.1 — 탄압 지역에서 AI를 전하는 법
 
 > 작성 2026-09-05 · 브랜치 `claude/missionary-strategy-planning-jpn9ry` · 부록: `docs/ai-missionary-interviews/`
+> 읽기 좋은 버전: https://claude.ai/code/artifact/9c86b0a1-1cb7-4953-ae35-85f0a6cb8375
 
 **전제(비유 해석).** "AI계의 선교사"는 AI를 경계·거부하는 대상층에 AI 활용을 퍼뜨리는 사람이다.
 "탄압 국가" = AI라는 말만 나와도 문이 닫히는 시니어·보수적 조직·소상공인.
