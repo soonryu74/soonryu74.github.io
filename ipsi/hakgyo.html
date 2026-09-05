@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전국 고교 찾기 | 입시 나침반 — 2,400개 고등학교 학생수·학급·교원·진학 현황(교육통계 2026.4.1)</title>
+<meta name="description" content="한국교육개발원 교육기본통계(2026년 4월 1일 기준) 전국 2,400개 고등학교의 유형·설립·학생수·학급당 학생수·교원·2025년 졸업생 진학률과 의대 지역인재 권역 판정.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+ <div class="nav-inner">
+ <a class="brand" href="index.html">입시 나침반 <span class="tag">2010년생 · 2029학년도 대입</span></a>
+ <nav class="site-nav">
+ <a href="jedo.html">바뀐 제도</a>
+ <a href="sihum.html">시험 파먹기</a>
+ <a href="roadmap.html">3년 로드맵</a>
+ <a href="daehak.html">대학 순위</a>
+ <a href="yogang.html">대학별 요강</a>
+ <a href="hakgyo.html" class="on">고교 찾기</a>
+ <a href="hakgwa.html">학과·경쟁률</a>
+ <a href="gyoyukcheong.html">교육청 자료</a>
+ <a href="jaryo.html">출처·자료</a>
+ </nav>
+ </div>
+</header>
+<main class="wrap">
+<div class="page-head">
+ <span class="kicker">⑦ 전국 고교 찾기</span>
+ <h1>전국 고등학교 2,400개 — 우리 학교의 숫자</h1>
+ <p class="lead">교육부·한국교육개발원 <strong>교육기본통계(2026.4.1 기준)</strong> 학교별 원자료를 그대로 옮겼습니다. 학생수·학급당 학생수·교원 1인당 학생수·기간제 비율은 2026년, 졸업 후 진학·취업은 <strong>2025년 2월 졸업생</strong>(2025.4.1 조사) 수치입니다. 학교알리미 공시와 같은 원천(교육통계)입니다.</p>
+</div>
+
+<section>
+ <h2>시도별 고교 분포</h2>
+ <div class="tbl-wrap compact"><table id="statTbl"><thead><tr><th>시도</th><th class="num">계</th><th class="num">일반고</th><th class="num">자율고</th><th class="num">특목고</th><th class="num">특성화고</th><th class="num">고1 학생수</th><th class="num">고3 학생수</th><th class="num">2025 졸업생</th><th class="num">4년제 진학률</th></tr></thead><tbody></tbody></table></div>
+ <p class="src" id="statSrc"></p>
+</section>
+
+<section id="search">
+ <h2>학교 검색</h2>
+ <div class="toolbar">
+  <input id="q" type="search" placeholder="학교명·시군구·주소 (예: 대원, 분당, 해운대)">
+  <select id="sido"><option value="">전체 시도</option></select>
+  <select id="type"><option value="">전체 유형</option><option>일반고등학교</option><option>자율고등학교</option><option>특수목적고등학교</option><option>특성화고등학교</option></select>
+  <select id="sub"><option value="">세부유형 전체</option></select>
+  <select id="found"><option value="">설립 전체</option><option>국립</option><option>공립</option><option>사립</option></select>
+  <select id="coedu"><option value="">남녀 전체</option><option>남여공학</option><option>남</option><option>여</option></select>
+  <select id="sort"><option value="name">정렬: 가나다</option><option value="students">학생수 많은 순</option><option value="g1">고1 학생수</option><option value="univ4rate">4년제 진학률</option><option value="adv_rate">전체 진학률</option><option value="per_class">학급당 학생수 적은 순</option><option value="temp_rate">기간제 비율 낮은 순</option></select>
+  <span id="count" class="sub"></span>
+ </div>
+ <div class="tbl-wrap"><table id="tbl"><thead><tr><th>학교</th><th>소재</th><th>유형</th><th>설립</th><th class="num">학생수</th><th class="num">고1</th><th class="num">학급당</th><th class="num">교원1인당</th><th class="num">기간제%</th><th class="num">'25 졸업</th><th class="num">4년제</th><th class="num">전문대</th><th class="num">취업</th><th class="num">4년제 진학률</th></tr></thead><tbody></tbody></table></div>
+ <p class="sub">표는 최대 300개까지 표시됩니다. 학교명을 클릭하면 상세 카드가 아래에 열립니다. "4년제 진학률" = 국내 4년제 대학 진학자 ÷ 졸업자(2025). 기타(재수·미상)가 많을수록 상위권 재수 비율이 높은 학교인 경우가 많습니다.</p>
+ <div id="detail"></div>
+</section>
+
+<section id="jiyeok">
+ <h2>의대·약대 지역인재 권역 판정기</h2>
+ <div class="grid-2">
+  <div class="card">
+   <p>고교 소재 시도를 고르면 지방대육성법 시행령의 <strong>지역인재 권역</strong>과 그 권역에서 지역인재로 지원할 수 있는 의대를 보여줍니다.</p>
+   <div class="toolbar"><select id="jsido"><option value="">시도 선택</option></select></div>
+   <div id="jout"></div>
+  </div>
+  <div class="card"><h3>2028학년도부터 강화된 자격</h3><ul class="check"><li>비수도권 <strong>중학교 전 과정 이수·졸업</strong> + 해당 권역 <strong>고교 전 과정 이수·졸업</strong></li><li>재학 기간 동안 본인(과 보호자)이 해당 권역에 거주</li><li>의·치·한·약: 권역 내 대학 모집인원의 <strong>40% 이상</strong>(강원·제주 20%) 지역인재 의무 선발</li><li>2028 시행계획 기준 39개 의대 3,611명 중 지역인재 1,710명(67.6%)</li></ul><p class="src">출처: 지방대학 및 지역균형인재 육성에 관한 법률 제15조·시행령, 뉴스핌 2024.2.9, 한국일보 2024.8.28, 베리타스알파 2026.5</p></div>
+ </div>
+</section>
+<div class="disclaimer">데이터: 한국교육개발원 교육통계서비스(kess.kedi.re.kr) 학교별 데이터셋 「2026년 유초중등 학교별 학년별 학생수 학급수 입학 졸업 교원 직원 면적」·「2025년 …」. 학교수는 본교 기준(분교·폐교 제외), 방송통신고·각종학교 제외. 통계 이용 시 KEDI 교육통계센터 출처 표기.</div>
+</main>
+<footer class="site-footer">
+ <div class="wrap">
+ <div><strong>입시 나침반</strong> — 2010년생(2026년 고1)이 치르는 2029학년도 대입을 교육부·대교협·평가원·각 대학 공식 발표에 근거해 정리한 정적 사이트입니다.</div>
+ <div>기준일 2026년 9월 5일. 2029학년도 대학별 전형시행계획은 2027년 4월 말, 수능 시행세부계획은 2027년 3월(평가원), 모집요강은 2028년 5월 발표 예정 — 그 전까지는 2028학년도 시행계획(2026.4.30 공표)을 기준으로 삼습니다.</div>
+ <div>본 사이트는 정보 제공용이며 최종 지원 전 반드시 <a href="https://www.adiga.kr" target="_blank" rel="noopener">대입정보포털 어디가</a>와 각 대학 입학처 원문을 확인하세요. 제작: 서순려</div>
+ </div>
+</footer>
+<script>
+(async function(){
+ const $=s=>document.querySelector(s);
+ const [D,S]=await Promise.all([fetch('data/schools-hs.json').then(r=>r.json()),fetch('data/schools-stats.json').then(r=>r.json())]);
+ const rows=D.rows; const SIDO=[...new Set(rows.map(r=>r.sido))];
+ $('#statSrc').textContent=`출처: ${D.source} (기준일 ${D.base_date}) · 졸업 후 상황: ${D.prev_source} (기준일 ${D.prev_base_date}). 자료 갱신 ${D.updated}`;
+ // 통계표
+ const agg={};
+ rows.forEach(r=>{const a=agg[r.sido]=agg[r.sido]||{g1:0,g3:0,grads:0,univ4:0}; a.g1+=r.g1; a.g3+=r.g3; if(r.prev){a.grads+=r.prev.grads;a.univ4+=r.prev.univ4}});
+ const tot={g1:0,g3:0,grads:0,univ4:0}; Object.values(agg).forEach(a=>{for(const k in tot)tot[k]+=a[k]});
+ const fmt=n=>n==null?'—':n.toLocaleString('ko-KR');
+ const pct=(a,b)=>b?(100*a/b).toFixed(1)+'%':'—';
+ const st=S.hs_by_sido; const order=['전국',...SIDO];
+ $('#statTbl tbody').innerHTML=order.map(s=>{const t=st[s]||{};const a=s==='전국'?tot:agg[s];return `<tr${s==='전국'?' class="hl"':''}><td><strong>${s}</strong></td><td class="num">${fmt(t['계'])}</td><td class="num">${fmt(t['일반고등학교']||0)}</td><td class="num">${fmt(t['자율고등학교']||0)}</td><td class="num">${fmt(t['특수목적고등학교']||0)}</td><td class="num">${fmt(t['특성화고등학교']||0)}</td><td class="num">${fmt(a.g1)}</td><td class="num">${fmt(a.g3)}</td><td class="num">${fmt(a.grads)}</td><td class="num">${pct(a.univ4,a.grads)}</td></tr>`}).join('');
+ // 셀렉트
+ SIDO.forEach(s=>{for(const id of ['#sido','#jsido']){const o=document.createElement('option');o.value=s;o.textContent=s;$(id).appendChild(o)}});
+ const subs=[...new Set(rows.map(r=>r.subtype))].sort((a,b)=>a.localeCompare(b,'ko'));
+ subs.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;$('#sub').appendChild(o)});
+ const u4=r=>r.prev&&r.prev.grads?r.prev.univ4/r.prev.grads:-1;
+ const tr=r=>r.teachers?r.temp/r.teachers:9;
+ function render(){
+  const q=$('#q').value.trim().toLowerCase(),sido=$('#sido').value,type=$('#type').value,sub=$('#sub').value,found=$('#found').value,co=$('#coedu').value,sort=$('#sort').value;
+  let list=rows.filter(r=>(!q||(r.name+r.gu+r.addr+r.eng).toLowerCase().includes(q))&&(!sido||r.sido===sido)&&(!type||r.type===type)&&(!sub||r.subtype===sub)&&(!found||r.found===found)&&(!co||r.coedu===co));
+  const cmp={name:(a,b)=>a.name.localeCompare(b.name,'ko'),students:(a,b)=>b.students-a.students,g1:(a,b)=>b.g1-a.g1,univ4rate:(a,b)=>u4(b)-u4(a),adv_rate:(a,b)=>((b.prev||{}).adv_rate||0)-((a.prev||{}).adv_rate||0),per_class:(a,b)=>(a.per_class||99)-(b.per_class||99),temp_rate:(a,b)=>tr(a)-tr(b)}[sort];
+  list.sort(cmp); $('#count').textContent=list.length.toLocaleString()+'개교';
+  $('#tbl tbody').innerHTML=list.slice(0,300).map((r,i)=>{const p=r.prev||{};return `<tr><td><a href="#" data-i="${rows.indexOf(r)}" class="sch"><strong>${r.name}</strong></a>${r.status!=='기존(원)교'?` <span class="chip">${r.status}</span>`:''}</td><td>${r.sido} ${r.gu}</td><td>${r.subtype}${r.type==='자율고등학교'?'<br><span class="chip blue">자율고</span>':''}${r.type==='특수목적고등학교'?'<br><span class="chip purple">특목고</span>':''}</td><td>${r.found}</td><td class="num">${fmt(r.students)}</td><td class="num">${fmt(r.g1)}</td><td class="num">${r.per_class||'—'}</td><td class="num">${r.stu_per_t||'—'}</td><td class="num">${r.teachers?(100*r.temp/r.teachers).toFixed(0):'—'}</td><td class="num">${fmt(p.grads)}</td><td class="num">${fmt(p.univ4)}</td><td class="num">${fmt(p.college)}</td><td class="num">${fmt(p.employed)}</td><td class="num"><strong>${pct(p.univ4,p.grads)}</strong></td></tr>`}).join('');
+ }
+ ['q','sido','type','sub','found','coedu','sort'].forEach(id=>$('#'+id).addEventListener('input',render)); render();
+ document.addEventListener('click',e=>{const a=e.target.closest('a.sch'); if(!a)return; e.preventDefault(); const r=rows[+a.dataset.i]; const p=r.prev||{};
+  $('#detail').innerHTML=`<div class="univ-card"><h3>${r.name} <span class="chip blue">${r.subtype}</span><span class="chip">${r.found}</span><span class="chip">${r.coedu}</span>${r.special!=='해당없음'?`<span class="chip orange">${r.special}</span>`:''}</h3>
+  <div class="meta">${r.addr} · ${r.tel} · ${r.web?`<a href="${r.web}" target="_blank" rel="noopener">홈페이지</a>`:''} · 개교 ${r.opened} · ${r.office} · 지역규모 ${r.scale} · KEDI 코드 ${r.code}</div>
+  <dl><dt>학생·학급(2026)</dt><dd>학생 ${fmt(r.students)}명(남 ${fmt(r.boys)}·여 ${fmt(r.girls)}) · 1학년 ${fmt(r.g1)} / 2학년 ${fmt(r.g2)} / 3학년 ${fmt(r.g3)} · 학급 ${r.classes}개, 학급당 ${r.per_class}명 · 2026 입학자 ${fmt(r.entrants)}명</dd>
+  <dt>교원(2026)</dt><dd>교원 ${r.teachers}명(정규 ${r.regular}·기간제 ${r.temp}) · 교원 1인당 학생 ${r.stu_per_t}명 · 일반교실 ${r.rooms}개 · 교지 ${fmt(r.land)}㎡</dd>
+  <dt>졸업 후 상황(${p.year||'—'}년 2월 졸업)</dt><dd>${p.grads?`졸업 ${fmt(p.grads)}명 → 4년제 ${fmt(p.univ4)}(${pct(p.univ4,p.grads)}) · 전문대 ${fmt(p.college)}(${pct(p.college,p.grads)}) · 국외 ${fmt(p.abroad)} · 취업 ${fmt(p.employed)}(${pct(p.employed,p.grads)}) · 기타(재수 등) ${fmt(p.etc)}(${pct(p.etc,p.grads)}) · 전체 진학률 ${p.adv_rate}%`:'자료 없음'}</dd>
+  <dt>해석</dt><dd>${p.grads&&p.grads>0?(p.etc/p.grads>0.3?'기타 비율이 30%를 넘습니다 — 재수·N수 선택이 많은 학교(상위권 일반고·자사고·특목고 패턴). ':'')+(r.temp/(r.teachers||1)>0.3?'기간제 교원 비율이 30% 이상입니다 — 과목 개설 폭은 넓을 수 있으나 세특 연속성 확인 필요. ':'')+(r.per_class&&r.per_class<20?'학급당 20명 미만 — 소인수 과목이 많아 5등급 산출 시 1등급 인원이 적을 수 있습니다. ':'')+(r.students<300?'전교생 300명 미만 소규모 학교 — 2029 기본사항의 "과목수강 노력 고려" 대상이 될 수 있습니다.':''):'—'}</dd></dl></div>`;
+  $('#detail').scrollIntoView({behavior:'smooth',block:'start'});
+ });
+ // 지역인재 권역
+ const ZONE={'충청권':['대전','세종','충남','충북'],'호남권':['광주','전남','전북'],'대구·경북권':['대구','경북'],'부산·울산·경남권':['부산','울산','경남'],'강원권':['강원'],'제주권':['제주']};
+ const MED={'충청권':'충남대·충북대·건양대·을지대(대전)·순천향대·단국대(천안)·건국대(글로컬) [7개교]','호남권':'전남대·전북대·조선대·원광대 [4개교]','대구·경북권':'경북대·계명대·영남대·대구가톨릭대·동국대(WISE) [5개교]','부산·울산·경남권':'부산대·동아대·인제대·고신대·경상국립대·울산대 [6개교]','강원권':'강원대·연세대(미래)·한림대·가톨릭관동대 [4개교]','제주권':'제주대 [1개교]'};
+ $('#jsido').addEventListener('change',()=>{const s=$('#jsido').value; if(!s){$('#jout').innerHTML='';return}
+  const z=Object.keys(ZONE).find(k=>ZONE[k].includes(s));
+  $('#jout').innerHTML=z?`<div class="callout ok"><h4>${s} → <strong>${z}</strong></h4><p>지역인재 지원 가능 의대: ${MED[z]}</p><p class="sub">권역 내 시도: ${ZONE[z].join('·')}. 약대·치대·한의대·간호(일부)도 같은 권역 기준. 대학별 거주 요건은 모집요강 확인.</p></div>`:`<div class="callout warn"><h4>${s} → 수도권</h4><p>수도권(서울·경기·인천) 고교는 지역인재 대상이 아닙니다. 서울대 지역균형(일반고 재학생) 등 학교장추천 전형이 대안입니다.</p></div>`;
+ });
+})();
+</script>
+</body>
+</html>

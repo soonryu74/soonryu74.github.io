@@ -1,0 +1,43 @@
+name: 교육통계(KESS) 학교·대학 데이터 갱신
+
+# 한국교육개발원 교육통계서비스 학교별/학과별 데이터셋(매년 4월·10월 기준 공개)을
+# 매월 5일 확인해 ipsi/data/{schools-hs,schools-stats,univ-stats,univ-dept}.json 을 갱신합니다.
+on:
+  schedule:
+    - cron: '0 20 4 * *'   # UTC 4일 20:00 = KST 5일 05:00
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-push-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 의존성
+        run: pip install --quiet openpyxl
+      - name: KESS 데이터셋 수집·변환
+        run: python3 scripts/build_kess.py
+      - name: (선택) 나이스 학교기본정보 — NEIS_API_KEY 있을 때만
+        env:
+          NEIS_API_KEY: ${{ secrets.NEIS_API_KEY }}
+        run: |
+          if [ -z "$NEIS_API_KEY" ]; then echo "NEIS_API_KEY 없음 — 건너뜀(open.neis.go.kr 에서 무료 발급 후 Secret 등록)"; exit 0; fi
+          python3 scripts/build_schools.py
+      - name: 변경 시 커밋
+        run: |
+          git add ipsi/data/*.json
+          if git diff --cached --quiet; then echo "변경 없음"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "교육통계(KESS) 학교·대학 데이터 자동 갱신"
+          git push
