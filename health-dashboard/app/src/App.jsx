@@ -8,6 +8,7 @@ import RankPanel from "./components/RankPanel";
 import YearTable from "./components/YearTable";
 import GapBoxplot from "./components/GapBoxplot";
 import Profile from "./components/Profile";
+import Compare, { NAT, MAX_CMP } from "./components/Compare";
 import Tooltip from "./components/Tooltip";
 
 const DEFAULT_IND = INDICATORS.find((i) => i.id === "DT_H_SM") || INDICATORS[0];
@@ -24,7 +25,8 @@ function readHash() {
     sgg: RBY.has(sgg) ? sgg : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
-    view: h.get("view") === "profile" ? "profile" : "analysis",
+    view: ["profile", "compare"].includes(h.get("view")) ? h.get("view") : "analysis",
+    cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
   };
 }
 
@@ -36,7 +38,8 @@ export default function App() {
   const [sgg, setSgg] = useState(init.sgg);
   const [yearSel, setYearSel] = useState(init.year);
   const [scope, setScope] = useState(init.scope);   // 순위·격차·지도 비교 범위: nation | sido
-  const [view, setView] = useState(init.view);      // analysis | profile
+  const [view, setView] = useState(init.view);      // analysis | profile | compare
+  const [cmp, setCmp] = useState(init.cmp);         // 비교 대상 코드 목록 (NAT = 전국 중앙값)
   const [playing, setPlaying] = useState(false);
   const [tip, setTip] = useState(null);
   const [theme, setTheme] = useState(() => document.documentElement.getAttribute("data-theme") || null);
@@ -46,9 +49,10 @@ export default function App() {
   const year = yearSel != null && years.includes(yearSel) ? yearSel : years[years.length - 1];
 
   useEffect(() => {
-    const h = new URLSearchParams({ ind: ind.id, item, sido, ...(sgg ? { sgg } : {}), year: String(year), scope, view });
+    const h = new URLSearchParams({ ind: ind.id, item, sido, ...(sgg ? { sgg } : {}), year: String(year), scope, view,
+      ...(cmp.length ? { cmp: cmp.join(",") } : {}) });
     window.history.replaceState(null, "", "#" + h.toString());
-  }, [ind, item, sido, sgg, year, scope, view]);
+  }, [ind, item, sido, sgg, year, scope, view, cmp]);
 
   // 연도 애니메이션
   useEffect(() => {
@@ -80,6 +84,13 @@ export default function App() {
     setTheme(next);
   };
   const pickFromProfile = (i, y) => { setInd(i); setYearSel(y); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const inCmp = cmp.includes(sel.c);
+  const addToCompare = () => {
+    if (inCmp) { setCmp(cmp.filter((c) => c !== sel.c)); return; }
+    if (cmp.length >= MAX_CMP) return;
+    // 처음 담을 때는 전국 중앙값을 같이 넣어 비교 기준을 제공
+    setCmp(cmp.length ? [...cmp, sel.c] : [NAT, sel.c]);
+  };
 
   const scopeLabel = sel.l === "sido" ? "17개 시도" : scope === "sido" ? `${RBY.get(sel.p).n} 내 시군구` : "전국 시군구";
 
@@ -95,15 +106,27 @@ export default function App() {
             <div className="seg views">
               <button className={`seg-btn ${view === "analysis" ? "on" : ""}`} onClick={() => setView("analysis")}>지표 분석</button>
               <button className={`seg-btn ${view === "profile" ? "on" : ""}`} onClick={() => setView("profile")}>지역 프로파일</button>
+              <button className={`seg-btn ${view === "compare" ? "on" : ""}`} onClick={() => setView("compare")}>
+                지역 비교{cmp.length ? <small className="cnt">{cmp.length}</small> : null}
+              </button>
             </div>
             <button className="themebtn" onClick={toggleTheme}>{theme === "dark" ? "☀ 라이트" : "☾ 다크"}</button>
           </div>
         </header>
 
         <div className="controls">
-          {view === "analysis" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
-          <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />
-          {sel.l === "sgg" && (
+          {view !== "profile" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
+          {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
+          {view !== "compare" && (
+            <div className="ctrl">
+              <label>비교 담기</label>
+              <button className={`themebtn ${inCmp ? "on" : ""}`} onClick={addToCompare} disabled={!inCmp && cmp.length >= MAX_CMP}
+                title="지역 비교 화면에 이 지역을 추가/제거">
+                {inCmp ? "✓ 담김 (빼기)" : "+ 비교에 추가"}
+              </button>
+            </div>
+          )}
+          {view !== "compare" && sel.l === "sgg" && (
             <div className="ctrl">
               <label>비교 범위</label>
               <div className="seg">
@@ -113,10 +136,13 @@ export default function App() {
             </div>
           )}
           <ItemToggle item={item} onChange={setItem} />
-          {view === "analysis" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
+          {view !== "profile" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
         </div>
 
-        {view === "analysis" ? (
+        {view === "compare" ? (
+          <Compare ind={ind} item={item} year={year} codes={cmp} onCodes={setCmp} onYear={(y) => setYearSel(y)}
+            onPick={(i, y) => { setInd(i); setYearSel(y); window.scrollTo({ top: 0, behavior: "smooth" }); }} setTip={setTip} />
+        ) : view === "analysis" ? (
           <>
             <Kpis ind={ind} item={item} year={year} sel={sel} />
             <div className="grid2">
