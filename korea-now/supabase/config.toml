@@ -9,3 +9,6 @@ verify_jwt = false
 
 [functions.tour-search]
 verify_jwt = false
+
+[functions.tour-congestion]
+verify_jwt = false
