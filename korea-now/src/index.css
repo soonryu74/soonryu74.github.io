@@ -123,3 +123,11 @@ input { font: inherit; }
 .bottom-nav a.active { color: var(--primary); font-weight: 700; }
 
 .disclaimer { font-size: 11px; color: var(--muted); padding: 8px 2px 0; line-height: 1.5; }
+
+/* 기사에게 보여주기 — 한글 이름 전체 화면 */
+.show-ko { position: fixed; inset: 0; z-index: 100; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
+.show-ko-label { font-size: 14px; color: var(--muted); }
+.show-ko-name { font-size: 52px; font-weight: 900; line-height: 1.15; margin: 12px 0 6px; word-break: keep-all; letter-spacing: -1px; }
+.show-ko-sub { font-size: 18px; color: var(--muted); }
+.show-ko-phrase { font-size: 28px; font-weight: 700; margin-top: 28px; color: var(--primary-dark); }
+.show-ko-hint { position: absolute; bottom: 28px; font-size: 12px; color: var(--muted); }

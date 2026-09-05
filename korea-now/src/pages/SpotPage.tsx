@@ -16,6 +16,7 @@ export default function SpotPage() {
   const { me, congestion } = useApp()
   const [stamped, setStamped] = useState(() => hasStamp(id))
   const [copied, setCopied] = useState(false)
+  const [showKo, setShowKo] = useState(false)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -57,13 +58,23 @@ export default function SpotPage() {
 
   return (
     <div className="page">
+      {showKo && (
+        <div className="show-ko" onClick={() => setShowKo(false)} role="dialog" aria-label="Show to driver">
+          <div className="show-ko-label">Please take me here</div>
+          <div className="show-ko-name">{spot.nameKo}</div>
+          <div className="show-ko-sub">{spot.name}</div>
+          <div className="show-ko-phrase">여기로 가 주세요</div>
+          <div className="show-ko-hint">Tap anywhere to close</div>
+        </div>
+      )}
       <div className="detail-head">
         <button className="back" onClick={() => nav(-1)} aria-label="Back">←</button>
         <div>
           <h2>{CATEGORY_ICON[spot.category]} {spot.name}</h2>
           <div className="ko-row">
             <span>{spot.nameKo}</span>
-            <button className="copy-btn" onClick={copyKo}>{copied ? 'Copied ✓' : 'Copy for taxi'}</button>
+            <button className="copy-btn" onClick={copyKo}>{copied ? 'Copied ✓' : 'Copy'}</button>
+            <button className="copy-btn" onClick={() => setShowKo(true)}>🚕 Show to driver</button>
             <span>· {CATEGORY_LABEL[spot.category]} · {regionLabel}</span>
           </div>
         </div>
