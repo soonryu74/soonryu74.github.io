@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>성분별 근거 | 근거영양</title>
+<meta name="description" content="종합비타민·비타민D·오메가3·칼슘·마그네슘·유산균·콜라겐 등 27개 성분의 근거 등급, 누가 먹어야 하고 누가 피해야 하는지, 2025 한국인 영양소 섭취기준 용량, 제품 고르는 기준.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head">
+    <h1>성분별 근거 카드</h1>
+    <p>등급은 "대부분의 건강 성인" 기준. 같은 성분도 결핍자·환자에게는 판정이 달라지므로 <a href="chucheon.html">내게 맞는 영양제</a>에서 조건별로 확인하세요. 용량 기준은 2025 한국인 영양소 섭취기준(2025년 12월 개정).</p>
+  </div>
+  <div class="filter-bar">
+    <input type="search" id="q" placeholder="성분 검색">
+    <select id="f-v"><option value="">판정 전체</option><option value="rec">권장</option><option value="cond">조건부 권장</option><option value="opt">선택</option><option value="no">비권장</option><option value="avoid">피하세요</option></select>
+  </div>
+  <div class="ing-grid" id="grid"></div>
+  <div class="disclaimer">성분 카드는 공개 연구 요약이며 진단·처방이 아닙니다. 질환·임신·약물 복용 중에는 의사·약사와 상의하세요. 섭취기준 출처: 보건복지부·한국영양학회 「2025 한국인 영양소 섭취기준」.</div>
+</main>
+<div id="site-footer"></div>
+<script src="assets/app.js"></script>
+<script src="data/ingredients.js"></script>
+<script src="data/studies.js"></script>
+<script>
+(function(){
+  var I=window.EBN_INGREDIENTS, SI={}; (window.EBN_STUDIES||[]).forEach(function(s){SI[s.id]=s;});
+  var esc=EBN.esc, order={rec:0,cond:1,opt:2,no:3,avoid:4};
+  function render(){
+    var kw=(document.getElementById('q').value||'').toLowerCase(), fv=document.getElementById('f-v').value;
+    var keys=Object.keys(I).filter(function(k){ var g=I[k]; if(fv&&g.verdict!==fv) return false; if(kw&&(g.name+' '+g.en+' '+g.one).toLowerCase().indexOf(kw)<0) return false; return true; });
+    keys.sort(function(a,b){ return order[I[a].verdict]-order[I[b].verdict] || I[a].name.localeCompare(I[b].name,'ko'); });
+    document.getElementById('grid').innerHTML = keys.map(function(k){ var g=I[k];
+      var st=(g.studies||[]).map(function(id){ var s=SI[id]; return s?'<li><a href="yeongu.html#'+esc(id)+'"><span class="grade '+esc(s.grade)+'" style="font-size:.7rem;padding:1px 7px">'+esc(s.grade)+'</span> '+esc(s.name)+' <span class="small">('+esc(s.inst)+', '+esc(s.year)+')</span></a></li>':''; }).join('');
+      return '<article class="ing" id="'+esc(k)+'"><div class="ih"><h3>'+esc(g.name)+' <span class="small">'+esc(g.en)+'</span></h3><span><span class="verdict '+esc(g.verdict)+'">'+esc(EBN.verdictLabel[g.verdict])+'</span> <span class="grade '+esc(g.grade)+'" title="'+esc(EBN.gradeLabel[g.grade])+'">'+esc(g.grade)+'</span></span></div>'+
+        '<p class="one">'+esc(g.one)+'</p><dl><dt>이득 있는 사람</dt><dd>'+g.for.map(esc).join(' · ')+'</dd><dt>피해야 할 사람</dt><dd>'+g.against.map(esc).join(' · ')+'</dd><dt>용량</dt><dd>'+esc(g.dose)+'</dd><dt>한국 기준</dt><dd>'+esc(g.kr)+'</dd></dl>'+
+        '<details><summary>제품 고를 때 ('+g.pick.length+')</summary><ul>'+g.pick.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></details>'+
+        '<details><summary>근거 연구 ('+(g.studies||[]).length+')</summary><ul>'+st+'</ul></details>'+
+        '<a class="btn btn-ghost btn-sm" href="yeongu.html?ing='+esc(k)+'" style="margin-top:6px">연구 DB에서 보기</a></article>'; }).join('');
+  }
+  ['q','f-v'].forEach(function(id){ document.getElementById(id).addEventListener('input',render); document.getElementById(id).addEventListener('change',render); });
+  render(); if(location.hash){ var el=document.querySelector(location.hash); if(el){ el.scrollIntoView(); el.style.outline='3px solid var(--teal)'; } }
+})();
+</script>
+</body>
+</html>
