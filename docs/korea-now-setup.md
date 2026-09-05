@@ -88,6 +88,11 @@ VITE_SUPABASE_ANON_KEY=sb_publishable_...
 
 이후 `main` 브랜치에 push 하면 `jekyll.yml` 워크플로가 앱을 빌드해 `/korea-now/`에 올립니다.
 
+## 3-6. 홈화면에 앱 설치 (PWA)
+- 배포 주소를 폰 브라우저로 열면 "홈 화면에 추가"가 뜹니다(안드로이드 Chrome은 자동 배너, 아이폰 Safari는 공유 → 홈 화면에 추가).
+- 한 번 열어 두면 지하철 등 오프라인에서도 목록·요금·휴관일이 뜨고, 본 적 있는 지도 타일은 30일간 남습니다.
+- 코드를 바꿔 다시 배포하면 앱이 다음 실행 때 자동 갱신됩니다(`registerType: autoUpdate`).
+
 ## 4. 동작 확인
 - 앱 상단 배지가 **● LIVE**면 실시간 모드, **◐ DEMO**면 키 없이 동작 중
 - 서울 스팟 상세 화면 하단에 "Live from Seoul city data, HH:MM KST"가 보이면 성공

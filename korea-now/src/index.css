@@ -131,3 +131,14 @@ input { font: inherit; }
 .show-ko-sub { font-size: 18px; color: var(--muted); }
 .show-ko-phrase { font-size: 28px; font-weight: 700; margin-top: 28px; color: var(--primary-dark); }
 .show-ko-hint { position: absolute; bottom: 28px; font-size: 12px; color: var(--muted); }
+
+/* 주변 검색 카드 */
+.nearby-card { display: grid; grid-template-columns: 84px 1fr; gap: 10px; padding: 10px; }
+.nearby-card img, .nearby-noimg { width: 84px; height: 84px; border-radius: 10px; object-fit: cover; background: var(--bg); }
+.nearby-noimg { display: flex; align-items: center; justify-content: center; font-size: 30px; }
+.nearby-body .name { font-weight: 700; font-size: 14.5px; }
+.nearby-body .meta { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.nearby-body .meta b { color: var(--text); }
+.nearby-links { display: flex; gap: 10px; margin-top: 6px; font-size: 12.5px; }
+.nearby-links a { color: var(--primary); font-weight: 600; }
+.bottom-nav .inner { grid-template-columns: repeat(4, 1fr); }

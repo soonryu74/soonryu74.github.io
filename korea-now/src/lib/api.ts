@@ -99,3 +99,34 @@ export async function fetchFx(): Promise<FxRate> {
     return DEMO_FX
   }
 }
+
+// ── 주변 검색 (한국관광공사 TourAPI, Edge Function 경유) ──
+export interface NearbyItem {
+  contentId: string
+  contentTypeId: string   // 76 관광지 · 78 문화시설 · 79 쇼핑 · 82 음식점 · 85 축제
+  title: string
+  addr: string
+  lat: number
+  lng: number
+  dist: number            // m
+  image: string | null
+  tel: string | null
+}
+
+export const NEARBY_TYPES: { id: string; label: string; icon: string }[] = [
+  { id: '', label: 'All', icon: '✨' },
+  { id: '76', label: 'Sights', icon: '📍' },
+  { id: '82', label: 'Food', icon: '🍜' },
+  { id: '78', label: 'Culture', icon: '🏛️' },
+  { id: '79', label: 'Shopping', icon: '🛍️' },
+  { id: '85', label: 'Festivals', icon: '🎉' },
+]
+
+export async function fetchNearby(lat: number, lng: number, contentTypeId = '', radius = 2000): Promise<NearbyItem[]> {
+  if (!supabase) throw new Error('offline')
+  const { data, error } = await supabase.functions.invoke<{ items: NearbyItem[] }>('tour-search', {
+    body: { lat, lng, radius, contentTypeId },
+  })
+  if (error) throw error
+  return data?.items ?? []
+}
