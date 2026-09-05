@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>리더십 렌즈 — 카드 라이브러리</title>
+<meta name="description" content="근거 등급이 붙은 리더십 지식 카드 라이브러리. 상황·근거·단계·형태로 탐색.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lens.css">
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Leadership Lens · v0.1</p>
+  <h1>리더십 렌즈 <span style="font-weight:400;">카드 라이브러리</span></h1>
+  <p class="subtitle">모든 카드에 근거 등급이 붙어 있습니다. 우리는 모든 리더십 정보를 다루지 않습니다 — 걸러낸 것만 싣습니다. 등급이 매겨지는 기준은 <a href="criteria.html">판정 기준서</a>에 공개되어 있습니다.</p>
+  <nav class="lens-nav">
+    <a class="here" href="index.html">카드 라이브러리</a>
+    <a href="guide-first-90-days.html">가이드 · 첫 90일</a>
+    <a href="criteria.html">판정 기준·운영 원칙</a>
+    <a href="../leadership-plan.html">기획서</a>
+  </nav>
+</header>
+
+<div class="filters" id="filters">
+  <div class="filter-group">
+    <span class="flabel">상황 — 지금 겪는 문제로 고르세요</span>
+    <div class="chips" id="chips-situation" role="group" aria-label="상황 필터"></div>
+  </div>
+  <div class="filter-group">
+    <span class="flabel">근거 등급</span>
+    <div class="chips" id="chips-grade" role="group" aria-label="근거 등급 필터"></div>
+  </div>
+  <div class="filter-group">
+    <span class="flabel">성장단계</span>
+    <div class="chips" id="chips-stage" role="group" aria-label="성장단계 필터"></div>
+  </div>
+  <div class="filter-group">
+    <span class="flabel">형태</span>
+    <div class="chips" id="chips-format" role="group" aria-label="형태 필터"></div>
+  </div>
+  <div class="filter-group">
+    <span class="flabel">검색</span>
+    <div class="search-row">
+      <input type="search" id="search" placeholder="제목·주장·출처에서 검색" aria-label="카드 검색">
+    </div>
+  </div>
+</div>
+
+<p class="count-line"><span id="count"></span> <button type="button" id="reset" hidden>필터 초기화</button></p>
+
+<div id="cards"></div>
+
+<div class="footnote">
+  <p>근거 등급은 저자·인물이 아니라 <strong>주장</strong>에 대한 근거 유형의 사실 기술입니다. 요약은 전량 자체 작성이며 원문을 대체하지 않습니다 — 판단은 원문에서 하세요. 오류 정정 요청과 판정 이의는 <a href="criteria.html#corrections">정정 이력 페이지</a>의 절차를 따릅니다.</p>
+</div>
+
+</div>
+
+<script src="../data/leadership-cards.js"></script>
+<script>
+(function () {
+  var state = { situation: null, grade: null, stage: null, format: null, q: "" };
+
+  var GRADE_KEYS = Object.keys(LENS_TAXONOMY.grades);
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function chipRow(containerId, values, key, labelFn) {
+    var box = document.getElementById(containerId);
+    values.forEach(function (v) {
+      var c = el("button", "chip", labelFn ? labelFn(v) : v);
+      c.type = "button";
+      c.setAttribute("aria-pressed", "false");
+      c.addEventListener("click", function () {
+        state[key] = (state[key] === v) ? null : v;
+        render();
+      });
+      c.dataset.value = v;
+      box.appendChild(c);
+    });
+  }
+
+  function syncChips(containerId, key) {
+    var chips = document.getElementById(containerId).children;
+    for (var i = 0; i < chips.length; i++) {
+      var on = chips[i].dataset.value === state[key];
+      chips[i].classList.toggle("on", on);
+      chips[i].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+  }
+
+  function gradeBadge(g) {
+    var b = el("span", "grade" + (g === "E5" ? " g5" : g === "X" ? " gx" : ""), g + " " + LENS_TAXONOMY.grades[g]);
+    return b;
+  }
+
+  function dtdd(dl, label, value, isHtmlLink) {
+    if (!value) return;
+    dl.appendChild(el("dt", null, label));
+    var dd = el("dd");
+    if (isHtmlLink) {
+      var a = el("a", null, value.text);
+      a.href = value.href;
+      a.target = "_blank";
+      a.rel = "noopener";
+      dd.appendChild(a);
+    } else {
+      dd.textContent = value;
+    }
+    dl.appendChild(dd);
+  }
+
+  function cardNode(c) {
+    var art = el("article", "card" + (c.grade === "X" ? " gradeX" : ""));
+    art.id = "card-" + c.id;
+
+    var row = el("div", "tagrow");
+    c.situations.forEach(function (s) { row.appendChild(el("span", "tag hl", "상황 · " + s)); });
+    row.appendChild(el("span", "tag", c.stage));
+    row.appendChild(el("span", "tag", c.format + " · " + c.time));
+    row.appendChild(gradeBadge(c.grade));
+    art.appendChild(row);
+
+    art.appendChild(el("h4", null, c.title));
+    art.appendChild(el("p", "claim", c.claim));
+
+    var det = el("details");
+    det.appendChild(el("summary", null, "통하는 조건 · 한국 맥락 · 출처 · 판정 사유"));
+    var dl = el("dl");
+    dtdd(dl, "통하는 조건", c.worksWhen);
+    dtdd(dl, "통하지 않는 조건 / 한계", c.failsWhen);
+    dtdd(dl, "한국 조직 맥락 주석", c.krContext);
+    if (c.counter || (c.counterCards && c.counterCards.length)) {
+      dl.appendChild(el("dt", null, "함께 볼 상반된 관점"));
+      var dd = el("dd");
+      if (c.counter) dd.appendChild(document.createTextNode(c.counter + " "));
+      (c.counterCards || []).forEach(function (cid) {
+        var target = LENS_CARDS.find(function (x) { return x.id === cid; });
+        if (!target) return;
+        var a = el("a", null, "→ " + target.title);
+        a.href = "#card-" + cid;
+        var span = el("span");
+        span.appendChild(a);
+        dd.appendChild(span);
+      });
+      dl.appendChild(dd);
+    }
+    dtdd(dl, "이번 주 실행 한 가지", c.action);
+    dl.appendChild(el("dt", null, "출처"));
+    var srcDd = el("dd", "src");
+    srcDd.appendChild(document.createTextNode(c.source + " — "));
+    var link = el("a", null, "원문 보기");
+    link.href = c.sourceUrl; link.target = "_blank"; link.rel = "noopener";
+    srcDd.appendChild(link);
+    dl.appendChild(srcDd);
+    dtdd(dl, "등급 판정 사유", c.rationale);
+    dtdd(dl, "검수 · 갱신", (c.reviewed === "human" ? "인간 검수 완료" : "AI 초안(미검수)") + " · " + c.updated);
+    det.appendChild(dl);
+    art.appendChild(det);
+    return art;
+  }
+
+  function matches(c) {
+    if (state.situation && c.situations.indexOf(state.situation) === -1) return false;
+    if (state.grade && c.grade !== state.grade) return false;
+    if (state.stage && c.stage !== state.stage) return false;
+    if (state.format && c.format !== state.format) return false;
+    if (state.q) {
+      var hay = (c.title + " " + c.claim + " " + c.source + " " + c.situations.join(" ")).toLowerCase();
+      if (hay.indexOf(state.q.toLowerCase()) === -1) return false;
+    }
+    return true;
+  }
+
+  var GRADE_ORDER = { "E5": 0, "E4": 1, "E3": 2, "E2": 3, "E1": 4, "X": 5 };
+
+  function render() {
+    syncChips("chips-situation", "situation");
+    syncChips("chips-grade", "grade");
+    syncChips("chips-stage", "stage");
+    syncChips("chips-format", "format");
+
+    var box = document.getElementById("cards");
+    box.textContent = "";
+    var shown = LENS_CARDS.filter(matches).slice().sort(function (a, b) {
+      return GRADE_ORDER[a.grade] - GRADE_ORDER[b.grade];
+    });
+    shown.forEach(function (c) { box.appendChild(cardNode(c)); });
+
+    var anyFilter = state.situation || state.grade || state.stage || state.format || state.q;
+    document.getElementById("count").textContent =
+      "카드 " + shown.length + " / " + LENS_CARDS.length + "장" + (anyFilter ? " (필터 적용됨)" : "");
+    document.getElementById("reset").hidden = !anyFilter;
+
+    if (shown.length === 0) {
+      var empty = el("p", null, "조건에 맞는 카드가 없습니다. 필터를 풀거나, 아직 다루지 않은 상황이라면 다음 발행에서 다뤄질 수 있습니다.");
+      empty.style.color = "var(--muted)";
+      box.appendChild(empty);
+    }
+  }
+
+  chipRow("chips-situation", LENS_TAXONOMY.situations, "situation");
+  chipRow("chips-grade", GRADE_KEYS, "grade", function (g) { return g; });
+  chipRow("chips-stage", LENS_TAXONOMY.stages, "stage");
+  chipRow("chips-format", LENS_TAXONOMY.formats, "format");
+
+  document.getElementById("search").addEventListener("input", function (e) {
+    state.q = e.target.value.trim();
+    render();
+  });
+  document.getElementById("reset").addEventListener("click", function () {
+    state = { situation: null, grade: null, stage: null, format: null, q: "" };
+    document.getElementById("search").value = "";
+    render();
+  });
+
+  // #card-id 로 진입하면 해당 카드 펼침
+  if (location.hash.indexOf("#card-") === 0) {
+    render();
+    var t = document.getElementById(location.hash.slice(1));
+    if (t) { t.querySelector("details").open = true; t.scrollIntoView(); }
+  } else {
+    render();
+  }
+  window.addEventListener("hashchange", function () {
+    var t = document.getElementById(location.hash.slice(1));
+    if (t) { t.querySelector("details").open = true; }
+  });
+})();
+</script>
+</body>
+</html>
