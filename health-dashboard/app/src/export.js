@@ -6,7 +6,17 @@ const SVG_PROPS = ["fill", "stroke", "stroke-width", "stroke-dasharray", "stroke
 
 const safe = (s) => String(s).replace(/[\\/:*?"<>|\s]+/g, "_").slice(0, 80);
 
-function download(blob, filename) {
+async function download(blob, filename) {
+  // claude.ai 아티팩트 뷰어 안에서는 일반 다운로드가 막혀 있어 뷰어의 저장 기능을 사용
+  if (window.claude?.use) {
+    try {
+      const dl = await window.claude.use("downloads");
+      if (dl) { await dl.save({ filename, data: blob }); return; }
+    } catch (err) {
+      if (err?.code !== "declined") console.warn("뷰어 저장 실패:", err);
+      return;
+    }
+  }
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = filename;
