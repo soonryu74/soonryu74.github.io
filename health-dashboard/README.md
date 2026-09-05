@@ -1,54 +1,32 @@
-# 지역 건강프로파일 대시보드 — 시작 안내
+# 지역 건강프로파일 대시보드
 
-이 폴더는 Cowork(모바일 세션)에서 작업한 내용을 클로드 코드로 인수인계하는 패키지입니다.
-`CLAUDE.md`에 전체 맥락이 들어 있어서, 클로드 코드를 켜면 자동으로 읽고 이어서 작업합니다.
+질병관리청 지역사회건강조사 지표를 KOSIS openAPI로 수집해 시도·시군구 단위로 분석하는
+반응형 웹 대시보드입니다 (CIAT 구조 참조, React + 정적 데이터). 전체 맥락은 `CLAUDE.md`.
 
-## 1. 클로드 코드 설치 (처음 한 번만)
+## 폴더
 
-**윈도우 (PowerShell 실행 후):**
-```powershell
-irm https://claude.ai/install.ps1 | iex
-```
+- `app/` — React(Vite) 소스. 빌드하면 단일 `index.html` 하나로 합쳐집니다.
+- `index.html` — 빌드 결과물(그대로 열거나 어디든 배포).
+- `data/` — 수집·검증 산출물. `dataset.json`(앱 내장), `validation_*.md/csv`(검증 리포트), `geo/`(지도 경계).
+  `data/raw/`는 KOSIS 원본(용량이 커서 커밋 제외).
+- `scripts/` — 파이프라인 (아래 순서).
+- `prototype/` — 디자인 원본(샘플 데이터).
+- `docs/` — 랭킹 기획안 등.
 
-**맥 (터미널 실행 후):**
-```bash
-curl -fsSL https://claude.ai/install.sh | bash
-```
-
-설치가 안 되면 Node.js 방식(윈도우/맥 동일):
-```
-npm install -g @anthropic-ai/claude-code
-```
-
-## 2. 시작하기
-
-압축을 푼 이 폴더로 이동한 뒤 클로드 코드를 실행합니다.
-
-**윈도우 (PowerShell):**
-```powershell
-cd $HOME\Downloads\health-dashboard
-claude
-```
-
-**맥 (터미널):**
-```bash
-cd ~/Downloads/health-dashboard
-claude
-```
-
-처음 실행하면 로그인 안내가 나옵니다 (Claude 계정 그대로 사용).
-
-## 3. 첫 지시 (복사해서 붙여넣기)
+## 데이터 갱신 (연 1회)
 
 ```
-CLAUDE.md 읽고 현재 상태 요약해줘. 그 다음 김동현 교수 엑셀 DB부터 검증하자.
-파일 위치는 다운로드 폴더의 "지역사회 건강결과 및 건강 결정요인 DB 1.7v.xlsx"야.
+# 0) 준비: .env 에 KOSIS_API_KEY=... (커밋 금지), pip install requests, cd app && npm install
+python scripts/kosis_inventory.py     # 통계표 인벤토리 + 표본 검증
+python scripts/kosis_validate_all.py  # 전 표 커버리지 검증 → validation_full_report.md
+python scripts/kosis_fetch_all.py     # 시군구 표 원본 수집 → data/raw/ (재개 가능)
+python scripts/build_dataset.py       # → data/dataset.json
+python scripts/build_dashboard.py     # → index.html
 ```
 
-## 폴더 구성
+KOSIS는 연속 호출을 몇 분간 차단하므로 스크립트에 호출 간격·재시도가 내장되어 있습니다.
+중간에 끊겨도 다시 실행하면 이어서 진행합니다.
 
-- `CLAUDE.md` — 프로젝트 전체 맥락 (클로드 코드가 자동으로 읽음)
-- `prototype/` — 디자인 확정된 대시보드 프로토타입 (샘플 데이터)
-- `docs/` — 랭킹 기획안 등 문서
-- `scripts/kosis_collect.py` — KOSIS 지표 인벤토리 수집 시작 스크립트
-- `.env` — KOSIS API 키 (**절대 GitHub에 올리지 말 것**, .gitignore에 이미 등록됨)
+## 클로드 코드로 이어서 작업하기
+
+폴더에서 `claude` 실행 후 "CLAUDE.md 읽고 현재 상태 요약해줘"로 시작하면 됩니다.
