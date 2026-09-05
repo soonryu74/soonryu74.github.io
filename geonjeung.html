@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국민건강증진 정책 한눈에 — 법령·HP2030·추진체계·예산</title>
+<meta name="description" content="국민건강증진법·보건의료기본법 등 법령 체계, 국민건강증진종합계획(HP2010→HP2030→제6차) 연혁, 보건복지부 건강정책국·한국건강증진개발원·국립암센터·국립정신건강센터·지자체 PHIS 추진체계, 보건복지부 예산 장기 추이와 비전 달성을 위한 과제를 한 페이지로 정리했습니다.">
+<meta property="og:title" content="국민건강증진 정책 한눈에">
+<meta property="og:description" content="법령·HP2030·추진체계·예산·비전 달성 과제를 한 페이지로">
+<meta property="og:type" content="website">
+<style>
+  :root{ --navy:#12365f; --line:#e3e9f0; --muted:#5f6e80; --bg:#f5f7fa; --accent:#1f6f5c; --chip:#eef3f8; --warn:#a03030; --ok:#1c4f9c;
+         --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#4a3aa7; --text:#22303e; }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; scroll-padding-top:56px; }
+  body{ margin:0; font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  a{ color:inherit; }
+  .top{ background:var(--accent); color:#fff; padding:28px 18px 22px; }
+  .top-inner{ max-width:1080px; margin:0 auto; }
+  .top h1{ margin:0 0 6px; font-size:1.55rem; line-height:1.3; }
+  .top p{ margin:0; font-size:.92rem; opacity:.92; }
+  .top .meta{ margin-top:10px; font-size:.78rem; opacity:.85; }
+  .subnav{ position:sticky; top:0; z-index:10; background:#fff; border-bottom:1px solid var(--line); }
+  .subnav-inner{ max-width:1080px; margin:0 auto; padding:8px 18px; display:flex; gap:6px; flex-wrap:wrap; }
+  .subnav a{ text-decoration:none; font-size:.8rem; font-weight:700; color:var(--navy); background:var(--chip); border-radius:16px; padding:5px 12px; white-space:nowrap; }
+  .subnav a:hover{ background:#dbe6f2; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:22px 18px 70px; }
+  h2{ font-size:1.25rem; color:var(--navy); margin:38px 0 10px; padding-top:6px; border-top:3px solid var(--accent); display:inline-block; }
+  h3{ font-size:1.02rem; color:var(--navy); margin:22px 0 8px; }
+  .lead{ font-size:.92rem; color:#3d4f63; margin:0 0 14px; }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+  .grid{ display:grid; gap:10px; }
+  .g2{ grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }
+  .g3{ grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
+  .g4{ grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); }
+  /* KPI tiles */
+  .kpi{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; position:relative; }
+  .kpi .k{ font-size:.76rem; font-weight:800; color:var(--muted); }
+  .kpi .v{ font-size:1.6rem; font-weight:900; color:var(--navy); line-height:1.15; margin:4px 0 2px; }
+  .kpi .v small{ font-size:.85rem; font-weight:700; color:var(--muted); }
+  .kpi .t{ font-size:.76rem; color:#3d4f63; }
+  .kpi.bad{ border-left:4px solid var(--warn); }
+  .kpi.good{ border-left:4px solid var(--accent); }
+  .kpi.neu{ border-left:4px solid var(--s1); }
+  /* tables */
+  .tbl{ overflow-x:auto; background:#fff; border:1px solid var(--line); border-radius:12px; margin-bottom:12px; }
+  table{ border-collapse:collapse; width:100%; font-size:.84rem; }
+  th,td{ border-bottom:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th{ background:#f4f7fa; color:var(--navy); font-size:.8rem; white-space:nowrap; }
+  tr:last-child td{ border-bottom:0; }
+  td.num, th.num{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .badge{ display:inline-block; border-radius:9px; padding:1px 9px; font-size:.72rem; font-weight:800; background:var(--chip); color:#3d4f63; white-space:nowrap; }
+  .badge.up{ background:#e9f6ef; color:#1f6f5c; }
+  .badge.down{ background:#fbeaea; color:#a03030; }
+  .badge.na{ background:#fff3e0; color:#a35b1e; }
+  .badge.law{ background:#e8f0fb; color:#1c4f9c; }
+  .badge.plan{ background:#f3ecfb; color:#6b3fa0; }
+  /* timeline */
+  .tl{ position:relative; padding-left:26px; margin:10px 0 6px; }
+  .tl:before{ content:''; position:absolute; left:8px; top:4px; bottom:4px; width:2px; background:#c9d6e3; }
+  .tl .ev{ position:relative; margin-bottom:12px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 14px; }
+  .tl .ev:before{ content:''; position:absolute; left:-23px; top:14px; width:12px; height:12px; border-radius:50%; background:var(--accent); border:2px solid #fff; box-shadow:0 0 0 2px #c9d6e3; }
+  .tl .ev.law:before{ background:var(--s1); }
+  .tl .ev .y{ font-weight:900; color:var(--navy); font-size:.9rem; }
+  .tl .ev .d{ font-size:.84rem; color:#3d4f63; margin-top:2px; }
+  /* org chart */
+  .org{ display:flex; flex-direction:column; gap:8px; }
+  .org .lv{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+  .node{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-size:.82rem; text-align:center; min-width:150px; }
+  .node b{ display:block; color:var(--navy); }
+  .node small{ color:var(--muted); font-size:.72rem; }
+  .node.head{ background:var(--navy); color:#fff; border-color:var(--navy); }
+  .node.head b{ color:#fff; }
+  .node.head small{ color:#d6e0ec; }
+  .node.sub{ background:#f4f7fa; }
+  .node.new{ border:2px dashed var(--s2); }
+  .org .arrow{ text-align:center; color:#9aabbd; font-size:.9rem; line-height:1; }
+  /* gap matrix */
+  .gap{ display:grid; grid-template-columns:1fr; gap:10px; }
+  .gap .row{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:grid; grid-template-columns:150px 1fr 1fr 1fr; gap:12px; align-items:start; }
+  .gap .row .h{ font-weight:900; color:var(--navy); font-size:.92rem; }
+  .gap .row .h small{ display:block; font-weight:600; color:var(--muted); font-size:.72rem; margin-top:2px; }
+  .gap .col{ font-size:.82rem; }
+  .gap .col .lab{ font-size:.7rem; font-weight:900; letter-spacing:.02em; margin-bottom:3px; }
+  .gap .col.now .lab{ color:var(--s1); }
+  .gap .col.lack .lab{ color:var(--warn); }
+  .gap .col.need .lab{ color:var(--accent); }
+  .gap .col ul{ margin:0; padding-left:16px; }
+  .gap .col li{ margin-bottom:2px; }
+  .gap .hdr{ display:grid; grid-template-columns:150px 1fr 1fr 1fr; gap:12px; padding:0 14px; font-size:.72rem; font-weight:900; color:var(--muted); }
+  @media (max-width:760px){ .gap .row{ grid-template-columns:1fr; } .gap .hdr{ display:none; } .gap .col{ border-top:1px dashed var(--line); padding-top:6px; } }
+  /* chart */
+  .chart-box{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px 10px; margin-bottom:12px; }
+  .chart-box .ct{ font-weight:800; color:var(--navy); font-size:.92rem; margin-bottom:2px; }
+  .chart-box .cs{ font-size:.76rem; color:var(--muted); margin-bottom:8px; }
+  .chart-box canvas{ width:100%; max-height:320px; }
+  .legend{ display:flex; gap:12px; flex-wrap:wrap; font-size:.76rem; color:#3d4f63; margin-top:6px; }
+  .legend i{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+  .notice{ background:#fff8e6; border:1px solid #f0dfae; border-radius:10px; padding:10px 14px; font-size:.84rem; margin:10px 0 14px; color:#5c4a15; }
+  .src{ font-size:.76rem; color:var(--muted); margin-top:6px; }
+  .src a{ color:#2a4d7d; }
+  details{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 14px; margin-bottom:8px; }
+  summary{ cursor:pointer; font-weight:800; color:var(--navy); font-size:.9rem; }
+  ul.tight{ margin:6px 0 0; padding-left:18px; font-size:.86rem; }
+  ul.tight li{ margin-bottom:3px; }
+  .foot{ font-size:.78rem; color:var(--muted); margin-top:30px; border-top:1px solid var(--line); padding-top:14px; }
+  .foot a{ color:#2a4d7d; }
+  @media print{ .subnav{ display:none; } .top{ background:#fff; color:#000; } body{ background:#fff; } }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-inner">
+    <h1>🩺 국민건강증진 정책 한눈에</h1>
+    <p>법령 체계 · 국민건강증진종합계획(HP2010→HP2030→제6차) · 보건복지부 건강정책국·한국건강증진개발원·국립암센터·국립정신건강센터·지자체 추진체계 · 예산 장기 추이 · 비전 달성을 위한 과제</p>
+    <div class="meta">기준일 2026년 9월 5일 · 보건복지부·한국건강증진개발원(KHEPI)·질병관리청·국립암센터·국회예산정책처·OECD 공개자료를 바탕으로 정리한 <b>비공식 참고자료</b>입니다.</div>
+  </div>
+</div>
+
+<nav class="subnav"><div class="subnav-inner">
+  <a href="#s0">한눈에</a>
+  <a href="#s1">법령 체계</a>
+  <a href="#s2">계획 연혁</a>
+  <a href="#s3">HP2030·제6차</a>
+  <a href="#s4">추진 체계</a>
+  <a href="#s5">지자체·PHIS</a>
+  <a href="#s6">국립암센터</a>
+  <a href="#s7">국립정신건강</a>
+  <a href="#s8">예산 분석</a>
+  <a href="#s9">부족한 것·필요한 것</a>
+  <a href="#s10">출처</a>
+</div></nav>
+
+<main class="wrap">
+
+<!-- ===== 0. 한눈에 ===== -->
+<h2 id="s0">0. 한눈에 보기 — 비전 대비 현재 위치</h2>
+<p class="lead">HP2030 비전 <b>"모든 사람이 평생 건강을 누리는 사회"</b>의 총괄목표 2개(건강수명 연장, 건강형평성 제고)는 2026년 현재 <b>둘 다 목표와 반대 방향</b>으로 움직이고 있습니다.</p>
+<div class="grid g4">
+  <div class="kpi bad"><div class="k">건강수명 (2022)</div><div class="v">69.9세 <small>목표 73.3세(2030)</small></div><div class="t">2020년 70.9 → 2021년 70.5 → 2022년 69.9. 2년 연속 하락, 9년 만에 70세 아래.</div></div>
+  <div class="kpi bad"><div class="k">소득 상·하위 20% 건강수명 격차</div><div class="v">8.4세 <small>목표 7.6세 이하</small></div><div class="t">2018년 8.1세에서 확대. 상위 72.7세 vs 하위 64.3세.</div></div>
+  <div class="kpi bad"><div class="k">자살사망률 (2024, 인구 10만 명당)</div><div class="v">29.1명 <small>HP2030 목표 17.0명</small></div><div class="t">2011년 이후 최고. 2025년 잠정 13,774명(−7.4%)으로 3년 만에 감소.</div></div>
+  <div class="kpi bad"><div class="k">성인 남성 비만 유병률 (2024)</div><div class="v">48.8% <small>2023년 45.6%</small></div><div class="t">40대 남성 61.7%. 유산소 신체활동 실천율은 10년간 9.0%p 하락.</div></div>
+  <div class="kpi good"><div class="k">성인 남성 궐련 흡연율 (2024)</div><div class="v">28.5% <small>2014년 대비 −10.9%p</small></div><div class="t">담배제품 전체 사용률은 36.0%. 전자담배는 소폭 증가.</div></div>
+  <div class="kpi neu"><div class="k">HP2030 대표지표 64개 중간평가 (2024)</div><div class="v">개선 31 <small>· 악화 16 · 정체 17</small></div><div class="t">악화: 자살, 당뇨, 비만, 노인 주관적 건강 격차.</div></div>
+  <div class="kpi bad"><div class="k">보건의료발전계획 수립 횟수 (2000~2026)</div><div class="v">0회 <small>법정 5년 주기</small></div><div class="t">보건의료기본법 제15조. 26년째 상위 계획 부재 속 개별 계획만 수립.</div></div>
+  <div class="kpi bad"><div class="k">국립정신병원 5곳 전문의 충원율 (2025)</div><div class="v">49.1% <small>병상 가동률 25.5%</small></div><div class="t">정원 77명. 춘천병원 입원병동 15개월 폐쇄(2022.11~2024.2).</div></div>
+</div>
+<div class="notice">건강수명 수치는 한국건강증진개발원 「2022년 건강수명 통계집」(2026.2 발간), 건강행태는 질병관리청 2024년 국민건강영양조사(2025.10 발표), 중간평가는 보건복지부 2026.3.27 보도자료 기준입니다.</div>
+
+<!-- ===== 1. 법령 체계 ===== -->
+<h2 id="s1">1. 법령 체계 — 무엇이 무엇을 근거 짓는가</h2>
+<p class="lead">건강증진 정책은 <b>보건의료기본법(상위)</b> → <b>국민건강증진법(핵심)</b> → 분야별 법률(암·정신건강·영양·구강·자살예방) → <b>지역보건법(집행)</b>의 층위로 짜여 있습니다. 각 법은 저마다 '5년 주기 계획'을 두고 있어, 계획이 7개 이상 병렬로 돌아갑니다.</p>
+
+<div class="tbl"><table>
+<thead><tr><th>층위</th><th>법률</th><th>제정·시행</th><th>계획 근거 조항</th><th>현재 유효 계획</th><th>핵심 내용</th></tr></thead>
+<tbody>
+<tr><td><span class="badge law">상위</span></td><td><b>보건의료기본법</b></td><td>2000.1.12 제정, 2000.7.13 시행<br>최근 개정 2025.11.11</td><td>제15조 보건의료발전계획(5년)</td><td><span class="badge down">미수립</span> 2000년 이후 0회</td><td>제10조 건강권(성별·나이·사회적 신분·경제적 사정에 따른 차별 금지), 제20조 보건의료정책심의위원회, 제31조 평생국민건강관리체계. 2026.8 복지부 "연구용역 진행 중, 일정 미정".</td></tr>
+<tr><td><span class="badge law">핵심</span></td><td><b>국민건강증진법</b></td><td>1995.1.5 제정(법률 제4914호), 1995.9.1 시행<br>최근 개정 2026.4.30</td><td>제4조 국민건강증진종합계획(5년)<br>제4조의2 매년 실행계획</td><td>제6차(2026~2030)<br>= 제5차 HP2030 보완계획</td><td>제5조 국민건강증진정책심의위원회 · 제5조의3 한국건강증진개발원 · 제9조 금연구역 · 제9조의2 경고그림(50% 이상) · 제16조 국민건강영양조사 · 제22조 국민건강증진기금 · 제23조 담배부담금(궐련 20개비당 841원) · 제25조 기금 사용(건보 지원은 담배부담금 예상수입의 65% 이내).</td></tr>
+<tr><td><span class="badge law">분야</span></td><td>암관리법</td><td>2003.5.29 제정 · 2010.5.31 전부개정</td><td>제4조 암관리종합계획(5년)<br>제27조 국립암센터</td><td>제5차(2026~2030) 2026.2.24 확정</td><td>4대 목표·12개 중점과제·68개 세부과제. 6대암 조기진단율 60%(2030), 2028년 대장내시경 검진(45~74세 10년 주기) 도입.</td></tr>
+<tr><td><span class="badge law">분야</span></td><td>정신건강증진 및 정신질환자 복지서비스 지원에 관한 법률</td><td>1995.12.30 정신보건법 제정 · 2016.5.29 전부개정(2017.5.30 시행)</td><td>제7조 국가계획(5년) · 시도 지역계획</td><td>제3차 정신건강복지기본계획(2026~2030) 2026.3.27 확정</td><td>6대 분야·17개 핵심과제·53개 세부과제. 급성기 집중치료병상 391→2,000개, 권역정신응급의료센터 13→17곳.</td></tr>
+<tr><td><span class="badge law">분야</span></td><td>자살예방 및 생명존중문화 조성을 위한 법률</td><td>2011.3.30 제정, 2012.3.31 시행</td><td>제7조 자살예방기본계획(5년)</td><td>제5차(2023~2027)</td><td>목표 자살률 18.2명(2027). 2025.9 국가자살예방전략으로 2029년 19.4명, 2034년 17.0명 재설정.</td></tr>
+<tr><td><span class="badge law">분야</span></td><td>국민영양관리법</td><td>2010.3.26 제정</td><td>제7조 국민영양관리기본계획(5년)</td><td>제3차(2022~2026)</td><td>국민건강증진정책심의위 심의. 제4차(2027~) 수립 시기 도래.</td></tr>
+<tr><td><span class="badge law">분야</span></td><td>구강보건법</td><td>2000.1.12 제정, 2000.9.1 시행</td><td>제5조 구강보건사업기본계획(5년)</td><td>제2차(2022~2026)</td><td>구강보건의 날 6.9. 2026.7 직제 개정으로 구강정책과가 건강정책국 밖(보건의료정책실)으로 이동.</td></tr>
+<tr><td><span class="badge law">집행</span></td><td><b>지역보건법</b></td><td>1956 보건소법 → 1995.12.29 전부개정·명칭 변경(1996.7.1 시행) → 2015.5.18 전부개정</td><td>제7조 지역보건의료계획(4년)</td><td>제8기(2023~2026) · 제9기(2027~2030) 수립 중(2026.8~2027.1)</td><td>제10조 보건소 · 제13조 보건지소 · 제14조 건강생활지원센터. 2024.1 개정으로 보건소장 임용자격 확대.</td></tr>
+</tbody></table></div>
+
+<h3>국민건강증진법 최근 개정 흐름 (2019~2026)</h3>
+<div class="tbl"><table>
+<thead><tr><th>공포일</th><th>법률번호</th><th>시행</th><th>내용</th></tr></thead>
+<tbody>
+<tr><td>2019.12.3</td><td>제16719호</td><td>2020.6.4</td><td>건강친화기업 인증제도, 신체활동장려 조항 신설</td></tr>
+<tr><td>2020.12.29</td><td>제17773호</td><td>2021.6.30</td><td>주류광고 규제 강화, 음주폐해예방위원회, 금주구역 지정 근거</td></tr>
+<tr><td>2021.7.27</td><td>제18324호</td><td>2021.8.1</td><td>연초 잎 외 부분 원료 담배(신종담배) 부담금 대상 추가</td></tr>
+<tr><td>2021.12.21</td><td>제18606호</td><td>2022.6.22</td><td>시·도 건강증진사업지원단 법적 근거(2005년부터 17개 시도 운영)</td></tr>
+<tr><td>2023.6.13</td><td>제19446호</td><td>2023.6.13</td><td>기금의 건강보험공단 지원 기한 2027년까지 연장</td></tr>
+<tr><td>2023.8.16</td><td>제19645호</td><td>2024.8.17</td><td>유치원·어린이집·학교 경계 30m 이내 금연구역</td></tr>
+<tr><td>2024.2.20</td><td>제20325호</td><td>2024.2.20</td><td>아동·노인·장애인·임산부 구강건강증진사업</td></tr>
+<tr><td>2025.3.18</td><td>제20813호</td><td>2026.3.19</td><td>주류용기 음주운전 경고문구·경고그림, 절주교육·광고 근거</td></tr>
+<tr><td>2025.11.11</td><td>제21099호</td><td>2025.11.11</td><td>국민건강영양조사–보건의료 건강정보 연계·활용 근거</td></tr>
+<tr><td>2026.4.30</td><td>제21607호</td><td>2026.4.30</td><td>합성니코틴 담배 제조사업자 부담금 50% 감경(2028.4.23까지). 담배사업법 개정(2026.4.24 시행)으로 합성니코틴도 담배에 포함</td></tr>
+</tbody></table></div>
+<p class="src">출처: 법제처 국가법령정보센터 연혁·제개정이유, 국회예산정책처(2026.6), 보건복지부 보도자료.</p>
+
+<!-- ===== 2. 계획 연혁 ===== -->
+<h2 id="s2">2. 국민건강증진종합계획 연혁 — 1995년부터 2026년까지</h2>
+<p class="lead">담배부담금 인상이 있을 때마다 계획이 커졌습니다. 2원(1995) → 150원(2002, 제1차) → 354원(2004, 제2차) → 841원(2015, 제4차). 2015년 이후 11년째 부담금이 동결된 상태에서 제5차·제6차가 수립됐습니다.</p>
+
+<div class="tl">
+  <div class="ev law"><div class="y">1995 · 국민건강증진법 제정</div><div class="d">치료 중심에서 예방 중심으로 전환 선언. 국민건강증진기금 설치(담배 갑당 2원). 같은 해 정신보건법 제정, 지역보건법 전부개정.</div></div>
+  <div class="ev law"><div class="y">2000 · 보건의료기본법·구강보건법 제정, 국립암센터 개원</div><div class="d">보건의료발전계획(5년) 근거 마련. 그러나 2026년까지 한 번도 수립되지 않음.</div></div>
+  <div class="ev"><div class="y">2002 · 제1차 HP2010 (2002~2005)</div><div class="d">건강수명 2010년 72.0세 목표. 4개 분야 24개 중점과제, 6개 건강영역 40개 목표. 담배부담금 150원 인상이 재원 계기. 당초 5년 계획을 3년 만에 종료.</div></div>
+  <div class="ev"><div class="y">2005 · 제2차 HP2010 (2006~2010)</div><div class="d">'새국민건강증진종합계획'. <b>건강형평성 제고</b>를 총괄목표에 처음 추가. 244개 세부지표. 담배부담금 354원. 교육부·노동부 사업 편입.</div></div>
+  <div class="ev"><div class="y">2011 · 제3차 HP2020 (2011~2020)</div><div class="d">비전 "온 국민이 함께 만들고 누리는 건강세상". 건강수명 2020년 75세 목표. 계획 단위를 5년→<b>10년</b>으로 확대. 6개 분야 32개 중점과제, 16개 대표지표. 같은 해 한국건강증진재단 출범.</div></div>
+  <div class="ev"><div class="y">2015.12 · 제4차 HP2020 (2016~2020)</div><div class="d">제3차 중간수정. 6개 분야 27개 중점과제, 357개 성과지표(19개 대표지표), 140개 세부사업. 결과지표 중심으로 재편. 담배부담금 841원(2015.1).</div></div>
+  <div class="ev"><div class="y">2021.1 · 제5차 HP2030 (2021~2030)</div><div class="d">비전 "모든 사람이 평생 건강을 누리는 사회". 건강수명 2030년 73.3세, 소득격차 7.6세 이하, 지역격차 2.9세 이하. 6개 분과 28개 중점과제, 400개 성과지표, 64개 대표지표, 형평성지표 176개. 연간 약 2.5조 원. 2022.4 일부 지표 수정.</div></div>
+  <div class="ev"><div class="y">2026.3.27 · 제6차 국민건강증진종합계획 (2026~2030)</div><div class="d">제5차의 중간 보완계획(비전·건강수명 목표 유지). <b>7개 분과 32개 중점과제, 439개 성과지표, 70개 대표지표</b>, 형평성 지표 225개. 기후위기 건강대응 분과·청년건강·만성질환 통합관리 신설. 담뱃값 OECD 평균 수준 인상 및 주류 건강증진부담금 신설 '검토' 명시.</div></div>
+</div>
+
+<div class="tbl"><table>
+<thead><tr><th>차수</th><th>기간</th><th>건강수명 목표</th><th class="num">분야/분과</th><th class="num">중점과제</th><th class="num">성과지표</th><th class="num">대표지표</th><th>특징</th></tr></thead>
+<tbody>
+<tr><td>제1차 HP2010</td><td>2002~2005</td><td>72.0세(2010)</td><td class="num">4</td><td class="num">24</td><td class="num">40 목표</td><td class="num">–</td><td>최초 계획, 3년 만에 종료</td></tr>
+<tr><td>제2차 HP2010</td><td>2006~2010</td><td>72.0세 + 형평성</td><td class="num">–</td><td class="num">–</td><td class="num">244</td><td class="num">–</td><td>형평성 총괄목표 추가</td></tr>
+<tr><td>제3차 HP2020</td><td>2011~2020</td><td>75.0세(2020)</td><td class="num">6</td><td class="num">32</td><td class="num">(405 추정)</td><td class="num">16</td><td>10년 계획으로 전환</td></tr>
+<tr><td>제4차 HP2020</td><td>2016~2020</td><td>75.0세(2020)</td><td class="num">6</td><td class="num">27</td><td class="num">357</td><td class="num">19</td><td>결과지표 중심 재편</td></tr>
+<tr><td>제5차 HP2030</td><td>2021~2030</td><td>73.3세(2030)</td><td class="num">6</td><td class="num">28</td><td class="num">400</td><td class="num">64</td><td>HiAP, 건강영향평가 도입</td></tr>
+<tr><td><b>제6차</b></td><td>2026~2030</td><td>73.3세(2030) 유지</td><td class="num">7</td><td class="num">32</td><td class="num">439</td><td class="num">70</td><td>기후위기·청년·만성질환 통합관리 신설</td></tr>
+</tbody></table></div>
+<p class="src">주: 제3차 성과지표 405개는 2차 문헌 기준으로 원자료 미확인. HP2020의 건강수명 75세 목표는 실제 2020년 70.9세로 미달했고, HP2030은 목표치를 73.3세로 낮춰 재설정했습니다.</p>
+
+<!-- ===== 3. HP2030 구조 ===== -->
+<h2 id="s3">3. HP2030 · 제6차 계획의 구조와 지표 현황</h2>
+<div class="grid g2">
+  <div class="card">
+    <h3 style="margin-top:0">비전 · 총괄목표 · 6대 기본원칙</h3>
+    <ul class="tight">
+      <li><b>비전</b> 모든 사람이 평생 건강을 누리는 사회</li>
+      <li><b>총괄목표 ①</b> 건강수명 2018년 70.4세 → 2030년 73.3세(남 71.4 · 여 75.0)</li>
+      <li><b>총괄목표 ②</b> 건강형평성: 소득 상·하위 20% 격차 7.6세 이하, 지역 상·하위 20% 격차 2.9세 이하</li>
+      <li><b>원칙</b> ① 모든 정책에 건강 우선 반영(HiAP) ② 보편적 향상과 형평성 병행 ③ 모든 생애과정·생활터 ④ 건강친화적 환경 ⑤ 누구나 참여 ⑥ 모든 부문 연계·협력</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">분과 구성 (제5차 6개 → 제6차 7개)</h3>
+    <ul class="tight">
+      <li>건강생활 실천 (금연·절주·영양·신체활동·구강)</li>
+      <li>정신건강 관리 (자살예방·치매·중독·지역사회 정신건강)</li>
+      <li>비감염성 질환 예방관리 (암·심뇌혈관·비만·손상)</li>
+      <li>감염 및 환경성 질환 예방관리</li>
+      <li>인구집단별 건강관리 (영유아·아동청소년·여성·노인·장애인·근로자·군인)</li>
+      <li>건강친화적 환경 구축 (법제도·자원·거버넌스·정보통계·재원)</li>
+      <li><span class="badge na">신설</span> 기후위기 건강 대응 (폭염사망 108명(2024)→30명)</li>
+    </ul>
+  </div>
+</div>
+
+<h3>대표지표 중간평가 (2024년 실적 기준, 2026.3.27 발표)</h3>
+<div class="tbl"><table>
+<thead><tr><th>지표</th><th class="num">기준(2018)</th><th class="num">최신</th><th class="num">2030 목표</th><th>판정</th></tr></thead>
+<tbody>
+<tr><td>건강수명</td><td class="num">70.4세</td><td class="num">69.9세 (2022)</td><td class="num">73.3세</td><td><span class="badge down">악화</span> 3.4세 미달</td></tr>
+<tr><td>소득 상·하위 20% 건강수명 격차</td><td class="num">8.1세</td><td class="num">8.4세 (2022)</td><td class="num">7.6세 이하</td><td><span class="badge down">악화</span></td></tr>
+<tr><td>성인 남성 현재흡연율(궐련)</td><td class="num">36.7%</td><td class="num">28.5% (2024)</td><td class="num">25.0%</td><td><span class="badge up">개선</span></td></tr>
+<tr><td>성인 여성 현재흡연율(궐련)</td><td class="num">7.5%</td><td class="num">4.2% (2024)</td><td class="num">4.0%</td><td><span class="badge up">개선</span> 목표 근접</td></tr>
+<tr><td>성인 남성 담배제품 사용률</td><td class="num">–</td><td class="num">36.0% (2024)</td><td class="num">29.0% (제6차)</td><td><span class="badge">전자담배 증가</span></td></tr>
+<tr><td>성인 남성 고위험음주율</td><td class="num">20.8%</td><td class="num">18.6% (2024)</td><td class="num">17.8% (제6차)</td><td><span class="badge up">개선</span></td></tr>
+<tr><td>성인 여성 고위험음주율</td><td class="num">8.4%</td><td class="num">8.6% (2024)</td><td class="num">–</td><td><span class="badge down">악화</span></td></tr>
+<tr><td>유산소 신체활동 실천율</td><td class="num">–</td><td class="num">52.1% (2024)</td><td class="num">–</td><td><span class="badge down">10년간 −9.0%p</span></td></tr>
+<tr><td>성인 남성 비만 유병률</td><td class="num">–</td><td class="num">48.8% (2024)</td><td class="num">–</td><td><span class="badge down">악화</span> 40대 61.7%</td></tr>
+<tr><td>당뇨병 유병률(남/여)</td><td class="num">–</td><td class="num">13.3% / 7.8% (2024)</td><td class="num">–</td><td><span class="badge down">악화</span></td></tr>
+<tr><td>자살사망률(10만 명당)</td><td class="num">26.6명</td><td class="num">29.1명 (2024)</td><td class="num">17.0명</td><td><span class="badge down">악화</span> 2025 잠정 감소</td></tr>
+<tr><td>식품안정성 확보 가구분율</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td><span class="badge up">개선</span></td></tr>
+</tbody></table></div>
+<p class="src">10년 영양 추이(2014→2024): 과일 −81.6g, 육류 +25.3g, 음료 +83.6g, 지방 에너지비율 +5.0%p, 나트륨 −799mg. 출처: 질병관리청 2024 국민건강영양조사, KHEPI 건강수명 통계집, 보건복지부 보도자료.</p>
+
+<!-- ===== 4. 추진 체계 ===== -->
+<h2 id="s4">4. 추진 체계 — 누가 무엇을 맡는가</h2>
+<p class="lead">2026년 7월 21일 시행된 직제 개정으로 건강정책국이 크게 바뀌었습니다. <b>질병정책과가 건강정책국으로 들어오고</b>(건강증진과 질병정책의 결합), <b>구강정책과는 보건의료정책실로 나갔습니다</b>. 지역·필수·공공의료는 신설 '지역필수공공의료실'로 분리됐습니다.</p>
+
+<div class="card">
+<h3 style="margin-top:0">보건복지부 건강정책국 (2026.7.21 직제 기준)</h3>
+<div class="org">
+  <div class="lv"><div class="node head"><b>건강정책국</b><small>국장 (나급)</small></div></div>
+  <div class="arrow">│</div>
+  <div class="lv">
+    <div class="node"><b>건강정책과</b><small>HP 종합계획 · 국민건강증진기금 · 지역보건법 · 보건소 · 통합건강증진사업 · PHIS</small></div>
+    <div class="node new"><b>질병정책과</b><small>2026.7 편입 · 만성질환 · 희귀질환 · 암정책</small></div>
+    <div class="node"><b>건강증진과</b><small>금연 · 절주 · 영양 · 비만 · 신체활동</small></div>
+    <div class="node"><b>생활보건팀</b><small>생활 속 건강위해 대응</small></div>
+    <div class="node head" style="background:var(--accent);border-color:var(--accent)"><b>정신건강정책관</b><small>(나급, 2020 신설)</small></div>
+  </div>
+  <div class="arrow">│ 정신건강정책관 산하</div>
+  <div class="lv" style="border:1px dashed #b5ddd0;border-radius:12px;padding:8px;background:#f6fbf8">
+    <div class="node sub"><b>정신건강정책과</b><small>기본계획 · 국립정신병원</small></div>
+    <div class="node sub"><b>정신건강관리과</b><small>2020 신설 · 지역 정신건강</small></div>
+    <div class="node sub"><b>자살예방정책과</b><small>2018.2 신설</small></div>
+  </div>
+</div>
+<p class="src" style="margin-top:10px">이관: 구강정책과 → 보건의료정책실 의료자원정책관. 舊 공공보건정책관(공공의료과·응급의료과) → 신설 지역필수공공의료실. 국 명칭 변천: 보건증진국(1998) → 보건정책국(1999) → 건강증진국(2005.9, 1개월) → 본부제(2005.10) → 건강정책국(2008.2~).</p>
+</div>
+
+<div class="tbl"><table>
+<thead><tr><th>기관</th><th>성격·근거</th><th>건강증진 역할</th><th>규모</th><th>비고</th></tr></thead>
+<tbody>
+<tr><td><b>한국건강증진개발원 (KHEPI)</b></td><td>국민건강증진법 제5조의3 · 위탁집행형 준정부기관(2019)<br>1998 평가단 → 2011 재단 → 2014 개발원</td><td>HP 총괄지원·모니터링(/healthplan, /hpn 격차DB), 통합건강증진사업 지원단, 지역보건의료계획 지원·계획서 공개(/kps/localHealthPlan), 국가금연지원센터, 절주·영양·비만, 건강도시·건강친화기업 인증, 보건진료소장 교육</td><td>직원 181명, 예산 약 354억 원(공시)</td><td>원장 김헌주(2023.11~, 2026.11 임기 만료). <code>khepi.or.kr/kps</code>는 기관 대표 사이트 접두어이며 HP2030 전용은 <code>/healthplan</code>·<code>/hpn</code></td></tr>
+<tr><td><b>질병관리청 (KDCA)</b></td><td>2020.9 청 승격</td><td>국민건강영양조사·지역사회건강조사 생산, 만성질환 예방관리, 감염병</td><td>예산 별도(§8 참조)</td><td>건강행태 통계의 실질 생산자. 복지부와 통계·사업 이원화</td></tr>
+<tr><td><b>국립암센터 (NCC)</b></td><td>암관리법 제27조 · 2000.3 설립</td><td>국가암관리사업본부(중앙암등록, 12개 지역암센터, 호스피스, 암생존자, 국가암데이터센터), 연구소, 부속병원(563병상), 국제암대학원</td><td>직원 약 3,500명, 예산 약 6,150억 원(정부출연 약 572억, 9%)</td><td>원장 양한광(2024.11~). §6 참조</td></tr>
+<tr><td><b>국립정신건강센터 + 국립정신병원 4곳</b></td><td>책임운영기관(2006)</td><td>정신건강 정책 연구·국가트라우마센터·권역 정신의료</td><td>5곳 합계 병상 약 1,142 + 센터</td><td>전문의 충원율 49.1%. §7 참조</td></tr>
+<tr><td><b>시·도 건강증진사업지원단 (17개)</b></td><td>국민건강증진법(2021.12 개정 법적 근거)</td><td>시도 통합건강증진사업 기술지원·평가</td><td>2005년부터 운영</td><td>공공보건의료지원단과 별도 운영(경기·전남 등)</td></tr>
+<tr><td><b>보건소 · 보건지소 · 건강생활지원센터 · 보건진료소</b></td><td>지역보건법 제10·13·14조, 농어촌 등 보건의료를 위한 특별조치법</td><td>통합건강증진사업 13개 영역 집행, 지역보건의료계획 수립</td><td>263 · 1,318 · 131 · 1,894 (2025.12)</td><td>총 3,606개 기관이 PHIS 사용</td></tr>
+</tbody></table></div>
+
+<!-- ===== 5. 지자체 ===== -->
+<h2 id="s5">5. 지자체 — 지역보건의료계획 · 통합건강증진사업 · PHIS · 시도별 비교</h2>
+
+<div class="grid g3">
+  <div class="card"><h3 style="margin-top:0">지역보건의료계획 (4년 주기)</h3>
+    <ul class="tight">
+      <li>제8기 2023~2026 → <b>제9기 2027~2030 수립 중</b>(2026.8~2027.1). 2026.6.18 설명회(550명). 우수 광역: 서울·경남.</li>
+      <li>제9기 방향: 읍면 분산 보건기관을 <b>거점 보건지소</b>로 재편, 초고령사회·지역격차·통합돌봄(2026.3 전국 시행) 연계.</li>
+      <li>1996년 지역보건법 전부개정 30주년. 계획서 원문은 KHEPI 포털에 시도·시군구별 공개.</li>
+    </ul></div>
+  <div class="card"><h3 style="margin-top:0">지역사회 통합건강증진사업 (2013~)</h3>
+    <ul class="tight">
+      <li>보건소 국고보조 17개 사업을 1개로 통합해 지자체 자율 편성.</li>
+      <li><b>13개 영역</b>: 금연·절주·영양·신체활동·비만·구강·심뇌혈관·아토피천식·한의약·여성어린이·모바일헬스케어·방문건강관리·지역사회중심재활(CBR).</li>
+      <li>2025·2026 안내서 발간. 총 국비액은 안내서 PDF 수록(웹 미공개).</li>
+    </ul></div>
+  <div class="card"><h3 style="margin-top:0">PHIS 지역보건의료정보시스템</h3>
+    <ul class="tight">
+      <li>2007 구축, 한국사회보장정보원 운영. 약 3,600개 기관, 20개 분야 보건사업·행정·EMR·통계.</li>
+      <li>한계: 노후화, 대국민 접근성 낮음, 맞춤형 관리 부족, 행정 비효율.</li>
+      <li><b>차세대 PHIS</b> 2020.12 착수, 사업비 271억, 2023.2.20 시범운영(초기 접속지연 장애). 모바일 비대면 서비스 지향.</li>
+      <li>공개 통계는 지역사회건강조사(질병청)·KHEPI 격차DB에 의존. PHIS 자체는 대국민 개방 API 없음.</li>
+    </ul></div>
+</div>
+
+<h3>시·도 홈페이지 건강증진 정보 공개 방식 비교</h3>
+<div class="tbl"><table>
+<thead><tr><th>시·도</th><th>계획 공개</th><th>통계 공개</th><th>시민 참여</th><th>특징</th></tr></thead>
+<tbody>
+<tr><td>서울</td><td>KHEPI 포털(25개 구 포함)</td><td>열린데이터광장에 지역사회건강통계 원자료</td><td><b>시민건강위원회</b>(누구나 참여, 4개 분과)</td><td>2003 건강도시 시작, 2006 대한민국건강도시협의회, 2010 25개 구 전체 확대. 가장 체계적</td></tr>
+<tr><td>경기</td><td>KHEPI 포털</td><td>경기도공공보건의료지원단 <b>지표뱅크</b> 통계포털, 이슈브리핑, 카톡채널</td><td>–</td><td>통합건강증진사업지원단 사이트(gghealth.kr) 접속 불가(403) 확인</td></tr>
+<tr><td>부산</td><td>KHEPI 포털</td><td>시 보건 페이지에 건강통계·질병정보·만성질환 자가진단</td><td>–</td><td>건강수명 68.32세로 전국 최저(2022)</td></tr>
+<tr><td>전남</td><td>KHEPI 포털</td><td>공공보건의료지원단·통합건강증진사업지원단</td><td>성과대회(2025.11, 우수사례 73건)</td><td>22개 시군 분산, 지원단 이원 구조</td></tr>
+<tr><td>세종</td><td>KHEPI 포털</td><td>–</td><td>–</td><td>건강수명 71.0세 전국 1위, 흡연·비만 최저. 신도시 인구구조 효과</td></tr>
+</tbody></table></div>
+<p class="src">공통점: 계획서 원문은 KHEPI에 집중돼 있고, 시도 자체 사이트는 '사업 안내' 위주라 <b>지표 달성 현황을 시민이 추적할 수 있는 화면은 서울·경기 외 거의 없음</b>.</p>
+
+<h3>지역 간 건강격차 (2025 지역사회건강조사, 258개 보건소 231,615명, 2025.12.8 발표)</h3>
+<div class="tbl"><table>
+<thead><tr><th>지표</th><th class="num">전국</th><th>최저 시군구</th><th>최고 시군구</th><th>시·도 격차</th></tr></thead>
+<tbody>
+<tr><td>담배제품 현재사용률</td><td class="num">22.1%</td><td>과천 12.8%</td><td>평택·정선·청주상당 29.1%</td><td>세종 17.3% ↔ 충북 24.7%</td></tr>
+<tr><td>고위험음주율</td><td class="num">12.0% (중앙값)</td><td>과천 4.4%</td><td>속초 21.8%</td><td>세종 9.5% ↔ 강원 15.9% (2024)</td></tr>
+<tr><td>비만율(자가보고)</td><td class="num">35.4%</td><td>강남구 21.7%</td><td>철원 46.6%</td><td>세종 29.4% ↔ 울산 38.2%</td></tr>
+<tr><td>주관적 건강인지율</td><td class="num">–</td><td>강원 44.4%</td><td>대전 59.7%</td><td>(2024)</td></tr>
+<tr><td>건강수명</td><td class="num">69.9세</td><td>하위 10개 시군구 평균 65.2세</td><td>상위 10개 평균 74.2세</td><td><b>9.0세</b> 격차 (HP2030 지역목표 2.9세)</td></tr>
+</tbody></table></div>
+<p class="src">비만율은 10년간 26.9% 증가. 격차가 가장 큰 지표: 직장 실내 간접흡연 노출률, 고위험음주율, 혈당 인지율.</p>
+
+<!-- ===== 6. 국립암센터 ===== -->
+<h2 id="s6">6. 국립암센터와 암관리 — 가장 잘 작동하는 축</h2>
+<div class="grid g2">
+  <div class="card"><h3 style="margin-top:0">기관 개요</h3>
+    <ul class="tight">
+      <li>2000.1.12 국립암센터법 → 2000.3.22 설립, 10.20 진료 개시. 2011.6 암관리법 제27조로 근거 이관.</li>
+      <li>4축: 연구소 · 부속병원(563병상, 22개 진료과) · <b>국가암관리사업본부</b>(2011; 중앙암등록본부, 12개 지역암센터, 호스피스, 암생존자, 국가암데이터센터) · 국제암대학원대학교(2014).</li>
+      <li>직원 약 3,500명, 연 예산 약 6,150억 원 중 정부출연 약 572억(9%). 국가암·AI데이터센터 2027년부터 5년간 460억 계획.</li>
+    </ul></div>
+  <div class="card"><h3 style="margin-top:0">암관리종합계획 연혁</h3>
+    <ul class="tight">
+      <li>제1기 1996~2005 · 제2차 2006~2015 · 제3차 2016~2020</li>
+      <li>제4차 2021~2025: 8개 지표 중 6개 달성(빅데이터 529만 명, 5년 초과 생존자 62.1%, 암생존자센터 2.4만 명 등)</li>
+      <li><b>제5차 2026~2030</b> (2026.2.24 확정): "모두를 위한 암관리, 더 나은 건강한 미래". 4분야·12핵심·68세부.</li>
+    </ul></div>
+</div>
+<div class="tbl"><table>
+<thead><tr><th>제5차 핵심성과지표</th><th class="num">현재</th><th class="num">2030 목표</th></tr></thead>
+<tbody>
+<tr><td>6대암 조기진단율</td><td class="num">57.7%</td><td class="num">60.0%</td></tr>
+<tr><td>암 발생 대비 사망비</td><td class="num">29.5%</td><td class="num">27.0%</td></tr>
+<tr><td>10대암 수술 지역 자체충족률</td><td class="num">63.6%</td><td class="num">65.0%</td></tr>
+<tr><td>암사망률 지역격차(10만 명당)</td><td class="num">12.4명</td><td class="num">10.7명</td></tr>
+<tr><td>암생존자 삶의 질</td><td class="num">80점</td><td class="num">85점</td></tr>
+<tr><td>호스피스 이용률</td><td class="num">29.1%</td><td class="num">55.5%</td></tr>
+<tr><td>연구자주도 임상시험</td><td class="num">2건</td><td class="num">15건</td></tr>
+</tbody></table></div>
+<div class="grid g2">
+  <div class="card"><h3 style="margin-top:0">국가암검진 6종과 2024 수검률</h3>
+    <ul class="tight">
+      <li>위(40세+, 2년) 63.2% · 대장(50세+, 매년 분변잠혈) <b>40.3%</b> · 간(40세+ 고위험, 6개월) 74.6% · 유방(40세+ 여, 2년) 63.5% · 자궁경부(20세+ 여, 2년) 60.1% · 폐(54~74세 30갑년, 2년) 52.1%</li>
+      <li>2028년부터 45~74세 10년 주기 <b>대장내시경</b> 도입(2025.11 권고안), 폐암검진 대상 확대.</li>
+    </ul></div>
+  <div class="card"><h3 style="margin-top:0">2023 암등록통계 (2025.12 발표)</h3>
+    <ul class="tight">
+      <li>신규 암환자 288,613명(+2.5%). 유병자 327만 명(국민 19명 중 1명).</li>
+      <li>5년 상대생존율(2019~23) <b>73.7%</b>(남 68.2 / 여 79.4). 2001~05 대비 +19.5%p.</li>
+      <li>암 사망률 64.3명(10만 명당). 일본 78.6, 미국 82.3보다 낮음.</li>
+      <li>2023년 암환자 195만 명, 진료비 10조 1,552억 원.</li>
+    </ul></div>
+</div>
+
+<!-- ===== 7. 국립정신건강 ===== -->
+<h2 id="s7">7. 국립정신건강센터·국립정신병원 — 가장 약한 축</h2>
+<div class="tbl"><table>
+<thead><tr><th>기관</th><th>권역</th><th>연혁</th><th class="num">병상</th><th>특징</th></tr></thead>
+<tbody>
+<tr><td><b>국립정신건강센터</b> (서울 광진)</td><td>중앙·수도권</td><td>1962 국립정신병원 → 국립서울병원 → 2016.3.1 센터 전환</td><td class="num">–</td><td>국가트라우마센터(2018), 정신질환자 음압병동(2021), 정신건강연구소, 2025 R&amp;D 신규 83억</td></tr>
+<tr><td>국립나주병원</td><td>호남</td><td>1956 도립 → 1983 국립 → 2002 현 명칭</td><td class="num">150</td><td></td></tr>
+<tr><td>국립부곡병원</td><td>영남</td><td>1988.5 개원</td><td class="num">302</td><td>약물중독진료소 120병상(10년간 가동률 4% 미만), 트라우마센터(2019)</td></tr>
+<tr><td>국립춘천병원</td><td>강원</td><td>1992.2 설립</td><td class="num">320</td><td>2022.11~2024.2 입원병동 전면 폐쇄(전문의 부재)</td></tr>
+<tr><td>국립공주병원</td><td>충청</td><td>1951 결핵병원 → 1998 정신병원 → 2002 현 명칭</td><td class="num">370</td><td></td></tr>
+</tbody></table></div>
+
+<div class="grid g3">
+  <div class="kpi bad"><div class="k">5개 병원 전문의 충원율 (2025)</div><div class="v">49.1%</div><div class="t">정원 77명. 2019년 61.2% → 2022년 33.8% → 2025년 49.1%.</div></div>
+  <div class="kpi bad"><div class="k">병상 가동률 (2025)</div><div class="v">25.5%</div><div class="t">1,142병상 중 4분의 1만 사용.</div></div>
+  <div class="kpi bad"><div class="k">마약류 치료보호 (2024)</div><div class="v">876건 <small>수요 대비 9.2%</small></div><div class="t">비자의입원 통보 3일 초과 130건(2023~25).</div></div>
+</div>
+
+<div class="grid g2">
+  <div class="card"><h3 style="margin-top:0">정신건강정책 혁신방안 (2023.12.5) → 제3차 기본계획 (2026~2030)</h3>
+    <ul class="tight">
+      <li>2027년까지 심리상담 100만 명(연 50만), 10년 내 자살률 50% 감축, 정신건강검진 주기 10년→2년, 위기개입팀 204→306명, 권역정신응급센터 12→32개(2028), 109 통합번호.</li>
+      <li>대통령 직속 정신건강정책 혁신위원회 2024.6.26 출범(23명).</li>
+      <li><b>제3차 정신건강복지기본계획</b>(2026.3.27): 자살률 목표 20.4명, 급성기 집중치료병상 391→2,000, 정신응급병상 62→310, 24시간 권역센터 13→17, 지원주택 7→100호, 정신장애인 고용률 30%. 비판: 비자의입원·강제치료 개선책 미흡.</li>
+    </ul></div>
+  <div class="card"><h3 style="margin-top:0">자살 통계와 예산의 엇박자</h3>
+    <ul class="tight">
+      <li>2024 자살자 14,872명, 29.1명(2011년 이후 최고, 남 41.8 / 여 16.6). 연령표준화 26.2명 vs OECD 평균 10.8명.</li>
+      <li>2025 잠정 13,774명(−7.4%), 20대 −14%. 3년 만에 감소.</li>
+      <li>자살예방 예산 2025년 562억 → 2026년 <b>708억(+20.6%)</b>.</li>
+      <li>반면 '전국민 마음투자' 2025년 433억 → 2026년 <b>299억(−30%)</b>, '심리상담 바우처'로 개명. 2025 목표 16만→11.6만 명 하향.</li>
+      <li>2024년 정신건강 예산 3,866억(+706억).</li>
+    </ul></div>
+</div>
+
+
+<!-- ===== 8. 예산 ===== -->
+<h2 id="s8">8. 예산 분석 — 보건복지부 총예산 장기 추이와 건강증진·질병정책 예산</h2>
+<p class="lead">보건복지부의 전신은 1948년 사회부·보건부에서 출발해 1955년 보건사회부, 1994년 보건복지부, 2008년 보건복지가족부, 2010년 보건복지부로 이어집니다. 연속 비교가 가능한 부처 단위 수치는 <b>1982년 이후 일반회계</b>와 <b>2013년 이후 총지출</b>이며, 그 이전은 정부총예산 대비 비중만 문헌으로 남아 있습니다.</p>
+<div class="notice"><b>범례</b> 본=본예산 · 안=정부안 · 결=결산 · [계산]=출처 수치로 산출 · [추정]=도표 판독 등 정확도 낮음. 1950~70년대는 화폐개혁(1953·1962)과 회계 기준 변경으로 절대액 비교가 어려워 비중만 제시합니다.</div>
+
+<h3>8-1. 1950~1970년대: 정부총예산 대비 보건·복지 비중 (문헌 인용)</h3>
+<div class="tbl"><table>
+<thead><tr><th>시기</th><th>수치</th><th>맥락</th></tr></thead>
+<tbody>
+<tr><td>1950년대</td><td>복지예산 정부총예산의 4% 이상</td><td>전후 구호 중심</td></tr>
+<tr><td>1961</td><td>2.56%</td><td>정부총예산 +152억 원, 복지예산 −5억 원</td></tr>
+<tr><td>1965</td><td>보건 부문 <b>0.1%</b></td><td>베트남 0.6%, 인도 0.7%보다 낮음</td></tr>
+<tr><td>1967~71 / 1972~76</td><td>사회보장 투자 2.2% → 1.8%</td><td>2차·3차 경제개발계획, 성장 우선</td></tr>
+<tr><td>1970</td><td>약 6%</td><td>보사부+노동청+원호처 합산</td></tr>
+<tr><td>1975 / 1976</td><td>4.6% → 3.9%</td><td>복지예산 비중</td></tr>
+<tr><td>1970~78 → 1992 → 2007</td><td>일반정부지출 중 복지(보건+사회보호) 약 5% → 15.1% → 25.2%</td><td>국회예산정책처 2014, 기능별 지출 기준</td></tr>
+</tbody></table></div>
+
+<h3>8-2. 보건복지부 일반회계 예산 1982~2026 (조 원)</h3>
+<div class="chart-box">
+  <div class="ct">보건복지부 일반회계 예산 추이</div>
+  <div class="cs">단위 조 원, 총지출 아님(기금 제외). 2005년 감소는 지방이양·보육 이관, 2025년 감소는 보육 예산 교육부 이관(5.33조) 영향. 출처: e-나라지표 「보건복지부 일반회계 예산현황」.</div>
+  <canvas id="chGa" height="120"></canvas>
+</div>
+<div class="tbl"><table>
+<thead><tr><th>연도</th><th class="num">1982</th><th class="num">1990</th><th class="num">1995</th><th class="num">2000</th><th class="num">2005</th><th class="num">2010</th><th class="num">2015</th><th class="num">2020</th><th class="num">2023</th><th class="num">2024</th><th class="num">2025</th><th class="num">2026</th></tr></thead>
+<tbody>
+<tr><td>일반회계(조 원)</td><td class="num">0.5 미만</td><td class="num">1</td><td class="num">2</td><td class="num">5</td><td class="num">9</td><td class="num">20</td><td class="num">33</td><td class="num">55</td><td class="num">66.4</td><td class="num">72.2</td><td class="num">70.6</td><td class="num">73.3</td></tr>
+<tr><td>전년 대비</td><td class="num">+33%</td><td class="num">+24%</td><td class="num">+12%</td><td class="num">+28%</td><td class="num">−3%</td><td class="num">+7%</td><td class="num">+12%</td><td class="num">+6%</td><td class="num">+8%</td><td class="num">+9%</td><td class="num">−2%</td><td class="num">+4%</td></tr>
+</tbody></table></div>
+
+<h3>8-3. 총지출(기금 포함) 2013~2027안과 정부 총지출 대비 비중</h3>
+<div class="grid g2">
+<div class="chart-box">
+  <div class="ct">보건복지부 총지출 (조 원)</div>
+  <div class="cs">2013 결산 42.2조 → 2026 본예산 137.5조 → 2027 정부안 148.8조. 13년간 3.3배.</div>
+  <canvas id="chTot" height="150"></canvas>
+</div>
+<div class="tbl" style="margin:0"><table>
+<thead><tr><th>연도</th><th class="num">총지출</th><th>구분</th><th class="num">정부 총지출 대비</th></tr></thead>
+<tbody>
+<tr><td>2013</td><td class="num">42조 1,808억</td><td>결</td><td class="num">–</td></tr>
+<tr><td>2015</td><td class="num">51조 9,368억</td><td>안</td><td class="num">–</td></tr>
+<tr><td>2018</td><td class="num">64.2조</td><td>안</td><td class="num">15.0%</td></tr>
+<tr><td>2020</td><td class="num">82조 5,269억</td><td>본</td><td class="num">–</td></tr>
+<tr><td>2021</td><td class="num">89조 5,766억</td><td>본</td><td class="num">16.0%</td></tr>
+<tr><td>2022</td><td class="num">97조 4,767억</td><td>본</td><td class="num">16.0%</td></tr>
+<tr><td>2023</td><td class="num">109조 1,830억</td><td>본</td><td class="num">17.1%</td></tr>
+<tr><td>2024</td><td class="num">122조 3,779억</td><td>본</td><td class="num">17.8%</td></tr>
+<tr><td>2025</td><td class="num">125조 4,909억</td><td>본</td><td class="num">18.6%</td></tr>
+<tr><td>2026</td><td class="num">137조 4,949억</td><td>본</td><td class="num">18.9%</td></tr>
+<tr><td>2027</td><td class="num">148조 7,697억</td><td>안</td><td class="num">–</td></tr>
+</tbody></table></div>
+</div>
+<p class="src">2026 본예산 구조(억 원): 일반회계 732,668 · 지역균형발전특회 44,817 · 책임운영기관특회 1,933 · <b>국민건강증진기금 36,486</b> · 국민연금기금 약 545,000 · 응급의료기금 약 2,700. 출처: 보건복지부 2025·2026 예산 개요서, 국회예산정책처, 복지부 보도자료.</p>
+
+<h3>8-4. 보건 분야 vs 사회복지 분야 — 보건은 13~14%에서 정체</h3>
+<div class="chart-box">
+  <div class="ct">복지부 총지출의 분야별 구성 (조 원)</div>
+  <div class="cs">보건 분야의 절반 이상이 건강보험 국고지원(2026년 10조 7,820억). 건보 지원을 뺀 순수 보건예산은 2024년 3조 6,657억으로 전년 대비 8,886억 감소했다가 2025년 4조 2,846억으로 회복.</div>
+  <canvas id="chSec" height="130"></canvas>
+  <div class="legend"><span><i style="background:var(--s1)"></i>사회복지</span><span><i style="background:var(--s2)"></i>보건</span></div>
+</div>
+<div class="tbl"><table>
+<thead><tr><th>연도</th><th class="num">사회복지(억)</th><th class="num">보건(억)</th><th class="num">보건 비중</th><th class="num">보건 중 건보 국고지원</th><th class="num">건보 제외 보건</th></tr></thead>
+<tbody>
+<tr><td>2015안</td><td class="num">419,519</td><td class="num">99,849</td><td class="num">19.2%</td><td class="num">55,788</td><td class="num">44,061</td></tr>
+<tr><td>2020본</td><td class="num">≈698,000</td><td class="num">129,739</td><td class="num">15.7%</td><td class="num">89,496</td><td class="num">40,243</td></tr>
+<tr><td>2023본</td><td class="num">922,185</td><td class="num">169,645</td><td class="num">15.5%</td><td class="num">–</td><td class="num">45,543</td></tr>
+<tr><td>2024본</td><td class="num">1,049,119</td><td class="num">174,660</td><td class="num">14.3%</td><td class="num">105,262</td><td class="num">36,657</td></tr>
+<tr><td>2025본</td><td class="num">1,071,868</td><td class="num">183,041</td><td class="num">14.6%</td><td class="num">106,211</td><td class="num">42,846</td></tr>
+<tr><td>2026본</td><td class="num">1,184,796</td><td class="num">190,152</td><td class="num">13.8%</td><td class="num">107,820</td><td class="num">≈82,300 [계산]</td></tr>
+<tr><td>2027안</td><td class="num">1,282,737</td><td class="num">204,960</td><td class="num">13.8%</td><td class="num">118,000</td><td class="num">≈86,960 [계산]</td></tr>
+</tbody></table></div>
+<p class="src">건보 제외 보건 2015~2025는 참여연대 분석치, 2026~27은 보건 총액에서 건보 지원을 뺀 단순 계산으로 기준이 달라 직접 비교는 피하세요.</p>
+
+<h3>8-5. 국민건강증진기금 (1997 설치) — 절반이 건강보험으로 간다</h3>
+<div class="grid g2">
+<div class="chart-box">
+  <div class="ct">기금 총지출 vs 건강보험 지원 (억 원)</div>
+  <div class="cs">2015년 담뱃값 2,000원 인상으로 기금이 40% 커졌지만 건보 지원도 같이 늘어 비중은 50~56%로 고정.</div>
+  <canvas id="chFund" height="150"></canvas>
+  <div class="legend"><span><i style="background:var(--s1)"></i>기금 총지출</span><span><i style="background:var(--s2)"></i>건보 지원</span></div>
+</div>
+<div class="chart-box">
+  <div class="ct">2020년 기금 지출 3조 3,700억의 구성 (억 원)</div>
+  <div class="cs">건보 지원 55.8%, 순수 건강생활실천(금연·절주·영양·신체활동·통합건강증진)은 약 5%. 출처: 한국보건사회연구원 2022.5 재분류.</div>
+  <canvas id="chComp" height="150"></canvas>
+</div>
+</div>
+<div class="tbl"><table>
+<thead><tr><th>연도</th><th class="num">담배부담금 수입</th><th class="num">기금 총지출</th><th class="num">건보 지원</th><th class="num">건보/지출</th><th>구분</th></tr></thead>
+<tbody>
+<tr><td>2013</td><td class="num">–</td><td class="num">18,764</td><td class="num">9,986</td><td class="num">53%</td><td>결</td></tr>
+<tr><td>2014</td><td class="num">–</td><td class="num">20,030</td><td class="num">10,191</td><td class="num">50.9%</td><td>본</td></tr>
+<tr><td>2015</td><td class="num">–</td><td class="num">27,189</td><td class="num">15,185</td><td class="num">55.9%</td><td>안 · 담뱃값 인상</td></tr>
+<tr><td>2018</td><td class="num">30,356</td><td class="num">33,927</td><td class="num">–</td><td class="num">–</td><td>계획</td></tr>
+<tr><td>2020</td><td class="num">29,671</td><td class="num">33,700</td><td class="num">18,801</td><td class="num">55.8%</td><td>결</td></tr>
+<tr><td>2023</td><td class="num">29,737</td><td class="num">36,715</td><td class="num">18,208</td><td class="num">49.6%</td><td>본</td></tr>
+<tr><td>2024</td><td class="num">31,566</td><td class="num">36,377</td><td class="num">19,022</td><td class="num">52.3%</td><td>본</td></tr>
+<tr><td>2025</td><td class="num">28,771 (−2,795)</td><td class="num">35,349</td><td class="num">19,882 (결 18,701)</td><td class="num">56.2%</td><td>본/결 · 공자기금 9,121억 차입</td></tr>
+<tr><td>2026</td><td class="num">29,771 (예상)</td><td class="num">36,486</td><td class="num">19,351</td><td class="num">53.0%</td><td>본 · 경상사업비 17,134(복지부 9,068 + 질병청 8,066)</td></tr>
+<tr><td>2027</td><td class="num">–</td><td class="num">–</td><td class="num">약 20,000</td><td class="num">–</td><td>안</td></tr>
+</tbody></table></div>
+
+<div class="card">
+<h3 style="margin-top:0">"목적 외 사용" 논쟁의 구조</h3>
+<ul class="tight">
+  <li><b>법 구조</b>: 국민건강보험법·국민건강증진법 부칙 — 보험료 예상수입의 6%를 기금에서 지원하되 담배부담금 예상수입의 65%를 넘을 수 없음. 특례 2027.12.31 일몰.</li>
+  <li><b>실제 지원율</b>(보험료 예상수입 대비): 2020년 3.0% → 2022년 2.5% → 2024년 2.3% → 2025년 2.1% → 2029년 전망 1.9%. 담배부담금을 전액 넣어도 6%는 불가능한 구조(국회예산정책처).</li>
+  <li><b>법정 대비 부족</b>: 2024년 기금 법정분 5조 1,857억 vs 편성 1조 9,022억. 일반회계 포함 20% 기준 4조 8,573억 부족. 정부지원율 2025년 14.4%, 2026년 14.2%, 2027안 14.4%로 법정 20% 미달 지속.</li>
+  <li><b>기금 사업 구성 비판</b>(한국보건사회연구원 2022): 예방접종·R&amp;D 등 설치 목적 부합성 낮은 사업 편성. 건보 지원·R&amp;D 축소, 의료비 지원 일반회계 이관 권고. 건강생활실천 비중 2018년 13.8% → 2020년 11.4%.</li>
+  <li><b>재원 위험</b>: 담배 반출량 감소로 부담금 2025년 −2,795억. 국회예산정책처는 부담금 전망 방법이 매년 다르고 2026년 전망이 미공개라고 지적. 담배부담금의 보험료 수입 대비 기여 4.0%(2016) → 2.18%(2025).</li>
+  <li><b>국회 계류</b>: 65% 단서 삭제안(전전년도 보험료 3% 또는 6% 지원), 설탕부담금 신설안. 감사원의 기금 목적 외 사용 감사결과는 이번 조사에서 확인되지 않음.</li>
+</ul>
+</div>
+
+<h3>8-6. 질병정책 예산 — 질병관리청 · 정신건강 · 암·희귀·만성</h3>
+<div class="grid g2">
+<div class="chart-box">
+  <div class="ct">질병관리청 예산 (억 원, 본예산)</div>
+  <div class="cs">코로나19 접종·방역으로 2022년 5조 8,574억 정점 후 1조 3천억대로 복귀. 2027안 1조 4,347억.</div>
+  <canvas id="chKdca" height="150"></canvas>
+</div>
+<div class="tbl" style="margin:0"><table>
+<thead><tr><th>정신건강 예산</th><th class="num">억 원</th><th>비고</th></tr></thead>
+<tbody>
+<tr><td>2020 자살예방·지역정신보건</td><td class="num">974</td><td>+33.7%</td></tr>
+<tr><td>제2차 기본계획 목표 2021→2025</td><td class="num">2,700 → 5,200</td><td>5년 2조 원</td></tr>
+<tr><td>2024 정신건강 총액</td><td class="num">3,866</td><td>+706, 마음투자 신규</td></tr>
+<tr><td><b>2025 정신건강 총액</b></td><td class="num">5,363</td><td>일반·특별회계 3,475 + 기금 1,889. 보건예산의 <b>2.9%</b> (WHO 권고 5%, Lancet 10%)</td></tr>
+<tr><td>　국립정신병원 5개</td><td class="num">1,409</td><td></td></tr>
+<tr><td>　정신건강증진사업</td><td class="num">1,318</td><td>센터 인력 866, 통합정신건강 339</td></tr>
+<tr><td>　자살예방</td><td class="num">562 → 708 (2026) → 947 (2027안)</td><td>2027안 국가자살대응실 10, AI 109콜센터 13</td></tr>
+<tr><td>　마음투자 → 심리상담 바우처</td><td class="num">434 → 299 (2026)</td><td>−30%, 목표 16만→11.6만 명</td></tr>
+<tr><td>　마약류·중독 (2027안)</td><td class="num">134</td><td>치료보호 수요 대비 9.2% 충족(2024)</td></tr>
+</tbody></table></div>
+</div>
+<div class="tbl"><table>
+<thead><tr><th>질병정책 세부</th><th class="num">2025</th><th class="num">2026</th><th class="num">2027안</th><th>비고</th></tr></thead>
+<tbody>
+<tr><td>국가예방접종 실시(질병청)</td><td class="num">6,018</td><td class="num">6,392</td><td class="num">–</td><td>지자체보조 4,371, 코로나19 접종 1,758, HPV 303</td></tr>
+<tr><td>만성질환 예방관리(질병청)</td><td class="num">139</td><td class="num">143</td><td class="num">통합관리센터 19→29개</td><td>고혈압·당뇨 등록센터 85. 기금 내 만성질환 예방관리 2020년 109억</td></tr>
+<tr><td>희귀질환자 지원(질병청)</td><td class="num">313</td><td class="num">233</td><td class="num">진단지원 2,713건</td><td>진단지원 800→1,150건</td></tr>
+<tr><td>권역감염병전문병원</td><td class="num">0.5</td><td class="num">172</td><td class="num">병상 706→1,208</td><td></td></tr>
+<tr><td>암관리(기금)</td><td class="num" colspan="3">2020년 국가암관리·지원 510억 · 암환자 의료비는 '의료비 지원' 1,627억에 포함</td><td>2023 암 진료비 10조 1,552억(건보). 국립암센터 정부출연 약 572억. 2024~26 암검진·의료비·출연 세부는 사업설명자료에만 수록(미확인)</td></tr>
+<tr><td>감염병 예방관리(복지부 소관, 2024)</td><td class="num" colspan="3">200.7억(−13.7%), 감염병 대응 지원체계 구축 −98.7%</td><td>코로나 이후 급감</td></tr>
+</tbody></table></div>
+
+<h3>8-7. 국제 비교 — 예방 지출은 평균 이상, 전체 의료비는 평균 이하</h3>
+<div class="grid g2">
+<div class="tbl" style="margin:0"><table>
+<thead><tr><th>지표</th><th class="num">한국</th><th class="num">OECD 평균</th></tr></thead>
+<tbody>
+<tr><td>경상의료비 중 예방 지출(2023)</td><td class="num">4.6%</td><td class="num">3.4%</td></tr>
+<tr><td>예방 지출(2021, 코로나 검사·접종 포함) [추정]</td><td class="num">9.0%</td><td class="num">5.5%</td></tr>
+<tr><td>GDP 대비 경상의료비(2024)</td><td class="num">8.4~8.5%</td><td class="num">9.1~9.3%</td></tr>
+<tr><td>1인당 경상의료비(USD PPP)</td><td class="num">4,797</td><td class="num">5,967</td></tr>
+<tr><td>정부·의무가입 재원 비중</td><td class="num">60%</td><td class="num">75%</td></tr>
+<tr><td>자살률(연령표준화, 10만 명당)</td><td class="num">26.2</td><td class="num">10.8</td></tr>
+</tbody></table></div>
+<div class="chart-box">
+  <div class="ct">GDP 대비 경상의료비 추이 (%)</div>
+  <div class="cs">2024년 GDP 기준년 개편 반영 계열. 개편 전 계열(2022년 9.7%)과 다르므로 인용 시 주의. 출처: e-나라지표 보건계정, OECD Health at a Glance 2025.</div>
+  <canvas id="chGdp" height="150"></canvas>
+</div>
+</div>
+
+<div class="card" style="border-left:4px solid var(--warn)">
+<h3 style="margin-top:0">예산에서 읽히는 것</h3>
+<ul class="tight">
+  <li>복지부 총지출은 13년간 3.3배 커졌지만 <b>보건 분야 비중은 19%→14%로 줄었고</b>, 그 보건 예산의 57%가 건강보험 지원입니다.</li>
+  <li>건강증진기금 3.6조 중 순수 건강생활실천 사업은 약 1,700억(5%)입니다. HP2030이 "연 2.5조 원 계획"이라고 부르는 돈의 대부분은 예방접종·건보 지원·R&amp;D입니다.</li>
+  <li>정신건강 예산은 보건예산의 2.9%로 WHO 권고(5%)의 절반입니다. 자살률이 최고치를 찍은 해에 심리상담 바우처가 30% 깎였습니다.</li>
+  <li>예방 지출 비중(4.6%)은 OECD 평균을 넘지만, 그 예방의 상당 부분이 예방접종·검진(질병청·건보)이고 생활습관·환경 개입 예산은 얇습니다.</li>
+</ul>
+</div>
+
+<!-- ===== 9. 갭 분석 ===== -->
+<h2 id="s9">9. 비전 달성을 위해 무엇이 부족하고 무엇이 필요한가</h2>
+<p class="lead">"모든 사람이 평생 건강을 누리는 사회"까지 남은 거리를 <b>거버넌스 · 재원 · 지역 · 정신건강 · 만성질환 · 데이터 · 인력</b> 7개 축으로 나눠, 지금 상태 → 빠진 것 → 필요한 것을 한 줄에 놓았습니다.</p>
+
+<div class="gap">
+  <div class="hdr"><div>영역</div><div>지금 상태</div><div>부족한 것</div><div>필요한 것</div></div>
+
+  <div class="row">
+    <div class="h">① 거버넌스<small>계획 체계</small></div>
+    <div class="col now"><div class="lab">지금</div><ul><li>보건의료발전계획 26년째 미수립</li><li>HP·암·정신건강·자살·영양·구강·지역보건 등 7개 이상 5년 계획이 각각 심의위 따로 운영</li><li>2026.7 직제 개정으로 건강증진+질병정책 통합, 구강은 분리</li></ul></div>
+    <div class="col lack"><div class="lab">부족</div><ul><li>상위 계획이 없어 개별 계획 간 우선순위·재원 배분 기준 부재</li><li>HiAP(모든 정책에 건강) 원칙을 강제할 부처 간 기구 없음</li><li>건강영향평가 제도화 미완(HP2030 도입 선언에 그침)</li></ul></div>
+    <div class="col need"><div class="lab">필요</div><ul><li>제1차 보건의료발전계획 수립 · 하위 계획 주기 정렬(2030 동시 종료 활용)</li><li>국무총리급 건강정책조정회의 상설화</li><li>건강영향평가 법제화(국민건강증진법 개정)</li></ul></div>
+  </div>
+
+  <div class="row">
+    <div class="h">② 재원<small>국민건강증진기금</small></div>
+    <div class="col now"><div class="lab">지금</div><ul><li>담배부담금 841원, 2015년 이후 11년 동결</li><li>기금 지출의 약 절반이 건강보험 지원(2026년 2조 원)</li><li>담배 반출량 감소로 수입 하락(2025년 −2,795억)</li></ul></div>
+    <div class="col lack"><div class="lab">부족</div><ul><li>기금 재원의 담배 단일 의존 · 축소 추세</li><li>기금이 건강증진사업보다 건보 재정 보전에 쓰이는 구조(목적 외 사용 비판)</li><li>건보 지원 특례가 2027년 종료 예정, 이후 설계 없음</li></ul></div>
+    <div class="col need"><div class="lab">필요</div><ul><li>담뱃값 OECD 평균 수준 단계 인상(제6차 계획 검토 명시)</li><li>주류·당류 등 건강위해물품 부담금 신설 논의 공론화</li><li>기금의 건보 지원 비율 축소 로드맵 · 예방 지출 목표치(경상의료비 대비) 법정화</li></ul></div>
+  </div>
+
+  <div class="row">
+    <div class="h">③ 지역 형평<small>지자체·보건소</small></div>
+    <div class="col now"><div class="lab">지금</div><ul><li>시군구 건강수명 상위 10곳 74.2세 vs 하위 10곳 65.2세(9.0세 격차)</li><li>목표(2.9세)와 3배 차이</li><li>보건소 263 · 보건지소 1,318 · 진료소 1,894, 읍면 분산 구조</li></ul></div>
+    <div class="col lack"><div class="lab">부족</div><ul><li>통합건강증진사업 예산이 인구 기준 배분 → 격차 큰 농촌·소도시에 불리</li><li>시도 홈페이지에서 지표 달성 현황을 시민이 볼 수 없음(서울·경기 제외)</li><li>지원단 이원화(공공보건의료지원단 vs 통합건강증진사업지원단)</li></ul></div>
+    <div class="col need"><div class="lab">필요</div><ul><li>제9기 지역보건의료계획(2027~30)에 격차 축소 목표 의무화 · 격차 가중 예산 배분</li><li>거점 보건지소 재편과 통합돌봄 연계(2026.3 전국 시행)</li><li>지자체별 HP 대표지표 대시보드 공개 표준화</li></ul></div>
+  </div>
+
+  <div class="row">
+    <div class="h">④ 정신건강<small>국립정신병원·자살</small></div>
+    <div class="col now"><div class="lab">지금</div><ul><li>자살률 29.1명(2024), OECD 평균의 2.4배</li><li>국립정신병원 전문의 충원 49.1%, 병상 가동 25.5%</li><li>마음투자 예산 −30%(2026)</li></ul></div>
+    <div class="col lack"><div class="lab">부족</div><ul><li>공공 정신의료 인력 유인책(보수·근무환경) 없음</li><li>급성기·응급 병상(391개) 절대 부족</li><li>혁신방안 목표(자살률 50% 감축)와 예산 흐름 불일치</li></ul></div>
+    <div class="col need"><div class="lab">필요</div><ul><li>국립정신병원 기능 재편(권역 정신응급·중독·치료감호 특화) 및 전문의 처우 개선</li><li>제3차 기본계획 병상 목표(2,000개)의 연차별 예산 확정</li><li>비자의입원 절차 개선 · 지역사회 위기개입팀 확충</li></ul></div>
+  </div>
+
+  <div class="row">
+    <div class="h">⑤ 만성질환·생활습관<small>비만·당뇨·신체활동</small></div>
+    <div class="col now"><div class="lab">지금</div><ul><li>남성 비만 48.8%, 당뇨 13.3%, 고혈압 26.3%로 모두 증가</li><li>유산소 신체활동 10년간 −9.0%p</li><li>흡연은 개선, 전자담배·여성 음주는 증가</li></ul></div>
+    <div class="col lack"><div class="lab">부족</div><ul><li>흡연 대비 비만·신체활동 정책 수단(부담금·환경 규제) 빈약</li><li>일차의료 만성질환관리가 시범사업에 머묾</li><li>암은 검진 체계가 있으나 대장암 수검률 40.3%로 최저</li></ul></div>
+    <div class="col need"><div class="lab">필요</div><ul><li>2026년 일차의료 통합수가·지역사회 일차의료 혁신 시범사업의 본사업 전환</li><li>신체활동 친화 환경(도시계획·직장) HiAP 적용</li><li>당류·주류 부담금, 전자담배 규제 강화(2026.4 담배 정의 확대 후속)</li></ul></div>
+  </div>
+
+  <div class="row">
+    <div class="h">⑥ 데이터·정보<small>PHIS·통계</small></div>
+    <div class="col now"><div class="lab">지금</div><ul><li>PHIS 2007 구축, 차세대 2023 시범운영</li><li>건강영양조사(질병청)·건강수명(KHEPI)·암등록(NCC)·건보 빅데이터 분산</li><li>2025.11 국민건강영양조사–건강정보 연계 근거 마련</li></ul></div>
+    <div class="col lack"><div class="lab">부족</div><ul><li>PHIS 대국민 개방 API·실시간 지표 없음</li><li>건강수명 통계가 2~4년 시차(2026년에 2022년 발표)</li><li>형평성 지표 225개를 시군구 단위로 볼 수 있는 화면 부재</li></ul></div>
+    <div class="col need"><div class="lab">필요</div><ul><li>PHIS–건보–지역사회건강조사 연계 데이터 플랫폼(제6차 계획 명시) 실행</li><li>건강수명 연 1회 정시 산출 체계</li><li>KHEPI 격차DB를 시군구·소득분위까지 공개</li></ul></div>
+  </div>
+
+  <div class="row">
+    <div class="h">⑦ 인력·조직<small>복지부·KHEPI·보건소</small></div>
+    <div class="col now"><div class="lab">지금</div><ul><li>건강정책국 1국이 HP·기금·질병·정신건강·지역보건 총괄</li><li>KHEPI 직원 181명, 예산 약 354억</li><li>보건소장 임용자격 확대(2024)</li></ul></div>
+    <div class="col lack"><div class="lab">부족</div><ul><li>연 2.5조 원 계획을 총괄하는 KHEPI 규모가 국립암센터의 6% 수준</li><li>보건소 인력이 감염병·행정에 쏠려 건강증진 전담 인력 부족</li><li>구강정책 분리로 건강생활실천 분과 조정 기능 약화 우려</li></ul></div>
+    <div class="col need"><div class="lab">필요</div><ul><li>KHEPI를 HP 성과관리 전담기관으로 격상(평가·예산 연계 권한)</li><li>보건소 건강증진 전담 정원 기준 신설</li><li>건강정책국–지역필수공공의료실 간 지역보건 업무 조정 명문화</li></ul></div>
+  </div>
+</div>
+
+<h3>요약 — 세 가지가 바뀌면 나머지가 따라온다</h3>
+<div class="grid g3">
+  <div class="card" style="border-left:4px solid var(--accent)"><b>1. 상위 계획을 만든다</b><p style="font-size:.86rem;margin:6px 0 0">보건의료발전계획을 수립해 7개 하위 계획의 목표·재원·주기를 2030년에 맞춰 정렬한다.</p></div>
+  <div class="card" style="border-left:4px solid var(--accent)"><b>2. 돈의 방향을 바꾼다</b><p style="font-size:.86rem;margin:6px 0 0">건강증진기금의 건보 지원 비율을 줄이고, 담배 외 재원(주류·당류)을 더해 예방 지출을 늘린다.</p></div>
+  <div class="card" style="border-left:4px solid var(--accent)"><b>3. 격차를 숫자로 관리한다</b><p style="font-size:.86rem;margin:6px 0 0">시군구·소득분위별 건강수명을 매년 공개하고, 격차에 따라 예산을 가중 배분한다.</p></div>
+</div>
+
+<!-- ===== 10. 출처 ===== -->
+<h2 id="s10">10. 출처와 유의사항</h2>
+<details open><summary>법령·계획</summary><ul class="tight">
+  <li>법제처 국가법령정보센터 — 국민건강증진법·보건의료기본법·지역보건법·암관리법·정신건강복지법·자살예방법·국민영양관리법·구강보건법 연혁 및 제개정이유 (law.go.kr)</li>
+  <li>보건복지부 「제6차 국민건강증진종합계획(2026~2030)」 보도자료 2026.3.27 · 국민건강증진종합계획 소개 페이지 (mohw.go.kr)</li>
+  <li>보건복지부 「제5차 암관리종합계획(2026~2030)」 2026.2.24 · 「제3차 정신건강복지기본계획(2026~2030)」 2026.3.27 · 「정신건강정책 혁신방안」 2023.12.5</li>
+  <li>한국건강증진개발원 HP2030 소개·대표지표 (khepi.or.kr/healthplan, /hpn) · 지역보건의료계획 공개 포털 (khepi.or.kr/kps/localHealthPlan)</li>
+  <li>대한민국 정책브리핑 제5차 HP2030 브리핑(2021.1.27) · KDI 경제정보센터 정책자료</li>
+</ul></details>
+<details><summary>통계</summary><ul class="tight">
+  <li>한국건강증진개발원 「2022년 건강수명 통계집」(2026.2)</li>
+  <li>질병관리청 「2024년 국민건강영양조사」(2025.10.1) · 「2025년 지역사회건강조사」(2025.12.8)</li>
+  <li>국립암센터 중앙암등록본부 「2023년 국가암등록통계」(2025.12) · 국가암정보센터 검진 안내</li>
+  <li>통계청 「2024년 사망원인통계」 · 보건복지부 2025년 자살 잠정치</li>
+  <li>보건복지부 지역보건기관 현황(2025.12)</li>
+</ul></details>
+<details><summary>조직·기관</summary><ul class="tight">
+  <li>「보건복지부와 그 소속기관 직제」 개정(2026.7.14 국무회의, 7.21 시행) · 보건복지부 조직도</li>
+  <li>KDI 정부부처 변천사 · 한국건강증진개발원 기관소개 · 국립정신건강센터·국립나주·부곡·춘천·공주병원 연혁</li>
+  <li>보건복지부 국립정신병원 감사 결과(2025) 관련 보도(메디컬데일리·뉴스더보이스)</li>
+  <li>한국사회보장정보원 PHIS 소개 · 정책브리핑 차세대 PHIS(2023.2)</li>
+</ul></details>
+<details><summary>예산</summary><ul class="tight">
+  <li>보건복지부 연도별 예산 개요·「2026년 예산안」 보도자료 · 국회예산정책처 결산·예산안 분석 · 열린재정(openfiscaldata.go.kr)</li>
+  <li>국민건강증진기금 운용계획·결산 · 국회예산정책처 「국민건강증진기금 건강보험 지원」 분석(2026.6)</li>
+  <li>OECD Health Statistics 2025</li>
+</ul></details>
+<div class="notice" style="margin-top:14px">
+  <b>확인하지 못한 항목</b>: 제3차 HP2020 성과지표 수(405개), KHEPI·국립암센터의 공공기관 경영정보(ALIO) 정원·예산 원표, 통합건강증진사업 연도별 총 국비액. 이 항목은 2차 문헌 또는 공시 요약값을 썼으며 본문에 '추정' 또는 '공시'로 표시했습니다. 1948~1990년대 예산은 화폐개혁(1953·1962)과 회계 기준 변경으로 연속 비교가 어려워 참고치로만 제시합니다.
+</div>
+
+<p class="foot">
+  본 페이지는 개인이 공개자료를 바탕으로 정리한 비공식 참고자료이며, 보건복지부·한국건강증진개발원·국립암센터·국립정신건강센터 등 어떤 기관의 공식 사이트도 아닙니다. 수치는 발표 시점에 따라 달라질 수 있으므로 인용 시 원 출처를 확인하세요.
+  · <a href="gukgam-health.html">국정감사 보건복지 트랙</a> · <a href="dolbom/index.html">돌봄 포털</a> · <a href="about.html">소개</a>
+</p>
+</main>
+
+<script src="assets/js/chart.umd.min.js"></script>
+<script>
+(function(){
+  if(typeof Chart==='undefined') return;
+  var S1='#2a78d6', S2='#eb6834', S3='#1baf7a', TXT='#3d4f63', GRID='#eef2f6';
+  Chart.defaults.font.family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif";
+  Chart.defaults.font.size=11; Chart.defaults.color=TXT;
+  var base={ responsive:true, maintainAspectRatio:true, interaction:{mode:'index',intersect:false},
+    plugins:{ legend:{display:false}, tooltip:{backgroundColor:'#12365f',titleFont:{weight:'800'},padding:8,cornerRadius:6} },
+    scales:{ x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true}}, y:{beginAtZero:true,grid:{color:GRID},border:{display:false}} } };
+  function bar(id,labels,datasets,opt){
+    var el=document.getElementById(id); if(!el) return;
+    var o=JSON.parse(JSON.stringify(base)); if(opt&&opt.scales) o.scales=Object.assign(o.scales,opt.scales); if(opt&&opt.plugins) o.plugins=Object.assign(o.plugins,opt.plugins);
+    if(opt&&opt.indexAxis) o.indexAxis=opt.indexAxis;
+    if(opt&&opt.tooltip) o.plugins.tooltip.callbacks=opt.tooltip;
+    datasets.forEach(function(d){ d.borderRadius=d.borderRadius||4; d.borderSkipped='start'; d.maxBarThickness=28; d.borderWidth=0; });
+    new Chart(el,{type:'bar',data:{labels:labels,datasets:datasets},options:o});
+  }
+  function line(id,labels,datasets,opt){
+    var el=document.getElementById(id); if(!el) return;
+    var o=JSON.parse(JSON.stringify(base)); o.scales.y.beginAtZero=false; if(opt&&opt.scales) o.scales=Object.assign(o.scales,opt.scales);
+    if(opt&&opt.tooltip) o.plugins.tooltip.callbacks=opt.tooltip;
+    datasets.forEach(function(d){ d.borderWidth=2; d.pointRadius=4; d.pointHoverRadius=6; d.pointBackgroundColor='#fff'; d.pointBorderWidth=2; d.tension=0; d.fill=false; });
+    new Chart(el,{type:'line',data:{labels:labels,datasets:datasets},options:o});
+  }
+  var fmt=function(u){ return { label:function(c){ return ' '+c.dataset.label+': '+c.parsed[c.chart.config.options.indexAxis==='y'?'x':'y'].toLocaleString('ko-KR')+u; } }; };
+
+  // 8-2 일반회계
+  bar('chGa',['1982','1985','1990','1995','2000','2005','2010','2015','2020','2021','2022','2023','2024','2025','2026'],
+    [{label:'일반회계',data:[0.4,0.6,1,2,5,9,20,33,55,55,62,66.4,72.2,70.6,73.3],backgroundColor:S1}],
+    {tooltip:fmt('조 원')});
+  // 8-3 총지출
+  bar('chTot',['2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026','2027안'],
+    [{label:'총지출',data:[42.2,46.9,51.9,55.8,57.7,64.2,72.5,82.5,89.6,97.5,109.2,122.4,125.5,137.5,148.8],backgroundColor:S1}],
+    {tooltip:fmt('조 원')});
+  // 8-4 분야
+  bar('chSec',['2015안','2020본','2023본','2024본','2025본','2026본','2027안'],
+    [{label:'사회복지',data:[41.95,69.8,92.2,104.9,107.2,118.5,128.3],backgroundColor:S1,stack:'a'},
+     {label:'보건',data:[9.98,12.97,16.96,17.47,18.30,19.02,20.50],backgroundColor:S2,stack:'a'}],
+    {scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,beginAtZero:true,grid:{color:GRID},border:{display:false}}},tooltip:fmt('조 원')});
+  // 8-5 기금
+  bar('chFund',['2013결','2014본','2015안','2020결','2023본','2024본','2025본','2026본'],
+    [{label:'기금 총지출',data:[18764,20030,27189,33700,36715,36377,35349,36486],backgroundColor:S1},
+     {label:'건보 지원',data:[9986,10191,15185,18801,18208,19022,19882,19351],backgroundColor:S2}],
+    {tooltip:fmt('억 원')});
+  bar('chComp',['건보 지원','질환예방(접종·치매·암·감염병)','공공보건의료·정보화','R&D','건강생활실천','의료비 지원','정신건강'],
+    [{label:'2020 지출',data:[18801,6463,1948,1882,1701,1627,988],backgroundColor:[S2,S1,S1,S1,S3,S1,S1]}],
+    {indexAxis:'y',scales:{x:{beginAtZero:true,grid:{color:GRID},border:{display:false}},y:{grid:{display:false},ticks:{autoSkip:false,font:{size:10}}}},tooltip:fmt('억 원')});
+  // 8-6 질병청
+  bar('chKdca',['2021','2022','2023','2024','2025','2026','2027안'],
+    [{label:'질병관리청',data:[9917,58574,29470,16303,12661,13359,14347],backgroundColor:S1}],
+    {tooltip:fmt('억 원')});
+  // 8-7 GDP
+  line('chGdp',['2000','2005','2010','2015','2019','2020','2021','2022','2023','2024','2025'],
+    [{label:'GDP 대비 경상의료비',data:[3.9,4.6,5.9,6.5,7.7,8.0,8.3,8.8,8.5,8.5,8.4],borderColor:S1,pointBorderColor:S1}],
+    {scales:{y:{min:0,max:10,grid:{color:GRID},border:{display:false}}},tooltip:fmt('%')});
+})();
+</script>
+</body>
+</html>
