@@ -10,6 +10,7 @@ import GapBoxplot from "./components/GapBoxplot";
 import Profile from "./components/Profile";
 import Compare, { NAT, MAX_CMP } from "./components/Compare";
 import Tooltip from "./components/Tooltip";
+import ExportButtons from "./components/ExportButtons";
 
 const DEFAULT_IND = INDICATORS.find((i) => i.id === "DT_H_SM") || INDICATORS[0];
 
@@ -150,6 +151,7 @@ export default function App() {
                 <div className="cardhead">
                   <div>
                     <h3>{year}년 {ind.name} — 시군구 단계구분도</h3>
+                    <ExportButtons name={`${year}_${ind.name}_지도`} />
                     <div className="desc">7단계 분위({scope === "sido" && sel.l === "sgg" ? RBY.get(sel.p).n : "전국"} 기준) · 지역을 누르면 선택 · ▶ 로 연도 애니메이션</div>
                   </div>
                 </div>
@@ -159,24 +161,28 @@ export default function App() {
 
               <div className="card">
                 <h3>{ind.name} 추이</h3>
+                <ExportButtons name={`${ind.name}_추이_${label(sel)}`} />
                 <div className="desc">{years[0]}–{years[years.length - 1]} · {ind.src}</div>
                 <TrendChart ind={ind} item={item} year={year} sel={sel} setTip={setTip} />
               </div>
 
               <div className="card">
                 <h3>순위 — {scopeLabel}</h3>
+                <ExportButtons name={`${year}_${ind.name}_순위_${scopeLabel}`} kinds={["list"]} />
                 <div className="desc">{year}년 · 양호한 순 ({ind.bad == null ? "값 큰 순" : ind.bad ? "낮을수록 양호" : "높을수록 양호"})</div>
                 <RankPanel ind={ind} item={item} year={year} sel={sel} scope={scope} onSelect={selectRegion} />
               </div>
 
               <div className="card">
                 <h3>연도별 추이표</h3>
+                <ExportButtons name={`${ind.name}_연도별_${label(sel)}`} kinds={["csv"]} />
                 <div className="desc">수치 · 순위 · 증감량 · 증감률 (행을 누르면 연도 이동)</div>
                 <YearTable ind={ind} item={item} sel={sel} year={year} onYear={(y) => setYearSel(y)} />
               </div>
 
               <div className="card">
                 <h3>지역 간 격차 — {scopeLabel}</h3>
+                <ExportButtons name={`${ind.name}_격차_${scopeLabel}`} />
                 <div className="desc">연도별 분포(상자그림)와 {label(sel)}의 위치</div>
                 <GapBoxplot ind={ind} item={item} year={year} sel={sel} scope={scope} setTip={setTip} />
               </div>

@@ -234,3 +234,11 @@ footer { font-size:11.5px; color:var(--muted); margin:18px 0 8px; line-height:1.
 .pctmini { display:inline-flex; align-items:center; gap:4px; width:70px; }
 .pctmini i { display:block; height:5px; border-radius:3px; flex:none; }
 .pctmini small { color:var(--muted); font-size:10px; }
+
+/* ===== 내보내기 버튼 ===== */
+.card { position: relative; }
+.exports { position:absolute; top:12px; right:12px; display:flex; gap:4px; }
+.xbtn { border:1px solid var(--border); background:var(--surface-1); color:var(--muted); border-radius:6px; padding:2px 7px; font-size:11px; cursor:pointer; }
+.xbtn:hover { color:var(--series-1); border-color:var(--series-1); }
+.card:has(.exports) > h3, .card:has(.exports) .cardhead h3 { padding-right: 150px; }
+@media (max-width: 480px){ .exports { position:static; margin:-4px 0 6px; } .card:has(.exports) > h3, .card:has(.exports) .cardhead h3 { padding-right:0; } }

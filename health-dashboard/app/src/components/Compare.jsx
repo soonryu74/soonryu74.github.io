@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { INDICATORS, DOMAINS, SIDOS, SGG_BY_SIDO, SGG_ALL, RBY, fmt, val, nationalMedian, ranked, percentile, latestYear, label, betterCmp } from "../data";
 import { pathOf, nearestIndex, clientXY, Gridlines, XAxis } from "./svgUtil";
+import ExportButtons from "./ExportButtons";
 
 export const NAT = "NAT";                       // 전국(전 시군구 중앙값) 가상 지역
 export const MAX_CMP = 6;
@@ -204,22 +205,26 @@ export default function Compare({ ind, item, year, codes, onCodes, onYear, onPic
           <div className="grid2">
             <div className="card">
               <h3>{ind.name} 추이 비교</h3>
+              <ExportButtons name={`${ind.name}_추이비교`} />
               <div className="desc">{ind.years[0]}–{ind.years[ind.years.length - 1]} · {ind.bad == null ? "중립 지표" : ind.bad ? "낮을수록 양호" : "높을수록 양호"}</div>
               <MultiTrend ind={ind} item={item} year={year} codes={codes} setTip={setTip} />
             </div>
             <div className="card">
               <h3>{year}년 {ind.name}</h3>
+              <ExportButtons name={`${year}_${ind.name}_비교`} kinds={["list"]} />
               <div className="desc">막대 비교 · 시군구는 전국 시군구 순위, 시도는 17개 시도 순위</div>
               <YearBars ind={ind} item={item} year={year} codes={codes} />
             </div>
           </div>
           <div className="card">
             <h3>연도별 비교표</h3>
+            <ExportButtons name={`${ind.name}_연도별비교`} kinds={["csv"]} />
             <div className="desc">행을 누르면 연도 이동 · 차이는 첫 번째 지역에서 두 번째 지역을 뺀 값</div>
             <YearCompareTable ind={ind} item={item} year={year} codes={codes} onYear={onYear} />
           </div>
           <div className="card">
             <h3>전 지표 비교 ({INDICATORS.length}개)</h3>
+            <ExportButtons name={`${year}_전지표비교`} kinds={["csv"]} />
             <div className="desc">{year}년 기준(해당 연도 없으면 최신) · 값 아래 막대는 전국 시군구 백분위(높을수록 양호) · 색 강조는 비교 지역 중 가장 양호 · 행을 누르면 그 지표로 이동</div>
             <AllIndicatorTable item={item} year={year} codes={codes} onPick={onPick} />
           </div>

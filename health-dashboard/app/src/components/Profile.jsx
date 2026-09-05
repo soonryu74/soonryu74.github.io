@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { INDICATORS, DOMAINS, fmt, val, latestYear, percentile, ranked, poolFor, label, RBY } from "../data";
+import ExportButtons from "./ExportButtons";
 
 /* 지역 프로파일: 전 지표 백분위 → 영역 점수 · 강점 TOP5 · 개선 TOP · 전체 지표표 */
 export default function Profile({ item, sel, scope, onPick }) {
@@ -54,6 +55,7 @@ export default function Profile({ item, sel, scope, onPick }) {
       <div className="grid2">
         <div className="card">
           <h3>영역별 양호도</h3>
+          <ExportButtons name={`${label(sel)}_영역별양호도`} kinds={["list"]} />
           <div className="desc">영역 내 지표 백분위 평균</div>
           <div className="domains">
             {domainScore.map(({ d, score, n }) => (
@@ -115,6 +117,7 @@ export default function Profile({ item, sel, scope, onPick }) {
 
       <div className="card">
         <h3>전체 지표</h3>
+        <ExportButtons name={`${label(sel)}_프로파일_전체지표`} kinds={["csv"]} />
         <div className="desc">행을 누르면 해당 지표 분석 화면으로 이동합니다</div>
         <div className="tblscroll">
           <table className="proftbl">
