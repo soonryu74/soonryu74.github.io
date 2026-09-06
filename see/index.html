@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>크게보기 — 눈이 편한 AI 창</title>
 <meta name="description" content="링크 하나로 여는, 눈이 편한 AI 창. 큰 글자, 높은 대비, 버튼 두 개.">
+<meta name="theme-color" content="#12161c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
   /* ===== 접근성 토큰 (CLAUDE.md 6장 — 임의 변경 금지) ===== */
   :root {
@@ -122,6 +126,30 @@
     cursor: pointer;
   }
   .actions button:disabled { opacity: 1; background: var(--bg); color: var(--ink-2); border-color: var(--ink-2); cursor: default; }
+  .actions button[aria-pressed="true"] { background: var(--btn-on-bg); border-color: var(--btn-on-bg); }
+
+  #ask {
+    display: none;
+    width: 100%;
+    margin-top: 12px;
+    min-height: var(--touch-min);
+    padding: 12px;
+    border: 3px solid var(--ink);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--ink);
+    font: inherit;
+    letter-spacing: 0;
+    cursor: pointer;
+  }
+  #ask.show { display: block; }
+
+  #status {
+    margin-top: 12px;
+    min-height: calc(var(--fs-body) * var(--lh));
+    color: var(--ink-2);
+  }
+  #status:empty { display: none; }
 
   :focus-visible { outline: 4px solid var(--focus); outline-offset: 3px; }
 
@@ -145,6 +173,8 @@
   </div>
   <label for="question">질문</label>
   <textarea id="question" placeholder="여기에 적거나, 아래 말하기 버튼을 누르세요"></textarea>
+  <button type="button" id="ask">물어보기</button>
+  <p id="status" aria-live="polite"></p>
 </main>
 
 <footer class="actions">
@@ -177,6 +207,170 @@
     buttons[i].addEventListener('click', function () { apply(this.dataset.size); });
   }
 })();
+
+/* ===== 공통 ===== */
+var $answer = document.getElementById('answer');
+var $question = document.getElementById('question');
+var $ask = document.getElementById('ask');
+var $status = document.getElementById('status');
+var $speak = document.getElementById('btn-speak');
+var $read = document.getElementById('btn-read');
+
+function setStatus(msg) { $status.textContent = msg || ''; }
+function setAnswer(lines) {
+  $answer.innerHTML = '';
+  lines.forEach(function (t) {
+    var p = document.createElement('p');
+    p.textContent = t;
+    $answer.appendChild(p);
+  });
+}
+
+/* ===== 읽어주기 (SpeechSynthesis, ko-KR) ===== */
+(function () {
+  var synth = window.speechSynthesis;
+  if (!synth || !window.SpeechSynthesisUtterance) {
+    $read.textContent = '읽어주기 불가';
+    return;
+  }
+  $read.disabled = false;
+
+  var koVoice = null;
+  function pickVoice() {
+    var voices = synth.getVoices();
+    for (var i = 0; i < voices.length; i++) {
+      if (/^ko/i.test(voices[i].lang)) { koVoice = voices[i]; break; }
+    }
+  }
+  pickVoice();
+  if (typeof synth.onvoiceschanged !== 'undefined') synth.onvoiceschanged = pickVoice;
+
+  function stopReading() {
+    synth.cancel();
+    $read.textContent = '🔊 읽어주기';
+    $read.setAttribute('aria-pressed', 'false');
+  }
+
+  $read.addEventListener('click', function () {
+    if (synth.speaking) { stopReading(); return; }
+    pickVoice();
+    var text = $answer.textContent.replace(/\s+/g, ' ').trim();
+    if (!text) return;
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR';
+    if (koVoice) u.voice = koVoice;
+    else setStatus('이 기기에 한국어 음성이 없어요. 기기 설정에서 한국어 음성을 설치하면 더 잘 들려요.');
+    u.rate = 0.9;
+    u.onend = stopReading;
+    u.onerror = function () { stopReading(); setStatus('읽어주기가 중간에 멈췄어요. 다시 눌러 주세요.'); };
+    $read.textContent = '⏹ 멈추기';
+    $read.setAttribute('aria-pressed', 'true');
+    synth.speak(u);
+  });
+})();
+
+/* ===== 말하기 (SpeechRecognition, ko-KR) — 미지원 시 텍스트 입력으로 ===== */
+(function () {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    $speak.textContent = '말하기 불가';
+    $question.placeholder = '이 기기는 말하기를 지원하지 않아요. 여기에 적어 주세요.';
+    return;
+  }
+  $speak.disabled = false;
+
+  var rec = null;
+  var listening = false;
+
+  function stopListening() {
+    listening = false;
+    $speak.textContent = '🎤 말하기';
+    $speak.setAttribute('aria-pressed', 'false');
+  }
+
+  $speak.addEventListener('click', function () {
+    if (listening) { try { rec.stop(); } catch (e) {} stopListening(); return; }
+    rec = new SR();
+    rec.lang = 'ko-KR';
+    rec.interimResults = true;
+    rec.continuous = false;
+    rec.maxAlternatives = 1;
+
+    var finalText = '';
+    rec.onresult = function (ev) {
+      var interim = '';
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        var t = ev.results[i][0].transcript;
+        if (ev.results[i].isFinal) finalText += t; else interim += t;
+      }
+      $question.value = finalText || interim;
+    };
+    rec.onerror = function (ev) {
+      stopListening();
+      if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
+        setStatus('마이크 사용을 허용해 주세요. 허용이 어려우면 아래에 적어 주셔도 돼요.');
+      } else if (ev.error === 'no-speech') {
+        setStatus('말소리가 들리지 않았어요. 다시 눌러서 말해 주세요.');
+      } else {
+        setStatus('말하기가 안 돼요. 아래에 적어 주세요.');
+      }
+    };
+    rec.onend = function () {
+      var wasListening = listening;
+      stopListening();
+      if (wasListening && finalText.trim()) ask(finalText.trim());
+    };
+
+    listening = true;
+    $speak.textContent = '⏹ 듣는 중';
+    $speak.setAttribute('aria-pressed', 'true');
+    setStatus('');
+    try { rec.start(); } catch (e) { stopListening(); setStatus('말하기를 시작할 수 없어요. 아래에 적어 주세요.'); }
+  });
+})();
+
+/* ===== 물어보기 (텍스트 입력 시에만 버튼 표시) ===== */
+$question.addEventListener('input', function () {
+  $ask.classList.toggle('show', $question.value.trim().length > 0);
+});
+$ask.addEventListener('click', function () {
+  var q = $question.value.trim();
+  if (q) ask(q);
+});
+$question.addEventListener('keydown', function (ev) {
+  if (ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing) {
+    ev.preventDefault();
+    var q = $question.value.trim();
+    if (q) ask(q);
+  }
+});
+
+/* ===== AI에 묻기 (서버리스 함수 경유, 3줄 요약) ===== */
+var asking = false;
+function ask(q) {
+  if (asking) return;
+  asking = true;
+  setStatus('답을 찾고 있어요…');
+  fetch('/api/ask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question: q })
+  })
+  .then(function (r) { if (!r.ok) throw new Error('bad status ' + r.status); return r.json(); })
+  .then(function (data) {
+    var lines = (data && data.lines) || [];
+    if (!lines.length) throw new Error('empty');
+    setAnswer(lines);
+    setStatus('');
+    $question.value = '';
+    $ask.classList.remove('show');
+    window.scrollTo({ top: 0 });
+  })
+  .catch(function () {
+    setStatus('지금은 답을 가져올 수 없어요. 잠시 후 다시 해보세요.');
+  })
+  .then(function () { asking = false; });
+}
 </script>
 </body>
 </html>

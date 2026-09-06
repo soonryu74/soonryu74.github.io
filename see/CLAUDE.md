@@ -268,3 +268,26 @@ nomoremanual.com           ← 본체. AI 교육·강의·유튜브 허브
 > **앱을 파는 게 아니라, 이미 있는 것을 닿게 만드는 일입니다.**
 
 기능으로 애플·구글과 경쟁하지 않습니다. 우리가 만드는 건 **"쓰는 법을 아는 사람"이 만든 창구**입니다. 그래서 기능이 적어야 이깁니다.
+
+---
+
+## 13. 진행 상황 (Claude Code 기록, 2026-09-06)
+
+| 스프린트 | 상태 | 비고 |
+|---|---|---|
+| Day 1–2 골격·글자 토글 | ✅ | `index.html`. localStorage try/catch, 390px 가로 스크롤 없음 확인 |
+| Day 3–4 대비 토큰·검증 스크립트 | ✅ | `node check-contrast.js` — 본문 18:1, 보조 9.4:1, 테두리 4.6:1 |
+| Day 5–6 읽어주기 | ⚠️ 코드 완료 | ko-KR 음성 선택·없을 때 안내. **기기 4종 실기 확인은 미완** (헤드리스에서 불가) |
+| Day 7–8 말하기 + 텍스트 폴백 | ✅ | 미지원 시 "말하기 불가" + 안내 placeholder. 마이크 거부·무음 오류 안내. 텍스트 입력 시에만 [물어보기] 버튼 표시 |
+| Day 9–10 AI 연결 + 3줄 요약 | ⚠️ 코드 완료 | `api/ask.js` (Vercel Node 함수, claude-opus-5, effort low, 3줄 시스템 프롬프트). **실호출 미검증** — API 키 없음. 오류 경로(405/400/413/500)만 테스트 |
+| Day 11–12 PWA·배포 | ⚠️ 매니페스트 완료 | `manifest.webmanifest`, 아이콘 192/512. **배포 미완** — Vercel 프로젝트 생성 + `ANTHROPIC_API_KEY` 환경변수는 대표님 결정 필요 |
+| Day 13–14 실사용자 테스트 | ⬜ | 50대 이상 3명. 실행 주체: 대표님 |
+
+### 배포 방법 (Vercel)
+1. Vercel 새 프로젝트 → 이 저장소 → Root Directory `see`
+2. Environment Variables에 `ANTHROPIC_API_KEY` 추가
+3. Domains에 `see.nomoremanual.com` 연결
+4. 배포 후 `https://see.nomoremanual.com/api/ask` 에 POST `{"question":"..."}` 로 확인
+
+### 들리게(hear) 관련
+- 코드 없음. 사전 조사·패널 심사·개발 계획은 `../hear/research/report.html`. 착수 조건: 위 표 전부 ✅.

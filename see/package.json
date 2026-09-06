@@ -1,0 +1,12 @@
+{
+  "name": "see",
+  "private": true,
+  "type": "module",
+  "description": "크게보기 — 눈이 편한 AI 창",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.124.0"
+  },
+  "scripts": {
+    "check": "node check-contrast.js"
+  }
+}
