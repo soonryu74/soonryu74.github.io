@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Korea Now — 셋업 가이드 (왕초보용) | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Korea Now — 셋업 가이드 (왕초보용)" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Korea Now — 셋업 가이드 (왕초보용)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Korea Now — 셋업 가이드 (왕초보용)","url":"/docs/korea-now-setup.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=b71e3789b274edea3e67d0041902e43e26fb67eb">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="korea-now--셋업-가이드-왕초보용">Korea Now — 셋업 가이드 (왕초보용)</h1>
+
+<blockquote>
+  <p>앱 위치: <code class="language-plaintext highlighter-rouge">korea-now/</code> · 배포 주소: https://soonryu74.github.io/korea-now/
+서버(Supabase)와 공공 API 키가 <strong>없어도</strong> 화면은 뜹니다(데모 곡선). 키를 넣으면 서울 실시간 혼잡도로 바뀝니다.</p>
+</blockquote>
+
+<h2 id="1-내-컴퓨터에서-실행해-보기">1. 내 컴퓨터에서 실행해 보기</h2>
+
+<p>Node.js 22 이상이 필요합니다. (https://nodejs.org 에서 LTS 설치)</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>단계</th>
+      <th>Windows (PowerShell)</th>
+      <th>macOS (터미널)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>저장소 받기</td>
+      <td><code class="language-plaintext highlighter-rouge">git clone https://github.com/soonryu74/soonryu74.github.io.git</code></td>
+      <td>동일</td>
+    </tr>
+    <tr>
+      <td>앱 폴더로 이동</td>
+      <td><code class="language-plaintext highlighter-rouge">cd soonryu74.github.io\korea-now</code></td>
+      <td><code class="language-plaintext highlighter-rouge">cd soonryu74.github.io/korea-now</code></td>
+    </tr>
+    <tr>
+      <td>필요한 부품 설치</td>
+      <td><code class="language-plaintext highlighter-rouge">npm install</code></td>
+      <td><code class="language-plaintext highlighter-rouge">npm install</code></td>
+    </tr>
+    <tr>
+      <td>개발 서버 켜기</td>
+      <td><code class="language-plaintext highlighter-rouge">npm run dev</code></td>
+      <td><code class="language-plaintext highlighter-rouge">npm run dev</code></td>
+    </tr>
+    <tr>
+      <td>브라우저에서 열기</td>
+      <td>http://localhost:5173/korea-now/</td>
+      <td>동일</td>
+    </tr>
+    <tr>
+      <td>배포용 빌드</td>
+      <td><code class="language-plaintext highlighter-rouge">npm run build</code></td>
+      <td><code class="language-plaintext highlighter-rouge">npm run build</code></td>
+    </tr>
+    <tr>
+      <td>환경변수 파일 만들기</td>
+      <td><code class="language-plaintext highlighter-rouge">Copy-Item .env.example .env</code></td>
+      <td><code class="language-plaintext highlighter-rouge">cp .env.example .env</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>비유: <code class="language-plaintext highlighter-rouge">npm install</code>은 “레고 부품 상자 받기”, <code class="language-plaintext highlighter-rouge">npm run dev</code>는 “조립한 걸 내 방에서 켜 보기”입니다.</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">.env</code> 파일에 아래 두 줄을 채우면 실시간 모드가 됩니다(3번에서 얻는 값).</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>VITE_SUPABASE_URL=https://xxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_...
+</code></pre></div></div>
+
+<h2 id="2-공공-api-키-발급-무료">2. 공공 API 키 발급 (무료)</h2>
+
+<h3 id="2-1-서울시-실시간-도시데이터-혼잡도--서울-열린데이터광장">2-1. 서울시 실시간 도시데이터 (혼잡도) — 서울 열린데이터광장</h3>
+<ol>
+  <li>https://data.seoul.go.kr 회원가입 → 로그인</li>
+  <li>상단 메뉴 <strong>[인증키 신청]</strong> → 사용 URL에 <code class="language-plaintext highlighter-rouge">https://soonryu74.github.io</code> 입력 → 신청</li>
+  <li>발급된 인증키(영문+숫자 32자)를 복사해 둡니다. 즉시 사용 가능.</li>
+  <li>이 키는 <strong>브라우저에 넣지 않습니다.</strong> Supabase 시크릿 <code class="language-plaintext highlighter-rouge">SEOUL_API_KEY</code>에만 넣습니다(3-3 참고).</li>
+</ol>
+
+<h3 id="2-2-한국관광공사-tourapi-영문-관광정보--공공데이터포털">2-2. 한국관광공사 TourAPI (영문 관광정보) — 공공데이터포털</h3>
+<ol>
+  <li>https://www.data.go.kr 회원가입 → 로그인</li>
+  <li>검색창에 <strong>“한국관광공사_영문 관광정보 서비스”</strong> 검색 → 활용신청</li>
+  <li>승인되면 마이페이지 → 인증키 <strong>Decoding(디코딩) 값</strong>을 복사</li>
+  <li>Supabase 시크릿 <code class="language-plaintext highlighter-rouge">TOUR_API_KEY</code>에 넣습니다.</li>
+  <li>기본 트래픽: 개발계정 하루 1,000건. 앱은 응답을 24시간 캐시하므로 충분합니다.</li>
+  <li>같은 계정으로 <strong>“한국관광공사_관광지 집중률 방문자 추이 예측 정보”</strong>(전국 30일 붐빔 예측)도 활용신청해 두면 <code class="language-plaintext highlighter-rouge">tour-congestion</code> 함수가 같은 키로 동작합니다.</li>
+</ol>
+
+<h3 id="2-3-한국수출입은행-환율--선택">2-3. 한국수출입은행 환율 — 선택</h3>
+<ol>
+  <li>https://www.koreaexim.go.kr/ir/HPHKIR019M01 에서 인증키 발급(회원가입 필요)</li>
+  <li>Supabase 시크릿 <code class="language-plaintext highlighter-rouge">KOREAEXIM_API_KEY</code>에 넣습니다. 하루 1,000건 제한, 앱은 하루 1회만 호출.</li>
+</ol>
+
+<h2 id="3-supabase-연결">3. Supabase 연결</h2>
+
+<blockquote>
+  <p><strong>2026-09-06 현재 상태</strong>: 프로젝트 <code class="language-plaintext highlighter-rouge">korea-now</code>(ref <code class="language-plaintext highlighter-rouge">dxhmprqfgigljgbstqrg</code>) 생성, 스키마 적용, Edge Function 4개 배포, 앱에 URL·공개키 연결까지 완료. <strong>남은 건 3-3 시크릿 등록뿐.</strong></p>
+</blockquote>
+
+<h3 id="3-1-프로젝트-만들기--완료">3-1. 프로젝트 만들기 — 완료</h3>
+<ul>
+  <li>https://supabase.com/dashboard/project/dxhmprqfgigljgbstqrg</li>
+  <li>무료 플랜 활성 2개 한도 때문에 <code class="language-plaintext highlighter-rouge">artselah</code>를 일시정지했습니다. 다시 켜려면 그 프로젝트 → Restore.</li>
+</ul>
+
+<h3 id="3-2-스키마-넣기--완료">3-2. 스키마 넣기 — 완료</h3>
+<ul>
+  <li>새 프로젝트를 다시 만들 때만: <strong>SQL Editor</strong> → <code class="language-plaintext highlighter-rouge">supabase/migrations/0001_init.sql</code> 붙여넣고 <strong>Run</strong></li>
+</ul>
+
+<h3 id="3-3-시크릿비밀-키-등록">3-3. 시크릿(비밀 키) 등록</h3>
+<ul>
+  <li>Dashboard → <strong>Edge Functions → Secrets</strong> 에 아래 3개 추가</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>이름</th>
+      <th>값</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">SEOUL_API_KEY</code></td>
+      <td>2-1에서 받은 키</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">TOUR_API_KEY</code></td>
+      <td>2-2 디코딩 키</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">KOREAEXIM_API_KEY</code></td>
+      <td>2-3 키 (선택)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="3-4-edge-function-배포-supabase-cli--완료-코드를-고쳤을-때만-다시">3-4. Edge Function 배포 (Supabase CLI) — 완료 (코드를 고쳤을 때만 다시)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>단계</th>
+      <th>Windows (PowerShell)</th>
+      <th>macOS (터미널)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CLI 설치</td>
+      <td><code class="language-plaintext highlighter-rouge">scoop install supabase</code> (scoop 없으면 https://scoop.sh 먼저)</td>
+      <td><code class="language-plaintext highlighter-rouge">brew install supabase/tap/supabase</code></td>
+    </tr>
+    <tr>
+      <td>로그인</td>
+      <td><code class="language-plaintext highlighter-rouge">supabase login</code></td>
+      <td><code class="language-plaintext highlighter-rouge">supabase login</code></td>
+    </tr>
+    <tr>
+      <td>프로젝트 연결</td>
+      <td><code class="language-plaintext highlighter-rouge">supabase link --project-ref &lt;프로젝트ref&gt;</code></td>
+      <td>동일</td>
+    </tr>
+    <tr>
+      <td>함수 4개 배포</td>
+      <td><code class="language-plaintext highlighter-rouge">supabase functions deploy seoul-congestion --no-verify-jwt</code><br /><code class="language-plaintext highlighter-rouge">supabase functions deploy fx-rate --no-verify-jwt</code><br /><code class="language-plaintext highlighter-rouge">supabase functions deploy tour-search --no-verify-jwt</code><br /><code class="language-plaintext highlighter-rouge">supabase functions deploy tour-congestion --no-verify-jwt</code></td>
+      <td>동일</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>프로젝트 ref는 Dashboard 주소 <code class="language-plaintext highlighter-rouge">https://supabase.com/dashboard/project/&lt;여기&gt;</code> 부분입니다.
+저장소 루트(<code class="language-plaintext highlighter-rouge">soonryu74.github.io/</code>)에서 실행합니다. <code class="language-plaintext highlighter-rouge">supabase/</code> 폴더를 자동으로 찾습니다.</p>
+</blockquote>
+
+<h3 id="3-5-앱에-url과-공개-키-넣기--완료">3-5. 앱에 URL과 공개 키 넣기 — 완료</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">korea-now/.env.production</code>에 들어 있습니다(공개용 키라 저장소에 있어도 됨). 로컬 개발은 <code class="language-plaintext highlighter-rouge">.env</code>에 같은 값을 복사.</li>
+  <li>프로젝트를 바꾸면 이 파일만 고치면 됩니다. GitHub Secrets(<code class="language-plaintext highlighter-rouge">KOREA_NOW_SUPABASE_URL</code>, <code class="language-plaintext highlighter-rouge">KOREA_NOW_SUPABASE_ANON_KEY</code>)를 등록하면 그것이 우선합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">main</code> 브랜치에 push 하면 <code class="language-plaintext highlighter-rouge">jekyll.yml</code> 워크플로가 앱을 빌드해 <code class="language-plaintext highlighter-rouge">/korea-now/</code>에 올립니다.</li>
+</ul>
+
+<h2 id="3-6-홈화면에-앱-설치-pwa">3-6. 홈화면에 앱 설치 (PWA)</h2>
+<ul>
+  <li>배포 주소를 폰 브라우저로 열면 “홈 화면에 추가”가 뜹니다(안드로이드 Chrome은 자동 배너, 아이폰 Safari는 공유 → 홈 화면에 추가).</li>
+  <li>한 번 열어 두면 지하철 등 오프라인에서도 목록·요금·휴관일이 뜨고, 본 적 있는 지도 타일은 30일간 남습니다.</li>
+  <li>코드를 바꿔 다시 배포하면 앱이 다음 실행 때 자동 갱신됩니다(<code class="language-plaintext highlighter-rouge">registerType: autoUpdate</code>).</li>
+</ul>
+
+<h2 id="4-동작-확인">4. 동작 확인</h2>
+<ul>
+  <li>앱 상단 배지가 <strong>● LIVE</strong>면 실시간 모드, <strong>◐ DEMO</strong>면 키 없이 동작 중</li>
+  <li>서울 스팟 상세 화면 하단에 “Live from Seoul city data, HH:MM KST”가 보이면 성공</li>
+  <li>실패 시 브라우저 개발자도구(F12) Console에 <code class="language-plaintext highlighter-rouge">[korea-now] live congestion unavailable</code> 메시지와 원인이 찍힙니다</li>
+</ul>
+
+<h2 id="5-데이터-관리">5. 데이터 관리</h2>
+<ul>
+  <li>관광지 목록·입장료: <code class="language-plaintext highlighter-rouge">korea-now/src/data/spots.ts</code> (분기마다 <code class="language-plaintext highlighter-rouge">feeCheckedAt</code> 갱신)</li>
+  <li>한국어 한마디·매너 팁: <code class="language-plaintext highlighter-rouge">korea-now/src/data/phrases.ts</code></li>
+  <li>서울 실시간 지역명(<code class="language-plaintext highlighter-rouge">seoulArea</code>)은 서울시 API의 AREA_NM과 <strong>글자까지 똑같아야</strong> 합니다. 목록은 <code class="language-plaintext highlighter-rouge">docs/korea-now-api.md</code> 참고.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
