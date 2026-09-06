@@ -254,3 +254,26 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .footer-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 8px 0 18px; }
 .footer-links a { color: #dcecea; }
 .footer-note { border-top: 1px solid rgba(255,255,255,.1); padding-top: 16px; color: #93b3af; line-height: 1.7; }
+
+/* ---------- 성분 × 질환 매트릭스 ---------- */
+.mx-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; margin: 16px 0; }
+.mx { border-collapse: separate; border-spacing: 0; font-size: .82rem; min-width: 900px; }
+.mx th, .mx td { padding: 6px 6px; border-bottom: 1px solid var(--line); text-align: center; }
+.mx th { background: var(--gray-soft); position: sticky; top: 0; z-index: 2; font-size: .78rem; white-space: nowrap; }
+.mx th:first-child, .mx td:first-child { position: sticky; left: 0; background: #fff; text-align: left; font-weight: 700; z-index: 3; min-width: 140px; box-shadow: 2px 0 0 var(--line); }
+.mx th:first-child { z-index: 4; background: var(--gray-soft); }
+.mx td .c { display: inline-block; width: 30px; height: 26px; line-height: 26px; border-radius: 7px; font-weight: 800; cursor: pointer; color: #fff; }
+.c.ok { background: #2e9e5b; } .c.caution { background: #d9932a; } .c.avoid { background: #c0392b; } .c.na { background: #c9d1d0; color: #4b5857; }
+.mx td .c:hover { transform: scale(1.12); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .88rem; margin: 10px 0; }
+.legend .c { width: auto; padding: 0 10px; height: 24px; line-height: 24px; cursor: default; }
+.cell-detail { background: var(--bg-soft); border: 1px solid var(--line); border-left: 5px solid var(--teal); border-radius: var(--radius); padding: 14px 18px; margin: 12px 0; }
+.cell-detail.avoid { border-left-color: #c0392b; } .cell-detail.caution { border-left-color: #d9932a; } .cell-detail.ok { border-left-color: #2e9e5b; }
+.cond-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 10px; margin: 14px 0; }
+.cond-item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; }
+.cond-item .c { flex-shrink: 0; width: 64px; font-size: .78rem; height: 26px; line-height: 26px; border-radius: 7px; text-align: center; font-weight: 800; color: #fff; }
+.cond-item b { display: block; }
+.cond-item p { margin: 2px 0 0; font-size: .88rem; color: var(--muted); }
+.cond-item a { font-size: .8rem; }
+.ing .mini { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.ing .mini span { font-size: .72rem; padding: 1px 7px; border-radius: 6px; color: #fff; font-weight: 700; }

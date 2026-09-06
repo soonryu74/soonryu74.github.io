@@ -53,6 +53,11 @@
       <label class="chip"><input type="checkbox" name="c_gi">위 절제·위축성 위염·염증성 장질환</label>
       <label class="chip"><input type="checkbox" name="c_adenoma">대장 선종(용종)·대장암 병력</label>
       <label class="chip"><input type="checkbox" name="c_kidney">만성 신장질환</label>
+      <label class="chip"><input type="checkbox" name="c_liver">간질환(지방간·간염·간경변)</label>
+      <label class="chip"><input type="checkbox" name="c_thyroid">갑상선질환(레보티록신 복용 등)</label>
+      <label class="chip"><input type="checkbox" name="c_stones">신장결석 병력</label>
+      <label class="chip"><input type="checkbox" name="c_gout">통풍·고요산혈증</label>
+      <label class="chip"><input type="checkbox" name="c_surgery">2주 내 수술 예정</label>
       <label class="chip"><input type="checkbox" name="c_cancer_tx">항암·방사선 치료 중</label>
     </div>
     <p class="small" style="margin-top:12px">없으면 그냥 다음으로.</p>
@@ -129,6 +134,8 @@
 <script src="assets/app.js"></script>
 <script src="data/ingredients.js"></script>
 <script src="data/studies.js"></script>
+<script src="data/conditions.js"></script>
+<script src="data/matrix.js"></script>
 <script src="data/rules.js"></script>
 <script>
 (function(){
@@ -154,7 +161,7 @@
     var f=form, F=f.sex.value==='F';
     return { age:+f.age.value, sex:f.sex.value, planning:F&&ck('planning'), pregnant:F&&ck('pregnant'), lactating:F&&ck('lactating'),
       smoker:ck('smoker'), lowSun:ck('lowSun'), lowFish:ck('lowFish'), vegan:ck('vegan'), poorDiet:ck('poorDiet'), exercise:ck('exercise'),
-      cond:{ htn:ck('c_htn'), prediabetes:ck('c_prediabetes'), diabetes:ck('c_diabetes'), dyslip:ck('c_dyslip'), osteo:ck('c_osteo'), amd:ck('c_amd'), hf:ck('c_hf'), autoimmune:ck('c_autoimmune'), gi:ck('c_gi'), adenoma:ck('c_adenoma'), kidney:ck('c_kidney'), cancer_tx:ck('c_cancer_tx') },
+      cond:{ liver:ck('c_liver'), thyroid:ck('c_thyroid'), stones:ck('c_stones'), gout:ck('c_gout'), surgery:ck('c_surgery'), htn:ck('c_htn'), prediabetes:ck('c_prediabetes'), diabetes:ck('c_diabetes'), dyslip:ck('c_dyslip'), osteo:ck('c_osteo'), amd:ck('c_amd'), hf:ck('c_hf'), autoimmune:ck('c_autoimmune'), gi:ck('c_gi'), adenoma:ck('c_adenoma'), kidney:ck('c_kidney'), cancer_tx:ck('c_cancer_tx') },
       meds:{ anticoagulant:ck('m_anticoagulant'), metformin:ck('m_metformin'), ppi:ck('m_ppi'), antibiotic:ck('m_antibiotic') },
       lab:{ vitd_low:ck('l_vitd_low'), iron_low:ck('l_iron_low'), b12_low:ck('l_b12_low'), tg_high:ck('l_tg_high') },
       goal:{ cognition:ck('g_cognition'), immune:ck('g_immune'), bone:ck('g_bone'), eye:ck('g_eye'), sleep:ck('g_sleep'), muscle:ck('g_muscle'), joint:ck('g_joint'), skin:ck('g_skin'), gut:ck('g_gut'), bp:ck('g_bp'), longevity:ck('g_longevity') } };
@@ -169,6 +176,7 @@
       var cites=(r.cite||[]).map(function(id){ var s=SI[id]; return s ? '<a href="yeongu.html#'+esc(id)+'" title="'+esc(s.inst)+' · '+esc(s.journal)+' '+esc(s.year)+'">'+esc(s.name.split(' — ')[0])+' ('+esc(s.year)+')</a>' : ''; }).filter(Boolean).join(' · ');
       return '<div class="rec-card '+tierCls[r.tier]+'"><div class="rh"><span class="verdict '+EBN.verdictClass[r.tier]+'">'+esc(EBN.verdictLabel[r.tier])+'</span><h3>'+esc(r.title)+'</h3>'+(ing.grade?'<span class="grade '+esc(ing.grade)+'" title="'+esc(EBN.gradeLabel[ing.grade])+'">'+esc(ing.grade)+'</span>':'')+'</div>'+
         '<p class="why">'+esc(r.why)+'</p>'+(r.dose&&r.dose!=='—'?'<div class="dose"><b>용량·방법</b> '+esc(r.dose)+(ing.kr?' <span class="small">· 한국 기준: '+esc(ing.kr)+'</span>':'')+'</div>':'')+
+        (r.flags&&r.flags.length?'<div class="dose" style="border-left:4px solid #d9932a"><b>내 상태별 주의</b><ul style="margin:4px 0 0;padding-left:18px">'+r.flags.map(function(f){return '<li><span class="c '+f.v+'" style="font-size:.72rem;padding:0 6px;border-radius:5px;color:#fff;font-weight:800">'+(f.v==='avoid'?'금기':'주의')+'</span> <b>'+esc(f.cond)+'</b>: '+esc(f.why)+(f.src?' <a href="'+esc(f.src)+'" target="_blank" rel="noopener">근거↗</a>':'')+'</li>';}).join('')+'</ul></div>':'')+
         (cites?'<div class="cite">근거: '+cites+'</div>':'')+(ing.name?'<div class="cite"><a href="seongbun.html#'+esc(r.ing)+'">'+esc(ing.name)+' 성분 카드 →</a></div>':'')+'</div>';
     }).join('');
     form.hidden=true; document.getElementById('steps').hidden=true; document.getElementById('result').hidden=false;

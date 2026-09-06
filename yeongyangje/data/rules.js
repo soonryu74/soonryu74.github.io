@@ -4,8 +4,8 @@
 window.EBN_RULES = (function () {
 
   function level(p) {
-    if (p.meds.anticoagulant || p.cond.kidney || p.cond.cancer_tx || p.smoker) return 'L4';
-    if (p.cond.htn || p.cond.diabetes || p.cond.prediabetes || p.cond.dyslip || p.cond.osteo || p.cond.amd || p.cond.autoimmune) return 'L3';
+    if (p.meds.anticoagulant || p.cond.kidney || p.cond.liver || p.cond.cancer_tx || p.smoker || p.cond.surgery) return 'L4';
+    if (p.cond.htn || p.cond.diabetes || p.cond.prediabetes || p.cond.dyslip || p.cond.osteo || p.cond.amd || p.cond.autoimmune || p.cond.hf || p.cond.thyroid || p.cond.stones || p.cond.gout) return 'L3';
     if (p.age >= 65 || p.pregnant || p.planning || p.lactating || p.vegan || p.lowSun || p.cond.gi || p.meds.metformin || p.meds.ppi || p.lab.vitd_low || p.lab.iron_low || p.lab.b12_low) return 'L2';
     return 'L1';
   }
@@ -193,6 +193,29 @@ window.EBN_RULES = (function () {
     if (p.goal.bone && !p.cond.osteo) add({ tier: 'no', ing: 'vitk2', title: '비타민 K2 — 뼈·혈관',
       why: '골밀도는 소폭 유지하지만 16개 RCT 6,425명에서 골절 감소 없음. 관상동맥 석회화 예방은 최고 수준 RCT(AVADEC)에서 실패. 긍정 연구는 원료사 연계 단일 연구진.',
       dose: '불필요. 와파린 복용자 금기.', cite: ['k2-bone-cvd'] });
+
+    /* ---------- 성분 × 질환 매트릭스 적용: 내 상태에서 금기·주의인 성분 표시 ---------- */
+    var M = window.EBN_MATRIX || {}, CN = {}; (window.EBN_CONDITIONS || []).forEach(function (c) { CN[c.id] = c.name; });
+    var my = [];
+    if (p.cond.htn) my.push('htn'); if (p.cond.diabetes || p.cond.prediabetes) my.push('diabetes'); if (p.cond.dyslip) my.push('dyslip');
+    if (p.cond.kidney) my.push('ckd'); if (p.cond.liver) my.push('liver'); if (p.cond.osteo) my.push('osteo'); if (p.cond.hf) my.push('hf_af');
+    if (p.cond.thyroid) my.push('thyroid'); if (p.cond.gi) my.push('gi'); if (p.cond.autoimmune) my.push('autoimmune'); if (p.cond.cancer_tx) my.push('cancer');
+    if (p.pregnant || p.lactating || p.planning) my.push('pregnancy'); if (p.meds.anticoagulant) my.push('anticoag'); if (p.smoker) my.push('smoker');
+    if (p.cond.stones) my.push('stones'); if (p.cond.gout) my.push('gout'); if (p.cond.surgery) my.push('surgery');
+    var seenIng = {};
+    R.forEach(function (r) {
+      seenIng[r.ing] = 1; r.flags = [];
+      my.forEach(function (cid) { var x = M[r.ing] && M[r.ing][cid]; if (x && (x.v === 'avoid' || x.v === 'caution')) r.flags.push({ v: x.v, cond: CN[cid], why: x.why, src: (x.src || [])[0] }); });
+      if (r.flags.some(function (f) { return f.v === 'avoid'; }) && r.tier !== 'avoid') { r.tier = 'avoid'; r.title = r.title + ' — 내 상태에서 금기'; }
+      else if (r.flags.length && r.tier === 'rec') { r.tier = 'cond'; }
+    });
+    /* 추천 목록에 없지만 내 상태에서 금기인 성분 → 피하세요 항목 추가 */
+    Object.keys(M).forEach(function (ing) {
+      if (seenIng[ing]) return;
+      var fl = [];
+      my.forEach(function (cid) { var x = M[ing][cid]; if (x && x.v === 'avoid') fl.push({ v: 'avoid', cond: CN[cid], why: x.why, src: (x.src || [])[0] }); });
+      if (fl.length && window.EBN_INGREDIENTS[ing]) add({ tier: 'avoid', ing: ing, title: window.EBN_INGREDIENTS[ing].name + ' — 내 상태에서 금기', why: '아래 상태에서 피해야 할 성분입니다. 복용 중이라면 의사·약사와 상의하세요.', dose: '—', cite: [], flags: fl });
+    });
 
     /* 정렬: avoid → rec → cond → opt → no */
     var order = { avoid: 0, rec: 1, cond: 2, opt: 3, no: 4 };
