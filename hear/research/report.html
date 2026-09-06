@@ -1,0 +1,503 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<title>들리게 개발 계획 보고</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --paper:#f4f5f2; --ink:#14181d; --muted:#4a545c; --rule:#c3c9cb; --soft:#e9ecea;
+    --accent:#0b5e63; --tint:#dfeceb;
+    --num-ink:#6f3400; --num-bg:#fbe6c2;
+    --go:#0d6b4f; --cond:#8a5a00; --hold:#a63a1e;
+    --phone:#ffffff; --phone-edge:#14181d;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#111517; --ink:#edf0ee; --muted:#b3bcc0; --rule:#3a4448; --soft:#1b2124;
+      --accent:#7fcfd3; --tint:#173a3d;
+      --num-ink:#f6c98a; --num-bg:#3d2a10;
+      --go:#6fd1a8; --cond:#e8b85a; --hold:#f0906f;
+      --phone:#1b2124; --phone-edge:#b3bcc0;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#111517; --ink:#edf0ee; --muted:#b3bcc0; --rule:#3a4448; --soft:#1b2124;
+    --accent:#7fcfd3; --tint:#173a3d;
+    --num-ink:#f6c98a; --num-bg:#3d2a10;
+    --go:#6fd1a8; --cond:#e8b85a; --hold:#f0906f;
+    --phone:#1b2124; --phone-edge:#b3bcc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    font-size:17px;line-height:1.75;word-break:keep-all;text-align:left;
+    font-variant-numeric:tabular-nums}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 100px}
+  h1,h2,h3{font-family:"Gowun Batang","Apple SD Gothic Neo",serif;text-wrap:balance;letter-spacing:-0.01em}
+  h1{font-size:34px;line-height:1.3;margin:0 0 10px;font-weight:700}
+  h2{font-size:24px;margin:64px 0 16px;padding-top:20px;border-top:2px solid var(--ink)}
+  h2 .no{font-family:"IBM Plex Sans KR",sans-serif;font-size:13px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:6px;font-weight:700}
+  h3{font-size:19px;margin:32px 0 10px}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 16px;padding-left:22px}
+  li{margin-bottom:6px}
+  .meta{color:var(--muted);font-size:15px;margin:0 0 6px}
+  .eyebrow{font-size:13px;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:12px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:22px;margin-bottom:28px}
+
+  /* 판정 패널 */
+  .verdict{border:2px solid var(--ink);padding:20px 22px;margin:24px 0 8px}
+  .verdict h2{border:0;margin:0 0 12px;padding:0;font-size:22px}
+  .verdict ol{margin-bottom:8px}
+  .pill{display:inline-block;font-size:13px;font-weight:700;padding:2px 10px;border-radius:3px;border:1.5px solid currentColor;vertical-align:middle;white-space:nowrap}
+  .pill.go{color:var(--go)} .pill.cond{color:var(--cond)} .pill.hold{color:var(--hold)}
+  .notice{background:var(--tint);border-left:4px solid var(--accent);padding:14px 18px;margin:18px 0}
+  .notice p:last-child{margin-bottom:0}
+  .warn{border-left-color:var(--hold)}
+  .warn{background:var(--soft)}
+
+  table{width:100%;border-collapse:collapse;margin:14px 0 22px;font-size:15px;line-height:1.55}
+  th,td{border-bottom:1px solid var(--rule);padding:9px 10px;text-align:left;vertical-align:top}
+  th{font-weight:700;font-size:13.5px;letter-spacing:.02em;color:var(--muted);border-bottom:2px solid var(--ink)}
+  td.n{text-align:right;white-space:nowrap}
+  .tbl{overflow-x:auto}
+  .k{font-weight:700}
+  .src{font-size:14px;color:var(--muted)}
+  .src a{color:var(--accent);word-break:break-all}
+  a{color:var(--accent)}
+  u{text-decoration-thickness:.08em;text-underline-offset:.15em}
+
+  /* 숫자 강조 = 앱 규약 */
+  .num{background:var(--num-bg);color:var(--num-ink);padding:0 .15em;border-radius:2px;text-decoration:underline;text-decoration-thickness:.09em;text-underline-offset:.15em;font-weight:700}
+
+  /* 통계 타일 */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:18px 0 24px}
+  .stat{border-top:2px solid var(--ink);padding:10px 2px 0}
+  .stat b{display:block;font-size:28px;line-height:1.1;font-family:"Gowun Batang",serif}
+  .stat span{display:block;font-size:13.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+
+  /* 패널 카드 */
+  .panel{display:grid;gap:14px;margin:18px 0}
+  .card{border:1px solid var(--rule);padding:16px 18px}
+  .card h3{margin:0 0 8px;font-size:18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .card ul{margin-bottom:6px}
+  .card .cut{font-size:14.5px;color:var(--muted)}
+  .card .cut b{color:var(--ink)}
+
+  /* 합의표 */
+  .agree td:not(:first-child){text-align:center;white-space:nowrap}
+  .agree th:not(:first-child){text-align:center}
+  .y{color:var(--go);font-weight:700} .n2{color:var(--hold);font-weight:700} .m{color:var(--muted)}
+
+  /* 탁자 모드 목업 */
+  .mock{display:flex;justify-content:center;margin:22px 0 10px}
+  .phone{width:min(360px,100%);aspect-ratio:9/13;border:3px solid var(--phone-edge);border-radius:22px;background:var(--phone);
+    display:flex;flex-direction:column;padding:14px;gap:10px}
+  .phone .speaker{font-size:16px;line-height:1.4;color:var(--muted);border-bottom:1px dashed var(--rule);padding-bottom:8px}
+  .phone .speaker .live{color:var(--accent);font-weight:700}
+  .phone .elder{flex:1;display:flex;align-items:center;transform:rotate(180deg)}
+  .phone .elder div{width:100%;text-align:left;padding:0 8px;font-size:44px;line-height:1.4;font-weight:700;letter-spacing:.02em}
+  .phone .elder .num{font-size:1em}
+  .cap{font-size:14px;color:var(--muted);text-align:center;margin:0 0 20px}
+
+  .step{display:grid;grid-template-columns:96px 1fr;gap:12px;border-bottom:1px solid var(--rule);padding:10px 0}
+  .step b{font-family:"Gowun Batang",serif;font-size:15px;color:var(--accent)}
+  .step p{margin:0}
+  .gate{border:2px dashed var(--accent);padding:12px 16px;margin:12px 0}
+  .small{font-size:14.5px;color:var(--muted)}
+  @media (max-width:600px){ body{font-size:16px} h1{font-size:27px} h2{font-size:21px} .phone .elder div{font-size:34px} .step{grid-template-columns:1fr} }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">개발 계획 보고 · 청각편</div>
+  <h1>귀가 어두우신 부모님과 대화하는 앱, 만들 것인가</h1>
+  <p class="meta">2026년 9월 6일 · 노모어매뉴얼 대표님 보고용 · 작성 Claude Code</p>
+  <p class="meta">구성: 글로벌 시장 조사 4건 → 전문가 패널 5인 심사 → 노인 테스트 설계 → v1 스펙·일정</p>
+</header>
+
+<div class="notice warn">
+  <p><b>먼저 밝혀둘 두 가지.</b> ① 노인 실사용 테스트는 <u>실행하지 못했습니다</u>. 제가 사람을 모집할 수 없어 <b>설계안과 통과 기준</b>으로 대체했고, 실행은 대표님 몫입니다. ② "전문가 토론"은 <b>AI 역할극 패널</b>입니다. 실제 전문가의 자문이 아니며, 특히 법률 의견은 반드시 변호사 확인이 필요합니다.</p>
+</div>
+
+<div class="verdict">
+  <h2>결론 <span class="pill cond">조건부 진행</span></h2>
+  <p>만들 가치는 있습니다. 시장에 빈자리가 실제로 있고, 근거도 있습니다. 다만 초안 그대로는 안 되고, 패널 5인이 공통으로 요구한 세 가지를 바꾼 뒤에 착수해야 합니다.</p>
+  <ol>
+    <li><b>서버 경유 AI 요약을 v1에서 뺀다.</b> 5인 전원 일치. 비저장 약속·개인정보·비용·오류 누적, 네 가지 이유가 한 기능에 몰려 있습니다. 대신 <u>숫자·날짜·금액이 나온 문장을 원문 그대로 모아 보여주기</u>(기기 안에서, 규칙 기반)로 바꿉니다.</li>
+    <li><b>폰을 "상대방이 들고 어르신이 건너다본다"는 장면을 버린다.</b> 4인이 지적. 그 거리에서는 40px도 읽기 임계선입니다. <u>탁자 모드</u>(폰을 눕히면 자막이 어르신 쪽으로 180° 돌아감)와 기본 글자 40px로 바꿉니다.</li>
+    <li><b>흘러가는 자막 대신 한 문장 고정.</b> 버튼을 누르는 동안 듣고, 손을 떼면 그 문장이 2줄로 고정되어 다음 문장까지 남습니다. 확정된 글자만 보여주고, 미확정 글자는 그리지 않습니다.</li>
+  </ol>
+  <p><b>착수 시점</b>은 전략 패널의 "보류" 의견을 받아들여 <b>크게보기 완료 정의 4개 통과 후</b>로 둡니다. 그 전까지는 코드 없이 할 수 있는 두 가지, ① "갤럭시·아이폰에 이미 있는 무료 자막 켜기" 영상 1편 ② 그 무료 자막으로 6쌍 사전 테스트를 먼저 합니다. 사전 테스트에서 숫자 오독·거리·자세 문제가 실제로 관찰되지 않으면 <u>앱을 만들지 않고 콘텐츠로 끝냅니다</u>.</p>
+</div>
+
+<!-- ============ 1 ============ -->
+<h2><span class="no">1장</span>왜 지금 이 문제인가</h2>
+<div class="stats">
+  <div class="stat"><b>38%</b><span>국내 65세 이상 난청 (국민건강영양조사 2019~21)</span></div>
+  <div class="stat"><b>12.6%</b><span>중등도 이상 난청 노인 중 보청기 장기 사용률 (대한이과학회 2025)</span></div>
+  <div class="stat"><b>43%</b><span>60세+ 환자가 의사·간호사 말을 잘못 들은 경험 (Cudmore 2017, JAMA Otolaryngol)</span></div>
+  <div class="stat"><b>30.6%</b><span>2025년 신규 등록장애 중 청각 비중, 1위. 신규의 59.5%가 65세 이상 (복지부)</span></div>
+  <div class="stat"><b>40%</b><span>80~85세 이중감각손실(난청+저시력) (캐나다 CLSA)</span></div>
+  <div class="stat"><b>92%</b><span>국내 60대 이상 스마트폰 삼성 비중 (한국갤럽 2025)</span></div>
+</div>
+<p>핵심은 두 번째 숫자입니다. 난청 노인 열에 아홉은 <b>안 들리는 채로</b> 대화합니다. 증폭(보청기·에어팟)은 이미 시장이 해결했고 규제도 붙었습니다. 남은 채널은 <b>눈</b>입니다. 그리고 다섯 번째 숫자가 이 앱의 조건을 정합니다. 80세가 넘으면 열에 넷은 눈도 어둡습니다. 자막은 "보이는" 정도가 아니라 <b>"읽히는"</b> 크기여야 합니다.</p>
+
+<!-- ============ 2 ============ -->
+<h2><span class="no">2장</span>글로벌 시장 — 하드웨어는 끝났고, 자막은 무료가 됐다</h2>
+
+<h3>2-1. 증폭 하드웨어: 애플·삼성이 37만 원에 가져갔다</h3>
+<div class="tbl"><table>
+<thead><tr><th>플레이어</th><th>2026년 9월 상태</th><th>시사점</th></tr></thead>
+<tbody>
+<tr><td><b>Apple AirPods Pro 2/3</b></td><td>FDA OTC 보청기 SW 승인(2024-09). <b>식약처 2025-07 "디지털의료기기" 허가</b>. 국내 청력 테스트·보청기 기능 활성. 369,000원</td><td>"증폭"이라 쓰는 순간 의료기기. 우리는 소리를 건드리지 않는다</td></tr>
+<tr><td><b>Samsung Galaxy Buds 3/4 Pro</b></td><td>FDA OTC 허가 2026-08-11, 2026-4Q 미국 출시. 식약처 허가 미확인. 319,000~359,000원</td><td>60대+ 92%가 갤럭시. 증폭 경쟁 무의미</td></tr>
+<tr><td>미국 OTC 보청기</td><td>Sony 2026-04 단종, Lexie·Eargo 2026-07 미국 사업 종료. OTC가 채택률에 기여한 증가분 4%p (MarkeTrak 2025)</td><td>중간 가격대 전용기기는 죽었다</td></tr>
+<tr><td>처방 보청기 5대사</td><td>Sonova CHF 36.1억(+7.5%), GN Hearing +5%. 전문가 채널은 여전히 성장</td><td>우리 영역 아님</td></tr>
+<tr><td>실패 사례</td><td>Whisper.ai(구독 보청기, 2023 철수), Nuheara(2025 청산), Eargo(DOJ 합의 $34M → 종료)</td><td>공급망·보험·빅테크 진입. 하나면 무너진다</td></tr>
+</tbody></table></div>
+<p><b>한국 보조금 현실.</b> 건강보험 보청기 급여 131만 원은 <u>청각장애 등록자(60dB 이상)</u>만 받습니다. 65세 이상 비장애 노인 급여화는 학회 제안 단계입니다. 난청 노인 중 급여 수혜는 6%입니다. 즉 나머지는 자기 돈 70만~500만 원이거나, 안 씁니다.</p>
+
+<h3>2-2. 자막 소프트웨어: 정확한 자막은 이미 공짜다</h3>
+<div class="tbl"><table>
+<thead><tr><th>제품</th><th>한국어</th><th>가격</th><th>우리와의 거리</th></tr></thead>
+<tbody>
+<tr><td><b>Google Live Transcribe</b> (갤럭시 설정 &gt; 접근성 &gt; 청각 보조에 내장)</td><td>지원, 오프라인 팩 있음</td><td>무료</td><td><b>가장 가까운 대체재.</b> 핀치 확대만 있고 보호자 화면·숫자 강조·탁자 모드 없음</td></tr>
+<tr><td><b>Apple Live Captions</b> (iOS 26)</td><td>2025년부터 지원, 온디바이스</td><td>무료</td><td>아이폰은 이미 있음. iOS에서는 우리 앱 대신 <u>이걸 켜는 법</u>을 안내하는 게 맞다</td></tr>
+<tr><td>Samsung Voice Captioning (One UI 8)</td><td>중국 전용, 국내 미확인</td><td>무료</td><td>국내 출시 시 대체재 후보</td></tr>
+<tr><td><b>소보로 플러스</b> (국내)</td><td>지원, 정확도 97.8% 주장</td><td>월 9,900원</td><td>당사자용 유료 앱, 980+ 기관. 노인 가족용 아님</td></tr>
+<tr><td>쉐어타이핑 (에이유디)</td><td>사람 속기사</td><td>기관 계약</td><td>농인·학생·행사용</td></tr>
+<tr><td>Ava / Otter / Rylo / InnoCaption</td><td>한국 미서비스 또는 미지원</td><td>—</td><td>해당 없음</td></tr>
+<tr><td>자막 안경 (XRAI, AirCaps, Hearview, Meta Ray-Ban Display)</td><td>대부분 한국어 미지원</td><td>$419~699 + 구독</td><td>하드웨어. 하지 않는다</td></tr>
+<tr><td><b>CaptionPad</b> (미국) / <b>Hearing Helper</b> (미국)</td><td>영어만</td><td>태블릿 / $2.99</td><td><b>세계에서 유일하게 "가족이 어르신에게" 각도</b>. 하나는 하드웨어, 하나는 2021년 이후 방치</td></tr>
+</tbody></table></div>
+
+<div class="notice">
+<p><b>빈자리는 넷입니다.</b> ① 한국어·무료·설치 없음(웹) ② 보호자가 어르신에게 보여주는 워크플로 ③ 숫자·날짜·금액 강조(어떤 자막 제품에도 없음) ④ 노안·저시력 겸용 초대형 글자. 넷 다 애플·구글이 손대지 않는 영역입니다. 반대로 <b>자막 정확도·오프라인·번역·안경</b>은 플랫폼이 가져갔으니 거기서는 싸우지 않습니다.</p>
+</div>
+
+<h3>2-3. 한국어 음성인식 — 누가 말하느냐가 정확도를 정한다</h3>
+<div class="tbl"><table>
+<thead><tr><th>엔진</th><th class="n">평균 CER</th><th class="n">저품질 전화</th><th>비고</th></tr></thead>
+<tbody>
+<tr><td>리턴제로</td><td class="n">5.91%</td><td class="n">4.40%</td><td>유료 API</td></tr>
+<tr><td>네이버 CLOVA Speech</td><td class="n">7.52%</td><td class="n">6.49%</td><td>약 20원/분</td></tr>
+<tr><td>OpenAI Whisper</td><td class="n">11.39%</td><td class="n">17.27%</td><td>오픈소스</td></tr>
+<tr><td>Google Cloud v2</td><td class="n">11.50%</td><td class="n">14.11%</td><td>브라우저 Web Speech가 이 계열</td></tr>
+<tr><td>Deepgram nova-2</td><td class="n">21.02%</td><td class="n">30.47%</td><td>—</td></tr>
+</tbody></table></div>
+<p class="src">출처: 리턴제로 벤치마크, AI Hub 7개 셋. <a href="https://rtzr.github.io/Awesome-Korean-Speech-Recognition/">rtzr.github.io/Awesome-Korean-Speech-Recognition</a></p>
+<p><b>결정적 사실.</b> Whisper large-v3는 난청 노인(78·87세) 한국어 음절을 <b>13%</b>밖에 못 알아듣습니다(청능사는 60%). 그런데 우리 앱에서 말하는 쪽은 <b>자녀·배우자</b>입니다. 노인 음성 인식 문제를 구조적으로 피해 갑니다. 이것이 "폰을 드는 사람은 보호자"라는 설계의 진짜 근거이고, 유일하게 무료·비저장을 만족하는 경로가 <b>Chrome 온디바이스 Web Speech API</b>(ko-KR)입니다. 단, 설치 UX와 삼성 인터넷·카카오톡 인앱 브라우저 동작은 <u>미확인</u>이라 착수 전 실기 확인이 필수입니다.</p>
+
+<!-- ============ 3 ============ -->
+<h2><span class="no">3장</span>국내 규제·유통 — 이름과 문구가 곧 규제다</h2>
+<p>식약처가 에어팟을 의료기기로 본 이유는 사용목적 문구 <b>"청각장애가 있는 사람에게 소리를 증폭"</b>이었습니다. 트리거는 ① 대상 질환 명시 ② 증폭·보정·개선 주장 ③ 청력 측정, 세 가지입니다. 자막 앱을 직접 다룬 식약처 해석은 <u>미확인</u>이지만, 판단기준상 "말을 글자로 표시, 청력 개입 없음"은 비의료기기로 볼 여지가 큽니다. 확정하려면 식약처 <b>의료기기 해당여부 질의(민원)</b> 1건이면 됩니다.</p>
+
+<div class="tbl"><table>
+<thead><tr><th>안전한 표현 (정보 표시)</th><th>위험한 표현 (의료기기·통비법 트리거)</th></tr></thead>
+<tbody>
+<tr><td>말을 <b>큰 글자로 보여줍니다</b></td><td>청력을 보완·개선·회복</td></tr>
+<tr><td>귀가 어두우신 분과 <b>대화를 돕는</b> 도구</td><td><b>난청·청각장애</b>용 앱</td></tr>
+<tr><td>잘 안 들릴 때 <b>눈으로 확인</b></td><td>증폭·보정·교정·재활·치료</td></tr>
+<tr><td>숫자·금액을 <b>눈에 띄게 표시</b></td><td>보청기 대신 · 복약 오류 방지 · 사고 방지</td></tr>
+<tr><td><b>저장하지 않습니다</b>, 화면에만</td><td>대화를 녹음·녹취·자동 기록</td></tr>
+<tr><td>화면에 <b>"듣는 중"</b> 표시로 상대에게 알림</td><td>몰래 사용 권장</td></tr>
+<tr><td>통계·교육 콘텐츠에서 "65세 이상 38%"</td><td>영상 제목에 "치매 48% 감소"(ACHIEVE 하위군 수치를 앱과 연결)</td></tr>
+</tbody></table></div>
+
+<p><b>앱 이름 「들리게」자체가 위험하다는 지적</b>이 법률 패널에서 나왔습니다. 이름은 "들리도록 만든다"고 읽히고, 여기에 병원·약·숫자가 붙으면 사용목적 전체가 "난청 보정"으로 해석될 여지가 생깁니다. 이름은 대표님 결정 사항입니다. 대안 예시로 「글로보기」(크게보기와 짝), 「말글」을 남깁니다.</p>
+
+<h3>3-1. 개인정보·통신비밀</h3>
+<ul>
+  <li>통신비밀보호법은 <b>타인 간</b> 대화 녹음을 금합니다. 보호자가 그 자리에서 함께 대화하는 <b>당사자</b>는 해당 없음(판례). 병원·은행에서는 직원이 보이는 상태로 쓰면 당사자 요건을 채웁니다.</li>
+  <li>저장 없는 실시간 전사가 "녹음"인지는 <u>명문 해석 미확인</u>. 클라우드 STT는 서버 전송이므로 개인정보 "처리"에는 해당합니다. <b>서버가 없으면 운영자는 사실상 개인정보처리자 부담에서 벗어납니다.</b> 이것이 AI 요약을 빼는 법적 이유입니다.</li>
+  <li>온디바이스가 안 되는 기기에서 Web Speech 기본 경로는 브라우저 제조사 서버입니다. "저장 안 함"이라 써 놓고 음성이 나가면 표시 불일치. 시작 전 <b>사전 고지 모달</b>이 필요합니다.</li>
+  <li>은행 창구에서 폰을 세우면 "촬영 금지"로 제지당할 수 있습니다(현장 패널). 탁자 모드가 이 문제도 완화합니다.</li>
+</ul>
+
+<h3>3-2. 유통 채널</h3>
+<div class="tbl"><table>
+<thead><tr><th>채널</th><th>2026 현황</th><th>판단</th></tr></thead>
+<tbody>
+<tr><td><b>유튜브 채널</b></td><td>구독자 1만, 30~60대. 클로드 코워크·노트북LM 실무 시연이 통함</td><td><b>1순위.</b> "만드는 과정"과 "이미 있는 무료 자막 켜기"가 둘 다 콘텐츠</td></tr>
+<tr><td><b>AI디지털배움터</b></td><td>2024년 60% 삭감 후 2026년 69곳 재확대 + 경로당·복지관 찾아가는 교육 3,000개소</td><td>2순위. 디지털 튜터 교안에 실습 제안</td></tr>
+<tr><td><b>요양보호사 교육</b></td><td>320시간, 표준교재 8장 "의사소통과 정서 지원". 자격자 300만</td><td><b>채널로는 최고, 사용자로는 아님.</b> 근무 중 폰 사용은 민원·규정 문제. 요양보호사는 "가족에게 알려주는 사람"</td></tr>
+<tr><td>정보통신보조기기 보급(at4u)</td><td>등록장애인·하드웨어 중심, 128종</td><td>무료 웹앱 부적합</td></tr>
+<tr><td>은행권</td><td>시중은행 11/15곳 STT 텍스트 상담 도입(2025-08), 예가람저축은행 AI 자막(2026-06)</td><td>"고령자 정보전달" 명분이 같음. 숫자 강조 논리의 외부 근거</td></tr>
+</tbody></table></div>
+
+<!-- ============ 4 ============ -->
+<h2><span class="no">4장</span>설계에 바로 들어가는 근거 수치</h2>
+<div class="tbl"><table>
+<thead><tr><th>설계 항목</th><th>수치</th><th>근거</th></tr></thead>
+<tbody>
+<tr><td>한글 노인 읽기</td><td>최대 읽기속도 208 wpm (청년 296). 임계 글자 크기 <b>청년의 1.3배</b></td><td>김선경·이혜원 2015, 한국심리학회지</td></tr>
+<tr><td>임계 글자 크기 급증 시점</td><td>68세 이후 급증, 81세 0.34 logMAR</td><td>Calabrèse 2016, IOVS</td></tr>
+<tr><td>편안한 자막 속도</td><td>≤145 wpm, 170 이상 불편</td><td>Jensema 1998</td></tr>
+<tr><td>자막 지연</td><td>목표 ≤1.5초, 5초 넘으면 대화 참여 불가</td><td>MITRE/FCC 2020, Lasecki 2012</td></tr>
+<tr><td>줄바꿈</td><td>구문 단위(sense block)가 눈 이동·부담 감소. 최대 2줄</td><td>Gerber-Morón 2018; BBC·DCMP 관행</td></tr>
+<tr><td>단어 노출</td><td>단어당 최소 0.3초. 대비 5:1 이상</td><td>BBC 자막 가이드라인</td></tr>
+<tr><td>터치 타겟</td><td>운동 저하 노인 <b>≥19.05mm</b></td><td>Jin, Plocher &amp; Kiff 2007</td></tr>
+<tr><td>병원 소음</td><td>병상 실측 52.8~54.6 dBA (WHO 권고 35)</td><td>PMC4056361</td></tr>
+<tr><td>자막앱 대화 정확도</td><td>WER 19~34%, 소음에서 급락</td><td>Pragt 2022, Front Digit Health</td></tr>
+<tr><td>정보 회상</td><td>의료정보 40~80% 즉시 망각. 서면 요약 늘려도 회상 53% 고정 → 양보다 선별</td><td>Kessels 2003; Pavlik 2014</td></tr>
+<tr><td>확인 질문 효과</td><td>teach-back으로 이해 결손 49% → 12%</td><td>Slater 2020, RCT N=483</td></tr>
+<tr><td>누가 설치하나</td><td>돌봄 수혜자는 평균 1.6개 기능만 사용. 보호자 기술 사용이 노인 사용을 예측</td><td>JMIR Aging 2024</td></tr>
+<tr><td>진료실 자막 수용도</td><td>모의진료 29회, 90% "따라가기 쉽고 신뢰"</td><td>JMIR Rehabil 2026</td></tr>
+</tbody></table></div>
+<p class="small"><b>약한 근거·미확인:</b> 삼/사/팔·십/이십 혼동 행렬 연구 없음(자체 테스트 필요). 난청 노인 투약 오류율 정량 데이터 없음. 보청기 vs 자막앱 낙인 비교 없음. 한국 노인 이중감각손실 국가통계 미확인.</p>
+
+<!-- ============ 5 ============ -->
+<h2><span class="no">5장</span>전문가 패널 5인 심사 <span class="pill">AI 역할극</span></h2>
+<p>각자 조사 4건과 인수인계서, 테스트 설계안을 읽고 독립적으로 의견을 냈습니다. 판정은 조건부 진행 4, 보류 1.</p>
+
+<div class="panel">
+  <div class="card">
+    <h3>이비인후과 전문의·청능사 <span class="pill cond">조건부 진행</span></h3>
+    <ul>
+      <li><b>자막 오류가 청각 오류보다 위험하다.</b> 안 들리면 되묻지만, 화면에 찍힌 숫자는 되묻지 않고 믿는다.</li>
+      <li><b>폰이 얼굴을 가린다.</b> 난청 노인은 입 모양으로 고주파 자음을 보완한다. 자막이 독순을 빼앗는 구조.</li>
+      <li><b>24px는 건너편 폰에서 임계 아래.</b> 상대방 모드 40/56/72px 기본 56, 어르신 손에 들 때 32/40/56 기본 40.</li>
+      <li>숫자는 <b>확정 결과만</b> 표시, 한글 수사("세 번", "스무 알")를 아라비아로 병기하는 <b>수사 사전</b> 필요. 문장 확정 후 "읽는 중…"으로 화자를 멈추게 할 것.</li>
+    </ul>
+    <p class="cut"><b>빼라:</b> AI 요약. 원문 ASR 오류 위에 재생성 오류가 겹친다. <b>갈리는 지점:</b> 읽는 순간의 폰은 어르신 손에 있어야 한다(설치·시작은 보호자).</p>
+  </div>
+  <div class="card">
+    <h3>접근성 UX 연구자 <span class="pill cond">조건부 진행</span></h3>
+    <ul>
+      <li><b>마이크와 화면이 반대를 본다.</b> 마이크는 화자 50cm 이내, 화면은 어르신 쪽. 초안은 둘을 동시에 만족 못 한다.</li>
+      <li><b>미확정 글자 처리가 스펙에 없다.</b> 읽던 글자가 바뀌면 노인은 처음부터 다시 읽는다. 깜빡임 금지 조항에도 걸릴 수 있다.</li>
+      <li><b>틀렸을 때 복구 경로가 없다.</b> [다시 말해주세요] 버튼(≥19mm, 어르신이 누름), 숫자 병기, 마지막 숫자 문장 상단 고정.</li>
+      <li>표시 규칙 명문화: 고정 2줄, 구문 단위 줄바꿈, 흘림 금지, 확정 줄 최소 3초 유지, 새 문장은 <b>페이지 교체</b>. "어르신께 보여주기" 모드 = 180° 뒤집기 + 가로 전체화면 + 버튼 숨김.</li>
+    </ul>
+    <p class="cut"><b>빼라:</b> AI 요약(전문이 서버로 나가야 함). <b>갈리는 지점:</b> 미확정 글자는 기본 비표시. "멈춘 화면"보다 "바뀌는 글자"가 더 큰 이탈을 부른다. 테스트에서 A/B로 확인.</p>
+  </div>
+  <div class="card">
+    <h3>의료기기·개인정보 변호사 <span class="pill cond">조건부 진행</span></h3>
+    <ul>
+      <li><b>이름·문맥이 합쳐지면 "장애 보정 SW"로 읽힌다.</b> 「들리게」 + 병원 + 약 + 숫자 강조 = 사용목적이 누적된다. 의료기기 오인 표시·광고는 별도 금지 조항.</li>
+      <li><b>서버 경유 요약 = 민감정보(건강정보) 국외이전.</b> 1인 운영 무료 앱이 질 무게가 아니다.</li>
+      <li><b>"온디바이스·비저장" 약속이 안 지켜질 수 있다.</b> 온디바이스 실패 시 브라우저 제조사 서버로 간다. 사전 고지 모달 필수.</li>
+      <li>시작 화면 고정 문구: "말을 글자로 바꿔 화면에만 보여줍니다. 저장하지 않습니다. 글자·숫자가 틀릴 수 있으니 돈과 약은 말로 다시 확인하세요."</li>
+    </ul>
+    <p class="cut"><b>빼라:</b> 서버리스 경유 AI 요약. 서버가 없으면 법적 부담의 8할이 사라진다. <b>갈리는 지점:</b> "난청" 키워드는 통계·교육 콘텐츠에선 허용, 앱 이름·첫 화면·영상 제목처럼 기능과 붙는 자리에선 금지.</p>
+  </div>
+  <div class="card">
+    <h3>요양보호사·복지관 현장 실무자 <span class="pill cond">조건부 진행</span></h3>
+    <ul>
+      <li><b>"상대가 들고 어르신이 본다"는 현장과 다르다.</b> 어르신은 폰이 아니라 사람 얼굴을 본다. 폰을 얼굴 20cm까지 갖다 대고, "내가 귀머거리냐"며 밀어내는 분이 열에 셋(추정).</li>
+      <li><b>요양보호사가 근무 중 폰을 꺼내는 건 비현실적.</b> 민원·규정·양손이 찼음. 요양보호사 다수가 60대라 본인도 노안.</li>
+      <li><b>숫자를 크게 강조할수록 틀렸을 때 사고가 커진다.</b> 화면을 사람 말보다 믿는다.</li>
+      <li>연속 인식 → <b>한 문장 푸시투토크</b>. 우리가 원래 난청 어르신께 말하는 방식(짧게, 끄덕임 기다리기)과 같다. <b>탁자 모드</b>: 폰을 둘 사이에 눕히면 자막이 어르신 쪽으로 돌고, 상대 쪽 위 한 줄에 같은 글.</li>
+    </ul>
+    <p class="cut"><b>빼라:</b> 종료 요약. 요약이 필요한 사람은 그 자리에 없던 가족인데 비저장이라 전달 못 한다. <b>갈리는 지점:</b> v1 사용자는 자녀·배우자. 요양보호사는 채널이지 사용자가 아니다. 치매 동반 1쌍 테스트 추가.</p>
+  </div>
+  <div class="card">
+    <h3>시니어 제품 전략가·크리에이터 비즈니스 <span class="pill hold">보류</span></h3>
+    <ul>
+      <li><b>범위 확산.</b> 인수인계서가 스스로 1위 리스크로 명시한 것을 지금 어기고 있다. 미완성 앱 2개 = 미완성 시리즈 2개. 구독자 1만 채널에서 "만드는 과정"을 두 번 끊으면 신뢰 손실.</li>
+      <li><b>차별점이 30초 안에 설명되지 않는다.</b> 첫 댓글은 "갤럭시 설정 켜면 되는데요?"다. 한 문장으로 못 만들면 영상이 안 돈다.</li>
+      <li><b>퍼널이 없다.</b> 비저장·로그인 없음·종료 후 연결점 0. "좋은 일 한 번"으로 끝난다.</li>
+      <li>종료 화면 하단 링크 1개: "갤럭시·아이폰에 이미 있는 무료 자막 켜는 법" → 채널 영상. 경쟁사 기능을 앱 안에서 먼저 안내하는 게 "이미 있는 것을 닿게"와 일치하고 유일한 퍼널 연결점.</li>
+    </ul>
+    <p class="cut"><b>빼라:</b> LLM 요약. <b>갈리는 지점:</b> 크게보기 완료 전 코드 한 줄도 쓰지 않는다. 단 콘텐츠는 지금 시작. 테스트에 <b>Live Transcribe 비교군</b> 추가, 차이가 수치로 안 나오면 앱 대신 콘텐츠로 전환.</p>
+  </div>
+</div>
+
+<h3>5-1. 합의와 불일치</h3>
+<div class="tbl"><table class="agree">
+<thead><tr><th>쟁점</th><th>청능사</th><th>UX</th><th>법률</th><th>현장</th><th>전략</th></tr></thead>
+<tbody>
+<tr><td>v1에서 서버 경유 AI 요약 삭제</td><td class="y">●</td><td class="y">●</td><td class="y">●</td><td class="y">●</td><td class="y">●</td></tr>
+<tr><td>기본 글자 24px은 부족, 40px 이상</td><td class="y">●</td><td class="y">●</td><td class="m">–</td><td class="y">●</td><td class="m">–</td></tr>
+<tr><td>어르신 쪽으로 화면을 돌리는 모드</td><td class="y">●</td><td class="y">●</td><td class="m">–</td><td class="y">●</td><td class="m">–</td></tr>
+<tr><td>미확정 글자 비표시, 문장 고정</td><td class="y">●</td><td class="y">●</td><td class="m">–</td><td class="y">●</td><td class="m">–</td></tr>
+<tr><td>숫자 아라비아 병기 + 재확인 장치</td><td class="y">●</td><td class="y">●</td><td class="y">●</td><td class="y">●</td><td class="m">–</td></tr>
+<tr><td>"저장 안 함·틀릴 수 있음" 고정 문구</td><td class="m">–</td><td class="m">–</td><td class="y">●</td><td class="m">–</td><td class="y">●</td></tr>
+<tr><td>크게보기 완료 전 착수 금지</td><td class="m">–</td><td class="m">–</td><td class="m">–</td><td class="m">–</td><td class="y">●</td></tr>
+<tr><td>폰은 어르신 손에 (vs 탁자 vs 상대 손)</td><td class="n2">손</td><td class="m">돌리기</td><td class="m">–</td><td class="n2">탁자</td><td class="m">–</td></tr>
+<tr><td>요양보호사를 v1 사용자에서 제외</td><td class="m">–</td><td class="m">–</td><td class="m">–</td><td class="y">●</td><td class="m">–</td></tr>
+</tbody></table></div>
+<p><b>정리.</b> "누가 폰을 드는가"만 셋으로 갈렸고 나머지는 사실상 합의입니다. 셋을 모두 만족하는 답이 <b>탁자 모드</b>입니다. 폰을 둘 사이에 눕히면 어르신은 화자의 입과 자막을 한 시야에 두고, 마이크는 화자 50cm 안에 있고, 은행 창구에서 폰을 세울 일도 없습니다. 어르신이 폰을 집어 들면 그대로 손에 든 모드가 됩니다.</p>
+
+<div class="mock">
+  <div class="phone" aria-label="탁자 모드 화면 예시">
+    <div class="speaker"><span class="live">● 듣는 중 · 저장 안 함</span><br>다음 진료는 10월 14일 오후 3시예요</div>
+    <div class="elder"><div>다음 진료는<br><span class="num">10월 14일</span><br><span class="num">오후 3시</span>예요</div></div>
+  </div>
+</div>
+<p class="cap">탁자 모드 예시. 위쪽 작은 글은 말하는 사람용, 큰 글은 180° 돌아 어르신 쪽을 향한다. 숫자·날짜는 밑줄과 배경으로 강조, 미확정 글자는 그리지 않는다.</p>
+
+<!-- ============ 6 ============ -->
+<h2><span class="no">6장</span>노인 테스트 설계 <span class="pill hold">미실행</span></h2>
+<p>제가 실행할 수 없는 부분입니다. 아래는 초안에 패널 요구를 반영한 수정본이며, 실행 주체는 대표님입니다. 목적은 "설명 없이 30초 안에 켜고, 어르신이 숫자를 읽을 수 있는가"입니다.</p>
+
+<h3>6-1. 두 단계로 나눈다</h3>
+<div class="gate">
+<p><b>0단계 (지금, 코드 없음):</b> 갤럭시 Live Transcribe / 아이폰 Live Captions만으로 6쌍 시행. 아래 관찰 항목 중 <u>숫자 오독·읽기 거리·폰 자세·거부 신호</u>가 실제로 나오는지 본다. <b>안 나오면 앱을 만들지 않는다.</b> 나오면 그 항목이 v1의 존재 이유가 된다.</p>
+<p><b>1단계 (v1 완성 후):</b> 같은 6쌍 + 치매 동반 1쌍, 같은 문장으로 무료 자막 vs v1 교차 시행.</p>
+</div>
+
+<h3>6-2. 대상 7쌍</h3>
+<div class="tbl"><table>
+<thead><tr><th>쌍</th><th>어르신</th><th>대화 상대</th><th>모집처</th></tr></thead>
+<tbody>
+<tr><td>1–2</td><td>70대, 보청기 미착용</td><td>40~50대 자녀</td><td>구독자 공지</td></tr>
+<tr><td>3–4</td><td>75세 이상, 보청기 착용</td><td>배우자 60~70대</td><td>경로당·복지관</td></tr>
+<tr><td>5</td><td>80세 이상, 저시력 동반 (2쌍으로 확대 권고)</td><td>자녀 또는 요양보호사 (본인 폰·상대 폰 두 조건 모두)</td><td>재가요양센터</td></tr>
+<tr><td>6</td><td>65~70대, 경도, 스마트폰 능숙</td><td>손주·자녀</td><td>구독자 공지</td></tr>
+<tr><td>7 (추가)</td><td>경도 치매 동반</td><td>가족</td><td>치매안심센터</td></tr>
+</tbody></table></div>
+
+<h3>6-3. 절차 (설명 없이, 카카오톡으로 링크 전송)</h3>
+<ol>
+  <li>카카오톡 안에서 링크 열기 → [듣기 시작]까지 <b>30초 이내</b>. 인앱 브라우저→크롬 전환 시간 포함해 측정.</li>
+  <li>같은 문장을 <b>자막 없이 1회 → 자막 있고 1회</b>. 대화 상대가 외워서 평소대로 말한다(종이 보고 읽기 금지). 되묻기는 관찰자가 아니라 상대가 "확인차 한 번만요"로.
+    <ul>
+      <li>"다음 진료는 10월 14일 오후 3시예요"</li>
+      <li>"이 약은 하루 세 번, 식후 30분에 드세요"</li>
+      <li>"이체 금액이 48만 5천 원 맞으세요?" + 삼/사/팔, 십/이십, 일/칠 세트 각 1문장</li>
+      <li>"요즘 잠은 잘 주무세요?"</li>
+    </ul>
+  </li>
+  <li><b>의도적 오인식 1회</b>(사→팔로 조작된 자막)를 넣어 누가, 몇 초 만에 알아채고 어떻게 복구하는지 본다.</li>
+  <li>글자 크기 변경을 스스로 찾는지, 폰을 어르신이 집어 드는지 관찰.</li>
+  <li>종료 화면(숫자 모아보기) 읽고 "오늘 약속이 언제였죠?" 답하기.</li>
+  <li>어르신께 "이거 녹음되는 거예요?" → "아니요, 화면에만"이라 답하는지.</li>
+</ol>
+
+<h3>6-4. 기록과 통과 기준</h3>
+<div class="tbl"><table>
+<thead><tr><th>지표</th><th>통과 기준</th><th>요구한 패널</th></tr></thead>
+<tbody>
+<tr><td>첫 자막까지 시간</td><td>30초 이내, 5/6쌍</td><td>초안</td></tr>
+<tr><td>3층 기록: 말한 문장 / 화면 문장 / 되말한 문장</td><td>ASR 오류와 읽기 실패를 분리</td><td>UX</td></tr>
+<tr><td>숫자 문장 정확 이해 (자막 유무 대조)</td><td>자막 있을 때 3/3, 5/6쌍</td><td>청능사</td></tr>
+<tr><td>읽기 거리(cm)·화면 방향·안경·시선(입/화면)·상대가 소리 질렀는지·문장 사이 멈췄는지</td><td>기록 (통과 기준 아님)</td><td>청능사·UX</td></tr>
+<tr><td>소음 조건</td><td>조용한 방 + 폰 소음계 55 dBA 1회</td><td>청능사</td></tr>
+<tr><td>거부 신호 (폰 밀어냄·시선 회피·"됐어") 횟수</td><td>기록</td><td>현장</td></tr>
+<tr><td>어르신 3문항 구두 척도 (읽기 쉬웠나 / 글자 바뀌어 헷갈렸나 / 다음 병원 갈 때 켜 달라 하겠나)</td><td>3번 "예" 4/6쌍</td><td>UX·현장</td></tr>
+<tr><td>"녹음되는 거예요?" 인지</td><td>6/6쌍</td><td>법률</td></tr>
+<tr><td>대화 상대 SUS 10문항</td><td>평균 70 이상</td><td>초안</td></tr>
+<tr><td>"누구에게 알려주고 싶은가"</td><td>기록 (채널 성장 지표)</td><td>전략</td></tr>
+</tbody></table></div>
+
+<h3>6-5. 윤리·동의 (법률 패널 반영)</h3>
+<ul>
+  <li>녹음·녹화 없음. 관찰 메모만. 참여·상품권·유튜브 출연 여부는 <b>서면 동의</b>.</li>
+  <li>청력·보청기·질환은 건강정보이므로 <b>기록하지 않고</b> 구두 자기보고만. 80세+ 쌍은 보호자 입회, 요양보호사 쌍은 센터 승인.</li>
+  <li>상품권 건당 5만 원 이하(주민번호 수집 회피).</li>
+  <li>온디바이스가 안 되는 기기는 "소리가 외부 서버로 갈 수 있음"을 먼저 알린다.</li>
+</ul>
+
+<!-- ============ 7 ============ -->
+<h2><span class="no">7장</span>v1 스펙 — 초안에서 무엇이 바뀌었나</h2>
+<div class="tbl"><table>
+<thead><tr><th>항목</th><th>초안</th><th>확정 제안</th><th>근거</th></tr></thead>
+<tbody>
+<tr><td>사용자</td><td>난청 어르신과 대화하는 사람</td><td><b>자녀·배우자</b>. 요양보호사는 v2</td><td>현장</td></tr>
+<tr><td>인식 방식</td><td>연속 인식</td><td><b>푸시투토크</b>: 누르는 동안 듣고, 떼면 문장 고정</td><td>현장·UX</td></tr>
+<tr><td>자막 표시</td><td>초대형 자막</td><td>고정 2줄, 구문 단위 줄바꿈, 흘림 금지, <b>확정 글자만</b>, 새 문장은 페이지 교체, 최소 3초 유지</td><td>UX·청능사</td></tr>
+<tr><td>글자 크기</td><td>24 / 32 / 40px</td><td><b>40 / 56 / 72px, 기본 40</b>. 화자용 위 한 줄 24px</td><td>청능사·UX·현장</td></tr>
+<tr><td>화면 방향</td><td>상대가 들고 보여줌</td><td><b>탁자 모드</b>(180° 회전, 버튼 숨김) 기본. 어르신이 들면 손 모드</td><td>합의</td></tr>
+<tr><td>숫자·날짜·금액</td><td>자동 강조</td><td>확정 결과만, 한글 수사 사전 → <b>아라비아 병기</b>, 밑줄+배경, 마지막 숫자 문장 상단 고정, 탭하면 화자가 고침</td><td>청능사·UX·현장</td></tr>
+<tr><td>복구</td><td>없음</td><td>[다시 말해주세요] 버튼 ≥19mm (어르신 쪽)</td><td>UX</td></tr>
+<tr><td>종료 요약</td><td>AI 3줄 요약(서버)</td><td><b>삭제.</b> 숫자 문장 원문 모아보기(기기 안, 규칙 기반) + 확인 질문 1개 + [저장 안 함] 기본</td><td>5인 전원</td></tr>
+<tr><td>고정 문구</td><td>없음</td><td>시작 화면: "말을 글자로 바꿔 화면에만 보여줍니다. 저장하지 않습니다. 글자·숫자가 틀릴 수 있으니 돈과 약은 말로 다시 확인하세요." / 인식 중: "● 듣는 중 · 저장 안 함"</td><td>법률·전략</td></tr>
+<tr><td>음성인식 경로</td><td>Web Speech ko-KR</td><td>Chrome <b>온디바이스</b> 우선. 삼성 인터넷·카톡 인앱 → intent로 크롬 열기 시도. 온디바이스 불가 시 <b>사전 고지 모달</b>. iOS → "Live Captions 켜는 법" 안내. 최종 폴백 텍스트 입력</td><td>법률·UX</td></tr>
+<tr><td>서버</td><td>서버리스 AI</td><td><b>없음</b></td><td>법률</td></tr>
+<tr><td>퍼널</td><td>없음</td><td>종료 화면 링크 1개: "이미 있는 무료 자막 켜는 법" 영상</td><td>전략</td></tr>
+<tr><td>이름</td><td>들리게</td><td><b>대표님 결정.</b> 법률 패널이 위험 지적. 대안 예시 「글로보기」「말글」</td><td>법률</td></tr>
+<tr><td>표현 규칙</td><td>인수인계서 7장</td><td>코드 옆 WORDS.md로 고정. 금지: 난청·청각장애·보청기·청력·증폭·치매·사고 방지·복약 오류. 유튜브 제목·썸네일·첫 화면 동일 적용</td><td>법률</td></tr>
+</tbody></table></div>
+
+<!-- ============ 8 ============ -->
+<h2><span class="no">8장</span>일정</h2>
+<p>전제: <b>크게보기 완료 정의 4개 통과 후 착수</b>. 크게보기와 공유하는 부분(글자 토글, 대비 토큰, Web Speech 폴백, PWA)이 많아서 크게보기를 끝내면 들리게는 2주 안에 끝납니다.</p>
+
+<h3>0주차 — 지금, 코드 없이</h3>
+<div class="step"><b>영상 1편</b><p>"갤럭시에 숨겨진 무료 자막, 부모님 병원 갈 때 켜드리세요". 아이폰 Live Captions 병행. 이 영상이 수요 검증이자 v1의 퍼널 링크가 된다.</p></div>
+<div class="step"><b>0단계 테스트</b><p>무료 자막만으로 6쌍. 6-1의 게이트 통과 시에만 다음으로.</p></div>
+<div class="step"><b>실기 확인 2건</b><p>① Chrome Android 온디바이스 ko-KR 설치 UX ② 삼성 인터넷·카카오톡 인앱에서 Web Speech 동작. 둘 다 미확인 상태.</p></div>
+<div class="step"><b>식약처 질의</b><p>의료기기 해당여부 민원 1건 접수. 답변에 2~4주.</p></div>
+
+<h3>착수 후 2주</h3>
+<div class="step"><b>Day 1–2</b><p>골격. 푸시투토크, 고정 2줄 표시, 40/56/72px, 탁자 모드 180° 회전. 크게보기 토큰 재사용.</p></div>
+<div class="step"><b>Day 3–4</b><p>음성인식 경로 분기. 온디바이스 판정 → 크롬 열기 → 사전 고지 모달 → iOS 안내 → 텍스트 폴백. 기기 4종 실기.</p></div>
+<div class="step"><b>Day 5–6</b><p>한글 수사 사전(하나·둘·세 번·스무·닷새·만·천) → 아라비아 병기. 확정 결과만 강조. 상단 고정. 탭해서 고치기.</p></div>
+<div class="step"><b>Day 7–8</b><p>종료 화면: 숫자 문장 모아보기 + 확인 질문 + [저장 안 함] 기본 + [이 폰에 저장] + [지우기]. WORDS.md 작성.</p></div>
+<div class="step"><b>Day 9–10</b><p>자동 검증: 대비 7:1, 터치 타겟 ≥19mm, 200% 확대, 깜빡임 없음. 텍스트 폴백 회귀.</p></div>
+<div class="step"><b>Day 11–12</b><p>PWA, 홈 화면 추가, 서브도메인 배포.</p></div>
+<div class="step"><b>Day 13–14</b><p>1단계 테스트 7쌍 (6장). 통과 못 한 지표는 기능 추가가 아니라 <u>뺄 것</u>부터 찾는다.</p></div>
+
+<h3>완료 정의</h3>
+<ol>
+  <li>자녀가 <b>설명 없이</b> 카카오톡 링크에서 30초 안에 첫 자막을 띄운다 (5/6쌍)</li>
+  <li>어르신이 탁자 모드에서 숫자 문장 3개를 정확히 읽는다 (5/6쌍)</li>
+  <li>모든 텍스트 대비 7:1, 터치 타겟 19mm 이상이 <b>스크립트로 검증</b>된다</li>
+  <li>음성 미지원 브라우저에서 텍스트 입력으로 정상 동작한다</li>
+  <li>서버 호출이 0건임을 네트워크 로그로 확인한다</li>
+  <li>어르신 6/6이 "녹음 아니고 화면에만"이라고 답한다</li>
+</ol>
+
+<!-- ============ 9 ============ -->
+<h2><span class="no">9장</span>미확인 항목 — 착수 전에 닫아야 할 것</h2>
+<ul>
+  <li>Chrome Android 온디바이스 ko-KR 언어팩 설치 UX (r2). <b>착수 조건</b></li>
+  <li>삼성 인터넷·카카오톡 인앱 브라우저의 Web Speech 실제 동작 (r3). <b>착수 조건</b></li>
+  <li>식약처의 자막 앱 의료기기 해당여부 해석 (r3). 민원으로 확정</li>
+  <li>저장 없는 실시간 전사가 통비법상 "녹음"인지 (r3). 변호사 확인</li>
+  <li>Samsung Voice Captioning 국내 출시 여부 (r2). 출시되면 대체재</li>
+  <li>Galaxy Buds 보청기 기능 식약처 허가·국내 출시 (r1). 콘텐츠 소재</li>
+  <li>삼/사/팔·십/이십 혼동 실측 (r4). 0단계 테스트에서 수집</li>
+  <li>한국 노인 이중감각손실 국가통계 (r4)</li>
+</ul>
+
+<!-- ============ 10 ============ -->
+<h2><span class="no">10장</span>유튜브 제목안 (전략 패널, 정직·신뢰 톤)</h2>
+<ol>
+  <li>갤럭시에 숨겨진 무료 자막 기능, 부모님 병원 갈 때 켜드리세요</li>
+  <li>아이폰에 이런 게 있는 줄 몰랐죠? 무료 실시간 자막으로 은행 숫자 안 놓치는 법</li>
+  <li>보청기 안 쓰시는 부모님과 대화하는 꿀조합, 무료 자막 + 큰 글자, 설치 없이</li>
+</ol>
+<p class="small">법률 패널 기준 검토: 3번의 "보청기"는 통계·교육 맥락이라 허용 범위이나, 앱 이름과 붙는 자리(썸네일 문구, 앱 첫 화면)에서는 쓰지 않습니다.</p>
+
+<!-- ============ 출처 ============ -->
+<h2><span class="no">출처</span>주요 근거</h2>
+<div class="src">
+<p><b>시장·하드웨어</b></p>
+<ul>
+<li><a href="https://www.fda.gov/news-events/press-announcements/fda-authorizes-first-over-counter-hearing-aid-software">FDA — AirPods Pro 보청기 SW 승인 (2024-09)</a></li>
+<li><a href="https://www.monews.co.kr/news/articleView.html?idxno=405919">식약처 에어팟 HAF 디지털의료기기 허가 — 메디칼업저버 (2025-08)</a></li>
+<li><a href="https://news.samsung.com/global/samsungs-hearing-aid-feature-on-galaxy-buds-cleared-by-fda">Samsung Galaxy Buds FDA 허가 (2026-08)</a></li>
+<li><a href="https://www.hearingtracker.com/news/sales-of-sony-hearing-aids-discontinued-wsa-eyes-next-steps-for-otc-market">Sony OTC 보청기 단종 (2026-04)</a> / <a href="https://www.hearingtracker.com/news/eargo-and-lexie-parent-lxe-hearing-begins-u-s-wind-down">LXE(Eargo·Lexie) 미국 사업 종료 (2026-07)</a></li>
+<li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12638185/">MarkeTrak 2025 — OTC 채택률</a></li>
+<li><a href="https://www.nhis.or.kr/nhis/policy/wbhada11900m01.do">건강보험 보청기 급여 기준</a> / <a href="https://v.daum.net/v/20250121024315324">대한이과학회 — 노인 난청 38%·보청기 12.6%</a></li>
+<li><a href="https://eiec.kdi.re.kr/policy/materialView.do?num=279704">2025 등록장애인 현황 — 복지부/KDI</a></li>
+</ul>
+<p><b>소프트웨어·음성인식</b></p>
+<ul>
+<li><a href="https://support.google.com/accessibility/android/answer/9158064">Google Live Transcribe</a> / <a href="https://www.apple.com/ios/feature-availability/">Apple Live Captions 언어 가용성</a></li>
+<li><a href="https://play.google.com/store/apps/details?id=kr.sovoro.app">소보로 플러스</a> / <a href="https://captionpad.com/product.html">CaptionPad</a></li>
+<li><a href="https://rtzr.github.io/Awesome-Korean-Speech-Recognition/">한국어 STT 벤치마크 (리턴제로)</a></li>
+<li><a href="https://www.e-asr.org/journal/view.php?doi=10.21848/asr.260227">Whisper 노인 난청 화자 한국어 인식 (Audiol Speech Res 2026)</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition/install_static">Web Speech API 온디바이스 (MDN)</a> / <a href="https://caniuse.com/speech-recognition">caniuse — 브라우저 지원</a></li>
+</ul>
+<p><b>규제·제도</b></p>
+<ul>
+<li><a href="https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=259299">디지털의료제품법</a> / <a href="https://www.mfds.go.kr/brd/m_861/view.do?seq=20156">의료기기·웰니스 제품 판단기준</a></li>
+<li><a href="https://www.korea.kr/news/policyNewsView.do?newsId=148957089">AI디지털배움터 69곳 (2025-12)</a> / <a href="https://www.mohw.go.kr/board.es?mid=a10411010100&bid=0019&act=view&list_no=1482064">요양보호사 표준교재</a></li>
+<li><a href="https://gs.statcounter.com/browser-market-share/mobile/south-korea">StatCounter 한국 모바일 브라우저</a> / <a href="https://www.datanews.co.kr/news/article.html?no=139581">한국갤럽 2025 스마트폰 브랜드</a></li>
+</ul>
+<p><b>근거 연구</b></p>
+<ul>
+<li><a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART002014698">김선경·이혜원 2015 — 한글 노인 읽기속도·임계 글자 크기</a></li>
+<li><a href="https://iovs.arvojournals.org/article.aspx?articleid=2537421">Calabrèse 2016 — MNREAD 연령 규준</a></li>
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/9842059/">Jensema 1998 — 자막 속도 선호</a> / <a href="https://www.bbc.co.uk/accessibility/forproducts/guides/subtitles/">BBC 자막 가이드라인</a></li>
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/28837709/">Cudmore 2017 — 노인 환자 오청 43%</a></li>
+<li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7513274/">Slater 2020 — teach-back RCT</a> / <a href="https://www.jabfm.org/content/27/2/209">Pavlik 2014 — 서면 요약 회상</a></li>
+<li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8889114/">Pragt 2022 — 자막앱 대화 WER</a> / <a href="https://aging.jmir.org/2024/1/e50759">JMIR Aging 2024 — 보호자 매개 기술 사용</a></li>
+<li><a href="https://link.springer.com/chapter/10.1007/978-3-540-73279-2_104">Jin 2007 — 노인 터치 타겟 크기</a> / <a href="https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html">WCAG 2.2 1.4.12</a></li>
+<li><a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(23)01406-X/abstract">ACHIEVE 2023 (Lancet)</a> / <a href="https://www.thelancet.com/commissions-do/dementia-prevention-intervention-and-care">Lancet 위원회 2024</a></li>
+</ul>
+</div>
+</div>
+</body></html>
