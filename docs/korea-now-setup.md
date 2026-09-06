@@ -48,12 +48,14 @@ VITE_SUPABASE_ANON_KEY=sb_publishable_...
 
 ## 3. Supabase 연결
 
-### 3-1. 프로젝트 만들기
-- https://supabase.com/dashboard → **New project** → 이름 `korea-now`, Region **Northeast Asia (Seoul)**
-- 무료 플랜은 **활성 프로젝트 2개까지**입니다. 이미 2개가 켜져 있으면 안 쓰는 프로젝트를 **Pause** 하거나 유료 플랜이 필요합니다.
+> **2026-09-06 현재 상태**: 프로젝트 `korea-now`(ref `dxhmprqfgigljgbstqrg`) 생성, 스키마 적용, Edge Function 4개 배포, 앱에 URL·공개키 연결까지 완료. **남은 건 3-3 시크릿 등록뿐.**
 
-### 3-2. 스키마 넣기
-- Dashboard → **SQL Editor** → `supabase/migrations/0001_init.sql` 내용을 붙여넣고 **Run**
+### 3-1. 프로젝트 만들기 — 완료
+- https://supabase.com/dashboard/project/dxhmprqfgigljgbstqrg
+- 무료 플랜 활성 2개 한도 때문에 `artselah`를 일시정지했습니다. 다시 켜려면 그 프로젝트 → Restore.
+
+### 3-2. 스키마 넣기 — 완료
+- 새 프로젝트를 다시 만들 때만: **SQL Editor** → `supabase/migrations/0001_init.sql` 붙여넣고 **Run**
 
 ### 3-3. 시크릿(비밀 키) 등록
 - Dashboard → **Edge Functions → Secrets** 에 아래 3개 추가
@@ -64,7 +66,7 @@ VITE_SUPABASE_ANON_KEY=sb_publishable_...
 | `TOUR_API_KEY` | 2-2 디코딩 키 |
 | `KOREAEXIM_API_KEY` | 2-3 키 (선택) |
 
-### 3-4. Edge Function 배포 (Supabase CLI)
+### 3-4. Edge Function 배포 (Supabase CLI) — 완료 (코드를 고쳤을 때만 다시)
 
 | 단계 | Windows (PowerShell) | macOS (터미널) |
 | --- | --- | --- |
@@ -76,17 +78,10 @@ VITE_SUPABASE_ANON_KEY=sb_publishable_...
 > 프로젝트 ref는 Dashboard 주소 `https://supabase.com/dashboard/project/<여기>` 부분입니다.
 > 저장소 루트(`soonryu74.github.io/`)에서 실행합니다. `supabase/` 폴더를 자동으로 찾습니다.
 
-### 3-5. 앱에 URL과 공개 키 넣기
-- Dashboard → **Project Settings → API** 에서 `Project URL`, `Publishable key(sb_publishable_…)` 복사
-- 로컬: `korea-now/.env`에 입력
-- 배포: GitHub 저장소 → **Settings → Secrets and variables → Actions** 에 아래 2개 등록
-
-| Secret 이름 | 값 |
-| --- | --- |
-| `KOREA_NOW_SUPABASE_URL` | Project URL |
-| `KOREA_NOW_SUPABASE_ANON_KEY` | Publishable key |
-
-이후 `main` 브랜치에 push 하면 `jekyll.yml` 워크플로가 앱을 빌드해 `/korea-now/`에 올립니다.
+### 3-5. 앱에 URL과 공개 키 넣기 — 완료
+- `korea-now/.env.production`에 들어 있습니다(공개용 키라 저장소에 있어도 됨). 로컬 개발은 `.env`에 같은 값을 복사.
+- 프로젝트를 바꾸면 이 파일만 고치면 됩니다. GitHub Secrets(`KOREA_NOW_SUPABASE_URL`, `KOREA_NOW_SUPABASE_ANON_KEY`)를 등록하면 그것이 우선합니다.
+- `main` 브랜치에 push 하면 `jekyll.yml` 워크플로가 앱을 빌드해 `/korea-now/`에 올립니다.
 
 ## 3-6. 홈화면에 앱 설치 (PWA)
 - 배포 주소를 폰 브라우저로 열면 "홈 화면에 추가"가 뜹니다(안드로이드 Chrome은 자동 배너, 아이폰 Safari는 공유 → 홈 화면에 추가).

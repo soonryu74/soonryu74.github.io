@@ -30,6 +30,7 @@ jobs:
           cache-dependency-path: korea-now/package-lock.json
       - name: Build Korea Now
         working-directory: korea-now
+        # 기본값은 korea-now/.env.production. 시크릿이 있으면 그것이 우선.
         env:
           VITE_SUPABASE_URL: ${{ secrets.KOREA_NOW_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.KOREA_NOW_SUPABASE_ANON_KEY }}
