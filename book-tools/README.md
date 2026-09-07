@@ -14,6 +14,8 @@
 | `역학조사관_신국판.pdf` | 종이책 내지 (신국판 152×225mm, 346쪽, POD 주문형 출판용) |
 | `역학조사관_A4인쇄용.pdf` | 집·사무실 프린터로 뽑아 읽는 판 (A4, 11.2pt, 258쪽) |
 | `역학조사관_원고.docx` | 출판사 투고용 원고 (A4, 바탕체, 자동 목차) |
+| `역학조사관_1권_원고.docx` | **투고 주력** — 제1권 단독 (580매, 25장) |
+| `역학조사관_출간기획서.docx` | 시놉시스 + 출간기획서 (7개 절) |
 | `reader.html` | 브라우저에서 바로 읽는 웹 전자책 (차례·이전다음·글자크기·이어읽기) |
 | `cover.png` | 표지 (1600×2400) |
 
@@ -41,6 +43,20 @@ node build_docx.js               # → 역학조사관_원고.docx
 ```
 
 판형은 `build_pdf_html.py`의 `PRESET`에서 정의합니다(용지·여백·본문 크기·행간).
+
+### 권별 단독본 뽑기
+
+`BOOK` 환경변수로 원본 JSON을 바꿔 끼웁니다. 권이 하나뿐이면 권 표지와 차례의 권 제목이
+자동으로 생략되어 단독 단행본처럼 조판됩니다.
+
+```bash
+# book_v1.json = volumes를 1권만 담고 subtitle을 "제1권 전설의 훈련단"으로 바꾼 파일
+BOOK=book_v1.json OUT_SINKUK=pdf_v1.html python3 build_pdf_html.py sinkuk
+python3 print_pdf.py $PWD/pdf_v1.html $PWD/역학조사관_1권_신국판.pdf
+BOOK=book_v1.json OUT=역학조사관_1권.epub      python3 build_epub.py
+BOOK=book_v1.json OUT=역학조사관_1권_원고.docx node build_docx.js
+
+node build_proposal.js   # → 역학조사관_출간기획서.docx
 
 - PDF 조판은 Paged.js + Chromium 인쇄 엔진 사용: 목차 쪽번호(target-counter),
   면주(짝수쪽 서명·홀수쪽 장 제목), 신국판 규격, Noto Serif CJK KR 본문.

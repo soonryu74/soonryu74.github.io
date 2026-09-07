@@ -3,15 +3,17 @@
 import json, html, sys
 from inline import md_inline, block_html
 
-book = json.load(open("book.json", encoding="utf-8"))
+import os
+book = json.load(open(os.environ.get("BOOK", "book.json"), encoding="utf-8"))
+SINGLE = len(book["volumes"]) == 1
 
 # 판형: sinkuk(신국판, POD 인쇄용) / a4(집에서 인쇄해 읽는 용)
 FMT = sys.argv[1] if len(sys.argv) > 1 else "sinkuk"
 PRESET = {
     "sinkuk": dict(size="152mm 225mm", margin="18mm 17mm 20mm 17mm", base="10.3pt",
-                   lh="1.72", chgap="16mm 0 12mm 0", out="pdf.html"),
+                   lh="1.72", chgap="16mm 0 12mm 0", out=os.environ.get("OUT_SINKUK","pdf.html")),
     "a4":     dict(size="A4", margin="22mm 24mm 22mm 24mm", base="11.2pt",
-                   lh="1.80", chgap="14mm 0 11mm 0", out="pdf_a4.html"),
+                   lh="1.80", chgap="14mm 0 11mm 0", out=os.environ.get("OUT_A4","pdf_a4.html")),
 }[FMT]
 
 CSS = """
@@ -99,7 +101,8 @@ A(f"""<div class="copyright"><div class="box">
 toc = ['<div class="toc"><h2>차 례</h2>']
 n = 0
 for vi, vol in enumerate(book["volumes"], 1):
-    toc.append(f'<p class="vol">{md_inline(vol["title"])}</p>')
+    if not SINGLE:
+        toc.append(f'<p class="vol">{md_inline(vol["title"])}</p>')
     for pi, part in enumerate(vol["parts"], 1):
         toc.append(f'<p class="part">{md_inline(part["title"])}</p>')
         for ch in part["chapters"]:
@@ -110,7 +113,8 @@ A("\n".join(toc))
 
 n = 0
 for vi, vol in enumerate(book["volumes"], 1):
-    A(f'<div class="vol-page"><div class="inner"><h1>{md_inline(vol["title"])}</h1><div class="rule"></div></div></div>')
+    if not SINGLE:
+        A(f'<div class="vol-page"><div class="inner"><h1>{md_inline(vol["title"])}</h1><div class="rule"></div></div></div>')
     for pi, part in enumerate(vol["parts"], 1):
         A(f'<div class="part-page"><h2>{md_inline(part["title"])}</h2></div>')
         for ch in part["chapters"]:

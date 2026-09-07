@@ -3,8 +3,10 @@
 import json, zipfile, uuid, datetime, html
 from inline import md_inline, block_html
 
-book = json.load(open("book.json", encoding="utf-8"))
-OUT = "역학조사관.epub"
+import os
+book = json.load(open(os.environ.get("BOOK", "book.json"), encoding="utf-8"))
+SINGLE = len(book["volumes"]) == 1
+OUT = os.environ.get("OUT", "역학조사관.epub")
 BOOK_ID = "urn:uuid:" + str(uuid.uuid5(uuid.NAMESPACE_URL, "soonryu74/epidemiologist-novel"))
 NOW = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -55,9 +57,10 @@ docs.append(("title.xhtml", "속표지", xhtml("역학조사관", tp), True, Non
 toc_entries = []  # (level, title, file)
 n = 0
 for vi, vol in enumerate(book["volumes"], 1):
-    fn = f"vol{vi}.xhtml"
-    docs.append((fn, vol["title"], xhtml(vol["title"], f'<div class="vol-page"><h1>{md_inline(vol["title"])}</h1></div>'), True, None))
-    toc_entries.append((0, vol["title"], fn))
+    if not SINGLE:
+        fn = f"vol{vi}.xhtml"
+        docs.append((fn, vol["title"], xhtml(vol["title"], f'<div class="vol-page"><h1>{md_inline(vol["title"])}</h1></div>'), True, None))
+        toc_entries.append((0, vol["title"], fn))
     for pi, part in enumerate(vol["parts"], 1):
         fn = f"vol{vi}_part{pi}.xhtml"
         docs.append((fn, part["title"], xhtml(part["title"], f'<div class="part-page"><h2>{md_inline(part["title"])}</h2></div>'), True, None))
@@ -73,6 +76,8 @@ for vi, vol in enumerate(book["volumes"], 1):
 
 # ---- nav ----
 def build_nav(entries):
+    base = min(l for l, _, _ in entries) if entries else 0
+    entries = [(l - base, t, f) for l, t, f in entries]
     out = ["<ol>"]
     prev = 0
     for lvl, title, fn in entries:
@@ -89,11 +94,12 @@ def build_nav(entries):
     s = "".join(out).replace("<ol></li>", "<ol>", 1)
     return s
 
+FIRST_BODY = [d[0] for d in docs if d[0] not in ("cover.xhtml","title.xhtml")][0]
 nav_body = f"""<nav epub:type="toc" id="toc"><h2>차례</h2>{build_nav(toc_entries)}</nav>
 <nav epub:type="landmarks" hidden=""><ol>
 <li><a epub:type="cover" href="cover.xhtml">표지</a></li>
 <li><a epub:type="toc" href="nav.xhtml">차례</a></li>
-<li><a epub:type="bodymatter" href="vol1.xhtml">본문</a></li>
+<li><a epub:type="bodymatter" href="{FIRST_BODY}">본문</a></li>
 </ol></nav>"""
 nav_doc = xhtml("차례", nav_body)
 

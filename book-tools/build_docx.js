@@ -5,7 +5,8 @@ const {
   PageBreak, TableOfContents, SectionType,
 } = require("docx");
 
-const book = JSON.parse(fs.readFileSync("book.json", "utf-8"));
+const book = JSON.parse(fs.readFileSync(process.env.BOOK || "book.json", "utf-8"));
+const SINGLE = book.volumes.length === 1;
 
 const KO = { ascii: "Batang", eastAsia: "Batang", hAnsi: "Batang" };
 
@@ -80,7 +81,7 @@ children.push(
 );
 
 for (const vol of book.volumes) {
-  children.push(new Paragraph({
+  if (!SINGLE) children.push(new Paragraph({
     heading: HeadingLevel.HEADING_1, pageBreakBefore: true,
     alignment: AlignmentType.CENTER, spacing: { before: 4400, after: 400 },
     children: [new TextRun({ text: vol.title, bold: true, size: 40 })],
@@ -128,6 +129,6 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then((buf) => {
-  fs.writeFileSync("역학조사관_원고.docx", buf);
-  console.log("saved 역학조사관_원고.docx", buf.length, "bytes");
+  fs.writeFileSync(process.env.OUT || "역학조사관_원고.docx", buf);
+  console.log("saved", process.env.OUT || "역학조사관_원고.docx", buf.length, "bytes");
 });
