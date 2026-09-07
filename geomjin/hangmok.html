@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>검진 항목·주기 | 검진맵</title>
+<meta name="description" content="2026 국가건강검진 항목·대상·주기 한눈에: 일반건강검진 20종, 2차검진, 국가암검진 6종, 영유아 8회, 구강, 학생, 근로자 일반·특수건강진단. 연령·성별 필터와 근거 조문.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head">
+    <h1>검진 항목 · 대상 · 주기 (2026)</h1>
+    <p>무엇을, 누가, 몇 년마다, 어떤 법에 따라 받는지. 항목마다 근거 조문과 이유를 적었습니다.</p>
+  </div>
+
+  <div class="filter-bar">
+    <select id="grp"><option value="">모든 검진</option><option value="general">일반건강검진</option><option value="confirm">확진검사</option><option value="cancer">국가암검진</option><option value="oral">구강검진</option><option value="infant">영유아</option><option value="student">학생</option><option value="worker">근로자</option><option value="special">장애인 등</option></select>
+    <select id="sex"><option value="">성별 무관</option><option value="M">남성</option><option value="F">여성</option></select>
+    <input type="number" id="age" placeholder="나이(만)" min="0" max="120" style="width:120px">
+    <input type="search" id="q" placeholder="검색: 골밀도, 폐암, 내시경…">
+  </div>
+  <p class="count-line" id="cnt"></p>
+  <div class="item-grid" id="grid"></div>
+
+  <div class="section">
+    <h2>연령 × 항목 매트릭스 (일반검진·암검진)</h2>
+    <p class="small">셀: ● 해당 연령 실시 · 숫자 = 주기(년) · 조건 = 고위험군/성별 조건. 기준 연도는 짝수·홀수 출생연도 2년 주기 원칙.</p>
+    <div class="legend"><span class="c yes">●</span> 해당 연령 실시 · 숫자 = 주기(년) <span class="c cond">조건</span> 조건부(고위험군·성별·2027 변경) <span class="c na">—</span> 비대상</div>
+    <div class="mx-wrap"><table class="mx" id="mx"></table></div>
+  </div>
+
+  <div class="section" id="stats">
+    <h2>수검률 추이 2010 → 2025</h2>
+    <div class="table-scroll"><table class="compact" id="rateTable"><thead><tr><th>연도</th><th class="num">일반건강검진</th><th class="num">암검진</th><th class="num">영유아검진</th></tr></thead><tbody></tbody></table></div>
+    <div class="two-col">
+      <div><h3>2024 암종별 수검률</h3><div class="table-scroll"><table class="compact" id="cancerRate"><tbody></tbody></table></div></div>
+      <div><h3>2024 일반검진 판정 분포</h3><div class="table-scroll"><table class="compact" id="judgRate"><tbody></tbody></table></div></div>
+    </div>
+    <div class="table-scroll"><table class="compact" id="miscTable"><tbody></tbody></table></div>
+    <p class="small" id="statNote"></p>
+  </div>
+
+  <div class="section">
+    <h2>판정 구분 (일반건강검진)</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>판정</th><th>의미</th><th>후속 조치</th></tr></thead>
+      <tbody>
+        <tr><td><b>정상 A</b></td><td>건강이 양호</td><td>없음</td></tr>
+        <tr><td><b>정상 B</b></td><td>건강에 이상은 없으나 자기관리·예방조치 필요 (경계)</td><td>생활습관 개선, 다음 검진</td></tr>
+        <tr><td><b>일반 질환의심</b></td><td>질환으로 발전할 가능성이 있어 추적검사·정확한 진단 필요</td><td>의료기관 진료 권고</td></tr>
+        <tr><td><b>고혈압·당뇨병·이상지질혈증 질환의심</b></td><td>확진검사 대상</td><td>검진기관 또는 병·의원에서 본인부담 없이 확진검사(다음 해 3.31까지)</td></tr>
+        <tr><td><b>유질환자</b></td><td>고혈압·당뇨·이상지질혈증·폐결핵·우울증·조기정신증·C형간염·COPD로 진단받아 약물치료 중</td><td>치료 지속</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">근거: 건강검진실시기준 별표4(2025.1.1 개정). 수치 컷오프는 <a href="silsi-gijun.html#judgment">고시 페이지</a>. 검진 결과는 15일 이내(공단 지침) 수검자에게 통보 — 건강검진실시기준 §10.</p>
+  </div>
+
+  <div class="section">
+    <h2>본인부담 · 비용</h2>
+    <ul>
+      <li><b>일반건강검진·구강·영유아</b>: 본인부담 없음 (건강보험 재정, 의료급여는 국가·지자체).</li>
+      <li><b>국가암검진</b>: 공단 90%·본인 10%(암검진실시기준 §11). 건강보험료 하위 50%·의료급여수급권자는 무료(국가·지자체+공단), 자궁경부암·대장암은 전원 무료. 폐암검진 본인부담 약 1.1만 원.</li>
+      <li><b>확진검사</b>: 고혈압·당뇨(HbA1c 포함)·이상지질혈증·C형간염 RNA 등 본인부담 없음(건강검진기본법 §25).</li>
+      <li><b>근로자 특수건강진단</b>: 사업주 부담(산업안전보건법 §130).</li>
+      <li><b>학생 건강검사</b>: 국가·지자체(학교) 부담.</li>
+    </ul>
+  </div>
+
+  <div class="disclaimer">항목·주기는 「건강검진실시기준」·「암검진실시기준」·「영유아건강검진 실시기준」 2026년 고시를 기준으로 정리했으며, ⚠ 표시는 원문 재확인 대상입니다. 검진 대상 여부는 매년 1월 공단이 발송하는 검진표(The건강보험 앱)에서 확정됩니다.</div>
+</main>
+<div id="site-footer"></div>
+<script src="assets/app.js"></script>
+<script src="data/items.js"></script>
+<script src="data/stats.js"></script>
+<script>
+(function(){
+  var E = GM.esc, ITEMS = window.GM_ITEMS, S = window.GM_STATS;
+  document.querySelector('#rateTable tbody').innerHTML = S.rates.map(function(r){ return '<tr><td>'+r[0]+(r[0]===2025?' <small>(잠정)</small>':'')+'</td><td class="num">'+(r[1]==null?'—':r[1]+'%')+'</td><td class="num">'+(r[2]==null?'—':r[2]+'%')+'</td><td class="num">'+(r[3]==null?'—':r[3]+'%')+'</td></tr>'; }).join('');
+  document.querySelector('#cancerRate tbody').innerHTML = Object.keys(S.cancer2024).map(function(k){ return '<tr><td>'+k+'</td><td class="num">'+S.cancer2024[k]+'%</td></tr>'; }).join('');
+  document.querySelector('#judgRate tbody').innerHTML = Object.keys(S.judgment2024).map(function(k){ return '<tr><td>'+k+'</td><td class="num">'+S.judgment2024[k]+'%</td></tr>'; }).join('');
+  document.querySelector('#miscTable tbody').innerHTML = S.misc.map(function(m){ return '<tr><td><b>'+E(m[0])+'</b></td><td>'+E(m[1])+'</td></tr>'; }).join('');
+  document.getElementById('statNote').textContent = '출처: 건강검진통계연보(2024, 2025.12 발간), e-나라지표, 공단 경영공시. '+S.note;
+  var GL = { general:'일반', confirm:'확진검사', cancer:'암검진', oral:'구강', infant:'영유아', student:'학생', worker:'근로자', special:'장애인·노인' };
+  var GC = { general:'navy', confirm:'teal', cancer:'purple', oral:'green', infant:'amber', student:'teal', worker:'navy', special:'purple' };
+  var grid = document.getElementById('grid'), grp = document.getElementById('grp'), sex = document.getElementById('sex'), age = document.getElementById('age'), q = document.getElementById('q'), cnt = document.getElementById('cnt');
+  function cyc(c){ return c===0 ? '해당 연령·조건 시' : c<1 ? (c*12)+'개월마다' : c+'년마다'; }
+  function render(){
+    var s=(q.value||'').toLowerCase(), g=grp.value, sx=sex.value, a=age.value===''?null:+age.value, n=0, html='';
+    ITEMS.forEach(function(it){
+      if (g && it.grp!==g) return;
+      if (sx && it.sex!=='all' && it.sex!==sx) return;
+      if (a!==null && (a<it.ages[0] || a>it.ages[1])) return;
+      if (s && (it.name+' '+it.target+' '+it.method+' '+it.why).toLowerCase().indexOf(s)<0) return;
+      n++;
+      html += '<div class="item"><div class="ih"><h3>'+E(it.name)+(it.verify?' <span class="pill amber">⚠</span>':'')+'</h3><span class="pill '+GC[it.grp]+'">'+GL[it.grp]+'</span></div>' +
+        '<dl><dt>대상</dt><dd>'+E(it.target)+'</dd><dt>주기</dt><dd>'+cyc(it.cycle)+'</dd><dt>방법</dt><dd>'+E(it.method)+'</dd><dt>이유</dt><dd>'+E(it.why)+'</dd>'+(it.note?'<dt>비고</dt><dd>'+E(it.note)+'</dd>':'')+'</dl>' +
+        '<div class="src">근거: '+E(it.basis)+'</div></div>';
+    });
+    grid.innerHTML = html || '<p>조건에 맞는 항목이 없습니다.</p>';
+    cnt.textContent = '항목 '+n+'건 / 전체 '+ITEMS.length+'건';
+  }
+  [grp,sex,age,q].forEach(function(el){ el.addEventListener('input',render); el.addEventListener('change',render); });
+  render();
+
+  // 매트릭스
+  var AGES = [20,24,30,34,40,50,54,56,60,66,70,74,80];
+  var rows = ITEMS.filter(function(i){ return (i.grp==='general'||i.grp==='cancer'||i.grp==='oral') && i.id!=='med-aid' && i.id!=='cvd'; });
+  var h = '<thead><tr><th>항목</th>'+AGES.map(function(a){ return '<th>'+a+'세</th>'; }).join('')+'</tr></thead><tbody>';
+  rows.forEach(function(it){
+    h += '<tr><td>'+E(it.name.split(' (')[0])+(it.sex!=='all'?' <small>('+(it.sex==='F'?'여':'남')+')</small>':'')+(it.verify?' <span class="pill amber">⚠</span>':'')+'</td>';
+    AGES.forEach(function(a){
+      var inR = a>=it.ages[0] && a<=it.ages[1];
+      var cell = '<span class="c na">—</span>';
+      if (inR){
+        if (it.onlyAges){ cell = it.onlyAges.indexOf(a)>=0 ? '<span class="c yes">●</span>' : '<span class="c na">—</span>'; }
+        else if (it.cycle===0){ cell = (it.ages[0]===it.ages[1]) ? '<span class="c yes">●</span>' : '<span class="c cond">조건</span>'; }
+        else if (it.id==='mental'){ cell = a<=34 ? '<span class="c yes">2</span>' : (a<=39 ? '<span class="c yes">1회</span>' : '<span class="c yes">10</span>'); }
+        else if (it.id==='c-liver' || it.id==='c-lung'){ cell = '<span class="c cond">고위험</span>'; }
+        else if (it.id==='lipid'){ cell = (it.sex==='all' && a<40) ? '<span class="c cond">남 4</span>' : '<span class="c yes">4</span>'; }
+        else if (it.id==='cxr'){ cell = a<50 ? '<span class="c cond">2→27년 직종</span>' : '<span class="c yes">2</span>'; }
+        else cell = '<span class="c yes">'+(it.cycle<1?'6개월':it.cycle)+'</span>';
+      }
+      h += '<td>'+cell+'</td>';
+    });
+    h += '</tr>';
+  });
+  document.getElementById('mx').innerHTML = h + '</tbody>';
+})();
+</script>
+</body>
+</html>

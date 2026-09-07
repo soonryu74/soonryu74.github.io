@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 검진 찾기 | 검진맵</title>
+<meta name="description" content="나이·성별·가입 유형·출생연도·흡연력·간염 여부를 고르면 올해 받을 수 있는 국가건강검진·암검진 항목과 근거 조문을 보여드립니다. 입력은 서버로 전송되지 않습니다.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head">
+    <h1>내 검진 찾기</h1>
+    <p>입력은 이 브라우저 안에서만 계산되고 어디에도 저장되지 않습니다. 결과는 법령·고시 기준의 안내이며, 실제 대상 여부는 공단 검진표가 확정합니다.</p>
+  </div>
+
+  <div class="section">
+    <div class="form-grid">
+      <div class="field"><label for="birth">출생연도</label><input type="number" id="birth" min="1920" max="2026" placeholder="예: 1974"></div>
+      <div class="field"><label>성별</label><div class="chip-row"><label class="chip"><input type="radio" name="sex" value="M">남성</label><label class="chip"><input type="radio" name="sex" value="F">여성</label></div></div>
+      <div class="field"><label>가입 유형</label><div class="chip-row"><label class="chip"><input type="radio" name="typ" value="office">직장가입자(사무직)</label><label class="chip"><input type="radio" name="typ" value="field">직장가입자(비사무직)</label><label class="chip"><input type="radio" name="typ" value="dep">피부양자·지역 세대원</label><label class="chip"><input type="radio" name="typ" value="local">지역 세대주</label><label class="chip"><input type="radio" name="typ" value="aid">의료급여수급권자</label></div></div>
+      <div class="field"><label>해당되는 것 모두</label><div class="chip-row"><label class="chip"><input type="checkbox" name="risk" value="smoke">30갑년 이상 흡연(금연 15년 미만 포함)</label><label class="chip"><input type="checkbox" name="risk" value="hep">B형·C형간염 보유자 또는 간경변</label><label class="chip"><input type="checkbox" name="risk" value="low50">건강보험료 하위 50%</label><label class="chip"><input type="checkbox" name="risk" value="disab">등록 장애인</label></div></div>
+    </div>
+    <div class="wiz-nav" style="justify-content:flex-end"><button class="btn btn-primary" id="go">올해 받을 검진 보기</button></div>
+  </div>
+
+  <div id="out"></div>
+
+  <div class="disclaimer">계산 규칙: 일반검진은 20세 이상 2년 주기(출생연도 짝·홀수 = 검진연도 짝·홀수), 비사무직 근로자는 매년. 연령 특정 항목(골밀도 54·60·66, 폐기능 56·66, 생활습관 40·50·60·70, 노인신체기능 66·70·80, B형간염 40, C형간염 56)은 해당 연령 도달 연도. 정신건강검사는 20~34세 2년·35~39세 1회·40~79세 10년 중 1회. 암검진은 암관리법 시행령 별표1. 건강검진실시기준 제2026-6호 기준이며 ⚠ 항목은 원문 재확인 대상.</div>
+</main>
+<div id="site-footer"></div>
+<script src="assets/app.js"></script>
+<script src="data/items.js"></script>
+<script>
+(function(){
+  var E = GM.esc, ITEMS = window.GM_ITEMS, YEAR = new Date().getFullYear();
+  document.querySelectorAll('.chip input').forEach(function(i){ i.addEventListener('change', function(){
+    if (i.type==='radio') document.querySelectorAll('.chip input[name='+i.name+']').forEach(function(x){ x.parentNode.classList.toggle('on', x.checked); });
+    else i.parentNode.classList.toggle('on', i.checked);
+  }); });
+  function val(n){ var el = document.querySelector('input[name='+n+']:checked'); return el?el.value:''; }
+  function risks(){ return Array.prototype.map.call(document.querySelectorAll('input[name=risk]:checked'), function(x){ return x.value; }); }
+  document.getElementById('go').addEventListener('click', function(){
+    var birth = +document.getElementById('birth').value, sex = val('sex'), typ = val('typ'), R = risks();
+    var out = document.getElementById('out');
+    if (!birth || !sex || !typ){ out.innerHTML = '<div class="callout warn"><span class="t">출생연도·성별·가입 유형을 모두 골라 주세요</span></div>'; return; }
+    var age = YEAR - birth; // 만 나이 근사 (검진은 연령 도달 연도 기준)
+    var evenYear = (YEAR % 2 === 0), evenBirth = (birth % 2 === 0), cycleYear = (evenYear === evenBirth) || typ==='field';
+    var due = [], cond = [], later = [];
+    ITEMS.forEach(function(it){
+      if (it.grp==='student' || it.grp==='worker' || it.grp==='infant' || it.grp==='confirm' || it.id==='elder' || it.id==='cvd') return;
+      if (it.grp==='special' && R.indexOf('disab')<0) return;
+      if (it.id==='med-aid' && typ!=='aid') return;
+      if (it.sex!=='all' && it.sex!==sex) return;
+      var inAge = age>=it.ages[0] && age<=it.ages[1];
+      var card = { it:it, reason:'' };
+      if (!inAge){ if (age<it.ages[0]) { card.reason = it.ages[0]+'세부터 대상 ('+(birth+it.ages[0])+'년)'; later.push(card); } return; }
+      if (it.id==='c-liver'){ if (R.indexOf('hep')>=0){ card.reason='고위험군 — 상·하반기 각 1회'; due.push(card);} else { card.reason='B·C형간염 보유자·간경변만 대상'; cond.push(card);} return; }
+      if (it.id==='c-lung'){ if (R.indexOf('smoke')>=0){ card.reason='30갑년 흡연 고위험군 — 2년마다 LDCT'; due.push(card);} else { card.reason='30갑년 이상 흡연자만 대상'; cond.push(card);} return; }
+      if (it.onlyAges){ if (it.onlyAges.indexOf(age)>=0){ card.reason='올해 '+age+'세 해당'; due.push(card);} else { var nx = it.onlyAges.filter(function(x){ return x>age; })[0]; card.reason = nx ? '다음 해당 연령 '+nx+'세 ('+(birth+nx)+'년)' : '해당 연령 지남'; (nx?later:cond).push(card);} return; }
+      if (it.cycle===0){ if (age===it.ages[0]){ card.reason='올해 '+age+'세 해당 (생애 1회)'; due.push(card);} else { card.reason=it.ages[0]+'세에만 실시'; later.push(card);} return; }
+      if (it.id==='mental'){
+        if (age<=34){ if (cycleYear){ card.reason='20~34세 2년 주기 (PHQ-9 + CAPE-15)'; due.push(card);} else { card.reason='내년('+(YEAR+1)+') 검진 연도'; later.push(card);} }
+        else if (age<=39){ card.reason='35~39세 구간 1회 (미수검 시 신청)'; cond.push(card); }
+        else { card.reason='40~79세 10년 중 1회 (해당 연령대 미수검 시 검진 연도에 신청)'; cond.push(card); }
+        return; }
+      if (it.id==='lipid'){ var start = sex==='M'?24:40; if (age<start){ card.reason=start+'세부터'; later.push(card); return; } var ok4 = ((age-start)%4===0) && cycleYear; if (ok4){ card.reason='4년 주기 해당 연도'; due.push(card);} else { card.reason='4년 주기 — 실시 연도는 검진표 확인'; cond.push(card);} return; }
+      if (it.id==='cxr' && age<50){ if (cycleYear){ card.reason='2026년까지 전 연령 실시 → 2027년부터 50세 미만은 고위험 직종만'; due.push(card);} else { card.reason='내년부터 50세 미만은 고위험 직종만'; cond.push(card);} return; }
+      if (it.grp==='general' || it.grp==='oral'){ if (cycleYear){ card.reason = typ==='field' ? '비사무직 근로자 매년' : (evenYear?'짝수':'홀수')+'년 출생 → 올해 검진 연도'; due.push(card);} else { card.reason='내년('+(YEAR+1)+') 검진 연도'; later.push(card);} return; }
+      if (it.grp==='cancer'){ var cy = it.cycle===1 ? true : cycleYear; if (cy){ card.reason = it.cycle===1?'매년':'2년 주기 해당 연도'; due.push(card);} else { card.reason='내년('+(YEAR+1)+') 검진 연도'; later.push(card);} return; }
+      if (it.grp==='special'){ card.reason='장애친화 검진기관에서 수검 가능'; cond.push(card); return; }
+    });
+    var free = R.indexOf('low50')>=0 || typ==='aid';
+    function card(c, cls){ var it=c.it; return '<div class="rec-card '+cls+'"><div class="rh"><h3>'+E(it.name)+(it.verify?' <span class="pill amber">⚠</span>':'')+'</h3><span class="pill">'+E(c.reason)+'</span></div><p class="why">'+E(it.method)+' · '+E(it.why)+'</p><div class="basis">근거: '+E(it.basis)+(it.grp==='cancer'?' · 본인부담 '+(free?'없음(무료 대상)':'10%'):'')+'</div></div>'; }
+    out.innerHTML = '<div class="section"><h2>'+YEAR+'년 · '+age+'세 '+(sex==='M'?'남성':'여성')+' — 받을 수 있는 검진 '+due.length+'개</h2>' +
+      (due.length? due.map(function(c){ return card(c,'due'); }).join('') : '<p>올해 정기 검진 연도가 아닙니다.</p>') +
+      (cond.length? '<h2>조건 충족 시</h2>'+cond.map(function(c){ return card(c,'cond'); }).join(''):'') +
+      (later.length? '<h2>이후 해당 항목</h2>'+later.map(function(c){ return card(c,'notyet'); }).join(''):'') +
+      '<div class="callout tip"><span class="t">확인 방법</span>The건강보험 앱 또는 공단 홈페이지 → 건강검진 대상 조회. 검진 가능 기관은 공단 "검진기관 찾기". 결과는 검진일부터 15일 이내 통보(건강검진실시기준 §10).</div></div>';
+    out.scrollIntoView({behavior:'smooth'});
+  });
+})();
+</script>
+</body>
+</html>

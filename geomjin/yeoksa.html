@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>연혁 1953→2026 | 검진맵</title>
+<meta name="description" content="근로기준법(1953)·의료보험법(1963)·직장의료보험 건강진단(1980)·국민건강증진법(1995)·국민건강보험법(1999)·건강검진기본법(2008)·폐암검진(2019)·2025 개편까지 대한민국 건강검진 제도 연혁을 법률·제도·항목·암검진·고시로 구분한 타임라인.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head">
+    <h1>건강검진 제도 연혁 1950 → 2026</h1>
+    <p>법률 제·개정, 제도 도입, 검진 항목·주기 변경, 암검진, 고시를 한 줄에. 각 사건에 근거 조문과 원문 링크를 붙였습니다.</p>
+  </div>
+
+  <div class="callout tip"><span class="t">한눈에 보는 5단계</span>
+    <b>① 태동(1953~79)</b> 근로자 건강진단·결핵 집단검진 → <b>② 의료보험 검진(1980~94)</b> 직장 피보험자 → 피부양자 → 전 국민 →
+    <b>③ 국민건강 검진(1995~2007)</b> 국민건강증진법·국민건강보험법·암관리법, 암·영유아·생애전환기 도입 →
+    <b>④ 건강검진기본법(2008~17)</b> 국가건강검진 통합·검진기관 지정·평가 →
+    <b>⑤ 개편·확대(2018~26)</b> 20~30대 확대, 폐암검진, 정신건강·C형간염·골다공증.
+  </div>
+
+  <div class="filter-bar">
+    <input type="search" id="q" placeholder="검색: 폐암, 기본법, 영유아, 고시…">
+    <select id="kind"><option value="">모든 종류</option><option value="law">법률 제·개정</option><option value="sys">제도·사업</option><option value="item">검진 항목·주기</option><option value="cancer">암검진</option><option value="gosi">고시·평가</option></select>
+    <label class="small"><input type="checkbox" id="onlyVerify"> 원문 재확인 필요 항목만</label>
+  </div>
+  <div class="era-nav" id="eraNav"></div>
+  <div class="legend"><span class="pill navy">법률</span><span class="pill teal">제도</span><span class="pill green">항목·주기</span><span class="pill purple">암검진</span><span class="pill amber">고시·평가</span> <span class="small">· ⚠ 표시는 2026-09 기준 원문 재대조가 남은 항목</span></div>
+  <p class="count-line" id="cnt"></p>
+  <ul class="tl" id="tl"></ul>
+
+  <div class="section" id="summary">
+    <h2>법령 한 줄 계보</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>순서</th><th>법률</th><th>제정(시행)</th><th>검진과의 관계</th><th>현재 상태</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>근로기준법</td><td>1953.5 (1953.8)</td><td>근로자 건강진단의 최초 근거</td><td>건강진단 조항은 산업안전보건법으로 이관</td></tr>
+        <tr><td>2</td><td>의료보험법</td><td>1963.12 (1964.3)</td><td>보험자 건강진단(1980~) 근거</td><td>1999 국민건강보험법으로 대체·폐지</td></tr>
+        <tr><td>3</td><td>산업안전보건법</td><td>1981.12 (1982.7)</td><td>일반·특수·배치전·수시·임시 건강진단</td><td>현행 §129~§135</td></tr>
+        <tr><td>4</td><td>국민건강증진법</td><td>1995.1 (1995.9)</td><td>국가 건강증진사업·국민건강증진기금(암검진 재원)</td><td>현행</td></tr>
+        <tr><td>5</td><td>국민건강보험법</td><td>1999.2 (2000.7)</td><td>§52 건강검진 — 일반·암·영유아 검진의 보험자 실시 근거</td><td>현행</td></tr>
+        <tr><td>6</td><td>암관리법</td><td>2003.5 (2004.1)</td><td>§11 암검진사업, §12 비용 지원</td><td>현행</td></tr>
+        <tr><td>7</td><td>건강검진기본법</td><td>2008.3 (2009.3)</td><td>국가건강검진 통합 기본법 — 위원회·계획·기관 지정·평가·자료</td><td>현행</td></tr>
+        <tr><td>8</td><td>의료급여법 §14</td><td>1977 제정(의료보호법) → 2001 개칭</td><td>수급권자 건강검진</td><td>현행</td></tr>
+        <tr><td>9</td><td>학교보건법 §7</td><td>1967.3</td><td>학생 건강검사</td><td>현행</td></tr>
+        <tr><td>10</td><td>장애인건강권법 §7</td><td>2015.12 (2017.12)</td><td>장애인 건강검진·장애친화 검진기관</td><td>현행</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">→ 조문별 내용은 <a href="beopryeong.html">법령 체계</a>, 건강검진기본법 전 조문은 <a href="gibonbeop.html">건강검진기본법</a> 페이지.</p>
+  </div>
+
+  <div class="disclaimer">연혁의 연도·조문은 법제처 국가법령정보센터 연혁 법령과 보건복지부·국민건강보험공단 공식 자료를 대조해 정리했습니다. ⚠ 표시 항목은 1980~90년대 조합 내부 규정 등 원문 접근이 제한된 부분으로, 2차 자료(학술 논문·백서) 기준입니다.</div>
+</main>
+<div id="site-footer"></div>
+<script src="assets/app.js"></script>
+<script src="data/timeline.js"></script>
+<script>
+(function(){
+  var E = GM.esc, T = window.GM_TIMELINE, ERAS = window.GM_ERAS;
+  var ul = document.getElementById('tl'), q = document.getElementById('q'), kind = document.getElementById('kind'), ov = document.getElementById('onlyVerify'), cnt = document.getElementById('cnt');
+  var eraNav = document.getElementById('eraNav');
+  eraNav.innerHTML = '<button class="on" data-era="">전체</button>' + ERAS.map(function(e){ return '<button data-era="'+e.n+'">'+E(e.label)+'</button>'; }).join('');
+  var era = '';
+  eraNav.addEventListener('click', function(ev){ var b = ev.target.closest('button'); if(!b) return; era = b.getAttribute('data-era'); eraNav.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); }); render(); });
+  function render(){
+    var s = (q.value||'').trim().toLowerCase(), k = kind.value, lastEra = null, n = 0, html = '';
+    T.forEach(function(t){
+      if (era && String(t.era)!==era) return;
+      if (k && t.kind!==k) return;
+      if (ov.checked && !t.verify) return;
+      if (s && (t.title+' '+t.body+' '+t.basis).toLowerCase().indexOf(s)<0) return;
+      if (t.era!==lastEra){ var e = ERAS[t.era-1]; html += '<li class="era-h"><h3>'+E(e.label)+' — '+E(e.desc)+'</h3></li>'; lastEra = t.era; }
+      n++;
+      html += '<li class="k-'+t.kind+'"><span class="year">'+t.y+(t.m?'<br><small>'+t.m+'월</small>':'')+'</span><div class="ev">' +
+        '<h4><span class="pill '+GM.kindClass[t.kind]+'">'+GM.kindLabel[t.kind]+'</span>'+E(t.title)+(t.verify?' <span class="pill amber" title="원문 재확인 필요">⚠</span>':'')+'</h4>' +
+        '<p>'+E(t.body)+'</p>' +
+        '<div class="basis">근거: '+E(t.basis)+(t.src?' · <a href="'+E(t.src)+'" target="_blank" rel="noopener">원문 ↗</a>':'')+'</div></div></li>';
+    });
+    ul.innerHTML = html || '<li class="era-h"><h3>조건에 맞는 사건이 없습니다</h3></li>';
+    cnt.textContent = '사건 ' + n + '건 / 전체 ' + T.length + '건';
+  }
+  [q, kind, ov].forEach(function(el){ el.addEventListener('input', render); el.addEventListener('change', render); });
+  render();
+})();
+</script>
+</body>
+</html>

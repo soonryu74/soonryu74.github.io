@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>건강검진기본법 한눈에 | 검진맵</title>
+<meta name="description" content="건강검진기본법(2008.3.21 제정, 2009.3.22 시행) 전 조문을 장별 아코디언으로 한눈에. 시행령·시행규칙 핵심 조문 연결, 2008~2026 개정 연혁, 조문 검색.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head"><h1>건강검진기본법 한눈에</h1><p id="lead"></p></div>
+
+  <div class="callout tip"><span class="t">읽는 법</span>왼쪽 번호가 조(§), 굵은 글자가 조 제목, 회색이 한 줄 요약입니다. 장 제목을 누르면 펼쳐지고, 검색창은 조문 제목·요약을 함께 찾습니다. 각 조의 <b>원문 ↗</b>은 법제처 국가법령정보센터로 연결됩니다.</p></div>
+
+  <div class="stat-strip" id="stats"></div>
+
+  <div class="filter-bar">
+    <input type="search" id="q" placeholder="조문 검색: 검진기관, 위원회, 벌칙, 자료…">
+    <button class="btn btn-ghost btn-sm" id="openAll">모두 펼치기</button>
+    <button class="btn btn-ghost btn-sm" id="closeAll">모두 접기</button>
+    <a class="btn btn-ghost btn-sm" id="srcLink" href="https://www.law.go.kr/법령/건강검진기본법" target="_blank" rel="noopener">법제처 원문 ↗</a>
+  </div>
+
+  <div id="chapters"></div>
+
+  <div class="section" id="decree">
+    <h2>시행령 · 시행규칙 핵심 조문</h2>
+    <div class="two-col">
+      <div><h3>건강검진기본법 시행령 (대통령령)</h3><div id="decreeList"></div></div>
+      <div><h3>건강검진기본법 시행규칙 (보건복지부령)</h3><div id="ruleList"></div></div>
+    </div>
+  </div>
+
+  <div class="section" id="history">
+    <h2>개정 연혁 2008 → 2026</h2>
+    <div class="table-scroll"><table id="histTable"><thead><tr><th>공포일</th><th>법률 번호</th><th>시행일</th><th>구분</th><th>주요 내용</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <div class="disclaimer" id="disc"></div>
+</main>
+<div id="site-footer"></div>
+<script src="assets/app.js"></script>
+<script src="data/law.js"></script>
+<script>
+(function(){
+  var E = GM.esc, L = window.GM_LAW, M = L.main;
+  document.getElementById('lead').textContent = M.name + ' — ' + M.enacted + ' 제정(' + M.no + '), ' + M.effective + ' 시행. ' + M.purpose;
+  var nArt = M.chapters.reduce(function(a,c){ return a + c.arts.length; }, 0);
+  document.getElementById('stats').innerHTML = '<div class="stat"><div class="n">'+M.chapters.length+'</div><div class="l">장(章)</div></div><div class="stat"><div class="n">'+nArt+'</div><div class="l">조문(부칙 제외)</div></div><div class="stat"><div class="n">'+M.history.length+'</div><div class="l">제·개정 횟수</div></div><div class="stat"><div class="n">'+E(M.current)+'</div><div class="l">현행 기준</div></div>';
+  var box = document.getElementById('chapters');
+  function render(){
+    var s = (document.getElementById('q').value||'').trim().toLowerCase();
+    box.innerHTML = M.chapters.map(function(c, i){
+      var arts = c.arts.filter(function(a){ return !s || (a.no+' '+a.title+' '+a.sum+' '+(a.tags||[]).join(' ')).toLowerCase().indexOf(s)>=0; });
+      if (!arts.length) return '';
+      return '<details class="chap" id="ch'+(i+1)+'"'+(s||i<2?' open':'')+'><summary>'+E(c.no)+' '+E(c.title)+'<span class="cnt">'+arts.length+'개 조</span></summary>' +
+        arts.map(function(a){ return '<div class="art"><div class="no">'+E(a.no)+'</div><div><div class="ti">'+E(a.title)+(a.del?' <span class="pill">삭제</span>':'')+(a.verify?' <span class="pill amber">⚠</span>':'')+'</div><div class="sum">'+E(a.sum)+'</div>' +
+          (a.tags&&a.tags.length?'<div class="tags">'+a.tags.map(function(t){ return '<span class="pill navy">'+E(t)+'</span>'; }).join('')+'</div>':'') +
+          '<div class="small"><a href="'+E(a.url||M.url)+'" target="_blank" rel="noopener">원문 ↗</a>'+(a.link?' · 관련: '+E(a.link):'')+'</div></div></div>'; }).join('') + '</details>';
+    }).join('') || '<p>검색 결과가 없습니다.</p>';
+  }
+  document.getElementById('q').addEventListener('input', render);
+  document.getElementById('openAll').addEventListener('click', function(){ box.querySelectorAll('details').forEach(function(d){ d.open = true; }); });
+  document.getElementById('closeAll').addEventListener('click', function(){ box.querySelectorAll('details').forEach(function(d){ d.open = false; }); });
+  render();
+  function list(arr){ return '<div class="table-scroll"><table class="compact"><tbody>'+arr.map(function(a){ return '<tr><td style="white-space:nowrap"><b>'+E(a.no)+'</b></td><td><b>'+E(a.title)+'</b><br><span class="small">'+E(a.sum)+'</span></td></tr>'; }).join('')+'</tbody></table></div>'; }
+  document.getElementById('decreeList').innerHTML = list(L.decree);
+  document.getElementById('ruleList').innerHTML = list(L.rule);
+  document.querySelector('#histTable tbody').innerHTML = M.history.map(function(h){ return '<tr><td style="white-space:nowrap">'+E(h.date)+'</td><td style="white-space:nowrap">'+E(h.no)+'</td><td style="white-space:nowrap">'+E(h.eff)+'</td><td><span class="pill '+(h.type==='제정'?'navy':h.type==='타법개정'?'':'teal')+'">'+E(h.type)+'</span></td><td>'+E(h.sum)+'</td></tr>'; }).join('');
+  document.getElementById('disc').textContent = L.note;
+  if (location.hash) { var t = document.querySelector(location.hash); if (t && t.tagName==='DETAILS') t.open = true; }
+})();
+</script>
+</body>
+</html>

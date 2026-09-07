@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>건강검진실시기준 고시 | 검진맵</title>
+<meta name="description" content="건강검진실시기준(보건복지부 고시 제2026-6호)의 구조·별표·2026 수가, 2005년 제정부터 2026년까지 개정 연혁, 암검진실시기준(제2025-220호) 연혁, 영유아 근거, 판정기준과 수치 컷오프.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head"><h1>건강검진실시기준 · 암검진실시기준 (고시)</h1><p>법률이 "무엇을 할 수 있다"를 정하면, 고시가 "누가·언제·무엇을·얼마에"를 정합니다. 검진 실무의 진짜 규범.</p></div>
+
+  <div class="callout tip"><span class="t">고시가 중요한 이유</span>국민건강보험법 §52·시행령 §25와 건강검진기본법 §24는 검사항목·방법·비용을 보건복지부장관 고시에 위임합니다. 따라서 C형간염 56세, 골밀도 60세, 폐기능검사 56·66세 같은 변화는 법 개정 없이 <b>국가건강검진위원회 의결 → 고시 개정</b>으로 매년 1월 반영됩니다.</div>
+
+  <div class="stat-strip" id="stats"></div>
+
+  <div class="section" id="general">
+    <h2 id="gTitle"></h2>
+    <dl class="kv" id="gMeta"></dl>
+    <h3>구조 (6장 17조 + 별표 9)</h3>
+    <div class="table-scroll"><table id="gStruct"><thead><tr><th>장</th><th>조문</th></tr></thead><tbody></tbody></table></div>
+    <h3>별표 · 별지</h3>
+    <div class="table-scroll"><table class="compact" id="gTables"><tbody></tbody></table></div>
+    <div class="two-col">
+      <div class="callout ok"><span class="t">2026년 주요 변경 (제2026-6호)</span><ul id="c2026"></ul></div>
+      <div class="callout info"><span class="t">2025년 주요 변경 (제2025-5호)</span><ul id="c2025"></ul></div>
+    </div>
+    <h3>2026 검진비용 (별표1~3 요약)</h3>
+    <p class="small">일반검진은 대부분 건강보험 행위 상대가치점수 × 환산지수(분류번호) 방식, 일부 정액. 종별가산·차등수가 미적용.</p>
+    <div class="table-scroll"><table class="compact" id="gFees"><thead><tr><th>항목</th><th>2026 수가</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <div class="section" id="history">
+    <h2>건강검진실시기준 개정 연혁 2005 → 2026</h2>
+    <div class="table-scroll"><table class="compact" id="gHist"><thead><tr><th>고시 번호</th><th>발령</th><th>시행</th><th>구분</th><th>주요 내용</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <div class="section" id="cancer">
+    <h2 id="cTitle"></h2>
+    <dl class="kv" id="cMeta"></dl>
+    <h3>구조</h3>
+    <div id="cStruct"></div>
+    <h3>별표 · 별지</h3>
+    <div class="table-scroll"><table class="compact" id="cTables"><tbody></tbody></table></div>
+    <h3>개정 연혁 2005 → 2026</h3>
+    <div class="table-scroll"><table class="compact" id="cHist"><thead><tr><th>고시 번호</th><th>발령</th><th>시행</th><th>구분</th><th>주요 내용</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <div class="section" id="infant">
+    <h2>영유아건강검진의 근거</h2>
+    <dl class="kv" id="iMeta"></dl>
+  </div>
+
+  <div class="section" id="judgment">
+    <h2>판정기준 (별표4, 2025.1.1 개정)</h2>
+    <div class="table-scroll"><table id="jTable"><thead><tr><th>판정</th><th>기준</th></tr></thead><tbody></tbody></table></div>
+    <h3>수치 컷오프 (별표4 별첨) — 정상A · 정상B · 질환의심 순</h3>
+    <div class="table-scroll"><table class="compact" id="cutTable"><tbody></tbody></table></div>
+  </div>
+
+  <div class="disclaimer">고시 본문은 보건복지부 게시 원문(PDF)과 국민건강보험공단 건강Law를 대조했습니다. 2005·2007년 구 고시와 2010년 암검진 고시 일부, 제2025-220호 세부 개정 내용, 암종별 원 단위 단가는 ⚠ 미확인. 검진기관은 청구 전 공단 운영세칙과 최신 고시를 확인하세요.</div>
+</main>
+<div id="site-footer"></div>
+<script src="assets/app.js"></script>
+<script src="data/gosi.js"></script>
+<script>
+(function(){
+  var E = GM.esc, G = window.GM_GOSI, g = G.general, c = G.cancer;
+  document.getElementById('stats').innerHTML = '<div class="stat"><div class="n">'+E(g.current)+'</div><div class="l">건강검진실시기준 현행</div></div><div class="stat"><div class="n">'+g.history.length+'</div><div class="l">제·개정 (2005~)</div></div><div class="stat"><div class="n">'+E(c.current)+'</div><div class="l">암검진실시기준 현행</div></div><div class="stat"><div class="n">'+c.history.length+'</div><div class="l">제·개정 (2005~)</div></div>';
+  function meta(el, x){ el.innerHTML = '<dt>구분</dt><dd>'+E(x.kind)+'</dd><dt>현행</dt><dd><b>'+E(x.current)+'</b> · 발령 '+E(x.issued)+' · 시행 '+E(x.effective)+' (직전 '+E(x.prev)+')</dd><dt>위임 근거</dt><dd>'+E(x.basis)+'</dd><dt>원문</dt><dd><a href="'+E(x.url)+'" target="_blank" rel="noopener">국가법령정보센터 ↗</a>'+(x.mohw?' · <a href="'+E(x.mohw)+'" target="_blank" rel="noopener">보건복지부 고시 게시 ↗</a>':'')+'</dd>'; }
+  document.getElementById('gTitle').textContent = g.name; meta(document.getElementById('gMeta'), g);
+  document.querySelector('#gStruct tbody').innerHTML = g.structure.map(function(s){ return '<tr><td style="white-space:nowrap"><b>'+E(s.ch)+'</b></td><td>'+E(s.arts)+'</td></tr>'; }).join('');
+  document.querySelector('#gTables tbody').innerHTML = g.tables.map(function(t){ return '<tr><td style="white-space:nowrap"><b>'+E(t.no)+'</b></td><td>'+E(t.title)+'</td></tr>'; }).join('');
+  document.getElementById('c2026').innerHTML = g.changes2026.map(function(x){ return '<li>'+E(x)+'</li>'; }).join('');
+  document.getElementById('c2025').innerHTML = g.changes2025.map(function(x){ return '<li>'+E(x)+'</li>'; }).join('');
+  document.querySelector('#gFees tbody').innerHTML = g.fees2026.map(function(f){ return '<tr><td>'+E(f[0])+'</td><td><code>'+E(f[1])+'</code></td></tr>'; }).join('');
+  function hist(el, arr){ el.innerHTML = arr.map(function(h){ return '<tr><td style="white-space:nowrap"><b>'+E(h.no)+'</b>'+(h.verify?' <span class="pill amber">⚠</span>':'')+'</td><td style="white-space:nowrap">'+E(h.date)+'</td><td style="white-space:nowrap">'+E(h.eff)+'</td><td><span class="pill '+(h.type.indexOf('제정')>=0?'navy':h.type.indexOf('전부')>=0?'red':'teal')+'">'+E(h.type)+'</span></td><td>'+E(h.sum||'연도별 항목·비용 조정')+'</td></tr>'; }).join(''); }
+  hist(document.querySelector('#gHist tbody'), g.history);
+  document.getElementById('cTitle').textContent = c.name; meta(document.getElementById('cMeta'), c);
+  document.getElementById('cStruct').innerHTML = c.structure.map(function(s){ return '<p>'+E(s.arts)+'</p>'; }).join('');
+  document.querySelector('#cTables tbody').innerHTML = c.tables.map(function(t){ return '<tr><td style="white-space:nowrap"><b>'+E(t.no)+'</b></td><td>'+E(t.title)+'</td></tr>'; }).join('');
+  hist(document.querySelector('#cHist tbody'), c.history);
+  var i = G.infant; document.getElementById('iMeta').innerHTML = '<dt>법령 근거</dt><dd>'+E(i.basis)+'</dd><dt>최초 고시</dt><dd>'+E(i.first)+'</dd><dt>차수</dt><dd>'+E(i.rounds)+'</dd><dt>비고</dt><dd>'+E(i.note)+'</dd>';
+  document.querySelector('#jTable tbody').innerHTML = G.judgment.map(function(j){ return '<tr><td style="white-space:nowrap"><b>'+E(j[0])+'</b></td><td>'+E(j[1])+'</td></tr>'; }).join('');
+  document.querySelector('#cutTable tbody').innerHTML = G.cutoffs.map(function(j){ return '<tr><td style="white-space:nowrap"><b>'+E(j[0])+'</b></td><td>'+E(j[1])+'</td></tr>'; }).join('');
+})();
+</script>
+</body>
+</html>
