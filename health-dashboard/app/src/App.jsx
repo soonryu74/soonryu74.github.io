@@ -11,6 +11,7 @@ import Profile from "./components/Profile";
 import Compare, { NAT, MAX_CMP } from "./components/Compare";
 import Tooltip from "./components/Tooltip";
 import UnitsView from "./components/UnitsView";
+import NcdView from "./components/NcdView";
 import ExportButtons from "./components/ExportButtons";
 
 const DEFAULT_IND = INDICATORS.find((i) => i.id === "DT_H_SM") || INDICATORS[0];
@@ -27,7 +28,8 @@ function readHash() {
     sgg: RBY.has(sgg) ? sgg : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
-    view: ["profile", "compare", "units"].includes(h.get("view")) ? h.get("view") : "analysis",
+    view: ["profile", "compare", "units", "ncd"].includes(h.get("view")) ? h.get("view") : "analysis",
+    ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
       weights: h.get("w") === "equal" ? "equal" : h.get("w") === "custom" && h.get("cw")
@@ -51,6 +53,7 @@ export default function App() {
   const [view, setView] = useState(init.view);      // analysis | profile | compare
   const [cmp, setCmp] = useState(init.cmp);         // 비교 대상 코드 목록 (NAT = 전국 중앙값)
   const [rankOpt, setRankOpt] = useState(init.rankOpt); // 순위 산출 방식 (방법론 v1)
+  const [ncdInd, setNcdInd] = useState(init.ncdInd);     // 지식베이스 지표 필터
   const [playing, setPlaying] = useState(false);
   const [tip, setTip] = useState(null);
   const [theme, setTheme] = useState(() => document.documentElement.getAttribute("data-theme") || null);
@@ -63,9 +66,10 @@ export default function App() {
     const h = new URLSearchParams({ ind: ind.id, item, sido, ...(sgg ? { sgg } : {}), year: String(year), scope, view,
       ...(cmp.length ? { cmp: cmp.join(",") } : {}),
       w: typeof rankOpt.weights === "object" ? "custom" : rankOpt.weights, sm: String(rankOpt.smooth), lg: rankOpt.league, ex: rankOpt.exclude ? "1" : "0",
-      ...(typeof rankOpt.weights === "object" ? { cw: DS.domains.map((d) => rankOpt.weights[d] ?? 0).join(",") } : {}) });
+      ...(typeof rankOpt.weights === "object" ? { cw: DS.domains.map((d) => rankOpt.weights[d] ?? 0).join(",") } : {}),
+      ...(ncdInd ? { nind: ncdInd } : {}) });
     window.history.replaceState(null, "", "#" + h.toString());
-  }, [ind, item, sido, sgg, year, scope, view, cmp, rankOpt]);
+  }, [ind, item, sido, sgg, year, scope, view, cmp, rankOpt, ncdInd]);
 
   // 연도 애니메이션
   useEffect(() => {
@@ -122,13 +126,14 @@ export default function App() {
               <button className={`seg-btn ${view === "compare" ? "on" : ""}`} onClick={() => setView("compare")}>
                 지역 비교{cmp.length ? <small className="cnt">{cmp.length}</small> : null}
               </button>
+              <button className={`seg-btn ${view === "ncd" ? "on" : ""}`} onClick={() => setView("ncd")}>예방·관리</button>
               <button className={`seg-btn ${view === "units" ? "on" : ""}`} onClick={() => setView("units")}>조사 단위</button>
             </div>
             <button className="themebtn" onClick={toggleTheme}>{theme === "dark" ? "☀ 라이트" : "☾ 다크"}</button>
           </div>
         </header>
 
-        {view !== "units" && <div className="controls">
+        {view !== "units" && view !== "ncd" && <div className="controls">
           {view !== "profile" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
           {view !== "compare" && (
@@ -155,6 +160,9 @@ export default function App() {
 
         {view === "units" ? (
           <UnitsView setTip={setTip} />
+        ) : view === "ncd" ? (
+          <NcdView filterInd={ncdInd} onClearInd={() => setNcdInd(null)} sidoFull={RBY.get(sido)?.n}
+            onPickInd={(i) => { if (i) { setInd(i); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); } }} />
         ) : view === "compare" ? (
           <Compare ind={ind} item={item} year={year} codes={cmp} onCodes={setCmp} onYear={(y) => setYearSel(y)}
             onPick={(i, y) => { setInd(i); setYearSel(y); window.scrollTo({ top: 0, behavior: "smooth" }); }} setTip={setTip} />
@@ -204,7 +212,8 @@ export default function App() {
             </div>
           </>
         ) : (
-          <Profile item={item} sel={sel} scope={scope} rankOpt={rankOpt} onRankOpt={setRankOpt} onPick={pickFromProfile} />
+          <Profile item={item} sel={sel} scope={scope} rankOpt={rankOpt} onRankOpt={setRankOpt} onPick={pickFromProfile}
+            onRecommend={(name) => { setNcdInd(name); setView("ncd"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         )}
 
         <footer>

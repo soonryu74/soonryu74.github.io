@@ -291,3 +291,28 @@ tr.muted td { color: var(--muted); }
 .subchip.on { border-color: var(--series-1); color: var(--series-1); }
 .unitlist { max-height: 460px; overflow:auto; }
 .unitlist tr { cursor:pointer; }
+
+/* ===== 예방·관리 탭 ===== */
+.ncdlist { display:flex; flex-direction:column; gap:10px; }
+.ncdcard { border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--page); border-left-width:4px; }
+.ncdcard.lv-global { border-left-color:#7a5cc4; } .ncdcard.lv-regional { border-left-color:#1a9e7a; } .ncdcard.lv-national { border-left-color:var(--series-1); } .ncdcard.lv-sido { border-left-color:var(--series-2); }
+.ncdhead { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:6px; }
+.lvbadge { font-size:11px; font-weight:700; color:#fff; border-radius:999px; padding:2px 8px; white-space:nowrap; }
+.lvbadge.lv-global { background:#7a5cc4; } .lvbadge.lv-regional { background:#1a9e7a; } .lvbadge.lv-national { background:var(--series-1); } .lvbadge.lv-sido { background:var(--series-2); }
+.ncdgoal { font-size:14px; font-weight:700; line-height:1.45; }
+.ncdtarget { font-size:12.5px; color:var(--text-secondary); margin-top:4px; }
+.ncdul { margin:6px 0 0; padding-left:18px; font-size:12.5px; color:var(--text-secondary); line-height:1.55; }
+.ncdint { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+.intchip { font-size:11.5px; border:1px solid var(--border); border-radius:8px; padding:2px 8px; background:var(--surface-1); color:var(--text-primary); }
+.ncdfoot { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-top:8px; flex-wrap:wrap; }
+.linked { display:flex; flex-wrap:wrap; gap:4px; }
+.indlink { border:none; background:var(--band); color:var(--series-1); border-radius:999px; padding:2px 8px; font-size:11px; cursor:pointer; }
+.src { font-size:11.5px; color:var(--muted); text-decoration:none; white-space:nowrap; } .src:hover { color:var(--series-1); }
+.recs { display:flex; flex-direction:column; gap:10px; }
+.rec { border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
+.rechead { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:6px; font-size:13px; }
+.rechead .xbtn { margin-left:auto; }
+.recitem { display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:12.5px; padding:4px 0; border-top:1px dashed var(--grid); }
+.recgoal { flex:1 1 240px; color:var(--text-secondary); }
+.ncd .setrow { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:flex-end; }
+.ncd select { border:1px solid var(--border); border-radius:8px; padding:6px 8px; background:var(--surface-1); }

@@ -234,3 +234,14 @@ export function computeRanking(item, pool, opts = DEFAULT_RANK_OPT) {
 import UNITS_RAW from "../../data/units.json";
 export const UNITS = UNITS_RAW;
 export const UNIT_BY_CODE = new Map(UNITS_RAW.units.map((u) => [u.c, u]));
+
+/* ===== 만성질환 예방·관리 지식베이스 ===== */
+import NCD_RAW from "../../data/ncd.json";
+export const NCD = NCD_RAW;
+export const LEVEL_RANK = { sido: 0, national: 1, regional: 2, global: 3 };
+/** 지표명으로 권고 항목 찾기: 선택 지역의 시도 → 국가 → 서태평양 → 국제 순 */
+export function recommendFor(indName, sidoFull) {
+  return NCD_RAW.entries
+    .filter((e) => e.linked.includes(indName) && (e.level !== "sido" || !sidoFull || e.sido === sidoFull))
+    .sort((a, b) => LEVEL_RANK[a.level] - LEVEL_RANK[b.level]);
+}

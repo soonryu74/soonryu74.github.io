@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { INDICATORS, DOMAINS, fmt, val, poolFor, label, RBY, computeRanking, PANEL_WEIGHTS, EQUAL_WEIGHTS, EXCLUDE_IDS, LEAGUE_NAME } from "../data";
+import { INDICATORS, DOMAINS, fmt, val, poolFor, label, RBY, computeRanking, PANEL_WEIGHTS, EQUAL_WEIGHTS, EXCLUDE_IDS, LEAGUE_NAME, recommendFor } from "../data";
 import ExportButtons from "./ExportButtons";
 
 const tone = (p) => (p == null ? "" : p >= 75 ? "t-high" : p >= 50 ? "t-mid" : p >= 25 ? "t-low" : "t-min");
@@ -65,7 +65,7 @@ function RankSettings({ opt, onChange, isSgg }) {
 }
 
 /* 지역 프로파일: 방법론 v1 기반 영역·종합 순위, 등급 배지, 강점·개선·과제 */
-export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick }) {
+export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend }) {
   const pool = poolFor(sel, scope);
   const isSgg = sel.l === "sgg";
   const rk = useMemo(() => computeRanking(item, pool, rankOpt), [item, pool, rankOpt]);
@@ -172,6 +172,25 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick }
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="card span2">
+          <h3>권고 예방·관리 사업 <small className="muted">(하위 25% 지표 기준 · 지식베이스 연결)</small></h3>
+          <div className="desc">이 지역의 낮은 지표마다 시도 계획 → 국가 사업 → WHO 권고 순으로 연결된 항목을 보여줍니다. "더 보기"를 누르면 예방·관리 탭에서 전체를 볼 수 있습니다.</div>
+          {(() => {
+            const sidoFull = isSgg ? RBY.get(sel.p)?.n : sel.n;
+            const lows = scored.filter((r) => r.pct < 25).sort((a, b) => a.pct - b.pct).slice(0, 6);
+            const items = lows.map((r) => ({ r, recs: recommendFor(r.ind.name, sidoFull).slice(0, 3) })).filter((x) => x.recs.length);
+            if (!lows.length) return <div className="empty">하위 25% 지표가 없습니다 — 권고 대상 없음</div>;
+            if (!items.length) return <div className="empty">낮은 지표({lows.map((x) => x.ind.name).join(", ")})에 연결된 지식베이스 항목이 아직 없습니다</div>;
+            return <div className="recs">{items.map(({ r, recs }) => (
+              <div key={r.ind.id} className="rec">
+                <div className="rechead"><b>{r.ind.name}</b> <span className="k-bad">{fmt(r.v)}{r.ind.unit} · 하위 {Math.max(1, Math.round(r.pct))}%</span>
+                  <button className="xbtn" onClick={() => onRecommend(r.ind.name)}>더 보기 →</button></div>
+                {recs.map((e) => <div key={e.id} className="recitem"><span className={`lvbadge lv-${e.level}`}>{e.level === "sido" ? e.sido : e.level === "national" ? "국가" : e.level === "regional" ? "WPRO" : "WHO"}</span>
+                  <span className="recgoal">{e.goal}</span>{e.interventions?.[0] && <span className="intchip">{e.interventions[0]}</span>}</div>)}
+              </div>))}</div>;
+          })()}
         </div>
 
         <div className="card span2">
