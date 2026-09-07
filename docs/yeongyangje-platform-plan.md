@@ -1,6 +1,6 @@
-# 근거영양 플랫폼 기획안 v0.1
+# 근거영양 플랫폼 기획안 v0.2
 
-> 작성 2026-09-05 · 사이트: `/yeongyangje/` · 브랜치 `claude/vitamin-supplement-research-tq2ltd`
+> 작성 2026-09-05 · 갱신 2026-09-07 · 사이트: `/yeongyangje/` · 브랜치 `claude/vitamin-supplement-research-tq2ltd`
 
 **팔기 위해 근거를 고르지 않고, 근거에 맞춰 판다.**
 
@@ -23,7 +23,7 @@
 | 유해 | ATBC, CARET, SELECT, 코크란 항산화 | 흡연자 베타카로틴 폐암 +18~28%, 비타민 E 400 IU 전립선암 +17%, 항산화제 사망률 + |
 | 확실한 이득 | MRC 엽산(NTD −72%), 코크란 프로바이오틱스 AAD(NNT 9), 철·B12 결핍 교정 | 근거 A |
 
-전체 70건은 `yeongyangje/data/studies.js`, 성분 27종은 `data/ingredients.js`.
+전체 82건은 `yeongyangje/data/studies.js`, 성분 40종은 `data/ingredients.js`, 질환별 판정은 `data/matrix.js`.
 
 ## 3. 플랫폼 구조
 
@@ -31,7 +31,8 @@
 | --- | --- | --- |
 | 홈 | `index.html` | 세 가지 핵심 메시지, 진입 |
 | 핵심 결론 | `gyeollon.html` | 먹을 것 5 · 피할 것 5 · "하버드 20년 연구"의 정확한 의미 |
-| 성분별 근거 | `seongbun.html` | 27개 성분 카드(판정·등급·대상·용량·제품 기준·근거 연구) |
+| 성분별 근거 | `seongbun.html` | 40개 성분 카드(판정·등급·대상·용량·제품 기준·근거 연구·질환별 판정) |
+| 질환별 먹어도 되나 | `jilhwan.html` | 성분 40 × 질환·상태 18 매트릭스(`data/matrix.js`, 329셀). 질환 선택 → 성분 판정, 성분 선택 → 질환 판정. OK/주의/금기 + 이유 + 출처(NIH ODS·LiverTox·FDA·EMA·EFSA·KDOQI·ACOG·ASMBS·식약처) |
 | 연구 DB | `yeongu.html` | 70건 검색(성분·결과·설계·등급), 효과 크기·원문 링크 |
 | 내게 맞는 영양제 | `chucheon.html` | 4단계 위저드 → 건강 수준 L1~L4 + 판정 목록 (`data/rules.js`) |
 | 제품 고르는 법 | `jepum.html` | 5단계 체크리스트, 인증마크, 판매 원칙 사전 공개, `data/products.js` 스키마 |

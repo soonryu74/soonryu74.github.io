@@ -810,5 +810,138 @@ window.EBN_STUDIES = [
   finding: "둘 다 LDL을 낮춘다. 그러나 홍국의 유효성분은 처방약 로바스타틴과 '동일 물질'이라 근육·간 부작용도 같고, 시트리닌(신독성 곰팡이독) 오염 문제로 EU는 2022년 1회분 3 mg 미만 제한 후 전면 금지 추진 중.",
   caveat: "스타틴 복용 중 병용 금지. 임신·간질환·70세 이상 경고. 심혈관 사건을 줄였다는 근거는 없음.",
   grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/35111069/", "https://pubmed.ncbi.nlm.nih.gov/30466986/", "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX%3A32022R0860"], updated: "2026-09"
+},
+/* ===================== 허브·기타 성분 효능 (2026-09-06 검증) ===================== */
+{
+  id: "gem-ginkgo", name: "GEM — 은행잎 추출물과 치매 예방",
+  inst: "피츠버그 대학 등 미국 5개 센터 (NCCAM·NIA 지원)", journal: "JAMA", year: 2008,
+  n: 3069, followup: "중앙값 6.1년", design: "RCT",
+  population: "75세 이상 지역사회 노인(정상 2,587 + 경도인지장애 482)", intervention: "은행잎 추출물 EGb 761 120 mg 1일 2회 vs 위약",
+  ing: ["ginkgo"], outcome: ["cognition"],
+  effect: ["전체 치매 HR 1.12 (0.94–1.33), p=0.21", "알츠하이머 HR 1.16 (0.97–1.39)", "2009 후속: 기억·언어·주의 등 모든 영역 인지 저하 속도 차이 없음"],
+  finding: "가장 큰 은행잎 시험에서 치매 예방도 인지 저하 억제도 실패했다.",
+  caveat: "75세 이상만 대상. 더 젊은 나이·더 긴 복용은 검증 안 됨.",
+  grade: "D", urls: ["https://pubmed.ncbi.nlm.nih.gov/19017911/", "https://pubmed.ncbi.nlm.nih.gov/20040554/"], updated: "2026-09"
+},
+{
+  id: "cochrane-milkthistle", name: "코크란 리뷰 — 밀크시슬과 알코올성·바이러스성 간질환",
+  inst: "코펜하겐 코크란 간담도 그룹", journal: "Cochrane Database of Systematic Reviews", year: 2007,
+  n: 1088, followup: "RCT 18건", design: "META",
+  population: "알코올성·B형·C형 간질환", intervention: "밀크시슬(실리마린) vs 위약",
+  ing: ["milkthistle"], outcome: ["mortality"],
+  effect: ["총 사망 RR 0.78 (0.53–1.15), 유의 없음", "간질환 합병증 RR 0.95 (0.83–1.09)", "간 관련 사망 감소는 질 낮은 시험에서만(고품질 시험 RR 0.57, 0.28–1.19 유의 없음)", "조직 소견 변화 없음"],
+  finding: "'간 영양제' 밀크시슬은 사망·합병증을 줄이지 못했다. 안전하지만 효과도 없다.",
+  caveat: "시험의 28.6%만 고품질.",
+  grade: "D", urls: ["https://pubmed.ncbi.nlm.nih.gov/17943794/"], updated: "2026-09"
+},
+{
+  id: "ala-neuropathy", name: "알파리포산과 당뇨병성 신경병증 — SYDNEY 2 · NATHAN 1 · 메타분석",
+  inst: "독일 당뇨병센터(뒤셀도르프)", journal: "Diabetes Care 2006·2011 · Int J Endocrinol 2012", year: 2011,
+  n: 641, followup: "5주(SYDNEY 2, 181명) · 4년(NATHAN 1, 460명)", design: "RCT",
+  population: "당뇨병성 말초신경병증", intervention: "경구 알파리포산 600 mg/일 vs 위약",
+  ing: ["ala"], outcome: ["pain"],
+  effect: ["SYDNEY 2: 증상 점수(TSS) −4.9점(51%) vs 위약 −2.9점(32%), 반응률 62% vs 26%", "NATHAN 1(4년): 1차 복합 지표 유의 없음(p=0.105), 2차 신경병증 점수 개선(p=0.028)", "메타(4 RCT): 경구 SMD −1.78 (−2.45 ~ −1.10)"],
+  finding: "600 mg으로 수주 내 신경병증 증상이 개선된다. 4년 장기 시험은 1차 목표를 놓쳤다.",
+  caveat: "증상 지표 위주, 이질성 높음. 600 mg 초과는 부작용만 증가.",
+  grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/17065669/", "https://pubmed.ncbi.nlm.nih.gov/21775755/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3272801/"], updated: "2026-09"
+},
+{
+  id: "cinnamon-diabetes", name: "계피와 당뇨병 — 코크란 2012 · 우산 메타분석 2023",
+  inst: "코크란 · 타브리즈 의대", journal: "Cochrane · Diabetology & Metabolic Syndrome", year: 2023,
+  n: 577, followup: "RCT 10건(코크란) · 메타분석 11건(우산)", design: "META",
+  population: "1·2형 당뇨병", intervention: "경구 계피(주로 카시아) 평균 2 g/일, 4~16주",
+  ing: ["cinnamon"], outcome: ["metabolic"],
+  effect: ["코크란: HbA1c·공복혈당·인슐린 차이 없음", "2023 우산 메타: HbA1c −0.10% (−0.17 ~ −0.03), 공복혈당 −10.9 mg/dL", "2023 용량반응 메타: 공복혈당·HbA1c 유의 없음"],
+  finding: "HbA1c 0.1% 감소는 임상적 의미(0.5%)에 한참 못 미친다. 코크란은 '근거 불충분'.",
+  caveat: "카시아 계피의 쿠마린 간독성이 이득보다 문제.",
+  grade: "D", urls: ["https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD007170.pub2/abstract", "https://pubmed.ncbi.nlm.nih.gov/37316893/"], updated: "2026-09"
+},
+{
+  id: "chromium-glycemic", name: "크롬과 혈당 조절 — 메타분석 2014 · NIH ODS 리뷰 2016",
+  inst: "마히돌 대학 · 미국 NIH 식이보충제국", journal: "J Clin Pharm Ther · Nutrition Reviews", year: 2016,
+  n: 0, followup: "RCT 25건", design: "META",
+  population: "2형 당뇨병", intervention: "크롬(주로 피콜리네이트 200 µg 이상) 8주 이상",
+  ing: ["chromium"], outcome: ["metabolic"],
+  effect: ["HbA1c −0.55% (−0.88 ~ −0.22), 공복혈당 −1.15 mmol/L — 이질성 높음", "NIH ODS 2016: 20개 RCT 중 HbA1c 목표 도달 3/14건. '권고할 근거 거의 없음'"],
+  finding: "통합하면 HbA1c 0.5% 감소로 보이지만 소규모·이질적 시험이며 NIH는 권고하지 않는다.",
+  caveat: "고용량(1,200 µg+) 신부전 사례.",
+  grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/24635480/", "https://pubmed.ncbi.nlm.nih.gov/27261273/"], updated: "2026-09"
+},
+{
+  id: "greentea-efsa", name: "녹차추출물 — EFSA 2018 안전성 의견 · 코크란 체중 감량 리뷰",
+  inst: "유럽식품안전청(EFSA) · 댈하우지 대학(Cochrane)", journal: "EFSA Journal · Cochrane", year: 2018,
+  n: 532, followup: "RCT 12주 이상(체중) · 49개 연구 검토(안전성)", design: "META",
+  population: "과체중·비만 성인", intervention: "녹차추출물(EGCG) 보충제",
+  ing: ["greentea"], outcome: ["safety", "metabolic"],
+  effect: ["코크란(일본 외 6건): 체중 −0.04 kg (−0.5 ~ 0.4) — 효과 없음", "EFSA: 보충제 EGCG 800 mg/일 이상에서 간효소 유의 상승, 안전 용량 설정 불가. EU 상한 800 mg", "차로 마시는 EGCG 90~300 mg/일은 안전"],
+  finding: "녹차추출물은 살이 빠지지 않고, 800 mg 이상 EGCG는 간을 상하게 한다.",
+  caveat: "일본 시험(제조사 연계)은 −0.2~−3.5 kg이나 통합 불가.",
+  grade: "X", urls: ["https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5239", "https://pubmed.ncbi.nlm.nih.gov/23235664/"], updated: "2026-09"
+},
+{
+  id: "ginseng-evidence", name: "홍삼·인삼 — 피로 메타분석 · 와파린 상호작용 RCT",
+  inst: "국립암센터(한국) · 시카고 대학", journal: "J Korean Med Sci 2016 · Annals of Internal Medicine 2004", year: 2016,
+  n: 630, followup: "RCT 12건(피로) · 교차 RCT 20명(와파린)", design: "META",
+  population: "성인", intervention: "인삼·홍삼 vs 위약",
+  ing: ["ginseng"], outcome: ["muscle", "safety"],
+  effect: ["피로(4 RCT): SMD 0.34 (0.16–0.52) — 작은 효과", "신체 수행능력(8 RCT): SMD −0.01 — 효과 없음", "2022 메타(12 RCT 1,298명): 질환 관련 피로 SMD 0.33", "Yuan 2004: 미국삼 2주 복용 시 와파린 최고 INR −0.19 (−0.36 ~ −0.07), p=0.0012"],
+  finding: "피로에 작은 효과(SMD 0.3)가 소규모 시험에서 보이고, 인삼은 와파린 효과를 측정 가능하게 떨어뜨린다. 면역 결과 메타분석은 없다.",
+  caveat: "저자들: '근거 불충분, 소규모 시험'. 와파린 RCT는 건강 자원자 대상 미국삼.",
+  grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/27822924/", "https://pubmed.ncbi.nlm.nih.gov/15238367/", "https://pubmed.ncbi.nlm.nih.gov/36730693/"], updated: "2026-09"
+},
+{
+  id: "ashwagandha-evidence", name: "아슈와간다 — 스트레스·불안 메타분석 · 간 손상 사례",
+  inst: "테헤란 의대 · 아이슬란드 란드스피탈리/미국 DILIN", journal: "Phytotherapy Research 2022 · Liver International 2020", year: 2022,
+  n: 1002, followup: "RCT 12건 · 간 손상 5례", design: "META",
+  population: "25~48세 성인", intervention: "뿌리 추출물 240~600 mg/일",
+  ing: ["ashwagandha"], outcome: ["mood", "safety"],
+  effect: ["불안 SMD −1.55 (−2.37 ~ −0.74), 이질성 93.8%", "스트레스 SMD −1.75 (−2.29 ~ −1.22), 근거 확실성 '낮음'", "간 손상 5례: 잠복기 2~12주, 담즙정체형, 황달, 1~5개월 회복(LiverTox: 간 손상 유발 가능성 있음)"],
+  finding: "스트레스 감소 효과는 크게 나오지만 근거 확실성이 낮고(인도 제조사 지원 소규모), 문서화된 간 손상 사례가 있다.",
+  caveat: "덴마크 판매 금지(2023), 프랑스 임신·수유 반대(2024).",
+  grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/36017529/", "https://pubmed.ncbi.nlm.nih.gov/31991029/"], updated: "2026-09"
+},
+{
+  id: "nac-copd", name: "NAC와 COPD 악화 — 코크란 2019 · PANTHEON",
+  inst: "오클랜드 대학(Cochrane) · 광저우 호흡기연구소", journal: "Cochrane · Lancet Respiratory Medicine", year: 2019,
+  n: 10377, followup: "RCT 38건(코크란) · 1,006명 1년(PANTHEON)", design: "META",
+  population: "COPD·만성 기관지염", intervention: "경구 점액용해제(NAC 등) 2개월 이상 · NAC 600 mg 1일 2회",
+  ing: ["nac"], outcome: ["immune"],
+  effect: ["악화 없이 지낸 비율 Peto OR 1.73 (1.56–1.91), NNT 8", "입원 OR 0.68 (0.52–0.89)", "사망 OR 0.98 — 차이 없음", "PANTHEON: 악화 1.16 vs 1.49회/인년, RR 0.78 (0.67–0.90)"],
+  finding: "고용량 NAC(1,200 mg/일)는 COPD 악화를 20~25% 줄인다. 중등도 환자에서 가장 뚜렷.",
+  caveat: "최신·장기 시험일수록 효과 작음. PANTHEON은 제약사 지원, 중국 대상.",
+  grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/31107966/", "https://pubmed.ncbi.nlm.nih.gov/24621680/"], updated: "2026-09"
+},
+{
+  id: "biotin-fda", name: "FDA 안전성 서한 — 비오틴의 혈액검사 간섭",
+  inst: "미국 FDA", journal: "FDA Safety Communication", year: 2019,
+  n: 0, followup: "2017-11 발표, 2019-11 갱신", design: "GUIDE",
+  population: "비오틴 보충제 복용자", intervention: "고용량 비오틴(모발·손톱 제품 5~20 mg, RDA 0.03 mg의 최대 650배)",
+  ing: ["biotin"], outcome: ["safety"],
+  effect: ["스트렙타비딘-비오틴 면역검사에서 거짓 고·저 결과: 트로포닌, TSH·T4, 호르몬, 비타민 D, hCG", "거짓 저하 트로포닌으로 심근경색 놓쳐 사망 1건 보고", "2019: 일부 제조사만 간섭 해소, 14개 트로포닌 검사 여전히 영향"],
+  finding: "모발 영양제 수준의 비오틴은 심근경색·갑상선 검사를 왜곡한다. 검사 2일 전에는 끊어야 한다.",
+  caveat: "권장량(30 µg) 수준은 간섭 없음.",
+  grade: "X", urls: ["https://www.fda.gov/medical-devices/in-vitro-diagnostics/biotin-interference-troponin-lab-tests-assays-subject-biotin-interference", "https://www.thyroid.org/patient-thyroid-information/ct-for-patients/january-2022/vol-15-issue-1-p-7-8/"], updated: "2026-09"
+},
+{
+  id: "garlic-bp", name: "마늘 보충제와 혈압 — 메타분석 (Ried 2016·2020)",
+  inst: "호주 국립통합의학연구소", journal: "Journal of Nutrition · Experimental and Therapeutic Medicine", year: 2020,
+  n: 970, followup: "RCT 20건(2016) · 고혈압 12건 553명(2020), 중앙값 12주", design: "META",
+  population: "성인·고혈압 환자", intervention: "마늘 분말 600~900 mg 또는 숙성마늘 추출물 1,200 mg/일",
+  ing: ["garlic"], outcome: ["bp"],
+  effect: ["전체: 수축기 −5.1 ± 2.2, 이완기 −2.5 mmHg", "고혈압군: 수축기 −8.3 ± 1.9, 이완기 −5.5 mmHg"],
+  finding: "고혈압 환자에서 12주 마늘 보충제로 수축기 혈압 약 8 mmHg 감소.",
+  caveat: "단일 저자 리뷰, 저자는 제조사(Kyolic) 지원 시험 수행. 소규모 단기, 심혈관 사건 결과 없음.",
+  grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/26764326/", "https://pubmed.ncbi.nlm.nih.gov/32010325/"], updated: "2026-09"
+},
+{
+  id: "sjw-evidence", name: "세인트존스워트 — 코크란 우울증 리뷰 · 이리노테칸 상호작용",
+  inst: "뮌헨 공대(Cochrane) · 에라스무스 암센터", journal: "Cochrane 2008 · JNCI 2002", year: 2008,
+  n: 5489, followup: "RCT 29건", design: "META",
+  population: "주요 우울증 환자", intervention: "하이페리쿰 추출물 vs 위약·항우울제",
+  ing: ["sjw"], outcome: ["mood", "safety"],
+  effect: ["위약 대비 반응률 RR 1.28 (1.10–1.49) (대규모 9건)", "SSRI 대비 RR 1.00 — 동등", "부작용 중단 OR 0.53 vs SSRI", "이리노테칸 활성대사체 SN-38 AUC −42% (14~70%) — 항암 효과 저하"],
+  finding: "우울증에는 SSRI만큼 효과가 있으나 CYP3A4 유도로 항암제·면역억제제·피임약·항응고제를 무력화한다. 국내 미허가.",
+  caveat: "독일어권 시험이 더 우호적. 추출물 표준화 상이.",
+  grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/18843608/", "https://pubmed.ncbi.nlm.nih.gov/12189228/"], updated: "2026-09"
 }
 ];
