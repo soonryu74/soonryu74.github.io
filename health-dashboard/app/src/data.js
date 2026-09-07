@@ -229,3 +229,8 @@ export function computeRanking(item, pool, opts = DEFAULT_RANK_OPT) {
   }
   return { byCode, weights: W };
 }
+
+/* ===== 조사 단위(보건소) 데이터 ===== */
+import UNITS_RAW from "../../data/units.json";
+export const UNITS = UNITS_RAW;
+export const UNIT_BY_CODE = new Map(UNITS_RAW.units.map((u) => [u.c, u]));

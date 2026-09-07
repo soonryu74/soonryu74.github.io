@@ -10,6 +10,7 @@ import GapBoxplot from "./components/GapBoxplot";
 import Profile from "./components/Profile";
 import Compare, { NAT, MAX_CMP } from "./components/Compare";
 import Tooltip from "./components/Tooltip";
+import UnitsView from "./components/UnitsView";
 import ExportButtons from "./components/ExportButtons";
 
 const DEFAULT_IND = INDICATORS.find((i) => i.id === "DT_H_SM") || INDICATORS[0];
@@ -26,7 +27,7 @@ function readHash() {
     sgg: RBY.has(sgg) ? sgg : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
-    view: ["profile", "compare"].includes(h.get("view")) ? h.get("view") : "analysis",
+    view: ["profile", "compare", "units"].includes(h.get("view")) ? h.get("view") : "analysis",
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
       weights: h.get("w") === "equal" ? "equal" : h.get("w") === "custom" && h.get("cw")
@@ -121,12 +122,13 @@ export default function App() {
               <button className={`seg-btn ${view === "compare" ? "on" : ""}`} onClick={() => setView("compare")}>
                 지역 비교{cmp.length ? <small className="cnt">{cmp.length}</small> : null}
               </button>
+              <button className={`seg-btn ${view === "units" ? "on" : ""}`} onClick={() => setView("units")}>조사 단위</button>
             </div>
             <button className="themebtn" onClick={toggleTheme}>{theme === "dark" ? "☀ 라이트" : "☾ 다크"}</button>
           </div>
         </header>
 
-        <div className="controls">
+        {view !== "units" && <div className="controls">
           {view !== "profile" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
           {view !== "compare" && (
@@ -149,9 +151,11 @@ export default function App() {
           )}
           <ItemToggle item={item} onChange={setItem} />
           {view !== "profile" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
-        </div>
+        </div>}
 
-        {view === "compare" ? (
+        {view === "units" ? (
+          <UnitsView setTip={setTip} />
+        ) : view === "compare" ? (
           <Compare ind={ind} item={item} year={year} codes={cmp} onCodes={setCmp} onYear={(y) => setYearSel(y)}
             onPick={(i, y) => { setInd(i); setYearSel(y); window.scrollTo({ top: 0, behavior: "smooth" }); }} setTip={setTip} />
         ) : view === "analysis" ? (

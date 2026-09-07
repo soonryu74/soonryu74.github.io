@@ -272,3 +272,22 @@ footer { font-size:11.5px; color:var(--muted); margin:18px 0 8px; line-height:1.
 .subchip.warn { border-color: var(--bad-text); color: var(--bad-text); }
 .indchip.off { opacity:.55; border-style:dashed; }
 tr.muted td { color: var(--muted); }
+
+/* ===== 조사 단위 탭 ===== */
+.unitsdoc p { font-size:13px; line-height:1.7; color:var(--text-secondary); margin:0 0 8px; max-width:78ch; }
+.unitsdoc b { color:var(--text-primary); }
+.unitwrap { display:grid; grid-template-columns: 1fr 300px; gap:14px; align-items:start; }
+@media (max-width: 900px){ .unitwrap { grid-template-columns: 1fr; } }
+.unitmap svg { max-height: 860px; }
+.u-single { fill: var(--seq-200); } .u-multi { fill: var(--seq-500); } .u-changed { fill: var(--series-2); } .u-none { fill: var(--grid); }
+.maplegend i.u-single { background: var(--seq-200); } .maplegend i.u-multi { background: var(--seq-500); } .maplegend i.u-changed { background: var(--series-2); } .maplegend i.u-none { background: var(--grid); }
+.unitinfo { margin-top:12px; border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--page); }
+.ui-name { font-size:16px; font-weight:800; margin-bottom:8px; }
+.ui-row { display:flex; gap:8px; font-size:12.5px; margin:4px 0; align-items:baseline; flex-wrap:wrap; }
+.ui-row span { color:var(--muted); min-width:96px; }
+.ui-row small { color:var(--muted); }
+.ui-subs { margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
+.ui-subs span { width:100%; color:var(--muted); font-size:12px; }
+.subchip.on { border-color: var(--series-1); color: var(--series-1); }
+.unitlist { max-height: 460px; overflow:auto; }
+.unitlist tr { cursor:pointer; }
