@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { DS, INDICATORS, RBY, label } from "./data";
+import { DS, INDICATORS, RBY, label, DEFAULT_RANK_OPT } from "./data";
 import { IndicatorPicker, RegionPicker, YearControl, ItemToggle } from "./components/Pickers";
 import Kpis from "./components/Kpis";
 import TrendChart from "./components/TrendChart";
@@ -21,13 +21,21 @@ function readHash() {
   const sgg = h.get("sgg"), sido = h.get("sido");
   return {
     ind: ind || DEFAULT_IND,
-    item: h.get("item") === "std" ? "std" : "crude",
+    item: h.get("item") === "crude" ? "crude" : "std",   // 방법론 v1: 표준화율 기본
     sido: RBY.has(sido) ? sido : (RBY.has(sgg) ? RBY.get(sgg).p : "001"),
     sgg: RBY.has(sgg) ? sgg : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
     view: ["profile", "compare"].includes(h.get("view")) ? h.get("view") : "analysis",
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
+    rankOpt: {
+      weights: h.get("w") === "equal" ? "equal" : h.get("w") === "custom" && h.get("cw")
+        ? Object.fromEntries(h.get("cw").split(",").map((v, i) => [DS.domains[i], Math.max(0, Math.min(30, +v || 0))]))
+        : "panel",
+      smooth: h.get("sm") === "1" ? 1 : 3,
+      league: h.get("lg") === "nation" ? "nation" : "league",
+      exclude: h.get("ex") !== "0",
+    },
   };
 }
 
@@ -41,6 +49,7 @@ export default function App() {
   const [scope, setScope] = useState(init.scope);   // 순위·격차·지도 비교 범위: nation | sido
   const [view, setView] = useState(init.view);      // analysis | profile | compare
   const [cmp, setCmp] = useState(init.cmp);         // 비교 대상 코드 목록 (NAT = 전국 중앙값)
+  const [rankOpt, setRankOpt] = useState(init.rankOpt); // 순위 산출 방식 (방법론 v1)
   const [playing, setPlaying] = useState(false);
   const [tip, setTip] = useState(null);
   const [theme, setTheme] = useState(() => document.documentElement.getAttribute("data-theme") || null);
@@ -51,9 +60,11 @@ export default function App() {
 
   useEffect(() => {
     const h = new URLSearchParams({ ind: ind.id, item, sido, ...(sgg ? { sgg } : {}), year: String(year), scope, view,
-      ...(cmp.length ? { cmp: cmp.join(",") } : {}) });
+      ...(cmp.length ? { cmp: cmp.join(",") } : {}),
+      w: typeof rankOpt.weights === "object" ? "custom" : rankOpt.weights, sm: String(rankOpt.smooth), lg: rankOpt.league, ex: rankOpt.exclude ? "1" : "0",
+      ...(typeof rankOpt.weights === "object" ? { cw: DS.domains.map((d) => rankOpt.weights[d] ?? 0).join(",") } : {}) });
     window.history.replaceState(null, "", "#" + h.toString());
-  }, [ind, item, sido, sgg, year, scope, view, cmp]);
+  }, [ind, item, sido, sgg, year, scope, view, cmp, rankOpt]);
 
   // 연도 애니메이션
   useEffect(() => {
@@ -189,7 +200,7 @@ export default function App() {
             </div>
           </>
         ) : (
-          <Profile item={item} sel={sel} scope={scope} onPick={pickFromProfile} />
+          <Profile item={item} sel={sel} scope={scope} rankOpt={rankOpt} onRankOpt={setRankOpt} onPick={pickFromProfile} />
         )}
 
         <footer>

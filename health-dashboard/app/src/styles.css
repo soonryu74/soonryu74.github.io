@@ -257,3 +257,18 @@ footer { font-size:11.5px; color:var(--muted); margin:18px 0 8px; line-height:1.
 .ic-val { color:var(--text-primary); font-weight:700; font-variant-numeric: tabular-nums; }
 .ic-val small { font-weight:500; color:var(--muted); margin-left:1px; }
 .ic-rank { font-variant-numeric: tabular-nums; font-size:11px; }
+
+/* ===== 방법론 v1: 설정·등급 배지 ===== */
+.rankset .setrow { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:flex-end; }
+.setitem label { font-size:11.5px; color:var(--muted); display:block; margin-bottom:4px; }
+.sliders { display:grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap:6px 18px; margin-top:12px; }
+.slider { display:grid; grid-template-columns: 90px 1fr 28px; align-items:center; gap:8px; font-size:12.5px; }
+.slider b { text-align:right; font-variant-numeric: tabular-nums; }
+.badgesrow { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; align-items:center; }
+.gradebadge { font-size:12px; font-weight:800; letter-spacing:.02em; padding:4px 11px; border-radius:999px; color:#fff; }
+.g-플래티넘 { background: linear-gradient(135deg, #3b4b66, #6f86a8); }
+.g-골드 { background: linear-gradient(135deg, #a5741a, #d9a83b); }
+.g-실버 { background: linear-gradient(135deg, #6e7278, #a3a8ae); }
+.subchip.warn { border-color: var(--bad-text); color: var(--bad-text); }
+.indchip.off { opacity:.55; border-style:dashed; }
+tr.muted td { color: var(--muted); }

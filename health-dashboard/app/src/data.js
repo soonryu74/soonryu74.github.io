@@ -158,3 +158,74 @@ export function domainRanking(item, pool, weights = null, year = null) {
   full.forEach((x, i) => (x.overallRank = i + 1)); n.overall = full.length;
   return { byCode, n };
 }
+
+/* ===== 랭킹 방법론 v1 (docs/랭킹_방법론_v1.md) ===== */
+export const PANEL_WEIGHTS = { "흡연": 14, "음주": 11, "신체활동": 11, "식생활·비만": 11, "정신건강": 13, "구강건강": 4, "만성질환": 16, "예방·안전": 9, "의료이용": 11 };
+export const EQUAL_WEIGHTS = Object.fromEntries(DOMAINS.map((d) => [d, 1]));
+// 결과·유병 성격/중립/합성 지표: 순위 산식에서 제외 권고 (6개 패널 공통 지적)
+export const EXCLUDE_IDS = new Set(["DT_HYPER_DOCTOR", "DT_DIA_DOCTOR", "DT_NECE_CLINIC", "DT_117075_H_HEALTHY"]);
+export const DEFAULT_RANK_OPT = { weights: "panel", smooth: 3, league: "league", exclude: true };
+export const leagueOf = (r) => (r.l !== "sgg" ? "sido" : r.n.endsWith("군") ? "gun" : "city");
+export const LEAGUE_NAME = { city: "도시(구·시) 리그", gun: "군 리그", sido: "17개 시도" };
+
+/** 평활값: 평가연도 포함 최근 k개년 평균 (없는 해는 건너뜀) */
+export function valSmooth(ind, item, year, code, k = 1) {
+  if (k <= 1) return val(ind, item, year, code);
+  let s = 0, n = 0;
+  for (let y = year - k + 1; y <= year; y++) { const v = val(ind, item, y, code); if (v != null) { s += v; n++; } }
+  return n ? s / n : null;
+}
+
+/**
+ * 종합 순위 산출 (방법론 v1). opts: {weights:'panel'|'equal'|{...}, smooth:1|3, league:'nation'|'league', exclude:bool, year}
+ * pool 내에서 리그별로 따로 백분위·순위를 매긴다. 반환 byCode: code → {inds:{id:{v,pct,rank,n,y}}, domains:{d:{score,rank,n}}, overall, overallRank, n, league, grade, weakest}
+ */
+export function computeRanking(item, pool, opts = DEFAULT_RANK_OPT) {
+  const W = opts.weights === "equal" ? EQUAL_WEIGHTS : opts.weights === "panel" ? PANEL_WEIGHTS : (opts.weights || EQUAL_WEIGHTS);
+  const groups = opts.league === "league" && pool.some((r) => r.l === "sgg")
+    ? { city: pool.filter((r) => leagueOf(r) === "city"), gun: pool.filter((r) => leagueOf(r) === "gun") }
+    : { all: pool };
+  const byCode = new Map();
+  for (const [lg, members] of Object.entries(groups)) {
+    if (!members.length) continue;
+    const recs = new Map(members.map((r) => [r.c, { c: r.c, inds: {}, domains: {}, league: lg }]));
+    for (const ind of INDICATORS) {
+      if (ind.bad == null || (opts.exclude && EXCLUDE_IDS.has(ind.id))) continue;
+      const y = opts.year != null && ind.years.includes(opts.year) ? opts.year : ind.years[ind.years.length - 1];
+      const vals = members.map((r) => [r.c, valSmooth(ind, item, y, r.c, opts.smooth)]).filter(([, v]) => v != null);
+      const sorted = vals.map(([, v]) => v).sort((a, b) => a - b), n = sorted.length;
+      if (!n) continue;
+      const lower = (x) => { let lo = 0, hi = n; while (lo < hi) { const m = (lo + hi) >> 1; if (sorted[m] < x) lo = m + 1; else hi = m; } return lo; };
+      const upper = (x) => { let lo = 0, hi = n; while (lo < hi) { const m = (lo + hi) >> 1; if (sorted[m] <= x) lo = m + 1; else hi = m; } return lo; };
+      for (const [c, v] of vals) {
+        const below = lower(v), tie = upper(v) - below, worse = ind.bad ? n - upper(v) : below;
+        recs.get(c).inds[ind.id] = { v, pct: ((worse + tie / 2) / n) * 100, rank: n - worse - tie + 1, n, y };
+      }
+    }
+    for (const rec of recs.values()) {
+      let acc = 0, wsum = 0;
+      for (const d of DOMAINS) {
+        const xs = INDICATORS.filter((i) => i.domain === d && rec.inds[i.id]).map((i) => rec.inds[i.id].pct);
+        if (!xs.length) continue;
+        rec.domains[d] = { score: xs.reduce((a, b) => a + b, 0) / xs.length, k: xs.length };
+        acc += rec.domains[d].score * W[d]; wsum += W[d];
+      }
+      rec.overall = wsum ? acc / wsum : null;
+      rec.k = Object.keys(rec.domains).length;
+    }
+    for (const d of DOMAINS) {
+      const s = [...recs.values()].filter((x) => x.domains[d]).sort((a, b) => b.domains[d].score - a.domains[d].score);
+      s.forEach((x, i) => { x.domains[d].rank = i + 1; x.domains[d].n = s.length; });
+    }
+    const full = [...recs.values()].filter((x) => x.overall != null && x.k >= DOMAINS.length - 1).sort((a, b) => b.overall - a.overall);
+    full.forEach((x, i) => {
+      x.overallRank = i + 1; x.n = full.length;
+      const p = (i + 1) / full.length;
+      x.grade = p <= 0.10 ? "플래티넘" : p <= 0.25 ? "골드" : p <= 0.50 ? "실버" : null;
+      const worst = Object.entries(x.domains).sort((a, b) => a[1].score - b[1].score)[0];
+      x.weakest = worst && worst[1].score < 25 ? worst[0] : null;
+    });
+    for (const rec of recs.values()) byCode.set(rec.c, rec);
+  }
+  return { byCode, weights: W };
+}
