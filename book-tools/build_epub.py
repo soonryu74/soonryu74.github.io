@@ -114,7 +114,7 @@ opf = f"""<?xml version="1.0" encoding="utf-8"?>
 <dc:title>{html.escape(book['title'])}</dc:title>
 <dc:creator>{html.escape(book['author'])}</dc:creator>
 <dc:language>ko</dc:language>
-<dc:description>{html.escape(book['subtitle'] + ' — ' + book['edition'])}</dc:description>
+<dc:description>{html.escape(book['subtitle'])}</dc:description>
 <meta property="dcterms:modified">{NOW}</meta>
 <meta name="cover" content="cover-img"/>
 </metadata>

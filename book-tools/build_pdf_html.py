@@ -91,7 +91,6 @@ A(f"""<div class="titlepage">
 
 A(f"""<div class="copyright"><div class="box">
 <p><strong>역학조사관</strong> — {html.escape(book['subtitle'])}</p>
-<p>{html.escape(book['edition'])}</p>
 <p>지은이 {html.escape(book['author'])}</p>
 <p>이 책의 인물과 사건은 실제 방역사에서 영감을 받은 허구입니다.</p>
 </div></div>""")

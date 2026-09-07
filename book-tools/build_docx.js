@@ -66,10 +66,6 @@ children.push(
     alignment: AlignmentType.CENTER, spacing: { before: 800 },
     children: [new TextRun({ text: book.author, bold: true, size: 32 })],
   }),
-  new Paragraph({
-    alignment: AlignmentType.CENTER, spacing: { before: 2400 },
-    children: [new TextRun({ text: book.edition, size: 20, color: "777777" })],
-  }),
   new Paragraph({ children: [new PageBreak()] }),
 );
 
@@ -109,7 +105,7 @@ for (const vol of book.volumes) {
 const doc = new Document({
   creator: book.author,
   title: book.title,
-  description: book.subtitle + " — " + book.edition,
+  description: book.subtitle,
   styles: {
     default: {
       document: { run: { font: KO, size: 21 } }, // 10.5pt
