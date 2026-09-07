@@ -316,3 +316,8 @@ tr.muted td { color: var(--muted); }
 .recgoal { flex:1 1 240px; color:var(--text-secondary); }
 .ncd .setrow { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:flex-end; }
 .ncd select { border:1px solid var(--border); border-radius:8px; padding:6px 8px; background:var(--surface-1); }
+/* 예방·관리 탭 모바일 넘침 방지 */
+.ncd .seg { flex-wrap: wrap; }
+.ncd .src { white-space: normal; word-break: break-all; }
+.ncdcard, .ncdcard * { min-width: 0; }
+.rechead .k-bad { white-space: normal; }
