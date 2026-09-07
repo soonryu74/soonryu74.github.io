@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>근거영양 플랫폼 기획안 v0.2 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="근거영양 플랫폼 기획안 v0.2" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="근거영양 플랫폼 기획안 v0.2" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"근거영양 플랫폼 기획안 v0.2","url":"/docs/yeongyangje-platform-plan.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d70f2f346797b3b25fd3f350992061b3f4b3de16">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="근거영양-플랫폼-기획안-v02">근거영양 플랫폼 기획안 v0.2</h1>
+
+<blockquote>
+  <p>작성 2026-09-05 · 갱신 2026-09-07 · 사이트: <code class="language-plaintext highlighter-rouge">/yeongyangje/</code> · 브랜치 <code class="language-plaintext highlighter-rouge">claude/vitamin-supplement-research-tq2ltd</code></p>
+</blockquote>
+
+<p><strong>팔기 위해 근거를 고르지 않고, 근거에 맞춰 판다.</strong></p>
+
+<h2 id="1-요약">1. 요약</h2>
+
+<ul>
+  <li>한국 건강기능식품 시장은 약 6조 원(2024년 6조 440억, −1.6%; 2025년 5조 9,626억, +0.2%)에서 정체. 구매 경험률은 83.6%로 5년 최고. 홍삼(0.95조)이 1위지만 비타민 합계(1.05조)에 역전됨. 온라인 구매 71%.</li>
+  <li>시장이 정체된 이유는 “무엇을 왜 먹어야 하는지” 근거를 제시하는 플레이어가 없기 때문. 광고와 후기가 전부.</li>
+  <li>대규모 연구의 결론은 명확하다. 건강한 성인에게 영양제는 수명·심혈관 예방 효과가 없고(NIH 39만 명 20년, PHS II, COSMOS), <strong>결핍 교정</strong>만 확실하며(비타민 D·B12·철·엽산), 일부는 <strong>유해</strong>하다(베타카로틴·비타민 E 400 IU·고용량 오메가-3).</li>
+  <li>그래서 포지션은 “근거로 걸러 주는 플랫폼”. 추천 엔진은 판매와 분리되고, 판매는 근거 A·B 성분만, 판매 제품은 자체 연구(n-of-1 → 실용 RCT)로 검증한다.</li>
+  <li>수익은 ① 큐레이션 판매(마진) ② n-of-1 개인 효과 검증 패키지(프리미엄) ③ B2B 데이터·콘텐츠(약국·검진센터·보험) 순으로 확장.</li>
+</ul>
+
+<h2 id="2-근거-조사-결과-2026-09-검증-원문-pubmed-확인">2. 근거 조사 결과 (2026-09 검증, 원문 PubMed 확인)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>영역</th>
+      <th>핵심 연구</th>
+      <th>결론</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>종합비타민</td>
+      <td>PHS II(1.4만, 11년), COSMOS(2.1만), NIH-AARP(39만, 20년+), USPSTF 2022</td>
+      <td>사망·심혈관 효과 없음. 암 7~8% 감소 신호(경계선). 60세+ 인지 0.07 SD 개선</td>
+    </tr>
+    <tr>
+      <td>비타민 D</td>
+      <td>VITAL(2.6만, 5.3년), D-Health(2.1만), 메타분석 50건</td>
+      <td>결핍 없는 성인: 암·심혈관·골절·우울·감기 예방 없음. 매일 복용 시 암 사망 12~15% 감소. 당뇨 전단계 진행 15% 감소. 한국 성인 결핍 31~47%</td>
+    </tr>
+    <tr>
+      <td>오메가-3</td>
+      <td>VITAL, ASCEND, REDUCE-IT, STRENGTH, 코크란 86건</td>
+      <td>일반 어유 효과 없음. 처방용 EPA 4 g만 고위험군 25% 감소. &gt;1 g 심방세동 위험</td>
+    </tr>
+    <tr>
+      <td>칼슘</td>
+      <td>WHI(3.6만, 22년), BMJ 2026 메타(15만)</td>
+      <td>골절 예방 거의 없음, 신장결석 +17%, 심근경색 논쟁</td>
+    </tr>
+    <tr>
+      <td>유해</td>
+      <td>ATBC, CARET, SELECT, 코크란 항산화</td>
+      <td>흡연자 베타카로틴 폐암 +18~28%, 비타민 E 400 IU 전립선암 +17%, 항산화제 사망률 +</td>
+    </tr>
+    <tr>
+      <td>확실한 이득</td>
+      <td>MRC 엽산(NTD −72%), 코크란 프로바이오틱스 AAD(NNT 9), 철·B12 결핍 교정</td>
+      <td>근거 A</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>전체 82건은 <code class="language-plaintext highlighter-rouge">yeongyangje/data/studies.js</code>, 성분 40종은 <code class="language-plaintext highlighter-rouge">data/ingredients.js</code>, 질환별 판정은 <code class="language-plaintext highlighter-rouge">data/matrix.js</code>.</p>
+
+<h2 id="3-플랫폼-구조">3. 플랫폼 구조</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>페이지</th>
+      <th>파일</th>
+      <th>역할</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>홈</td>
+      <td><code class="language-plaintext highlighter-rouge">index.html</code></td>
+      <td>세 가지 핵심 메시지, 진입</td>
+    </tr>
+    <tr>
+      <td>핵심 결론</td>
+      <td><code class="language-plaintext highlighter-rouge">gyeollon.html</code></td>
+      <td>먹을 것 5 · 피할 것 5 · “하버드 20년 연구”의 정확한 의미</td>
+    </tr>
+    <tr>
+      <td>성분별 근거</td>
+      <td><code class="language-plaintext highlighter-rouge">seongbun.html</code></td>
+      <td>40개 성분 카드(판정·등급·대상·용량·제품 기준·근거 연구·질환별 판정)</td>
+    </tr>
+    <tr>
+      <td>질환별 먹어도 되나</td>
+      <td><code class="language-plaintext highlighter-rouge">jilhwan.html</code></td>
+      <td>성분 40 × 질환·상태 18 매트릭스(<code class="language-plaintext highlighter-rouge">data/matrix.js</code>, 329셀). 질환 선택 → 성분 판정, 성분 선택 → 질환 판정. OK/주의/금기 + 이유 + 출처(NIH ODS·LiverTox·FDA·EMA·EFSA·KDOQI·ACOG·ASMBS·식약처)</td>
+    </tr>
+    <tr>
+      <td>연구 DB</td>
+      <td><code class="language-plaintext highlighter-rouge">yeongu.html</code></td>
+      <td>70건 검색(성분·결과·설계·등급), 효과 크기·원문 링크</td>
+    </tr>
+    <tr>
+      <td>내게 맞는 영양제</td>
+      <td><code class="language-plaintext highlighter-rouge">chucheon.html</code></td>
+      <td>4단계 위저드 → 건강 수준 L1~L4 + 판정 목록 (<code class="language-plaintext highlighter-rouge">data/rules.js</code>)</td>
+    </tr>
+    <tr>
+      <td>제품 고르는 법</td>
+      <td><code class="language-plaintext highlighter-rouge">jepum.html</code></td>
+      <td>5단계 체크리스트, 인증마크, 판매 원칙 사전 공개, <code class="language-plaintext highlighter-rouge">data/products.js</code> 스키마</td>
+    </tr>
+    <tr>
+      <td>R&amp;D</td>
+      <td><code class="language-plaintext highlighter-rouge">rnd.html</code></td>
+      <td>4단계 연구 설계, 바이오마커, DB 스키마, 규제, 12개월 로드맵, 예산</td>
+    </tr>
+    <tr>
+      <td>원칙</td>
+      <td><code class="language-plaintext highlighter-rouge">about.html</code></td>
+      <td>인용 기준, 등급 정의, 이해상충, 갱신 주기</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="근거-등급">근거 등급</h3>
+<p>A(대규모 RCT 다수 일관) · B(RCT/메타, 조건부) · C(관찰·소규모·혼재) · D(효과 없음 확인) · X(유해). 등급은 “성분 × 대상 × 용량 × 결과”에 붙는다.</p>
+
+<h3 id="건강-수준-4단계-추천-엔진과-rd-공용">건강 수준 4단계 (추천 엔진과 R&amp;D 공용)</h3>
+<ul>
+  <li>L1 건강: 결핍 위험 없음 → 식사 우선, 선택만</li>
+  <li>L2 결핍 위험군: 실내 근무·채식·임신·65세+·위장질환·메트포르민·검사 결핍 → 결핍 교정(근거 A/B)</li>
+  <li>L3 만성질환: 고혈압·당뇨·이상지질·골다공증·황반변성·자가면역 → 질환별 근거 성분</li>
+  <li>L4 주의·금기: 항응고제·신장질환·항암치료·흡연 → “피하세요” 우선, 의사 확인</li>
+</ul>
+
+<h2 id="4-상업화-단계">4. 상업화 단계</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>단계</th>
+      <th>시기</th>
+      <th>내용</th>
+      <th>수익</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>M1~2</td>
+      <td>플랫폼 공개, 유튜브 콘텐츠 연계(“하버드 연구가 진짜 말하는 것”), 회원·설문 인프라(Supabase)</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>M2~3</td>
+      <td>근거 A·B 성분 큐레이션 판매(OEM 또는 위탁). 로트별 시험성적서 공개. 이해상충 고지</td>
+      <td>판매 마진</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>M6~9</td>
+      <td>n-of-1 개인 효과 검증 패키지(제품+위약 키트+주간 설문+리포트)</td>
+      <td>프리미엄</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>M9~12</td>
+      <td>실용 RCT 1건 사전등록(CRIS)·IRB. 결과 공개</td>
+      <td>신뢰 자산</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>M12+</td>
+      <td>B2B: 검진센터·약국용 추천 엔진 API, 건강 수준별 데이터 리포트, 전자책·강의</td>
+      <td>라이선스·콘텐츠</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="판매-원칙-jepumhtml에-사전-공개">판매 원칙 (jepum.html에 사전 공개)</h3>
+<ol>
+  <li>근거 A·B 성분만 판매, C 이하는 정보만</li>
+  <li>로트별 시험성적서 공개, 없으면 판매 중단</li>
+  <li>추천 엔진과 판매 분리, 비권장 항목 판매 금지</li>
+  <li>이해상충 문구 명시</li>
+  <li>판매 제품은 자체 연구로 검증, 부정 결과도 공개, 효과 없으면 중단</li>
+  <li>식약처 표시·광고 규정 준수</li>
+</ol>
+
+<h2 id="5-rd-설계-요약-상세-rndhtml">5. R&amp;D 설계 요약 (상세: rnd.html)</h2>
+
+<ul>
+  <li>0단계 데이터 인프라(M1~3) → 1단계 실사용 관찰(M3~6, 300명, IRB 신속심의) → 2단계 n-of-1(50명)·실용 RCT(200명, CRIS 사전등록) → 3단계 외부 검증(대학병원, 식약처 인체적용시험)</li>
+  <li>지표: 25(OH)D, 페리틴, B12, 오메가-3 지수, 혈압, HbA1c, 지질, 골밀도, MoCA-K, 주간 PRO(피로·수면·통증·기분)</li>
+  <li>DB: participants / health_profiles / regimens / outcomes_pro / labs / studies / study_arms / products (판매·연구 공용 participant_id, 개인식별정보 분리)</li>
+  <li>규제: 생명윤리법·공용 IRB, CRIS, 개인정보보호법(민감정보), 건강기능식품법·표시광고법, 의료법 27조, 식약처 인체적용시험 가이드, GMP</li>
+  <li>예산: 관찰 600만 원 · n-of-1 500만 원(매출 상쇄) · 실용 RCT 2,500~4,000만 원</li>
+</ul>
+
+<h2 id="6-유튜브-콘텐츠-연계-노모어매뉴얼">6. 유튜브 콘텐츠 연계 (노모어매뉴얼)</h2>
+
+<p>성공 공식 “누구나 아는 툴 + 아무도 모르는 활용법”을 영양제에 적용하면 “누구나 먹는 영양제 + 아무도 안 읽은 연구 원문”.</p>
+
+<ul>
+  <li>“하버드 20년 연구, 종합비타민 결론은 이겁니다” — NIH 39만 명 + COSMOS</li>
+  <li>“비타민 D, 한국인 절반이 결핍인데 먹으면 안 되는 사람” — KNHANES + VITAL</li>
+  <li>“오메가-3 먹다가 심방세동” — STRENGTH·35개 RCT</li>
+  <li>“흡연자가 절대 먹으면 안 되는 영양제 성분표” — ATBC·CARET</li>
+  <li>“영양제 고르는 5단계 체크리스트(시험성적서 요청하는 법)”</li>
+  <li>바이브코딩 각도: “이 추천 엔진, 클로드로 하루 만에 만들었습니다”(rules.js 시연) → 강의 연결</li>
+</ul>
+
+<h2 id="7-다음-할-일">7. 다음 할 일</h2>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />사이트명·도메인 확정 (현재 가칭 “근거영양”)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />약사·의사 감수 1인 섭외 (성분 카드·추천 규칙 검토)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Supabase 프로젝트: participants·health_profiles·outcomes_pro 테이블, 동의서 v1</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />공용 IRB 사전 문의</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />OEM/위탁 후보 3곳 시험성적서 요청</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />분기 근거 갱신 루틴(PubMed 검색어 저장)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />미확인 수치 원표 확인: KNHANES 2023 연령별 빈혈, 식약처 홍국 모나콜린 K 기준, 오메가-3·프로바이오틱스 시장 규모</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
