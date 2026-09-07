@@ -66,13 +66,9 @@
   <!-- STEP 3 -->
   <div class="section wiz-panel" data-step="3">
     <h2>3. 복용 약 · 알고 있는 검사 결과</h2>
-    <h3>복용 중인 약</h3>
-    <div class="chip-row">
-      <label class="chip"><input type="checkbox" name="m_anticoagulant">항응고제·항혈소판제(와파린·아스피린·클로피도그렐 등)</label>
-      <label class="chip"><input type="checkbox" name="m_metformin">메트포르민(당뇨약)</label>
-      <label class="chip"><input type="checkbox" name="m_ppi">위산억제제(PPI) 장기 복용</label>
-      <label class="chip"><input type="checkbox" name="m_antibiotic">지금 항생제 복용 중</label>
-    </div>
+    <h3>복용 중인 약 (해당하는 것 모두)</h3>
+    <div class="chip-row" id="drug-chips" style="gap:8px"></div>
+
     <h3>최근 검사에서 확인된 것</h3>
     <div class="chip-row">
       <label class="chip"><input type="checkbox" name="l_vitd_low">비타민 D 결핍(25(OH)D 20 ng/mL 미만)</label>
@@ -136,12 +132,19 @@
 <script src="data/studies.js"></script>
 <script src="data/conditions.js"></script>
 <script src="data/matrix.js"></script>
+<script src="data/drugs.js"></script>
+<script src="data/interactions.js"></script>
 <script src="data/rules.js"></script>
 <script>
 (function(){
   var step=1, TOTAL=4, form=document.getElementById('wiz');
   var steps=document.querySelectorAll('#steps .s'), panels=document.querySelectorAll('.wiz-panel');
   var esc=EBN.esc, SI={}; (window.EBN_STUDIES||[]).forEach(function(s){SI[s.id]=s;});
+  var DRUGS=window.EBN_DRUGS||[], picked={};
+  (function(){ var box=document.getElementById('drug-chips');
+    DRUGS.forEach(function(d){ box.insertAdjacentHTML('beforeend','<span class="drug-chip" data-id="'+d.id+'">'+esc(d.ko)+'<small>'+esc(d.ex.split(',')[0])+' · '+esc(d.use)+'</small></span>'); });
+    box.addEventListener('click', function(e){ var el=e.target.closest('.drug-chip'); if(!el) return; picked[el.dataset.id]=!picked[el.dataset.id]; el.classList.toggle('on', picked[el.dataset.id]); });
+  })();
   document.querySelectorAll('.chip input').forEach(function(i){ i.addEventListener('change',function(){ i.parentElement.classList.toggle('on', i.checked); }); });
   form.sex.addEventListener('change', function(){ document.getElementById('preg-wrap').hidden = form.sex.value==='M'; });
 
@@ -162,7 +165,8 @@
     return { age:+f.age.value, sex:f.sex.value, planning:F&&ck('planning'), pregnant:F&&ck('pregnant'), lactating:F&&ck('lactating'),
       smoker:ck('smoker'), lowSun:ck('lowSun'), lowFish:ck('lowFish'), vegan:ck('vegan'), poorDiet:ck('poorDiet'), exercise:ck('exercise'),
       cond:{ liver:ck('c_liver'), thyroid:ck('c_thyroid'), stones:ck('c_stones'), gout:ck('c_gout'), surgery:ck('c_surgery'), htn:ck('c_htn'), prediabetes:ck('c_prediabetes'), diabetes:ck('c_diabetes'), dyslip:ck('c_dyslip'), osteo:ck('c_osteo'), amd:ck('c_amd'), hf:ck('c_hf'), autoimmune:ck('c_autoimmune'), gi:ck('c_gi'), adenoma:ck('c_adenoma'), kidney:ck('c_kidney'), cancer_tx:ck('c_cancer_tx') },
-      meds:{ anticoagulant:ck('m_anticoagulant'), metformin:ck('m_metformin'), ppi:ck('m_ppi'), antibiotic:ck('m_antibiotic') },
+      drugs: picked,
+      meds:{ anticoagulant:!!(picked.warfarin||picked.doac||picked.antiplt), metformin:!!picked.metformin, ppi:!!picked.ppi, antibiotic:!!(picked.quinolone||picked.tetra||picked.abx_other) },
       lab:{ vitd_low:ck('l_vitd_low'), iron_low:ck('l_iron_low'), b12_low:ck('l_b12_low'), tg_high:ck('l_tg_high') },
       goal:{ cognition:ck('g_cognition'), immune:ck('g_immune'), bone:ck('g_bone'), eye:ck('g_eye'), sleep:ck('g_sleep'), muscle:ck('g_muscle'), joint:ck('g_joint'), skin:ck('g_skin'), gut:ck('g_gut'), bp:ck('g_bp'), longevity:ck('g_longevity') } };
   }

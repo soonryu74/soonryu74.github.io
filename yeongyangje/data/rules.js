@@ -209,11 +209,21 @@ window.EBN_RULES = (function () {
       if (r.flags.some(function (f) { return f.v === 'avoid'; }) && r.tier !== 'avoid') { r.tier = 'avoid'; r.title = r.title + ' — 내 상태에서 금기'; }
       else if (r.flags.length && r.tier === 'rec') { r.tier = 'cond'; }
     });
+    /* 복용 중인 약과의 상호작용 플래그 */
+    var IX = window.EBN_DRUG_IX || {}, DN = {}; (window.EBN_DRUGS || []).forEach(function (d) { DN[d.id] = d.ko; });
+    var myDrugs = Object.keys(p.drugs || {}).filter(function (k) { return p.drugs[k]; });
+    R.forEach(function (r) {
+      myDrugs.forEach(function (d) { var x = IX[r.ing] && IX[r.ing][d]; if (x && (x.v === 'avoid' || x.v === 'caution')) r.flags.push({ v: x.v, cond: DN[d] + ' 복용 중', why: x.why, src: (x.src || [])[0] }); });
+      if (r.flags.some(function (f) { return f.v === 'avoid'; }) && r.tier !== 'avoid') { r.tier = 'avoid'; if (r.title.indexOf('금기') < 0) r.title = r.title + ' — 내 상태에서 금기'; }
+    });
+
     /* 추천 목록에 없지만 내 상태에서 금기인 성분 → 피하세요 항목 추가 */
-    Object.keys(M).forEach(function (ing) {
+    var allIng = {}; Object.keys(M).forEach(function (k) { allIng[k] = 1; }); Object.keys(IX).forEach(function (k) { allIng[k] = 1; });
+    Object.keys(allIng).forEach(function (ing) {
       if (seenIng[ing]) return;
       var fl = [];
-      my.forEach(function (cid) { var x = M[ing][cid]; if (x && x.v === 'avoid') fl.push({ v: 'avoid', cond: CN[cid], why: x.why, src: (x.src || [])[0] }); });
+      my.forEach(function (cid) { var x = M[ing] && M[ing][cid]; if (x && x.v === 'avoid') fl.push({ v: 'avoid', cond: CN[cid], why: x.why, src: (x.src || [])[0] }); });
+      myDrugs.forEach(function (d) { var x = IX[ing] && IX[ing][d]; if (x && x.v === 'avoid') fl.push({ v: 'avoid', cond: DN[d] + ' 복용 중', why: x.why, src: (x.src || [])[0] }); });
       if (fl.length && window.EBN_INGREDIENTS[ing]) add({ tier: 'avoid', ing: ing, title: window.EBN_INGREDIENTS[ing].name + ' — 내 상태에서 금기', why: '아래 상태에서 피해야 할 성분입니다. 복용 중이라면 의사·약사와 상의하세요.', dose: '—', cite: [], flags: fl });
     });
 

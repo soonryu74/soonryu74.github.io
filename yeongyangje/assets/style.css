@@ -277,3 +277,25 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .cond-item a { font-size: .8rem; }
 .ing .mini { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 .ing .mini span { font-size: .72rem; padding: 1px 7px; border-radius: 6px; color: #fff; font-weight: 700; }
+
+/* ---------- 약물 상호작용 · 조합 · 타이밍 ---------- */
+.drug-chip { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 9px 15px; border: 1.5px solid var(--line-strong); border-radius: 12px; background: #fff; cursor: pointer; font-size: .95rem; font-weight: 700; color: var(--ink); transition: all .12s; }
+.drug-chip small { font-weight: 400; color: var(--muted); font-size: .76rem; }
+.drug-chip:hover { border-color: var(--teal); }
+.drug-chip.on { background: var(--teal); border-color: var(--teal); color: #fff; }
+.drug-chip.on small { color: #cfe7e5; }
+.pair { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; grid-template-columns: 76px 1fr; gap: 12px; align-items: start; }
+.pair .c { text-align: center; }
+.pair .names { font-weight: 800; color: var(--teal-ink); }
+.pair .how { display: inline-block; background: var(--teal-soft); color: var(--teal-dark); border-radius: 7px; padding: 2px 9px; font-size: .84rem; font-weight: 700; margin-top: 4px; }
+.pair p { margin: 4px 0 0; font-size: .9rem; color: var(--muted); }
+.time-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 12px; margin: 16px 0; }
+.time-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.time-card h4 { margin: 0 0 6px; font-size: 1.02rem; }
+.time-card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+.time-card .tags span { font-size: .76rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
+.t-meal { background: var(--amber-soft); color: var(--amber); }
+.t-empty { background: var(--blue-soft); color: var(--blue); }
+.t-any { background: var(--gray-soft); color: var(--gray); }
+.t-when { background: var(--teal-soft); color: var(--teal-dark); }
+.time-card p { margin: 0; font-size: .89rem; color: var(--muted); }
