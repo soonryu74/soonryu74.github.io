@@ -57,6 +57,7 @@ BOOK=book_v1.json OUT=역학조사관_1권.epub      python3 build_epub.py
 BOOK=book_v1.json OUT=역학조사관_1권_원고.docx node build_docx.js
 
 node build_proposal.js   # → 역학조사관_출간기획서.docx
+```
 
 - PDF 조판은 Paged.js + Chromium 인쇄 엔진 사용: 목차 쪽번호(target-counter),
   면주(짝수쪽 서명·홀수쪽 장 제목), 신국판 규격, Noto Serif CJK KR 본문.
