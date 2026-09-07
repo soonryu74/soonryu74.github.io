@@ -7,11 +7,13 @@
     ['index.html', '홈'],
     ['gyeollon.html', '핵심 결론'],
     ['seongbun.html', '성분별 근거'],
-    ['jilhwan.html', '질환별 먹어도 되나'],
+    ['jilhwan.html', '질환별 판정'],
+    ['bokyong.html', '약·복용법'],
+    ['saengae.html', '생애주기'],
     ['yeongu.html', '연구 DB'],
     ['chucheon.html', '내게 맞는 영양제'],
     ['jepum.html', '제품 고르는 법'],
-    ['rnd.html', 'R&D·연구'],
+    ['rnd.html', 'R&D'],
     ['about.html', '원칙·소개']
   ];
 

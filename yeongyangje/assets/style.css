@@ -277,3 +277,41 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .cond-item a { font-size: .8rem; }
 .ing .mini { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 .ing .mini span { font-size: .72rem; padding: 1px 7px; border-radius: 6px; color: #fff; font-weight: 700; }
+
+/* ---------- 약물 상호작용 · 조합 · 타이밍 ---------- */
+.drug-chip { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 9px 15px; border: 1.5px solid var(--line-strong); border-radius: 12px; background: #fff; cursor: pointer; font-size: .95rem; font-weight: 700; color: var(--ink); transition: all .12s; }
+.drug-chip small { font-weight: 400; color: var(--muted); font-size: .76rem; }
+.drug-chip:hover { border-color: var(--teal); }
+.drug-chip.on { background: var(--teal); border-color: var(--teal); color: #fff; }
+.drug-chip.on small { color: #cfe7e5; }
+.pair { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; grid-template-columns: 76px 1fr; gap: 12px; align-items: start; }
+.pair .c { text-align: center; }
+.pair .names { font-weight: 800; color: var(--teal-ink); }
+.pair .how { display: inline-block; background: var(--teal-soft); color: var(--teal-dark); border-radius: 7px; padding: 2px 9px; font-size: .84rem; font-weight: 700; margin-top: 4px; }
+.pair p { margin: 4px 0 0; font-size: .9rem; color: var(--muted); }
+.time-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 12px; margin: 16px 0; }
+.time-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.time-card h4 { margin: 0 0 6px; font-size: 1.02rem; }
+.time-card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+.time-card .tags span { font-size: .76rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
+.t-meal { background: var(--amber-soft); color: var(--amber); }
+.t-empty { background: var(--blue-soft); color: var(--blue); }
+.t-any { background: var(--gray-soft); color: var(--gray); }
+.t-when { background: var(--teal-soft); color: var(--teal-dark); }
+.time-card p { margin: 0; font-size: .89rem; color: var(--muted); }
+
+/* ---------- 생애주기 ---------- */
+.stage-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 24px; }
+.stage-nav a { padding: 10px 16px; border: 1.5px solid var(--line-strong); border-radius: 999px; background: #fff; font-weight: 700; font-size: .95rem; color: var(--ink); }
+.stage-nav a:hover, .stage-nav a.on { background: var(--teal); border-color: var(--teal); color: #fff; text-decoration: none; }
+.stage h2 { display: flex; align-items: center; gap: 10px; }
+.stage .lead { background: var(--teal-soft); border-left: 5px solid var(--teal); border-radius: 10px; padding: 14px 18px; margin: 10px 0 18px; }
+.ls-item { border: 1px solid var(--line); border-left: 6px solid var(--line-strong); border-radius: 12px; padding: 16px 18px; margin: 12px 0; background: #fff; }
+.ls-item.rec { border-left-color: #1b7f3a; } .ls-item.cond { border-left-color: #2f7fc1; } .ls-item.opt { border-left-color: #6c757d; } .ls-item.no { border-left-color: #b7791f; } .ls-item.avoid { border-left-color: #b3261e; background: #fff8f7; }
+.ls-item .ih { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 6px; }
+.ls-item h4 { margin: 0; font-size: 1.06rem; }
+.ls-item p { margin: 6px 0 0; }
+.ls-item .note { background: var(--amber-soft); border-radius: 8px; padding: 10px 14px; margin-top: 8px; font-size: .9rem; color: #6a5320; }
+.krdi { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+.krdi span { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: .87rem; }
+.krdi span b { color: var(--teal-dark); }
