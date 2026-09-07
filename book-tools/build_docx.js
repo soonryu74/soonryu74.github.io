@@ -63,7 +63,11 @@ children.push(
     children: [new TextRun({ text: book.subtitle, size: 26, color: "444444" })],
   }),
   new Paragraph({
-    alignment: AlignmentType.CENTER, spacing: { before: 3000 },
+    alignment: AlignmentType.CENTER, spacing: { before: 800 },
+    children: [new TextRun({ text: book.author, bold: true, size: 32 })],
+  }),
+  new Paragraph({
+    alignment: AlignmentType.CENTER, spacing: { before: 2400 },
     children: [new TextRun({ text: book.edition, size: 20, color: "777777" })],
   }),
   new Paragraph({ children: [new PageBreak()] }),

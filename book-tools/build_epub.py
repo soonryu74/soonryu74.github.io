@@ -21,9 +21,11 @@ p.noindent { text-indent: 0; }
 .part-page h2 { font-size: 1.5em; }
 .chapter h3 { font-size: 1.25em; margin: 3em 0 2.2em 0; }
 .titlepage { text-align: center; margin-top: 22%; }
+.titlepage p { text-align: center; text-indent: 0; }
 .titlepage .label { letter-spacing: .5em; font-size: .9em; color: #866; }
 .titlepage h1 { font-size: 2.4em; margin: .4em 0 .2em 0; letter-spacing: .1em; }
 .titlepage .sub { color: #555; margin-top: 1em; }
+.titlepage .byline { margin-top: 2.2em; font-size: 1.15em; font-weight: 700; letter-spacing: .3em; }
 .titlepage .edition { margin-top: 4em; font-size: .85em; color: #888; }
 .cover { text-align: center; margin: 0; }
 .cover img { max-width: 100%; max-height: 100%; }
@@ -46,7 +48,7 @@ tp = f"""<div class="titlepage" epub:type="titlepage">
 <p class="label noindent">장 편 소 설</p>
 <h1>{book['title']}</h1>
 <p class="sub noindent">{html.escape(book['subtitle'])}</p>
-<p class="edition noindent">{html.escape(book['edition'])}</p>
+<p class="byline noindent">{html.escape(book['author'])}</p>
 </div>"""
 docs.append(("title.xhtml", "속표지", xhtml("역학조사관", tp), True, None))
 

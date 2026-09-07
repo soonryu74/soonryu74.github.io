@@ -55,6 +55,7 @@ nav {
 nav .bookmark { padding: 0 22px 14px; border-bottom: 1px solid var(--line); }
 nav .bookmark .lbl { font-size: 11px; letter-spacing: .35em; color: var(--accent); }
 nav .bookmark h1 { font-size: 21px; font-weight: 900; letter-spacing: .05em; margin-top: 4px; }
+nav .bookmark .au { font-size: 12.5px; color: var(--ink-soft); letter-spacing: .2em; margin-top: 3px; }
 nav .vol { font-size: 12.5px; font-weight: 900; color: var(--accent); padding: 18px 22px 4px; letter-spacing: .05em; }
 nav .part { font-size: 12px; font-weight: 600; color: var(--ink-soft); padding: 10px 22px 2px; }
 nav button.ch {
@@ -146,7 +147,7 @@ function inline(t) {
 // 차례
 (function buildNav() {
   const nav = $("nav");
-  let html = '<div class="bookmark"><div class="lbl">장 편 소 설</div><h1>역학조사관</h1></div>';
+  let html = '<div class="bookmark"><div class="lbl">장 편 소 설</div><h1>역학조사관</h1><div class="au">서해원</div></div>';
   let lastVol = "", lastPart = "";
   CH.forEach((c, i) => {
     if (c.vol !== lastVol) { html += `<div class="vol">${esc(c.vol)}</div>`; lastVol = c.vol; lastPart = ""; }

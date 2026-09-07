@@ -38,9 +38,11 @@ strong {{ font-weight: 700; }} em {{ font-style: italic; }}
 
 /* 표제지 */
 .titlepage {{ page: frontmatter; page-break-after: always; text-align: center; }}
+.titlepage p {{ text-align: center; text-indent: 0; }}
 .titlepage .label {{ margin-top: 34mm; letter-spacing: .6em; font-size: 10pt; color: #7a6a4a; text-indent: 0; }}
 .titlepage h1 {{ font-size: 34pt; font-weight: 900; letter-spacing: .1em; margin: 14mm 0 6mm 0; }}
 .titlepage .sub {{ font-size: 11pt; color: #444; text-indent: 0; }}
+.titlepage .byline {{ margin-top: 26mm; font-size: 15pt; font-weight: 700; letter-spacing: .3em; text-indent: 0; }}
 .titlepage .edition {{ margin-top: 60mm; font-size: 9pt; color: #777; text-indent: 0; }}
 
 /* 판권지 */
@@ -84,7 +86,7 @@ A(f"""<div class="titlepage">
 <p class="label">장 편 소 설</p>
 <h1>{book['title']}</h1>
 <p class="sub">{html.escape(book['subtitle'])}</p>
-<p class="edition">{html.escape(book['edition'])}</p>
+<p class="byline">{html.escape(book['author'])}</p>
 </div>""")
 
 A(f"""<div class="copyright"><div class="box">
