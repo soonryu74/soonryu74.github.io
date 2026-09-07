@@ -20,6 +20,29 @@ jobs:
           bundle _2.5.23_ install
       - name: Build Site
         run: bundle exec jekyll build
+
+      # Korea Now (React/Vite 앱) — /korea-now/ 경로에 함께 배포
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: korea-now/package-lock.json
+      - name: Build Korea Now
+        working-directory: korea-now
+        # 기본값은 korea-now/.env.production. 시크릿이 있을 때만 그것이 우선.
+        # (빈 문자열 env는 .env.production을 덮어써 버리므로 값이 있을 때만 export)
+        env:
+          SB_URL: ${{ secrets.KOREA_NOW_SUPABASE_URL }}
+          SB_KEY: ${{ secrets.KOREA_NOW_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -n "$SB_URL" ]; then export VITE_SUPABASE_URL="$SB_URL"; fi
+          if [ -n "$SB_KEY" ]; then export VITE_SUPABASE_ANON_KEY="$SB_KEY"; fi
+          npm ci
+          npm run build
+          grep -q "supabase.co" dist/assets/index-*.js && echo "Supabase URL 포함됨" || echo "::warning::Supabase URL 없음 — DEMO 모드로 배포됨"
+          mkdir -p ../_site/korea-now
+          cp -r dist/. ../_site/korea-now/
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
