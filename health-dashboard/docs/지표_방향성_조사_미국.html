@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>US 공중보건 랭킹 프레임워크의 지표 “방향(desired direction)” 관례 조사 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="US 공중보건 랭킹 프레임워크의 지표 “방향(desired direction)” 관례 조사" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="US 공중보건 랭킹 프레임워크의 지표 “방향(desired direction)” 관례 조사" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"US 공중보건 랭킹 프레임워크의 지표 “방향(desired direction)” 관례 조사","url":"/health-dashboard/docs/%EC%A7%80%ED%91%9C_%EB%B0%A9%ED%96%A5%EC%84%B1_%EC%A1%B0%EC%82%AC_%EB%AF%B8%EA%B5%AD.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=d4536d642aa89b546bcf50fd85387fa48be437b0">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="us-공중보건-랭킹-프레임워크의-지표-방향desired-direction-관례-조사">US 공중보건 랭킹 프레임워크의 지표 “방향(desired direction)” 관례 조사</h1>
+
+<p>조사일: 2026-09-08. 출처는 각 기관 1차 자료(웹페이지·PDF). 검증하지 못한 항목은 <strong>not found</strong> 로 표기.</p>
+
+<h2 id="0-핵심-요약-프레임워크별-방향-처리-규칙">0. 핵심 요약 (프레임워크별 방향 처리 규칙)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>프레임워크</th>
+      <th>방향을 어떻게 정의하는가</th>
+      <th>맥락(무방향) 지표 취급</th>
+      <th>근거</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>County Health Rankings &amp; Roadmaps (CHR&amp;R, UWPHI) 2025</strong></td>
+      <td>Z-score 기반. “For most of our measures, a higher Z-score indicates poorer health (e.g., Children in Poverty). However, for some of our measures (e.g., High School Completion) a higher Z-score indicates better health. For this second set of measures, we apply reverse coding … multiplying by -1, so that a higher Z-score indicates poorer health for all measures.” 역코딩(=높을수록 좋음) Select 지표 11개를 명시 열거: Access to Exercise Opportunities, Broadband Access, Dentists, Flu Vaccinations, High School Completion, Library Access, Mammography Screening, Mental Health Providers, Primary Care Physicians, Social Associations, Some College. 나머지 Select 지표는 모두 “낮을수록 좋음”.</td>
+      <td>Select(가중치·점수 산출) / Additional(맥락, 점수 미산출) / Demographics 3층 구조. “Additional measures: measures which provide helpful community context but are not used in the determination of … summaries, or the calculation of Health Groups. Demographic data are included as additional measures to provide context for the place and its data.” Additional·Demographic 지표에는 역코딩 목록이 없음(= 공식 방향 부여 없음). 단, 트렌드 그래프 아이콘은 “Red – trending worse / Green – trending better”로 방향을 부여함(12 Select + 3 Additional 지표에만 제공).</td>
+      <td><a href="https://www.countyhealthrankings.org/sites/default/files/media/document/CHRR%20Technical%20Documentation%202025_2.pdf">Technical Documentation 2025 v3 (PDF)</a> pp.7-8, 12; <a href="https://www.countyhealthrankings.org/sites/default/files/media/document/2025%20Select%20and%20additional%20measures%2C%20data%20sources%20and%20years.pdf">2025 Select/Additional/Demographic measures (PDF)</a>; <a href="https://www.countyhealthrankings.org/health-data/methodology-and-sources/methods">Methods</a></td>
+    </tr>
+    <tr>
+      <td><strong>CDC PLACES</strong></td>
+      <td>방향 플래그를 명시적으로 제공하지 <strong>않음</strong>. 모든 지표가 “prevalence(유병률/보고율)”이며, 카테고리 명칭으로 방향이 암시됨: Health Outcomes·Health Risk Behaviors·Health Status·Disabilities·Health-Related Social Needs·Non-Medical Factors 는 모두 부정적 상태(예: “Lack of health insurance”, “No leisure-time physical activity”, “Fair or poor self-rated health”)로 정의되어 높을수록 나쁨; Prevention 은 “Routine checkup”, “Mammography use”, “Visited dentist” 등 서비스 이용률로 정의되어 높을수록 좋음. 단 Prevention 안의 “Lack of health insurance”는 예외(낮을수록 좋음). FAQ: “The data should not be used for ranking the overall health of any county…” (종합 점수·랭킹 없음).</td>
+      <td>인구·사회 맥락은 “Non-Medical Factors”(ACS 기반 9개: ≥65세 인구비율, 무광대역, 과밀주거, 주거비부담, 무고졸, 150% 빈곤선 미만, 인종·민족 소수자, 한부모가구, 실업)로 분리. 이 중 “Persons aged ≥65 years”와 “Persons of racial or ethnic minority status”는 명백한 인구 맥락 지표이나 PLACES 는 방향을 명시하지 않음.</td>
+      <td><a href="https://www.cdc.gov/places/measure-definitions/index.html">Measure definitions index</a>; <a href="https://www.cdc.gov/places/measure-definitions/health-outcomes.html">Health outcomes</a>; <a href="https://www.cdc.gov/places/measure-definitions/prevention.html">Prevention</a>; <a href="https://www.cdc.gov/places/measure-definitions/health-risk-behaviors.html">Health risk behaviors</a>; <a href="https://www.cdc.gov/places/measure-definitions/health-status.html">Health status</a>; <a href="https://www.cdc.gov/places/measure-definitions/disability.html">Disability</a>; <a href="https://www.cdc.gov/places/measure-definitions/health-related-social-needs.html">Health-related social needs</a>; <a href="https://www.cdc.gov/places/measure-definitions/non-medical-factors.html">Non-medical factors</a>; <a href="https://www.cdc.gov/places/faqs/using-data/index.html">FAQ Using the data</a>; <a href="https://www.cdc.gov/places/about/index.html">About</a></td>
+    </tr>
+    <tr>
+      <td><strong>Healthy People 2030 (ODPHP/NCHS)</strong></td>
+      <td>모든 objective 제목이 동사로 방향을 선언: “Increase …” / “Reduce …” / “Decrease …” / (드물게) “Maintain …”, “Eliminate …”. NCHS 방법론: “because Healthy People 2030 objectives have a desired direction (increase or decrease), the confidence level of a one-sided prediction interval … can be used …”. 진행상태 판정도 방향 기준: “When the desired direction is an increase, an objective is considered to have met or exceeded its target … if its most recent value is at or above the … target”; “When the desired direction is a decrease … at or below the … target”.</td>
+      <td>인구·기후 등 순수 맥락 지표는 objective 로 존재하지 않음(objective 는 모두 개선 가능 항목). “Maintain the baseline” 목표설정법은 “an objective is already at a desired level nationally or … expected to move in an undesirable direction”일 때만 사용.</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/data-sources-and-methods/target-setting-methods">Target-setting methods</a>; <a href="https://www.cdc.gov/nchs/healthy-people/hp2030/methods.html">NCHS HP2030 methods</a>; <a href="https://odphp.health.gov/healthypeople/objectives-and-data/about-objectives">About objectives</a></td>
+    </tr>
+    <tr>
+      <td><strong>America’s Health Rankings (AHR, United Health Foundation) 2025 Annual Report</strong></td>
+      <td>모든 가중 지표에 “association with health”(=방향) 부여. “Measures positively associated with population health, such as volunteerism and flu vaccination, were multiplied by 1. In contrast, measures with a negative association, such as smoking and premature death, were multiplied by -1.” 점수는 z-score(±2.00 캡). 방향·가중치 표는 웹의 “Measures, Weights and Direction” 페이지에 이미지로 게시.</td>
+      <td>99개 지표 중 50개 가중(랭킹) + 49개 비가중. Measures Table 의 각주: “* Unweighted measure, excluded from the Overall and category composite measures.” <strong>Demographics</strong> 섹션(Total Population, Population – Age &lt;18, Ages 18-64, Age 65+, Rural Population)은 전부 비가중(*) = 맥락 지표.</td>
+      <td><a href="https://www.americashealthrankings.org/about/methodology/rankings">Ranking methodology</a>; <a href="https://www.americashealthrankings.org/about/methodology/measures-weights-and-direction">Measures, Weights and Direction</a>; <a href="https://assets.americashealthrankings.org/ahr_2025annual_measurestable_final-web.pdf">2025 Annual Report Measures Table (PDF)</a>; <a href="https://assets.americashealthrankings.org/ahr_2025annual_comprehensivereport_final-web.pdf">2025 Annual Report (PDF)</a> (Methodology 절); <a href="https://www.americashealthrankings.org/about/methodology/measures-selection-and-changes">Measures selection &amp; changes</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="a-프레임워크별-지표-방향표">A. 프레임워크별 지표 방향표</h2>
+
+<h3 id="a-1-county-health-rankings--roadmaps-2025">A-1. County Health Rankings &amp; Roadmaps 2025</h3>
+
+<p>방향 근거: Technical Documentation 2025 v3 p.7-8 (“Reverse Coding of Some Measures”) + 2025 measures PDF. Select 지표는 역코딩 목록에 있으면 <strong>높을수록 좋음</strong>, 없으면 <strong>낮을수록 좋음</strong>(문서가 명시). Additional/Demographic 지표는 CHR&amp;R 이 공식 방향 코드를 제공하지 않으므로 아래 “추정” 표기는 각 지표 페이지의 “why it matters” 서술에 근거.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>지표 (CHR&amp;R 명칭)</th>
+      <th>층위</th>
+      <th>방향 관례</th>
+      <th>출처</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Premature Death (YPLL &lt;75/100k)</td>
+      <td>Select 50%</td>
+      <td>낮을수록 좋음 (역코딩 목록에 없음)</td>
+      <td>Tech doc p.7-8</td>
+    </tr>
+    <tr>
+      <td>Poor Physical Health Days / Poor Mental Health Days / Poor or Fair Health / Low Birth Weight</td>
+      <td>Select</td>
+      <td>낮을수록 좋음</td>
+      <td>동상</td>
+    </tr>
+    <tr>
+      <td>Flu Vaccinations</td>
+      <td>Select</td>
+      <td><strong>높을수록 좋음</strong> (역코딩)</td>
+      <td>Tech doc p.7</td>
+    </tr>
+    <tr>
+      <td>Access to Exercise Opportunities</td>
+      <td>Select</td>
+      <td><strong>높을수록 좋음</strong> (역코딩)</td>
+      <td>Tech doc p.7; <a href="https://www.countyhealthrankings.org/health-data/community-conditions/health-infrastructure/health-promotion-and-harm-reduction/access-to-exercise-opportunities">measure page</a></td>
+    </tr>
+    <tr>
+      <td>Food Environment Index</td>
+      <td>Select</td>
+      <td>낮을수록 좋음? — <strong>주의</strong>: 역코딩 목록에 없으나 지수는 0(worst)-10(best)이므로 실제로는 높을수록 좋음. 문서 열거와 불일치 → 문서 원문만 인용하고 별도 확인 권고</td>
+      <td>Tech doc p.7</td>
+    </tr>
+    <tr>
+      <td>Primary Care Physicians / Dentists / Mental Health Providers</td>
+      <td>Select</td>
+      <td><strong>높을수록 좋음</strong> (역코딩). 단 웹 표시값은 “ratio of population to providers”(예: 2,500:1)로 낮을수록 좋음. MHP 페이지: “Higher ratios indicate fewer providers relative to population”</td>
+      <td>Tech doc p.7-8; <a href="https://www.countyhealthrankings.org/health-data/community-conditions/health-infrastructure/clinical-care/mental-health-providers">MHP page</a></td>
+    </tr>
+    <tr>
+      <td>Preventable Hospital Stays (ACSC/100k Medicare)</td>
+      <td>Select</td>
+      <td>낮을수록 좋음</td>
+      <td>Tech doc; <a href="https://www.countyhealthrankings.org/health-data/community-conditions/health-infrastructure/clinical-care/preventable-hospital-stays">page</a></td>
+    </tr>
+    <tr>
+      <td>Mammography Screening</td>
+      <td>Select</td>
+      <td><strong>높을수록 좋음</strong> (역코딩)</td>
+      <td>Tech doc p.7</td>
+    </tr>
+    <tr>
+      <td>Uninsured</td>
+      <td>Select</td>
+      <td>낮을수록 좋음</td>
+      <td>Tech doc</td>
+    </tr>
+    <tr>
+      <td>Severe Housing Problems / Driving Alone to Work / Long Commute</td>
+      <td>Select</td>
+      <td>낮을수록 좋음</td>
+      <td>Tech doc</td>
+    </tr>
+    <tr>
+      <td>Air Pollution: Particulate Matter (PM2.5 µg/m³)</td>
+      <td>Select 8%</td>
+      <td>낮을수록 좋음</td>
+      <td>Tech doc; <a href="https://www.countyhealthrankings.org/health-data/community-conditions/physical-environment/air-water-and-land/air-pollution-particulate-matter">page</a></td>
+    </tr>
+    <tr>
+      <td>Drinking Water Violations</td>
+      <td>Select</td>
+      <td>낮을수록 좋음</td>
+      <td>Tech doc</td>
+    </tr>
+    <tr>
+      <td>Broadband Access / Library Access</td>
+      <td>Select</td>
+      <td><strong>높을수록 좋음</strong> (역코딩)</td>
+      <td>Tech doc p.7</td>
+    </tr>
+    <tr>
+      <td>Some College / High School Completion</td>
+      <td>Select</td>
+      <td><strong>높을수록 좋음</strong> (역코딩)</td>
+      <td>Tech doc p.7-8</td>
+    </tr>
+    <tr>
+      <td>Unemployment / Income Inequality / Children in Poverty / Injury Deaths / Child Care Cost Burden</td>
+      <td>Select</td>
+      <td>낮을수록 좋음</td>
+      <td>Tech doc</td>
+    </tr>
+    <tr>
+      <td>Social Associations</td>
+      <td>Select</td>
+      <td><strong>높을수록 좋음</strong> (역코딩)</td>
+      <td>Tech doc p.8</td>
+    </tr>
+    <tr>
+      <td>Life Expectancy</td>
+      <td>Additional</td>
+      <td>공식 코드 없음; 성격상 높을수록 좋음</td>
+      <td>measures PDF p.2</td>
+    </tr>
+    <tr>
+      <td>Premature Age-Adjusted Mortality / Child Mortality / Infant Mortality / Suicides / Drug Overdose Deaths / Homicides / Firearm Fatalities / Motor Vehicle Crash Deaths / Alcohol-Impaired Driving Deaths</td>
+      <td>Additional</td>
+      <td>공식 코드 없음; 성격상 낮을수록 좋음</td>
+      <td>measures PDF p.2-3; <a href="https://www.countyhealthrankings.org/health-data/community-conditions/social-and-economic-factors/safety-and-social-support/motor-vehicle-crash-deaths">MV crash deaths page</a></td>
+    </tr>
+    <tr>
+      <td>Frequent Physical/Mental Distress, Diabetes Prevalence, HIV Prevalence, Adult Obesity, Adult Smoking, Physical Inactivity, Excessive Drinking, Insufficient Sleep, Teen Births, STI, Food Insecurity, Limited Access to Healthy Foods, Feelings of Loneliness, Lack of Social and Emotional Support</td>
+      <td>Additional</td>
+      <td>공식 코드 없음; 성격상 낮을수록 좋음 (2025년에 Adult Obesity·Smoking·Physical Inactivity·Excessive Drinking·Teen Births·STI 등이 Select→Additional 로 이동)</td>
+      <td>measures PDF p.2-3</td>
+    </tr>
+    <tr>
+      <td>Uninsured Adults / Uninsured Children</td>
+      <td>Additional</td>
+      <td>낮을수록 좋음(트렌드 그래프 제공)</td>
+      <td>Tech doc p.12</td>
+    </tr>
+    <tr>
+      <td>Other Primary Care Providers</td>
+      <td>Additional</td>
+      <td>높을수록 좋음(성격)</td>
+      <td>measures PDF</td>
+    </tr>
+    <tr>
+      <td>Traffic Volume (per meter of major roadway)</td>
+      <td>Additional</td>
+      <td>낮을수록 좋음(성격; “associated with increased exposures to air and noise pollution”)</td>
+      <td><a href="https://www.countyhealthrankings.org/health-data/community-conditions/physical-environment/housing-and-transportation/traffic-volume">page</a></td>
+    </tr>
+    <tr>
+      <td>Homeownership (% owner-occupied)</td>
+      <td>Additional</td>
+      <td>높을수록 좋음(성격; “Homeownership is associated with better health”)</td>
+      <td><a href="https://www.countyhealthrankings.org/health-data/community-conditions/physical-environment/housing-and-transportation/homeownership">page</a></td>
+    </tr>
+    <tr>
+      <td>Severe Housing Cost Burden</td>
+      <td>Additional</td>
+      <td>낮을수록 좋음(성격)</td>
+      <td>measures PDF</td>
+    </tr>
+    <tr>
+      <td>Access to Parks</td>
+      <td>Additional</td>
+      <td>높을수록 좋음(성격)</td>
+      <td>measures PDF p.2</td>
+    </tr>
+    <tr>
+      <td>Adverse Climate Events</td>
+      <td>Additional</td>
+      <td>페이지 명시: “This measure is not intended to track progress” → <strong>맥락</strong></td>
+      <td><a href="https://www.countyhealthrankings.org/health-data/community-conditions/physical-environment/climate/adverse-climate-events">page</a></td>
+    </tr>
+    <tr>
+      <td>Census Participation / Voter Turnout / High School Graduation / Reading·Math Scores / School Funding Adequacy / Median Household Income / Living Wage / Child Care Centers</td>
+      <td>Additional</td>
+      <td>높을수록 좋음(성격)</td>
+      <td>measures PDF p.2-3</td>
+    </tr>
+    <tr>
+      <td>School Segregation / Residential Segregation / Gender Pay Gap / Children Eligible for Free or Reduced Price Lunch / Disconnected Youth</td>
+      <td>Additional</td>
+      <td>낮을수록 좋음(성격)</td>
+      <td>measures PDF p.3</td>
+    </tr>
+    <tr>
+      <td><strong>Demographics</strong>: Population, % Below 18, % 65 and Older, % Female, % AIAN/Asian/Hispanic/NHOPI/NH Black/NH White, % Not Proficient in English, % Rural, % Disability: Functional Limitations, Children in Single-Parent Households</td>
+      <td>Demographics</td>
+      <td><strong>맥락(무방향)</strong> — “Demographic data are included as additional measures to provide context”. % 65+ 페이지: “A Demographics measure”; Population 페이지: “Population size provides context used to measure health…”; % Rural 페이지: “A Demographics measure”; Disability 페이지: “A Demographics measure”. 2025년부터 Children in Single-Parent Households 도 Demographics 섹션에 수록</td>
+      <td>measures PDF p.3; <a href="https://www.countyhealthrankings.org/health-data/community-conditions/demographics/demographics/65-and-older">%65+</a>; <a href="https://www.countyhealthrankings.org/health-data/community-conditions/demographics/demographics/rural">%Rural</a>; <a href="https://www.countyhealthrankings.org/health-data/community-conditions/demographics/demographics/population">Population</a>; <a href="https://www.countyhealthrankings.org/health-data/community-conditions/demographics/demographics/disability-functional-limitations">Disability</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="a-2-cdc-places-2024-release-49-measures">A-2. CDC PLACES (2024 release, 49 measures)</h3>
+
+<p>PLACES 는 방향 필드를 제공하지 않음. 아래 “방향”은 지표 정의(부정 상태 vs 서비스 이용)에서 도출한 관례이며, 원문에 “higher is better/worse”라는 문구는 <strong>없음</strong>(FAQ 및 PMC 논문에서도 명시 문구 not found).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>카테고리</th>
+      <th>지표</th>
+      <th>정의 성격 → 방향 관례</th>
+      <th>출처</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Health Outcomes (12)</td>
+      <td>Arthritis, Current asthma, High blood pressure, Cancer (non-skin)/melanoma, High cholesterol (screened), COPD, Coronary heart disease, Depression, Diagnosed diabetes, Obesity, All teeth lost (≥65), Stroke (CKD 는 2024 중단)</td>
+      <td>“ever told by a doctor…” 유병률 → 낮을수록 좋음</td>
+      <td><a href="https://www.cdc.gov/places/measure-definitions/health-outcomes.html">health-outcomes</a></td>
+    </tr>
+    <tr>
+      <td>Prevention (7)</td>
+      <td>Routine checkup past year; Dentist visit past year; Taking BP medicine (among HTN); Cholesterol screening; Mammography (50-74); Colorectal screening (45-75); <strong>Lack of health insurance (18-64)</strong></td>
+      <td>서비스 이용률 → 높을수록 좋음. 예외 Lack of health insurance → 낮을수록 좋음</td>
+      <td><a href="https://www.cdc.gov/places/measure-definitions/prevention.html">prevention</a></td>
+    </tr>
+    <tr>
+      <td>Health Risk Behaviors (4)</td>
+      <td>Binge drinking; Current smoking; No leisure-time physical activity; Short sleep</td>
+      <td>부정 행동 → 낮을수록 좋음</td>
+      <td><a href="https://www.cdc.gov/places/measure-definitions/health-risk-behaviors.html">health-risk-behaviors</a></td>
+    </tr>
+    <tr>
+      <td>Health Status (3)</td>
+      <td>Frequent mental distress; Frequent physical distress; Fair or poor self-rated health</td>
+      <td>부정 상태 → 낮을수록 좋음</td>
+      <td><a href="https://www.cdc.gov/places/measure-definitions/health-status.html">health-status</a></td>
+    </tr>
+    <tr>
+      <td>Disabilities (7)</td>
+      <td>Any disability; Hearing; Vision; Cognitive; Mobility; Self-care; Independent living</td>
+      <td>유병률 → 관례상 낮을수록 좋음(단 인구특성 성격도 있음)</td>
+      <td><a href="https://www.cdc.gov/places/measure-definitions/disability.html">disability</a></td>
+    </tr>
+    <tr>
+      <td>Health-Related Social Needs (7)</td>
+      <td>Loneliness; Food stamps receipt; Food insecurity; Housing insecurity; Utility shutoff threat; Lack of reliable transportation; Lack of social/emotional support</td>
+      <td>부정 상태 → 낮을수록 좋음</td>
+      <td><a href="https://www.cdc.gov/places/measure-definitions/health-related-social-needs.html">HRSN</a></td>
+    </tr>
+    <tr>
+      <td>Non-Medical Factors (9, ACS)</td>
+      <td><strong>Persons aged ≥65 years</strong>; No broadband; Crowding; Housing cost burden; No HS diploma (≥25); Below 150% poverty; <strong>Racial/ethnic minority status</strong>; Single-parent households; Unemployment (≥16, labor force)</td>
+      <td>대부분 부정 상태 → 낮을수록 좋음. 굵게 표시한 2개는 인구 구성 → <strong>맥락</strong> (PLACES 는 방향 미명시)</td>
+      <td><a href="https://www.cdc.gov/places/measure-definitions/non-medical-factors.html">non-medical-factors</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="a-3-healthy-people-2030-관련-objective-발췌-방향--제목-동사">A-3. Healthy People 2030 (관련 objective 발췌; 방향 = 제목 동사)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Objective (ID)</th>
+      <th>방향</th>
+      <th>출처</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Increase the proportion of people with a usual source of care (AHS-07)</td>
+      <td>증가=좋음</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/health-care-access-and-quality">Health care access &amp; quality</a></td>
+    </tr>
+    <tr>
+      <td>Increase the proportion of adults who get recommended evidence-based preventive health care (AHS-08)</td>
+      <td>증가</td>
+      <td>동상</td>
+    </tr>
+    <tr>
+      <td>Reduce the proportion of people who can’t get medical care when they need it (AHS-04) / dental care (AHS-05) / prescription medicines (AHS-06)</td>
+      <td>감소</td>
+      <td>동상</td>
+    </tr>
+    <tr>
+      <td>Increase the proportion of people with health insurance (AHS-01)</td>
+      <td>증가</td>
+      <td>동상</td>
+    </tr>
+    <tr>
+      <td>Increase the ability of primary care and behavioral health professionals to provide more high-quality care (AHS-R01, research objective)</td>
+      <td>증가 (의사 수 per population 자체를 목표로 하는 core objective 는 <strong>not found</strong>)</td>
+      <td>동상</td>
+    </tr>
+    <tr>
+      <td>Reduce the proportion of emergency department visits with a longer wait time than recommended (AHS-09)</td>
+      <td>감소</td>
+      <td>동상</td>
+    </tr>
+    <tr>
+      <td>Reduce heart failure hospitalizations in adults (HDS-09); Reduce the rate of hospital admissions for diabetes among older adults (OA-05), UTI (OA-07), pneumonia (OA-06), pressure ulcer (OA-04); Reduce hospitalizations for asthma (RD-D01~D03), COPD (RD-D04); Reduce the proportion of preventable hospitalizations in older adults with dementia (DIA-02); Reduce ED visits for asthma (RD-02/03), COPD (RD-06), falls (OA-03), nonfatal injuries (IVP-02/04), self-harm (IVP-19)</td>
+      <td>감소 (병원 이용은 “예방가능/회피가능”한 경우에 한해 감소 목표)</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/hospital-and-emergency-services">Hospital &amp; emergency services</a></td>
+    </tr>
+    <tr>
+      <td>Increase the proportion of females who get screened for breast cancer (C-05), cervical (C-09), adults colorectal (C-07), lung (C-03)</td>
+      <td>증가</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/preventive-care">Preventive care</a></td>
+    </tr>
+    <tr>
+      <td>Increase use of the oral health care system (OH-08)</td>
+      <td>증가</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/oral-conditions">Oral conditions</a></td>
+    </tr>
+    <tr>
+      <td>Reduce the proportion of adults aged 45+ with moderate and severe periodontitis (OH-06); with active or untreated tooth decay (OH-03); lost all teeth (OH-05)</td>
+      <td>감소</td>
+      <td>동상</td>
+    </tr>
+    <tr>
+      <td>Reduce the proportion of adults with high blood pressure (HDS-04); Increase control of high blood pressure (HDS-05)</td>
+      <td>감소 / 증가</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/heart-disease-and-stroke/reduce-proportion-adults-high-blood-pressure-hds-04">HDS-04</a></td>
+    </tr>
+    <tr>
+      <td>Reduce the number of diabetes cases diagnosed yearly (D-01); Reduce the proportion of adults who don’t know they have prediabetes (D-02); Reduce A1c&gt;9% (D-03)</td>
+      <td>감소</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/diabetes">Diabetes</a></td>
+    </tr>
+    <tr>
+      <td>Reduce the overall cancer death rate (C-01) + 부위별 사망률 감소(C-02/04/06/08); Increase 5-year survivors (C-11)</td>
+      <td>감소 / 증가 (암 <strong>발생/진료인원</strong> 자체를 줄이는 objective 는 not found; 사망률·검진에 초점)</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/cancer">Cancer</a></td>
+    </tr>
+    <tr>
+      <td>Reduce the proportion of adults with arthritis who have moderate or severe joint pain (A-01) / limits activities (A-02) / limits work (A-03)</td>
+      <td>감소 (관절염 유병률 objective 는 not found)</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/arthritis">Arthritis</a></td>
+    </tr>
+    <tr>
+      <td>Reduce the suicide rate (MHMD-01); Increase the proportion of adults with depression who get treatment (MHMD-05); with serious mental illness who get treatment (MHMD-04)</td>
+      <td>감소 / 증가 (정신질환 <strong>치료 이용</strong>은 증가가 목표)</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/mental-health-and-mental-disorders">MHMD</a></td>
+    </tr>
+    <tr>
+      <td>People with disabilities: DH-01 Reduce … delay preventive care because of cost; DH-02 Reduce … serious psychological distress; DH-04 Increase homes with entrance without steps</td>
+      <td>장애인 <strong>비율</strong> 자체에 대한 objective 는 <strong>not found</strong>(장애인은 대상 집단으로만 취급)</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/people-disabilities">People with disabilities</a></td>
+    </tr>
+    <tr>
+      <td>Increase employment in working-age people (SDOH-02, LHI); Reduce the proportion of people living in poverty (SDOH-01); Reduce families spending &gt;30% income on housing (SDOH-04)</td>
+      <td>증가 / 감소</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/economic-stability">Economic stability</a>; <a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/economic-stability/increase-employment-working-age-people-sdoh-02">SDOH-02</a></td>
+    </tr>
+    <tr>
+      <td>Reduce the number of days people are exposed to unhealthy air (EH-01, AQI 기반); Increase the proportion of people whose water supply meets Safe Drinking Water Act regulations (EH-03); Reduce diseases and deaths related to heat (EH-D02)</td>
+      <td>감소 / 증가 / 감소</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/environmental-health">Environmental health</a></td>
+    </tr>
+    <tr>
+      <td>Reduce deaths from motor vehicle crashes (IVP-06); Reduce the proportion of deaths of car passengers who weren’t buckled in (IVP-07); Reduce MV crash deaths involving a drunk driver (SU-11); Increase adults who walk or bike to get places (PA-10); Increase trips to work made by mass transit (EH-02)</td>
+      <td>감소 / 감소 / 감소 / 증가 / 증가. <strong>안전벨트 착용률 증가 objective 는 HP2030 에 not found</strong> (HP2020 IVP-15 “Increase use of safety belts”는 존재했음)</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/transportation">Transportation</a>; <a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/injury-prevention/reduce-proportion-deaths-car-passengers-who-werent-buckled-ivp-07">IVP-07</a>; <a href="https://www.cdc.gov/nchs/data/hpdata2020/HP2020MCR-C24-IVP.pdf">HP2020 midcourse IVP</a></td>
+    </tr>
+    <tr>
+      <td>Family planning: Reduce pregnancies in adolescents (FP-03); Reduce the proportion of unintended pregnancies (FP-01); Increase … use effective birth control (FP-10)</td>
+      <td>감소 / 감소 / 증가. <strong>합계출산율·조출생률 objective 는 not found</strong></td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/family-planning">Family planning</a></td>
+    </tr>
+    <tr>
+      <td>Increase the proportion of adults with broadband internet (HC/HIT-05); Increase smoke-free homes (TU-18)</td>
+      <td>증가</td>
+      <td><a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/neighborhood-and-built-environment">Neighborhood &amp; built environment</a></td>
+    </tr>
+    <tr>
+      <td>Increase the proportion of people who get the flu vaccine every year (IID-09, LHI); Increase adults doing enough aerobic physical activity (PA-02/05)</td>
+      <td>증가</td>
+      <td>검색 결과 <a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/vaccination/increase-proportion-people-who-get-flu-vaccine-every-year-iid-09/data-methodology">IID-09</a>, <a href="https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/physical-activity/increase-proportion-adults-who-do-enough-aerobic-physical-activity-substantial-health-benefits-pa-02">PA-02</a></td>
+    </tr>
+    <tr>
+      <td>인구밀도·인구증가율·고령인구비율·평균연령·도시화율·산림·기온·강수·1인가구·주택소유·빈집·노후주택·상하수도보급률(EH-03 은 수질 규제 준수율)·교원당 학생수·재정자립도·사업체수·1인당 진료비</td>
+      <td><strong>not found</strong> (objective 없음)</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="a-4-americas-health-rankings-2025-annual-report-99-measures-50-weighted--49-unweighted">A-4. America’s Health Rankings 2025 Annual Report (99 measures: 50 weighted + 49 unweighted)</h3>
+
+<p>방향 근거: 보고서 Methodology “Measures positively associated with population health … multiplied by 1 … negative association … multiplied by -1”. 지표별 +/- 표는 웹에 이미지로만 제공되어 텍스트 추출 불가 → 아래 방향은 (i) 방법론 문장에 예시된 지표(volunteerism, flu vaccination = +; smoking, premature death = −), (ii) 지표 정의의 성격, (iii) 개별 measure 페이지 서술로 판단. 비가중(*) 여부는 Measures Table PDF 원문.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>카테고리 / 지표</th>
+      <th>가중 여부</th>
+      <th>방향 관례</th>
+      <th>출처</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Social &amp; Economic: Firearm Deaths*, Homicide, Occupational Fatalities</td>
+      <td>Homicide·Occ.Fatalities 가중</td>
+      <td>낮을수록 좋음(−)</td>
+      <td>Measures Table p.1</td>
+    </tr>
+    <tr>
+      <td>Public Health Funding (state $ per person)</td>
+      <td>가중</td>
+      <td>높을수록 좋음(+)</td>
+      <td>p.1</td>
+    </tr>
+    <tr>
+      <td>Economic Hardship Index — “normalized values are 1 to 100, with a higher value indicating worse economic conditions” (구성: crowded housing, <strong>dependency(&lt;18 or &gt;64 인구비율)</strong>, education, income, poverty, unemployment)</td>
+      <td>가중</td>
+      <td>낮을수록 좋음(−) — 원문이 방향을 직접 명시한 유일한 사례</td>
+      <td>p.1</td>
+    </tr>
+    <tr>
+      <td>Crowded Housing<em>, Dependency (Ages &lt;18 or &gt;64)</em>, Less Than HS Education<em>, Per Capita Income</em>, Poverty<em>, Unemployment</em>, Homeownership<em>, Homeownership Racial Disparity</em></td>
+      <td>비가중(지수 구성요소)</td>
+      <td>성격상: Per Capita Income·Homeownership 높을수록 좋음; 나머지 낮을수록 좋음. Dependency 는 지수 안에서 “높을수록 경제조건 악화” 요소</td>
+      <td>p.1-2</td>
+    </tr>
+    <tr>
+      <td>Food Insecurity, Income Inequality (80/20 ratio)</td>
+      <td>가중</td>
+      <td>낮을수록 좋음</td>
+      <td>p.2</td>
+    </tr>
+    <tr>
+      <td>Fourth Grade Reading Proficiency, High School Completion, High School Graduation*, High-Speed Internet, Volunteerism, Voter Participation (Average)</td>
+      <td>가중(*제외)</td>
+      <td>높을수록 좋음(+; volunteerism 은 방법론 예시)</td>
+      <td>p.2</td>
+    </tr>
+    <tr>
+      <td>Adverse Childhood Experiences, Neighborhood Racial/Ethnic Segregation, Residential Segregation – Black/White</td>
+      <td>가중</td>
+      <td>낮을수록 좋음</td>
+      <td>p.2</td>
+    </tr>
+    <tr>
+      <td>Physical Environment: Air Pollution (PM2.5 µg/m³), Drinking Water Violations, Drive Alone to Work, Housing With Lead Risk, Severe Housing Problems, Climate Risks<em>, Heat and Worker Health</em>, Heat-Coded ED Visits<em>, Homelessness</em>, Housing Cost Burden<em>, Transportation Health Risks</em>, Transportation Energy Use*</td>
+      <td>가중(*제외)</td>
+      <td>낮을수록 좋음</td>
+      <td>p.3</td>
+    </tr>
+    <tr>
+      <td>Water Fluoridation, Climate Policies, Smoke-Free Policies<em>, Renewable Energy</em></td>
+      <td>가중(*제외)</td>
+      <td>높을수록 좋음</td>
+      <td>p.3</td>
+    </tr>
+    <tr>
+      <td>Clinical Care: Avoided Care Due to Cost, Uninsured, Preventable Hospitalizations (PQI 90 /100k Medicare FFS)</td>
+      <td>가중</td>
+      <td>낮을수록 좋음</td>
+      <td>p.4-5; <a href="https://www.americashealthrankings.org/explore/measures/prev_hosp_b">Preventable Hospitalizations page</a></td>
+    </tr>
+    <tr>
+      <td>Dental Care Providers /100k, Mental Health Providers /100k, Primary Care Providers /100k</td>
+      <td>가중</td>
+      <td><strong>높을수록 좋음</strong> (PCP 페이지: 1위 Massachusetts 400.2, 50위 Texas 225.0 → 높은 값이 상위 순위)</td>
+      <td>p.4; <a href="https://www.americashealthrankings.org/explore/measures/PCP_NPPES">PCP page</a></td>
+    </tr>
+    <tr>
+      <td>Cancer Screenings, Dental Visit, Childhood/Flu/HPV Immunizations, Dedicated Health Care Provider (personal doctor %)</td>
+      <td>가중</td>
+      <td>높을수록 좋음(+; flu vaccination 은 방법론 예시)</td>
+      <td>p.4-5</td>
+    </tr>
+    <tr>
+      <td>Behaviors: Exercise, Fruit &amp; Vegetable Consumption</td>
+      <td>가중</td>
+      <td>높을수록 좋음</td>
+      <td>p.5</td>
+    </tr>
+    <tr>
+      <td>Physical Inactivity, Chlamydia, High-Risk HIV Behaviors, Teen Births, Insufficient Sleep, E-Cigarette Use, Smoking, Non-Medical Drug Use</td>
+      <td>가중</td>
+      <td>낮을수록 좋음(−; smoking 은 방법론 예시)</td>
+      <td>p.5-6</td>
+    </tr>
+    <tr>
+      <td>Health Outcomes: Premature Death, Drug Deaths<em>, Excessive Drinking, Frequent Mental/Physical Distress, Low Birth Weight, Multiple Chronic Conditions, Obesity, (Arthritis</em>, Asthma<em>, Cancer</em>, CVD<em>, CKD</em>, COPD<em>, Depression</em>, Diabetes<em>, High BP</em>, High Cholesterol* — 유병률, 비가중)</td>
+      <td>가중(*제외)</td>
+      <td>낮을수록 좋음(−; premature death 는 방법론 예시). 질환 유병률은 <strong>비가중(맥락)</strong>으로 취급됨</td>
+      <td>p.6-7</td>
+    </tr>
+    <tr>
+      <td><strong>Demographics: Total Population<em>, Population – Age &lt;18</em>, Ages 18-64<em>, Age 65+</em>, Rural Population</strong>*</td>
+      <td>전부 비가중</td>
+      <td><strong>맥락(무방향)</strong> — “* Unweighted measure, excluded from the Overall and category composite measures.” Age 65+ 페이지: “The demographics of a community influence the health needs and outcomes of its population.”</td>
+      <td>p.7; <a href="https://www.americashealthrankings.org/explore/measures/pct_65plus">pct_65plus</a></td>
+    </tr>
+    <tr>
+      <td>Seat Belt Use</td>
+      <td>과거 지표(현행 표에 없음)</td>
+      <td>페이지 서술 “Seat belt use reduces the severity of injuries … and reduces motor vehicle deaths” → 높을수록 좋음. 현행 50/49 지표 목록에는 <strong>없음</strong></td>
+      <td><a href="https://www.americashealthrankings.org/about/methodology/measures-selection-and-changes">Measures selection &amp; changes</a></td>
+    </tr>
+    <tr>
+      <td>Nurses per population, Hospital beds per population, 1인당 진료비</td>
+      <td><strong>not found</strong> (Annual Report 지표 아님)</td>
+      <td>—</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="b-한국-대시보드-지표--미국-프레임워크-매칭-및-권고-방향">B. 한국 대시보드 지표 ↔ 미국 프레임워크 매칭 및 권고 방향</h2>
+
+<p>표기: <strong>좋음</strong> = 높을수록 좋음, <strong>나쁨</strong> = 높을수록 나쁨(낮을수록 좋음), <strong>맥락</strong> = 방향 부여 없이 참고용.</p>
+
+<h3 id="b-1-의료이용진료비">B-1. 의료이용·진료비</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>한국 지표</th>
+      <th>매칭 지표 (프레임워크)</th>
+      <th>권고 방향</th>
+      <th>근거 URL</th>
+      <th>한 줄 근거</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>인구 대비 의료기관 진료실인원 (per 1,000)</td>
+      <td>(근접) PLACES “Routine checkup within the past year” (Prevention, 이용률↑ 좋음); HP2030 AHS-07 “Increase … usual source of care”; 반대로 HP2030 hospital objectives 는 “Reduce hospitalizations/ED visits”</td>
+      <td><strong>맥락</strong> (강제 시: 예방적 1차 이용은 좋음, 입원·응급은 나쁨)</td>
+      <td>https://www.cdc.gov/places/measure-definitions/prevention.html ; https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/hospital-and-emergency-services</td>
+      <td>미국 프레임워크는 “전체 진료인원” 지표를 쓰지 않고, 예방적 접근(↑)과 회피가능 입원(↓)으로 나눠 방향을 반대로 준다 — 합산 지표는 방향이 상쇄되므로 맥락 처리.</td>
+    </tr>
+    <tr>
+      <td>1인당 진료비</td>
+      <td>직접 매칭 <strong>not found</strong>. 가장 가까운 것은 AHR “Avoided Care Due to Cost”(낮을수록 좋음)와 AHR “Public Health Funding per person”(높을수록 좋음)이나 둘 다 지출 총액이 아님</td>
+      <td><strong>맥락</strong></td>
+      <td>https://assets.americashealthrankings.org/ahr_2025annual_measurestable_final-web.pdf</td>
+      <td>4개 프레임워크 어느 곳도 1인당 의료비 지출을 순위 지표로 쓰지 않음(고령화·질병부담·접근성이 혼재).</td>
+    </tr>
+    <tr>
+      <td>질환별 진료실인원 — 고혈압·당뇨·관절염·치주질환·간질환·암</td>
+      <td>PLACES Health Outcomes (High blood pressure, Diagnosed diabetes, Arthritis, Cancer 등 유병률 — 카테고리상 나쁨); AHR Diabetes<em>/High Blood Pressure</em>/Arthritis<em>/Cancer</em> (유병률, <strong>비가중</strong>); HP2030 HDS-04 “Reduce … high blood pressure”, D-01 “Reduce the number of diabetes cases”, OH-06 “Reduce … periodontitis”</td>
+      <td><strong>나쁨</strong> (단 “진료를 받은 환자수”는 진단·접근성 효과로 오를 수 있음을 주석)</td>
+      <td>https://www.cdc.gov/places/measure-definitions/health-outcomes.html ; https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/heart-disease-and-stroke/reduce-proportion-adults-high-blood-pressure-hds-04 ; https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/oral-conditions</td>
+      <td>미국은 “진단받은 유병률”을 결과지표(낮을수록 좋음)로 취급; AHR 은 랭킹에서 제외(비가중)해 진단율 편향을 피함.</td>
+    </tr>
+    <tr>
+      <td>질환별 진료실인원 — 정신질환</td>
+      <td>PLACES “Depression among adults”(유병률, 나쁨) vs HP2030 MHMD-04/05 “Increase the proportion of adults with serious mental illness / depression who get treatment”(치료 이용↑ 좋음)</td>
+      <td><strong>맥락</strong> (유병률이면 나쁨, 치료 이용률이면 좋음)</td>
+      <td>https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/mental-health-and-mental-disorders</td>
+      <td>HP2030 은 정신질환 “치료받는 비율”의 증가를 목표로 하므로 진료실인원↑을 나쁨으로 단정 불가.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="b-2-인구지리환경-맥락">B-2. 인구·지리·환경 맥락</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>한국 지표</th>
+      <th>매칭 지표</th>
+      <th>권고 방향</th>
+      <th>근거 URL</th>
+      <th>한 줄 근거</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>고령인구비율 (% 65+)</td>
+      <td>CHR “% 65 and Older” (Demographics); AHR “Population – Age 65+*” (비가중); PLACES “Persons aged ≥65 years” (Non-Medical Factors)</td>
+      <td><strong>맥락</strong></td>
+      <td>https://www.countyhealthrankings.org/health-data/community-conditions/demographics/demographics/65-and-older ; https://assets.americashealthrankings.org/ahr_2025annual_measurestable_final-web.pdf</td>
+      <td>3개 프레임워크 모두 랭킹에서 제외된 인구 맥락 지표. (참고: AHR Economic Hardship Index 안에서는 dependency↑=경제조건 악화 요소.)</td>
+    </tr>
+    <tr>
+      <td>인구증가율</td>
+      <td><strong>not found</strong> (모두 정적 인구규모만 제공)</td>
+      <td><strong>맥락</strong></td>
+      <td>https://www.countyhealthrankings.org/health-data/community-conditions/demographics/demographics/population</td>
+      <td>CHR Population: “provides context used to measure health, allocate resources”.</td>
+    </tr>
+    <tr>
+      <td>인구밀도</td>
+      <td>CHR “% Rural” (Demographics); AHR “Rural Population*” (비가중) — 밀도 자체는 not found</td>
+      <td><strong>맥락</strong></td>
+      <td>https://www.countyhealthrankings.org/health-data/community-conditions/demographics/demographics/rural</td>
+      <td>“A Demographics measure”; 도시/농촌은 맥락으로만 사용.</td>
+    </tr>
+    <tr>
+      <td>평균연령</td>
+      <td><strong>not found</strong> (연령대별 비율만 존재, 모두 Demographics/비가중)</td>
+      <td><strong>맥락</strong></td>
+      <td>동상</td>
+      <td>연령 구조는 어디서도 방향을 갖지 않음.</td>
+    </tr>
+    <tr>
+      <td>도시지역인구비율</td>
+      <td>CHR “% Rural”, AHR “Rural Population*“의 보수(補數)</td>
+      <td><strong>맥락</strong></td>
+      <td>동상</td>
+      <td>동상.</td>
+    </tr>
+    <tr>
+      <td>등록장애인 비율 (per 1,000)</td>
+      <td>CHR “% Disability: Functional Limitations” (<strong>Demographics</strong>); PLACES “Any disability among adults” (Disabilities 카테고리, 방향 미명시); HP2030 은 장애인 비율 objective 없음(장애인은 대상집단)</td>
+      <td><strong>맥락</strong></td>
+      <td>https://www.countyhealthrankings.org/health-data/community-conditions/demographics/demographics/disability-functional-limitations ; https://www.cdc.gov/places/measure-definitions/disability.html</td>
+      <td>CHR 이 명시적으로 Demographics 로 분류(“A Demographics measure”); 등록률은 제도 접근성도 반영.</td>
+    </tr>
+    <tr>
+      <td>1인가구 비율</td>
+      <td>직접 매칭 <strong>not found</strong>. 근접: CHR “Children in Single-Parent Households”(2025 Demographics), PLACES “Single-parent households”(Non-Medical Factors), CHR “Feelings of Loneliness”/”Lack of Social and Emotional Support”(Additional, 나쁨)</td>
+      <td><strong>맥락</strong></td>
+      <td>https://www.countyhealthrankings.org/sites/default/files/media/document/2025%20Select%20and%20additional%20measures%2C%20data%20sources%20and%20years.pdf</td>
+      <td>가구구조는 2025 CHR 에서 Demographics 로 이동; 고립 자체(외로움)는 나쁨이나 1인가구는 대리지표에 불과.</td>
+    </tr>
+    <tr>
+      <td>산림면적비율</td>
+      <td><strong>not found</strong></td>
+      <td><strong>맥락</strong></td>
+      <td>—</td>
+      <td>어떤 프레임워크도 녹지·산림 비율을 사용하지 않음(CHR Access to Parks 는 접근성 지표).</td>
+    </tr>
+    <tr>
+      <td>연평균 기온</td>
+      <td>CHR “Adverse Climate Events”(Additional; 페이지: “This measure is not intended to track progress”); AHR “Climate Risks*“(비가중); HP2030 EH-D02 “Reduce diseases and deaths related to heat”</td>
+      <td><strong>맥락</strong></td>
+      <td>https://www.countyhealthrankings.org/health-data/community-conditions/physical-environment/climate/adverse-climate-events</td>
+      <td>기온 자체가 아니라 극단 사건·건강피해만 지표화, 그것도 비가중.</td>
+    </tr>
+    <tr>
+      <td>연 강수량</td>
+      <td>동상(가뭄은 Adverse Climate Events 구성요소)</td>
+      <td><strong>맥락</strong></td>
+      <td>동상</td>
+      <td>동상.</td>
+    </tr>
+    <tr>
+      <td>교원 1인당 학생 수</td>
+      <td>직접 매칭 <strong>not found</strong>. 근접: CHR “School Funding Adequacy”(Additional, 높을수록 좋음), AHR “Fourth Grade Reading Proficiency”(가중, 높을수록 좋음), HP2030 교육 objective 는 졸업·진학률</td>
+      <td><strong>맥락</strong> (강제 시 낮을수록 좋음)</td>
+      <td>https://www.countyhealthrankings.org/sites/default/files/media/document/2025%20Select%20and%20additional%20measures%2C%20data%20sources%20and%20years.pdf</td>
+      <td>미국은 교육 “성과·재원”을 쓰고 학급규모 투입지표는 쓰지 않음.</td>
+    </tr>
+    <tr>
+      <td>연간 보건기관 이용률</td>
+      <td>AHR “Dedicated Health Care Provider”(가중, 높을수록 좋음); PLACES “Routine checkup within the past year”(Prevention); HP2030 AHS-07 “Increase … usual source of care”</td>
+      <td><strong>좋음</strong></td>
+      <td>https://assets.americashealthrankings.org/ahr_2025annual_measurestable_final-web.pdf ; https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/health-care-access-and-quality</td>
+      <td>1차·예방 접점 이용률은 3개 프레임워크 모두 증가가 바람직.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="b-3-보건자원검진사회경제환경안전">B-3. 보건자원·검진·사회경제·환경·안전</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>한국 지표</th>
+      <th>매칭 지표</th>
+      <th>권고 방향</th>
+      <th>근거 URL</th>
+      <th>한 줄 근거</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>의사 수 (per population)</td>
+      <td>CHR “Primary Care Physicians”(Select, <strong>역코딩=높을수록 좋음</strong>); AHR “Primary Care Providers /100k”(가중, 1위=최고값); HP2030 AHS-R01(증가)</td>
+      <td><strong>좋음</strong></td>
+      <td>https://www.countyhealthrankings.org/sites/default/files/media/document/CHRR%20Technical%20Documentation%202025_2.pdf ; https://www.americashealthrankings.org/explore/measures/PCP_NPPES</td>
+      <td>Tech doc p.7 역코딩 목록에 명시. 단 CHR 표시값(인구:의사 비율)은 낮을수록 좋음이므로 단위 주의.</td>
+    </tr>
+    <tr>
+      <td>간호사 수</td>
+      <td><strong>not found</strong> (AHR MHP 정의에 정신전문 APN 포함 정도). 의사·치과·정신보건인력과 동일 논리 적용</td>
+      <td><strong>좋음</strong> (유추)</td>
+      <td>동상</td>
+      <td>인력 공급 지표는 예외 없이 높을수록 좋음으로 코딩됨.</td>
+    </tr>
+    <tr>
+      <td>병상 수</td>
+      <td><strong>not found</strong></td>
+      <td><strong>맥락</strong> (유추 시 좋음)</td>
+      <td>—</td>
+      <td>4개 프레임워크 모두 병상을 지표로 쓰지 않음; 대신 Preventable Hospital Stays(나쁨)를 사용.</td>
+    </tr>
+    <tr>
+      <td>검진 수검률</td>
+      <td>CHR “Mammography Screening”(Select, 역코딩=좋음); AHR “Cancer Screenings”(가중, +); PLACES Prevention(Mammography, Colorectal, Cholesterol screening); HP2030 C-05/07/09 “Increase … screened”</td>
+      <td><strong>좋음</strong></td>
+      <td>https://www.countyhealthrankings.org/sites/default/files/media/document/CHRR%20Technical%20Documentation%202025_2.pdf ; https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/preventive-care</td>
+      <td>모든 프레임워크에서 검진 이용률은 증가 목표.</td>
+    </tr>
+    <tr>
+      <td>검진 판정 유질환자 비율</td>
+      <td>PLACES Health Outcomes(유병률, 나쁨); HP2030 HDS-04 “Reduce … high blood pressure”, D-02 “Reduce the proportion of adults who don’t know they have prediabetes”(발견율↑은 좋음)</td>
+      <td><strong>나쁨</strong> (주석: 수검률·발견율 상승기에는 판정률이 오를 수 있음)</td>
+      <td>https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/diabetes</td>
+      <td>유병률은 낮을수록 좋음이 관례이나, HP2030 D-02 는 “모르는 사람 감소”를 목표로 해 조기발견은 긍정 — 해석 주석 필요.</td>
+    </tr>
+    <tr>
+      <td>재정자립도</td>
+      <td>직접 매칭 <strong>not found</strong>. 근접: AHR “Public Health Funding per person”(가중, 높을수록 좋음), AHR “Economic Hardship Index”(높을수록 나쁨), CHR “Median Household Income”(Additional)</td>
+      <td><strong>맥락</strong> (강제 시 좋음)</td>
+      <td>https://assets.americashealthrankings.org/ahr_2025annual_measurestable_final-web.pdf</td>
+      <td>지방재정 자립도는 미국 랭킹에 없음; 재정투입·경제여건 지표만 존재.</td>
+    </tr>
+    <tr>
+      <td>실업률</td>
+      <td>CHR “Unemployment”(Select 8%, 낮을수록 좋음); AHR “Unemployment*“(지수 구성요소, 낮을수록 좋음); PLACES “Unemployment”(Non-Medical Factors); HP2030 SDOH-02 “Increase employment”</td>
+      <td><strong>나쁨</strong></td>
+      <td>https://www.countyhealthrankings.org/sites/default/files/media/document/CHRR%20Technical%20Documentation%202025_2.pdf ; https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/economic-stability/increase-employment-working-age-people-sdoh-02</td>
+      <td>Select 지표이며 역코딩 목록에 없음 → 낮을수록 좋음.</td>
+    </tr>
+    <tr>
+      <td>고용률</td>
+      <td>HP2030 SDOH-02 “Increase employment in working-age people”(LHI, 목표 75.0%)</td>
+      <td><strong>좋음</strong></td>
+      <td>동상</td>
+      <td>HP2030 이 고용률 증가를 Leading Health Indicator 로 지정.</td>
+    </tr>
+    <tr>
+      <td>인구 천명당 사업체 수</td>
+      <td><strong>not found</strong> (CHR “Social Associations”는 회원조직 수/10k 로 높을수록 좋음이나 사업체와 다름)</td>
+      <td><strong>맥락</strong></td>
+      <td>https://www.countyhealthrankings.org/sites/default/files/media/document/CHRR%20Technical%20Documentation%202025_2.pdf</td>
+      <td>사업체 밀도는 건강 프레임워크 지표가 아님.</td>
+    </tr>
+    <tr>
+      <td>주택소유율</td>
+      <td>CHR “Homeownership”(Additional; “Homeownership is associated with better health”); AHR “Homeownership*“(비가중)</td>
+      <td><strong>좋음</strong> (단 랭킹 미반영)</td>
+      <td>https://www.countyhealthrankings.org/health-data/community-conditions/physical-environment/housing-and-transportation/homeownership</td>
+      <td>두 프레임워크 모두 긍정 지표로 서술하나 점수 산정에서는 제외.</td>
+    </tr>
+    <tr>
+      <td>빈집비율</td>
+      <td><strong>not found</strong> (AHR Homelessness*, CHR Severe Housing Problems 는 다른 개념)</td>
+      <td><strong>맥락</strong></td>
+      <td>—</td>
+      <td>빈집률은 미국 건강 랭킹에 없음.</td>
+    </tr>
+    <tr>
+      <td>노후주택비율</td>
+      <td>AHR “Housing With Lead Risk”(가중; “potential elevated lead risk due to age of housing”, 낮을수록 좋음); CHR “Severe Housing Problems”(Select, 부엌·배관 결여 포함, 낮을수록 좋음)</td>
+      <td><strong>나쁨</strong></td>
+      <td>https://assets.americashealthrankings.org/ahr_2025annual_measurestable_final-web.pdf</td>
+      <td>AHR 은 주택 노후를 납 노출 위험으로 지표화하여 부정 방향 부여.</td>
+    </tr>
+    <tr>
+      <td>상하수도보급률</td>
+      <td>HP2030 EH-03 “Increase the proportion of people whose water supply meets Safe Drinking Water Act regulations”; CHR “Drinking Water Violations”(Select, 낮을수록 좋음); AHR “Drinking Water Violations”(가중, −)</td>
+      <td><strong>좋음</strong> (보급률)</td>
+      <td>https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/environmental-health</td>
+      <td>안전한 수도 접근은 증가 목표; 미국은 보급률 대신 수질 위반을 씀.</td>
+    </tr>
+    <tr>
+      <td>공원·체육시설 (per population)</td>
+      <td>CHR “Access to Exercise Opportunities”(Select 4%, <strong>역코딩=높을수록 좋음</strong>), “Access to Parks”(Additional)</td>
+      <td><strong>좋음</strong></td>
+      <td>https://www.countyhealthrankings.org/sites/default/files/media/document/CHRR%20Technical%20Documentation%202025_2.pdf ; https://www.countyhealthrankings.org/health-data/community-conditions/health-infrastructure/health-promotion-and-harm-reduction/access-to-exercise-opportunities</td>
+      <td>Tech doc p.7 역코딩 목록 첫 항목.</td>
+    </tr>
+    <tr>
+      <td>미세먼지 PM2.5</td>
+      <td>CHR “Air Pollution: Particulate Matter”(Select 8%, 낮을수록 좋음); AHR “Air Pollution”(가중, −); HP2030 EH-01 “Reduce the number of days … unhealthy air”</td>
+      <td><strong>나쁨</strong></td>
+      <td>https://www.countyhealthrankings.org/health-data/community-conditions/physical-environment/air-water-and-land/air-pollution-particulate-matter ; https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/environmental-health/reduce-number-days-people-are-exposed-unhealthy-air-eh-01</td>
+      <td>세 프레임워크 모두 감소 목표.</td>
+    </tr>
+    <tr>
+      <td>미세먼지 PM10</td>
+      <td>직접 지표 <strong>not found</strong> (모두 PM2.5 사용; HP2030 EH-01 AQI 는 PM10 포함)</td>
+      <td><strong>나쁨</strong> (유추)</td>
+      <td>동상</td>
+      <td>AQI 구성 오염물질에 particulate matter 포함.</td>
+    </tr>
+    <tr>
+      <td>교통사고 사망</td>
+      <td>CHR “Motor Vehicle Crash Deaths”(Additional, /100k); HP2030 IVP-06 “Reduce deaths from motor vehicle crashes”; CHR “Injury Deaths”(Select, 낮을수록 좋음)</td>
+      <td><strong>나쁨</strong></td>
+      <td>https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/injury-prevention/reduce-deaths-motor-vehicle-crashes-ivp-06</td>
+      <td>명시적 Reduce objective.</td>
+    </tr>
+    <tr>
+      <td>안전벨트 착용률</td>
+      <td>AHR “Seat Belt Use”(과거 지표, “reduces … motor vehicle deaths”); HP2030 IVP-07 “Reduce the proportion of deaths of car passengers who weren’t buckled in”(간접); HP2020 IVP-15 “Increase use of safety belts”</td>
+      <td><strong>좋음</strong></td>
+      <td>https://www.americashealthrankings.org/about/methodology/measures-selection-and-changes ; https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/injury-prevention/reduce-proportion-deaths-car-passengers-who-werent-buckled-ivp-07</td>
+      <td>현행 HP2030 에는 착용률 objective 없음(not found)이나 관련 objective 와 과거 지표 모두 착용↑=좋음.</td>
+    </tr>
+    <tr>
+      <td>합계출산율 (TFR)</td>
+      <td><strong>not found</strong>. HP2030 은 FP-03 “Reduce pregnancies in adolescents”, FP-01 “Reduce unintended pregnancies”만 존재; CHR/AHR “Teen Births”(낮을수록 좋음)</td>
+      <td><strong>맥락</strong></td>
+      <td>https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/family-planning</td>
+      <td>미국은 출산 총량에 방향을 두지 않고 10대·의도치 않은 임신만 감소 목표.</td>
+    </tr>
+    <tr>
+      <td>조출생률</td>
+      <td>동상</td>
+      <td><strong>맥락</strong></td>
+      <td>동상</td>
+      <td>동상.</td>
+    </tr>
+    <tr>
+      <td>지방소멸위험지수</td>
+      <td><strong>not found</strong> (구성요소인 65+ 비율·가임여성 비율은 모두 Demographics/비가중)</td>
+      <td><strong>맥락</strong></td>
+      <td>https://www.countyhealthrankings.org/health-data/community-conditions/demographics/demographics/65-and-older</td>
+      <td>인구구조 파생지수는 미국 프레임워크에 없음.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="c-대시보드-적용-시-참고-규칙-미국-관례-종합">C. 대시보드 적용 시 참고 규칙 (미국 관례 종합)</h2>
+
+<ol>
+  <li><strong>점수 산출 지표에는 반드시 방향을 부여</strong>하고, 부여 방식은 문서로 열거(CHR: 역코딩 목록 11개; AHR: ±1 곱). 역코딩 목록에 없는 지표는 기본값 “낮을수록 좋음”.</li>
+  <li><strong>인구 구성(연령·성·인종·도농·인구규모·장애·가구구조)은 예외 없이 ‘맥락’</strong>: CHR Demographics, AHR Demographics(*비가중), PLACES Non-Medical Factors, HP2030 objective 부재.</li>
+  <li><strong>질환 유병률/진단자 수</strong>: PLACES·HP2030 은 낮을수록 좋음으로 취급하지만, AHR 은 랭킹에서 제외(비가중)하고 CHR 은 Additional 로 둠 — 진단율·접근성 편향을 인정한 처리.</li>
+  <li><strong>의료 이용</strong>: “예방적 접점”(정기검진·주치의·검진·예방접종·치과방문)은 좋음, “회피가능 입원·응급”은 나쁨, 총 이용량·지출은 지표로 쓰지 않음.</li>
+  <li><strong>기후·출산·재정·산림 등 정책 목표가 없는 자연·구조 변수</strong>는 지표화하더라도 “not intended to track progress”(CHR Adverse Climate Events) 방식으로 방향 없이 표시.</li>
+</ol>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

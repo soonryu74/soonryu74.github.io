@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=dd2ad643f7969b6317ec64a2e6ed3c0e22390e86">
+    <link rel="stylesheet" href="/assets/css/style.css?v=d4536d642aa89b546bcf50fd85387fa48be437b0">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -162,6 +162,9 @@
       <li>원본 xlsx·추출물(data/kdh/)은 비공개. index.html 7.5MB(단일 파일 한계 고려해 지표 추가 시 용량 확인)</li>
     </ul>
   </li>
+  <li>[완료] 지표 방향성 확정(2026-09-08): docs/지표_방향성_v1.md + 조사 원문 3건(미국 CHR·PLACES·HP2030·AHR / WHO·OECD·ECHI·SDG / 국가지표체계·HP2030·건강도시협의회·지역안전지수).
+scripts/build_directions.py → data/directions.json(119개: 좋음 39·나쁨 63·맥락 17) → data.js 가 로드 시 bad 덮어씀. 지도 색: 나쁨=붉은색·좋음=파란색·맥락=보라색, 지표 분석 화면에 근거 문구·출처 링크 표시.
+원칙: 인구·기후·의료이용 총량·진료비·병상은 맥락, 인력·검진·환경 인프라는 좋음, 유병률·사망·오염·사고는 나쁨, 국내 체계 명시 시 국내 우선.</li>
   <li>[완료] 김동현 교수 DB 검증 (docs/김동현DB_검증_v1.md): 2,507개 지표 카탈로그·17개 연도 시트, CHS 값 KOSIS와 완전 일치,
 기대여명은 시도만·건강수명은 2018 시군구 250개(외부 검증 기준). 원본은 구글 드라이브(20260711)·추출물 data/kdh/(비공개, scripts/kdh_extract.py)</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>

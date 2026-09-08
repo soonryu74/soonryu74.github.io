@@ -29,6 +29,20 @@ import KDH_RAW from "../../data/kdh_dataset.json";
 })();
 export const KDH_SOURCE = KDH_RAW.source || null;
 
+// ── 지표 방향성 확정표(docs/지표_방향성_v1.md → data/directions.json): bad 덮어쓰기 + 근거 문구 ──
+import DIR_RAW from "../../data/directions.json";
+(function applyDirections() {
+  const items = DIR_RAW.items || {};
+  for (const ind of RAW.indicators) {
+    const d = items[ind.id];
+    if (!d) continue;
+    ind.bad = d.dir === "bad" ? true : d.dir === "good" ? false : null;
+    ind.ctx = d.dir === "ctx";
+    ind.dirNote = d.note || null;
+    ind.dirRefs = d.refs || [];
+  }
+})();
+
 export const DS = RAW;
 export const YEARS_ALL = RAW.years;
 export const DOMAINS = RAW.domains;                       // 순위 산정 영역
