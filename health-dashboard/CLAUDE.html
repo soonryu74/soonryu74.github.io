@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=1583942aa8b58076328a264ca0568fe3002f0391">
+    <link rel="stylesheet" href="/assets/css/style.css?v=25422181c0add40417583b12a4dc44cbddeb1e5a">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -176,7 +176,9 @@ data/deprivation.json(228개 시군구, 5분위) → 지표 DEP_IDX·건강형�
   <li>[완료] CIAT 심층분석 대응(2026-09-08): 순위 역순·격차 최대/최소 지역명, 프로파일 황금다이아몬드(GoldenDiamond, 시간축=기준연도 대비·공간축=시도/전국 중앙값 대비 3×3),
 연관지표 탭(CorrelationView: 산점도·피어슨/스피어만/켄달·근사 p·연도별 상관), 핫스팟 탭(HotspotView: topojson neighbors 인접 → Getis-Ord Gi* 90/95/99%, Mann-Kendall z·Sen 기울기).
 통계는 브라우저에서 즉시 계산(시군구 250 폴리곤 규모라 사전계산 불필요). 섬은 최근접 2곳을 이웃으로 대체, MK는 동률 보정 없음.</li>
-  <li>[대기] 보건소 단위 풀을 질병관리청 「2025 지역건강통계 한눈에 보기」 조사 단위 목록(258)으로 확정 — 파일 다운로드 실패(소유자 업로드 필요), 현재 252/259 불일치 7곳</li>
+  <li>[완료] 보건소 단위 258개 확정(2026-09-09): 소유자 구글 드라이브(20260711)의 「2025 지역건강통계 한눈에 보기」 부록 시군구별 표(부록표 2-28 행)에서 시 전체 행 17개를 뺀 258개 조사 단위를
+KOSIS 코드에 전량 매핑 → data/chs2025_units.json → HC_POOL. 공식 보건소정보 페이지(255)에 없던 군위군·화성 3·천안 2 포함. 요약집 25개 지표 목록은 data/chs2025_summary25.json(프리셋 후보).
+도시유형별 보건소 수: 특별시 구 25·광역시 구 100·30만 미만 시 10·도농복합 시 41·일반 군 67·보건의료원 군 15.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>
 </ul>

@@ -38,7 +38,7 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect }) {
         <span className="muted" style={{ alignSelf: "center", fontSize: "13px", marginLeft: 6 }}>{rows.length}개</span>
         <button className={`seg-btn ${rev ? "on" : ""}`} style={{ marginLeft: "auto" }} onClick={() => setRev(!rev)} title="양호한 순 ↔ 나쁜 순">{rev ? "나쁜 순 ▲" : "양호한 순 ▼"}</button>
       </div>
-      {m === "hc" && <div className="desc" style={{ marginBottom: 6 }}>조사 단위(보건소)별 순위 — 일반구가 있는 시는 보건소별 행, 세종은 세종특별자치시보건소. 질병관리청 공식 보건소 255곳 중 자료가 있는 곳(KOSIS 수록 단위 258개는 시 전체 행을 포함한 수)</div>}
+      {m === "hc" && <div className="desc" style={{ marginBottom: 6 }}>조사 단위(보건소)별 순위 — 질병관리청 「2025 지역건강통계 한눈에 보기」 부록의 시군구별 표 기준 258개 조사 단위(일반구가 있는 시는 보건소별 행, 시 전체 행 제외, 세종은 세종특별자치시보건소)</div>}
       <div className="rank scroll" ref={listRef}>
         {rows.map(({ r, v }, k) => (
           <div key={r.c} className={`rrow ${r.c === sel.c ? "sel" : ""} ${mine(r) ? "mine" : ""}`} onClick={() => onSelect(r.c)}>

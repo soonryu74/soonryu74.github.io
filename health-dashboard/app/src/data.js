@@ -294,7 +294,13 @@ import UNITS_RAW from "../../data/units.json";
 export const UNITS = UNITS_RAW;
 export const UNIT_BY_CODE = new Map(UNITS_RAW.units.map((u) => [u.c, u]));
 /** 보건소 단위 풀: 공식 보건소명이 있는 조사 단위(일반구가 있는 시는 시 전체 행 대신 보건소별 행). 세종특별자치시보건소 포함 */
-export const HC_POOL = UNITS_RAW.units.filter((u) => u.chs && !u.has_subs && RBY.has(u.c)).map((u) => ({ ...RBY.get(u.c), hc: u.chs }));
+// 보건소 단위 풀 = 질병관리청 「2025 지역건강통계 한눈에 보기」 부록 시군구별 표의 258개 조사 단위(시 전체 행 제외, 세종시 포함)
+import CHS25 from "../../data/chs2025_units.json";
+export const CHS25_COUNT = CHS25.count;
+export const HC_POOL = CHS25.units.filter((u) => RBY.has(u.c)).map((u) => {
+  const off = UNIT_BY_CODE.get(u.c)?.chs;
+  return { ...RBY.get(u.c), hc: off || `${u.n}보건소`, hc25: u.n };
+});
 
 /* ===== 만성질환 예방·관리 지식베이스 ===== */
 import NCD_RAW from "../../data/ncd.json";
