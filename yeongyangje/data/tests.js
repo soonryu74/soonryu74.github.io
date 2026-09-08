@@ -9,7 +9,7 @@ window.EBN_TESTS = {
       cutNote: "2024년 미국 내분비학회는 목표 수치를 정하지 않았고, 건강 성인의 '일상적 검사에 반대(suggest against routine testing)'합니다. 즉 검사는 결핍 위험이 있는 사람(실내 근무·고령·흡수장애·골다공증)에게 의미가 있습니다.",
       national: "미포함", cost: "비급여 13,030~20,000원(검진센터) · 의원 2~5만 원 · 급여 대상(골다공증·만성신장병·흡수장애·특정 약물 등)이면 본인부담 5천~1.5만 원",
       prep: "공복 불필요", retest: "보충 시작 8~12주 후(반감기 2~3주). 유지 단계에서는 연 1회 이내",
-      interfere: "비타민 D2 복용자는 면역측정법이 40~45% 과소평가 → 질량분석(LC-MS/MS) 요청. 고용량 비오틴 복용 시 채혈 8시간 전 중단",
+      interfere: "비타민 D2 복용자는 면역측정법이 40~45% 과소평가 → 질량분석(LC-MS/MS) 요청. 고용량(5 mg 이상) 비오틴 복용 시 채혈 최소 2~3일 전 중단(검사기관 안내에 따름)",
       src: ["https://www.endocrine.org/clinical-practice-guidelines/vitamin-d-for-prevention-of-disease", "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/", "https://kss.kahp.or.kr/br/nkubMgt/nkubMgtList.do"] },
     { id: "ferritin", name: "페리틴 + 혈색소 + 철포화도", en: "Ferritin · Hb · TSAT", ing: "iron",
       what: "페리틴은 저장철, 혈색소(Hb)는 빈혈 여부, 철포화도(TSAT)는 지금 쓸 수 있는 철. 빈혈이 생기기 전 '철 고갈' 단계를 잡으려면 페리틴이 필요합니다.",
@@ -24,7 +24,7 @@ window.EBN_TESTS = {
       cutoffs: ["NIH: 200~250 pg/mL 미만 저하", "MMA 0.271 µmol/L 초과 시 결핍 시사"],
       cutNote: "혈청 B12가 200~300 사이면 증상과 맞지 않을 때 MMA로 확인합니다(호모시스테인보다 특이적). 위 내인자 항체가 있으면 B12가 거짓 정상으로 나올 수 있습니다.",
       national: "미포함", cost: "B12 13,030원 · 호모시스테인 15,780원 · MMA는 대형 수탁검사(검진센터 목록에 없음, 가격 미확인)",
-      prep: "공복 불필요", retest: "경구 치료 시작 2개월 후 B12·CBC(NICE 2024)",
+      prep: "공복 불필요", retest: "경구 치료 후 증상·혈액 재평가 시점은 의료진이 정함(NICE 2024는 고정 간격을 두지 않음)",
       interfere: "고용량 엽산이 빈혈만 가려 신경 손상이 진행될 수 있음. 비오틴 간섭 가능",
       src: ["https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/", "https://www.nice.org.uk/guidance/ng239"] },
     { id: "folate", name: "엽산", en: "Serum folate", ing: "folate",
@@ -33,9 +33,9 @@ window.EBN_TESTS = {
       national: "미포함", cost: "13,030원", prep: "공복 불필요", retest: "필요 시 3개월",
       src: ["https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC5792260/"] },
     { id: "omega3", name: "오메가-3 지수", en: "Omega-3 Index (RBC EPA+DHA %)", ing: "omega3",
-      what: "적혈구막의 EPA+DHA 비율. 오메가-3를 먹을 필요가 있는지, 먹은 게 실제로 올라갔는지 확인하는 유일한 지표입니다.",
+      what: "적혈구막의 EPA+DHA 비율. 오메가-3 섭취 상태를 반영하는 지표입니다(표준 진료 지침에는 없음).",
       cutoffs: ["4% 미만 고위험 · 4~8% 중간 · 8% 초과 저위험 (Harris & von Schacky)"],
-      cutNote: "한국인 1,000명 평균은 10.4%로 미국(대부분 8% 미만)보다 훨씬 높습니다. 생선을 먹는 한국인 대부분은 보충제 없이 이미 목표 이상이라는 뜻입니다. 관찰연구 기반 지표이며 표준 진료 지침에는 없습니다.",
+      cutNote: "국내 문헌은 한국인 평균이 8%를 넘어 목표치를 10%로 올려 잡자고 제안합니다. 생선을 먹는 한국인은 보충제 없이 이미 목표 이상인 경우가 많습니다. 관찰연구 기반 지표입니다.",
       national: "미포함", cost: "기능의학 클리닉 등 일부 기관만 제공. 가격 미확인(기관 문의)",
       prep: "공복 불필요(건조혈액반점 채취)", retest: "보충 시작 3~4개월 후(적혈구 수명 120일)",
       src: ["https://pubmed.ncbi.nlm.nih.gov/17876200/", "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART001436429"] },
@@ -84,11 +84,11 @@ window.EBN_TESTS = {
       '<li>혈색소(빈혈) · 공복혈당 · 크레아티닌/eGFR(신장) · AST/ALT/γ-GTP(간) · 혈압 · 비만 · 요단백 — <b>2년마다, 전액 공단 부담</b></li>' +
       '<li>지질 4종(총콜레스테롤·HDL·LDL·중성지방) — 남 24세 이상·여 40세 이상, <b>4년마다</b></li>' +
       '<li>골밀도 — <b>여성 54·60·66세</b> (2025년부터 60세 추가)</li>' +
-      '<li>B형간염 40세 · C형간염 항체 56세(2025 신규) · 인지기능 66세 이상 2년마다 · 우울증 선별 20~70세</li>' +
+      '<li>B형간염 40세 · C형간염 항체 56세(2025 신규) · 인지기능 66세 이상 2년마다 · 우울증 선별 20~34세 2년마다·35~39세 1회·40~79세 10년마다(2025 개편)</li>' +
       '<li>대상: 2026년은 <b>짝수년 출생자</b>(직장 비사무직은 매년). 전날 저녁 9시 이후 금식.</li></ul></div>' +
       '<div><h3 style="margin-top:0">❌ 없는 것 — 영양제 결정에 필요하면 추가 요청</h3><ul>' +
       '<li><b>25(OH)D</b> 1.3~2만 원 · <b>페리틴</b> 1.2~2만 원 · <b>B12</b> 1.3만 원 · <b>당화혈색소</b> 0.9만 원 · <b>TSH+fT4</b> 3.3만 원 · 요산 0.3만 원 · 마그네슘 0.2만 원</li>' +
-      '<li>위 다섯 가지(비타민 D·페리틴·B12·당화혈색소·갑상선)를 검진에 추가하면 <b>약 7~8만 원</b>. 이것이 "먹어야 할 영양제"를 결정하는 데 필요한 전부입니다.</li>' +
+      '<li>위 다섯 가지(비타민 D·페리틴·B12·당화혈색소·갑상선)를 검진에 추가하면 <b>약 7~8만 원</b>. 영양제 결정에 가장 자주 필요한 검사들입니다.</li>' +
       '<li>비타민 A·E·K·C, 오메가-3 지수, 적혈구 마그네슘, 모발 미네랄 검사는 일상적으로 불필요합니다.</li>' +
       '<li>기관별 가격은 <a href="https://www.hira.or.kr/npay/index.do" target="_blank" rel="noopener">건강보험심사평가원 비급여 진료비 공개</a>에서 비교할 수 있습니다.</li></ul></div></div>' +
       '<p class="small">출처: 국민건강보험공단 「2025년 건강검진 안내」 · 한국건강관리협회 비급여 고시(2026-01-01) · 메디플라워 · 약체크. 가격은 기관마다 다르며 참고용입니다.</p>'

@@ -10,13 +10,13 @@ window.EBN_SYMPTOMS = [
     { v: "opt", name: "홍삼", ing: "ginseng", why: "12개 RCT 메타 −0.33 vs 19개 RCT 메타 −0.36(유의 없음). 결과가 엇갈리는 작은 효과.", src: "https://pubmed.ncbi.nlm.nih.gov/36730693/" }
   ],
   test: "혈액검사(CBC) + 페리틴(+CRP, 염증 시 페리틴이 거짓 상승) + TSH + 25(OH)D + B12 + 혈당. 코골이·낮 졸림은 수면무호흡 선별, 기분 저하는 우울 선별.",
-  flag: "체중 감소, 열·식은땀, 림프절 붓기, 흑변, 남성·폐경 여성의 철 결핍(위장관 검사 필요), 코골이+낮 졸림, 자살 생각." },
+  flag: "숨참·가슴 통증·실신, 황달, 체중 감소, 열·식은땀, 림프절 붓기, 흑변, 남성·폐경 여성의 철 결핍(위장관 검사 필요), 코골이+낮 졸림, 자살 생각." },
 { id: "hair", icon: "💇", name: "탈모",
   lead: "탈모 영양제의 대표 성분 비오틴은 건강한 사람에게 효과를 본 RCT가 하나도 없고, 오히려 혈액검사를 왜곡합니다.",
   causes: [
-    { v: "cond", name: "철 결핍", ing: "iron", why: "페리틴 기준은 논쟁 중(30 미만 vs 40 미만에서 휴지기 탈모 증가). 결핍이 아닌 사람에게 철분이 탈모를 줄인다는 RCT는 없음.", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC12839778" },
-    { v: "cond", name: "아연 결핍", ing: "zinc", why: "탈모 환자 코호트에서 중등도 결핍 34%(대조군 약 1%). 결핍자 5명 증례 전원 호전. 결핍 없는 사람 RCT는 없음.", src: "https://pubmed.ncbi.nlm.nih.gov/22741940/" },
-    { v: "no", name: "비오틴", ing: "biotin", why: "2017년 검토: 효과 보고 18건 전부 기저 결핍·질환이 있는 증례. 건강 성인 RCT 없음. 고용량(5~100 mg)은 트로포닌·갑상선 검사 왜곡(FDA 경고), 검사 3일 전 중단.", src: "https://karger.com/sad/article-abstract/3/3/166/291279" },
+    { v: "cond", name: "철 결핍", ing: "iron", why: "휴지기 탈모 환자에서 철 결핍(페리틴 15 미만) 비율이 높다는 환자-대조군 연구가 있고 치료 기준(30~70)은 논쟁 중. 결핍이 아닌 사람에게 철분이 탈모를 줄인다는 RCT는 없음.", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC12839778" },
+    { v: "cond", name: "아연 결핍", ing: "zinc", why: "탈모 환자 312명 연구: 혈청 아연이 대조군보다 낮았고(84 vs 98 µg/dL) 원형탈모에서 70 µg/dL 미만 비율이 4배. 결핍자 5명 증례 전원 호전. 결핍 없는 사람 RCT는 없음.", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC3870206/" },
+    { v: "no", name: "비오틴", ing: "biotin", why: "2017년 검토: 효과 보고 18건 전부 기저 결핍·질환이 있는 증례. 건강 성인 RCT 없음. 고용량(5~100 mg)은 트로포닌·갑상선 검사 왜곡(FDA 경고). 채혈 최소 2~3일 전 중단(검사기관 안내에 따름).", src: "https://karger.com/sad/article-abstract/3/3/166/291279" },
     { v: "no", name: "비타민 D", ing: "vitd", why: "연관성 연구만 있고 RCT 없음." }
   ],
   test: "페리틴, CBC, TSH, (선택) 아연, 25(OH)D.",
@@ -24,13 +24,13 @@ window.EBN_SYMPTOMS = [
 { id: "numb", icon: "🖐️", name: "손발 저림·감각 이상",
   lead: "가장 흔한 영양 원인은 B12 결핍이고, 역설적으로 '신경 영양제'로 팔리는 B6를 고용량으로 오래 먹으면 저림이 생깁니다.",
   causes: [
-    { v: "cond", name: "비타민 B12 결핍", ing: "b12", why: "메트포르민 복용자 결핍 23% vs 17%(약 3배). 위산억제제·위 절제·비건·아산화질소 흡입도 원인. 교정 효과 확실.", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9816920/" },
+    { v: "cond", name: "비타민 B12 결핍", ing: "b12", why: "메트포르민 복용자 결핍 23% vs 비복용 17%(교차비 2.95). 위산억제제·위 절제·비건·아산화질소 흡입도 원인. 교정 효과 확실.", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9816920/" },
     { v: "avoid", name: "비타민 B6 과잉", ing: "b6", why: "대부분 1,000 mg 이상에서 신경병증이 생기지만 장기 복용 시 50 mg 미만 사례도 있음. 상한: 미국 100 mg, 한국은 2025년 100→50 mg으로 하향, 유럽(2023) 12 mg.", src: "https://www.ncbi.nlm.nih.gov/books/NBK554500/" },
     { v: "avoid", name: "아연 과잉 → 구리 결핍", ing: "zinc", why: "고용량 아연(보충제·틀니 접착제)이 구리를 고갈시켜 척수신경병증+빈혈. 보행 장애는 회복되지 않는 경우가 많음.", src: "https://www.nature.com/articles/sj.bdj.2011.428" },
     { v: "opt", name: "알파리포산(당뇨 신경병증)", ing: "ala", why: "과거 메타는 증상 24% 감소였으나 코크란 2024: 6개월 시점 '효과가 거의 없거나 없을 것', 탈락 편향 큼.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD012967.pub2/full" }
   ],
   test: "B12 + 메틸말론산(MMA), 당화혈색소, TSH, 고용량 B6 복용자는 B6 농도, 아연 복용자는 구리·세룰로플라스민, CBC.",
-  flag: "빠르게 진행하거나 올라오는 근력 저하, 보행 불안정, 대소변 장애, 한쪽만 저림, 저림+인지 변화(B12·구리 척수병증)." },
+  flag: "갑자기 생긴 한쪽 얼굴·팔 저림+말 어눌함(뇌졸중 응급, 119), 빠르게 진행하거나 올라오는 근력 저하, 보행 불안정, 대소변 장애, 저림+인지 변화(B12·구리 척수병증), 당뇨 환자의 발 상처·감각 소실." },
 { id: "cramp", icon: "🦵", name: "근육 경련(쥐)",
   lead: "'쥐 나면 마그네슘'은 통념입니다. 코크란 리뷰는 고령자의 원인 불명 쥐에 마그네슘이 의미 있는 예방 효과를 주지 않는다고 결론냈습니다.",
   causes: [
@@ -48,7 +48,7 @@ window.EBN_SYMPTOMS = [
     { v: "opt", name: "마그네슘", ing: "magnesium", why: "고령자 3개 RCT 151명: 잠드는 시간 −17.4분. 근거 질 낮음~매우 낮음.", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8053283/" },
     { v: "no", name: "발레리안", why: "2024 우산 리뷰: 불면에 효능 없음, 주관적 질만 개선 가능. 안전성은 양호.", src: "https://www.sciencedirect.com/science/article/pii/S0924977X24000294" },
     { v: "opt", name: "L-테아닌", why: "2025 메타(18 RCT 897명): 잠드는 시간 SMD 0.15, 수면 질 0.43. 혼합 제품 다수.", src: "https://pubmed.ncbi.nlm.nih.gov/40056718/" },
-    { v: "cond", name: "철 결핍(하지불안증후군)", ing: "iron", why: "밤에 다리를 움직이고 싶은 충동이 있으면 페리틴 50~75 미만에서 철분이 효과. 일반 불면과는 다른 문제." }
+    { v: "cond", name: "철 결핍(하지불안증후군)", ing: "iron", why: "밤에 다리를 움직이고 싶은 충동이 있으면 하지불안증후군 지침상 페리틴 75 미만에서 철분 치료를 고려합니다(의사 판단). 일반 불면과는 다른 문제." }
   ],
   test: "보통 불필요. 하지불안 증상이면 페리틴, 심계항진·체중 감소면 TSH.",
   flag: "심한 코골이·무호흡 목격, 불면+우울·자살 생각, 밤에 다리를 움직이고 싶은 충동, 체중 감소·두근거림, 3개월 이상 지속." },
@@ -63,12 +63,12 @@ window.EBN_SYMPTOMS = [
   test: "영양 검사 불필요. 안과 검사(눈물막 파괴시간, 쉬르머). 흡수장애가 있을 때만 혈청 비타민 A.",
   flag: "통증, 눈부심, 시력 저하, 분비물 있는 충혈, 입 마름 동반(쇼그렌), 복시, 갑작스러운 날파리·번쩍임." },
 { id: "cold", icon: "🤧", name: "잦은 감기",
-  lead: "비타민 C·D·아연 모두 감기 '예방' 효과는 없습니다. 프로바이오틱스만 코크란에서 발생 21% 감소(주로 어린이)를 보였습니다.",
+  lead: "비타민 C·D·아연 모두 감기 '예방' 효과는 없습니다. 프로바이오틱스만 코크란에서 상기도 감염 약 24% 감소(낮은 확실성, 어린이·성인 혼합)를 보였습니다.",
   causes: [
     { v: "opt", name: "비타민 C", ing: "vitc", why: "코크란 2013: 일반인 발생 감소 없음. 평소 복용 시 기간 성인 −8%·어린이 −14%. 걸린 뒤 복용은 효과 없음.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD000980.pub4/full" },
     { v: "opt", name: "아연 로젠지", ing: "zinc", why: "코크란 2024(34 RCT): 예방 효과 없음, 기간 약 2일 단축(낮은 확실성), 위장 부작용. 코 스프레이 아연은 후각 소실.", src: "https://pubmed.ncbi.nlm.nih.gov/38719213/" },
-    { v: "no", name: "비타민 D", ing: "vitd", why: "2025 갱신 메타(신규 6건, 1.6만 명 포함): 전체 무효. 결핍자의 매일·매주 복용에서만 신호.", src: "https://www.thelancet.com/journals/landia/article/PIIS2213-8587(24)00348-6/fulltext" },
-    { v: "opt", name: "프로바이오틱스", ing: "probiotic", why: "코크란 2022: 상기도 감염 발생률비 0.79(0.71~0.89). 대부분 어린이 시험, 낮음~중등도 확실성.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006895.pub4/full" },
+    { v: "no", name: "비타민 D", ing: "vitd", why: "2025 갱신 메타(40개 RCT 6.2만 명): 전체 OR 0.94(0.88~1.00), 유의하지 않음. 연령·기저 농도·복용 빈도·용량 어느 하위군에서도 효과 차이가 확인되지 않았습니다.", src: "https://www.thelancet.com/journals/landia/article/PIIS2213-8587(24)00348-6/fulltext" },
+    { v: "opt", name: "프로바이오틱스", ing: "probiotic", why: "코크란 2022(16개 RCT 4,798명): 1회 이상 상기도 감염 RR 0.76(0.67~0.87), 낮은 확실성. 어린이·성인·고령자 혼합.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006895.pub4/full" },
     { v: "no", name: "에키네시아·엘더베리", why: "코크란 2014(24건): 치료 효과 없음, 예방은 미미할 가능성. 엘더베리는 소규모 제조사 지원 5건, 결론 불가.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD000530.pub3/full" }
   ],
   test: "보통 불필요. 결핍 위험이 있으면 25(OH)D. 면역글로불린 검사는 아래 신호가 있을 때만.",
@@ -107,9 +107,9 @@ window.EBN_SYMPTOMS = [
 { id: "mood", icon: "🌧️", name: "우울감",
   lead: "비타민 D는 1.8만 명 5년 시험에서 우울증을 예방하지 못했습니다. EPA 위주 오메가-3와 활성엽산은 '치료 보조'로 작은 근거가 있습니다.",
   causes: [
-    { v: "no", name: "비타민 D(예방)", ing: "vitd", why: "VITAL-DEP(JAMA 2020, 18,353명, 2,000 IU 5.3년): 우울증 발생·기분 점수 차이 없음. 결핍·증상자 대상 메타는 SMD −0.3대이나 질 낮음.", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC11650176/" },
+    { v: "no", name: "비타민 D(예방)", ing: "vitd", why: "VITAL-DEP(JAMA 2020, 18,353명, 2,000 IU 5.3년): 우울증 발생·기분 점수 차이 없음. 2024 메타(31 RCT)는 단기(24주 이하)·기존 우울증에서 증상 감소(SMD −0.32)였으나 52주 초과 시험에서는 효과가 사라졌습니다.", src: "https://jamanetwork.com/journals/jama/fullarticle/2768978" },
     { v: "opt", name: "오메가-3(EPA 위주)", ing: "omega3", why: "26개 RCT 2,160명: 전체 SMD −0.28. EPA 60% 이상·1 g 이하에서 −0.50~−1.03. DHA 위주는 무효. 치료 대체가 아니라 보조.", src: "https://www.nature.com/articles/s41398-019-0515-5" },
-    { v: "opt", name: "L-메틸엽산 15 mg(보조)", ing: "folate", why: "항우울제 보조 시 반응률 RR 1.25(1.08~1.46), SMD −0.38.", src: "https://pubmed.ncbi.nlm.nih.gov/34450256/" },
+    { v: "opt", name: "엽산·L-메틸엽산 — 항우울제 보조(처방 영역)", ing: "folate", why: "항우울제에 엽산(L-메틸엽산 포함)을 더한 6개 RCT: 반응률 RR 1.36(1.16~1.59), 소규모. 15 mg L-메틸엽산은 처방 용량입니다.", src: "https://pubmed.ncbi.nlm.nih.gov/34450256/" },
     { v: "no", name: "SAMe", why: "코크란 2016: 근거 불충분, 조증 유발 보고.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD011286.pub2/full" },
     { v: "avoid", name: "세인트존스워트", ing: "sjw", why: "위약보다 낫고 항우울제와 동등(코크란 29건 5,489명)이지만 피임약·항응고제·SSRI(세로토닌 증후군)와 중대한 상호작용. 국내에서는 일반의약품으로만 허가.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD000448.pub3/related-content" }
   ],
@@ -120,7 +120,7 @@ window.EBN_SYMPTOMS = [
   causes: [
     { v: "cond", name: "B12·철·엽산 결핍", ing: "b12", why: "재발성 구내염 코호트에서 B12 결핍 최대 50%, 철 7~12.5%, 엽산 7.5%. 결핍 교정으로 호전.", src: "https://www.sciencedirect.com/science/article/pii/S0929664618307435" },
     { v: "opt", name: "B12 1,000 µg 설하(결핍 무관)", ing: "b12", why: "RCT 58명 6개월: 기저 B12와 무관하게 궤양 기간·수 감소. 단일 소규모, 재현 안 됨.", src: "https://www.nature.com/articles/6400688" },
-    { v: "cond", name: "리보플라빈(B2) 결핍", ing: "b6", why: "입꼬리 갈라짐·자홍색 혀. 한국에서 드묾." },
+    { v: "cond", name: "리보플라빈(B2) 결핍", why: "입꼬리 갈라짐·자홍색 혀. 한국에서 드묾." },
     { v: "rec", name: "SLS 없는 치약·자극 피하기", why: "계면활성제(SLS) 치약이 재발 요인. 바꿔 보는 것이 먼저." }
   ],
   test: "CBC, 페리틴, B12, 엽산. 위장 증상 있으면 셀리악 항체.",
@@ -147,8 +147,8 @@ window.EBN_SYMPTOMS = [
 { id: "gut", icon: "🚽", name: "소화불량·변비",
   lead: "변비에는 산화마그네슘·차전자피가 2023년 미국 소화기학회 지침에 '근거 있는 치료'로 들어갔습니다. 소화불량 자체에 근거 있는 영양제는 없습니다.",
   causes: [
-    { v: "rec", name: "산화마그네슘(변비)", ing: "magnesium", why: "RCT(1.5 g/일): 전반 개선 70.6% vs 위약 25.0%. AGA/ACG 2023 조건부 권고. 신장질환은 금지(고마그네슘혈증).", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6786451/" },
-    { v: "rec", name: "차전자피(식이섬유)", why: "AGA/ACG 2023 조건부 권고. 하루 10 g 이상, 4주 이상. 폴리에틸렌글리콜(PEG)만 강한 권고.", src: "https://gi.org/journals-publications/ebgi/schoenfeld2_june2023/" },
+    { v: "rec", name: "산화마그네슘(변비)", ing: "magnesium", why: "RCT(1.5 g/일): 전반 개선 70.6% vs 위약 25.0%. AGA/ACG 2023 조건부 권고(매우 낮은 확실성). 신장질환자는 고마그네슘혈증 위험으로 복용 전 의사 확인.", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6786451/" },
+    { v: "rec", name: "차전자피(식이섬유)", why: "AGA/ACG 2023 조건부 권고(낮은 확실성). 용량은 제품 표시량부터 점진 증량. 폴리에틸렌글리콜(PEG)만 강한 권고.", src: "https://gi.org/journals-publications/ebgi/schoenfeld2_june2023/" },
     { v: "opt", name: "프로바이오틱스(변비)", ing: "probiotic", why: "메타분석: 장 통과시간 −12.4시간, 주 배변 +1.3회. B. lactis는 효과, L. casei Shirota는 무효. 편향 큼.", src: "https://ajcn.nutrition.org/article/S0002-9165(23)04789-5/fulltext" },
     { v: "avoid", name: "칼슘·철분 보충제(변비 원인)", ing: "calcium", why: "변비를 일으키는 흔한 보충제. 새로 생긴 변비라면 먼저 의심." }
   ],
