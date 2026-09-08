@@ -112,7 +112,7 @@ window.EBN_RULES = (function () {
     /* ---------- 칼슘 ---------- */
     if (p.cond.osteo) add({ tier: 'cond', ing: 'calcium', title: '칼슘 — 골다공증 (식사로 부족할 때만)',
       why: '골다공증 치료약(비스포스포네이트 등)과 병행 시 칼슘·비타민 D 충족이 기본입니다. 단, 칼슘 "보충제"는 신장결석을 17% 늘렸고 심근경색 위험 증가 논쟁이 있어 식사(유제품·멸치·두부)로 먼저 채우고 부족분만 보충하세요.',
-      dose: '식사 포함 총 800~1,000 mg/일. 보충제는 1회 500 mg 이하, 식사와 함께. 한국 상한섭취량 2,500 mg.', cite: ['whi-cad-2006', 'bolland-calcium', 'bmj-2026-fracture'] });
+      dose: '식사 포함 총 800~1,000 mg/일. 보충제는 1회 500 mg 이하, 식사와 함께. 한국 상한섭취량: 여 30세+ 2,000 · 남 30세+ 2,500 mg(19~29세는 각 +500).', cite: ['whi-cad-2006', 'bolland-calcium', 'bmj-2026-fracture'] });
     else if (p.age >= 50) add({ tier: 'no', ing: 'calcium', title: '칼슘 보충제 — 골다공증 없는 50대 이상',
       why: '69개 RCT 15만 명(BMJ 2026): 지역사회 거주 성인에게 칼슘·비타민 D는 골절·낙상을 거의 줄이지 못했습니다. USPSTF 2024 초안도 "권고 반대". 신장결석·심근경색 위험 가능성만 남습니다.',
       dose: '식사로 700~800 mg 충족(우유 1잔 약 200 mg). 보충제 불필요.', cite: ['bmj-2026-fracture', 'whi-cad-2006', 'bolland-calcium'] });

@@ -51,7 +51,7 @@
   var LBL={ok:'OK',caution:'주의',avoid:'금기',na:'—'}, ORDER={avoid:0,caution:1,ok:2,na:3};
   var ings=Object.keys(I).filter(function(k){return M[k];});
   function cell(ing,cond){ return (M[ing]&&M[ing][cond])||{v:'na',why:'정리된 근거 없음'}; }
-  function srcs(c){ return (c.src||[]).map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener">근거 ↗</a>';}).join(' '); }
+  function srcs(c){ var L=(c.src||[]).map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener">근거 ↗</a>';}).join(' '); return L || '<span class="nosrc" title="1차 출처를 확인하지 못한 항목입니다. 기전·전문가 의견에 근거한 추정이며 감수 대상입니다.">출처 미확인</span>'; }
 
   // 1. 질환 칩
   var chips=document.getElementById('cond-chips');
