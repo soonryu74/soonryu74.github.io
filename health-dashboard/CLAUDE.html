@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=27124189d3e34f57f96d45a64b94ef265961b5bf">
+    <link rel="stylesheet" href="/assets/css/style.css?v=7c89d00a6568a341858a846f1f050eadd11873a7">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -167,6 +167,10 @@ scripts/build_directions.py → data/directions.json(119개: 좋음 39·나쁨 6
 원칙: 인구·기후·의료이용 총량·진료비·병상은 맥락, 인력·검진·환경 인프라는 좋음, 유병률·사망·오염·사고는 나쁨, 국내 체계 명시 시 국내 우선.</li>
   <li>[완료] 김동현 교수 DB 검증 (docs/김동현DB_검증_v1.md): 2,507개 지표 카탈로그·17개 연도 시트, CHS 값 KOSIS와 완전 일치,
 기대여명은 시도만·건강수명은 2018 시군구 250개(외부 검증 기준). 원본은 구글 드라이브(20260711)·추출물 data/kdh/(비공개, scripts/kdh_extract.py)</li>
+  <li>[완료] 지표 방향성 확정(2026-09-08): 미국·국제·국내 12개 체계 조사 → data/directions.json(119개, scripts/build_directions.py) → 지도 색·순위·근거 표시.
+docs/지표_방향성_v1.md + 조사 원문 3건. 미확인: 질병관리청 한눈에 보기 상향/하향 배정표, 합계출산율 방향(국내 정책 우선)</li>
+  <li>[완료] 감염병 고위험군 카드(2026-09-08): scripts/build_risk.py → data/risk.json(245개 지역 × 30개 집단, 실측/추정 구분) → 프로파일 RiskCard.
+docs/감염병_고위험군_v1.md. 미수집: 정신시설 입원자·투석·COPD·노숙인·돌봄 종사자</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>
 </ul>

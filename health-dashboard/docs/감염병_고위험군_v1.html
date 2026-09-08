@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>감염병 대응 고위험군 — 정의 정리와 지역별 규모 추정 v1 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="감염병 대응 고위험군 — 정의 정리와 지역별 규모 추정 v1" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="감염병 대응 고위험군 — 정의 정리와 지역별 규모 추정 v1" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"감염병 대응 고위험군 — 정의 정리와 지역별 규모 추정 v1","url":"/health-dashboard/docs/%EA%B0%90%EC%97%BC%EB%B3%91_%EA%B3%A0%EC%9C%84%ED%97%98%EA%B5%B0_v1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=7c89d00a6568a341858a846f1f050eadd11873a7">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="감염병-대응-고위험군--정의-정리와-지역별-규모-추정-v1">감염병 대응 고위험군 — 정의 정리와 지역별 규모 추정 v1</h1>
+
+<p>작성일: 2026-09-08 · 산출: scripts/build_risk.py → data/risk.json · 화면: 지역 프로파일 “감염병 대응 고위험군” 카드</p>
+
+<h2 id="1-지침별-고위험군-정의">1. 지침별 고위험군 정의</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>대응 상황</th>
+      <th>고위험군</th>
+      <th>출처</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>코로나19 (2024년 관리지침)</td>
+      <td>65세 이상, 면역저하자(혈액암·장기이식·면역억제제 등), 기저질환자(심혈관·당뇨·만성신장·만성폐·간질환·암·신경계), 임신부, 고도비만, 감염취약시설 입원·입소자</td>
+      <td>질병관리청 2024년도 코로나바이러스감염증-19 관리지침(2024.8.16 개정) https://www.kdca.go.kr/board/board.es?mid=a20507020000&amp;bid=0019&amp;list_no=725889&amp;act=view</td>
+    </tr>
+    <tr>
+      <td>인플루엔자 국가예방접종</td>
+      <td>생후 6개월~13세 어린이, 임신부, 65세 이상(75세 이상 우선), 만성질환자·면역저하자 권장</td>
+      <td>질병관리청 예방접종도우미 https://nip.kdca.go.kr/irhp/infm/goVcntInfo.do?menuLv=1&amp;menuCd=1112</td>
+    </tr>
+    <tr>
+      <td>감염취약시설(집단발생 관리)</td>
+      <td>요양병원, 노인요양시설(공동생활가정 포함), 주야간보호센터, 정신의료기관, 정신요양시설, 정신재활시설, 장애인복지시설</td>
+      <td>PHWR 2023;16(4) 감염취약시설 대응 https://www.phwr.org/journal/view.html?doi=10.56786%2FPHWR.2023.16.4.2</td>
+    </tr>
+    <tr>
+      <td>폐렴구균·결핵·온열질환 등</td>
+      <td>65세 이상, 만성질환자, 노숙인·기초수급자(결핵), 독거노인·야외근로자(온열), 외국인 노동자·다문화, 영유아 집단시설, 의료·돌봄 종사자</td>
+      <td>지침별 상이</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="2-지역-자료로-옮긴-방법">2. 지역 자료로 옮긴 방법</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>집단</th>
+      <th>자료</th>
+      <th>산출</th>
+      <th>구분</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>65·75·85세 이상, 0~4세, 0~14세</td>
+      <td>주민등록연앙인구 5세별(통계청, 2024)</td>
+      <td>직접 합산</td>
+      <td>실측</td>
+    </tr>
+    <tr>
+      <td>고혈압·당뇨 진단경험자</td>
+      <td>지역사회건강조사 진단경험률(30세 이상, 조율) × 30세 이상 인구</td>
+      <td>추정</td>
+      <td>추정</td>
+    </tr>
+    <tr>
+      <td>고혈압·당뇨·정신질환 진료실인원, 암 5종 진료실인원</td>
+      <td>DB(건강보험)</td>
+      <td>직접</td>
+      <td>실측</td>
+    </tr>
+    <tr>
+      <td>비만·현재흡연·우울증상</td>
+      <td>지역사회건강조사 조율 × 19세 이상 인구(15~19세의 1/5 포함 근사)</td>
+      <td>추정</td>
+      <td>추정</td>
+    </tr>
+    <tr>
+      <td>임산부, 출생아, 유치원 원아</td>
+      <td>DB(모자보건 등록, 출생통계, 교육통계)</td>
+      <td>직접</td>
+      <td>실측</td>
+    </tr>
+    <tr>
+      <td>장기요양 시설 정원·기관 수, 재가 정원, 요양병원 수</td>
+      <td>DB(국민건강보험공단·심평원)</td>
+      <td>직접</td>
+      <td>실측</td>
+    </tr>
+    <tr>
+      <td>독거노인, 기초생활수급자, 기초연금 수급자</td>
+      <td>DB</td>
+      <td>직접(독거노인은 65세 이상 1인가구 수)</td>
+      <td>실측</td>
+    </tr>
+    <tr>
+      <td>외국인 주민</td>
+      <td>DB 인구 천명당 외국인 수 × 인구</td>
+      <td>추정</td>
+      <td>추정</td>
+    </tr>
+    <tr>
+      <td>인플루엔자 미접종 성인</td>
+      <td>(100 − 접종률, 조율) × 19세 이상 인구</td>
+      <td>추정(성인 전체 기준, 65세 이상만의 값 아님)</td>
+      <td>추정</td>
+    </tr>
+    <tr>
+      <td>결핵 신환자, 의사·간호사 수</td>
+      <td>DB</td>
+      <td>직접</td>
+      <td>실측</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>원칙: 집단끼리 겹치므로(65세 이상이면서 고혈압) 합계를 내지 않습니다. 순위는 인구 대비 비율 기준으로 비중이 큰 지역이 1위입니다. 시도 값이 DB에 없으면 시군구 합으로 보완하고 “시군구 합”으로 표시합니다.</p>
+
+<h2 id="3-아직-못-넣은-것">3. 아직 못 넣은 것</h2>
+<ul>
+  <li>정신의료기관·정신요양시설 입원자, 장애인복지시설 입소자: 시군구 공표 자료 없음(시설 수는 KOSIS 보건복지부 통계에서 추가 수집 가능).</li>
+  <li>면역억제제 복용자, 만성신장(투석)·만성폐질환 환자: 건강보험 시군구 진료인원 표(KOSIS 350)에서 추가 수집 가능.</li>
+  <li>등록장애인 수: DB에 2018년까지만 있어 제외(보건복지부 등록장애인 현황으로 갱신 필요).</li>
+  <li>노숙인, 의료·돌봄 종사자 수(의사·간호사만 있음).</li>
+</ul>
+
+<h2 id="4-검증-메모">4. 검증 메모</h2>
+<ul>
+  <li>마포구(2024 인구 359,362명): 65세 이상 57,963명(16.1%), 고혈압 진단경험자 추정 66,673명 vs 진료실인원 실측 46,093명 — 추정치가 실측보다 큰 것은 진단경험(자기보고)이 연간 진료보다 넓은 개념이기 때문. 두 값을 나란히 보여 해석 여지를 남김.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
