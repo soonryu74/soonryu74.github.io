@@ -321,3 +321,7 @@ tr.muted td { color: var(--muted); }
 .ncd .src { white-space: normal; word-break: break-all; }
 .ncdcard, .ncdcard * { min-width: 0; }
 .rechead .k-bad { white-space: normal; }
+.faclist { margin-top:8px; font-size:12px; }
+.faclist summary { cursor:pointer; color:var(--series-1); }
+.faclist ul { margin:6px 0 0; padding-left:16px; max-height:260px; overflow:auto; }
+.faclist li { margin:4px 0; line-height:1.35; }

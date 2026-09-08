@@ -80,7 +80,10 @@
   - 파이프라인: scratchpad ncd_*.json(에이전트 수집) → scripts/build_ncd.py → data/ncd.json. 시도 계획서 출처 허브: KHEPI 지역보건의료계획서 저장소(planList.do)
   - 한계: AI 수집·요약이므로 수치는 원문 대조 필요(변경본 기준, 일부 표 불일치 notes 기록)
 - [완료] 조사 단위 탭: 보건소 단위(공식 255곳) ↔ KOSIS 코드 전량 매핑, 연도별 참여 단위, 시도별 보건기관 수(KOSIS 2025)
-  - PHIS: 공개 API 없음. 보건지소 목록은 공공데이터포털 '전국 지역보건의료기관 현황'(3,607건, CSV/OpenAPI) 필요 — 이 환경에서는 접속 차단
+  - PHIS: 공개 API 없음. 보건지소·진료소는 공공데이터포털 '전국 지역보건의료기관 현황' Open API(odcloud, 2025-12-31 기준 3,607건)로 수집 완료
+    (scripts/fetch_health_facilities.py → data/health_facilities.csv, 키는 .env DATA_GO_KR_KEY). build_units.py 가 기관→조사 단위 매핑(3,607건 전량).
+- [진행 중] 건강수명(전국·시도·시군구): 방법론 docs/건강수명_산출법_v1.md. 전국=통계청·WHO·HP2030 공식값, 시도=Sullivan(간이생명표+주관적 불건강률),
+  시군구=근사 Sullivan(사망원인통계 3년 합산 + 주민등록 인구 + 전국 연령 패턴 보정) → scripts/build_hle.py → data/hle.json
 - [대기] 김동현 교수 DB 검증 ← 파일 확보 시 착수 (원격 세션에서는 드라이브 업로드 필요)
 - [대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)
 - [대기] Vercel/GitHub Pages 배포 결정

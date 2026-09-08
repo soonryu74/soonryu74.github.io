@@ -88,6 +88,14 @@ export default function UnitsView({ setTip }) {
                   {selPoly && <div className="ui-row"><span>통계청 경계코드</span><b>{selPoly.properties.code}</b> <small>{selPoly.properties.name}</small></div>}
                   <div className="ui-row"><span>수록 기간</span><b>{sel.first ?? "–"}–{sel.last ?? "–"}</b> <small>{sel.status === "ended" ? "종료(폐지·이관)" : sel.status === "started_later" ? "중간 신설" : ""}</small></div>
                   {CHANGED[sel.c] && <div className="ui-row"><span>변경</span><b>{CHANGED[sel.c]}</b></div>}
+                  {sel.fac && Object.keys(sel.fac).length > 0 && (
+                    <div className="ui-row"><span>보건기관</span><b>{Object.entries(sel.fac).map(([k, v]) => `${k} ${v}`).join(" · ")}</b></div>
+                  )}
+                  {(UNITS.fac_by_unit?.[sel.c]?.list?.length > 0) && (
+                    <details className="faclist"><summary>기관 목록 {UNITS.fac_by_unit[sel.c].list.length}곳 (2025.12 기준)</summary>
+                      <ul>{UNITS.fac_by_unit[sel.c].list.map((f, i) => <li key={i}><b>{f.n}</b> <small>{f.t}{f.p ? ` · ${f.p}` : ""}</small><br /><small className="muted">{f.a}{f.tel ? ` · ${f.tel}` : ""}</small></li>)}</ul>
+                    </details>
+                  )}
                   {siblings.length > 0 && (
                     <div className="ui-subs"><span>세부 단위(보건소별)</span>
                       {siblings.map((s) => <button key={s.c} className={`subchip ${s.c === selCode ? "on" : ""}`} onClick={() => setSelCode(s.c)}>{s.n} <small>{s.chs?.replace(/보건소$/, "")}</small></button>)}
@@ -136,12 +144,13 @@ export default function UnitsView({ setTip }) {
         <input className="pick-search" placeholder="시도·시군구·보건소명 검색" value={q} onChange={(e) => setQ(e.target.value)} />
         <div className="tblscroll unitlist">
           <table className="yeartbl">
-            <thead><tr><th>시도</th><th>시군구</th><th>세부 단위</th><th>공식 보건소명</th><th>KOSIS 코드</th><th>수록</th><th>상태</th></tr></thead>
+            <thead><tr><th>시도</th><th>시군구</th><th>세부 단위</th><th>공식 보건소명</th><th>KOSIS 코드</th><th>수록</th><th>보건지소</th><th>진료소</th><th>상태</th></tr></thead>
             <tbody>
               {list.map((u) => (
                 <tr key={u.c} className={u.c === selCode ? "sel" : ""} onClick={() => setSelCode(u.c)}>
                   <td>{u.s}</td><td>{u.l === "sub" ? u.parent : u.n}</td><td>{u.l === "sub" ? u.n : u.has_subs ? `${u.subs.length}곳` : ""}</td>
                   <td>{u.chs || (u.has_subs ? "(세부 참조)" : "–")}</td><td className="muted">{u.c}</td><td>{u.first ?? "–"}–{u.last ?? "–"}</td>
+                  <td>{(u.fac?.["일반보건지소"] || 0) + (u.fac?.["통합보건지소"] || 0) || ""}</td><td>{u.fac?.["보건진료소"] || ""}</td>
                   <td>{u.status === "active" ? "" : u.status === "ended" ? "종료" : u.status === "started_later" ? "신설" : "자료 없음"}</td>
                 </tr>
               ))}
@@ -154,7 +163,7 @@ export default function UnitsView({ setTip }) {
         <h3>보건지소·보건진료소 데이터와 PHIS</h3>
         <div className="unitsdoc">
           <p><b>PHIS(지역보건의료정보시스템, 한국사회보장정보원)</b>는 보건기관 내부 업무·실적 시스템으로, 외부에 공개된 API가 없습니다. 실적통계는 보건기관 사용자와 정책담당자만 조회합니다.</p>
-          <p>대신 <b>공공데이터포털</b>에 보건복지부 「전국 지역보건의료기관 현황」(3,607건: 보건소·보건지소·보건진료소·건강생활지원센터, 시도·시군구·상위기관명·주소, CSV + Open API)이 있습니다. 이 파일을 연결하면 시군구별 보건지소 목록과 위치를 이 지도에 올릴 수 있습니다. 현재 화면의 시도별 기관 수는 KOSIS 통계표로 대체했습니다.</p>
+          <p>대신 <b>공공데이터포털</b> 보건복지부 「전국 지역보건의료기관 현황」(Open API, 2025-12-31 기준 {UNITS.fac_total?.toLocaleString()}건: 보건소·보건의료원·보건지소·보건진료소·건강생활지원센터, 시도·시군구·상위기관·주소·전화)을 연결했습니다. 지도에서 지역을 누르면 그 시군구의 기관 목록이 나옵니다(위경도 미제공이라 점 표시는 없음). 시도별 합계 표는 KOSIS 통계표(2025) 기준입니다.</p>
         </div>
       </div>
     </div>

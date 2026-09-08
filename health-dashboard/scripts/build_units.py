@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """조사 단위(보건소) 데이터셋: KOSIS 수록 단위 ↔ 질병청 공식 보건소 목록 매핑, 연도별 참여 단위 수, 시도별 보건기관 수"""
-import json, re, time
+import json, re, time, collections
 from pathlib import Path
 from collections import defaultdict
 
@@ -95,12 +95,48 @@ for r in R:
     units.append({"c": r["c"], "n": r["n"], "l": r["l"], "s": r["s"], "p": r["p"], "parent": R[IDX[r["p"]]]["n"] if r["p"] in IDX else None,
                   "chs": mapping.get(r["c"]), "first": ys[0] if ys else None, "last": ys[-1] if ys else None, "status": status(r),
                   "has_subs": r["c"] in subs, "subs": [s["n"] for s in subs.get(r["c"], [])]})
+# ---- 보건기관 3,607건 (공공데이터포털 API) → 조사 단위별 매핑 ----
+import csv as _csv
+fac_rows = list(_csv.DictReader(open(ROOT / "data/health_facilities.csv", encoding="utf-8-sig"))) if (ROOT / "data/health_facilities.csv").exists() else []
+by_unit = {}
+unmapped_fac = collections.Counter()
+sgg_by_sido_name = defaultdict(dict); sub_by_parent = defaultdict(dict)
+for u in units:
+    if u["l"] == "sgg": sgg_by_sido_name[u["s"]][u["n"]] = u["c"]
+    else: sub_by_parent[u["p"]][u["n"]] = u["c"]
+SUBFIX = {"상록구": "상록구", "단원구": "단원구", "마산합포구": "마산", "마산회원구": "마산", "진해구": "진해", "의창구": "창원", "성산구": "창원"}
+for f in fac_rows:
+    s_short = SHORT.get(f["시도"], f["시도"]); sg = f["시군구"].strip(); code = None
+    parts = sg.split()
+    if len(parts) == 2:  # "수원시 권선구" → 세부단위, 없으면 시 전체
+        city, gu = parts; pc = sgg_by_sido_name[s_short].get(city)
+        gu2 = SUBFIX.get(gu, gu)
+        code = sub_by_parent.get(pc, {}).get(gu2) or pc
+    elif sg in sgg_by_sido_name[s_short]: code = sgg_by_sido_name[s_short][sg]
+    elif sg in ("세종특별자치시", "세종시", "세종"): code = sgg_by_sido_name["세종"].get("세종시")
+    elif sg == "제주시": code = sgg_by_sido_name["제주"].get("제주시")
+    elif sg == "서귀포시": code = sgg_by_sido_name["제주"].get("서귀포시")
+    if not code: unmapped_fac[(f["시도"], sg)] += 1; continue
+    d = by_unit.setdefault(code, {"counts": collections.Counter(), "list": []})
+    d["counts"][f["기관유형"]] += 1
+    d["list"].append({"n": f["보건기관명"], "t": f["기관유형"], "p": f["상위기관명"], "a": f["주소"], "tel": f["대표 전화번호"]})
+for code, d in by_unit.items(): d["counts"] = dict(d["counts"])
+print(f"보건기관 {len(fac_rows)}건 중 매핑 {sum(len(d['list']) for d in by_unit.values())}건, 미매핑 {sum(unmapped_fac.values())}: {list(unmapped_fac.items())[:12]}")
+# 시군구 합계(세부 포함)
+for u in units:
+    if u["l"] == "sgg":
+        tot = collections.Counter(by_unit.get(u["c"], {}).get("counts", {}))
+        for sc in subs.get(u["c"], []): tot.update(by_unit.get(sc["c"], {}).get("counts", {}))
+        u["fac"] = dict(tot)
+    else:
+        u["fac"] = by_unit.get(u["c"], {}).get("counts", {})
+
 # ---- 시도별 보건기관 수 (KOSIS 2025) ----
 fac = defaultdict(dict)
 for row in json.loads((ROOT / "data/facilities_sido_2025.json").read_text(encoding="utf-8")):
     fac[row["C1_NM"].strip()][row["C2_NM"].strip()] = int(float(row["DT"])) if row["DT"] not in (None, "", "-") else None
 out = {"generated": time.strftime("%Y-%m-%d"), "official_count": len(official), "official_source": "https://chs.kdca.go.kr/chs/mainContent/pbhlthInfoMain.do",
-       "yearly": yearly, "units": units, "facilities": fac, "facilities_year": "2025", "facilities_source": "KOSIS 보건복지부 보건소·보건지소·보건진료소 수(TX_117191104)"}
+       "yearly": yearly, "units": units, "facilities": fac, "fac_by_unit": by_unit, "fac_source": "공공데이터포털 보건복지부_전국 지역보건의료기관 현황_20251231 (Open API)", "fac_total": len(fac_rows), "facilities_year": "2025", "facilities_source": "KOSIS 보건복지부 보건소·보건지소·보건진료소 수(TX_117191104)"}
 (ROOT / "data/units.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 from collections import Counter
 print("상태:", Counter(u["status"] for u in units), "| 세부 보유 시군구:", sum(1 for u in units if u["has_subs"]))
