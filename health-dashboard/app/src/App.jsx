@@ -95,6 +95,8 @@ export default function App() {
     if (r.l === "sido") { setSido(r.c); setSgg(null); }
     else { setSido(r.p); setSgg(r.c); }
   };
+  const [fs, setFs] = useState(() => { try { return Number(localStorage.getItem("hd-fs") || 0); } catch { return 0; } });
+  const bumpFs = (d) => setFs((v) => { const n = Math.max(-1, Math.min(2, v + d)); try { localStorage.setItem("hd-fs", String(n)); } catch {} return n; });
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", next);
@@ -112,7 +114,7 @@ export default function App() {
   const scopeLabel = sel.l === "sido" ? "17개 시도" : scope === "sido" ? `${RBY.get(sel.p).n} 내 시군구` : "전국 시군구";
 
   return (
-    <div className="viz-root">
+    <div className={`viz-root fs-${fs}`}>
       <div className="wrap">
         <header className="top">
           <div>
@@ -129,6 +131,8 @@ export default function App() {
               <button className={`seg-btn ${view === "ncd" ? "on" : ""}`} onClick={() => setView("ncd")}>예방·관리</button>
               <button className={`seg-btn ${view === "units" ? "on" : ""}`} onClick={() => setView("units")}>조사 단위</button>
             </div>
+            <button className="themebtn" onClick={() => bumpFs(-1)} disabled={fs <= -1} title="글자 작게">A−</button>
+            <button className="themebtn" onClick={() => bumpFs(1)} disabled={fs >= 2} title="글자 크게">A+</button>
             <button className="themebtn" onClick={toggleTheme}>{theme === "dark" ? "☀ 라이트" : "☾ 다크"}</button>
           </div>
         </header>
