@@ -304,3 +304,16 @@ export function hleRank(code, pool) {
   const rank = sorted.findIndex((v) => v <= mine) + 1;
   return { rank: rank || null, n: sorted.length, median: median(sorted), y };
 }
+
+// ── 감염병 고위험군 (scripts/build_risk.py → data/risk.json) ──
+import RISK_RAW from "../../data/risk.json";
+export const RISK = RISK_RAW;
+export const riskOf = (code) => RISK.regions?.[code] || null;
+/** 집단 비율 순위(높을수록 1위), 집단 내 중앙값(%) */
+export function riskRank(gid, code, pool) {
+  const vals = pool.map((r) => { const x = riskOf(r.c); return x && x[gid] ? [r.c, (x[gid].v / x.pop) * 100] : null; }).filter(Boolean);
+  const sorted = vals.map(([, v]) => v).sort((a, b) => b - a);
+  const me = riskOf(code); if (!me || !me[gid] || !sorted.length) return { rank: null, n: sorted.length, median: null };
+  const mine = (me[gid].v / me.pop) * 100;
+  return { rank: sorted.findIndex((v) => v <= mine) + 1 || null, n: sorted.length, median: median(sorted) };
+}
