@@ -47,7 +47,7 @@ window.EBN_STUDIES = [
   effect: ["백내장 HR 0.91 (0.83–0.99), p=0.04", "황반변성 HR 1.19 (0.94–1.50), 유의 없음"],
   finding: "백내장 발생이 9% 낮았다. 황반변성에는 효과 없음.",
   caveat: "효과 크기가 작고 남성 의사 대상. 간호사 건강연구(관찰)에서는 백내장 감소가 확인되지 않음.",
-  grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/24490265/"], updated: "2026-09"
+  grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/24268861/"], updated: "2026-09"
 },
 {
   id: "cosmos-main", name: "COSMOS — 종합비타민 주요 결과 (암·심혈관·사망)",
@@ -129,7 +129,7 @@ window.EBN_STUDIES = [
 {
   id: "uspstf-2022", name: "USPSTF 2022 권고 — 심혈관질환·암 예방 목적의 비타민·미네랄 보충",
   inst: "미국 예방서비스 태스크포스 · 카이저 퍼머넌트 근거센터", journal: "JAMA", year: 2022,
-  n: 324837, followup: "RCT 78건 + 코호트 6건(39만 명)", design: "GUIDE",
+  n: 739803, followup: "84개 연구(RCT 78 + 코호트 6), 73.9만 명", design: "GUIDE",
   population: "결핍 없는 지역사회 성인 (임신부 제외)", intervention: "종합비타민·단일/복합 영양소 vs 위약",
   ing: ["multi", "betacarotene", "vite"], outcome: ["cancer", "cvd", "mortality"],
   effect: ["종합비타민 암 발생 OR 0.93 (0.87–0.99), RCT 4건", "종합비타민 총 사망 OR 0.94 (0.87–1.01) — 유의 없음", "베타카로틴 폐암 OR 1.20 (1.01–1.42), 심혈관 사망 OR 1.10 (1.02–1.19)", "비타민 E 사망 OR 1.02 — 이득 없음"],
@@ -213,7 +213,7 @@ window.EBN_STUDIES = [
   ing: ["vitd", "omega3"], outcome: ["immune"],
   effect: ["비타민 D: 자가면역질환 HR 0.78 (0.61–0.99), p=0.05", "오메가-3: HR 0.85 (0.67–1.08)", "둘 다: HR 0.69 (0.49–0.96)", "복용 중단 2년 후: 비타민 D HR 0.98 (효과 소실), 오메가-3 HR 0.83 (0.70–0.99, 지속)"],
   finding: "비타민 D 복용 중에는 자가면역질환(류마티스·건선·갑상선 등)이 22% 적었으나, 끊으면 2년 내 효과가 사라졌다.",
-  caveat: "절대 차이 작음(1.2% vs 1.5%). 경계선 p값. 다양한 자가면역질환을 묶어서 분석.",
+  caveat: "절대 차이 작음(약 1.0% vs 1.2%). 경계선 p값. 다양한 자가면역질환을 묶어서 분석.",
   grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/35082139/", "https://pubmed.ncbi.nlm.nih.gov/38272846/"], updated: "2026-09"
 },
 {
@@ -262,11 +262,11 @@ window.EBN_STUDIES = [
 },
 {
   id: "vitd-mortality-meta", name: "비타민 D 보충과 사망률 — RCT 메타분석 (BMJ 2019 · Keum 2019 · Kuznia 2023)",
-  inst: "하버드 보건대학원 외", journal: "BMJ · Annals of Oncology · Ageing Research Reviews", year: 2019,
-  n: 74655, followup: "RCT 50건", design: "META",
+  inst: "쓰촨대 등(BMJ 2019) · 하버드 보건대학원(Keum 2019) · 독일암연구센터(Kuznia 2023)", journal: "BMJ · Annals of Oncology · Ageing Research Reviews", year: 2019,
+  n: 75454, followup: "RCT 52건", design: "META",
   population: "성인", intervention: "비타민 D2/D3 vs 위약",
   ing: ["vitd"], outcome: ["mortality", "cancer"],
-  effect: ["총 사망 RR 0.98 (0.95–1.02)", "암 사망 RR 0.85 (0.74–0.97) [BMJ 2019] · RR 0.87 (0.79–0.96) [Keum 2019]", "개인자료 메타(Kuznia 2023): 매일 복용 RR 0.88 (0.78–0.98) vs 볼루스 RR 1.07 (0.91–1.24)", "암 발생 RR 0.98 — 차이 없음"],
+  effect: ["총 사망 RR 0.98 (0.95–1.02)", "암 사망 RR 0.84 (0.74–0.95) [BMJ 2019] · RR 0.87 (0.79–0.96) [Keum 2019]", "개인자료 메타(Kuznia 2023): 매일 복용 RR 0.88 (0.78–0.98) vs 볼루스 RR 1.07 (0.91–1.24)", "암 발생 RR 0.98 — 차이 없음"],
   finding: "비타민 D는 수명을 늘리지 않고 암 발생도 못 줄이지만, 매일 복용 시 암 '사망'은 12~15% 낮았다. D3가 D2보다 낫다.",
   caveat: "용량·대상 이질적. 암 사망 효과는 소수 대형 시험에 의존. 후속 메타분석(Cheema 2022)에서는 유의 없음(RR 0.93).",
   grade: "B", urls: ["https://pmc.ncbi.nlm.nih.gov/articles/PMC6689821/", "https://pubmed.ncbi.nlm.nih.gov/30796437/", "https://pubmed.ncbi.nlm.nih.gov/37004841/"], updated: "2026-09"
@@ -294,9 +294,9 @@ window.EBN_STUDIES = [
   grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/36745886/", "https://pubmed.ncbi.nlm.nih.gov/38828931/"], updated: "2026-09"
 },
 {
-  id: "vitd-ari-2025", name: "비타민 D와 급성 호흡기 감염 — 43개 RCT 메타분석 (2025)",
+  id: "vitd-ari-2025", name: "비타민 D와 급성 호흡기 감염 — 40개 RCT 메타분석 (2025)",
   inst: "런던 퀸메리대 (Jolliffe·Martineau)", journal: "Lancet Diabetes & Endocrinology", year: 2025,
-  n: 61589, followup: "RCT 43건", design: "META",
+  n: 61589, followup: "RCT 40건(6.2만 명)", design: "META",
   population: "전 연령", intervention: "비타민 D vs 위약",
   ing: ["vitd"], outcome: ["immune"],
   effect: ["급성 호흡기 감염 OR 0.94 (0.88–1.00), p=0.057 — 유의 없음", "용량·나이·기저 농도별 차이 없음"],
@@ -324,7 +324,7 @@ window.EBN_STUDIES = [
   effect: ["25(OH)D <20 ng/mL: 성인 46.5% (2022, n=3,920)", "19~39세: 남 63.2% · 여 60.7%", "40~64세: 남 46.1% · 여 36.8%", "65세+: 남 38.4% · 여 27.6%", "2022~2023 별도 표본(n=2,612): 평균 24.2 ng/mL, 결핍 31.1%", "청소년 10~18세(2022~2023): 결핍 62.4% (여 71.5% · 남 54.0%)"],
   finding: "한국 성인 3명 중 1~2명이 비타민 D 결핍. 특히 20~30대 실내 근무 세대가 가장 심하다. 2014년(75~82%)보다는 개선.",
   caveat: "두 성인 수치는 표본·기준이 달라 섞어 쓰면 안 됨. 질병관리청 공식 통계표는 확인 안 됨(학술지 분석 기준). 보도에 흔한 '남 75%·여 82%'는 2014년 이전 자료.",
-  grade: "B", urls: ["https://pmc.ncbi.nlm.nih.gov/articles/PMC12567185/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC12472871/", "https://pubmed.ncbi.nlm.nih.gov/29952942/"], updated: "2026-09"
+  grade: "B", urls: ["https://pmc.ncbi.nlm.nih.gov/articles/PMC12567185/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC12472871/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC12845353/", "https://pubmed.ncbi.nlm.nih.gov/29952942/"], updated: "2026-09"
 },
 
 /* ===================== 오메가-3 ===================== */
@@ -432,7 +432,7 @@ window.EBN_STUDIES = [
 {
   id: "select", name: "SELECT — 비타민 E 400 IU · 셀레늄과 전립선암",
   inst: "SWOG (미국 국립암연구소 지원), 427개 기관", journal: "JAMA", year: 2011,
-  n: 35533, followup: "중앙값 7년", design: "RCT",
+  n: 34887, followup: "중앙값 7년 (무작위 35,533명, 2011 분석 34,887명)", design: "RCT",
   population: "50/55세 이상 건강한 남성 (PSA ≤4)", intervention: "비타민 E 400 IU/일, 셀레늄 200 µg/일 (2×2)",
   ing: ["vite", "selenium"], outcome: ["cancer"],
   effect: ["비타민 E: 전립선암 HR 1.17 (99% CI 1.004–1.36), p=0.008", "절대 증가 1.6명/1,000인년", "셀레늄 HR 1.09 (유의 없음), 당뇨 신호 RR 1.07", "기저 셀레늄 높은 남성이 셀레늄 복용 시 고등급 전립선암 약 2배 (2014 후속)"],
@@ -516,7 +516,7 @@ window.EBN_STUDIES = [
   n: 4203, followup: "중앙값 5년 (+5년 추적 2022)", design: "RCT",
   population: "50~85세 중등도 황반변성(양측 큰 드루젠 등)", intervention: "AREDS 제형(비타민 C 500 mg·E 400 IU·베타카로틴 15 mg·아연 80 mg·구리)에 루테인 10 mg+지아잔틴 2 mg, DHA/EPA 추가",
   ing: ["lutein", "omega3", "zinc", "betacarotene"], outcome: ["eye", "safety"],
-  effect: ["진행성 AMD: 루테인/지아잔틴 HR 0.90 (0.76–1.07), 1차 결과 유의 없음", "오메가-3 HR 0.97 — 효과 없음", "10년 추적: 루테인/지아잔틴 vs 베타카로틴 HR 0.85 (0.73–0.98)", "베타카로틴군 폐암 OR 1.82 (1.06–3.12) — 대부분 과거 흡연자"],
+  effect: ["진행성 AMD: 루테인/지아잔틴 HR 0.90 (98.7% CI 0.76–1.07), p=0.12, 1차 결과 유의 없음", "오메가-3 HR 0.97 — 효과 없음", "10년 추적: 루테인/지아잔틴 vs 베타카로틴 HR 0.85 (0.73–0.98)", "베타카로틴군 폐암 OR 1.82 (1.06–3.12) — 대부분 과거 흡연자"],
   finding: "AREDS 제형은 중등도 황반변성의 진행을 늦춘다. 베타카로틴은 폐암 위험 때문에 루테인·지아잔틴으로 대체해야 한다. 오메가-3 추가는 효과 없음.",
   caveat: "이미 황반변성이 있는 사람 대상. 건강한 눈의 예방 근거는 아님. 아연 80 mg은 고용량.",
   grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/23644932/", "https://pubmed.ncbi.nlm.nih.gov/35653117/"], updated: "2026-09"
@@ -575,10 +575,10 @@ window.EBN_STUDIES = [
   n: 8526, followup: "RCT 34건", design: "META",
   population: "성인·어린이", intervention: "아연 로젠지·시럽·스프레이",
   ing: ["zinc"], outcome: ["immune"],
-  effect: ["예방 RR 0.93 (0.85–1.01) — 효과 없음", "치료: 감기 기간 −2.37일 (−4.21 ~ −0.53), 이질성 97%, 낮은 확실성", "부작용(메스꺼움·맛) RR 1.34 (1.15–1.55)", "Hemilä: 아연 아세테이트 >75 mg/일 로젠지 −42% (35~48%), 성인 로젠지만 −37%"],
+  effect: ["예방 RR 0.93 (0.85–1.01) — 효과 없음", "치료: 감기 기간 −2.37일 (−4.21 ~ −0.53), 이질성 97%, 낮은 확실성", "부작용(메스꺼움·맛) RR 1.34 (1.15–1.55)", "Hemilä 2011: 아연 아세테이트 >75 mg/일 −42% (35~48%), 기타 염 −20%; Hemilä 2017(7 RCT >75 mg): 전체 −33% (21~45%)"],
   finding: "아연 로젠지를 감기 초기에 하루 75 mg 이상 먹으면 기간이 1~2일 짧아질 수 있다. 예방 효과는 없고 부작용은 늘어난다.",
   caveat: "근거 확실성 낮음. 제형·용량 의존. 어린이 시험은 음성.",
-  grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/38719213/", "https://pubmed.ncbi.nlm.nih.gov/21769305/"], updated: "2026-09"
+  grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/38719213/", "https://pubmed.ncbi.nlm.nih.gov/21769305/", "https://pubmed.ncbi.nlm.nih.gov/28515951/"], updated: "2026-09"
 },
 
 /* ===================== 마그네슘 ===================== */
@@ -658,7 +658,7 @@ window.EBN_STUDIES = [
   n: 420, followup: "2년", design: "RCT",
   population: "중등도~중증 심부전(NYHA III~IV), 표준치료 병행", intervention: "CoQ10 100 mg 1일 3회(300 mg) vs 위약",
   ing: ["coq10"], outcome: ["cvd", "mortality"],
-  effect: ["주요 심혈관 사건 HR 0.50 (0.32–0.80), p=0.005", "심혈관 사망 HR 0.51 (0.28–0.92)", "총 사망 HR 0.51 (0.30–0.89)"],
+  effect: ["주요 심혈관 사건 HR 0.50 (0.32–0.80), p=0.003", "심혈관 사망 HR 0.51 (0.28–0.92)", "총 사망 HR 0.51 (0.30–0.89)"],
   finding: "심부전 환자에서 CoQ10 300 mg이 2년간 사망·심혈관 사건을 절반으로 줄였다.",
   caveat: "420명 단일 시험. 사건 수 적음. 비유럽 기관에 결과가 편중됐다는 비판. 심부전 지침 표준치료로 채택되지 않음. 건강인 근거는 아님.",
   grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/25282031/"], updated: "2026-09"
@@ -708,7 +708,7 @@ window.EBN_STUDIES = [
   ing: ["curcumin"], outcome: ["joint", "pain"],
   effect: ["VAS 통증 −1.77 (−2.44 ~ −1.09) vs 위약", "WOMAC 기능 −5.04", "NSAID 대비 비열등, 부작용 RR 0.71 (0.57–0.90)"],
   finding: "무릎 관절염 통증을 소염진통제만큼 줄이면서 부작용은 적었다는 통합 결과.",
-  caveat: "포함 시험 질 낮음. 커큐민 흡수율 매우 낮아 '고흡수 제형'을 쓰는데, 이 제형에서 간 손상 보고 증가(미국 DILIN 10례, 이탈리아 7례 → 간 경고 라벨 의무화). NIH: 어떤 목적에도 이득 결론 불충분.",
+  caveat: "포함 시험 질 낮음. 커큐민 흡수율 매우 낮아 '고흡수 제형'을 쓰는데, 이 제형에서 간 손상 보고 증가(미국 DILIN 10례, 이탈리아 2019년 상반기 28례·토스카나 7례 → 간 경고 라벨 의무화). NIH: 어떤 목적에도 이득 결론 불충분.",
   grade: "C", urls: ["https://link.springer.com/article/10.1186/s12906-022-03740-9", "https://www.nccih.nih.gov/health/turmeric", "https://www.amjmed.com/article/S0002-9343(22)00740-9/fulltext"], updated: "2026-09"
 },
 
@@ -791,7 +791,7 @@ window.EBN_STUDIES = [
   id: "k2-bone-cvd", name: "비타민 K2(MK-7) — 폐경 여성 골밀도 RCT · 관상동맥 석회화 AVADEC RCT",
   inst: "마스트리흐트 대학 · 오덴세 대학병원", journal: "Osteoporosis International · JACC: Advances", year: 2023,
   n: 548, followup: "3년 (뼈) · 2년 (심혈관)", design: "RCT",
-  population: "건강 폐경 여성 244명 · 관상동맥 석회화 남성 304명", intervention: "MK-7 180 µg/일 · MK-7 720 µg + 비타민 D 25 µg/일",
+  population: "건강 폐경 여성 244명 · AVADEC 남성 389명 무작위(석회화 분석 304명)", intervention: "MK-7 180 µg/일 · MK-7 720 µg + 비타민 D 25 µg/일",
   ing: ["vitk2"], outcome: ["bone", "cvd"],
   effect: ["요추·대퇴경부 골밀도 감소 완화 (총 고관절 효과 없음)", "16개 RCT 메타(6,425명): 골절 RR 0.96 (p=0.65) — 효과 없음", "AVADEC: 관상동맥 석회화 진행 차이 없음 (p=0.089)", "투석·당뇨 환자 시험도 모두 음성"],
   finding: "K2는 골밀도를 조금 지키지만 골절은 못 줄이고, 혈관 석회화 예방은 최고 수준 RCT에서 실패했다.",
@@ -884,7 +884,7 @@ window.EBN_STUDIES = [
   n: 630, followup: "RCT 12건(피로) · 교차 RCT 20명(와파린)", design: "META",
   population: "성인", intervention: "인삼·홍삼 vs 위약",
   ing: ["ginseng"], outcome: ["muscle", "safety"],
-  effect: ["피로(4 RCT): SMD 0.34 (0.16–0.52) — 작은 효과", "신체 수행능력(8 RCT): SMD −0.01 — 효과 없음", "2022 메타(12 RCT 1,298명): 질환 관련 피로 SMD 0.33", "Yuan 2004: 미국삼 2주 복용 시 와파린 최고 INR −0.19 (−0.36 ~ −0.07), p=0.0012"],
+  effect: ["피로(4 RCT): SMD 0.34 (0.16–0.52) — 작은 효과", "신체 수행능력(8 RCT): SMD −0.01 — 효과 없음", "2023 메타(19 RCT): 전체 피로 SMD −0.36 (−0.82 ~ 0.11) 유의 없음 · 만성피로 하위군 −0.30 · 일반 피로 −0.48", "Yuan 2004: 미국삼 2주 복용 시 와파린 최고 INR −0.19 (−0.36 ~ −0.07), p=0.0012"],
   finding: "피로에 작은 효과(SMD 0.3)가 소규모 시험에서 보이고, 인삼은 와파린 효과를 측정 가능하게 떨어뜨린다. 면역 결과 메타분석은 없다.",
   caveat: "저자들: '근거 불충분, 소규모 시험'. 와파린 RCT는 건강 자원자 대상 미국삼.",
   grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/27822924/", "https://pubmed.ncbi.nlm.nih.gov/15238367/", "https://pubmed.ncbi.nlm.nih.gov/36730693/"], updated: "2026-09"
@@ -940,7 +940,7 @@ window.EBN_STUDIES = [
   population: "주요 우울증 환자", intervention: "하이페리쿰 추출물 vs 위약·항우울제",
   ing: ["sjw"], outcome: ["mood", "safety"],
   effect: ["위약 대비 반응률 RR 1.28 (1.10–1.49) (대규모 9건)", "SSRI 대비 RR 1.00 — 동등", "부작용 중단 OR 0.53 vs SSRI", "이리노테칸 활성대사체 SN-38 AUC −42% (14~70%) — 항암 효과 저하"],
-  finding: "우울증에는 SSRI만큼 효과가 있으나 CYP3A4 유도로 항암제·면역억제제·피임약·항응고제를 무력화한다. 국내 미허가.",
+  finding: "우울증에는 SSRI만큼 효과가 있으나 CYP3A4 유도로 항암제·면역억제제·피임약·항응고제를 무력화한다. 국내에서는 건강기능식품이 아닌 일반의약품(예: 페리시정)으로만 허가.",
   caveat: "독일어권 시험이 더 우호적. 추출물 표준화 상이.",
   grade: "B", urls: ["https://pubmed.ncbi.nlm.nih.gov/18843608/", "https://pubmed.ncbi.nlm.nih.gov/12189228/"], updated: "2026-09"
 }
