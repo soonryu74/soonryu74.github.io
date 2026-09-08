@@ -71,6 +71,9 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
     onSelect(reg.l === "sub" ? reg.p : reg.c);
   };
 
+  // 색 계열: 높을수록 나쁨 → 붉은색, 높을수록 좋음 → 파란색, 방향 없음 → 보라색
+  const pal = ind.bad === true ? "seqr" : ind.bad === false ? "seq" : "seqn";
+  const palNote = ind.bad === true ? "진한 붉은색일수록 값이 높음(나쁨)" : ind.bad === false ? "진한 파란색일수록 값이 높음(좋음)" : "진할수록 값이 높음(좋고 나쁨 없음)";
   return (
     <div className="mapwrap">
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="시군구 단계구분도">
@@ -80,7 +83,7 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
           const isSel = selCodes.has(r.code);
           return (
             <path key={f.properties.code} d={dPaths[i]} className={`poly ${isSel ? "sel" : ""}`}
-              style={{ fill: r.v == null ? "var(--grid)" : `var(--seq-${cls}00)` }}
+              style={{ fill: r.v == null ? "var(--grid)" : `var(--${pal}-${cls}00)` }}
               onMouseMove={onMove(f, r)} onMouseLeave={() => setTip(null)} onClick={onClick(r)} />
           );
         })}
@@ -89,9 +92,10 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
         {dSidoHi && <path d={dSidoHi} className="sido-hi" />}
       </svg>
       <div className="maplegend">
+        <span className="lg-item"><small>{palNote}</small></span>
         {[1, 2, 3, 4, 5, 6, 7].map((n) => (
           <span key={n} className="lg-item">
-            <i style={{ background: `var(--seq-${n}00)` }} />
+            <i style={{ background: `var(--${pal}-${n}00)` }} />
             <small>{n === 1 ? `≤${fmt(breaks[0])}` : n === 7 ? `>${fmt(breaks[5])}` : `${fmt(breaks[n - 2])}–${fmt(breaks[n - 1])}`}</small>
           </span>
         ))}
