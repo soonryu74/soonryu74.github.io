@@ -87,6 +87,7 @@ R = {
  "KR_KOROAD": {"name": "도로교통공단 교통안전지수", "url": "https://www.busan.go.kr/depart/trsafetyindex001"},
  "KR_EXT": {"name": "한국고용정보원 지방소멸위험지수", "url": "https://www.moel.go.kr/news/enews/report/enewsView.do?news_seq=13488"},
  "KR_HP2030": {"name": "제5차 국민건강증진종합계획(HP2030)", "url": "https://www.mohw.go.kr/board.es?mid=a10401000000&bid=0008&tag=&act=view&list_no=365340"},
+ "KR_DEP": {"name": "김동진 외(2013) 한국의 건강불평등 지표와 정책과제(KIHASA)", "url": "http://repository.kihasa.re.kr/bitstream/201002/11225/1/연구보고서%202013-10.pdf"},
  "KR_KHEPI": {"name": "지역보건의료계획 현황분석 지표(KHEPI)", "url": "https://www.jncare.go.kr/health/News/download/663/415"},
  "KR_CHS": {"name": "지역사회건강조사 보도자료(상향·하향지표 각주)", "url": "https://www.kdca.go.kr/bbs/kdca/42/310235/artclView.do?layout=unknown"},
  "KR_PARK": {"name": "박언아·최성용 2019 보건소 이용률 요인", "url": "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002448658"},
@@ -176,6 +177,7 @@ ITEMS = {
  "DT_NECE_CLINIC": E("ctx", "보건기관 이용률은 미국 체계(주치의·정기검진 이용)는 좋음으로 보지만, OECD·ECHI는 이용률을 맥락으로 두고 국내 연구(박언아·최성용 2019)는 고령·저소득·미충족의료자·군 지역에서 높아 취약성과 공공 접근성이 동시에 반영된다고 봄 → 방향 없음", "HP_AHS", "OECD_HAAG", "KR_PARK"),
  "HLE_LE": E("good", "기대수명은 OECD RWB·ECHI·CHR(조기사망 역지표) 모두 정방향", "OECD_RWB", "ECHI"),
  "HLE_HLE": E("good", "건강수명은 OECD·ECHI(HLY) 정방향, HP2030 대표지표", "ECHI", "KR_HP2030"),
+ "DEP_IDX": E("bad", "지역박탈지수는 정의상 높을수록 박탈이 큼(김동진 외 2013; 영국 IMD·미국 ADI 동일). 집계표 기반 근사값으로 원시자료 기반 공식값과 다를 수 있음", "KR_DEP"),
  "HLE_UNH": E("bad", "불건강 기간(기대수명−건강수명)은 짧을수록 좋음(HP2030 건강수명 격차 축소)", "KR_HP2030"),
 }
 out = {"generated": datetime.date.today().isoformat(), "rules": [l.strip() for l in __doc__.splitlines() if l.strip().startswith("R")], "items": ITEMS}

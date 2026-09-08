@@ -7,6 +7,7 @@ import ChoroplethMap from "./components/ChoroplethMap";
 import RankPanel from "./components/RankPanel";
 import YearTable from "./components/YearTable";
 import GapBoxplot from "./components/GapBoxplot";
+import EquityPanel from "./components/EquityPanel";
 import Profile from "./components/Profile";
 import Compare, { NAT, MAX_CMP } from "./components/Compare";
 import Tooltip from "./components/Tooltip";
@@ -213,6 +214,13 @@ export default function App() {
                 <ExportButtons name={`${ind.name}_격차_${scopeLabel}`} />
                 <div className="desc">연도별 분포(상자그림)와 {label(sel)}의 위치</div>
                 <GapBoxplot ind={ind} item={item} year={year} sel={sel} scope={scope} setTip={setTip} />
+              </div>
+
+              <div className="card">
+                <h3>건강형평성 — 지역박탈 5분위별 분포</h3>
+                <ExportButtons name={`${year}_${ind.name}_박탈분위`} kinds={["svg", "png"]} />
+                <div className="desc">{year}년 · 전국 시군구를 지역박탈지수(근사)로 5등분해 {ind.name} 분포를 비교</div>
+                <EquityPanel ind={ind} item={item} year={year} sel={sel} setTip={setTip} />
               </div>
             </div>
           </>

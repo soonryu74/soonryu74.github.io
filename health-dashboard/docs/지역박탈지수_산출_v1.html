@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>지역박탈지수(근사) 산출 v1 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="지역박탈지수(근사) 산출 v1" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="지역박탈지수(근사) 산출 v1" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"지역박탈지수(근사) 산출 v1","url":"/health-dashboard/docs/%EC%A7%80%EC%97%AD%EB%B0%95%ED%83%88%EC%A7%80%EC%88%98_%EC%82%B0%EC%B6%9C_v1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=399578f2c5b0519bcc2947b799776f65c2480f64">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="지역박탈지수근사-산출-v1">지역박탈지수(근사) 산출 v1</h1>
+
+<p>작성일: 2026-09-08 · 산출: scripts/kosis_fetch_census.py → scripts/build_deprivation.py → data/deprivation.json · 조사 배경: docs/지역박탈지수_조사_v1.md</p>
+
+<h2 id="1-방법">1. 방법</h2>
+<p>김동진 외(한국보건사회연구원, 2013)의 지역박탈지수 방식을 따릅니다. 변수별 시군구 비율을 전국 시군구 기준 z점수로 바꿔 단순합한 값이 지수이며, 높을수록 박탈이 큽니다. 원안은 원시자료(10~20% 표본)로 9개 변수를 썼지만, 여기서는 KOSIS 시군구 집계표로 얻을 수 있는 7개 변수를 씁니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>변수</th>
+      <th>정의</th>
+      <th>자료(2020 인구주택총조사)</th>
+      <th>전국 시군구 평균</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>낮은 교육수준</td>
+      <td>30~64세 중 고졸 미만(무학·초등·중학 졸업, 고교 재학·중퇴) 비율</td>
+      <td>DT_1PM2001(20% 표본)</td>
+      <td>11.4%</td>
+    </tr>
+    <tr>
+      <td>노인인구</td>
+      <td>65세 이상 인구 비율</td>
+      <td>주민등록연앙인구 2020</td>
+      <td>21.5%</td>
+    </tr>
+    <tr>
+      <td>낮은 사회계급(근사)</td>
+      <td>취업자 중 단순노무·농림어업·서비스·판매 종사자 비율</td>
+      <td>DT_1PC2012(20% 표본, 현거주지 기준)</td>
+      <td>35.7%</td>
+    </tr>
+    <tr>
+      <td>1인가구</td>
+      <td>일반가구 중 1인가구 비율</td>
+      <td>DT_1PE2013</td>
+      <td>33.6%</td>
+    </tr>
+    <tr>
+      <td>아파트 비거주</td>
+      <td>일반가구 중 아파트 외 거처 비율</td>
+      <td>DT_1PE2002</td>
+      <td>60.1%</td>
+    </tr>
+    <tr>
+      <td>여성가구주</td>
+      <td>일반가구 중 여성 가구주 비율</td>
+      <td>DT_1PE2013</td>
+      <td>33.1%</td>
+    </tr>
+    <tr>
+      <td>이혼·사별</td>
+      <td>15세 이상 중 이혼·사별 비율</td>
+      <td>DT_1PM2002(20% 표본)</td>
+      <td>15.5%</td>
+    </tr>
+    <tr>
+      <td>(제외) 자동차 미소유</td>
+      <td>2020 총조사 항목 없음</td>
+      <td>—</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>(제외) 낙후 주거시설</td>
+      <td>시군구 집계표 미확인</td>
+      <td>—</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>대상: 대시보드 시군구 228개(일반구가 있는 시는 시 전체 행). 시도 값은 시군구 지수의 인구가중 평균(참고용).</li>
+  <li>5분위: 지수 순으로 5등분, 5분위 = 박탈이 가장 큰 20%, 1분위 = 가장 덜 박탈.</li>
+  <li>지수 표준편차 5.8(김동진 2010년 9개 변수 7.7). 변수가 7개라 절대값 범위가 조금 좁습니다.</li>
+</ul>
+
+<h2 id="2-결과-요약">2. 결과 요약</h2>
+<ul>
+  <li>박탈 큼: 전남 고흥군 12.3, 경남 합천군 11.7, 전남 보성군 11.5, 경북 영덕군 11.5, 경북 의성군 11.2</li>
+  <li>덜 박탈: 울산 북구 −13.5, 충남 계룡시 −11.7, 인천 연수구 −10.6, 경기 용인시 −10.2, 경기 과천시 −10.1</li>
+  <li>서울: 서초(−8.0)·양천·송파·강남이 덜 박탈, 관악(2.4)·강북·중구·종로가 박탈 큼</li>
+</ul>
+
+<h2 id="3-검증">3. 검증</h2>
+<ul>
+  <li>경기도공공보건의료지원단 이슈브리핑 30호(원시자료 기반)의 세종 −9.3에 대해 본 근사값은 −8.2로 근접. 용인 수지구·성남 수정구는 일반구라 비교 불가(시 전체만 산출).</li>
+  <li>표면 타당도(2024 표준화율·2023 건강수명, 시군구 227개): 현재흡연율과 r=+0.25, 건강수명과 r=−0.32 (박탈이 클수록 흡연 많고 건강수명 짧음), 주관적 건강인지율과는 r≈0.</li>
+  <li>한계: 사회계급 변수는 가구주 직업이 아니라 취업자 전체 직업 분포로 근사. 자동차·주거시설 변수 누락. 2015년은 같은 방식으로 소급 가능(미실행).</li>
+</ul>
+
+<h2 id="4-화면">4. 화면</h2>
+<ul>
+  <li>지표 분석: “지역박탈지수(근사)” 지표(높을수록 나쁨, 지도·순위), “건강형평성 — 지역박탈 5분위별 분포” 카드(선택 지표를 분위별 상자그림으로, 5분위−1분위 중앙값 차이 표시).</li>
+  <li>지역 프로파일: 헤더에 “지역박탈 n분위” 배지(툴팁에 지수·순위).</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
