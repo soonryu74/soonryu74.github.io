@@ -50,6 +50,13 @@ def objs(tbl):
         if r["OBJ_ID"] != "ITEM": seen.setdefault(r["OBJ_ID"], int(r.get("OBJ_ID_SN", len(seen) + 1)))
     return [k for k, _ in sorted(seen.items(), key=lambda x: x[1])]
 
+def objs_sn(tbl):
+    """(OBJ_ID, OBJ_ID_SN) 목록 — objL 번호는 OBJ_ID_SN 을 그대로 써야 하는 표가 있음(중간 번호가 비는 경우)."""
+    j = meta(tbl, "ITM"); seen = {}
+    for r in j:
+        if r["OBJ_ID"] != "ITEM": seen.setdefault(r["OBJ_ID"], int(r.get("OBJ_ID_SN", len(seen) + 1)))
+    return sorted(seen.items(), key=lambda x: x[1])
+
 def data(tbl, y0, y1, itm="ALL", fix=None):
     """fix: {OBJ_ID: 코드} 로 특정 분류를 고정(예: 성별 계). 행수 제한(약 4만) 때문에 큰 표는 연도별로 부른다."""
     tag = "" if not fix and itm == "ALL" else "_" + "_".join([itm] + [f"{k}{v}" for k, v in (fix or {}).items()])
@@ -58,7 +65,7 @@ def data(tbl, y0, y1, itm="ALL", fix=None):
     # 주기가 '2년'·'3년'인 표(DT_1B44·DT_1B46)는 prdSe=F 로 불러야 함(Y 는 err 30)
     p = {"method": "getList", "apiKey": KEY, "format": "json", "jsonVD": "Y", "orgId": "101", "tblId": tbl,
          "itmId": itm, "prdSe": PRDSE.get(tbl, "Y"), "startPrdDe": str(y0), "endPrdDe": str(y1)}
-    for k, oid in enumerate(objs(tbl), 1): p[f"objL{k}"] = (fix or {}).get(oid, "ALL")
+    for oid, sn in objs_sn(tbl): p[f"objL{sn}"] = (fix or {}).get(oid, "ALL")
     j = call("https://kosis.kr/openapi/Param/statisticsParameterData.do", p)
     if isinstance(j, list):
         f.write_text(json.dumps(j, ensure_ascii=False), encoding="utf-8"); print("data", tbl, y0, y1, len(j), "rows", flush=True)

@@ -106,7 +106,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
             {me?.grade && <span className={`gradebadge g-${me.grade}`}>{me.grade}</span>}
             {me?.overallRank && <span className="subchip">{poolName} <b>{me.overallRank}위</b> / {me.n}</span>}
             {me?.weakest && <span className="subchip warn" title="가장 낮은 영역이 하위 25% 이내 — 지자체 참고">⚠ 최저 영역: {me.weakest}</span>}
-            {depOf(sel.c)?.q && <span className="subchip" title={`지역박탈지수(근사, ${DEP.year}년 총조사) ${fmt(depOf(sel.c).idx)} · 전국 시군구 중 ${depOf(sel.c).rank}위/${depOf(sel.c).n} (높을수록 박탈 큼)`}>지역박탈 <b>{depOf(sel.c).q}분위</b>{depOf(sel.c).q === 5 ? " (박탈 큼)" : depOf(sel.c).q === 1 ? " (덜 박탈)" : ""}</span>}
+            {depOf(sel.c)?.q && <span className="subchip" title={`지역박탈지수(근사, ${DEP.year}년 총조사) ${fmt(depOf(sel.c).idx)} · 전국 시군구 중 ${depOf(sel.c).rank}위/${depOf(sel.c).n} (높을수록 박탈 큼)${depOf(sel.c).prev ? ` · 2015년 ${fmt(depOf(sel.c).prev.idx)}(${depOf(sel.c).prev.q}분위)` : ""}`}>지역박탈 <b>{depOf(sel.c).q}분위</b>{depOf(sel.c).prev && depOf(sel.c).prev.q !== depOf(sel.c).q ? ` (2015 ${depOf(sel.c).prev.q}분위→)` : ""}{depOf(sel.c).q === 5 ? " (박탈 큼)" : depOf(sel.c).q === 1 ? " (덜 박탈)" : ""}</span>}
           </div>
         </div>
         <div className="prof-score">
