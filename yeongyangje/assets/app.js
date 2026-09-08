@@ -10,6 +10,8 @@
     ['jilhwan.html', '질환별 판정'],
     ['bokyong.html', '약·복용법'],
     ['saengae.html', '생애주기'],
+    ['jeungsang.html', '증상별'],
+    ['geomsa.html', '검사·계산기'],
     ['yeongu.html', '연구 DB'],
     ['chucheon.html', '내게 맞는 영양제'],
     ['jepum.html', '제품 고르는 법'],

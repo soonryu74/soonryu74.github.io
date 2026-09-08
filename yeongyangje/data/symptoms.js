@@ -1,0 +1,1 @@
+window.EBN_SYMPTOMS=[];
