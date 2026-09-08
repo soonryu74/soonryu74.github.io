@@ -45,6 +45,9 @@
     <div id="cStruct"></div>
     <h3>별표 · 별지</h3>
     <div class="table-scroll"><table class="compact" id="cTables"><tbody></tbody></table></div>
+    <h3>2026 검진비용 분류번호 (별표1)</h3>
+    <p class="small">원 단위 금액이 아닌 건강보험 행위 분류번호로 규정. 공단 청구 시 연도별 상대가치점수 × 환산지수(병원·의원 중 높은 단가) 적용.</p>
+    <div class="table-scroll"><table class="compact" id="cFees"><thead><tr><th>항목</th><th>분류번호·비용</th></tr></thead><tbody></tbody></table></div>
     <h3>개정 연혁 2005 → 2026</h3>
     <div class="table-scroll"><table class="compact" id="cHist"><thead><tr><th>고시 번호</th><th>발령</th><th>시행</th><th>구분</th><th>주요 내용</th></tr></thead><tbody></tbody></table></div>
   </div>
@@ -61,7 +64,7 @@
     <div class="table-scroll"><table class="compact" id="cutTable"><tbody></tbody></table></div>
   </div>
 
-  <div class="disclaimer">고시 본문은 보건복지부 게시 원문(PDF)과 국민건강보험공단 건강Law를 대조했습니다. 2005·2007년 구 고시와 2010년 암검진 고시 일부, 제2025-220호 세부 개정 내용, 암종별 원 단위 단가는 ⚠ 미확인. 검진기관은 청구 전 공단 운영세칙과 최신 고시를 확인하세요.</div>
+  <div class="disclaimer">고시 본문은 보건복지부 게시 원문(PDF)과 국민건강보험공단 건강Law를 대조했습니다. 2010년 암검진 고시 일부와 2012년 2차검진 인지기능 추가 세부는 ⚠ 2차 자료. 암종별 원 단위 단가는 고시에 없음(분류번호 방식). 검진기관은 청구 전 공단 운영세칙과 최신 고시를 확인하세요.</div>
 </main>
 <div id="site-footer"></div>
 <script src="assets/app.js"></script>
@@ -83,6 +86,7 @@
   document.getElementById('cStruct').innerHTML = c.structure.map(function(s){ return '<p>'+E(s.arts)+'</p>'; }).join('');
   document.querySelector('#cTables tbody').innerHTML = c.tables.map(function(t){ return '<tr><td style="white-space:nowrap"><b>'+E(t.no)+'</b></td><td>'+E(t.title)+'</td></tr>'; }).join('');
   hist(document.querySelector('#cHist tbody'), c.history);
+  document.querySelector('#cFees tbody').innerHTML = c.fees2026.map(function(f){ return '<tr><td>'+E(f[0])+'</td><td><code>'+E(f[1])+'</code></td></tr>'; }).join('');
   var i = G.infant; document.getElementById('iMeta').innerHTML = '<dt>법령 근거</dt><dd>'+E(i.basis)+'</dd><dt>최초 고시</dt><dd>'+E(i.first)+'</dd><dt>차수</dt><dd>'+E(i.rounds)+'</dd><dt>비고</dt><dd>'+E(i.note)+'</dd>';
   document.querySelector('#jTable tbody').innerHTML = G.judgment.map(function(j){ return '<tr><td style="white-space:nowrap"><b>'+E(j[0])+'</b></td><td>'+E(j[1])+'</td></tr>'; }).join('');
   document.querySelector('#cutTable tbody').innerHTML = G.cutoffs.map(function(j){ return '<tr><td style="white-space:nowrap"><b>'+E(j[0])+'</b></td><td>'+E(j[1])+'</td></tr>'; }).join('');
