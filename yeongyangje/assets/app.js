@@ -10,6 +10,8 @@
     ['jilhwan.html', '질환별 판정'],
     ['bokyong.html', '약·복용법'],
     ['saengae.html', '생애주기'],
+    ['jeungsang.html', '증상별'],
+    ['geomsa.html', '검사·계산기'],
     ['yeongu.html', '연구 DB'],
     ['chucheon.html', '내게 맞는 영양제'],
     ['jepum.html', '제품 고르는 법'],
@@ -34,6 +36,8 @@
       '<button class="a11y-btn" data-fs="xl">더 크게</button>' +
       '<span class="spacer"></span><span>근거 갱신 2026-09 · 광고·협찬 없음</span>' +
       '</div></div>' +
+      '<div class="beta-bar"><div class="a11y-inner"><b>전문가 감수 전(베타)</b> 이 사이트의 모든 내용은 공개 연구를 정리한 <b>일반 정보</b>이며 진단·처방이 아닙니다. 약사·의사 감수 후 표시가 바뀝니다. 질환·약 복용·임신 중에는 영양제 시작 전 반드시 의료인과 상의하세요.' +
+      '</div></div>' +
       '<header class="site-header"><div class="nav-inner">' +
       '<a class="brand" href="index.html"><span class="mark">EB</span>근거영양 <span class="tag">연구로 고르는 영양제</span></a>' +
       '<button class="nav-toggle" aria-label="메뉴" aria-expanded="false">☰ 메뉴</button>' +
@@ -45,7 +49,7 @@
     return '<footer class="site-footer"><div class="footer-inner">' +
       '<h4>근거영양 · Evidence-Based Nutrition Lab</h4>' +
       '<div class="footer-links">' + NAV.map(function (n) { return '<a href="' + n[0] + '">' + n[1] + '</a>'; }).join('') + '</div>' +
-      '<div class="footer-note">본 사이트는 공개된 임상연구·공식 기관 자료를 정리한 일반 정보이며 진단·처방이 아닙니다. 질환이 있거나 약을 복용 중이면 영양제 시작 전에 의사·약사와 상의하세요. ' +
+      '<div class="footer-note"><b>면책</b> 본 사이트는 공개된 임상연구·공식 기관 자료를 정리한 일반 건강 정보이며 의료법상 진단·처방·의료행위가 아닙니다. 개인의 건강 상태·복용 약 전체를 반영하지 못하므로 어떤 영양제든 시작·중단 전 의사·약사와 상의하세요. 이 정보를 근거로 한 판단과 결과의 책임은 이용자에게 있습니다. 내용은 전문가 감수 전이며 오류가 있을 수 있습니다(발견 시 제보 바랍니다). ' +
       '인용 연구는 각 항목의 원문 링크(PubMed·학술지·NIH·식약처)를 통해 직접 확인할 수 있습니다. ' +
       '이해상충: 현재 제품 판매·광고·협찬이 없으며, 향후 판매를 시작하면 해당 페이지에 명시합니다. © 2026 근거영양.</div>' +
       '</div></footer>';
@@ -81,7 +85,7 @@
   // 공용 유틸
   window.EBN = {
     gradeLabel: { A: 'A · 대규모 RCT 다수 일관', B: 'B · RCT 또는 메타분석 근거', C: 'C · 관찰연구·소규모·혼재', D: 'D · 효과 없음(잘 설계된 연구)', X: 'X · 유해 근거' },
-    verdictLabel: { rec: '권장', cond: '조건부 권장', opt: '선택(효과 작음)', no: '비권장(효과 없음)', avoid: '피하세요(유해)' },
+    verdictLabel: { rec: '근거 있음', cond: '조건부 근거', opt: '근거 약함', no: '효과 없음(연구 확인)', avoid: '유해 근거' },
     verdictClass: { rec: 'rec', cond: 'cond', opt: 'opt', no: 'no', avoid: 'avoid' },
     esc: function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   };

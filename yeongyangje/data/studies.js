@@ -321,9 +321,9 @@ window.EBN_STUDIES = [
   n: 3920, followup: "단면조사", design: "COHORT",
   population: "19세 이상 한국 성인", intervention: "혈중 25(OH)D 측정",
   ing: ["vitd"], outcome: ["deficiency"],
-  effect: ["25(OH)D <20 ng/mL: 전체 46.5% (2022, 면역측정법)", "19~39세: 남 63.2% · 여 60.7%", "40~64세: 남 46.1% · 여 36.8%", "65세+: 남 38.4% · 여 27.6%", "2022~2023 LC-MS/MS 재분석: 평균 24.2 ng/mL, 결핍 31.0%"],
+  effect: ["25(OH)D <20 ng/mL: 성인 46.5% (2022, n=3,920)", "19~39세: 남 63.2% · 여 60.7%", "40~64세: 남 46.1% · 여 36.8%", "65세+: 남 38.4% · 여 27.6%", "2022~2023 별도 표본(n=2,612): 평균 24.2 ng/mL, 결핍 31.1%", "청소년 10~18세(2022~2023): 결핍 62.4% (여 71.5% · 남 54.0%)"],
   finding: "한국 성인 3명 중 1~2명이 비타민 D 결핍. 특히 20~30대 실내 근무 세대가 가장 심하다. 2014년(75~82%)보다는 개선.",
-  caveat: "측정법(면역측정 vs LC-MS/MS) 차이로 결핍률이 크게 달라짐. 질병관리청 공식 통계표는 확인 안 됨.",
+  caveat: "두 성인 수치는 표본·기준이 달라 섞어 쓰면 안 됨. 질병관리청 공식 통계표는 확인 안 됨(학술지 분석 기준). 보도에 흔한 '남 75%·여 82%'는 2014년 이전 자료.",
   grade: "B", urls: ["https://pmc.ncbi.nlm.nih.gov/articles/PMC12567185/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC12472871/", "https://pubmed.ncbi.nlm.nih.gov/29952942/"], updated: "2026-09"
 },
 
@@ -738,15 +738,15 @@ window.EBN_STUDIES = [
 
 /* ===================== 철분 · B12 ===================== */
 {
-  id: "iron-korea", name: "한국 여성 빈혈 유병률 — 국민건강통계 2023 · WHO 철분 지침",
-  inst: "질병관리청 · WHO", journal: "국민건강통계 · WHO Guideline 2016", year: 2023,
+  id: "iron-korea", name: "한국 여성 빈혈 유병률 — 질병관리청 2014~2023 추이 · WHO 철분 지침",
+  inst: "질병관리청 · WHO", journal: "주간 건강과 질병 2025;18(41) · WHO Guideline 2016", year: 2025,
   n: 0, followup: "단면조사", design: "COHORT",
   population: "10세 이상 한국 여성", intervention: "—",
   ing: ["iron"], outcome: ["deficiency"],
-  effect: ["여성 빈혈 14.8% (2023, 보도 기준)", "30대 18.2% · 40대 21.7%", "WHO: 빈혈 유병률 ≥40% 지역에서만 가임기 여성 일괄 보충(30~60 mg, 연 3개월) 권고"],
+  effect: ["여성(10세+) 연령표준화 빈혈 14.8% · 남성 3.3% (2023)", "여성 연령별: 19~29세 10.0% · 30대 18.2% · 40대 21.7% · 50대 9.9% · 60대 11.6% · 70세+ 20.2%", "남성 70세+ 21.1%", "WHO: 빈혈 유병률 ≥40% 지역에서만 가임기 여성 일괄 보충(30~60 mg, 연 3개월) 권고"],
   finding: "한국 30~40대 여성 5명 중 1명이 빈혈. 그러나 WHO 기준상 한국은 '검사 후 보충' 지역이지 일괄 보충 지역이 아니다.",
-  caveat: "연령별 수치는 보도 인용(원표 미확인). 결핍 없는 철 보충은 위장 부작용·철 과잉 위험.",
-  grade: "B", urls: ["https://www.who.int/publications/i/item/9789241510196", "https://pmc.ncbi.nlm.nih.gov/articles/PMC6567528/", "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/"], updated: "2026-09"
+  caveat: "질병관리청 공식 간행물 그림에서 읽은 값. 70세 이상은 남녀 모두 5명 중 1명이 빈혈이며 이는 철 결핍보다 만성질환·출혈 원인 감별이 우선. 결핍 없는 철 보충은 위장 부작용·철 과잉 위험.",
+  grade: "B", urls: ["https://pmc.ncbi.nlm.nih.gov/articles/PMC12547683/", "https://www.who.int/publications/i/item/9789241510196", "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/"], updated: "2026-09"
 },
 {
   id: "b12-metformin", name: "메트포르민과 B12 결핍 — 17개 연구 메타분석 · ADA 2025 권고",

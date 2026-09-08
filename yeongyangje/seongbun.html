@@ -17,7 +17,7 @@
   </div>
   <div class="filter-bar">
     <input type="search" id="q" placeholder="성분 검색">
-    <select id="f-v"><option value="">판정 전체</option><option value="rec">권장</option><option value="cond">조건부 권장</option><option value="opt">선택</option><option value="no">비권장</option><option value="avoid">피하세요</option></select>
+    <select id="f-v"><option value="">판정 전체</option><option value="rec">근거 있음</option><option value="cond">조건부 근거</option><option value="opt">근거 약함</option><option value="no">효과 없음</option><option value="avoid">유해 근거</option></select>
   </div>
   <div class="ing-grid" id="grid"></div>
   <div class="disclaimer">성분 카드는 공개 연구 요약이며 진단·처방이 아닙니다. 질환·임신·약물 복용 중에는 의사·약사와 상의하세요. 섭취기준 출처: 보건복지부·한국영양학회 「2025 한국인 영양소 섭취기준」.</div>
@@ -42,7 +42,7 @@
         '<p class="one">'+esc(g.one)+'</p><dl><dt>이득 있는 사람</dt><dd>'+g.for.map(esc).join(' · ')+'</dd><dt>피해야 할 사람</dt><dd>'+g.against.map(esc).join(' · ')+'</dd><dt>용량</dt><dd>'+esc(g.dose)+'</dd><dt>한국 기준</dt><dd>'+esc(g.kr)+'</dd></dl>'+
         '<details><summary>제품 고를 때 ('+g.pick.length+')</summary><ul>'+g.pick.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></details>'+
         (M[k]?'<div class="mini">'+C.filter(function(c){return M[k][c.id]&&M[k][c.id].v!=='na'&&c.id!=='healthy';}).map(function(c){return '<span class="c '+M[k][c.id].v+'" title="'+esc(M[k][c.id].why)+'">'+esc(c.short)+' '+LBL[M[k][c.id].v]+'</span>';}).join('')+'</div>'+
-        '<details><summary>질환별 판정 ('+C.length+')</summary><ul>'+C.map(function(c){var x=M[k][c.id]||{v:'na',why:'정리된 근거 없음'};return '<li><span class="c '+x.v+'" style="font-size:.7rem;padding:0 6px;border-radius:5px;color:#fff;font-weight:800">'+LBL[x.v]+'</span> <b>'+esc(c.name)+'</b>: '+esc(x.why)+((x.src||[]).length?' <a href="'+esc(x.src[0])+'" target="_blank" rel="noopener">근거↗</a>':'')+'</li>';}).join('')+'</ul><a href="jilhwan.html?ing='+esc(k)+'">질환별 페이지에서 보기 →</a></details>':'')+
+        '<details><summary>질환별 판정 ('+C.length+')</summary><ul>'+C.map(function(c){var x=M[k][c.id]||{v:'na',why:'정리된 근거 없음'};return '<li><span class="c '+x.v+'" style="font-size:.7rem;padding:0 6px;border-radius:5px;color:#fff;font-weight:800">'+LBL[x.v]+'</span> <b>'+esc(c.name)+'</b>: '+esc(x.why)+((x.src||[]).length?' <a href="'+esc(x.src[0])+'" target="_blank" rel="noopener">근거↗</a>':(x.v!=='na'?' '+'<span class="nosrc" title="1차 출처를 확인하지 못한 항목입니다. 기전·전문가 의견에 근거한 추정이며 감수 대상입니다.">출처 미확인</span>':''))+'</li>';}).join('')+'</ul><a href="jilhwan.html?ing='+esc(k)+'">질환별 페이지에서 보기 →</a></details>':'')+
         '<details><summary>근거 연구 ('+(g.studies||[]).length+')</summary><ul>'+st+'</ul></details>'+
         '<a class="btn btn-ghost btn-sm" href="yeongu.html?ing='+esc(k)+'" style="margin-top:6px">연구 DB에서 보기</a></article>'; }).join('');
   }

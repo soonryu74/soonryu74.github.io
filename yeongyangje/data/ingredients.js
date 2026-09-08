@@ -30,7 +30,7 @@ window.EBN_INGREDIENTS = {
   ginseng: { name: "홍삼", en: "Red ginseng (Panax)", verdict: "opt", grade: "C",
     one: "한국 1위 판매 원료(약 1조). 피로·면역 소규모 시험은 혼재, 대규모 질병 예방 근거 없음. 와파린 효과 감소 RCT, 호르몬 의존성 질환 주의.",
     for: ["없음(선택)"], against: ["와파린 복용", "유방암 등 호르몬 의존성 암", "조절 안 되는 고혈압(주의)"],
-    dose: "식약처 기능성 함량 진세노사이드 Rg1+Rb1+Rg3 합 2.4~80 mg/일", kr: "고시형 원료(면역·피로·혈행 등)", pick: ["진세노사이드 함량 표기", "농축액 당 함량 확인(당뇨)"], studies: ["ginseng-evidence"] },
+    dose: "식약처 기능성 함량 진세노사이드 Rg1+Rb1+Rg3 합 25~80 mg/일", kr: "고시형 원료(면역·피로·혈행·갱년기 여성 건강 등)", pick: ["진세노사이드 함량 표기", "농축액 당 함량 확인(당뇨)"], studies: ["ginseng-evidence"] },
   greentea: { name: "녹차추출물(EGCG)", en: "Green tea extract", verdict: "no", grade: "C",
     one: "체중 감량 효과 미미(1~2 kg 미만). 고용량 추출물 간 손상 보고 다수 — EFSA 2018: EGCG 800 mg/일 이상 간독성. 차로 마시는 건 안전.",
     for: ["없음"], against: ["간질환", "공복 고용량", "철 결핍(흡수 방해)"],
@@ -238,7 +238,7 @@ window.EBN_INGREDIENTS = {
     one: "LDL은 낮추지만 홍국 = 로바스타틴(처방약)과 동일 물질, 곰팡이독 오염 문제. 심혈관 사건 감소 근거 없음. EU 규제 강화 중.",
     for: ["없음(LDL 관리는 의사와 스타틴 상담)"],
     against: ["스타틴 병용", "간·신장질환", "임신", "70세 이상"],
-    dose: "불필요", kr: "식약처 고시형(콜레스테롤 개선)",
+    dose: "불필요", kr: "식약처 고시형: 총 모나콜린 K 4~8 mg/일, 시트리닌 0.05 mg/kg 이하. 공식 주의사항: 어린이·임산부·수유부, 간질환·고지혈증 치료제 복용 시 섭취 피할 것(2021 재평가)",
     pick: ["함량 표기 없는 제품 다수, 시트리닌 시험 여부 확인"],
     studies: ["ryr-berberine"] },
 
@@ -253,6 +253,6 @@ window.EBN_INGREDIENTS = {
     for: ["없음"], against: ["와파린 복용"], dose: "불필요", kr: "충분섭취량 남 75 · 여 65 µg", pick: ["—"], studies: ["k2-bone-cvd"] },
 
   b6: { name: "비타민 B6", en: "Vitamin B6", verdict: "no", grade: "D",
-    one: "호모시스테인 강하 목적 심혈관 예방 실패. 장기 고용량(100 mg+)은 말초신경병증.",
-    for: ["입덧(의사 처방)"], against: ["장기 고용량"], dose: "불필요", kr: "권장 남 1.5 · 여 1.4 mg, UL 100 mg", pick: ["—"], studies: ["bvit-cvd"] }
+    one: "호모시스테인 강하 목적 심혈관 예방 실패. 장기 고용량은 말초신경병증 — 2025 한국 기준 상한이 100에서 50 mg으로 내려감.",
+    for: ["입덧(의사 처방)"], against: ["장기 고용량"], dose: "불필요", kr: "권장 남 1.5 · 여 1.4 mg, UL 50 mg(2025년 100→50 하향, 미국 100·유럽 12 mg)", pick: ["—"], studies: ["bvit-cvd"] }
 };

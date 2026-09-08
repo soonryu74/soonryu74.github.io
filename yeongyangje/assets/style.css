@@ -315,3 +315,34 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .krdi { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
 .krdi span { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: .87rem; }
 .krdi span b { color: var(--teal-dark); }
+
+/* ---------- 검사 가이드 · 계산기 ---------- */
+.test-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px 22px; margin: 12px 0; }
+.test-card h3 { margin: 0 0 6px; font-size: 1.12rem; }
+.test-card .row { display: grid; grid-template-columns: 110px 1fr; gap: 4px 10px; font-size: .93rem; margin-top: 8px; }
+.test-card .row dt { color: var(--muted); font-weight: 700; }
+.test-card .row dd { margin: 0; }
+.cut { display: inline-block; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 7px; padding: 2px 9px; font-size: .85rem; margin: 2px 4px 2px 0; font-family: ui-monospace, Menlo, monospace; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; }
+@media (max-width: 720px) { .calc-grid { grid-template-columns: 1fr; } }
+.calc-row { display: grid; grid-template-columns: 1fr 96px 60px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.calc-row label { font-size: .93rem; }
+.calc-row input { font: inherit; padding: 7px 9px; border: 1.5px solid var(--line-strong); border-radius: 8px; width: 100%; }
+.calc-row .u { font-size: .8rem; color: var(--muted); }
+.bar { height: 10px; background: var(--gray-soft); border-radius: 6px; overflow: hidden; position: relative; }
+.bar i { display: block; height: 100%; background: #2e9e5b; }
+.bar i.warn { background: #d9932a; } .bar i.over { background: #c0392b; }
+.res-row { display: grid; grid-template-columns: 150px 1fr 150px; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .92rem; }
+.res-row b.over { color: #c0392b; } .res-row b.warn { color: #b7791f; }
+@media (max-width: 600px) { .res-row { grid-template-columns: 1fr; gap: 4px; } }
+.sym-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px 22px; margin: 12px 0; }
+.sym-card h3 { margin: 0 0 8px; font-size: 1.15rem; }
+.sym-card .cause { margin: 6px 0; padding-left: 0; list-style: none; }
+.sym-card .cause li { padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: .94rem; }
+.sym-card .cause li b { color: var(--teal-dark); }
+.sym-card .flag { background: var(--red-soft); border-left: 4px solid var(--red); border-radius: 8px; padding: 8px 12px; font-size: .9rem; margin-top: 8px; }
+.sym-card .test { background: var(--blue-soft); border-left: 4px solid var(--blue); border-radius: 8px; padding: 8px 12px; font-size: .9rem; margin-top: 8px; }
+
+.beta-bar { background: #fff3cd; color: #5f4a00; font-size: .84rem; border-bottom: 1px solid #f1d27a; }
+.beta-bar .a11y-inner { padding: 6px 20px; line-height: 1.5; }
+.nosrc { display: inline-block; background: var(--amber-soft); color: var(--amber); border: 1px dashed var(--amber); border-radius: 6px; padding: 0 7px; font-size: .76rem; font-weight: 700; }
