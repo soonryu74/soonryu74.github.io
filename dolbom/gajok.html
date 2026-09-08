@@ -25,6 +25,7 @@
  <a href="gujik.html">돌봄종사자</a>
  <a href="tonghap-dolbom.html">통합돌봄</a>
  <a href="jangki-yoyang.html">장기요양</a>
+ <a href="uiryo.html">의료·보건</a>
  <a href="jiyeok.html">지역 찾기</a>
  <a href="gigwan.html">기관 평가</a>
  <a href="partner.html">광고·제휴</a>
@@ -99,7 +100,7 @@
  <div class="footer-inner">
  <h4>모심</h4>
  <div class="footer-links">
- <a href="gajok.html">환자·가족</a><a href="gujik.html">돌봄종사자</a><a href="tonghap-dolbom.html">통합돌봄</a><a href="jangki-yoyang.html">장기요양</a><a href="jiyeok.html">지역 찾기</a><a href="partner.html">광고·제휴</a><a href="jaryo.html">자료실</a>
+ <a href="gajok.html">환자·가족</a><a href="gujik.html">돌봄종사자</a><a href="tonghap-dolbom.html">통합돌봄</a><a href="jangki-yoyang.html">장기요양</a><a href="uiryo.html">의료·보건</a><a href="jiyeok.html">지역 찾기</a><a href="partner.html">광고·제휴</a><a href="jaryo.html">자료실</a>
  </div>
  <div class="footer-note">본 결과는 참고용이며 법적 효력이 없습니다. © 2026 모심.</div>
  </div>
@@ -164,7 +165,7 @@ document.getElementById('run').addEventListener('click', () => {
 
  // 개별 서비스 매핑
  const svc = [];
- if (need('medical') || ctx('discharge')) svc.push('<b>방문의료·방문간호</b> — 의사·간호사가 집으로 방문(재택의료). 퇴원 직후 특히 유용합니다.');
+ if (need('medical') || ctx('discharge')) svc.push('<b>방문의료·방문간호</b> — 의사·간호사가 집으로 방문(재택의료). 퇴원 직후 특히 유용합니다. <a href="uiryo.html#home">방문진료·재택의료·가정간호 비교</a>');
  if (need('bath') || heavy) svc.push('<b>방문요양·방문목욕</b> — 요양보호사가 방문해 신체활동·목욕·가사를 지원합니다.');
  if (need('day') || state.cognition==='severe') svc.push('<b>주·야간보호(데이케어)</b> — 낮 동안 기관에서 돌봄·기능훈련. 가족 부담을 크게 줄여줍니다.');
  if (need('meal')) svc.push('<b>식사배달·반찬 지원</b> — 도시락·반찬 배달 및 영양관리.');
@@ -172,7 +173,7 @@ document.getElementById('run').addEventListener('click', () => {
  if (need('move')) svc.push('<b>병원동행·이동지원</b> — 진료 동행 및 외출 교통 지원.');
  if (need('home')) svc.push('<b>주거환경 개선</b> — 안전손잡이·미끄럼방지·문턱 제거 등 케어안심 주거.');
  if (need('safety') || ctx('alone')) svc.push('<b>응급안전안심서비스</b> — 응급호출·활동감지 장비로 독거 어르신 안전 확인.');
- if (state.cognition==='mild' || state.cognition==='severe') svc.push('<b>치매 검진·상담</b> — 치매안심센터 연계, 치매상담콜 1899-9988(24시간).');
+ if (state.cognition==='mild' || state.cognition==='severe') svc.push('<b>치매 검진·상담</b> — 치매안심센터 연계, 치매상담콜 1899-9988(24시간). <a href="uiryo.html#chimae">치매안심센터 서비스 보기</a>');
 
  if (svc.length) {
  recs.push({tag:'맞춤 서비스', color:'law', title:'상태에 맞는 세부 서비스',
