@@ -29,7 +29,7 @@
 <script>
 (function(){
   var L=window.EBN_LIFESTAGE, I=window.EBN_INGREDIENTS, esc=EBN.esc;
-  var VL={rec:'꼭 필요',cond:'조건부',opt:'선택',no:'효과 없음',avoid:'피하세요'};
+  var VL={rec:'근거 확실',cond:'조건부 근거',opt:'근거 약함',no:'효과 없음',avoid:'유해 근거'};
   document.getElementById('stage-nav').innerHTML=L.map(function(s){ return '<a href="#'+s.id+'">'+s.icon+' '+esc(s.name)+'</a>'; }).join('');
   document.getElementById('stages').innerHTML=L.map(function(s){
     return '<section class="section stage" id="'+esc(s.id)+'"><h2 style="margin-top:0"><span>'+s.icon+'</span> '+esc(s.name)+'</h2>'+

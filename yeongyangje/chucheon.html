@@ -115,8 +115,8 @@
   <!-- RESULT -->
   <div id="result" hidden>
     <div class="section" id="level-box"></div>
-    <h2>결과 <button class="btn btn-ghost btn-sm print-btn" onclick="window.print()">인쇄·저장</button></h2>
-    <p class="small">위에서부터 <b>피하세요 → 권장 → 조건부 → 선택 → 비권장</b> 순. 각 항목의 "근거"를 눌러 원문 연구를 확인하세요.</p>
+    <h2>결과(정보 제공) <button class="btn btn-ghost btn-sm print-btn" onclick="window.print()">인쇄·저장</button></h2>
+    <div class="callout danger"><span class="t">읽기 전에</span>아래는 입력한 조건에 해당하는 <b>연구 결과를 정리한 정보</b>이지 개인 처방이 아닙니다. 용량은 "연구에서 쓰인 용량"이며 개인에게 맞는 용량은 의사·약사가 정합니다. 이 페이지는 전문가 감수 전입니다.</div><p class="small">위에서부터 <b>유해 근거 → 근거 있음 → 조건부 → 근거 약함 → 효과 없음</b> 순. 각 항목의 "근거"를 눌러 원문 연구를 확인하세요.</p>
     <div id="recs"></div>
     <div class="callout warn"><span class="t">이 결과는</span>공개된 임상연구를 규칙으로 정리한 <b>일반 정보</b>입니다. 진단·처방이 아니며, 질환이 있거나 약을 복용 중이면 시작 전 의사·약사와 상의하세요. 특히 L3·L4로 분류된 분은 반드시.</div>
     <div class="cta-band">
@@ -179,9 +179,9 @@
       var ing=EBN_INGREDIENTS[r.ing]||{};
       var cites=(r.cite||[]).map(function(id){ var s=SI[id]; return s ? '<a href="yeongu.html#'+esc(id)+'" title="'+esc(s.inst)+' · '+esc(s.journal)+' '+esc(s.year)+'">'+esc(s.name.split(' — ')[0])+' ('+esc(s.year)+')</a>' : ''; }).filter(Boolean).join(' · ');
       return '<div class="rec-card '+tierCls[r.tier]+'"><div class="rh"><span class="verdict '+EBN.verdictClass[r.tier]+'">'+esc(EBN.verdictLabel[r.tier])+'</span><h3>'+esc(r.title)+'</h3>'+(ing.grade?'<span class="grade '+esc(ing.grade)+'" title="'+esc(EBN.gradeLabel[ing.grade])+'">'+esc(ing.grade)+'</span>':'')+'</div>'+
-        '<p class="why">'+esc(r.why)+'</p>'+(r.dose&&r.dose!=='—'?'<div class="dose"><b>용량·방법</b> '+esc(r.dose)+(ing.kr?' <span class="small">· 한국 기준: '+esc(ing.kr)+'</span>':'')+'</div>':'')+
-        (r.flags&&r.flags.length?'<div class="dose" style="border-left:4px solid #d9932a"><b>내 상태별 주의</b><ul style="margin:4px 0 0;padding-left:18px">'+r.flags.map(function(f){return '<li><span class="c '+f.v+'" style="font-size:.72rem;padding:0 6px;border-radius:5px;color:#fff;font-weight:800">'+(f.v==='avoid'?'금기':'주의')+'</span> <b>'+esc(f.cond)+'</b>: '+esc(f.why)+(f.src?' <a href="'+esc(f.src)+'" target="_blank" rel="noopener">근거↗</a>':'')+'</li>';}).join('')+'</ul></div>':'')+
-        (cites?'<div class="cite">근거: '+cites+'</div>':'')+(ing.name?'<div class="cite"><a href="seongbun.html#'+esc(r.ing)+'">'+esc(ing.name)+' 성분 카드 →</a></div>':'')+'</div>';
+        '<p class="why">'+esc(r.why)+'</p>'+(r.dose&&r.dose!=='—'?'<div class="dose"><b>연구에서 쓰인 용량·방법</b> '+esc(r.dose)+(ing.kr?' <span class="small">· 한국 기준: '+esc(ing.kr)+'</span>':'')+'</div>':'')+
+        (r.flags&&r.flags.length?'<div class="dose" style="border-left:4px solid #d9932a"><b>내 상태별 주의</b><ul style="margin:4px 0 0;padding-left:18px">'+r.flags.map(function(f){return '<li><span class="c '+f.v+'" style="font-size:.72rem;padding:0 6px;border-radius:5px;color:#fff;font-weight:800">'+(f.v==='avoid'?'금기':'주의')+'</span> <b>'+esc(f.cond)+'</b>: '+esc(f.why)+(f.src?' <a href="'+esc(f.src)+'" target="_blank" rel="noopener">근거↗</a>':' '+'<span class="nosrc" title="1차 출처를 확인하지 못한 항목입니다. 기전·전문가 의견에 근거한 추정이며 감수 대상입니다.">출처 미확인</span>')+'</li>';}).join('')+'</ul></div>':'')+
+        (cites?'<div class="cite">근거: '+cites+'</div>':'')+(ing.name?'<div class="cite"><a href="seongbun.html#'+esc(r.ing)+'">'+esc(ing.name)+' 성분 카드 →</a></div>':'')+'<div class="cite" style="color:#b3261e">시작·중단 전 의사·약사 확인</div></div>';
     }).join('');
     form.hidden=true; document.getElementById('steps').hidden=true; document.getElementById('result').hidden=false;
     window.scrollTo({top:0,behavior:'smooth'});

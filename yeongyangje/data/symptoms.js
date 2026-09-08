@@ -25,7 +25,7 @@ window.EBN_SYMPTOMS = [
   lead: "가장 흔한 영양 원인은 B12 결핍이고, 역설적으로 '신경 영양제'로 팔리는 B6를 고용량으로 오래 먹으면 저림이 생깁니다.",
   causes: [
     { v: "cond", name: "비타민 B12 결핍", ing: "b12", why: "메트포르민 복용자 결핍 23% vs 17%(약 3배). 위산억제제·위 절제·비건·아산화질소 흡입도 원인. 교정 효과 확실.", src: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9816920/" },
-    { v: "avoid", name: "비타민 B6 과잉", ing: "b6", why: "대부분 1,000 mg 이상에서 신경병증이 생기지만 장기 복용 시 50 mg 미만 사례도 있음. 한국·미국 상한 100 mg, 유럽(2023)은 12 mg.", src: "https://www.ncbi.nlm.nih.gov/books/NBK554500/" },
+    { v: "avoid", name: "비타민 B6 과잉", ing: "b6", why: "대부분 1,000 mg 이상에서 신경병증이 생기지만 장기 복용 시 50 mg 미만 사례도 있음. 상한: 미국 100 mg, 한국은 2025년 100→50 mg으로 하향, 유럽(2023) 12 mg.", src: "https://www.ncbi.nlm.nih.gov/books/NBK554500/" },
     { v: "avoid", name: "아연 과잉 → 구리 결핍", ing: "zinc", why: "고용량 아연(보충제·틀니 접착제)이 구리를 고갈시켜 척수신경병증+빈혈. 보행 장애는 회복되지 않는 경우가 많음.", src: "https://www.nature.com/articles/sj.bdj.2011.428" },
     { v: "opt", name: "알파리포산(당뇨 신경병증)", ing: "ala", why: "과거 메타는 증상 24% 감소였으나 코크란 2024: 6개월 시점 '효과가 거의 없거나 없을 것', 탈락 편향 큼.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD012967.pub2/full" }
   ],
