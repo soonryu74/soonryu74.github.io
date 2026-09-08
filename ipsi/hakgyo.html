@@ -80,6 +80,18 @@
  <div class="tbl-wrap compact"><table id="ntbl"><thead><tr><th>학교</th><th>학교급</th><th>시도</th><th>시군구</th><th>설립</th><th>남녀</th><th>주소</th></tr></thead><tbody></tbody></table></div>
  <p class="src" id="nsrc"></p>
 </section>
+<section id="seongchwi">
+ <h2>성취도 A~E 분포 — 5등급제 첫해(2025학년도) 고교 교과별</h2>
+ <p class="sub">에듀데이터서비스(EDSS) 개방데이터 「교과별 학업성취도_학년별」 2026년 공시(2025학년도 성적) 익명 학교자료를 시도×고교구분×학년×교과로 합산. <strong>1학년 = 2009년생, 5등급제·2022 개정 교육과정 첫 적용 학년</strong>. 2010년생이 받을 성취도 분포의 가장 가까운 선례입니다.</p>
+ <div class="toolbar">
+  <select id="asido"><option value="">전국(합산)</option></select>
+  <select id="atype"><option value="일반고">일반고</option><option value="자율고">자율고</option><option value="특목고">특목고</option><option value="특성화고">특성화고</option><option value="">전체 유형</option></select>
+  <select id="agrade"><option value="1학년">1학년</option><option value="2학년">2학년</option><option value="3학년">3학년</option></select>
+  <span id="asrc" class="sub"></span>
+ </div>
+ <div class="tbl-wrap compact"><table id="atbl"><thead><tr><th>교과</th><th class="num">A(90+)</th><th class="num">B</th><th class="num">C</th><th class="num">D</th><th class="num">E(60 미만)</th><th class="num">이수 인원(중복)</th><th class="num">학교수</th></tr></thead><tbody></tbody></table></div>
+ <div class="callout"><h4>읽는 법</h4><p>A 비율이 높을수록 "성취도만 보는 전형"(경희대 네오르네상스 서류형 등)에서 변별이 약해지고, 대학은 원점수·평균·표준편차와 세특으로 눈을 돌립니다. 국어·수학·영어의 A 비율이 25~30%인데 5등급 1등급은 10%라는 뜻은, <strong>같은 A 안에서도 1·2등급이 갈린다</strong>는 것입니다. 과학(통합과학+과학탐구실험 포함)·예술·체육은 A가 60% 이상으로 사실상 절대평가 성격.</p></div>
+</section>
 <div class="disclaimer">데이터: 한국교육개발원 교육통계서비스(kess.kedi.re.kr) 학교별 데이터셋 「2026년 유초중등 학교별 학년별 학생수 학급수 입학 졸업 교원 직원 면적」·「2025년 …」. 학교수는 본교 기준(분교·폐교 제외), 방송통신고·각종학교 제외. 통계 이용 시 KEDI 교육통계센터 출처 표기.</div>
 </main>
 <footer class="site-footer">
@@ -142,6 +154,17 @@
    $('#ncount').textContent=(q||k||s)?l.length.toLocaleString()+'개교':'검색어를 입력하세요';
    $('#ntbl tbody').innerHTML=l.slice(0,200).map(r=>`<tr><td><strong>${r.name}</strong></td><td>${r.kind}</td><td>${r.sido}</td><td>${r.sigungu}</td><td>${r.found}</td><td>${r.coedu}</td><td style="font-size:.8rem">${r.addr}</td></tr>`).join('');}
   ['nq','nkind','nsido'].forEach(id=>$('#'+id).addEventListener('input',rn)); rn();
+ });
+ // EDSS 성취도
+ fetch('data/edss-achievement.json').then(r=>r.json()).then(E=>{
+  const R=E.rows; $('#asrc').textContent='출처: '+E.source+' · 갱신 '+E.updated;
+  [...new Set(R.map(r=>r[0]))].sort((a,b)=>a.localeCompare(b,'ko')).forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;$('#asido').appendChild(o)});
+  const ORDER=['국어','수학','영어','사회(역사/도덕포함)','과학','한국사','기술·가정/정보','제2외국어/한문','예술','체육'];
+  function ra(){const s=$('#asido').value,t=$('#atype').value,g=$('#agrade').value; const m={};
+   R.forEach(r=>{if((s&&r[0]!==s)||(t&&r[1]!==t)||r[2]!==g)return; const k=r[3]; const a=m[k]=m[k]||[0,0,0,0,0,0]; for(let i=0;i<5;i++)a[i]+=r[4+i]; a[5]+=r[9];});
+   const keys=Object.keys(m).sort((a,b)=>{const ia=ORDER.indexOf(a),ib=ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b,'ko')});
+   $('#atbl tbody').innerHTML=keys.map(k=>{const a=m[k],n=a[0]+a[1]+a[2]+a[3]+a[4]; if(n<100)return ''; const p=i=>(100*a[i]/n).toFixed(1)+'%'; return `<tr${ORDER.slice(0,6).includes(k)?' class="hl"':''}><td><strong>${k}</strong></td><td class="num"><strong>${p(0)}</strong></td><td class="num">${p(1)}</td><td class="num">${p(2)}</td><td class="num">${p(3)}</td><td class="num">${p(4)}</td><td class="num">${n.toLocaleString()}</td><td class="num">${a[5]}</td></tr>`}).join('');}
+  ['asido','atype','agrade'].forEach(id=>$('#'+id).addEventListener('input',ra)); ra();
  });
 })();
 </script>

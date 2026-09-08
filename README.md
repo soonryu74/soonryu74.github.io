@@ -42,7 +42,7 @@
 | 학과·경쟁률 | `ipsi/hakgwa.html` | 대학 493개교·학과 13,638개 정원·지원자·경쟁률 (`ipsi/data/univ-stats.json`, `univ-dept.json`) |
 | 교육청 자료 | `ipsi/gyoyukcheong.html` | 17개 시도 진로진학센터·공식 데이터 출처·수집 현황 |
 
-데이터 갱신: `python3 scripts/build_kess.py` (KESS 교육통계 엑셀 자동 탐색·변환, 매월 5일 GitHub Actions `kess-data.yml`). 나이스 학교기본정보는 `NEIS_API_KEY` Secret 등록 시 `scripts/build_schools.py`로 수집.
+데이터 갱신: `python3 scripts/build_kess.py` · `python3 scripts/build_edss.py`(EDSS 개방데이터 성취도 집계) (KESS 교육통계 엑셀 자동 탐색·변환, 매월 5일 GitHub Actions `kess-data.yml`). 나이스 학교기본정보는 `NEIS_API_KEY` Secret 등록 시 `scripts/build_schools.py`로 수집.
 
 ---
 안녕하세요, 만든 사람은 **서순려**입니다. 보건학을 전공하고 공무원으로 근무하며, 인공지능을 활용한 연구·데이터 분석·시각화·창작에 관심을 두고 꾸준히 배우고 있습니다.
