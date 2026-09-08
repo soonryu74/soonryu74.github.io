@@ -12,6 +12,8 @@
     ['saengae.html', '생애주기'],
     ['jeungsang.html', '증상별'],
     ['geomsa.html', '검사·계산기'],
+    ['deunggeup.html', '허가 등급'],
+    ['yongeo.html', '용어집'],
     ['yeongu.html', '연구 DB'],
     ['chucheon.html', '내게 맞는 영양제'],
     ['jepum.html', '제품 고르는 법'],
@@ -80,7 +82,43 @@
     });
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
+  function glossify() {
+    var G = window.EBN_GLOSSARY; if (!G || !G.length || document.body.hasAttribute('data-noglossary')) return;
+    var map = {}, keys = [];
+    G.forEach(function (g) { [g.term].concat(g.alias || []).forEach(function (t) { if (t && t.length >= 2) { map[t] = g; keys.push(t); } }); });
+    keys.sort(function (a, b) { return b.length - a.length; });
+    var re = new RegExp('(?<![\\w가-힣])(' + keys.map(function (k) { return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')(?![\w가-힣])', 'g');
+    var counts = {}, MAX = 3;
+    var walker = document.createTreeWalker(document.querySelector('main') || document.body, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
+      var p = n.parentNode; if (!p) return NodeFilter.FILTER_REJECT;
+      var tag = p.nodeName; if (/^(A|SCRIPT|STYLE|CODE|PRE|INPUT|TEXTAREA|SELECT|OPTION|BUTTON|H1|ABBR)$/.test(tag)) return NodeFilter.FILTER_REJECT;
+      if (p.closest && p.closest('a, .gl, .nosrc, .grade, .verdict, .chip, .drug-chip, .c, h1, h2, .page-head, .beta-bar, .a11y-bar')) return NodeFilter.FILTER_REJECT;
+      return re.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } });
+    var nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      var frag = document.createDocumentFragment(), last = 0, txt = n.nodeValue, m; re.lastIndex = 0;
+      while ((m = re.exec(txt))) {
+        var g = map[m[1]]; counts[g.term] = (counts[g.term] || 0) + 1; if (counts[g.term] > MAX) continue;
+        frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        var ab = document.createElement('abbr'); ab.className = 'gl'; ab.textContent = m[1]; ab.setAttribute('title', g.def); ab.setAttribute('tabindex', '0');
+        ab.addEventListener('click', function (e) { e.preventDefault(); showGl(g, ab); });
+        frag.appendChild(ab); last = m.index + m[1].length;
+      }
+      if (last === 0) return; frag.appendChild(document.createTextNode(txt.slice(last))); n.parentNode.replaceChild(frag, n);
+    });
+    function showGl(g, at) {
+      var old = document.getElementById('gl-pop'); if (old) old.remove();
+      var d = document.createElement('div'); d.id = 'gl-pop'; d.className = 'gl-pop';
+      d.innerHTML = '<b>' + g.term + '</b> <span class="small">' + (g.cat || '') + '</span><p>' + g.def + '</p><a href="yongeo.html#' + encodeURIComponent(g.term) + '">용어집에서 보기</a> <button type="button" aria-label="닫기">✕</button>';
+      document.body.appendChild(d);
+      var r = at.getBoundingClientRect(); d.style.top = (window.scrollY + r.bottom + 6) + 'px'; d.style.left = Math.max(8, Math.min(window.scrollX + r.left, window.innerWidth - 340)) + 'px';
+      d.querySelector('button').addEventListener('click', function () { d.remove(); });
+      setTimeout(function () { document.addEventListener('click', function h(e) { if (!d.contains(e.target) && e.target !== at) { d.remove(); document.removeEventListener('click', h); } }); }, 0);
+    }
+  }
+  window.EBN_glossify = glossify;
+  function mountAll() { mount(); setTimeout(glossify, 0); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountAll); else mountAll();
 
   // 공용 유틸
   window.EBN = {
