@@ -84,7 +84,8 @@
     (scripts/fetch_health_facilities.py → data/health_facilities.csv, 키는 .env DATA_GO_KR_KEY). build_units.py 가 기관→조사 단위 매핑(3,607건 전량).
 - [진행 중] 건강수명(전국·시도·시군구): 방법론 docs/건강수명_산출법_v1.md. 전국=통계청·WHO·HP2030 공식값, 시도=Sullivan(간이생명표+주관적 불건강률),
   시군구=근사 Sullivan(사망원인통계 3년 합산 + 주민등록 인구 + 전국 연령 패턴 보정) → scripts/build_hle.py → data/hle.json
-- [대기] 김동현 교수 DB 검증 ← 파일 확보 시 착수 (원격 세션에서는 드라이브 업로드 필요)
+- [완료] 김동현 교수 DB 검증 (docs/김동현DB_검증_v1.md): 2,507개 지표 카탈로그·17개 연도 시트, CHS 값 KOSIS와 완전 일치,
+  기대여명은 시도만·건강수명은 2018 시군구 250개(외부 검증 기준). 원본은 구글 드라이브(20260711)·추출물 data/kdh/(비공개, scripts/kdh_extract.py)
 - [대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)
 - [대기] Vercel/GitHub Pages 배포 결정
 

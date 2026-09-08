@@ -41,7 +41,7 @@ export default function HleCard({ sel, pool, poolName, setTip }) {
       <h3>기대수명 · 건강수명 <small className="muted">({isSgg ? "시군구 근사" : "시도 추정"} · 주관적 건강 기반)</small></h3>
       <ExportButtons name={`${label(sel)}_건강수명`} kinds={["svg", "png"]} />
       <div className="desc">
-        건강수명 = 기대수명 중 "스스로 건강하다"고 느끼며 사는 햇수(Sullivan 방식). {isSgg ? "시군구는 사망원인통계 3년 합산 생명표 + 지역사회건강조사 주관적 건강인지율(전국 연령 곡선 보정)로 근사한 값" : "시도는 통계청 시도별 간이생명표 + 지역사회건강조사 주관적 건강인지율로 산출한 값"}이며 <b>공식 통계가 아닙니다</b>.
+        건강수명 = 기대수명 중 "스스로 건강하다"고 느끼며 사는 햇수(Sullivan 방식). {isSgg ? "시군구는 사망원인통계 3년 합산 생명표 + 지역사회건강조사 주관적 건강인지율(전국 연령 곡선 보정)로 근사한 값" : "시도는 통계청 시도별 간이생명표 + 지역사회건강조사 주관적 건강인지율로 산출한 값"}이며 <b>공식 통계가 아닙니다</b>. 지역 차이는 주로 주관적 건강 응답 차이에서 나오며, 청구자료(YLD) 기반 건강수명과는 순위가 크게 다를 수 있습니다(방법론 문서 §3.3b).
       </div>
       <div className="hle-grid">
         <div className="kpi">

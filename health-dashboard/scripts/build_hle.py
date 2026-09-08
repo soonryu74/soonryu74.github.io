@@ -166,17 +166,19 @@ for y in range(2016, 2025):
         POP[(y, code)][P_AGE[age]] += v
         if len(code) == 2: POP_SIDO[y][code] = POP_SIDO[y].get(code, 0) + v
 
-def pooled(code, yc):
-    """yc 중심 3년 합산 사망자·인구 (AGES_SGG 구간). 자료가 없으면 None."""
+def pooled(codes, yc):
+    """yc 중심 3년 합산 사망자·인구 (AGES_SGG 구간). codes = 같은 지역을 가리키는 통계청 코드 집합
+    (사망자 표와 인구 표의 군 코드가 다름: 예 기장군 21510 vs 21310). 3개 연도 모두 있어야 함."""
     D = [0.0] * len(AGES_SGG); P = [0.0] * len(AGES_SGG); ok = 0
     for y in (yc - 1, yc, yc + 1):
-        d, p = DEATH.get((y, code)), POP.get((y, code))
+        d = next((DEATH[(y, c)] for c in codes if (y, c) in DEATH), None)
+        p = next((POP[(y, c)] for c in codes if (y, c) in POP), None)
         if not d or not p: continue
         ok += 1
-        da = sorted(d); D = [a + b for a, b in zip(D, regroup(da, [d[k] for k in da], AGES_SGG))]
-        # 연령미상 사망 비례 배분
-        unk = DEATH_UNK.get((y, code), 0.0); tot = sum(d.values())
-        if unk and tot: D = [x * (1 + unk / tot) for x in D]
+        da = sorted(d); Dy = regroup(da, [d[k] for k in da], AGES_SGG)
+        unk = sum(DEATH_UNK.get((y, c), 0.0) for c in codes); tot = sum(d.values())   # 연령미상 사망 비례 배분
+        if unk and tot: Dy = [x * (1 + unk / tot) for x in Dy]
+        D = [a + b for a, b in zip(D, Dy)]
         pa = sorted(p); P = [a + b for a, b in zip(P, regroup(pa, [p[k] for k in pa], AGES_SGG))]
     return (D, P, ok) if ok == 3 else None
 
@@ -264,15 +266,40 @@ for y in SIDO_YEARS:
 
 # 시군구 (3년 합산, 중심연도)
 unmapped = collections.Counter(); n_ok = 0
+DST2CODES = collections.defaultdict(set)
+for code in {c for (y, c) in list(DEATH) + list(POP) if len(c) == 5}:
+    dst = map_stat(code)
+    if dst: DST2CODES[dst].add(code)
+    else: unmapped[(code, NAMES.get(code))] += 1
+# 시도별 보정계수 k: 사망자·인구로 만든 시도 생명표 e0 가 통계청 시도 생명표 e0 와 같아지도록 연령별 사망률을 k배 (raking)
+def sido_official_le(code, yc):
+    ys = [y for y in SIDO_YEARS if code in out["regions"] and str(y) in out["regions"][code]["y"]]
+    if not ys: return None
+    y = min(ys, key=lambda t: (abs(t - yc), -t))
+    return out["regions"][code]["y"][str(y)]["le"]
+KFAC = {}
+for sc, snm in STAT_SIDO.items():
+    code = next((r["c"] for r in DS["regions"] if r["l"] == "sido" and r["s"] == snm), None)
+    for yc in range(2017, 2024):
+        pl = pooled({sc}, yc); off = sido_official_le(code, yc) if code else None
+        if not pl or not off: continue
+        D, P, _ = pl; lo, hi = 0.7, 1.4
+        for _ in range(50):
+            mid = (lo + hi) / 2
+            if chiang_lifetable(AGES_SGG, [d * mid for d in D], P)["e"][0] > off: lo = mid
+            else: hi = mid
+        KFAC[(sc, yc)] = (lo + hi) / 2
+print("시도 보정계수 k 범위", round(min(KFAC.values()), 3), "~", round(max(KFAC.values()), 3))
+out["method"]["kfac"] = {f"{STAT_SIDO[sc]}_{yc}": round(k, 4) for (sc, yc), k in KFAC.items()}
+
 for yc in range(2017, 2024):
-    for code in {c for (y, c) in DEATH if len(c) == 5}:
-        dst = map_stat(code)
-        if not dst: unmapped[(code, NAMES.get(code))] += 1; continue
-        pl = pooled(code, yc)
+    for dst, codes in DST2CODES.items():
+        pl = pooled(codes, yc)
         if not pl: continue
         D, P, _ = pl
         if sum(D) < 150: continue                                  # 3년 사망자 150명 미만은 불안정 → 제외
-        lt = chiang_lifetable(AGES_SGG, D, P)
+        k = KFAC.get((next(iter(codes))[:2], yc), 1.0)
+        lt = chiang_lifetable(AGES_SGG, [d * k for d in D], P)
         pat, y46u, _ = nat_pattern(yc, AGES_SGG); r = odds_ratio(dst, yc)
         if r is None: continue
         pi = scale_pattern(pat, r)
@@ -280,7 +307,7 @@ for yc in range(2017, 2024):
         pr = 100 * sum(a * b for a, b in zip(lt["L"], pi)) / sum(lt["L"])
         # 표본오차 근사: 3년 사망자 수 기반 기대수명 표준오차(Chiang 근사) — 간단히 1/sqrt(D) 스케일
         se = round(1.96 * 4.5 / (sum(D) ** 0.5) * 3, 2)             # 경험식(≈±0.3~1.0세) — 참고용
-        out["regions"].setdefault(dst, {"y": {}})["y"][str(yc)] = {"le": round(lt["e"][0], 2), "hle": round(hle, 2), "pr": round(pr, 1), "good": round(recog3(dst, yc), 1), "or": round(r, 3), "d3": int(sum(D)), "ci": se, "pat": y46u}
+        out["regions"].setdefault(dst, {"y": {}})["y"][str(yc)] = {"le": round(lt["e"][0], 2), "hle": round(hle, 2), "pr": round(pr, 1), "good": round(recog3(dst, yc), 1), "or": round(r, 3), "d3": int(sum(D)), "ci": se, "pat": y46u, "k": round(k, 3)}
         n_ok += 1
         if yc not in out["periods"]["sgg"]: out["periods"]["sgg"].append(yc)
 print("시군구 산출", n_ok, "건 | 미매핑", len(unmapped), list(unmapped)[:15])
