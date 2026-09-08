@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>김동현 교수 DB 검증 보고 v1 — 「지역사회 건강결과 및 건강 결정요인 DB 1.7v.xlsx」 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="김동현 교수 DB 검증 보고 v1 — 「지역사회 건강결과 및 건강 결정요인 DB 1.7v.xlsx」" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="김동현 교수 DB 검증 보고 v1 — 「지역사회 건강결과 및 건강 결정요인 DB 1.7v.xlsx」" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"김동현 교수 DB 검증 보고 v1 — 「지역사회 건강결과 및 건강 결정요인 DB 1.7v.xlsx」","url":"/health-dashboard/docs/%EA%B9%80%EB%8F%99%ED%98%84DB_%EA%B2%80%EC%A6%9D_v1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=adcb97a154e86481c946cf3324aeac047c9695fb">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="김동현-교수-db-검증-보고-v1--지역사회-건강결과-및-건강-결정요인-db-17vxlsx">김동현 교수 DB 검증 보고 v1 — 「지역사회 건강결과 및 건강 결정요인 DB 1.7v.xlsx」</h1>
+
+<p>검토일: 2026-09-08 · 파일: 51.2MB, 22개 시트 · 보관: 구글 드라이브(공개 저장소에 원본·추출물 커밋 금지, <code class="language-plaintext highlighter-rouge">data/kdh/</code>는 .gitignore)</p>
+
+<h2 id="1-구조">1. 구조</h2>
+<p>| 시트 | 내용 |
+|—|—|
+| DATA설명 | 지표 카탈로그 2,507개: 대/중/소분류, 지표명, 정의, 단위, 자료생산기관, 통계명, 승인통계 여부, 지표유형, 수집 URL, 지역수준(전국/시도/시군구), 연도별 수록 여부(2008~2024) |
+| V1.7현황 / 통계원과 항목수 | 분류별 항목 수(기존·추가·산출중단·미공표), 통계 81종별 항목 수 |
+| 연도별행정구역 | 304개 행정구역의 연도별 존재 여부(2008~2024) |
+| 암발생률 | 시군구별 암등록통계 24개 암종(발생자수·조발생률·표준화발생률, 성별) 5년 구간(1999-2003 ~) 839행 |
+| 2008 ~ 2024 (17개) | 연도별 <strong>와이드 표</strong>: 행 = 전국·17개 시도·시군구(일반구 포함 약 276~280개), 열 = 지표 1,117~1,834개. 2022~2024 시트는 1행에 원본 변수 ID(예: 040603002001)가 추가 |</p>
+
+<p>지표 분포(카탈로그 기준): 건강결과 1,193(사망률 540·발생률 420·유병률 67·주관적 건강 54) · 보건의료체계 509(의료이용 317·보건의료자원 158) · 건강행태 426 · 물리적 환경 167 · 사회적 환경 118 · 인구학적 특성 90.
+자료원 상위: 사망원인통계 452, 지역사회건강조사 289, 암등록통계 253, 건강검진통계 221, 법정감염병 204, 예방접종률 138, 건강보험통계 80, 아동구강 145, 교통사고 73, 청소년건강행태 67, 지역별의료이용 65.</p>
+
+<h2 id="2-검증-결과">2. 검증 결과</h2>
+<ul>
+  <li><strong>값 정확성(지역사회건강조사)</strong>: 2023년 마포구·송파구·강남구의 주관적 건강수준인지율·비만율(자가보고) 표준화율이 이 프로젝트의 KOSIS 수집값과 <strong>소수 첫째 자리까지 완전 일치</strong> → DB의 CHS 부분과 우리 파이프라인이 서로 검증됨.</li>
+  <li><strong>커버리지</strong>: 시군구 행 270(2008)→278(2024). 전 지표의 99.7%가 전국·시도·시군구 3수준 수록. 2021년 시트는 열이 1,117개로 다른 해(1,500~1,800)보다 적음(수록 누락 가능성 → 원저자 확인 필요). 2022~2024는 채움 열이 1,499~1,592개(미공표 지표 공란).</li>
+  <li><strong>기대여명</strong>: 2008·2011·2014·2017·2020 시트에 열이 있으나 <strong>시도 행만 값이 있고 시군구는 공란</strong>(통계청이 시군구 생명표를 공표하지 않기 때문 — 우리 건강수명 산출법 문서 §2.1과 일치).</li>
+  <li><strong>건강수명</strong>: 2018 시트에만 시군구 250개 값(62.2~75.3세, 세종 69.9·종로 72.3). 청구자료 YLD 기반 연구값으로 보이며(보건행정학회지 2024 연구와 지역 수 250 일치), 우리 근사 건강수명의 <strong>외부 검증 기준</strong>으로 사용 예정(순위 상관). 이 중 218개가 대시보드 시군구 코드와 직접 매핑되고 나머지 32개는 일반구(수원 장안구 등) 단위.</li>
+  <li><strong>코드 체계</strong>: 2008~2020은 통계청 행정구역 코드 2·5자리(11, 11010), 2021~은 5자리 0채움(00000, 11000). 대시보드(KOSIS 177 코드)와는 이름 기반 매핑 필요 — 이번 검증에서 시도+시군구명으로 매핑 가능 확인.</li>
+  <li><strong>주의</strong>: 헤더 표기가 연도마다 다름(예: “여자 현재흡연율_표준화” vs “_표준화율”, 공백 포함). 지표명 정규화 사전이 필요.</li>
+</ul>
+
+<h2 id="3-활용-판단">3. 활용 판단</h2>
+<ol>
+  <li><strong>바로 쓸 수 있는 것(2단계 지역 건강프로파일)</strong>: 사망원인통계 시군구 사망률(표준화율 포함, 총·원인별·성별), 암발생률(24개 암종), 건강검진 결과, 감염병, 예방접종률, 의료이용·보건의료자원. 이 지표들은 KOSIS에서 우리가 아직 수집하지 않은 영역이라 DB를 1차 자료원으로 삼되, 게시 전 KOSIS 원표와 표본 대조(연 1회).</li>
+  <li><strong>중복(검증용)</strong>: 지역사회건강조사 289개 지표 — 우리 파이프라인(41개 시군구 지표)이 이미 수집하므로 DB는 교차검증용.</li>
+  <li><strong>활용 조건</strong>: 원저자 DB이므로 공개 대시보드에 값을 게시하려면 김동현 교수의 사용 동의·출처 표기 방식 확인 필요. 파일·추출물은 저장소 밖(드라이브·로컬)에만 보관.</li>
+</ol>
+
+<h2 id="4-다음-단계">4. 다음 단계</h2>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scripts/kdh_extract.py</code>(작성 완료): <code class="language-plaintext highlighter-rouge">KDH_XLSX=경로</code> 로 실행하면 카탈로그 CSV와 연도별 long 형식 CSV를 <code class="language-plaintext highlighter-rouge">data/kdh/</code>(비공개)에 생성.</li>
+  <li>건강수명 근사값이 나오면 2018 DB 건강수명 250개와 순위 상관 검증 → 산출법 문서 §3.1 검증 항목 기록.</li>
+  <li>2단계 프로파일 설계 시 DB 사망률·암·검진 지표를 영역(건강결과)으로 추가하는 매핑표 작성.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

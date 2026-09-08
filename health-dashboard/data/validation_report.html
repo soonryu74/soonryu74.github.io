@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>KOSIS 지표 인벤토리 수집·검증 리포트 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="KOSIS 지표 인벤토리 수집·검증 리포트" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="KOSIS 지표 인벤토리 수집·검증 리포트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"KOSIS 지표 인벤토리 수집·검증 리포트","url":"/health-dashboard/data/validation_report.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=adcb97a154e86481c946cf3324aeac047c9695fb">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="kosis-지표-인벤토리-수집검증-리포트">KOSIS 지표 인벤토리 수집·검증 리포트</h1>
+
+<p>생성일: 2026-09-05 04:53 (UTC)</p>
+
+<h2 id="1-통계표-검색-페이지네이션-전량">1. 통계표 검색 (페이지네이션 전량)</h2>
+<ul>
+  <li>‘지역사회건강조사’: 500건</li>
+  <li>‘e-지방지표’: 119건</li>
+  <li>‘지방지표’: 496건</li>
+  <li>합계 1115건 → 중복 제거 후 고유 통계표 <strong>983개</strong></li>
+</ul>
+
+<h2 id="2-대상-통계-필터-stat_nm-기준">2. 대상 통계 필터 (STAT_NM 기준)</h2>
+<h3 id="지역사회건강조사-87개-통계표-ciat-기준-지표-수-98">지역사회건강조사: 87개 통계표 (CIAT 기준 지표 수: 98)</h3>
+<ul>
+  <li>최신 수록연도 분포: 2025년 53개, 2024년 2개, 2022년 3개, 2021년 9개, 2019년 10개, 2018년 3개</li>
+  <li>2023년 이전에 갱신이 멈춘 표: 32개</li>
+  <li>파일: data/inventory_chs.csv</li>
+</ul>
+
+<h3 id="e-지방지표-119개-통계표-ciat-기준-지표-수-157">e-지방지표: 119개 통계표 (CIAT 기준 지표 수: 157)</h3>
+<ul>
+  <li>최신 수록연도 분포: 2042년 1개, 2026년 17개, 2025년 49개, 2024년 35개, 2023년 1개, 2022년 2개</li>
+  <li>2023년 이전에 갱신이 멈춘 표: 16개</li>
+  <li>파일: data/inventory_ejibang.csv</li>
+</ul>
+
+<h2 id="3-핵심-지표-표본-실데이터-검증">3. 핵심 지표 표본 실데이터 검증</h2>
+<p>프로토타입 5개 지표에 대응하는 통계표를 골라 최신 연도 실데이터를 호출,
+시도(17개) 커버리지와 결측을 확인.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>프로토타입 지표</th>
+      <th>통계표</th>
+      <th>수록기간</th>
+      <th>최신연도 행수</th>
+      <th>시도 커버</th>
+      <th>시군구 행수</th>
+      <th>결측</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>현재흡연율</td>
+      <td>흡연율(시도/시/군/구) (DT_1YL21001E)</td>
+      <td>2008–2025</td>
+      <td>243</td>
+      <td>17/17</td>
+      <td>204</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>고위험음주율</td>
+      <td>시·도별 당뇨병 진단 경험자(30세 이상)의 고위험음주율 (DT_DIA_DOCTOR_HIGH)</td>
+      <td>2008–2025</td>
+      <td>85</td>
+      <td>17/17</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>걷기실천율</td>
+      <td>시·도별 당뇨병 진단 경험자(30세 이상)의 걷기 실천율 (DT_117075_DIA_DOCTOR_WALK)</td>
+      <td>2008–2025</td>
+      <td>85</td>
+      <td>17/17</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>비만율</td>
+      <td>시·군·구별 비만율(자가보고) (DT_H_OBE_OBE)</td>
+      <td>2008–2025</td>
+      <td>1460</td>
+      <td>17/17</td>
+      <td>247</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>우울감경험률</td>
+      <td>시·군·구별 우울증상유병률 (DT_117075_H_MENTAL_DEPRESS_SYM)</td>
+      <td>2017–2025</td>
+      <td>1460</td>
+      <td>17/17</td>
+      <td>247</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="4-판정-요약">4. 판정 요약</h2>
+<ul>
+  <li>페이지네이션 수집이 정상 작동하며 API 키 유효.</li>
+  <li>상세 표별 검증(전 연도 결측·시군구 단위)은 다음 단계에서 표 단위로 수행.</li>
+</ul>
+
+<h2 id="5-보완-검증-2026-09-05-0501-utc">5. 보완 검증 (2026-09-05 05:01 UTC)</h2>
+<ul>
+  <li>‘지역사회건강조사’ 검색 501번째 이후 없음 (응답: {“err”: “30”, “errMsg”: “데이터가 존재하지 않습니다.”}) → 500건이 전체, 상한 잘림 아님</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>지표</th>
+      <th>통계표</th>
+      <th>연도</th>
+      <th>행수</th>
+      <th>시도 커버</th>
+      <th>지역 수(전체)</th>
+      <th>결측</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>고위험음주율(전체 인구)</td>
+      <td>DT_1YL20291E</td>
+      <td>2025</td>
+      <td>243</td>
+      <td>17/17</td>
+      <td>221</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>걷기 실천율(전체 인구)</td>
+      <td>DT_H_EX_WALK (orgId 177)</td>
+      <td>2025</td>
+      <td>1460</td>
+      <td>확인 필요*</td>
+      <td>264</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>*걷기 실천율 표는 orgId 177(시군구 단위 통계) 소속으로, 264개 지역(시군구 포함) 전체에서 결측 0을 확인. 시도 17개 명칭 매칭은 다음 배치에서 표 구조와 함께 확인.</p>
+
+<h2 id="6-최종-판정">6. 최종 판정</h2>
+<ul>
+  <li>검색 500건은 상한 잘림이 아니라 전체임 → 지역사회건강조사 87개 표가 검색 기준 전량.</li>
+  <li>프로토타입 5개 지표 모두 실데이터 확보 가능 확인 (시도 17/17, 결측 0). 우울증상유병률만 2017년 시작.</li>
+  <li>KOSIS는 연속 호출 시 수 분간 트래픽 차단 → 수집 자동화 시 호출 간격 2~5초 및 재시도 백오프 필수.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
