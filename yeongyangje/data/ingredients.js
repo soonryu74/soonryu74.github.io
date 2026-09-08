@@ -242,7 +242,7 @@ window.EBN_INGREDIENTS = {
     pick: ["함량 표기 없는 제품 다수, 시트리닌 시험 여부 확인"],
     studies: ["ryr-berberine"] },
 
-  antioxidant: { name: "항산화제 복합", en: "Antioxidant combos", status: [{ k: "hff", t: "개별 성분별로 상이" }], verdict: "no", grade: "X",
+  antioxidant: { name: "항산화제 복합", en: "Antioxidant combos", status: [{ k: "hff", t: "베타카로틴·비타민 C·E·셀레늄·아연 각각 영양소 원료" }], statusNote: "복합 항산화제라는 별도 등급은 없음. 구성 성분마다 건기식 영양소 원료로 인정되며, 각 성분의 상한(베타카로틴 등)은 공전 기준을 따름", statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "no", grade: "X",
     one: "78개 RCT 29.7만 명: 수명 연장 없음. 베타카로틴·비타민 E·고용량 A는 사망률 소폭 증가.",
     for: ["없음"], against: ["예방·노화 목적 전반", "항암치료 중"],
     dose: "불필요", kr: "—", pick: ["채소·과일로 대체"],
