@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { DS, INDICATORS, RBY, label, DEFAULT_RANK_OPT } from "./data";
+import { DS, INDICATORS, RBY, label, DEFAULT_RANK_OPT, KDH_SOURCE } from "./data";
 import { IndicatorPicker, RegionPicker, YearControl, ItemToggle } from "./components/Pickers";
 import Kpis from "./components/Kpis";
 import TrendChart from "./components/TrendChart";
@@ -117,7 +117,7 @@ export default function App() {
         <header className="top">
           <div>
             <div className="title">지역 건강프로파일 대시보드</div>
-            <div className="subtitle">지역사회건강조사 {INDICATORS.length}개 지표 · 시도/시군구 · {DS.years[0]}–{DS.years[DS.years.length - 1]}</div>
+            <div className="subtitle">지역사회건강조사 {INDICATORS.filter((i) => !i.outcome).length}개 지표 · 건강수명 · 결과·환경 DB {INDICATORS.filter((i) => i.kdh).length}개 지표 · 시도/시군구 · {DS.years[0]}–{DS.years[DS.years.length - 1]}</div>
           </div>
           <div className="topright">
             <div className="seg views">
@@ -154,7 +154,7 @@ export default function App() {
               </div>
             </div>
           )}
-          <ItemToggle item={item} onChange={setItem} />
+          <ItemToggle item={item} onChange={setItem} ind={ind} />
           {view !== "profile" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
         </div>}
 
@@ -218,6 +218,7 @@ export default function App() {
 
         <footer>
           자료원: 질병관리청 「지역사회건강조사」 — 통계청 KOSIS 공유서비스(openAPI), 수집일 {DS.generated}.
+          {KDH_SOURCE && <> 사망률·감염병·의료이용·자원·인구·환경 지표: <a className="src" style={{ whiteSpace: "normal" }} href={KDH_SOURCE.url} target="_blank" rel="noreferrer">{KDH_SOURCE.name}</a>.</>}
           지도 경계: 통계청 2018 행정구역(행정구역 변경분은 최신 코드로 연결).<br />
           전국 기준값은 전 시군구 중앙값. 표준화율은 연령 표준화 값으로 지역 간 비교에 적합합니다.
           구조는 질병관리청 수도권질병대응센터 CIAT를 참조했습니다.

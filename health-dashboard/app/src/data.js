@@ -21,10 +21,18 @@ import HLE_RAW from "../../data/hle.json";
   }
 })();
 
+// ── 지역사회건강조사 DB(질병관리청 자료실·김동현 교수 구축) 보조 지표 주입: 결과·환경 지표 → 순위 산정 제외 ──
+import KDH_RAW from "../../data/kdh_dataset.json";
+(function injectKdh() {
+  if (!KDH_RAW.indicators || RAW.indicators.some((i) => i.kdh)) return;
+  for (const ind of KDH_RAW.indicators) { RAW.indicators.push(ind); RAW.values[ind.id] = KDH_RAW.values[ind.id]; }
+})();
+export const KDH_SOURCE = KDH_RAW.source || null;
+
 export const DS = RAW;
 export const YEARS_ALL = RAW.years;
 export const DOMAINS = RAW.domains;                       // 순위 산정 영역
-export const DOMAINS_ALL = [...RAW.domains, "건강수명"];   // 지표 선택·비교표 영역
+export const DOMAINS_ALL = [...RAW.domains, "건강수명", ...(KDH_RAW.domains || [])];   // 지표 선택·비교표 영역
 export const REGIONS = RAW.regions;
 export const RIDX = new Map(REGIONS.map((r, i) => [r.c, i]));
 export const RBY = new Map(REGIONS.map((r) => [r.c, r]));

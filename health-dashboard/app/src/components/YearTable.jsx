@@ -27,7 +27,7 @@ export default function YearTable({ ind, item, sel, year, onYear }) {
             <th>연도</th><th>{ind.name} ({ind.unit})</th>
             <th>{isSgg ? "전국 순위" : "시도 순위"}</th>
             {isSgg && <th>{RBY.get(sel.p).n} 내</th>}
-            <th>증감량(%p)</th><th>증감률(%)</th>
+            <th>증감량({ind.unit === "%" ? "%p" : ind.unit})</th><th>증감률(%)</th>
           </tr>
         </thead>
         <tbody>

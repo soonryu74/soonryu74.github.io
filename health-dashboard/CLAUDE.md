@@ -82,8 +82,14 @@
 - [완료] 조사 단위 탭: 보건소 단위(공식 255곳) ↔ KOSIS 코드 전량 매핑, 연도별 참여 단위, 시도별 보건기관 수(KOSIS 2025)
   - PHIS: 공개 API 없음. 보건지소·진료소는 공공데이터포털 '전국 지역보건의료기관 현황' Open API(odcloud, 2025-12-31 기준 3,607건)로 수집 완료
     (scripts/fetch_health_facilities.py → data/health_facilities.csv, 키는 .env DATA_GO_KR_KEY). build_units.py 가 기관→조사 단위 매핑(3,607건 전량).
-- [진행 중] 건강수명(전국·시도·시군구): 방법론 docs/건강수명_산출법_v1.md. 전국=통계청·WHO·HP2030 공식값, 시도=Sullivan(간이생명표+주관적 불건강률),
-  시군구=근사 Sullivan(사망원인통계 3년 합산 + 주민등록 인구 + 전국 연령 패턴 보정) → scripts/build_hle.py → data/hle.json
+- [완료] 건강수명(전국·시도·시군구, 2026-09-08): docs/건강수명_산출법_v1.md. 전국=통계청 공식값 앵커(역산 π), 시도=통계청 시도 생명표+Sullivan,
+  시군구 253개=사망원인통계·연앙인구 3년 합산 Chiang 생명표(시도 raking k 0.99~1.10)+오즈비 보정 → scripts/build_hle.py → data/hle.json.
+  프로파일 카드(HleCard) + 지표 분석·비교 지표 3개(HLE_LE/HLE_HLE/HLE_UNH, outcome → 순위 제외).
+  검증: 청구자료 기반 DB 2018 건강수명과 순위 상관 0.18(정의 차이), 기대수명은 0.69. 수집: scripts/kosis_fetch_hle.py(2·3년 주기 표 prdSe=F).
+- [완료] 지역사회건강조사 DB(김동현 교수 v1.7) 115개 보조 지표 연결 (2026-09-08 소유자 결정: 넣고 출처는 질병관리청 자료실 URL)
+  - scripts/build_kdh_dataset.py(화이트리스트·이름 정규화·인구당 환산) → data/kdh_dataset.json(4MB) → data.js 주입(kdh·outcome → 순위 제외)
+  - 영역 6개: 사망률(표준화) 22 · 감염병 발생률 12 · 의료이용·검진 17 · 보건의료자원 16 · 인구·사회·경제 20 · 환경·안전 28. DOMAINS(순위) vs DOMAINS_ALL(선택) 분리.
+  - 원본 xlsx·추출물(data/kdh/)은 비공개. index.html 7.5MB(단일 파일 한계 고려해 지표 추가 시 용량 확인)
 - [완료] 김동현 교수 DB 검증 (docs/김동현DB_검증_v1.md): 2,507개 지표 카탈로그·17개 연도 시트, CHS 값 KOSIS와 완전 일치,
   기대여명은 시도만·건강수명은 2018 시군구 250개(외부 검증 기준). 원본은 구글 드라이브(20260711)·추출물 data/kdh/(비공개, scripts/kdh_extract.py)
 - [대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)

@@ -97,7 +97,8 @@ svg text { font-family: inherit; }
 
 /* table view */
 details.tbl summary { font-size:12.5px; color:var(--text-secondary); cursor:pointer; margin-top:4px; }
-.tblscroll { overflow-x:auto; }
+.tblscroll { overflow-x:auto; max-width:100%; }
+.card { min-width:0; overflow-x:clip; }
 table { width:100%; border-collapse:collapse; font-size:12.5px; margin-top:8px; }
 th, td { text-align:right; padding:5px 8px; border-bottom:1px solid var(--grid); font-variant-numeric:tabular-nums; }
 th:first-child, td:first-child { text-align:left; }
@@ -334,3 +335,7 @@ tr.muted td { color: var(--muted); }
 .hle-refs { flex:1 1 260px; min-width:0; }
 .hle-refs .tbl td { padding:3px 6px; }
 @media (max-width: 720px) { .hle-grid { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+
+/* 긴 단위가 있는 KPI 값 줄바꿈 */
+.kpi .k-value { display:flex; flex-wrap:wrap; align-items:baseline; gap:0 4px; }
+

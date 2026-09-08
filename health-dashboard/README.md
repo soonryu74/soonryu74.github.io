@@ -30,3 +30,8 @@ KOSIS는 연속 호출을 몇 분간 차단하므로 스크립트에 호출 간�
 ## 클로드 코드로 이어서 작업하기
 
 폴더에서 `claude` 실행 후 "CLAUDE.md 읽고 현재 상태 요약해줘"로 시작하면 됩니다.
+
+## 건강수명·DB 보조 지표 (2026-09)
+1. `python scripts/kosis_fetch_hle.py data` → `python scripts/build_hle.py` → data/hle.json (검증: `python scripts/validate_hle.py`)
+2. `KDH_XLSX=<엑셀 경로> python scripts/kdh_extract.py` → `python scripts/build_kdh_dataset.py` → data/kdh_dataset.json
+3. `python scripts/build_dashboard.py`

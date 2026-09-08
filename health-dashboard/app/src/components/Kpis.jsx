@@ -3,6 +3,7 @@ import { fmt, val, ranked, percentile, nationalMedian, label, SGG_BY_SIDO, SIDOS
 /* 현황: 값·전년 대비, 전국 기준, 순위(전국/시도 내), 백분위 게이지 */
 export default function Kpis({ ind, item, year, sel }) {
   const v = val(ind, item, year, sel.c);
+  const du = ind.unit === "%" ? "%p" : ` ${ind.unit}`;   // 차이 단위
   const yi = ind.years.indexOf(year);
   const prev = yi > 0 ? val(ind, item, ind.years[yi - 1], sel.c) : null;
   const delta = v == null || prev == null ? null : v - prev;
@@ -23,14 +24,14 @@ export default function Kpis({ ind, item, year, sel }) {
         <div className="k-label">{label(sel)} · {year}년</div>
         <div className="k-value">{fmt(v)}<small> {ind.unit}</small></div>
         <div className={`k-sub ${deltaGood == null ? "" : deltaGood ? "k-good" : "k-bad"}`}>
-          {delta == null ? "전년 자료 없음" : `${delta > 0 ? "▲" : delta < 0 ? "▼" : "="} 전년 대비 ${fmt(Math.abs(delta))}%p`}
+          {delta == null ? "전년 자료 없음" : `${delta > 0 ? "▲" : delta < 0 ? "▼" : "="} 전년 대비 ${fmt(Math.abs(delta))}${du}`}
         </div>
       </div>
       <div className="kpi">
         <div className="k-label">전국 시군구 중앙값</div>
         <div className="k-value">{fmt(nat)}<small> {ind.unit}</small></div>
         <div className="k-sub">
-          {v != null && nat != null ? `중앙값 대비 ${fmt(Math.abs(v - nat))}%p ${v - nat >= 0 ? "높음" : "낮음"}` : ""}
+          {v != null && nat != null ? `중앙값 대비 ${fmt(Math.abs(v - nat))}${du} ${v - nat >= 0 ? "높음" : "낮음"}` : ""}
           {isSgg && sidoVal != null ? ` · ${RBY.get(sel.p).n} 전체 ${fmt(sidoVal)}` : ""}
         </div>
       </div>

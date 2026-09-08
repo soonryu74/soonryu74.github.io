@@ -97,7 +97,15 @@ export function YearControl({ years, year, onYear, playing, onPlay }) {
 }
 
 /* 조율/표준화율 토글 */
-export function ItemToggle({ item, onChange }) {
+export function ItemToggle({ item, onChange, ind }) {
+  if (ind?.outcome) {
+    return (
+      <div className="ctrl">
+        <label>값 유형</label>
+        <div className="desc" style={{ marginTop: 6 }}>{ind.kdh ? "DB 원자료 값(표준화사망률은 연령표준화)" : "산출값(조율·표준화 구분 없음)"}</div>
+      </div>
+    );
+  }
   return (
     <div className="ctrl">
       <label>값 유형 <span className="hint" title="표준화율: 지역 간 연령 구조 차이를 보정한 값. 지역 비교에는 표준화율을 권장">ⓘ</span></label>
