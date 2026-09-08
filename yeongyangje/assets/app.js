@@ -87,7 +87,7 @@
     var map = {}, keys = [];
     G.forEach(function (g) { [g.term].concat(g.alias || []).forEach(function (t) { if (t && t.length >= 2) { map[t] = g; keys.push(t); } }); });
     keys.sort(function (a, b) { return b.length - a.length; });
-    var re = new RegExp('(' + keys.map(function (k) { return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')(?![\w가-힣])', 'g');
+    var re = new RegExp('(?<![\\w가-힣])(' + keys.map(function (k) { return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')(?![\w가-힣])', 'g');
     var counts = {}, MAX = 3;
     var walker = document.createTreeWalker(document.querySelector('main') || document.body, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
       var p = n.parentNode; if (!p) return NodeFilter.FILTER_REJECT;
