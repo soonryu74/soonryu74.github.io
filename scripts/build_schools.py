@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""나이스 교육정보 개방포털(open.neis.go.kr) 학교기본정보 → ipsi/data/schools-hs.json, ipsi/data/schools-min.json
+"""나이스 교육정보 개방포털(open.neis.go.kr) 학교기본정보 → ipsi/data/schools-neis-hs.json, ipsi/data/schools-neis-all.json (KESS 기반 schools-hs.json과 별도)
 
 - NEIS_API_KEY 환경변수가 있으면 1,000건/페이지, 없으면 5건/페이지(무인증 샘플 모드)로 전 페이지를 순회한다.
 - 고등학교는 전 필드, 초·중·특수·각종학교는 축약 필드로 저장.
@@ -13,8 +13,8 @@ BASE = "https://open.neis.go.kr/hub/schoolInfo"
 KEY = os.environ.get("NEIS_API_KEY", "").strip()
 PSIZE = 1000 if KEY else 5
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT_HS = os.path.join(ROOT, "ipsi", "data", "schools-hs.json")
-OUT_MIN = os.path.join(ROOT, "ipsi", "data", "schools-min.json")
+OUT_HS = os.path.join(ROOT, "ipsi", "data", "schools-neis-hs.json")
+OUT_MIN = os.path.join(ROOT, "ipsi", "data", "schools-neis-all.json")
 KINDS = ["고등학교", "중학교", "초등학교", "특수학교", "각종학교(고)", "각종학교(중)", "각종학교(초)"]
 
 def fetch(kind, page, retry=4):
@@ -75,24 +75,24 @@ def sigungu(addr):
 
 def slim_hs(r):
     return {
-        "code": r["SD_SCHUL_CODE"], "name": r["SCHUL_NM"], "eng": r.get("ENG_SCHUL_NM",""),
+        "code": r["SD_SCHUL_CODE"], "name": r["SCHUL_NM"], "eng": (r.get("ENG_SCHUL_NM") or ""),
         "sido": r["LCTN_SC_NM"], "office": r["ATPT_OFCDC_SC_NM"], "office_code": r["ATPT_OFCDC_SC_CODE"],
         "sigungu": sigungu(r.get("ORG_RDNMA")),
-        "found": r.get("FOND_SC_NM",""),            # 국립/공립/사립
+        "found": (r.get("FOND_SC_NM") or ""),            # 국립/공립/사립
         "hs_type": r.get("HS_SC_NM","") or "",     # 일반고/특성화고/특수목적고/자율고
-        "track": r.get("HS_GNRL_BUSNS_SC_NM",""),  # 일반계/전문계
+        "track": (r.get("HS_GNRL_BUSNS_SC_NM") or ""),  # 일반계/전문계
         "special": r.get("SPECLY_PURPS_HS_ORD_NM","") or "",  # 과학계열/외국어계열/…
-        "coedu": r.get("COEDU_SC_NM",""), "daynight": r.get("DGHT_SC_NM",""),
-        "addr": (r.get("ORG_RDNMA","") + " " + (r.get("ORG_RDNDA","") or "")).strip(),
-        "zip": (r.get("ORG_RDNZC","") or "").strip(), "tel": r.get("ORG_TELNO",""),
-        "web": r.get("HMPG_ADRES","") or "", "founded": r.get("FOAS_MEMRD",""),
-        "anniv": r.get("FOND_YMD",""), "industry": r.get("INDST_SPECL_CCCCL_EXST_YN",""),
+        "coedu": (r.get("COEDU_SC_NM") or ""), "daynight": (r.get("DGHT_SC_NM") or ""),
+        "addr": ((r.get("ORG_RDNMA") or "") + " " + (r.get("ORG_RDNDA") or "")).strip(),
+        "zip": (r.get("ORG_RDNZC") or "").strip(), "tel": r.get("ORG_TELNO") or "",
+        "web": r.get("HMPG_ADRES") or "", "founded": r.get("FOAS_MEMRD") or "",
+        "anniv": r.get("FOND_YMD") or "", "industry": r.get("INDST_SPECL_CCCCL_EXST_YN") or "",
     }
 
 def slim_min(r):
     return {"code": r["SD_SCHUL_CODE"], "name": r["SCHUL_NM"], "kind": r["SCHUL_KND_SC_NM"],
-            "sido": r["LCTN_SC_NM"], "sigungu": sigungu(r.get("ORG_RDNMA")), "found": r.get("FOND_SC_NM",""),
-            "coedu": r.get("COEDU_SC_NM",""), "addr": r.get("ORG_RDNMA","")}
+            "sido": r["LCTN_SC_NM"], "sigungu": sigungu(r.get("ORG_RDNMA")), "found": r.get("FOND_SC_NM") or "",
+            "coedu": r.get("COEDU_SC_NM") or "", "addr": r.get("ORG_RDNMA") or ""}
 
 def main():
     print(f"NEIS 학교기본정보 수집 시작 (인증키 {'있음' if KEY else '없음 → 5건/페이지 모드'})")

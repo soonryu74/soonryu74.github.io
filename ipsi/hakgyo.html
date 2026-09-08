@@ -68,6 +68,18 @@
   <div class="card"><h3>2028학년도부터 강화된 자격</h3><ul class="check"><li>비수도권 <strong>중학교 전 과정 이수·졸업</strong> + 해당 권역 <strong>고교 전 과정 이수·졸업</strong></li><li>재학 기간 동안 본인(과 보호자)이 해당 권역에 거주</li><li>의·치·한·약: 권역 내 대학 모집인원의 <strong>40% 이상</strong>(강원·제주 20%) 지역인재 의무 선발</li><li>2028 시행계획 기준 39개 의대 3,611명 중 지역인재 1,710명(67.6%)</li></ul><p class="src">출처: 지방대학 및 지역균형인재 육성에 관한 법률 제15조·시행령, 뉴스핌 2024.2.9, 한국일보 2024.8.28, 베리타스알파 2026.5</p></div>
  </div>
 </section>
+<section id="neis">
+ <h2>초·중·고 전체 12,371개교 검색 (나이스 학교기본정보)</h2>
+ <p class="sub">나이스 교육정보 개방포털 OpenAPI 학교기본정보. 초등학교·중학교·특수학교·각종학교까지 포함. 고교 지역인재 판정, 중학교 비수도권 이수 요건 확인용.</p>
+ <div class="toolbar">
+  <input id="nq" type="search" placeholder="학교명·시군구 (예: 분당중, 해운대초)">
+  <select id="nkind"><option value="">전체 학교급</option><option>초등학교</option><option>중학교</option><option>고등학교</option><option>특수학교</option><option>각종학교(고)</option><option>각종학교(중)</option><option>각종학교(초)</option></select>
+  <select id="nsido"><option value="">전체 시도</option></select>
+  <span id="ncount" class="sub"></span>
+ </div>
+ <div class="tbl-wrap compact"><table id="ntbl"><thead><tr><th>학교</th><th>학교급</th><th>시도</th><th>시군구</th><th>설립</th><th>남녀</th><th>주소</th></tr></thead><tbody></tbody></table></div>
+ <p class="src" id="nsrc"></p>
+</section>
 <div class="disclaimer">데이터: 한국교육개발원 교육통계서비스(kess.kedi.re.kr) 학교별 데이터셋 「2026년 유초중등 학교별 학년별 학생수 학급수 입학 졸업 교원 직원 면적」·「2025년 …」. 학교수는 본교 기준(분교·폐교 제외), 방송통신고·각종학교 제외. 통계 이용 시 KEDI 교육통계센터 출처 표기.</div>
 </main>
 <footer class="site-footer">
@@ -120,6 +132,16 @@
  $('#jsido').addEventListener('change',()=>{const s=$('#jsido').value; if(!s){$('#jout').innerHTML='';return}
   const z=Object.keys(ZONE).find(k=>ZONE[k].includes(s));
   $('#jout').innerHTML=z?`<div class="callout ok"><h4>${s} → <strong>${z}</strong></h4><p>지역인재 지원 가능 의대: ${MED[z]}</p><p class="sub">권역 내 시도: ${ZONE[z].join('·')}. 약대·치대·한의대·간호(일부)도 같은 권역 기준. 대학별 거주 요건은 모집요강 확인.</p></div>`:`<div class="callout warn"><h4>${s} → 수도권</h4><p>수도권(서울·경기·인천) 고교는 지역인재 대상이 아닙니다. 서울대 지역균형(일반고 재학생) 등 학교장추천 전형이 대안입니다.</p></div>`;
+ });
+ // 나이스 전체 학교
+ fetch('data/schools-neis-all.json').then(r=>r.json()).then(N=>{
+  const rows=N.rows; $('#nsrc').textContent='출처: 나이스 교육정보 개방포털 학교기본정보(schoolInfo) · 수집 '+N.updated+' · '+Object.entries(N.stats).map(([k,v])=>k+' '+v.toLocaleString()).join(', ');
+  [...new Set(rows.map(r=>r.sido))].sort((a,b)=>a.localeCompare(b,'ko')).forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;$('#nsido').appendChild(o)});
+  function rn(){const q=$('#nq').value.trim(),k=$('#nkind').value,s=$('#nsido').value;
+   let l=q.length<1&&!k&&!s?[]:rows.filter(r=>(!q||(r.name+r.sigungu).includes(q))&&(!k||r.kind===k)&&(!s||r.sido===s));
+   $('#ncount').textContent=(q||k||s)?l.length.toLocaleString()+'개교':'검색어를 입력하세요';
+   $('#ntbl tbody').innerHTML=l.slice(0,200).map(r=>`<tr><td><strong>${r.name}</strong></td><td>${r.kind}</td><td>${r.sido}</td><td>${r.sigungu}</td><td>${r.found}</td><td>${r.coedu}</td><td style="font-size:.8rem">${r.addr}</td></tr>`).join('');}
+  ['nq','nkind','nsido'].forEach(id=>$('#'+id).addEventListener('input',rn)); rn();
  });
 })();
 </script>

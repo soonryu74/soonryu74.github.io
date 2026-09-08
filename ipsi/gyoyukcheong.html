@@ -68,7 +68,7 @@
   <tr><td><a href="https://kess.kedi.re.kr/contents/dataset" target="_blank" rel="noopener">KEDI 교육통계서비스 데이터셋</a></td><td>학교별·학과별 엑셀 원자료(매년 4월 1일·10월 1일 기준): 유초중등 학교별 학생·학급·교원·졸업 후 상황, 대학 학교별·학과별 정원·지원자·입학자·졸업자</td><td><a href="hakgyo.html">고교 찾기</a> · <a href="hakgwa.html">학과·경쟁률</a> (자동 수집)</td></tr>
   <tr><td><a href="https://www.schoolinfo.go.kr" target="_blank" rel="noopener">학교알리미</a></td><td>학교별 공시 40항목(학생·교원·학업성취·급식·학교폭력 등), <a href="https://www.schoolinfo.go.kr/ng/go/pnnggo_a01_l2.do" target="_blank" rel="noopener">공개용 데이터 다운로드</a>, OpenAPI(공공데이터포털 인증키)</td><td>교육통계로 대체(같은 원천). 상세 공시는 인증키 필요</td></tr>
   <tr><td><a href="https://www.academyinfo.go.kr" target="_blank" rel="noopener">대학알리미</a></td><td>대학별 신입생 충원율·중도탈락·취업률·등록금·전임교원 확보율 공시</td><td>대학 순위 페이지 보완 예정</td></tr>
-  <tr><td><a href="https://open.neis.go.kr" target="_blank" rel="noopener">나이스 교육정보 개방포털</a></td><td>학교기본정보·학과정보·시간표·급식 OpenAPI</td><td>수집기 준비(scripts/build_schools.py) — <strong>인증키 없이는 5건 샘플만</strong> 반환</td></tr>
+  <tr><td><a href="https://open.neis.go.kr" target="_blank" rel="noopener">나이스 교육정보 개방포털</a></td><td>학교기본정보·학과정보·시간표·급식 OpenAPI</td><td><a href="hakgyo.html#neis">고교 찾기 › 초·중·고 전체 검색</a> (scripts/build_schools.py, 인증키 필요)</td></tr>
   <tr><td><a href="https://www.data.go.kr/data/15021148/standard.do" target="_blank" rel="noopener">공공데이터포털 전국초중등학교위치표준데이터</a></td><td>학교ID·위도·경도·운영상태(2026.5.6 갱신)</td><td>지도 표시용 후보(브라우저 다운로드만 가능)</td></tr>
   <tr><td><a href="https://www.edunet.net" target="_blank" rel="noopener">에듀넷</a> · 고교학점제 지원센터</td><td>고교 선택과목 137개 안내 영상, 학생·학부모 연수 자료</td><td><a href="jedo.html#hakjeom">고교학점제</a></td></tr>
  </tbody></table></div>
@@ -78,7 +78,7 @@
  <h2>데이터 수집 현황 (2026.9.5)</h2>
  <div class="grid-2">
   <div class="card"><h3>수집 완료 → 사이트에 반영</h3><ul class="check"><li><strong>KESS 2026 유초중등 학교별</strong>(20,660행, 149열): 고교 2,400개 전 필드 → schools-hs.json</li><li><strong>KESS 2025 유초중등 학교별</strong>: 2025년 2월 졸업생 진학·취업 → 고교 데이터에 병합</li><li><strong>KESS 2026 고등교육 학교별</strong>(493개교): 정원·지원자·입학자·재적·교원 → univ-stats.json</li><li><strong>KESS 2026 고등교육 학교별×학과별</strong>(36,396행 중 학부 13,638 학과) → univ-dept.json</li><li>매월 5일 자동 갱신 워크플로(GitHub Actions)로 최신 연도 파일 자동 탐색</li></ul></div>
-  <div class="card"><h3>수집 불가 · 조건부</h3><ul class="check x"><li><strong>나이스 OpenAPI</strong>: 인증키 없으면 페이지당 5건 고정(pIndex 무시) → 저장소 Secret <code>NEIS_API_KEY</code> 등록 시 전체 12,673개교 수집</li><li><strong>학교알리미 상세 공시(학업성취·학교폭력 등)</strong>: 공공데이터포털 인증키 필요, 파일 다운로드는 브라우저 세션 필요</li><li><strong>어디가 학과별 입결</strong>: 로그인 필요, 크롤링 약관 제한 → 기사·대학 공개자료로 대체</li><li><strong>교육청 자료실 PDF 전량</strong>: 사이트별 게시판 구조가 달라 자동 수집 대신 센터 링크 제공</li></ul></div>
+  <div class="card"><h3>수집 불가 · 조건부</h3><ul class="check x"><li><strong>나이스 OpenAPI</strong>: 인증키로 초·중·고·특수·각종 12,371개교 수집 완료(2026.9.8) → schools-neis-all.json. 자동 갱신은 저장소 Secret <code>NEIS_API_KEY</code> 등록 필요</li><li><strong>학교알리미 상세 공시(학업성취·학교폭력 등)</strong>: 공공데이터포털 인증키 필요, 파일 다운로드는 브라우저 세션 필요</li><li><strong>어디가 학과별 입결</strong>: 로그인 필요, 크롤링 약관 제한 → 기사·대학 공개자료로 대체</li><li><strong>교육청 자료실 PDF 전량</strong>: 사이트별 게시판 구조가 달라 자동 수집 대신 센터 링크 제공</li></ul></div>
  </div>
  <div class="callout"><h4>학교알리미 공개용 데이터 공시항목(40)</h4><p>학교기본정보 · 수업일수 및 수업시수 · 자유학기제 · 학교 현황 · 성별 학생수 · 학년별·학급별 학생수 · 전·출입 및 학업중단 · 직위별/자격종별/표시과목별 교원 · 학교폭력 예방교육 · 입학생 현황 · 학교용지·교사·지원시설·시설개방 · 예·결산(국공립/사립) · 학교발전기금 · 환경위생 · 시설안전 · 교복 단가 · 교육운영 특색사업 · 장애인 편의시설 · 급식 실시·급식비 · 보건관리 · 안전교육 · 장학금 · 동아리 · 도서관 · 방과후학교 · 상담 · 직원 · 체력 증진. — 졸업생 진로현황·학업성취는 공개용 일괄 다운로드 대상이 아니며 학교별 조회 또는 API로만 제공.</p></div>
 </section>
