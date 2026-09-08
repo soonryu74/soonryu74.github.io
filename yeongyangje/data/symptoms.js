@@ -111,7 +111,7 @@ window.EBN_SYMPTOMS = [
     { v: "opt", name: "오메가-3(EPA 위주)", ing: "omega3", why: "26개 RCT 2,160명: 전체 SMD −0.28. EPA 60% 이상·1 g 이하에서 −0.50~−1.03. DHA 위주는 무효. 치료 대체가 아니라 보조.", src: "https://www.nature.com/articles/s41398-019-0515-5" },
     { v: "opt", name: "L-메틸엽산 15 mg(보조)", ing: "folate", why: "항우울제 보조 시 반응률 RR 1.25(1.08~1.46), SMD −0.38.", src: "https://pubmed.ncbi.nlm.nih.gov/34450256/" },
     { v: "no", name: "SAMe", why: "코크란 2016: 근거 불충분, 조증 유발 보고.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD011286.pub2/full" },
-    { v: "avoid", name: "세인트존스워트", ing: "sjw", why: "위약보다 낫고 항우울제와 동등(코크란 29건 5,489명)이지만 피임약·항응고제·SSRI(세로토닌 증후군)와 중대한 상호작용. 국내 미허가.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD000448.pub3/related-content" }
+    { v: "avoid", name: "세인트존스워트", ing: "sjw", why: "위약보다 낫고 항우울제와 동등(코크란 29건 5,489명)이지만 피임약·항응고제·SSRI(세로토닌 증후군)와 중대한 상호작용. 국내에서는 일반의약품으로만 허가.", src: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD000448.pub3/related-content" }
   ],
   test: "TSH, CBC, B12, 엽산, 결핍 위험 시 25(OH)D. 우울 선별(PHQ-9).",
   flag: "자살 생각, 환각·망상, 일상 기능 상실, 조증 병력, 산후 발병, 2주 이상 지속." },
