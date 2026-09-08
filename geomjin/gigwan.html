@@ -106,8 +106,13 @@
       <li>평가 준비 표준화: 조문 기준 체크리스트.</li>
       <li>건강증진센터·종합검진 상담 시 "국가검진 vs 종합검진 vs 해외 권고" 근거 설명 자료.</li>
     </ul>
+    <h3>위젯 임베드 (Standard 이상)</h3>
+    <p>기관 홈페이지에 아래 한 줄을 넣으면 "내 검진 찾기"가 기관명과 함께 표시됩니다. <a href="nae-geomjin.html?embed=1&org=검진맵%20예시병원" target="_blank" rel="noopener">미리보기 ↗</a></p>
+    <pre style="background:var(--gray-soft);padding:12px 14px;border-radius:10px;overflow:auto;font-size:.85rem">&lt;iframe src="https://soonryu74.github.io/geomjin/nae-geomjin.html?embed=1&amp;org=기관명" width="100%" height="900" style="border:0" loading="lazy"&gt;&lt;/iframe&gt;</pre>
+    <h3>연도별 개정 diff (Basic 이상)</h3>
+    <p>매년 1월 고시 개정 후 "변경 전 → 변경 후" 표를 갱신합니다. <a href="gaejeong.html">2018~2028 개정 diff →</a></p>
     <h3>데이터 스키마 (제공 형식)</h3>
-    <p>본 사이트의 <code>data/items.js</code>(항목·대상·주기·근거), <code>data/timeline.js</code>(연혁), <code>data/law.js</code>(조문), <code>data/gosi.js</code>(고시 연혁), <code>data/intl.js</code>(해외 비교)를 JSON으로 제공. 필드: <code>id, grp, name, sex, ages, cycle, method, target, basis, why, note, verify</code>.</p>
+    <p>본 사이트의 <code>data/items.js</code>(항목·대상·주기·근거), <code>data/timeline.js</code>(연혁), <code>data/law.js</code>(조문), <code>data/gosi.js</code>(고시 연혁), <code>data/intl.js</code>(해외 비교), <code>data/changes.js</code>(개정 diff), <code>data/stats.js</code>(통계)를 JSON으로 제공. 필드: <code>id, grp, name, sex, ages, cycle, method, target, basis, why, note, verify</code>.</p>
     <div class="callout tip"><span class="t">문의</span>soonryu74@gmail.com · 기관명·검진 유형·규모를 적어 보내주시면 견적과 샘플을 드립니다.</div>
   </div>
 

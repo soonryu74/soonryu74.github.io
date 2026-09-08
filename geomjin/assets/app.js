@@ -9,8 +9,10 @@
     ['beopryeong.html', '법령 체계'],
     ['gibonbeop.html', '건강검진기본법'],
     ['silsi-gijun.html', '실시기준 고시'],
+    ['gaejeong.html', '개정 diff'],
     ['hangmok.html', '검진 항목·주기'],
     ['nae-geomjin.html', '내 검진 찾기'],
+    ['daesang.html', '대상별 상세'],
     ['haeoe.html', '해외 가이드라인'],
     ['gigwan.html', '검진기관·B2B'],
     ['about.html', '원칙·출처']
