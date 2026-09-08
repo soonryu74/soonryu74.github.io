@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { INDICATORS, DOMAINS, SIDOS, SGG_BY_SIDO, SGG_ALL, RBY, fmt, val, nationalMedian, ranked, percentile, latestYear, label, betterCmp } from "../data";
+import { INDICATORS, DOMAINS_ALL as DOMAINS, SIDOS, SGG_BY_SIDO, SGG_ALL, RBY, fmt, val, nationalMedian, ranked, percentile, latestYear, label, betterCmp } from "../data";
 import { pathOf, nearestIndex, clientXY, Gridlines, XAxis } from "./svgUtil";
 import ExportButtons from "./ExportButtons";
 

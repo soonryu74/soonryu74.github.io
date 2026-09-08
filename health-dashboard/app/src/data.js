@@ -1,9 +1,30 @@
 // 데이터셋 접근 계층: 인덱스, 값 조회, 통계 헬퍼
 import RAW from "../../data/dataset.json";
 
+import HLE_RAW from "../../data/hle.json";
+
+// ── 건강수명 지표 주입: 결과지표(outcome) → 순위 산정 제외, 지표 분석·비교에서 선택 가능 ──
+(function injectHle() {
+  if (!HLE_RAW.regions || RAW.indicators.some((i) => i.id === "HLE_HLE")) return;
+  const codes = RAW.regions.map((r) => r.c);
+  const years = [...new Set(Object.values(HLE_RAW.regions).flatMap((r) => Object.keys(r.y).map(Number)))].sort((a, b) => a - b);
+  const src = "scripts/build_hle.py — 사망원인통계·주민등록연앙인구·통계청 생명표·지역사회건강조사 주관적 건강인지율 (공식 통계 아님)";
+  const defs = [
+    { id: "HLE_LE", name: "기대수명(추정)", bad: false, get: (v) => v.le },
+    { id: "HLE_HLE", name: "건강수명(주관적 건강 기반·근사)", bad: false, get: (v) => v.hle },
+    { id: "HLE_UNH", name: "불건강 기간(기대수명−건강수명)", bad: true, get: (v) => v.le - v.hle },
+  ];
+  for (const d of defs) {
+    const grid = years.map((y) => codes.map((c) => { const v = HLE_RAW.regions[c]?.y?.[String(y)]; return v ? Math.round(d.get(v) * 10) : null; }));
+    RAW.indicators.push({ id: d.id, name: d.name, domain: "건강수명", bad: d.bad, unit: "세", years, src, outcome: true });
+    RAW.values[d.id] = { crude: grid, std: grid };
+  }
+})();
+
 export const DS = RAW;
 export const YEARS_ALL = RAW.years;
-export const DOMAINS = RAW.domains;
+export const DOMAINS = RAW.domains;                       // 순위 산정 영역
+export const DOMAINS_ALL = [...RAW.domains, "건강수명"];   // 지표 선택·비교표 영역
 export const REGIONS = RAW.regions;
 export const RIDX = new Map(REGIONS.map((r, i) => [r.c, i]));
 export const RBY = new Map(REGIONS.map((r) => [r.c, r]));
@@ -15,7 +36,7 @@ REGIONS.filter((r) => r.l === "sub").forEach((r) => (SUBS_BY_SGG[r.p] ??= []).pu
 
 export const INDICATORS = RAW.indicators;
 export const IND_BY_ID = Object.fromEntries(INDICATORS.map((d) => [d.id, d]));
-export const IND_BY_DOMAIN = Object.fromEntries(DOMAINS.map((d) => [d, INDICATORS.filter((i) => i.domain === d)]));
+export const IND_BY_DOMAIN = Object.fromEntries(DOMAINS_ALL.map((d) => [d, INDICATORS.filter((i) => i.domain === d)]));
 
 export const ITEMS = { crude: "조율", std: "표준화율" };
 
@@ -134,7 +155,7 @@ export function allPercentiles(ind, item, year, pool) {
 export function domainRanking(item, pool, weights = null, year = null) {
   const pctByInd = {};
   for (const ind of INDICATORS) {
-    if (ind.bad == null) continue;
+    if (ind.bad == null || ind.outcome) continue;
     const y = year != null && ind.years.includes(year) ? year : ind.years[ind.years.length - 1];
     pctByInd[ind.id] = allPercentiles(ind, item, y, pool);
   }
@@ -190,7 +211,7 @@ export function computeRanking(item, pool, opts = DEFAULT_RANK_OPT) {
     if (!members.length) continue;
     const recs = new Map(members.map((r) => [r.c, { c: r.c, inds: {}, domains: {}, league: lg }]));
     for (const ind of INDICATORS) {
-      if (ind.bad == null || (opts.exclude && EXCLUDE_IDS.has(ind.id))) continue;
+      if (ind.bad == null || ind.outcome || (opts.exclude && EXCLUDE_IDS.has(ind.id))) continue;
       const y = opts.year != null && ind.years.includes(opts.year) ? opts.year : ind.years[ind.years.length - 1];
       const vals = members.map((r) => [r.c, valSmooth(ind, item, y, r.c, opts.smooth)]).filter(([, v]) => v != null);
       const sorted = vals.map(([, v]) => v).sort((a, b) => a - b), n = sorted.length;
@@ -247,7 +268,6 @@ export function recommendFor(indName, sidoFull) {
 }
 
 // ── 건강수명 (scripts/build_hle.py → data/hle.json) ──
-import HLE_RAW from "../../data/hle.json";
 export const HLE = HLE_RAW;
 /** 지역 코드 → {y: {year: {le, hle, pr}}} 또는 null */
 export const hleOf = (code) => HLE.regions?.[code] || null;

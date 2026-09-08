@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DOMAINS, IND_BY_DOMAIN, INDICATORS, SIDOS, SGG_BY_SIDO, ITEMS } from "../data";
+import { DOMAINS_ALL as DOMAINS, IND_BY_DOMAIN, INDICATORS, SIDOS, SGG_BY_SIDO, ITEMS } from "../data";
 
 /* 지표 탐색기: 영역 칩 + 검색 + 목록 */
 export function IndicatorPicker({ ind, onChange }) {
