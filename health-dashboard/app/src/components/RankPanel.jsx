@@ -1,10 +1,18 @@
-import { useEffect, useRef } from "react";
-import { fmt, ranked, poolFor, label, SUBS_BY_SGG, val } from "../data";
+import { useEffect, useRef, useState } from "react";
+import { fmt, ranked, poolFor, label, SUBS_BY_SGG, val, SIDOS, SGG_ALL, SGG_BY_SIDO, RBY } from "../data";
 
 /* 순위: 비교 집단(전국 시군구 / 시도 내 시군구 / 17개 시도) 막대. 선택 지역 자동 스크롤 */
 export default function RankPanel({ ind, item, year, sel, scope, onSelect }) {
-  const pool = poolFor(sel, scope);
+  // 순위 집단 탭: 17개 시도 · 전국 시군구 · 시도 내 시군구 (기본은 선택 지역에 따라 자동)
+  const sidoCode = sel.l === "sido" ? sel.c : sel.p;
+  const sidoName = RBY.get(sidoCode)?.n || "";
+  const [mode, setMode] = useState("auto");
+  useEffect(() => setMode("auto"), [sel.c, scope]);
+  const auto = sel.l === "sido" ? "sido" : scope === "sido" ? "insido" : "nation";
+  const m = mode === "auto" ? auto : mode;
+  const pool = m === "sido" ? SIDOS : m === "nation" ? SGG_ALL : m === "insido" ? SGG_BY_SIDO[sidoCode] : poolFor(sel, scope);
   const rows = ranked(ind, item, year, pool);
+  const TABS = [["sido", "17개 시도"], ["nation", "전국 시군구"], ["insido", `${sidoName} 시군구`]];
   const max = rows.length ? Math.max(...rows.map((x) => x.v)) : 1;
   const listRef = useRef(null);
   useEffect(() => {
@@ -13,17 +21,22 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect }) {
       const top = el.offsetTop - listRef.current.clientHeight / 2 + el.clientHeight / 2;
       listRef.current.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     }
-  }, [ind, item, year, sel, scope]);
+  }, [ind, item, year, sel, scope, m]);
 
   const subs = sel.l === "sgg" ? SUBS_BY_SGG[sel.c] : null;
 
+  const mine = (r) => r.c === sel.c || (sel.l === "sido" && r.p === sel.c);
   return (
     <>
+      <div className="seg" style={{ marginBottom: 8, flexWrap: "wrap" }}>
+        {TABS.map(([k, name]) => <button key={k} className={`seg-btn ${m === k ? "on" : ""}`} onClick={() => setMode(k)}>{name}</button>)}
+        <span className="muted" style={{ alignSelf: "center", fontSize: "13px", marginLeft: 6 }}>{rows.length}개</span>
+      </div>
       <div className="rank scroll" ref={listRef}>
         {rows.map(({ r, v }, k) => (
-          <div key={r.c} className={`rrow ${r.c === sel.c ? "sel" : ""}`} onClick={() => onSelect(r.c)}>
+          <div key={r.c} className={`rrow ${r.c === sel.c ? "sel" : ""} ${mine(r) ? "mine" : ""}`} onClick={() => onSelect(r.c)}>
             <div className="rn">{k + 1}</div>
-            <div className="rl" title={label(r)}>{scope === "nation" && r.l === "sgg" ? `${r.s} ${r.n}` : r.n}</div>
+            <div className="rl" title={label(r)}>{m === "nation" && r.l === "sgg" ? `${r.s} ${r.n}` : r.n}</div>
             <div className="bar-track"><div className="bar" style={{ width: `${((v / max) * 100).toFixed(1)}%` }} /></div>
             <div className="rv">{fmt(v)}</div>
           </div>
