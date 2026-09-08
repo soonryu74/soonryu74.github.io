@@ -12,9 +12,11 @@
     ['gaejeong.html', '개정 diff'],
     ['hangmok.html', '검진 항목·주기'],
     ['nae-geomjin.html', '내 검진 찾기'],
+    ['gyeolgwa.html', '결과 읽는 법'],
     ['daesang.html', '대상별 상세'],
     ['haeoe.html', '해외 가이드라인'],
     ['gigwan.html', '검진기관·B2B'],
+    ['annae.html', '안내문 만들기'],
     ['about.html', '원칙·출처']
   ];
 
