@@ -245,3 +245,20 @@ export function recommendFor(indName, sidoFull) {
     .filter((e) => e.linked.includes(indName) && (e.level !== "sido" || !sidoFull || e.sido === sidoFull))
     .sort((a, b) => LEVEL_RANK[a.level] - LEVEL_RANK[b.level]);
 }
+
+// ── 건강수명 (scripts/build_hle.py → data/hle.json) ──
+import HLE_RAW from "../../data/hle.json";
+export const HLE = HLE_RAW;
+/** 지역 코드 → {y: {year: {le, hle, pr}}} 또는 null */
+export const hleOf = (code) => HLE.regions?.[code] || null;
+/** 집단 내 건강수명 순위(높을수록 양호), 최신 공통 연도 기준 */
+export function hleRank(code, pool) {
+  const me = hleOf(code);
+  if (!me) return { rank: null, n: 0, median: null };
+  const y = Object.keys(me.y).sort().pop();
+  const vals = pool.map((r) => [r.c, hleOf(r.c)?.y?.[y]?.hle]).filter(([, v]) => v != null);
+  const sorted = vals.map(([, v]) => v).sort((a, b) => b - a);
+  const mine = me.y[y].hle;
+  const rank = sorted.findIndex((v) => v <= mine) + 1;
+  return { rank: rank || null, n: sorted.length, median: median(sorted), y };
+}

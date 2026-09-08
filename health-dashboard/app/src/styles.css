@@ -325,3 +325,12 @@ tr.muted td { color: var(--muted); }
 .faclist summary { cursor:pointer; color:var(--series-1); }
 .faclist ul { margin:6px 0 0; padding-left:16px; max-height:260px; overflow:auto; }
 .faclist li { margin:4px 0; line-height:1.35; }
+
+/* 건강수명 카드 */
+.hle-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin:10px 0; }
+.hle-grid .kpi { min-width:0; }
+.hle-row { display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; }
+.hle-row > svg { flex:1 1 280px; min-width:0; }
+.hle-refs { flex:1 1 260px; min-width:0; }
+.hle-refs .tbl td { padding:3px 6px; }
+@media (max-width: 720px) { .hle-grid { grid-template-columns:repeat(2, minmax(0,1fr)); } }

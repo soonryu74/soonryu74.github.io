@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { INDICATORS, DOMAINS, fmt, val, poolFor, label, RBY, computeRanking, PANEL_WEIGHTS, EQUAL_WEIGHTS, EXCLUDE_IDS, LEAGUE_NAME, recommendFor } from "../data";
 import ExportButtons from "./ExportButtons";
+import HleCard from "./HleCard";
 
 const tone = (p) => (p == null ? "" : p >= 75 ? "t-high" : p >= 50 ? "t-mid" : p >= 25 ? "t-low" : "t-min");
 
@@ -65,7 +66,7 @@ function RankSettings({ opt, onChange, isSgg }) {
 }
 
 /* 지역 프로파일: 방법론 v1 기반 영역·종합 순위, 등급 배지, 강점·개선·과제 */
-export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend }) {
+export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, setTip }) {
   const pool = poolFor(sel, scope);
   const isSgg = sel.l === "sgg";
   const rk = useMemo(() => computeRanking(item, pool, rankOpt), [item, pool, rankOpt]);
@@ -115,6 +116,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
       <RankSettings opt={rankOpt} onChange={onRankOpt} isSgg={isSgg} />
 
       <div className="grid2">
+        <HleCard sel={sel} pool={pool} poolName={poolName} setTip={setTip} />
         <div className="card span2">
           <h3>영역별 순위와 수치</h3>
           <ExportButtons name={`${label(sel)}_영역별순위`} kinds={["list"]} />
