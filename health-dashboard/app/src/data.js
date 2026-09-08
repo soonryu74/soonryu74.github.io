@@ -29,6 +29,17 @@ import KDH_RAW from "../../data/kdh_dataset.json";
 })();
 export const KDH_SOURCE = KDH_RAW.source || null;
 
+// ── 지역박탈지수(근사) 지표 주입 (data/deprivation.json) ──
+import DEP_RAW0 from "../../data/deprivation.json";
+(function injectDep() {
+  if (!DEP_RAW0.year || RAW.indicators.some((i) => i.id === "DEP_IDX")) return;
+  const codes = RAW.regions.map((r) => r.c);
+  const grid = [codes.map((c) => { const d = DEP_RAW0.regions[c]; return d && d.q ? Math.round(d.idx * 10) : null; })];
+  RAW.indicators.push({ id: "DEP_IDX", name: "지역박탈지수(근사, 총조사 집계표)", domain: "지역박탈", bad: true, unit: "점", years: [DEP_RAW0.year],
+    src: "scripts/build_deprivation.py — 2020 인구주택총조사 시군구 집계표 7개 변수 z점수 합(김동진 2013 방식 재현, 공식값 아님)", outcome: true, dep: true });
+  RAW.values.DEP_IDX = { crude: grid, std: grid };
+})();
+
 // ── 지표 방향성 확정표(docs/지표_방향성_v1.md → data/directions.json): bad 덮어쓰기 + 근거 문구 ──
 import DIR_RAW from "../../data/directions.json";
 (function applyDirections() {
@@ -46,7 +57,7 @@ import DIR_RAW from "../../data/directions.json";
 export const DS = RAW;
 export const YEARS_ALL = RAW.years;
 export const DOMAINS = RAW.domains;                       // 순위 산정 영역
-export const DOMAINS_ALL = [...RAW.domains, "건강수명", ...(KDH_RAW.domains || [])];   // 지표 선택·비교표 영역
+export const DOMAINS_ALL = [...RAW.domains, "건강수명", ...(KDH_RAW.domains || []), "지역박탈"];   // 지표 선택·비교표 영역
 export const REGIONS = RAW.regions;
 export const RIDX = new Map(REGIONS.map((r, i) => [r.c, i]));
 export const RBY = new Map(REGIONS.map((r) => [r.c, r]));
@@ -316,4 +327,15 @@ export function riskRank(gid, code, pool) {
   const me = riskOf(code); if (!me || !me[gid] || !sorted.length) return { rank: null, n: sorted.length, median: null };
   const mine = (me[gid].v / me.pop) * 100;
   return { rank: sorted.findIndex((v) => v <= mine) + 1 || null, n: sorted.length, median: median(sorted) };
+}
+
+// ── 지역박탈지수(근사, 총조사 집계표 기반) scripts/build_deprivation.py → data/deprivation.json ──
+import DEP_RAW from "../../data/deprivation.json";
+export const DEP = DEP_RAW;
+export const depOf = (code) => DEP.regions?.[code] || null;
+/** 박탈 5분위(1=가장 덜 박탈)별 지역 목록 */
+export function depQuintiles(pool) {
+  const q = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+  for (const r of pool) { const d = depOf(r.c); if (d?.q) q[d.q].push(r); }
+  return q;
 }
