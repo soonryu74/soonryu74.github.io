@@ -30,8 +30,9 @@ export default function TrendChart({ ind, item, year, sel, setTip }) {
     <>
       <div className="legend">
         <span><i className="sw" style={{ background: "var(--series-1)" }} />{label(sel)}</span>
-        {s2 && <span><i className="sw" style={{ background: "var(--series-3)" }} />{RBY.get(sel.p).n}</span>}
+        {s2 && <span><i className="sw dashed" style={{ borderColor: "var(--series-3)" }} />{RBY.get(sel.p).n} 전체(시도, 점선)</span>}
         <span><i className="sw" style={{ background: "var(--series-2)" }} />전국 시군구 중앙값</span>
+        <span className="muted">세로 점선 = 선택 연도</span>
       </div>
       <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="연도별 추이">
         <Gridlines lo={lo} hi={hi} y={y} W={W} L={L} R={R} />
