@@ -4,15 +4,15 @@ import { geoMercator, geoPath } from "d3-geo";
 import { DS, RBY, fmt, val, classBreaks, classOf, sidoOf, SGG_ALL } from "../data";
 import { clientXY } from "./svgUtil";
 
-const TOPO = DS.geo.topo;
-const OBJ = TOPO.objects[Object.keys(TOPO.objects)[0]];
-const FC = feature(TOPO, OBJ);
-const GEOMAP = DS.geo.map;
+export const TOPO = DS.geo.topo;
+export const OBJ = TOPO.objects[Object.keys(TOPO.objects)[0]];
+export const FC = feature(TOPO, OBJ);
+export const GEOMAP = DS.geo.map;
 // 폴리곤 코드 앞 2자리(통계청) → KOSIS 시도 코드
 const TOPO_SIDO = { 11: "001", 21: "002", 22: "003", 23: "004", 24: "005", 25: "006", 26: "007", 29: "0071",
   31: "008", 32: "009", 33: "010", 34: "011", 35: "012", 36: "013", 37: "014", 38: "015", 39: "016" };
-const polySido = (f) => TOPO_SIDO[f.properties.code.slice(0, 2)];
-const SIDO_MESH = mesh(TOPO, OBJ, (a, b) => polySido(a) !== polySido(b));
+export const polySido = (f) => TOPO_SIDO[f.properties.code.slice(0, 2)];
+export const SIDO_MESH = mesh(TOPO, OBJ, (a, b) => polySido(a) !== polySido(b));
 const OUTER = mesh(TOPO, OBJ, (a, b) => a === b);
 
 const W = 560, H = 560;

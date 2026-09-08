@@ -9,6 +9,12 @@ export default function GapBoxplot({ ind, item, year, sel, scope, setTip }) {
   const ys = ind.years;
   const pool = poolFor(sel, scope);
   const stats = ys.map((y) => boxStats(pool.map((r) => val(ind, item, y, r.c))));
+  // 연도별 최댓값·최솟값 지역명
+  const ext = ys.map((y) => {
+    let mx = null, mn = null;
+    for (const r of pool) { const v = val(ind, item, y, r.c); if (v == null) continue; if (!mx || v > mx.v) mx = { r, v }; if (!mn || v < mn.v) mn = { r, v }; }
+    return { mx, mn };
+  });
   const mine = ys.map((y) => val(ind, item, y, sel.c));
   const allv = stats.flatMap((s) => (s ? [s.min, s.max] : [])).concat(mine.filter((v) => v != null));
   if (!allv.length) return <div className="empty">표시할 자료가 없습니다</div>;
@@ -23,7 +29,7 @@ export default function GapBoxplot({ ind, item, year, sel, scope, setTip }) {
     const s = stats[i];
     const { x: px, y: py } = clientXY(ev);
     setTip({ x: px, y: py, title: `${ys[i]}년 (n=${s?.n ?? 0})`,
-      rows: s ? [["최대", fmt(s.max)], ["3사분위", fmt(s.q3)], ["중앙값", fmt(s.med)], ["1사분위", fmt(s.q1)], ["최소", fmt(s.min)],
+      rows: s ? [[`최대 · ${ext[i].mx ? label(ext[i].mx.r) : ""}`, fmt(s.max)], ["3사분위", fmt(s.q3)], ["중앙값", fmt(s.med)], ["1사분위", fmt(s.q1)], [`최소 · ${ext[i].mn ? label(ext[i].mn.r) : ""}`, fmt(s.min)],
                  [label(sel), fmt(mine[i])]] : [["자료", "없음"]] });
   };
 
@@ -51,6 +57,8 @@ export default function GapBoxplot({ ind, item, year, sel, scope, setTip }) {
         <rect x={L} y={T} width={W - L - R} height={H - T - B} fill="transparent"
           onMouseMove={onMove} onTouchMove={onMove} onMouseLeave={() => setTip(null)} onTouchEnd={() => setTip(null)} />
       </svg>
+      {(() => { const i = ys.indexOf(year); const e = ext[i]; const s = stats[i];
+        return e && s ? <div className="desc" style={{ marginTop: 4 }}>{year}년 최댓값 <b>{label(e.mx.r)} {fmt(e.mx.v)}</b> · 최솟값 <b>{label(e.mn.r)} {fmt(e.mn.v)}</b> · 격차 {fmt(e.mx.v - e.mn.v)}{ind.unit === "%" ? "%p" : " " + ind.unit} (n={s.n})</div> : null; })()}
     </>
   );
 }

@@ -3,6 +3,7 @@ import { INDICATORS, DOMAINS, fmt, val, poolFor, label, RBY, computeRanking, PAN
 import ExportButtons from "./ExportButtons";
 import HleCard from "./HleCard";
 import RiskCard from "./RiskCard";
+import GoldenDiamond from "./GoldenDiamond";
 
 const tone = (p) => (p == null ? "" : p >= 75 ? "t-high" : p >= 50 ? "t-mid" : p >= 25 ? "t-low" : "t-min");
 
@@ -120,6 +121,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
       <div className="grid2">
         <HleCard sel={sel} pool={pool} poolName={poolName} setTip={setTip} />
         <RiskCard sel={sel} pool={pool} poolName={poolName} />
+        <GoldenDiamond item={item} sel={sel} />
         <div className="card span2">
           <h3>영역별 순위와 수치</h3>
           <ExportButtons name={`${label(sel)}_영역별순위`} kinds={["list"]} />
