@@ -13,6 +13,8 @@ import Compare, { NAT, MAX_CMP } from "./components/Compare";
 import Tooltip from "./components/Tooltip";
 import UnitsView from "./components/UnitsView";
 import NcdView from "./components/NcdView";
+import CorrelationView from "./components/CorrelationView";
+import HotspotView from "./components/HotspotView";
 import ExportButtons from "./components/ExportButtons";
 
 const DEFAULT_IND = INDICATORS.find((i) => i.id === "DT_H_SM") || INDICATORS[0];
@@ -29,7 +31,7 @@ function readHash() {
     sgg: RBY.has(sgg) ? sgg : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
-    view: ["profile", "compare", "units", "ncd"].includes(h.get("view")) ? h.get("view") : "analysis",
+    view: ["profile", "compare", "units", "ncd", "corr", "hot"].includes(h.get("view")) ? h.get("view") : "analysis",
     ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
@@ -130,6 +132,8 @@ export default function App() {
                 지역 비교{cmp.length ? <small className="cnt">{cmp.length}</small> : null}
               </button>
               <button className={`seg-btn ${view === "ncd" ? "on" : ""}`} onClick={() => setView("ncd")}>예방·관리</button>
+              <button className={`seg-btn ${view === "corr" ? "on" : ""}`} onClick={() => setView("corr")}>연관지표</button>
+              <button className={`seg-btn ${view === "hot" ? "on" : ""}`} onClick={() => setView("hot")}>핫스팟</button>
               <button className={`seg-btn ${view === "units" ? "on" : ""}`} onClick={() => setView("units")}>조사 단위</button>
             </div>
             <button className="themebtn" onClick={() => bumpFs(-1)} disabled={fs <= -1} title="글자 작게">A−</button>
@@ -138,7 +142,7 @@ export default function App() {
           </div>
         </header>
 
-        {view !== "units" && view !== "ncd" && <div className="controls">
+        {!["units", "ncd", "corr", "hot"].includes(view) && <div className="controls">
           {view !== "profile" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
           {view !== "compare" && (
@@ -165,6 +169,10 @@ export default function App() {
 
         {view === "units" ? (
           <UnitsView setTip={setTip} />
+        ) : view === "corr" ? (
+          <CorrelationView setTip={setTip} />
+        ) : view === "hot" ? (
+          <HotspotView setTip={setTip} onPick={(i, code, y) => { const r = RBY.get(code); if (!r) return; setInd(i); if (r.l === "sgg") { setSido(r.p); setSgg(code); } else { setSido(code); setSgg(null); } if (y) setYearSel(y); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "ncd" ? (
           <NcdView filterInd={ncdInd} onClearInd={() => setNcdInd(null)} sidoFull={RBY.get(sido)?.n}
             onPickInd={(i) => { if (i) { setInd(i); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); } }} />
