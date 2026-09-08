@@ -34,8 +34,13 @@ import DEP_RAW0 from "../../data/deprivation.json";
 (function injectDep() {
   if (!DEP_RAW0.year || RAW.indicators.some((i) => i.id === "DEP_IDX")) return;
   const codes = RAW.regions.map((r) => r.c);
-  const grid = [codes.map((c) => { const d = DEP_RAW0.regions[c]; return d && d.q ? Math.round(d.idx * 10) : null; })];
-  RAW.indicators.push({ id: "DEP_IDX", name: "지역박탈지수(근사, 총조사 집계표)", domain: "지역박탈", bad: true, unit: "점", years: [DEP_RAW0.year],
+  const years = DEP_RAW0.years || [DEP_RAW0.year];
+  const grid = years.map((y) => codes.map((c) => {
+    const d = DEP_RAW0.regions[c]; if (!d || !d.q) return null;
+    if (y === DEP_RAW0.year) return Math.round(d.idx * 10);
+    return d.prev && d.prev.year === y ? Math.round(d.prev.idx * 10) : null;
+  }));
+  RAW.indicators.push({ id: "DEP_IDX", name: "지역박탈지수(근사, 총조사 집계표)", domain: "지역박탈", bad: true, unit: "점", years,
     src: "scripts/build_deprivation.py — 2020 인구주택총조사 시군구 집계표 7개 변수 z점수 합(김동진 2013 방식 재현, 공식값 아님)", outcome: true, dep: true });
   RAW.values.DEP_IDX = { crude: grid, std: grid };
 })();

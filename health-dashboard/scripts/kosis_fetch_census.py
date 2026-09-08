@@ -9,7 +9,10 @@ import sys, re, json
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
 import kosis_fetch_hle as K
 YEAR = sys.argv[1] if len(sys.argv) > 1 else "2020"
-for t in ("DT_1PM2001", "DT_1PM2002", "DT_1PE2013", "DT_1PC2012", "DT_1PE2002"): K.PRDSE[t] = "F"   # 총조사 5년 주기 표
+# 연도별 표 ID (2020 = DT_1P?20xx, 2015 = DT_1P?15xx)
+TABLES = {"2020": {"edu": "DT_1PM2001", "mar": "DT_1PM2002", "hh": "DT_1PE2013", "job": "DT_1PC2012", "dw": "DT_1PE2002"},
+          "2015": {"edu": "DT_1PM1501", "mar": "DT_1PM1503", "hh": "DT_1PE1513", "job": "DT_1PC1512", "dw": "DT_1PE1502"}}[YEAR]
+for t in TABLES.values(): K.PRDSE[t] = "F"   # 총조사 5년 주기 표
 
 def codes(tbl, obj_nm_pat, name_pat=None, first=False):
     """ITM 메타에서 분류(OBJ_NM 정규식)의 코드 목록. name_pat 로 항목명 필터, first=True 면 첫 코드('계'). 분류가 없으면 None."""
@@ -26,14 +29,15 @@ def items(tbl, name_pat):
     return "+".join(r["ITM_ID"] for r in j if r["OBJ_ID"] == "ITEM" and re.search(name_pat, r["ITM_NM"]))
 
 PLAN = {
- # 표: (분류 고정 {OBJ_NM 정규식: (name_pat or None, first)}, 항목 선택 정규식 or None=ALL)
- "DT_1PM2001": ({"^성별": (None, True), "연령": (r"^(30|35|40|45|50|55|60)\s*[-~∼]", False)}, r"^내국인|^초등학교-계|^중학교-계|^고등학교-(재학|중퇴)|^받지"),
- "DT_1PM2002": ({"연령": (None, True)}, r"^내국인"),                       # 연령 합계 × 내국인 계·미혼·배우자·사별·이혼
- "DT_1PE2013": ({"세대구성": (r"^(일반가구|1인가구)$", False)}, r"^일반가구$"),   # 성별 계·남·여 × (전체, 1인가구)
- "DT_1PC2012": ({"근무지|현거주지": (None, True)}, None),
- "DT_1PE2002": ({}, None),
+ # 역할: (분류 고정 {OBJ_NM 정규식: (name_pat or None, first)}, 항목 선택 정규식 or None=ALL)
+ "edu": ({"^성별": (None, True), "연령": (r"^(30|35|40|45|50|55|60)\s*[-~∼]", False)}, r"^내국인|^초등학교-계|^중학교-계|^고등학교-(재학|중퇴)|^받지"),
+ "mar": ({"연령": (None, True)}, r"^내국인"),                       # 연령 합계 × 내국인 계·미혼·배우자·사별·이혼
+ "hh": ({"세대구성": (r"^(일반가구|1인가구)$", False)}, r"^일반가구$"),   # 성별 계·남·여 × (전체, 1인가구)
+ "job": ({"근무지|현거주지": (None, True)}, None),
+ "dw": ({}, None),
 }
-for tbl, (fixes, itm_pat) in PLAN.items():
+for role, (fixes, itm_pat) in PLAN.items():
+    tbl = TABLES[role]
     fix = {}
     for pat, (name_pat, first) in fixes.items():
         oid, val = codes(tbl, pat, name_pat, first)
@@ -41,4 +45,5 @@ for tbl, (fixes, itm_pat) in PLAN.items():
     itm = items(tbl, itm_pat) if itm_pat else "ALL"
     print(tbl, "fix", {k: (v[:40] + "…" if len(v) > 40 else v) for k, v in fix.items()}, "itm", itm[:60], flush=True)
     K.data(tbl, int(YEAR), int(YEAR), itm=itm, fix=fix)
+if YEAR == "2015": K.data("DT_1B040M5", 2015, 2015, fix={"SBB": "0"})   # 연앙인구 2015
 print("ALL-DONE")
