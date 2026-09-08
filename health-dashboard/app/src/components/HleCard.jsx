@@ -68,7 +68,7 @@ export default function HleCard({ sel, pool, poolName, setTip }) {
       <div className="hle-row">
         <svg className="chart" viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxWidth: 420 }} data-title={`${label(sel)} 기대수명·건강수명 추이`}>
           {[lo, Math.round((lo + hi) / 2), hi].map((v) => (
-            <g key={v}><line x1={pad.l} x2={W - pad.r} y1={sy(v)} y2={sy(v)} stroke="#e5e7eb" strokeWidth="1" /><text x={pad.l - 4} y={sy(v) + 3} fontSize="9" textAnchor="end" fill="#6b7280">{v}</text></g>
+            <g key={v}><line x1={pad.l} x2={W - pad.r} y1={sy(v)} y2={sy(v)} stroke="#e5e7eb" strokeWidth="1" /><text x={pad.l - 4} y={sy(v) + 3} fontSize="11" textAnchor="end" fill="#6b7280">{v}</text></g>
           ))}
           <path d={path("le")} fill="none" stroke="#6b7280" strokeWidth="2" />
           <path d={path("hle")} fill="none" stroke="#2563eb" strokeWidth="2.5" />
@@ -78,10 +78,10 @@ export default function HleCard({ sel, pool, poolName, setTip }) {
               <circle cx={sx(i)} cy={sy(rec.y[yy].hle)} r="3" fill="#2563eb"
                 onMouseEnter={(e) => setTip?.({ x: e.clientX, y: e.clientY, html: `<b>${yy}</b><br/>기대수명 ${fmt(rec.y[yy].le)}세<br/>건강수명 ${fmt(rec.y[yy].hle)}세<br/>불건강 ${fmt(rec.y[yy].le - rec.y[yy].hle)}년` })}
                 onMouseLeave={() => setTip?.(null)} />
-              <text x={sx(i)} y={H - 4} fontSize="9" textAnchor="middle" fill="#6b7280">{yy}</text>
+              <text x={sx(i)} y={H - 4} fontSize="11" textAnchor="middle" fill="#6b7280">{yy}</text>
             </g>
           ))}
-          <text x={W - pad.r} y={9} fontSize="9" textAnchor="end" fill="#6b7280">─ 기대수명 <tspan fill="#2563eb">─ 건강수명</tspan></text>
+          <text x={W - pad.r} y={9} fontSize="11" textAnchor="end" fill="#6b7280">─ 기대수명 <tspan fill="#2563eb">─ 건강수명</tspan></text>
         </svg>
         <div className="hle-refs">
           <div className="k-label">전국 공식 건강수명(정의별)</div>
