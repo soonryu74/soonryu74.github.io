@@ -14,13 +14,13 @@ function RankSettings({ opt, onChange, isSgg }) {
   const total = DOMAINS.reduce((a, d) => a + (w[d] || 0), 0);
   return (
     <div className="card rankset">
-      <h3>순위 산출 방식 <small className="muted">방법론 v1 · 100인 패널 권고</small></h3>
-      <div className="desc">권고안: 100인 패널 가중 · 3년 이동평균 · 도시/군 리그 · 결과지표 4개 제외. 바꿔 보면 순위가 얼마나 흔들리는지 확인할 수 있습니다.</div>
+      <h3>순위 산출 방식 <small className="muted">방법론 v1 · 기본 균등 가중</small></h3>
+      <div className="desc">기본: 영역 균등 가중 · 3년 이동평균 · 도시/군 리그 · 결과지표 4개 제외. "모의 패널" 가중치는 AI가 시뮬레이션한 값으로 실제 전문가 조사 결과가 아니며 민감도 검증용입니다. 바꿔 보면 순위가 얼마나 흔들리는지 확인할 수 있습니다.</div>
       <div className="setrow">
         <div className="setitem">
           <label>가중치</label>
           <div className="seg">
-            {[["panel", "100인 패널"], ["equal", "균등"], ["custom", "직접 조정"]].map(([k, n]) => (
+            {[["equal", "균등"], ["panel", "모의 패널(검증용)"], ["custom", "직접 조정"]].map(([k, n]) => (
               <button key={k} className={`seg-btn ${(custom ? "custom" : opt.weights) === k ? "on" : ""}`}
                 onClick={() => set("weights", k === "custom" ? { ...PANEL_WEIGHTS } : k)}>{n}</button>
             ))}
@@ -110,7 +110,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
           </div>
         </div>
         <div className="prof-score">
-          <div className="k-label">종합 양호도 <small className="muted">({typeof rankOpt.weights === "object" ? "직접 가중" : rankOpt.weights === "panel" ? "100인 패널 가중" : "균등 가중"})</small></div>
+          <div className="k-label">종합 양호도 <small className="muted">({typeof rankOpt.weights === "object" ? "직접 가중" : rankOpt.weights === "panel" ? "모의 패널 가중(검증용)" : "균등 가중"})</small></div>
           <div className="k-value">{me?.overall == null ? "–" : Math.round(me.overall)}<small> / 100</small></div>
         </div>
       </div>
@@ -247,7 +247,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
           </table>
         </div>
       </div>
-      <div className="desc">산출 방식 상세: docs/랭킹_방법론_v1.md — 표준화율·3년 이동평균·리그·가중치 근거(공인 체계 조사, 100인 패널, 232개 시군구 실증)</div>
+      <div className="desc">산출 방식 상세: docs/랭킹_방법론_v1.md — 표준화율·3년 이동평균·리그·가중치 근거(공인 체계 조사, AI 모의 패널은 검증용, 232개 시군구 실증)</div>
     </div>
   );
 }

@@ -223,7 +223,7 @@ export const PANEL_WEIGHTS = { "흡연": 14, "음주": 11, "신체활동": 11, "
 export const EQUAL_WEIGHTS = Object.fromEntries(DOMAINS.map((d) => [d, 1]));
 // 결과·유병 성격/중립/합성 지표: 순위 산식에서 제외 권고 (6개 패널 공통 지적)
 export const EXCLUDE_IDS = new Set(["DT_HYPER_DOCTOR", "DT_DIA_DOCTOR", "DT_NECE_CLINIC", "DT_117075_H_HEALTHY"]);
-export const DEFAULT_RANK_OPT = { weights: "panel", smooth: 3, league: "league", exclude: true };
+export const DEFAULT_RANK_OPT = { weights: "equal", smooth: 3, league: "league", exclude: true };   // 가중치 기본 = 균등 (모의 패널은 검증용)
 export const leagueOf = (r) => (r.l !== "sgg" ? "sido" : r.n.endsWith("군") ? "gun" : "city");
 export const LEAGUE_NAME = { city: "도시(구·시) 리그", gun: "군 리그", sido: "17개 시도" };
 
@@ -293,6 +293,8 @@ export function computeRanking(item, pool, opts = DEFAULT_RANK_OPT) {
 import UNITS_RAW from "../../data/units.json";
 export const UNITS = UNITS_RAW;
 export const UNIT_BY_CODE = new Map(UNITS_RAW.units.map((u) => [u.c, u]));
+/** 보건소 단위 풀: 공식 보건소명이 있는 조사 단위(일반구가 있는 시는 시 전체 행 대신 보건소별 행). 세종특별자치시보건소 포함 */
+export const HC_POOL = UNITS_RAW.units.filter((u) => u.chs && !u.has_subs && RBY.has(u.c)).map((u) => ({ ...RBY.get(u.c), hc: u.chs }));
 
 /* ===== 만성질환 예방·관리 지식베이스 ===== */
 import NCD_RAW from "../../data/ncd.json";

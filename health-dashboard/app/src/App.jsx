@@ -33,9 +33,9 @@ function readHash() {
     ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
-      weights: h.get("w") === "equal" ? "equal" : h.get("w") === "custom" && h.get("cw")
+      weights: h.get("w") === "panel" ? "panel" : h.get("w") === "custom" && h.get("cw")
         ? Object.fromEntries(h.get("cw").split(",").map((v, i) => [DS.domains[i], Math.max(0, Math.min(30, +v || 0))]))
-        : "panel",
+        : "equal",
       smooth: h.get("sm") === "1" ? 1 : 3,
       league: h.get("lg") === "nation" ? "nation" : "league",
       exclude: h.get("ex") !== "0",
