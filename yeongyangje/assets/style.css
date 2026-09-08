@@ -346,3 +346,30 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .beta-bar { background: #fff3cd; color: #5f4a00; font-size: .84rem; border-bottom: 1px solid #f1d27a; }
 .beta-bar .a11y-inner { padding: 6px 20px; line-height: 1.5; }
 .nosrc { display: inline-block; background: var(--amber-soft); color: var(--amber); border: 1px dashed var(--amber); border-radius: 6px; padding: 0 7px; font-size: .76rem; font-weight: 700; }
+
+/* ---------- 용어 툴팁 · 국내 지위 뱃지 · 허가 등급 ---------- */
+abbr.gl { text-decoration: none; border-bottom: 1.5px dotted var(--teal); cursor: help; color: inherit; }
+abbr.gl:hover, abbr.gl:focus { background: var(--teal-soft); outline: none; }
+.gl-pop { position: absolute; z-index: 200; width: 330px; max-width: calc(100vw - 16px); background: #fff; border: 1px solid var(--line-strong); border-left: 5px solid var(--teal); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 12px 14px; font-size: .92rem; line-height: 1.6; }
+.gl-pop p { margin: 6px 0; }
+.gl-pop button { position: absolute; top: 6px; right: 8px; background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--muted); }
+.gl-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 12px; }
+.gl-item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.gl-item h4 { margin: 0 0 4px; font-size: 1.02rem; }
+.gl-item .alias { font-size: .8rem; color: var(--muted); }
+.gl-item p { margin: 6px 0 0; font-size: .92rem; }
+.stat-badge { display: inline-block; font-size: .74rem; font-weight: 800; padding: 2px 9px; border-radius: 6px; margin: 2px 4px 2px 0; border: 1px solid transparent; }
+.st-rx { background: #fbe7e5; color: #8f1d17; border-color: #efc9c6; }
+.st-otc { background: #fbf1dc; color: #7a4f00; border-color: #eedbb4; }
+.st-qd { background: #eef1f4; color: #4b5857; border-color: #d5dbe0; }
+.st-hff { background: #e6f2e7; color: #1f5c25; border-color: #c7e2ca; }
+.st-hffi { background: #e3f1ef; color: #0b4f4c; border-color: #bfdcd9; }
+.st-food { background: #f4f4f4; color: #555; border-color: #ddd; }
+.st-none { background: #fff; color: #b3261e; border-color: #b3261e; }
+.st-import { background: #e6eef9; color: #1f5fa8; border-color: #c7d8ef; }
+.reg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 16px; margin: 18px 0; }
+.reg { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px; border-top: 6px solid var(--line-strong); }
+.reg h3 { margin: 0 0 6px; }
+.reg dl { display: grid; grid-template-columns: 92px 1fr; gap: 5px 10px; font-size: .92rem; margin: 10px 0 0; }
+.reg dt { color: var(--muted); font-weight: 700; } .reg dd { margin: 0; }
+.reg .ex { margin-top: 8px; font-size: .9rem; }
