@@ -2,7 +2,7 @@
 // SVG는 CSS 변수/클래스에 의존하므로 계산된 스타일을 속성으로 인라인해 독립 파일로 만든다.
 
 const SVG_PROPS = ["fill", "stroke", "stroke-width", "stroke-dasharray", "stroke-linejoin", "stroke-linecap",
-  "opacity", "font-size", "font-family", "font-weight", "fill-opacity", "stroke-opacity"];
+  "opacity", "font-size", "font-family", "font-weight", "fill-opacity", "stroke-opacity", "paint-order", "text-anchor"];
 
 const safe = (s) => String(s).replace(/[\\/:*?"<>|\s]+/g, "_").slice(0, 80);
 
