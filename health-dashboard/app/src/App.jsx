@@ -24,11 +24,13 @@ function readHash() {
   const h = new URLSearchParams(window.location.hash.replace(/^#/, ""));
   const ind = INDICATORS.find((i) => i.id === h.get("ind"));
   const sgg = h.get("sgg"), sido = h.get("sido");
+  const sgg0 = RBY.get(sgg)?.l === "sub" ? RBY.get(sgg).p : sgg;   // 세부 단위 코드는 소속 시군구로
   return {
     ind: ind || DEFAULT_IND,
     item: h.get("item") === "crude" ? "crude" : "std",   // 방법론 v1: 표준화율 기본
-    sido: RBY.has(sido) ? sido : (RBY.has(sgg) ? RBY.get(sgg).p : "001"),
-    sgg: RBY.has(sgg) ? sgg : null,
+    // 세부 단위(보건소) 코드는 시군구 선택으로 쓰지 않는다 — 부모 시군구로 올림
+    sido: RBY.get(sido)?.l === "sido" ? sido : (RBY.get(sgg0)?.l === "sgg" ? RBY.get(sgg0).p : "001"),
+    sgg: RBY.get(sgg0)?.l === "sgg" ? sgg0 : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
     view: ["profile", "compare", "units", "ncd", "corr", "hot"].includes(h.get("view")) ? h.get("view") : "analysis",
@@ -96,6 +98,7 @@ export default function App() {
     const r = RBY.get(code);
     if (!r) return;
     if (r.l === "sido") { setSido(r.c); setSgg(null); }
+    else if (r.l === "sub") { const p = RBY.get(r.p); if (p) { setSido(p.p); setSgg(p.c); } }   // 보건소 세부 단위 → 소속 시군구
     else { setSido(r.p); setSgg(r.c); }
   };
   const [fs, setFs] = useState(() => { try { return Number(localStorage.getItem("hd-fs") || 0); } catch { return 0; } });
@@ -186,7 +189,7 @@ export default function App() {
               <div className="card span2 mapcard">
                 <div className="cardhead">
                   <div>
-                    <h3>{year}년 {ind.name} — 시군구 단계구분도</h3>
+                    <h3>{year}년 {ind.name} — {scope === "sido" && sel.l === "sgg" ? `${RBY.get(sel.p).n} ` : "전국 "}시군구 단계구분도</h3>
                     <ExportButtons name={`${year}_${ind.name}_지도`} />
                     <div className="desc">7단계 분위({scope === "sido" && sel.l === "sgg" ? RBY.get(sel.p).n : "전국"} 기준) · 지역을 누르면 선택 · ▶ 로 연도 애니메이션</div>
                   </div>
