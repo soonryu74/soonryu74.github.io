@@ -189,7 +189,7 @@ export default function App() {
               <div className="card span2 mapcard">
                 <div className="cardhead">
                   <div>
-                    <h3>{year}년 {ind.name} — 시군구 단계구분도</h3>
+                    <h3>{year}년 {ind.name} — {scope === "sido" && sel.l === "sgg" ? `${RBY.get(sel.p).n} ` : "전국 "}시군구 단계구분도</h3>
                     <ExportButtons name={`${year}_${ind.name}_지도`} />
                     <div className="desc">7단계 분위({scope === "sido" && sel.l === "sgg" ? RBY.get(sel.p).n : "전국"} 기준) · 지역을 누르면 선택 · ▶ 로 연도 애니메이션</div>
                   </div>
