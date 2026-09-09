@@ -5,6 +5,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
+import { getSecret } from '../_shared/secret.ts'
 
 const TTL_MS = 24 * 3600 * 1000
 // 서비스 버전은 docs/korea-now-api.md 검증 결과에 맞춰 조정
@@ -12,8 +13,6 @@ const BASE = Deno.env.get('TOUR_API_BASE') ?? 'https://apis.data.go.kr/B551011/E
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-  const key = Deno.env.get('TOUR_API_KEY')
-  if (!key) return json({ error: 'TOUR_API_KEY not set' }, 500)
 
   let lat = 0, lng = 0, radius = 2000, contentTypeId = ''
   try {
@@ -26,6 +25,8 @@ Deno.serve(async (req) => {
 
   const cacheKey = `loc:${lat.toFixed(3)},${lng.toFixed(3)}:${radius}:${contentTypeId}`
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+  const key = await getSecret(db, 'TOUR_API_KEY')
+  if (!key) return json({ error: 'TOUR_API_KEY not set' }, 500)
   const { data: hit } = await db.from('tour_cache').select('payload, fetched_at').eq('key', cacheKey).maybeSingle()
   if (hit && Date.now() - new Date(hit.fetched_at).getTime() < TTL_MS) return json(hit.payload)
 

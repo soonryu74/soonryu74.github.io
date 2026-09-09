@@ -58,13 +58,18 @@ VITE_SUPABASE_ANON_KEY=sb_publishable_...
 - 새 프로젝트를 다시 만들 때만: **SQL Editor** → `supabase/migrations/0001_init.sql` 붙여넣고 **Run**
 
 ### 3-3. 시크릿(비밀 키) 등록
-- Dashboard → **Edge Functions → Secrets** 에 아래 3개 추가
+> **2026-09-09 현재**: `SEOUL_API_KEY`, `TOUR_API_KEY`는 `app_secrets` 테이블에 저장 완료(함수는 환경변수 → 테이블 순으로 읽음). 남은 것: `SEOUL_SUBWAY_API_KEY`(지하철), `KOREAEXIM_API_KEY`(환율, 선택). 테이블에 넣으려면 SQL Editor에서
+> `insert into app_secrets(name,value) values('SEOUL_SUBWAY_API_KEY','키') on conflict(name) do update set value=excluded.value;`
+> 또, 관광지 30일 예측(`tour-congestion`)은 data.go.kr에서 **「한국관광공사_관광지 집중률 방문자 추이 예측 정보」 활용신청**이 추가로 필요합니다(같은 키로 동작, 현재 "등록되지 않은 서비스키" 응답).
+
+- Dashboard → **Edge Functions → Secrets** 에 아래 추가 (테이블 대신 여기 넣어도 됨)
 
 | 이름 | 값 |
 | --- | --- |
 | `SEOUL_API_KEY` | 2-1에서 받은 키 |
 | `TOUR_API_KEY` | 2-2 디코딩 키 |
 | `KOREAEXIM_API_KEY` | 2-3 키 (선택) |
+| `SEOUL_SUBWAY_API_KEY` | 서울 열린데이터광장 **지하철 실시간 도착정보** 인증키 (일반 인증키와 별도 발급) |
 
 ### 3-4. Edge Function 배포 (Supabase CLI) — 완료 (코드를 고쳤을 때만 다시)
 

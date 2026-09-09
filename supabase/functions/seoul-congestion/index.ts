@@ -5,6 +5,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
+import { getSecret } from '../_shared/secret.ts'
 
 const TTL_MS = 5 * 60 * 1000
 
@@ -21,8 +22,6 @@ interface Ppltn {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
-  const key = Deno.env.get('SEOUL_API_KEY')
-  if (!key) return json({ error: 'SEOUL_API_KEY not set' }, 500)
 
   let areas: string[] = []
   try {
@@ -34,6 +33,8 @@ Deno.serve(async (req) => {
   if (areas.length === 0) return json({ error: 'areas[] required' }, 400)
 
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+  const key = await getSecret(db, 'SEOUL_API_KEY')
+  if (!key) return json({ error: 'SEOUL_API_KEY not set' }, 500)
   const { data: cached } = await db.from('congestion_cache').select('area, payload, fetched_at').in('area', areas)
   const now = Date.now()
   const fresh = new Map<string, unknown>()
