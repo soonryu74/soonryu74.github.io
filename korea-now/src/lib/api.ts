@@ -86,9 +86,10 @@ function ktoCacheSet(signgu: string, data: KtoPayload) {
   try { localStorage.setItem(`korea-now:kto:${signgu}`, JSON.stringify({ at: Date.now(), data })) } catch { /* 무시 */ }
 }
 
-// 관광지명 매칭: 정확히 → 포함 → 공백 제거 후 포함
-function matchName(nameKo: string, keys: string[]): string | undefined {
-  const norm = (x: string) => x.replace(/\s|\(.*?\)/g, '')
+// 관광지명 매칭: 지정명(ktoName) → 정확히 → 공백·괄호·[태그] 제거 후 같음 → 포함
+function matchName(nameKo: string, keys: string[], ktoName?: string): string | undefined {
+  if (ktoName && keys.includes(ktoName)) return ktoName
+  const norm = (x: string) => x.replace(/\s|\(.*?\)|\[.*?\]/g, '')
   const n = norm(nameKo)
   return keys.find((k) => k === nameKo)
     ?? keys.find((k) => norm(k) === n)
@@ -121,7 +122,7 @@ async function fetchKtoDaily(spots: Spot[]): Promise<Record<string, DailyRate[]>
       }
       const keys = Object.keys(data.spots)
       for (const s of list) {
-        const k = matchName(s.nameKo, keys)
+        const k = matchName(s.nameKo, keys, s.ktoName)
         if (k) out[s.id] = data.spots[k]
       }
     }),

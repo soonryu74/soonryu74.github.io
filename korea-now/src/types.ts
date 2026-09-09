@@ -34,6 +34,7 @@ export interface Spot {
   english: 'good' | 'some' | 'little'   // 영어 안내 수준
   seoulArea?: string      // 서울시 실시간 도시데이터 AREA_NM (서울만)
   lDong?: { area: string; signgu: string }   // 법정동 시도·시군구 코드 (관광공사 30일 예측용)
+  ktoName?: string        // 관광공사 예측 데이터의 관광지명이 nameKo와 다를 때 지정
   station?: { name: string; nameEn: string; lines: string[]; walkMin: number }   // 가장 가까운 지하철역 (서울)
   popularity: 1 | 2 | 3 | 4 | 5   // 데모 혼잡도 계산용 (5=항상 붐빔)
   tags: string[]
