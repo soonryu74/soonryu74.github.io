@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"Korea Now — 셋업 가이드 (왕초보용)","url":"/docs/korea-now-setup.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=8b63df579c88ec6dec8ab8d18275da897f3269d6">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2c5ab39ee03f156a04a5e8993b4cfcfc96040706">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -149,8 +149,14 @@ VITE_SUPABASE_ANON_KEY=sb_publishable_...
 </ul>
 
 <h3 id="3-3-시크릿비밀-키-등록">3-3. 시크릿(비밀 키) 등록</h3>
+<blockquote>
+  <p><strong>2026-09-09 현재</strong>: <code class="language-plaintext highlighter-rouge">SEOUL_API_KEY</code>, <code class="language-plaintext highlighter-rouge">TOUR_API_KEY</code>는 <code class="language-plaintext highlighter-rouge">app_secrets</code> 테이블에 저장 완료(함수는 환경변수 → 테이블 순으로 읽음). 남은 것: <code class="language-plaintext highlighter-rouge">SEOUL_SUBWAY_API_KEY</code>(지하철), <code class="language-plaintext highlighter-rouge">KOREAEXIM_API_KEY</code>(환율, 선택). 테이블에 넣으려면 SQL Editor에서
+<code class="language-plaintext highlighter-rouge">insert into app_secrets(name,value) values('SEOUL_SUBWAY_API_KEY','키') on conflict(name) do update set value=excluded.value;</code>
+또, 관광지 30일 예측(<code class="language-plaintext highlighter-rouge">tour-congestion</code>)은 data.go.kr에서 <strong>「한국관광공사_관광지 집중률 방문자 추이 예측 정보」 활용신청</strong>이 추가로 필요합니다(같은 키로 동작, 현재 “등록되지 않은 서비스키” 응답).</p>
+</blockquote>
+
 <ul>
-  <li>Dashboard → <strong>Edge Functions → Secrets</strong> 에 아래 3개 추가</li>
+  <li>Dashboard → <strong>Edge Functions → Secrets</strong> 에 아래 추가 (테이블 대신 여기 넣어도 됨)</li>
 </ul>
 
 <table>
@@ -172,6 +178,10 @@ VITE_SUPABASE_ANON_KEY=sb_publishable_...
     <tr>
       <td><code class="language-plaintext highlighter-rouge">KOREAEXIM_API_KEY</code></td>
       <td>2-3 키 (선택)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">SEOUL_SUBWAY_API_KEY</code></td>
+      <td>서울 열린데이터광장 <strong>지하철 실시간 도착정보</strong> 인증키 (일반 인증키와 별도 발급)</td>
     </tr>
   </tbody>
 </table>
