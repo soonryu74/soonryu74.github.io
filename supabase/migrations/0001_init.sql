@@ -58,3 +58,12 @@ create policy "spots public read" on public.spots for select using (true);
 create policy "congestion public read" on public.congestion_cache for select using (true);
 create policy "fx public read" on public.fx_cache for select using (true);
 create policy "tour public read" on public.tour_cache for select using (true);
+
+-- 5) 공공 API 키 보관 (대시보드 시크릿 대신/보조). RLS 켜고 정책 없음 → 서비스 롤만 읽음
+create table if not exists public.app_secrets (
+  name text primary key,
+  value text not null,
+  updated_at timestamptz not null default now()
+);
+alter table public.app_secrets enable row level security;
+revoke all on public.app_secrets from anon, authenticated;

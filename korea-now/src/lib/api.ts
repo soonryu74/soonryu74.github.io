@@ -195,3 +195,25 @@ export async function fetchNearby(lat: number, lng: number, contentTypeId = '', 
   if (error) throw error
   return data?.items ?? []
 }
+
+// ── 서울 지하철 실시간 도착 (Edge Function 경유, 20초 캐시) ──
+export interface Arrival {
+  lineId: string
+  line: string        // "Line 3"
+  dest: string        // 종착역 (한글)
+  direction: string   // 상행/하행/내선/외선
+  trainLine: string   // "대화행 - 독립문방면"
+  seconds: number     // 도착까지 초 (0 = 도착/정보 없음)
+  msg: string         // "2분 후 (안국)"
+  where: string       // 열차 현재 위치
+  status: string      // arvlCd
+  express: boolean
+}
+export interface ArrivalBoard { station: string; arrivals: Arrival[]; updatedAt: string; note?: string }
+
+export async function fetchArrivals(station: string): Promise<ArrivalBoard> {
+  if (!supabase) throw new Error('offline')
+  const { data, error } = await supabase.functions.invoke<ArrivalBoard>('subway-arrival', { body: { station } })
+  if (error || !data) throw error ?? new Error('no data')
+  return data
+}

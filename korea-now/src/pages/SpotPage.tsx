@@ -9,6 +9,7 @@ import { nowInSeoul } from '../lib/hours'
 import { addStamp, hasStamp, removeStamp } from '../lib/stamps'
 import CongestionBadge from '../components/CongestionBadge'
 import Timeline from '../components/Timeline'
+import SubwayCard from '../components/SubwayCard'
 
 export default function SpotPage() {
   const { id = '' } = useParams()
@@ -177,6 +178,8 @@ export default function SpotPage() {
           </div>
         </div>
       </div>
+
+      <SubwayCard spot={spot} />
 
       <div className="tip"><b>Local tip</b> — {spot.tip}</div>
 

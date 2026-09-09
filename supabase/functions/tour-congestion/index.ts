@@ -5,6 +5,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
+import { getSecret } from '../_shared/secret.ts'
 
 const TTL_MS = 24 * 3600 * 1000
 const BASE = 'https://apis.data.go.kr/B551011/TatsCnctrRateService/tatsCnctrRatedList'
@@ -13,8 +14,6 @@ interface Item { baseYmd: string; areaCd: string; areaNm: string; signguCd: stri
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-  const key = Deno.env.get('TOUR_API_KEY')
-  if (!key) return json({ error: 'TOUR_API_KEY not set' }, 500)
 
   let areaCd = '', signguCd = '', name = ''
   try {
@@ -25,6 +24,8 @@ Deno.serve(async (req) => {
 
   const cacheKey = `cnctr:${areaCd}:${signguCd}:${name}`
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+  const key = await getSecret(db, 'TOUR_API_KEY')
+  if (!key) return json({ error: 'TOUR_API_KEY not set' }, 500)
   const { data: hit } = await db.from('tour_cache').select('payload, fetched_at').eq('key', cacheKey).maybeSingle()
   if (hit && Date.now() - new Date(hit.fetched_at).getTime() < TTL_MS) return json(hit.payload)
 
@@ -36,17 +37,24 @@ Deno.serve(async (req) => {
 
   try {
     const r = await fetch(`${BASE}?${params}`)
-    const j = await r.json()
+    const text = await r.text()
+    let j: any
+    try { j = JSON.parse(text) } catch { return json({ error: 'forecast api non-json', detail: text.slice(0, 200) }, 502) }
+    // data.go.kr 게이트웨이 오류(해당 데이터셋 활용신청 안 된 키 등)는 캐시하지 않고 그대로 알린다
+    const gw = j?.OpenAPI_ServiceResponse?.cmmMsgHeader
+    if (gw) return json({ error: 'forecast api error', detail: `${gw.errMsg} (${gw.returnAuthMsg ?? gw.returnReasonCode})` }, 502)
     const raw = j?.response?.body?.items?.item ?? []
-    const items: Item[] = Array.isArray(raw) ? raw : [raw]
+    const items: Item[] = (Array.isArray(raw) ? raw : [raw]).filter(Boolean)
     // 관광지명 → 날짜별 집중률 배열로 정리
     const bySpot: Record<string, { date: string; rate: number }[]> = {}
     for (const it of items) {
       ;(bySpot[it.tAtsNm] ??= []).push({ date: it.baseYmd, rate: Number(it.cnctrRate) })
     }
     for (const list of Object.values(bySpot)) list.sort((a, b) => a.date.localeCompare(b.date))
-    const payload = { areaCd, signguCd, spots: bySpot, fetchedAt: new Date().toISOString() }
-    await db.from('tour_cache').upsert({ key: cacheKey, payload, fetched_at: new Date().toISOString() })
+    const payload = { areaCd, signguCd, spots: bySpot, fetchedAt: new Date().toISOString(), resultMsg: j?.response?.header?.resultMsg }
+    // 빈 결과는 1시간만 캐시
+    const fetched = items.length ? new Date() : new Date(Date.now() - TTL_MS + 3600 * 1000)
+    await db.from('tour_cache').upsert({ key: cacheKey, payload, fetched_at: fetched.toISOString() })
     return json(payload)
   } catch (e) {
     console.error('cnctr fetch failed', e)

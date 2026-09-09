@@ -3,6 +3,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
+import { getSecret } from '../_shared/secret.ts'
 
 interface Row { cur_unit: string; deal_bas_r: string; result: number }
 
@@ -13,10 +14,10 @@ function kstDate(offsetDays = 0): string {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-  const key = Deno.env.get('KOREAEXIM_API_KEY')
-  if (!key) return json({ error: 'KOREAEXIM_API_KEY not set' }, 500)
 
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+  const key = await getSecret(db, 'KOREAEXIM_API_KEY')
+  if (!key) return json({ error: 'KOREAEXIM_API_KEY not set' }, 500)
   const today = kstDate()
   const { data: hit } = await db.from('fx_cache').select('payload').eq('day', today).maybeSingle()
   if (hit?.payload) return json(hit.payload)
