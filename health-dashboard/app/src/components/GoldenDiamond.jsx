@@ -12,23 +12,31 @@ export default function GoldenDiamond({ item, sel }) {
   const isSgg = sel.l === "sgg";
   const years = INDICATORS.find((i) => i.id === "DT_H_SM")?.years || [];
   const latest = years[years.length - 1];
-  const [cur, setCur] = useState(latest);
-  const [excludeCovid, setExcludeCovid] = useState(true);
-  const [baseN, setBaseN] = useState(2);            // 기준연도 개수(당해연도 이전, 코로나 연도 제외 가능)
+  // 당해연도·기준연도 모두 여러 해 선택 가능(선택한 해의 평균으로 비교). 기본: 최신 1개년 vs 그 이전 2개년(2020·2021 제외)
+  const [curYears, setCurYears] = useState([latest]);
+  const [baseYears, setBaseYears] = useState(() => years.filter((y) => y < latest && y !== 2020 && y !== 2021).slice(-2));
   const [ref, setRef] = useState(isSgg ? "sido" : "nation");
   const [tol, setTol] = useState(5);                // 판정 여유(상대 %)
-  const baseYears = useMemo(() => {
-    const cand = years.filter((y) => y < cur && !(excludeCovid && (y === 2020 || y === 2021)));
-    return cand.slice(-baseN);
-  }, [years, cur, excludeCovid, baseN]);
+  const toggle = (list, setList, other, setOther) => (y) => {
+    if (list.includes(y)) { if (list.length > 1) setList(list.filter((x) => x !== y)); return; }
+    setList([...list, y].sort()); if (other.includes(y)) setOther(other.filter((x) => x !== y));
+  };
+  const toggleCur = toggle(curYears, setCurYears, baseYears, setBaseYears), toggleBase = toggle(baseYears, setBaseYears, curYears, setCurYears);
+  const preset = (nCur, nBase, covid) => () => {
+    const ys = years.filter((y) => !(covid && (y === 2020 || y === 2021)));
+    const c = ys.slice(-nCur); const b = ys.filter((y) => y < c[0]).slice(-nBase);
+    setCurYears(c); setBaseYears(b);
+  };
+  const yl = (a) => (a.length ? (a.length > 3 ? `${a[0]}–${a[a.length - 1]}(${a.length}개년)` : a.join("·")) : "없음");
+  const curLabel = yl(curYears), baseLabel = yl(baseYears);
+  const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
   const refName = ref === "sido" ? `${RBY.get(sel.p)?.n || ""} 전체` : "전국 시군구 중앙값";
 
   const rows = useMemo(() => INDICATORS.filter((i) => i.bad != null && !i.dep).map((ind) => {
-    const v = val(ind, item, cur, sel.c);
+    const v = mean(curYears.map((y) => val(ind, item, y, sel.c)).filter((x) => x != null));
     if (v == null) return null;
-    const bases = baseYears.map((y) => val(ind, item, y, sel.c)).filter((x) => x != null);
-    const base = bases.length ? bases.reduce((a, b) => a + b, 0) / bases.length : null;
-    const refV = ref === "sido" && isSgg ? val(ind, item, cur, sel.p) : nationalMedian(ind, item, cur);
+    const base = mean(baseYears.map((y) => val(ind, item, y, sel.c)).filter((x) => x != null));
+    const refV = mean(curYears.map((y) => (ref === "sido" && isSgg ? val(ind, item, y, sel.p) : nationalMedian(ind, item, y))).filter((x) => x != null));
     if (base == null || refV == null) return null;
     const rel = (a, b) => (b === 0 ? 0 : ((a - b) / Math.abs(b)) * 100);
     const dT = rel(v, base), dS = rel(v, refV);
@@ -36,7 +44,7 @@ export default function GoldenDiamond({ item, sel }) {
     const t = good(dT) ? "개선" : badd(dT) ? "악화" : "유지";
     const s = good(dS) ? "좋음" : badd(dS) ? "나쁨" : "비슷";
     return { ind, v, base, refV, dT, dS, t, s, pri: PRI[`${t}|${s}`] };
-  }).filter(Boolean), [item, sel, cur, baseYears, ref, tol]);
+  }).filter(Boolean), [item, sel, curYears, baseYears, ref, tol]);
 
   const cell = (t, s) => rows.filter((r) => r.t === t && r.s === s);
   const W = 560, H = 430, L = 64, T = 34, cw = (W - L - 8) / 3, ch = (H - T - 8) / 3;
@@ -44,22 +52,29 @@ export default function GoldenDiamond({ item, sel }) {
   return (
     <div className="card span2 gd">
       <h3>황금다이아몬드 — 보건사업 우선순위 <small className="muted">(시간축 × 공간축)</small></h3>
-      <ExportButtons name={`${label(sel)}_황금다이아몬드_${cur}`} kinds={["svg", "png", "list"]} />
+      <ExportButtons name={`${label(sel)}_황금다이아몬드_${curLabel}`} kinds={["svg", "png", "list"]} />
       <div className="desc">
-        {cur}년 값을 기준연도({baseYears.join("·") || "없음"}) 평균과 비교해 개선·유지·악화, {refName} 대비 좋음·비슷·나쁨으로 나눕니다(판정 여유 ±{tol}%, 지표 방향 자동 적용).
+        당해연도({curLabel}) 평균값을 기준연도({baseLabel}) 평균과 비교해 개선·유지·악화, {refName} 대비 좋음·비슷·나쁨으로 나눕니다(판정 여유 ±{tol}%, 지표 방향 자동 적용). 연도는 여러 해를 골라 평균으로 볼 수 있습니다(단년도 값의 표본오차를 줄일 때 유용).
         1순위(악화 + 나쁨)가 사업 우선 검토 대상입니다. 통합건강증진사업 계획서의 CIAT 황금다이아몬드와 같은 구조입니다.
       </div>
-      <div className="ctrls" style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "8px 0" }}>
-        <label className="subchip">당해연도 <select value={cur} onChange={(e) => setCur(+e.target.value)}>{years.slice(-6).map((y) => <option key={y} value={y}>{y}</option>)}</select></label>
-        <label className="subchip">기준연도 수 <select value={baseN} onChange={(e) => setBaseN(+e.target.value)}>{[1, 2, 3].map((n) => <option key={n} value={n}>{n}년 평균</option>)}</select></label>
-        <label className="subchip"><input type="checkbox" checked={excludeCovid} onChange={(e) => setExcludeCovid(e.target.checked)} /> 2020·2021 제외</label>
+      <div className="ctrls" style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "8px 0", alignItems: "center" }}>
         <label className="subchip">비교 <select value={ref} onChange={(e) => setRef(e.target.value)}>{isSgg && <option value="sido">소속 시도</option>}<option value="nation">전국 중앙값</option></select></label>
         <label className="subchip">여유 <select value={tol} onChange={(e) => setTol(+e.target.value)}>{[0, 3, 5, 10].map((n) => <option key={n} value={n}>±{n}%</option>)}</select></label>
+        <span className="muted" style={{ fontSize: 13 }}>빠른 선택:</span>
+        <button className="themebtn" onClick={preset(1, 2, true)}>최신 1년 vs 이전 2년</button>
+        <button className="themebtn" onClick={preset(3, 3, true)}>최근 3년 vs 이전 3년</button>
+        <button className="themebtn" onClick={preset(1, 1, false)}>전년 대비</button>
+      </div>
+      <div className="gd-years">
+        <div className="gd-yrow"><span className="gd-ylab">당해연도 <small className="muted">({curYears.length}개년 평균)</small></span>
+          {years.map((y) => <button key={y} className={`ychip ${curYears.includes(y) ? "on cur" : ""}`} onClick={() => toggleCur(y)}>{y}</button>)}</div>
+        <div className="gd-yrow"><span className="gd-ylab">기준연도 <small className="muted">({baseYears.length}개년 평균)</small></span>
+          {years.map((y) => <button key={y} className={`ychip ${baseYears.includes(y) ? "on base" : ""}`} onClick={() => toggleBase(y)}>{y}</button>)}</div>
       </div>
       <div className="hle-row">
-        <svg className="chart" viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxWidth: 620 }} data-title={`${label(sel)} 황금다이아몬드 ${cur}`}>
+        <svg className="chart" viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxWidth: 620 }} data-title={`${label(sel)} 황금다이아몬드 ${curLabel}`}>
           <text x={L + (W - L) / 2} y={14} fontSize="11" textAnchor="middle" fill="#6b7280">공간축: {refName} 대비 →</text>
-          <text x={12} y={T + (H - T) / 2} fontSize="11" textAnchor="middle" fill="#6b7280" transform={`rotate(-90 12 ${T + (H - T) / 2})`}>시간축: 기준연도 대비 ↑</text>
+          <text x={12} y={T + (H - T) / 2} fontSize="11" textAnchor="middle" fill="#6b7280" transform={`rotate(-90 12 ${T + (H - T) / 2})`}>시간축: {curLabel} vs {baseLabel} ↑</text>
           {TIME.slice().reverse().map((t, ti) => SPACE.map((s, si) => {
             const items = cell(t, s); const p = PRI[`${t}|${s}`];
             const x0 = L + si * cw, y0 = T + ti * ch;
@@ -78,7 +93,7 @@ export default function GoldenDiamond({ item, sel }) {
         <div style={{ flex: "1 1 260px", minWidth: 0 }}>
           <div className="tblscroll">
             <table className="yeartbl">
-              <thead><tr><th>순위</th><th>지표</th><th>{cur}</th><th>기준 평균</th><th>{refName}</th><th>시간</th><th>공간</th></tr></thead>
+              <thead><tr><th>순위</th><th>지표</th><th>{curLabel}</th><th>기준 {baseLabel}</th><th>{refName}</th><th>시간</th><th>공간</th></tr></thead>
               <tbody>
                 {[...rows].sort((a, b) => a.pri - b.pri || Math.abs(b.dS) - Math.abs(a.dS)).slice(0, 15).map((r) => (
                   <tr key={r.ind.id}><td style={{ fontWeight: 700 }}>{r.pri}</td><td>{r.ind.name}</td><td>{fmt(r.v)}</td><td>{fmt(r.base)}</td><td>{fmt(r.refV)}</td><td>{r.t} ({r.dT > 0 ? "+" : ""}{fmt(r.dT, 0)}%)</td><td>{r.s} ({r.dS > 0 ? "+" : ""}{fmt(r.dS, 0)}%)</td></tr>
