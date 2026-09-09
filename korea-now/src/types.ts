@@ -33,6 +33,7 @@ export interface Spot {
   cardOk: boolean         // 카드 결제 가능 여부(입장·대부분 상점)
   english: 'good' | 'some' | 'little'   // 영어 안내 수준
   seoulArea?: string      // 서울시 실시간 도시데이터 AREA_NM (서울만)
+  lDong?: { area: string; signgu: string }   // 법정동 시도·시군구 코드 (관광공사 30일 예측용)
   popularity: 1 | 2 | 3 | 4 | 5   // 데모 혼잡도 계산용 (5=항상 붐빔)
   tags: string[]
   tip: string             // 한 줄 현지 팁
@@ -54,7 +55,13 @@ export interface Congestion {
   max: number
   updatedAt: string
   forecast: ForecastSlot[]
-  source: 'seoul-live' | 'demo'
+  source: 'seoul-live' | 'kto-forecast' | 'demo'
+  daily?: DailyRate[]     // 관광공사 30일 예측 (서울 외)
+}
+
+export interface DailyRate {
+  date: string            // YYYYMMDD
+  rate: number            // 0~100, 가장 붐비는 날 = 100
 }
 
 export interface FxRate {

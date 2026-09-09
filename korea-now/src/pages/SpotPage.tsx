@@ -4,7 +4,8 @@ import { CATEGORY_ICON, CATEGORY_LABEL, REGIONS, SPOT_BY_ID } from '../data/spot
 import { useApp } from '../lib/state'
 import { distanceKm, formatDistance, formatKrw, walkMinutes } from '../lib/geo'
 import { closedDaysLabel, openStatus } from '../lib/hours'
-import { LEVEL_META, bestTime } from '../lib/congestion'
+import { LEVEL_META, bestTime, levelFromRate, ymdSeoul } from '../lib/congestion'
+import { nowInSeoul } from '../lib/hours'
 import { addStamp, hasStamp, removeStamp } from '../lib/stamps'
 import CongestionBadge from '../components/CongestionBadge'
 import Timeline from '../components/Timeline'
@@ -105,6 +106,29 @@ export default function SpotPage() {
             Crowd forecast · next 12 hours (KST)
           </div>
           <Timeline spot={spot} c={c} />
+        </div>
+      )}
+
+      {c?.daily && c.daily.length > 0 && (
+        <div className="card">
+          <div className="label" style={{ fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.4px' }}>
+            Next 14 days · busiest day = 100
+          </div>
+          <div className="daily-strip">
+            {c.daily.map((d) => {
+              const lv = levelFromRate(d.rate)
+              const dt = new Date(`${d.date.slice(0, 4)}-${d.date.slice(4, 6)}-${d.date.slice(6, 8)}T00:00:00+09:00`)
+              const isToday = d.date === ymdSeoul(nowInSeoul())
+              return (
+                <div key={d.date} className={'day' + (isToday ? ' today' : '')} title={`${d.date} · ${d.rate}`}>
+                  <div className="dow">{dt.toLocaleDateString('en-US', { weekday: 'narrow', timeZone: 'Asia/Seoul' })}</div>
+                  <div className="dot" style={{ background: LEVEL_META[lv].color, height: `${8 + d.rate * 0.28}px` }} />
+                  <div className="dd">{dt.getDate()}</div>
+                </div>
+              )
+            })}
+          </div>
+          <div className="source-note">Korea Tourism Organization forecast from mobile-carrier data. Pick a low bar.</div>
         </div>
       )}
 

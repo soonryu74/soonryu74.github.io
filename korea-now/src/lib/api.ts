@@ -1,8 +1,8 @@
 // 서버(Supabase Edge Function) 호출 + 실패 시 데모 데이터로 자동 전환
 // - 공공 API 키는 브라우저에 두지 않고 Edge Function 안에만 둔다
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import type { Congestion, FxRate, Spot } from '../types'
-import { demoCongestion, levelFromSeoul } from './congestion'
+import type { Congestion, DailyRate, FxRate, Spot } from '../types'
+import { demoCongestion, forecastCongestion, levelFromSeoul } from './congestion'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
@@ -56,11 +56,76 @@ export async function fetchCongestion(spots: Spot[]): Promise<Record<string, Con
     }
   }
 
+  // 서울 실시간이 없는 곳: 관광공사 30일 예측(있으면) → 데모
+  const ktoDaily = supabase ? await fetchKtoDaily(spots.filter((s) => !s.seoulArea && s.lDong)) : {}
+
   for (const s of spots) {
-    if (out[s.id]) continue
+    if (out[s.id] && out[s.id].source !== 'demo') continue
     const hit = s.seoulArea ? cache.get(s.seoulArea) : undefined
-    out[s.id] = hit ? hit.data : demoCongestion(s)
+    if (hit) { out[s.id] = hit.data; continue }
+    const daily = ktoDaily[s.id]
+    const fc = daily ? forecastCongestion(s, daily) : null
+    out[s.id] = fc ?? demoCongestion(s)
   }
+  return out
+}
+
+// ── 관광공사 30일 예측 (시군구 단위로 받아 관광지명으로 매칭) ──
+interface KtoPayload { spots: Record<string, DailyRate[]> }
+const KTO_TTL = 12 * 3600 * 1000
+
+function ktoCacheGet(signgu: string): KtoPayload | null {
+  try {
+    const raw = localStorage.getItem(`korea-now:kto:${signgu}`)
+    if (!raw) return null
+    const { at, data } = JSON.parse(raw) as { at: number; data: KtoPayload }
+    return Date.now() - at < KTO_TTL ? data : null
+  } catch { return null }
+}
+function ktoCacheSet(signgu: string, data: KtoPayload) {
+  try { localStorage.setItem(`korea-now:kto:${signgu}`, JSON.stringify({ at: Date.now(), data })) } catch { /* 무시 */ }
+}
+
+// 관광지명 매칭: 정확히 → 포함 → 공백 제거 후 포함
+function matchName(nameKo: string, keys: string[]): string | undefined {
+  const norm = (x: string) => x.replace(/\s|\(.*?\)/g, '')
+  const n = norm(nameKo)
+  return keys.find((k) => k === nameKo)
+    ?? keys.find((k) => norm(k) === n)
+    ?? keys.find((k) => norm(k).includes(n) || n.includes(norm(k)))
+}
+
+async function fetchKtoDaily(spots: Spot[]): Promise<Record<string, DailyRate[]>> {
+  const out: Record<string, DailyRate[]> = {}
+  if (!supabase || spots.length === 0) return out
+  const bySigngu = new Map<string, Spot[]>()
+  for (const s of spots) {
+    const g = s.lDong!.signgu
+    bySigngu.set(g, [...(bySigngu.get(g) ?? []), s])
+  }
+  await Promise.all(
+    [...bySigngu.entries()].map(async ([signgu, list]) => {
+      let data = ktoCacheGet(signgu)
+      if (!data) {
+        try {
+          const { data: d, error } = await supabase!.functions.invoke<KtoPayload>('tour-congestion', {
+            body: { areaCd: list[0].lDong!.area, signguCd: signgu },
+          })
+          if (error || !d?.spots) return
+          data = d
+          ktoCacheSet(signgu, data)
+        } catch (e) {
+          console.warn('[korea-now] kto forecast unavailable', signgu, e)
+          return
+        }
+      }
+      const keys = Object.keys(data.spots)
+      for (const s of list) {
+        const k = matchName(s.nameKo, keys)
+        if (k) out[s.id] = data.spots[k]
+      }
+    }),
+  )
   return out
 }
 
