@@ -34,7 +34,9 @@ export default function Timeline({ spot, c }: { spot: Spot; c: Congestion }) {
         {' · '}
         {c.source === 'seoul-live'
           ? `Live from Seoul city data, ${new Date(c.updatedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Seoul' })} KST`
-          : 'Estimated from typical daily patterns (no live sensor here)'}
+          : c.source === 'kto-forecast'
+            ? "Today's level from Korea Tourism Organization's 30-day forecast (mobile data); hourly shape estimated"
+            : 'Estimated from typical daily patterns (no live sensor here)'}
       </div>
     </div>
   )

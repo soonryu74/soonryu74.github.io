@@ -1,7 +1,7 @@
 // 혼잡도 계산·변환
 // 1) 서울시 실시간 도시데이터 응답 → 앱 공통 형식
 // 2) 실시간 데이터가 없는 곳(서울 외, 키 미설정, 오류)은 시간대 곡선으로 데모 혼잡도를 만든다
-import type { Congestion, CongestionLevel, ForecastSlot, Spot } from '../types'
+import type { Congestion, CongestionLevel, DailyRate, ForecastSlot, Spot } from '../types'
 import { nowInSeoul } from './hours'
 import { openStatus } from './hours'
 
@@ -73,6 +73,44 @@ export function demoCongestion(spot: Spot, now: Date = nowInSeoul()): Congestion
     updatedAt: now.toISOString(),
     forecast,
     source: 'demo',
+  }
+}
+
+// ── 관광공사 30일 예측(집중률 0~100) → 앱 형식 ─────────────
+// 집중률: 향후 30일 중 가장 붐비는 날 = 100. 일 단위라서 시간대 모양은 데모 곡선을 빌린다.
+export function levelFromRate(rate: number): CongestionLevel {
+  if (rate >= 70) return 'crowded'
+  if (rate >= 50) return 'busy'
+  if (rate >= 30) return 'normal'
+  return 'relaxed'
+}
+
+export function ymdSeoul(d: Date): string {
+  const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0')
+  return `${y}${m}${day}`
+}
+
+export function forecastCongestion(spot: Spot, daily: DailyRate[], now: Date = nowInSeoul()): Congestion | null {
+  const today = daily.find((d) => d.date === ymdSeoul(now)) ?? daily[0]
+  if (!today) return null
+  // 오늘 집중률로 데모 곡선의 높이를 조정: 100이면 곡선 그대로, 30이면 절반 이하
+  const factor = 0.35 + (today.rate / 100) * 0.85
+  const base = demoCongestion(spot, now)
+  const scale = (s: number) => Math.min(1.2, s * factor)
+  const scoreOf = (c: { min: number; max: number }) => c.max === 0 ? 0 : c.min / (300 + spot.popularity * 900)
+  const forecast: ForecastSlot[] = base.forecast.map((f) => {
+    const sc = scale(scoreOf(f))
+    return { ...f, level: levelFromScore(sc), min: Math.round((sc * (300 + spot.popularity * 900)) / 100) * 100, max: Math.round((sc * (300 + spot.popularity * 900) * 1.3) / 100) * 100 }
+  })
+  const cur = scale(scoreOf(base))
+  return {
+    level: levelFromScore(Math.max(cur, today.rate >= 70 ? 0.8 : 0)),
+    min: Math.round((cur * (300 + spot.popularity * 900)) / 100) * 100,
+    max: Math.round((cur * (300 + spot.popularity * 900) * 1.3) / 100) * 100,
+    updatedAt: now.toISOString(),
+    forecast,
+    source: 'kto-forecast',
+    daily: daily.slice(0, 14),
   }
 }
 
