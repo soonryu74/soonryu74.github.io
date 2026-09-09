@@ -361,3 +361,11 @@ tr.muted td { color: var(--muted); }
 .rrow.mine:not(.sel) .bar { background: var(--seq-400); opacity:.7; }
 
 .sw.dashed { background:none; height:0; border-top:3px dashed; }
+
+/* 황금다이아몬드 연도 다중 선택 */
+.gd-years { display:flex; flex-direction:column; gap:6px; margin:6px 0 10px; }
+.gd-yrow { display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+.gd-ylab { font-size:14px; color:var(--text-secondary); font-weight:600; min-width:150px; }
+.ychip { border:1px solid var(--border); background:var(--surface-1); color:var(--text-secondary); border-radius:6px; padding:3px 7px; font-size:13.5px; cursor:pointer; font-variant-numeric:tabular-nums; }
+.ychip.on.cur { background:var(--series-1); border-color:var(--series-1); color:#fff; }
+.ychip.on.base { background:var(--series-2); border-color:var(--series-2); color:#fff; }
