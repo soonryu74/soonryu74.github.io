@@ -19,9 +19,10 @@ export default function NowPage() {
 
   const regionMeta = REGIONS.find((r) => r.id === region) ?? REGIONS[0]
 
-  // 지도 중심: 내 위치가 선택 지역 근처(60km 이내)면 내 위치, 아니면 지역 중심
+  // 지도 중심: 선택한 지역 중심. 내 위치가 그 지역 안(12 km 이내)일 때만 내 위치로.
+  // (인천공항처럼 서울에서 50 km 떨어진 곳에서 '서울'을 누르면 서울이 보여야 한다)
   const center = useMemo(() => {
-    if (me && region !== 'all' && distanceKm(me.lat, me.lng, regionMeta.lat, regionMeta.lng) < 60) {
+    if (me && region !== 'all' && distanceKm(me.lat, me.lng, regionMeta.lat, regionMeta.lng) < 12) {
       return { lat: me.lat, lng: me.lng, zoom: 13 }
     }
     return { lat: regionMeta.lat, lng: regionMeta.lng, zoom: regionMeta.zoom }
