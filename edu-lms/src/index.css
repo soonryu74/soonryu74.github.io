@@ -1,0 +1,104 @@
+/* 통합돌봄사이버교육원 강의실 — 공개 사이트(edu/assets/style.css)와 같은 색과 글꼴을 쓴다.
+   50~70대 수강생이 쓰므로 본문 17px, 버튼은 크게, 대비는 강하게. */
+:root{
+  --ground:#FBFAF7; --surface:#FFFFFF; --sub:#F4F2ED;
+  --ink:#1A1F23; --ink-2:#565E64;
+  --line:#E3E0D8; --line-2:#CFCBC0;
+  --accent:#14524B; --accent-2:#1D7168; --accent-soft:#E4EDEA; --accent-ink:#0B3833;
+  --cta:#A8571F; --cta-soft:#F7ECE2;
+  --ok:#1E6B3A; --ok-soft:#E3F1E7;
+  --wrap:960px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#14171A; --surface:#1C2023; --sub:#202528; --ink:#E9EBE8; --ink-2:#A3AAA7;
+    --line:#2E3438; --line-2:#3D4448; --accent:#6FB5AA; --accent-2:#8CC9BF;
+    --accent-soft:#18332F; --accent-ink:#BFE3DB; --cta:#D89258; --cta-soft:#31241A;
+    --ok:#7CC894; --ok-soft:#1B3324;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#14171A; --surface:#1C2023; --sub:#202528; --ink:#E9EBE8; --ink-2:#A3AAA7;
+  --line:#2E3438; --line-2:#3D4448; --accent:#6FB5AA; --accent-2:#8CC9BF;
+  --accent-soft:#18332F; --accent-ink:#BFE3DB; --cta:#D89258; --cta-soft:#31241A;
+  --ok:#7CC894; --ok-soft:#1B3324;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:17px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word;
+}
+a{color:var(--accent-ink)}
+:focus-visible{outline:3px solid var(--cta);outline-offset:2px}
+h1,h2,h3{font-family:"Noto Serif KR",serif;line-height:1.35;margin:0;text-wrap:balance}
+h1{font-size:1.7rem}
+h2{font-size:1.3rem}
+h3{font-size:1.05rem}
+p{margin:0}
+button,input{font:inherit}
+
+/* 뼈대 */
+.top{background:var(--surface);border-bottom:1px solid var(--line)}
+.top .in{max-width:var(--wrap);margin:0 auto;padding:.8rem 1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.top .brand{font-family:"Noto Serif KR",serif;font-weight:700;color:var(--ink);text-decoration:none;font-size:1.05rem}
+.top .brand small{display:block;font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:.78rem;color:var(--ink-2)}
+.top nav{display:flex;gap:.2rem;margin-left:auto;flex-wrap:wrap}
+.top nav a{padding:.45rem .8rem;border-radius:6px;text-decoration:none;color:var(--ink-2);font-size:.95rem}
+.top nav a.active{background:var(--accent-soft);color:var(--accent-ink);font-weight:500}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:1.6rem 1rem 4rem;display:flex;flex-direction:column;gap:1.6rem}
+.crumb{font-size:.9rem;color:var(--ink-2)}
+.crumb a{color:var(--ink-2)}
+.lead{color:var(--ink-2);max-width:62ch}
+.muted{color:var(--ink-2);font-size:.92rem}
+
+/* 카드·목록 */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1.2rem 1.3rem;display:flex;flex-direction:column;gap:.7rem}
+.list{display:flex;flex-direction:column;gap:.8rem}
+.row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.row .grow{flex:1;min-width:12rem}
+.lesson{display:grid;grid-template-columns:2.6rem 1fr auto;gap:.9rem;align-items:center;padding:.9rem 1rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--ink)}
+.lesson:hover{border-color:var(--accent-2)}
+.lesson .n{font-weight:700;color:var(--ink-2);text-align:center}
+.lesson .t{font-weight:500}
+.lesson .s{display:block;font-size:.88rem;color:var(--ink-2)}
+.lesson.off{opacity:.55;pointer-events:none}
+
+/* 상태 표시 */
+.pill{display:inline-block;font-size:.78rem;font-weight:600;padding:.15rem .6rem;border-radius:999px;white-space:nowrap}
+.pill.done{background:var(--ok-soft);color:var(--ok)}
+.pill.part{background:var(--accent-soft);color:var(--accent-ink)}
+.pill.none{background:var(--sub);color:var(--ink-2)}
+.pill.wait{background:var(--cta-soft);color:var(--cta)}
+.bar{height:8px;background:var(--sub);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent-2)}
+.big{font-family:"Noto Serif KR",serif;font-size:2rem;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+
+/* 버튼·입력 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.75rem 1.3rem;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:600;font-size:1rem;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--accent-2);border-color:var(--accent-2)}
+.btn.ghost{background:transparent;color:var(--accent-ink);border-color:var(--line-2)}
+.btn.small{padding:.4rem .8rem;font-size:.88rem}
+.btn:disabled{opacity:.5;cursor:default}
+input[type=email],input[type=text],select{width:100%;padding:.75rem .9rem;border:1px solid var(--line-2);border-radius:8px;background:var(--surface);color:var(--ink);font-size:1.05rem}
+label{display:flex;flex-direction:column;gap:.35rem;font-weight:500}
+.note{background:var(--accent-soft);color:var(--accent-ink);border-radius:8px;padding:.9rem 1.1rem;font-size:.95rem}
+.warn{background:var(--cta-soft);color:var(--cta);border-radius:8px;padding:.9rem 1.1rem;font-size:.95rem}
+
+/* 재생 */
+.player{background:#000;border-radius:10px;overflow:hidden;aspect-ratio:16/9}
+.player video{width:100%;height:100%;display:block}
+.player .empty{color:#ccc;display:flex;align-items:center;justify-content:center;height:100%;padding:1rem;text-align:center}
+
+/* 표 */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:40rem}
+th,td{text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+thead th{font-size:.78rem;letter-spacing:.06em;color:var(--ink-2);background:var(--sub)}
+tbody tr:last-child td{border-bottom:0}
+td.c{text-align:center}
+
+/* 로그인 */
+.login{max-width:26rem;margin:3rem auto;display:flex;flex-direction:column;gap:1.2rem}
+.center{display:flex;align-items:center;justify-content:center;min-height:40vh;color:var(--ink-2)}
