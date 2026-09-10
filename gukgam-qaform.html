@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>예상 질의 — 후보와 답변 메모</title>
+<meta name="description" content="국회 공개 회의록의 과거 질의 이력과 공개된 언론보도에서 예상 질의 후보를 뽑아, 예상질의답변서 양식에 맞춰 채워 주는 도구. 수치와 정책 내용은 담당자가 직접 작성합니다.">
+<style>
+  :root{ --navy:#12365f; --line:#e3e9f0; --muted:#5f6e80; --bg:#f5f7fa; --brown:#5c3310; --chip:#eef3f8; --sig:#c2603a; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:var(--bg); color:#22303e; line-height:1.6;
+        -webkit-text-size-adjust:100%; text-size-adjust:100%; }   /* 휴대전화 브라우저가 글자를 임의로 키우지 않게 */
+  a{ color:inherit; }
+  .top{ background:var(--brown); color:#fff; padding:26px 18px 22px; }
+  .top-inner{ max-width:1180px; margin:0 auto; }
+  .top h1{ margin:0 0 6px; font-size:1.5rem; }
+  .top p{ margin:0; font-size:.92rem; opacity:.9; }
+  .top-nav{ margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+  .top-nav a{ color:#fff; text-decoration:none; font-size:.85rem; font-weight:700; background:rgba(255,255,255,.16); border-radius:20px; padding:6px 14px; }
+  .top-nav a.on, .top-nav a:hover{ background:rgba(255,255,255,.3); }
+  .wrap{ max-width:1180px; margin:0 auto; padding:18px 18px 60px; }
+
+  .warn{ background:#fffaf6; border:2px solid var(--sig); border-left:6px solid var(--sig); border-radius:12px;
+         padding:12px 16px; font-size:.86rem; margin-bottom:16px; }
+  .warn b{ color:#9e3a20; }
+
+  .howto{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; margin-bottom:16px; }
+  .ht{ background:#fff; border:1.5px solid #cbd8e6; border-radius:12px; padding:12px 14px; display:flex; gap:10px; align-items:flex-start; }
+  .ht .n{ flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--brown); color:#fff;
+          font-weight:900; font-size:.85rem; display:flex; align-items:center; justify-content:center; }
+  .ht b{ display:block; color:var(--navy); font-size:.92rem; margin-bottom:3px; }
+  .ht span{ font-size:.82rem; color:var(--muted); line-height:1.5; }
+  .ht span b{ display:inline; color:var(--navy); font-size:inherit; margin:0; }   /* 문장 중간의 굵은 글씨가 줄을 바꾸지 않게 */
+  .ht .ph-demo{ display:inline; color:#b9c2cd; font-weight:700; }
+  .step{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%;
+         background:var(--brown); color:#fff; font-size:.75rem; font-weight:900; margin-right:6px; }
+  .cols{ display:grid; grid-template-columns:minmax(320px,420px) 1fr; gap:16px; align-items:start; }
+  .cols > *{ min-width:0; }   /* 그리드 칸이 내용 폭에 밀려 화면 밖으로 나가지 않게 */
+  @media (max-width:960px){
+    .cols{ grid-template-columns:1fr; }
+    .sheet{ width:100%; padding:16px 14px; }   /* 휴대전화에서 A4 폭(210mm)을 그대로 쓰면 가로 스크롤이 생긴다 */
+    .qa-tbl th, .qa-tbl td{ font-size:9.5pt; padding:6px 7px; }
+    .sheet [contenteditable]:empty{ min-width:60px; }   /* 좁은 화면에서 안내 글이 줄을 넘기지 않게 */
+  }
+  .panel{ background:#fff; border:1.5px solid #cbd8e6; border-radius:14px; padding:14px 16px; box-shadow:0 1px 3px rgba(18,54,95,.06); }
+  .panel h2{ font-size:1rem; color:var(--navy); margin:0 0 10px; }
+  .picker{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .picker select{ border:1px solid var(--line); border-radius:8px; padding:7px 9px; font-size:.86rem; background:#fff; }
+
+  .cand{ border:1px solid var(--line); border-radius:11px; padding:11px 12px; margin-bottom:9px; cursor:pointer; background:#fff; }
+  .cand:hover{ border-color:#9db6d4; background:#fbfdff; }
+  .cand.on{ border-color:var(--sig); background:#fffaf6; }
+  .cand .t{ font-weight:800; font-size:.92rem; color:#1c2b3a; line-height:1.45; }
+  .cand .m{ margin-top:6px; display:flex; gap:5px; flex-wrap:wrap; font-size:.72rem; }
+  .bdg{ border-radius:8px; padding:1px 8px; font-weight:800; background:var(--chip); color:#3d4f63; }
+  .bdg.rp{ background:#f7ecef; color:#7b2d43; }
+  .bdg.pr{ background:#fff1e8; color:#a1471f; }
+  .bdg.fd{ background:#eef6f0; color:#1f6f4a; }
+  .bdg.ag{ background:#fff1e8; color:#a1471f; border:1px solid #f0d3c1; }
+  .cand .ex{ margin-top:7px; font-size:.78rem; color:var(--muted); line-height:1.5; border-top:1px dashed var(--line); padding-top:6px; }
+  .cand .ex a{ color:#2a4d7d; font-weight:700; text-decoration:none; }
+
+  .tools{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btn{ border:1px solid #cbd8e6; background:#fff; border-radius:9px; padding:8px 14px; font-size:.85rem; font-weight:800; cursor:pointer; color:#2a4d7d; }
+  .btn.primary{ background:var(--brown); color:#fff; border-color:var(--brown); }
+  .btn:hover{ background:#f3f7fb; } .btn.primary:hover{ background:#734017; }
+
+  /* ── 양식 (A4) ─────────────────────────────── */
+  .sheet{ background:#fff; border:1.5px solid #cbd8e6; border-radius:6px; padding:20mm; width:210mm; max-width:100%;
+          margin:0 auto; box-shadow:0 2px 10px rgba(18,54,95,.08); }
+  .sheet [contenteditable]{ outline:0; }
+  .sheet [contenteditable]:focus{ background:#fffdf5; box-shadow:0 0 0 2px #f0dcc4; border-radius:4px; }
+  .sheet [data-ph]:empty:before{ content:attr(data-ph); color:#b9c2cd; }
+  .sheet [contenteditable]:empty{ border-bottom:1px dashed #cbd3dd; min-width:120px; display:inline-block; cursor:text; }
+  .sheet [contenteditable]:empty:hover{ background:#fffdf5; border-bottom-color:#d2603a; }
+  .hd{ text-align:right; font-size:11pt; font-weight:700; margin-bottom:8px; }
+  .ttl{ font-size:14pt; font-weight:800; line-height:1.45; margin-bottom:4px; }
+  .src{ font-size:9.5pt; color:var(--muted); margin-bottom:12px; }
+  .key{ font-size:13pt; font-weight:800; line-height:1.5; margin:0 0 10px; }
+  .sec{ font-size:12pt; font-weight:800; margin:14px 0 6px; }
+  .lv1{ font-size:12pt; margin:0 0 4px; }
+  .lv2{ font-size:12pt; margin:0 0 4px; padding-left:14px; }
+  .lv3{ font-size:10.5pt; color:#a8442a; margin:0 0 8px; padding-left:26px; }
+  .refs{ font-size:10.5pt; margin:0 0 4px; padding-left:6px; }
+  .qa-tbl{ width:100%; border-collapse:collapse; margin-top:6px; }
+  .qa-tbl th, .qa-tbl td{ border:1px solid #b9c2cd; padding:6px 8px; font-size:10pt; vertical-align:top; }
+  .qa-tbl th{ background:#eef1f5; text-align:center; font-size:10pt; }
+  .qa-tbl td:first-child{ width:45%; }
+  .note-in{ font-size:9pt; color:var(--muted); margin-top:8px; }
+
+  .evi{ margin-bottom:12px; }
+  .evi > summary{ cursor:pointer; font-size:.95rem; font-weight:800; color:var(--navy); list-style:none; }
+  .evi > summary::-webkit-details-marker{ display:none; }
+  .evi > summary:before{ content:'▸ '; color:var(--sig); font-weight:900; }
+  .evi[open] > summary:before{ content:'▾ '; }
+  .evi > summary .cnt{ font-weight:600; color:var(--muted); font-size:.85rem; }
+  .evi[open] > summary{ padding-bottom:8px; border-bottom:1px solid var(--line); margin-bottom:6px; }
+  .btn.accent{ background:#fff1e8; border-color:#e0b8a4; color:#9e3a20; }
+  .btn.accent:disabled{ background:#f4f6f8; border-color:#e3e9f0; color:#aab4c0; cursor:default; }
+  .quo{ background:#f6f8fa; border-left:3px solid #b9c9da; border-radius:0 6px 6px 0; padding:2px 8px; }
+  .evi h2 .sub{ font-size:.78rem; font-weight:500; color:var(--muted); }
+  .evirow{ border-top:1px dashed var(--line); padding:10px 0; }
+  .evirow:first-child{ border-top:0; }
+  .evirow .meta{ font-size:.76rem; color:var(--muted); font-weight:800; margin-bottom:4px; }
+  .evirow .meta a{ color:#2a4d7d; text-decoration:none; font-weight:800; margin-left:6px; }
+  .evirow .eq{ font-size:.86rem; line-height:1.55; }
+  .evirow .eq b{ color:#7b2d43; }
+  .evirow .ea{ font-size:.84rem; line-height:1.55; color:#1f4e46; background:#f2f8f6; border-left:3px solid #9dc7bb;
+                border-radius:0 8px 8px 0; padding:6px 10px; margin-top:5px; }
+  .evirow .ea b{ color:#14615a; }
+  .evi .none{ font-size:.84rem; color:var(--muted); padding:8px 2px; }
+  .basis{ font-size:.78rem; color:var(--muted); line-height:1.6; margin-top:14px; border-top:1px dashed var(--line); padding-top:8px; }
+  .empty{ color:var(--muted); font-size:.86rem; padding:14px 4px; }
+
+  /* 재료(과거 질의·답변)를 크게, 빈칸은 접어서 아래로 */
+  .evi.mat{ background:#f7fbfd; border:1.5px solid #cfe0ea; border-radius:12px; padding:12px 14px; margin:10px 0 8px; }
+  .evi.mat > summary{ font-size:1rem; }
+  .evibar{ margin:8px 0 4px; }
+  .fillbar{ display:flex; gap:9px; align-items:center; flex-wrap:wrap; margin:10px 0 6px;
+            border-top:1px dashed var(--line); padding-top:10px; }
+  .fillbar .fillhint{ font-size:.78rem; color:var(--muted); }
+  .fill.closed{ display:none; }
+  .savedAt{ font-size:.78rem; color:#1f6f4a; align-self:center; }
+  .toolhint{ font-size:.8rem; color:var(--muted); line-height:1.6; margin:-4px 2px 12px; }
+  .toolhint b{ color:var(--navy); }
+  .toolhint span{ color:#9e3a20; }
+  .btn.ghost{ background:transparent; border-color:#dfe6ee; color:#7b8794; font-weight:700; }
+  /* 여러 건을 담는 메모 */
+  .item{ margin-bottom:16px; position:relative; }
+  .itemhd{ display:flex; align-items:center; gap:8px; margin:-6px 0 10px; flex-wrap:wrap; }
+  .itemhd .ino{ background:var(--brown); color:#fff; font-weight:900; font-size:.78rem; border-radius:7px; padding:3px 10px; white-space:nowrap; }
+  .btn.mini{ padding:5px 10px; font-size:.78rem; border-radius:8px; white-space:nowrap; }
+  .btn.mini.del{ color:#a03030; border-color:#e6c9c9; margin-left:auto; }
+  @media (max-width:640px){ .btn.mini.del{ margin-left:0; } }
+  .btn.mini.apply{ background:#fff1e8; border-color:#e0b8a4; color:#9e3a20; }
+  .btn.mini:disabled{ background:#f4f6f8; border-color:#e3e9f0; color:#aab4c0; cursor:default; }
+  /* 최근 보도 칸 */
+  .press-panel{ margin-top:12px; }
+  .prrow{ border-top:1px dashed var(--line); padding:9px 0; }
+  .prrow:first-child{ border-top:0; }
+  .prrow .pt{ font-size:.9rem; font-weight:700; line-height:1.5; color:#1c2b3a; }
+  .prrow .pm{ font-size:.78rem; color:var(--muted); margin-top:5px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  /* ── 휴대전화 ── 한 화면에 되도록 많이 들어오도록 촘촘하게. 크게 키웠더니 제목 한 줄이 화면을 다 먹었다. */
+  @media (max-width:640px){
+    .wrap{ padding:12px 10px 44px; }
+    .top{ padding:16px 12px 14px; }
+    .top h1{ font-size:1.2rem; }
+    .top p{ font-size:.8rem; }
+    .top-nav{ gap:5px; margin-top:9px; }
+    .top-nav a{ font-size:.74rem; padding:4px 9px; }
+    .panel{ padding:11px 11px; }
+    .warn{ font-size:.8rem; padding:10px 12px; line-height:1.55; }
+    .howto{ gap:7px; margin-bottom:12px; }
+    .ht{ padding:9px 11px; gap:8px; }
+    .ht .n{ width:22px; height:22px; font-size:.76rem; }
+    .ht b{ font-size:.86rem; }
+    .ht span{ font-size:.79rem; line-height:1.5; }
+    .picker{ display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+    .picker select{ width:100%; font-size:.84rem; padding:7px 7px; }
+    .picker select:last-child{ grid-column:1 / -1; }
+    .cand{ padding:10px 11px; margin-bottom:7px; }
+    .cand .t{ font-size:.88rem; line-height:1.45; }
+    .cand .m{ font-size:.7rem; gap:5px; margin-top:6px; }
+    .bdg{ padding:1px 7px; }
+    .cand .ex{ font-size:.76rem; line-height:1.5; padding-top:6px; }
+    .btn{ font-size:.82rem; padding:8px 12px; }
+    .btn.mini{ font-size:.74rem; padding:5px 9px; }
+    .toolhint{ font-size:.74rem; line-height:1.5; }
+    .basis{ font-size:.74rem; line-height:1.6; }
+
+    /* 메모 한 건 */
+    .sheet{ padding:14px 12px; }
+    .itemhd{ margin:-2px 0 8px; gap:6px; }
+    .itemhd .ino{ font-size:.72rem; padding:2px 8px; }
+    .hd{ display:none; }                 /* 화면에서는 자리만 차지한다 — 인쇄에는 그대로 나온다 */
+    .ttl{ font-size:11.5pt; line-height:1.4; }
+    .src{ font-size:8.5pt; line-height:1.45; margin-bottom:9px; }
+    .evi.mat{ padding:9px 10px; margin:8px 0 6px; }
+    .evi > summary{ font-size:.88rem; line-height:1.45; }
+    .evi > summary .cnt{ font-size:.76rem; }
+    .evirow{ padding:8px 0; }
+    .evirow .meta{ font-size:.72rem; }
+    .evirow .eq{ font-size:.82rem; line-height:1.55; }
+    .evirow .ea{ font-size:.8rem; line-height:1.55; padding:6px 9px; }
+    .evi .none{ font-size:.76rem; }
+    .fillbar{ margin:8px 0 5px; padding-top:8px; }
+    .fillbar .fillhint{ font-size:.72rem; }
+    .key{ font-size:11pt; line-height:1.45; }
+    .sec{ font-size:10.5pt; margin:10px 0 5px; }
+    .lv1,.lv2{ font-size:10.5pt; }
+    .lv3{ font-size:9.5pt; }
+    .refs{ font-size:9.5pt; }
+    .qa-tbl th, .qa-tbl td{ font-size:9pt; padding:5px 6px; }
+    .prrow .pt{ font-size:.82rem; line-height:1.45; }
+    .prrow .pm{ font-size:.72rem; }
+  }
+
+  @media print{
+    @page{ size:A4; margin:20mm; }   /* A4 기본 여백 */
+    body{ background:#fff; }
+    .top, .wrap > .warn, .panel.left, .tools, .basis, .noprint{ display:none !important; }
+    .cols{ display:block; }
+    .sheet{ border:0; box-shadow:none; padding:0; width:auto; margin:0; }
+    .item + .item{ page-break-before:always; }
+    .itemhd{ display:none !important; }
+    .fill.closed{ display:block !important; }   /* 접어 둔 채로 인쇄해도 내용이 빠지지 않게 */
+    .hd{ display:block !important; }            /* 휴대전화 화면에서는 감췄던 머리글 */
+    .sheet [contenteditable]:focus{ background:none; box-shadow:none; }
+    .sheet [data-ph]:empty:before{ content:''; }
+    .sheet [contenteditable]:empty{ border-bottom:0; }
+    .lv3{ color:#333; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-inner">
+    <h1>📝 예상 질의</h1>
+    <p>공개 회의록의 <strong>과거 질의 이력</strong>과 공개된 <strong>언론보도</strong>, 지난해 <strong>지적사항</strong>에서 올해 나올 만한 질의 후보를 뽑습니다. 근거는 모두 원문으로 이어집니다.</p>
+    <div class="top-nav">
+      <a href="gukgam.html">홈</a>
+      <a href="gukgam-year.html">최근 국감</a>
+      <a href="gukgam-mohw.html">복지부</a>
+      <a href="gukgam-kdca.html">질병청</a>
+      <a href="gukgam-mfds.html">식약처</a>
+      <a href="gukgam-guide.html">의원별 가이드북</a>
+      <a href="gukgam-prep.html">답변 대비 워크북</a>
+      <a href="gukgam-all.html">전체 자료·도구</a>
+    </div>
+    <div style="font-size:.74rem;color:rgba(255,255,255,.82);margin:8px 2px 0;">질병관리청 인공지능놀이터 연구회에서 만든 <b>비공식 참고자료</b>입니다 — 어떤 기관의 공식 사이트도 아니며, 모든 자료의 원 출처는 대한민국 국회(열린국회정보·회의록·결과보고서)와 공개된 언론보도입니다.</div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="warn">
+    <b>이 도구가 채우는 것과 채우지 않는 것</b><br>
+    자동으로 채우는 것은 <b>공개 자료에서 확인되는 것뿐</b>입니다 — 질의 제목(요지), 출처(질의 날짜·위원·형태 또는 보도 일자·매체), 과거 질의 예시와 회의록 원문 링크.
+    <b>답변 내용과 통계는 비워 둡니다.</b> 확인되지 않은 숫자를 채우지 않기 위해서입니다. 아래 메모는 초안 정리용이며, 기관의 공식 서식은 각 기관 내부 지침을 따르십시오.
+  </div>
+
+  <div class="howto">
+    <div class="ht"><span class="n">1</span><div><b>후보를 고릅니다</b><span>목록에 뜨는 것은 <b>실제로 나왔던 질의 문장</b>입니다. 누르면 오른쪽에 담기고 제목·출처가 채워집니다.</span></div></div>
+    <div class="ht"><span class="n">2</span><div><b>재료부터 읽습니다</b><span>담자마자 <b>그동안 오간 질의와 당시 답변</b>이 펼쳐집니다. <b>↩ 옮기기</b>를 누르면 당시 답변이 출처와 함께 메모로 들어갑니다.</span></div></div>
+    <div class="ht"><span class="n">3</span><div><b>복사해서 마무리합니다</b><span><b>텍스트 복사</b>로 한글 문서에 붙여 넣고 수치를 채웁니다. 쓰던 내용은 <b>이 기기에 자동 저장</b>되어 새로고침해도 남습니다.</span></div></div>
+  </div>
+
+  <div class="cols">
+    <!-- ── 왼쪽: 후보 ── -->
+    <section class="panel left">
+      <h2><span class="step">1</span>예상 질의 후보 <span style="font-size:.78rem;font-weight:500;color:var(--muted);">— 여러 개 눌러 담을 수 있습니다(최대 5건)</span></h2>
+      <div class="picker">
+        <select id="pAgency">
+          <option value="kdca">질병관리청</option>
+          <option value="mohw">보건복지부</option>
+          <option value="mfds">식품의약품안전처</option>
+        </select>
+        <select id="pMember"><option value="">위원 전체</option></select>
+        <select id="pKind">
+          <option value="">근거 전체</option>
+          <option value="repeat">반복 질의</option>
+          <option value="press">최근 보도</option>
+          <option value="finding">지난해 지적사항</option>
+        </select>
+      </div>
+      <div id="cands"><div class="empty">자료를 불러오는 중입니다…</div></div>
+    </section>
+
+    <details class="panel evi press-panel" id="prBox" style="grid-column:1;">
+      <summary>📰 최근 보도 <span class="cnt"></span></summary>
+      <div id="prList"></div>
+    </details>
+
+    <!-- ── 오른쪽: 답변 메모(여러 건) ── -->
+    <section>
+      <h2 style="font-size:1rem;color:var(--navy);margin:0 0 10px;"><span class="step">2</span>답변 메모 초안
+        <span style="font-size:.78rem;font-weight:500;color:var(--muted);">— 후보를 고를 때마다 1-1, 1-2… 로 쌓입니다</span></h2>
+      <div class="tools noprint">
+        <button class="btn primary" id="btnCopy" title="담은 항목 전부를 글자로 복사해 한글·워드에 붙여 넣습니다">📋 텍스트 복사</button>
+        <button class="btn" id="btnBlank" title="후보 없이 직접 쓸 빈 항목을 하나 더 만듭니다">＋ 빈 항목</button>
+        <button class="btn ghost" onclick="window.print()" title="담은 항목을 한 건씩 새 쪽에 인쇄합니다">🖨️ 종이로 인쇄</button>
+        <button class="btn ghost" id="btnClear" title="담은 항목과 자동 저장된 내용을 모두 지웁니다">↺ 전부 비우기</button>
+        <span id="itemCnt" style="font-size:.82rem;color:var(--muted);align-self:center;"></span>
+        <span class="savedAt" id="savedAt"></span>
+      </div>
+      <p class="toolhint noprint">
+        <b>텍스트 복사</b> 한글 문서에 붙여넣기(주로 쓰는 단추) · <b>＋ 빈 항목</b> 직접 쓸 칸 추가 · <b>종이로 인쇄</b> 한 건씩 새 쪽에 · <b>전부 비우기</b> 처음부터 다시<br>
+        <span>※ 쓰던 내용은 이 기기(브라우저)에만 자동 저장됩니다 — 서버로 보내지 않으며, 다른 기기에서는 보이지 않습니다.</span>
+      </p>
+      <div id="items"></div>
+      <p class="basis" id="basis"></p>
+    </section>
+  </div>
+</main>
+
+<script>
+(function(){
+  var esc=function(s){ return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+  function J(n,f){ return fetch('data/gukgam/'+n+'?_='+Date.now()).then(function(r){ if(!r.ok) throw 0; return r.json(); }).catch(function(){ return f; }); }
+  function junkName(n){ return /^(대리|직무대리|출석전문|참고인|증인|위원장|위원)$|^(참고인|증인|출석)/.test(n||''); }
+  function ymd(d){ var p=(d||'').split('-'); return p.length===3 ? (p[0]+'. '+(+p[1])+'. '+(+p[2])+'.') : (d||''); }
+  function md(d){ var p=(d||'').split('-'); return p.length===3 ? ((+p[1])+'. '+(+p[2])+'.') : (d||''); }
+
+  var AG={ kdca:{name:'질병관리청', qa:'kdca-qa.json', kw:['질병관리청','질병청','감염병','예방접종','방역','검역','만성질환','결핵']},
+           mfds:{name:'식품의약품안전처', qa:'mfds-qa.json', kw:['식품의약품안전처','식약처','의약품','마약','식품','의료기기','화장품']},
+           mohw:{name:'보건복지부', qa:null, kw:['보건복지부','복지부','건강보험','연금','의료','돌봄','저출생','장애인']} };
+
+  var QA=[], PRESS=[], FIND=null, AGENDA=[], CUR='kdca', CANDS=[], ITEMS=[];
+
+  // ── 자동 저장 ── 새로고침해도 쓰던 내용이 남게 한다. 이 기기의 브라우저에만 보관하고 서버로 보내지 않는다.
+  var SKEY='gukgam-qaform-v1', RESTORING=false, PENDING=null, _svt=null;
+  function stamp(at){
+    var e=document.getElementById('savedAt'); if(!e) return;
+    var d=new Date(at||Date.now());
+    e.textContent='자동 저장됨 · '+d.getHours()+':'+('0'+d.getMinutes()).slice(-2);
+  }
+  function save(){
+    if(RESTORING) return;
+    try{
+      var d={ v:1, at:Date.now(), ag:CUR, items:ITEMS.map(function(it){
+        var c=it.cand;
+        return { cand: c ? {kind:c.kind, topic:c.topic, agtext:c.agtext, title:c.title, src:c.src,
+                            y0:c.y0, y1:c.y1, n:c.n, link:c.link, badges:c.badges} : null,
+                 open: !it.el.querySelector('.fill').classList.contains('closed'),
+                 who:  (it.el.querySelector('.hd span[contenteditable]')||{}).textContent||'',
+                 ttl:  it.el.querySelector('.ttlx').textContent||'',
+                 srcx: it.el.querySelector('.srcx').textContent||'',
+                 html: it.el.querySelector('.fill').innerHTML };
+      })};
+      localStorage.setItem(SKEY, JSON.stringify(d));
+      stamp(d.at);
+    }catch(e){}   /* 사생활 보호 모드 등 저장이 막힌 브라우저에서는 조용히 넘어간다 */
+  }
+  function queueSave(){ clearTimeout(_svt); _svt=setTimeout(save, 500); }
+  function drop(){ try{ localStorage.removeItem(SKEY); }catch(e){}
+    var e2=document.getElementById('savedAt'); if(e2) e2.textContent=''; }
+  function readSaved(){
+    var raw; try{ raw=localStorage.getItem(SKEY); }catch(e){ return null; }
+    if(!raw) return null;
+    var d; try{ d=JSON.parse(raw); }catch(e){ return null; }
+    if(!d || d.v!==1 || !d.items || !d.items.length) return null;
+    return d;
+  }
+  // 되살릴 때 붙여넣기로 섞여 들어갔을 수 있는 태그를 걷어낸다
+  function sanitize(html){
+    var d=document.createElement('div'); d.innerHTML=html||'';
+    var all=d.querySelectorAll('*');
+    for(var i=0;i<all.length;i++){
+      var e=all[i]; if(!e.parentNode) continue;
+      var tn=e.tagName.toLowerCase();
+      if(tn==='script'||tn==='iframe'||tn==='object'||tn==='embed'||tn==='link'||tn==='style'){ e.parentNode.removeChild(e); continue; }
+      for(var j=e.attributes.length-1;j>=0;j--){
+        var a=e.attributes[j].name, v=e.getAttribute(a)||'';
+        if(/^on/i.test(a) || ((a==='href'||a==='src') && /^\s*javascript:/i.test(v))) e.removeAttribute(a);
+      }
+    }
+    return d.innerHTML;
+  }
+  function applyRestore(d){
+    RESTORING=true;
+    document.getElementById('items').innerHTML=''; ITEMS=[];
+    d.items.forEach(function(sv){
+      var el=document.createElement('article');
+      el.className='sheet item';
+      el.innerHTML=itemHTML('1-'+(ITEMS.length+1));
+      document.getElementById('items').appendChild(el);
+      var it={el:el, cand:sv.cand||null, rows:[]};
+      ITEMS.push(it);
+      var who=el.querySelector('.hd span[contenteditable]');
+      if(who) who.textContent=sv.who||'';
+      el.querySelector('.ttlx').textContent=sv.ttl||'';
+      el.querySelector('.srcx').textContent=sv.srcx||'';
+      if(sv.html) el.querySelector('.fill').innerHTML=sanitize(sv.html);
+      bindItem(it);
+      if(it.cand){
+        it.rows=relatedQA(it.cand);
+        renderEvi(it);
+        if(el.querySelector('[data-added]')) el.querySelector('.apply').disabled=true;
+      }else{
+        el.querySelector('.evi').hidden=true;
+        el.querySelector('.fillbar').hidden=true;
+      }
+      setFill(it, it.cand ? !!sv.open : true);
+    });
+    renumber(); renderCands();
+    RESTORING=false;
+    stamp(d.at);
+  }
+
+  // 답변에서 '무엇을 하겠다'는 문장을 찾는 표현 — 인용할 값어치가 있는 답변만 고른다
+  var PROMISE=/(검토하겠|추진하겠|마련하겠|협의하겠|노력하겠|개선하겠|확대하겠|보완하겠|살펴보겠|점검하겠|반영하겠|챙기겠|시행하겠|지원하겠|강화하겠|제출하겠|보고드리겠|확인하겠|하겠습니다|추진 중|준비하고 있|검토 중)/;
+  function quotable(r){
+    if(!r.a) return false;
+    var body=r.a.replace(/^\s*(예|네|아)\s*[,.]?\s*/,'');      // 앞의 '예,' '네,'는 내용이 아니다
+    var n=body.replace(/\s/g,'').length;
+    if(/^(예|네)[\s,.]*(알겠습니다|그렇습니다|맞습니다)?[\s.]*$/.test(r.a.trim())) return false;
+    return (PROMISE.test(body) && n>=22) || n>=45;
+  }
+  function promiseLine(a){
+    var t=clean(a).replace(/^\s*(예|네|아)\s*[,.]\s*/,'');
+    var parts=t.split(/(?:(?<=다\.)|(?<=[.?!]))\s+/);
+    parts=parts.map(function(x){ return mend(x); });
+    for(var i=parts.length-1;i>=0;i--){
+      var x=(parts[i]||'').trim();
+      if(x.length>=8 && PROMISE.test(x)) return x.length>110 ? x.slice(0,110)+'…' : x;
+    }
+    t=parts.join(' ');
+    return t.length>110 ? t.slice(0,110)+'…' : t;
+  }
+  function cut(t,n){ t=(t||'').replace(/^[\s,.、·…?!:;)\]]+/,''); return t.length>n ? t.slice(0,n)+'…' : t; }
+
+  // 질의 원문에서 '무엇을 묻는 문장'을 골라낸다 — 주제 이름 대신 실제 질의를 후보 제목으로 쓴다.
+  // 회의록 원문은 줄바꿈·쪽번호 때문에 앞머리가 잘리거나 띄어쓰기가 붙어 있는 곳이 있어, 성한 문장만 고른다.
+  var ASK=/(습니까|합니까|입니까|겠습니까|까\?)/;
+  var WANT=/(계획|대책|대안|방안|개선|이유|입장|현황|점검|보완|마련|검토|필요)/;
+  var JUNK=/(영상자료|자료화면|보시는|화면을|존경하는|위원장님|의사진행|말씀드리겠|답변하겠|이상입니다|감사합니다)/;
+  var GLUE=/[가-힣]{9,}/;                       // 띄어쓰기가 통째로 뭉개진 자리
+  var STUCK=/[가-힣]{4,}(입니까|습니까|합니까|하십니까|됩니까|입니다|습니다)/;   // 종결어미가 앞말에 붙어 버린 자리
+  var RHET=/(않습니까|아니겠습니까|아닙니까|않겠습니까)\s*[.?…]*$/;             // 밑자락을 까는 되물음
+  // 회의록 원문은 두 단 편집이라 줄 끝에서 낱말이 갈라진다. 낱말 첫머리에 올 수 없는 조각은 앞말에 붙여 읽는다.
+  // 홀로 설 수 없는 조각(닫힌 목록만 쓴다 — '의약품'·'가족'처럼 같은 글자로 시작하는 낱말을 건드리지 않기 위해서다)
+  var TAILW=/^(니까|니다|습니|겠습|십니|읍니|답니|됩니|입니|으로|에서|까지|부터|다고|라고|는데|시겠|느냐|냐라|습니까|습니다|입니까|입니다|십니까|십니다|겠습니|하겠습|니다만|과에서|에서는|으로는|이라고|냐라고|겠느냐|하는데|되는데|라는데|이라는|들이|들은|들을|들의|들도|들과)$/;
+  var PART=/^(이|가|을|를|은|는|의|에|도|과|와|로|서|라|며)$/;   // 홀로 놓일 수 없는 조사
+  var HEADNO=/^[는니다습서을를이가의에도과와로게요죠며면자러려든던까네씩째냐]/;
+  var ONE={};   // 한 글자로도 홀로 쓰이는 낱말 — 이것들은 붙이지 않는다
+  '좀 더 안 못 잘 저 제 그 이 등 및 약 또 즉 왜 참 첫 두 세 네 몇 각 전 총 매 말 법 돈 일 것 수 때 점 뭐 다 꼭 새 온 늘 막 딱 물 몸 힘 삶 값 곳 밥 글 뜻 위 밖 앞 뒤 옆 년 월 명 개 건 억 천 백 조 배 쪽 편'
+    .split(' ').forEach(function(w){ ONE[w]=1; });
+  function core(w){ return (w||'').replace(/[^가-힣]/g,''); }
+  function mend(t){
+    var w=(t||'').split(' '), out=[], i, c;
+    for(i=0;i<w.length;i++){
+      c=core(w[i]);
+      if(c.length===1 && !ONE[c] && (out.length || i+1<w.length)){
+        if(i+1<w.length && HEADNO.test(core(w[i+1]))){ out.push(w[i]+w[i+1]); i++; continue; }
+        if(out.length){ out[out.length-1]+=w[i]; continue; }
+      }
+      if(c.length>=2 && TAILW.test(c) && out.length){ out[out.length-1]+=w[i]; continue; }
+      out.push(w[i]);
+    }
+    return out.join(' ');
+  }
+  function orphan(t){
+    var w=(t||'').split(' ');
+    for(var i=0;i<w.length;i++){
+      var c=core(w[i]);
+      if(!c) continue;
+      if(c.length===1 && !ONE[c]) return true;
+      if(c.length>=2 && TAILW.test(c)) return true;
+      if(c.length>=8 && STUCK.test(c)) return true;
+      if(i>0 && PART.test(c)) return true;                 // 문장 중간에 조사만 떨어져 있으면 낱말이 갈라진 자리다
+      if(c.length>=3 && /\d/.test(w[i])) return true;      // '지금2차'·'10조가넘고'처럼 숫자와 뒤엉킨 자리
+    }
+    return false;
+  }
+  // 쪽머리(‘2025년도국감-보건복지(2025년10월30일) 133’)가 문장 사이에 섞여 들어와 있다
+  function clean(q){
+    return (q||'').replace(/\s*\d{1,4}\s*\d{4}\s*년도\s*국감[^()]*\([^)]*\)\s*\d*/g,' ')
+                  .replace(/\d{4}\s*년도\s*국감[^()]*\([^)]*\)\s*\d*/g,' ')
+                  .replace(/\s+/g,' ').trim();
+  }
+  // 화면에 보일 때도 쪽머리를 걷고 줄 끝에서 갈라진 낱말을 붙여 읽는다
+  function disp(t){
+    return mend(clean(t));
+  }
+  // 마침표 뒤에 빈칸이 없는 곳도 문장 경계로 본다(회의록 원문에 흔하다)
+  function sentences(q){
+    return clean(q).split(/(?<=[.?!])\s*/).filter(function(x){ return x && x.trim(); });
+  }
+  // 주제 이름에서 실제로 문장에 나타날 만한 낱말만 남긴다
+  var GENERIC={'대응':1,'대비':1,'협력':1,'관리':1,'안전':1,'지원':1,'정책':1,'제도':1,'사업':1,'기타':1};
+  function topicKeys(t){
+    return (t||'').split(/[·,\/\s]+/).filter(function(w){ return w.length>=2 && !GENERIC[w]; });
+  }
+  // 성한 물음 한 문장을 골라 낸다. 고르지 못하면 아무것도 돌려주지 않는다(주제 이름을 쓴다).
+  function pickQ(x, idx, keys, strict){
+    var t=(x||'').trim(), i, hit=false;
+    if(idx<1) return null;                        // 앞 문장이 끊긴 자리는 첫 글자가 잘려 있을 수 있다
+    if(t.length<20 || t.length>95) return null;
+    if(JUNK.test(t) || /국감|\d{3,}\s/.test(t)) return null;
+    if(!ASK.test(t) || RHET.test(t)) return null; // 실제로 묻는 문장만
+    for(i=0;i<keys.length;i++){ if(t.indexOf(keys[i])>=0){ hit=true; break; } }
+    if(!hit) return null;                         // 그 주제를 실제로 묻는 문장이어야 한다
+    t=mend(t);
+    if(t.length<20 || t.length>82) return null;   // 잘라 쓰지 않아도 되는 길이만
+    if(GLUE.test(t) || orphan(t)) return null;    // 붙여 읽어도 성하지 않으면 버린다
+    if(strict && !WANT.test(t)) return null;      // 1차에서는 '대책·계획·이유'를 묻는 문장만
+    return t;
+  }
+  function bestQuestion(rows, topic){
+    var keys=topicKeys(topic); if(!keys.length) return null;
+    for(var pass=0; pass<2; pass++){
+      var best=null, bs=0;
+      for(var i=0;i<rows.length;i++){
+        var ps=sentences(rows[i].q);
+        for(var j=0;j<ps.length && j<12;j++){
+          var q=pickQ(ps[j], j, keys, pass===0);
+          if(!q) continue;
+          var sc=60+(WANT.test(q)?30:0)+(q.length>=28?10:0)+Math.max(0,8-i);
+          if(sc>bs){ bs=sc; best={q:q, row:rows[i]}; }
+        }
+      }
+      if(best) return best;
+    }
+    return null;
+  }
+
+
+  // ── 예상 질의 후보 ─────────────────────────────────────
+  function buildCands(member){
+    var out=[], now=new Date().getFullYear();
+    var rows=QA.filter(function(r){ return r.year>=now-4 && !junkName(r.member); });
+    if(member) rows=rows.filter(function(r){ return r.member===member; });
+
+    rows=rows.slice().sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+    var byTopic={};
+    rows.forEach(function(r){
+      (r.topics||[]).forEach(function(t){
+        if(!byTopic[t]) byTopic[t]={n:0, years:{}, ex:[], rows:[]};
+        byTopic[t].n++; byTopic[t].years[r.year]=1;
+        if(byTopic[t].ex.length<3) byTopic[t].ex.push(r);   // 최근 것부터 3건
+        if(byTopic[t].rows.length<400) byTopic[t].rows.push(r);
+      });
+    });
+    var reps=[];
+    Object.keys(byTopic).forEach(function(t){
+      var b=byTopic[t], ys=Object.keys(b.years).sort();
+      if(ys.length<2 || b.n<4) return;
+      var pick=bestQuestion(b.rows, t), head=pick?pick.row:b.ex[0], ttl, sub;
+      if(pick){
+        ttl=pick.q;
+        sub=ymd(head.date)+' '+head.member+' 위원 구두질의 · 「'+t+'」 관련 질의는 '+ys[0]+'~'+ys[ys.length-1]+'년 '+b.n+'건';
+      }else{
+        ttl='「'+t+'」 관련 반복 질의 — '+ys[0]+'~'+ys[ys.length-1]+'년 '+b.n+'건';
+        sub='최근 '+ys.length+'개 연도 국정감사 「'+t+'」 관련 질의 '+b.n+'건 (최근: '+ymd(head.date)+' '+head.member+' 위원 구두질의)';
+      }
+      reps.push({ kind:'repeat', topic:t, agtext:t, y0:ys[0], y1:ys[ys.length-1], n:b.n, verbatim:!!pick,
+        title:ttl, src:sub,
+        badges:[['','「'+t+'」'],['rp', ys[0]+'~'+ys[ys.length-1]+' 반복'],['','질의 '+b.n+'건']]
+          .concat(pick?[['','실제 질의 문장']]:[]),
+        ex:b.ex.filter(function(e){ return e!==head; }).slice(0,2) });
+    });
+    reps.sort(function(a,b){ return b.n-a.n; });
+    var seen={};
+    reps.forEach(function(c){
+      if(seen[c.title]){ c.title='「'+c.topic+'」 관련 반복 질의 — '+c.y0+'~'+c.y1+'년 '+c.n+'건'; c.verbatim=false;
+        c.badges=c.badges.filter(function(b){ return b[1]!=='실제 질의 문장'; }); }
+      seen[c.title]=1;
+      out.push(c);
+    });
+
+    pressOf().forEach(function(p){ out.push(pressCand(p)); });
+
+    if(FIND && FIND.items){
+      var mine=FIND.items.filter(function(i){ return (i.group===AG[CUR].name) || ((i.agency||'').indexOf(AG[CUR].name)>=0); });
+      mine.slice(0,12).forEach(function(i){
+        out.push({ kind:'finding',
+          title:cut(i.text,60)+' 이행 현황',
+          src:(FIND.year||'')+'년 국정감사 결과보고서 시정·처리요구',
+          badges:[['fd','지난해 지적'],['',(FIND.year||'')+'년']], ex:[] });
+      });
+    }
+    out.forEach(function(c){
+      var flat=(c.agtext||c.title).replace(/\s+/g,'');
+      for(var i=0;i<AGENDA.length;i++){
+        var a=AGENDA[i], hit=(a.strong||[]).filter(function(k){ return flat.indexOf(k.replace(/\s+/g,''))>=0; });
+        if(hit.length){ c.badges.push(['ag','국정과제 '+a.no]); c.agenda=a; break; }
+      }
+    });
+    return out;
+  }
+  var PRESS_ALL=false;
+  function pressOf(){
+    var mine=PRESS.filter(function(p){
+      var t=(p.title||''); return AG[CUR].kw.some(function(k){ return t.indexOf(k)>=0; });
+    });
+    PRESS_ALL = mine.length===0;
+    return PRESS_ALL ? PRESS.slice(0,12) : mine;   // 기관 낱말이 안 걸리면 국감 보도 전체를 보인다
+  }
+  function pressCand(p){
+    var t=(p.title||'').replace(/\s*-\s*[a-z0-9.-]+$/i,'');
+    return { kind:'press', title:t+' 관련 대응 방향',
+             src:md(p.date)+' 언론보도('+(p.source||'')+', 「'+t.slice(0,40)+'」)',
+             badges:[['pr','최근 보도'],['',md(p.date)]], link:p.link||p.url||'', ex:[] };
+  }
+
+  // ── 관련 과거 질의·답변 ────────────────────────────────
+  var STOP={'이행':1,'현황':1,'관련':1,'대응':1,'방향':1,'올해':1,'반복':1,'질의':1,'대책':1,'마련':1,'검토':1,'개선':1,'것':1,'등':1,'및':1};
+  function tokens(t){
+    var out=[], m=(t||'').match(/[가-힣]{2,}/g)||[];
+    m.forEach(function(w){ if(!STOP[w] && w.length>=2 && out.indexOf(w)<0) out.push(w); });
+    return out.slice(0,10);
+  }
+  function relatedQA(c){
+    var rows;
+    if(c.kind==='repeat'){
+      rows=QA.filter(function(r){ return (r.topics||[]).indexOf(c.topic)>=0; });
+    }else{
+      var ks=tokens(c.title);
+      rows=QA.filter(function(r){
+        var t=(r.q||'')+' '+(r.a||''), n=0, long=false;
+        for(var i=0;i<ks.length;i++){ if(t.indexOf(ks[i])>=0){ n++; if(ks[i].length>=3) long=true; } }
+        return n>=2 && long;
+      });
+    }
+    rows=rows.filter(function(r){ return !junkName(r.member); })
+             .sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+    var withA=rows.filter(function(r){ return r.a; });
+    return withA.concat(rows.filter(function(r){ return !r.a; })).slice(0,8);
+  }
+
+  // ── 후보 목록 ─────────────────────────────────────────
+  // 제목이 이미 실제 질의 문장이면 날짜·위원만 한 줄로, 주제 이름을 쓴 후보만 질의 예시를 보인다
+  function exLine(c){
+    if(!c.ex || !c.ex.length) return '';
+    var e=c.ex[0], lnk=e.minutes_url?' <a href="'+esc(e.minutes_url)+'" target="_blank" rel="noopener">원문 ↗</a>':'';
+    if(c.verbatim) return '<div class="ex">· 이 주제의 가장 최근 질의 '+esc(ymd(e.date))+' '+esc(e.member)+' 위원'+lnk+'</div>';
+    return '<div class="ex">· '+esc(ymd(e.date))+' '+esc(e.member)+' 위원 — '+esc(cut(disp(e.q),70))+lnk+'</div>';
+  }
+  var CSHOWN=6;
+  function renderCands(){
+    var kind=document.getElementById('pKind').value;
+    var list=CANDS.filter(function(c){ return !kind || c.kind===kind; });
+    var box=document.getElementById('cands');
+    if(!list.length){ box.innerHTML='<div class="empty">조건에 맞는 후보가 없습니다.</div>'; return; }
+    var more=list.length-CSHOWN;
+    box.innerHTML=list.slice(0,CSHOWN).map(function(c,i){
+      var used=ITEMS.some(function(it){ return it.cand && it.cand.title===c.title; });
+      return '<div class="cand'+(used?' on':'')+'" data-i="'+i+'">'+
+        '<div class="t">'+esc(c.title)+'</div>'+
+        '<div class="m">'+c.badges.map(function(b){ return '<span class="bdg '+b[0]+'">'+esc(b[1])+'</span>'; }).join('')+
+          (used?'<span class="bdg" style="background:#e9f3ea;color:#1f6f4a;">담음</span>':'')+'</div>'+
+        exLine(c)+
+        '</div>';
+    }).join('')+(more>0?'<button class="btn" id="moreCand" style="width:100%;margin-top:4px;">후보 '+more+'개 더 보기</button>':'');
+    box.querySelectorAll('.cand').forEach(function(el){
+      el.addEventListener('click', function(){ addItem(list[+this.dataset.i]); });
+    });
+    var mb=document.getElementById('moreCand');
+    if(mb) mb.addEventListener('click', function(){ CSHOWN+=12; renderCands(); });
+  }
+
+  // ── 최근 보도 칸 ───────────────────────────────────────
+  function renderPress(){
+    var rows=pressOf(), box=document.getElementById('prBox'), list=document.getElementById('prList');
+    box.querySelector('.cnt').textContent = PRESS_ALL
+      ? '— '+AG[CUR].name+' 이름이 들어간 기사는 없어 국감 관련 보도 '+rows.length+'건을 보입니다 · 눌러서 펼치기'
+      : '— '+AG[CUR].name+' 관련 '+rows.length+'건 · 눌러서 펼치기';
+    if(!rows.length){ list.innerHTML='<div class="none">이 기관 관련 최근 보도가 없습니다.</div>'; return; }
+    list.innerHTML=rows.slice(0,12).map(function(p,i){
+      return '<div class="prrow"><div class="pt">'+esc(p.title)+'</div>'+
+        '<div class="pm">'+esc(md(p.date))+' · '+esc(p.source||'')+
+        ' <button class="btn mini" data-p="'+i+'">이 보도로 예상 질의 만들기</button></div></div>';
+    }).join('');
+    list.querySelectorAll('button[data-p]').forEach(function(b){
+      b.addEventListener('click', function(e){ e.stopPropagation(); addItem(pressCand(rows[+this.dataset.p])); });
+    });
+  }
+
+  // ── 메모 항목 ─────────────────────────────────────────
+  function itemHTML(no){
+    return ''+
+    '<div class="itemhd noprint"><span class="ino">'+no+'</span>'+
+      '<button class="btn mini del">✕ 삭제</button></div>'+
+    '<div class="hd">답변 메모 초안 · 작성 <span contenteditable data-ph="담당자"></span></div>'+
+    '<div class="ttl"><span class="no">'+no+'.</span> <span class="ttlx" contenteditable data-ph="예상 질의 요지 — 왼쪽에서 후보를 고르면 채워집니다"></span></div>'+
+    '<div class="src">※ (출처) <span class="srcx" contenteditable data-ph="질의 날짜·위원·형태 또는 보도 일자"></span></div>'+
+    '<details class="evi mat noprint" open><summary>📌 그동안 오간 질의와 당시 답변 <span class="cnt"></span></summary>'+
+      '<div class="evibar"><button class="btn mini apply">↩ 과거 답변을 아래 메모로 옮기기</button></div>'+
+      '<div class="evilist"></div></details>'+
+    '<div class="fillbar noprint"><button class="btn mini fillt">✍ 답변 메모 칸 펼치기</button>'+
+      '<span class="fillhint">결론·근거·참고자료·이어질 질문을 직접 씁니다</span></div>'+
+    '<div class="fill closed">'+
+      '<p class="key">◈ <span contenteditable data-ph="결론 한 문장 — 직접 작성"></span></p>'+
+      '<div class="sec">◈ 근거와 향후 계획</div>'+
+      '<div class="bodyx">'+
+        '<p class="lv1">○ <span contenteditable data-ph="답변 핵심 내용 — 직접 작성"></span></p>'+
+        '<p class="lv2">- <span contenteditable data-ph="부연 — 직접 작성"></span></p>'+
+        '<p class="lv3">* <span contenteditable data-ph="통계 — 확정 자료로 기재(기준일·단위·출처 포함)"></span></p>'+
+        '<p class="lv1">○ <span contenteditable data-ph="관계 부처·기관과 협의 등 향후 계획 — 직접 작성"></span></p>'+
+      '</div>'+
+      '<div class="sec" style="font-size:11.5pt;">참고자료</div>'+
+      '<p class="refs">ㅇ <span contenteditable data-ph="붙일 자료의 주요 통계 요약 — 직접 작성"></span></p>'+
+      '<div class="sec" style="font-size:11.5pt;">이어질 만한 질문</div>'+
+      '<table class="qa-tbl"><thead><tr><th>질 문 사 항</th><th>답 변</th></tr></thead><tbody>'+
+        '<tr><td>◦ <span contenteditable data-ph="이어질 만한 질문 — 직접 작성"></span></td><td>◦ <span contenteditable data-ph="한 문장 요지 — 직접 작성"></span></td></tr>'+
+        '<tr><td>◦ <span contenteditable data-ph="이어질 만한 질문 — 직접 작성"></span></td><td>◦ <span contenteditable data-ph="한 문장 요지 — 직접 작성"></span></td></tr>'+
+      '</tbody></table>'+
+    '</div>';
+  }
+
+  function renumber(){
+    ITEMS.forEach(function(it,i){
+      var no='1-'+(i+1);
+      it.el.querySelector('.ino').textContent=no;
+      it.el.querySelector('.ttl .no').textContent=no+'.';
+    });
+    document.getElementById('itemCnt').textContent = ITEMS.length ? '담은 질의 '+ITEMS.length+'건' : '';
+  }
+
+  function setFill(it, open){
+    var f=it.el.querySelector('.fill'), b=it.el.querySelector('.fillt');
+    if(open) f.classList.remove('closed'); else f.classList.add('closed');
+    b.textContent = open ? '▾ 답변 메모 칸 접기' : '✍ 답변 메모 칸 펼치기';
+  }
+
+  function bindItem(it){
+    var el=it.el;
+    el.querySelector('.del').addEventListener('click', function(){
+      ITEMS=ITEMS.filter(function(x){ return x!==it; }); el.remove(); renumber(); renderCands(); save();
+    });
+    el.querySelector('.apply').addEventListener('click', function(){ applyPast(it); });
+    el.querySelector('.fillt').addEventListener('click', function(){
+      setFill(it, it.el.querySelector('.fill').classList.contains('closed')); save();
+    });
+    el.addEventListener('input', queueSave);
+  }
+
+  function addItem(cand){
+    if(cand && ITEMS.some(function(it){ return it.cand && it.cand.title===cand.title; })){
+      alert('이미 담은 질의입니다.'); return;
+    }
+    if(cand && ITEMS.length===1 && !ITEMS[0].cand && !ITEMS[0].el.querySelector('.ttlx').textContent.trim()){
+      ITEMS[0].el.remove(); ITEMS=[];      // 비어 있는 첫 항목은 치우고 그 자리에 담는다
+    }
+    if(ITEMS.length>=5){ alert('한 번에 5건까지 담을 수 있습니다.'); return; }
+    var el=document.createElement('article');
+    el.className='sheet item';
+    el.innerHTML=itemHTML('1-'+(ITEMS.length+1));
+    document.getElementById('items').appendChild(el);
+    var it={el:el, cand:cand||null, rows:[]};
+    ITEMS.push(it);
+
+    bindItem(it);
+    if(cand){
+      el.querySelector('.ttlx').textContent=cand.title;
+      el.querySelector('.srcx').textContent=cand.src;
+      it.rows=relatedQA(cand);
+      renderEvi(it);
+      setFill(it, !it.rows.filter(quotable).length);   // 옮겨 올 답변이 없으면 바로 쓰게 펼친다
+    }else{
+      el.querySelector('.evi').hidden=true;
+      el.querySelector('.fillbar').hidden=true;
+      setFill(it, true);
+    }
+    renumber(); renderCands(); save();
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function renderEvi(it){
+    var box=it.el.querySelector('.evi'), list=it.el.querySelector('.evilist'), rows=it.rows;
+    var nA=rows.filter(function(r){ return r.a; }).length, usable=rows.filter(quotable).length;
+    box.hidden=false; box.open=true;
+    box.querySelector('.cnt').textContent = rows.length
+      ? '— 질의 '+rows.length+'건, 답변이 남은 것 '+nA+'건 · 눌러서 펼치기'
+      : '— 이어지는 과거 질의를 찾지 못했습니다';
+    var ap=it.el.querySelector('.apply');
+    ap.disabled=!usable;
+    ap.textContent = usable ? '↩ 이 답변들을 아래 메모로 옮기기 ('+usable+'건)' : '↩ 옮겨 올 만한 답변이 없습니다';
+    if(!rows.length){ list.innerHTML='<div class="none">이 후보와 이어지는 과거 질의를 찾지 못했습니다. 새로 제기된 사안일 수 있습니다.</div>'; return; }
+    function row(r){
+      return '<div class="evirow">'+
+        '<div class="meta">'+esc(ymd(r.date))+' · '+esc(r.member)+' 위원'+
+          (r.minutes_url?'<a href="'+esc(r.minutes_url)+'" target="_blank" rel="noopener">회의록 원문 ↗</a>':'')+'</div>'+
+        '<div class="eq"><b>질의</b> '+esc(cut(disp(r.q),150))+'</div>'+
+        (r.a?'<div class="ea"><b>당시 답변</b> '+esc(cut(disp(r.a),170))+'</div>':'')+
+      '</div>';
+    }
+    var SHOW=3, rest=rows.length-SHOW;
+    list.innerHTML='<div class="none" style="padding:0 2px 8px;">최근 것부터 '+rows.length+'건'+
+        (it.cand.kind==='repeat'?'':' · 제목의 낱말이 겹치는 질의를 찾은 것이라 주제가 다를 수 있습니다')+'</div>'+
+      rows.slice(0,SHOW).map(row).join('')+
+      (rest>0 ? '<div class="evimore" hidden>'+rows.slice(SHOW).map(row).join('')+'</div>'+
+                '<button class="btn mini evimoreb">나머지 '+rest+'건 더 보기</button>' : '');
+    var mb=list.querySelector('.evimoreb');
+    if(mb) mb.addEventListener('click', function(){
+      var d=list.querySelector('.evimore'); d.hidden=false; this.remove();
+    });
+  }
+
+  // 과거 답변을 메모에 옮겨 넣기 — 지어내지 않고 그대로 인용하고 출처를 붙인다
+  function applyPast(it){
+    var c=it.cand; if(!c) return;
+    var rows=it.rows.filter(quotable);
+    function score(r){ var n=Math.min((r.a||'').replace(/\s/g,'').length,300); return (PROMISE.test(r.a)?1000:0)+n; }
+    rows.sort(function(a,b){ return score(b)-score(a); });
+    rows=rows.slice(0,3);
+    if(!rows.length){ alert('이 주제의 과거 답변에서 옮겨 올 만한 문장을 찾지 못했습니다.'); return; }
+
+    var body=it.el.querySelector('.bodyx');
+    function mk(cls, html){ var p=document.createElement('p'); p.className=cls; p.dataset.added='1'; p.innerHTML=html; return p; }
+    var frag=document.createDocumentFragment();
+    if(c.kind==='repeat'){
+      frag.appendChild(mk('lv1','○ 「'+esc(c.topic)+'」 관련 질의는 '+esc(c.y0)+'년부터 '+esc(c.y1)+'년까지 국정감사에서 '+c.n+'건 제기되었습니다.'));
+    }else{
+      frag.appendChild(mk('lv1','○ 이 사안은 '+esc(c.src)+'에서 제기되었습니다.'));
+    }
+    rows.forEach(function(r){
+      frag.appendChild(mk('lv2','- '+esc(ymd(r.date))+' '+esc(r.member)+' 위원 질의에 <span class="quo">“'+esc(promiseLine(r.a))+'”</span>라고 답변했습니다.'));
+    });
+    frag.appendChild(mk('lv2','- <span contenteditable data-ph="위 답변 이후 무엇을 했는지 — 직접 작성"></span>'));
+    frag.appendChild(mk('lv3','* <span contenteditable data-ph="추진 실적 수치 — 확정 자료로 기재(기준일·단위·출처)"></span>'));
+    body.insertBefore(frag, body.firstChild);
+    var ref=it.el.querySelector('.refs span[contenteditable]');
+    if(ref && !ref.textContent) ref.textContent='위 답변 이후 추진 실적(연도별)';
+    it.el.querySelector('.apply').disabled=true;
+    setFill(it, true);          // 옮겨 넣은 내용이 바로 보이도록 메모 칸을 펼친다
+    save();
+    it.el.querySelector('.fill').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  // ── 텍스트로 복사 ─────────────────────────────────────
+  function sheetText(){
+    var out=[];
+    ITEMS.forEach(function(it,idx){
+      var el=it.el, t=function(x){ return x ? (x.textContent||'').replace(/\s+/g,' ').trim() : ''; };
+      if(idx) out.push('', '─────────────', '');
+      out.push(t(el.querySelector('.hd')));
+      out.push(t(el.querySelector('.ttl')));
+      out.push('※ (출처) '+t(el.querySelector('.srcx')));
+      out.push('');
+      out.push('◈ '+t(el.querySelector('.key')).replace(/^◈\s*/,''));
+      out.push('');
+      out.push('◈ 근거와 향후 계획');
+      el.querySelectorAll('.bodyx p').forEach(function(p){ var v=t(p); if(v.length>2) out.push(v); });
+      out.push('');
+      out.push('참고자료');
+      el.querySelectorAll('.refs').forEach(function(p){ var v=t(p); if(v.length>2) out.push(v); });
+      out.push('');
+      out.push('<이어질 만한 질문>');
+      el.querySelectorAll('.qa-tbl tbody tr').forEach(function(tr){
+        var a=t(tr.children[0]), b=t(tr.children[1]);
+        if(a.length>2 || b.length>2) out.push(a+'\t'+b);
+      });
+    });
+    return out.join('\n');
+  }
+
+  // ── 불러오기 ─────────────────────────────────────────
+  function load(agency){
+    CUR=agency; CSHOWN=6;
+    document.getElementById('cands').innerHTML='<div class="empty">자료를 불러오는 중입니다…</div>';
+    var qaP;
+    if(AG[agency].qa){
+      qaP=J(AG[agency].qa,{items:[]}).then(function(d){ return d.items||[]; });
+    }else{
+      qaP=J('mohw-qa-index.json',{years:[]}).then(function(idx){
+        var ys=(idx.years||[]).slice().sort().reverse().slice(0,4);
+        return Promise.all(ys.map(function(y){ return J('mohw-qa-'+y+'.json',{items:[]}).then(function(d){
+          return (d.items||[]).map(function(r){ if(!r.year) r.year=y; return r; }); }); }))
+        .then(function(a){ var all=[]; a.forEach(function(x){ all=all.concat(x); }); return all; });
+      });
+    }
+    Promise.all([qaP, J('press.json',{items:[]}), J('findings-2025.json',null), J('agenda.json',{items:[]})])
+    .then(function(r){
+      QA=r[0]; PRESS=(r[1].items||[]); FIND=r[2]; AGENDA=(r[3].items||[]);
+      var c={}; QA.forEach(function(x){ if(!junkName(x.member)) c[x.member]=(c[x.member]||0)+1; });
+      var names=Object.keys(c).sort(function(a,b){ return c[b]-c[a]; }).slice(0,40);
+      document.getElementById('pMember').innerHTML='<option value="">위원 전체</option>'+
+        names.map(function(n){ return '<option value="'+esc(n)+'">'+esc(n)+' ('+c[n]+')</option>'; }).join('');
+      CANDS=buildCands('');
+      renderCands(); renderPress();
+      document.getElementById('basis').innerHTML=
+        '<b>산출 근거</b> — 후보는 세 가지 공개 자료에서만 만듭니다. ① <b>반복 질의</b>: 최근 5개 연도 '+esc(AG[CUR].name)+
+        ' 질의 '+QA.length+'건을 주제별로 세어, 두 해 이상·네 건 이상 나온 주제. ② <b>최근 보도</b>: 공개된 국감 관련 기사 중 이 기관 관련 제목. '+
+        '③ <b>지난해 지적사항</b>: 국정감사 결과보고서의 시정·처리요구 중 이 기관 소관. '+
+        '후보 제목은 그 주제를 실제로 묻는 <b>회의록 속 질의 한 문장</b>입니다(배지 「실제 질의 문장」). '+
+        '회의록 원문은 두 단 편집이라 줄 끝에서 낱말이 갈라지고 쪽머리가 섞여 들어간 곳이 있어, 후보 제목과 아래 근거 목록 모두 <b>쪽머리를 걷고 갈라진 조각을 붙여</b> 보입니다. '+
+        '제목으로는 그렇게 해도 성치 않은 문장은 쓰지 않았습니다. '+
+        '그래도 원문 표기가 그대로 남아 띄어쓰기가 어색한 곳이 있을 수 있으니 <b>회의록 원문 링크로 확인</b>하십시오. 고르지 못한 주제는 주제 이름과 건수로 적었습니다. '+
+        '제목·출처와 <b>과거 답변 인용</b>만 자동으로 채우고 <b>답변 내용과 수치는 채우지 않습니다</b>. '+
+        '국정과제 배지는 공개된 123대 국정과제와 낱말이 겹칠 때 참고로 붙인 것이며 이행 평가가 아닙니다.';
+      if(PENDING){ applyRestore(PENDING); PENDING=null; }
+      else if(!ITEMS.length) addItem(null);
+      else { ITEMS.forEach(function(it){ if(it.cand){ it.rows=relatedQA(it.cand); renderEvi(it);
+               if(it.el.querySelector('[data-added]')) it.el.querySelector('.apply').disabled=true; } }); }
+    });
+  }
+
+  document.getElementById('pAgency').addEventListener('change', function(){ load(this.value); });
+  document.getElementById('pMember').addEventListener('change', function(){ CANDS=buildCands(this.value); CSHOWN=6; renderCands(); });
+  document.getElementById('pKind').addEventListener('change', function(){ CSHOWN=6; renderCands(); });
+  document.getElementById('btnBlank').addEventListener('click', function(){ addItem(null); });
+  document.getElementById('btnClear').addEventListener('click', function(){
+    if(!confirm('담은 항목과 자동 저장된 내용을 모두 지웁니다. 계속할까요?')) return;
+    ITEMS=[]; document.getElementById('items').innerHTML=''; drop(); addItem(null); renderCands();
+  });
+  document.getElementById('btnCopy').addEventListener('click', function(){
+    var txt=sheetText();
+    navigator.clipboard.writeText(txt).then(function(){ alert('복사했습니다. 쓰시는 문서에 붙여 넣고 서식만 맞추십시오.'); },
+      function(){ window.prompt('아래 내용을 복사하십시오', txt); });
+  });
+
+  PENDING=readSaved();
+  if(PENDING && AG[PENDING.ag]) document.getElementById('pAgency').value=PENDING.ag;
+  load(PENDING && AG[PENDING.ag] ? PENDING.ag : 'kdca');
+  window.addEventListener('beforeunload', function(){ clearTimeout(_svt); save(); });
+})();
+</script>
+<footer class="site-credit" style="max-width:1180px;margin:6px auto 30px;padding:0 18px;font-size:.76rem;color:#5f6e80;text-align:right;">ⓒ <b>지음웍스닷컴</b> · 2026년 9월</footer>
+</body>
+</html>
