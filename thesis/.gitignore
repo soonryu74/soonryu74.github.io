@@ -1,0 +1,17 @@
+# 원시자료는 절대 커밋하지 않는다.
+# KNHANES 원시자료는 CC-BY-NC-ND(제4유형) 라이선스라 재배포가 금지된다.
+# 이 저장소는 공개 저장소이므로 데이터 파일이 올라가면 라이선스 위반이다.
+data/raw/
+data/derived/
+*.sav
+*.sas7bdat
+*.csv
+*.xlsx
+*.dta
+*.zip
+*.hwp
+*.pdf
+
+# 분석 산출물 중 개인정보 위험 없는 표/그림만 선별해서 수동으로 추가할 것
+output/*
+!output/.gitkeep
