@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전형 고르기 | 입시 나침반 — 전형유형별 신입생 출신 고교·지역 실제 데이터</title>
+<meta name="description" content="대학정보공시 원자료로 본 2025학년도 4년제 신입생 36만7천명의 전형유형별 출신 고교 유형과 지역 분포. 학종은 정말 특목고 잔치인가, 논술은 서울 학생만 가는가에 대한 공식 근거.">
+<meta property="og:title" content="전형 고르기 — 전형유형별 출신 고교 실제 데이터">
+<meta property="og:description" content="학생부교과·학종·논술·수능 전형이 실제로 어떤 고교, 어떤 지역 학생을 뽑았는지 공시 원자료로 확인합니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* 차트 색 — 카테고리 5슬롯 (검증: CVD ΔE 9.1 / 일반시야 ΔE 19.6, 대비 경고는 직접 라벨+표로 해소) */
+.viz{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--viz-surface:#fff;--viz-ink:#1f2937;--viz-muted:#5f6b7a}
+.viz-row{display:grid;grid-template-columns:130px 1fr 76px;gap:12px;align-items:center;margin-bottom:12px}
+.viz-row .lab{font-weight:700;font-size:.9rem;text-align:right;color:var(--viz-ink);line-height:1.3}
+.viz-row .tot{font-size:.82rem;color:var(--viz-muted);text-align:right;white-space:nowrap}
+.viz-bar{display:flex;height:34px;border-radius:4px;overflow:hidden;background:var(--viz-surface)}
+.viz-seg{position:relative;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;
+  box-shadow:0 0 0 1px var(--viz-surface) inset;cursor:default;transition:filter .12s;overflow:hidden;white-space:nowrap}
+.viz-seg > span{padding:0 2px}
+.viz-seg > span[hidden]{display:none}
+.viz-bar .viz-seg + .viz-seg{margin-left:2px}
+.viz-seg:first-child{border-radius:4px 0 0 4px}.viz-seg:last-child{border-radius:0 4px 4px 0}
+.viz-seg:hover{filter:brightness(.88)}
+.viz-seg[data-dark="1"]{color:#20160a}
+.viz-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 16px 142px;font-size:.86rem;color:var(--viz-ink)}
+.viz-legend span{display:inline-flex;align-items:center;gap:6px}
+.viz-legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.viz-tip{position:fixed;z-index:99;background:#1f2937;color:#fff;padding:7px 11px;border-radius:8px;font-size:.82rem;
+  pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 6px 20px rgba(0,0,0,.22);max-width:260px}
+.viz-tip.on{opacity:1}
+.viz-tip b{color:#ffd9a8}
+@media (max-width:640px){.viz-row{grid-template-columns:84px 1fr;gap:8px}.viz-row .tot{grid-column:2;text-align:left;margin-top:-6px}.viz-legend{margin-left:0}.viz-row .lab{font-size:.82rem}}
+</style>
+</head>
+<body>
+<header class="site-header">
+ <div class="nav-inner">
+ <a class="brand" href="index.html">입시 나침반 <span class="tag">2010년생 · 2029학년도 대입</span></a>
+ <nav class="site-nav">
+ <a href="jedo.html">바뀐 제도</a>
+ <a href="gwamok.html">과목 고르기</a>
+ <a href="sihum.html">시험 파먹기</a>
+ <a href="roadmap.html">3년 로드맵</a>
+ <a href="jeonhyeong.html" class="on">전형 고르기</a>
+ <a href="daehak.html">대학 순위</a>
+ <a href="yogang.html">대학별 요강</a>
+ <a href="hakgyo.html">고교 찾기</a>
+ <a href="hakgwa.html">학과·경쟁률</a>
+ <a href="gyoyukcheong.html">교육청 자료</a>
+ <a href="jaryo.html">출처·자료</a>
+ </nav>
+ </div>
+</header>
+<main class="wrap">
+<div class="page-head">
+ <span class="kicker">⑤ 전형 고르기</span>
+ <h1>학종은 정말 특목고 잔치인가 — 공시 원자료로 확인</h1>
+ <p class="lead">대학은 매년 <strong>신입생이 어느 유형의 고교, 어느 지역에서 왔는지</strong>를 전형유형별로 공시합니다. 아래는 에듀데이터서비스 개방데이터에서 받은 <strong>2025학년도 4년제 216개교 신입생 36만 7천 명</strong>의 실제 분포입니다. 소문이 아니라 숫자로 내 전형을 고르는 자리입니다.</p>
+</div>
+
+<div class="stat-strip" style="margin:0 0 28px;padding:0">
+ <div class="stat"><div class="n" id="k1">—</div><div class="l">학생부교과 일반고 비율</div></div>
+ <div class="stat"><div class="n" id="k2">—</div><div class="l">학생부종합 일반고 비율</div></div>
+ <div class="stat"><div class="n" id="k3">—</div><div class="l">논술 일반고 비율</div></div>
+ <div class="stat"><div class="n" id="k4">—</div><div class="l">수능위주 일반고 비율</div></div>
+</div>
+
+<section>
+ <h2>전형유형별 출신 고교</h2>
+ <p class="sub" id="src1"></p>
+ <div class="viz" id="hsChart"></div>
+ <div class="callout ok"><h4>숫자가 말하는 것</h4>
+ <p><strong>모든 전형에서 일반고가 압도적 다수입니다.</strong> 가장 낮은 학생부종합도 일반고가 4분의 3을 넘습니다. "학종은 특목고 전유물"이라는 통념은 전국 단위 데이터로는 성립하지 않습니다. 다만 <strong>특목고·영재학교 비중이 가장 높은 전형은 학생부종합</strong>이고, <strong>자율고(자사고) 비중이 가장 높은 전형은 수능위주</strong>입니다. 자사고는 정시로, 특목고는 학종으로 간다는 뜻입니다.</p>
+ <p class="sub" style="margin-bottom:0">주의: 이 수치는 전국 216개 대학 합계입니다. 상위권 대학만 떼어 보면 특목고·자사고 비중이 크게 올라갑니다. 대학별 수치는 공시에서 익명 처리되어 이 자료로는 알 수 없습니다.</p></div>
+</section>
+
+<section>
+ <h2>전형유형별 출신 지역</h2>
+ <p class="sub">고교 소재지 기준. 특별시는 서울, 광역시·특별자치시는 부산·대구·인천·광주·대전·울산·세종입니다.</p>
+ <div class="viz" id="rgChart"></div>
+ <div class="callout warn"><h4>지역이 전형을 가른다</h4>
+ <p id="rgNote">—</p></div>
+</section>
+
+<section>
+ <h2>전체 수치 표</h2>
+ <p class="sub">12개 고교유형 원자료 그대로. 백분율은 각 전형의 고교유형 합계 기준.</p>
+ <div class="tbl-wrap compact"><table id="fullTbl"><thead></thead><tbody></tbody></table></div>
+</section>
+
+<section>
+ <h2>그래서 나는 어떤 전형인가 — 2010년생 판단표</h2>
+ <div class="grid">
+  <div class="card"><h3>일반고 · 비수도권</h3><p>데이터가 가장 우호적인 조합입니다. 학생부교과의 읍·면 출신 비율이 수능위주의 두 배 가까이 되고, 지역인재·지역균형이 여기에 얹힙니다. <strong>1순위 학생부교과(학교장추천), 2순위 학생부종합.</strong> 2028학년도부터 상위권 교과전형이 졸업예정자로 제한되는 것도 재학생에게 유리합니다.</p><a class="go" href="yogang.html#jolup">재학생 전용 전형 →</a></div>
+  <div class="card"><h3>일반고 · 서울·수도권</h3><p>같은 일반고라도 교과전형 경쟁이 빡빡합니다. 논술의 특별시 출신 비율이 전 전형 중 가장 높다는 점에 주목하세요. <strong>교과·학종에 논술 1~2장을 얹는 구성</strong>이 현실적입니다. 논술은 2028학년도에 43개교 12,727명으로 역대 최대입니다.</p><a class="go" href="sihum.html#nonsul">논술 준비법 →</a></div>
+  <div class="card"><h3>자율형사립고</h3><p>자사고 출신이 가장 많이 쓰는 문은 <strong>수능위주</strong>입니다. 내신 경쟁이 불리한 만큼 정시 비중을 높게 잡되, 2028학년도부터 서울대·연세대·고려대 등 8개교가 정시에도 학생부를 반영한다는 점을 함께 계산해야 합니다.</p><a class="go" href="yogang.html#sky">정시 학생부 반영 →</a></div>
+  <div class="card"><h3>과학고·영재학교·외고·국제고</h3><p>특목고 비중이 가장 높은 전형은 학생부종합입니다. 조기졸업·이수 과목 위계가 그대로 평가되므로 <strong>학종이 주력, 과기원(6회 제한 밖) 4장이 보너스</strong>입니다.</p><a class="go" href="sihum.html#ist">과기원 전형 →</a></div>
+  <div class="card"><h3>특성화고·마이스터고</h3><p>특성화고 출신의 10.2%가 학생부교과로 진학합니다. 일반전형이 아니라 <strong>특성화고졸업자 특별전형</strong>이 실제 통로이며, 이 전형은 정원 외로 운영돼 일반고와 경쟁하지 않습니다.</p></div>
+  <div class="card"><h3>검정고시</h3><p>학생부교과 4.3%, 수능위주 3.9%로 두 전형에 몰려 있습니다. 학생부가 없으니 <strong>정시 또는 비교내신 적용 교과전형</strong>이 사실상 유일한 길입니다. 학종 0.4%는 통계적으로 문이 거의 닫혀 있다는 뜻입니다.</p></div>
+ </div>
+</section>
+
+<div class="disclaimer">데이터: 에듀데이터서비스(EDSS) 개방데이터 · 대학정보공시 「신입생의 출신고등학교 유형별 현황」 2025년. 4년제 대학만 집계(전문대 제외), 대학 단위는 공시에서 개방ID로 익명화되어 있어 전국 합계만 산출할 수 있습니다. 전형유형 구분은 대학정보공시 분류를 따릅니다. 2029학년도에도 전형 구조는 유지되지만 대학별 인원·수능최저는 2027년 4월 시행계획에서 확정됩니다.</div>
+</main>
+<footer class="site-footer">
+ <div class="wrap">
+ <div><strong>입시 나침반</strong> — 2010년생(2026년 고1)이 치르는 2029학년도 대입을 교육부·대교협·평가원·각 대학 공식 발표에 근거해 정리한 정적 사이트입니다.</div>
+ <div>기준일 2026년 9월 5일. 2029학년도 대학별 전형시행계획은 2027년 4월 말, 수능 시행세부계획은 2027년 3월(평가원), 모집요강은 2028년 5월 발표 예정 — 그 전까지는 2028학년도 시행계획(2026.4.30 공표)을 기준으로 삼습니다.</div>
+ <div>본 사이트는 정보 제공용이며 최종 지원 전 반드시 <a href="https://www.adiga.kr" target="_blank" rel="noopener">대입정보포털 어디가</a>와 각 대학 입학처 원문을 확인하세요. 제작: 서순려</div>
+ </div>
+</footer>
+<div class="viz-tip" id="tip"></div>
+<script>
+(async function(){
+ const $=s=>document.querySelector(s), fmt=n=>n.toLocaleString('ko-KR');
+ const D=await fetch('data/edss-admission.json').then(r=>r.json());
+ $('#src1').textContent='출처: '+D.source+' · 자료 갱신 '+D.updated;
+ const HL=D.hs_labels, RL=D.region_labels;
+ const ix=l=>HL.indexOf(l), rx=l=>RL.indexOf(l);
+ // 12개 원자료를 읽기 쉬운 5묶음으로. 순서는 검증된 색 슬롯 순서와 일치시킨다.
+ const HS_GROUPS=[
+  {name:'일반고', keys:['일반고']},
+  {name:'자율고', keys:['자율고','공립 자율고']},
+  {name:'특목고·영재', keys:['과학고','영재학교','외고·국제고','예술·체육고','마이스터고']},
+  {name:'특성화고', keys:['특성화고']},
+  {name:'검정고시·기타', keys:['검정고시','대안학교','기타']}];
+ const RG_GROUPS=[
+  {name:'특별시(서울)', keys:['특별시']},
+  {name:'광역시·특별자치시', keys:['광역시·특별자치시']},
+  {name:'중소도시', keys:['중소도시']},
+  {name:'읍·면', keys:['읍·면']},
+  {name:'기타·특수지역', keys:['기타','특수지역']}];
+ const SLOT=['var(--s1)','var(--s2)','var(--s3)','var(--s4)','var(--s5)'];
+ // 채움색 위 글자 대비: 흰 글자는 파랑(4.4:1)에서만, 나머지는 어두운 글자(5.6~8.2:1)
+ const DARKTEXT=[0,1,1,1,1];
+ const tip=$('#tip');
+ function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');
+  const x=Math.min(e.clientX+14,innerWidth-tip.offsetWidth-10);
+  tip.style.left=x+'px';tip.style.top=Math.max(e.clientY-46,8)+'px';}
+ function hideTip(){tip.classList.remove('on')}
+
+ function draw(el,groups,pick,rows,unit){
+  const legend=document.createElement('div'); legend.className='viz-legend';
+  legend.innerHTML=groups.map((g,i)=>`<span><i style="background:${SLOT[i]}"></i>${g.name}</span>`).join('');
+  el.appendChild(legend);
+  rows.forEach(r=>{
+   const vals=groups.map(g=>g.keys.reduce((s,k)=>s+pick(r,k),0));
+   const sum=vals.reduce((a,b)=>a+b,0); if(!sum) return;
+   const row=document.createElement('div'); row.className='viz-row';
+   const segs=vals.map((v,i)=>{const p=100*v/sum;
+     return `<div class="viz-seg" style="width:${p}%;background:${SLOT[i]}" data-dark="${DARKTEXT[i]}"
+       data-tip="<b>${r.type}</b> · ${groups[i].name}<br>${fmt(v)}명 (${p.toFixed(1)}%)"><span>${p.toFixed(1)}%</span></div>`}).join('');
+   row.innerHTML=`<div class="lab">${r.type.replace('학생부위주','학생부').replace('(교과)','<br>교과').replace('(종합)','<br>종합')}</div>
+     <div class="viz-bar">${segs}</div><div class="tot">${fmt(r.total)}명<br><span style="font-size:.76rem">${r.univs}개교</span></div>`;
+   el.appendChild(row);
+  });
+  el.querySelectorAll('.viz-seg').forEach(s=>{
+   s.addEventListener('mousemove',e=>showTip(e,s.dataset.tip));
+   s.addEventListener('mouseleave',hideTip);
+   // 터치 화면: 눌러서 값 보기
+   s.addEventListener('click',e=>{showTip(e,s.dataset.tip);clearTimeout(s._t);s._t=setTimeout(hideTip,2600)});
+  });
+ }
+ // 칸에 실제로 들어가는 라벨만 남긴다(화면 폭이 바뀌면 다시 판단).
+ function fitLabels(){
+  document.querySelectorAll('.viz-seg > span').forEach(sp=>{
+   sp.hidden=false;
+   if(sp.scrollWidth+2 > sp.parentElement.clientWidth) sp.hidden=true;
+  });
+ }
+ const rows=D.rows.filter(r=>r.type!=='기타');
+ draw($('#hsChart'),HS_GROUPS,(r,k)=>r.hs[ix(k)],rows);
+ draw($('#rgChart'),RG_GROUPS,(r,k)=>r.region[rx(k)],rows);
+ fitLabels();
+ addEventListener('resize',fitLabels);
+ if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitLabels);
+
+ // 요약 수치
+ const pct=(r,k)=>{const t=r.hs.reduce((a,b)=>a+b,0);return t?(100*r.hs[ix(k)]/t).toFixed(1)+'%':'—'};
+ const by=t=>D.rows.find(r=>r.type===t);
+ [['#k1','학생부위주(교과)'],['#k2','학생부위주(종합)'],['#k3','논술위주'],['#k4','수능위주']]
+   .forEach(([sel,t])=>{const r=by(t); if(r)$(sel).textContent=pct(r,'일반고')});
+
+ // 지역 해설 — 실제 값으로 문장 생성
+ const rp=(t,k)=>{const r=by(t); if(!r)return 0; const s=r.region.reduce((a,b)=>a+b,0); return s?100*r.region[rx(k)]/s:0};
+ $('#rgNote').innerHTML=`논술위주는 특별시(서울) 출신이 <strong>${rp('논술위주','특별시').toFixed(1)}%</strong>로 전 전형 중 가장 높고, 읍·면 출신은 <strong>${rp('논술위주','읍·면').toFixed(1)}%</strong>에 그칩니다. 반대로 학생부위주(종합)은 읍·면 출신이 <strong>${rp('학생부위주(종합)','읍·면').toFixed(1)}%</strong>, 학생부위주(교과)는 <strong>${rp('학생부위주(교과)','읍·면').toFixed(1)}%</strong>로 가장 높습니다. 수능위주는 특별시 <strong>${rp('수능위주','특별시').toFixed(1)}%</strong> · 읍·면 <strong>${rp('수능위주','읍·면').toFixed(1)}%</strong>입니다. 정시는 서울에, 수시 학생부 전형은 지방에 문이 넓다는 뜻입니다.`;
+
+ // 전체 표
+ const th=`<tr><th>전형유형</th><th class="num">입학생</th><th class="num">대학</th>${HL.map(l=>`<th class="num">${l}</th>`).join('')}</tr>`;
+ $('#fullTbl thead').innerHTML=th;
+ $('#fullTbl tbody').innerHTML=D.rows.map(r=>{const s=r.hs.reduce((a,b)=>a+b,0);
+  return `<tr><td><strong>${r.type}</strong></td><td class="num">${fmt(r.total)}</td><td class="num">${r.univs}</td>`+
+   r.hs.map(v=>`<td class="num">${v?`${fmt(v)}<br><span style="color:#5f6b7a;font-size:.78rem">${(100*v/s).toFixed(1)}%</span>`:'—'}</td>`).join('')+'</tr>'}).join('');
+})();
+</script>
+</body>
+</html>
