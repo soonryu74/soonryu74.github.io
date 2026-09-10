@@ -38,6 +38,7 @@
 | 바뀐 제도 | `ipsi/jedo.html` | 수능 체제·5등급제·고교학점제·학생부·권장과목·2029 기본사항 |
 | 시험 파먹기 | `ipsi/sihum.html` | 내신·학평·모평·수능·논술·면접·사관/경찰대·과기원·미반영 시험 |
 | 3년 로드맵 | `ipsi/roadmap.html` | 2026.3~2029.3 월별 캘린더 |
+| 전형 고르기 | `ipsi/jeonhyeong.html` | 전형유형별 신입생 출신 고교·지역 (`ipsi/data/edss-admission.json`) |
 | 대학 순위 | `ipsi/daehak.html` | 4개 평가 교차표, 198개 대학 검색·정렬 (`ipsi/data/univ.js`) |
 | 대학별 요강 | `ipsi/yogang.html` | 상위권·지거국·의대·과기원 전형 분석 |
 | 출처 | `ipsi/jaryo.html` | 공식 문서·기사 링크, 향후 발표 일정 |

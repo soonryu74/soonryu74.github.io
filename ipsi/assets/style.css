@@ -116,8 +116,9 @@ ol.steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:26
 
 /* 탭/필터 */
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 16px}
-.toolbar input,.toolbar select{font:inherit;padding:8px 12px;border:1px solid var(--line-strong);border-radius:10px;background:#fff;font-size:.92rem}
+.toolbar input,.toolbar select{font:inherit;padding:8px 12px;border:1px solid var(--line-strong);border-radius:10px;background:#fff;font-size:.92rem;max-width:100%}
 .toolbar input{min-width:220px}
+.toolbar select{max-width:min(100%,320px);text-overflow:ellipsis}
 .btn{display:inline-block;padding:8px 14px;border-radius:10px;background:var(--navy);color:#fff;font-weight:700;border:0;cursor:pointer;font:inherit;font-size:.9rem}
 .btn:hover{background:var(--navy-dark);text-decoration:none}
 .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line-strong)}
