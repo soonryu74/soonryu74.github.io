@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>과목 고르기 | 입시 나침반 — 내가 고른 과목으로 열리는 대학·학과 확인</title>
+<meta name="description" content="대교협 어디가 「2028학년도 권역별 대학별 권장과목」 원자료 47개 대학 1,358개 모집단위. 고1이 2·3학년 과목을 고를 때 어떤 문이 열리고 닫히는지 확인하는 도구.">
+<meta property="og:title" content="과목 고르기 — 내가 고른 과목으로 열리는 문">
+<meta property="og:description" content="47개 대학 1,358개 모집단위의 핵심·권장과목을 과목 조합으로 뒤집어 봅니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.subj-pick{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.subj-pick label{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1.5px solid var(--line-strong);
+  border-radius:var(--pill);background:#fff;cursor:pointer;font-weight:600;font-size:.92rem;user-select:none;transition:.12s}
+.subj-pick label:hover{border-color:var(--navy)}
+.subj-pick input{accent-color:var(--navy);width:16px;height:16px;margin:0}
+.subj-pick label:has(input:checked){background:var(--p-blue);border-color:var(--navy);color:var(--navy-ink)}
+.subj-pick .cnt{color:var(--muted);font-weight:500;font-size:.84rem}
+.match-yes{color:#2b6b3f;font-weight:800}
+.match-no{color:#a12c2c;font-weight:800}
+.miss{display:inline-block;background:var(--p-red);color:var(--f-red);border-radius:6px;padding:1px 7px;font-size:.78rem;font-weight:700;margin:1px 3px 1px 0}
+.unit-core{font-weight:700;color:var(--navy-ink)}
+.unit-rec{color:var(--muted);font-size:.88rem}
+.gate{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 20px}
+.gate div{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;text-align:center;box-shadow:var(--shadow-sm)}
+.gate .n{font-size:1.6rem;font-weight:800;color:var(--navy)}
+.gate .l{font-size:.82rem;color:var(--muted)}
+.gate .open .n{color:#2b6b3f}.gate .shut .n{color:#a12c2c}
+</style>
+</head>
+<body>
+<header class="site-header">
+ <div class="nav-inner">
+ <a class="brand" href="index.html">입시 나침반 <span class="tag">2010년생 · 2029학년도 대입</span></a>
+ <nav class="site-nav">
+ <a href="jedo.html">바뀐 제도</a>
+ <a href="gwamok.html" class="on">과목 고르기</a>
+ <a href="sihum.html">시험 파먹기</a>
+ <a href="roadmap.html">3년 로드맵</a>
+ <a href="jeonhyeong.html">전형 고르기</a>
+ <a href="daehak.html">대학 순위</a>
+ <a href="yogang.html">대학별 요강</a>
+ <a href="hakgyo.html">고교 찾기</a>
+ <a href="hakgwa.html">학과·경쟁률</a>
+ <a href="gyoyukcheong.html">교육청 자료</a>
+ <a href="jaryo.html">출처·자료</a>
+ </nav>
+ </div>
+</header>
+<main class="wrap">
+<div class="page-head">
+ <span class="kicker">② 과목 고르기</span>
+ <h1>지금 고르는 과목이 3년 뒤 지원할 수 있는 학과를 정합니다</h1>
+ <p class="lead">고1 2학기는 2학년 과목을 정하는 때입니다. 대학은 모집단위마다 <strong>핵심과목(필수적 이수를 권장)</strong>과 <strong>권장과목</strong>을 공개하고, 서울대는 이수 여부를 수시 서류평가와 정시 교과역량평가에 반영한다고 명시했습니다. 아래는 대교협 어디가가 공개한 <strong>47개 대학 1,358개 모집단위</strong> 원자료를 과목 쪽에서 거꾸로 본 것입니다.</p>
+</div>
+
+<section>
+ <h2>내가 들을 과목을 고르면, 열리는 문이 보입니다</h2>
+ <p class="sub">2·3학년에 이수할 예정인 과목을 고르세요. 아래 숫자와 표가 바로 바뀝니다.</p>
+ <div class="subj-pick" id="pick"></div>
+ <div class="gate">
+  <div class="open"><div class="n" id="gOpen">—</div><div class="l">권장과목을 모두 채운 모집단위</div></div>
+  <div class="shut"><div class="n" id="gShut">—</div><div class="l">권장과목이 아직 모자란 모집단위</div></div>
+  <div><div class="n" id="gFree">—</div><div class="l">지정 과목이 없는 모집단위</div></div>
+  <div><div class="n" id="gUniv">—</div><div class="l">지원에 걸림돌이 없는 대학 수</div></div>
+ </div>
+ <p class="sub" style="margin-top:-6px">판정 규칙: 자료에 적힌 과목을 <strong>모두 이수</strong>하는 것으로 계산하고, <strong>"또는"으로 묶인 과목</strong>은 하나만 들어도 채워진 것으로 봅니다. 비고에 <strong>"2과목 이상"</strong>처럼 개수 조건이 붙은 모집단위는 실제보다 엄격하게 잡히니 비고를 함께 읽어 주세요.</p>
+ <div class="callout" id="advice"><h4>고른 과목이 없습니다</h4><p>위에서 과목을 하나 이상 골라 보세요. 자연계 지망이면 미적분Ⅱ와 기하부터 눌러 보시면 차이가 큽니다.</p></div>
+</section>
+
+<section id="list">
+ <h2>모집단위별 권장과목</h2>
+ <div class="toolbar">
+  <input id="q" type="search" placeholder="대학·학과 검색 (예: 서울대 의예, 컴퓨터, 간호)">
+  <select id="zone"><option value="">전체 권역</option></select>
+  <select id="univ"><option value="">전체 대학</option></select>
+  <select id="only"><option value="">전체 보기</option><option value="ok">내 과목으로 되는 곳만</option><option value="no">권장과목이 모자란 곳만</option><option value="tag">지정 과목이 있는 곳만</option></select>
+  <span id="count" class="sub"></span>
+ </div>
+ <div class="tbl-wrap"><table id="tbl"><thead><tr><th>대학</th><th>모집단위</th><th>핵심과목</th><th>권장과목</th><th>비고</th><th class="num">판정</th></tr></thead><tbody></tbody></table></div>
+ <p class="sub" id="src"></p>
+</section>
+
+<section>
+ <h2>2022 개정 교육과정 과목 지도</h2>
+ <p class="sub">고1은 공통과목을 듣고, 2·3학년에 일반선택 → 진로선택 → 융합선택을 고릅니다. 대학이 말하는 "권장과목"은 대부분 <strong>진로선택</strong>에 있습니다.</p>
+ <div class="tbl-wrap compact"><table>
+  <thead><tr><th>교과</th><th>공통(고1)</th><th>일반선택</th><th>진로선택</th><th>융합선택</th></tr></thead>
+  <tbody>
+   <tr><td><strong>국어</strong></td><td>공통국어1·2</td><td>화법과 언어 · 독서와 작문 · 문학</td><td>주제 탐구 독서 · 문학과 영상 · 직무 의사소통</td><td>독서 토론과 글쓰기 · 매체 의사소통 · 언어생활 탐구</td></tr>
+   <tr class="hl"><td><strong>수학</strong></td><td>공통수학1·2<br>(기본수학1·2)</td><td>대수 · 미적분Ⅰ · 확률과 통계</td><td><strong>기하 · 미적분Ⅱ</strong> · 경제 수학 · 인공지능 수학 · 직무 수학</td><td>수학과 문화 · 실용 통계 · 수학과제 탐구</td></tr>
+   <tr><td><strong>영어</strong></td><td>공통영어1·2<br>(기본영어1·2)</td><td>영어Ⅰ · 영어Ⅱ · 영어 독해와 작문</td><td>영미 문학 읽기 · 영어 발표와 토론 · 심화 영어 · 심화 영어 독해와 작문</td><td>실생활 영어 회화 · 미디어 영어 · 세계 문화와 영어</td></tr>
+   <tr><td><strong>사회</strong></td><td>통합사회1·2<br>한국사1·2</td><td>세계시민과 지리 · 세계사 · 사회와 문화 · 현대사회와 윤리</td><td>한국지리 탐구 · 도시의 미래 탐구 · 동아시아 역사 기행 · 정치 · 법과 사회 · 경제 · 윤리와 사상 · 인문학과 윤리 · 국제 관계의 이해</td><td>여행지리 · 역사로 탐구하는 현대세계 · 사회문제 탐구 · 금융과 경제생활 · 윤리문제 탐구 · 기후변화와 지속가능한 세계</td></tr>
+   <tr class="hl"><td><strong>과학</strong></td><td>통합과학1·2<br>과학탐구실험1·2</td><td>물리학 · 화학 · 생명과학 · 지구과학</td><td><strong>역학과 에너지 · 전자기와 양자</strong>(물리) · <strong>물질과 에너지 · 화학 반응의 세계</strong>(화학) · <strong>세포와 물질대사 · 생물의 유전</strong>(생명) · <strong>지구시스템과학 · 행성우주과학</strong>(지구)</td><td>과학의 역사와 문화 · 기후변화와 환경생태 · 융합과학 탐구</td></tr>
+  </tbody>
+ </table></div>
+ <div class="callout warn"><h4>이름이 바뀐 것에 속지 마세요</h4><p>대학 자료에 "생명과학"이라 적혀 있어도 2022 개정 교육과정에서 고3이 듣는 과목명은 <strong>세포와 물질대사·생물의 유전</strong>입니다. 물리는 역학과 에너지·전자기와 양자, 화학은 물질과 에너지·화학 반응의 세계, 지구과학은 지구시스템과학·행성우주과학입니다. 이 페이지의 과목 판정은 옛 이름과 새 이름을 함께 인식합니다.</p></div>
+ <div class="callout ok"><h4>사회·과학 융합선택 9과목은 석차등급이 없습니다</h4><p>표의 융합선택 중 사회 6과목과 과학 3과목은 성취도(A~E)만 기재되고 <strong>5등급 석차가 매겨지지 않습니다</strong>. 등급 부담 없이 탐구 기록(세특)을 남기기 좋은 자리입니다. <a href="jedo.html#naesin">내신 5등급제 상세 →</a></p></div>
+</section>
+
+<section>
+ <h2>과목 선택 3원칙</h2>
+ <div class="grid">
+  <div class="card"><span class="num">1</span><h3>수능에 없어도 듣는다</h3><p>2029학년도 수능 수학은 대수·미적분Ⅰ·확률과 통계뿐입니다. <strong>미적분Ⅱ와 기하는 수능에 나오지 않습니다.</strong> 그런데 서울대·고려대 공대를 비롯한 상위권 자연계는 두 과목을 권장과목으로 명시합니다. "수능에 안 나오니 안 듣는다"가 가장 흔하고 가장 비싼 실수입니다.</p></div>
+  <div class="card"><span class="num">2</span><h3>위계를 지킨다</h3><p>대학은 이수 여부만이 아니라 <strong>과목의 위계</strong>를 봅니다. 일반선택(물리학)을 건너뛰고 진로선택(역학과 에너지)만 들으면 기록이 얕아 보입니다. 2학년 일반선택 → 3학년 진로선택 순서가 기본입니다.</p></div>
+  <div class="card"><span class="num">3</span><h3>학교에 없으면 밖에서 듣는다</h3><p>2029학년도 대입전형 기본사항은 소규모·농산어촌 학생의 <strong>온라인학교·공동교육과정 수강 노력</strong>을 대학이 고려하도록 권장합니다. 학교에 과목이 없다는 것은 더 이상 이유가 되지 않고, 찾아 들은 기록은 오히려 강점이 됩니다.</p></div>
+ </div>
+</section>
+
+<div class="disclaimer">데이터: 대입정보포털 어디가(adiga.kr) 대입전략자료실 「2028학년도 권역별 대학별 권장과목(반영과목)」. 자료를 공개한 47개 대학만 담겨 있으며, 목록에 없는 대학은 권장과목을 별도로 공개하지 않았거나 대학 입학처에서 따로 안내합니다. 핵심·권장과목은 <strong>지원 자격이 아니라 평가 참고자료</strong>입니다. 2029학년도 자료가 나오면 이 표는 갱신됩니다.</div>
+</main>
+<footer class="site-footer">
+ <div class="wrap">
+ <div><strong>입시 나침반</strong> — 2010년생(2026년 고1)이 치르는 2029학년도 대입을 교육부·대교협·평가원·각 대학 공식 발표에 근거해 정리한 정적 사이트입니다.</div>
+ <div>기준일 2026년 9월 5일. 2029학년도 대학별 전형시행계획은 2027년 4월 말, 수능 시행세부계획은 2027년 3월(평가원), 모집요강은 2028년 5월 발표 예정 — 그 전까지는 2028학년도 시행계획(2026.4.30 공표)을 기준으로 삼습니다.</div>
+ <div>본 사이트는 정보 제공용이며 최종 지원 전 반드시 <a href="https://www.adiga.kr" target="_blank" rel="noopener">대입정보포털 어디가</a>와 각 대학 입학처 원문을 확인하세요. 제작: 서순려</div>
+ </div>
+</footer>
+<script>
+(async function(){
+ const $=s=>document.querySelector(s), fmt=n=>n.toLocaleString('ko-KR');
+ const D=await fetch('data/gwonjang.json').then(r=>r.json());
+ const rows=D.rows;
+ $('#src').textContent='출처: '+D.source+' · 자료 갱신 '+D.updated;
+ const KEY='ipsi-gwamok-pick';
+ let picked=new Set();
+ try{const v=localStorage.getItem(KEY); if(v) picked=new Set(JSON.parse(v));}catch(e){}
+
+ // 과목 고르기 칩 — 그 과목을 요구하는 모집단위 수를 함께 보여준다
+ const cnt={}; D.subjects.forEach(s=>cnt[s]=rows.filter(r=>r.tags.includes(s)).length);
+ $('#pick').innerHTML=D.subjects.map(s=>
+  `<label><input type="checkbox" value="${s}"${picked.has(s)?' checked':''}><span>${s}</span><span class="cnt">${cnt[s]}곳</span></label>`).join('');
+ $('#pick').addEventListener('change',e=>{
+  if(e.target.checked) picked.add(e.target.value); else picked.delete(e.target.value);
+  try{localStorage.setItem(KEY,JSON.stringify([...picked]))}catch(e){}
+  render();
+ });
+
+ // 셀렉트 채우기
+ [...new Set(rows.map(r=>r.zone))].forEach(z=>{const o=document.createElement('option');o.value=z;o.textContent=z;$('#zone').appendChild(o)});
+ [...new Set(rows.map(r=>r.univ))].sort((a,b)=>a.localeCompare(b,'ko')).forEach(u=>{const o=document.createElement('option');o.value=u;o.textContent=u;$('#univ').appendChild(o)});
+
+ // '또는'으로 묶인 과목은 하나만 들어도 채워진 것으로 본다.
+ const missing=r=>(r.need||[]).filter(g=>!g.some(x=>picked.has(x))).map(g=>g.join(' 또는 '));
+ const judge=r=>{ if(!(r.need||[]).length) return 'free'; return missing(r).length? 'no':'ok'; };
+
+ function render(){
+  // 숫자판
+  const ok=rows.filter(r=>judge(r)==='ok'), no=rows.filter(r=>judge(r)==='no'), free=rows.filter(r=>judge(r)==='free');
+  $('#gOpen').textContent=fmt(ok.length); $('#gShut').textContent=fmt(no.length); $('#gFree').textContent=fmt(free.length);
+  $('#gUniv').textContent=new Set([...ok,...free].map(r=>r.univ)).size;
+  // 조언
+  const a=$('#advice');
+  if(!picked.size){
+   a.className='callout';
+   a.innerHTML='<h4>고른 과목이 없습니다</h4><p>위에서 과목을 하나 이상 골라 보세요. 자연계 지망이면 미적분Ⅱ와 기하부터 눌러 보시면 차이가 큽니다.</p>';
+  }else{
+   // 한 과목만 더 들으면 열리는 문이 가장 많은 과목을 찾는다
+   const gain={};
+   D.subjects.filter(s=>!picked.has(s)).forEach(s=>{
+    gain[s]=no.filter(r=>{const m=(r.need||[]).filter(g=>!g.some(x=>picked.has(x)));
+      return m.length===1 && m[0].includes(s)}).length;});
+   const best=Object.entries(gain).sort((x,y)=>y[1]-x[1])[0];
+   a.className='callout ok';
+   a.innerHTML=`<h4>${[...picked].join(' · ')}를 들으면</h4>`+
+    `<p>권장과목을 모두 채우는 모집단위가 <strong>${fmt(ok.length)}곳</strong>, 지정 과목이 없어 누구나 지원할 수 있는 곳이 <strong>${fmt(free.length)}곳</strong>입니다. 반대로 <strong>${fmt(no.length)}곳</strong>은 권장과목이 아직 모자랍니다.</p>`+
+    (best && best[1]>0 ? `<p><strong>${best[0]}</strong> 한 과목을 더 들으면 <strong>${fmt(best[1])}곳</strong>이 추가로 열립니다.</p>` : '');
+  }
+  // 표
+  const q=$('#q').value.trim().split(/\s+/).filter(Boolean), z=$('#zone').value, u=$('#univ').value, only=$('#only').value;
+  let l=rows.filter(r=>(!z||r.zone===z)&&(!u||r.univ===u)
+    &&q.every(t=>(r.univ+' '+r.unit+' '+r.college+' '+r.core+' '+r.rec).includes(t))
+    &&(!only|| (only==='tag'? r.tags.length>0 : judge(r)===only)));
+  $('#count').textContent=fmt(l.length)+'개 모집단위';
+  $('#tbl tbody').innerHTML=l.slice(0,300).map(r=>{
+   const j=judge(r), m=missing(r);
+   const verdict = j==='free' ? '<span class="sub">지정 없음</span>'
+     : j==='ok' ? '<span class="match-yes">충족</span>'
+     : '<span class="match-no">부족</span><br>'+m.map(x=>`<span class="miss">${x}</span>`).join('');
+   return `<tr><td><strong>${r.univ}</strong><br><span class="sub">${r.zone} ${r.sido}</span></td>`+
+    `<td>${r.unit}${r.college?`<br><span class="sub">${r.college}</span>`:''}</td>`+
+    `<td class="unit-core">${r.core||'—'}</td><td class="unit-rec">${r.rec||'—'}</td>`+
+    `<td class="sub" style="max-width:260px">${r.note||''}</td><td class="num">${verdict}</td></tr>`;
+  }).join('');
+ }
+ ['q','zone','univ','only'].forEach(id=>$('#'+id).addEventListener('input',render));
+ render();
+})();
+</script>
+</body>
+</html>

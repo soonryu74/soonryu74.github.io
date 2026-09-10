@@ -29,5 +29,25 @@
 ## 유의사항
 본 사이트는 일반적인 정보 제공용이며 법률·세무 자문이 아닙니다. 법령·세율·요율·지원 기준은 자주 바뀌므로 실제 계약·신고·신청 전에는 공식 사이트에서 최신 내용을 확인하거나 전문가의 도움을 받으시기 바랍니다.
 
+## 하위 프로젝트: 입시 나침반 (`ipsi/`)
+2010년생(2026년 고1)이 치르는 **2029학년도 대입**을 위한 근거 기반 가이드. 통합형 수능·내신 5등급제·고교학점제, 고교 3년의 모든 시험, 대학 순위(중앙일보·QS·THE·US News + 입결), 대학별 2028 시행계획 분석.
+
+| 페이지 | 파일 | 내용 |
+| --- | --- | --- |
+| 허브 | `ipsi/index.html` | 한 장 요약, 세대별 제도 비교 |
+| 바뀐 제도 | `ipsi/jedo.html` | 수능 체제·5등급제·고교학점제·학생부·권장과목·2029 기본사항 |
+| 과목 고르기 | `ipsi/gwamok.html` | 47개 대학 1,358개 모집단위 권장과목, 과목 조합별 지원 가능 판정 (`ipsi/data/gwonjang.json`) |
+| 시험 파먹기 | `ipsi/sihum.html` | 내신·학평·모평·수능·논술·면접·사관/경찰대·과기원·미반영 시험 |
+| 3년 로드맵 | `ipsi/roadmap.html` | 2026.3~2029.3 월별 캘린더 |
+| 전형 고르기 | `ipsi/jeonhyeong.html` | 전형유형별 신입생 출신 고교·지역 (`ipsi/data/edss-admission.json`) |
+| 대학 순위 | `ipsi/daehak.html` | 4개 평가 교차표, 198개 대학 검색·정렬 (`ipsi/data/univ.js`) |
+| 대학별 요강 | `ipsi/yogang.html` | 상위권·지거국·의대·과기원 전형 분석 |
+| 출처 | `ipsi/jaryo.html` | 공식 문서·기사 링크, 향후 발표 일정 |
+| 고교 찾기 | `ipsi/hakgyo.html` | 교육기본통계 2026 전국 고교 2,400개 학생·교원·진학 + 지역인재 권역 (`ipsi/data/schools-hs.json`) |
+| 학과·경쟁률 | `ipsi/hakgwa.html` | 대학 493개교·학과 13,638개 정원·지원자·경쟁률 (`ipsi/data/univ-stats.json`, `univ-dept.json`) |
+| 교육청 자료 | `ipsi/gyoyukcheong.html` | 17개 시도 진로진학센터·공식 데이터 출처·수집 현황 |
+
+데이터 갱신: `python3 scripts/build_gwajeong.py`(어디가 권장과목) · `python3 scripts/build_kess.py` · `python3 scripts/build_edss.py`(EDSS 개방데이터 성취도 집계) (KESS 교육통계 엑셀 자동 탐색·변환, 매월 5일 GitHub Actions `kess-data.yml`). 나이스 학교기본정보는 `NEIS_API_KEY` Secret 등록 시 `scripts/build_schools.py`로 수집.
+
 ---
 안녕하세요, 만든 사람은 **서순려**입니다. 보건학을 전공하고 공무원으로 근무하며, 인공지능을 활용한 연구·데이터 분석·시각화·창작에 관심을 두고 꾸준히 배우고 있습니다.
