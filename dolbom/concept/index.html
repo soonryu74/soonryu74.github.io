@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>찾아가는 교회 · 컨셉 페이퍼</title>
+<meta name="description" content="지역교회 기반 통합 돌봄 시범사업 '찾아가는 교회' 컨셉 페이퍼">
+<style>
+@page { size: A4; margin: 0; }
+
+:root{
+  --navy:#12106E;
+  --navy-soft:#3C3A8C;
+  --magenta:#E4004F;
+  --red:#D1232A;
+  --ink:#1E2430;
+  --ink-mid:#454E5C;
+  --ink-soft:#6B7482;
+  --line:#DCE0E8;
+  --line-soft:#EDEFF4;
+  --wash:#F6F7FB;
+  --wash-warm:#FDF3F6;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:#525866;
+  font-family:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  word-break:keep-all;
+}
+
+/* ---------- toolbar (screen only) ---------- */
+.toolbar{
+  position:sticky; top:0; z-index:50;
+  display:flex; gap:10px; align-items:center; justify-content:center;
+  flex-wrap:wrap;
+  padding:14px 16px;
+  background:rgba(22,26,36,.92);
+  backdrop-filter:blur(8px);
+}
+.toolbar .tlabel{
+  color:#C9CEDA; font-size:13px; letter-spacing:.01em; margin-right:4px;
+}
+.btn{
+  display:inline-flex; align-items:center; gap:7px;
+  padding:9px 16px; border-radius:8px;
+  font-size:14px; font-weight:600; text-decoration:none;
+  border:1px solid transparent; cursor:pointer;
+  font-family:inherit;
+}
+.btn-primary{ background:var(--magenta); color:#fff; }
+.btn-ghost{ background:transparent; color:#DDE1EA; border-color:#4A5162; }
+
+/* ---------- page ---------- */
+.page{
+  width:210mm; min-height:297mm;
+  margin:18px auto; padding:16mm 15mm 14mm;
+  background:#fff;
+  box-shadow:0 10px 34px rgba(0,0,0,.28);
+  display:flex; flex-direction:column;
+}
+
+/* ---------- masthead ---------- */
+.masthead{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:14mm; padding-bottom:5mm;
+}
+.mast-left{ min-width:0; }
+.eyebrow{
+  display:inline-block;
+  font-size:9.5pt; font-weight:700; letter-spacing:.14em;
+  color:var(--magenta); margin-bottom:3mm;
+}
+h1.title{
+  margin:0;
+  font-size:34pt; font-weight:800; letter-spacing:-.035em;
+  line-height:1.04; color:var(--navy);
+}
+h1.title .quiet{ color:var(--ink); font-weight:800; }
+.subtitle{
+  margin:3.4mm 0 0;
+  font-size:11.5pt; font-weight:500; color:var(--ink-mid);
+  letter-spacing:-.01em;
+}
+
+/* logos — top right, matched optical size */
+.logos{
+  display:flex; align-items:center; gap:9mm;
+  flex:0 0 auto; padding-bottom:1.5mm;
+}
+.logo-unit{ display:flex; flex-direction:column; align-items:center; gap:1.3mm; }
+.logo-unit img{ display:block; }
+.logo-sarang img{ height:11.5mm; width:auto; }
+.logo-bayada img{ height:10mm; width:auto; }
+.logo-cap{
+  font-size:6.6pt; font-weight:600; letter-spacing:.07em;
+  color:var(--ink-soft); text-transform:none; white-space:nowrap;
+}
+.logo-bayada .logo-cap{ color:#8A9099; letter-spacing:.15em; }
+.logo-div{ width:1px; align-self:stretch; background:var(--line); margin:1mm 0; }
+
+.rule{
+  height:2.4pt; background:var(--navy); border-radius:2pt;
+  position:relative; margin-bottom:1.2mm;
+}
+.rule::after{
+  content:""; position:absolute; left:0; top:0; bottom:0;
+  width:34mm; background:var(--magenta); border-radius:2pt;
+}
+.rule-thin{ height:.6pt; background:var(--line); margin-bottom:7mm; }
+
+/* ---------- lede ---------- */
+.lede{
+  font-size:12.5pt; font-weight:700; line-height:1.5;
+  color:var(--navy); letter-spacing:-.022em;
+  margin:0 0 6.5mm;
+}
+
+/* ---------- stat strip ---------- */
+.stats{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--line); border-radius:3mm;
+  overflow:hidden; margin-bottom:8mm; background:var(--wash);
+}
+.stat{ padding:4.6mm 4mm; border-left:1px solid var(--line); }
+.stat:first-child{ border-left:0; }
+.stat-k{
+  font-size:7.8pt; font-weight:700; color:var(--ink-soft);
+  letter-spacing:.02em; margin-bottom:1.8mm;
+}
+.stat-v{
+  font-size:16pt; font-weight:800; color:var(--navy);
+  letter-spacing:-.03em; line-height:1.1;
+}
+.stat-v em{ font-style:normal; font-size:10pt; font-weight:700; color:var(--ink-mid); }
+.stat-s{ font-size:7.6pt; color:var(--ink-soft); margin-top:1.6mm; line-height:1.4; }
+.stat.alert .stat-v{ color:var(--magenta); }
+
+/* ---------- sections ---------- */
+section{ margin-bottom:4.5mm; }
+.sec-head{
+  display:flex; align-items:baseline; gap:3mm;
+  padding-bottom:2mm; margin-bottom:3.4mm;
+  border-bottom:1.4pt solid var(--navy);
+}
+.sec-no{
+  font-size:8.5pt; font-weight:800; color:#fff;
+  background:var(--navy); border-radius:2mm;
+  padding:1mm 2.4mm; letter-spacing:.05em;
+  align-self:center;
+}
+.sec-title{
+  font-size:14pt; font-weight:800; color:var(--navy);
+  letter-spacing:-.03em; margin:0;
+}
+.sec-note{
+  margin-left:auto; font-size:8pt; color:var(--ink-soft); font-weight:500;
+}
+
+/* ---------- bullets ---------- */
+.item{ margin-bottom:4.6mm; }
+.item:last-child{ margin-bottom:0; }
+.item-head{
+  display:flex; gap:2.6mm; align-items:baseline;
+}
+.dot{
+  flex:0 0 auto; width:2.1mm; height:2.1mm; border-radius:50%;
+  border:1.1pt solid var(--magenta); margin-top:1.6mm;
+}
+.item-body{ flex:1; min-width:0; }
+.item-t{
+  font-size:10.5pt; font-weight:700; color:var(--ink);
+  letter-spacing:-.02em; line-height:1.5; margin:0 0 1.4mm;
+}
+.item-t b{ color:var(--navy); font-weight:800; }
+.item-p{
+  font-size:9.8pt; font-weight:400; color:var(--ink-mid);
+  line-height:1.62; letter-spacing:-.015em; margin:0;
+}
+.item-p strong{ color:var(--ink); font-weight:700; }
+
+.foot{
+  margin:1.8mm 0 0; padding-left:3mm;
+  border-left:1.6pt solid var(--line);
+  font-size:8.1pt; color:var(--ink-soft); line-height:1.45;
+}
+.foot p{ margin:0 0 1mm; }
+.foot p:last-child{ margin-bottom:0; }
+
+.sub{
+  margin:2mm 0 0 0; padding:0; list-style:none;
+}
+.sub li{
+  position:relative; padding-left:4mm; margin-bottom:1.5mm;
+  font-size:9.4pt; color:var(--ink-mid); line-height:1.5;
+  letter-spacing:-.015em;
+}
+.sub li:last-child{ margin-bottom:0; }
+.sub li::before{
+  content:"–"; position:absolute; left:0; top:0;
+  color:var(--magenta); font-weight:700;
+}
+.sub li strong{ color:var(--ink); font-weight:700; }
+
+/* ---------- role cards ---------- */
+.roles{ display:grid; gap:2.2mm; margin-bottom:3.4mm; }
+.role{
+  border:1px solid var(--line); border-radius:3mm;
+  padding:3mm 4.2mm; background:#fff;
+  border-left:3.4pt solid var(--navy);
+}
+.role.r-sarang{ border-left-color:var(--magenta); }
+.role.r-center{ border-left-color:var(--navy); }
+.role.r-bayada{ border-left-color:var(--red); }
+.role-head{
+  display:flex; align-items:center; gap:2.4mm; margin-bottom:1.8mm;
+  flex-wrap:wrap;
+}
+.role-tag{
+  font-size:8.6pt; font-weight:800; letter-spacing:-.01em;
+  padding:1.1mm 3mm; border-radius:99px; color:#fff;
+  background:var(--navy);
+}
+.r-sarang .role-tag{ background:var(--magenta); }
+.r-bayada .role-tag{ background:var(--red); }
+.role-role{
+  font-size:8.4pt; font-weight:600; color:var(--ink-soft);
+  letter-spacing:.01em;
+}
+.role p{
+  margin:0; font-size:9.7pt; color:var(--ink-mid);
+  line-height:1.55; letter-spacing:-.015em;
+}
+.role p strong{ color:var(--ink); font-weight:700; }
+
+/* ---------- table ---------- */
+.tbl-cap{
+  display:flex; align-items:baseline; gap:2.4mm;
+  margin:0 0 1.8mm;
+}
+.tbl-cap h3{
+  margin:0; font-size:10.5pt; font-weight:800;
+  color:var(--navy); letter-spacing:-.025em;
+}
+.tbl-cap span{ font-size:8pt; color:var(--ink-soft); font-weight:500; }
+
+table{
+  width:100%; border-collapse:collapse;
+  font-size:9pt; margin-bottom:2.6mm;
+}
+thead th{
+  background:var(--navy); color:#fff;
+  font-size:8.6pt; font-weight:700; letter-spacing:-.01em;
+  padding:1.9mm 2.4mm; text-align:left;
+  border-right:1px solid rgba(255,255,255,.18);
+}
+thead th:last-child{ border-right:0; text-align:center; }
+tbody td{
+  padding:1.9mm 2.4mm; border-bottom:1px solid var(--line-soft);
+  color:var(--ink-mid); line-height:1.5; letter-spacing:-.015em;
+  vertical-align:top;
+}
+tbody tr:nth-child(even){ background:var(--wash); }
+tbody tr:last-child td{ border-bottom:1px solid var(--line); }
+td.lv{ font-weight:800; color:var(--navy); font-size:9.4pt; white-space:nowrap; }
+td.nm{ font-weight:700; color:var(--ink); white-space:nowrap; }
+td.rate{
+  text-align:center; font-weight:800; color:var(--magenta);
+  font-size:10pt; white-space:nowrap;
+}
+td.yrs{ white-space:nowrap; }
+
+/* ---------- callout ---------- */
+.callout{
+  border:1px solid #F3C9D8; background:var(--wash-warm);
+  border-radius:3mm; padding:3mm 4.2mm;
+}
+.callout .co-t{
+  font-size:9pt; font-weight:800; color:var(--magenta);
+  letter-spacing:.01em; margin:0 0 1.8mm;
+}
+.callout p{
+  margin:0; font-size:9.8pt; color:var(--ink-mid);
+  line-height:1.62; letter-spacing:-.015em;
+}
+.callout p strong{ color:var(--ink); font-weight:700; }
+
+/* ---------- page foot ---------- */
+.pagefoot{
+  margin-top:auto; padding-top:4mm;
+  border-top:1px solid var(--line);
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:8mm;
+}
+.pagefoot .pf-note{
+  font-size:7.4pt; color:#9AA1AC; line-height:1.55; max-width:135mm;
+}
+.pagefoot .pf-no{
+  font-size:8pt; font-weight:700; color:var(--ink-soft);
+  white-space:nowrap;
+}
+
+/* ---------- running head (page 2) ---------- */
+.runhead{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:8mm; padding-bottom:2.4mm; margin-bottom:3.5mm;
+  border-bottom:1px solid var(--line);
+}
+.runhead .rh-t{
+  font-size:9.5pt; font-weight:800; color:var(--navy);
+  letter-spacing:-.02em;
+}
+.runhead .rh-t span{ color:var(--ink-soft); font-weight:600; }
+.runhead .rh-logos{ display:flex; align-items:center; gap:5mm; }
+.runhead .rh-logos img.s{ height:6.4mm; width:auto; display:block; }
+.runhead .rh-logos img.b{ height:5.4mm; width:auto; display:block; }
+
+/* ---------- responsive (screen) ---------- */
+@media screen and (max-width:820px){
+  .page{ width:auto; min-height:0; margin:12px; padding:22px 18px 20px; }
+  .masthead{ flex-direction:column; align-items:flex-start; gap:16px; }
+  .logos{ order:-1; gap:22px; }
+  h1.title{ font-size:30pt; }
+  .stats{ grid-template-columns:repeat(2,1fr); }
+  .stat:nth-child(3){ border-left:0; }
+  .stat:nth-child(n+3){ border-top:1px solid var(--line); }
+  table{ font-size:8.4pt; }
+  thead th,tbody td{ padding:2.2mm 2mm; }
+}
+
+/* ---------- print ---------- */
+@media print{
+  body{ background:#fff; }
+  .toolbar{ display:none !important; }
+  .page{
+    position:relative;
+    width:210mm; height:297mm; min-height:auto; margin:0;
+    padding:16mm 15mm 24mm;
+    box-shadow:none;
+    page-break-after:always; break-after:page;
+  }
+  .pagefoot{
+    position:absolute; left:15mm; right:15mm; bottom:11mm;
+    margin-top:0; padding-top:3.4mm;
+  }
+  .page:last-child{ page-break-after:auto; break-after:auto; }
+  section,.role,table,.callout,.stats{ break-inside:avoid; page-break-inside:avoid; }
+  thead{ display:table-header-group; }
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="tlabel">찾아가는 교회 · 컨셉 페이퍼</span>
+  <a class="btn btn-primary" href="concept-paper.pdf" download="찾아가는교회-컨셉페이퍼.pdf">PDF 다운로드</a>
+  <button class="btn btn-ghost" onclick="window.print()">인쇄 / PDF로 저장</button>
+</div>
+
+<!-- ============ PAGE 1 ============ -->
+<div class="page">
+
+  <header class="masthead">
+    <div class="mast-left">
+      <span class="eyebrow">CONCEPT PAPER</span>
+      <h1 class="title">찾아가는 교회</h1>
+      <p class="subtitle">지역교회가 직접 운영하는 방문요양센터 기반 통합 돌봄 시범사업</p>
+    </div>
+    <div class="logos">
+      <div class="logo-unit logo-sarang">
+        <img src="sarang-logo.png" alt="사랑의교회">
+        <span class="logo-cap">SaRang Church</span>
+      </div>
+      <div class="logo-div"></div>
+      <div class="logo-unit logo-bayada">
+        <img src="bayada-logo.png" alt="BAYADA">
+        <span class="logo-cap">HOME HEALTH CARE</span>
+      </div>
+    </div>
+  </header>
+  <div class="rule"></div>
+  <div class="rule-thin"></div>
+
+  <p class="lede">지역사회 돌봄 공백을 교회가 직접 메우고, 돌봄의 질은 재택의료 전문기관과 함께 지킵니다.<br>돌봄이 곧 전도가 되는 새로운 전도의 틀을 시범적으로 세우고자 합니다.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-k">돌봄 인정자</div>
+      <div class="stat-v">123만 5천 <em>명</em></div>
+      <div class="stat-s">’25년 기준</div>
+    </div>
+    <div class="stat">
+      <div class="stat-k">현장 요양보호사</div>
+      <div class="stat-v">63만 7천 <em>명</em></div>
+      <div class="stat-s">자격자 300만 명 중</div>
+    </div>
+    <div class="stat">
+      <div class="stat-k">장기요양보험 지출</div>
+      <div class="stat-v">17.6 → 40.9<em>조원</em></div>
+      <div class="stat-s">’25년 → ’34년 전망</div>
+    </div>
+    <div class="stat alert">
+      <div class="stat-k">누적준비금</div>
+      <div class="stat-v">2030년 고갈</div>
+      <div class="stat-s">2027년 적자 전환 예상</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">01</span>
+      <h2 class="sec-title">추진 배경</h2>
+      <span class="sec-note">돌봄 수요는 커지고, 인력과 재정은 함께 줄고 있습니다</span>
+    </div>
+
+    <div class="item">
+      <div class="item-head">
+        <span class="dot"></span>
+        <div class="item-body">
+          <p class="item-t">돌봄 인력 공급이 수요를 따라가지 못합니다</p>
+          <p class="item-p">’25년 현재 국내 돌봄이 필요하다고 인정받은 사람은 <strong>123만 5천 명</strong>, 기관에 근무하는 요양보호사는 <strong>63만 7천 명</strong>으로 공공기관의 돌봄 인력 공급이 턱없이 부족한 상황입니다.</p>
+          <div class="foot">
+            <p>* 요양보호사 300만 명 중 현장 근무자 63만 7천 명 (국민건강보험공단, 「2025 노인장기요양보험 통계연보」, 2025년 기준)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="item-head">
+        <span class="dot"></span>
+        <div class="item-body">
+          <p class="item-t">통합돌봄법은 시행되었으나 지자체 준비가 미비합니다</p>
+          <p class="item-p">’26. 3월부터 <strong>통합돌봄법</strong>이 시행되었으나 지자체에서는 조직·인력 준비가 미비한 상황입니다.</p>
+          <div class="foot">
+            <p>* 「의료·요양 등 지역 돌봄의 통합지원에 관한 법률」로써, 병원·요양원 말고 살던 집·동네에서 계속 살 수 있도록 흩어져 있던 의료·요양·돌봄을 시·군·구가 한 번에 묶어 지원하게 만든 법</p>
+            <p>** 한국보건사회연구원이 추산한 필요 인력 7,205명에 비해 정부가 반영한 전담인력은 5,394명</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="item-head">
+        <span class="dot"></span>
+        <div class="item-body">
+          <p class="item-t">재정도 10년 안에 한계에 다다릅니다</p>
+          <p class="item-p">가파른 초고령화 시대에 10년 내에 장기요양보험 지출도 증가(’25년 17.6조원 → ’34년 40.9조원)하여, 누적준비금은 <strong>2027년 적자가 시작되어 2030년에 고갈</strong>될 것으로 예상됩니다.</p>
+          <div class="foot">
+            <p>* 국회예산정책처(NABO), 「노인장기요양보험 지출 증가요인 및 시사점」 (2025. 6. 17.)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="item-head">
+        <span class="dot"></span>
+        <div class="item-body">
+          <p class="item-t"><b>그래서 교회가 직접 나서고, 질 관리는 전문기관과 함께합니다</b></p>
+          <p class="item-p">지역사회 돌봄 공백을 <strong>교회 주관 방문요양센터를 직접 운영</strong>하고, 돌봄 직원의 질(Quality) 관리 및 교육은 재택의료사업에 10년 이상 노하우를 가지고 있는 <strong>Bayada와 협력</strong>하여, 돌봄이 전도가 되는 전도의 새로운 프레임(‘찾아가는 교회’)을 시범적으로 구축하고자 합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pagefoot">
+    <p class="pf-note">본 문서는 ‘찾아가는 교회’ 시범사업 논의를 위한 컨셉 페이퍼이며, 확정된 제안이 아닙니다. 수치는 국민건강보험공단·국회예산정책처·한국보건사회연구원 공개자료 기준입니다.</p>
+    <span class="pf-no">1 / 2</span>
+  </div>
+</div>
+
+<!-- ============ PAGE 2 ============ -->
+<div class="page">
+
+  <div class="runhead">
+    <span class="rh-t">찾아가는 교회 <span>· 컨셉 페이퍼</span></span>
+    <span class="rh-logos">
+      <img class="s" src="sarang-logo.png" alt="사랑의교회">
+      <img class="b" src="bayada-logo.png" alt="BAYADA">
+    </span>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">02</span>
+      <h2 class="sec-title">제안 사항</h2>
+      <span class="sec-note">세 주체가 각자의 강점으로 한 사업을 세웁니다</span>
+    </div>
+
+    <div class="roles">
+      <div class="role r-sarang">
+        <div class="role-head">
+          <span class="role-tag">사랑의교회</span>
+          <span class="role-role">지역 교회 추천 · 전도훈련 체계 마련</span>
+        </div>
+        <p>‘찾아가는 교회’에 참여할 <strong>지역 교회 2개소를 추천</strong>하고, 지역 교회에 노인 등 돌봄이 필요한 자에게 복음을 전할 수 있도록 사랑의교회 내에 <strong>‘돌봄전폭팀’(가칭)을 신설·운영</strong>하여 지역 교회 성도 전도훈련과정을 마련합니다. <em>(예산 필요)</em></p>
+      </div>
+
+      <div class="role r-center">
+        <div class="role-head">
+          <span class="role-tag">방문요양센터</span>
+          <span class="role-role">지역 전도 거점 설립 · 임금 가산금 체계 시범적용</span>
+        </div>
+        <p>지역 교회 내 사회복지 자격증을 가지고 있는 성도들을 중심으로 지역사회 전도 거점을 정하고, <strong>방문요양센터를 각 1개소씩 설립(신규)</strong>합니다. <em>(설치 및 운영 비용 필요)</em></p>
+        <ul class="sub">
+          <li>요양보호사 이직 방지 및 돌봄 인력풀에 젊은층의 유입을 위해, 교육·자격 수준에 따라 기본 임금에 가산금을 적용하는 <strong>일본의 개호수가 체계를 시범적용</strong> 제안 <em>(약 3년간)</em></li>
+          <li>1개 센터는 임금 가산금 체계 적용, 1개 센터는 미적용하여 <strong>매 6개월마다 잔존율·승급인원·만족도 등 평가</strong></li>
+        </ul>
+        <div class="foot">
+          <p>* 설치기준 : (시설) 약 5평 이상, (요양보호사) 15명 이상(농어촌 5명 이상), (관리책임자) 사회복지사·간호사 등, (비용) 약 1,500~3,000만원</p>
+          <p>* 시범사업 결과는 Bayada에서 정리하여 보건복지부·국민건강보험공단 등에 요양보호사 처우 개선 근거자료로 활용</p>
+        </div>
+      </div>
+
+      <div class="role r-bayada">
+        <div class="role-head">
+          <span class="role-tag">Bayada</span>
+          <span class="role-role">교육 · 모니터링 · 질(Quality) 관리</span>
+        </div>
+        <p>방문요양센터 직원을 대상으로 <strong>온·오프라인 교육 및 모니터링을 실시</strong>하고 질(Quality) 관리를 수행합니다. <em>(무상 교육)</em></p>
+      </div>
+    </div>
+
+    <div class="tbl-cap">
+      <h3>요양보호사 처우 개선을 위한 임금체계</h3>
+      <span>(예시)</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:9%">등급</th>
+          <th style="width:17%">명칭</th>
+          <th style="width:11%">경력</th>
+          <th style="width:27%">교육·자격 요건</th>
+          <th style="width:24%">역할</th>
+          <th style="width:12%">가산율</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="lv">L1</td>
+          <td class="nm">요양보호사</td>
+          <td class="yrs">0~2년</td>
+          <td>요양보호사 자격</td>
+          <td>기본 돌봄</td>
+          <td class="rate">10%</td>
+        </tr>
+        <tr>
+          <td class="lv">L2</td>
+          <td class="nm">숙련요양보호사</td>
+          <td class="yrs">2년 이상</td>
+          <td>+ 치매전문교육 이수</td>
+          <td>중증·치매 대응</td>
+          <td class="rate">15%</td>
+        </tr>
+        <tr>
+          <td class="lv">L3</td>
+          <td class="nm">선임요양보호사</td>
+          <td class="yrs">5년 이상</td>
+          <td>+ 전문교육 2개(호스피스·재활 등)</td>
+          <td>신입 지도, 사례관리 보조</td>
+          <td class="rate">20%</td>
+        </tr>
+        <tr>
+          <td class="lv">L4</td>
+          <td class="nm">책임요양보호사</td>
+          <td class="yrs">8년 이상</td>
+          <td>+ 상위자격(사회복지사·간호조무사) 또는 교육강사 과정</td>
+          <td>교육·품질관리, 케어플랜에 참여</td>
+          <td class="rate">24.5%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">03</span>
+      <h2 class="sec-title">고려사항</h2>
+    </div>
+    <div class="callout">
+      <p class="co-t">별도 논의가 필요한 사항</p>
+      <p>임금 가산금 체계 시범사업 도입을 고려할 경우, <strong>가산금 지불 주체 및 방법</strong>에 대한 별도 논의가 필요합니다.</p>
+    </div>
+  </section>
+
+  <div class="pagefoot">
+    <p class="pf-note">사랑의교회 · Bayada 협력 시범사업 논의용 초안입니다. 표의 임금체계는 일본 개호보수 체계를 참고한 예시이며, 적용 수준은 협의를 통해 조정될 수 있습니다.</p>
+    <span class="pf-no">2 / 2</span>
+  </div>
+</div>
+
+</body>
+</html>
