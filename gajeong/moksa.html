@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>목장 나눔터 — 목사 화면</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="style.css">
+<style>
+  .tabs{display:flex; gap:6px; margin:16px 0 4px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch}
+  .tabs button{white-space:nowrap; border-radius:999px; padding:9px 16px; font-size:15px; background:#fff}
+  .tabs button.on{background:var(--brand); border-color:var(--brand); color:#fff}
+  .pane{display:none}
+  .pane.on{display:block}
+  .stat{display:flex; gap:10px; flex-wrap:wrap; margin:4px 0 14px}
+  .stat div{background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px 16px; min-width:110px}
+  .stat b{display:block; font-size:22px; line-height:1.2}
+  .stat span{color:var(--muted); font-size:13.5px}
+  .mj{border:1px solid var(--line); border-radius:12px; margin:10px 0; background:#fff; overflow:hidden}
+  .mj > summary{cursor:pointer; padding:14px 16px; font-weight:700; display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .mj > div{padding:0 16px 16px}
+  .print-head{display:none}
+  @media print{ .print-head{display:block; text-align:center; margin-bottom:14px} .mj > div{display:block !important} }
+</style>
+</head>
+<body>
+<div class="wrap wrap-wide">
+  <div class="tabs noprint">
+    <button data-pane="week" class="on">주간 현황</button>
+    <button data-pane="gather">기도제목 모아보기</button>
+    <button data-pane="manage">목장·목자 관리</button>
+  </div>
+
+  <!-- ── 주간 현황 ───────────────────────────────── -->
+  <section class="pane on" id="pane-week">
+    <div class="card">
+      <div class="weekbar">
+        <button class="small" id="wk-prev">◀ 지난주</button>
+        <span class="label" id="wk-label">…</span>
+        <button class="small" id="wk-next">다음주 ▶</button>
+        <span class="spacer"></span>
+        <button class="small" id="wk-this">이번 주로</button>
+      </div>
+      <div class="stat" id="stat"></div>
+      <p class="desc" style="margin:0">목장 이름을 누르면 그 주 일기와 기도제목이 펼쳐집니다. 아래에 말씀을 남기시면 목자에게 보입니다.</p>
+    </div>
+    <div id="week-list"></div>
+  </section>
+
+  <!-- ── 기도제목 모아보기 ───────────────────────── -->
+  <section class="pane" id="pane-gather">
+    <div class="card noprint">
+      <div class="weekbar">
+        <button class="small" id="g-prev">◀ 지난주</button>
+        <span class="label" id="g-label">…</span>
+        <button class="small" id="g-next">다음주 ▶</button>
+        <span class="spacer"></span>
+        <label class="check"><input type="checkbox" id="g-only"> 기도제목만</label>
+        <button class="small primary" id="g-print">인쇄 · PDF로 저장</button>
+      </div>
+      <p class="desc" style="margin:8px 0 0">주일 중보기도 시간에 쓰실 수 있게 한 주 전체를 한 장으로 모았습니다.</p>
+    </div>
+    <div class="print-head" id="g-print-head"></div>
+    <div id="gather-list"></div>
+  </section>
+
+  <!-- ── 관리 ────────────────────────────────────── -->
+  <section class="pane" id="pane-manage">
+    <div class="card">
+      <h2>목자 계정 만들기</h2>
+      <p class="desc">계정을 만들면 그 목자의 목장도 함께 생깁니다. 아이디와 첫 비밀번호를 목자에게 알려 주세요.</p>
+      <form id="form-new">
+        <label for="n-name">목자 이름</label>
+        <input id="n-name" type="text" placeholder="예: 김철수" required>
+        <label for="n-mj">목장 이름</label>
+        <input id="n-mj" type="text" placeholder="비워 두면 '김철수 목장'이 됩니다">
+        <label for="n-day">모이는 요일</label>
+        <input id="n-day" type="text" placeholder="예: 금요일 저녁 8시">
+        <label for="n-id">아이디</label>
+        <input id="n-id" type="text" inputmode="latin" autocapitalize="none" autocorrect="off"
+               placeholder="영문 소문자와 숫자로 3자 이상 (예: kimcs)" required>
+        <label for="n-pw">첫 비밀번호</label>
+        <input id="n-pw" type="text" placeholder="8자 이상" required>
+        <p class="hint">목자가 들어간 뒤 스스로 바꿀 수 있습니다.</p>
+        <div class="msg" id="msg-new"></div>
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit" id="btn-new">계정 만들기</button></div>
+      </form>
+    </div>
+    <div class="card">
+      <h2>목장 목록</h2>
+      <p class="desc">비밀번호를 잊은 목자는 여기서 새 비밀번호를 정해 주시면 됩니다.</p>
+      <div class="msg" id="msg-manage"></div>
+      <div id="manage-list"></div>
+    </div>
+    <div class="card">
+      <h2>내 비밀번호 바꾸기</h2>
+      <form id="form-pw">
+        <label for="pw1">새 비밀번호</label>
+        <input id="pw1" type="password" autocomplete="new-password" placeholder="8자 이상" required>
+        <label for="pw2">한 번 더</label>
+        <input id="pw2" type="password" autocomplete="new-password" required>
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit">바꾸기</button></div>
+      </form>
+      <div class="msg" id="msg-pw"></div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="common.js"></script>
+<script src="moksa.js"></script>
+</body>
+</html>
