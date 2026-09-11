@@ -1,0 +1,103 @@
+/* 목장 나눔터 — 공통 스타일 (글자 크게, 손가락으로 누르기 쉽게) */
+:root{
+  --bg:#f7f4ee; --card:#fff; --ink:#23201b; --muted:#6f685d; --line:#e3ddd1;
+  --brand:#3d6b53; --brand-dk:#2f5341; --brand-soft:#eaf1ec;
+  --gold:#a8823a; --warn:#b4532a; --warn-soft:#fbeee8;
+  --r:14px; --shadow:0 1px 2px rgba(35,32,27,.06), 0 8px 24px rgba(35,32,27,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  font-size:17px; line-height:1.65; -webkit-text-size-adjust:100%;
+}
+a{color:var(--brand-dk)}
+.wrap{max-width:860px; margin:0 auto; padding:0 16px 72px}
+.wrap-wide{max-width:1100px}
+
+/* 머리말 */
+.top{background:var(--brand); color:#fff}
+.top-in{max-width:860px; margin:0 auto; padding:14px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+.wrap-wide + .top-in, .top-in.wide{max-width:1100px}
+.top h1{font-size:19px; margin:0; font-weight:700; letter-spacing:-.02em}
+.top .who{margin-left:auto; font-size:14px; opacity:.92; display:flex; align-items:center; gap:10px}
+.top .who button{background:rgba(255,255,255,.16); color:#fff; border:0}
+
+/* 카드 */
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:20px; margin:16px 0}
+.card h2{font-size:18px; margin:0 0 4px; letter-spacing:-.02em}
+.card .desc{color:var(--muted); font-size:14.5px; margin:0 0 16px}
+.section-title{font-size:15px; font-weight:700; color:var(--muted); margin:28px 0 8px; letter-spacing:-.01em}
+
+/* 입력 */
+label{display:block; font-weight:600; font-size:15px; margin:14px 0 6px}
+input[type=text],input[type=password],input[type=date],input[type=number],select,textarea{
+  width:100%; padding:12px 13px; font:inherit; font-size:16.5px; color:var(--ink);
+  background:#fff; border:1.5px solid var(--line); border-radius:10px;
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-soft)}
+textarea{min-height:110px; resize:vertical; line-height:1.6}
+.hint{color:var(--muted); font-size:13.5px; margin-top:6px}
+
+/* 단추 */
+button{font:inherit; font-size:16px; font-weight:600; padding:12px 18px; border-radius:10px; border:1.5px solid var(--line); background:#fff; color:var(--ink); cursor:pointer}
+button:hover{border-color:#cfc7b7}
+button.primary{background:var(--brand); border-color:var(--brand); color:#fff}
+button.primary:hover{background:var(--brand-dk); border-color:var(--brand-dk)}
+button.ghost{background:transparent}
+button.danger{color:var(--warn); border-color:#e6cfc4}
+button.small{padding:7px 12px; font-size:14px; border-radius:8px}
+button:disabled{opacity:.5; cursor:not-allowed}
+.row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.row.end{justify-content:flex-end}
+.spacer{flex:1}
+
+/* 알림 */
+.msg{padding:12px 14px; border-radius:10px; font-size:15px; margin:12px 0; display:none}
+.msg.show{display:block}
+.msg.err{background:var(--warn-soft); color:#8c3d1d; border:1px solid #eccfc2}
+.msg.ok{background:var(--brand-soft); color:var(--brand-dk); border:1px solid #cfe0d5}
+
+/* 뱃지 */
+.badge{display:inline-block; font-size:13px; font-weight:700; padding:3px 9px; border-radius:999px; background:#f0ece3; color:var(--muted)}
+.badge.done{background:var(--brand-soft); color:var(--brand-dk)}
+.badge.todo{background:var(--warn-soft); color:#8c3d1d}
+.badge.gold{background:#f7efdc; color:#77571f}
+
+/* 목원 줄 */
+.member{border:1px solid var(--line); border-radius:12px; padding:14px; margin:10px 0; background:#fffdfa}
+.member .head{display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap}
+.member .name{font-weight:700; font-size:16.5px}
+.member textarea{min-height:74px}
+.check{display:inline-flex; align-items:center; gap:7px; font-size:14.5px; color:var(--muted); font-weight:600; cursor:pointer; user-select:none}
+.check input{width:20px; height:20px; accent-color:var(--brand); margin:0}
+
+/* 목록 */
+.list-item{border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin:10px 0; background:#fff; display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+.list-item .grow{flex:1; min-width:180px}
+.list-item .t{font-weight:700}
+.list-item .s{color:var(--muted); font-size:14px}
+
+/* 읽기용 본문 */
+.prose{white-space:pre-wrap; word-break:break-word; line-height:1.7}
+.quiet{color:var(--muted)}
+.empty{color:var(--muted); text-align:center; padding:28px 10px; font-size:15px}
+
+/* 주차 고르기 */
+.weekbar{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:6px}
+.weekbar .label{font-weight:700}
+
+/* 인쇄 */
+@media print{
+  .top,.noprint{display:none !important}
+  body{background:#fff; font-size:12.5pt}
+  .card{box-shadow:none; border:1px solid #ddd; break-inside:avoid; margin:10px 0; padding:14px}
+  .wrap{padding:0}
+}
+@media (max-width:560px){
+  .weekbar .label{flex-basis:100%; order:-1; font-size:16px}
+  .wrap{padding:0 12px 60px}
+  .card{padding:16px; border-radius:12px}
+  .top h1{font-size:17px}
+}

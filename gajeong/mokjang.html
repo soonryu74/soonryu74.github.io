@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>목장 나눔터 — 목자 화면</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="style.css">
+<style>
+  .tabs{display:flex; gap:6px; margin:16px 0 4px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch}
+  .tabs button{white-space:nowrap; border-radius:999px; padding:9px 16px; font-size:15px; background:#fff}
+  .tabs button.on{background:var(--brand); border-color:var(--brand); color:#fff}
+  .pane{display:none}
+  .pane.on{display:block}
+  .savebar{position:sticky; bottom:0; background:linear-gradient(to top,var(--bg) 70%,rgba(247,244,238,0));
+           padding:14px 0 16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; z-index:5}
+  .savebar .state{color:var(--muted); font-size:14px}
+  .two{display:flex; gap:12px; flex-wrap:wrap}
+  .two > div{flex:1; min-width:150px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tabs noprint">
+    <button data-pane="write" class="on">이번 주 일기</button>
+    <button data-pane="members">목원 명단</button>
+    <button data-pane="past">지난 일기</button>
+    <button data-pane="mine">내 계정</button>
+  </div>
+
+  <!-- ── 일기 쓰기 ───────────────────────────────── -->
+  <section class="pane on" id="pane-write">
+    <div class="card">
+      <div class="weekbar">
+        <button class="small" id="wk-prev">◀ 지난주</button>
+        <span class="label" id="wk-label">…</span>
+        <button class="small" id="wk-next">다음주 ▶</button>
+        <span class="spacer"></span>
+        <span class="badge" id="wk-state">불러오는 중</span>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <div>
+          <label for="met-on">모인 날</label>
+          <input id="met-on" type="date">
+        </div>
+        <div>
+          <label for="present">모인 사람 수</label>
+          <input id="present" type="number" min="0" placeholder="예: 7">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>목원별 기도제목</h2>
+      <p class="desc">한 사람씩 그 주에 나눈 기도제목을 적어 주세요. 빈칸으로 두셔도 됩니다.</p>
+      <div class="row noprint" style="margin-bottom:10px">
+        <button class="small" id="btn-copy-last">지난주 기도제목 불러오기</button>
+        <button class="small" id="btn-all-present">모두 참석으로</button>
+      </div>
+      <div id="members-box"></div>
+      <p class="hint" id="no-members" style="display:none">
+        아직 목원 명단이 비어 있습니다. 위의 <b>목원 명단</b>에서 먼저 이름을 넣어 주세요.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>목장 이야기</h2>
+      <p class="desc">그 주 목장 모임이 어땠는지, 나눈 말씀과 있었던 일을 적어 주세요.</p>
+      <textarea id="body" placeholder="예: 이번 주는 요한복음 15장을 함께 나눴습니다…"></textarea>
+
+      <label for="mprayer">목장 전체 기도제목</label>
+      <p class="hint" style="margin:0 0 6px">목장 전체를 위해 목사님께 부탁드리고 싶은 기도제목입니다.</p>
+      <textarea id="mprayer" placeholder="예: 새가족 ○○님이 다음 주에도 나오실 수 있도록…"></textarea>
+    </div>
+
+    <div class="savebar noprint">
+      <button id="btn-save">임시 저장</button>
+      <button class="primary" id="btn-submit">목사님께 제출</button>
+      <span class="state" id="save-state"></span>
+    </div>
+    <div class="msg" id="msg-write"></div>
+  </section>
+
+  <!-- ── 목원 명단 ───────────────────────────────── -->
+  <section class="pane" id="pane-members">
+    <div class="card">
+      <h2>목원 명단</h2>
+      <p class="desc">여기에 넣은 이름이 매주 일기 화면에 그대로 나옵니다.</p>
+      <form id="form-add" class="row">
+        <input id="new-name" type="text" placeholder="목원 이름" style="flex:2; min-width:140px" required>
+        <input id="new-tag" type="text" placeholder="표시 (새가족·VIP 등, 안 쓰셔도 됩니다)" style="flex:3; min-width:180px">
+        <button class="primary" type="submit">추가</button>
+      </form>
+      <div class="msg" id="msg-members"></div>
+      <div id="member-list" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- ── 지난 일기 ───────────────────────────────── -->
+  <section class="pane" id="pane-past">
+    <div class="card">
+      <h2>지난 일기</h2>
+      <p class="desc">제목을 누르면 그 주 내용과 목사님 말씀이 펼쳐집니다.</p>
+      <div id="past-list"></div>
+    </div>
+  </section>
+
+  <!-- ── 내 계정 ─────────────────────────────────── -->
+  <section class="pane" id="pane-mine">
+    <div class="card">
+      <h2>목장 이름</h2>
+      <p class="desc">목사님 화면에도 이 이름으로 보입니다.</p>
+      <form id="form-mokjang">
+        <label for="mj-name">목장 이름</label>
+        <input id="mj-name" type="text" required>
+        <label for="mj-day">모이는 요일</label>
+        <input id="mj-day" type="text" placeholder="예: 금요일 저녁 8시">
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit">저장</button></div>
+      </form>
+      <div class="msg" id="msg-mokjang"></div>
+    </div>
+    <div class="card">
+      <h2>비밀번호 바꾸기</h2>
+      <form id="form-pw">
+        <label for="pw1">새 비밀번호</label>
+        <input id="pw1" type="password" autocomplete="new-password" placeholder="8자 이상" required>
+        <label for="pw2">한 번 더</label>
+        <input id="pw2" type="password" autocomplete="new-password" required>
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit">바꾸기</button></div>
+      </form>
+      <div class="msg" id="msg-pw"></div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="common.js"></script>
+<script src="mokjang.js"></script>
+</body>
+</html>
