@@ -569,18 +569,24 @@
     return out;
   }
   var PRESS_ALL=false;
+  var PRESS_DJ=0;
   function pressOf(){
-    var mine=PRESS.filter(function(p){
+    var kw=PRESS.filter(function(p){
       var t=(p.title||''); return AG[CUR].kw.some(function(k){ return t.indexOf(k)>=0; });
     });
-    PRESS_ALL = mine.length===0;
-    return PRESS_ALL ? PRESS.slice(0,12) : mine;   // 기관 낱말이 안 걸리면 국감 보도 전체를 보인다
+    // 본회의 대정부질문 보도는 기관 이름이 제목에 없어도 쟁점이 되므로 앞에 붙인다
+    var dj=PRESS.filter(function(p){ return p.track==='대정부질문' && kw.indexOf(p)<0; });
+    PRESS_DJ = dj.length;
+    PRESS_ALL = kw.length===0;                     // 기관 낱말이 안 걸리면 국감 보도 전체를 보인다
+    var base = PRESS_ALL ? PRESS.slice(0,12) : kw;
+    return dj.concat(base.filter(function(p){ return dj.indexOf(p)<0; }));
   }
   function pressCand(p){
     var t=(p.title||'').replace(/\s*-\s*[a-z0-9.-]+$/i,'');
+    var dj = p.track==='대정부질문';
     return { kind:'press', title:t+' 관련 대응 방향',
-             src:md(p.date)+' 언론보도('+(p.source||'')+', 「'+t.slice(0,40)+'」)',
-             badges:[['pr','최근 보도'],['',md(p.date)]], link:p.link||p.url||'', ex:[] };
+             src:md(p.date)+' 언론보도('+(p.source||'')+', 「'+t.slice(0,40)+'」)'+(dj?' · 본회의 대정부질문 관련':''),
+             badges:[['pr', dj?'대정부질문 보도':'최근 보도'],['',md(p.date)]], link:p.link||p.url||'', ex:[] };
   }
 
   // ── 관련 과거 질의·답변 ────────────────────────────────
@@ -642,13 +648,15 @@
   // ── 최근 보도 칸 ───────────────────────────────────────
   function renderPress(){
     var rows=pressOf(), box=document.getElementById('prBox'), list=document.getElementById('prList');
+    var dj = PRESS_DJ ? ' (대정부질문 '+PRESS_DJ+'건 포함)' : '';
     box.querySelector('.cnt').textContent = PRESS_ALL
-      ? '— '+AG[CUR].name+' 이름이 들어간 기사는 없어 국감 관련 보도 '+rows.length+'건을 보입니다 · 눌러서 펼치기'
-      : '— '+AG[CUR].name+' 관련 '+rows.length+'건 · 눌러서 펼치기';
+      ? '— '+AG[CUR].name+' 이름이 들어간 기사는 없어 국감 관련 보도 '+rows.length+'건을 보입니다'+dj+' · 눌러서 펼치기'
+      : '— '+AG[CUR].name+' 관련 '+rows.length+'건'+dj+' · 눌러서 펼치기';
     if(!rows.length){ list.innerHTML='<div class="none">이 기관 관련 최근 보도가 없습니다.</div>'; return; }
     list.innerHTML=rows.slice(0,12).map(function(p,i){
       return '<div class="prrow"><div class="pt">'+esc(p.title)+'</div>'+
         '<div class="pm">'+esc(md(p.date))+' · '+esc(p.source||'')+
+        (p.track==='대정부질문' ? ' <span class="bdg pr">대정부질문</span>' : '')+
         ' <button class="btn mini" data-p="'+i+'">이 보도로 예상 질의 만들기</button></div></div>';
     }).join('');
     list.querySelectorAll('button[data-p]').forEach(function(b){
@@ -863,6 +871,7 @@
         '<b>산출 근거</b> — 후보는 세 가지 공개 자료에서만 만듭니다. ① <b>반복 질의</b>: 최근 5개 연도 '+esc(AG[CUR].name)+
         ' 질의 '+QA.length+'건을 주제별로 세어, 두 해 이상·네 건 이상 나온 주제. ② <b>최근 보도</b>: 공개된 국감 관련 기사 중 이 기관 관련 제목. '+
         '③ <b>지난해 지적사항</b>: 국정감사 결과보고서의 시정·처리요구 중 이 기관 소관. '+
+        '최근 보도에는 본회의 <b>대정부질문</b> 관련 기사도 함께 넣습니다 — 대정부질문은 연 네 차례, 보건복지는 「교육사회문화」 분야 하루라 회의록을 따로 모으지 않고 보도로만 살핍니다. '+
         '후보 제목은 그 주제를 실제로 묻는 <b>회의록 속 질의 한 문장</b>입니다(배지 「실제 질의 문장」). '+
         '회의록 원문은 두 단 편집이라 줄 끝에서 낱말이 갈라지고 쪽머리가 섞여 들어간 곳이 있어, 후보 제목과 아래 근거 목록 모두 <b>쪽머리를 걷고 갈라진 조각을 붙여</b> 보입니다. '+
         '제목으로는 그렇게 해도 성치 않은 문장은 쓰지 않았습니다. '+
