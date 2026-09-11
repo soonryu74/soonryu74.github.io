@@ -1,9 +1,9 @@
 {
  "updated": "2026-09-11",
- "updated_at": "2026-09-11 07:51",
+ "updated_at": "2026-09-11 09:29",
  "window": "14d",
- "note": "구글 뉴스 검색(위원 이름·기관명 + 국정감사) 기반 최근 기사. 언론 보도 기준이며 의원실 보도자료 원문이 아님. 기관·위원 분류는 제목 키워드 자동.",
- "count": 49,
+ "note": "구글 뉴스 검색(위원 이름·기관명 + 국정감사, 그리고 본회의 대정부질문) 기반 최근 기사. 언론 보도 기준이며 의원실 보도자료 원문이 아님. 기관·위원 분류와 국정감사/대정부질문 구분(track)은 제목 키워드 자동.",
+ "count": 52,
  "items": [
   {
    "title": "野 “김승원, 2021년 국감중 식약처 청탁”… 金측 “통화 시간 5분 정도에 불과” 인정",
@@ -15,26 +15,55 @@
     "식품의약품안전처"
    ],
    "members": [],
+   "track": "국정감사",
    "first_seen": "2026-09-11"
   },
   {
-   "title": "“얘기하고 다니면 국감 대상” 김승원측 공개 녹취록이 되레 의혹 키워",
-   "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1wRy1NZ3pJNkR1TTRRZUNPV1A4MHdVUG1sMFpoM1hMTUxXQWFWVm1XM3l0UTFtcjRGamF5enk2RTFGS0NRRW1TNEtXbTVSSEJkUXlNeHNTQmYwbVByZDdiZGVoeDVPZ9IBZkFVX3lxTE1wRy1NZ3pJNkR1TTRRZUNPV1A4MHdVUG1sMFpoM1hMTUxXQWFWVm1XM3l0UTFtcjRGamF5enk2RTFGS0NRRW1TNEtXbTVSSEJkUXlNeHNTQmYwbVByZDdiZGVoeDVPZw?oc=5",
+   "title": "국감 중 식약처 청탁?...녹취엔 '성공한 로비' 자랑 [뉴스UP]",
+   "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE1keFNNYkFZYkpNRzNLNmp1ejMwd2g2NHVQSW9jdVhmN3paZ3RqaFJUOElFQ3ZCenZIZWM1azN4bVFZMGg5cGFQVDJwdGxaeERHT2tnUU5paDN2U3BPamc?oc=5",
    "date": "2026-09-11",
-   "source": "donga.com",
-   "score": 2,
-   "agencies": [],
+   "source": "YTN",
+   "score": 3,
+   "agencies": [
+    "식품의약품안전처"
+   ],
    "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "“김승원, 브로커·식약처 청탁 전화…국감 중 들락날락”",
+   "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5XTm5VOHA5cm9YaXpOek5yNEZGZ0c4Y1pNSGhtWDRodjJMbGV3bzFFOTRhYUE3cVl4UkdNa21IbGZDRFZLUkpWYkVwRlJCUHF3N3UzTng2YXVHd2c?oc=5",
+   "date": "2026-09-11",
+   "source": "KBS 뉴스",
+   "score": 3,
+   "agencies": [
+    "식품의약품안전처"
+   ],
+   "members": [],
+   "track": "국정감사",
    "first_seen": "2026-09-11"
   },
   {
    "title": "\"김승원, 브로커에 휘둘려 국감 들락날락하며 청탁\"",
    "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE0zRVc5LUo2dkt0S1FYdU9YcTlWY2tfRDgzbHhkMXFEZjkydFJJVk1EYlg4ZXFGQ3ZNSXdJUUhhZnFvX21wMWZuc3FJZmF6UEpjTE5V?oc=5",
    "date": "2026-09-11",
-   "source": "Nate News",
+   "source": "news.nate.com",
    "score": 2,
    "agencies": [],
    "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "“얘기하고 다니면 국감 대상”…김승원측 공개 녹취록이 되레 의혹 키워",
+   "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1wRy1NZ3pJNkR1TTRRZUNPV1A4MHdVUG1sMFpoM1hMTUxXQWFWVm1XM3l0UTFtcjRGamF5enk2RTFGS0NRRW1TNEtXbTVSSEJkUXlNeHNTQmYwbVByZDdiZGVoeDVPZ9IBZkFVX3lxTE1wRy1NZ3pJNkR1TTRRZUNPV1A4MHdVUG1sMFpoM1hMTUxXQWFWVm1XM3l0UTFtcjRGamF5enk2RTFGS0NRRW1TNEtXbTVSSEJkUXlNeHNTQmYwbVByZDdiZGVoeDVPZw?oc=5",
+   "date": "2026-09-11",
+   "source": "donga.com",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
    "first_seen": "2026-09-11"
   },
   {
@@ -45,165 +74,8 @@
    "score": 2,
    "agencies": [],
    "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "\"김승원, 국감 중 전화 돌리느라 들락날락\" 안철수, 시간대별 '청탁 정황' 직격",
-   "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTFA1Z2tkZGc2VVVVUHY0T0JQUWNzTWFNUGdaTVpKNlQ2SnpxeTN5YnpwZkhHWTh2RF9GU1UyVWthV09TcFJYakI3ajFtQS1DRkdDVU9KcGlqM1JxR3pPVEtsRk9jUDFoaUZ1NU5SMnVR0gFzQVVfeXFMTjFLa3l0b0lDSGZoVmdfb20zRWlhSTVsS3B2akJqczdzc3h6Tlo5ajFpa0Q5NzFyejRpYVZxUG1oUDhLM2FTSXcxWVpYRFZIbW5oSTEtMms0dDhpMWZKcEJPWXg5ZVM1bnNkV3kwMFJUSnNpcw?oc=5",
-   "date": "2026-09-10",
-   "source": "한국일보",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "정치권과 언론, 국정감사가 마무리된 이후 ‘중폭 개각’ 가능성 계속 거론",
-   "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE85aFJrSUhscmgxYkJMdXU4X0tReUZuZHR5dGRjRUIzdllFai11dFVEdlZzTl81X19ORzF6dXRoT2NrVUZvVzBLaWlFTTJSRnc1MVdwZ3VldHMxRFFibElZZ0VBS3FkdUNK?oc=5",
-   "date": "2026-09-10",
-   "source": "정경시사 FOCUS",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "“김승원, 국감중 식약처 청탁…양씨 등과 전화-문자하려 들락날락”",
-   "url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE1LYjZTMkJ2N3hTdWlPWHlfXzF2N3V5UEtCM0ZxSDcyUTJ1SlpudG5jbEFHLVpxYkpLcXBxMHZoLW5FVl9SOFE?oc=5",
-   "date": "2026-09-10",
-   "source": "v.daum.net",
-   "score": 3,
-   "agencies": [
-    "식품의약품안전처"
-   ],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "[김종석의 왜]김승원, 국정감사 중 ‘들락날락’ 무슨 일?",
-   "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE1lcUozN1VDSGVfTzBOdGxwRXlpcml6a2lUbEpBVU5TYlRaaWFyOGttUGhxMGFPempzZkJKUkFCV3lyRnpwQUFZbkNpMDNBQXdwRC1ZeWtfamtWNDZUYXfSAWNBVV95cUxPY0EwcWo3bElwNktNTW43N1hqdGZqMldYOS11TWtuOTlYcEFXWlRUTWlkREQ2cDhIUHhjV19QSDh4OVpiUUdLVzI0MTlKUEsxMXBnZUhVTkpzUWV5dUdWZlcwVG8?oc=5",
-   "date": "2026-09-10",
-   "source": "채널A",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "“김승원, 브로커·식약처 청탁 전화…국감 중 들락날락”",
-   "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1xM0YwUXVKRHlnZkpSNlpPb3p5amlxSHEzUC04NGRyTUZXVUVVNjd4UmhqYmwxOHVDMDhNVGkzM1ctSjNLRzZGaUNLcUMxdF9XcU5CVmpONTFQVkNUT1h6amhoZkZqUQ?oc=5",
-   "date": "2026-09-10",
-   "source": "KBS 뉴스",
-   "score": 3,
-   "agencies": [
-    "식품의약품안전처"
-   ],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "김승원, 국정감사 중 제넨셀 임상 승인 요청 의혹…안철수 “의원 자격도 없다”",
-   "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFBCeVVqc0JTM05aU3ZrZnZGYXVBMFQwUkNxMHl4VW8tSHpVWFdkZU1wR2VDQjBoWDZQVm51OGc1Vzh4dmZIZ2VGNlA0WWNTQQ?oc=5",
-   "date": "2026-09-10",
-   "source": "뉴스21일간",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "안철수 \"김승원 의원 자격 없다..., 국감 중 식약처에 제넨셀 청탁\" |",
-   "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE42VEpHdGlhYWNfSW5aZGcwSzNOamR0ajc3eC1QMVljZlVURFhEenZ0ck1BSHJqSkxuWVNaZXFaR2xlRUJ5VkVybm1lcDNOQVVoekxlTWN6a2RHbkxaLUxuOUxnZm9mcTdMRjIyZkNBVQ?oc=5",
-   "date": "2026-09-10",
-   "source": "더퍼블릭",
-   "score": 3,
-   "agencies": [
-    "식품의약품안전처"
-   ],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "김승원, 국감장서 '들락날락'...청탁 현장 포착?",
-   "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE53aWplQjBRck9HWXpETmlfUVlKSDdMWWlHXzVWOC1IN3J6VTVYRGlqVlFUaG80MXdKNDdyZ0JOX3hWNWJpZEtUUW0tMlRvdndPR1FvSklmbFNSUk14NWc?oc=5",
-   "date": "2026-09-10",
-   "source": "ytn.co.kr",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "“김승원 국감 중 식약처 청탁... 브로커에 휘둘려 들락날락”",
-   "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNQ0hTcEM5bG0xUVZqYUtfMWdsM2pTQVhWR0lGSVJwM2I0QWsyVU11MUJzNVFrT2dLclZHUTg5X2lHNDc5U2RhS2FZTldBT1lrNWlLRWFtNXZBNXBKY2dGZGdHVG5VOEQ3SUFKZHBXbXhDMGQxeDY0QnJDd1RuNGN5YUpMcmFoUQ?oc=5",
-   "date": "2026-09-10",
-   "source": "chosun.com",
-   "score": 3,
-   "agencies": [
-    "식품의약품안전처"
-   ],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "김승원, 국감 중 통화·문자 ‘들락날락’…영상 보니",
-   "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFBpcVlxZkYxVTBDN0NtSlFtMmxzbTJ2R2ltb1lGZEYwb2RpRDhBeU1wM1RTZlJsVVU3ay1walV0NGgxbG5rZWN1RlpQZ3hMMzNzT3BtMGZ5czZBc2ZTZU03eXZtMNIBY0FVX3lxTFBpcVlxZkYxVTBDN0NtSlFtMmxzbTJ2R2ltb1lGZEYwb2RpRDhBeU1wM1RTZlJsVVU3ay1walV0NGgxbG5rZWN1RlpQZ3hMMzNzT3BtMGZ5czZBc2ZTZU03eXZtMA?oc=5",
-   "date": "2026-09-10",
-   "source": "채널A",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "녹취 원문 꺼낸 김승원 “왜곡”… 국힘 “김, 국감 중 청탁 영업”",
-   "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5JeWV3Ti1WMlptZlpRNlVkSWhtenJhTXkyVW04dGJ4NXptQWVxblltMU9OTTc0dXo1NHRDblVXSkNKQ2ZoV3BHa2tpYXFYQm5TM1VwQnB0aWl6U1BSX213QU1JX2w1QlVrZkk4YjBKSlY?oc=5",
-   "date": "2026-09-10",
-   "source": "서울신문",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "안철수, \"국감 중 양 씨 청탁 영업 金, 장관·의원 자격 없다\"",
-   "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFBNWXZ2OTFxc2FKbVBZUG9mdmJlbHRUSUlxWV9wTzhNeTdXWFEzUk54aV9xcGRWN3l3dEVjdXEyNWJGdEx5cUlMVkl6bFhSdkZiQXZiSmZLeVRjTWNLVzFRZTV3?oc=5",
-   "date": "2026-09-10",
-   "source": "매일신문",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "[사설] 국감 중 제약사 청탁 의혹까지 나온 김승원… 자진사퇴가 답이다",
-   "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5RSVVJa2VGejU5XzE5SnNXSFlILTFNWnZkMWhoOGREZlc1dDU5eHdnQ1lnTFJKMzFCdjh5SUJIbDZzQVd5SkIwY0ZUY3NjYkk?oc=5",
-   "date": "2026-09-10",
-   "source": "v.daum.net",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "안철수 “김승원, 국감 중에도 브로커 청탁…의원 자격도 없어”",
-   "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE13MTdINk1NdmpPWTdOLUhrcEt0bjliaERaYkJLM2pjaG1rdnlYcXNWM2drcHJuTXBKMm5ZU294V1NjdFFGWXNFLVNPZzhDUC1qSUpxLTVDeWk3V0U?oc=5",
-   "date": "2026-09-10",
-   "source": "kyeonggi.com",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
-  },
-  {
-   "title": "후보자가 직접 공개한 녹취...안철수 \"국감 중 청탁전화 돌린 것\" [앵커리포트]",
-   "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE9RN0JlUDRmNFE3Q1NXZjlBR2RLWVljYVBIT3MxSUxxSVBuM1Q1WUhYbnVsSGd1RDQ0SjRCVVM3Q3BMSWxCeHR0b1pKUU82MmF6b1c2YXB3OTdhV2FabUE?oc=5",
-   "date": "2026-09-10",
-   "source": "ytn.co.kr",
-   "score": 2,
-   "agencies": [],
-   "members": [],
-   "first_seen": "2026-09-10"
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
   },
   {
    "title": "국정감사 끝나면 ‘2차 추가 개각’ 가능성있다?...복지·교육·외교부 주목",
@@ -213,6 +85,176 @@
    "score": 2,
    "agencies": [],
    "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "\"김승원 국감 중 식약처 청탁... 브로커에 휘둘려 들락날락\"",
+   "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNQ0hTcEM5bG0xUVZqYUtfMWdsM2pTQVhWR0lGSVJwM2I0QWsyVU11MUJzNVFrT2dLclZHUTg5X2lHNDc5U2RhS2FZTldBT1lrNWlLRWFtNXZBNXBKY2dGZGdHVG5VOEQ3SUFKZHBXbXhDMGQxeDY0QnJDd1RuNGN5YUpMcmFoUQ?oc=5",
+   "date": "2026-09-10",
+   "source": "조선일보",
+   "score": 3,
+   "agencies": [
+    "식품의약품안전처"
+   ],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "[김종석의 왜]김승원, 국정감사 중 ‘들락날락’ 무슨 일?",
+   "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE1lcUozN1VDSGVfTzBOdGxwRXlpcml6a2lUbEpBVU5TYlRaaWFyOGttUGhxMGFPempzZkJKUkFCV3lyRnpwQUFZbkNpMDNBQXdwRC1ZeWtfamtWNDZUYXfSAWNBVV95cUxPY0EwcWo3bElwNktNTW43N1hqdGZqMldYOS11TWtuOTlYcEFXWlRUTWlkREQ2cDhIUHhjV19QSDh4OVpiUUdLVzI0MTlKUEsxMXBnZUhVTkpzUWV5dUdWZlcwVG8?oc=5",
+   "date": "2026-09-10",
+   "source": "채널A",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "김승원, 국정감사 중 제넨셀 임상 승인 요청 의혹…안철수 “의원 자격도 없다”",
+   "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFBCeVVqc0JTM05aU3ZrZnZGYXVBMFQwUkNxMHl4VW8tSHpVWFdkZU1wR2VDQjBoWDZQVm51OGc1Vzh4dmZIZ2VGNlA0WWNTQQ?oc=5",
+   "date": "2026-09-10",
+   "source": "뉴스21일간",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "\"김승원, 국감 중 전화 돌리느라 들락날락\" 안철수, 시간대별 '청탁 정황' 직격",
+   "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTFA1Z2tkZGc2VVVVUHY0T0JQUWNzTWFNUGdaTVpKNlQ2SnpxeTN5YnpwZkhHWTh2RF9GU1UyVWthV09TcFJYakI3ajFtQS1DRkdDVU9KcGlqM1JxR3pPVEtsRk9jUDFoaUZ1NU5SMnVR0gFzQVVfeXFMTjFLa3l0b0lDSGZoVmdfb20zRWlhSTVsS3B2akJqczdzc3h6Tlo5ajFpa0Q5NzFyejRpYVZxUG1oUDhLM2FTSXcxWVpYRFZIbW5oSTEtMms0dDhpMWZKcEJPWXg5ZVM1bnNkV3kwMFJUSnNpcw?oc=5",
+   "date": "2026-09-10",
+   "source": "한국일보",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "안철수 \"김승원 의원 자격 없다..., 국감 중 식약처에 제넨셀 청탁\"",
+   "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE42VEpHdGlhYWNfSW5aZGcwSzNOamR0ajc3eC1QMVljZlVURFhEenZ0ck1BSHJqSkxuWVNaZXFaR2xlRUJ5VkVybm1lcDNOQVVoekxlTWN6a2RHbkxaLUxuOUxnZm9mcTdMRjIyZkNBVQ?oc=5",
+   "date": "2026-09-10",
+   "source": "thepublic.kr",
+   "score": 3,
+   "agencies": [
+    "식품의약품안전처"
+   ],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "녹취 원문 꺼낸 김승원 “왜곡”… 국힘 “김, 국감 중 청탁 영업”",
+   "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5JeWV3Ti1WMlptZlpRNlVkSWhtenJhTXkyVW04dGJ4NXptQWVxblltMU9OTTc0dXo1NHRDblVXSkNKQ2ZoV3BHa2tpYXFYQm5TM1VwQnB0aWl6U1BSX213QU1JX2w1QlVrZkk4YjBKSlY?oc=5",
+   "date": "2026-09-10",
+   "source": "서울신문",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "김승원, 국감장서 '들락날락'...청탁 현장 포착?",
+   "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE53aWplQjBRck9HWXpETmlfUVlKSDdMWWlHXzVWOC1IN3J6VTVYRGlqVlFUaG80MXdKNDdyZ0JOX3hWNWJpZEtUUW0tMlRvdndPR1FvSklmbFNSUk14NWc?oc=5",
+   "date": "2026-09-10",
+   "source": "YTN",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "김승원, 국감 중 통화·문자 ‘들락날락’…영상 보니",
+   "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFBpcVlxZkYxVTBDN0NtSlFtMmxzbTJ2R2ltb1lGZEYwb2RpRDhBeU1wM1RTZlJsVVU3ay1walV0NGgxbG5rZWN1RlpQZ3hMMzNzT3BtMGZ5czZBc2ZTZU03eXZtMNIBY0FVX3lxTFBpcVlxZkYxVTBDN0NtSlFtMmxzbTJ2R2ltb1lGZEYwb2RpRDhBeU1wM1RTZlJsVVU3ay1walV0NGgxbG5rZWN1RlpQZ3hMMzNzT3BtMGZ5czZBc2ZTZU03eXZtMA?oc=5",
+   "date": "2026-09-10",
+   "source": "채널A",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "안철수 \"국감 중 양 씨 청탁 영업 金, 장관·의원 자격 없다\"",
+   "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFBNWXZ2OTFxc2FKbVBZUG9mdmJlbHRUSUlxWV9wTzhNeTdXWFEzUk54aV9xcGRWN3l3dEVjdXEyNWJGdEx5cUlMVkl6bFhSdkZiQXZiSmZLeVRjTWNLVzFRZTV3?oc=5",
+   "date": "2026-09-10",
+   "source": "매일신문",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "안철수 “김승원, 국감 중에도 브로커 청탁…의원 자격도 없어”",
+   "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE13MTdINk1NdmpPWTdOLUhrcEt0bjliaERaYkJLM2pjaG1rdnlYcXNWM2drcHJuTXBKMm5ZU294V1NjdFFGWXNFLVNPZzhDUC1qSUpxLTVDeWk3V0U?oc=5",
+   "date": "2026-09-10",
+   "source": "경기일보",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "[사설] 국감 중 제약사 청탁 의혹까지 나온 김승원… 자진사퇴가 답이다",
+   "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5RSVVJa2VGejU5XzE5SnNXSFlILTFNWnZkMWhoOGREZlc1dDU5eHdnQ1lnTFJKMzFCdjh5SUJIbDZzQVd5SkIwY0ZUY3NjYkk?oc=5",
+   "date": "2026-09-10",
+   "source": "v.daum.net",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "안철수 “김승원, 국감 중 청탁 전화”…金 측 “통화 5분, 왜곡된 공세”",
+   "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE03WnVLVExaZFRxeDRIRnk5VnRwbzJPdkhWMllLU21YT3JnVHB6U1RVNUdSWDFUbnhRSXIwSHFtMUdZTnVTQXJaSFlxV1IzeVZsNXfSAVNBVV95cUxNcE9zcjlRcmhiWFRFN3dvVWV3MksyZ2ZEVk5HRWthMUlxVTB0dmpQaWdyQVhuNnE5UVVpbUtqZ2s1blU0SVlObXZMcHN3LWE3NDdoZw?oc=5",
+   "date": "2026-09-10",
+   "source": "서울경제",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "[천지일보 사설] 국감 중 ‘청탁 전화’ 김승원… 철저히 검증해야",
+   "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE82YkFCSUt5UXdMZHBwY1lfdHo5MkhsZVBEcXNDUUpwT3BTOWZTWVMzRHBkMC1aVzRVd2ItOU45QS0zVEZoM2lDbDZXNlZjcFpVY3NySjBZUXhsUWtQLTNHejV3cWl4YjNLbXc?oc=5",
+   "date": "2026-09-10",
+   "source": "천지일보",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "후보자가 직접 공개한 녹취...안철수 \"국감 중 청탁전화 돌린 것\" [앵커리포트]",
+   "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE9RN0JlUDRmNFE3Q1NXZjlBR2RLWVljYVBIT3MxSUxxSVBuM1Q1WUhYbnVsSGd1RDQ0SjRCVVM3Q3BMSWxCeHR0b1pKUU82MmF6b1c2YXB3OTdhV2FabUE?oc=5",
+   "date": "2026-09-10",
+   "source": "YTN",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "시작된 국회 대정부 질문 '약사 현안' 언급될까?",
+   "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE50cHlDSmZXX0lwQzllZ3IzN1pUbmRrUmU0UWNuZWpQc1gxVWJ3U0ZhQ2hsdmZHT0xNTlZDb3lfR2tEVEVPc3gwU3VzajNKWXRvYlctbGpicGZacDdWRjlUYVF2a1ZRamZ5clJTeQ?oc=5",
+   "date": "2026-09-10",
+   "source": "약사공론",
+   "score": 2,
+   "agencies": [],
+   "members": [],
+   "track": "대정부질문",
    "first_seen": "2026-09-11"
   },
   {
@@ -225,6 +267,20 @@
     "식품의약품안전처"
    ],
    "members": [],
+   "track": "국정감사",
+   "first_seen": "2026-09-11"
+  },
+  {
+   "title": "“김승원, 국감중 식약처 청탁…양씨 등과 전화-문자하려 들락날락”",
+   "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE5rS19HQnFGcng1eThCVzZDN05sTUZFOUFQYUpsSV9TLXdHZUVMdjVsTWZ3OGhWQ3M2SWx4bGFwa0JBQWQ2V3ZEWUhCVkxhMWRaeUdzaQ?oc=5",
+   "date": "2026-09-10",
+   "source": "v.daum.net",
+   "score": 3,
+   "agencies": [
+    "식품의약품안전처"
+   ],
+   "members": [],
+   "track": "국정감사",
    "first_seen": "2026-09-11"
   },
   {
@@ -235,17 +291,18 @@
    "score": 2,
    "agencies": [],
    "members": [],
+   "track": "국정감사",
    "first_seen": "2026-09-11"
   },
   {
-   "title": "안철수 “김승원, 국감 중 청탁 전화”…金 측 “통화 5분, 왜곡된 공세”",
-   "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE03WnVLVExaZFRxeDRIRnk5VnRwbzJPdkhWMllLU21YT3JnVHB6U1RVNUdSWDFUbnhRSXIwSHFtMUdZTnVTQXJaSFlxV1IzeVZsNXfSAVNBVV95cUxNcE9zcjlRcmhiWFRFN3dvVWV3MksyZ2ZEVk5HRWthMUlxVTB0dmpQaWdyQVhuNnE5UVVpbUtqZ2s1blU0SVlObXZMcHN3LWE3NDdoZw?oc=5",
+   "title": "정치권과 언론, 국정감사가 마무리된 이후 ‘중폭 개각’ 가능성 계속 거론",
+   "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE85aFJrSUhscmgxYkJMdXU4X0tReUZuZHR5dGRjRUIzdllFai11dFVEdlZzTl81X19ORzF6dXRoT2NrVUZvVzBLaWlFTTJSRnc1MVdwZ3VldHMxRFFibElZZ0VBS3FkdUNK?oc=5",
    "date": "2026-09-10",
-   "source": "서울경제",
+   "source": "정경시사 FOCUS",
    "score": 2,
    "agencies": [],
    "members": [],
-   "first_seen": "2026-09-11"
+   "first_seen": "2026-09-10"
   },
   {
    "title": "이만희 보건복지위원장, 농어촌 의료·돌봄 해법 토론회 개최",
@@ -267,7 +324,8 @@
    "score": 2,
    "agencies": [],
    "members": [],
-   "first_seen": "2026-09-09"
+   "first_seen": "2026-09-09",
+   "track": "국정감사"
   },
   {
    "title": "스타트업얼라이언스, 국감 앞두고 정책과제 제언",
@@ -277,7 +335,8 @@
    "score": 2,
    "agencies": [],
    "members": [],
-   "first_seen": "2026-09-08"
+   "first_seen": "2026-09-08",
+   "track": "국정감사"
   },
   {
    "title": "[인터뷰] 이만희 보건복지위원장 \"'식약처 청탁 의혹' 국감서 다룰 것…이미 결과 영향 예상했던 김승원, 공익 아냐\"",
@@ -291,7 +350,8 @@
    "members": [
     "이만희"
    ],
-   "first_seen": "2026-09-08"
+   "first_seen": "2026-09-08",
+   "track": "국정감사"
   },
   {
    "title": "입법·국정감사로 제기한 ‘청년 당뇨 지원 사각지대’ 개선",
@@ -311,7 +371,8 @@
    "score": 2,
    "agencies": [],
    "members": [],
-   "first_seen": "2026-09-09"
+   "first_seen": "2026-09-09",
+   "track": "국정감사"
   },
   {
    "title": "입법·국정감사로 제기한 청년 당뇨 지원 사각지대 개선 김예지·국민의힘, 소아·청소년·청년 끊김없는 지원 필요",
@@ -331,7 +392,8 @@
    "score": 2,
    "agencies": [],
    "members": [],
-   "first_seen": "2026-09-07"
+   "first_seen": "2026-09-07",
+   "track": "국정감사"
   },
   {
    "title": "[펜앤현장] 野, 용혜인·김승원 청문회 뒤엔 김현지 국정감사 예고",
@@ -341,7 +403,8 @@
    "score": 2,
    "agencies": [],
    "members": [],
-   "first_seen": "2026-09-07"
+   "first_seen": "2026-09-07",
+   "track": "국정감사"
   },
   {
    "title": "[기획] 페이백·의료공백·필수약 대란… 보건복지 현안, 국감 도마 - m-i.kr",
@@ -403,7 +466,8 @@
    "score": 2,
    "agencies": [],
    "members": [],
-   "first_seen": "2026-09-04"
+   "first_seen": "2026-09-04",
+   "track": "국정감사"
   },
   {
    "title": "국감 앞두고 '6호처분' 주목... 경계선지능 아동 지원도 과제",
@@ -413,7 +477,8 @@
    "score": 2,
    "agencies": [],
    "members": [],
-   "first_seen": "2026-09-03"
+   "first_seen": "2026-09-03",
+   "track": "국정감사"
   },
   {
    "title": "[충청국감]이재명 정부 두 번째 정기국회 1일 개회…충청권 28명 국회의원 어느 상임위서 뛰나",
