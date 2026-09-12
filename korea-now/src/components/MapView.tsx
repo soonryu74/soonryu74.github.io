@@ -12,17 +12,19 @@ interface Props {
   spots: Spot[]
   congestion: Record<string, Congestion>
   me: { lat: number; lng: number } | null
-  center: { lat: number; lng: number; zoom: number }
+  // nonce: 같은 좌표를 다시 눌러도 지도가 다시 움직이도록 하는 일련번호
+  center: { lat: number; lng: number; zoom: number; nonce: number }
   onLocate: () => void
   locating: boolean
+  locateError: string | null
 }
 
-// 지역 선택이 바뀌면 지도를 그쪽으로 이동
+// 지역 선택이 바뀌거나 위치 버튼을 누르면 지도를 그쪽으로 이동
 function FlyTo({ center }: { center: Props['center'] }) {
   const map = useMap()
   useEffect(() => {
     map.flyTo([center.lat, center.lng], center.zoom, { duration: 0.8 })
-  }, [map, center.lat, center.lng, center.zoom])
+  }, [map, center.lat, center.lng, center.zoom, center.nonce])
   return null
 }
 
@@ -36,9 +38,10 @@ function spotIcon(spot: Spot, c?: Congestion) {
   })
 }
 
-const meIcon = L.divIcon({ className: '', html: '<div class="marker me"></div>', iconSize: [16, 16], iconAnchor: [8, 8] })
+// 내 위치: 파란 점 + 퍼지는 링 (지도에서 눈에 띄도록)
+const meIcon = L.divIcon({ className: '', html: '<div class="marker-me"><i></i></div>', iconSize: [20, 20], iconAnchor: [10, 10] })
 
-export default function MapView({ spots, congestion, me, center, onLocate, locating }: Props) {
+export default function MapView({ spots, congestion, me, center, onLocate, locating, locateError }: Props) {
   const nav = useNavigate()
   return (
     <div className="map-wrap">
@@ -62,9 +65,15 @@ export default function MapView({ spots, congestion, me, center, onLocate, locat
           ))}
         </div>
       </div>
-      <button className="locate-btn" onClick={onLocate} aria-label="My location" title="My location">
-        {locating ? '…' : '📍'}
+      <button
+        className={'locate-btn' + (locating ? ' busy' : '') + (me ? ' has-fix' : '')}
+        onClick={onLocate}
+        aria-label="Show my location on the map"
+        title="Show my location on the map"
+      >
+        {locating ? <span className="spin">◌</span> : '📍'}
       </button>
+      {locateError && <div className="locate-error">{locateError}</div>}
     </div>
   )
 }

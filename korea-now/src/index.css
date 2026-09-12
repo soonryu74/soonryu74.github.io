@@ -28,7 +28,10 @@ input { font: inherit; }
 .brand h1 { font-size: 18px; margin: 0; letter-spacing: -0.2px; }
 .brand h1 span { color: var(--primary); }
 .brand .sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
-.pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--muted); white-space: nowrap; }
+.pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--muted); white-space: nowrap; }
+button.pill { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button.pill:active { transform: scale(.96); }
+.pill-caret { font-size: 9px; opacity: .7; }
 .pill.live { color: #15803d; border-color: #bbf7d0; background: #f0fdf4; }
 .pill.demo { color: #a16207; border-color: #fde68a; background: #fffbeb; }
 
@@ -161,3 +164,25 @@ input { font: inherit; }
 .etas { display: flex; gap: 6px; white-space: nowrap; }
 .eta { font-size: 13px; color: var(--muted); }
 .eta.first { font-size: 15px; font-weight: 800; color: var(--primary-dark); }
+
+/* 데이터 출처 패널 (LIVE 배지를 누르면 열림) */
+.sources { margin-top: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+.sources-title { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); font-weight: 700; }
+.sources ul { margin: 6px 0 0; padding-left: 16px; }
+.sources li { font-size: 12.5px; line-height: 1.5; margin-bottom: 2px; }
+.sources li b { color: var(--primary-dark); }
+.sources-note { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+/* 내 위치 버튼 */
+.locate-btn { transition: transform .1s, background .2s; }
+.locate-btn:active { transform: scale(.92); }
+.locate-btn.has-fix { background: var(--primary); color: #fff; }
+.locate-btn .spin { display: inline-block; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.locate-error { position: absolute; left: 10px; right: 56px; bottom: 54px; z-index: 500; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 10px; padding: 7px 10px; font-size: 12px; line-height: 1.4; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+
+/* 내 위치 표시 (파란 점 + 퍼지는 링) */
+.marker-me { width: 20px; height: 20px; position: relative; display: flex; align-items: center; justify-content: center; }
+.marker-me::after { content: ''; width: 14px; height: 14px; border-radius: 50%; background: #2563eb; border: 2.5px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+.marker-me i { position: absolute; inset: 0; border-radius: 50%; background: rgba(37,99,235,.35); animation: pulse 2s ease-out infinite; }
+@keyframes pulse { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(2.4); opacity: 0; } }
