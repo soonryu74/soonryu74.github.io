@@ -171,3 +171,30 @@ export function downloadListCsv(card, name) {
   if (!rows.length) return;
   download(new Blob(["﻿" + rows.join("\n")], { type: "text/csv;charset=utf-8" }), safe(name) + ".csv");
 }
+
+/** 문자열로 만든 SVG 저장 (DOM 차트가 아닌 직접 생성한 SVG용) */
+export function saveSvgString(svg, name) {
+  download(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }), safe(name) + ".svg");
+}
+/** 문자열 SVG → PNG */
+export function savePngFromSvg(svg, name, scale = 2) {
+  const img = new Image();
+  const [, , vw, vh] = (svg.match(/viewBox="([^"]+)"/)?.[1] || "0 0 1200 800").split(/\s+/).map(Number);
+  const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+  img.onerror = () => { URL.revokeObjectURL(url); toast("PNG 변환에 실패했습니다. SVG로 저장해 주세요."); };
+  img.onload = () => {
+    const c = document.createElement("canvas");
+    const w = img.naturalWidth || vw, h = img.naturalHeight || vh;
+    c.width = w * scale; c.height = h * scale;
+    const ctx = c.getContext("2d");
+    ctx.scale(scale, scale); ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    c.toBlob((b) => download(b, safe(name) + ".png"), "image/png");
+  };
+  img.src = url;
+}
+/** 2차원 배열 → CSV (엑셀 한글 호환 BOM) */
+export function saveCsvRows(rows, name) {
+  const body = rows.map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+  download(new Blob(["\ufeff" + body], { type: "text/csv;charset=utf-8" }), safe(name) + ".csv");
+}
