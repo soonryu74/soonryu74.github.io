@@ -104,6 +104,14 @@ window.CHURCH = (function () {
     return out;
   }
 
+  // '홍길동' → '홍길동 목사님'. 이미 직함이 붙어 있으면 겹쳐 붙이지 않는다.
+  function title2(p) {
+    var n = (p.name || '').trim();
+    var suffix = p.role === 'pastor' ? '목사님' : '목자님';
+    if (/(목사|목자)(님)?$/.test(n)) return n;
+    return n ? n + ' ' + suffix : suffix;
+  }
+
   function header(profile, title, extraHtml) {
     var el = document.createElement('div');
     el.className = 'top';
@@ -111,8 +119,7 @@ window.CHURCH = (function () {
       '<div class="top-in' + (document.querySelector('.wrap-wide') ? ' wide' : '') + '">' +
       '<h1>' + esc(title) + '</h1>' +
       (extraHtml || '') +
-      '<div class="who"><span>' + esc(profile.name) +
-      (profile.role === 'pastor' ? ' 목사님' : ' 목자님') + '</span>' +
+      '<div class="who"><span>' + esc(title2(profile)) + '</span>' +
       '<button class="small" id="btn-signout">로그아웃</button></div></div>';
     document.body.insertBefore(el, document.body.firstChild);
     el.querySelector('#btn-signout').addEventListener('click', signOut);
@@ -123,6 +130,6 @@ window.CHURCH = (function () {
     sb: sb, $: $, $$: $$, esc: esc, say: say,
     mondayOf: mondayOf, addWeeks: addWeeks, weekLabel: weekLabel, weekShort: weekShort,
     ymd: ymd, kstNow: kstNow, whenText: whenText,
-    signIn: signIn, signOut: signOut, me: me, guard: guard, callAdmin: callAdmin, header: header
+    signIn: signIn, signOut: signOut, me: me, guard: guard, callAdmin: callAdmin, header: header, title2: title2
   };
 })();

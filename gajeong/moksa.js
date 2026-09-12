@@ -216,6 +216,19 @@
       b.disabled = false; b.textContent = '계정 만들기';
     });
 
+
+    $('#my-name').value = me.name || '';
+    $('#form-myname').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var nm = $('#my-name').value.trim();
+      if (!nm) return C.say($('#msg-myname'), '이름을 적어 주세요.', 'err');
+      var r = await sb.from('church_profile').update({ name: nm }).eq('id', me.id).select().single();
+      if (r.error) return C.say($('#msg-myname'), r.error.message, 'err');
+      me.name = r.data.name;
+      $('.top .who span').textContent = C.title2(me);
+      C.say($('#msg-myname'), '이름을 바꿨습니다.', 'ok');
+    });
+
     $('#form-pw').addEventListener('submit', async function (e) {
       e.preventDefault();
       var a = $('#pw1').value, b2 = $('#pw2').value;
