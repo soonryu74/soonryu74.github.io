@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
       if (!setup) return json({ error: '설치 정보가 없습니다' }, 500)
       if (setup.used) return json({ error: '이미 목사 계정이 만들어졌습니다' }, 403)
       if (String(body.setup_code ?? '').trim().toUpperCase() !== setup.setup_code) {
-        return json({ error: '설치 코드가 맞지 않습니다' }, 403)
+        return json({ error: '등록 코드가 맞지 않습니다' }, 403)
       }
       const { count } = await admin
         .from('church_profile').select('id', { count: 'exact', head: true }).eq('role', 'pastor')
@@ -116,6 +116,20 @@ Deno.serve(async (req) => {
       return json({ ok: true, user_id: user.id, mokjang_id: mj.id })
     }
 
+    // ── 2-2) 목사 계정 더 만들기 ────────────────────────────────
+    //  먼저 만들어 시험해 본 뒤 실제 목사님 계정을 따로 내드리기 위한 길
+    if (action === 'create_pastor') {
+      if (!ID_RE.test(login_id)) return json({ error: '아이디는 영문 소문자·숫자 3~30자입니다' }, 400)
+      if (password.length < 8) return json({ error: '비밀번호는 8자 이상으로 정해 주세요' }, 400)
+      if (!name) return json({ error: '이름을 적어 주세요' }, 400)
+
+      const user = await createAccount(login_id, password, name)
+      const { error: pe } = await admin.from('church_profile')
+        .insert({ id: user.id, login_id, name, role: 'pastor' })
+      if (pe) { await admin.auth.admin.deleteUser(user.id); throw new Error(pe.message) }
+      return json({ ok: true, user_id: user.id })
+    }
+
     // ── 3) 비밀번호 다시 정하기 ──────────────────────────────────
     if (action === 'reset_password') {
       const uid = String(body.user_id ?? '')
@@ -131,6 +145,13 @@ Deno.serve(async (req) => {
       const uid = String(body.user_id ?? '')
       if (!uid) return json({ error: '대상 계정이 없습니다' }, 400)
       if (uid === me.id) return json({ error: '자기 계정은 지울 수 없습니다' }, 400)
+      const { data: target } = await admin
+        .from('church_profile').select('role').eq('id', uid).maybeSingle()
+      if (target?.role === 'pastor') {
+        const { count } = await admin
+          .from('church_profile').select('id', { count: 'exact', head: true }).eq('role', 'pastor')
+        if ((count ?? 0) <= 1) return json({ error: '마지막 목사 계정은 지울 수 없습니다' }, 400)
+      }
       const { error } = await admin.auth.admin.deleteUser(uid)
       if (error) throw new Error(error.message)
       return json({ ok: true })

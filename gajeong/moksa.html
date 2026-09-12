@@ -87,6 +87,23 @@
       </form>
     </div>
     <div class="card">
+      <h2>목사 계정</h2>
+      <p class="desc">시험해 보신 뒤 실제 목사님 계정을 여기서 하나 더 만들어 넘겨 드리면 됩니다.
+        목사 계정끼리는 보는 것이 똑같습니다.</p>
+      <form id="form-pastor">
+        <label for="p-name">이름</label>
+        <input id="p-name" type="text" placeholder="예: 홍길동" required>
+        <label for="p-id">아이디</label>
+        <input id="p-id" type="text" inputmode="latin" autocapitalize="none" autocorrect="off"
+               placeholder="영문 소문자와 숫자로 3자 이상" required>
+        <label for="p-pw">첫 비밀번호</label>
+        <input id="p-pw" type="text" placeholder="8자 이상" required>
+        <div class="msg" id="msg-pastor"></div>
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit" id="btn-pastor">목사 계정 만들기</button></div>
+      </form>
+      <div id="pastor-list" style="margin-top:16px"></div>
+    </div>
+    <div class="card">
       <h2>목장 목록</h2>
       <p class="desc">비밀번호를 잊은 목자는 여기서 새 비밀번호를 정해 주시면 됩니다.</p>
       <div class="msg" id="msg-manage"></div>

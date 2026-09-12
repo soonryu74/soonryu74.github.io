@@ -227,12 +227,63 @@
       C.say($('#msg-pw'), '비밀번호를 바꿨습니다.', 'ok');
     });
 
+    $('#form-pastor').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var b = $('#btn-pastor'); b.disabled = true; b.textContent = '만드는 중…';
+      try {
+        await C.callAdmin({
+          action: 'create_pastor',
+          login_id: $('#p-id').value, password: $('#p-pw').value, name: $('#p-name').value
+        });
+        C.say($('#msg-pastor'), $('#p-name').value + ' 목사 계정을 만들었습니다. 아이디 ' +
+          $('#p-id').value.trim().toLowerCase() + ' · 비밀번호 ' + $('#p-pw').value + ' 를 알려 주세요.', 'ok', true);
+        $('#form-pastor').reset();
+        renderManage();
+      } catch (err) {
+        C.say($('#msg-pastor'), err.message, 'err');
+      }
+      b.disabled = false; b.textContent = '목사 계정 만들기';
+    });
+
     $('#manage-list').addEventListener('click', onManageClick);
+    $('#pastor-list').addEventListener('click', onPastorClick);
+  }
+
+  async function onPastorClick(e) {
+    var btn = e.target.closest('button'); if (!btn) return;
+    var item = e.target.closest('.list-item'), uid = item.dataset.uid, nm = item.dataset.name;
+    try {
+      if (btn.classList.contains('act-pw')) {
+        var np = prompt('새 비밀번호를 정해 주세요 (8자 이상).');
+        if (np === null) return;
+        await C.callAdmin({ action: 'reset_password', user_id: uid, password: np });
+        C.say($('#msg-pastor'), nm + ' 목사의 새 비밀번호는 ' + np + ' 입니다.', 'ok', true);
+        return;
+      }
+      if (btn.classList.contains('act-del')) {
+        if (!confirm(nm + ' 목사 계정을 지울까요?')) return;
+        await C.callAdmin({ action: 'delete_user', user_id: uid });
+        renderManage();
+      }
+    } catch (err) { C.say($('#msg-pastor'), err.message, 'err'); }
   }
 
   async function renderManage() {
     var profs = (await sb.from('church_profile').select('id, login_id, name, role')).data || [];
     var byId = {}; profs.forEach(function (p) { byId[p.id] = p; });
+
+    var pastors = profs.filter(function (p) { return p.role === 'pastor'; });
+    $('#pastor-list').innerHTML = pastors.map(function (p) {
+      var mine = p.id === me.id;
+      return '<div class="list-item" data-uid="' + p.id + '" data-name="' + esc(p.name) + '">' +
+        '<div class="grow"><div class="t">' + esc(p.name) +
+        (mine ? ' <span class="badge done">지금 나</span>' : '') + '</div>' +
+        '<div class="s">아이디 ' + esc(p.login_id || '') + '</div></div>' +
+        (mine ? '' : '<button class="small act-pw">비밀번호 새로</button>') +
+        (mine || pastors.length <= 1 ? '' : '<button class="small danger act-del">계정 삭제</button>') +
+        '</div>';
+    }).join('');
+
     var box = $('#manage-list');
     if (!mokjangs.length) { box.innerHTML = '<p class="empty">아직 목장이 없습니다.</p>'; return; }
     box.innerHTML = mokjangs.map(function (m) {
@@ -246,6 +297,7 @@
         '<button class="small act-rename">이름 고치기</button>' +
         '<button class="small act-hide">' + (m.active ? '잠시 쉼으로' : '다시 활동') + '</button>' +
         (m.mokja_id ? '<button class="small danger act-del">계정 삭제</button>' : '') +
+        '<button class="small danger act-drop">목장 지우기</button>' +
         '</div>';
     }).join('');
   }
@@ -274,6 +326,14 @@
         if (!confirm(m.mokja_name + ' 목자의 계정을 지울까요?\n지금까지 쓴 일기와 기도제목은 그대로 남습니다.')) return;
         await C.callAdmin({ action: 'delete_user', user_id: uid });
         await sb.from('church_mokjang').update({ mokja_name: m.mokja_name + ' (지난 목자)' }).eq('id', mjId);
+      } else if (btn.classList.contains('act-drop')) {
+        if (!confirm(m.name + ' 을(를) 통째로 지울까요?\n\n이 목장의 목원 명단과 지금까지의 일기·기도제목이 모두 함께 사라지고, 되돌릴 수 없습니다.\n(시험 삼아 만든 목장을 치울 때 쓰세요.)')) return;
+        if (uid && !confirm('담당 목자 ' + m.mokja_name + ' 의 계정도 함께 지울까요?\n[확인]을 누르면 계정까지 지웁니다. [취소]를 누르면 목장만 지웁니다.')) {
+          await sb.from('church_mokjang').delete().eq('id', mjId);
+        } else {
+          await sb.from('church_mokjang').delete().eq('id', mjId);
+          if (uid) await C.callAdmin({ action: 'delete_user', user_id: uid });
+        }
       }
       await loadMokjangs(); renderManage(); loadWeek();
     } catch (err) {
