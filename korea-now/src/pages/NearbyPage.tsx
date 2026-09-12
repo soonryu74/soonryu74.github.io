@@ -44,7 +44,7 @@ export default function NearbyPage() {
           <div style={{ fontSize: 32 }}>📍</div>
           <div style={{ fontWeight: 700, marginTop: 4 }}>Where are you?</div>
           <div style={{ fontSize: 13, color: 'var(--muted)', margin: '4px 0 10px' }}>Allow location to see what's within walking distance.</div>
-          <button className="btn primary" onClick={locate} disabled={locating}>{locating ? 'Locating…' : 'Use my location'}</button>
+          <button className="btn primary" onClick={() => locate()} disabled={locating}>{locating ? 'Locating…' : 'Use my location'}</button>
         </div>
       )}
 
