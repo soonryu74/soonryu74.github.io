@@ -25,13 +25,19 @@ window.CHURCH = (function () {
     if (kind !== 'err' && !keep) setTimeout(function () { el.className = 'msg'; }, 4000);
   }
 
-  /* ── 날짜 (한국 시간 기준) ───────────────────────────── */
-  function kstNow() { return new Date(Date.now() + 9 * 3600000); }
+  /* ── 날짜 (교회가 있는 멜번 현지 시각 기준) ─────────────
+     서머타임이 해마다 바뀌므로 시차를 숫자로 박지 않고 표준 시간대 이름을 쓴다.
+     보는 사람이 한국에 있든 멜번에 있든 같은 '이번 주'를 본다. */
+  var TZ = 'Australia/Melbourne';
+  function today() {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit'
+    }).format(new Date());
+  }
   function ymd(d) { return d.toISOString().slice(0, 10); }
   function mondayOf(dateStr) {
-    var d = dateStr ? new Date(dateStr + 'T00:00:00Z') : kstNow();
-    var wd = d.getUTCDay();              // 0=일
-    var back = (wd + 6) % 7;             // 월요일까지 되돌아갈 날 수
+    var d = new Date((dateStr || today()) + 'T00:00:00Z');
+    var back = (d.getUTCDay() + 6) % 7;  // 월요일까지 되돌아갈 날 수
     d.setUTCDate(d.getUTCDate() - back);
     return ymd(d);
   }
@@ -52,10 +58,11 @@ window.CHURCH = (function () {
   }
   function whenText(iso) {
     if (!iso) return '';
-    var d = new Date(iso);
-    var k = new Date(d.getTime() + 9 * 3600000);
-    return (k.getUTCMonth() + 1) + '월 ' + k.getUTCDate() + '일 ' +
-      String(k.getUTCHours()).padStart(2, '0') + ':' + String(k.getUTCMinutes()).padStart(2, '0');
+    var p = {};
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone: TZ, month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false
+    }).formatToParts(new Date(iso)).forEach(function (x) { p[x.type] = x.value; });
+    return p.month + '월 ' + p.day + '일 ' + p.hour + ':' + p.minute;
   }
 
   /* ── 계정 ────────────────────────────────────────────── */
@@ -117,7 +124,9 @@ window.CHURCH = (function () {
     el.className = 'top';
     el.innerHTML =
       '<div class="top-in' + (document.querySelector('.wrap-wide') ? ' wide' : '') + '">' +
-      '<h1>' + esc(title) + '</h1>' +
+      '<img class="mark" src="assets/mark.png" alt="">' +
+      '<div class="titles"><h1>' + esc(title) + '</h1>' +
+      '<span class="church">멜번방주교회 &amp; ALF</span></div>' +
       (extraHtml || '') +
       '<div class="who"><span>' + esc(title2(profile)) + '</span>' +
       '<button class="small" id="btn-signout">로그아웃</button></div></div>';
@@ -129,7 +138,7 @@ window.CHURCH = (function () {
   return {
     sb: sb, $: $, $$: $$, esc: esc, say: say,
     mondayOf: mondayOf, addWeeks: addWeeks, weekLabel: weekLabel, weekShort: weekShort,
-    ymd: ymd, kstNow: kstNow, whenText: whenText,
+    ymd: ymd, today: today, whenText: whenText,
     signIn: signIn, signOut: signOut, me: me, guard: guard, callAdmin: callAdmin, header: header, title2: title2
   };
 })();

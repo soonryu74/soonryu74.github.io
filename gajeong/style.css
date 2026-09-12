@@ -1,9 +1,11 @@
 /* 목장 나눔터 — 공통 스타일 (글자 크게, 손가락으로 누르기 쉽게) */
+/* 색은 멜번방주교회 로고에서 가져왔다 — 짙은 파랑 #0054A8, 연두 #84C03C, 주황 #F07818 */
 :root{
-  --bg:#f7f4ee; --card:#fff; --ink:#23201b; --muted:#6f685d; --line:#e3ddd1;
-  --brand:#3d6b53; --brand-dk:#2f5341; --brand-soft:#eaf1ec;
-  --gold:#a8823a; --warn:#b4532a; --warn-soft:#fbeee8;
-  --r:14px; --shadow:0 1px 2px rgba(35,32,27,.06), 0 8px 24px rgba(35,32,27,.05);
+  --bg:#f1f5fa; --card:#fff; --ink:#16222f; --muted:#5d6b7b; --line:#dbe3ed;
+  --brand:#0B57A4; --brand-dk:#07406f; --brand-soft:#e5eef8;
+  --gold:#b9670f; --gold-soft:#fdf1e3; --green:#4e8f22; --green-soft:#eef6e5;
+  --warn:#b4532a; --warn-soft:#fbeee8;
+  --r:14px; --shadow:0 1px 2px rgba(22,34,47,.06), 0 8px 24px rgba(22,34,47,.06);
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -21,6 +23,10 @@ a{color:var(--brand-dk)}
 .top-in{max-width:860px; margin:0 auto; padding:14px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
 .wrap-wide + .top-in, .top-in.wide{max-width:1100px}
 .top h1{font-size:19px; margin:0; font-weight:700; letter-spacing:-.02em}
+.top .mark{height:30px; width:auto; display:block; flex:0 0 auto;
+  background:#fff; border-radius:8px; padding:3px 5px}
+.top .titles{display:flex; flex-direction:column; line-height:1.25}
+.top .church{font-size:12.5px; opacity:.85; letter-spacing:.01em}
 .top .who{margin-left:auto; font-size:14px; opacity:.92; display:flex; align-items:center; gap:10px}
 .top .who button{background:rgba(255,255,255,.16); color:#fff; border:0}
 
@@ -42,7 +48,7 @@ textarea{min-height:110px; resize:vertical; line-height:1.6}
 
 /* 단추 */
 button{font:inherit; font-size:16px; font-weight:600; padding:12px 18px; border-radius:10px; border:1.5px solid var(--line); background:#fff; color:var(--ink); cursor:pointer}
-button:hover{border-color:#cfc7b7}
+button:hover{border-color:#c3cfdc}
 button.primary{background:var(--brand); border-color:var(--brand); color:#fff}
 button.primary:hover{background:var(--brand-dk); border-color:var(--brand-dk)}
 button.ghost{background:transparent}
@@ -60,13 +66,14 @@ button:disabled{opacity:.5; cursor:not-allowed}
 .msg.ok{background:var(--brand-soft); color:var(--brand-dk); border:1px solid #cfe0d5}
 
 /* 뱃지 */
-.badge{display:inline-block; font-size:13px; font-weight:700; padding:3px 9px; border-radius:999px; background:#f0ece3; color:var(--muted)}
+.badge{display:inline-block; font-size:13px; font-weight:700; padding:3px 9px; border-radius:999px; background:#eef1f5; color:var(--muted)}
 .badge.done{background:var(--brand-soft); color:var(--brand-dk)}
 .badge.todo{background:var(--warn-soft); color:#8c3d1d}
-.badge.gold{background:#f7efdc; color:#77571f}
+.badge.gold{background:var(--gold-soft); color:var(--gold)}
+.badge.ok{background:var(--green-soft); color:var(--green)}
 
 /* 목원 줄 */
-.member{border:1px solid var(--line); border-radius:12px; padding:14px; margin:10px 0; background:#fffdfa}
+.member{border:1px solid var(--line); border-radius:12px; padding:14px; margin:10px 0; background:#fbfcfe}
 .member .head{display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap}
 .member .name{font-weight:700; font-size:16.5px}
 .member textarea{min-height:74px}
