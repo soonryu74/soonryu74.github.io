@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F6F5C">
+<title>Nunchi · Korean that sounds right</title>
+<meta name="description" content="Korean isn't only grammar — it's who you're talking to. Practice the relationship, not just the rule.">
+<meta property="og:title" content="Nunchi · Korean that sounds right">
+<meta property="og:description" content="Dial the listener, roleplay a real situation, then review what was correct but still odd.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F1F3F0;--surface:#fff;--surface2:#E9ECE7;
+  --ink:#161C18;--muted:#5C6A62;--faint:#8A968E;
+  --accent:#1F6F5C;--accent-soft:#DDEAE4;
+  --alert:#A8452B;--alert-soft:#F3E2DC;
+  --line:#D6DBD4;--line-strong:#B8C0B8;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#101310;--surface:#181D19;--surface2:#1F2621;
+    --ink:#E7ECE6;--muted:#9DAAA1;--faint:#74827a;
+    --accent:#5FBFA3;--accent-soft:#1B2F2A;
+    --alert:#E08B6E;--alert-soft:#32211C;
+    --line:#2A322C;--line-strong:#3C463F;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#101310;--surface:#181D19;--surface2:#1F2621;
+  --ink:#E7ECE6;--muted:#9DAAA1;--faint:#74827a;
+  --accent:#5FBFA3;--accent-soft:#1B2F2A;
+  --alert:#E08B6E;--alert-soft:#32211C;
+  --line:#2A322C;--line-strong:#3C463F;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;font-weight:350;line-height:1.7;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding-inline:18px;padding-block:0 80px}
+h1,h2,h3{font-family:"Gowun Batang","Noto Serif KR",serif;margin:0;line-height:1.35;text-wrap:balance}
+.mono{font-family:"IBM Plex Mono",monospace}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+header{padding-block:34px 20px;border-bottom:1px solid var(--line-strong);display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}
+header h1{font-size:1.8rem;font-weight:700}
+header h1 span{font-family:"Noto Sans KR",sans-serif;font-size:.8rem;font-weight:400;color:var(--muted);display:block;margin-top:5px}
+#keybtn{margin-left:auto}
+button{font-family:inherit;font-size:.86rem;cursor:pointer;border-radius:3px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);padding:8px 13px;transition:border-color .15s,background .15s}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+:root[data-theme="dark"] button.primary{color:#0d1310}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.primary{color:#0d1310}}
+button.primary:hover{opacity:.9}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input,select,textarea{font-family:inherit;font-size:.9rem;background:var(--surface);color:var(--ink);border:1px solid var(--line-strong);border-radius:3px;padding:9px 11px;width:100%}
+textarea{resize:vertical;line-height:1.6}
+label{font-size:.78rem;color:var(--muted);display:block;margin-bottom:5px}
+/* tabs */
+nav.tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin-block:22px 26px;overflow-x:auto}
+nav.tabs button{border:none;border-bottom:2px solid transparent;background:none;border-radius:0;padding:11px 16px;color:var(--muted);white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:500}
+nav.tabs button small{display:block;font-size:.68rem;color:var(--faint);font-weight:400}
+.panel[hidden]{display:none}
+.card{background:var(--surface);border:1px solid var(--line);padding:20px;border-radius:3px}
+.card+.card{margin-top:16px}
+.intro{color:var(--muted);font-size:.9rem;margin:0 0 18px;max-width:62ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>*{flex:1 1 180px}
+.row>.fit{flex:0 0 auto}
+.row>.fit button{white-space:nowrap}
+/* dial */
+.dial output{display:block;text-align:center;font-size:.95rem;font-weight:500;margin-bottom:6px}
+input[type=range]{accent-color:var(--accent);padding:0}
+.ticks{display:flex;justify-content:space-between;font-size:.66rem;color:var(--faint);margin-top:4px}
+.ladder{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:18px}
+.rung{background:var(--surface);padding:14px 16px;display:grid;grid-template-columns:124px minmax(0,1fr);gap:14px;align-items:baseline}
+.rung.on{background:var(--accent-soft)}
+.rung .who{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.05em;color:var(--muted)}
+.rung .ko{font-size:1rem;line-height:1.6}
+.rung .style{font-size:.7rem;color:var(--faint);font-family:"IBM Plex Mono",monospace}
+.rung .why{font-size:.8rem;color:var(--muted);margin-top:4px}
+/* chat */
+.scene{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.scene button{font-size:.8rem;padding:6px 11px}
+.scene button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+#log{display:flex;flex-direction:column;gap:12px;max-height:46vh;overflow-y:auto;padding:4px 2px 4px 0}
+.msg{max-width:82%;padding:10px 14px;border-radius:3px;font-size:.95rem;line-height:1.65;white-space:pre-wrap}
+.msg.ai{background:var(--surface2);align-self:flex-start;border-left:2px solid var(--accent)}
+.msg.me{background:var(--accent-soft);align-self:flex-end}
+.msg .romaji{display:block;font-size:.75rem;color:var(--muted);margin-top:5px;font-family:"IBM Plex Mono",monospace}
+.composer{display:flex;gap:8px;margin-top:14px}
+.composer input{flex:1}
+.hint{font-size:.76rem;color:var(--faint);margin-top:8px}
+/* cards */
+.rcard{border:1px solid var(--line);background:var(--surface);border-left:3px solid var(--line-strong);padding:15px 17px;border-radius:3px}
+.rcard+.rcard{margin-top:12px}
+.rcard.err{border-left-color:var(--alert)}
+.rcard.odd{border-left-color:var(--accent)}
+.rcard .kind{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.rcard.err .kind{color:var(--alert)}
+.rcard.odd .kind{color:var(--accent)}
+.rcard .was{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--alert);font-size:.95rem}
+.rcard .now{font-size:1rem;font-weight:500;margin-top:3px}
+.rcard .alt{font-size:.85rem;color:var(--muted);margin-top:5px}
+.rcard .why{font-size:.84rem;color:var(--muted);margin-top:9px;border-top:1px dashed var(--line);padding-top:9px}
+.kept{font-size:.75rem;color:var(--faint);margin-top:16px;font-family:"IBM Plex Mono",monospace}
+/* key dialog */
+.sheet{position:fixed;inset:0;background:rgba(10,14,11,.55);display:grid;place-items:center;padding:18px;z-index:20}
+.sheet[hidden]{display:none}
+.sheet .box{background:var(--surface);border:1px solid var(--line-strong);border-radius:4px;max-width:440px;width:100%;padding:24px}
+.sheet h2{font-size:1.15rem;margin-bottom:10px}
+.sheet p{font-size:.85rem;color:var(--muted);margin:0 0 14px}
+.sheet a{color:var(--accent)}
+.status{font-size:.8rem;color:var(--muted);min-height:1.4em;margin-top:10px}
+.status.bad{color:var(--alert)}
+.demo-note{background:var(--surface2);border:1px dashed var(--line-strong);font-size:.78rem;color:var(--muted);padding:9px 12px;border-radius:3px;margin-bottom:16px}
+footer{margin-top:44px;border-top:1px solid var(--line);padding-top:18px;font-size:.78rem;color:var(--faint)}
+footer a{color:var(--accent)}
+@media (max-width:560px){
+  .rung{grid-template-columns:1fr;gap:4px}
+  .msg{max-width:92%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>눈치 Nunchi<span>Korean that sounds right — not just correct.</span></h1>
+  <button id="keybtn" type="button">API key</button>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button id="tab-dial" role="tab" aria-selected="true" aria-controls="p-dial">Relationship dial<small>관계 다이얼</small></button>
+  <button id="tab-chat" role="tab" aria-selected="false" aria-controls="p-chat">Situation<small>상황 롤플레이</small></button>
+  <button id="tab-review" role="tab" aria-selected="false" aria-controls="p-review">Review cards<small>복기 카드</small></button>
+</nav>
+
+<!-- ── MODE 1 ───────────────────────────────── -->
+<section class="panel" id="p-dial" role="tabpanel" aria-labelledby="tab-dial">
+  <p class="intro">Type one thing you want to say. See how it changes depending on <b>who is listening</b>. This is the part textbooks skip.</p>
+  <div class="card dial">
+    <div class="row">
+      <div style="flex:3 1 260px">
+        <label for="dial-input">What do you want to say? (English or Korean)</label>
+        <input id="dial-input" value="I'll be about 30 minutes late." autocomplete="off">
+      </div>
+      <div class="fit" style="flex:0 0 auto"><button id="dial-go" class="primary" type="button">Show all five</button></div>
+    </div>
+    <div style="margin-top:16px">
+      <output id="dial-label" for="dial-range">Boss · 사장님</output>
+      <input type="range" id="dial-range" min="0" max="4" step="1" value="4">
+      <div class="ticks"><span>close friend</span><span>senior</span><span>coworker</span><span>stranger</span><span>boss</span></div>
+    </div>
+    <div class="ladder" id="dial-out"></div>
+    <div class="status" id="dial-status"></div>
+  </div>
+</section>
+
+<!-- ── MODE 2 ───────────────────────────────── -->
+<section class="panel" id="p-chat" role="tabpanel" aria-labelledby="tab-chat" hidden>
+  <p class="intro">A real situation you will actually be in. <b>Nothing gets corrected while you talk</b> — mistakes are collected and shown afterwards, so you can keep going.</p>
+  <div class="card">
+    <div class="scene" id="scenes"></div>
+    <div class="row" style="margin-bottom:14px">
+      <div><label for="level">Your level · 급수</label>
+        <select id="level">
+          <option value="1">TOPIK 1 — beginner</option>
+          <option value="2" selected>TOPIK 2 — high beginner</option>
+          <option value="3">TOPIK 3 — intermediate</option>
+          <option value="4">TOPIK 4 — high intermediate</option>
+        </select>
+      </div>
+      <div class="fit"><button id="end-chat" type="button">End &amp; review · 대화 끝내기</button></div>
+    </div>
+    <div id="log"></div>
+    <div class="composer">
+      <label for="say" style="position:absolute;left:-9999px">Your reply in Korean</label>
+      <input id="say" placeholder="한국어로 답해 보세요…" autocomplete="off">
+      <button id="send" class="primary" type="button">Send</button>
+    </div>
+    <p class="hint">Tip: don't worry about mistakes. That's what the review cards are for.</p>
+    <div class="status" id="chat-status"></div>
+  </div>
+</section>
+
+<!-- ── MODE 3 ───────────────────────────────── -->
+<section class="panel" id="p-review" role="tabpanel" aria-labelledby="tab-review" hidden>
+  <p class="intro">Two kinds of feedback. <b class="mono" style="color:var(--alert)">WRONG</b> is a grammar error. <b class="mono" style="color:var(--accent)">ODD</b> is correct grammar that a Korean would not say — the part no other app tells you.</p>
+  <div id="cards"></div>
+  <p class="kept" id="kept"></p>
+  <div class="status" id="rev-status"></div>
+</section>
+
+<footer>
+  MVP · runs entirely in your browser. Your API key is stored only on this device (localStorage) and is sent only to Google's API.
+  Built for the <a href="https://soonryu74.github.io/">노모어매뉴얼</a> Nunchi project.
+</footer>
+</div>
+
+<!-- key sheet -->
+<div class="sheet" id="sheet" hidden>
+  <div class="box">
+    <h2>Connect a model</h2>
+    <p>Nunchi runs on your own free Gemini API key. Get one at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> — it takes about a minute and costs nothing on the free tier.</p>
+    <label for="key">API key</label>
+    <input id="key" type="password" placeholder="AIza…" autocomplete="off">
+    <label for="model" style="margin-top:10px">Model</label>
+    <input id="model" value="gemini-2.5-flash" autocomplete="off">
+    <div class="row" style="margin-top:16px">
+      <button id="save-key" class="primary" type="button">Save</button>
+      <button id="close-key" type="button">Close</button>
+      <button id="clear-key" type="button">Forget key</button>
+    </div>
+    <p class="hint" style="margin-top:12px">Without a key you can still look around — the screens below are loaded with a worked example.</p>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const LS = { key:'nunchi.key', model:'nunchi.model' };
+const store = {
+  get k(){ try{ return localStorage.getItem(LS.key)||'' }catch(e){ return '' } },
+  get m(){ try{ return localStorage.getItem(LS.model)||'gemini-2.5-flash' }catch(e){ return 'gemini-2.5-flash' } },
+  set(k,m){ try{ localStorage.setItem(LS.key,k); localStorage.setItem(LS.model,m) }catch(e){} },
+  clear(){ try{ localStorage.removeItem(LS.key) }catch(e){} }
+};
+
+/* ── model call ─────────────────────────────── */
+async function ask(system, user, schema){
+  const key = store.k;
+  if(!key){ const e = new Error('no-key'); e.noKey = true; throw e; }
+  const body = {
+    systemInstruction:{ parts:[{text:system}] },
+    contents:[{ role:'user', parts:[{text:user}] }],
+    generationConfig: schema
+      ? { responseMimeType:'application/json', responseSchema:schema, temperature:0.4 }
+      : { temperature:0.8, maxOutputTokens:220 }
+  };
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(store.m)}:generateContent`;
+  const res = await fetch(url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-goog-api-key':key},
+    body: JSON.stringify(body)
+  });
+  if(!res.ok){
+    let detail = '';
+    try{ detail = (await res.json())?.error?.message || '' }catch(e){}
+    throw new Error(res.status === 400 && /API key/i.test(detail) ? 'That API key was rejected. Check it in the API key panel.'
+      : res.status === 404 ? `Model "${store.m}" not found for this key. Try another model name.`
+      : detail || `Request failed (${res.status}).`);
+  }
+  const data = await res.json();
+  const text = data?.candidates?.[0]?.content?.parts?.map(p=>p.text).filter(Boolean).join('') || '';
+  if(!text) throw new Error('The model returned nothing. Try again.');
+  return schema ? JSON.parse(text) : text.trim();
+}
+function fail(el, err){
+  el.className = 'status bad';
+  el.textContent = err && err.noKey ? 'Add an API key first (button at the top right) — the example below stays visible.' : (err?.message || 'Something went wrong.');
+}
+function busy(el, msg){ el.className = 'status'; el.textContent = msg; }
+
+/* ── tabs ───────────────────────────────────── */
+const TABS = [['tab-dial','p-dial'],['tab-chat','p-chat'],['tab-review','p-review']];
+TABS.forEach(([t,p]) => $('#'+t).addEventListener('click', () => {
+  TABS.forEach(([tt,pp]) => {
+    const on = tt === t;
+    $('#'+tt).setAttribute('aria-selected', String(on));
+    $('#'+pp).hidden = !on;
+  });
+}));
+
+/* ── key sheet ──────────────────────────────── */
+$('#keybtn').addEventListener('click', () => {
+  $('#key').value = store.k; $('#model').value = store.m; $('#sheet').hidden = false; $('#key').focus();
+});
+$('#close-key').addEventListener('click', () => { $('#sheet').hidden = true; });
+$('#save-key').addEventListener('click', () => {
+  store.set($('#key').value.trim(), $('#model').value.trim() || 'gemini-2.5-flash');
+  $('#sheet').hidden = true;
+  $('#keybtn').textContent = store.k ? 'API key ✓' : 'API key';
+});
+$('#clear-key').addEventListener('click', () => { store.clear(); $('#key').value=''; $('#keybtn').textContent='API key'; });
+document.addEventListener('keydown', e => { if(e.key==='Escape') $('#sheet').hidden = true; });
+if(store.k) $('#keybtn').textContent = 'API key ✓';
+
+/* ── MODE 1 · relationship dial ─────────────── */
+const LISTENERS = [
+  { id:'friend',  who:'Close friend', ko:'친한 친구', style:'해체 · 반말' },
+  { id:'senior',  who:'Senior',       ko:'선배',      style:'해요체' },
+  { id:'coworker',who:'Coworker',     ko:'동료',      style:'해요체' },
+  { id:'stranger',who:'Stranger',     ko:'모르는 사람', style:'해요체 · 거리 둠' },
+  { id:'boss',    who:'Boss',         ko:'사장님',    style:'하십시오체' }
+];
+const DIAL_EXAMPLE = [
+  { ko:'나 좀 늦어', why:'No ending, no apology. Only for people you are genuinely close to.' },
+  { ko:'형, 저 조금 늦을 것 같아요', why:'해요체 plus 저 — polite but still warm. Address term 형/누나 does the work.' },
+  { ko:'저 조금 늦을 것 같아요. 먼저 시작하세요', why:'Adding what the other person should do is what makes it considerate.' },
+  { ko:'죄송합니다. 조금 늦을 것 같습니다', why:'With a stranger, apologise first — the reason comes second.' },
+  { ko:'사장님, 죄송합니다. 30분 정도 늦을 것 같습니다. 최대한 빨리 가겠습니다', why:'Grammar alone is not enough: apology → fact → what you will do. Leaving out the apology reads as rude even though nothing is wrong.' }
+];
+const dialSchema = {
+  type:'object',
+  properties:{ lines:{ type:'array', minItems:5, maxItems:5, items:{
+    type:'object', properties:{ korean:{type:'string'}, why:{type:'string'} }, required:['korean','why'] } } },
+  required:['lines']
+};
+function renderDial(lines){
+  const at = +$('#dial-range').value;
+  $('#dial-out').innerHTML = LISTENERS.map((l,i) => `
+    <div class="rung${i===at?' on':''}">
+      <div><div class="who">${l.who}</div><div class="style">${l.ko} · ${l.style}</div></div>
+      <div><div class="ko">${esc(lines[i].korean)}</div><div class="why">${esc(lines[i].why)}</div></div>
+    </div>`).join('');
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+let dialLines = DIAL_EXAMPLE.map(d => ({korean:d.ko, why:d.why}));
+function dialLabel(){
+  const l = LISTENERS[+$('#dial-range').value];
+  $('#dial-label').textContent = `${l.who} · ${l.ko}`;
+  renderDial(dialLines);
+}
+$('#dial-range').addEventListener('input', dialLabel);
+$('#dial-go').addEventListener('click', async () => {
+  const msg = $('#dial-input').value.trim();
+  if(!msg) return;
+  busy($('#dial-status'), 'Working…'); $('#dial-go').disabled = true;
+  try{
+    dialLines = (await ask(
+      'You are a Korean speech-level (화계) coach for foreign learners. Given one message, write how a Korean would actually say it to five different listeners: 1 close friend (해체), 2 senior/선배 (해요체), 3 coworker (해요체), 4 stranger (해요체, distant), 5 boss/사장님 (하십시오체). Natural, short, what a real person types — not textbook. Adjust politeness strategies (apology, hedging, address terms), not only the verb ending. "why" is one sentence of plain English explaining the social reason, not the grammar rule.',
+      msg, dialSchema)).lines;
+    $('#dial-status').textContent = '';
+    renderDial(dialLines);
+  }catch(err){ fail($('#dial-status'), err); }
+  finally{ $('#dial-go').disabled = false; }
+});
+
+/* ── MODE 2 · situation roleplay ────────────── */
+const SCENES = [
+  { id:'clinic', label:'Clinic reception 병원 접수', role:'a receptionist at a small neighbourhood clinic in Seoul', open:'어디가 불편하셔서 오셨어요?' },
+  { id:'store',  label:'First shift at a convenience store 편의점 첫 알바', role:'the store owner training a new part-timer on their first shift', open:'어서 오세요. 오늘 첫날이죠? 우선 계산부터 배워 볼게요.' },
+  { id:'landlord', label:'Calling the landlord 집주인 통화', role:'a landlord answering a call from a tenant about a broken boiler', open:'네, 여보세요. 무슨 일이세요?' },
+  { id:'team', label:'Reporting to your manager 팀장 보고', role:'a team manager at a Korean company receiving a short status report', open:'네, 어제 말한 자료는 어떻게 됐어요?' }
+];
+let scene = SCENES[0], turns = [];
+function renderScenes(){
+  $('#scenes').innerHTML = SCENES.map(s => `<button type="button" data-id="${s.id}" aria-pressed="${s.id===scene.id}">${esc(s.label)}</button>`).join('');
+  $('#scenes').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    scene = SCENES.find(s => s.id === b.dataset.id); startScene();
+  }));
+}
+function bubble(role, text){
+  const d = document.createElement('div');
+  d.className = 'msg ' + (role === 'ai' ? 'ai' : 'me');
+  d.textContent = text;
+  $('#log').appendChild(d); $('#log').scrollTop = $('#log').scrollHeight;
+  return d;
+}
+function startScene(){
+  turns = [{ role:'ai', text: scene.open }];
+  $('#log').innerHTML = '';
+  renderScenes();
+  bubble('ai', scene.open);
+}
+$('#send').addEventListener('click', send);
+$('#say').addEventListener('keydown', e => { if(e.key === 'Enter') send(); });
+async function send(){
+  const text = $('#say').value.trim();
+  if(!text) return;
+  $('#say').value = '';
+  turns.push({ role:'me', text }); bubble('me', text);
+  busy($('#chat-status'), '…'); $('#send').disabled = true;
+  const lvl = $('#level').value;
+  try{
+    const reply = await ask(
+      `You are ${scene.role}. Speak only Korean, 1–2 short sentences, like a real person in that situation. The learner is TOPIK level ${lvl}: stay inside that vocabulary and grammar range. NEVER correct their Korean and never mention mistakes — just keep the conversation going naturally and ask something back so they can reply.`,
+      turns.map(t => (t.role === 'ai' ? 'A: ' : 'B: ') + t.text).join('\n') + '\nA:'
+    );
+    turns.push({ role:'ai', text: reply }); bubble('ai', reply);
+    $('#chat-status').textContent = '';
+  }catch(err){
+    fail($('#chat-status'), err);
+    if(err.noKey){ const demo = '네, 어제부터요. 혹시 보험증 가지고 오셨어요?'; turns.push({role:'ai',text:demo}); bubble('ai', demo); }
+  }
+  finally{ $('#send').disabled = false; $('#say').focus(); }
+}
+renderScenes(); startScene();
+
+/* ── MODE 3 · review cards ──────────────────── */
+const revSchema = {
+  type:'object',
+  properties:{ cards:{ type:'array', maxItems:5, items:{
+    type:'object',
+    properties:{
+      kind:{ type:'string', enum:['wrong','odd'] },
+      label:{ type:'string' },
+      original:{ type:'string' },
+      fixed:{ type:'string' },
+      alternative:{ type:'string' },
+      why:{ type:'string' }
+    },
+    required:['kind','label','original','fixed','why'] } } },
+  required:['cards']
+};
+/* Overcorrection guard — research shows LLMs rewrite far more than the learner's
+   error. Anything that changes more than 45% of the characters is dropped:
+   we teach the learner's own sentence back to them, not a new one. */
+function changeRatio(a,b){
+  a = (a||'').replace(/\s/g,''); b = (b||'').replace(/\s/g,'');
+  if(!a.length) return 1;
+  const m = Array.from({length:a.length+1}, (_,i) => [i, ...Array(b.length).fill(0)]);
+  for(let j=0;j<=b.length;j++) m[0][j] = j;
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++)
+    m[i][j] = Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1] + (a[i-1]===b[j-1]?0:1));
+  return m[a.length][b.length] / Math.max(a.length, b.length);
+}
+const REVIEW_EXAMPLE = [
+  { kind:'odd', label:'word order · 어순', original:'배가 아파요 어제부터', fixed:'어제부터 배가 아파요', alternative:'어제부터 배가 좀 아파요', why:'Nothing here is ungrammatical. But Korean puts the time expression first, so trailing it sounds like an afterthought.' },
+  { kind:'wrong', label:'particle · 조사', original:'저는 보험증이 없어요', fixed:'저는 보험증을 안 가져왔어요', alternative:'보험증을 집에 두고 왔어요', why:'없어요 says you do not own one at all. At a clinic you mean you did not bring it today.' },
+  { kind:'odd', label:'politeness · 화용', original:'빨리 해 주세요', fixed:'혹시 빨리 될까요?', alternative:'조금만 서둘러 주실 수 있을까요?', why:'주세요 is polite, but a bare request to hurry lands as pushy. Korean softens with 혹시 and a question.' }
+];
+function renderCards(cards, kept){
+  $('#cards').innerHTML = cards.map(c => `
+    <div class="rcard ${c.kind === 'wrong' ? 'err' : 'odd'}">
+      <div class="kind">${c.kind === 'wrong' ? 'WRONG' : 'ODD BUT CORRECT'} · ${esc(c.label||'')}</div>
+      <div class="was">${esc(c.original)}</div>
+      <div class="now">${esc(c.fixed)}</div>
+      ${c.alternative ? `<div class="alt">or · ${esc(c.alternative)}</div>` : ''}
+      <div class="why">${esc(c.why)}</div>
+    </div>`).join('');
+  $('#kept').textContent = kept != null
+    ? `${kept} suggestion(s) dropped — they rewrote your sentence instead of fixing it.`
+    : 'Example review from the clinic conversation.';
+}
+renderCards(REVIEW_EXAMPLE, null);
+$('#end-chat').addEventListener('click', async () => {
+  const mine = turns.filter(t => t.role === 'me');
+  if(!mine.length){ busy($('#chat-status'), 'Say something first — then the review has material.'); return; }
+  TABS.forEach(([tt,pp]) => { const on = tt === 'tab-review'; $('#'+tt).setAttribute('aria-selected',String(on)); $('#'+pp).hidden = !on; });
+  busy($('#rev-status'), 'Reading the conversation…');
+  try{
+    const out = await ask(
+      'You review a foreign learner\'s Korean AFTER a conversation. Return at most 5 cards about the learner\'s lines (marked B) only. kind="wrong" = a real grammatical error (particle, ending, conjugation, word choice). kind="odd" = grammatically correct but a Korean would not say it that way (word order, politeness strategy, missing apology or hedge, unnatural collocation). Prefer "odd" cards — that is what nobody teaches. CRITICAL: keep the learner\'s own wording. Fix only the erroneous part; never rewrite the whole sentence, never upgrade their vocabulary. "alternative" is one other natural option. "why" is one or two sentences of plain English. "label" is a short tag like "particle · 조사".',
+      `Situation: ${scene.role}\n\n` + turns.map(t => (t.role === 'ai' ? 'A: ' : 'B: ') + t.text).join('\n'),
+      revSchema);
+    const all = out.cards || [];
+    const keep = all.filter(c => changeRatio(c.original, c.fixed) <= 0.45);
+    $('#rev-status').textContent = '';
+    if(!keep.length){ renderCards([], all.length); $('#cards').innerHTML = '<div class="card">Nothing worth correcting in that conversation. 잘하셨어요.</div>'; }
+    else renderCards(keep, all.length - keep.length);
+  }catch(err){ fail($('#rev-status'), err); }
+});
+dialLabel();
+</script>
+</body>
+</html>
