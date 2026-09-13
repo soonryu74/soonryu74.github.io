@@ -1,0 +1,383 @@
+{
+ "updated": "",
+ "groups": [
+  {
+   "id": "who",
+   "name": "세계보건기구 (WHO)",
+   "sources": [
+    {
+     "id": "who-don",
+     "name": "WHO 발생 속보 (Disease Outbreak News)",
+     "region": "국제",
+     "site": "https://www.who.int/emergencies/disease-outbreak-news",
+     "lang": "en",
+     "query": "WHO Disease Outbreak News"
+    },
+    {
+     "id": "who-news",
+     "name": "WHO 보도자료",
+     "region": "국제",
+     "rss": "https://www.who.int/rss-feeds/news-english.xml",
+     "site": "https://www.who.int/news",
+     "lang": "en",
+     "query": "World Health Organization outbreak statement"
+    },
+    {
+     "id": "who-euro",
+     "name": "WHO 유럽지역사무처 (뉴스검색)",
+     "region": "유럽",
+     "query": "WHO Europe outbreak",
+     "site": "https://www.who.int/europe",
+     "lang": "en"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "us",
+   "name": "미국 질병통제예방센터 (CDC)",
+   "sources": [
+    {
+     "id": "cdc-news",
+     "name": "美CDC 뉴스룸",
+     "region": "미주",
+     "rss": "https://tools.cdc.gov/api/v2/resources/media/316422.rss",
+     "site": "https://www.cdc.gov/media/",
+     "lang": "en"
+    },
+    {
+     "id": "cdc-mmwr",
+     "name": "美CDC MMWR (주간 이환·사망 보고)",
+     "region": "미주",
+     "site": "https://www.cdc.gov/mmwr/",
+     "lang": "en",
+     "query": "CDC MMWR report"
+    },
+    {
+     "id": "cdc-han",
+     "name": "美CDC 보건경보 (HAN)",
+     "region": "미주",
+     "rss": "https://tools.cdc.gov/api/v2/resources/media/285676.rss",
+     "site": "https://emergency.cdc.gov/han/",
+     "lang": "en",
+     "query": "CDC Health Alert Network HAN advisory"
+    },
+    {
+     "id": "cdc-travel",
+     "name": "美CDC 여행 건강 경보",
+     "region": "미주",
+     "query": "CDC travel health notice outbreak",
+     "site": "https://wwwnc.cdc.gov/travel/notices",
+     "lang": "en"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "eu",
+   "name": "유럽 질병예방통제센터 (ECDC) 등",
+   "sources": [
+    {
+     "id": "ecdc-news",
+     "name": "ECDC 뉴스·주간 위협보고(CDTR)",
+     "region": "유럽",
+     "site": "https://www.ecdc.europa.eu/en/threats-and-outbreaks",
+     "lang": "en",
+     "query": "ECDC outbreak threat assessment"
+    },
+    {
+     "id": "ecdc-cdtr",
+     "name": "ECDC CDTR (뉴스검색 보완)",
+     "region": "유럽",
+     "query": "ECDC Communicable Disease Threats Report",
+     "site": "https://www.ecdc.europa.eu/en/publications-data",
+     "lang": "en"
+    },
+    {
+     "id": "eu-nations",
+     "name": "유럽 각국 기관 (ISS·NPHO·SZU 등)",
+     "region": "유럽",
+     "query": "West Nile OR dengue OR measles outbreak Italy OR Greece OR France health institute",
+     "site": "https://www.ecdc.europa.eu/en",
+     "lang": "en"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "global",
+   "name": "국제 감시망·전문매체",
+   "sources": [
+    {
+     "id": "promed",
+     "name": "ProMED-mail (전 세계 발생 제보)",
+     "region": "국제",
+     "site": "https://promedmail.org/",
+     "lang": "en",
+     "query": "ProMED outbreak report"
+    },
+    {
+     "id": "cidrap",
+     "name": "CIDRAP (미네소타대 감염병연구정책센터)",
+     "region": "국제",
+     "rss": "https://www.cidrap.umn.edu/rss.xml",
+     "site": "https://www.cidrap.umn.edu/",
+     "lang": "en",
+     "query": "CIDRAP outbreak news"
+    },
+    {
+     "id": "outbreaknews",
+     "name": "Outbreak News Today",
+     "region": "국제",
+     "site": "https://outbreaknewstoday.com/",
+     "lang": "en",
+     "query": "outbreak news today infectious disease"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "kr",
+   "name": "국내 (질병관리청·보건당국)",
+   "sources": [
+    {
+     "id": "kdca",
+     "name": "질병관리청 보도자료·감염병 소식",
+     "region": "국내",
+     "query": "질병관리청 감염병",
+     "site": "https://www.kdca.go.kr/",
+     "lang": "ko"
+    },
+    {
+     "id": "kr-outbreak",
+     "name": "국내 감염병 발생 동향",
+     "region": "국내",
+     "query": "국내 감염병 발생 환자 증가",
+     "site": "https://npt.kdca.go.kr/",
+     "lang": "ko"
+    },
+    {
+     "id": "kr-travel",
+     "name": "해외유입 감염병·검역",
+     "region": "국내",
+     "query": "해외유입 감염병 검역 입국",
+     "site": "https://www.kdca.go.kr/",
+     "lang": "ko"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "phsm-hub",
+   "name": "사회 대응(PHSM) 기관·지침",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "who-phsm",
+     "name": "WHO PHSM 지식허브 (공중보건·사회적 조치)",
+     "region": "국제",
+     "query": "WHO public health and social measures PHSM",
+     "site": "https://phsm.who.int/",
+     "lang": "en"
+    },
+    {
+     "id": "ukhsa",
+     "name": "영국 UKHSA 발표·근거자료",
+     "region": "유럽",
+     "rss": "https://www.gov.uk/search/news-and-communications.atom?organisations%5B%5D=uk-health-security-agency",
+     "query": "UKHSA evidence review",
+     "site": "https://www.gov.uk/government/organisations/uk-health-security-agency",
+     "lang": "en"
+    },
+    {
+     "id": "ecdc-phsm",
+     "name": "ECDC 비약물적 중재(NPI) 지침",
+     "region": "유럽",
+     "query": "ECDC non-pharmaceutical interventions guidance",
+     "site": "https://www.ecdc.europa.eu/en/publications-data",
+     "lang": "en"
+    },
+    {
+     "id": "kr-phsm",
+     "name": "국내 방역·사회적 거리두기 정책",
+     "region": "국내",
+     "query": "방역 사회적 거리두기 정책 감염병 대응",
+     "site": "https://www.kdca.go.kr/",
+     "lang": "ko"
+    }
+   ]
+  },
+  {
+   "id": "phsm-research",
+   "name": "사회 대응 연구 논문 (Europe PMC·medRxiv)",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "epmc-phsm",
+     "name": "논문: 공중보건·사회적 조치(PHSM) 일반",
+     "region": "연구",
+     "epmc": "(\"public health and social measures\" OR \"public health social measures\") AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-npi",
+     "name": "논문: 비약물적 중재(NPI)·거리두기 효과",
+     "region": "연구",
+     "epmc": "(\"non-pharmaceutical intervention*\" OR \"physical distancing\" OR \"social distancing\") AND (effectiveness OR impact) AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-rcce",
+     "name": "논문: 위험소통·주민참여(RCCE)",
+     "region": "연구",
+     "epmc": "(\"risk communication\" OR \"community engagement\" OR \"infodemic\") AND (outbreak OR epidemic OR pandemic) AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-adherence",
+     "name": "논문: 수용성·순응도·방역 피로",
+     "region": "연구",
+     "epmc": "(adherence OR compliance OR \"pandemic fatigue\" OR acceptability) AND (\"public health measures\" OR quarantine OR isolation OR \"face mask*\") AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-social",
+     "name": "논문: 사회·경제 영향과 형평성",
+     "region": "연구",
+     "epmc": "(inequit* OR \"socioeconomic impact\" OR \"mental health\") AND (lockdown OR \"school closure*\" OR \"travel restriction*\") AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "medrxiv-phsm",
+     "name": "프리프린트: medRxiv 역학·보건정책",
+     "region": "연구",
+     "rss": "https://connect.medrxiv.org/medrxiv_xml.php?subject=epidemiology",
+     "filter": [
+      "distancing",
+      "mask",
+      "lockdown",
+      "closure",
+      "quarantine",
+      "isolation",
+      "travel restriction",
+      "behaviour",
+      "behavior",
+      "adherence",
+      "communication",
+      "non-pharmaceutical",
+      "policy"
+     ],
+     "site": "https://www.medrxiv.org/",
+     "lang": "en"
+    }
+   ]
+  },
+  {
+   "id": "ncd-org",
+   "name": "만성질환 기관·통계",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "who-ncd",
+     "name": "WHO 비감염성질환(NCD) 소식",
+     "region": "국제",
+     "query": "WHO noncommunicable diseases NCD report",
+     "site": "https://www.who.int/health-topics/noncommunicable-diseases",
+     "lang": "en"
+    },
+    {
+     "id": "cdc-ncd",
+     "name": "美CDC 만성질환·건강행태",
+     "region": "미주",
+     "query": "CDC chronic disease obesity diabetes hypertension data",
+     "site": "https://www.cdc.gov/chronic-disease/",
+     "lang": "en"
+    },
+    {
+     "id": "kdca-ncd",
+     "name": "질병관리청 만성질환·건강통계",
+     "region": "국내",
+     "query": "질병관리청 만성질환 건강통계 국민건강영양조사",
+     "site": "https://www.kdca.go.kr/",
+     "lang": "ko"
+    },
+    {
+     "id": "kr-ncd-policy",
+     "name": "국내 만성질환 관리 정책",
+     "region": "국내",
+     "query": "고혈압 당뇨병 만성질환 관리 사업 정책 보건복지부",
+     "site": "https://www.mohw.go.kr/",
+     "lang": "ko"
+    },
+    {
+     "id": "ncd-alliance",
+     "name": "국제 NCD 동향·캠페인",
+     "region": "국제",
+     "query": "noncommunicable disease prevention policy global",
+     "site": "https://ncdalliance.org/",
+     "lang": "en"
+    }
+   ]
+  },
+  {
+   "id": "ncd-research",
+   "name": "만성질환 연구 논문 (Europe PMC)",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "epmc-ncd",
+     "name": "논문: 만성질환 예방·관리 정책",
+     "region": "연구",
+     "epmc": "(\"noncommunicable disease*\" OR \"chronic disease*\") AND (prevention OR policy OR \"population health\") AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-cvd",
+     "name": "논문: 심뇌혈관질환·고혈압",
+     "region": "연구",
+     "epmc": "(\"cardiovascular disease\" OR hypertension OR stroke) AND (screening OR management OR \"risk factor*\") AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-dm",
+     "name": "논문: 당뇨병·비만·대사질환",
+     "region": "연구",
+     "epmc": "(\"type 2 diabetes\" OR obesity OR \"metabolic syndrome\") AND (prevention OR intervention OR trend*) AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-cancer",
+     "name": "논문: 암 검진·예방",
+     "region": "연구",
+     "epmc": "(\"cancer screening\" OR \"cancer prevention\") AND (program* OR uptake OR guideline*) AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-behav",
+     "name": "논문: 건강행태(흡연·음주·신체활동·식이)",
+     "region": "연구",
+     "epmc": "(smoking OR \"alcohol use\" OR \"physical activity\" OR diet) AND (\"chronic disease*\" OR mortality OR \"risk factor*\") AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-aging",
+     "name": "논문: 노인·다질환·정신건강",
+     "region": "연구",
+     "epmc": "(multimorbidity OR \"older adults\" OR depression) AND (\"chronic disease*\" OR \"primary care\") AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en"
+    }
+   ]
+  }
+ ]
+}
