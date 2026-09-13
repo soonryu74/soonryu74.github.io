@@ -38,11 +38,39 @@ export default function SpotPage() {
   const dist = me ? distanceKm(me.lat, me.lng, spot.lat, spot.lng) : null
   const regionLabel = REGIONS.find((r) => r.id === spot.region)?.label ?? spot.region
 
-  const copyKo = async () => {
+  // 공유: 이름(영·한) + 요금·시간 + 지도 링크 + 이 화면 링크를 한 덩어리로
+  // 카카오톡 등으로 보냈을 때 받는 사람이 바로 찾아갈 수 있어야 한다
+  const shareText = () => {
+    const url = `${window.location.origin}${import.meta.env.BASE_URL}#/spot/${spot.id}`
+    const lines = [
+      `${spot.name} ${spot.nameKo}`,
+      [
+        spot.fee.adult === 0 ? 'Free entry' : `Admission ${formatKrw(spot.fee.adult)}`,
+        spot.hours ? `${spot.hours.open}-${spot.hours.close}` : 'Always open',
+        spot.closedDays.length > 0 ? `Closed ${closedDaysLabel(spot)}` : closedDaysLabel(spot),
+      ].join(' · '),
+      `Map: https://www.google.com/maps/search/?api=1&query=${spot.lat},${spot.lng}`,
+      `Korea Now: ${url}`,
+    ]
+    return lines.join('\n')
+  }
+
+  const share = async () => {
+    const text = shareText()
+    // 휴대폰은 기본 공유창(카카오톡·메시지 등)을 띄우고, 안 되면 클립보드로
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: spot.name, text })
+        return
+      } catch (e) {
+        // 사용자가 공유창을 닫은 경우는 조용히 넘어간다
+        if ((e as DOMException)?.name === 'AbortError') return
+      }
+    }
     try {
-      await navigator.clipboard.writeText(spot.nameKo)
+      await navigator.clipboard.writeText(text)
       setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
+      setTimeout(() => setCopied(false), 1800)
     } catch {
       /* 클립보드 미지원 */
     }
@@ -75,7 +103,9 @@ export default function SpotPage() {
           <h2>{CATEGORY_ICON[spot.category]} {spot.name}</h2>
           <div className="ko-row">
             <span>{spot.nameKo}</span>
-            <button className="copy-btn" onClick={copyKo}>{copied ? 'Copied ✓' : 'Copy'}</button>
+            <button className="copy-btn" onClick={share} aria-label="Share this spot">
+              {copied ? 'Copied ✓' : '↗ Share'}
+            </button>
             <button className="copy-btn" onClick={() => setShowKo(true)}>🚕 Show to driver</button>
             <span>· {CATEGORY_LABEL[spot.category]} · {regionLabel}</span>
           </div>
