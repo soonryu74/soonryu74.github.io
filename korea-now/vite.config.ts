@@ -1,11 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { BASE, BASE_SLASH, ORIGIN } from './site.config.mjs'
 
-// GitHub Pages 하위 경로(/korea-now/)에 배포되므로 base를 고정한다.
+// 배포 주소는 site.config.mjs 한 곳에서만 정한다. 여기에 경로를 직접 적지 말 것.
 export default defineConfig({
   plugins: [
     react(),
+    // index.html 의 %BASE% / %ORIGIN% 을 실제 값으로 바꾼다.
+    {
+      name: 'site-vars',
+      transformIndexHtml: (html: string) =>
+        html.replaceAll('%BASE%', BASE).replaceAll('%ORIGIN%', ORIGIN),
+    },
     // PWA: 홈화면 설치 + 오프라인. 앱 껍데기는 미리 저장, 지도 타일은 본 것만 캐시.
     VitePWA({
       registerType: 'autoUpdate',
@@ -18,8 +25,8 @@ export default defineConfig({
         background_color: '#f6f7f8',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/korea-now/',
-        scope: '/korea-now/',
+        start_url: BASE_SLASH,
+        scope: BASE_SLASH,
         lang: 'en',
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
@@ -29,10 +36,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        navigateFallback: '/korea-now/index.html',
+        navigateFallback: `${BASE_SLASH}index.html`,
         // 관광지별 정적 페이지는 앱 껍데기로 가로채지 않는다.
         // 검색으로 들어온 사람이 그 페이지를 그대로 봐야 하기 때문.
-        navigateFallbackDenylist: [/^\/korea-now\/spot\//],
+        navigateFallbackDenylist: [new RegExp(`^${BASE}/spot/`)],
         runtimeCaching: [
           {
             // 지도 타일: 한 번 본 타일은 30일 보관 (최대 300장)
@@ -68,6 +75,6 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/korea-now/',
+  base: BASE_SLASH,
   build: { outDir: 'dist', sourcemap: false },
 })

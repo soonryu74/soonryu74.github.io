@@ -13,12 +13,12 @@ import { mkdir, writeFile, rm } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { build as esbuild } from 'esbuild'
+import { BASE, ORIGIN } from '../site.config.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..')
 const dist = join(root, 'dist')
-const SITE = 'https://soonryu74.github.io'
-const BASE = '/korea-now'
+const SITE = ORIGIN   // 배포 주소는 site.config.mjs 한 곳에서만 정한다
 
 // ── 데이터 읽기 ──────────────────────────────────────────────
 // spots.ts는 타입스크립트라 그냥 import할 수 없다. esbuild로 잠깐 옮겨 담아 읽는다.
@@ -346,6 +346,15 @@ for (const s of enriched) {
 }
 
 await writeFile(join(dist, 'spot', 'index.html'), hubPage(enriched, REGIONS), 'utf8')
+
+// robots.txt — 도메인 루트에 올릴 때를 위한 것.
+// 하위 경로(/korea-now/)로 배포하면 크롤러는 사이트 루트의 robots.txt만 읽으므로 이 파일은 무시된다.
+// 둘 중 어디에 올리든 맞도록 함께 만들어 둔다.
+await writeFile(
+  join(dist, 'robots.txt'),
+  `User-agent: *\nAllow: /\n\nSitemap: ${SITE}${BASE}/sitemap.xml\n`,
+  'utf8',
+)
 
 // 사이트맵 — 앱 첫 화면, 목록, 장소 55개
 const today = new Date().toISOString().slice(0, 10)
