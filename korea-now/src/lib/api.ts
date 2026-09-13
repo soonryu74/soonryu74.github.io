@@ -152,7 +152,8 @@ function seoulToIso(s: string): string {
 }
 
 // 환율 — 실패 시 데모값(표시에 "demo" 라벨)
-const DEMO_FX: FxRate = { usdKrw: 1380, jpyKrw: 920, cnyKrw: 190, eurKrw: 1500, date: 'demo', source: 'demo' }
+// 서버를 못 부를 때만 쓰는 대략값. 2026-09-11 고시 기준.
+const DEMO_FX: FxRate = { usdKrw: 1338, jpyKrw: 866, cnyKrw: 199, eurKrw: 1554, date: 'demo', source: 'demo' }
 
 export async function fetchFx(): Promise<FxRate> {
   if (!supabase) return DEMO_FX
