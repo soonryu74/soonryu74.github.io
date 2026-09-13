@@ -256,6 +256,65 @@ https://apis.data.go.kr/B551011/TatsCnctrRateService/tatsCnctrRatedList?serviceK
 
 ---
 
+## 7. 한국관광 데이터랩 — 기초지자체 방문자수 (`DataLabService`)
+
+한국관광 데이터랩(datalab.visitkorea.or.kr)의 방문자 데이터를 공공데이터포털에서 API로 받는 길.
+**외국인 방문자 수가 내국인과 분리되어 나온다**는 점이 이 앱에 중요하다.
+
+### 데이터셋 / 활용신청 (검증됨 — 2026-09-13 실호출)
+- 공공데이터포털: `한국관광공사_빅데이터_지역별 방문자수_GW` (data.go.kr/data/15101972/openapi.do)
+- **API마다 활용신청이 따로 필요하다.** 같은 인증키로 다른 API가 되더라도, 신청 전에는
+  `SERVICE_KEY_IS_NOT_REGISTERED_ERROR / 등록되지 않은 서비스키(코드 30)` 가 온다. 키를 새로 받을 일은 아니다.
+- 개발계정 자동승인, 무료, **1,000건/일**
+
+### 오퍼레이션 (검증됨 — 실호출로 확인, 이 둘뿐)
+| 오퍼레이션 | 단위 | 하루 응답 건수 |
+|---|---|---|
+| `metcoRegnVisitrDDList` | 광역지자체(17개 시도) | 50건 |
+| `locgoRegnVisitrDDList` | 기초지자체(299개 시군구) | 807건 |
+
+없는 것으로 확인된 이름(`NO_OPENAPI_SERVICE_ERROR`): `metcoRegnTvlrDDList`, `locgoRegnTvlrDDList`,
+`locgoRegnCnsmDDList`, `metcoRegnNavgDDList`. 소비·내비게이션 데이터는 이 서비스에 없다.
+
+### 베이스 URL / 파라미터 (검증됨)
+```
+https://apis.data.go.kr/B551011/DataLabService/locgoRegnVisitrDDList
+  ?serviceKey=<URL 인코딩된 키>&numOfRows=6000&pageNo=1
+  &MobileOS=ETC&MobileApp=<앱이름>&_type=json
+  &startYmd=20260701&endYmd=20260707
+```
+- `startYmd`/`endYmd` 로 **구간 조회가 된다.** 일주일이면 807 × 7 = 5,649건이 한 번에 온다.
+  하루씩 부르면 호출 수만 7배가 되니 주 단위로 끊는 게 맞다.
+- `numOfRows` 를 구간 총건수보다 크게 줘도 잘린 응답은 오지 않는다(실측 numOfRows=1000 요청에 807건 전부 반환).
+
+### 응답 필드 (검증됨)
+| 필드 | 뜻 |
+|---|---|
+| `signguCode` / `signguNm` | 시군구 법정동 코드 / 이름 (광역은 `areaCode`/`areaNm`) |
+| `daywkDivCd` / `daywkDivNm` | 요일 코드 / 이름(`월요일`…`일요일`) |
+| `touDivCd` / `touDivNm` | **1=현지인(a), 2=외지인(b), 3=외국인(c)** |
+| `touNum` | 추정 방문자 수 (실수. 예: `35962.44999999998`) |
+| `baseYmd` | 기준일 |
+
+### 갱신 지연 (검증됨 — 2026-09-13 조회)
+- 최신 데이터는 **2026-08-14**까지. 그 이후 날짜는 `totalCount: 0` 이 온다.
+- 즉 **약 한 달이 밀린다.** 오늘 날짜로 부르면 빈 응답이 오니, 끝 날짜를 한 달 전으로 잡을 것.
+- 실시간 혼잡도 용도로는 못 쓴다. 요일·계절 같은 **패턴 분석용**이다.
+
+### 출처 표기
+내국인은 KT, **외국인은 SK텔레콤** 이동통신 데이터 기반 추정치.
+시군구 단위 값이라 개별 관광지 혼잡도와 같지 않다. 앱에서는 '경향'이라고 명시할 것.
+
+### 앱에서 쓰는 법 (korea-now)
+1. `scripts/fetch-visitors.mjs` — 12주치를 받아 `.cache/visitors.json` 에 저장 (주 단위 12회 호출)
+2. `scripts/gen-rhythm.mjs` — 외국인(touDivCd=3)만 골라 시군구×요일 지수(평균=100)로 요약 →
+   `src/data/visitorRhythm.ts` (22개 시군구, 앱이 쓰는 곳만)
+3. 런타임에는 API를 부르지 않는다. 한 달에 한 번 다시 돌리면 된다.
+
+검증 상태: **검증됨** (엔드포인트·파라미터·응답필드·갱신지연 실호출 확인, 2026-09-13)
+
+---
+
 ## 종합 권고 (앱 아키텍처 관점)
 | 데이터 | API | 브라우저 직접 호출 | 프록시 필요 이유 |
 |---|---|---|---|
@@ -265,5 +324,6 @@ https://apis.data.go.kr/B551011/TatsCnctrRateService/tatsCnctrRatedList?serviceK
 | 환율 | koreaexim AP01 | 불가(CORS 없음) | 하루 1회 캐시 |
 | 전국 혼잡 예측 | TatsCnctrRateService | 미확인(apis.data.go.kr와 동일 게이트웨이 → 가능 추정) | 일 1회 캐시 |
 | 지도 | Leaflet+영문 타일 / Google JS | 가능 | — |
+| 요일별 방문 패턴 | DataLabService | 부를 일 없음 | 빌드 때 정적 파일로 굽는다(월 1회 갱신) |
 
 프록시 1개(Cloudflare Worker 무료 10만 req/일)로 위 4종을 라우팅하고, KV/캐시로 서울 60초·환율 24시간·집중률 24시간 TTL을 두면 개발계정 쿼터 내에서 운영 가능.

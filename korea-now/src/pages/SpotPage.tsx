@@ -10,6 +10,7 @@ import { addStamp, hasStamp, removeStamp } from '../lib/stamps'
 import CongestionBadge from '../components/CongestionBadge'
 import Timeline from '../components/Timeline'
 import SubwayCard from '../components/SubwayCard'
+import QuietDay from '../components/QuietDay'
 
 export default function SpotPage() {
   const { id = '' } = useParams()
@@ -162,6 +163,8 @@ export default function SpotPage() {
           <div className="source-note">Korea Tourism Organization forecast from mobile-carrier data. Pick a low bar.</div>
         </div>
       )}
+
+      <QuietDay spot={spot} />
 
       <div className="card">
         <div className="info-grid">

@@ -272,3 +272,16 @@ button.pill:active { transform: scale(.96); }
 }
 .splash.open .splash-skip { opacity: 0; transition: opacity .25s; }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* 요일별 붐빔 (QuietDay) */
+.quiet-head { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+.quiet-head strong { font-size: 20px; }
+.quiet-delta { font-size: 13px; color: #15803d; font-weight: 700; }
+.quiet-bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; align-items: end; margin-top: 10px; }
+.quiet-bars .qd { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.quiet-bars .bar { width: 100%; border-radius: 3px 3px 1px 1px; background: var(--line); }
+.quiet-bars .dow { font-size: 10px; color: var(--muted); }
+.quiet-bars .qd.best .bar { background: #15803d; }
+.quiet-bars .qd.best .dow { color: #15803d; font-weight: 800; }
+.quiet-bars .qd.closed .bar { background: repeating-linear-gradient(45deg, var(--line) 0 3px, transparent 3px 6px); }
+.quiet-warn { font-size: 12px; color: var(--muted); margin-top: 8px; }
