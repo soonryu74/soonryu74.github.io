@@ -1,4 +1,6 @@
+import { useCallback, useState } from 'react'
 import { NavLink, Route, Routes, useParams } from 'react-router-dom'
+import Splash, { shouldShowSplash } from './components/Splash'
 import { AppProvider } from './lib/state'
 import NowPage from './pages/NowPage'
 import SpotPage from './pages/SpotPage'
@@ -13,8 +15,12 @@ function SpotRoute() {
 }
 
 export default function App() {
+  const [splash, setSplash] = useState(shouldShowSplash)
+  const hideSplash = useCallback(() => setSplash(false), [])
+
   return (
     <AppProvider>
+      {splash && <Splash onDone={hideSplash} />}
       <div className="app">
         <Routes>
           <Route path="/" element={<NowPage />} />
