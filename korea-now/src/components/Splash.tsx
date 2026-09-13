@@ -6,11 +6,15 @@
 //  2) 볼 때마다 나오면 성가시다. 한 번 본 뒤에는 그 세션 동안 다시 나오지 않고,
 //     아무 곳이나 누르면 즉시 건너뛴다.
 import { useCallback, useEffect, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 import Taegukgi from './Taegukgi'
 import { strikeGong, unlockSound } from '../lib/gong'
 
 const SEEN_KEY = 'korea-now:splash-seen'
 export const SPLASH_MS = 2400
+
+// 깃면을 세로로 몇 조각 내어 나부끼게 할지. 많을수록 부드럽지만 그릴 것이 늘어난다.
+const STRIPS = 26
 
 /** 이번에 시작 화면을 보여줄지 */
 export function shouldShowSplash(): boolean {
@@ -71,8 +75,15 @@ export default function Splash({ onDone }: { onDone: () => void }) {
       <div className="splash-glow" />
       <div className="splash-vignette" />
       <div className="splash-flag">
-        <Taegukgi className="flag-svg" />
-        <div className="flag-sheen" />
+        {/* 깃대에 매단 것이 아니라 허공에서 나부끼는 천처럼 보여야 한다.
+            한 장을 통째로 돌리면 한쪽 끝이 고정된 것처럼 보이므로,
+            세로로 잘라 각 조각이 조금씩 늦게 움직이게 한다. 그러면 주름이 왼쪽에서
+            오른쪽으로 흘러간다. 밝기도 같이 흔들어 접힌 면의 명암을 만든다. */}
+        {Array.from({ length: STRIPS }, (_, i) => (
+          <div key={i} className="flag-strip" style={{ '--i': i } as CSSProperties}>
+            <Taegukgi className="flag-svg" />
+          </div>
+        ))}
       </div>
       <div className="splash-skip">tap to skip</div>
     </div>

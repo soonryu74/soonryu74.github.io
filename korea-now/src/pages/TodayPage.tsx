@@ -84,6 +84,8 @@ export default function TodayPage() {
       {freeOpen.map((s) => (
         <SpotCard key={s.id} spot={s} congestion={congestion[s.id]} />
       ))}
+
+      <Link className="intro-relink" to="/intro"><u>What is this app?</u></Link>
     </div>
   )
 }
