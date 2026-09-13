@@ -13,19 +13,20 @@ import { mkdir, writeFile, rm } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { build as esbuild } from 'esbuild'
+import { BASE, ORIGIN } from '../site.config.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..')
 const dist = join(root, 'dist')
-const SITE = 'https://soonryu74.github.io'
-const BASE = '/korea-now'
+const SITE = ORIGIN   // 배포 주소는 site.config.mjs 한 곳에서만 정한다
 
 // ── 데이터 읽기 ──────────────────────────────────────────────
 // spots.ts는 타입스크립트라 그냥 import할 수 없다. esbuild로 잠깐 옮겨 담아 읽는다.
-async function loadSpots() {
-  const tmp = join(dist, '_spots.tmp.mjs')
+// 타입스크립트 원본을 잠깐 자바스크립트로 바꿔 node 가 읽게 한다.
+async function loadTs(relPath) {
+  const tmp = join(dist, `_${relPath.replace(/[^a-z0-9]/gi, '_')}.tmp.mjs`)
   await esbuild({
-    entryPoints: [join(root, 'src/data/spots.ts')],
+    entryPoints: [join(root, relPath)],
     outfile: tmp,
     bundle: true,
     format: 'esm',
@@ -89,18 +90,41 @@ footer a{color:var(--faint)}
 a{color:var(--teal-deep)}
 `
 
-function spotPage(s, all, dist2) {
+function quietDayRow(s, rhythm) {
+  const r = rhythm[s.lDong?.signgu ?? '']
+  if (!r) return { row: '', line: '' }
+  // 데이터랩 배열은 월요일부터, closedDays 는 일요일이 0 이다.
+  const NAME = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const closed = new Set(s.closedDays ?? [])
+  const days = r.idx.map((index, i) => ({ jsDay: (i + 1) % 7, index }))
+  const open = days.filter((d) => !closed.has(d.jsDay))
+  if (!open.length) return { row: '', line: '' }
+  const best = open.reduce((a, b) => (b.index < a.index ? b : a))
+  const busiest = open.reduce((a, b) => (b.index > a.index ? b : a))
+  const delta = 100 - best.index
+  const note = delta > 0 ? ` — about ${delta}% fewer foreign visitors than an average day` : ''
+  return {
+    row: `<div class="row"><dt>Quietest day</dt><dd>${esc(NAME[best.jsDay])}${esc(note)}<small>Busiest: ${esc(
+      NAME[busiest.jsDay],
+    )}. Based on Korea Tourism Data Lab foreign-visitor counts for ${esc(r.gu)}.</small></dd></div>`,
+    line: `${NAME[best.jsDay]} is usually the quietest day to visit; ${NAME[busiest.jsDay]} is the busiest.`,
+  }
+}
+
+function spotPage(s, all, dist2, rhythm) {
   const url = `${SITE}${BASE}/spot/${s.id}/`
   // 앱으로 들어가는 링크는 상대 주소여야 한다. 절대 주소로 두면 미리보기나 다른 호스트에서 깨진다.
   const appUrl = `${BASE}/#/spot/${s.id}`
   const fee = won(s.fee.adult)
   const hours = s.hours ? `${s.hours.open} – ${s.hours.close}` : 'Open at any hour'
   const closed = closedLabel(s)
+  const quiet = quietDayRow(s, rhythm)
 
   const title = `${s.name} — hours, admission & when to go | Korea Now`
   const desc =
     `${s.name} (${s.nameKo}): admission ${fee}, open ${hours}. ` +
     `Closed ${s.closedDays.length ? closed.split(' · ')[0] : 'never'}. ` +
+    (quiet.line ? `${quiet.line} ` : '') +
     `See how crowded it is right now before you go.`
 
   // 가까운 곳 5군데 — 사람에게도 쓸모 있고, 검색엔진이 사이트를 훑는 길도 된다
@@ -199,6 +223,7 @@ function spotPage(s, all, dist2) {
     s.hoursNote ? `<small>${esc(s.hoursNote)}</small>` : ''
   }</dd></div>
   <div class="row"><dt>Closed</dt><dd>${esc(closed)}</dd></div>
+  ${quiet.row}
   <div class="row"><dt>Payment</dt><dd>${
     s.cardOk ? 'Cards accepted' : 'Cash only — bring small bills'
   }</dd></div>
@@ -301,7 +326,8 @@ function km(a, b) {
   return 2 * R * Math.asin(Math.sqrt(x))
 }
 
-const { SPOTS, REGIONS, CATEGORY_LABEL } = await loadSpots()
+const { SPOTS, REGIONS, CATEGORY_LABEL } = await loadTs('src/data/spots.ts')
+const { VISITOR_RHYTHM } = await loadTs('src/data/visitorRhythm.ts')
 const regionLabel = Object.fromEntries(REGIONS.map((r) => [r.id, r.label]))
 
 const enriched = SPOTS.map((s) => ({
@@ -316,10 +342,19 @@ for (const s of enriched) {
     .sort((a, b) => a.km - b.km)
   const dir = join(dist, 'spot', s.id)
   await mkdir(dir, { recursive: true })
-  await writeFile(join(dir, 'index.html'), spotPage(s, enriched, near), 'utf8')
+  await writeFile(join(dir, 'index.html'), spotPage(s, enriched, near, VISITOR_RHYTHM), 'utf8')
 }
 
 await writeFile(join(dist, 'spot', 'index.html'), hubPage(enriched, REGIONS), 'utf8')
+
+// robots.txt — 도메인 루트에 올릴 때를 위한 것.
+// 하위 경로(/korea-now/)로 배포하면 크롤러는 사이트 루트의 robots.txt만 읽으므로 이 파일은 무시된다.
+// 둘 중 어디에 올리든 맞도록 함께 만들어 둔다.
+await writeFile(
+  join(dist, 'robots.txt'),
+  `User-agent: *\nAllow: /\n\nSitemap: ${SITE}${BASE}/sitemap.xml\n`,
+  'utf8',
+)
 
 // 사이트맵 — 앱 첫 화면, 목록, 장소 55개
 const today = new Date().toISOString().slice(0, 10)

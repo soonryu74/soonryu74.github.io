@@ -70,7 +70,7 @@ export default function TodayPage() {
           <div className="fx-grid">
             <div>USD <b>${fmt(n / fx.usdKrw)}</b></div>
             <div>JPY <b>¥{fmt((n / fx.jpyKrw) * 100, 0)}</b></div>
-            <div>CNY <b>¥{fmt(n / fx.cnyKrw)}</b></div>
+            <div>CNY <b>CN¥{fmt(n / fx.cnyKrw)}</b></div>
             <div>EUR <b>€{fmt(n / fx.eurKrw)}</b></div>
           </div>
         )}
@@ -84,6 +84,8 @@ export default function TodayPage() {
       {freeOpen.map((s) => (
         <SpotCard key={s.id} spot={s} congestion={congestion[s.id]} />
       ))}
+
+      <Link className="intro-relink" to="/intro"><u>What is this app?</u></Link>
     </div>
   )
 }
