@@ -22,6 +22,7 @@ body[data-kind="phsm"]    { --navy:#0d6e6d; --navy-d:#095251; --teal:#bf560c; --
 body[data-kind="chronic"] { --navy:#146c3a; --navy-d:#0e5029; --teal:#bf560c; --tint:#fdf1e3; }
 body[data-kind="climate"] { --navy:#0d5c8c; --navy-d:#09456a; --teal:#bf560c; --tint:#fdf1e3; }
 *{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;
   font-size:16.5px;line-height:1.68}
@@ -60,7 +61,7 @@ button{font-family:inherit}
   padding:18px 20px;background:#fff}
 .issue-card .ik{font-size:.82rem;font-weight:800;letter-spacing:0;color:var(--ia,var(--teal))}
 .issue-card .it{font-family:"Nanum Myeongjo",serif;font-size:1.28rem;font-weight:800;color:var(--ic,var(--navy));margin:5px 0 3px}
-.issue-card .im{font-size:.84rem;color:var(--muted)}
+.issue-card .imeta{font-size:.84rem;color:var(--muted);white-space:normal;line-height:1.5}
 .issue-card .il{font-size:.96rem;color:#3d4753;margin:10px 0 0;line-height:1.6}
 .issue-card .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .rev-head{background:var(--navy);color:#fff;border-radius:14px 14px 0 0;padding:22px 24px}
@@ -665,7 +666,7 @@ function issueCard(r, i, pre){
   return `<div class="issue-card" style="--ic:${c};--ia:${a}">
       <div class="ik">${esc(r.kindName)}</div>
       <div class="it">${esc(r.title)}</div>
-      <div class="im">${esc(r.issue)} · ${esc(r.date)} · ${esc(r.org)}</div>
+      <div class="imeta">${esc(r.issue)} · ${esc(r.date)} · ${esc(r.org)}</div>
       <p class="il">${esc(r.tagline || '')}</p>
       <div class="acts">
         <a class="btn sm pri" href="issues/${esc(r.file)}" target="_blank" rel="noopener">뉴스레터 열기</a>
@@ -905,7 +906,7 @@ function renderMine(){
     return `<div class="issue-card" style="--ic:${c};--ia:${a}">
       <div class="ik">${esc((KINDS[x.kind] || {}).title || '')}</div>
       <div class="it">${esc(x.meta.title || '제목 없음')}</div>
-      <div class="im">${esc(x.meta.issue || '')} · 저장 ${esc(x.savedAt)} · 주제 ${x.draft.topics.length}개</div>
+      <div class="imeta">${esc(x.meta.issue || '')} · 저장 ${esc(x.savedAt)} · 주제 ${x.draft.topics.length}개</div>
       <p class="il">${esc(x.draft.tagline || '')}</p>
       <div class="acts">
         <button class="btn sm pri" data-mineopen="${i}">열어서 고치기</button>
