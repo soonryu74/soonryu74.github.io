@@ -29,7 +29,8 @@ KINDS = {
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
-         'family=Noto+Sans+KR:wght@400;500;700;800&family=Nanum+Myeongjo:wght@700;800&display=swap">')
+         'family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">'
+         '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">')
 e = lambda s: html.escape(str(s or ""), quote=True)
 
 def make_qr(url, out_path, brand="#12395f"):
@@ -59,6 +60,24 @@ def refs_block(refs):
         items.append(f"<li>{e(head)}" + (f' <a href="{e(link)}" target="_blank" rel="noopener">원문</a>' if link else "") + "</li>")
     return (f'<details class="refs"><summary>출처 {len(items)}건</summary>'
             f'<ol>{"".join(items)}</ol></details>')
+
+def src_card(t):
+    c = t.get("card") or {}
+    if not c.get("url"): return ""
+    img = f'<img src="{e(c["image"])}" alt="" loading="lazy">' if c.get("image") else ""
+    return f'''<div class="srccard">{img}
+      <div class="sc-b">
+        <div class="sc-site">원문 · {e(c.get("site",""))}</div>
+        <div class="sc-t">{e(c.get("title",""))}</div>
+        {f'<div class="sc-d">{e(c.get("desc"))}</div>' if c.get("desc") else ""}
+        <a href="{e(c["url"])}" target="_blank" rel="noopener">원문 보기 →</a>
+      </div></div>'''
+
+def profile_table(t):
+    rows = t.get("profile") or []
+    if not rows: return ""
+    body = "".join(f'<dt>{e(r["k"])}</dt><dd>{e(r["v"])}</dd>' for r in rows)
+    return f'<div class="profile"><h5>질병 개요</h5><dl>{body}</dl></div>'
 
 def paper(data):
     k = KINDS[data["kind"]]
@@ -96,9 +115,11 @@ def paper(data):
       </div>
       {f'<div class="topic-src">출처 <b>{e(" · ".join(t.get("sources") or []))}</b></div>' if t.get("sources") else ''}
       {f'<p class="topic-lead">{e(t.get("headline"))}</p>' if t.get("headline") else ''}
+      {src_card(t)}
       <div class="sec"><h4>{e(k["secs"][0])}</h4>{ul(t.get("situation"))}</div>
       <div class="sec"><h4>{e(k["secs"][1])}</h4>{ul(t.get("assess"))}</div>
       <div class="sec"><h4>{e(k["secs"][2])}</h4>{ul(t.get("korea"))}</div>
+      {profile_table(t)}
       {refs_block(t.get("refs"))}
     </section>''' for i, t in enumerate(d["topics"]))
 
@@ -163,7 +184,7 @@ def page(data, others):
 <style>
   :root{{ --bar-brand:{k["brand"]}; --bar-accent:{k["accent"]}; }}
   body{{ margin:0; background:#eef1f5; color:#191f28;
-    font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; }}
+    font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif; }}
   .bar{{ position:sticky; top:0; z-index:20; background:var(--bar-brand); color:#fff;
     display:flex; gap:8px; align-items:center; flex-wrap:wrap;
     padding:10px 16px; box-shadow:0 1px 8px rgba(0,0,0,.18); }}
@@ -267,7 +288,7 @@ def index_page(rows):
 <style>
  :root{{ --ink:#191f28; --muted:#6d7885; --line:#dde2e9; }}
  body{{ margin:0; background:#eef1f5; color:var(--ink);
-   font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; font-size:17px; }}
+   font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif; font-size:17px; }}
  .bar{{ background:#12395f; color:#fff; padding:12px 16px; display:flex; gap:10px; align-items:center; }}
  .bar a{{ color:#fff; text-decoration:none; font-weight:700; background:rgba(255,255,255,.14);
    padding:7px 12px; border-radius:8px; font-size:.92rem; }}
