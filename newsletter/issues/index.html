@@ -34,7 +34,8 @@
 </style>
 </head>
 <body>
-<nav class="bar"><a href="../">← 뉴스레터 메이커</a><a href="./" id="allLink" hidden>전체 뉴스레터 보기</a></nav>
+<nav class="bar"><a href="../">← 뉴스레터 메이커</a><a href="./" id="allLink" hidden>전체 뉴스레터 보기</a>
+  <a href="../subscribe.html" id="subLink" style="margin-left:auto">구독 신청</a></nav>
 <div class="wrap">
   <h1 id="listTitle">발간한 뉴스레터</h1>
   <p class="sub" id="listSub">뉴스레터 메이커로 만든 호입니다. 서식과 구성을 그대로 가져다 새 호를 만들 수 있습니다.</p>
@@ -83,6 +84,7 @@
     document.getElementById('listTitle').textContent = NAMES[series];
     document.getElementById('listSub').textContent = shown + '개 호가 발간되었습니다. 구독을 원하시면 발행 기관으로 문의해 주세요.';
     document.getElementById('allLink').hidden = false;
+    document.getElementById('subLink').href = '../subscribe.html?series=' + series;
     document.getElementById('listEmpty').hidden = shown > 1;
   }
 </script>
