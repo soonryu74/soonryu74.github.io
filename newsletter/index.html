@@ -407,6 +407,12 @@ textarea{min-height:90px;resize:vertical}
       <div class="grow"><label class="f">구독 안내 문구</label>
         <input type="text" id="mSubLabel" placeholder="예: 뉴스레터 구독·지난 호 보기"></div>
     </div>
+    <div class="row" style="margin-top:10px">
+      <div class="grow"><label class="f">발행 주기</label>
+        <input type="text" id="mCadence" placeholder="예: 주 1회 발행 (매주 월요일)"></div>
+      <div style="flex:0 0 180px"><label class="f">다음 호 예정일</label>
+        <input type="date" id="mNextIssue"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -614,6 +620,7 @@ function restore(){
 const KIND_COLOR = { outbreak:['#1b3fb0','#bf560c'], phsm:['#0d6e6d','#bf560c'],
                      chronic:['#146c3a','#bf560c'], climate:['#0d5c8c','#bf560c'] };
 let ISSUES = [];                         // 발간한 뉴스레터 목록
+let SOURCE_COUNT = 0;                    // 기본 소스 개수(자동 수집 대상)
 function nav(name){
   if (name === 'make') document.body.dataset.kind = S.kind; else delete document.body.dataset.kind;
   $$('.navpanel').forEach(p => p.classList.toggle('on', p.id === 'nav-' + name));
@@ -1273,7 +1280,8 @@ $('#addBtn').onclick = () => {
 
 /* ── 3단계: 초안 ─────────────────────────── */
 const META_FIELDS = { mOrg:'org', mTitle:'title', mIssue:'issue', mDate:'date', mEditor:'editor',
-                      mSubUrl:'subUrl', mSubLabel:'subLabel' };
+                      mSubUrl:'subUrl', mSubLabel:'subLabel',
+                      mCadence:'cadence', mNextIssue:'nextIssue' };
 Object.entries(META_FIELDS).forEach(([id, key]) => {
   $('#' + id).addEventListener('input', () => { S.meta[key] = $('#' + id).value; save(); });
 });
@@ -1558,6 +1566,7 @@ function renderPaper(){
   </header>
   <div class="nl-bar">
     <span>발행 ${esc(m.org || '')}</span>
+    ${m.cadence ? `<span>${esc(m.cadence)}</span>` : ''}
     ${m.editor ? `<span>담당 ${esc(m.editor)}</span>` : ''}
     ${m.subUrl ? `<span>구독 <a href="${esc(m.subUrl)}" target="_blank" rel="noopener">이 뉴스레터 받아보기</a></span>` : ''}
   </div>
@@ -1578,7 +1587,14 @@ function renderPaper(){
   ${topics}
   ${TIPS_HTML}
   ${sub}
-  <footer class="foot-note" contenteditable="true">
+  <footer class="foot-note">
+    <div class="cover">
+      <b>자료 수집</b>
+      <span>소스 ${SOURCE_COUNT}곳을 매일 새벽 5시(KST)에 자동 수집</span>
+      <span>이 호가 다룬 기간 최근 ${S.days}일</span>
+      ${m.cadence ? `<span>${esc(m.cadence)}</span>` : ''}
+      ${m.nextIssue ? `<span>다음 호 ${esc(ymd(m.nextIssue))}</span>` : ''}
+    </div>
     본 뉴스레터는 각 기관의 공개 자료와 학술 문헌을 정리한 것으로, 원문의 내용이 우선합니다.
     ${esc(m.org || '')}${m.editor ? ' · ' + esc(m.editor) : ''}
   </footer>`;
@@ -1715,7 +1731,8 @@ $('#exMailApp').onclick = () => {
       history.replaceState(null, '', location.pathname);
     } catch(e){ console.warn('공유 링크를 읽지 못했습니다', e); }
   }
-  try { SOURCES = await (await fetch('../data/newsletter/sources.json')).json(); } catch(e){}
+  try { SOURCES = await (await fetch('../data/newsletter/sources.json')).json();
+        SOURCE_COUNT = SOURCES.groups.reduce((n, g) => n + g.sources.length, 0); } catch(e){}
   try { FEED    = await (await fetch('../data/newsletter/feed.json')).json(); } catch(e){}
   if (!Object.keys(S.sel).length) ({
     outbreak: ['who-don','cdc-news','ecdc-news','kdca'],
