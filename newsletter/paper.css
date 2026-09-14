@@ -153,9 +153,10 @@
 
 /* ── 본문 꼭지 ──────────────────────────────────────── */
 .topic{ padding-top:30px; margin-bottom:30px; border-top:1px solid var(--line); }
-.topic-head{ display:grid; grid-template-columns:auto 1fr auto; gap:4px 10px;
+.topic-head{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px 10px;
   align-items:baseline; margin-bottom:6px; }
 .topic-head h2{ min-width:0; }
+.topic-head .ev, .topic-head .tag{ grid-column:2; justify-self:start; }
 .topic-no{
   font-size:.86rem; font-weight:800; color:var(--accent); letter-spacing:0;
   font-variant-numeric:tabular-nums;
@@ -178,13 +179,20 @@
 }
 .sec ul{ margin:0; padding:0; list-style:none; }
 .sec li{
-  position:relative; padding-left:16px; word-break:keep-all; margin-bottom:10px; color:var(--ink-2);
-  font-size:1.01rem; line-height:1.78;
+  position:relative; padding-left:17px; word-break:keep-all; margin-bottom:16px; color:var(--ink-2);
+  font-size:1.01rem; line-height:1.72;
 }
 .sec li::before{
-  content:""; position:absolute; left:0; top:.72em; width:5px; height:1px; background:var(--muted);
+  content:""; position:absolute; left:0; top:.62em; width:5px; height:5px; border-radius:50%;
+  background:var(--accent);
 }
-.sec li b.num{ color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums; }
+.sec li b.num{ color:var(--accent); font-weight:600; font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+/* 항목 앞머리 키워드 — 한 항목에 하나만 */
+.sec li b.lead{ color:var(--ink); font-weight:700; margin-right:.4em; }
+.sec li b.lead::after{
+  content:""; display:inline-block; width:1px; height:.85em; background:var(--line);
+  vertical-align:-.08em; margin-left:.45em;
+}
 .sec li sup{ font-size:.68em; color:var(--accent); font-weight:700; padding-left:1px; }
 
 /* 출처 */
@@ -193,7 +201,7 @@
   display:flex; gap:14px; align-items:stretch; margin:16px 0 4px;
   border:1px solid var(--line); border-left:4px solid var(--accent); background:#fbfcfe;
 }
-.srccard img{ width:180px; height:110px; object-fit:cover; flex:0 0 auto; background:var(--accent-soft); }
+.srccard img{ width:180px; height:110px; object-fit:cover; flex:0 0 auto; display:block; background:#eef1f5; }
 .srccard .sc-b{ padding:12px 14px; min-width:0; display:flex; flex-direction:column; justify-content:center; }
 .srccard .sc-site{ font-size:.78rem; font-weight:800; letter-spacing:0; color:var(--accent); }
 .srccard .sc-t{ font-size:.96rem; font-weight:700; line-height:1.5; margin:3px 0 4px; color:var(--ink); }
@@ -215,6 +223,34 @@
 .profile dd{ margin:0; padding:9px 14px; font-size:.92rem; color:var(--ink-2); border-top:1px solid var(--line); line-height:1.7; }
 .profile dt:first-of-type, .profile dd:first-of-type{ border-top:0; }
 @media (max-width:560px){ .profile dl{ grid-template-columns:100px 1fr; } }
+
+/* 근거 강도 — 점 세 개로 표시 */
+.ev{
+  display:inline-flex; gap:5px; align-items:center; font-size:.74rem; font-weight:700;
+  color:var(--muted); border:1px solid var(--line); border-radius:3px; padding:2px 8px; white-space:nowrap;
+}
+.ev .dots{ letter-spacing:1px; color:var(--accent); font-size:.8rem; line-height:1; }
+.ev.low .dots{ color:#9aa5b1; }
+/* 연구 설계 메타 칩 */
+.design{
+  font-size:.82rem; color:var(--muted); margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;
+}
+.design span{ background:#f2f5f9; border:1px solid var(--line); border-radius:3px; padding:2px 8px; }
+/* 한 꼭지의 해석 주의 — 맨 아래로 몰아 둔다 */
+.caveat{
+  margin-top:14px; font-size:.88rem; color:var(--muted); background:#f7f9fb;
+  border-left:3px solid var(--line); padding:10px 14px; line-height:1.65;
+}
+.caveat b{ color:var(--ink-2); }
+/* 복사 단추 — 보고용 3줄 */
+.copybar{ margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.copybtn{
+  font-family:inherit; font-size:.84rem; font-weight:700; color:var(--brand); background:#fff;
+  border:1px solid var(--line); border-radius:6px; padding:7px 12px; cursor:pointer;
+}
+.copybtn:hover{ border-color:var(--brand); }
+.copyok{ font-size:.82rem; color:var(--accent); font-weight:700; }
+@media print{ .copybar{ display:none; } }
 
 .refs{ margin-top:20px; font-size:.84rem; color:var(--muted); }
 .refs summary{
@@ -303,9 +339,10 @@
   .issues .src{ font-size:.74rem; padding:2px 6px; }
   .issues .tag{ display:none; }
   .sec > h4{ font-size:.78rem; padding:4px 9px; }
+  .sec li{ font-size:1rem; line-height:1.68; margin-bottom:18px; }
   .topic h2{ font-size:1.28rem; line-height:1.38; }
-  .topic-head{ grid-template-columns:auto minmax(0,1fr) auto; }
-  .topic-head .tag{ font-size:.7rem; padding:2px 6px; align-self:start; margin-top:6px; }
+  .topic-head{ grid-template-columns:auto minmax(0,1fr); }
+  .topic-head .tag, .topic-head .ev{ font-size:.72rem; padding:2px 7px; margin-top:2px; }
 }
 
 /* ── 인쇄 ───────────────────────────────────────────── */
@@ -327,6 +364,7 @@
   }
   .t-card .topic{ border-top:1px solid var(--line); }
   .topic{ break-inside:avoid; }
+  .sec li{ margin-bottom:10px; line-height:1.6; }
   .subscribe{ break-inside:avoid; }
   .refs{ display:block !important; }
   .refs ol{ display:block !important; }
