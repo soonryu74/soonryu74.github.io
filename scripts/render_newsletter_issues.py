@@ -17,13 +17,13 @@ ISSUES  = os.path.join(ROOT, "newsletter", "issues")
 SITE    = "https://soonryu74.github.io/newsletter/issues/"   # 메일에서 이미지를 불러올 주소
 
 KINDS = {
-    "outbreak": {"name": "감염병 발생동향", "sumTitle": "이번 호 한눈에 보기",
+    "outbreak": {"name": "감염병 발생동향", "sumTitle": "목차",
                  "secs": ["발생 상황", "상황 평가", "국내 관련성 · 권고"], "brand": "#12395f", "accent": "#c2540b"},
-    "phsm":     {"name": "감염병 사회 대응(PHSM)", "sumTitle": "이번 호 한눈에 보기",
+    "phsm":     {"name": "감염병 사회 대응(PHSM)", "sumTitle": "목차",
                  "secs": ["연구 · 정책 동향", "핵심 쟁점과 근거", "분과위 시사점 · 토론거리"], "brand": "#3b3080", "accent": "#0e7490"},
-    "chronic":  {"name": "만성질환", "sumTitle": "이번 호 한눈에 보기",
+    "chronic":  {"name": "만성질환", "sumTitle": "목차",
                  "secs": ["주요 동향", "근거 해석", "국내 적용 시사점"], "brand": "#14532d", "accent": "#a16207"},
-    "climate":  {"name": "기후·건강", "sumTitle": "이번 호 한눈에 보기",
+    "climate":  {"name": "기후·건강", "sumTitle": "목차",
                  "secs": ["기후 · 건강 동향", "감시체계와 근거", "국내 대응 시사점"], "brand": "#7c2d12", "accent": "#0369a1"},
 }
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
@@ -72,12 +72,20 @@ def paper(data):
             + (f'<div class="n">{e(s.get("n"))}</div>' if s.get("n") else "") + "</div>"
             for s in d["stats"][:4]) + "</div>"
 
+    def src_chips(t, limit=2):
+        srcs = t.get("sources") or []
+        chips = "".join(f'<span class="src">{e(x)}</span>' for x in srcs[:limit])
+        if len(srcs) > limit:
+            chips += f'<span class="src-more">외 {len(srcs)-limit}곳</span>'
+        return chips
+
     issues = '<ol class="issues">' + "".join(
         f'''<li><a href="#t{i+1}">
           <span class="no">{i+1}</span>
           <span class="it">{e(t["name"])}
             {f'<span class="ih">{e(t.get("headline"))}</span>' if t.get("headline") else ''}</span>
-          {f'<span class="tag tag-{e(t.get("tag"))}">{e(t.get("tag"))}</span>' if t.get("tag") else '<span></span>'}
+          <span class="meta">{src_chips(t)}
+            {f'<span class="tag tag-{e(t.get("tag"))}">{e(t.get("tag"))}</span>' if t.get("tag") else ''}</span>
         </a></li>''' for i, t in enumerate(d["topics"])) + "</ol>"
 
     topics = "".join(f'''<section class="topic" id="t{i+1}">
@@ -86,6 +94,7 @@ def paper(data):
         <h2>{e(t["name"])} <span class="en">{e(t.get("en",""))}</span></h2>
         {f'<span class="tag tag-{e(t.get("tag"))}">{e(t.get("tag"))}</span>' if t.get("tag") else ''}
       </div>
+      {f'<div class="topic-src">출처 <b>{e(" · ".join(t.get("sources") or []))}</b></div>' if t.get("sources") else ''}
       {f'<p class="topic-lead">{e(t.get("headline"))}</p>' if t.get("headline") else ''}
       <div class="sec"><h4>{e(k["secs"][0])}</h4>{ul(t.get("situation"))}</div>
       <div class="sec"><h4>{e(k["secs"][1])}</h4>{ul(t.get("assess"))}</div>
@@ -113,7 +122,7 @@ def paper(data):
     {f'<p class="nl-lead">{e(d.get("tagline"))}</p>' if d.get("tagline") else ""}
   </header>
   <div class="brief">
-    <div class="brief-label">{e(k["sumTitle"])}</div>
+    <div class="brief-label">{e(k["sumTitle"])} <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
     {stats}
     {issues}
   </div>

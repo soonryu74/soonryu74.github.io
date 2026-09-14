@@ -54,7 +54,7 @@
 
     const issues = `
       <tr><td style="padding:0 0 22px 0">
-        <div style="font:800 12px/1.4 ${FONT};letter-spacing:.11em;color:#6d7885;padding-bottom:8px">이번 호 한눈에 보기</div>
+        <div style="font:800 12px/1.4 ${FONT};letter-spacing:.11em;color:#6d7885;padding-bottom:8px">목차</div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
         ${(d.topics || []).map((t, i) => `
           <tr><td style="padding:9px 0;border-bottom:1px solid #eef1f5">
@@ -63,6 +63,7 @@
             ${t.tag ? `<span style="font:700 11px/1.4 ${FONT};color:#6d7885;border:1px solid #dde2e9;
               border-radius:3px;padding:1px 6px;margin-left:6px">${esc(t.tag)}</span>` : ''}
             ${t.headline ? `<div style="font:400 14px/1.6 ${FONT};color:#3d4753;padding-top:3px">${esc(t.headline)}</div>` : ''}
+            ${(t.sources || []).length ? `<div style="font:700 12px/1.5 ${FONT};color:${c.accent};padding-top:3px">출처 ${esc(t.sources.join(' · '))}</div>` : ''}
           </td></tr>`).join('')}
         </table>
       </td></tr>`;
@@ -72,6 +73,7 @@
         <div style="font:800 13px/1.4 ${FONT};color:${c.accent}">${i + 1}</div>
         <div style="font:800 20px/1.35 ${FONT};color:${c.brand};padding-top:2px">${esc(t.name)}
           ${t.en ? `<span style="font:400 12px/1.4 ${FONT};color:#6d7885">${esc(t.en)}</span>` : ''}</div>
+        ${(t.sources || []).length ? `<div style="font:400 12px/1.5 ${FONT};color:#6d7885;padding-top:4px">출처 <b style="color:${c.accent}">${esc(t.sources.join(' · '))}</b></div>` : ''}
         ${t.headline ? `<div style="font:600 15px/1.6 ${FONT};color:#191f28;border-left:3px solid ${c.accent};
           padding:2px 0 2px 12px;margin-top:10px">${esc(t.headline)}</div>` : ''}
       </td></tr>

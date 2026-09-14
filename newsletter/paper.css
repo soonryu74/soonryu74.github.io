@@ -81,9 +81,20 @@
 .issues{ list-style:none; margin:0; padding:0; }
 .issues li{ border-bottom:1px solid var(--line-2); }
 .issues a{
-  display:grid; grid-template-columns:26px 1fr auto; gap:12px; align-items:baseline;
-  padding:11px 0; text-decoration:none; color:inherit;
+  display:grid; grid-template-columns:28px 1fr auto; gap:12px; align-items:baseline;
+  padding:12px 0; text-decoration:none; color:inherit;
 }
+.issues .meta{ display:flex; gap:6px; align-items:center; justify-content:flex-end; flex-wrap:wrap; }
+.issues .src{
+  font-size:.78rem; font-weight:700; color:var(--accent); background:var(--accent-soft);
+  border-radius:3px; padding:2px 8px; white-space:nowrap;
+}
+.issues .src-more{ font-size:.76rem; color:var(--muted); }
+.brief-label .go{ font-weight:500; letter-spacing:0; color:var(--muted); }
+.topic-src{
+  font-size:.82rem; color:var(--muted); margin-top:4px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;
+}
+.topic-src b{ color:var(--accent); font-weight:700; }
 .issues a:hover .it{ text-decoration:underline; text-underline-offset:3px; }
 .issues .no{
   font-size:.88rem; font-weight:800; color:var(--accent);
@@ -200,6 +211,8 @@
   .stat:first-child,.stat:nth-child(2){ border-top:0; }
   .stat:nth-child(even){ padding-left:16px; border-left:1px solid var(--line-2); }
   .issues a{ grid-template-columns:22px 1fr; }
+  .issues a{ grid-template-columns:22px 1fr; }
+  .issues .meta{ justify-content:flex-start; padding-top:4px; grid-column:2; }
   .issues .tag{ display:none; }
   .topic h2{ font-size:1.3rem; }
 }
