@@ -6,6 +6,7 @@
 <title>보건 동향 뉴스레터 메이커</title>
 <meta name="description" content="WHO·미국 CDC·ECDC·Europe PMC 등 공식 소스를 골라 감염병 발생동향, 사회 대응(PHSM), 만성질환 뉴스레터를 만들고 HTML·PDF·이메일·워드로 내보내는 도구.">
 <meta name="robots" content="noindex">
+<link rel="stylesheet" href="paper.css">
 <style>
 :root{
   --navy:#123a6b; --navy-d:#0d2b50; --teal:#0f7b7b; --ink:#1c2430; --muted:#6b7787;
@@ -85,73 +86,13 @@ textarea{min-height:90px;resize:vertical}
 .pitem .pm{font-size:.74rem;color:var(--muted);margin:3px 0 6px}
 .pitem .prow{display:flex;gap:6px;align-items:center}
 .pitem input[type=text]{padding:5px 8px;font-size:.8rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.chip{border:1px solid var(--line);background:#fff;color:#41505f;border-radius:999px;padding:5px 12px;
+  font-size:.82rem;font-weight:700;cursor:pointer}
+.chip:hover{border-color:#b9cbe2}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
 .empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:.88rem}
 
-/* ── 4단계 미리보기(종이) ── */
-.paperwrap{background:#e7ecf2;padding:18px;border-radius:12px;overflow:auto}
-#paper{background:#fff;max-width:860px;margin:0 auto;padding:44px 46px;box-shadow:0 4px 18px rgba(0,0,0,.1);
-  font-size:14.5px;line-height:1.72;color:#1c2430}
-#paper h1,#paper h2,#paper h3{letter-spacing:-.02em}
-#paper [contenteditable]:focus{outline:2px solid #b6e0e0;outline-offset:2px;border-radius:4px}
-
-/* 템플릿 A: 공문서형 */
-.t-official .nl-head{border-bottom:3px solid var(--navy);padding-bottom:14px;margin-bottom:22px}
-.t-official .nl-kicker{font-size:.78rem;color:var(--teal);font-weight:800;letter-spacing:.04em}
-.t-official .nl-title{font-size:1.85rem;font-weight:800;color:var(--navy);margin:6px 0 4px}
-.t-official .nl-meta{font-size:.82rem;color:var(--muted)}
-.t-official .sumbox{border:1px solid var(--line);border-left:5px solid var(--teal);background:#f7fbfb;
-  border-radius:6px;padding:16px 18px;margin-bottom:26px}
-.t-official .sumbox h3{margin:0 0 10px;font-size:.95rem;color:var(--navy)}
-.t-official .topic{margin:0 0 30px;padding-top:6px}
-.t-official .topic > h2{font-size:1.16rem;color:var(--navy);margin:0 0 3px;padding-bottom:7px;border-bottom:1px solid var(--line)}
-.t-official .topic .en{font-size:.8rem;color:var(--muted);font-weight:600}
-.t-official .sec{margin-top:15px}
-.t-official .sec > h4{margin:0 0 6px;font-size:.9rem;color:#0d5d5d;background:#eef7f7;display:inline-block;padding:3px 10px;border-radius:6px}
-.t-official ul{margin:6px 0 0;padding-left:20px}
-.t-official li{margin-bottom:5px}
-.t-official .refs{font-size:.79rem;color:#54606e;border-top:1px dashed var(--line);margin-top:14px;padding-top:9px}
-.t-official .refs li{margin-bottom:3px;word-break:break-all}
-
-/* 템플릿 B: 간결 브리프 */
-.t-brief .nl-head{margin-bottom:20px}
-.t-brief .nl-kicker{font-size:.75rem;color:var(--muted);font-weight:700}
-.t-brief .nl-title{font-size:1.6rem;font-weight:800;margin:4px 0}
-.t-brief .nl-meta{font-size:.8rem;color:var(--muted)}
-.t-brief .sumbox{background:#fffdf5;border:1px solid #f0e2bd;border-radius:10px;padding:14px 16px;margin-bottom:22px}
-.t-brief .sumbox h3{margin:0 0 8px;font-size:.92rem;color:#8a6d1f}
-.t-brief .topic{margin-bottom:24px}
-.t-brief .topic > h2{font-size:1.08rem;margin:0 0 2px}
-.t-brief .topic .en{font-size:.78rem;color:var(--muted)}
-.t-brief .sec > h4{margin:12px 0 4px;font-size:.86rem;color:var(--teal)}
-.t-brief ul{margin:4px 0 0;padding-left:18px}
-.t-brief .refs{font-size:.76rem;color:var(--muted);margin-top:10px}
-
-/* 템플릿 C: 카드형 */
-.t-card{background:#f7f9fc}
-.t-card .nl-head{background:var(--navy);color:#fff;border-radius:14px;padding:22px 24px;margin-bottom:18px}
-.t-card .nl-kicker{font-size:.76rem;color:#8fd6d6;font-weight:800}
-.t-card .nl-title{font-size:1.6rem;font-weight:800;margin:6px 0 3px}
-.t-card .nl-meta{font-size:.8rem;color:#c6d6ea}
-.t-card .sumbox{background:#fff;border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(18,58,107,.08)}
-.t-card .sumbox h3{margin:0 0 8px;font-size:.95rem;color:var(--navy)}
-.t-card .topic{background:#fff;border-radius:14px;padding:20px 22px;margin-bottom:16px;box-shadow:0 2px 10px rgba(18,58,107,.08)}
-.t-card .topic > h2{font-size:1.12rem;color:var(--navy);margin:0 0 2px}
-.t-card .topic .en{font-size:.78rem;color:var(--muted)}
-.t-card .sec > h4{margin:14px 0 5px;font-size:.88rem;color:#0d5d5d}
-.t-card ul{margin:4px 0 0;padding-left:18px}
-.t-card .refs{font-size:.77rem;color:#5a6675;border-top:1px solid var(--line);margin-top:12px;padding-top:8px}
-
-.foot-note{font-size:.78rem;color:var(--muted);border-top:1px solid var(--line);margin-top:26px;padding-top:10px}
-
-@media print{
-  body{background:#fff}
-  .top,.bar,.noprint,.paperwrap{background:#fff!important;padding:0!important;box-shadow:none!important}
-  .top,.bar,.noprint{display:none!important}
-  #paper{box-shadow:none;max-width:none;padding:0;font-size:11.5pt}
-  .t-card{background:#fff}
-  .topic{break-inside:avoid}
-  @page{size:A4;margin:18mm 16mm}
-}
 </style>
 </head>
 <body>
@@ -159,7 +100,8 @@ textarea{min-height:90px;resize:vertical}
 <div class="top">
   <div class="wrap">
     <h1>보건 동향 뉴스레터 메이커</h1>
-    <div class="sub">감염병 발생동향 · 사회 대응(PHSM) · 만성질환 — 공식 소스를 고르면 서식에 맞춰 뉴스레터를 만들어 드립니다. <span id="saveTag" class="badge" style="background:#1d4a80;border-color:#2a5c99;color:#cfe3ff">자동 저장</span></div>
+    <div class="sub">감염병 발생동향 · 사회 대응(PHSM) · 만성질환 · 기후·건강 — 공식 소스를 고르면 서식에 맞춰 뉴스레터를 만들어 드립니다. <span id="saveTag" class="badge" style="background:#1d4a80;border-color:#2a5c99;color:#cfe3ff">자동 저장</span>
+      <a href="issues/" style="color:#fff;font-weight:700;margin-left:6px">발간한 뉴스레터 보기 →</a></div>
     <nav class="steps">
       <button data-go="1" class="on">① 소스 고르기</button>
       <button data-go="2">② 기사 담기</button>
@@ -176,11 +118,13 @@ textarea{min-height:90px;resize:vertical}
     <p class="hint">유형을 고르면 그에 맞는 소스·서식·문체가 준비됩니다.</p>
     <div class="row" id="kindBox">
       <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="kind" value="outbreak" checked>
-        <span><span class="nm">전 세계 감염병 발생 동향</span><span class="mt">WHO·美CDC·ECDC 공식 발표 중심 주간 발생 동향</span></span></label>
+        <span><span class="nm">전 세계 감염병 발생 동향</span><span class="mt">WHO·美CDC·ECDC 공식 발표 중심 주간 발생 동향 · <a href="issues/outbreak-2026-37.html" target="_blank" rel="noopener">발간 예시 보기</a></span></span></label>
       <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="kind" value="phsm">
-        <span><span class="nm">감염병 사회 대응(PHSM) 분과위원회</span><span class="mt">거리두기·위험소통 등 사회적 조치의 최신 연구·정책 동향</span></span></label>
+        <span><span class="nm">감염병 사회 대응(PHSM) 분과위원회</span><span class="mt">거리두기·위험소통 등 사회적 조치의 최신 연구·정책 동향 · <a href="issues/phsm-2026-01.html" target="_blank" rel="noopener">발간 예시 보기</a></span></span></label>
       <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="kind" value="chronic">
-        <span><span class="nm">만성질환 동향</span><span class="mt">심뇌혈관·당뇨·암·건강행태 통계와 연구 동향</span></span></label>
+        <span><span class="nm">만성질환 동향</span><span class="mt">심뇌혈관·당뇨·암·건강행태 통계와 연구 동향 · <a href="issues/chronic-2026-01.html" target="_blank" rel="noopener">발간 예시 보기</a></span></span></label>
+      <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="kind" value="climate">
+        <span><span class="nm">기후·건강 (폭염 등)</span><span class="mt">폭염 감시체계, 매개체 확산, 대기질 등 기후가 건강에 미치는 영향 · <a href="issues/climate-2026-01.html" target="_blank" rel="noopener">발간 예시 보기</a></span></span></label>
     </div>
   </div>
   <div class="card">
@@ -199,8 +143,9 @@ textarea{min-height:90px;resize:vertical}
     <div id="srcBox"></div>
   </div>
   <div class="card">
-    <h2>소스 직접 추가</h2>
-    <p class="hint">원하는 기관의 RSS 주소, 검색어, 논문 검색식을 넣으면 내 소스로 쓸 수 있습니다.</p>
+    <details id="addSrcBox">
+    <summary style="cursor:pointer;font-weight:800;color:var(--navy);font-size:1.02rem">소스 직접 추가 <span class="note" style="font-weight:400">— 목록에 없는 기관을 넣고 싶을 때만 펼치세요</span></summary>
+    <p class="hint" style="margin-top:10px">기관의 RSS 주소, 뉴스 검색어, 논문 검색식 중 하나를 넣으면 내 소스가 됩니다.</p>
     <div class="row">
       <div class="grow"><label class="f">소스 이름</label><input type="text" id="nsName" placeholder="예: 일본 후생노동성 감염병 정보"></div>
       <div style="flex:0 0 210px"><label class="f">가져오는 방법</label>
@@ -222,8 +167,9 @@ textarea{min-height:90px;resize:vertical}
       <span class="note" id="nsLog"></span>
     </div>
     <div id="myList" style="margin-top:14px"></div>
-    <p class="note" style="margin-top:10px">내 소스는 이 브라우저에 저장됩니다. 매일 자동 수집까지 시키려면
-      <b>소스 설정 파일</b>을 내려받아 저장소의 <code>data/newsletter/sources.json</code> 에 넣어 주세요.</p>
+    <p class="note" style="margin-top:10px">내 소스는 이 브라우저에 저장됩니다. 매일 자동 수집 목록에도 넣으려면
+      <b>소스 설정 파일</b>을 내려받아 전달해 주세요(저장소의 <code>data/newsletter/sources.json</code> 에 반영).</p>
+    </details>
   </div>
   <div class="bar"><div class="wrap row" style="justify-content:space-between">
     <span class="note" id="srcCount">선택한 소스 0곳</span>
@@ -242,6 +188,7 @@ textarea{min-height:90px;resize:vertical}
             <select id="regionSel"><option value="">전체 지역</option><option>국제</option><option>유럽</option><option>미주</option><option>연구</option><option>국내</option></select>
           </div>
         </div>
+        <div id="topicChips" class="chips"></div>
         <p class="note" style="margin:10px 0 0" id="feedInfo"></p>
       </div>
       <div class="feed" id="feedBox"></div>
@@ -327,6 +274,7 @@ textarea{min-height:90px;resize:vertical}
     <div class="row" style="margin-top:14px">
       <button class="btn pri" id="genBtn">초안 만들기</button>
       <button class="btn" id="genBasic">AI 없이 기본 초안</button>
+      <button class="btn" id="loadSample">예시 호 불러오기</button>
       <span class="note" id="genLog"></span>
     </div>
   </div>
@@ -388,6 +336,13 @@ const KINDS = {
     secs: ['연구 · 정책 동향', '핵심 쟁점과 근거', '분과위 시사점 · 토론거리'],
     role: '감염병 사회 대응(공중보건·사회적 조치, PHSM) 분과위원회의 간사',
     guide: 'situation=연구·지침의 설계와 결과를 수치와 함께, assess=근거의 강도·한계·상충되는 결과, korea=국내 대응 매뉴얼에 주는 시사점과 분과위에서 논의할 질문'
+  },
+  climate: {
+    title: '기후·건강 위기 동향',
+    sumTitle: '이번 호 요약',
+    secs: ['기후 · 건강 동향', '감시체계와 근거', '국내 대응 시사점'],
+    role: '폭염 등 기후 건강피해를 담당하는 보건기관 담당자',
+    guide: 'situation=기상·보건 지표와 각국 조치를 수치와 함께, assess=감시체계와 연구 근거의 해석·한계, korea=국내 감시·대응(온열질환 감시, 취약계층 보호)에 주는 시사점'
   },
   chronic: {
     title: '만성질환 동향 뉴스레터',
@@ -454,10 +409,21 @@ const TOPICS_NCD = [
   ['건강형평성','Health equity',['equity','inequalit','형평']],
   ['만성질환 관리체계','Care delivery',['primary care','care model','management program','일차의료','관리사업']]
 ];
+const TOPICS_CLIMATE = [
+  ['폭염·온열질환','Extreme heat',['heatwave','heat-related','extreme heat','heat health','폭염','온열','열사병']],
+  ['한랭질환','Cold exposure',['cold wave','hypothermia','한파','한랭']],
+  ['폭염 조기경보체계','Heat warning systems',['early warning','heat action plan','warning system','조기경보','경보체계']],
+  ['기후와 매개체 감염병','Climate & vector-borne disease',['vector-borne','mosquito','tick','dengue','malaria','매개체','모기','진드기']],
+  ['대기질·산불 연기','Air quality',['air pollution','wildfire','particulate','air quality','대기질','미세먼지','산불']],
+  ['수해·수인성 감염병','Floods & waterborne',['flood','waterborne','cholera','수해','홍수','수인성']],
+  ['기후 적응·보건체계','Adaptation & resilience',['adaptation','resilience','vulnerability','적응','회복력','취약성']],
+  ['취약계층 보호','Vulnerable populations',['older adults','outdoor workers','vulnerable','취약계층','고령','야외작업']]
+];
 function guessTopic(text){
   const t = (text || '').toLowerCase();
   const books = S.kind === 'phsm'    ? [TOPICS_PHSM, DISEASES]
               : S.kind === 'chronic' ? [TOPICS_NCD, DISEASES]
+              : S.kind === 'climate' ? [TOPICS_CLIMATE, DISEASES]
               :                        [DISEASES, TOPICS_PHSM];
   for (const book of books)
     for (const [ko, en, keys] of book) if (keys.some(k => t.includes(k))) return { name: ko, en };
@@ -540,6 +506,37 @@ $('#selNone').onclick = () => { S.sel = {}; save(); renderSources(); };
 $('#days').addEventListener('change', e => { S.days = +e.target.value; save(); });
 
 /* ── 2단계: 수집함 ───────────────────────── */
+/* 유형별 주제 칩 — 누르면 그 주제 자료만 걸러 봅니다 */
+const CHIPS = {
+  outbreak: [['인플루엔자','influenza|독감|flu'],['코로나19','covid|코로나'],['홍역','measles|홍역'],
+             ['뎅기열','dengue|뎅기'],['에볼라·마버그','ebola|marburg|에볼라|마버그'],['엠폭스','mpox|엠폭스'],
+             ['콜레라','cholera|콜레라'],['레지오넬라','legionnaires|레지오넬라'],['결핵','tuberculosis|결핵'],
+             ['식중독·수인성','salmonella|listeria|food|식중독|장염']],
+  phsm:     [['거리두기·NPI','distancing|non-pharmaceutical|lockdown|거리두기'],['마스크','mask|마스크'],
+             ['학교·직장','school|workplace|university|학교|직장'],['백신 수용성','hesitancy|acceptability|acceptance|수용성'],
+             ['허위정보','misinformation|infodemic|허위'],['격리·검역','quarantine|isolation|격리|검역'],
+             ['형평성','equity|inequalit|형평'],['거버넌스·법제','governance|preparedness|policy|거버넌스']],
+  chronic:  [['고혈압·심뇌혈관','hypertension|cardiovascular|stroke|고혈압|심뇌혈관'],['당뇨병','diabetes|당뇨'],
+             ['비만','obesity|비만'],['암 검진','cancer|암'],['흡연·금연','smoking|tobacco|vaping|흡연|금연'],
+             ['음주','alcohol|음주'],['신체활동·식이','physical activity|diet|nutrition|신체활동|식이'],
+             ['치매·정신건강','dementia|cognitive|depression|mental|치매|정신'],['형평성','inequalit|equity|disparit|형평']],
+  climate:  [['폭염·온열질환','heat|heatwave|폭염|온열'],['조기경보체계','early warning|action plan|경보'],
+             ['한파','cold|한파|한랭'],['대기질·산불','air pollution|wildfire|particulate|대기질|미세먼지|산불'],
+             ['매개체 확산','vector|mosquito|tick|dengue|매개체|모기|진드기'],['수해·수인성','flood|waterborne|홍수|수해'],
+             ['취약계층','vulnerable|older adults|outdoor worker|취약']]
+};
+function renderChips(){
+  const list = CHIPS[S.kind] || [];
+  const cur = ($('#feedSearch').value || '').trim();
+  $('#topicChips').innerHTML = list.map(([label, q]) =>
+    `<button class="chip ${cur === q ? 'on' : ''}" data-q="${esc(q)}">${esc(label)}</button>`).join('')
+    + (cur ? `<button class="chip" data-q="">전체 보기</button>` : '');
+}
+document.addEventListener('click', e => {
+  const c = e.target.closest('.chip'); if (!c) return;
+  $('#feedSearch').value = c.dataset.q;
+  renderChips(); renderFeed();
+});
 function feedItems(){
   const q = ($('#feedSearch').value || '').trim().toLowerCase();
   const region = $('#regionSel').value;
@@ -550,10 +547,12 @@ function feedItems(){
     (!anySel || S.sel[it.sourceId]) &&
     (!region || it.region === region) &&
     (it.date >= cut) &&
-    (!q || (it.title + ' ' + (it.excerpt || '')).toLowerCase().includes(q))
+    (!q || q.split('|').some(w => (it.title + ' ' + (it.excerpt || '') + ' ' + (it.origin || ''))
+                                    .toLowerCase().includes(w.trim())))
   );
 }
 function renderFeed(){
+  renderChips();
   const items = feedItems();
   $('#feedInfo').innerHTML = `자동 수집분 <b>${FEED.items.length}</b>건${(S.myItems||[]).length ? ` + 내 소스 <b>${S.myItems.length}</b>건` : ''} 중 <b>${items.length}</b>건 표시 · 마지막 갱신 ${esc(FEED.updated || '-')}`;
   $('#feedBox').innerHTML = items.length ? items.map(it => {
@@ -915,6 +914,17 @@ async function generate(useAI){
   save(); log.textContent = '초안이 준비됐습니다.';
   go(4);
 }
+const SAMPLE_FILE = { outbreak: 'outbreak-2026-37', phsm: 'phsm-2026-01', chronic: 'chronic-2026-01', climate: 'climate-2026-01' };
+$('#loadSample').onclick = async () => {
+  try {
+    const r = await fetch('samples/' + SAMPLE_FILE[S.kind] + '.json');
+    const j = await r.json();
+    S.tpl = j.tpl || S.tpl; S.meta = Object.assign({}, S.meta, j.meta); S.draft = j.draft;
+    ['mOrg','mTitle','mIssue','mDate','mEditor'].forEach(id => $('#' + id).value = S.meta[id.slice(1).toLowerCase()] || '');
+    const rd = $(`input[name=tpl][value="${S.tpl}"]`); if (rd) rd.checked = true;
+    save(); $('#genLog').textContent = '예시 호를 불러왔습니다. 내용을 고쳐 쓰시면 됩니다.'; go(4);
+  } catch(e){ alert('예시를 불러오지 못했습니다.'); }
+};
 $('#genBtn').onclick = () => generate(true);
 $('#genBasic').onclick = () => generate(false);
 $('#reBuild').onclick = () => go(3);
@@ -933,6 +943,7 @@ function renderPaper(){
     <div class="nl-title" contenteditable="true">${esc(m.title || '감염병 발생 동향')}</div>
     <div class="nl-meta" contenteditable="true">${esc(m.issue || '')}${m.issue && dateTxt ? ' · ' : ''}${esc(dateTxt)}${m.editor ? ' · 작성 ' + esc(m.editor) : ''}</div>
   </div>
+  ${d.intro ? `<div class="intro" contenteditable="true">${esc(d.intro)}</div>` : ''}
   <div class="sumbox">
     <h3>${esc(K.sumTitle)}</h3>
     <ol contenteditable="true" style="margin:0;padding-left:20px">
@@ -958,7 +969,9 @@ function renderPaper(){
 
 /* ── 내보내기 ────────────────────────────── */
 function paperDoc(){
-  const css = Array.from(document.styleSheets[0].cssRules).map(r => r.cssText).join('\n');
+  const css = Array.from(document.styleSheets).map(sh => {
+    try { return Array.from(sh.cssRules).map(r => r.cssText).join('\n'); } catch(e){ return ''; }
+  }).join('\n');
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
 <title>${esc(S.meta.title || '감염병 동향')} ${esc(S.meta.issue || '')}</title>
 <style>${css}
@@ -995,7 +1008,8 @@ $('#exMail').onclick  = async () => {
   if (!Object.keys(S.sel).length) ({
     outbreak: ['who-don','cdc-news','ecdc-news','kdca'],
     phsm: ['who-phsm','ukhsa','epmc-phsm','epmc-npi','epmc-rcce'],
-    chronic: ['who-ncd','kdca-ncd','epmc-ncd','epmc-cvd','epmc-dm']
+    chronic: ['who-ncd','kdca-ncd','epmc-ncd','epmc-cvd','epmc-dm'],
+    climate: ['who-climate','wmo-heat','cdc-heat','kr-heat','epmc-heat-mort','epmc-hhws']
   }[S.kind] || []).forEach(id => S.sel[id] = true);
   if (!S.meta.date) S.meta.date = new Date().toISOString().slice(0, 10);
   $('#days').value = S.days; $('#tone').value = S.tone; $('#model').value = S.model;
