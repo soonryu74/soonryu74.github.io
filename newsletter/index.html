@@ -12,15 +12,15 @@
 <link rel="stylesheet" href="paper.css">
 <style>
 :root{
-  --navy:#12395f; --navy-d:#0d2b50; --teal:#0e7490; --ink:#191f28; --muted:#5d6875;
+  --navy:#1b3fb0; --navy-d:#142f85; --teal:#bf560c; --ink:#191f28; --muted:#5d6875;
   --line:#dde2e9; --bg:#eef1f5; --card:#fff; --warn:#b8541c; --ok:#1a7f4b;
   --radius:14px; --shadow:0 2px 10px rgba(18,58,107,.07);
 }
 /* 유형을 고르면 화면 전체 색이 그 분야 색으로 바뀝니다(노안 배려: 대비 4.5:1 이상) */
-body[data-kind="outbreak"]{ --navy:#12395f; --navy-d:#0d2846; --teal:#c2540b; --tint:#fdf0e4; }
-body[data-kind="phsm"]    { --navy:#3b3080; --navy-d:#2c2463; --teal:#0e7490; --tint:#e6f3f7; }
-body[data-kind="chronic"] { --navy:#14532d; --navy-d:#0e3d21; --teal:#a16207; --tint:#faf2df; }
-body[data-kind="climate"] { --navy:#7c2d12; --navy-d:#5e220e; --teal:#0369a1; --tint:#e8f2fa; }
+body[data-kind="outbreak"]{ --navy:#1b3fb0; --navy-d:#142f85; --teal:#bf560c; --tint:#fdf1e3; }
+body[data-kind="phsm"]    { --navy:#0d6e6d; --navy-d:#095251; --teal:#bf560c; --tint:#fdf1e3; }
+body[data-kind="chronic"] { --navy:#146c3a; --navy-d:#0e5029; --teal:#bf560c; --tint:#fdf1e3; }
+body[data-kind="climate"] { --navy:#0d5c8c; --navy-d:#09456a; --teal:#bf560c; --tint:#fdf1e3; }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;
@@ -611,8 +611,8 @@ function restore(){
 }
 
 /* ── 메뉴 이동 ───────────────────────────── */
-const KIND_COLOR = { outbreak:['#12395f','#c2540b'], phsm:['#3b3080','#0e7490'],
-                     chronic:['#14532d','#a16207'], climate:['#7c2d12','#0369a1'] };
+const KIND_COLOR = { outbreak:['#1b3fb0','#bf560c'], phsm:['#0d6e6d','#bf560c'],
+                     chronic:['#146c3a','#bf560c'], climate:['#0d5c8c','#bf560c'] };
 let ISSUES = [];                         // 발간한 뉴스레터 목록
 function nav(name){
   if (name === 'make') document.body.dataset.kind = S.kind; else delete document.body.dataset.kind;
@@ -1543,6 +1543,14 @@ function renderPaper(){
     ${stats}
     ${issues}
   </div>
+  ${d.explainer ? `<aside class="explainer">
+      <h4>${esc(d.explainer.title || '')}</h4>
+      ${(d.explainer.body || []).map(b => `<p>${esc(b)}</p>`).join('')}
+      ${(d.explainer.terms || []).length ? `<div class="terms">${d.explainer.terms.map(t =>
+         `<div class="term"><b>${esc(t.k)}</b><span>${esc(t.v)}</span></div>`).join('')}</div>` : ''}
+      ${(d.explainer.sources || []).length ? `<div class="src">정의 출처 · ${d.explainer.sources.map(x =>
+         x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>` : esc(x.label)).join(' · ')}</div>` : ''}
+    </aside>` : ''}
   ${d.intro ? `<div class="intro" contenteditable="true">${esc(d.intro)}</div>` : ''}
   ${topics}
   ${sub}

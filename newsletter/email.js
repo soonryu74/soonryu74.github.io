@@ -3,10 +3,10 @@
    발간본 페이지와 뉴스레터 메이커가 함께 씁니다. */
 (function (w) {
   const PALETTE = {
-    outbreak: { brand: '#12395f', accent: '#c2540b', soft: '#fdf0e4' },
-    phsm:     { brand: '#3b3080', accent: '#0e7490', soft: '#e6f3f7' },
-    chronic:  { brand: '#14532d', accent: '#a16207', soft: '#faf2df' },
-    climate:  { brand: '#7c2d12', accent: '#0369a1', soft: '#e8f2fa' }
+    outbreak: { brand: '#1b3fb0', accent: '#bf560c', soft: '#fdf1e3' },
+    phsm:     { brand: '#0d6e6d', accent: '#bf560c', soft: '#fdf1e3' },
+    chronic:  { brand: '#146c3a', accent: '#bf560c', soft: '#fdf1e3' },
+    climate:  { brand: '#0d5c8c', accent: '#bf560c', soft: '#fdf1e3' }
   };
   const SECS = {
     outbreak: ['발생 상황', '상황 평가', '국내 관련성 · 권고'],
