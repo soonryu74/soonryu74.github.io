@@ -63,9 +63,10 @@ textarea{min-height:90px;resize:vertical}
 .srclist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;padding:12px}
 .srcitem{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;background:#fff}
 .srcitem.on{border-color:var(--teal);background:#f2fbfb}
+.srcitem .badge{margin-right:4px}
 .srcitem input{margin-top:3px}
-.srcitem .nm{font-weight:700;font-size:.9rem}
-.srcitem .mt{font-size:.76rem;color:var(--muted);margin-top:2px}
+.srcitem .nm{display:block;font-weight:700;font-size:.9rem}
+.srcitem .mt{display:block;font-size:.76rem;color:var(--muted);margin-top:3px;line-height:1.5}
 
 /* ── 2단계 수집함 ── */
 .two{display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
@@ -196,6 +197,33 @@ textarea{min-height:90px;resize:vertical}
       </div>
     </div>
     <div id="srcBox"></div>
+  </div>
+  <div class="card">
+    <h2>소스 직접 추가</h2>
+    <p class="hint">원하는 기관의 RSS 주소, 검색어, 논문 검색식을 넣으면 내 소스로 쓸 수 있습니다.</p>
+    <div class="row">
+      <div class="grow"><label class="f">소스 이름</label><input type="text" id="nsName" placeholder="예: 일본 후생노동성 감염병 정보"></div>
+      <div style="flex:0 0 210px"><label class="f">가져오는 방법</label>
+        <select id="nsType">
+          <option value="rss">기관 RSS 주소</option>
+          <option value="news">뉴스 검색어</option>
+          <option value="epmc">논문 검색어 (Europe PMC)</option>
+        </select></div>
+      <div style="flex:0 0 130px"><label class="f">지역</label>
+        <select id="nsRegion"><option>국제</option><option>유럽</option><option>미주</option><option>아시아</option><option>연구</option><option>국내</option></select></div>
+    </div>
+    <label class="f" style="margin-top:8px">주소 또는 검색어</label>
+    <input type="text" id="nsValue" placeholder="https://example.org/feed.xml">
+    <p class="note" id="nsHelp" style="margin:6px 0 0"></p>
+    <div class="row" style="margin-top:12px">
+      <button class="btn pri" id="nsAdd">내 소스에 추가</button>
+      <button class="btn" id="nsFetch">추가한 소스 지금 가져오기</button>
+      <button class="btn" id="nsExport">소스 설정 파일 내려받기</button>
+      <span class="note" id="nsLog"></span>
+    </div>
+    <div id="myList" style="margin-top:14px"></div>
+    <p class="note" style="margin-top:10px">내 소스는 이 브라우저에 저장됩니다. 매일 자동 수집까지 시키려면
+      <b>소스 설정 파일</b>을 내려받아 저장소의 <code>data/newsletter/sources.json</code> 에 넣어 주세요.</p>
   </div>
   <div class="bar"><div class="wrap row" style="justify-content:space-between">
     <span class="note" id="srcCount">선택한 소스 0곳</span>
@@ -333,10 +361,12 @@ textarea{min-height:90px;resize:vertical}
 const $  = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 const KEY = 'nlmaker-v1';
+const domainOf = u => { try { const h = new URL(u).hostname.replace(/^www\./, '');
+    return h === 'news.google.com' ? '' : h; } catch(e){ return ''; } };
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 const S = {
-  kind: 'outbreak', sel: {}, days: 14, picked: [],
+  kind: 'outbreak', sel: {}, days: 14, picked: [], mySources: [], myItems: [],
   meta: { org:'', title:'전 세계 감염병 발생 동향', issue:'', date:'', editor:'' },
   tpl: 'official', tone: 'official', model: 'claude-opus-5',
   draft: null
@@ -469,12 +499,19 @@ function renderSources(){
     if (!list.length) return '';
     return `<div class="srcgroup"><h3>${esc(g.name)}
         <button class="btn sm" data-grp="${esc(g.id)}">이 기관 모두</button></h3>
-      <div class="srclist">${list.map(s => `
+      <div class="srclist">${list.map(s => {
+        const st = (FEED.status || []).find(x => x.id === s.id);
+        return `
         <label class="srcitem ${S.sel[s.id] ? 'on' : ''}">
           <input type="checkbox" data-src="${esc(s.id)}" ${S.sel[s.id] ? 'checked' : ''}>
           <span><span class="nm">${esc(s.name)}</span>
-          <span class="mt">${esc(s.region || '')} · <a href="${esc(s.site)}" target="_blank" rel="noopener">기관 사이트</a></span></span>
-        </label>`).join('')}</div></div>`;
+          ${s.desc ? `<span class="mt" style="color:#41505f">${esc(s.desc)}</span>` : ''}
+          <span class="mt">
+            <span class="badge">${esc(st && st.via ? st.via : (s.via || '뉴스 검색'))}</span>
+            ${st ? `최근 ${st.count}건` : '수집 대기'} · ${esc(s.region || '')}
+            · <a href="${esc(s.site)}" target="_blank" rel="noopener">기관 사이트</a>
+          </span></span>
+        </label>`; }).join('')}</div></div>`;
   }).join('') || '<p class="empty">찾는 소스가 없습니다.</p>';
   $('#secHint').textContent = KINDS[S.kind].secs.join(' · ');
   $('#srcCount').textContent = '선택한 소스 ' + Object.values(S.sel).filter(Boolean).length + '곳';
@@ -496,7 +533,7 @@ $$('input[name=kind]').forEach(r => r.addEventListener('change', () => {
   S.sel = {};                                   // 유형이 바뀌면 소스 선택을 새로 시작
   if (!S.picked.length) S.meta.title = KINDS[S.kind].title;
   $('#mTitle').value = S.meta.title;
-  save(); renderSources(); renderFeed();
+  save(); renderMy(); renderSources(); renderFeed();
 }));
 $('#selAll').onclick  = () => { SOURCES.groups.forEach(g => g.sources.forEach(s => S.sel[s.id] = true)); save(); renderSources(); };
 $('#selNone').onclick = () => { S.sel = {}; save(); renderSources(); };
@@ -508,7 +545,7 @@ function feedItems(){
   const region = $('#regionSel').value;
   const cut = new Date(Date.now() - S.days * 864e5).toISOString().slice(0, 10);
   const anySel = Object.values(S.sel).some(Boolean);
-  return FEED.items.filter(it =>
+  return FEED.items.concat(S.myItems || []).filter(it =>
     ((it.kind || 'outbreak') === S.kind) &&
     (!anySel || S.sel[it.sourceId]) &&
     (!region || it.region === region) &&
@@ -518,14 +555,14 @@ function feedItems(){
 }
 function renderFeed(){
   const items = feedItems();
-  $('#feedInfo').innerHTML = `자동 수집분 <b>${FEED.items.length}</b>건 중 <b>${items.length}</b>건 표시 · 마지막 갱신 ${esc(FEED.updated || '-')}`;
+  $('#feedInfo').innerHTML = `자동 수집분 <b>${FEED.items.length}</b>건${(S.myItems||[]).length ? ` + 내 소스 <b>${S.myItems.length}</b>건` : ''} 중 <b>${items.length}</b>건 표시 · 마지막 갱신 ${esc(FEED.updated || '-')}`;
   $('#feedBox').innerHTML = items.length ? items.map(it => {
     const on = S.picked.some(p => p.link === it.link);
     return `<div class="fitem ${on ? 'on' : ''}">
       <div style="flex:0 0 auto;padding-top:2px"><button class="btn sm ${on ? '' : 'pri'}" data-pick="${esc(it.link)}">${on ? '뺀다' : '담기'}</button></div>
       <div style="min-width:0">
         <a class="t" href="${esc(it.link)}" target="_blank" rel="noopener">${esc(it.title)}</a>
-        <div class="m"><span class="badge">${esc(it.sourceName)}</span>${it.origin ? `<span>${esc(it.origin)}</span>` : ''}<span>${esc(it.date)}</span></div>
+        <div class="m"><span class="badge">${esc(it.sourceName)}</span>${it.origin ? `<span>${esc(it.origin)}</span>` : ''}${domainOf(it.link) ? `<span>${esc(domainOf(it.link))}</span>` : ''}<span>${esc(it.date)}</span></div>
         ${it.excerpt ? `<div class="x">${esc(it.excerpt)}</div>` : ''}
       </div></div>`;
   }).join('') : '<p class="empty">조건에 맞는 기사가 없습니다. 기간을 늘리거나 소스를 더 골라 보세요.</p>';
@@ -537,7 +574,7 @@ $('#feedBox').addEventListener('click', e => {
   const i = S.picked.findIndex(p => p.link === link);
   if (i >= 0) S.picked.splice(i, 1);
   else {
-    const it = FEED.items.find(x => x.link === link);
+    const it = FEED.items.concat(S.myItems || []).find(x => x.link === link);
     const g = guessTopic(it.title + ' ' + (it.excerpt || ''));
     S.picked.push({ title: it.title, link: it.link, date: it.date, source: it.sourceName,
                     origin: it.origin || '', region: it.region, excerpt: it.excerpt || '',
@@ -580,6 +617,142 @@ $('#autoTopic').onclick = () => {
   // 주제가 같은 기사끼리 모이도록 정렬
   S.picked.sort((a, b) => (a.topic || '힣').localeCompare(b.topic || '힣', 'ko'));
   save(); renderPicked();
+};
+
+/* ── 내 소스: 추가·수집·내보내기 ───────────────────────────────── */
+const NS_HELP = {
+  rss:  '기관 페이지에서 RSS 주소를 복사해 넣으세요. 예: https://www.cidrap.umn.edu/rss.xml',
+  news: '뉴스에서 찾을 검색어를 넣으세요. 예: 일본 홍역 유행 / Japan measles outbreak',
+  epmc: '논문 검색식을 넣으세요. 예: ("school closure" OR "mask mandate") AND (SRC:MED OR SRC:PPR)'
+};
+function nsHelp(){ $('#nsHelp').textContent = NS_HELP[$('#nsType').value]; }
+$('#nsType').addEventListener('change', nsHelp);
+
+function renderMy(){
+  const mine = (S.mySources || []).filter(m => m.kind === S.kind);
+  $('#myList').innerHTML = mine.length ? `<div class="srclist" style="padding:0">${mine.map(m => {
+    const got = (S.myItems || []).filter(x => x.sourceId === m.id).length;
+    return `<label class="srcitem ${S.sel[m.id] ? 'on' : ''}">
+      <input type="checkbox" data-src="${esc(m.id)}" ${S.sel[m.id] ? 'checked' : ''}>
+      <span><span class="nm">${esc(m.name)}</span>
+      <span class="mt"><span class="badge">${m.type === 'epmc' ? '논문 검색' : m.type === 'rss' ? '기관 RSS' : '뉴스 검색'}</span>
+        ${got ? `가져온 글 ${got}건` : '아직 안 가져옴'} · ${esc(m.region)}</span>
+      <span class="mt" style="word-break:break-all;color:#8592a3">${esc(m.value)}</span></span>
+      <button class="btn sm" data-delmy="${esc(m.id)}" style="margin-left:auto">✕</button>
+    </label>`; }).join('')}</div>` : '<p class="note">아직 추가한 소스가 없습니다.</p>';
+}
+$('#myList').addEventListener('change', e => {
+  const cb = e.target.closest('[data-src]'); if (!cb) return;
+  S.sel[cb.dataset.src] = cb.checked; save(); renderMy();
+});
+$('#myList').addEventListener('click', e => {
+  const b = e.target.closest('[data-delmy]'); if (!b) return;
+  e.preventDefault();
+  S.mySources = S.mySources.filter(m => m.id !== b.dataset.delmy);
+  S.myItems = (S.myItems || []).filter(x => x.sourceId !== b.dataset.delmy);
+  save(); renderMy(); renderFeed();
+});
+$('#nsAdd').onclick = () => {
+  const name = $('#nsName').value.trim(), value = $('#nsValue').value.trim();
+  if (!name || !value) return alert('이름과 주소(검색어)를 모두 적어 주세요.');
+  const id = 'my-' + Date.now().toString(36);
+  S.mySources.push({ id, name, type: $('#nsType').value, value, region: $('#nsRegion').value, kind: S.kind });
+  S.sel[id] = true;
+  $('#nsName').value = ''; $('#nsValue').value = '';
+  save(); renderMy(); $('#nsLog').textContent = '추가했습니다. [지금 가져오기]를 눌러 보세요.';
+};
+
+/* 브라우저에서 바로 가져오기 (막히면 읽기 도우미를 거칩니다) */
+async function fetchText(url){
+  try {
+    const r = await fetch(url);
+    if (r.ok) return { text: await r.text(), via: 'direct' };
+  } catch(e){}
+  const r2 = await fetch('https://r.jina.ai/' + url);
+  if (!r2.ok) throw new Error('가져오지 못했습니다 (' + r2.status + ')');
+  return { text: await r2.text(), via: 'proxy' };
+}
+function parseFeedXml(xml){
+  const doc = new DOMParser().parseFromString(xml, 'application/xml');
+  if (doc.querySelector('parsererror')) return null;
+  return Array.from(doc.querySelectorAll('item, entry')).map(el => {
+    const pick = n => (el.querySelector(n) ? el.querySelector(n).textContent.trim() : '');
+    let link = pick('link');
+    if (!link){ const a = el.querySelector('link[href]'); link = a ? a.getAttribute('href') : ''; }
+    const raw = pick('pubDate') || pick('published') || pick('updated') || pick('date');
+    const d = raw ? new Date(raw) : null;
+    return {
+      title: pick('title'), link,
+      date: d && !isNaN(d) ? d.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+      excerpt: (pick('description') || pick('summary') || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 320)
+    };
+  }).filter(x => x.title && x.link);
+}
+function parseJinaMarkdown(md){          // 읽기 도우미가 돌려준 글에서 제목·링크만 추립니다
+  const out = [];
+  const re = /\[([^\]]{8,200})\]\((https?:\/\/[^)]+)\)/g;
+  let m;
+  while ((m = re.exec(md)) && out.length < 30){
+    if (/\.(png|jpg|svg|gif)$/i.test(m[2])) continue;
+    out.push({ title: m[1].trim(), link: m[2], date: new Date().toISOString().slice(0, 10), excerpt: '' });
+  }
+  return out;
+}
+async function fetchMySource(m){
+  if (m.type === 'epmc'){
+    const url = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=' +
+      encodeURIComponent(m.value) + '&format=json&pageSize=25&resultType=core&sort=P_PDATE_D%20desc';
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('논문 검색 실패 (' + r.status + ')');
+    const j = await r.json();
+    return ((j.resultList || {}).result || []).map(x => ({
+      title: (x.title || '').replace(/\.$/, ''),
+      link: x.doi ? 'https://doi.org/' + x.doi : `https://europepmc.org/article/${x.source}/${x.id}`,
+      date: (x.firstPublicationDate || x.pubYear || '').slice(0, 10),
+      excerpt: (x.abstractText || '').replace(/<[^>]+>/g, ' ').slice(0, 420),
+      origin: ((x.journalInfo || {}).journal || {}).title || 'preprint'
+    }));
+  }
+  const url = m.type === 'news'
+    ? 'https://news.google.com/rss/search?q=' + encodeURIComponent(m.value) + '+when:30d&hl=ko&gl=KR&ceid=KR:ko'
+    : m.value;
+  const { text } = await fetchText(url);
+  return parseFeedXml(text) || parseJinaMarkdown(text);
+}
+$('#nsFetch').onclick = async () => {
+  const mine = (S.mySources || []).filter(m => m.kind === S.kind);
+  if (!mine.length) return alert('먼저 소스를 추가해 주세요.');
+  const btn = $('#nsFetch'); btn.disabled = true;
+  for (const m of mine){
+    $('#nsLog').textContent = `${m.name} 가져오는 중…`;
+    try {
+      const rows = await fetchMySource(m);
+      S.myItems = (S.myItems || []).filter(x => x.sourceId !== m.id);
+      rows.forEach((row, i) => S.myItems.push({
+        id: m.id + '-' + i, sourceId: m.id, sourceName: m.name, groupId: 'my', kind: m.kind,
+        region: m.region, lang: '', title: row.title, origin: row.origin || '',
+        link: row.link, date: row.date, excerpt: row.excerpt
+      }));
+      $('#nsLog').textContent = `${m.name}: ${rows.length}건 가져왔습니다.`;
+    } catch(err){
+      $('#nsLog').textContent = `${m.name}: ${err.message} — 주소를 확인하거나, 저장소 설정에 넣어 매일 자동 수집으로 돌려 보세요.`;
+    }
+  }
+  btn.disabled = false; save(); renderMy(); renderFeed();
+};
+$('#nsExport').onclick = () => {
+  const byKind = {};
+  (S.mySources || []).forEach(m => { (byKind[m.kind] = byKind[m.kind] || []).push(m); });
+  const groups = Object.entries(byKind).map(([kind, list]) => ({
+    id: 'my-' + kind, name: '내가 추가한 소스', kind,
+    sources: list.map(m => Object.assign(
+      { id: m.id, name: m.name, region: m.region, site: m.type === 'rss' ? m.value : '', desc: '직접 추가한 소스' },
+      m.type === 'rss' ? { rss: m.value } : m.type === 'news' ? { query: m.value } : { epmc: m.value }
+    ))
+  }));
+  if (!groups.length) return alert('추가한 소스가 없습니다.');
+  download('sources-추가분.json', 'application/json', JSON.stringify({ groups }, null, 1));
+  alert('내려받은 파일의 groups 내용을 data/newsletter/sources.json 의 groups 에 넣으면 매일 자동으로 수집됩니다.');
 };
 
 /* 직접 넣기 */
@@ -832,7 +1005,7 @@ $('#exMail').onclick  = async () => {
   const rk = $(`input[name=kind][value="${S.kind}"]`); if (rk) rk.checked = true;
   if (!S.meta.title) { S.meta.title = KINDS[S.kind].title; $('#mTitle').value = S.meta.title; }
   try { $('#apiKey').value = localStorage.getItem('nlmaker-key') || ''; } catch(e){}
-  renderSources(); renderFeed();
+  nsHelp(); renderMy(); renderSources(); renderFeed();
 })();
 </script>
 </body>
