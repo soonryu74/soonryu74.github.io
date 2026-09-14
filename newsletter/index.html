@@ -1293,13 +1293,21 @@ function renderPaper(){
 
   p.innerHTML = `
   <header class="nl-head">
+    <div class="nl-topline">
+      <span>${esc((KINDS[S.kind] || {}).title || '')}</span>
+      <span class="issue">${esc(m.issue || '')}${m.issue && dateTxt ? ' · ' : ''}${esc(dateTxt)}</span>
+    </div>
     <div class="nl-kicker" contenteditable="true">${esc(m.org || '발행 기관')}</div>
     <h1 class="nl-title" contenteditable="true">${esc(m.title || '뉴스레터')}</h1>
-    <div class="nl-meta">${esc(m.issue || '')}${m.issue && dateTxt ? ' · ' : ''}${esc(dateTxt)}${m.editor ? ' · 작성 ' + esc(m.editor) : ''}</div>
     ${d.tagline ? `<p class="nl-lead" contenteditable="true">${esc(d.tagline)}</p>` : ''}
   </header>
+  <div class="nl-bar">
+    <span>발행 ${esc(m.org || '')}</span>
+    ${m.editor ? `<span>담당 ${esc(m.editor)}</span>` : ''}
+    ${m.subUrl ? `<span>구독 <a href="${esc(m.subUrl)}" target="_blank" rel="noopener">이 뉴스레터 받아보기</a></span>` : ''}
+  </div>
   <div class="brief">
-    <div class="brief-label">목차 <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
+    <div class="brief-label">이번 호에는 <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
     ${stats}
     ${issues}
   </div>

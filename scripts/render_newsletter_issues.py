@@ -116,13 +116,21 @@ def paper(data):
   </aside>'''
     return f'''<div id="paper" class="t-{e(data.get("tpl","official"))} k-{e(data["kind"])}">
   <header class="nl-head">
+    <div class="nl-topline">
+      <span>{e(KINDS[data["kind"]]["name"])} 뉴스레터</span>
+      <span class="issue">{e(m.get("issue",""))}{" · " if m.get("issue") and date_txt else ""}{e(date_txt)}</span>
+    </div>
     <div class="nl-kicker">{e(m.get("org",""))}</div>
     <h1 class="nl-title">{e(m.get("title",""))}</h1>
-    <div class="nl-meta">{e(m.get("issue",""))}{" · " if m.get("issue") and date_txt else ""}{e(date_txt)}{" · 작성 " + e(m.get("editor","")) if m.get("editor") else ""}</div>
     {f'<p class="nl-lead">{e(d.get("tagline"))}</p>' if d.get("tagline") else ""}
   </header>
+  <div class="nl-bar">
+    <span>발행 {e(m.get("org",""))}</span>
+    {f'<span>담당 {e(m.get("editor"))}</span>' if m.get("editor") else ""}
+    {f'<span>구독 <a href="{e((data.get("subscribe") or {{}}).get("url",""))}">이 뉴스레터 받아보기</a></span>' if (data.get("subscribe") or {{}}).get("url") else ""}
+  </div>
   <div class="brief">
-    <div class="brief-label">{e(k["sumTitle"])} <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
+    <div class="brief-label">이번 호에는 <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
     {stats}
     {issues}
   </div>
