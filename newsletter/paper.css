@@ -52,31 +52,32 @@
 .nl-head{ border-bottom:2px solid var(--brand); padding-bottom:0; margin-bottom:0; }
 .nl-topline{
   display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
-  font-size:.74rem; font-weight:700; letter-spacing:.1em; color:var(--muted);
+  font-size:.76rem; font-weight:700; letter-spacing:.01em; color:var(--muted);
   border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:16px;
   font-variant-numeric:tabular-nums;
 }
 .nl-topline .issue{ color:var(--accent); }
 .nl-kicker{
-  font-size:.78rem; font-weight:800; letter-spacing:.14em; color:var(--accent);
+  font-size:.86rem; font-weight:800; letter-spacing:.005em; color:var(--accent);
   display:flex; gap:12px; align-items:center; flex-wrap:wrap;
 }
 .nl-kicker::after{ content:""; flex:1; height:2px; background:var(--accent); min-width:24px; opacity:.35; }
 /* 제호 아래 발행 정보 띠 */
 .nl-bar{
-  display:flex; gap:8px 20px; flex-wrap:wrap; justify-content:space-between;
-  background:var(--brand); color:#fff; font-size:.8rem; font-weight:600;
-  padding:9px 16px; margin:16px 0 26px;
+  display:flex; gap:6px 18px; flex-wrap:wrap; justify-content:space-between; align-items:baseline;
+  background:var(--brand); color:#fff; font-size:.82rem; font-weight:600; line-height:1.55;
+  padding:10px 16px; margin:16px 0 26px; word-break:keep-all;
 }
 .nl-bar span{ opacity:.92; }
 .nl-bar a{ color:#fff; text-decoration:underline; text-underline-offset:2px; }
 .nl-title{
-  font-family:var(--serif); font-weight:800; font-size:2.9rem; line-height:1.12;
-  letter-spacing:-.025em; color:var(--brand); margin:10px 0 8px; text-wrap:balance;
+  font-family:var(--serif); font-weight:800; font-size:clamp(1.55rem, 5.4vw, 2.75rem);
+  line-height:1.22; letter-spacing:-.02em; color:var(--brand); margin:10px 0 8px;
+  text-wrap:balance; word-break:keep-all;
 }
 .nl-meta{ font-size:.82rem; color:var(--muted); font-variant-numeric:tabular-nums; }
 .nl-lead{
-  font-size:1.2rem; line-height:1.66; color:var(--ink-2); margin-top:16px;
+  font-size:clamp(1rem, 2.6vw, 1.18rem); line-height:1.7; color:var(--ink-2); margin-top:14px;
   font-weight:500; text-wrap:pretty; padding-bottom:16px;
 }
 
@@ -86,7 +87,7 @@
   padding:20px 22px 14px;
 }
 .brief-label{
-  font-size:.8rem; font-weight:800; letter-spacing:.12em; color:var(--brand);
+  font-size:.88rem; font-weight:800; letter-spacing:0; color:var(--brand);
   margin-bottom:14px; display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;
 }
 .brief .stats{ background:#fff; border-color:var(--line); }
@@ -100,8 +101,8 @@
 .brief .stat:first-child{ padding-left:16px; }
 .stat:first-child{ border-left:0; padding-left:0; }
 .stat .v{
-  font-size:1.72rem; font-weight:800; line-height:1.15; color:var(--accent);
-  font-variant-numeric:tabular-nums; letter-spacing:-.01em;
+  font-size:clamp(1.25rem, 4.4vw, 1.7rem); font-weight:800; line-height:1.2; color:var(--accent);
+  font-variant-numeric:tabular-nums; letter-spacing:-.015em; word-break:keep-all;
 }
 .stat .l{ font-size:.84rem; color:var(--ink-2); margin-top:3px; line-height:1.45; }
 .stat .n{ font-size:.72rem; color:var(--muted); margin-top:2px; }
@@ -114,7 +115,7 @@
 }
 .issues .meta{ display:flex; gap:6px; align-items:center; justify-content:flex-end; flex-wrap:wrap; }
 .issues .src{
-  font-size:.78rem; font-weight:700; color:var(--accent); background:var(--accent-soft);
+  font-size:.8rem; font-weight:700; letter-spacing:0; color:var(--accent); background:var(--accent-soft);
   border-radius:3px; padding:2px 8px; white-space:nowrap;
 }
 .issues .src-more{ font-size:.76rem; color:var(--muted); }
@@ -133,7 +134,7 @@
 
 /* 자료 성격 태그 — 색이 아니라 형태로 구분한다 */
 .tag{
-  font-size:.74rem; font-weight:800; letter-spacing:.06em; color:var(--muted);
+  font-size:.76rem; font-weight:700; letter-spacing:0; color:var(--muted);
   border:1px solid var(--line); border-radius:3px; padding:2px 7px; white-space:nowrap;
 }
 .tag-경보,.tag-alert{ color:#a3243b; border-color:#e7c3ca; background:#fdf4f5; }
@@ -147,7 +148,7 @@
   align-items:baseline; margin-bottom:6px; }
 .topic-head h2{ min-width:0; }
 .topic-no{
-  font-size:.82rem; font-weight:800; color:var(--accent); letter-spacing:.06em;
+  font-size:.86rem; font-weight:800; color:var(--accent); letter-spacing:0;
   font-variant-numeric:tabular-nums;
 }
 .topic h2{
@@ -162,7 +163,7 @@
 }
 .sec{ margin-top:20px; }
 .sec > h4{
-  font-size:.78rem; font-weight:800; letter-spacing:.11em; color:var(--accent);
+  font-size:.84rem; font-weight:800; letter-spacing:0; color:var(--accent);
   margin:0 0 8px; padding-bottom:6px; border-bottom:1px solid var(--accent-soft);
 }
 .sec ul{ margin:0; padding:0; list-style:none; }
@@ -184,7 +185,7 @@
 }
 .srccard img{ width:180px; height:110px; object-fit:cover; flex:0 0 auto; background:var(--accent-soft); }
 .srccard .sc-b{ padding:12px 14px; min-width:0; display:flex; flex-direction:column; justify-content:center; }
-.srccard .sc-site{ font-size:.74rem; font-weight:800; letter-spacing:.08em; color:var(--accent); }
+.srccard .sc-site{ font-size:.78rem; font-weight:800; letter-spacing:0; color:var(--accent); }
 .srccard .sc-t{ font-size:.96rem; font-weight:700; line-height:1.5; margin:3px 0 4px; color:var(--ink); }
 .srccard .sc-d{ font-size:.84rem; color:var(--muted); line-height:1.55; max-height:3.2em; overflow:hidden; }
 .srccard a{ font-size:.82rem; font-weight:700; margin-top:6px; display:inline-block; }
@@ -193,8 +194,8 @@
 /* 질병개요 표 (원본 주간보고서 서식) */
 .profile{ margin-top:18px; border:1px solid var(--line); }
 .profile h5{
-  margin:0; padding:9px 14px; background:var(--brand); color:#fff; font-size:.82rem;
-  font-weight:800; letter-spacing:.06em;
+  margin:0; padding:10px 14px; background:var(--brand); color:#fff; font-size:.88rem;
+  font-weight:800; letter-spacing:0;
 }
 .profile dl{ margin:0; display:grid; grid-template-columns:132px 1fr; }
 .profile dt{
@@ -263,8 +264,9 @@
   #paper::before{ display:none; }
   .t-card{ padding:0; }
   .t-card .nl-head,.t-card .brief,.t-card .topic,.t-card .intro,.t-card .foot-note{ padding:22px 20px; }
-  .nl-title{ font-size:2.05rem; }
-  .nl-bar{ padding:10px 14px; font-size:.76rem; }
+  .nl-title{ line-height:1.25; }
+  .nl-bar{ padding:11px 14px; font-size:.8rem; gap:4px 14px; }
+  .nl-topline{ font-size:.7rem; letter-spacing:.06em; }
   .brief{ padding:16px 14px 8px; }
   .nl-lead{ font-size:1.06rem; }
   .stats{ grid-template-columns:1fr 1fr; }
