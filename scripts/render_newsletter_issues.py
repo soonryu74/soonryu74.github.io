@@ -15,6 +15,7 @@ ROOT    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SAMPLES = os.path.join(ROOT, "newsletter", "samples")
 ISSUES  = os.path.join(ROOT, "newsletter", "issues")
 SITE    = "https://soonryu74.github.io/newsletter/issues/"   # 메일에서 이미지를 불러올 주소
+SUBSCRIBE = "https://soonryu74.github.io/newsletter/subscribe.html"   # 구독 신청 페이지
 
 KINDS = {
     "outbreak": {"name": "감염병 발생동향", "sumTitle": "목차",
@@ -148,7 +149,7 @@ def paper(data):
   <div class="nl-bar">
     <span>발행 {e(m.get("org",""))}</span>
     {f'<span>담당 {e(m.get("editor"))}</span>' if m.get("editor") else ""}
-    {f'<span>구독 <a href="{e((data.get("subscribe") or {{}}).get("url",""))}">이 뉴스레터 받아보기</a></span>' if (data.get("subscribe") or {{}}).get("url") else ""}
+    {f'<span>구독 <a href="{e((data.get("subscribe") or {{}}).get("url",""))}">이 뉴스레터 받아보기 →</a></span>' if (data.get("subscribe") or {{}}).get("url") else ""}
   </div>
   <div class="brief">
     <div class="brief-label">이번 호에는 <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
@@ -313,7 +314,8 @@ def index_page(rows):
 </style>
 </head>
 <body>
-<nav class="bar"><a href="../">← 뉴스레터 메이커</a><a href="./" id="allLink" hidden>전체 뉴스레터 보기</a></nav>
+<nav class="bar"><a href="../">← 뉴스레터 메이커</a><a href="./" id="allLink" hidden>전체 뉴스레터 보기</a>
+  <a href="../subscribe.html" id="subLink" style="margin-left:auto">구독 신청</a></nav>
 <div class="wrap">
   <h1 id="listTitle">발간한 뉴스레터</h1>
   <p class="sub" id="listSub">뉴스레터 메이커로 만든 호입니다. 서식과 구성을 그대로 가져다 새 호를 만들 수 있습니다.</p>
@@ -334,6 +336,7 @@ def index_page(rows):
     document.getElementById('listTitle').textContent = NAMES[series];
     document.getElementById('listSub').textContent = shown + '개 호가 발간되었습니다. 구독을 원하시면 발행 기관으로 문의해 주세요.';
     document.getElementById('allLink').hidden = false;
+    document.getElementById('subLink').href = '../subscribe.html?series=' + series;
     document.getElementById('listEmpty').hidden = shown > 1;
   }}
 </script>
@@ -358,11 +361,12 @@ def main():
     for me in metas:
         kind = me["data"]["kind"]
         sub = me["data"].setdefault("subscribe", {})
-        sub["url"] = SITE + "?series=" + kind            # 이 뉴스레터 시리즈만 모아 보는 주소
+        sub["url"] = SUBSCRIBE + "?series=" + kind       # 구독 신청 페이지(해당 뉴스레터가 미리 선택됨)
         many = counts.get(kind, 1) > 1
-        sub["label"] = ("이 뉴스레터 구독 · 지난 호 보기" if many else "이 뉴스레터 구독 안내")
-        sub["note"] = ("휴대폰 카메라로 찍으면 " + KINDS[kind]["name"] + " 뉴스레터의 "
-                       + ("지난 호와 구독 안내로 이어집니다." if many else "구독 안내로 이어집니다. (이번이 창간호입니다)"))
+        sub["label"] = "이 뉴스레터 받아보기"
+        sub["note"] = ("휴대폰 카메라로 찍으면 " + KINDS[kind]["name"]
+                       + " 뉴스레터 구독 신청 화면으로 바로 이어집니다."
+                       + ("" if many else " (이번이 창간호입니다)"))
         qr_name = "qr-" + me["file"].replace(".html", ".png")
         make_qr(sub["url"], os.path.join(ISSUES, qr_name), KINDS[kind]["brand"])
         me["data"]["_qr"] = qr_name

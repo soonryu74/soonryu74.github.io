@@ -186,6 +186,7 @@ textarea{min-height:90px;resize:vertical}
     <div class="row" style="margin-top:20px">
       <button class="btn pri" data-nav="make" style="font-size:1.04rem">맞춤형 뉴스레터 만들기 →</button>
       <button class="btn" data-nav="issues">최신 뉴스레터 보기</button>
+      <a class="btn" href="subscribe.html" style="text-decoration:none">구독 신청 화면 보기</a>
     </div>
   </div>
 
@@ -399,7 +400,7 @@ textarea{min-height:90px;resize:vertical}
     </div>
     <div class="row" style="margin-top:10px">
       <div class="grow"><label class="f">구독 링크 <span class="note">— 넣으면 QR 코드가 자동으로 만들어집니다</span></label>
-        <input type="text" id="mSubUrl" placeholder="예: https://soonryu74.github.io/newsletter/issues/"></div>
+        <input type="text" id="mSubUrl" placeholder="예: https://soonryu74.github.io/newsletter/subscribe.html"></div>
       <div class="grow"><label class="f">구독 안내 문구</label>
         <input type="text" id="mSubLabel" placeholder="예: 뉴스레터 구독·지난 호 보기"></div>
     </div>
@@ -659,6 +660,7 @@ function issueCard(r, i, pre){
       <div class="acts">
         <a class="btn sm pri" href="issues/${esc(r.file)}" target="_blank" rel="noopener">뉴스레터 열기</a>
         <button class="btn sm" data-pubtoggle="${pre}-${i}">발행 방법 선택 ▾</button>
+        <a class="btn sm" href="subscribe.html?series=${esc(r.kind)}" target="_blank" rel="noopener">구독 신청</a>
         <button class="btn sm" data-copyissue="${i}">이 서식으로 새 호 만들기</button>
       </div>
       ${pubButtons(pre + '-' + i)}
