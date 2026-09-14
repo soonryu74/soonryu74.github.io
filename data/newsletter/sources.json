@@ -12,8 +12,9 @@
      "site": "https://www.who.int/emergencies/disease-outbreak-news",
      "lang": "en",
      "query": "WHO Disease Outbreak News",
-     "desc": "WHO가 회원국 보고를 확인해 올리는 공식 발생 속보. 새 유행의 1차 출처",
-     "via": "뉴스 검색"
+     "desc": "WHO가 회원국 보고를 확인해 발표하는 공식 발생 속보(WHO 웹사이트에서 직접 수집)",
+     "via": "WHO 공식",
+     "who_api": true
     },
     {
      "id": "who-news",
@@ -1049,6 +1050,302 @@
      "epmc": "(TITLE:adaptation OR TITLE:resilience OR TITLE:vulnerability) AND (ABSTRACT:climate AND ABSTRACT:health) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
      "via": "논문 검색",
      "lang": "en"
+    }
+   ]
+  },
+  {
+   "id": "review-outbreak",
+   "name": "논문 리뷰·트렌드 (감염병)",
+   "kind": "outbreak",
+   "sources": [
+    {
+     "id": "cochrane-outbreak",
+     "name": "코크란 리뷰 (신규 발표)",
+     "region": "연구",
+     "desc": "코크란 체계적 문헌고찰 최신호. 근거 수준이 가장 높은 종합 결론",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "JOURNAL:\"Cochrane Database Syst Rev\" AND (TITLE:infection* OR TITLE:vaccin* OR TITLE:influenza OR TITLE:outbreak OR TITLE:antibiotic* OR TITLE:antiviral*) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "cochrane-protocol-outbreak",
+     "name": "진행 중인 체계적 문헌고찰 (프로토콜)",
+     "region": "연구",
+     "desc": "아직 결과가 나오지 않은 리뷰 계획서. 어느 주제로 근거가 모이는지 미리 보여 줌",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "((TITLE:\"systematic review protocol\" OR (TITLE:protocol AND TITLE:\"systematic review\") OR TITLE:\"scoping review protocol\")) AND (TITLE:infection* OR TITLE:vaccin* OR TITLE:influenza OR TITLE:outbreak OR TITLE:antibiotic* OR TITLE:antiviral*) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "review-outbreak",
+     "name": "리뷰 논문 (분야 종합)",
+     "region": "연구",
+     "desc": "학술지 리뷰 논문. 개별 연구보다 흐름을 읽기 좋음",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "epmc": "PUB_TYPE:\"Review\" AND (TITLE:infection* OR TITLE:vaccin* OR TITLE:influenza OR TITLE:outbreak OR TITLE:antibiotic* OR TITLE:antiviral*) AND {RECENT} AND SRC:MED",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "review-phsm",
+   "name": "논문 리뷰·트렌드 (사회 대응)",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "cochrane-phsm",
+     "name": "코크란 리뷰 (신규 발표)",
+     "region": "연구",
+     "desc": "코크란 체계적 문헌고찰 최신호. 근거 수준이 가장 높은 종합 결론",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "JOURNAL:\"Cochrane Database Syst Rev\" AND (TITLE:\"public health\" OR TITLE:distancing OR TITLE:mask* OR TITLE:vaccin* OR TITLE:quarantine OR TITLE:\"health communication\" OR TITLE:adherence) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "cochrane-protocol-phsm",
+     "name": "진행 중인 체계적 문헌고찰 (프로토콜)",
+     "region": "연구",
+     "desc": "아직 결과가 나오지 않은 리뷰 계획서. 어느 주제로 근거가 모이는지 미리 보여 줌",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "((TITLE:\"systematic review protocol\" OR (TITLE:protocol AND TITLE:\"systematic review\") OR TITLE:\"scoping review protocol\")) AND (TITLE:\"public health\" OR TITLE:distancing OR TITLE:mask* OR TITLE:vaccin* OR TITLE:quarantine OR TITLE:\"health communication\" OR TITLE:adherence) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "review-phsm",
+     "name": "리뷰 논문 (분야 종합)",
+     "region": "연구",
+     "desc": "학술지 리뷰 논문. 개별 연구보다 흐름을 읽기 좋음",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "epmc": "PUB_TYPE:\"Review\" AND (TITLE:\"public health\" OR TITLE:distancing OR TITLE:mask* OR TITLE:vaccin* OR TITLE:quarantine OR TITLE:\"health communication\" OR TITLE:adherence) AND {RECENT} AND SRC:MED",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "review-chronic",
+   "name": "논문 리뷰·트렌드 (만성질환)",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "cochrane-chronic",
+     "name": "코크란 리뷰 (신규 발표)",
+     "region": "연구",
+     "desc": "코크란 체계적 문헌고찰 최신호. 근거 수준이 가장 높은 종합 결론",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "JOURNAL:\"Cochrane Database Syst Rev\" AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"physical activity\" OR TITLE:depression) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "cochrane-protocol-chronic",
+     "name": "진행 중인 체계적 문헌고찰 (프로토콜)",
+     "region": "연구",
+     "desc": "아직 결과가 나오지 않은 리뷰 계획서. 어느 주제로 근거가 모이는지 미리 보여 줌",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "((TITLE:\"systematic review protocol\" OR (TITLE:protocol AND TITLE:\"systematic review\") OR TITLE:\"scoping review protocol\")) AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"physical activity\" OR TITLE:depression) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "review-chronic",
+     "name": "리뷰 논문 (분야 종합)",
+     "region": "연구",
+     "desc": "학술지 리뷰 논문. 개별 연구보다 흐름을 읽기 좋음",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "epmc": "PUB_TYPE:\"Review\" AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"physical activity\" OR TITLE:depression) AND {RECENT} AND SRC:MED",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "review-climate",
+   "name": "논문 리뷰·트렌드 (기후·건강)",
+   "kind": "climate",
+   "sources": [
+    {
+     "id": "cochrane-climate",
+     "name": "코크란 리뷰 (신규 발표)",
+     "region": "연구",
+     "desc": "코크란 체계적 문헌고찰 최신호. 근거 수준이 가장 높은 종합 결론",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "JOURNAL:\"Cochrane Database Syst Rev\" AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:\"vector-borne\" OR TITLE:dengue OR TITLE:malaria) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "cochrane-protocol-climate",
+     "name": "진행 중인 체계적 문헌고찰 (프로토콜)",
+     "region": "연구",
+     "desc": "아직 결과가 나오지 않은 리뷰 계획서. 어느 주제로 근거가 모이는지 미리 보여 줌",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "((TITLE:\"systematic review protocol\" OR (TITLE:protocol AND TITLE:\"systematic review\") OR TITLE:\"scoping review protocol\")) AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:\"vector-borne\" OR TITLE:dengue OR TITLE:malaria) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "review-climate",
+     "name": "리뷰 논문 (분야 종합)",
+     "region": "연구",
+     "desc": "학술지 리뷰 논문. 개별 연구보다 흐름을 읽기 좋음",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "epmc": "PUB_TYPE:\"Review\" AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:\"vector-borne\" OR TITLE:dengue OR TITLE:malaria) AND {RECENT} AND SRC:MED",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "quick-outbreak",
+   "name": "신속검토·중국 연구 (감염병)",
+   "kind": "outbreak",
+   "sources": [
+    {
+     "id": "rapid-outbreak",
+     "name": "신속검토(Rapid review)·근거요약",
+     "region": "연구",
+     "desc": "위기 때 짧은 기간에 근거를 모아 정리한 문헌. 급할 때 먼저 보는 자료",
+     "epmc": "(TITLE:\"rapid review\" OR TITLE:\"rapid evidence\" OR TITLE:\"evidence summary\" OR TITLE:\"umbrella review\") AND (TITLE:outbreak OR TITLE:influenza OR TITLE:infection* OR TITLE:vaccin* OR TITLE:surveillance) AND {RECENT}",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "china-outbreak",
+     "name": "중국 연구 동향",
+     "region": "연구",
+     "desc": "중국 소속 연구진의 역학·공중보건 연구. 최근 발표량이 많아 흐름을 보기 좋음",
+     "epmc": "AFF:\"China\" AND (TITLE:epidemiolog* OR TITLE:surveillance OR TITLE:\"public health\" OR TITLE:cohort OR TITLE:prevalence OR TITLE:trends OR TITLE:policy) AND (TITLE:outbreak OR TITLE:influenza OR TITLE:infection* OR TITLE:vaccin* OR TITLE:surveillance) AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "guideline-outbreak",
+     "name": "지침·권고 문헌",
+     "region": "연구",
+     "desc": "학회·기관 지침과 권고 개정 문헌",
+     "epmc": "(TITLE:guideline* OR TITLE:recommendation* OR TITLE:\"consensus statement\") AND (TITLE:outbreak OR TITLE:influenza OR TITLE:infection* OR TITLE:vaccin* OR TITLE:surveillance) AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "quick-phsm",
+   "name": "신속검토·중국 연구 (사회 대응)",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "rapid-phsm",
+     "name": "신속검토(Rapid review)·근거요약",
+     "region": "연구",
+     "desc": "위기 때 짧은 기간에 근거를 모아 정리한 문헌. 급할 때 먼저 보는 자료",
+     "epmc": "(TITLE:\"rapid review\" OR TITLE:\"rapid evidence\" OR TITLE:\"evidence summary\" OR TITLE:\"umbrella review\") AND (TITLE:\"public health\" OR TITLE:vaccin* OR TITLE:distancing OR TITLE:mask* OR TITLE:quarantine OR TITLE:adherence OR TITLE:\"health communication\") AND {RECENT}",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "china-phsm",
+     "name": "중국 연구 동향",
+     "region": "연구",
+     "desc": "중국 소속 연구진의 역학·공중보건 연구. 최근 발표량이 많아 흐름을 보기 좋음",
+     "epmc": "AFF:\"China\" AND (TITLE:epidemiolog* OR TITLE:surveillance OR TITLE:\"public health\" OR TITLE:cohort OR TITLE:prevalence OR TITLE:trends OR TITLE:policy) AND (TITLE:\"public health\" OR TITLE:vaccin* OR TITLE:distancing OR TITLE:mask* OR TITLE:quarantine OR TITLE:adherence OR TITLE:\"health communication\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "guideline-phsm",
+     "name": "지침·권고 문헌",
+     "region": "연구",
+     "desc": "학회·기관 지침과 권고 개정 문헌",
+     "epmc": "(TITLE:guideline* OR TITLE:recommendation* OR TITLE:\"consensus statement\") AND (TITLE:\"public health\" OR TITLE:vaccin* OR TITLE:distancing OR TITLE:mask* OR TITLE:quarantine OR TITLE:adherence OR TITLE:\"health communication\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "quick-chronic",
+   "name": "신속검토·중국 연구 (만성질환)",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "rapid-chronic",
+     "name": "신속검토(Rapid review)·근거요약",
+     "region": "연구",
+     "desc": "위기 때 짧은 기간에 근거를 모아 정리한 문헌. 급할 때 먼저 보는 자료",
+     "epmc": "(TITLE:\"rapid review\" OR TITLE:\"rapid evidence\" OR TITLE:\"evidence summary\" OR TITLE:\"umbrella review\") AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"chronic disease\") AND {RECENT}",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "china-chronic",
+     "name": "중국 연구 동향",
+     "region": "연구",
+     "desc": "중국 소속 연구진의 역학·공중보건 연구. 최근 발표량이 많아 흐름을 보기 좋음",
+     "epmc": "AFF:\"China\" AND (TITLE:epidemiolog* OR TITLE:surveillance OR TITLE:\"public health\" OR TITLE:cohort OR TITLE:prevalence OR TITLE:trends OR TITLE:policy) AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"chronic disease\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "guideline-chronic",
+     "name": "지침·권고 문헌",
+     "region": "연구",
+     "desc": "학회·기관 지침과 권고 개정 문헌",
+     "epmc": "(TITLE:guideline* OR TITLE:recommendation* OR TITLE:\"consensus statement\") AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"chronic disease\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "quick-climate",
+   "name": "신속검토·중국 연구 (기후·건강)",
+   "kind": "climate",
+   "sources": [
+    {
+     "id": "rapid-climate",
+     "name": "신속검토(Rapid review)·근거요약",
+     "region": "연구",
+     "desc": "위기 때 짧은 기간에 근거를 모아 정리한 문헌. 급할 때 먼저 보는 자료",
+     "epmc": "(TITLE:\"rapid review\" OR TITLE:\"rapid evidence\" OR TITLE:\"evidence summary\" OR TITLE:\"umbrella review\") AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:dengue OR TITLE:\"vector-borne\") AND {RECENT}",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "china-climate",
+     "name": "중국 연구 동향",
+     "region": "연구",
+     "desc": "중국 소속 연구진의 역학·공중보건 연구. 최근 발표량이 많아 흐름을 보기 좋음",
+     "epmc": "AFF:\"China\" AND (TITLE:epidemiolog* OR TITLE:surveillance OR TITLE:\"public health\" OR TITLE:cohort OR TITLE:prevalence OR TITLE:trends OR TITLE:policy) AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:dengue OR TITLE:\"vector-borne\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "guideline-climate",
+     "name": "지침·권고 문헌",
+     "region": "연구",
+     "desc": "학회·기관 지침과 권고 개정 문헌",
+     "epmc": "(TITLE:guideline* OR TITLE:recommendation* OR TITLE:\"consensus statement\") AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:dengue OR TITLE:\"vector-borne\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
     }
    ]
   }

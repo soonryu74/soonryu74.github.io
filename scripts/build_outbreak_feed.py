@@ -61,6 +61,22 @@ def fetch_json(url, tries=3):
                 print(f"  ! 실패: {url} ({e})")
     return None
 
+def who_don(limit=PER_SOURCE):
+    """WHO 발생 속보(Disease Outbreak News) 공식 자료 — WHO 웹사이트 API에서 그대로 가져온다."""
+    url = ("https://www.who.int/api/news/diseaseoutbreaknews?sf_provider=dynamicProvider372"
+           "&sf_culture=en&%24orderby=PublicationDateAndTime%20desc&%24top=" + str(limit) + "&%24format=json")
+    data = fetch_json(url) or {}
+    out = []
+    for x in data.get("value", []):
+        out.append({
+            "title": (x.get("Title") or "").strip(),
+            "link": "https://www.who.int/emergencies/disease-outbreak-news/item" + (x.get("ItemDefaultUrl") or ""),
+            "date": (x.get("PublicationDateAndTime") or x.get("PublicationDate") or "")[:10],
+            "excerpt": strip_tags(x.get("Summary") or x.get("Overview") or "", 420),
+            "origin": "WHO Disease Outbreak News",
+        })
+    return [o for o in out if o["title"]]
+
 def europepmc(query, limit=PER_SOURCE):
     """검색식의 {RECENT} 는 최근 120일 기간으로 바뀐다."""
     today = datetime.date.today()
@@ -148,7 +164,9 @@ def main():
         for s in g["sources"]:
             print(f"- {s['name']}")
             got, via = [], ""
-            if s.get("epmc"):
+            if s.get("who_api"):
+                got, via = who_don(), "WHO 공식"
+            if not got and s.get("epmc"):
                 got, via = europepmc(s["epmc"]), "논문 검색"
             if not got and s.get("rss"):
                 got, via = items_from(fetch_xml(s["rss"])), "기관 RSS"
