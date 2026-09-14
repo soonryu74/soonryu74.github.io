@@ -62,9 +62,14 @@ def refs_block(refs):
     return (f'<details class="refs"><summary>출처 {len(items)}건</summary>'
             f'<ol>{"".join(items)}</ol></details>')
 
+BAD_CARD = re.compile(r"^(redirecting|client challenge|just a moment|attention required|access denied|error)\.?$", re.I)
+
 def src_card(t):
     c = t.get("card") or {}
-    if not c.get("url"): return ""
+    title = (c.get("title") or "").strip()
+    # 리디렉션 안내나 봇 차단 화면이 잡힌 카드는 보여 주지 않는다
+    if not c.get("url") or not title or BAD_CARD.match(title): return ""
+    if not c.get("image") and not c.get("desc"): return ""
     img = f'<img src="{e(c["image"])}" alt="" loading="lazy">' if c.get("image") else ""
     return f'''<div class="srccard">{img}
       <div class="sc-b">
@@ -129,7 +134,7 @@ def paper(data):
         <h2>{e(t["name"])} <span class="en">{e(t.get("en",""))}</span></h2>
         {f'<span class="tag tag-{e(t.get("tag"))}">{e(t.get("tag"))}</span>' if t.get("tag") else ''}
       </div>
-      {f'<div class="topic-src">출처 <b>{e(" · ".join(t.get("sources") or []))}</b></div>' if t.get("sources") else ''}
+      {f'<div class="topic-src"><span class="lbl">출처</span> <b>{e(" · ".join(t.get("sources") or []))}</b></div>' if t.get("sources") else ''}
       {f'<p class="topic-lead">{e(t.get("headline"))}</p>' if t.get("headline") else ''}
       {src_card(t)}
       <div class="sec"><h4>{e(k["secs"][0])}</h4>{ul(t.get("situation"))}</div>

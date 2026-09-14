@@ -71,6 +71,11 @@ def main():
                 "image": img, "url": final,
             }
             card["title"] = html.unescape(re.sub(r"\s+", " ", card["title"]))[:150]
+            bad = re.match(r"^(redirecting|client challenge|just a moment|attention required|access denied|error)\.?$",
+                           card["title"], re.I)
+            if not card["title"] or bad or (not card["image"] and not card["desc"]):
+                t.pop("card", None); changed = True
+                print(f"   {i}. 건너뜀(쓸 만한 미리보기 없음)"); time.sleep(0.3); continue
             t["card"] = card; changed = True
             print(f"   {i}. {card['site']} | 이미지 {'있음' if img else '없음'} | {card['title'][:50]}")
             time.sleep(0.4)
