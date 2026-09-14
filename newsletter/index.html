@@ -846,6 +846,14 @@ const countries = t => {
 /* AI 없이 만드는 기본 초안 — 담은 기사에서 바로 뼈대를 세웁니다 */
 function basicDraft(){
   const K = KINDS[S.kind];
+  const srcNames = items => {
+    const out = [];
+    items.forEach(i => {
+      const n = (i.origin || i.source || '').split('·')[0].split('|')[0].trim().slice(0, 34);
+      if (n && !out.includes(n)) out.push(n);
+    });
+    return out.slice(0, 4);
+  };
   const tagOf = items => {
     if (items.every(i => i.region === '연구')) return '연구';
     if (items.some(i => /질병관리청|복지부|정책|UKHSA|WHO|CDC|ECDC/.test(i.source + i.title))) return '정책';
@@ -855,7 +863,7 @@ function basicDraft(){
     const txt = g.items.map(i => (i.title + ' ' + i.excerpt).toLowerCase()).join(' ');
     const where = countries(txt);
     return {
-      name: g.name, en: g.en, tag: tagOf(g.items),
+      name: g.name, en: g.en, tag: tagOf(g.items), sources: srcNames(g.items),
       headline: g.items[0] ? g.items[0].title.slice(0, 90) : '',
       summary: [
         `${where.length ? where.join('·') + ' 등 ' : ''}${g.items.length}건의 자료에서 ${g.name} 관련 동향이 확인됨`,
@@ -930,6 +938,9 @@ tag 는 자료 성격으로 경보·정책·연구·통계 중 하나만 고르�
   const j = JSON.parse(m[0]);
   return {
     name: g.name, en: j.nameEn || g.en, headline: j.headline || '', tag: j.tag || '',
+    sources: (() => { const out = []; g.items.forEach(i => {
+        const n = (i.origin || i.source || '').split('·')[0].split('|')[0].trim().slice(0, 34);
+        if (n && !out.includes(n)) out.push(n); }); return out.slice(0, 4); })(),
     summary: j.summary || [], situation: j.situation || [], assess: j.assess || [], korea: j.korea || [],
     refs: g.items.map(i => `${i.origin ? i.origin + ' | ' : ''}${i.source} (${ymd(i.date)} 발표) ${i.title} — ${i.link}`)
   };
@@ -1016,11 +1027,16 @@ function renderPaper(){
       <div class="l" contenteditable="true">${esc(x.l)}</div>
       ${x.n ? `<div class="n">${esc(x.n)}</div>` : ''}</div>`).join('')}</div>` : '';
 
+  const chips = (t, n = 2) => {
+    const srcs = t.sources || [];
+    return srcs.slice(0, n).map(x => `<span class="src">${esc(x)}</span>`).join('')
+      + (srcs.length > n ? `<span class="src-more">외 ${srcs.length - n}곳</span>` : '');
+  };
   const issues = `<ol class="issues">${d.topics.map((t, i) => `
       <li><a href="#t${i+1}">
         <span class="no">${i+1}</span>
         <span class="it">${esc(t.name)}${t.headline ? `<span class="ih">${esc(t.headline)}</span>` : ''}</span>
-        ${t.tag ? `<span class="tag tag-${esc(t.tag)}">${esc(t.tag)}</span>` : '<span></span>'}
+        <span class="meta">${chips(t)}${t.tag ? `<span class="tag tag-${esc(t.tag)}">${esc(t.tag)}</span>` : ''}</span>
       </a></li>`).join('')}</ol>`;
 
   const topics = d.topics.map((t, i) => `
@@ -1030,6 +1046,7 @@ function renderPaper(){
         <h2 contenteditable="true">${esc(t.name)} <span class="en">${esc(t.en || '')}</span></h2>
         ${t.tag ? `<span class="tag tag-${esc(t.tag)}">${esc(t.tag)}</span>` : ''}
       </div>
+      ${(t.sources || []).length ? `<div class="topic-src">출처 <b>${esc((t.sources || []).join(' · '))}</b></div>` : ''}
       ${t.headline ? `<p class="topic-lead" contenteditable="true">${esc(t.headline)}</p>` : ''}
       <div class="sec"><h4>${esc(K.secs[0])}</h4><div contenteditable="true">${ul(t.situation)}</div></div>
       <div class="sec"><h4>${esc(K.secs[1])}</h4><div contenteditable="true">${ul(t.assess)}</div></div>
@@ -1054,7 +1071,7 @@ function renderPaper(){
     ${d.tagline ? `<p class="nl-lead" contenteditable="true">${esc(d.tagline)}</p>` : ''}
   </header>
   <div class="brief">
-    <div class="brief-label">이번 호 한눈에 보기</div>
+    <div class="brief-label">목차 <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
     ${stats}
     ${issues}
   </div>
