@@ -19,13 +19,13 @@ SUBSCRIBE = "https://soonryu74.github.io/newsletter/subscribe.html"   # 구독 �
 
 KINDS = {
     "outbreak": {"name": "감염병 발생동향", "sumTitle": "목차",
-                 "secs": ["발생 상황", "상황 평가", "국내 관련성 · 권고"], "brand": "#12395f", "accent": "#c2540b"},
+                 "secs": ["발생 상황", "상황 평가", "국내 관련성 · 권고"], "brand": "#1b3fb0", "accent": "#bf560c"},
     "phsm":     {"name": "감염병 사회 대응(PHSM)", "sumTitle": "목차",
-                 "secs": ["연구 · 정책 동향", "핵심 쟁점과 근거", "분과위 시사점 · 토론거리"], "brand": "#3b3080", "accent": "#0e7490"},
+                 "secs": ["연구 · 정책 동향", "핵심 쟁점과 근거", "분과위 시사점 · 토론거리"], "brand": "#0d6e6d", "accent": "#bf560c"},
     "chronic":  {"name": "만성질환", "sumTitle": "목차",
-                 "secs": ["주요 동향", "근거 해석", "국내 적용 시사점"], "brand": "#14532d", "accent": "#a16207"},
+                 "secs": ["주요 동향", "근거 해석", "국내 적용 시사점"], "brand": "#146c3a", "accent": "#bf560c"},
     "climate":  {"name": "기후·건강", "sumTitle": "목차",
-                 "secs": ["기후 · 건강 동향", "감시체계와 근거", "국내 대응 시사점"], "brand": "#7c2d12", "accent": "#0369a1"},
+                 "secs": ["기후 · 건강 동향", "감시체계와 근거", "국내 대응 시사점"], "brand": "#0d5c8c", "accent": "#bf560c"},
 }
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
@@ -79,6 +79,21 @@ def profile_table(t):
     if not rows: return ""
     body = "".join(f'<dt>{e(r["k"])}</dt><dd>{e(r["v"])}</dd>' for r in rows)
     return f'<div class="profile"><h5>질병 개요</h5><dl>{body}</dl></div>'
+
+def explainer_box(d):
+    x = d.get("explainer")
+    if not x: return ""
+    terms = "".join(f'<div class="term"><b>{e(t["k"])}</b><span>{e(t["v"])}</span></div>'
+                    for t in x.get("terms", []))
+    srcs = " · ".join(f'<a href="{e(s2["url"])}" target="_blank" rel="noopener">{e(s2["label"])}</a>'
+                      if s2.get("url") else e(s2["label"]) for s2 in x.get("sources", []))
+    body = "".join(f"<p>{e(b)}</p>" for b in x.get("body", []))
+    return f'''<aside class="explainer">
+      <h4>{e(x.get("title",""))}</h4>
+      {body}
+      {f'<div class="terms">{terms}</div>' if terms else ""}
+      {f'<div class="src">정의 출처 · {srcs}</div>' if srcs else ""}
+    </aside>'''
 
 def paper(data):
     k = KINDS[data["kind"]]
@@ -156,6 +171,7 @@ def paper(data):
     {stats}
     {issues}
   </div>
+  {explainer_box(d)}
   {intro}
   {topics}
   {sub_html}
@@ -299,7 +315,7 @@ def index_page(rows):
  :root{{ --ink:#191f28; --muted:#6d7885; --line:#dde2e9; }}
  body{{ margin:0; background:#eef1f5; color:var(--ink);
    font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif; font-size:17px; }}
- .bar{{ background:#12395f; color:#fff; padding:12px 16px; display:flex; gap:10px; align-items:center; }}
+ .bar{{ background:#1b3fb0; color:#fff; padding:12px 16px; display:flex; gap:10px; align-items:center; }}
  .bar a{{ color:#fff; text-decoration:none; font-weight:700; background:rgba(255,255,255,.14);
    padding:7px 12px; border-radius:8px; font-size:.92rem; }}
  .wrap{{ max-width:880px; margin:0 auto; padding:30px 16px 70px; }}
@@ -309,10 +325,10 @@ def index_page(rows):
    border-radius:4px; padding:22px 24px; margin-bottom:16px; text-decoration:none; color:inherit; }}
  .issue:hover{{ box-shadow:0 8px 26px rgba(22,48,90,.12); }}
  .issue[hidden]{{ display:none; }}
- .k-outbreak{{ --b:#12395f; --a:#c2540b; }}
- .k-phsm{{ --b:#3b3080; --a:#0e7490; }}
- .k-chronic{{ --b:#14532d; --a:#a16207; }}
- .k-climate{{ --b:#7c2d12; --a:#0369a1; }}
+ .k-outbreak{{ --b:#1b3fb0; --a:#bf560c; }}
+ .k-phsm{{ --b:#0d6e6d; --a:#bf560c; }}
+ .k-chronic{{ --b:#146c3a; --a:#bf560c; }}
+ .k-climate{{ --b:#0d5c8c; --a:#bf560c; }}
  .kind{{ font-size:.78rem; font-weight:800; letter-spacing:.08em; color:var(--a); }}
  .t{{ font-family:"Nanum Myeongjo",serif; font-size:1.45rem; font-weight:800; color:var(--b); margin:6px 0 4px; }}
  .m{{ font-size:.84rem; color:var(--muted); font-variant-numeric:tabular-nums; }}

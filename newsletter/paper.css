@@ -10,8 +10,9 @@
   --line-2:#eef1f5;       /* 더 얇은 선 */
   --paper:#ffffff;
   --ground:#eef1f5;       /* 종이 바깥 */
-  --brand:#12395f;        /* 제호·구조색 (유형별로 바뀜) */
-  --accent:#c2540b;       /* 강조색 (유형별로 바뀜) */
+  --brand:#1b3fb0;        /* 제호·구조색 (유형별로 바뀜) */
+  --accent:#bf560c;       /* 강조색: 작은 글씨에도 읽히는 오렌지 */
+  --accent-bright:#ef7c1a;/* 큰 숫자·띠에 쓰는 밝은 오렌지 */
   --accent-soft:#eef2f8;
   --serif:"Nanum Myeongjo","Noto Serif KR","Apple SD Gothic Neo",serif;
   --sans:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
@@ -19,10 +20,10 @@
 /* 유형별 색 배합 — 구조색(brand) + 강조색(accent) 두 가지.
    모두 흰 바탕에서 명암비 4.5:1 이상(작은 글씨도 읽히도록),
    색만으로 구분하지 않고 항상 글자 라벨을 함께 둔다. */
-.k-outbreak{ --brand:#12395f; --accent:#c2540b; --accent-soft:#fdf0e4; }  /* 남색 + 오렌지 */
-.k-phsm    { --brand:#3b3080; --accent:#0e7490; --accent-soft:#e6f3f7; }  /* 인디고 + 청록 */
-.k-chronic { --brand:#14532d; --accent:#a16207; --accent-soft:#faf2df; }  /* 딥그린 + 앰버 */
-.k-climate { --brand:#7c2d12; --accent:#0369a1; --accent-soft:#e8f2fa; }  /* 벽돌 + 하늘 */
+.k-outbreak{ --brand:#1b3fb0; --accent:#bf560c; --accent-bright:#ef7c1a; --accent-soft:#fdf1e3; } /* 로열블루 + 오렌지 */
+.k-phsm    { --brand:#0d6e6d; --accent:#bf560c; --accent-bright:#ef7c1a; --accent-soft:#fdf1e3; } /* 딥틸 + 오렌지 */
+.k-chronic { --brand:#146c3a; --accent:#bf560c; --accent-bright:#ef7c1a; --accent-soft:#fdf1e3; } /* 딥그린 + 오렌지 */
+.k-climate { --brand:#0d5c8c; --accent:#bf560c; --accent-bright:#ef7c1a; --accent-soft:#fdf1e3; } /* 오션블루 + 오렌지 */
 
 #paper{
   position:relative; background:var(--paper); color:var(--ink);
@@ -38,9 +39,10 @@
 }
 /* 왼쪽 세로 띠 — 어느 분야 뉴스레터인지 펼치지 않아도 보이게 */
 #paper::after{
-  content:""; position:absolute; left:0; top:0; bottom:0; width:7px; background:var(--accent);
+  content:""; position:absolute; left:0; top:0; bottom:0; width:7px; background:var(--accent-bright);
 }
 #paper > *{ position:relative; }
+
 #paper *{ box-sizing:border-box; }
 #paper{ word-break:keep-all; overflow-wrap:break-word; }   /* 한글은 단어 단위로 줄바꿈 */
 #paper h1,#paper h2,#paper h3,#paper h4{ word-break:keep-all; text-wrap:balance; }
@@ -83,8 +85,8 @@
 
 /* ── 3초 브리핑 ─────────────────────────────────────── */
 .brief{
-  margin-bottom:34px; background:var(--accent-soft); border:1px solid var(--line);
-  padding:20px 22px 14px;
+  margin-bottom:34px; background:#f7f9fb; border:1px solid var(--line);
+  border-left:4px solid var(--brand); padding:20px 22px 14px;
 }
 .brief-label{
   font-size:.88rem; font-weight:800; letter-spacing:0; color:var(--brand);
@@ -101,7 +103,7 @@
 .brief .stat:first-child{ padding-left:16px; }
 .stat:first-child{ border-left:0; padding-left:0; }
 .stat .v{
-  font-size:clamp(1.25rem, 4.4vw, 1.7rem); font-weight:800; line-height:1.2; color:var(--accent);
+  font-size:clamp(1.25rem, 4.4vw, 1.7rem); font-weight:800; line-height:1.2; color:var(--brand);
   font-variant-numeric:tabular-nums; letter-spacing:-.015em; word-break:keep-all;
 }
 .stat .l{ font-size:.84rem; color:var(--ink-2); margin-top:3px; line-height:1.45; }
@@ -218,13 +220,27 @@
 .refs li{ margin-bottom:5px; line-height:1.6; word-break:break-word; }
 .refs a{ white-space:nowrap; }
 
+.explainer{
+  border:1px solid var(--line); border-top:4px solid var(--brand); background:#fff;
+  padding:20px 22px; margin:0 0 26px;
+}
+.explainer h4{
+  margin:0 0 8px; font-size:1.02rem; color:var(--brand); font-weight:800;
+}
+.explainer p{ margin:0 0 9px; font-size:.98rem; line-height:1.78; color:var(--ink-2); }
+.explainer .terms{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin:14px 0 6px; }
+.explainer .term{ border:1px solid var(--line); background:#f7f9fb; padding:10px 12px; }
+.explainer .term b{ display:block; color:var(--brand); font-size:.92rem; }
+.explainer .term span{ font-size:.86rem; color:var(--ink-2); line-height:1.6; }
+.explainer .src{ font-size:.82rem; color:var(--muted); border-top:1px dashed var(--line); padding-top:9px; margin-top:12px; }
+.explainer .src a{ font-weight:700; }
 .intro{
   font-size:1rem; line-height:1.82; color:var(--ink-2); white-space:pre-line;
   border-left:3px solid var(--accent-soft); padding:2px 0 2px 18px; margin:0 0 30px;
 }
 .subscribe{
   display:flex; gap:18px; align-items:center; margin-top:34px; padding:20px 22px;
-  border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft);
+  border:1px solid var(--line); border-left:4px solid var(--accent-bright); background:var(--accent-soft);
 }
 .subscribe img{ width:112px; height:112px; flex:0 0 auto; background:#fff; padding:6px; border:1px solid var(--line); }
 .subscribe .sub-title{ font-weight:800; font-size:1.02rem; color:var(--brand); }
@@ -294,7 +310,7 @@
   #paper::after{ width:6px; }                 /* 왼쪽 분야 색 띠는 그대로 */
   .nl-bar{ background:var(--brand) !important; color:#fff !important; }
   .nl-bar a{ color:#fff !important; }
-  .brief{ background:var(--accent-soft) !important; }
+  .brief{ background:#f7f9fb !important; }
   .brief .stats{ background:#fff !important; }
   .t-card, .t-card .nl-head, .t-card .brief, .t-card .topic, .t-card .intro, .t-card .foot-note{
     box-shadow:none; border-radius:0;
