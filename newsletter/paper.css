@@ -36,40 +36,65 @@
   content:""; position:absolute; inset:14px; border:1px solid var(--line-2);
   pointer-events:none;
 }
+/* 왼쪽 세로 띠 — 어느 분야 뉴스레터인지 펼치지 않아도 보이게 */
+#paper::after{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:7px; background:var(--accent);
+}
 #paper > *{ position:relative; }
 #paper *{ box-sizing:border-box; }
 #paper a{ color:var(--accent); }
 #paper [contenteditable]:focus{ outline:2px solid var(--accent); outline-offset:3px; border-radius:3px; }
 
 /* ── 제호 ───────────────────────────────────────────── */
-.nl-head{ border-bottom:2px solid var(--brand); padding-bottom:18px; margin-bottom:26px; }
-.nl-kicker{
-  font-size:.76rem; font-weight:700; letter-spacing:.09em; color:var(--accent);
-  text-transform:none; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+.nl-head{ border-bottom:2px solid var(--brand); padding-bottom:0; margin-bottom:0; }
+.nl-topline{
+  display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  font-size:.74rem; font-weight:700; letter-spacing:.1em; color:var(--muted);
+  border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:16px;
+  font-variant-numeric:tabular-nums;
 }
-.nl-kicker::after{ content:""; flex:1; height:1px; background:var(--line); min-width:20px; }
+.nl-topline .issue{ color:var(--accent); }
+.nl-kicker{
+  font-size:.78rem; font-weight:800; letter-spacing:.14em; color:var(--accent);
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+}
+.nl-kicker::after{ content:""; flex:1; height:2px; background:var(--accent); min-width:24px; opacity:.35; }
+/* 제호 아래 발행 정보 띠 */
+.nl-bar{
+  display:flex; gap:8px 20px; flex-wrap:wrap; justify-content:space-between;
+  background:var(--brand); color:#fff; font-size:.8rem; font-weight:600;
+  padding:9px 16px; margin:16px 0 26px;
+}
+.nl-bar span{ opacity:.92; }
+.nl-bar a{ color:#fff; text-decoration:underline; text-underline-offset:2px; }
 .nl-title{
-  font-family:var(--serif); font-weight:800; font-size:2.55rem; line-height:1.18;
-  letter-spacing:-.02em; color:var(--brand); margin:12px 0 10px; text-wrap:balance;
+  font-family:var(--serif); font-weight:800; font-size:2.9rem; line-height:1.12;
+  letter-spacing:-.025em; color:var(--brand); margin:10px 0 8px; text-wrap:balance;
 }
 .nl-meta{ font-size:.82rem; color:var(--muted); font-variant-numeric:tabular-nums; }
 .nl-lead{
-  font-size:1.18rem; line-height:1.66; color:var(--ink-2); margin-top:16px;
-  font-weight:500; text-wrap:pretty;
+  font-size:1.2rem; line-height:1.66; color:var(--ink-2); margin-top:16px;
+  font-weight:500; text-wrap:pretty; padding-bottom:16px;
 }
 
 /* ── 3초 브리핑 ─────────────────────────────────────── */
-.brief{ margin-bottom:34px; }
-.brief-label{
-  font-size:.76rem; font-weight:800; letter-spacing:.12em; color:var(--muted);
-  margin-bottom:12px;
+.brief{
+  margin-bottom:34px; background:var(--accent-soft); border:1px solid var(--line);
+  padding:20px 22px 14px;
 }
+.brief-label{
+  font-size:.8rem; font-weight:800; letter-spacing:.12em; color:var(--brand);
+  margin-bottom:14px; display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;
+}
+.brief .stats{ background:#fff; border-color:var(--line); }
+.brief .issues li:last-child{ border-bottom:0; }
 .stats{
   display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
   gap:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
   margin-bottom:22px;
 }
 .stat{ padding:14px 18px 15px; border-left:1px solid var(--line-2); }
+.brief .stat:first-child{ padding-left:16px; }
 .stat:first-child{ border-left:0; padding-left:0; }
 .stat .v{
   font-size:1.72rem; font-weight:800; line-height:1.15; color:var(--accent);
@@ -204,7 +229,9 @@
   #paper::before{ display:none; }
   .t-card{ padding:0; }
   .t-card .nl-head,.t-card .brief,.t-card .topic,.t-card .intro,.t-card .foot-note{ padding:22px 20px; }
-  .nl-title{ font-size:1.95rem; }
+  .nl-title{ font-size:2.05rem; }
+  .nl-bar{ padding:10px 14px; font-size:.76rem; }
+  .brief{ padding:16px 14px 8px; }
   .nl-lead{ font-size:1.06rem; }
   .stats{ grid-template-columns:1fr 1fr; }
   .stat{ border-left:0; padding:12px 0; border-top:1px solid var(--line-2); }
@@ -225,6 +252,10 @@
   }
   .t-card .topic{ border-top:1px solid #ccc; }
   .topic{ break-inside:avoid; }
+  #paper::after{ width:4px; }
+  .nl-bar{ background:#fff; color:#191f28; border-top:1px solid #ccc; border-bottom:1px solid #ccc; padding:7px 0; }
+  .nl-bar a{ color:#191f28; }
+  .brief{ background:#fff; }
   .refs[open] summary::before, .refs summary::before{ content:""; }
   .subscribe{ break-inside:avoid; background:#fff; }
   .refs{ display:block !important; }
