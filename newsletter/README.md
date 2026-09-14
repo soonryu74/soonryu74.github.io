@@ -1,0 +1,67 @@
+# 보건 동향 뉴스레터 메이커
+
+공식 소스를 고르면 → 자료를 담고 → 서식에 맞춰 뉴스레터를 만들어 주는 도구입니다.
+서버가 필요 없습니다. GitHub Pages에 그대로 올라갑니다.
+
+- 화면: `newsletter/index.html`
+- 소스 목록: `data/newsletter/sources.json`
+- 자동 수집분: `data/newsletter/feed.json` (GitHub Actions가 매일 KST 05:00 갱신)
+- 수집 스크립트: `scripts/build_outbreak_feed.py`
+- 자동화: `.github/workflows/newsletter.yml`
+
+## 뉴스레터 3종
+
+| 유형 | 쓰임 | 주요 소스 |
+|---|---|---|
+| 전 세계 감염병 발생 동향 | 주간 발생 동향 보고 | WHO DON·보도자료, 美CDC(뉴스룸·HAN·MMWR), ECDC, ProMED, CIDRAP, 질병관리청 |
+| 감염병 사회 대응(PHSM) 분과위원회 | 사회적 조치 연구·정책 스터디 | WHO PHSM 지식허브, 영국 UKHSA, ECDC NPI 지침, Europe PMC 논문 5종, medRxiv |
+| 만성질환 동향 | 만성질환 예방·관리 | WHO NCD, 美CDC 만성질환, 질병관리청 건강통계, Europe PMC 논문 6종 |
+
+유형마다 본문 소제목과 AI 문체가 달라집니다.
+
+- 발생동향: 발생 상황 / 상황 평가 / 국내 관련성·권고
+- 사회대응: 연구·정책 동향 / 핵심 쟁점과 근거 / 분과위 시사점·토론거리
+- 만성질환: 주요 동향 / 근거 해석 / 국내 적용 시사점
+
+## 쓰는 순서
+
+1. **소스 고르기** — 유형을 고르고, 기관을 체크하고, 기간(7~45일)을 정합니다.
+2. **자료 담기** — 목록에서 `담기`. 원하는 글은 URL을 넣어 직접 담을 수도 있습니다.
+   `주제 자동 묶기`를 누르면 병명·주제별로 자동 분류됩니다(직접 고칠 수 있음).
+3. **초안 만들기** — 발행 정보(기관·호수·발행일)를 적고 서식 3종 중 하나를 고른 뒤 `초안 만들기`.
+   - Claude API 키를 넣으면 AI가 요약·평가·시사점까지 정리합니다(키는 이 브라우저에만 저장).
+   - 키가 없으면 `AI 없이 기본 초안`으로 뼈대와 출처가 자동 정리됩니다.
+4. **다듬고 내보내기** — 미리보기 글자를 직접 고친 뒤 인쇄·PDF / HTML / 이메일 본문 / 워드로 내보냅니다.
+
+## 직접 돌려 보기
+
+소스를 지금 바로 새로 모으려면(파이썬 3만 있으면 됩니다):
+
+| | 윈도우(PowerShell) | 맥 · 리눅스(터미널) |
+|---|---|---|
+| 수집 실행 | `python scripts\build_outbreak_feed.py` | `python3 scripts/build_outbreak_feed.py` |
+| 미리보기 서버 | `python -m http.server 8000` | `python3 -m http.server 8000` |
+| 브라우저 주소 | `http://localhost:8000/newsletter/` | `http://localhost:8000/newsletter/` |
+
+> 파일을 두 번 눌러 여는 방식(`file://`)으로는 소스 목록을 읽지 못합니다.
+> 위처럼 간단한 서버를 띄우거나, GitHub Pages에 올린 주소로 여세요.
+
+## 소스를 더 넣고 싶을 때
+
+`data/newsletter/sources.json` 의 `groups` 에 추가합니다.
+
+```jsonc
+{ "id": "새소스id", "name": "화면에 보일 이름", "region": "유럽",
+  "rss":   "https://example.org/feed.xml",       // ① 기관 RSS
+  "query": "검색어",                              // ② RSS가 막히면 뉴스 검색으로 대체
+  "epmc":  "(\"검색어\") AND (SRC:MED OR SRC:PPR)", // ③ 논문(Europe PMC) 검색
+  "filter": ["키워드"],                           // (선택) 이 단어가 있는 글만
+  "site": "https://example.org/", "lang": "en" }
+```
+
+그룹의 `kind` 값(`outbreak` / `phsm` / `chronic`)이 어느 뉴스레터에 나타날지를 정합니다.
+
+## 저작권 메모
+
+제목·출처·날짜·링크와 짧은 발췌만 저장합니다. 원문 전체는 저장하지 않으며,
+뉴스레터에는 항상 원문 링크가 각주로 붙습니다.
