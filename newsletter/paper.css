@@ -100,9 +100,8 @@
   gap:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
   margin-bottom:22px;
 }
-.stat{ padding:14px 18px 15px; border-left:1px solid var(--line-2); }
-.brief .stat:first-child{ padding-left:16px; }
-.stat:first-child{ border-left:0; padding-left:0; }
+.stat{ padding:14px 16px 15px; border-left:1px solid var(--line-2); }
+.stat:first-child{ border-left:0; }
 .stat .v{
   font-size:clamp(1.25rem, 4.4vw, 1.7rem); font-weight:800; line-height:1.2; color:var(--brand);
   font-variant-numeric:tabular-nums; letter-spacing:-.015em; word-break:keep-all;
@@ -357,9 +356,9 @@
   .brief{ padding:16px 14px 8px; }
   .nl-lead{ font-size:1.06rem; }
   .stats{ grid-template-columns:1fr 1fr; }
-  .stat{ border-left:0; padding:12px 0; border-top:1px solid var(--line-2); }
-  .stat:first-child,.stat:nth-child(2){ border-top:0; }
-  .stat:nth-child(even){ padding-left:16px; border-left:1px solid var(--line-2); }
+  .stat{ padding:13px 14px; border-left:0; border-top:1px solid var(--line-2); }
+  .stat:first-child, .stat:nth-child(2){ border-top:0; }
+  .stat:nth-child(even){ border-left:1px solid var(--line-2); }
   .issues a{ grid-template-columns:22px 1fr; }
   .issues a{ grid-template-columns:24px minmax(0,1fr); gap:4px 10px; padding:14px 0; }
   .issues .meta{ justify-content:flex-start; grid-column:2; max-width:100%; margin-top:6px; gap:4px; }
