@@ -32,7 +32,9 @@ FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
          'family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">'
          '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">')
-e = lambda s: html.escape(str(s or ""), quote=True)
+def e(s):
+    """HTML 이스케이프 + 줄바꿈 시 '—'가 줄머리에 오지 않게 앞 공백을 고정 공백으로."""
+    return html.escape(str(s or ""), quote=True).replace(" —", "\u00a0—").replace(" ·", "\u00a0·")
 
 def make_qr(url, out_path, brand="#12395f"):
     """구독 주소를 QR 그림(PNG)으로 저장한다. 인쇄·메일 어디서나 보이도록 그림 파일로 만든다."""
@@ -93,6 +95,14 @@ EV = {   # 근거 강도 — 짧은 라벨로 두고 자세한 설명은 title �
     "weak": ("○○○", "발표·보도", "기관 발표 · 언론 보도 · 프리프린트", "low"),
 }
 
+def judge_badges(t):
+    u, im = t.get("urgency"), t.get("impact")
+    if not u and not im: return ""
+    parts = []
+    if u:  parts.append(f'<span class="u u-{e(u)}" title="긴급도">{e(u)}</span>')
+    if im: parts.append(f'<span class="im im-{e(im)}" title="국내 영향도">국내 영향 {e(im)}</span>')
+    return '<span class="judge">' + "".join(parts) + "</span>"
+
 def evidence_badge(t):
     k = t.get("evidence")
     if not k or k not in EV: return ""
@@ -141,6 +151,26 @@ def explainer_box(d):
       {f'<div class="src">정의 출처 · {srcs}</div>' if srcs else ""}
     </aside>'''
 
+TIPS = [
+    ("‘발표·보도’ 근거는 1차 자료를 확인한 뒤 인용하십시오.",
+     "기관 발표를 전한 언론 보도는 수치의 기준(분모·기간)을 생략하는 일이 잦습니다. 각 꼭지의 출처에서 원문을 먼저 여십시오."),
+    ("해외 수치는 국내값과 나란히 놓기 전까지 비교하지 마십시오.",
+     "접종률·발생률은 분모 정의와 의료체계가 달라 그대로 대비하면 오해를 만듭니다."),
+    ("모형 연구는 결론보다 가정값을 보십시오.",
+     "모형의 결과는 투입한 가정(순응도·접촉률)에 좌우됩니다. 우리 매뉴얼이 같은 값을 무엇으로 두고 있는지부터 확인하는 편이 빠릅니다."),
+    ("단일 관찰연구로 지침을 바꾸지 마십시오.",
+     "관찰연구는 연관성을 보여줄 뿐 인과를 확정하지 않습니다. 지침 개정 근거로는 ●●● 표시(체계적 문헌고찰·무작위배정)를 우선하십시오."),
+    ("프리프린트는 동료심사 전 자료입니다.",
+     "흐름을 먼저 읽는 데는 유용하나, 공식 문서 인용은 게재 확정 후로 미루십시오."),
+    ("‘자료 없음’도 정책 정보입니다.",
+     "원문에 수치가 없으면 이 뉴스레터는 ‘(원문 미제시)’로 표시합니다. 국내 해당 지표가 없다는 사실 자체가 조사·감시 과제입니다."),
+]
+
+def tips_box():
+    items = "".join(f"<li><b>{e(h)}</b><span class='why'>{e(w)}</span></li>" for h, w in TIPS)
+    return (f'<aside class="tips"><h4>이 뉴스레터를 정책에 쓰실 때</h4>'
+            f'<ol>{items}</ol></aside>')
+
 def paper(data):
     k = KINDS[data["kind"]]
     m, d = data["meta"], data["draft"]
@@ -165,7 +195,7 @@ def paper(data):
           <span class="no">{i+1}</span>
           <span class="it">{e(t["name"])}
             {f'<span class="ih">{e(t.get("headline"))}</span>' if t.get("headline") else ''}</span>
-          <span class="meta">{src_chips(t)}
+          <span class="meta">{f'<span class="u u-{e(t.get("urgency"))}">{e(t.get("urgency"))}</span>' if t.get("urgency") else ''}{src_chips(t)}
             {f'<span class="tag tag-{e(t.get("tag"))}">{e(t.get("tag"))}</span>' if t.get("tag") else ''}</span>
         </a></li>''' for i, t in enumerate(d["topics"])) + "</ol>"
 
@@ -173,6 +203,7 @@ def paper(data):
       <div class="topic-head">
         <span class="topic-no">{i+1}</span>
         <h2>{e(t["name"])} <span class="en">{e(t.get("en",""))}</span></h2>
+        {judge_badges(t)}
         {evidence_badge(t) or (f'<span class="tag tag-{e(t.get("tag"))}">{e(t.get("tag"))}</span>' if t.get("tag") else '')}
       </div>
       {f'<div class="topic-src"><span class="lbl">출처</span> <b>{e(" · ".join(t.get("sources") or []))}</b></div>' if t.get("sources") else ''}
@@ -223,6 +254,7 @@ def paper(data):
   {explainer_box(d)}
   {intro}
   {topics}
+  {tips_box()}
   {sub_html}
   <footer class="foot-note">
     본 뉴스레터는 각 기관의 공개 자료와 학술 문헌을 정리한 것으로, 원문의 내용이 우선합니다.<br>
