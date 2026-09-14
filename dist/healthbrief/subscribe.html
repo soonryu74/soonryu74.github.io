@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>뉴스레터 구독 신청</title>
+<meta name="description" content="감염병 발생동향·사회 대응(PHSM)·만성질환·기후건강 뉴스레터 구독 신청">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+ :root{ --ink:#191f28; --muted:#5d6875; --line:#dde2e9; --brand:#1b3fb0; --accent:#bf560c; --soft:#fdf1e3; }
+ [data-series="phsm"]{ --brand:#0d6e6d; }
+ [data-series="chronic"]{ --brand:#146c3a; }
+ [data-series="climate"]{ --brand:#0d5c8c; }
+ *{box-sizing:border-box}
+ body{margin:0;background:#eef1f5;color:var(--ink);font-size:17px;line-height:1.7;
+   font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif}
+ .bar{background:var(--brand);color:#fff;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+ .bar a{color:#fff;text-decoration:none;font-weight:700;background:rgba(255,255,255,.15);
+   padding:7px 12px;border-radius:8px;font-size:.9rem}
+ .wrap{max-width:720px;margin:0 auto;padding:26px 16px 70px}
+ .card{background:#fff;border:1px solid var(--line);border-top:5px solid var(--brand);border-radius:4px;
+   padding:26px 26px 28px;box-shadow:0 2px 14px rgba(22,48,90,.07)}
+ h1{font-family:"Nanum Myeongjo",serif;font-size:1.85rem;color:var(--brand);margin:0 0 6px;word-break:keep-all}
+ .sub{color:var(--muted);font-size:.95rem;margin:0 0 22px;word-break:keep-all}
+ label{display:block;font-size:.85rem;font-weight:700;color:var(--muted);margin:16px 0 5px}
+ input,select,textarea{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:8px;
+   font-size:1rem;font-family:inherit;background:#fff;color:var(--ink)}
+ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+ .series{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:6px}
+ .series label{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;
+   padding:12px 14px;margin:0;cursor:pointer;font-size:.95rem;font-weight:600;color:var(--ink)}
+ .series label.on{border-color:var(--accent);background:var(--soft)}
+ .series input{width:auto;margin-top:3px}
+ .series .d{display:block;font-size:.82rem;color:var(--muted);font-weight:400;margin-top:3px}
+ .btn{border:0;background:var(--brand);color:#fff;font-weight:800;font-size:1.02rem;
+   padding:14px 22px;border-radius:10px;cursor:pointer;font-family:inherit}
+ .btn:hover{filter:brightness(1.12)}
+ .btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--line);font-weight:700;font-size:.95rem;padding:11px 16px}
+ .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:22px}
+ .note{font-size:.86rem;color:var(--muted);line-height:1.6}
+ .ok{background:var(--soft);border:1px solid var(--line);border-left:4px solid var(--accent);
+   padding:16px 18px;margin-top:18px;display:none}
+ .ok.on{display:block}
+ .ok b{color:var(--brand)}
+ details{margin-top:26px;border-top:1px solid var(--line);padding-top:14px}
+ summary{cursor:pointer;font-size:.88rem;font-weight:700;color:var(--muted)}
+ .admin{margin-top:12px;background:#f7fafc;border:1px solid var(--line);border-radius:10px;padding:16px}
+ .privacy{margin-top:20px;font-size:.84rem;color:var(--muted);background:#f7fafc;border:1px solid var(--line);
+   border-radius:8px;padding:12px 14px;line-height:1.6}
+</style>
+</head>
+<body>
+<nav class="bar">
+  <a href="./">← 뉴스레터 메이커</a>
+  <a href="issues/">발간한 뉴스레터</a>
+</nav>
+<div class="wrap">
+  <div class="card">
+    <h1 id="title">뉴스레터 구독 신청</h1>
+    <p class="sub" id="lead">받아보실 뉴스레터를 고르고 연락처를 남겨 주세요. 담당자가 확인 후 발송 명단에 등록해 드립니다.</p>
+
+    <form id="form" novalidate>
+      <label>받아볼 뉴스레터 <span style="color:var(--accent)">*</span></label>
+      <div class="series" id="series">
+        <label><input type="checkbox" name="s" value="감염병 발생동향" data-k="outbreak">
+          <span>전 세계 감염병 발생 동향<span class="d">주 1회 · WHO·美CDC·ECDC 발표 정리</span></span></label>
+        <label><input type="checkbox" name="s" value="감염병 사회 대응(PHSM)" data-k="phsm">
+          <span>감염병 사회 대응(PHSM)<span class="d">격주 · 거리두기·위험소통 연구 동향</span></span></label>
+        <label><input type="checkbox" name="s" value="만성질환 동향" data-k="chronic">
+          <span>만성질환 동향<span class="d">월 1회 · 통계와 예방·관리 연구</span></span></label>
+        <label><input type="checkbox" name="s" value="기후·건강 위기 동향" data-k="climate">
+          <span>기후·건강 위기 동향<span class="d">월 1회 · 폭염·대기질·매개체</span></span></label>
+      </div>
+
+      <label for="name">이름 <span style="color:var(--accent)">*</span></label>
+      <input type="text" id="name" autocomplete="name" placeholder="예: 홍길동">
+
+      <label for="org">소속 · 직위</label>
+      <input type="text" id="org" autocomplete="organization" placeholder="예: ○○시 보건소 감염병관리팀">
+
+      <label for="mail">받으실 이메일 <span style="color:var(--accent)">*</span></label>
+      <input type="email" id="mail" autocomplete="email" placeholder="예: hong@korea.kr">
+
+      <label for="memo">남기실 말씀(선택)</label>
+      <textarea id="memo" rows="2" placeholder="예: 매개체 감염병 중심으로 받아보고 싶습니다."></textarea>
+
+      <div class="privacy">
+        수집 항목은 <b>이름 · 소속 · 이메일</b>이며 뉴스레터 발송 목적으로만 사용합니다.
+        구독 중단은 회신 메일로 언제든 요청하실 수 있습니다.
+      </div>
+
+      <div class="row">
+        <button type="submit" class="btn" id="submit">구독 신청하기</button>
+        <button type="button" class="btn ghost" id="copyBtn">신청 내용 복사</button>
+        <a class="btn ghost" href="issues/" style="text-decoration:none">지난 호 먼저 보기</a>
+      </div>
+    </form>
+
+    <div class="ok" id="ok"></div>
+
+    <details>
+      <summary>담당자 설정 — 신청을 어디로 받을지 정합니다</summary>
+      <div class="admin">
+        <label for="admMail">신청 접수 이메일</label>
+        <input type="email" id="admMail" placeholder="예: newsletter@korea.kr">
+        <label for="admForm">또는 구글폼 등 신청 양식 주소</label>
+        <input type="url" id="admForm" placeholder="https://forms.gle/...">
+        <p class="note" style="margin-top:10px">
+          접수 이메일을 넣으면 <b>구독 신청하기</b>가 그 주소로 가는 메일을 열어 줍니다(서버 없이 동작).
+          양식 주소를 넣으면 그 양식으로 바로 연결됩니다.
+        </p>
+        <div class="row" style="margin-top:12px">
+          <button type="button" class="btn ghost" id="admSave">이 브라우저에 저장</button>
+          <button type="button" class="btn ghost" id="admFile">설정 파일 내려받기</button>
+        </div>
+        <p class="note" style="margin-top:8px">
+          내려받은 <code>subscribe-config.json</code>을 저장소의 <code>newsletter/</code> 폴더에 넣으면
+          모든 방문자에게 같은 설정이 적용됩니다.
+        </p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const NAMES = { outbreak:'전 세계 감염병 발생 동향', phsm:'감염병 사회 대응(PHSM) 분과위원회',
+                chronic:'만성질환 동향', climate:'기후·건강 위기 동향' };
+let CONF = { email:'', formUrl:'', org:'질병관리청', note:'' };
+
+/* QR이나 뉴스레터에서 ?series=phsm 으로 들어오면 그 뉴스레터를 미리 체크해 둔다 */
+const series = new URLSearchParams(location.search).get('series');
+if (series && NAMES[series]){
+  document.documentElement.setAttribute('data-series', series);
+  $('#title').textContent = NAMES[series] + ' 구독 신청';
+  $('#lead').textContent = '이 뉴스레터를 이메일로 받아보실 수 있습니다. 다른 뉴스레터도 함께 고르실 수 있습니다.';
+  const cb = document.querySelector(`[data-k="${series}"]`);
+  if (cb){ cb.checked = true; cb.closest('label').classList.add('on'); }
+}
+$('#series').addEventListener('change', e => {
+  const l = e.target.closest('label'); if (l) l.classList.toggle('on', e.target.checked);
+});
+
+fetch('subscribe-config.json').then(r => r.json()).then(c => { CONF = Object.assign(CONF, c); loadAdmin(); }).catch(loadAdmin);
+function loadAdmin(){
+  try {
+    const local = JSON.parse(localStorage.getItem('nl-subscribe-conf') || '{}');
+    CONF = Object.assign(CONF, local);
+  } catch(e){}
+  $('#admMail').value = CONF.email || '';
+  $('#admForm').value = CONF.formUrl || '';
+}
+$('#admSave').onclick = () => {
+  CONF.email = $('#admMail').value.trim(); CONF.formUrl = $('#admForm').value.trim();
+  try { localStorage.setItem('nl-subscribe-conf', JSON.stringify({ email: CONF.email, formUrl: CONF.formUrl })); } catch(e){}
+  alert('이 브라우저에 저장했습니다. 모든 방문자에게 적용하려면 설정 파일을 내려받아 저장소에 넣어 주세요.');
+};
+$('#admFile').onclick = () => {
+  const blob = new Blob([JSON.stringify({ email: $('#admMail').value.trim(), formUrl: $('#admForm').value.trim(),
+    org: CONF.org, note: CONF.note }, null, 1)], { type:'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'subscribe-config.json'; a.click();
+};
+
+function collect(){
+  const picked = Array.from(document.querySelectorAll('[name=s]:checked')).map(x => x.value);
+  return { picked, name: $('#name').value.trim(), org: $('#org').value.trim(),
+           mail: $('#mail').value.trim(), memo: $('#memo').value.trim() };
+}
+function asText(d){
+  return [`[뉴스레터 구독 신청]`,
+          `받아볼 뉴스레터: ${d.picked.join(', ')}`,
+          `이름: ${d.name}`, `소속: ${d.org || '-'}`, `이메일: ${d.mail}`,
+          d.memo ? `남기실 말씀: ${d.memo}` : '', '',
+          `신청 일시: ${new Date().toLocaleString('ko-KR')}`].filter(Boolean).join('\n');
+}
+$('#copyBtn').onclick = async () => {
+  const d = collect();
+  await navigator.clipboard.writeText(asText(d));
+  alert('신청 내용을 복사했습니다. 담당자에게 메일이나 메신저로 보내 주세요.');
+};
+$('#form').addEventListener('submit', e => {
+  e.preventDefault();
+  const d = collect();
+  if (!d.picked.length) return alert('받아보실 뉴스레터를 하나 이상 골라 주세요.');
+  if (!d.name) return alert('이름을 적어 주세요.');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.mail)) return alert('받으실 이메일 주소를 정확히 적어 주세요.');
+
+  if (CONF.formUrl){ location.href = CONF.formUrl; return; }
+
+  const ok = $('#ok');
+  if (CONF.email){
+    const subject = `[뉴스레터 구독 신청] ${d.name} · ${d.picked.join(', ')}`;
+    location.href = 'mailto:' + encodeURIComponent(CONF.email) +
+      '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(asText(d));
+    ok.innerHTML = `<b>메일 창을 열었습니다.</b><br>보내기를 누르시면 신청이 접수됩니다.
+      메일 창이 열리지 않으면 <b>신청 내용 복사</b>를 눌러 ${CONF.email} 로 보내 주세요.`;
+  } else {
+    ok.innerHTML = `<b>신청 내용이 준비되었습니다.</b><br>
+      아직 접수 이메일이 설정되지 않았습니다. 아래 <b>신청 내용 복사</b>를 눌러 ${CONF.org} 담당자에게 보내 주세요.
+      <br><span class="note">(담당자는 이 화면 아래 <b>담당자 설정</b>에서 접수 이메일이나 신청 양식 주소를 넣을 수 있습니다.)</span>`;
+  }
+  ok.classList.add('on');
+  ok.scrollIntoView({ behavior:'smooth', block:'center' });
+});
+</script>
+</body>
+</html>
