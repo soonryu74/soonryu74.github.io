@@ -19,7 +19,7 @@ try:
     _CFG = json.load(open(_CFG_PATH, encoding="utf-8"))
 except Exception:
     _CFG = {}
-BASE      = (_CFG.get("baseUrl") or "https://soonryu74.github.io/newsletter").rstrip("/")
+BASE      = (_CFG.get("baseUrl") or "https://epibrief.github.io").rstrip("/")
 SITE      = BASE + "/issues/"          # 메일에서 이미지를 불러올 주소
 SUBSCRIBE = BASE + "/subscribe.html"   # 구독 신청 페이지
 
