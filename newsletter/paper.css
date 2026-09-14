@@ -77,6 +77,8 @@
   line-height:1.22; letter-spacing:-.02em; color:var(--brand); margin:10px 0 8px;
   text-wrap:balance; word-break:keep-all;
 }
+.nl-org-en{ font-size:.8rem; color:var(--muted); font-weight:500; margin-top:3px; letter-spacing:.01em; }
+.nl-title-en{ font-size:.92rem; color:var(--muted); font-weight:600; margin:-2px 0 6px; letter-spacing:.01em; }
 .nl-meta{ font-size:.82rem; color:var(--muted); font-variant-numeric:tabular-nums; }
 .nl-lead{
   font-size:clamp(1.02rem, 2.2vw, 1.14rem); line-height:1.62; color:var(--ink-2); margin-top:12px;

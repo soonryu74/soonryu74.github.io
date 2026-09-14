@@ -238,7 +238,9 @@ def paper(data):
       <span class="issue">{e(m.get("issue",""))}{" · " if m.get("issue") and date_txt else ""}{e(date_txt)}</span>
     </div>
     <div class="nl-kicker">{e(m.get("org",""))}</div>
+    {f'<div class="nl-org-en">{e(m.get("orgEn"))}</div>' if m.get("orgEn") else ""}
     <h1 class="nl-title">{e(m.get("title",""))}</h1>
+    {f'<div class="nl-title-en">{e(m.get("titleEn"))}</div>' if m.get("titleEn") else ""}
     {f'<p class="nl-lead">{e(d.get("tagline"))}</p>' if d.get("tagline") else ""}
   </header>
   <div class="nl-bar">

@@ -1551,7 +1551,9 @@ function renderPaper(){
       <span class="issue">${esc(m.issue || '')}${m.issue && dateTxt ? ' · ' : ''}${esc(dateTxt)}</span>
     </div>
     <div class="nl-kicker" contenteditable="true">${esc(m.org || '발행 기관')}</div>
+    ${m.orgEn ? `<div class="nl-org-en">${esc(m.orgEn)}</div>` : ''}
     <h1 class="nl-title" contenteditable="true">${esc(m.title || '뉴스레터')}</h1>
+    ${m.titleEn ? `<div class="nl-title-en">${esc(m.titleEn)}</div>` : ''}
     ${d.tagline ? `<p class="nl-lead" contenteditable="true">${esc(d.tagline)}</p>` : ''}
   </header>
   <div class="nl-bar">
