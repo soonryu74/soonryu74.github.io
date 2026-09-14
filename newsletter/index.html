@@ -1454,6 +1454,24 @@ $('#genBasic').onclick = () => generate(false);
 $('#reBuild').onclick = () => go(3);
 
 /* ── 4단계: 종이 그리기 ──────────────────── */
+/* 정책 담당자 참고 — 모든 호에 고정으로 들어갑니다 */
+const TIPS = [
+  ['‘발표·보도’ 근거는 1차 자료를 확인한 뒤 인용하십시오.',
+   '기관 발표를 전한 언론 보도는 수치의 기준(분모·기간)을 생략하는 일이 잦습니다. 각 꼭지의 출처에서 원문을 먼저 여십시오.'],
+  ['해외 수치는 국내값과 나란히 놓기 전까지 비교하지 마십시오.',
+   '접종률·발생률은 분모 정의와 의료체계가 달라 그대로 대비하면 오해를 만듭니다.'],
+  ['모형 연구는 결론보다 가정값을 보십시오.',
+   '모형의 결과는 투입한 가정(순응도·접촉률)에 좌우됩니다. 우리 매뉴얼이 같은 값을 무엇으로 두고 있는지부터 확인하는 편이 빠릅니다.'],
+  ['단일 관찰연구로 지침을 바꾸지 마십시오.',
+   '관찰연구는 연관성을 보여줄 뿐 인과를 확정하지 않습니다. 지침 개정 근거로는 체계적 문헌고찰·무작위배정 연구를 우선하십시오.'],
+  ['프리프린트는 동료심사 전 자료입니다.',
+   '흐름을 먼저 읽는 데는 유용하나, 공식 문서 인용은 게재 확정 후로 미루십시오.'],
+  ['‘자료 없음’도 정책 정보입니다.',
+   '원문에 수치가 없으면 ‘(원문 미제시)’로 표시합니다. 국내 해당 지표가 없다는 사실 자체가 조사·감시 과제입니다.']
+];
+const TIPS_HTML = `<aside class="tips"><h4>이 뉴스레터를 정책에 쓰실 때</h4><ol>${
+  TIPS.map(([h, w]) => `<li><b>${esc(h)}</b><span class="why">${esc(w)}</span></li>`).join('')}</ol></aside>`;
+
 /* 숫자는 굵게, [1] 같은 근거 번호는 위첨자로 — 눈으로 빨리 짚이도록 */
 const NUMRE = /(\d[\d,\.]*\s?(?:배|명|건|개|%|℃|년|주|일|시간|개국|만 명|억|달러|쌍)|\d{1,3}(?:,\d{3})+)/g;
 function mark(text){
@@ -1496,7 +1514,7 @@ function renderPaper(){
       <li><a href="#t${i+1}">
         <span class="no">${i+1}</span>
         <span class="it">${esc(t.name)}${t.headline ? `<span class="ih">${esc(t.headline)}</span>` : ''}</span>
-        <span class="meta">${chips(t)}${t.tag ? `<span class="tag tag-${esc(t.tag)}">${esc(t.tag)}</span>` : ''}</span>
+        <span class="meta">${t.urgency ? `<span class="u u-${esc(t.urgency)}">${esc(t.urgency)}</span>` : ''}${chips(t)}${t.tag ? `<span class="tag tag-${esc(t.tag)}">${esc(t.tag)}</span>` : ''}</span>
       </a></li>`).join('')}</ol>`;
 
   const topics = d.topics.map((t, i) => `
@@ -1504,6 +1522,9 @@ function renderPaper(){
       <div class="topic-head">
         <span class="topic-no">${i+1}</span>
         <h2 contenteditable="true">${esc(t.name)} <span class="en">${esc(t.en || '')}</span></h2>
+        ${(t.urgency || t.impact) ? `<span class="judge">
+           ${t.urgency ? `<span class="u u-${esc(t.urgency)}">${esc(t.urgency)}</span>` : ''}
+           ${t.impact ? `<span class="im im-${esc(t.impact)}">국내 영향 ${esc(t.impact)}</span>` : ''}</span>` : ''}
         ${t.tag ? `<span class="tag tag-${esc(t.tag)}">${esc(t.tag)}</span>` : ''}
       </div>
       ${(t.sources || []).length ? `<div class="topic-src">출처 <b>${esc((t.sources || []).join(' · '))}</b></div>` : ''}
@@ -1553,6 +1574,7 @@ function renderPaper(){
     </aside>` : ''}
   ${d.intro ? `<div class="intro" contenteditable="true">${esc(d.intro)}</div>` : ''}
   ${topics}
+  ${TIPS_HTML}
   ${sub}
   <footer class="foot-note" contenteditable="true">
     본 뉴스레터는 각 기관의 공개 자료와 학술 문헌을 정리한 것으로, 원문의 내용이 우선합니다.
