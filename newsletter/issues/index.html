@@ -4,49 +4,68 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>발간한 뉴스레터</title>
+<meta name="description" content="뉴스레터 메이커로 발간한 호 목록. 감염병 발생동향, 사회 대응(PHSM), 만성질환, 기후·건강.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=Nanum+Myeongjo:wght@700;800&display=swap">
 <style>
- body{margin:0;background:#f4f6f9;color:#1c2430;font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif}
- .wrap{max-width:860px;margin:0 auto;padding:28px 16px 60px}
- h1{font-size:1.25rem;color:#123a6b;margin:0 0 4px}
- .sub{color:#6b7787;font-size:.9rem;margin:0 0 22px}
- .card{display:block;background:#fff;border:1px solid #dfe5ec;border-radius:14px;padding:18px 20px;
-   margin-bottom:14px;text-decoration:none;color:inherit;box-shadow:0 2px 10px rgba(18,58,107,.06)}
- .card:hover{border-color:#b9cbe2}
- .k{font-size:.75rem;font-weight:800;color:#0f7b7b}
- .t{font-size:1.05rem;font-weight:800;color:#123a6b;margin:4px 0 3px}
- .m{font-size:.8rem;color:#6b7787}
- .s{font-size:.88rem;color:#41505f;margin-top:8px;line-height:1.6}
- .back{display:inline-block;margin-top:10px;font-size:.9rem;color:#123a6b;font-weight:700}
+ :root{ --ink:#191f28; --muted:#6d7885; --line:#dde2e9; }
+ body{ margin:0; background:#eef1f5; color:var(--ink);
+   font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; font-size:17px; }
+ .bar{ background:#12395f; color:#fff; padding:12px 16px; display:flex; gap:10px; align-items:center; }
+ .bar a{ color:#fff; text-decoration:none; font-weight:700; background:rgba(255,255,255,.14);
+   padding:7px 12px; border-radius:8px; font-size:.92rem; }
+ .wrap{ max-width:880px; margin:0 auto; padding:30px 16px 70px; }
+ h1{ font-family:"Nanum Myeongjo",serif; font-size:2rem; margin:0 0 6px; }
+ .sub{ color:var(--muted); font-size:.95rem; margin:0 0 26px; }
+ .issue{ display:block; background:#fff; border:1px solid var(--line); border-top:5px solid var(--b);
+   border-radius:4px; padding:22px 24px; margin-bottom:16px; text-decoration:none; color:inherit; }
+ .issue:hover{ box-shadow:0 8px 26px rgba(22,48,90,.12); }
+ .k-outbreak{ --b:#12395f; --a:#c2540b; }
+ .k-phsm{ --b:#3b3080; --a:#0e7490; }
+ .k-chronic{ --b:#14532d; --a:#a16207; }
+ .k-climate{ --b:#7c2d12; --a:#0369a1; }
+ .kind{ font-size:.78rem; font-weight:800; letter-spacing:.08em; color:var(--a); }
+ .t{ font-family:"Nanum Myeongjo",serif; font-size:1.45rem; font-weight:800; color:var(--b); margin:6px 0 4px; }
+ .m{ font-size:.84rem; color:var(--muted); font-variant-numeric:tabular-nums; }
+ .lead{ font-size:1rem; line-height:1.65; color:#3d4753; margin:12px 0 0; }
+ .topics{ display:flex; gap:6px; flex-wrap:wrap; margin-top:14px; }
+ .topics span{ font-size:.8rem; color:#3d4753; border:1px solid var(--line); border-radius:999px; padding:3px 11px; }
+ @media (max-width:560px){ .t{ font-size:1.25rem; } }
 </style>
 </head>
-<body><div class="wrap">
+<body>
+<nav class="bar"><a href="../">← 뉴스레터 메이커</a></nav>
+<div class="wrap">
   <h1>발간한 뉴스레터</h1>
   <p class="sub">뉴스레터 메이커로 만든 호입니다. 서식과 구성을 그대로 가져다 새 호를 만들 수 있습니다.</p>
   
-    <a class="card" href="chronic-2026-01.html">
-      <div class="k">만성질환</div>
+    <a class="issue k-chronic" href="chronic-2026-01.html">
+      <div class="kind">만성질환</div>
       <div class="t">만성질환 동향 뉴스레터</div>
       <div class="m">2026년 제1호(창간호) · 2026-09-14 · 질병관리청 만성질환관리국</div>
-      <div class="s">보건복지부가 향후 10년간 만성질환을 중점 관리하겠다는 방향을 밝힘[1]</div>
+      <p class="lead">향후 10년, 만성질환이 국가 보건정책의 한복판으로 들어옵니다.</p>
+      <div class="topics"><span>국내 정책 — 향후 10년, 만성질환 중점 관리</span><span>국제 동향 — 정책 채택에서 이행으로</span><span>비만·대사 — 근감소성 비만의 전 세계 유병률</span><span>노인·다질환 — 재택 일차의료와 응급실 이용</span></div>
     </a>
-    <a class="card" href="climate-2026-01.html">
-      <div class="k">기후·건강</div>
+    <a class="issue k-climate" href="climate-2026-01.html">
+      <div class="kind">기후·건강</div>
       <div class="t">기후·건강 위기 동향</div>
       <div class="m">2026년 제1호(창간호) · 2026-09-14 · 질병관리청 기후보건·건강위해대응</div>
-      <div class="s">’26년 8월 기록적 고온으로 전 지구 기온이 다시 1.5℃ 기준선을 넘었고, 서유럽은 가장 더운 여름을 기록한 것으로 보고됨[1]</div>
+      <p class="lead">8월 지구 기온이 다시 1.5℃를 넘었습니다. 폭염은 날씨가 아니라 감시 대상입니다.</p>
+      <div class="topics"><span>기록적 더위와 온열질환 의료이용</span><span>폭염·산불이 대기질을 되돌린다</span><span>기후와 매개체 감염병</span><span>누가 먼저 위험해지는가 — 취약집단 보호</span></div>
     </a>
-    <a class="card" href="outbreak-2026-37.html">
-      <div class="k">감염병 발생동향</div>
+    <a class="issue k-outbreak" href="outbreak-2026-37.html">
+      <div class="kind">감염병 발생동향</div>
       <div class="t">전 세계 감염병 발생 동향</div>
       <div class="m">2026년 제37호 · 2026-09-14 · 질병관리청 감염병위기대응국</div>
-      <div class="s">질병관리청은 ’26.9.11. 2026-2027절기 인플루엔자 유행주의보를 발령하였으며, 예년보다 이른 유행에 따라 학생·고위험군 대응을 강화함[1]</div>
+      <p class="lead">독감 유행주의보가 예년보다 이르게 내려졌고, 콩고민주공화국 에볼라는 7개 주로 번졌습니다.</p>
+      <div class="topics"><span>인플루엔자, 대한민국</span><span>에볼라바이러스병, 콩고민주공화국</span><span>레지오넬라증, 미국</span><span>홍역, 미국</span></div>
     </a>
-    <a class="card" href="phsm-2026-01.html">
-      <div class="k">감염병 사회 대응(PHSM)</div>
+    <a class="issue k-phsm" href="phsm-2026-01.html">
+      <div class="kind">감염병 사회 대응(PHSM)</div>
       <div class="t">감염병 사회 대응(PHSM) 분과위원회 뉴스레터</div>
       <div class="m">2026년 제1호(창간호) · 2026-09-14 · 감염병위기총괄과 · 감염병 사회 대응 분과위원회</div>
-      <div class="s">구획 모형은 인구·접촉의 이질성은 반영하면서도 행동 반응은 ‘평균적인 사람’으로 단순화해 왔으며, 이 가정을 풀면 유행 결과가 달라진다는 연구가 제시됨[1]</div>
+      <p class="lead">사람들이 조치를 어떻게 받아들이는가 — 창간호는 ‘순응’을 둘러싼 최근 근거를 모았습니다.</p>
+      <div class="topics"><span>순응도는 균일하지 않다 — 행동 이질성과 유행 결과</span><span>백신 수용성과 주저 — 무엇이 결정하는가</span><span>허위정보 대응과 디지털 소통</span><span>사회적 조치의 뜻밖의 파급 — 소아결핵 사례</span></div>
     </a>
-  <a class="back" href="../">← 뉴스레터 메이커로 돌아가기</a>
-</div></body>
+</div>
+</body>
 </html>
