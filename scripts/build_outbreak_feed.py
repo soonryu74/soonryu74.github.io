@@ -62,7 +62,10 @@ def fetch_json(url, tries=3):
     return None
 
 def europepmc(query, limit=PER_SOURCE):
-    """Europe PMC(논문·프리프린트) 검색 — 제목·저널·날짜·초록 앞부분만 가져온다."""
+    """검색식의 {RECENT} 는 최근 120일 기간으로 바뀐다."""
+    today = datetime.date.today()
+    query = query.replace("{RECENT}", "(FIRST_PDATE:[%s TO %s])"
+                          % ((today - datetime.timedelta(days=120)).isoformat(), today.isoformat()))
     url = ("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query="
            + urllib.parse.quote(query)
            + f"&format=json&pageSize={limit}&resultType=core&sort=P_PDATE_D%20desc")
