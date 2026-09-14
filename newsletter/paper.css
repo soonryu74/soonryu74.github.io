@@ -112,18 +112,25 @@
 .issues{ list-style:none; margin:0; padding:0; }
 .issues li{ border-bottom:1px solid var(--line-2); }
 .issues a{
-  display:grid; grid-template-columns:28px 1fr auto; gap:12px; align-items:baseline;
+  display:grid; grid-template-columns:28px minmax(0,1fr) auto; gap:6px 12px; align-items:baseline;
   padding:12px 0; text-decoration:none; color:inherit;
 }
-.issues .meta{ display:flex; gap:6px; align-items:center; justify-content:flex-end; flex-wrap:wrap; }
+.issues .meta{ display:flex; gap:5px; align-items:center; justify-content:flex-end;
+  flex-wrap:wrap; max-width:46%; }
 .issues .src{
-  font-size:.8rem; font-weight:700; letter-spacing:0; color:var(--accent); background:var(--accent-soft);
-  border-radius:3px; padding:2px 8px; white-space:nowrap;
+  font-size:.78rem; font-weight:700; letter-spacing:0; color:var(--accent); background:var(--accent-soft);
+  border-radius:3px; padding:2px 7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;
 }
 .issues .src-more{ font-size:.76rem; color:var(--muted); }
 .brief-label .go{ font-weight:500; letter-spacing:0; color:var(--muted); }
 .topic-src{
-  font-size:.82rem; color:var(--muted); margin-top:4px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;
+  display:flex; gap:8px; align-items:flex-start; font-size:.86rem; color:var(--muted);
+  margin-top:6px; line-height:1.6;
+}
+.topic-src b{ min-width:0; }
+.topic-src .lbl{
+  display:inline-block; font-size:.72rem; font-weight:800; color:var(--muted);
+  border:1px solid var(--line); border-radius:3px; padding:1px 6px; flex:0 0 auto; margin-top:2px;
 }
 .topic-src b{ color:var(--accent); font-weight:700; }
 .issues a:hover .it{ text-decoration:underline; text-underline-offset:3px; }
@@ -132,7 +139,7 @@
   font-variant-numeric:tabular-nums;
 }
 .issues .it{ font-weight:700; font-size:1.06rem; line-height:1.55; color:var(--brand); word-break:keep-all; }
-.issues .ih{ display:block; font-weight:400; font-size:.96rem; color:var(--ink-2); margin-top:2px; }
+.issues .ih{ display:block; font-weight:400; font-size:.96rem; color:var(--ink-2); margin-top:3px; }
 
 /* 자료 성격 태그 — 색이 아니라 형태로 구분한다 */
 .tag{
@@ -165,8 +172,9 @@
 }
 .sec{ margin-top:20px; }
 .sec > h4{
-  font-size:.84rem; font-weight:800; letter-spacing:0; color:var(--accent);
-  margin:0 0 8px; padding-bottom:6px; border-bottom:1px solid var(--accent-soft);
+  display:inline-block; font-size:.82rem; font-weight:800; letter-spacing:0;
+  color:#fff; background:var(--brand); border-radius:3px;
+  margin:0 0 10px; padding:5px 11px; border:0;
 }
 .sec ul{ margin:0; padding:0; list-style:none; }
 .sec li{
@@ -290,12 +298,14 @@
   .stat:first-child,.stat:nth-child(2){ border-top:0; }
   .stat:nth-child(even){ padding-left:16px; border-left:1px solid var(--line-2); }
   .issues a{ grid-template-columns:22px 1fr; }
-  .issues a{ grid-template-columns:22px 1fr; }
-  .issues .meta{ justify-content:flex-start; padding-top:4px; grid-column:2; }
+  .issues a{ grid-template-columns:24px minmax(0,1fr); gap:4px 10px; padding:14px 0; }
+  .issues .meta{ justify-content:flex-start; grid-column:2; max-width:100%; margin-top:6px; gap:4px; }
+  .issues .src{ font-size:.74rem; padding:2px 6px; }
   .issues .tag{ display:none; }
+  .sec > h4{ font-size:.78rem; padding:4px 9px; }
   .topic h2{ font-size:1.28rem; line-height:1.38; }
-  .topic-head{ grid-template-columns:auto 1fr; }
-  .topic-head .tag{ grid-column:2; justify-self:start; margin-top:2px; }
+  .topic-head{ grid-template-columns:auto minmax(0,1fr) auto; }
+  .topic-head .tag{ font-size:.7rem; padding:2px 6px; align-self:start; margin-top:6px; }
 }
 
 /* ── 인쇄 ───────────────────────────────────────────── */
