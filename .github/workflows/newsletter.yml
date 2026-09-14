@@ -1,0 +1,38 @@
+name: 뉴스레터 소스 자동 수집
+
+# 감염병 발생동향 · 사회 대응(PHSM) · 만성질환 뉴스레터에 쓸 소스를 매일 모아
+# data/newsletter/feed.json 을 갱신합니다. 별도 키가 필요 없습니다.
+# (제목·출처·링크·날짜·발췌만 저장 — 원문은 저장하지 않습니다)
+on:
+  schedule:
+    - cron: '0 20 * * *'    # UTC 20:00 = KST 05:00 매일
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-push-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 소스 수집 → data/newsletter/feed.json
+        run: python3 scripts/build_outbreak_feed.py
+
+      - name: 변경 시 커밋
+        run: |
+          if git diff --quiet -- data/newsletter/feed.json; then
+            echo "변경 없음"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/newsletter/feed.json
+            git commit -m "뉴스레터 소스 자동 갱신"
+            git push
+          fi
