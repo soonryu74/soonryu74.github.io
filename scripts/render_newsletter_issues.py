@@ -45,11 +45,16 @@ def make_qr(url, out_path, brand="#12395f"):
 
 NUM = re.compile(r"(\d[\d,\.]*\s?(?:배|명|건|개|%|℃|년|주|일|시간|개국|개 주|만 명|억|달러|쌍)|\d{1,3}(?:,\d{3})+)")
 def mark(text):
-    """숫자를 굵게, [1] 같은 근거 번호를 위첨자로."""
-    t = e(text)
+    """'키워드 :: 본문' 은 앞머리 키워드로, 숫자는 색 강조, [1] 은 위첨자로."""
+    raw = str(text or "")
+    lead = ""
+    if " :: " in raw:
+        head, _, raw = raw.partition(" :: ")
+        lead = f'<b class="lead">{e(head.strip())}</b>'
+    t = e(raw)
     t = NUM.sub(r'<b class="num">\1</b>', t)
     t = re.sub(r"\[(\d+(?:\]\[\d+)*)\]", lambda m: "<sup>[" + m.group(1) + "]</sup>", t)
-    return t
+    return lead + t
 
 def ul(items):
     return "<ul>" + "".join(f"<li>{mark(x)}</li>" for x in (items or [])) + "</ul>"
@@ -58,7 +63,8 @@ def refs_block(refs):
     items = []
     for r in refs or []:
         head, _, link = r.partition(" — ")
-        items.append(f"<li>{e(head)}" + (f' <a href="{e(link)}" target="_blank" rel="noopener">원문</a>' if link else "") + "</li>")
+        label = "기사" if "news.google.com" in link else "원문"
+        items.append(f"<li>{e(head)}" + (f' <a href="{e(link)}" target="_blank" rel="noopener">{label}</a>' if link else "") + "</li>")
     return (f'<details class="refs"><summary>출처 {len(items)}건</summary>'
             f'<ol>{"".join(items)}</ol></details>')
 
@@ -70,7 +76,8 @@ def src_card(t):
     # 리디렉션 안내나 봇 차단 화면이 잡힌 카드는 보여 주지 않는다
     if not c.get("url") or not title or BAD_CARD.match(title): return ""
     if not c.get("image") and not c.get("desc"): return ""
-    img = f'<img src="{e(c["image"])}" alt="" loading="lazy">' if c.get("image") else ""
+    img = (f'<img src="{e(c["image"])}" alt="" loading="lazy" '
+           f'onerror="this.remove()">') if c.get("image") else ""
     return f'''<div class="srccard">{img}
       <div class="sc-b">
         <div class="sc-site">원문 · {e(c.get("site",""))}</div>
@@ -78,6 +85,40 @@ def src_card(t):
         {f'<div class="sc-d">{e(c.get("desc"))}</div>' if c.get("desc") else ""}
         <a href="{e(c["url"])}" target="_blank" rel="noopener">원문 보기 →</a>
       </div></div>'''
+
+EV = {   # 근거 강도 — 짧은 라벨로 두고 자세한 설명은 title 속성에
+    "high": ("●●●", "고찰·RCT", "체계적 문헌고찰 · 무작위배정 연구", ""),
+    "mid":  ("●●○", "관찰연구", "코호트 · 횡단 등 관찰연구", ""),
+    "low":  ("●○○", "모형", "모형 · 생태학적 분석", ""),
+    "weak": ("○○○", "발표·보도", "기관 발표 · 언론 보도 · 프리프린트", "low"),
+}
+
+def evidence_badge(t):
+    k = t.get("evidence")
+    if not k or k not in EV: return ""
+    dots, label, full, cls = EV[k]
+    return (f'<span class="ev {cls}" title="근거 강도 · {e(full)}">'
+            f'<span class="dots">{dots}</span>{e(label)}</span>')
+
+def design_chips(t):
+    d = t.get("design") or []
+    if not d: return ""
+    return '<div class="design">' + "".join(f"<span>{e(x)}</span>" for x in d) + "</div>"
+
+def caveat_box(t):
+    c = t.get("caveat")
+    if not c: return ""
+    return f'<div class="caveat"><b>해석 주의</b> · {e(c)}</div>'
+
+def copy_bar(t, i, meta):
+    """상사 보고용 3줄(상황·조치·출처)을 그대로 복사할 수 있게."""
+    line1 = (t.get("headline") or t.get("name", "")).strip()
+    line2 = ((t.get("korea") or [""])[0]).split(" :: ")[-1].strip()
+    srcs = " · ".join(t.get("sources") or [])
+    line3 = f'{srcs} / {meta.get("title","")} {meta.get("issue","")}'
+    text = f'[{t.get("name","")}] {line1}\n조치: {line2}\n출처: {line3}'
+    return (f'<div class="copybar"><button class="copybtn" data-copy="{e(text)}">'
+            f'보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>')
 
 def profile_table(t):
     rows = t.get("profile") or []
@@ -132,16 +173,19 @@ def paper(data):
       <div class="topic-head">
         <span class="topic-no">{i+1}</span>
         <h2>{e(t["name"])} <span class="en">{e(t.get("en",""))}</span></h2>
-        {f'<span class="tag tag-{e(t.get("tag"))}">{e(t.get("tag"))}</span>' if t.get("tag") else ''}
+        {evidence_badge(t) or (f'<span class="tag tag-{e(t.get("tag"))}">{e(t.get("tag"))}</span>' if t.get("tag") else '')}
       </div>
       {f'<div class="topic-src"><span class="lbl">출처</span> <b>{e(" · ".join(t.get("sources") or []))}</b></div>' if t.get("sources") else ''}
       {f'<p class="topic-lead">{e(t.get("headline"))}</p>' if t.get("headline") else ''}
+      {design_chips(t)}
       {src_card(t)}
       <div class="sec"><h4>{e(k["secs"][0])}</h4>{ul(t.get("situation"))}</div>
       <div class="sec"><h4>{e(k["secs"][1])}</h4>{ul(t.get("assess"))}</div>
       <div class="sec"><h4>{e(k["secs"][2])}</h4>{ul(t.get("korea"))}</div>
+      {caveat_box(t)}
       {profile_table(t)}
       {refs_block(t.get("refs"))}
+      {copy_bar(t, i, m)}
     </section>''' for i, t in enumerate(d["topics"]))
 
     intro = f'<div class="intro">{e(d["intro"])}</div>' if d.get("intro") else ""
@@ -280,6 +324,14 @@ def page(data, others):
     setTimeout(() => t.classList.remove('on'), 2600);
   }};
   document.getElementById('jump').addEventListener('change', e => {{ location.href = e.target.value; }});
+  document.addEventListener('click', async e => {{      // 보고용 3줄 복사
+    const b = e.target.closest('[data-copy]'); if (!b) return;
+    try {{
+      await navigator.clipboard.writeText(b.dataset.copy);
+      const ok = b.parentElement.querySelector('.copyok'); ok.hidden = false;
+      setTimeout(() => {{ ok.hidden = true; }}, 2000);
+    }} catch(err) {{ toast('복사하지 못했습니다. 길게 눌러 직접 복사해 주세요.'); }}
+  }});
   const pop = document.getElementById('mailPop'), btn = document.getElementById('mailBtn');
   btn.addEventListener('click', () => {{
     const on = pop.classList.toggle('on');
