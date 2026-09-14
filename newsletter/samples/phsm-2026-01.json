@@ -8,7 +8,10 @@
   "date": "2026-09-14",
   "editor": "분과위 간사",
   "orgEn": "Public Health and Social Measures (PHSM) Subcommittee",
-  "titleEn": "Public Health and Social Measures Newsletter"
+  "titleEn": "Public Health and Social Measures Newsletter",
+  "cadence": "격주 발행 (둘째·넷째 주 월요일)",
+  "nextIssue": "2026-09-28",
+  "coverage": "2026.09.06.~2026.09.11."
  },
  "draft": {
   "generatedBy": "편집 예시(수집 자료 기반)",
@@ -51,7 +54,47 @@
     ],
     "caveat": "컴퓨터 모형(simulation) 연구로, 실제 정책 효과의 크기를 말해 주지 않음. 넣은 가정값에 따라 결과가 달라짐.",
     "urgency": "모니터링",
-    "impact": "중"
+    "impact": "중",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 거리두기·행동 반응 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 12
+      },
+      {
+       "y": 2020,
+       "v": 154
+      },
+      {
+       "y": 2021,
+       "v": 293
+      },
+      {
+       "y": 2022,
+       "v": 178
+      },
+      {
+       "y": 2023,
+       "v": 121
+      },
+      {
+       "y": 2024,
+       "v": 100
+      },
+      {
+       "y": 2025,
+       "v": 77
+      },
+      {
+       "y": 2026,
+       "v": 44
+      }
+     ]
+    }
    },
    {
     "name": "백신을 왜 망설이는가",
@@ -94,7 +137,47 @@
     ],
     "caveat": "세 편 모두 국외 관찰연구(observational study)로 원인과 결과를 확정하지 못하며, 국내 적용 시 제도·문화 차이를 확인해야 함.",
     "urgency": "이번분기",
-    "impact": "중"
+    "impact": "중",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 백신 주저(vaccine hesitancy) 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 75
+      },
+      {
+       "y": 2020,
+       "v": 112
+      },
+      {
+       "y": 2021,
+       "v": 523
+      },
+      {
+       "y": 2022,
+       "v": 708
+      },
+      {
+       "y": 2023,
+       "v": 510
+      },
+      {
+       "y": 2024,
+       "v": 363
+      },
+      {
+       "y": 2025,
+       "v": 294
+      },
+      {
+       "y": 2026,
+       "v": 198
+      }
+     ]
+    }
    },
    {
     "name": "허위정보에 어떻게 대응하나",
@@ -137,7 +220,52 @@
     ],
     "caveat": "대부분 소규모·단기 평가로, 장기 효과는 확인되지 않음.",
     "urgency": "이번분기",
-    "impact": "중"
+    "impact": "중",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 허위정보·인포데믹 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 77
+      },
+      {
+       "y": 2020,
+       "v": 235
+      },
+      {
+       "y": 2021,
+       "v": 328
+      },
+      {
+       "y": 2022,
+       "v": 362
+      },
+      {
+       "y": 2023,
+       "v": 329
+      },
+      {
+       "y": 2024,
+       "v": 335
+      },
+      {
+       "y": 2025,
+       "v": 347
+      },
+      {
+       "y": 2026,
+       "v": 273
+      }
+     ]
+    },
+    "logo": {
+     "file": "logos/link.springer.com.ico",
+     "site": "link.springer.com",
+     "url": "https://link.springer.com/10.1007/s10900-026-01609-3"
+    }
    },
    {
     "name": "방역 조치가 남기는 뜻밖의 흔적",
@@ -173,7 +301,52 @@
     ],
     "caveat": "한 나라의 감시자료 분석으로, 국내 상황에 그대로 적용하기 어려움.",
     "urgency": "모니터링",
-    "impact": "하"
+    "impact": "하",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 방역 조치의 부수 영향 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 0
+      },
+      {
+       "y": 2020,
+       "v": 29
+      },
+      {
+       "y": 2021,
+       "v": 24
+      },
+      {
+       "y": 2022,
+       "v": 22
+      },
+      {
+       "y": 2023,
+       "v": 24
+      },
+      {
+       "y": 2024,
+       "v": 5
+      },
+      {
+       "y": 2025,
+       "v": 4
+      },
+      {
+       "y": 2026,
+       "v": 1
+      }
+     ]
+    },
+    "logo": {
+     "file": "logos/link.springer.com.ico",
+     "site": "link.springer.com",
+     "url": "https://link.springer.com/10.1007/s00431-026-07378-4"
+    }
    },
    {
     "name": "학교 접종은 동의서에서 갈린다",
@@ -219,7 +392,52 @@
     ],
     "caveat": "기관 발표문 기준이며, 접종률을 어떻게 계산했는지(대상 학년·분모)는 원문 확인이 필요함.",
     "urgency": "이번분기",
-    "impact": "상"
+    "impact": "상",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 학교 기반 예방접종 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 43
+      },
+      {
+       "y": 2020,
+       "v": 28
+      },
+      {
+       "y": 2021,
+       "v": 39
+      },
+      {
+       "y": 2022,
+       "v": 45
+      },
+      {
+       "y": 2023,
+       "v": 44
+      },
+      {
+       "y": 2024,
+       "v": 41
+      },
+      {
+       "y": 2025,
+       "v": 56
+      },
+      {
+       "y": 2026,
+       "v": 36
+      }
+     ]
+    },
+    "logo": {
+     "file": "logos/gov.uk.ico",
+     "site": "gov.uk",
+     "url": "https://www.gov.uk/government/news/only-around-half-of-primary-school-children-got-their-flu-vaccine-last-year"
+    }
    }
   ],
   "tagline": "사람들이 방역 조치를 어떻게 받아들이는가. 창간호는 ‘지키게 만드는 힘’에 관한 최근 근거를 모았습니다.",

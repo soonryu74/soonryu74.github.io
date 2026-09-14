@@ -130,6 +130,53 @@ def copy_bar(t, i, meta):
     return (f'<div class="copybar"><button class="copybtn" data-copy="{e(text)}">'
             f'보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>')
 
+def logo_img(t):
+    """어느 사이트에서 가져왔는지 보이도록 기관 아이콘을 함께 둔다."""
+    lg = t.get("logo") or {}
+    if not lg.get("file"): return ""
+    return (f'<img class="srclogo" src="{e(lg["file"])}" alt="{e(lg.get("site",""))}" '
+            f'title="{e(lg.get("site",""))}" onerror="this.remove()">')
+
+def trend_chart(t):
+    """연도별 논문 수 막대 그래프 — 외부 라이브러리 없이 SVG로 그린다(인쇄·저장에도 남는다)."""
+    c = t.get("chart") or {}
+    rows = c.get("data") or []
+    if len(rows) < 4:
+        return ""
+    W, H = 320.0, 104.0
+    PAD_B, PAD_T = 18.0, 16.0
+    top = max(r["v"] for r in rows) or 1
+    slot = W / len(rows)
+    bw = min(26.0, slot * 0.62)
+    peak = max(rows, key=lambda r: r["v"])
+    bars, labels, values = [], [], []
+    for i, r in enumerate(rows):
+        h = (H - PAD_B - PAD_T) * (r["v"] / top)
+        x = i * slot + (slot - bw) / 2
+        y = H - PAD_B - h
+        cur = (i == len(rows) - 1)
+        bars.append('<rect class="%s" x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="3"/>'
+                    % ("b cur" if cur else "b", x, y, bw, max(h, 1.5)))
+        labels.append('<text class="xl" x="%.1f" y="%.1f">%s</text>'
+                      % (i * slot + slot / 2, H - 5, str(r["y"])[2:]))
+        if r is peak or cur:          # 숫자는 최고점과 올해에만
+            values.append('<text class="vl" x="%.1f" y="%.1f">%d</text>'
+                          % (i * slot + slot / 2, y - 4, r["v"]))
+    table = "".join("<tr><th>%s</th><td>%s</td></tr>" % (r["y"], r["v"]) for r in rows)
+    note = (" · " + e(c.get("note"))) if c.get("note") else ""
+    aria = "%s — %s년 %d편에서 %s년 %d편" % (c.get("title", ""), rows[0]["y"], rows[0]["v"],
+                                              rows[-1]["y"], rows[-1]["v"])
+    return (
+        '<figure class="chart">'
+        '<figcaption>' + e(c.get("title", "")) + '</figcaption>'
+        '<svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="' + e(aria) + '">'
+        '<line class="ax" x1="0" y1="%.1f" x2="320" y2="%.1f"/>' % (H - PAD_B, H - PAD_B)
+        + "".join(bars) + "".join(values) + "".join(labels) +
+        '</svg>'
+        '<div class="cnote">' + e(c.get("source", "")) + note + ' · 단위 ' + e(c.get("unit", "편")) + '</div>'
+        '<table class="cdata"><caption>' + e(c.get("title", "")) + '</caption><tbody>' + table + '</tbody></table>'
+        '</figure>')
+
 def profile_table(t):
     rows = t.get("profile") or []
     if not rows: return ""
@@ -206,9 +253,10 @@ def paper(data):
         {judge_badges(t)}
         {evidence_badge(t) or (f'<span class="tag tag-{e(t.get("tag"))}">{e(t.get("tag"))}</span>' if t.get("tag") else '')}
       </div>
-      {f'<div class="topic-src"><span class="lbl">출처</span> <b>{e(" · ".join(t.get("sources") or []))}</b></div>' if t.get("sources") else ''}
+      {f'<div class="topic-src"><span class="lbl">출처</span>{logo_img(t)} <b>{e(" · ".join(t.get("sources") or []))}</b></div>' if t.get("sources") else ''}
       {f'<p class="topic-lead">{e(t.get("headline"))}</p>' if t.get("headline") else ''}
       {design_chips(t)}
+      {trend_chart(t)}
       {src_card(t)}
       <div class="sec"><h4>{e(k["secs"][0])}</h4>{ul(t.get("situation"))}</div>
       <div class="sec"><h4>{e(k["secs"][1])}</h4>{ul(t.get("assess"))}</div>
@@ -245,6 +293,7 @@ def paper(data):
   </header>
   <div class="nl-bar">
     <span>발행 {e(m.get("org",""))}</span>
+    {f'<span>{e(m.get("cadence"))}</span>' if m.get("cadence") else ""}
     {f'<span>담당 {e(m.get("editor"))}</span>' if m.get("editor") else ""}
     {f'<span>구독 <a href="{e((data.get("subscribe") or {{}}).get("url",""))}">이 뉴스레터 받아보기 →</a></span>' if (data.get("subscribe") or {{}}).get("url") else ""}
   </div>
@@ -259,6 +308,13 @@ def paper(data):
   {tips_box()}
   {sub_html}
   <footer class="foot-note">
+    <div class="cover">
+      <b>자료 수집</b>
+      {f'<span>이 호가 다룬 기간 {e(m.get("coverage"))}</span>' if m.get("coverage") else ""}
+      <span>소스 102곳을 매일 새벽 5시(KST)에 자동 수집</span>
+      {f'<span>{e(m.get("cadence"))}</span>' if m.get("cadence") else ""}
+      {f'<span>다음 호 {e(m.get("nextIssue","").replace("-", "."))}.</span>' if m.get("nextIssue") else ""}
+    </div>
     본 뉴스레터는 각 기관의 공개 자료와 학술 문헌을 정리한 것으로, 원문의 내용이 우선합니다.<br>
     {e(m.get("org",""))}{" · " + e(m.get("editor","")) if m.get("editor") else ""}
   </footer>
