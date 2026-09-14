@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="paper.css">
 <style>
 :root{
@@ -23,7 +23,7 @@ body[data-kind="chronic"] { --navy:#14532d; --navy-d:#0e3d21; --teal:#a16207; --
 body[data-kind="climate"] { --navy:#7c2d12; --navy-d:#5e220e; --teal:#0369a1; --tint:#e8f2fa; }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:"Noto Sans KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;
   font-size:16.5px;line-height:1.68}
 a{color:var(--navy)}
 button{font-family:inherit}
@@ -60,6 +60,34 @@ button{font-family:inherit}
 .issue-card .im{font-size:.84rem;color:var(--muted)}
 .issue-card .il{font-size:.96rem;color:#3d4753;margin:10px 0 0;line-height:1.6}
 .issue-card .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.rev-head{background:var(--navy);color:#fff;border-radius:14px 14px 0 0;padding:22px 24px}
+.rev-head h3{margin:0;font-family:"Nanum Myeongjo",serif;font-size:1.55rem}
+.rev-head .rq{font-size:.82rem;color:rgba(255,255,255,.8);font-weight:700;letter-spacing:.06em}
+.rev-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));background:#fff;
+  border:1px solid var(--line);border-top:0}
+.rev-stats div{padding:14px 16px;border-left:1px solid var(--line)}
+.rev-stats div:first-child{border-left:0}
+.rev-stats b{display:block;font-size:1.5rem;color:var(--teal);font-variant-numeric:tabular-nums}
+.rev-stats span{font-size:.82rem;color:var(--muted)}
+.rev-group{background:#fff;border:1px solid var(--line);border-top:0;padding:18px 22px}
+.rev-group > h4{margin:0 0 4px;font-size:1.08rem;color:var(--navy)}
+.rev-group .gsum{font-size:.92rem;color:#3d4753;margin:0 0 12px;line-height:1.6}
+.lit{border-top:1px solid var(--line-2);padding:12px 0;display:grid;grid-template-columns:30px 1fr;gap:10px}
+.lit:first-of-type{border-top:0}
+.lit .ln{font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums;font-size:.9rem}
+.lit .lt{font-weight:700;font-size:1rem;line-height:1.5;color:var(--ink);text-decoration:none;display:block}
+.lit .lt:hover{text-decoration:underline}
+.lit .lm{font-size:.82rem;color:var(--muted);margin-top:3px}
+.lit .lm b{color:var(--teal)}
+.lit .lx{font-size:.9rem;color:#3d4753;margin-top:5px;line-height:1.6}
+.rev-acts{background:#f7fafc;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;
+  padding:14px 20px;display:flex;gap:8px;flex-wrap:wrap}
+@media print{
+  body>.top,.navpanel:not(.on),#nav-mine .card,.rev-acts{display:none!important}
+  .rev-head{background:#12395f!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .rev-group{break-inside:auto}
+  .lit{break-inside:avoid}
+}
 .pubbox{border:1px dashed var(--line);border-radius:10px;padding:12px;margin-top:12px;background:#f9fbfd;display:none}
 .pubbox.on{display:block}
 .pubbox .row{gap:8px}
@@ -179,13 +207,39 @@ textarea{min-height:90px;resize:vertical}
 
 <!-- ───────────── My Newsletter ───────────── -->
 <section class="navpanel" id="nav-mine"><div class="wrap">
-  <div class="card">
-    <h2>My Newsletter</h2>
-    <p class="hint">내가 만든 뉴스레터입니다. 이 브라우저에 저장되며, 열어서 고치거나 그대로 발행할 수 있습니다.</p>
-    <div id="mineList" class="issue-list"></div>
-    <div class="row" style="margin-top:14px">
-      <button class="btn pri" data-nav="make">새 뉴스레터 만들기</button>
+  <div class="card" style="border-left:5px solid var(--teal)">
+    <h2>My Newsletter — 키워드로 연구·정책 동향 정리</h2>
+    <p class="hint">관심 주제를 넣으면 기본 소스 전체(기관 발표 · 논문 · 리뷰)에서 관련 자료를 찾아
+      <b>문헌고찰처럼 출처와 요약을 정리</b>해 드립니다. 예: “좌식 생활”, “sedentary behaviour”, “폭염 초과사망”.</p>
+    <div class="row" style="flex-wrap:nowrap;gap:8px">
+      <input type="text" id="revQ" placeholder="관심 주제나 키워드 (여러 개면 띄어쓰기 또는 | 로 구분)" style="flex:1">
+      <button class="btn pri" id="revGo" style="flex:0 0 auto">동향 정리하기</button>
     </div>
+    <div class="row" style="margin-top:10px">
+      <div style="flex:0 0 190px"><label class="f">분야</label>
+        <select id="revKind">
+          <option value="">전체 분야</option>
+          <option value="outbreak">감염병 발생동향</option>
+          <option value="phsm">감염병 사회 대응</option>
+          <option value="chronic">만성질환</option>
+          <option value="climate">기후·건강</option>
+        </select></div>
+      <div style="flex:0 0 170px"><label class="f">기간</label>
+        <select id="revDays"><option value="30">최근 30일</option><option value="60" selected>최근 60일</option>
+          <option value="120">최근 120일</option><option value="400">1년</option></select></div>
+      <div style="flex:0 0 170px"><label class="f">자료 성격</label>
+        <select id="revType"><option value="">전체</option><option value="연구">논문·연구만</option>
+          <option value="기관">기관 발표만</option></select></div>
+      <div class="grow" style="padding-top:20px"><span class="note" id="revLog"></span></div>
+    </div>
+  </div>
+
+  <div id="revOut"></div>
+
+  <div class="card">
+    <h2>저장한 정리본</h2>
+    <p class="hint">정리한 결과와 만든 뉴스레터가 이 브라우저에 보관됩니다.</p>
+    <div id="mineList" class="issue-list"></div>
   </div>
 </div></section>
 
@@ -644,6 +698,179 @@ document.addEventListener('click', async e => {
     save(); nav('make'); syncForm(); go(4);
   }
 });
+
+/* ── My Newsletter: 키워드 동향 정리(문헌고찰) ───────────────── */
+let REVIEW = null;
+const KIND_LABEL = { outbreak:'감염병 발생동향', phsm:'감염병 사회 대응', chronic:'만성질환', climate:'기후·건강' };
+
+function revSearch(){
+  const q = $('#revQ').value.trim();
+  if (!q) { alert('관심 주제를 넣어 주세요.'); return null; }
+  const words = q.split(/[\s,|]+/).filter(Boolean).map(w => w.toLowerCase());
+  const kind = $('#revKind').value, days = +$('#revDays').value, type = $('#revType').value;
+  const cut = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
+  const pool = FEED.items.concat(S.myItems || []).filter(it => {
+    if (kind && (it.kind || 'outbreak') !== kind) return false;
+    if (it.date < cut) return false;
+    if (type === '연구' && it.region !== '연구') return false;
+    if (type === '기관' && it.region === '연구') return false;
+    const hay = (it.title + ' ' + (it.excerpt || '') + ' ' + (it.origin || '')).toLowerCase();
+    return words.some(w => hay.includes(w));
+  });
+  // 키워드가 제목에 있는 자료를 먼저, 그다음 최신순
+  pool.sort((a, b) => {
+    const ta = words.some(w => a.title.toLowerCase().includes(w)) ? 0 : 1;
+    const tb = words.some(w => b.title.toLowerCase().includes(w)) ? 0 : 1;
+    return ta - tb || (b.date || '').localeCompare(a.date || '');
+  });
+  return { q, kind, days, type, items: pool.slice(0, 60) };
+}
+
+function revBuild(res){
+  const map = new Map();
+  res.items.forEach(it => {
+    const g = guessTopicIn(it, res.kind) || (it.region === '연구' ? '연구 동향' : '기관 발표·정책');
+    if (!map.has(g)) map.set(g, []);
+    map.get(g).push(it);
+  });
+  const groups = Array.from(map.entries())
+    .map(([name, items]) => ({ name, items }))
+    .sort((a, b) => b.items.length - a.items.length);
+  const srcs = new Set(res.items.map(i => i.origin || i.sourceName));
+  const studies = res.items.filter(i => i.region === '연구').length;
+  return Object.assign({}, res, {
+    groups,
+    stats: [
+      { v: res.items.length, l: '찾은 자료' },
+      { v: studies, l: '논문 · 연구' },
+      { v: res.items.length - studies, l: '기관 발표 · 보도' },
+      { v: srcs.size, l: '출처(기관·학술지)' },
+      { v: res.days + '일', l: '검색 기간' }
+    ]
+  });
+}
+/* 분야에 맞는 주제 사전으로 묶는다 */
+function guessTopicIn(it, kind){
+  const saved = S.kind; if (kind) S.kind = kind;
+  const g = guessTopic(it.title + ' ' + (it.excerpt || ''));
+  S.kind = saved;
+  return g ? g.name : null;
+}
+
+function renderReview(){
+  const r = REVIEW;
+  if (!r){ $('#revOut').innerHTML = ''; return; }
+  const lit = (it, n) => `
+    <div class="lit">
+      <div class="ln">${n}</div>
+      <div>
+        <a class="lt" href="${esc(it.link)}" target="_blank" rel="noopener">${esc(it.title)}</a>
+        <div class="lm"><b>${esc(it.origin || it.sourceName)}</b> · ${esc(ymd(it.date))}
+          ${it.region ? ' · ' + esc(it.region) : ''} ${it.kind ? '· ' + esc(KIND_LABEL[it.kind] || '') : ''}</div>
+        ${it.excerpt ? `<div class="lx">${esc(it.excerpt.slice(0, 240))}</div>` : ''}
+      </div>
+    </div>`;
+  let n = 0;
+  $('#revOut').innerHTML = `
+    <div class="rev-head">
+      <div class="rq">키워드 · ${esc(r.q)}${r.kind ? ' · ' + esc(KIND_LABEL[r.kind]) : ''}</div>
+      <h3>${esc(r.q)} — 최근 ${r.days}일 연구·정책 동향</h3>
+    </div>
+    <div class="rev-stats">${r.stats.map(s => `<div><b>${esc(s.v)}</b><span>${esc(s.l)}</span></div>`).join('')}</div>
+    ${r.groups.map(g => `
+      <div class="rev-group">
+        <h4>${esc(g.name)} <span class="note">(${g.items.length}건)</span></h4>
+        ${g.summary ? `<p class="gsum">${esc(g.summary)}</p>` : ''}
+        ${g.items.map(it => lit(it, ++n)).join('')}
+      </div>`).join('')}
+    <div class="rev-acts">
+      <button class="btn sm pri" id="revAI">AI로 요약 붙이기</button>
+      <button class="btn sm" id="revPrint">인쇄 · PDF</button>
+      <button class="btn sm" id="revMail">메일 본문 복사</button>
+      <button class="btn sm" id="revFile">HTML 저장</button>
+      <button class="btn sm" id="revSave">저장하기</button>
+      <button class="btn sm" id="revLetter">이 내용으로 뉴스레터 만들기</button>
+    </div>`;
+  bindRevActions();
+}
+
+/* 정리 결과 → 뉴스레터/메일에서 쓰는 형식으로 */
+function revToData(){
+  const r = REVIEW;
+  const topics = r.groups.map(g => ({
+    name: g.name, en: '', tag: g.items.every(i => i.region === '연구') ? '연구' : '정책',
+    headline: g.summary || `${g.items.length}건의 자료가 확인되었습니다.`,
+    sources: Array.from(new Set(g.items.map(i => (i.origin || i.sourceName).split('·')[0].trim()))).slice(0, 4),
+    summary: [g.summary || `${g.items.length}건`],
+    situation: g.items.map(i => `(${i.origin || i.sourceName}, ${ymd(i.date)}) ${i.title}${i.excerpt ? ' — ' + i.excerpt.slice(0, 180) : ''}`),
+    assess: g.assess || [], korea: g.korea || [],
+    refs: g.items.map(i => `${i.origin ? i.origin + ' | ' : ''}${i.sourceName} (${ymd(i.date)} 발표) ${i.title} — ${i.link}`)
+  }));
+  return {
+    kind: r.kind || 'chronic', tpl: 'brief',
+    meta: { org: S.meta.org || '', title: `${r.q} 연구·정책 동향`,
+            issue: `최근 ${r.days}일 · ${new Date().toISOString().slice(0,10).replace(/-/g,'.')} 기준`,
+            date: new Date().toISOString().slice(0, 10), editor: S.meta.editor || '',
+            subUrl: S.meta.subUrl || '', subLabel: S.meta.subLabel || '' },
+    draft: { topics, generatedBy: '키워드 동향 정리',
+             tagline: `‘${r.q}’ 관련 자료 ${r.items.length}건을 정리했습니다.`,
+             stats: r.stats.slice(0, 4).map(s => ({ v: String(s.v), l: s.l })) }
+  };
+}
+
+function bindRevActions(){
+  $('#revPrint').onclick = () => window.print();
+  $('#revMail').onclick = async () => alert(await NLEmail.copy(revToData()));
+  $('#revFile').onclick = () => NLEmail.download(revToData());
+  $('#revSave').onclick = () => {
+    const d = revToData();
+    const list = loadMine();
+    list.unshift({ id: Date.now().toString(36), kind: d.kind, tpl: d.tpl, meta: d.meta, draft: d.draft,
+                   savedAt: new Date().toISOString().slice(0, 16).replace('T', ' ') });
+    putMine(list); renderMine(); alert('저장했습니다. 아래 [저장한 정리본]에서 다시 볼 수 있습니다.');
+  };
+  $('#revLetter').onclick = () => {
+    const d = revToData();
+    S.kind = d.kind; S.tpl = d.tpl; S.meta = Object.assign({}, S.meta, d.meta); S.draft = d.draft;
+    save(); saveMine(); nav('make'); syncForm(); go(4);
+  };
+  $('#revAI').onclick = async () => {
+    const key = $('#apiKey') ? $('#apiKey').value.trim() : '';
+    if (!key) return alert('AI 요약은 ③ 서식·발행 정보 화면에서 Claude API 키를 넣으면 쓸 수 있습니다. 키 없이도 목록 정리는 그대로 쓰실 수 있습니다.');
+    const btn = $('#revAI'); btn.disabled = true; btn.textContent = '요약하는 중…';
+    for (const g of REVIEW.groups){
+      try {
+        const src = g.items.slice(0, 12).map((i, n) =>
+          `[${n+1}] ${i.origin || i.sourceName} (${i.date}) ${i.title}\n${(i.excerpt || '').slice(0, 700)}`).join('\n\n');
+        const prompt = `아래는 '${REVIEW.q}' 관련 '${g.name}' 자료 목록입니다. 문헌고찰의 소주제 요약처럼,
+자료에 있는 내용만 근거로 3~4문장으로 정리하세요. 수치는 그대로 옮기고, 없는 내용은 지어내지 마세요.
+설명 없이 요약 문장만 출력하세요.\n\n${src}`;
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-api-key': key,
+                     'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+          body: JSON.stringify({ model: S.model, max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
+        });
+        const j = await res.json();
+        g.summary = (j.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+      } catch(err){ console.warn(err); }
+    }
+    renderReview();
+  };
+}
+
+$('#revGo').onclick = () => {
+  const res = revSearch(); if (!res) return;
+  if (!res.items.length){
+    $('#revLog').textContent = '관련 자료를 찾지 못했습니다. 기간을 늘리거나 영어 키워드를 함께 넣어 보세요.';
+    REVIEW = null; renderReview(); return;
+  }
+  REVIEW = revBuild(res);
+  $('#revLog').textContent = `${res.items.length}건을 정리했습니다.`;
+  renderReview();
+  $('#revOut').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+$('#revQ').addEventListener('keydown', e => { if (e.key === 'Enter') $('#revGo').click(); });
 
 /* My Newsletter — 내가 만든 뉴스레터 보관함 */
 const MINE_KEY = 'nlmaker-mine';
