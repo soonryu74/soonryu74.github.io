@@ -12,9 +12,9 @@ import qrcode
 from qrcode.image.pil import PilImage
 
 ROOT    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SAMPLES = os.path.join(ROOT, "newsletter", "samples")
-ISSUES  = os.path.join(ROOT, "newsletter", "issues")
-_CFG_PATH = os.path.join(ROOT, "newsletter", "site-config.json")
+SAMPLES = os.path.join(ROOT, "samples")
+ISSUES  = os.path.join(ROOT, "issues")
+_CFG_PATH = os.path.join(ROOT, "site-config.json")
 try:
     _CFG = json.load(open(_CFG_PATH, encoding="utf-8"))
 except Exception:
