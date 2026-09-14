@@ -241,7 +241,7 @@ def page(data, others):
 
 def index_page(rows):
     cards = "".join(f'''
-    <a class="issue k-{e(r["kind"])}" href="{e(r["file"])}">
+    <a class="issue k-{e(r["kind"])}" data-kind="{e(r["kind"])}" href="{e(r["file"])}">
       <div class="kind">{e(r["kindName"])}</div>
       <div class="t">{e(r["title"])}</div>
       <div class="m">{e(r["issue"])} · {e(r["date"])} · {e(r["org"])}</div>
@@ -269,6 +269,7 @@ def index_page(rows):
  .issue{{ display:block; background:#fff; border:1px solid var(--line); border-top:5px solid var(--b);
    border-radius:4px; padding:22px 24px; margin-bottom:16px; text-decoration:none; color:inherit; }}
  .issue:hover{{ box-shadow:0 8px 26px rgba(22,48,90,.12); }}
+ .issue[hidden]{{ display:none; }}
  .k-outbreak{{ --b:#12395f; --a:#c2540b; }}
  .k-phsm{{ --b:#3b3080; --a:#0e7490; }}
  .k-chronic{{ --b:#14532d; --a:#a16207; }}
@@ -283,12 +284,30 @@ def index_page(rows):
 </style>
 </head>
 <body>
-<nav class="bar"><a href="../">← 뉴스레터 메이커</a></nav>
+<nav class="bar"><a href="../">← 뉴스레터 메이커</a><a href="./" id="allLink" hidden>전체 뉴스레터 보기</a></nav>
 <div class="wrap">
-  <h1>발간한 뉴스레터</h1>
-  <p class="sub">뉴스레터 메이커로 만든 호입니다. 서식과 구성을 그대로 가져다 새 호를 만들 수 있습니다.</p>
+  <h1 id="listTitle">발간한 뉴스레터</h1>
+  <p class="sub" id="listSub">뉴스레터 메이커로 만든 호입니다. 서식과 구성을 그대로 가져다 새 호를 만들 수 있습니다.</p>
   {cards}
+  <p class="sub" id="listEmpty" hidden>아직 이 뉴스레터의 다른 호가 없습니다. 이번 호가 창간호입니다.</p>
 </div>
+<script>
+  /* ?series=phsm 처럼 열면 그 뉴스레터만 보여 줍니다 (QR로 들어온 경우) */
+  var NAMES = {{ outbreak:'전 세계 감염병 발생 동향', phsm:'감염병 사회 대응(PHSM) 분과위원회',
+                chronic:'만성질환 동향', climate:'기후·건강 위기 동향' }};
+  var series = new URLSearchParams(location.search).get('series');
+  if (series && NAMES[series]) {{
+    var shown = 0;
+    document.querySelectorAll('.issue').forEach(function(el){{
+      var keep = el.dataset.kind === series;
+      el.hidden = !keep; if (keep) shown++;
+    }});
+    document.getElementById('listTitle').textContent = NAMES[series];
+    document.getElementById('listSub').textContent = shown + '개 호가 발간되었습니다. 구독을 원하시면 발행 기관으로 문의해 주세요.';
+    document.getElementById('allLink').hidden = false;
+    document.getElementById('listEmpty').hidden = shown > 1;
+  }}
+</script>
 </body>
 </html>
 '''
@@ -304,13 +323,21 @@ def main():
                       "kindName": KINDS[data["kind"]]["name"],
                       "issue": data["meta"].get("issue", "")})
     rows = []
+    counts = {}
     for me in metas:
-        sub = me["data"].get("subscribe") or {}
-        if sub.get("url"):
-            qr_name = "qr-" + me["file"].replace(".html", ".png")
-            make_qr(sub["url"], os.path.join(ISSUES, qr_name), KINDS[me["data"]["kind"]]["brand"])
-            me["data"]["_qr"] = qr_name
-            me["data"]["_qr_abs"] = SITE + qr_name
+        counts[me["data"]["kind"]] = counts.get(me["data"]["kind"], 0) + 1
+    for me in metas:
+        kind = me["data"]["kind"]
+        sub = me["data"].setdefault("subscribe", {})
+        sub["url"] = SITE + "?series=" + kind            # 이 뉴스레터 시리즈만 모아 보는 주소
+        many = counts.get(kind, 1) > 1
+        sub["label"] = ("이 뉴스레터 구독 · 지난 호 보기" if many else "이 뉴스레터 구독 안내")
+        sub["note"] = ("휴대폰 카메라로 찍으면 " + KINDS[kind]["name"] + " 뉴스레터의 "
+                       + ("지난 호와 구독 안내로 이어집니다." if many else "구독 안내로 이어집니다. (이번이 창간호입니다)"))
+        qr_name = "qr-" + me["file"].replace(".html", ".png")
+        make_qr(sub["url"], os.path.join(ISSUES, qr_name), KINDS[kind]["brand"])
+        me["data"]["_qr"] = qr_name
+        me["data"]["_qr_abs"] = SITE + qr_name
         others = [{"file": o["file"], "kindName": o["kindName"], "issue": o["issue"],
                    "current": o["file"] == me["file"]} for o in metas]
         open(os.path.join(ISSUES, me["file"]), "w", encoding="utf-8").write(page(me["data"], others))
@@ -322,6 +349,11 @@ def main():
         print("생성:", me["file"])
     rows.sort(key=lambda r: r["date"], reverse=True)
     open(os.path.join(ISSUES, "index.html"), "w", encoding="utf-8").write(index_page(rows))
+    for r in rows:                                    # 홈 화면이 읽을 목록
+        r["sample"] = "../samples/" + r["file"].replace(".html", ".json")
+    json.dump({"issues": rows}, open(os.path.join(ISSUES, "manifest.json"), "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
+    print("생성: manifest.json")
     print("생성: index.html (", len(rows), "호 )")
 
 if __name__ == "__main__":

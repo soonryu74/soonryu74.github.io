@@ -40,6 +40,29 @@ button{font-family:inherit}
 .steps button:disabled{opacity:.45;cursor:not-allowed}
 
 /* ── 공통 ── */
+.navpanel{display:none}
+.navpanel.on{display:block}
+.steps.inner{margin:0;padding-bottom:0}
+.steps.inner button{color:var(--muted);font-size:.95rem;background:#fff;border:1px solid var(--line);
+  border-bottom:0;margin-right:4px;border-radius:10px 10px 0 0}
+.steps.inner button.on{color:#fff;background:var(--navy);border-color:var(--navy)}
+.hero .howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:6px}
+.hero .ht{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fbfcfe}
+.hero .ht .n{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;
+  align-items:center;justify-content:center;font-weight:800;font-size:.82rem;margin-right:7px}
+.hero .ht b{font-size:1rem}
+.hero .ht span:last-child{display:block;font-size:.88rem;color:var(--muted);margin-top:6px;line-height:1.55}
+.issue-list{display:flex;flex-direction:column;gap:12px}
+.issue-card{border:1px solid var(--line);border-top:5px solid var(--ic,var(--navy));border-radius:10px;
+  padding:18px 20px;background:#fff}
+.issue-card .ik{font-size:.78rem;font-weight:800;letter-spacing:.06em;color:var(--ia,var(--teal))}
+.issue-card .it{font-family:"Nanum Myeongjo",serif;font-size:1.28rem;font-weight:800;color:var(--ic,var(--navy));margin:5px 0 3px}
+.issue-card .im{font-size:.84rem;color:var(--muted)}
+.issue-card .il{font-size:.96rem;color:#3d4753;margin:10px 0 0;line-height:1.6}
+.issue-card .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.pubbox{border:1px dashed var(--line);border-radius:10px;padding:12px;margin-top:12px;background:#f9fbfd;display:none}
+.pubbox.on{display:block}
+.pubbox .row{gap:8px}
 .panel{display:none;padding:22px 0 60px}
 .panel.on{display:block}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
@@ -108,16 +131,74 @@ textarea{min-height:90px;resize:vertical}
 <div class="top">
   <div class="wrap">
     <h1>보건 동향 뉴스레터 메이커</h1>
-    <div class="sub">감염병 발생동향 · 사회 대응(PHSM) · 만성질환 · 기후·건강 — 공식 소스를 고르면 서식에 맞춰 뉴스레터를 만들어 드립니다. <span id="saveTag" class="badge" style="background:#1d4a80;border-color:#2a5c99;color:#cfe3ff">자동 저장</span>
-      <a href="issues/" style="color:#fff;font-weight:700;margin-left:6px">발간한 뉴스레터 보기 →</a></div>
-    <nav class="steps">
-      <button data-go="1" class="on">① 소스 고르기</button>
-      <button data-go="2">② 기사 담기</button>
-      <button data-go="3">③ 초안 만들기</button>
-      <button data-go="4">④ 다듬고 내보내기</button>
+    <div class="sub">감염병 발생동향 · 사회 대응(PHSM) · 만성질환 · 기후·건강 — 공식 소스를 고르면 서식에 맞춰 뉴스레터를 만들어 드립니다. <span id="saveTag" class="badge" style="background:#1d4a80;border-color:#2a5c99;color:#cfe3ff">자동 저장</span></div>
+    <nav class="steps" id="mainNav">
+      <button data-nav="home" class="on">홈</button>
+      <button data-nav="issues">최신 뉴스레터</button>
+      <button data-nav="make">맞춤형 제작</button>
+      <button data-nav="mine">My Newsletter</button>
     </nav>
   </div>
 </div>
+
+<!-- ───────────── 홈 ───────────── -->
+<section class="navpanel on" id="nav-home"><div class="wrap">
+  <div class="card hero">
+    <h2 style="font-size:1.5rem;margin-bottom:6px">무엇을 하는 곳인가요?</h2>
+    <p class="hint" style="font-size:1rem;margin-bottom:18px">
+      WHO·미국 CDC·ECDC·질병관리청 같은 <b>공식 기관 발표</b>와 <b>최신 논문</b>을 매일 모아 두었습니다.
+      필요한 것만 고르면 <b>보고서 서식에 맞춘 뉴스레터</b>가 만들어지고, 그대로 인쇄·이메일·링크로 보낼 수 있습니다.
+    </p>
+    <div class="howto">
+      <div class="ht"><span class="n">1</span><b>소스 고르기</b><span>분야(감염병·사회대응·만성질환·기후)를 고르고 기관을 선택합니다. 102곳이 이미 들어 있습니다.</span></div>
+      <div class="ht"><span class="n">2</span><b>자료 담기</b><span>주제 칩이나 키워드로 걸러 필요한 자료만 담습니다. 키워드 하나로 보고서를 만들 수도 있습니다.</span></div>
+      <div class="ht"><span class="n">3</span><b>서식 고르고 만들기</b><span>서식 3종 중 하나를 고르면 요약·평가·시사점 초안까지 만들어집니다.</span></div>
+      <div class="ht"><span class="n">4</span><b>발행하기</b><span>인쇄·PDF, 메일 본문, 메일용 HTML, 워드, 공유 링크. 구독 QR도 함께 넣습니다.</span></div>
+    </div>
+    <div class="row" style="margin-top:20px">
+      <button class="btn pri" data-nav="make" style="font-size:1.04rem">맞춤형 뉴스레터 만들기 →</button>
+      <button class="btn" data-nav="issues">최신 뉴스레터 보기</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>최신 뉴스레터</h2>
+    <p class="hint">바로 읽고, 그대로 발행할 수 있습니다. 서식과 구성을 가져다 새 호를 만들 수도 있습니다.</p>
+    <div id="homeIssues" class="issue-list"></div>
+  </div>
+</div></section>
+
+<!-- ───────────── 최신 뉴스레터 ───────────── -->
+<section class="navpanel" id="nav-issues"><div class="wrap">
+  <div class="card">
+    <h2>발간한 뉴스레터</h2>
+    <p class="hint">호를 열어 읽거나, <b>발행 방법</b>을 골라 바로 보낼 수 있습니다.</p>
+    <div id="allIssues" class="issue-list"></div>
+  </div>
+</div></section>
+
+<!-- ───────────── My Newsletter ───────────── -->
+<section class="navpanel" id="nav-mine"><div class="wrap">
+  <div class="card">
+    <h2>My Newsletter</h2>
+    <p class="hint">내가 만든 뉴스레터입니다. 이 브라우저에 저장되며, 열어서 고치거나 그대로 발행할 수 있습니다.</p>
+    <div id="mineList" class="issue-list"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn pri" data-nav="make">새 뉴스레터 만들기</button>
+    </div>
+  </div>
+</div></section>
+
+<!-- ───────────── 맞춤형 제작 ───────────── -->
+<section class="navpanel" id="nav-make">
+  <div class="wrap" style="padding-top:18px">
+    <nav class="steps inner" id="stepNav">
+      <button data-go="1" class="on">① 소스 선택</button>
+      <button data-go="2">② 자료 담기</button>
+      <button data-go="3">③ 서식 · 발행 정보</button>
+      <button data-go="4">④ 미리보기 · 발행</button>
+    </nav>
+  </div>
 
 <!-- ───────────── 1단계 ───────────── -->
 <section class="panel on" id="p1"><div class="wrap">
@@ -325,6 +406,7 @@ textarea{min-height:90px;resize:vertical}
   </div>
   <div class="paperwrap"><div id="paper" class="t-official"></div></div>
 </div></section>
+</section>
 
 <script src="email.js"></script>
 <script src="vendor/qrcode.min.js"></script>
@@ -470,12 +552,158 @@ function restore(){
   } catch(e){}
 }
 
+/* ── 메뉴 이동 ───────────────────────────── */
+const KIND_COLOR = { outbreak:['#12395f','#c2540b'], phsm:['#3b3080','#0e7490'],
+                     chronic:['#14532d','#a16207'], climate:['#7c2d12','#0369a1'] };
+let ISSUES = [];                         // 발간한 뉴스레터 목록
+function nav(name){
+  if (name === 'make') document.body.dataset.kind = S.kind; else delete document.body.dataset.kind;
+  $$('.navpanel').forEach(p => p.classList.toggle('on', p.id === 'nav-' + name));
+  $$('#mainNav button').forEach(b => b.classList.toggle('on', b.dataset.nav === name));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (name === 'issues') renderIssueList('#allIssues');
+  if (name === 'mine') renderMine();
+  try { localStorage.setItem('nlmaker-nav', name); } catch(e){}
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-nav]'); if (!b) return;
+  nav(b.dataset.nav);
+});
+
+/* 발행 방법 고르기 — 어디서든 같은 방식으로 */
+function pubButtons(id){
+  return `<div class="pubbox" id="${id}">
+      <div class="row">
+        <button class="btn sm" data-pub="print">인쇄 · PDF</button>
+        <button class="btn sm" data-pub="mail">메일 본문 복사</button>
+        <button class="btn sm" data-pub="mailapp">메일 프로그램 열기</button>
+        <button class="btn sm" data-pub="mailfile">메일용 HTML 저장</button>
+        <button class="btn sm" data-pub="link">링크 복사</button>
+      </div>
+    </div>`;
+}
+async function doPublish(act, data, url){
+  if (act === 'print'){ window.open(url, '_blank'); return; }
+  if (act === 'mail'){ alert(await NLEmail.copy(data)); return; }
+  if (act === 'mailapp'){ location.href = NLEmail.mailto(data); return; }
+  if (act === 'mailfile'){ NLEmail.download(data); return; }
+  if (act === 'link'){
+    const abs = new URL(url, location.href).href;
+    await navigator.clipboard.writeText(abs);
+    alert('링크를 복사했습니다: ' + abs);
+  }
+}
+
+/* 발간한 뉴스레터 목록 */
+function issueCard(r, i, pre){
+  const [c, a] = KIND_COLOR[r.kind] || KIND_COLOR.outbreak;
+  return `<div class="issue-card" style="--ic:${c};--ia:${a}">
+      <div class="ik">${esc(r.kindName)}</div>
+      <div class="it">${esc(r.title)}</div>
+      <div class="im">${esc(r.issue)} · ${esc(r.date)} · ${esc(r.org)}</div>
+      <p class="il">${esc(r.tagline || '')}</p>
+      <div class="acts">
+        <a class="btn sm pri" href="issues/${esc(r.file)}" target="_blank" rel="noopener">뉴스레터 열기</a>
+        <button class="btn sm" data-pubtoggle="${pre}-${i}">발행 방법 선택 ▾</button>
+        <button class="btn sm" data-copyissue="${i}">이 서식으로 새 호 만들기</button>
+      </div>
+      ${pubButtons(pre + '-' + i)}
+    </div>`;
+}
+async function loadIssues(){
+  if (ISSUES.length) return ISSUES;
+  try { ISSUES = (await (await fetch('issues/manifest.json')).json()).issues || []; } catch(e){ ISSUES = []; }
+  return ISSUES;
+}
+async function renderIssueList(sel, limit){
+  const rows = (await loadIssues()).slice(0, limit || 99);
+  const box = $(sel); if (!box) return;
+  const pre = sel.replace(/\W/g, '');
+  box.innerHTML = rows.length ? rows.map((r, i) => issueCard(r, i, pre)).join('')
+    : '<p class="note">아직 발간한 뉴스레터가 없습니다.</p>';
+}
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-pubtoggle]');
+  if (t){ const box = $('#' + t.dataset.pubtoggle); if (box) box.classList.toggle('on'); return; }
+  const pb = e.target.closest('[data-pub]');
+  if (pb){
+    const card = pb.closest('.issue-card');
+    const idx = Array.from(card.parentElement.children).indexOf(card);
+    const r = ISSUES[idx];
+    if (r && r.mine){ doPublish(pb.dataset.pub, r.data, location.pathname); return; }
+    if (!r) return;
+    const data = await (await fetch('samples/' + r.file.replace('.html', '.json'))).json();
+    doPublish(pb.dataset.pub, data, 'issues/' + r.file);
+    return;
+  }
+  const cp = e.target.closest('[data-copyissue]');
+  if (cp){
+    const r = ISSUES[+cp.dataset.copyissue]; if (!r) return;
+    const data = await (await fetch('samples/' + r.file.replace('.html', '.json'))).json();
+    S.kind = data.kind; S.tpl = data.tpl; S.meta = Object.assign({}, S.meta, data.meta); S.draft = data.draft;
+    save(); nav('make'); syncForm(); go(4);
+  }
+});
+
+/* My Newsletter — 내가 만든 뉴스레터 보관함 */
+const MINE_KEY = 'nlmaker-mine';
+const loadMine = () => { try { return JSON.parse(localStorage.getItem(MINE_KEY) || '[]'); } catch(e){ return []; } };
+const putMine = list => { try { localStorage.setItem(MINE_KEY, JSON.stringify(list.slice(0, 30))); } catch(e){} };
+function saveMine(){
+  if (!S.draft) return;
+  const list = loadMine();
+  const item = { id: Date.now().toString(36), kind: S.kind, tpl: S.tpl,
+                 meta: JSON.parse(JSON.stringify(S.meta)), draft: JSON.parse(JSON.stringify(S.draft)),
+                 savedAt: new Date().toISOString().slice(0, 16).replace('T', ' ') };
+  const same = list.findIndex(x => x.meta.title === item.meta.title && x.meta.issue === item.meta.issue);
+  if (same >= 0) list[same] = item; else list.unshift(item);
+  putMine(list);
+}
+function renderMine(){
+  const list = loadMine();
+  $('#mineList').innerHTML = list.length ? list.map((x, i) => {
+    const [c, a] = KIND_COLOR[x.kind] || KIND_COLOR.outbreak;
+    return `<div class="issue-card" style="--ic:${c};--ia:${a}">
+      <div class="ik">${esc((KINDS[x.kind] || {}).title || '')}</div>
+      <div class="it">${esc(x.meta.title || '제목 없음')}</div>
+      <div class="im">${esc(x.meta.issue || '')} · 저장 ${esc(x.savedAt)} · 주제 ${x.draft.topics.length}개</div>
+      <p class="il">${esc(x.draft.tagline || '')}</p>
+      <div class="acts">
+        <button class="btn sm pri" data-mineopen="${i}">열어서 고치기</button>
+        <button class="btn sm" data-minemail="${i}">메일 본문 복사</button>
+        <button class="btn sm" data-minefile="${i}">메일용 HTML 저장</button>
+        <button class="btn sm" data-minedel="${i}">삭제</button>
+      </div>
+    </div>`; }).join('')
+    : '<p class="note">아직 저장한 뉴스레터가 없습니다. [맞춤형 제작]에서 만들면 여기에 쌓입니다.</p>';
+}
+document.addEventListener('click', async e => {
+  const list = loadMine();
+  const op = e.target.closest('[data-mineopen]'), ml = e.target.closest('[data-minemail]'),
+        mf = e.target.closest('[data-minefile]'), dl = e.target.closest('[data-minedel]');
+  if (op){ const x = list[+op.dataset.mineopen];
+    S.kind = x.kind; S.tpl = x.tpl; S.meta = x.meta; S.draft = x.draft; save(); nav('make'); syncForm(); go(4); }
+  if (ml){ const x = list[+ml.dataset.minemail];
+    alert(await NLEmail.copy({ kind: x.kind, tpl: x.tpl, meta: x.meta, draft: x.draft })); }
+  if (mf){ const x = list[+mf.dataset.minefile];
+    NLEmail.download({ kind: x.kind, tpl: x.tpl, meta: x.meta, draft: x.draft }); }
+  if (dl){ if (!confirm('이 뉴스레터를 지울까요?')) return;
+    list.splice(+dl.dataset.minedel, 1); putMine(list); renderMine(); }
+});
+
+/* 입력칸을 현재 상태에 맞춰 다시 채운다 */
+function syncForm(){
+  Object.entries(META_FIELDS).forEach(([id, key]) => { const el = $('#' + id); if (el) el.value = S.meta[key] || ''; });
+  const rd = $(`input[name=tpl][value="${S.tpl}"]`); if (rd) rd.checked = true;
+  const rk = $(`input[name=kind][value="${S.kind}"]`); if (rk) rk.checked = true;
+}
+
 /* ── 단계 이동 ───────────────────────────── */
 function go(n){
   n = +n;
   $$('.panel').forEach(p => p.classList.remove('on'));
   $('#p' + n).classList.add('on');
-  $$('.steps button').forEach(b => b.classList.toggle('on', b.dataset.go === String(n)));
+  $$('#stepNav button').forEach(b => b.classList.toggle('on', b.dataset.go === String(n)));
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (n === 2) renderFeed();
   if (n === 4) renderPaper();
@@ -951,7 +1179,7 @@ async function generate(useAI){
   const key = $('#apiKey').value.trim();
   const log = $('#genLog');
   if (!useAI || !key){
-    S.draft = basicDraft(); save(); log.textContent = '기본 초안을 만들었습니다.';
+    S.draft = basicDraft(); save(); saveMine(); log.textContent = '기본 초안을 만들었습니다. My Newsletter에 저장했습니다.';
     go(4); return;
   }
   const groups = groupTopics();
@@ -975,7 +1203,7 @@ async function generate(useAI){
             { v: `${srcN}곳`, l: '출처 기관 · 학술지' },
             { v: `${S.days}일`, l: '자료 수집 기간' },
             { v: `${topics.length}개`, l: '주제' }] };
-  save(); log.textContent = '초안이 준비됐습니다.';
+  save(); saveMine(); log.textContent = '초안이 준비됐습니다. My Newsletter에 저장했습니다.';
   go(4);
 }
 const SAMPLE_FILE = { outbreak: 'outbreak-2026-37', phsm: 'phsm-2026-01', chronic: 'chronic-2026-01', climate: 'climate-2026-01' };
@@ -1230,8 +1458,10 @@ $('#exMailApp').onclick = () => {
   const rk = $(`input[name=kind][value="${S.kind}"]`); if (rk) rk.checked = true;
   if (!S.meta.title) { S.meta.title = KINDS[S.kind].title; $('#mTitle').value = S.meta.title; }
   try { $('#apiKey').value = localStorage.getItem('nlmaker-key') || ''; } catch(e){}
-  nsHelp(); renderMy(); renderSources(); renderFeed();
-  if (shared && S.draft) go(4);
+  nsHelp(); renderMy(); renderSources(); renderFeed(); syncForm();
+  renderIssueList('#homeIssues');
+  if (shared && S.draft){ nav('make'); go(4); }
+  else nav(location.hash === '#make' ? 'make' : 'home');
 })();
 </script>
 </body>
