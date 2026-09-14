@@ -246,19 +246,26 @@
 
 /* ── 인쇄 ───────────────────────────────────────────── */
 @media print{
-  #paper{ box-shadow:none; max-width:none; padding:0; font-size:10.8pt; background:#fff; }
-  .t-card, .t-card .nl-head, .t-card .brief, .t-card .topic, .t-card .intro, .t-card .foot-note{
-    box-shadow:none; border-radius:0; padding-left:0; padding-right:0; background:#fff;
+  /* PDF로 저장하는 경우가 대부분이라 화면과 같은 색으로 나오게 한다 */
+  *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+  #paper{
+    box-shadow:none; max-width:none; padding:0 0 0 14px; font-size:10.8pt; background:#fff;
+    border:0; border-left:0;
   }
-  .t-card .topic{ border-top:1px solid #ccc; }
+  #paper::before{ display:none; }
+  #paper::after{ width:6px; }                 /* 왼쪽 분야 색 띠는 그대로 */
+  .nl-bar{ background:var(--brand) !important; color:#fff !important; }
+  .nl-bar a{ color:#fff !important; }
+  .brief{ background:var(--accent-soft) !important; }
+  .brief .stats{ background:#fff !important; }
+  .t-card, .t-card .nl-head, .t-card .brief, .t-card .topic, .t-card .intro, .t-card .foot-note{
+    box-shadow:none; border-radius:0;
+  }
+  .t-card .topic{ border-top:1px solid var(--line); }
   .topic{ break-inside:avoid; }
-  #paper::after{ width:4px; }
-  .nl-bar{ background:#fff; color:#191f28; border-top:1px solid #ccc; border-bottom:1px solid #ccc; padding:7px 0; }
-  .nl-bar a{ color:#191f28; }
-  .brief{ background:#fff; }
-  .refs[open] summary::before, .refs summary::before{ content:""; }
-  .subscribe{ break-inside:avoid; background:#fff; }
+  .subscribe{ break-inside:avoid; }
   .refs{ display:block !important; }
   .refs ol{ display:block !important; }
-  @page{ size:A4; margin:17mm 16mm; }
+  .refs summary::before, .refs[open] summary::before{ content:""; }
+  @page{ size:A4; margin:15mm 14mm; }
 }
