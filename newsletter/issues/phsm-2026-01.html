@@ -13,11 +13,12 @@
   body{ margin:0; background:#eef1f5; color:#191f28;
     font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif; }
   .bar{ position:sticky; top:0; z-index:20; background:var(--bar-brand); color:#fff;
-    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
-    padding:10px 16px; box-shadow:0 1px 8px rgba(0,0,0,.18); }
+    display:flex; gap:6px; align-items:center; flex-wrap:nowrap;
+    padding:8px 12px; box-shadow:0 1px 8px rgba(0,0,0,.18); }
   .bar a, .bar button, .bar select{ font-family:inherit; font-size:.92rem; font-weight:700; }
-  .bar a.home{ color:#fff; text-decoration:none; padding:7px 12px; border-radius:8px;
-    background:rgba(255,255,255,.14); }
+  .bar a.home{ color:#fff; text-decoration:none; padding:7px 11px; border-radius:8px;
+    background:rgba(255,255,255,.14); white-space:nowrap; }
+  .bar .short{ display:none; }
   .bar a.home:hover{ background:rgba(255,255,255,.24); }
   .bar .sp{ flex:1 }
   .bar select{ background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.35);
@@ -29,7 +30,7 @@
   .bar button.ghost{ background:rgba(255,255,255,.14); color:#fff; }
   .bar button.ghost:hover{ background:rgba(255,255,255,.26); }
   .menu{ position:relative; }
-  .menu-pop{ position:absolute; right:0; top:calc(100% + 8px); background:#fff; color:#191f28;
+  .menu-pop{ position:absolute; right:0; left:auto; top:calc(100% + 8px); background:#fff; color:#191f28;
     border:1px solid #dde2e9; border-radius:12px; box-shadow:0 10px 30px rgba(22,48,90,.18);
     min-width:250px; padding:6px; display:none; }
   .menu-pop.on{ display:block; }
@@ -42,18 +43,26 @@
     color:#fff; padding:12px 18px; border-radius:10px; font-size:.9rem; z-index:50; display:none; }
   .toast.on{ display:block; }
   .paperwrap{ padding:24px 14px 60px; }
+  @media (max-width:640px){
+    .bar{ gap:5px; padding:7px 9px; font-size:.86rem; }
+    .bar a.home, .bar button{ padding:7px 9px; font-size:.85rem; }
+    .bar .full{ display:none; }
+    .bar .short{ display:inline; }
+    .bar select{ max-width:34vw; padding:6px 7px; font-size:.82rem; }
+    .menu-pop{ position:fixed; left:10px; right:10px; top:56px; min-width:0; }
+  }
   @media print{ .bar,.toast{ display:none !important; } body{ background:#fff; } .paperwrap{ padding:0; } }
 </style>
 </head>
 <body>
 <nav class="bar">
-  <a class="home" href="../">← 뉴스레터 메이커</a>
-  <a class="home" href="./">발간 목록</a>
+  <a class="home" href="../"><span class="full">← 뉴스레터 메이커</span><span class="short">← 홈</span></a>
+  <a class="home" href="./"><span class="full">발간 목록</span><span class="short">목록</span></a>
   <select id="jump" aria-label="다른 호 보기"><option value="chronic-2026-01.html">만성질환 · 2026년 제1호(창간호)</option><option value="climate-2026-01.html">기후·건강 · 2026년 제1호(창간호)</option><option value="outbreak-2026-37.html">감염병 발생동향 · 2026년 제37호</option><option value="phsm-2026-01.html" selected>감염병 사회 대응(PHSM) · 2026년 제1호(창간호)</option></select>
   <span class="sp"></span>
-  <button class="ghost" onclick="window.print()">인쇄 · PDF</button>
+  <button class="ghost" onclick="window.print()"><span class="full">인쇄 · PDF</span><span class="short">인쇄</span></button>
   <span class="menu">
-    <button id="mailBtn" aria-haspopup="true" aria-expanded="false">이메일로 보내기 ▾</button>
+    <button id="mailBtn" aria-haspopup="true" aria-expanded="false"><span class="full">이메일로 보내기</span><span class="short">메일</span> ▾</button>
     <span class="menu-pop" id="mailPop">
       <div class="hint">받는 사람에게 그대로 보낼 수 있는 형태로 만듭니다.</div>
       <button data-act="copy">메일 본문 복사 (서식 유지)</button>
