@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 """
 독립 저장소용 묶음 만들기: 지금 구조(newsletter/ 아래)를 새 저장소 루트 구조로 복사한다.
-  → dist/healthbrief/  (그대로 새 저장소에 올리면 됨)
+  → dist/epibrief/  (그대로 새 저장소에 올리면 됨)
 
 새 주소를 인자로 주면 site-config.json 의 baseUrl 도 바꿔 준다.
-  python3 scripts/export_standalone.py https://healthbrief.github.io
+  python3 scripts/export_standalone.py https://epibrief.github.io
 """
 import os, re, sys, json, shutil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT  = os.path.join(ROOT, "dist", "healthbrief")
+OUT  = os.path.join(ROOT, "dist", "epibrief")
 
 # (원래 위치, 새 저장소에서의 위치)
 COPY = [
@@ -110,6 +110,8 @@ def main():
             except Exception:
                 continue
             n = rewrite(t)
+            if base:
+                n = n.replace("https://soonryu74.github.io/newsletter", base)
             if n != t:
                 open(fp, "w", encoding="utf-8").write(n)
 
@@ -120,6 +122,26 @@ def main():
         cfg["baseUrl"] = base
         json.dump(cfg, open(cfg_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
+    # 새 주소로 발간호·QR 다시 만들기 (이전 주소가 박혀 있으면 안 되므로)
+    if base:
+        import subprocess
+        r = subprocess.run([sys.executable, os.path.join(OUT, "scripts", "render_newsletter_issues.py")],
+                           cwd=OUT, capture_output=True, text=True)
+        if r.returncode != 0:
+            print("  · 발간호 재생성 실패:\n", (r.stderr or r.stdout)[-1500:])
+        else:
+            left = []
+            for rt, _, fs in os.walk(OUT):
+                for f in fs:
+                    if f.endswith((".html", ".json")):
+                        fp = os.path.join(rt, f)
+                        try:
+                            if "soonryu74.github.io/newsletter" in open(fp, encoding="utf-8").read():
+                                left.append(os.path.relpath(fp, OUT))
+                        except Exception:
+                            pass
+            print("  · 발간호 재생성 완료" + (f" / 옛 주소 남은 파일: {left}" if left else " / 옛 주소 없음"))
+
     os.makedirs(os.path.join(OUT, ".github", "workflows"), exist_ok=True)
     open(os.path.join(OUT, ".github", "workflows", "newsletter.yml"), "w", encoding="utf-8").write(WORKFLOW)
     open(os.path.join(OUT, ".nojekyll"), "w").write("")
@@ -128,11 +150,11 @@ def main():
     print(f"묶음 완성: {OUT} ({n}개 파일)")
     print("새 주소:", cfg["baseUrl"])
     print("\n다음 순서로 올리시면 됩니다:")
-    print("  1. github.com/organizations/new 에서 조직 healthbrief 만들기(무료)")
-    print("  2. 그 조직에 저장소 healthbrief.github.io 만들기(공개)")
+    print("  1. github.com/organizations/new 에서 조직 epibrief 만들기(무료)")
+    print("  2. 그 조직에 저장소 epibrief.github.io 만들기(공개)")
     print("  3. 이 폴더의 파일을 저장소 루트에 올리기")
     print("  4. Settings → Pages → Source: main 브랜치 / 루트")
-    print("  5. 몇 분 뒤 https://healthbrief.github.io 에서 열림")
+    print("  5. 몇 분 뒤 https://epibrief.github.io 에서 열림")
 
 if __name__ == "__main__":
     main()
