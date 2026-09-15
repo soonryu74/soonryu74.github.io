@@ -47,7 +47,7 @@
 | FAQ | `ipsi/faq.html` | 등급 없는 과목·3단계 과목·공동교육과정·온라인학교·학교 밖 교육·미이수·재수생 비교 등 12문답, 교육부·대학 공동연구·교육청 지침 원문 근거 |
 | 학교를 떠날까 | `ipsi/leave.html` | 자퇴·검정고시·지방 이주의 손익. 학업중단율·자퇴 사유·검정고시 추이, 2028 규칙(정시 학생부·재학생 전용·지역인재 요건)에서의 판정, 결정 흐름 |
 | 학과 트렌드 | `ipsi/trend.html` | KESS 학과별 2016~2026 정원·지원자, 키워드(AI·반도체·자유전공) 흐름, 소계열별 취업률, AI 학과 정책·해외 사례 (`ipsi/data/major-trend.json`, `scripts/build_trend.py`) |
-| 과목 고르기 | `ipsi/gwamok.html` | 47개 대학 1,358개 모집단위 권장과목, 과목 조합별 지원 가능 판정 (`ipsi/data/gwonjang.json`) |
+| 과목 고르기 | `ipsi/gwamok.html` | 어디가 제출 47개 대학 1,358개 모집단위 핵심·권장과목, 과목 조합별 핵심과목 충족 판정(N-of-M 조건 지원, 권장은 표시만) (`ipsi/data/gwonjang.json`) |
 | 시험 파먹기 | `ipsi/sihum.html` | 내신·학평·모평·수능·논술·면접·사관/경찰대·과기원·미반영 시험 |
 | 3년 로드맵 | `ipsi/roadmap.html` | 2026.3~2029.3 월별 캘린더 |
 | 전형 고르기 | `ipsi/jeonhyeong.html` | 전형유형별 신입생 출신 고교·지역 (`ipsi/data/edss-admission.json`) |
