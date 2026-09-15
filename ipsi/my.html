@@ -33,6 +33,10 @@
 .btnrow .go{background:var(--navy);color:#fff;border-color:var(--navy)}
 .tblwrap-my{overflow-x:auto}
 .grid-tbl{min-width:640px}
+.profile{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;font-size:.9rem}.profile select{padding:6px 8px;border:1.5px solid var(--line-strong);border-radius:8px;font:inherit;min-width:120px}.profile button{padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-size:.84rem;cursor:pointer}
+.rec{margin:12px 0 0;padding:10px 14px;border-radius:12px;background:var(--p-purple);color:var(--f-purple);font-size:.88rem;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}.rec label{display:inline-flex;align-items:center;gap:6px}.rec input,.rec select{padding:5px 8px;border:1.5px solid var(--line-strong);border-radius:8px;font:inherit;font-size:.86rem;width:70px}.rec select{width:auto}.rec .sub{flex-basis:100%;color:inherit;opacity:.85}
+.print-head{display:none}.print-bar{align-items:center}.print-set{font-size:.86rem}.print-set summary{cursor:pointer;color:var(--muted)}.print-set label{display:inline-flex;gap:6px;align-items:center;margin:6px 10px 0 0}.print-set input{padding:5px 8px;border:1.5px solid var(--line-strong);border-radius:8px;font:inherit;font-size:.86rem}
+@media print{.hero-my,.howto,.addrow,.btnrow,.keep,.profile,.stage,.tip,.disclaimer,.page-head .lead,.check input{display:none!important} .print-head{display:block;margin:0 0 14px;padding:10px 0;border-bottom:2px solid #1e3a5f;font-size:.9rem} .print-head b{font-size:1.1rem} #out{display:block!important} .two{display:block} .panel{break-inside:avoid;border:1px solid #ccc;margin:0 0 10px} .radar{max-width:260px} input,select{border:none!important;background:none!important;font-weight:700} .grid-tbl td .del{display:none} .check li::before{content:"☐ "}}
 .keep{display:inline-flex;align-items:center;gap:6px;font-size:.84rem;color:var(--muted);margin-left:auto}
 .howto{margin:12px 0 0;padding:10px 14px;border-radius:12px;background:var(--p-blue);color:var(--f-blue);font-size:.88rem;line-height:1.55}.howto a{color:inherit;text-decoration:underline}
 .check{list-style:none;padding:0;margin:10px 0 0}.check li{display:flex;gap:8px;align-items:flex-start;margin:0 0 8px;font-size:.92rem}.check input{margin-top:3px}
@@ -83,6 +87,7 @@
 <header class="site-header">
  <div class="nav-inner">
  <a class="brand" href="index.html">입시 나침반 <span class="tag">2010년생 · 2029학년도 대입</span></a>
+ <input type="checkbox" id="navToggle" class="nav-toggle-in"><label for="navToggle" class="nav-toggle" aria-label="메뉴 열기">☰ 메뉴</label>
  <nav class="site-nav">
  <a href="my.html" class="on">내 성적표</a>
  <a href="plan.html">서울대·의대 플랜</a>
@@ -115,14 +120,22 @@
 
 <section>
  <h2>1. 성적 입력</h2>
+ <div class="profile"><label>학생 <select id="prof"></select></label><button id="profAdd">+ 새 학생</button><button id="profRen">이름 바꾸기</button><button id="profDel">삭제</button><span class="sub">학생마다 성적·기록·체크가 따로 저장됩니다(이 기기 안에서만).</span></div>
  <div class="tblwrap-my"><table class="grid-tbl" id="tbl"><thead><tr><th>과목</th><th>원점수</th><th>과목평균</th><th>표준편차</th><th>성취도</th><th>석차등급</th><th>수강자 수</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
  <div class="addrow"><button data-add="공통국어1">+ 국어</button><button data-add="공통수학1">+ 수학</button><button data-add="공통영어1">+ 영어</button><button data-add="통합사회1">+ 통합사회</button><button data-add="통합과학1">+ 통합과학</button><button data-add="한국사1">+ 한국사</button><button data-add="정보">+ 정보</button><button data-add="과학탐구실험1">+ 과탐실험</button><button data-add="">+ 직접 입력</button></div>
  <div class="btnrow"><button class="go" id="run">분석하기 →</button><button id="demo">예시 채우기</button><button id="clear">비우기</button><label class="keep"><input type="checkbox" id="keep" checked> 이 기기에 저장</label></div>
  <div class="howto"><b>표준편차·성취도 비율은 어디서?</b> <a href="https://www.schoolinfo.go.kr/" target="_blank" rel="noopener">학교알리미</a> → 학교명 검색 → <b>학업성취사항 → 교과별 학업성취 사항</b>(보안문자 입력) → 과목별 평균·표준편차·성취도 A~E 비율. 표준편차를 넣으면 등급 추정이 실제 산식(정규분포 위치)과 같아집니다. 수강자 수를 넣으면 그 과목의 1등급 인원(상위 10%)도 같이 계산합니다. 우리 학교 학년 정원은 <a href="hakgyo.html">고교 찾기</a>에서.</div>
+ <div class="rec"><b>기록(학종용)</b>
+  <label>세특 탐구 기록 <input id="rTan" type="number" min="0" max="40" placeholder="건"> 건(누적)</label>
+  <label>동아리 전공 연계 <select id="rClub"><option value="">—</option><option value="y">있음</option><option value="n">없음</option></select></label>
+  <label>진로활동 기록 <select id="rCareer"><option value="">—</option><option value="y">있음</option><option value="n">없음</option></select></label>
+  <span class="sub">탐구 기록 = 세특에 "질문 → 과정 → 결과 → 한계"가 있는 활동. 독서·봉사·수상은 2024학년도부터 대입 미반영이라 넣지 않습니다.</span></div>
  <p class="src" style="margin:8px 0 0">학평(모의고사)이 있으면 아래에 등급만: <input id="mock" placeholder="예) 국2 수3 영2 사2 과3" style="width:220px;padding:6px 8px;border:1.5px solid var(--line-strong);border-radius:8px;font:inherit;font-size:.86rem"></p>
 </section>
 
 <section id="out" hidden>
+ <div class="print-head" id="printHead"></div>
+ <div class="btnrow print-bar"><button id="print">상담지 인쇄 / PDF 저장 →</button><details class="print-set"><summary>인쇄 설정</summary><label>학원·기관명 <input id="orgName" placeholder="예) ○○학원"></label> <label>상담자 <input id="counselor" placeholder="이름"></label></details></div>
  <h2>2. 내 위치</h2>
  <div class="badges" id="badges"></div>
  <div class="verdict" id="verdict"></div>
@@ -167,7 +180,12 @@
 <script>
 (function(){
  const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- const KEY='ipsi-my-grades';
+ // 학생 프로필: 기본 학생은 예전 키를 그대로 쓰고, 추가 학생은 접미사를 붙인다.
+ const PK='ipsi-my-profiles';let P={cur:'default',list:[{id:'default',label:'나'}]};
+ try{const d=JSON.parse(localStorage.getItem(PK)||'null');if(d&&d.list&&d.list.length)P=d;}catch(e){}
+ const KEY=()=>P.cur==='default'?'ipsi-my-grades':'ipsi-my-grades:'+P.cur;
+ const CKEY=()=>P.cur==='default'?'ipsi-my-check':'ipsi-my-check:'+P.cur;
+ const saveP=()=>{try{localStorage.setItem(PK,JSON.stringify(P));}catch(e){}};
  const ROWS=document.getElementById('rows');
  // 과목 → 계열 태그. 이름에 포함된 낱말로 판단한다.
  const AREA=[['국어','hum'],['영어','lang'],['사회','hum'],['한국사','hum'],['역사','hum'],['도덕','hum'],['윤리','hum'],['수학','sci'],['과학','sci'],['물리','sci'],['화학','sci'],['생명','sci'],['지구','sci'],['정보','sw'],['기술','sw']];
@@ -181,11 +199,22 @@
   ROWS.appendChild(tr);
  }
  function read(){return [...ROWS.querySelectorAll('tr')].map(tr=>{const i=tr.querySelectorAll('input,select');return {name:i[0].value.trim(),s:+i[1].value||null,m:+i[2].value||null,sd:+i[3].value||null,a:i[4].value,g:i[5].value,n:+i[6].value||null}}).filter(r=>r.name);}
- function save(){try{if(!document.getElementById('keep').checked){localStorage.removeItem(KEY);return;}localStorage.setItem(KEY,JSON.stringify({rows:read(),mock:document.getElementById('mock').value}));}catch(e){}}
- function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d&&d.rows&&d.rows.length){d.rows.forEach(r=>addRow(r.name,r));document.getElementById('mock').value=d.mock||'';return true;}}catch(e){}return false;}
+ const $v=id=>document.getElementById(id).value;
+ function save(){try{if(!document.getElementById('keep').checked){localStorage.removeItem(KEY());return;}localStorage.setItem(KEY(),JSON.stringify({rows:read(),mock:$v('mock'),rec:{tan:$v('rTan'),club:$v('rClub'),career:$v('rCareer')}}));localStorage.setItem('ipsi-my-org',JSON.stringify({org:$v('orgName'),who:$v('counselor')}));}catch(e){}}
+ function load(){try{const o=JSON.parse(localStorage.getItem('ipsi-my-org')||'null');if(o){document.getElementById('orgName').value=o.org||'';document.getElementById('counselor').value=o.who||'';}}catch(e){}
+  try{const d=JSON.parse(localStorage.getItem(KEY())||'null');if(d&&d.rows&&d.rows.length){d.rows.forEach(r=>addRow(r.name,r));document.getElementById('mock').value=d.mock||'';const rc=d.rec||{};document.getElementById('rTan').value=rc.tan||'';document.getElementById('rClub').value=rc.club||'';document.getElementById('rCareer').value=rc.career||'';return true;}}catch(e){}return false;}
+ // 프로필 UI
+ const profSel=document.getElementById('prof');
+ function drawProf(){profSel.innerHTML=P.list.map(p=>`<option value="${esc(p.id)}"${p.id===P.cur?' selected':''}>${esc(p.label)}</option>`).join('');}
+ function switchProf(id){P.cur=id;saveP();ROWS.innerHTML='';['mock','rTan','rClub','rCareer'].forEach(i=>document.getElementById(i).value='');document.getElementById('out').hidden=true;if(!load())['공통국어1','공통수학1','공통영어1','통합사회1','통합과학1','한국사1'].forEach(n=>addRow(n));loadChecks();drawProf();}
+ profSel.addEventListener('change',()=>{save();switchProf(profSel.value);});
+ document.getElementById('profAdd').addEventListener('click',()=>{const nm=prompt('학생 이름(별명)');if(!nm)return;save();const id='p'+Date.now().toString(36);P.list.push({id,label:nm.trim()});switchProf(id);});
+ document.getElementById('profRen').addEventListener('click',()=>{const p=P.list.find(x=>x.id===P.cur);const nm=prompt('새 이름',p.label);if(!nm)return;p.label=nm.trim();saveP();drawProf();});
+ document.getElementById('profDel').addEventListener('click',()=>{if(P.list.length<2){alert('마지막 학생은 지울 수 없습니다. 비우기를 쓰세요.');return;}const p=P.list.find(x=>x.id===P.cur);if(!confirm(`'${p.label}' 기록을 지울까요?`))return;try{localStorage.removeItem(KEY());localStorage.removeItem(CKEY());}catch(e){}P.list=P.list.filter(x=>x.id!==P.cur);switchProf(P.list[0].id);});
+ drawProf();
  if(!load()) ['공통국어1','공통수학1','공통영어1','통합사회1','통합과학1','한국사1'].forEach(n=>addRow(n));
  document.querySelector('.addrow').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;addRow(b.dataset.add||'');});
- document.getElementById('clear').addEventListener('click',()=>{ROWS.innerHTML='';document.getElementById('mock').value='';try{localStorage.removeItem(KEY);}catch(e){}document.getElementById('out').hidden=true;});
+ document.getElementById('clear').addEventListener('click',()=>{ROWS.innerHTML='';['mock','rTan','rClub','rCareer'].forEach(i=>document.getElementById(i).value='');try{localStorage.removeItem(KEY());}catch(e){}document.getElementById('out').hidden=true;});
  document.getElementById('demo').addEventListener('click',()=>{ROWS.innerHTML='';[['공통국어1',{s:88.5,m:70}],['공통수학1',{s:37.8,m:52}],['공통영어1',{s:66.8,m:60}],['통합사회1',{s:46.6,m:58}],['통합과학1',{s:55.7,m:57}],['한국사1',{s:61.5,m:62}],['정보',{s:77.2,m:65}]].forEach(([n,v])=>addRow(n,v));});
 
  // ---- 판정 ----
@@ -260,11 +289,13 @@
   // 목표
   const all1=graded.length>=4&&top.length===graded.length, half=top.length>=graded.length/2;
   const mockG=(mock.match(/[0-9]/g)||[]).map(Number), mockAvg=mockG.length?mockG.reduce((a,b)=>a+b,0)/mockG.length:null;
+  const tanV=$v('rTan'), tan=tanV===''?null:+tanV, club=$v('rClub');
+  const recTxt=tan==null?' 탐구 기록은 미입력.':tan>=2?` 탐구 기록 ${tan}건 확인.`:` 탐구 기록 ${tan}건 — 학기당 1건이 목표.`;
   const D=[
-   [all1?'ok':half?'mid':'no','서울대 지역균형·의대 수시', all1?'전 과목 1등급권 — 성적 조건은 충족. 결정은 세특·최저·면접.':half?'절반 이상 1등급권 — 2학년 1학기까지 나머지를 올려야 함.':'전 과목 1등급권이 필요조건 — 미충족. 회복이 먼저.'],
-   [(sc.sci??0)>=.66?'ok':(sc.sci??0)>=.5?'mid':'no','KAIST·과기원 (6회 밖 4장)', (sc.sci??0)>=.66?'수학·과학 위치 좋음 — 진로선택 3과목 + 탐구 기록이 서류 조건.':(sc.sci??0)>=.5?'수학·과학을 2등급권 이상으로 — 서류는 탐구 기록.':'수학·과학 위치가 낮음 — 미충족.'],
+   [all1?(tan!=null&&tan<2?'mid':'ok'):half?'mid':'no','서울대 지역균형·의대 수시', (all1?'전 과목 1등급권 — 성적 조건은 충족. 결정은 세특·최저·면접.':half?'절반 이상 1등급권 — 2학년 1학기까지 나머지를 올려야 함.':'전 과목 1등급권이 필요조건 — 미충족. 회복이 먼저.')+(all1||half?recTxt:'')],
+   [(sc.sci??0)>=.66?(tan!=null&&tan<2?'mid':'ok'):(sc.sci??0)>=.5?'mid':'no','KAIST·과기원 (6회 밖 4장)', ((sc.sci??0)>=.66?'수학·과학 위치 좋음 — 진로선택 3과목 + 탐구 기록이 서류 조건.':(sc.sci??0)>=.5?'수학·과학을 2등급권 이상으로 — 서류는 탐구 기록.':'수학·과학 위치가 낮음 — 미충족.')+((sc.sci??0)>=.5?recTxt:'')],
    [mockAvg!=null?(mockAvg<=2?'ok':mockAvg<=3?'mid':'no'):'mid','정시(수능형)', mockAvg!=null?`학평 평균 ${mockAvg.toFixed(1)}등급 — ${mockAvg<=2?'정시 주력 가능. 단 서울대 정시는 학생부 40%.':mockAvg<=3?'2학년 6월까지 2등급 안으로.':'수능 기초부터.'}`:'학평 등급을 넣으면 판정합니다.'],
-   [best&&best.p>=.9?'ok':'mid',`${best?esc(best.name):'강점 과목'} 중심 학종 (인서울 상위~중위)`, best&&best.p>=.9?'강점 과목 1등급 + 세특이 있으면 해당 계열 학종은 현실적 목표.':'강점 과목을 1등급권으로 만드는 것이 조건.'],
+   [best&&best.p>=.9?(tan!=null&&tan<1?'mid':'ok'):'mid',`${best?esc(best.name):'강점 과목'} 중심 학종 (인서울 상위~중위)`, (best&&best.p>=.9?'강점 과목 1등급 + 세특이 있으면 해당 계열 학종은 현실적 목표.':'강점 과목을 1등급권으로 만드는 것이 조건.')+(club==='n'?' 동아리를 전공과 연결할 것.':'')+recTxt],
    ['mid','간호·교대·계약학과 등', '성적만으로 판정하지 않음. 반도체 계약학과는 입결이 의약 계열 수준이고 물리 진로선택이 서류 뼈대. 컨설팅의 간호대·교대·반도체 카드에서 최저·과목을 직접 확인.']
   ];
   document.getElementById('doors').innerHTML=D.map(([c,t,d])=>`<li><span class="${c}">${c==='ok'?'충족':c==='mid'?'일부':'미충족'}</span> · <strong>${t}</strong> — ${d}</li>`).join('');
@@ -274,8 +305,12 @@
  document.getElementById('mock').addEventListener('change',save);
  document.getElementById('keep').addEventListener('change',save);
  // 자가 체크 저장
- (function(){const CK='ipsi-my-check';let st={};try{st=JSON.parse(localStorage.getItem(CK)||'{}');}catch(e){}
-  document.querySelectorAll('#check input').forEach(i=>{i.checked=!!st[i.dataset.k];i.addEventListener('change',()=>{st[i.dataset.k]=i.checked;try{localStorage.setItem(CK,JSON.stringify(st));}catch(e){}});});})();
+ let CST={};
+ function loadChecks(){try{CST=JSON.parse(localStorage.getItem(CKEY())||'{}');}catch(e){CST={};}document.querySelectorAll('#check input').forEach(i=>{i.checked=!!CST[i.dataset.k];});}
+ document.querySelectorAll('#check input').forEach(i=>i.addEventListener('change',()=>{CST[i.dataset.k]=i.checked;try{localStorage.setItem(CKEY(),JSON.stringify(CST));}catch(e){}}));
+ loadChecks();
+ ['rTan','rClub','rCareer','orgName','counselor'].forEach(i=>document.getElementById(i).addEventListener('change',save));
+ document.getElementById('print').addEventListener('click',()=>{const p=P.list.find(x=>x.id===P.cur);const org=$v('orgName'),who=$v('counselor');document.getElementById('printHead').innerHTML=`<b>${esc(org||'입시 나침반')}</b> 성적 상담지 · 학생 ${esc(p.label)} · ${new Date().toLocaleDateString('ko-KR')}${who?' · 상담 '+esc(who):''}<br><span class="sub">5등급제(1등급 = 상위 10%) 기준 추정. 학교 성적표와 대학 요강이 우선합니다. 출처: 입시 나침반 soonryu74.github.io/ipsi/</span>`;window.print();});
 
  // ---- 레이더 ----
  function drawRadar(items){
