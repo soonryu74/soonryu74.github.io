@@ -32,6 +32,17 @@ p{margin:0 0 .9em}
 .site-nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
 .site-nav a{color:#dbe4f0;padding:6px 10px;border-radius:8px;font-size:.92rem;font-weight:500}
 .site-nav a:hover,.site-nav a.on{background:rgba(255,255,255,.14);color:#fff;text-decoration:none}
+.mode-btn{margin-left:auto;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:var(--pill);padding:5px 11px;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.mode-btn:hover{background:rgba(255,255,255,.22)}
+.site-nav a.mode-hide,a.card.link.mode-hide{display:none!important}
+html[data-mode="student"] .site-nav{margin-left:0}
+.mode-gate{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 22px}
+.mode-gate a{display:block;padding:18px 18px;border-radius:16px;background:#fff;border:2px solid var(--line);color:var(--ink);text-decoration:none;transition:border-color .15s,transform .15s}
+.mode-gate a:hover{border-color:var(--navy);transform:translateY(-2px)}
+.mode-gate a.on{border-color:var(--accent);background:var(--p-orange)}
+.mode-gate b{display:block;font-size:1.15rem;margin:0 0 4px}.mode-gate span{color:var(--muted);font-size:.9rem}
+.mode-gate.picked{grid-template-columns:1fr 1fr}
+@media (max-width:600px){.mode-gate{grid-template-columns:1fr}.mode-btn{order:2;margin-left:auto}}
 .nav-toggle-in{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 .nav-toggle{display:none;margin-left:auto;color:#fff;font-weight:700;font-size:.92rem;padding:6px 12px;border:1px solid rgba(255,255,255,.35);border-radius:8px;cursor:pointer;user-select:none}
 .nav-toggle-in:focus-visible + .nav-toggle{outline:2px solid #fff;outline-offset:2px}
@@ -147,7 +158,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:26
 @media (max-width:720px){
   .hero h1{font-size:1.6rem} h1{font-size:1.6rem} h2{font-size:1.3rem}
   .univ-card dl,.kv{grid-template-columns:1fr}
-  .nav-toggle{display:inline-block}
+  .nav-toggle{display:inline-block;margin-left:8px}
   .site-nav{display:none;width:100%;margin-left:0;padding:4px 0 6px;border-top:1px solid rgba(255,255,255,.15)} .site-nav a{padding:7px 10px;font-size:.9rem}
   .nav-toggle-in:checked ~ .site-nav{display:flex}
   .site-nav a.on{order:-1}
