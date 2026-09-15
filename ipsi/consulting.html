@@ -184,7 +184,7 @@
   if(!G) return [];
   const m=a.match;
   const re=m.unitMatch?new RegExp(m.unitMatch):null;
-  return G.rows.filter(r=>(!m.univ||r.univ===m.univ)&&(!m.univIncludes||r.univ.includes(m.univIncludes))&&(!m.unit||r.unit===m.unit)&&(!m.unitIncludes||r.unit.includes(m.unitIncludes))&&(!re||re.test(r.unit)));
+  return G.rows.filter(r=>(!m.univ||r.univ===m.univ)&&(!m.univs||m.univs.includes(r.univ))&&(!m.univIncludes||r.univ.includes(m.univIncludes))&&(!m.unit||r.unit===m.unit)&&(!m.unitIncludes||r.unit.includes(m.unitIncludes))&&(!re||re.test(r.unit)));
  }
  function autoTable(rows, withUniv){
   if(!rows.length) return '<p class="sub">해당 행이 없습니다.</p>';
