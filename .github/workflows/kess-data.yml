@@ -37,6 +37,12 @@ jobs:
         run: |
           if [ -z "$NEIS_API_KEY" ]; then echo "NEIS_API_KEY 없음 — 건너뜀(open.neis.go.kr 에서 무료 발급 후 Secret 등록)"; exit 0; fi
           python3 scripts/build_schools.py
+      - name: (선택) 학교알리미 학년별 학생수·입학·전출입 — SCHOOLINFO_API_KEY 있을 때만
+        env:
+          SCHOOLINFO_API_KEY: ${{ secrets.SCHOOLINFO_API_KEY }}
+        run: |
+          if [ -z "$SCHOOLINFO_API_KEY" ]; then echo "SCHOOLINFO_API_KEY 없음 — 건너뜀(schoolinfo.go.kr OpenAPI에서 네이버/카카오 로그인 후 발급)"; exit 0; fi
+          python3 scripts/build_schoolinfo.py
       - name: 변경 시 커밋
         run: |
           git add ipsi/data/*.json

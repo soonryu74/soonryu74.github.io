@@ -210,9 +210,9 @@
   // ---- 과목표 ----
   const core=['미적분Ⅱ','기하','확률과 통계','화학','생명과학','세포와 물질대사','생물의 유전','물질과 에너지 또는 화학 반응의 세계'];
   const recs=['물리학','역학과 에너지','영어Ⅱ·심화 영어'];
-  const fuse=['과학과제 연구 또는 수학과제 탐구(융합선택 1)'];
+  const fuse=['융합과학 탐구 또는 수학과제 탐구(융합선택 1)'];
   document.getElementById('subj').innerHTML=core.map(s=>`<span>${esc(s)}</span>`).join('')+recs.map(s=>`<span class="rec">${esc(s)}</span>`).join('')+fuse.map(s=>`<span class="fuse">${esc(s)}</span>`).join('');
-  document.getElementById('subjNote').innerHTML='파랑 = 서울대 의예·의대 다수의 핵심·권장 과목(어디가 2028 원자료). 초록 = 있으면 유리. 회색 = 절대평가 융합선택으로 탐구 기록용, 3학년 2학기에 몰지 말 것. 이 조합이면 <a href="consulting.html#toggle">상위권 47개 대학 1,358개 모집단위</a>가 전부 열립니다.';
+  document.getElementById('subjNote').innerHTML='파랑 = 서울대 의예·의대 다수의 핵심·권장 과목(어디가 2028 원자료). 초록 = 있으면 유리. 회색 = 융합선택(사회·과학은 절대평가 A·B·C, 수학과제 탐구는 5등급)으로 탐구 기록용, 3학년 2학기에 몰지 말 것. 이 조합이면 <a href="consulting.html#toggle">상위권 47개 대학 1,358개 모집단위</a>가 전부 열립니다.';
   const mt=loc6?'국·수·영·탐(통사·통과) 중 3개 영역 합 4~6 (부산대 3합 4, 경북·울산 3합 5, 충남·전남 3합 6). 목표는 <strong>3합 4</strong>.':'서울대 수시는 최저 없음. 의대 전국 학종·교과는 대학별 3합 4~5 수준. 정시를 쓰려면 4개 영역 모두 1등급. 목표는 <strong>3합 4, 정시 대비 4개 1등급</strong>.';
   document.getElementById('minTarget').innerHTML=mt;
 
