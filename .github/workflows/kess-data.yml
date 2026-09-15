@@ -29,6 +29,8 @@ jobs:
         run: python3 scripts/build_kess.py
       - name: EDSS 개방데이터(성취도) 수집·집계
         run: python3 scripts/build_edss.py
+      - name: 학과 트렌드(학과별 10년 + 취업통계) 집계
+        run: python3 scripts/build_trend.py
       - name: (선택) 나이스 학교기본정보 — NEIS_API_KEY 있을 때만
         env:
           NEIS_API_KEY: ${{ secrets.NEIS_API_KEY }}

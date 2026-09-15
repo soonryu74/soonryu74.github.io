@@ -49,6 +49,11 @@
 .flow li::before{content:"→ ";color:var(--muted)}
 .flow li:first-child::before{content:""}
 .min{margin:12px 0 0;padding:10px 12px;background:var(--p-gray);border-radius:8px;font-size:.88rem}
+.facts{margin:6px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.facts{grid-template-columns:1fr}}
+.facts div{background:var(--p-gray);border-radius:8px;padding:8px 10px}
+.facts dt{font-size:.76rem;color:var(--muted);margin:0 0 2px}
+.facts dd{margin:0;font-weight:800;color:var(--navy-ink);font-size:.98rem}
 .steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 24px}
 @media(max-width:820px){.steps3{grid-template-columns:1fr}}
 .steps3 .card h3{font-size:1rem;color:var(--navy)}
@@ -96,6 +101,7 @@
  <a class="brand" href="index.html">입시 나침반 <span class="tag">2010년생 · 2029학년도 대입</span></a>
  <nav class="site-nav">
  <a href="consulting.html" class="on">컨설팅</a>
+ <a href="trend.html">학과 트렌드</a>
  <a href="jedo.html">바뀐 제도</a>
  <a href="gwamok.html">과목 고르기</a>
  <a href="sihum.html">시험 파먹기</a>
@@ -171,7 +177,8 @@
  function autoRows(a){
   if(!G) return [];
   const m=a.match;
-  return G.rows.filter(r=>(!m.univ||r.univ===m.univ)&&(!m.unit||r.unit===m.unit)&&(!m.unitIncludes||r.unit.includes(m.unitIncludes)));
+  const re=m.unitMatch?new RegExp(m.unitMatch):null;
+  return G.rows.filter(r=>(!m.univ||r.univ===m.univ)&&(!m.univIncludes||r.univ.includes(m.univIncludes))&&(!m.unit||r.unit===m.unit)&&(!m.unitIncludes||r.unit.includes(m.unitIncludes))&&(!re||re.test(r.unit)));
  }
  function autoTable(rows, withUniv){
   if(!rows.length) return '<p class="sub">해당 행이 없습니다.</p>';
@@ -206,8 +213,9 @@
     ${s.auto?autoBlock(s.auto):''}
    </div>
    <div class="panel viz">
-    <h3>전형 구조 · 무엇이 몇 %인가</h3>
-    ${t.structure.map(bar).join('')}
+    <h3>${t.structure&&t.structure.length?'전형 구조 · 무엇이 몇 %인가':'숫자로 보는 현황'}</h3>
+    ${(t.structure||[]).map(bar).join('')}
+    ${t.facts?`<dl class="facts">${t.facts.map(f=>`<div><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('')}</dl>`:''}
     <div class="lbl" style="margin-top:14px">흐름</div>
     <ul class="flow">${t.flow.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
     <div class="min"><strong>수능 최저</strong> · ${esc(t.minimum)}</div>
