@@ -84,27 +84,102 @@ def tag_subjects(*texts):
     return out
 
 
-def need_groups(*texts):
-    """이수 조건을 [[대안1, 대안2], [단일과목], ...] 꼴로 만든다.
-    한 조각 안에 '또는'과 과목이 둘 이상이면 서로 대신할 수 있는 것으로 본다
-    (예: '화학 또는 생명과학', '기하 또는 미적분Ⅱ'). 그 밖에는 모두 이수 대상으로 둔다."""
-    groups, seen = [], set()
-    for text in texts:
-        for chunk in re.split(r"[,·/]|및", text):
-            subs = find_subjects(chunk)
-            if not subs: continue
-            if "또는" in chunk and len(subs) > 1:
-                key = tuple(sorted(subs))
-                if key not in seen: seen.add(key); groups.append(subs)
+# 판정에서 "늘 듣는다"고 보는 기초 과목(태그 없음). "대수, 미적분Ⅰ, 확률과 통계, 미적분Ⅱ, 기하 중 4과목"처럼
+# 개수 조건에 이런 과목이 섞여 있으면 그 수만큼 요구 개수를 줄여 태그 과목만으로 조건을 만든다.
+BASE_SUBJ = ["대수", "미적분Ⅰ", "미적분1", "미적분 i", "영어Ⅰ", "영어Ⅱ", "영어 독해와 작문", "영어독해와 작문", "문학",
+             "화법과 언어", "독서와 작문", "한국사", "통합사회", "통합과학", "공통"]
+
+
+def is_base(chunk):
+    low = chunk.lower()
+    return any(b.lower() in low for b in BASE_SUBJ)
+
+
+def parse_clauses(text, conditional_only=False):
+    """이수 조건 문장을 (must, any) 로 푼다.
+    must = 모두 이수해야 하는 태그 과목, any = [{"of": [...], "n": k}] (of 중 k과목 이상).
+    - "[A, B, C 중 2과목]", "A/B/C 중 1과목 이상", "A, B 중 1과목", "A 또는 B", "[A 또는 B]" 를 개수 조건으로 본다.
+    - conditional_only=True 면 개수·포함 조건이 있는 절만 읽는다(비고란용). 평범한 나열은 무시.
+    - 태그 과목이 아닌 것(대수·영어Ⅰ 같은 기초 과목, '과학' 같은 교과군)은 조건에서 뺀다."""
+    must, anys = [], []
+
+    def add_any(subs, n):
+        subs = list(dict.fromkeys(subs))
+        if not subs: return
+        n = max(1, min(n, len(subs)))
+        if n >= len(subs): must.extend(subs)
+        else: anys.append({"of": subs, "n": n})
+
+    def cnt(m): return int(m.group(1))
+
+    t = text
+    for m in re.finditer(r"\[([^\]]+)\]", t):
+        inner = m.group(1); subs = find_subjects(inner)
+        mm = re.search(r"중\s*(\d+)\s*과목", inner)
+        items = [c.strip() for c in re.split(r"[,/]", re.sub(r"중\s*\d+\s*과목.*", "", inner)) if c.strip()]
+        base = sum(1 for it in items if not find_subjects(it) and is_base(it))
+        if mm: add_any(subs, cnt(mm) - base)
+        elif "또는" in inner or "/" in inner: add_any(subs, 1)
+        elif not conditional_only: must.extend(subs)
+    t = re.sub(r"\[[^\]]+\]", " ", t)
+    for clause in re.split(r"(?:^|\s)-(?=[가-힣])|;", t):
+        clause = re.sub(r"^\s*[가-힣·/()\s]+:\s*", "", clause.strip())  # "-수학: " 같은 라벨 제거
+        if not clause: continue
+        chunks = [c.strip() for c in clause.split(",") if c.strip()]
+        run = []  # 개수 조건 앞에 나열된 단일 과목들
+
+        def flush():
+            if not conditional_only:
+                for it in run: must.extend(find_subjects(it))
+            run.clear()
+
+        for c in chunks:
+            mm = re.search(r"중\s*(\d+)\s*과목", c)
+            if mm:
+                items = run + [re.sub(r"중\s*\d+\s*과목.*", "", c)]
+                subs = [x for it in items for x in find_subjects(it)]
+                base = sum(1 for it in items if not find_subjects(it) and is_base(it))
+                add_any(subs, cnt(mm) - base); run.clear()
+            elif "또는" in c or "/" in c:
+                flush(); subs = find_subjects(c)
+                if len(subs) > 1: add_any(subs, 1)
+                elif not conditional_only: must.extend(subs)
+            elif "포함" in c:
+                flush(); must.extend(find_subjects(c))
             else:
-                for x in subs:
-                    if (x,) not in seen: seen.add((x,)); groups.append([x])
-    return groups
+                subs = find_subjects(c)
+                if len(subs) == 1 or (not subs and is_base(c)): run.append(c)
+                else: flush(); (not conditional_only) and must.extend(subs)
+        flush()
+    must = [x for x in dict.fromkeys(must)]
+    anys = [g for g in anys if not set(g["of"]) <= set(must)]
+    return must, anys
+
+
+def need_groups(core, rec, note=""):
+    """모집단위의 이수 조건. kind: subj(과목 지정 → 판정), list(반영과목 목록 → 판정 안 함),
+    group(교과군·계열 문구만 → 판정 안 함), free(아무 지정 없음). 권장(rec)은 판정에 쓰지 않고 표시만."""
+    if core.startswith("-"):  # "-일반선택: … -진로선택: …" 반영과목 목록
+        return {"kind": "list", "must": [], "any": [], "rec": tag_subjects(rec)}
+    must, anys = parse_clauses(core)
+    m2, a2 = parse_clauses(note, conditional_only=True)
+    must = [x for x in dict.fromkeys(must + m2)]
+    anys = [g for g in anys + a2 if not set(g["of"]) <= set(must)]
+    kind = "subj" if (must or anys) else ("group" if (core or note) else "free")
+    return {"kind": kind, "must": must, "any": anys, "rec": [x for x in tag_subjects(rec) if x not in must]}
 
 
 def main():
     import openpyxl
     t0 = time.time()
+    if os.environ.get("GWONJANG_REPARSE"):  # 원자료 재수집 없이 기존 JSON의 core/rec/note 로 need 만 다시 계산
+        old = json.load(open(OUT, encoding="utf-8"))
+        for r in old["rows"]:
+            r["tags"] = tag_subjects(r["core"], r["rec"]); r["need"] = need_groups(r["core"], r["rec"], r["note"])
+        old["updated"] = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d %H:%M")
+        old["subjects"] = [n for n, _ in SUBJECTS]
+        json.dump(old, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+        print(f"재계산 완료: {old['count']}건 → {OUT}"); return
     title, path = fetch_workbook()
     ws = openpyxl.load_workbook(path, read_only=True, data_only=True)["Sheet1"]
     rows = [r for i, r in enumerate(ws.iter_rows(values_only=True)) if i >= 4]
@@ -121,7 +196,7 @@ def main():
         out.append({"zone": clean(r[0]), "sido": clean(r[1]), "univ": univ,
                     "unit": dept or college, "college": college if dept else "",
                     "core": core, "rec": rec, "note": note,
-                    "tags": tag_subjects(core, rec), "need": need_groups(core, rec)})
+                    "tags": tag_subjects(core, rec), "need": need_groups(core, rec, note)})
     out.sort(key=lambda x: (x["zone"], x["univ"], x["unit"]))
     kst = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d %H:%M")
     json.dump({"updated": kst, "title": title,
