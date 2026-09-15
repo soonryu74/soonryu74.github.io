@@ -33,6 +33,9 @@
 .btnrow .go{background:var(--navy);color:#fff;border-color:var(--navy)}
 .tblwrap-my{overflow-x:auto}
 .grid-tbl{min-width:640px}
+.keep{display:inline-flex;align-items:center;gap:6px;font-size:.84rem;color:var(--muted);margin-left:auto}
+.howto{margin:12px 0 0;padding:10px 14px;border-radius:12px;background:var(--p-blue);color:var(--f-blue);font-size:.88rem;line-height:1.55}.howto a{color:inherit;text-decoration:underline}
+.check{list-style:none;padding:0;margin:10px 0 0}.check li{display:flex;gap:8px;align-items:flex-start;margin:0 0 8px;font-size:.92rem}.check input{margin-top:3px}
 .badges{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--pill);font-weight:800;font-size:.86rem;background:#fff;border:1.5px solid var(--line)}
 .badge.good{background:var(--p-green);color:var(--f-green);border-color:transparent}
@@ -105,16 +108,17 @@
 <div class="page-head">
  <span class="kicker">내 성적표</span>
  <h1>성적 넣으면, 길이 보여요</h1>
- <p class="lead">성적표 숫자를 그대로 옮겨 적으면 과목별로 <strong>지금 어디쯤인지</strong>, <strong>어느 계열이 강한지</strong>, <strong>2·3학년에 뭘 들어야 하는지</strong>, <strong>어떤 목표가 열려 있는지</strong>를 계산합니다. 5등급제(1등급 = 상위 10%) 기준. 저장은 이 기기 안에서만 되고 어디로도 전송되지 않습니다.</p>
+ <p class="lead">성적표 숫자를 그대로 옮겨 적으면 과목별로 <strong>지금 어디쯤인지</strong>, <strong>어느 계열이 강한지</strong>, <strong>2·3학년에 뭘 들어야 하는지</strong>, <strong>목표별 성적 조건을 채웠는지</strong>를 계산합니다. 5등급제(1등급 = 상위 10%) 기준. 저장은 이 기기 안에서만 되고 어디로도 전송되지 않습니다.</p>
 </div>
 
-<div class="hero-my"><div class="mascot">🧭</div><p><b>쓰는 법.</b> 성적표에 있는 만큼만 넣어요. <b>석차등급</b>이 있으면 그걸로 판정하고, 없으면(중간고사 답정오표처럼) 원점수와 과목평균으로 <b>추정</b>합니다. 과목평균을 모르면 비워도 돼요. 등급 없는 과목(체육·예술·과학탐구실험)은 성취도만 넣으면 됩니다.</p></div>
+<div class="hero-my"><div class="mascot">🧭</div><p><b>쓰는 법.</b> 성적표에 있는 만큼만 넣어요. <b>석차등급</b>이 있으면 그걸로 판정하고, 없으면(중간고사 답정오표처럼) 원점수와 과목평균으로 <b>추정</b>합니다. 과목평균을 모르면 비워도 돼요. <b>표준편차</b>까지 넣으면 추정이 정확해집니다(학교알리미에서 찾는 법은 아래). 등급 없는 과목(체육·예술·과학탐구실험)은 성취도만 넣으면 됩니다.</p></div>
 
 <section>
  <h2>1. 성적 입력</h2>
- <div class="tblwrap-my"><table class="grid-tbl" id="tbl"><thead><tr><th>과목</th><th>원점수</th><th>과목평균</th><th>성취도</th><th>석차등급</th><th>수강자 수</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+ <div class="tblwrap-my"><table class="grid-tbl" id="tbl"><thead><tr><th>과목</th><th>원점수</th><th>과목평균</th><th>표준편차</th><th>성취도</th><th>석차등급</th><th>수강자 수</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
  <div class="addrow"><button data-add="공통국어1">+ 국어</button><button data-add="공통수학1">+ 수학</button><button data-add="공통영어1">+ 영어</button><button data-add="통합사회1">+ 통합사회</button><button data-add="통합과학1">+ 통합과학</button><button data-add="한국사1">+ 한국사</button><button data-add="정보">+ 정보</button><button data-add="과학탐구실험1">+ 과탐실험</button><button data-add="">+ 직접 입력</button></div>
- <div class="btnrow"><button class="go" id="run">분석하기 →</button><button id="demo">예시 채우기</button><button id="clear">비우기</button></div>
+ <div class="btnrow"><button class="go" id="run">분석하기 →</button><button id="demo">예시 채우기</button><button id="clear">비우기</button><label class="keep"><input type="checkbox" id="keep" checked> 이 기기에 저장</label></div>
+ <div class="howto"><b>표준편차·성취도 비율은 어디서?</b> <a href="https://www.schoolinfo.go.kr/" target="_blank" rel="noopener">학교알리미</a> → 학교명 검색 → <b>학업성취사항 → 교과별 학업성취 사항</b>(보안문자 입력) → 과목별 평균·표준편차·성취도 A~E 비율. 표준편차를 넣으면 등급 추정이 실제 산식(정규분포 위치)과 같아집니다. 수강자 수를 넣으면 그 과목의 1등급 인원(상위 10%)도 같이 계산합니다. 우리 학교 학년 정원은 <a href="hakgyo.html">고교 찾기</a>에서.</div>
  <p class="src" style="margin:8px 0 0">학평(모의고사)이 있으면 아래에 등급만: <input id="mock" placeholder="예) 국2 수3 영2 사2 과3" style="width:220px;padding:6px 8px;border:1.5px solid var(--line-strong);border-radius:8px;font:inherit;font-size:.86rem"></p>
 </section>
 
@@ -138,9 +142,16 @@
   <div class="panel"><h3>3학년 진로선택 미리보기</h3><div class="chips" id="y3"></div><p class="sub" id="y3note"></p><div class="btnrow"><button id="toGw">이 과목표로 '과목 고르기' 열기 →</button></div></div>
  </div>
 
- <h2>5. 지금 열려 있는 목표</h2>
- <div class="panel"><ul class="doors" id="doors"></ul><p class="src">기준: 서울대·의대 수시는 전 과목 1등급권, 과기원은 수학·과학 진로선택과 탐구 기록, 정시는 학평 등급. 자세한 전략은 <a href="plan.html">서울대·의대 플랜</a>, 목표별 과목은 <a href="consulting.html">컨설팅</a>.</p></div>
- <div class="tip"><strong>이 판정의 한계.</strong> 5등급 석차등급은 학교가 산출한 값이 정답입니다. 등급이 없는 경우의 추정은 "평균보다 얼마나 위인가"만 보므로 표준편차·분포에 따라 실제와 다를 수 있습니다. 성취도별 분포 비율이 있으면 A 비율이 10% 안팎일 때 A ≈ 1등급으로 보면 됩니다.</div>
+ <h2>5. 목표별 조건 체크</h2>
+ <div class="panel"><ul class="doors" id="doors"></ul><p class="src">"충족"은 성적 조건만 본 것입니다. 합격 여부가 아니라 <em>다음 관문으로 갈 자격</em>입니다. 기준: 서울대·의대 수시는 전 과목 1등급권(필요조건), 과기원은 수학·과학 진로선택과 탐구 기록, 정시는 학평 등급. 자세한 전략은 <a href="plan.html">서울대·의대 플랜</a>, 목표별 과목은 <a href="consulting.html">컨설팅</a>.</p></div>
+ <div class="panel" style="margin-top:14px"><h3>내가 직접 확인할 것 <span class="chip">체크</span></h3><ul class="check" id="check">
+  <li><input type="checkbox" data-k="c1"><span>우리 학교 <b>편제표</b>에 위 추천 과목이 2·3학년에 개설되는지 확인했다(없으면 공동교육과정·온라인학교로 대체 가능한지).</span></li>
+  <li><input type="checkbox" data-k="c2"><span><b>학교알리미</b>에서 우리 학교 과목별 평균·표준편차·성취도 비율을 보고 표준편차 칸을 채웠다.</span></li>
+  <li><input type="checkbox" data-k="c3"><span>학평(모의고사) 등급을 넣어 수능형 강점을 함께 봤다.</span></li>
+  <li><input type="checkbox" data-k="c4"><span>세특에 학기마다 탐구 기록(질문 → 과정 → 결과 → 한계) 1건이 있다.</span></li>
+  <li><input type="checkbox" data-k="c5"><span>목표 대학 카드(<a href="consulting.html">컨설팅</a>)에서 수능 최저·전형 구조를 요강으로 확인했다.</span></li>
+ </ul></div>
+ <div class="tip"><strong>이 판정의 한계.</strong> 5등급 석차등급은 학교가 산출한 값이 정답입니다. 표준편차 없이 추정하면 구간으로만 보여 주고, 표준편차를 넣어도 성취도 분포가 정규분포와 다르면 실제와 어긋날 수 있습니다. 중간고사 1회 성적은 학기 등급이 아닙니다. 성취도별 분포 비율이 있으면 A 비율이 10% 안팎일 때 A ≈ 1등급으로 보면 됩니다.</div>
 </section>
 
 <div class="disclaimer">입력한 성적은 브라우저(localStorage)에만 저장됩니다. 공용 기기라면 '비우기'를 눌러 지우세요. 판정은 참고용이며 학교 성적표와 대학 요강이 우선합니다.</div>
@@ -165,12 +176,12 @@
 
  function addRow(name,v={}){
   const tr=document.createElement('tr');
-  tr.innerHTML=`<td class="nm"><input value="${esc(name)}" placeholder="과목명"></td><td><input type="number" min="0" max="100" step="0.1" placeholder="88.5" value="${v.s??''}"></td><td><input type="number" min="0" max="100" step="0.1" placeholder="70" value="${v.m??''}"></td><td><select><option value="">—</option>${['A','B','C','D','E','P'].map(x=>`<option${v.a===x?' selected':''}>${x}</option>`).join('')}</select></td><td><select><option value="">—</option>${[1,2,3,4,5].map(x=>`<option${String(v.g)===String(x)?' selected':''}>${x}</option>`).join('')}<option value="·"${v.g==='·'?' selected':''}>· (미산출)</option></select></td><td><input type="number" min="1" placeholder="240" value="${v.n??''}"></td><td><button class="del" title="삭제">✕</button></td>`;
+  tr.innerHTML=`<td class="nm"><input value="${esc(name)}" placeholder="과목명"></td><td><input type="number" min="0" max="100" step="0.1" placeholder="88.5" value="${v.s??''}"></td><td><input type="number" min="0" max="100" step="0.1" placeholder="70" value="${v.m??''}"></td><td><input type="number" min="1" max="60" step="0.1" placeholder="20" value="${v.sd??''}"></td><td><select><option value="">—</option>${['A','B','C','D','E','P'].map(x=>`<option${v.a===x?' selected':''}>${x}</option>`).join('')}</select></td><td><select><option value="">—</option>${[1,2,3,4,5].map(x=>`<option${String(v.g)===String(x)?' selected':''}>${x}</option>`).join('')}<option value="·"${v.g==='·'?' selected':''}>· (미산출)</option></select></td><td><input type="number" min="1" placeholder="240" value="${v.n??''}"></td><td><button class="del" title="삭제">✕</button></td>`;
   tr.querySelector('.del').addEventListener('click',()=>{tr.remove();save();});
   ROWS.appendChild(tr);
  }
- function read(){return [...ROWS.querySelectorAll('tr')].map(tr=>{const i=tr.querySelectorAll('input,select');return {name:i[0].value.trim(),s:+i[1].value||null,m:+i[2].value||null,a:i[3].value,g:i[4].value,n:+i[5].value||null}}).filter(r=>r.name);}
- function save(){try{localStorage.setItem(KEY,JSON.stringify({rows:read(),mock:document.getElementById('mock').value}));}catch(e){}}
+ function read(){return [...ROWS.querySelectorAll('tr')].map(tr=>{const i=tr.querySelectorAll('input,select');return {name:i[0].value.trim(),s:+i[1].value||null,m:+i[2].value||null,sd:+i[3].value||null,a:i[4].value,g:i[5].value,n:+i[6].value||null}}).filter(r=>r.name);}
+ function save(){try{if(!document.getElementById('keep').checked){localStorage.removeItem(KEY);return;}localStorage.setItem(KEY,JSON.stringify({rows:read(),mock:document.getElementById('mock').value}));}catch(e){}}
  function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d&&d.rows&&d.rows.length){d.rows.forEach(r=>addRow(r.name,r));document.getElementById('mock').value=d.mock||'';return true;}}catch(e){}return false;}
  if(!load()) ['공통국어1','공통수학1','공통영어1','통합사회1','통합과학1','한국사1'].forEach(n=>addRow(n));
  document.querySelector('.addrow').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;addRow(b.dataset.add||'');});
@@ -181,10 +192,16 @@
  // 위치 점수 pos: 0(최하)~1(최상). 등급이 있으면 등급 중앙값의 누적 백분위, 없으면 (원점수-평균)을 25점 폭으로 정규화한 추정.
  function position(r){
   if(r.g&&r.g!=='·'){const cum={1:.05,2:.22,3:.50,4:.78,5:.95};return {p:1-cum[r.g],src:'등급'};}
-  if(r.s!=null&&r.m!=null){const d=r.s-r.m;return {p:Math.max(0,Math.min(1,.5+d/50)),src:'추정'};}
+  if(r.s!=null&&r.m!=null){const d=r.s-r.m;
+   if(r.sd){return {p:ncdf(d/r.sd),src:'표준편차'};}
+   const a=ncdf(d/25),b=ncdf(d/15);return {p:ncdf(d/20),lo:Math.min(a,b),hi:Math.max(a,b),src:'범위'};}
   if(r.a){const map={A:.9,B:.7,C:.5,D:.3,E:.1,P:.5};return {p:map[r.a]??.5,src:'성취도'};}
   return {p:null,src:'—'};
  }
+ // 표준정규분포 누적(Abramowitz-Stegun 7.1.26)
+ function ncdf(z){const x=Math.abs(z)/Math.SQRT2,t=1/(1+.3275911*x);const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-.284496736)*t+.254829592)*t*Math.exp(-x*x);return .5*(1+(z<0?-y:y));}
+ const bandNo=p=>p>=.9?1:p>=.66?2:p>=.34?3:4;
+ const bandLabel=r=>{if(r.p==null)return '정보 부족';if(r.src==='범위'){const a=bandNo(r.hi),b=bandNo(r.lo);return a===b?(a===4?'4등급 이하':a+'등급권'):a+'~'+b+'등급권';}return bandNo(r.p)===4?'4등급 이하':bandNo(r.p)+'등급권';};
  const band=p=>p==null?['g0','정보 부족']:p>=.9?['g1','1등급권']:p>=.66?['g2','2등급권']:p>=.34?['g3','3등급권']:['g4','4등급 이하'];
  const col=p=>p==null?'#9aa3ad':p>=.9?'#1baf7a':p>=.66?'#2a78d6':p>=.34?'#eda100':'#eb6834';
 
@@ -195,22 +212,22 @@
   const graded=rows.filter(r=>!r.nograde&&r.p!=null);
   document.getElementById('out').hidden=false;
   // 과목별
-  document.getElementById('pos').innerHTML=rows.map(r=>{const [c,l]=band(r.p);const w=r.p==null?0:Math.round(r.p*100);return `<li><span class="nm">${esc(r.name)}</span><span class="bar"><i style="width:${w}%;background:${col(r.p)}"></i><b style="left:90%"></b></span><span class="tag ${c}">${r.nograde?(r.a||'—'):l}${r.src==='추정'?' (추정)':''}</span></li>`}).join('');
-  document.getElementById('posNote').textContent='막대의 검은 선이 1등급 경계(상위 10%). "추정"은 원점수−과목평균으로 계산한 값이라 실제 등급과 다를 수 있습니다.';
+  document.getElementById('pos').innerHTML=rows.map(r=>{const [c,l]=band(r.p);const w=r.p==null?0:Math.round(r.p*100);return `<li><span class="nm">${esc(r.name)}</span><span class="bar"><i style="width:${w}%;background:${col(r.p)}"></i><b style="left:90%"></b></span><span class="tag ${c}">${r.nograde?(r.a||'—'):bandLabel(r)}${r.src==='범위'?' (범위 추정)':r.src==='표준편차'?' (추정)':''}${r.n?' · 1등급 '+Math.round(r.n*.1)+'명':''}</span></li>`}).join('');
+  document.getElementById('posNote').textContent='막대의 검은 선이 1등급 경계(상위 10%). "추정"은 (원점수−평균)÷표준편차의 정규분포 위치, "범위 추정"은 표준편차를 몰라 15~25로 가정한 구간입니다. 학교가 산출한 석차등급이 있으면 그것이 정답입니다.';
   // 뱃지·결론
   const top=graded.filter(r=>r.p>=.9), low=graded.filter(r=>r.p<.34);
   const best=[...graded].sort((a,b)=>b.p-a.p)[0], worst=[...graded].sort((a,b)=>a.p-b.p)[0];
   const B=[];
-  if(best)B.push(['good',`${best.name} 파워 💪`]);
-  if(worst&&worst.p<.5)B.push(['bad',`${worst.name} 요주의 🚨`]);
-  if(top.length===graded.length&&graded.length>=4)B.push(['good','전 과목 1등급권 🏆']);
+  if(best)B.push(['good',`강점: ${best.name}`]);
+  if(worst&&worst.p<.5)B.push(['bad',`보완: ${worst.name}`]);
+  if(top.length===graded.length&&graded.length>=4)B.push(['good','전 과목 1등급권']);
   else B.push(['info',`1등급권 ${top.length}/${graded.length}과목`]);
   const mock=document.getElementById('mock').value.trim();
   if(mock)B.push(['info','학평 '+mock]);
   document.getElementById('badges').innerHTML=B.map(([c,t])=>`<span class="badge ${c}">${esc(t)}</span>`).join('');
   let v;
-  if(graded.length&&top.length===graded.length&&graded.length>=4)v='<strong>전 과목 1등급권.</strong> 서울대 지역균형·의대 수시가 열려 있습니다. 이제 변별은 세특·면접·수능 최저입니다. 서울대·의대 플랜의 관문을 따라가세요.';
-  else if(top.length>=graded.length/2)v=`<strong>절반 이상이 1등급권.</strong> ${low.length?esc(low.map(r=>r.name).join('·'))+'을(를) 끌어올리면':'나머지 과목을 1등급권으로 올리면'} 서울대·의대 수시 문이 열립니다. 2학년 1학기까지가 판정 시점입니다.`;
+  if(graded.length&&top.length===graded.length&&graded.length>=4)v='<strong>전 과목 1등급권.</strong> 서울대·의대 수시의 <em>필요조건</em>은 채웠습니다. 300명 학교면 1등급이 30명이고 그중 의대 합격은 소수이므로, 결정은 세특·수능 최저·면접에서 납니다. 서울대·의대 플랜의 관문을 따라가세요.';
+  else if(top.length>=graded.length/2)v=`<strong>절반 이상이 1등급권.</strong> ${low.length?esc(low.map(r=>r.name).join('·'))+'을(를) 끌어올리면':'나머지 과목을 1등급권으로 올리면'} 서울대·의대 수시의 필요조건이 됩니다. 2학년 1학기까지가 판정 시점입니다.`;
   else if(best&&best.p>=.9)v=`<strong>${esc(best.name)}이(가) 확실한 강점, 나머지가 따라오지 못하는 모양입니다.</strong> 지금은 목표 대학보다 ${worst?esc(worst.name):'약한 과목'} 결손 회복이 먼저입니다. 강점 과목이 살아 있으니 계열을 그쪽으로 잡으면 길이 남아 있습니다.`;
   else v='<strong>아직 1등급권 과목이 없습니다.</strong> 5등급제 1등급은 상위 10%라 예전보다 넓습니다. 한 과목을 골라 다음 시험에서 1등급권에 넣는 것부터 시작하고, 수능형(학평) 강점이 있는지 함께 확인하세요.';
   document.getElementById('verdict').innerHTML=v;
@@ -224,17 +241,17 @@
   const lead=order[0], sciOK=(sc.sci??0)>=.5, mathRow=graded.find(r=>r.name.includes('수학'));
   const y2=[['대수',1],['미적분Ⅰ',1],['문학',1],['독서와 작문',1],['영어Ⅰ',1],['영어Ⅱ',1]];
   const notes=[];
-  if(lead==='sci'||lead==='sw'||sciOK){y2.push(['화학',1],['생명과학',1]);if((sc.sci??0)>=.66)y2.push(['물리학',2]);else notes.push('물리학은 수학 위치가 올라온 뒤 3학년 역학과 에너지로 대신해도 됩니다.');}
+  if(lead==='sci'||lead==='sw'||sciOK){y2.push(['화학',1],['생명과학',1],['물리학',1]);notes.push('물리학은 반도체·공대 모집단위 다수의 핵심 과목입니다(어디가 2028 권장과목 기준 물리 미이수 시 300개 모집단위가 닫힘). 의대·서울대 자연계 목표면 미적분Ⅱ를 2학년 2학기에 당겨 개설하는지 학교 편제표를 확인하세요. 3학년 2학기 성적은 수시에 반영되지 않습니다.');}
   else {y2.push(['화학 또는 생명과학 1개',2]);notes.push('인문 쪽이 강해도 과학 일반선택 1개는 넣어 두면 자연계 전환 가능성이 남습니다.');}
   if(lead==='hum'||lead==='lang'){y2.push(['사회와 문화',1],['현대사회와 윤리',1],['세계사 또는 세계시민과 지리',2]);}else y2.push(['사회 일반선택 1개',2]);
   if(lead==='sw'||rows.some(r=>r.name.includes('정보')&&r.p!=null&&r.p>=.66))y2.push(['인공지능 기초 또는 데이터 과학',2]);
   if(lead==='lang')y2.push(['제2외국어 1개',2]);
-  y2.push(['확률과 통계 (2학년 개설 시)',2]);
+  y2.push(['확률과 통계',1]);notes.push('확률과 통계는 수능 수학 범위(대수·미적분Ⅰ·확률과 통계)이고 권장과목 자료에서 화학 다음으로 많이 요구됩니다. 2학년 개설이면 반드시, 아니면 3학년 1학기에.');
   if(mathRow&&mathRow.p!=null&&mathRow.p<.34)notes.push('수학이 약해도 대수·미적분Ⅰ은 빼면 안 됩니다. 수능 범위이고 3학년 진로선택의 전제입니다. 기하·미적분Ⅱ를 2학년에 당겨 넣지 마세요.');
-  notes.push('융합선택(절대평가)은 최대 1개. 등급 없는 과목으로 슬롯을 채우면 서류에서 "무엇을 이수했나"가 비어 보입니다.');
+  notes.push('융합선택 중 사회·과학 9과목만 절대평가(A·B·C)이고 수학과제 탐구는 5등급 상대평가입니다. 절대평가 과목은 학기당 1개까지. 등급 없는 과목으로 슬롯을 채우면 서류에서 "무엇을 이수했나"가 비어 보입니다.');
   document.getElementById('y2').innerHTML=y2.map(([n,t])=>`<span class="${t===2?'rec':''}">${esc(n)}</span>`).join('');
   document.getElementById('y2note').innerHTML='파랑 = 필수, 초록 = 권장. '+notes.map(esc).join(' ');
-  const y3=lead==='hum'||lead==='lang'?[['정치',1],['법과 사회',1],['경제',1],['윤리와 사상',2],['한국지리 탐구 또는 동아시아 역사 기행',2],['심화 영어',2],['확률과 통계',1]]:[['미적분Ⅱ',1],['기하',1],['세포와 물질대사',1],['생물의 유전',1],['물질과 에너지 또는 화학 반응의 세계',1],['역학과 에너지',2],['수학과제 탐구 또는 과학과제 연구(융합 1)',2]];
+  const y3=lead==='hum'||lead==='lang'?[['정치',1],['법과 사회',1],['경제',1],['윤리와 사상',2],['한국지리 탐구 또는 동아시아 역사 기행',2],['심화 영어',2],['확률과 통계',1]]:[['미적분Ⅱ',1],['기하',1],['세포와 물질대사',1],['생물의 유전',1],['물질과 에너지 또는 화학 반응의 세계',1],['역학과 에너지',2],['융합과학 탐구 또는 수학과제 탐구(융합 1)',2]];
   if(lead==='sw')y3.splice(4,0,['전자기와 양자',2]);
   document.getElementById('y3').innerHTML=y3.map(([n,t])=>`<span class="${t===2?'rec':''}">${esc(n)}</span>`).join('');
   document.getElementById('y3note').textContent=lead==='hum'||lead==='lang'?'서울대 인문·사회 계열 권장(경제학부는 제2외국어/한문 1과목). 수능은 통합사회·통합과학 둘 다 필수라 과학 일반선택 1개는 유지.':'서울대 의예·컴공 권장(기하·미적분Ⅱ + 과학 진로선택 3과목). 의대는 세포와 물질대사·생물의 유전 포함.';
@@ -244,17 +261,21 @@
   const all1=graded.length>=4&&top.length===graded.length, half=top.length>=graded.length/2;
   const mockG=(mock.match(/[0-9]/g)||[]).map(Number), mockAvg=mockG.length?mockG.reduce((a,b)=>a+b,0)/mockG.length:null;
   const D=[
-   [all1?'ok':half?'mid':'no','서울대 지역균형·의대 수시', all1?'전 과목 1등급권 — 지금 열림. 세특·면접 준비로.':half?'절반 이상 1등급권 — 2학년 1학기까지 나머지를 올리면 열림.':'전 과목 1등급권이 조건 — 아직 닫힘. 회복이 먼저.'],
-   [(sc.sci??0)>=.66?'ok':(sc.sci??0)>=.5?'mid':'no','KAIST·과기원 (6회 밖 4장)', (sc.sci??0)>=.66?'수학·과학 위치 좋음 — 진로선택 3과목 + 탐구 기록이면 가능.':(sc.sci??0)>=.5?'수학·과학을 2등급권 이상으로 — 서류는 탐구 기록.':'수학·과학 위치가 낮음 — 지금은 닫힘.'],
+   [all1?'ok':half?'mid':'no','서울대 지역균형·의대 수시', all1?'전 과목 1등급권 — 성적 조건은 충족. 결정은 세특·최저·면접.':half?'절반 이상 1등급권 — 2학년 1학기까지 나머지를 올려야 함.':'전 과목 1등급권이 필요조건 — 미충족. 회복이 먼저.'],
+   [(sc.sci??0)>=.66?'ok':(sc.sci??0)>=.5?'mid':'no','KAIST·과기원 (6회 밖 4장)', (sc.sci??0)>=.66?'수학·과학 위치 좋음 — 진로선택 3과목 + 탐구 기록이 서류 조건.':(sc.sci??0)>=.5?'수학·과학을 2등급권 이상으로 — 서류는 탐구 기록.':'수학·과학 위치가 낮음 — 미충족.'],
    [mockAvg!=null?(mockAvg<=2?'ok':mockAvg<=3?'mid':'no'):'mid','정시(수능형)', mockAvg!=null?`학평 평균 ${mockAvg.toFixed(1)}등급 — ${mockAvg<=2?'정시 주력 가능. 단 서울대 정시는 학생부 40%.':mockAvg<=3?'2학년 6월까지 2등급 안으로.':'수능 기초부터.'}`:'학평 등급을 넣으면 판정합니다.'],
-   [best&&best.p>=.9?'ok':'mid',`${best?esc(best.name):'강점 과목'} 중심 학종 (인서울 상위~중위)`, best&&best.p>=.9?'강점 과목 1등급 + 세특이 있으면 해당 계열 학종은 현실적 목표.':'강점 과목을 1등급권으로 만들면 열림.'],
-   ['ok','간호·교대·계약학과 등 취업형', '컨설팅의 간호대·교대·반도체 카드 참고. 과목표는 위 추천과 같음.']
+   [best&&best.p>=.9?'ok':'mid',`${best?esc(best.name):'강점 과목'} 중심 학종 (인서울 상위~중위)`, best&&best.p>=.9?'강점 과목 1등급 + 세특이 있으면 해당 계열 학종은 현실적 목표.':'강점 과목을 1등급권으로 만드는 것이 조건.'],
+   ['mid','간호·교대·계약학과 등', '성적만으로 판정하지 않음. 반도체 계약학과는 입결이 의약 계열 수준이고 물리 진로선택이 서류 뼈대. 컨설팅의 간호대·교대·반도체 카드에서 최저·과목을 직접 확인.']
   ];
-  document.getElementById('doors').innerHTML=D.map(([c,t,d])=>`<li><span class="${c}">${c==='ok'?'열림':c==='mid'?'조건부':'닫힘'}</span> · <strong>${t}</strong> — ${d}</li>`).join('');
+  document.getElementById('doors').innerHTML=D.map(([c,t,d])=>`<li><span class="${c}">${c==='ok'?'충족':c==='mid'?'일부':'미충족'}</span> · <strong>${t}</strong> — ${d}</li>`).join('');
   draw3D(rows);
  }
  document.getElementById('run').addEventListener('click',analyze);
  document.getElementById('mock').addEventListener('change',save);
+ document.getElementById('keep').addEventListener('change',save);
+ // 자가 체크 저장
+ (function(){const CK='ipsi-my-check';let st={};try{st=JSON.parse(localStorage.getItem(CK)||'{}');}catch(e){}
+  document.querySelectorAll('#check input').forEach(i=>{i.checked=!!st[i.dataset.k];i.addEventListener('change',()=>{st[i.dataset.k]=i.checked;try{localStorage.setItem(CK,JSON.stringify(st));}catch(e){}});});})();
 
  // ---- 레이더 ----
  function drawRadar(items){

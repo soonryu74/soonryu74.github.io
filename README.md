@@ -41,7 +41,7 @@
 | --- | --- | --- |
 | 허브 | `ipsi/index.html` | 한 장 요약, 세대별 제도 비교 |
 | 바뀐 제도 | `ipsi/jedo.html` | 수능 체제·5등급제·고교학점제·학생부·권장과목·2029 기본사항 |
-| 내 성적표 | `ipsi/my.html` | 성적 입력 → 과목별 위치(5등급제)·강점 계열·2/3학년 과목 추천·열린 목표. 3D 성적 타워(three.js). localStorage만 사용 |
+| 내 성적표 | `ipsi/my.html` | 성적 입력(원점수·평균·표준편차·등급·수강자 수) → 과목별 위치(정규분포 추정, 5등급제)·1등급 인원·강점 계열·2/3학년 과목 추천·목표별 조건 체크·자가 체크리스트. 3D 성적 타워(three.js). 저장은 선택(localStorage) |
 | 서울대·의대 플랜 | `ipsi/plan.html` | 고교 유형·지역·내신·강점 4가지 선택 → 지원 순서, 과목표, 학기별 관문, 플랜 B (2028 시행계획 근거) |
 | 컨설팅 | `ipsi/consulting.html` | 목표별(경찰대·사관학교·의대·서울대·연고대·과기원·반도체 계약학과) 필요 과목·전형 구조·3년 전략·입시 비밀, 과목 하나 빼면 닫히는 모집단위 실험 (`ipsi/data/consulting.js`) |
 | FAQ | `ipsi/faq.html` | 등급 없는 과목·3단계 과목·공동교육과정·온라인학교·학교 밖 교육·미이수·재수생 비교 등 12문답, 교육부·대학 공동연구·교육청 지침 원문 근거 |
@@ -54,7 +54,7 @@
 | 대학 순위 | `ipsi/daehak.html` | 4개 평가 교차표, 198개 대학 검색·정렬 (`ipsi/data/univ.js`) |
 | 대학별 요강 | `ipsi/yogang.html` | 상위권·지거국·의대·과기원 전형 분석 |
 | 출처 | `ipsi/jaryo.html` | 공식 문서·기사 링크, 향후 발표 일정 |
-| 고교 찾기 | `ipsi/hakgyo.html` | 교육기본통계 2026 전국 고교 2,400개 학생·교원·진학 + 지역인재 권역 (`ipsi/data/schools-hs.json`) |
+| 고교 찾기 | `ipsi/hakgyo.html` | 교육기본통계 2026 전국 고교 2,400개 학생·교원·진학 + 5등급제 1등급 인원 추정 + 지역인재 권역 (`ipsi/data/schools-hs.json`; 학교알리미 OpenAPI 학년별 학생수·입학·전출입 `ipsi/data/schoolinfo.json`, `scripts/build_schoolinfo.py`, 중학교 3,300개 포함) |
 | 학과·경쟁률 | `ipsi/hakgwa.html` | 대학 493개교·학과 13,638개 정원·지원자·경쟁률 (`ipsi/data/univ-stats.json`, `univ-dept.json`) |
 | 교육청 자료 | `ipsi/gyoyukcheong.html` | 17개 시도 진로진학센터·공식 데이터 출처·수집 현황 |
 
