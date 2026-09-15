@@ -68,9 +68,9 @@
  <p class="sub">2·3학년에 이수할 예정인 과목을 고르세요. 아래 숫자와 표가 바로 바뀝니다.</p>
  <div class="subj-pick" id="pick"></div>
  <div class="gate">
-  <div class="open"><div class="n" id="gOpen">—</div><div class="l">권장과목을 모두 채운 모집단위</div></div>
+  <div class="open"><div class="n" id="gOpen">—</div><div class="l">핵심과목 조건을 채운 모집단위</div></div>
   <div class="shut"><div class="n" id="gShut">—</div><div class="l">권장과목이 아직 모자란 모집단위</div></div>
-  <div><div class="n" id="gFree">—</div><div class="l">지정 과목이 없는 모집단위</div></div>
+  <div><div class="n" id="gFree">—</div><div class="l">판정 제외(교과군 조건·목록·지정 없음)</div></div>
   <div><div class="n" id="gUniv">—</div><div class="l">지원에 걸림돌이 없는 대학 수</div></div>
  </div>
  <p class="sub" style="margin-top:-6px">판정 규칙: 자료에 적힌 과목을 <strong>모두 이수</strong>하는 것으로 계산하고, <strong>"또는"으로 묶인 과목</strong>은 하나만 들어도 채워진 것으로 봅니다. 비고에 <strong>"2과목 이상"</strong>처럼 개수 조건이 붙은 모집단위는 실제보다 엄격하게 잡히니 비고를 함께 읽어 주세요.</p>
@@ -149,9 +149,11 @@
  [...new Set(rows.map(r=>r.zone))].forEach(z=>{const o=document.createElement('option');o.value=z;o.textContent=z;$('#zone').appendChild(o)});
  [...new Set(rows.map(r=>r.univ))].sort((a,b)=>a.localeCompare(b,'ko')).forEach(u=>{const o=document.createElement('option');o.value=u;o.textContent=u;$('#univ').appendChild(o)});
 
- // '또는'으로 묶인 과목은 하나만 들어도 채워진 것으로 본다.
- const missing=r=>(r.need||[]).filter(g=>!g.some(x=>picked.has(x))).map(g=>g.join(' 또는 '));
- const judge=r=>{ if(!(r.need||[]).length) return 'free'; return missing(r).length? 'no':'ok'; };
+ // 판정: 핵심과목(must) 전부 + 개수 조건(any: of 중 n과목). 권장(rec)은 판정에 쓰지 않고 표시만.
+ const missingWith=(r,set)=>{const n=r.need||{must:[],any:[]};const m=n.must.filter(x=>!set.has(x));n.any.forEach(g=>{const have=g.of.filter(x=>set.has(x)).length;if(have<g.n)m.push(g.of.join('/')+' 중 '+(g.n-have)+'과목 더');});return m;};
+ const missing=r=>missingWith(r,picked);
+ const judge=r=>{ if(!r.need||r.need.kind!=='subj') return 'free'; return missing(r).length? 'no':'ok'; };
+ const KIND={group:'교과군 조건만',list:'반영과목 목록',free:'지정 없음'};
 
  function render(){
   // 숫자판
@@ -167,12 +169,11 @@
    // 한 과목만 더 들으면 열리는 문이 가장 많은 과목을 찾는다
    const gain={};
    D.subjects.filter(s=>!picked.has(s)).forEach(s=>{
-    gain[s]=no.filter(r=>{const m=(r.need||[]).filter(g=>!g.some(x=>picked.has(x)));
-      return m.length===1 && m[0].includes(s)}).length;});
+    const t=new Set(picked);t.add(s);gain[s]=no.filter(r=>!missingWith(r,t).length).length;});
    const best=Object.entries(gain).sort((x,y)=>y[1]-x[1])[0];
    a.className='callout ok';
    a.innerHTML=`<h4>${[...picked].join(' · ')}를 들으면</h4>`+
-    `<p>권장과목을 모두 채우는 모집단위가 <strong>${fmt(ok.length)}곳</strong>, 지정 과목이 없어 누구나 지원할 수 있는 곳이 <strong>${fmt(free.length)}곳</strong>입니다. 반대로 <strong>${fmt(no.length)}곳</strong>은 권장과목이 아직 모자랍니다.</p>`+
+    `<p>핵심과목 조건을 채우는 모집단위가 <strong>${fmt(ok.length)}곳</strong>, 과목을 지정하지 않아 판정에서 뺀 곳(교과군 조건·반영과목 목록·지정 없음)이 <strong>${fmt(free.length)}곳</strong>입니다. 반대로 <strong>${fmt(no.length)}곳</strong>은 핵심과목이 아직 모자랍니다. 권장과목은 판정에 넣지 않았습니다.</p>`+
     (best && best[1]>0 ? `<p><strong>${best[0]}</strong> 한 과목을 더 들으면 <strong>${fmt(best[1])}곳</strong>이 추가로 열립니다.</p>` : '');
   }
   // 표
@@ -183,9 +184,11 @@
   $('#count').textContent=fmt(l.length)+'개 모집단위';
   $('#tbl tbody').innerHTML=l.slice(0,300).map(r=>{
    const j=judge(r), m=missing(r);
-   const verdict = j==='free' ? '<span class="sub">지정 없음</span>'
+   const rec=(r.need&&r.need.rec||[]).filter(x=>!picked.has(x));
+   const recTxt=rec.length?`<br><span class="sub">권장: ${rec.join('·')}</span>`:'';
+   const verdict = (j==='free' ? `<span class="sub">${KIND[(r.need||{}).kind]||'지정 없음'}</span>`
      : j==='ok' ? '<span class="match-yes">충족</span>'
-     : '<span class="match-no">부족</span><br>'+m.map(x=>`<span class="miss">${x}</span>`).join('');
+     : '<span class="match-no">부족</span><br>'+m.map(x=>`<span class="miss">${x}</span>`).join(''))+recTxt;
    return `<tr><td><strong>${r.univ}</strong><br><span class="sub">${r.zone} ${r.sido}</span></td>`+
     `<td>${r.unit}${r.college?`<br><span class="sub">${r.college}</span>`:''}</td>`+
     `<td class="unit-core">${r.core||'—'}</td><td class="unit-rec">${r.rec||'—'}</td>`+
