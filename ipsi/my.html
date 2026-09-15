@@ -116,14 +116,14 @@
  <p class="lead">성적표 숫자를 그대로 옮겨 적으면 과목별로 <strong>지금 어디쯤인지</strong>, <strong>어느 계열이 강한지</strong>, <strong>2·3학년에 뭘 들어야 하는지</strong>, <strong>목표별 성적 조건을 채웠는지</strong>를 계산합니다. 5등급제(1등급 = 상위 10%) 기준. 저장은 이 기기 안에서만 되고 어디로도 전송되지 않습니다.</p>
 </div>
 
-<div class="hero-my"><div class="mascot">🧭</div><p><b>쓰는 법.</b> 성적표에 있는 만큼만 넣어요. <b>석차등급</b>이 있으면 그걸로 판정하고, 없으면(중간고사 답정오표처럼) 원점수와 과목평균으로 <b>추정</b>합니다. 과목평균을 모르면 비워도 돼요. <b>표준편차</b>까지 넣으면 추정이 정확해집니다(학교알리미에서 찾는 법은 아래). 등급 없는 과목(체육·예술·과학탐구실험)은 성취도만 넣으면 됩니다.</p></div>
+<div class="hero-my"><div class="mascot">🧭</div><p><b>쓰는 법.</b> 성적표에 있는 만큼만 넣어요. <b>석차</b>와 수강자 수가 있으면 그걸로 정확히 계산하고, <b>석차등급</b>만 있으면 등급으로 판정하고, 없으면(중간고사 답정오표처럼) 원점수와 과목평균으로 <b>추정</b>합니다. 과목평균을 모르면 비워도 돼요. <b>표준편차</b>까지 넣으면 추정이 정확해집니다(학교알리미에서 찾는 법은 아래). 등급 없는 과목(체육·예술·과학탐구실험)은 성취도만 넣으면 됩니다.</p></div>
 
 <section>
  <h2>1. 성적 입력</h2>
  <div class="profile"><label>학생 <select id="prof"></select></label><button id="profAdd">+ 새 학생</button><button id="profRen">이름 바꾸기</button><button id="profDel">삭제</button><span class="sub">학생마다 성적·기록·체크가 따로 저장됩니다(이 기기 안에서만).</span></div>
- <div class="tblwrap-my"><table class="grid-tbl" id="tbl"><thead><tr><th>과목</th><th>원점수</th><th>과목평균</th><th>표준편차</th><th>성취도</th><th>석차등급</th><th>수강자 수</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+ <div class="tblwrap-my"><table class="grid-tbl" id="tbl"><thead><tr><th>과목</th><th>원점수</th><th>과목평균</th><th>표준편차</th><th>성취도</th><th>석차등급</th><th>석차</th><th>수강자 수</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
  <div class="addrow"><button data-add="공통국어1">+ 국어</button><button data-add="공통수학1">+ 수학</button><button data-add="공통영어1">+ 영어</button><button data-add="통합사회1">+ 통합사회</button><button data-add="통합과학1">+ 통합과학</button><button data-add="한국사1">+ 한국사</button><button data-add="정보">+ 정보</button><button data-add="과학탐구실험1">+ 과탐실험</button><button data-add="">+ 직접 입력</button></div>
- <div class="btnrow"><button class="go" id="run">분석하기 →</button><button id="demo">예시 채우기</button><button id="clear">비우기</button><label class="keep"><input type="checkbox" id="keep" checked> 이 기기에 저장</label></div>
+ <div class="btnrow"><button class="go" id="run">분석하기 →</button><button id="demo">예시 채우기</button><button id="clear">비우기</button><button id="share">링크로 넘기기</button><label class="keep"><input type="checkbox" id="keep" checked> 이 기기에 저장</label></div>
  <div class="howto"><b>표준편차·성취도 비율은 어디서?</b> <a href="https://www.schoolinfo.go.kr/" target="_blank" rel="noopener">학교알리미</a> → 학교명 검색 → <b>학업성취사항 → 교과별 학업성취 사항</b>(보안문자 입력) → 과목별 평균·표준편차·성취도 A~E 비율. 표준편차를 넣으면 등급 추정이 실제 산식(정규분포 위치)과 같아집니다. 수강자 수를 넣으면 그 과목의 1등급 인원(상위 10%)도 같이 계산합니다. 우리 학교 학년 정원은 <a href="hakgyo.html">고교 찾기</a>에서.</div>
  <div class="rec"><b>기록(학종용)</b>
   <label>세특 탐구 기록 <input id="rTan" type="number" min="0" max="40" placeholder="건"> 건(누적)</label>
@@ -194,11 +194,11 @@
 
  function addRow(name,v={}){
   const tr=document.createElement('tr');
-  tr.innerHTML=`<td class="nm"><input value="${esc(name)}" placeholder="과목명"></td><td><input type="number" min="0" max="100" step="0.1" placeholder="88.5" value="${v.s??''}"></td><td><input type="number" min="0" max="100" step="0.1" placeholder="70" value="${v.m??''}"></td><td><input type="number" min="1" max="60" step="0.1" placeholder="20" value="${v.sd??''}"></td><td><select><option value="">—</option>${['A','B','C','D','E','P'].map(x=>`<option${v.a===x?' selected':''}>${x}</option>`).join('')}</select></td><td><select><option value="">—</option>${[1,2,3,4,5].map(x=>`<option${String(v.g)===String(x)?' selected':''}>${x}</option>`).join('')}<option value="·"${v.g==='·'?' selected':''}>· (미산출)</option></select></td><td><input type="number" min="1" placeholder="240" value="${v.n??''}"></td><td><button class="del" title="삭제">✕</button></td>`;
+  tr.innerHTML=`<td class="nm"><input value="${esc(name)}" placeholder="과목명"></td><td><input type="number" min="0" max="100" step="0.1" placeholder="88.5" value="${v.s??''}"></td><td><input type="number" min="0" max="100" step="0.1" placeholder="70" value="${v.m??''}"></td><td><input type="number" min="1" max="60" step="0.1" placeholder="20" value="${v.sd??''}"></td><td><select><option value="">—</option>${['A','B','C','D','E','P'].map(x=>`<option${v.a===x?' selected':''}>${x}</option>`).join('')}</select></td><td><select><option value="">—</option>${[1,2,3,4,5].map(x=>`<option${String(v.g)===String(x)?' selected':''}>${x}</option>`).join('')}<option value="·"${v.g==='·'?' selected':''}>· (미산출)</option></select></td><td><input type="number" min="1" placeholder="25" value="${v.rank??''}"></td><td><input type="number" min="1" placeholder="240" value="${v.n??''}"></td><td><button class="del" title="삭제">✕</button></td>`;
   tr.querySelector('.del').addEventListener('click',()=>{tr.remove();save();});
   ROWS.appendChild(tr);
  }
- function read(){return [...ROWS.querySelectorAll('tr')].map(tr=>{const i=tr.querySelectorAll('input,select');return {name:i[0].value.trim(),s:+i[1].value||null,m:+i[2].value||null,sd:+i[3].value||null,a:i[4].value,g:i[5].value,n:+i[6].value||null}}).filter(r=>r.name);}
+ function read(){return [...ROWS.querySelectorAll('tr')].map(tr=>{const i=tr.querySelectorAll('input,select');return {name:i[0].value.trim(),s:+i[1].value||null,m:+i[2].value||null,sd:+i[3].value||null,a:i[4].value,g:i[5].value,rank:+i[6].value||null,n:+i[7].value||null}}).filter(r=>r.name);}
  const $v=id=>document.getElementById(id).value;
  function save(){try{if(!document.getElementById('keep').checked){localStorage.removeItem(KEY());return;}localStorage.setItem(KEY(),JSON.stringify({rows:read(),mock:$v('mock'),rec:{tan:$v('rTan'),club:$v('rClub'),career:$v('rCareer')}}));localStorage.setItem('ipsi-my-org',JSON.stringify({org:$v('orgName'),who:$v('counselor')}));}catch(e){}}
  function load(){try{const o=JSON.parse(localStorage.getItem('ipsi-my-org')||'null');if(o){document.getElementById('orgName').value=o.org||'';document.getElementById('counselor').value=o.who||'';}}catch(e){}
@@ -220,6 +220,7 @@
  // ---- 판정 ----
  // 위치 점수 pos: 0(최하)~1(최상). 등급이 있으면 등급 중앙값의 누적 백분위, 없으면 (원점수-평균)을 25점 폭으로 정규화한 추정.
  function position(r){
+  if(r.rank&&r.n&&r.rank<=r.n){return {p:1-(r.rank-.5)/r.n,src:'석차'};}
   if(r.g&&r.g!=='·'){const cum={1:.05,2:.22,3:.50,4:.78,5:.95};return {p:1-cum[r.g],src:'등급'};}
   if(r.s!=null&&r.m!=null){const d=r.s-r.m;
    if(r.sd){return {p:ncdf(d/r.sd),src:'표준편차'};}
@@ -241,7 +242,7 @@
   const graded=rows.filter(r=>!r.nograde&&r.p!=null);
   document.getElementById('out').hidden=false;
   // 과목별
-  document.getElementById('pos').innerHTML=rows.map(r=>{const [c,l]=band(r.p);const w=r.p==null?0:Math.round(r.p*100);return `<li><span class="nm">${esc(r.name)}</span><span class="bar"><i style="width:${w}%;background:${col(r.p)}"></i><b style="left:90%"></b></span><span class="tag ${c}">${r.nograde?(r.a||'—'):bandLabel(r)}${r.src==='범위'?' (범위 추정)':r.src==='표준편차'?' (추정)':''}${r.n?' · 1등급 '+Math.round(r.n*.1)+'명':''}</span></li>`}).join('');
+  document.getElementById('pos').innerHTML=rows.map(r=>{const [c,l]=band(r.p);const w=r.p==null?0:Math.round(r.p*100);return `<li><span class="nm">${esc(r.name)}</span><span class="bar"><i style="width:${w}%;background:${col(r.p)}"></i><b style="left:90%"></b></span><span class="tag ${c}">${r.nograde?(r.a||'—'):bandLabel(r)}${r.src==='범위'?' (범위 추정)':r.src==='표준편차'?' (추정)':r.src==='석차'?' · 상위 '+Math.round((1-r.p)*100)+'%':''}${r.n?' · 1등급 '+Math.round(r.n*.1)+'명':''}</span></li>`}).join('');
   document.getElementById('posNote').textContent='막대의 검은 선이 1등급 경계(상위 10%). "추정"은 (원점수−평균)÷표준편차의 정규분포 위치, "범위 추정"은 표준편차를 몰라 15~25로 가정한 구간입니다. 학교가 산출한 석차등급이 있으면 그것이 정답입니다.';
   // 뱃지·결론
   const top=graded.filter(r=>r.p>=.9), low=graded.filter(r=>r.p<.34);
@@ -310,6 +311,9 @@
  document.querySelectorAll('#check input').forEach(i=>i.addEventListener('change',()=>{CST[i.dataset.k]=i.checked;try{localStorage.setItem(CKEY(),JSON.stringify(CST));}catch(e){}}));
  loadChecks();
  ['rTan','rClub','rCareer','orgName','counselor'].forEach(i=>document.getElementById(i).addEventListener('change',save));
+ // 성적을 주소(#d=)에 담아 다른 기기·상담자에게 넘긴다. 이름은 담지 않는다.
+ document.getElementById('share').addEventListener('click',()=>{const d={rows:read(),mock:$v('mock'),rec:{tan:$v('rTan'),club:$v('rClub'),career:$v('rCareer')}};const u=location.origin+location.pathname+'#d='+btoa(unescape(encodeURIComponent(JSON.stringify(d))));(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>alert('링크를 복사했습니다. 이름은 들어 있지 않습니다.'),()=>prompt('이 링크를 복사하세요',u));});
+ (function(){const h=location.hash;if(!h.startsWith('#d='))return;try{const d=JSON.parse(decodeURIComponent(escape(atob(h.slice(3)))));ROWS.innerHTML='';(d.rows||[]).forEach(r=>addRow(r.name,r));document.getElementById('mock').value=d.mock||'';const rc=d.rec||{};document.getElementById('rTan').value=rc.tan||'';document.getElementById('rClub').value=rc.club||'';document.getElementById('rCareer').value=rc.career||'';history.replaceState(null,'',location.pathname);analyze();document.getElementById('out').scrollIntoView();}catch(e){}})();
  document.getElementById('print').addEventListener('click',()=>{const p=P.list.find(x=>x.id===P.cur);const org=$v('orgName'),who=$v('counselor');document.getElementById('printHead').innerHTML=`<b>${esc(org||'입시 나침반')}</b> 성적 상담지 · 학생 ${esc(p.label)} · ${new Date().toLocaleDateString('ko-KR')}${who?' · 상담 '+esc(who):''}<br><span class="sub">5등급제(1등급 = 상위 10%) 기준 추정. 학교 성적표와 대학 요강이 우선합니다. 출처: 입시 나침반 soonryu74.github.io/ipsi/</span>`;window.print();});
 
  // ---- 레이더 ----
