@@ -32,6 +32,9 @@ p{margin:0 0 .9em}
 .site-nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
 .site-nav a{color:#dbe4f0;padding:6px 10px;border-radius:8px;font-size:.92rem;font-weight:500}
 .site-nav a:hover,.site-nav a.on{background:rgba(255,255,255,.14);color:#fff;text-decoration:none}
+.nav-toggle-in{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.nav-toggle{display:none;margin-left:auto;color:#fff;font-weight:700;font-size:.92rem;padding:6px 12px;border:1px solid rgba(255,255,255,.35);border-radius:8px;cursor:pointer;user-select:none}
+.nav-toggle-in:focus-visible + .nav-toggle{outline:2px solid #fff;outline-offset:2px}
 
 /* 히어로 */
 .hero{background:linear-gradient(135deg,var(--navy-dark),var(--navy) 60%,#2d5387);color:#fff;padding:52px 20px 44px}
@@ -144,7 +147,10 @@ ol.steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:26
 @media (max-width:720px){
   .hero h1{font-size:1.6rem} h1{font-size:1.6rem} h2{font-size:1.3rem}
   .univ-card dl,.kv{grid-template-columns:1fr}
-  .site-nav{margin-left:0} .site-nav a{padding:5px 8px;font-size:.85rem}
+  .nav-toggle{display:inline-block}
+  .site-nav{display:none;width:100%;margin-left:0;padding:4px 0 6px;border-top:1px solid rgba(255,255,255,.15)} .site-nav a{padding:7px 10px;font-size:.9rem}
+  .nav-toggle-in:checked ~ .site-nav{display:flex}
+  .site-nav a.on{order:-1}
   .stat-strip{margin-top:-18px}
 }
-@media print{.site-header,.site-footer,.toolbar{display:none} body{background:#fff}}
+@media print{.site-header,.site-footer,.toolbar,.nav-toggle{display:none} body{background:#fff}}
