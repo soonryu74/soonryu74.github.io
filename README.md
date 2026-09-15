@@ -42,6 +42,7 @@
 | 허브 | `ipsi/index.html` | 한 장 요약, 세대별 제도 비교 |
 | 바뀐 제도 | `ipsi/jedo.html` | 수능 체제·5등급제·고교학점제·학생부·권장과목·2029 기본사항 |
 | 컨설팅 | `ipsi/consulting.html` | 목표별(경찰대·사관학교·의대·서울대·연고대·과기원·반도체 계약학과) 필요 과목·전형 구조·3년 전략·입시 비밀, 과목 하나 빼면 닫히는 모집단위 실험 (`ipsi/data/consulting.js`) |
+| FAQ | `ipsi/faq.html` | 등급 없는 과목·3단계 과목·공동교육과정·온라인학교·학교 밖 교육·미이수·재수생 비교 등 12문답, 교육부·대학 공동연구·교육청 지침 원문 근거 |
 | 학과 트렌드 | `ipsi/trend.html` | KESS 학과별 2016~2026 정원·지원자, 키워드(AI·반도체·자유전공) 흐름, 소계열별 취업률, AI 학과 정책·해외 사례 (`ipsi/data/major-trend.json`, `scripts/build_trend.py`) |
 | 과목 고르기 | `ipsi/gwamok.html` | 47개 대학 1,358개 모집단위 권장과목, 과목 조합별 지원 가능 판정 (`ipsi/data/gwonjang.json`) |
 | 시험 파먹기 | `ipsi/sihum.html` | 내신·학평·모평·수능·논술·면접·사관/경찰대·과기원·미반영 시험 |
