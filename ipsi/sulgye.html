@@ -168,7 +168,8 @@ async function hwpxText(buf){
 }
 let pdfjsReady=null;
 function loadPdfjs(){if(pdfjsReady)return pdfjsReady;pdfjsReady=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';res();};s.onerror=()=>rej(new Error('pdf.js 로드 실패'));document.head.appendChild(s);});return pdfjsReady;}
-async function pdfText(buf){await loadPdfjs();const doc=await pdfjsLib.getDocument({data:buf}).promise;let t='';for(let p=1;p<=doc.numPages;p++){const pg=await doc.getPage(p);const c=await pg.getTextContent();let y=null;for(const it of c.items){if(y!==null&&Math.abs(it.transform[5]-y)>3)t+='\n';else if(y!==null)t+=' ';t+=it.str;y=it.transform[5];}t+='\n';}return t;}
+// PDF는 표의 칸 구분이 없어서, 같은 줄에서 글자 사이가 벌어지면(다음 칸) ' | '로 끊어 hwp 문단 구조와 맞춘다.
+async function pdfText(buf){await loadPdfjs();const doc=await pdfjsLib.getDocument({data:buf}).promise;let t='';for(let p=1;p<=doc.numPages;p++){const pg=await doc.getPage(p);const c=await pg.getTextContent();let y=null,xe=null;for(const it of c.items){if(!it.str||!it.str.trim())continue;const x=it.transform[4],fs=Math.abs(it.transform[0])||it.height||10;if(y!==null&&Math.abs(it.transform[5]-y)>3)t+='\n';else if(y!==null)t+=(x-xe>Math.max(4,fs*0.6))?' | ':' ';t+=it.str;y=it.transform[5];xe=x+(it.width||0);}t+='\n';}return t;}
 const dec=b=>{try{return new TextDecoder('euc-kr').decode(b);}catch(e){return new TextDecoder().decode(b);}};
 
 async function handleFile(name,buf){
@@ -181,8 +182,10 @@ async function handleFile(name,buf){
   else if(ext==='pdf')text=await pdfText(buf);
   else if(ext==='txt')text=new TextDecoder().decode(buf);
   else {log(`건너뜀(지원 안 함): ${name}`);return;}
+  if(ext==='pdf'&&text.replace(/\s/g,'').length<80){log(`글자 정보가 없는 PDF(스캔·사진본): ${name} — 학교알리미 첨부의 hwp·hwpx 원본을 넣어 주세요`);return;}
+  window.__sulgyeText=text;  // 디버그용: 마지막으로 읽은 원문
   const s=parsePlan(text,name);
-  if(!s){log(`평가계획 양식을 못 찾음: ${name}`);return;}
+  if(!s){log(`평가계획 양식을 못 찾음: ${name} — 읽힌 글자: "${text.replace(/\s+/g,' ').trim().slice(0,60)}…"`);return;}
   const i=SUBJ.findIndex(x=>x.name===s.name&&x.term===s.term);if(i>=0)SUBJ[i]=s;else SUBJ.push(s);
   log(`읽음: ${s.term?s.term+' ':''}${s.name} — 선택형 ${s.mid.sel+s.fin.sel}% · 서답형 ${s.mid.ess+s.fin.ess}% · 수행 ${s.perfPct}%`);
  }catch(e){log(`실패: ${name} (${e.message})`);}
@@ -196,8 +199,9 @@ function parsePlan(text,fname){
  if(!name)return null;name=name.replace(/과$/,'').trim();
  const term=(fname.match(/(\d학기)/)||T.match(/(\d학기)/)||[])[1]||'';
  const gm=/(?<![\d년])(\d)학년(?!도)/;const grade=((fname.match(gm)||T.match(gm)||[])[1]||'')&&((fname.match(gm)||T.match(gm))[1]+'학년');
- const i=T.indexOf('반영 비율');const S=i>=0?T.slice(i,i+2500):T.slice(0,2500);
- const iMan=S.indexOf('만점');let pctPart=iMan>0?S.slice(0,iMan):S.slice(0,600);
+ const loc=(src,str)=>{const m=src.match(new RegExp(str.split('').map(c=>c===' '?'':c).join('(?:\\s*\\|?\\s*)')));return m?m.index:-1;};
+ const i=loc(T,'반영 비율');const S=i>=0?T.slice(i,i+2500):T.slice(0,2500);
+ const iMan=loc(S,'만점');let pctPart=iMan>0?S.slice(0,iMan):S.slice(0,600);
  const iRat=pctPart.lastIndexOf('비율');if(iRat>0)pctPart=pctPart.slice(iRat);  // "(서·논술형 비율 45.4%)" 같은 앞쪽 셀 제외
  const P=[...pctPart.matchAll(/(\d+(?:\.\d+)?)\s*%/g)].map(m=>+m[1]).filter(v=>v>0);  // 빈 칸(0%)은 소계 판별에서 제외
  // 소계 찾기: 앞 항목들의 누적합과 같은 값
@@ -206,7 +210,7 @@ function parsePlan(text,fname){
   // v가 소계(앞 항목 합)인지. 단 다음 칸이 acc+v 이면 v는 아직 구성 항목("20 | 20 | 40")
   if(cur.length&&Math.abs(acc-v)<0.35&&!(nx!=null&&Math.abs(acc+v-nx)<0.35)){groups.push({items:cur,sum:v});cur=[];acc=0;}else{cur.push(v);acc+=v;}}
  // 수행 영역(소계 해석 전에 먼저 읽음)
- const perf=[];const ps=T.indexOf('세부 평가계획');const pe=T.indexOf('수행평가 분할점수');const PS=ps>=0?T.slice(ps,pe>ps?pe:ps+12000):'';
+ const perf=[];const ps=loc(T,'세부 평가계획');const pe=loc(T,'수행평가 분할점수');const PS=ps>=0?T.slice(ps,pe>ps?pe:ps+12000):'';
  for(const m of PS.matchAll(/평가\s*영역\s*\d+\s*[:：]\s*([^|]{2,60})/g)){const blk=PS.slice(m.index,m.index+1800);
   perf.push({name:m[1].trim(),pct:num((blk.match(/반영\s*비율\s*\|\s*(\d+(?:\.\d+)?)\s*%/)||[])[1]),max:num((blk.match(/만점\s*\|\s*(\d+)\s*점/)||[])[1]),base:num((blk.match(/기본\s*점수\s*\|\s*(\d+)\s*점/)||[])[1])});}
  if(groups.length===1&&groups[0].sum>=99.5)groups.unshift({items:[],sum:0},{items:[],sum:0}); // 수행 100% 과목
