@@ -88,7 +88,7 @@
   <select id="only"><option value="">전체 보기</option><option value="ok">내 과목으로 되는 곳만</option><option value="no">권장과목이 모자란 곳만</option><option value="tag">지정 과목이 있는 곳만</option></select>
   <span id="count" class="sub"></span>
  </div>
- <p class="sub" style="margin:6px 0 10px">이 표는 <strong>어디가에 2028학년도 권장과목을 제출한 47개 대학(캠퍼스별 분리)</strong>만 담고 있습니다. 전국 대학 전체가 아니며 연세·성균관·서강·이화·KAIST 등 미제출 대학은 없습니다. 권역은 <strong>캠퍼스 소재지</strong> 기준이라 단국대(천안)·한양대(ERICA)·전남대(여수)·강원대(삼척·도계)·건국대(글로컬)은 본교와 다른 권역에 별도 행으로 나옵니다.</p>
+ <p class="sub" style="margin:6px 0 10px">이 표는 <strong>어디가에 2028학년도 권장과목을 제출한 47개 대학(캠퍼스별 분리)</strong>만 담고 있습니다. 전국 대학 전체가 아니며 연세·성균관·서강·이화·KAIST 등 미제출 대학은 없습니다. 권역은 <strong>캠퍼스 소재지</strong> 기준(원자료의 '중부권'은 충청권·강원권으로 나눠 표시)이라 단국대(천안)·한양대(ERICA)·전남대(여수)·강원대(삼척·도계)·건국대(글로컬)은 본교와 다른 권역에 별도 행으로 나옵니다.</p>
  <div class="tbl-wrap"><table id="tbl"><thead><tr><th>대학</th><th>모집단위</th><th>핵심과목</th><th>권장과목</th><th>비고</th><th class="num">판정</th></tr></thead><tbody></tbody></table></div>
  <p class="sub" id="src"></p>
 </section>
@@ -133,6 +133,9 @@
  const $=s=>document.querySelector(s), fmt=n=>n.toLocaleString('ko-KR');
  const D=await fetch('data/gwonjang.json').then(r=>r.json());
  const rows=D.rows;
+ // 어디가 원자료는 충청·강원을 '중부권' 하나로 묶는다. 시도 기준으로 충청권/강원권으로 나눠 표시.
+ const ZONE_ORDER=['수도권','충청권','강원권','호남권','영남권','제주권'];
+ rows.forEach(r=>{if(r.zone==='중부권')r.zone=r.sido==='강원'?'강원권':'충청권';});
  $('#src').textContent='출처: '+D.source+' · 자료 갱신 '+D.updated;
  const KEY='ipsi-gwamok-pick';
  let picked=new Set();
@@ -149,7 +152,7 @@
  });
 
  // 셀렉트 채우기
- [...new Set(rows.map(r=>r.zone))].forEach(z=>{const o=document.createElement('option');o.value=z;o.textContent=z;$('#zone').appendChild(o)});
+ [...new Set(rows.map(r=>r.zone))].sort((a,b)=>(ZONE_ORDER.indexOf(a)+1||99)-(ZONE_ORDER.indexOf(b)+1||99)).forEach(z=>{const o=document.createElement('option');o.value=z;o.textContent=z;$('#zone').appendChild(o)});
  // 대학 목록은 고른 권역 안의 대학만. 권역은 캠퍼스 소재지 기준(단국대/단국대(천안), 한양대/한양대(ERICA) 등은 별도 행).
  function fillUniv(){const z=$('#zone').value,cur=$('#univ').value;const us=[...new Set(rows.filter(r=>!z||r.zone===z).map(r=>r.univ))].sort((a,b)=>a.localeCompare(b,'ko'));
   $('#univ').innerHTML='<option value="">전체 대학 ('+us.length+')</option>'+us.map(u=>`<option value="${u}"${u===cur?' selected':''}>${u}${/\(|ERICA/.test(u)?' · 캠퍼스':''}</option>`).join('');
