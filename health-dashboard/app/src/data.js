@@ -167,6 +167,66 @@ export function ranked(ind, item, year, pool, opts = {}) {
   return keep.sort((a, b) => cmp(a.v, b.v));
 }
 
+// ── Health Group: 서열 대신 "비슷한 지역 묶음" ────────────────────────────────
+// County Health Rankings & Roadmaps 는 2024년부터 1~N 순위를 버리고, 요약 Z-점수를
+// 군집분석으로 10개 그룹(크기가 제각각)에 배정한다. 기술문서 원문:
+//   "Counties are assigned a value (e.g., group 1-10) based on their Z-score
+//    rather than an ordinal rank … Health Groups do not always indicate
+//    statistically significant differences between counties."
+// 우리는 지표 하나씩 다루므로 요약 Z-점수 대신 그 지표의 값 분포를 그대로 쓴다.
+// 군집은 1차원 최적 분할(Fisher–Jenks 동적계획법 — 군집 내 제곱합을 최소화)로 구한다.
+// CHR&R 가 쓰는 Wasserstein 거리 군집과 계산식은 다르지만, "데이터 안의 의미 있는
+// 간격으로 끊는다"는 목적은 같다. (docs/미국_CountyHealthRankings_검토_v1.md 2.2)
+export const GROUP_N = 10;
+
+/** 정렬된 수치 배열을 k개 군집으로 최적 분할 → 군집 시작 인덱스 목록 */
+function fisherJenks(sorted, k) {
+  const n = sorted.length;
+  if (k <= 1 || n <= k) return sorted.map((_, i) => i).slice(1);
+  const S1 = new Float64Array(n + 1), S2 = new Float64Array(n + 1);
+  for (let i = 0; i < n; i++) { S1[i + 1] = S1[i] + sorted[i]; S2[i + 1] = S2[i] + sorted[i] ** 2; }
+  // [a, b) 구간의 편차 제곱합
+  const ssq = (a, b) => { const c = b - a; if (c <= 1) return 0; const s = S1[b] - S1[a]; return (S2[b] - S2[a]) - s * s / c; };
+  let prev = new Float64Array(n + 1).fill(Infinity);
+  for (let i = 1; i <= n; i++) prev[i] = ssq(0, i);           // 군집 1개일 때의 비용
+  const backs = [];
+  for (let j = 2; j <= k; j++) {
+    const cur = new Float64Array(n + 1).fill(Infinity), bk = new Int32Array(n + 1);
+    for (let i = j; i <= n; i++)
+      for (let m = j - 1; m < i; m++) {
+        const c = prev[m] + ssq(m, i);
+        if (c < cur[i]) { cur[i] = c; bk[i] = m; }
+      }
+    backs.push(bk); prev = cur;
+  }
+  const starts = []; let i = n;
+  for (let j = k; j >= 2; j--) { const m = backs[j - 2][i]; starts.unshift(m); i = m; }
+  return starts;                                              // 길이 k-1
+}
+
+/** 지표·연도·집단 → { g(code), sizes, k, range(g) } · 1그룹 = 가장 양호 */
+export function healthGroups(ind, item, year, pool, k = GROUP_N) {
+  const rows = pool.map((r) => ({ c: r.c, v: val(ind, item, year, r.c) })).filter((x) => x.v != null);
+  if (!rows.length) return { g: () => null, sizes: [], k: 0, range: () => null };
+  const asc = rows.sort((a, b) => a.v - b.v);
+  const vals = asc.map((x) => x.v);
+  const kk = Math.max(1, Math.min(k, new Set(vals).size));
+  const starts = new Set(fisherJenks(vals, kk));
+  const cl = []; let g = 0;
+  for (let i = 0; i < vals.length; i++) { if (starts.has(i)) g++; cl.push(g); }
+  // 방향 적용: 높을수록 좋은 지표면 큰 값이 1그룹
+  const flip = ind.bad === false;
+  const map = new Map(), lo = [], hi = [], size = new Array(kk).fill(0);
+  asc.forEach((x, i) => {
+    const gi = (flip ? kk - 1 - cl[i] : cl[i]) + 1;
+    map.set(x.c, gi); size[gi - 1]++;
+    if (lo[gi - 1] == null || x.v < lo[gi - 1]) lo[gi - 1] = x.v;
+    if (hi[gi - 1] == null || x.v > hi[gi - 1]) hi[gi - 1] = x.v;
+  });
+  return { g: (code) => map.get(code) ?? null, sizes: size, k: kk,
+           range: (gi) => (lo[gi - 1] == null ? null : [lo[gi - 1], hi[gi - 1]]) };
+}
+
 /** 순위에서 제외된(불안정) 지역 목록 — 화면에 "제외 n곳"을 알리기 위해 */
 export function unstableRows(ind, item, year, pool) {
   return pool
