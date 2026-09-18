@@ -42,11 +42,45 @@ export default function CorrelationView({ setTip }) {
   const wrapRef = useRef(null);
   const [cw, setCw] = useState(640);
   useEffect(() => { const el = wrapRef.current; if (!el) return; const ro = new ResizeObserver(() => setCw(el.clientWidth || 640)); ro.observe(el); setCw(el.clientWidth || 640); return () => ro.disconnect(); }, []);
-  const W = Math.max(340, cw), H = Math.round(Math.min(480, Math.max(300, W * 0.5))), L = 56, R = 16, T = 16, B = 46;
-  const xlo = Math.min(...xs), xhi = Math.max(...xs), ylo = Math.min(...ys), yhi = Math.max(...ys);
+  const W = Math.max(340, cw), narrowChart = W < 560;
+  const H = narrowChart ? Math.round(W * 1.05) : Math.round(Math.min(480, Math.max(300, W * 0.5)));
+  const L = 56, R = level === "sido" ? 30 : 18, T = 20, B = 46;
+  // 축 범위: 데이터 양끝에 여백을 둬 점·지역명이 테두리에 붙거나 잘리지 않게
+  const padded = (a) => {
+    const lo0 = Math.min(...a), hi0 = Math.max(...a), sp = hi0 - lo0 || Math.abs(hi0) || 1;
+    return [lo0 - sp * 0.08, hi0 + sp * 0.08];
+  };
+  const [xlo, xhi] = n ? padded(xs) : [0, 1];
+  const [ylo, yhi] = n ? padded(ys) : [0, 1];
   const px = (v) => L + (W - L - R) * ((v - xlo) / ((xhi - xlo) || 1));
   const py = (v) => T + (H - T - B) * (1 - (v - ylo) / ((yhi - ylo) || 1));
-  const ticks = (lo, hi) => [0, 0.25, 0.5, 0.75, 1].map((f) => lo + (hi - lo) * f);
+  // 눈금은 반올림이 되는 값으로 (1·2·2.5·5 배수)
+  const ticks = (lo, hi, count = 5) => {
+    const span = hi - lo; if (!(span > 0)) return [lo];
+    const raw = span / (count - 1), mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    const stepN = [1, 2, 2.5, 5, 10].find((m) => m * mag >= raw) || 10;
+    const stepv = stepN * mag, first = Math.ceil(lo / stepv) * stepv, out = [];
+    for (let v = first; v <= hi + stepv * 1e-9; v += stepv) out.push(+v.toFixed(10));
+    return out.length >= 2 ? out : [lo, hi];
+  };
+  // 시도 라벨: 오른쪽 끝 점은 왼쪽에 쓰고, 세로로 겹치면 살짝 내려 쓴다
+  const labels = level !== "sido" ? [] : (() => {
+    let src = pts;
+    if (narrowChart) {                                  // 좁은 화면: 다 쓰면 겹치므로 눈에 띄는 6곳만
+      const byY = [...pts].sort((a, b) => a.y - b.y), byX = [...pts].sort((a, b) => a.x - b.x);
+      const keep = new Set([byY[0], byY[byY.length - 1], byY[byY.length - 2], byX[0], byX[byX.length - 1]].filter(Boolean));
+      src = pts.filter((p) => keep.has(p));
+    }
+    const out = src.map((p) => ({ p, x: px(p.x), y: py(p.y), t: p.r.n.replace(/특별자치도|특별자치시|광역시|특별시/, "") }))
+      .sort((a, b) => a.y - b.y);
+    const gap = narrowChart ? 11 : 12;
+    out.forEach((o) => { o.right = o.x > W - R - 78; o.ty = o.y + 4; });
+    for (let i = 1; i < out.length; i++) {
+      const prev = out[i - 1];
+      if (Math.abs(out[i].x - prev.x) < 74 && out[i].ty - prev.ty < gap) out[i].ty = prev.ty + gap;
+    }
+    return out;
+  })();
   const sig = (p) => (p == null ? "" : p < 0.001 ? "***" : p < 0.01 ? "**" : p < 0.05 ? "*" : "");
   return (
     <div className="corr">
@@ -66,21 +100,30 @@ export default function CorrelationView({ setTip }) {
         <div className="card span2">
           <h3>{year}년 · {xi.name} × {yi.name} <small className="muted">(n={n})</small></h3>
           <ExportButtons name={`${year}_${xi.name}_x_${yi.name}_연관`} kinds={["svg", "png"]} />
-          <div className="desc">X: {xi.name}({xi.unit}) · Y: {yi.name}({yi.unit}) · 점선 = 최소제곱 추세선 · 점에 마우스를 올리면 지역명</div>
+          <div className="desc">X: {xi.name}({xi.unit}) · Y: {yi.name}({yi.unit}) · 점선 = 최소제곱 추세선 · 점을 누르면 지역명{level === "sido" && narrowChart ? " · 좁은 화면에서는 양 끝 지역만 이름 표시" : ""}</div>
           <div ref={wrapRef}>
           {n < 3 ? <div className="empty">해당 연도에 두 지표를 모두 가진 지역이 없습니다</div> : (
             <svg className="chart" viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ maxWidth: "100%" }} data-title={`${year} ${xi.name} × ${yi.name}`}>
+              <defs><clipPath id="corr-clip"><rect x={L} y={T} width={W - L - R} height={H - T - B} /></clipPath></defs>
               {ticks(ylo, yhi).map((v) => <g key={"y" + v}><line x1={L} x2={W - R} y1={py(v)} y2={py(v)} stroke="var(--border)" /><text x={L - 6} y={py(v) + 4} fontSize="11.5" textAnchor="end" fill="var(--muted)">{fmt(v)}</text></g>)}
               {ticks(xlo, xhi).map((v) => <g key={"x" + v}><line y1={T} y2={H - B} x1={px(v)} x2={px(v)} stroke="var(--border)" strokeOpacity="0.5" /><text x={px(v)} y={H - B + 14} fontSize="11.5" textAnchor="middle" fill="var(--muted)">{fmt(v)}</text></g>)}
               <text x={L + (W - L - R) / 2} y={H - 6} fontSize="12.5" textAnchor="middle" fill="var(--text-secondary)">{xi.name}</text>
               <text x={12} y={T + (H - T - B) / 2} fontSize="12.5" textAnchor="middle" fill="var(--text-secondary)" transform={`rotate(-90 12 ${T + (H - T - B) / 2})`}>{yi.name}</text>
-              {n > 2 && <line x1={px(xlo)} y1={py(my + slope * (xlo - mx))} x2={px(xhi)} y2={py(my + slope * (xhi - mx))} stroke="var(--bad-text)" strokeDasharray="5 4" strokeWidth="1.5" />}
+              {n > 2 && (() => {                                   // 추세선은 그래프 안에서만 (축 밖으로 삐져나오지 않게)
+                const x0 = Math.max(xlo, Math.min(...xs)), x1 = Math.min(xhi, Math.max(...xs));
+                return <line x1={px(x0)} y1={py(my + slope * (x0 - mx))} x2={px(x1)} y2={py(my + slope * (x1 - mx))}
+                  stroke="var(--bad-text)" strokeDasharray="5 4" strokeWidth="1.5" clipPath="url(#corr-clip)" />;
+              })()}
               {pts.map((p) => (
                 <circle key={p.r.c} cx={px(p.x)} cy={py(p.y)} r={level === "sido" ? 6 : 3.5} fill="var(--series-1)" fillOpacity="0.55" stroke="var(--surface-1)" strokeWidth="0.8"
                   onMouseMove={(ev) => { const { x, y } = clientXY(ev); setTip({ x, y, title: label(p.r), rows: [[xi.name, fmt(p.x) + xi.unit], [yi.name, fmt(p.y) + yi.unit]] }); }}
                   onMouseLeave={() => setTip(null)} />
               ))}
-              {level === "sido" && pts.map((p) => <text key={"t" + p.r.c} x={px(p.x) + 7} y={py(p.y) + 4} fontSize="11" fill="var(--text-secondary)">{p.r.n.replace(/특별자치도|특별자치시|광역시|특별시/, "")}</text>)}
+              {labels.map((o) => (
+                <text key={"t" + o.p.r.c} x={o.right ? o.x - 9 : o.x + 8} y={o.ty} fontSize={narrowChart ? 10.5 : 11}
+                  textAnchor={o.right ? "end" : "start"} fill="var(--text-secondary)"
+                  paintOrder="stroke" stroke="var(--surface-1)" strokeWidth="2.4" strokeLinejoin="round">{o.t}</text>
+              ))}
             </svg>
           )}
           </div>
