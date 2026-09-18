@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=39d968ff28849ebb14fcc432e548ada0e444c966">
+    <link rel="stylesheet" href="/assets/css/style.css?v=61d83e74756c4d2505d68c074e0c4c058d87fcea">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -231,6 +231,16 @@ index.html 7.96→8.98MB. 사망률·인구 등 표준오차 없는 지표는 �
 ⑥ <strong>다크모드 지도 라벨 버그 수정(소유자 제보)</strong>: .maplab 이 fill을 –text-primary 로 고정해 다크 모드에서 흰 글자가
    밝은 구역(1~4단계 분위) 위에서 사라졌다. → 라벨 색을 테마가 아니라 <strong>그 구역 칠 색의 밝기</strong>에 맞춘다(.on-light/.on-dark, classOf 5단계 기준).
    지도 라벨 토글은 꺼진 상태를 「🏷 지역명 꺼짐」으로 글자에 명시.</li>
+  <li>[완료] <strong>국가암검진 수검률 7종 수집·탑재</strong>(2026-09-18, CPSTF 검토 1순위): scripts/kosis_fetch_cancer.py → data/raw_cancer/(gitignore) → scripts/build_cancer.py → data/cancer_screening.json(0.22MB) → data.js 주입.
+원자료: KOSIS <strong>DT_35007_N009</strong> 「시군구별 성별 암검진 대상 및 수검인원 현황」(국민건강보험공단 건강검진통계, orgId 350). 2015~2024 전 연도.
+지표 7종(모두 ‘높을수록 양호’, 계층=성과): 암검진 전체·위암·대장암·간암·유방암·자궁경부암·폐암. 수검률 = 수검인원÷대상인원.
+지역 정리 — 원자료는 <strong>일반구 단위 257개</strong>라 인원을 더해 시 단위로 합산(비율이 아니라 사람 수를 더하므로 가중평균이 자동).
+  같은 해에 시 단위 행과 구 행이 공존하면 시 행 우선(부천시 2016년 행정구 폐지 → 이중계상 방지). 여주군·당진군은 승격 전 이름 별칭 처리. 세종은 시도 행을 세종시에 배정.
+  결과: 우리 시군구 231개 중 229개 매칭(나머지는 세종·제주 중복 레코드와 폐지 지역 청원군·연기군).
+검증 — 시군구 중앙값 2015 47.8% → 2019 55.4% → <strong>2020 48.8%(코로나 급락)</strong> → 2024 59.7%. 폐암검진은 2020년부터 값 존재(2019.7 도입과 일치). 2018년 53.7%는 공표값 53.1%과 부합.
+  2024 암종별 중앙값: 간암 75.4 · 위암 63.7 · 유방암 63.6 · 자궁경부암 59.1 · 폐암 51.0 · 대장암 41.5.
+주목 — <strong>강남구 53.4%로 229개 중 222위(하위 3%)</strong>. 흡연·자살은 양호한데 국가암검진은 최하위권이다. 민간 종합검진 대체 가능성이 커서 해석에 주의가 필요하다(미검증 가설).
+KOSIS 트래픽 차단이 심해 호출 간격 6초 + 지수 백오프(최대 420초) 필요.</li>
   <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>
