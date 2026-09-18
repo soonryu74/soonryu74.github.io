@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { DS, INDICATORS, RBY, label, DEFAULT_RANK_OPT, KDH_SOURCE } from "./data";
 import { IndicatorPicker, RegionPicker, YearControl, ItemToggle } from "./components/Pickers";
 import Kpis from "./components/Kpis";
@@ -61,6 +61,7 @@ export default function App() {
   const [rankOpt, setRankOpt] = useState(init.rankOpt); // 순위 산출 방식 (방법론 v1)
   const [ncdInd, setNcdInd] = useState(init.ncdInd);     // 지식베이스 지표 필터
   const [playing, setPlaying] = useState(false);
+  const bodyRef = useRef(null);   // 재생을 누르면 본문(그래프)이 화면에 들어오도록 스크롤
   const [tip, setTip] = useState(null);
   const [theme, setTheme] = useState(() => document.documentElement.getAttribute("data-theme") || null);
 
@@ -91,7 +92,15 @@ export default function App() {
     return () => clearInterval(t);
   }, [playing, years]);
   const togglePlay = () => {
-    if (!playing && years.indexOf(year) >= years.length - 1) setYearSel(years[0]);
+    if (!playing) {
+      if (years.indexOf(year) >= years.length - 1) setYearSel(years[0]);
+      // 모바일에선 선택 영역이 한 화면을 채워 그래프가 화면 밖에 있다 → 본문 첫 카드로 이동
+      const el = bodyRef.current;
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 6;
+        if (window.scrollY < top - 4) window.scrollTo({ top, behavior: "smooth" });
+      }
+    }
     setPlaying((p) => !p);
   };
 
@@ -121,7 +130,7 @@ export default function App() {
   const scopeLabel = sel.l === "sido" ? "17개 시도" : scope === "sido" ? `${RBY.get(sel.p).n} 내 시군구` : "전국 시군구";
 
   return (
-    <div className={`viz-root fs-${fs}`}>
+    <div className={`viz-root fs-${fs}${playing ? " playing" : ""}`}>
       <div className="wrap">
         <header className="top">
           <div>
@@ -147,6 +156,15 @@ export default function App() {
           </div>
         </header>
 
+        {playing && (
+          <div className="playbar" role="status" aria-live="polite">
+            <button className="pb-stop" onClick={() => setPlaying(false)} aria-label="정지">■</button>
+            <b className="pb-year">{year}년</b>
+            <span className="pb-track"><span className="pb-fill" style={{ width: `${(((years.indexOf(year) + 1) / years.length) * 100).toFixed(0)}%` }} /></span>
+            <span className="pb-ind">{ind.name}</span>
+          </div>
+        )}
+
         {!["units", "ncd", "corr", "hot", "chronicle"].includes(view) && <div className="controls">
           {view !== "profile" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
@@ -171,6 +189,8 @@ export default function App() {
           <ItemToggle item={item} onChange={setItem} ind={ind} />
           {view !== "profile" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
         </div>}
+
+        <div ref={bodyRef} className="body-anchor" />
 
         {view === "units" ? (
           <UnitsView setTip={setTip} />

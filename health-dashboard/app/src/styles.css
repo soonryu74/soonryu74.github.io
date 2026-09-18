@@ -538,3 +538,21 @@ tr.muted td { color: var(--muted); }
   .ra-ends { display:none; } .ra-me { margin-left:4px; white-space:nowrap; font-size:12px; padding:2px 9px; }
   .ra-foot { padding:5px 8px; font-size:10.5px; gap:4px; } .ra-foot .ra-lg:last-child { display:none; }
 }
+
+/* 연도 재생 중 화면에 붙는 연도 표시줄 (모바일에서 그래프가 화면 밖에 있어도 진행이 보이게) */
+.body-anchor { height:0; }
+.viz-root.playing { padding-bottom:58px; }
+.playbar { position:fixed; left:50%; bottom:14px; transform:translateX(-50%); z-index:110; display:flex; align-items:center; gap:9px;
+  background:var(--surface-1); border:1px solid var(--border); border-radius:999px; padding:7px 14px 7px 8px;
+  box-shadow:0 8px 24px rgba(0,0,0,.22); font-size:14px; max-width:calc(100vw - 20px); }
+.pb-stop { border:none; background:var(--series-1); color:#fff; border-radius:999px; width:26px; height:26px; cursor:pointer; font-size:11px; line-height:1; flex:0 0 auto; }
+.pb-year { font-variant-numeric:tabular-nums; color:var(--text-primary); font-size:15px; flex:0 0 auto; }
+.pb-track { width:110px; height:5px; border-radius:3px; background:var(--grid); overflow:hidden; flex:0 0 auto; }
+.pb-fill { display:block; height:100%; background:var(--series-1); border-radius:3px; transition:width .4s linear; }
+.pb-ind { color:var(--muted); font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media (max-width: 640px) {
+  .playbar { bottom:10px; padding:6px 12px 6px 6px; gap:7px; font-size:13px; }
+  .pb-track { width:74px; } .pb-ind { max-width:110px; }
+  .controls { gap:6px; margin:10px 0 12px; }
+  .ctrl { padding:6px 9px; } .controls label { font-size:12.5px; margin-bottom:2px; }
+}
