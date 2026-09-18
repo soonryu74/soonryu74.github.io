@@ -343,6 +343,22 @@ tr.muted td { color: var(--muted); }
 .hle-refs { flex:1 1 260px; min-width:0; }
 .hle-refs .tbl td { padding:3px 6px; }
 @media (max-width: 720px) { .hle-grid { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+/* 전국 공식 건강수명(정의별) 표 — 줄바꿈으로 깨지지 않게 이름/값/부가정보를 고정 열로 */
+.hle-defs { display:flex; flex-direction:column; margin-top:4px; }
+.hd-row { display:grid; grid-template-columns:1fr auto auto; align-items:baseline; gap:4px 10px;
+  padding:7px 2px; border-bottom:1px solid var(--grid); }
+.hd-row:last-child { border-bottom:none; }
+.hd-name { font-size:14px; color:var(--text-primary); min-width:0; }
+.hd-val { font-size:17px; font-weight:800; color:var(--text-primary); font-variant-numeric:tabular-nums; white-space:nowrap; text-align:right; }
+.hd-val small { font-size:11.5px; font-weight:600; color:var(--muted); margin-left:2px; }
+.hd-meta { display:flex; gap:8px; align-items:baseline; justify-content:flex-end; font-size:12px; color:var(--muted); white-space:nowrap; }
+.hd-y { font-variant-numeric:tabular-nums; }
+@media (max-width: 560px) {
+  .hd-row { grid-template-columns:1fr auto; gap:1px 8px; }
+  .hd-name { font-size:13.5px; }
+  .hd-meta { grid-column:1 / -1; justify-content:flex-start; font-size:11.5px; gap:6px; }
+  .hd-meta .hd-sex::before { content:"·"; margin-right:6px; }
+}
 
 /* 긴 단위가 있는 KPI 값 줄바꿈 */
 .kpi .k-value { display:flex; flex-wrap:wrap; align-items:baseline; gap:0 4px; }
