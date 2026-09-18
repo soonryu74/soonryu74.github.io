@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DS, INDICATORS, RBY, label, DEFAULT_RANK_OPT, KDH_SOURCE } from "./data";
+import { DS, INDICATORS, RBY, label, DEFAULT_RANK_OPT, KDH_SOURCE, TIER_INFO } from "./data";
 import { IndicatorPicker, RegionPicker, YearControl, ItemToggle } from "./components/Pickers";
 import Kpis from "./components/Kpis";
 import TrendChart from "./components/TrendChart";
@@ -16,6 +16,7 @@ import NcdView from "./components/NcdView";
 import CorrelationView from "./components/CorrelationView";
 import HotspotView from "./components/HotspotView";
 import ChronicleView from "./components/ChronicleView";
+import KpiView from "./components/KpiView";
 import ExportButtons from "./components/ExportButtons";
 
 const DEFAULT_IND = INDICATORS.find((i) => i.id === "DT_H_SM") || INDICATORS[0];
@@ -34,7 +35,7 @@ function readHash() {
     sgg: RBY.get(sgg0)?.l === "sgg" ? sgg0 : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
-    view: ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle"].includes(h.get("view")) ? h.get("view") : "analysis",
+    view: ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi"].includes(h.get("view")) ? h.get("view") : "analysis",
     ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
@@ -77,6 +78,18 @@ export default function App() {
       ...(ncdInd ? { nind: ncdInd } : {}) });
     window.history.replaceState(null, "", "#" + h.toString());
   }, [ind, item, sido, sgg, year, scope, view, cmp, rankOpt, ncdInd]);
+
+  // 주소창 해시가 바뀌면(링크 붙여넣기·뒤로가기) 화면 상태를 다시 읽는다
+  useEffect(() => {
+    const onHash = () => {
+      const h = readHash();
+      setInd(h.ind); setItem(h.item); setSido(h.sido); setSgg(h.sgg);
+      setYearSel(h.year); setScope(h.scope); setView(h.view); setCmp(h.cmp);
+      setRankOpt(h.rankOpt); setNcdInd(h.ncdInd); setPlaying(false);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
   // 연도 애니메이션
   useEffect(() => {
@@ -135,12 +148,14 @@ export default function App() {
         <header className="top">
           <div>
             <div className="title">지역 건강프로파일 대시보드</div>
-            <div className="subtitle">지역사회건강조사 {INDICATORS.filter((i) => !i.outcome).length}개 지표 · 건강수명 · 결과·환경 DB {INDICATORS.filter((i) => i.kdh).length}개 지표 · 시도/시군구 · {DS.years[0]}–{DS.years[DS.years.length - 1]}</div>
+            <div className="subtitle">지역사회건강조사 {INDICATORS.filter((i) => !i.outcome).length}개 지표 · 건강수명 · 결과·환경 DB {INDICATORS.filter((i) => i.kdh).length}개 지표 · 시도/시군구 · {DS.years[0]}–{DS.years[DS.years.length - 1]}
+              <span className="sub-note">건강수준 모니터링과 목표치 설정 지원 도구입니다. 보건소 사업 실적(투입·산출) 자료를 담고 있지 않아 사업 성과 평가 도구가 아닙니다.</span></div>
           </div>
           <div className="topright">
             <div className="seg views">
               <button className={`seg-btn ${view === "analysis" ? "on" : ""}`} onClick={() => setView("analysis")}>지표 분석</button>
               <button className={`seg-btn ${view === "profile" ? "on" : ""}`} onClick={() => setView("profile")}>지역 프로파일</button>
+              <button className={`seg-btn ${view === "kpi" ? "on" : ""}`} onClick={() => setView("kpi")}>성과지표</button>
               <button className={`seg-btn ${view === "compare" ? "on" : ""}`} onClick={() => setView("compare")}>
                 지역 비교{cmp.length ? <small className="cnt">{cmp.length}</small> : null}
               </button>
@@ -166,9 +181,9 @@ export default function App() {
         )}
 
         {!["units", "ncd", "corr", "hot", "chronicle"].includes(view) && <div className="controls">
-          {view !== "profile" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
+          {view !== "profile" && view !== "kpi" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
-          {view !== "compare" && (
+          {view !== "compare" && view !== "kpi" && (
             <div className="ctrl">
               <label>비교 담기</label>
               <button className={`themebtn ${inCmp ? "on" : ""}`} onClick={addToCompare} disabled={!inCmp && cmp.length >= MAX_CMP}
@@ -177,7 +192,7 @@ export default function App() {
               </button>
             </div>
           )}
-          {view !== "compare" && sel.l === "sgg" && (
+          {view !== "compare" && view !== "kpi" && sel.l === "sgg" && (
             <div className="ctrl">
               <label>비교 범위</label>
               <div className="seg">
@@ -187,7 +202,7 @@ export default function App() {
             </div>
           )}
           <ItemToggle item={item} onChange={setItem} ind={ind} />
-          {view !== "profile" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
+          {view !== "profile" && view !== "kpi" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
         </div>}
 
         <div ref={bodyRef} className="body-anchor" />
@@ -196,6 +211,8 @@ export default function App() {
           <UnitsView setTip={setTip} />
         ) : view === "corr" ? (
           <CorrelationView setTip={setTip} />
+        ) : view === "kpi" ? (
+          <KpiView item={item} sel={sel} onPick={(i, y) => { setInd(i); if (y) setYearSel(y); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "chronicle" ? (
           <ChronicleView setTip={setTip} onPick={(i, y) => { setInd(i); if (y) setYearSel(y); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "hot" ? (
@@ -226,6 +243,13 @@ export default function App() {
                 <h3>{ind.name} 추이</h3>
                 <ExportButtons name={`${ind.name}_추이_${label(sel)}`} />
                 <div className="desc">{years[0]}–{years[years.length - 1]} · {ind.src}</div>
+                {ind.tier && TIER_INFO[ind.tier] && (
+                  <div className="desc tierline">
+                    <span className={`tbadge ${TIER_INFO[ind.tier].color}`}>{ind.tier}</span>
+                    <b>권장 측정 주기 {TIER_INFO[ind.tier].cycle}</b> · 순위 비교 {TIER_INFO[ind.tier].rankable === true ? "가능" : TIER_INFO[ind.tier].rankable === false ? "부적합" : TIER_INFO[ind.tier].rankable} · {TIER_INFO[ind.tier].desc}
+                    {" "}<span className="muted">(WHO/IHP+ 결과사슬 기준 · docs/지역보건사업_평가이론_v1.md)</span>
+                  </div>
+                )}
                 {ind.dirNote && <div className="desc dirnote"><b>{ind.bad === true ? "높을수록 나쁨" : ind.bad === false ? "높을수록 좋음" : "방향 없음(맥락 지표)"}</b> — {ind.dirNote}{ind.dirRefs?.length ? <> · 근거: {ind.dirRefs.map((r, i) => <a key={i} className="src" style={{ whiteSpace: "normal" }} href={r.url} target="_blank" rel="noreferrer">{r.name}</a>).reduce((a, b) => [a, ", ", b])}</> : null}</div>}
                 <TrendChart ind={ind} item={item} year={year} sel={sel} setTip={setTip} />
               </div>
@@ -261,7 +285,7 @@ export default function App() {
           </>
         ) : (
           <Profile item={item} sel={sel} scope={scope} rankOpt={rankOpt} onRankOpt={setRankOpt} onPick={pickFromProfile} setTip={setTip}
-            onRecommend={(name) => { setNcdInd(name); setView("ncd"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+            onRecommend={(name) => { setNcdInd(name); setView("ncd"); window.scrollTo({ top: 0, behavior: "smooth" }); }} onRegion={selectRegion} />
         )}
 
         <footer>

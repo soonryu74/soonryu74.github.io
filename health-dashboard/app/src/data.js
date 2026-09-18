@@ -352,3 +352,33 @@ export function depQuintiles(pool) {
   for (const r of pool) { const d = depOf(r.c); if (d?.q) q[d.q].push(r); }
   return q;
 }
+
+// ── 평가 계층(결과사슬) 주입: scripts/classify_tiers.py → data/eval_tiers.json ──
+// 근거: WHO/IHP+ Common M&E Framework(2011) 4개 지표 도메인 + CIPP Context. docs/지역보건사업_평가이론_v1.md
+import TIERS_RAW from "../../data/eval_tiers.json";
+export const TIER_INFO = {
+  "투입·과정": { short: "투입", cycle: "연 1회 이상", rankable: true, color: "t-in",
+    desc: "예산·인력·시설 등 자원과 수행 과정. 보건소가 통제 가능해 책무성 평가에 쓸 수 있습니다." },
+  "산출": { short: "산출", cycle: "연 1회 이상", rankable: true, color: "t-out",
+    desc: "서비스의 가용성·접근성·질. 주어가 보건소인 지표입니다." },
+  "성과": { short: "성과", cycle: "2년(급변 시 연 1회)", rankable: "위험보정 후", color: "t-come",
+    desc: "주민에게 일어난 변화(보장률·위험행태). 주어가 주민인 지표입니다." },
+  "임팩트": { short: "임팩트", cycle: "5년에 1~2회", rankable: false, color: "t-imp",
+    desc: "사망·유병 등 건강 수준과 형평. 변화가 느리고 귀인이 불가능해 순위 비교에 적합하지 않습니다." },
+  "맥락": { short: "맥락", cycle: "참고", rankable: false, color: "t-ctx",
+    desc: "인구·경제·기후 등 사업이 바꿀 수 없는 지역 여건. 해석의 배경으로만 씁니다." },
+};
+(function applyTiers() {
+  const m = new Map((TIERS_RAW.items || []).map((x) => [x.name, x.tier]));
+  for (const ind of RAW.indicators) {
+    const t = m.get(ind.name);
+    if (t) ind.tier = t;
+    else if (ind.id.startsWith("HLE_")) ind.tier = "임팩트";
+    else if (ind.id === "DEP_IDX") ind.tier = "맥락";
+  }
+})();
+
+// ── 통합건강증진사업 핵심성과지표 16개 (보건복지부 안내서) → data/khepi_kpi.json ──
+import KHEPI_RAW from "../../data/khepi_kpi.json";
+export const KHEPI = KHEPI_RAW;
+export const KHEPI_INDS = (KHEPI_RAW.items || []).map((x) => ({ ...x, ind: x.id ? IND_BY_ID[x.id] : null }));
