@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { feature, mesh, merge } from "topojson-client";
 import { geoMercator, geoPath, geoCentroid, geoArea } from "d3-geo";
-import { DS, RBY, fmt, val, classBreaks, classOf, sidoOf, SGG_ALL } from "../data";
+import { DS, RBY, fmt, val, classBreaks, classOf, sidoOf, SGG_ALL, SIDOS } from "../data";
 import { clientXY } from "./svgUtil";
 
 export const TOPO = DS.geo.topo;
@@ -15,19 +15,40 @@ export const polySido = (f) => TOPO_SIDO[f.properties.code.slice(0, 2)];
 export const SIDO_MESH = mesh(TOPO, OBJ, (a, b) => polySido(a) !== polySido(b));
 const OUTER = mesh(TOPO, OBJ, (a, b) => a === b);
 
+/* 「전국 시도」 단계구분도용 — 시군구 폴리곤을 시도별로 병합해 17개 면을 만든다 */
+export const SIDO_FEATS = (() => {
+  const by = new Map();
+  for (const g of OBJ.geometries) {
+    const sc = TOPO_SIDO[g.properties.code.slice(0, 2)];
+    if (!sc) continue;
+    (by.get(sc) || by.set(sc, []).get(sc)).push(g);
+  }
+  // 라벨은 짧은 이름(서울·경기·강원…)을 쓴다 — 전국 시도 지도에서 수도권·광역시 라벨이 겹치지 않도록
+  return [...by.entries()].map(([code, geoms]) => {
+    const r = RBY.get(code);
+    return {
+      type: "Feature",
+      properties: { code, name: r?.s || r?.n || code, full: r?.n || code, sidoLevel: true },
+      geometry: merge(TOPO, geoms),
+    };
+  });
+})();
+
 const W = 560, H = 560;
 
 /* 단계구분도: 전국/시도 범위, 분위 7단계, 클릭 선택, 연도 애니메이션은 부모의 year 로 */
-export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, setTip }) {
+export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, setTip, showLabels = true }) {
   const sidoCode = sel.l === "sgg" ? sel.p : sel.c;
 
+  // scope: "sidoAll" = 17개 시도 면 · "sido" = 선택 시도 내 시군구 · 그 외 = 전국 시군구
+  const isSidoAll = scope === "sidoAll";
   const feats = useMemo(
-    () => (scope === "sido" ? FC.features.filter((f) => polySido(f) === sidoCode) : FC.features),
-    [scope, sidoCode]
+    () => (isSidoAll ? SIDO_FEATS : scope === "sido" ? FC.features.filter((f) => polySido(f) === sidoCode) : FC.features),
+    [isSidoAll, scope, sidoCode]
   );
   // 시도 범위: 본토에서 멀리 떨어진 섬(울릉군 등)은 축척을 망가뜨리므로 본토만으로 화면을 맞추고, 섬은 오른쪽 위 작은 상자(별도 축척)에 그린다
   const { mainFeats, islandFeats } = useMemo(() => {
-    if (scope !== "sido" || feats.length < 3) return { mainFeats: feats, islandFeats: [] };
+    if (isSidoAll || scope !== "sido" || feats.length < 3) return { mainFeats: feats, islandFeats: [] };
     const cs = feats.map((f) => geoCentroid(f));
     const med = (a) => { const b = [...a].sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
     const mx = med(cs.map((c) => c[0])), my = med(cs.map((c) => c[1]));
@@ -59,13 +80,32 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
   }, [islandFeats, INSET]);
   const dPaths = useMemo(() => feats.map((f) => (islandFeats.includes(f) ? insetPath(f) : path(f))), [feats, path, islandFeats, insetPath]);
   // 시도 범위에서는 시군구 이름(넓으면 값까지)을 지도 위에 표시, 전국 범위에서는 선택 시군구만
-  const labels = useMemo(() => feats.map((f, i) => {
-    const isl = islandFeats.includes(f);
-    const pth = isl ? insetPath : path;
-    const [cx, cy] = pth.centroid(f); const [[x0, y0], [x1, y1]] = pth.bounds(f);
-    return { cx, cy, w: x1 - x0, h: y1 - y0, name: f.properties.name, isl };
-  }), [feats, path, islandFeats, insetPath]);
-  const dMesh = useMemo(() => (scope === "sido" ? null : path(SIDO_MESH)), [scope, path]);
+  const labels = useMemo(() => {
+    const base = feats.map((f, i) => {
+      const isl = islandFeats.includes(f);
+      const pth = isl ? insetPath : path;
+      const [cx, cy] = pth.centroid(f); const [[x0, y0], [x1, y1]] = pth.bounds(f);
+      return { i, cx, cy, w: x1 - x0, h: y1 - y0, name: f.properties.name, isl, dx: 0, dy: 0 };
+    });
+    // 겹침 회피: 면적이 큰 폴리곤부터 자리를 잡고, 이미 놓인 글상자와 겹치면 조금씩 밀어 본다.
+    // (서울·경기, 충남·세종처럼 중심점이 붙어 있는 시도에서 글자가 포개지는 것을 막는다)
+    const order = [...base].filter((l) => isFinite(l.cx) && !l.isl).sort((a, b) => b.w * b.h - a.w * a.h);
+    const placed = [];
+    const OFFSETS = [[0, 0], [0, -11], [0, 11], [-20, 0], [20, 0], [0, -21], [0, 21], [-26, -11], [26, 11]];
+    const hit = (a, b) => Math.abs(a.x - b.x) * 2 < a.w + b.w && Math.abs(a.y - b.y) * 2 < a.h + b.h;
+    for (const l of order) {
+      const tw = Math.max(20, l.name.length * 7 + 6), th = 15;
+      let best = OFFSETS[0];
+      for (const [dx, dy] of OFFSETS) {
+        const box = { x: l.cx + dx, y: l.cy + dy, w: tw, h: th };
+        if (!placed.some((q) => hit(box, q))) { best = [dx, dy]; break; }
+      }
+      l.dx = best[0]; l.dy = best[1];
+      placed.push({ x: l.cx + l.dx, y: l.cy + l.dy, w: tw, h: th });
+    }
+    return base;
+  }, [feats, path, islandFeats, insetPath]);
+  const dMesh = useMemo(() => (scope === "sido" || isSidoAll ? null : path(SIDO_MESH)), [scope, isSidoAll, path]);
   const dOuter = useMemo(() => {
     if (scope !== "sido") return null;
     const geoms = OBJ.geometries.filter((g) => TOPO_SIDO[g.properties.code.slice(0, 2)] === sidoCode);
@@ -73,13 +113,14 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
   }, [scope, path, sidoCode]);
   // 전국 지도에서 선택 시도는 폴리곤 개별 강조 대신 시도 외곽선 하나로 강조
   const dSidoHi = useMemo(() => {
-    if (scope === "sido" || sel.l !== "sido") return null;
+    if (scope === "sido" || isSidoAll || sel.l !== "sido") return null;
     const geoms = OBJ.geometries.filter((g) => TOPO_SIDO[g.properties.code.slice(0, 2)] === sel.c);
     return geoms.length ? path(merge(TOPO, geoms)) : null;
-  }, [scope, sel, path]);
+  }, [scope, isSidoAll, sel, path]);
 
   // 폴리곤 → 해당 연도 값 (후보 코드 중 값이 있는 첫 코드)
   const resolve = (f) => {
+    if (f.properties.sidoLevel) return { code: f.properties.code, v: val(ind, item, year, f.properties.code) };
     for (const c of GEOMAP[f.properties.code] || []) {
       const v = val(ind, item, year, c);
       if (v != null) return { code: c, v };
@@ -89,11 +130,11 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
   const resolved = feats.map(resolve);
   // 분위 경계는 화면 범위(전국/시도)의 시군구 값 기준
   const breaks = useMemo(() => {
-    const pool = scope === "sido" ? SGG_ALL.filter((r) => r.p === sidoCode) : SGG_ALL;
+    const pool = isSidoAll ? SIDOS : scope === "sido" ? SGG_ALL.filter((r) => r.p === sidoCode) : SGG_ALL;
     return classBreaks(pool.map((r) => val(ind, item, year, r.c)));
-  }, [ind, item, year, scope, sidoCode]);
+  }, [ind, item, year, isSidoAll, scope, sidoCode]);
 
-  const selCodes = new Set([sel.c]);
+  const selCodes = new Set([sel.c, ...(isSidoAll ? [sidoCode] : [])]);
   // 선택 시군구에 속한 세부단위 폴리곤도 강조
   if (sel.l === "sgg") Object.values(GEOMAP).flat().forEach((c) => { if (c.length === 7 && c.startsWith(sel.c)) selCodes.add(c); });
 
@@ -101,7 +142,8 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
     const { x, y } = clientXY(ev);
     const reg = RBY.get(r.code);
     const parent = reg && reg.l === "sub" ? RBY.get(reg.p) : null;
-    setTip({ x, y, title: parent ? `${parent.s} ${parent.n} · ${reg.n}` : reg ? `${reg.s} ${reg.n}` : f.properties.name,
+    setTip({ x, y, title: f.properties.sidoLevel ? f.properties.full
+        : parent ? `${parent.s} ${parent.n} · ${reg.n}` : reg ? `${reg.s} ${reg.n}` : f.properties.name,
       rows: [[`${ind.name} (${year})`, fmt(r.v) + ind.unit]] });
   };
   const onClick = (r) => () => {
@@ -115,7 +157,7 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
   const palNote = ind.bad === true ? "진한 붉은색일수록 값이 높음(나쁨)" : ind.bad === false ? "진한 파란색일수록 값이 높음(좋음)" : "진할수록 값이 높음(좋고 나쁨 없음)";
   return (
     <div className="mapwrap">
-      <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="시군구 단계구분도">
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label={isSidoAll ? "시도 단계구분도" : "시군구 단계구분도"}>
         {feats.map((f, i) => {
           if (islandFeats.includes(f)) return null;
           const r = resolved[i];
@@ -143,14 +185,14 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
         {feats.map((f, i) => {
           const lb = labels[i], r = resolved[i], isSel = selCodes.has(r.code);
           if (lb.isl) return null;   // 섬은 인셋 제목으로 표시
-          const show = scope === "sido" ? true : isSel;
+          const show = showLabels === false ? isSel : (scope === "sido" || isSidoAll ? true : isSel);
           if (!show || !isFinite(lb.cx)) return null;
-          const big = scope === "sido" && lb.w > 44 && lb.h > 34 && !lb.isl;
-          const nm = scope === "sido" && lb.w < 30 && lb.name.length > 3 ? lb.name.slice(0, 3) : lb.name;
+          const big = (scope === "sido" || isSidoAll) && lb.w > (isSidoAll ? 58 : 44) && lb.h > (isSidoAll ? 48 : 34) && !lb.isl;
+          const nm = (scope === "sido" || isSidoAll) && lb.w < 30 && lb.name.length > 3 ? lb.name.slice(0, 3) : lb.name;
           return (
             <g key={"l" + f.properties.code} pointerEvents="none">
-              <text x={lb.cx} y={big ? lb.cy - 2 : lb.cy + 3} className={`maplab ${isSel ? "sel" : ""} ${lb.isl ? "small" : ""}`} textAnchor="middle">{nm}</text>
-              {big && r.v != null && <text x={lb.cx} y={lb.cy + 11} className="maplab val" textAnchor="middle">{fmt(r.v)}</text>}
+              <text x={lb.cx + lb.dx} y={(big ? lb.cy - 2 : lb.cy + 3) + lb.dy} className={`maplab ${isSel ? "sel" : ""} ${lb.isl ? "small" : ""}`} textAnchor="middle">{nm}</text>
+              {big && r.v != null && <text x={lb.cx + lb.dx} y={lb.cy + 11 + lb.dy} className="maplab val" textAnchor="middle">{fmt(r.v)}</text>}
             </g>
           );
         })}
