@@ -253,7 +253,9 @@ export default function App() {
                     </select>
                   )}
                   <button className={`seg-btn ${mapLabels ? "on" : ""}`} style={{ marginLeft: "auto" }}
-                    onClick={() => setMapLabels(!mapLabels)} title="지도 위 지역명 표시">🏷 지역명</button>
+                    onClick={() => setMapLabels(!mapLabels)}
+                    title={mapLabels ? "지도 위 지역명을 숨깁니다" : "지도 위에 지역명을 표시합니다"}>
+                    🏷 지역명{mapLabels ? "" : " 꺼짐"}</button>
                 </div>
                 <ChoroplethMap ind={ind} item={item} year={year} sel={sel} scope={mapScope}
                   showLabels={mapLabels} onSelect={selectRegion} setTip={setTip} />

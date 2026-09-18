@@ -184,6 +184,11 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
         })}
         {feats.map((f, i) => {
           const lb = labels[i], r = resolved[i], isSel = selCodes.has(r.code);
+          // 라벨 색은 테마가 아니라 그 구역 칠 색의 밝기를 따른다.
+          // 7단계 순차 팔레트에서 1~4단계는 밝아 검은 글자, 5~7단계는 어두워 흰 글자가 읽힌다.
+          // (다크 모드에서 밝은 구역 위의 흰 글자가 사라지던 문제)
+          const clsN = classOf(r.v, breaks);
+          const onTone = r.v == null ? "" : clsN >= 5 ? " on-dark" : " on-light";
           if (lb.isl) return null;   // 섬은 인셋 제목으로 표시
           const show = showLabels === false ? isSel : (scope === "sido" || isSidoAll ? true : isSel);
           if (!show || !isFinite(lb.cx)) return null;
@@ -191,8 +196,8 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
           const nm = (scope === "sido" || isSidoAll) && lb.w < 30 && lb.name.length > 3 ? lb.name.slice(0, 3) : lb.name;
           return (
             <g key={"l" + f.properties.code} pointerEvents="none">
-              <text x={lb.cx + lb.dx} y={(big ? lb.cy - 2 : lb.cy + 3) + lb.dy} className={`maplab ${isSel ? "sel" : ""} ${lb.isl ? "small" : ""}`} textAnchor="middle">{nm}</text>
-              {big && r.v != null && <text x={lb.cx + lb.dx} y={lb.cy + 11 + lb.dy} className="maplab val" textAnchor="middle">{fmt(r.v)}</text>}
+              <text x={lb.cx + lb.dx} y={(big ? lb.cy - 2 : lb.cy + 3) + lb.dy} className={`maplab${onTone} ${isSel ? "sel" : ""} ${lb.isl ? "small" : ""}`} textAnchor="middle">{nm}</text>
+              {big && r.v != null && <text x={lb.cx + lb.dx} y={lb.cy + 11 + lb.dy} className={`maplab val${onTone}`} textAnchor="middle">{fmt(r.v)}</text>}
             </g>
           );
         })}

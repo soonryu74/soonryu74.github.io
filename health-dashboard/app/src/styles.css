@@ -403,6 +403,11 @@ tr.muted td { color: var(--muted); }
 
 /* 지도 라벨·섬 인셋 */
 .maplab { font-size:9.5px; font-weight:600; fill:var(--text-primary); paint-order:stroke; stroke:var(--surface-1); stroke-width:2.6px; stroke-linejoin:round; }
+/* 지도 라벨은 테마가 아니라 그 구역 칠 색의 밝기를 따른다 — 다크 모드에서 밝은 구역 위 흰 글자가 사라지던 문제 */
+.maplab.on-light { fill:#15100e; stroke:rgba(255,255,255,.9); }
+.maplab.on-dark  { fill:#fff;    stroke:rgba(0,0,0,.62); }
+.maplab.val.on-light { fill:#3b2f2b; }
+.maplab.val.on-dark  { fill:rgba(255,255,255,.92); }
 .maplab.val { font-size:9px; font-weight:500; fill:var(--text-secondary); }
 .maplab.sel { font-size:11px; font-weight:800; }
 .maplab.small { font-size:8.5px; font-weight:500; fill:var(--text-secondary); }
@@ -607,3 +612,9 @@ tr.muted td { color: var(--muted); }
 .map-seg { margin:6px 0 10px; flex-wrap:wrap; align-items:center; }
 .map-seg .map-sido { margin-left:6px; padding:5px 8px; border-radius:8px; font-size:13.5px;
   border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); }
+
+/* Health Group(묶음) 표기 — 묶음이 바뀌는 곳에 구분선, 번호는 알약 배지 */
+.rrow.gtop { border-top:1px solid var(--border); margin-top:2px; padding-top:2px; }
+.rrow .gnum { display:inline-block; min-width:20px; padding:1px 5px; border-radius:6px; font-size:12px; font-weight:700;
+  background:var(--surface-2); color:var(--text-secondary); text-align:center; }
+.rrow.sel .gnum { background:var(--series-1); color:#fff; }

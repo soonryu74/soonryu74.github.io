@@ -31,7 +31,14 @@ export default function PeerCard({ item, sel, onPick }) {
       return { ...a, y, m, mu, sd };
     }).filter(Boolean);
     const depQ = (c) => depOf(c)?.q ?? null;
-    const zOf = (c) => axv.map((a) => (a.m.has(c) ? (a.m.get(c) - a.mu) / a.sd : null));
+    // Z-점수는 ±3에서 자른다 — 인구가 아주 적거나 많은 극단 지역 한 곳이 거리 계산을 지배하지 않도록.
+    // 근거: County Health Rankings & Roadmaps 2025 Technical Documentation
+    //   "For counties with a population of 20,000 or less, any Z-score less than
+    //    -3.0 or greater than 3.0 is truncated to -3.0 or 3.0, respectively."
+    // (docs/미국_CountyHealthRankings_검토_v1.md 4.1)
+    const Z_CAP = 3;
+    const clamp = (z) => (z == null ? null : Math.max(-Z_CAP, Math.min(Z_CAP, z)));
+    const zOf = (c) => axv.map((a) => clamp(a.m.has(c) ? (a.m.get(c) - a.mu) / a.sd : null));
     const me = zOf(sel.c), myDep = depQ(sel.c), myLg = leagueOf(sel);
     if (me.every((x) => x == null)) return null;
     const scored = SGG_ALL.filter((r) => r.c !== sel.c && leagueOf(r) === myLg).map((r) => {
