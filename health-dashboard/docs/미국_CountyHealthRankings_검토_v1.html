@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"미국 County Health Rankings &amp; Roadmaps(CHR&amp;R) 검토","url":"/health-dashboard/docs/%EB%AF%B8%EA%B5%AD_CountyHealthRankings_%EA%B2%80%ED%86%A0_v1.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=75d866de9081339d2a4763dffd764e2f6e593a80">
+    <link rel="stylesheet" href="/assets/css/style.css?v=39d968ff28849ebb14fcc432e548ada0e444c966">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -733,6 +733,68 @@ CHR&amp;R의 선택은 이 문제에 대한 가장 권위 있는 선례다.</p>
 </table>
 
 <p>우선순위: <strong>1 → 3 → 2 → 4 → 5 → 7 → 6</strong></p>
+
+<h3 id="101-반영-현황-2026-09-18">10.1 반영 현황 (2026-09-18)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>권고</th>
+      <th>상태</th>
+      <th>비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>신뢰구간 병기</td>
+      <td>✅ <strong>완료</strong></td>
+      <td>표본오차가 KOSIS 원표(CR_SE·SR_SE)에 이미 있었다. 순위 막대에 95% 오차막대 + ±표기, 선택 지역과 겹치면 흐리게</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Health Group 방식 병기</td>
+      <td>✅ <strong>완료</strong></td>
+      <td>순위 패널 「⑩ 묶음」 토글. 값 분포를 <strong>1차원 최적 분할(Fisher–Jenks)</strong> 로 10개 묶음(크기 제각각)에 배정</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>불안정 자료 등급 미부여</td>
+      <td>✅ <strong>완료</strong></td>
+      <td>상대표준오차 &gt; 20%면 순위에서 제외(토글). 시군구 셀의 4.1%, 우울증상 유병률은 62%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>강점 최소 3개 보장</td>
+      <td>✅ <strong>이미 충족</strong></td>
+      <td>프로파일 「강점 TOP 5」가 백분위 상위 5개를 항상 표시한다. 약한 쪽은 「개선 과제」·「권고 예방·관리 사업」으로 행동 지향 명명</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>소규모 지역 Z-점수 절단</td>
+      <td>✅ <strong>완료</strong></td>
+      <td>동류군 거리 계산의 Z를 ±3에서 절단. 재정자립도에서 2곳(최대 z=4.15)이 영향을 받는다</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>맥락 서술 블록</td>
+      <td>⬜ 미착수</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>WWFH 형평성 4등급</td>
+      <td>⬜ 미착수</td>
+      <td>CPSTF 「근거 중재」 레이어와 함께 붙여야 한다</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>2번의 정직한 한계</strong>: CHR&amp;R 는 여러 측정값을 합친 <strong>요약 Z-점수</strong>를 Wasserstein 거리 군집으로 나눈다.
+우리는 지표를 하나씩 다루므로 그 지표의 <strong>값 분포</strong>를 Fisher–Jenks(군집 내 제곱합 최소화)로 나눈다.
+계산식이 다르므로 “CHR&amp;R 방식을 그대로 구현했다”고 말할 수 없다. 같은 것은 목적 — <strong>서열 대신 의미 있는 간격으로 끊고,
+같은 묶음 안의 순서 차이는 의미 없다고 화면에 못 박는 것</strong> — 이다.</p>
 
 <p>1번과 3번이 가장 급하다. <strong>신뢰구간 없이 231위까지 줄 세우는 현재 화면이 가장 공격받기 쉬운 지점</strong>이며, CHR&amp;R가 같은 비판을 받고 결국 설계를 바꾼 바로 그 지점이기 때문이다.</p>
 

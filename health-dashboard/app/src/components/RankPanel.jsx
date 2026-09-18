@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { fmt, ranked, poolFor, label, SUBS_BY_SGG, val, SIDOS, SGG_ALL, SGG_BY_SIDO, RBY, HC_POOL,
-         ci, hasSe, unstableRows, RSE_UNSTABLE } from "../data";
+         ci, hasSe, unstableRows, RSE_UNSTABLE, healthGroups, GROUP_N } from "../data";
 import RankAll from "./RankAll";
 
 /* 순위: 비교 집단(전국 시군구 / 시도 내 시군구 / 17개 시도) 막대. 선택 지역 자동 스크롤 */
@@ -23,6 +23,9 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
   const rowsAsc = ranked(ind, item, year, pool, { dropUnstable: se && drop });
   const rows = rev ? [...rowsAsc].reverse() : rowsAsc;
   const dropped = se && drop ? unstableRows(ind, item, year, pool) : [];
+  // 서열 대신 「비슷한 지역 묶음」으로 보기 (CHR&R 2024년 전환 방식)
+  const [grp, setGrp] = useState(false);
+  const groups = useMemo(() => (grp ? healthGroups(ind, item, year, pool) : null), [grp, ind, item, year, pool]);
   // 신뢰구간 겹침 비교는 선택 지역이 이 순위 목록에 들어 있을 때만 의미가 있다
   const selInPool = rowsAsc.some((x) => x.r.c === sel.c);
   const selCi = se && selInPool ? ci(ind, item, year, sel.c) : null;
@@ -43,6 +46,7 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
   const subs = sel.l === "sgg" ? SUBS_BY_SGG[sel.c] : null;
 
   const mine = (r) => r.c === sel.c || (sel.l === "sido" && m !== "insido" && (r.p === sel.c || r.s === sel.s)) || (m === "hc" && sel.l === "sgg" && r.l === "sub" && r.p === sel.c);
+  const gOf = (c) => (groups ? groups.g(c) : null);
   const rowLabel = (r) => m === "hc" ? (r.hc || label(r)) : m === "nation" && r.l === "sgg" ? `${r.s} ${r.n}` : r.n;
   return (
     <>
@@ -51,6 +55,8 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
         <span className="muted" style={{ alignSelf: "center", fontSize: "13px", marginLeft: 6 }}>{rows.length}개</span>
         <button className="seg-btn" style={{ marginLeft: "auto" }} onClick={() => setAllOpen(true)} title="순위 전체를 한 화면에 펼치고 연도별 변동을 애니메이션으로 보기">⛶ 전체 보기</button>
         <button className={`seg-btn ${rev ? "on" : ""}`} onClick={() => setRev(!rev)} title="양호한 순 ↔ 나쁜 순">{rev ? "나쁜 순 ▲" : "양호한 순 ▼"}</button>
+        <button className={`seg-btn ${grp ? "on" : ""}`} onClick={() => setGrp(!grp)}
+          title={`1~N 서열 대신 값이 비슷한 지역을 ${GROUP_N}개 묶음으로 나눠 보여줍니다 (County Health Rankings 2024년 방식)`}>⑩ 묶음</button>
       </div>
       {se && (
         <div className="seg ci-bar" style={{ marginBottom: 8, flexWrap: "wrap" }}>
@@ -67,8 +73,9 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
         {rows.map((x, k) => { const { r, v } = x;
           const blur = showCi && selCi && x.ci && r.c !== sel.c && x.ci.lo <= selCi.hi && selCi.lo <= x.ci.hi;
           return (
-          <div key={r.c} className={`rrow ${r.c === sel.c ? "sel" : ""} ${mine(r) ? "mine" : ""} ${blur ? "blur" : ""}`} onClick={() => onSelect(r.l === "sub" ? r.p : r.c)} title={r.l === "sub" ? `${label(r)} → 소속 시군구 선택` : undefined}>
-            <div className="rn">{rankNo(k)}</div>
+          <div key={r.c} className={`rrow ${r.c === sel.c ? "sel" : ""} ${mine(r) ? "mine" : ""} ${blur ? "blur" : ""}${
+              groups && gOf(r.c) !== gOf(rows[k - 1]?.r.c) && k > 0 ? " gtop" : ""}`} onClick={() => onSelect(r.l === "sub" ? r.p : r.c)} title={r.l === "sub" ? `${label(r)} → 소속 시군구 선택` : undefined}>
+            <div className="rn">{groups ? <span className="gnum" title={`${GROUP_N}개 묶음 중 ${gOf(r.c)}묶음`}>{gOf(r.c)}</span> : rankNo(k)}</div>
             <div className="rl" title={label(r)}>{rowLabel(r)}</div>
             <div className="bar-track">
               <div className="bar" style={{ width: `${((v / max) * 100).toFixed(1)}%` }} />
@@ -85,6 +92,15 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
         ); })}
         {!rows.length && <div className="empty">해당 연도 자료 없음</div>}
       </div>
+      {groups && groups.k > 0 && (
+        <div className="desc ci-legend">
+          값이 비슷한 지역끼리 <b>{groups.k}개 묶음</b>으로 나눴습니다(1묶음 = 가장 양호). 묶음 크기는 제각각이고,
+          <b> 같은 묶음 안의 순서 차이는 의미가 없습니다</b>.
+          {gOf(sel.c) && <> {label(sel)}는 <b>{gOf(sel.c)}묶음</b>
+            {groups.range(gOf(sel.c)) && <> ({fmt(groups.range(gOf(sel.c))[0])}~{fmt(groups.range(gOf(sel.c))[1])}{ind.unit}, {groups.sizes[gOf(sel.c) - 1]}곳)</>}.</>}
+          <span className="muted"> 1차원 최적 분할(Fisher–Jenks)로 데이터 안의 간격에서 끊습니다.</span>
+        </div>
+      )}
       {se && showCi && (selCi || dropped.length > 0) && (
         <div className="desc ci-legend">
           {selCi && <>{label(sel)} {fmt(selCi.v)} <b>(95% 신뢰구간 {fmt(selCi.lo)}~{fmt(selCi.hi)})</b></>}
