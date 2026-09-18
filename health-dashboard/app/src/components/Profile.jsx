@@ -4,6 +4,7 @@ import ExportButtons from "./ExportButtons";
 import HleCard from "./HleCard";
 import RiskCard from "./RiskCard";
 import GoldenDiamond from "./GoldenDiamond";
+import PeerCard from "./PeerCard";
 
 const tone = (p) => (p == null ? "" : p >= 75 ? "t-high" : p >= 50 ? "t-mid" : p >= 25 ? "t-low" : "t-min");
 
@@ -16,7 +17,8 @@ function RankSettings({ opt, onChange, isSgg }) {
   return (
     <div className="card rankset">
       <h3>순위 산출 방식 <small className="muted">방법론 v1 · 기본 균등 가중</small></h3>
-      <div className="desc">기본: 영역 균등 가중 · 3년 이동평균 · 도시/군 리그 · 결과지표 4개 제외. "모의 패널" 가중치는 AI가 시뮬레이션한 값으로 실제 전문가 조사 결과가 아니며 민감도 검증용입니다. 바꿔 보면 순위가 얼마나 흔들리는지 확인할 수 있습니다.</div>
+      <div className="desc">기본: 영역 균등 가중 · 3년 이동평균 · 도시/군 리그 · 결과지표 4개 제외.
+        <b>결과·임팩트 지표를 순위에서 빼는 것은 이론적 근거가 있습니다.</b> 사망률·유병률 같은 지표는 변화가 느리고 보건소 활동에 귀인할 수 없어, 국제 지침(WHO/IHP+ 2011)도 5년에 1~2회 모니터링용으로만 권고합니다(docs/지역보건사업_평가이론_v1.md). "모의 패널" 가중치는 AI가 시뮬레이션한 값으로 실제 전문가 조사 결과가 아니며 민감도 검증용입니다. 바꿔 보면 순위가 얼마나 흔들리는지 확인할 수 있습니다.</div>
       <div className="setrow">
         <div className="setitem">
           <label>가중치</label>
@@ -68,7 +70,7 @@ function RankSettings({ opt, onChange, isSgg }) {
 }
 
 /* 지역 프로파일: 방법론 v1 기반 영역·종합 순위, 등급 배지, 강점·개선·과제 */
-export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, setTip }) {
+export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, onRegion, setTip }) {
   const pool = poolFor(sel, scope);
   const isSgg = sel.l === "sgg";
   const rk = useMemo(() => computeRanking(item, pool, rankOpt), [item, pool, rankOpt]);
@@ -122,6 +124,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         <HleCard sel={sel} pool={pool} poolName={poolName} setTip={setTip} />
         <RiskCard sel={sel} pool={pool} poolName={poolName} />
         <GoldenDiamond item={item} sel={sel} />
+        <PeerCard item={item} sel={sel} onPick={onRegion} />
         <div className="card span2">
           <h3>영역별 순위와 수치</h3>
           <ExportButtons name={`${label(sel)}_영역별순위`} kinds={["list"]} />
