@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>미국 County Health Rankings &amp; Roadmaps(CHR&amp;R) 검토 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="미국 County Health Rankings &amp; Roadmaps(CHR&amp;R) 검토" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="미국 County Health Rankings &amp; Roadmaps(CHR&amp;R) 검토" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"미국 County Health Rankings &amp; Roadmaps(CHR&amp;R) 검토","url":"/health-dashboard/docs/%EB%AF%B8%EA%B5%AD_CountyHealthRankings_%EA%B2%80%ED%86%A0_v1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=75d866de9081339d2a4763dffd764e2f6e593a80">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="미국-county-health-rankings--roadmapschrr-검토">미국 County Health Rankings &amp; Roadmaps(CHR&amp;R) 검토</h1>
+
+<blockquote>
+  <p>원자료: CHR&amp;R 웹사이트, <strong>2025 Technical Documentation</strong>(24p PDF), What Works for Health 방법론, CHR&amp;R 블로그
+검토일: 2026-09-18 · 운영: University of Wisconsin Population Health Institute(UWPHI), 후원: Robert Wood Johnson Foundation(RWJF)</p>
+</blockquote>
+
+<hr />
+
+<h2 id="0-요약--세-줄">0. 요약 — 세 줄</h2>
+
+<ol>
+  <li><strong>CHR&amp;R는 2024년부터 1~N 순위를 폐기하고 10개 「Health Group」으로 바꿨다.</strong> 기술문서 원문: <em>“Counties are assigned a value (e.g., group 1-10) based on their Z-score <strong>rather than an ordinal rank</strong>.”</em></li>
+  <li>우리가 갖지 못한 통계적 절제 장치를 갖추고 있다 — <strong>95% 신뢰구간 공표</strong>, 소규모 지역 Z-점수 ±3 절단, 다년 합산, 자료 불안정 시 <strong>아예 등급을 부여하지 않음</strong>.</li>
+  <li><strong>2026년 연례 릴리스는 없다.</strong> RWJF 자금이 연말 종료되어 Health Groups·추세·강점/개선영역 기능을 모두 중단했고, 웹사이트는 2026년 12월까지만 유지한다.</li>
+</ol>
+
+<p>미국에서 가장 권위 있는 카운티 단위 건강 순위 사업이 <strong>스스로 순위를 버렸다</strong>는 사실은, 「지역보건사업 평가이론」에서 우리가 도달한 결론(위계별 순위 적합성 분리)과 정확히 같은 방향이다.</p>
+
+<hr />
+
+<h2 id="1-무엇인가--우리와-같은-자리에-있는-사업">1. 무엇인가 — 우리와 같은 자리에 있는 사업</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>CHR&amp;R</th>
+      <th>우리 대시보드</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>단위</td>
+      <td>미국 카운티 약 3,000개</td>
+      <td>시군구 231개 · 보건소 258개</td>
+    </tr>
+    <tr>
+      <td>시작</td>
+      <td>2010년(전신 MATCH 2008)</td>
+      <td>2025년</td>
+    </tr>
+    <tr>
+      <td>운영</td>
+      <td>대학 연구소(UWPHI) + 민간재단(RWJF)</td>
+      <td>개인 프로젝트</td>
+    </tr>
+    <tr>
+      <td>측정값</td>
+      <td>80여 개(요약점수에는 29개만 사용)</td>
+      <td>156개</td>
+    </tr>
+    <tr>
+      <td>요약</td>
+      <td>Population Health and Well-being · Community Conditions 2개</td>
+      <td>영역별 지표 + 계층 배지</td>
+    </tr>
+    <tr>
+      <td>중재 근거</td>
+      <td><strong>What Works for Health</strong> 내장</td>
+      <td>(CPSTF 검토만 하고 미반영)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>같은 문제를 16년 먼저 겪은 사업이다. 그들이 무엇을 바꿨는지가 우리에게는 미래 예고편이다.</p>
+
+<hr />
+
+<h2 id="2-핵심--20242025년-대전환">2. 핵심 — 2024~2025년 대전환</h2>
+
+<h3 id="21-무엇이-바뀌었나">2.1 무엇이 바뀌었나</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th><strong>구 모델(2010~2023)</strong></th>
+      <th><strong>신 모델(2024~2025)</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>상위 구조</td>
+      <td>Health Outcomes / Health Factors</td>
+      <td>Population Health and Well-being / <strong>Community Conditions</strong></td>
+    </tr>
+    <tr>
+      <td>결과 표기</td>
+      <td><strong>주 내 1~N위 순위</strong></td>
+      <td><strong>전국 10개 Health Group</strong></td>
+    </tr>
+    <tr>
+      <td>하위 가중치</td>
+      <td>건강행태 30% · 임상진료 20% · 사회경제 40% · 물리환경 10%</td>
+      <td><strong>보건인프라 25% · 물리환경 25% · 사회경제 50%</strong></td>
+    </tr>
+    <tr>
+      <td>건강행태</td>
+      <td>독립 영역(30%)</td>
+      <td>해체되어 ‘보건인프라 &gt; 건강증진·해악감소’로 흡수</td>
+    </tr>
+    <tr>
+      <td>물리환경</td>
+      <td>10%</td>
+      <td><strong>25%</strong> (2.5배)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>두 가지를 동시에 한 것이다 — <strong>① 서열을 없애고 ② 사회구조 요인의 비중을 높였다.</strong></p>
+
+<h3 id="22-순위를-버린-방식">2.2 순위를 버린 방식</h3>
+
+<p>단순히 순위를 감춘 것이 아니라 <strong>다른 통계로 대체</strong>했다.</p>
+
+<ul>
+  <li>요약 Z-점수를 계산한 뒤, <strong>Wasserstein 거리(earth mover’s distance)</strong> 기반 군집분석으로 전국 카운티를 10개 그룹에 배정한다.</li>
+  <li>10개 그룹은 <strong>크기가 같지 않다</strong>(unequally-sized). 십분위가 아니라 <strong>데이터 안의 실제 간격(meaningful gaps)</strong> 을 기준으로 나눈다.</li>
+  <li>방법론 근거: Pollock EA, Gangnon RE, Gennuso KP, Givens ML. <em>Cluster analysis methods to support population health improvement among U.S. counties.</em> J Public Health Manag Pract. 2024.</li>
+</ul>
+
+<p>그리고 기술문서와 웹사이트 양쪽에 같은 경고를 박아 놓았다.</p>
+
+<blockquote>
+  <p><em>“Health Groups do not always indicate statistically significant differences between counties; instead, they help facilitate data-informed comparisons and highlight meaningful similarities.”</em></p>
+</blockquote>
+
+<p><strong>순위 1위와 2위의 차이가 통계적으로 의미 없을 수 있다</strong>는 사실을, 순위를 없애는 방식으로 해결한 것이다.</p>
+
+<h3 id="23-왜-중요한가">2.3 왜 중요한가</h3>
+
+<p>우리 대시보드는 지금 <strong>231개 시군구를 1위부터 231위까지 줄 세운다.</strong> 「전체 보기」 막대 순위는 그 서열을 애니메이션으로 보여 주기까지 한다.
+「지역보건사업 평가이론」에서 계층별 <code class="language-plaintext highlighter-rouge">rankable</code> 속성(임팩트·맥락은 false, 성과는 “위험보정 후”)을 붙여 일부 방어했지만, <strong>화면은 여전히 순위를 준다.</strong>
+CHR&amp;R의 선택은 이 문제에 대한 가장 권위 있는 선례다.</p>
+
+<hr />
+
+<h2 id="3-현행-모델과-가중치-2025-기술문서-table-1-전문">3. 현행 모델과 가중치 (2025 기술문서 Table 1 전문)</h2>
+
+<h3 id="population-health-and-well-being--5개-측정값">Population Health and Well-being — 5개 측정값</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>영역</th>
+      <th>측정값</th>
+      <th style="text-align: right">가중치</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>수명(Length of life)</td>
+      <td>Premature Death(조기사망, YPLL)</td>
+      <td style="text-align: right"><strong>50%</strong></td>
+    </tr>
+    <tr>
+      <td>삶의 질(Quality of life)</td>
+      <td>Low Birthweight(저체중출생)</td>
+      <td style="text-align: right">20%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>Poor Physical Health Days</td>
+      <td style="text-align: right">10%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>Poor Mental Health Days</td>
+      <td style="text-align: right">10%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>Poor or Fair Health(주관적 건강)</td>
+      <td style="text-align: right">10%</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="community-conditions--24개-측정값">Community Conditions — 24개 측정값</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>영역(가중)</th>
+      <th>측정값</th>
+      <th style="text-align: right">가중치</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>보건인프라 25%</strong></td>
+      <td>운동시설 접근성 / 인플루엔자 접종률 / 식품환경지수</td>
+      <td style="text-align: right">각 4%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>예방가능 입원 / 무보험률</td>
+      <td style="text-align: right">각 4%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>일차의료의사</td>
+      <td style="text-align: right">2%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>유방촬영검진 / 정신건강 제공자 / 치과의사</td>
+      <td style="text-align: right">각 1%</td>
+    </tr>
+    <tr>
+      <td><strong>물리환경 25%</strong></td>
+      <td>대기오염(PM2.5)</td>
+      <td style="text-align: right"><strong>8%</strong></td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>식수 위반 / 초고속인터넷 접근 / 심각한 주거문제</td>
+      <td style="text-align: right">각 4%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>도서관 접근 / 나홀로 자동차 통근</td>
+      <td style="text-align: right">각 2%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>장시간 나홀로 통근</td>
+      <td style="text-align: right">1%</td>
+    </tr>
+    <tr>
+      <td><strong>사회경제 50%</strong></td>
+      <td>고교 졸업 / 대학 경험 / 실업률 / 아동빈곤 / 소득불평등</td>
+      <td style="text-align: right"><strong>각 8%</strong></td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>보육비 부담 / 손상 사망</td>
+      <td style="text-align: right">각 4%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>사회적 결사체 수</td>
+      <td style="text-align: right">2%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>검산</strong>: PHW 50+20+10+10+10 = 100%, CC 25+25+50 = 100%, 측정값 5 + 24 = <strong>29개</strong>.
+(CHR&amp;R 웹 방법론 페이지는 “Community Conditions 요약에 29개”라고 적었으나 기술문서 Table 1을 세면 CC는 24개, 전체 Select가 29개다. <strong>웹 페이지 쪽 표기 오류로 보인다.</strong> 본 문서는 기술문서를 따른다.)</p>
+
+<p><strong>주목할 점</strong></p>
+<ul>
+  <li>도서관 접근·초고속인터넷·사회적 결사체가 <strong>건강 지표</strong>로 들어 있다. ‘시민 인프라(civic infrastructure)’를 건강 결정요인으로 명시적으로 계산에 넣는다.</li>
+  <li>보육비 부담(Child Care Cost Burden)이 4%다.</li>
+  <li>대기오염 단일 측정값이 8%로, 일차의료의사(2%)의 4배다.</li>
+</ul>
+
+<hr />
+
+<h2 id="4-통계적-절제-장치--우리에게-없는-것들">4. 통계적 절제 장치 — 우리에게 없는 것들</h2>
+
+<h3 id="41-z-점수-계산과-절단">4.1 Z-점수 계산과 절단</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Z = (카운티 값 − 전국 카운티 평균) / (전국 카운티 표준편차)
+</code></pre></div></div>
+<ul>
+  <li>방향이 반대인 측정값(고교 졸업률 등)은 <strong>−1을 곱해</strong> 모든 Z-점수가 “높을수록 나쁨”이 되도록 통일한다(reverse coding).</li>
+  <li><strong>인구 20,000명 이하 카운티는 Z-점수를 ±3.0에서 절단한다.</strong> 소규모 지역의 극단값이 요약점수를 지배하지 못하게 막는 장치다.</li>
+</ul>
+
+<h3 id="42-95-신뢰구간-공표">4.2 95% 신뢰구간 공표</h3>
+
+<blockquote>
+  <p><em>“Where possible, we provide the margins of error (95% confidence intervals)… <strong>In many cases, the values of specific measures are not statistically different between counties.</strong>”</em></p>
+</blockquote>
+
+<p>두 지역의 오차범위가 겹치면 차이를 확신할 수 없다는 설명을 사용자에게 직접 제공한다.</p>
+
+<h3 id="43-등급을-아예-부여하지-않는-규칙">4.3 등급을 아예 부여하지 않는 규칙</h3>
+
+<p>다음 중 하나라도 해당하면 그 카운티는 <strong>Health Group을 받지 못한다</strong>(빈칸으로 둔다).</p>
+
+<ol>
+  <li>조기사망 값 결측 — 해당 기간 사망 <strong>20건 미만</strong>이라 프라이버시로 억제된 경우</li>
+  <li>조기사망 값이 불안정하고 다른 이환 측정값이 없는 경우</li>
+  <li>조기사망·저체중출생 모두 불안정하고 다른 이환 측정값이 없는 경우</li>
+</ol>
+
+<p><strong>불안정(unreliable)의 정의</strong>: 추정치의 표준오차가 추정값의 <strong>20%를 초과</strong>하고, 그 값이 <strong>전년도 신뢰구간 밖</strong>에 있을 때.</p>
+
+<blockquote>
+  <p>억지로 숫자를 채우지 않고 <strong>빈칸으로 남기는 규칙이 명문화</strong>되어 있다는 점이 핵심이다.</p>
+</blockquote>
+
+<h3 id="44-그-밖">4.4 그 밖</h3>
+
+<ul>
+  <li><strong>다년 합산</strong>: 희귀사건·소규모 인구는 여러 해를 묶어 안정화한다.</li>
+  <li><strong>연령표준화</strong>: 연령구조가 다른 카운티 비교를 위해 적용.</li>
+  <li><strong>결측 대체</strong>: 등급을 받을 자격은 되는데 특정 측정값만 없으면, <strong>같은 주(state) 내 카운티들의 Z-점수 평균</strong>으로 대체한다.</li>
+</ul>
+
+<hr />
+
+<h2 id="5-보조-도구--설계-철학이-드러나는-부분">5. 보조 도구 — 설계 철학이 드러나는 부분</h2>
+
+<h3 id="51-areas-of-strength--areas-to-explore">5.1 Areas of Strength / Areas to Explore</h3>
+
+<p>주·전국 기준값보다 <strong>의미 있게 나은</strong> 측정값은 ‘강점’, <strong>의미 있게 나쁜</strong> 측정값은 ‘탐색 영역’으로 자동 제시한다.</p>
+
+<blockquote>
+  <p><em>“Each county is assigned <strong>at least three Areas of Strength</strong>, and there is <strong>no minimum number</strong> of Areas to Explore.”</em></p>
+</blockquote>
+
+<p><strong>강점은 최소 3개를 보장하고, 약점은 최소 개수가 없다.</strong> 최하위 카운티라도 반드시 강점 3개를 보게 된다. 서열 공개가 낙인이 되지 않도록 한 의도적 설계다.
+또 ‘탐색 영역(Areas to <strong>Explore</strong>)’이라는 명명 자체가 ‘약점·미달’이 아니다.</p>
+
+<h3 id="52-county-descriptions--숫자-앞에-맥락을-놓는다">5.2 County Descriptions — 숫자 앞에 맥락을 놓는다</h3>
+
+<p>각 카운티 스냅샷 맨 위에 서술형 소개가 붙는다. 여기에 포함되는 것 —</p>
+<ul>
+  <li><strong>Native Lands Digital</strong> 링크(그 땅의 원주민 국가)</li>
+  <li><strong>1935~1940년 HOLC 레드라이닝 지도</strong>에서 “쇠퇴·위험” 등급을 받은 동네가 있는지 — 즉 <strong>의도적 투자 배제의 역사</strong></li>
+  <li>인구밀도, 대도시·주도와의 연결성</li>
+</ul>
+
+<p>숫자를 보여 주기 전에 “이 지역이 왜 이런 상태인지”의 역사적 맥락을 먼저 읽게 한다.</p>
+
+<h3 id="53-추세-그래프">5.3 추세 그래프</h3>
+
+<ul>
+  <li>12개 Select 측정값 + 3개 추가 측정값에 대해 제공.</li>
+  <li><strong>최소 8년 자료</strong>로 선형회귀, <strong>80% 신뢰수준</strong> 유의성 검정.</li>
+  <li>장기 추세(전 기간)와 <strong>단기 추세(최근 4년)</strong> 를 따로 계산하고, 둘이 다르면 그래프에 주석이 붙는다.</li>
+  <li>아이콘 색: 빨강(악화) · 노랑(유의한 추세 없음) · 초록(개선) · 회색(해석에 추가 정보 필요) · 검정(해석 미제공).</li>
+</ul>
+
+<blockquote>
+  <p><strong>우리가 더 나은 부분</strong>: 우리는 Mann-Kendall + Sen 기울기를 쓴다. 비모수 방법이라 정규성·선형성 가정에 덜 민감하고, 이상치에 강건하다. CHR&amp;R의 OLS 80% 검정보다 방법론적으로 보수적이다.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="6-what-works-for-health--cpstf와-나란히-놓고-보기">6. What Works for Health — CPSTF와 나란히 놓고 보기</h2>
+
+<p>CHR&amp;R는 데이터 옆에 <strong>중재 근거 데이터베이스</strong>를 직접 붙여 두었다. 우리가 CPSTF 검토에서 「근거 중재 레이어」로 제안한 바로 그것이다.</p>
+
+<h3 id="61-근거-등급-6단계">6.1 근거 등급 6단계</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>등급</th>
+      <th>정의</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Scientifically Supported</td>
+      <td>복수의 견고한 연구가 일관되게 유리한 결과</td>
+    </tr>
+    <tr>
+      <td>Some Evidence</td>
+      <td>긍정적이나 추가 연구 필요</td>
+    </tr>
+    <tr>
+      <td>Expert Opinion</td>
+      <td>전문가 권고, 연구는 제한적</td>
+    </tr>
+    <tr>
+      <td>Insufficient Evidence</td>
+      <td>효과를 입증할 연구가 제한적</td>
+    </tr>
+    <tr>
+      <td>Mixed Evidence</td>
+      <td>결과가 일관되지 않음</td>
+    </tr>
+    <tr>
+      <td><strong>Evidence of Ineffectiveness</strong></td>
+      <td>복수 연구가 일관되게 <strong>불리하거나 해로운</strong> 결과</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>판정 절차: 광범위 검색 → 체계적 문헌고찰·동료평가 논문 우선 초점 검색 → 설계의 엄격성·질·결과 강도 평가 → <strong>분석가 2인의 독립 검토</strong>로 최종 등급.</p>
+
+<h3 id="62-건강형평성-영향-등급-4단계-cpstf에-없는-것">6.2 건강형평성 영향 등급 4단계 (CPSTF에 없는 것)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>등급</th>
+      <th>의미</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Potential to Decrease Disparities</td>
+      <td>집단 간 격차를 줄일 가능성</td>
+    </tr>
+    <tr>
+      <td>Potential to Increase Disparities</td>
+      <td><strong>격차를 키울 가능성</strong></td>
+    </tr>
+    <tr>
+      <td>Potential for Mixed Disparities</td>
+      <td>양방향 모두 가능</td>
+    </tr>
+    <tr>
+      <td>Inconclusive Impact on Disparities</td>
+      <td>형평성 영향 판단 불가</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>효과가 있어도 격차를 키울 수 있다</strong>는 것을 별도 축으로 표시한다. 이것이 CPSTF보다 진전된 부분이다.</p>
+
+<h3 id="63-cpstf와의-비교">6.3 CPSTF와의 비교</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>CPSTF(The Community Guide)</th>
+      <th>WWFH(CHR&amp;R)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>등급 수</td>
+      <td>4</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>부정 등급</td>
+      <td>반대 권고(2건)</td>
+      <td>Evidence of Ineffectiveness</td>
+    </tr>
+    <tr>
+      <td>중간 등급</td>
+      <td>없음</td>
+      <td><strong>Mixed Evidence</strong>(결과 불일치)를 근거 불충분과 분리</td>
+    </tr>
+    <tr>
+      <td>전문가 의견</td>
+      <td>별도 등급 없음</td>
+      <td><strong>Expert Opinion</strong> 등급 존재</td>
+    </tr>
+    <tr>
+      <td>형평성</td>
+      <td>검토 항목 중 하나</td>
+      <td><strong>독립된 4단계 등급</strong></td>
+    </tr>
+    <tr>
+      <td>엄격성</td>
+      <td>높음(10단계 절차, 경제성 검토 별도)</td>
+      <td>상대적으로 유연(2인 검토)</td>
+    </tr>
+    <tr>
+      <td>규모</td>
+      <td>224건</td>
+      <td>수백 건, 주제별 큐레이션 목록 제공</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>둘은 대체재가 아니라 보완재다.</strong> CPSTF는 엄격하지만 느리고 범위가 좁다. WWFH는 유연하지만 근거 강도가 고르지 않다. 실무에서는 CPSTF 강력 권고를 1순위로, WWFH를 보조 탐색으로 쓰는 것이 합리적이다.</p>
+
+<hr />
+
+<h2 id="7-비판과-chrr의-자기방어">7. 비판과 CHR&amp;R의 자기방어</h2>
+
+<h3 id="71-주요-비판">7.1 주요 비판</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>비판</th>
+      <th>요지</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>가중치의 자의성</strong></td>
+      <td>30/20/40/10에 이론적 근거가 없다</td>
+    </tr>
+    <tr>
+      <td><strong>순위의 불안정성</strong></td>
+      <td>인구가 적거나 중위권인 카운티는 순위 신뢰구간이 매우 넓다(경험적 베이즈 연구)</td>
+    </tr>
+    <tr>
+      <td><strong>농촌 자료 신뢰도</strong></td>
+      <td>결측·불량 자료를 보정하느라 무작위성이 섞인다</td>
+    </tr>
+    <tr>
+      <td><strong>서열의 부작용</strong></td>
+      <td>낙인, 순위 변동에 대한 과잉 반응</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="72-chrr의-답">7.2 CHR&amp;R의 답</h3>
+
+<p>자체 블로그 「Is the County Health Rankings Model Right or Wrong?」에서 이렇게 답한다.</p>
+
+<blockquote>
+  <p><em>“There is no one ‘correct’ formula or ‘true’ set of weights that perfectly represents the health of a community.”</em>
+<em>“The County Health Rankings model was <strong>not developed to explain all the factors</strong> and interactions between these factors — it was developed to provide <strong>a graphical depiction of how we compile the Rankings</strong>.”</em></p>
+</blockquote>
+
+<p>즉 <strong>모델은 인과 이론이 아니라 산출 절차의 도식</strong>이라는 것이다. 정직하지만, 이 답변만으로는 서열의 부작용을 막지 못했다.
+그래서 별도 워킹페이퍼 「Different Perspectives for Assigning Weights to Determinants of Health」로 가중치 민감도 분석을 수행했고, <strong>결국 2024년에 순위 자체를 버렸다.</strong></p>
+
+<blockquote>
+  <p>이 경로가 시사하는 바가 크다. <strong>비판 → 해명 → 민감도 분석 → 설계 변경.</strong> 해명으로 버티지 않고 끝내 구조를 바꿨다.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="8-2026년-중단--지속가능성-교훈">8. 2026년 중단 — 지속가능성 교훈</h2>
+
+<p>2026년 3월, CHR&amp;R는 다음을 공지했다.</p>
+
+<ul>
+  <li><strong>RWJF 자금이 2026년 말 종료</strong>된다. 현재 자금·인력으로는 예년 수준의 연례 릴리스가 불가능하다.</li>
+  <li>2026년에는 34개 측정값만 갱신하고, <strong>전국 보고서·Health Groups 갱신·추세 그래프·강점/개선영역 기능을 제공하지 않는다.</strong></li>
+  <li>웹사이트는 <strong>2026년 12월까지</strong> 유지하며, 신규 자금 확보 시 연장될 수 있다.</li>
+</ul>
+
+<p>16년간 미국 지역보건 데이터의 표준 역할을 한 사업이 단일 재단 자금에 의존하다 중단 수순에 들어갔다.
+<strong>우리 프로젝트에 주는 교훈</strong> — 데이터 수집 스크립트를 전부 저장소에 두고 원자료 출처를 공개해 둔 현재 구조(<code class="language-plaintext highlighter-rouge">scripts/kosis_*.py</code>, <code class="language-plaintext highlighter-rouge">scripts/fetch_cpstf.py</code>)가 이 위험에 대한 유일한 방어다. 사람이 빠져도 스크립트가 남으면 재현된다.</p>
+
+<hr />
+
+<h2 id="9-우리-대시보드와-정면-대조">9. 우리 대시보드와 정면 대조</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>항목</th>
+      <th>CHR&amp;R</th>
+      <th>우리</th>
+      <th>판정</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>서열 표기</td>
+      <td>10개 그룹(2024~)</td>
+      <td><strong>1~231위 순위 + 애니메이션</strong></td>
+      <td>❌ 우리가 뒤처짐</td>
+    </tr>
+    <tr>
+      <td>신뢰구간</td>
+      <td>95% CI 공표</td>
+      <td><strong>없음</strong></td>
+      <td>❌ 우리가 뒤처짐</td>
+    </tr>
+    <tr>
+      <td>소규모 지역 처리</td>
+      <td>Z-점수 ±3 절단, 다년 합산</td>
+      <td>다년 합산 일부만</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td>자료 불안정 시</td>
+      <td><strong>등급 미부여(빈칸)</strong></td>
+      <td>값이 있으면 그대로 순위</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td>강점 최소 보장</td>
+      <td><strong>최소 3개 보장</strong></td>
+      <td>강점 TOP 있음(최소 보장 없음)</td>
+      <td>△</td>
+    </tr>
+    <tr>
+      <td>맥락 서술</td>
+      <td>레드라이닝·원주민 토지 등 역사</td>
+      <td>없음</td>
+      <td>△</td>
+    </tr>
+    <tr>
+      <td>추세 검정</td>
+      <td>OLS 80% 신뢰</td>
+      <td><strong>Mann-Kendall + Sen</strong></td>
+      <td>✅ 우리가 나음</td>
+    </tr>
+    <tr>
+      <td>동류군 비교</td>
+      <td>도농 특성 기준 비교 도구</td>
+      <td><strong>4축 표준화 거리 12개 동류군</strong></td>
+      <td>✅ 우리가 나음</td>
+    </tr>
+    <tr>
+      <td>공간 군집</td>
+      <td>없음</td>
+      <td><strong>Getis-Ord Gi*</strong></td>
+      <td>✅ 우리가 나음</td>
+    </tr>
+    <tr>
+      <td>중재 근거</td>
+      <td>WWFH 내장</td>
+      <td>CPSTF 검토만, 미반영</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td>계층 구분</td>
+      <td>2개 요약(결과/조건)</td>
+      <td><strong>5계층 배지 + 순위 적합성</strong></td>
+      <td>✅ 우리가 나음</td>
+    </tr>
+    <tr>
+      <td>측정값 수</td>
+      <td>80여 개(요약엔 29)</td>
+      <td>156개(요약 없음)</td>
+      <td>△</td>
+    </tr>
+    <tr>
+      <td>재현성</td>
+      <td>기술문서 공개, 코드 비공개</td>
+      <td><strong>수집·가공 스크립트 전부 공개</strong></td>
+      <td>✅ 우리가 나음</td>
+    </tr>
+    <tr>
+      <td>지속성</td>
+      <td><strong>2026년 중단 예정</strong></td>
+      <td>스크립트 기반 재현 가능</td>
+      <td>✅</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>요약: 통계적 절제에서 밀리고, 분석 기법과 재현성에서 앞선다.</strong></p>
+
+<hr />
+
+<h2 id="10-반영-권고">10. 반영 권고</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>권고</th>
+      <th>근거</th>
+      <th>난이도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1</strong></td>
+      <td><strong>신뢰구간 병기</strong> — 지역사회건강조사 「한눈에 보기」 부록에 시군구별 표준오차가 이미 공표되어 있다(<code class="language-plaintext highlighter-rouge">68.2(1.3)</code> 형식). 이를 추출해 순위·막대에 오차범위를 표시하고, 겹치면 “차이 불확실” 표시</td>
+      <td>CHR&amp;R가 명시적으로 하는 것, 우리에게 완전히 없는 것</td>
+      <td>중</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td><strong>「Health Group」 방식 병기</strong> — 1~231위와 함께 10개 그룹(또는 5분위) 표기를 제공하고, 기본 표시를 그룹으로 전환 검토</td>
+      <td>CHR&amp;R 2024년 전환의 직접 이식</td>
+      <td>중</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td><strong>자료 불안정 시 등급 미부여 규칙 도입</strong> — 표준오차 &gt; 추정값의 20%면 순위에서 제외하고 빈칸 처리</td>
+      <td>CHR&amp;R 명문 규칙</td>
+      <td>하</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td><strong>강점 최소 3개 보장</strong> — 프로파일에서 하위 지역도 반드시 강점 3개가 보이도록. ‘약점’을 ‘탐색 영역’으로 개명</td>
+      <td>낙인 방지 설계</td>
+      <td>하</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td><strong>소규모 시군구 Z-점수 절단</strong> — 박탈지수·동류군 거리 계산 시 인구 하위 지역 Z를 ±3에서 절단</td>
+      <td>CHR&amp;R Z-score 규칙</td>
+      <td>하</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td><strong>맥락 서술 블록</strong> — 각 시군구 프로파일 상단에 인구·도농·재정·역사적 맥락 한 문단</td>
+      <td>County Descriptions</td>
+      <td>중</td>
+    </tr>
+    <tr>
+      <td><strong>7</strong></td>
+      <td><strong>WWFH 형평성 4등급을 CPSTF 레이어에 추가</strong> — 중재가 격차를 줄이는지 키우는지 별도 표시</td>
+      <td>CPSTF에 없는 WWFH의 강점</td>
+      <td>중</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>우선순위: <strong>1 → 3 → 2 → 4 → 5 → 7 → 6</strong></p>
+
+<p>1번과 3번이 가장 급하다. <strong>신뢰구간 없이 231위까지 줄 세우는 현재 화면이 가장 공격받기 쉬운 지점</strong>이며, CHR&amp;R가 같은 비판을 받고 결국 설계를 바꾼 바로 그 지점이기 때문이다.</p>
+
+<hr />
+
+<h2 id="11-한계">11. 한계</h2>
+
+<ul>
+  <li>본 검토는 2025 Technical Documentation(24쪽)과 웹사이트 공개 페이지에 근거한다. Working Paper 전문과 Pollock et al.(2024) 원논문은 미열람이다.</li>
+  <li>군집분석의 구체적 구현(Wasserstein 거리 기반 클러스터 수 결정 규칙)은 기술문서에 요약만 있어, 그대로 재현하려면 원논문이 필요하다.</li>
+  <li>CHR&amp;R 웹 방법론 페이지와 기술문서 사이에 측정값 개수 표기 불일치가 있다(3장 검산 참조). 본 문서는 기술문서를 기준으로 삼았다.</li>
+  <li>2026년 이후 사이트 접근이 불가능해질 수 있으므로, 인용한 PDF는 별도 보관이 필요하다.</li>
+</ul>
+
+<hr />
+
+<h2 id="12-출처">12. 출처</h2>
+
+<ul>
+  <li>County Health Rankings &amp; Roadmaps — https://www.countyhealthrankings.org/</li>
+  <li>2025 Technical Documentation [PDF] — https://www.countyhealthrankings.org/sites/default/files/media/document/CHRR%20Technical%20Documentation%202025_2.pdf</li>
+  <li>Methods — https://www.countyhealthrankings.org/health-data/methodology-and-sources/methods</li>
+  <li>What Works for Health, Methods and Ratings — https://www.countyhealthrankings.org/strategies-and-solutions/what-works-for-health/methods-and-ratings</li>
+  <li>“Is the County Health Rankings Model Right or Wrong?” — https://www.countyhealthrankings.org/findings-and-insights/blog/is-the-county-health-rankings-model-right-or-wrong</li>
+  <li>“CHR&amp;R Updates Data for 34 Measures, Will Not Produce a 2026 Annual Data Release” — https://www.countyhealthrankings.org/findings-and-insights/blog/chrr-updates-data-for-34-measures-will-not-produce-a-2026-annual-data-release</li>
+  <li>Working Paper: Different Perspectives for Assigning Weights to Determinants of Health [PDF] — https://www.countyhealthrankings.org/sites/default/files/differentPerspectivesForAssigningWeightsToDeterminantsOfHealth.pdf</li>
+  <li>Remington PL, Catlin BB, Gennuso KP. The County Health Rankings: rationale and methods. <em>Population Health Metrics</em>. 2015;13(11). — https://link.springer.com/article/10.1186/s12963-015-0044-2</li>
+  <li>Pollock EA, Gangnon RE, Gennuso KP, Givens ML. Cluster analysis methods to support population health improvement among U.S. counties. <em>J Public Health Manag Pract</em>. 2024.</li>
+  <li>Using Empirical Bayes Methods to Rank Counties on Population Health Measures — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3733480/</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

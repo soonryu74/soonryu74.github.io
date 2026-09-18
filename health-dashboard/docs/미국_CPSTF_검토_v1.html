@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>미국 CPSTF(Community Preventive Services Task Force) 검토 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="미국 CPSTF(Community Preventive Services Task Force) 검토" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="미국 CPSTF(Community Preventive Services Task Force) 검토" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"미국 CPSTF(Community Preventive Services Task Force) 검토","url":"/health-dashboard/docs/%EB%AF%B8%EA%B5%AD_CPSTF_%EA%B2%80%ED%86%A0_v1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=75d866de9081339d2a4763dffd764e2f6e593a80">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="미국-cpstfcommunity-preventive-services-task-force-검토">미국 CPSTF(Community Preventive Services Task Force) 검토</h1>
+
+<blockquote>
+  <p>원자료: CPSTF <em>All Active Findings</em> (2024년 11월판, 224건 전수) · The Community Guide 방법론 매뉴얼 Part 1·2
+검토일: 2026-09-18 · 구조화 산출물: <code class="language-plaintext highlighter-rouge">data/cpstf_findings.json</code></p>
+</blockquote>
+
+<hr />
+
+<h2 id="0-요약">0. 요약</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>항목</th>
+      <th>내용</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>기구</td>
+      <td>미국 보건복지부(DHHS)가 1996년 설립한 <strong>비연방 독립 전문가 패널</strong>. 위원은 CDC 국장이 임명하고, CDC Community Guide Program이 사무국을 맡는다. 매년 의회에 보고서를 제출한다.</td>
+    </tr>
+    <tr>
+      <td>대상</td>
+      <td><strong>지역사회·인구집단 단위 중재</strong>(프로그램·정책·환경 변화). 개인 임상 서비스는 USPSTF 소관.</td>
+    </tr>
+    <tr>
+      <td>산출</td>
+      <td>체계적 문헌고찰 → 중재별 권고. 현재 활성 권고 <strong>224건</strong>(아래 <em>집계 규칙</em> 참조).</td>
+    </tr>
+    <tr>
+      <td>등급</td>
+      <td>강력 권고 106 · 권고 66 · <strong>근거 불충분 50</strong> · 반대 권고 2</td>
+    </tr>
+    <tr>
+      <td>핵심 원칙</td>
+      <td>① 지표가 아니라 <strong>중재</strong>를 평가한다 ② “근거 불충분 ≠ 효과 없음” ③ 효과가 입증된 중재만 경제성 평가로 넘긴다</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>집계 규칙(재현 가능)</strong>: 본 문서의 224건은 CPSTF <em>All Active Findings</em>(2024-11) PDF에서 <strong>판정(finding)이 붙은 표의 행 수</strong>를 센 것이다.
+하나의 중재가 유방암·자궁경부암·대장암처럼 대상별로 각각 판정을 받으면 그 수만큼 센다(CPSTF 표 자체가 그렇게 행을 나눈다).
+사이트 안내문의 “200여 건”은 중재 묶음 단위의 어림수다. 파싱 코드는 <code class="language-plaintext highlighter-rouge">scripts/fetch_cpstf.py</code>, 결과는 <code class="language-plaintext highlighter-rouge">data/cpstf_findings.json</code>에 있으며 누구든 재실행해 검증할 수 있다.
+비활성·보관(inactive/archived) 검토는 원자료에서 이미 제외되어 있다.</p>
+
+<p><strong>우리 프로젝트에 주는 한 문장:</strong>
+우리 대시보드는 “이 지역이 몇 등인가”를 답한다. CPSTF는 <strong>“그래서 무엇을 하면 그 순위가 움직이는가”</strong>를 답한다. 「지역보건사업 평가이론」 문서에서 확인한 우리의 구조적 공백 — 임팩트 59 · 성과 45 · 산출 2 · <strong>활동 0</strong> — 에서 비어 있는 ‘활동’ 칸을 그대로 채워 주는 자료다.</p>
+
+<hr />
+
+<h2 id="1-cpstf와-uspstf--한국에-없는-쪽은-어디인가">1. CPSTF와 USPSTF — 한국에 없는 쪽은 어디인가</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th><strong>USPSTF</strong></th>
+      <th><strong>CPSTF</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>설립</td>
+      <td>1984, AHRQ 지원</td>
+      <td>1996, CDC 지원</td>
+    </tr>
+    <tr>
+      <td>대상</td>
+      <td>개인 대상 임상예방서비스(검진·상담·예방약)</td>
+      <td>지역사회 인구집단 중재(프로그램·정책·환경)</td>
+    </tr>
+    <tr>
+      <td>실행 주체</td>
+      <td>의사·의료기관</td>
+      <td>보건소·지자체·학교·직장·주 정부</td>
+    </tr>
+    <tr>
+      <td>등급</td>
+      <td>A / B / C / D / I</td>
+      <td>강력 권고 / 권고 / 근거 불충분 / 반대 권고</td>
+    </tr>
+    <tr>
+      <td>제도적 구속력</td>
+      <td>ACA에 따라 A·B 등급은 보험 급여 의무</td>
+      <td>급여 연계 없음(순수 권고)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>제도적 구속력의 근거</strong>: 미국 ACA 제2713조가 USPSTF A·B 등급 서비스에 대해 본인부담 없는 급여를 의무화한다.
+2025년 연방대법원(<em>Kennedy v. Braidwood Management</em>)이 6-3으로 이 조항을 합헌으로 유지했다. CPSTF 권고에는 이런 급여 연계가 없다.</p>
+
+<p><strong>한국 대응 상황 — “없다”는 말의 정확한 범위</strong></p>
+<ul>
+  <li>USPSTF 대응 → 「국가건강검진 권고안」(국립암센터·대한의학회 등)이 부분적으로 존재한다.</li>
+  <li>CPSTF 대응 → <strong>없다.</strong> 다만 인접 기관이 있으므로 무엇이 다른지 분명히 해 둔다.
+    <ul>
+      <li><strong>한국보건의료연구원(NECA)</strong>: 의료기술평가(HTA)·신의료기술평가 기관이다. 대상이 <strong>의료기술·의료기기·임상 시술</strong>이며, 지역사회 프로그램·정책·환경 중재를 등급 판정하지 않는다.</li>
+      <li><strong>한국건강증진개발원(KHEPI)</strong>: 통합건강증진사업 안내서·우수사례·교육을 제공한다. 그러나 안내서는 <strong>사업 절차 지침</strong>이며, “이 중재는 강력 권고 / 이 중재는 근거 불충분”처럼 <strong>중재별 근거 등급을 공표하지 않는다</strong>.</li>
+      <li><strong>질병관리청·학회 진료지침</strong>: 임상 진료 대상이며 인구집단 중재가 아니다.</li>
+    </ul>
+
+    <p>즉 “없다”는 것은 <em>연구기관이 없다</em>는 뜻이 아니라, <strong>지역사회 중재를 체계적 문헌고찰로 등급 판정해 상시 공표하는 독립 패널과 그 목록이 없다</strong>는 뜻이다.</p>
+  </li>
+</ul>
+
+<p>즉 한국의 지역보건은 <strong>“무엇을 해야 하는가”에 대한 근거 등급 체계 없이</strong> 12개 영역 사업을 집행하고, 그 결과를 정성 서면평가로 채점한다. 이것이 「지역보건사업 평가이론」 4장에서 지적한 문제의 제도적 뿌리다.</p>
+
+<hr />
+
+<h2 id="2-권고-등급-체계">2. 권고 등급 체계</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>등급</th>
+      <th>원문</th>
+      <th>의미</th>
+      <th>실무 해석</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>강력 권고</strong></td>
+      <td>Recommended (strong)</td>
+      <td>효과 근거가 강함</td>
+      <td>우선 도입. 미도입 자체가 설명 대상</td>
+    </tr>
+    <tr>
+      <td><strong>권고</strong></td>
+      <td>Recommended (sufficient)</td>
+      <td>효과 근거가 충분함</td>
+      <td>도입 가능</td>
+    </tr>
+    <tr>
+      <td><strong>근거 불충분</strong></td>
+      <td>Insufficient Evidence</td>
+      <td>판단할 근거가 부족</td>
+      <td><strong>효과가 없다는 뜻이 아니다.</strong> 연구·평가 우선순위</td>
+    </tr>
+    <tr>
+      <td><strong>반대 권고</strong></td>
+      <td>Recommended Against</td>
+      <td>이익보다 해가 크다는 근거가 충분</td>
+      <td>시행하지 말 것</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>현재 <strong>반대 권고는 전체 224건 중 단 2건</strong>이다.</p>
+<ul>
+  <li>주류 소매 민영화(Privatization of Retail Alcohol Sales, 2011)</li>
+  <li>소년범의 성인 사법체계 이송 정책(Policies Facilitating the Transfer of Juveniles to Adult Justice Systems, 2003)</li>
+</ul>
+
+<blockquote>
+  <p><strong>가장 중요한 원칙</strong>: CPSTF는 <em>Insufficient evidence</em> 를 별도 페이지까지 두어 방어한다 — “not enough evidence exists to determine if an intervention is effective… <strong>It does not mean the intervention does not work.</strong>”
+한국 평가에서 “성과지표 미설정 사업은 감점” 식으로 운영되면, 측정이 어려운 중재가 근거 없음으로 오독되어 퇴출된다. CPSTF는 이 오독을 제도적으로 차단한다.</p>
+</blockquote>
+
+<h3 id="근거-결정표evidence-decision-table">근거 결정표(Evidence Decision Table)</h3>
+<p>CPSTF는 근거의 강도를 <strong>연구설계 적합성 × 실행의 질 × 결과의 일관성·크기</strong>로 판정한다.</p>
+
+<ul>
+  <li><strong>설계 적합성(Suitability of design)</strong>
+    <ul>
+      <li><em>Greatest</em>: RCT, 비무작위 시험, 전향적 코호트, 동시대조군을 가진 설계</li>
+      <li><em>Moderate</em>: 중단시계열, 후향적 코호트, 환자-대조군</li>
+      <li><em>Least</em>: 대조 없는 전후 비교, 단면조사</li>
+    </ul>
+  </li>
+  <li><strong>실행의 질(Quality of execution)</strong>: good / fair / limited (표본·측정·탈락·교란·편향 등 도메인별 평가)</li>
+  <li>그 위에서 위원회가 <strong>상향·하향 조정</strong>을 명시적으로 한다: 효과 크기가 크면 권고→강력 권고로 상향, 우려가 있으면 하향, 해가 확인되면 반대 권고로 전환.</li>
+</ul>
+
+<p>이 구조는 <strong>대조 없는 전후 비교도 근거로 인정하되 등급을 낮춰 쓴다</strong>는 뜻이다. 보건소 사업 평가에 그대로 쓸 수 있는 설계다. 현재 우리 제도는 전후 비교조차 등급 없이 서술로 처리한다.</p>
+
+<hr />
+
+<h2 id="3-검토-절차--효과성-10단계-경제성-9단계">3. 검토 절차 — 효과성 10단계, 경제성 9단계</h2>
+
+<h3 id="효과성-검토-10단계">효과성 검토 10단계</h3>
+<ol>
+  <li>우선 주제 선정 → 2. 조정팀 구성(6~10인) → 3. 중재 접근법 선정 → 4. <strong>개념화</strong>(정의·포함배제기준·연구질문·<strong>분석틀</strong>·적용가능성) → 5. 체계적 문헌검색(CDC 도서관 사서 참여) → 6. 3단계 스크리닝 → 7. 정보 추출·질 평가 → 8. 분석(효과크기·적용가능성·의미있는 영향) → 9. <strong>CPSTF 권고 결정</strong> → 10. 확산</li>
+</ol>
+
+<p>주목할 실무 장치:</p>
+<ul>
+  <li><strong>분석틀(Analytic Framework)</strong>: 중재 → 중간산물 → 행태 → 건강결과로 이어지는 인과 도식을 <em>그림으로</em> 먼저 그린다. 우리 평가이론 문서의 결과사슬(투입·과정 → 산출 → 성과 → 임팩트)을 중재 단위로 구체화한 것이다.</li>
+  <li><strong>‘Must have’ / ‘May have’</strong>: 중재 정의를 필수 요소와 선택 요소로 쪼갠다. 통합건강증진사업 지침이 갖추지 못한 부분 — “이 사업이라고 부르려면 최소한 무엇이 있어야 하는가”가 명시되지 않으면 지역 간 비교 자체가 성립하지 않는다.</li>
+  <li><strong>적용가능성(Applicability)</strong>: 사전 가설을 세우고 연령·인종·환경별 효과 차이를 검증한다. 효과가 집단별로 다르면 권고를 좁힌다.</li>
+  <li><strong>추가 이익과 잠재적 해(Additional benefits / Potential harms)</strong>: 의도치 않은 해를 <em>명시적으로</em> 따진다. 예 — 팬데믹 휴교는 전파를 줄이지만 보호자 돌봄비용을 늘린다. 한국 지역보건 평가에는 ‘해’ 항목이 아예 없다.</li>
+  <li><strong>근거 공백(Evidence Gaps)</strong>: 모든 검토는 남은 질문 목록으로 끝난다. 연구비 배분 기관이 이를 우선순위로 쓴다.</li>
+</ul>
+
+<h3 id="경제성-검토-9단계">경제성 검토 9단계</h3>
+<ul>
+  <li><strong>효과성에서 강력 권고 또는 권고를 받은 중재만</strong> 경제성 검토 대상이 된다. 순서가 고정되어 있다.</li>
+  <li>산출: ① 시행 비용 ② 경제적 편익(의료비 절감·생산성·수명과 삶의 질) ③ 비용-편익 / 비용-효과 요약</li>
+  <li>예: 혈압 조절을 위한 <strong>팀 기반 케어</strong> — 효과성 근거 54편(검색 2012.1~2020.6)으로 강력 권고, 경제성 검토 35편(검색 2011.1~2021.1)에서 QALY당 중앙값 <strong>$15,202</strong>, 15개 추정치 중 14개가 기준선 $50,000 아래 → “비용효과적” 판정. (TFFRS 원문 확인)</li>
+</ul>
+
+<blockquote>
+  <p><strong>우리가 배울 순서 규칙</strong>: 한국은 사업 기획 단계에서 효과 근거 없이 예산 타당성부터 따지는 경우가 많다. CPSTF는 <strong>효과 입증 → 경제성 평가</strong> 순서를 제도로 고정했다.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="4-우선-주제-선정-기준--지표-가중치에-그대로-쓸-수-있다">4. 우선 주제 선정 기준 — 지표 가중치에 그대로 쓸 수 있다</h2>
+
+<p>CPSTF는 주제를 8개 기준으로 선정한다(2020–2025 우선 9개 주제 도출에 사용).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>기준</th>
+      <th>내용</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Alignment</td>
+      <td>국가 정책·계획과의 정합성</td>
+    </tr>
+    <tr>
+      <td>Balance</td>
+      <td>주제 간 균형, 공백 메우기</td>
+    </tr>
+    <tr>
+      <td><strong>Burden</strong></td>
+      <td>질병 부담·중증도</td>
+    </tr>
+    <tr>
+      <td>Coverage</td>
+      <td>충분한 근거체로 권고를 만들 수 있는가</td>
+    </tr>
+    <tr>
+      <td><strong>Disparities</strong></td>
+      <td>중재로 줄일 수 있는 건강격차의 존재</td>
+    </tr>
+    <tr>
+      <td>Impact</td>
+      <td>현장에 유용한가</td>
+    </tr>
+    <tr>
+      <td><strong>Preventability</strong></td>
+      <td>인구집단 중재로 예방 가능한가</td>
+    </tr>
+    <tr>
+      <td>Partner interest</td>
+      <td>핵심 파트너의 관심·우선순위</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>2020–2025 우선 9개 주제: 심장병·뇌졸중 예방 / 손상 예방 / <strong>정신건강</strong> / 영양·신체활동·비만 / 보건위기 대비·대응 / 건강의 사회적 결정요인 / 약물 사용 / 담배 / 폭력 예방</p>
+
+<p><strong>적용안</strong>: 우리 대시보드의 지표 가중치 논의(#8 과제)에서 쓴 기준은 자료 가용성 중심이었다. 위 8기준 중 특히 <strong>Burden · Disparities · Preventability</strong> 세 축은 「어떤 지표를 상위에 놓을 것인가」의 객관적 근거가 된다. 예컨대 지역 간 분산이 큰데(Disparities) 예방 가능성이 높은(Preventability) 지표를 상위로 올리는 규칙을 만들 수 있다.</p>
+
+<hr />
+
+<h2 id="5-224건-전수--주제별-분포">5. 224건 전수 — 주제별 분포</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>주제</th>
+      <th style="text-align: right">계</th>
+      <th style="text-align: right">강력 권고</th>
+      <th style="text-align: right">권고</th>
+      <th style="text-align: right">근거 불충분</th>
+      <th style="text-align: right">반대</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>암</td>
+      <td style="text-align: right">49</td>
+      <td style="text-align: right">24</td>
+      <td style="text-align: right">9</td>
+      <td style="text-align: right">16</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>비만</td>
+      <td style="text-align: right">19</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">6</td>
+      <td style="text-align: right">11</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>예방접종</td>
+      <td style="text-align: right">18</td>
+      <td style="text-align: right">12</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>신체활동</td>
+      <td style="text-align: right">17</td>
+      <td style="text-align: right">6</td>
+      <td style="text-align: right">9</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>교통사고 손상</td>
+      <td style="text-align: right">16</td>
+      <td style="text-align: right">12</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>건강의 사회적 결정요인</td>
+      <td style="text-align: right">12</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>HIV·성매개감염·청소년임신</td>
+      <td style="text-align: right">11</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>담배</td>
+      <td style="text-align: right">11</td>
+      <td style="text-align: right">8</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>과도한 음주</td>
+      <td style="text-align: right">10</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">1</td>
+    </tr>
+    <tr>
+      <td>심장병·뇌졸중 예방</td>
+      <td style="text-align: right">9</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>정신건강</td>
+      <td style="text-align: right">8</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>폭력 예방</td>
+      <td style="text-align: right">8</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">1</td>
+    </tr>
+    <tr>
+      <td>당뇨병</td>
+      <td style="text-align: right">7</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>영양</td>
+      <td style="text-align: right">7</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>구강건강</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>직장 건강</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>천식</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>임신 건강</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>건강 커뮤니케이션·정보기술</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>약물 사용</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>청소년 건강</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>보건위기 대비·대응</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td><strong>계</strong></td>
+      <td style="text-align: right"><strong>224</strong></td>
+      <td style="text-align: right"><strong>106</strong></td>
+      <td style="text-align: right"><strong>66</strong></td>
+      <td style="text-align: right"><strong>50</strong></td>
+      <td style="text-align: right"><strong>2</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>읽는 법 두 가지.</p>
+<ul>
+  <li><strong>담배·교통사고 손상은 근거 불충분이 0건</strong>이다. 단, 이는 <em>CPSTF가 검토한 중재 범위 안에서</em> 그렇다는 뜻이지 그 영역의 모든 중재가 입증되었다는 뜻은 아니다. 그래도 이 두 영역에 효과가 확인된 중재가 27건(강력 권고 20건) 존재한다는 사실은 남는다. 한국에서 이 두 영역의 지역 간 격차는 적어도 ‘무엇을 해야 할지 모른다’로는 설명되지 않는다.</li>
+  <li><strong>비만은 19건 중 11건이 근거 불충분</strong>이다. 가장 많이 시도되고 가장 덜 입증된 영역이다.
+여기서 “그러므로 비만율로 지역을 평가하면 안 된다”로 바로 건너뛰면 논리 비약이다. 사슬을 다 적으면 이렇다 —
+① 효과가 입증된 중재가 적다 → ② 보건소가 쓸 수 있는 통제 수단이 적다 → ③ 지역 간 비만율 차이 중 보건소에 <strong>귀속</strong>시킬 수 있는 몫이 작다 → ④ 따라서 비만율 <strong>순위를 사업 성과 점수로 환산</strong>하는 것은 부당하다.
+모니터링 지표로 쓰는 것 자체는 문제가 없다. 문제가 되는 것은 성과 책임의 배분이다(「지역보건사업 평가이론」 5장 귀인 대 기여 참조).</li>
+</ul>
+
+<hr />
+
+<h2 id="6-우리-대시보드와의-대조">6. 우리 대시보드와의 대조</h2>
+
+<p><code class="language-plaintext highlighter-rouge">data/cpstf_findings.json</code> 에서 CPSTF 22개 주제를 우리 지표 id에 매핑했다.</p>
+
+<blockquote>
+  <p><strong>매핑의 성격을 먼저 밝힌다.</strong> 이것은 CPSTF가 승인한 공식 크로스워크가 <strong>아니다</strong>(CPSTF의 공식 크로스워크는 Healthy People 2030과 EBCCP 두 가지뿐이다).
+본 매핑은 ① <strong>주제(topic) 수준</strong>의 ② <strong>저자 판단</strong>이며 ③ 중재 1건 대 지표 1개의 정밀 대응이 아니다. 목적은 “이 지표를 움직이려 할 때 찾아볼 근거 뭉치가 어디인가”를 가리키는 <strong>길찾기</strong>다.
+판단 근거는 <code class="language-plaintext highlighter-rouge">scripts/fetch_cpstf.py</code>의 <code class="language-plaintext highlighter-rouge">MAP</code> 딕셔너리에 전부 노출되어 있어 누구든 이견을 제기하고 수정할 수 있다. 아래 60%라는 숫자는 <strong>정밀도 지표가 아니라 탐색 가능 범위</strong>로 읽어야 한다.</p>
+</blockquote>
+
+<ul>
+  <li>우리 지표 <strong>156개 중 93개(60%)</strong>가 CPSTF 권고 주제와 연결된다.</li>
+  <li>연결되지 않는 63개는 대부분 ① 의료인력·재정 등 <strong>투입 지표</strong>(CPSTF 검토 대상이 아님) ② <strong>법정감염병 발생률 10여 종</strong>(예방접종 일부만 해당) ③ 낙상·알츠하이머·패혈증 등 CPSTF가 아직 다루지 않는 주제다.</li>
+</ul>
+
+<h3 id="61-가장-큰-발견--암검진-수검률이-우리-지표에-없다">6.1 가장 큰 발견 — 암검진 수검률이 우리 지표에 없다</h3>
+
+<p>CPSTF 최대 근거 블록은 <strong>암(49건, 강력 권고 24건)</strong>이고, 그 대부분이 <strong>암검진 수검률을 올리는 중재</strong>다.</p>
+
+<blockquote>
+  <p>환자 내비게이션 · 지역사회 건강인력(CHW) 활용 · 수요자 리마인더 · 1:1 교육 · 구조적 장벽 완화 · 소규모 매체 · <strong>의료제공자 리마인더/리콜</strong> — 유방암·자궁경부암·대장암 각각에 대해 강력 권고</p>
+</blockquote>
+
+<p>그런데 우리 대시보드에는 <strong>암 사망률 5종·암 진료실인원 4종은 있는데 암검진 수검률이 없다.</strong> 일반건강검진(1차) 수검률만 있다.</p>
+
+<p>결과적으로 우리는 <strong>결과(암 사망률)는 보여 주면서, 그 결과를 움직이는 유일한 강력 권고 지렛대(검진 수검률)는 보여 주지 않는다.</strong> 「평가이론」 문서에서 지적한 임팩트 편중의 가장 구체적인 사례다.</p>
+
+<p>→ <strong>국가암검진 수검률을 다음 수집 1순위로 올려야 한다.</strong> 자료원은 이미 확인했다.</p>
+<ul>
+  <li>국민건강보험공단 「<strong>시군구별 국가건강검진 현황자료(일반검진·암검진)</strong>」 — 2018~2023년, 시군구 단위, XLSX (공공데이터포털 15149732)</li>
+  <li>국민건강보험공단 「암검진통합수검률」 — 위·대장·간·유방·자궁경부·폐암 중 1개 이상 수검 비율, 시도·시군구 (공공데이터포털 15064612)</li>
+  <li>국립암센터 암모니터링포털(cancerdata.re.kr) — 암종별 수검률</li>
+</ul>
+
+<p>참고로 지역사회건강조사 2025 요약집 25개 지표에도 암검진 수검률은 없다. 우리만 빠뜨린 것이 아니라 <strong>국내 지역보건 지표 체계 전반에서 검진 수검률이 사망률에 비해 과소 대표</strong>되어 있다.</p>
+
+<h3 id="62-우리-지표는-있는데-대응-중재가-비어-있는-영역">6.2 우리 지표는 있는데 대응 중재가 비어 있는 영역</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>우리 지표</th>
+      <th>CPSTF 강력 권고 중재(도입 검토 대상)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>고혈압 진단경험자 치료율, 혈압수치 인지율</td>
+      <td><strong>팀 기반 케어</strong>(QALY당 $15,202로 비용효과적), 약국 기반 복약순응 중재, 자가혈압측정+추가지원, CHW 활용</td>
+    </tr>
+    <tr>
+      <td>우울감 경험률, 자살 사망률</td>
+      <td><strong>협력적 우울증 관리(Collaborative Care)</strong>, 가정방문 우울관리, 학교기반 CBT(보편·표적 모두 강력 권고)</td>
+    </tr>
+    <tr>
+      <td>현재흡연율, 금연시도율</td>
+      <td>금연상담전화(Quitline), <strong>금연치료 본인부담 경감</strong>, 담배가격 인상, 금연구역 정책, 문자메시지 금연중재, 대중매체 캠페인</td>
+    </tr>
+    <tr>
+      <td>걷기실천율, 신체활동 실천율</td>
+      <td><strong>신체활동 장소 조성·개선</strong>, 지역사회 전역 캠페인, 개별 맞춤 행태변화 프로그램, 계단이용 유도 표지</td>
+    </tr>
+    <tr>
+      <td>인플루엔자 예방접종률</td>
+      <td>리마인더/리콜, 표준지시(Standing Orders), 제공자 평가·피드백, 본인부담 경감, 예방접종정보시스템</td>
+    </tr>
+    <tr>
+      <td>안전벨트·음주운전·보행 사망</td>
+      <td>음주단속 공표, <strong>시동잠금장치</strong>, 1차 단속 법규, 안전벨트 강화 단속</td>
+    </tr>
+    <tr>
+      <td>1인가구·기초생활수급·노후주택(맥락)</td>
+      <td><strong>Housing First 영구지원주택</strong>, 주거바우처, 고교졸업 프로그램, 영유아 보육·교육</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="63-cpstf가-다루지-않는-우리-지표">6.3 CPSTF가 다루지 않는 우리 지표</h3>
+
+<p>법정감염병 발생률 10여 종, 낙상 사망률, 알츠하이머, 패혈증, 의료인력 밀도 — CPSTF에 대응 중재가 없다. 이 영역은 WHO·국내 지침으로 별도 보완해야 하며, <strong>“근거 중재 없음”을 대시보드에서 숨기지 말고 표시</strong>하는 편이 정직하다.</p>
+
+<hr />
+
+<h2 id="7-반영-권고">7. 반영 권고</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>권고</th>
+      <th>근거</th>
+      <th>난이도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>암검진 수검률(국가암검진, 시군구·암종별) 수집·탑재</strong></td>
+      <td>CPSTF 강력 권고 24건이 걸린 유일한 미보유 지표군</td>
+      <td>중 — 국립암센터 공표자료</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>「근거 중재(What Works)」 레이어 추가</strong> — 지표를 클릭하면 그 지표를 움직이는 CPSTF 권고 목록을 등급 배지와 함께 표시</td>
+      <td>대시보드의 ‘활동 0’ 공백을 메움</td>
+      <td>중 — <code class="language-plaintext highlighter-rouge">data/cpstf_findings.json</code> 이미 확보</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>4등급 배지 도입</strong>(강력 권고 / 권고 / <strong>근거 불충분</strong> / 반대 권고)과 “근거 불충분 ≠ 효과 없음” 각주 상시 노출</td>
+      <td>CPSTF가 별도 페이지로 방어하는 원칙</td>
+      <td>하</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><strong>지표 우선순위 규칙에 Burden · Disparities · Preventability 3축 도입</strong></td>
+      <td>CPSTF 주제 선정 8기준</td>
+      <td>중 — 기존 가중치 로직 수정</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><strong>「근거 공백」 화면</strong> — 우리 지표 중 대응 CPSTF 권고가 없는 63개를 명시</td>
+      <td>CPSTF Evidence Gaps 기능의 국내판</td>
+      <td>하</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>평가이론 문서에 CPSTF <strong>근거 결정표(설계 적합성 × 실행의 질)</strong> 를 보건소 사업 자체평가 서식으로 변환한 부록 추가</td>
+      <td>현행 정성 서면평가의 대체안</td>
+      <td>중</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>우선순위: <strong>1 → 2 → 3 → 5 → 4 → 6</strong></p>
+
+<hr />
+
+<h2 id="8-한계">8. 한계</h2>
+
+<ul>
+  <li>CPSTF 검토는 <strong>세계은행 고소득국, 영어 논문</strong>으로 한정된다. 한국 적용 시 적용가능성(Applicability)을 별도로 따져야 한다.</li>
+  <li><strong>권고의 연식이 고르지 않다.</strong> 판정 연도는 1998년~2024년에 걸쳐 있고, <strong>62%(139/224)가 2015년 이전</strong> 판정, 2020년 이후는 12%(26/224)에 불과하다.
+최고령은 1998년 6월 교통사고 손상 영역 4건(어린이 카시트 관련)이다. 오래된 권고를 인용할 때는 판정 연월을 함께 적어야 한다 — <code class="language-plaintext highlighter-rouge">data/cpstf_findings.json</code>의 모든 항목에 <code class="language-plaintext highlighter-rouge">date</code>가 들어 있다.</li>
+  <li>미국 제도 전제의 중재가 섞여 있다(WIC, 학교 보건센터, 민간보험 본인부담). 한국에서는 대응 제도로 치환해야 한다.</li>
+  <li>본 문서의 224건은 2024년 11월판 <em>All Active Findings</em> PDF를 파싱한 것으로, 비활성·보관 검토는 제외되어 있다.</li>
+</ul>
+
+<hr />
+
+<h2 id="9-예상-반박과-답변">9. 예상 반박과 답변</h2>
+
+<p>이 문서를 비판적으로 읽을 사람이 제기할 만한 반론을 미리 적고, 각각에 대한 답을 둔다. 답할 수 없는 것은 답할 수 없다고 적었다.</p>
+
+<h3 id="91-미국-자료를-한국에-그대로-갖다-쓰는-것-아닌가">9.1 “미국 자료를 한국에 그대로 갖다 쓰는 것 아닌가”</h3>
+
+<p>아니다. 이 문서는 <strong>CPSTF 권고를 한국에 그대로 적용하라고 주장하지 않는다.</strong> 두 가지를 분리해서 제안한다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>가져오는 것</th>
+      <th>가져오지 않는 것</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>방법론</strong> — 근거 등급 체계, 설계 적합성 × 실행의 질 결정표, 효과→경제성 순서, 근거 공백 명시, 해(harm) 검토</td>
+      <td>개별 중재를 한국에 무비판 이식</td>
+    </tr>
+    <tr>
+      <td><strong>근거 목록을 탐색 출발점으로 제공</strong></td>
+      <td>근거 목록을 한국 시행 근거로 대체</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>방법론은 문화 의존적이지 않다. “대조 없는 전후 비교는 근거로 인정하되 등급을 낮춘다”는 규칙에 한국적 특수성이 개입할 여지는 없다.
+개별 중재는 다르다. CPSTF 자신이 <strong>적용가능성(Applicability)</strong> 을 검토 단계에 넣어 둔 이유가 그것이고, 본 문서 8장에 미국 제도 전제 중재(WIC·학교보건센터·민간보험 본인부담)를 한계로 명시했다.</p>
+
+<h3 id="92-224건이라는-숫자가-틀렸다-사이트에는-200여-건이라고-되어-있다">9.2 “224건이라는 숫자가 틀렸다. 사이트에는 200여 건이라고 되어 있다”</h3>
+
+<p>집계 단위가 다르다. 0장의 <em>집계 규칙</em>에 밝혔듯 224는 <strong>PDF 표에서 판정이 붙은 행 수</strong>다. 한 중재가 유방암·자궁경부암·대장암 3개 대상에 각각 판정을 받으면 CPSTF 표 자체가 3행으로 나누므로 3으로 센다.
+사이트의 “200여 건”은 중재 묶음 단위 어림수다. <strong>어느 쪽이 맞다 틀리다의 문제가 아니라 세는 단위의 문제</strong>이며, 본 문서는 그 단위를 명시했고 <code class="language-plaintext highlighter-rouge">scripts/fetch_cpstf.py</code>를 재실행하면 누구나 같은 224를 얻는다. 반증 가능한 형태로 제시한 것이 요점이다.</p>
+
+<h3 id="93-지표-매핑-60는-저자-임의-판단-아닌가">9.3 “지표 매핑 60%는 저자 임의 판단 아닌가”</h3>
+
+<p><strong>맞다. 그래서 그렇게 적었다.</strong> 6장 첫머리에 ① 공식 크로스워크가 아니고 ② 주제 수준이며 ③ 저자 판단임을 명시했고, 판단 내용 전체를 <code class="language-plaintext highlighter-rouge">scripts/fetch_cpstf.py</code>의 <code class="language-plaintext highlighter-rouge">MAP</code> 딕셔너리로 노출했다.
+숨긴 판단은 비판할 수 없지만 드러낸 판단은 고칠 수 있다. 60%는 정밀도 주장이 아니라 <strong>탐색 가능 범위</strong>다. 이견이 있으면 딕셔너리 한 줄을 고치고 스크립트를 다시 돌리면 된다.</p>
+
+<h3 id="94-권고가-오래됐다-1998년-판정을-지금-근거로-쓸-수-있나">9.4 “권고가 오래됐다. 1998년 판정을 지금 근거로 쓸 수 있나”</h3>
+
+<p>가장 정당한 비판이다. 그래서 숨기지 않고 <strong>62%(139/224)가 2015년 이전 판정</strong>이라고 8장에 수치로 적었다.
+다만 두 가지를 구분해야 한다. ① CPSTF는 갱신 시 이전 판정을 교체한다(팀 기반 케어 2020년판이 2012년판을 대체). 즉 활성 목록에 남아 있는 오래된 판정은 <em>방치</em>가 아니라 <em>재검토 우선순위 밖</em>이라는 뜻이다. ② 그럼에도 1998년 어린이 카시트 권고를 2026년 한국에 인용하는 것은 부적절하다.
+<strong>실무 규칙</strong>: 인용할 때 판정 연월을 반드시 병기하고, 2015년 이전 판정은 최신 문헌으로 재확인한다. <code class="language-plaintext highlighter-rouge">data/cpstf_findings.json</code>의 모든 항목에 <code class="language-plaintext highlighter-rouge">date</code>가 들어 있는 이유다.</p>
+
+<h3 id="95-한국에도-neca한국건강증진개발원이-있는데-없다고-단정하는-건-과하다">9.5 “한국에도 NECA·한국건강증진개발원이 있는데 ‘없다’고 단정하는 건 과하다”</h3>
+
+<p>1장에 세 기관을 명시적으로 거론하고 무엇이 다른지 적었다. 요지는 기관의 부재가 아니라 <strong>산출물의 부재</strong>다.
+NECA는 의료기술평가, KHEPI는 사업 절차 지침, 학회는 임상 진료지침을 낸다. <strong>“지역사회 중재 X는 강력 권고 / Y는 근거 불충분”이라는 형태의 상시 공표 목록</strong>을 내는 곳은 없다. 이 진술은 반증 가능하다 — 그런 목록이 존재한다면 제시하면 되고, 그러면 문서를 고치겠다.</p>
+
+<h3 id="96-비만율로-지역을-평가하면-안-된다는-건-지나친-주장이다">9.6 “비만율로 지역을 평가하면 안 된다는 건 지나친 주장이다”</h3>
+
+<p>5장에서 논리 사슬 네 단계를 모두 적어 두었다. 주장하는 것은 <strong>“비만율을 보지 말라”가 아니라 “비만율 순위를 사업 성과 점수로 환산하지 말라”</strong> 이다. 모니터링 지표로 쓰는 것에는 반대하지 않는다.
+이 구분은 CPSTF에서 온 것이 아니라 「지역보건사업 평가이론」 5장의 귀인(attribution) 대 기여(contribution) 논의에서 온 것이며, 그 문서는 Donabedian·Kellogg·WHO/IHP+·OECD DAC 1차 문헌에 근거한다.</p>
+
+<h3 id="97-근거-불충분-50건은-결국-cpstf도-모른다는-뜻-아닌가-그런-기구를-왜-따르나">9.7 “근거 불충분 50건은 결국 CPSTF도 모른다는 뜻 아닌가. 그런 기구를 왜 따르나”</h3>
+
+<p>거꾸로다. <strong>모르는 것을 모른다고 공표하는 것이 이 체계의 강점이다.</strong> CPSTF는 <em>Insufficient evidence</em> 를 별도 페이지까지 두어 “효과가 없다는 뜻이 아니다”라고 방어하고, 이를 연구비 배분 우선순위로 쓰게 한다.
+현행 한국 지역보건 평가는 모르는 것을 모른다고 적을 자리가 없다. 정성 서면평가는 모든 항목에 점수를 매겨야 하므로, 측정되지 않은 것은 <em>낮은 점수</em>로 처리되거나 아예 항목에서 빠진다. 50건이라는 숫자는 CPSTF의 약점이 아니라 <strong>정직성의 증거</strong>다.</p>
+
+<h3 id="98-암검진-수검률이-없다는-지적은-맞지만-우리가-특별히-부실한-것인가">9.8 “암검진 수검률이 없다는 지적은 맞지만, 우리가 특별히 부실한 것인가”</h3>
+
+<p>아니다. 그래서 6.1에 지역사회건강조사 2025 요약집 25개 지표에도 없다는 사실을 함께 적었다. 이것은 우리 대시보드만의 결함이 아니라 <strong>국내 지역보건 지표 체계 전반이 사망률 편중, 검진 과소 대표</strong>라는 구조적 특징이다.
+다만 “남들도 그렇다”가 고치지 않을 이유는 아니다. 자료는 국민건강보험공단이 시군구 단위로 이미 공표하고 있다(2018~2023).</p>
+
+<h3 id="99-1차-자료를-직접-읽은-게-맞나">9.9 “1차 자료를 직접 읽은 게 맞나”</h3>
+
+<p>확인 경로를 전부 남겼다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>주장</th>
+      <th>확인 방법</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>권고 224건·등급 분포·주제별 집계</td>
+      <td>CPSTF <em>All Active Findings</em> PDF 직접 파싱 → <code class="language-plaintext highlighter-rouge">scripts/fetch_cpstf.py</code> 재실행으로 재현</td>
+    </tr>
+    <tr>
+      <td>10단계·9단계 절차, 설계 적합성 3분류, 상향·하향 조정 규칙</td>
+      <td>Methods Manual Part 1·2 원문</td>
+    </tr>
+    <tr>
+      <td>팀 기반 케어 QALY $15,202 / 기준선 $50,000 / 경제성 35편 / 효과성 54편</td>
+      <td>TFFRS 원문</td>
+    </tr>
+    <tr>
+      <td>설립 1996·CDC 국장 임명·의회 연례보고</td>
+      <td>About CPSTF 원문</td>
+    </tr>
+    <tr>
+      <td>ACA §2713, 2025년 대법원 합헌 판결</td>
+      <td>미 의회조사국(CRS) IF13010 등</td>
+    </tr>
+    <tr>
+      <td>암검진 수검률 시군구 단위 공표</td>
+      <td>공공데이터포털 15149732·15064612</td>
+    </tr>
+    <tr>
+      <td>우리 지표 156개·암검진 수검률 부재</td>
+      <td><code class="language-plaintext highlighter-rouge">data/dataset.json</code>·<code class="language-plaintext highlighter-rouge">data/kdh_dataset.json</code> 직접 조회</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="910-스스로-찾아-고친-오류">9.10 스스로 찾아 고친 오류</h3>
+
+<p>신뢰의 근거는 오류가 없다는 주장이 아니라 오류를 찾아 고친 기록이다. 초판(v1 최초 커밋)에서 다음을 고쳤다.</p>
+
+<ul>
+  <li><strong>최고령 권고를 “2001년 6월 미성년자 담배 접근 제한”으로 적었으나 틀렸다.</strong> 실제 최고령은 <strong>1998년 6월 교통사고 손상 4건</strong>이다. 연도 분포를 다시 세어 62%/12% 수치와 함께 교체했다.</li>
+  <li>암검진 수검률 자료원을 “국립암센터 시군구·암종별 공표”로 뭉뚱그렸으나, 실제 시군구 단위 공표 주체는 <strong>국민건강보험공단</strong>(공공데이터포털)임을 확인해 데이터셋 번호까지 적시했다.</li>
+  <li>팀 기반 케어 경제성 수치를 웹 검색 요약에서 가져왔던 것을 <strong>TFFRS 원문으로 재확인</strong>하고 효과성 근거 편수(54편)를 추가했다.</li>
+  <li>“담배·교통은 지식 문제가 아니라 집행 문제” 문장이 검토 범위를 넘어선 일반화였으므로 범위 한정 문구를 넣었다.</li>
+</ul>
+
+<hr />
+
+<h2 id="10-출처">10. 출처</h2>
+
+<ul>
+  <li>The Community Guide — https://www.thecommunityguide.org/</li>
+  <li>CPSTF All Active Findings (2024-11) [PDF] — https://www.thecommunityguide.org/media/pdf/cpstf-finding-lists/CPSTF-All-Findings-508.pdf</li>
+  <li>About CPSTF — https://www.thecommunityguide.org/pages/about-community-preventive-services-task-force.html</li>
+  <li>Methods Manual Part 1: Effectiveness Review Methods — https://www.thecommunityguide.org/pages/effectiveness-review-methods.html</li>
+  <li>Methods Manual Part 2: Economic Review Process — https://www.thecommunityguide.org/pages/economic-review-methods.html</li>
+  <li>Evidence Gaps — https://www.thecommunityguide.org/pages/evidence-gaps.html</li>
+  <li>Crosswalks with Partners (Healthy People 2030, EBCCP) — https://www.thecommunityguide.org/pages/crosswalks.html</li>
+  <li>Heart Disease &amp; Stroke Prevention: Team-Based Care — https://www.thecommunityguide.org/findings/heart-disease-stroke-prevention-team-based-care-improve-blood-pressure-control.html</li>
+  <li>TFFRS: Team-based Care to Improve Blood Pressure Control — https://www.thecommunityguide.org/pages/tffrs-heart-disease-and-stroke-prevention-team-based-care-improve-blood-pressure-control.html</li>
+  <li>미 의회조사국(CRS), The ACA Preventive Services Coverage Requirement (IF13010) — https://www.congress.gov/crs-product/IF13010</li>
+  <li>국민건강보험공단, 시군구별 국가건강검진 현황자료(일반검진·암검진) — https://www.data.go.kr/data/15149732/fileData.do</li>
+  <li>국민건강보험공단, 암검진통합수검률 — https://www.data.go.kr/data/15064612/fileData.do</li>
+  <li>국립암센터 암모니터링포털 — https://www.cancerdata.re.kr/</li>
+  <li>한국보건의료연구원(NECA) 기관 역할 — https://www.neca.re.kr/lay1/S1T20C233/contents.do</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

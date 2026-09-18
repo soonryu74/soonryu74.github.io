@@ -91,6 +91,49 @@ export function val(ind, item, year, code) {
   return v == null ? null : v / 10;
 }
 
+// ── 표본오차·신뢰구간 (지역사회건강조사 지표만) ──────────────────────────────
+// KOSIS 원표에 조율/표준화율별 표준오차(CR_SE·SR_SE)가 함께 실려 있다. build_dataset.py 가
+// cse·sse 행렬로 실어 온다. 사망률·인구·환경 등 다른 출처 지표에는 표준오차가 없다(null).
+const SE_KEY = { crude: "cse", std: "sse" };
+
+/** 상대표준오차가 이 값을 넘으면 '불안정'으로 보고 순위에서 제외한다.
+ *  근거: County Health Rankings & Roadmaps 2025 Technical Documentation —
+ *  "values are considered unreliable when the standard error of the estimate is
+ *   more than 20% of the estimate value". (docs/미국_CountyHealthRankings_검토_v1.md 4.3) */
+export const RSE_UNSTABLE = 0.2;
+
+/** 지표·항목·연도·지역 → 표준오차(%p) 또는 null */
+export function se(ind, item, year, code) {
+  const key = SE_KEY[item];
+  const mat = key && RAW.values[ind.id]?.[key];
+  if (!mat) return null;
+  const yi = ind.years.indexOf(year), ri = RIDX.get(code);
+  if (yi < 0 || ri == null) return null;
+  const v = mat[yi]?.[ri];
+  return v == null ? null : v / 10;
+}
+
+/** 95% 신뢰구간 등 표본오차 정보. 표준오차가 없는 지표는 null.
+ *  → { v, se, lo, hi, moe, rse, unstable } */
+export function ci(ind, item, year, code) {
+  const v = val(ind, item, year, code);
+  const s = se(ind, item, year, code);
+  if (v == null || s == null) return null;
+  const moe = 1.96 * s;
+  return { v, se: s, lo: v - moe, hi: v + moe, moe,
+           rse: v > 0 ? s / v : null, unstable: v > 0 && s / v > RSE_UNSTABLE };
+}
+
+/** 두 지역의 95% 신뢰구간이 겹치는가 — 겹치면 "차이가 확실하지 않다". */
+export function ciOverlap(ind, item, year, codeA, codeB) {
+  const a = ci(ind, item, year, codeA), b = ci(ind, item, year, codeB);
+  if (!a || !b) return null;
+  return a.lo <= b.hi && b.lo <= a.hi;
+}
+
+/** 지표가 표본오차를 갖는가(= 지역사회건강조사 계열) */
+export const hasSe = (ind) => !!RAW.values[ind.id]?.sse;
+
 /** 지역의 전 연도 시계열 */
 export const series = (ind, item, code) => ind.years.map((y) => val(ind, item, y, code));
 
@@ -114,12 +157,21 @@ export function betterCmp(ind) {
 }
 
 /** 집단 내 순위표 [{r, v}] (양호한 순). 결측 제외 */
-export function ranked(ind, item, year, pool) {
+export function ranked(ind, item, year, pool, opts = {}) {
   const cmp = betterCmp(ind);
+  const rows = pool
+    .map((r) => ({ r, v: val(ind, item, year, r.c), ci: ci(ind, item, year, r.c) }))
+    .filter((x) => x.v != null);
+  // dropUnstable: 상대표준오차가 RSE_UNSTABLE 을 넘는 값은 순위에서 제외한다(CHR&R 규칙).
+  const keep = opts.dropUnstable ? rows.filter((x) => !x.ci?.unstable) : rows;
+  return keep.sort((a, b) => cmp(a.v, b.v));
+}
+
+/** 순위에서 제외된(불안정) 지역 목록 — 화면에 "제외 n곳"을 알리기 위해 */
+export function unstableRows(ind, item, year, pool) {
   return pool
-    .map((r) => ({ r, v: val(ind, item, year, r.c) }))
-    .filter((x) => x.v != null)
-    .sort((a, b) => cmp(a.v, b.v));
+    .map((r) => ({ r, c: ci(ind, item, year, r.c) }))
+    .filter((x) => x.c?.unstable);
 }
 
 /** 백분위(0~100, 높을수록 양호): 집단 중 나보다 나쁜 비율 (+동률 절반) */

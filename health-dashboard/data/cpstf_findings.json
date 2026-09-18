@@ -1,0 +1,2170 @@
+{
+ "source": "Community Preventive Services Task Force, All Active Findings (2024-11)",
+ "source_url": "https://www.thecommunityguide.org/media/pdf/cpstf-finding-lists/CPSTF-All-Findings-508.pdf",
+ "site": "https://www.thecommunityguide.org/",
+ "retrieved": "2026-09-18",
+ "grades": [
+  {
+   "en": "Recommended (strong)",
+   "ko": "강력 권고",
+   "desc": "효과 근거가 강함 — 우선 도입 대상"
+  },
+  {
+   "en": "Recommended (sufficient)",
+   "ko": "권고",
+   "desc": "효과 근거가 충분함 — 도입 가능"
+  },
+  {
+   "en": "Insufficient Evidence",
+   "ko": "근거 불충분",
+   "desc": "효과 여부를 판단할 근거가 부족 — 효과가 없다는 뜻이 아님. 연구·평가 우선순위"
+  },
+  {
+   "en": "Recommended Against",
+   "ko": "반대 권고",
+   "desc": "이익보다 해가 크다는 근거가 충분 — 시행하지 말 것"
+  }
+ ],
+ "total": 224,
+ "summary": {
+  "Recommended (sufficient)": 66,
+  "Recommended (strong)": 106,
+  "Insufficient Evidence": 50,
+  "Recommended Against": 2
+ },
+ "topics": [
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "n": 49,
+   "strong": 24,
+   "sufficient": 9,
+   "insufficient": 16,
+   "against": 0,
+   "indicators": [
+    "K_MORT_CA",
+    "K_MORT_STO",
+    "K_MORT_LIV",
+    "K_MORT_LUNG",
+    "K_MORT_COL",
+    "K_USE_STO",
+    "K_USE_LUNG",
+    "K_USE_COL",
+    "K_USE_BRE"
+   ]
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "n": 19,
+   "strong": 2,
+   "sufficient": 6,
+   "insufficient": 11,
+   "against": 0,
+   "indicators": [
+    "DT_H_OBE_OBE",
+    "DT_H_OBE_CONTROL"
+   ]
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "n": 18,
+   "strong": 12,
+   "sufficient": 1,
+   "insufficient": 5,
+   "against": 0,
+   "indicators": [
+    "DT_INFLUENZA",
+    "K_INF_VAR",
+    "K_INF_MUMPS",
+    "K_INF_HAV",
+    "K_INF_PER"
+   ]
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "n": 17,
+   "strong": 6,
+   "sufficient": 9,
+   "insufficient": 2,
+   "against": 0,
+   "indicators": [
+    "DT_H_EX_WALK",
+    "DT_H_EX_PHY",
+    "DT_117075_H_HEALTHY",
+    "K_ENV_SPORT",
+    "K_ENV_PARKN",
+    "K_ENV_PARKA"
+   ]
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "n": 16,
+   "strong": 12,
+   "sufficient": 4,
+   "insufficient": 0,
+   "against": 0,
+   "indicators": [
+    "DT_H_BELT",
+    "DT_117075_H_BELT_BACK",
+    "DT_117075_H_DR_DRIV",
+    "K_SAF_BELT",
+    "K_SAF_STOP",
+    "K_SAF_SIG",
+    "K_SAF_TA",
+    "K_SAF_TADEATH",
+    "K_SAF_PED",
+    "K_SAF_ELD",
+    "K_SAF_TCI",
+    "K_SAF_TSI",
+    "K_MORT_TRA",
+    "K_SAF_G_TRAF"
+   ]
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "n": 12,
+   "strong": 5,
+   "sufficient": 4,
+   "insufficient": 3,
+   "against": 0,
+   "indicators": [
+    "K_POP_ONE",
+    "K_POP_BLS",
+    "K_ENV_OLD",
+    "K_ENV_EMPTY",
+    "K_ECO_EMP",
+    "K_ECO_YEMP",
+    "K_ECO_UNEMP",
+    "K_EDU_RATIO",
+    "K_RES_SOC",
+    "K_RES_CULT"
+   ]
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "n": 11,
+   "strong": 3,
+   "sufficient": 5,
+   "insufficient": 3,
+   "against": 0,
+   "indicators": [
+    "K_INF_SYP",
+    "K_POP_CBR"
+   ]
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "n": 11,
+   "strong": 8,
+   "sufficient": 3,
+   "insufficient": 0,
+   "against": 0,
+   "indicators": [
+    "DT_H_SM",
+    "DT_H_SM_MALE",
+    "DT_TOBACCO_PRODUCT",
+    "DT_SM_TRY_V2",
+    "DT_117075_SM_IND_WORK_V2",
+    "K_MORT_LUNG",
+    "K_USE_LUNG",
+    "K_MORT_COPD"
+   ]
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "n": 10,
+   "strong": 4,
+   "sufficient": 3,
+   "insufficient": 2,
+   "against": 1,
+   "indicators": [
+    "DT_H_DR_MONTH",
+    "DT_117075_H_DR_HIGH_WH",
+    "DT_H_DR_HIGH",
+    "DT_117075_H_DR_DRIV",
+    "K_MORT_LIVD",
+    "K_USE_LIV"
+   ]
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "n": 9,
+   "strong": 5,
+   "sufficient": 4,
+   "insufficient": 0,
+   "against": 0,
+   "indicators": [
+    "DT_HYPER_DOCTOR",
+    "DT_HYPER_DOCTOR_DRUG",
+    "DT_117075_HYPER_AWAR",
+    "DT_117075_STR_EARLY_SYM",
+    "DT_117075_MYO_EARLY_SYM",
+    "K_MORT_IHD",
+    "K_MORT_CVA",
+    "K_MORT_HTN",
+    "K_MORT_HEART",
+    "K_USE_HTN",
+    "K_CHK_HTN"
+   ]
+  },
+  {
+   "topic": "Mental Health",
+   "topic_ko": "정신건강",
+   "n": 8,
+   "strong": 4,
+   "sufficient": 2,
+   "insufficient": 2,
+   "against": 0,
+   "indicators": [
+    "DT_H_MENTAL_STRESS",
+    "DT_H_MENTAL_DEPRESS",
+    "DT_117075_H_MENTAL_DEPRESS_SYM",
+    "K_MORT_SUI",
+    "K_USE_MENT",
+    "K_SAF_G_SUI"
+   ]
+  },
+  {
+   "topic": "Violence Prevention",
+   "topic_ko": "폭력 예방",
+   "n": 8,
+   "strong": 5,
+   "sufficient": 2,
+   "insufficient": 0,
+   "against": 1,
+   "indicators": [
+    "K_MORT_HOM",
+    "K_SAF_G_CRIME"
+   ]
+  },
+  {
+   "topic": "Diabetes",
+   "topic_ko": "당뇨병",
+   "n": 7,
+   "strong": 3,
+   "sufficient": 3,
+   "insufficient": 1,
+   "against": 0,
+   "indicators": [
+    "DT_DIA_DOCTOR",
+    "DT_DIA_TREAT",
+    "DT_DIA_EYE",
+    "DT_DIA_KIDNEY",
+    "DT_117075_DIA_AWAR",
+    "K_MORT_DM",
+    "K_USE_DM",
+    "K_CHK_DM"
+   ]
+  },
+  {
+   "topic": "Nutrition",
+   "topic_ko": "영양",
+   "n": 7,
+   "strong": 2,
+   "sufficient": 5,
+   "insufficient": 0,
+   "against": 0,
+   "indicators": [
+    "DT_117075_DIE_BF02",
+    "DT_11775_NUT_LABEL_UTIL"
+   ]
+  },
+  {
+   "topic": "Oral Health",
+   "topic_ko": "구강건강",
+   "n": 5,
+   "strong": 3,
+   "sufficient": 0,
+   "insufficient": 2,
+   "against": 0,
+   "indicators": [
+    "DT_H_OR_BRUSH",
+    "DT_H_OR_INCONV",
+    "K_USE_PERIO"
+   ]
+  },
+  {
+   "topic": "Worksite Health",
+   "topic_ko": "직장 건강",
+   "n": 5,
+   "strong": 2,
+   "sufficient": 1,
+   "insufficient": 2,
+   "against": 0,
+   "indicators": [
+    "DT_117075_SM_IND_WORK_V2"
+   ]
+  },
+  {
+   "topic": "Asthma",
+   "topic_ko": "천식",
+   "n": 3,
+   "strong": 2,
+   "sufficient": 0,
+   "insufficient": 1,
+   "against": 0,
+   "indicators": [
+    "K_MORT_COPD"
+   ]
+  },
+  {
+   "topic": "Pregnancy Health",
+   "topic_ko": "임신 건강",
+   "n": 3,
+   "strong": 1,
+   "sufficient": 2,
+   "insufficient": 0,
+   "against": 0,
+   "indicators": [
+    "K_MORT_INF"
+   ]
+  },
+  {
+   "topic": "Health Communication and Health Information Technology",
+   "topic_ko": "건강 커뮤니케이션·정보기술",
+   "n": 2,
+   "strong": 2,
+   "sufficient": 0,
+   "insufficient": 0,
+   "against": 0,
+   "indicators": []
+  },
+  {
+   "topic": "Substance Use",
+   "topic_ko": "약물 사용",
+   "n": 2,
+   "strong": 1,
+   "sufficient": 1,
+   "insufficient": 0,
+   "against": 0,
+   "indicators": [
+    "DT_117075_H_DR_DRIV"
+   ]
+  },
+  {
+   "topic": "Adolescent Health",
+   "topic_ko": "청소년 건강",
+   "n": 1,
+   "strong": 0,
+   "sufficient": 1,
+   "insufficient": 0,
+   "against": 0,
+   "indicators": []
+  },
+  {
+   "topic": "Preparedness and Response",
+   "topic_ko": "보건위기 대비·대응",
+   "n": 1,
+   "strong": 0,
+   "sufficient": 1,
+   "insufficient": 0,
+   "against": 0,
+   "indicators": [
+    "K_SAF_G_INF"
+   ]
+  }
+ ],
+ "items": [
+  {
+   "topic": "Adolescent Health",
+   "topic_ko": "청소년 건강",
+   "name": "Person-to-Person Interventions to Improve Caregivers' Parenting Skills",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2007"
+  },
+  {
+   "topic": "Asthma",
+   "topic_ko": "천식",
+   "name": "School-based Self-Management Interventions for Children and Adolescents with Asthma",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2019"
+  },
+  {
+   "topic": "Asthma",
+   "topic_ko": "천식",
+   "name": "Home-Based Multi-Trigger, Multicomponent Environmental Interventions Children and Adolescents with Asthma",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2008"
+  },
+  {
+   "topic": "Asthma",
+   "topic_ko": "천식",
+   "name": "Adults with Asthma",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "June 2008"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Increasing Cancer Screening Patient Navigation Services to Advance Health Equity Breast Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "July 2022"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "July 2022"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "July 2022"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Interventions Engaging Community Health Workers Breast Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2019"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2019"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2019"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Multicomponent Interventions Breast Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2016"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2016"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2016"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Increasing Cancer Screening, Client-Oriented Interventions Client Incentives Breast Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "July 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "July 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "July 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Client Reminders Breast Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "July 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "July 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "July 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "One-on-One Education Breast Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "March 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Reducing Structural Barriers Breast Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "March 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2010"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Group Education for Clients Breast Cancer",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Mass Media Targeting Clients Breast Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Reducing Client Out-of-Pocket Costs Breast Cancer",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Small Media Targeting Clients Breast Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2005"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2005"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2005"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Increasing Cancer Screening, Provider-Oriented Interventions Provider Assessment and Feedback Breast Cancer",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Provider Incentives Breast Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2009"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Provider Reminder and Recall Systems Breast Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2006"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Cervical Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2006"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Colorectal Cancer",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2006"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Preventing Skin Cancer Interventions in Outdoor Recreational and Tourism Settings",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2014"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Interventions in Outdoor Occupational Settings",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2013"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Child Care Center-Based Interventions",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "May 2013"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "High School- and College-Based Interventions",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "May 2013"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Primary and Middle School-Based Interventions",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2012"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Multicomponent Community-Wide Interventions",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "April 2012"
+  },
+  {
+   "topic": "Cancer",
+   "topic_ko": "암",
+   "name": "Mass Media",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "June 2011"
+  },
+  {
+   "topic": "Diabetes",
+   "topic_ko": "당뇨병",
+   "name": "Mobile Phone Applications Used Within Healthcare Systems for Type 1 Diabetes Self-Management",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "August 2017"
+  },
+  {
+   "topic": "Diabetes",
+   "topic_ko": "당뇨병",
+   "name": "Mobile Phone Applications Used Within Healthcare Systems for Type 2 Diabetes Self-Management",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "August 2017"
+  },
+  {
+   "topic": "Diabetes",
+   "topic_ko": "당뇨병",
+   "name": "Diabetes Management: Interventions Engaging Community Health Workers",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2017"
+  },
+  {
+   "topic": "Diabetes",
+   "topic_ko": "당뇨병",
+   "name": "Team-Based Care for Patients with Type 2 Diabetes",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2016"
+  },
+  {
+   "topic": "Diabetes",
+   "topic_ko": "당뇨병",
+   "name": "Intensive Lifestyle Interventions for Patients with Type 2 Diabetes",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2016"
+  },
+  {
+   "topic": "Diabetes",
+   "topic_ko": "당뇨병",
+   "name": "Diabetes Prevention: Interventions Engaging Community Health Workers for Diabetes Prevention",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "August 2016"
+  },
+  {
+   "topic": "Diabetes",
+   "topic_ko": "당뇨병",
+   "name": "Combined Diet and Physical Activity Promotion Programs to Prevent Type 2 Diabetes Among People at Increased Risk",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "July 2014"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "Electronic Screening and Brief Interventions (e-SBI)",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2012"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "Privatization of Retail Alcohol Sales",
+   "finding": "Recommended Against",
+   "finding_ko": "반대 권고",
+   "date": "April 2011"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "(strong) Responsible Beverage Service Training",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2010"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "Dram Shop Liability",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2010"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "Overservice Law Enforcement Initiatives",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "March 2010"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "Maintaining Limits on Hours of Sale",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "February 2009"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "Maintaining Limits on Days of Sale",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2008"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "Increasing Alcohol Taxes",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2007"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "Regulation of Alcohol Outlet Density",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "February 2007"
+  },
+  {
+   "topic": "Excessive Alcohol Use",
+   "topic_ko": "과도한 음주",
+   "name": "Enhanced Enforcement of Laws Prohibiting Sales to Minors",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "February 2006"
+  },
+  {
+   "topic": "Health Communication and Health Information Technology",
+   "topic_ko": "건강 커뮤니케이션·정보기술",
+   "name": "Health Information Technology: Text Messaging Interventions for Medication Adherence Among Patients with Chronic Diseases Recommended (sufficient) Health Information Technology: Comprehensive Telehealth to Deliver Dietary Interventions to Patients with Chronic Diseases",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2017"
+  },
+  {
+   "topic": "Health Communication and Health Information Technology",
+   "topic_ko": "건강 커뮤니케이션·정보기술",
+   "name": "Health Communication and Social Marketing: Campaigns That Include Mass Media and Health-Related Product Distribution",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2010"
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "name": "Team-Based Care to Improve Blood Pressure Control",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2020"
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "name": "Tailored Pharmacy-based Interventions to Improve Medication Adherence",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2019"
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "name": "Mobile Health (mHealth) Interventions for Treatment Adherence among Newly Diagnosed Patients",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2017"
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "name": "Interactive Digital Interventions for Blood Pressure Self- Management",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "August 2017"
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "name": "Self-Measured Blood Pressure Monitoring Interventions for Improved Blood Pressure Control When Used Alone",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2015"
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "name": "When Combined with Additional Support",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2015"
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "name": "Interventions Engaging Community Health Workers",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2015"
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "name": "Clinical Decision-Support Systems (CDSS)",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "April 2013"
+  },
+  {
+   "topic": "Heart Disease and Stroke Prevention",
+   "topic_ko": "심장병·뇌졸중 예방",
+   "name": "Reducing Out-of-Pocket Costs for Cardiovascular Disease Preventive Services for Patients with High Blood Pressure and High Cholesterol",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "November 2012"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Group-Based Abstinence Education Interventions for Adolescents",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "June 2009"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Group-Based Comprehensive Risk Reduction Interventions for Adolescents",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2009"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Youth Development Behavioral Interventions to Reduce Sexual Risk Behaviors in Adolescents Coordinated with – Work or Vocational Training",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "April 2008"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Coordinated with – Sports or Club Participation",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "April 2008"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Coordinated with – Community Service",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2007"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "HIV Prevention Digital Health Interventions to Improve Adherence to HIV Pre- Exposure Prophylaxis",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2021"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Partner Services Interventions to Increase HIV Testing",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "July 2021"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Clinical Decision Support System to Increase HIV Screening",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2020"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Interventions to Reduce Sexual Risk Behaviors or Increase Protective Behaviors to Prevent Acquisition of HIV in Men Who Have Sex with Men Community-Level Interventions",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2005"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Group-Level Interventions",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2005"
+  },
+  {
+   "topic": "HIV/AIDS, STIs and Teen Pregnancy",
+   "topic_ko": "HIV·성매개감염·청소년임신",
+   "name": "Individual-Level Interventions",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2005"
+  },
+  {
+   "topic": "Mental Health",
+   "topic_ko": "정신건강",
+   "name": "Multi-tiered Interventions to Create Trauma-Informed Schools to Improve Mental Health Among Youth",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "November 2023"
+  },
+  {
+   "topic": "Mental Health",
+   "topic_ko": "정신건강",
+   "name": "Targeted School-Based Cognitive Behavioral Therapy Programs to Reduce Depression and Anxiety Symptoms",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2019"
+  },
+  {
+   "topic": "Mental Health",
+   "topic_ko": "정신건강",
+   "name": "Universal School-Based Cognitive Behavioral Therapy Programs to Reduce Depression and Anxiety Symptoms",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2019"
+  },
+  {
+   "topic": "Mental Health",
+   "topic_ko": "정신건강",
+   "name": "Mental Health Benefits Legislation",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "August 2012"
+  },
+  {
+   "topic": "Mental Health",
+   "topic_ko": "정신건강",
+   "name": "Collaborative Care for the Management of Depressive Disorders",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2010"
+  },
+  {
+   "topic": "Mental Health",
+   "topic_ko": "정신건강",
+   "name": "Interventions to Reduce Depression Among Older Adults Clinic-Based Depression Care Management",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "February 2008"
+  },
+  {
+   "topic": "Mental Health",
+   "topic_ko": "정신건강",
+   "name": "Community-Based Exercise Interventions",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "February 2008"
+  },
+  {
+   "topic": "Mental Health",
+   "topic_ko": "정신건강",
+   "name": "Home-Based Depression Care Management",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2008"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Use of Motorcycle Helmets Universal Helmet Laws",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2013"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Reducing Alcohol-Impaired Driving Publicized Sobriety Checkpoint Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2012"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Ignition Interlocks",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2006"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Multicomponent Interventions with Community Mobilization",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2005"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "School-Based Programs Instructional Programs",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2003"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Mass Media Campaigns",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2002"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "0.08% Blood Alcohol Concentration (BAC) Laws",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2000"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Maintaining Current Minimum Legal Drinking Age (MLDA) Laws",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2000"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Lower BAC Laws for Young or Inexperienced Drivers",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2000"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Use of Safety Belts Enhanced Enforcement Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "October 2000"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Laws Mandating Use",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "October 2000"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Primary (vs. Secondary) Enforcement Laws",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "October 2000"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Use of Child Safety Seats Community-Wide Information and Enhanced Enforcement Campaigns",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 1998"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Distribution and Education Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 1998"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Incentive and Education Programs",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 1998"
+  },
+  {
+   "topic": "Motor Vehicle Injury",
+   "topic_ko": "교통사고 손상",
+   "name": "Laws Mandating Use",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 1998"
+  },
+  {
+   "topic": "Nutrition",
+   "topic_ko": "영양",
+   "name": "Home-delivered and Congregate Meal Services for Older Adults",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2021"
+  },
+  {
+   "topic": "Nutrition",
+   "topic_ko": "영양",
+   "name": "Digital Health and Telephone Interventions to Increase Healthy Eating and Physical Activity among Students at Institutions of Higher Education",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "July 2021"
+  },
+  {
+   "topic": "Nutrition",
+   "topic_ko": "영양",
+   "name": "Worksite Digital Health and Telephone Interventions to Increase Healthy Eating and Physical Activity",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "March 2021"
+  },
+  {
+   "topic": "Nutrition",
+   "topic_ko": "영양",
+   "name": "Community-based Digital Health and Telephone Interventions to Increase Healthy Eating and Physical Activity",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2020"
+  },
+  {
+   "topic": "Nutrition",
+   "topic_ko": "영양",
+   "name": "Gardening Interventions to Increase Fruit and Vegetable Consumption Among Children",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2017"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Digital Health Interventions for Adolescents with Overweight or Obesity",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "August 2019"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Meal or Fruit and Vegetable Snack Interventions Combined with Physical Activity Interventions in Schools",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "April 2018"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Increasing Water Access Combined with Physical Activity Interventions in Schools",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "April 2018"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Multicomponent Interventions (Meal or Fruit and Vegetable Snack Interventions + Healthier Snack Foods and Beverages) Combined with a Physical Activity Intervention in Schools",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2018"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Supporting Healthier Snack Foods and Beverages Sold or Offered Combined with Physical Activity Interventions in Schools",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2018"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Increasing Water Access in Schools",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "December 2016"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Meal and Fruit and Vegetable Snack Interventions to Increase Healthier Foods and Beverages Provided by Schools",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2016"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Multicomponent Interventions to Increase Availability of Healthier Foods and Beverages in Schools",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2016"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Supporting Healthier Snack Foods and Beverages Sold or Offered as Rewards in Schools",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "December 2016"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Behavioral Interventions that Aim to Reduce Recreational Sedentary Screen Time Among Children",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2014"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Technology-Supported Multicomponent Coaching or Counseling Interventions To Maintain Weight Loss",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2009"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "To Reduce Weight",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2009"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Worksite Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2007"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Provider-Oriented Interventions Multicomponent Provider Interventions",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "February 2008"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Multicomponent Provider Interventions with Client Interventions",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "February 2008"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Provider Education with a Client Intervention",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "February 2008"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Provider Education",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2007"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Provider Feedback",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2007"
+  },
+  {
+   "topic": "Obesity",
+   "topic_ko": "비만",
+   "name": "Provider Reminders",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2007"
+  },
+  {
+   "topic": "Oral Health",
+   "topic_ko": "구강건강",
+   "name": "School Fluoride Varnish Delivery Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2024"
+  },
+  {
+   "topic": "Oral Health",
+   "topic_ko": "구강건강",
+   "name": "Craniofacial Injuries: Community-Based Interventions to Encourage Use of Helmets, Facemasks, and Mouthguards in Contact Sports",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "October 2013"
+  },
+  {
+   "topic": "Oral Health",
+   "topic_ko": "구강건강",
+   "name": "Dental Caries (Cavities): Community Water Fluoridation",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2013"
+  },
+  {
+   "topic": "Oral Health",
+   "topic_ko": "구강건강",
+   "name": "Dental Caries (Cavities): Community-Based Initiatives to Promote the Use of Dental Sealants",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "April 2013"
+  },
+  {
+   "topic": "Oral Health",
+   "topic_ko": "구강건강",
+   "name": "Dental Caries (Cavities): School-Based Dental Sealant Delivery Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2013"
+  },
+  {
+   "topic": "Preparedness and Response",
+   "topic_ko": "보건위기 대비·대응",
+   "name": "Non-Pharmaceutical Interventions to Reduce Transmission of Viral Respiratory Infections in Long-Term Care Communities",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2024"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Home-based Exercise Interventions for Adults Aged 65 Years and Older",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "July 2022"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Park, Trail, and Greenway Infrastructure Interventions When Combined with Additional Interventions",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "July 2021"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "When Implemented Alone",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "July 2021"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Classroom-based Physically Active Lesson Interventions",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "March 2021"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Physical Activity: Classroom-based Physical Activity Break Interventions",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "March 2021"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Digital Health Interventions for Adults 55 years and Older",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "April 2019"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Interventions to Increase Active Travel to School",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "August 2018"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Interventions Including Activity Monitors for Adults with Overweight or Obesity",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "August 2017"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Built Environment Approaches Combining Transportation System Interventions with Land Use and Environmental Design",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2016"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Family-Based Interventions",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "October 2016"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Enhanced School-Based Physical Education",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2013"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Stand-Alone Mass Media Campaigns",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "March 2010"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Point-of-Decision Prompts to Encourage Use of Stairs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2005"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Creating or Improving Places for Physical Activity",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "May 2001"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Community-Wide Campaigns",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2001"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Individually Adapted Health Behavior Change Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2001"
+  },
+  {
+   "topic": "Physical Activity",
+   "topic_ko": "신체활동",
+   "name": "Social Support Interventions in Community Settings",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2001"
+  },
+  {
+   "topic": "Pregnancy Health",
+   "topic_ko": "임신 건강",
+   "name": "Exercise Programs to Prevent Gestational Hypertension",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "February 2019"
+  },
+  {
+   "topic": "Pregnancy Health",
+   "topic_ko": "임신 건강",
+   "name": "Lifestyle Interventions to Reduce the Risk of Gestational Diabetes",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2017"
+  },
+  {
+   "topic": "Pregnancy Health",
+   "topic_ko": "임신 건강",
+   "name": "Community-Wide Campaigns to Promote the Use of Folic Acid Supplements",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2004"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Education Programs and Policies Year-Round Schooling",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "August 2017"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Expanded In-School Learning Time",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "April 2017"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Center-Based Early Childhood Education",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2015"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "School-Based Health Centers",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "March 2015"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "High School Completion Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2013"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Out-of-School-Time Academic Programs General",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2013"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Math-Focused",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2013"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Reading-Focused",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2013"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Minimal Academic Content",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "December 2013"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Full Day Kindergarten Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2011"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Housing Tenant-Based Housing Voucher Programs",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "July 2020"
+  },
+  {
+   "topic": "Social Determinants of Health",
+   "topic_ko": "건강의 사회적 결정요인",
+   "name": "Permanent Supportive Housing with Housing First (Housing First Programs)",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2019"
+  },
+  {
+   "topic": "Nutrition",
+   "topic_ko": "영양",
+   "name": "Fruit and Vegetable Incentive Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2023"
+  },
+  {
+   "topic": "Nutrition",
+   "topic_ko": "영양",
+   "name": "Healthy School Meals for All",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "July 2022"
+  },
+  {
+   "topic": "Substance Use",
+   "topic_ko": "약물 사용",
+   "name": "Community Interventions Involving Coalitions or Partnerships to Prevent Substance Use among Youth",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2024"
+  },
+  {
+   "topic": "Substance Use",
+   "topic_ko": "약물 사용",
+   "name": "Family-based Interventions to Prevent Substance Use among Youth",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2023"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Mobile Phone Text Messaging Cessation Interventions",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "July 2020"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Internet-based Cessation Interventions",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2019"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Comprehensive Tobacco Control Programs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2014"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Mass-Reach Health Communication Interventions",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "April 2013"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Interventions to Increase the Unit Price for Tobacco Products",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "November 2012"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Smoke-Free Policies",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "November 2012"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Quitline Interventions",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2012"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Reducing Out-of-Pocket Costs for Evidence-Based Cessation Treatments",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "August 2012"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Mobile Phone-Based Cessation Interventions",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "December 2011"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Incentives and Competitions to Increase Smoking Cessation Among Workers When Combined with Additional Interventions",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2005"
+  },
+  {
+   "topic": "Tobacco Use",
+   "topic_ko": "담배",
+   "name": "Restricting Minors' Access to Tobacco Products Community Mobilization with Additional Interventions to Restrict Minors' Access to Tobacco Products",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2001"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Enhancing Access to Vaccination Services Home Visits to Increase Vaccination Rates",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2016"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Special Supplemental Nutrition Program for Women, Infants & Children (WIC) Settings",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Reducing Client Out-of-Pocket Costs",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "September 2014"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Vaccination Programs in Schools and Organized Child Care Centers",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2009"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Increasing Community Demand for Vaccinations Client-Held Paper Immunization Records",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "February 2016"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Vaccination Requirements for Child Care, School, and College Attendance",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2016"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Community-Wide Education When Used Alone",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "September 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Monetary Sanction Policies",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "September 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Client or Family Incentive Rewards",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "May 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Client Reminder and Recall Systems",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "May 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Clinic-Based Client Education when Used Alone",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "May 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Community-Based Interventions Implemented in Combination",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "October 2014"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Provider- or System-Based Interventions Provider Education When Used Alone",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "May 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Provider Assessment and Feedback",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Provider Reminders",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Standing Orders",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "March 2015"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Health Care System-Based Interventions Implemented in Combination",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "October 2014"
+  },
+  {
+   "topic": "Vaccination",
+   "topic_ko": "예방접종",
+   "name": "Immunization Information Systems",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "July 2010"
+  },
+  {
+   "topic": "Violence Prevention",
+   "topic_ko": "폭력 예방",
+   "name": "School-based Anti-Bullying Interventions",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "December 2021"
+  },
+  {
+   "topic": "Violence Prevention",
+   "topic_ko": "폭력 예방",
+   "name": "Primary Prevention Interventions to Reduce Perpetration of Intimate Partner Violence and Sexual Violence Among Youth",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "April 2018"
+  },
+  {
+   "topic": "Violence Prevention",
+   "topic_ko": "폭력 예방",
+   "name": "Group Cognitive-Behavioral Therapy to Reduce Psychological Harm for Traumatic Events Among Children and Adolescents",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2006"
+  },
+  {
+   "topic": "Violence Prevention",
+   "topic_ko": "폭력 예방",
+   "name": "Individual Cognitive-Behavioral Therapy to Reduce Psychological Harm for Traumatic Events Among Children and Adolescents",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2006"
+  },
+  {
+   "topic": "Violence Prevention",
+   "topic_ko": "폭력 예방",
+   "name": "School-Based Programs to Reduce Violence",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2005"
+  },
+  {
+   "topic": "Violence Prevention",
+   "topic_ko": "폭력 예방",
+   "name": "Policies Facilitating the Transfer of Juveniles to Adult Justice Systems",
+   "finding": "Recommended Against",
+   "finding_ko": "반대 권고",
+   "date": "April 2003"
+  },
+  {
+   "topic": "Violence Prevention",
+   "topic_ko": "폭력 예방",
+   "name": "Therapeutic Foster Care for Chronically Delinquent Juveniles",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2002"
+  },
+  {
+   "topic": "Violence Prevention",
+   "topic_ko": "폭력 예방",
+   "name": "Early Childhood Home Visitation to Prevent Child Maltreatment",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2002"
+  },
+  {
+   "topic": "Worksite Health",
+   "topic_ko": "직장 건강",
+   "name": "Seasonal Influenza Vaccinations Using Interventions with On-Site, Free, Actively Promoted Vaccinations Healthcare Workers",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "June 2008"
+  },
+  {
+   "topic": "Worksite Health",
+   "topic_ko": "직장 건강",
+   "name": "Non-Healthcare Workers",
+   "finding": "Recommended (sufficient)",
+   "finding_ko": "권고",
+   "date": "June 2008"
+  },
+  {
+   "topic": "Worksite Health",
+   "topic_ko": "직장 건강",
+   "name": "Seasonal Influenza Vaccinations Using Interventions with Actively Promoted, Off-Site Vaccinations Non-Healthcare Workers",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "June 2008"
+  },
+  {
+   "topic": "Worksite Health",
+   "topic_ko": "직장 건강",
+   "name": "Healthcare Workers",
+   "finding": "Insufficient Evidence",
+   "finding_ko": "근거 불충분",
+   "date": "June 2008"
+  },
+  {
+   "topic": "Worksite Health",
+   "topic_ko": "직장 건강",
+   "name": "Assessment of Health Risks with Feedback (AHRF) to Change Employees' Health AHRF Plus Health Education with or without Other Interventions",
+   "finding": "Recommended (strong)",
+   "finding_ko": "강력 권고",
+   "date": "February 2007"
+  }
+ ]
+}

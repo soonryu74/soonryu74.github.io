@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=0c707efa1a9fa8cd7a5dfbc8ca3505459154bc31">
+    <link rel="stylesheet" href="/assets/css/style.css?v=75d866de9081339d2a4763dffd764e2f6e593a80">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -192,6 +192,37 @@ CSS 3D 복도(연도 플라크)·자동 관람·주제 칩 필터, 올해의 10�
 ② 「성과지표」 탭(KpiView): 통합건강증진사업 핵심성과지표 16개 중 보유 13개, 안내서 목표치 설정법 5종 자동 계산 + 달성률·득점 계산기(data/khepi_kpi.json)
 ③ 프로파일 「동류군 비교」(PeerCard): 고령화율·재정자립도·인구밀도(log)·박탈분위 표준화 거리로 유사여건 12개 시군구 비교 — 여건 보정 없는 서열화 비판에 대한 대응
 ④ 해시 변경(hashchange) 반영, 대시보드 성격을 “건강수준 모니터링·목표치 설정 지원 도구”로 명시(사업 성과 평가 도구 아님)</li>
+  <li>[완료] 미국 CPSTF 검토(2026-09-18): docs/미국_CPSTF_검토_v1.md + scripts/fetch_cpstf.py → data/cpstf_findings.json.
+The Community Guide 「All Active Findings」(2024-11) PDF 전수 파싱 — 권고 224건(강력 106·권고 66·근거 불충분 50·반대 2), 22개 주제, 우리 지표 id 매핑(156개 중 93개 연결).
+방법론 정리: 효과성 10단계·경제성 9단계(효과 입증된 중재만 경제성 검토), 근거 결정표(설계 적합성 greatest/moderate/least × 실행의 질), 상향·하향 조정 규칙,
+주제 선정 8기준(Burden·Disparities·Preventability 등), 「근거 불충분 ≠ 효과 없음」 원칙, 적용가능성·잠재적 해·근거 공백.
+최대 발견: CPSTF 최대 근거 블록인 암(49건·강력 24건)은 대부분 <strong>암검진 수검률 향상 중재</strong>인데 우리 대시보드에 암검진 수검률이 없음(암 사망률·진료실인원만 보유) → 국가암검진 수검률 수집 1순위.
+반영 권고 6가지(암검진 수검률 수집 → 「근거 중재」 레이어 → 4등급 배지 → 근거 공백 화면 → 지표 우선순위 3축 → 자체평가 서식) — 미구현, 승인 대기.
+9장 「예상 반박과 답변」 10항 추가(미국 자료 이식 비판 / 224건 집계 단위 / 매핑의 임의성 / 권고 연식 62%가 2015년 이전 / NECA·KHEPI와의 차이 / 근거 불충분 50건의 의미 / 1차 자료 확인 경로 표).
+자체 검증으로 고친 오류: 최고령 권고를 2001년으로 적었으나 실제는 1998년 6월 교통사고 손상 4건, 암검진 수검률 시군구 공표 주체는 국립암센터가 아니라 국민건강보험공단(공공데이터포털 15149732·15064612, 2018~2023),
+팀 기반 케어 경제성 수치는 TFFRS 원문으로 재확인(효과성 54편·경제성 35편·QALY당 $15,202·기준선 $50,000).</li>
+  <li>[완료] 미국 County Health Rankings &amp; Roadmaps 검토(2026-09-18): docs/미국_CountyHealthRankings_검토_v1.md.
+핵심: CHR&amp;R는 <strong>2024년부터 1~N 순위를 폐기</strong>하고 Z-점수 → Wasserstein 거리 군집분석으로 10개 Health Group(불균등 크기)에 배정.
+기술문서 원문 “assigned a value (group 1-10) based on their Z-score rather than an ordinal rank”, “그룹 차이가 통계적 유의차를 뜻하지는 않는다” 명시.
+신 모델 가중치: PHW = 조기사망 50·저체중 20·신체/정신건강일수 각 10·주관적건강 10 | CC = 보건인프라 25·물리환경 25·사회경제 50 (구 모델은 행태30·임상20·사회경제40·물리환경10).
+우리에게 없는 절제 장치 — 95% 신뢰구간 공표, 인구 2만 이하 Z-점수 ±3 절단, 다년 합산, <strong>표준오차&gt;추정값 20%면 등급 미부여(빈칸)</strong>, 결측은 주내 Z 평균 대체.
+설계 철학 — Areas of Strength <strong>최소 3개 보장</strong>(약점은 최소 개수 없음), County Descriptions에 레드라이닝·원주민 토지 역사 병기, 추세는 8년 이상 OLS 80% 신뢰(장기+최근 4년).
+What Works for Health: 근거 6등급(Evidence of Ineffectiveness 포함) + <strong>건강형평성 영향 4등급</strong>(격차 축소/확대/혼재/판단불가) — CPSTF에 없는 축.
+2026년 연례 릴리스 중단(RWJF 자금 종료, 사이트 2026-12까지). 기술문서 PDF는 data/raw/chr_tech.pdf에 보관(gitignore).
+반영 권고 7가지, 1·3순위는 신뢰구간 병기와 불안정 자료 순위 제외 — 미구현, 승인 대기.</li>
+  <li>[완료] 신뢰구간 병기 + 단계구분도 시도 모드(2026-09-18, CHR&amp;R 검토 1·3순위 + CIAT 메뉴 대응):
+① <strong>표본오차가 KOSIS 원자료에 처음부터 있었다</strong> — 지역사회건강조사 41개 표 전부에 CR_SE·SR_SE·N 항목 포함(결측 0%). 구글 드라이브 xlsx 파싱 불필요.
+   build_dataset.py 에 cse·sse 행렬 추가(dataset.json 1.92→2.93MB). data.js: se()·ci()·ciOverlap()·hasSe()·RSE_UNSTABLE(0.2)·unstableRows().
+② 순위 패널에 「⟺ 신뢰구간」(막대 위 95% 오차막대 + ±표기) / 「불안정값 제외」 토글. 선택 지역과 신뢰구간이 겹치는 지역은 흐리게 = 차이 불확실.
+   비교 기준은 선택 지역이 그 순위 목록에 있을 때만 적용(시도 선택 + 시군구 목록이면 기준 없음).
+③ 불안정 기준 = 표준오차 &gt; 추정값의 20%(CHR&amp;R 규칙). 시군구 셀 131,252개 중 4.1%(5,330개)가 해당.
+   지표별 최악: <strong>우울증상 유병률 62%</strong>(1212/1955) · 연간 미충족의료율 42.7% · 직장실내 간접흡연 35.6% · 연간 음주운전 32.3% · 연간 우울감 25.9%.
+   → 우울증상 유병률 전국 순위는 231개 중 125개가 제외되어 106개만 남는다. 이 지표로 서열을 매기던 것이 문제였음.
+④ 단계구분도에 「전국 시도」 모드 신설(CIAT 대칭) — 시군구 폴리곤을 시도별 merge 한 17개 면(SIDO_FEATS), 분위는 시도 값 기준.
+   지도 위에 「전국 시도 / 전국 시군구 / 시도 내 시군구」 3탭 + 시도 드롭다운 + 「🏷 지역명」 토글(CIAT 화면 구성과 동일).
+   라벨은 짧은 시도명(서울·경기…) + 면적 기준 겹침 회피 배치(면적 큰 폴리곤 우선, 9개 후보 위치) → CIAT의 라벨 겹침 문제 해결.
+index.html 7.96→8.98MB. 사망률·인구 등 표준오차 없는 지표는 신뢰구간 UI가 나오지 않는다.</li>
+  <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>
 </ul>
