@@ -85,13 +85,18 @@ export default function HleCard({ sel, pool, poolName, setTip }) {
         </svg>
         <div className="hle-refs">
           <div className="k-label">전국 공식 건강수명(정의별)</div>
-          <table className="tbl small">
-            <tbody>
-              {refs.map((r) => (
-                <tr key={r.id}><td>{r.label}</td><td style={{ textAlign: "right", fontWeight: 600 }}>{fmt(r.t)}세</td><td className="muted">{r.year}{r.m != null ? ` · 남 ${fmt(r.m)} 여 ${fmt(r.f)}` : ""}</td></tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="hle-defs">
+            {refs.map((r) => (
+              <div className="hd-row" key={r.id}>
+                <div className="hd-name">{r.label}</div>
+                <div className="hd-val">{fmt(r.t)}<small>세</small></div>
+                <div className="hd-meta">
+                  <span className="hd-y">{r.year}</span>
+                  {r.m != null && <span className="hd-sex">남 {fmt(r.m)} · 여 {fmt(r.f)}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="desc" style={{ marginTop: 6 }}>{HLE.method?.summary}</div>
         </div>
       </div>
