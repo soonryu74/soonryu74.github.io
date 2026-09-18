@@ -29,6 +29,16 @@ import KDH_RAW from "../../data/kdh_dataset.json";
 })();
 export const KDH_SOURCE = KDH_RAW.source || null;
 
+// ── 국가암검진 수검률 주입 (data/cancer_screening.json) ──
+// 미국 CPSTF 최대 근거 블록이 암(권고 49건·강력 24건)이고 그 대부분이 검진 수검률을
+// 올리는 중재인데 우리에겐 암 사망률·진료실인원만 있었다. (docs/미국_CPSTF_검토_v1.md 6.1)
+import CANCER_RAW from "../../data/cancer_screening.json";
+(function injectCancer() {
+  if (!CANCER_RAW.indicators || RAW.indicators.some((i) => i.id === "CANC_ALL")) return;
+  for (const ind of CANCER_RAW.indicators) { RAW.indicators.push(ind); RAW.values[ind.id] = CANCER_RAW.values[ind.id]; }
+})();
+export const CANCER_SOURCE = CANCER_RAW.source || null;
+
 // ── 지역박탈지수(근사) 지표 주입 (data/deprivation.json) ──
 import DEP_RAW0 from "../../data/deprivation.json";
 (function injectDep() {
@@ -62,7 +72,7 @@ import DIR_RAW from "../../data/directions.json";
 export const DS = RAW;
 export const YEARS_ALL = RAW.years;
 export const DOMAINS = RAW.domains;                       // 순위 산정 영역
-export const DOMAINS_ALL = [...RAW.domains, "건강수명", ...(KDH_RAW.domains || []), "지역박탈"];   // 지표 선택·비교표 영역
+export const DOMAINS_ALL = [...RAW.domains, "암검진", "건강수명", ...(KDH_RAW.domains || []), "지역박탈"];   // 지표 선택·비교표 영역
 export const REGIONS = RAW.regions;
 export const RIDX = new Map(REGIONS.map((r, i) => [r.c, i]));
 export const RBY = new Map(REGIONS.map((r) => [r.c, r]));
