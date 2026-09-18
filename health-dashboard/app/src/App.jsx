@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DS, INDICATORS, RBY, label, DEFAULT_RANK_OPT, KDH_SOURCE, TIER_INFO } from "./data";
+import { DS, INDICATORS, RBY, SIDOS, label, DEFAULT_RANK_OPT, KDH_SOURCE, TIER_INFO } from "./data";
 import { IndicatorPicker, RegionPicker, YearControl, ItemToggle } from "./components/Pickers";
 import Kpis from "./components/Kpis";
 import TrendChart from "./components/TrendChart";
@@ -56,7 +56,10 @@ export default function App() {
   const [sido, setSido] = useState(init.sido);
   const [sgg, setSgg] = useState(init.sgg);
   const [yearSel, setYearSel] = useState(init.year);
-  const [scope, setScope] = useState(init.scope);   // 순위·격차·지도 비교 범위: nation | sido
+  const [scope, setScope] = useState(init.scope);   // 순위·격차 비교 범위: nation | sido
+  // 지도 범위(CIAT 단계구분도와 동일): sidoAll = 전국 시도 · nation = 전국 시군구 · sido = 시도 내 시군구
+  const [mapMode, setMapMode] = useState("auto");
+  const [mapLabels, setMapLabels] = useState(true);
   const [view, setView] = useState(init.view);      // analysis | profile | compare
   const [cmp, setCmp] = useState(init.cmp);         // 비교 대상 코드 목록 (NAT = 전국 중앙값)
   const [rankOpt, setRankOpt] = useState(init.rankOpt); // 순위 산출 방식 (방법론 v1)
@@ -141,6 +144,10 @@ export default function App() {
   };
 
   const scopeLabel = sel.l === "sido" ? "17개 시도" : scope === "sido" ? `${RBY.get(sel.p).n} 내 시군구` : "전국 시군구";
+  // 지도 범위: 「자동」이면 시도를 고르면 그 시도 내 시군구, 시군구를 고르면 비교 범위를 따른다
+  const mapSidoCode = sel.l === "sido" ? sel.c : sel.p;
+  const mapScope = mapMode !== "auto" ? mapMode : sel.l === "sido" ? "sido" : scope === "sido" ? "sido" : "nation";
+  const mapScopeName = mapScope === "sidoAll" ? "전국 시도" : mapScope === "sido" ? `${RBY.get(mapSidoCode)?.n || ""} 시군구` : "전국 시군구";
 
   return (
     <div className={`viz-root fs-${fs}${playing ? " playing" : ""}`}>
@@ -230,13 +237,26 @@ export default function App() {
               <div className="card span2 mapcard">
                 <div className="cardhead">
                   <div>
-                    <h3>{year}년 {ind.name} — {scope === "sido" && sel.l === "sgg" ? `${RBY.get(sel.p).n} ` : "전국 "}시군구 단계구분도</h3>
-                    <ExportButtons name={`${year}_${ind.name}_지도`} />
-                    <div className="desc">7단계 분위({scope === "sido" && sel.l === "sgg" ? RBY.get(sel.p).n : "전국"} 기준) · 지역을 누르면 선택 · ▶ 로 연도 애니메이션</div>
+                    <h3>{year}년 {ind.name} — {mapScopeName} 단계구분도</h3>
+                    <ExportButtons name={`${year}_${ind.name}_지도_${mapScopeName}`} />
+                    <div className="desc">7단계 분위({mapScopeName} 기준) · 지역을 누르면 선택 · ▶ 로 연도 애니메이션</div>
                   </div>
                 </div>
-                <ChoroplethMap ind={ind} item={item} year={year} sel={sel} scope={sel.l === "sgg" ? scope : "nation"}
-                  onSelect={selectRegion} setTip={setTip} />
+                <div className="seg map-seg">
+                  {[["sidoAll", "전국 시도"], ["nation", "전국 시군구"], ["sido", "시도 내 시군구"]].map(([k, nm]) => (
+                    <button key={k} className={`seg-btn ${mapScope === k ? "on" : ""}`} onClick={() => setMapMode(k)}>{nm}</button>
+                  ))}
+                  {mapScope === "sido" && (
+                    <select className="map-sido" value={mapSidoCode} onChange={(e) => selectRegion(e.target.value)}
+                      title="지도에 표시할 시도">
+                      {SIDOS.map((s) => <option key={s.c} value={s.c}>{s.n}</option>)}
+                    </select>
+                  )}
+                  <button className={`seg-btn ${mapLabels ? "on" : ""}`} style={{ marginLeft: "auto" }}
+                    onClick={() => setMapLabels(!mapLabels)} title="지도 위 지역명 표시">🏷 지역명</button>
+                </div>
+                <ChoroplethMap ind={ind} item={item} year={year} sel={sel} scope={mapScope}
+                  showLabels={mapLabels} onSelect={selectRegion} setTip={setTip} />
               </div>
 
               <div className="card">

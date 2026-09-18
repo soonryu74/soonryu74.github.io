@@ -101,6 +101,19 @@ svg text { font-family: inherit; }
 .rrow.sel .bar { background: var(--series-1); }
 .rrow.sel .rl, .rrow.sel .rn { color: var(--text-primary); font-weight:700; }
 .rrow .rv { color:var(--text-secondary); font-variant-numeric:tabular-nums; text-align:right; }
+/* 신뢰구간: 막대 위에 95% 오차막대를 겹쳐 그린다 */
+.rrow .err { position:absolute; top:50%; height:1.5px; transform:translateY(-50%); background:var(--text-secondary); opacity:.55; pointer-events:none; }
+.rrow .err::before, .rrow .err::after { content:""; position:absolute; top:-4px; width:1.5px; height:9px; background:inherit; }
+.rrow .err::before { left:0; } .rrow .err::after { right:0; }
+.rrow.sel .err { background:var(--text-primary); opacity:.8; }
+.rrow .rv .moe { display:block; font-size:10.5px; color:var(--muted); font-weight:400; line-height:1.1; }
+/* 선택 지역과 신뢰구간이 겹쳐 차이를 확신할 수 없는 지역 */
+.rrow.blur .rl, .rrow.blur .rn, .rrow.blur .rv { opacity:.45; }
+.rrow.blur .bar { opacity:.35; }
+.ci-bar .ci-note { align-self:center; font-size:12px; margin-left:6px; }
+.ci-legend { margin-top:8px; line-height:1.5; }
+.warn-chip { display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; font-size:11.5px; font-weight:600;
+  background:color-mix(in srgb, var(--series-1) 16%, transparent); color:var(--series-1); }
 .rrow.sel .rv { color:var(--text-primary); font-weight:700; }
 
 /* table view */
@@ -589,3 +602,8 @@ tr.muted td { color: var(--muted); }
 .tbadge.t-come { background:#1baf7a; } .tbadge.t-imp { background:#ab2a19; } .tbadge.t-ctx { background:#6f52b9; }
 .sub-note { display:block; margin-top:3px; font-size:12.5px; color:var(--muted); }
 .peer-rank { margin-left:10px; font-size:14px; background:var(--band); border-radius:999px; padding:3px 12px; }
+
+/* 단계구분도 범위 선택(전국 시도 / 전국 시군구 / 시도 내 시군구) + 시도 드롭다운 */
+.map-seg { margin:6px 0 10px; flex-wrap:wrap; align-items:center; }
+.map-seg .map-sido { margin-left:6px; padding:5px 8px; border-radius:8px; font-size:13.5px;
+  border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); }

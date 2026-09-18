@@ -5,7 +5,8 @@ v3 데이터셋 빌드: data/raw/*.json (KOSIS 원본) → data/dataset.json (�
 구성:
   regions   : KOSIS 지역 계층 (시도 17 · 시군구 230 · 보건소 세부단위 44)
   indicators: 큐레이션된 41개 지표 (영역, 방향, 수록연도)
-  values    : 지표별 {crude: 조율, std: 표준화율} — [연도][지역] 정수(×10), 결측 null
+  values    : 지표별 {crude: 조율, std: 표준화율, cse: 조율 표준오차, sse: 표준화율 표준오차}
+              — [연도][지역] 정수(×10), 결측 null. 표준오차는 KOSIS 원표의 CR_SE·SR_SE 항목.
   geo       : 시군구 TopoJSON(2018 통계청 경계) + 폴리곤→KOSIS 지역코드 매핑
 
 사용법: python scripts/build_dataset.py
@@ -136,7 +137,8 @@ def main():
             continue
         yrs = sorted({r["PRD_DE"][:4] for r in rows})
         mats = {}
-        for key, item in (("crude", "조율"), ("std", "표준화율")):
+        for key, item in (("crude", "조율"), ("std", "표준화율"),
+                          ("cse", "조율표준오차"), ("sse", "표준화율표준오차")):
             m = [[None] * len(codes) for _ in yrs]
             yi = {y: i for i, y in enumerate(yrs)}
             for r in rows:
