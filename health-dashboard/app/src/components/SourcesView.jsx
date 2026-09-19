@@ -86,6 +86,12 @@ export default function SourcesView() {
                 <div className="sc-cnt">● {c.O} · ◐ {c.P} · ○ {c.X}</div>
                 <div className="sc-tbl">{s.tbl}{s.updated && ` · 최종갱신 ${s.updated}`}</div>
                 {s.via && <div className="sc-via">경유 · {s.via}</div>}
+                {s.formula && (
+                  <div className="sc-formula">
+                    <code>{s.formula}</code>
+                    {s.formula_note && <small>{s.formula_note}</small>}
+                  </div>
+                )}
                 {s.note && <div className="sc-note">{s.note}</div>}
                 {s.limits && (
                   <details className="sc-lim">

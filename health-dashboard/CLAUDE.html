@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=6c53d49aa9cce64444d526a0856d2e08e90561af">
+    <link rel="stylesheet" href="/assets/css/style.css?v=b82b4847e7b53ace5d9df3b914c6d17b45ca5ad2">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -281,6 +281,12 @@ docs/지역박탈지수_산출_v2.md 신규(150줄) + docs/건강수명_산출�
   시군구 생명표 자작의 3중 안전장치(3년 합산·사망 150명 미만 제외·시도 raking k 0.99~1.10) / 표본오차 ±0.5~1세 / 그럼에도 쓰는 이유(전국 앵커링·재현 가능한 유일 자료).
 표기 규칙 표 2종 — 「건강수명(주관적 건강 기반·근사)」·「지역박탈지수(근사, 총조사 집계표)」로만 부르고, 절대값·연도 간 비교·1~2위 차이 강조 금지.
 화면 반영: 자료원 카드에 「근사·공식 아님」 배지 + 산출 방식 한 줄 + <strong>「한계 4가지」 접기</strong>(각 4항목) + 방법론 문서 경로 표기.</li>
+  <li>[완료] 산출 예시·산식 화면 표기(2026-09-19, 소유자 지시 “누구나 재현 가능토록 옆에 산출예시 산식을 넣어”): app/src/components/CalcExample.jsx (HleCalc·DepCalc).
+<strong>선택한 지역의 실제 숫자로</strong> 산식을 펼쳐 보여 화면만으로 검산 가능하게 함. deprivation.json 의 v·z·vars(mean/sd), hle.json 의 good·or·pr·le·hle 중간값을 그대로 사용.
+· 지역박탈지수 — 7개 변수 × (우리 값 / 전국 평균 / 표준편차 / z) 표 + 합계. 검증: 강남구 (1.8−11.4)÷4.7 = −2.04, 합계 −5.99 = 저장값 일치. 지표 분석 「건강형평성」 카드에 탑재.
+· 건강수명 — ①주관적 건강인지율 → ②불건강률 u → ③전국 u₀(오즈비에서 역산) → ④오즈비 r → ⑤보정 평균 불건강률 → ⑥Sullivan 기대수명/건강수명 + <strong>검산행</strong>.
+  검증: 강남구 2023 86.5×(1−0.104)=77.5세 = 저장값 일치. 프로파일 「기대수명·건강수명」 카드에 탑재.
+자료원 탭 카드에도 산식 한 줄(.sc-formula)과 “지역별 실제 숫자는 어느 화면에서 볼 수 있는지” 안내 추가.</li>
   <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>

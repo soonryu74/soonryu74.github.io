@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { DepCalc } from "./CalcExample";
 import { DEP, depOf, depQuintiles, boxStats, fmt, val, label, poolFor, SGG_ALL } from "../data";
 import { clientXY } from "./svgUtil";
 
@@ -52,6 +53,7 @@ export default function EquityPanel({ ind, item, year, sel, setTip }) {
         {ind.bad != null && gap != null && <> → 박탈이 큰 지역일수록 {(ind.bad ? gap > 0 : gap < 0) ? "나쁨" : "좋음"}</>}
         . 지역박탈지수는 {DEP.year}년 인구주택총조사 집계표로 근사 산출(공식값 아님).
       </div>
+      <DepCalc code={sel.c} name={label(sel)} />
     </>
   );
 }
