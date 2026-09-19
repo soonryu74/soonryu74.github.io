@@ -56,6 +56,12 @@ CHS_IDS = [i["id"] for i in DS["indicators"]]
 KDH_IDS = [i["id"] for i in KDH["indicators"]]
 CANCER_IDS = [i["id"] for i in CANCER["indicators"]]
 
+# 원 출처별로 나누기 위한 영역 → 지표 id 묶음
+KDH_BY_DOMAIN = {}
+for i in KDH["indicators"]:
+    KDH_BY_DOMAIN.setdefault(i["domain"], []).append(i["id"])
+
+
 # 대체 조회용 상위 코드 보정.
 #  · 제주는 제주시·서귀포시가 보건소 3곳씩으로 쪼개져 있는데 중간 코드(01602·01604)가
 #    지역 목록에 없어 상위 조회가 끊긴다 → 실제 시 코드로 연결한다.
@@ -76,6 +82,9 @@ for u in CHS25["units"]:
     parent = pr["c"] if (pr and lvl == "sub") else c    # 세부 단위는 소속 시군구로 대체 조회
     parent = PARENT_FIX.get(c, parent)
     ui = UBY.get(c, {})
+    def reg_mark(src):
+        rs = src.get("regions") or {}
+        return "O" if c in rs else ("P" if parent in rs else "X")
     def mark(ids, values, src_code=None):
         """○=이 단위 코드로 값 있음 · △=소속 시군구 값으로 대체 · ×=없음"""
         if has_any(values, ids, c): return "O"
@@ -88,31 +97,76 @@ for u in CHS25["units"]:
         "parent": parent if parent != c else None,
         "chs": mark(CHS_IDS, DS["values"]),
         "cancer": mark(CANCER_IDS, CANCER["values"]),
-        "kdh": mark(KDH_IDS, KDH["values"]),
-        "hle": "O" if c in (HLE.get("regions") or {}) else ("P" if parent in (HLE.get("regions") or {}) else "X"),
-        "dep": "O" if c in (DEP.get("regions") or {}) else ("P" if parent in (DEP.get("regions") or {}) else "X"),
-        "risk": "O" if c in (RISK.get("regions") or {}) else ("P" if parent in (RISK.get("regions") or {}) else "X"),
+        "mort": mark(KDH_BY_DOMAIN.get("사망률(표준화)", []), KDH["values"]),
+        "inf": mark(KDH_BY_DOMAIN.get("감염병 발생률", []), KDH["values"]),
+        "nhis": mark(KDH_BY_DOMAIN.get("의료이용·검진", []) + KDH_BY_DOMAIN.get("보건의료자원", []), KDH["values"]),
+        "pop": mark(KDH_BY_DOMAIN.get("인구·사회·경제", []), KDH["values"]),
+        "env": mark(KDH_BY_DOMAIN.get("환경·안전", []), KDH["values"]),
+        "hle": reg_mark(HLE), "dep": reg_mark(DEP), "risk": reg_mark(RISK),
         "fac": ui.get("fac") or {},
     })
 
+# 자료원은 **원 출처 기관** 기준으로 나눈다.
+# 김동현 교수 구축 DB(v1.7)는 원천이 아니라 여러 국가통계를 모아 둔 2차 가공본이므로
+# `via`(경유)로만 적고, 기관·통계명은 data/kdh/catalog.csv 의 「자료생산기관·통계명」을 근거로 한다.
+#   근거: 카탈로그에서 건강결과>사망률 452행이 전부 「통계청 / 사망원인통계」,
+#         감염병 204행이 「질병관리청 / 법정감염병발생보고」.
+VIA_KDH = "질병관리청 자료실의 지역사회 건강결과·건강결정요인 DB(김동현 교수 구축 v1.7)를 통해 수집"
+
 SRC = [
-    {"key": "chs", "name": "지역사회건강조사", "org": "질병관리청", "n": len(CHS_IDS), "unit": "보건소",
-     "years": [DS["years"][0], DS["years"][-1]], "cycle": "연 1회(12월 공표)", "tbl": "KOSIS 177 DT_*",
-     "url": "https://chs.kdca.go.kr/", "updated": "2025-12-22"},
-    {"key": "cancer", "name": "국가암검진 수검률", "org": "국민건강보험공단", "n": len(CANCER_IDS), "unit": "시군구",
-     "years": [CANCER["years"][0], CANCER["years"][-1]], "cycle": "연 1회(연말~연초)", "tbl": "KOSIS 350 DT_35007_N009",
+    {"key": "chs", "name": "지역사회건강조사", "org": "질병관리청", "ids": CHS_IDS, "unit": "보건소",
+     "years": [DS["years"][0], DS["years"][-1]], "cycle": "연 1회", "next": "2026년 12월",
+     "tbl": "KOSIS 177", "url": "https://chs.kdca.go.kr/", "updated": "2025-12-22"},
+
+    {"key": "mort", "name": "사망원인통계", "org": "국가데이터처(옛 통계청)",
+     "ids": KDH_BY_DOMAIN.get("사망률(표준화)", []), "unit": "시군구",
+     "years": [2008, 2024], "cycle": "연 1회(9월 하순)", "next": "2026년 9월 하순 — 2025년분 미공표",
+     "tbl": "KOSIS 101 DT_1B34E13", "via": VIA_KDH,
+     "url": "https://mods.go.kr/menu.es?mid=a10301060200", "updated": "2025-09-23",
+     "note": "표준화사망률 22종의 원천. 2024년분은 2025-09-25 공표됐고 KOSIS는 이틀 전 갱신됐다."},
+
+    {"key": "inf", "name": "법정감염병 발생보고", "org": "질병관리청",
+     "ids": KDH_BY_DOMAIN.get("감염병 발생률", []), "unit": "시군구",
+     "years": [2008, 2024], "cycle": "연 1회", "next": "미정", "tbl": "법정감염병발생보고·결핵환자신고현황",
+     "via": VIA_KDH, "url": "https://dportal.kdca.go.kr/", "updated": "2026-09-08"},
+
+    {"key": "cancer", "name": "국가암검진 수검률", "org": "국민건강보험공단", "ids": CANCER_IDS, "unit": "시군구",
+     "years": [CANCER["years"][0], CANCER["years"][-1]], "cycle": "연 1회(연말~연초)",
+     "next": "2026년 12월~2027년 1월", "tbl": "KOSIS 350 DT_35007_N009",
      "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009", "updated": "2026-01-06"},
-    {"key": "kdh", "name": "사망·감염병·의료이용·환경 등 보조 지표", "org": "질병관리청 자료실(김동현 교수 구축 DB v1.7)",
-     "n": len(KDH_IDS), "unit": "시군구", "years": [2008, 2024], "cycle": "비정기", "tbl": "-",
-     "url": "https://chs.kdca.go.kr/", "updated": "2026-09-08"},
-    {"key": "hle", "name": "건강수명(근사 산출)", "org": "자체 산출(사망원인통계·연앙인구·생명표 기반)", "n": 3, "unit": "시군구",
-     "years": [2008, 2024], "cycle": "사망원인통계 공표 후", "tbl": "scripts/build_hle.py",
-     "url": "", "updated": "2026-09-08"},
-    {"key": "dep", "name": "지역박탈지수(근사)", "org": "자체 산출(인구주택총조사 집계표)", "n": 1, "unit": "시군구",
-     "years": [2015, 2020], "cycle": "5년(총조사)", "tbl": "scripts/build_deprivation.py",
-     "url": "", "updated": "2026-09-08"},
-    {"key": "risk", "name": "감염병 고위험군", "org": "자체 집계(복수 출처)", "n": 30, "unit": "시군구",
-     "years": [2024, 2024], "cycle": "비정기", "tbl": "scripts/build_risk.py", "url": "", "updated": "2026-09-08"},
+
+    {"key": "nhis", "name": "건강보험·의료이용·검진 통계", "org": "국민건강보험공단",
+     "ids": KDH_BY_DOMAIN.get("의료이용·검진", []) + KDH_BY_DOMAIN.get("보건의료자원", []), "unit": "시군구",
+     "years": [2008, 2024], "cycle": "연 1회", "next": "2026년 12월~2027년 1월",
+     "tbl": "건강보험통계·건강검진통계·지역별의료이용통계", "via": VIA_KDH,
+     "url": "https://www.nhis.or.kr/", "updated": "2026-09-08",
+     "note": "일반건강검진 수검률·판정결과 5종은 우리 데이터가 2017년에 멈춰 있고 원천은 2024년까지 있다."},
+
+    {"key": "pop", "name": "인구·사회·경제 통계", "org": "국가데이터처 · 행정안전부 등",
+     "ids": KDH_BY_DOMAIN.get("인구·사회·경제", []), "unit": "시군구",
+     "years": [2008, 2024], "cycle": "연 1회", "next": "연 1회 수시",
+     "tbl": "인구총조사·경제활동인구조사·주민등록인구현황·지방자치단체 통합재정 개요 등",
+     "via": VIA_KDH, "url": "https://kosis.kr/", "updated": "2026-09-08"},
+
+    {"key": "env", "name": "환경·안전 통계", "org": "환경부 · 국토교통부 · 도로교통공단 등",
+     "ids": KDH_BY_DOMAIN.get("환경·안전", []), "unit": "시군구",
+     "years": [2008, 2024], "cycle": "연 1회", "next": "연 1회 수시",
+     "tbl": "상·하수도통계·도로현황·교통문화지수·경찰접수교통사고현황 등",
+     "via": VIA_KDH, "url": "https://kosis.kr/", "updated": "2026-09-08"},
+
+    {"key": "hle", "name": "건강수명(근사 산출)", "org": "자체 산출", "ids": None, "unit": "시군구",
+     "years": [2008, 2024], "cycle": "사망원인통계 공표 후", "next": "2026년 9월 하순 공표 직후",
+     "tbl": "scripts/build_hle.py", "url": "", "updated": "2026-09-08",
+     "note": "사망원인통계·주민등록연앙인구·생명표로 산출. 공식 통계가 아니다."},
+
+    {"key": "dep", "name": "지역박탈지수(근사)", "org": "자체 산출", "ids": None, "unit": "시군구",
+     "years": [2015, 2020], "cycle": "5년(인구주택총조사)", "next": "2025년 총조사 집계표 공표 후",
+     "tbl": "scripts/build_deprivation.py", "url": "", "updated": "2026-09-08",
+     "note": "2020년 총조사 집계표 기반. 공식 통계가 아니다."},
+
+    {"key": "risk", "name": "감염병 고위험군", "org": "자체 집계(복수 출처)", "ids": None, "unit": "시군구",
+     "years": [2024, 2024], "cycle": "비정기", "next": "미정",
+     "tbl": "scripts/build_risk.py", "url": "", "updated": "2026-09-08"},
 ]
 
 counts = [
@@ -127,14 +181,17 @@ counts = [
 out = {"generated": date.today().isoformat(),
        "standard": 258,
        "standard_source": CHS25.get("source", ""),
-       "counts": counts, "sources": SRC, "units": rows,
+       "counts": counts,
+       "sources": [{**x, "n": (len(x["ids"]) if x["ids"] is not None else {"hle": 3, "dep": 1, "risk": 30}[x["key"]]),
+                    "ids": None} for x in SRC],
+       "units": rows,
        "legend": {"O": "이 보건소 단위로 값이 있음", "P": "소속 시군구 값으로 대체", "X": "없음"}}
 p = D / "coverage.json"
 p.write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
 
 from collections import Counter
 print(f"기준 보건소 {len(rows)}개 → {p} ({p.stat().st_size/1024:.0f}KB)")
-for k in ("chs", "cancer", "kdh", "hle", "dep", "risk"):
+for k in [x["key"] for x in SRC]:
     c = Counter(r[k] for r in rows)
     print(f"  {k:7s} 있음 {c['O']:3d} · 시군구 대체 {c['P']:3d} · 없음 {c['X']:3d}")
 print("  단위 구성:", Counter(r["l"] for r in rows))
