@@ -138,7 +138,8 @@ export default function UnitsView({ setTip }) {
       </div>
 
       <div className="card">
-        <h3>조사 단위 목록 ({UNITS.units.length}개 = 시군구 {UNITS.units.filter((u) => u.l === "sgg").length} + 세부 {UNITS.units.filter((u) => u.l === "sub").length})</h3>
+        <h3>조사 단위 목록 <small className="muted">기준 258개소 · 과거 폐지 단위 포함 전체 {UNITS.units.length}개</small></h3>
+        <div className="desc">이 대시보드의 지역 기준은 <b>지역사회건강조사 258개 조사 단위</b>입니다. 자료원별 보유 현황은 <b>「자료원」 탭</b>에서 볼 수 있습니다.</div>
         <ExportButtons name="조사단위_목록" kinds={["csv"]} />
         <div className="desc">공식 보건소명은 질병관리청 지역사회건강조사 보건소정보 페이지 기준({UNITS.official_count}곳). 행을 누르면 지도에서 강조됩니다.</div>
         <input className="pick-search" placeholder="시도·시군구·보건소명 검색" value={q} onChange={(e) => setQ(e.target.value)} />
