@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>지역박탈지수(근사) 산출 v2 — 기준·출처·방어 논리 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="지역박탈지수(근사) 산출 v2 — 기준·출처·방어 논리" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="지역박탈지수(근사) 산출 v2 — 기준·출처·방어 논리" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"지역박탈지수(근사) 산출 v2 — 기준·출처·방어 논리","url":"/health-dashboard/docs/%EC%A7%80%EC%97%AD%EB%B0%95%ED%83%88%EC%A7%80%EC%88%98_%EC%82%B0%EC%B6%9C_v2.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=6c53d49aa9cce64444d526a0856d2e08e90561af">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="지역박탈지수근사-산출-v2--기준출처방어-논리">지역박탈지수(근사) 산출 v2 — 기준·출처·방어 논리</h1>
+
+<blockquote>
+  <p>v1(2026-09-08)에 <strong>문헌상 표준 변수와의 대조표</strong>, <strong>예상 반박과 답변</strong>, <strong>표기 규칙</strong>을 더한 판입니다.
+산출: <code class="language-plaintext highlighter-rouge">scripts/kosis_fetch_census.py</code> → <code class="language-plaintext highlighter-rouge">scripts/build_deprivation.py</code> → <code class="language-plaintext highlighter-rouge">data/deprivation.json</code>
+갱신: 2026-09-19</p>
+</blockquote>
+
+<hr />
+
+<h2 id="0-한-문장">0. 한 문장</h2>
+
+<p><strong>이것은 공식 지역박탈지수가 아니라, 공표된 시군구 집계표만으로 재현한 근사값입니다.</strong> 화면·문서 어디서든 이름 뒤에 <strong>(근사)</strong> 를 뗄 수 없습니다.</p>
+
+<hr />
+
+<h2 id="1-무엇을-계산하는가--정의와-공식">1. 무엇을 계산하는가 — 정의와 공식</h2>
+
+<p>박탈(deprivation)은 개인·가구·지역이 <strong>상대적으로</strong> 불이익한 상태를 뜻합니다(Townsend, 1987). 지역박탈지수는 그 정도를 지역 단위로 지수화한 것입니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>변수 j 의 시군구 i 비율            x_ij
+전국 시군구 기준 표준화            z_ij = (x_ij − mean_j) / sd_j
+지역박탈지수                      D_i  = Σ_j z_ij        (단순합, 가중치 없음)
+</code></pre></div></div>
+
+<ul>
+  <li><strong>높을수록 박탈이 큼.</strong></li>
+  <li><strong>단순합(가중치 없음)</strong> 은 Townsend·Carstairs 이래 국내 선행연구가 공통으로 쓰는 방식입니다. 영국 종합박탈지수(IMD)처럼 영역별 가중치를 두는 방식과는 다릅니다.</li>
+  <li><strong>연도별로 각각 표준화</strong>하므로 값은 절대 수준이 아니라 <strong>그 해 전국 시군구 안에서의 상대 위치</strong>입니다. 연도 간 값 비교는 순위·분위로만 하십시오.</li>
+</ul>
+
+<hr />
+
+<h2 id="2-문헌상-표준-변수-vs-우리-변수--정면-대조">2. 문헌상 표준 변수 vs 우리 변수 — 정면 대조</h2>
+
+<h3 id="21-원전">2.1 원전</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>지수</th>
+      <th>변수</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Townsend(1987)</strong></td>
+      <td>실업률 · 주택 미소유율 · 과잉밀집도 · 승용차 미소유율 (4개)</td>
+    </tr>
+    <tr>
+      <td><strong>Carstairs &amp; Morris</strong></td>
+      <td>남성 실업률 · 가구주 하위 사회계급 · 과잉밀집도 · 승용차 미소유율 (4개)</td>
+    </tr>
+    <tr>
+      <td><strong>영국 IMD(2015)</strong></td>
+      <td>7개 영역 37개 지표, 영역별 가중치(소득 22.5% · 고용 22.5% · 교육 13.5% · 건강 13.5% · 범죄 9.3% · 주택·서비스 9.3% · 주거환경 9.3%)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="22-국내-선행연구-6편이-쓴-구성요소와-우리의-채택-여부">2.2 국내 선행연구 6편이 쓴 구성요소와 우리의 채택 여부</h3>
+
+<p>김동진 외(2013) p.172 의 정리표를 기준으로 대조합니다(○ = 그 연구가 사용).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>구성요소</th>
+      <th style="text-align: right">국내 6편 중 사용</th>
+      <th style="text-align: center">우리</th>
+      <th>비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>하위 사회계급(육체직업군)</td>
+      <td style="text-align: right"><strong>6</strong></td>
+      <td style="text-align: center"><strong>△</strong></td>
+      <td>가구주 직업이 아니라 <strong>취업자 전체 직업 분포</strong>로 근사</td>
+    </tr>
+    <tr>
+      <td>남성 실업률</td>
+      <td style="text-align: right"><strong>5</strong></td>
+      <td style="text-align: center"><strong>✕</strong></td>
+      <td>시군구 집계표에 성별 실업률 없음. 대신 <code class="language-plaintext highlighter-rouge">실업률</code>을 별도 맥락 지표로 제공</td>
+    </tr>
+    <tr>
+      <td>고졸 미만 학력률</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: center"><strong>○</strong></td>
+      <td>30~64세 기준</td>
+    </tr>
+    <tr>
+      <td>무주택 소유율</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: center">✕</td>
+      <td>대신 아파트 비거주율 사용</td>
+    </tr>
+    <tr>
+      <td>낙후된 주거 환경률</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: center">✕</td>
+      <td>시군구 집계표 미확인</td>
+    </tr>
+    <tr>
+      <td>1인 가구율</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: center"><strong>○</strong></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>자동차 미소유율</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: center">✕</td>
+      <td><strong>2020 총조사에 항목 없음</strong></td>
+    </tr>
+    <tr>
+      <td>아파트 미거주율</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: center"><strong>○</strong></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>여성 가구주율</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: center"><strong>○</strong></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>노인 인구율</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: center"><strong>○</strong></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>주거 밀집도</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: center">✕</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>이혼·별거율</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: center"><strong>○</strong></td>
+      <td>이혼·사별로 조작화</td>
+    </tr>
+    <tr>
+      <td>기초생활수급자율</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: center">✕</td>
+      <td>별도 맥락 지표로 제공</td>
+    </tr>
+    <tr>
+      <td>한부모 가구율</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: center">✕</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>요약: 국내에서 가장 널리 쓰인 2개(하위 사회계급·남성 실업률) 중 하나는 근사, 하나는 누락입니다.</strong> 이 사실을 숨기지 않습니다.</p>
+
+<hr />
+
+<h2 id="3-원자료--표-하나까지">3. 원자료 — 표 하나까지</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>변수</th>
+      <th>조작적 정의</th>
+      <th>원자료(2020)</th>
+      <th>원자료(2015)</th>
+      <th style="text-align: right">전국 시군구 평균(2020)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>낮은 교육수준</td>
+      <td>30~64세 중 고졸 미만(무학·초등·중학 졸업, 고교 재학·중퇴)</td>
+      <td>KOSIS <code class="language-plaintext highlighter-rouge">DT_1PM2001</code> (20% 표본)</td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PM1501</code></td>
+      <td style="text-align: right">11.4%</td>
+    </tr>
+    <tr>
+      <td>노인인구</td>
+      <td>65세 이상 인구 비율</td>
+      <td>주민등록연앙인구 2020</td>
+      <td>연앙인구 2015</td>
+      <td style="text-align: right">21.5%</td>
+    </tr>
+    <tr>
+      <td>낮은 사회계급(근사)</td>
+      <td>취업자 중 단순노무·농림어업·서비스·판매 종사자</td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PC2012</code> (20% 표본, 현거주지)</td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PC1512</code></td>
+      <td style="text-align: right">35.7%</td>
+    </tr>
+    <tr>
+      <td>1인가구</td>
+      <td>일반가구 중 1인가구</td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PE2013</code></td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PE1513</code></td>
+      <td style="text-align: right">33.6%</td>
+    </tr>
+    <tr>
+      <td>아파트 비거주</td>
+      <td>일반가구 중 아파트 외 거처</td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PE2002</code></td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PE1502</code></td>
+      <td style="text-align: right">60.1%</td>
+    </tr>
+    <tr>
+      <td>여성가구주</td>
+      <td>일반가구 중 여성 가구주</td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PE2013</code></td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PE1513</code></td>
+      <td style="text-align: right">33.1%</td>
+    </tr>
+    <tr>
+      <td>이혼·사별</td>
+      <td>15세 이상 중 이혼·사별</td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PM2002</code> (20% 표본)</td>
+      <td><code class="language-plaintext highlighter-rouge">DT_1PM1503</code></td>
+      <td style="text-align: right">15.5%</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>작성기관: <strong>국가데이터처(옛 통계청) 인구주택총조사</strong> + 주민등록연앙인구</li>
+  <li>대상: 시군구 <strong>228개</strong>(2020) / <strong>227개</strong>(2015). 일반구가 있는 시는 시 전체 행.</li>
+  <li>시도 값은 시군구 지수의 인구가중 평균(참고용).</li>
+  <li>지수 표준편차 5.8 (김동진 2013의 9변수판은 7.7). <strong>변수가 적어 절대 범위가 좁습니다.</strong></li>
+</ul>
+
+<hr />
+
+<h2 id="4-가정--틀릴-수-있는-지점을-먼저-적는다">4. 가정 — 틀릴 수 있는 지점을 먼저 적는다</h2>
+
+<ol>
+  <li><strong>변수 7개로 9~14개를 대신할 수 있다</strong> — 검증되지 않았습니다. 상관은 높겠지만 동일하지 않습니다.</li>
+  <li><strong>가중치 없는 단순합</strong> — 각 변수의 박탈 기여도가 같다고 가정합니다. IMD는 이 가정을 버렸습니다.</li>
+  <li><strong>사회계급 근사</strong> — 가구주 직업 ≈ 취업자 전체 직업 분포라고 가정합니다.</li>
+  <li><strong>20% 표본 변수의 오차를 반영하지 않음</strong> — 교육·직업·혼인 3개 변수는 표본 집계라 소규모 시군구에서 흔들립니다.</li>
+  <li><strong>연도별 독립 표준화</strong> — 2015와 2020의 지수 값은 서로 다른 잣대입니다.</li>
+</ol>
+
+<hr />
+
+<h2 id="5-검증-결과">5. 검증 결과</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>검증</th>
+      <th>결과</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>외부 기준(경기도공공보건의료지원단 이슈브리핑 30호, 원시자료 기반)의 세종 −9.3</td>
+      <td>우리 근사값 <strong>−8.2</strong> — 근접</td>
+    </tr>
+    <tr>
+      <td>표면 타당도 — 현재흡연율</td>
+      <td>r = <strong>+0.25</strong> (박탈↑ → 흡연↑)</td>
+    </tr>
+    <tr>
+      <td>표면 타당도 — 건강수명(근사)</td>
+      <td>r = <strong>−0.32</strong> (박탈↑ → 건강수명↓)</td>
+    </tr>
+    <tr>
+      <td>표면 타당도 — 주관적 건강인지율</td>
+      <td>r ≈ <strong>0</strong> ← 설명 필요(아래 6.4)</td>
+    </tr>
+    <tr>
+      <td>시계열 안정성 — 2015 ↔ 2020</td>
+      <td><strong>r = 0.985</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>박탈 큼: 전남 고흥 12.3 · 경남 합천 11.7 · 전남 보성 11.5
+덜 박탈: 울산 북구 −13.5 · 충남 계룡 −11.7 · 인천 연수 −10.6</p>
+
+<hr />
+
+<h2 id="6-예상-반박과-답변">6. 예상 반박과 답변</h2>
+
+<h3 id="61-공식-지역박탈지수와-값이-다르다">6.1 “공식 지역박탈지수와 값이 다르다”</h3>
+<p><strong>다릅니다. 다를 수밖에 없습니다.</strong> 공식·연구용 지수는 총조사 <strong>원시자료</strong>(10~20% 표본 마이크로데이터)로 가구 단위 변수를 만듭니다. 우리는 <strong>공표된 집계표</strong>만 씁니다. 그래서 이름에 (근사)를 붙이고, 원시자료 기반 값(세종 −9.3)과 우리 값(−8.2)을 나란히 적어 차이의 크기를 보여 줍니다. 정책 판단에 쓸 값이 필요하면 원시자료로 다시 산출해야 합니다.</p>
+
+<h3 id="62-남성-실업률이-빠졌는데-박탈지수라-할-수-있나">6.2 “남성 실업률이 빠졌는데 박탈지수라 할 수 있나”</h3>
+<p>가장 아픈 지적입니다. 국내 6편 중 5편이 쓴 변수입니다. 시군구 집계표에 성별 실업률이 없어 넣지 못했습니다. <strong>대신 전체 실업률을 독립 맥락 지표로 제공</strong>하므로, 이용자가 두 지표를 함께 볼 수 있습니다. 성별 실업률을 얻으면 v3에 포함할 계획입니다.</p>
+
+<h3 id="63-가중치를-안-준-근거가-있나">6.3 “가중치를 안 준 근거가 있나”</h3>
+<p>Townsend·Carstairs 이래 국내 선행연구 6편이 모두 단순합을 씁니다. <strong>관행을 따른 것이며 최적이라는 주장은 하지 않습니다.</strong> 영국 IMD는 영역 가중치를 두므로, 가중치 방식이 더 낫다는 주장도 근거가 있습니다. 이 선택은 v1부터 명시해 왔습니다.</p>
+
+<h3 id="64-주관적-건강인지율과-상관이-0이면-타당도가-없는-것-아닌가">6.4 “주관적 건강인지율과 상관이 0이면 타당도가 없는 것 아닌가”</h3>
+<p>아닙니다. <strong>주관적 건강 응답은 박탈과 단순 선형 관계가 아닙니다.</strong> 농촌 고령지역은 박탈 지수가 높지만 주관적 건강 응답이 상대적으로 후한 경향이 알려져 있습니다. 실제로 <strong>객관적 지표인 흡연율(+0.25)과 건강수명(−0.32)에서는 기대 방향의 상관</strong>이 나옵니다. 주관적 지표 하나로 타당도를 판정할 수 없습니다.</p>
+
+<h3 id="65-2015년과-2020년-값을-비교해도-되나">6.5 “2015년과 2020년 값을 비교해도 되나”</h3>
+<p><strong>절대값 비교는 안 됩니다.</strong> 연도별로 각각 표준화하므로 값은 그 해 안에서의 상대 위치입니다. 문서·화면 모두 <strong>순위·분위 변화로만</strong> 해석하도록 적었습니다. 두 해의 순위 상관은 0.985로 매우 안정적입니다.</p>
+
+<h3 id="66-표본-집계-변수의-오차는">6.6 “표본 집계 변수의 오차는?”</h3>
+<p>반영하지 않았습니다. 교육·직업·혼인 3개 변수가 20% 표본 집계입니다. <strong>인구가 적은 군 지역에서 지수가 흔들릴 수 있다</strong>는 점을 한계로 적습니다. 다만 7개 변수를 합산하므로 단일 변수보다는 안정적입니다.</p>
+
+<hr />
+
+<h2 id="7-표기-규칙-반드시-지킬-것">7. 표기 규칙 (반드시 지킬 것)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>상황</th>
+      <th>쓸 말</th>
+      <th>쓰면 안 되는 말</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>지표명</td>
+      <td><strong>지역박탈지수(근사, 총조사 집계표)</strong></td>
+      <td>“지역박탈지수” 단독</td>
+    </tr>
+    <tr>
+      <td>출처</td>
+      <td>자체 산출 — 2020 인구주택총조사 집계표 7개 변수 z점수 합(김동진 외 2013 방식 재현)</td>
+      <td>“한국보건사회연구원 지역박탈지수”</td>
+    </tr>
+    <tr>
+      <td>값 해석</td>
+      <td>그 해 전국 시군구 안에서의 상대 위치</td>
+      <td>절대 수준, 연도 간 값 비교</td>
+    </tr>
+    <tr>
+      <td>순위 사용</td>
+      <td>분위(5분위) 중심</td>
+      <td>1~228위 서열 강조</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="8-출처">8. 출처</h2>
+
+<ul>
+  <li>Townsend P. (1987). Deprivation. <em>Journal of Social Policy</em>, 16(2), 125-146.</li>
+  <li>김동진·이소영·기명·김명희·김승섭·김유미 외. (2013). <strong>한국의 건강불평등 지표와 정책과제</strong>. 한국보건사회연구원 연구보고서 2013-10. (pp. 166, 172 — Townsend·Carstairs 변수 및 국내 선행연구 구성표) — https://repository.kihasa.re.kr/handle/201002/11225</li>
+  <li>한국보건사회연구원. (2018). 한국의 상대적 지역박탈 현황과 변화. <em>보건복지포럼</em>. — https://repository.kihasa.re.kr/bitstream/201002/29977/1/GSSR_2018.06_v005_09.pdf</li>
+  <li>Department for Communities and Local Government. (2015). <em>The English Indices of Deprivation 2015</em>.</li>
+  <li>정백근 외(2006) 예방의학회지 39(1); 손미아(2002) 예방의학회지 35(1); 신호성 외(2009) J Prev Public Health 42(6); Choi MH 외(2011) JPMPH 44(6)</li>
+  <li>원자료: 국가데이터처 인구주택총조사 시군구 집계표(KOSIS <code class="language-plaintext highlighter-rouge">DT_1PM2001</code>·<code class="language-plaintext highlighter-rouge">DT_1PC2012</code>·<code class="language-plaintext highlighter-rouge">DT_1PE2013</code>·<code class="language-plaintext highlighter-rouge">DT_1PE2002</code>·<code class="language-plaintext highlighter-rouge">DT_1PM2002</code> 등), 주민등록연앙인구</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
