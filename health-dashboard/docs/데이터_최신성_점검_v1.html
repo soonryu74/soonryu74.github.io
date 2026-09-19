@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>데이터 최신성 점검표 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="데이터 최신성 점검표" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="데이터 최신성 점검표" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"데이터 최신성 점검표","url":"/health-dashboard/docs/%EB%8D%B0%EC%9D%B4%ED%84%B0_%EC%B5%9C%EC%8B%A0%EC%84%B1_%EC%A0%90%EA%B2%80_v1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=133bae0767fcbdcb47830823ab7e770d4906daff">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="데이터-최신성-점검표">데이터 최신성 점검표</h1>
+
+<blockquote>
+  <p>점검일: <strong>2026-09-19</strong> · 점검 방법: 우리 데이터셋의 지표별 최신 연도를 전수 집계하고, 주요 표는 KOSIS 원천에 더 최신 연도가 있는지 직접 조회해 대조했다.
+재현: <code class="language-plaintext highlighter-rouge">python3 -c</code> 인벤토리(아래 3장) + <code class="language-plaintext highlighter-rouge">scratchpad/freshness.py</code>(원천 조회)</p>
+</blockquote>
+
+<hr />
+
+<h2 id="0-한눈에">0. 한눈에</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>자료군</th>
+      <th>우리 최신</th>
+      <th>원천 최신</th>
+      <th>판정</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>지역사회건강조사(CHS) 41종</td>
+      <td><strong>2025</strong> (39종) / 2024 (2종)</td>
+      <td>2025</td>
+      <td>✅ 최신</td>
+    </tr>
+    <tr>
+      <td>국가암검진 수검률 7종</td>
+      <td><strong>2024</strong></td>
+      <td>2024</td>
+      <td>✅ 최신</td>
+    </tr>
+    <tr>
+      <td>시군구 사망원인(표준화사망률 등)</td>
+      <td><strong>2024</strong></td>
+      <td>2024</td>
+      <td>✅ 최신</td>
+    </tr>
+    <tr>
+      <td><strong>일반건강검진 수검률·판정결과 5종</strong></td>
+      <td><strong>2017</strong></td>
+      <td><strong>2024</strong></td>
+      <td>❌ <strong>7년 뒤처짐</strong></td>
+    </tr>
+    <tr>
+      <td>미세먼지 PM10·PM2.5</td>
+      <td>2020</td>
+      <td>미확인</td>
+      <td>⚠️ 확인 필요</td>
+    </tr>
+    <tr>
+      <td>기타 KDH 지표 8종</td>
+      <td>2017~2023</td>
+      <td>미확인</td>
+      <td>⚠️ 확인 필요</td>
+    </tr>
+    <tr>
+      <td>지역박탈지수</td>
+      <td>2020 총조사</td>
+      <td>2025 총조사 집계 대기</td>
+      <td>⏳ 대기</td>
+    </tr>
+    <tr>
+      <td>CPSTF 권고</td>
+      <td>2024-11판</td>
+      <td>2024-11판</td>
+      <td>✅ 최신</td>
+    </tr>
+    <tr>
+      <td>County Health Rankings</td>
+      <td>2025판</td>
+      <td><strong>2026년 릴리스 없음</strong></td>
+      <td>⚠️ 원천 중단</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="1-2025년-사망원인통계-공표일--오늘-기준-아직-안-나왔다">1. 2025년 사망원인통계 공표일 — 오늘 기준 아직 안 나왔다</h2>
+
+<p>국가데이터처(옛 통계청) 보도자료 목록에서 확인한 <strong>실제 공표 이력</strong>이다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>대상 연도</th>
+      <th>공표일</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2017년분</td>
+      <td>2018-09-19</td>
+    </tr>
+    <tr>
+      <td>2018년분</td>
+      <td>2019-09-24</td>
+    </tr>
+    <tr>
+      <td>2019년분</td>
+      <td>2020-09-22</td>
+    </tr>
+    <tr>
+      <td>2020년분</td>
+      <td>2021-09-28</td>
+    </tr>
+    <tr>
+      <td>2021년분</td>
+      <td>2022-09-27</td>
+    </tr>
+    <tr>
+      <td>2022년분</td>
+      <td>2023-09-21</td>
+    </tr>
+    <tr>
+      <td>2023년분</td>
+      <td>2024-10-04</td>
+    </tr>
+    <tr>
+      <td>2024년분</td>
+      <td><strong>2025-09-25</strong></td>
+    </tr>
+    <tr>
+      <td><strong>2025년분</strong></td>
+      <td><strong>미공표</strong> (2026-09-19 현재 목록에 없음)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>판단</strong>: 최근 8년 중 7년이 <strong>9월 19~28일</strong>에 나왔다(2023년분만 10월 4일). 따라서 <strong>2025년 사망원인통계는 2026년 9월 하순 공표가 유력</strong>하며, 오늘 기준 <strong>길어야 2주 안</strong>이다.</p>
+
+<blockquote>
+  <p>정확한 예정일은 확인하지 못했다. 웹 검색에서는 2026-09-22 또는 2026-09-30이 언급되지만 <strong>국가데이터처 사전정보공표목록에서 확인되지 않아 추정으로만 둔다.</strong> 공표되면 보도자료 목록에 바로 올라온다.
+참고: 기관명이 <strong>통계청 → 국가데이터처</strong>로 바뀌었고 도메인도 <code class="language-plaintext highlighter-rouge">mods.go.kr</code> 이다.</p>
+</blockquote>
+
+<p><strong>우리에게 미치는 영향</strong>: KOSIS <code class="language-plaintext highlighter-rouge">DT_1B34E13</code>(시군구/사망원인/성) 의 최종갱신일이 <strong>2025-09-23</strong> 으로, 2024년분 보도자료 공표(9/25) <strong>이틀 전</strong>이었다. 즉 보도자료와 거의 동시에 KOSIS가 갱신된다.
+→ <strong>2025년분이 공표되는 즉시 사망률 22종을 2025년까지 늘릴 수 있다.</strong> 갱신 대상: <code class="language-plaintext highlighter-rouge">K_MORT_*</code> 22종, 건강수명(<code class="language-plaintext highlighter-rouge">hle.json</code>, 사망원인통계 기반), 연대기 10대 뉴스.</p>
+
+<hr />
+
+<h2 id="2-갱신-주기와-다음-공표-시점">2. 갱신 주기와 다음 공표 시점</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>자료</th>
+      <th>작성기관</th>
+      <th>주기</th>
+      <th>최근 갱신(KOSIS 기준)</th>
+      <th>다음 예상</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>사망원인통계</td>
+      <td>국가데이터처</td>
+      <td>연 1회</td>
+      <td>2025-09-23</td>
+      <td><strong>2026년 9월 하순</strong></td>
+    </tr>
+    <tr>
+      <td>지역사회건강조사</td>
+      <td>질병관리청</td>
+      <td>연 1회</td>
+      <td>2025-12-22</td>
+      <td>2026년 12월</td>
+    </tr>
+    <tr>
+      <td>건강검진통계(일반·암검진)</td>
+      <td>국민건강보험공단</td>
+      <td>연 1회</td>
+      <td><strong>2026-01-06</strong></td>
+      <td>2026년 12월~2027년 1월</td>
+    </tr>
+    <tr>
+      <td>인구주택총조사(박탈지수 기반)</td>
+      <td>국가데이터처</td>
+      <td>5년</td>
+      <td>2020년 집계표</td>
+      <td>2025년 총조사 집계표 공표 후</td>
+    </tr>
+    <tr>
+      <td>CPSTF 권고</td>
+      <td>미국 CDC/CPSTF</td>
+      <td>비정기</td>
+      <td>2024-11</td>
+      <td>미정</td>
+    </tr>
+    <tr>
+      <td>County Health Rankings</td>
+      <td>UWPHI/RWJF</td>
+      <td>연 1회</td>
+      <td>2025</td>
+      <td><strong>없음</strong>(2026년 릴리스 중단)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="3-우리-데이터-전수--뒤처진-항목">3. 우리 데이터 전수 — 뒤처진 항목</h2>
+
+<h3 id="31-지역사회건강조사-41종--39종이-2025년">3.1 지역사회건강조사 41종 — 39종이 2025년</h3>
+
+<p>2025년까지 있는 것 39종. <strong>2024년에서 멈춘 2종</strong>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>지표</th>
+      <th>우리 최신</th>
+      <th>원천 최종갱신</th>
+      <th>해석</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>심폐소생술 인지율</td>
+      <td>2024</td>
+      <td>2024-12-30</td>
+      <td>2025년 조사 표에 갱신 없음</td>
+    </tr>
+    <tr>
+      <td>심폐소생술 교육경험률</td>
+      <td>2024</td>
+      <td>2024-12-30</td>
+      <td>〃</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>→ 우리 수집 누락이 아니라 <strong>원천 표 자체가 2024년에서 멈춰 있다.</strong> 2025년 조사에서 문항이 빠졌을 가능성이 있어 확인이 필요하다(초기 검증에서 분류한 「WARN 갱신중단」 32개 표와 같은 부류로 보인다).</p>
+
+<h3 id="32-김동현-교수-dbkdh_dataset-115종--14종이-뒤처짐">3.2 김동현 교수 DB(kdh_dataset) 115종 — 14종이 뒤처짐</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>최신 연도</th>
+      <th>지표</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>2017</strong></td>
+      <td>일반건강검진(1차) 수검률 · 검진 판정 정상A/유질환자/고혈압/당뇨병 비율 · 추락(낙상) 표준화사망률 · 등록장애인 비율</td>
+    </tr>
+    <tr>
+      <td>2020</td>
+      <td>만성하기도질환 표준화사망률 · 미세먼지(PM10) · 초미세먼지(PM2.5)</td>
+    </tr>
+    <tr>
+      <td>2021</td>
+      <td>의료기관 진료실인원(천명당)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>인구 10만명당 사회복지시설 수 · 인구 10만명당 교통사고 건수</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>병상 수(천명당)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>나머지 101종은 2024년까지 있다.</p>
+
+<h3 id="33-가장-큰-구멍--일반건강검진-5종">3.3 가장 큰 구멍 — 일반건강검진 5종</h3>
+
+<p><strong>우리 2017년 ↔ 원천 2024년.</strong> 원천은 KOSIS <code class="language-plaintext highlighter-rouge">DT_35007_N001_1</code>(시군구별 성별 일반건강검진 대상 및 수검인원 현황, 국민건강보험공단), <strong>최종갱신 2026-01-06</strong>.</p>
+
+<p>이번에 암검진을 받아온 <code class="language-plaintext highlighter-rouge">DT_35007_N009</code>와 <strong>같은 통계 계열</strong>이므로, <code class="language-plaintext highlighter-rouge">scripts/kosis_fetch_cancer.py</code> · <code class="language-plaintext highlighter-rouge">scripts/build_cancer.py</code> 를 거의 그대로 재사용할 수 있다(일반구 → 시 합산 로직 포함).
+판정결과 4종도 같은 계열에 있다: <code class="language-plaintext highlighter-rouge">DT_35007_N101</code>(정상B) · <code class="language-plaintext highlighter-rouge">N103</code>(질환의심) · <code class="language-plaintext highlighter-rouge">N105</code>(유질환자).</p>
+
+<hr />
+
+<h2 id="4-갱신-우선순위">4. 갱신 우선순위</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>대상</th>
+      <th>근거</th>
+      <th>난이도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>일반건강검진 수검률·판정결과 5종 → 2024년</strong></td>
+      <td>7년 뒤처짐, 수집 코드 재사용 가능</td>
+      <td>하</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>사망률 22종 + 건강수명 → 2025년</strong></td>
+      <td>2026년 9월 하순 공표 즉시</td>
+      <td>중(공표 대기)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>미세먼지 2종 → 최신</td>
+      <td>환경부/에어코리아 별도 확인</td>
+      <td>중</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>병상 수·사회복지시설·교통사고 건수</td>
+      <td>원천 확인 후</td>
+      <td>중</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>심폐소생술 2종</td>
+      <td>원천 갱신중단 여부 확인(갱신 없으면 화면에 「2024년까지」 명시)</td>
+      <td>하</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>지역박탈지수 → 2025 총조사</td>
+      <td>집계표 공표 후</td>
+      <td>대기</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="5-화면-표기-원칙권고">5. 화면 표기 원칙(권고)</h2>
+
+<p>지금 대시보드는 지표별 최신 연도가 제각각인데 화면에서 그 사실이 드러나지 않는다.</p>
+
+<ul>
+  <li>지표 분석 화면에 <strong>「자료 최신 연도」와 「원천 최종갱신일」</strong> 을 함께 표시한다.</li>
+  <li>최신 연도가 <strong>3년 이상 지난 지표</strong>에는 「갱신 중단/지연」 표시를 붙인다.</li>
+  <li>지역 비교·프로파일에서 <strong>서로 다른 연도의 지표를 한 점수로 합칠 때</strong> 그 사실을 명시한다.</li>
+</ul>
+
+<hr />
+
+<h2 id="6-출처">6. 출처</h2>
+
+<ul>
+  <li>국가데이터처 사망원인통계 보도자료 목록 — https://mods.go.kr/menu.es?mid=a10301060200</li>
+  <li>국가데이터처 사망원인통계 통계설명 — https://mods.go.kr/statDesc.es?act=view&amp;mid=a10501010000&amp;sttr_cd=S004001</li>
+  <li>KOSIS <code class="language-plaintext highlighter-rouge">DT_1B34E13</code> 시군구/사망원인(50항목)/성 (통계청 101)</li>
+  <li>KOSIS <code class="language-plaintext highlighter-rouge">DT_35007_N001_1</code> 시군구별 성별 일반건강검진 대상 및 수검인원 현황 (건강보험공단 350)</li>
+  <li>KOSIS <code class="language-plaintext highlighter-rouge">DT_35007_N009</code> 시군구별 성별 암검진 대상 및 수검인원 현황 (건강보험공단 350)</li>
+  <li>County Health Rankings 2026년 릴리스 중단 공지 — https://www.countyhealthrankings.org/findings-and-insights/blog/chrr-updates-data-for-34-measures-will-not-produce-a-2026-annual-data-release</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
