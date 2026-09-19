@@ -17,6 +17,7 @@ import CorrelationView from "./components/CorrelationView";
 import HotspotView from "./components/HotspotView";
 import ChronicleView from "./components/ChronicleView";
 import KpiView from "./components/KpiView";
+import SourcesView from "./components/SourcesView";
 import ExportButtons from "./components/ExportButtons";
 
 const DEFAULT_IND = INDICATORS.find((i) => i.id === "DT_H_SM") || INDICATORS[0];
@@ -35,7 +36,7 @@ function readHash() {
     sgg: RBY.get(sgg0)?.l === "sgg" ? sgg0 : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
-    view: ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi"].includes(h.get("view")) ? h.get("view") : "analysis",
+    view: ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources"].includes(h.get("view")) ? h.get("view") : "analysis",
     ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
@@ -171,6 +172,7 @@ export default function App() {
               <button className={`seg-btn ${view === "hot" ? "on" : ""}`} onClick={() => setView("hot")}>핫스팟</button>
               <button className={`seg-btn ${view === "chronicle" ? "on" : ""}`} onClick={() => setView("chronicle")}>연대기 전시관</button>
               <button className={`seg-btn ${view === "units" ? "on" : ""}`} onClick={() => setView("units")}>조사 단위</button>
+              <button className={`seg-btn ${view === "sources" ? "on" : ""}`} onClick={() => setView("sources")}>자료원</button>
             </div>
             <button className="themebtn" onClick={() => bumpFs(-1)} disabled={fs <= -1} title="글자 작게">A−</button>
             <button className="themebtn" onClick={() => bumpFs(1)} disabled={fs >= 2} title="글자 크게">A+</button>
@@ -187,7 +189,7 @@ export default function App() {
           </div>
         )}
 
-        {!["units", "ncd", "corr", "hot", "chronicle"].includes(view) && <div className="controls">
+        {!["units", "ncd", "corr", "hot", "chronicle", "sources"].includes(view) && <div className="controls">
           {view !== "profile" && view !== "kpi" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
           {view !== "compare" && view !== "kpi" && (
@@ -214,7 +216,9 @@ export default function App() {
 
         <div ref={bodyRef} className="body-anchor" />
 
-        {view === "units" ? (
+        {view === "sources" ? (
+          <SourcesView />
+        ) : view === "units" ? (
           <UnitsView setTip={setTip} />
         ) : view === "corr" ? (
           <CorrelationView setTip={setTip} />
