@@ -60,7 +60,10 @@ export default function SourcesView() {
 
       <div className="card span2">
         <h3>자료원 {srcs.length}종</h3>
-        <div className="desc">각 자료원이 {COV.standard}개 보건소 중 몇 곳을 덮는지 — ● 단위 그대로 · ◐ 소속 시군구 값으로 대체 · ○ 없음</div>
+        <div className="desc">
+          각 자료원이 {COV.standard}개 보건소 중 몇 곳을 덮는지 — ● 단위 그대로 · ◐ 소속 시군구 값으로 대체 · ○ 없음.
+          기관은 <b>원 출처 기준</b>입니다. 여러 국가통계를 모아 둔 2차 가공본을 통해 받은 것은 「경유」로 따로 적었습니다.
+        </div>
         <div className="srclist">
           {srcs.map((s) => {
             const c = tally(s.key);
@@ -70,6 +73,7 @@ export default function SourcesView() {
                 <div className="sc-org">{s.org}</div>
                 <div className="sc-meta">
                   <span>{s.years[0]}–{s.years[1]}</span><span>{s.unit} 단위</span><span>{s.cycle}</span>
+                  {s.next && <span className="sc-next">다음 {s.next}</span>}
                 </div>
                 <div className="sc-bar" title={`단위 그대로 ${c.O} · 시군구 대체 ${c.P} · 없음 ${c.X}`}>
                   <i className="b-o" style={{ width: `${(c.O / COV.standard) * 100}%` }} />
@@ -78,6 +82,8 @@ export default function SourcesView() {
                 </div>
                 <div className="sc-cnt">● {c.O} · ◐ {c.P} · ○ {c.X}</div>
                 <div className="sc-tbl">{s.tbl}{s.updated && ` · 최종갱신 ${s.updated}`}</div>
+                {s.via && <div className="sc-via">경유 · {s.via}</div>}
+                {s.note && <div className="sc-note">{s.note}</div>}
                 {s.url && <a className="sc-url" href={s.url} target="_blank" rel="noreferrer">원본 바로가기 ↗</a>}
               </div>
             );
@@ -99,7 +105,7 @@ export default function SourcesView() {
             <thead>
               <tr>
                 <th className="cv-s">시도</th><th className="cv-n">보건소</th><th className="cv-u">단위</th>
-                {srcs.map((s) => <th key={s.key} className="cv-m" title={s.name}>{s.name.slice(0, 6)}</th>)}
+                {srcs.map((s) => <th key={s.key} className="cv-m" title={`${s.name} — ${s.org}`}>{s.name.slice(0, 5)}</th>)}
               </tr>
             </thead>
             <tbody>
