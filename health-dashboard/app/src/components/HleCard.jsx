@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { HleCalc } from "./CalcExample";
 import { HLE, hleOf, hleRank, fmt, label, RBY } from "../data";
 import ExportButtons from "./ExportButtons";
 
@@ -100,6 +101,7 @@ export default function HleCard({ sel, pool, poolName, setTip }) {
           <div className="desc" style={{ marginTop: 6 }}>{HLE.method?.summary}</div>
         </div>
       </div>
+      <HleCalc code={sel.c} year={y} name={label(sel)} />
     </div>
   );
 }
