@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>지음웍스 — 만든 것과 만든 이야기</title>
+<meta name="description" content="공공 자료를 쓸 만하게 만드는 일을 혼자 해 온 기록. 만든 달별로 모아 놓았습니다.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="지음웍스">
+<meta property="og:title" content="지음웍스 — 만든 것과 만든 이야기">
+<meta property="og:description" content="공공 자료를 쓸 만하게 만드는 일을 혼자 해 온 기록.">
+<meta property="og:url" content="https://jieumworks.com/">
+<meta name="twitter:card" content="summary">
+<style>
+  :root{
+    --bg:#f5f6f8; --surface:#ffffff; --line:#e2e6ec; --edge:#d3dae3;
+    --ink:#171b22; --body:#454d59; --muted:#6e7684;
+    --hero:#182436; --hero-2:#25344a;
+    --navy:#1b2942; --sig:#3f7d78; --link:#2f5d78;
+    --tag-bg:#eaf1f0; --tag-ink:#2b5c58;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  body{ margin:0; background:var(--bg); color:var(--ink);
+        font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+        line-height:1.72; word-break:keep-all; }
+  a{ color:var(--link); }
+  .wrap{ max-width:900px; margin:0 auto; padding:0 20px; }
+
+  /* ── 머리 ── 나중에 흑백 사진이 들어올 자리 ── */
+  .hero{ background:var(--hero); color:#fff; padding:52px 0 44px; position:relative; overflow:hidden; }
+  .hero .photo{ position:absolute; inset:0; background:var(--hero) center/cover no-repeat;
+                filter:grayscale(1) contrast(1.05); opacity:0; }   /* 사진을 넣으면 opacity 만 올리면 됩니다 */
+  .hero .wrap{ position:relative; }
+  .mark{ font-size:.76rem; letter-spacing:.24em; opacity:.62; font-weight:700; }
+  .hero h1{ margin:12px 0 14px; font-size:1.9rem; line-height:1.42; font-weight:800; }
+  .hero p{ margin:0; font-size:.98rem; opacity:.9; max-width:42em; }
+  .hero .sub{ margin-top:18px; font-size:.84rem; opacity:.66; }
+
+  /* ── 숫자 줄 ── */
+  .nums{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line);
+         border-bottom:1px solid var(--line); }
+  .nums div{ background:var(--surface); padding:16px 10px; text-align:center; }
+  .nums b{ display:block; font-size:1.3rem; color:var(--navy); font-weight:800; }
+  .nums span{ font-size:.74rem; color:var(--muted); }
+
+  section{ padding:44px 0; }
+  h2{ font-size:1.26rem; color:var(--navy); margin:0 0 6px; font-weight:800; }
+  .lead{ color:var(--muted); font-size:.9rem; margin:0 0 22px; }
+
+  /* ── 달력 상자 ── */
+  .month{ background:var(--surface); border:1.5px solid var(--edge); border-radius:14px;
+          margin-bottom:16px; overflow:hidden; }
+  .mhd{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+        padding:18px 20px 14px; border-bottom:1px solid var(--line); background:var(--bg); }
+  .mhd .y{ font-size:1.05rem; color:var(--muted); font-weight:700; }
+  .mhd .m{ font-size:2.1rem; color:var(--navy); font-weight:800; line-height:1; letter-spacing:-.01em; }
+  .mhd .n{ margin-left:auto; font-size:.78rem; color:var(--tag-ink); background:var(--tag-bg);
+           border-radius:20px; padding:4px 12px; font-weight:800; white-space:nowrap; }
+
+  .items{ list-style:none; margin:0; padding:0; }
+  .items li{ border-top:1px solid var(--line); }
+  .items li:first-child{ border-top:0; }
+  .item{ display:flex; gap:14px; align-items:flex-start; padding:15px 20px;
+         text-decoration:none; color:inherit; }
+  .item:hover{ background:var(--tag-bg); }
+  .item .em{ flex:0 0 auto; font-size:1.55rem; line-height:1.3; width:34px; text-align:center; }
+  .item .tx{ min-width:0; flex:1; }
+  .item .tt{ display:block; font-size:1.02rem; font-weight:800; color:var(--navy); line-height:1.45; }
+  .item .tt .star{ color:var(--sig); font-size:.74rem; font-weight:800; margin-left:7px;
+                   border:1px solid var(--sig); border-radius:6px; padding:1px 6px; white-space:nowrap; }
+  .item .dd{ display:block; font-size:.85rem; color:var(--body); margin-top:3px; }
+  .item .go{ flex:0 0 auto; color:var(--sig); font-weight:800; font-size:.9rem; align-self:center; }
+  .tagp{ display:inline-block; font-size:.7rem; color:var(--muted); background:var(--bg);
+         border:1px solid var(--line); border-radius:6px; padding:0 7px; margin-left:6px;
+         vertical-align:middle; font-weight:700; }
+
+  .empty{ color:var(--muted); font-size:.88rem; padding:18px 20px; }
+
+  /* ── 이야기 ── */
+  .story{ background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .tl{ list-style:none; margin:0; padding:0; border-left:2px solid var(--line); }
+  .tl li{ position:relative; padding:0 0 26px 22px; }
+  .tl li:before{ content:''; position:absolute; left:-7px; top:7px; width:12px; height:12px;
+                 border-radius:50%; background:var(--sig); border:2px solid var(--surface); }
+  .tl .d{ font-size:.78rem; color:var(--sig); font-weight:800; }
+  .tl h4{ margin:2px 0 6px; font-size:1rem; color:var(--navy); }
+  .tl p{ margin:0; font-size:.9rem; color:var(--body); }
+  .note{ margin:18px 0 0; font-size:.8rem; color:var(--muted); line-height:1.65;
+         border-top:1px dashed var(--line); padding-top:14px; }
+
+  /* ── 일하는 방식 ── */
+  .rules{ list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+  .rules li{ background:var(--surface); border:1.5px solid var(--edge); border-radius:11px;
+             padding:14px 16px; font-size:.9rem; color:var(--body); }
+  .rules b{ display:block; color:var(--navy); margin-bottom:3px; font-size:.95rem; }
+
+  footer{ padding:34px 0 46px; font-size:.8rem; color:var(--muted); }
+  footer p{ margin:0 0 6px; }
+
+  @media (max-width:640px){
+    .wrap{ padding:0 14px; }
+    .hero{ padding:36px 0 30px; }
+    .hero h1{ font-size:1.38rem; }
+    .hero p{ font-size:.9rem; }
+    .nums{ grid-template-columns:repeat(2,1fr); }
+    .nums b{ font-size:1.16rem; }
+    section{ padding:32px 0; }
+    h2{ font-size:1.12rem; }
+    .mhd{ padding:15px 15px 12px; gap:9px; }
+    .mhd .m{ font-size:1.72rem; }
+    .mhd .n{ font-size:.72rem; padding:3px 10px; }
+    .item{ padding:13px 15px; gap:11px; }
+    .item .em{ font-size:1.35rem; width:28px; }
+    .item .tt{ font-size:.96rem; }
+    .item .dd{ font-size:.82rem; }
+    .item .go{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="photo" id="heroPhoto"></div>
+  <div class="wrap">
+    <div class="mark">JIEUM WORKS</div>
+    <h1>공공 자료를 쓸 만하게 만드는 일</h1>
+    <p>흩어져 있고 읽기 어려운 자료를, 찾아 쓸 수 있는 형태로 바꾸는 웹 도구를 만듭니다.
+       업무 밖 시간에 혼자 만들었고, 만드는 과정도 함께 남깁니다.</p>
+    <div class="sub" id="heroSub">2026년 8월부터</div>
+  </div>
+</header>
+
+<div class="nums">
+  <div><b id="nWorks">—</b><span>만든 것</span></div>
+  <div><b>11,408</b><span>뽑아낸 국감 질의·답변</span></div>
+  <div><b>147</b><span>만든 웹 페이지</span></div>
+  <div><b>8</b><span>자동 갱신 워크플로</span></div>
+</div>
+
+<section class="wrap">
+  <h2>만든 달로 보기</h2>
+  <p class="lead">최근에 만든 것이 위에 옵니다. 제목을 누르면 그 자리로 갑니다.</p>
+  <div id="months"><div class="empty">목록을 불러오는 중입니다…</div></div>
+</section>
+
+<section class="story">
+  <div class="wrap">
+    <h2>어떻게 여기까지 왔나</h2>
+    <p class="lead">저장소에 남은 커밋 539개를 날짜순으로 훑어 정리한 것입니다.</p>
+    <ul class="tl">
+      <li><div class="d">2026년 8월 15일</div><h4>기록이 시작된 날</h4>
+        <p>동네 부동산 실거래가를 보기 좋게 정리하는 일부터 시작했습니다.
+          인쇄용 포스터, 평형별 표, 지도 위 단지 묶음 — 첫날에만 여덟 번 고쳤습니다.</p></li>
+      <li><div class="d">8월 16일</div><h4>처음으로 저절로 도는 것을 만듦</h4>
+        <p>국토교통부 실거래가를 매일 받아 오게 했습니다. 손으로 갱신하던 일이 사라진
+          첫 경험이었고, 이후 만든 것들이 대부분 이 구조를 따릅니다.</p></li>
+      <li><div class="d">8월 17일</div><h4>국정감사 자료 DB 시작</h4>
+        <p>회의록이 공개돼 있는데도 정작 찾아 쓸 수가 없었습니다. PDF에서 질의와 답변을
+          한 쌍씩 뽑아내는 일부터 손을 댔습니다.</p></li>
+      <li><div class="d">8월 말 ~ 9월 초</div><h4>하루에 스무 번, 마흔 번씩</h4>
+        <p>8월 27일 21번, 28일 26번, 9월 1일 43번, 9월 2일 79번.
+          이 무렵 돌봄 포털과 상조 사이트, 건강 대시보드가 함께 만들어졌습니다.</p></li>
+      <li><div class="d">9월 5일</div><h4>데이터를 한 번 날렸습니다</h4>
+        <p>보건복지부 질의를 다시 뽑는 작업이 100분 제한에 걸리면서 연도별 파일이 통째로
+          지워졌습니다. 옛 커밋에서 되살렸고, 그 뒤로는 새로 쓰기 전에 기존 것을 지우지
+          않는 방식으로 바꿨습니다.</p></li>
+      <li><div class="d">9월 15일</div><h4>없는 줄 알았던 질의를 찾아냄</h4>
+        <p>코로나19 화면에서 접종 피해보상 질의가 2025년에 끊긴 것처럼 보였습니다.
+          알고 보니 국회가 그해부터 '코로나'라는 말 없이 '예방접종 피해보상'으로만 부르고
+          있었고, 낱말로만 세던 탓에 49건이 빠져 있었습니다.</p></li>
+    </ul>
+    <p class="note">여기 적힌 날짜와 횟수는 모두 저장소의 커밋 기록에서 가져온 것입니다.
+      기억에 기대 쓰면 좋았던 일만 남기 때문입니다.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>일하는 방식</h2>
+  <p class="lead">만들면서 지키려고 한 것들입니다.</p>
+  <ul class="rules">
+    <li><b>숫자에는 근거를 붙입니다</b>
+      화면에 뜨는 건수가 무엇을 어떻게 센 것인지 그 자리에 적습니다. 추정한 것은 추정이라고 표시합니다.</li>
+    <li><b>비어 있으면 비었다고 적습니다</b>
+      자료가 없는 칸을 그럴듯하게 채우지 않습니다. 왜 비었는지를 대신 적습니다.</li>
+    <li><b>공개 자료만 씁니다</b>
+      원문으로 이어지는 링크를 함께 둡니다. 확인할 수 없는 것은 싣지 않습니다.</li>
+    <li><b>손이 가지 않게 만듭니다</b>
+      한 번 만들면 저절로 갱신되게 합니다. 지금 여덟 개가 돌고 있습니다.</li>
+    <li><b>고친 것도 남깁니다</b>
+      잘못 만든 것과 되돌린 것을 지우지 않습니다. 위 이야기의 9월 5일과 15일이 그것입니다.</li>
+  </ul>
+</section>
+
+<footer class="wrap">
+  <p><b>지음웍스</b> — 개인이 만든 기록입니다. 어떤 기관을 대표하지 않습니다.</p>
+  <p>국정감사 자료 DB는 질병관리청 인공지능놀이터 연구회 이름으로 공개한 비공식 참고자료입니다.</p>
+  <p style="margin-top:12px;">ⓒ 2026 jieumworks.com</p>
+</footer>
+
+<script>
+(function(){
+  var esc=function(s){ return String(s||'').replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+
+  fetch('works.json?_='+Date.now()).then(function(r){ return r.json(); }).then(render)
+    .catch(function(){
+      document.getElementById('months').innerHTML =
+        '<div class="empty">목록을 불러오지 못했습니다. works.json 을 확인해 주세요.</div>';
+    });
+
+  function render(d){
+    var items=(d.items||[]).filter(function(x){ return x.ym && x.title; });
+    if(!items.length){
+      document.getElementById('months').innerHTML='<div class="empty">아직 등록된 것이 없습니다.</div>'; return;
+    }
+    // 만든 달로 묶는다. 최신이 위로.
+    var by={};
+    items.forEach(function(x){ (by[x.ym]=by[x.ym]||[]).push(x); });
+    var yms=Object.keys(by).sort().reverse();
+
+    document.getElementById('months').innerHTML = yms.map(function(ym){
+      var y=ym.slice(0,4), m=String(+ym.slice(5,7));
+      return '<div class="month">'+
+        '<div class="mhd"><span class="y">'+esc(y)+'</span><span class="m">'+esc(m)+'월</span>'+
+          '<span class="n">'+by[ym].length+'개</span></div>'+
+        '<ul class="items">'+ by[ym].map(row).join('') +'</ul></div>';
+    }).join('');
+
+    document.getElementById('nWorks').textContent = items.length;
+    var last=yms[yms.length-1];
+    document.getElementById('heroSub').textContent =
+      last.slice(0,4)+'년 '+(+last.slice(5,7))+'월부터 · 만든 것 '+items.length+'개';
+  }
+
+  function row(x){
+    return '<li><a class="item" href="'+esc(x.url||'#')+'" target="_blank" rel="noopener">'+
+      '<span class="em">'+esc(x.emoji||'•')+'</span>'+
+      '<span class="tx">'+
+        '<span class="tt">'+esc(x.title)+
+          (x.star?'<span class="star">대표작</span>':'')+
+          (x.tag?'<span class="tagp">'+esc(x.tag)+'</span>':'')+'</span>'+
+        (x.desc?'<span class="dd">'+esc(x.desc)+'</span>':'')+
+      '</span>'+
+      '<span class="go">↗</span></a></li>';
+  }
+})();
+</script>
+</body>
+</html>

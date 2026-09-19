@@ -1,0 +1,124 @@
+{
+ "note": "만든 것 목록. 새로 만들 때마다 여기에 한 줄 더하면 홈 화면이 저절로 바뀝니다. ym은 만든 달, 최신이 위로 올라갑니다.",
+ "items": [
+  { "ym": "2026-09", "emoji": "📰", "title": "보건 동향 뉴스레터 메이커",
+    "desc": "세계보건기구·미국 질병통제예방센터·유럽질병예방통제센터 자료를 모아 뉴스레터 꼴로 만들어 줍니다.",
+    "url": "https://soonryu74.github.io/newsletter/", "tag": "보건" },
+
+  { "ym": "2026-09", "emoji": "🧭", "title": "입시 나침반",
+    "desc": "2010년생이 치르는 2029학년도 대입. 통합형 수능과 내신 5등급제, 고교학점제 첫 세대를 위한 정리.",
+    "url": "https://soonryu74.github.io/ipsi/", "tag": "교육" },
+
+  { "ym": "2026-09", "emoji": "🕊️", "title": "목장 나눔터",
+    "desc": "멜번방주교회 목장 모임을 위한 나눔 기록 공간.",
+    "url": "https://soonryu74.github.io/gajeong/", "tag": "생활" },
+
+  { "ym": "2026-09", "emoji": "🎨", "title": "GPT Image 2.5 프롬프트 갤러리",
+    "desc": "한국어로 이미지를 만들 때 쓰는 프롬프트 시트와 결과 모음.",
+    "url": "https://soonryu74.github.io/gpt-image-2-5-gallery.html", "tag": "도구" },
+
+  { "ym": "2026-09", "emoji": "🎓", "title": "통합돌봄 사이버교육원",
+    "desc": "통합돌봄 현장 실무자와 시민을 위한 원격 교육. 법령과 서식을 업무 순서대로 따라갑니다.",
+    "url": "https://soonryu74.github.io/edu/", "tag": "돌봄" },
+
+  { "ym": "2026-09", "emoji": "💊", "title": "근거영양",
+    "desc": "하버드 코스모스·바이탈, 미국 국립보건원 39만 명 20년 추적 등 대규모 임상연구 82건으로 정리한 영양제 안내.",
+    "url": "https://soonryu74.github.io/yeongyangje/", "tag": "보건" },
+
+  { "ym": "2026-09", "emoji": "📊", "title": "지역 건강프로파일 대시보드",
+    "desc": "지역사회건강조사로 17개 시도와 시군구의 건강 지표를 견줘 봅니다. 순위와 추이를 함께 놓았습니다.",
+    "url": "https://soonryu74.github.io/health-dashboard/", "tag": "보건" },
+
+  { "ym": "2026-09", "emoji": "🕯️", "title": "고마움 상조",
+    "desc": "장례 절차와 준비를 미리 알 수 있게 정리한 안내.",
+    "url": "https://soonryu74.github.io/sangjo/", "tag": "생활" },
+
+  { "ym": "2026-08", "emoji": "🏛️", "title": "국정감사 자료 DB", "star": true,
+    "desc": "국회 회의록 4,805건에서 질의·답변 11,408건을 뽑아 기관별로 나눴습니다. 국정감사 시즌에는 하루 두 번 저절로 갱신됩니다.",
+    "url": "https://gukgam-db.github.io", "tag": "공공" },
+
+  { "ym": "2026-08", "emoji": "🤝", "title": "생활 제휴 업체",
+    "desc": "동네 생활 업체를 모아 보이는 제휴 안내 화면.",
+    "url": "https://soonryu74.github.io/jehyu.html", "tag": "생활" },
+
+  { "ym": "2026-08", "emoji": "🏪", "title": "상가 입지분석",
+    "desc": "반경 안의 업종 분포를 읽어 상가 자리를 가늠해 봅니다.",
+    "url": "https://soonryu74.github.io/ipji.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🤖", "title": "AI 1인 기업 학습 가이드",
+    "desc": "혼자 만들고 혼자 운영하는 법을 단계별로 정리한 교재.",
+    "url": "https://soonryu74.github.io/guide.html", "tag": "도구" },
+
+  { "ym": "2026-08", "emoji": "🫂", "title": "곁애",
+    "desc": "검증된 돌봄·의료 전문가를 찾는 사람과 이어 주는 화면.",
+    "url": "https://soonryu74.github.io/gyeotae/", "tag": "돌봄" },
+
+  { "ym": "2026-08", "emoji": "🏡", "title": "모심 — 돌봄 종합 포털",
+    "desc": "2026년 3월 시행 지역사회 통합돌봄부터 노인장기요양·방문요양까지 제도별 안내를 한곳에.",
+    "url": "https://soonryu74.github.io/dolbom/", "tag": "돌봄" },
+
+  { "ym": "2026-08", "emoji": "📈", "title": "아파트 실거래가 분석",
+    "desc": "국토교통부 실거래가를 매일 받아 단지별·평형별로 보여 줍니다. 처음으로 저절로 도는 것을 만든 자리입니다.",
+    "url": "https://soonryu74.github.io/silgeorae-lab.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🏠", "title": "갈매동 부동산",
+    "desc": "동네 시세와 매물, 안전한 계약까지. 여기서 모든 것이 시작됐습니다.",
+    "url": "https://soonryu74.github.io/budongsan.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🗂️", "title": "부동산 생활 안내 모음 (첫 화면)",
+    "desc": "아래 열두 가지 안내로 들어가는 첫 화면입니다.",
+    "url": "https://soonryu74.github.io/jaryo.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🏦", "title": "주택청약 안내",
+    "desc": "청약종합저축, 국민주택과 민영주택의 차이, 가점제와 특별공급, 청약홈 신청 절차까지.",
+    "url": "https://soonryu74.github.io/cheongyak.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🧾", "title": "부동산 세금 안내",
+    "desc": "취득세·재산세·종합부동산세·양도소득세·임대소득세를 살 때, 가지고 있을 때, 팔 때로 나눠 정리했습니다.",
+    "url": "https://soonryu74.github.io/sege.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🛡️", "title": "전세사기 예방과 보증금 보호",
+    "desc": "전세사기 수법과 계약 전후 점검표, 안심전세앱, 보증금 반환보증, 임차권등기명령, 피해자 지원까지.",
+    "url": "https://soonryu74.github.io/jeonse-sagi.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🔑", "title": "주택임대차 안내",
+    "desc": "대항력과 우선변제권, 확정일자, 최우선변제, 계약갱신청구권, 전월세상한제와 신고제를 쉬운 말로.",
+    "url": "https://soonryu74.github.io/jutaek-imdaecha.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "💰", "title": "중개보수 요율표",
+    "desc": "매매와 임대차 요율, 계산하는 법, 부가세, 월세를 보증금으로 환산하는 법까지.",
+    "url": "https://soonryu74.github.io/junggae.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🧹", "title": "관리비 바로 알기",
+    "desc": "관리비 항목이 어떻게 짜이는지, 공동주택 관리비 공개 자료를 어디서 보는지, 장기수선충당금과 수선유지비가 어떻게 다른지.",
+    "url": "https://soonryu74.github.io/gwanribi.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "📦", "title": "이사·전입신고 체크리스트",
+    "desc": "전입신고와 확정일자 받는 법, 이사 전후로 해야 할 일, 관리비와 장기수선충당금 정산, 주소 이전까지.",
+    "url": "https://soonryu74.github.io/isa.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "📝", "title": "부동산 매매 절차",
+    "desc": "실거래가 확인부터 계약, 계약금·중도금·잔금, 소유권 이전등기, 하자담보책임까지 순서대로.",
+    "url": "https://soonryu74.github.io/maemae.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "📉", "title": "실거래가 확인·활용법",
+    "desc": "국토교통부 공개시스템으로 실거래가를 확인하고, 공시가격·시세와 함께 제대로 읽는 법.",
+    "url": "https://soonryu74.github.io/silgeorae.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "📜", "title": "등기부·건축물대장 확인법",
+    "desc": "등기사항전부증명서의 갑구와 을구를 보는 법, 건축물대장과 토지이용계획 확인법, 계약 전 점검할 곳.",
+    "url": "https://soonryu74.github.io/deungi-daejang.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🏬", "title": "상가 계약 체크리스트",
+    "desc": "업종별 규제와 교육환경보호구역, 건축물 용도와 소방 확인, 상가건물임대차보호법의 환산보증금과 권리금까지.",
+    "url": "https://soonryu74.github.io/sangga.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🗺️", "title": "아파트 시세 지도",
+    "desc": "지도 위에서 가격대와 평형으로 좁혀 보고, 핀을 누르면 최근 실거래가가 나옵니다.",
+    "url": "https://soonryu74.github.io/jido-search.html", "tag": "부동산" },
+
+  { "ym": "2026-08", "emoji": "🗞️", "title": "부동산 뉴스·정책 모음",
+    "desc": "대출·세금·공급·청약 관련 정책 뉴스를 매일 저절로 모읍니다. 국토교통부와 청약홈 등 공식 자료로 바로 갑니다.",
+    "url": "https://soonryu74.github.io/news.html", "tag": "부동산" }
+ ]
+}
