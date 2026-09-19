@@ -69,7 +69,10 @@ export default function SourcesView() {
             const c = tally(s.key);
             return (
               <div key={s.key} className="srccard">
-                <div className="sc-head"><b>{s.name}</b> <span className="sc-n">{s.n}개 지표</span></div>
+                <div className="sc-head">
+                  <b>{s.name}{s.approx && <span className="approx-chip">근사·공식 아님</span>}</b>
+                  <span className="sc-n">{s.n}개 지표</span>
+                </div>
                 <div className="sc-org">{s.org}</div>
                 <div className="sc-meta">
                   <span>{s.years[0]}–{s.years[1]}</span><span>{s.unit} 단위</span><span>{s.cycle}</span>
@@ -84,6 +87,12 @@ export default function SourcesView() {
                 <div className="sc-tbl">{s.tbl}{s.updated && ` · 최종갱신 ${s.updated}`}</div>
                 {s.via && <div className="sc-via">경유 · {s.via}</div>}
                 {s.note && <div className="sc-note">{s.note}</div>}
+                {s.limits && (
+                  <details className="sc-lim">
+                    <summary>한계 {s.limits.length}가지</summary>
+                    <ul>{s.limits.map((l, i) => <li key={i}>{l}</li>)}</ul>
+                  </details>
+                )}
                 {s.url && <a className="sc-url" href={s.url} target="_blank" rel="noreferrer">원본 바로가기 ↗</a>}
               </div>
             );
