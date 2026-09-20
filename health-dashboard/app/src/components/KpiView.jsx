@@ -92,6 +92,7 @@ export default function KpiView({ item, sel, onPick }) {
                       <summary>미보유 · {r.src || "자료원 미확인"}</summary>
                       {r.why && <div className="miss-why">{r.why}</div>}
                       {r.route && <div className="miss-route">확보 경로 · {r.route}</div>}
+                      {r.guide && <div className="miss-route">정의 출처 · {r.guide}</div>}
                     </details>
                   </td>
                 </tr>
