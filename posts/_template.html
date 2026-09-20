@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!-- ★ 새 글 만드는 법:
+     1) 이 파일을 posts/ 안에 복사 → 이름: YYYY-MM-DD-영문제목.html (예: 2026-10-01-galmae-october.html)
+     2) 아래 {{ }} 부분만 바꾸기 (제목·날짜·요약·본문). 나머지(헤더/푸터)는 손대지 않기.
+     3) posts/index.json 맨 앞에 한 줄 추가:
+        { "file":"파일명.html", "title":"제목", "date":"YYYY-MM-DD", "tag":"가이드", "summary":"한 줄 요약" }
+     ※ 헤더/푸터는 다른 글과 똑같이 유지해야 디자인이 안 깨집니다. -->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>{{제목}} | 갈매역삼성부동산</title>
+<meta name="description" content="{{한 줄 요약}}">
+<meta property="og:site_name" content="갈매역삼성부동산">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{제목}}">
+<meta property="og:description" content="{{한 줄 요약}}">
+<meta property="og:url" content="https://galmae-budongsan.com/posts/{{파일명.html}}">
+<meta property="og:image" content="https://galmae-budongsan.com/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{제목}}">
+<meta name="twitter:description" content="{{한 줄 요약}}">
+<meta name="twitter:image" content="https://galmae-budongsan.com/assets/og-image.png">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+  .post-body{ max-width:720px; }
+  .post-head{ margin-bottom:14px; }
+  .post-head .pm{ font-size:.82rem; color:var(--muted); font-weight:700; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .post-head .pm .tag{ background:var(--accent); color:#fff; border-radius:999px; padding:2px 10px; }
+  .post-head h1{ margin:8px 0 0; font-size:1.55rem; letter-spacing:-.02em; line-height:1.3; }
+  .post-body h2{ font-size:1.15rem; margin:24px 0 8px; color:var(--navy,#123a6b); }
+  .post-body p{ line-height:1.75; color:#33424f; margin:8px 0; }
+  .post-body ol,.post-body ul{ line-height:1.8; color:#33424f; padding-left:20px; }
+  .post-body a{ color:#1f6fd1; font-weight:600; }
+  .post-cta{ background:#0f2f57; color:#fff; border-radius:14px; padding:18px 20px; margin:24px 0 6px; }
+  .post-cta a{ color:#ffd85e; font-weight:800; text-decoration:none; }
+  .post-back{ display:inline-block; margin-top:18px; font-weight:700; color:#1f6fd1; text-decoration:none; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a class="brand" href="../budongsan.html">🏢 갈매동 부동산 <span class="tag">갈매역삼성부동산</span></a>
+    <nav class="site-nav">
+      <a href="../jido-search.html" data-nav="guri">구리·갈매</a>
+      <a href="../jido-search.html?region=by" data-nav="by">남양주 별내</a>
+      <a href="../silgeorae-lab.html">실거래가 분석 <span class="nav-badge">매일 업데이트</span></a>
+      <a href="../sosik.html" class="active">소식</a>
+      <a href="../news.html">뉴스·정책 <span class="nav-badge">매일 업데이트</span></a>
+      <a href="../store.html">매물</a>
+      <a href="../jaryo.html">자료실</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="breadcrumb"><a href="../budongsan.html">홈</a> › <a href="../sosik.html">소식</a> › {{제목}}</div>
+
+  <article class="post-body">
+    <div class="post-head">
+      <div class="pm"><span class="tag">{{태그}}</span><span>{{2026.00.00}}</span><span>· 갈매역삼성부동산</span></div>
+      <h1>{{제목}}</h1>
+    </div>
+
+    <!-- ↓↓↓ 여기부터 본문. <p>문단</p>, <h2>소제목</h2> 자유롭게 ↓↓↓ -->
+    <p>{{첫 문단을 여기에 씁니다.}}</p>
+
+    <h2>{{소제목}}</h2>
+    <p>{{내용}}</p>
+    <!-- ↑↑↑ 본문 끝 ↑↑↑ -->
+
+    <div class="post-cta">
+      📞 자세한 상담은 갈매역삼성부동산 — <a href="tel:0315754944">031-575-4944</a>
+    </div>
+
+    <a class="post-back" href="../sosik.html">← 소식 목록으로</a>
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <h4>🏢 갈매역삼성부동산 · 갈매동 부동산</h4>
+    <div class="footer-links">
+      <a href="../budongsan.html">홈</a>
+      <a href="../silgeorae-lab.html">실거래가 분석</a>
+      <a href="../sosik.html">소식</a>
+      <a href="../news.html">뉴스·정책</a>
+      <a href="../store.html">매물</a>
+      <a href="../jaryo.html">자료실</a>
+    </div>
+    <div class="footer-note">참고용 정보이며 법적 효력은 없습니다. © 2026 갈매역삼성부동산.</div>
+  </div>
+</footer>
+<script src="../assets/js/a11y.js" defer></script>
+</body>
+</html>
