@@ -63,7 +63,7 @@ export default function KpiView({ item, sel, onPick }) {
   const dlCsv = () => {
     const head = ["지표", "보유", "최근연도", "최근값", "최근3개년평균", "전국중앙값", "소속시도평균", "전국순위", "분모", "상위50%", "상위25%", "연평균변화", "최소검출차이"];
     const body = rows.map((r) => r.missing
-      ? [r.kpi, "미보유(건보공단 자료)", "", "", "", "", "", "", "", "", "", "", ""]
+      ? [r.kpi, "미보유 · " + (r.src || "자료원 미확인"), r.why || "", "", "", "", "", "", "", "", "", "", ""]
       : [r.kpi, "보유", r.last ?? "", fmt(r.v), fmt(r.avg3), fmt(r.med), fmt(r.sidoAvg), r.myRank ?? "", r.nRank, fmt(r.top50), fmt(r.top25), fmt(r.slope, 2), fmt(r.mdd, 2)]);
     saveCsvRows([head, ...body], `${label(sel)}_통합건강증진사업_핵심성과지표`);
   };
@@ -75,7 +75,7 @@ export default function KpiView({ item, sel, onPick }) {
         <div className="desc">
           보건복지부 「지역사회 통합건강증진사업 안내」가 정한 핵심성과지표입니다. 보건소는 광역 공통지표 2개(건강생활실천율 필수)와 자체 지표 1개 이상, <b>총 3개 이상</b>을 골라 <b>2년 이상</b> 관리합니다.
           평가 산식은 <b>최근 3개년 평균 실적 ÷ 자체 목표값</b>이며, 득점은 95% 이상 8점, 90% 이상 7점, 85% 이상 6점, 그 미만 5점입니다.
-          16개 중 <b>13개를 이 대시보드가 시군구·연도별로 보유</b>하고 있습니다. 모유수유 실천율과 고혈압·당뇨 투약 순응률 3종은 국민건강보험공단 자료라 아직 없습니다.
+          16개 중 <b>13개를 이 대시보드가 시군구·연도별로 보유</b>하고 있습니다. 나머지 3종은 <b>시군구 단위 공표 통계가 없어</b> 채울 수 없습니다(2026-09-20 KOSIS 전수 검색 확인). 각 줄의 사유를 펼쳐 보세요.
         </div>
         <div className="kpi-actions"><button className="themebtn" onClick={dlCsv}>↓ CSV 내려받기</button></div>
         <div className="tblscroll">
@@ -85,7 +85,16 @@ export default function KpiView({ item, sel, onPick }) {
             </tr></thead>
             <tbody>
               {rows.map((r) => r.missing ? (
-                <tr key={r.kpi} className="kpi-miss"><td>{r.kpi}</td><td colSpan={6}>미보유 · 자료원 국민건강보험공단</td></tr>
+                <tr key={r.kpi} className="kpi-miss">
+                  <td>{r.kpi}</td>
+                  <td colSpan={6}>
+                    <details className="miss-d">
+                      <summary>미보유 · {r.src || "자료원 미확인"}</summary>
+                      {r.why && <div className="miss-why">{r.why}</div>}
+                      {r.route && <div className="miss-route">확보 경로 · {r.route}</div>}
+                    </details>
+                  </td>
+                </tr>
               ) : (
                 <tr key={r.kpi} className={openId === r.ind.id ? "sel" : ""} onClick={() => { setOpenId(openId === r.ind.id ? null : r.ind.id); setTarget(""); }}>
                   <td>{r.kpi} <small className="muted">{r.ind.bad ? "↓" : "↑"}</small></td>
