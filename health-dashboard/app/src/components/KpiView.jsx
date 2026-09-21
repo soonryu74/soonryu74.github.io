@@ -90,6 +90,21 @@ export default function KpiView({ item, sel, onPick }) {
                   <td colSpan={6}>
                     <details className="miss-d">
                       <summary>미보유 · {r.src || "자료원 미확인"}</summary>
+                      {r.khepi && (
+                        <div className="miss-ref">
+                          <b>건강증진개발원 공표 참고치</b>
+                          <table className="miss-ref-t"><tbody>
+                            <tr><td>2016 전국기준(보건소 중앙값)</td>
+                                <td>{r.khepi["2016 전국 보건소 사분위수(표준화율,%)"]["중앙값"]}%</td></tr>
+                            <tr><td>2016 전국 시군구 최소~최대</td>
+                                <td>{r.khepi["2016 전국 시군구 분포(%)"]["최소"]}~{r.khepi["2016 전국 시군구 분포(%)"]["최대"]}%
+                                    (격차 {r.khepi["2016 전국 시군구 분포(%)"]["격차"]}%p)</td></tr>
+                            <tr><td>서울특별시 2016(표준화율)</td>
+                                <td>{r.khepi["서울특별시 2016(표준화율,%)"]}%</td></tr>
+                          </tbody></table>
+                          <div className="miss-ref-src">{r.khepi["출처"]}</div>
+                        </div>
+                      )}
                       {r.why && <div className="miss-why">{r.why}</div>}
                       {r.route && <div className="miss-route">확보 경로 · {r.route}</div>}
                       {r.guide && <div className="miss-route">정의 출처 · {r.guide}</div>}
