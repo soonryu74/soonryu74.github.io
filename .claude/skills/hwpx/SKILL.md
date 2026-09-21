@@ -14,11 +14,12 @@ description: "한글 HWP/HWPX 파일의 변환·읽기·편집과 편집 가능�
 1. 사용자 요청의 사실·필수 조건·미확정 사항을 정리한다. 기관명·연도·장소·문서번호 등을 추측하지 않는다.
    - 문서에 필요하지만 미정인 사실과, 요청상 생략하는 항목은 다르다. 일반 지식 보고서에 기관·작성일을 쓰지 않는다는 이유만으로 unknowns나 초안 표시를 만들지 않는다.
 2. 아래 문서 유형을 고르고 실행 가능한 예시와 스키마를 확인한다.
-3. 기본 문서는 v1 Markdown/공문 JSON을 사용한다. 사실 계약·표 도식·기관별 표현이 필요하면 v2의 의미 블록을 사용한다. 모델이 XML이나 셀 좌표를 작성할 필요는 없다.
+3. 공무원·공공기관 대상 문서는 [bumpis-conventions.md](references/bumpis-conventions.md)의 글머리·날짜·금액·증감·표 규칙을 기본값으로 적용한다.
+4. 기본 문서는 v1 Markdown/공문 JSON을 사용한다. 사실 계약·표 도식·기관별 표현이 필요하면 v2의 의미 블록을 사용한다. 모델이 XML이나 셀 좌표를 작성할 필요는 없다.
    - 공문 키는 예시의 `기관명`, `수신`, `제목`, `발신명의`, `body`를 그대로 사용한다. 영문 별칭을 추측하지 않는다.
    - 절차도·흐름도·추진체계도 요청은 `diagram` 블록과 `visual-elements.md`로 연결한다. 단계가 나열된 일반 데이터 표만으로 도식 요청을 충족했다고 판단하지 않는다.
-4. 명세를 파일로 저장해 한 번 빌드한다. `ok`, `published`, `draft`, 미수행 검사 상태를 확인한다.
-5. 완성본은 가능한 경우 실제 한컴 페이지를 렌더하고 육안 검토한다. 정적 통과, 한컴 열림, 렌더 성공, 시각 검토를 같은 것으로 취급하지 않는다.
+5. 명세를 파일로 저장해 한 번 빌드한다. `ok`, `published`, `draft`, 미수행 검사 상태를 확인한다.
+6. 완성본은 가능한 경우 실제 한컴 페이지를 렌더하고 육안 검토한다. 정적 통과, 한컴 열림, 렌더 성공, 시각 검토를 같은 것으로 취급하지 않는다.
 
 아래 명령은 **이 SKILL.md가 있는 디렉터리**를 기준으로 한다. 다른 작업 디렉터리에서는 스크립트 경로를 해당 스킬의 절대 경로로 바꾼다. 특정 환경변수가 자동 설정된다고 가정하지 않는다.
 
@@ -102,6 +103,7 @@ python scripts/finalize_hwpx.py output.hwpx --hancom
 | 요청 | 경로 |
 |---|---|
 | 공문 표기 | [gonmunseo-2025-writing-rules.md](references/gonmunseo-2025-writing-rules.md) |
+| 범정부오피스(범피스) 호환 서식·표기 관행, 공무원 보고서 기본값 | [bumpis-conventions.md](references/bumpis-conventions.md) |
 | 요약보고 | [yoyak-bogo-style.md](references/yoyak-bogo-style.md) |
 | 계획·검토보고 | [geomto-bogo-style.md](references/geomto-bogo-style.md) |
 | 범용 보고서 | [report-style.md](references/report-style.md) |
