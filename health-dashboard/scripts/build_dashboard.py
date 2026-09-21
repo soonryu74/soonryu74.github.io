@@ -31,3 +31,13 @@ for name, d in data["indicators"].items():
 subprocess.run(["npm", "run", "build"], cwd=app, check=True)
 out = ROOT / "index.html"
 print(f"생성: {out} ({out.stat().st_size:,} bytes)")
+
+# health-profile.kr 저장소가 옆에 클론돼 있으면 같은 산출물을 거울 배포
+# (GitHub Pages는 저장소당 커스텀 도메인 1개만 받으므로 전용 저장소를 따로 둔다)
+MIRROR = ROOT.parent.parent / "health-profile"
+if (MIRROR / ".git").exists():
+    (MIRROR / "index.html").write_bytes(out.read_bytes())
+    (MIRROR / "CNAME").write_text("health-profile.kr\n", encoding="utf-8")
+    print(f"거울 배포: {MIRROR / 'index.html'}")
+else:
+    print(f"거울 배포 생략: {MIRROR} 없음")
