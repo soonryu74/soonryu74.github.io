@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"데이터 최신성 점검표","url":"/health-dashboard/docs/%EB%8D%B0%EC%9D%B4%ED%84%B0_%EC%B5%9C%EC%8B%A0%EC%84%B1_%EC%A0%90%EA%B2%80_v1.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=ed67d230a779334ed6b8f5a5a83e12a8885e7f9f">
+    <link rel="stylesheet" href="/assets/css/style.css?v=c0c9dc6995dc561866ef9d6382ae6cae7bbccf1b">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -77,10 +77,10 @@
       <td>✅ 최신</td>
     </tr>
     <tr>
-      <td><strong>일반건강검진 수검률·판정결과 5종</strong></td>
-      <td><strong>2017</strong></td>
-      <td><strong>2024</strong></td>
-      <td>❌ <strong>7년 뒤처짐</strong></td>
+      <td>일반건강검진 수검률·판정결과 5종</td>
+      <td><strong>2024</strong>(2026-09-22 갱신)</td>
+      <td>2024</td>
+      <td>✅ 동일 (고혈압·당뇨는 정의 변경으로 2018~ 별도 4종)</td>
     </tr>
     <tr>
       <td>미세먼지 PM10·PM2.5</td>
@@ -285,7 +285,11 @@
   <tbody>
     <tr>
       <td><strong>2017</strong></td>
-      <td>일반건강검진(1차) 수검률 · 검진 판정 정상A/유질환자/고혈압/당뇨병 비율 · 추락(낙상) 표준화사망률 · 등록장애인 비율</td>
+      <td>검진 고혈압/당뇨병 판정 비율(2차 판정 — 제도 폐지로 원천 종료, 2018~은 별도 4종) · 추락(낙상) 표준화사망률 · 등록장애인 비율</td>
+    </tr>
+    <tr>
+      <td><del>2017</del> → 2024</td>
+      <td>일반건강검진(1차) 수검률 · 검진 판정 정상A/유질환자 비율 (2026-09-22 KOSIS 직접 연결)</td>
     </tr>
     <tr>
       <td>2020</td>
@@ -308,12 +312,116 @@
 
 <p>나머지 101종은 2024년까지 있다.</p>
 
-<h3 id="33-가장-큰-구멍--일반건강검진-5종">3.3 가장 큰 구멍 — 일반건강검진 5종</h3>
+<h3 id="33-가장-큰-구멍--일반건강검진-5종--2024년까지-갱신-완료2026-09-22">3.3 가장 큰 구멍 — 일반건강검진 5종 → <strong>2024년까지 갱신 완료(2026-09-22)</strong></h3>
 
-<p><strong>우리 2017년 ↔ 원천 2024년.</strong> 원천은 KOSIS <code class="language-plaintext highlighter-rouge">DT_35007_N001_1</code>(시군구별 성별 일반건강검진 대상 및 수검인원 현황, 국민건강보험공단), <strong>최종갱신 2026-01-06</strong>.</p>
+<p><strong>우리 2017년 ↔ 원천 2024년</strong>이던 7년 공백을 메웠다. 원천은 KOSIS 국민건강보험공단 건강검진통계(orgId 350), <strong>최종갱신 2026-01-06</strong>.</p>
 
-<p>이번에 암검진을 받아온 <code class="language-plaintext highlighter-rouge">DT_35007_N009</code>와 <strong>같은 통계 계열</strong>이므로, <code class="language-plaintext highlighter-rouge">scripts/kosis_fetch_cancer.py</code> · <code class="language-plaintext highlighter-rouge">scripts/build_cancer.py</code> 를 거의 그대로 재사용할 수 있다(일반구 → 시 합산 로직 포함).
-판정결과 4종도 같은 계열에 있다: <code class="language-plaintext highlighter-rouge">DT_35007_N101</code>(정상B) · <code class="language-plaintext highlighter-rouge">N103</code>(질환의심) · <code class="language-plaintext highlighter-rouge">N105</code>(유질환자).</p>
+<table>
+  <thead>
+    <tr>
+      <th>원천 표</th>
+      <th>내용</th>
+      <th>만든 지표</th>
+      <th>연도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">DT_35007_N001_1</code></td>
+      <td>시군구별 성별 일반건강검진 대상·수검인원</td>
+      <td>일반건강검진 수검률 (= 수검인원 ÷ 대상인원)</td>
+      <td>2018~2024 → <strong>K_CHK_RATE 2010~2024로 연결</strong></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">DT_35007_N098</code></td>
+      <td>시군구별 성별 일반건강검진 판정 현황</td>
+      <td>판정 정상A 비율 · 유질환자 비율 (분모 = 판정 「계」 = 수검인원)</td>
+      <td>2018~2024 → <strong>K_CHK_NORMA·K_CHK_DIS 2010~2024로 연결</strong></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">DT_35007_N103</code></td>
+      <td>판정결과 질환의심 세부현황</td>
+      <td>고혈압 의심 비율(1차 판정) · 당뇨병 의심 비율(1차 판정) — <strong>신규 CHK_HTN_S·CHK_DM_S</strong></td>
+      <td>2018~2024</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">DT_35007_N105</code></td>
+      <td>판정결과 유질환자 세부현황</td>
+      <td>고혈압 유질환자 비율 · 당뇨병 유질환자 비율 — <strong>신규 CHK_HTN_D·CHK_DM_D</strong></td>
+      <td>2018~2024</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>정의 단절 — 고혈압·당뇨 2종은 이어 붙이지 않았다.</strong> 기존 「검진 고혈압/당뇨병 판정 비율」(K_CHK_HTN·K_CHK_DM, 2010~2017, 시군구 중앙값 1.1%·0.7%)의 분자는 <strong>2차 검진의 확진 판정</strong>이었다.
+2018년 검진제도 개편으로 2차 검진이 폐지되어(1차 판정에서 바로 의심자를 의료기관 확진검사로 연계) 이 원천 자체가 2017년에서 끝난다(<code class="language-plaintext highlighter-rouge">DT_35007_N108</code> 2차 판정 표도 2017년까지).
+2018년 이후는 1차 판정의 「질환의심」(2024 중앙값 고혈압 8.1%·당뇨병 3.7%)과 「유질환자」(23.5%·10.5%)를 <strong>별도 지표 4종</strong>으로 두고, 화면에 정의 변경 경고문을 띄운다. 값의 크기가 10배쯤 다르므로 이어 붙이면 2018년에 계단이 생긴다.</p>
+
+<p><strong>연결한 3종의 산식 동일성 확인.</strong> 김동현 DB 산식(수검인원÷대상인원, 정상A÷수검인원, 유질환자÷수검인원)과 같다. 분모 검증: N098 「계」 = 정상A+정상B+질환의심(실인원)+유질환자 = N001_1 수검인원, 247개 지역 전부 일치.
+전국 「계」 행으로 계산한 2018년 수검률 <strong>76.9%는 공단 건강검진통계연보 공표값과 일치</strong>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>시군구 중앙값</th>
+      <th>2016</th>
+      <th>2017(DB)</th>
+      <th>2018(KOSIS)</th>
+      <th>2019</th>
+      <th>2020</th>
+      <th>2021</th>
+      <th>2022</th>
+      <th>2023</th>
+      <th>2024</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>수검률 %</td>
+      <td>77.2</td>
+      <td>78.1</td>
+      <td>76.4</td>
+      <td>73.7</td>
+      <td><strong>67.2</strong>(코로나)</td>
+      <td>73.6</td>
+      <td>74.7</td>
+      <td>75.2</td>
+      <td>74.9</td>
+    </tr>
+    <tr>
+      <td>정상A %</td>
+      <td>6.9</td>
+      <td>6.8</td>
+      <td><strong>11.6</strong></td>
+      <td>11.5</td>
+      <td>10.6</td>
+      <td>10.2</td>
+      <td>9.7</td>
+      <td>9.6</td>
+      <td>9.2</td>
+    </tr>
+    <tr>
+      <td>유질환자 %</td>
+      <td>22.4</td>
+      <td>23.7</td>
+      <td>25.4</td>
+      <td>25.9</td>
+      <td>26.8</td>
+      <td>27.5</td>
+      <td>28.9</td>
+      <td>30.2</td>
+      <td>31.4</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>수검률·유질환자는 자연스럽게 이어지지만 <strong>정상A는 2017→2018년에 6.8→11.6%로 계단</strong>이 생긴다. 산식은 같아도 2018년 개편에서 판정 기준(정상A/정상B 경계 등)이 바뀐 결과로, 우리 처리 오류가 아니다(공단 연보의 전국 정상A도 2017년 7%대 → 2018년 12%대).
+화면에는 세 지표 모두 「자료 연결 + 2018년 판정 기준 변경」 경고문을 띄우고, 정상A는 2017년 이전과의 증감 비교를 피하라고 적었다.</p>
+
+<p><strong>지역 정리</strong>는 암검진(<code class="language-plaintext highlighter-rouge">build_cancer.py</code>)과 같다 — 일반구는 인원을 더해 시로 합산, 시 행이 있으면 구 행 폐기, 세종은 시도 행, 여주군·당진군 별칭. 시도 행도 함께 집계해 시도 순위·비교가 된다. 시군구 229개 + 시도 17개 = 셀 246/연도.
+N105는 항목명이 「당뇨」, N103은 「당뇨병」으로 다르다(스크립트에서 통일).</p>
+
+<p>파이프라인: <code class="language-plaintext highlighter-rouge">scripts/kosis_fetch_checkup.py [y0] [y1] [표…]</code>(objL 단계 자동 탐색 2→3→4, 호출 간격 10초 + 지수 백오프; KOSIS 차단이 심해 연도·표 하나씩 받는 데 수십 분) → <code class="language-plaintext highlighter-rouge">data/raw_checkup/</code>(gitignore) → <code class="language-plaintext highlighter-rouge">scripts/build_checkup.py</code> → <code class="language-plaintext highlighter-rouge">data/checkup.json</code> → <code class="language-plaintext highlighter-rouge">data.js injectCheckup()</code>(cont 지표는 연도·격자 splice).</p>
 
 <hr />
 
@@ -331,7 +439,7 @@
   <tbody>
     <tr>
       <td>1</td>
-      <td><strong>일반건강검진 수검률·판정결과 5종 → 2024년</strong></td>
+      <td><del>일반건강검진 수검률·판정결과 5종 → 2024년</del> <strong>완료(2026-09-22)</strong></td>
       <td>7년 뒤처짐, 수집 코드 재사용 가능</td>
       <td>하</td>
     </tr>

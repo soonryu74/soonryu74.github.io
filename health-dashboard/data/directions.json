@@ -1,5 +1,5 @@
 {
-"generated": "2026-09-08",
+"generated": "2026-09-22",
 "rules": [
 "R1 인구 구성·규모·기후 지표는 예외 없이 맥락 (CHR Demographics, AHR 비가중, ECHI 인구장, 국가지표체계 가치판단 없음)",
 "R2 의료이용 총량·진료비는 맥락 (OECD \"better/worse로 분류 불가\", HP2030 성과지표 아님, 격차의 대부분이 인구구조·건강수준)",
@@ -829,6 +829,78 @@
 {
 "name": "Healthy People 2030 Diabetes",
 "url": "https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/diabetes"
+}
+]
+},
+"CHK_HTN_S": {
+"dir": "bad",
+"note": "1차 판정 고혈압 「질환의심」 비율은 미진단·미조절 고혈압의 대리 지표(HP2030 고혈압 인지율·조절률 향상 목표의 뒷면). 2018년 2차 검진 폐지 후 신설 정의라 2017년 이전 「판정 비율」과 이어지지 않음",
+"refs": [
+{
+"name": "제5차 국민건강증진종합계획(HP2030)",
+"url": "https://www.mohw.go.kr/board.es?mid=a10401000000&bid=0008&tag=&act=view&list_no=365340"
+},
+{
+"name": "Healthy People 2030 HDS-04(고혈압 감소)",
+"url": "https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/heart-disease-and-stroke/reduce-proportion-adults-high-blood-pressure-hds-04"
+},
+{
+"name": "건강검진 실시기준 판정구분",
+"url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawDetail.do?SEQ=80&LAWGROUP=1"
+}
+]
+},
+"CHK_DM_S": {
+"dir": "bad",
+"note": "1차 판정 당뇨병 「질환의심」 비율은 미진단 당뇨의 대리 지표(HP2030 당뇨 인지율 향상 목표의 뒷면). 2018년 이후 신설 정의",
+"refs": [
+{
+"name": "제5차 국민건강증진종합계획(HP2030)",
+"url": "https://www.mohw.go.kr/board.es?mid=a10401000000&bid=0008&tag=&act=view&list_no=365340"
+},
+{
+"name": "Healthy People 2030 Diabetes",
+"url": "https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/diabetes"
+},
+{
+"name": "건강검진 실시기준 판정구분",
+"url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawDetail.do?SEQ=80&LAWGROUP=1"
+}
+]
+},
+"CHK_HTN_D": {
+"dir": "bad",
+"note": "1차 판정 고혈압 「유질환자」(이미 진단·치료 중) 비율은 유병률 대리(HP2030 성인 고혈압 유병률 감소 목표). 2018년 이후 신설 정의",
+"refs": [
+{
+"name": "제5차 국민건강증진종합계획(HP2030)",
+"url": "https://www.mohw.go.kr/board.es?mid=a10401000000&bid=0008&tag=&act=view&list_no=365340"
+},
+{
+"name": "Healthy People 2030 HDS-04(고혈압 감소)",
+"url": "https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/heart-disease-and-stroke/reduce-proportion-adults-high-blood-pressure-hds-04"
+},
+{
+"name": "건강검진 실시기준 판정구분",
+"url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawDetail.do?SEQ=80&LAWGROUP=1"
+}
+]
+},
+"CHK_DM_D": {
+"dir": "bad",
+"note": "1차 판정 당뇨병 「유질환자」 비율은 유병률 대리(HP2030 당뇨 유병률 감소 목표). 2018년 이후 신설 정의",
+"refs": [
+{
+"name": "제5차 국민건강증진종합계획(HP2030)",
+"url": "https://www.mohw.go.kr/board.es?mid=a10401000000&bid=0008&tag=&act=view&list_no=365340"
+},
+{
+"name": "Healthy People 2030 Diabetes",
+"url": "https://odphp.health.gov/healthypeople/objectives-and-data/browse-objectives/diabetes"
+},
+{
+"name": "건강검진 실시기준 판정구분",
+"url": "https://www.nhis.or.kr/lm/lmxsrv/law/lawDetail.do?SEQ=80&LAWGROUP=1"
 }
 ]
 },

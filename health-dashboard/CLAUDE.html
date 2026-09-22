@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=ed67d230a779334ed6b8f5a5a83e12a8885e7f9f">
+    <link rel="stylesheet" href="/assets/css/style.css?v=c0c9dc6995dc561866ef9d6382ae6cae7bbccf1b">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -298,6 +298,14 @@ docs/지역박탈지수_산출_v2.md 신규(150줄) + docs/건강수명_산출�
   ① <strong>시도 19개 단위까지만</strong> ② 구간이 <strong>179일 이하 / 180~239 / 240~359 / 360일 이상</strong> 이라 <strong>「300일 이상」 경계를 만들 수 없음</strong>(240일 이상으로 근사만 가능). → 공단 맞춤형 DB 신청 사안.
 · 모유수유 실천율 — 공단이 아니라 <strong>보건복지부 산후조리실태조사(117)·아동종합실태조사·가족과출산조사</strong>에만 있고 전부 전국·시도 표본. 시군구 없음.
 <strong>화면 오류 수정</strong> — KpiView 가 3종 모두 “자료원 국민건강보험공단”으로 하드코딩하고 있었는데 모유수유는 공단 자료가 아님. data/khepi_kpi.json 에 항목별 src·why·route 를 넣고 행마다 사유·확보경로를 펼쳐 보이게 교체.</li>
+  <li>[완료] <strong>일반건강검진 수검률·판정 5종 2024년까지 갱신</strong>(2026-09-22, 소유자 지시 “일반검진 5종 2024년 갱신도 해”): docs/데이터_최신성_점검_v1.md §3.3.
+scripts/kosis_fetch_checkup.py(KOSIS 350 DT_35007_N001_1·N098·N103·N105, 2018~2024) → data/raw_checkup/(gitignore) → scripts/build_checkup.py → data/checkup.json(0.15MB) → data.js injectCheckup().
+· 수검률·정상A·유질환자 3종은 산식이 같아 K_CHK_RATE·K_CHK_NORMA·K_CHK_DIS 에 <strong>2018~2024를 이어 붙임(splice)</strong> → 2010~2024 한 시계열. 시군구 229 + 시도 17 = 셀 246/연도.
+· 고혈압·당뇨 「판정 비율」(K_CHK_HTN·K_CHK_DM)은 분자가 <strong>2차 검진 확진</strong>이라 2018년 2차 검진 폐지로 2017년에서 종료. 2018~은 1차 판정 <strong>의심(CHK_HTN_S·CHK_DM_S)·유질환자(CHK_HTN_D·CHK_DM_D) 4종 신규</strong>(값 크기가 10배쯤 달라 이어 붙이지 않음).
+· 검증: 전국 「계」 행 2018년 수검률 76.9% = 공단 연보 공표값. 시군구 중앙값 수검률 2018 76.4 → 2020 67.2(코로나) → 2024 74.9. 고혈압 유질환자 ≤ 유질환자 전체 1,722셀 전부 충족.
+· <strong>정상A는 2017 6.8% → 2018 11.6%로 계단</strong>(개편에 따른 판정 기준 변경, 공단 연보 전국값도 동일) → 지표 note(⚠ 붉은 안내문, App.jsx indnote)로 2017년 이전과 증감 비교 금지 표시. N105 항목명은 「당뇨」(N103은 「당뇨병」).
+· KOSIS 차단 대응: 지수 백오프(30~420초)로는 파일당 15분 → <strong>성공 후 240초 고정 대기 + 실패 시 90초 재시도 + objL 단계 사전 지정</strong>으로 파일당 3~4분(단, 한 번은 30분 차단). 25개 파일에 3시간.
+· 자료원 탭 공단 카드에 검진 표ID·연도·정의 변경 설명, 방향성(directions.json)에 신규 4종 추가. 보건소 커버리지 공단 통계 241→243●.</li>
   <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>
