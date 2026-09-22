@@ -1,0 +1,270 @@
+{
+ "source": "NICE guidelines (NG series), 개별 지침 페이지 314건 크롤링 후 공중보건·지역 적용 가능 지침 수동 선별",
+ "retrieved": "2026-09-22",
+ "excluded_replaced": [
+  "NG92→NG209",
+  "NG7→NG246"
+ ],
+ "note": "published=페이지 내 최초 날짜, last_updated=최종 날짜. PH 시리즈(2006~2014)는 2014년 중단되어 제외.",
+ "items": [
+  {
+   "code": "NG209",
+   "title": "Tobacco: preventing uptake, promoting quitting and treating dependence",
+   "topic_ko": "담배",
+   "published": "2021-11-30",
+   "last_updated": "2025-02-04",
+   "level": "direct",
+   "indicators": [
+    "DT_H_SM",
+    "DT_H_SM_MALE",
+    "DT_TOBACCO_PRODUCT",
+    "DT_SM_TRY_V2",
+    "DT_117075_SM_IND_WORK_V2"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng209"
+  },
+  {
+   "code": "NG135",
+   "title": "Alcohol interventions in secondary and further education",
+   "topic_ko": "음주(청소년)",
+   "published": "2019-08-12",
+   "last_updated": "2019-08-12",
+   "level": "partial",
+   "indicators": [
+    "DT_H_DR_MONTH",
+    "DT_117075_H_DR_HIGH_WH",
+    "DT_H_DR_HIGH"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng135"
+  },
+  {
+   "code": "NG90",
+   "title": "Physical activity and the environment",
+   "topic_ko": "신체활동·환경",
+   "published": "2018-03-22",
+   "last_updated": "2018-03-22",
+   "level": "direct",
+   "indicators": [
+    "DT_H_EX_WALK",
+    "DT_H_EX_PHY",
+    "DT_117075_H_HEALTHY"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng90"
+  },
+  {
+   "code": "NG246",
+   "title": "Overweight and obesity management",
+   "topic_ko": "비만 관리",
+   "published": "2025-01-14",
+   "last_updated": "2026-01-08",
+   "level": "direct",
+   "indicators": [
+    "DT_H_OBE_OBE",
+    "DT_H_OBE_CONTROL"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng246"
+  },
+  {
+   "code": "NG247",
+   "title": "Maternal and child nutrition: nutrition and weight management in pregnancy, and nutrition in children up to 5 years",
+   "topic_ko": "모자 영양",
+   "published": "2025-01-15",
+   "last_updated": "2025-01-15",
+   "level": "partial",
+   "indicators": [
+    "DT_117075_DIE_BF02",
+    "DT_11775_NUT_LABEL_UTIL"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng247"
+  },
+  {
+   "code": "NG212",
+   "title": "Mental wellbeing at work",
+   "topic_ko": "직장 정신건강",
+   "published": "2022-03-02",
+   "last_updated": "2022-03-02",
+   "level": "direct",
+   "indicators": [
+    "DT_H_MENTAL_STRESS",
+    "DT_H_MENTAL_DEPRESS"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng212"
+  },
+  {
+   "code": "NG223",
+   "title": "Social, emotional and mental wellbeing in primary and secondary education",
+   "topic_ko": "학교 정신건강",
+   "published": "2022-07-06",
+   "last_updated": "2022-07-06",
+   "level": "partial",
+   "indicators": [
+    "DT_H_MENTAL_STRESS"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng223"
+  },
+  {
+   "code": "NG32",
+   "title": "Older people: independence and mental wellbeing",
+   "topic_ko": "노인 정신건강",
+   "published": "2015-12-17",
+   "last_updated": "2015-12-17",
+   "level": "direct",
+   "indicators": [
+    "DT_H_MENTAL_DEPRESS",
+    "DT_117075_H_MENTAL_DEPRESS_SYM"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng32"
+  },
+  {
+   "code": "NG105",
+   "title": "Preventing suicide in community and custodial settings",
+   "topic_ko": "자살 예방",
+   "published": "2018-09-10",
+   "last_updated": "2018-09-10",
+   "level": "partial",
+   "indicators": [
+    "DT_H_MENTAL_DEPRESS",
+    "DT_117075_H_MENTAL_DEPRESS_SYM"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng105"
+  },
+  {
+   "code": "NG222",
+   "title": "Depression in adults: treatment and management",
+   "topic_ko": "우울증 관리",
+   "published": "2022-06-29",
+   "last_updated": "2022-06-29",
+   "level": "partial",
+   "indicators": [
+    "DT_117075_H_MENTAL_DEPRESS_SYM"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng222"
+  },
+  {
+   "code": "NG30",
+   "title": "Oral health promotion: general dental practice",
+   "topic_ko": "구강보건 증진",
+   "published": "2015-12-15",
+   "last_updated": "2015-12-15",
+   "level": "direct",
+   "indicators": [
+    "DT_H_OR_BRUSH"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng30"
+  },
+  {
+   "code": "NG48",
+   "title": "Oral health for adults in care homes",
+   "topic_ko": "요양시설 구강",
+   "published": "2016-07-05",
+   "last_updated": "2016-07-05",
+   "level": "partial",
+   "indicators": [
+    "DT_H_OR_INCONV"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng48"
+  },
+  {
+   "code": "NG136",
+   "title": "Hypertension in adults: diagnosis and management",
+   "topic_ko": "고혈압",
+   "published": "2019-08-28",
+   "last_updated": "2026-02-26",
+   "level": "direct",
+   "indicators": [
+    "DT_HYPER_DOCTOR",
+    "DT_HYPER_DOCTOR_DRUG",
+    "DT_117075_HYPER_AWAR"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng136"
+  },
+  {
+   "code": "NG28",
+   "title": "Type 2 diabetes in adults: management",
+   "topic_ko": "2형 당뇨",
+   "published": "2015-12-02",
+   "last_updated": "2026-02-18",
+   "level": "direct",
+   "indicators": [
+    "DT_DIA_DOCTOR",
+    "DT_DIA_TREAT",
+    "DT_DIA_EYE",
+    "DT_DIA_KIDNEY",
+    "DT_117075_DIA_AWAR"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng28"
+  },
+  {
+   "code": "NG238",
+   "title": "Cardiovascular disease: risk assessment and reduction, including lipid modification",
+   "topic_ko": "심혈관 위험",
+   "published": "2023-12-14",
+   "last_updated": "2023-12-14",
+   "level": "partial",
+   "indicators": [
+    "DT_117075_STR_EARLY_SYM",
+    "DT_117075_MYO_EARLY_SYM",
+    "DT_HYPER_DOCTOR"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng238"
+  },
+  {
+   "code": "NG103",
+   "title": "Flu vaccination: increasing uptake",
+   "topic_ko": "독감 접종률",
+   "published": "2018-08-22",
+   "last_updated": "2018-08-22",
+   "level": "direct",
+   "indicators": [
+    "DT_INFLUENZA"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng103"
+  },
+  {
+   "code": "NG218",
+   "title": "Vaccine uptake in the general population",
+   "topic_ko": "예방접종 수용",
+   "published": "2022-05-17",
+   "last_updated": "2022-05-17",
+   "level": "direct",
+   "indicators": [
+    "DT_INFLUENZA"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng218"
+  },
+  {
+   "code": "NG44",
+   "title": "Community engagement: improving health and wellbeing and reducing health inequalities",
+   "topic_ko": "지역사회 참여·형평",
+   "published": "2016-03-04",
+   "last_updated": "2016-03-04",
+   "level": "partial",
+   "indicators": [
+    "DT_117075_NECE_NTR02",
+    "DT_NECE_CLINIC",
+    "DT_HEALTH_RECOG"
+   ],
+   "url": "https://www.nice.org.uk/guidance/ng44"
+  },
+  {
+   "code": "NG183",
+   "title": "Behaviour change: digital and mobile health interventions",
+   "topic_ko": "행동변화(디지털)",
+   "published": "2020-10-07",
+   "last_updated": "2020-10-07",
+   "level": "cross",
+   "indicators": [],
+   "url": "https://www.nice.org.uk/guidance/ng183"
+  },
+  {
+   "code": "NG102",
+   "title": "Community pharmacies: promoting health and wellbeing",
+   "topic_ko": "지역약국 건강증진",
+   "published": "2018-08-02",
+   "last_updated": "2018-08-02",
+   "level": "cross",
+   "indicators": [],
+   "url": "https://www.nice.org.uk/guidance/ng102"
+  }
+ ]
+}
