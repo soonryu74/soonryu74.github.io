@@ -4,6 +4,7 @@ import { fmt, ranked, poolFor, label, SUBS_BY_SGG, val, SIDOS, SGG_ALL, SGG_BY_S
 import RankAll from "./RankAll";
 
 /* 순위: 비교 집단(전국 시군구 / 시도 내 시군구 / 17개 시도) 막대. 선택 지역 자동 스크롤 */
+const SHOW_ALL_MAX = 40;   // 이 개수 이하면 스크롤 상자 대신 전부 펼침(경기 31개 시군구까지 포함)
 export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYear }) {
   // 순위 집단 탭: 17개 시도 · 전국 시군구 · 시도 내 시군구 (기본은 선택 지역에 따라 자동)
   const sidoCode = sel.l === "sido" ? sel.c : sel.p;
@@ -52,7 +53,7 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
     <>
       <div className="seg" style={{ marginBottom: 8, flexWrap: "wrap" }}>
         {TABS.map(([k, name]) => <button key={k} className={`seg-btn ${m === k ? "on" : ""}`} onClick={() => setMode(k)}>{name}</button>)}
-        <span className="muted" style={{ alignSelf: "center", fontSize: "13px", marginLeft: 6 }}>{rows.length}개</span>
+        <span className="muted" style={{ alignSelf: "center", fontSize: "13px", marginLeft: 6 }}>· 총 {rows.length}개 지역{rows.length > SHOW_ALL_MAX ? " (아래로 스크롤)" : ""}</span>
         <button className="seg-btn" style={{ marginLeft: "auto" }} onClick={() => setAllOpen(true)} title="순위 전체를 한 화면에 펼치고 연도별 변동을 애니메이션으로 보기">⛶ 전체 보기</button>
         <button className={`seg-btn ${rev ? "on" : ""}`} onClick={() => setRev(!rev)} title="양호한 순 ↔ 나쁜 순">{rev ? "나쁜 순 ▲" : "양호한 순 ▼"}</button>
         <button className={`seg-btn ${grp ? "on" : ""}`} onClick={() => setGrp(!grp)}
@@ -69,7 +70,8 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
         </div>
       )}
       {m === "hc" && <div className="desc" style={{ marginBottom: 6 }}>조사 단위(보건소)별 순위 — 질병관리청 「2025 지역건강통계 한눈에 보기」 부록의 시군구별 표 기준 258개 조사 단위(일반구가 있는 시는 보건소별 행, 시 전체 행 제외, 세종은 세종특별자치시보건소)</div>}
-      <div className="rank scroll" ref={listRef}>
+      {/* 시도 내 시군구·17개 시도처럼 짧은 목록은 스크롤 없이 전부 펼친다(소유자 제보: 서울 25개 구 중 16개만 보임) */}
+      <div className={`rank ${rows.length > SHOW_ALL_MAX ? "scroll" : ""}`} ref={listRef}>
         {rows.map((x, k) => { const { r, v } = x;
           const blur = showCi && selCi && x.ci && r.c !== sel.c && x.ci.lo <= selCi.hi && selCi.lo <= x.ci.hi;
           return (
