@@ -26,21 +26,24 @@ KEY = os.environ["KOSIS_API_KEY"]
 ORG = "350"
 TABLES = ["DT_35007_N001_1", "DT_35007_N098", "DT_35007_N103", "DT_35007_N105"]
 S = requests.Session()
-PACE = 10.0
+# KOSIS는 호출 하나가 성공하면 몇 분간(관측상 1~7분) 다음 연결을 끊는다. 지수 백오프(30·60·120·240·420초)로는
+# 파일 하나에 15분이 걸렸으므로, 성공 뒤 고정 대기(PACE) 후 시도하고 실패하면 짧은 간격으로 다시 두드린다.
+PACE = float(os.environ.get("KOSIS_PACE", "240"))
+RETRY_WAIT = float(os.environ.get("KOSIS_RETRY", "90"))
 
-def call(params, tries=7):
+def call(params, tries=20):
     """err 21(잘못된 요청 변수)은 재시도해도 소용없으므로 즉시 반환해 호출부가 변수를 바꾸게 한다."""
     last = None
     for i in range(tries):
         try:
             r = S.get("https://kosis.kr/openapi/Param/statisticsParameterData.do", params=params, timeout=240)
-            j = r.json(); time.sleep(PACE)
+            j = r.json()
+            print(f"    응답 {time.strftime('%H:%M:%S')} — {PACE:.0f}초 대기", flush=True); time.sleep(PACE)
             return j
         except Exception as e:
             last = e
-            w = min(420, 30 * (2 ** i))
-            print(f"    재시도 {i} {type(e).__name__}: {str(e)[:120]} — {w}초 대기", flush=True)
-            time.sleep(w)
+            print(f"    재시도 {i} {time.strftime('%H:%M:%S')} {type(e).__name__}: {str(e)[:100]} — {RETRY_WAIT:.0f}초 대기", flush=True)
+            time.sleep(RETRY_WAIT)
     raise RuntimeError(f"소진: {last}")
 
 def fetch(tbl, y):
@@ -63,7 +66,8 @@ def fetch(tbl, y):
         print(f"  {tbl} {y}: 자료 없음 — {str(j)[:100]}", flush=True); return False
     print(f"  {tbl} {y}: 모든 단계 거부", flush=True); return False
 
-LEVELS = {}
+# 표별 objL 단계(2024년 실측). 모르는 표는 2→3→4 순서로 탐색한다(탐색 호출도 차단을 부르므로 아는 표는 고정).
+LEVELS = {"DT_35007_N001_1": [2], "DT_35007_N098": [3], "DT_35007_N103": [3], "DT_35007_N105": [3]}
 
 if __name__ == "__main__":
     y0 = int(sys.argv[1]) if len(sys.argv) > 1 else 2018
