@@ -709,3 +709,44 @@ tr.muted td { color: var(--muted); }
 .cmpempty { display:flex; align-items:center; gap:8px; flex-wrap:wrap;
   font-size:13px; color:var(--text-secondary); }
 .cmpempty b { color:var(--text-primary); }
+
+/* ── 근거 지침 패널 / 우선순위 카드 ── */
+.evbadge { display:inline-block; font-size:11px; font-weight:700; padding:1px 7px; border-radius:3px; border:1px solid currentColor; margin-right:4px; white-space:nowrap; }
+.ev-ok { color:var(--series-1); } .ev-co { color:#c48f12; } .ev-no { color:var(--bad-text); } .ev-in { color:var(--muted); }
+:root[data-theme="dark"] .ev-co { color:#d9a326; }
+@media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .ev-co { color:#d9a326; } }
+.evverdict { font-size:12px; font-weight:700; padding:2px 9px; border-radius:999px; margin-left:8px; vertical-align:middle; }
+.v-now .evverdict, .evverdict.v-now { background:rgba(57,135,229,.18); color:var(--series-1); }
+.evverdict.v-thin, .evverdict.v-cpstf { background:rgba(212,168,83,.2); color:#c48f12; }
+.evverdict.v-stale, .evverdict.v-none { background:rgba(216,64,42,.16); color:var(--bad-text); }
+.evguide { margin-top:10px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface-1); }
+.evguide.partial { opacity:.85; }
+.evhead { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.evcode { font-size:12px; font-weight:700; color:var(--muted); font-variant-numeric:tabular-nums; }
+.evtitle { font-size:14.5px; }
+.evlv { font-size:11px; border-radius:999px; padding:1px 7px; border:1px solid var(--border); color:var(--text-secondary); }
+.evlv.direct { border-color:var(--series-1); color:var(--series-1); }
+.evmeta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:7px; font-size:12px; }
+.evchip { background:var(--grid); color:var(--text-secondary); padding:2px 8px; border-radius:4px; white-space:nowrap; }
+.evchip.fresh { background:rgba(12,163,12,.18); color:var(--good-text); font-weight:600; }
+.evchip.stale { background:rgba(216,64,42,.14); color:var(--bad-text); font-weight:600; }
+.evlink { margin-left:auto; font-size:12px; }
+.evsamples { list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:6px; }
+.evsamples li { font-size:12.5px; line-height:1.55; color:var(--text-secondary); padding:6px 8px; border-left:2px solid var(--border); }
+.evyear { font-size:11px; color:var(--muted); margin-right:6px; }
+.evcp { margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); }
+.evcphead { font-size:13px; }
+.evnote { margin-top:6px; font-size:12px; color:var(--muted); line-height:1.6; }
+.priotbl { width:100%; border-collapse:collapse; font-size:13.5px; margin-top:6px; }
+.priotbl th { text-align:left; font-size:12px; color:var(--muted); font-weight:600; padding:6px 8px; border-bottom:1px solid var(--border); }
+.priotbl td { padding:8px; border-bottom:1px solid var(--border); vertical-align:top; }
+.priotbl .num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.priotbl tbody tr:not(.prio-g) { cursor:pointer; } .priotbl tbody tr:not(.prio-g):hover { background:var(--band); }
+.priotbl tr.prio-g td { padding:10px 8px 6px; font-size:12.5px; background:var(--grid); }
+.priotbl tr.prio-g.v-now td b { color:var(--series-1); } .priotbl tr.prio-g.v-thin td b, .priotbl tr.prio-g.v-cpstf td b { color:#c48f12; }
+.priotbl tr.prio-g.v-stale td b, .priotbl tr.prio-g.v-none td b { color:var(--bad-text); }
+.evcell { font-size:12px; } .evmini { display:block; white-space:nowrap; } .evmini .fresh { color:var(--good-text); }
+.cutsel select { font-size:12px; margin-left:4px; }
+.evgaps { margin-top:12px; font-size:12.5px; } .evgaps summary { cursor:pointer; color:var(--text-secondary); }
+.evgaprow { margin-top:6px; line-height:1.6; }
+@media (max-width: 640px) { .priotbl th:nth-child(3), .priotbl td:nth-child(3), .priotbl th:nth-child(5), .priotbl td:nth-child(5) { display:none; } }

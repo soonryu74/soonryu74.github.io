@@ -10,6 +10,7 @@ import GapBoxplot from "./components/GapBoxplot";
 import EquityPanel from "./components/EquityPanel";
 import Profile from "./components/Profile";
 import Compare, { NAT, MAX_CMP } from "./components/Compare";
+import EvidencePanel from "./components/EvidencePanel";
 import Tooltip from "./components/Tooltip";
 import UnitsView from "./components/UnitsView";
 import NcdView from "./components/NcdView";
@@ -307,6 +308,7 @@ export default function App() {
                 <div className="desc">{year}년 · 전국 시군구를 지역박탈지수(근사)로 5등분해 {ind.name} 분포를 비교</div>
                 <EquityPanel ind={ind} item={item} year={year} sel={sel} setTip={setTip} />
               </div>
+              <EvidencePanel ind={ind} />
             </div>
           </>
         ) : (

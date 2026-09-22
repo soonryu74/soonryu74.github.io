@@ -504,3 +504,27 @@ export const TIER_INFO = {
 import KHEPI_RAW from "../../data/khepi_kpi.json";
 export const KHEPI = KHEPI_RAW;
 export const KHEPI_INDS = (KHEPI_RAW.items || []).map((x) => ({ ...x, ind: x.id ? IND_BY_ID[x.id] : null }));
+
+// ── 근거 지침 통합표(NICE 현행 지침 + CPSTF 보조): scripts/build_evidence.py → data/evidence.json ──
+import EVID_RAW from "../../data/evidence.json";
+export const EVIDENCE = EVID_RAW;
+export const evidenceOf = (indId) => EVID_RAW.by_ind[indId] || { nice: [], cpstf: [] };
+export const guideOf = (code) => EVID_RAW.guides[code];
+/* 근거 판정: 지금 할 것 / 근거 얇음 / 근거 낡음 / 근거 없음
+   - NICE 직접 연결이 있고 최종 갱신이 10년 이내 → now
+   - NICE 부분 연결만, 또는 직접 연결이 10년 초과 → thin
+   - NICE 없음, CPSTF만 있고 판정 중앙이 15년 초과 → stale
+   - NICE 없음, CPSTF 판정 중앙 15년 이내 → cpstf
+   - 둘 다 없음 → none */
+export function evidenceVerdict(indId) {
+  const e = evidenceOf(indId), now = EVID_RAW.now_year;
+  const direct = e.nice.filter((x) => x.level === "direct").map((x) => guideOf(x.code));
+  const partial = e.nice.filter((x) => x.level === "partial").map((x) => guideOf(x.code));
+  const fresh = direct.filter((g) => now - Number(g.last_updated.slice(0, 4)) <= 10);
+  if (fresh.length) return { key: "now", label: "지금 할 것", guides: fresh };
+  if (direct.length || partial.length) return { key: "thin", label: "근거 얇음", guides: [...direct, ...partial] };
+  const cp = e.cpstf[0];
+  if (cp) return cp.median_year != null && now - cp.median_year > 15
+    ? { key: "stale", label: "근거 낡음", cpstf: cp } : { key: "cpstf", label: "근거 있음(CPSTF)", cpstf: cp };
+  return { key: "none", label: "근거 없음" };
+}

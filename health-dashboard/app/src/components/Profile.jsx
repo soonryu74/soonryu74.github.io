@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import PriorityCard from "./PriorityCard";
 import { INDICATORS, DOMAINS, fmt, val, poolFor, label, RBY, computeRanking, PANEL_WEIGHTS, EQUAL_WEIGHTS, EXCLUDE_IDS, LEAGUE_NAME, recommendFor, depOf, DEP } from "../data";
 import ExportButtons from "./ExportButtons";
 import HleCard from "./HleCard";
@@ -202,6 +203,8 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
               </div>))}</div>;
           })()}
         </div>
+
+        <PriorityCard scored={scored} item={item} pool={pool} onPick={onPick} />
 
         <div className="card span2">
           <h3>개선 과제 <small className="muted">(지자체 참고용)</small></h3>
