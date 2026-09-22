@@ -271,6 +271,7 @@ export default function App() {
                 <h3>{ind.name} 추이</h3>
                 <ExportButtons name={`${ind.name}_추이_${label(sel)}`} />
                 <div className="desc">{years[0]}–{years[years.length - 1]} · {ind.src}</div>
+                {ind.note && <div className="desc indnote">⚠ {ind.note}</div>}
                 {ind.tier && TIER_INFO[ind.tier] && (
                   <div className="desc tierline">
                     <span className={`tbadge ${TIER_INFO[ind.tier].color}`}>{ind.tier}</span>
