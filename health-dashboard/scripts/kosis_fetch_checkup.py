@@ -26,18 +26,15 @@ KEY = os.environ["KOSIS_API_KEY"]
 ORG = "350"
 TABLES = ["DT_35007_N001_1", "DT_35007_N098", "DT_35007_N103", "DT_35007_N105"]
 S = requests.Session()
-PACE = 6.0
+PACE = 10.0
 
-def call(params, tries=9):
+def call(params, tries=7):
+    """err 21(잘못된 요청 변수)은 재시도해도 소용없으므로 즉시 반환해 호출부가 변수를 바꾸게 한다."""
     last = None
     for i in range(tries):
         try:
             r = S.get("https://kosis.kr/openapi/Param/statisticsParameterData.do", params=params, timeout=240)
             j = r.json(); time.sleep(PACE)
-            if isinstance(j, dict) and str(j.get("err")) in ("20", "30"):   # 자료 없음 계열은 재시도 불필요
-                return j
-            if isinstance(j, dict) and "err" in j:
-                raise RuntimeError(f"KOSIS err {j.get('err')} {j.get('errMsg')}")
             return j
         except Exception as e:
             last = e
@@ -50,13 +47,22 @@ def fetch(tbl, y):
     f = OUT / f"{tbl}_{y}.json"
     if f.exists() and f.stat().st_size > 1000:
         print(f"  {tbl} {y}: 이미 있음 ({f.stat().st_size:,}B)", flush=True); return True
-    j = call({"method": "getList", "apiKey": KEY, "format": "json", "jsonVD": "Y", "orgId": ORG, "tblId": tbl,
-              "itmId": "ALL", "objL1": "ALL", "objL2": "ALL", "objL3": "ALL", "objL4": "ALL",
-              "prdSe": "Y", "startPrdDe": str(y), "endPrdDe": str(y)})
-    if isinstance(j, list) and j:
-        f.write_text(json.dumps(j, ensure_ascii=False), encoding="utf-8")
-        print(f"  {tbl} {y}: {len(j):,}행 저장", flush=True); return True
-    print(f"  {tbl} {y}: 자료 없음 — {str(j)[:80]}", flush=True); return False
+    base = {"method": "getList", "apiKey": KEY, "format": "json", "jsonVD": "Y", "orgId": ORG, "tblId": tbl,
+            "itmId": "ALL", "prdSe": "Y", "startPrdDe": str(y), "endPrdDe": str(y)}
+    # 표마다 분류(objL) 단계 수가 달라 2·3·4단계를 차례로 시도한다(맞지 않으면 err 21)
+    for n in LEVELS.get(tbl, [2, 3, 4]):
+        params = {**base, **{f"objL{k}": "ALL" for k in range(1, n + 1)}}
+        j = call(params)
+        if isinstance(j, list) and j:
+            LEVELS[tbl] = [n]
+            f.write_text(json.dumps(j, ensure_ascii=False), encoding="utf-8")
+            print(f"  {tbl} {y}: {len(j):,}행 저장 (objL {n}단계)", flush=True); return True
+        if isinstance(j, dict) and str(j.get("err")) == "21":
+            print(f"  {tbl} {y}: objL {n}단계 거부(err 21) → 다음 단계", flush=True); continue
+        print(f"  {tbl} {y}: 자료 없음 — {str(j)[:100]}", flush=True); return False
+    print(f"  {tbl} {y}: 모든 단계 거부", flush=True); return False
+
+LEVELS = {}
 
 if __name__ == "__main__":
     y0 = int(sys.argv[1]) if len(sys.argv) > 1 else 2018
