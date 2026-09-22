@@ -39,6 +39,29 @@ import CANCER_RAW from "../../data/cancer_screening.json";
 })();
 export const CANCER_SOURCE = CANCER_RAW.source || null;
 
+// ── 일반건강검진 수검률·판정 주입 (data/checkup.json, KOSIS 공단 건강검진통계 2018~) ──
+// 김동현 교수 DB의 2010~2017 시계열(K_CHK_*)과 정의가 같은 지표는 cont 로 이어 붙여 한 시계열로 보이게 한다.
+// 고혈압·당뇨는 2018년 2차 검진 폐지로 정의가 끊겨 별도 지표(1차 의심·유질환자)로 둔다.
+import CHECKUP_RAW from "../../data/checkup.json";
+(function injectCheckup() {
+  if (!CHECKUP_RAW.indicators || RAW.indicators.some((i) => i.id === "CHK_RATE" || i.spliced)) return;
+  for (const ind of CHECKUP_RAW.indicators) {
+    const v = CHECKUP_RAW.values[ind.id];
+    const base = ind.cont && RAW.indicators.find((i) => i.id === ind.cont);
+    if (base && RAW.values[base.id]) {
+      const bv = RAW.values[base.id];
+      const keep = base.years.map((y, k) => [y, k]).filter(([y]) => !ind.years.includes(y));   // 겹치는 해는 새 자료 우선
+      base.years = [...keep.map(([y]) => y), ...ind.years];
+      for (const key of ["crude", "std"]) bv[key] = [...keep.map(([, k]) => bv[key][k]), ...v[key]];
+      base.spliced = true;
+      base.src = `${base.src} ‖ ${ind.years[0]}년부터: ${ind.src}`;
+    } else {
+      RAW.indicators.push(ind); RAW.values[ind.id] = v;
+    }
+  }
+})();
+export const CHECKUP_SOURCE = CHECKUP_RAW.source || null;
+
 // ── 지역박탈지수(근사) 지표 주입 (data/deprivation.json) ──
 import DEP_RAW0 from "../../data/deprivation.json";
 (function injectDep() {
