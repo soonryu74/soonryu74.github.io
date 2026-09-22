@@ -156,7 +156,8 @@ export default function App() {
       <div className="wrap">
         <header className="top">
           <div>
-            <div className="title">지역 건강프로파일 대시보드</div>
+            <button type="button" className="title title-home" title="처음 화면(지표 분석)으로"
+              onClick={() => { setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>지역 건강프로파일 대시보드</button>
             <div className="subtitle">지역사회건강조사 {INDICATORS.filter((i) => !i.outcome).length}개 지표 · 건강수명 · 결과·환경 DB {INDICATORS.filter((i) => i.kdh).length}개 지표 · 시도/시군구 · {DS.years[0]}–{DS.years[DS.years.length - 1]}
               <span className="sub-note">건강수준 모니터링과 목표치 설정 지원 도구입니다. 보건소 사업 실적(투입·산출) 자료를 담고 있지 않아 사업 성과 평가 도구가 아닙니다.</span></div>
           </div>
