@@ -55,7 +55,7 @@ import CHECKUP_RAW from "../../data/checkup.json";
       for (const key of ["crude", "std"]) bv[key] = [...keep.map(([, k]) => bv[key][k]), ...v[key]];
       base.spliced = true;
       base.src = `${base.src} ‖ ${ind.years[0]}년부터: ${ind.src}`;
-      base.note = `자료 연결 — ${ind.years[0]}년 이전은 질병관리청 자료실(김동현 교수 DB) 경유, ${ind.years[0]}년부터는 KOSIS 공단 건강검진통계에서 직접 산출. 정의(분자·분모)는 같다.`;
+      base.note = ind.note || `자료 연결 — ${ind.years[0]}년 이전은 질병관리청 자료실(김동현 교수 DB) 경유, ${ind.years[0]}년부터는 KOSIS 공단 건강검진통계에서 직접 산출. 정의(분자·분모)는 같다.`;
     } else {
       RAW.indicators.push(ind); RAW.values[ind.id] = v;
     }

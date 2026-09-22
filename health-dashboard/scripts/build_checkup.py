@@ -145,7 +145,7 @@ def main():
             g = grid_ratio(num.get(k, {}), den, ys)
             values[meta["id"]] = {"crude": g, "std": g}
             inds.append({**meta, "domain": "의료이용·검진", "unit": "%", "years": ys, "outcome": False, "tier": meta.get("tier", "성과"),
-                         "note": NOTE_1ST if meta["id"] in ("CHK_HTN_S", "CHK_DM_S", "CHK_HTN_D", "CHK_DM_D") else None,
+                         "note": meta.get("note") or (NOTE_1ST if meta["id"] in ("CHK_HTN_S", "CHK_DM_S", "CHK_HTN_D", "CHK_DM_D") else None),
                          "src": f"국민건강보험공단 건강검진통계 — {spec['title']}(KOSIS {tbl}). {meta['formula']}. 일반구는 시 단위로 합산"})
             print(f"  {meta['name']}: {ys[0]}~{ys[-1]} · 셀 {sum(1 for r in g for v in r if v is not None)}")
         src_years[tbl] = ys
@@ -162,6 +162,8 @@ def main():
 
 
 # 표별 항목 매핑 — 2024년 원자료 구조 확인 후 채운다
+NOTE_2018 = ("자료 연결 — 2017년까지는 질병관리청 자료실(김동현 교수 DB) 경유, 2018년부터는 KOSIS 공단 건강검진통계에서 직접 산출(산식 동일). "
+             "단, 2018년 검진제도 개편으로 판정 기준·절차가 바뀌었다.")
 NOTE_1ST = ("정의 변경 — 2018년 검진제도 개편으로 2차 검진이 폐지되어 「검진 고혈압/당뇨병 판정 비율」(2차 판정 확진)은 2017년에서 끝난다. "
             "이 지표는 2018년부터의 1차 판정 결과이며 2017년 이전 값과 이어 붙여 비교할 수 없다.")
 DZ = {"고혈압": "고혈압", "당뇨병": "당뇨병", "당뇨": "당뇨병"}     # N103은 「당뇨병」, N105는 「당뇨」로 적혀 있다
@@ -189,8 +191,10 @@ JUDGE = {
   # 판정 「계」 = 정상A + 정상B(경계) + 질환의심 실인원 + 유질환자 (2024 서울로 확인) → 분모
   "key": lambda r: {"계": "__den__", "정상A": "정상A", "유질환자": "유질환자"}.get(r.get("C3_NM")),
   "out": {
-   "정상A":   {"id": "CHK_NORMA", "name": "검진 판정 정상A 비율", "bad": False, "cont": "K_CHK_NORMA", "formula": "정상A ÷ 판정 인원(계)"},
-   "유질환자": {"id": "CHK_DIS",   "name": "검진 판정 유질환자 비율", "bad": True,  "cont": "K_CHK_DIS",   "formula": "유질환자 ÷ 판정 인원(계)"},
+   "정상A":   {"id": "CHK_NORMA", "name": "검진 판정 정상A 비율", "bad": False, "cont": "K_CHK_NORMA", "formula": "정상A ÷ 판정 인원(계)",
+               "note": NOTE_2018 + " 특히 정상A는 판정 기준이 바뀌어 2017→2018년 사이 계단식으로 오른다(시군구 중앙값 6.8→11.6%). 2017년 이전과의 증감 비교는 피할 것."},
+   "유질환자": {"id": "CHK_DIS",   "name": "검진 판정 유질환자 비율", "bad": True,  "cont": "K_CHK_DIS",   "formula": "유질환자 ÷ 판정 인원(계)",
+               "note": NOTE_2018 + " 유질환자 비율은 2017년 23.7% → 2018년 25.4%(시군구 중앙값)로 이어지지만 판정 기준 변경 영향이 섞여 있을 수 있다."},
   },
  },
 }
