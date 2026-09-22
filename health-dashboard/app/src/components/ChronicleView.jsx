@@ -198,6 +198,7 @@ export default function ChronicleView({ setTip, onPick }) {
             const mx = Math.max(...ind.years.map((y) => MED[ind.id][y]).filter((x) => x != null));
             const d = v != null && p != null ? v - p : null, good = d == null ? null : ind.bad ? d < 0 : d > 0;
             const db = v != null && base != null ? v - base : null;
+            const goodBase = db == null ? null : ind.bad ? db < 0 : db > 0;
             return (
               <div key={ind.id} className={`tile ${v == null ? "na" : ""}`} onClick={() => goto(ind)} title="지표 분석으로 이동"
                 onMouseMove={(ev) => setTip && setTip({ x: ev.clientX, y: ev.clientY, title: ind.name, rows: [[`${year} 중앙값`, v == null ? "–" : fmt(v) + ind.unit], ["전년 대비", d == null ? "–" : sign(d) + fmt(d) + punit(ind.unit)], [`${ind.years[0]} 대비`, db == null ? "–" : sign(db) + fmt(db) + punit(ind.unit)], ["방향", ind.bad ? "낮을수록 양호 ↓" : "높을수록 양호 ↑"]] })}
@@ -206,8 +207,8 @@ export default function ChronicleView({ setTip, onPick }) {
                 <div className="t-val">{v == null ? "–" : fmt(v)}<small>{v == null ? "" : ind.unit}</small></div>
                 <div className="t-bar"><div className="t-fill" style={{ width: v == null ? 0 : `${(v / mx) * 100}%` }} /></div>
                 <div className="t-foot">
-                  <span className={`t-delta ${good == null ? "" : good ? "good" : "bad"}`}>{d == null ? "전년 자료 없음" : `${sign(d)}${fmt(d)}${punit(ind.unit)} ${good ? "개선" : "악화"}`}</span>
-                  <span className="t-base">{db == null ? "" : `${ind.years[0]}년 대비 ${sign(db)}${fmt(db)}`}</span>
+                  <span className={`t-delta ${good == null ? "" : good ? "good" : "bad"}`}>{d == null ? "전년 자료 없음" : d === 0 ? "전년과 같음" : `${good ? "개선" : "악화"} ${fmt(Math.abs(d))}${punit(ind.unit)}`}</span>
+                  <span className="t-base">{db == null ? "" : db === 0 ? `${ind.years[0]}년과 같음` : `${ind.years[0]}년 대비 ${goodBase ? "개선" : "악화"} ${fmt(Math.abs(db))}${punit(ind.unit)}`}</span>
                 </div>
               </div>
             );
