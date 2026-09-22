@@ -4,9 +4,10 @@
 질병관리청 실무부서 보고(계획·결과보고)의 첫 장 형식을 따른다(2025년 배포 PDF 관찰):
 
   ┌──────────────────────────────────────────────────────────┐
-  │ ┌──────────────────────────────────────────────────────┐ │
-  │ │           보 고 서 제 목 (박스, 굵게, 가운데)         │ │  ← 검은 테두리 박스
-  │ └──────────────────────────────────────────────────────┘ │
+  │ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ │  ← 남색 선
+  │ ░░░░░░░░░░ 보 고 서 제 목 (연파랑 띠, 굵게) ░░░░░░░░░░ │
+  │ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ │
+  │                              <'26. 9. 22.(화), ○○과>   │  ← 보고일, 부서
   │ □ 소제목                                                 │
   │   ○ (일시) 항목                                          │
   │      - 세부                                              │
@@ -15,7 +16,7 @@
   └──────────────────────────────────────────────────────────┘
 
 결재선·기관명 머리·색 띠가 없다. 글머리는 □ ○ - ⇒ ※ 다.
-마크다운 문법은 yoyak.py 와 같다(프런트매터 `기관`·`결재`는 무시).
+마크다운 문법은 yoyak.py 와 같다. 프런트매터 `보고일`·`부서`가 제목 아래 줄이 된다(`기관`·`결재`는 무시).
 
     python3 scripts/kdca_report.py 보고.md -o 보고.hwpx
 """
@@ -32,24 +33,39 @@ import yoyak as Y  # noqa: E402
 from hwpx_helpers import NS_DECL, next_id, reset_id  # noqa: E402
 
 PREFIX = {"h1": "□ ", "item": "  ○ ", "sub": "     - ", "concl": "  ⇒ ", "note": "    ※ "}
-BF_TITLE_BOX = "12"            # patched_header 가 추가한다
+BF_TITLE_BOX = "12"            # 제목 띠 — patched_header 가 추가한다
 TITLE_BOX_H = 3400
 FOOTER_H = 1500                # 5.3mm
 
 
 def patched_header(ls: int) -> str:
     x = Y.patched_header(ls)
-    box = ('<hh:borderFill id="12" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0">'
-           '<hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/>'
-           '<hh:leftBorder type="SOLID" width="0.4 mm" color="#000000"/>'
-           '<hh:rightBorder type="SOLID" width="0.4 mm" color="#000000"/>'
-           '<hh:topBorder type="SOLID" width="0.4 mm" color="#000000"/>'
-           '<hh:bottomBorder type="SOLID" width="0.4 mm" color="#000000"/>'
-           '<hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/></hh:borderFill>')
+    band = ('<hh:borderFill id="12" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0">'
+            '<hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/>'
+            '<hh:leftBorder type="NONE" width="0.1 mm" color="#000000"/>'
+            '<hh:rightBorder type="NONE" width="0.1 mm" color="#000000"/>'
+            '<hh:topBorder type="SOLID" width="0.5 mm" color="#1F4E9C"/>'
+            '<hh:bottomBorder type="SOLID" width="0.5 mm" color="#1F4E9C"/>'
+            '<hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/>'
+            '<hc:fillBrush><hc:winBrush faceColor="#D3E5F6" hatchColor="#999999" alpha="0"/></hc:fillBrush></hh:borderFill>')
     assert '<hh:borderFills itemCnt="11">' in x
     x = x.replace('<hh:borderFills itemCnt="11">', '<hh:borderFills itemCnt="12">')
-    x = x.replace('</hh:borderFills>', box + '</hh:borderFills>')
+    x = x.replace('</hh:borderFills>', band + '</hh:borderFills>')
+    # 문단 모양 추가: 42 = 오른쪽 정렬(PP_PLAIN 복제), 43 = 왼쪽 정렬 셀(PP_CELL 복제)
+    def clone(pid, new_id, align):
+        m = re.search(r'<hh:paraPr id="%s".*?</hh:paraPr>' % pid, x, re.S)
+        c = m.group(0).replace(f'<hh:paraPr id="{pid}"', f'<hh:paraPr id="{new_id}"', 1)
+        c2 = re.sub(r'<hh:align horizontal="[A-Z]+"', f'<hh:align horizontal="{align}"', c, count=1)
+        assert c2 != c or align in c
+        return c2
+    extra = clone(Y.PP_PLAIN, "42", "RIGHT") + clone(Y.PP_CELL, "43", "LEFT")
+    assert '<hh:paraProperties itemCnt="42">' in x
+    x = x.replace('<hh:paraProperties itemCnt="42">', '<hh:paraProperties itemCnt="44">')
+    x = x.replace('</hh:paraProperties>', extra + '</hh:paraProperties>')
     return x
+
+
+PP_RIGHT, PP_CELL_LEFT = "42", "43"
 
 
 def title_box(title: str) -> str:
@@ -57,10 +73,30 @@ def title_box(title: str) -> str:
     ch = 2000                                        # CP_TITLE 20pt
     usable = w - Y.CELL_M[0] - Y.CELL_M[1]
     lines = max(1, -(-Y.text_width(title, ch) // usable))
-    h = lines * round(ch * 1.6) + 1000
+    h = lines * round(ch * 1.5) + 900
     row = f'<hp:tr>{Y.cell(0, 0, w, h, BF_TITLE_BOX, [Y.text_para(Y.PP_TITLE, Y.CP_TITLE, title)])}</hp:tr>'
     tbl = Y.table([row], 1, 1, w, h, BF_TITLE_BOX, outmargin=(0, 0, 0, 0))
     return Y.para(Y.PP_TITLE, f'<hp:run charPrIDRef="{Y.CP_BODY}">{tbl}</hp:run>')
+
+
+def dept_line(meta: dict) -> str:
+    """제목 띠 아래 오른쪽: <'26. 2. 4.(목), 결핵정책과>"""
+    date, dept = meta.get("보고일", "").strip(), meta.get("부서", "").strip()
+    if not (date or dept):
+        return ""
+    txt = "<" + ", ".join(v for v in (date, dept) if v) + ">"
+    return Y.text_para(PP_RIGHT, Y.CP_NOTE, txt)
+
+
+def content_table(rows):
+    """yoyak 표 + 내용 칸이 ▶·- 로 시작하면 왼쪽 정렬."""
+    xml = Y.content_table(rows)
+    def fix(m):
+        inner = m.group(0)
+        if re.search(r'<hp:t>\s*[▶\-]', inner):
+            return inner.replace(f'paraPrIDRef="{Y.PP_CELL}"', f'paraPrIDRef="{PP_CELL_LEFT}"', 1)
+        return inner
+    return re.sub(r'<hp:tc .*?</hp:tc>', fix, xml, flags=re.S)
 
 
 def footer_para() -> str:
@@ -85,7 +121,8 @@ def build_section(meta: dict, title: str, blocks: list, images: list) -> str:
              f'columnBreak="0" merged="0"><hp:run charPrIDRef="{Y.CP_BODY}">{sec}{Y.col_pr()}<hp:t/></hp:run></hp:p>')
     P.append(footer_para())
     P.append(title_box(title))
-    P.append(Y.spacer())
+    dl = dept_line(meta)
+    P.append(dl if dl else Y.spacer())
     first_h1 = True
     for b in blocks:
         t = b[0]
@@ -105,7 +142,7 @@ def build_section(meta: dict, title: str, blocks: list, images: list) -> str:
         elif t == "para":
             P.append(Y.text_para(Y.PP_BODY, Y.CP_BODY, b[1]))
         elif t == "table":
-            P.append(Y.content_table(b[1]))
+            P.append(content_table(b[1]))
         elif t == "pagebreak":
             P.append(Y.para(Y.PP_PLAIN, f'<hp:run charPrIDRef="{Y.CP_BODY}"><hp:t/></hp:run>').replace('pageBreak="0"', 'pageBreak="1"'))
         elif t == "image":
