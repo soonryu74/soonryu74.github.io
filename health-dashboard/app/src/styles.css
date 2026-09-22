@@ -78,6 +78,7 @@ input[type=range]{ flex:1; accent-color: var(--series-1); }
 .card h3 small.muted, .card h3 .muted { font-weight:500; }
 .cardhead h3 { flex:1; }
 .card .desc { font-size:14px; color:var(--muted); margin:2px 0 10px; }
+.card .desc.indnote { color:var(--text-secondary); background:color-mix(in srgb, #d8402a 8%, transparent); border-left:3px solid #d8402a; padding:6px 10px; border-radius:6px; font-size:13px; line-height:1.5; }
 .legend { display:flex; gap:14px; font-size:14.5px; color:var(--text-secondary); margin-bottom:6px; flex-wrap:wrap; }
 .legend span { display:inline-flex; align-items:center; gap:6px; }
 .sw { width:14px; height:3px; border-radius:2px; display:inline-block; }

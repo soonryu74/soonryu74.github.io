@@ -62,9 +62,11 @@ def aggregate(rows, keyfn):
             if nm == "계": continue
             if nm in SIDOS:
                 cur = nm
-                if nm == "세종" and SEJONG:
-                    k = keyfn(r)
-                    if k is not None: acc[(SEJONG, k)] += float(r["DT"] or 0); cityset.add(SEJONG)
+                k = keyfn(r)
+                if k is not None:
+                    acc[(short2sido[nm], k)] += float(r["DT"] or 0)          # 시도 행 → 시도 값(시도 순위·비교용)
+                    if nm == "세종" and SEJONG:
+                        acc[(SEJONG, k)] += float(r["DT"] or 0); cityset.add(SEJONG)
                 continue
             if cur is None: continue
             code, is_city = target_of(cur, nm)
@@ -118,7 +120,7 @@ def main():
         got[y] = {c: v for (c, k), v in a.items() if k == "수검인원"}
     years = sorted(raw)
     values["CHK_RATE"] = {"crude": grid_ratio(got, tgt, years), "std": grid_ratio(got, tgt, years)}
-    inds.append({"id": "CHK_RATE", "name": "일반건강검진 수검률", "domain": "검진", "bad": False, "unit": "%", "years": years,
+    inds.append({"id": "CHK_RATE", "name": "일반건강검진 수검률", "domain": "의료이용·검진", "bad": False, "unit": "%", "years": years,
                  "outcome": False, "tier": "성과", "cont": "K_CHK_RATE",
                  "src": "국민건강보험공단 건강검진통계 — 시군구별 성별 일반건강검진 대상 및 수검인원 현황(KOSIS DT_35007_N001_1). 수검인원÷대상인원. 일반구는 시 단위로 합산"})
     src_years["DT_35007_N001_1"] = years
@@ -142,14 +144,15 @@ def main():
         for k, meta in spec["out"].items():
             g = grid_ratio(num.get(k, {}), den, ys)
             values[meta["id"]] = {"crude": g, "std": g}
-            inds.append({**meta, "domain": "검진", "unit": "%", "years": ys, "outcome": False, "tier": meta.get("tier", "성과"),
+            inds.append({**meta, "domain": "의료이용·검진", "unit": "%", "years": ys, "outcome": False, "tier": meta.get("tier", "성과"),
+                         "note": NOTE_1ST if meta["id"] in ("CHK_HTN_S", "CHK_DM_S", "CHK_HTN_D", "CHK_DM_D") else None,
                          "src": f"국민건강보험공단 건강검진통계 — {spec['title']}(KOSIS {tbl}). {meta['formula']}. 일반구는 시 단위로 합산"})
             print(f"  {meta['name']}: {ys[0]}~{ys[-1]} · 셀 {sum(1 for r in g for v in r if v is not None)}")
         src_years[tbl] = ys
 
     out = {"generated": datetime.date.today().isoformat(),
            "source": "KOSIS 국민건강보험공단 건강검진통계 (DT_35007_N001_1·N098·N103·N105)",
-           "source_years": src_years, "domains": ["검진"], "indicators": inds, "values": values,
+           "source_years": src_years, "domains": ["의료이용·검진"], "indicators": inds, "values": values,
            "note": "2018년 검진제도 개편으로 2차 검진이 폐지되어 「검진 고혈압/당뇨병 판정 비율」(2차 판정)은 2017년에서 끝난다. 2018년 이후 고혈압·당뇨는 1차 판정의 의심·유질환자 비율을 별도 지표로 둔다."}
     p = ROOT / "data" / "checkup.json"
     p.write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
@@ -159,12 +162,15 @@ def main():
 
 
 # 표별 항목 매핑 — 2024년 원자료 구조 확인 후 채운다
+NOTE_1ST = ("정의 변경 — 2018년 검진제도 개편으로 2차 검진이 폐지되어 「검진 고혈압/당뇨병 판정 비율」(2차 판정 확진)은 2017년에서 끝난다. "
+            "이 지표는 2018년부터의 1차 판정 결과이며 2017년 이전 값과 이어 붙여 비교할 수 없다.")
+DZ = {"고혈압": "고혈압", "당뇨병": "당뇨병", "당뇨": "당뇨병"}     # N103은 「당뇨병」, N105는 「당뇨」로 적혀 있다
 JUDGE = {
  # 세부현황 표에는 분모(판정 인원)가 없어 N001_1 수검인원을 분모로 쓴다(N098 「계」와 247개 지역 전부 일치 확인).
  # C3_NM 「실인원」이 두 번 나오지만(일반 의심·고당 의심) 우리는 질환명만 쓴다.
  "DT_35007_N103": {
   "title": "시군구별 성별 일반건강검진 판정결과 질환의심 세부현황",
-  "key": lambda r: r.get("C3_NM") if r.get("C3_NM") in ("고혈압", "당뇨병") else None,
+  "key": lambda r: DZ.get(r.get("C3_NM")),
   "out": {
    "고혈압": {"id": "CHK_HTN_S", "name": "검진 고혈압 의심 비율(1차 판정)", "bad": True, "formula": "1차 판정 고혈압 질환의심 ÷ 수검인원"},
    "당뇨병": {"id": "CHK_DM_S",  "name": "검진 당뇨병 의심 비율(1차 판정)", "bad": True, "formula": "1차 판정 당뇨병 질환의심 ÷ 수검인원"},
@@ -172,7 +178,7 @@ JUDGE = {
  },
  "DT_35007_N105": {
   "title": "시군구별 성별 일반건강검진 판정결과 유질환자 세부현황",
-  "key": lambda r: r.get("C3_NM") if r.get("C3_NM") in ("고혈압", "당뇨병") else None,
+  "key": lambda r: DZ.get(r.get("C3_NM")),
   "out": {
    "고혈압": {"id": "CHK_HTN_D", "name": "검진 고혈압 유질환자 비율", "bad": True, "formula": "판정 고혈압 유질환자 ÷ 수검인원"},
    "당뇨병": {"id": "CHK_DM_D",  "name": "검진 당뇨병 유질환자 비율", "bad": True, "formula": "판정 당뇨병 유질환자 ÷ 수검인원"},
