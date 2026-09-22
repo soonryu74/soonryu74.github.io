@@ -705,3 +705,7 @@ tr.muted td { color: var(--muted); }
 .kpi-miss .miss-ref-src { margin-top:5px; font-size:11px; color:var(--text-tertiary,var(--text-secondary)); }
 .kpi-miss .miss-why { margin-top:5px; font-size:12px; color:var(--text-secondary); line-height:1.6; }
 .kpi-miss .miss-route { margin-top:4px; font-size:12px; color:var(--series-1); font-weight:600; }
+
+.cmpempty { display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  font-size:13px; color:var(--text-secondary); }
+.cmpempty b { color:var(--text-primary); }

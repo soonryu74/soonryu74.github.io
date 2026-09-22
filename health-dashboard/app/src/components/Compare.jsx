@@ -11,10 +11,14 @@ export const cmpLabel = (code) => (code === NAT ? "전국 중앙값" : label(RBY
 const valueOf = (ind, item, year, code) => (code === NAT ? nationalMedian(ind, item, year) : val(ind, item, year, code));
 
 /* 비교 대상 관리 칩 + 추가 컨트롤 */
-function CompareBar({ codes, onChange }) {
+function CompareBar({ codes, onChange, sel }) {
   const [sido, setSido] = useState("001");
   const [sgg, setSgg] = useState("");
-  const add = (c) => { if (c && !codes.includes(c) && codes.length < MAX_CMP) onChange([...codes, c]); };
+  // 처음 담을 때는 전국 중앙값을 같이 넣어 비교 기준을 제공(「비교에 담기」 버튼과 동일 규칙)
+  const add = (c) => {
+    if (!c || codes.includes(c) || codes.length >= MAX_CMP) return;
+    onChange(codes.length ? [...codes, c] : c === NAT ? [c] : [NAT, c]);
+  };
   return (
     <div className="cmpbar">
       <div className="chips">
@@ -24,7 +28,16 @@ function CompareBar({ codes, onChange }) {
             <button aria-label="제거" onClick={() => onChange(codes.filter((x) => x !== c))}>×</button>
           </span>
         ))}
-        {!codes.length && <span className="muted">비교할 지역을 추가하세요</span>}
+        {!codes.length && (
+          <span className="cmpempty">
+            아래에서 지역을 고른 뒤 <b>+ 추가</b>를 눌러야 비교가 시작됩니다.
+            {sel && (
+              <button className="themebtn" onClick={() => add(sel.c)}>
+                {label(sel)} 바로 담기
+              </button>
+            )}
+          </span>
+        )}
       </div>
       <div className="cmpadd">
         <select value={sido} onChange={(e) => { setSido(e.target.value); setSgg(""); }}>
@@ -192,13 +205,13 @@ function AllIndicatorTable({ item, year, codes, onPick }) {
   );
 }
 
-export default function Compare({ ind, item, year, codes, onCodes, onYear, onPick, setTip }) {
+export default function Compare({ ind, item, year, codes, onCodes, onYear, onPick, setTip, sel }) {
   return (
     <div className="compare">
       <div className="card">
         <h3>비교 대상</h3>
         <div className="desc">전국 중앙값 · 시도 · 시군구를 자유롭게 섞어 비교합니다 (예: 전국 vs 서울 vs 마포구 vs 송파구)</div>
-        <CompareBar codes={codes} onChange={onCodes} />
+        <CompareBar codes={codes} onChange={onCodes} sel={sel} />
       </div>
       {codes.length > 0 && (
         <>
