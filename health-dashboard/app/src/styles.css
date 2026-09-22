@@ -750,3 +750,7 @@ tr.muted td { color: var(--muted); }
 .evgaps { margin-top:12px; font-size:12.5px; } .evgaps summary { cursor:pointer; color:var(--text-secondary); }
 .evgaprow { margin-top:6px; line-height:1.6; }
 @media (max-width: 640px) { .priotbl th:nth-child(3), .priotbl td:nth-child(3), .priotbl th:nth-child(5), .priotbl td:nth-child(5) { display:none; } }
+
+/* 제목 = 홈 버튼: 눌러도 글자 모양은 그대로, 손가락 커서와 밑줄만 */
+button.title-home { all:unset; cursor:pointer; display:block; }
+button.title-home:hover, button.title-home:focus-visible { text-decoration:underline; text-underline-offset:4px; outline:none; }
