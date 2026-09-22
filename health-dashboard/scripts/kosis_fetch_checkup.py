@@ -57,8 +57,9 @@ def fetch(tbl, y):
             LEVELS[tbl] = [n]
             f.write_text(json.dumps(j, ensure_ascii=False), encoding="utf-8")
             print(f"  {tbl} {y}: {len(j):,}행 저장 (objL {n}단계)", flush=True); return True
-        if isinstance(j, dict) and str(j.get("err")) == "21":
-            print(f"  {tbl} {y}: objL {n}단계 거부(err 21) → 다음 단계", flush=True); continue
+        if isinstance(j, dict) and (str(j.get("err")) == "21" or (str(j.get("err")) == "20" and "objL" in str(j.get("errMsg")))):
+            # 21 = 단계가 남음(너무 많음), 20+objL = 단계가 모자람 → 둘 다 다음 단계 시도
+            print(f"  {tbl} {y}: objL {n}단계 불일치(err {j.get('err')}) → 다음 단계", flush=True); continue
         print(f"  {tbl} {y}: 자료 없음 — {str(j)[:100]}", flush=True); return False
     print(f"  {tbl} {y}: 모든 단계 거부", flush=True); return False
 
