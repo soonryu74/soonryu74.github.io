@@ -363,6 +363,13 @@ tr.muted td { color: var(--muted); }
 .card details.method { font-size:13.5px; color:var(--text-secondary); line-height:1.55; margin:-4px 0 10px; }
 .card details.method summary { cursor:pointer; color:var(--muted); font-size:13px; }
 .card details.method p { margin:6px 0 0; }
+/* 고위험군 카드 — 코로나19 실적 참고 */
+.covidref { margin-top:14px; padding-top:10px; border-top:1px dashed var(--border); }
+.covidref h4 { font-size:15px; font-weight:700; margin:0 0 6px; color:var(--text-primary); }
+.covidref h4 small { font-weight:500; font-size:12.5px; }
+.covidref .covidtbl { font-size:13.5px; }
+.covidref .covidtbl td:first-child .subchip { white-space:nowrap; }
+@media (max-width: 480px){ .covidref h4 small { display:block; margin-top:2px; } }
 /* 전국 공식 건강수명(정의별) 표 — 줄바꿈으로 깨지지 않게 이름/값/부가정보를 고정 열로 */
 .hle-defs { display:flex; flex-direction:column; margin-top:4px; }
 .hd-row { display:grid; grid-template-columns:1fr auto auto; align-items:baseline; gap:4px 10px;
