@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { fmt, ranked, label, val, RBY } from "../data";
 import { saveSvgString, savePngFromSvg, saveCsvRows } from "../export";
+import { renderRankVideo, saveBlob } from "../video";
+import { safe } from "../export";
 
 /* 전체 보기 — 순위 전체를 막대그래프로 펼치고, 연도를 재생하면 막대 길이와 자리(순위)가 함께 움직인다.
    막대 길이 = 값(0 기준, 모든 연도 공통 척도라 늘고 줌이 그대로 보임) · 선택 지역 = 붉은 막대 · ▲▼ = 전년 대비 순위 변동.
@@ -16,6 +18,8 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
   const [speed, setSpeed] = useState(1100);
   const [big, setBig] = useState(false);
   const [size, setSize] = useState({ w: 1200, h: 620 });
+  const [vid, setVid] = useState(null);           // {pct, msg} 영상 생성 진행 상태
+  const [vidTop, setVidTop] = useState("auto");   // 영상에 담을 순위 수: auto(≤40이면 전체, 아니면 상위 30) | all | 30 | 50
   const wrapRef = useRef(null);
 
   useEffect(() => {
@@ -25,6 +29,8 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
     return () => ro.disconnect();
   }, []);
   const step = (d) => { const i = years.indexOf(year); onYear(years[clamp(i + d, 0, years.length - 1)]); };
+  // ▶ 를 누르면 마지막 연도에 있을 때는 처음(2008)부터 다시 시작한다
+  const togglePlay = () => { if (!play && year === years[years.length - 1]) onYear(years[0]); setPlay(!play); };
   useEffect(() => {
     const h = (e) => {
       if (e.key === "Escape") onClose();
@@ -84,6 +90,32 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
   const dirWord = ind.bad === true ? "낮을수록 양호" : ind.bad === false ? "높을수록 양호" : "방향 없음(맥락 지표)";
   const fileBase = `${ind.name}_${poolName}_순위전체_${year}`;
 
+  /* ── 영상 저장: 연도별 순위 목록을 캔버스 애니메이션으로 그려 MP4(H.264)로 인코딩 ── */
+  const makeVideo = async () => {
+    if (vid) return;
+    setPlay(false);
+    const frames = {}; for (const y of years) frames[y] = rowsFor(y).map(({ r, v }) => ({ c: r.c, name: nameOf(r, false), v }));
+    const nAll = Math.max(...years.map((y) => frames[y].length));
+    const topN = vidTop === "all" ? 0 : vidTop === "auto" ? (nAll <= 40 ? 0 : 30) : +vidTop;
+    const rowsShown = (topN || nAll) + 1;
+    const height = rowsShown <= 26 ? 720 : rowsShown <= 40 ? 1080 : Math.min(2160, Math.ceil((118 + 48 + rowsShown * 12) / 2) * 2);
+    setVid({ pct: 0, msg: "영상 만드는 중" });
+    try {
+      const out = await renderRankVideo({
+        title: ind.name, subtitle: `${item === "std" ? "표준화율" : "조율"} · ${dirWord} · ${rev ? "나쁜 순" : "양호한 순"}`, poolName, years, frames,
+        selCode: sel.l === "sgg" || sel.l === "sido" ? sel.c : null, gmax, unit: ind.unit, topN, width: 1280, height, fps: 30,
+        holdMs: Math.round(speed * 0.55), moveMs: Math.round(speed * 0.75),
+        source: `자료: 질병관리청 지역사회건강조사(KOSIS) 등 · 지역 건강프로파일 대시보드 health-profile.kr`,
+        onProgress: (p) => setVid({ pct: p, msg: "영상 만드는 중" }),
+      });
+      saveBlob(out.blob, safe(`${ind.name}_${poolName}_순위변화_${years[0]}-${years[years.length - 1]}`) + `.${out.ext}`);
+      setVid({ pct: 1, msg: `저장 완료 · ${out.ext.toUpperCase()} ${out.width}×${out.height} · ${Math.round(out.seconds)}초${out.ext === "webm" ? " (이 브라우저는 MP4 인코딩을 지원하지 않아 WebM으로 저장)" : ""}` });
+    } catch (e) {
+      setVid({ pct: 0, msg: `실패: ${e.message || e}` });
+    }
+    setTimeout(() => setVid(null), 6000);
+  };
+
   /* ── 내려받기: 화면과 같은 막대 순위표를 독립 SVG로 생성 ── */
   const buildSvg = () => {
     const C = 6, R = Math.ceil(n / C), RH = 21, CW = 268, PAD = 18, TOP = 84;
@@ -132,13 +164,19 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
         </div>
         <div className="ra-nowyear">{year}</div>
         <div className="ra-actions">
-          <button className={`ra-btn ${play ? "on" : ""}`} onClick={() => setPlay(!play)}>{play ? "■ 정지" : "▶ 연도 재생"}</button>
+          <button className={`ra-btn ${play ? "on" : ""}`} onClick={togglePlay}>{play ? "■ 정지" : `▶ ${years[0]}년부터 재생`}</button>
           <button className={`ra-btn ${big ? "on" : ""}`} onClick={() => setBig(!big)} title="줄 높이를 키워 보기">{big ? "촘촘히" : "크게"}</button>
           <button className="ra-btn" onClick={() => window.print()} title="이 화면만 세로로 길게 인쇄(전체 순위가 한 줄로 나옵니다)">🖨 인쇄</button>
           <select className="ra-sel" value={speed} onChange={(e) => setSpeed(+e.target.value)} title="재생 속도">
             <option value={1800}>느리게</option><option value={1100}>보통</option><option value={600}>빠르게</option>
           </select>
           <span className="ra-dl">
+            <select className="ra-sel sm" value={vidTop} onChange={(e) => setVidTop(e.target.value)} title="영상에 담을 지역 수">
+              <option value="auto">영상: 자동</option><option value="all">영상: 전체</option><option value="30">영상: 상위 30</option><option value="50">영상: 상위 50</option>
+            </select>
+            <button className={`ra-btn sm ${vid ? "on" : ""}`} onClick={makeVideo} disabled={!!vid} title={`${years[0]}년부터 ${years[years.length - 1]}년까지 순위·막대 변화를 MP4 영상으로 저장(발표용)`}>
+              {vid && vid.pct < 1 && !vid.msg.startsWith("실패") ? `🎬 ${Math.round(vid.pct * 100)}%` : "🎬 영상 저장"}
+            </button>
             <button className="ra-btn sm" onClick={() => saveSvgString(buildSvg(), fileBase)} title="편집 가능한 벡터(PPT용)">↓ SVG</button>
             <button className="ra-btn sm" onClick={() => savePngFromSvg(buildSvg(), fileBase)} title="이미지">↓ PNG</button>
             <button className="ra-btn sm" onClick={dlCsv} title="전 연도 값·순위 표">↓ CSV</button>
@@ -147,6 +185,7 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
         </div>
       </header>
 
+      {vid && <div className={`ra-vid ${vid.msg.startsWith("실패") ? "err" : ""}`}><i style={{ width: `${Math.round(vid.pct * 100)}%` }} /><span>{vid.msg}{vid.pct < 1 && !vid.msg.startsWith("실패") ? ` ${Math.round(vid.pct * 100)}% — 창을 닫지 마세요` : ""}</span></div>}
       <div className="ra-bar">
         <button className="ra-step" onClick={() => step(-1)} aria-label="이전 연도">‹</button>
         {years.map((y) => <button key={y} className={`ra-y ${y === year ? "on" : ""}`} onClick={() => { setPlay(false); onYear(y); }}>{String(y).slice(2)}</button>)}

@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=990b53b6f70c44bf83e14774810453b7e93b5f05">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2ef4ad68fc4e6bd1b95c4f1001e284c8d1c3afb1">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -187,7 +187,11 @@ CSS 3D 복도(연도 플라크)·자동 관람·주제 칩 필터, 올해의 10�
 ▲▼ = 전년 대비 순위 변동, 상단에 선택 지역 순위·중앙값·1위/꼴찌 표시. 내려받기 SVG/PNG(독립 벡터, 6열 조판)·CSV(전 연도 값+순위 전량).
 <del>열/행은 화면 크기에 맞춰 자동 계산(데스크톱 8열·모바일 3열)</del> → <strong>2026-09-23 소유자 지시로 항상 1열</strong>(25개든 258개든 위에서 아래로, 막대가 화면 폭 전체 → 격차가 한눈에). 「크게」는 줄 높이 토글.
 <strong>🖨 인쇄 버튼</strong>: body.rall-open + @media print 로 이 화면만 세로로 길게(칸은 static 배치, print-color-adjust exact, 버튼·연도칩 숨김). 오버레이는 .viz-root 안에 portal(테마 변수 상속).
-지표 분석의 순위 목록도 인쇄 시 스크롤 상자 없이 전부 펼침. 모든 지표·모든 집단 탭 공통. 단축키 Space·← →·Esc. export.js에 saveSvgString/savePngFromSvg/saveCsvRows 추가. SVG 내려받기는 6열 조판 유지(PPT용).</li>
+지표 분석의 순위 목록도 인쇄 시 스크롤 상자 없이 전부 펼침. 모든 지표·모든 집단 탭 공통. 단축키 Space·← →·Esc. export.js에 saveSvgString/savePngFromSvg/saveCsvRows 추가. SVG 내려받기는 6열 조판 유지(PPT용).
+<strong>🎬 영상 저장</strong>(2026-09-23 소유자 지시 “2008년부터 애니메이션을 영상으로 저장해 발표에 쓰게”): app/src/video.js renderRankVideo — 캔버스에 연도별 순위를 그리며 자리·길이를 보간(easeInOutCubic),
+  1순위 WebCodecs VideoEncoder(H.264 avc1) + <strong>mp4-muxer</strong> → .mp4(1280×720/1080, 30fps, 6Mbps, 파워포인트 삽입 가능) / 2순위 MediaRecorder → .webm(H.264 인코더 없는 브라우저·헤드리스 크로미움).
+  영상 범위 select: 자동(≤40개면 전체, 아니면 상위 30)·전체·상위 30·상위 50. 선택 지역은 topN 밖이어도 맨 아래 한 줄에 「(n위)」로 항상 표시. 첫/마지막 연도 hold, 마지막은 +1.6초.
+  ▶ 버튼은 마지막 연도에서 누르면 2008년부터 다시 시작. 파일명은 export.js safe()(download·safe 를 export 로 공개). 25개 기준 약 27초·10MB.</li>
   <li>[완료] 지역보건사업 평가이론 분석·반영(2026-09-18): docs/지역보건사업_평가이론_v1.md — Donabedian SPO·Kellogg 로직모델·WHO/IHP+ 결과사슬·CIPP·CDC·RE-AIM·OECD DAC 1차 문헌 정리 +
 국내 제도(지역보건법 §9·시행령 §7③, 통합건강증진사업 110점 체계, HP2030/제6차, 합동평가, 국무조정실 4유형) 조사. 핵심: WHO 결과사슬을 척추로, 위계별 측정주기 분리, 산출-성과 분리, 결과는 기여로 평가.
 반영 4종 — ① scripts/classify_tiers.py → data/eval_tiers.json(156개 계층 분류: 투입25/산출2/성과45/임팩트59/맥락25) → 지표 분석에 계층 배지·권장 주기·순위 적합성 표시
