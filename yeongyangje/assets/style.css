@@ -390,3 +390,4 @@ abbr.gl:hover, abbr.gl:focus { background: var(--teal-soft); outline: none; }
 .jdg.ok { background: var(--green-soft); color: var(--green); } .jdg.warn { background: var(--amber-soft); color: var(--amber); } .jdg.over { background: var(--red-soft); color: var(--red); } .jdg.low { background: var(--gray-soft); color: var(--gray); } .jdg.info { background: var(--blue-soft); color: var(--blue); }
 .cmp-slot .field { min-width: 0; } .cmp-slot input, .cmp-slot select, .cmp-slot .inline { width: 100%; max-width: 100%; box-sizing: border-box; }
 .cmp-slot .inline select { width: auto; flex: 0 0 auto; }
+.foot-credit { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); color: #d6e6e4; font-size: .88rem; } .foot-credit a { color: #fff; text-decoration: underline; }
