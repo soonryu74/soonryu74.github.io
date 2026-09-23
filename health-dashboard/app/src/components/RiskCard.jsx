@@ -4,6 +4,9 @@ import ExportButtons from "./ExportButtons";
 
 const CATS = ["연령", "기저질환", "임신부·영유아", "감염취약시설", "사회적 취약", "예방접종", "감염병", "대응 자원"];
 const nf = (v) => (v == null ? "–" : Math.round(v).toLocaleString("ko-KR"));
+// 큰 인원은 만 단위로 읽기 쉽게(1,759,963 → 176.0만). 1만 미만은 그대로.
+const kf = (v) => (v == null ? "–" : v >= 10000 ? `${(v / 10000).toFixed(1)}만` : Math.round(v).toLocaleString("ko-KR"));
+const Big = ({ v }) => <><div className="k-value">{kf(v)}<small> 명</small></div>{v != null && v >= 10000 && <div className="k-exact">{nf(v)}명</div>}</>;
 
 /* 감염병 대응 고위험군 규모 (프로파일 카드) */
 export default function RiskCard({ sel, pool, poolName }) {
@@ -38,23 +41,23 @@ export default function RiskCard({ sel, pool, poolName }) {
       <div className="hle-grid">
         <div className="kpi">
           <div className="k-label">65세 이상</div>
-          <div className="k-value">{nf(a65?.v)}<small> 명</small></div>
+          <Big v={a65?.v} />
           <div className="k-sub"><span className="kl">인구의 {fmt(a65?.pct)}%</span><span className="kl muted">{poolName} 중 {a65?.rank ?? "–"}위 / {a65?.n}</span></div>
         </div>
         <div className="kpi">
           <div className="k-label">고혈압·당뇨 진단경험자<small>30세 이상 · 유병률로 추정</small></div>
-          <div className="k-value">{nf((htn?.v || 0) + (dm?.v || 0))}<small> 명</small></div>
-          <div className="k-sub"><span className="kl">고혈압 {nf(htn?.v)}명</span><span className="kl">당뇨 {nf(dm?.v)}명</span><span className="kl muted">두 질환을 함께 가진 사람은 두 번 셈</span></div>
+          <Big v={htn || dm ? (htn?.v || 0) + (dm?.v || 0) : null} />
+          <div className="k-sub"><span className="kl">고혈압 {kf(htn?.v)} 명</span><span className="kl">당뇨 {kf(dm?.v)} 명</span><span className="kl muted">두 질환을 함께 가진 사람은 두 번 셈</span></div>
         </div>
         <div className="kpi">
           <div className="k-label">장기요양 시설 정원</div>
-          <div className="k-value">{nf(ltc?.v)}<small> 명</small></div>
+          <Big v={ltc?.v} />
           <div className="k-sub">{ltc ? <><span className="kl">인구 천 명당 {fmt(ltc.pct * 10)}명</span><span className="kl muted">{poolName} 중 {ltc.rank ?? "–"}위 / {ltc.n}</span></> : "자료 없음"}</div>
         </div>
         <div className="kpi">
           <div className="k-label">임신부·영유아</div>
-          <div className="k-value">{nf((head("preg")?.v || 0) + (head("age0_4")?.v || 0))}<small> 명</small></div>
-          <div className="k-sub"><span className="kl">등록 임산부 {nf(head("preg")?.v)}명</span><span className="kl">0~4세 {nf(head("age0_4")?.v)}명</span></div>
+          <Big v={head("preg") || head("age0_4") ? (head("preg")?.v || 0) + (head("age0_4")?.v || 0) : null} />
+          <div className="k-sub"><span className="kl">등록 임산부 {kf(head("preg")?.v)} 명</span><span className="kl">0~4세 {kf(head("age0_4")?.v)} 명</span></div>
         </div>
       </div>
       <div className="seg" style={{ margin: "8px 0", flexWrap: "wrap" }}>
