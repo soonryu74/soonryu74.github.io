@@ -35,6 +35,8 @@ HLE = load("hle.json")
 DEP = load("deprivation.json")
 try: RISK = load("risk.json")
 except Exception: RISK = {}
+try: COVID = load("covid_sgg.json")
+except Exception: COVID = {}
 
 codes = [r["c"] for r in DS["regions"]]
 idx = {c: i for i, c in enumerate(codes)}
@@ -106,7 +108,7 @@ for u in CHS25["units"]:
         "nhis": "O" if mark(CHECKUP_IDS, CHECKUP["values"]) == "O" else mark(KDH_BY_DOMAIN.get("의료이용·검진", []) + KDH_BY_DOMAIN.get("보건의료자원", []), KDH["values"]),
         "pop": mark(KDH_BY_DOMAIN.get("인구·사회·경제", []), KDH["values"]),
         "env": mark(KDH_BY_DOMAIN.get("환경·안전", []), KDH["values"]),
-        "hle": reg_mark(HLE), "dep": reg_mark(DEP), "risk": reg_mark(RISK),
+        "hle": reg_mark(HLE), "dep": reg_mark(DEP), "risk": reg_mark(RISK), "covid": reg_mark(COVID),
         "fac": ui.get("fac") or {},
     })
 
@@ -187,6 +189,13 @@ SRC = [
     {"key": "risk", "name": "감염병 고위험군", "org": "자체 집계(복수 출처)", "ids": None, "unit": "시군구",
      "years": [2024, 2024], "cycle": "비정기", "next": "미정",
      "tbl": "scripts/build_risk.py", "url": "", "updated": "2026-09-08"},
+    {"key": "covid", "name": "코로나19 확진·사망(전수감시 기간)", "org": "질병관리청", "ids": None, "unit": "시군구",
+     "years": [2020, 2023], "cycle": "종료(1회성)", "next": "없음 — 2023-08-31 전수감시 종료, 이후 표본감시",
+     "tbl": "공공데이터포털 15124288 「코로나19 시군구별 월별 확진자 및 사망 발생 현황」", "updated": "2025-05-20",
+     "url": "https://www.data.go.kr/data/15124288/fileData.do",
+     "formula": "확진율 = 누적 확진 ÷ 2024 연앙인구 × 100 · 10만 명당 사망 = 누적 사망 ÷ 인구 × 100,000 · 치명률 = 사망 ÷ 확진 × 100",
+     "formula_note": "지역 프로파일 「감염병 대응 고위험군」 카드 하단 「코로나19 실적 참고」에서 지역별 값을 볼 수 있습니다.",
+     "note": "거주지가 아니라 신고 보건소 관할 기준입니다. 사망은 사망 장소(병원) 관할로 집계되어 상급종합병원 소재지가 높게 나오고, 확진은 직장·검사소 위치를 따릅니다. 시군구 순위를 매기지 않고 시도·중앙값 비교만 권장합니다. 연령별 시군구 자료는 공표되지 않았습니다."},
 ]
 
 counts = [
@@ -202,7 +211,7 @@ out = {"generated": date.today().isoformat(),
        "standard": 258,
        "standard_source": CHS25.get("source", ""),
        "counts": counts,
-       "sources": [{**x, "n": (len(x["ids"]) if x["ids"] is not None else {"hle": 3, "dep": 1, "risk": 30}[x["key"]]),
+       "sources": [{**x, "n": (len(x["ids"]) if x["ids"] is not None else {"hle": 3, "dep": 1, "risk": 30, "covid": 3}[x["key"]]),
                     "ids": None} for x in SRC],
        "units": rows,
        "legend": {"O": "이 보건소 단위로 값이 있음", "P": "소속 시군구 값으로 대체", "X": "없음"}}

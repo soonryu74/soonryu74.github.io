@@ -33,6 +33,7 @@ for r in DS["regions"]:
         by_sido[r["p"]][r["n"]] = r["c"]
 NAME = {r["c"]: r["n"] for r in DS["regions"]}
 SEJONG = next(r["c"] for r in DS["regions"] if r["l"] == "sgg" and r["n"] == "세종시")
+SIDO_CODES = set(short2sido.values())          # 세종 시도 코드는 4자리(0071)라 길이로 판별하면 안 된다
 
 
 def target(sido_short, nm):
@@ -103,17 +104,30 @@ def main():
                          "death_rate": round(d / pop * 1e5, 1) if pop else None,
                          "cfr": round(d / c * 100, 3) if c else None,
                          "by_year": {str(y): [int(a["c"][y]), int(a["d"][y])] for y in years}}
-    nat_c = sum(v["cases"] for k, v in regions.items() if len(k) == 3)
-    nat_d = sum(v["deaths"] for k, v in regions.items() if len(k) == 3)
+    # 요약: 시군구 중앙값 + 65세 이상 비율 4분위별 중앙값(카드 설명 근거)
+    sgg = [(k, v) for k, v in regions.items() if k not in SIDO_CODES and v["pop"]]
+    med = lambda xs: (lambda s: s[len(s) // 2])(sorted(xs))
+    summary = {"n": len(sgg), "case_rate": med([v["case_rate"] for _, v in sgg]),
+               "death_rate": med([v["death_rate"] for _, v in sgg]), "cfr": med([v["cfr"] for _, v in sgg])}
+    q = sorted([(RISK["regions"][k]["age65"]["v"] / v["pop"] * 100, v) for k, v in sgg if RISK["regions"].get(k, {}).get("age65")])
+    n = len(q); quart = []
+    for i in range(4):
+        g = q[i * n // 4:(i + 1) * n // 4]
+        quart.append({"lo": round(g[0][0], 1), "hi": round(g[-1][0], 1), "case_rate": med([v["case_rate"] for _, v in g]),
+                      "death_rate": med([v["death_rate"] for _, v in g]), "cfr": med([v["cfr"] for _, v in g])})
+    nat_c = sum(v["cases"] for k, v in regions.items() if k in SIDO_CODES)
+    nat_d = sum(v["deaths"] for k, v in regions.items() if k in SIDO_CODES)
     out = {"generated": datetime.date.today().isoformat(),
            "source": "질병관리청 「코로나19 시군구별 월별 확진자 및 사망 발생 현황」(공공데이터포털 15124288), 2020-01-20~2023-08-31 전수감시 기간",
            "period": "2020-01-20~2023-08-31", "years": years, "pop_year": RISK["pop_year"],
            "national": {"cases": nat_c, "deaths": nat_d, "cfr": round(nat_d / nat_c * 100, 3)},
+           "summary": summary, "age65_quartiles": quart,
+           "basis": "신고 보건소 관할 기준(거주지 아님). 사망은 사망 장소(병원) 관할 보건소로 집계되어 상급종합병원 소재지가 높게 나온다.",
            "regions": regions}
     p = ROOT / "data" / "covid_sgg.json"
     p.write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
-    sgg = [k for k in regions if len(k) != 3]
-    print(f"→ {p} 시도 {sum(1 for k in regions if len(k)==3)} · 시군구 {len(sgg)} (인구 있음 {sum(1 for k in sgg if regions[k]['pop'])})")
+    sgg = [k for k in regions if k not in SIDO_CODES]
+    print(f"→ {p} 시도 {sum(1 for k in regions if k in SIDO_CODES)} · 시군구 {len(sgg)} (인구 있음 {sum(1 for k in sgg if regions[k]['pop'])})")
     print(f"전국(시도 합) 확진 {nat_c:,} · 사망 {nat_d:,} · 치명률 {nat_d/nat_c*100:.3f}%")
     if unmatched:
         print("미매칭:", unmatched)

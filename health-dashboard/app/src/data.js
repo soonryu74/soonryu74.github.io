@@ -483,6 +483,9 @@ export function hleRank(code, pool) {
 // ── 감염병 고위험군 (scripts/build_risk.py → data/risk.json) ──
 import RISK_RAW from "../../data/risk.json";
 export const RISK = RISK_RAW;
+// 코로나19 시군구별 누적 확진·사망(질병관리청, 2020.1~2023.8, 신고 보건소 관할 기준) — 고위험군 카드의 참고 실적
+import COVID_RAW from "../../data/covid_sgg.json";
+export const COVID = COVID_RAW;
 export const riskOf = (code) => RISK.regions?.[code] || null;
 /** 집단 비율 순위(높을수록 1위), 집단 내 중앙값(%) */
 export function riskRank(gid, code, pool) {
