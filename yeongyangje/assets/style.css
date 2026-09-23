@@ -373,3 +373,19 @@ abbr.gl:hover, abbr.gl:focus { background: var(--teal-soft); outline: none; }
 .reg dl { display: grid; grid-template-columns: 92px 1fr; gap: 5px 10px; font-size: .92rem; margin: 10px 0 0; }
 .reg dt { color: var(--muted); font-weight: 700; } .reg dd { margin: 0; }
 .reg .ex { margin-top: 8px; font-size: .9rem; }
+
+/* ---- 제품 환산 계산기 ---- */
+.cmp-slot { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px; background: #fff; }
+.cmp-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.btn-x { border: 1px solid var(--line-strong); background: #fff; border-radius: 8px; width: 32px; height: 32px; font-size: 1.1rem; cursor: pointer; color: var(--muted); }
+.inline { display: flex; gap: 8px; } .inline input { flex: 1; min-width: 0; } .inline select { font: inherit; padding: 8px; border: 1.5px solid var(--line-strong); border-radius: 10px; background: #fff; }
+.chk-wrap { display: flex; flex-wrap: wrap; gap: 6px 14px; } .chk { font-weight: 400; font-size: .9rem; display: inline-flex; align-items: center; gap: 5px; }
+.cmp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.cmp-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; background: #fff; }
+.cmp-card h3 { margin: 0 0 8px; font-size: 1.05rem; }
+.cmp-card dl.row { display: grid; grid-template-columns: 96px 1fr; gap: 4px 10px; margin: 0; font-size: .93rem; } .cmp-card dt { color: var(--muted); } .cmp-card dd { margin: 0; }
+.jdg-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.jdg { display: inline-block; font-size: .82rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; background: var(--gray-soft); color: var(--gray); }
+.jdg.ok { background: var(--green-soft); color: var(--green); } .jdg.warn { background: var(--amber-soft); color: var(--amber); } .jdg.over { background: var(--red-soft); color: var(--red); } .jdg.low { background: var(--gray-soft); color: var(--gray); } .jdg.info { background: var(--blue-soft); color: var(--blue); }
+.cmp-slot .field { min-width: 0; } .cmp-slot input, .cmp-slot select, .cmp-slot .inline { width: 100%; max-width: 100%; box-sizing: border-box; }
+.cmp-slot .inline select { width: auto; flex: 0 0 auto; }
