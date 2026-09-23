@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제품 환산 계산기 | 근거영양</title>
+<meta name="description" content="영양제 라벨 숫자(총량·1회량·함량·가격)를 넣으면 1일 비용, 성분 단위당 가격, 연구 용량·상한섭취량 대비 위치를 계산합니다. 브랜드 이름 없이 숫자로만 비교하는 도구.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head">
+    <h1>제품 환산 계산기</h1>
+    <p>어느 회사 제품이든 라벨에 적힌 숫자는 같은 자로 잴 수 있습니다. <b>총량 · 1회 섭취량 · 1회당 함량 · 가격</b> 네 가지를 넣으면 며칠분인지, 하루 얼마인지, 성분 1단위에 얼마인지, 그리고 그 함량이 <b>연구에서 쓰인 용량</b>과 <b>상한섭취량</b> 어디쯤인지 나옵니다.</p>
+  </div>
+
+  <div class="callout info"><span class="t">이 도구가 하는 일 · 안 하는 일</span>라벨 숫자를 환산하고 이 사이트의 근거 용량표와 비교합니다. 제품의 효과·품질을 판정하지 않습니다. 브랜드·제품명은 입력해도 <b>이 브라우저에만 저장</b>되고 서버로 전송되지 않습니다. 가격은 입력 시점 기준이며, 여러 성분이 든 복합 제품은 성분별로 따로 넣으세요.</div>
+
+  <div class="section" id="calc">
+    <h2 style="margin-top:0">1. 제품 입력 (최대 3개 나란히)</h2>
+    <div id="slots"></div>
+    <div class="wiz-nav"><button class="btn btn-ghost" id="c-reset">전부 지우기</button><span><button class="btn btn-ghost" id="c-add">+ 비교 제품 추가</button> <button class="btn btn-primary" id="c-run">환산 결과 보기</button></span></div>
+    <div id="result" style="margin-top:18px"></div>
+  </div>
+
+  <div class="section" id="read">
+    <h2>2. 결과 읽는 법 — 네 개의 자</h2>
+    <ul class="crit-list">
+      <li><b>① 연구 용량 대비 위치</b><br>"연구 용량 범위 안"은 그 연구의 근거가 이 함량에 적용된다는 뜻이지 효과 보증이 아닙니다. 범위보다 적으면 근거가 내 것이 아니고, 많으면 근거 없이 비용과 위험만 늘어납니다. 상한섭취량을 넘는 값은 전문가 상담 대상입니다.</li>
+      <li><b>② 성분 1단위 가격</b><br>제품 가격 ÷ (1회 함량 × 총 회분). 통 크기·포장·증정품이 아니라 이 숫자가 실제 비교 대상입니다. 같은 성분·같은 형태라면 이 값이 낮은 쪽이 같은 근거를 더 싸게 사는 것입니다.</li>
+      <li><b>③ 효과와 무관한 요소 분리</b><br>증정품, 포인트 적립, 정기주문 할인, 원산지·역사 강조, 분석권은 가격에 들어 있지만 성분의 효과와 관계없습니다. 체크해 두면 결과에 따로 표시됩니다.</li>
+      <li><b>④ 허가 지위</b><br>같은 성분도 건강기능식품·일반식품·의약품으로 지위가 다릅니다. <a href="deunggeup.html">허가 등급</a> 페이지와 각 성분 카드의 뱃지에서 확인하세요. 건강기능식품 마크는 "표시대로 들어 있음"의 보증이지 효과 보증이 아닙니다.</li>
+    </ul>
+  </div>
+
+  <div class="section" id="check">
+    <h2>3. 회원 판매·브랜드 제품을 볼 때 5가지</h2>
+    <ol>
+      <li><b>성분표부터.</b> 제품 소개 페이지의 문구가 아니라 뒷면 "영양·기능 정보"의 성분명·함량·1일 섭취량을 봅니다. 함량이 없거나 "독점 블렌드"면 비교 불가.</li>
+      <li><b>형태 확인.</b> 비타민 D는 D3, 오메가-3는 EPA+DHA 합계, 철분은 원소철, 크레아틴은 모노하이드레이트. 연구와 다른 형태면 그 연구는 이 제품의 근거가 아닙니다. (<a href="jepum.html">제품 고르는 법</a>)</li>
+      <li><b>단위 가격으로 환산.</b> 위 계산기. 세트 구성·증정품은 빼고 성분 1단위당 가격만 봅니다.</li>
+      <li><b>시험성적서 요청.</b> 로트별 함량·중금속·미생물 결과를 요청해 보세요. 못 주는 회사 제품은 마크가 있어도 확인이 안 된 것입니다.</li>
+      <li><b>"내게 필요한가"가 먼저.</b> 좋은 제품이라도 결핍이 없으면 근거상 이득이 없습니다. <a href="chucheon.html">내게 맞는 영양제</a>와 <a href="geomsa.html">검사 가이드</a>를 먼저.</li>
+    </ol>
+    <p class="small">이 사이트는 특정 브랜드·판매 방식에 대한 평가를 하지 않습니다. 위 기준은 모든 제품에 같은 방식으로 적용됩니다.</p>
+  </div>
+
+  <div class="disclaimer">기준값 출처: 각 성분 카드에 인용된 연구, 식약처 건강기능식품 기능성 원료 고시 함량, 2025 한국인 영양소 섭취기준. 기준값을 바꿀 때는 성분 카드와 함께 갱신합니다. 이 페이지의 계산 결과는 정보 제공이며 의학적 판단을 대신하지 않습니다.</div>
+</main>
+<div id="site-footer"></div>
+<script src="assets/app.js"></script>
+<script src="data/ingredients.js"></script>
+<script src="data/glossary.js"></script>
+<script src="data/calc.js"></script>
+<script>
+(function(){
+
+  var C=window.EBN_CALC, I=window.EBN_INGREDIENTS||{}, esc=EBN.esc, KEY='ebn_bigyo_v1';
+  var T={}; C.types.forEach(function(t){T[t.id]=t;});
+  var slots=document.getElementById('slots'), n=0;
+  function opts(){ return C.types.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>';}).join(''); }
+  function addSlot(v){ n++; var id=n; v=v||{};
+    var d=document.createElement('div'); d.className='cmp-slot'; d.dataset.id=id;
+    d.innerHTML='<div class="cmp-head"><b>제품 '+id+'</b><button type="button" class="btn-x" title="이 제품 지우기">×</button></div>'+
+      '<div class="form-grid">'+
+      '<div class="field"><label>별칭 (선택)</label><input type="text" data-k="alias" placeholder="예: A사 비타민D" value="'+esc(v.alias||'')+'"></div>'+
+      '<div class="field"><label>성분</label><select data-k="type">'+opts()+'</select><span class="small" data-k="hint"></span></div>'+
+      '<div class="field"><label>제품 총량</label><div class="inline"><input type="number" min="0" step="any" data-k="total" placeholder="900" value="'+esc(v.total||'')+'"><select data-k="unit"><option value="g">g</option><option value="ea">정·캡슐·포</option><option value="ml">mL</option></select></div></div>'+
+      '<div class="field"><label>1회 섭취량 (같은 단위)</label><input type="number" min="0" step="any" data-k="per" placeholder="12.5" value="'+esc(v.per||'')+'"></div>'+
+      '<div class="field"><label>1일 섭취 횟수</label><input type="number" min="0" step="any" data-k="times" placeholder="2" value="'+esc(v.times||'')+'"></div>'+
+      '<div class="field"><label>1회당 성분 함량 <span data-k="unitlbl" class="small"></span></label><input type="number" min="0" step="any" data-k="amt" placeholder="10"  value="'+esc(v.amt||'')+'"></div>'+
+      '<div class="field"><label>가격 (원)</label><input type="number" min="0" step="any" data-k="price" placeholder="85000" value="'+esc(v.price||'')+'"></div>'+
+      '<div class="field"><label>효과와 무관한 요소 (해당 시 체크)</label><div class="chk-wrap">'+C.marketing.map(function(m){return '<label class="chk"><input type="checkbox" data-m="'+m[0]+'"'+((v.mk||[]).indexOf(m[0])>=0?' checked':'')+'> '+esc(m[1])+'</label>';}).join('')+'</div></div>'+
+      '</div>';
+    slots.appendChild(d);
+    var sel=d.querySelector('[data-k=type]'); if(v.type&&T[v.type]) sel.value=v.type; if(v.unit) d.querySelector('[data-k=unit]').value=v.unit;
+    function syncHint(){ var t=T[sel.value]; d.querySelector('[data-k=hint]').textContent=t.hint||''; d.querySelector('[data-k=unitlbl]').textContent='('+t.unit+')'; }
+    sel.addEventListener('change',syncHint); syncHint();
+    d.querySelector('.btn-x').addEventListener('click',function(){ d.remove(); save(); });
+    d.addEventListener('input',save); d.addEventListener('change',save);
+  }
+  function read(){ return Array.prototype.map.call(slots.querySelectorAll('.cmp-slot'),function(d){ var o={id:d.dataset.id}; d.querySelectorAll('[data-k]').forEach(function(e){ if(e.tagName==='INPUT'||e.tagName==='SELECT') o[e.dataset.k]=e.value; }); o.mk=Array.prototype.map.call(d.querySelectorAll('input[data-m]:checked'),function(e){return e.dataset.m;}); return o; }); }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(read())); }catch(e){} }
+  function fmt(x,d){ if(x==null||!isFinite(x)) return '—'; return Number(x).toLocaleString('ko-KR',{maximumFractionDigits:d==null?1:d}); }
+  function won(x){ return x==null||!isFinite(x)?'—':Math.round(x).toLocaleString('ko-KR')+'원'; }
+  function judge(t,daily){
+    var out=[];
+    if(t.ul!=null&&daily>t.ul) out.push({c:'over',t:'상한섭취량 초과 ('+fmt(t.ul)+' '+t.unit+') — 전문가 상담 필요'});
+    else if(t.avoidAbove!=null&&daily>=t.avoidAbove) out.push({c:'over',t:'유해 근거가 있는 용량 (≥'+fmt(t.avoidAbove)+' '+t.unit+')'});
+    else if(t.ul!=null&&daily>=t.ul*0.7) out.push({c:'warn',t:'상한섭취량의 '+Math.round(daily/t.ul*100)+'%'});
+    if(t.ev){ if(daily<t.ev[0]) out.push({c:'low',t:'연구 용량보다 적음 (연구 '+fmt(t.ev[0])+(t.ev[1]!==t.ev[0]?'~'+fmt(t.ev[1]):'')+' '+t.unit+')'});
+      else if(daily>t.ev[1]) out.push({c:'warn',t:'연구 용량보다 많음 (연구 '+fmt(t.ev[0])+(t.ev[1]!==t.ev[0]?'~'+fmt(t.ev[1]):'')+' '+t.unit+')'});
+      else out.push({c:'ok',t:'연구 용량 범위 안 ('+fmt(t.ev[0])+(t.ev[1]!==t.ev[0]?'~'+fmt(t.ev[1]):'')+' '+t.unit+')'}); }
+    else if(t.rni){ out.push({c:'info',t:'하루 보충량은 권장섭취량(남 '+t.rni.M[1]+'~'+t.rni.M[0]+' g · 여 '+t.rni.F[1]+'~'+t.rni.F[0]+' g, 식사 포함)의 남 '+Math.round(daily/t.rni.M[0]*100)+'% · 여 '+Math.round(daily/t.rni.F[0]*100)+'%'}); }
+    else if(!out.length||out[0].c!=='over') out.push({c:'info',t:'이 사이트 기준 "연구 용량" 없음 — 근거가 약하거나 보충 불필요로 분류된 성분'});
+    if(t.kr) out.push({c: daily>=t.kr[0]&&daily<=t.kr[1]?'ok':'low', t:'식약처 기능성 함량 '+fmt(t.kr[0])+'~'+fmt(t.kr[1])+' '+t.unit+' '+(daily>=t.kr[0]&&daily<=t.kr[1]?'범위 안':'범위 밖')});
+    return out;
+  }
+  function calc(o){ var t=T[o.type]; var total=+o.total, per=+o.per, times=+o.times, amt=+o.amt, price=+o.price;
+    if(!(t&&total>0&&per>0&&times>0&&amt>=0)) return null;
+    var servings=total/per, days=servings/times, daily=amt*times, unitsTotal=amt*servings;
+    return {t:t, servings:servings, days:days, daily:daily, perDay: price>0?price/days:null, perUnit: price>0&&unitsTotal>0?price/unitsTotal:null, perServe: price>0?price/servings:null, j:judge(t,daily), mk:o.mk||[], alias:o.alias||('제품 '+o.id), price:price};
+  }
+  var MK={}; C.marketing.forEach(function(m){MK[m[0]]=m[1];});
+  document.getElementById('c-run').addEventListener('click',function(){
+    var rs=read().map(calc), ok=rs.filter(Boolean), miss=rs.length-ok.length, R=document.getElementById('result');
+    if(!ok.length){ R.innerHTML='<p class="count-line">총량 · 1회 섭취량 · 1일 횟수 · 1회당 함량을 모두 숫자로 넣어 주세요.</p>'; return; }
+    var cards=ok.map(function(r){ var t=r.t, ing=t.ing&&I[t.ing];
+      return '<div class="cmp-card"><h3>'+esc(r.alias)+' <span class="small">'+esc(t.name)+'</span></h3>'+
+        '<dl class="row"><dt>총 회분</dt><dd>'+fmt(r.servings,1)+'회 · <b>'+fmt(r.days,1)+'일분</b></dd>'+
+        '<dt>하루 섭취</dt><dd><b>'+fmt(r.daily,2)+' '+esc(t.unit)+'</b></dd>'+
+        '<dt>1일 비용</dt><dd>'+won(r.perDay)+' <span class="small">(1회 '+won(r.perServe)+')</span></dd>'+
+        '<dt>'+esc(t.unit)+'당 가격</dt><dd><b>'+(r.perUnit==null?'—':(r.perUnit<10?r.perUnit.toFixed(2):Math.round(r.perUnit).toLocaleString('ko-KR'))+'원')+'</b></dd></dl>'+
+        '<div class="jdg-list">'+r.j.map(function(j){return '<span class="jdg '+j.c+'">'+esc(j.t)+'</span>';}).join('')+'</div>'+
+        (r.mk.length?'<div class="small" style="margin-top:8px">효과와 무관한 요소: '+r.mk.map(function(k){return '<span class="pill">'+esc(MK[k]||k)+'</span>';}).join('')+'</div>':'')+
+        (ing?'<p class="small" style="margin:8px 0 0">근거 · 국내 지위: <a href="seongbun.html#'+esc(t.ing)+'">'+esc(ing.name)+' 성분 카드</a>'+(ing.status?' '+ing.status.map(function(s){return '<span class="stat-badge st-'+esc(s.k)+'">'+esc({rx:'전문의약품',otc:'일반의약품',qd:'의약외품',hff:'건기식(고시형)',hffi:'건기식(개별인정)',food:'일반식품',none:'국내 미허가',import:'해외직구'}[s.k]||s.k)+'</span>';}).join(' '):'')+'</p>':'')+
+        (t.ulNote?'<p class="small" style="margin:6px 0 0">상한: '+esc(t.ulNote)+'</p>':'')+
+        '</div>'; }).join('');
+    var same=ok.length>1&&ok.every(function(r){return r.t.id===ok[0].t.id;});
+    var table='';
+    if(ok.length>1){ var u=ok[0].t.unit;
+      table='<div class="table-scroll" style="margin-top:14px"><table><tr><th></th>'+ok.map(function(r){return '<th>'+esc(r.alias)+'</th>';}).join('')+'</tr>'+
+        '<tr><td>성분</td>'+ok.map(function(r){return '<td>'+esc(r.t.name)+'</td>';}).join('')+'</tr>'+
+        '<tr><td>일수</td>'+ok.map(function(r){return '<td>'+fmt(r.days,0)+'일</td>';}).join('')+'</tr>'+
+        '<tr><td>하루 섭취량</td>'+ok.map(function(r){return '<td>'+fmt(r.daily,2)+' '+esc(r.t.unit)+'</td>';}).join('')+'</tr>'+
+        '<tr><td>1일 비용</td>'+ok.map(function(r){return '<td>'+won(r.perDay)+'</td>';}).join('')+'</tr>'+
+        '<tr><td>성분 단위당 가격</td>'+ok.map(function(r){return '<td>'+(r.perUnit==null?'—':(r.perUnit<10?r.perUnit.toFixed(2):Math.round(r.perUnit).toLocaleString('ko-KR'))+'원/'+esc(r.t.unit))+'</td>';}).join('')+'</tr>'+
+        '<tr><td>연구 용량 대비</td>'+ok.map(function(r){var j=r.j.find(function(x){return x.c==='ok'||x.c==='low'||x.c==='over'||x.c==='warn';})||r.j[0];return '<td><span class="jdg '+j.c+'">'+esc(j.t.split(' (')[0])+'</span></td>';}).join('')+'</tr>'+
+        '</table></div>'+(same?'':'<p class="small">성분이 다른 제품끼리는 단위당 가격을 직접 비교할 수 없습니다. 같은 성분·같은 형태끼리 보세요.</p>'); }
+    R.innerHTML='<div class="cmp-grid">'+cards+'</div>'+table+(miss?'<p class="small">입력이 비어 있는 제품 '+miss+'개는 제외했습니다.</p>':'')+
+      '<div class="callout tip" style="margin-top:14px"><span class="t">다음 단계</span>범위 안이라도 "내게 필요한가"는 별개입니다. <a href="chucheon.html">내게 맞는 영양제</a>에서 질환·약 조건을 넣어 확인하고, 여러 제품을 같이 먹는다면 <a href="geomsa.html#calc">상한 합산 계산기</a>로 총량을 보세요.</div>';
+    R.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  document.getElementById('c-add').addEventListener('click',function(){ if(slots.querySelectorAll('.cmp-slot').length>=3){ alert('최대 3개까지 나란히 비교합니다.'); return; } addSlot(); save(); });
+  document.getElementById('c-reset').addEventListener('click',function(){ slots.innerHTML=''; n=0; addSlot(); document.getElementById('result').innerHTML=''; try{localStorage.removeItem(KEY);}catch(e){} });
+  var saved=null; try{ saved=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+  if(saved&&saved.length) saved.slice(0,3).forEach(addSlot); else addSlot();
+})();
+</script>
+</body>
+</html>
