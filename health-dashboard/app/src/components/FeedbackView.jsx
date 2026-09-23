@@ -131,6 +131,10 @@ export default function FeedbackView({ currentUrl }) {
           지역 건강프로파일 대시보드는 질병관리청 지역사회건강조사(KOSIS)·사망원인통계·국민건강보험공단 검진통계 등 공표 자료를 모아 시군구·보건소 단위 건강수준을 보여 주는 <b>모니터링·목표치 설정 지원 도구</b>입니다. 보건소 사업 실적 자료는 담고 있지 않아 사업 성과 평가 도구가 아닙니다.
           자료별 출처·산식·갱신 주기·한계는 「자료원」 탭에, 지표 방향·계층·근거는 각 지표 화면에 적혀 있습니다. 주소: <a href={CONTACT.site} target="_blank" rel="noreferrer">{CONTACT.site}</a>
         </div>
+        <div className="desc" style={{ marginTop: 6 }}>
+          <b>사용설명서(64쪽)</b> — 자료 소개·기본 조작·메뉴별 설명과 활용 팁·활용 시나리오·해석 주의:{" "}
+          <a href={CONTACT.manual_pdf} target="_blank" rel="noreferrer">PDF 보기</a> · <a href={CONTACT.manual_pptx} target="_blank" rel="noreferrer">파워포인트 내려받기</a>
+        </div>
       </div>
     </div>
   );
