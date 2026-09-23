@@ -28,14 +28,34 @@ export default function RiskCard({ sel, pool, poolName }) {
       <h3>감염병 대응 고위험군 <small className="muted">(규모 추정 · 집단 간 중복 있음)</small></h3>
       <ExportButtons name={`${label(sel)}_고위험군`} kinds={["list"]} />
       <div className="desc">
-        질병관리청 코로나19·인플루엔자·감염취약시설 지침의 고위험군 정의를 지역 자료로 옮긴 것입니다. "실측"은 행정·건강보험 인원, "추정"은 지역사회건강조사 유병률 × 해당 연령 인구입니다.
-        집단은 서로 겹치므로(65세 이상이면서 고혈압 등) 더하지 않습니다. 인구 기준 {RISK.pop_year}년 연앙인구 {nf(rec.pop)}명.
+        질병관리청 지침(코로나19·인플루엔자·감염취약시설)의 고위험군 정의를 지역 자료로 옮겨 규모를 잡은 것입니다. 인구 기준 {RISK.pop_year}년 연앙인구 {nf(rec.pop)}명.
       </div>
+      <details className="method">
+        <summary>산출 방법과 읽을 때 주의할 점</summary>
+        <p>「실측」은 행정·건강보험 등록 인원이고, 「추정」은 지역사회건강조사 유병률에 해당 연령 인구를 곱한 값입니다.</p>
+        <p>집단은 서로 겹칩니다(65세 이상이면서 고혈압인 사람 등). 그래서 타일의 숫자를 더해 「고위험군 총원」을 만들면 안 됩니다.</p>
+      </details>
       <div className="hle-grid">
-        <div className="kpi"><div className="k-label">65세 이상</div><div className="k-value">{nf(a65?.v)}<small> 명</small></div><div className="k-sub">인구의 {fmt(a65?.pct)}% · {poolName} {a65?.rank ?? "–"}위 / {a65?.n}</div></div>
-        <div className="kpi"><div className="k-label">고혈압·당뇨 진단경험자(30세 이상, 추정)</div><div className="k-value">{nf((htn?.v || 0) + (dm?.v || 0))}<small> 명</small></div><div className="k-sub">고혈압 {nf(htn?.v)} · 당뇨 {nf(dm?.v)} (중복 포함)</div></div>
-        <div className="kpi"><div className="k-label">장기요양 시설 정원</div><div className="k-value">{nf(ltc?.v)}<small> 명</small></div><div className="k-sub">{ltc ? `인구 천명당 ${fmt(ltc.pct * 10)}명 · ${poolName} ${ltc.rank ?? "–"}위 / ${ltc.n}` : "자료 없음"}</div></div>
-        <div className="kpi"><div className="k-label">임신부·영유아</div><div className="k-value">{nf((head("preg")?.v || 0) + (head("age0_4")?.v || 0))}<small> 명</small></div><div className="k-sub">등록 임산부 {nf(head("preg")?.v)} · 0~4세 {nf(head("age0_4")?.v)}</div></div>
+        <div className="kpi">
+          <div className="k-label">65세 이상</div>
+          <div className="k-value">{nf(a65?.v)}<small> 명</small></div>
+          <div className="k-sub"><span className="kl">인구의 {fmt(a65?.pct)}%</span><span className="kl muted">{poolName} 중 {a65?.rank ?? "–"}위 / {a65?.n}</span></div>
+        </div>
+        <div className="kpi">
+          <div className="k-label">고혈압·당뇨 진단경험자<small>30세 이상 · 유병률로 추정</small></div>
+          <div className="k-value">{nf((htn?.v || 0) + (dm?.v || 0))}<small> 명</small></div>
+          <div className="k-sub"><span className="kl">고혈압 {nf(htn?.v)}명</span><span className="kl">당뇨 {nf(dm?.v)}명</span><span className="kl muted">두 질환을 함께 가진 사람은 두 번 셈</span></div>
+        </div>
+        <div className="kpi">
+          <div className="k-label">장기요양 시설 정원</div>
+          <div className="k-value">{nf(ltc?.v)}<small> 명</small></div>
+          <div className="k-sub">{ltc ? <><span className="kl">인구 천 명당 {fmt(ltc.pct * 10)}명</span><span className="kl muted">{poolName} 중 {ltc.rank ?? "–"}위 / {ltc.n}</span></> : "자료 없음"}</div>
+        </div>
+        <div className="kpi">
+          <div className="k-label">임신부·영유아</div>
+          <div className="k-value">{nf((head("preg")?.v || 0) + (head("age0_4")?.v || 0))}<small> 명</small></div>
+          <div className="k-sub"><span className="kl">등록 임산부 {nf(head("preg")?.v)}명</span><span className="kl">0~4세 {nf(head("age0_4")?.v)}명</span></div>
+        </div>
       </div>
       <div className="seg" style={{ margin: "8px 0", flexWrap: "wrap" }}>
         {["전체", ...CATS].map((c) => <button key={c} className={`seg-btn ${cat === c ? "on" : ""}`} onClick={() => setCat(c)}>{c}</button>)}
@@ -59,7 +79,8 @@ export default function RiskCard({ sel, pool, poolName }) {
           </tbody>
         </table>
       </div>
-      <div className="desc" style={{ marginTop: 6 }}>순위는 인구 대비 비율이 높은 순(고위험군 비중이 큰 지역이 1위). 요양병원·장기요양 기관 수는 비율을 내지 않습니다. 정신의료기관 입원자·투석·만성폐질환·노숙인·의료 종사자 수는 시군구 자료가 없어 빠져 있습니다.</div>
+      <div className="desc" style={{ marginTop: 6 }}>순위는 인구 대비 비율이 높은 순입니다(고위험군 비중이 큰 지역이 1위). 요양병원·장기요양 기관 수는 비율을 내지 않습니다.</div>
+      <div className="desc">시군구 자료가 없어 빠진 집단: 정신의료기관 입원자 · 투석 환자 · 만성폐질환자 · 노숙인 · 의료 종사자.</div>
     </div>
   );
 }
