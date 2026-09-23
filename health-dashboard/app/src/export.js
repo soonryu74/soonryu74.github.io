@@ -4,7 +4,7 @@
 const SVG_PROPS = ["fill", "stroke", "stroke-width", "stroke-dasharray", "stroke-linejoin", "stroke-linecap",
   "opacity", "font-size", "font-family", "font-weight", "fill-opacity", "stroke-opacity", "paint-order", "text-anchor"];
 
-const safe = (s) => String(s).replace(/[\\/:*?"<>|\s]+/g, "_").slice(0, 80);
+export const safe = (s) => String(s).replace(/[\\/:*?"<>|\s]+/g, "_").slice(0, 80);
 
 const UA = navigator.userAgent || "";
 const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(UA);
@@ -25,7 +25,7 @@ function openExternal() {
   toast("이 앱의 내장 브라우저에서는 파일 저장이 막혀 있습니다. 메뉴에서 '다른 브라우저로 열기'를 눌러 주세요.", 6000);
 }
 
-async function download(blob, filename) {
+export async function download(blob, filename) {
   if (!blob) { toast("이미지를 만들지 못했습니다. 다시 시도해 주세요."); return; }
   // claude.ai 아티팩트 뷰어 안에서는 일반 다운로드가 막혀 있어 뷰어의 저장 기능을 사용
   if (window.claude?.use) {
