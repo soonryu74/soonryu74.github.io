@@ -555,6 +555,11 @@ tr.muted td { color: var(--muted); }
 .ra-btn:hover { color:var(--series-1); border-color:var(--series-1); }
 .ra-btn.on { background:var(--series-1); border-color:var(--series-1); color:#fff; }
 .ra-sel { border:1px solid var(--border); background:var(--surface-1); color:var(--text-secondary); border-radius:8px; padding:5px 8px; font-size:13.5px; }
+.ra-sel.sm { padding:4px 6px; font-size:12.5px; }
+.ra-vid { position:relative; margin:0 16px; padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--band); font-size:13px; color:var(--text-primary); overflow:hidden; flex:0 0 auto; }
+.ra-vid i { position:absolute; left:0; top:0; bottom:0; background:color-mix(in srgb, var(--series-1) 22%, transparent); transition:width .2s; }
+.ra-vid span { position:relative; }
+.ra-vid.err { border-color:#d8402a; color:#d8402a; }
 .ra-bar { display:flex; align-items:center; gap:3px; padding:6px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; flex:0 0 auto; }
 .ra-y, .ra-step { flex:0 0 auto; }
 .ra-y { border:1px solid var(--border); background:transparent; color:var(--muted); border-radius:6px; padding:2px 7px; font-size:12.5px; cursor:pointer; font-variant-numeric:tabular-nums; }
@@ -792,7 +797,7 @@ button.title-home:hover, button.title-home:focus-visible { text-decoration:under
   .rall { position:static !important; inset:auto !important; height:auto !important; background:#fff !important; color:#0b0b0b !important; display:block !important;
     --ra-track:rgba(0,0,0,.06); --ra-bar:#cfe3fb; --ra-bar-kin:#9ec5f4; --ra-bar-me:#f5a58f; --ra-me-line:#d8402a; }
   .rall * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
-  .ra-actions, .ra-step, .ra-y:not(.on), .ra-foot .ra-lg:last-child { display:none !important; }
+  .ra-actions, .ra-step, .ra-y:not(.on), .ra-foot .ra-lg:last-child, .ra-vid { display:none !important; }
   .ra-y.on { background:#2a78d6 !important; color:#fff !important; }
   .ra-nowyear { color:#2a78d6 !important; }
   .ra-head, .ra-bar, .ra-foot { border-color:#ddd !important; page-break-inside:avoid; }
