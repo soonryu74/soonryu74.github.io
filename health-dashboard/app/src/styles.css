@@ -781,3 +781,31 @@ tr.muted td { color: var(--muted); }
 /* 제목 = 홈 버튼: 눌러도 글자 모양은 그대로, 손가락 커서와 밑줄만 */
 button.title-home { all:unset; cursor:pointer; display:block; font-size:20px; font-weight:700; letter-spacing:-0.2px; color:inherit; font-family:inherit; }
 button.title-home:hover, button.title-home:focus-visible { text-decoration:underline; text-underline-offset:4px; outline:none; }
+
+
+/* ── 인쇄: 순위 「전체 보기」가 열려 있으면 그 화면만 세로로 길게(한 줄) 찍는다.
+   막대 색이 사라지지 않도록 print-color-adjust, 칸이 페이지 경계에서 잘리지 않도록 break-inside. ── */
+@media print {
+  @page { margin: 12mm; }
+  body.rall-open .viz-root > *:not(.rall) { display:none !important; }
+  body.rall-open, body.rall-open .viz-root { overflow:visible !important; background:#fff !important; }
+  .rall { position:static !important; inset:auto !important; height:auto !important; background:#fff !important; color:#0b0b0b !important; display:block !important;
+    --ra-track:rgba(0,0,0,.06); --ra-bar:#cfe3fb; --ra-bar-kin:#9ec5f4; --ra-bar-me:#f5a58f; --ra-me-line:#d8402a; }
+  .rall * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+  .ra-actions, .ra-step, .ra-y:not(.on), .ra-foot .ra-lg:last-child { display:none !important; }
+  .ra-y.on { background:#2a78d6 !important; color:#fff !important; }
+  .ra-nowyear { color:#2a78d6 !important; }
+  .ra-head, .ra-bar, .ra-foot { border-color:#ddd !important; page-break-inside:avoid; }
+  .ra-head h3, .ra-head h3 small, .ra-kick, .ra-ends, .ra-me, .ra-foot { color:#0b0b0b !important; }
+  .ra-me { background:#f1f1ef !important; }
+  .ra-grid { overflow:visible !important; height:auto !important; padding:6px 0 !important; }
+  .ra-canvas { height:auto !important; }
+  .ra-cell { position:static !important; transform:none !important; width:auto !important; height:22px !important; margin:0 0 3px;
+    break-inside:avoid; page-break-inside:avoid; transition:none !important; font-size:11.5px; }
+  .ra-cell .ra-nm, .ra-cell .ra-v, .ra-cell .ra-no { color:#0b0b0b !important; }
+  .ra-cell.me { box-shadow:none !important; outline:2px solid #d8402a; outline-offset:-2px; }
+  .ra-fill { transition:none !important; }
+  /* 지표 분석 화면의 순위 목록도 인쇄 시 스크롤 상자 없이 전부 */
+  .rank.scroll { max-height:none !important; overflow:visible !important; }
+  .rrow { break-inside:avoid; }
+}
