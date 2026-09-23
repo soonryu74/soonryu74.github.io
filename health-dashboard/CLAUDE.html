@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=2ef4ad68fc4e6bd1b95c4f1001e284c8d1c3afb1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=fa871d65f46a510491f3936f91fb8b06e4767ae0">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -321,6 +321,10 @@ scripts/build_covid.py <xlsx> → data/covid_sgg.json(시도 17·시군구 228, 
   서울 중구 확진율 141%·종로구 105%(직장·검사소), 세종 35%·군위군 2.2%(인접 지역으로 유출). → 개별 시군구 순위 금지, 시도·4분위 등 뭉친 비교만 유효.
 공공데이터포털도 KOSIS처럼 연결을 끊는다(proxy 1006 after 11s). 파일 다운로드는 `/tcs/dss/selectFileDataDownload.do` JSON에서 atchFileId를 얻어 `/cmm/cmm/fileDownload.do?atchFileId=…&amp;fileDetailSn=1`.
 카드 반영(소유자 승인 "그래 진행해"): RiskCard 하단 「코로나19 실적 참고」 — 선택 지역(시군구는 참고치 표기)·소속 시도·전국 시군구 중앙값 3행 + 65세 이상 4분위별 치명률 표 + 병원 소재지 경고문. 시군구 순위는 표시하지 않음. 자료원 탭에 카드 추가(coverage covid).</xlsx></li>
+  <li>[완료] <strong>「의견·문의」 메뉴</strong>(2026-09-23, 소유자 지시 “수정 의견이나 문의할 수 있도록 메뉴를, 깨지지 않도록”): app/src/components/FeedbackView.jsx + data/contact.json(email·github_repo·site·response_note·faq 5개).
+서버·외부 요청 없음 → 네트워크·서버 장애로 실패할 일이 없다. 보내는 길 3가지: ① 이메일 앱(mailto, 제목·본문 자동) ② 내용 복사(clipboard → execCommand 폴백, 실패 시 미리보기 드래그 안내) ③ GitHub 이슈(개발자용, 새 이슈 URL 프리필).
+구분 4종·내용(5자 이상, 2,000자)·이름/소속·회신 이메일(형식 검사)·「보고 있던 화면 링크+브라우저 정보」 자동 첨부(의견 탭 직전 화면 해시 기억). 초안은 localStorage 자동 저장(try/catch, 사생활 모드 무해). mailto 1,800자 초과 시 잘림 안내.
+탭은 맨 끝(자료원 다음), footer 에 「수정 의견·문의 보내기 →」 링크, 해시 view=feedback. 받는 주소는 data/contact.json 의 email 한 곳에서만 바꾼다(현재 소유자 Gmail — 공개 페이지에 노출됨).</li>
   <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>

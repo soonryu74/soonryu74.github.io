@@ -19,6 +19,7 @@ import HotspotView from "./components/HotspotView";
 import ChronicleView from "./components/ChronicleView";
 import KpiView from "./components/KpiView";
 import SourcesView from "./components/SourcesView";
+import FeedbackView from "./components/FeedbackView";
 import ExportButtons from "./components/ExportButtons";
 
 const DEFAULT_IND = INDICATORS.find((i) => i.id === "DT_H_SM") || INDICATORS[0];
@@ -37,7 +38,7 @@ function readHash() {
     sgg: RBY.get(sgg0)?.l === "sgg" ? sgg0 : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
-    view: ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources"].includes(h.get("view")) ? h.get("view") : "analysis",
+    view: ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback"].includes(h.get("view")) ? h.get("view") : "analysis",
     ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
@@ -63,6 +64,9 @@ export default function App() {
   const [mapMode, setMapMode] = useState("auto");
   const [mapLabels, setMapLabels] = useState(true);
   const [view, setView] = useState(init.view);      // analysis | profile | compare
+  // 「의견·문의」에 자동으로 붙일 「보고 있던 화면」 주소 — 문의 탭이 아닌 마지막 화면의 해시를 기억
+  const [feedbackFrom, setFeedbackFrom] = useState(() => window.location.href);
+  useEffect(() => { if (view !== "feedback") setFeedbackFrom(window.location.href); }, [view, window.location.hash]);
   const [cmp, setCmp] = useState(init.cmp);         // 비교 대상 코드 목록 (NAT = 전국 중앙값)
   const [rankOpt, setRankOpt] = useState(init.rankOpt); // 순위 산출 방식 (방법론 v1)
   const [ncdInd, setNcdInd] = useState(init.ncdInd);     // 지식베이스 지표 필터
@@ -175,6 +179,7 @@ export default function App() {
               <button className={`seg-btn ${view === "chronicle" ? "on" : ""}`} onClick={() => setView("chronicle")}>연대기 전시관</button>
               <button className={`seg-btn ${view === "units" ? "on" : ""}`} onClick={() => setView("units")}>조사 단위</button>
               <button className={`seg-btn ${view === "sources" ? "on" : ""}`} onClick={() => setView("sources")}>자료원</button>
+              <button className={`seg-btn fb-tab ${view === "feedback" ? "on" : ""}`} onClick={() => setView("feedback")} title="수정 의견·오류 신고·자료 문의">의견·문의</button>
             </div>
             <button className="themebtn" onClick={() => bumpFs(-1)} disabled={fs <= -1} title="글자 작게">A−</button>
             <button className="themebtn" onClick={() => bumpFs(1)} disabled={fs >= 2} title="글자 크게">A+</button>
@@ -191,7 +196,7 @@ export default function App() {
           </div>
         )}
 
-        {!["units", "ncd", "corr", "hot", "chronicle", "sources"].includes(view) && <div className="controls">
+        {!["units", "ncd", "corr", "hot", "chronicle", "sources", "feedback"].includes(view) && <div className="controls">
           {view !== "profile" && view !== "kpi" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
           {view !== "compare" && view !== "kpi" && (
@@ -218,7 +223,9 @@ export default function App() {
 
         <div ref={bodyRef} className="body-anchor" />
 
-        {view === "sources" ? (
+        {view === "feedback" ? (
+          <FeedbackView currentUrl={feedbackFrom} />
+        ) : view === "sources" ? (
           <SourcesView />
         ) : view === "units" ? (
           <UnitsView setTip={setTip} />
@@ -324,6 +331,7 @@ export default function App() {
           지도 경계: 통계청 2018 행정구역(행정구역 변경분은 최신 코드로 연결).<br />
           전국 기준값은 전 시군구 중앙값. 표준화율은 연령 표준화 값으로 지역 간 비교에 적합합니다.
           구조는 질병관리청 수도권질병대응센터 CIAT를 참조했습니다.
+          {" "}<button type="button" className="linkbtn" onClick={() => { setView("feedback"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>수정 의견·문의 보내기 →</button>
         </footer>
       </div>
       <Tooltip tip={tip} />
