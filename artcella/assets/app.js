@@ -27,7 +27,7 @@ const ART = (function () {
     const links = NAV.map(([href, label]) =>
       `<a href="${href}"${href === current ? ' aria-current="page"' : ''}>${label}</a>`).join('');
     return `<header class="site-header"><div class="nav-inner">
-      <a class="brand" href="index.html"><span class="mark">아트셀라</span><span class="en">Artcella</span></a>
+      <a class="brand" href="index.html"><span class="mark">아트셀라</span><span class="en">ARTSELAH</span></a>
       <button class="nav-toggle" aria-expanded="false" aria-controls="sitenav">메뉴</button>
       <nav class="site-nav" id="sitenav">${links}</nav>
     </div></header>`;
@@ -36,7 +36,7 @@ const ART = (function () {
   function footer() {
     return `<footer class="site-footer"><div class="wrap cols">
       <div>
-        <h4>아트셀라 Artcella</h4>
+        <h4>아트셀라 ARTSELAH</h4>
         <p>작가의 작업실과 보는 사람 사이를 잇는 온라인 전시 공간입니다.</p>
         <p>작품 문의는 작품 상세 화면의 「문의하기」로 받습니다.</p>
       </div>
