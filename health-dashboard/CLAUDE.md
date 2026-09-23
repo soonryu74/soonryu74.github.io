@@ -252,7 +252,7 @@
 - [완료] **「의견·문의」 메뉴**(2026-09-23, 소유자 지시 "수정 의견이나 문의할 수 있도록 메뉴를, 깨지지 않도록"): app/src/components/FeedbackView.jsx + data/contact.json(email·github_repo·site·response_note·faq 5개).
   서버·외부 요청 없음 → 네트워크·서버 장애로 실패할 일이 없다. 보내는 길 3가지: ① 이메일 앱(mailto, 제목·본문 자동) ② 내용 복사(clipboard → execCommand 폴백, 실패 시 미리보기 드래그 안내) ③ GitHub 이슈(개발자용, 새 이슈 URL 프리필).
   구분 4종·내용(5자 이상, 2,000자)·이름/소속·회신 이메일(형식 검사)·「보고 있던 화면 링크+브라우저 정보」 자동 첨부(의견 탭 직전 화면 해시 기억). 초안은 localStorage 자동 저장(try/catch, 사생활 모드 무해). mailto 1,800자 초과 시 잘림 안내.
-  탭은 맨 끝(자료원 다음), footer 에 「수정 의견·문의 보내기 →」 링크, 해시 view=feedback. 받는 주소는 data/contact.json 의 email 한 곳에서만 바꾼다(현재 소유자 Gmail — 공개 페이지에 노출됨).
+  탭은 맨 끝(자료원 다음), footer 에 「수정 의견·문의 보내기 →」 링크, 해시 view=feedback. 받는 주소는 data/contact.json 의 email 한 곳에서만 바꾼다(2026-09-23 소유자 지정: khealth.profile@gmail.com).
 - [대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.
 - [대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)
 - [대기] Vercel/GitHub Pages 배포 결정
