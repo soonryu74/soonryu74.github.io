@@ -17,6 +17,7 @@
     ['yeongu.html', '연구 DB'],
     ['chucheon.html', '내게 맞는 영양제'],
     ['jepum.html', '제품 고르는 법'],
+    ['bigyo.html', '제품 환산 계산기'],
     ['rnd.html', 'R&D'],
     ['about.html', '원칙·소개']
   ];

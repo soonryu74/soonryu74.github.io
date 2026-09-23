@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"근거영양 플랫폼 기획안 v0.2","url":"/docs/yeongyangje-platform-plan.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=65c7cd0c8421d85b674f98219ff7053eeb23cedf">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cd8f559a36546da0986266748d745bb5ff6de63e">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -367,6 +367,14 @@
   <li>성분 40종 전부에 <code class="language-plaintext highlighter-rouge">status</code>(국내 지위 뱃지), <code class="language-plaintext highlighter-rouge">statusNote</code>, <code class="language-plaintext highlighter-rouge">statusSrc</code>(식약처·의약품안전나라 등) 추가. 성분 카드와 등급 페이지 표에 동시 표시.</li>
   <li><code class="language-plaintext highlighter-rouge">yongeo.html</code>: 용어 45개(<code class="language-plaintext highlighter-rouge">data/glossary.js</code>). 본문 자동 툴팁은 용어당 최대 3회, 앞뒤 경계 검사, <code class="language-plaintext highlighter-rouge">data-noglossary</code>로 페이지 단위 제외.</li>
   <li>미확인: 개별 제품 허가 상태는 변경될 수 있어 각 뱃지의 <code class="language-plaintext highlighter-rouge">statusSrc</code> 링크에서 재확인 필요. 감수 시 약사 검토 항목.</li>
+</ul>
+
+<h2 id="11-제품-환산-계산기-2026-09-23-추가">11. 제품 환산 계산기 (2026-09-23 추가)</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">bigyo.html</code> + <code class="language-plaintext highlighter-rouge">data/calc.js</code>: 라벨 숫자(총량·1회량·1일 횟수·1회당 함량·가격) → 일수, 1일 비용, 성분 단위당 가격, 연구 용량·식약처 기능성 함량·상한섭취량 대비 위치. 최대 3개 나란히 비교, 브라우저 localStorage에만 저장.</li>
+  <li>설계 원칙: 사이트는 브랜드·제품명을 싣지 않는다(사용자 입력만). 평가어 없이 숫자·범위·출처만 표시. 기준값 21종은 성분 카드·kdri.js에 이미 있는 값만 사용, 바꿀 때 함께 갱신.</li>
+  <li>2단계(실명 비교표)는 변호사 검토 후: 공개 라벨 숫자만, 확인일·계산식·정정 창구 표기.</li>
 </ul>
 
 
