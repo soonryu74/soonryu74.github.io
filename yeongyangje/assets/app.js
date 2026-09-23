@@ -18,6 +18,7 @@
     ['chucheon.html', '내게 맞는 영양제'],
     ['jepum.html', '제품 고르는 법'],
     ['bigyo.html', '제품 환산 계산기'],
+    ['goyongryang.html', '고용량 요법·주사'],
     ['rnd.html', 'R&D'],
     ['about.html', '원칙·소개']
   ];
