@@ -276,7 +276,8 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .cond-item p { margin: 2px 0 0; font-size: .88rem; color: var(--muted); }
 .cond-item a { font-size: .8rem; }
 .ing .mini { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-.ing .mini span { font-size: .72rem; padding: 1px 7px; border-radius: 6px; color: #fff; font-weight: 700; }
+.ing .mini span:not(.stat-badge) { font-size: .72rem; padding: 1px 7px; border-radius: 6px; color: #fff; font-weight: 700; }
+.ing .mini .stat-badge { font-size: .74rem; }
 
 /* ---------- 약물 상호작용 · 조합 · 타이밍 ---------- */
 .drug-chip { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 9px 15px; border: 1.5px solid var(--line-strong); border-radius: 12px; background: #fff; cursor: pointer; font-size: .95rem; font-weight: 700; color: var(--ink); transition: all .12s; }
