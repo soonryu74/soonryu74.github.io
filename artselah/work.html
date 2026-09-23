@@ -89,8 +89,17 @@ Promise.all([ART.load(), fetch('data/site.json').then(r => r.json())]).then(([d,
 
   const body = `[아트셀라 작품 문의]\n작품: ${w.title} (${w.id})\n작가: ${a.name}\n크기: ${w.size}\n재료: ${w.medium}\n가격: ${ART.priceLabel(w)}\n\n문의 내용:\n`;
   document.getElementById('msg').value = body;
-  document.getElementById('mailBtn').href =
-    `mailto:${site.contactEmail}?subject=${encodeURIComponent('[작품 문의] ' + w.title + ' — ' + a.name)}&body=${encodeURIComponent(body)}`;
+  const mailBtn = document.getElementById('mailBtn');
+  if (site.contactEmail) {
+    mailBtn.href =
+      `mailto:${site.contactEmail}?subject=${encodeURIComponent('[작품 문의] ' + w.title + ' — ' + a.name)}&body=${encodeURIComponent(body)}`;
+  } else {
+    // 문의 주소가 아직 없으면 빈 메일창이 열리지 않게 하고, 내용 복사로 안내한다
+    mailBtn.textContent = '문의 주소 준비 중';
+    mailBtn.classList.add('ghost');
+    mailBtn.setAttribute('aria-disabled', 'true');
+    mailBtn.addEventListener('click', e => e.preventDefault());
+  }
   document.getElementById('copyBtn').addEventListener('click', async e => {
     try { await navigator.clipboard.writeText(body); e.target.textContent = '복사했습니다'; }
     catch { document.getElementById('msg').select(); e.target.textContent = '직접 복사해 주세요'; }

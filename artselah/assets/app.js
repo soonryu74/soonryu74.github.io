@@ -47,9 +47,10 @@ const ART = (function () {
         <p><a href="artists.html">참여 작가</a></p>
       </div>
       <div>
-        <h4>알림</h4>
-        <p>이 사이트의 작품 그림은 사진을 넣기 전의 자리그림입니다.</p>
-        <p>작가·작품·전시 정보는 예시로 구성했습니다.</p>
+        <h4>안내</h4>
+        <p>모든 작품은 작가의 동의를 받아 게시합니다.</p>
+        <p>작품 사진의 무단 사용을 금합니다.</p>
+        <p class="credit">기획·제작 — 지음 <span style="letter-spacing:.18em">JIEUM</span> · 2026.09</p>
       </div>
     </div></footer>`;
   }
