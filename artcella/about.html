@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>소개·문의 | 아트셀라</title>
+<meta name="description" content="아트셀라가 어떤 곳인지, 작품 문의와 작가 참여는 어떻게 하는지 안내합니다.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:40px;padding:36px 0}
+  .box{border:1px solid var(--line);background:#fff;padding:22px;box-shadow:var(--shadow)}
+  .box h3{font-family:"Gowun Batang",serif;font-size:1.15rem;margin:0 0 8px}
+  .qa{border-top:1px solid var(--line);padding:18px 0}
+  .qa b{font-family:"Gowun Batang",serif;font-weight:400;font-size:1.08rem}
+  .qa p{color:var(--ink-2);margin:.5em 0 0}
+  code{background:var(--paper-2);padding:1px 6px;border-radius:3px;font-size:.88em}
+  @media (max-width:860px){ .cols2{grid-template-columns:1fr;gap:22px} }
+</style>
+</head>
+<body>
+
+<div class="page-head"><div class="wrap">
+  <span class="kicker">About</span>
+  <h1 class="title">작품 앞에 오래 서 있을 수 있게</h1>
+  <p class="lead">아트셀라는 작가의 작업실과 작품을 보는 사람 사이를 잇는 온라인 전시 공간입니다. 한 번에 많이 보여 주기보다, 한 점을 오래 볼 수 있게 만드는 것을 목표로 합니다.</p>
+</div></div>
+
+<div class="wrap cols2">
+  <div>
+    <h2 class="sec">이렇게 운영합니다</h2>
+    <div class="qa"><b>전시 단위로 묶습니다</b>
+      <p>작품을 낱개로 늘어놓지 않고 전시로 묶습니다. 전시실에 들어가면 한 점씩 차례로 보게 됩니다.</p></div>
+    <div class="qa"><b>지난 전시도 남깁니다</b>
+      <p>전시가 끝나도 작품과 글은 아카이브에 그대로 남습니다. 판매된 작품도 기록으로 볼 수 있습니다.</p></div>
+    <div class="qa"><b>작가의 말을 함께 싣습니다</b>
+      <p>작품마다 작가가 직접 쓴 두어 문장을 붙입니다. 설명이 아니라 작업하면서 있었던 일에 가깝습니다.</p></div>
+    <div class="qa"><b>가격을 숨기지 않습니다</b>
+      <p>판매 가능한 작품은 가격을 그대로 적습니다. 문의 후에야 가격을 알려 드리는 방식은 쓰지 않습니다.</p></div>
+  </div>
+  <div>
+    <div class="box">
+      <h3>작품 문의</h3>
+      <p>작품 상세 화면의 「메일로 문의」를 누르면 작품 정보가 담긴 메일이 자동으로 작성됩니다. 메일 앱이 없으면 「내용 복사」로 붙여 넣어 보내 주세요.</p>
+      <p style="margin:.6em 0 0"><a class="btn ghost" href="gallery.html">작품 보러 가기</a></p>
+    </div>
+    <div class="box" style="margin-top:22px">
+      <h3>작가로 참여하기</h3>
+      <p>전시를 함께할 작가를 상시로 찾고 있습니다. 작품 사진 10점 내외와 간단한 작업 소개를 보내 주시면 검토 후 연락드립니다.</p>
+    </div>
+    <div class="box" style="margin-top:22px">
+      <h3>관람료</h3>
+      <p>온라인 전시 관람은 무료입니다. 실물 관람은 전시 기간 중 예약제로 운영합니다.</p>
+    </div>
+  </div>
+</div>
+
+<section class="band"><div class="wrap">
+  <h2 class="sec">사이트를 고치는 분께</h2>
+  <p class="sec-sub">디자인을 건드리지 않고 내용만 바꾸는 방법입니다.</p>
+  <div class="cols2" style="padding-top:8px">
+    <div>
+      <div class="qa"><b>작품·작가·전시 추가</b>
+        <p><code>data/works.json</code>, <code>data/artists.json</code>, <code>data/exhibitions.json</code> 세 파일만 고치면 모든 화면에 바로 반영됩니다.</p></div>
+      <div class="qa"><b>문의 주소 바꾸기</b>
+        <p><code>data/site.json</code> 의 <code>contactEmail</code> 값을 바꾸면 모든 작품의 문의 버튼이 그 주소로 갑니다.</p></div>
+    </div>
+    <div>
+      <div class="qa"><b>실제 작품 사진 넣기</b>
+        <p>작품 하나에 <code>"image": "assets/works/파일명.jpg"</code> 를 적어 주면 자리그림 대신 그 사진이 나옵니다. 사진이 없는 작품만 자리그림이 유지됩니다.</p></div>
+      <div class="qa"><b>자리그림이란</b>
+        <p>사진이 준비되지 않은 작품 자리에 코드로 그려 넣는 그림입니다. 작가의 색과 작품 번호로 만들어지므로 새로고침해도 같은 그림이 나옵니다.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<script src="assets/art.js"></script>
+<script src="assets/app.js"></script>
+<script>ART.chrome('about.html');</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>작가 | 아트셀라</title>
+<meta name="description" content="아트셀라 작가 소개 — 작업 이야기, 이력, 전체 작품.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .a-head{display:grid;grid-template-columns:1fr 300px;gap:40px;padding:44px 0;border-bottom:1px solid var(--line);align-items:start}
+  .a-head .band-swatch{display:flex;height:180px;border:1px solid var(--line)}
+  .a-head .band-swatch i{flex:1}
+  .cv{font-size:.93rem;color:var(--ink-2)}
+  .cv h3{font-family:"Gowun Batang",serif;color:var(--ink);font-size:1.02rem;margin:18px 0 6px}
+  .cv li{margin:.2em 0}
+  @media (max-width:860px){ .a-head{grid-template-columns:1fr;gap:20px;padding:26px 0} }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="crumb" style="font-size:.86rem;color:var(--ink-2);padding:20px 0 0"></div>
+<div class="wrap a-head" id="head"></div>
+
+<section class="band"><div class="wrap">
+  <h2 class="sec" id="wt">작품</h2>
+  <p class="sec-sub" id="ws"></p>
+  <div class="grid" id="works"></div>
+</div></section>
+
+<script src="assets/art.js"></script>
+<script src="assets/app.js"></script>
+<script>
+ART.chrome('artists.html');
+ART.load().then(d => {
+  const a = d.byArtist[ART.param('id')] || d.artists[0];
+  const ws = d.works.filter(w => w.artist === a.id);
+  document.title = `${a.name} — 작가 | 아트셀라`;
+  document.getElementById('crumb').innerHTML = `<a href="artists.html">작가</a> › ${a.name}`;
+
+  const exhs = d.exhibitions.filter(e => e.works.some(id => d.byWork[id].artist === a.id));
+
+  document.getElementById('head').innerHTML = `
+    <div>
+      <span class="kicker">${a.genre}</span>
+      <h1 class="title">${a.name} <span style="font-size:.9rem;color:var(--ink-2);font-family:inherit">${a.en}</span></h1>
+      <p class="lead" style="font-size:1.06rem">${a.tagline}</p>
+      <p style="color:var(--ink-2);max-width:62ch">${a.bio}</p>
+      <div class="cv">
+        <h3>학력</h3><ul>${a.edu.map(x => `<li>${x}</li>`).join('')}</ul>
+        <h3>개인전</h3><ul>${a.solo.map(x => `<li>${x}</li>`).join('')}</ul>
+        ${exhs.length ? `<h3>아트셀라 전시</h3><ul>${exhs.map(e =>
+          `<li><a href="exhibition.html?id=${e.id}">${e.title}</a> (${ART.period(e)})</li>`).join('')}</ul>` : ''}
+      </div>
+    </div>
+    <div>
+      <div class="band-swatch">${a.palette.map(c => `<i style="background:${c}"></i>`).join('')}</div>
+      <p style="font-size:.84rem;color:var(--ink-2);margin-top:8px">작가가 자주 쓰는 색</p>
+      <p style="font-size:.93rem;color:var(--ink-2)">활동 지역 ${a.base} · ${a.born}년생</p>
+    </div>`;
+
+  document.getElementById('wt').textContent = `${a.name}의 작품`;
+  document.getElementById('ws').textContent = `${ws.length}점`;
+  document.getElementById('works').innerHTML = ws.map(w => ART.card(w, a)).join('');
+});
+</script>
+</body>
+</html>

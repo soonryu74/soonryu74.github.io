@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전시실 | 아트셀라</title>
+<meta name="description" content="아트셀라 전시실 — 복도를 걸으며 작품을 한 점씩 보는 관람 화면.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body{background:#141210;color:#e7e0d6}
+  .room-top{max-width:1180px;margin:0 auto;padding:16px 20px 10px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .room-top h1{font-family:"Gowun Batang",serif;font-size:1.35rem;margin:0;color:#fff}
+  .room-top .m{font-size:.86rem;color:#a89f93}
+  .room-top a{color:#cdbfa6;font-size:.88rem;margin-left:auto}
+
+  .viewport{position:relative;height:72vh;min-height:380px;overflow:hidden;
+    perspective:900px;perspective-origin:50% 44%;
+    background:radial-gradient(120% 90% at 50% 40%,#2a2621 0%,#171512 60%,#0e0c0b 100%)}
+  .world{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.22,.61,.36,1)}
+  .floor{position:absolute;left:-60%;width:220%;height:2600px;bottom:-4%;
+    background:linear-gradient(to bottom,#3a332b 0%,#221e1a 60%,#141210 100%);
+    transform:rotateX(78deg) translateZ(-200px);transform-origin:bottom center;opacity:.9}
+  .piece{position:absolute;left:50%;top:50%;transform-style:preserve-3d;width:230px}
+  .piece .lamp{position:absolute;left:50%;top:-86px;width:260px;height:110px;transform:translateX(-50%);
+    background:radial-gradient(ellipse 45% 70% at 50% 6%,rgba(255,238,206,.38),rgba(255,238,206,0) 72%);
+    filter:blur(6px);pointer-events:none}
+  .piece .plate{display:block;background:#f7f3ec;padding:10px;border:1px solid #cfc6b8;
+    box-shadow:0 18px 40px rgba(0,0,0,.55);text-decoration:none}
+  .piece .plate .canvas{display:block;overflow:hidden;background:#e8e2d8}
+  .piece .plate .canvas svg,.piece .plate .canvas img{width:100%;height:auto;display:block}
+  .piece .cap{margin-top:9px;font-size:.76rem;color:#cfc4b4;line-height:1.5;text-align:center}
+  .piece .cap b{display:block;font-family:"Gowun Batang",serif;font-size:.92rem;color:#f3ece1;font-weight:400}
+
+  .controls{max-width:1180px;margin:0 auto;padding:16px 20px 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .ctl{background:#221f1b;border:1px solid #3b352d;color:#e7e0d6;border-radius:999px;padding:9px 16px;font:inherit;font-size:.9rem;cursor:pointer}
+  .ctl:hover{background:#2c2822}
+  .ctl[disabled]{opacity:.4;cursor:default}
+  .ctl.primary{background:#cdbfa6;color:#1a1714;border-color:#cdbfa6}
+  .pos{font-size:.86rem;color:#a89f93;margin-left:auto}
+  .now-caption{max-width:1180px;margin:0 auto;padding:6px 20px 44px;color:#b7ada0;font-size:.92rem}
+  .now-caption b{color:#fff;font-family:"Gowun Batang",serif;font-weight:400;font-size:1.05rem}
+  .hint{font-size:.82rem;color:#7d756a;padding:0 20px 30px;max-width:1180px;margin:0 auto}
+  @media (max-width:700px){ .viewport{height:58vh} .piece{width:160px} }
+</style>
+</head>
+<body>
+
+<div class="room-top">
+  <h1 id="exTitle">전시실</h1>
+  <span class="m" id="exMeta"></span>
+  <a id="backLink" href="exhibition.html">← 전시 소개로</a>
+</div>
+
+<div class="viewport" id="vp" tabindex="0" aria-label="전시실. 좌우 방향키로 이동합니다.">
+  <div class="world" id="world"><div class="floor"></div></div>
+</div>
+
+<div class="controls">
+  <button class="ctl" id="prev">← 이전 작품</button>
+  <button class="ctl primary" id="next">다음 작품 →</button>
+  <button class="ctl" id="auto">자동 관람</button>
+  <span class="pos" id="pos"></span>
+</div>
+<p class="now-caption" id="cap"></p>
+<p class="hint">방향키 ← → 로도 움직입니다. 작품을 누르면 상세 화면으로 갑니다.</p>
+
+<script src="assets/art.js"></script>
+<script src="assets/app.js"></script>
+<script>
+// 화면이 좁으면 복도를 좁혀 현재 작품이 화면 밖으로 밀려나지 않게 한다
+const NARROW = window.innerWidth < 700;
+const GAP = NARROW ? 430 : 520;   // 작품 사이 거리
+const WALL = NARROW ? 150 : 330;  // 벽까지 좌우 거리
+const TILT = NARROW ? 24 : 32;    // 벽에 걸린 각도
+const PAN = NARROW ? 0.78 : 0.52; // 현재 작품 쪽으로 따라가는 정도
+
+ART.load().then(d => {
+  const ex = d.exhibitions.find(e => e.id === ART.param('id')) || d.exhibitions[0];
+  const works = ex.works.map(id => d.byWork[id]);
+  document.getElementById('exTitle').textContent = ex.title;
+  document.getElementById('exMeta').textContent = `${ART.period(ex)} · ${ex.place} · ${works.length}점`;
+  document.getElementById('backLink').href = `exhibition.html?id=${ex.id}`;
+  document.title = `${ex.title} 전시실 | 아트셀라`;
+
+  const world = document.getElementById('world');
+  world.insertAdjacentHTML('beforeend', works.map((w, i) => {
+    const side = i % 2 ? 1 : -1;
+    const a = d.byArtist[w.artist];
+    return `<div class="piece" data-i="${i}" style="transform:translate(-50%,-50%) translate3d(${side * WALL}px,-20px,${-i * GAP}px) rotateY(${-side * TILT}deg)">
+      <span class="lamp"></span>
+      <a class="plate" href="work.html?id=${w.id}">
+        <span class="canvas">${ART.visual(w, a)}</span>
+      </a>
+      <div class="cap"><b>${w.title}</b>${a.name} · ${w.year} · ${w.medium}</div>
+    </div>`;
+  }).join(''));
+
+  let at = 0, timer = null;
+
+  function go(i) {
+    at = Math.max(0, Math.min(works.length - 1, i));
+    const side = at % 2 ? 1 : -1;               // 현재 작품이 걸린 쪽
+    world.style.transform = `translateX(${-side * WALL * PAN}px) translateZ(${at * GAP}px)`;
+    document.querySelectorAll('.piece').forEach(p => {
+      const dist = Math.abs(+p.dataset.i - at);
+      p.style.opacity = dist > 3 ? 0 : String(1 - dist * 0.18);
+    });
+    const w = works[at], a = d.byArtist[w.artist];
+    document.getElementById('cap').innerHTML =
+      `<b>${w.title}</b> ${a.name} · ${w.year} · ${w.medium} · ${w.size}<br>${w.note}`;
+    document.getElementById('pos').textContent = `${at + 1} / ${works.length}`;
+    document.getElementById('prev').disabled = at === 0;
+    document.getElementById('next').disabled = at === works.length - 1;
+  }
+
+  function stopAuto() {
+    clearInterval(timer); timer = null;
+    document.getElementById('auto').textContent = '자동 관람';
+    document.getElementById('auto').classList.remove('primary');
+  }
+
+  document.getElementById('prev').addEventListener('click', () => { stopAuto(); go(at - 1); });
+  document.getElementById('next').addEventListener('click', () => { stopAuto(); go(at + 1); });
+  document.getElementById('auto').addEventListener('click', e => {
+    if (timer) return stopAuto();
+    e.target.textContent = '멈추기';
+    e.target.classList.add('primary');
+    timer = setInterval(() => {
+      if (at >= works.length - 1) { stopAuto(); return; }
+      go(at + 1);
+    }, 3800);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { stopAuto(); go(at + 1); }
+    if (e.key === 'ArrowLeft') { stopAuto(); go(at - 1); }
+  });
+
+  go(0);
+  document.getElementById('vp').focus({ preventScroll: true });
+});
+</script>
+</body>
+</html>

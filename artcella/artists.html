@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>참여 작가 | 아트셀라</title>
+<meta name="description" content="아트셀라와 함께하는 회화·사진·드로잉·도예·판화·설치·조각 작가들. 작업 이야기와 전체 작품을 봅니다.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .a-item{display:grid;grid-template-columns:1fr 240px;gap:32px;border-top:1px solid var(--line);padding:30px 0;align-items:center}
+  .a-item .mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .a-item .mini a{display:block;aspect-ratio:3/4;overflow:hidden;border:1px solid var(--line);background:#fff}
+  .a-item .mini svg,.a-item .mini img{width:100%;height:100%;object-fit:cover;display:block}
+  .a-item h2{font-family:"Gowun Batang",serif;font-size:1.5rem;margin:0 0 2px}
+  .a-item .sub{color:var(--ink-2);font-size:.9rem;margin:0 0 10px}
+  @media (max-width:860px){ .a-item{grid-template-columns:1fr;gap:16px} }
+</style>
+</head>
+<body>
+
+<div class="page-head"><div class="wrap">
+  <span class="kicker">Artists</span>
+  <h1 class="title">참여 작가</h1>
+  <p class="lead">각자 다른 재료를 쓰지만, 한 자리를 오래 들여다본다는 점이 닮은 여덟 분입니다.</p>
+</div></div>
+
+<div class="wrap" id="list"></div>
+<div style="height:60px"></div>
+
+<script src="assets/art.js"></script>
+<script src="assets/app.js"></script>
+<script>
+ART.chrome('artists.html');
+ART.load().then(d => {
+  document.getElementById('list').innerHTML = d.artists.map(a => {
+    const ws = d.works.filter(w => w.artist === a.id).slice(0, 3);
+    return `<article class="a-item">
+      <div>
+        <h2><a href="artist.html?id=${a.id}" style="text-decoration:none">${a.name}</a>
+          <span style="font-size:.8rem;color:var(--ink-2);font-family:inherit">${a.en}</span></h2>
+        <p class="sub">${a.genre} · ${a.base} · ${a.born}년생</p>
+        <p style="margin:0 0 10px">${a.tagline}</p>
+        <p style="color:var(--ink-2);font-size:.94rem;margin:0">${a.bio}</p>
+        <p style="margin:14px 0 0"><a class="btn ghost" href="artist.html?id=${a.id}">작가 페이지</a></p>
+      </div>
+      <div class="mini">${ws.map(w =>
+        `<a href="work.html?id=${w.id}" title="${w.title}">${ART.visual(w, a)}</a>`).join('')}</div>
+    </article>`;
+  }).join('');
+});
+</script>
+</body>
+</html>
