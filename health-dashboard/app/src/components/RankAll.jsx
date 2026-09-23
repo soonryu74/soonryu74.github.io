@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { fmt, ranked, label, val, RBY } from "../data";
 import { saveSvgString, savePngFromSvg, saveCsvRows } from "../export";
 
-/* 전체 보기 — 순위 전체를 막대그래프로 한 화면에 펼치고, 연도를 재생하면 막대 길이와 자리(순위)가 함께 움직인다.
+/* 전체 보기 — 순위 전체를 막대그래프로 펼치고, 연도를 재생하면 막대 길이와 자리(순위)가 함께 움직인다.
    막대 길이 = 값(0 기준, 모든 연도 공통 척도라 늘고 줌이 그대로 보임) · 선택 지역 = 붉은 막대 · ▲▼ = 전년 대비 순위 변동.
-   SVG·PNG·CSV 내려받기 지원. 모든 지표·모든 집단 탭에 동일 적용. */
+   2026-09-23 소유자 지시: 좌우로 나누지 말고 **항상 한 줄(1열)** 로, 258개라도 위에서 아래로. 막대가 화면 폭 전체를 쓰므로 격차가 한눈에 보인다.
+   인쇄(🖨)하면 이 화면만 세로로 길게 나온다(styles.css @media print). SVG·PNG·CSV 내려받기 지원. 모든 지표·모든 집단 탭 공통. */
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -32,8 +34,14 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
     };
     window.addEventListener("keydown", h);
     const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
-    return () => { window.removeEventListener("keydown", h); document.body.style.overflow = prev; };
+    document.body.classList.add("rall-open");                       // 인쇄 시 이 화면만 남기기 위한 표식
+    return () => { window.removeEventListener("keydown", h); document.body.style.overflow = prev; document.body.classList.remove("rall-open"); };
   }, [year]);
+  // 열릴 때 선택 지역이 보이도록 스크롤
+  useEffect(() => {
+    const t = setTimeout(() => wrapRef.current?.querySelector(".ra-cell.me")?.scrollIntoView({ block: "center" }), 60);
+    return () => clearTimeout(t);
+  }, []);
   useEffect(() => {
     if (!play) return;
     const t = setInterval(() => onYear(years[(years.indexOf(year) + 1) % years.length]), speed);
@@ -57,17 +65,13 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
 
   const n = rows.length;
   const narrow = size.w < 560;
-  const minColW = big ? (narrow ? 160 : 250) : (narrow ? 96 : 172);
-  const minRowH = big ? 20 : (narrow ? 14 : 15), idealRowH = big ? 26 : (narrow ? 17 : 23);
-  const maxCols = clamp(Math.floor(size.w / minColW), 1, 12);
-  const perIdeal = Math.max(1, Math.floor(size.h / idealRowH));
-  const cols = clamp(Math.ceil(n / perIdeal), 1, maxCols);
-  const perCol = Math.ceil(n / cols) || 1;
-  const rowH = clamp(Math.floor(size.h / perCol), minRowH, idealRowH);
-  const colW = size.w / cols;
+  // 항상 1열: 개수와 상관없이 위에서 아래로 한 줄. 길면 세로 스크롤(인쇄 시에는 전부 펼침).
+  const perCol = n || 1;
+  const rowH = big ? 30 : (narrow ? 22 : 24);
+  const colW = size.w;
   const gridH = perCol * rowH;
-  const compact = colW < 152;
-  const tiny = colW < 112;
+  const compact = narrow;
+  const tiny = size.w < 340;
 
   const nameOf = (r, short) => (r.hc ? r.hc.replace(/보건소$/, "") : r.l === "sgg" && !short ? `${r.s} ${r.n}` : r.n);
   const isMineC = (r) => r.c === sel.c || (r.l === "sub" && r.p === sel.c);
@@ -119,7 +123,7 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
     saveCsvRows([head, ...body], fileBase);
   };
 
-  return (
+  return createPortal(
     <div className="rall" role="dialog" aria-label="순위 전체 보기">
       <header className="ra-head">
         <div className="ra-t">
@@ -129,7 +133,8 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
         <div className="ra-nowyear">{year}</div>
         <div className="ra-actions">
           <button className={`ra-btn ${play ? "on" : ""}`} onClick={() => setPlay(!play)}>{play ? "■ 정지" : "▶ 연도 재생"}</button>
-          <button className={`ra-btn ${big ? "on" : ""}`} onClick={() => setBig(!big)} title="열 수를 줄여 크게 보기">{big ? "촘촘히" : "크게"}</button>
+          <button className={`ra-btn ${big ? "on" : ""}`} onClick={() => setBig(!big)} title="줄 높이를 키워 보기">{big ? "촘촘히" : "크게"}</button>
+          <button className="ra-btn" onClick={() => window.print()} title="이 화면만 세로로 길게 인쇄(전체 순위가 한 줄로 나옵니다)">🖨 인쇄</button>
           <select className="ra-sel" value={speed} onChange={(e) => setSpeed(+e.target.value)} title="재생 속도">
             <option value={1800}>느리게</option><option value={1100}>보통</option><option value={600}>빠르게</option>
           </select>
@@ -158,7 +163,7 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
       <div className="ra-grid" ref={wrapRef}>
         <div className="ra-canvas" style={{ height: gridH }}>
           {rows.map(({ r, v }, i) => {
-            const col = Math.floor(i / perCol), row = i % perCol;
+            const col = 0, row = i;
             const pr = prevRank ? prevRank.get(r.c) : null;
             const d = pr != null ? pr - (i + 1) : null;
             const me = isMineC(r);
@@ -185,6 +190,7 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
         <span className="ra-swbar me" /><span className="ra-lg">선택 지역</span>
         <span className="ra-lg">{rev ? "오른쪽·아래로 갈수록 양호" : "왼쪽·위가 양호"} · ▲▼ = 전년 대비 순위 변동 · 칸을 누르면 그 지역으로 이동 · Space 재생, ← → 연도, Esc 닫기</span>
       </footer>
-    </div>
+    </div>,
+    document.querySelector(".viz-root") || document.body     // 테마 변수(--page 등)가 .viz-root 에 있어 그 안에 띄운다
   );
 }
