@@ -48,7 +48,7 @@
     </div>
   </div>
   <div class="hero-art">
-    <span class="canvas" id="heroArt"></span>
+    <button class="canvas hero-btn" id="heroArt" aria-label="대표 작품 크게 보기"></button>
     <div class="hero-cap" id="heroCap"></div>
   </div>
 </div></section>
@@ -74,17 +74,55 @@
   <div class="artist-row" id="artistRow"></div>
 </div></section>
 
+<dialog class="lightbox" id="lb"><div class="inner" id="lbInner"></div></dialog>
+
 <script src="assets/art.js"></script>
 <script src="assets/app.js"></script>
 <script>
 ART.chrome('index.html');
 ART.load().then(d => {
-  // 머리 그림 — 지금 전시의 첫 작품
+  // 머리 그림 — 지금 전시 작품을 천천히 돌려 보여 주고, 누르면 크게 본다
   const live = d.exhibitions.find(e => e.status === '진행중') || d.exhibitions[0];
-  const hw = d.byWork[live.works[0]];
-  document.getElementById('heroArt').innerHTML = ART.visual(hw, d.byArtist[hw.artist]);
-  document.getElementById('heroCap').textContent =
-    `${d.byArtist[hw.artist].name}, 「${hw.title}」, ${hw.year}, ${hw.medium}`;
+  const heroWorks = live.works.map(id => d.byWork[id]).filter(Boolean);
+  const heroArt = document.getElementById('heroArt');
+  const heroCap = document.getElementById('heroCap');
+  const lb = document.getElementById('lb');
+  const slow = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let hi = 0, timer = null;
+
+  function caption(w) {
+    const a = d.byArtist[w.artist];
+    return `${a.name}, 「${w.title}」, ${w.year}, ${w.medium}`;
+  }
+  function showHero(i) {
+    hi = (i + heroWorks.length) % heroWorks.length;
+    const w = heroWorks[hi];
+    heroArt.innerHTML = ART.visual(w, d.byArtist[w.artist]);
+    heroArt.classList.remove('fade'); void heroArt.offsetWidth; heroArt.classList.add('fade');
+    heroCap.textContent = caption(w);
+    document.querySelectorAll('#nowStrip .canvas').forEach((el, n) =>
+      el.classList.toggle('on', n === hi));
+  }
+  function play() { if (!slow && heroWorks.length > 1) timer = setInterval(() => showHero(hi + 1), 6000); }
+  function pause() { clearInterval(timer); timer = null; }
+
+  // 크게 보기 — 작품 페이지로 넘어가지 않고 그 자리에서 원본 크기로
+  function openLarge(w) {
+    pause();
+    document.getElementById('lbInner').innerHTML =
+      `${ART.visual(w, d.byArtist[w.artist])}
+       <p class="lb-cap">${caption(w)}</p>
+       <p class="lb-go"><a href="work.html?id=${w.id}">작품 이야기 · 소장 문의 →</a></p>`;
+    lb.showModal();
+  }
+  lb.addEventListener('click', e => { if (e.target === lb) lb.close(); });
+  lb.addEventListener('close', play);
+  heroArt.addEventListener('click', () => openLarge(heroWorks[hi]));
+  document.querySelector('.hero-art').addEventListener('mouseenter', pause);
+  document.querySelector('.hero-art').addEventListener('mouseleave', play);
+
+  showHero(0);
+  play();
 
   // 지금 전시
   document.getElementById('nowSub').textContent = `${ART.period(live)} · ${live.place}`;
@@ -94,10 +132,15 @@ ART.load().then(d => {
      <p style="margin-top:18px">
        <a class="btn" href="room.html?id=${live.id}">전시실 들어가기</a>
        <a class="btn ghost" href="exhibition.html?id=${live.id}">전시 소개</a></p>`;
-  document.getElementById('nowStrip').innerHTML = live.works.slice(0, 6).map(id => {
-    const w = d.byWork[id];
-    return `<a class="canvas" href="work.html?id=${w.id}" title="${w.title}">${ART.visual(w, d.byArtist[w.artist])}</a>`;
-  }).join('');
+  document.getElementById('nowStrip').innerHTML = heroWorks.map((w, n) =>
+    `<button class="canvas${n === 0 ? ' on' : ''}" data-n="${n}" title="${w.title}"
+      aria-label="${w.title} 크게 보기">${ART.visual(w, d.byArtist[w.artist])}</button>`).join('');
+  document.getElementById('nowStrip').addEventListener('click', e => {
+    const btn = e.target.closest('.canvas'); if (!btn) return;
+    const n = Number(btn.dataset.n);
+    showHero(n);          // 위의 큰 그림도 같이 바꾸고
+    openLarge(heroWorks[n]); // 원본 크기로 연다
+  });
 
   // 새 작품
   const recent = [...d.works].sort((a, b) => b.year - a.year || a.id.localeCompare(b.id)).slice(0, 8);

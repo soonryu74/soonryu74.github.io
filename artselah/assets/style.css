@@ -112,3 +112,22 @@ section.band{padding:52px 0;border-bottom:1px solid var(--line)}
 
 /* 푸터 제작 크레딧 — 주변 글씨보다 한 단계 연하게 */
 .credit { margin-top: 10px; font-size: 12px; color: #8a8f9a; }
+
+/* 크게 보기 — 홈과 작품 상세가 함께 쓴다 */
+.lightbox{border:0;padding:0;background:transparent;max-width:min(94vw,1100px);max-height:92vh}
+.lightbox::backdrop{background:rgba(18,17,15,.88)}
+.lightbox .inner{background:#fff;border-radius:12px;padding:14px;max-height:92vh;overflow:auto}
+.lightbox .canvas,.lightbox img{display:block;width:100%;height:auto;max-height:76vh;object-fit:contain}
+.lb-cap{margin:12px 4px 0;font-size:.9rem;color:var(--ink-2);text-align:center}
+.lb-go{margin:6px 4px 2px;text-align:center;font-size:.9rem;font-weight:700}
+
+/* 머리 그림 — 눌러서 크게 볼 수 있는 단추, 바뀔 때 부드럽게 */
+.hero-btn{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in}
+.hero-btn.fade{animation:heroIn .6s ease}
+@keyframes heroIn{from{opacity:.25}to{opacity:1}}
+
+/* 지금 전시 썸네일 — 고른 것을 표시한다 */
+#nowStrip .canvas{padding:0;border:1px solid var(--line);background:#fff;cursor:zoom-in;border-radius:8px;overflow:hidden}
+#nowStrip .canvas.on{outline:2px solid var(--ink);outline-offset:1px}
+
+@media (prefers-reduced-motion: reduce){ .hero-btn.fade{animation:none} }
