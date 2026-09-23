@@ -814,3 +814,41 @@ button.title-home:hover, button.title-home:focus-visible { text-decoration:under
   .rank.scroll { max-height:none !important; overflow:visible !important; }
   .rrow { break-inside:avoid; }
 }
+
+
+/* ── 의견·문의 ── */
+.feedback .card { margin-bottom:14px; }
+.fb-form { display:flex; flex-direction:column; gap:12px; margin-top:8px; }
+.fb-row { display:flex; flex-direction:column; gap:5px; font-size:14px; color:var(--text-secondary); min-width:0; }
+.fb-row > span { font-weight:600; color:var(--text-primary); }
+.fb-row .req { font-size:11px; font-weight:700; color:#d8402a; margin-left:6px; }
+.fb-row select, .fb-row input, .fb-row textarea { width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:15px; font-family:inherit;
+  background:var(--surface-1); color:var(--text-primary); }
+.fb-row textarea { resize:vertical; min-height:120px; line-height:1.55; }
+.feedback .fb-row select { width:100%; max-width:560px; }
+.fb-row input.bad { border-color:#d8402a; }
+.fb-row select:focus, .fb-row input:focus, .fb-row textarea:focus { outline:2px solid var(--series-1); outline-offset:1px; }
+.fb-cnt { align-self:flex-end; font-size:12px; color:var(--muted); }
+.fb-cnt.warn { color:#d8402a; }
+.fb-two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.fb-chk { font-size:13.5px; color:var(--text-secondary); display:flex; gap:8px; align-items:flex-start; line-height:1.5; }
+.fb-chk input { margin-top:3px; }
+.fb-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.fb-btn { display:inline-flex; align-items:center; gap:4px; border:1px solid var(--border); background:var(--surface-1); color:var(--text-primary); border-radius:10px; padding:10px 14px; font-size:14.5px; font-weight:700; cursor:pointer; text-decoration:none; font-family:inherit; }
+.fb-btn:hover { border-color:var(--series-1); color:var(--series-1); }
+.fb-btn.primary { background:var(--series-1); border-color:var(--series-1); color:#fff; }
+.fb-btn.primary:hover { color:#fff; filter:brightness(1.08); }
+.fb-btn.primary.dim { opacity:.55; }
+.fb-btn.ghost { border-color:transparent; color:var(--muted); font-weight:600; }
+.fb-status { border-radius:10px; padding:9px 12px; font-size:14px; line-height:1.5; }
+.fb-status.ok { background:color-mix(in srgb, var(--series-1) 12%, transparent); color:var(--text-primary); }
+.fb-status.err { background:color-mix(in srgb, #d8402a 12%, transparent); color:#b93419; }
+.fb-status.info { background:var(--band); color:var(--text-secondary); }
+.fb-preview summary { cursor:pointer; font-size:13.5px; color:var(--muted); }
+.fb-preview pre { white-space:pre-wrap; word-break:break-all; font-size:13px; line-height:1.55; background:var(--band); border-radius:10px; padding:10px 12px; margin:6px 0 0; color:var(--text-secondary); user-select:all; }
+.fb-faq details { border-top:1px solid var(--border); padding:8px 0; }
+.fb-faq details:first-child { border-top:none; }
+.fb-faq summary { cursor:pointer; font-size:15px; font-weight:600; color:var(--text-primary); }
+.fb-faq p { margin:8px 0 0; font-size:14px; line-height:1.6; color:var(--text-secondary); }
+footer .linkbtn { all:unset; cursor:pointer; color:var(--series-1); font-weight:600; font-size:14px; text-decoration:underline; text-underline-offset:3px; }
+@media (max-width: 600px){ .fb-two { grid-template-columns:1fr; } .fb-actions .fb-btn { flex:1 1 45%; justify-content:center; } }
