@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>코로나19 시군구별 사망률 비교 — 고위험군 카드 검증용 (v1, 2026-09-23) | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="코로나19 시군구별 사망률 비교 — 고위험군 카드 검증용 (v1, 2026-09-23)" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="코로나19 시군구별 사망률 비교 — 고위험군 카드 검증용 (v1, 2026-09-23)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"코로나19 시군구별 사망률 비교 — 고위험군 카드 검증용 (v1, 2026-09-23)","url":"/health-dashboard/docs/%EC%BD%94%EB%A1%9C%EB%82%9819_%EC%8B%9C%EA%B5%B0%EA%B5%AC_%EC%82%AC%EB%A7%9D%EB%A5%A0_%EB%B9%84%EA%B5%90_v1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=b382c61fdc56d9a92f364c1ec597a56f8494273a">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="코로나19-시군구별-사망률-비교--고위험군-카드-검증용-v1-2026-09-23">코로나19 시군구별 사망률 비교 — 고위험군 카드 검증용 (v1, 2026-09-23)</h1>
+
+<p>소유자 질문: “지자체별로 코로나19 때 연령별 감염자 수나 참고로 비교할 만한 데이터가 있을까?” → 받아지면 시군구별 사망률을 비교해 보고.</p>
+
+<h2 id="1-쓸-수-있는-자료와-없는-자료">1. 쓸 수 있는 자료와 없는 자료</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>자료</th>
+      <th>단위</th>
+      <th>연령</th>
+      <th>기간</th>
+      <th>판단</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>질병관리청 「코로나19 시군구별 월별 확진자 및 사망 발생 현황」(공공데이터포털 15124288)</td>
+      <td><strong>시군구</strong> × 월</td>
+      <td>없음</td>
+      <td>2020-01-20 ~ 2023-08-31 (전수감시 종료)</td>
+      <td><strong>이번에 사용</strong></td>
+    </tr>
+    <tr>
+      <td>질병관리청 「코로나19 확진자 발생현황(전수감시)」(15127820)</td>
+      <td>연령별은 전국만 · 지역은 시도·시군구 합계</td>
+      <td>전국만</td>
+      <td>같음</td>
+      <td>연령 참고선용</td>
+    </tr>
+    <tr>
+      <td>질병관리청 「코로나19 예방접종 통계 현황」(15131145)</td>
+      <td>시도 × 연령군 4개 × 1~3차</td>
+      <td>시도만</td>
+      <td>2021-02 ~ 2023-10</td>
+      <td>시군구 없음</td>
+    </tr>
+    <tr>
+      <td>사망원인통계 코로나19(U07.1)</td>
+      <td>시도 × 연령</td>
+      <td>시도만</td>
+      <td>2020~2024</td>
+      <td>시군구 없음</td>
+    </tr>
+    <tr>
+      <td>서울 열린데이터광장 자치구별 확진자·사망자</td>
+      <td>자치구</td>
+      <td>없음(개인정보 지침)</td>
+      <td>같음</td>
+      <td>위 1과 중복</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>결론: 「지자체별 × 연령별」 감염자·사망자는 어디에도 공표되지 않았다.</strong> 시군구 단위는 확진·사망 합계뿐이고, 연령별은 전국 단위뿐이다.</p>
+
+<h2 id="2-처리">2. 처리</h2>
+
+<p><code class="language-plaintext highlighter-rouge">scripts/build_covid.py &lt;xlsx&gt;</code> → <code class="language-plaintext highlighter-rouge">data/covid_sgg.json</code>. 원자료 xlsx(148KB)는 <code class="language-plaintext highlighter-rouge">data/raw_covid/</code>(gitignore)에 보관.</p>
+<ul>
+  <li>시트 「확진자」·「사망자」의 연도별 「전체」 열을 더해 2020~2023.8 누적. ‘-‘는 0.</li>
+  <li>일반구(고양시 덕양구 등)는 시로 합산, 「합계」 행은 시도 값, 「검역」(확진 2,441 · 사망 2)은 제외.</li>
+  <li>분모 인구는 고위험군 카드와 같은 <strong>2024년 연앙인구</strong>(data/risk.json). 유행기와 연도가 달라 근사.</li>
+  <li>결과: 시도 17 · 시군구 230(인구 있는 228) 매칭. 세종은 시도 행(0071)과 시군구 행을 따로 두었다.</li>
+</ul>
+
+<p><strong>합계 검증</strong> — 시도 합 확진 34,552,981 · 사망 35,020 · 치명률 0.101%. 질병관리청 최종 집계(2023-08-31, 확진 34,571,873 · 사망 35,934)와 확진은 0.05% 차이(검역 2,441 제외분), 사망은 2.5% 적다(검역·주소 불명 등). 비교 목적에는 지장이 없는 차이.</p>
+
+<h2 id="3-결과">3. 결과</h2>
+
+<p>시군구 228개 중앙값: <strong>누적 확진율 64.8%(인구 100명당) · 인구 10만 명당 사망 66.1명 · 치명률 0.108%</strong>.</p>
+
+<h3 id="31-고위험군이-많을수록-치명률이-높다--그러나-사망률인구당은-약하게만">3.1 고위험군이 많을수록 치명률이 높다 — 그러나 사망률(인구당)은 약하게만</h3>
+
+<p>65세 이상 비율 4분위별 중앙값:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>65세 이상 비율</th>
+      <th>확진율</th>
+      <th>10만 명당 사망</th>
+      <th><strong>치명률</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1분위 10.6~18.2% (도시)</td>
+      <td>70.0%</td>
+      <td>53.2</td>
+      <td><strong>0.077%</strong></td>
+    </tr>
+    <tr>
+      <td>2분위 18.2~23.6%</td>
+      <td>66.7%</td>
+      <td>66.8</td>
+      <td>0.104%</td>
+    </tr>
+    <tr>
+      <td>3분위 23.7~33.9%</td>
+      <td>64.5%</td>
+      <td>71.7</td>
+      <td>0.121%</td>
+    </tr>
+    <tr>
+      <td>4분위 33.9~46.5% (군)</td>
+      <td>52.3%</td>
+      <td>74.1</td>
+      <td><strong>0.146%</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>고령 비율 최상위 군 지역은 최하위 도시 지역보다 <strong>확진율은 낮고(52 vs 70%), 치명률은 2배</strong>다. 고위험군 카드의 「65세 이상 비율」이 감염 시 위험을 실제로 반영한다는 뜻이다.</p>
+
+<p>스피어만 순위상관(시군구 228, 세종 시도 중복 제거 전 229 기준 값과 소수 둘째 자리까지 같음):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>고위험군 지표(카드)</th>
+      <th>vs 10만 명당 사망</th>
+      <th>vs 치명률</th>
+      <th>vs 확진율</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>65세 이상 비율</td>
+      <td>0.29</td>
+      <td><strong>0.49</strong></td>
+      <td>−0.67</td>
+    </tr>
+    <tr>
+      <td>75세 이상 비율</td>
+      <td>0.29</td>
+      <td>0.48</td>
+      <td>−0.65</td>
+    </tr>
+    <tr>
+      <td>독거노인 비율</td>
+      <td>0.31</td>
+      <td><strong>0.51</strong></td>
+      <td>−0.65</td>
+    </tr>
+    <tr>
+      <td>고혈압 진단경험자 비율(추정)</td>
+      <td>0.23</td>
+      <td>0.43</td>
+      <td>−0.66</td>
+    </tr>
+    <tr>
+      <td>장기요양 시설 정원(천 명당)</td>
+      <td>0.22</td>
+      <td>0.36</td>
+      <td>−0.47</td>
+    </tr>
+    <tr>
+      <td>의사 수(10만 명당)</td>
+      <td>0.30</td>
+      <td>0.10</td>
+      <td>+0.58</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>읽는 법 — 고령·독거·기저질환 비율은 치명률과 중간 정도(0.4~0.5) 상관이 있다. 인구당 사망과는 약하다(0.2~0.3). 이유는 고령 지역이 <strong>덜 감염됐기</strong> 때문(확진율과 −0.65): 인구 밀도가 낮고 이동이 적어 감염 자체가 적었고, 걸리면 더 많이 죽었다. 의사 수는 확진율과 +0.58인데 이는 병원이 많은 도심에 검사·신고가 몰린 결과다(아래 3.3).</p>
+
+<p><img src="/health-dashboard/docs/%EC%BD%94%EB%A1%9C%EB%82%9819_%EC%B9%98%EB%AA%85%EB%A5%A0_vs_%EA%B3%A0%EB%A0%B9%EB%B9%84%EC%9C%A8.png" alt="치명률 vs 65세 이상 비율" /></p>
+
+<h3 id="32-시도">3.2 시도</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>시도</th>
+      <th>확진율</th>
+      <th>10만 명당 사망</th>
+      <th>치명률</th>
+      <th>65세+</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>서울</td>
+      <td>72.7</td>
+      <td>70.0</td>
+      <td>0.096</td>
+      <td>18.9</td>
+    </tr>
+    <tr>
+      <td>부산</td>
+      <td>64.1</td>
+      <td>88.5</td>
+      <td>0.138</td>
+      <td>23.3</td>
+    </tr>
+    <tr>
+      <td>대구</td>
+      <td>64.2</td>
+      <td>79.1</td>
+      <td>0.123</td>
+      <td>20.3</td>
+    </tr>
+    <tr>
+      <td>인천</td>
+      <td>66.5</td>
+      <td>64.9</td>
+      <td>0.098</td>
+      <td>17.1</td>
+    </tr>
+    <tr>
+      <td>광주</td>
+      <td>72.3</td>
+      <td>61.7</td>
+      <td>0.085</td>
+      <td>17.0</td>
+    </tr>
+    <tr>
+      <td>대전</td>
+      <td>70.6</td>
+      <td>69.9</td>
+      <td>0.099</td>
+      <td>17.5</td>
+    </tr>
+    <tr>
+      <td>울산</td>
+      <td>67.3</td>
+      <td>47.4</td>
+      <td>0.070</td>
+      <td>16.6</td>
+    </tr>
+    <tr>
+      <td>세종</td>
+      <td>35.3</td>
+      <td>7.6</td>
+      <td>0.022</td>
+      <td>11.3</td>
+    </tr>
+    <tr>
+      <td>경기</td>
+      <td>68.1</td>
+      <td>61.6</td>
+      <td>0.090</td>
+      <td>16.1</td>
+    </tr>
+    <tr>
+      <td>강원</td>
+      <td>66.3</td>
+      <td>92.5</td>
+      <td>0.139</td>
+      <td>24.7</td>
+    </tr>
+    <tr>
+      <td>충북</td>
+      <td>67.7</td>
+      <td>67.6</td>
+      <td>0.100</td>
+      <td>21.4</td>
+    </tr>
+    <tr>
+      <td>충남</td>
+      <td>65.4</td>
+      <td>76.3</td>
+      <td>0.117</td>
+      <td>21.8</td>
+    </tr>
+    <tr>
+      <td>전북</td>
+      <td>67.1</td>
+      <td>72.8</td>
+      <td>0.109</td>
+      <td>24.7</td>
+    </tr>
+    <tr>
+      <td>전남</td>
+      <td>63.7</td>
+      <td>60.5</td>
+      <td>0.095</td>
+      <td>26.7</td>
+    </tr>
+    <tr>
+      <td>경북</td>
+      <td>62.4</td>
+      <td>83.7</td>
+      <td>0.134</td>
+      <td>25.4</td>
+    </tr>
+    <tr>
+      <td>경남</td>
+      <td>64.3</td>
+      <td>65.0</td>
+      <td>0.101</td>
+      <td>21.2</td>
+    </tr>
+    <tr>
+      <td>제주</td>
+      <td>67.5</td>
+      <td>47.7</td>
+      <td>0.071</td>
+      <td>18.4</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>사망률 상위는 강원(92.5)·부산(88.5)·경북(83.7)·대구(79.1) — 고령 비율이 높거나(강원·경북) 2020년 초 대유행지(대구)·초기 요양병원 집단감염지(부산). 세종은 확진율 35%·사망 7.6으로 비정상적으로 낮아 <strong>세종 주민의 검사·신고가 상당 부분 대전 등 인접 보건소로 잡힌 것</strong>으로 보인다(3.3).</p>
+
+<h3 id="33-가장-중요한-주의--거주지가-아니라-신고-보건소-관할-기준이다">3.3 가장 중요한 주의 — 「거주지」가 아니라 「신고 보건소 관할」 기준이다</h3>
+
+<p>인구 10만 명당 사망 상위 10개 시군구:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>시군구</th>
+      <th>사망</th>
+      <th>10만 명당</th>
+      <th>치명률</th>
+      <th>확진율</th>
+      <th>65세+</th>
+      <th>소재 대형병원</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>부산 서구</td>
+      <td>351</td>
+      <td><strong>340.4</strong></td>
+      <td>0.44%</td>
+      <td>76.8%</td>
+      <td>28.9%</td>
+      <td>부산대병원·동아대병원</td>
+    </tr>
+    <tr>
+      <td>대구 남구</td>
+      <td>385</td>
+      <td>281.4</td>
+      <td>0.38%</td>
+      <td>73.4%</td>
+      <td>27.1%</td>
+      <td>영남대병원·대구가톨릭대병원</td>
+    </tr>
+    <tr>
+      <td>광주 동구</td>
+      <td>256</td>
+      <td>241.5</td>
+      <td>0.31%</td>
+      <td>77.4%</td>
+      <td>23.1%</td>
+      <td>전남대병원·조선대병원</td>
+    </tr>
+    <tr>
+      <td>전남 화순군</td>
+      <td>137</td>
+      <td>225.2</td>
+      <td>0.34%</td>
+      <td>66.9%</td>
+      <td>30.3%</td>
+      <td>화순전남대병원</td>
+    </tr>
+    <tr>
+      <td>대구 중구</td>
+      <td>207</td>
+      <td>223.1</td>
+      <td>0.33%</td>
+      <td>67.8%</td>
+      <td>18.8%</td>
+      <td>경북대병원·계명대 동산병원</td>
+    </tr>
+    <tr>
+      <td>경북 안동시</td>
+      <td>307</td>
+      <td>201.0</td>
+      <td>0.31%</td>
+      <td>64.5%</td>
+      <td>28.2%</td>
+      <td>안동병원(권역)</td>
+    </tr>
+    <tr>
+      <td>강원 강릉시</td>
+      <td>410</td>
+      <td>197.2</td>
+      <td>0.29%</td>
+      <td>66.9%</td>
+      <td>25.4%</td>
+      <td>강릉아산병원</td>
+    </tr>
+    <tr>
+      <td>전북 순창군</td>
+      <td>51</td>
+      <td>190.7</td>
+      <td>0.36%</td>
+      <td>52.3%</td>
+      <td>37.2%</td>
+      <td>(고령 군)</td>
+    </tr>
+    <tr>
+      <td>충북 영동군</td>
+      <td>72</td>
+      <td>164.6</td>
+      <td>0.28%</td>
+      <td>58.6%</td>
+      <td>37.4%</td>
+      <td>(고령 군)</td>
+    </tr>
+    <tr>
+      <td>서울 종로구</td>
+      <td>225</td>
+      <td>164.1</td>
+      <td>0.16%</td>
+      <td>104.9%</td>
+      <td>20.9%</td>
+      <td>서울대병원</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>상위 10곳 중 8곳이 <strong>권역 상급종합병원 소재지</strong>다. 사망이 사망 장소(병원)를 관할하는 보건소로 신고·집계됐다는 뜻이며, 거주지 기준이 아니다. 확진자도 마찬가지다 — 서울 중구 확진율 141%, 종로구 105%는 주민보다 직장인·검사소 이용자가 많이 잡힌 결과다. 반대로 세종(35%)·군위군(2.2%)은 인접 지역으로 빠져나갔다.</p>
+
+<p>따라서 <strong>이 자료로 시군구 사망률을 1등부터 줄 세우면 안 된다.</strong> 「부산 서구가 코로나에 가장 취약했다」가 아니라 「부산 서구에서 가장 많이 사망 신고됐다」이다. 시도 단위·4분위 단위처럼 뭉뚱그리면 병원 효과가 희석되어 3.1 같은 비교가 가능하지만, 개별 시군구 값은 참고치로만 써야 한다.</p>
+
+<h3 id="34-서울-25개-구">3.4 서울 25개 구</h3>
+
+<p>10만 명당 사망 상위: 종로 164(서울대병원) · 동대문 127(경희대병원) · 서대문 122(세브란스) · 구로 103(고대구로병원) — 역시 병원 소재지. 하위: 마포 27 · 관악 44 · 서초 48 · 강남 51. 강남구는 65세 이상 16.1%로 서울 최저이고 사망률도 하위권이라 고위험군 카드와 방향이 맞다.</p>
+
+<h2 id="4-고위험군-카드-반영-소유자-승인-2026-09-23-그래-진행해">4. 고위험군 카드 반영 (소유자 승인 2026-09-23 “그래 진행해”)</h2>
+
+<p><strong>개별 순위가 아니라 「참고 실적」으로만</strong> 붙였다. RiskCard 하단 <code class="language-plaintext highlighter-rouge">CovidRef</code>:</p>
+
+<ol>
+  <li>카드 하단에 「코로나19 실적(2020.1~2023.8, 신고 보건소 관할 기준)」 한 줄: 누적 확진율·10만 명당 사망·치명률과 <strong>시도 값</strong>·전국 중앙값. 시군구 순위는 표시하지 않음.</li>
+  <li>병원 효과 경고문 필수: “사망은 사망 장소 관할 보건소로 집계되므로 대형병원이 있는 지역이 높게 나옵니다.”</li>
+  <li>65세 이상 비율 4분위별 치명률 표(0.077 → 0.146%)를 「고위험군 비율이 왜 중요한가」의 근거로 카드에 표시.</li>
+  <li>자료원 탭에 「코로나19 확진·사망(전수감시 기간)」 카드 추가(산식·주의문·원본 링크, 보건소별 보유 표기).</li>
+</ol>
+
+<h2 id="5-남은-것">5. 남은 것</h2>
+
+<ul>
+  <li>예방접종 통계(시도 × 연령군)는 내려받는 중(공공데이터포털 연결 끊김 재시도). 받으면 시도 65세 이상 3차 접종률 vs 치명률을 3.2 표에 한 열 추가.</li>
+  <li>거주지 기준 시군구 사망은 사망원인통계 마이크로데이터(MDIS) 신청 사안. 연령별 시군구는 어디에도 없음.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
