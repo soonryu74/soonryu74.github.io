@@ -194,7 +194,7 @@ footer a{color:var(--accent)}
 </section>
 
 <footer>
-  MVP · runs entirely in your browser. Your API key is stored only on this device (localStorage) and is sent only to Google's API.
+  MVP · <span id="privacy">runs entirely in your browser. Your API key is stored only on this device (localStorage) and is sent only to Google's API.</span>
   Built for the <a href="https://soonryu74.github.io/">노모어매뉴얼</a> Nunchi project.
 </footer>
 </div>
@@ -220,16 +220,31 @@ footer a{color:var(--accent)}
 <script>
 "use strict";
 const $ = s => document.querySelector(s);
-const LS = { key:'nunchi.key', model:'nunchi.model' };
+
+/* Server proxy. Leave empty and every learner brings their own Gemini key
+   (stage 1 — zero running cost). Fill it in with the deployed Edge Function URL
+   and the key moves to the server, conversations get logged, and the API key
+   panel disappears.  e.g. 'https://<project>.supabase.co/functions/v1/nunchi'  */
+const PROXY = '';
+
+const LS = { key:'nunchi.key', model:'nunchi.model', device:'nunchi.device' };
 const store = {
   get k(){ try{ return localStorage.getItem(LS.key)||'' }catch(e){ return '' } },
   get m(){ try{ return localStorage.getItem(LS.model)||'gemini-2.5-flash' }catch(e){ return 'gemini-2.5-flash' } },
   set(k,m){ try{ localStorage.setItem(LS.key,k); localStorage.setItem(LS.model,m) }catch(e){} },
-  clear(){ try{ localStorage.removeItem(LS.key) }catch(e){} }
+  clear(){ try{ localStorage.removeItem(LS.key) }catch(e){} },
+  get device(){
+    try{
+      let d = localStorage.getItem(LS.device);
+      if(!d){ d = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()); localStorage.setItem(LS.device, d); }
+      return d;
+    }catch(e){ return 'anon' }
+  }
 };
 
 /* ── model call ─────────────────────────────── */
-async function ask(system, user, schema){
+async function ask(system, user, schema, meta){
+  if(PROXY) return askProxy(system, user, schema, meta);
   const key = store.k;
   if(!key){ const e = new Error('no-key'); e.noKey = true; throw e; }
   const body = {
@@ -257,6 +272,21 @@ async function ask(system, user, schema){
   if(!text) throw new Error('The model returned nothing. Try again.');
   return schema ? JSON.parse(text) : text.trim();
 }
+/* Stage 2 — the key lives on the server, so the browser sends only the conversation. */
+async function askProxy(system, user, schema, meta){
+  const res = await fetch(PROXY, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ mode: meta?.mode || 'chat', system, prompt:user, schema,
+                           device: store.device, scene: meta?.scene, level: meta?.level })
+  });
+  let data = {};
+  try{ data = await res.json() }catch(e){}
+  if(!res.ok) throw new Error(data.error || `Request failed (${res.status}).`);
+  if(!data.text) throw new Error('The model returned nothing. Try again.');
+  return schema ? JSON.parse(data.text) : String(data.text).trim();
+}
+
 function fail(el, err){
   el.className = 'status bad';
   el.textContent = err && err.noKey ? 'Add an API key first (button at the top right) — the example below stays visible.' : (err?.message || 'Something went wrong.');
@@ -285,7 +315,8 @@ $('#save-key').addEventListener('click', () => {
 });
 $('#clear-key').addEventListener('click', () => { store.clear(); $('#key').value=''; $('#keybtn').textContent='API key'; });
 document.addEventListener('keydown', e => { if(e.key==='Escape') $('#sheet').hidden = true; });
-if(store.k) $('#keybtn').textContent = 'API key ✓';
+if(PROXY){ $('#keybtn').hidden = true; $('#privacy').textContent = 'no sign-up needed. Conversations are stored anonymously so the lessons can improve.'; }
+else if(store.k) $('#keybtn').textContent = 'API key ✓';
 
 /* ── MODE 1 · relationship dial ─────────────── */
 const LISTENERS = [
@@ -302,6 +333,20 @@ const DIAL_EXAMPLE = [
   { ko:'죄송합니다. 조금 늦을 것 같습니다', why:'With a stranger, apologise first — the reason comes second.' },
   { ko:'사장님, 죄송합니다. 30분 정도 늦을 것 같습니다. 최대한 빨리 가겠습니다', why:'Grammar alone is not enough: apology → fact → what you will do. Leaving out the apology reads as rude even though nothing is wrong.' }
 ];
+const DIAL_SYSTEM = `You are a Korean 화계(speech level) coach for foreign learners. The user gives one message. Write how a Korean would really say it to five listeners, in this fixed order:
+1 close friend — 해체/반말
+2 senior 선배 — 해요체, address term (형/누나/선배님) where natural
+3 coworker 동료 — 해요체
+4 stranger 모르는 사람 — 해요체, more distance
+5 boss 사장님 — 하십시오체
+
+Rules:
+- Change the whole politeness strategy, not just the verb ending: apology (죄송합니다/미안), hedging (좀, 혹시, -(으)ㄹ 것 같다), address terms, and what you offer to do about it. That shift is the entire point.
+- Write what a real person would type in a message today — short. No textbook sentences, no romanization, no English inside the Korean.
+- Keep the user's actual content. Do not invent new reasons or facts.
+- If the user writes in Korean, treat their sentence as the meaning to convey, not as text to correct.
+- "why" is ONE sentence of plain English about the social reason (who outranks whom, what a Korean expects to hear first). Never state a grammar rule. Never repeat the Korean line.`;
+
 const dialSchema = {
   type:'object',
   properties:{ lines:{ type:'array', minItems:5, maxItems:5, items:{
@@ -330,8 +375,8 @@ $('#dial-go').addEventListener('click', async () => {
   busy($('#dial-status'), 'Working…'); $('#dial-go').disabled = true;
   try{
     dialLines = (await ask(
-      'You are a Korean speech-level (화계) coach for foreign learners. Given one message, write how a Korean would actually say it to five different listeners: 1 close friend (해체), 2 senior/선배 (해요체), 3 coworker (해요체), 4 stranger (해요체, distant), 5 boss/사장님 (하십시오체). Natural, short, what a real person types — not textbook. Adjust politeness strategies (apology, hedging, address terms), not only the verb ending. "why" is one sentence of plain English explaining the social reason, not the grammar rule.',
-      msg, dialSchema)).lines;
+      DIAL_SYSTEM,
+      msg, dialSchema, { mode:'dial' })).lines;
     $('#dial-status').textContent = '';
     renderDial(dialLines);
   }catch(err){ fail($('#dial-status'), err); }
@@ -376,8 +421,13 @@ async function send(){
   const lvl = $('#level').value;
   try{
     const reply = await ask(
-      `You are ${scene.role}. Speak only Korean, 1–2 short sentences, like a real person in that situation. The learner is TOPIK level ${lvl}: stay inside that vocabulary and grammar range. NEVER correct their Korean and never mention mistakes — just keep the conversation going naturally and ask something back so they can reply.`,
-      turns.map(t => (t.role === 'ai' ? 'A: ' : 'B: ') + t.text).join('\n') + '\nA:'
+      `You are ${scene.role}. This is a live conversation, not a lesson.
+- Korean only. 1-2 short sentences. No English, no romanization, no parentheses, no explanations about language.
+- The learner is TOPIK level ${lvl}. Stay inside that vocabulary and grammar range; if you need a harder word, choose an easier one instead.
+- NEVER correct their Korean, never mention mistakes, never praise their Korean. If a line is broken or odd, react to what they most likely meant and move on — exactly like a busy real person would.
+- Stay in character and keep the situation moving: react, then ask one thing back so they have something to answer.`,
+      turns.map(t => (t.role === 'ai' ? 'A: ' : 'B: ') + t.text).join('\n') + '\nA:',
+      null, { mode:'chat', scene: scene.id, level: lvl }
     );
     turns.push({ role:'ai', text: reply }); bubble('ai', reply);
     $('#chat-status').textContent = '';
@@ -390,6 +440,25 @@ async function send(){
 renderScenes(); startScene();
 
 /* ── MODE 3 · review cards ──────────────────── */
+const REVIEW_SYSTEM = `You review a foreign learner's Korean AFTER the conversation is over. Only the lines marked B: are theirs. Return at most 5 cards.
+
+kind="wrong" — a real error: particle, ending, conjugation, wrong word.
+kind="odd" — grammatical, but no Korean would say it that way: word order, missing apology or hedge, too blunt for the listener, unnatural collocation, wrong speech level for who they are talking to.
+
+Prefer "odd" cards. Every app already marks errors; nobody tells learners that a correct sentence sounds rude or foreign. If a line is both, file the more useful one.
+
+THE ONE RULE THAT MATTERS: give the learner their own sentence back, repaired. Change only the part that is broken. Never upgrade their vocabulary, never make the sentence longer or more formal than they were going for, never merge two of their sentences. If your fix does not reuse most of their words, it is wrong — drop the card instead.
+
+Example of a good card:
+  original 배가 아파요 어제부터
+  fixed    어제부터 배가 아파요
+  alternative 어제부터 배가 좀 아파요
+  label    word order · 어순
+  kind     odd
+  why      Nothing here is ungrammatical, but Korean puts the time first. Trailing it sounds like you remembered halfway through.
+
+"alternative" is one other thing a Korean might say — optional, and only if it is genuinely different. "why" is one or two sentences of plain English, written to the learner. "label" is a short tag like "particle · 조사".`;
+
 const revSchema = {
   type:'object',
   properties:{ cards:{ type:'array', maxItems:5, items:{
@@ -405,17 +474,23 @@ const revSchema = {
     required:['kind','label','original','fixed','why'] } } },
   required:['cards']
 };
-/* Overcorrection guard — research shows LLMs rewrite far more than the learner's
-   error. Anything that changes more than 45% of the characters is dropped:
-   we teach the learner's own sentence back to them, not a new one. */
-function changeRatio(a,b){
-  a = (a||'').replace(/\s/g,''); b = (b||'').replace(/\s/g,'');
-  if(!a.length) return 1;
-  const m = Array.from({length:a.length+1}, (_,i) => [i, ...Array(b.length).fill(0)]);
-  for(let j=0;j<=b.length;j++) m[0][j] = j;
-  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++)
-    m[i][j] = Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1] + (a[i-1]===b[j-1]?0:1));
-  return m[a.length][b.length] / Math.max(a.length, b.length);
+/* Overcorrection guard — LLMs rewrite far more of a learner's sentence than the
+   error needs. We compare the two sentences as bags of syllables, so putting the
+   same words in the right order counts as no change (word order is exactly the
+   kind of card we want to keep), while swapping in new vocabulary does. Anything
+   that replaces more than 45% of what the learner actually wrote is dropped. */
+function changeRatio(a, b){
+  const bag = t => { const m = new Map();
+    for(const ch of String(t||'').replace(/[\s.,!?~…·]/g,'')) m.set(ch, (m.get(ch)||0)+1);
+    return m; };
+  const A = bag(a), B = bag(b);
+  if(!A.size) return 1;
+  let shared = 0, total = 0;
+  for(const ch of new Set([...A.keys(), ...B.keys()])){
+    const x = A.get(ch)||0, y = B.get(ch)||0;
+    shared += Math.min(x,y); total += Math.max(x,y);
+  }
+  return total ? 1 - shared/total : 1;
 }
 const REVIEW_EXAMPLE = [
   { kind:'odd', label:'word order · 어순', original:'배가 아파요 어제부터', fixed:'어제부터 배가 아파요', alternative:'어제부터 배가 좀 아파요', why:'Nothing here is ungrammatical. But Korean puts the time expression first, so trailing it sounds like an afterthought.' },
@@ -443,9 +518,9 @@ $('#end-chat').addEventListener('click', async () => {
   busy($('#rev-status'), 'Reading the conversation…');
   try{
     const out = await ask(
-      'You review a foreign learner\'s Korean AFTER a conversation. Return at most 5 cards about the learner\'s lines (marked B) only. kind="wrong" = a real grammatical error (particle, ending, conjugation, word choice). kind="odd" = grammatically correct but a Korean would not say it that way (word order, politeness strategy, missing apology or hedge, unnatural collocation). Prefer "odd" cards — that is what nobody teaches. CRITICAL: keep the learner\'s own wording. Fix only the erroneous part; never rewrite the whole sentence, never upgrade their vocabulary. "alternative" is one other natural option. "why" is one or two sentences of plain English. "label" is a short tag like "particle · 조사".',
+      REVIEW_SYSTEM,
       `Situation: ${scene.role}\n\n` + turns.map(t => (t.role === 'ai' ? 'A: ' : 'B: ') + t.text).join('\n'),
-      revSchema);
+      revSchema, { mode:'review', scene: scene.id, level: $('#level').value });
     const all = out.cards || [];
     const keep = all.filter(c => changeRatio(c.original, c.fixed) <= 0.45);
     $('#rev-status').textContent = '';
