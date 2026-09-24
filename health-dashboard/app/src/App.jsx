@@ -13,6 +13,7 @@ import Compare, { NAT, MAX_CMP } from "./components/Compare";
 import EvidencePanel from "./components/EvidencePanel";
 import Tooltip from "./components/Tooltip";
 import UnitsView from "./components/UnitsView";
+import CONTACT from "../../data/contact.json";
 import NcdView from "./components/NcdView";
 import CorrelationView from "./components/CorrelationView";
 import HotspotView from "./components/HotspotView";
@@ -333,6 +334,9 @@ export default function App() {
           구조는 질병관리청 수도권질병대응센터 CIAT를 참조했습니다.
           {" "}<button type="button" className="linkbtn" onClick={() => { setView("feedback"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>수정 의견·문의 보내기 →</button>
         </footer>
+        {CONTACT.credit && (
+          <div className="site-credit">기획·제작 {CONTACT.credit.org} · <a href={CONTACT.credit.url} target="_blank" rel="noopener noreferrer">{CONTACT.credit.urlLabel || CONTACT.credit.url}</a> · {CONTACT.credit.date}</div>
+        )}
       </div>
       <Tooltip tip={tip} />
     </div>
