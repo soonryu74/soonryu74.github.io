@@ -1,4 +1,4 @@
-import { fmt, val, ranked, percentile, nationalMedian, label, SGG_BY_SIDO, SIDOS, RBY } from "../data";
+import { fmt, val, ranked, percentile, nationalMedian, label, SIDOS, RBY, isSurvey, natPool, sidoPoolOf, unitsOfCity, HC_POOL } from "../data";
 import Cite from "./Cite";
 
 /* 현황: 값·전년 대비, 전국 기준, 순위(전국/시도 내), 백분위 게이지 */
@@ -11,11 +11,15 @@ export default function Kpis({ ind, item, year, sel }) {
   const deltaGood = delta == null || ind.bad == null ? null : (delta < 0) === ind.bad;
 
   const isSgg = sel.l === "sgg";
-  const natPool = isSgg ? ranked(ind, item, year, Object.values(SGG_BY_SIDO).flat()) : ranked(ind, item, year, SIDOS);
-  const natRank = natPool.findIndex((x) => x.r.c === sel.c) + 1;
-  const sidoPool = isSgg ? ranked(ind, item, year, SGG_BY_SIDO[sel.p]) : null;
+  // 지역사회건강조사 지표는 질병관리청 공표 방식대로 조사 단위 258곳(일반구가 있는 시는 보건소별)에서 순위·중앙값·백분위를 낸다
+  const survey = isSurvey(ind);
+  const nat_ = isSgg ? ranked(ind, item, year, natPool(ind)) : ranked(ind, item, year, SIDOS);
+  const natRank = nat_.findIndex((x) => x.r.c === sel.c) + 1;
+  const sidoPool = isSgg ? ranked(ind, item, year, sidoPoolOf(ind, sel.p)) : null;
+  const cityUnits = survey && isSgg && !natRank ? unitsOfCity(sel.c) : [];   // 수원시처럼 보건소 여러 곳으로 조사되는 시
+  const unitN = survey ? HC_POOL.length : null;
   const sidoRank = sidoPool ? sidoPool.findIndex((x) => x.r.c === sel.c) + 1 : null;
-  const pct = ind.bad == null ? null : percentile(ind, v, natPool.map((x) => x.v));
+  const pct = ind.bad == null ? null : percentile(ind, v, nat_.map((x) => x.v));
   const nat = nationalMedian(ind, item, year);
   const sidoVal = isSgg ? val(ind, item, year, sel.p) : null;
 
@@ -29,7 +33,7 @@ export default function Kpis({ ind, item, year, sel }) {
         </div>
       </div>
       <div className="kpi">
-        <div className="k-label">전국 시군구 중앙값<Cite ind={ind} /></div>
+        <div className="k-label">전국 시군구 중앙값{survey ? ` (조사 단위 ${unitN}곳)` : ""}<Cite ind={ind} k={survey ? "chs25" : null} /></div>
         <div className="k-value">{fmt(nat)}<small> {ind.unit}</small></div>
         <div className="k-sub">
           {v != null && nat != null ? `중앙값 대비 ${fmt(Math.abs(v - nat))}${du} ${v - nat >= 0 ? "높음" : "낮음"}` : ""}
@@ -37,11 +41,12 @@ export default function Kpis({ ind, item, year, sel }) {
         </div>
       </div>
       <div className="kpi">
-        <div className="k-label">{isSgg ? "전국 시군구 순위" : "전국 시도 순위"} (양호한 순)<Cite ind={ind} k={isSgg ? "mois" : null} /></div>
-        <div className="k-value">{natRank || "–"}<small> / {natPool.length}</small></div>
+        <div className="k-label">{isSgg ? "전국 시군구 순위" : "전국 시도 순위"} (양호한 순)<Cite ind={ind} k={isSgg ? (survey ? "chs25" : "mois") : null} /></div>
+        <div className="k-value">{natRank || "–"}<small> / {nat_.length}</small></div>
         <div className="k-sub">
-          {sidoRank ? `${RBY.get(sel.p).n} 내 ${sidoRank} / ${sidoPool.length}` : ""}
-          {ind.bad == null ? "중립 지표(방향 없음)" : ind.bad ? " · 낮을수록 양호" : " · 높을수록 양호"}
+          {[cityUnits.length ? `보건소 ${cityUnits.length}곳으로 조사되어 시 전체 순위는 없음(순위 목록에서 보건소별로 확인)` : null,
+            sidoRank ? `${RBY.get(sel.p).n} 내 ${sidoRank} / ${sidoPool.length}` : null,
+            ind.bad == null ? "중립 지표(방향 없음)" : ind.bad ? "낮을수록 양호" : "높을수록 양호"].filter(Boolean).join(" · ")}
         </div>
       </div>
       <div className="kpi">
