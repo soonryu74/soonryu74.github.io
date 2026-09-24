@@ -109,7 +109,9 @@ export const SIDOS = REGIONS.filter((r) => r.l === "sido");
 export const SGG_ALL = REGIONS.filter((r) => r.l === "sgg");
 export const SGG_BY_SIDO = Object.fromEntries(SIDOS.map((s) => [s.c, SGG_ALL.filter((r) => r.p === s.c)]));
 export const SUBS_BY_SGG = {};
-REGIONS.filter((r) => r.l === "sub").forEach((r) => (SUBS_BY_SGG[r.p] ??= []).push(r));
+// 값이 한 번도 없는 자리표시 코드(예: 제주 0160000·0160400)는 세부 단위 목록에서 뺀다
+const hasAnyValue = (i) => Object.values(RAW.values).some((v) => ["crude", "std"].some((k) => v[k]?.some((row) => row?.[i] != null)));
+REGIONS.forEach((r, i) => { if (r.l === "sub" && hasAnyValue(i)) (SUBS_BY_SGG[r.p] ??= []).push(r); });
 
 export const INDICATORS = RAW.indicators;
 export const IND_BY_ID = Object.fromEntries(INDICATORS.map((d) => [d.id, d]));
