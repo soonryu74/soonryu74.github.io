@@ -20,6 +20,8 @@ try:
 except Exception:
     _CFG = {}
 BASE      = (_CFG.get("baseUrl") or "https://epibrief.github.io").rstrip("/")
+# 제작 크레딧 — 문구·날짜는 site-config.json 의 credit 에서만 관리한다
+CREDIT    = _CFG.get("credit") or {}
 SITE      = BASE + "/issues/"          # 메일에서 이미지를 불러올 주소
 SUBSCRIBE = BASE + "/subscribe.html"   # 구독 신청 페이지
 
@@ -224,6 +226,15 @@ def tips_box():
     return (f'<aside class="tips"><h4>이 뉴스레터를 정책에 쓰실 때</h4>'
             f'<ol>{items}</ol></aside>')
 
+def credit_html():
+    """모든 페이지 맨 아래 제작 크레딧. 서식은 paper.css 의 .site-credit 하나로 공용."""
+    c = CREDIT
+    text = c.get("text", "기획·제작 지음웍스"); site = c.get("site", "jieumworks.com")
+    url  = c.get("url", "https://jieumworks.com"); date = c.get("date", "")
+    return (f'<div class="site-credit">{e(text)} · '
+            f'<a href="{e(url)}" target="_blank" rel="noopener">{e(site)}</a>'
+            f'{" · " + e(date) if date else ""}</div>')
+
 def paper(data):
     k = KINDS[data["kind"]]
     m, d = data["meta"], data["draft"]
@@ -407,7 +418,7 @@ def page(data, others):
   </span>
 </nav>
 
-<div class="paperwrap">{paper(data)}</div>
+<div class="paperwrap">{paper(data)}{credit_html()}</div>
 <div class="toast" id="toast"></div>
 
 <script type="application/json" id="issue-data">{json.dumps(data, ensure_ascii=False)}</script>
@@ -464,6 +475,7 @@ def index_page(rows):
 <title>발간한 뉴스레터</title>
 <meta name="description" content="뉴스레터 메이커로 발간한 호 목록. 감염병 발생동향, 사회 대응(PHSM), 만성질환, 기후·건강.">
 {FONTS}
+<link rel="stylesheet" href="../paper.css">
 <style>
  :root{{ --ink:#191f28; --muted:#6d7885; --line:#dde2e9; }}
  body{{ margin:0; background:#eef1f5; color:var(--ink);
@@ -499,6 +511,7 @@ def index_page(rows):
   <p class="sub" id="listSub">뉴스레터 메이커로 만든 호입니다. 서식과 구성을 그대로 가져다 새 호를 만들 수 있습니다.</p>
   {cards}
   <p class="sub" id="listEmpty" hidden>아직 이 뉴스레터의 다른 호가 없습니다. 이번 호가 창간호입니다.</p>
+  {credit_html()}
 </div>
 <script>
   /* ?series=phsm 처럼 열면 그 뉴스레터만 보여 줍니다 (QR로 들어온 경우) */
