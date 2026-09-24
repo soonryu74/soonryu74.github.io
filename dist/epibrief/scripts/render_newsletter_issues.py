@@ -19,10 +19,26 @@ try:
     _CFG = json.load(open(_CFG_PATH, encoding="utf-8"))
 except Exception:
     _CFG = {}
-BASE      = (_CFG.get("baseUrl") or "https://epibrief.github.io").rstrip("/")
+BASE      = (_CFG.get("baseUrl") or "https://soonryu74.github.io/newsletter").rstrip("/")
 SITE      = BASE + "/issues/"          # 메일에서 이미지를 불러올 주소
 SUBSCRIBE = BASE + "/subscribe.html"   # 구독 신청 페이지
-CREDIT    = _CFG.get("credit") or {}   # 제작 크레딧(문구·날짜는 site-config.json 에서만 관리)
+CREDIT    = _CFG.get("credit") or {"org": "지음웍스", "url": "https://jieumworks.com", "urlLabel": "jieumworks.com", "date": "2026년 9월"}
+
+def credit_html():
+    """제작 크레딧. 문구·날짜는 site-config.json 의 credit 에서만 바꾼다. 발간호·목록·credit.js 가 모두 이 값을 쓴다."""
+    return (f'<footer class="site-credit">기획·제작 {html.escape(CREDIT["org"])} · '
+            f'<a href="{html.escape(CREDIT["url"])}" target="_blank" rel="noopener">{html.escape(CREDIT.get("urlLabel") or CREDIT["url"])}</a> · '
+            f'{html.escape(CREDIT["date"])}</footer>')
+
+def write_credit_js():
+    """index.html · subscribe.html 이 쓰는 credit.js (site-config.json 에서 생성되는 파일이므로 직접 고치지 말 것)."""
+    js = ("/* 자동 생성 파일 — scripts/render_newsletter_issues.py 가 newsletter/site-config.json 의 credit 로 만듭니다. 직접 고치지 마세요. */\n"
+          "(function(){var C=" + json.dumps(CREDIT, ensure_ascii=False) + ";"
+          "function esc(s){return String(s).replace(/[&<>\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c];});}"
+          "function put(){var el=document.getElementById('siteCredit');if(!el){el=document.createElement('footer');el.id='siteCredit';document.body.appendChild(el);}"
+          "el.className='site-credit';el.innerHTML='기획·제작 '+esc(C.org)+' · <a href=\"'+esc(C.url)+'\" target=\"_blank\" rel=\"noopener\">'+esc(C.urlLabel||C.url)+'</a> · '+esc(C.date);}"
+          "if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',put);else put();})();\n")
+    open(os.path.join(ROOT, "newsletter", "credit.js"), "w", encoding="utf-8").write(js)
 
 KINDS = {
     "outbreak": {"name": "감염병 발생동향", "sumTitle": "목차",
@@ -42,16 +58,6 @@ FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
 def e(s):
     """HTML 이스케이프 + 줄바꿈 시 '—'가 줄머리에 오지 않게 앞 공백을 고정 공백으로."""
     return html.escape(str(s or ""), quote=True).replace(" —", "\u00a0—").replace(" ·", "\u00a0·")
-
-def credit_html():
-    """모든 페이지 맨 아래 제작 크레딧. 스타일은 paper.css 의 .site-credit 하나를 공용으로 쓴다."""
-    by   = CREDIT.get("by") or "지음웍스"
-    url  = CREDIT.get("url") or "https://jieumworks.com"
-    date = CREDIT.get("date") or ""
-    dom  = re.sub(r"^https?://", "", url).rstrip("/")
-    return (f'<div class="site-credit">기획·제작 {e(by)} · '
-            f'<a href="{e(url)}" target="_blank" rel="noopener">{e(dom)}</a>'
-            + (f" · {e(date)}" if date else "") + "</div>")
 
 def make_qr(url, out_path, brand="#12395f"):
     """구독 주소를 QR 그림(PNG)으로 저장한다. 인쇄·메일 어디서나 보이도록 그림 파일로 만든다."""
@@ -418,7 +424,8 @@ def page(data, others):
   </span>
 </nav>
 
-<div class="paperwrap">{paper(data)}{credit_html()}</div>
+<div class="paperwrap">{paper(data)}</div>
+{credit_html()}
 <div class="toast" id="toast"></div>
 
 <script type="application/json" id="issue-data">{json.dumps(data, ensure_ascii=False)}</script>
@@ -537,6 +544,7 @@ def index_page(rows):
 
 def main():
     os.makedirs(ISSUES, exist_ok=True)
+    write_credit_js()
     files = sorted(glob.glob(os.path.join(SAMPLES, "*.json")))
     metas = []
     for path in files:

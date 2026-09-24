@@ -404,7 +404,7 @@ textarea{min-height:90px;resize:vertical}
     </div>
     <div class="row" style="margin-top:10px">
       <div class="grow"><label class="f">구독 링크 <span class="note">— 넣으면 QR 코드가 자동으로 만들어집니다</span></label>
-        <input type="text" id="mSubUrl" placeholder="예: https://epibrief.github.io/subscribe.html"></div>
+        <input type="text" id="mSubUrl" placeholder="예: https://soonryu74.github.io/newsletter/subscribe.html"></div>
       <div class="grow"><label class="f">구독 안내 문구</label>
         <input type="text" id="mSubLabel" placeholder="예: 뉴스레터 구독·지난 호 보기"></div>
     </div>
@@ -473,7 +473,6 @@ textarea{min-height:90px;resize:vertical}
 </div></section>
 </section>
 
-<script src="credit.js" defer></script>
 <script src="email.js"></script>
 <script src="vendor/qrcode.min.js"></script>
 <script>
@@ -1755,5 +1754,7 @@ $('#exMailApp').onclick = () => {
   else nav(location.hash === '#make' ? 'make' : 'home');
 })();
 </script>
+<footer class="site-credit" id="siteCredit"></footer>
+<script src="credit.js"></script>
 </body>
 </html>
