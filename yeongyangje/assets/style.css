@@ -391,3 +391,6 @@ abbr.gl:hover, abbr.gl:focus { background: var(--teal-soft); outline: none; }
 .cmp-slot .field { min-width: 0; } .cmp-slot input, .cmp-slot select, .cmp-slot .inline { width: 100%; max-width: 100%; box-sizing: border-box; }
 .cmp-slot .inline select { width: auto; flex: 0 0 auto; }
 .foot-credit { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); color: #d6e6e4; font-size: .88rem; } .foot-credit a { color: #fff; text-decoration: underline; }
+details.faq { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 10px; background: #fff; }
+details.faq summary { cursor: pointer; font-weight: 800; color: var(--teal-dark); font-size: 1rem; }
+details.faq .faq-a { margin-top: 10px; line-height: 1.7; }

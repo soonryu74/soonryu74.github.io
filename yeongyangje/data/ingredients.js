@@ -10,7 +10,7 @@ window.EBN_INGREDIENTS = {
     pick: ["베타카로틴 0 또는 미량", "비타민 E ≤ 30 IU, 비타민 A ≤ 700 µg RAE", "철분은 남성·폐경 여성용은 무철분", "GMP 제조·함량 시험성적서"],
     studies: ["cosmos-main", "cosmos-meta", "phs2-cancer", "phs2-cvd", "nih-aarp-2024", "uspstf-2022", "arr-2026-multi", "cosmos-epigenetic"] },
 
-  vitd: { name: "비타민 D3", en: "Vitamin D3 (cholecalciferol)", status: [{ k: "rx", t: "주사제 10만~30만 IU" }, { k: "otc", t: "디카맥스디 1,000 IU 등" }, { k: "hff", t: "영양소·골다공증 위험 감소" }, { k: "import", t: "5,000 IU 등 고함량은 직구로만" }], statusNote: "건기식 공전 함량 이내면 건기식, 고함량·결핍 치료 표방은 의약품(공전 상한 수치는 개정 확인 필요)", statusSrc: "https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetailCache?cacheSeq=201500388aupdateTs2026-08-04+10%3A54%3A22.0b", verdict: "cond", grade: "B",
+  vitd: { name: "비타민 D3", en: "Vitamin D3 (cholecalciferol)", mega: "vitd-mega", status: [{ k: "rx", t: "주사제 10만~30만 IU" }, { k: "otc", t: "디카맥스디 1,000 IU 등" }, { k: "hff", t: "영양소·골다공증 위험 감소" }, { k: "import", t: "5,000 IU 등 고함량은 직구로만" }], statusNote: "건기식 공전 함량 이내면 건기식, 고함량·결핍 치료 표방은 의약품(공전 상한 수치는 개정 확인 필요)", statusSrc: "https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetailCache?cacheSeq=201500388aupdateTs2026-08-04+10%3A54%3A22.0b", verdict: "cond", grade: "B",
     one: "결핍 교정에는 확실. 결핍 없는 건강인에게 암·심혈관·골절·우울·감기 예방 효과는 없음. 한국 성인 31~47% 결핍.",
     for: ["혈중 25(OH)D 20 ng/mL 미만", "실내 근무·햇빛 부족", "75세 이상", "임신·수유", "당뇨병 전단계(진행 15% 감소)", "골다공증 치료 병행"],
     against: ["신장질환·고칼슘혈증", "사르코이드증 등 육아종 질환"],
@@ -82,7 +82,7 @@ window.EBN_INGREDIENTS = {
     pick: ["구연산칼슘(식사 무관 흡수) 또는 탄산칼슘(식사와 함께)", "비타민 D 병행", "마그네슘과 시간 분리"],
     studies: ["whi-cad-2006", "whi-cad-2024", "bolland-calcium", "bmj-2026-fracture"] },
 
-  folate: { name: "엽산", en: "Folic acid / Folate", status: [{ k: "hff", t: "영양소" }, { k: "otc", t: "원폴정 등(전문/일반 구분 미확인)" }, { k: "rx", t: "주사제 5 mg" }], statusNote: "결핍증·빈혈 치료 표방은 의약품", statusSrc: "https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetailCache?cacheSeq=201904379aupdateTs2025-01-05+11:05:04.0b", verdict: "cond", grade: "A",
+  folate: { name: "엽산", en: "Folic acid / Folate", mega: "folate-mega", status: [{ k: "hff", t: "영양소" }, { k: "otc", t: "원폴정 등(전문/일반 구분 미확인)" }, { k: "rx", t: "주사제 5 mg" }], statusNote: "결핍증·빈혈 치료 표방은 의약품", statusSrc: "https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetailCache?cacheSeq=201904379aupdateTs2025-01-05+11:05:04.0b", verdict: "cond", grade: "A",
     one: "임신 전후 신경관 결손 72% 예방(A등급). 심혈관 예방 효과는 없음. 대장 선종 병력자 고용량 주의.",
     for: ["임신 준비~임신 12주 여성(필수)", "가임기 여성 전반"],
     against: ["대장 선종·암 병력자의 1 mg 이상", "B12 결핍 미확인 상태의 고용량(신경 손상 가림)"],
@@ -162,7 +162,7 @@ window.EBN_INGREDIENTS = {
     pick: ["황반변성이면 AREDS2 전체 조성(C·E·아연·구리 포함)", "베타카로틴 없는 제품"],
     studies: ["areds2", "phs2-eye"] },
 
-  vitc: { name: "비타민 C", en: "Vitamin C", status: [{ k: "hff", t: "영양소 30~1,000 mg" }, { k: "otc", t: "고함량 정제" }, { k: "rx", t: "주사제" }], statusNote: "건기식 상한 1,000 mg, 그 이상은 의약품", statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "opt", grade: "C",
+  vitc: { name: "비타민 C", en: "Vitamin C", mega: "vitc-mega", status: [{ k: "hff", t: "영양소 30~1,000 mg" }, { k: "otc", t: "고함량 정제" }, { k: "rx", t: "주사제" }], statusNote: "건기식 상한 1,000 mg, 그 이상은 의약품", statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "opt", grade: "C",
     one: "감기 예방 못 함. 평소 복용 시 기간 8% 단축(반나절). 극한 운동자만 예방 효과. 사망률 영향 없음.",
     for: ["극한 신체 스트레스(마라톤·군 훈련)", "철분 흡수 보조"],
     against: ["신장결석 병력 2 g 이상", "혈색소증"],
@@ -170,7 +170,7 @@ window.EBN_INGREDIENTS = {
     pick: ["고가 '리포소말' 근거 부족", "메가도스 불필요"],
     studies: ["cochrane-vitc-cold", "cochrane-antioxidant"] },
 
-  zinc: { name: "아연", en: "Zinc", status: [{ k: "hff", t: "영양소" }, { k: "otc", t: "복합 영양제 성분" }], statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "opt", grade: "C",
+  zinc: { name: "아연", en: "Zinc", mega: "zinc-mega", status: [{ k: "hff", t: "영양소" }, { k: "otc", t: "복합 영양제 성분" }], statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "opt", grade: "C",
     one: "감기 초기 로젠지(75 mg+/일)로 기간 1~2일 단축 가능(근거 낮음). 예방 효과 없음. 장기 고용량은 구리 결핍.",
     for: ["감기 초기 24시간 내 단기"],
     against: ["장기 40 mg 이상 복용", "구리 결핍"],
@@ -178,7 +178,7 @@ window.EBN_INGREDIENTS = {
     pick: ["아세테이트·글루코네이트 로젠지", "구연산 첨가 로젠지는 효과 저하"],
     studies: ["zinc-cold", "areds2"] },
 
-  vite: { name: "비타민 E", en: "Vitamin E", status: [{ k: "hff", t: "영양소" }, { k: "otc", t: "복합제·단일 연질캡슐" }], statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "avoid", grade: "X",
+  vite: { name: "비타민 E", en: "Vitamin E", mega: "vite-mega", status: [{ k: "hff", t: "영양소" }, { k: "otc", t: "복합제·단일 연질캡슐" }], statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "avoid", grade: "X",
     one: "400 IU 이상 사망률 증가, 건강한 남성 전립선암 17% 증가(SELECT). USPSTF '복용 반대'.",
     for: ["없음(결핍은 매우 드묾)"],
     against: ["모든 예방 목적 고용량", "항응고제 복용"],
@@ -186,7 +186,7 @@ window.EBN_INGREDIENTS = {
     pick: ["종합비타민 내 소량만"],
     studies: ["select", "miller-vite", "cochrane-antioxidant", "uspstf-2022", "atbc"] },
 
-  betacarotene: { name: "베타카로틴", en: "Beta-carotene", status: [{ k: "hff", t: "영양소: 시각 적응·피부 점막" }], statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "avoid", grade: "X",
+  betacarotene: { name: "베타카로틴", en: "Beta-carotene", mega: "vita-carotene-mega", status: [{ k: "hff", t: "영양소: 시각 적응·피부 점막" }], statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "avoid", grade: "X",
     one: "흡연자 폐암 18~28% 증가, 사망 8~17% 증가(ATBC·CARET). AREDS2에서도 폐암 1.8배. 비흡연자도 이득 없음.",
     for: ["없음"],
     against: ["흡연자·과거 흡연자(절대)", "석면 노출자"],
@@ -194,7 +194,7 @@ window.EBN_INGREDIENTS = {
     pick: ["종합비타민·눈 영양제 성분표에서 확인"],
     studies: ["atbc", "caret", "areds2", "cochrane-antioxidant", "uspstf-2022"] },
 
-  selenium: { name: "셀레늄", en: "Selenium", status: [{ k: "hff", t: "영양소" }, { k: "rx", t: "주사제(미확인)" }], statusSrc: "https://www.thinkfood.co.kr/news/articleView.html?idxno=22987", verdict: "no", grade: "D",
+  selenium: { name: "셀레늄", en: "Selenium", mega: "selenium-mega", status: [{ k: "hff", t: "영양소" }, { k: "rx", t: "주사제(미확인)" }], statusSrc: "https://www.thinkfood.co.kr/news/articleView.html?idxno=22987", verdict: "no", grade: "D",
     one: "전립선암 예방 실패(SELECT), 기저 농도 높은 사람은 고등급 암 증가. 사망률 영향 없음. 한국인 결핍 드묾.",
     for: ["없음"],
     against: ["예방 목적 200 µg"],
@@ -202,7 +202,7 @@ window.EBN_INGREDIENTS = {
     pick: ["—"],
     studies: ["select", "cochrane-antioxidant"] },
 
-  vita: { name: "비타민 A", en: "Vitamin A (retinol)", status: [{ k: "hff", t: "영양소, 최대함량 의무 기준" }, { k: "otc", t: "종합비타민 성분" }], statusNote: "공전 상한 초과 시 의약품 영역", statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "no", grade: "D",
+  vita: { name: "비타민 A", en: "Vitamin A (retinol)", mega: "vita-carotene-mega", status: [{ k: "hff", t: "영양소, 최대함량 의무 기준" }, { k: "otc", t: "종합비타민 성분" }], statusNote: "공전 상한 초과 시 의약품 영역", statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "no", grade: "D",
     one: "고용량은 사망률 용량 비례 증가, 간독성·기형 유발. 한국인 결핍 드묾.",
     for: ["없음(결핍 진단 시만)"],
     against: ["임신부 고용량(기형)", "흡연자 베타카로틴 병용"],
@@ -252,7 +252,7 @@ window.EBN_INGREDIENTS = {
     one: "와파린과 직접 상호작용. 건강인 보충 근거 없음.",
     for: ["없음"], against: ["와파린 복용"], dose: "불필요", kr: "충분섭취량 남 75 · 여 65 µg", pick: ["—"], studies: ["k2-bone-cvd"] },
 
-  b6: { name: "비타민 B6", en: "Vitamin B6", status: [{ k: "hff", t: "영양소" }, { k: "otc", t: "복합제 성분" }], statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "no", grade: "D",
+  b6: { name: "비타민 B6", en: "Vitamin B6", mega: "b6-mega", status: [{ k: "hff", t: "영양소" }, { k: "otc", t: "복합제 성분" }], statusSrc: "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3811&bbs_no=bbs464&ntctxt_no=1070220", verdict: "no", grade: "D",
     one: "호모시스테인 강하 목적 심혈관 예방 실패. 장기 고용량은 말초신경병증 — 2025 한국 기준 상한이 100에서 50 mg으로 내려감.",
     for: ["입덧(의사 처방)"], against: ["장기 고용량"], dose: "불필요", kr: "권장 남 1.5 · 여 1.4 mg, UL 50 mg(2025년 100→50 하향, 미국 100·유럽 12 mg)", pick: ["—"], studies: ["bvit-cvd"] }
 };
