@@ -22,6 +22,7 @@ except Exception:
 BASE      = (_CFG.get("baseUrl") or "https://soonryu74.github.io/newsletter").rstrip("/")
 SITE      = BASE + "/issues/"          # 메일에서 이미지를 불러올 주소
 SUBSCRIBE = BASE + "/subscribe.html"   # 구독 신청 페이지
+CREDIT    = _CFG.get("credit") or {}   # 제작 크레딧(문구·날짜는 site-config.json 에서만 관리)
 
 KINDS = {
     "outbreak": {"name": "감염병 발생동향", "sumTitle": "목차",
@@ -41,6 +42,16 @@ FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
 def e(s):
     """HTML 이스케이프 + 줄바꿈 시 '—'가 줄머리에 오지 않게 앞 공백을 고정 공백으로."""
     return html.escape(str(s or ""), quote=True).replace(" —", "\u00a0—").replace(" ·", "\u00a0·")
+
+def credit_html():
+    """모든 페이지 맨 아래 제작 크레딧. 스타일은 paper.css 의 .site-credit 하나를 공용으로 쓴다."""
+    by   = CREDIT.get("by") or "지음웍스"
+    url  = CREDIT.get("url") or "https://jieumworks.com"
+    date = CREDIT.get("date") or ""
+    dom  = re.sub(r"^https?://", "", url).rstrip("/")
+    return (f'<div class="site-credit">기획·제작 {e(by)} · '
+            f'<a href="{e(url)}" target="_blank" rel="noopener">{e(dom)}</a>'
+            + (f" · {e(date)}" if date else "") + "</div>")
 
 def make_qr(url, out_path, brand="#12395f"):
     """구독 주소를 QR 그림(PNG)으로 저장한다. 인쇄·메일 어디서나 보이도록 그림 파일로 만든다."""
@@ -407,7 +418,7 @@ def page(data, others):
   </span>
 </nav>
 
-<div class="paperwrap">{paper(data)}</div>
+<div class="paperwrap">{paper(data)}{credit_html()}</div>
 <div class="toast" id="toast"></div>
 
 <script type="application/json" id="issue-data">{json.dumps(data, ensure_ascii=False)}</script>
@@ -464,6 +475,7 @@ def index_page(rows):
 <title>발간한 뉴스레터</title>
 <meta name="description" content="뉴스레터 메이커로 발간한 호 목록. 감염병 발생동향, 사회 대응(PHSM), 만성질환, 기후·건강.">
 {FONTS}
+<link rel="stylesheet" href="../paper.css">
 <style>
  :root{{ --ink:#191f28; --muted:#6d7885; --line:#dde2e9; }}
  body{{ margin:0; background:#eef1f5; color:var(--ink);
@@ -500,6 +512,7 @@ def index_page(rows):
   {cards}
   <p class="sub" id="listEmpty" hidden>아직 이 뉴스레터의 다른 호가 없습니다. 이번 호가 창간호입니다.</p>
 </div>
+{credit_html()}
 <script>
   /* ?series=phsm 처럼 열면 그 뉴스레터만 보여 줍니다 (QR로 들어온 경우) */
   var NAMES = {{ outbreak:'전 세계 감염병 발생 동향', phsm:'감염병 사회 대응(PHSM) 분과위원회',

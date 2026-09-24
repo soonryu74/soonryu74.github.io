@@ -399,6 +399,18 @@
   .topic-head .tag, .topic-head .ev{ font-size:.72rem; padding:2px 7px; margin-top:2px; }
 }
 
+/* ── 제작 크레딧(모든 페이지 맨 아래 공용) ───────────────
+   문구·날짜는 site-config.json 의 credit 에서만 관리한다.
+   index.html·subscribe.html 은 credit.js 가, 발간본은 render_newsletter_issues.py 가 넣는다. */
+.site-credit{
+  display:block; max-width:100%; margin:28px auto 0; padding:14px 16px 22px;
+  text-align:center; font-size:.76rem; line-height:1.6; color:#8a94a1;
+  font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;
+  word-break:keep-all; overflow-wrap:anywhere;
+}
+.site-credit a{ color:inherit; text-decoration:underline; text-decoration-color:#c3cad3; text-underline-offset:2px; }
+.site-credit a:hover{ color:#5d6875; }
+
 /* ── 인쇄 ───────────────────────────────────────────── */
 @media print{
   /* PDF로 저장하는 경우가 대부분이라 화면과 같은 색으로 나오게 한다 */
@@ -423,5 +435,7 @@
   .refs{ display:block !important; }
   .refs ol{ display:block !important; }
   .refs summary::before, .refs[open] summary::before{ content:""; }
+  /* 제작 크레딧은 인쇄·PDF 에도 그대로 */
+  .site-credit{ display:block !important; color:#8a94a1 !important; margin-top:16px; padding:8px 0 0; break-inside:avoid; }
   @page{ size:A4; margin:15mm 14mm; }
 }
