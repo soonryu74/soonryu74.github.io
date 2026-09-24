@@ -16,6 +16,7 @@
   --accent:#1F6F5C;--accent-soft:#DDEAE4;
   --alert:#A8452B;--alert-soft:#F3E2DC;
   --line:#D6DBD4;--line-strong:#B8C0B8;
+  --credit-date:"2026년 9월";  /* 제작 크레딧 날짜 — 여기 한 줄만 바꾸면 됩니다 */
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -116,6 +117,17 @@ input[type=range]{accent-color:var(--accent);padding:0}
 .demo-note{background:var(--surface2);border:1px dashed var(--line-strong);font-size:.78rem;color:var(--muted);padding:9px 12px;border-radius:3px;margin-bottom:16px}
 footer{margin-top:44px;border-top:1px solid var(--line);padding-top:18px;font-size:.78rem;color:var(--faint)}
 footer a{color:var(--accent)}
+/* 제작 크레딧 — 본문이 끝난 맨 아래, 안내 문구보다 더 아래 */
+.site-credit{
+  margin:26px auto 0; padding:0 16px; max-width:840px;
+  font-size:.76rem; line-height:1.7; color:var(--faint);
+  text-align:center; word-break:keep-all; text-wrap:pretty;
+}
+.site-credit a{
+  color:inherit; text-decoration:underline; text-underline-offset:2px; white-space:nowrap;
+}
+.site-credit a:hover{color:var(--accent)}
+.site-credit .credit-date::after{content:var(--credit-date)}
 @media (max-width:560px){
   .rung{grid-template-columns:1fr;gap:4px}
   .msg{max-width:92%}
@@ -197,6 +209,8 @@ footer a{color:var(--accent)}
   MVP · <span id="privacy">runs entirely in your browser. Your API key is stored only on this device (localStorage) and is sent only to Google's API.</span>
   Built for the <a href="https://soonryu74.github.io/">노모어매뉴얼</a> Nunchi project.
 </footer>
+
+<p class="site-credit">기획·제작 지음웍스 · <a href="https://jieumworks.com" target="_blank" rel="noopener">jieumworks.com</a> · <span class="credit-date"></span></p>
 </div>
 
 <!-- key sheet -->
