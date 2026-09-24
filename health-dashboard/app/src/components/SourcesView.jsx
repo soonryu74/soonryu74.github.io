@@ -1,4 +1,7 @@
 import { useMemo, useState } from "react";
+import Cite from "./Cite";
+// 기준 숫자 카드 → 참고문헌 key (258 한눈에 보기 · 263 지역보건의료기관 현황 · 255 보건소 정보 · 229 행정안전부)
+const CNT_REF = { 258: "chs25", 263: "fac", 255: "kdcahc", 229: "mois" };
 import COV from "../../../data/coverage.json";
 import { saveCsvRows } from "../export";
 
@@ -46,7 +49,7 @@ export default function SourcesView() {
           {COV.counts.map((c) => (
             <div key={c.label} className={`cnt-row ${c.std ? "std" : ""}`}>
               <div className="cnt-n">{c.n}</div>
-              <div className="cnt-l">{c.label}{c.std && <span className="std-chip">기준</span>}</div>
+              <div className="cnt-l">{c.label}<Cite k={CNT_REF[c.n]} />{c.std && <span className="std-chip">기준</span>}</div>
               <div className="cnt-note">{c.note}</div>
             </div>
           ))}
@@ -70,7 +73,7 @@ export default function SourcesView() {
             return (
               <div key={s.key} className="srccard">
                 <div className="sc-head">
-                  <b>{s.name}{s.approx && <span className="approx-chip">근사·공식 아님</span>}</b>
+                  <b>{s.name}<Cite k={s.key} />{s.approx && <span className="approx-chip">근사·공식 아님</span>}</b>
                   <span className="sc-n">{s.n}개 지표</span>
                 </div>
                 <div className="sc-org">{s.org}</div>

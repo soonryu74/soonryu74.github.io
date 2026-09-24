@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from "react";
+import Cite from "./Cite";
 import { INDICATORS, IND_BY_DOMAIN, DOMAINS_ALL, SIDOS, SGG_ALL, SGG_BY_SIDO, fmt, val, label, RBY } from "../data";
 import ExportButtons from "./ExportButtons";
 import { clientXY } from "./svgUtil";
@@ -98,7 +99,7 @@ export default function CorrelationView({ setTip }) {
       </div>
       <div className="grid2">
         <div className="card span2">
-          <h3>{year}년 · {xi.name} × {yi.name} <small className="muted">(n={n})</small></h3>
+          <h3>{year}년 · {xi.name}<Cite ind={xi} /> × {yi.name}<Cite ind={yi} /> <small className="muted">(n={n})</small></h3>
           <ExportButtons name={`${year}_${xi.name}_x_${yi.name}_연관`} kinds={["svg", "png"]} />
           <div className="desc">X: {xi.name}({xi.unit}) · Y: {yi.name}({yi.unit}) · 점선 = 최소제곱 추세선 · 점을 누르면 지역명{level === "sido" && narrowChart ? " · 좁은 화면에서는 양 끝 지역만 이름 표시" : ""}</div>
           <div ref={wrapRef}>

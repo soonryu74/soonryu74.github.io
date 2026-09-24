@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DS, INDICATORS, RBY, SIDOS, label, DEFAULT_RANK_OPT, KDH_SOURCE, TIER_INFO } from "./data";
+import Cite from "./components/Cite";
+import RefList from "./components/RefList";
+import { DS, INDICATORS, RBY, SIDOS, label, DEFAULT_RANK_OPT, KDH_SOURCE, TIER_INFO , indRef } from "./data";
 import { IndicatorPicker, RegionPicker, YearControl, ItemToggle } from "./components/Pickers";
 import Kpis from "./components/Kpis";
 import TrendChart from "./components/TrendChart";
@@ -52,6 +54,11 @@ function readHash() {
     },
   };
 }
+
+// 제목의 지표 수는 참고문헌(data/refs.json)의 지표별 첫 출처로 센다 — 2026-09-24 이전에는 결과지표가 아닌 것을 모두
+// 「지역사회건강조사」로 세어 암검진·일반검진이 섞인 52개로 나왔다.
+const nSrc = (key) => INDICATORS.filter((i) => indRef(i)?.refs?.[0] === key).length;
+const nKdh = INDICATORS.filter((i) => i.kdh).length;
 
 export default function App() {
   const init = useMemo(readHash, []);
@@ -163,7 +170,7 @@ export default function App() {
           <div>
             <button type="button" className="title title-home" title="처음 화면(지표 분석)으로"
               onClick={() => { setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>지역 건강프로파일 대시보드</button>
-            <div className="subtitle">지역사회건강조사 {INDICATORS.filter((i) => !i.outcome).length}개 지표 · 건강수명 · 결과·환경 DB {INDICATORS.filter((i) => i.kdh).length}개 지표 · 시도/시군구 · {DS.years[0]}–{DS.years[DS.years.length - 1]}
+            <div className="subtitle">지표 {INDICATORS.length}개 — 지역사회건강조사 {nSrc("chs")}<Cite k="chs" /> · 결과·환경 DB {nKdh}<Cite k="kdh" /> · 국가암검진 {nSrc("cancer")}<Cite k="cancer" /> · 일반검진 {INDICATORS.filter((i) => i.id.startsWith("CHK_")).length}<Cite k="nhis" /> · 건강수명 {nSrc("hle")}<Cite k="hle" /> · 박탈지수 {nSrc("dep")}<Cite k="dep" /> · 시도/시군구 · {DS.years[0]}–{DS.years[DS.years.length - 1]}
               <span className="sub-note">건강수준 모니터링과 목표치 설정 지원 도구입니다. 보건소 사업 실적(투입·산출) 자료를 담고 있지 않아 사업 성과 평가 도구가 아닙니다.</span></div>
           </div>
           <div className="topright">
@@ -251,7 +258,7 @@ export default function App() {
               <div className="card span2 mapcard">
                 <div className="cardhead">
                   <div>
-                    <h3>{year}년 {ind.name} — {mapScopeName} 단계구분도</h3>
+                    <h3>{year}년 {ind.name} — {mapScopeName} 단계구분도<Cite ind={ind} k="geo" /></h3>
                     <ExportButtons name={`${year}_${ind.name}_지도_${mapScopeName}`} />
                     <div className="desc">7단계 분위({mapScopeName} 기준) · 지역을 누르면 선택 · ▶ 로 연도 애니메이션</div>
                   </div>
@@ -276,7 +283,7 @@ export default function App() {
               </div>
 
               <div className="card">
-                <h3>{ind.name} 추이</h3>
+                <h3>{ind.name} 추이<Cite ind={ind} /></h3>
                 <ExportButtons name={`${ind.name}_추이_${label(sel)}`} />
                 <div className="desc">{years[0]}–{years[years.length - 1]} · {ind.src}</div>
                 {ind.note && <div className="desc indnote">⚠ {ind.note}</div>}
@@ -284,36 +291,36 @@ export default function App() {
                   <div className="desc tierline">
                     <span className={`tbadge ${TIER_INFO[ind.tier].color}`}>{ind.tier}</span>
                     <b>권장 측정 주기 {TIER_INFO[ind.tier].cycle}</b> · 순위 비교 {TIER_INFO[ind.tier].rankable === true ? "가능" : TIER_INFO[ind.tier].rankable === false ? "부적합" : TIER_INFO[ind.tier].rankable} · {TIER_INFO[ind.tier].desc}
-                    {" "}<span className="muted">(WHO/IHP+ 결과사슬 기준 · docs/지역보건사업_평가이론_v1.md)</span>
+                    {" "}<span className="muted">(WHO/IHP+ 결과사슬 기준)</span><Cite k="tiers" />
                   </div>
                 )}
-                {ind.dirNote && <div className="desc dirnote"><b>{ind.bad === true ? "높을수록 나쁨" : ind.bad === false ? "높을수록 좋음" : "방향 없음(맥락 지표)"}</b> — {ind.dirNote}{ind.dirRefs?.length ? <> · 근거: {ind.dirRefs.map((r, i) => <a key={i} className="src" style={{ whiteSpace: "normal" }} href={r.url} target="_blank" rel="noreferrer">{r.name}</a>).reduce((a, b) => [a, ", ", b])}</> : null}</div>}
+                {ind.dirNote && <div className="desc dirnote"><b>{ind.bad === true ? "높을수록 나쁨" : ind.bad === false ? "높을수록 좋음" : "방향 없음(맥락 지표)"}</b> — {ind.dirNote}{ind.dirRefs?.length ? <> · 근거: {ind.dirRefs.map((r, i) => <a key={i} className="src" style={{ whiteSpace: "normal" }} href={r.url} target="_blank" rel="noreferrer">{r.name}</a>).reduce((a, b) => [a, ", ", b])}</> : null}<Cite k="dir" /></div>}
                 <TrendChart ind={ind} item={item} year={year} sel={sel} setTip={setTip} />
               </div>
 
               <div className="card">
-                <h3>순위</h3>
+                <h3>순위<Cite ind={ind} /></h3>
                 <ExportButtons name={`${year}_${ind.name}_순위_${scopeLabel}`} kinds={["list"]} />
                 <div className="desc">{year}년 · 양호한 순 ({ind.bad == null ? "값 큰 순" : ind.bad ? "낮을수록 양호" : "높을수록 양호"})</div>
                 <RankPanel ind={ind} item={item} year={year} sel={sel} scope={scope} onSelect={selectRegion} onYear={(y) => { setYearSel(y); setPlaying(false); }} />
               </div>
 
               <div className="card">
-                <h3>연도별 추이표</h3>
+                <h3>연도별 추이표<Cite ind={ind} /></h3>
                 <ExportButtons name={`${ind.name}_연도별_${label(sel)}`} kinds={["csv"]} />
                 <div className="desc">수치 · 순위 · 증감량 · 증감률 (행을 누르면 연도 이동)</div>
                 <YearTable ind={ind} item={item} sel={sel} year={year} onYear={(y) => setYearSel(y)} />
               </div>
 
               <div className="card">
-                <h3>지역 간 격차 — {scopeLabel}</h3>
+                <h3>지역 간 격차 — {scopeLabel}<Cite ind={ind} /></h3>
                 <ExportButtons name={`${ind.name}_격차_${scopeLabel}`} />
                 <div className="desc">연도별 분포(상자그림)와 {label(sel)}의 위치</div>
                 <GapBoxplot ind={ind} item={item} year={year} sel={sel} scope={scope} setTip={setTip} />
               </div>
 
               <div className="card">
-                <h3>건강형평성 — 지역박탈 5분위별 분포</h3>
+                <h3>건강형평성 — 지역박탈 5분위별 분포<Cite ind={ind} k="dep" /></h3>
                 <ExportButtons name={`${year}_${ind.name}_박탈분위`} kinds={["svg", "png"]} />
                 <div className="desc">{year}년 · 전국 시군구를 지역박탈지수(근사)로 5등분해 {ind.name} 분포를 비교</div>
                 <EquityPanel ind={ind} item={item} year={year} sel={sel} setTip={setTip} />
@@ -326,12 +333,13 @@ export default function App() {
             onRecommend={(name) => { setNcdInd(name); setView("ncd"); window.scrollTo({ top: 0, behavior: "smooth" }); }} onRegion={selectRegion} />
         )}
 
+        <RefList />
         <footer>
           자료원: 질병관리청 「지역사회건강조사」 — 통계청 KOSIS 공유서비스(openAPI), 수집일 {DS.generated}.
           {KDH_SOURCE && <> 사망률·감염병·의료이용·자원·인구·환경 지표: <a className="src" style={{ whiteSpace: "normal" }} href={KDH_SOURCE.url} target="_blank" rel="noreferrer">{KDH_SOURCE.name}</a>.</>}
           지도 경계: 통계청 2018 행정구역(행정구역 변경분은 최신 코드로 연결).<br />
           전국 기준값은 전 시군구 중앙값. 표준화율은 연령 표준화 값으로 지역 간 비교에 적합합니다.
-          구조는 질병관리청 수도권질병대응센터 CIAT를 참조했습니다.
+          구조는 질병관리청 수도권질병대응센터 CIAT를 참조했습니다<Cite k="ciat" />.
           {" "}<button type="button" className="linkbtn" onClick={() => { setView("feedback"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>수정 의견·문의 보내기 →</button>
         </footer>
         {CONTACT.credit && (

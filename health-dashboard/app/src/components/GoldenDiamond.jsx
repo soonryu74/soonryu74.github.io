@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Cite from "./Cite";
 import { INDICATORS, fmt, val, label, RBY, nationalMedian } from "../data";
 import ExportButtons from "./ExportButtons";
 
@@ -51,7 +52,7 @@ export default function GoldenDiamond({ item, sel }) {
   const fillOf = (p) => ({ 1: "#f8b4a8", 2: "#fcd9c4", 3: "#f3f4f6", 4: "#cfe3fb", 5: "#a9ccf6" })[p];
   return (
     <div className="card span2 gd">
-      <h3>황금다이아몬드 — 보건사업 우선순위 <small className="muted">(시간축 × 공간축)</small></h3>
+      <h3>황금다이아몬드 — 보건사업 우선순위<Cite k={["chs", "ciat"]} /> <small className="muted">(시간축 × 공간축)</small></h3>
       <ExportButtons name={`${label(sel)}_황금다이아몬드_${curLabel}`} kinds={["svg", "png", "list"]} />
       <div className="desc">
         당해연도({curLabel}) 평균값을 기준연도({baseLabel}) 평균과 비교해 개선·유지·악화, {refName} 대비 좋음·비슷·나쁨으로 나눕니다(판정 여유 ±{tol}%, 지표 방향 자동 적용). 연도는 여러 해를 골라 평균으로 볼 수 있습니다(단년도 값의 표본오차를 줄일 때 유용).

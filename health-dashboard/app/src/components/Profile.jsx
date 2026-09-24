@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Cite from "./Cite";
 import PriorityCard from "./PriorityCard";
 import { INDICATORS, DOMAINS, fmt, val, poolFor, label, RBY, computeRanking, PANEL_WEIGHTS, EQUAL_WEIGHTS, EXCLUDE_IDS, LEAGUE_NAME, recommendFor, depOf, DEP } from "../data";
 import ExportButtons from "./ExportButtons";
@@ -17,7 +18,7 @@ function RankSettings({ opt, onChange, isSgg }) {
   const total = DOMAINS.reduce((a, d) => a + (w[d] || 0), 0);
   return (
     <div className="card rankset">
-      <h3>순위 산출 방식 <small className="muted">방법론 v1 · 기본 균등 가중</small></h3>
+      <h3>순위 산출 방식<Cite k="rank" /> <small className="muted">방법론 v1 · 기본 균등 가중</small></h3>
       <div className="desc">기본: 영역 균등 가중 · 3년 이동평균 · 도시/군 리그 · 결과지표 4개 제외.
         <b>결과·임팩트 지표를 순위에서 빼는 것은 이론적 근거가 있습니다.</b> 사망률·유병률 같은 지표는 변화가 느리고 보건소 활동에 귀인할 수 없어, 국제 지침(WHO/IHP+ 2011)도 5년에 1~2회 모니터링용으로만 권고합니다(docs/지역보건사업_평가이론_v1.md). "모의 패널" 가중치는 AI가 시뮬레이션한 값으로 실제 전문가 조사 결과가 아니며 민감도 검증용입니다. 바꿔 보면 순위가 얼마나 흔들리는지 확인할 수 있습니다.</div>
       <div className="setrow">
@@ -127,7 +128,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         <GoldenDiamond item={item} sel={sel} />
         <PeerCard item={item} sel={sel} onPick={onRegion} />
         <div className="card span2">
-          <h3>영역별 순위와 수치</h3>
+          <h3>영역별 순위와 수치<Cite k={["chs", "rank"]} /></h3>
           <ExportButtons name={`${label(sel)}_영역별순위`} kinds={["list"]} />
           <div className="desc">영역 점수 = 소속 지표 백분위 평균 · 순위는 {poolName} 기준 · 칩의 숫자는 지표별 순위 (회색 칩은 순위 산정 제외 지표)</div>
           <div className="domains">
@@ -158,7 +159,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         </div>
 
         <div className="card">
-          <h3>강점 TOP 5</h3>
+          <h3>강점 TOP 5<Cite k="chs" /></h3>
           <div className="desc">백분위가 가장 높은 지표 — 이 지역이 이미 잘하고 있는 것</div>
           <div className="badges">
             {strengths.map((r) => (
@@ -172,7 +173,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         </div>
 
         <div className="card">
-          <h3>가장 개선된 지표 TOP 5</h3>
+          <h3>가장 개선된 지표 TOP 5<Cite k="chs" /></h3>
           <div className="desc">최근 5년 방향 보정 개선폭(%p) — "올해 가장 건강해진" 후보</div>
           <div className="badges">
             {improved.map((r) => (
@@ -207,7 +208,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         <PriorityCard scored={scored} item={item} pool={pool} onPick={onPick} />
 
         <div className="card span2">
-          <h3>개선 과제 <small className="muted">(지자체 참고용)</small></h3>
+          <h3>개선 과제<Cite k="chs" /> <small className="muted">(지자체 참고용)</small></h3>
           <div className="desc">백분위가 낮은 지표 — 공개 화면에서는 비공개 원칙(랭킹 기획안)</div>
           {!showWeak ? (
             <button className="themebtn" onClick={() => setShowWeak(true)}>펼쳐 보기</button>
@@ -226,7 +227,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
       </div>
 
       <div className="card">
-        <h3>전체 지표</h3>
+        <h3>전체 지표<Cite k={["chs", "kdh", "cancer", "nhis"]} /></h3>
         <ExportButtons name={`${label(sel)}_프로파일_전체지표`} kinds={["csv"]} />
         <div className="desc">행을 누르면 해당 지표 분석 화면으로 이동합니다</div>
         <div className="tblscroll">
