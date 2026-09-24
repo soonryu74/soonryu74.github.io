@@ -1,3 +1,7 @@
 # Jekyll 빌드 설정 — 기본값으로 충분해 비워 둔다.
 # (Korea Now 앱이 이 저장소에 있을 때는 여기서 제외 목록을 잡았으나,
 #  앱이 soonryu74/korea-now 저장소로 옮겨 가면서 필요 없어졌다.)
+
+# nunchi/test/ 는 앱 테스트 코드라 사이트에 올리지 않는다.
+exclude:
+  - nunchi/test
