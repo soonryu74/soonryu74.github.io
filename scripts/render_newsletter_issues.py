@@ -33,6 +33,12 @@ KINDS = {
     "climate":  {"name": "기후·건강", "sumTitle": "목차",
                  "secs": ["기후 · 건강 동향", "감시체계와 근거", "국내 대응 시사점"], "brand": "#0d5c8c", "accent": "#bf560c"},
 }
+# 제작 크레딧 — 발간본과 목록 페이지가 함께 씁니다.
+# 서식은 newsletter/paper.css 의 .site-credit, 날짜는 그 파일의 --credit-date 한 줄에서 관리합니다.
+CREDIT = ('<p class="site-credit">기획·제작 지음웍스 · '
+          '<a href="https://jieumworks.com" target="_blank" rel="noopener">jieumworks.com</a> · '
+          '<span class="credit-date"></span></p>')
+
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
@@ -324,6 +330,7 @@ def paper(data):
     본 뉴스레터는 각 기관의 공개 자료와 학술 문헌을 정리한 것으로, 원문의 내용이 우선합니다.<br>
     {e(m.get("org",""))}{" · " + e(m.get("editor","")) if m.get("editor") else ""}
   </footer>
+  {CREDIT}
 </div>'''
 
 def page(data, others):
@@ -464,6 +471,7 @@ def index_page(rows):
 <title>발간한 뉴스레터</title>
 <meta name="description" content="뉴스레터 메이커로 발간한 호 목록. 감염병 발생동향, 사회 대응(PHSM), 만성질환, 기후·건강.">
 {FONTS}
+<link rel="stylesheet" href="../paper.css">
 <style>
  :root{{ --ink:#191f28; --muted:#6d7885; --line:#dde2e9; }}
  body{{ margin:0; background:#eef1f5; color:var(--ink);
@@ -500,6 +508,7 @@ def index_page(rows):
   {cards}
   <p class="sub" id="listEmpty" hidden>아직 이 뉴스레터의 다른 호가 없습니다. 이번 호가 창간호입니다.</p>
 </div>
+{CREDIT}
 <script>
   /* ?series=phsm 처럼 열면 그 뉴스레터만 보여 줍니다 (QR로 들어온 경우) */
   var NAMES = {{ outbreak:'전 세계 감염병 발생 동향', phsm:'감염병 사회 대응(PHSM) 분과위원회',

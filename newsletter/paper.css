@@ -14,6 +14,7 @@
   --accent:#bf560c;       /* 강조색: 작은 글씨에도 읽히는 오렌지 */
   --accent-bright:#ef7c1a;/* 큰 숫자·띠에 쓰는 밝은 오렌지 */
   --accent-soft:#eef2f8;
+  --credit-date:"2026년 9월";  /* 제작 크레딧 날짜 — 모든 페이지가 이 한 줄을 씁니다 */
   --serif:"Nanum Myeongjo","Noto Serif KR","Apple SD Gothic Neo",serif;
   --sans:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
 }
@@ -347,6 +348,27 @@
 .foot-note{
   font-size:.8rem; color:var(--muted); border-top:1px solid var(--line);
   margin-top:36px; padding-top:14px; line-height:1.6;
+}
+
+/* ── 제작 크레딧 ────────────────────────────────────
+   도구 홈·구독 신청·발간 목록·발간본이 모두 이 한 벌을 씁니다.
+   날짜는 맨 위 :root 의 --credit-date 한 줄에서만 바꿉니다. */
+.site-credit{
+  margin:30px auto 20px; padding:0 16px; max-width:840px;
+  font-size:.76rem; line-height:1.7; color:var(--muted);
+  text-align:center; word-break:keep-all; text-wrap:pretty;
+}
+/* #paper 안에서도 크레딧 링크는 본문 링크색을 따라가지 않게 한다 */
+.site-credit a, #paper .site-credit a{
+  color:inherit; text-decoration:underline; text-underline-offset:2px;
+  white-space:nowrap;
+}
+.site-credit a:hover, #paper .site-credit a:hover{ color:var(--accent); }
+.site-credit .credit-date::after{ content:var(--credit-date); }
+/* 발간본을 인쇄하거나 PDF로 저장할 때도 그대로 남는다 */
+@media print{
+  .site-credit{ margin:16px 0 0; padding:0; font-size:8.6pt; break-inside:avoid; }
+  .site-credit a, #paper .site-credit a{ text-decoration:none; }
 }
 
 /* ── 서식 변형 ──────────────────────────────────────── */
