@@ -17,6 +17,7 @@ COPY = [
     ("newsletter/index.html",        "index.html"),
     ("newsletter/paper.css",         "paper.css"),
     ("newsletter/email.js",          "email.js"),
+    ("newsletter/credit.js",         "credit.js"),
     ("newsletter/subscribe.html",    "subscribe.html"),
     ("newsletter/subscribe-config.json", "subscribe-config.json"),
     ("newsletter/site-config.json",  "site-config.json"),
