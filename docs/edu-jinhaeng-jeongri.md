@@ -62,7 +62,7 @@ index, about, courses, admission, learning, faq, rules, course-care, course-etc,
 
 ### 교재
 
-2종 완성. 실무과정 1·2모듈(11회차)을 덮습니다.
+2종 완성. 실무과정 1부(11회차)를 덮습니다. (2026-09-24 실무과정 6부 구조 확정 — `docs/edu-haeoe-curriculum.md`)
 - 1호 통합지원회의와 개인별지원계획서
 - 2호 통합돌봄 용어집
 
