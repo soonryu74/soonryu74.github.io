@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import Cite from "./Cite";
-import { INDICATORS, IND_BY_DOMAIN, DOMAINS_ALL, SIDOS, SGG_ALL, SGG_BY_SIDO, fmt, val, label, RBY } from "../data";
+import { INDICATORS, IND_BY_DOMAIN, DOMAINS_ALL, SIDOS, SGG_ALL, SGG_BY_SIDO, fmt, val, label, RBY , isSurvey, HC_POOL, sidoPoolOf } from "../data";
 import ExportButtons from "./ExportButtons";
 import { clientXY } from "./svgUtil";
 
@@ -31,7 +31,9 @@ export default function CorrelationView({ setTip }) {
   useEffect(() => { if (!years.includes(year)) setYear(years[years.length - 1]); }, [years]);
   const [play, setPlay] = useState(false);
   useEffect(() => { if (!play) return; const t = setInterval(() => setYear((y) => { const i = years.indexOf(y); return years[(i + 1) % years.length]; }), 900); return () => clearInterval(t); }, [play, years]);
-  const pool = level === "sido" ? SIDOS : sidoF === "all" ? SGG_ALL : SGG_BY_SIDO[sidoF];
+  // 두 지표가 모두 지역사회건강조사면 조사 단위 258곳, 하나라도 시군구 자료면 시군구 229곳에서 짝을 짓는다
+  const both = isSurvey(xi) && isSurvey(yi);
+  const pool = level === "sido" ? SIDOS : sidoF === "all" ? (both ? HC_POOL : SGG_ALL) : (both ? sidoPoolOf(xi, sidoF) : SGG_BY_SIDO[sidoF]);
   const pts = useMemo(() => pool.map((r) => ({ r, x: val(xi, item, year, r.c), y: val(yi, item, year, r.c) })).filter((p) => p.x != null && p.y != null), [pool, xi, yi, item, year]);
   const xs = pts.map((p) => p.x), ys = pts.map((p) => p.y), n = pts.length;
   const rP = pearson(xs, ys), rS = pearson(ranks(xs), ranks(ys)), tK = kendall(xs, ys);

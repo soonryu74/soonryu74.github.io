@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmt, ranked, poolFor, label, SUBS_BY_SGG, val, SIDOS, SGG_ALL, SGG_BY_SIDO, RBY, HC_POOL,
+import { fmt, ranked, poolFor, label, SUBS_BY_SGG, val, SIDOS, SGG_ALL, SGG_BY_SIDO, RBY, HC_POOL, isSurvey, natPool, sidoPoolOf,
          ci, hasSe, unstableRows, RSE_UNSTABLE, healthGroups, GROUP_N } from "../data";
 import RankAll from "./RankAll";
+import Cite from "./Cite";
 
 /* 순위: 비교 집단(전국 시군구 / 시도 내 시군구 / 17개 시도) 막대. 선택 지역 자동 스크롤 */
 const SHOW_ALL_MAX = 40;   // 이 개수 이하면 스크롤 상자 대신 전부 펼침(경기 31개 시군구까지 포함)
@@ -14,7 +15,9 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
   // 기본: 시도를 고르면 그 시도의 시군구 순위, 시군구를 고르면 비교 범위(전국/시도)에 따라. 17개 시도 순위는 탭으로.
   const auto = sel.l === "sido" ? "insido" : scope === "sido" ? "insido" : "nation";
   const m = mode === "auto" ? auto : mode;
-  const pool = m === "sido" ? SIDOS : m === "nation" ? SGG_ALL : m === "insido" ? SGG_BY_SIDO[sidoCode] : m === "hc" ? HC_POOL : poolFor(sel, scope);
+  // 지역사회건강조사 지표는 「전국 시군구」·「시도 내 시군구」가 곧 조사 단위(보건소) 기준 — 질병관리청 공표 방식
+  const survey = isSurvey(ind);
+  const pool = m === "sido" ? SIDOS : m === "nation" ? natPool(ind) : m === "insido" ? sidoPoolOf(ind, sidoCode) : m === "hc" ? HC_POOL : poolFor(sel, scope, ind);
   const [rev, setRev] = useState(false);
   const [allOpen, setAllOpen] = useState(false);
   // 표본오차가 있는 지표(지역사회건강조사)만 신뢰구간·불안정값 제외를 적용한다.
@@ -31,7 +34,10 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
   const selInPool = rowsAsc.some((x) => x.r.c === sel.c);
   const selCi = se && selInPool ? ci(ind, item, year, sel.c) : null;
   const rankNo = (k) => (rev ? rows.length - k : k + 1);
-  const TABS = [["sido", "17개 시도"], ["nation", "전국 시군구"], ["insido", `${sidoName} 시군구`], ["hc", "보건소 단위"]];
+  const TABS = survey
+    ? [["sido", "17개 시도"], ["nation", `전국 시군구 ${HC_POOL.length}`], ["insido", `${sidoName} 시군구`]]
+    : [["sido", "17개 시도"], ["nation", "전국 시군구"], ["insido", `${sidoName} 시군구`], ["hc", "보건소 단위"]];
+  const unitMode = m === "hc" || (survey && (m === "nation" || m === "insido"));
   const hcOf = (c) => HC_POOL.find((u) => u.c === c);
   // 오차막대가 트랙을 넘지 않도록 상한은 신뢰구간 상단까지 포함해 잡는다.
   const max = rows.length ? Math.max(...rows.map((x) => (showCi && x.ci ? x.ci.hi : x.v))) : 1;
@@ -46,9 +52,9 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
 
   const subs = sel.l === "sgg" ? SUBS_BY_SGG[sel.c] : null;
 
-  const mine = (r) => r.c === sel.c || (sel.l === "sido" && m !== "insido" && (r.p === sel.c || r.s === sel.s)) || (m === "hc" && sel.l === "sgg" && r.l === "sub" && r.p === sel.c);
+  const mine = (r) => r.c === sel.c || (sel.l === "sido" && m !== "insido" && (r.p === sel.c || r.s === sel.s)) || (unitMode && sel.l === "sgg" && r.l === "sub" && r.p === sel.c);
   const gOf = (c) => (groups ? groups.g(c) : null);
-  const rowLabel = (r) => m === "hc" ? (r.hc || label(r)) : m === "nation" && r.l === "sgg" ? `${r.s} ${r.n}` : r.n;
+  const rowLabel = (r) => m === "hc" ? (r.hc || label(r)) : unitMode ? (r.l === "sub" ? `${m === "nation" ? r.s + " " : ""}${r.hc25 || `${RBY.get(r.p)?.n || ""} ${r.n}`}` : m === "nation" ? `${r.s} ${r.n}` : r.n) : m === "nation" && r.l === "sgg" ? `${r.s} ${r.n}` : r.n;
   return (
     <>
       <div className="seg" style={{ marginBottom: 8, flexWrap: "wrap" }}>
@@ -69,6 +75,7 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
           <span className="muted ci-note">표본조사 값입니다. 신뢰구간이 겹치면 순위 차이를 확신할 수 없습니다.</span>
         </div>
       )}
+      {survey && (m === "nation" || m === "insido") && <div className="desc" style={{ marginBottom: 6 }}>지역사회건강조사는 조사 단위 {HC_POOL.length}곳(일반구가 있는 시는 보건소별)으로 공표됩니다. 순위·중앙값도 이 기준입니다<Cite k="chs25" />.</div>}
       {m === "hc" && <div className="desc" style={{ marginBottom: 6 }}>조사 단위(보건소)별 순위 — 질병관리청 「2025 지역건강통계 한눈에 보기」 부록의 시군구별 표 기준 258개 조사 단위(일반구가 있는 시는 보건소별 행, 시 전체 행 제외, 세종은 세종특별자치시보건소)</div>}
       {/* 시도 내 시군구·17개 시도처럼 짧은 목록은 스크롤 없이 전부 펼친다(소유자 제보: 서울 25개 구 중 16개만 보임) */}
       <div className={`rank ${rows.length > SHOW_ALL_MAX ? "scroll" : ""}`} ref={listRef}>
