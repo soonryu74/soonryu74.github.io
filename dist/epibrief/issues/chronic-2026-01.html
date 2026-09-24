@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>만성질환 동향 뉴스레터 2026년 제1호(창간호)</title>
+<meta name="description" content="질병관리청 만성질환관리국 발간 · 만성질환 동향 뉴스레터 2026년 제1호(창간호). 공식 기관 발표와 최신 연구를 정리한 뉴스레터입니다.">
+<meta name="theme-color" content="#146c3a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="../paper.css">
+<style>
+  :root{ --bar-brand:#146c3a; --bar-accent:#bf560c; }
+  body{ margin:0; background:#eef1f5; color:#191f28;
+    font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif; }
+  .bar{ position:sticky; top:0; z-index:20; background:var(--bar-brand); color:#fff;
+    display:flex; gap:6px; align-items:center; flex-wrap:nowrap;
+    padding:8px 12px; box-shadow:0 1px 8px rgba(0,0,0,.18); }
+  .bar a, .bar button, .bar select{ font-family:inherit; font-size:.92rem; font-weight:700; }
+  .bar a.home{ color:#fff; text-decoration:none; padding:7px 11px; border-radius:8px;
+    background:rgba(255,255,255,.14); white-space:nowrap; }
+  .bar .short{ display:none; }
+  .bar a.home:hover{ background:rgba(255,255,255,.24); }
+  .bar .sp{ flex:1 }
+  .bar select{ background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.35);
+    border-radius:8px; padding:7px 10px; max-width:min(46vw,320px); }
+  .bar select option{ color:#191f28; }
+  .bar button{ background:#fff; color:var(--bar-brand); border:0; border-radius:8px;
+    padding:8px 14px; cursor:pointer; }
+  .bar button:hover{ background:#f0f3f8; }
+  .bar button.ghost{ background:rgba(255,255,255,.14); color:#fff; }
+  .bar button.ghost:hover{ background:rgba(255,255,255,.26); }
+  .menu{ position:relative; }
+  .menu-pop{ position:absolute; right:0; left:auto; top:calc(100% + 8px); background:#fff; color:#191f28;
+    border:1px solid #dde2e9; border-radius:12px; box-shadow:0 10px 30px rgba(22,48,90,.18);
+    min-width:250px; padding:6px; display:none; }
+  .menu-pop.on{ display:block; }
+  .menu-pop button, .menu-pop a{ display:block; width:100%; text-align:left; background:none;
+    border:0; color:#191f28; padding:11px 12px; border-radius:8px; cursor:pointer; font-size:.92rem;
+    font-weight:600; text-decoration:none; }
+  .menu-pop button:hover, .menu-pop a:hover{ background:#f2f5f9; }
+  .menu-pop .hint{ font-size:.78rem; color:#6d7885; font-weight:400; padding:4px 12px 8px; }
+  .toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#191f28;
+    color:#fff; padding:12px 18px; border-radius:10px; font-size:.9rem; z-index:50; display:none; }
+  .toast.on{ display:block; }
+  .paperwrap{ padding:24px 14px 60px; }
+  @media (max-width:640px){
+    .bar{ gap:5px; padding:7px 9px; font-size:.86rem; }
+    .bar a.home, .bar button{ padding:7px 9px; font-size:.85rem; }
+    .bar .full{ display:none; }
+    .bar .short{ display:inline; }
+    .bar select{ max-width:34vw; padding:6px 7px; font-size:.82rem; }
+    .menu-pop{ position:fixed; left:10px; right:10px; top:56px; min-width:0; }
+  }
+  @media print{ .bar,.toast{ display:none !important; } body{ background:#fff; } .paperwrap{ padding:0; } }
+</style>
+</head>
+<body>
+<nav class="bar">
+  <a class="home" href="../"><span class="full">← 뉴스레터 메이커</span><span class="short">← 홈</span></a>
+  <a class="home" href="./"><span class="full">발간 목록</span><span class="short">목록</span></a>
+  <select id="jump" aria-label="다른 호 보기"><option value="chronic-2026-01.html" selected>만성질환 · 2026년 제1호(창간호)</option><option value="climate-2026-01.html">기후·건강 · 2026년 제1호(창간호)</option><option value="outbreak-2026-37.html">감염병 발생동향 · 2026년 제37호</option><option value="phsm-2026-01.html">감염병 사회 대응(PHSM) · 2026년 제1호(창간호)</option></select>
+  <span class="sp"></span>
+  <button class="ghost" onclick="window.print()"><span class="full">인쇄 · PDF</span><span class="short">인쇄</span></button>
+  <span class="menu">
+    <button id="mailBtn" aria-haspopup="true" aria-expanded="false"><span class="full">이메일로 보내기</span><span class="short">메일</span> ▾</button>
+    <span class="menu-pop" id="mailPop">
+      <div class="hint">받는 사람에게 그대로 보낼 수 있는 형태로 만듭니다.</div>
+      <button data-act="copy">메일 본문 복사 (서식 유지)</button>
+      <a href="#" data-act="mailto">메일 프로그램 열기</a>
+      <button data-act="download">메일용 HTML 파일 저장</button>
+    </span>
+  </span>
+</nav>
+
+<div class="paperwrap"><div id="paper" class="t-card k-chronic">
+  <header class="nl-head">
+    <div class="nl-topline">
+      <span>만성질환 뉴스레터</span>
+      <span class="issue">2026년 제1호(창간호) · 2026.09.14.</span>
+    </div>
+    <div class="nl-kicker">질병관리청 만성질환관리국</div>
+    <div class="nl-org-en">Bureau of Chronic Disease Prevention and Control</div>
+    <h1 class="nl-title">만성질환 동향 뉴스레터</h1>
+    <div class="nl-title-en">Chronic Disease Trends Newsletter</div>
+    <p class="nl-lead">향후 10년, 만성질환이 국가 보건정책의 한복판으로 들어옵니다.</p>
+  </header>
+  <div class="nl-bar">
+    <span>발행 질병관리청 만성질환관리국</span>
+    <span>월 1회 발행 (매월 둘째 주)</span>
+    <span>담당 만성질환예방과</span>
+    <span>구독 <a href="https://epibrief.github.io/subscribe.html?series=chronic">이 뉴스레터 받아보기 →</a></span>
+  </div>
+  <div class="brief">
+    <div class="brief-label">이번 호에는 <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
+    <div class="stats"><div class="stat"><div class="v">3명 중 1명</div><div class="l">성인 고콜레스테롤혈증</div><div class="n">보도 기준</div></div><div class="stat"><div class="v">10년</div><div class="l">복지부 중점 관리 기간</div></div><div class="stat"><div class="v">2030년</div><div class="l">아프리카 NCD 최대 사인 전망</div></div><div class="stat"><div class="v">30일</div><div class="l">재입원 예측모형 관찰 기간</div></div></div>
+    <ol class="issues"><li><a href="#t1">
+          <span class="no">1</span>
+          <span class="it">국내 정책 — 향후 10년, 만성질환 중점 관리
+            <span class="ih">중점 관리의 실효는 검진 이후의 연계율에서 갈립니다.</span></span>
+          <span class="meta"><span class="u u-즉시조치">즉시조치</span><span class="src">한의신문</span><span class="src">의약뉴스</span>
+            <span class="tag tag-정책">정책</span></span>
+        </a></li><li><a href="#t2">
+          <span class="no">2</span>
+          <span class="it">국제 동향 — 정책 채택에서 이행으로
+            <span class="ih">국제 논의의 초점이 정책 ‘채택’에서 ‘이행’으로 옮겨가고 있습니다.</span></span>
+          <span class="meta"><span class="u u-모니터링">모니터링</span><span class="src">WHO</span><span class="src">Onlymyhealth</span><span class="src-more">외 1곳</span>
+            <span class="tag tag-정책">정책</span></span>
+        </a></li><li><a href="#t3">
+          <span class="no">3</span>
+          <span class="it">비만·대사 — 근감소성 비만의 전 세계 유병률
+            <span class="ih">체중만으로는 잡히지 않는 ‘근육 감소를 동반한 비만’이 별도 표현형으로 정리됩니다.</span></span>
+          <span class="meta"><span class="u u-모니터링">모니터링</span><span class="src">Clinical Nutrition ESPEN</span>
+            <span class="tag tag-연구">연구</span></span>
+        </a></li><li><a href="#t4">
+          <span class="no">4</span>
+          <span class="it">노인·다질환 — 재택 일차의료와 응급실 이용
+            <span class="ih">재택의료의 성과는 ‘하느냐’가 아니라 ‘어떻게 짜느냐’에 달려 있습니다.</span></span>
+          <span class="meta"><span class="u u-모니터링">모니터링</span><span class="src">BMJ Open</span>
+            <span class="tag tag-연구">연구</span></span>
+        </a></li><li><a href="#t5">
+          <span class="no">5</span>
+          <span class="it">관리체계 — 데이터로 재입원을 예측하다
+            <span class="ih">예측은 알고리즘보다 자료 품질에 좌우되며, 예측 이후의 개입이 성과를 만듭니다.</span></span>
+          <span class="meta"><span class="u u-모니터링">모니터링</span><span class="src">J Intensive Care Medicine</span>
+            <span class="tag tag-연구">연구</span></span>
+        </a></li></ol>
+  </div>
+  
+  <div class="intro">만성질환은 갑자기 터지지 않습니다. 그래서 동향도 잘 보이지 않습니다.
+이 뉴스레터는 국내외 통계 발표와 최신 연구를 한 달에 한 번 정리해, 우리 사업이 어디를 보고 있어야 하는지를 같이 확인하려고 만들었습니다. 창간호에서는 국내 정책 방향, 국제 동향, 그리고 최근 연구 세 갈래를 담았습니다.</div>
+  <section class="topic" id="t1">
+      <div class="topic-head">
+        <span class="topic-no">1</span>
+        <h2>국내 정책 — 향후 10년, 만성질환 중점 관리 <span class="en">Domestic policy</span></h2>
+        <span class="judge"><span class="u u-즉시조치" title="긴급도">즉시조치</span><span class="im im-상" title="국내 영향도">국내 영향 상</span></span>
+        <span class="tag tag-정책">정책</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>한의신문 · 의약뉴스</b></div>
+      <p class="topic-lead">중점 관리의 실효는 검진 이후의 연계율에서 갈립니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 만성질환 정책 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 만성질환 정책 연구 — 2019년 1편에서 2026년 7편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="78.2" width="24.8" height="7.8" rx="3"/><rect class="b" x="47.6" y="70.4" width="24.8" height="15.6" rx="3"/><rect class="b" x="87.6" y="39.3" width="24.8" height="46.7" rx="3"/><rect class="b" x="127.6" y="47.1" width="24.8" height="38.9" rx="3"/><rect class="b" x="167.6" y="62.7" width="24.8" height="23.3" rx="3"/><rect class="b" x="207.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b" x="247.6" y="39.3" width="24.8" height="46.7" rx="3"/><rect class="b cur" x="287.6" y="31.6" width="24.8" height="54.4" rx="3"/><text class="vl" x="220.0" y="12.0">9</text><text class="vl" x="300.0" y="27.6">7</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 만성질환 정책 연구</caption><tbody><tr><th>2019</th><td>1</td></tr><tr><th>2020</th><td>2</td></tr><tr><th>2021</th><td>6</td></tr><tr><th>2022</th><td>5</td></tr><tr><th>2023</th><td>3</td></tr><tr><th>2024</th><td>9</td></tr><tr><th>2025</th><td>6</td></tr><tr><th>2026</th><td>7</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>주요 동향</h4><ul><li>한의신문은 복지부가 향후 <b class="num">10년</b> 간 만성질환을 중점 관리하겠다는 계획을 밝혔다고 보도함<sup>[1]</sup></li><li>의약뉴스는 성인 <b class="num">3명</b> 중 <b class="num">1명</b>이 고콜레스테롤혈증에 해당한다며 국가건강검진 주기를 단축해야 한다는 학계 주장을 전함<sup>[2]</sup></li></ul></div>
+      <div class="sec"><h4>근거 해석</h4><ul><li>‘중점 관리’의 실효는 무엇을 지표로 삼고 어디에 재원을 배분하는지에 달려 있음</li><li>검진 주기 단축 주장은 발견율을 높일 수 있으나, 검진 이후 관리 연계가 없으면 효과가 제한됨</li><li>두 건 모두 언론 보도이므로 확정 계획·근거 자료는 원문 발표 확인이 필요함</li></ul></div>
+      <div class="sec"><h4>국내 적용 시사점</h4><ul><li>검진–진단–치료 연계율을 사업 성과지표로 함께 관리할 것</li><li>고콜레스테롤혈증 등 주요 위험요인의 인지율·치료율·조절률을 정기적으로 확인할 것</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 2건</summary><ol><li>보도 | 복지부 “향후 10년 간 만성질환 중점 관리” | 한의신문 (2026.09.12. 발표) <a href="https://news.google.com/rss/articles/CBMigAJBVV95cUxNN21UQURGZ1F3VF92UUNvbWt2XzdySlVJSlItSG95U0ozSHJwc05ob3Q3VUhBMjVJanNQaFpJaG80UWk2ZXA1aUVOYnRjaDBILTBndXB4V1dfenRKcmNzNGFOUzNKcFBqT1lKQWZTdmxhb1RJZWVjS1YtY3JWS1cwem8zVzBBbVRSeThYcGFZdjFjbXpEVG9YTzRsa0ozYzU0ck9uMXRKVFFuV005cTdCczF0RzJVSk80MnROZ3RONHgwMXdpazZwUzloNkdwVUZKMmdBbWJwNHBDRGpab19nQjd0aXQzM3BIR3lMUk9Tc0tiZk9KMWNKS3hJRjllZVdZ?oc=5" target="_blank" rel="noopener">기사</a></li><li>보도 | 성인 3명 중 1명 고콜레스테롤혈증 “국가 검진 주기 단축해야” | 의약뉴스 (2026.09.10. 발표) <a href="https://news.google.com/rss/articles/CBMiY0FVX3lxTE9jRzQ0MTJ6WjFMQlhtWDg5SGNEUDg1YWNwRzZvRWVUV3hkT2lxMUtCVWFYWnktWDk5WHNDem4xaUNwRnFrZFlDMXA4aGUxNTQyUk5LM1d6SU95eGk5NXpxS0dIVQ?oc=5" target="_blank" rel="noopener">기사</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[국내 정책 — 향후 10년, 만성질환 중점 관리] 중점 관리의 실효는 검진 이후의 연계율에서 갈립니다.
+조치: 검진–진단–치료 연계율을 사업 성과지표로 함께 관리할 것
+출처: 한의신문 · 의약뉴스 / 만성질환 동향 뉴스레터 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t2">
+      <div class="topic-head">
+        <span class="topic-no">2</span>
+        <h2>국제 동향 — 정책 채택에서 이행으로 <span class="en">Global NCD policy</span></h2>
+        <span class="judge"><span class="u u-모니터링" title="긴급도">모니터링</span><span class="im im-중" title="국내 영향도">국내 영향 중</span></span>
+        <span class="tag tag-정책">정책</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>WHO · Onlymyhealth · The Nation(나이지리아)</b></div>
+      <p class="topic-lead">국제 논의의 초점이 정책 ‘채택’에서 ‘이행’으로 옮겨가고 있습니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 비감염성질환(NCD) 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 비감염성질환(NCD) 연구 — 2019년 348편에서 2026년 359편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="44.5" width="24.8" height="41.5" rx="3"/><rect class="b" x="47.6" y="36.9" width="24.8" height="49.1" rx="3"/><rect class="b" x="87.6" y="28.5" width="24.8" height="57.5" rx="3"/><rect class="b" x="127.6" y="24.9" width="24.8" height="61.1" rx="3"/><rect class="b" x="167.6" y="30.0" width="24.8" height="56.0" rx="3"/><rect class="b" x="207.6" y="29.2" width="24.8" height="56.8" rx="3"/><rect class="b" x="247.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b cur" x="287.6" y="43.2" width="24.8" height="42.8" rx="3"/><text class="vl" x="260.0" y="12.0">587</text><text class="vl" x="300.0" y="39.2">359</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 비감염성질환(NCD) 연구</caption><tbody><tr><th>2019</th><td>348</td></tr><tr><th>2020</th><td>412</td></tr><tr><th>2021</th><td>482</td></tr><tr><th>2022</th><td>512</td></tr><tr><th>2023</th><td>470</td></tr><tr><th>2024</th><td>476</td></tr><tr><th>2025</th><td>587</td></tr><tr><th>2026</th><td>359</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>주요 동향</h4><ul><li>BRICS 정상회의에서 비만과 NCD를 주요 위협으로 인식했다는 보도가 나옴<sup>[1]</sup></li><li>아프리카 지역에서 NCD가 <b class="num">2030년</b>까지 최대 사망 원인이 될 것이라는 보고서 내용이 전해짐<sup>[2]</sup></li><li>WHO는 금연법 이행 경험에서 얻은 교훈을 통해 NCD 예방정책의 이행력을 강화해야 한다고 제시함<sup>[3]</sup></li></ul></div>
+      <div class="sec"><h4>근거 해석</h4><ul><li>국제적으로 NCD 의제가 감염병 대응과 나란히 올라오고 있으며, 초점은 법·제도의 ‘채택’에서 ‘집행과 준수’로 옮겨가고 있음</li><li>국내도 금연·절주·영양 표시 등 기존 정책의 이행 점검이 다음 과제가 될 가능성이 큼</li></ul></div>
+      <div class="sec"><h4>국내 적용 시사점</h4><ul><li>금연구역 단속, 주류 광고 규제, 영양표시 준수 등 기존 정책의 이행률을 점검할 것</li><li>국제 논의에서 다루는 지표(비만 유병률, 조기 사망 확률 등)와 국내 지표의 정합성을 확인할 것</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 3건</summary><ol><li>보도 | World Leaders at BRICS Recognise Obesity and NCDs as Major Health Threats | Onlymyhealth (2026.09.13. 발표) <a href="https://news.google.com/rss/articles/CBMi0gFBVV95cUxOb2R5M1ROUHRQRldFN0V1d2VGOUJMU3dPenBrQ3VpVnYxbDZkTEdDSDJzSXJOc052SE0zc3otUHVzRjRhN29lcTN1eFoxZkNnV194YlVJVUdINFFLc2xfTFJOQUpSTVpJcWI2RVNZdENnQWVrdE5BUmFmd0ViaVJXOU1BelRtUmZtYjBBc0Q1VzZtNVpBV1NuNHVXcnZuOUZOUElRNGQyV3RVNlhxeGRNdE5kYzhPd0NiZUJPQURxODliWlFyZmEydDFIVy1nV1RieEE?oc=5" target="_blank" rel="noopener">기사</a></li><li>보도 | Non-communicable diseases will be Africa&#x27;s top killer by 2030, report warns | thenationonlineng.net (2026.09.08. 발표) <a href="https://news.google.com/rss/articles/CBMipwFBVV95cUxQVjZjbXEyVzhFa1NPa2JILWRHV19JV1NPMDV3V3dXeXVlV2xRR05oVFNrQWlORmR3TkMtVW1FbV9SaFhrR0h3aFBLbTNmbFY4ODZzVlh1cHQzTnJGaWpLTnZacWFCVFVROGVMNEZ0LTlqeFRYU2F4UlM4c3ZEX3Nwd3AxZ2ExLWlBWVRaSDNnOURUMWNkdTJlMW9sRjZFMEhndmVZeHJmTdIBrAFBVV95cUxQdS02VnVKZTFJczc2MjExa2hMdkFGMG5QVGxkVHR2bkdkLVU1RlhOR2RocGd6bUN4Vm9YOU82YVc3RnpTSU1LeEVOUy0wYnpsNGVibWwzTEcyeVZDNG1BOUhYZzdBcnozcGZheWpfbTFvSWdvXzZCd2hFQXNrN05pM2g5NWFmMzYtQUpSV3FXSmtfcGJsZXRWTnVQcFBwdUZyUm5FcXBJZnE4anhH?oc=5" target="_blank" rel="noopener">기사</a></li><li>WHO | From adoption to compliance: Strengthening implementation of NCD prevention policies | World Health Organization (WHO) (2026.09.08. 발표) <a href="https://news.google.com/rss/articles/CBMiwgJBVV95cUxQV0tTLVVQaVM5bkpoQUNLMV9NZU5yMWxEMUIzSFBBN0trcGQzY0dGc3dnUFFoeXA1aDBXcm5uSFFjQk5UOU1RVXlIV2dYR2puV1VWWkpaUEdSRVJfYXI2V1RBMGFMZXBlYTdBdDF1eElKMzlrYUV0akwxT0pXT0R3Y2lmMU9LV0oxTmpPNWxzemVHRmR0UXlLMlY1MnJYdnRWUEREVVZMU0czNnc0WlJOclUyNmhlbVdabHV0M3puRTM1NGdMYU9pVWN2OEdydWV2OWVPYXFGa2VNczZnX2JGTkQ2RC1UaHh5QWpYSFVYdFBWNHJjTnpfN1RKVTZ5RldhMU9HTnJjNzJtTmVNbWJNUnVWODVIalRDX0g3TVhtdlhDTjBfQ1FXMVlZVkZ0TGdEaG1IdFRTd29XcC00eEhGYkZn?oc=5" target="_blank" rel="noopener">기사</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[국제 동향 — 정책 채택에서 이행으로] 국제 논의의 초점이 정책 ‘채택’에서 ‘이행’으로 옮겨가고 있습니다.
+조치: 금연구역 단속, 주류 광고 규제, 영양표시 준수 등 기존 정책의 이행률을 점검할 것
+출처: WHO · Onlymyhealth · The Nation(나이지리아) / 만성질환 동향 뉴스레터 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t3">
+      <div class="topic-head">
+        <span class="topic-no">3</span>
+        <h2>비만·대사 — 근감소성 비만의 전 세계 유병률 <span class="en">Sarcopenic obesity</span></h2>
+        <span class="judge"><span class="u u-모니터링" title="긴급도">모니터링</span><span class="im im-하" title="국내 영향도">국내 영향 하</span></span>
+        <span class="tag tag-연구">연구</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>Clinical Nutrition ESPEN</b></div>
+      <p class="topic-lead">체중만으로는 잡히지 않는 ‘근육 감소를 동반한 비만’이 별도 표현형으로 정리됩니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 근감소성 비만 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 근감소성 비만 연구 — 2019년 53편에서 2026년 155편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="69.1" width="24.8" height="16.9" rx="3"/><rect class="b" x="47.6" y="67.5" width="24.8" height="18.5" rx="3"/><rect class="b" x="87.6" y="60.4" width="24.8" height="25.6" rx="3"/><rect class="b" x="127.6" y="51.2" width="24.8" height="34.8" rx="3"/><rect class="b" x="167.6" y="42.5" width="24.8" height="43.5" rx="3"/><rect class="b" x="207.6" y="38.7" width="24.8" height="47.3" rx="3"/><rect class="b" x="247.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b cur" x="287.6" y="36.5" width="24.8" height="49.5" rx="3"/><text class="vl" x="260.0" y="12.0">219</text><text class="vl" x="300.0" y="32.5">155</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 근감소성 비만 연구</caption><tbody><tr><th>2019</th><td>53</td></tr><tr><th>2020</th><td>58</td></tr><tr><th>2021</th><td>80</td></tr><tr><th>2022</th><td>109</td></tr><tr><th>2023</th><td>136</td></tr><tr><th>2024</th><td>148</td></tr><tr><th>2025</th><td>219</td></tr><tr><th>2026</th><td>155</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>주요 동향</h4><ul><li>Clinical Nutrition ESPEN 게재 연구는 유럽임상영양대사학회(ESPEN)와 유럽비만학회(EASO)가 제시한 정의에 따라 근감소성 비만의 전 세계 유병률을 체계적으로 추정함<sup>[1]</sup></li></ul></div>
+      <div class="sec"><h4>근거 해석</h4><ul><li>체중이나 BMI만으로는 잡히지 않는 ‘근육량 감소를 동반한 비만’이 별도 표현형으로 자리잡는 흐름</li><li>기준 정의가 최근에 정리된 만큼, 연구 간 유병률 편차와 측정 방법의 차이를 함께 봐야 함</li></ul></div>
+      <div class="sec"><h4>국내 적용 시사점</h4><ul><li>국내 노인 대상 사업에서 체중·BMI와 함께 근력·근육량 지표를 병행 측정하는 방안을 검토할 것</li><li>비만 관리 사업이 고령층에서는 근육 유지·단백질 섭취·저항운동과 함께 설계되어야 함</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 1건</summary><ol><li>연구 | Global prevalence of sarcopenic obesity defined by ESPEN/EASO criteria | Clinical nutrition ESPEN (2026.09.09. 발표) <a href="https://doi.org/10.1016/j.clnesp.2026.105111" target="_blank" rel="noopener">원문</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[비만·대사 — 근감소성 비만의 전 세계 유병률] 체중만으로는 잡히지 않는 ‘근육 감소를 동반한 비만’이 별도 표현형으로 정리됩니다.
+조치: 국내 노인 대상 사업에서 체중·BMI와 함께 근력·근육량 지표를 병행 측정하는 방안을 검토할 것
+출처: Clinical Nutrition ESPEN / 만성질환 동향 뉴스레터 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t4">
+      <div class="topic-head">
+        <span class="topic-no">4</span>
+        <h2>노인·다질환 — 재택 일차의료와 응급실 이용 <span class="en">Home-based primary care</span></h2>
+        <span class="judge"><span class="u u-모니터링" title="긴급도">모니터링</span><span class="im im-중" title="국내 영향도">국내 영향 중</span></span>
+        <span class="tag tag-연구">연구</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>BMJ Open</b></div>
+      <p class="topic-lead">재택의료의 성과는 ‘하느냐’가 아니라 ‘어떻게 짜느냐’에 달려 있습니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 재택의료 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 재택의료 연구 — 2019년 69편에서 2026년 162편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="59.5" width="24.8" height="26.5" rx="3"/><rect class="b" x="47.6" y="52.5" width="24.8" height="33.5" rx="3"/><rect class="b" x="87.6" y="40.6" width="24.8" height="45.4" rx="3"/><rect class="b" x="127.6" y="40.2" width="24.8" height="45.8" rx="3"/><rect class="b" x="167.6" y="45.2" width="24.8" height="40.8" rx="3"/><rect class="b" x="207.6" y="46.4" width="24.8" height="39.6" rx="3"/><rect class="b" x="247.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b cur" x="287.6" y="23.7" width="24.8" height="62.3" rx="3"/><text class="vl" x="260.0" y="12.0">182</text><text class="vl" x="300.0" y="19.7">162</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 재택의료 연구</caption><tbody><tr><th>2019</th><td>69</td></tr><tr><th>2020</th><td>87</td></tr><tr><th>2021</th><td>118</td></tr><tr><th>2022</th><td>119</td></tr><tr><th>2023</th><td>106</td></tr><tr><th>2024</th><td>103</td></tr><tr><th>2025</th><td>182</td></tr><tr><th>2026</th><td>162</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>주요 동향</h4><ul><li>BMJ Open 게재 질적연구는 재택 일차의료가 응급실 방문 감소에 기여할 수 있다는 기존 제안에서 출발해, 실제로 어떤 운영 요소가 그 효과에 관여하는지를 환자·제공자 관점에서 탐색함<sup>[1]</sup></li></ul></div>
+      <div class="sec"><h4>근거 해석</h4><ul><li>‘재택의료를 한다’보다 ‘어떻게 구성하느냐’가 성과를 좌우한다는 방향의 근거</li><li>질적연구이므로 효과 크기를 말해 주지는 않으며, 국내 적용 전 제도·인력 구조 차이를 고려해야 함</li></ul></div>
+      <div class="sec"><h4>국내 적용 시사점</h4><ul><li>국내 방문건강관리·재택의료 시범사업의 운영 요소(연락 체계, 야간 대응, 다직종 협업)를 성과와 연결해 평가할 것</li><li>응급실 이용을 성과지표로 쓸 경우, 의료 접근성 저하로 인한 감소와 구분할 필요가 있음</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 1건</summary><ol><li>연구 | Which components of home-based primary care may reduce emergency department visits among older adults | BMJ open (2026.09.11. 발표) <a href="https://doi.org/10.1136/bmjopen-2026-118687" target="_blank" rel="noopener">원문</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[노인·다질환 — 재택 일차의료와 응급실 이용] 재택의료의 성과는 ‘하느냐’가 아니라 ‘어떻게 짜느냐’에 달려 있습니다.
+조치: 국내 방문건강관리·재택의료 시범사업의 운영 요소(연락 체계, 야간 대응, 다직종 협업)를 성과와 연결해 평가할 것
+출처: BMJ Open / 만성질환 동향 뉴스레터 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t5">
+      <div class="topic-head">
+        <span class="topic-no">5</span>
+        <h2>관리체계 — 데이터로 재입원을 예측하다 <span class="en">Data-driven chronic care</span></h2>
+        <span class="judge"><span class="u u-모니터링" title="긴급도">모니터링</span><span class="im im-하" title="국내 영향도">국내 영향 하</span></span>
+        <span class="tag tag-연구">연구</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>J Intensive Care Medicine</b></div>
+      <p class="topic-lead">예측은 알고리즘보다 자료 품질에 좌우되며, 예측 이후의 개입이 성과를 만듭니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 재입원 예측 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 재입원 예측 연구 — 2019년 31편에서 2026년 24편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="36.7" width="24.8" height="49.3" rx="3"/><rect class="b" x="47.6" y="52.6" width="24.8" height="33.4" rx="3"/><rect class="b" x="87.6" y="35.1" width="24.8" height="50.9" rx="3"/><rect class="b" x="127.6" y="41.5" width="24.8" height="44.5" rx="3"/><rect class="b" x="167.6" y="47.8" width="24.8" height="38.2" rx="3"/><rect class="b" x="207.6" y="31.9" width="24.8" height="54.1" rx="3"/><rect class="b" x="247.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b cur" x="287.6" y="47.8" width="24.8" height="38.2" rx="3"/><text class="vl" x="260.0" y="12.0">44</text><text class="vl" x="300.0" y="43.8">24</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 재입원 예측 연구</caption><tbody><tr><th>2019</th><td>31</td></tr><tr><th>2020</th><td>21</td></tr><tr><th>2021</th><td>32</td></tr><tr><th>2022</th><td>28</td></tr><tr><th>2023</th><td>24</td></tr><tr><th>2024</th><td>34</td></tr><tr><th>2025</th><td>44</td></tr><tr><th>2026</th><td>24</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>주요 동향</h4><ul><li>Journal of Intensive Care Medicine 게재 연구는 빅데이터·예측모형을 활용한 만성질환 관리 맥락에서 <b class="num">30일</b> 재입원 예측 모형을 개발하고 실증적으로 검증함<sup>[1]</sup></li></ul></div>
+      <div class="sec"><h4>근거 해석</h4><ul><li>예측모형의 성능은 알고리즘보다 자료 품질과 전처리에 더 크게 좌우된다는 점이 재확인됨</li><li>예측이 곧 개선은 아니며, 고위험군을 찾은 뒤의 개입 설계가 있어야 성과로 이어짐</li></ul></div>
+      <div class="sec"><h4>국내 적용 시사점</h4><ul><li>건강보험·검진 자료를 활용한 국내 고위험군 선별 모형을 검토하되, 선별 이후의 관리 경로를 함께 설계할 것</li><li>모형 도입 시 자료 편향과 취약계층 과소·과대 선별 여부를 점검할 것</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 1건</summary><ol><li>연구 | Chronic Disease Management Using Big Data and Predictive Models | Journal of intensive care medicine (2026.09.12. 발표) <a href="https://doi.org/10.1177/08850666261487154" target="_blank" rel="noopener">원문</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[관리체계 — 데이터로 재입원을 예측하다] 예측은 알고리즘보다 자료 품질에 좌우되며, 예측 이후의 개입이 성과를 만듭니다.
+조치: 건강보험·검진 자료를 활용한 국내 고위험군 선별 모형을 검토하되, 선별 이후의 관리 경로를 함께 설계할 것
+출처: J Intensive Care Medicine / 만성질환 동향 뉴스레터 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section>
+  <aside class="tips"><h4>이 뉴스레터를 정책에 쓰실 때</h4><ol><li><b>‘발표·보도’ 근거는 1차 자료를 확인한 뒤 인용하십시오.</b><span class='why'>기관 발표를 전한 언론 보도는 수치의 기준(분모·기간)을 생략하는 일이 잦습니다. 각 꼭지의 출처에서 원문을 먼저 여십시오.</span></li><li><b>해외 수치는 국내값과 나란히 놓기 전까지 비교하지 마십시오.</b><span class='why'>접종률·발생률은 분모 정의와 의료체계가 달라 그대로 대비하면 오해를 만듭니다.</span></li><li><b>모형 연구는 결론보다 가정값을 보십시오.</b><span class='why'>모형의 결과는 투입한 가정(순응도·접촉률)에 좌우됩니다. 우리 매뉴얼이 같은 값을 무엇으로 두고 있는지부터 확인하는 편이 빠릅니다.</span></li><li><b>단일 관찰연구로 지침을 바꾸지 마십시오.</b><span class='why'>관찰연구는 연관성을 보여줄 뿐 인과를 확정하지 않습니다. 지침 개정 근거로는 ●●● 표시(체계적 문헌고찰·무작위배정)를 우선하십시오.</span></li><li><b>프리프린트는 동료심사 전 자료입니다.</b><span class='why'>흐름을 먼저 읽는 데는 유용하나, 공식 문서 인용은 게재 확정 후로 미루십시오.</span></li><li><b>‘자료 없음’도 정책 정보입니다.</b><span class='why'>원문에 수치가 없으면 이 뉴스레터는 ‘(원문 미제시)’로 표시합니다. 국내 해당 지표가 없다는 사실 자체가 조사·감시 과제입니다.</span></li></ol></aside>
+  <aside class="subscribe">
+    <img src="qr-chronic-2026-01.png" alt="구독 안내 QR 코드" width="112" height="112">
+    <div class="sub-text">
+      <div class="sub-title">이 뉴스레터 받아보기</div>
+      <div class="sub-note">휴대폰 카메라로 찍으면 만성질환 뉴스레터 구독 신청 화면으로 바로 이어집니다. (이번이 창간호입니다)</div>
+      <a href="https://epibrief.github.io/subscribe.html?series=chronic">https://epibrief.github.io/subscribe.html?series=chronic</a>
+    </div>
+  </aside>
+  <footer class="foot-note">
+    <div class="cover">
+      <b>자료 수집</b>
+      <span>이 호가 다룬 기간 2026.09.08.~2026.09.13.</span>
+      <span>소스 102곳을 매일 새벽 5시(KST)에 자동 수집</span>
+      <span>월 1회 발행 (매월 둘째 주)</span>
+      <span>다음 호 2026.10.12.</span>
+    </div>
+    본 뉴스레터는 각 기관의 공개 자료와 학술 문헌을 정리한 것으로, 원문의 내용이 우선합니다.<br>
+    질병관리청 만성질환관리국 · 만성질환예방과
+  </footer>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script type="application/json" id="issue-data">{"kind": "chronic", "tpl": "card", "meta": {"org": "질병관리청 만성질환관리국", "title": "만성질환 동향 뉴스레터", "issue": "2026년 제1호(창간호)", "date": "2026-09-14", "editor": "만성질환예방과", "orgEn": "Bureau of Chronic Disease Prevention and Control", "titleEn": "Chronic Disease Trends Newsletter", "cadence": "월 1회 발행 (매월 둘째 주)", "nextIssue": "2026-10-12", "coverage": "2026.09.08.~2026.09.13."}, "draft": {"generatedBy": "편집 예시(수집 자료 기반)", "intro": "만성질환은 갑자기 터지지 않습니다. 그래서 동향도 잘 보이지 않습니다.\n이 뉴스레터는 국내외 통계 발표와 최신 연구를 한 달에 한 번 정리해, 우리 사업이 어디를 보고 있어야 하는지를 같이 확인하려고 만들었습니다. 창간호에서는 국내 정책 방향, 국제 동향, 그리고 최근 연구 세 갈래를 담았습니다.", "topics": [{"name": "국내 정책 — 향후 10년, 만성질환 중점 관리", "en": "Domestic policy", "summary": ["보건복지부가 향후 10년간 만성질환을 중점 관리하겠다는 방향을 밝힘[1]", "성인 3명 중 1명이 고콜레스테롤혈증이라는 자료와 함께 국가 검진 주기 단축 요구가 제기됨[2]"], "situation": ["한의신문은 복지부가 향후 10년 간 만성질환을 중점 관리하겠다는 계획을 밝혔다고 보도함[1]", "의약뉴스는 성인 3명 중 1명이 고콜레스테롤혈증에 해당한다며 국가건강검진 주기를 단축해야 한다는 학계 주장을 전함[2]"], "assess": ["‘중점 관리’의 실효는 무엇을 지표로 삼고 어디에 재원을 배분하는지에 달려 있음", "검진 주기 단축 주장은 발견율을 높일 수 있으나, 검진 이후 관리 연계가 없으면 효과가 제한됨", "두 건 모두 언론 보도이므로 확정 계획·근거 자료는 원문 발표 확인이 필요함"], "korea": ["검진–진단–치료 연계율을 사업 성과지표로 함께 관리할 것", "고콜레스테롤혈증 등 주요 위험요인의 인지율·치료율·조절률을 정기적으로 확인할 것"], "refs": ["보도 | 복지부 “향후 10년 간 만성질환 중점 관리” | 한의신문 (2026.09.12. 발표) — https://news.google.com/rss/articles/CBMigAJBVV95cUxNN21UQURGZ1F3VF92UUNvbWt2XzdySlVJSlItSG95U0ozSHJwc05ob3Q3VUhBMjVJanNQaFpJaG80UWk2ZXA1aUVOYnRjaDBILTBndXB4V1dfenRKcmNzNGFOUzNKcFBqT1lKQWZTdmxhb1RJZWVjS1YtY3JWS1cwem8zVzBBbVRSeThYcGFZdjFjbXpEVG9YTzRsa0ozYzU0ck9uMXRKVFFuV005cTdCczF0RzJVSk80MnROZ3RONHgwMXdpazZwUzloNkdwVUZKMmdBbWJwNHBDRGpab19nQjd0aXQzM3BIR3lMUk9Tc0tiZk9KMWNKS3hJRjllZVdZ?oc=5", "보도 | 성인 3명 중 1명 고콜레스테롤혈증 “국가 검진 주기 단축해야” | 의약뉴스 (2026.09.10. 발표) — https://news.google.com/rss/articles/CBMiY0FVX3lxTE9jRzQ0MTJ6WjFMQlhtWDg5SGNEUDg1YWNwRzZvRWVUV3hkT2lxMUtCVWFYWnktWDk5WHNDem4xaUNwRnFrZFlDMXA4aGUxNTQyUk5LM1d6SU95eGk5NXpxS0dIVQ?oc=5"], "tag": "정책", "headline": "중점 관리의 실효는 검진 이후의 연계율에서 갈립니다.", "sources": ["한의신문", "의약뉴스"], "urgency": "즉시조치", "impact": "상", "chart": {"title": "연도별 논문 발표 건수 — 만성질환 정책 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 1}, {"y": 2020, "v": 2}, {"y": 2021, "v": 6}, {"y": 2022, "v": 5}, {"y": 2023, "v": 3}, {"y": 2024, "v": 9}, {"y": 2025, "v": 6}, {"y": 2026, "v": 7}]}}, {"name": "국제 동향 — 정책 채택에서 이행으로", "en": "Global NCD policy", "summary": ["BRICS 정상들이 비만과 비감염성질환(NCD)을 주요 건강 위협으로 인정했다는 보고가 나옴[1]", "아프리카에서는 2030년 NCD가 최대 사인이 될 것이라는 전망이 제시됨[2]", "WHO는 금연법 사례를 들어 ‘정책 채택’과 ‘실제 이행’의 간극을 좁혀야 한다고 강조함[3]"], "situation": ["BRICS 정상회의에서 비만과 NCD를 주요 위협으로 인식했다는 보도가 나옴[1]", "아프리카 지역에서 NCD가 2030년까지 최대 사망 원인이 될 것이라는 보고서 내용이 전해짐[2]", "WHO는 금연법 이행 경험에서 얻은 교훈을 통해 NCD 예방정책의 이행력을 강화해야 한다고 제시함[3]"], "assess": ["국제적으로 NCD 의제가 감염병 대응과 나란히 올라오고 있으며, 초점은 법·제도의 ‘채택’에서 ‘집행과 준수’로 옮겨가고 있음", "국내도 금연·절주·영양 표시 등 기존 정책의 이행 점검이 다음 과제가 될 가능성이 큼"], "korea": ["금연구역 단속, 주류 광고 규제, 영양표시 준수 등 기존 정책의 이행률을 점검할 것", "국제 논의에서 다루는 지표(비만 유병률, 조기 사망 확률 등)와 국내 지표의 정합성을 확인할 것"], "refs": ["보도 | World Leaders at BRICS Recognise Obesity and NCDs as Major Health Threats | Onlymyhealth (2026.09.13. 발표) — https://news.google.com/rss/articles/CBMi0gFBVV95cUxOb2R5M1ROUHRQRldFN0V1d2VGOUJMU3dPenBrQ3VpVnYxbDZkTEdDSDJzSXJOc052SE0zc3otUHVzRjRhN29lcTN1eFoxZkNnV194YlVJVUdINFFLc2xfTFJOQUpSTVpJcWI2RVNZdENnQWVrdE5BUmFmd0ViaVJXOU1BelRtUmZtYjBBc0Q1VzZtNVpBV1NuNHVXcnZuOUZOUElRNGQyV3RVNlhxeGRNdE5kYzhPd0NiZUJPQURxODliWlFyZmEydDFIVy1nV1RieEE?oc=5", "보도 | Non-communicable diseases will be Africa's top killer by 2030, report warns | thenationonlineng.net (2026.09.08. 발표) — https://news.google.com/rss/articles/CBMipwFBVV95cUxQVjZjbXEyVzhFa1NPa2JILWRHV19JV1NPMDV3V3dXeXVlV2xRR05oVFNrQWlORmR3TkMtVW1FbV9SaFhrR0h3aFBLbTNmbFY4ODZzVlh1cHQzTnJGaWpLTnZacWFCVFVROGVMNEZ0LTlqeFRYU2F4UlM4c3ZEX3Nwd3AxZ2ExLWlBWVRaSDNnOURUMWNkdTJlMW9sRjZFMEhndmVZeHJmTdIBrAFBVV95cUxQdS02VnVKZTFJczc2MjExa2hMdkFGMG5QVGxkVHR2bkdkLVU1RlhOR2RocGd6bUN4Vm9YOU82YVc3RnpTSU1LeEVOUy0wYnpsNGVibWwzTEcyeVZDNG1BOUhYZzdBcnozcGZheWpfbTFvSWdvXzZCd2hFQXNrN05pM2g5NWFmMzYtQUpSV3FXSmtfcGJsZXRWTnVQcFBwdUZyUm5FcXBJZnE4anhH?oc=5", "WHO | From adoption to compliance: Strengthening implementation of NCD prevention policies | World Health Organization (WHO) (2026.09.08. 발표) — https://news.google.com/rss/articles/CBMiwgJBVV95cUxQV0tTLVVQaVM5bkpoQUNLMV9NZU5yMWxEMUIzSFBBN0trcGQzY0dGc3dnUFFoeXA1aDBXcm5uSFFjQk5UOU1RVXlIV2dYR2puV1VWWkpaUEdSRVJfYXI2V1RBMGFMZXBlYTdBdDF1eElKMzlrYUV0akwxT0pXT0R3Y2lmMU9LV0oxTmpPNWxzemVHRmR0UXlLMlY1MnJYdnRWUEREVVZMU0czNnc0WlJOclUyNmhlbVdabHV0M3puRTM1NGdMYU9pVWN2OEdydWV2OWVPYXFGa2VNczZnX2JGTkQ2RC1UaHh5QWpYSFVYdFBWNHJjTnpfN1RKVTZ5RldhMU9HTnJjNzJtTmVNbWJNUnVWODVIalRDX0g3TVhtdlhDTjBfQ1FXMVlZVkZ0TGdEaG1IdFRTd29XcC00eEhGYkZn?oc=5"], "tag": "정책", "headline": "국제 논의의 초점이 정책 ‘채택’에서 ‘이행’으로 옮겨가고 있습니다.", "sources": ["WHO", "Onlymyhealth", "The Nation(나이지리아)"], "urgency": "모니터링", "impact": "중", "chart": {"title": "연도별 논문 발표 건수 — 비감염성질환(NCD) 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 348}, {"y": 2020, "v": 412}, {"y": 2021, "v": 482}, {"y": 2022, "v": 512}, {"y": 2023, "v": 470}, {"y": 2024, "v": 476}, {"y": 2025, "v": 587}, {"y": 2026, "v": 359}]}}, {"name": "비만·대사 — 근감소성 비만의 전 세계 유병률", "en": "Sarcopenic obesity", "summary": ["ESPEN·EASO 기준에 따른 근감소성 비만(sarcopenic obesity)의 전 세계 유병률을 추정한 메타분석이 발표됨[1]"], "situation": ["Clinical Nutrition ESPEN 게재 연구는 유럽임상영양대사학회(ESPEN)와 유럽비만학회(EASO)가 제시한 정의에 따라 근감소성 비만의 전 세계 유병률을 체계적으로 추정함[1]"], "assess": ["체중이나 BMI만으로는 잡히지 않는 ‘근육량 감소를 동반한 비만’이 별도 표현형으로 자리잡는 흐름", "기준 정의가 최근에 정리된 만큼, 연구 간 유병률 편차와 측정 방법의 차이를 함께 봐야 함"], "korea": ["국내 노인 대상 사업에서 체중·BMI와 함께 근력·근육량 지표를 병행 측정하는 방안을 검토할 것", "비만 관리 사업이 고령층에서는 근육 유지·단백질 섭취·저항운동과 함께 설계되어야 함"], "refs": ["연구 | Global prevalence of sarcopenic obesity defined by ESPEN/EASO criteria | Clinical nutrition ESPEN (2026.09.09. 발표) — https://doi.org/10.1016/j.clnesp.2026.105111"], "tag": "연구", "headline": "체중만으로는 잡히지 않는 ‘근육 감소를 동반한 비만’이 별도 표현형으로 정리됩니다.", "sources": ["Clinical Nutrition ESPEN"], "urgency": "모니터링", "impact": "하", "chart": {"title": "연도별 논문 발표 건수 — 근감소성 비만 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 53}, {"y": 2020, "v": 58}, {"y": 2021, "v": 80}, {"y": 2022, "v": 109}, {"y": 2023, "v": 136}, {"y": 2024, "v": 148}, {"y": 2025, "v": 219}, {"y": 2026, "v": 155}]}}, {"name": "노인·다질환 — 재택 일차의료와 응급실 이용", "en": "Home-based primary care", "summary": ["재택 일차의료가 취약 노인의 응급실 방문을 줄일 수 있다는 가설에 대해, 어떤 구성요소가 그 효과를 만드는지 탐색한 질적연구가 발표됨[1]"], "situation": ["BMJ Open 게재 질적연구는 재택 일차의료가 응급실 방문 감소에 기여할 수 있다는 기존 제안에서 출발해, 실제로 어떤 운영 요소가 그 효과에 관여하는지를 환자·제공자 관점에서 탐색함[1]"], "assess": ["‘재택의료를 한다’보다 ‘어떻게 구성하느냐’가 성과를 좌우한다는 방향의 근거", "질적연구이므로 효과 크기를 말해 주지는 않으며, 국내 적용 전 제도·인력 구조 차이를 고려해야 함"], "korea": ["국내 방문건강관리·재택의료 시범사업의 운영 요소(연락 체계, 야간 대응, 다직종 협업)를 성과와 연결해 평가할 것", "응급실 이용을 성과지표로 쓸 경우, 의료 접근성 저하로 인한 감소와 구분할 필요가 있음"], "refs": ["연구 | Which components of home-based primary care may reduce emergency department visits among older adults | BMJ open (2026.09.11. 발표) — https://doi.org/10.1136/bmjopen-2026-118687"], "tag": "연구", "headline": "재택의료의 성과는 ‘하느냐’가 아니라 ‘어떻게 짜느냐’에 달려 있습니다.", "sources": ["BMJ Open"], "urgency": "모니터링", "impact": "중", "chart": {"title": "연도별 논문 발표 건수 — 재택의료 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 69}, {"y": 2020, "v": 87}, {"y": 2021, "v": 118}, {"y": 2022, "v": 119}, {"y": 2023, "v": 106}, {"y": 2024, "v": 103}, {"y": 2025, "v": 182}, {"y": 2026, "v": 162}]}}, {"name": "관리체계 — 데이터로 재입원을 예측하다", "en": "Data-driven chronic care", "summary": ["대규모 임상 코호트에서 30일 재입원을 예측하는 모형을 개발·검증한 연구가 발표됨. 자료 품질과 전처리, 학습 전략의 선택이 성능을 좌우함[1]"], "situation": ["Journal of Intensive Care Medicine 게재 연구는 빅데이터·예측모형을 활용한 만성질환 관리 맥락에서 30일 재입원 예측 모형을 개발하고 실증적으로 검증함[1]"], "assess": ["예측모형의 성능은 알고리즘보다 자료 품질과 전처리에 더 크게 좌우된다는 점이 재확인됨", "예측이 곧 개선은 아니며, 고위험군을 찾은 뒤의 개입 설계가 있어야 성과로 이어짐"], "korea": ["건강보험·검진 자료를 활용한 국내 고위험군 선별 모형을 검토하되, 선별 이후의 관리 경로를 함께 설계할 것", "모형 도입 시 자료 편향과 취약계층 과소·과대 선별 여부를 점검할 것"], "refs": ["연구 | Chronic Disease Management Using Big Data and Predictive Models | Journal of intensive care medicine (2026.09.12. 발표) — https://doi.org/10.1177/08850666261487154"], "tag": "연구", "headline": "예측은 알고리즘보다 자료 품질에 좌우되며, 예측 이후의 개입이 성과를 만듭니다.", "sources": ["J Intensive Care Medicine"], "urgency": "모니터링", "impact": "하", "chart": {"title": "연도별 논문 발표 건수 — 재입원 예측 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 31}, {"y": 2020, "v": 21}, {"y": 2021, "v": 32}, {"y": 2022, "v": 28}, {"y": 2023, "v": 24}, {"y": 2024, "v": 34}, {"y": 2025, "v": 44}, {"y": 2026, "v": 24}]}}], "tagline": "향후 10년, 만성질환이 국가 보건정책의 한복판으로 들어옵니다.", "stats": [{"v": "3명 중 1명", "l": "성인 고콜레스테롤혈증", "n": "보도 기준"}, {"v": "10년", "l": "복지부 중점 관리 기간"}, {"v": "2030년", "l": "아프리카 NCD 최대 사인 전망"}, {"v": "30일", "l": "재입원 예측모형 관찰 기간"}]}, "subscribe": {"url": "https://epibrief.github.io/subscribe.html?series=chronic", "label": "이 뉴스레터 받아보기", "note": "휴대폰 카메라로 찍으면 만성질환 뉴스레터 구독 신청 화면으로 바로 이어집니다. (이번이 창간호입니다)"}, "_qr": "qr-chronic-2026-01.png", "_qr_abs": "https://epibrief.github.io/issues/qr-chronic-2026-01.png"}</script>
+<script src="../email.js"></script>
+<script>
+  const DATA = JSON.parse(document.getElementById('issue-data').textContent);
+  const toast = (msg) => {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('on');
+    setTimeout(() => t.classList.remove('on'), 2600);
+  };
+  document.getElementById('jump').addEventListener('change', e => { location.href = e.target.value; });
+  document.addEventListener('click', async e => {      // 보고용 3줄 복사
+    const b = e.target.closest('[data-copy]'); if (!b) return;
+    try {
+      await navigator.clipboard.writeText(b.dataset.copy);
+      const ok = b.parentElement.querySelector('.copyok'); ok.hidden = false;
+      setTimeout(() => { ok.hidden = true; }, 2000);
+    } catch(err) { toast('복사하지 못했습니다. 길게 눌러 직접 복사해 주세요.'); }
+  });
+  const pop = document.getElementById('mailPop'), btn = document.getElementById('mailBtn');
+  btn.addEventListener('click', () => {
+    const on = pop.classList.toggle('on');
+    btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.menu')) pop.classList.remove('on'); });
+  pop.addEventListener('click', async e => {
+    const el = e.target.closest('[data-act]'); if (!el) return;
+    const act = el.dataset.act;
+    if (act === 'copy'){ e.preventDefault(); toast(await NLEmail.copy(DATA)); }
+    if (act === 'download'){ e.preventDefault(); NLEmail.download(DATA); toast('메일용 HTML 파일을 저장했습니다.'); }
+    if (act === 'mailto'){ el.href = NLEmail.mailto(DATA); }
+    pop.classList.remove('on');
+  });
+</script>
+</body>
+</html>

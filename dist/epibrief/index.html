@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>보건 동향 뉴스레터 메이커</title>
+<meta name="description" content="WHO·미국 CDC·ECDC·Europe PMC 등 공식 소스를 골라 감염병 발생동향, 사회 대응(PHSM), 만성질환 뉴스레터를 만들고 HTML·PDF·이메일·워드로 내보내는 도구.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="paper.css">
+<style>
+:root{
+  --navy:#1b3fb0; --navy-d:#142f85; --teal:#bf560c; --ink:#191f28; --muted:#5d6875;
+  --line:#dde2e9; --bg:#eef1f5; --card:#fff; --warn:#b8541c; --ok:#1a7f4b;
+  --radius:14px; --shadow:0 2px 10px rgba(18,58,107,.07);
+}
+/* 유형을 고르면 화면 전체 색이 그 분야 색으로 바뀝니다(노안 배려: 대비 4.5:1 이상) */
+body[data-kind="outbreak"]{ --navy:#1b3fb0; --navy-d:#142f85; --teal:#bf560c; --tint:#fdf1e3; }
+body[data-kind="phsm"]    { --navy:#0d6e6d; --navy-d:#095251; --teal:#bf560c; --tint:#fdf1e3; }
+body[data-kind="chronic"] { --navy:#146c3a; --navy-d:#0e5029; --teal:#bf560c; --tint:#fdf1e3; }
+body[data-kind="climate"] { --navy:#0d5c8c; --navy-d:#09456a; --teal:#bf560c; --tint:#fdf1e3; }
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;
+  font-size:16.5px;line-height:1.68}
+a{color:var(--navy)}
+button{font-family:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+
+/* ── 상단 ── */
+.top{background:var(--navy);color:#fff;padding:16px 0 0}
+.top h1{margin:0;font-family:"Nanum Myeongjo",serif;font-size:clamp(1.18rem,3.6vw,1.42rem);
+  font-weight:800;letter-spacing:-.02em;word-break:keep-all}
+.top .sub{font-size:clamp(.82rem,2.4vw,.9rem);color:rgba(255,255,255,.82);margin-top:5px;word-break:keep-all}
+.steps{display:flex;gap:4px;margin-top:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps button{flex:0 0 auto;background:transparent;border:0;border-bottom:3px solid transparent;
+  color:rgba(255,255,255,.75);font-size:.98rem;font-weight:700;padding:10px 13px;cursor:pointer;
+  border-radius:8px 8px 0 0;white-space:nowrap}
+.steps button.on{color:#fff;background:rgba(255,255,255,.16);border-bottom-color:#fff}
+.steps button:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── 공통 ── */
+.navpanel{display:none}
+.navpanel.on{display:block}
+.steps.inner{margin:0;padding-bottom:0}
+.steps.inner button{color:var(--muted);font-size:.95rem;background:#fff;border:1px solid var(--line);
+  border-bottom:0;margin-right:4px;border-radius:10px 10px 0 0}
+.steps.inner button.on{color:#fff;background:var(--navy);border-color:var(--navy)}
+.hero .howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:6px}
+.hero .ht{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fbfcfe}
+.hero .ht .n{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;
+  align-items:center;justify-content:center;font-weight:800;font-size:.82rem;margin-right:7px}
+.hero .ht b{font-size:1rem}
+.hero .ht span:last-child{display:block;font-size:.88rem;color:var(--muted);margin-top:6px;line-height:1.55}
+.issue-list{display:flex;flex-direction:column;gap:12px}
+.issue-card{border:1px solid var(--line);border-top:5px solid var(--ic,var(--navy));border-radius:10px;
+  padding:18px 20px;background:#fff}
+.issue-card .ik{font-size:.82rem;font-weight:800;letter-spacing:0;color:var(--ia,var(--teal))}
+.issue-card .it{font-family:"Nanum Myeongjo",serif;font-size:1.28rem;font-weight:800;color:var(--ic,var(--navy));margin:5px 0 3px}
+.issue-card .imeta{font-size:.84rem;color:var(--muted);white-space:normal;line-height:1.5}
+.issue-card .il{font-size:.96rem;color:#3d4753;margin:10px 0 0;line-height:1.6}
+.issue-card .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.rev-head{background:var(--navy);color:#fff;border-radius:14px 14px 0 0;padding:22px 24px}
+.rev-head h3{margin:0;font-family:"Nanum Myeongjo",serif;font-size:1.55rem}
+.rev-head .rq{font-size:.85rem;color:rgba(255,255,255,.82);font-weight:700;letter-spacing:0}
+.rev-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));background:#fff;
+  border:1px solid var(--line);border-top:0}
+.rev-stats div{padding:14px 16px;border-left:1px solid var(--line)}
+.rev-stats div:first-child{border-left:0}
+.rev-stats b{display:block;font-size:1.5rem;color:var(--teal);font-variant-numeric:tabular-nums}
+.rev-stats span{font-size:.82rem;color:var(--muted)}
+.rev-group{background:#fff;border:1px solid var(--line);border-top:0;padding:18px 22px}
+.rev-group > h4{margin:0 0 4px;font-size:1.08rem;color:var(--navy)}
+.rev-group .gsum{font-size:.92rem;color:#3d4753;margin:0 0 12px;line-height:1.6}
+.lit{border-top:1px solid var(--line-2);padding:12px 0;display:grid;grid-template-columns:30px 1fr;gap:10px}
+.lit:first-of-type{border-top:0}
+.lit .ln{font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums;font-size:.9rem}
+.lit .lt{font-weight:700;font-size:1rem;line-height:1.5;color:var(--ink);text-decoration:none;display:block}
+.lit .lt:hover{text-decoration:underline}
+.lit .lm{font-size:.82rem;color:var(--muted);margin-top:3px}
+.lit .lm b{color:var(--teal)}
+.lit .lx{font-size:.9rem;color:#3d4753;margin-top:5px;line-height:1.6}
+.rev-acts{background:#f7fafc;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;
+  padding:14px 20px;display:flex;gap:8px;flex-wrap:wrap}
+@media print{
+  body>.top,.navpanel:not(.on),#nav-mine .card,.rev-acts{display:none!important}
+  .rev-head{background:#12395f!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .rev-group{break-inside:auto}
+  .lit{break-inside:avoid}
+}
+.pubbox{border:1px dashed var(--line);border-radius:10px;padding:12px;margin-top:12px;background:#f9fbfd;display:none}
+.pubbox.on{display:block}
+.pubbox .row{gap:8px}
+.panel{display:none;padding:22px 0 60px}
+.panel.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 4px;font-size:1.14rem;color:var(--navy);font-weight:800}
+.card .hint{font-size:.92rem;color:var(--muted);margin:0 0 14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1 1 220px;min-width:0}
+label.f{display:block;font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+input[type=text],input[type=date],input[type=password],select,textarea{
+  width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;font-size:.92rem;
+  font-family:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+.btn{border:1px solid var(--line);background:#fff;color:var(--navy);font-weight:700;font-size:.98rem;
+  padding:11px 18px;border-radius:10px;cursor:pointer}
+.btn:hover{border-color:#b9cbe2}
+.btn.pri{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.pri:hover{background:var(--navy-d)}
+.btn.sm{padding:5px 10px;font-size:.82rem;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.badge{display:inline-block;background:#eef3f8;border:1px solid var(--line);border-radius:999px;
+  padding:2px 10px;font-size:.78rem;font-weight:700;color:#42505f;letter-spacing:0}
+.note{font-size:.82rem;color:var(--muted)}
+.bar{position:sticky;bottom:0;background:rgba(244,246,249,.95);backdrop-filter:blur(4px);
+  border-top:1px solid var(--line);padding:12px 0;margin-top:10px;z-index:5}
+
+/* ── 1단계 소스 ── */
+.srcgroup{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.srcgroup>h3{margin:0;padding:10px 14px;background:#f7fafc;font-size:.9rem;color:var(--navy);
+  display:flex;justify-content:space-between;align-items:center}
+.srclist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;padding:12px}
+.srcitem{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;background:#fff}
+.srcitem.on{border-color:var(--teal);background:var(--tint,#f2fbfb)}
+.srcitem .badge{margin-right:4px}
+.srcitem input{margin-top:3px}
+.srcitem .nm{display:block;font-weight:700;font-size:1rem}
+.srcitem .mt{display:block;font-size:.84rem;color:var(--muted);margin-top:3px;line-height:1.5}
+
+/* ── 2단계 수집함 ── */
+.two{display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+.feed{max-height:62vh;overflow:auto;border:1px solid var(--line);border-radius:12px}
+.fitem{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid #eef2f6}
+.fitem:last-child{border-bottom:0}
+.fitem.on{background:#f2fbfb}
+.fitem .t{font-weight:700;font-size:1rem;line-height:1.45;color:var(--ink);text-decoration:none;display:block}
+.fitem .t:hover{text-decoration:underline}
+.fitem .m{font-size:.82rem;color:var(--muted);margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.fitem .x{font-size:.9rem;color:#5a6675;margin-top:5px;max-height:3.2em;overflow:hidden}
+.picked{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;position:sticky;top:12px}
+.pitem{border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:8px;background:#fbfdff}
+.pitem .pt{font-size:.85rem;font-weight:700;line-height:1.4}
+.pitem .pm{font-size:.74rem;color:var(--muted);margin:3px 0 6px}
+.pitem .prow{display:flex;gap:6px;align-items:center}
+.pitem input[type=text]{padding:5px 8px;font-size:.8rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.chip{border:1px solid var(--line);background:#fff;color:#3d4753;border-radius:999px;padding:7px 14px;
+  font-size:.9rem;font-weight:700;cursor:pointer}
+.chip:hover{border-color:#b9cbe2}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:.88rem}
+
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <h1>보건 동향 뉴스레터 메이커</h1>
+    <div class="sub">감염병 발생동향 · 사회 대응(PHSM) · 만성질환 · 기후·건강 — 공식 소스를 고르면 서식에 맞춰 뉴스레터를 만들어 드립니다. <span id="saveTag" class="badge" style="background:#1d4a80;border-color:#2a5c99;color:#cfe3ff">자동 저장</span></div>
+    <nav class="steps" id="mainNav">
+      <button data-nav="home" class="on">홈</button>
+      <button data-nav="issues">최신 뉴스레터</button>
+      <button data-nav="make">맞춤형 제작</button>
+      <button data-nav="mine">My Newsletter</button>
+    </nav>
+  </div>
+</div>
+
+<!-- ───────────── 홈 ───────────── -->
+<section class="navpanel on" id="nav-home"><div class="wrap">
+  <div class="card hero">
+    <h2 style="font-size:1.5rem;margin-bottom:6px">무엇을 하는 곳인가요?</h2>
+    <p class="hint" style="font-size:1rem;margin-bottom:18px">
+      WHO·미국 CDC·ECDC·질병관리청 같은 <b>공식 기관 발표</b>와 <b>최신 논문</b>을 매일 모아 두었습니다.
+      필요한 것만 고르면 <b>보고서 서식에 맞춘 뉴스레터</b>가 만들어지고, 그대로 인쇄·이메일·링크로 보낼 수 있습니다.
+    </p>
+    <div class="howto">
+      <div class="ht"><span class="n">1</span><b>소스 고르기</b><span>분야(감염병·사회대응·만성질환·기후)를 고르고 기관을 선택합니다. 102곳이 이미 들어 있습니다.</span></div>
+      <div class="ht"><span class="n">2</span><b>자료 담기</b><span>주제 칩이나 키워드로 걸러 필요한 자료만 담습니다. 키워드 하나로 보고서를 만들 수도 있습니다.</span></div>
+      <div class="ht"><span class="n">3</span><b>서식 고르고 만들기</b><span>서식 3종 중 하나를 고르면 요약·평가·시사점 초안까지 만들어집니다.</span></div>
+      <div class="ht"><span class="n">4</span><b>발행하기</b><span>인쇄·PDF, 메일 본문, 메일용 HTML, 워드, 공유 링크. 구독 QR도 함께 넣습니다.</span></div>
+    </div>
+    <div class="row" style="margin-top:20px">
+      <button class="btn pri" data-nav="make" style="font-size:1.04rem">맞춤형 뉴스레터 만들기 →</button>
+      <button class="btn" data-nav="issues">최신 뉴스레터 보기</button>
+      <a class="btn" href="subscribe.html" style="text-decoration:none">구독 신청 화면 보기</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>최신 뉴스레터</h2>
+    <p class="hint">바로 읽고, 그대로 발행할 수 있습니다. 서식과 구성을 가져다 새 호를 만들 수도 있습니다.</p>
+    <div id="homeIssues" class="issue-list"></div>
+  </div>
+</div></section>
+
+<!-- ───────────── 최신 뉴스레터 ───────────── -->
+<section class="navpanel" id="nav-issues"><div class="wrap">
+  <div class="card">
+    <h2>발간한 뉴스레터</h2>
+    <p class="hint">호를 열어 읽거나, <b>발행 방법</b>을 골라 바로 보낼 수 있습니다.</p>
+    <div id="allIssues" class="issue-list"></div>
+  </div>
+</div></section>
+
+<!-- ───────────── My Newsletter ───────────── -->
+<section class="navpanel" id="nav-mine"><div class="wrap">
+  <div class="card" style="border-left:5px solid var(--teal)">
+    <h2>My Newsletter — 키워드로 연구·정책 동향 정리</h2>
+    <p class="hint">관심 주제를 넣으면 기본 소스 전체(기관 발표 · 논문 · 리뷰)에서 관련 자료를 찾아
+      <b>문헌고찰처럼 출처와 요약을 정리</b>해 드립니다. 예: “좌식 생활”, “sedentary behaviour”, “폭염 초과사망”.</p>
+    <div class="row" style="flex-wrap:nowrap;gap:8px">
+      <input type="text" id="revQ" placeholder="관심 주제나 키워드 (여러 개면 띄어쓰기 또는 | 로 구분)" style="flex:1">
+      <button class="btn pri" id="revGo" style="flex:0 0 auto">동향 정리하기</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div style="flex:0 0 190px"><label class="f">분야</label>
+        <select id="revKind">
+          <option value="">전체 분야</option>
+          <option value="outbreak">감염병 발생동향</option>
+          <option value="phsm">감염병 사회 대응</option>
+          <option value="chronic">만성질환</option>
+          <option value="climate">기후·건강</option>
+        </select></div>
+      <div style="flex:0 0 170px"><label class="f">기간</label>
+        <select id="revDays"><option value="30">최근 30일</option><option value="60" selected>최근 60일</option>
+          <option value="120">최근 120일</option><option value="400">1년</option></select></div>
+      <div style="flex:0 0 170px"><label class="f">자료 성격</label>
+        <select id="revType"><option value="">전체</option><option value="연구">논문·연구만</option>
+          <option value="기관">기관 발표만</option></select></div>
+      <div class="grow" style="padding-top:20px"><span class="note" id="revLog"></span></div>
+    </div>
+  </div>
+
+  <div id="revOut"></div>
+
+  <div class="card">
+    <h2>저장한 정리본</h2>
+    <p class="hint">정리한 결과와 만든 뉴스레터가 이 브라우저에 보관됩니다.</p>
+    <div id="mineList" class="issue-list"></div>
+  </div>
+</div></section>
+
+<!-- ───────────── 맞춤형 제작 ───────────── -->
+<section class="navpanel" id="nav-make">
+  <div class="wrap" style="padding-top:18px">
+    <nav class="steps inner" id="stepNav">
+      <button data-go="1" class="on">① 소스 선택</button>
+      <button data-go="2">② 자료 담기</button>
+      <button data-go="3">③ 서식 · 발행 정보</button>
+      <button data-go="4">④ 미리보기 · 발행</button>
+    </nav>
+  </div>
+
+<!-- ───────────── 1단계 ───────────── -->
+<section class="panel on" id="p1"><div class="wrap">
+  <div class="card">
+    <h2>어떤 뉴스레터인가요?</h2>
+    <p class="hint">유형을 고르면 그에 맞는 소스·서식·문체가 준비됩니다.</p>
+    <div class="row" id="kindBox">
+      <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="kind" value="outbreak" checked>
+        <span><span class="nm">전 세계 감염병 발생 동향</span><span class="mt">WHO·美CDC·ECDC 공식 발표 중심 주간 발생 동향 · <a href="issues/outbreak-2026-37.html" target="_blank" rel="noopener">발간 예시 보기</a></span></span></label>
+      <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="kind" value="phsm">
+        <span><span class="nm">감염병 사회 대응(PHSM) 분과위원회</span><span class="mt">거리두기·위험소통 등 사회적 조치의 최신 연구·정책 동향 · <a href="issues/phsm-2026-01.html" target="_blank" rel="noopener">발간 예시 보기</a></span></span></label>
+      <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="kind" value="chronic">
+        <span><span class="nm">만성질환 동향</span><span class="mt">심뇌혈관·당뇨·암·건강행태 통계와 연구 동향 · <a href="issues/chronic-2026-01.html" target="_blank" rel="noopener">발간 예시 보기</a></span></span></label>
+      <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="kind" value="climate">
+        <span><span class="nm">기후·건강 (폭염 등)</span><span class="mt">폭염 감시체계, 매개체 확산, 대기질 등 기후가 건강에 미치는 영향 · <a href="issues/climate-2026-01.html" target="_blank" rel="noopener">발간 예시 보기</a></span></span></label>
+    </div>
+  </div>
+  <div class="card">
+    <h2>어디에서 가져올까요?</h2>
+    <p class="hint">기관을 고르면 해당 기관의 최신 소식만 모아 보여 드립니다. 여러 곳을 함께 골라도 됩니다.</p>
+    <div class="row" style="margin-bottom:12px">
+      <div class="grow"><label class="f">소스 찾기</label><input type="text" id="srcSearch" placeholder="예: CDC, WHO, 질병관리청"></div>
+      <div style="flex:0 0 150px"><label class="f">가져올 기간</label>
+        <select id="days"><option value="7">최근 7일</option><option value="14" selected>최근 14일</option><option value="30">최근 30일</option><option value="45">최근 45일</option></select>
+      </div>
+      <div style="flex:0 0 auto;padding-top:18px">
+        <button class="btn sm" id="selAll">전체 선택</button>
+        <button class="btn sm" id="selNone">전체 해제</button>
+      </div>
+    </div>
+    <div id="srcBox"></div>
+  </div>
+  <div class="card">
+    <details id="addSrcBox">
+    <summary style="cursor:pointer;font-weight:800;color:var(--navy);font-size:1.02rem">소스 직접 추가 <span class="note" style="font-weight:400">— 목록에 없는 기관을 넣고 싶을 때만 펼치세요</span></summary>
+    <p class="hint" style="margin-top:10px">기관의 RSS 주소, 뉴스 검색어, 논문 검색식 중 하나를 넣으면 내 소스가 됩니다.</p>
+    <div class="row">
+      <div class="grow"><label class="f">소스 이름</label><input type="text" id="nsName" placeholder="예: 일본 후생노동성 감염병 정보"></div>
+      <div style="flex:0 0 210px"><label class="f">가져오는 방법</label>
+        <select id="nsType">
+          <option value="rss">기관 RSS 주소</option>
+          <option value="news">뉴스 검색어</option>
+          <option value="epmc">논문 검색어 (Europe PMC)</option>
+        </select></div>
+      <div style="flex:0 0 130px"><label class="f">지역</label>
+        <select id="nsRegion"><option>국제</option><option>유럽</option><option>미주</option><option>아시아</option><option>연구</option><option>국내</option></select></div>
+    </div>
+    <label class="f" style="margin-top:8px">주소 또는 검색어</label>
+    <input type="text" id="nsValue" placeholder="https://example.org/feed.xml">
+    <p class="note" id="nsHelp" style="margin:6px 0 0"></p>
+    <div class="row" style="margin-top:12px">
+      <button class="btn pri" id="nsAdd">내 소스에 추가</button>
+      <button class="btn" id="nsFetch">추가한 소스 지금 가져오기</button>
+      <button class="btn" id="nsExport">소스 설정 파일 내려받기</button>
+      <span class="note" id="nsLog"></span>
+    </div>
+    <div id="myList" style="margin-top:14px"></div>
+    <p class="note" style="margin-top:10px">내 소스는 이 브라우저에 저장됩니다. 매일 자동 수집 목록에도 넣으려면
+      <b>소스 설정 파일</b>을 내려받아 전달해 주세요(저장소의 <code>data/newsletter/sources.json</code> 에 반영).</p>
+    </details>
+  </div>
+  <div class="bar"><div class="wrap row" style="justify-content:space-between">
+    <span class="note" id="srcCount">선택한 소스 0곳</span>
+    <button class="btn pri" data-go="2">기사 담으러 가기 →</button>
+  </div></div>
+</div></section>
+
+<!-- ───────────── 2단계 ───────────── -->
+<section class="panel" id="p2"><div class="wrap">
+  <div class="two">
+    <div>
+      <div class="card" style="margin-bottom:12px;border-left:4px solid var(--teal)">
+        <h2>키워드로 내 보고서 만들기</h2>
+        <p class="hint">키워드를 넣으면 기본 소스 전체에서 관련 자료를 모아 보고서 초안까지 한 번에 만듭니다.</p>
+        <div class="row" style="flex-wrap:nowrap;gap:8px">
+          <input type="text" id="repQ" placeholder="예: 폭염 온열질환 / dengue climate / 백신 수용성" style="flex:1">
+          <button class="btn pri" id="repGo" style="flex:0 0 auto">자료 모아 보고서 만들기</button>
+        </div>
+        <p class="note" id="repLog" style="margin:8px 0 0"></p>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="row">
+          <div class="grow"><label class="f">제목·내용 검색</label><input type="text" id="feedSearch" placeholder="예: 뎅기, measles, West Nile"></div>
+          <div style="flex:0 0 170px"><label class="f">지역</label>
+            <select id="regionSel"><option value="">전체 지역</option><option>국제</option><option>유럽</option><option>미주</option><option>연구</option><option>국내</option></select>
+          </div>
+        </div>
+        <div id="topicChips" class="chips"></div>
+        <p class="note" style="margin:10px 0 0" id="feedInfo"></p>
+      </div>
+      <div class="feed" id="feedBox"></div>
+    </div>
+
+    <div>
+      <div class="picked">
+        <div class="row" style="justify-content:space-between;margin-bottom:8px">
+          <strong style="font-size:.95rem">담은 기사 <span id="pickCount" class="badge">0</span></strong>
+          <button class="btn sm" id="autoTopic">주제 자동 묶기</button>
+        </div>
+        <div id="pickBox"><p class="empty">왼쪽에서 <b>담기</b>를 누르면 여기에 쌓입니다.</p></div>
+        <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+        <details>
+          <summary style="cursor:pointer;font-size:.86rem;font-weight:700;color:var(--navy)">원하는 기사 직접 넣기</summary>
+          <div style="margin-top:10px">
+            <label class="f">원문 주소(URL)</label>
+            <div class="row" style="flex-wrap:nowrap;gap:6px">
+              <input type="text" id="addUrl" placeholder="https://...">
+              <button class="btn sm" id="fetchUrl" style="flex:0 0 auto">불러오기</button>
+            </div>
+            <label class="f" style="margin-top:8px">제목</label><input type="text" id="addTitle">
+            <label class="f" style="margin-top:8px">출처·날짜</label>
+            <div class="row" style="flex-wrap:nowrap;gap:6px">
+              <input type="text" id="addSource" placeholder="예: WHO">
+              <input type="date" id="addDate" style="flex:0 0 150px">
+            </div>
+            <label class="f" style="margin-top:8px">핵심 내용(붙여넣기)</label>
+            <textarea id="addText" placeholder="원문에서 필요한 대목을 붙여넣으세요."></textarea>
+            <button class="btn sm pri" id="addBtn" style="margin-top:8px">담기</button>
+            <p class="note" style="margin-top:6px">불러오기는 무료 읽기 도우미(r.jina.ai)를 씁니다. 막히면 내용을 직접 붙여넣으세요.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <div class="bar"><div class="wrap row" style="justify-content:space-between">
+    <button class="btn" data-go="1">← 소스 다시 고르기</button>
+    <button class="btn pri" data-go="3">초안 만들러 가기 →</button>
+  </div></div>
+</div></section>
+
+<!-- ───────────── 3단계 ───────────── -->
+<section class="panel" id="p3"><div class="wrap">
+  <div class="card">
+    <h2>발행 정보</h2>
+    <p class="hint">표지에 들어가는 내용입니다.</p>
+    <div class="row">
+      <div class="grow"><label class="f">발행 기관</label><input type="text" id="mOrg" placeholder="예: 질병관리청 감염병위기대응국"></div>
+      <div class="grow"><label class="f">뉴스레터 이름</label><input type="text" id="mTitle" placeholder="예: 전 세계 감염병 발생 동향"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="grow"><label class="f">호수</label><input type="text" id="mIssue" placeholder="예: 2026년 제31호"></div>
+      <div style="flex:0 0 170px"><label class="f">발행일</label><input type="date" id="mDate"></div>
+      <div class="grow"><label class="f">담당자(선택)</label><input type="text" id="mEditor" placeholder="예: 감염병위기대응국 ○○○"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="grow"><label class="f">구독 링크 <span class="note">— 넣으면 QR 코드가 자동으로 만들어집니다</span></label>
+        <input type="text" id="mSubUrl" placeholder="예: https://epibrief.github.io/subscribe.html"></div>
+      <div class="grow"><label class="f">구독 안내 문구</label>
+        <input type="text" id="mSubLabel" placeholder="예: 뉴스레터 구독·지난 호 보기"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="grow"><label class="f">발행 주기</label>
+        <input type="text" id="mCadence" placeholder="예: 주 1회 발행 (매주 월요일)"></div>
+      <div style="flex:0 0 180px"><label class="f">다음 호 예정일</label>
+        <input type="date" id="mNextIssue"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>서식 고르기</h2>
+    <p class="hint">언제든 바꿀 수 있습니다.</p>
+    <div class="row" id="tplBox">
+      <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="tpl" value="official" checked>
+        <span><span class="nm">공문서형</span><span class="mt">첨부하신 주간보고서와 같은 구성 — 요약 상자·주제별 본문·각주</span></span></label>
+      <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="tpl" value="brief">
+        <span><span class="nm">간결 브리프형</span><span class="mt">한 장으로 훑는 짧은 보고. 메일 본문에 적합</span></span></label>
+      <label class="srcitem grow" style="cursor:pointer"><input type="radio" name="tpl" value="card">
+        <span><span class="nm">카드형</span><span class="mt">주제마다 카드로 분리. 화면으로 읽기 편함</span></span></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>글 만들기</h2>
+    <p class="hint">담은 자료를 주제별로 묶어 <b>요약</b>과 본문 세 꼭지(<span id="secHint"></span>)를 정리합니다.</p>
+    <div class="row">
+      <div style="flex:0 0 200px"><label class="f">문체</label>
+        <select id="tone"><option value="official">공문서체 (보고용)</option><option value="plain">쉬운 말 (일반 대상)</option></select></div>
+      <div style="flex:0 0 220px"><label class="f">AI 모델</label>
+        <select id="model"><option value="claude-opus-5">Claude Opus 5 (권장)</option><option value="claude-sonnet-5">Claude Sonnet 5 (빠름)</option></select></div>
+      <div class="grow"><label class="f">Claude API 키 <span class="note">— 이 브라우저에만 저장됩니다</span></label>
+        <input type="password" id="apiKey" placeholder="sk-ant-... (없으면 AI 없이 기본 초안을 만듭니다)"></div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn pri" id="genBtn">초안 만들기</button>
+      <button class="btn" id="genBasic">AI 없이 기본 초안</button>
+      <button class="btn" id="loadSample">예시 호 불러오기</button>
+      <span class="note" id="genLog"></span>
+    </div>
+  </div>
+  <div class="bar"><div class="wrap row" style="justify-content:space-between">
+    <button class="btn" data-go="2">← 기사 다시 담기</button>
+    <button class="btn pri" data-go="4">미리보기 →</button>
+  </div></div>
+</div></section>
+
+<!-- ───────────── 4단계 ───────────── -->
+<section class="panel" id="p4"><div class="wrap">
+  <div class="card noprint">
+    <h2>다듬고 내보내기</h2>
+    <p class="hint">아래 미리보기에서 <b>글자를 직접 고칠 수 있습니다</b>. 고친 내용 그대로 내보내집니다.</p>
+    <div class="row">
+      <button class="btn" id="exPrint">인쇄 · PDF로 저장</button>
+      <button class="btn" id="exHtml">HTML 파일로 저장</button>
+      <button class="btn" id="exMail">메일 본문 복사</button>
+      <button class="btn" id="exMailApp">메일 프로그램 열기</button>
+      <button class="btn" id="exMailFile">메일용 HTML 저장</button>
+      <button class="btn" id="exDoc">워드 파일로 저장</button>
+      <button class="btn" id="exShare">공유 링크 만들기</button>
+      <button class="btn" id="reBuild">초안 다시 만들기</button>
+    </div>
+  </div>
+  <div class="paperwrap"><div id="paper" class="t-official"></div></div>
+</div></section>
+</section>
+
+<script src="email.js"></script>
+<script src="vendor/qrcode.min.js"></script>
+<script>
+/* ─────────────────────────────────────────────
+   감염병 동향 뉴스레터 메이커
+   - 자료: data/newsletter/sources.json, feed.json (GitHub Actions가 자동 갱신)
+   - 저장: 이 브라우저(localStorage)에만 저장됩니다.
+   ───────────────────────────────────────────── */
+const $  = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const KEY = 'nlmaker-v1';
+const ymd = d => (d || '').replace(/-/g, '.') + ((d || '').length === 10 ? '.' : '');
+const domainOf = u => { try { const h = new URL(u).hostname.replace(/^www\./, '');
+    return h === 'news.google.com' ? '' : h; } catch(e){ return ''; } };
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const S = {
+  kind: 'outbreak', sel: {}, days: 14, picked: [], mySources: [], myItems: [],
+  meta: { org:'', title:'전 세계 감염병 발생 동향', issue:'', date:'', editor:'', subUrl:'', subLabel:'뉴스레터 구독·지난 호 보기' },
+  tpl: 'official', tone: 'official', model: 'claude-opus-5',
+  draft: null
+};
+let SOURCES = { groups: [] }, FEED = { items: [], updated: '' };
+
+/* 뉴스레터 유형별 설정 — 이름, 본문 소제목, AI에게 줄 역할 */
+const KINDS = {
+  outbreak: {
+    title: '전 세계 감염병 발생 동향',
+    sumTitle: '이번 호 요약',
+    secs: ['발생 상황', '상황 평가', '국내 관련성 · 권고'],
+    role: '질병관리청 감염병 주간동향 보고서를 작성하는 담당자',
+    guide: 'situation=기관별 발생 규모·지역·기간, assess=추세와 위험도 평가, korea=국내 발생 여부와 국민 권고사항'
+  },
+  phsm: {
+    title: '감염병 사회 대응(PHSM) 분과위원회 뉴스레터',
+    sumTitle: '이번 호 핵심 메시지',
+    secs: ['연구 · 정책 동향', '핵심 쟁점과 근거', '분과위 시사점 · 토론거리'],
+    role: '감염병 사회 대응(공중보건·사회적 조치, PHSM) 분과위원회의 간사',
+    guide: 'situation=연구·지침의 설계와 결과를 수치와 함께, assess=근거의 강도·한계·상충되는 결과, korea=국내 대응 매뉴얼에 주는 시사점과 분과위에서 논의할 질문'
+  },
+  climate: {
+    title: '기후·건강 위기 동향',
+    sumTitle: '이번 호 요약',
+    secs: ['기후 · 건강 동향', '감시체계와 근거', '국내 대응 시사점'],
+    role: '폭염 등 기후 건강피해를 담당하는 보건기관 담당자',
+    guide: 'situation=기상·보건 지표와 각국 조치를 수치와 함께, assess=감시체계와 연구 근거의 해석·한계, korea=국내 감시·대응(온열질환 감시, 취약계층 보호)에 주는 시사점'
+  },
+  chronic: {
+    title: '만성질환 동향 뉴스레터',
+    sumTitle: '이번 호 요약',
+    secs: ['주요 동향', '근거 해석', '국내 적용 시사점'],
+    role: '만성질환 예방·관리 업무를 담당하는 보건기관 담당자',
+    guide: 'situation=유병률·사망률·정책 변화 등 확인된 수치, assess=연구 근거의 해석과 한계, korea=국내 사업·지침에 주는 시사점'
+  }
+};
+
+/* 병명 사전 — 담은 기사를 주제별로 자동으로 묶을 때 씁니다 */
+const DISEASES = [
+  ['웨스트나일열','West Nile fever',['west nile','wnv','웨스트나일']],
+  ['뎅기열','Dengue',['dengue','뎅기']],
+  ['홍역','Measles',['measles','홍역']],
+  ['말라리아','Malaria',['malaria','말라리아']],
+  ['콜레라','Cholera',['cholera','콜레라']],
+  ['엠폭스','Mpox',['mpox','monkeypox','엠폭스','원숭이두창']],
+  ['조류인플루엔자','Avian influenza',['h5n1','avian influenza','bird flu','조류인플루엔자','조류독감']],
+  ['인플루엔자','Influenza',['influenza','flu ','독감','인플루엔자']],
+  ['코로나19','COVID-19',['covid','sars-cov-2','코로나']],
+  ['라임병','Lyme disease',['lyme','라임병']],
+  ['공수병·광견병','Rabies',['rabies','공수병','광견병']],
+  ['에볼라','Ebola',['ebola','에볼라']],
+  ['마버그열','Marburg',['marburg','마버그']],
+  ['황열','Yellow fever',['yellow fever','황열']],
+  ['치쿤구니야열','Chikungunya',['chikungunya','치쿤구니야']],
+  ['지카바이러스감염증','Zika',['zika','지카']],
+  ['중동호흡기증후군','MERS',['mers','메르스']],
+  ['백일해','Pertussis',['pertussis','whooping cough','백일해']],
+  ['수막구균성 수막염','Meningococcal disease',['meningococcal','수막구균']],
+  ['A형간염','Hepatitis A',['hepatitis a','a형간염']],
+  ['결핵','Tuberculosis',['tuberculosis',' tb ','결핵']],
+  ['장출혈성대장균감염증','STEC',['e. coli','o157','장출혈성']],
+  ['SFTS(중증열성혈소판감소증후군)','SFTS',['sfts','중증열성']],
+  ['폴리오','Poliomyelitis',['polio','폴리오']],
+  ['디프테리아','Diphtheria',['diphtheria','디프테리아']],
+  ['니파바이러스감염증','Nipah',['nipah','니파']],
+  ['라싸열','Lassa fever',['lassa','라싸']]
+];
+const TOPICS_PHSM = [
+  ['거리두기·이동제한','Physical distancing',['distancing','lockdown','stay-at-home','거리두기','이동제한']],
+  ['마스크 착용','Face masks',['mask','마스크']],
+  ['학교 방역·휴교','School measures',['school clos','school measure','휴교','학교 방역']],
+  ['검역·여행제한','Travel measures',['travel restrict','border','quarantine of travel','검역','여행제한']],
+  ['격리·자가격리','Isolation & quarantine',['isolation','quarantine','격리']],
+  ['위험소통·인포데믹','Risk communication',['risk communication','infodemic','misinformation','위험소통','가짜정보']],
+  ['주민참여(RCCE)','Community engagement',['community engagement','participation','주민참여']],
+  ['수용성·순응도','Adherence & acceptability',['adherence','compliance','acceptability','순응','수용성']],
+  ['방역 피로·정신건강','Pandemic fatigue',['fatigue','mental health','방역 피로','정신건강']],
+  ['사회경제 영향·형평성','Equity & impact',['inequit','socioeconomic','equity','형평','사회경제']],
+  ['대응 거버넌스·매뉴얼','Governance',['governance','preparedness','policy framework','거버넌스','매뉴얼','대응체계']]
+];
+const TOPICS_NCD = [
+  ['심뇌혈관질환·고혈압','Cardiovascular disease',['cardiovascular','hypertension','stroke','심뇌혈관','고혈압','뇌졸중']],
+  ['당뇨병','Diabetes',['diabetes','당뇨']],
+  ['비만·대사질환','Obesity',['obesity','metabolic','비만','대사증후군']],
+  ['암 검진·예방','Cancer',['cancer','oncolog','암 검진','암']],
+  ['흡연·금연','Tobacco',['smoking','tobacco','vaping','흡연','금연','담배']],
+  ['음주','Alcohol',['alcohol','음주']],
+  ['신체활동·식이','Physical activity & diet',['physical activity','diet','nutrition','신체활동','식이','영양']],
+  ['정신건강','Mental health',['depression','mental health','정신건강','우울']],
+  ['노인·다질환','Ageing & multimorbidity',['multimorbidity','older adult','ageing','노인','다질환']],
+  ['건강형평성','Health equity',['equity','inequalit','형평']],
+  ['만성질환 관리체계','Care delivery',['primary care','care model','management program','일차의료','관리사업']]
+];
+const TOPICS_CLIMATE = [
+  ['폭염·온열질환','Extreme heat',['heatwave','heat-related','extreme heat','heat health','폭염','온열','열사병']],
+  ['한랭질환','Cold exposure',['cold wave','hypothermia','한파','한랭']],
+  ['폭염 조기경보체계','Heat warning systems',['early warning','heat action plan','warning system','조기경보','경보체계']],
+  ['기후와 매개체 감염병','Climate & vector-borne disease',['vector-borne','mosquito','tick','dengue','malaria','매개체','모기','진드기']],
+  ['대기질·산불 연기','Air quality',['air pollution','wildfire','particulate','air quality','대기질','미세먼지','산불']],
+  ['수해·수인성 감염병','Floods & waterborne',['flood','waterborne','cholera','수해','홍수','수인성']],
+  ['기후 적응·보건체계','Adaptation & resilience',['adaptation','resilience','vulnerability','적응','회복력','취약성']],
+  ['취약계층 보호','Vulnerable populations',['older adults','outdoor workers','vulnerable','취약계층','고령','야외작업']]
+];
+function guessTopic(text){
+  const t = (text || '').toLowerCase();
+  const books = S.kind === 'phsm'    ? [TOPICS_PHSM, DISEASES]
+              : S.kind === 'chronic' ? [TOPICS_NCD, DISEASES]
+              : S.kind === 'climate' ? [TOPICS_CLIMATE, DISEASES]
+              :                        [DISEASES, TOPICS_PHSM];
+  for (const book of books)
+    for (const [ko, en, keys] of book) if (keys.some(k => t.includes(k))) return { name: ko, en };
+  return null;
+}
+
+/* ── 저장·복원 ───────────────────────────── */
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){}
+}
+function restore(){
+  try {
+    const raw = localStorage.getItem(KEY); if (!raw) return;
+    Object.assign(S, JSON.parse(raw));
+  } catch(e){}
+}
+
+/* ── 메뉴 이동 ───────────────────────────── */
+const KIND_COLOR = { outbreak:['#1b3fb0','#bf560c'], phsm:['#0d6e6d','#bf560c'],
+                     chronic:['#146c3a','#bf560c'], climate:['#0d5c8c','#bf560c'] };
+let ISSUES = [];                         // 발간한 뉴스레터 목록
+let SOURCE_COUNT = 0;                    // 기본 소스 개수(자동 수집 대상)
+function nav(name){
+  if (name === 'make') document.body.dataset.kind = S.kind; else delete document.body.dataset.kind;
+  $$('.navpanel').forEach(p => p.classList.toggle('on', p.id === 'nav-' + name));
+  $$('#mainNav button').forEach(b => b.classList.toggle('on', b.dataset.nav === name));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (name === 'issues') renderIssueList('#allIssues');
+  if (name === 'mine') renderMine();
+  try { localStorage.setItem('nlmaker-nav', name); } catch(e){}
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-nav]'); if (!b) return;
+  nav(b.dataset.nav);
+});
+
+/* 발행 방법 고르기 — 어디서든 같은 방식으로 */
+function pubButtons(id){
+  return `<div class="pubbox" id="${id}">
+      <div class="row">
+        <button class="btn sm" data-pub="print">인쇄 · PDF</button>
+        <button class="btn sm" data-pub="mail">메일 본문 복사</button>
+        <button class="btn sm" data-pub="mailapp">메일 프로그램 열기</button>
+        <button class="btn sm" data-pub="mailfile">메일용 HTML 저장</button>
+        <button class="btn sm" data-pub="link">링크 복사</button>
+      </div>
+    </div>`;
+}
+async function doPublish(act, data, url){
+  if (act === 'print'){ window.open(url, '_blank'); return; }
+  if (act === 'mail'){ alert(await NLEmail.copy(data)); return; }
+  if (act === 'mailapp'){ location.href = NLEmail.mailto(data); return; }
+  if (act === 'mailfile'){ NLEmail.download(data); return; }
+  if (act === 'link'){
+    const abs = new URL(url, location.href).href;
+    await navigator.clipboard.writeText(abs);
+    alert('링크를 복사했습니다: ' + abs);
+  }
+}
+
+/* 발간한 뉴스레터 목록 */
+function issueCard(r, i, pre){
+  const [c, a] = KIND_COLOR[r.kind] || KIND_COLOR.outbreak;
+  return `<div class="issue-card" style="--ic:${c};--ia:${a}">
+      <div class="ik">${esc(r.kindName)}</div>
+      <div class="it">${esc(r.title)}</div>
+      <div class="imeta">${esc(r.issue)} · ${esc(r.date)} · ${esc(r.org)}</div>
+      <p class="il">${esc(r.tagline || '')}</p>
+      <div class="acts">
+        <a class="btn sm pri" href="issues/${esc(r.file)}" target="_blank" rel="noopener">뉴스레터 열기</a>
+        <button class="btn sm" data-pubtoggle="${pre}-${i}">발행 방법 선택 ▾</button>
+        <a class="btn sm" href="subscribe.html?series=${esc(r.kind)}" target="_blank" rel="noopener">구독 신청</a>
+        <button class="btn sm" data-copyissue="${i}">이 서식으로 새 호 만들기</button>
+      </div>
+      ${pubButtons(pre + '-' + i)}
+    </div>`;
+}
+async function loadIssues(){
+  if (ISSUES.length) return ISSUES;
+  try { ISSUES = (await (await fetch('issues/manifest.json')).json()).issues || []; } catch(e){ ISSUES = []; }
+  return ISSUES;
+}
+async function renderIssueList(sel, limit){
+  const rows = (await loadIssues()).slice(0, limit || 99);
+  const box = $(sel); if (!box) return;
+  const pre = sel.replace(/\W/g, '');
+  box.innerHTML = rows.length ? rows.map((r, i) => issueCard(r, i, pre)).join('')
+    : '<p class="note">아직 발간한 뉴스레터가 없습니다.</p>';
+}
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-pubtoggle]');
+  if (t){ const box = $('#' + t.dataset.pubtoggle); if (box) box.classList.toggle('on'); return; }
+  const pb = e.target.closest('[data-pub]');
+  if (pb){
+    const card = pb.closest('.issue-card');
+    const idx = Array.from(card.parentElement.children).indexOf(card);
+    const r = ISSUES[idx];
+    if (r && r.mine){ doPublish(pb.dataset.pub, r.data, location.pathname); return; }
+    if (!r) return;
+    const data = await (await fetch('samples/' + r.file.replace('.html', '.json'))).json();
+    doPublish(pb.dataset.pub, data, 'issues/' + r.file);
+    return;
+  }
+  const cp = e.target.closest('[data-copyissue]');
+  if (cp){
+    const r = ISSUES[+cp.dataset.copyissue]; if (!r) return;
+    const data = await (await fetch('samples/' + r.file.replace('.html', '.json'))).json();
+    S.kind = data.kind; S.tpl = data.tpl; S.meta = Object.assign({}, S.meta, data.meta); S.draft = data.draft;
+    save(); nav('make'); syncForm(); go(4);
+  }
+});
+
+/* ── My Newsletter: 키워드 동향 정리(문헌고찰) ───────────────── */
+let REVIEW = null;
+const KIND_LABEL = { outbreak:'감염병 발생동향', phsm:'감염병 사회 대응', chronic:'만성질환', climate:'기후·건강' };
+
+function revSearch(){
+  const q = $('#revQ').value.trim();
+  if (!q) { alert('관심 주제를 넣어 주세요.'); return null; }
+  const words = q.split(/[\s,|]+/).filter(Boolean).map(w => w.toLowerCase());
+  const kind = $('#revKind').value, days = +$('#revDays').value, type = $('#revType').value;
+  const cut = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
+  const pool = FEED.items.concat(S.myItems || []).filter(it => {
+    if (kind && (it.kind || 'outbreak') !== kind) return false;
+    if (it.date < cut) return false;
+    if (type === '연구' && it.region !== '연구') return false;
+    if (type === '기관' && it.region === '연구') return false;
+    const hay = (it.title + ' ' + (it.excerpt || '') + ' ' + (it.origin || '')).toLowerCase();
+    return words.some(w => hay.includes(w));
+  });
+  // 키워드가 제목에 있는 자료를 먼저, 그다음 최신순
+  pool.sort((a, b) => {
+    const ta = words.some(w => a.title.toLowerCase().includes(w)) ? 0 : 1;
+    const tb = words.some(w => b.title.toLowerCase().includes(w)) ? 0 : 1;
+    return ta - tb || (b.date || '').localeCompare(a.date || '');
+  });
+  return { q, kind, days, type, items: pool.slice(0, 60) };
+}
+
+function revBuild(res){
+  const map = new Map();
+  res.items.forEach(it => {
+    const g = guessTopicIn(it, res.kind) || (it.region === '연구' ? '연구 동향' : '기관 발표·정책');
+    if (!map.has(g)) map.set(g, []);
+    map.get(g).push(it);
+  });
+  const groups = Array.from(map.entries())
+    .map(([name, items]) => ({ name, items }))
+    .sort((a, b) => b.items.length - a.items.length);
+  const srcs = new Set(res.items.map(i => i.origin || i.sourceName));
+  const studies = res.items.filter(i => i.region === '연구').length;
+  return Object.assign({}, res, {
+    groups,
+    stats: [
+      { v: res.items.length, l: '찾은 자료' },
+      { v: studies, l: '논문 · 연구' },
+      { v: res.items.length - studies, l: '기관 발표 · 보도' },
+      { v: srcs.size, l: '출처(기관·학술지)' },
+      { v: res.days + '일', l: '검색 기간' }
+    ]
+  });
+}
+/* 분야에 맞는 주제 사전으로 묶는다 */
+function guessTopicIn(it, kind){
+  const saved = S.kind; if (kind) S.kind = kind;
+  const g = guessTopic(it.title + ' ' + (it.excerpt || ''));
+  S.kind = saved;
+  return g ? g.name : null;
+}
+
+function renderReview(){
+  const r = REVIEW;
+  if (!r){ $('#revOut').innerHTML = ''; return; }
+  const lit = (it, n) => `
+    <div class="lit">
+      <div class="ln">${n}</div>
+      <div>
+        <a class="lt" href="${esc(it.link)}" target="_blank" rel="noopener">${esc(it.title)}</a>
+        <div class="lm"><b>${esc(it.origin || it.sourceName)}</b> · ${esc(ymd(it.date))}
+          ${it.region ? ' · ' + esc(it.region) : ''} ${it.kind ? '· ' + esc(KIND_LABEL[it.kind] || '') : ''}</div>
+        ${it.excerpt ? `<div class="lx">${esc(it.excerpt.slice(0, 240))}</div>` : ''}
+      </div>
+    </div>`;
+  let n = 0;
+  $('#revOut').innerHTML = `
+    <div class="rev-head">
+      <div class="rq">키워드 · ${esc(r.q)}${r.kind ? ' · ' + esc(KIND_LABEL[r.kind]) : ''}</div>
+      <h3>${esc(r.q)} — 최근 ${r.days}일 연구·정책 동향</h3>
+    </div>
+    <div class="rev-stats">${r.stats.map(s => `<div><b>${esc(s.v)}</b><span>${esc(s.l)}</span></div>`).join('')}</div>
+    ${r.groups.map(g => `
+      <div class="rev-group">
+        <h4>${esc(g.name)} <span class="note">(${g.items.length}건)</span></h4>
+        ${g.summary ? `<p class="gsum">${esc(g.summary)}</p>` : ''}
+        ${g.items.map(it => lit(it, ++n)).join('')}
+      </div>`).join('')}
+    <div class="rev-acts">
+      <button class="btn sm pri" id="revAI">AI로 요약 붙이기</button>
+      <button class="btn sm" id="revPrint">인쇄 · PDF</button>
+      <button class="btn sm" id="revMail">메일 본문 복사</button>
+      <button class="btn sm" id="revFile">HTML 저장</button>
+      <button class="btn sm" id="revSave">저장하기</button>
+      <button class="btn sm" id="revLetter">이 내용으로 뉴스레터 만들기</button>
+    </div>`;
+  bindRevActions();
+}
+
+/* 정리 결과 → 뉴스레터/메일에서 쓰는 형식으로 */
+function revToData(){
+  const r = REVIEW;
+  const topics = r.groups.map(g => ({
+    name: g.name, en: '', tag: g.items.every(i => i.region === '연구') ? '연구' : '정책',
+    headline: g.summary || `${g.items.length}건의 자료가 확인되었습니다.`,
+    sources: Array.from(new Set(g.items.map(i => (i.origin || i.sourceName).split('·')[0].trim()))).slice(0, 4),
+    summary: [g.summary || `${g.items.length}건`],
+    situation: g.items.map(i => `(${i.origin || i.sourceName}, ${ymd(i.date)}) ${i.title}${i.excerpt ? ' — ' + i.excerpt.slice(0, 180) : ''}`),
+    assess: g.assess || [], korea: g.korea || [],
+    refs: g.items.map(i => `${i.origin ? i.origin + ' | ' : ''}${i.sourceName} (${ymd(i.date)} 발표) ${i.title} — ${i.link}`)
+  }));
+  return {
+    kind: r.kind || 'chronic', tpl: 'brief',
+    meta: { org: S.meta.org || '', title: `${r.q} 연구·정책 동향`,
+            issue: `최근 ${r.days}일 · ${new Date().toISOString().slice(0,10).replace(/-/g,'.')} 기준`,
+            date: new Date().toISOString().slice(0, 10), editor: S.meta.editor || '',
+            subUrl: S.meta.subUrl || '', subLabel: S.meta.subLabel || '' },
+    draft: { topics, generatedBy: '키워드 동향 정리',
+             tagline: `‘${r.q}’ 관련 자료 ${r.items.length}건을 정리했습니다.`,
+             stats: r.stats.slice(0, 4).map(s => ({ v: String(s.v), l: s.l })) }
+  };
+}
+
+function bindRevActions(){
+  $('#revPrint').onclick = () => window.print();
+  $('#revMail').onclick = async () => alert(await NLEmail.copy(revToData()));
+  $('#revFile').onclick = () => NLEmail.download(revToData());
+  $('#revSave').onclick = () => {
+    const d = revToData();
+    const list = loadMine();
+    list.unshift({ id: Date.now().toString(36), kind: d.kind, tpl: d.tpl, meta: d.meta, draft: d.draft,
+                   savedAt: new Date().toISOString().slice(0, 16).replace('T', ' ') });
+    putMine(list); renderMine(); alert('저장했습니다. 아래 [저장한 정리본]에서 다시 볼 수 있습니다.');
+  };
+  $('#revLetter').onclick = () => {
+    const d = revToData();
+    S.kind = d.kind; S.tpl = d.tpl; S.meta = Object.assign({}, S.meta, d.meta); S.draft = d.draft;
+    save(); saveMine(); nav('make'); syncForm(); go(4);
+  };
+  $('#revAI').onclick = async () => {
+    const key = $('#apiKey') ? $('#apiKey').value.trim() : '';
+    if (!key) return alert('AI 요약은 ③ 서식·발행 정보 화면에서 Claude API 키를 넣으면 쓸 수 있습니다. 키 없이도 목록 정리는 그대로 쓰실 수 있습니다.');
+    const btn = $('#revAI'); btn.disabled = true; btn.textContent = '요약하는 중…';
+    for (const g of REVIEW.groups){
+      try {
+        const src = g.items.slice(0, 12).map((i, n) =>
+          `[${n+1}] ${i.origin || i.sourceName} (${i.date}) ${i.title}\n${(i.excerpt || '').slice(0, 700)}`).join('\n\n');
+        const prompt = `아래는 '${REVIEW.q}' 관련 '${g.name}' 자료 목록입니다. 문헌고찰의 소주제 요약처럼,
+자료에 있는 내용만 근거로 3~4문장으로 정리하세요. 수치는 그대로 옮기고, 없는 내용은 지어내지 마세요.
+설명 없이 요약 문장만 출력하세요.\n\n${src}`;
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-api-key': key,
+                     'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+          body: JSON.stringify({ model: S.model, max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
+        });
+        const j = await res.json();
+        g.summary = (j.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+      } catch(err){ console.warn(err); }
+    }
+    renderReview();
+  };
+}
+
+$('#revGo').onclick = () => {
+  const res = revSearch(); if (!res) return;
+  if (!res.items.length){
+    $('#revLog').textContent = '관련 자료를 찾지 못했습니다. 기간을 늘리거나 영어 키워드를 함께 넣어 보세요.';
+    REVIEW = null; renderReview(); return;
+  }
+  REVIEW = revBuild(res);
+  $('#revLog').textContent = `${res.items.length}건을 정리했습니다.`;
+  renderReview();
+  $('#revOut').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+$('#revQ').addEventListener('keydown', e => { if (e.key === 'Enter') $('#revGo').click(); });
+
+/* My Newsletter — 내가 만든 뉴스레터 보관함 */
+const MINE_KEY = 'nlmaker-mine';
+const loadMine = () => { try { return JSON.parse(localStorage.getItem(MINE_KEY) || '[]'); } catch(e){ return []; } };
+const putMine = list => { try { localStorage.setItem(MINE_KEY, JSON.stringify(list.slice(0, 30))); } catch(e){} };
+function saveMine(){
+  if (!S.draft) return;
+  const list = loadMine();
+  const item = { id: Date.now().toString(36), kind: S.kind, tpl: S.tpl,
+                 meta: JSON.parse(JSON.stringify(S.meta)), draft: JSON.parse(JSON.stringify(S.draft)),
+                 savedAt: new Date().toISOString().slice(0, 16).replace('T', ' ') };
+  const same = list.findIndex(x => x.meta.title === item.meta.title && x.meta.issue === item.meta.issue);
+  if (same >= 0) list[same] = item; else list.unshift(item);
+  putMine(list);
+}
+function renderMine(){
+  const list = loadMine();
+  $('#mineList').innerHTML = list.length ? list.map((x, i) => {
+    const [c, a] = KIND_COLOR[x.kind] || KIND_COLOR.outbreak;
+    return `<div class="issue-card" style="--ic:${c};--ia:${a}">
+      <div class="ik">${esc((KINDS[x.kind] || {}).title || '')}</div>
+      <div class="it">${esc(x.meta.title || '제목 없음')}</div>
+      <div class="imeta">${esc(x.meta.issue || '')} · 저장 ${esc(x.savedAt)} · 주제 ${x.draft.topics.length}개</div>
+      <p class="il">${esc(x.draft.tagline || '')}</p>
+      <div class="acts">
+        <button class="btn sm pri" data-mineopen="${i}">열어서 고치기</button>
+        <button class="btn sm" data-minemail="${i}">메일 본문 복사</button>
+        <button class="btn sm" data-minefile="${i}">메일용 HTML 저장</button>
+        <button class="btn sm" data-minedel="${i}">삭제</button>
+      </div>
+    </div>`; }).join('')
+    : '<p class="note">아직 저장한 뉴스레터가 없습니다. [맞춤형 제작]에서 만들면 여기에 쌓입니다.</p>';
+}
+document.addEventListener('click', async e => {
+  const list = loadMine();
+  const op = e.target.closest('[data-mineopen]'), ml = e.target.closest('[data-minemail]'),
+        mf = e.target.closest('[data-minefile]'), dl = e.target.closest('[data-minedel]');
+  if (op){ const x = list[+op.dataset.mineopen];
+    S.kind = x.kind; S.tpl = x.tpl; S.meta = x.meta; S.draft = x.draft; save(); nav('make'); syncForm(); go(4); }
+  if (ml){ const x = list[+ml.dataset.minemail];
+    alert(await NLEmail.copy({ kind: x.kind, tpl: x.tpl, meta: x.meta, draft: x.draft })); }
+  if (mf){ const x = list[+mf.dataset.minefile];
+    NLEmail.download({ kind: x.kind, tpl: x.tpl, meta: x.meta, draft: x.draft }); }
+  if (dl){ if (!confirm('이 뉴스레터를 지울까요?')) return;
+    list.splice(+dl.dataset.minedel, 1); putMine(list); renderMine(); }
+});
+
+/* 입력칸을 현재 상태에 맞춰 다시 채운다 */
+function syncForm(){
+  Object.entries(META_FIELDS).forEach(([id, key]) => { const el = $('#' + id); if (el) el.value = S.meta[key] || ''; });
+  const rd = $(`input[name=tpl][value="${S.tpl}"]`); if (rd) rd.checked = true;
+  const rk = $(`input[name=kind][value="${S.kind}"]`); if (rk) rk.checked = true;
+}
+
+/* ── 단계 이동 ───────────────────────────── */
+function go(n){
+  n = +n;
+  $$('.panel').forEach(p => p.classList.remove('on'));
+  $('#p' + n).classList.add('on');
+  $$('#stepNav button').forEach(b => b.classList.toggle('on', b.dataset.go === String(n)));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 2) renderFeed();
+  if (n === 4) renderPaper();
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-go]'); if (!b) return;
+  go(b.dataset.go);
+});
+
+/* ── 1단계: 소스 ─────────────────────────── */
+function renderSources(){
+  const q = ($('#srcSearch').value || '').trim().toLowerCase();
+  const groups = SOURCES.groups.filter(g => (g.kind || 'outbreak') === S.kind);
+  $('#srcBox').innerHTML = groups.map(g => {
+    const list = g.sources.filter(s => !q || (g.name + s.name + (s.region||'')).toLowerCase().includes(q));
+    if (!list.length) return '';
+    return `<div class="srcgroup"><h3>${esc(g.name)}
+        <button class="btn sm" data-grp="${esc(g.id)}">이 기관 모두</button></h3>
+      <div class="srclist">${list.map(s => {
+        const st = (FEED.status || []).find(x => x.id === s.id);
+        return `
+        <label class="srcitem ${S.sel[s.id] ? 'on' : ''}">
+          <input type="checkbox" data-src="${esc(s.id)}" ${S.sel[s.id] ? 'checked' : ''}>
+          <span><span class="nm">${esc(s.name)}</span>
+          ${s.desc ? `<span class="mt" style="color:#41505f">${esc(s.desc)}</span>` : ''}
+          <span class="mt">
+            <span class="badge">${esc(st && st.via ? st.via : (s.via || '뉴스 검색'))}</span>
+            ${st ? `최근 ${st.count}건` : '수집 대기'} · ${esc(s.region || '')}
+            · <a href="${esc(s.site)}" target="_blank" rel="noopener">기관 사이트</a>
+          </span></span>
+        </label>`; }).join('')}</div></div>`;
+  }).join('') || '<p class="empty">찾는 소스가 없습니다.</p>';
+  $('#secHint').textContent = KINDS[S.kind].secs.join(' · ');
+  $('#srcCount').textContent = '선택한 소스 ' + Object.values(S.sel).filter(Boolean).length + '곳';
+}
+$('#srcBox').addEventListener('change', e => {
+  const cb = e.target.closest('[data-src]'); if (!cb) return;
+  S.sel[cb.dataset.src] = cb.checked; save(); renderSources();
+});
+$('#srcBox').addEventListener('click', e => {
+  const b = e.target.closest('[data-grp]'); if (!b) return;
+  const g = SOURCES.groups.find(x => x.id === b.dataset.grp);
+  const all = g.sources.every(s => S.sel[s.id]);
+  g.sources.forEach(s => S.sel[s.id] = !all);
+  save(); renderSources();
+});
+$('#srcSearch').addEventListener('input', renderSources);
+$$('input[name=kind]').forEach(r => r.addEventListener('change', () => {
+  S.kind = $('input[name=kind]:checked').value;
+  S.sel = {};                                   // 유형이 바뀌면 소스 선택을 새로 시작
+  if (!S.picked.length) S.meta.title = KINDS[S.kind].title;
+  $('#mTitle').value = S.meta.title;
+  save(); renderMy(); renderSources(); renderFeed();
+}));
+$('#selAll').onclick  = () => { SOURCES.groups.forEach(g => g.sources.forEach(s => S.sel[s.id] = true)); save(); renderSources(); };
+$('#selNone').onclick = () => { S.sel = {}; save(); renderSources(); };
+$('#days').addEventListener('change', e => { S.days = +e.target.value; save(); });
+
+/* ── 2단계: 수집함 ───────────────────────── */
+/* 유형별 주제 칩 — 누르면 그 주제 자료만 걸러 봅니다 */
+const CHIPS = {
+  outbreak: [['인플루엔자','influenza|독감|flu'],['코로나19','covid|코로나'],['홍역','measles|홍역'],
+             ['뎅기열','dengue|뎅기'],['에볼라·마버그','ebola|marburg|에볼라|마버그'],['엠폭스','mpox|엠폭스'],
+             ['콜레라','cholera|콜레라'],['레지오넬라','legionnaires|레지오넬라'],['결핵','tuberculosis|결핵'],
+             ['식중독·수인성','salmonella|listeria|food|식중독|장염']],
+  phsm:     [['거리두기·NPI','distancing|non-pharmaceutical|lockdown|거리두기'],['마스크','mask|마스크'],
+             ['학교·직장','school|workplace|university|학교|직장'],['백신 수용성','hesitancy|acceptability|acceptance|수용성'],
+             ['허위정보','misinformation|infodemic|허위'],['격리·검역','quarantine|isolation|격리|검역'],
+             ['형평성','equity|inequalit|형평'],['거버넌스·법제','governance|preparedness|policy|거버넌스']],
+  chronic:  [['고혈압·심뇌혈관','hypertension|cardiovascular|stroke|고혈압|심뇌혈관'],['당뇨병','diabetes|당뇨'],
+             ['비만','obesity|비만'],['암 검진','cancer|암'],['흡연·금연','smoking|tobacco|vaping|흡연|금연'],
+             ['음주','alcohol|음주'],['신체활동·식이','physical activity|diet|nutrition|신체활동|식이'],
+             ['치매·정신건강','dementia|cognitive|depression|mental|치매|정신'],['형평성','inequalit|equity|disparit|형평']],
+  climate:  [['폭염·온열질환','heat|heatwave|폭염|온열'],['조기경보체계','early warning|action plan|경보'],
+             ['한파','cold|한파|한랭'],['대기질·산불','air pollution|wildfire|particulate|대기질|미세먼지|산불'],
+             ['매개체 확산','vector|mosquito|tick|dengue|매개체|모기|진드기'],['수해·수인성','flood|waterborne|홍수|수해'],
+             ['취약계층','vulnerable|older adults|outdoor worker|취약']]
+};
+function renderChips(){
+  const list = CHIPS[S.kind] || [];
+  const cur = ($('#feedSearch').value || '').trim();
+  $('#topicChips').innerHTML = list.map(([label, q]) =>
+    `<button class="chip ${cur === q ? 'on' : ''}" data-q="${esc(q)}">${esc(label)}</button>`).join('')
+    + (cur ? `<button class="chip" data-q="">전체 보기</button>` : '');
+}
+document.addEventListener('click', e => {
+  const c = e.target.closest('.chip'); if (!c) return;
+  $('#feedSearch').value = c.dataset.q;
+  renderChips(); renderFeed();
+});
+function feedItems(){
+  const q = ($('#feedSearch').value || '').trim().toLowerCase();
+  const region = $('#regionSel').value;
+  const cut = new Date(Date.now() - S.days * 864e5).toISOString().slice(0, 10);
+  const anySel = Object.values(S.sel).some(Boolean);
+  return FEED.items.concat(S.myItems || []).filter(it =>
+    ((it.kind || 'outbreak') === S.kind) &&
+    (!anySel || S.sel[it.sourceId]) &&
+    (!region || it.region === region) &&
+    (it.date >= cut) &&
+    (!q || q.split('|').some(w => (it.title + ' ' + (it.excerpt || '') + ' ' + (it.origin || ''))
+                                    .toLowerCase().includes(w.trim())))
+  );
+}
+function renderFeed(){
+  renderChips();
+  const items = feedItems();
+  $('#feedInfo').innerHTML = `자동 수집분 <b>${FEED.items.length}</b>건${(S.myItems||[]).length ? ` + 내 소스 <b>${S.myItems.length}</b>건` : ''} 중 <b>${items.length}</b>건 표시 · 마지막 갱신 ${esc(FEED.updated || '-')}`;
+  $('#feedBox').innerHTML = items.length ? items.map(it => {
+    const on = S.picked.some(p => p.link === it.link);
+    return `<div class="fitem ${on ? 'on' : ''}">
+      <div style="flex:0 0 auto;padding-top:2px"><button class="btn sm ${on ? '' : 'pri'}" data-pick="${esc(it.link)}">${on ? '뺀다' : '담기'}</button></div>
+      <div style="min-width:0">
+        <a class="t" href="${esc(it.link)}" target="_blank" rel="noopener">${esc(it.title)}</a>
+        <div class="m"><span class="badge">${esc(it.sourceName)}</span>${it.origin ? `<span>${esc(it.origin)}</span>` : ''}${domainOf(it.link) ? `<span>${esc(domainOf(it.link))}</span>` : ''}<span>${esc(it.date)}</span></div>
+        ${it.excerpt ? `<div class="x">${esc(it.excerpt)}</div>` : ''}
+      </div></div>`;
+  }).join('') : '<p class="empty">조건에 맞는 기사가 없습니다. 기간을 늘리거나 소스를 더 골라 보세요.</p>';
+  renderPicked();
+}
+$('#feedBox').addEventListener('click', e => {
+  const b = e.target.closest('[data-pick]'); if (!b) return;
+  const link = b.dataset.pick;
+  const i = S.picked.findIndex(p => p.link === link);
+  if (i >= 0) S.picked.splice(i, 1);
+  else {
+    const it = FEED.items.concat(S.myItems || []).find(x => x.link === link);
+    const g = guessTopic(it.title + ' ' + (it.excerpt || ''));
+    S.picked.push({ title: it.title, link: it.link, date: it.date, source: it.sourceName,
+                    origin: it.origin || '', region: it.region, excerpt: it.excerpt || '',
+                    topic: g ? g.name : '', topicEn: g ? g.en : '' });
+  }
+  save(); renderFeed();
+});
+$('#feedSearch').addEventListener('input', renderFeed);
+$('#regionSel').addEventListener('change', renderFeed);
+
+function renderPicked(){
+  $('#pickCount').textContent = S.picked.length;
+  $('#pickBox').innerHTML = S.picked.length ? S.picked.map((p, i) => `
+    <div class="pitem">
+      <div class="pt">${esc(p.title)}</div>
+      <div class="pm">${esc(p.source)} · ${esc(p.date)}</div>
+      <div class="prow">
+        <input type="text" data-topic="${i}" value="${esc(p.topic)}" placeholder="주제 이름 (예: 뎅기열)">
+        <button class="btn sm" data-up="${i}">↑</button>
+        <button class="btn sm" data-del="${i}">✕</button>
+      </div>
+    </div>`).join('') : '<p class="empty">왼쪽에서 <b>담기</b>를 누르면 여기에 쌓입니다.</p>';
+}
+$('#pickBox').addEventListener('input', e => {
+  const t = e.target.closest('[data-topic]'); if (!t) return;
+  S.picked[+t.dataset.topic].topic = t.value; save();
+});
+$('#pickBox').addEventListener('click', e => {
+  const up = e.target.closest('[data-up]'), del = e.target.closest('[data-del]');
+  if (up){ const i = +up.dataset.up; if (i > 0) S.picked.splice(i - 1, 0, S.picked.splice(i, 1)[0]); }
+  if (del) S.picked.splice(+del.dataset.del, 1);
+  if (up || del){ save(); renderFeed(); }
+});
+$('#autoTopic').onclick = () => {
+  S.picked.forEach(p => {
+    const g = guessTopic(p.title + ' ' + (p.excerpt || ''));
+    if (g){ p.topic = g.name; p.topicEn = g.en; }
+    else if (!p.topic) p.topic = '기타 동향';
+  });
+  // 주제가 같은 기사끼리 모이도록 정렬
+  S.picked.sort((a, b) => (a.topic || '힣').localeCompare(b.topic || '힣', 'ko'));
+  save(); renderPicked();
+};
+
+/* ── 내 소스: 추가·수집·내보내기 ───────────────────────────────── */
+const NS_HELP = {
+  rss:  '기관 페이지에서 RSS 주소를 복사해 넣으세요. 예: https://www.cidrap.umn.edu/rss.xml',
+  news: '뉴스에서 찾을 검색어를 넣으세요. 예: 일본 홍역 유행 / Japan measles outbreak',
+  epmc: '논문 검색식을 넣으세요. 예: ("school closure" OR "mask mandate") AND (SRC:MED OR SRC:PPR)'
+};
+function nsHelp(){ $('#nsHelp').textContent = NS_HELP[$('#nsType').value]; }
+$('#nsType').addEventListener('change', nsHelp);
+
+function renderMy(){
+  const mine = (S.mySources || []).filter(m => m.kind === S.kind);
+  $('#myList').innerHTML = mine.length ? `<div class="srclist" style="padding:0">${mine.map(m => {
+    const got = (S.myItems || []).filter(x => x.sourceId === m.id).length;
+    return `<label class="srcitem ${S.sel[m.id] ? 'on' : ''}">
+      <input type="checkbox" data-src="${esc(m.id)}" ${S.sel[m.id] ? 'checked' : ''}>
+      <span><span class="nm">${esc(m.name)}</span>
+      <span class="mt"><span class="badge">${m.type === 'epmc' ? '논문 검색' : m.type === 'rss' ? '기관 RSS' : '뉴스 검색'}</span>
+        ${got ? `가져온 글 ${got}건` : '아직 안 가져옴'} · ${esc(m.region)}</span>
+      <span class="mt" style="word-break:break-all;color:#8592a3">${esc(m.value)}</span></span>
+      <button class="btn sm" data-delmy="${esc(m.id)}" style="margin-left:auto">✕</button>
+    </label>`; }).join('')}</div>` : '<p class="note">아직 추가한 소스가 없습니다.</p>';
+}
+$('#myList').addEventListener('change', e => {
+  const cb = e.target.closest('[data-src]'); if (!cb) return;
+  S.sel[cb.dataset.src] = cb.checked; save(); renderMy();
+});
+$('#myList').addEventListener('click', e => {
+  const b = e.target.closest('[data-delmy]'); if (!b) return;
+  e.preventDefault();
+  S.mySources = S.mySources.filter(m => m.id !== b.dataset.delmy);
+  S.myItems = (S.myItems || []).filter(x => x.sourceId !== b.dataset.delmy);
+  save(); renderMy(); renderFeed();
+});
+$('#nsAdd').onclick = () => {
+  const name = $('#nsName').value.trim(), value = $('#nsValue').value.trim();
+  if (!name || !value) return alert('이름과 주소(검색어)를 모두 적어 주세요.');
+  const id = 'my-' + Date.now().toString(36);
+  S.mySources.push({ id, name, type: $('#nsType').value, value, region: $('#nsRegion').value, kind: S.kind });
+  S.sel[id] = true;
+  $('#nsName').value = ''; $('#nsValue').value = '';
+  save(); renderMy(); $('#nsLog').textContent = '추가했습니다. [지금 가져오기]를 눌러 보세요.';
+};
+
+/* 브라우저에서 바로 가져오기 (막히면 읽기 도우미를 거칩니다) */
+async function fetchText(url){
+  try {
+    const r = await fetch(url);
+    if (r.ok) return { text: await r.text(), via: 'direct' };
+  } catch(e){}
+  const r2 = await fetch('https://r.jina.ai/' + url);
+  if (!r2.ok) throw new Error('가져오지 못했습니다 (' + r2.status + ')');
+  return { text: await r2.text(), via: 'proxy' };
+}
+function parseFeedXml(xml){
+  const doc = new DOMParser().parseFromString(xml, 'application/xml');
+  if (doc.querySelector('parsererror')) return null;
+  return Array.from(doc.querySelectorAll('item, entry')).map(el => {
+    const pick = n => (el.querySelector(n) ? el.querySelector(n).textContent.trim() : '');
+    let link = pick('link');
+    if (!link){ const a = el.querySelector('link[href]'); link = a ? a.getAttribute('href') : ''; }
+    const raw = pick('pubDate') || pick('published') || pick('updated') || pick('date');
+    const d = raw ? new Date(raw) : null;
+    return {
+      title: pick('title'), link,
+      date: d && !isNaN(d) ? d.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+      excerpt: (pick('description') || pick('summary') || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 320)
+    };
+  }).filter(x => x.title && x.link);
+}
+function parseJinaMarkdown(md){          // 읽기 도우미가 돌려준 글에서 제목·링크만 추립니다
+  const out = [];
+  const re = /\[([^\]]{8,200})\]\((https?:\/\/[^)]+)\)/g;
+  let m;
+  while ((m = re.exec(md)) && out.length < 30){
+    if (/\.(png|jpg|svg|gif)$/i.test(m[2])) continue;
+    out.push({ title: m[1].trim(), link: m[2], date: new Date().toISOString().slice(0, 10), excerpt: '' });
+  }
+  return out;
+}
+async function fetchMySource(m){
+  if (m.type === 'epmc'){
+    const url = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=' +
+      encodeURIComponent(m.value) + '&format=json&pageSize=25&resultType=core&sort=P_PDATE_D%20desc';
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('논문 검색 실패 (' + r.status + ')');
+    const j = await r.json();
+    return ((j.resultList || {}).result || []).map(x => ({
+      title: (x.title || '').replace(/\.$/, ''),
+      link: x.doi ? 'https://doi.org/' + x.doi : `https://europepmc.org/article/${x.source}/${x.id}`,
+      date: (x.firstPublicationDate || x.pubYear || '').slice(0, 10),
+      excerpt: (x.abstractText || '').replace(/<[^>]+>/g, ' ').slice(0, 420),
+      origin: ((x.journalInfo || {}).journal || {}).title || 'preprint'
+    }));
+  }
+  const url = m.type === 'news'
+    ? 'https://news.google.com/rss/search?q=' + encodeURIComponent(m.value) + '+when:30d&hl=ko&gl=KR&ceid=KR:ko'
+    : m.value;
+  const { text } = await fetchText(url);
+  return parseFeedXml(text) || parseJinaMarkdown(text);
+}
+$('#nsFetch').onclick = async () => {
+  const mine = (S.mySources || []).filter(m => m.kind === S.kind);
+  if (!mine.length) return alert('먼저 소스를 추가해 주세요.');
+  const btn = $('#nsFetch'); btn.disabled = true;
+  for (const m of mine){
+    $('#nsLog').textContent = `${m.name} 가져오는 중…`;
+    try {
+      const rows = await fetchMySource(m);
+      S.myItems = (S.myItems || []).filter(x => x.sourceId !== m.id);
+      rows.forEach((row, i) => S.myItems.push({
+        id: m.id + '-' + i, sourceId: m.id, sourceName: m.name, groupId: 'my', kind: m.kind,
+        region: m.region, lang: '', title: row.title, origin: row.origin || '',
+        link: row.link, date: row.date, excerpt: row.excerpt
+      }));
+      $('#nsLog').textContent = `${m.name}: ${rows.length}건 가져왔습니다.`;
+    } catch(err){
+      $('#nsLog').textContent = `${m.name}: ${err.message} — 주소를 확인하거나, 저장소 설정에 넣어 매일 자동 수집으로 돌려 보세요.`;
+    }
+  }
+  btn.disabled = false; save(); renderMy(); renderFeed();
+};
+$('#nsExport').onclick = () => {
+  const byKind = {};
+  (S.mySources || []).forEach(m => { (byKind[m.kind] = byKind[m.kind] || []).push(m); });
+  const groups = Object.entries(byKind).map(([kind, list]) => ({
+    id: 'my-' + kind, name: '내가 추가한 소스', kind,
+    sources: list.map(m => Object.assign(
+      { id: m.id, name: m.name, region: m.region, site: m.type === 'rss' ? m.value : '', desc: '직접 추가한 소스' },
+      m.type === 'rss' ? { rss: m.value } : m.type === 'news' ? { query: m.value } : { epmc: m.value }
+    ))
+  }));
+  if (!groups.length) return alert('추가한 소스가 없습니다.');
+  download('sources-추가분.json', 'application/json', JSON.stringify({ groups }, null, 1));
+  alert('내려받은 파일의 groups 내용을 data/newsletter/sources.json 의 groups 에 넣으면 매일 자동으로 수집됩니다.');
+};
+
+/* 직접 넣기 */
+$('#fetchUrl').onclick = async () => {
+  const url = $('#addUrl').value.trim(); if (!url) return;
+  const btn = $('#fetchUrl'); btn.disabled = true; btn.textContent = '읽는 중…';
+  try {
+    const r = await fetch('https://r.jina.ai/' + url);
+    if (!r.ok) throw new Error(r.status);
+    const txt = await r.text();
+    const mt = txt.match(/^Title:\s*(.+)$/m);
+    if (mt && !$('#addTitle').value) $('#addTitle').value = mt[1].trim();
+    $('#addText').value = txt.replace(/^(Title|URL Source|Published Time|Markdown Content):.*$/gm, '').trim().slice(0, 4000);
+  } catch(err){
+    alert('자동으로 읽어오지 못했습니다. 원문에서 필요한 대목을 직접 붙여넣어 주세요.');
+  }
+  btn.disabled = false; btn.textContent = '불러오기';
+};
+$('#addBtn').onclick = () => {
+  const title = $('#addTitle').value.trim(); if (!title) return alert('제목을 적어 주세요.');
+  const g = guessTopic(title + ' ' + $('#addText').value);
+  S.picked.push({
+    title, link: $('#addUrl').value.trim(), date: $('#addDate').value || new Date().toISOString().slice(0,10),
+    source: $('#addSource').value.trim() || '직접 입력', region: '', excerpt: $('#addText').value.trim().slice(0, 4000),
+    topic: g ? g.name : '', topicEn: g ? g.en : ''
+  });
+  ['addUrl','addTitle','addSource','addText'].forEach(id => $('#' + id).value = '');
+  save(); renderFeed();
+};
+
+/* ── 3단계: 초안 ─────────────────────────── */
+const META_FIELDS = { mOrg:'org', mTitle:'title', mIssue:'issue', mDate:'date', mEditor:'editor',
+                      mSubUrl:'subUrl', mSubLabel:'subLabel',
+                      mCadence:'cadence', mNextIssue:'nextIssue' };
+Object.entries(META_FIELDS).forEach(([id, key]) => {
+  $('#' + id).addEventListener('input', () => { S.meta[key] = $('#' + id).value; save(); });
+});
+$$('input[name=tpl]').forEach(r => r.addEventListener('change', () => {
+  S.tpl = $('input[name=tpl]:checked').value; save(); renderPaper();
+}));
+$('#tone').addEventListener('change', e => { S.tone = e.target.value; save(); });
+$('#model').addEventListener('change', e => { S.model = e.target.value; save(); });
+$('#apiKey').addEventListener('input', e => { try{ localStorage.setItem('nlmaker-key', e.target.value); }catch(_){} });
+
+function groupTopics(){
+  const map = new Map();
+  S.picked.forEach(p => {
+    const name = (p.topic || '기타 동향').trim();
+    if (!map.has(name)) map.set(name, { name, en: p.topicEn || '', items: [] });
+    map.get(name).items.push(p);
+  });
+  return Array.from(map.values());
+}
+const countries = t => {
+  const hit = [];
+  [['이탈리아',['italy','italia','이탈리아']],['그리스',['greece','그리스']],['미국',['united states','u.s.','usa','미국','cdc']],
+   ['프랑스',['france','프랑스']],['독일',['germany','독일']],['스페인',['spain','스페인']],['체코',['czech','체코']],
+   ['영국',['united kingdom','uk ','영국']],['중국',['china','중국']],['일본',['japan','일본']],['베트남',['viet','베트남']],
+   ['필리핀',['philippin','필리핀']],['브라질',['brazil','브라질']],['인도',['india','인도']],['국내',['한국','국내','질병관리청','korea']]
+  ].forEach(([ko, keys]) => { if (keys.some(k => t.includes(k))) hit.push(ko); });
+  return hit;
+};
+
+/* AI 없이 만드는 기본 초안 — 담은 기사에서 바로 뼈대를 세웁니다 */
+function basicDraft(){
+  const K = KINDS[S.kind];
+  const srcNames = items => {
+    const out = [];
+    items.forEach(i => {
+      const n = (i.origin || i.source || '').split('·')[0].split('|')[0].trim().slice(0, 34);
+      if (n && !out.includes(n)) out.push(n);
+    });
+    return out.slice(0, 4);
+  };
+  const tagOf = items => {
+    if (items.every(i => i.region === '연구')) return '연구';
+    if (items.some(i => /질병관리청|복지부|정책|UKHSA|WHO|CDC|ECDC/.test(i.source + i.title))) return '정책';
+    return '경보';
+  };
+  const topics = groupTopics().map(g => {
+    const txt = g.items.map(i => (i.title + ' ' + i.excerpt).toLowerCase()).join(' ');
+    const where = countries(txt);
+    return {
+      name: g.name, en: g.en, tag: tagOf(g.items), sources: srcNames(g.items),
+      headline: g.items[0] ? g.items[0].title.slice(0, 90) : '',
+      summary: [
+        `${where.length ? where.join('·') + ' 등 ' : ''}${g.items.length}건의 자료에서 ${g.name} 관련 동향이 확인됨`,
+        g.items[0] ? `대표 자료: ${g.items[0].title}` : ''
+      ].filter(Boolean),
+      situation: g.items.map(i => `(${i.origin || i.source}, ${ymd(i.date)}) ${i.title}${i.excerpt ? ' — ' + i.excerpt.slice(0, 200) : ''}`),
+      assess: [`※ ${K.secs[1]}을(를) 여기에 적어 주세요.`],
+      korea:  [`※ ${K.secs[2]}을(를) 여기에 적어 주세요.`],
+      refs: g.items.map(i => `${i.origin ? i.origin + ' | ' : ''}${i.source} (${ymd(i.date)} 발표) ${i.title} — ${i.link}`)
+    };
+  });
+  const srcCount = new Set(S.picked.map(p => p.origin || p.source)).size;
+  return {
+    topics, generatedBy: '기본 초안',
+    tagline: topics[0] ? `${topics.map(t => t.name).slice(0, 3).join(' · ')} 등 ${topics.length}개 주제를 정리했습니다.` : '',
+    stats: [
+      { v: `${S.picked.length}건`, l: '이번 호가 다룬 자료' },
+      { v: `${srcCount}곳`, l: '출처 기관 · 학술지' },
+      { v: `${S.days}일`, l: '자료 수집 기간' },
+      { v: `${topics.length}개`, l: '주제' }
+    ]
+  };
+}
+
+/* Claude로 만드는 초안 */
+async function aiTopic(g, key){
+  const tone = S.tone === 'plain'
+    ? '문체: 일반 국민이 이해하기 쉬운 존댓말 설명체. 전문용어는 괄호로 쉬운 풀이를 덧붙인다.'
+    : '문체: 공공기관 주간보고서의 개조식 문어체("~함", "~임", "~권고함"). 감탄사·과장 금지.';
+  const src = g.items.map((i, n) =>
+    `[${n + 1}] 출처:${i.source} / 날짜:${i.date} / 제목:${i.title}\n내용:${(i.excerpt || '').slice(0, 1500)}\n링크:${i.link}`
+  ).join('\n\n');
+  const K = KINDS[S.kind];
+  const prompt =
+`당신은 ${K.role}입니다.
+아래 '${g.name}' 관련 자료만 근거로 뉴스레터 한 꼭지를 작성하세요.
+이 뉴스레터의 본문은 세 꼭지입니다: ① ${K.secs[0]} ② ${K.secs[1]} ③ ${K.secs[2]}
+(${K.guide})
+
+${tone}
+규칙:
+- 자료에 없는 수치·사실을 지어내지 말 것. 불확실하면 "자료상 확인되지 않음"으로 적을 것.
+- 숫자(환자 수·기간·지역)는 자료에 있는 그대로 옮길 것.
+- 각 문장 끝에 근거 자료 번호를 [1] 형태로 붙일 것.
+
+자료:
+${src}
+
+아래 JSON 형식으로만 답하세요. 설명·인사말 없이 JSON만.
+headline 은 이 꼭지를 3초 안에 파악할 수 있는 한 문장(40자 안팎)입니다.
+tag 는 자료 성격으로 경보·정책·연구·통계 중 하나만 고르세요.
+{"nameEn":"영문 표기","headline":"한 문장 요지","tag":"연구","summary":["요약 2~4줄"],"situation":["${K.secs[0]} 3~6개"],"assess":["${K.secs[1]} 2~4개"],"korea":["${K.secs[2]} 2~4개"]}`;
+
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: S.model, max_tokens: 4000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!r.ok) throw new Error('API ' + r.status + ' ' + (await r.text()).slice(0, 200));
+  const data = await r.json();
+  const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+  const m = text.match(/\{[\s\S]*\}/);
+  if (!m) throw new Error('응답을 읽지 못했습니다.');
+  const j = JSON.parse(m[0]);
+  return {
+    name: g.name, en: j.nameEn || g.en, headline: j.headline || '', tag: j.tag || '',
+    sources: (() => { const out = []; g.items.forEach(i => {
+        const n = (i.origin || i.source || '').split('·')[0].split('|')[0].trim().slice(0, 34);
+        if (n && !out.includes(n)) out.push(n); }); return out.slice(0, 4); })(),
+    summary: j.summary || [], situation: j.situation || [], assess: j.assess || [], korea: j.korea || [],
+    refs: g.items.map(i => `${i.origin ? i.origin + ' | ' : ''}${i.source} (${ymd(i.date)} 발표) ${i.title} — ${i.link}`)
+  };
+}
+
+async function generate(useAI){
+  if (!S.picked.length) return alert('담은 기사가 없습니다. ② 단계에서 기사를 먼저 담아 주세요.');
+  const key = $('#apiKey').value.trim();
+  const log = $('#genLog');
+  if (!useAI || !key){
+    S.draft = basicDraft(); save(); saveMine(); log.textContent = '기본 초안을 만들었습니다. My Newsletter에 저장했습니다.';
+    go(4); return;
+  }
+  const groups = groupTopics();
+  const topics = [];
+  $('#genBtn').disabled = true;
+  for (let i = 0; i < groups.length; i++){
+    log.textContent = `AI가 정리하는 중… (${i + 1}/${groups.length}) ${groups[i].name}`;
+    try { topics.push(await aiTopic(groups[i], key)); }
+    catch(err){
+      console.error(err);
+      log.textContent = '오류: ' + err.message;
+      const fb = basicDraft().topics.find(t => t.name === groups[i].name);
+      if (fb) topics.push(fb);
+    }
+  }
+  $('#genBtn').disabled = false;
+  const srcN = new Set(S.picked.map(p => p.origin || p.source)).size;
+  S.draft = { topics, generatedBy: 'Claude ' + S.model,
+    tagline: (topics[0] && topics[0].headline) || '',
+    stats: [{ v: `${S.picked.length}건`, l: '이번 호가 다룬 자료' },
+            { v: `${srcN}곳`, l: '출처 기관 · 학술지' },
+            { v: `${S.days}일`, l: '자료 수집 기간' },
+            { v: `${topics.length}개`, l: '주제' }] };
+  save(); saveMine(); log.textContent = '초안이 준비됐습니다. My Newsletter에 저장했습니다.';
+  go(4);
+}
+const SAMPLE_FILE = { outbreak: 'outbreak-2026-37', phsm: 'phsm-2026-01', chronic: 'chronic-2026-01', climate: 'climate-2026-01' };
+$('#loadSample').onclick = async () => {
+  try {
+    const r = await fetch('samples/' + SAMPLE_FILE[S.kind] + '.json');
+    const j = await r.json();
+    S.tpl = j.tpl || S.tpl; S.meta = Object.assign({}, S.meta, j.meta); S.draft = j.draft;
+    Object.entries(META_FIELDS).forEach(([id, key]) => $('#' + id).value = S.meta[key] || '');
+    const rd = $(`input[name=tpl][value="${S.tpl}"]`); if (rd) rd.checked = true;
+    save(); $('#genLog').textContent = '예시 호를 불러왔습니다. 내용을 고쳐 쓰시면 됩니다.'; go(4);
+  } catch(e){ alert('예시를 불러오지 못했습니다.'); }
+};
+$('#genBtn').onclick = () => generate(true);
+$('#genBasic').onclick = () => generate(false);
+$('#reBuild').onclick = () => go(3);
+
+/* ── 4단계: 종이 그리기 ──────────────────── */
+/* 정책 담당자 참고 — 모든 호에 고정으로 들어갑니다 */
+const TIPS = [
+  ['‘발표·보도’ 근거는 1차 자료를 확인한 뒤 인용하십시오.',
+   '기관 발표를 전한 언론 보도는 수치의 기준(분모·기간)을 생략하는 일이 잦습니다. 각 꼭지의 출처에서 원문을 먼저 여십시오.'],
+  ['해외 수치는 국내값과 나란히 놓기 전까지 비교하지 마십시오.',
+   '접종률·발생률은 분모 정의와 의료체계가 달라 그대로 대비하면 오해를 만듭니다.'],
+  ['모형 연구는 결론보다 가정값을 보십시오.',
+   '모형의 결과는 투입한 가정(순응도·접촉률)에 좌우됩니다. 우리 매뉴얼이 같은 값을 무엇으로 두고 있는지부터 확인하는 편이 빠릅니다.'],
+  ['단일 관찰연구로 지침을 바꾸지 마십시오.',
+   '관찰연구는 연관성을 보여줄 뿐 인과를 확정하지 않습니다. 지침 개정 근거로는 체계적 문헌고찰·무작위배정 연구를 우선하십시오.'],
+  ['프리프린트는 동료심사 전 자료입니다.',
+   '흐름을 먼저 읽는 데는 유용하나, 공식 문서 인용은 게재 확정 후로 미루십시오.'],
+  ['‘자료 없음’도 정책 정보입니다.',
+   '원문에 수치가 없으면 ‘(원문 미제시)’로 표시합니다. 국내 해당 지표가 없다는 사실 자체가 조사·감시 과제입니다.']
+];
+const TIPS_HTML = `<aside class="tips"><h4>이 뉴스레터를 정책에 쓰실 때</h4><ol>${
+  TIPS.map(([h, w]) => `<li><b>${esc(h)}</b><span class="why">${esc(w)}</span></li>`).join('')}</ol></aside>`;
+
+/* 숫자는 굵게, [1] 같은 근거 번호는 위첨자로 — 눈으로 빨리 짚이도록 */
+const NUMRE = /(\d[\d,\.]*\s?(?:배|명|건|개|%|℃|년|주|일|시간|개국|만 명|억|달러|쌍)|\d{1,3}(?:,\d{3})+)/g;
+function mark(text){
+  let t = esc(text);
+  t = t.replace(NUMRE, '<b class="num">$1</b>');
+  t = t.replace(/\[(\d+(?:\]\[\d+)*)\]/g, '<sup>[$1]</sup>');
+  return t;
+}
+const ul = arr => '<ul>' + (arr || []).map(x => `<li>${mark(x)}</li>`).join('') + '</ul>';
+const refsBlock = refs => {
+  const items = (refs || []).map(r => {
+    const [head, link] = r.split(' — ');
+    return `<li>${esc(head)}${link ? ` <a href="${esc(link)}" target="_blank" rel="noopener">원문</a>` : ''}</li>`;
+  });
+  return `<details class="refs"><summary>출처 ${items.length}건</summary><ol>${items.join('')}</ol></details>`;
+};
+
+function renderPaper(){
+  const p = $('#paper');
+  document.body.dataset.kind = S.kind;
+  p.className = 't-' + S.tpl + ' k-' + S.kind;
+  if (!S.draft){
+    p.innerHTML = '<p class="empty" style="text-align:center;color:#6d7885;padding:40px 10px">아직 초안이 없습니다. ③ 단계에서 <b>초안 만들기</b>를 눌러 주세요.</p>';
+    return;
+  }
+  const m = S.meta, d = S.draft, K = KINDS[S.kind] || KINDS.outbreak;
+  const dateTxt = m.date ? m.date.replace(/-/g, '.') + '.' : '';
+
+  const stats = (d.stats || []).length ? `<div class="stats">${d.stats.slice(0,4).map(x => `
+      <div class="stat"><div class="v" contenteditable="true">${esc(x.v)}</div>
+      <div class="l" contenteditable="true">${esc(x.l)}</div>
+      ${x.n ? `<div class="n">${esc(x.n)}</div>` : ''}</div>`).join('')}</div>` : '';
+
+  const chips = (t, n = 2) => {
+    const srcs = t.sources || [];
+    return srcs.slice(0, n).map(x => `<span class="src">${esc(x)}</span>`).join('')
+      + (srcs.length > n ? `<span class="src-more">외 ${srcs.length - n}곳</span>` : '');
+  };
+  const issues = `<ol class="issues">${d.topics.map((t, i) => `
+      <li><a href="#t${i+1}">
+        <span class="no">${i+1}</span>
+        <span class="it">${esc(t.name)}${t.headline ? `<span class="ih">${esc(t.headline)}</span>` : ''}</span>
+        <span class="meta">${t.urgency ? `<span class="u u-${esc(t.urgency)}">${esc(t.urgency)}</span>` : ''}${chips(t)}${t.tag ? `<span class="tag tag-${esc(t.tag)}">${esc(t.tag)}</span>` : ''}</span>
+      </a></li>`).join('')}</ol>`;
+
+  const topics = d.topics.map((t, i) => `
+    <section class="topic" id="t${i+1}">
+      <div class="topic-head">
+        <span class="topic-no">${i+1}</span>
+        <h2 contenteditable="true">${esc(t.name)} <span class="en">${esc(t.en || '')}</span></h2>
+        ${(t.urgency || t.impact) ? `<span class="judge">
+           ${t.urgency ? `<span class="u u-${esc(t.urgency)}">${esc(t.urgency)}</span>` : ''}
+           ${t.impact ? `<span class="im im-${esc(t.impact)}">국내 영향 ${esc(t.impact)}</span>` : ''}</span>` : ''}
+        ${t.tag ? `<span class="tag tag-${esc(t.tag)}">${esc(t.tag)}</span>` : ''}
+      </div>
+      ${(t.sources || []).length ? `<div class="topic-src">출처 <b>${esc((t.sources || []).join(' · '))}</b></div>` : ''}
+      ${t.headline ? `<p class="topic-lead" contenteditable="true">${esc(t.headline)}</p>` : ''}
+      <div class="sec"><h4>${esc(K.secs[0])}</h4><div contenteditable="true">${ul(t.situation)}</div></div>
+      <div class="sec"><h4>${esc(K.secs[1])}</h4><div contenteditable="true">${ul(t.assess)}</div></div>
+      <div class="sec"><h4>${esc(K.secs[2])}</h4><div contenteditable="true">${ul(t.korea)}</div></div>
+      ${refsBlock(t.refs)}
+    </section>`).join('');
+
+  const sub = m.subUrl ? `<aside class="subscribe">
+      <div id="qrBox"></div>
+      <div class="sub-text">
+        <div class="sub-title">${esc(m.subLabel || '뉴스레터 구독')}</div>
+        <div class="sub-note">휴대폰 카메라로 찍으면 구독·지난 호 안내로 이어집니다.</div>
+        <a href="${esc(m.subUrl)}" target="_blank" rel="noopener">${esc(m.subUrl)}</a>
+      </div>
+    </aside>` : '';
+
+  p.innerHTML = `
+  <header class="nl-head">
+    <div class="nl-topline">
+      <span>${esc((KINDS[S.kind] || {}).title || '')}</span>
+      <span class="issue">${esc(m.issue || '')}${m.issue && dateTxt ? ' · ' : ''}${esc(dateTxt)}</span>
+    </div>
+    <div class="nl-kicker" contenteditable="true">${esc(m.org || '발행 기관')}</div>
+    ${m.orgEn ? `<div class="nl-org-en">${esc(m.orgEn)}</div>` : ''}
+    <h1 class="nl-title" contenteditable="true">${esc(m.title || '뉴스레터')}</h1>
+    ${m.titleEn ? `<div class="nl-title-en">${esc(m.titleEn)}</div>` : ''}
+    ${d.tagline ? `<p class="nl-lead" contenteditable="true">${esc(d.tagline)}</p>` : ''}
+  </header>
+  <div class="nl-bar">
+    <span>발행 ${esc(m.org || '')}</span>
+    ${m.cadence ? `<span>${esc(m.cadence)}</span>` : ''}
+    ${m.editor ? `<span>담당 ${esc(m.editor)}</span>` : ''}
+    ${m.subUrl ? `<span>구독 <a href="${esc(m.subUrl)}" target="_blank" rel="noopener">이 뉴스레터 받아보기</a></span>` : ''}
+  </div>
+  <div class="brief">
+    <div class="brief-label">이번 호에는 <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
+    ${stats}
+    ${issues}
+  </div>
+  ${d.explainer ? `<aside class="explainer">
+      <h4>${esc(d.explainer.title || '')}</h4>
+      ${(d.explainer.body || []).map(b => `<p>${esc(b)}</p>`).join('')}
+      ${(d.explainer.terms || []).length ? `<div class="terms">${d.explainer.terms.map(t =>
+         `<div class="term"><b>${esc(t.k)}</b><span>${esc(t.v)}</span></div>`).join('')}</div>` : ''}
+      ${(d.explainer.sources || []).length ? `<div class="src">정의 출처 · ${d.explainer.sources.map(x =>
+         x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>` : esc(x.label)).join(' · ')}</div>` : ''}
+    </aside>` : ''}
+  ${d.intro ? `<div class="intro" contenteditable="true">${esc(d.intro)}</div>` : ''}
+  ${topics}
+  ${TIPS_HTML}
+  ${sub}
+  <footer class="foot-note">
+    <div class="cover">
+      <b>자료 수집</b>
+      <span>소스 ${SOURCE_COUNT}곳을 매일 새벽 5시(KST)에 자동 수집</span>
+      <span>이 호가 다룬 기간 최근 ${S.days}일</span>
+      ${m.cadence ? `<span>${esc(m.cadence)}</span>` : ''}
+      ${m.nextIssue ? `<span>다음 호 ${esc(ymd(m.nextIssue))}</span>` : ''}
+    </div>
+    본 뉴스레터는 각 기관의 공개 자료와 학술 문헌을 정리한 것으로, 원문의 내용이 우선합니다.
+    ${esc(m.org || '')}${m.editor ? ' · ' + esc(m.editor) : ''}
+  </footer>`;
+
+  if (m.subUrl) drawQR(m.subUrl);
+}
+
+/* 구독 QR — 화면·인쇄·저장 파일 어디서나 보이도록 그림으로 바꿔 둡니다 */
+function drawQR(url){
+  const box = $('#qrBox'); if (!box || typeof QRCode === 'undefined') return;
+  box.innerHTML = '';
+  const brand = getComputedStyle($('#paper')).getPropertyValue('--brand').trim() || '#12395f';
+  new QRCode(box, { text: url, width: 112, height: 112, colorDark: brand, colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.M });
+  setTimeout(() => {                       // 캔버스를 그림으로 바꿔 두면 저장·인쇄에서도 남습니다
+    const cv = box.querySelector('canvas');
+    if (cv){ const img = new Image(); img.src = cv.toDataURL('image/png');
+             img.width = 112; img.height = 112; img.alt = '구독 QR 코드';
+             box.innerHTML = ''; box.appendChild(img); }
+  }, 60);
+}
+
+/* ── 키워드 보고서: 기본 소스 전체에서 관련 자료를 모아 초안까지 ── */
+$('#repGo').onclick = async () => {
+  const q = $('#repQ').value.trim();
+  if (!q) return alert('키워드를 넣어 주세요.');
+  const words = q.split(/[\s,|]+/).filter(Boolean).map(w => w.toLowerCase());
+  const cut = new Date(Date.now() - Math.max(S.days, 30) * 864e5).toISOString().slice(0, 10);
+  const hits = FEED.items.concat(S.myItems || [])
+    .filter(it => (it.kind || 'outbreak') === S.kind && it.date >= cut)
+    .filter(it => {
+      const hay = (it.title + ' ' + (it.excerpt || '') + ' ' + (it.origin || '')).toLowerCase();
+      return words.some(w => hay.includes(w));
+    })
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    .slice(0, 40);
+  if (!hits.length){ $('#repLog').textContent = '해당 키워드 자료를 찾지 못했습니다. 다른 말로 바꾸거나 기간을 늘려 보세요.'; return; }
+
+  S.picked = hits.map(it => {
+    const g = guessTopic(it.title + ' ' + (it.excerpt || ''));
+    return { title: it.title, link: it.link, date: it.date, source: it.sourceName, origin: it.origin || '',
+             region: it.region, excerpt: it.excerpt || '', topic: g ? g.name : '기타', topicEn: g ? g.en : '' };
+  });
+  S.meta.title = `${q} 브리핑`;
+  S.meta.issue = new Date().toISOString().slice(0, 10).replace(/-/g, '.') + ' 기준';
+  Object.entries(META_FIELDS).forEach(([id, key]) => $('#' + id).value = S.meta[key] || '');
+  $('#repLog').textContent = `${hits.length}건을 모았습니다. 초안을 만드는 중…`;
+  save(); renderFeed();
+  const key = $('#apiKey').value.trim();
+  await generate(!!key);
+};
+
+/* ── 공유: 보고서를 주소 한 줄에 담아 전달 ── */
+async function packReport(){
+  const payload = JSON.stringify({ kind: S.kind, tpl: S.tpl, meta: S.meta, draft: S.draft });
+  const bytes = new TextEncoder().encode(payload);
+  let out = bytes;
+  if (window.CompressionStream){
+    const cs = new CompressionStream('deflate-raw');
+    const w = cs.writable.getWriter(); w.write(bytes); w.close();
+    out = new Uint8Array(await new Response(cs.readable).arrayBuffer());
+  }
+  let bin = ''; out.forEach(b => bin += String.fromCharCode(b));
+  return (window.CompressionStream ? 'z' : 'p') + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+async function unpackReport(code){
+  const mode = code[0];
+  const b64 = code.slice(1).replace(/-/g, '+').replace(/_/g, '/');
+  const bin = atob(b64);
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  let json;
+  if (mode === 'z'){
+    const ds = new DecompressionStream('deflate-raw');
+    const w = ds.writable.getWriter(); w.write(bytes); w.close();
+    json = await new Response(ds.readable).text();
+  } else json = new TextDecoder().decode(bytes);
+  return JSON.parse(json);
+}
+$('#exShare').onclick = async () => {
+  if (!S.draft) return alert('먼저 초안을 만들어 주세요.');
+  try {
+    const url = location.origin + location.pathname + '#r=' + await packReport();
+    if (url.length > 60000) return alert('내용이 많아 링크로 담기 어렵습니다. HTML 파일로 저장해 전달해 주세요.');
+    await navigator.clipboard.writeText(url);
+    alert('공유 링크를 복사했습니다. 이 링크를 받은 사람은 같은 보고서를 바로 볼 수 있습니다.');
+  } catch(e){ alert('링크를 만들지 못했습니다. HTML 파일로 저장해 전달해 주세요.'); }
+};
+
+/* ── 내보내기 ────────────────────────────── */
+function paperDoc(){
+  const css = Array.from(document.styleSheets).map(sh => {
+    try { return Array.from(sh.cssRules).map(r => r.cssText).join('\n'); } catch(e){ return ''; }
+  }).join('\n');
+  return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
+<title>${esc(S.meta.title || '감염병 동향')} ${esc(S.meta.issue || '')}</title>
+<style>${css}
+body{background:#fff}#paper{box-shadow:none;margin:0 auto;max-width:860px}</style></head>
+<body><div id="paper" class="${'t-' + S.tpl}">${$('#paper').innerHTML}</div></body></html>`;
+}
+function download(name, mime, text){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: mime }));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+const fname = ext => (S.meta.title || '감염병동향').replace(/\s+/g, '') + '_' + (S.meta.issue || new Date().toISOString().slice(0,10)).replace(/[^\w가-힣]+/g, '') + '.' + ext;
+$('#exPrint').onclick = () => window.print();
+$('#exHtml').onclick  = () => download(fname('html'), 'text/html;charset=utf-8', paperDoc());
+$('#exDoc').onclick   = () => download(fname('doc'), 'application/msword', paperDoc());
+const mailData = () => ({ kind: S.kind, tpl: S.tpl, draft: S.draft, meta: S.meta,
+  subscribe: S.meta.subUrl ? { url: S.meta.subUrl, label: S.meta.subLabel,
+                               note: '휴대폰 카메라로 찍으면 구독·지난 호 안내로 이어집니다.' } : null });
+$('#exMail').onclick = async () => {
+  if (!S.draft) return alert('먼저 초안을 만들어 주세요.');
+  alert(await NLEmail.copy(mailData()));
+};
+$('#exMailFile').onclick = () => {
+  if (!S.draft) return alert('먼저 초안을 만들어 주세요.');
+  NLEmail.download(mailData());
+};
+$('#exMailApp').onclick = () => {
+  if (!S.draft) return alert('먼저 초안을 만들어 주세요.');
+  location.href = NLEmail.mailto(mailData());
+};
+
+/* ── 시작 ────────────────────────────────── */
+(async function init(){
+  restore();
+  const shared = location.hash.match(/^#r=(.+)$/);
+  if (shared){
+    try {
+      const r = await unpackReport(decodeURIComponent(shared[1]));
+      S.kind = r.kind || S.kind; S.tpl = r.tpl || S.tpl;
+      S.meta = Object.assign({}, S.meta, r.meta); S.draft = r.draft;
+      history.replaceState(null, '', location.pathname);
+    } catch(e){ console.warn('공유 링크를 읽지 못했습니다', e); }
+  }
+  try { SOURCES = await (await fetch('data/sources.json')).json();
+        SOURCE_COUNT = SOURCES.groups.reduce((n, g) => n + g.sources.length, 0); } catch(e){}
+  try { FEED    = await (await fetch('data/feed.json')).json(); } catch(e){}
+  if (!Object.keys(S.sel).length) ({
+    outbreak: ['who-don','cdc-news','ecdc-news','kdca'],
+    phsm: ['who-phsm','ukhsa','epmc-phsm','epmc-npi','epmc-rcce'],
+    chronic: ['who-ncd','kdca-ncd','epmc-ncd','epmc-cvd','epmc-dm'],
+    climate: ['who-climate','wmo-heat','cdc-heat','kr-heat','epmc-heat-mort','epmc-hhws']
+  }[S.kind] || []).forEach(id => S.sel[id] = true);
+  if (!S.meta.date) S.meta.date = new Date().toISOString().slice(0, 10);
+  $('#days').value = S.days; $('#tone').value = S.tone; $('#model').value = S.model;
+  Object.entries(META_FIELDS).forEach(([id, key]) => $('#' + id).value = S.meta[key] || '');
+  const rd = $(`input[name=tpl][value="${S.tpl}"]`); if (rd) rd.checked = true;
+  const rk = $(`input[name=kind][value="${S.kind}"]`); if (rk) rk.checked = true;
+  if (!S.meta.title) { S.meta.title = KINDS[S.kind].title; $('#mTitle').value = S.meta.title; }
+  try { $('#apiKey').value = localStorage.getItem('nlmaker-key') || ''; } catch(e){}
+  nsHelp(); renderMy(); renderSources(); renderFeed(); syncForm();
+  renderIssueList('#homeIssues');
+  if (shared && S.draft){ nav('make'); go(4); }
+  else nav(location.hash === '#make' ? 'make' : 'home');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기후·건강 위기 동향 2026년 제1호(창간호)</title>
+<meta name="description" content="질병관리청 기후보건·건강위해대응 발간 · 기후·건강 위기 동향 2026년 제1호(창간호). 공식 기관 발표와 최신 연구를 정리한 뉴스레터입니다.">
+<meta name="theme-color" content="#0d5c8c">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="../paper.css">
+<style>
+  :root{ --bar-brand:#0d5c8c; --bar-accent:#bf560c; }
+  body{ margin:0; background:#eef1f5; color:#191f28;
+    font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif; }
+  .bar{ position:sticky; top:0; z-index:20; background:var(--bar-brand); color:#fff;
+    display:flex; gap:6px; align-items:center; flex-wrap:nowrap;
+    padding:8px 12px; box-shadow:0 1px 8px rgba(0,0,0,.18); }
+  .bar a, .bar button, .bar select{ font-family:inherit; font-size:.92rem; font-weight:700; }
+  .bar a.home{ color:#fff; text-decoration:none; padding:7px 11px; border-radius:8px;
+    background:rgba(255,255,255,.14); white-space:nowrap; }
+  .bar .short{ display:none; }
+  .bar a.home:hover{ background:rgba(255,255,255,.24); }
+  .bar .sp{ flex:1 }
+  .bar select{ background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.35);
+    border-radius:8px; padding:7px 10px; max-width:min(46vw,320px); }
+  .bar select option{ color:#191f28; }
+  .bar button{ background:#fff; color:var(--bar-brand); border:0; border-radius:8px;
+    padding:8px 14px; cursor:pointer; }
+  .bar button:hover{ background:#f0f3f8; }
+  .bar button.ghost{ background:rgba(255,255,255,.14); color:#fff; }
+  .bar button.ghost:hover{ background:rgba(255,255,255,.26); }
+  .menu{ position:relative; }
+  .menu-pop{ position:absolute; right:0; left:auto; top:calc(100% + 8px); background:#fff; color:#191f28;
+    border:1px solid #dde2e9; border-radius:12px; box-shadow:0 10px 30px rgba(22,48,90,.18);
+    min-width:250px; padding:6px; display:none; }
+  .menu-pop.on{ display:block; }
+  .menu-pop button, .menu-pop a{ display:block; width:100%; text-align:left; background:none;
+    border:0; color:#191f28; padding:11px 12px; border-radius:8px; cursor:pointer; font-size:.92rem;
+    font-weight:600; text-decoration:none; }
+  .menu-pop button:hover, .menu-pop a:hover{ background:#f2f5f9; }
+  .menu-pop .hint{ font-size:.78rem; color:#6d7885; font-weight:400; padding:4px 12px 8px; }
+  .toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#191f28;
+    color:#fff; padding:12px 18px; border-radius:10px; font-size:.9rem; z-index:50; display:none; }
+  .toast.on{ display:block; }
+  .paperwrap{ padding:24px 14px 60px; }
+  @media (max-width:640px){
+    .bar{ gap:5px; padding:7px 9px; font-size:.86rem; }
+    .bar a.home, .bar button{ padding:7px 9px; font-size:.85rem; }
+    .bar .full{ display:none; }
+    .bar .short{ display:inline; }
+    .bar select{ max-width:34vw; padding:6px 7px; font-size:.82rem; }
+    .menu-pop{ position:fixed; left:10px; right:10px; top:56px; min-width:0; }
+  }
+  @media print{ .bar,.toast{ display:none !important; } body{ background:#fff; } .paperwrap{ padding:0; } }
+</style>
+</head>
+<body>
+<nav class="bar">
+  <a class="home" href="../"><span class="full">← 뉴스레터 메이커</span><span class="short">← 홈</span></a>
+  <a class="home" href="./"><span class="full">발간 목록</span><span class="short">목록</span></a>
+  <select id="jump" aria-label="다른 호 보기"><option value="chronic-2026-01.html">만성질환 · 2026년 제1호(창간호)</option><option value="climate-2026-01.html" selected>기후·건강 · 2026년 제1호(창간호)</option><option value="outbreak-2026-37.html">감염병 발생동향 · 2026년 제37호</option><option value="phsm-2026-01.html">감염병 사회 대응(PHSM) · 2026년 제1호(창간호)</option></select>
+  <span class="sp"></span>
+  <button class="ghost" onclick="window.print()"><span class="full">인쇄 · PDF</span><span class="short">인쇄</span></button>
+  <span class="menu">
+    <button id="mailBtn" aria-haspopup="true" aria-expanded="false"><span class="full">이메일로 보내기</span><span class="short">메일</span> ▾</button>
+    <span class="menu-pop" id="mailPop">
+      <div class="hint">받는 사람에게 그대로 보낼 수 있는 형태로 만듭니다.</div>
+      <button data-act="copy">메일 본문 복사 (서식 유지)</button>
+      <a href="#" data-act="mailto">메일 프로그램 열기</a>
+      <button data-act="download">메일용 HTML 파일 저장</button>
+    </span>
+  </span>
+</nav>
+
+<div class="paperwrap"><div id="paper" class="t-brief k-climate">
+  <header class="nl-head">
+    <div class="nl-topline">
+      <span>기후·건강 뉴스레터</span>
+      <span class="issue">2026년 제1호(창간호) · 2026.09.14.</span>
+    </div>
+    <div class="nl-kicker">질병관리청 기후보건·건강위해대응</div>
+    <div class="nl-org-en">Climate and Health Response</div>
+    <h1 class="nl-title">기후·건강 위기 동향</h1>
+    <div class="nl-title-en">Climate and Health Risk Update</div>
+    <p class="nl-lead">8월 지구 기온이 다시 1.5℃를 넘었습니다. 폭염은 날씨가 아니라 감시 대상입니다.</p>
+  </header>
+  <div class="nl-bar">
+    <span>발행 질병관리청 기후보건·건강위해대응</span>
+    <span>월 1회 발행 (매월 둘째 주)</span>
+    <span>담당 기후보건담당</span>
+    <span>구독 <a href="https://epibrief.github.io/subscribe.html?series=climate">이 뉴스레터 받아보기 →</a></span>
+  </div>
+  <div class="brief">
+    <div class="brief-label">이번 호에는 <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
+    <div class="stats"><div class="stat"><div class="v">1.5℃</div><div class="l">’26년 8월 전 지구 기온 재돌파</div></div><div class="stat"><div class="v">2027년</div><div class="l">엘니뇨 극한기상 위험 지속 전망</div></div><div class="stat"><div class="v">2억 9,800만 달러</div><div class="l">텍사스 교정시설 냉방 예산 요청</div></div><div class="stat"><div class="v">15,700</div><div class="l">냉방 대상 침상 수</div></div></div>
+    <ol class="issues"><li><a href="#t1">
+          <span class="no">1</span>
+          <span class="it">기록적 더위와 온열질환 의료이용
+            <span class="ih">기록적 더위가 온열질환 응급실 이용 증가로 이어지고 있습니다.</span></span>
+          <span class="meta"><span class="u u-이번분기">이번분기</span><span class="src">Health Policy Watch</span><span class="src">Climate Central</span><span class="src-more">외 1곳</span>
+            <span class="tag tag-통계">통계</span></span>
+        </a></li><li><a href="#t2">
+          <span class="no">2</span>
+          <span class="it">폭염·산불이 대기질을 되돌린다
+            <span class="ih">산불과 폭염이 그간의 대기질 개선을 되돌리고 있습니다.</span></span>
+          <span class="meta"><span class="u u-모니터링">모니터링</span><span class="src">WMO</span><span class="src">로이터</span><span class="src-more">외 1곳</span>
+            <span class="tag tag-경보">경보</span></span>
+        </a></li><li><a href="#t3">
+          <span class="no">3</span>
+          <span class="it">기후와 매개체 감염병
+            <span class="ih">기온·강수로 어느 정도 예측되는 영역 — 기상-보건 연계 감시의 효용이 큽니다.</span></span>
+          <span class="meta"><span class="u u-이번분기">이번분기</span><span class="src">Nature Rev Microbiology</span><span class="src">Health Science Reports</span>
+            <span class="tag tag-연구">연구</span></span>
+        </a></li><li><a href="#t4">
+          <span class="no">4</span>
+          <span class="it">누가 먼저 위험해지는가 — 취약집단 보호
+            <span class="ih">폭염 피해는 냉방에 닿을 수 있느냐는 사회적 조건에서 갈립니다.</span></span>
+          <span class="meta"><span class="u u-이번분기">이번분기</span><span class="src">Medical Daily</span><span class="src">Gesundheitswesen</span>
+            <span class="tag tag-정책">정책</span></span>
+        </a></li><li><a href="#t5">
+          <span class="no">5</span>
+          <span class="it">국내 논의 — 폭염을 사회적 재난으로
+            <span class="ih">폭염 대응의 실효는 부처 간 조정 구조에서 나옵니다.</span></span>
+          <span class="meta"><span class="u u-모니터링">모니터링</span><span class="src">한국재난안전뉴스</span>
+            <span class="tag tag-정책">정책</span></span>
+        </a></li></ol>
+  </div>
+  
+  <div class="intro">폭염은 이제 ‘무더운 날씨’가 아니라 감시하고 대비해야 할 건강 위해입니다.
+이 뉴스레터는 기상 경보와 보건 감시, 그리고 관련 연구를 한자리에 모아 정리합니다. 창간호는 기록적인 더위가 지나간 2026년 여름을 짚고, 대기질과 매개체 감염병으로 이어지는 연결 고리를 함께 봅니다.</div>
+  <section class="topic" id="t1">
+      <div class="topic-head">
+        <span class="topic-no">1</span>
+        <h2>기록적 더위와 온열질환 의료이용 <span class="en">Record heat and heat illness</span></h2>
+        <span class="judge"><span class="u u-이번분기" title="긴급도">이번분기</span><span class="im im-상" title="국내 영향도">국내 영향 상</span></span>
+        <span class="tag tag-통계">통계</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>Health Policy Watch · Climate Central · SCVNews</b></div>
+      <p class="topic-lead">기록적 더위가 온열질환 응급실 이용 증가로 이어지고 있습니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 폭염 건강영향 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 폭염 건강영향 연구 — 2019년 56편에서 2026년 116편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="57.8" width="24.8" height="28.2" rx="3"/><rect class="b" x="47.6" y="50.2" width="24.8" height="35.8" rx="3"/><rect class="b" x="87.6" y="56.8" width="24.8" height="29.2" rx="3"/><rect class="b" x="127.6" y="52.8" width="24.8" height="33.2" rx="3"/><rect class="b" x="167.6" y="40.2" width="24.8" height="45.8" rx="3"/><rect class="b" x="207.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b" x="247.6" y="17.0" width="24.8" height="69.0" rx="3"/><rect class="b cur" x="287.6" y="27.6" width="24.8" height="58.4" rx="3"/><text class="vl" x="220.0" y="12.0">139</text><text class="vl" x="300.0" y="23.6">116</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 폭염 건강영향 연구</caption><tbody><tr><th>2019</th><td>56</td></tr><tr><th>2020</th><td>71</td></tr><tr><th>2021</th><td>58</td></tr><tr><th>2022</th><td>66</td></tr><tr><th>2023</th><td>91</td></tr><tr><th>2024</th><td>139</td></tr><tr><th>2025</th><td>137</td></tr><tr><th>2026</th><td>116</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>기후 · 건강 동향</h4><ul><li>Health Policy Watch는 8월 기록적 더위로 전 지구 기온이 산업화 이전 대비 <b class="num">1.5℃</b>를 다시 웃돌았고 서유럽이 가장 더운 여름을 보냈다고 전함<sup>[1]</sup></li><li>Climate Central 분석은 기후변화가 미국 내 온열질환 응급실 방문율을 높이고 있다고 보고함<sup>[2]</sup></li><li>미국 일부 지역에서는 폭염 경보가 반복 발령되며 고온이 지속됨<sup>[3]</sup></li></ul></div>
+      <div class="sec"><h4>감시체계와 근거</h4><ul><li>기온 지표(평균기온·열대야일수)와 보건 지표(응급실 내원·초과사망)를 함께 보아야 실제 피해 규모를 알 수 있음</li><li>분석 다수가 언론·비영리기관 발표이므로 공식 감시자료와 대조해 확인할 필요가 있음</li></ul></div>
+      <div class="sec"><h4>국내 대응 시사점</h4><ul><li>국내 온열질환 응급실감시체계 결과와 기상 지표를 함께 제시하는 정기 보고 형식을 검토할 것</li><li>폭염기 종료 후 초과사망 분석으로 실제 피해 규모를 사후 평가할 것</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 3건</summary><ol><li>보도 | Record August Heat Pushes Global Temperatures Back Above 1.5°C | Health Policy Watch (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMixAFBVV95cUxNSnJpQ1hoOFRXcjQzQTRvUGY2R1Y0QnVldnBfV1I5NnpXLXkwYTU2aWhRcmFBV2tEakI3RWcydkpiTE1nOF9GTXlzUzVySFMzMHBXSkpJVnpTSHM0bThiNlRJcTVBbFZIdjRVOHVFT3QxdHBuTjZ6TmFNVThLX0F2MWYyU1NvS0gtMi1GSkwwMjlqZWUwOW85TF9mc2luOEJGSk9WZmx5bU04bEQxc1lZTWhaVnNJUFdhSV9OSlJFZHB1Z3Q5?oc=5" target="_blank" rel="noopener">기사</a></li><li>분석 | Climate Change Raises Rates of U.S. Emergency Room Visits For Heat Illness | Climate Central (2026.09.12. 발표) <a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxQdDk2VWdmcXJaNmdpZENhVVpIRG11dk9BT3V6OGpVOEtYTFBqSENtRTZVR2hzVkJ1eWREUDl0QzBqeXhlMmRPajEyazgtX2ZyMzJTcnRoQVVIeGZTT3FuU0RiamYzeGdrV2VyZGY1bkV2NVlLYzJCdGdwNjRJUzJQQ0NOWmhueVhs?oc=5" target="_blank" rel="noopener">기사</a></li><li>보도 | Extreme Heat Warning: High Temperatures Expected Across County | SCVNews.com (2026.09.09. 발표) <a href="https://news.google.com/rss/articles/CBMixgFBVV95cUxNSFlVemIxdWhVZll6V1Y2ODFrenBZSmEtLU4xVVh4ZGdsZzA2cjhBakhKcXpQU2JlR2pjZ2cyeVUzSXJnUEdTNVlvN3lidmxiTDVtbldfY2MwY05UREprdUVWSlFEQ0lVX2hwRE9yVTVYbC1zNDZqdGMyems2YVB2cTV5c05VTGd0Y3JwTERBQnBtS0J0MlZfU0NMcDJoSEd4YklmRHZnM2JETWx2MjM0ZXAyZTQxVGNpamgwODdNWTUwUjQ1NVE?oc=5" target="_blank" rel="noopener">기사</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[기록적 더위와 온열질환 의료이용] 기록적 더위가 온열질환 응급실 이용 증가로 이어지고 있습니다.
+조치: 국내 온열질환 응급실감시체계 결과와 기상 지표를 함께 제시하는 정기 보고 형식을 검토할 것
+출처: Health Policy Watch · Climate Central · SCVNews / 기후·건강 위기 동향 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t2">
+      <div class="topic-head">
+        <span class="topic-no">2</span>
+        <h2>폭염·산불이 대기질을 되돌린다 <span class="en">Heat, wildfire and air quality</span></h2>
+        <span class="judge"><span class="u u-모니터링" title="긴급도">모니터링</span><span class="im im-중" title="국내 영향도">국내 영향 중</span></span>
+        <span class="tag tag-경보">경보</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>WMO · 로이터 · Anadolu</b></div>
+      <p class="topic-lead">산불과 폭염이 그간의 대기질 개선을 되돌리고 있습니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 산불 연기·대기질 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 산불 연기·대기질 연구 — 2019년 15편에서 2026년 70편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="73.0" width="24.8" height="13.0" rx="3"/><rect class="b" x="47.6" y="60.1" width="24.8" height="25.9" rx="3"/><rect class="b" x="87.6" y="60.1" width="24.8" height="25.9" rx="3"/><rect class="b" x="127.6" y="43.7" width="24.8" height="42.3" rx="3"/><rect class="b" x="167.6" y="38.5" width="24.8" height="47.5" rx="3"/><rect class="b" x="207.6" y="35.9" width="24.8" height="50.1" rx="3"/><rect class="b" x="247.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b cur" x="287.6" y="25.5" width="24.8" height="60.5" rx="3"/><text class="vl" x="260.0" y="12.0">81</text><text class="vl" x="300.0" y="21.5">70</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 산불 연기·대기질 연구</caption><tbody><tr><th>2019</th><td>15</td></tr><tr><th>2020</th><td>30</td></tr><tr><th>2021</th><td>30</td></tr><tr><th>2022</th><td>49</td></tr><tr><th>2023</th><td>55</td></tr><tr><th>2024</th><td>58</td></tr><tr><th>2025</th><td>81</td></tr><tr><th>2026</th><td>70</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>기후 · 건강 동향</h4><ul><li>로이터는 WMO가 산불과 폭염으로 대기질이 악화되고 있다고 경고했다고 보도함<sup>[1]</sup></li><li>WMO는 산불·폭염이 세계적 대기질 개선 노력을 위협한다고 발표함<sup>[2]</sup></li><li>WMO는 강한 엘니뇨의 영향으로 <b class="num">2027년</b>까지 극한기상 위험이 커질 것으로 전망함<sup>[3]</sup></li></ul></div>
+      <div class="sec"><h4>감시체계와 근거</h4><ul><li>폭염과 대기오염은 각각이 아니라 겹쳐서 건강에 작용하며, 취약집단에서 영향이 증폭됨</li><li>다음 절기 대비 계획은 폭염과 대기질을 한 묶음으로 설계할 근거가 쌓이는 중</li></ul></div>
+      <div class="sec"><h4>국내 대응 시사점</h4><ul><li>폭염 대응과 미세먼지 대응 안내를 하나의 생활수칙으로 통합해 전달할 것</li><li>요양시설·학교 등 실내 취약시설의 냉방과 환기·공기질을 함께 점검할 것</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 3건</summary><ol><li>로이터 | Wildfires, heat waves threaten to undermine air quality, UN weather agency says | reuters.com (2026.09.07. 발표) <a href="https://news.google.com/rss/articles/CBMiyAFBVV95cUxQNmdsbHIzdVk0TWxDaGJjMnZvdkdUY3J0SExNNzE4THBud3N0ejFIelUyRTJNR3c3bERId3N0bTRuZ3YxRTE5RlRjN0tCR0o5QnM2d0dPVnh5X0Jwd3FuV0JOU1JFWkp0d0dNYVd6M3Q1VmVkS0pjNFZwUWNqS0FPVlFvUGlYYkRPaEdSOVRIZ0dzcjF2WnZJWXFCMWVVNnZGSFBEY3hxTEduRXlYX21YMVdNSzIxYUJzeEU5cXRkSzlPU2pDLW93eQ?oc=5" target="_blank" rel="noopener">기사</a></li><li>WMO | Wildfires, heat waves threaten global efforts to improve air quality | Anadolu Ajansı (2026.09.07. 발표) <a href="https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQU5jdUxaTFQ5dk5HYTV3c2N0a1Z6My1qeGdLVEtyRkcyTko0MTR3blRjTlF3c3laNnNaM1hpT3BwaGF2cGNFZEhnZU9hWmZmVmZhOFN5bzlVVWI2ZWZ4aVJBY3lGdTRHZVZNeUM2UVJVSmpCMWR3TDZBX2wzUDZsNHF6OFpCUE1xa24wQU13Z1E2UUlzMzQxdzBYUjF2MG96c3I1Y2tNVTJMdjhYRVUtRS0xZ3FxSDJSb3d2VzVnQS1YN2JVYnVxVA?oc=5" target="_blank" rel="noopener">기사</a></li><li>WMO | Strong El Nino expected to raise extreme weather risks into 2027 | Anadolu Ajansı (2026.09.07. 발표) <a href="https://news.google.com/rss/articles/CBMi1wFBVV95cUxQRU9ySGl4TUxLQ2JEUXdRUEwtZ2lFUExmOTBDaE9BdlVqTnF3Rjd5dWZMZElMc05kN0ZVQ2dxLXFuajBFUGQ2aFNIaUFmVnFoUVlNWGlxa0p5WHlqNkp3NGxJdlQzRVBvU3p4MVRDR002c2xEdmViTkpBS2tBTkFveS03T3J5MGpCdGNEbndrUi1YLUd6ZHVUNlV2U0dKcHBBTDZHajM0ajlrQ2lpamhybmp6U3lkcVI5TXVOOXBYemdZcnBFMG9fd1RxSVphZEUxS3p5R0xsOA?oc=5" target="_blank" rel="noopener">기사</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[폭염·산불이 대기질을 되돌린다] 산불과 폭염이 그간의 대기질 개선을 되돌리고 있습니다.
+조치: 폭염 대응과 미세먼지 대응 안내를 하나의 생활수칙으로 통합해 전달할 것
+출처: WMO · 로이터 · Anadolu / 기후·건강 위기 동향 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t3">
+      <div class="topic-head">
+        <span class="topic-no">3</span>
+        <h2>기후와 매개체 감염병 <span class="en">Climate and vector-borne disease</span></h2>
+        <span class="judge"><span class="u u-이번분기" title="긴급도">이번분기</span><span class="im im-중" title="국내 영향도">국내 영향 중</span></span>
+        <span class="tag tag-연구">연구</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span><img class="srclogo" src="logos/nature.com.ico" alt="nature.com" title="nature.com" onerror="this.remove()"> <b>Nature Rev Microbiology · Health Science Reports</b></div>
+      <p class="topic-lead">기온·강수로 어느 정도 예측되는 영역 — 기상-보건 연계 감시의 효용이 큽니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 기후–매개체 감염병 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 기후–매개체 감염병 연구 — 2019년 16편에서 2026년 44편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="64.5" width="24.8" height="21.5" rx="3"/><rect class="b" x="47.6" y="47.0" width="24.8" height="39.0" rx="3"/><rect class="b" x="87.6" y="60.4" width="24.8" height="25.6" rx="3"/><rect class="b" x="127.6" y="48.3" width="24.8" height="37.7" rx="3"/><rect class="b" x="167.6" y="52.3" width="24.8" height="33.7" rx="3"/><rect class="b" x="207.6" y="26.8" width="24.8" height="59.2" rx="3"/><rect class="b" x="247.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b cur" x="287.6" y="26.8" width="24.8" height="59.2" rx="3"/><text class="vl" x="260.0" y="12.0">52</text><text class="vl" x="300.0" y="22.8">44</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 기후–매개체 감염병 연구</caption><tbody><tr><th>2019</th><td>16</td></tr><tr><th>2020</th><td>29</td></tr><tr><th>2021</th><td>19</td></tr><tr><th>2022</th><td>28</td></tr><tr><th>2023</th><td>25</td></tr><tr><th>2024</th><td>44</td></tr><tr><th>2025</th><td>52</td></tr><tr><th>2026</th><td>44</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>기후 · 건강 동향</h4><ul><li>Nature Reviews Microbiology 검토는 기후변화가 뎅기의 분포와 유행 규모에 미치는 영향을 정리함<sup>[1]</sup></li><li>Health Science Reports 게재 연구는 방글라데시 뎅기 환자·사망 증가와 기후 요인의 관련성을 생태학적으로 분석함<sup>[2]</sup></li><li>같은 학술지의 또 다른 검토는 기후변화 국면에서 말라리아 퇴치 위험평가 틀을 재구성할 것을 제안함<sup>[3]</sup></li></ul></div>
+      <div class="sec"><h4>감시체계와 근거</h4><ul><li>매개체 감염병은 기온·강수 같은 기상 지표로 어느 정도 예측 가능한 영역이어서 기상-보건 연계 감시의 효용이 큼</li><li>생태학적 분석은 인과를 단정하기 어려우므로 매개체 밀도 자료와 함께 해석해야 함</li></ul></div>
+      <div class="sec"><h4>국내 대응 시사점</h4><ul><li>국내 매개모기·진드기 밀도 감시 자료와 기상 자료를 연계한 유행 예측을 시도할 것</li><li>해외유입 뎅기 환자 증가 시기에 맞춰 여행자 대상 모기물림 예방수칙 홍보를 강화할 것</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 3건</summary><ol><li>연구 | Impacts of climate change on dengue | Nature reviews. Microbiology (2026.09.01. 발표) <a href="https://doi.org/10.1038/s41579-026-01329-4" target="_blank" rel="noopener">원문</a></li><li>연구 | Dengue Surge in Bangladesh: Exploring the Role of Climate Factors | Health science reports (2026.09.10. 발표) <a href="https://doi.org/10.1002/hsr2.73221" target="_blank" rel="noopener">원문</a></li><li>연구 | Reframing risk assessment for malaria elimination in a changing climate | Nature reviews. Microbiology (2026.09.01. 발표) <a href="https://doi.org/10.1038/s41579-026-01337-4" target="_blank" rel="noopener">원문</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[기후와 매개체 감염병] 기온·강수로 어느 정도 예측되는 영역 — 기상-보건 연계 감시의 효용이 큽니다.
+조치: 국내 매개모기·진드기 밀도 감시 자료와 기상 자료를 연계한 유행 예측을 시도할 것
+출처: Nature Rev Microbiology · Health Science Reports / 기후·건강 위기 동향 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t4">
+      <div class="topic-head">
+        <span class="topic-no">4</span>
+        <h2>누가 먼저 위험해지는가 — 취약집단 보호 <span class="en">Protecting vulnerable groups</span></h2>
+        <span class="judge"><span class="u u-이번분기" title="긴급도">이번분기</span><span class="im im-상" title="국내 영향도">국내 영향 상</span></span>
+        <span class="tag tag-정책">정책</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>Medical Daily · Gesundheitswesen</b></div>
+      <p class="topic-lead">폭염 피해는 냉방에 닿을 수 있느냐는 사회적 조건에서 갈립니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 폭염 취약집단 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 폭염 취약집단 연구 — 2019년 6편에서 2026년 27편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="76.2" width="24.8" height="9.8" rx="3"/><rect class="b" x="47.6" y="77.9" width="24.8" height="8.1" rx="3"/><rect class="b" x="87.6" y="76.2" width="24.8" height="9.8" rx="3"/><rect class="b" x="127.6" y="73.0" width="24.8" height="13.0" rx="3"/><rect class="b" x="167.6" y="61.6" width="24.8" height="24.4" rx="3"/><rect class="b" x="207.6" y="33.9" width="24.8" height="52.1" rx="3"/><rect class="b" x="247.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b cur" x="287.6" y="42.0" width="24.8" height="44.0" rx="3"/><text class="vl" x="260.0" y="12.0">43</text><text class="vl" x="300.0" y="38.0">27</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 폭염 취약집단 연구</caption><tbody><tr><th>2019</th><td>6</td></tr><tr><th>2020</th><td>5</td></tr><tr><th>2021</th><td>6</td></tr><tr><th>2022</th><td>8</td></tr><tr><th>2023</th><td>15</td></tr><tr><th>2024</th><td>32</td></tr><tr><th>2025</th><td>43</td></tr><tr><th>2026</th><td>27</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>기후 · 건강 동향</h4><ul><li>텍사스 교정당국은 <b class="num">15,700개</b> 침상의 냉방을 위해 <b class="num">2억</b> <b class="num">9,800</b>만 달러를 요청했으며, 고령 수용자의 온열질환 위험이 계속되고 있다고 보도됨<sup>[1]</sup></li><li>Gesundheitswesen 게재 연구는 요양·거주시설에서 폭염·극한기상·대기오염이 고령자 건강에 미치는 영향과 적응 과제를 검토함<sup>[2]</sup></li></ul></div>
+      <div class="sec"><h4>감시체계와 근거</h4><ul><li>폭염 피해는 냉방 접근성이라는 사회적 조건에 크게 좌우되며, 시설 거주자는 스스로 환경을 바꾸기 어려움</li><li>개인 수칙 홍보만으로는 한계가 있어 시설 기준·설비 투자와 함께 가야 함</li></ul></div>
+      <div class="sec"><h4>국내 대응 시사점</h4><ul><li>요양시설·쪽방·고시원 등 냉방 취약 거주지의 실내온도 관리와 점검 체계를 확인할 것</li><li>야외작업자·고령 농업인 대상 작업시간 조정 지침의 이행 여부를 점검할 것</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 2건</summary><ol><li>보도 | Texas Prisons Ask for $298 Million to Cool 15,700 Beds | Medical Daily (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMilgFBVV95cUxNVmdDVGZJcF9mNTNtVGc4NTVCVk53YXl0U2lIbDMzVEtIQ1FKUHp3cFRPWHZCb3VEOUlsNFpDdXBJaTNBNk1OLTd3cDlMV3lWbmRiMXA1Y0w0eUpMN1AyN0pTNjVOcUhRMlV2NDZXNXdta0dBZXQ1ajVEeHplZ0tqcThXMmxKeVNmT25sWXdnUmk2SGVWaHc?oc=5" target="_blank" rel="noopener">기사</a></li><li>연구 | Climate Protection and Adaptation in Residential and Nursing Homes | Gesundheitswesen (Bundesverband der Arzte des Offentlichen Gesundheitsdienstes (Germany)) (2026.09.09. 발표) <a href="https://doi.org/10.1055/a-2886-3048" target="_blank" rel="noopener">원문</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[누가 먼저 위험해지는가 — 취약집단 보호] 폭염 피해는 냉방에 닿을 수 있느냐는 사회적 조건에서 갈립니다.
+조치: 요양시설·쪽방·고시원 등 냉방 취약 거주지의 실내온도 관리와 점검 체계를 확인할 것
+출처: Medical Daily · Gesundheitswesen / 기후·건강 위기 동향 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t5">
+      <div class="topic-head">
+        <span class="topic-no">5</span>
+        <h2>국내 논의 — 폭염을 사회적 재난으로 <span class="en">Domestic policy debate</span></h2>
+        <span class="judge"><span class="u u-모니터링" title="긴급도">모니터링</span><span class="im im-중" title="국내 영향도">국내 영향 중</span></span>
+        <span class="tag tag-정책">정책</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>한국재난안전뉴스</b></div>
+      <p class="topic-lead">폭염 대응의 실효는 부처 간 조정 구조에서 나옵니다.</p>
+      
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 폭염 대응정책 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 폭염 대응정책 연구 — 2019년 2편에서 2026년 6편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="68.5" width="24.8" height="17.5" rx="3"/><rect class="b" x="47.6" y="33.5" width="24.8" height="52.5" rx="3"/><rect class="b" x="87.6" y="86.0" width="24.8" height="1.5" rx="3"/><rect class="b" x="127.6" y="68.5" width="24.8" height="17.5" rx="3"/><rect class="b" x="167.6" y="51.0" width="24.8" height="35.0" rx="3"/><rect class="b" x="207.6" y="51.0" width="24.8" height="35.0" rx="3"/><rect class="b" x="247.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b cur" x="287.6" y="33.5" width="24.8" height="52.5" rx="3"/><text class="vl" x="260.0" y="12.0">8</text><text class="vl" x="300.0" y="29.5">6</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 폭염 대응정책 연구</caption><tbody><tr><th>2019</th><td>2</td></tr><tr><th>2020</th><td>6</td></tr><tr><th>2021</th><td>0</td></tr><tr><th>2022</th><td>2</td></tr><tr><th>2023</th><td>4</td></tr><tr><th>2024</th><td>4</td></tr><tr><th>2025</th><td>8</td></tr><tr><th>2026</th><td>6</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>기후 · 건강 동향</h4><ul><li>한국재난안전뉴스는 폭염을 사회적 재난으로 보고 환경·복지·보건·노동·도시정책을 아우르는 대책이 필요하다는 견해를 전함<sup>[1]</sup></li></ul></div>
+      <div class="sec"><h4>감시체계와 근거</h4><ul><li>폭염 대응의 실효는 보건 단독이 아니라 부처 간 조정 구조에서 나옴</li><li>기고 성격의 자료이므로 정책 근거로 쓰려면 국내 피해 통계와 함께 제시해야 함</li></ul></div>
+      <div class="sec"><h4>국내 대응 시사점</h4><ul><li>폭염 대응 협의체에서 보건이 담당할 범위(감시·의료대응·취약계층 파악)를 명확히 할 것</li><li>온열질환 감시 결과를 지자체 취약계층 지원 사업과 연결하는 경로를 마련할 것</li></ul></div>
+      
+      
+      <details class="refs"><summary>출처 1건</summary><ol><li>보도 | [폭염, 사회적 재난] 폭염 대책은 환경·복지·보건·노동·도시정책 되어야 | 한국재난안전뉴스 (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTFByWkFIaDB1bzNUTFNsVVdpTXUyRGhqR0RDcEJUQTdIMnRyYkFEbUl0b2pvQi1LWTltRGRNcmN6SmtNUGhfTmxMbHBJSTk2RkxsN0JjQW1nLU5KSkcyaVE?oc=5" target="_blank" rel="noopener">기사</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[국내 논의 — 폭염을 사회적 재난으로] 폭염 대응의 실효는 부처 간 조정 구조에서 나옵니다.
+조치: 폭염 대응 협의체에서 보건이 담당할 범위(감시·의료대응·취약계층 파악)를 명확히 할 것
+출처: 한국재난안전뉴스 / 기후·건강 위기 동향 2026년 제1호(창간호)">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section>
+  <aside class="tips"><h4>이 뉴스레터를 정책에 쓰실 때</h4><ol><li><b>‘발표·보도’ 근거는 1차 자료를 확인한 뒤 인용하십시오.</b><span class='why'>기관 발표를 전한 언론 보도는 수치의 기준(분모·기간)을 생략하는 일이 잦습니다. 각 꼭지의 출처에서 원문을 먼저 여십시오.</span></li><li><b>해외 수치는 국내값과 나란히 놓기 전까지 비교하지 마십시오.</b><span class='why'>접종률·발생률은 분모 정의와 의료체계가 달라 그대로 대비하면 오해를 만듭니다.</span></li><li><b>모형 연구는 결론보다 가정값을 보십시오.</b><span class='why'>모형의 결과는 투입한 가정(순응도·접촉률)에 좌우됩니다. 우리 매뉴얼이 같은 값을 무엇으로 두고 있는지부터 확인하는 편이 빠릅니다.</span></li><li><b>단일 관찰연구로 지침을 바꾸지 마십시오.</b><span class='why'>관찰연구는 연관성을 보여줄 뿐 인과를 확정하지 않습니다. 지침 개정 근거로는 ●●● 표시(체계적 문헌고찰·무작위배정)를 우선하십시오.</span></li><li><b>프리프린트는 동료심사 전 자료입니다.</b><span class='why'>흐름을 먼저 읽는 데는 유용하나, 공식 문서 인용은 게재 확정 후로 미루십시오.</span></li><li><b>‘자료 없음’도 정책 정보입니다.</b><span class='why'>원문에 수치가 없으면 이 뉴스레터는 ‘(원문 미제시)’로 표시합니다. 국내 해당 지표가 없다는 사실 자체가 조사·감시 과제입니다.</span></li></ol></aside>
+  <aside class="subscribe">
+    <img src="qr-climate-2026-01.png" alt="구독 안내 QR 코드" width="112" height="112">
+    <div class="sub-text">
+      <div class="sub-title">이 뉴스레터 받아보기</div>
+      <div class="sub-note">휴대폰 카메라로 찍으면 기후·건강 뉴스레터 구독 신청 화면으로 바로 이어집니다. (이번이 창간호입니다)</div>
+      <a href="https://epibrief.github.io/subscribe.html?series=climate">https://epibrief.github.io/subscribe.html?series=climate</a>
+    </div>
+  </aside>
+  <footer class="foot-note">
+    <div class="cover">
+      <b>자료 수집</b>
+      <span>이 호가 다룬 기간 2026.09.01.~2026.09.12.</span>
+      <span>소스 102곳을 매일 새벽 5시(KST)에 자동 수집</span>
+      <span>월 1회 발행 (매월 둘째 주)</span>
+      <span>다음 호 2026.10.12.</span>
+    </div>
+    본 뉴스레터는 각 기관의 공개 자료와 학술 문헌을 정리한 것으로, 원문의 내용이 우선합니다.<br>
+    질병관리청 기후보건·건강위해대응 · 기후보건담당
+  </footer>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script type="application/json" id="issue-data">{"kind": "climate", "tpl": "brief", "meta": {"org": "질병관리청 기후보건·건강위해대응", "title": "기후·건강 위기 동향", "issue": "2026년 제1호(창간호)", "date": "2026-09-14", "editor": "기후보건담당", "orgEn": "Climate and Health Response", "titleEn": "Climate and Health Risk Update", "cadence": "월 1회 발행 (매월 둘째 주)", "nextIssue": "2026-10-12", "coverage": "2026.09.01.~2026.09.12."}, "draft": {"generatedBy": "편집 예시(수집 자료 기반)", "intro": "폭염은 이제 ‘무더운 날씨’가 아니라 감시하고 대비해야 할 건강 위해입니다.\n이 뉴스레터는 기상 경보와 보건 감시, 그리고 관련 연구를 한자리에 모아 정리합니다. 창간호는 기록적인 더위가 지나간 2026년 여름을 짚고, 대기질과 매개체 감염병으로 이어지는 연결 고리를 함께 봅니다.", "topics": [{"name": "기록적 더위와 온열질환 의료이용", "en": "Record heat and heat illness", "summary": ["’26년 8월 기록적 고온으로 전 지구 기온이 다시 1.5℃ 기준선을 넘었고, 서유럽은 가장 더운 여름을 기록한 것으로 보고됨[1]", "기후변화가 미국의 온열질환 응급실 방문 증가에 기여하고 있다는 분석이 제시됨[2]"], "situation": ["Health Policy Watch는 8월 기록적 더위로 전 지구 기온이 산업화 이전 대비 1.5℃를 다시 웃돌았고 서유럽이 가장 더운 여름을 보냈다고 전함[1]", "Climate Central 분석은 기후변화가 미국 내 온열질환 응급실 방문율을 높이고 있다고 보고함[2]", "미국 일부 지역에서는 폭염 경보가 반복 발령되며 고온이 지속됨[3]"], "assess": ["기온 지표(평균기온·열대야일수)와 보건 지표(응급실 내원·초과사망)를 함께 보아야 실제 피해 규모를 알 수 있음", "분석 다수가 언론·비영리기관 발표이므로 공식 감시자료와 대조해 확인할 필요가 있음"], "korea": ["국내 온열질환 응급실감시체계 결과와 기상 지표를 함께 제시하는 정기 보고 형식을 검토할 것", "폭염기 종료 후 초과사망 분석으로 실제 피해 규모를 사후 평가할 것"], "refs": ["보도 | Record August Heat Pushes Global Temperatures Back Above 1.5°C | Health Policy Watch (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMixAFBVV95cUxNSnJpQ1hoOFRXcjQzQTRvUGY2R1Y0QnVldnBfV1I5NnpXLXkwYTU2aWhRcmFBV2tEakI3RWcydkpiTE1nOF9GTXlzUzVySFMzMHBXSkpJVnpTSHM0bThiNlRJcTVBbFZIdjRVOHVFT3QxdHBuTjZ6TmFNVThLX0F2MWYyU1NvS0gtMi1GSkwwMjlqZWUwOW85TF9mc2luOEJGSk9WZmx5bU04bEQxc1lZTWhaVnNJUFdhSV9OSlJFZHB1Z3Q5?oc=5", "분석 | Climate Change Raises Rates of U.S. Emergency Room Visits For Heat Illness | Climate Central (2026.09.12. 발표) — https://news.google.com/rss/articles/CBMiiAFBVV95cUxQdDk2VWdmcXJaNmdpZENhVVpIRG11dk9BT3V6OGpVOEtYTFBqSENtRTZVR2hzVkJ1eWREUDl0QzBqeXhlMmRPajEyazgtX2ZyMzJTcnRoQVVIeGZTT3FuU0RiamYzeGdrV2VyZGY1bkV2NVlLYzJCdGdwNjRJUzJQQ0NOWmhueVhs?oc=5", "보도 | Extreme Heat Warning: High Temperatures Expected Across County | SCVNews.com (2026.09.09. 발표) — https://news.google.com/rss/articles/CBMixgFBVV95cUxNSFlVemIxdWhVZll6V1Y2ODFrenBZSmEtLU4xVVh4ZGdsZzA2cjhBakhKcXpQU2JlR2pjZ2cyeVUzSXJnUEdTNVlvN3lidmxiTDVtbldfY2MwY05UREprdUVWSlFEQ0lVX2hwRE9yVTVYbC1zNDZqdGMyems2YVB2cTV5c05VTGd0Y3JwTERBQnBtS0J0MlZfU0NMcDJoSEd4YklmRHZnM2JETWx2MjM0ZXAyZTQxVGNpamgwODdNWTUwUjQ1NVE?oc=5"], "tag": "통계", "headline": "기록적 더위가 온열질환 응급실 이용 증가로 이어지고 있습니다.", "sources": ["Health Policy Watch", "Climate Central", "SCVNews"], "urgency": "이번분기", "impact": "상", "chart": {"title": "연도별 논문 발표 건수 — 폭염 건강영향 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 56}, {"y": 2020, "v": 71}, {"y": 2021, "v": 58}, {"y": 2022, "v": 66}, {"y": 2023, "v": 91}, {"y": 2024, "v": 139}, {"y": 2025, "v": 137}, {"y": 2026, "v": 116}]}}, {"name": "폭염·산불이 대기질을 되돌린다", "en": "Heat, wildfire and air quality", "summary": ["WMO는 산불과 폭염이 그동안의 대기질 개선 노력을 위협하고 있다고 경고함[1][2]", "강한 엘니뇨가 2027년까지 극한기상 위험을 높일 것으로 전망됨[3]"], "situation": ["로이터는 WMO가 산불과 폭염으로 대기질이 악화되고 있다고 경고했다고 보도함[1]", "WMO는 산불·폭염이 세계적 대기질 개선 노력을 위협한다고 발표함[2]", "WMO는 강한 엘니뇨의 영향으로 2027년까지 극한기상 위험이 커질 것으로 전망함[3]"], "assess": ["폭염과 대기오염은 각각이 아니라 겹쳐서 건강에 작용하며, 취약집단에서 영향이 증폭됨", "다음 절기 대비 계획은 폭염과 대기질을 한 묶음으로 설계할 근거가 쌓이는 중"], "korea": ["폭염 대응과 미세먼지 대응 안내를 하나의 생활수칙으로 통합해 전달할 것", "요양시설·학교 등 실내 취약시설의 냉방과 환기·공기질을 함께 점검할 것"], "refs": ["로이터 | Wildfires, heat waves threaten to undermine air quality, UN weather agency says | reuters.com (2026.09.07. 발표) — https://news.google.com/rss/articles/CBMiyAFBVV95cUxQNmdsbHIzdVk0TWxDaGJjMnZvdkdUY3J0SExNNzE4THBud3N0ejFIelUyRTJNR3c3bERId3N0bTRuZ3YxRTE5RlRjN0tCR0o5QnM2d0dPVnh5X0Jwd3FuV0JOU1JFWkp0d0dNYVd6M3Q1VmVkS0pjNFZwUWNqS0FPVlFvUGlYYkRPaEdSOVRIZ0dzcjF2WnZJWXFCMWVVNnZGSFBEY3hxTEduRXlYX21YMVdNSzIxYUJzeEU5cXRkSzlPU2pDLW93eQ?oc=5", "WMO | Wildfires, heat waves threaten global efforts to improve air quality | Anadolu Ajansı (2026.09.07. 발표) — https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQU5jdUxaTFQ5dk5HYTV3c2N0a1Z6My1qeGdLVEtyRkcyTko0MTR3blRjTlF3c3laNnNaM1hpT3BwaGF2cGNFZEhnZU9hWmZmVmZhOFN5bzlVVWI2ZWZ4aVJBY3lGdTRHZVZNeUM2UVJVSmpCMWR3TDZBX2wzUDZsNHF6OFpCUE1xa24wQU13Z1E2UUlzMzQxdzBYUjF2MG96c3I1Y2tNVTJMdjhYRVUtRS0xZ3FxSDJSb3d2VzVnQS1YN2JVYnVxVA?oc=5", "WMO | Strong El Nino expected to raise extreme weather risks into 2027 | Anadolu Ajansı (2026.09.07. 발표) — https://news.google.com/rss/articles/CBMi1wFBVV95cUxQRU9ySGl4TUxLQ2JEUXdRUEwtZ2lFUExmOTBDaE9BdlVqTnF3Rjd5dWZMZElMc05kN0ZVQ2dxLXFuajBFUGQ2aFNIaUFmVnFoUVlNWGlxa0p5WHlqNkp3NGxJdlQzRVBvU3p4MVRDR002c2xEdmViTkpBS2tBTkFveS03T3J5MGpCdGNEbndrUi1YLUd6ZHVUNlV2U0dKcHBBTDZHajM0ajlrQ2lpamhybmp6U3lkcVI5TXVOOXBYemdZcnBFMG9fd1RxSVphZEUxS3p5R0xsOA?oc=5"], "tag": "경보", "headline": "산불과 폭염이 그간의 대기질 개선을 되돌리고 있습니다.", "sources": ["WMO", "로이터", "Anadolu"], "urgency": "모니터링", "impact": "중", "chart": {"title": "연도별 논문 발표 건수 — 산불 연기·대기질 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 15}, {"y": 2020, "v": 30}, {"y": 2021, "v": 30}, {"y": 2022, "v": 49}, {"y": 2023, "v": 55}, {"y": 2024, "v": 58}, {"y": 2025, "v": 81}, {"y": 2026, "v": 70}]}}, {"name": "기후와 매개체 감염병", "en": "Climate and vector-borne disease", "summary": ["기후변화가 뎅기 유행에 미치는 영향을 정리한 검토가 발표됨[1]", "방글라데시의 뎅기 급증에서 기후 요인의 역할을 분석한 연구가 보고됨[2]", "말라리아 퇴치 전략도 변화하는 기후를 전제로 위험평가를 다시 짜야 한다는 제안이 제시됨[3]"], "situation": ["Nature Reviews Microbiology 검토는 기후변화가 뎅기의 분포와 유행 규모에 미치는 영향을 정리함[1]", "Health Science Reports 게재 연구는 방글라데시 뎅기 환자·사망 증가와 기후 요인의 관련성을 생태학적으로 분석함[2]", "같은 학술지의 또 다른 검토는 기후변화 국면에서 말라리아 퇴치 위험평가 틀을 재구성할 것을 제안함[3]"], "assess": ["매개체 감염병은 기온·강수 같은 기상 지표로 어느 정도 예측 가능한 영역이어서 기상-보건 연계 감시의 효용이 큼", "생태학적 분석은 인과를 단정하기 어려우므로 매개체 밀도 자료와 함께 해석해야 함"], "korea": ["국내 매개모기·진드기 밀도 감시 자료와 기상 자료를 연계한 유행 예측을 시도할 것", "해외유입 뎅기 환자 증가 시기에 맞춰 여행자 대상 모기물림 예방수칙 홍보를 강화할 것"], "refs": ["연구 | Impacts of climate change on dengue | Nature reviews. Microbiology (2026.09.01. 발표) — https://doi.org/10.1038/s41579-026-01329-4", "연구 | Dengue Surge in Bangladesh: Exploring the Role of Climate Factors | Health science reports (2026.09.10. 발표) — https://doi.org/10.1002/hsr2.73221", "연구 | Reframing risk assessment for malaria elimination in a changing climate | Nature reviews. Microbiology (2026.09.01. 발표) — https://doi.org/10.1038/s41579-026-01337-4"], "tag": "연구", "headline": "기온·강수로 어느 정도 예측되는 영역 — 기상-보건 연계 감시의 효용이 큽니다.", "sources": ["Nature Rev Microbiology", "Health Science Reports"], "urgency": "이번분기", "impact": "중", "chart": {"title": "연도별 논문 발표 건수 — 기후–매개체 감염병 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 16}, {"y": 2020, "v": 29}, {"y": 2021, "v": 19}, {"y": 2022, "v": 28}, {"y": 2023, "v": 25}, {"y": 2024, "v": 44}, {"y": 2025, "v": 52}, {"y": 2026, "v": 44}]}, "logo": {"file": "logos/nature.com.ico", "site": "nature.com", "url": "https://www.nature.com/articles/s41579-026-01329-4"}}, {"name": "누가 먼저 위험해지는가 — 취약집단 보호", "en": "Protecting vulnerable groups", "summary": ["미국 텍사스 교정당국은 고령 수용자의 온열질환 위험을 이유로 냉방 설비 예산을 요청함[1]", "독일 연구는 요양·거주시설의 기후 적응 과제를 정리함[2]"], "situation": ["텍사스 교정당국은 15,700개 침상의 냉방을 위해 2억 9,800만 달러를 요청했으며, 고령 수용자의 온열질환 위험이 계속되고 있다고 보도됨[1]", "Gesundheitswesen 게재 연구는 요양·거주시설에서 폭염·극한기상·대기오염이 고령자 건강에 미치는 영향과 적응 과제를 검토함[2]"], "assess": ["폭염 피해는 냉방 접근성이라는 사회적 조건에 크게 좌우되며, 시설 거주자는 스스로 환경을 바꾸기 어려움", "개인 수칙 홍보만으로는 한계가 있어 시설 기준·설비 투자와 함께 가야 함"], "korea": ["요양시설·쪽방·고시원 등 냉방 취약 거주지의 실내온도 관리와 점검 체계를 확인할 것", "야외작업자·고령 농업인 대상 작업시간 조정 지침의 이행 여부를 점검할 것"], "refs": ["보도 | Texas Prisons Ask for $298 Million to Cool 15,700 Beds | Medical Daily (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMilgFBVV95cUxNVmdDVGZJcF9mNTNtVGc4NTVCVk53YXl0U2lIbDMzVEtIQ1FKUHp3cFRPWHZCb3VEOUlsNFpDdXBJaTNBNk1OLTd3cDlMV3lWbmRiMXA1Y0w0eUpMN1AyN0pTNjVOcUhRMlV2NDZXNXdta0dBZXQ1ajVEeHplZ0tqcThXMmxKeVNmT25sWXdnUmk2SGVWaHc?oc=5", "연구 | Climate Protection and Adaptation in Residential and Nursing Homes | Gesundheitswesen (Bundesverband der Arzte des Offentlichen Gesundheitsdienstes (Germany)) (2026.09.09. 발표) — https://doi.org/10.1055/a-2886-3048"], "tag": "정책", "headline": "폭염 피해는 냉방에 닿을 수 있느냐는 사회적 조건에서 갈립니다.", "sources": ["Medical Daily", "Gesundheitswesen"], "urgency": "이번분기", "impact": "상", "chart": {"title": "연도별 논문 발표 건수 — 폭염 취약집단 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 6}, {"y": 2020, "v": 5}, {"y": 2021, "v": 6}, {"y": 2022, "v": 8}, {"y": 2023, "v": 15}, {"y": 2024, "v": 32}, {"y": 2025, "v": 43}, {"y": 2026, "v": 27}]}}, {"name": "국내 논의 — 폭염을 사회적 재난으로", "en": "Domestic policy debate", "summary": ["국내에서는 폭염 대책이 보건을 넘어 환경·복지·노동·도시정책으로 확장되어야 한다는 지적이 제기됨[1]"], "situation": ["한국재난안전뉴스는 폭염을 사회적 재난으로 보고 환경·복지·보건·노동·도시정책을 아우르는 대책이 필요하다는 견해를 전함[1]"], "assess": ["폭염 대응의 실효는 보건 단독이 아니라 부처 간 조정 구조에서 나옴", "기고 성격의 자료이므로 정책 근거로 쓰려면 국내 피해 통계와 함께 제시해야 함"], "korea": ["폭염 대응 협의체에서 보건이 담당할 범위(감시·의료대응·취약계층 파악)를 명확히 할 것", "온열질환 감시 결과를 지자체 취약계층 지원 사업과 연결하는 경로를 마련할 것"], "refs": ["보도 | [폭염, 사회적 재난] 폭염 대책은 환경·복지·보건·노동·도시정책 되어야 | 한국재난안전뉴스 (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMiXkFVX3lxTFByWkFIaDB1bzNUTFNsVVdpTXUyRGhqR0RDcEJUQTdIMnRyYkFEbUl0b2pvQi1LWTltRGRNcmN6SmtNUGhfTmxMbHBJSTk2RkxsN0JjQW1nLU5KSkcyaVE?oc=5"], "tag": "정책", "headline": "폭염 대응의 실효는 부처 간 조정 구조에서 나옵니다.", "sources": ["한국재난안전뉴스"], "urgency": "모니터링", "impact": "중", "chart": {"title": "연도별 논문 발표 건수 — 폭염 대응정책 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 2}, {"y": 2020, "v": 6}, {"y": 2021, "v": 0}, {"y": 2022, "v": 2}, {"y": 2023, "v": 4}, {"y": 2024, "v": 4}, {"y": 2025, "v": 8}, {"y": 2026, "v": 6}]}}], "tagline": "8월 지구 기온이 다시 1.5℃를 넘었습니다. 폭염은 날씨가 아니라 감시 대상입니다.", "stats": [{"v": "1.5℃", "l": "’26년 8월 전 지구 기온 재돌파"}, {"v": "2027년", "l": "엘니뇨 극한기상 위험 지속 전망"}, {"v": "2억 9,800만 달러", "l": "텍사스 교정시설 냉방 예산 요청"}, {"v": "15,700", "l": "냉방 대상 침상 수"}]}, "subscribe": {"url": "https://epibrief.github.io/subscribe.html?series=climate", "label": "이 뉴스레터 받아보기", "note": "휴대폰 카메라로 찍으면 기후·건강 뉴스레터 구독 신청 화면으로 바로 이어집니다. (이번이 창간호입니다)"}, "_qr": "qr-climate-2026-01.png", "_qr_abs": "https://epibrief.github.io/issues/qr-climate-2026-01.png"}</script>
+<script src="../email.js"></script>
+<script>
+  const DATA = JSON.parse(document.getElementById('issue-data').textContent);
+  const toast = (msg) => {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('on');
+    setTimeout(() => t.classList.remove('on'), 2600);
+  };
+  document.getElementById('jump').addEventListener('change', e => { location.href = e.target.value; });
+  document.addEventListener('click', async e => {      // 보고용 3줄 복사
+    const b = e.target.closest('[data-copy]'); if (!b) return;
+    try {
+      await navigator.clipboard.writeText(b.dataset.copy);
+      const ok = b.parentElement.querySelector('.copyok'); ok.hidden = false;
+      setTimeout(() => { ok.hidden = true; }, 2000);
+    } catch(err) { toast('복사하지 못했습니다. 길게 눌러 직접 복사해 주세요.'); }
+  });
+  const pop = document.getElementById('mailPop'), btn = document.getElementById('mailBtn');
+  btn.addEventListener('click', () => {
+    const on = pop.classList.toggle('on');
+    btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.menu')) pop.classList.remove('on'); });
+  pop.addEventListener('click', async e => {
+    const el = e.target.closest('[data-act]'); if (!el) return;
+    const act = el.dataset.act;
+    if (act === 'copy'){ e.preventDefault(); toast(await NLEmail.copy(DATA)); }
+    if (act === 'download'){ e.preventDefault(); NLEmail.download(DATA); toast('메일용 HTML 파일을 저장했습니다.'); }
+    if (act === 'mailto'){ el.href = NLEmail.mailto(DATA); }
+    pop.classList.remove('on');
+  });
+</script>
+</body>
+</html>

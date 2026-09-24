@@ -1,0 +1,512 @@
+{
+ "kind": "phsm",
+ "tpl": "official",
+ "meta": {
+  "org": "감염병위기총괄과 · 감염병 사회 대응 분과위원회",
+  "title": "감염병 사회 대응(PHSM) 분과위원회 뉴스레터",
+  "issue": "2026년 제1호(창간호)",
+  "date": "2026-09-14",
+  "editor": "분과위 간사",
+  "orgEn": "Public Health and Social Measures (PHSM) Subcommittee",
+  "titleEn": "Public Health and Social Measures Newsletter",
+  "cadence": "격주 발행 (둘째·넷째 주 월요일)",
+  "nextIssue": "2026-09-28",
+  "coverage": "2026.09.06.~2026.09.11."
+ },
+ "draft": {
+  "generatedBy": "편집 예시(수집 자료 기반)",
+  "intro": "‘사회 대응’은 아직 낯선 말입니다. 백신과 치료제 밖에서 유행의 속도를 늦추는 조치 — 거리두기, 마스크, 학교와 일터의 운영 조정, 검역과 이동 관리, 그리고 이 모든 것을 사람들이 받아들이게 만드는 위험소통과 주민참여 — 를 국제사회는 PHSM(Public Health and Social Measures)이라 부릅니다.\n분과위원회는 이 분야의 최신 연구와 각국 정책을 격주로 정리해 함께 읽습니다. 창간호에서는 ‘사람들이 실제로 어떻게 반응하는가’를 다룬 최근 연구들을 모았습니다. 매뉴얼의 문장을 고치기 전에, 근거가 어디까지 왔는지 먼저 확인하려는 취지입니다.",
+  "topics": [
+   {
+    "name": "사람마다 조심하는 정도가 다르다",
+    "en": "Heterogeneous behavioural responses",
+    "summary": [
+     "구획 모형은 인구·접촉의 이질성은 반영하면서도 행동 반응은 ‘평균적인 사람’으로 단순화해 왔으며, 이 가정을 풀면 유행 결과가 달라진다는 연구가 제시됨[1]"
+    ],
+    "situation": [
+     "결론 :: 사람마다 조심하는 정도, 곧 순응도(adherence, 권고를 실제로 지키는 정도)가 다르면 유행 곡선의 모양 자체가 달라짐[1]",
+     "기존 방식 :: 지금까지 모형은 ‘감염이 늘면 모두가 비슷하게 조심한다’고 단순화해 왔음[1]",
+     "함께 볼 것 :: 서로 다른 호흡기 바이러스가 같이 돌 때도 유행 양상이 바뀜(리노바이러스·인플루엔자 A)[2]"
+    ],
+    "assess": [
+     "‘전 국민이 똑같이 지킨다’는 전제로 만든 시나리오는 조치 효과를 실제보다 크거나 작게 잡음",
+     "국내에는 집단별 순응도(adherence)를 측정한 자료가 없어 지금은 가정값으로만 계산하고 있음"
+    ],
+    "korea": [
+     "매뉴얼 점검 :: 우리 매뉴얼이 순응도를 몇 %로 가정하는지 확인해 다음 회의에 보고",
+     "토론거리 :: 순응도를 정기적으로 조사(패널 조사)할 것인가"
+    ],
+    "refs": [
+     "연구 | Not Everyone Panics Alike: When Heterogeneous Behavioral Responses Change Epidemic Outcomes | Journal of theoretical biology (2026.09.11. 발표) — https://doi.org/10.1016/j.jtbi.2026.112590",
+     "연구 | Leveraging perturbations to infer the population dynamics of human rhinovirus and influenza A | PLoS computational biology (2026.09.11. 발표) — https://doi.org/10.1371/journal.pcbi.1014784"
+    ],
+    "tag": "연구",
+    "headline": "모두가 똑같이 조심한다고 가정하면 유행 예측이 빗나갑니다.",
+    "sources": [
+     "J Theoretical Biology",
+     "PLoS Comput Biology"
+    ],
+    "evidence": "low",
+    "design": [
+     "모형 연구",
+     "Journal of Theoretical Biology",
+     "2026.09.11."
+    ],
+    "caveat": "컴퓨터 모형(simulation) 연구로, 실제 정책 효과의 크기를 말해 주지 않음. 넣은 가정값에 따라 결과가 달라짐.",
+    "urgency": "모니터링",
+    "impact": "중",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 거리두기·행동 반응 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 12
+      },
+      {
+       "y": 2020,
+       "v": 154
+      },
+      {
+       "y": 2021,
+       "v": 293
+      },
+      {
+       "y": 2022,
+       "v": 178
+      },
+      {
+       "y": 2023,
+       "v": 121
+      },
+      {
+       "y": 2024,
+       "v": 100
+      },
+      {
+       "y": 2025,
+       "v": 77
+      },
+      {
+       "y": 2026,
+       "v": 44
+      }
+     ]
+    }
+   },
+   {
+    "name": "백신을 왜 망설이는가",
+    "en": "Vaccine acceptance and hesitancy",
+    "summary": [
+     "중국 8개 성 4,422쌍 대상 연구는 RSV 모체 백신과 영아 단클론항체에 대한 주저를 5C 심리 요인으로 설명함[1]",
+     "브라질 연구는 예방접종 지식이 생후 1년 내 부모의 백신 주저를 예측하는 요인임을 보고함[2]",
+     "미국 농촌 지역 노인 연구는 ‘누구를 신뢰하는가’에 따라 주저 정도가 달라짐을 보여줌[3]"
+    ],
+    "situation": [
+     "결론 :: 백신 주저(vaccine hesitancy, 접종을 미루거나 망설이는 상태)는 성향이 아니라 다섯 요인(5C: 신뢰·안주·제약·위험계산·집단책임)의 조합임[1]",
+     "규모 :: 중국 8개 성 예비부모 4,422쌍 조사 (효과 크기·신뢰구간은 원문 미제시)[1]",
+     "집단 차이 :: 브라질은 보호자의 예방접종 지식이, 미국 농촌 노인은 ‘누구를 믿느냐’가 망설임을 갈랐음[2][3]"
+    ],
+    "assess": [
+     "집단마다 우세한 요인이 달라, 같은 홍보 문구를 전 국민에게 쓰면 효과가 떨어짐",
+     "접종률만 보지 말고 ‘왜 망설이는지’를 함께 측정해야 고칠 지점이 보임"
+    ],
+    "korea": [
+     "측정 :: 국내 접종사업에 5C 같은 표준 설문을 붙여 집단별 망설임 요인을 조사",
+     "토론거리 :: 국내에서 신뢰받는 전달자는 집단별로 누구인가(의료인·지역 인사·기관)"
+    ],
+    "refs": [
+     "연구 | 5C psychological antecedents of vaccine hesitancy toward maternal RSV vaccines | Human vaccines & immunotherapeutics (2026.09.09. 발표) — https://doi.org/10.1080/21645515.2026.2716519",
+     "연구 | Knowledge as a predictor of parental vaccine hesitancy during children's first year | Vaccine (2026.09.08. 발표) — https://doi.org/10.1016/j.vaccine.2026.129127",
+     "연구 | Who Do You Trust? Demographic Patterns in Vaccine Hesitancy among Older Adults | International journal of aging & human development (2026.09.06. 발표) — https://doi.org/10.1177/00914150261480669"
+    ],
+    "tag": "연구",
+    "headline": "‘반대하는 사람’이 따로 있는 게 아니라, 망설이는 이유가 집단마다 다릅니다.",
+    "sources": [
+     "Human Vaccines & Immunother.",
+     "Vaccine",
+     "Int J Aging & Human Dev"
+    ],
+    "evidence": "mid",
+    "design": [
+     "관찰연구(횡단)",
+     "중국 8개 성 4,422쌍 · 브라질 · 미국 농촌",
+     "Human Vaccines & Immunother. 외 2편"
+    ],
+    "caveat": "세 편 모두 국외 관찰연구(observational study)로 원인과 결과를 확정하지 못하며, 국내 적용 시 제도·문화 차이를 확인해야 함.",
+    "urgency": "이번분기",
+    "impact": "중",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 백신 주저(vaccine hesitancy) 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 75
+      },
+      {
+       "y": 2020,
+       "v": 112
+      },
+      {
+       "y": 2021,
+       "v": 523
+      },
+      {
+       "y": 2022,
+       "v": 708
+      },
+      {
+       "y": 2023,
+       "v": 510
+      },
+      {
+       "y": 2024,
+       "v": 363
+      },
+      {
+       "y": 2025,
+       "v": 294
+      },
+      {
+       "y": 2026,
+       "v": 198
+      }
+     ]
+    }
+   },
+   {
+    "name": "허위정보에 어떻게 대응하나",
+    "en": "Countering misinformation",
+    "summary": [
+     "디지털 플랫폼의 건강 허위정보 대응 전략을 정리한 스코핑 리뷰가 발표됨[1]",
+     "HPV 백신 소통을 돕는 모바일 도구(HPVVaxFacts)의 실행가능성·수용성·예비 효과 평가가 보고됨[2]",
+     "말라위 학교·지역사회 참여 사업은 현장 기반 접근의 교훈을 제시함[3]"
+    ],
+    "situation": [
+     "모이는 결론 :: 허위정보(misinformation)는 백신 망설임·거부와 일관되게 함께 나타남[1]",
+     "갈리는 지점 :: 틀린 정보를 정정하는 것만으로는 효과가 오래가지 않음 — 전달자와 경로 설계가 함께 필요[1][2]",
+     "비어 있는 곳 :: 실제 접종률까지 올랐는지 확인한 연구는 드묾[1][3]"
+    ],
+    "assess": [
+     "‘사실 정정’만으로는 한계가 있고, 신뢰 관계와 전달 경로를 함께 설계해야 함",
+     "평시에 신뢰를 쌓아 두지 않으면 유행이 시작된 뒤에는 만들 수 없음"
+    ],
+    "korea": [
+     "매뉴얼 :: 위험소통(RCCE, risk communication and community engagement) 매뉴얼에 허위정보 감시–대응 주체–대응 수위를 단계로 명시",
+     "토론거리 :: 평시 소통 예산과 전담 조직을 어떻게 유지할 것인가"
+    ],
+    "refs": [
+     "연구 | Digital Strategies To Counter Health Misinformation and Strengthen Vaccine Acceptance | Journal of community health (2026.09.06. 발표) — https://doi.org/10.1007/s10900-026-01609-3",
+     "연구 | A Multimethod Evaluation of HPVVaxFacts, a Tailored Mobile Tool | JMIR cancer (2026.09.09. 발표) — https://doi.org/10.2196/78910",
+     "연구 | Lessons learned from a school and community engagement initiative for HPV vaccine awareness | Human vaccines & immunotherapeutics (2026.09.07. 발표) — https://doi.org/10.1080/21645515.2026.2727812"
+    ],
+    "tag": "연구",
+    "headline": "사실을 바로잡는 것만으로는 부족합니다. 누가 전하느냐가 함께 갑니다.",
+    "sources": [
+     "J Community Health",
+     "JMIR Cancer",
+     "Human Vaccines & Immunother."
+    ],
+    "evidence": "mid",
+    "design": [
+     "스코핑 리뷰 · 다방법 평가",
+     "미국 · 말라위",
+     "J Community Health 외 2편"
+    ],
+    "caveat": "대부분 소규모·단기 평가로, 장기 효과는 확인되지 않음.",
+    "urgency": "이번분기",
+    "impact": "중",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 허위정보·인포데믹 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 77
+      },
+      {
+       "y": 2020,
+       "v": 235
+      },
+      {
+       "y": 2021,
+       "v": 328
+      },
+      {
+       "y": 2022,
+       "v": 362
+      },
+      {
+       "y": 2023,
+       "v": 329
+      },
+      {
+       "y": 2024,
+       "v": 335
+      },
+      {
+       "y": 2025,
+       "v": 347
+      },
+      {
+       "y": 2026,
+       "v": 273
+      }
+     ]
+    },
+    "logo": {
+     "file": "logos/link.springer.com.ico",
+     "site": "link.springer.com",
+     "url": "https://link.springer.com/10.1007/s10900-026-01609-3"
+    }
+   },
+   {
+    "name": "방역 조치가 남기는 뜻밖의 흔적",
+    "en": "Unintended effects of control measures",
+    "summary": [
+     "프랑스 2014~2023년 자료 분석에서 코로나19 비약물적 중재 기간 전후로 소아결핵의 발생과 양상이 변화한 것으로 보고됨[1]"
+    ],
+    "situation": [
+     "결론 :: 코로나19 방역 조치 기간을 전후해 프랑스 소아결핵의 발생과 환자 특성이 달라짐 (변화폭은 원문 미제시)[1]",
+     "배경 :: 거리두기·마스크 같은 비약물적 중재(NPI, non-pharmaceutical interventions)가 다른 지역사회 감염에도 영향을 준 정황[1]"
+    ],
+    "assess": [
+     "방역 조치의 영향은 목표 질병 밖에서, 조치가 끝난 뒤 몇 년에 걸쳐 나타날 수 있음",
+     "진단이 늦어지거나 접촉자 조사가 멈춘 것이 원인일 수 있어 해석에 주의가 필요함"
+    ],
+    "korea": [
+     "평가 :: 대유행기 전후 국내 결핵·성매개감염병 지표 변화를 함께 분석",
+     "매뉴얼 :: ‘방역 조치의 부수 영향 점검’ 항목을 넣을지 검토"
+    ],
+    "refs": [
+     "연구 | Changes in the incidence and profile of pediatric tuberculosis in France, 2014–2023 | European journal of pediatrics (2026.09.10. 발표) — https://doi.org/10.1007/s00431-026-07378-4"
+    ],
+    "tag": "연구",
+    "headline": "거리두기 같은 조치는 목표가 아니던 질병에도 몇 년에 걸쳐 영향을 남깁니다.",
+    "sources": [
+     "European J Pediatrics"
+    ],
+    "evidence": "mid",
+    "design": [
+     "국가 감시자료 분석",
+     "프랑스 2014–2023",
+     "European J Pediatrics"
+    ],
+    "caveat": "한 나라의 감시자료 분석으로, 국내 상황에 그대로 적용하기 어려움.",
+    "urgency": "모니터링",
+    "impact": "하",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 방역 조치의 부수 영향 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 0
+      },
+      {
+       "y": 2020,
+       "v": 29
+      },
+      {
+       "y": 2021,
+       "v": 24
+      },
+      {
+       "y": 2022,
+       "v": 22
+      },
+      {
+       "y": 2023,
+       "v": 24
+      },
+      {
+       "y": 2024,
+       "v": 5
+      },
+      {
+       "y": 2025,
+       "v": 4
+      },
+      {
+       "y": 2026,
+       "v": 1
+      }
+     ]
+    },
+    "logo": {
+     "file": "logos/link.springer.com.ico",
+     "site": "link.springer.com",
+     "url": "https://link.springer.com/10.1007/s00431-026-07378-4"
+    }
+   },
+   {
+    "name": "학교 접종은 동의서에서 갈린다",
+    "en": "School-based immunisation logistics",
+    "summary": [
+     "영국 UKHSA는 지난 절기 초등학생 인플루엔자 접종률이 약 절반에 그쳤다며 학교 접종 시작에 맞춰 동의서 회신을 당부함[1]",
+     "같은 기관은 대학 신입생을 대상으로 수막구균 B 백신 2회 접종을 권고함[2]"
+    ],
+    "situation": [
+     "수치 :: 영국 초등학생 인플루엔자 접종률이 지난 절기 약 50%에 그침 (전년 대비 변화는 원문 미제시)[1]",
+     "조치 :: 영국 보건안전청(UKHSA, UK Health Security Agency)이 학교 접종 시작에 맞춰 보호자에게 동의서 회신을 당부[1]",
+     "함께 :: 신학기 학생 대상 수막구균 B 백신 2회 접종도 권고[2]"
+    ],
+    "assess": [
+     "접종률은 백신을 받아들이는 마음가짐뿐 아니라 동의 절차·회신 기한 같은 행정 설계에 좌우됨",
+     "국내 같은 학년·같은 산출식의 접종률과 나란히 놓기 전에는 직접 비교할 수 없음"
+    ],
+    "korea": [
+     "점검 :: 국내 학교 접종·안내 사업의 동의 절차(전자 동의 도입 여부)를 확인해 보고",
+     "토론거리 :: 국내 병목은 동의 절차인가, 인력인가, 시간인가"
+    ],
+    "refs": [
+     "영국 UKHSA | Only around half of primary school children got their flu vaccine last year |  (2026.09.07. 발표) — https://www.gov.uk/government/news/only-around-half-of-primary-school-children-got-their-flu-vaccine-last-year",
+     "영국 UKHSA | Latest figures highlight ongoing Meningitis B risk for students |  (2026.09.10. 발표) — https://www.gov.uk/government/news/latest-figures-highlight-ongoing-meningitis-b-risk-for-students"
+    ],
+    "tag": "정책",
+    "headline": "백신이 싫어서가 아니라, 동의서가 돌아오지 않아 접종률이 떨어집니다.",
+    "sources": [
+     "영국 UKHSA"
+    ],
+    "card": {
+     "title": "Only around half of primary school children got their flu vaccine last year",
+     "site": "GOV.UK",
+     "desc": "UKHSA reminds parents to return flu consent forms to protect their children as roll out of vaccines in schools starts this week",
+     "image": "https://www.gov.uk/assets/frontend/govuk-opengraph-image-4196a4d6333cf92aaf720047f56cfd91b3532d7635fc21ebcf0d5897df6b5f77.png",
+     "url": "https://www.gov.uk/government/news/only-around-half-of-primary-school-children-got-their-flu-vaccine-last-year"
+    },
+    "evidence": "weak",
+    "design": [
+     "기관 발표",
+     "영국 UKHSA",
+     "2026.09.07. · 09.10."
+    ],
+    "caveat": "기관 발표문 기준이며, 접종률을 어떻게 계산했는지(대상 학년·분모)는 원문 확인이 필요함.",
+    "urgency": "이번분기",
+    "impact": "상",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 학교 기반 예방접종 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 43
+      },
+      {
+       "y": 2020,
+       "v": 28
+      },
+      {
+       "y": 2021,
+       "v": 39
+      },
+      {
+       "y": 2022,
+       "v": 45
+      },
+      {
+       "y": 2023,
+       "v": 44
+      },
+      {
+       "y": 2024,
+       "v": 41
+      },
+      {
+       "y": 2025,
+       "v": 56
+      },
+      {
+       "y": 2026,
+       "v": 36
+      }
+     ]
+    },
+    "logo": {
+     "file": "logos/gov.uk.ico",
+     "site": "gov.uk",
+     "url": "https://www.gov.uk/government/news/only-around-half-of-primary-school-children-got-their-flu-vaccine-last-year"
+    }
+   }
+  ],
+  "tagline": "사람들이 방역 조치를 어떻게 받아들이는가. 창간호는 ‘지키게 만드는 힘’에 관한 최근 근거를 모았습니다.",
+  "stats": [
+   {
+    "v": "4,422쌍",
+    "l": "중국 RSV 백신 주저 조사 규모"
+   },
+   {
+    "v": "2014–2023",
+    "l": "프랑스 소아결핵 분석 기간"
+   },
+   {
+    "v": "약 50%",
+    "l": "영국 초등학생 독감 접종률"
+   },
+   {
+    "v": "5건",
+    "l": "이번 호가 다룬 연구·정책"
+   }
+  ],
+  "explainer": {
+   "title": "‘감염병 사회 대응(PHSM)’이란 무엇인가",
+   "body": [
+    "백신과 치료제 밖에서 유행의 속도를 늦추는 조치를 국제사회는 PHSM(Public Health and Social Measures, 공중보건·사회적 조치)이라고 부릅니다. 마스크 착용과 손 씻기 같은 개인 수칙부터 모임·이동 제한, 학교와 일터의 운영 조정, 검역과 격리, 실내 환기 같은 환경 조치, 그리고 이 모든 것을 사람들이 받아들이게 만드는 위험소통(risk communication)과 주민참여까지가 이 범위에 들어갑니다.",
+    "유럽질병예방통제센터(ECDC) 등은 같은 범위를 ‘비약물적 중재(NPI, non-pharmaceutical interventions)’라고도 부릅니다. 두 용어는 실무에서 거의 같은 뜻으로 쓰이며, PHSM 쪽이 사회적 조치와 소통까지 포괄하는 넓은 표현입니다.",
+    "이 분야의 어려움은 조치의 목록이 아니라 ‘사람’에 있습니다. 같은 조치라도 사람들이 얼마나 받아들이고 지키는지(순응), 그 과정에서 교육·소득·정신건강에 어떤 부담이 생기는지에 따라 결과가 달라집니다. 그래서 분과위원회는 조치의 효과와 함께 수용성·형평성·소통을 같은 무게로 봅니다."
+   ],
+   "terms": [
+    {
+     "k": "PHSM",
+     "v": "공중보건·사회적 조치. 백신·치료제 외의 모든 전파 차단 조치와 그 사회적 수단"
+    },
+    {
+     "k": "NPI",
+     "v": "비약물적 중재. 거리두기·마스크·환기 등 약물이 아닌 개입을 가리키는 용어"
+    },
+    {
+     "k": "순응(adherence)",
+     "v": "권고된 조치를 실제로 따르는 정도. 효과 크기를 좌우하는 핵심 변수"
+    },
+    {
+     "k": "RCCE",
+     "v": "위험소통과 주민참여. 조치를 설명하고 함께 실행하도록 만드는 활동"
+    }
+   ],
+   "sources": [
+    {
+     "label": "WHO, 공중보건·사회적 조치 조정 지침(2023)",
+     "url": "https://www.who.int/publications/i/item/WHO-2019-nCoV-Adjusting-PH-measures-2023.1"
+    },
+    {
+     "label": "WHO PHSM 지식허브 (phsm.who.int)",
+     "url": "https://phsm.who.int/"
+    },
+    {
+     "label": "ECDC, 비약물적 중재(NPI) 지침",
+     "url": "https://www.ecdc.europa.eu/en/covid-19/prevention-and-control/non-pharmaceutical-interventions"
+    },
+    {
+     "label": "WHO, 위험소통·주민참여(RCCE)",
+     "url": "https://www.who.int/teams/risk-communication"
+    }
+   ]
+  }
+ },
+ "subscribe": {
+  "url": "https://epibrief.github.io/subscribe.html?series=phsm",
+  "label": "뉴스레터 구독·지난 호 보기",
+  "note": "휴대폰 카메라로 찍으면 지난 호와 구독 안내로 이어집니다."
+ }
+}

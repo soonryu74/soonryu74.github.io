@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전 세계 감염병 발생 동향 2026년 제37호</title>
+<meta name="description" content="질병관리청 감염병위기대응국 발간 · 전 세계 감염병 발생 동향 2026년 제37호. 공식 기관 발표와 최신 연구를 정리한 뉴스레터입니다.">
+<meta name="theme-color" content="#1b3fb0">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="../paper.css">
+<style>
+  :root{ --bar-brand:#1b3fb0; --bar-accent:#bf560c; }
+  body{ margin:0; background:#eef1f5; color:#191f28;
+    font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif; }
+  .bar{ position:sticky; top:0; z-index:20; background:var(--bar-brand); color:#fff;
+    display:flex; gap:6px; align-items:center; flex-wrap:nowrap;
+    padding:8px 12px; box-shadow:0 1px 8px rgba(0,0,0,.18); }
+  .bar a, .bar button, .bar select{ font-family:inherit; font-size:.92rem; font-weight:700; }
+  .bar a.home{ color:#fff; text-decoration:none; padding:7px 11px; border-radius:8px;
+    background:rgba(255,255,255,.14); white-space:nowrap; }
+  .bar .short{ display:none; }
+  .bar a.home:hover{ background:rgba(255,255,255,.24); }
+  .bar .sp{ flex:1 }
+  .bar select{ background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.35);
+    border-radius:8px; padding:7px 10px; max-width:min(46vw,320px); }
+  .bar select option{ color:#191f28; }
+  .bar button{ background:#fff; color:var(--bar-brand); border:0; border-radius:8px;
+    padding:8px 14px; cursor:pointer; }
+  .bar button:hover{ background:#f0f3f8; }
+  .bar button.ghost{ background:rgba(255,255,255,.14); color:#fff; }
+  .bar button.ghost:hover{ background:rgba(255,255,255,.26); }
+  .menu{ position:relative; }
+  .menu-pop{ position:absolute; right:0; left:auto; top:calc(100% + 8px); background:#fff; color:#191f28;
+    border:1px solid #dde2e9; border-radius:12px; box-shadow:0 10px 30px rgba(22,48,90,.18);
+    min-width:250px; padding:6px; display:none; }
+  .menu-pop.on{ display:block; }
+  .menu-pop button, .menu-pop a{ display:block; width:100%; text-align:left; background:none;
+    border:0; color:#191f28; padding:11px 12px; border-radius:8px; cursor:pointer; font-size:.92rem;
+    font-weight:600; text-decoration:none; }
+  .menu-pop button:hover, .menu-pop a:hover{ background:#f2f5f9; }
+  .menu-pop .hint{ font-size:.78rem; color:#6d7885; font-weight:400; padding:4px 12px 8px; }
+  .toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#191f28;
+    color:#fff; padding:12px 18px; border-radius:10px; font-size:.9rem; z-index:50; display:none; }
+  .toast.on{ display:block; }
+  .paperwrap{ padding:24px 14px 60px; }
+  @media (max-width:640px){
+    .bar{ gap:5px; padding:7px 9px; font-size:.86rem; }
+    .bar a.home, .bar button{ padding:7px 9px; font-size:.85rem; }
+    .bar .full{ display:none; }
+    .bar .short{ display:inline; }
+    .bar select{ max-width:34vw; padding:6px 7px; font-size:.82rem; }
+    .menu-pop{ position:fixed; left:10px; right:10px; top:56px; min-width:0; }
+  }
+  @media print{ .bar,.toast{ display:none !important; } body{ background:#fff; } .paperwrap{ padding:0; } }
+</style>
+</head>
+<body>
+<nav class="bar">
+  <a class="home" href="../"><span class="full">← 뉴스레터 메이커</span><span class="short">← 홈</span></a>
+  <a class="home" href="./"><span class="full">발간 목록</span><span class="short">목록</span></a>
+  <select id="jump" aria-label="다른 호 보기"><option value="chronic-2026-01.html">만성질환 · 2026년 제1호(창간호)</option><option value="climate-2026-01.html">기후·건강 · 2026년 제1호(창간호)</option><option value="outbreak-2026-37.html" selected>감염병 발생동향 · 2026년 제37호</option><option value="phsm-2026-01.html">감염병 사회 대응(PHSM) · 2026년 제1호(창간호)</option></select>
+  <span class="sp"></span>
+  <button class="ghost" onclick="window.print()"><span class="full">인쇄 · PDF</span><span class="short">인쇄</span></button>
+  <span class="menu">
+    <button id="mailBtn" aria-haspopup="true" aria-expanded="false"><span class="full">이메일로 보내기</span><span class="short">메일</span> ▾</button>
+    <span class="menu-pop" id="mailPop">
+      <div class="hint">받는 사람에게 그대로 보낼 수 있는 형태로 만듭니다.</div>
+      <button data-act="copy">메일 본문 복사 (서식 유지)</button>
+      <a href="#" data-act="mailto">메일 프로그램 열기</a>
+      <button data-act="download">메일용 HTML 파일 저장</button>
+    </span>
+  </span>
+</nav>
+
+<div class="paperwrap"><div id="paper" class="t-official k-outbreak">
+  <header class="nl-head">
+    <div class="nl-topline">
+      <span>감염병 발생동향 뉴스레터</span>
+      <span class="issue">2026년 제37호 · 2026.09.14.</span>
+    </div>
+    <div class="nl-kicker">질병관리청 감염병위기대응국</div>
+    <div class="nl-org-en">Korea Disease Control and Prevention Agency</div>
+    <h1 class="nl-title">전 세계 감염병 발생 동향</h1>
+    <div class="nl-title-en">Global Infectious Disease Outbreak Update</div>
+    <p class="nl-lead">독감 유행주의보가 예년보다 이르게 내려졌고, 콩고민주공화국 에볼라는 7개 주로 번졌습니다.</p>
+  </header>
+  <div class="nl-bar">
+    <span>발행 질병관리청 감염병위기대응국</span>
+    <span>주 1회 발행 (매주 월요일)</span>
+    <span>담당 감염병위기총괄과</span>
+    <span>구독 <a href="https://epibrief.github.io/subscribe.html?series=outbreak">이 뉴스레터 받아보기 →</a></span>
+  </div>
+  <div class="brief">
+    <div class="brief-label">이번 호에는 <span class="go">— 제목을 누르면 해당 꼭지로 이동합니다</span></div>
+    <div class="stats"><div class="stat"><div class="v">13배</div><div class="l">국내 독감 입원환자 증가</div><div class="n">정책브리핑 보도 기준</div></div><div class="stat"><div class="v">7개 주</div><div class="l">콩고 에볼라 확산 지역</div></div><div class="stat"><div class="v">9.21.</div><div class="l">절기 예방접종 시작</div></div><div class="stat"><div class="v">1명 사망</div><div class="l">뉴욕 레지오넬라 집단발생</div></div></div>
+    <ol class="issues"><li><a href="#t1">
+          <span class="no">1</span>
+          <span class="it">인플루엔자, 대한민국
+            <span class="ih">예년보다 이른 유행에 입원환자가 급증했고, 접종은 9월 21일 시작됩니다.</span></span>
+          <span class="meta"><span class="u u-즉시조치">즉시조치</span><span class="src">질병관리청</span><span class="src">정책브리핑</span><span class="src-more">외 2곳</span>
+            <span class="tag tag-경보">경보</span></span>
+        </a></li><li><a href="#t2">
+          <span class="no">2</span>
+          <span class="it">에볼라바이러스병, 콩고민주공화국
+            <span class="ih">진원지를 넘어 7개 주로 확산 — 국내는 검역·이송 훈련으로 대비 중입니다.</span></span>
+          <span class="meta"><span class="u u-이번분기">이번분기</span><span class="src">The Washington Post</span><span class="src">美CDC</span><span class="src-more">외 1곳</span>
+            <span class="tag tag-경보">경보</span></span>
+        </a></li><li><a href="#t3">
+          <span class="no">3</span>
+          <span class="it">레지오넬라증, 미국
+            <span class="ih">냉각탑이 감염원으로 지목돼 10기 청소 명령이 내려졌습니다.</span></span>
+          <span class="meta"><span class="u u-모니터링">모니터링</span><span class="src">The Guardian</span><span class="src">CBS News</span>
+            <span class="tag tag-경보">경보</span></span>
+        </a></li><li><a href="#t4">
+          <span class="no">4</span>
+          <span class="it">홍역, 미국
+            <span class="ih">접종률이 낮은 지역을 중심으로 수입 사례가 지역사회 전파로 이어지고 있습니다.</span></span>
+          <span class="meta"><span class="u u-이번분기">이번분기</span><span class="src">NBC News</span><span class="src">미국 지역언론</span>
+            <span class="tag tag-통계">통계</span></span>
+        </a></li></ol>
+  </div>
+  
+  
+  <section class="topic" id="t1">
+      <div class="topic-head">
+        <span class="topic-no">1</span>
+        <h2>인플루엔자, 대한민국 <span class="en">Influenza, Republic of Korea</span></h2>
+        <span class="judge"><span class="u u-즉시조치" title="긴급도">즉시조치</span><span class="im im-상" title="국내 영향도">국내 영향 상</span></span>
+        <span class="ev low" title="근거 강도 · 기관 발표 · 언론 보도 · 프리프린트"><span class="dots">○○○</span>발표·보도</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span><img class="srclogo" src="logos/gov.uk.ico" alt="gov.uk" title="gov.uk" onerror="this.remove()"> <b>질병관리청 · 정책브리핑 · 연합뉴스 · 영국 UKHSA</b></div>
+      <p class="topic-lead">예년보다 이른 유행에 입원환자가 급증했고, 접종은 9월 21일 시작됩니다.</p>
+      <div class="design"><span>기관 발표 · 언론 보도</span><span>대한민국</span><span>2026.09.11.</span></div>
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 인플루엔자 감시·절기 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 인플루엔자 감시·절기 연구 — 2019년 188편에서 2026년 168편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="22.4" width="24.8" height="63.6" rx="3"/><rect class="b" x="47.6" y="27.8" width="24.8" height="58.2" rx="3"/><rect class="b" x="87.6" y="27.2" width="24.8" height="58.8" rx="3"/><rect class="b" x="127.6" y="34.9" width="24.8" height="51.1" rx="3"/><rect class="b" x="167.6" y="39.0" width="24.8" height="47.0" rx="3"/><rect class="b" x="207.6" y="27.2" width="24.8" height="58.8" rx="3"/><rect class="b" x="247.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b cur" x="287.6" y="29.2" width="24.8" height="56.8" rx="3"/><text class="vl" x="260.0" y="12.0">207</text><text class="vl" x="300.0" y="25.2">168</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 인플루엔자 감시·절기 연구</caption><tbody><tr><th>2019</th><td>188</td></tr><tr><th>2020</th><td>172</td></tr><tr><th>2021</th><td>174</td></tr><tr><th>2022</th><td>151</td></tr><tr><th>2023</th><td>139</td></tr><tr><th>2024</th><td>174</td></tr><tr><th>2025</th><td>207</td></tr><tr><th>2026</th><td>168</td></tr></tbody></table></figure>
+      <div class="srccard"><img src="https://www.gov.uk/assets/frontend/govuk-opengraph-image-4196a4d6333cf92aaf720047f56cfd91b3532d7635fc21ebcf0d5897df6b5f77.png" alt="" loading="lazy" onerror="this.remove()">
+      <div class="sc-b">
+        <div class="sc-site">원문 · GOV.UK</div>
+        <div class="sc-t">Only around half of primary school children got their flu vaccine last year</div>
+        <div class="sc-d">UKHSA reminds parents to return flu consent forms to protect their children as roll out of vaccines in schools starts this week</div>
+        <a href="https://www.gov.uk/government/news/only-around-half-of-primary-school-children-got-their-flu-vaccine-last-year" target="_blank" rel="noopener">원문 보기 →</a>
+      </div></div>
+      <div class="sec"><h4>발생 상황</h4><ul><li><b class="lead">발령</b>질병관리청, 2026-2027절기 인플루엔자 유행주의보 발령(9.11.) — 예년보다 이른 유행<sup>[1]</sup></li><li><b class="lead">규모</b>입원환자 <b class="num">13배</b> 증가 (정책브리핑 보도 기준, 비교 시점·실수치 원문 미제시)<sup>[2]</sup></li><li><b class="lead">일정</b>절기 예방접종은 9.21. 시작, 코로나19 동시 증가 보도도 있음<sup>[3][4]</sup></li></ul></div>
+      <div class="sec"><h4>상황 평가</h4><ul><li>접종 완료 전 감염 기회가 커져 고위험군 조기 접종과 집단시설 선제 대응이 관건</li><li>호흡기감염병이 동시 유행하면 외래·입원 부담이 겹쳐 병상·항바이러스제 수급 관리가 필요</li></ul></div>
+      <div class="sec"><h4>국내 관련성 · 권고</h4><ul><li><b class="lead">안내</b>9.21. 접종 개시에 맞춰 무료접종 대상자(어린이·임신부·65세 이상) 안내 공문 발송</li><li><b class="lead">점검</b>학교·어린이집·요양시설 유증상자 관리와 항바이러스제 수급 현황 점검</li></ul></div>
+      <div class="caveat"><b>해석 주의</b> · 입원환자 증가 배수는 언론 보도 기준으로, 질병관리청 표본감시 통계로 확인한 뒤 인용해야 함.</div>
+      <div class="profile"><h5>질병 개요</h5><dl><dt>병원체</dt><dd>인플루엔자 바이러스(A형·B형)</dd><dt>전파경로</dt><dd>기침·재채기 등 비말, 오염된 손·물건 접촉</dd><dt>잠복기</dt><dd>1~4일(평균 2일)</dd><dt>주요 증상</dt><dd>갑작스러운 발열, 기침, 인후통, 근육통, 두통, 피로</dd><dt>고위험군</dt><dd>65세 이상, 임신부, 영유아, 만성질환자, 면역저하자</dd><dt>예방</dt><dd>절기 예방접종, 손 씻기, 기침예절, 유증상 시 등교·출근 자제</dd><dt>치료</dt><dd>대증치료, 고위험군은 조기 항바이러스제 투여 고려</dd></dl></div>
+      <details class="refs"><summary>출처 5건</summary><ol><li>질병관리청 보도자료 | 2026-2027절기 인플루엔자 유행주의보 발령 (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxQdDN1T3B6SDdGOTZUalFNWTE3QVhoanpyM2JCVWs2akRqazgweXFOeEFNWnhQLVZ5MkliSXNyWXhUcGY0RGtpZVY4TU1rc3Zjb0Z0a2RoSTJ1a0ZsajBPQ0NQRjA4RVpLQnpBVW82THlIcTJJRjUzTFh1QlZJQmM1WWJxY0pZS2FBQnEtWUlYa1Fsd2tZWE92TFd2cG8wRFI5WlhfeWhhcGRiQUlIcEtzSWl6X2c0M2s?oc=5" target="_blank" rel="noopener">기사</a></li><li>대한민국 정책브리핑 | ‘인플루엔자 유행주의보’ 발령…입원환자 13배↑ (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMibEFVX3lxTE94MndQbi1aQWlKX2JRSmdJUWpaVzZ6S1pmb2tkNlBabFk0NXE5cXIwSm5zUTZERlRrc0otcmt4NFFXYjZjWUJIWGlpOXJLYV9PcTA4SjZpNFltYXJBWXR3VEx3UHBuNkZpSHpWdA?oc=5" target="_blank" rel="noopener">기사</a></li><li>연합뉴스 | 늦여름부터 독감 기승…유행주의보 발령·21일부터 예방접종 (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMiW0FVX3lxTE9FUjJCOTVRaGM1ZEdqVE16YUVOU0pMLWFkY1FzUXJZVmcyckFqMlJqTzlIOG9fX19ZaUx5N29BSGgtQUw1cmF0T240T19hdUZ0cjE2VUJBc2dHZkHSAWBBVV95cUxOXy14b3ptQk1zWXhENnhhNkU3M2Y4cG9VY2NrWU1CalpwVGxmSW11U01mdGhiWHgzRElSQUp1R2dLVmcxcF9QbV85MmVNelVTWUVaT1I3Sk1DQTB4cjFRbWM?oc=5" target="_blank" rel="noopener">기사</a></li><li>busan.com | 독감 유행주의보 발령…코로나 증가까지 고위험군 주의 (2026.09.13. 발표) <a href="https://news.google.com/rss/articles/CBMifEFVX3lxTE4tOGJaM2FZNGZUQVFmcUVHQW9adV8wSE1rSWVFYzRDNTRVX0VVT044Z2lmaFlUWFZ1YVh1MDUyMVRhVTZLd0hyOF9pYlJyX1VrblFlSmJnbkdQbFJLT29UaEtOOFNtSFRCYW9yZ1Q2bG1ta0RqMDZReDBhbVc?oc=5" target="_blank" rel="noopener">기사</a></li><li>UKHSA | Only around half of primary school children got their flu vaccine last year (2026.09.07. 발표) <a href="https://www.gov.uk/government/news/only-around-half-of-primary-school-children-got-their-flu-vaccine-last-year" target="_blank" rel="noopener">원문</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[인플루엔자, 대한민국] 예년보다 이른 유행에 입원환자가 급증했고, 접종은 9월 21일 시작됩니다.
+조치: 9.21. 접종 개시에 맞춰 무료접종 대상자(어린이·임신부·65세 이상) 안내 공문 발송
+출처: 질병관리청 · 정책브리핑 · 연합뉴스 · 영국 UKHSA / 전 세계 감염병 발생 동향 2026년 제37호">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t2">
+      <div class="topic-head">
+        <span class="topic-no">2</span>
+        <h2>에볼라바이러스병, 콩고민주공화국 <span class="en">Ebola virus disease, DRC</span></h2>
+        <span class="judge"><span class="u u-이번분기" title="긴급도">이번분기</span><span class="im im-중" title="국내 영향도">국내 영향 중</span></span>
+        <span class="ev low" title="근거 강도 · 기관 발표 · 언론 보도 · 프리프린트"><span class="dots">○○○</span>발표·보도</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>The Washington Post · 美CDC · 경인매일</b></div>
+      <p class="topic-lead">진원지를 넘어 7개 주로 확산 — 국내는 검역·이송 훈련으로 대비 중입니다.</p>
+      <div class="design"><span>언론 보도 · 기관 안내</span><span>콩고민주공화국 · 미국 · 대한민국</span><span>2026.09.11.</span></div>
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 에볼라 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 에볼라 연구 — 2019년 494편에서 2026년 256편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b" x="47.6" y="28.6" width="24.8" height="57.4" rx="3"/><rect class="b" x="87.6" y="41.9" width="24.8" height="44.1" rx="3"/><rect class="b" x="127.6" y="50.1" width="24.8" height="35.9" rx="3"/><rect class="b" x="167.6" y="54.4" width="24.8" height="31.6" rx="3"/><rect class="b" x="207.6" y="55.8" width="24.8" height="30.2" rx="3"/><rect class="b" x="247.6" y="61.1" width="24.8" height="24.9" rx="3"/><rect class="b cur" x="287.6" y="49.7" width="24.8" height="36.3" rx="3"/><text class="vl" x="20.0" y="12.0">494</text><text class="vl" x="300.0" y="45.7">256</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 에볼라 연구</caption><tbody><tr><th>2019</th><td>494</td></tr><tr><th>2020</th><td>405</td></tr><tr><th>2021</th><td>311</td></tr><tr><th>2022</th><td>253</td></tr><tr><th>2023</th><td>223</td></tr><tr><th>2024</th><td>213</td></tr><tr><th>2025</th><td>176</td></tr><tr><th>2026</th><td>256</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>발생 상황</h4><ul><li><b class="lead">확산</b>콩고민주공화국 에볼라 유행이 7번째 주(province)로 확대<sup>[1]</sup></li><li><b class="lead">경고</b>아프리카 보건당국, 진원지를 넘어 빠르게 번지는 중이라고 경고 (누적 확진·사망·치명률 원문 미제시)<sup>[2]</sup></li><li><b class="lead">국내</b>인천시가 국내 유입을 가정해 검역–격리–이송 합동훈련 실시<sup>[4]</sup></li></ul></div>
+      <div class="sec"><h4>상황 평가</h4><ul><li>지역 간 확산 단계에서는 접촉자 추적과 안전한 장례 관리가 통제의 관건</li><li>국내 유입 위험은 직항이 없어 낮으나, 제3국 경유 입국자의 여행력 확보가 조기 인지의 핵심</li></ul></div>
+      <div class="sec"><h4>국내 관련성 · 권고</h4><ul><li><b class="lead">안내</b>유행지역 방문력 확인과 귀국 후 <b class="num">21일</b> 내 발열 시 1339 신고 안내 시행</li><li><b class="lead">점검</b>격리병상·이송체계와 개인보호구 착탈의 절차 점검, 의료기관 신고 기준 재안내</li></ul></div>
+      <div class="caveat"><b>해석 주의</b> · 누적 환자 수와 치명률은 이번 수집 자료에 없어, WHO 발생 속보 원문으로 확인이 필요함.</div>
+      <div class="profile"><h5>질병 개요</h5><dl><dt>병원체</dt><dd>에볼라바이러스(Ebolavirus, 본디부교 등 6종)</dd><dt>전파경로</dt><dd>환자의 혈액·체액·분비물과의 직접 접촉, 오염된 물건 접촉</dd><dt>잠복기</dt><dd>2~21일</dd><dt>주요 증상</dt><dd>발열, 근육통, 두통, 구토·설사, 진행 시 출혈</dd><dt>국내 관리</dt><dd>제1급감염병, 국내 발생 사례 없음</dd><dt>예방</dt><dd>유행지역 여행 자제, 환자·체액 접촉 회피, 귀국 후 21일 내 발열 시 1339 신고</dd><dt>치료</dt><dd>보존적 치료, 일부 항체치료제 사용(유행 지역)</dd></dl></div>
+      <details class="refs"><summary>출처 4건</summary><ol><li>The Washington Post | Ebola outbreak in Congo spreads to a 7th province (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMixgFBVV95cUxQdG5oSVp1RUNiUVF3alMyLUUzOElfLVVaT3MtRXhEdkcxWTR2TFViV1QwVGVrUzdmUF82MkxDQ2VBQWg0YkQxUTAtWE5Sd0RXdmVndFZlLWZKMmV5Y1VHVG9jdGJPbVRIZ0J3ZUVnZTJTWjYyNVkxSmtzYnROUDdCZFdoSExEQWhTcFFWa20wdGNRUGk4QW9YVlRhSEUycmdDa2xZN1AxTUx5NnZQSGQwYVM0TDRBQzdUTkNIUXZPemhrd1hxaXc?oc=5" target="_blank" rel="noopener">기사</a></li><li>The Washington Post | Africa&#x27;s top health body warns Congo&#x27;s Ebola outbreak is rapidly spreading (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMi2AFBVV95cUxPanFURzBCSGlsMmxNdFpJQUdibW9PdEFfVWVMd2tGcW1HT2NRUkE5bFpIR1VobkZObnpCRElxaXdaSEQwY0NYUkY5NlBJSEdvWmN5bUZsNTByam56OXU3V1Q4dXJmczRVaHdtVG9SQzJMTWdoSmpTSi1WaWtRSXBFeDZja19FdEFrN0x6dUh3TlBuQVZWa0hoT0NuX0FjZk96VHdSZldOMG04YXRSVUhzVDNxZGZSdms0VVY3WlpXcFp5MEVQQ0pzck1hUWtvSjJGMFdmZlMtOEY?oc=5" target="_blank" rel="noopener">기사</a></li><li>美CDC | Information for Travelers Returning from Ebola-Affected Areas (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMid0FVX3lxTE5iWWh1cnAzdVpkcUh0OXI5eTlmMnZRMHJrdnY2WnNMVDZwX1d3enJoMkQxTDdnbXQ4Qm03MXQtaXd0TDFWbzgxZWVfUWE4RUhESE5wWW1PUXFRWDJlV2ZVb1pHc3BnX3pINTNiNVdRUUdCX0JabXdR?oc=5" target="_blank" rel="noopener">기사</a></li><li>경인매일 | 인천시, 에볼라 유입 가정 감염병 대응훈련 (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMiaEFVX3lxTE01QVVPVFNhNUpKcG8zcG95RUpDY0tMeE14VTZVRlE2aVR6WXBYMkNNNmlhRXhWMUFDcDRET2gzSkcyY3ZMaDVXb0R6akRiZ1NmaEFLaUphNF9sOVY2VFlpc2dRLWhWMHox?oc=5" target="_blank" rel="noopener">기사</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[에볼라바이러스병, 콩고민주공화국] 진원지를 넘어 7개 주로 확산 — 국내는 검역·이송 훈련으로 대비 중입니다.
+조치: 유행지역 방문력 확인과 귀국 후 21일 내 발열 시 1339 신고 안내 시행
+출처: The Washington Post · 美CDC · 경인매일 / 전 세계 감염병 발생 동향 2026년 제37호">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t3">
+      <div class="topic-head">
+        <span class="topic-no">3</span>
+        <h2>레지오넬라증, 미국 <span class="en">Legionnaires&#x27; disease, USA</span></h2>
+        <span class="judge"><span class="u u-모니터링" title="긴급도">모니터링</span><span class="im im-하" title="국내 영향도">국내 영향 하</span></span>
+        <span class="ev low" title="근거 강도 · 기관 발표 · 언론 보도 · 프리프린트"><span class="dots">○○○</span>발표·보도</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>The Guardian · CBS News</b></div>
+      <p class="topic-lead">냉각탑이 감염원으로 지목돼 10기 청소 명령이 내려졌습니다.</p>
+      <div class="design"><span>언론 보도</span><span>미국 뉴욕</span><span>2026.09.11.–09.13.</span></div>
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 레지오넬라 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 레지오넬라 연구 — 2019년 187편에서 2026년 133편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="24.5" width="24.8" height="61.5" rx="3"/><rect class="b" x="47.6" y="17.3" width="24.8" height="68.7" rx="3"/><rect class="b" x="87.6" y="18.6" width="24.8" height="67.4" rx="3"/><rect class="b" x="127.6" y="21.3" width="24.8" height="64.7" rx="3"/><rect class="b" x="167.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b" x="207.6" y="19.6" width="24.8" height="66.4" rx="3"/><rect class="b" x="247.6" y="27.2" width="24.8" height="58.8" rx="3"/><rect class="b cur" x="287.6" y="42.3" width="24.8" height="43.7" rx="3"/><text class="vl" x="180.0" y="12.0">213</text><text class="vl" x="300.0" y="38.3">133</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 레지오넬라 연구</caption><tbody><tr><th>2019</th><td>187</td></tr><tr><th>2020</th><td>209</td></tr><tr><th>2021</th><td>205</td></tr><tr><th>2022</th><td>197</td></tr><tr><th>2023</th><td>213</td></tr><tr><th>2024</th><td>202</td></tr><tr><th>2025</th><td>179</td></tr><tr><th>2026</th><td>133</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>발생 상황</h4><ul><li><b class="lead">발생</b>뉴욕 브롱크스 남부 집단발생으로 사망 <b class="num">1명</b>, 추가 감염 보고 (총 환자 수 원문 미제시)<sup>[1]</sup></li><li><b class="lead">조치</b>뉴욕시 보건당국이 감염원으로 의심되는 냉각탑 10기에 청소를 명령<sup>[2]</sup></li></ul></div>
+      <div class="sec"><h4>상황 평가</h4><ul><li>대형 건물 냉각탑은 반복 확인되는 감염원이며 늦여름~초가을 집단발생이 재발하는 경향</li><li>고령자·흡연자·만성폐질환자에서 중증 폐렴으로 진행할 수 있어 조기 진단이 중요</li></ul></div>
+      <div class="sec"><h4>국내 관련성 · 권고</h4><ul><li><b class="lead">점검</b>대형 건물 냉각탑·목욕장 등 수계시설의 수질검사·소독 이행 여부 점검</li><li><b class="lead">안내</b>원인 미상 폐렴 환자에서 냉각탑·온천·대형건물 방문력 확인과 소변항원 검사 권고</li></ul></div>
+      <div class="caveat"><b>해석 주의</b> · 언론 보도 기준으로 총 환자 수와 발생 기간은 뉴욕시 보건국 발표로 확인이 필요함.</div>
+      <div class="profile"><h5>질병 개요</h5><dl><dt>병원체</dt><dd>레지오넬라균(Legionella spp.)</dd><dt>전파경로</dt><dd>오염된 물에서 생긴 물방울(에어로졸) 흡입, 사람 간 전파는 없음</dd><dt>잠복기</dt><dd>2~10일(폰티악열 5시간~3일)</dd><dt>주요 증상</dt><dd>고열, 기침, 근육통, 폐렴(중증 시 호흡부전)</dd><dt>고위험군</dt><dd>50세 이상, 흡연자, 만성폐질환자, 면역저하자</dd><dt>국내 관리</dt><dd>제3급감염병</dd><dt>예방</dt><dd>냉각탑·급수시설 등 수계시설 청소·소독과 정기 수질검사</dd></dl></div>
+      <details class="refs"><summary>출처 2건</summary><ol><li>The Guardian | Legionnaires&#x27; disease outbreak kills one and infects others in the South Bronx (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMikwFBVV95cUxNV082d0s2aDZMRHRDLVVyMFRQSjk2ckp5TVZCSnBXNTBWWTc0OUs2RnduN1dZcnJoTW8zMU4wRW5QcXRpY29nQnRuc2VOSTU1c2JsZzVtQXQ1NExxSzk3S1VBb2dWTkhCLUxtQXNEbFVBLURXbFBoRjNXN0YtWTRUdXRnTzBNYVhTZWp1cnBqX2R5Ulk?oc=5" target="_blank" rel="noopener">기사</a></li><li>CBS News | NYC health officials order cleaning of 10 cooling towers (2026.09.13. 발표) <a href="https://news.google.com/rss/articles/CBMingFBVV95cUxPaWNBbWducXFQRm8zRkJCdEgxUTFNX0FySk51Z3BMaW5keGpKMXRZVWw4OVgtSXVuMHRYVHkwQVdpWFZkYi0zTlNSbjFYREl1bWxmeXg0eGNnbHp4clgxVk1HVGxHeWp1TDk1WUpQVmt2ZTZkWW5lT1NLYUY1NjlHTWpkR19MaUl2S1FSR3RmYW5zQzR1elZ1czg3aWVMZw?oc=5" target="_blank" rel="noopener">기사</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[레지오넬라증, 미국] 냉각탑이 감염원으로 지목돼 10기 청소 명령이 내려졌습니다.
+조치: 대형 건물 냉각탑·목욕장 등 수계시설의 수질검사·소독 이행 여부 점검
+출처: The Guardian · CBS News / 전 세계 감염병 발생 동향 2026년 제37호">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section><section class="topic" id="t4">
+      <div class="topic-head">
+        <span class="topic-no">4</span>
+        <h2>홍역, 미국 <span class="en">Measles, USA</span></h2>
+        <span class="judge"><span class="u u-이번분기" title="긴급도">이번분기</span><span class="im im-중" title="국내 영향도">국내 영향 중</span></span>
+        <span class="ev low" title="근거 강도 · 기관 발표 · 언론 보도 · 프리프린트"><span class="dots">○○○</span>발표·보도</span>
+      </div>
+      <div class="topic-src"><span class="lbl">출처</span> <b>NBC News · 미국 지역언론</b></div>
+      <p class="topic-lead">접종률이 낮은 지역을 중심으로 수입 사례가 지역사회 전파로 이어지고 있습니다.</p>
+      <div class="design"><span>언론 보도</span><span>미국 · 뉴욕주</span><span>2026.09.11.–09.12.</span></div>
+      <figure class="chart"><figcaption>연도별 논문 발표 건수 — 홍역 연구</figcaption><svg viewBox="0 0 320 104" role="img" preserveAspectRatio="none" aria-label="연도별 논문 발표 건수 — 홍역 연구 — 2019년 520편에서 2026년 414편"><line class="ax" x1="0" y1="86.0" x2="320" y2="86.0"/><rect class="b" x="7.6" y="16.0" width="24.8" height="70.0" rx="3"/><rect class="b" x="47.6" y="21.9" width="24.8" height="64.1" rx="3"/><rect class="b" x="87.6" y="40.4" width="24.8" height="45.6" rx="3"/><rect class="b" x="127.6" y="48.2" width="24.8" height="37.8" rx="3"/><rect class="b" x="167.6" y="47.6" width="24.8" height="38.4" rx="3"/><rect class="b" x="207.6" y="30.3" width="24.8" height="55.7" rx="3"/><rect class="b" x="247.6" y="19.9" width="24.8" height="66.1" rx="3"/><rect class="b cur" x="287.6" y="30.3" width="24.8" height="55.7" rx="3"/><text class="vl" x="20.0" y="12.0">520</text><text class="vl" x="300.0" y="26.3">414</text><text class="xl" x="20.0" y="99.0">19</text><text class="xl" x="60.0" y="99.0">20</text><text class="xl" x="100.0" y="99.0">21</text><text class="xl" x="140.0" y="99.0">22</text><text class="xl" x="180.0" y="99.0">23</text><text class="xl" x="220.0" y="99.0">24</text><text class="xl" x="260.0" y="99.0">25</text><text class="xl" x="300.0" y="99.0">26</text></svg><div class="cnote">Europe PMC 제목 검색 기준 · 2026년은 09월까지 집계 · 단위 편</div><table class="cdata"><caption>연도별 논문 발표 건수 — 홍역 연구</caption><tbody><tr><th>2019</th><td>520</td></tr><tr><th>2020</th><td>476</td></tr><tr><th>2021</th><td>339</td></tr><tr><th>2022</th><td>281</td></tr><tr><th>2023</th><td>285</td></tr><tr><th>2024</th><td>414</td></tr><tr><th>2025</th><td>491</td></tr><tr><th>2026</th><td>414</td></tr></tbody></table></figure>
+      
+      <div class="sec"><h4>발생 상황</h4><ul><li><b class="lead">발생</b>뉴욕주 웨인카운티에서 홍역 확진 <b class="num">2명</b> 확인<sup>[2]</sup></li><li><b class="lead">추세</b>미국 내 확산이 계속 추적·보도되고 있음 (누적 건수·발생 주(州) 수 원문 미제시)<sup>[1]</sup></li></ul></div>
+      <div class="sec"><h4>상황 평가</h4><ul><li>접종률이 낮은 지역을 중심으로 수입 사례가 지역사회 전파로 이어지는 양상이 반복됨</li><li>학기 시작 시기에는 학교를 매개로 한 전파 위험이 커짐</li></ul></div>
+      <div class="sec"><h4>국내 관련성 · 권고</h4><ul><li><b class="lead">안내</b>해외여행 전 MMR 2회 접종력 확인 안내, 미접종 영유아의 유행국 여행 자제 권고</li><li><b class="lead">점검</b>의료기관 대상 발열·발진 환자 해외여행력 확인과 즉시 신고·격리 진료 재안내</li></ul></div>
+      <div class="caveat"><b>해석 주의</b> · 미국 전체 누적 건수는 이번 수집 자료에 없어, 美CDC 홍역 통계 원문으로 확인이 필요함.</div>
+      <div class="profile"><h5>질병 개요</h5><dl><dt>병원체</dt><dd>홍역 바이러스(Measles morbillivirus)</dd><dt>전파경로</dt><dd>공기전파(비말핵), 전염력이 매우 높음</dd><dt>잠복기</dt><dd>7~21일(평균 10~12일)</dd><dt>주요 증상</dt><dd>발열, 기침, 콧물, 결막염 후 발진(귀 뒤→얼굴→몸통)</dd><dt>전염기간</dt><dd>발진 4일 전부터 발진 후 4일까지</dd><dt>국내 관리</dt><dd>제2급감염병</dd><dt>예방</dt><dd>MMR 2회 접종, 유행국 여행 전 접종력 확인</dd></dl></div>
+      <details class="refs"><summary>출처 2건</summary><ol><li>NBC News | Map: Track the spread of measles in the U.S. (2026.09.11. 발표) <a href="https://news.google.com/rss/articles/CBMijAFBVV95cUxQbE5SY1JYYnNMX1pQUlQ3aWxCUWdqZFlNbTR4dUtWaDBxQXFTOEZvemktbms3RzJqeFdSMWpFNVhIazcxR1FSVm1jaEgtRnd1NnVzRElYR2RuYlp3U0x3aTROYnNMc1BHeEhhVnhSZUtBQkdKZUlPUmlVWWhCOEIxNTRpbXFwaDU0dkllZw?oc=5" target="_blank" rel="noopener">기사</a></li><li>13wham.com | Two measles cases confirmed in Wayne County (2026.09.12. 발표) <a href="https://news.google.com/rss/articles/CBMilgJBVV95cUxPc2oxM2RYS0xJVVd1aWFrS1lXUHExQ18xLWJPMnlRczN3OEpHZ1NPd1JKR05ldkpCQnI3MVBZMEFuTHdZTmFuMTk2emxBSXNTbXFxQ0phVThQMHZJNDZWcW54SkRqbVlfNUowekY0R1dUczNNbTJuTTU2cEtPWldQSmpEVEZtaWU1MGZ3YXdsRzBTQi1wM29kLUhGc1BHa1ZWaE5fSERYWVk3WUxEUS0tV2hPa3FQN1BLTWpRYVBFdzhSTjVpMGNpTTVHQ29PRU1KMUhyYkJjUEt6N19FQ3N1aTljNmNtN1BaUjdYSVo2QjNqb2xTcU94cnpDWWppZ1RWMl9xYzE2LTdsWXQxWm9iUng1b0NVUQ?oc=5" target="_blank" rel="noopener">기사</a></li></ol></details>
+      <div class="copybar"><button class="copybtn" data-copy="[홍역, 미국] 접종률이 낮은 지역을 중심으로 수입 사례가 지역사회 전파로 이어지고 있습니다.
+조치: 해외여행 전 MMR 2회 접종력 확인 안내, 미접종 영유아의 유행국 여행 자제 권고
+출처: NBC News · 미국 지역언론 / 전 세계 감염병 발생 동향 2026년 제37호">보고용 3줄 복사</button><span class="copyok" hidden>복사했습니다</span></div>
+    </section>
+  <aside class="tips"><h4>이 뉴스레터를 정책에 쓰실 때</h4><ol><li><b>‘발표·보도’ 근거는 1차 자료를 확인한 뒤 인용하십시오.</b><span class='why'>기관 발표를 전한 언론 보도는 수치의 기준(분모·기간)을 생략하는 일이 잦습니다. 각 꼭지의 출처에서 원문을 먼저 여십시오.</span></li><li><b>해외 수치는 국내값과 나란히 놓기 전까지 비교하지 마십시오.</b><span class='why'>접종률·발생률은 분모 정의와 의료체계가 달라 그대로 대비하면 오해를 만듭니다.</span></li><li><b>모형 연구는 결론보다 가정값을 보십시오.</b><span class='why'>모형의 결과는 투입한 가정(순응도·접촉률)에 좌우됩니다. 우리 매뉴얼이 같은 값을 무엇으로 두고 있는지부터 확인하는 편이 빠릅니다.</span></li><li><b>단일 관찰연구로 지침을 바꾸지 마십시오.</b><span class='why'>관찰연구는 연관성을 보여줄 뿐 인과를 확정하지 않습니다. 지침 개정 근거로는 ●●● 표시(체계적 문헌고찰·무작위배정)를 우선하십시오.</span></li><li><b>프리프린트는 동료심사 전 자료입니다.</b><span class='why'>흐름을 먼저 읽는 데는 유용하나, 공식 문서 인용은 게재 확정 후로 미루십시오.</span></li><li><b>‘자료 없음’도 정책 정보입니다.</b><span class='why'>원문에 수치가 없으면 이 뉴스레터는 ‘(원문 미제시)’로 표시합니다. 국내 해당 지표가 없다는 사실 자체가 조사·감시 과제입니다.</span></li></ol></aside>
+  <aside class="subscribe">
+    <img src="qr-outbreak-2026-37.png" alt="구독 안내 QR 코드" width="112" height="112">
+    <div class="sub-text">
+      <div class="sub-title">이 뉴스레터 받아보기</div>
+      <div class="sub-note">휴대폰 카메라로 찍으면 감염병 발생동향 뉴스레터 구독 신청 화면으로 바로 이어집니다. (이번이 창간호입니다)</div>
+      <a href="https://epibrief.github.io/subscribe.html?series=outbreak">https://epibrief.github.io/subscribe.html?series=outbreak</a>
+    </div>
+  </aside>
+  <footer class="foot-note">
+    <div class="cover">
+      <b>자료 수집</b>
+      <span>이 호가 다룬 기간 2026.09.07.~2026.09.13.</span>
+      <span>소스 102곳을 매일 새벽 5시(KST)에 자동 수집</span>
+      <span>주 1회 발행 (매주 월요일)</span>
+      <span>다음 호 2026.09.21.</span>
+    </div>
+    본 뉴스레터는 각 기관의 공개 자료와 학술 문헌을 정리한 것으로, 원문의 내용이 우선합니다.<br>
+    질병관리청 감염병위기대응국 · 감염병위기총괄과
+  </footer>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script type="application/json" id="issue-data">{"kind": "outbreak", "tpl": "official", "meta": {"org": "질병관리청 감염병위기대응국", "title": "전 세계 감염병 발생 동향", "issue": "2026년 제37호", "date": "2026-09-14", "editor": "감염병위기총괄과", "orgEn": "Korea Disease Control and Prevention Agency", "titleEn": "Global Infectious Disease Outbreak Update", "cadence": "주 1회 발행 (매주 월요일)", "nextIssue": "2026-09-21", "coverage": "2026.09.07.~2026.09.13."}, "draft": {"generatedBy": "편집 예시(수집 자료 기반)", "topics": [{"name": "인플루엔자, 대한민국", "en": "Influenza, Republic of Korea", "summary": ["질병관리청은 ’26.9.11. 2026-2027절기 인플루엔자 유행주의보를 발령하였으며, 예년보다 이른 유행에 따라 학생·고위험군 대응을 강화함[1]", "언론 보도 기준 입원환자가 최근 13배 수준으로 증가하였고, 절기 예방접종은 9.21.부터 시작될 예정임[2][3]"], "situation": ["발령 :: 질병관리청, 2026-2027절기 인플루엔자 유행주의보 발령(9.11.) — 예년보다 이른 유행[1]", "규모 :: 입원환자 13배 증가 (정책브리핑 보도 기준, 비교 시점·실수치 원문 미제시)[2]", "일정 :: 절기 예방접종은 9.21. 시작, 코로나19 동시 증가 보도도 있음[3][4]"], "assess": ["접종 완료 전 감염 기회가 커져 고위험군 조기 접종과 집단시설 선제 대응이 관건", "호흡기감염병이 동시 유행하면 외래·입원 부담이 겹쳐 병상·항바이러스제 수급 관리가 필요"], "korea": ["안내 :: 9.21. 접종 개시에 맞춰 무료접종 대상자(어린이·임신부·65세 이상) 안내 공문 발송", "점검 :: 학교·어린이집·요양시설 유증상자 관리와 항바이러스제 수급 현황 점검"], "refs": ["질병관리청 보도자료 | 2026-2027절기 인플루엔자 유행주의보 발령 (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMitwFBVV95cUxQdDN1T3B6SDdGOTZUalFNWTE3QVhoanpyM2JCVWs2akRqazgweXFOeEFNWnhQLVZ5MkliSXNyWXhUcGY0RGtpZVY4TU1rc3Zjb0Z0a2RoSTJ1a0ZsajBPQ0NQRjA4RVpLQnpBVW82THlIcTJJRjUzTFh1QlZJQmM1WWJxY0pZS2FBQnEtWUlYa1Fsd2tZWE92TFd2cG8wRFI5WlhfeWhhcGRiQUlIcEtzSWl6X2c0M2s?oc=5", "대한민국 정책브리핑 | ‘인플루엔자 유행주의보’ 발령…입원환자 13배↑ (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMibEFVX3lxTE94MndQbi1aQWlKX2JRSmdJUWpaVzZ6S1pmb2tkNlBabFk0NXE5cXIwSm5zUTZERlRrc0otcmt4NFFXYjZjWUJIWGlpOXJLYV9PcTA4SjZpNFltYXJBWXR3VEx3UHBuNkZpSHpWdA?oc=5", "연합뉴스 | 늦여름부터 독감 기승…유행주의보 발령·21일부터 예방접종 (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMiW0FVX3lxTE9FUjJCOTVRaGM1ZEdqVE16YUVOU0pMLWFkY1FzUXJZVmcyckFqMlJqTzlIOG9fX19ZaUx5N29BSGgtQUw1cmF0T240T19hdUZ0cjE2VUJBc2dHZkHSAWBBVV95cUxOXy14b3ptQk1zWXhENnhhNkU3M2Y4cG9VY2NrWU1CalpwVGxmSW11U01mdGhiWHgzRElSQUp1R2dLVmcxcF9QbV85MmVNelVTWUVaT1I3Sk1DQTB4cjFRbWM?oc=5", "busan.com | 독감 유행주의보 발령…코로나 증가까지 고위험군 주의 (2026.09.13. 발표) — https://news.google.com/rss/articles/CBMifEFVX3lxTE4tOGJaM2FZNGZUQVFmcUVHQW9adV8wSE1rSWVFYzRDNTRVX0VVT044Z2lmaFlUWFZ1YVh1MDUyMVRhVTZLd0hyOF9pYlJyX1VrblFlSmJnbkdQbFJLT29UaEtOOFNtSFRCYW9yZ1Q2bG1ta0RqMDZReDBhbVc?oc=5", "UKHSA | Only around half of primary school children got their flu vaccine last year (2026.09.07. 발표) — https://www.gov.uk/government/news/only-around-half-of-primary-school-children-got-their-flu-vaccine-last-year"], "tag": "경보", "headline": "예년보다 이른 유행에 입원환자가 급증했고, 접종은 9월 21일 시작됩니다.", "sources": ["질병관리청", "정책브리핑", "연합뉴스", "영국 UKHSA"], "card": {"title": "Only around half of primary school children got their flu vaccine last year", "site": "GOV.UK", "desc": "UKHSA reminds parents to return flu consent forms to protect their children as roll out of vaccines in schools starts this week", "image": "https://www.gov.uk/assets/frontend/govuk-opengraph-image-4196a4d6333cf92aaf720047f56cfd91b3532d7635fc21ebcf0d5897df6b5f77.png", "url": "https://www.gov.uk/government/news/only-around-half-of-primary-school-children-got-their-flu-vaccine-last-year"}, "profile": [{"k": "병원체", "v": "인플루엔자 바이러스(A형·B형)"}, {"k": "전파경로", "v": "기침·재채기 등 비말, 오염된 손·물건 접촉"}, {"k": "잠복기", "v": "1~4일(평균 2일)"}, {"k": "주요 증상", "v": "갑작스러운 발열, 기침, 인후통, 근육통, 두통, 피로"}, {"k": "고위험군", "v": "65세 이상, 임신부, 영유아, 만성질환자, 면역저하자"}, {"k": "예방", "v": "절기 예방접종, 손 씻기, 기침예절, 유증상 시 등교·출근 자제"}, {"k": "치료", "v": "대증치료, 고위험군은 조기 항바이러스제 투여 고려"}], "evidence": "weak", "design": ["기관 발표 · 언론 보도", "대한민국", "2026.09.11."], "caveat": "입원환자 증가 배수는 언론 보도 기준으로, 질병관리청 표본감시 통계로 확인한 뒤 인용해야 함.", "urgency": "즉시조치", "impact": "상", "chart": {"title": "연도별 논문 발표 건수 — 인플루엔자 감시·절기 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 188}, {"y": 2020, "v": 172}, {"y": 2021, "v": 174}, {"y": 2022, "v": 151}, {"y": 2023, "v": 139}, {"y": 2024, "v": 174}, {"y": 2025, "v": 207}, {"y": 2026, "v": 168}]}, "logo": {"file": "logos/gov.uk.ico", "site": "gov.uk", "url": "https://www.gov.uk/government/news/only-around-half-of-primary-school-children-got-their-flu-vaccine-last-year"}}, {"name": "에볼라바이러스병, 콩고민주공화국", "en": "Ebola virus disease, DRC", "summary": ["콩고민주공화국의 에볼라 유행이 7번째 주(province)로 확대되었고, 아프리카 보건당국은 진원지를 넘어 빠르게 확산 중이라고 경고함[1][2]", "美CDC는 유행지역 귀국 여행자를 위한 안내를 운영 중이며, 국내에서는 인천시가 유입을 가정한 합동 대응훈련을 실시함[3][4]"], "situation": ["확산 :: 콩고민주공화국 에볼라 유행이 7번째 주(province)로 확대[1]", "경고 :: 아프리카 보건당국, 진원지를 넘어 빠르게 번지는 중이라고 경고 (누적 확진·사망·치명률 원문 미제시)[2]", "국내 :: 인천시가 국내 유입을 가정해 검역–격리–이송 합동훈련 실시[4]"], "assess": ["지역 간 확산 단계에서는 접촉자 추적과 안전한 장례 관리가 통제의 관건", "국내 유입 위험은 직항이 없어 낮으나, 제3국 경유 입국자의 여행력 확보가 조기 인지의 핵심"], "korea": ["안내 :: 유행지역 방문력 확인과 귀국 후 21일 내 발열 시 1339 신고 안내 시행", "점검 :: 격리병상·이송체계와 개인보호구 착탈의 절차 점검, 의료기관 신고 기준 재안내"], "refs": ["The Washington Post | Ebola outbreak in Congo spreads to a 7th province (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMixgFBVV95cUxQdG5oSVp1RUNiUVF3alMyLUUzOElfLVVaT3MtRXhEdkcxWTR2TFViV1QwVGVrUzdmUF82MkxDQ2VBQWg0YkQxUTAtWE5Sd0RXdmVndFZlLWZKMmV5Y1VHVG9jdGJPbVRIZ0J3ZUVnZTJTWjYyNVkxSmtzYnROUDdCZFdoSExEQWhTcFFWa20wdGNRUGk4QW9YVlRhSEUycmdDa2xZN1AxTUx5NnZQSGQwYVM0TDRBQzdUTkNIUXZPemhrd1hxaXc?oc=5", "The Washington Post | Africa's top health body warns Congo's Ebola outbreak is rapidly spreading (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMi2AFBVV95cUxPanFURzBCSGlsMmxNdFpJQUdibW9PdEFfVWVMd2tGcW1HT2NRUkE5bFpIR1VobkZObnpCRElxaXdaSEQwY0NYUkY5NlBJSEdvWmN5bUZsNTByam56OXU3V1Q4dXJmczRVaHdtVG9SQzJMTWdoSmpTSi1WaWtRSXBFeDZja19FdEFrN0x6dUh3TlBuQVZWa0hoT0NuX0FjZk96VHdSZldOMG04YXRSVUhzVDNxZGZSdms0VVY3WlpXcFp5MEVQQ0pzck1hUWtvSjJGMFdmZlMtOEY?oc=5", "美CDC | Information for Travelers Returning from Ebola-Affected Areas (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMid0FVX3lxTE5iWWh1cnAzdVpkcUh0OXI5eTlmMnZRMHJrdnY2WnNMVDZwX1d3enJoMkQxTDdnbXQ4Qm03MXQtaXd0TDFWbzgxZWVfUWE4RUhESE5wWW1PUXFRWDJlV2ZVb1pHc3BnX3pINTNiNVdRUUdCX0JabXdR?oc=5", "경인매일 | 인천시, 에볼라 유입 가정 감염병 대응훈련 (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMiaEFVX3lxTE01QVVPVFNhNUpKcG8zcG95RUpDY0tMeE14VTZVRlE2aVR6WXBYMkNNNmlhRXhWMUFDcDRET2gzSkcyY3ZMaDVXb0R6akRiZ1NmaEFLaUphNF9sOVY2VFlpc2dRLWhWMHox?oc=5"], "tag": "경보", "headline": "진원지를 넘어 7개 주로 확산 — 국내는 검역·이송 훈련으로 대비 중입니다.", "sources": ["The Washington Post", "美CDC", "경인매일"], "profile": [{"k": "병원체", "v": "에볼라바이러스(Ebolavirus, 본디부교 등 6종)"}, {"k": "전파경로", "v": "환자의 혈액·체액·분비물과의 직접 접촉, 오염된 물건 접촉"}, {"k": "잠복기", "v": "2~21일"}, {"k": "주요 증상", "v": "발열, 근육통, 두통, 구토·설사, 진행 시 출혈"}, {"k": "국내 관리", "v": "제1급감염병, 국내 발생 사례 없음"}, {"k": "예방", "v": "유행지역 여행 자제, 환자·체액 접촉 회피, 귀국 후 21일 내 발열 시 1339 신고"}, {"k": "치료", "v": "보존적 치료, 일부 항체치료제 사용(유행 지역)"}], "evidence": "weak", "design": ["언론 보도 · 기관 안내", "콩고민주공화국 · 미국 · 대한민국", "2026.09.11."], "caveat": "누적 환자 수와 치명률은 이번 수집 자료에 없어, WHO 발생 속보 원문으로 확인이 필요함.", "urgency": "이번분기", "impact": "중", "chart": {"title": "연도별 논문 발표 건수 — 에볼라 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 494}, {"y": 2020, "v": 405}, {"y": 2021, "v": 311}, {"y": 2022, "v": 253}, {"y": 2023, "v": 223}, {"y": 2024, "v": 213}, {"y": 2025, "v": 176}, {"y": 2026, "v": 256}]}}, {"name": "레지오넬라증, 미국", "en": "Legionnaires' disease, USA", "summary": ["미국 뉴욕 브롱크스 남부에서 레지오넬라증 집단발생이 확인되어 1명이 사망하고 다수가 감염됨[1]", "뉴욕시 보건당국은 감염원으로 의심되는 냉각탑 10기에 대한 청소를 명령함[2]"], "situation": ["발생 :: 뉴욕 브롱크스 남부 집단발생으로 사망 1명, 추가 감염 보고 (총 환자 수 원문 미제시)[1]", "조치 :: 뉴욕시 보건당국이 감염원으로 의심되는 냉각탑 10기에 청소를 명령[2]"], "assess": ["대형 건물 냉각탑은 반복 확인되는 감염원이며 늦여름~초가을 집단발생이 재발하는 경향", "고령자·흡연자·만성폐질환자에서 중증 폐렴으로 진행할 수 있어 조기 진단이 중요"], "korea": ["점검 :: 대형 건물 냉각탑·목욕장 등 수계시설의 수질검사·소독 이행 여부 점검", "안내 :: 원인 미상 폐렴 환자에서 냉각탑·온천·대형건물 방문력 확인과 소변항원 검사 권고"], "refs": ["The Guardian | Legionnaires' disease outbreak kills one and infects others in the South Bronx (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMikwFBVV95cUxNV082d0s2aDZMRHRDLVVyMFRQSjk2ckp5TVZCSnBXNTBWWTc0OUs2RnduN1dZcnJoTW8zMU4wRW5QcXRpY29nQnRuc2VOSTU1c2JsZzVtQXQ1NExxSzk3S1VBb2dWTkhCLUxtQXNEbFVBLURXbFBoRjNXN0YtWTRUdXRnTzBNYVhTZWp1cnBqX2R5Ulk?oc=5", "CBS News | NYC health officials order cleaning of 10 cooling towers (2026.09.13. 발표) — https://news.google.com/rss/articles/CBMingFBVV95cUxPaWNBbWducXFQRm8zRkJCdEgxUTFNX0FySk51Z3BMaW5keGpKMXRZVWw4OVgtSXVuMHRYVHkwQVdpWFZkYi0zTlNSbjFYREl1bWxmeXg0eGNnbHp4clgxVk1HVGxHeWp1TDk1WUpQVmt2ZTZkWW5lT1NLYUY1NjlHTWpkR19MaUl2S1FSR3RmYW5zQzR1elZ1czg3aWVMZw?oc=5"], "tag": "경보", "headline": "냉각탑이 감염원으로 지목돼 10기 청소 명령이 내려졌습니다.", "sources": ["The Guardian", "CBS News"], "profile": [{"k": "병원체", "v": "레지오넬라균(Legionella spp.)"}, {"k": "전파경로", "v": "오염된 물에서 생긴 물방울(에어로졸) 흡입, 사람 간 전파는 없음"}, {"k": "잠복기", "v": "2~10일(폰티악열 5시간~3일)"}, {"k": "주요 증상", "v": "고열, 기침, 근육통, 폐렴(중증 시 호흡부전)"}, {"k": "고위험군", "v": "50세 이상, 흡연자, 만성폐질환자, 면역저하자"}, {"k": "국내 관리", "v": "제3급감염병"}, {"k": "예방", "v": "냉각탑·급수시설 등 수계시설 청소·소독과 정기 수질검사"}], "evidence": "weak", "design": ["언론 보도", "미국 뉴욕", "2026.09.11.–09.13."], "caveat": "언론 보도 기준으로 총 환자 수와 발생 기간은 뉴욕시 보건국 발표로 확인이 필요함.", "urgency": "모니터링", "impact": "하", "chart": {"title": "연도별 논문 발표 건수 — 레지오넬라 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 187}, {"y": 2020, "v": 209}, {"y": 2021, "v": 205}, {"y": 2022, "v": 197}, {"y": 2023, "v": 213}, {"y": 2024, "v": 202}, {"y": 2025, "v": 179}, {"y": 2026, "v": 133}]}}, {"name": "홍역, 미국", "en": "Measles, USA", "summary": ["미국 내 홍역 확산이 계속 추적·보고되고 있으며, 뉴욕주 웨인카운티에서 2명이 추가 확진됨[1][2]"], "situation": ["발생 :: 뉴욕주 웨인카운티에서 홍역 확진 2명 확인[2]", "추세 :: 미국 내 확산이 계속 추적·보도되고 있음 (누적 건수·발생 주(州) 수 원문 미제시)[1]"], "assess": ["접종률이 낮은 지역을 중심으로 수입 사례가 지역사회 전파로 이어지는 양상이 반복됨", "학기 시작 시기에는 학교를 매개로 한 전파 위험이 커짐"], "korea": ["안내 :: 해외여행 전 MMR 2회 접종력 확인 안내, 미접종 영유아의 유행국 여행 자제 권고", "점검 :: 의료기관 대상 발열·발진 환자 해외여행력 확인과 즉시 신고·격리 진료 재안내"], "refs": ["NBC News | Map: Track the spread of measles in the U.S. (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMijAFBVV95cUxQbE5SY1JYYnNMX1pQUlQ3aWxCUWdqZFlNbTR4dUtWaDBxQXFTOEZvemktbms3RzJqeFdSMWpFNVhIazcxR1FSVm1jaEgtRnd1NnVzRElYR2RuYlp3U0x3aTROYnNMc1BHeEhhVnhSZUtBQkdKZUlPUmlVWWhCOEIxNTRpbXFwaDU0dkllZw?oc=5", "13wham.com | Two measles cases confirmed in Wayne County (2026.09.12. 발표) — https://news.google.com/rss/articles/CBMilgJBVV95cUxPc2oxM2RYS0xJVVd1aWFrS1lXUHExQ18xLWJPMnlRczN3OEpHZ1NPd1JKR05ldkpCQnI3MVBZMEFuTHdZTmFuMTk2emxBSXNTbXFxQ0phVThQMHZJNDZWcW54SkRqbVlfNUowekY0R1dUczNNbTJuTTU2cEtPWldQSmpEVEZtaWU1MGZ3YXdsRzBTQi1wM29kLUhGc1BHa1ZWaE5fSERYWVk3WUxEUS0tV2hPa3FQN1BLTWpRYVBFdzhSTjVpMGNpTTVHQ29PRU1KMUhyYkJjUEt6N19FQ3N1aTljNmNtN1BaUjdYSVo2QjNqb2xTcU94cnpDWWppZ1RWMl9xYzE2LTdsWXQxWm9iUng1b0NVUQ?oc=5"], "tag": "통계", "headline": "접종률이 낮은 지역을 중심으로 수입 사례가 지역사회 전파로 이어지고 있습니다.", "sources": ["NBC News", "미국 지역언론"], "profile": [{"k": "병원체", "v": "홍역 바이러스(Measles morbillivirus)"}, {"k": "전파경로", "v": "공기전파(비말핵), 전염력이 매우 높음"}, {"k": "잠복기", "v": "7~21일(평균 10~12일)"}, {"k": "주요 증상", "v": "발열, 기침, 콧물, 결막염 후 발진(귀 뒤→얼굴→몸통)"}, {"k": "전염기간", "v": "발진 4일 전부터 발진 후 4일까지"}, {"k": "국내 관리", "v": "제2급감염병"}, {"k": "예방", "v": "MMR 2회 접종, 유행국 여행 전 접종력 확인"}], "evidence": "weak", "design": ["언론 보도", "미국 · 뉴욕주", "2026.09.11.–09.12."], "caveat": "미국 전체 누적 건수는 이번 수집 자료에 없어, 美CDC 홍역 통계 원문으로 확인이 필요함.", "urgency": "이번분기", "impact": "중", "chart": {"title": "연도별 논문 발표 건수 — 홍역 연구", "unit": "편", "source": "Europe PMC 제목 검색 기준", "note": "2026년은 09월까지 집계", "data": [{"y": 2019, "v": 520}, {"y": 2020, "v": 476}, {"y": 2021, "v": 339}, {"y": 2022, "v": 281}, {"y": 2023, "v": 285}, {"y": 2024, "v": 414}, {"y": 2025, "v": 491}, {"y": 2026, "v": 414}]}}], "tagline": "독감 유행주의보가 예년보다 이르게 내려졌고, 콩고민주공화국 에볼라는 7개 주로 번졌습니다.", "stats": [{"v": "13배", "l": "국내 독감 입원환자 증가", "n": "정책브리핑 보도 기준"}, {"v": "7개 주", "l": "콩고 에볼라 확산 지역"}, {"v": "9.21.", "l": "절기 예방접종 시작"}, {"v": "1명 사망", "l": "뉴욕 레지오넬라 집단발생"}], "profileNote": "질병개요는 국내 감염병 관리 기준(질병관리청 감염병 누리집)의 일반 정보를 정리한 것입니다."}, "subscribe": {"url": "https://epibrief.github.io/subscribe.html?series=outbreak", "label": "이 뉴스레터 받아보기", "note": "휴대폰 카메라로 찍으면 감염병 발생동향 뉴스레터 구독 신청 화면으로 바로 이어집니다. (이번이 창간호입니다)"}, "_qr": "qr-outbreak-2026-37.png", "_qr_abs": "https://epibrief.github.io/issues/qr-outbreak-2026-37.png"}</script>
+<script src="../email.js"></script>
+<script>
+  const DATA = JSON.parse(document.getElementById('issue-data').textContent);
+  const toast = (msg) => {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('on');
+    setTimeout(() => t.classList.remove('on'), 2600);
+  };
+  document.getElementById('jump').addEventListener('change', e => { location.href = e.target.value; });
+  document.addEventListener('click', async e => {      // 보고용 3줄 복사
+    const b = e.target.closest('[data-copy]'); if (!b) return;
+    try {
+      await navigator.clipboard.writeText(b.dataset.copy);
+      const ok = b.parentElement.querySelector('.copyok'); ok.hidden = false;
+      setTimeout(() => { ok.hidden = true; }, 2000);
+    } catch(err) { toast('복사하지 못했습니다. 길게 눌러 직접 복사해 주세요.'); }
+  });
+  const pop = document.getElementById('mailPop'), btn = document.getElementById('mailBtn');
+  btn.addEventListener('click', () => {
+    const on = pop.classList.toggle('on');
+    btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.menu')) pop.classList.remove('on'); });
+  pop.addEventListener('click', async e => {
+    const el = e.target.closest('[data-act]'); if (!el) return;
+    const act = el.dataset.act;
+    if (act === 'copy'){ e.preventDefault(); toast(await NLEmail.copy(DATA)); }
+    if (act === 'download'){ e.preventDefault(); NLEmail.download(DATA); toast('메일용 HTML 파일을 저장했습니다.'); }
+    if (act === 'mailto'){ el.href = NLEmail.mailto(DATA); }
+    pop.classList.remove('on');
+  });
+</script>
+</body>
+</html>

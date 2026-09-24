@@ -188,8 +188,10 @@ def main():
         except Exception:
             pass
     if state.get("scope_v") != SCOPE_V:      # 소관 판정 규칙이 바뀌면 전부 다시 뽑는다
+        # 기존 항목은 그대로 두고 회의록 단위로 갈아 끼운다 — 재추출이 여러 실행에 걸쳐도
+        # 공개 화면의 건수가 중간에 푹 꺼지지 않는다.
         print("소관 판정 규칙 %s → %s: 전체 재추출" % (state.get("scope_v"), SCOPE_V))
-        state["processed"], state["items"] = [], []
+        state["processed"] = []
     processed = set(state.get("processed", []))
     items = state.get("items", [])
 
@@ -211,14 +213,14 @@ def main():
             got = extract(text, mt["date"])
             for g in got:
                 g["minutes_url"] = mt["url"]
-            items += got
+            items[:] = [i for i in items if i.get("minutes_url") != mt["url"]] + got
             print(f"{mt['date']}: {len(got)}건")
         except Exception as e:
             print(f"{mt['date']} 실패: {e}")
             continue
         processed.add(mt["conf_id"])
         new += 1
-        if new % 10 == 0:
+        if new % 3 == 0:      # 회의록 한 건에 십수 분이 걸리는 날도 있어 자주 저장한다
             save()
         time.sleep(1)
 

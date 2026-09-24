@@ -1,0 +1,416 @@
+{
+ "kind": "climate",
+ "tpl": "brief",
+ "meta": {
+  "org": "질병관리청 기후보건·건강위해대응",
+  "title": "기후·건강 위기 동향",
+  "issue": "2026년 제1호(창간호)",
+  "date": "2026-09-14",
+  "editor": "기후보건담당",
+  "orgEn": "Climate and Health Response",
+  "titleEn": "Climate and Health Risk Update",
+  "cadence": "월 1회 발행 (매월 둘째 주)",
+  "nextIssue": "2026-10-12",
+  "coverage": "2026.09.01.~2026.09.12."
+ },
+ "draft": {
+  "generatedBy": "편집 예시(수집 자료 기반)",
+  "intro": "폭염은 이제 ‘무더운 날씨’가 아니라 감시하고 대비해야 할 건강 위해입니다.\n이 뉴스레터는 기상 경보와 보건 감시, 그리고 관련 연구를 한자리에 모아 정리합니다. 창간호는 기록적인 더위가 지나간 2026년 여름을 짚고, 대기질과 매개체 감염병으로 이어지는 연결 고리를 함께 봅니다.",
+  "topics": [
+   {
+    "name": "기록적 더위와 온열질환 의료이용",
+    "en": "Record heat and heat illness",
+    "summary": [
+     "’26년 8월 기록적 고온으로 전 지구 기온이 다시 1.5℃ 기준선을 넘었고, 서유럽은 가장 더운 여름을 기록한 것으로 보고됨[1]",
+     "기후변화가 미국의 온열질환 응급실 방문 증가에 기여하고 있다는 분석이 제시됨[2]"
+    ],
+    "situation": [
+     "Health Policy Watch는 8월 기록적 더위로 전 지구 기온이 산업화 이전 대비 1.5℃를 다시 웃돌았고 서유럽이 가장 더운 여름을 보냈다고 전함[1]",
+     "Climate Central 분석은 기후변화가 미국 내 온열질환 응급실 방문율을 높이고 있다고 보고함[2]",
+     "미국 일부 지역에서는 폭염 경보가 반복 발령되며 고온이 지속됨[3]"
+    ],
+    "assess": [
+     "기온 지표(평균기온·열대야일수)와 보건 지표(응급실 내원·초과사망)를 함께 보아야 실제 피해 규모를 알 수 있음",
+     "분석 다수가 언론·비영리기관 발표이므로 공식 감시자료와 대조해 확인할 필요가 있음"
+    ],
+    "korea": [
+     "국내 온열질환 응급실감시체계 결과와 기상 지표를 함께 제시하는 정기 보고 형식을 검토할 것",
+     "폭염기 종료 후 초과사망 분석으로 실제 피해 규모를 사후 평가할 것"
+    ],
+    "refs": [
+     "보도 | Record August Heat Pushes Global Temperatures Back Above 1.5°C | Health Policy Watch (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMixAFBVV95cUxNSnJpQ1hoOFRXcjQzQTRvUGY2R1Y0QnVldnBfV1I5NnpXLXkwYTU2aWhRcmFBV2tEakI3RWcydkpiTE1nOF9GTXlzUzVySFMzMHBXSkpJVnpTSHM0bThiNlRJcTVBbFZIdjRVOHVFT3QxdHBuTjZ6TmFNVThLX0F2MWYyU1NvS0gtMi1GSkwwMjlqZWUwOW85TF9mc2luOEJGSk9WZmx5bU04bEQxc1lZTWhaVnNJUFdhSV9OSlJFZHB1Z3Q5?oc=5",
+     "분석 | Climate Change Raises Rates of U.S. Emergency Room Visits For Heat Illness | Climate Central (2026.09.12. 발표) — https://news.google.com/rss/articles/CBMiiAFBVV95cUxQdDk2VWdmcXJaNmdpZENhVVpIRG11dk9BT3V6OGpVOEtYTFBqSENtRTZVR2hzVkJ1eWREUDl0QzBqeXhlMmRPajEyazgtX2ZyMzJTcnRoQVVIeGZTT3FuU0RiamYzeGdrV2VyZGY1bkV2NVlLYzJCdGdwNjRJUzJQQ0NOWmhueVhs?oc=5",
+     "보도 | Extreme Heat Warning: High Temperatures Expected Across County | SCVNews.com (2026.09.09. 발표) — https://news.google.com/rss/articles/CBMixgFBVV95cUxNSFlVemIxdWhVZll6V1Y2ODFrenBZSmEtLU4xVVh4ZGdsZzA2cjhBakhKcXpQU2JlR2pjZ2cyeVUzSXJnUEdTNVlvN3lidmxiTDVtbldfY2MwY05UREprdUVWSlFEQ0lVX2hwRE9yVTVYbC1zNDZqdGMyems2YVB2cTV5c05VTGd0Y3JwTERBQnBtS0J0MlZfU0NMcDJoSEd4YklmRHZnM2JETWx2MjM0ZXAyZTQxVGNpamgwODdNWTUwUjQ1NVE?oc=5"
+    ],
+    "tag": "통계",
+    "headline": "기록적 더위가 온열질환 응급실 이용 증가로 이어지고 있습니다.",
+    "sources": [
+     "Health Policy Watch",
+     "Climate Central",
+     "SCVNews"
+    ],
+    "urgency": "이번분기",
+    "impact": "상",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 폭염 건강영향 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 56
+      },
+      {
+       "y": 2020,
+       "v": 71
+      },
+      {
+       "y": 2021,
+       "v": 58
+      },
+      {
+       "y": 2022,
+       "v": 66
+      },
+      {
+       "y": 2023,
+       "v": 91
+      },
+      {
+       "y": 2024,
+       "v": 139
+      },
+      {
+       "y": 2025,
+       "v": 137
+      },
+      {
+       "y": 2026,
+       "v": 116
+      }
+     ]
+    }
+   },
+   {
+    "name": "폭염·산불이 대기질을 되돌린다",
+    "en": "Heat, wildfire and air quality",
+    "summary": [
+     "WMO는 산불과 폭염이 그동안의 대기질 개선 노력을 위협하고 있다고 경고함[1][2]",
+     "강한 엘니뇨가 2027년까지 극한기상 위험을 높일 것으로 전망됨[3]"
+    ],
+    "situation": [
+     "로이터는 WMO가 산불과 폭염으로 대기질이 악화되고 있다고 경고했다고 보도함[1]",
+     "WMO는 산불·폭염이 세계적 대기질 개선 노력을 위협한다고 발표함[2]",
+     "WMO는 강한 엘니뇨의 영향으로 2027년까지 극한기상 위험이 커질 것으로 전망함[3]"
+    ],
+    "assess": [
+     "폭염과 대기오염은 각각이 아니라 겹쳐서 건강에 작용하며, 취약집단에서 영향이 증폭됨",
+     "다음 절기 대비 계획은 폭염과 대기질을 한 묶음으로 설계할 근거가 쌓이는 중"
+    ],
+    "korea": [
+     "폭염 대응과 미세먼지 대응 안내를 하나의 생활수칙으로 통합해 전달할 것",
+     "요양시설·학교 등 실내 취약시설의 냉방과 환기·공기질을 함께 점검할 것"
+    ],
+    "refs": [
+     "로이터 | Wildfires, heat waves threaten to undermine air quality, UN weather agency says | reuters.com (2026.09.07. 발표) — https://news.google.com/rss/articles/CBMiyAFBVV95cUxQNmdsbHIzdVk0TWxDaGJjMnZvdkdUY3J0SExNNzE4THBud3N0ejFIelUyRTJNR3c3bERId3N0bTRuZ3YxRTE5RlRjN0tCR0o5QnM2d0dPVnh5X0Jwd3FuV0JOU1JFWkp0d0dNYVd6M3Q1VmVkS0pjNFZwUWNqS0FPVlFvUGlYYkRPaEdSOVRIZ0dzcjF2WnZJWXFCMWVVNnZGSFBEY3hxTEduRXlYX21YMVdNSzIxYUJzeEU5cXRkSzlPU2pDLW93eQ?oc=5",
+     "WMO | Wildfires, heat waves threaten global efforts to improve air quality | Anadolu Ajansı (2026.09.07. 발표) — https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQU5jdUxaTFQ5dk5HYTV3c2N0a1Z6My1qeGdLVEtyRkcyTko0MTR3blRjTlF3c3laNnNaM1hpT3BwaGF2cGNFZEhnZU9hWmZmVmZhOFN5bzlVVWI2ZWZ4aVJBY3lGdTRHZVZNeUM2UVJVSmpCMWR3TDZBX2wzUDZsNHF6OFpCUE1xa24wQU13Z1E2UUlzMzQxdzBYUjF2MG96c3I1Y2tNVTJMdjhYRVUtRS0xZ3FxSDJSb3d2VzVnQS1YN2JVYnVxVA?oc=5",
+     "WMO | Strong El Nino expected to raise extreme weather risks into 2027 | Anadolu Ajansı (2026.09.07. 발표) — https://news.google.com/rss/articles/CBMi1wFBVV95cUxQRU9ySGl4TUxLQ2JEUXdRUEwtZ2lFUExmOTBDaE9BdlVqTnF3Rjd5dWZMZElMc05kN0ZVQ2dxLXFuajBFUGQ2aFNIaUFmVnFoUVlNWGlxa0p5WHlqNkp3NGxJdlQzRVBvU3p4MVRDR002c2xEdmViTkpBS2tBTkFveS03T3J5MGpCdGNEbndrUi1YLUd6ZHVUNlV2U0dKcHBBTDZHajM0ajlrQ2lpamhybmp6U3lkcVI5TXVOOXBYemdZcnBFMG9fd1RxSVphZEUxS3p5R0xsOA?oc=5"
+    ],
+    "tag": "경보",
+    "headline": "산불과 폭염이 그간의 대기질 개선을 되돌리고 있습니다.",
+    "sources": [
+     "WMO",
+     "로이터",
+     "Anadolu"
+    ],
+    "urgency": "모니터링",
+    "impact": "중",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 산불 연기·대기질 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 15
+      },
+      {
+       "y": 2020,
+       "v": 30
+      },
+      {
+       "y": 2021,
+       "v": 30
+      },
+      {
+       "y": 2022,
+       "v": 49
+      },
+      {
+       "y": 2023,
+       "v": 55
+      },
+      {
+       "y": 2024,
+       "v": 58
+      },
+      {
+       "y": 2025,
+       "v": 81
+      },
+      {
+       "y": 2026,
+       "v": 70
+      }
+     ]
+    }
+   },
+   {
+    "name": "기후와 매개체 감염병",
+    "en": "Climate and vector-borne disease",
+    "summary": [
+     "기후변화가 뎅기 유행에 미치는 영향을 정리한 검토가 발표됨[1]",
+     "방글라데시의 뎅기 급증에서 기후 요인의 역할을 분석한 연구가 보고됨[2]",
+     "말라리아 퇴치 전략도 변화하는 기후를 전제로 위험평가를 다시 짜야 한다는 제안이 제시됨[3]"
+    ],
+    "situation": [
+     "Nature Reviews Microbiology 검토는 기후변화가 뎅기의 분포와 유행 규모에 미치는 영향을 정리함[1]",
+     "Health Science Reports 게재 연구는 방글라데시 뎅기 환자·사망 증가와 기후 요인의 관련성을 생태학적으로 분석함[2]",
+     "같은 학술지의 또 다른 검토는 기후변화 국면에서 말라리아 퇴치 위험평가 틀을 재구성할 것을 제안함[3]"
+    ],
+    "assess": [
+     "매개체 감염병은 기온·강수 같은 기상 지표로 어느 정도 예측 가능한 영역이어서 기상-보건 연계 감시의 효용이 큼",
+     "생태학적 분석은 인과를 단정하기 어려우므로 매개체 밀도 자료와 함께 해석해야 함"
+    ],
+    "korea": [
+     "국내 매개모기·진드기 밀도 감시 자료와 기상 자료를 연계한 유행 예측을 시도할 것",
+     "해외유입 뎅기 환자 증가 시기에 맞춰 여행자 대상 모기물림 예방수칙 홍보를 강화할 것"
+    ],
+    "refs": [
+     "연구 | Impacts of climate change on dengue | Nature reviews. Microbiology (2026.09.01. 발표) — https://doi.org/10.1038/s41579-026-01329-4",
+     "연구 | Dengue Surge in Bangladesh: Exploring the Role of Climate Factors | Health science reports (2026.09.10. 발표) — https://doi.org/10.1002/hsr2.73221",
+     "연구 | Reframing risk assessment for malaria elimination in a changing climate | Nature reviews. Microbiology (2026.09.01. 발표) — https://doi.org/10.1038/s41579-026-01337-4"
+    ],
+    "tag": "연구",
+    "headline": "기온·강수로 어느 정도 예측되는 영역 — 기상-보건 연계 감시의 효용이 큽니다.",
+    "sources": [
+     "Nature Rev Microbiology",
+     "Health Science Reports"
+    ],
+    "urgency": "이번분기",
+    "impact": "중",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 기후–매개체 감염병 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 16
+      },
+      {
+       "y": 2020,
+       "v": 29
+      },
+      {
+       "y": 2021,
+       "v": 19
+      },
+      {
+       "y": 2022,
+       "v": 28
+      },
+      {
+       "y": 2023,
+       "v": 25
+      },
+      {
+       "y": 2024,
+       "v": 44
+      },
+      {
+       "y": 2025,
+       "v": 52
+      },
+      {
+       "y": 2026,
+       "v": 44
+      }
+     ]
+    },
+    "logo": {
+     "file": "logos/nature.com.ico",
+     "site": "nature.com",
+     "url": "https://www.nature.com/articles/s41579-026-01329-4"
+    }
+   },
+   {
+    "name": "누가 먼저 위험해지는가 — 취약집단 보호",
+    "en": "Protecting vulnerable groups",
+    "summary": [
+     "미국 텍사스 교정당국은 고령 수용자의 온열질환 위험을 이유로 냉방 설비 예산을 요청함[1]",
+     "독일 연구는 요양·거주시설의 기후 적응 과제를 정리함[2]"
+    ],
+    "situation": [
+     "텍사스 교정당국은 15,700개 침상의 냉방을 위해 2억 9,800만 달러를 요청했으며, 고령 수용자의 온열질환 위험이 계속되고 있다고 보도됨[1]",
+     "Gesundheitswesen 게재 연구는 요양·거주시설에서 폭염·극한기상·대기오염이 고령자 건강에 미치는 영향과 적응 과제를 검토함[2]"
+    ],
+    "assess": [
+     "폭염 피해는 냉방 접근성이라는 사회적 조건에 크게 좌우되며, 시설 거주자는 스스로 환경을 바꾸기 어려움",
+     "개인 수칙 홍보만으로는 한계가 있어 시설 기준·설비 투자와 함께 가야 함"
+    ],
+    "korea": [
+     "요양시설·쪽방·고시원 등 냉방 취약 거주지의 실내온도 관리와 점검 체계를 확인할 것",
+     "야외작업자·고령 농업인 대상 작업시간 조정 지침의 이행 여부를 점검할 것"
+    ],
+    "refs": [
+     "보도 | Texas Prisons Ask for $298 Million to Cool 15,700 Beds | Medical Daily (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMilgFBVV95cUxNVmdDVGZJcF9mNTNtVGc4NTVCVk53YXl0U2lIbDMzVEtIQ1FKUHp3cFRPWHZCb3VEOUlsNFpDdXBJaTNBNk1OLTd3cDlMV3lWbmRiMXA1Y0w0eUpMN1AyN0pTNjVOcUhRMlV2NDZXNXdta0dBZXQ1ajVEeHplZ0tqcThXMmxKeVNmT25sWXdnUmk2SGVWaHc?oc=5",
+     "연구 | Climate Protection and Adaptation in Residential and Nursing Homes | Gesundheitswesen (Bundesverband der Arzte des Offentlichen Gesundheitsdienstes (Germany)) (2026.09.09. 발표) — https://doi.org/10.1055/a-2886-3048"
+    ],
+    "tag": "정책",
+    "headline": "폭염 피해는 냉방에 닿을 수 있느냐는 사회적 조건에서 갈립니다.",
+    "sources": [
+     "Medical Daily",
+     "Gesundheitswesen"
+    ],
+    "urgency": "이번분기",
+    "impact": "상",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 폭염 취약집단 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 6
+      },
+      {
+       "y": 2020,
+       "v": 5
+      },
+      {
+       "y": 2021,
+       "v": 6
+      },
+      {
+       "y": 2022,
+       "v": 8
+      },
+      {
+       "y": 2023,
+       "v": 15
+      },
+      {
+       "y": 2024,
+       "v": 32
+      },
+      {
+       "y": 2025,
+       "v": 43
+      },
+      {
+       "y": 2026,
+       "v": 27
+      }
+     ]
+    }
+   },
+   {
+    "name": "국내 논의 — 폭염을 사회적 재난으로",
+    "en": "Domestic policy debate",
+    "summary": [
+     "국내에서는 폭염 대책이 보건을 넘어 환경·복지·노동·도시정책으로 확장되어야 한다는 지적이 제기됨[1]"
+    ],
+    "situation": [
+     "한국재난안전뉴스는 폭염을 사회적 재난으로 보고 환경·복지·보건·노동·도시정책을 아우르는 대책이 필요하다는 견해를 전함[1]"
+    ],
+    "assess": [
+     "폭염 대응의 실효는 보건 단독이 아니라 부처 간 조정 구조에서 나옴",
+     "기고 성격의 자료이므로 정책 근거로 쓰려면 국내 피해 통계와 함께 제시해야 함"
+    ],
+    "korea": [
+     "폭염 대응 협의체에서 보건이 담당할 범위(감시·의료대응·취약계층 파악)를 명확히 할 것",
+     "온열질환 감시 결과를 지자체 취약계층 지원 사업과 연결하는 경로를 마련할 것"
+    ],
+    "refs": [
+     "보도 | [폭염, 사회적 재난] 폭염 대책은 환경·복지·보건·노동·도시정책 되어야 | 한국재난안전뉴스 (2026.09.11. 발표) — https://news.google.com/rss/articles/CBMiXkFVX3lxTFByWkFIaDB1bzNUTFNsVVdpTXUyRGhqR0RDcEJUQTdIMnRyYkFEbUl0b2pvQi1LWTltRGRNcmN6SmtNUGhfTmxMbHBJSTk2RkxsN0JjQW1nLU5KSkcyaVE?oc=5"
+    ],
+    "tag": "정책",
+    "headline": "폭염 대응의 실효는 부처 간 조정 구조에서 나옵니다.",
+    "sources": [
+     "한국재난안전뉴스"
+    ],
+    "urgency": "모니터링",
+    "impact": "중",
+    "chart": {
+     "title": "연도별 논문 발표 건수 — 폭염 대응정책 연구",
+     "unit": "편",
+     "source": "Europe PMC 제목 검색 기준",
+     "note": "2026년은 09월까지 집계",
+     "data": [
+      {
+       "y": 2019,
+       "v": 2
+      },
+      {
+       "y": 2020,
+       "v": 6
+      },
+      {
+       "y": 2021,
+       "v": 0
+      },
+      {
+       "y": 2022,
+       "v": 2
+      },
+      {
+       "y": 2023,
+       "v": 4
+      },
+      {
+       "y": 2024,
+       "v": 4
+      },
+      {
+       "y": 2025,
+       "v": 8
+      },
+      {
+       "y": 2026,
+       "v": 6
+      }
+     ]
+    }
+   }
+  ],
+  "tagline": "8월 지구 기온이 다시 1.5℃를 넘었습니다. 폭염은 날씨가 아니라 감시 대상입니다.",
+  "stats": [
+   {
+    "v": "1.5℃",
+    "l": "’26년 8월 전 지구 기온 재돌파"
+   },
+   {
+    "v": "2027년",
+    "l": "엘니뇨 극한기상 위험 지속 전망"
+   },
+   {
+    "v": "2억 9,800만 달러",
+    "l": "텍사스 교정시설 냉방 예산 요청"
+   },
+   {
+    "v": "15,700",
+    "l": "냉방 대상 침상 수"
+   }
+  ]
+ },
+ "subscribe": {
+  "url": "https://epibrief.github.io/subscribe.html?series=climate",
+  "label": "뉴스레터 구독·지난 호 보기",
+  "note": "휴대폰 카메라로 찍으면 지난 호와 구독 안내로 이어집니다."
+ }
+}

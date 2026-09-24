@@ -1,0 +1,1353 @@
+{
+ "updated": "",
+ "groups": [
+  {
+   "id": "who",
+   "name": "세계보건기구 (WHO)",
+   "sources": [
+    {
+     "id": "who-don",
+     "name": "WHO 발생 속보 (Disease Outbreak News)",
+     "region": "국제",
+     "site": "https://www.who.int/emergencies/disease-outbreak-news",
+     "lang": "en",
+     "query": "WHO Disease Outbreak News",
+     "desc": "WHO가 회원국 보고를 확인해 발표하는 공식 발생 속보(WHO 웹사이트에서 직접 수집)",
+     "via": "WHO 공식",
+     "who_api": true
+    },
+    {
+     "id": "who-news",
+     "name": "WHO 보도자료",
+     "region": "국제",
+     "rss": "https://www.who.int/rss-feeds/news-english.xml",
+     "site": "https://www.who.int/news",
+     "lang": "en",
+     "query": "World Health Organization outbreak statement",
+     "desc": "WHO 본부 보도자료·성명. 지침 변경과 비상사태 선언이 여기 실림",
+     "via": "기관 RSS"
+    },
+    {
+     "id": "who-euro",
+     "name": "WHO 유럽지역사무처 (뉴스검색)",
+     "region": "유럽",
+     "query": "WHO Europe outbreak",
+     "site": "https://www.who.int/europe",
+     "lang": "en",
+     "desc": "WHO 유럽지역사무처 발표. 유럽 내 권고와 경보",
+     "via": "뉴스 검색"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "us",
+   "name": "미국 질병통제예방센터 (CDC)",
+   "sources": [
+    {
+     "id": "cdc-news",
+     "name": "美CDC 뉴스룸",
+     "region": "미주",
+     "rss": "https://tools.cdc.gov/api/v2/resources/media/316422.rss",
+     "site": "https://www.cdc.gov/media/",
+     "lang": "en",
+     "desc": "미국 CDC 보도자료. 자국 발생과 대응 조치",
+     "via": "기관 RSS"
+    },
+    {
+     "id": "cdc-mmwr",
+     "name": "美CDC MMWR (주간 이환·사망 보고)",
+     "region": "미주",
+     "site": "https://www.cdc.gov/mmwr/",
+     "lang": "en",
+     "query": "CDC MMWR report",
+     "desc": "CDC 주간 이환·사망 보고(MMWR). 역학조사 결과가 논문 형태로 실림",
+     "via": "뉴스 검색"
+    },
+    {
+     "id": "cdc-han",
+     "name": "美CDC 보건경보 (HAN)",
+     "region": "미주",
+     "rss": "https://tools.cdc.gov/api/v2/resources/media/285676.rss",
+     "site": "https://emergency.cdc.gov/han/",
+     "lang": "en",
+     "query": "CDC Health Alert Network HAN advisory",
+     "desc": "CDC 보건경보(HAN). 임상·검사 지침이 긴급히 나가는 통로",
+     "via": "기관 RSS"
+    },
+    {
+     "id": "cdc-travel",
+     "name": "美CDC 여행 건강 경보",
+     "region": "미주",
+     "query": "CDC travel health notice outbreak",
+     "site": "https://wwwnc.cdc.gov/travel/notices",
+     "lang": "en",
+     "desc": "CDC 여행 건강 경보. 해외유입 위험 판단에 씀",
+     "via": "뉴스 검색"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "eu",
+   "name": "유럽 질병예방통제센터 (ECDC) 등",
+   "sources": [
+    {
+     "id": "ecdc-news",
+     "name": "ECDC 뉴스·주간 위협보고(CDTR)",
+     "region": "유럽",
+     "site": "https://www.ecdc.europa.eu/en/threats-and-outbreaks",
+     "lang": "en",
+     "query": "ECDC outbreak threat assessment",
+     "desc": "유럽 CDC 뉴스·주간 위협보고(CDTR). 유럽 발생 집계의 기준",
+     "via": "뉴스 검색"
+    },
+    {
+     "id": "ecdc-cdtr",
+     "name": "ECDC CDTR (뉴스검색 보완)",
+     "region": "유럽",
+     "query": "ECDC Communicable Disease Threats Report",
+     "site": "https://www.ecdc.europa.eu/en/publications-data",
+     "lang": "en",
+     "desc": "ECDC 주간 위협보고 관련 보도. 본문 공개가 늦을 때 보완용",
+     "via": "뉴스 검색"
+    },
+    {
+     "id": "eu-nations",
+     "name": "유럽 각국 기관 (ISS·NPHO·SZU 등)",
+     "region": "유럽",
+     "query": "West Nile OR dengue OR measles outbreak Italy OR Greece OR France health institute",
+     "site": "https://www.ecdc.europa.eu/en",
+     "lang": "en",
+     "desc": "이탈리아 ISS, 그리스 NPHO, 체코 SZÚ 등 각국 기관 발표",
+     "via": "뉴스 검색"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "global",
+   "name": "국제 감시망·전문매체",
+   "sources": [
+    {
+     "id": "promed",
+     "name": "ProMED-mail (전 세계 발생 제보)",
+     "region": "국제",
+     "site": "https://promedmail.org/",
+     "lang": "en",
+     "query": "ProMED outbreak report",
+     "desc": "전 세계 전문가 제보망. 공식 발표보다 먼저 올라오는 경우가 많음",
+     "via": "뉴스 검색"
+    },
+    {
+     "id": "cidrap",
+     "name": "CIDRAP (미네소타대 감염병연구정책센터)",
+     "region": "국제",
+     "rss": "https://www.cidrap.umn.edu/rss.xml",
+     "site": "https://www.cidrap.umn.edu/",
+     "lang": "en",
+     "query": "CIDRAP outbreak news",
+     "desc": "미네소타대 감염병연구정책센터. 발생 소식을 해설과 함께 정리",
+     "via": "기관 RSS"
+    },
+    {
+     "id": "outbreaknews",
+     "name": "Outbreak News Today",
+     "region": "국제",
+     "site": "https://outbreaknewstoday.com/",
+     "lang": "en",
+     "query": "outbreak news today infectious disease",
+     "desc": "감염병 전문 매체. 공식 발표를 빠르게 요약",
+     "via": "뉴스 검색"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "kr",
+   "name": "국내 (질병관리청·보건당국)",
+   "sources": [
+    {
+     "id": "kdca",
+     "name": "질병관리청 보도자료·감염병 소식",
+     "region": "국내",
+     "query": "질병관리청 감염병",
+     "site": "https://www.kdca.go.kr/",
+     "lang": "ko",
+     "desc": "질병관리청 보도자료·감염병 소식",
+     "via": "뉴스 검색"
+    },
+    {
+     "id": "kr-outbreak",
+     "name": "국내 감염병 발생 동향",
+     "region": "국내",
+     "query": "국내 감염병 발생 환자 증가",
+     "site": "https://npt.kdca.go.kr/",
+     "lang": "ko",
+     "desc": "국내 감염병 발생 동향 보도",
+     "via": "뉴스 검색"
+    },
+    {
+     "id": "kr-travel",
+     "name": "해외유입 감염병·검역",
+     "region": "국내",
+     "query": "해외유입 감염병 검역 입국",
+     "site": "https://www.kdca.go.kr/",
+     "lang": "ko",
+     "desc": "해외유입 감염병과 검역 관련 소식",
+     "via": "뉴스 검색"
+    }
+   ],
+   "kind": "outbreak"
+  },
+  {
+   "id": "phsm-hub",
+   "name": "사회 대응(PHSM) 기관·지침",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "who-phsm",
+     "name": "WHO PHSM 지식허브 (공중보건·사회적 조치)",
+     "region": "국제",
+     "query": "WHO public health and social measures PHSM",
+     "site": "https://phsm.who.int/",
+     "lang": "en",
+     "desc": "WHO PHSM 지식허브. 공중보건·사회적 조치의 국제 기준과 사례",
+     "via": "뉴스 검색",
+     "filter": [
+      "PHSM",
+      "social measures",
+      "public health measures",
+      "distancing",
+      "mask",
+      "quarantine",
+      "outbreak response"
+     ]
+    },
+    {
+     "id": "ukhsa",
+     "name": "영국 UKHSA 발표·근거자료",
+     "region": "유럽",
+     "rss": "https://www.gov.uk/search/news-and-communications.atom?organisations%5B%5D=uk-health-security-agency",
+     "query": "UKHSA evidence review",
+     "site": "https://www.gov.uk/government/organisations/uk-health-security-agency",
+     "lang": "en",
+     "desc": "영국 보건안전청 발표·근거검토(evidence gap 포함)",
+     "via": "기관 RSS"
+    },
+    {
+     "id": "ecdc-phsm",
+     "name": "ECDC 비약물적 중재(NPI) 지침",
+     "region": "유럽",
+     "query": "ECDC non-pharmaceutical interventions guidance",
+     "site": "https://www.ecdc.europa.eu/en/publications-data",
+     "lang": "en",
+     "desc": "ECDC 비약물적 중재(NPI) 지침과 평가보고",
+     "via": "뉴스 검색",
+     "filter": [
+      "non-pharmaceutical",
+      "NPI",
+      "measure",
+      "guidance",
+      "distancing",
+      "mask",
+      "ECDC"
+     ]
+    },
+    {
+     "id": "kr-phsm",
+     "name": "국내 방역·사회적 거리두기 정책",
+     "region": "국내",
+     "query": "방역 사회적 거리두기 정책 감염병 대응",
+     "site": "https://www.kdca.go.kr/",
+     "lang": "ko",
+     "desc": "국내 방역·거리두기 정책 보도",
+     "via": "뉴스 검색",
+     "filter": [
+      "방역",
+      "거리두기",
+      "마스크",
+      "감염병",
+      "격리",
+      "검역",
+      "예방접종",
+      "유행"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "phsm-research",
+   "name": "사회 대응 연구 논문 (Europe PMC·medRxiv)",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "epmc-phsm",
+     "name": "논문: 공중보건·사회적 조치(PHSM) 일반",
+     "region": "연구",
+     "epmc": "(TITLE:\"public health and social measures\" OR ABSTRACT:\"public health and social measures\" OR TITLE:\"social measures\") AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: PHSM 자체를 다룬 연구(정의·분류·효과 종합)",
+     "via": "논문 검색"
+    },
+    {
+     "id": "epmc-npi",
+     "name": "논문: 비약물적 중재(NPI)·거리두기 효과",
+     "region": "연구",
+     "epmc": "(TITLE:\"non-pharmaceutical\" OR TITLE:\"physical distancing\" OR TITLE:\"social distancing\" OR TITLE:\"lockdown\" OR ABSTRACT:\"non-pharmaceutical interventions\") AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 거리두기·비약물적 중재의 효과와 영향 평가",
+     "via": "논문 검색"
+    },
+    {
+     "id": "epmc-rcce",
+     "name": "논문: 위험소통·주민참여(RCCE)",
+     "region": "연구",
+     "epmc": "(TITLE:\"risk communication\" OR TITLE:\"community engagement\" OR TITLE:\"infodemic\" OR TITLE:\"misinformation\") AND (ABSTRACT:outbreak OR ABSTRACT:epidemic OR ABSTRACT:pandemic OR ABSTRACT:vaccination) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 위험소통·주민참여·인포데믹 대응",
+     "via": "논문 검색"
+    },
+    {
+     "id": "epmc-adherence",
+     "name": "논문: 수용성·순응도·방역 피로",
+     "region": "연구",
+     "epmc": "(TITLE:adherence OR TITLE:compliance OR TITLE:\"pandemic fatigue\" OR TITLE:acceptability OR TITLE:\"vaccine hesitancy\") AND (ABSTRACT:\"public health measures\" OR ABSTRACT:quarantine OR ABSTRACT:isolation OR ABSTRACT:\"face mask\" OR ABSTRACT:vaccination) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 방역수칙 수용성·순응도·방역 피로",
+     "via": "논문 검색"
+    },
+    {
+     "id": "epmc-social",
+     "name": "논문: 사회·경제 영향과 형평성",
+     "region": "연구",
+     "epmc": "(TITLE:lockdown OR TITLE:\"school closure\" OR TITLE:\"travel restriction\" OR TITLE:\"school closures\") AND (ABSTRACT:impact OR ABSTRACT:inequalities OR ABSTRACT:\"mental health\" OR ABSTRACT:economic) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 봉쇄·휴교·이동제한의 사회경제 영향과 형평성",
+     "via": "논문 검색"
+    },
+    {
+     "id": "medrxiv-phsm",
+     "name": "프리프린트: medRxiv 역학·보건정책",
+     "region": "연구",
+     "rss": "https://connect.medrxiv.org/medrxiv_xml.php?subject=epidemiology",
+     "filter": [
+      "distancing",
+      "mask",
+      "lockdown",
+      "closure",
+      "quarantine",
+      "isolation",
+      "travel restriction",
+      "behaviour",
+      "behavior",
+      "adherence",
+      "communication",
+      "non-pharmaceutical",
+      "policy"
+     ],
+     "site": "https://www.medrxiv.org/",
+     "lang": "en",
+     "desc": "프리프린트(심사 전 논문). 가장 빠르지만 검증 전임에 유의",
+     "via": "기관 RSS"
+    }
+   ]
+  },
+  {
+   "id": "ncd-org",
+   "name": "만성질환 기관·통계",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "who-ncd",
+     "name": "WHO 비감염성질환(NCD) 소식",
+     "region": "국제",
+     "query": "WHO noncommunicable diseases NCD report",
+     "site": "https://www.who.int/health-topics/noncommunicable-diseases",
+     "lang": "en",
+     "desc": "WHO 비감염성질환(NCD) 보고서·권고",
+     "via": "뉴스 검색",
+     "filter": [
+      "NCD",
+      "noncommunicable",
+      "non-communicable",
+      "obesity",
+      "diabetes",
+      "chronic",
+      "tobacco",
+      "alcohol",
+      "cancer",
+      "hypertension"
+     ]
+    },
+    {
+     "id": "cdc-ncd",
+     "name": "美CDC 만성질환·건강행태",
+     "region": "미주",
+     "query": "CDC chronic disease obesity diabetes hypertension data",
+     "site": "https://www.cdc.gov/chronic-disease/",
+     "lang": "en",
+     "desc": "미국 CDC 만성질환·건강행태 통계와 프로그램",
+     "via": "뉴스 검색",
+     "filter": [
+      "chronic",
+      "obesity",
+      "diabetes",
+      "hypertension",
+      "cancer",
+      "smoking",
+      "heart"
+     ]
+    },
+    {
+     "id": "kdca-ncd",
+     "name": "질병관리청 만성질환·건강통계",
+     "region": "국내",
+     "query": "질병관리청 만성질환 건강통계 국민건강영양조사",
+     "site": "https://www.kdca.go.kr/",
+     "lang": "ko",
+     "desc": "질병관리청 만성질환 통계(국민건강영양조사 등)",
+     "via": "뉴스 검색",
+     "filter": [
+      "만성질환",
+      "건강통계",
+      "국민건강영양",
+      "질병관리청",
+      "건강조사",
+      "유병률"
+     ]
+    },
+    {
+     "id": "kr-ncd-policy",
+     "name": "국내 만성질환 관리 정책",
+     "region": "국내",
+     "query": "고혈압 당뇨병 만성질환 관리 사업 정책 보건복지부",
+     "site": "https://www.mohw.go.kr/",
+     "lang": "ko",
+     "desc": "국내 만성질환 관리 정책·사업 소식",
+     "via": "뉴스 검색",
+     "filter": [
+      "만성질환",
+      "고혈압",
+      "당뇨",
+      "비만",
+      "건강검진",
+      "콜레스테롤",
+      "대사",
+      "심뇌혈관",
+      "금연",
+      "절주"
+     ]
+    },
+    {
+     "id": "ncd-alliance",
+     "name": "국제 NCD 동향·캠페인",
+     "region": "국제",
+     "query": "noncommunicable disease prevention policy global",
+     "site": "https://ncdalliance.org/",
+     "lang": "en",
+     "desc": "국제 NCD 정책·캠페인 동향",
+     "via": "뉴스 검색",
+     "filter": [
+      "NCD",
+      "noncommunicable",
+      "non-communicable",
+      "chronic disease",
+      "obesity",
+      "diabetes",
+      "tobacco",
+      "alcohol",
+      "cancer",
+      "hypertension"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ncd-research",
+   "name": "만성질환 연구 논문 (Europe PMC)",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "epmc-ncd",
+     "name": "논문: 만성질환 예방·관리 정책",
+     "region": "연구",
+     "epmc": "(TITLE:\"noncommunicable disease\" OR TITLE:\"non-communicable disease\" OR TITLE:\"chronic disease\" OR TITLE:\"chronic diseases\") AND (TITLE:prevention OR TITLE:policy OR TITLE:management OR TITLE:burden OR TITLE:trends) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 만성질환 예방·관리 정책과 인구집단 개입",
+     "via": "논문 검색"
+    },
+    {
+     "id": "epmc-cvd",
+     "name": "논문: 심뇌혈관질환·고혈압",
+     "region": "연구",
+     "epmc": "(TITLE:hypertension OR TITLE:\"cardiovascular disease\" OR TITLE:stroke OR TITLE:\"blood pressure\") AND (TITLE:prevention OR TITLE:screening OR TITLE:management OR TITLE:trends OR TITLE:risk) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 심뇌혈관질환·고혈압 선별과 관리",
+     "via": "논문 검색"
+    },
+    {
+     "id": "epmc-dm",
+     "name": "논문: 당뇨병·비만·대사질환",
+     "region": "연구",
+     "epmc": "(TITLE:\"type 2 diabetes\" OR TITLE:obesity OR TITLE:\"metabolic syndrome\") AND (TITLE:prevention OR TITLE:trends OR TITLE:policy OR TITLE:intervention OR TITLE:prevalence) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 당뇨병·비만·대사질환 예방과 중재",
+     "via": "논문 검색"
+    },
+    {
+     "id": "epmc-cancer",
+     "name": "논문: 암 검진·예방",
+     "region": "연구",
+     "epmc": "(TITLE:\"cancer screening\" OR TITLE:\"cancer prevention\" OR TITLE:\"screening programme\" OR TITLE:\"screening program\") AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 암 검진·예방 프로그램과 수검률",
+     "via": "논문 검색"
+    },
+    {
+     "id": "epmc-behav",
+     "name": "논문: 건강행태(흡연·음주·신체활동·식이)",
+     "region": "연구",
+     "epmc": "(TITLE:smoking OR TITLE:\"alcohol use\" OR TITLE:\"physical activity\" OR TITLE:\"dietary\" OR TITLE:\"health behaviour\" OR TITLE:\"health behavior\") AND (ABSTRACT:\"chronic disease\" OR ABSTRACT:mortality OR ABSTRACT:\"risk factor\" OR ABSTRACT:prevention) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 흡연·음주·신체활동·식이 등 건강행태",
+     "via": "논문 검색"
+    },
+    {
+     "id": "epmc-aging",
+     "name": "논문: 노인·다질환·정신건강",
+     "region": "연구",
+     "epmc": "(TITLE:multimorbidity OR TITLE:\"older adults\" OR TITLE:depression OR TITLE:\"mental health\") AND (ABSTRACT:\"chronic disease\" OR ABSTRACT:\"primary care\" OR ABSTRACT:\"long-term condition\") AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "desc": "논문: 노인·다질환·정신건강과 일차의료",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "intl-agency",
+   "name": "각국·지역 보건기구",
+   "kind": "outbreak",
+   "sources": [
+    {
+     "id": "paho",
+     "name": "범미보건기구(PAHO) 역학 경보",
+     "region": "미주",
+     "desc": "중남미 발생 경보. 뎅기·황열·콜레라 등 미주 유행의 1차 출처",
+     "query": "PAHO epidemiological alert outbreak",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "africacdc",
+     "name": "아프리카 질병통제센터(Africa CDC)",
+     "region": "국제",
+     "desc": "아프리카 대륙 유행 브리핑. 에볼라·마버그·엠폭스 대응 발표",
+     "query": "Africa CDC outbreak briefing",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "who-wpro",
+     "name": "WHO 서태평양지역사무처(WPRO)",
+     "region": "아시아",
+     "desc": "우리와 같은 권역의 발생·권고. 국내 연관성이 가장 높은 지역 발표",
+     "query": "WHO Western Pacific outbreak health emergency",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "who-searo",
+     "name": "WHO 동남아지역사무처(SEARO)",
+     "region": "아시아",
+     "desc": "동남아 발생 동향. 해외유입 경로와 직결",
+     "query": "WHO South-East Asia outbreak disease",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "japan-niid",
+     "name": "일본 국립감염증연구소·후생노동성",
+     "region": "아시아",
+     "desc": "일본 감염병 발생과 대응. 인접국 유행 조기 신호",
+     "query": "Japan infectious disease outbreak NIID ministry health",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "china-cdc",
+     "name": "중국 질병예방통제센터(China CDC)",
+     "region": "아시아",
+     "desc": "중국 내 발생 동향과 주간 보고",
+     "query": "China CDC infectious disease weekly report outbreak",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "taiwan-cdc",
+     "name": "대만 질병관제서(Taiwan CDC)",
+     "region": "아시아",
+     "desc": "대만 발생 경보. 뎅기·엔테로바이러스 등",
+     "query": "Taiwan CDC outbreak alert disease",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "singapore-moh",
+     "name": "싱가포르 보건부(MOH)",
+     "region": "아시아",
+     "desc": "동남아 허브의 발생 동향과 여행 관련 조치",
+     "query": "Singapore MOH infectious disease outbreak dengue",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "aus-health",
+     "name": "호주 보건부·NNDSS",
+     "region": "국제",
+     "desc": "남반구 절기 호흡기감염병 동향(우리 절기 예측에 참고)",
+     "query": "Australia influenza surveillance report health department",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "ukhsa-id",
+     "name": "영국 UKHSA 감염병 발표",
+     "region": "유럽",
+     "desc": "영국 발생·경보와 근거검토",
+     "rss": "https://www.gov.uk/search/news-and-communications.atom?organisations%5B%5D=uk-health-security-agency",
+     "query": "UKHSA outbreak infection",
+     "site": "",
+     "via": "기관 RSS",
+     "lang": "en"
+    }
+   ]
+  },
+  {
+   "id": "kr-detail",
+   "name": "국내 감시·연구",
+   "kind": "outbreak",
+   "sources": [
+    {
+     "id": "kdca-weekly",
+     "name": "질병관리청 주간 감염병 발생 동향",
+     "region": "국내",
+     "desc": "국내 표본감시 결과와 주간 통계 보도",
+     "query": "질병관리청 주간 감염병 표본감시 발생",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "ko"
+    },
+    {
+     "id": "kr-lab",
+     "name": "시도 보건환경연구원·지자체 대응",
+     "region": "국내",
+     "desc": "지역 단위 검사·역학조사와 대응 조치",
+     "query": "보건환경연구원 감염병 검사 역학조사",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "ko"
+    },
+    {
+     "id": "kr-vaccine",
+     "name": "국내 예방접종 사업",
+     "region": "국내",
+     "desc": "절기 접종 일정·대상·접종률",
+     "query": "예방접종 사업 접종률 무료접종 질병관리청",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "ko"
+    }
+   ]
+  },
+  {
+   "id": "phsm-org2",
+   "name": "사회 대응 국제기구·정책",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "who-behav",
+     "name": "WHO 행동통찰·수용도 조사",
+     "region": "국제",
+     "desc": "사람들이 왜 따르고 안 따르는지에 대한 WHO 조사·지침",
+     "query": "WHO behavioural insights health tailoring vaccination uptake",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "oecd-health",
+     "name": "OECD 보건정책·대유행 대비",
+     "region": "국제",
+     "desc": "제도·재정 관점의 대비태세 평가",
+     "query": "OECD pandemic preparedness health system policy",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "gpmb",
+     "name": "국제 대비태세 감시(GPMB 등)",
+     "region": "국제",
+     "desc": "대유행 대비태세 평가 보고와 권고",
+     "query": "Global Preparedness Monitoring Board pandemic report",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "kr-manual",
+     "name": "국내 대응체계·매뉴얼 논의",
+     "region": "국내",
+     "desc": "국내 방역 거버넌스·매뉴얼 개정 관련 보도",
+     "query": "감염병 대응체계 매뉴얼 방역 거버넌스 개정",
+     "filter": [
+      "감염병",
+      "방역",
+      "대응체계",
+      "매뉴얼",
+      "위기",
+      "거버넌스",
+      "질병관리청"
+     ],
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "ko"
+    }
+   ]
+  },
+  {
+   "id": "phsm-research2",
+   "name": "사회 대응 연구 (심화)",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "epmc-sr",
+     "name": "논문: 체계적 문헌고찰·메타분석",
+     "region": "연구",
+     "desc": "사회적 조치 분야의 종합 근거만 추린 검색",
+     "epmc": "(TITLE:\"systematic review\" OR TITLE:\"meta-analysis\") AND (TITLE:\"public health measures\" OR TITLE:\"non-pharmaceutical\" OR TITLE:distancing OR TITLE:\"face mask\" OR TITLE:quarantine OR TITLE:\"vaccine hesitancy\") AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-school",
+     "name": "논문: 학교·직장 방역",
+     "region": "연구",
+     "desc": "학교 운영 조정과 직장 방역의 효과·수용성",
+     "epmc": "(TITLE:school OR TITLE:workplace OR TITLE:university) AND (TITLE:\"COVID-19\" OR TITLE:outbreak OR TITLE:transmission OR TITLE:vaccination) AND (ABSTRACT:policy OR ABSTRACT:measure OR ABSTRACT:intervention) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-gov",
+     "name": "논문: 대비태세·거버넌스·법제",
+     "region": "연구",
+     "desc": "위기 시 권한·조직·법제도 연구",
+     "epmc": "(TITLE:\"pandemic preparedness\" OR TITLE:governance OR TITLE:\"emergency powers\" OR TITLE:\"health security\") AND (ABSTRACT:policy OR ABSTRACT:legislation OR ABSTRACT:response) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-trust",
+     "name": "논문: 신뢰·공정성·취약계층 보호",
+     "region": "연구",
+     "desc": "조치의 수용을 좌우하는 신뢰와 형평 문제",
+     "epmc": "(TITLE:trust OR TITLE:equity OR TITLE:\"vulnerable populations\" OR TITLE:inequalities) AND (ABSTRACT:\"public health\" AND (ABSTRACT:pandemic OR ABSTRACT:outbreak OR ABSTRACT:vaccination)) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "",
+     "via": "논문 검색",
+     "lang": "en"
+    }
+   ]
+  },
+  {
+   "id": "ncd-stat",
+   "name": "만성질환 통계·기관 (심화)",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "oecd-ncd",
+     "name": "OECD Health at a Glance·보건통계",
+     "region": "국제",
+     "desc": "국가 비교 통계. 국내 위치 확인에 유용",
+     "query": "OECD Health at a Glance health statistics obesity smoking",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "nchs",
+     "name": "미국 국립보건통계센터(NCHS)",
+     "region": "미주",
+     "desc": "미국 만성질환·건강행태 통계 브리프",
+     "query": "NCHS data brief prevalence adults",
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "kr-nhis",
+     "name": "국민건강보험공단·심평원 통계",
+     "region": "국내",
+     "desc": "진료·투약 자료 기반 국내 만성질환 규모",
+     "query": "건강보험공단 심사평가원 만성질환 진료 통계",
+     "filter": [
+      "만성질환",
+      "고혈압",
+      "당뇨",
+      "비만",
+      "진료",
+      "검진",
+      "심사평가원",
+      "건강보험"
+     ],
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "ko"
+    },
+    {
+     "id": "kr-cancer",
+     "name": "국가암등록통계·암검진",
+     "region": "국내",
+     "desc": "암 발생률·생존율과 검진 수검률",
+     "query": "국가암등록통계 암 발생률 암검진 수검률",
+     "filter": [
+      "암",
+      "검진",
+      "발생률",
+      "생존율",
+      "국가암등록"
+     ],
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "ko"
+    },
+    {
+     "id": "kr-checkup",
+     "name": "국가건강검진 결과·제도",
+     "region": "국내",
+     "desc": "검진 결과 통계와 제도 개편 논의",
+     "query": "국가건강검진 결과 통계 검진 제도 개편",
+     "filter": [
+      "검진",
+      "건강검진",
+      "판정",
+      "제도",
+      "수검"
+     ],
+     "site": "",
+     "via": "뉴스 검색",
+     "lang": "ko"
+    }
+   ]
+  },
+  {
+   "id": "ncd-research2",
+   "name": "만성질환 연구 (심화)",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "epmc-ckd",
+     "name": "논문: 만성콩팥병·간질환",
+     "region": "연구",
+     "desc": "검진·조기발견과 진행 억제",
+     "epmc": "(TITLE:\"chronic kidney disease\" OR TITLE:\"fatty liver\" OR TITLE:\"liver disease\") AND (TITLE:screening OR TITLE:prevention OR TITLE:management OR TITLE:prevalence) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-dementia",
+     "name": "논문: 치매·인지기능",
+     "region": "연구",
+     "desc": "위험요인 관리와 지역사회 개입",
+     "epmc": "(TITLE:dementia OR TITLE:\"cognitive decline\" OR TITLE:\"cognitive impairment\") AND (ABSTRACT:\"risk factor\" OR ABSTRACT:prevention OR ABSTRACT:\"public health\") AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-tobacco",
+     "name": "논문: 담배·전자담배 규제",
+     "region": "연구",
+     "desc": "금연정책과 신종 담배제품 규제 근거",
+     "epmc": "(TITLE:tobacco OR TITLE:\"e-cigarette\" OR TITLE:vaping OR TITLE:\"smoking cessation\") AND (ABSTRACT:policy OR ABSTRACT:regulation OR ABSTRACT:prevalence OR ABSTRACT:cessation) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-equity-ncd",
+     "name": "논문: 만성질환 건강형평성",
+     "region": "연구",
+     "desc": "소득·지역에 따른 격차와 개입",
+     "epmc": "(TITLE:inequalities OR TITLE:equity OR TITLE:disparities) AND (ABSTRACT:\"chronic disease\" OR ABSTRACT:diabetes OR ABSTRACT:hypertension OR ABSTRACT:obesity) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "site": "",
+     "via": "논문 검색",
+     "lang": "en"
+    }
+   ]
+  },
+  {
+   "id": "climate-org",
+   "name": "기후·건강 기관",
+   "kind": "climate",
+   "sources": [
+    {
+     "id": "who-climate",
+     "name": "WHO 기후변화와 건강",
+     "region": "국제",
+     "desc": "폭염·기후 위험에 대한 WHO 지침과 경보",
+     "site": "https://www.who.int/health-topics/climate-change",
+     "query": "WHO climate change health heat extreme weather",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "wmo-heat",
+     "name": "세계기상기구(WMO) 폭염·극한기후",
+     "region": "국제",
+     "desc": "기상 측 경보와 기록. 보건 경보의 선행 신호",
+     "site": "https://wmo.int/",
+     "query": "WMO heatwave extreme heat record climate warning",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "cdc-heat",
+     "name": "美CDC 폭염 건강(HeatRisk)",
+     "region": "미주",
+     "desc": "폭염 위험 등급과 응급실 내원 감시 자료",
+     "site": "https://www.cdc.gov/heat-health/",
+     "query": "CDC heat health HeatRisk heat-related illness emergency",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "eu-heat",
+     "name": "유럽 폭염·기후 매개체 감시",
+     "region": "유럽",
+     "desc": "유럽 폭염 초과사망과 매개체 북상 감시",
+     "site": "https://www.ecdc.europa.eu/",
+     "query": "Europe heatwave excess mortality ECDC vector climate",
+     "via": "뉴스 검색",
+     "lang": "en"
+    },
+    {
+     "id": "kr-heat",
+     "name": "국내 온열질환 응급실감시체계",
+     "region": "국내",
+     "desc": "질병관리청 폭염 대비 온열질환 감시 결과",
+     "site": "https://www.kdca.go.kr/",
+     "query": "온열질환 응급실감시체계 폭염 질병관리청 온열질환자",
+     "filter": [
+      "온열",
+      "폭염",
+      "한랭",
+      "열사병",
+      "응급실감시",
+      "기후",
+      "열대야"
+     ],
+     "via": "뉴스 검색",
+     "lang": "ko"
+    },
+    {
+     "id": "kr-heat-policy",
+     "name": "국내 폭염·한파 대책",
+     "region": "국내",
+     "desc": "무더위쉼터·취약계층 보호 등 대응 정책",
+     "site": "",
+     "query": "폭염 대책 무더위쉼터 취약계층 한파 대책",
+     "filter": [
+      "폭염",
+      "한파",
+      "무더위",
+      "온열",
+      "기후",
+      "열대야",
+      "쉼터"
+     ],
+     "via": "뉴스 검색",
+     "lang": "ko"
+    }
+   ]
+  },
+  {
+   "id": "climate-research",
+   "name": "기후·건강 연구 (Europe PMC)",
+   "kind": "climate",
+   "sources": [
+    {
+     "id": "epmc-heat-mort",
+     "name": "논문: 폭염과 사망·질병 부담",
+     "region": "연구",
+     "desc": "폭염이 사망·입원에 미치는 영향 추정",
+     "site": "",
+     "epmc": "(TITLE:heat OR TITLE:heatwave OR TITLE:\"extreme heat\" OR TITLE:\"heat-related\") AND (TITLE:mortality OR TITLE:morbidity OR TITLE:hospitalization OR TITLE:burden) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-hhws",
+     "name": "논문: 폭염 조기경보·감시체계",
+     "region": "연구",
+     "desc": "경보체계 설계와 효과 평가",
+     "site": "",
+     "epmc": "((TITLE:\"heat action plan\" OR TITLE:\"heat-health\" OR TITLE:\"heat warning\" OR TITLE:\"heat wave\" OR TITLE:heatwave) AND (TITLE:\"early warning\" OR TITLE:surveillance OR TITLE:system OR TITLE:plan OR TITLE:preparedness)) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-climate-vector",
+     "name": "논문: 기후변화와 매개체 감염병",
+     "region": "연구",
+     "desc": "모기·진드기 매개 감염병의 분포 변화",
+     "site": "",
+     "epmc": "(TITLE:climate OR TITLE:\"climate change\" OR TITLE:warming) AND (TITLE:dengue OR TITLE:\"vector-borne\" OR TITLE:mosquito OR TITLE:tick OR TITLE:malaria) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-air",
+     "name": "논문: 대기질·산불 연기와 건강",
+     "region": "연구",
+     "desc": "초미세먼지·산불 연기의 건강 영향",
+     "site": "",
+     "epmc": "(TITLE:\"air pollution\" OR TITLE:\"wildfire smoke\" OR TITLE:\"particulate matter\" OR TITLE:\"air quality\") AND (ABSTRACT:health OR ABSTRACT:mortality OR ABSTRACT:respiratory) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "via": "논문 검색",
+     "lang": "en"
+    },
+    {
+     "id": "epmc-adapt",
+     "name": "논문: 기후 적응과 보건체계",
+     "region": "연구",
+     "desc": "보건체계의 기후 적응·취약성 평가",
+     "site": "",
+     "epmc": "(TITLE:adaptation OR TITLE:resilience OR TITLE:vulnerability) AND (ABSTRACT:climate AND ABSTRACT:health) AND {RECENT} AND (SRC:MED OR SRC:PPR)",
+     "via": "논문 검색",
+     "lang": "en"
+    }
+   ]
+  },
+  {
+   "id": "review-outbreak",
+   "name": "논문 리뷰·트렌드 (감염병)",
+   "kind": "outbreak",
+   "sources": [
+    {
+     "id": "cochrane-outbreak",
+     "name": "코크란 리뷰 (신규 발표)",
+     "region": "연구",
+     "desc": "코크란 체계적 문헌고찰 최신호. 근거 수준이 가장 높은 종합 결론",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "JOURNAL:\"Cochrane Database Syst Rev\" AND (TITLE:infection* OR TITLE:vaccin* OR TITLE:influenza OR TITLE:outbreak OR TITLE:antibiotic* OR TITLE:antiviral*) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "cochrane-protocol-outbreak",
+     "name": "진행 중인 체계적 문헌고찰 (프로토콜)",
+     "region": "연구",
+     "desc": "아직 결과가 나오지 않은 리뷰 계획서. 어느 주제로 근거가 모이는지 미리 보여 줌",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "((TITLE:\"systematic review protocol\" OR (TITLE:protocol AND TITLE:\"systematic review\") OR TITLE:\"scoping review protocol\")) AND (TITLE:infection* OR TITLE:vaccin* OR TITLE:influenza OR TITLE:outbreak OR TITLE:antibiotic* OR TITLE:antiviral*) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "review-outbreak",
+     "name": "리뷰 논문 (분야 종합)",
+     "region": "연구",
+     "desc": "학술지 리뷰 논문. 개별 연구보다 흐름을 읽기 좋음",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "epmc": "PUB_TYPE:\"Review\" AND (TITLE:infection* OR TITLE:vaccin* OR TITLE:influenza OR TITLE:outbreak OR TITLE:antibiotic* OR TITLE:antiviral*) AND {RECENT} AND SRC:MED",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "review-phsm",
+   "name": "논문 리뷰·트렌드 (사회 대응)",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "cochrane-phsm",
+     "name": "코크란 리뷰 (신규 발표)",
+     "region": "연구",
+     "desc": "코크란 체계적 문헌고찰 최신호. 근거 수준이 가장 높은 종합 결론",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "JOURNAL:\"Cochrane Database Syst Rev\" AND (TITLE:\"public health\" OR TITLE:distancing OR TITLE:mask* OR TITLE:vaccin* OR TITLE:quarantine OR TITLE:\"health communication\" OR TITLE:adherence) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "cochrane-protocol-phsm",
+     "name": "진행 중인 체계적 문헌고찰 (프로토콜)",
+     "region": "연구",
+     "desc": "아직 결과가 나오지 않은 리뷰 계획서. 어느 주제로 근거가 모이는지 미리 보여 줌",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "((TITLE:\"systematic review protocol\" OR (TITLE:protocol AND TITLE:\"systematic review\") OR TITLE:\"scoping review protocol\")) AND (TITLE:\"public health\" OR TITLE:distancing OR TITLE:mask* OR TITLE:vaccin* OR TITLE:quarantine OR TITLE:\"health communication\" OR TITLE:adherence) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "review-phsm",
+     "name": "리뷰 논문 (분야 종합)",
+     "region": "연구",
+     "desc": "학술지 리뷰 논문. 개별 연구보다 흐름을 읽기 좋음",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "epmc": "PUB_TYPE:\"Review\" AND (TITLE:\"public health\" OR TITLE:distancing OR TITLE:mask* OR TITLE:vaccin* OR TITLE:quarantine OR TITLE:\"health communication\" OR TITLE:adherence) AND {RECENT} AND SRC:MED",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "review-chronic",
+   "name": "논문 리뷰·트렌드 (만성질환)",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "cochrane-chronic",
+     "name": "코크란 리뷰 (신규 발표)",
+     "region": "연구",
+     "desc": "코크란 체계적 문헌고찰 최신호. 근거 수준이 가장 높은 종합 결론",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "JOURNAL:\"Cochrane Database Syst Rev\" AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"physical activity\" OR TITLE:depression) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "cochrane-protocol-chronic",
+     "name": "진행 중인 체계적 문헌고찰 (프로토콜)",
+     "region": "연구",
+     "desc": "아직 결과가 나오지 않은 리뷰 계획서. 어느 주제로 근거가 모이는지 미리 보여 줌",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "((TITLE:\"systematic review protocol\" OR (TITLE:protocol AND TITLE:\"systematic review\") OR TITLE:\"scoping review protocol\")) AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"physical activity\" OR TITLE:depression) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "review-chronic",
+     "name": "리뷰 논문 (분야 종합)",
+     "region": "연구",
+     "desc": "학술지 리뷰 논문. 개별 연구보다 흐름을 읽기 좋음",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "epmc": "PUB_TYPE:\"Review\" AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"physical activity\" OR TITLE:depression) AND {RECENT} AND SRC:MED",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "review-climate",
+   "name": "논문 리뷰·트렌드 (기후·건강)",
+   "kind": "climate",
+   "sources": [
+    {
+     "id": "cochrane-climate",
+     "name": "코크란 리뷰 (신규 발표)",
+     "region": "연구",
+     "desc": "코크란 체계적 문헌고찰 최신호. 근거 수준이 가장 높은 종합 결론",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "JOURNAL:\"Cochrane Database Syst Rev\" AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:\"vector-borne\" OR TITLE:dengue OR TITLE:malaria) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "cochrane-protocol-climate",
+     "name": "진행 중인 체계적 문헌고찰 (프로토콜)",
+     "region": "연구",
+     "desc": "아직 결과가 나오지 않은 리뷰 계획서. 어느 주제로 근거가 모이는지 미리 보여 줌",
+     "site": "https://www.cochranelibrary.com/",
+     "lang": "en",
+     "epmc": "((TITLE:\"systematic review protocol\" OR (TITLE:protocol AND TITLE:\"systematic review\") OR TITLE:\"scoping review protocol\")) AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:\"vector-borne\" OR TITLE:dengue OR TITLE:malaria) AND {RECENT}",
+     "via": "논문 검색"
+    },
+    {
+     "id": "review-climate",
+     "name": "리뷰 논문 (분야 종합)",
+     "region": "연구",
+     "desc": "학술지 리뷰 논문. 개별 연구보다 흐름을 읽기 좋음",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "epmc": "PUB_TYPE:\"Review\" AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:\"vector-borne\" OR TITLE:dengue OR TITLE:malaria) AND {RECENT} AND SRC:MED",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "quick-outbreak",
+   "name": "신속검토·중국 연구 (감염병)",
+   "kind": "outbreak",
+   "sources": [
+    {
+     "id": "rapid-outbreak",
+     "name": "신속검토(Rapid review)·근거요약",
+     "region": "연구",
+     "desc": "위기 때 짧은 기간에 근거를 모아 정리한 문헌. 급할 때 먼저 보는 자료",
+     "epmc": "(TITLE:\"rapid review\" OR TITLE:\"rapid evidence\" OR TITLE:\"evidence summary\" OR TITLE:\"umbrella review\") AND (TITLE:outbreak OR TITLE:influenza OR TITLE:infection* OR TITLE:vaccin* OR TITLE:surveillance) AND {RECENT}",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "china-outbreak",
+     "name": "중국 연구 동향",
+     "region": "연구",
+     "desc": "중국 소속 연구진의 역학·공중보건 연구. 최근 발표량이 많아 흐름을 보기 좋음",
+     "epmc": "AFF:\"China\" AND (TITLE:epidemiolog* OR TITLE:surveillance OR TITLE:\"public health\" OR TITLE:cohort OR TITLE:prevalence OR TITLE:trends OR TITLE:policy) AND (TITLE:outbreak OR TITLE:influenza OR TITLE:infection* OR TITLE:vaccin* OR TITLE:surveillance) AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "guideline-outbreak",
+     "name": "지침·권고 문헌",
+     "region": "연구",
+     "desc": "학회·기관 지침과 권고 개정 문헌",
+     "epmc": "(TITLE:guideline* OR TITLE:recommendation* OR TITLE:\"consensus statement\") AND (TITLE:outbreak OR TITLE:influenza OR TITLE:infection* OR TITLE:vaccin* OR TITLE:surveillance) AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "quick-phsm",
+   "name": "신속검토·중국 연구 (사회 대응)",
+   "kind": "phsm",
+   "sources": [
+    {
+     "id": "rapid-phsm",
+     "name": "신속검토(Rapid review)·근거요약",
+     "region": "연구",
+     "desc": "위기 때 짧은 기간에 근거를 모아 정리한 문헌. 급할 때 먼저 보는 자료",
+     "epmc": "(TITLE:\"rapid review\" OR TITLE:\"rapid evidence\" OR TITLE:\"evidence summary\" OR TITLE:\"umbrella review\") AND (TITLE:\"public health\" OR TITLE:vaccin* OR TITLE:distancing OR TITLE:mask* OR TITLE:quarantine OR TITLE:adherence OR TITLE:\"health communication\") AND {RECENT}",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "china-phsm",
+     "name": "중국 연구 동향",
+     "region": "연구",
+     "desc": "중국 소속 연구진의 역학·공중보건 연구. 최근 발표량이 많아 흐름을 보기 좋음",
+     "epmc": "AFF:\"China\" AND (TITLE:epidemiolog* OR TITLE:surveillance OR TITLE:\"public health\" OR TITLE:cohort OR TITLE:prevalence OR TITLE:trends OR TITLE:policy) AND (TITLE:\"public health\" OR TITLE:vaccin* OR TITLE:distancing OR TITLE:mask* OR TITLE:quarantine OR TITLE:adherence OR TITLE:\"health communication\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "guideline-phsm",
+     "name": "지침·권고 문헌",
+     "region": "연구",
+     "desc": "학회·기관 지침과 권고 개정 문헌",
+     "epmc": "(TITLE:guideline* OR TITLE:recommendation* OR TITLE:\"consensus statement\") AND (TITLE:\"public health\" OR TITLE:vaccin* OR TITLE:distancing OR TITLE:mask* OR TITLE:quarantine OR TITLE:adherence OR TITLE:\"health communication\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "quick-chronic",
+   "name": "신속검토·중국 연구 (만성질환)",
+   "kind": "chronic",
+   "sources": [
+    {
+     "id": "rapid-chronic",
+     "name": "신속검토(Rapid review)·근거요약",
+     "region": "연구",
+     "desc": "위기 때 짧은 기간에 근거를 모아 정리한 문헌. 급할 때 먼저 보는 자료",
+     "epmc": "(TITLE:\"rapid review\" OR TITLE:\"rapid evidence\" OR TITLE:\"evidence summary\" OR TITLE:\"umbrella review\") AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"chronic disease\") AND {RECENT}",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "china-chronic",
+     "name": "중국 연구 동향",
+     "region": "연구",
+     "desc": "중국 소속 연구진의 역학·공중보건 연구. 최근 발표량이 많아 흐름을 보기 좋음",
+     "epmc": "AFF:\"China\" AND (TITLE:epidemiolog* OR TITLE:surveillance OR TITLE:\"public health\" OR TITLE:cohort OR TITLE:prevalence OR TITLE:trends OR TITLE:policy) AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"chronic disease\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "guideline-chronic",
+     "name": "지침·권고 문헌",
+     "region": "연구",
+     "desc": "학회·기관 지침과 권고 개정 문헌",
+     "epmc": "(TITLE:guideline* OR TITLE:recommendation* OR TITLE:\"consensus statement\") AND (TITLE:diabetes OR TITLE:hypertension OR TITLE:obesity OR TITLE:cancer OR TITLE:smoking OR TITLE:\"chronic disease\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    }
+   ]
+  },
+  {
+   "id": "quick-climate",
+   "name": "신속검토·중국 연구 (기후·건강)",
+   "kind": "climate",
+   "sources": [
+    {
+     "id": "rapid-climate",
+     "name": "신속검토(Rapid review)·근거요약",
+     "region": "연구",
+     "desc": "위기 때 짧은 기간에 근거를 모아 정리한 문헌. 급할 때 먼저 보는 자료",
+     "epmc": "(TITLE:\"rapid review\" OR TITLE:\"rapid evidence\" OR TITLE:\"evidence summary\" OR TITLE:\"umbrella review\") AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:dengue OR TITLE:\"vector-borne\") AND {RECENT}",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "china-climate",
+     "name": "중국 연구 동향",
+     "region": "연구",
+     "desc": "중국 소속 연구진의 역학·공중보건 연구. 최근 발표량이 많아 흐름을 보기 좋음",
+     "epmc": "AFF:\"China\" AND (TITLE:epidemiolog* OR TITLE:surveillance OR TITLE:\"public health\" OR TITLE:cohort OR TITLE:prevalence OR TITLE:trends OR TITLE:policy) AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:dengue OR TITLE:\"vector-borne\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    },
+    {
+     "id": "guideline-climate",
+     "name": "지침·권고 문헌",
+     "region": "연구",
+     "desc": "학회·기관 지침과 권고 개정 문헌",
+     "epmc": "(TITLE:guideline* OR TITLE:recommendation* OR TITLE:\"consensus statement\") AND (TITLE:heat OR TITLE:climate OR TITLE:\"air pollution\" OR TITLE:dengue OR TITLE:\"vector-borne\") AND {RECENT} AND SRC:MED",
+     "site": "https://europepmc.org/",
+     "lang": "en",
+     "via": "논문 검색"
+    }
+   ]
+  }
+ ]
+}
