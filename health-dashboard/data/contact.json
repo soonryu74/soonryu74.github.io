@@ -26,5 +26,12 @@
     }
   ],
   "manual_pdf": "https://soonryu74.github.io/health-dashboard/docs/%EC%A7%80%EC%97%AD%EA%B1%B4%EA%B0%95%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC_%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C_%EC%82%AC%EC%9A%A9%EC%84%A4%EB%AA%85%EC%84%9C_v1.pdf",
-  "manual_pptx": "https://soonryu74.github.io/health-dashboard/docs/%EC%A7%80%EC%97%AD%EA%B1%B4%EA%B0%95%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC_%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C_%EC%82%AC%EC%9A%A9%EC%84%A4%EB%AA%85%EC%84%9C_v1.pptx"
+  "manual_pptx": "https://soonryu74.github.io/health-dashboard/docs/%EC%A7%80%EC%97%AD%EA%B1%B4%EA%B0%95%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC_%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C_%EC%82%AC%EC%9A%A9%EC%84%A4%EB%AA%85%EC%84%9C_v1.pptx",
+  "credit": {
+    "org": "지음웍스",
+    "url": "https://jieumworks.com",
+    "urlLabel": "jieumworks.com",
+    "date": "2026년 9월",
+    "note": "모든 화면 맨 아래 제작 크레딧. 날짜·문구는 여기서만 바꾸고 build_dashboard.py 로 다시 빌드한다(뉴스레터 site-config.json 의 credit 와 같은 문구)."
+  }
 }
