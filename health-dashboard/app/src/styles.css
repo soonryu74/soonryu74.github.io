@@ -857,3 +857,32 @@ footer .linkbtn { all:unset; cursor:pointer; color:var(--series-1); font-weight:
 .site-credit a { color:inherit; text-decoration:underline; text-decoration-color:#c3cad3; text-underline-offset:2px; }
 .site-credit a:hover { color:#5d6875; }
 @media (max-width: 600px){ .fb-two { grid-template-columns:1fr; } .fb-actions .fb-btn { flex:1 1 45%; justify-content:center; } }
+
+/* ── 참고문헌 번호(Cite) · 목록(RefList) ── 문구·번호는 data/refs.json */
+.cite { position: relative; display: inline; white-space: nowrap; }
+.cite-btn { all: unset; cursor: pointer; font-size: .66em; line-height: 1; vertical-align: super; margin-left: 2px; padding: 1px 2px; border-radius: 3px;
+  color: var(--series-1); font-weight: 600; font-variant-numeric: tabular-nums; }
+.cite-btn:hover, .cite-btn[aria-expanded="true"] { background: color-mix(in srgb, var(--series-1) 14%, transparent); text-decoration: underline; }
+.cite-btn:focus-visible { outline: 2px solid var(--series-1); outline-offset: 1px; }
+.cite-pop { position: fixed; z-index: 90; display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; max-height: min(70vh, 460px); overflow: auto;
+  background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--baseline, var(--border)); border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.18); font-size: 13px; font-weight: 400; line-height: 1.55; white-space: normal; text-align: left; letter-spacing: 0; }
+.cite-pop a { color: var(--series-1); }
+.cite-tbl { display: flex; flex-direction: column; gap: 2px; padding-bottom: 8px; border-bottom: 1px dashed var(--baseline, var(--border)); overflow-wrap: anywhere; }
+.cite-tbl b { font-size: 12px; }
+.cite-item { display: grid; grid-template-columns: auto 1fr; gap: 6px; overflow-wrap: anywhere; }
+.cite-n { color: var(--series-1); font-variant-numeric: tabular-nums; }
+.cite-acts { display: flex; gap: 12px; margin-top: 3px; font-size: 12px; }
+.cite-acts .linkbtn { all: unset; cursor: pointer; color: var(--series-1); text-decoration: underline; }
+.reflist .refs-ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; font-size: 13px; line-height: 1.55; }
+.reflist .refs-ol li { display: grid; grid-template-columns: 34px 1fr; gap: 4px; padding: 4px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+.reflist .ref-url { color: var(--series-1); word-break: break-all; }
+.reflist .refs-ol li.ref-hit { animation: refhit 2.2s ease-out; }
+@keyframes refhit { 0%, 40% { background: color-mix(in srgb, var(--series-1) 22%, transparent); } 100% { background: transparent; } }
+@media (min-width: 900px) { .reflist .refs-ol { grid-template-columns: 1fr 1fr; column-gap: 18px; } }
+@media print {
+  .cite-pop { display: none !important; }
+  .cite-btn { color: #444 !important; background: none !important; }
+  .reflist { break-inside: auto; }
+  .reflist .refs-ol { grid-template-columns: 1fr !important; }
+}

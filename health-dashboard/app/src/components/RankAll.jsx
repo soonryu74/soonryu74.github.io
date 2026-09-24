@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import Cite from "./Cite";
 import { createPortal } from "react-dom";
 import { fmt, ranked, label, val, RBY } from "../data";
 import { saveSvgString, savePngFromSvg, saveCsvRows } from "../export";
@@ -160,7 +161,7 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
       <header className="ra-head">
         <div className="ra-t">
           <div className="ra-kick">순위 전체 보기 · {poolName} · {n}개</div>
-          <h3>{ind.name} <small>{item === "std" ? "표준화율" : "조율"} · {dirWord} · {rev ? "나쁜 순" : "양호한 순"}</small></h3>
+          <h3>{ind.name}<Cite ind={ind} /> <small>{item === "std" ? "표준화율" : "조율"} · {dirWord} · {rev ? "나쁜 순" : "양호한 순"}</small></h3>
         </div>
         <div className="ra-nowyear">{year}</div>
         <div className="ra-actions">

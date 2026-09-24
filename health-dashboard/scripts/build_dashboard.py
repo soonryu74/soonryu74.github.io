@@ -19,6 +19,9 @@ if not data_path.exists():
 if not (app / "node_modules").exists():
     sys.exit("app/node_modules 없음 — 먼저  cd app && npm install")
 
+# 참고문헌 목록(data/refs.json)은 자료원 카드(coverage.json)의 갱신일을 쓰므로 빌드 때마다 새로 만든다
+subprocess.run([sys.executable, str(ROOT / "scripts" / "build_refs.py")], check=True)
+
 # 데이터 무결성 확인: 지표별 시도 17개, 연도-값 길이 일치
 data = json.loads(data_path.read_text(encoding="utf-8"))
 for name, d in data["indicators"].items():

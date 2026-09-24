@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=55844b9fec9dde7a2a1e654f7c7bc0e4e231e283">
+    <link rel="stylesheet" href="/assets/css/style.css?v=17b9204bab35e8466bfcbaa25c2c62fa5e984f11">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -337,6 +337,12 @@ QA: validate.py PASS, LibreOffice Impress(apt로 설치) → PDF → PyMuPDF 렌
 ② 기초자치단체는 226(229 = 226 + 제주 행정시 2 + 세종) — UnitsView·SourcesView·coverage counts 문구 수정. ③ 자료원 공단 카드 40 → 33(검진 이어붙인 3개 중복 제거, 비공단 4개를 인구·사회·경제·복지시설 카드로; 근거 data/kdh/catalog.csv 자료생산기관).
 ④ build_units 세종 보건기관 매핑(값 있는 단위 우선) 3,588→3,606. ⑤ 설명서: 메뉴 탭 12→11, 지어낸 예시 문장(33.1%·180위) → 실제 강릉시 값, 심폐소생술 「갱신 중단」→「2025년 값 없음」, 박탈지수 2015·2020, 결과지표 제외 설명.
 ※ 이 항목 이전 기록의 「231」(순위 분모, 우울증상 231개 중 125개 등)은 중복 포함 수치다. 규칙: 문서 숫자는 단위를 붙이고, 예시도 실제 데이터 값만 쓴다.</li>
+  <li>[완료] <strong>참고문헌 번호(논문식 인용)</strong>(2026-09-24, 소유자 지시 “제시한 데이터 옆에 작은 번호로, 클릭하면 참고문헌처럼 바로 가거나 정보를 볼 수 있게”):
+scripts/build_refs.py → data/refs.json(참고문헌 25건 · 지표 174개의 원 통계표). <strong>번호는 REFS 목록 순서로 고정 — 새 출처는 맨 뒤에 추가</strong>(대시보드·사용설명서·정오표 공통 번호). build_dashboard.py 가 매번 먼저 실행.
+대시보드: Cite.jsx(숫자·카드 제목 옆 [n] → 출처 카드: 지표의 원 통계표·KOSIS 원표 링크·기관·통계명·갱신일·원문 링크·「참고문헌 목록 ↓」) + RefList.jsx(모든 화면 하단 참고문헌, id=ref-n). 해시 라우팅이라 #ref-n 대신 scrollIntoView.
+  김동현 DB 경유 115개는 카탈로그 자료생산기관·통계명을 지표별로 표기(113개 매칭, 2개는 사망원인통계). 390px 가로 스크롤 없음·출처 카드 화면 안 배치 확인.
+사용설명서: deck.mjs 문자열의 {r:key} → 파란 위첨자 [n] + 참고문헌 쪽(64·65쪽) 링크, 참고문헌 쪽 항목은 원문 URL 링크. 66쪽. PDF 내부 링크 59개·외부 28개 확인. REF_SLIDE_FIRST 불일치 시 생성 중단.
+정오표 md: 위첨자 번호 → 원문 링크 + 문서 끝 참고문헌. 작업 중 <strong>제목 지표 수 오류 발견·수정</strong>: 「지역사회건강조사 52개」(암검진·일반검진 섞임) → 자료원별 171 = 41+115+7+4+3+1.</li>
   <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>
