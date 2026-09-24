@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import Cite from "./Cite";
-import { KHEPI, KHEPI_INDS, val, fmt, label, RBY, SGG_ALL, SGG_BY_SIDO, SIDOS, nationalMedian, ranked, quantile } from "../data";
+import { KHEPI, KHEPI_INDS, val, fmt, label, RBY, SGG_ALL, SGG_BY_SIDO, SIDOS, nationalMedian, ranked, quantile, natPool, sidoPoolOf } from "../data";
 import ExportButtons from "./ExportButtons";
 import { saveCsvRows } from "../export";
 
@@ -16,10 +16,10 @@ const score = (rate) => (rate == null ? null : rate >= 95 ? 8 : rate >= 90 ? 7 :
 export default function KpiView({ item, sel, onPick }) {
   const isSgg = sel.l === "sgg";
   const sidoCode = isSgg ? sel.p : sel.c;
-  const pool = SGG_ALL, sidoPool = SGG_BY_SIDO[sidoCode] || [];
   const rows = useMemo(() => KHEPI_INDS.map((k) => {
     if (!k.ind) return { ...k, missing: true };
     const ind = k.ind;
+    const pool = natPool(ind), sidoPool = sidoPoolOf(ind, sidoCode);   // 지역사회건강조사는 조사 단위 258곳 기준
     const ys = ind.years.filter((y) => val(ind, item, y, sel.c) != null);
     const last = ys[ys.length - 1];
     const last3 = ys.slice(-3);

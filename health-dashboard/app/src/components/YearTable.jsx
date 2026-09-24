@@ -1,14 +1,14 @@
-import { fmt, val, ranked, SGG_ALL, SIDOS, SGG_BY_SIDO, RBY } from "../data";
+import { fmt, val, ranked, SIDOS, RBY, natPool, sidoPoolOf } from "../data";
 
 /* 연도별 추이표: 수치 · 전국 순위 · 시도 내 순위 · 증감량 · 증감률 (CIAT 패널 5 재현) */
 export default function YearTable({ ind, item, sel, year, onYear }) {
   const isSgg = sel.l === "sgg";
-  const natPool = isSgg ? SGG_ALL : SIDOS;
-  const sidoPool = isSgg ? SGG_BY_SIDO[sel.p] : null;
+  const nPool = isSgg ? natPool(ind) : SIDOS;          // 지역사회건강조사는 조사 단위 258곳
+  const sidoPool = isSgg ? sidoPoolOf(ind, sel.p) : null;
   let prev = null;
   const rows = ind.years.map((y) => {
     const v = val(ind, item, y, sel.c);
-    const nat = ranked(ind, item, y, natPool);
+    const nat = ranked(ind, item, y, nPool);
     const nr = nat.findIndex((x) => x.r.c === sel.c) + 1;
     const sd = sidoPool ? ranked(ind, item, y, sidoPool) : null;
     const sr = sd ? sd.findIndex((x) => x.r.c === sel.c) + 1 : null;

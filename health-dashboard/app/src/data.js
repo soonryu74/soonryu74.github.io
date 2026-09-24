@@ -186,9 +186,10 @@ export function latestYear(ind, item, code) {
 }
 
 /** 비교 집단: 시군구 선택 시 전국/시도 내 시군구, 시도 선택 시 17개 시도 */
-export function poolFor(sel, scope) {
+export function poolFor(sel, scope, ind = null) {
   if (!sel) return SIDOS;
   if (sel.l === "sido") return SIDOS;
+  if (ind && isSurvey(ind)) return scope === "sido" ? sidoPoolOf(ind, sel.p) : HC_POOL;
   return scope === "sido" ? SGG_BY_SIDO[sel.p] : SGG_ALL;
 }
 
@@ -308,7 +309,7 @@ export function boxStats(vals) {
 
 /** 전국 기준값: 전 시군구 중앙값 */
 export function nationalMedian(ind, item, year) {
-  return median(SGG_ALL.map((r) => val(ind, item, year, r.c)));
+  return median(natPool(ind).map((r) => val(ind, item, year, r.c)));
 }
 
 /** 7단계 분위 경계 (단계구분도용) */
@@ -454,6 +455,21 @@ export const HC_POOL = CHS25.units.filter((u) => RBY.has(u.c)).map((u) => {
   const off = UNIT_BY_CODE.get(u.c)?.chs;
   return { ...RBY.get(u.c), hc: off || `${u.n}보건소`, hc25: u.n };
 });
+
+/* ── 지역사회건강조사 지표의 전국 기준 = 258개 조사 단위(보건소) ──
+   질병관리청은 지역사회건강조사를 「시·군·구별 약 900명 × 258개 지역」으로 조사하고 「전국 대푯값은 시·군·구 중앙값」으로 공표한다.
+   이때 시·군·구는 행정 시군구 229곳이 아니라 조사 단위 258곳(일반구가 있는 시는 보건소별)이다.
+   검증(2026-09-24): 2024·2025 담배제품 현재사용률·고위험음주율·비만율·걷기 실천율 공식 중앙값 8개 중 258곳 기준 7개 일치(1개 0.1 차),
+   229곳 기준은 6개 불일치 → 지역사회건강조사 지표는 순위·중앙값·백분위·지도 분위를 258곳으로 계산한다.
+   사망률·검진·인구 등 시군구 단위 자료와 지역 프로파일 종합 순위는 시군구 229곳을 유지한다. */
+export const isSurvey = (ind) => indRef(ind)?.refs?.[0] === "chs";
+const sidoOfUnit = (r) => (r.l === "sub" ? RBY.get(r.p)?.p : r.p);
+export const HC_BY_SIDO = {};
+HC_POOL.forEach((u) => (HC_BY_SIDO[sidoOfUnit(u)] ??= []).push(u));
+export const natPool = (ind) => (isSurvey(ind) ? HC_POOL : SGG_ALL);
+export const sidoPoolOf = (ind, sidoCode) => (isSurvey(ind) ? HC_BY_SIDO[sidoCode] || [] : SGG_BY_SIDO[sidoCode] || []);
+/** 선택한 시(시 전체)가 여러 보건소로 조사되는 경우 그 보건소들 */
+export const unitsOfCity = (code) => HC_POOL.filter((u) => u.l === "sub" && u.p === code);
 
 /* ===== 만성질환 예방·관리 지식베이스 ===== */
 import NCD_RAW from "../../data/ncd.json";

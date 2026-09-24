@@ -7,7 +7,7 @@ export default function GapBoxplot({ ind, item, year, sel, scope, setTip }) {
   const svgRef = useRef(null);
   const W = 560, H = 260, L = 40, R = 16, T = 14, B = 28;
   const ys = ind.years;
-  const pool = poolFor(sel, scope);
+  const pool = poolFor(sel, scope, ind);
   const stats = ys.map((y) => boxStats(pool.map((r) => val(ind, item, y, r.c))));
   // 연도별 최댓값·최솟값 지역명
   const ext = ys.map((y) => {

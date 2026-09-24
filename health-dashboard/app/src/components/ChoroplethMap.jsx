@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { feature, mesh, merge } from "topojson-client";
 import { geoMercator, geoPath, geoCentroid, geoArea } from "d3-geo";
-import { DS, RBY, fmt, val, classBreaks, classOf, sidoOf, SGG_ALL, SIDOS } from "../data";
+import { DS, RBY, fmt, val, classBreaks, classOf, sidoOf, SGG_ALL, SIDOS, natPool, sidoPoolOf } from "../data";
 import { clientXY } from "./svgUtil";
 
 export const TOPO = DS.geo.topo;
@@ -130,7 +130,7 @@ export default function ChoroplethMap({ ind, item, year, sel, scope, onSelect, s
   const resolved = feats.map(resolve);
   // 분위 경계는 화면 범위(전국/시도)의 시군구 값 기준
   const breaks = useMemo(() => {
-    const pool = isSidoAll ? SIDOS : scope === "sido" ? SGG_ALL.filter((r) => r.p === sidoCode) : SGG_ALL;
+    const pool = isSidoAll ? SIDOS : scope === "sido" ? sidoPoolOf(ind, sidoCode) : natPool(ind);   // 지역사회건강조사는 조사 단위 258곳
     return classBreaks(pool.map((r) => val(ind, item, year, r.c)));
   }, [ind, item, year, isSidoAll, scope, sidoCode]);
 

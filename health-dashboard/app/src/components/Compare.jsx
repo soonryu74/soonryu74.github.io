@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import Cite from "./Cite";
-import { INDICATORS, DOMAINS_ALL as DOMAINS, SIDOS, SGG_BY_SIDO, SGG_ALL, RBY, fmt, val, nationalMedian, ranked, percentile, latestYear, label, betterCmp } from "../data";
+import { INDICATORS, DOMAINS_ALL as DOMAINS, SIDOS, SGG_BY_SIDO, SGG_ALL, RBY, fmt, val, nationalMedian, ranked, percentile, latestYear, label, betterCmp , natPool } from "../data";
 import { pathOf, nearestIndex, clientXY, Gridlines, XAxis } from "./svgUtil";
 import ExportButtons from "./ExportButtons";
 
@@ -98,7 +98,7 @@ function MultiTrend({ ind, item, year, codes, setTip }) {
 
 /* 선택 연도 막대 비교 + 전국 순위 */
 function YearBars({ ind, item, year, codes }) {
-  const natRank = ranked(ind, item, year, SGG_ALL);
+  const natRank = ranked(ind, item, year, natPool(ind));
   const sidoRank = ranked(ind, item, year, SIDOS);
   const rows = codes.map((c, k) => {
     const v = valueOf(ind, item, year, c);
@@ -159,7 +159,7 @@ function YearCompareTable({ ind, item, year, codes, onYear }) {
 function AllIndicatorTable({ item, year, codes, onPick }) {
   const rows = useMemo(() => INDICATORS.map((ind) => {
     const y = ind.years.includes(year) ? year : ind.years[ind.years.length - 1];
-    const pool = ranked(ind, item, y, SGG_ALL).map((x) => x.v);
+    const pool = ranked(ind, item, y, natPool(ind)).map((x) => x.v);
     const cells = codes.map((c) => {
       const v = valueOf(ind, item, y, c);
       const pct = c === NAT || ind.bad == null ? null : percentile(ind, v, pool);

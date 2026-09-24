@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"사용설명서 v1 · 대시보드 정오표","url":"/health-dashboard/docs/%EC%82%AC%EC%9A%A9%EC%84%A4%EB%AA%85%EC%84%9C_%EC%A0%95%EC%98%A4%ED%91%9C_v1.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=17b9204bab35e8466bfcbaa25c2c62fa5e984f11">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2756707bb42a64e948482c6661f1df5bac863b24">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -70,7 +70,7 @@
       <td><strong>대시보드 데이터</strong> + 설명서 5·6·8·22·24·46쪽</td>
       <td>시군구 <strong>231개</strong></td>
       <td>229개. 제주시·서귀포시 안의 보건소 2곳(KOSIS 코드 01603 「제주」, 01601 「서귀포」 — 영문명 Jeju-si Jeju, Seogwipo-si Seogwipo)<sup><a href="https://chs.kdca.go.kr/chs/stats/statsMain.do">[1]</a></sup>이 시군구로 분류되어 제주가 두 번 들어갔다</td>
-      <td><code class="language-plaintext highlighter-rouge">build_dataset.py</code> 분류 수정. 전국 시군구 순위·중앙값·산점도·핫스팟의 분모가 229로 바로잡힘. 값은 한 셀도 바뀌지 않음</td>
+      <td><code class="language-plaintext highlighter-rouge">build_dataset.py</code> 분류 수정. 전국 시군구 목록의 중복 제거. 값은 한 셀도 바뀌지 않음(지역사회건강조사 지표의 전국 기준은 14번 참고)</td>
     </tr>
     <tr>
       <td>2</td>
@@ -105,7 +105,7 @@
       <td>설명서 22쪽</td>
       <td>예시 「비만율 33.1%로 중앙값보다 3%p 높고 231곳 중 180위」</td>
       <td>33.1은 2025년 중앙값 35.4보다 낮아 문장 자체가 모순. 실제 값이 아닌 지어낸 예시였다</td>
-      <td>실제 값으로 교체: 강릉시 38.0%, 중앙값 35.4%, 2.6%p 높음, 229곳 중 170위(화면 값과 대조 완료)</td>
+      <td>실제 값으로 교체: 강릉시 38.0%, 중앙값 35.4%, 2.6%p 높음, 조사 단위 258곳 중 193위(14번 반영 후 화면 값과 대조 완료)</td>
     </tr>
     <tr>
       <td>7</td>
@@ -155,6 +155,13 @@
       <td>「지역사회건강조사 <strong>52개</strong> 지표」</td>
       <td>41개. 결과지표가 아닌 지표를 모두 지역사회건강조사로 세어 국가암검진 7개·일반검진 4개가 섞였다(참고문헌 번호 작업 중 발견)</td>
       <td>자료원별로 따로 세도록 수정: 지표 171개 = 지역사회건강조사 41 + 결과·환경 DB 115 + 국가암검진 7 + 일반검진 4 + 건강수명 3 + 박탈지수 1</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td><strong>대시보드 계산 기준</strong> + 설명서 8·22·24·26·46쪽</td>
+      <td>지역사회건강조사 지표의 전국 순위·중앙값·백분위를 <strong>시군구 229곳</strong>으로 계산(1번 수정 뒤 「229가 기준 분모」라고 적음)</td>
+      <td>소유자 지적: 지역사회건강조사는 2025년 <strong>258개 보건소</strong>. 질병관리청은 「시·군·구별 약 900명 × 258개 지역」으로 조사하고 「전국 대푯값은 시·군·구 중앙값」으로 공표한다<sup><a href="https://www.korea.kr/briefing/pressReleaseView.do?newsId=156745804">[2]</a></sup>. 2024·2025 공표 중앙값 8개(담배제품 현재사용률·고위험음주율·비만율·걷기 실천율)와 대조하니 258곳 기준은 7개 일치·1개 0.1 차, 229곳 기준은 6개 불일치</td>
+      <td>지역사회건강조사 지표는 순위·중앙값·백분위·지도 분위·상자그림·연도표·비교·성과지표·연관지표를 <strong>조사 단위 258곳</strong>으로 계산. 보건소 여러 곳으로 조사되는 시(수원시 등)는 시 전체 순위 없이 보건소별로 안내. 사망률 등 시군구 자료와 지역 프로파일 종합 순위는 229곳 유지. 예시 문장은 「조사 단위 258곳 중 193위」로 정정</td>
     </tr>
   </tbody>
 </table>

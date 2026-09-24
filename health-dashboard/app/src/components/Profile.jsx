@@ -106,7 +106,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
       <div className="card prof-head">
         <div>
           <div className="prof-name">{label(sel)}</div>
-          <div className="desc">{poolName} 기준 백분위(높을수록 양호) · {smoothNote} · 순위 산정 지표 {scored.length}개</div>
+          <div className="desc">{poolName} 기준 백분위(높을수록 양호) · {smoothNote} · 순위 산정 지표 {scored.length}개 · 종합 순위는 여러 자료를 합치므로 행정 시군구 단위로 비교합니다</div>
           <div className="badgesrow">
             {me?.grade && <span className={`gradebadge g-${me.grade}`}>{me.grade}</span>}
             {me?.overallRank && <span className="subchip">{poolName} <b>{me.overallRank}위</b> / {me.n}</span>}
