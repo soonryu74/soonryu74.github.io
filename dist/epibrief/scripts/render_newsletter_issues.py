@@ -19,9 +19,26 @@ try:
     _CFG = json.load(open(_CFG_PATH, encoding="utf-8"))
 except Exception:
     _CFG = {}
-BASE      = (_CFG.get("baseUrl") or "https://epibrief.github.io").rstrip("/")
+BASE      = (_CFG.get("baseUrl") or "https://soonryu74.github.io/newsletter").rstrip("/")
 SITE      = BASE + "/issues/"          # 메일에서 이미지를 불러올 주소
 SUBSCRIBE = BASE + "/subscribe.html"   # 구독 신청 페이지
+CREDIT    = _CFG.get("credit") or {"org": "지음웍스", "url": "https://jieumworks.com", "urlLabel": "jieumworks.com", "date": "2026년 9월"}
+
+def credit_html():
+    """제작 크레딧. 문구·날짜는 site-config.json 의 credit 에서만 바꾼다. 발간호·목록·credit.js 가 모두 이 값을 쓴다."""
+    return (f'<footer class="site-credit">기획·제작 {html.escape(CREDIT["org"])} · '
+            f'<a href="{html.escape(CREDIT["url"])}" target="_blank" rel="noopener">{html.escape(CREDIT.get("urlLabel") or CREDIT["url"])}</a> · '
+            f'{html.escape(CREDIT["date"])}</footer>')
+
+def write_credit_js():
+    """index.html · subscribe.html 이 쓰는 credit.js (site-config.json 에서 생성되는 파일이므로 직접 고치지 말 것)."""
+    js = ("/* 자동 생성 파일 — scripts/render_newsletter_issues.py 가 newsletter/site-config.json 의 credit 로 만듭니다. 직접 고치지 마세요. */\n"
+          "(function(){var C=" + json.dumps(CREDIT, ensure_ascii=False) + ";"
+          "function esc(s){return String(s).replace(/[&<>\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c];});}"
+          "function put(){var el=document.getElementById('siteCredit');if(!el){el=document.createElement('footer');el.id='siteCredit';document.body.appendChild(el);}"
+          "el.className='site-credit';el.innerHTML='기획·제작 '+esc(C.org)+' · <a href=\"'+esc(C.url)+'\" target=\"_blank\" rel=\"noopener\">'+esc(C.urlLabel||C.url)+'</a> · '+esc(C.date);}"
+          "if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',put);else put();})();\n")
+    open(os.path.join(ROOT, "newsletter", "credit.js"), "w", encoding="utf-8").write(js)
 
 KINDS = {
     "outbreak": {"name": "감염병 발생동향", "sumTitle": "목차",
@@ -408,6 +425,7 @@ def page(data, others):
 </nav>
 
 <div class="paperwrap">{paper(data)}</div>
+{credit_html()}
 <div class="toast" id="toast"></div>
 
 <script type="application/json" id="issue-data">{json.dumps(data, ensure_ascii=False)}</script>
@@ -464,6 +482,7 @@ def index_page(rows):
 <title>발간한 뉴스레터</title>
 <meta name="description" content="뉴스레터 메이커로 발간한 호 목록. 감염병 발생동향, 사회 대응(PHSM), 만성질환, 기후·건강.">
 {FONTS}
+<link rel="stylesheet" href="../paper.css">
 <style>
  :root{{ --ink:#191f28; --muted:#6d7885; --line:#dde2e9; }}
  body{{ margin:0; background:#eef1f5; color:var(--ink);
@@ -500,6 +519,7 @@ def index_page(rows):
   {cards}
   <p class="sub" id="listEmpty" hidden>아직 이 뉴스레터의 다른 호가 없습니다. 이번 호가 창간호입니다.</p>
 </div>
+{credit_html()}
 <script>
   /* ?series=phsm 처럼 열면 그 뉴스레터만 보여 줍니다 (QR로 들어온 경우) */
   var NAMES = {{ outbreak:'전 세계 감염병 발생 동향', phsm:'감염병 사회 대응(PHSM) 분과위원회',
@@ -524,6 +544,7 @@ def index_page(rows):
 
 def main():
     os.makedirs(ISSUES, exist_ok=True)
+    write_credit_js()
     files = sorted(glob.glob(os.path.join(SAMPLES, "*.json")))
     metas = []
     for path in files:

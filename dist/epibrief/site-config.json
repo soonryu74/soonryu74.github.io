@@ -1,6 +1,13 @@
 {
- "brand": "epibrief",
- "brandKo": "보건 브리프",
- "baseUrl": "https://epibrief.github.io",
- "note": "주소를 옮기면 baseUrl 한 줄만 바꾸면 됩니다. 예: https://epibrief.github.io"
+  "brand": "epibrief",
+  "brandKo": "보건 브리프",
+  "baseUrl": "https://soonryu74.github.io/newsletter",
+  "note": "주소를 옮기면 baseUrl 한 줄만 바꾸면 됩니다. 예: https://epibrief.github.io",
+  "credit": {
+    "org": "지음웍스",
+    "url": "https://jieumworks.com",
+    "urlLabel": "jieumworks.com",
+    "date": "2026년 9월",
+    "note": "제작 크레딧. 날짜·문구를 바꾸면 scripts/render_newsletter_issues.py 를 다시 실행해 발간호와 credit.js 를 갱신한다."
+  }
 }
