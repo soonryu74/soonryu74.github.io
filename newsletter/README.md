@@ -153,3 +153,10 @@ python3 scripts/render_newsletter_issues.py
 
 제목·출처·날짜·링크와 짧은 발췌만 저장합니다. 원문 전체는 저장하지 않으며,
 뉴스레터에는 항상 원문 링크가 각주로 붙습니다.
+
+## 제작 크레딧
+
+모든 페이지 맨 아래에 「기획·제작 지음웍스 · jieumworks.com · 2026년 9월」이 붙습니다.
+문구·날짜는 `site-config.json`의 `credit` 한 곳에서만 바꾸고, `scripts/render_newsletter_issues.py`를
+다시 실행하면 발간호·발간 목록·`credit.js`(홈·구독 신청 페이지용)가 함께 갱신됩니다.
+스타일은 `paper.css`의 `.site-credit` 하나입니다.
