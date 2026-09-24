@@ -3,6 +3,9 @@
   var root = document.documentElement;
   try { var fs = localStorage.getItem('ebn_fs'); if (fs) root.setAttribute('data-fs', fs); } catch (e) {}
 
+  /* 제작 크레딧 — 문구·날짜는 여기서만 바꾼다 (모든 페이지 맨 아래, 인쇄에도 표시) */
+  var CREDIT = { org: '지음웍스', url: 'https://jieumworks.com', label: 'jieumworks.com', date: '2026년 9월' };
+
   var NAV = [
     ['index.html', '홈'],
     ['gyeollon.html', '핵심 결론'],
@@ -55,10 +58,12 @@
       '<div class="footer-links">' + NAV.map(function (n) { return '<a href="' + n[0] + '">' + n[1] + '</a>'; }).join('') + '</div>' +
       '<div class="footer-note"><b>면책</b> 본 사이트는 공개된 임상연구·공식 기관 자료를 정리한 일반 건강 정보이며 의료법상 진단·처방·의료행위가 아닙니다. 개인의 건강 상태·복용 약 전체를 반영하지 못하므로 어떤 영양제든 시작·중단 전 의사·약사와 상의하세요. 이 정보를 근거로 한 판단과 결과의 책임은 이용자에게 있습니다. 내용은 전문가 감수 전이며 오류가 있을 수 있습니다(발견 시 제보 바랍니다). ' +
       '인용 연구는 각 항목의 원문 링크(PubMed·학술지·NIH·식약처)를 통해 직접 확인할 수 있습니다. ' +
-      '이해상충: 현재 제품 판매·광고·협찬이 없으며, 향후 판매를 시작하면 해당 페이지에 명시합니다.</div>' +
-      '<div class="foot-credit">© 2026 근거영양 · 기획·제작 지음웍스 <a href="https://jieumworks.com" target="_blank" rel="noopener">jieumworks.com</a> · 2026년 9월</div>' +
-      '</div></footer>';
+      '이해상충: 현재 제품 판매·광고·협찬이 없으며, 향후 판매를 시작하면 해당 페이지에 명시합니다. © 2026 근거영양.</div>' +
+      '</div></footer>' +
+      '<footer class="site-credit">기획·제작 ' + esc(CREDIT.org) + ' · <a href="' + esc(CREDIT.url) + '" target="_blank" rel="noopener">' + esc(CREDIT.label) + '</a> · ' + esc(CREDIT.date) + '</footer>';
   }
+
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   function mount() {
     var h = document.getElementById('site-header');
