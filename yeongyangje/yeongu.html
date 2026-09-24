@@ -37,15 +37,18 @@
   <div class="disclaimer">연구 수치는 원문 기준이며 요약·번역 오류 가능성이 있습니다. 반드시 원문 링크로 확인하세요. 본 DB는 정보 제공 목적이며 진단·처방이 아닙니다.</div>
 </main>
 <div id="site-footer"></div>
+<script src="data/glossary.js"></script>
 <script src="assets/app.js"></script>
 <script src="data/ingredients.js"></script>
 <script src="data/studies.js"></script>
 <script>
 (function(){
   var S = window.EBN_STUDIES || [], I = window.EBN_INGREDIENTS || {}, esc = EBN.esc;
-  var OUT = { cancer:'암', cvd:'심혈관', mortality:'사망률', cognition:'인지·치매', bone:'뼈·골절', eye:'눈', immune:'면역·감염', metabolic:'대사·당뇨', mood:'기분·우울', pregnancy:'임신', safety:'안전성', aging:'노화', deficiency:'결핍 실태', muscle:'근육', sleep:'수면', gut:'장', skin:'피부', joint:'관절', lipid:'지질', bp:'혈압', pain:'통증' };
+  var OUT = { cancer:'암', cvd:'심혈관', mortality:'사망률', cognition:'인지·치매', bone:'뼈·골절', eye:'눈', immune:'면역·감염', metabolic:'대사·당뇨', mood:'기분·우울', pregnancy:'임신', safety:'안전성', aging:'노화', deficiency:'결핍 실태', muscle:'근육', sleep:'수면', gut:'장', skin:'피부', joint:'관절', lipid:'지질', bp:'혈압', pain:'통증', mental:'정신질환', fatigue:'피로', other:'기타' };
   var DES = { RCT:'RCT', META:'메타분석', COHORT:'코호트', REVIEW:'리뷰', GUIDE:'권고' };
-  var ingName = function(id){ return (I[id] && I[id].name) || id; };
+  var XN={niacin:'니아신(고용량)',ortho:'분자교정 요법',glutathione:'글루타치온 주사',fursultiamine:'푸르설티아민(마늘주사)',placenta:'태반 주사',mvi:'종합비타민 수액',ala:'티옥트산(주사·경구)'};
+  var ingName = function(id){ return (I[id] && I[id].name) || XN[id] || id; };
+  var ingHref = function(id){ return I[id] ? 'seongbun.html#'+id : 'goyongryang.html'; };
 
   var ingSel = document.getElementById('f-ing'), outSel = document.getElementById('f-out');
   var ings = {}, outs = {};
@@ -86,7 +89,7 @@
         '<div class="finding">'+esc(s.finding)+'</div>'+
         '<div>'+(s.effect||[]).map(function(e){return '<span class="effect">'+esc(e)+'</span>';}).join('')+'</div>'+
         (s.caveat?'<div class="caveat">한계: '+esc(s.caveat)+'</div>':'')+
-        '<div class="meta" style="margin-top:8px"><span>성분: '+(s.ing||[]).map(function(i){return '<a href="seongbun.html#'+esc(i)+'">'+esc(ingName(i))+'</a>';}).join(', ')+'</span><span>결과: '+(s.outcome||[]).map(function(o){return esc(OUT[o]||o);}).join(', ')+'</span><span>갱신 '+esc(s.updated)+'</span></div>'+
+        '<div class="meta" style="margin-top:8px"><span>성분: '+(s.ing||[]).map(function(i){return '<a href="'+ingHref(i)+'">'+esc(ingName(i))+'</a>';}).join(', ')+'</span><span>결과: '+(s.outcome||[]).map(function(o){return esc(OUT[o]||o);}).join(', ')+'</span><span>갱신 '+esc(s.updated)+'</span></div>'+
         '<div class="src">'+(s.urls||[]).map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener">원문 ↗</a>';}).join('')+'</div>'+
       '</article>';
     }).join('') || '<p class="count-line">조건에 맞는 연구가 없습니다.</p>';

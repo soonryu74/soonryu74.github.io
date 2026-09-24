@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고용량 요법 · 영양 주사 | 근거영양</title>
+<meta name="description" content="비타민 C 메가도스, 고용량 니아신·B6·비타민 D, 비타민 C 정맥주사, 백옥·마늘·신데렐라·태반 주사. 무엇을 주장하고, 큰 연구는 무엇을 찾았고, 국내 허가는 어디까지인지 출처와 함께.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head">
+    <h1>고용량 요법 · 영양 주사</h1>
+    <p>"많이 먹으면 더 좋다"는 생각은 1968년 라이너스 폴링의 '분자교정(오소몰레큘러)'에서 시작해 지금의 메가도스 비타민 C, 고용량 니아신, 클리닉 영양 주사까지 이어집니다. 이 페이지는 각 요법이 <b>무엇을 주장하는지</b>, <b>큰 연구가 무엇을 찾았는지</b>, <b>국내 허가가 어디까지인지</b>를 나눠 적습니다.</p>
+  </div>
+  <div class="toc"><b>차례</b><ol><li><a href="#why">왜 '더 많이'가 통하지 않는가</a></li><li><a href="#oral">경구 고용량 요법</a></li><li><a href="#iv">정맥·근육 주사 (클리닉 영양 주사)</a></li><li><a href="#faq">자주 듣는 주장과 답</a></li><li><a href="#history">분자교정의 역사와 검증</a></li><li><a href="#legal">허가 외 사용과 광고</a></li></ol></div>
+
+  <div class="section" id="why">
+    <h2 style="margin-top:0">1. 왜 '더 많이'가 통하지 않는가</h2>
+    <div id="why-box"></div>
+  </div>
+
+  <div class="section" id="oral">
+    <h2>2. 경구 고용량 요법</h2>
+    <p class="small">각 항목의 판정은 "그 용량으로 그 목적에 쓸 때"의 근거입니다. 성분 자체의 판정은 성분 카드를 보세요.</p>
+    <div id="oral-list"></div>
+  </div>
+
+  <div class="section" id="iv">
+    <h2>3. 정맥·근육 주사 — 클리닉 '영양 주사'</h2>
+    <p>주사제는 모두 <span class="stat-badge st-rx">전문의약품</span>입니다. 식약처가 허가한 효능·효과가 있고, 그 밖의 용도(피로·미백·다이어트 등)는 의사 재량의 <b>허가 외 사용</b>입니다. 허가 외 사용 자체는 불법이 아니지만, 그 효과를 광고하는 것은 의료법의 제한을 받습니다. 아래 표는 허가 문구와 광고 문구를 나란히 둡니다.</p>
+    <div class="table-scroll" id="iv-table"></div>
+    <div id="iv-cards"></div>
+  </div>
+
+  <div class="section" id="faq">
+    <h2>4. 자주 듣는 주장과 답</h2>
+    <p class="small">특정 인물·제품에 대한 평가가 아니라, 주장 유형별로 사람 대상 연구가 무엇을 찾았는지 적습니다.</p>
+    <div id="faq-list"></div>
+  </div>
+
+  <div class="section" id="history">
+    <h2>5. 분자교정(오소몰레큘러)의 역사와 검증</h2>
+    <div id="history-box"></div>
+  </div>
+
+  <div class="section" id="legal">
+    <h2>6. 허가 외 사용과 광고 — 소비자가 알아둘 것</h2>
+    <div id="legal-box"></div>
+  </div>
+
+  <div class="disclaimer" id="foot-note"></div>
+</main>
+<div id="site-footer"></div>
+<script src="data/glossary.js"></script>
+<script src="assets/app.js"></script>
+<script src="data/ingredients.js"></script>
+<script src="data/studies.js"></script>
+<script src="data/megadose.js"></script>
+<script>
+(function(){
+  var M=window.EBN_MEGA||{}, I=window.EBN_INGREDIENTS||{}, esc=EBN.esc, S={};
+  (window.EBN_STUDIES||[]).forEach(function(s){S[s.id]=s;});
+  function studyLinks(ids){ return (ids||[]).map(function(id){ var s=S[id]; if(!s) return '<span class="nosrc">출처 미확인: '+esc(id)+'</span>'; return '<a href="yeongu.html#'+esc(id)+'" title="'+esc(s.name)+'">'+esc(s.name.split(' — ')[0].split(' (')[0])+' '+esc(s.year)+'</a>'; }).join(' · '); }
+  document.getElementById('why-box').innerHTML=M.why||'';
+  document.getElementById('oral-list').innerHTML=(M.oral||[]).map(function(o){
+    var ing=o.ing&&I[o.ing];
+    return '<div class="ing" id="'+esc(o.id)+'"><h3 style="margin:0 0 6px">'+esc(o.name)+' <span class="small">'+esc(o.dose||'')+'</span></h3>'+
+      '<div style="margin:6px 0 10px"><span class="verdict '+esc(o.verdict)+'">'+esc(EBN.verdictLabel[o.verdict]||o.verdict)+'</span> <span class="grade '+esc(o.grade)+'" title="근거 등급">'+esc(o.grade)+'</span></div>'+
+      '<dl class="row"><dt>주장</dt><dd>'+esc(o.claim)+'</dd><dt>연구 결과</dt><dd>'+esc(o.evidence)+'</dd><dt>유해 근거</dt><dd>'+esc(o.harm||'보고된 것 없음')+'</dd><dt>상한</dt><dd>'+esc(o.ul||'—')+'</dd></dl>'+
+      '<p class="small" style="margin:8px 0 0">근거: '+studyLinks(o.studies)+(ing?' · <a href="seongbun.html#'+esc(o.ing)+'">'+esc(ing.name)+' 성분 카드</a>':'')+'</p></div>'; }).join('');
+  var GL={A:'근거 있음',B:'조건부',C:'약함',D:'효과 없음',X:'유해'};
+  document.getElementById('iv-table').innerHTML='<table><tr><th>주사</th><th>식약처 허가 효능·효과</th><th>클리닉 광고 용도</th><th>광고 용도 근거</th></tr>'+(M.iv||[]).map(function(v){
+    return '<tr><td><a href="#'+esc(v.id)+'">'+esc(v.name)+'</a></td><td>'+esc(v.approved)+(v.approvedSrc?' <a href="'+esc(v.approvedSrc)+'" target="_blank" rel="noopener">허가↗</a>':' <span class="nosrc">출처 미확인</span>')+'</td><td>'+(v.advertised||[]).map(function(a){return '<span class="pill">'+esc(a)+'</span>';}).join('')+'</td><td><span class="grade '+esc(v.grade)+'">'+esc(v.grade)+'</span> '+esc(GL[v.grade]||'')+'</td></tr>'; }).join('')+'</table>';
+  document.getElementById('iv-cards').innerHTML=(M.iv||[]).map(function(v){
+    return '<div class="ing" id="'+esc(v.id)+'"><h3 style="margin:0 0 4px">'+esc(v.name)+' <span class="small">'+esc(v.generic||'')+'</span></h3>'+
+      '<p class="small" style="margin:0 0 8px">대표 허가 제품: '+esc(v.example||'미확인')+'</p>'+
+      '<dl class="row"><dt>허가 효능</dt><dd>'+esc(v.approved)+'</dd><dt>광고 용도</dt><dd>'+esc((v.advertised||[]).join(' · '))+'</dd><dt>근거</dt><dd>'+esc(v.evidence)+'</dd><dt>이상반응</dt><dd>'+esc(v.risks||'—')+'</dd></dl>'+
+      '<p class="small" style="margin:8px 0 0">'+(v.evidenceSrc||[]).map(function(u,i){return '<a href="'+esc(u)+'" target="_blank" rel="noopener">근거'+(i+1)+' ↗</a>';}).join(' ')+(v.approvedSrc?' <a href="'+esc(v.approvedSrc)+'" target="_blank" rel="noopener">허가사항 ↗</a>':'')+'</p></div>'; }).join('');
+  document.getElementById('faq-list').innerHTML=(M.faq||[]).map(function(f){return '<details class="faq"><summary>'+esc(f.q)+'</summary><div class="faq-a">'+f.a+'</div></details>';}).join('');
+  document.getElementById('history-box').innerHTML=M.history||'';
+  document.getElementById('legal-box').innerHTML=M.legal||'';
+  document.getElementById('foot-note').innerHTML=M.foot||'';
+})();
+</script>
+</body>
+</html>

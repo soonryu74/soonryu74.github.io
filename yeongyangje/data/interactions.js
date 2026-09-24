@@ -34,8 +34,8 @@
 
   window.EBN_DRUG_IX = {
     multi: ext(CHELATE, {
-      warfarin: c('caution', '제품마다 비타민 K가 25~120 µg씩 들어 있어 바꾸면 INR이 흔들립니다. 같은 제품을 일정하게 유지하고, 바꿀 때는 INR을 다시 재세요.', WARF),
-      levodopa: c('caution', '들어 있는 철분이 레보도파와 결합해 파킨슨약 흡수를 떨어뜨립니다. 최소 2시간 간격.', SINEMET),
+      warfarin: c('caution', '제품마다 비타민 K 함량이 다르므로(0~120 µg) 바꾸면 INR이 흔들립니다. 같은 제품을 일정하게 유지하고, 바꿀 때는 INR을 다시 재세요.', [WARF, 'https://ods.od.nih.gov/factsheets/MVMS-HealthProfessional/']),
+      levodopa: c('caution', '들어 있는 철분이 레보도파와 결합해 파킨슨약 흡수를 떨어뜨립니다. 라벨은 시간을 명시하지 않으며 통상 2시간 분리를 권합니다.', SINEMET),
       chemo: c('caution', '비오틴 성분이 검사 수치를 왜곡할 수 있고, 항암 중 추가 항산화제는 권장되지 않습니다.', FDABIO)
     }),
     vitd: {
@@ -46,23 +46,21 @@
     },
     vita: {
       tetra: c('caution', '테트라사이클린과 고용량 레티놀을 함께 쓰면 두개내압이 올라가는 부작용(가성뇌종양)이 겹칠 수 있습니다.', DOXY),
-      warfarin: c('caution', '10,000 IU/일을 넘는 레티놀은 간독성과 응고인자 영향으로 INR을 올린다는 보고가 있습니다. 권장량 초과 장기 복용을 피하세요.', WARF),
-      chemo: c('caution', '레티노이드계 항암제와 겹치면 비타민 A 과잉 독성이 더해집니다.', '')
+      warfarin: c('caution', '고용량 레티놀 장기 복용은 간독성·응고 이상 사례 보고(드묾). 권장량 초과 장기 복용을 피하세요.', 'https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/')
     },
     vite: {
       warfarin: c('caution', '비타민 K 작용을 방해하고 혈소판도 억제합니다. 400 IU/일 초과는 피하고, 시작할 때 INR을 다시 재세요.', WARF),
-      doac: c('caution', '출혈 위험이 더해집니다. 400 IU/일 초과 고용량을 피하세요.', ELIQ),
-      antiplt: c('caution', '아스피린·클로피도그렐의 항혈소판 작용에 더해집니다. 고용량을 피하세요.', ''),
+      doac: c('caution', '출혈 위험이 더해집니다. 400 IU/일 초과 고용량을 피하세요.', 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/'),
+      antiplt: c('caution', '아스피린·클로피도그렐의 항혈소판 작용에 더해집니다. 고용량을 피하세요.', 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/'),
       statin: c('caution', '스타틴에 나이아신을 함께 쓰는 치료 중이라면, 고용량 항산화제가 좋은 콜레스테롤 상승 효과를 상쇄했습니다(HATS 시험).', HATS)
     },
     vitc: {
       statin: c('caution', '스타틴+나이아신 병용 치료 중에는 비타민 C 1,000 mg 같은 고용량 항산화제가 HDL 상승 반응을 막았습니다.', HATS),
-      warfarin: c('caution', '1 g/일을 넘는 초고용량에서 INR이 떨어졌다는 사례 보고가 있습니다. 용량을 바꿀 때 INR을 확인하세요.', ''),
-      chemo: c('caution', '항암·방사선 치료 중 고용량 항산화제는 치료 효과를 떨어뜨릴 우려가 있어 상용량을 넘기지 마세요.', '')
+      warfarin: c('caution', '1 g/일을 넘는 초고용량에서 INR이 떨어졌다는 사례 보고가 있습니다. 용량을 바꿀 때 INR을 확인하세요.', 'https://pubmed.ncbi.nlm.nih.gov/5108759/'),
+      chemo: c('caution', '항암·방사선 치료 중 고용량 항산화제는 치료 효과를 떨어뜨릴 우려가 있어 상용량을 넘기지 마세요.', 'https://academic.oup.com/jnci/article/100/11/773/895704')
     },
     vitk: {
-      warfarin: c('avoid', '와파린이 막는 바로 그 경로를 직접 되살립니다. 비타민 K 보충제를 새로 시작하지 마세요. 불가피하면 매일 같은 용량으로 고정하고 INR을 다시 맞춥니다.', WARF),
-      levo: c('caution', '기름 제형이 갑상선약 흡수에 영향을 줄 수 있어 4시간 간격을 권합니다(직접 근거는 미확인).', '')
+      warfarin: c('avoid', '와파린이 막는 바로 그 경로를 직접 되살립니다. 비타민 K 보충제를 새로 시작하지 마세요. 불가피하면 매일 같은 용량으로 고정하고 INR을 다시 맞춥니다.', WARF)
     },
     vitk2: {
       warfarin: c('avoid', 'MK-7도 같은 비타민 K입니다. 와파린 효과를 떨어뜨려 혈전 위험을 높이므로 병용 금지입니다.', WARF)
@@ -71,17 +69,15 @@
       immuno: c('caution', '류마티스에서 저용량 메토트렉세이트를 쓸 때는 오히려 병용이 표준입니다(엽산 5 mg 주 1회 또는 1 mg/일, 메토트렉세이트 먹는 날은 피함). 부작용은 줄고 약효는 유지됩니다.', 'https://sps.nhs.uk/articles/using-folic-acid-with-methotrexate-in-rheumatoid-arthritis/'),
       chemo: c('avoid', '고용량 항암 메토트렉세이트의 해독은 엽산이 아니라 류코보린입니다. 5-FU·카페시타빈은 엽산이 독성을 키웁니다. 다만 페메트렉시드는 엽산 400~1,000 µg 복용이 라벨상 필수이니, 반드시 종양내과 지시대로 하세요.', PEMET),
       aed: c('caution', '엽산이 페니토인 혈중농도를 떨어뜨려 발작 조절이 흔들릴 수 있습니다. 시작·중단 시 약물 농도를 재세요.', PHT),
-      ocp: c('caution', '경구피임약을 오래 쓰면 엽산 수치가 떨어질 수 있어 임신 계획 시 특히 보충이 필요합니다.', '')
+      ocp: c('caution', '경구피임약을 오래 쓰면 엽산 수치가 떨어질 수 있어 임신 계획 시 특히 보충이 필요합니다.', 'https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/')
     },
     b12: {
       metformin: c('caution', '메트포르민이 회장에서 B12 흡수를 방해합니다. 미국당뇨병학회는 1,500 mg 이상 또는 4~5년 이상 복용자, 빈혈·손발 저림이 있는 경우 정기 B12 검사를 권합니다.', ADA),
       ppi: c('caution', '위산이 줄어 음식 속 B12를 떼어내지 못합니다. 오메프라졸 라벨은 3년 넘는 장기 사용 시 흡수 장애 가능성을 명시합니다.', 'https://www.accessdata.fda.gov/drugsatfda_docs/label/2023/022056s026lbl.pdf'),
-      chemo: c('caution', '페메트렉시드 치료 중에는 B12 1 mg 근육주사가 라벨상 필수(첫 투여 1주 전, 이후 3주기마다)입니다. 임의 중단하지 마세요.', PEMET),
-      gout: c('caution', '콜히친을 오래 먹으면 회장에서 B12 흡수가 떨어질 수 있어 확인이 필요합니다.', '')
+      chemo: c('caution', '페메트렉시드 치료 중에는 B12 1 mg 근육주사가 라벨상 필수(첫 투여 1주 전, 이후 3주기마다)입니다. 임의 중단하지 마세요.', PEMET)
     },
     b6: {
-      levodopa: c('caution', '카비도파가 함께 든 제품(시네메트 등)이면 B6를 먹어도 됩니다. 라벨에 명시돼 있습니다. 반대로 카비도파 없는 레보도파 단독 제제라면 B6 10~25 mg만으로도 약효가 사라지므로 금기입니다.', SINEMET),
-      aed: c('caution', '200 mg 이상 고용량 B6가 페니토인 농도를 떨어뜨릴 수 있습니다(직접 근거는 미확인).', '')
+      levodopa: c('caution', '카비도파가 함께 든 제품(시네메트 등)이면 B6를 먹어도 됩니다. 라벨에 명시돼 있습니다. 반대로 카비도파 없는 레보도파 단독 제제라면 B6 10~25 mg만으로도 약효가 사라지므로 금기입니다.', SINEMET)
     },
     biotin: {
       antiplt: c('caution', '검사 왜곡 문제입니다. 트로포닌이 거짓으로 낮게 나와 심근경색을 놓친 사망 사례가 FDA에 보고됐습니다. 채혈 전 최소 2~3일 중단하세요.', FDABIO),
@@ -91,58 +87,56 @@
     calcium: ext(CHELATE, {
       bisphos: c('caution', '알렌드로네이트 흡수를 막습니다. 골다공증약은 기상 직후 물만으로, 최소 30분 뒤 식사. 칼슘은 점심·저녁으로 옮기세요. 단 데노수맙은 저칼슘혈증 예방을 위해 칼슘 1,000 mg + 비타민 D 400 IU 병용이 필요합니다.', [ALEN, FDADEN]),
       diuretic: c('caution', '티아지드가 소변 칼슘 배설을 줄여 고칼슘혈증이 올 수 있습니다. 혈청 칼슘을 확인하세요.', HCTZ),
-      ppi: c('caution', '탄산칼슘은 위산이 있어야 녹습니다. 위산억제제를 먹는다면 구연산칼슘으로 바꾸세요.', FDAPPI),
+      ppi: c('caution', '탄산칼슘은 위산이 있어야 녹습니다. 위산억제제를 먹는다면 구연산칼슘으로 바꾸세요.', 'https://pubmed.ncbi.nlm.nih.gov/4000241/'),
       steroid: c('caution', '오히려 병용이 권장됩니다. 미국류마티스학회는 스테로이드 장기 복용자에게 칼슘 1,000~1,200 mg/일을 권합니다.', ACR),
-      aed: c('caution', '탄산칼슘·제산제가 페니토인 흡수를 줄입니다. 2시간 간격.', PHT)
+      aed: c('caution', '탄산칼슘·제산제가 페니토인 흡수를 줄입니다. 라벨: 같은 시간대에 복용하지 말 것(2~3시간 분리 관행).', PHT)
     }),
     magnesium: ext(CHELATE, {
       ppi: c('caution', '위산억제제를 3개월 이상(대개 1년 넘게) 쓰면 저마그네슘혈증으로 경련·부정맥이 올 수 있습니다(FDA 경고). 이뇨제·디곡신을 함께 쓰면 특히 위험하고, 넷 중 하나는 보충만으로 교정되지 않아 약을 끊어야 합니다.', FDAPPI),
       diuretic: c('caution', '티아지드·루프 이뇨제는 마그네슘을 빼앗습니다. 마그네슘을 먼저 교정하지 않으면 칼륨 보충도 실패합니다. 반대로 신장 기능이 나쁘면 고마그네슘혈증 위험.', HCTZ),
-      aed: c('caution', '수산화마그네슘 제산제가 페니토인 흡수를 줄입니다. 2시간 간격.', PHT)
+      aed: c('caution', '수산화마그네슘 제산제가 페니토인 흡수를 줄입니다. 라벨: 같은 시간대에 복용하지 말 것(2~3시간 분리 관행).', PHT)
     }),
     zinc: ext(CHELATE, {
-      diuretic: c('caution', '티아지드가 소변으로 아연 배설을 늘려 결핍이 생길 수 있습니다(직접 근거는 미확인).', ''),
-      immuno: c('caution', '40 mg/일을 오래 넘기면 구리 결핍으로 빈혈·백혈구 감소가 오는데, 면역억제 상태에서는 더 위험합니다.', '')
+      diuretic: c('caution', '티아지드가 소변으로 아연 배설을 늘려 결핍이 생길 수 있습니다(직접 근거는 미확인).', 'https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/'),
+      immuno: c('caution', '40 mg/일을 오래 넘기면 구리 결핍으로 빈혈·백혈구 감소가 오는데, 면역억제 상태에서는 더 위험합니다.', 'https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/')
     }),
     iron: ext(CHELATE, {
-      levodopa: c('caution', '라벨에 명시돼 있습니다. 철염이 레보도파·카비도파와 결합해 약효를 떨어뜨립니다. 최소 2시간 간격.', SINEMET),
-      ppi: c('caution', '위산이 있어야 철이 흡수 가능한 형태로 바뀝니다. 위산억제제 복용 중이면 경구 철분제 반응이 나쁘고, 정맥 철을 고려해야 할 수 있습니다.', ''),
-      chemo: c('caution', '확인된 결핍이 아니면 피하세요. 항암 중 철 복용이 예후 악화와 연관됐다는 코호트가 있습니다.', '')
+      levodopa: c('caution', '라벨에 명시돼 있습니다. 철염이 레보도파·카비도파와 결합해 약효를 떨어뜨립니다. 라벨은 시간을 명시하지 않으며 통상 2시간 분리를 권합니다.', SINEMET),
+      ppi: c('caution', '위산이 있어야 철이 흡수 가능한 형태로 바뀝니다. 위산억제제 복용 중이면 경구 철분제 반응이 나쁘고, 정맥 철을 고려해야 할 수 있습니다.', 'https://pubmed.ncbi.nlm.nih.gov/21150767/'),
+      chemo: c('caution', '확인된 결핍이 아니면 피하세요. 항암 중 철 복용이 예후 악화와 연관됐다는 코호트가 있습니다.', 'https://pubmed.ncbi.nlm.nih.gov/31855498/')
     }),
     selenium: {
       statin: c('caution', '스타틴+나이아신 병용 치료에서 셀레늄이 포함된 항산화제 조합이 치료 효과를 상쇄했습니다.', HATS),
-      chemo: c('caution', '고용량 항산화제가 항암 효과를 떨어뜨릴 우려가 있습니다.', ''),
-      levo: c('caution', '셀레늄이 T4→T3 전환 효소에 관여해 갑상선 수치가 달라질 수 있습니다(직접 근거는 미확인).', '')
+      chemo: c('caution', '고용량 항산화제가 항암 효과를 떨어뜨릴 우려가 있습니다.', 'https://academic.oup.com/jnci/article/100/11/773/895704')
     },
     potassium: {
       acei_arb: c('avoid', '라벨 명시: 칼륨 보충제·칼륨 소금대체품 병용은 혈중 칼륨을 유의하게 올립니다. 의사 상담 없이 저염 소금(칼륨 대체염)을 쓰지 마세요.', LISIN),
       diuretic: c('caution', '스피로노락톤 라벨은 "시작 시 칼륨 보충을 중단하라"고 지시합니다. 반대로 티아지드·루프 이뇨제는 칼륨을 빼앗지만, ARB 복합제라면 자가 보충 금지입니다.', [SPIRO, HCTZ]),
       immuno: c('avoid', '사이클로스포린·타크로리무스 자체가 고칼륨혈증을 일으킵니다. 라벨이 칼륨보존이뇨제 병용 금지와 고칼륨 식이 주의를 명시합니다.', [CSA, TAC]),
-      sglt2: c('caution', '신기능이 떨어졌거나 ARB를 함께 쓰면 고칼륨혈증 위험이 더해집니다.', '')
+      sglt2: c('caution', 'SGLT2 억제제 자체는 고칼륨혈증 위험을 낮추지만, 신기능 저하·ARB 병용 상태라면 칼륨 보충 전 검사가 필요합니다.', 'https://www.ahajournals.org/doi/10.1161/CIRCULATIONAHA.121.057736')
     },
     omega3: {
       warfarin: c('caution', '이론적으로 출혈 위험이 더해지지만, RCT 11건 12만 명 메타분석에서 출혈 증가는 없었습니다. 4 g/일 이상 고용량일 때만 INR·출혈 징후를 살피세요.', OM3B),
-      doac: c('caution', '고순도 EPA 4 g/일에서 출혈 상대위험이 약 50% 늘었습니다(절대 +0.6%). 항혈전제와 함께라면 하루 1 g 이하로 유지하세요.', OM3B),
+      doac: c('caution', '출혈 신호는 정제 EPA 4 g/일에서만(상대 +50%, 절대 +0.6%). 항혈전제 병용 시 통상 용량(1~2 g)은 문제 없었고 고용량은 의사와 상의하세요.', OM3B),
       antiplt: c('caution', '아스피린·클로피도그렐과 겹치면 출혈 위험이 더해집니다. 고용량을 피하세요.', OM3B),
-      ssri: c('caution', 'SSRI도 혈소판 기능을 떨어뜨립니다. 소염진통제까지 세 가지가 겹치면 위장 출혈을 살펴야 합니다.', '')
+      ssri: c('caution', 'SSRI도 혈소판 기능을 떨어뜨립니다. 소염진통제까지 세 가지가 겹치면 위장 출혈을 살펴야 합니다.', 'https://pubmed.ncbi.nlm.nih.gov/21208586/')
     },
     probiotic: {
       immuno: c('avoid', '균혈증·진균혈증 위험입니다. 특히 S. boulardii는 면역저하·중환자에게 금기이고(EMA 경고), 중심정맥관이 있어도 금기입니다.', CDCPRO),
       chemo: c('avoid', '항암 중 호중구가 떨어진 기간에는 피하세요. 항암치료 중 S. boulardii 진균혈증 사례가 있습니다.', CDCPRO),
-      quinolone: c('caution', '항생제가 유산균을 죽입니다. 항생제 복용 후 최소 2시간 간격을 두세요.', ''),
-      tetra: c('caution', '항생제와 최소 2시간 간격을 두세요.', ''),
-      abx_other: c('caution', '항생제와 최소 2시간 간격. 다만 항생제 연관 설사 예방 목적이라면 이 조합 자체는 근거가 확실합니다.', ''),
-      steroid: c('caution', '고용량 스테로이드로 면역이 떨어진 상태에서는 균혈증 위험이 있습니다.', '')
+      quinolone: c('caution', '항생제가 유산균을 죽입니다. 항생제 복용 후 최소 2시간 간격을 두세요.', 'https://pubmed.ncbi.nlm.nih.gov/31039287/'),
+      tetra: c('caution', '항생제와 최소 2시간 간격을 두세요.', 'https://pubmed.ncbi.nlm.nih.gov/31039287/'),
+      abx_other: c('caution', '항생제와 최소 2시간 간격. 다만 항생제 연관 설사 예방 목적이라면 이 조합 자체는 근거가 확실합니다.', 'https://pubmed.ncbi.nlm.nih.gov/31039287/'),
+      steroid: c('caution', '고용량 스테로이드로 면역이 떨어진 상태에서는 균혈증 위험이 있습니다.', CDCPRO)
     },
     coq10: {
       warfarin: c('caution', '와파린 라벨이 이름을 직접 적어 두었습니다. 구조가 비타민 K와 비슷해 와파린 효과를 떨어뜨릴 수 있습니다. 시작·중단 시 INR을 다시 재세요.', WARF),
-      acei_arb: c('caution', '약한 혈압 강하 작용이 더해져 일어설 때 어지러울 수 있습니다.', ''),
+      acei_arb: c('caution', '약한 혈압 강하 작용이 더해져 일어설 때 어지러울 수 있습니다.', NCCIH + 'coenzyme-q10'),
       insulin_su: c('caution', '인슐린과 상호작용 가능성이 있어 혈당을 살피세요.', NCCIH + 'coenzyme-q10')
     },
     creatine: {
-      metformin: c('caution', '크레아틴은 혈청 크레아티닌을 올려 콩팥 수치(eGFR)를 실제보다 나쁘게 보이게 합니다. 메트포르민·SGLT2 억제제 용량 조절이나 조영제 검사 판단이 틀어질 수 있으니 채혈 전에 복용 사실을 알리세요.', ''),
-      sglt2: c('caution', '같은 이유로 콩팥 수치가 실제보다 나쁘게 보일 수 있습니다. 채혈 전 복용 사실을 알리세요.', ''),
-      diuretic: c('caution', '탈수·신기능 부담이 겹칠 수 있습니다.', '')
+      metformin: c('caution', '크레아틴은 혈청 크레아티닌을 올려 콩팥 수치(eGFR)를 실제보다 나쁘게 보이게 합니다. 메트포르민·SGLT2 억제제 용량 조절이나 조영제 검사 판단이 틀어질 수 있으니 채혈 전에 복용 사실을 알리세요.', 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5469049/'),
+      sglt2: c('caution', '같은 이유로 콩팥 수치가 실제보다 나쁘게 보일 수 있습니다. 채혈 전 복용 사실을 알리세요.', 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5469049/')
     },
     curcumin: {
       warfarin: c('caution', '혈소판을 억제하고 간 효소(CYP2C9)를 막습니다. 흡수를 높인 제형(피페린·파이토좀)을 시작할 때 INR을 다시 재세요.', TURM),
@@ -155,23 +149,23 @@
       warfarin: c('caution', '출혈 위험 증가 보고가 있습니다. 병용 시 INR과 출혈 징후를 살피세요.', 'https://www.goodrx.com/melatonin/interactions'),
       doac: c('caution', '출혈 위험이 더해질 수 있습니다.', 'https://www.goodrx.com/melatonin/interactions'),
       antiplt: c('caution', '출혈 위험이 더해질 수 있습니다.', 'https://www.goodrx.com/melatonin/interactions'),
-      ssri: c('caution', '플루복사민은 멜라토닌 분해를 강하게 막아 혈중농도를 몇 배로 올립니다. 과도한 졸림이 오므로 병용을 피하거나 최소 용량으로.', 'https://www.goodrx.com/melatonin/interactions'),
+      ssri: c('caution', '플루복사민은 멜라토닌 분해(CYP1A2)를 강하게 막아 노출을 약 17배 올립니다. 과도한 졸림이 오므로 병용을 피하거나 최소 용량으로.', 'https://pubmed.ncbi.nlm.nih.gov/10668847/'),
       immuno: c('caution', '멜라토닌의 면역 자극 작용이 면역억제 효과를 떨어뜨릴 수 있어 이식 환자는 피하세요.', 'https://www.goodrx.com/melatonin/interactions'),
-      insulin_su: c('caution', '야간 인슐린 분비에 영향을 줘 혈당이 흔들릴 수 있습니다.', '')
+      insulin_su: c('caution', '야간 인슐린 분비에 영향을 줘 혈당이 흔들릴 수 있습니다.', 'https://doi.org/10.2337/dc26-0164')
     },
     glucosamine: {
       warfarin: c('avoid', 'FDA 부작용 보고 20건, WHO 21건에서 INR이 올랐습니다. 안정적이던 환자가 하루 3,000 mg으로 늘린 뒤 3주 만에 INR이 2.3에서 3.9로 뛴 사례가 있고 뇌출혈 사례도 있습니다.', 'https://pubmed.ncbi.nlm.nih.gov/18363538/'),
       insulin_su: c('caution', '혈당을 올릴 가능성이 보고돼 있습니다(근거는 상충). 당화혈색소를 추적하세요.', NCCIH + 'glucosamine-and-chondroitin-for-osteoarthritis'),
-      metformin: c('caution', '혈당에 영향을 줄 가능성이 있어 추적이 필요합니다.', '')
+      metformin: c('caution', '혈당에 영향을 줄 가능성이 있어 추적이 필요합니다.', NCCIH + 'glucosamine-and-chondroitin-for-osteoarthritis')
     },
     ryr: {
       statin: c('avoid', '홍국의 모나콜린 K는 처방약 로바스타틴과 같은 물질입니다. 스타틴과 함께 먹는 것은 스타틴을 두 번 먹는 것이며 근육 융해·간독성 위험이 커집니다.', 'https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2025.9276'),
-      immuno: c('avoid', '사이클로스포린이 홍국·베르베린 분해를 막아 농도가 치솟습니다. 베르베린은 신장이식 환자에서 사이클로스포린 노출을 34.5% 올렸습니다.', ['https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2025.9276', BERB]),
+      immuno: c('avoid', '베르베린이 간 효소(CYP3A4)를 억제해 사이클로스포린 농도를 올립니다(신장이식 환자 AUC +34.5%, 최저농도 +29%). 홍국은 반대 방향으로, 사이클로스포린이 로바스타틴(=모나콜린 K) 농도를 올려 근육병증 위험. 양쪽 다 병용 금지', ['https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2025.9276', BERB]),
       metformin: c('caution', '베르베린이 메트포르민 수송체에 영향을 주고 혈당 강하가 더해집니다. 저혈당·젖산산증을 살피세요.', BERB),
       insulin_su: c('caution', '혈당 강하가 더해져 저혈당이 올 수 있습니다. 약 감량을 고려하세요.', BERB),
       doac: c('caution', '베르베린의 P-gp 억제로 아픽사반·리바록사반·다비가트란 농도가 올라 출혈 위험이 커집니다.', BERB),
       chemo: c('caution', '간 효소를 막아 치료역이 좁은 항암제 농도를 바꿀 수 있습니다.', BERB),
-      warfarin: c('caution', 'INR이 흔들릴 수 있습니다.', '')
+      warfarin: c('caution', 'INR이 흔들릴 수 있습니다.', BERB)
     },
     ginseng: {
       warfarin: c('caution', '와파린 라벨이 인삼을 직접 적어 두었습니다. 와파린 효과를 떨어뜨릴 수 있고, 동시에 혈소판 억제 작용도 보고됩니다. 시작·중단 시 INR을 다시 재세요.', WARF),
@@ -184,15 +178,15 @@
     },
     greentea: {
       chemo: c('avoid', 'EGCG가 보르테조밉(다발골수종 치료제) 같은 보론산계 약과 직접 결합해 약을 무력화합니다. 치료 중 녹차 제품을 쓰지 마세요.', 'https://ashpublications.org/blood/article/113/23/5927/25877/'),
-      warfarin: c('caution', '녹차 잎의 비타민 K 때문에 다량 섭취 시 INR이 떨어진 사례가 있습니다.', WARF),
+      warfarin: c('caution', '녹차 잎의 비타민 K 때문에 다량 섭취 시 INR이 떨어진 사례가 있습니다.', 'https://pubmed.ncbi.nlm.nih.gov/10332534/'),
       statin: c('caution', '아토르바스타틴 혈중농도를 바꿀 수 있습니다.', NCCIH + 'green-tea')
     },
     ginkgo: {
       warfarin: c('avoid', '와파린 라벨이 은행잎을 직접 적어 두었습니다. 그 자체로 출혈을 일으키고 와파린 효과에 더해집니다. 병용을 피하는 것이 원칙입니다.', [WARF, NCCIH + 'ginkgo']),
       doac: c('caution', '혈소판 응집을 막아 출혈 위험이 더해집니다. 수술 7~14일 전 중단하세요.', NCCIH + 'ginkgo'),
       antiplt: c('caution', '출혈 위험이 더해집니다. 수술 전 중단하세요.', NCCIH + 'ginkgo'),
-      aed: c('caution', '은행 종실 성분이 비타민 B6를 방해해 발작 문턱을 낮출 수 있습니다. 뇌전증 환자는 피하세요.', ''),
-      immuno: c('caution', '간 효소 상호작용이 라벨에 명시돼 있어 면역억제제 농도가 흔들릴 수 있습니다.', WARF)
+      aed: c('caution', '은행 알(종실)의 징코톡신은 경련을 유발하고, 잎 추출물에서도 발작 사례 보고가 있어 뇌전증은 주의.', NCCIH + 'ginkgo'),
+      immuno: c('caution', '임상적으로 의미 있는 간 효소(CYP) 상호작용은 확인되지 않았습니다. 출혈 위험 관점에서만 주의.', NCCIH + 'ginkgo')
     },
     sjw: {
       immuno: c('avoid', '사이클로스포린 라벨이 "중대한 상호작용 — 혈중농도 현저 감소"를 경고합니다. 이식 거부가 일어납니다.', [CSA, TAC]),
@@ -203,7 +197,7 @@
       chemo: c('avoid', '이리노테칸 활성대사체가 42% 줄고 이매티닙·도세탁셀 농도도 떨어져 치료가 실패합니다.', NCCIH + 'st-johns-wort'),
       aed: c('avoid', '항경련제 농도가 떨어져 발작이 재발할 수 있습니다.', PHT),
       statin: c('caution', '스타틴 농도를 떨어뜨려 콜레스테롤 강하 효과가 사라집니다.', NCCIH + 'st-johns-wort'),
-      steroid: c('caution', '스테로이드 분해를 촉진해 효과가 줄 수 있습니다.', '')
+      steroid: c('caution', '스테로이드 분해를 촉진해 효과가 줄 수 있습니다.', NCCIH + 'st-johns-wort')
     },
     ashwagandha: {
       levo: c('avoid', '갑상선호르몬 분비를 자극해 T3·T4가 올라갑니다. 갑상선중독증 사례가 보고됐고, 미국 NCCIH는 갑상선질환자·갑상선약 복용자에게 권하지 않습니다.', NCCIH + 'ashwagandha'),
@@ -215,8 +209,7 @@
       aed: c('caution', '항경련제와 상호작용이 명시돼 있습니다.', NCCIH + 'ashwagandha')
     },
     milkthistle: {
-      immuno: c('caution', '간 효소 억제로 면역억제제 농도가 흔들릴 수 있습니다(임상 근거는 약함).', ''),
-      insulin_su: c('caution', '당뇨 환자에서 혈당이 떨어졌다는 보고가 있어 저혈당을 살피세요.', '')
+      insulin_su: c('caution', '당뇨 환자에서 혈당이 떨어졌다는 보고가 있어 저혈당을 살피세요.', 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4908257/')
     },
     garlic: {
       warfarin: c('caution', '와파린 라벨이 마늘을 직접 적어 두었습니다. 그 자체로 출혈을 일으키고 와파린 효과에 더해집니다. 고용량 보충제를 피하세요.', WARF),
@@ -225,25 +218,24 @@
       chemo: c('caution', '간 효소를 유도해 일부 항암제 농도를 떨어뜨릴 수 있습니다(사퀴나비르 노출 51% 감소 보고).', 'https://pubmed.ncbi.nlm.nih.gov/11740713/')
     },
     nac: {
-      antiplt: c('caution', '혈소판 기능을 떨어뜨립니다. 1,200 mg/일을 넘는 고용량 병용 시 출혈을 살피세요(라벨 근거는 없음).', ''),
-      warfarin: c('caution', '고용량에서 출혈 위험이 더해질 수 있습니다.', ''),
-      chemo: c('caution', '항암 중 고용량 항산화 목적 사용은 종양내과와 상의하세요.', '')
+      antiplt: c('caution', '혈소판 기능을 떨어뜨립니다. 1,200 mg/일을 넘는 고용량 병용 시 출혈을 살피세요(라벨 근거는 없음).', 'https://www.annalsthoracicsurgery.org/article/S0003-4975(08)02022-5/fulltext'),
+      warfarin: c('caution', '고용량에서 출혈 위험이 더해질 수 있습니다.', 'https://www.annalsthoracicsurgery.org/article/S0003-4975(08)02022-5/fulltext'),
+      chemo: c('caution', '항암 중 고용량 항산화 목적 사용은 종양내과와 상의하세요.', 'https://academic.oup.com/jnci/article/100/11/773/895704')
     },
     ala: {
-      insulin_su: c('caution', '인슐린 감수성을 높여 저혈당이 올 수 있습니다. 시작할 때 약 감량을 고려하고 혈당을 자주 재세요.', ''),
-      metformin: c('caution', '혈당 강하가 더해집니다.', ''),
-      levo: c('caution', 'T4를 T3로 바꾸는 과정을 억제한다는 보고가 있어 갑상선기능을 다시 확인하세요.', ''),
-      chemo: c('caution', '금속 결합·항산화 작용으로 백금계 항암제 효과가 줄 수 있습니다.', '')
+      insulin_su: c('caution', '인슐린 감수성을 높여 저혈당이 올 수 있습니다. 시작할 때 약 감량을 고려하고 혈당을 자주 재세요.', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13520106/'),
+      metformin: c('caution', '혈당 강하가 더해집니다.', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13520106/'),
+      levo: c('caution', 'T4를 T3로 바꾸는 과정을 억제한다는 보고가 있어 갑상선기능을 다시 확인하세요.', 'https://pubmed.ncbi.nlm.nih.gov/1815532/')
     },
     chromium: {
-      levo: c('caution', '크롬 피콜리네이트를 같이 먹으면 레보티록신 농도가 17% 떨어집니다. 갑상선약을 크롬 복용 30분 전 또는 3~4시간 후에 드세요.', 'https://pubmed.ncbi.nlm.nih.gov/17725434/'),
-      insulin_su: c('caution', '인슐린 감수성이 좋아져 저혈당이 올 수 있습니다.', ''),
-      metformin: c('caution', '혈당 강하가 더해집니다.', '')
+      levo: c('caution', '크롬 피콜리네이트 동시 복용 시 레보티록신 흡수 17% 감소(n=7). 저자 권고는 "수 시간 분리"이며 갑상선약 라벨 기준대로 4시간 이상 떨어뜨리세요', 'https://pubmed.ncbi.nlm.nih.gov/17725434/'),
+      insulin_su: c('caution', '인슐린 감수성이 좋아져 저혈당이 올 수 있습니다.', 'https://ods.od.nih.gov/factsheets/Chromium-HealthProfessional/'),
+      metformin: c('caution', '혈당 강하가 더해집니다.', 'https://ods.od.nih.gov/factsheets/Chromium-HealthProfessional/')
     },
     cinnamon: {
       warfarin: c('caution', '카시아 계피의 쿠마린이 간독성과 이론적 항응고 작용을 더합니다. 실론 계피로 바꾸거나 피하세요.', 'https://www.bfr.bund.de/en/service/frequently-asked-questions/topic/faq-on-coumarin-in-cinnamon-and-other-foods/'),
-      insulin_su: c('caution', '혈당 강하가 더해져 저혈당이 올 수 있습니다.', ''),
-      metformin: c('caution', '혈당 강하가 더해집니다.', '')
+      insulin_su: c('caution', '혈당 강하가 더해져 저혈당이 올 수 있습니다.', NCCIH + 'cinnamon'),
+      metformin: c('caution', '혈당 강하가 더해집니다.', NCCIH + 'cinnamon')
     },
     antioxidant: {
       chemo: c('avoid', '항암·방사선 치료 중 고용량 항산화제는 치료 효과를 떨어뜨릴 우려로 권장되지 않습니다.', 'https://academic.oup.com/jnci/article/100/11/773/895704'),

@@ -276,7 +276,8 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .cond-item p { margin: 2px 0 0; font-size: .88rem; color: var(--muted); }
 .cond-item a { font-size: .8rem; }
 .ing .mini { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-.ing .mini span { font-size: .72rem; padding: 1px 7px; border-radius: 6px; color: #fff; font-weight: 700; }
+.ing .mini span:not(.stat-badge) { font-size: .72rem; padding: 1px 7px; border-radius: 6px; color: #fff; font-weight: 700; }
+.ing .mini .stat-badge { font-size: .74rem; }
 
 /* ---------- 약물 상호작용 · 조합 · 타이밍 ---------- */
 .drug-chip { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 9px 15px; border: 1.5px solid var(--line-strong); border-radius: 12px; background: #fff; cursor: pointer; font-size: .95rem; font-weight: 700; color: var(--ink); transition: all .12s; }
@@ -315,3 +316,84 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .krdi { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
 .krdi span { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: .87rem; }
 .krdi span b { color: var(--teal-dark); }
+
+/* ---------- 검사 가이드 · 계산기 ---------- */
+.test-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px 22px; margin: 12px 0; }
+.test-card h3 { margin: 0 0 6px; font-size: 1.12rem; }
+.test-card .row { display: grid; grid-template-columns: 110px 1fr; gap: 4px 10px; font-size: .93rem; margin-top: 8px; }
+.test-card .row dt { color: var(--muted); font-weight: 700; }
+.test-card .row dd { margin: 0; }
+.cut { display: inline-block; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 7px; padding: 2px 9px; font-size: .85rem; margin: 2px 4px 2px 0; font-family: ui-monospace, Menlo, monospace; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; }
+@media (max-width: 720px) { .calc-grid { grid-template-columns: 1fr; } }
+.calc-row { display: grid; grid-template-columns: 1fr 96px 60px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.calc-row label { font-size: .93rem; }
+.calc-row input { font: inherit; padding: 7px 9px; border: 1.5px solid var(--line-strong); border-radius: 8px; width: 100%; }
+.calc-row .u { font-size: .8rem; color: var(--muted); }
+.bar { height: 10px; background: var(--gray-soft); border-radius: 6px; overflow: hidden; position: relative; }
+.bar i { display: block; height: 100%; background: #2e9e5b; }
+.bar i.warn { background: #d9932a; } .bar i.over { background: #c0392b; }
+.res-row { display: grid; grid-template-columns: 150px 1fr 150px; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .92rem; }
+.res-row b.over { color: #c0392b; } .res-row b.warn { color: #b7791f; }
+@media (max-width: 600px) { .res-row { grid-template-columns: 1fr; gap: 4px; } }
+.sym-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px 22px; margin: 12px 0; }
+.sym-card h3 { margin: 0 0 8px; font-size: 1.15rem; }
+.sym-card .cause { margin: 6px 0; padding-left: 0; list-style: none; }
+.sym-card .cause li { padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: .94rem; }
+.sym-card .cause li b { color: var(--teal-dark); }
+.sym-card .flag { background: var(--red-soft); border-left: 4px solid var(--red); border-radius: 8px; padding: 8px 12px; font-size: .9rem; margin-top: 8px; }
+.sym-card .test { background: var(--blue-soft); border-left: 4px solid var(--blue); border-radius: 8px; padding: 8px 12px; font-size: .9rem; margin-top: 8px; }
+
+.beta-bar { background: #fff3cd; color: #5f4a00; font-size: .84rem; border-bottom: 1px solid #f1d27a; }
+.beta-bar .a11y-inner { padding: 6px 20px; line-height: 1.5; }
+.nosrc { display: inline-block; background: var(--amber-soft); color: var(--amber); border: 1px dashed var(--amber); border-radius: 6px; padding: 0 7px; font-size: .76rem; font-weight: 700; }
+
+/* ---------- 용어 툴팁 · 국내 지위 뱃지 · 허가 등급 ---------- */
+abbr.gl { text-decoration: none; border-bottom: 1.5px dotted var(--teal); cursor: help; color: inherit; }
+abbr.gl:hover, abbr.gl:focus { background: var(--teal-soft); outline: none; }
+.gl-pop { position: absolute; z-index: 200; width: 330px; max-width: calc(100vw - 16px); background: #fff; border: 1px solid var(--line-strong); border-left: 5px solid var(--teal); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 12px 14px; font-size: .92rem; line-height: 1.6; }
+.gl-pop p { margin: 6px 0; }
+.gl-pop button { position: absolute; top: 6px; right: 8px; background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--muted); }
+.gl-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 12px; }
+.gl-item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.gl-item h4 { margin: 0 0 4px; font-size: 1.02rem; }
+.gl-item .alias { font-size: .8rem; color: var(--muted); }
+.gl-item p { margin: 6px 0 0; font-size: .92rem; }
+.stat-badge { display: inline-block; font-size: .74rem; font-weight: 800; padding: 2px 9px; border-radius: 6px; margin: 2px 4px 2px 0; border: 1px solid transparent; }
+.st-rx { background: #fbe7e5; color: #8f1d17; border-color: #efc9c6; }
+.st-otc { background: #fbf1dc; color: #7a4f00; border-color: #eedbb4; }
+.st-qd { background: #eef1f4; color: #4b5857; border-color: #d5dbe0; }
+.st-hff { background: #e6f2e7; color: #1f5c25; border-color: #c7e2ca; }
+.st-hffi { background: #e3f1ef; color: #0b4f4c; border-color: #bfdcd9; }
+.st-food { background: #f4f4f4; color: #555; border-color: #ddd; }
+.st-none { background: #fff; color: #b3261e; border-color: #b3261e; }
+.st-import { background: #e6eef9; color: #1f5fa8; border-color: #c7d8ef; }
+.reg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 16px; margin: 18px 0; }
+.reg { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px; border-top: 6px solid var(--line-strong); }
+.reg h3 { margin: 0 0 6px; }
+.reg dl { display: grid; grid-template-columns: 92px 1fr; gap: 5px 10px; font-size: .92rem; margin: 10px 0 0; }
+.reg dt { color: var(--muted); font-weight: 700; } .reg dd { margin: 0; }
+.reg .ex { margin-top: 8px; font-size: .9rem; }
+
+/* ---- 제품 환산 계산기 ---- */
+.cmp-slot { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px; background: #fff; }
+.cmp-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.btn-x { border: 1px solid var(--line-strong); background: #fff; border-radius: 8px; width: 32px; height: 32px; font-size: 1.1rem; cursor: pointer; color: var(--muted); }
+.inline { display: flex; gap: 8px; } .inline input { flex: 1; min-width: 0; } .inline select { font: inherit; padding: 8px; border: 1.5px solid var(--line-strong); border-radius: 10px; background: #fff; }
+.chk-wrap { display: flex; flex-wrap: wrap; gap: 6px 14px; } .chk { font-weight: 400; font-size: .9rem; display: inline-flex; align-items: center; gap: 5px; }
+.cmp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.cmp-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; background: #fff; }
+.cmp-card h3 { margin: 0 0 8px; font-size: 1.05rem; }
+.cmp-card dl.row { display: grid; grid-template-columns: 96px 1fr; gap: 4px 10px; margin: 0; font-size: .93rem; } .cmp-card dt { color: var(--muted); } .cmp-card dd { margin: 0; }
+.jdg-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.jdg { display: inline-block; font-size: .82rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; background: var(--gray-soft); color: var(--gray); }
+.jdg.ok { background: var(--green-soft); color: var(--green); } .jdg.warn { background: var(--amber-soft); color: var(--amber); } .jdg.over { background: var(--red-soft); color: var(--red); } .jdg.low { background: var(--gray-soft); color: var(--gray); } .jdg.info { background: var(--blue-soft); color: var(--blue); }
+.cmp-slot .field { min-width: 0; } .cmp-slot input, .cmp-slot select, .cmp-slot .inline { width: 100%; max-width: 100%; box-sizing: border-box; }
+.cmp-slot .inline select { width: auto; flex: 0 0 auto; }
+.site-credit { display: block; margin: 0 auto; padding: 16px 12px 24px; text-align: center; font-size: .76rem; line-height: 1.6; color: var(--muted); max-width: 100%; box-sizing: border-box; word-break: keep-all; overflow-wrap: anywhere; }
+.site-credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+@media print { .site-credit { display: block !important; color: #6d7885 !important; font-size: 8.5pt; padding: 8px 0 0; margin-top: 14px; break-inside: avoid; } }
+details.faq { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 10px; background: #fff; }
+details.faq summary { cursor: pointer; font-weight: 800; color: var(--teal-dark); font-size: 1rem; }
+details.faq .faq-a { margin-top: 10px; line-height: 1.7; }
+.ing dl.row dd, .cmp-card dl.row dd, .reg dd { min-width: 0; overflow-wrap: anywhere; }
