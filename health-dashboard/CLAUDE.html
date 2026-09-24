@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=6dafcc88bcfcd3d9368aacccc63b2d470a2a2d7c">
+    <link rel="stylesheet" href="/assets/css/style.css?v=55844b9fec9dde7a2a1e654f7c7bc0e4e231e283">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -331,6 +331,12 @@ QA: validate.py PASS, LibreOffice Impress(apt로 설치) → PDF → PyMuPDF 렌
 화면이 바뀌면 scripts/manual/capture.mjs 재실행(로컬 서버 8911에 index.html 제공 후) → deck.mjs 재생성으로 갱신한다.</li>
   <li>[완료] <strong>제작 크레딧</strong>(2026-09-24, 소유자 지시 “health-profile.kr과 깃허브에도 동일하게 반영”): 모든 화면 맨 아래(푸터 아래)에 「기획·제작 지음웍스 · jieumworks.com · 2026년 9월」. 문구·날짜는 data/contact.json 의 credit 한 곳에서만 관리(뉴스레터 newsletter/site-config.json 의 credit 와 같은 문구), App.jsx 푸터 뒤 .site-credit, styles.css(0.76rem 회색 가운데 + 인쇄 포함). 390px 폭 9개 메뉴 가로 스크롤 없음 확인. 날짜를 바꾸면 contact.json 수정 → build_dashboard.py 재빌드 → 두 저장소 배포.</li>
   <li>[완료] CHR&amp;R <strong>반영 현황 재점검</strong>(2026-09-24, 소유자 질문 “county health ranking report 검토해서 반영여부”): docs/미국_CountyHealthRankings_검토_v1.md §10.2. 기술문서 권고 7개 중 5개 완료·2개 미착수(맥락 블록, WWFH 형평성), 2025 보고서 권고 4개 모두 미착수(성별 분리·지역 유형·체감 환산·용어집). 새 사실: 2026-03 34개 측정값만 부분 갱신, 코드·2010~2025 자료가 GitHub countyhealthrankings·Zenodo 로 오픈소스 공개(Health Groups 군집 코드 포함 여부는 미확인). 권고 순서 체감 환산→용어집→성별 분리→맥락 블록→지역 유형.</li>
+  <li>[완료] <strong>사용설명서 숫자 전수 검증 + 제주 중복 수정</strong>(2026-09-24, 소유자 지적 “지역사회건강조사 지자체 수를 41개로 했던데? 신뢰가 무너졌어”): docs/사용설명서_정오표_v1.md.
+41은 지표 수였으나 단위 없이 써서 지자체 수로 읽힘 → 설명서 전체에 단위 표기. 검증 중 실제 오류 발견·수정:
+① <strong>시군구 231 → 229</strong>: KOSIS 제주 01601 「서귀포」·01603 「제주」는 시 아래 보건소인데 5자리 코드라 sgg 로 분류돼 전국 순위·중앙값에 제주가 두 번 들어갔다. build_dataset.py JEJU_SUB·JEJU_GROUP·CODE_ALIAS(아침식사 실천율 표의 0160000·0160400) 추가. 값 변동 없음, 지역 순서 불변.
+② 기초자치단체는 226(229 = 226 + 제주 행정시 2 + 세종) — UnitsView·SourcesView·coverage counts 문구 수정. ③ 자료원 공단 카드 40 → 33(검진 이어붙인 3개 중복 제거, 비공단 4개를 인구·사회·경제·복지시설 카드로; 근거 data/kdh/catalog.csv 자료생산기관).
+④ build_units 세종 보건기관 매핑(값 있는 단위 우선) 3,588→3,606. ⑤ 설명서: 메뉴 탭 12→11, 지어낸 예시 문장(33.1%·180위) → 실제 강릉시 값, 심폐소생술 「갱신 중단」→「2025년 값 없음」, 박탈지수 2015·2020, 결과지표 제외 설명.
+※ 이 항목 이전 기록의 「231」(순위 분모, 우울증상 231개 중 125개 등)은 중복 포함 수치다. 규칙: 문서 숫자는 단위를 붙이고, 예시도 실제 데이터 값만 쓴다.</li>
   <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>

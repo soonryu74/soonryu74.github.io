@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>사용설명서 v1 · 대시보드 정오표 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="사용설명서 v1 · 대시보드 정오표" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="사용설명서 v1 · 대시보드 정오표" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"사용설명서 v1 · 대시보드 정오표","url":"/health-dashboard/docs/%EC%82%AC%EC%9A%A9%EC%84%A4%EB%AA%85%EC%84%9C_%EC%A0%95%EC%98%A4%ED%91%9C_v1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=55844b9fec9dde7a2a1e654f7c7bc0e4e231e283">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="사용설명서-v1--대시보드-정오표">사용설명서 v1 · 대시보드 정오표</h1>
+
+<blockquote>
+  <p>2026-09-24 · 소유자 지적(“지역사회건강조사 지자체 수를 41개로 했던데?”)을 계기로 사용설명서 64쪽의 숫자가 들어간 문장 약 90개를
+실제 데이터(data/*.json)·코드(app/src)·공식 자료와 하나씩 대조했다. 틀린 곳은 설명서와 대시보드를 함께 고쳤다.</p>
+</blockquote>
+
+<h2 id="1-지적받은-41">1. 지적받은 「41」</h2>
+
+<ul>
+  <li>41은 지자체 수가 아니라 <strong>지역사회건강조사에서 가져온 지표 수</strong>(KOSIS 통계표 41개)다. 숫자 자체는 데이터와 일치한다.</li>
+  <li>그러나 「지역사회건강조사 41(시군구 단위)」처럼 <strong>단위 없이</strong> 써서 지자체 수로 읽혔다. 표기 결함이다.</li>
+  <li>수정: 설명서 전체에서 「지표 41개」「지표 수」로 단위를 붙였다.</li>
+</ul>
+
+<h2 id="2-검증에서-추가로-찾은-오류">2. 검증에서 추가로 찾은 오류</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>위치</th>
+      <th>틀린 내용</th>
+      <th>사실</th>
+      <th>조치</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>대시보드 데이터</strong> + 설명서 5·6·8·22·24·46쪽</td>
+      <td>시군구 <strong>231개</strong></td>
+      <td>229개. 제주시·서귀포시 안의 보건소 2곳(KOSIS 코드 01603 「제주」, 01601 「서귀포」 — 영문명 Jeju-si Jeju, Seogwipo-si Seogwipo)이 시군구로 분류되어 제주가 두 번 들어갔다</td>
+      <td><code class="language-plaintext highlighter-rouge">build_dataset.py</code> 분류 수정. 전국 시군구 순위·중앙값·산점도·핫스팟의 분모가 229로 바로잡힘. 값은 한 셀도 바뀌지 않음</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>대시보드 조사 단위·자료원 탭</td>
+      <td>「행정안전부 기초자치단체 229곳」</td>
+      <td>기초자치단체는 <strong>226곳</strong>. 229는 여기에 제주 행정시 2곳과 세종시를 더한 시군구 수</td>
+      <td>문구 수정</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>대시보드 조사 단위 탭</td>
+      <td>「순위 분모가 232·231·226인 이유는 지표마다 값이 있는 단위 수가 달라서」</td>
+      <td>231은 1번의 중복 때문이었다</td>
+      <td>설명 문단 재작성</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>대시보드 자료원 탭 + 설명서 7쪽</td>
+      <td>「건강보험·의료이용·일반검진 — 국민건강보험공단 40개」</td>
+      <td>① 기존 시계열을 잇는 검진 3개가 두 번 세어져 있었다 ② 보건의료자원 중 <strong>보건소 의사 인력(보건복지부)·노인여가복지시설(보건복지부·행정안전부)·문화기반시설(문화체육관광부·행정안전부)·사회복지시설(지자체·행정안전부)</strong> 4개는 공단 자료가 아니다(김동현 교수 DB 카탈로그 「자료생산기관」 기준). 의사·간호사·전문의·병상·의원 수 12개는 공단 「건강보험통계」·「지역별의료이용통계」가 맞다</td>
+      <td>공단 카드 33개, 「인구·사회·경제·복지시설」 카드 24개로 재구성. 전체 지표 수 171개는 그대로</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>설명서 14·21쪽</td>
+      <td>메뉴 탭 <strong>12개</strong></td>
+      <td>11개</td>
+      <td>수정</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>설명서 22쪽</td>
+      <td>예시 「비만율 33.1%로 중앙값보다 3%p 높고 231곳 중 180위」</td>
+      <td>33.1은 2025년 중앙값 35.4보다 낮아 문장 자체가 모순. 실제 값이 아닌 지어낸 예시였다</td>
+      <td>실제 값으로 교체: 강릉시 38.0%, 중앙값 35.4%, 2.6%p 높음, 229곳 중 170위(화면 값과 대조 완료)</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>설명서 10쪽</td>
+      <td>심폐소생술 2종 「원천 갱신 중단」</td>
+      <td>원천 표에 2025년 값이 없을 뿐, 중단 공지는 확인하지 못했다</td>
+      <td>「2025년 값 없음(2024년까지)」로 수정</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>설명서 10쪽</td>
+      <td>멈춘 자료로 미세먼지·만성하기도질환·진료실인원만 표기</td>
+      <td>추락 사망률·등록장애인 2017, 사회복지시설·교통사고 건수 2022, 병상 수 2023도 멈춰 있다</td>
+      <td>행 추가</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>설명서 7쪽</td>
+      <td>지역박탈지수 연도 「2020」</td>
+      <td>2015·2020</td>
+      <td>수정</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>설명서 36쪽</td>
+      <td>「결과지표(사망·유병 4종)는 순위에서 제외」</td>
+      <td>기본 제외 4종은 고혈압·당뇨병 진단 경험률, 건강생활실천율, 연간 보건기관 이용률. 사망률·건강수명은 결과지표로 따로 빠진다</td>
+      <td>문장 재작성</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>대시보드 조사 단위 탭</td>
+      <td>세종시 보건기관이 1곳(건강생활지원센터)만 연결</td>
+      <td>값이 없는 옛 세종 코드에 붙고 있었다. 보건소·보건지소·진료소 18곳이 누락</td>
+      <td>값이 있는 단위 우선 매핑. 연결 3,588 → 3,606곳(전체 3,607)</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>대시보드 데이터</td>
+      <td>「아침식사 실천율」 표만 제주 두 보건소를 다른 코드(0160000·0160400)로 수록 → 서귀포시 세부 목록에 「서귀포」가 두 번</td>
+      <td>같은 보건소</td>
+      <td>표준 코드로 합침</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="3-맞았던-것확인-완료">3. 맞았던 것(확인 완료)</h2>
+
+<p>지표 수 41·115·7·4·3·1(합 171), 보건소 조사 단위 258, 시도 17, 연도 범위(지역사회건강조사 2008~2025 18년, 사망원인 2008~2024, 검진 2010~2024, 암검진 2015~2024),
+CIAT 지표 98·157, 자료원 11종, 비교 최대 6곳, 지도 7단계, 영상 1280×720 30fps, 등급 기준(10·25·50%), 동류군 12곳, 섬 이웃 2곳,
+감염병 고위험군 30개 집단, 코로나19 2020.1~2023.8·65세 이상 4분위 치명률 약 2배(0.077→0.146), 성과지표 16·13·3,
+지식베이스 182항목·54문서·41개 지표 전부 연결, 연대기 39건, 보건기관 3,607곳, 실제 결측 4곳, FAQ 5개,
+우울증상 유병률 불안정값 62%(표준화율 기준, 조율 기준으로는 43%), 박탈지수 7개 변수.</p>
+
+<h2 id="4-재발-방지">4. 재발 방지</h2>
+
+<ul>
+  <li>설명서·보고서의 숫자는 <strong>단위를 붙인다</strong>(「41」 금지, 「지표 41개」).</li>
+  <li>예시 문장도 <strong>실제 데이터에서 뽑은 값</strong>만 쓴다.</li>
+  <li>문서에 적는 개수는 손으로 세지 않고 데이터에서 계산한 값을 쓴다.</li>
+  <li>이상 신호를 보면 기록만 하고 넘기지 않는다. 제주 중복은 9월 중순 작업 기록(CLAUDE.md, 김동현 DB 매칭 결과 「231개 중 229개 매칭, 나머지는 세종·제주 중복 레코드」)에 이미 흔적이 있었는데 그때 고치지 않았다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
