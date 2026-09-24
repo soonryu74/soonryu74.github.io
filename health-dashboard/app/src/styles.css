@@ -810,6 +810,7 @@ button.title-home:hover, button.title-home:focus-visible { text-decoration:under
   .ra-cell .ra-nm, .ra-cell .ra-v, .ra-cell .ra-no { color:#0b0b0b !important; }
   .ra-cell.me { box-shadow:none !important; outline:2px solid #d8402a; outline-offset:-2px; }
   .ra-fill { transition:none !important; }
+  .site-credit { display:block !important; color:#6d7885 !important; font-size:8.5pt; break-inside:avoid; }
   /* 지표 분석 화면의 순위 목록도 인쇄 시 스크롤 상자 없이 전부 */
   .rank.scroll { max-height:none !important; overflow:visible !important; }
   .rrow { break-inside:avoid; }
@@ -851,4 +852,8 @@ button.title-home:hover, button.title-home:focus-visible { text-decoration:under
 .fb-faq summary { cursor:pointer; font-size:15px; font-weight:600; color:var(--text-primary); }
 .fb-faq p { margin:8px 0 0; font-size:14px; line-height:1.6; color:var(--text-secondary); }
 footer .linkbtn { all:unset; cursor:pointer; color:var(--series-1); font-weight:600; font-size:14px; text-decoration:underline; text-underline-offset:3px; }
+/* 제작 크레딧 — 모든 화면 맨 아래 공용. 문구·날짜는 data/contact.json 의 credit 한 곳에서만 관리 */
+.site-credit { margin:22px auto 0; padding:12px 16px 20px; text-align:center; font-size:.76rem; line-height:1.6; color:#8a94a1; word-break:keep-all; overflow-wrap:anywhere; }
+.site-credit a { color:inherit; text-decoration:underline; text-decoration-color:#c3cad3; text-underline-offset:2px; }
+.site-credit a:hover { color:#5d6875; }
 @media (max-width: 600px){ .fb-two { grid-template-columns:1fr; } .fb-actions .fb-btn { flex:1 1 45%; justify-content:center; } }
