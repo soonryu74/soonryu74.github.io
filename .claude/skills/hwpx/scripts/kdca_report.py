@@ -47,7 +47,8 @@ def patched_header(ls: int) -> str:
             '<hh:topBorder type="SOLID" width="0.5 mm" color="#1F4E9C"/>'
             '<hh:bottomBorder type="SOLID" width="0.5 mm" color="#1F4E9C"/>'
             '<hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/>'
-            '<hc:fillBrush><hc:winBrush faceColor="#D3E5F6" hatchColor="#999999" alpha="0"/></hc:fillBrush></hh:borderFill>')
+            '<hc:fillBrush><hc:gradation type="LINEAR" angle="90" centerX="0" centerY="0" step="255" colorNum="2" stepCenter="50" alpha="0">'
+            '<hc:color value="#9DC3E6"/><hc:color value="#FFFFFF"/></hc:gradation></hc:fillBrush></hh:borderFill>')
     assert '<hh:borderFills itemCnt="11">' in x
     x = x.replace('<hh:borderFills itemCnt="11">', '<hh:borderFills itemCnt="12">')
     x = x.replace('</hh:borderFills>', band + '</hh:borderFills>')
@@ -59,6 +60,12 @@ def patched_header(ls: int) -> str:
         assert c2 != c or align in c
         return c2
     extra = clone(Y.PP_PLAIN, "42", "RIGHT") + clone(Y.PP_CELL, "43", "LEFT")
+    m = re.search(r'<hh:charPr id="%s".*?</hh:charPr>' % Y.CP_BODY, x, re.S)
+    h1 = m.group(0).replace(f'<hh:charPr id="{Y.CP_BODY}" height="1500"', '<hh:charPr id="34" height="1600"', 1)
+    assert h1 != m.group(0)
+    assert '<hh:charProperties itemCnt="34">' in x
+    x = x.replace('<hh:charProperties itemCnt="34">', '<hh:charProperties itemCnt="35">')
+    x = x.replace('</hh:charProperties>', h1 + '</hh:charProperties>')
     assert '<hh:paraProperties itemCnt="42">' in x
     x = x.replace('<hh:paraProperties itemCnt="42">', '<hh:paraProperties itemCnt="44">')
     x = x.replace('</hh:paraProperties>', extra + '</hh:paraProperties>')
@@ -66,6 +73,7 @@ def patched_header(ls: int) -> str:
 
 
 PP_RIGHT, PP_CELL_LEFT = "42", "43"
+CP_H1 = "34"                   # □ 소제목: 휴먼명조 16pt 보통
 
 
 def title_box(title: str) -> str:
@@ -130,7 +138,7 @@ def build_section(meta: dict, title: str, blocks: list, images: list) -> str:
             if not first_h1:
                 P.append(Y.spacer())
             first_h1 = False
-            P.append(Y.text_para(Y.PP_H1, Y.CP_H1, PREFIX["h1"] + b[1]))
+            P.append(Y.text_para(Y.PP_H1, CP_H1, PREFIX["h1"] + b[1]))
         elif t == "item":
             P.append(Y.text_para(Y.PP_ITEM, Y.CP_BODY, PREFIX["item"] + b[1]))
         elif t == "sub":
