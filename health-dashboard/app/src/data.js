@@ -562,3 +562,10 @@ export function evidenceVerdict(indId) {
     ? { key: "stale", label: "근거 낡음", cpstf: cp } : { key: "cpstf", label: "근거 있음(CPSTF)", cpstf: cp };
   return { key: "none", label: "근거 없음" };
 }
+
+/* ===== 참고문헌 (data/refs.json · scripts/build_refs.py) =====
+   번호는 대시보드·사용설명서 공통. 지표별 원 통계표는 by_ind. */
+import REFS_RAW from "../../data/refs.json";
+export const REFS = REFS_RAW.refs;
+export const REF_BY_KEY = new Map(REFS.map((r) => [r.key, r]));
+export const indRef = (ind) => (ind && REFS_RAW.by_ind[ind.id]) || null;

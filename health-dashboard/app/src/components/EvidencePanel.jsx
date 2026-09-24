@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Cite from "./Cite";
 import { EVIDENCE, evidenceOf, guideOf, evidenceVerdict } from "../data";
 
 const G = { "권고": "ev-ok", "고려": "ev-co", "반대": "ev-no", "근거 불충분": "ev-in" };
@@ -43,7 +44,7 @@ export default function EvidencePanel({ ind }) {
   const cp = e.cpstf[0];
   return (
     <div className={`card span2 evpanel v-${v.key}`}>
-      <h3>이 지표의 현행 근거 지침 <span className={`evverdict v-${v.key}`}>{v.label}</span></h3>
+      <h3>이 지표의 현행 근거 지침<Cite k={["nice", "cpstf"]} /> <span className={`evverdict v-${v.key}`}>{v.label}</span></h3>
       <div className="desc">
         영국 NICE 현행 지침(NG)을 주 근거로, 미국 CPSTF를 보조로 둡니다. 배지는 권고문 동사 규칙으로 자동 분류한 것입니다 —
         <b> offer·should</b>=권고 · <b>consider</b>=고려 · <b>do not</b>=반대 · 연구 권고=근거 불충분. 개별 문장은 원문 확인이 필요합니다.

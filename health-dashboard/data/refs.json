@@ -1,0 +1,1746 @@
+{
+ "generated": "2026-09-24",
+ "note": "번호는 대시보드·사용설명서 공통. scripts/build_refs.py 의 REFS 순서로 고정.",
+ "refs": [
+  {
+   "key": "chs",
+   "org": "질병관리청",
+   "title": "지역사회건강조사 시·군·구별 통계(KOSIS 공유서비스)",
+   "detail": "KOSIS 기관코드 177 · 41개 통계표 · 2008~2025 · 조율·표준화율·표준오차",
+   "url": "https://chs.kdca.go.kr/chs/stats/statsMain.do",
+   "updated": "2025-12-22",
+   "n": 1
+  },
+  {
+   "key": "chs25",
+   "org": "질병관리청",
+   "title": "2025 지역건강통계 한눈에 보기(2025년 지역사회건강조사 통계집)",
+   "detail": "3. 부록(통계표) 시군구별 — 조사 단위 258곳의 기준. 2026-02-25 공개",
+   "url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156745804",
+   "updated": "2026-02-25",
+   "n": 2
+  },
+  {
+   "key": "mort",
+   "org": "국가데이터처(옛 통계청)",
+   "title": "사망원인통계 — 시군구별 연령표준화 사망률",
+   "detail": "KOSIS 101 DT_1B34E13 · 표준화사망률 22종 · 2008~2024",
+   "url": "https://mods.go.kr/menu.es?mid=a10301060200",
+   "updated": "2025-09-23",
+   "n": 3
+  },
+  {
+   "key": "inf",
+   "org": "질병관리청",
+   "title": "법정감염병 발생보고 · 결핵환자 신고현황",
+   "detail": "감염병 발생률 12종 · 2008~2024",
+   "url": "https://dportal.kdca.go.kr/",
+   "updated": "2026-09-08",
+   "n": 4
+  },
+  {
+   "key": "cancer",
+   "org": "국민건강보험공단",
+   "title": "건강검진통계 — 시군구별 성별 암검진 대상 및 수검인원 현황",
+   "detail": "KOSIS 350 DT_35007_N009 · 암검진 수검률 7종 · 2015~2024",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009",
+   "updated": "2026-01-06",
+   "n": 5
+  },
+  {
+   "key": "nhis",
+   "org": "국민건강보험공단",
+   "title": "건강보험통계 · 건강검진통계 · 지역별의료이용통계",
+   "detail": "KOSIS 350 DT_35007_N001_1·N098·N103·N105 등 · 의료이용·검진·의료자원 33종 · 2008~2024",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N001_1",
+   "updated": "2026-01-06",
+   "n": 6
+  },
+  {
+   "key": "pop",
+   "org": "국가데이터처 · 행정안전부 · 보건복지부 · 문화체육관광부 등",
+   "title": "인구·사회·경제·복지시설 통계",
+   "detail": "인구총조사·경제활동인구조사·주민등록인구현황·지방재정·노인복지시설현황·문화기반시설 총람 등 24종",
+   "url": "https://kosis.kr/",
+   "updated": "2026-09-08",
+   "n": 7
+  },
+  {
+   "key": "env",
+   "org": "환경부 · 국토교통부 · 도로교통공단 등",
+   "title": "환경·안전 통계",
+   "detail": "상·하수도통계·도로현황·대기오염도·교통문화지수·경찰접수교통사고현황 등 28종",
+   "url": "https://kosis.kr/",
+   "updated": "2026-09-08",
+   "n": 8
+  },
+  {
+   "key": "kdh",
+   "org": "질병관리청 · 한림대 김동현 교수",
+   "title": "지역사회 건강결과 및 건강결정요인 데이터베이스 v1.7",
+   "detail": "사망·감염병·의료이용·자원·인구·환경 115종을 이 DB를 거쳐 수집(원 출처는 각 기관 통계 [3]~[8])",
+   "url": "https://chs.kdca.go.kr/chs/recsRoom/dataBaseMain.do",
+   "updated": "",
+   "n": 9
+  },
+  {
+   "key": "hle",
+   "org": "자체 산출(근사)",
+   "title": "시군구 건강수명 산출법 v1 — Sullivan 방식, 주관적 건강 기반",
+   "detail": "사망원인통계 [3]·연앙인구·지역사회건강조사 [1] 주관적 건강인지율로 산출. 공식 통계 아님",
+   "url": "https://github.com/soonryu74/soonryu74.github.io/blob/main/health-dashboard/docs/%EA%B1%B4%EA%B0%95%EC%88%98%EB%AA%85_%EC%82%B0%EC%B6%9C%EB%B2%95_v1.md",
+   "updated": "2026-09-08",
+   "n": 10
+  },
+  {
+   "key": "dep",
+   "org": "자체 산출(근사)",
+   "title": "지역박탈지수 산출 v2 — 김동진 외(2013) 방식 재현",
+   "detail": "인구주택총조사 2015·2020 집계표 7개 변수 z점수 합. 원전: 김동진 외, 「한국의 건강불평등 지표와 정책과제」, 한국보건사회연구원 연구보고서 2013-10",
+   "url": "https://github.com/soonryu74/soonryu74.github.io/blob/main/health-dashboard/docs/%EC%A7%80%EC%97%AD%EB%B0%95%ED%83%88%EC%A7%80%EC%88%98_%EC%82%B0%EC%B6%9C_v2.md",
+   "updated": "2026-09-08",
+   "n": 11
+  },
+  {
+   "key": "risk",
+   "org": "자체 집계(복수 출처)",
+   "title": "감염병 대응 고위험군 30개 집단 규모",
+   "detail": "주민등록인구·지역사회건강조사·장기요양·예방접종 통계 등 결합. 실측/추정 구분 표기",
+   "url": "https://github.com/soonryu74/soonryu74.github.io/blob/main/health-dashboard/docs/%EA%B0%90%EC%97%BC%EB%B3%91_%EA%B3%A0%EC%9C%84%ED%97%98%EA%B5%B0_v1.md",
+   "updated": "2026-09-08",
+   "n": 12
+  },
+  {
+   "key": "covid",
+   "org": "질병관리청",
+   "title": "코로나19 시군구별 월별 확진자 및 사망 발생 현황",
+   "detail": "공공데이터포털 15124288 · 2020-01-20~2023-08-31 전수감시 · 신고 보건소 관할 기준",
+   "url": "https://www.data.go.kr/data/15124288/fileData.do",
+   "updated": "2025-05-20",
+   "n": 13
+  },
+  {
+   "key": "geo",
+   "org": "통계청 SGIS(가공: southkorea-maps)",
+   "title": "2018년 시군구 행정구역 경계(TopoJSON)",
+   "detail": "skorea-municipalities-2018 · 공공누리 제1유형 원자료 가공",
+   "url": "https://github.com/southkorea/southkorea-maps",
+   "updated": "",
+   "n": 14
+  },
+  {
+   "key": "mois",
+   "org": "행정안전부",
+   "title": "자치단체 행정구역 및 인구현황(e-나라지표)",
+   "detail": "기초자치단체 226곳 · 시군구 229곳 = 226 + 제주 행정시 2 + 세종",
+   "url": "https://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1041",
+   "updated": "",
+   "n": 15
+  },
+  {
+   "key": "fac",
+   "org": "보건복지부",
+   "title": "전국 지역보건의료기관 현황(2025-12-31 기준)",
+   "detail": "보건소·보건의료원·보건지소·보건진료소·건강생활지원센터 3,607곳 · 공공데이터포털 Open API",
+   "url": "https://www.data.go.kr/data/3072692/fileData.do",
+   "updated": "2025-12-31",
+   "n": 16
+  },
+  {
+   "key": "kdcahc",
+   "org": "질병관리청",
+   "title": "지역사회건강조사 참여 보건소 정보",
+   "detail": "공식 보건소 목록 255곳",
+   "url": "https://chs.kdca.go.kr/chs/mainContent/pbhlthInfoMain.do",
+   "updated": "",
+   "n": 17
+  },
+  {
+   "key": "khepi",
+   "org": "보건복지부",
+   "title": "2025년 지역사회 통합건강증진사업 안내(총괄)",
+   "detail": "핵심성과지표 16개와 목표치 설정법 · 부록3 지표 정의",
+   "url": "https://www.mohw.go.kr/board.es?mid=a10411010100&bid=0019&act=view&list_no=1483973",
+   "updated": "",
+   "n": 18
+  },
+  {
+   "key": "nice",
+   "org": "National Institute for Health and Care Excellence(영국)",
+   "title": "NICE guidelines (NG series)",
+   "detail": "공중보건·지역 적용 가능 지침 선별, 권고문 단위 분류",
+   "url": "https://www.nice.org.uk/guidance",
+   "updated": "",
+   "n": 19
+  },
+  {
+   "key": "cpstf",
+   "org": "Community Preventive Services Task Force(미국)",
+   "title": "The Community Guide — All Active Findings (2024-11)",
+   "detail": "권고 224건 · 22개 주제",
+   "url": "https://www.thecommunityguide.org/media/pdf/cpstf-finding-lists/CPSTF-All-Findings-508.pdf",
+   "updated": "2024-11",
+   "n": 20
+  },
+  {
+   "key": "dir",
+   "org": "이 대시보드",
+   "title": "지표 방향성 확정 v1 — 미국·WHO·OECD·국내 12개 체계 조사",
+   "detail": "지표별 「높을수록 좋음/나쁨/맥락」 판정 근거",
+   "url": "https://github.com/soonryu74/soonryu74.github.io/blob/main/health-dashboard/docs/%EC%A7%80%ED%91%9C_%EB%B0%A9%ED%96%A5%EC%84%B1_v1.md",
+   "updated": "",
+   "n": 21
+  },
+  {
+   "key": "tiers",
+   "org": "이 대시보드",
+   "title": "지역보건사업 평가이론 v1 — WHO/IHP+ 결과사슬 계층 분류",
+   "detail": "투입·산출·성과·임팩트·맥락 계층과 권장 측정 주기",
+   "url": "https://github.com/soonryu74/soonryu74.github.io/blob/main/health-dashboard/docs/%EC%A7%80%EC%97%AD%EB%B3%B4%EA%B1%B4%EC%82%AC%EC%97%85_%ED%8F%89%EA%B0%80%EC%9D%B4%EB%A1%A0_v1.md",
+   "updated": "",
+   "n": 22
+  },
+  {
+   "key": "ciat",
+   "org": "질병관리청 수도권질병대응센터",
+   "title": "CIAT 지역사회건강지표 분석도구",
+   "detail": "화면 구성(6패널·심층분석 3종)을 참조",
+   "url": "https://kdca.shinyapps.io/ciat/",
+   "updated": "",
+   "n": 23
+  },
+  {
+   "key": "rank",
+   "org": "이 대시보드",
+   "title": "랭킹 방법론 v1 — 영역 점수·등급·가중치",
+   "detail": "균등 가중·3년 평균·결과지표 제외·등급(플래티넘 10%·골드 25%·실버 50%)",
+   "url": "https://github.com/soonryu74/soonryu74.github.io/blob/main/health-dashboard/docs/%EB%9E%AD%ED%82%B9_%EB%B0%A9%EB%B2%95%EB%A1%A0_v1.md",
+   "updated": "",
+   "n": 24
+  },
+  {
+   "key": "errata",
+   "org": "이 대시보드",
+   "title": "사용설명서·대시보드 정오표 v1",
+   "detail": "2026-09-24 숫자 전수 검증 결과와 정정 내역",
+   "url": "https://github.com/soonryu74/soonryu74.github.io/blob/main/health-dashboard/docs/%EC%82%AC%EC%9A%A9%EC%84%A4%EB%AA%85%EC%84%9C_%EC%A0%95%EC%98%A4%ED%91%9C_v1.md",
+   "updated": "2026-09-24",
+   "n": 25
+  }
+ ],
+ "by_ind": {
+  "DT_H_SM": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 현재흡연율",
+   "tbl": "DT_H_SM",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_SM"
+  },
+  "DT_H_SM_MALE": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 남자 현재흡연율",
+   "tbl": "DT_H_SM_MALE",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_SM_MALE"
+  },
+  "DT_TOBACCO_PRODUCT": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 담배제품 현재사용률",
+   "tbl": "DT_TOBACCO_PRODUCT",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_TOBACCO_PRODUCT"
+  },
+  "DT_SM_TRY_V2": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 금연시도율(담배제품 현재사용자)",
+   "tbl": "DT_SM_TRY_V2",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_SM_TRY_V2"
+  },
+  "DT_117075_SM_IND_WORK_V2": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 직장실내 간접흡연 노출률(담배제품 현재 미사용자)",
+   "tbl": "DT_117075_SM_IND_WORK_V2",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_SM_IND_WORK_V2"
+  },
+  "DT_H_DR_MONTH": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 월간음주율",
+   "tbl": "DT_H_DR_MONTH",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_DR_MONTH"
+  },
+  "DT_117075_H_DR_HIGH_WH": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 고위험음주율",
+   "tbl": "DT_117075_H_DR_HIGH_WH",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_H_DR_HIGH_WH"
+  },
+  "DT_H_DR_HIGH": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 연간음주자의 고위험음주율",
+   "tbl": "DT_H_DR_HIGH",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_DR_HIGH"
+  },
+  "DT_117075_H_DR_DRIV": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 자동차 또는 오토바이 운전자의 연간 음주운전 경험률",
+   "tbl": "DT_117075_H_DR_DRIV",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_H_DR_DRIV"
+  },
+  "DT_H_EX_WALK": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 걷기 실천율",
+   "tbl": "DT_H_EX_WALK",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_EX_WALK"
+  },
+  "DT_H_EX_PHY": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 중강도 이상 신체활동 실천율",
+   "tbl": "DT_H_EX_PHY",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_EX_PHY"
+  },
+  "DT_117075_H_HEALTHY": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 건강생활실천율",
+   "tbl": "DT_117075_H_HEALTHY",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_H_HEALTHY"
+  },
+  "DT_H_OBE_OBE": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 비만율(자가보고)",
+   "tbl": "DT_H_OBE_OBE",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_OBE_OBE"
+  },
+  "DT_H_OBE_CONTROL": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 연간 체중조절 시도율",
+   "tbl": "DT_H_OBE_CONTROL",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_OBE_CONTROL"
+  },
+  "DT_117075_DIE_BF02": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 아침식사 실천율",
+   "tbl": "DT_117075_DIE_BF02",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_DIE_BF02"
+  },
+  "DT_11775_NUT_LABEL_UTIL": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 영양표시 활용률",
+   "tbl": "DT_11775_NUT_LABEL_UTIL",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_11775_NUT_LABEL_UTIL"
+  },
+  "DT_H_MENTAL_STRESS": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 스트레스 인지율",
+   "tbl": "DT_H_MENTAL_STRESS",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_MENTAL_STRESS"
+  },
+  "DT_H_MENTAL_DEPRESS": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 연간 우울감 경험률",
+   "tbl": "DT_H_MENTAL_DEPRESS",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_MENTAL_DEPRESS"
+  },
+  "DT_117075_H_MENTAL_DEPRESS_SYM": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 우울증상유병률",
+   "tbl": "DT_117075_H_MENTAL_DEPRESS_SYM",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_H_MENTAL_DEPRESS_SYM"
+  },
+  "DT_H_OR_BRUSH": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 어제 점심식사 후 칫솔질 실천율",
+   "tbl": "DT_H_OR_BRUSH",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_OR_BRUSH"
+  },
+  "DT_H_OR_INCONV": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 저작불편호소율(65세 이상)",
+   "tbl": "DT_H_OR_INCONV",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_OR_INCONV"
+  },
+  "DT_HYPER_DOCTOR": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 고혈압 진단 경험률(30세 이상)",
+   "tbl": "DT_HYPER_DOCTOR",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_HYPER_DOCTOR"
+  },
+  "DT_HYPER_DOCTOR_DRUG": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 고혈압 진단 경험자(30세 이상)의 치료율",
+   "tbl": "DT_HYPER_DOCTOR_DRUG",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_HYPER_DOCTOR_DRUG"
+  },
+  "DT_DIA_DOCTOR": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 당뇨병 진단 경험률(30세 이상)",
+   "tbl": "DT_DIA_DOCTOR",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_DIA_DOCTOR"
+  },
+  "DT_DIA_TREAT": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 당뇨병 진단 경험자(30세 이상)의 치료율",
+   "tbl": "DT_DIA_TREAT",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_DIA_TREAT"
+  },
+  "DT_DIA_EYE": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 연간 당뇨성 안질환 합병증검사(안저검사) 수진율(30세 이상)",
+   "tbl": "DT_DIA_EYE",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_DIA_EYE"
+  },
+  "DT_DIA_KIDNEY": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 연간 당뇨성 신장질환 합병증검사(미세단백뇨검사) 수진율(30세 이상)",
+   "tbl": "DT_DIA_KIDNEY",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_DIA_KIDNEY"
+  },
+  "DT_117075_HYPER_AWAR": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 혈압수치 인지율",
+   "tbl": "DT_117075_HYPER_AWAR",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_HYPER_AWAR"
+  },
+  "DT_117075_DIA_AWAR": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 혈당수치 인지율",
+   "tbl": "DT_117075_DIA_AWAR",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_DIA_AWAR"
+  },
+  "DT_117075_STR_EARLY_SYM": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 뇌졸중(중풍) 조기증상 인지율",
+   "tbl": "DT_117075_STR_EARLY_SYM",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_STR_EARLY_SYM"
+  },
+  "DT_117075_MYO_EARLY_SYM": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 심근경색증 조기증상 인지율",
+   "tbl": "DT_117075_MYO_EARLY_SYM",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_MYO_EARLY_SYM"
+  },
+  "DT_INFLUENZA": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 연간 인플루엔자 예방접종률",
+   "tbl": "DT_INFLUENZA",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_INFLUENZA"
+  },
+  "DT_CPR_EDU": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 심폐소생술 교육경험률",
+   "tbl": "DT_CPR_EDU",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_CPR_EDU"
+  },
+  "DT_CPR_AWAR": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 심폐소생술 인지율",
+   "tbl": "DT_CPR_AWAR",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_CPR_AWAR"
+  },
+  "DT_H_BELT": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 운전자석 안전벨트 착용률",
+   "tbl": "DT_H_BELT",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_BELT"
+  },
+  "DT_117075_H_BELT_BACK": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 동승차량 뒷좌석 안전벨트 착용률",
+   "tbl": "DT_117075_H_BELT_BACK",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_H_BELT_BACK"
+  },
+  "DT_H_HAND_WASH": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 외출 후 손 씻기 실천율",
+   "tbl": "DT_H_HAND_WASH",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_HAND_WASH"
+  },
+  "DT_H_SOAP_USE": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 비누 손 세정제 사용률",
+   "tbl": "DT_H_SOAP_USE",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_H_SOAP_USE"
+  },
+  "DT_117075_NECE_NTR02": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 연간 미충족의료율(병의원)",
+   "tbl": "DT_117075_NECE_NTR02",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_117075_NECE_NTR02"
+  },
+  "DT_NECE_CLINIC": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 연간 보건기관 이용률",
+   "tbl": "DT_NECE_CLINIC",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_NECE_CLINIC"
+  },
+  "DT_HEALTH_RECOG": {
+   "refs": [
+    "chs"
+   ],
+   "table": "시·군·구별 주관적 건강인지율",
+   "tbl": "DT_HEALTH_RECOG",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=177&tblId=DT_HEALTH_RECOG"
+  },
+  "K_MORT_ALL": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「총사망 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_CA": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「악성신생물(암) 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_STO": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「위암 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_LIV": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「간암 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_LUNG": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「폐암 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_COL": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「대장암 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_HEART": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「심장질환 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_IHD": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「허혈성심장질환 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_CVA": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「뇌혈관질환 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_PNEU": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「폐렴 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_DM": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「당뇨병 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_ALZ": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「알츠하이머병 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_HTN": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「고혈압성질환 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_LIVD": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「간질환 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_COPD": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「만성하기도질환 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_SUI": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「고의적 자해(자살) 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_TRA": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「운수사고 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_FALL": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「추락(낙상) 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_SEP": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「패혈증 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_TB": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「호흡기결핵 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_HOM": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「가해(타살) 표준화사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_MORT_INF": {
+   "refs": [
+    "mort",
+    "kdh"
+   ],
+   "table": "원자료명 「영아사망률」 · 원 출처 통계청 「사망원인통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_VAR": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「수두 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_MUMPS": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「유행성이하선염 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_HAV": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「A형간염 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_TSU": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「쯔쯔가무시증 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_MAL": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「말라리아 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_SCA": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「성홍열 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_PER": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「백일해 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_HFRS": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「신증후군출혈열 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_LEG": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「레지오넬라증 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_SYP": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「매독(1기) 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_TYP": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「장티푸스 발생률」 · 원 출처 질병관리청 「법정감염병발생보고」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_INF_TBN": {
+   "refs": [
+    "inf",
+    "kdh"
+   ],
+   "table": "원자료명 「결핵 신환자 신고율」 · 원 출처 질병관리청 「결핵환자신고현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_PT": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「의료기관 진료실인원(인구 천명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_COST": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「1인당 의료기관 진료비」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_HTN": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「고혈압 진료실인원(천명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_DM": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「당뇨병 진료실인원(천명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_MENT": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「정신질환 진료실인원(천명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_ARTH": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「관절염 진료실인원(천명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_PERIO": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「치주질환 진료실인원(천명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_LIV": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「간질환 진료실인원(천명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_STO": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「위암 진료실인원(10만명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_LUNG": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「폐암 진료실인원(10만명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_COL": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「대장암 진료실인원(10만명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_USE_BRE": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「유방암 진료실인원(10만명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_CHK_RATE": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「일반건강검진(1차) 수검률」 · 원 출처 국민건강보험공단 「건강검진통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_CHK_NORMA": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「검진 판정 정상A 비율」 · 원 출처 국민건강보험공단 「건강검진통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_CHK_DIS": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「검진 판정 유질환자 비율」 · 원 출처 국민건강보험공단 「건강검진통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_CHK_HTN": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「검진 고혈압 판정 비율」 · 원 출처 국민건강보험공단 「건강검진통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_CHK_DM": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「검진 당뇨병 판정 비율」 · 원 출처 국민건강보험공단 「건강검진통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_DOC": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「의사 수(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_DENT": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「치과의사 수(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_KM": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「한의사 수(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_PHARM": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「약사 수(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_NURSE": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「간호사 수(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_BED": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「병상 수(천명당)」 · 원 출처 국민건강보험공단 「지역별의료이용통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_CLINIC": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「의원 수(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_EM": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「응급의학과 전문의(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_IM": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「내과 전문의(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_PSY": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「정신건강의학과 전문의(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_OB": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「산부인과 전문의(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_PED": {
+   "refs": [
+    "nhis",
+    "kdh"
+   ],
+   "table": "원자료명 「소아청소년과 전문의(10만명당)」 · 원 출처 국민건강보험공단 「건강보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_PHCDOC": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「보건소 의사 인력(10만명당)」 · 원 출처 보건복지부 「보건소 및 보건지소 운영현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_WELF": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「노인천명당 노인여가복지시설 수」 · 원 출처 보건복지부, 행정안전부 「노인복지시설현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_CULT": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「인구 10만명당 문화기반시설 수」 · 원 출처 문화체육관광부, 행정안전부 「전국 문화기반시설 총람」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_RES_SOC": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「인구 10만명당 사회복지시설 수」 · 원 출처 지방자치단체, 행정안전부 「지방자치단체 통계연보」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_AGED": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「고령인구비율(65세 이상)」 · 원 출처 행정안전부 「주민등록인구현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_GROW": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「인구증가율」 · 원 출처 행정안전부 「주민등록인구현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_TFR": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「합계출산율」 · 원 출처 통계청 「인구동향조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_CBR": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「조출생률」 · 원 출처 통계청 「인구동향조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_EXT": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「지방소멸위험지수」 · 원 출처 한국고용정보원 「소멸위험지수」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_DENS": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「인구밀도」 · 원 출처 행정안전부, 국토교통부 「지적통계, 주민등록인구현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_AGE": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「평균연령」 · 원 출처 통계청 「인구총조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_URB": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「도시지역인구비율」 · 원 출처 한국토지주택공사 「도시계획현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_DIS": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「등록장애인 비율(천명당)」 · 원 출처 국민건강보험공단 「노인장기요양보험통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_BLS": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「국민기초생활보장수급자 비율(천명당)」 · 원 출처 지방자치단체 「국민기초생활보장수급자현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_POP_ONE": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「1인가구 비율」 · 원 출처 통계청 「인구총조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ECO_FIN": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「재정자립도」 · 원 출처 행정안전부 「지방자치단체 통합재정 개요」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ECO_FIN2": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「재정자주도」 · 원 출처 행정안전부 「지방자치단체 통합재정 개요」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ECO_UNEMP": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「실업률」 · 원 출처 통계청 「경제활동인구조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ECO_EMP": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「고용률」 · 원 출처 통계청 「경제활동인구조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ECO_YEMP": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「청년고용률」 · 원 출처 통계청 「시도)경제활동인구조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ECO_LFP": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「경제활동참가율」 · 원 출처 통계청 「경제활동인구조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ECO_BIZ": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「인구 천명당 사업체 수」 · 원 출처 통계청 「전국사업체조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ECO_HOME": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「주택소유율」 · 원 출처 통계청 「주택소유통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_WATER": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「상수도보급률」 · 원 출처 환경부 「상수도통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_SEWER": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「하수도보급률」 · 원 출처 환경부 「하수도통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_ROAD": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「도로포장률」 · 원 출처 국토교통부 「도로현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_PARKN": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「인구 천명당 공원 수」 · 원 출처 국토교통부, 행정안전부 「도시계획현황, 주민등록인구」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_PARKA": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「인구 천명당 도시공원 조성면적」 · 원 출처 국토교통부 「도시계획현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_SPORT": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「인구 천명당 체육시설 수」 · 원 출처 한국토지주택공사, 행정안전부 「도시계획현황, 주민등록인구」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_FOREST": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「산림면적비율」 · 원 출처 산림청 「전국 도시림현황통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_EMPTY": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「빈집비율」 · 원 출처 통계청 「주택총조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_OLD": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「노후주택비율」 · 원 출처 통계청 「주택총조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_PM10": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「미세먼지(PM10) 연평균 농도」 · 원 출처 환경부(국립환경과학원 「대기오염도현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_PM25": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「초미세먼지(PM2.5) 연평균 농도」 · 원 출처 환경부(국립환경과학원 「대기오염도현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_TEMP": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「연평균 기온」 · 원 출처 기상청 「기상관측통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_ENV_RAIN": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「연 강수량」 · 원 출처 기상청 「기상관측통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_TCI": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「교통문화지수」 · 원 출처 국토교통부 「교통문화지수 실태조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_TSI": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「교통안전지수」 · 원 출처 도로교통공단 「교통안전지수」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_G_FIRE": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「지역안전등급 화재(1=최상)」 · 원 출처 국민안전처 「지역안전등급」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_G_TRAF": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「지역안전등급 교통사고(1=최상)」 · 원 출처 국민안전처 「지역안전등급」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_G_CRIME": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「지역안전등급 범죄(1=최상)」 · 원 출처 국민안전처 「지역안전등급」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_G_ACC": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「지역안전등급 생활안전(1=최상)」 · 원 출처 국민안전처 「지역안전등급」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_G_SUI": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「지역안전등급 자살(1=최상)」 · 원 출처 국민안전처 「지역안전등급」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_G_INF": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「지역안전등급 감염병(1=최상)」 · 원 출처 국민안전처 「지역안전등급」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_TA": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「인구 10만명당 교통사고 건수」 · 원 출처 도로교통공단(교통사고분석시스템) 「경찰접수교통사고현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_TADEATH": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「교통사고 사망자(10만명당)」 · 원 출처 도로교통공단(교통사고분석시스템) 「경찰접수교통사고현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_PED": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「보행 교통사고 사망자(10만명당)」 · 원 출처 도로교통공단(교통사고분석시스템) 「경찰접수교통사고현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_ELD": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「노인 교통사고 사망자(10만명당)」 · 원 출처 도로교통공단(교통사고분석시스템) 「경찰접수교통사고현황」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_BELT": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「안전띠 착용률(전좌석)」 · 원 출처 국토교통부 「교통문화지수 실태조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_STOP": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「횡단보도 정지선 준수율」 · 원 출처 국토교통부 「교통문화지수 실태조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_SAF_SIG": {
+   "refs": [
+    "env",
+    "kdh"
+   ],
+   "table": "원자료명 「보행자 횡단보도 신호준수율」 · 원 출처 국토교통부 「교통문화지수 실태조사」",
+   "tbl": "",
+   "url": ""
+  },
+  "K_EDU_RATIO": {
+   "refs": [
+    "pop",
+    "kdh"
+   ],
+   "table": "원자료명 「교원 1인당 학생 수」 · 원 출처 한국교육개발원(교육통계연구센터) 「교육기본통계」",
+   "tbl": "",
+   "url": ""
+  },
+  "CANC_ALL": {
+   "refs": [
+    "cancer"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 암검진 대상 및 수검인원 현황(KOSIS DT_35007_N009). 수검인원÷대상인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N009",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009"
+  },
+  "CANC_STO": {
+   "refs": [
+    "cancer"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 암검진 대상 및 수검인원 현황(KOSIS DT_35007_N009). 수검인원÷대상인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N009",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009"
+  },
+  "CANC_COL": {
+   "refs": [
+    "cancer"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 암검진 대상 및 수검인원 현황(KOSIS DT_35007_N009). 수검인원÷대상인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N009",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009"
+  },
+  "CANC_LIV": {
+   "refs": [
+    "cancer"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 암검진 대상 및 수검인원 현황(KOSIS DT_35007_N009). 수검인원÷대상인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N009",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009"
+  },
+  "CANC_BRE": {
+   "refs": [
+    "cancer"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 암검진 대상 및 수검인원 현황(KOSIS DT_35007_N009). 수검인원÷대상인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N009",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009"
+  },
+  "CANC_CVX": {
+   "refs": [
+    "cancer"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 암검진 대상 및 수검인원 현황(KOSIS DT_35007_N009). 수검인원÷대상인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N009",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009"
+  },
+  "CANC_LUN": {
+   "refs": [
+    "cancer"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 암검진 대상 및 수검인원 현황(KOSIS DT_35007_N009). 수검인원÷대상인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N009",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009"
+  },
+  "CHK_RATE": {
+   "refs": [
+    "nhis"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 일반건강검진 대상 및 수검인원 현황(KOSIS DT_35007_N001_1). 수검인원÷대상인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N001_1",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N001_1"
+  },
+  "CHK_HTN_S": {
+   "refs": [
+    "nhis"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 일반건강검진 판정결과 질환의심 세부현황(KOSIS DT_35007_N103). 1차 판정 고혈압 질환의심 ÷ 수검인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N103",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N103"
+  },
+  "CHK_DM_S": {
+   "refs": [
+    "nhis"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 일반건강검진 판정결과 질환의심 세부현황(KOSIS DT_35007_N103). 1차 판정 당뇨병 질환의심 ÷ 수검인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N103",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N103"
+  },
+  "CHK_HTN_D": {
+   "refs": [
+    "nhis"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 일반건강검진 판정결과 유질환자 세부현황(KOSIS DT_35007_N105). 판정 고혈압 유질환자 ÷ 수검인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N105",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N105"
+  },
+  "CHK_DM_D": {
+   "refs": [
+    "nhis"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 일반건강검진 판정결과 유질환자 세부현황(KOSIS DT_35007_N105). 판정 당뇨병 유질환자 ÷ 수검인원. 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N105",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N105"
+  },
+  "CHK_NORMA": {
+   "refs": [
+    "nhis"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 일반건강검진 판정현황(KOSIS DT_35007_N098). 정상A ÷ 판정 인원(계). 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N098",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N098"
+  },
+  "CHK_DIS": {
+   "refs": [
+    "nhis"
+   ],
+   "table": "국민건강보험공단 건강검진통계 — 시군구별 성별 일반건강검진 판정현황(KOSIS DT_35007_N098). 유질환자 ÷ 판정 인원(계). 일반구는 시 단위로 합산",
+   "tbl": "DT_35007_N098",
+   "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N098"
+  },
+  "HLE_LE": {
+   "refs": [
+    "hle",
+    "mort",
+    "chs"
+   ],
+   "table": "기대수명(추정) — 자체 산출(근사)",
+   "tbl": "",
+   "url": ""
+  },
+  "HLE_HLE": {
+   "refs": [
+    "hle",
+    "mort",
+    "chs"
+   ],
+   "table": "건강수명(추정) — 자체 산출(근사)",
+   "tbl": "",
+   "url": ""
+  },
+  "HLE_UNH": {
+   "refs": [
+    "hle",
+    "mort",
+    "chs"
+   ],
+   "table": "불건강 기간 — 자체 산출(근사)",
+   "tbl": "",
+   "url": ""
+  },
+  "DEP_IDX": {
+   "refs": [
+    "dep"
+   ],
+   "table": "지역박탈지수(근사) — 인구주택총조사 집계표 7개 변수",
+   "tbl": "",
+   "url": ""
+  }
+ }
+}

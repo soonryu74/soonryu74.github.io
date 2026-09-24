@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import Cite from "./Cite";
 import { INDICATORS, DS, SIDOS, SGG_ALL, val, fmt, nationalMedian, NCD } from "../data";
 import EV from "../../../data/chronicle_events.json";
 import S25 from "../../../data/chs2025_summary25.json";
@@ -139,7 +140,7 @@ export default function ChronicleView({ setTip, onPick }) {
         </div>
         <div className="room-grid">
           <div className="m-card news">
-            <div className="m-cardhead"><span className="m-icon">📰</span><h4>올해의 10대 뉴스 <small>시군구 중앙값(표준화율) 전년 대비 · 자동 산출</small></h4></div>
+            <div className="m-cardhead"><span className="m-icon">📰</span><h4>올해의 10대 뉴스<Cite k="chs" /> <small>시군구 중앙값(표준화율) 전년 대비 · 자동 산출</small></h4></div>
             {news.length === 0 && <div className="m-empty">{YEARS.includes(year) ? "이 주제의 지표 변화가 없습니다" : "조사 자료가 아직 없는 해입니다 — 사건·자료만 전시"}</div>}
             <ol className="m-news">
               {news.map((it) => (
@@ -191,7 +192,7 @@ export default function ChronicleView({ setTip, onPick }) {
       </section>
 
       <section className="wall">
-        <div className="m-cardhead"><span className="m-icon">🧱</span><h4>변화의 벽 <small>「한눈에 보기」 25개 지표 중 시군구 자료가 있는 {WALL.length}개 · 전국 시군구 중앙값 · 막대는 그 지표의 역대 최댓값 대비 · ▶ 재생 시 해마다 움직임</small></h4></div>
+        <div className="m-cardhead"><span className="m-icon">🧱</span><h4>변화의 벽<Cite k={["chs", "chs25"]} /> <small>「한눈에 보기」 25개 지표 중 시군구 자료가 있는 {WALL.length}개 · 전국 시군구 중앙값 · 막대는 그 지표의 역대 최댓값 대비 · ▶ 재생 시 해마다 움직임</small></h4></div>
         <div className="wall-grid">
           {WALL.map((ind) => {
             const v = MED[ind.id][year], p = MED[ind.id][year - 1], base = MED[ind.id][ind.years[0]];

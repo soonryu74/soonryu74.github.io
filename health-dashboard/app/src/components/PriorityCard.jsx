@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Cite from "./Cite";
 import { INDICATORS, EVIDENCE, evidenceVerdict, ranked, fmt } from "../data";
 import { Badge } from "./EvidencePanel";
 
@@ -25,7 +26,7 @@ export default function PriorityCard({ scored, item, pool, onPick }) {
 
   return (
     <div className="card span2 prio">
-      <h3>무엇부터 손댈 것인가 <small className="muted">(하위 {cut}% 지표 × 현행 근거)</small></h3>
+      <h3>무엇부터 손댈 것인가<Cite k={["chs", "nice", "cpstf"]} /> <small className="muted">(하위 {cut}% 지표 × 현행 근거)</small></h3>
       <div className="desc">
         축 1 <b>부담</b>(백분위) · 축 2 <b>격차</b>(전국 최대−최소) · 축 3 <b>수단</b>(NICE 현행 지침 유무와 갱신 연도). 나쁘고, 격차가 크고, 검증된 수단이 있는 지표가 위로 옵니다.
         <span className="cutsel"> 기준 <select value={cut} onChange={(e) => setCut(Number(e.target.value))}><option value={25}>하위 25%</option><option value={30}>하위 30%</option><option value={40}>하위 40%</option></select></span>

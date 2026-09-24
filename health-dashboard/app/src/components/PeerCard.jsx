@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Cite from "./Cite";
 import { INDICATORS, IND_BY_ID, val, fmt, label, RBY, SGG_ALL, leagueOf, depOf, latestYear, ranked, DOMAINS_ALL, IND_BY_DOMAIN } from "../data";
 import ExportButtons from "./ExportButtons";
 
@@ -68,7 +69,7 @@ export default function PeerCard({ item, sel, onPick }) {
 
   return (
     <div className="card span2 peer">
-      <h3>동류군 비교 <small className="muted">여건이 비슷한 {peers.list.length}개 시군구 · {peers.myLg === "gun" ? "군 리그" : "도시 리그"}</small></h3>
+      <h3>동류군 비교<Cite k={["pop", "dep", "chs"]} /> <small className="muted">여건이 비슷한 {peers.list.length}개 시군구 · {peers.myLg === "gun" ? "군 리그" : "도시 리그"}</small></h3>
       <ExportButtons name={`${label(sel)}_동류군비교`} kinds={["csv"]} />
       <div className="desc">
         고령인구비율·재정자립도·인구밀도(로그)·지역박탈 5분위 네 축을 표준화해 거리가 가까운 지역을 고릅니다.

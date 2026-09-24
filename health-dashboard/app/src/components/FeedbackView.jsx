@@ -132,7 +132,7 @@ export default function FeedbackView({ currentUrl }) {
           자료별 출처·산식·갱신 주기·한계는 「자료원」 탭에, 지표 방향·계층·근거는 각 지표 화면에 적혀 있습니다. 주소: <a href={CONTACT.site} target="_blank" rel="noreferrer">{CONTACT.site}</a>
         </div>
         <div className="desc" style={{ marginTop: 6 }}>
-          <b>사용설명서(64쪽)</b> — 자료 소개·기본 조작·메뉴별 설명과 활용 팁·활용 시나리오·해석 주의:{" "}
+          <b>사용설명서(66쪽)</b> — 자료 소개·기본 조작·메뉴별 설명과 활용 팁·활용 시나리오·해석 주의:{" "}
           <a href={CONTACT.manual_pdf} target="_blank" rel="noreferrer">PDF 보기</a> · <a href={CONTACT.manual_pptx} target="_blank" rel="noreferrer">파워포인트 내려받기</a>
         </div>
       </div>

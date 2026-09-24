@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import Cite from "./Cite";
 import { neighbors } from "topojson-client";
 import { geoMercator, geoPath, geoCentroid } from "d3-geo";
 import { INDICATORS, IND_BY_DOMAIN, DOMAINS_ALL, RBY, fmt, val } from "../data";
@@ -123,7 +124,7 @@ export default function HotspotView({ setTip, onPick }) {
       </div>
       <div className="grid2">
         <div className="card">
-          <h3>{mode === "gi" ? `${year}년 · ${ind.name} 핫스팟·콜드스팟` : `${ind.name} 추세 ${years[0]}–${years[years.length - 1]}`}</h3>
+          <h3>{mode === "gi" ? `${year}년 · ${ind.name} 핫스팟·콜드스팟` : `${ind.name} 추세 ${years[0]}–${years[years.length - 1]}`}<Cite ind={ind} k="geo" /></h3>
           <ExportButtons name={`${mode === "gi" ? year + "_" : ""}${ind.name}_${mode === "gi" ? "핫스팟" : "추세"}`} kinds={["svg", "png"]} />
           <div className="desc">{mode === "gi" ? "Gi* z ≥ 1.65/1.96/2.58 → 90/95/99% 핫스팟, z ≤ −1.65/−1.96/−2.58 → 콜드스팟" : "Mann-Kendall z ≥ 1.65/1.96/2.58 → 90/95/99% 증가, 음수는 감소 · Sen 기울기 = 연간 변화량 중앙값"} · 시군구 {FC.features.length}개 폴리곤 기준</div>
           <div className="mapwrap">

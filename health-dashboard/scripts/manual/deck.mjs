@@ -32,6 +32,31 @@ const W = 13.33, H = 7.5;
 let pageNo = 0;
 const T = (opts) => ({ fontFace: FONT, isTextBox: true, margin: 0, ...opts });
 
+// ── 참고문헌: 대시보드와 같은 번호(data/refs.json · scripts/build_refs.py) ──
+// 본문 문자열 안의 {r:key} 또는 {r:key1,key2} → 파란 위첨자 [n] + 「참고문헌」 쪽으로 가는 링크
+const REPO = process.env.HD_REPO || '/home/user/soonryu74.github.io/health-dashboard';
+const REFS = JSON.parse(fs.readFileSync(`${REPO}/data/refs.json`, 'utf8')).refs;
+const REFN = Object.fromEntries(REFS.map((r) => [r.key, r]));
+const REF_PER_SLIDE = 13;
+const REF_SLIDE_FIRST = Number(process.env.REF_SLIDE_FIRST || 64);   // 참고문헌 첫 쪽 번호 — 끝에서 실제 번호와 대조해 틀리면 멈춘다
+const refSlideOf = (n) => REF_SLIDE_FIRST + Math.floor((n - 1) / REF_PER_SLIDE);
+const MARK = /\{r:([a-z0-9_,]+)\}/g;
+function R(str, base = {}) {
+  if (typeof str !== 'string' || !str.includes('{r:')) return str;
+  const out = []; let last = 0; let m;
+  MARK.lastIndex = 0;
+  while ((m = MARK.exec(str))) {
+    if (m.index > last) out.push({ text: str.slice(last, m.index), options: { ...base } });
+    const refs = m[1].split(',').map((k) => { if (!REFN[k]) throw new Error(`참고문헌 key 없음: ${k}`); return REFN[k]; }).sort((a, b) => a.n - b.n);
+    refs.forEach((r, i) => out.push({ text: (i ? ',' : '[') + r.n + (i === refs.length - 1 ? ']' : ''),
+      options: { ...base, superscript: true, color: C.BLUE, hyperlink: { slide: refSlideOf(r.n), tooltip: `[${r.n}] ${r.org}, ${r.title}` } } }));
+    last = m.index + m[0].length;
+  }
+  if (last < str.length) out.push({ text: str.slice(last), options: { ...base } });
+  return out;
+}
+const plain = (str) => (typeof str === 'string' ? str.replace(MARK, '') : str);
+
 function footer(slide) {
   pageNo += 1;
   slide.addText('지역 건강프로파일 대시보드 사용설명서 · health-profile.kr', T({ x: 0.5, y: H - 0.42, w: 8, h: 0.3, fontSize: 9, color: C.MUT }));
@@ -39,7 +64,7 @@ function footer(slide) {
 }
 function title(slide, text, sub) {
   slide.addText(text, T({ x: 0.5, y: 0.35, w: W - 1, h: 0.6, fontSize: 26, bold: true, color: C.NAVY }));
-  if (sub) slide.addText(sub, T({ x: 0.5, y: 0.95, w: W - 1, h: 0.35, fontSize: 12.5, color: C.MUT }));
+  if (sub) slide.addText(R(sub, { fontSize: 12.5, color: C.MUT }), T({ x: 0.5, y: 0.95, w: W - 1, h: 0.35, fontSize: 12.5, color: C.MUT }));
 }
 function fitImage(slide, file, box, opts = {}) {
   if (!file) {
@@ -55,7 +80,13 @@ function fitImage(slide, file, box, opts = {}) {
   slide.addImage({ path: file, x, y, w: iw, h: ih });
 }
 function bulletsText(items, size = 12.5) {
-  return items.map((t, i) => ({ text: t, options: { bullet: { indent: 12 }, fontSize: size, color: C.INK, paraSpaceAfter: 6, breakLine: i < items.length - 1 } }));
+  return items.flatMap((t, i) => {
+    const base = { fontSize: size, color: C.INK };
+    const runs = [].concat(R(t, base)).map((x) => (typeof x === 'string' ? { text: x, options: { ...base } } : x));
+    runs[0].options = { ...runs[0].options, bullet: { indent: 12 }, paraSpaceAfter: 6 };
+    if (i < items.length - 1) runs[runs.length - 1].options = { ...runs[runs.length - 1].options, breakLine: true };
+    return runs;
+  });
 }
 function tipBox(slide, tips, box, label = '활용 팁') {
   slide.addShape(pres.ShapeType.roundRect, { x: box.x, y: box.y, w: box.w, h: box.h, fill: { color: C.SKY }, line: { color: C.SKY }, rectRadius: 0.1 });
@@ -139,8 +170,8 @@ function cardsSlide({ t, sub, items, cols = 2, note }) {
       s.addShape(pres.ShapeType.ellipse, { x: x + 0.2, y: y + 0.2, w: 0.5, h: 0.5, fill: { color: it.color || C.BLUE }, line: { color: it.color || C.BLUE } });
       s.addText(it.icon, T({ x: x + 0.2, y: y + 0.2, w: 0.5, h: 0.5, fontSize: 13, bold: true, color: C.WHITE, align: 'center', valign: 'middle' }));
     }
-    s.addText(it.h, T({ x: x + (it.icon ? 0.85 : 0.2), y: y + 0.2, w: gw - (it.icon ? 1.05 : 0.4), h: 0.45, fontSize: 14, bold: true, color: C.NAVY, valign: 'middle' }));
-    s.addText(it.b, T({ x: x + 0.2, y: y + 0.75, w: gw - 0.4, h: gh - 0.9, fontSize: 11.5, color: C.INK, valign: 'top' }));
+    s.addText(R(it.h, { fontSize: 14, bold: true, color: C.NAVY }), T({ x: x + (it.icon ? 0.85 : 0.2), y: y + 0.2, w: gw - (it.icon ? 1.05 : 0.4), h: 0.45, fontSize: 14, bold: true, color: C.NAVY, valign: 'middle' }));
+    s.addText(R(it.b, { fontSize: 11.5, color: C.INK }), T({ x: x + 0.2, y: y + 0.75, w: gw - 0.4, h: gh - 0.9, fontSize: 11.5, color: C.INK, valign: 'top' }));
   });
   notes(s, note); footer(s);
 }
@@ -149,7 +180,7 @@ function tableSlide({ t, sub, head, rows, colW, fs = 11, note }) {
   const s = pres.addSlide(); title(s, t, sub);
   const top = sub ? 1.45 : 1.2;
   const hdr = head.map((h) => ({ text: h, options: { bold: true, color: C.WHITE, fill: { color: C.NAVY }, fontSize: fs, fontFace: FONT, align: 'left', valign: 'middle' } }));
-  const body = rows.map((r, ri) => r.map((c) => ({ text: String(c), options: { fontSize: fs, fontFace: FONT, color: C.INK, fill: { color: ri % 2 ? C.WHITE : C.TINT }, valign: 'middle' } })));
+  const body = rows.map((r, ri) => r.map((c) => ({ text: R(String(c), { fontSize: fs, fontFace: FONT, color: C.INK }), options: { fontSize: fs, fontFace: FONT, color: C.INK, fill: { color: ri % 2 ? C.WHITE : C.TINT }, valign: 'middle' } })));
   s.addTable([hdr, ...body], { x: 0.5, y: top, w: W - 1, colW, border: { type: 'solid', color: C.LINE, pt: 0.5 }, rowH: 0.3, autoPage: false });
   notes(s, note); footer(s);
 }
@@ -162,7 +193,7 @@ function statsSlide({ t, sub, stats, foot, note }) {
     s.addShape(pres.ShapeType.roundRect, { x, y: top, w: gw, h: 2.6, fill: { color: C.TINT }, line: { color: C.LINE, width: 0.75 }, rectRadius: 0.12 });
     s.addText(st.n, T({ x, y: top + 0.35, w: gw, h: 1.1, fontSize: st.size || 44, bold: true, color: C.BLUE, align: 'center', valign: 'middle' }));
     s.addText(st.l, T({ x: x + 0.2, y: top + 1.45, w: gw - 0.4, h: 0.5, fontSize: 13.5, bold: true, color: C.NAVY, align: 'center' }));
-    s.addText(st.d, T({ x: x + 0.2, y: top + 1.9, w: gw - 0.4, h: 0.6, fontSize: 10.5, color: C.MUT, align: 'center', valign: 'top' }));
+    s.addText(R(st.d, { fontSize: st.dsize || 10.5, color: C.MUT }), T({ x: x + 0.15, y: top + 1.85, w: gw - 0.3, h: 0.7, fontSize: st.dsize || 10.5, color: C.MUT, align: 'center', valign: 'top' }));
   });
   if (foot) s.addText(bulletsText(foot, 12), T({ x: 0.5, y: top + 2.95, w: W - 1, h: H - top - 3.7, valign: 'top' }));
   notes(s, note); footer(s);
@@ -177,7 +208,7 @@ function stepsSlide({ t, sub, steps, note }) {
     s.addShape(pres.ShapeType.ellipse, { x: x + 0.2, y: top + 0.2, w: 0.55, h: 0.55, fill: { color: C.BLUE }, line: { color: C.BLUE } });
     s.addText(String(i + 1), T({ x: x + 0.2, y: top + 0.2, w: 0.55, h: 0.55, fontSize: 15, bold: true, color: C.WHITE, align: 'center', valign: 'middle' }));
     s.addText(st.h, T({ x: x + 0.2, y: top + 0.9, w: gw - 0.4, h: 0.7, fontSize: 14, bold: true, color: C.NAVY, valign: 'top' }));
-    s.addText(st.b, T({ x: x + 0.2, y: top + 1.6, w: gw - 0.4, h: 2.9, fontSize: 11.5, color: C.INK, valign: 'top' }));
+    s.addText(R(st.b, { fontSize: 11.5, color: C.INK }), T({ x: x + 0.2, y: top + 1.6, w: gw - 0.4, h: 2.9, fontSize: 11.5, color: C.INK, valign: 'top' }));
   });
   notes(s, note); footer(s);
 }
@@ -190,7 +221,7 @@ function cautionSlide({ t, sub, items, note }) {
     s.addShape(pres.ShapeType.roundRect, { x: 0.5, y, w: W - 1, h, fill: { color: 'FBEDEA' }, line: { color: 'F2C9C1', width: 0.75 }, rectRadius: 0.1 });
     s.addText('⚠', T({ x: 0.65, y, w: 0.5, h, fontSize: 20, color: C.RED, align: 'center', valign: 'middle' }));
     s.addText(it.h, T({ x: 1.2, y: y + 0.12, w: W - 2, h: 0.35, fontSize: 13.5, bold: true, color: C.RED }));
-    s.addText(it.b, T({ x: 1.2, y: y + 0.47, w: W - 2, h: h - 0.55, fontSize: 11.5, color: C.INK, valign: 'top' }));
+    s.addText(R(it.b, { fontSize: 11.5, color: C.INK }), T({ x: 1.2, y: y + 0.47, w: W - 2, h: h - 0.55, fontSize: 11.5, color: C.INK, valign: 'top' }));
     y += h + 0.2;
   });
   notes(s, note); footer(s);
@@ -203,7 +234,7 @@ toc([
   ['시작하기 — 기본 조작', '접속 · 화면 구성 · 지표/지역/연도 선택 · 주소 공유 · 화면 설정 · 내려받기'],
   ['메뉴별 설명과 활용 팁', '지표 분석 · 지역 프로파일 · 성과지표 · 지역 비교 · 예방·관리 · 연관지표 · 핫스팟 · 연대기 · 조사 단위 · 자료원 · 의견·문의'],
   ['활용 시나리오', '지역보건의료계획 현황 분석 · 사업 우선순위 · 목표치 설정 · 설명자료 제작 · 감염병 대비'],
-  ['해석 주의와 자주 묻는 질문', '순위의 함정 · 자체 산출 지표 표기 · 정의 변경 · 코로나19 자료 · FAQ · 문의'],
+  ['해석 주의와 자주 묻는 질문', '순위의 함정 · 자체 산출 지표 표기 · 정의 변경 · 코로나19 자료 · FAQ · 문의 · 참고문헌'],
 ]);
 
 // ─── PART 1 ───
@@ -225,8 +256,8 @@ tableSlide({
   rows: [
     ['지표별 6패널', '현황·추이·단계구분도·순위·연도별 추이·격차', '동일 구성 + 신뢰구간·10개 묶음·전체 보기 1열·인쇄·영상'],
     ['심층분석', '연관지표 탐색·핫스팟·황금다이아몬드', '동일 3종(브라우저에서 즉시 계산) + 근거 지침 연결'],
-    ['자료', '지역사회건강조사 지표 98개 · e-지방지표 157개', '지역사회건강조사 지표 41개 + 사망·감염병·의료이용·자원·인구·환경 지표 115개 + 암검진 7개 + 일반검진 4개 + 건강수명 3개 · 박탈지수 1개'],
-    ['지역 단위', '시도·시군구', '시도 17곳 · 시군구 229곳 · 보건소 조사 단위 258곳(자료 유무 표기)'],
+    ['자료', '지역사회건강조사 지표 98개 · e-지방지표 157개{r:ciat}', '지역사회건강조사 지표 41개{r:chs} + 사망·감염병·의료이용·자원·인구·환경 지표 115개{r:kdh} + 암검진 7개{r:cancer} + 일반검진 4개{r:nhis} + 건강수명 3개{r:hle} · 박탈지수 1개{r:dep}'],
+    ['지역 단위', '시도·시군구', '시도 17곳 · 시군구 229곳{r:mois} · 보건소 조사 단위 258곳{r:chs25}(자료 유무 표기)'],
     ['지역 프로파일', '없음', '영역 점수·등급 배지·강점/개선·동류군·우선순위·고위험군'],
     ['근거·출처', '지표 정의', 'NICE·CPSTF 권고, 자료원 탭(산식·한계·다음 공표일), 산출 예시'],
     ['공유·내보내기', '이미지', 'URL 공유, SVG(PPT 편집)·PNG·CSV, 인쇄, MP4 영상'],
@@ -237,9 +268,9 @@ tableSlide({
 statsSlide({
   t: '담긴 자료 한눈에', sub: '2026년 9월 기준',
   stats: [
-    { n: '170+', l: '지표', d: '지표 수 — 지역사회건강조사 41개 · 결과·환경 DB 115개 · 국가암검진 7개 · 일반검진 4개 · 건강수명 3개 · 박탈지수 1개' },
-    { n: '258', l: '보건소 조사 단위', d: '질병관리청 「2025 지역건강통계 한눈에 보기」 기준. 시도 17곳 · 시군구 229곳' },
-    { n: '2008~2025', size: 32, l: '연도 범위', d: '지역사회건강조사 18년. 사망원인 2008~2024, 검진 2010~2024' },
+    { n: '170+', l: '지표', d: '지역사회건강조사 41개{r:chs} · 결과·환경 DB 115개{r:kdh} · 암검진 7개{r:cancer} · 일반검진 4개{r:nhis} · 건강수명 3개{r:hle} · 박탈지수 1개{r:dep}', dsize: 9.5 },
+    { n: '258', l: '보건소 조사 단위', d: '질병관리청 「2025 지역건강통계 한눈에 보기」 기준{r:chs25}. 시도 17곳 · 시군구 229곳{r:mois}' },
+    { n: '2008~2025', size: 32, l: '연도 범위', d: '지역사회건강조사 18년{r:chs}. 사망원인 2008~2024{r:mort}, 검진 2010~2024{r:nhis}' },
     { n: '11', l: '자료원', d: '질병관리청 · 국가데이터처 · 국민건강보험공단 · 행정안전부 · 환경부 등' },
   ],
   foot: ['모든 값은 공표 통계에서 가져왔고, 자체 산출 2종(건강수명·지역박탈지수)은 「근사」로 표기합니다.', '자료별 출처·산식·최종 갱신일·다음 공표 예정은 「자료원」 탭에서 볼 수 있습니다.'],
@@ -248,25 +279,25 @@ tableSlide({
   t: '자료원 11종', sub: '원 출처 기관 기준 · 「자료원」 탭 카드와 같은 구성',
   head: ['자료원', '기관', '지표 수', '연도', '갱신'], colW: [3.6, 2.6, 1.0, 2.1, 3.03], fs: 10.5,
   rows: [
-    ['지역사회건강조사', '질병관리청', '41', '2008~2025', '연 1회(12월)'],
-    ['사망원인통계(표준화사망률 22종)', '국가데이터처(옛 통계청)', '22', '2008~2024', '연 1회(9월 하순)'],
-    ['법정감염병 발생보고', '질병관리청', '12', '2008~2024', '연 1회'],
-    ['국가암검진 수검률', '국민건강보험공단', '7', '2015~2024', '연 1회(연말~연초)'],
-    ['건강보험·의료이용·검진·의료자원', '국민건강보험공단', '33', '2008~2024', '연 1회'],
-    ['인구·사회·경제·복지시설', '국가데이터처·행정안전부·보건복지부 등', '24', '2008~2024', '연 1회'],
-    ['환경·안전', '환경부·국토부·도로교통공단', '28', '2008~2024', '연 1회'],
-    ['건강수명(근사 산출)', '자체 산출', '3', '2008~2024', '사망원인 공표 후'],
-    ['지역박탈지수(근사)', '자체 산출(인구주택총조사)', '1', '2015·2020', '총조사 5년'],
-    ['감염병 고위험군', '자체 집계(복수 출처)', '30', '2024', '비정기'],
-    ['코로나19 확진·사망', '질병관리청', '3', '2020~2023.8', '종료(1회성)'],
+    ['지역사회건강조사{r:chs}', '질병관리청', '41', '2008~2025', '연 1회(12월)'],
+    ['사망원인통계(표준화사망률 22종){r:mort}', '국가데이터처(옛 통계청)', '22', '2008~2024', '연 1회(9월 하순)'],
+    ['법정감염병 발생보고{r:inf}', '질병관리청', '12', '2008~2024', '연 1회'],
+    ['국가암검진 수검률{r:cancer}', '국민건강보험공단', '7', '2015~2024', '연 1회(연말~연초)'],
+    ['건강보험·의료이용·검진·의료자원{r:nhis}', '국민건강보험공단', '33', '2008~2024', '연 1회'],
+    ['인구·사회·경제·복지시설{r:pop}', '국가데이터처·행정안전부·보건복지부 등', '24', '2008~2024', '연 1회'],
+    ['환경·안전{r:env}', '환경부·국토부·도로교통공단', '28', '2008~2024', '연 1회'],
+    ['건강수명(근사 산출){r:hle}', '자체 산출', '3', '2008~2024', '사망원인 공표 후'],
+    ['지역박탈지수(근사){r:dep}', '자체 산출(인구주택총조사)', '1', '2015·2020', '총조사 5년'],
+    ['감염병 고위험군{r:risk}', '자체 집계(복수 출처)', '30', '2024', '비정기'],
+    ['코로나19 확진·사망{r:covid}', '질병관리청', '3', '2020~2023.8', '종료(1회성)'],
   ],
 });
 cardsSlide({
   t: '지역 단위 이해하기', sub: '같은 「보건소」라도 자료마다 단위가 다릅니다',
   items: [
     { icon: '시도', h: '시도 17개', b: '광역 비교와 「17개 시도 순위」에 쓰입니다. 세종은 단층제라 시도 값이 곧 시군구 값입니다.' },
-    { icon: '시군', h: '시군구 229개', b: '행정안전부 기초자치단체 226곳 + 제주 행정시 2곳 + 세종시. 전국 시군구 순위의 기준 분모입니다. 수원시처럼 일반구가 있는 시는 시 전체 값을 씁니다.' },
-    { icon: '보건', h: '보건소 조사 단위 258개', b: '지역사회건강조사의 조사 단위(강남구보건소, 수원시 장안구보건소 등). 「조사 단위」 탭과 「보건소 단위」 순위에서 씁니다.' },
+    { icon: '시군', h: '시군구 229개', b: '행정안전부 기초자치단체 226곳 + 제주 행정시 2곳 + 세종시{r:mois}. 전국 시군구 순위의 기준 분모입니다. 수원시처럼 일반구가 있는 시는 시 전체 값을 씁니다.' },
+    { icon: '보건', h: '보건소 조사 단위 258개', b: '지역사회건강조사의 조사 단위{r:chs25}(강남구보건소, 수원시 장안구보건소 등). 「조사 단위」 탭과 「보건소 단위」 순위에서 씁니다.' },
     { icon: '●◐○', h: '자료 유무 표기', b: '● 그 단위로 값 있음 · ◐ 소속 시군구 값으로 대체 · ○ 없음. 「자료원」 탭의 258행 매트릭스에서 보건소별로 확인합니다.', color: C.GREEN },
   ],
 });
@@ -283,13 +314,13 @@ tableSlide({
   t: '자료 갱신 주기와 최신성', sub: '원천이 공표되면 반영합니다 · 최신 상태는 「자료원」 탭 카드의 「최종 갱신」·「다음 공표」 참고',
   head: ['자료', '최신 연도', '다음 공표(예상)', '비고'], colW: [4.0, 1.6, 2.6, 4.13],
   rows: [
-    ['지역사회건강조사', '2025', '2026년 12월', '지표 41개 중 심폐소생술 2종은 원천 표에 2025년 값이 없음(2024년까지)'],
-    ['사망원인통계 · 건강수명', '2024', '2026년 9월 하순', '공표 즉시 사망률 22종·건강수명 연장'],
-    ['국가암검진 · 일반건강검진', '2024', '2026년 12월~2027년 1월', '검진 판정은 2018년 제도 개편으로 정의 변경'],
-    ['미세먼지·초미세먼지 · 만성하기도질환 사망률', '2020', '—', '원천 DB 갱신 대기'],
-    ['의료기관 진료실인원(인구 천명당)', '2021', '—', '원천 DB 갱신 대기'],
+    ['지역사회건강조사{r:chs}', '2025', '2026년 12월', '지표 41개 중 심폐소생술 2종은 원천 표에 2025년 값이 없음(2024년까지)'],
+    ['사망원인통계 · 건강수명{r:mort,hle}', '2024', '2026년 9월 하순', '공표 즉시 사망률 22종·건강수명 연장'],
+    ['국가암검진 · 일반건강검진{r:cancer,nhis}', '2024', '2026년 12월~2027년 1월', '검진 판정은 2018년 제도 개편으로 정의 변경'],
+    ['미세먼지·초미세먼지 · 만성하기도질환 사망률{r:env,mort}', '2020', '—', '원천 DB 갱신 대기'],
+    ['의료기관 진료실인원(인구 천명당){r:nhis}', '2021', '—', '원천 DB 갱신 대기'],
     ['추락 사망률·등록장애인 비율 2017 · 사회복지시설·교통사고 건수 2022 · 병상 수 2023', '2017~2023', '—', '원천 DB 갱신 대기(지표별 최신 연도는 자료원 탭)'],
-    ['코로나19 확진·사망', '2023.8', '없음', '전수감시 종료. 신고 보건소 관할 기준'],
+    ['코로나19 확진·사망{r:covid}', '2023.8', '없음', '전수감시 종료. 신고 보건소 관할 기준'],
   ],
 });
 
@@ -347,7 +378,7 @@ divider(3, '메뉴별 설명과 활용 팁', '메뉴 탭 11개를 왼쪽부터 �
 // 3.1 지표 분석
 shot({ t: '3.1 지표 분석 — 요약 타일', sub: '선택 지역 값 · 전국 시군구 중앙값 · 순위 · 백분위를 한 줄로', img: ['A_kpis'], wide: true,
   bullets: ['선택 지역·연도 값과 전년 대비 증감(▲▼).', '전국 시군구 중앙값: 전국 기준선(KOSIS에 전국 행이 없어 중앙값 사용).', '순위: 비교 범위(전국·시도 내)에서의 순위와 방향.', '양호도 백분위: 100에 가까울수록 양호.'],
-  tips: ['보고서 첫 문장은 이 타일 네 개로 충분합니다: "강릉시 비만율 38.0%로 전국 시군구 중앙값(35.4%)보다 2.6%p 높고, 229곳 중 170위(2025년, 낮을수록 양호)".'] });
+  tips: ['보고서 첫 문장은 이 타일 네 개로 충분합니다: "강릉시 비만율 38.0%로 전국 시군구 중앙값(35.4%)보다 2.6%p 높고, 229곳 중 170위(2025년, 낮을수록 양호)"{r:chs}.'] });
 shot({ t: '3.1 지표 분석 — 단계구분도 ① 전국 시도', sub: '지도 위 탭으로 「전국 시도 / 전국 시군구 / 시도 내 시군구」를 바꿉니다', img: ['B_map_sido'],
   bullets: ['7단계 분위 색: 「나쁠수록 붉게」·「좋을수록 파랗게」·맥락 지표는 보라색.', '지역을 누르면 선택되고, ▶ 로 연도 애니메이션.', '🏷 지역명 토글로 라벨을 켜고 끕니다(겹침 자동 회피).'],
   tips: ['시도 모드는 광역 단위 보고에, 시군구 모드는 전국 분포 파악에 쓰십시오.'] });
@@ -378,21 +409,21 @@ shot({ t: '3.1 지표 분석 — 연도별 추이표', sub: '수치 · 순위 ·
 shot({ t: '3.1 지표 분석 — 지역 간 격차(상자그림)', sub: '연도별 분포(상자=1~3사분위, 수염=최소~최대)와 우리 지역의 위치(점)', img: ['B_analysis_04'],
   bullets: ['상자가 길수록 지역 간 격차가 큽니다. 점이 상자 밖이면 우리 지역이 극단에 있다는 뜻.', '격차 최대·최소 지역명이 함께 표시됩니다.'],
   tips: ['"격차가 줄었는가"는 상자 길이의 연도별 변화로 말할 수 있습니다.'] });
-shot({ t: '3.1 지표 분석 — 건강형평성(지역박탈지수)', sub: '2020 인구총조사 집계표 7개 변수로 만든 근사 지수 · 5분위', img: ['B_analysis_05'], wide: true,
+shot({ t: '3.1 지표 분석 — 건강형평성(지역박탈지수)', sub: '2020 인구총조사 집계표 7개 변수로 만든 근사 지수{r:dep} · 5분위', img: ['B_analysis_05'], wide: true,
   bullets: ['박탈 분위별로 지표 값이 어떻게 다른지 보여 줍니다(형평성 기울기).', '선택 지역의 실제 숫자로 산식을 펼쳐 보여 화면만으로 검산할 수 있습니다.', '공식 통계가 아니라 「근사」입니다. 절대값·1~2위 차이 강조는 피하십시오.'],
   tips: ['형평성 관점의 사업 대상 지역(높은 박탈 + 나쁜 지표)을 고를 때 씁니다.'] });
-shot({ t: '3.1 지표 분석 — 이 지표의 현행 근거 지침', sub: '영국 NICE 가이드라인(2019 전후 갱신) + 미국 CPSTF 권고', img: ['B_evidence'],
+shot({ t: '3.1 지표 분석 — 이 지표의 현행 근거 지침', sub: '영국 NICE 가이드라인{r:nice} + 미국 CPSTF 권고{r:cpstf}', img: ['B_evidence'],
   bullets: ['지표와 직접·부분 관련된 NICE 가이드라인, 발표·최종 갱신 연도, 권고 수(권고·고려·반대·근거 불충분)를 보여 줍니다.', '판정 배지: 현행(최근 10년 내 갱신) · 얇음 · CPSTF만 · 오래됨 · 없음.', 'CPSTF 권고는 15년 이상 지난 것이 많아 보조로만 표시합니다.'],
   tips: ['사업 계획서 「근거」 란에 가이드라인 번호(예: NG92)와 갱신 연도를 인용하십시오.'] });
 
 // 3.2 지역 프로파일
 shot({ t: '3.2 지역 프로파일 — 개요', sub: '시군구를 고르면 전 지표 백분위를 모아 프로파일을 자동 생성', img: ['C_profile_top'],
-  bullets: ['영역 점수(흡연·음주·신체활동·식생활·정신건강·구강·만성질환·예방·의료이용) + 등급 배지(플래티넘 10% · 골드 25% · 실버 50%).', '강점 TOP5 · 개선 TOP5(항상 강점을 먼저, 최소 3개 보장).', '가중치 프리셋(균등·모의 패널·직접), 3년 평균, 도시·군 리그 선택.'],
+  bullets: ['영역 점수(흡연·음주·신체활동·식생활·정신건강·구강·만성질환·예방·의료이용) + 등급 배지(플래티넘 10% · 골드 25% · 실버 50%){r:rank}.', '강점 TOP5 · 개선 TOP5(항상 강점을 먼저, 최소 3개 보장).', '가중치 프리셋(균등·모의 패널·직접), 3년 평균, 도시·군 리그 선택.'],
   tips: ['기본값은 표준화율 + 균등 가중 + 3년 평균입니다. 「모의 패널」 가중치는 AI 시뮬레이션이라 실제 근거로 쓰지 마십시오.'] });
 shot({ t: '3.2 지역 프로파일 — 강점과 개선 과제', sub: '백분위 상위·하위 지표와 접힌 「개선 과제」 목록', img: ['C_profile_07'], img2: ['C_profile_08'],
   bullets: ['개선 TOP5는 하위 백분위 지표. 사망률·건강수명 같은 결과지표는 순위 산정에서 빠지고, 진단 경험률 2종·건강생활실천율·보건기관 이용률 4종도 기본값에서 제외됩니다(설정에서 포함 가능).', '「개선 과제」를 펼치면 하위 25% 지표 전체와 권고 사업(예방·관리 탭 연결)이 나옵니다.'],
   tips: ['강점을 먼저 말하고 개선 과제를 말하는 순서가 미국 County Health Rankings의 설계 원칙입니다. 보고서도 같은 순서를 권합니다.'] });
-shot({ t: '3.2 지역 프로파일 — 기대수명·건강수명(근사)', sub: '사망원인통계·연앙인구로 만든 시군구 생명표 + 주관적 건강 기반 건강수명', img: ['C_profile_02'],
+shot({ t: '3.2 지역 프로파일 — 기대수명·건강수명(근사)', sub: '사망원인통계{r:mort}·연앙인구로 만든 시군구 생명표{r:hle} + 주관적 건강 기반 건강수명', img: ['C_profile_02'],
   bullets: ['기대수명·건강수명·불건강 기간·시군구 순위 타일과 추이.', '「산출 예시」에 선택 지역 숫자로 6단계 산식과 검산행이 나옵니다.', '공식 통계가 아니므로 「건강수명(주관적 건강 기반·근사)」로만 부르고, 절대값·연도 간 비교·1~2위 차이 강조는 피합니다.'],
   tips: ['시도 값(통계청 생명표 기반)은 공식 값에 가깝고, 시군구는 근사입니다. 문서에 반드시 구분해 적으십시오.'] });
 shot({ t: '3.2 지역 프로파일 — 동류군 비교', sub: '고령화율·재정자립도·인구밀도·박탈분위가 비슷한 12개 시군구와 비교', img: ['C2_gurye_05'],
@@ -402,14 +433,14 @@ shot({ t: '3.2 지역 프로파일 — 황금다이아몬드(보건사업 우선
   bullets: ['당해연도·기준연도를 여러 해 평균으로 고를 수 있어 표본오차를 줄입니다.', '1순위(악화 + 나쁨)가 사업 우선 검토 대상. 통합건강증진사업 계획서의 CIAT 황금다이아몬드와 같은 구조.', '비교 기준을 전국 중앙값·시도로 바꿀 수 있습니다.'],
   tips: ['「최근 3년 vs 이전 3년」 빠른 선택이 계획서 작성에 가장 무난합니다.'] });
 shot({ t: '3.2 지역 프로파일 — 감염병 대응 고위험군 + 코로나19 실적 참고', sub: '질병관리청 지침의 고위험군 정의를 지역 자료로 옮긴 규모(실측/추정)', img: ['C_profile_03'],
-  bullets: ['65세 이상·기저질환·임신부·영유아·감염취약시설·사회적 취약·예방접종·대응 자원 30개 집단. 집단은 겹치므로 더하지 않습니다.', '하단 「코로나19 실적 참고」: 2020.1~2023.8 누적 확진율·10만 명당 사망·치명률(선택 지역·시도·전국 중앙값)과 65세 이상 비율 4분위별 치명률.', '⚠ 코로나 자료는 거주지가 아니라 신고 보건소 관할 기준이라 대형병원 소재지가 높게 나옵니다 — 시군구 순위를 매기지 않습니다.'],
+  bullets: ['65세 이상·기저질환·임신부·영유아·감염취약시설·사회적 취약·예방접종·대응 자원 30개 집단{r:risk}. 집단은 겹치므로 더하지 않습니다.', '하단 「코로나19 실적 참고」: 2020.1~2023.8 누적 확진율·10만 명당 사망·치명률(선택 지역·시도·전국 중앙값)과 65세 이상 비율 4분위별 치명률.', '⚠ 코로나 자료는 거주지가 아니라 신고 보건소 관할 기준이라 대형병원 소재지가 높게 나옵니다 — 시군구 순위를 매기지 않습니다.'],
   tips: ['감염병 대응 계획의 「대상 규모」 표는 이 카드의 CSV로 만드십시오.'] });
 shot({ t: '3.2 지역 프로파일 — 무엇부터 손댈 것인가', sub: '하위 25% 지표 × 현행 근거 지침 = 우선순위 표', img: ['C2_gurye_10'],
   bullets: ['하위 지표를 근거 판정(현행 → 얇음 → CPSTF만 → 오래됨 → 없음) 순으로 정렬합니다.', '근거가 확실한 지표부터 손대면 사업 효과를 설명하기 쉽습니다.', '「근거 공백」 접기에서 지침이 없는 지표를 따로 보여 줍니다.'],
   tips: ['하위 기준(25/30/40%)을 바꿔 가며 후보 폭을 조절하십시오.'] });
 
 // 3.3 성과지표
-shot({ t: '3.3 성과지표 — 통합건강증진사업 핵심성과지표 16개', sub: '보유 13개 + 미보유 3개(자료원·사유·확보 경로 표기)', img: ['D_kpi_top'],
+shot({ t: '3.3 성과지표 — 통합건강증진사업 핵심성과지표 16개', sub: '보유 13개 + 미보유 3개{r:khepi}(자료원·사유·확보 경로 표기)', img: ['D_kpi_top'],
   bullets: ['지표별 우리 지역 최근값·추이·전국 중앙값.', '안내서의 목표치 설정법 5종(전년 대비·추세 연장·중앙값 도달·상위 25% 도달·격차 절반)을 자동 계산.', '달성률·득점 계산기에 목표·실적을 넣으면 점수가 나옵니다.'],
   tips: ['계획서 목표치는 여기서 5종을 비교해 가장 현실적인 값을 고르십시오.'] });
 shot({ t: '3.3 성과지표 — 미보유 3종과 확보 경로', sub: '투약 순응률 2종 · 모유수유 실천율은 시군구 공표 통계가 없음', img: ['D_kpi_00'],
@@ -423,7 +454,7 @@ shot({ t: '3.4 지역 비교', sub: '전국 중앙값·시도·시군구를 섞�
 
 // 3.5 예방·관리
 shot({ t: '3.5 예방·관리 — 만성질환 지식베이스', sub: 'WHO → 서태평양 → 국가(HP2030·통합건강증진) → 17개 시도 지역보건의료계획 4층 구조', img: ['F_ncd_top'],
-  bullets: ['182개 항목·문서 54건(링크). 41개 지표 모두 최소 1개 항목에 연결.', '프로파일의 하위 지표를 누르면 시도 → 국가 → WPRO → WHO 순으로 권고 사업 카드가 열립니다.', 'AI가 수집·요약한 내용이므로 수치는 원문으로 확인하십시오.'],
+  bullets: ['182개 항목·문서 54건(원문 링크는 예방·관리 탭 각 항목). 41개 지표 모두 최소 1개 항목에 연결.', '프로파일의 하위 지표를 누르면 시도 → 국가 → WPRO → WHO 순으로 권고 사업 카드가 열립니다.', 'AI가 수집·요약한 내용이므로 수치는 원문으로 확인하십시오.'],
   tips: ['우리 시도 제8기 지역보건의료계획의 해당 사업명을 그대로 인용하면 상위 계획과의 정합성을 보이기 쉽습니다.'] });
 
 // 3.6 연관지표
@@ -442,7 +473,7 @@ shot({ t: '3.8 연대기 전시관', sub: '지침·백서·계획을 연도별 3
   tips: ['교육·발표 도입부에 「자동 관람」을 켜 두면 배경 설명이 됩니다.'] });
 
 // 3.9 조사 단위
-shot({ t: '3.9 조사 단위', sub: '보건소 조사 단위 258곳과 보건기관 3,607곳(보건지소·진료소 등) 연결', img: ['J_units_01'],
+shot({ t: '3.9 조사 단위', sub: '보건소 조사 단위 258곳{r:chs25}과 보건기관 3,607곳{r:fac}(보건지소·진료소 등) 연결', img: ['J_units_01'],
   bullets: ['지역사회건강조사 조사 단위 ↔ KOSIS 코드 전량 매핑, 연도별 참여 단위.', '시도별 보건기관 수(KOSIS 2025)와 공공데이터포털 지역보건의료기관 현황(2025-12-31).', '수원시 4개 보건소처럼 시군구 하나에 조사 단위가 여럿인 경우를 확인합니다.'],
   tips: ['보건소 단위 순위(「보건소 단위」 탭)는 이 목록을 기준으로 합니다.'] });
 
@@ -498,7 +529,7 @@ stepsSlide({ t: '시나리오 5 — 감염병 대비 대상 규모 산정', sub:
     { h: '고위험군 카드', b: '65세 이상·기저질환·시설 정원·임신부·영유아 규모를 확인(실측/추정 구분).' },
     { h: '집단별 표 CSV', b: '30개 집단의 인원·인구 대비·시도 순위를 CSV로 저장.' },
     { h: '코로나19 참고', b: '누적 확진율·사망·치명률을 시도·전국 중앙값과 비교(순위 아님).' },
-    { h: '4분위 치명률', b: '65세 이상 비율이 높을수록 치명률 2배 — 대비 필요성의 근거.' },
+    { h: '4분위 치명률', b: '65세 이상 비율이 높을수록 치명률 2배{r:covid,risk} — 대비 필요성의 근거.' },
     { h: '주의문 인용', b: '신고 관할 기준·연령별 자료 없음을 반드시 함께 적습니다.' },
   ] });
 
@@ -506,13 +537,13 @@ stepsSlide({ t: '시나리오 5 — 감염병 대비 대상 규모 산정', sub:
 divider(5, '해석 주의와 자주 묻는 질문', '숫자를 잘못 읽으면 도구가 오히려 해가 됩니다. 다섯 가지 주의와 FAQ.');
 cautionSlide({ t: '해석 주의 ① 순위의 함정', items: [
   { h: '인접 순위 차이는 대부분 의미가 없습니다', b: '표본조사 지표는 표본오차가 있습니다. 신뢰구간이 겹치는 지역끼리는 「차이가 있다」고 말할 수 없습니다. 순위 카드의 ⟺ 신뢰구간과 ⑩ 묶음을 쓰십시오.' },
-  { h: '불안정값이 많은 지표는 순위를 쓰지 마십시오', b: '우울증상 유병률은 표준화율 기준 시군구 값(2017~2025)의 62%가 불안정값입니다. 이런 지표는 시도 단위나 여러 해 평균으로만 말하십시오.' },
+  { h: '불안정값이 많은 지표는 순위를 쓰지 마십시오', b: '우울증상 유병률은 표준화율 기준 시군구 값(2017~2025)의 62%가 불안정값입니다{r:chs}. 이런 지표는 시도 단위나 여러 해 평균으로만 말하십시오.' },
   { h: '임팩트 지표(사망·유병)는 사업 성과가 아닙니다', b: '변화가 느리고 원인이 여럿이라 사업 귀인이 불가능합니다. 계층 배지가 「임팩트」인 지표는 「기여」로만 표현하십시오.' },
 ] });
 cautionSlide({ t: '해석 주의 ② 자체 산출 지표와 정의 변경', items: [
-  { h: '건강수명·지역박탈지수는 「근사」입니다', b: '「건강수명(주관적 건강 기반·근사)」·「지역박탈지수(근사, 총조사 집계표)」로만 부르고, 절대값·연도 간 비교·1~2위 차이 강조를 피하십시오. 한계 4가지가 자료원 카드에 있습니다.' },
+  { h: '건강수명·지역박탈지수는 「근사」입니다', b: '「건강수명(주관적 건강 기반·근사)」·「지역박탈지수(근사, 총조사 집계표)」로만 부르고, 절대값·연도 간 비교·1~2위 차이 강조를 피하십시오. 한계 4가지가 자료원 카드에 있습니다{r:hle,dep}.' },
   { h: '2018년 검진 제도 개편으로 정의가 바뀐 지표', b: '검진 고혈압·당뇨 판정 비율(2차 판정)은 2017년에서 끝나고, 2018년부터는 1차 판정 의심·유질환자 4종이 별도입니다. 정상A 비율은 2017→2018년에 계단이 있습니다. ⚠ 안내문이 있는 지표는 경계 전후 비교를 하지 마십시오.' },
-  { h: '코로나19 자료는 신고 보건소 관할 기준', b: '사망은 사망 장소(병원) 관할로 집계되어 상급종합병원이 있는 지역이 높게 나옵니다. 시군구 순위를 매기지 말고 시도·중앙값 비교만 하십시오.' },
+  { h: '코로나19 자료는 신고 보건소 관할 기준', b: '사망은 사망 장소(병원) 관할로 집계되어{r:covid} 상급종합병원이 있는 지역이 높게 나옵니다. 시군구 순위를 매기지 말고 시도·중앙값 비교만 하십시오.' },
 ] });
 cardsSlide({ t: '자주 묻는 질문', items: [
   { icon: 'Q', h: '자료는 언제 갱신되나요?', b: '지역사회건강조사 12월, 사망원인통계 9월 하순, 공단 검진통계 연말~연초. 각 자료원 카드의 「다음 공표」를 보십시오.' },
@@ -526,6 +557,25 @@ cardsSlide({ t: '문의와 개선 요청', items: [
   { icon: '📚', h: '방법론 문서', b: '건강수명 산출법 · 지역박탈지수 산출 · 지표 방향성 · 랭킹 방법론 · 지역보건사업 평가이론 · 데이터 최신성 점검 — 저장소 docs 폴더.' },
   { icon: '🔄', h: '갱신 내역', b: '수정 사항은 「자료원」 탭과 「연대기 전시관」에 반영됩니다. 이 설명서는 화면이 바뀌면 함께 갱신합니다.' },
 ] });
+// ─── 참고문헌 (대시보드 화면 하단 목록과 같은 번호) ───
+for (let p = 0; p * REF_PER_SLIDE < REFS.length; p++) {
+  const s = pres.addSlide();
+  if (pageNo + 1 !== refSlideOf(p * REF_PER_SLIDE + 1)) throw new Error(`참고문헌 쪽 번호 불일치: 실제 ${pageNo + 1}, 예상 ${refSlideOf(p * REF_PER_SLIDE + 1)} — REF_SLIDE_FIRST=${pageNo + 1} 로 다시 실행`);
+  title(s, p ? '참고문헌 (계속)' : '참고문헌', '본문의 파란 [번호]를 누르면 이 쪽으로 옵니다 · 번호는 대시보드 화면 하단 「참고문헌」과 같습니다 · 주소를 누르면 원문이 열립니다');
+  const chunk = REFS.slice(p * REF_PER_SLIDE, (p + 1) * REF_PER_SLIDE);
+  const runs = chunk.flatMap((r, i) => {
+    const last = i === chunk.length - 1;
+    const a = [
+      { text: `[${r.n}]  `, options: { bold: true, color: C.BLUE, fontSize: 10.5, paraSpaceAfter: 5 } },
+      { text: `${r.org}, 「${r.title}」. `, options: { color: C.INK, fontSize: 10.5 } },
+      { text: `${r.detail}${r.updated ? ' · 갱신 ' + r.updated : ''} `, options: { color: C.MUT, fontSize: 9.5, breakLine: !r.url && !last } },
+    ];
+    if (r.url) a.push({ text: (() => { try { return decodeURI(r.url); } catch { return r.url; } })(), options: { color: C.BLUE, fontSize: 9, hyperlink: { url: r.url, tooltip: '원문 열기' }, breakLine: !last } });
+    return a;
+  });
+  s.addText(runs, T({ x: 0.5, y: 1.45, w: W - 1, h: H - 2.1, valign: 'top', fontSize: 10.5 }));
+  footer(s);
+}
 {
   const s = pres.addSlide(); s.background = { color: C.NAVY };
   s.addText('감사합니다', T({ x: 0.8, y: 2.6, w: 11.5, h: 1.0, fontSize: 36, bold: true, color: C.WHITE }));
