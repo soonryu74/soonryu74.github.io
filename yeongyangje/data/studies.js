@@ -255,7 +255,7 @@ window.EBN_STUDIES = [
   n: 21315, followup: "중앙값 5.7년", design: "RCT",
   population: "호주 60~84세 (선거인명부 무작위 모집, 혈중 농도 선별 안 함)", intervention: "비타민 D3 60,000 IU 월 1회 (≈2,000 IU/일) vs 위약",
   ing: ["vitd"], outcome: ["mortality", "cvd"],
-  effect: ["총 사망 HR 1.04 (0.93–1.18), p=0.47", "암 사망 HR 1.15 (0.96–1.39)", "주요 심혈관 사건 HR 0.91 (0.81–1.01) · 심근경색 HR 0.81 (0.67–0.98) — BMJ 2023 후속"],
+  effect: ["총 사망 HR 1.04 (0.93–1.18), p=0.47", "암 사망 HR 1.15 (0.96–1.39)", "주요 심혈관 사건 HR 0.91 (0.81–1.01) · 심근경색 HR 0.81 (0.67–0.98) — BMJ 2023 후속", "초기 2년 제외 탐색적 분석: 암 사망 HR 1.24 (1.01–1.54), p=0.05"],
   finding: "월 1회 고용량 비타민 D는 사망률을 줄이지 못했다. 심근경색은 소폭 감소 신호.",
   caveat: "월 1회 몰아 먹는 방식(볼루스)은 매일 복용과 다를 수 있음. 최근 메타분석은 매일 복용에서만 암 사망 감소를 관찰.",
   grade: "D", urls: ["https://pubmed.ncbi.nlm.nih.gov/35026158/", "https://pubmed.ncbi.nlm.nih.gov/37380191/"], updated: "2026-09"
@@ -959,7 +959,7 @@ window.EBN_STUDIES = [
 {
   id: "levine-1996", name: "NIH 비타민 C 약동학 — 고갈·보충 연구",
   inst: "미국 NIH NIDDK", journal: "PNAS", year: 1996,
-  n: 7, followup: "입원 4~6개월", design: "RCT",
+  n: 7, followup: "입원 4~6개월", design: "PK",
   population: "건강한 자원자 7명 (비타민 C <5 mg/일 식이로 고갈 후 단계적 보충)", intervention: "1일 30~2,500 mg 7단계 순차 투여, 혈장·세포 농도·소변 배설 측정",
   ing: ["vitc"], outcome: ["safety"],
   effect: ["혈장 농도-용량 곡선 S자형: 급상승 구간 30~100 mg/일, S자 구간 이탈 200 mg/일, 완전 포화 1,000 mg/일", "백혈구는 100 mg/일에서 포화", "단회 200 mg 생체이용률 100% · 500 mg 이상은 생체이용률 감소, 흡수분은 소변 배설", "1,000 mg/일에서 옥살산·요산 배설 증가 — 저자: 400 mg/일 초과 용량은 '뚜렷한 가치 없음'"],
@@ -1008,7 +1008,7 @@ window.EBN_STUDIES = [
   ing: ["vitc"], outcome: ["cancer", "mortality"],
   effect: ["중앙 전체생존 16 vs 8.3개월, HR 0.46 (90% CI 0.23–0.92), p=0.030", "중앙 무진행생존 6.2 vs 3.9개월, HR 0.43 (90% CI 0.20–0.92)", "삶의 질 저하·이상반응 증가 없음"],
   finding: "34명 소규모 2상에서 표준 항암치료에 고용량 정맥 비타민 C를 더하자 생존이 길어졌으나, 확증 근거가 아니라 3상이 필요한 신호다.",
-  caveat: "n=34, 공개라벨, 90% 신뢰구간, 중간분석 조기중단, 단일기관. 2026년 9월 현재 재현한 더 큰 RCT 결과 미확인.",
+  caveat: "n=34, 공개라벨, 90% 신뢰구간(유의수준 0.2 설계), 효능 신호로 중간분석 조기중단, 2개 기관(아이오와 32 · 위스콘신 2). 2026년 9월 현재 재현한 더 큰 RCT 결과 미확인.",
   grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/39369582/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC11491967/"], updated: "2026-09"
 },
 {
@@ -1079,13 +1079,13 @@ window.EBN_STUDIES = [
 },
 {
   id: "suh-2012-ivc-fatigue", name: "사무직 피로에 정맥 비타민 C 10 g — 국내 이중맹검",
-  inst: "국내 대학병원 (Suh 등)", journal: "Nutrition Journal", year: 2012,
+  inst: "동국대 일산병원 연구진 (국내 2개 기업 직원 대상)", journal: "Nutrition Journal", year: 2012,
   n: 141, followup: "투여 후 2시간·1일", design: "RCT",
   population: "건강한 사무직 141명", intervention: "비타민 C 10 g 정맥 1회 vs 생리식염수",
   ing: ["vitc"], outcome: ["fatigue"],
   effect: ["2시간·1일 후 피로점수 유의 감소 (p=0.004)", "기저 혈중 비타민 C 낮은 군에서만 효과 (p=0.004) · 높은 군 무효 (p=0.206)"],
   finding: "비타민 C가 낮은 사람에게만 하루 정도 피로가 줄었다. 충분한 사람은 효과 없음.",
-  caveat: "단일 시험, 추적 1일, 허가 외 용량.",
+  caveat: "단일 시험, 추적 1일, 허가 외 용량. 147명 무작위·141명 분석. 하위군은 기저 비타민 C 중앙값(약 11 µg/mL)으로 나눔 — 높은 군 p=0.206은 효과 없음의 증명이 아님. 교신저자가 한국비타민연구회 회장(이해관계).",
   grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/22264303/"], updated: "2026-09"
 },
 {
@@ -1146,7 +1146,7 @@ window.EBN_STUDIES = [
 {
   id: "kristal-2014", name: "SELECT 기저 셀레늄 상태별 분석",
   inst: "프레드 허친슨 암연구센터 · SWOG", journal: "JNCI", year: 2014,
-  n: 4856, followup: "SELECT 추적기간", design: "COHORT",
+  n: 1739, followup: "SELECT 추적기간 (케이스 1,739 + 부분코호트 3,117, 일부 중복)", design: "COHORT",
   population: "SELECT 참가자 케이스-코호트 (전립선암 1,739례 + 부분코호트 3,117명), 발톱 셀레늄으로 기저 상태 구분", intervention: "셀레늄 보충 · 비타민 E 단독",
   ing: ["selenium", "vite"], outcome: ["cancer"],
   effect: ["기저 셀레늄 높은 남성(≥60백분위)에서 셀레늄 보충 시 고등급 전립선암 +91% (HR 1.91), p=0.007", "기저 셀레늄 낮은 남성에서는 셀레늄 효과 없음", "기저 셀레늄 낮은 남성에서 비타민 E 단독: 전체 전립선암 +63%, 고등급 +111%"],
@@ -1185,7 +1185,7 @@ window.EBN_STUDIES = [
   effect: ["7명 모두 운동실조·중증 감각신경 장애, 4명 중증 장애", "전원 중단 후 호전", "호주 TGA 2022: 50 mg 미만 제품에서도 신경병증 보고 → 10 mg/일 초과 제품 경고문 의무화 (공식 페이지 직접 확인 실패, 미확인)"],
   finding: "고용량 B6는 '새로운 메가비타민 증후군'으로 불린 감각신경병증을 일으킨다. 2025 한국 상한도 100→50 mg으로 내려갔다.",
   caveat: "증례 7명. 용량·TGA 수치는 미확인 표기.",
-  grade: "X", urls: ["https://pubmed.ncbi.nlm.nih.gov/6308447/", "https://pubmed.ncbi.nlm.nih.gov/28716455/"], updated: "2026-09"
+  grade: "X", urls: ["https://pubmed.ncbi.nlm.nih.gov/6308447/"], updated: "2026-09"
 },
 {
   id: "apa-1973", name: "미국정신의학회 특별위원회 보고서 7 — 메가비타민·분자교정 치료",
@@ -1211,31 +1211,31 @@ window.EBN_STUDIES = [
 },
 {
   id: "glutathione-skin-evidence", name: "글루타치온 미백 — 경구 RCT와 정맥 근거 리뷰",
-  inst: "출라롱꼰대 (태국) · 미국 피부과 리뷰", journal: "J Dermatolog Treat 2012 · Indian Dermatol Online J 2016 · Dermatol Pract Concept 2016", year: 2016,
-  n: 60, followup: "4주 (경구 RCT)", design: "META",
+  inst: "출라롱꼰대 (태국) · 인도·남아공 리뷰", journal: "J Dermatolog Treat 2012 · Indian J Dermatol Venereol Leprol 2016 · S Afr Med J 2016", year: 2016,
+  n: 60, followup: "4주 (경구 RCT)", design: "REVIEW",
   population: "태국 의대생 60명 (경구 RCT) · 문헌 검토", intervention: "경구 글루타치온 500 mg/일 4주 vs 위약 · 정맥 주사 문헌 검토",
   ing: ["glutathione"], outcome: ["skin", "safety"],
-  effect: ["경구 RCT: 6개 부위 중 2개(우측 얼굴 p=0.021, 좌측 전완 p=0.036)에서만 멜라닌 지수 감소", "Sonthalia 2016: '정맥 글루타치온 주사가 인기 있지만 효능을 증명하는 근거는 없다'", "Davids 2016: 정맥 미백 연구 및 장기 안전성 연구 없음, 갈색→적색 멜라닌 전환으로 자외선 피부암 위험 가능성 제기", "필리핀 FDA가 미백 목적 정맥 사용 경고"],
+  effect: ["경구 RCT: 6개 부위 모두 멜라닌 지수 감소, 위약 대비 유의한 차이는 2개 부위(우측 얼굴 p=0.021, 햇빛 노출 좌측 전완 p=0.036)", "Sonthalia 2016: '정맥 글루타치온 주사가 인기 있지만 효능을 증명하는 근거는 없다'", "Davids 2016: 정맥 미백 연구 및 장기 안전성 연구 없음, 갈색→적색 멜라닌 전환으로 자외선 피부암 위험 가능성 제기", "필리핀 FDA가 미백 목적 정맥 사용 경고"],
   finding: "미백 목적 정맥 글루타치온의 효과를 보인 임상시험은 없다. 경구 소규모 시험만 부분 효과.",
   caveat: "2016년 이후 정맥 미백 RCT 발표 여부 미확인.",
   grade: "D", urls: ["https://pubmed.ncbi.nlm.nih.gov/20524875/", "https://pubmed.ncbi.nlm.nih.gov/27088927/", "https://pubmed.ncbi.nlm.nih.gov/27499402/"], updated: "2026-09"
 },
 {
-  id: "ali-2009-myers", name: "마이어스 칵테일 — 섬유근육통 위약대조 시험",
+  id: "ali-2009-myers", name: "마이어스 칵테일 — 섬유근육통 위약대조 파일럿",
   inst: "예일대학교", journal: "J Altern Complement Med", year: 2009,
   n: 34, followup: "주 1회 8주", design: "RCT",
   population: "섬유근육통 환자 34명", intervention: "마이어스 칵테일 정맥 vs 젖산링거액",
   ing: ["mvi"], outcome: ["pain"],
   effect: ["모든 결과 지표에서 군간 유의 차이 없음", "위약군도 유의하게 호전 (높은 위약 반응)"],
-  finding: "마이어스 칵테일의 유일한 위약대조 시험에서 위약과 차이가 없었다.",
+  finding: "마이어스 칵테일의 첫 위약대조 파일럿 시험에서 위약과 차이가 없었다.",
   caveat: "n=34, 섬유근육통에 한정. 피로·숙취에 대한 시험은 없음.",
   grade: "D", urls: ["https://pubmed.ncbi.nlm.nih.gov/19250003/"], updated: "2026-09"
 },
 {
   id: "placenta-rcts", name: "태반(자하거) 주사 — 갱년기·만성피로 국내 RCT",
-  inst: "서울대 · 아주대 · 다기관 (한국)", journal: "Menopause 2009 · Clin Exp Obstet Gynecol 2008 · Chin J Integr Med 2016", year: 2016,
-  n: 226, followup: "4~8주", design: "RCT",
-  population: "갱년기 여성 108명 (Lee 2009) · 40~64세 여성 (Kong 2008) · 만성피로 78명 (Park 2016)", intervention: "자하거가수분해물 피하/근육 주사 vs 위약",
+  inst: "국내 연구진 (Lee · Kong · Park)", journal: "J Obstet Gynaecol Res 2009 · Menopause 2008 · Biol Pharm Bull 2016", year: 2016,
+  n: 270, followup: "4~8주", design: "RCT",
+  population: "갱년기 여성 108명 (Lee 2009, 4주) · 40~64세 여성 84명 (Kong 2008, 8주) · 만성피로 78명 (Park 2016, 6주)", intervention: "자하거가수분해물 피하/근육 주사 vs 위약",
   ing: ["placenta"], outcome: ["fatigue", "safety"],
   effect: ["Lee 2009: 쿠퍼만 지수 −12.30 vs −7.15, p=0.012", "Kong 2008: 갱년기 척도·피로·VAS 개선, 에스트라디올 상승", "Park 2016: 전체 만성피로군은 위약과 차이 없음, 만성피로증후군 하위군에서만 개선 · 특발성 만성피로군 무효"],
   finding: "갱년기 증상에 소규모 단기 국내 시험 2건이 효과를 보고했고, 피로는 하위군에서만 효과였다. 모두 허가 외 용도.",
@@ -1245,12 +1245,12 @@ window.EBN_STUDIES = [
 {
   id: "ala-weight-meta-2017", name: "알파리포산(티옥트산) 경구와 체중 — 메타분석",
   inst: "예일대학교 (Kucukgoncu)", journal: "Obesity Reviews", year: 2017,
-  n: 534, followup: "RCT 10편", design: "META",
+  n: 947, followup: "RCT 10편", design: "META",
   population: "이중맹검 위약대조 RCT 참가자", intervention: "경구 알파리포산 vs 위약",
   ing: ["ala"], outcome: ["metabolic"],
   effect: ["체중 −1.27 kg (0.25–2.29)", "BMI −0.43", "저자: '작지만 유의한 단기 체중 감소'"],
   finding: "경구 알파리포산은 단기 체중을 약 1.3 kg 줄였다. 주사제('신데렐라 주사') 근거는 아니다.",
-  caveat: "경구 시험만 포함, 단기. 참가자 수는 포함 연구 합계 추정(미확인).",
+  caveat: "경구 시험만 포함, 단기. 참가자 알파리포산군 534명 · 위약군 413명.",
   grade: "C", urls: ["https://pubmed.ncbi.nlm.nih.gov/28295905/"], updated: "2026-09"
 },
 {
