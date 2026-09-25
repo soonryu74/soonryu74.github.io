@@ -29,6 +29,27 @@ import KDH_RAW from "../../data/kdh_dataset.json";
 })();
 export const KDH_SOURCE = KDH_RAW.source || null;
 
+// ── 사망원인통계 새 공표분 주입 (data/mort_kosis.json, KOSIS DT_1B34E13) ──
+// 김동현 교수 DB의 사망률 21종은 2024년까지다. DB에 없는 해(새 공표분·DB가 일찍 끊긴 지표의 빈 해)만
+// 같은 지표 id 에 이어 붙인다. 겹치는 해의 값이 DB와 같은지는 scripts/build_mort.py 가 대조한다.
+import MORT_RAW from "../../data/mort_kosis.json";
+(function injectMort() {
+  for (const [id, rec] of Object.entries(MORT_RAW.indicators || {})) {
+    const base = RAW.indicators.find((i) => i.id === id);
+    const bv = RAW.values[id];
+    if (!base || !bv || base.mortSpliced) continue;
+    const rows = new Map(base.years.map((y, k) => [y, { crude: bv.crude[k], std: bv.std[k] }]));
+    rec.years.forEach((y, k) => rows.set(y, { crude: rec.crude[k], std: rec.std[k] }));
+    base.years = [...rows.keys()].sort((a, b) => a - b);
+    for (const key of ["crude", "std"]) bv[key] = base.years.map((y) => rows.get(y)[key]);
+    base.mortSpliced = true;
+    const yy = (a) => (a.length > 2 && a[a.length - 1] - a[0] === a.length - 1 ? `${a[0]}~${a[a.length - 1]}` : a.join("·"));
+    const add = rec.added || rec.years, fix = rec.fixed || [];
+    base.src = `${base.src} ‖ ${add.length ? `${yy(add)}년은 ` : ""}${MORT_RAW.source}에서 직접${fix.length ? ` · ${yy(fix)}년은 같은 원천 값으로 교정(DB의 0·빈 칸·반올림)` : ""}`;
+  }
+})();
+export const MORT_SOURCE = MORT_RAW.source || null;
+
 // ── 국가암검진 수검률 주입 (data/cancer_screening.json) ──
 // 미국 CPSTF 최대 근거 블록이 암(권고 49건·강력 24건)이고 그 대부분이 검진 수검률을
 // 올리는 중재인데 우리에겐 암 사망률·진료실인원만 있었다. (docs/미국_CPSTF_검토_v1.md 6.1)
