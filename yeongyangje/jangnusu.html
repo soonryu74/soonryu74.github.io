@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>장누수와 영양제 | 근거영양</title>
+<meta name="description" content="'장누수(새는 장)'는 의학적으로 어디까지 확인됐나. 장 투과성이 실제로 높아지는 질환, 장누수·조눌린·음식 IgG 검사의 한계, 글루타민·아연·프로바이오틱스·초유 등 장 점막 영양제의 사람 대상 연구 결과를 출처와 함께.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head">
+    <h1>장누수와 영양제</h1>
+    <p id="lead"></p>
+  </div>
+  <div class="toc"><b>차례</b><ol>
+    <li><a href="#what">장누수, 확인된 것과 안 된 것</a></li>
+    <li><a href="#where">장 투과성이 실제로 높아지는 경우</a></li>
+    <li><a href="#tests">장누수 검사 · 조눌린 · 음식 IgG 검사</a></li>
+    <li><a href="#supps">성분별 근거</a></li>
+    <li><a href="#faq">자주 듣는 주장과 답</a></li>
+    <li><a href="#do">근거가 있는 장 관리</a></li>
+  </ol></div>
+
+  <div class="section" id="what"><h2 style="margin-top:0">1. 장누수, 확인된 것과 안 된 것</h2><div id="what-box"></div></div>
+  <div class="section" id="where"><h2>2. 장 투과성이 실제로 높아지는 경우</h2><div class="table-scroll" id="where-table"></div></div>
+  <div class="section" id="tests"><h2>3. 장누수 검사 · 조눌린 · 음식 IgG 검사</h2><div id="tests-box"></div></div>
+  <div class="section" id="supps"><h2>4. 성분별 근거</h2>
+    <p class="small">"투과성 수치"는 피·소변 검사값이 바뀌었는지, "증상·질병"은 사람이 실제로 나아졌는지입니다. 둘은 다릅니다. 판정은 증상·질병 기준입니다.</p>
+    <div class="table-scroll" id="supp-table"></div>
+    <div id="supp-cards"></div>
+  </div>
+  <div class="section" id="faq"><h2>5. 자주 듣는 주장과 답</h2>
+    <p class="small">특정 인물·책·제품에 대한 평가가 아니라, 주장 유형별로 사람 대상 연구가 무엇을 찾았는지 적습니다.</p>
+    <div id="faq-list"></div>
+  </div>
+  <div class="section" id="do"><h2>6. 근거가 있는 장 관리</h2><div id="do-box"></div></div>
+  <div class="disclaimer" id="foot-note"></div>
+</main>
+<div id="site-footer"></div>
+<script src="data/glossary.js"></script>
+<script src="assets/app.js"></script>
+<script src="data/ingredients.js"></script>
+<script src="data/studies.js"></script>
+<script src="data/leakygut.js"></script>
+<script>
+(function(){
+  var L=window.EBN_LEAKY||{}, I=window.EBN_INGREDIENTS||{}, esc=EBN.esc, S={};
+  (window.EBN_STUDIES||[]).forEach(function(s){S[s.id]=s;});
+  var STL={rx:'전문의약품',otc:'일반의약품',qd:'의약외품',hff:'건기식(고시형)',hffi:'건기식(개별인정)',food:'일반식품',none:'국내 미허가',import:'해외직구'};
+  var GL={A:'근거 있음',B:'조건부',C:'약함',D:'효과 없음',X:'유해'};
+  function links(ids){ return (ids||[]).map(function(id){ var s=S[id]; if(!s) return '<span class="nosrc">출처 미확인: '+esc(id)+'</span>'; return '<a href="yeongu.html#'+esc(id)+'" title="'+esc(s.name)+'">'+esc(s.name.split(' — ')[0].split(' (')[0])+' '+esc(s.year)+'</a>'; }).join(' · '); }
+  function set(id,h){ var e=document.getElementById(id); if(e) e.innerHTML=h||''; }
+  set('lead', L.lead);
+  set('what-box', L.what);
+  set('where-table', '<table><tr><th>상황</th><th>확인된 것</th><th>근거</th></tr>'+(L.where||[]).map(function(w){return '<tr><td><b>'+esc(w.name)+'</b></td><td>'+esc(w.fact)+'</td><td class="small">'+links(w.studies)+'</td></tr>';}).join('')+'</table>'+(L.whereNote||''));
+  set('tests-box', L.tests);
+  set('supp-table', '<table><tr><th>성분</th><th>투과성 수치</th><th>증상·질병</th><th>대상</th><th>국내 지위</th><th>판정</th></tr>'+(L.supps||[]).map(function(o){
+    return '<tr><td><a href="#'+esc(o.id)+'">'+esc(o.name)+'</a></td><td>'+esc(o.perm)+'</td><td>'+esc(o.clinical)+'</td><td>'+esc(o.who)+'</td><td>'+(o.status||[]).map(function(s){return '<span class="stat-badge st-'+esc(s.k)+'">'+esc(STL[s.k]||s.k)+'</span>';}).join(' ')+'</td><td><span class="grade '+esc(o.grade)+'">'+esc(o.grade)+'</span> '+esc(GL[o.grade]||'')+'</td></tr>'; }).join('')+'</table>');
+  set('supp-cards', (L.supps||[]).map(function(o){ var ing=o.ing&&I[o.ing];
+    return '<div class="ing" id="'+esc(o.id)+'"><h3 style="margin:0 0 6px">'+esc(o.name)+' <span class="small">'+esc(o.dose||'')+'</span></h3>'+
+      '<div style="margin:6px 0 10px"><span class="verdict '+esc(o.verdict)+'">'+esc(EBN.verdictLabel[o.verdict]||o.verdict)+'</span> <span class="grade '+esc(o.grade)+'">'+esc(o.grade)+'</span></div>'+
+      '<dl class="row"><dt>주장</dt><dd>'+esc(o.claim)+'</dd><dt>연구 결과</dt><dd>'+esc(o.evidence)+'</dd><dt>주의</dt><dd>'+esc(o.harm||'보고된 것 없음')+'</dd><dt>국내 지위</dt><dd>'+esc(o.kr||'—')+'</dd></dl>'+
+      '<p class="small" style="margin:8px 0 0">근거: '+links(o.studies)+(ing?' · <a href="seongbun.html#'+esc(o.ing)+'">'+esc(ing.name)+' 성분 카드</a>':'')+'</p></div>'; }).join(''));
+  set('faq-list', (L.faq||[]).map(function(f){return '<details class="faq"><summary>'+esc(f.q)+'</summary><div class="faq-a">'+f.a+'</div></details>';}).join(''));
+  set('do-box', L.doBox);
+  set('foot-note', L.foot);
+})();
+</script>
+</body>
+</html>
