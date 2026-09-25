@@ -13,7 +13,8 @@
     "test:e2e": "playwright test",
     "db:test": "bash supabase/test/run.sh",
     "seed:generate": "tsx scripts/generate-seed.ts",
-    "import:hospitals": "tsx scripts/import-animal-hospitals.ts"
+    "import:hospitals": "tsx scripts/import-animal-hospitals.ts",
+    "import:funeral": "tsx scripts/import-funeral-businesses.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

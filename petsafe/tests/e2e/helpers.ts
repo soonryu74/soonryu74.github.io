@@ -7,6 +7,7 @@ export async function login(page: Page, email: string) {
   await page.waitForURL((u) => !u.pathname.startsWith("/login"));
   await page.waitForLoadState("networkidle");
   await acceptConsent(page);
+  await page.waitForLoadState("networkidle"); // 동의 후 리다이렉트가 끝난 뒤 다음 이동
 }
 
 export async function acceptConsent(page: Page) {

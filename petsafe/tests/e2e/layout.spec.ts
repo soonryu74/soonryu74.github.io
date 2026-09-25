@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["/", "/emergency", "/lost", "/map", "/health", "/health/zoonoses", "/insurance", "/reports?situation=abuse", "/legal", "/login", "/more", "/partner"];
+const PAGES = ["/", "/emergency", "/lost", "/funeral", "/map", "/health", "/health/zoonoses", "/insurance", "/reports?situation=abuse", "/legal", "/login", "/more", "/partner"];
 
 for (const path of PAGES) {
   test(`접근성·가로 스크롤 없음: ${path}`, async ({ page }) => {

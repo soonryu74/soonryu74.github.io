@@ -59,9 +59,9 @@ test("지도: 폐업은 기본 제외, 빈 결과 상태, 시설 상세의 상�
   await expect(page.getByText("조건에 맞는 시설이 없어요")).toBeVisible();
   await page.goto("/map?type=pet_cafe");
   await page.getByRole("link", { name: "예시 반려동물 동반 카페" }).click();
-  await expect(page.getByText("허가상 영업", { exact: true })).toBeVisible();
-  await expect(page.getByText("운영시간 확인", { exact: true })).toBeVisible();
-  await expect(page.getByText("실제 영업 중", { exact: true })).toBeVisible();
+  await expect(page.locator("dt", { hasText: /^허가상 영업$/ })).toBeVisible();
+  await expect(page.locator("dt", { hasText: /^운영시간 확인$/ })).toBeVisible();
+  await expect(page.locator("dt", { hasText: /^실제 영업 중$/ })).toBeVisible();
   await expect(page.getByText("예시 데이터 — 실제 업체 아님")).toBeVisible();
   await expect(page.locator("main")).toContainText("크기 제한");
 });
