@@ -6,6 +6,8 @@ import { kstDayRange } from "@/lib/dates";
 import { PetSwitcher } from "@/components/pets/pet-switcher";
 import type { CareTask, Pet } from "@/lib/types";
 import { newCountsForWatches, watchQuery } from "@/lib/rescue/watches";
+import { memorialMilestone, milestoneText } from "@/lib/memorial";
+import { kstDate } from "@/lib/dates";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ account?: string }> }) {
   const sp = await searchParams;
@@ -15,10 +17,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
   let tasks: CareTask[] = [];
   let needsConsent = false;
   let rescueAlerts: Awaited<ReturnType<typeof newCountsForWatches>> = [];
+  let remembrances: { pet: Pet; text: string }[] = [];
   if (store.user) {
     needsConsent = (await missingConsents(store)).length > 0;
     if (!needsConsent) {
-      ({ pets, active } = await getActivePet(store));
+      const r = await getActivePet(store);
+      ({ pets, active } = r);
+      remembrances = r.memorial.flatMap((p) => {
+        const m = p.memorial_reminders !== false ? memorialMilestone(p.passed_at, kstDate()) : null;
+        return m ? [{ pet: p, text: milestoneText(p.name, m) }] : [];
+      });
       if (active) {
         const now = new Date();
         const { start, end } = kstDayRange(now);
@@ -42,6 +50,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
         {store.user && needsConsent && <p className="mt-2"><Link href="/consent" className="btn btn-primary">약관 확인하고 시작하기</Link></p>}
         {active && <div className="mt-2"><PetSwitcher pets={pets} activeId={active.id} next="/" /></div>}
       </section>
+
+      {remembrances.map(({ pet, text }) => (
+        <section key={pet.id} className="card border-l-4 border-primary" aria-label={`${pet.name} 기억하기`}>
+          <p>🕊️ {text}</p>
+          <Link className="link text-sm" href={`/pets/${pet.id}/memorial`}>함께한 날들 보기</Link>
+        </section>
+      ))}
 
       {rescueAlerts.length > 0 && (
         <section aria-labelledby="rescue-alert-h" className="card border-2 border-danger">

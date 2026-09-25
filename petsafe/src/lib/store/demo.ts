@@ -9,7 +9,7 @@ import { isVersionPublic, canTransition } from "@/lib/content-rules";
 import { isContactVisible } from "@/lib/contacts";
 import type {
   AuditLog, CareTask, ConsentRow, ContentCard, ContentVersion, DocumentRow, Facility, FacilityReport, FeatureFlagRow,
-  HealthEvent, IncidentDraft, InsuranceCheck, InsurancePolicy, InsuranceTerm, LegalDocumentRow, OfficialContactRow,
+  HealthEvent, IncidentDraft, InsuranceCheck, InsurancePolicy, InsuranceTerm, LegalDocumentRow, MemorialLetter, OfficialContactRow,
   Pet, PetCondition, Profile, RescueWatch, SessionUser,
 } from "@/lib/types";
 import { AuthRequiredError, ForbiddenError, NotFoundError, type Store } from "./types";
@@ -38,6 +38,7 @@ type DB = {
   audit: AuditLog[];
   flags: FeatureFlagRow[];
   rescueWatches?: RescueWatch[];
+  letters?: MemorialLetter[];
 };
 
 function dir() { return path.resolve(/*turbopackIgnore: true*/ process.cwd(), serverEnv().demoDir); }
@@ -155,6 +156,7 @@ export function createDemoStore(user: SessionUser | null): Store {
         insurance_checks: db.checks.filter((c) => polIds.has(c.policy_id)),
         incident_drafts: db.incidents.filter((i) => i.user_id === id),
         rescue_watches: (db.rescueWatches ?? []).filter((w) => w.user_id === id),
+        memorial_letters: (db.letters ?? []).filter((l) => petIds.has(l.pet_id)),
       };
     }),
     deleteMyAccount: () => write((db) => {
@@ -172,6 +174,7 @@ export function createDemoStore(user: SessionUser | null): Store {
       db.events = db.events.filter((e) => !petIds.has(e.pet_id));
       db.tasks = db.tasks.filter((t) => !petIds.has(t.pet_id));
       db.conditions = db.conditions.filter((c) => !petIds.has(c.pet_id));
+      db.letters = (db.letters ?? []).filter((l) => !petIds.has(l.pet_id));
       db.pets = db.pets.filter((p) => p.owner_id !== id);
       db.incidents = db.incidents.filter((i) => i.user_id !== id);
       db.rescueWatches = (db.rescueWatches ?? []).filter((w) => w.user_id !== id);
@@ -192,6 +195,7 @@ export function createDemoStore(user: SessionUser | null): Store {
         neutered: input.neutered ?? null, weight_kg: input.weight_kg ?? null, indoor: input.indoor ?? null,
         multi_pet: input.multi_pet ?? null, registration_status: input.registration_status, insurance_status: input.insurance_status,
         primary_vet_name: input.primary_vet_name ?? null, primary_vet_phone: input.primary_vet_phone ?? null,
+        passed_at: null, memorial_reminders: true,
         created_at: now(), updated_at: now(),
       };
       db.pets.push(pet);
@@ -221,8 +225,19 @@ export function createDemoStore(user: SessionUser | null): Store {
       db.events = db.events.filter((e) => e.pet_id !== id);
       db.tasks = db.tasks.filter((t) => t.pet_id !== id);
       db.conditions = db.conditions.filter((c) => c.pet_id !== id);
+      db.letters = (db.letters ?? []).filter((l) => l.pet_id !== id);
       db.pets = db.pets.filter((p) => p.id !== id);
     }),
+    setPetPassed: (petId, passedAt) => write((db) => {
+      const p = ownPet(db, petId);
+      p.passed_at = passedAt;
+      p.updated_at = now();
+      if (passedAt) for (const t of db.tasks) if (t.pet_id === petId && (t.status === "pending" || t.status === "snoozed")) { t.status = "skipped"; t.updated_at = now(); }
+    }),
+    setMemorialReminders: (petId, on) => write((db) => { const p = ownPet(db, petId); p.memorial_reminders = on; p.updated_at = now(); }),
+    listLetters: (petId) => read((db) => { ownPet(db, petId); return (db.letters ?? []).filter((l) => l.pet_id === petId).sort((a, b) => b.created_at.localeCompare(a.created_at)); }),
+    addLetter: (petId, body) => write((db) => { ownPet(db, petId); db.letters ??= []; db.letters.push({ id: randomUUID(), pet_id: petId, author_id: uid(), body, created_at: now() }); }),
+    deleteLetter: (petId, id) => write((db) => { ownPet(db, petId); db.letters = (db.letters ?? []).filter((l) => !(l.id === id && l.pet_id === petId && l.author_id === uid())); }),
     listConditions: (petId) => read((db) => { ownPet(db, petId); return db.conditions.filter((c) => c.pet_id === petId); }),
     addCondition: (petId, c) => write((db) => {
       ownPet(db, petId);

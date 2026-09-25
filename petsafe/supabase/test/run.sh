@@ -8,7 +8,7 @@ PSQL="${PSQL:-psql}"
 run() { $PSQL -v ON_ERROR_STOP=1 -q -d "$DB" -f "$1"; }
 $PSQL -v ON_ERROR_STOP=1 -q -d postgres -c "drop database if exists $DB" -c "create database $DB"
 run supabase/test/local_auth_shim.sql
-for f in supabase/migrations/0001_core.sql supabase/migrations/0002_content_legal.sql supabase/migrations/0003_insurance_facilities.sql supabase/migrations/0005_rescue_watches.sql; do
+for f in supabase/migrations/0001_core.sql supabase/migrations/0002_content_legal.sql supabase/migrations/0003_insurance_facilities.sql supabase/migrations/0005_rescue_watches.sql supabase/migrations/0006_memorial.sql; do
   echo "apply $f"; run "$f"
 done
 # 0004_storage.sql 은 Supabase Storage 스키마가 필요해 로컬에서는 건너뛴다.

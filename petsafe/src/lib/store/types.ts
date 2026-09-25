@@ -3,7 +3,7 @@
 import type {
   AuditLog, CareTask, ConsentRow, ContentCard, ContentStatus, ContentVersion, DocumentRow, Facility, FacilityReport,
   FacilityType, FeatureFlagRow, HealthEvent, IncidentDraft, InsuranceCheck, InsurancePolicy, InsuranceTerm,
-  LegalDocumentRow, OfficialContactRow, Pet, PetCondition, Profile, RescueWatch, SessionUser,
+  LegalDocumentRow, OfficialContactRow, MemorialLetter, Pet, PetCondition, Profile, RescueWatch, SessionUser,
 } from "@/lib/types";
 import type { ConditionInput, PetInput } from "@/lib/validation";
 import type { NewTask } from "@/lib/rules";
@@ -41,6 +41,11 @@ export interface Store {
   createPet(input: PetInput, conditions: ConditionInput[]): Promise<Pet>;
   updatePet(id: string, input: PetInput): Promise<void>;
   deletePet(id: string): Promise<void>;
+  setPetPassed(petId: string, passedAt: string | null): Promise<void>;
+  setMemorialReminders(petId: string, on: boolean): Promise<void>;
+  listLetters(petId: string): Promise<MemorialLetter[]>;
+  addLetter(petId: string, body: string): Promise<void>;
+  deleteLetter(petId: string, id: string): Promise<void>;
   listConditions(petId: string): Promise<PetCondition[]>;
   addCondition(petId: string, c: ConditionInput): Promise<void>;
   removeCondition(petId: string, id: string): Promise<void>;

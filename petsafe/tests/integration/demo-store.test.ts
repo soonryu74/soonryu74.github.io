@@ -119,10 +119,28 @@ describe("예시 모드 저장소", () => {
     expect(await a.listRescueWatches()).toHaveLength(4);
   });
 
+  it("떠나보냄 기록: 남은 할 일은 멈추고, 편지는 소유자만", async () => {
+    const a = createDemoStore(alice);
+    const b = createDemoStore(bob);
+    const pet = await a.createPet({ ...petInput, name: "구름" }, []);
+    await a.createTasks(pet.id, generateInitialTasks(pet, CARE_TASK_TEMPLATES));
+    await a.setPetPassed(pet.id, "2026-09-20");
+    const range = { from: "2000-01-01T00:00:00Z", to: "2100-01-01T00:00:00Z" };
+    expect((await a.listTasks(pet.id, range)).every((t) => t.status === "skipped")).toBe(true);
+    expect((await a.getPet(pet.id))?.passed_at).toBe("2026-09-20");
+    await a.addLetter(pet.id, "고마웠어");
+    expect(await a.listLetters(pet.id)).toHaveLength(1);
+    await expect(b.listLetters(pet.id)).rejects.toBeInstanceOf(NotFoundError);
+    await expect(b.addLetter(pet.id, "침입")).rejects.toBeInstanceOf(NotFoundError);
+    await expect(b.setPetPassed(pet.id, null)).rejects.toBeInstanceOf(NotFoundError);
+    await a.setPetPassed(pet.id, null);
+    expect((await a.getPet(pet.id))?.passed_at).toBeNull();
+  });
+
   it("탈퇴하면 개인 데이터가 모두 삭제된다", async () => {
     const a = createDemoStore(alice);
     const before = await a.exportMyData();
-    expect((before.pets as unknown[]).length).toBe(1);
+    expect((before.pets as unknown[]).length).toBe(2);
     expect(await a.deleteMyAccount()).toBe("deleted");
     const again = await demoUpsertUser("alice@example.test", "");
     expect(again.id).not.toBe(alice.id);

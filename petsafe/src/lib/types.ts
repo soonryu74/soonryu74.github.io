@@ -35,9 +35,13 @@ export type Pet = {
   insurance_status: InsuranceStatus;
   primary_vet_name: string | null;
   primary_vet_phone: string | null;
+  passed_at?: string | null;          // 떠나보낸 날 (YYYY-MM-DD)
+  memorial_reminders?: boolean;       // 100일·기일 알림
   created_at: string;
   updated_at: string;
 };
+
+export type MemorialLetter = { id: string; pet_id: string; author_id: string; body: string; created_at: string };
 
 export type PetCondition = {
   id: string;

@@ -219,5 +219,21 @@ do $$ begin
 end $$;
 rollback;
 
+-- 12. 추모 편지: 소유자만 쓰고 읽는다
+begin;
+select test_as('00000000-0000-0000-0000-00000000000a');
+update public.pets set passed_at = current_date where id = '10000000-0000-0000-0000-000000000001';
+insert into public.memorial_letters (pet_id, author_id, body) values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a', '고마웠어');
+select test_as('00000000-0000-0000-0000-00000000000c');
+do $$ begin
+  if (select count(*) from public.memorial_letters) <> 0 then raise exception 'FAIL 12a: other user reads letters'; end if;
+  begin
+    insert into public.memorial_letters (pet_id, author_id, body) values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000c', '침입');
+    raise exception 'FAIL 12b: other user wrote letter';
+  exception when insufficient_privilege or check_violation then null;
+  end;
+end $$;
+rollback;
+
 select test_reset();
 \echo 'RLS TESTS PASSED'

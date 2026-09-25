@@ -21,6 +21,7 @@
 | 인수공통감염병 | `/health/zoonoses[/slug]` | SFTS·공수병·개 브루셀라증·톡소포자충증. **검수 전 비공개** |
 | 보험·비용 | `/insurance` | 약관 메타정보·조항 입력·3단계 확인·청구 서류 체크. 추천·가입 없음 |
 | 실종·구조동물 찾기 | `/lost` | 전국 보호소 구조 공고를 시도·시군구·종류·색/특징으로 모아 보기, 공고 남은 날, 보호소 원탭 전화, 새 공고 표시(비회원: 기기 기준 / 회원: 관심 조건 최대 5개 → 홈 알림) |
+| 함께한 날들(추모) | `/pets/[petId]/memorial` | 떠나보낸 날 기록 → 돌봄 알림 중지, 함께한 날 수, 기록에 남은 돌봄 요약, 사진, 비공개 편지, 100일·기일 홈 알림(끄기 가능), 되돌리기 |
 | 장례 도움 | `/funeral` | 합법 처리 방법·등록 말소 안내, 업체 이름으로 허가 목록 확인, 시도·시설별 허가 업체(전화·지도·홈페이지), 전화 체크리스트, 마음 돌보기(위기상담 연결) |
 | 신고 | `/reports` | 상황별 공식 연락처(확인일), 증거 체크, 신고 준비 메모(기기/계정 90일) |
 | 법무·신뢰센터 | `/legal`, `/legal/[type]` | 이용약관·개인정보·위치·저작권, 기능 플래그 상태 공개 |
@@ -75,7 +76,7 @@ npm run dev
 ## Supabase 설정 (운영 모드)
 
 1. 전용 프로젝트를 만든다(무료 요금제는 활성 프로젝트 수 제한이 있으니 대시보드에서 확인).
-2. SQL Editor에서 순서대로 실행: `supabase/migrations/0001_core.sql` → `0002_content_legal.sql` → `0003_insurance_facilities.sql` → `0004_storage.sql` → `supabase/seed.sql`
+2. SQL Editor에서 순서대로 실행: `supabase/migrations/0001_core.sql` → `0002_content_legal.sql` → `0003_insurance_facilities.sql` → `0004_storage.sql` → `0005_rescue_watches.sql` → `0006_memorial.sql` → `supabase/seed.sql`
    - Supabase CLI를 쓰면: `supabase link --project-ref <ref>` 후 `supabase db push`, 시드는 `psql "$DB_URL" -f supabase/seed.sql`
 3. Authentication → URL Configuration: Site URL과 Redirect URL에 `https://<도메인>/auth/callback` 추가.
 4. Authentication → Email: 매직링크 템플릿이 `{{ .ConfirmationURL }}`을 쓰는지 확인(PKCE 코드가 `/auth/callback?code=`로 온다).

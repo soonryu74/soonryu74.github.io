@@ -25,12 +25,15 @@ export async function requireStaff(kind: "reviewer" | "admin"): Promise<{ store:
   return ok ? { store, user: store.user } : "forbidden";
 }
 
-export async function getActivePet(store: Store, preferId?: string | null): Promise<{ pets: Pet[]; active: Pet | null }> {
-  const pets = await store.listPets();
+/** 돌봄 대상(떠나보내지 않은 아이)만 전환·오늘 할 일에 쓴다. 떠나보낸 아이는 memorial 로 따로 준다. */
+export async function getActivePet(store: Store, preferId?: string | null): Promise<{ pets: Pet[]; active: Pet | null; memorial: Pet[] }> {
+  const all = await store.listPets();
+  const pets = all.filter((p) => !p.passed_at);
+  const memorial = all.filter((p) => !!p.passed_at);
   const jar = await cookies();
   const want = preferId || jar.get(ACTIVE_PET_COOKIE)?.value;
   const active = pets.find((p) => p.id === want) ?? pets[0] ?? null;
-  return { pets, active };
+  return { pets, active, memorial };
 }
 
 export function safeNext(next: string | null | undefined, fallback = "/today"): string {

@@ -13,14 +13,14 @@ export default async function PetsPage({ searchParams }: { searchParams: Promise
   const sp = await searchParams;
   const m = await requireMember("/pets");
   if (!m) return <AuthRequired what="우리 아이 목록" next="/pets" />;
-  const { pets, active } = await getActivePet(m.store);
+  const { pets, active, memorial } = await getActivePet(m.store);
   return (
     <div>
       <PageHeader title="우리 아이" lead="여러 마리를 등록하고 전환할 수 있어요.">
         <Link href="/onboarding" className="btn btn-primary">+ 추가하기</Link>
       </PageHeader>
       {sp.deleted && <p role="status" className="card mb-3 bg-[#DCFCE7] text-[#14532D]">삭제했어요.</p>}
-      {pets.length === 0 ? (
+      {pets.length === 0 && memorial.length === 0 ? (
         <EmptyState title="아직 등록한 아이가 없어요" body="한 마리를 등록하면 오늘 할 일이 만들어져요." action={<Link href="/onboarding" className="btn btn-primary">등록하기</Link>} />
       ) : (
         <ul className="grid sm:grid-cols-2 gap-3">
@@ -49,6 +49,21 @@ export default async function PetsPage({ searchParams }: { searchParams: Promise
             </li>
           ))}
         </ul>
+      )}
+      {memorial.length > 0 && (
+        <section aria-labelledby="mem-h" className="mt-6">
+          <h2 id="mem-h" className="h2 mb-2">추억 속 아이들</h2>
+          <ul className="grid sm:grid-cols-2 gap-3">
+            {memorial.map((p) => (
+              <li key={p.id} className="card">
+                <Link href={`/pets/${p.id}/memorial`} className="flex items-center gap-3 hover:underline">
+                  <span aria-hidden="true" className="text-2xl">🕊️</span>
+                  <span><span className="h3 block">{p.name}</span><span className="text-sm text-muted">함께한 날들 보기</span></span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </div>
   );

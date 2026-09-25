@@ -84,6 +84,7 @@ export const DOCUMENT_TYPES = {
   vaccination: "접종 기록",
   insurance: "보험 서류",
   registration: "동물등록증",
+  photo: "사진",
   other: "기타",
 } as const;
 

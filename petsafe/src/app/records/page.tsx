@@ -9,18 +9,26 @@ import { EventForm, UploadForm, EventList, DocumentDelete } from "./record-forms
 
 export const metadata: Metadata = { title: "건강 기록" };
 
-export default async function RecordsPage() {
+export default async function RecordsPage({ searchParams }: { searchParams: Promise<{ pet?: string }> }) {
+  const sp = await searchParams;
   const m = await requireMember("/records");
   if (!m) return <AuthRequired what="건강 기록" next="/records" />;
-  const { pets, active } = await getActivePet(m.store);
+  const { pets, active: living } = await getActivePet(m.store);
+  // ?pet= 으로 떠나보낸 아이의 기록·사진도 열 수 있다 (본인 소유만 — 저장소가 소유자를 확인)
+  const chosen = sp.pet && /^[0-9a-f-]{36}$/i.test(sp.pet) ? await m.store.getPet(sp.pet) : null;
+  const active = chosen ?? living;
   if (!active) return (<div><PageHeader title="건강 기록" /><EmptyState title="먼저 우리 아이를 등록해 주세요" action={<Link className="btn btn-primary" href="/onboarding">등록하기</Link>} /></div>);
   const [events, docs] = await Promise.all([m.store.listEvents(active.id, 200), m.store.listDocuments(active.id)]);
   const weights = events.filter((e) => e.event_type === "weight").slice(0, 8);
   const costTotal = events.filter((e) => e.event_type === "cost").reduce((s, e) => s + Number((e.value_json as { amount_krw?: number }).amount_krw ?? 0), 0);
   return (
     <div className="space-y-4">
-      <PageHeader title={`${active.name}의 건강 기록`} lead="체중·관찰·진료·검사·비용과 문서를 한곳에. 모두 본인만 볼 수 있어요." />
-      <PetSwitcher pets={pets} activeId={active.id} next="/records" />
+      <PageHeader title={`${active.name}의 ${active.passed_at ? "기록" : "건강 기록"}`} lead="체중·관찰·진료·검사·비용과 문서를 한곳에. 모두 본인만 볼 수 있어요." />
+      {active.passed_at ? (
+        <p className="card border-l-4 border-primary text-sm">추억 속 아이의 기록이에요. <Link className="link" href={`/pets/${active.id}/memorial`}>함께한 날들로 돌아가기</Link></p>
+      ) : (
+        <PetSwitcher pets={pets} activeId={active.id} next="/records" />
+      )}
 
       <section aria-labelledby="add-h" className="card">
         <h2 id="add-h" className="h2 mb-2">기록 추가</h2>

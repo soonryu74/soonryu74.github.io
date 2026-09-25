@@ -70,6 +70,7 @@ export function createSupabaseStore(sb: SupabaseClient, user: SessionUser | null
         insurance_checks: await inPol("insurance_checks"),
         incident_drafts: must(await sb.from("incident_drafts").select("*").eq("user_id", id)),
         rescue_watches: must(await sb.from("rescue_watches").select("*").eq("user_id", id)),
+        memorial_letters: petIds.length ? must(await sb.from("memorial_letters").select("*").in("pet_id", petIds)) : [],
       };
     },
     async deleteMyAccount() {
@@ -117,6 +118,15 @@ export function createSupabaseStore(sb: SupabaseClient, user: SessionUser | null
       if (docs.length) await sb.storage.from(BUCKET).remove(docs.map((d: { storage_path: string }) => d.storage_path));
       must(await sb.from("pets").delete().eq("id", id));
     },
+    async setPetPassed(petId, passedAt) {
+      const rows = must(await sb.from("pets").update({ passed_at: passedAt }).eq("id", petId).eq("owner_id", uid()).select("id"));
+      if (!rows?.length) throw new NotFoundError("반려동물을 찾을 수 없어요.");
+      if (passedAt) must(await sb.from("care_tasks").update({ status: "skipped" }).eq("pet_id", petId).in("status", ["pending", "snoozed"]));
+    },
+    async setMemorialReminders(petId, on) { must(await sb.from("pets").update({ memorial_reminders: on }).eq("id", petId).eq("owner_id", uid())); },
+    async listLetters(petId) { uid(); return must(await sb.from("memorial_letters").select("*").eq("pet_id", petId).order("created_at", { ascending: false })) ?? []; },
+    async addLetter(petId, body) { must(await sb.from("memorial_letters").insert({ pet_id: petId, author_id: uid(), body })); },
+    async deleteLetter(petId, id) { must(await sb.from("memorial_letters").delete().eq("id", id).eq("pet_id", petId).eq("author_id", uid())); },
     async listConditions(petId) {
       return must(await sb.from("pet_conditions").select("*").eq("pet_id", petId).order("created_at")) ?? [];
     },

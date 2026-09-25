@@ -5,6 +5,8 @@ import { requireMember } from "@/lib/guard";
 import { AuthRequired, PageHeader } from "@/components/ui";
 import { formatKst } from "@/lib/dates";
 import { PetEditForm, PetDeleteForm, ConditionForm, ConditionRemove } from "./pet-forms";
+import { MarkPassedForm } from "./memorial-forms";
+import { kstDate } from "@/lib/dates";
 import { Timeline } from "@/components/records/timeline";
 
 export const metadata: Metadata = { title: "우리 아이 상세" };
@@ -27,6 +29,10 @@ export default async function PetDetailPage({ params }: { params: Promise<{ petI
       <PageHeader title={pet.name} lead={`${pet.species === "dog" ? "반려견" : "반려묘"} · 등록일 ${formatKst(pet.created_at)}`}>
         <Link href="/pets" className="btn btn-outline btn-sm">목록</Link>
       </PageHeader>
+
+      {pet.passed_at && (
+        <p className="card border-l-4 border-primary">{pet.name}는(은) {formatKst(pet.passed_at)}에 떠났어요. <Link className="link font-bold" href={`/pets/${pet.id}/memorial`}>함께한 날들 보기</Link></p>
+      )}
 
       <section aria-labelledby="profile-h" className="card">
         <h2 id="profile-h" className="h2 mb-3">프로필</h2>
@@ -71,6 +77,14 @@ export default async function PetDetailPage({ params }: { params: Promise<{ petI
         <p className="text-muted">가족 초대 기능은 준비 중이에요. 데이터베이스 권한 구조(읽기·쓰기 공동보호자)는 이미 마련돼 있어요.</p>
         <button type="button" className="btn btn-outline btn-sm mt-2" disabled aria-disabled="true">가족 초대 (준비 중)</button>
       </section>
+
+      {!pet.passed_at && (
+        <section aria-labelledby="farewell-h" className="card">
+          <h2 id="farewell-h" className="h2 mb-1">이별</h2>
+          <p className="text-muted text-sm">떠나보낸 날을 남기면 돌봄 알림을 멈추고, 기록은 그대로 두어 추모 페이지로 만들어 드려요.</p>
+          <MarkPassedForm petId={pet.id} name={pet.name} today={kstDate()} />
+        </section>
+      )}
 
       <section aria-labelledby="del-h" className="card border-[#FCA5A5]">
         <h2 id="del-h" className="h2 mb-1 text-danger">삭제</h2>
