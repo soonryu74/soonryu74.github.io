@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=2756707bb42a64e948482c6661f1df5bac863b24">
+    <link rel="stylesheet" href="/assets/css/style.css?v=1691a5129548e1e264c06956955c89a0ca74c55b">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -348,6 +348,11 @@ scripts/build_refs.py → data/refs.json(참고문헌 25건 · 지표 174개의 
 data.js isSurvey(ind)(refs 첫 출처 chs)·natPool·sidoPoolOf·HC_BY_SIDO·unitsOfCity, nationalMedian·poolFor(sel,scope,ind) 반영. Kpis·RankPanel(탭 「전국 시군구 258」, 보건소 행 라벨, 시 선택 시 소속 보건소 강조)·YearTable·ChoroplethMap 분위·GapBoxplot·Compare·KpiView·CorrelationView(두 지표 모두 CHS일 때) 적용.
 유지: 시군구 자료(사망률·검진·인구 등) 229곳, 지역 프로파일 종합 순위(행정 시군구·리그), PeerCard, EquityPanel(박탈지수가 시군구 단위), 핫스팟(폴리곤 인접).
 수원시 등 다보건소 시: KPI 「보건소 N곳으로 조사되어 시 전체 순위는 없음」. 예: 강릉시 비만율 2025 193/258(이전 170/229). 정오표 14번, 설명서 8·22·24·26·46·49쪽 문구 정정.</li>
+  <li>[완료] <strong>메인(첫) 화면 — 카드 4장</strong>(2026-09-25, 소유자 지시 “17개 시도 지도 · 258개 보건소 랭킹 · 취약인구 · 지자체 계획 수립 카드, 배경은 알아서”): app/src/components/Home.jsx.
+① 17개 시도 건강 지도(ChoroplethMap scope=sidoAll, 대표 지표 4종 흡연·고위험음주·비만·걷기 칩 공유, 시도 클릭→그 시도 분석) ② 258개 보건소 순위(HC_POOL 상위 10곳만 — 랭킹 기획안의 하위 비공개 원칙, 「우리 보건소 찾기」 검색, 다보건소 시는 소속 보건소 강조)
+③ 취약인구 규모(risk.json 17개 시도 합계 6개 집단·인구 대비 비율, 선택 지역 65세 이상 비율) ④ 지자체 계획 수립(제9기 지역보건의료계획 2027~2030, 2026 하반기 착수 — refs 26 hplan 보건복지부 보도자료; 현황→우선순위→목표치→사업 선정 4단계 메뉴 연결).
+배경: 시도 윤곽 SVG(opacity .08) + series-1 옅은 방사형 그라데이션. 해시가 비어 있으면 home, view=home, 공유 링크(해시 있음)는 기존대로. 탭 맨 앞 「홈」, 제목 클릭→홈, 컨트롤 막대 숨김, 참고문헌은 홈에서 접힘(details, 번호 누르면 펼침).
+탭 12개로 간격 9px. 사용설명서 3.0 홈 쪽 추가(67쪽, REF_SLIDE_FIRST 65), capture.mjs A0_home_grid.</li>
   <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
   <li>[대기] Vercel/GitHub Pages 배포 결정</li>
