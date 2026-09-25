@@ -3,7 +3,7 @@
 import type {
   AuditLog, CareTask, ConsentRow, ContentCard, ContentStatus, ContentVersion, DocumentRow, Facility, FacilityReport,
   FacilityType, FeatureFlagRow, HealthEvent, IncidentDraft, InsuranceCheck, InsurancePolicy, InsuranceTerm,
-  LegalDocumentRow, OfficialContactRow, Pet, PetCondition, Profile, SessionUser,
+  LegalDocumentRow, OfficialContactRow, Pet, PetCondition, Profile, RescueWatch, SessionUser,
 } from "@/lib/types";
 import type { ConditionInput, PetInput } from "@/lib/validation";
 import type { NewTask } from "@/lib/rules";
@@ -20,6 +20,7 @@ export type CheckInput = Omit<InsuranceCheck, "id" | "checked_at">;
 export type IncidentInput = Omit<IncidentDraft, "id" | "user_id" | "created_at" | "retention_until">;
 export type FacilityFilter = { types?: FacilityType[]; q?: string; includeClosed?: boolean };
 export type DocumentDownload = { kind: "url"; url: string } | { kind: "bytes"; bytes: Uint8Array; mime: string; name: string };
+export type RescueWatchInput = Omit<RescueWatch, "id" | "user_id" | "last_seen_at" | "created_at">;
 export type VersionInput = Pick<ContentVersion, "title" | "summary" | "body_json" | "source_json" | "change_reason"> & { author_name: string };
 export type ReviewInput = { reviewer_name: string; reviewer_credential: string; reviewed_at: string; next_review_at: string | null; expires_at: string | null };
 
@@ -76,6 +77,12 @@ export interface Store {
   listIncidentDrafts(): Promise<IncidentDraft[]>;
   createIncidentDraft(input: IncidentInput): Promise<void>;
   deleteIncidentDraft(id: string): Promise<void>;
+
+  // 실종·구조동물 관심 조건 (앱 내 새 공고 알림)
+  listRescueWatches(): Promise<RescueWatch[]>;
+  createRescueWatch(input: RescueWatchInput): Promise<void>;
+  deleteRescueWatch(id: string): Promise<void>;
+  markRescueWatchSeen(id: string): Promise<void>;
 
   // 공개 데이터
   listContacts(): Promise<OfficialContactRow[]>;

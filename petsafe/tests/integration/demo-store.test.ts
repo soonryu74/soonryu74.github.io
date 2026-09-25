@@ -105,6 +105,20 @@ describe("예시 모드 저장소", () => {
     expect(logs.some((l) => l.action === "test.action")).toBe(true);
   });
 
+  it("구조동물 관심 조건: 본인만, 최대 5개", async () => {
+    const a = createDemoStore(alice);
+    const b = createDemoStore(bob);
+    for (let i = 0; i < 5; i++) await a.createRescueWatch({ label: `조건${i}`, sido_code: null, sido_name: null, sigungu_code: null, sigungu_name: null, species: "dog", keyword: null });
+    await expect(a.createRescueWatch({ label: "여섯", sido_code: null, sido_name: null, sigungu_code: null, sigungu_name: null, species: "dog", keyword: null })).rejects.toBeInstanceOf(ForbiddenError);
+    const mine = await a.listRescueWatches();
+    expect(mine).toHaveLength(5);
+    expect(await b.listRescueWatches()).toHaveLength(0);
+    await b.deleteRescueWatch(mine[0].id); // 남의 것은 지워지지 않는다
+    expect(await a.listRescueWatches()).toHaveLength(5);
+    await a.deleteRescueWatch(mine[0].id);
+    expect(await a.listRescueWatches()).toHaveLength(4);
+  });
+
   it("탈퇴하면 개인 데이터가 모두 삭제된다", async () => {
     const a = createDemoStore(alice);
     const before = await a.exportMyData();

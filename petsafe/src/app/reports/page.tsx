@@ -56,6 +56,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
           <section aria-labelledby="sit-h" className="space-y-3">
             <h2 id="sit-h" className="h2">{situation.label}</h2>
             <p>{situation.intro}</p>
+            {(situation.key === "my_pet_lost" || situation.key === "lost_found") && (
+              <p className="card border-l-4 border-primary"><Link className="link font-bold" href="/lost">🔎 전국 보호소 구조 공고에서 찾아보기</Link><span className="block text-sm text-muted">동네·종류·특징으로 모아 보고, 새 공고가 올라오면 알려드려요.</span></p>
+            )}
             {"safetyNote" in situation && typeof situation.safetyNote === "string" && <p className="card border-danger border-2 font-bold">{situation.safetyNote}</p>}
             <ul className="grid sm:grid-cols-2 gap-2">
               {contacts.filter((c) => c.category === situation.key).map((c) => <ContactCard key={c.id} c={c} />)}

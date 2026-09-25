@@ -20,6 +20,7 @@
 | 건강·예방 | `/health` | 해야 할 것·하지 말 것, 출처·검토일 |
 | 인수공통감염병 | `/health/zoonoses[/slug]` | SFTS·공수병·개 브루셀라증·톡소포자충증. **검수 전 비공개** |
 | 보험·비용 | `/insurance` | 약관 메타정보·조항 입력·3단계 확인·청구 서류 체크. 추천·가입 없음 |
+| 실종·구조동물 찾기 | `/lost` | 전국 보호소 구조 공고를 시도·시군구·종류·색/특징으로 모아 보기, 공고 남은 날, 보호소 원탭 전화, 새 공고 표시(비회원: 기기 기준 / 회원: 관심 조건 최대 5개 → 홈 알림) |
 | 신고 | `/reports` | 상황별 공식 연락처(확인일), 증거 체크, 신고 준비 메모(기기/계정 90일) |
 | 법무·신뢰센터 | `/legal`, `/legal/[type]` | 이용약관·개인정보·위치·저작권, 기능 플래그 상태 공개 |
 | 내 계정 | `/account` | 동의 이력, 데이터 내려받기(JSON), 로그아웃, 탈퇴 |
@@ -90,7 +91,7 @@ npm run dev
 | `SUPABASE_SERVICE_ROLE_KEY` | **서버 전용** | 탈퇴 시 계정 완전 삭제, 관리자 부트스트랩, 수집기 쓰기 | 같은 곳 (service_role) |
 | `NEXT_PUBLIC_KAKAO_MAP_APP_KEY` | 예 | 지도 표시 | developers.kakao.com → 내 애플리케이션 → JavaScript 키 (+ 플랫폼에 도메인 등록) |
 | `KAKAO_REST_API_KEY` | **서버 전용** | 주소→좌표 | 같은 앱의 REST API 키 |
-| `PUBLIC_DATA_SERVICE_KEY` | **서버 전용** | 동물병원 수집기 | data.go.kr → 15154952 활용신청 |
+| `PUBLIC_DATA_SERVICE_KEY` | **서버 전용** | 실종·구조동물 찾기, 동물병원 수집기 | data.go.kr에서 **15098931(구조동물 조회)**과 15154952(동물병원)를 각각 활용신청. 포털의 '일반 인증키(Decoding)'를 넣는다 |
 | `PUBLIC_DATA_HOSPITAL_URL` | 서버 | 동물병원 수집기 | 위 API 상세 페이지의 요청 주소 |
 | `TOUR_API_SERVICE_KEY` | **서버 전용** | Phase 2 동반여행 | api.visitkorea.or.kr |
 | `CRON_SECRET` | 서버 | Phase 2 배치 엔드포인트 | 임의 문자열 |

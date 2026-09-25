@@ -13,6 +13,7 @@ export default async function MorePage() {
     { href: "/health/zoonoses", label: "🦠 사람과 동물 모두의 건강", desc: "인수공통감염병 예방" },
     { href: "/insurance", label: "🧾 보험·비용", desc: "내 약관 정리·청구 준비" },
     { href: "/reports", label: "📣 분실·발견·신고", desc: "공식 기관 연결" },
+    { href: "/lost", label: "🔎 실종·구조동물 찾기", desc: "보호소 새 공고 모아보기·알림" },
     { href: "/partner", label: "🤝 파트너", desc: "업체 입점 안내" },
     { href: "/legal", label: "⚖️ 법무·신뢰센터", desc: "약관·개인정보·위치·저작권" },
     { href: store.user ? "/account" : "/login", label: store.user ? "👤 내 계정" : "🔑 로그인", desc: store.user ? "동의 기록·내려받기·탈퇴" : "이메일로 시작하기" },

@@ -10,7 +10,7 @@ import { isContactVisible } from "@/lib/contacts";
 import type {
   AuditLog, CareTask, ConsentRow, ContentCard, ContentVersion, DocumentRow, Facility, FacilityReport, FeatureFlagRow,
   HealthEvent, IncidentDraft, InsuranceCheck, InsurancePolicy, InsuranceTerm, LegalDocumentRow, OfficialContactRow,
-  Pet, PetCondition, Profile, SessionUser,
+  Pet, PetCondition, Profile, RescueWatch, SessionUser,
 } from "@/lib/types";
 import { AuthRequiredError, ForbiddenError, NotFoundError, type Store } from "./types";
 
@@ -37,6 +37,7 @@ type DB = {
   facilityReports: FacilityReport[];
   audit: AuditLog[];
   flags: FeatureFlagRow[];
+  rescueWatches?: RescueWatch[];
 };
 
 function dir() { return path.resolve(/*turbopackIgnore: true*/ process.cwd(), serverEnv().demoDir); }
@@ -153,6 +154,7 @@ export function createDemoStore(user: SessionUser | null): Store {
         insurance_terms: db.terms.filter((t) => polIds.has(t.policy_id)),
         insurance_checks: db.checks.filter((c) => polIds.has(c.policy_id)),
         incident_drafts: db.incidents.filter((i) => i.user_id === id),
+        rescue_watches: (db.rescueWatches ?? []).filter((w) => w.user_id === id),
       };
     }),
     deleteMyAccount: () => write((db) => {
@@ -172,6 +174,7 @@ export function createDemoStore(user: SessionUser | null): Store {
       db.conditions = db.conditions.filter((c) => !petIds.has(c.pet_id));
       db.pets = db.pets.filter((p) => p.owner_id !== id);
       db.incidents = db.incidents.filter((i) => i.user_id !== id);
+      db.rescueWatches = (db.rescueWatches ?? []).filter((w) => w.user_id !== id);
       db.consents = db.consents.filter((c) => c.user_id !== id);
       db.profiles = db.profiles.filter((p) => p.user_id !== id);
       db.users = db.users.filter((u) => u.id !== id);
@@ -329,6 +332,18 @@ export function createDemoStore(user: SessionUser | null): Store {
       db.incidents.push({ ...input, id: randomUUID(), user_id: uid(), retention_until: retention, created_at: now() });
     }),
     deleteIncidentDraft: (id) => write((db) => { db.incidents = db.incidents.filter((i) => !(i.id === id && i.user_id === uid())); }),
+
+    listRescueWatches: () => read((db) => (db.rescueWatches ?? []).filter((w) => w.user_id === uid())),
+    createRescueWatch: (input) => write((db) => {
+      db.rescueWatches ??= [];
+      if (db.rescueWatches.filter((w) => w.user_id === uid()).length >= 5) throw new ForbiddenError("관심 조건은 5개까지 저장할 수 있어요.");
+      db.rescueWatches.push({ ...input, id: randomUUID(), user_id: uid(), last_seen_at: now(), created_at: now() });
+    }),
+    deleteRescueWatch: (id) => write((db) => { db.rescueWatches = (db.rescueWatches ?? []).filter((w) => !(w.id === id && w.user_id === uid())); }),
+    markRescueWatchSeen: (id) => write((db) => {
+      const w = (db.rescueWatches ?? []).find((x) => x.id === id && x.user_id === uid());
+      if (w) w.last_seen_at = now();
+    }),
 
     listContacts: () => read((db) => db.contacts.filter((c) => isContactVisible(c)).sort((a, b) => a.sort_order - b.sort_order)),
     listLegalDocuments: () => read((db) => db.legal.filter((d) => d.status === "published")),

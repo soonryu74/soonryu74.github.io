@@ -197,5 +197,27 @@ do $$ begin
 end $$;
 rollback;
 
+-- 11. 구조동물 관심 조건: 본인만, 최대 5개
+begin;
+select test_as('00000000-0000-0000-0000-00000000000a');
+insert into public.rescue_watches (user_id, label) select '00000000-0000-0000-0000-00000000000a', '조건' || g from generate_series(1, 5) g;
+do $$ begin
+  begin
+    insert into public.rescue_watches (user_id, label) values ('00000000-0000-0000-0000-00000000000a', '여섯');
+    raise exception 'FAIL 11a: sixth watch allowed';
+  exception when check_violation then null;
+  end;
+end $$;
+select test_as('00000000-0000-0000-0000-00000000000b');
+do $$ begin
+  if (select count(*) from public.rescue_watches) <> 0 then raise exception 'FAIL 11b: bob sees alice watches'; end if;
+  begin
+    insert into public.rescue_watches (user_id, label) values ('00000000-0000-0000-0000-00000000000a', '위장');
+    raise exception 'FAIL 11c: bob inserted watch for alice';
+  exception when insufficient_privilege or check_violation then null;
+  end;
+end $$;
+rollback;
+
 select test_reset();
 \echo 'RLS TESTS PASSED'

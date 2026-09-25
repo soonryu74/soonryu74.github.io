@@ -69,6 +69,7 @@ export function createSupabaseStore(sb: SupabaseClient, user: SessionUser | null
         insurance_terms: await inPol("insurance_terms"),
         insurance_checks: await inPol("insurance_checks"),
         incident_drafts: must(await sb.from("incident_drafts").select("*").eq("user_id", id)),
+        rescue_watches: must(await sb.from("rescue_watches").select("*").eq("user_id", id)),
       };
     },
     async deleteMyAccount() {
@@ -203,6 +204,16 @@ export function createSupabaseStore(sb: SupabaseClient, user: SessionUser | null
     async listIncidentDrafts() { return must(await sb.from("incident_drafts").select("*").eq("user_id", uid()).order("created_at", { ascending: false })) ?? []; },
     async createIncidentDraft(input) { must(await sb.from("incident_drafts").insert({ ...input, user_id: uid() })); },
     async deleteIncidentDraft(id) { must(await sb.from("incident_drafts").delete().eq("id", id).eq("user_id", uid())); },
+
+    async listRescueWatches() {
+      return must(await sb.from("rescue_watches").select("*").eq("user_id", uid()).order("created_at")) ?? [];
+    },
+    async createRescueWatch(input) {
+      const { error } = await sb.from("rescue_watches").insert({ ...input, user_id: uid() });
+      if (error) throw new Error(error.message.includes("limit") ? "관심 조건은 5개까지 저장할 수 있어요." : error.message);
+    },
+    async deleteRescueWatch(id) { must(await sb.from("rescue_watches").delete().eq("id", id).eq("user_id", uid())); },
+    async markRescueWatchSeen(id) { must(await sb.from("rescue_watches").update({ last_seen_at: new Date().toISOString() }).eq("id", id).eq("user_id", uid())); },
 
     async listContacts() {
       const rows = must(await sb.from("official_contacts").select("*").order("sort_order")) ?? [];

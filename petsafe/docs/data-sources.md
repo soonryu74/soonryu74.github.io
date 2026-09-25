@@ -9,6 +9,7 @@
 |---|---|---|---|---|---|---|
 | 전국 동물병원 | 행정안전부 동물_동물병원 조회서비스 (data.go.kr 15154952) | 일 배치 `npm run import:hospitals` | 공공데이터포털 이용허락(출처표시) | 매일 | `scripts/import-animal-hospitals.ts`, `src/lib/importers/animal-hospital.ts` | 필드 매핑은 LOCALDATA 표준 필드 기준으로 작성. **키 발급 후 실제 응답 필드명 대조 필요** (`FIELD_MAP`만 수정) |
 | 동물약국·미용·위탁·장묘·운송 | 공공데이터포털 전국 인허가 데이터 | 일/주 배치 | 공공데이터포털 이용허락 | 주 1회 | 미구현 (Phase 2, 동물병원 수집기 구조 재사용) | 미착수 |
+| 실종·구조동물 공고 | 농림축산식품부 국가동물보호정보시스템 구조동물 조회 서비스 (data.go.kr 15098931, `abandonmentPublicService_v2`) | 요청 시 서버 호출, 30분 캐시(시도·시군구 목록은 1일) | 이용허락범위 제한 없음 | 실시간(30분 캐시) | `src/lib/rescue/*`, `src/app/lost` | 2026-09-25 명세 확인: 요청 bgnde·endde·upkind(417000/422400/429900)·upr_cd·org_cd·state(notice/protect)·numOfRows≤1000, 응답 desertionNo·happenDt·happenPlace·upKindNm·kindNm·colorCd·age·weight·noticeSdt/Edt·popfile1·processState·sexCd·neuterYn·specialMark·careNm·careTel·careAddr·orgNm. 엔드포인트는 키 없이 호출 시 '등록되지 않은 서비스키' 응답 확인. **실제 키로 응답 확인은 아직 안 함** |
 | 보호센터 | 국가동물보호정보시스템 동물보호센터 API | 일 배치 | 공공데이터포털 이용허락 | 매일 | 미구현 (Phase 2) | 미착수 |
 | 동반 여행지 | 한국관광공사 TourAPI 반려동물 동반여행 | 주 배치 | 레코드별 사진 라이선스 기록 필수 | 주 1회 | 미구현 (Phase 2) | 미착수 |
 | 지도 표시 | Kakao Map JavaScript SDK | 클라이언트, `NEXT_PUBLIC_KAKAO_MAP_APP_KEY` | 카카오 이용약관 | - | `src/app/map/map-client.tsx` | 키 없으면 목록+길찾기 링크로 동작 |

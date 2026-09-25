@@ -260,3 +260,17 @@ export type AuditLog = {
 };
 
 export type FeatureFlagRow = { key: string; enabled: boolean; reason: string | null; approved_at: string | null };
+
+export type RescueWatch = {
+  id: string;
+  user_id: string;
+  label: string;
+  sido_code: string | null;
+  sido_name: string | null;
+  sigungu_code: string | null;
+  sigungu_name: string | null;
+  species: "dog" | "cat" | "other" | null;
+  keyword: string | null;
+  last_seen_at: string;
+  created_at: string;
+};
