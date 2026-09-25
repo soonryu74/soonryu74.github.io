@@ -23,6 +23,7 @@ import ChronicleView from "./components/ChronicleView";
 import KpiView from "./components/KpiView";
 import SourcesView from "./components/SourcesView";
 import FeedbackView from "./components/FeedbackView";
+import Home from "./components/Home";
 import ExportButtons from "./components/ExportButtons";
 
 const DEFAULT_IND = INDICATORS.find((i) => i.id === "DT_H_SM") || INDICATORS[0];
@@ -41,7 +42,9 @@ function readHash() {
     sgg: RBY.get(sgg0)?.l === "sgg" ? sgg0 : null,
     year: h.get("year") ? +h.get("year") : null,
     scope: h.get("scope") === "sido" ? "sido" : "nation",
-    view: ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback"].includes(h.get("view")) ? h.get("view") : "analysis",
+    // 주소에 아무 상태가 없으면(처음 방문) 메인 화면, view=home 도 메인 화면
+    view: !window.location.hash.replace(/^#/, "") || h.get("view") === "home" ? "home"
+      : ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback"].includes(h.get("view")) ? h.get("view") : "analysis",
     ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
@@ -168,13 +171,14 @@ export default function App() {
       <div className="wrap">
         <header className="top">
           <div>
-            <button type="button" className="title title-home" title="처음 화면(지표 분석)으로"
-              onClick={() => { setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>지역 건강프로파일 대시보드</button>
+            <button type="button" className="title title-home" title="처음 화면으로"
+              onClick={() => { setView("home"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>지역 건강프로파일 대시보드</button>
             <div className="subtitle">지표 {INDICATORS.length}개 — 지역사회건강조사 {nSrc("chs")}<Cite k="chs" /> · 결과·환경 DB {nKdh}<Cite k="kdh" /> · 국가암검진 {nSrc("cancer")}<Cite k="cancer" /> · 일반검진 {INDICATORS.filter((i) => i.id.startsWith("CHK_")).length}<Cite k="nhis" /> · 건강수명 {nSrc("hle")}<Cite k="hle" /> · 박탈지수 {nSrc("dep")}<Cite k="dep" /> · 시도/시군구 · {DS.years[0]}–{DS.years[DS.years.length - 1]}
               <span className="sub-note">건강수준 모니터링과 목표치 설정 지원 도구입니다. 보건소 사업 실적(투입·산출) 자료를 담고 있지 않아 사업 성과 평가 도구가 아닙니다.</span></div>
           </div>
           <div className="topright">
             <div className="seg views">
+              <button className={`seg-btn ${view === "home" ? "on" : ""}`} onClick={() => setView("home")}>홈</button>
               <button className={`seg-btn ${view === "analysis" ? "on" : ""}`} onClick={() => setView("analysis")}>지표 분석</button>
               <button className={`seg-btn ${view === "profile" ? "on" : ""}`} onClick={() => setView("profile")}>지역 프로파일</button>
               <button className={`seg-btn ${view === "kpi" ? "on" : ""}`} onClick={() => setView("kpi")}>성과지표</button>
@@ -204,7 +208,7 @@ export default function App() {
           </div>
         )}
 
-        {!["units", "ncd", "corr", "hot", "chronicle", "sources", "feedback"].includes(view) && <div className="controls">
+        {!["home", "units", "ncd", "corr", "hot", "chronicle", "sources", "feedback"].includes(view) && <div className="controls">
           {view !== "profile" && view !== "kpi" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
           {view !== "compare" && view !== "kpi" && (
@@ -231,7 +235,10 @@ export default function App() {
 
         <div ref={bodyRef} className="body-anchor" />
 
-        {view === "feedback" ? (
+        {view === "home" ? (
+          <Home sel={sel} setTip={setTip}
+            onGo={({ view: v, ind: i, code, scope: sc }) => { if (i) setInd(i); if (code) selectRegion(code); if (sc) setScope(sc); setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+        ) : view === "feedback" ? (
           <FeedbackView currentUrl={feedbackFrom} />
         ) : view === "sources" ? (
           <SourcesView />
@@ -333,7 +340,7 @@ export default function App() {
             onRecommend={(name) => { setNcdInd(name); setView("ncd"); window.scrollTo({ top: 0, behavior: "smooth" }); }} onRegion={selectRegion} />
         )}
 
-        <RefList />
+        <RefList collapsed={view === "home"} />
         <footer>
           자료원: 질병관리청 「지역사회건강조사」 — 통계청 KOSIS 공유서비스(openAPI), 수집일 {DS.generated}.
           {KDH_SOURCE && <> 사망률·감염병·의료이용·자원·인구·환경 지표: <a className="src" style={{ whiteSpace: "normal" }} href={KDH_SOURCE.url} target="_blank" rel="noreferrer">{KDH_SOURCE.name}</a>.</>}

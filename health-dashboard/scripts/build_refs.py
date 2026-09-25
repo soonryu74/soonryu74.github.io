@@ -72,6 +72,8 @@ REFS = [
      "detail": "균등 가중·3년 평균·결과지표 제외·등급(플래티넘 10%·골드 25%·실버 50%)", "url": doc("랭킹_방법론_v1.md"), "updated": ""},
     {"key": "errata", "org": "이 대시보드", "title": "사용설명서·대시보드 정오표 v1",
      "detail": "2026-09-24 숫자 전수 검증 결과와 정정 내역", "url": doc("사용설명서_정오표_v1.md"), "updated": "2026-09-24"},
+    {"key": "hplan", "org": "보건복지부", "title": "제9기 지역보건의료계획(2027~2030) 수립 착수 — 「지역 보건의료 성과 나누고, 새로운 4년 준비합니다」",
+     "detail": "지역보건법 제7조에 따른 4년 주기 법정계획 · 2026년 하반기 수립 착수", "url": "https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1490911", "updated": "2026"},
 ]
 for i, r in enumerate(REFS, 1):
     r["n"] = i

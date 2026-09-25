@@ -1,5 +1,6 @@
 // 지역 건강프로파일 대시보드 사용설명서 (pptx) 생성기
 import pptxgen from 'pptxgenjs';
+import JSZip from 'jszip';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -38,7 +39,7 @@ const REPO = process.env.HD_REPO || '/home/user/soonryu74.github.io/health-dashb
 const REFS = JSON.parse(fs.readFileSync(`${REPO}/data/refs.json`, 'utf8')).refs;
 const REFN = Object.fromEntries(REFS.map((r) => [r.key, r]));
 const REF_PER_SLIDE = 13;
-const REF_SLIDE_FIRST = Number(process.env.REF_SLIDE_FIRST || 64);   // 참고문헌 첫 쪽 번호 — 끝에서 실제 번호와 대조해 틀리면 멈춘다
+const REF_SLIDE_FIRST = Number(process.env.REF_SLIDE_FIRST || 65);   // 참고문헌 첫 쪽 번호 — 끝에서 실제 번호와 대조해 틀리면 멈춘다
 const refSlideOf = (n) => REF_SLIDE_FIRST + Math.floor((n - 1) / REF_PER_SLIDE);
 const MARK = /\{r:([a-z0-9_,]+)\}/g;
 function R(str, base = {}) {
@@ -83,7 +84,7 @@ function bulletsText(items, size = 12.5) {
   return items.flatMap((t, i) => {
     const base = { fontSize: size, color: C.INK };
     const runs = [].concat(R(t, base)).map((x) => (typeof x === 'string' ? { text: x, options: { ...base } } : x));
-    runs[0].options = { ...runs[0].options, bullet: { indent: 12 }, paraSpaceAfter: 6 };
+    runs[0].options = { ...runs[0].options, bullet: { indent: 12 }, paraSpaceAfter: 6 };   // 뒤 조각들의 문단 속성은 저장 후 후처리에서 지운다
     if (i < items.length - 1) runs[runs.length - 1].options = { ...runs[runs.length - 1].options, breakLine: true };
     return runs;
   });
@@ -102,7 +103,7 @@ function cover() {
   s.addText('사용설명서', T({ x: 0.8, y: 3.0, w: 11.5, h: 0.8, fontSize: 30, color: 'CADCFC' }));
   s.addText('전체 자료 소개 · 활용법 · 메뉴별 설명과 활용 팁', T({ x: 0.8, y: 3.9, w: 11.5, h: 0.5, fontSize: 16, color: 'CADCFC' }));
   s.addText('v1 · 2026년 9월 · https://health-profile.kr', T({ x: 0.8, y: 6.3, w: 11.5, h: 0.4, fontSize: 12, color: '9FB4CF' }));
-  const f = findShot('A_home_top'); if (f) fitImage(s, f, { x: 8.3, y: 1.4, w: 4.6, h: 4.6 });
+  const f = findShot('A0_home_grid', 'A_home_top'); if (f) fitImage(s, f, { x: 8.3, y: 1.4, w: 4.6, h: 4.6 });
   pageNo += 1;
 }
 function divider(no, t, sub) {
@@ -232,7 +233,7 @@ cover();
 toc([
   ['소개 — 무엇을 담은 도구인가', '목적과 성격 · CIAT와의 관계 · 담긴 자료 · 지역 단위 · 값의 종류 · 갱신 주기'],
   ['시작하기 — 기본 조작', '접속 · 화면 구성 · 지표/지역/연도 선택 · 주소 공유 · 화면 설정 · 내려받기'],
-  ['메뉴별 설명과 활용 팁', '지표 분석 · 지역 프로파일 · 성과지표 · 지역 비교 · 예방·관리 · 연관지표 · 핫스팟 · 연대기 · 조사 단위 · 자료원 · 의견·문의'],
+  ['메뉴별 설명과 활용 팁', '홈 · 지표 분석 · 지역 프로파일 · 성과지표 · 지역 비교 · 예방·관리 · 연관지표 · 핫스팟 · 연대기 · 조사 단위 · 자료원 · 의견·문의'],
   ['활용 시나리오', '지역보건의료계획 현황 분석 · 사업 우선순위 · 목표치 설정 · 설명자료 제작 · 감염병 대비'],
   ['해석 주의와 자주 묻는 질문', '순위의 함정 · 자체 산출 지표 표기 · 정의 변경 · 코로나19 자료 · FAQ · 문의 · 참고문헌'],
 ]);
@@ -338,8 +339,8 @@ cardsSlide({
 shot({ t: '휴대폰에서 보기', sub: '카드가 1열로 재배치되고 큰 숫자는 만 단위로 읽기 쉽게', img: ['A_mobile'], img2: ['C_mobile_profile'],
   bullets: ['지표 분석·프로파일·모든 메뉴가 휴대폰에서 동작합니다.', '표는 좌우로 밀어서 보고, 순위 목록은 40개 이하면 한 줄로 전부 펼쳐집니다.', '저장 버튼은 공유 시트로 열립니다(갤러리·카카오톡).'],
   tips: ['카카오톡 안에서 링크를 열었다면 오른쪽 위 메뉴의 「다른 브라우저로 열기」를 먼저 누르십시오.'] });
-shot({ t: '화면 구성', sub: '제목(누르면 첫 화면) · 메뉴 탭 · 선택 컨트롤 · 연도 · 요약 타일 · 카드들 · 하단 출처', img: ['A_home_top'],
-  bullets: ['① 제목: 누르면 언제든 「지표 분석」 첫 화면으로 돌아갑니다.', '② 메뉴 탭 11개: 지표 분석 · 지역 프로파일 · 성과지표 · 지역 비교 · 예방·관리 · 연관지표 · 핫스팟 · 연대기 전시관 · 조사 단위 · 자료원 · 의견·문의', '③ A−/A+ 글자 크기, 다크 모드 전환', '④ 지표·시도·시군구·비교 담기·값 유형 컨트롤', '⑤ 연도 슬라이더와 ▶ 재생', '⑥ 요약 타일 4개와 분석 카드'],
+shot({ t: '화면 구성', sub: '제목(누르면 홈) · 메뉴 탭 · 선택 컨트롤 · 연도 · 요약 타일 · 카드들 · 하단 출처', img: ['A_home_top'],
+  bullets: ['① 제목: 누르면 언제든 「홈」(메인 화면)으로 돌아갑니다.', '② 메뉴 탭 12개: 홈 · 지표 분석 · 지역 프로파일 · 성과지표 · 지역 비교 · 예방·관리 · 연관지표 · 핫스팟 · 연대기 전시관 · 조사 단위 · 자료원 · 의견·문의', '③ A−/A+ 글자 크기, 다크 모드 전환', '④ 지표·시도·시군구·비교 담기·값 유형 컨트롤', '⑤ 연도 슬라이더와 ▶ 재생', '⑥ 요약 타일 4개와 분석 카드'],
   tips: ['모든 카드 오른쪽 위에 ↓SVG·↓PNG·↓CSV 버튼이 있습니다.', '화면 상태는 주소(URL)에 담기므로 주소만 복사해 보내면 같은 화면이 열립니다.'] });
 shot({ t: '지표 선택', sub: '지표 이름 상자를 누르면 검색창과 영역 칩이 열립니다', img: ['A_picker_open', 'A_controls'],
   bullets: ['검색: 「흡연」·「우울」처럼 단어 일부만 넣어도 찾습니다.', '영역 칩: 흡연·음주·신체활동·식생활·정신건강·구강·만성질환·예방·의료이용 + 사망률·감염병·검진·자원·인구·환경·암검진·건강수명·지역박탈', '지표 이름 앞의 작은 글씨가 영역, 뒤의 배지가 방향·계층입니다.'],
@@ -373,9 +374,12 @@ cardsSlide({
 });
 
 // ─── PART 3 ───
-divider(3, '메뉴별 설명과 활용 팁', '메뉴 탭 11개를 왼쪽부터 차례로 설명합니다. 각 화면의 카드마다 「무엇을 보여 주는가」와 「이렇게 쓰면 좋다」를 적었습니다.');
+divider(3, '메뉴별 설명과 활용 팁', '메뉴 탭 12개를 왼쪽부터 차례로 설명합니다. 각 화면의 카드마다 「무엇을 보여 주는가」와 「이렇게 쓰면 좋다」를 적었습니다.');
 
 // 3.1 지표 분석
+shot({ t: '3.0 홈 — 메인 화면', sub: '처음 열면 나오는 카드 4장 · 카드를 누르면 해당 메뉴로 들어갑니다', img: ['A0_home_grid'],
+  bullets: ['① 17개 시도 건강 지도: 대표 지표 4종(흡연·고위험음주·비만·걷기)을 골라 시도별로 색칠합니다. 시도를 누르면 그 시도 분석으로.', '② 258개 보건소 순위{r:chs25}: 상위 10곳과 「우리 보건소 찾기」. 하위 순위는 첫 화면에 싣지 않습니다.', '③ 취약인구 규모{r:risk}: 65세 이상·독거노인·등록장애인·기초생활수급자·영유아·외국인 주민의 전국 규모와 비율.', '④ 지자체 계획 수립{r:hplan}: 현황 분석 → 우선순위 → 목표치 → 사업 선정 4단계를 해당 메뉴로 연결합니다.'],
+  tips: ['주소 뒤에 아무것도 없이 열면 홈, 공유 링크는 그 화면으로 바로 열립니다. 제목이나 「홈」 탭으로 언제든 돌아옵니다.'] });
 shot({ t: '3.1 지표 분석 — 요약 타일', sub: '선택 지역 값 · 전국 시군구 중앙값 · 순위 · 백분위를 한 줄로', img: ['A_kpis'], wide: true,
   bullets: ['선택 지역·연도 값과 전년 대비 증감(▲▼).', '전국 시군구 중앙값: 전국 기준선(KOSIS에 전국 행이 없어 중앙값 사용).', '순위: 비교 범위(전국·시도 내)에서의 순위와 방향.', '양호도 백분위: 100에 가까울수록 양호.'],
   tips: ['보고서 첫 문장은 이 타일 네 개로 충분합니다: "강릉시 비만율 38.0%로 전국 시군구 중앙값(35.4%)보다 2.6%p 높고, 조사 단위 258곳 중 193위(2025년)"{r:chs,chs25}.'] });
@@ -584,4 +588,21 @@ for (let p = 0; p * REF_PER_SLIDE < REFS.length; p++) {
 }
 
 await pres.writeFile({ fileName: OUT });
+// 후처리: pptxgenjs 는 한 문단 안의 조각(run)마다 <a:pPr> 를 적는다. 뒤 조각의 「글머리 없음」이 앞 조각의 글머리를 덮으므로
+// 문단마다 첫 <a:pPr> 만 남긴다(한 문단에 pPr 은 하나여야 하는 OOXML 구조와도 맞다). 참고문헌 번호가 붙은 글머리 문장이 대상.
+{
+  const zip = await JSZip.loadAsync(fs.readFileSync(OUT));
+  let fixed = 0;
+  for (const name of Object.keys(zip.files).filter((n) => /^ppt\/slides\/slide\d+\.xml$/.test(n))) {
+    const xml = await zip.file(name).async('string');
+    const out = xml.replace(/<a:p>([\s\S]*?)<\/a:p>/g, (m, inner) => {
+      let seen = false;
+      const body = inner.replace(/<a:pPr\b[^>]*?(?:\/>|>[\s\S]*?<\/a:pPr>)/g, (pp) => { if (seen) { fixed++; return ''; } seen = true; return pp; });
+      return '<a:p>' + body + '</a:p>';
+    });
+    if (out !== xml) zip.file(name, out);
+  }
+  fs.writeFileSync(OUT, await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' }));
+  console.log('pPr 중복 제거', fixed);
+}
 console.log('written', OUT, 'slides', pageNo);

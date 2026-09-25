@@ -33,6 +33,10 @@ const clickBtn = async (scopeSel, text) => { await p.evaluate(({ scopeSel, text 
 const cardBy = (t) => p.locator('.card', { has: p.locator('h3', { hasText: t }) }).first();
 
 // ── 지표 분석 (비만율 · 서울 강남구) ──
+// 홈(메인 화면) — 카드 4장 격자 전체와 카드별
+await go('#view=home&sido=009&sgg=00901', 2500);
+await shot('A0_home_grid', '.home-grid', '홈: 카드 4장');
+await cards('A0_home');
 await go('#ind=DT_H_OBE_OBE&sido=001&sgg=00101&year=2025&scope=nation');
 await p.screenshot({ path: `${OUT}/A_home_top.png` }); manifest.push({ name: 'A_home_top', file: `${OUT}/A_home_top.png`, note: '첫 화면(지표 분석) 상단' });
 await shot('A_header', 'header.top', '제목·부제');
