@@ -24,9 +24,9 @@
    "key": "mort",
    "org": "국가데이터처(옛 통계청)",
    "title": "사망원인통계 — 시군구별 연령표준화 사망률",
-   "detail": "KOSIS 101 DT_1B34E13 · 표준화사망률 22종 · 2008~2024",
+   "detail": "KOSIS 101 DT_1B34E13 · 표준화사망률 22종 · 2008~2025 (2024년까지 김동현 교수 DB [9] 경유, 이후 KOSIS 직접 · 영아사망률은 2024년까지)",
    "url": "https://mods.go.kr/menu.es?mid=a10301060200",
-   "updated": "2025-09-23",
+   "updated": "2026-09-22",
    "n": 3
   },
   {
@@ -89,7 +89,7 @@
    "title": "시군구 건강수명 산출법 v1 — Sullivan 방식, 주관적 건강 기반",
    "detail": "사망원인통계 [3]·연앙인구·지역사회건강조사 [1] 주관적 건강인지율로 산출. 공식 통계 아님",
    "url": "https://github.com/soonryu74/soonryu74.github.io/blob/main/health-dashboard/docs/%EA%B1%B4%EA%B0%95%EC%88%98%EB%AA%85_%EC%82%B0%EC%B6%9C%EB%B2%95_v1.md",
-   "updated": "2026-09-08",
+   "updated": "2026-09-25",
    "n": 10
   },
   {
@@ -177,7 +177,7 @@
    "key": "cpstf",
    "org": "Community Preventive Services Task Force(미국)",
    "title": "The Community Guide — All Active Findings (2024-11)",
-   "detail": "권고 224건 · 22개 주제",
+   "detail": "권고 224건 · 22개 주제 · 대시보드 목록은 개별 권고 원문(thecommunityguide.org) 151건·주제별 권고 목록으로 연결",
    "url": "https://www.thecommunityguide.org/media/pdf/cpstf-finding-lists/CPSTF-All-Findings-508.pdf",
    "updated": "2024-11",
    "n": 20

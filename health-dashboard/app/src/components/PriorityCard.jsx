@@ -46,7 +46,7 @@ export default function PriorityCard({ scored, item, pool, onPick }) {
                   <td className="num muted">{r.gap == null ? "–" : fmt(r.gap) + (r.ind.unit === "%" ? "%p" : "")}</td>
                   <td className="evcell">
                     {r.verdict.guides?.slice(0, 2).map((g) => <span key={g.code} className="evmini"><Badge k="권고" n={g.recs["권고"]} /> {g.code} · 갱신 <b className={EVIDENCE.now_year - Number(g.last_updated.slice(0, 4)) <= 5 ? "fresh" : ""}>{g.last_updated.slice(0, 4)}</b></span>)}
-                    {r.verdict.cpstf && <span className="evmini muted">CPSTF 「{r.verdict.cpstf.topic_ko}」 판정 중앙 {r.verdict.cpstf.median_year}년</span>}
+                    {r.verdict.cpstf && <span className="evmini muted">CPSTF {r.verdict.cpstf.findings_url ? <a href={r.verdict.cpstf.findings_url} target="_blank" rel="noopener noreferrer">「{r.verdict.cpstf.topic_ko}」 ↗</a> : `「${r.verdict.cpstf.topic_ko}」`} 판정 중앙 {r.verdict.cpstf.median_year}년</span>}
                     {r.verdict.key === "none" && <span className="evmini muted">NICE·CPSTF 모두 없음</span>}
                   </td>
                 </tr>

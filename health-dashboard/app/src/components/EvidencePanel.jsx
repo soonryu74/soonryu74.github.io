@@ -2,7 +2,7 @@ import { useState } from "react";
 import Cite from "./Cite";
 import { EVIDENCE, evidenceOf, guideOf, evidenceVerdict } from "../data";
 
-const G = { "권고": "ev-ok", "고려": "ev-co", "반대": "ev-no", "근거 불충분": "ev-in" };
+const G = { "권고": "ev-ok", "강력 권고": "ev-ok", "고려": "ev-co", "반대": "ev-no", "반대 권고": "ev-no", "근거 불충분": "ev-in" };
 export const Badge = ({ k, n }) => <span className={`evbadge ${G[k] || "ev-in"}`}>{k}{n != null ? ` ${n}` : ""}</span>;
 const ym = (d) => (d ? d.slice(0, 7) : "–");
 const age = (d) => EVIDENCE.now_year - Number(d.slice(0, 4));
@@ -39,6 +39,27 @@ function Guide({ code, level }) {
   );
 }
 
+// CPSTF 개별 권고 목록 — 개별 원문 주소를 확신할 수 없는 항목은 주제별 권고 목록 페이지로 보낸다
+function CpstfList({ cp }) {
+  const [open, setOpen] = useState(false);
+  const items = (EVIDENCE.cpstf_items || {})[cp.topic] || [];
+  if (!items.length) return null;
+  const order = { "강력 권고": 0, "권고": 1, "근거 불충분": 2, "반대 권고": 3 };
+  const sorted = [...items].sort((a, b) => (order[a.g] ?? 9) - (order[b.g] ?? 9) || (b.y || 0) - (a.y || 0));
+  return (
+    <>
+      <button className="xbtn" onClick={() => setOpen(!open)}>{open ? "CPSTF 권고 접기" : `CPSTF 권고 ${items.length}건 보기`}</button>
+      {open && <ul className="evsamples">
+        {sorted.map((x, i) => (
+          <li key={i}><Badge k={x.g} />{x.y && <span className="evyear" title="CPSTF 판정 연도">{x.y}</span>}
+            <a className="evtext" href={x.url || cp.findings_url || cp.url} target="_blank" rel="noopener noreferrer"
+              title={x.url ? "CPSTF 권고 원문" : "주제별 권고 목록(개별 페이지 주소 미확인)"}>{x.name} ↗</a></li>
+        ))}
+      </ul>}
+    </>
+  );
+}
+
 export default function EvidencePanel({ ind }) {
   const e = evidenceOf(ind.id), v = evidenceVerdict(ind.id);
   const cp = e.cpstf[0];
@@ -57,7 +78,9 @@ export default function EvidencePanel({ ind }) {
           <span className="evchip">강력 권고 {cp.strong}</span><span className="evchip">권고 {cp.sufficient}</span>
           <span className="evchip">근거 불충분 {cp.insufficient}</span>{cp.against > 0 && <span className="evchip">반대 {cp.against}</span>}
           <span className={`evchip ${EVIDENCE.now_year - cp.median_year > 15 ? "stale" : ""}`}>판정 중앙 {cp.median_year}년 · 최근 10년 내 {cp.recent10}건</span>
+          {(cp.findings_url || cp.url) && <a className="evlink" href={cp.findings_url || cp.url} target="_blank" rel="noopener noreferrer">원문 ↗</a>}
         </div>}
+        {cp && <CpstfList cp={cp} />}
         {cp && EVIDENCE.now_year - cp.median_year > 15 && (
           <div className="evnote">판정이 오래돼 「무엇을 새로 할지」의 근거로는 약합니다. 주류세·금연구역처럼 기전이 변하지 않는 제도형 중재에 한해 참고하십시오.</div>
         )}

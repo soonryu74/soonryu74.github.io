@@ -22,10 +22,10 @@ for line in (ROOT / ".env").read_text(encoding="utf-8").splitlines():
     if "=" in line and not line.strip().startswith("#"):
         k, v = line.split("=", 1); os.environ.setdefault(k.strip(), v.strip())
 KEY = os.environ["KOSIS_API_KEY"]
-S = requests.Session(); PACE = 5.0
+S = requests.Session(); PACE = float(os.environ.get("KOSIS_PACE", "5"))   # 차단이 심하면 KOSIS_PACE=240
 PRDSE = {"DT_1B44": "F", "DT_1B46": "F"}
 
-def call(url, params, tries=8):
+def call(url, params, tries=int(os.environ.get("KOSIS_TRIES", "8"))):
     last = None
     for i in range(tries):
         try:
@@ -85,6 +85,11 @@ if __name__ == "__main__":
     elif mode == "meta":
         for t in TABLES:
             for typ in ("ITM", "PRD"): meta(t, typ)
+    elif mode == "year":
+        # 사망원인통계가 새로 공표되면 그해 시군구 연령별 사망자·연앙인구만 추가로 받는다: python scripts/kosis_fetch_hle.py year 2025
+        y = int(sys.argv[2])
+        data("DT_1B80A18", y, y, itm="T2", fix={"SBB": "0"})
+        data("DT_1B040M5_1", y, y, fix={"SBB": "0"})
     elif mode == "data":
         data("DT_1B41", 2005, 2024); data("DT_1B46", 2012, 2024)
         data("DT_1B44", 2012, 2018); data("DT_1B44", 2019, 2024)

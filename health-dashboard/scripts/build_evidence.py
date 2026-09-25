@@ -71,7 +71,14 @@ def main():
         ng.sort(key=lambda x: (x["level"] != "direct", x["code"]))
         cps = [t for t in topics.values() if iid in t["indicators"]]
         cps.sort(key=lambda t: -t["strong"])
-        by_ind[iid] = {"nice": ng, "cpstf": [{k: t[k] for k in ("topic","topic_ko","n","strong","sufficient","insufficient","against","median_year","latest_year","recent10")} for t in cps]}
+        by_ind[iid] = {"nice": ng, "cpstf": [{k: t.get(k) for k in ("topic","topic_ko","n","strong","sufficient","insufficient","against","median_year","latest_year","recent10","url","findings_url")} for t in cps]}
+
+    # 주제별 개별 권고(이름·판정·연도·원문 주소) — 원문 주소는 fetch_cpstf_links.py 가 확신할 때만 채운다
+    cp_items = {}
+    for x in cp["items"]:
+        m = re.search(r"(\d{4})", x.get("date") or "")
+        cp_items.setdefault(x["topic"], []).append({"name": x.get("label") or x["name"], "g": x["finding_ko"],
+                                                    "y": int(m.group(1)) if m else None, "url": x.get("url")})
 
     has_nice = {i for i, v in by_ind.items() if v["nice"]}
     has_cp = {i for i, v in by_ind.items() if v["cpstf"]}
@@ -82,7 +89,7 @@ def main():
     out = {"generated": date.today().isoformat(), "now_year": NOW,
            "rule": nice.get("grade_rule"), "rule_note": nice.get("recs_note"),
            "nice_source": nice["source"], "cpstf_source": cp["source"], "cpstf_retrieved": cp.get("retrieved"),
-           "guides": guides, "by_ind": by_ind, "gaps": gaps,
+           "guides": guides, "by_ind": by_ind, "cpstf_items": cp_items, "cpstf_site": cp.get("site"), "gaps": gaps,
            "counts": {"nice_linked": len(has_nice), "cpstf_linked": len(has_cp), "union": len(has_nice | has_cp), "total": len(ind_ids)}}
     (D / "evidence.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"NICE {len(guides)}건 · 지표 연결 NICE {len(has_nice)} / CPSTF {len(has_cp)} / 합집합 {len(has_nice|has_cp)} / {len(ind_ids)}")
