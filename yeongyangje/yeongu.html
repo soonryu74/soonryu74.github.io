@@ -23,7 +23,7 @@
     <select id="f-ing"><option value="">성분 전체</option></select>
     <select id="f-out"><option value="">결과 전체</option></select>
     <select id="f-design"><option value="">설계 전체</option>
-      <option value="RCT">무작위 대조시험(RCT)</option><option value="META">메타분석·코크란</option><option value="COHORT">코호트(관찰)</option><option value="REVIEW">종합 리뷰</option><option value="GUIDE">공식 권고</option></select>
+      <option value="RCT">무작위 대조시험(RCT)</option><option value="META">메타분석·코크란</option><option value="COHORT">코호트(관찰)</option><option value="REVIEW">종합 리뷰</option><option value="GUIDE">공식 권고</option><option value="CASE">증례 보고</option><option value="PK">약동학 연구</option></select>
     <select id="f-grade"><option value="">등급 전체</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="X">X</option></select>
     <select id="f-sort"><option value="year">최신순</option><option value="n">규모순</option><option value="grade">등급순</option></select>
     <button class="btn btn-ghost btn-sm" id="reset">초기화</button>
@@ -45,7 +45,7 @@
 (function(){
   var S = window.EBN_STUDIES || [], I = window.EBN_INGREDIENTS || {}, esc = EBN.esc;
   var OUT = { cancer:'암', cvd:'심혈관', mortality:'사망률', cognition:'인지·치매', bone:'뼈·골절', eye:'눈', immune:'면역·감염', metabolic:'대사·당뇨', mood:'기분·우울', pregnancy:'임신', safety:'안전성', aging:'노화', deficiency:'결핍 실태', muscle:'근육', sleep:'수면', gut:'장', skin:'피부', joint:'관절', lipid:'지질', bp:'혈압', pain:'통증', mental:'정신질환', fatigue:'피로', other:'기타' };
-  var DES = { RCT:'RCT', META:'메타분석', COHORT:'코호트', REVIEW:'리뷰', GUIDE:'권고' };
+  var DES = { RCT:'RCT', META:'메타분석', COHORT:'코호트', REVIEW:'리뷰', GUIDE:'권고', CASE:'증례', PK:'약동학 연구' };
   var XN={niacin:'니아신(고용량)',ortho:'분자교정 요법',glutathione:'글루타치온 주사',fursultiamine:'푸르설티아민(마늘주사)',placenta:'태반 주사',mvi:'종합비타민 수액',ala:'티옥트산(주사·경구)'};
   var ingName = function(id){ return (I[id] && I[id].name) || XN[id] || id; };
   var ingHref = function(id){ return I[id] ? 'seongbun.html#'+id : 'goyongryang.html'; };
