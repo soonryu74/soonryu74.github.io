@@ -93,6 +93,8 @@ create table public.pets (
   multi_pet boolean,
   registration_status public.registration_status not null default 'unknown',
   insurance_status public.insurance_status not null default 'unknown',
+  primary_vet_name text check (primary_vet_name is null or char_length(primary_vet_name) <= 80),
+  primary_vet_phone text check (primary_vet_phone is null or primary_vet_phone ~ '^[0-9+\-() ]{3,20}$'),
   deleted_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

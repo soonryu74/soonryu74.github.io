@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // 문서 업로드(최대 10MB) 허용. 파일 검증은 서버 액션에서 다시 한다.
+  experimental: { serverActions: { bodySizeLimit: "11mb" } },
   headers: async () => [
     {
       source: "/(.*)",
