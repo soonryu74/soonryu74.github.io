@@ -28,10 +28,13 @@ CHS25 = load("chs2025_units.json")
 DS = load("dataset.json")
 UNITS = load("units.json")
 KDH = load("kdh_dataset.json")
+MORT = load("mort_kosis.json")      # 사망원인통계 새 공표분(KOSIS 직접) — scripts/build_mort.py
+MORT_LAST = max([2024] + [y for v in MORT.get("indicators", {}).values() for y in v["years"]])
 CANCER = load("cancer_screening.json")
 try: CHECKUP = load("checkup.json")
 except Exception: CHECKUP = {"indicators": [], "values": {}}
 HLE = load("hle.json")
+HLE_LAST = max(HLE["periods"]["sgg"]) + 1     # 3년 합산 생명표의 중심 연도 + 1 = 쓰인 마지막 자료 연도
 DEP = load("deprivation.json")
 try: RISK = load("risk.json")
 except Exception: RISK = {}
@@ -132,10 +135,13 @@ SRC = [
 
     {"key": "mort", "name": "사망원인통계", "org": "국가데이터처(옛 통계청)",
      "ids": KDH_BY_DOMAIN.get("사망률(표준화)", []), "unit": "시군구",
-     "years": [2008, 2024], "cycle": "연 1회(9월 하순)", "next": "2026년 9월 하순 — 2025년분 미공표",
-     "tbl": "KOSIS 101 DT_1B34E13", "via": VIA_KDH,
-     "url": "https://mods.go.kr/menu.es?mid=a10301060200", "updated": "2025-09-23",
-     "note": "표준화사망률 22종의 원천. 2024년분은 2025-09-25 공표됐고 KOSIS는 이틀 전 갱신됐다."},
+     "years": [2008, MORT_LAST], "cycle": "연 1회(9월 하순)", "next": f"{MORT_LAST + 2}년 9월 하순 — {MORT_LAST + 1}년분",
+     "tbl": "KOSIS 101 DT_1B34E13", "via": VIA_KDH + f" (2024년까지) · {MORT_LAST}년분은 KOSIS에서 직접",
+     "url": "https://mods.go.kr/menu.es?mid=a10301060200", "updated": "2026-09-22",
+     "note": (f"표준화사망률 22종의 원천. 2024년까지는 김동현 교수 DB 경유, {MORT_LAST}년분(2026-09-22 공표)은 KOSIS DT_1B34E13에서 직접 받아 같은 지표에 이었다. "
+              "2018~2024년을 원천과 한 칸씩 대조(35,867칸)해 정의가 같음을 확인했고(99.99% 일치), 이때 드러난 DB 쪽 오류 — 2023년 82개 지역(주로 군)의 사망률 전 항목 「0」, "
+              "결핵 등 정수 반올림, 빈 칸 — 은 원천 값으로 바로잡았다. DB가 일찍 끊긴 만성하기도질환(2021~)·낙상(2018~)의 빈 해도 같은 표로 채웠다. "
+              "영아사망률은 이 표에 없어(출생아 기준) 2024년까지다.")},
 
     {"key": "inf", "name": "법정감염병 발생보고", "org": "질병관리청",
      "ids": KDH_BY_DOMAIN.get("감염병 발생률", []), "unit": "시군구",
@@ -169,8 +175,8 @@ SRC = [
      "via": VIA_KDH, "url": "https://kosis.kr/", "updated": "2026-09-08"},
 
     {"key": "hle", "name": "건강수명(근사 산출)", "org": "자체 산출", "ids": None, "unit": "시군구",
-     "years": [2008, 2024], "cycle": "사망원인통계 공표 후", "next": "2026년 9월 하순 공표 직후",
-     "tbl": "scripts/build_hle.py · docs/건강수명_산출법_v1.md", "url": "", "updated": "2026-09-08",
+     "years": [2008, HLE_LAST], "cycle": "사망원인통계 공표 후", "next": f"{HLE_LAST + 2}년 9월 하순 사망원인통계 공표 직후",
+     "tbl": "scripts/build_hle.py · docs/건강수명_산출법_v1.md", "url": "", "updated": "2026-09-25",
      "approx": True,
      "formula": "HLE_x = Σ_{i≥x} L_i (1 − π_i) / l_x   ·   π_i(지역) = r·π_i / (1 − π_i + r·π_i),  r = [u/(1−u)] / [u₀/(1−u₀)]",
      "formula_note": "검산: 기대수명 × (1 − 평균 불건강률) ≈ 건강수명. 지역별 실제 숫자는 프로파일의 「기대수명·건강수명」 카드 안 「산출 예시」에서 펼쳐 볼 수 있다.",
