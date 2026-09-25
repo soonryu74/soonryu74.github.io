@@ -103,12 +103,12 @@ export function EmergencyTool({ flags, pets, activeId, loggedIn }: { flags: RedF
               <input id="em-start" name="started_at" type="time" className="input" value={memo.started_at} onChange={(e) => setMemo({ ...memo, started_at: e.target.value })} />
             </div>
             <div className="field">
-              <label htmlFor="em-amount" className="label">먹은 양{poison ? "" : <span className="opt">해당 시</span>}</label>
+              <label htmlFor="em-amount" className="label">먹은 양{poison ? "" : <span className="opt">(해당 시)</span>}</label>
               <input id="em-amount" name="amount" className="input" maxLength={100} value={memo.amount} onChange={(e) => setMemo({ ...memo, amount: e.target.value })} placeholder="예: 판 초콜릿 반 개" />
             </div>
           </div>
           <div className="field">
-            <label htmlFor="em-sub" className="label">먹은 것·제품명·성분{poison ? "" : <span className="opt">해당 시</span>}</label>
+            <label htmlFor="em-sub" className="label">먹은 것·제품명·성분{poison ? "" : <span className="opt">(해당 시)</span>}</label>
             <input id="em-sub" name="substance" className="input" maxLength={200} value={memo.substance} onChange={(e) => setMemo({ ...memo, substance: e.target.value })} placeholder="포장지 사진도 찍어 두세요" />
           </div>
           <div className="field">

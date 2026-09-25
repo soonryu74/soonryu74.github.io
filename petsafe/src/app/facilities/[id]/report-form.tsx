@@ -18,7 +18,7 @@ export function ReportForm({ facilityId }: { facilityId: string }) {
         </select>
       </div>
       <div className="field">
-        <label htmlFor="rep-details" className="label">자세히<span className="opt">선택</span></label>
+        <label htmlFor="rep-details" className="label">자세히<span className="opt">(선택)</span></label>
         <textarea id="rep-details" name="details" rows={2} maxLength={1000} className="input" placeholder="다른 사람의 개인정보는 적지 말아 주세요." />
       </div>
       <SubmitButton>오류 신고</SubmitButton>

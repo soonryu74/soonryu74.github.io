@@ -2,7 +2,7 @@
 import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { createHmac, randomBytes } from "node:crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { isSupabaseConfigured, serverEnv } from "@/lib/env";
@@ -31,8 +31,9 @@ function verifyDemoSession(value: string | undefined): string | null {
   if (!value) return null;
   const [id, mac] = value.split(".");
   if (!id || !mac) return null;
-  const expected = createHmac("sha256", demoSecret()).update(id).digest("hex");
-  return expected === mac ? id : null;
+  const expected = Buffer.from(createHmac("sha256", demoSecret()).update(id).digest("hex"));
+  const given = Buffer.from(mac);
+  return given.length === expected.length && timingSafeEqual(given, expected) ? id : null;
 }
 
 /** 요청당 1회: 현재 사용자와 저장소 */

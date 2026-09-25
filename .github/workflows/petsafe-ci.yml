@@ -1,0 +1,46 @@
+name: 펫안심365 CI
+# petsafe/ 폴더가 바뀔 때만 실행. 기존 사이트 워크플로와 독립.
+on:
+  push:
+    paths: ["petsafe/**", ".github/workflows/petsafe-ci.yml"]
+  pull_request:
+    paths: ["petsafe/**", ".github/workflows/petsafe-ci.yml"]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: petsafe
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: petsafe/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: RLS 테스트
+        run: npm run db:test
+      - run: npm run build
+      - name: Playwright 브라우저
+        run: npx playwright install --with-deps chromium
+      - name: E2E (예시 모드)
+        run: npm run test:e2e

@@ -32,6 +32,7 @@ export function templateMatches(t: CareTaskTemplate, pet: Pet, now = new Date())
 
 export type NewTask = {
   template_key: string | null;
+  template_id?: string | null;
   title: string;
   description: string | null;
   due_at: string;

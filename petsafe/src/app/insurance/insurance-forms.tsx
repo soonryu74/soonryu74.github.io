@@ -8,7 +8,7 @@ import { TREATMENT_CATEGORIES } from "@/content/insurance";
 function F({ id, label, name, type = "text", err, req, ...rest }: { id: string; label: string; name: string; type?: string; err?: string; req?: boolean } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className="field">
-      <label htmlFor={id} className="label">{label}{req ? <span className="req" aria-hidden="true">*</span> : <span className="opt">선택</span>}</label>
+      <label htmlFor={id} className="label">{label}{req ? <span className="req" aria-hidden="true">*</span> : <span className="opt">(선택)</span>}</label>
       <input id={id} name={name} type={type} className="input" aria-invalid={!!err} aria-describedby={err ? `${id}-err` : undefined} {...rest} />
       <FieldError id={`${id}-err`} error={err} />
     </div>

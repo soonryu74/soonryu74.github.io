@@ -43,19 +43,19 @@ export function EventForm({ petId, today }: { petId: string; today: string }) {
             <FieldError id="ev-amount-err" error={e?.amount_krw} />
           </div>
           <div className="field">
-            <label htmlFor="ev-place" className="label">장소<span className="opt">선택</span></label>
+            <label htmlFor="ev-place" className="label">장소<span className="opt">(선택)</span></label>
             <input id="ev-place" name="place" className="input" maxLength={80} />
           </div>
         </div>
       )}
       {(type === "visit" || type === "exam") && (
         <div className="field">
-          <label htmlFor="ev-place2" className="label">병원<span className="opt">선택</span></label>
+          <label htmlFor="ev-place2" className="label">병원<span className="opt">(선택)</span></label>
           <input id="ev-place2" name="place" className="input" maxLength={80} />
         </div>
       )}
       <div className="field">
-        <label htmlFor="ev-note" className="label">메모{type === "weight" || type === "cost" ? <span className="opt">선택</span> : <span className="req" aria-hidden="true">*</span>}</label>
+        <label htmlFor="ev-note" className="label">메모{type === "weight" || type === "cost" ? <span className="opt">(선택)</span> : <span className="req" aria-hidden="true">*</span>}</label>
         <textarea id="ev-note" name="note" rows={2} maxLength={1000} className="input" placeholder={type === "medication_note" ? "수의사가 처방한 내용을 그대로 적어 두세요." : "관찰한 내용"} aria-invalid={!!e?.note} aria-describedby={e?.note ? "ev-note-err" : undefined} />
         <FieldError id="ev-note-err" error={e?.note} />
       </div>

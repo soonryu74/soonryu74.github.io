@@ -37,7 +37,7 @@ export async function taskAction(_: FormState, fd: FormData): Promise<FormState>
     await store.createEvent(task.pet_id, { event_type: "task_done", occurred_at: now.toISOString(), value_json: { task_id: task.id, title: task.title }, note: task.note });
     const next = nextDueAt(task.due_at, task.repeat_rule, now);
     if (next) {
-      await store.createTasks(task.pet_id, [{ template_key: task.template_key ?? null, title: task.title, description: task.description, due_at: next, repeat_rule: task.repeat_rule, priority: task.priority }]);
+      await store.createTasks(task.pet_id, [{ template_key: task.template_key ?? null, template_id: task.template_id, title: task.title, description: task.description, due_at: next, repeat_rule: task.repeat_rule, priority: task.priority }]);
     }
   } else if (action === "snooze") {
     await store.updateTask(task.id, { status: "snoozed", snoozed_until: snoozeUntil(now) });

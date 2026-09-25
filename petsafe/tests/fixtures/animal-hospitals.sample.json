@@ -1,0 +1,10 @@
+{
+  "_comment": "예시 fixture — 실제 업체가 아니다. 인허가 데이터 필드 구조 검증용.",
+  "items": [
+    { "MNG_NO": "EX-0001", "BPLC_NM": "예시 동물병원 가", "ROAD_NM_ADDR": "서울특별시 중구 예시로 1", "LOTNO_ADDR": "서울특별시 중구 예시동 1", "TELNO": "02-000-1111", "CRD_INFO_X": "197986.727", "CRD_INFO_Y": "451579.894", "SALS_STTS_NM": "영업/정상", "DTL_SALS_STTS_NM": "영업중", "LAST_MDFCN_PNT": "2026-09-01 10:00:00" },
+    { "MNG_NO": "EX-0002", "BPLC_NM": "예시 동물병원 나", "ROAD_NM_ADDR": "서울특별시 종로구 예시길 2", "TELNO": "", "CRD_INFO_X": "", "CRD_INFO_Y": "", "SALS_STTS_NM": "폐업", "DTL_SALS_STTS_NM": "폐업", "LAST_MDFCN_PNT": "20260815" },
+    { "MNG_NO": "EX-0003", "BPLC_NM": "예시 동물병원 다", "ROAD_NM_ADDR": "서울특별시 중구 예시로 3", "TELNO": "02-000-3333", "CRD_INFO_X": "198100", "CRD_INFO_Y": "451700", "SALS_STTS_NM": "휴업", "LAST_MDFCN_PNT": "2026-09-10" },
+    { "MNG_NO": "EX-0004", "BPLC_NM": "예시동물병원 가", "ROAD_NM_ADDR": "서울특별시 중구 예시로 1", "TELNO": "02-000-1111", "CRD_INFO_X": "197986.727", "CRD_INFO_Y": "451579.894", "SALS_STTS_NM": "영업/정상", "LAST_MDFCN_PNT": "2026-09-02" },
+    { "MNG_NO": "", "BPLC_NM": "아이디 없는 행" }
+  ]
+}

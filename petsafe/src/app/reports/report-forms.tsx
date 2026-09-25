@@ -63,11 +63,11 @@ export function DraftForm({ type, evidence, loggedIn }: { type: string; evidence
         </ul>
       </fieldset>
       <div className="grid sm:grid-cols-2 gap-2">
-        <div className="field"><label htmlFor="r-when" className="label">일시<span className="opt">선택</span></label><input id="r-when" name="occurred_at" type="datetime-local" className="input" /></div>
-        <div className="field"><label htmlFor="r-where" className="label">장소(동네·건물 수준)<span className="opt">선택</span></label><input id="r-where" name="location_text" maxLength={120} className="input" placeholder="예: ○○동 ○○공원 입구" /></div>
+        <div className="field"><label htmlFor="r-when" className="label">일시<span className="opt">(선택)</span></label><input id="r-when" name="occurred_at" type="datetime-local" className="input" /></div>
+        <div className="field"><label htmlFor="r-where" className="label">장소(동네·건물 수준)<span className="opt">(선택)</span></label><input id="r-where" name="location_text" maxLength={120} className="input" placeholder="예: ○○동 ○○공원 입구" /></div>
       </div>
-      <div className="field"><label htmlFor="r-feat" className="label">동물의 특징<span className="opt">선택</span></label><textarea id="r-feat" name="features" rows={2} maxLength={1000} className="input" /></div>
-      <div className="field"><label htmlFor="r-memo" className="label">메모<span className="opt">선택</span></label><textarea id="r-memo" name="memo" rows={2} maxLength={1000} className="input" placeholder="다른 사람의 실명·주소는 적지 마세요." /></div>
+      <div className="field"><label htmlFor="r-feat" className="label">동물의 특징<span className="opt">(선택)</span></label><textarea id="r-feat" name="features" rows={2} maxLength={1000} className="input" /></div>
+      <div className="field"><label htmlFor="r-memo" className="label">메모<span className="opt">(선택)</span></label><textarea id="r-memo" name="memo" rows={2} maxLength={1000} className="input" placeholder="다른 사람의 실명·주소는 적지 마세요." /></div>
       <div className="flex flex-wrap gap-2">
         <button type="button" className="btn btn-outline" onClick={copy}>메모 복사</button>
         <button type="button" className="btn btn-outline" onClick={saveLocal}>이 기기에 저장</button>

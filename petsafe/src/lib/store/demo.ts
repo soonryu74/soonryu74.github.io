@@ -241,7 +241,7 @@ export function createDemoStore(user: SessionUser | null): Store {
       ownPet(db, petId);
       for (const t of tasks) {
         db.tasks.push({
-          id: randomUUID(), pet_id: petId, template_id: null, template_key: t.template_key, title: t.title, description: t.description,
+          id: randomUUID(), pet_id: petId, template_id: t.template_id ?? null, template_key: t.template_key, title: t.title, description: t.description,
           due_at: t.due_at, repeat_rule: t.repeat_rule, priority: t.priority, status: "pending", completed_at: null,
           snoozed_until: null, note: null, created_by: uid(), created_at: now(), updated_at: now(),
         });

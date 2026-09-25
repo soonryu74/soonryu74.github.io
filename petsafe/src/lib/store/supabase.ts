@@ -77,6 +77,8 @@ export function createSupabaseStore(sb: SupabaseClient, user: SessionUser | null
       await store.audit("account.delete_requested", "user", id);
       if (!service) {
         // 서비스 키 없이는 auth 사용자를 삭제할 수 없으므로 삭제 요청으로 기록하고 개인 데이터는 즉시 지운다.
+        const own = must(await sb.from("documents").select("storage_path").eq("owner_id", id)) ?? [];
+        if (own.length) await sb.storage.from(BUCKET).remove(own.map((d: { storage_path: string }) => d.storage_path));
         must(await sb.from("pets").delete().eq("owner_id", id));
         must(await sb.from("incident_drafts").delete().eq("user_id", id));
         must(await sb.from("profiles").update({ deletion_requested_at: new Date().toISOString() }).eq("user_id", id));
@@ -131,7 +133,7 @@ export function createSupabaseStore(sb: SupabaseClient, user: SessionUser | null
       if (!tasks.length) return;
       must(await sb.from("care_tasks").insert(tasks.map((t) => ({
         pet_id: petId,
-        template_id: t.template_key ? stableUuid(`template:${t.template_key}`) : null,
+        template_id: t.template_id ?? (t.template_key ? stableUuid(`template:${t.template_key}`) : null),
         title: t.title, description: t.description, due_at: t.due_at, repeat_rule: t.repeat_rule, priority: t.priority, created_by: uid(),
       }))));
     },
@@ -227,7 +229,7 @@ export function createSupabaseStore(sb: SupabaseClient, user: SessionUser | null
       if (filter.types?.length) q = q.in("facility_type", filter.types);
       if (!filter.includeClosed) q = q.neq("business_status", "closed");
       if (filter.q) {
-        const safe = filter.q.replace(/[%,()]/g, " ").trim();
+        const safe = filter.q.replace(/[%,()"\\*]/g, " ").trim();
         if (safe) q = q.or(`name.ilike.%${safe}%,address.ilike.%${safe}%,road_address.ilike.%${safe}%`);
       }
       return (must(await q) ?? []).map(toFacility);
