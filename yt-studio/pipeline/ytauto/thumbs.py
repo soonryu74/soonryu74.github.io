@@ -543,6 +543,145 @@ def hero_thumbnail(out: Path, big: str, fonts: dict, main_image: Path | None = N
     return out
 
 
+def _text_logo(text: str, fonts: dict, size: int = 150, color=(20, 24, 40), bg=(255, 255, 255, 245)) -> Image.Image:
+    """로고 이미지가 없을 때: 글자 로고 카드 (예: Flow, SUNO, Claude)."""
+    f = _font(fonts["bold"], int(size * 0.42))
+    w = int(max(size, f.getlength(text) + size * 0.5))
+    card = Image.new("RGBA", (w, size), (0, 0, 0, 0))
+    d = ImageDraw.Draw(card)
+    d.rounded_rectangle((0, 0, w - 1, size - 1), radius=int(size * 0.24), fill=bg)
+    d.text((w / 2, size / 2), text, font=f, fill=color, anchor="mm")
+    glow = Image.new("RGBA", (w + 60, size + 60), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).rounded_rectangle((30, 30, 30 + w, 30 + size), radius=int(size * 0.24),
+                                           fill=(255, 255, 255, 90))
+    glow = glow.filter(ImageFilter.GaussianBlur(16))
+    glow.alpha_composite(card, (30, 30))
+    return glow
+
+
+def _doodle(base: Image.Image, text: str, x: int, y: int, fonts: dict, color=(255, 225, 60), rot: float = -8,
+            size: int = 54) -> None:
+    """손글씨 낙서 (어비월드·새롭게하소서식 반응 글씨)."""
+    f = _font(fonts["hand"], size)
+    w, h = int(f.getlength(text)) + 30, int(size * 1.5)
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    ImageDraw.Draw(layer).text((15, 4), text, font=f, fill=color + (255,), stroke_width=5, stroke_fill=(15, 15, 20))
+    layer = layer.rotate(rot, expand=True, resample=Image.BICUBIC)
+    base.alpha_composite(layer, (max(0, min(W - layer.width, x)), max(0, min(H - layer.height, y))))
+
+
+def showcase_thumbnail(out: Path, big: str, fonts: dict, scene: Path | None = None, hook: str = "",
+                       logo: str = "", logo_text: str = "", badge: str = "", person: str = "",
+                       channel: str = "", theme: dict | None = None, accent: str = "#FFD400",
+                       doodles: list | None = None, accent2: str = "#3CE68C") -> Path:
+    """세 채널 공통 공식 (오빠두엑셀·어비월드·언더스탠딩):
+    - 왼쪽 위 채널 상자(늘 같은 자리) + 회차·NEW 배지
+    - 오른쪽: 얼굴(배경 지운 인물 PNG) — 없으면 결과 장면 카드가 주인공
+    - 도구 로고 카드, 손글씨 반응 낙서
+    - 아래 왼쪽 두 줄: '!' 로 시작하는 줄은 줄 전체 강조색, *단어* 는 두 번째 강조색
+    """
+    theme = theme or THEMES[2]
+    c1, c2 = _rgb(theme["c1"]), _rgb(theme["c2"])
+    base = _diag_gradient((W, H), c1, c2).convert("RGBA")
+    have_scene = bool(scene and Path(scene).exists())
+    if have_scene:
+        sc = Image.open(scene).convert("RGB")
+        back = fit_cover(sc, (W, H)).filter(ImageFilter.GaussianBlur(26))
+        base = Image.blend(back, Image.new("RGB", (W, H), c1), 0.55).convert("RGBA")
+    glow = Image.radial_gradient("L").resize((W, H)).point(lambda v: int(max(0, 255 - v) * 0.4))
+    light = Image.new("RGBA", (W, H), c2 + (255,))
+    light.putalpha(glow)
+    base.alpha_composite(light)
+    person_img = _cutout(person) if person else None
+    card_box = None
+    if have_scene:
+        if person_img is not None:
+            cw, ch = 560, 315
+            card = _card(Image.open(scene), cw, ch)
+            cxy = (10, 70)
+        else:
+            cw, ch = 790, 444
+            card = _card(Image.open(scene), cw, ch)
+            cxy = (W - card.width + 12, 8)
+        base.alpha_composite(card, cxy)
+        card_box = (cxy[0] + 40, cxy[1] + 40, cxy[0] + 40 + cw, cxy[1] + 40 + ch)
+    if person_img is not None:
+        ph = int(H * 0.99)
+        pimg = person_img.resize((max(1, round(person_img.width * ph / person_img.height)), ph), Image.LANCZOS)
+        mw = int(W * 0.46)
+        if pimg.width > mw:
+            pimg = pimg.crop(((pimg.width - mw) // 2, 0, (pimg.width - mw) // 2 + mw, ph))
+        base.alpha_composite(pimg, (W - pimg.width, H - ph))
+    base.alpha_composite(_bottom_shade((W, H), start=0.48, strength=245))
+    # 로고 카드: 장면 카드 모서리에 걸치게
+    lg = None
+    if logo and Path(logo).exists():
+        lg = _logo_card(Image.open(logo), 140)
+    elif logo_text:
+        lg = _text_logo(logo_text, fonts, 120)
+    if lg is not None:
+        if card_box and person_img is None:
+            pos = (card_box[0] - lg.width // 2 - 10, card_box[3] - lg.height + 10)
+        elif card_box:
+            pos = (card_box[2] - lg.width // 2, card_box[1] - 50)
+        else:
+            pos = (W - lg.width - 10, 10)
+        base.alpha_composite(lg, (max(0, pos[0]), max(0, pos[1])))
+    # 아래 왼쪽 두 줄
+    rows_raw = [r for r in big.replace("\\n", "\n").split("\n") if r.strip()][:2] or [big]
+    rows = []
+    for r in rows_raw:
+        whole = r.startswith("!")
+        rows.append((whole, parse_rich(r[1:] if whole else r)))
+    face_bottom = 0
+    fb = _face_boxes(base)
+    text_w = (W - 80) if person_img is None else int(W * 0.60)
+    pt = _fit_rich([r for _, r in rows], fonts["bold"], text_w, 110 if len(rows) == 2 else 130)
+    if fb:
+        fx_min = min(b[0] for b in fb)
+        if fx_min < 60 + text_w:  # 얼굴이 글자 가로 범위에 있으면 턱 아래로
+            face_bottom = max(b[3] for b in fb)
+    need = int(pt * 1.1) * len(rows)
+    while pt > 56 and H - 30 - need < max(face_bottom + 8, int(H * 0.50)):
+        pt -= 5
+        need = int(pt * 1.1) * len(rows)
+    y = H - 30 - need
+    f = _font(fonts["bold"], pt)
+    a1, a2 = _rgb(accent), _rgb(accent2)
+    for whole, segs in rows:
+        if whole:
+            segs = [(t, True) for t, _ in segs]
+            _draw_rich(base, 44, y, segs, f, (255, 255, 255), a1, max(5, pt // 16), "left")
+        else:
+            _draw_rich(base, 44, y, segs, f, (255, 255, 255), a2, max(5, pt // 16), "left")
+        y += int(pt * 1.1)
+    d = ImageDraw.Draw(base)
+    # 채널 상자 (언더스탠딩식 고정 자리) + 배지
+    x0 = 0
+    if channel:
+        cf = _font(fonts["bold"], 34)
+        cw2 = int(cf.getlength(channel)) + 36
+        d.rectangle((0, 0, cw2, 60), fill=c2 + (255,))
+        d.text((18, 10), channel, font=cf, fill=(255, 255, 255))
+        x0 = cw2 + 10
+    if badge:
+        bf2 = _font(fonts["bold"], 34)
+        bw = int(bf2.getlength(badge)) + 32
+        d.rectangle((x0, 0, x0 + bw, 60), fill=a1 + (255,))
+        d.text((x0 + 16, 10), badge, font=bf2, fill=(15, 15, 20))
+    if hook:  # 작은 맥락 줄: 두 줄 바로 위
+        hf = _font(fonts["bold"], 40)
+        hy = H - 30 - need - 58
+        hw = int(hf.getlength(hook.replace("*", ""))) + 28
+        d.rectangle((44, hy, 44 + hw, hy + 52), fill=(12, 12, 16, 220))
+        _draw_rich(base, 58, hy + 5, parse_rich(hook), hf, (255, 255, 255), a1, 0, "left")
+    for dd in doodles or []:
+        _doodle(base, dd.get("text", ""), int(W * dd.get("x", 0.6)), int(H * dd.get("y", 0.1)), fonts,
+                _rgb(dd.get("color", "#FFE13C")), dd.get("rot", -8), dd.get("size", 76))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    base.convert("RGB").save(out, quality=93)
+    return out
+
 def make_variants(folder: Path, project: dict, fonts: dict, tcfg: dict, main_image: Path | None,
                   channel: str = "", theme: dict | None = None) -> list[Path]:
     """썸네일 3종 — 긴 영상은 유튜브 'A/B 테스트'에 그대로 올릴 수 있다.

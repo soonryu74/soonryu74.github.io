@@ -451,7 +451,28 @@ def api_thumb():
     photo = _save_uploads("photo", up)
     logo_img = _save_uploads("logo_image", up / "logo")
     p = {k: _form(k) for k in ("quote", "name", "role", "kicker", "notes", "side", "series", "logo",
-                               "hook", "big", "badge")}
+                               "hook", "big", "badge", "layout", "channel", "logo_text", "doodle")}
+    person = _save_uploads("person", up / "person")
+    if p["layout"] == "showcase":
+        if not p["big"]:
+            return jsonify({"error": "큰 두 줄 문구를 적어 주세요."}), 400
+
+        def run_sc(job):
+            out_dir = SAGA / "thumbnails" / slug(p["big"].replace("*", "").replace("!", ""))
+            keys = [p["series"] or "nomore"] + [k for k in ("nomore", "intro", "dean", "column") if k != (p["series"] or "nomore")]
+            res = []
+            for i, k in enumerate(keys[:3]):
+                o = out_dir / ("thumbnail.jpg" if i == 0 else f"thumbnail_{i + 1}.jpg")
+                thumbs.showcase_thumbnail(o, p["big"], fonts(), photo[0] if photo else None, p["hook"],
+                                          str(logo_img[0]) if logo_img else "", p["logo_text"], p["badge"],
+                                          str(person[0]) if person else "", p["channel"], series.get(k)["theme"],
+                                          doodles=[{"text": t.strip(), "x": 0.02, "y": 0.17 + 0.12 * j, "rot": -7}
+                                                   for j, t in enumerate(p["doodle"].split("|")) if t.strip()])
+                res.append((o, f"장면 카드형 · {series.get(k)['name']} 색"))
+            return res
+
+        j = submit("썸네일", p["big"].replace("*", "").replace("!", "").replace("\n", " "), run_sc)
+        return jsonify({"id": j.id})
     if not p["quote"]:
         return jsonify({"error": "인용 문구를 적어 주세요."}), 400
 

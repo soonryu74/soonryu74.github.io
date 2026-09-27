@@ -182,7 +182,17 @@
   <h2>새롭게하소서형 썸네일</h2>
   <p class="lead">실제 장면 사진 한 장으로 3종이 한 번에 나와요: <b>인용형</b>(새롭게하소서 고전) · <b>예능 자막형</b>(새롭게하소서 최근) · <b>얼굴 + 큰 두 줄형</b>(오빠두엑셀). 글자는 얼굴을 피해 들어가요.</p>
   <form id="f-thumb">
-    <div class="drop"><input type="file" name="photo" accept="image/*"><b>장면 사진</b><div class="names"></div></div>
+    <label class="f" style="margin-bottom:12px"><span>틀 고르기</span><select name="layout" id="thumb-layout">
+      <option value="saga">사진 한 장 3종 (인용형 · 예능 자막형 · 얼굴+두 줄형)</option>
+      <option value="showcase">장면 카드형 (오빠두·어비월드·언더스탠딩 공통 공식, 노모어매뉴얼용)</option>
+    </select></label>
+    <div class="drop"><input type="file" name="photo" accept="image/*"><b>장면 사진</b> (장면 카드형에서는 결과 화면·장면)<div class="names"></div></div>
+    <div class="grid sc-only hidden" style="margin-top:14px">
+      <label class="f"><span>채널 이름 (왼쪽 위 상자)</span><input type="text" name="channel" value="노모어매뉴얼"></label>
+      <label class="f"><span>도구 이름 로고</span><input type="text" name="logo_text" placeholder="예: Flow · SUNO · Claude"></label>
+      <label class="f"><span>손글씨 반응</span><input type="text" name="doodle" placeholder="예: 진짜 자동?"><small>| 로 여러 개</small></label>
+      <div class="drop"><input type="file" name="person" accept="image/png"><b>대표님 사진</b> (배경 지운 PNG, 선택)<br><small>넣으면 오른쪽에 크게 서요</small><div class="names"></div></div>
+    </div>
     <div class="grid" style="margin-top:14px">
       <label class="f"><span>인용 문구</span><input type="text" name="quote" placeholder="주일엔 제자,\n월요일엔 *그냥 직장인*"><small>줄바꿈 \n · 강조 *단어*</small></label>
       <label class="f"><span>이름</span><input type="text" name="name"></label>
@@ -299,6 +309,12 @@
 
   formWire("#f-cheer", "/api/cheer");
   formWire("#f-thumb", "/api/thumb");
+  $("#thumb-layout").addEventListener("change", (e) => {
+    const sc = e.target.value === "showcase";
+    $$("#f-thumb .sc-only").forEach((el) => el.classList.toggle("hidden", !sc));
+    $("#f-thumb input[name=big]").placeholder = sc ? "!윗줄은 전체 노란색\n아랫줄 *핵심어*만 초록" : "비우면 인용 문구를 씀. 예: 월요일도 *예배*입니다";
+    const sel = $("#f-thumb select[name=series]"); if (sc && sel) sel.value = "nomore";
+  });
 
   // 칼럼 + 자막 고치기
   const fcol = formWire("#f-column", "/api/column", (job) => {
