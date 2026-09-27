@@ -81,9 +81,11 @@ def join(parts: list[Path], out: Path) -> Path:
 
 def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
            audio: str | None = None, audio_offset: float = 0.0, bgm: str = "", bgm_volume: float = 0.10,
-           wave: dict | None = None) -> Path:
+           wave: dict | None = None, sfx: list[tuple[str, float, float]] | None = None,
+           duck: bool = True) -> Path:
     """overlays: [(투명 png, 시작초, 끝초)].  audio: 바탕 영상 소리 대신 쓸 음성.
-    wave: {"x","y","w","h","start","end","color"} 음성 파형 표시."""
+    wave: {"x","y","w","h","start","end","color"} 음성 파형 표시.
+    sfx: [(효과음 파일, 시작초, 음량)].  duck: 말소리가 나올 때 배경음을 자동으로 줄이기."""
     dur = media.duration(str(base))
     args = ["-i", str(base)]
     n = 1
@@ -96,6 +98,11 @@ def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
     if bgm and Path(bgm).exists():
         args += ["-stream_loop", "-1", "-i", bgm]
         bgm_idx = n
+        n += 1
+    sfx_idx = []
+    for path, at, gain in sfx or []:
+        args += ["-i", str(path)]
+        sfx_idx.append((n, at, gain))
         n += 1
     ov_start = n
     for png, _, _ in overlays:
@@ -119,11 +126,30 @@ def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
         nxt = f"o{i}"
         fil.append(f"[{last}][{ov_start + i}:v]overlay=0:0:enable='between(t,{a:.3f},{b:.3f})'[{nxt}]")
         last = nxt
+    mix = ["[vmain]"]
     if bgm_idx is not None:
-        fil.append(f"[{bgm_idx}:a]volume={bgm_volume}[bg];[voice][bg]amix=inputs=2:duration=first:"
-                   f"dropout_transition=0,volume=2[aout]")
+        fil.append(f"[{bgm_idx}:a]aresample=48000,aformat=channel_layouts=stereo,volume={bgm_volume}[bg0]")
+        if duck:  # 말소리를 신호로 배경음을 눌러 준다
+            fil.append("[voice]asplit=2[vmain][vsc]")
+            fil.append("[bg0][vsc]sidechaincompress=threshold=0.02:ratio=8:attack=10:release=350[bg]")
+        else:
+            fil.append("[voice]anull[vmain]")
+            fil.append("[bg0]anull[bg]")
+        mix.append("[bg]")
     else:
-        fil.append("[voice]anull[aout]")
+        fil.append("[voice]anull[vmain]")
+    for k, (idx, at, gain) in enumerate(sfx_idx):
+        ms = int(max(0, at) * 1000)
+        fil.append(f"[{idx}:a]aresample=48000,aformat=channel_layouts=stereo,volume={gain},"
+                   f"adelay={ms}|{ms}[fx{k}]")
+        mix.append(f"[fx{k}]")
+    # 유튜브 표준 크기(약 -14 LUFS)로 맞춘다. 유튜브는 작은 소리를 키워 주지 않는다.
+    level = "loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000"
+    if len(mix) > 1:
+        fil.append(f"{''.join(mix)}amix=inputs={len(mix)}:duration=first:dropout_transition=0:normalize=0,"
+                   f"alimiter=limit=0.95,{level}[aout]")
+    else:
+        fil.append(f"[vmain]{level}[aout]")
     fil.append(f"[{last}]null[vout]")
     args += ["-filter_complex", ";".join(fil), "-map", "[vout]", "-map", "[aout]",
              "-t", f"{dur:.3f}", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",

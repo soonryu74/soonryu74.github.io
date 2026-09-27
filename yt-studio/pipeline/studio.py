@@ -396,7 +396,7 @@ def cmd_cheer(args, cfg):
     print(f"▶ 응원 릴레이 쇼츠: {', '.join(args.videos)}")
     out = cheer.make(args.videos, work, cfg, font_set(cfg), args.label, args.title, args.shout, args.sub,
                      args.series, args.fit, args.crop_x, args.outro, args.between, args.tag, args.tag_role,
-                     "long" if args.wide else "shorts", at)
+                     "long" if args.wide else "shorts", at, args.music, not args.no_sfx, args.music_volume)
     print(f"✔ 완성: {out}")
 
 
@@ -512,6 +512,9 @@ def main():
     sp.add_argument("--fit", default="auto", choices=["auto", "crop", "blur", "cover"])
     sp.add_argument("--crop-x", type=float, default=0.5)
     sp.add_argument("--at", default="", help="외침 시각 직접 지정: 영상별 쉼표, 영상 사이 / (예: 1,3.8/1.4,5.5)")
+    sp.add_argument("--music", default="auto", help="auto(기본 응원 리듬) · none(없음) · 음악 파일 경로")
+    sp.add_argument("--music-volume", type=float, default=0.2, help="배경음 크기 (말할 때는 자동으로 더 줄어요)")
+    sp.add_argument("--no-sfx", action="store_true", help="효과음 끄기")
     sp.add_argument("--out", default="")
     sp.add_argument("--wide", action="store_true")
     sp = sub.add_parser("facecheck", help="완성 영상에서 글자가 얼굴을 가렸는지 검사")

@@ -6,22 +6,25 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import faces, layout, media, series, shorts
+from . import faces, layout, media, series, sfx, shorts
 
 
 def make(videos: list[str], work: Path, cfg: dict, fonts: dict, label: str, title: str, shout: str,
          sub: str = "", series_key: str = "intro", fit: str = "auto", crop_x: float = 0.5,
          outro_text: str = "", between: str = "한 번 *더*!", tag: str = "", tag_role: str = "",
-         fmt: str = "shorts", at: list[list[float]] | None = None) -> Path:
+         fmt: str = "shorts", at: list[list[float]] | None = None, music: str = "auto",
+         effects: bool = True, music_volume: float = 0.2) -> Path:
     S = series.get(series_key)
     B = series.brand(cfg)
     work.mkdir(parents=True, exist_ok=True)
     W, H = layout.size_of(fmt)
     parts, events, t0 = [], [], 0.0
+    cuts = []  # 영상 사이 전환 시각 (whoosh)
     for i, v in enumerate(videos):
         if i > 0 and between:
             card = layout.card(work / f"between{i}", fmt, fonts, between, S["theme"])
             parts.append(shorts.piece(work / f"between{i}.mp4", fmt, str(card), 1.0, zoom=False))
+            cuts.append(t0)
             t0 += 1.0
         dur = media.duration(v)
         mode = fit
@@ -93,5 +96,17 @@ def make(videos: list[str], work: Path, cfg: dict, fonts: dict, label: str, titl
         ov += [(png, a, b) for a, b in spans]
     ov += pops
     out = work.parent / f"{work.name}.mp4"
-    shorts.finish(base, out, ov, bgm=cfg["video"].get("bgm_path", ""), bgm_volume=0.06)
+    fx = []
+    if effects:
+        fdir = work / "sfx"
+        p_pop, p_wh, p_ding = sfx.pop(fdir / "pop.wav"), sfx.whoosh(fdir / "whoosh.wav"), sfx.ding(fdir / "ding.wav")
+        fx += [(str(p_pop), a, 0.55) for a, _ in events]
+        fx += [(str(p_wh), max(0, c - 0.2), 0.6) for c in cuts]
+        fx.append((str(p_ding), main_end + 0.15, 0.55))
+    bgm = ""
+    if music == "auto":
+        bgm = str(sfx.stomp(work / "sfx" / "stomp.wav", main_end + 3.5))
+    elif music and music != "none":
+        bgm = music
+    shorts.finish(base, out, ov, bgm=bgm, bgm_volume=music_volume, sfx=fx)
     return out

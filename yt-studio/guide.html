@@ -270,6 +270,7 @@ python3 studio.py upload projects/날짜-주제</code></pre></div>
       <div><h4>Mac</h4><pre><code>python3 studio.py cheer ~/Movies/남군산1.mp4 ~/Movies/남군산2.mp4 --shout "일이 *선교*다!" --sub "Business is Mission!" --label "남군산교회에서 보내온 응원" --tag "남군산교회" --outro "당신의 일터도\n*선교지*입니다"</code></pre></div>
     </div>
     <p class="small">외치는 순간을 소리로 찾습니다. 어긋나면 <code>--at 1,3.8,6.8/1.4,5.5</code> 처럼 초를 직접 적어 주세요(영상 사이는 <code>/</code>).</p>
+    <p class="small"><b>소리:</b> 기본으로 글자가 뜰 때 '팡', 영상 사이 '휙', 끝 화면 '딩' 효과음과 박수·발 구르기 응원 리듬이 들어갑니다(모두 코드로 만든 소리라 저작권 걱정 없음). 말할 때는 음악이 자동으로 작아지고, 최종 음량은 유튜브 표준(-14 LUFS)에 맞춥니다. 음악 끄기 <code>--music none</code>, 오디오 보관함 음악 쓰기 <code>--music 음악파일.mp3</code>, 효과음 끄기 <code>--no-sfx</code>.</p>
 
     <h3>② 극동방송 1분 칼럼 녹음 → 쇼츠</h3>
     <p>녹음 파일과 원고(.txt)를 함께 주면 자막이 원고 그대로 정확하게 들어갑니다. 원고가 없으면 AI가 받아쓰고, 폴더에 생긴 <code>자막.srt</code>를 메모장으로 고친 뒤 같은 명령을 다시 실행하면 반영돼요.</p>
