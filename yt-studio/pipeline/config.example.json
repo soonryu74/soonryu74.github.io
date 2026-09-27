@@ -1,0 +1,55 @@
+{
+  "_설명": "이 파일을 config.json 으로 복사해서 고쳐 쓰세요. 비워 둔 항목은 기본값을 씁니다.",
+
+  "channel_name": "노모어매뉴얼",
+  "language": "ko",
+
+  "llm": {
+    "provider": "lmstudio",
+    "_provider_선택지": "lmstudio | ollama | openai-compatible | gemini | manual",
+    "base_url": "",
+    "model": "",
+    "api_key_env": "",
+    "temperature": 0.7
+  },
+
+  "tts": {
+    "provider": "edge",
+    "_provider_선택지": "edge(무료 온라인) | silent(테스트용 무음)",
+    "voice": "ko-KR-SunHiNeural",
+    "_voice_예시": "ko-KR-SunHiNeural(여) · ko-KR-InJoonNeural(남) · ko-KR-HyunsuMultilingualNeural(남)",
+    "rate": "+0%",
+    "pitch": "+0Hz"
+  },
+
+  "visual": {
+    "provider": "card",
+    "_provider_선택지": "card(무료·오프라인) | sd-webui(로컬 Stable Diffusion) | pollinations(무료 온라인) | gemini(이미지 API) | veo(영상 API) | folder(내 이미지 폴더)",
+    "sd_webui_url": "http://127.0.0.1:7860",
+    "gemini_image_model": "gemini-2.5-flash-image",
+    "veo_model": "veo-3.1-generate-preview",
+    "folder": "",
+    "style": "clean, warm, soft light, minimal, no text",
+    "fallback": "card"
+  },
+
+  "video": {
+    "fps": 30,
+    "burn_subtitles": true,
+    "font_path": "",
+    "subtitle_size": 0,
+    "bgm_path": "",
+    "bgm_volume": 0.12,
+    "ken_burns": true
+  },
+
+  "upload": {
+    "privacy": "private",
+    "category_id": "28",
+    "_category_참고": "27 교육 · 28 과학기술 · 22 인물/블로그",
+    "made_for_kids": false,
+    "contains_synthetic_media": true,
+    "upload_captions": true,
+    "description_footer": "※ 이 영상의 음성과 일부 화면은 AI 도구로 만들었고, 내용은 직접 확인했습니다."
+  }
+}

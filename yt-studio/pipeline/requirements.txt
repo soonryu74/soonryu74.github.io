@@ -1,0 +1,12 @@
+# 필수 — 대본·음성·영상 만들기
+requests>=2.31
+pillow>=10.0
+edge-tts>=7.0
+imageio-ffmpeg>=0.5     # ffmpeg 를 따로 설치하지 않아도 되게 해 줍니다
+
+# 선택 — 유튜브 자동 업로드 (upload 명령)
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.2
+
+# 선택 — 구글 Veo 영상 생성 (visual.provider = "veo")
+# google-genai>=1.30

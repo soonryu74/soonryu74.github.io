@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>유튜브 자동화 스튜디오</title>
+<meta name="description" content="주제 하나로 대본·장면·음성 미리듣기·썸네일까지. 로컬 AI(LM Studio·Ollama) 또는 Gemini로 기획하고, 파이썬 파이프라인으로 영상 완성.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --bg:#f4f6fa; --card:#fff; --ink:#1d2433; --muted:#5b6678; --line:#e1e6ee;
+    --navy:#123a6b; --green:#0e8a6b; --warn:#c0392b; --warn-bg:#fdecec; --ok-bg:#e8f6f1;
+    --code-bg:#0f2442; --code-ink:#e6f0ff; --chip:#eef2f8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f141c; --card:#171e29; --ink:#e6ebf2; --muted:#9aa6b8; --line:#2a3444;
+      --navy:#8fb6ea; --green:#3cc79f; --warn:#ff8a7a; --warn-bg:#3a1f1f; --ok-bg:#16322a;
+      --code-bg:#0a1220; --code-ink:#d6e4ff; --chip:#222b39;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f141c; --card:#171e29; --ink:#e6ebf2; --muted:#9aa6b8; --line:#2a3444;
+    --navy:#8fb6ea; --green:#3cc79f; --warn:#ff8a7a; --warn-bg:#3a1f1f; --ok-bg:#16322a;
+    --code-bg:#0a1220; --code-ink:#d6e4ff; --chip:#222b39;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;line-height:1.65;word-break:keep-all}
+  header{background:linear-gradient(120deg,#123a6b,#0e8a6b);color:#fff;padding:28px 16px}
+  header .in{max-width:1080px;margin:0 auto}
+  header h1{margin:0;font-size:1.7rem;font-family:"Black Han Sans","Pretendard",sans-serif;font-weight:400;letter-spacing:.5px}
+  header p{margin:4px 0 0;color:#dfeaf7}
+  header nav{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+  header nav a{color:#fff;background:rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;text-decoration:none;font-size:.92rem}
+  main{max-width:1080px;margin:0 auto;padding:18px 16px 60px}
+  .steps{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;padding:0;list-style:none}
+  .steps li{background:var(--chip);border-radius:999px;padding:5px 12px;font-size:.9rem;color:var(--muted)}
+  .steps li b{color:var(--green)}
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0}
+  section.card h2{margin:0 0 10px;font-size:1.18rem;color:var(--navy)}
+  section.card h2 small{font-weight:400;color:var(--muted);font-size:.85rem;margin-left:6px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 14px}
+  label{display:block;font-size:.9rem;color:var(--muted);margin-bottom:4px}
+  input[type=text],input[type=password],input[type=number],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+  textarea{min-height:70px;resize:vertical}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  button{font:inherit;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;background:var(--green);color:#fff;font-weight:600}
+  button.ghost{background:var(--chip);color:var(--ink)}
+  button.small{padding:6px 10px;font-size:.88rem}
+  button:disabled{opacity:.5;cursor:default}
+  .note{font-size:.88rem;color:var(--muted);margin:6px 0 0}
+  .msg{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:.93rem;display:none;white-space:pre-wrap}
+  .msg.ok{display:block;background:var(--ok-bg)}
+  .msg.err{display:block;background:var(--warn-bg);color:var(--warn)}
+  .titles{display:grid;gap:6px}
+  .titles button{text-align:left;background:var(--chip);color:var(--ink);font-weight:500}
+  .titles button.on{outline:2px solid var(--green)}
+  .bad{color:var(--warn);font-size:.85rem;margin-left:6px}
+  .scene{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:var(--bg)}
+  .scene .head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+  .scene .head b{color:var(--navy)}
+  .scene .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  @media (max-width:640px){.scene .two{grid-template-columns:1fr}}
+  .meta{font-size:.85rem;color:var(--muted)}
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px}
+  .thumbs figure{margin:0}
+  .thumbs canvas{width:100%;height:auto;border-radius:10px;display:block;border:1px solid var(--line)}
+  .thumbs figcaption{font-size:.85rem;color:var(--muted);margin-top:4px;display:flex;justify-content:space-between;align-items:center}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chips button{width:34px;height:34px;padding:0;border-radius:50%;border:3px solid transparent}
+  .chips button.on{border-color:var(--ink)}
+  pre{background:var(--code-bg);color:var(--code-ink);border-radius:10px;padding:12px;overflow-x:auto;font-size:.88rem;margin:6px 0;white-space:pre-wrap}
+  .os{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:720px){.os{grid-template-columns:1fr}}
+  .os h3{margin:6px 0 2px;font-size:.98rem}
+  .hidden{display:none}
+  .tip{background:var(--ok-bg);border-radius:10px;padding:10px 12px;font-size:.92rem;margin-top:10px}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <h1>유튜브 자동화 스튜디오</h1>
+  <p>주제 하나 → 대본·장면 → 음성 미리듣기 → 썸네일 → 영상 완성까지. 어렵지 않아요.</p>
+  <nav>
+    <a href="#plan">1. 기획</a><a href="#edit">2. 대본·장면</a><a href="#thumb">3. 썸네일</a><a href="#export">4. 영상 만들기</a><a href="guide.html">설치 안내</a>
+  </nav>
+</div></header>
+
+<main>
+  <ul class="steps">
+    <li><b>로컬 AI</b> 대본</li><li><b>무료 음성</b> 낭독</li><li><b>장면</b> 자동 구성</li><li><b>썸네일 3종</b> A/B</li><li><b>유튜브</b> 비공개 업로드</li>
+  </ul>
+
+  <!-- 0. 연결 -->
+  <section class="card" id="conn">
+    <h2>AI 연결 <small>한 번만 설정하면 이 브라우저에 기억돼요</small></h2>
+    <div class="grid">
+      <div>
+        <label for="provider">대본을 써 줄 AI</label>
+        <select id="provider">
+          <option value="lmstudio">LM Studio (내 컴퓨터, 무료)</option>
+          <option value="ollama">Ollama (내 컴퓨터, 무료)</option>
+          <option value="gemini">Gemini API (구글, 키 필요)</option>
+          <option value="manual">직접 붙여넣기 (ChatGPT·Claude 창 사용)</option>
+        </select>
+      </div>
+      <div id="urlBox">
+        <label for="baseUrl">서버 주소</label>
+        <input id="baseUrl" type="text" placeholder="http://localhost:1234/v1">
+      </div>
+      <div id="modelBox">
+        <label for="model">모델 이름 <span class="meta">(비우면 자동)</span></label>
+        <input id="model" type="text" placeholder="예: qwen3-8b / gemini-2.5-flash">
+      </div>
+      <div id="keyBox" class="hidden">
+        <label for="apiKey">Gemini API 키</label>
+        <input id="apiKey" type="password" placeholder="AIza…" autocomplete="off">
+      </div>
+    </div>
+    <div class="row">
+      <button class="ghost small" id="testConn">연결 확인</button>
+      <span class="note" id="connHint"></span>
+    </div>
+    <div class="msg" id="connMsg"></div>
+  </section>
+
+  <!-- 1. 기획 -->
+  <section class="card" id="plan">
+    <h2>1. 기획 <small>누구나 아는 툴 + 아무도 모르는 활용법</small></h2>
+    <label for="topic">영상 주제</label>
+    <input id="topic" type="text" placeholder="예: 엑셀 반복작업을 무료 AI로 1분 만에 끝내는 법">
+    <div class="grid" style="margin-top:10px">
+      <div>
+        <label for="fmt">형식</label>
+        <select id="fmt"><option value="long">가로 영상 (16:9)</option><option value="shorts">세로 쇼츠 (9:16)</option></select>
+      </div>
+      <div>
+        <label for="minutes">목표 길이(분)</label>
+        <input id="minutes" type="number" min="1" max="30" value="5">
+      </div>
+      <div>
+        <label for="audience">주 시청자</label>
+        <input id="audience" type="text" placeholder="예: 50대 AI 입문자, 30~40대 직장인">
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <label for="extra">추가 요청 <span class="meta">(선택)</span></label>
+      <input id="extra" type="text" placeholder="예: 실제 엑셀 화면 시연 순서를 3단계로">
+    </div>
+    <div class="row">
+      <button id="genBtn">대본 만들기</button>
+      <button class="ghost" id="copyPrompt">프롬프트 복사</button>
+    </div>
+    <div id="manualBox" class="hidden">
+      <p class="note">복사한 프롬프트를 ChatGPT·Claude·Gemini 창에 붙여 넣고, 받은 답변(JSON)을 아래에 붙여 넣으세요.</p>
+      <textarea id="manualIn" style="min-height:140px" placeholder='{"title": "...", "scenes": [...]}'></textarea>
+      <div class="row"><button id="manualApply">붙여 넣은 답변 적용</button></div>
+    </div>
+    <div class="msg" id="planMsg"></div>
+  </section>
+
+  <!-- 2. 대본·장면 -->
+  <section class="card hidden" id="edit">
+    <h2>2. 대본·장면 다듬기 <small>여기서 고친 내용이 그대로 영상이 돼요</small></h2>
+    <label>제목 고르기 <span class="meta">(금지어가 있으면 빨간 표시)</span></label>
+    <div class="titles" id="titles"></div>
+    <div class="grid" style="margin-top:10px">
+      <div><label for="title">최종 제목</label><input id="title" type="text"><span id="titleWarn" class="bad"></span></div>
+      <div><label for="tags">태그 <span class="meta">(쉼표로 구분)</span></label><input id="tags" type="text"></div>
+    </div>
+    <div style="margin-top:10px"><label for="desc">설명란</label><textarea id="desc"></textarea></div>
+    <div class="row">
+      <span class="meta" id="totalInfo"></span>
+      <button class="ghost small" id="playAll">▶ 전체 듣기</button>
+      <button class="ghost small" id="stopTts">■ 멈춤</button>
+      <select id="voiceSel" style="width:auto;max-width:260px"></select>
+    </div>
+    <p class="note">미리듣기는 브라우저 목소리예요. 실제 영상은 더 자연스러운 무료 음성(edge-tts)으로 만들어져요.</p>
+    <div id="scenes"></div>
+    <div class="row"><button class="ghost small" id="addScene">+ 장면 추가</button></div>
+  </section>
+
+  <!-- 3. 썸네일 -->
+  <section class="card hidden" id="thumb">
+    <h2>3. 썸네일 <small>메인 화면이 보이게, 글자는 한쪽에만</small></h2>
+    <div class="grid">
+      <div><label for="tText">큰 글씨 <span class="meta">(줄바꿈 = Enter, 2~3줄)</span></label><textarea id="tText" style="min-height:80px"></textarea></div>
+      <div>
+        <label for="tLabel">위 꼬리표</label><input id="tLabel" type="text" placeholder="예: 엑셀 자동화 | 무료">
+        <label for="tSub" style="margin-top:8px">아래 보조 문구</label><input id="tSub" type="text" placeholder="예: 복사·붙여넣기만 하면 끝">
+      </div>
+      <div>
+        <label for="tMain">메인 화면 <span class="meta">(결과 화면 캡처·이미지)</span></label><input id="tMain" type="file" accept="image/*">
+        <label for="tPerson" style="margin-top:8px">인물 사진 <span class="meta">(배경 지운 PNG 추천)</span></label><input id="tPerson" type="file" accept="image/*">
+      </div>
+    </div>
+    <label style="margin-top:10px">시리즈 색</label>
+    <div class="chips" id="themeChips"></div>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="tip">유튜브 스튜디오의 <b>‘테스트 및 비교’</b>에 세 장을 모두 올리면, 어떤 썸네일이 더 많이 눌리는지 유튜브가 알아서 비교해 줘요.</div>
+  </section>
+
+  <!-- 4. 내보내기 -->
+  <section class="card hidden" id="export">
+    <h2>4. 영상 만들기 <small>내 컴퓨터에서 명령어 한 줄</small></h2>
+    <div class="row" style="margin-top:0">
+      <button id="dlJson">project.json 내려받기</button>
+      <span class="note">받은 파일을 <b>yt-studio/pipeline/projects/새폴더/</b> 안에 넣어 주세요.</span>
+    </div>
+    <div class="os" style="margin-top:12px">
+      <div><h3>Windows (PowerShell)</h3><pre id="cmdWin"></pre></div>
+      <div><h3>Mac (터미널)</h3><pre id="cmdMac"></pre></div>
+    </div>
+    <p class="note">처음이라면 <a href="guide.html">설치 안내</a>를 먼저 따라 해 주세요. 파이썬 설치부터 유튜브 업로드 연결까지 순서대로 있어요.</p>
+  </section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const store = {
+    get(k, d = "") { try { return localStorage.getItem("yts." + k) ?? d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem("yts." + k, v); } catch {} },
+  };
+
+  // ── 규칙 (pipeline/ytauto/prompts.py 와 같게 유지) ──
+  const BANNED = ["기본기", "총정리", "사용법", "기초", "완벽 정리", "완벽정리"];
+  const RECOMMENDED = ["숨겨진", "자동화", "꿀조합", "이거면 끝", "몰랐죠", "무료"];
+  const PERSONA = "당신은 AI 교육 유튜브 채널의 대본 작가입니다. 말투는 따뜻한 선생님처럼 차분하고 정직합니다. " +
+    "시청자는 50대 이상 AI 입문자와 30~40대 직장인입니다. 전문용어는 쉬운 비유로 풀고, 영어 용어는 한글 발음을 함께 적습니다(예: 프롬프트(prompt)). " +
+    "과장·낚시·공포 마케팅은 쓰지 않습니다. 실제로 따라 할 수 있는 구체적인 순서를 보여 줍니다. " +
+    "'어렵지 않아요', '여러분도 할 수 있어요' 같은 격려를 자연스럽게 섞습니다.";
+  const SCHEMA = {
+    title: "대표 제목 (40자 이내)", title_candidates: ["제목 후보 5개"], hook: "첫 5초에 할 한 문장",
+    description: "유튜브 설명란 (3~6줄, 과장 없이)", tags: ["태그 8~12개"],
+    thumbnail_text: "썸네일 큰 글씨 (2~3줄, 줄바꿈은 \\n, 한 줄 8자 안팎, 마지막 줄이 핵심)",
+    thumbnail_label: "썸네일 위 작은 꼬리표 (예: 엑셀 자동화 | 무료)",
+    thumbnail_sub: "썸네일 아래 보조 문구 한 줄 (15자 이내)",
+    thumbnail_visual: "썸네일 오른쪽에 보일 메인 대상 묘사 (영어, 결과 화면·핵심 물건, 글자 없이)",
+    scenes: [{ narration: "이 장면에서 읽을 대본 (2~4문장, 구어체)", visual: "이 장면 배경 이미지 프롬프트 (영어, 글자 없이)", keyword: "화면에 크게 띄울 핵심어 (한국어 8자 이내)" }],
+  };
+  function targetLength(fmt, minutes) {
+    if (fmt === "shorts") return [6, 300];
+    const chars = Math.round(Math.max(1, minutes) * 330);
+    return [Math.max(5, Math.min(30, Math.round(chars / 150))), chars];
+  }
+  function buildMessages() {
+    const topic = $("topic").value.trim();
+    const fmt = $("fmt").value, minutes = +$("minutes").value || 5;
+    const [n, chars] = targetLength(fmt, minutes);
+    const kind = fmt === "shorts" ? "세로 쇼츠(60초 이내)" : `가로 영상(약 ${minutes}분)`;
+    const rules = [
+      `영상 형식: ${kind}. 장면 ${n}개 안팎, 대본 전체 약 ${chars}자.`,
+      "첫 장면은 시청자가 '이런 것도 되는 줄 몰랐다' 하고 느낄 결과를 먼저 보여 주는 훅으로 시작합니다.",
+      "중간 장면은 실제 따라 하는 순서(1단계, 2단계…)를 구체적으로 설명합니다.",
+      "마지막 장면은 요약과 부드러운 구독 권유 한 문장으로 끝냅니다. 과장된 약속은 하지 않습니다.",
+      `제목에 다음 단어는 절대 쓰지 않습니다: ${BANNED.join(", ")}.`,
+      `제목에는 가능하면 다음 중 하나를 자연스럽게 씁니다: ${RECOMMENDED.join(", ")}.`,
+      "사실이 확실하지 않은 수치·가격·날짜는 지어내지 말고 '화면에서 확인해 보세요'처럼 표현합니다.",
+      "visual 은 영어로, 화면 안에 글자가 들어가지 않는 장면 묘사로 씁니다.",
+      "썸네일은 메인 대상(결과 화면·핵심 물건)이 크게 보이고 글자는 한쪽에만 들어갑니다. thumbnail_text 는 영상 내용을 정직하게 요약한 짧은 말로, 궁금증을 주되 거짓 약속은 하지 않습니다.",
+      "반드시 아래 JSON 형식 하나만 출력합니다. 설명 문장·마크다운 코드블록 없이 JSON 만.",
+    ];
+    const aud = $("audience").value.trim(), extra = $("extra").value.trim();
+    if (aud) rules.unshift(`이번 영상의 주 시청자: ${aud}`);
+    if (extra) rules.push(`추가 요청: ${extra}`);
+    const user = `주제: ${topic}\n\n규칙:\n${rules.map((r) => "- " + r).join("\n")}\n\nJSON 형식:\n${JSON.stringify(SCHEMA, null, 2)}`;
+    return [{ role: "system", content: PERSONA }, { role: "user", content: user }];
+  }
+  function extractJson(text) {
+    text = text.replace(/<think>[\s\S]*?<\/think>/g, "");
+    const m = text.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
+    if (m) text = m[1];
+    const s = text.indexOf("{"), e = text.lastIndexOf("}");
+    if (s < 0 || e <= s) throw new Error("답변에서 JSON 을 찾지 못했어요. 다시 시도하거나 모델을 바꿔 보세요.");
+    const raw = text.slice(s, e + 1);
+    try { return JSON.parse(raw); } catch { return JSON.parse(raw.replace(/,\s*([}\]])/g, "$1")); }
+  }
+  const banned = (t) => BANNED.filter((w) => (t || "").includes(w));
+
+  // ── 연결 설정 ──
+  const DEFAULT_URL = { lmstudio: "http://localhost:1234/v1", ollama: "http://localhost:11434/v1" };
+  const HINT = {
+    lmstudio: "LM Studio → 왼쪽 ‘Developer’ 탭 → Start Server, 설정에서 ‘Enable CORS’를 켜 주세요.",
+    ollama: "터미널에서 OLLAMA_ORIGINS 설정 후 ollama serve (설치 안내 참고).",
+    gemini: "aistudio.google.com 에서 무료 키를 만들 수 있어요. 키는 이 브라우저에만 저장돼요.",
+    manual: "AI 서버 없이도 돼요. ‘프롬프트 복사’ → AI 창에 붙여 넣기 → 답변 붙여 넣기.",
+  };
+  function syncConn() {
+    const p = $("provider").value;
+    $("urlBox").classList.toggle("hidden", !(p in DEFAULT_URL));
+    $("modelBox").classList.toggle("hidden", p === "manual");
+    $("keyBox").classList.toggle("hidden", p !== "gemini");
+    $("testConn").classList.toggle("hidden", p === "manual");
+    $("manualBox").classList.toggle("hidden", p !== "manual");
+    $("genBtn").classList.toggle("hidden", p === "manual");
+    if (p in DEFAULT_URL && !$("baseUrl").value) $("baseUrl").value = DEFAULT_URL[p];
+    $("connHint").textContent = HINT[p];
+    store.set("provider", p);
+  }
+  $("provider").value = store.get("provider", "lmstudio");
+  $("baseUrl").value = store.get("baseUrl." + $("provider").value, "");
+  $("model").value = store.get("model", "");
+  $("apiKey").value = store.get("apiKey", "");
+  $("provider").addEventListener("change", () => { $("baseUrl").value = store.get("baseUrl." + $("provider").value, ""); syncConn(); });
+  $("baseUrl").addEventListener("change", () => store.set("baseUrl." + $("provider").value, $("baseUrl").value.trim()));
+  $("model").addEventListener("change", () => store.set("model", $("model").value.trim()));
+  $("apiKey").addEventListener("change", () => store.set("apiKey", $("apiKey").value.trim()));
+  syncConn();
+
+  function show(id, text, ok) { const el = $(id); el.textContent = text; el.className = "msg " + (ok ? "ok" : "err"); }
+
+  async function listModels() {
+    const base = $("baseUrl").value.trim().replace(/\/$/, "");
+    const r = await fetch(base + "/models");
+    if (!r.ok) throw new Error("서버 응답 " + r.status);
+    return ((await r.json()).data || []).map((m) => m.id).filter((id) => !/embed/i.test(id));
+  }
+  $("testConn").addEventListener("click", async () => {
+    const p = $("provider").value;
+    try {
+      if (p === "gemini") {
+        const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=1", { headers: { "x-goog-api-key": $("apiKey").value.trim() } });
+        if (!r.ok) throw new Error("키를 확인해 주세요 (" + r.status + ")");
+        show("connMsg", "Gemini 연결 성공!", true);
+      } else {
+        const models = await listModels();
+        show("connMsg", models.length ? `연결 성공! 불러온 모델: ${models.slice(0, 4).join(", ")}` : "서버는 켜졌지만 불러온 모델이 없어요. 모델을 Load 해 주세요.", models.length > 0);
+      }
+    } catch (e) {
+      show("connMsg", "연결이 안 돼요.\n· 서버가 켜져 있는지\n· CORS 허용이 켜져 있는지 확인해 주세요.\n(" + e.message + ")", false);
+    }
+  });
+
+  async function callLLM(messages) {
+    const p = $("provider").value;
+    if (p === "gemini") {
+      const model = $("model").value.trim() || "gemini-2.5-flash";
+      const body = {
+        systemInstruction: { parts: [{ text: messages[0].content }] },
+        contents: [{ role: "user", parts: [{ text: messages[1].content }] }],
+        generationConfig: { temperature: 0.7, responseMimeType: "application/json" },
+      };
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": $("apiKey").value.trim() }, body: JSON.stringify(body),
+      });
+      if (!r.ok) throw new Error("Gemini 오류 " + r.status + ": " + (await r.text()).slice(0, 200));
+      const j = await r.json();
+      return j.candidates[0].content.parts.map((x) => x.text || "").join("");
+    }
+    const base = $("baseUrl").value.trim().replace(/\/$/, "");
+    let model = $("model").value.trim();
+    if (!model) { const ms = await listModels(); if (!ms.length) throw new Error("불러온 모델이 없어요."); model = ms[0]; }
+    const r = await fetch(base + "/chat/completions", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model, messages, temperature: 0.7 }),
+    });
+    if (!r.ok) throw new Error("AI 서버 오류 " + r.status);
+    return (await r.json()).choices[0].message.content;
+  }
+
+  // ── 프로젝트 상태 ──
+  let project = null;
+  try { project = JSON.parse(store.get("project", "null")); } catch { project = null; }
+  const save = () => { if (project) store.set("project", JSON.stringify(project)); };
+
+  function normalize(plan) {
+    const scenes = (plan.scenes || []).map((s) => typeof s === "string" ? { narration: s } : s)
+      .map((s) => ({ narration: (s.narration || s.script || s.text || "").trim(), visual: (s.visual || s.image_prompt || "").trim(), keyword: (s.keyword || "").trim(), ...(s.media ? { media: s.media } : {}) }))
+      .filter((s) => s.narration);
+    if (!scenes.length) throw new Error("대본에 장면이 하나도 없어요.");
+    const cands = (plan.title_candidates || []).filter((c) => typeof c === "string");
+    let title = (plan.title || cands[0] || $("topic").value).trim();
+    if (banned(title).length) { const clean = cands.find((c) => !banned(c).length); if (clean) title = clean; }
+    let tags = plan.tags || [];
+    if (typeof tags === "string") tags = tags.split(/[,#]/).map((t) => t.trim()).filter(Boolean);
+    return {
+      topic: $("topic").value.trim(), format: $("fmt").value, title, title_candidates: cands,
+      hook: plan.hook || "", description: plan.description || "", tags: tags.slice(0, 15),
+      thumbnail_text: plan.thumbnail_text || title, thumbnail_label: plan.thumbnail_label || "",
+      thumbnail_sub: plan.thumbnail_sub || "", thumbnail_visual: plan.thumbnail_visual || "", scenes,
+    };
+  }
+
+  $("genBtn").addEventListener("click", async () => {
+    if (!$("topic").value.trim()) { show("planMsg", "주제를 먼저 적어 주세요.", false); return; }
+    const btn = $("genBtn"); btn.disabled = true; btn.textContent = "대본 쓰는 중… (로컬 AI는 1~3분)";
+    let lastErr = null;
+    for (let i = 0; i < 3; i++) {
+      try {
+        project = normalize(extractJson(await callLLM(buildMessages())));
+        save(); renderAll(); show("planMsg", `대본 완성! 장면 ${project.scenes.length}개. 아래에서 다듬어 주세요.`, true);
+        $("edit").scrollIntoView({ behavior: "smooth" });
+        lastErr = null; break;
+      } catch (e) { lastErr = e; if (/연결|fetch|Failed/i.test(e.message)) break; }
+    }
+    if (lastErr) show("planMsg", "대본을 만들지 못했어요: " + lastErr.message + "\n‘프롬프트 복사’로 ChatGPT·Claude 에서 받아 붙여 넣는 방법도 있어요.", false);
+    btn.disabled = false; btn.textContent = "대본 만들기";
+  });
+  $("copyPrompt").addEventListener("click", async () => {
+    if (!$("topic").value.trim()) { show("planMsg", "주제를 먼저 적어 주세요.", false); return; }
+    const m = buildMessages();
+    const text = m[0].content + "\n\n" + m[1].content;
+    try { await navigator.clipboard.writeText(text); show("planMsg", "프롬프트를 복사했어요. AI 창에 붙여 넣으세요.", true); }
+    catch { $("manualIn").value = text; show("planMsg", "자동 복사가 막혀서 아래 칸에 넣어 두었어요. 직접 복사해 주세요.", false); }
+    $("manualBox").classList.remove("hidden");
+  });
+  $("manualApply").addEventListener("click", () => {
+    try { project = normalize(extractJson($("manualIn").value)); save(); renderAll(); show("planMsg", "적용했어요!", true); $("edit").scrollIntoView({ behavior: "smooth" }); }
+    catch (e) { show("planMsg", "답변을 읽지 못했어요: " + e.message, false); }
+  });
+
+  // ── 2. 편집 화면 ──
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function secs(text) { return text.replace(/\s/g, "").length / 5.5; }
+  function renderTitles() {
+    const box = $("titles"); box.innerHTML = "";
+    const all = [...new Set([project.title, ...project.title_candidates])];
+    all.forEach((t) => {
+      const b = document.createElement("button"); b.type = "button";
+      b.className = t === project.title ? "on" : "";
+      const bad = banned(t);
+      b.innerHTML = esc(t) + (bad.length ? `<span class="bad">금지어: ${esc(bad.join(", "))}</span>` : "");
+      b.addEventListener("click", () => { project.title = t; $("title").value = t; save(); renderTitles(); checkTitle(); });
+      box.appendChild(b);
+    });
+  }
+  function checkTitle() { const bad = banned($("title").value); $("titleWarn").textContent = bad.length ? "금지어: " + bad.join(", ") : ""; }
+  function renderScenes() {
+    const box = $("scenes"); box.innerHTML = "";
+    project.scenes.forEach((s, i) => {
+      const d = document.createElement("div"); d.className = "scene";
+      d.innerHTML = `
+        <div class="head"><b>장면 ${i + 1}</b>
+          <span class="meta">약 ${Math.round(secs(s.narration))}초</span>
+          <span class="row" style="margin:0">
+            <button class="ghost small" data-a="play">▶ 듣기</button>
+            <button class="ghost small" data-a="up">↑</button>
+            <button class="ghost small" data-a="down">↓</button>
+            <button class="ghost small" data-a="del">삭제</button>
+          </span></div>
+        <textarea data-k="narration">${esc(s.narration)}</textarea>
+        <div class="two">
+          <div><label>화면 핵심어</label><input type="text" data-k="keyword" value="${esc(s.keyword)}"></div>
+          <div><label>배경 그림 설명 (영어)</label><input type="text" data-k="visual" value="${esc(s.visual)}"></div>
+        </div>
+        <div style="margin-top:8px"><label>내 화면 녹화·이미지 파일 <span class="meta">(선택, 예: rec/step1.mp4)</span></label><input type="text" data-k="media" value="${esc(s.media || "")}"></div>`;
+      d.querySelectorAll("[data-k]").forEach((el) => el.addEventListener("input", () => {
+        const k = el.dataset.k; const v = el.value;
+        if (k === "media" && !v.trim()) delete s.media; else s[k] = v;
+        save(); if (k === "narration") updateTotal();
+      }));
+      d.querySelectorAll("[data-a]").forEach((b) => b.addEventListener("click", () => {
+        const a = b.dataset.a;
+        if (a === "play") return speak([s.narration]);
+        if (a === "del" && project.scenes.length > 1) project.scenes.splice(i, 1);
+        if (a === "up" && i > 0) [project.scenes[i - 1], project.scenes[i]] = [project.scenes[i], project.scenes[i - 1]];
+        if (a === "down" && i < project.scenes.length - 1) [project.scenes[i + 1], project.scenes[i]] = [project.scenes[i], project.scenes[i + 1]];
+        save(); renderScenes(); updateTotal();
+      }));
+      box.appendChild(d);
+    });
+  }
+  function updateTotal() {
+    const t = project.scenes.reduce((a, s) => a + secs(s.narration), 0);
+    $("totalInfo").textContent = `장면 ${project.scenes.length}개 · 예상 길이 약 ${Math.floor(t / 60)}분 ${Math.round(t % 60)}초`;
+  }
+  $("addScene").addEventListener("click", () => { project.scenes.push({ narration: "", visual: "", keyword: "" }); save(); renderScenes(); });
+  $("title").addEventListener("input", () => { project.title = $("title").value; save(); checkTitle(); });
+  $("tags").addEventListener("input", () => { project.tags = $("tags").value.split(",").map((t) => t.trim()).filter(Boolean); save(); });
+  $("desc").addEventListener("input", () => { project.description = $("desc").value; save(); });
+
+  // 음성 미리듣기 (브라우저 내장)
+  function voices() { return (window.speechSynthesis?.getVoices() || []).filter((v) => v.lang.startsWith("ko")); }
+  function fillVoices() {
+    const sel = $("voiceSel"); const vs = voices(); sel.innerHTML = "";
+    if (!vs.length) { sel.innerHTML = "<option>한국어 목소리 없음</option>"; return; }
+    vs.forEach((v, i) => { const o = document.createElement("option"); o.value = i; o.textContent = v.name; sel.appendChild(o); });
+  }
+  if (window.speechSynthesis) { fillVoices(); speechSynthesis.onvoiceschanged = fillVoices; }
+  function speak(texts) {
+    if (!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const v = voices()[+$("voiceSel").value || 0];
+    texts.forEach((t) => { const u = new SpeechSynthesisUtterance(t); u.lang = "ko-KR"; if (v) u.voice = v; speechSynthesis.speak(u); });
+  }
+  $("playAll").addEventListener("click", () => speak(project.scenes.map((s) => s.narration)));
+  $("stopTts").addEventListener("click", () => window.speechSynthesis?.cancel());
+
+  // ── 3. 썸네일 (pipeline/ytauto/thumbs.py 와 같은 배치) ──
+  const THEMES = [
+    { name: "보라", c1: "#3A1C71", c2: "#8E44AD", accent: "#FFE14D" },
+    { name: "초록", c1: "#0B4D2C", c2: "#1E9E5A", accent: "#FFF36B" },
+    { name: "남색", c1: "#0B1F4B", c2: "#1F5FBF", accent: "#5CF2C8" },
+    { name: "주황", c1: "#7A2E05", c2: "#E8781A", accent: "#FFFFFF" },
+    { name: "청록", c1: "#073B4C", c2: "#118AB2", accent: "#FFD166" },
+    { name: "와인", c1: "#4A0E1E", c2: "#B0243F", accent: "#FFE3A3" },
+    { name: "먹색", c1: "#111111", c2: "#3A3A3A", accent: "#3CE63C" },
+  ];
+  let themeIdx = +store.get("themeIdx", "0") || 0;
+  let mainImg = null, personImg = null;
+  const TW = 1280, TH = 720, TITLE_FONT = '"Black Han Sans", "Pretendard", sans-serif';
+
+  function renderChips() {
+    const box = $("themeChips"); box.innerHTML = "";
+    THEMES.forEach((t, i) => {
+      const b = document.createElement("button"); b.type = "button"; b.title = t.name;
+      b.style.background = `linear-gradient(135deg, ${t.c1}, ${t.c2})`; b.className = i === themeIdx ? "on" : "";
+      b.setAttribute("aria-label", t.name + " 색");
+      b.addEventListener("click", () => { themeIdx = i; store.set("themeIdx", i); renderChips(); drawThumbs(); });
+      box.appendChild(b);
+    });
+  }
+  function loadFile(input, cb) {
+    input.addEventListener("change", () => {
+      const f = input.files[0]; if (!f) return;
+      const img = new Image(); img.onload = () => { cb(img); drawThumbs(); }; img.src = URL.createObjectURL(f);
+    });
+  }
+  loadFile($("tMain"), (i) => (mainImg = i));
+  loadFile($("tPerson"), (i) => (personImg = i));
+  ["tText", "tLabel", "tSub"].forEach((id) => $(id).addEventListener("input", () => {
+    project.thumbnail_text = $("tText").value; project.thumbnail_label = $("tLabel").value; project.thumbnail_sub = $("tSub").value;
+    save(); drawThumbs();
+  }));
+
+  function cover(ctx, img, x, y, w, h) {
+    const s = Math.max(w / img.width, h / img.height);
+    const sw = w / s, sh = h / s;
+    ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h);
+  }
+  function fitPt(ctx, lines, maxW, maxPt) {
+    let pt = maxPt;
+    while (pt > 44) { ctx.font = `${pt}px ${TITLE_FONT}`; if (Math.max(...lines.map((l) => ctx.measureText(l).width)) <= maxW) break; pt -= 4; }
+    return pt;
+  }
+  function drawPerson(ctx, left) {
+    const ph = TH * 0.97, pw = Math.min(personImg.width * ph / personImg.height, TW * 0.44);
+    const srcW = pw * personImg.height / ph;
+    const sx = (personImg.width - srcW) / 2;
+    ctx.drawImage(personImg, sx, 0, srcW, personImg.height, left ? 0 : TW - pw - 10, TH - ph, pw, ph);
+    return pw;
+  }
+  function drawThumb(canvas, layout, theme) {
+    const ctx = canvas.getContext("2d");
+    const lines = ($("tText").value || project.title || "").split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 3);
+    const label = $("tLabel").value.trim(), sub = $("tSub").value.trim();
+    // 배경
+    if (layout === "impact" && mainImg) {
+      cover(ctx, mainImg, 0, 0, TW, TH); ctx.fillStyle = "rgba(0,0,0,.45)"; ctx.fillRect(0, 0, TW, TH);
+    } else {
+      const g = ctx.createLinearGradient(0, 0, TW, TH * 0.6); g.addColorStop(0, theme.c1); g.addColorStop(1, theme.c2);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, TW, TH);
+      if (layout === "series") {
+        const r = ctx.createRadialGradient(1100, 200, 0, 1100, 200, 520); r.addColorStop(0, "rgba(255,255,255,.18)"); r.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = r; ctx.fillRect(0, 0, TW, TH);
+      }
+    }
+    let tx = 64, tw = TW - 128, align = "left";
+    if (layout === "split") {
+      if (mainImg) {
+        const pw = TW * 0.58, off = document.createElement("canvas"); off.width = pw; off.height = TH;
+        const o = off.getContext("2d"); cover(o, mainImg, 0, 0, pw, TH);
+        o.globalCompositeOperation = "destination-in";
+        const f = o.createLinearGradient(0, 0, pw, 0); f.addColorStop(0, "rgba(0,0,0,0)"); f.addColorStop(0.42, "rgba(0,0,0,1)"); f.addColorStop(1, "rgba(0,0,0,1)");
+        o.fillStyle = f; o.fillRect(0, 0, pw, TH);
+        ctx.drawImage(off, TW - pw, 0); tw = TW * 0.5;
+      } else if (personImg) tw = Math.min(tw, TW - drawPerson(ctx, false) - 90);
+    } else if (layout === "series") {
+      if (personImg) tw = Math.min(tw, TW - drawPerson(ctx, false) - 90);
+      else if (mainImg) {
+        const cw = 560, ch = 350, cx = TW - cw - 50, cy = (TH - ch) / 2;
+        ctx.save(); ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 30; ctx.shadowOffsetY = 14;
+        ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.roundRect(cx - 5, cy - 5, cw + 10, ch + 10, 28); ctx.fill(); ctx.restore();
+        ctx.save(); ctx.beginPath(); ctx.roundRect(cx, cy, cw, ch, 24); ctx.clip(); cover(ctx, mainImg, cx, cy, cw, ch); ctx.restore();
+        tw = TW - cw - 170;
+      }
+    } else if (personImg) {
+      const pw = drawPerson(ctx, true); tx = TW - 48; tw = TW - pw - 40; align = "right";
+    }
+    // 글자
+    const maxPt = { 1: 150, 2: 128, 3: 108 }[lines.length] || 128;
+    const pt = fitPt(ctx, lines.length ? lines : [" "], tw, maxPt), lineH = pt * 1.12;
+    const block = lineH * lines.length + (label ? 58 : 0) + (sub ? 50 : 0);
+    let y = Math.max(30, TH / 2 - block / 2);
+    ctx.textAlign = align; ctx.textBaseline = "top";
+    if (label) {
+      ctx.font = `800 30px "Pretendard", sans-serif`;
+      const lw = ctx.measureText(label).width + 32, lx = align === "right" ? tx - lw : tx;
+      ctx.fillStyle = layout === "impact" ? theme.accent : "rgba(255,255,255,.93)";
+      ctx.beginPath(); ctx.roundRect(lx, y, lw, 44, 22); ctx.fill();
+      ctx.fillStyle = layout === "impact" ? "#000" : theme.c1; ctx.textAlign = "left"; ctx.fillText(label, lx + 16, y + 6); ctx.textAlign = align;
+      y += 58;
+    }
+    ctx.font = `${pt}px ${TITLE_FONT}`; ctx.lineJoin = "round";
+    lines.forEach((l, i) => {
+      const fill = layout === "impact" ? ["#3CE63C", "#FFE600", "#FFFFFF"][i % 3]
+        : (i === lines.length - 1 && lines.length > 1 ? theme.accent : "#FFFFFF");
+      const stroke = layout === "impact" ? Math.max(6, pt / 13) : Math.max(2, pt / 30);
+      ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = pt / 10; ctx.shadowOffsetY = pt / 20;
+      ctx.lineWidth = stroke * 2; ctx.strokeStyle = "#000"; ctx.strokeText(l, tx, y); ctx.restore();
+      ctx.fillStyle = fill; ctx.fillText(l, tx, y); y += lineH;
+    });
+    if (sub) { ctx.font = `600 30px "Pretendard", sans-serif`; ctx.fillStyle = "#EBF0F5"; ctx.fillText(sub, tx, y + 8); }
+  }
+  // 한글 웹폰트는 글자 묶음별로 늦게 받아지므로, 쓸 글자를 먼저 받아 두고 그린다
+  async function ensureFonts() {
+    const text = [$("tText").value, $("tLabel").value, $("tSub").value, project?.title || ""].join(" ");
+    try {
+      await Promise.all([
+        document.fonts.load(`100px "Black Han Sans"`, text),
+        document.fonts.load(`800 30px "Pretendard"`, text),
+        document.fonts.load(`600 30px "Pretendard"`, text),
+      ]);
+    } catch {}
+  }
+  let drawSeq = 0;
+  async function drawThumbs() {
+    if (!project) return;
+    const seq = ++drawSeq;
+    await ensureFonts();
+    if (seq !== drawSeq) return;
+    const box = $("thumbs"); box.innerHTML = "";
+    [["split", "A · 메인 화면 강조"], ["impact", "B · 강한 글씨"], ["series", "C · 인물·시리즈형"]].forEach(([layout, name], i) => {
+      const fig = document.createElement("figure"); const c = document.createElement("canvas"); c.width = TW; c.height = TH;
+      c.setAttribute("role", "img"); c.setAttribute("aria-label", "썸네일 " + name);
+      drawThumb(c, layout, THEMES[(themeIdx + i * 2) % THEMES.length]);
+      const cap = document.createElement("figcaption"); cap.innerHTML = `<span>${name}</span>`;
+      const dl = document.createElement("button"); dl.className = "ghost small"; dl.textContent = "PNG 저장";
+      dl.addEventListener("click", () => { const a = document.createElement("a"); a.download = `thumbnail_${"ABC"[i]}.png`; a.href = c.toDataURL("image/png"); a.click(); });
+      cap.appendChild(dl); fig.append(c, cap); box.appendChild(fig);
+    });
+  }
+
+  // ── 4. 내보내기 ──
+  function slug(t) { return (t || "video").replace(/[^\w가-힣]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "video"; }
+  function renderCommands() {
+    const d = new Date(), ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+    const folder = `${ymd}-${slug(project.topic || project.title)}`;
+    $("cmdWin").textContent =
+`cd yt-studio\\pipeline
+.venv\\Scripts\\Activate.ps1
+mkdir projects\\${folder}
+move $HOME\\Downloads\\project.json projects\\${folder}\\
+python studio.py make projects\\${folder}
+python studio.py upload projects\\${folder}`;
+    $("cmdMac").textContent =
+`cd yt-studio/pipeline
+source .venv/bin/activate
+mkdir -p projects/${folder}
+mv ~/Downloads/project.json projects/${folder}/
+python3 studio.py make projects/${folder}
+python3 studio.py upload projects/${folder}`;
+  }
+  $("dlJson").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(project, null, 2)], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "project.json"; a.click();
+  });
+
+  function renderAll() {
+    if (!project) return;
+    ["edit", "thumb", "export"].forEach((id) => $(id).classList.remove("hidden"));
+    if (project.topic && !$("topic").value) $("topic").value = project.topic;
+    if (project.format) $("fmt").value = project.format;
+    $("title").value = project.title; $("tags").value = (project.tags || []).join(", "); $("desc").value = project.description || "";
+    $("tText").value = (project.thumbnail_text || "").replace(/\\n/g, "\n");
+    $("tLabel").value = project.thumbnail_label || ""; $("tSub").value = project.thumbnail_sub || "";
+    renderTitles(); checkTitle(); renderScenes(); updateTotal(); renderChips(); renderCommands();
+    drawThumbs();
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
