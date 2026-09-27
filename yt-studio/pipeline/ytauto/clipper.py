@@ -49,7 +49,7 @@ def select(cues, count: int, cfg: dict) -> list[dict]:
                                   "title": c.get("title", ""), "score": c.get("score", 5)})
         picks.sort(key=lambda c: -float(c.get("score", 5)))
     except Exception as e:
-        print(f"  ! AI 구간 선택 실패 → 고르게 나눠 뽑습니다 ({type(e).__name__}: {e})")
+        print(f"  · 로컬 AI 가 꺼져 있거나 답이 이상해서, 영상 전체에서 고르게 나눠 뽑습니다 ({type(e).__name__})")
         picks = []
     if not picks:  # AI 없이: 영상 전체에서 고르게 50초 안팎 구간
         step = max(1, len(cues) // max(1, count))
