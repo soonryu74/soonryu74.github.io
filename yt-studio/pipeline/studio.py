@@ -8,6 +8,14 @@
   python studio.py auto "주제" [--upload]  위 세 단계를 한 번에
   python studio.py batch topics.txt        주제 목록을 차례로 처리 (예약 실행용)
   python studio.py voices                  쓸 수 있는 한국어 목소리 보기
+
+  [SaGA 일터아카데미 캠페인]
+  python studio.py column 녹음.mp3 --title "…" --name "…"      극동방송 1분 칼럼 → 쇼츠
+  python studio.py clip 강의.mp4 --series dean --count 3         긴 강의 → 핵심 쇼츠
+  python studio.py referral init / referral make                 추천 영상 0~7번 틀 만들기 / 영상 만들기
+  python studio.py compose 장면대본.json                          장면 대본 하나로 영상 만들기
+  python studio.py thumb 사진.jpg --quote "…*강조*…"              새롭게하소서형 썸네일
+  python studio.py transcribe 파일                                받아쓰기만 (자막 파일)
 """
 from __future__ import annotations
 
@@ -283,6 +291,115 @@ def cmd_voices(args, cfg):
         print(" ", v)
 
 
+# ── SaGA 캠페인 ────────────────────────────────────────────
+SAGA = PROJECTS / "saga"
+
+
+def _read_text(p: str) -> str:
+    if not p:
+        return ""
+    q = Path(p)
+    return q.read_text(encoding="utf-8") if q.exists() else p
+
+
+def cmd_column(args, cfg):
+    from ytauto import column
+    stem = Path(args.audio).stem
+    work = SAGA / args.series / slugify(args.out or stem)
+    print(f"▶ 칼럼 영상 만들기: {args.audio}")
+    out = column.make(args.audio, work, cfg, font_set(cfg), args.title, args.name, args.role, args.photo,
+                      _read_text(args.script), args.images, args.series, "long" if args.wide else "shorts")
+    print(f"✔ 완성: {out}")
+    _series_thumbs(work, args, cfg)
+
+
+def _series_thumbs(work: Path, args, cfg):
+    """썸네일(가로)도 함께: --quote 가 있으면 새롭게하소서형."""
+    from ytauto import series
+    if not getattr(args, "quote", ""):
+        return
+    proj = {"title": args.title, "thumbnail_quote": args.quote.replace("\\n", "\n"),
+            "thumbnail_name": args.name, "thumbnail_role": args.role,
+            "thumbnail_kicker": getattr(args, "kicker", "") or ""}
+    shot = Path(args.shot) if getattr(args, "shot", "") else None
+    tcfg = dict(cfg["thumbnail"], logo_text="SaGA 일터아카데미")
+    files = thumbs.make_variants(work, proj, font_set(cfg), tcfg, shot, "", series.get(args.series)["theme"])
+    print("✔ 썸네일: " + ", ".join(f.name for f in files))
+
+
+def cmd_clip(args, cfg):
+    from ytauto import clipper
+    work = SAGA / args.series / slugify(args.out or Path(args.video).stem)
+    print(f"▶ 강의에서 쇼츠 뽑기: {args.video} ({args.count}편)")
+    outs = clipper.make(args.video, work, cfg, font_set(cfg), args.series, args.count, args.name, args.role,
+                        args.fit, args.crop_x, _read_text(args.script), args.source_url,
+                        "long" if args.wide else "shorts")
+    print("✔ 완성:\n  " + "\n  ".join(str(o) for o in outs))
+    print(f"  구간·제목을 바꾸려면 {work / 'clips.json'} 을 고치고 같은 명령을 다시 실행하세요.")
+
+
+def cmd_referral(args, cfg):
+    from ytauto import compose, referral
+    root = SAGA / "referral"
+    if args.action == "init":
+        files = referral.init(root)
+        print(f"✔ 장면 대본 {len(files)}개: {root / 'recipes'}")
+        print(f"  필요한 촬영·사진 목록: {root / 'media' / '필요한_파일.txt'}")
+        return
+    recipes = sorted((root / "recipes").glob("*.json"))
+    if not recipes:
+        sys.exit("먼저 python studio.py referral init 을 실행해 주세요.")
+    if args.only:
+        keep = {k.strip() for k in args.only.split(",")}
+        recipes = [r for r in recipes if r.stem.split("_")[0] in keep]
+    fmts = ["shorts", "long"] if args.format == "both" else [args.format]
+    for r in recipes:
+        for fmt in fmts:
+            print(f"▶ {r.stem} ({'세로' if fmt == 'shorts' else '가로'})")
+            print(f"  ✔ {compose.render(r, cfg, font_set(cfg), fmt)}")
+
+
+def cmd_compose(args, cfg):
+    from ytauto import compose
+    fmts = ["shorts", "long"] if args.format == "both" else [args.format]
+    for fmt in fmts:
+        print(f"✔ {compose.render(Path(args.recipe), cfg, font_set(cfg), fmt)}")
+
+
+def cmd_thumb(args, cfg):
+    from ytauto import series
+    out_dir = Path(args.out or ".")
+    proj = {"title": args.quote.replace("*", ""), "thumbnail_quote": args.quote.replace("\\n", "\n"),
+            "thumbnail_name": args.name, "thumbnail_role": args.role, "thumbnail_kicker": args.kicker,
+            "thumbnail_side": args.side, "thumbnail_text": args.quote.replace("*", "")}
+    if args.notes:
+        proj["thumbnail_notes"] = [{"text": t, "x": 0.72, "y": 0.16 + 0.1 * i} for i, t in enumerate(args.notes.split("|"))]
+    tcfg = dict(cfg["thumbnail"], logo_text=args.logo)
+    files = thumbs.make_variants(out_dir, proj, font_set(cfg), tcfg, Path(args.photo) if args.photo else None,
+                                 "", series.get(args.series)["theme"])
+    print("✔ " + ", ".join(str(f) for f in files))
+
+
+def cmd_transcribe(args, cfg):
+    from ytauto import transcribe as tr
+    from ytauto.assemble import write_srt
+    cues = tr.transcribe(args.file, cfg.get("transcribe", {}), _read_text(args.script))
+    out = Path(args.file).with_suffix(".srt")
+    write_srt(cues, out)
+    print(f"✔ {out}  ({len(cues)}문장)")
+
+
+def cmd_cheer(args, cfg):
+    from ytauto import cheer
+    work = SAGA / args.series / slugify(args.out or Path(args.videos[0]).stem)
+    at = [[float(x) for x in grp.split(",") if x] for grp in args.at.split("/")] if args.at else None
+    print(f"▶ 응원 릴레이 쇼츠: {', '.join(args.videos)}")
+    out = cheer.make(args.videos, work, cfg, font_set(cfg), args.label, args.title, args.shout, args.sub,
+                     args.series, args.fit, args.crop_x, args.outro, args.between, args.tag, args.tag_role,
+                     "long" if args.wide else "shorts", at)
+    print(f"✔ 완성: {out}")
+
+
 def main():
     ap = argparse.ArgumentParser(description="유튜브 자동화 스튜디오")
     ap.add_argument("--config", help="설정 파일 경로 (기본: pipeline/config.json)")
@@ -315,13 +432,86 @@ def main():
         p.add_argument("--publish-at", default=None)
         if name == "batch":
             p.add_argument("--limit", type=int, default=1, help="한 번에 만들 영상 수 (기본 1)")
+
+    sp = sub.add_parser("column", help="녹음 파일 → 칼럼 쇼츠")
+    sp.add_argument("audio")
+    sp.add_argument("--title", required=True, help='화면 위 제목. 줄바꿈 \\n, 강조 *단어*')
+    sp.add_argument("--name", default="", help="칼럼니스트 이름")
+    sp.add_argument("--role", default="", help="직함")
+    sp.add_argument("--photo", default="", help="칼럼니스트 사진")
+    sp.add_argument("--script", default="", help="원고 파일(.txt) — 있으면 자막이 정확해요")
+    sp.add_argument("--images", default="", help="장면 사진 폴더(선택)")
+    sp.add_argument("--series", default="column")
+    sp.add_argument("--out", default="", help="결과 폴더 이름")
+    sp.add_argument("--wide", action="store_true", help="가로(16:9)로 만들기")
+    sp.add_argument("--quote", default="", help="썸네일 인용 문구(선택)")
+    sp.add_argument("--shot", default="", help="썸네일 배경 사진(선택)")
+    sp.add_argument("--kicker", default="")
+
+    sp = sub.add_parser("clip", help="긴 강의 → 쇼츠 여러 편")
+    sp.add_argument("video")
+    sp.add_argument("--series", default="lecture", help="lecture(강의) · dean(학장 특강) · intro · scic · trip")
+    sp.add_argument("--count", type=int, default=3)
+    sp.add_argument("--name", default="", help="강사 이름")
+    sp.add_argument("--role", default="")
+    sp.add_argument("--fit", default="blur", choices=["blur", "crop", "cover"],
+                    help="blur: 화면 전체를 흐린 배경 위에 / crop: 화자만 세로로 크게")
+    sp.add_argument("--crop-x", type=float, default=0.5, help="crop 때 화자 위치 0(왼쪽)~1(오른쪽)")
+    sp.add_argument("--script", default="")
+    sp.add_argument("--source-url", default="", help="원본 강의 주소(설명란용)")
+    sp.add_argument("--out", default="")
+    sp.add_argument("--wide", action="store_true")
+
+    sp = sub.add_parser("referral", help="추천 영상 0~7번")
+    sp.add_argument("action", choices=["init", "make"])
+    sp.add_argument("--only", default="", help="예: 0,1,3")
+    sp.add_argument("--format", default="shorts", choices=["shorts", "long", "both"])
+
+    sp = sub.add_parser("compose", help="장면 대본 JSON → 영상")
+    sp.add_argument("recipe")
+    sp.add_argument("--format", default="shorts", choices=["shorts", "long", "both"])
+
+    sp = sub.add_parser("thumb", help="새롭게하소서형 썸네일")
+    sp.add_argument("photo", nargs="?", default="")
+    sp.add_argument("--quote", required=True, help='인용 문구. 줄바꿈 \\n, 강조 *단어*')
+    sp.add_argument("--name", default="")
+    sp.add_argument("--role", default="")
+    sp.add_argument("--kicker", default="", help="사연 한 줄")
+    sp.add_argument("--notes", default="", help="반응 자막, | 로 구분")
+    sp.add_argument("--side", default="left", choices=["left", "right"], help="글자 쪽")
+    sp.add_argument("--series", default="referral")
+    sp.add_argument("--logo", default="SaGA 일터아카데미")
+    sp.add_argument("--out", default="")
+
+
+    sp = sub.add_parser("cheer", help="응원 릴레이 영상 → 외칠 때마다 큰 글자 쇼츠")
+    sp.add_argument("videos", nargs="+")
+    sp.add_argument("--shout", required=True, help='외치는 말. 강조 *단어*')
+    sp.add_argument("--sub", default="", help="아래 작은 글씨 (예: 영어 구호)")
+    sp.add_argument("--label", default="", help="위 꼬리표")
+    sp.add_argument("--title", default="", help="위 제목(선택). 인물 얼굴을 가리면 비워 두세요")
+    sp.add_argument("--tag", default="", help="손글씨 이름표 (예: 교회 이름)")
+    sp.add_argument("--tag-role", default="")
+    sp.add_argument("--outro", default="", help="마지막 화면 큰 글씨")
+    sp.add_argument("--between", default="한 번 *더*!", help="영상 사이 1초 화면 (빈칸이면 없음)")
+    sp.add_argument("--series", default="intro")
+    sp.add_argument("--fit", default="auto", choices=["auto", "crop", "blur", "cover"])
+    sp.add_argument("--crop-x", type=float, default=0.5)
+    sp.add_argument("--at", default="", help="외침 시각 직접 지정: 영상별 쉼표, 영상 사이 / (예: 1,3.8/1.4,5.5)")
+    sp.add_argument("--out", default="")
+    sp.add_argument("--wide", action="store_true")
+    sp = sub.add_parser("transcribe", help="받아쓰기 → .srt")
+    sp.add_argument("file")
+    sp.add_argument("--script", default="")
     sub.add_parser("doctor", help="준비 상태 점검")
     sub.add_parser("voices", help="한국어 목소리 목록")
 
     args = ap.parse_args()
     cfg = load_config(args.config)
     {"plan": cmd_plan, "make": cmd_make, "upload": cmd_upload, "auto": cmd_auto,
-     "batch": cmd_batch, "doctor": cmd_doctor, "voices": cmd_voices}[args.cmd](args, cfg)
+     "batch": cmd_batch, "doctor": cmd_doctor, "voices": cmd_voices, "column": cmd_column,
+     "clip": cmd_clip, "referral": cmd_referral, "compose": cmd_compose, "thumb": cmd_thumb,
+     "transcribe": cmd_transcribe, "cheer": cmd_cheer}[args.cmd](args, cfg)
 
 
 if __name__ == "__main__":

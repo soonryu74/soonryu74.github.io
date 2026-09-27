@@ -43,6 +43,19 @@
     "ken_burns": true
   },
 
+  "transcribe": {
+    "engine": "faster-whisper",
+    "_engine_선택지": "faster-whisper(내 컴퓨터, 무료) | none(원고만으로 자막)",
+    "model": "small",
+    "_model_참고": "small(빠름) · medium(더 정확, 느림) · large-v3(가장 정확, 아주 느림)",
+    "language": "ko"
+  },
+
+  "brand": {
+    "channel_name": "사랑글로벌아카데미 SaGA",
+    "cta": ["7기 모집", "카카오톡 ‘사랑글로벌아카데미’", "02-3495-8300 · saga121.com"]
+  },
+
   "upload": {
     "privacy": "private",
     "category_id": "28",

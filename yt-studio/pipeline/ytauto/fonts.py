@@ -2,7 +2,8 @@
 
   title    : 썸네일·장면 핵심어 — 블랙한산스(Black Han Sans). 굵고 꽉 찬 제목체
   subtitle : 영상 자막 — 프리텐다드 SemiBold. 방송 자막처럼 또렷한 본문체
-  bold     : 기타 강조 — 프리텐다드 Black
+  bold     : 인용 제목·강조 — 프리텐다드 Black (새롭게하소서형 썸네일 제목)
+  hand     : 손글씨 이름표·반응 자막 — 나눔손글씨 펜
 
 처음 한 번 pipeline/fonts/ 에 내려받고, 받을 수 없으면 컴퓨터에 있는 한글 글꼴을 쓴다.
 """
@@ -28,6 +29,10 @@ DOWNLOADS = {
     "bold": ("Pretendard-Black.otf", [
         "https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/public/static/Pretendard-Black.otf",
         "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/public/static/Pretendard-Black.otf",
+    ]),
+    "hand": ("NanumPenScript-Regular.ttf", [
+        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/nanumpenscript/NanumPenScript-Regular.ttf",
+        "https://github.com/google/fonts/raw/main/ofl/nanumpenscript/NanumPenScript-Regular.ttf",
     ]),
 }
 
@@ -85,4 +90,5 @@ def font_set(cfg: dict) -> dict:
         "title": find_font("title", f.get("title", "")),
         "subtitle": find_font("subtitle", f.get("subtitle", "") or legacy),
         "bold": find_font("bold", f.get("bold", "")),
+        "hand": find_font("hand", f.get("hand", "")),
     }

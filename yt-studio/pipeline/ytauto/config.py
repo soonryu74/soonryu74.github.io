@@ -42,7 +42,9 @@ DEFAULTS: dict = {
         "ken_burns": True,
         "subtitle_style": "boxed",
     },
-    "fonts": {"title": "", "subtitle": "", "bold": ""},
+    "fonts": {"title": "", "subtitle": "", "bold": "", "hand": ""},
+    "transcribe": {"engine": "faster-whisper", "model": "small", "language": "ko"},
+    "brand": {},
     "thumbnail": {
         "layout": "split",
         "theme": "",

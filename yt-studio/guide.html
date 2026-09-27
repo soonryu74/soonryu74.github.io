@@ -38,6 +38,7 @@
   pre code{background:none;padding:0}
   .box{border-radius:10px;padding:10px 14px;margin:10px 0;background:var(--ok-bg)}
   .box.warn{background:var(--warn-bg)}
+  .small{font-size:.88rem}
   .box b.t{display:block;margin-bottom:2px}
   table{border-collapse:collapse;width:100%;font-size:.92rem;margin:8px 0}
   th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
@@ -60,6 +61,7 @@
     <li><a href="#screen">내 화면 녹화 넣기</a></li>
     <li><a href="#look">그림·글씨·썸네일 바꾸기</a></li>
     <li><a href="#upload">유튜브 업로드 연결</a></li>
+    <li><a href="#saga">SaGA 캠페인 영상</a></li>
     <li><a href="#auto">매일 자동 실행</a></li>
     <li><a href="#honest">수익화를 지키는 원칙</a></li>
     <li><a href="#faq">문제 해결</a></li>
@@ -255,6 +257,56 @@ python3 studio.py upload projects/날짜-주제</code></pre></div>
     <p>처음 한 번 브라우저가 열리면 채널 계정으로 로그인해 주세요. 영상은 <b>비공개</b>로 올라가고, 썸네일과 자막 파일도 함께 등록돼요. 예약 공개는 <code>--publish-at 2026-10-01T09:00:00+09:00</code>를 붙이면 됩니다.</p>
     <div class="box warn"><b class="t">꼭 알아 두세요</b>구글의 감사(audit)를 받지 않은 API 프로젝트로 올린 영상은 <b>비공개로 잠겨요</b>. 공개하려면 ‘YouTube API Services 감사 신청’을 통과해야 합니다. 그 전까지는 <code>make</code>로 만든 파일을 유튜브 스튜디오에서 직접 올리는 방법을 권장해요. 하루 업로드 횟수에도 한도(할당량)가 있고, 썸네일 등록은 채널 전화번호 인증이 필요합니다.</div>
     <p><code>client_secret.json</code>과 <code>token.json</code>은 비밀번호와 같아요. 절대 공유하거나 GitHub 에 올리지 마세요. 이 저장소는 자동으로 제외되게 설정돼 있습니다.</p>
+  </section>
+
+  <section id="saga">
+    <h2>SaGA 일터아카데미 캠페인 영상 만들기</h2>
+    <p>결과는 <code>projects/saga/재생목록/</code> 폴더에 쌓입니다. 재생목록 이름은 <code>intro</code>(소개), <code>column</code>(극동방송 칼럼), <code>scic</code>, <code>trip</code>(비전트립), <code>dean</code>(학장 특강), <code>lecture</code>(강의), <code>referral</code>(추천 영상)입니다. 목록마다 색과 꼬리표가 정해져 있어요.</p>
+
+    <h3>① 응원 릴레이 영상 → 쇼츠 (예: 남군산교회 "일이 선교다!")</h3>
+    <p>여러 사람이 한 명씩 외치는 영상을 넣으면, 외칠 때마다 큰 글자가 튀어나옵니다. 영상을 여러 개 주면 "한 번 더!" 화면으로 이어 붙여요. 가로 영상은 가운데 인물을 세로로 잘라 얼굴을 크게 보여 줍니다.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py cheer C:\영상\남군산1.mp4 C:\영상\남군산2.mp4 --shout "일이 *선교*다!" --sub "Business is Mission!" --label "남군산교회에서 보내온 응원" --tag "남군산교회" --outro "당신의 일터도\n*선교지*입니다"</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py cheer ~/Movies/남군산1.mp4 ~/Movies/남군산2.mp4 --shout "일이 *선교*다!" --sub "Business is Mission!" --label "남군산교회에서 보내온 응원" --tag "남군산교회" --outro "당신의 일터도\n*선교지*입니다"</code></pre></div>
+    </div>
+    <p class="small">외치는 순간을 소리로 찾습니다. 어긋나면 <code>--at 1,3.8,6.8/1.4,5.5</code> 처럼 초를 직접 적어 주세요(영상 사이는 <code>/</code>).</p>
+
+    <h3>② 극동방송 1분 칼럼 녹음 → 쇼츠</h3>
+    <p>녹음 파일과 원고(.txt)를 함께 주면 자막이 원고 그대로 정확하게 들어갑니다. 원고가 없으면 AI가 받아쓰고, 폴더에 생긴 <code>자막.srt</code>를 메모장으로 고친 뒤 같은 명령을 다시 실행하면 반영돼요.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py column C:\녹음\칼럼12.mp3 --title "월요일 사무실이\n*첫 번째 선교지*입니다" --name "칼럼니스트 이름" --role "직함" --photo C:\사진\얼굴.jpg --script C:\녹음\칼럼12.txt</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py column ~/녹음/칼럼12.mp3 --title "월요일 사무실이\n*첫 번째 선교지*입니다" --name "칼럼니스트 이름" --role "직함" --photo ~/사진/얼굴.jpg --script ~/녹음/칼럼12.txt</code></pre></div>
+    </div>
+    <p class="small">장면 사진을 넣고 싶으면 <code>--images 사진폴더</code>. 썸네일도 함께 만들려면 <code>--quote "인용 *강조*" --shot 배경사진.jpg</code>.</p>
+
+    <h3>③ 긴 강의·특강 → 핵심 쇼츠 여러 편</h3>
+    <p>받아쓰기 후 AI가 30~60초 구간과 "맨 앞에 먼저 보여 줄 한 문장"을 고릅니다. 결과 폴더의 <code>clips.json</code>에서 구간·제목을 고치고 다시 실행하면 그대로 다시 만듭니다.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py clip C:\강의\바이블에센셜.mp4 --series dean --count 5 --name "이돈주 학장" --source-url "원본 강의 주소"</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py clip ~/강의/바이블에센셜.mp4 --series dean --count 5 --name "이돈주 학장" --source-url "원본 강의 주소"</code></pre></div>
+    </div>
+    <p class="small">화면: <code>--fit blur</code>(기본, 슬라이드까지 전체) 또는 <code>--fit crop --crop-x 0.3</code>(화자만 크게, 0 왼쪽~1 오른쪽).</p>
+
+    <h3>④ 추천 영상 0~7번</h3>
+    <p>처음에 틀을 만들고, <code>media</code> 폴더에 사진·인터뷰 영상을 넣을 때마다 다시 만들면 됩니다. 파일이 아직 없으면 "[촬영 예정]" 화면으로 대신 들어가서, 촬영 전에도 전체 흐름을 볼 수 있어요.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py referral init
+notepad projects\saga\referral\media\필요한_파일.txt
+python studio.py referral make --format both</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py referral init
+open -e projects/saga/referral/media/필요한_파일.txt
+python3 studio.py referral make --format both</code></pre></div>
+    </div>
+    <p class="small">장면 대본은 <code>projects/saga/referral/recipes/*.json</code>. 인터뷰 구간은 <code>"start": "0:12", "end": "0:31"</code>, 동문 이름은 <code>"name"</code>에 적어 주세요.</p>
+
+    <h3>⑤ 새롭게하소서형 썸네일</h3>
+    <p>실제 장면 사진 한 장에 인용 제목을 얹습니다. <code>*별표*</code>로 감싼 단어만 강조색이 됩니다.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py thumb C:\사진\장면.jpg --quote "주일엔 제자,\n월요일엔 *그냥 직장인*" --name "홍길동 집사" --role "6기 동문" --kicker "20년 차 직장인의 고백" --notes "공감…|눈물 주의" --series intro</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py thumb ~/사진/장면.jpg --quote "주일엔 제자,\n월요일엔 *그냥 직장인*" --name "홍길동 집사" --role "6기 동문" --kicker "20년 차 직장인의 고백" --notes "공감…|눈물 주의" --series intro</code></pre></div>
+    </div>
+    <div class="box"><b class="t">새롭게하소서에서 배운 썸네일 원칙</b>실제 장면 속 인물은 크게, 제목은 그 사람이 한 말(1인칭 인용), 강조는 단어 한두 개만, 이름·직함은 작게. 인용형(글자 한쪽)과 최근형(아래 두 줄 + 손글씨 이름표·반응 자막) 두 가지가 함께 만들어집니다.</div>
+    <div class="box warn"><b class="t">받아쓰기 준비</b>처음 한 번 <code>pip install faster-whisper</code>가 필요하고, 첫 실행 때 AI 받아쓰기 모델(약 500MB)을 내려받습니다. 더 정확하게 하려면 <code>config.json</code>의 <code>transcribe.model</code>을 <code>medium</code>으로 바꾸세요.</div>
   </section>
 
   <section id="auto">

@@ -114,6 +114,7 @@ def _fit_pt(lines, font_path, max_w, max_pt, min_pt=44) -> int:
 
 
 def _lines(text: str) -> list[str]:
+    text = text.replace("*", "")
     ls = [l.strip() for l in text.replace("\\n", "\n").split("\n") if l.strip()]
     return ls[:3] or [text]
 
@@ -224,20 +225,212 @@ def make_thumbnail(out: Path, text: str, fonts: dict, main_image: Path | None = 
     return out
 
 
+
+# ── 새롭게하소서에서 배운 인용형 썸네일 ─────────────────────────────
+# 1) 실제 장면 사진 위 인물은 크게, 2) 제목은 그 사람의 말(1인칭 인용),
+# 3) 핵심 단어만 *별표* 로 강조색, 4) 이름·직함은 작게 강조색, 5) 로고는 왼쪽 위 작게.
+
+def parse_rich(line: str) -> list[tuple[str, bool]]:
+    """'살려달라고 *기도하지* 마세요' → [('살려달라고 ', False), ('기도하지', True), (' 마세요', False)]"""
+    parts = line.split("*")
+    return [(t, i % 2 == 1) for i, t in enumerate(parts) if t]
+
+
+def _rich_lines(text: str, limit: int = 4) -> list[list[tuple[str, bool]]]:
+    rows = [l.strip() for l in text.replace("\\n", "\n").split("\n") if l.strip()][:limit]
+    return [parse_rich(r) for r in rows] or [[(text, False)]]
+
+
+def _rich_w(segs, f) -> float:
+    return sum(f.getlength(t) for t, _ in segs)
+
+
+def _draw_rich(base: Image.Image, x: float, y: float, segs, f, white, accent, stroke: int,
+               align: str = "left") -> None:
+    w = _rich_w(segs, f)
+    cx = x - w if align == "right" else (x - w / 2 if align == "center" else x)
+    sh = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    ds = ImageDraw.Draw(sh)
+    off = max(3, f.size // 22)
+    tx = cx
+    for t, _ in segs:  # 그림자 먼저
+        ds.text((tx + off * 0.5, y + off), t, font=f, fill=(0, 0, 0, 170),
+                stroke_width=stroke, stroke_fill=(0, 0, 0, 170))
+        tx += f.getlength(t)
+    base.alpha_composite(sh.filter(ImageFilter.GaussianBlur(off * 0.8)))
+    d = ImageDraw.Draw(base)
+    tx = cx
+    for t, hi in segs:
+        d.text((tx, y), t, font=f, fill=accent if hi else white, stroke_width=stroke,
+               stroke_fill=(10, 10, 16))
+        tx += f.getlength(t)
+
+
+def _fit_rich(rows, font_path, max_w, max_pt, min_pt=40) -> int:
+    pt = max_pt
+    while pt > min_pt and max(_rich_w(r, _font(font_path, pt)) for r in rows) > max_w:
+        pt -= 4
+    return pt
+
+
+def _side_shade(size, color, side: str, reach: float = 0.64, strength: int = 225) -> Image.Image:
+    """글자 쪽을 어둡게 (채널 색이 살짝 섞인 어둠)."""
+    w, h = size
+    g = Image.linear_gradient("L").rotate(90).resize((w, h))  # 왼쪽 0 → 오른쪽 255
+    if side == "left":
+        g = g.transpose(Image.FLIP_LEFT_RIGHT)  # 왼쪽 255
+    g = g.point(lambda v: 0 if v < 255 * (1 - reach) else int(strength * ((v - 255 * (1 - reach)) / (255 * reach)) ** 0.8))
+    layer = Image.new("RGBA", size, color + (255,))
+    layer.putalpha(g)
+    return layer
+
+
+def _bottom_shade(size, start: float = 0.42, strength: int = 215) -> Image.Image:
+    w, h = size
+    g = Image.linear_gradient("L").resize((w, h))  # 위 0 → 아래 255
+    g = g.point(lambda v: 0 if v < 255 * start else int(strength * ((v - 255 * start) / (255 * (1 - start))) ** 1.1))
+    layer = Image.new("RGBA", size, (8, 8, 12, 255))
+    layer.putalpha(g)
+    return layer
+
+
+def _photo_base(main_image, theme) -> Image.Image:
+    if main_image and Path(main_image).exists():
+        try:
+            return fit_cover(Image.open(main_image), (W, H)).convert("RGBA")
+        except Exception:
+            pass
+    return _diag_gradient((W, H), _rgb(theme["c1"]), _rgb(theme["c2"])).convert("RGBA")
+
+
+def _logo(base, fonts, text: str, color=(255, 255, 255, 200)) -> None:
+    if text:
+        f = _font(fonts["subtitle"], 26)
+        ImageDraw.Draw(base).text((26, 18), text, font=f, fill=color)
+
+
+def testimony_thumbnail(out: Path, quote: str, fonts: dict, main_image: Path | None = None,
+                        name: str = "", role: str = "", logo: str = "", theme: dict | None = None,
+                        side: str = "left") -> Path:
+    """새롭게하소서 고전형 (조회 200만~500만 영상들의 틀).
+    사진 전체 + 글자 쪽 어둡게 + 3~4줄 인용 + 강조 단어 + 이름·직함."""
+    theme = theme or THEMES[2]
+    base = _photo_base(main_image, theme)
+    dark = tuple(max(0, int(c * 0.35)) for c in _rgb(theme["c1"]))
+    base.alpha_composite(_side_shade((W, H), dark, side))
+    rows = _rich_lines(quote, 4)
+    max_w = int(W * 0.50)
+    pt = _fit_rich(rows, fonts["bold"], max_w, {1: 130, 2: 122, 3: 110, 4: 96}[len(rows)])
+    f = _font(fonts["bold"], pt)
+    nf = _font(fonts["subtitle"], 34)
+    line_h = int(pt * 1.14)
+    block = line_h * len(rows) + (58 if (name or role) else 0)
+    y = (H - block) / 2 + 10
+    x, align = (56, "left") if side == "left" else (W - 56, "right")
+    accent = _rgb(theme["accent"])
+    for r in rows:
+        _draw_rich(base, x, y, r, f, (255, 255, 255), accent, max(2, pt // 40), align)
+        y += line_h
+    if name or role:
+        label = " ".join(p for p in (role, name) if p)
+        d = ImageDraw.Draw(base)
+        lx = x if align == "left" else x - nf.getlength(label)
+        d.text((lx, y + 14), label, font=nf, fill=accent)
+    _logo(base, fonts, logo)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    base.convert("RGB").save(out, quality=93)
+    return out
+
+
+def _swoosh(base, color, y0: int) -> None:
+    """아래쪽 붓 선 장식."""
+    import math
+    layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    pts = [(x, y0 + 10 * math.sin(x / 150) - x * 0.02) for x in range(-20, W + 40, 8)]
+    d.line(pts, fill=color + (230,), width=6, joint="curve")
+    pts2 = [(x, y0 + 16 + 8 * math.sin(x / 110 + 1.3) - x * 0.015) for x in range(300, W + 40, 8)]
+    d.line(pts2, fill=color + (150,), width=3, joint="curve")
+    base.alpha_composite(layer)
+
+
+def talk_thumbnail(out: Path, quote: str, fonts: dict, main_image: Path | None = None,
+                   name: str = "", role: str = "", kicker: str = "", notes: list | None = None,
+                   name_xy: tuple = (0.22, 0.28), logo: str = "", theme: dict | None = None) -> Path:
+    """새롭게하소서 최근형 (2025~).
+    사진 전체 + 아래 두 줄 인용 + 사연 한 줄 상자 + 손글씨 이름표·반응 자막 + 붓 선."""
+    theme = theme or THEMES[2]
+    base = _photo_base(main_image, theme)
+    base.alpha_composite(_bottom_shade((W, H)))
+    accent = _rgb(theme["accent"])
+    rows = _rich_lines(quote, 2)
+    pt = _fit_rich(rows, fonts["bold"], W - 110, 92 if len(rows) == 2 else 104)
+    f = _font(fonts["bold"], pt)
+    line_h = int(pt * 1.12)
+    y = H - 46 - line_h * len(rows)
+    if kicker:
+        kf = _font(fonts["subtitle"], 30)
+        kw = kf.getlength(kicker) + 28
+        ky = y - 56
+        ImageDraw.Draw(base).rectangle((52, ky, 52 + kw, ky + 46), fill=(18, 18, 22, 215))
+        ImageDraw.Draw(base).text((66, ky + 5), kicker, font=kf, fill=(255, 255, 255))
+    for r in rows:
+        _draw_rich(base, 56, y, r, f, (255, 255, 255), accent, max(3, pt // 28))
+        y += line_h
+    _swoosh(base, accent, H - 22)
+    hf = _font(fonts["hand"], 48)
+    hs = _font(fonts["hand"], 34)
+    d = ImageDraw.Draw(base)
+    if name:
+        nx, ny = int(W * name_xy[0]), int(H * name_xy[1])
+        d.text((nx, ny), name, font=hf, fill=(255, 225, 77), stroke_width=3, stroke_fill=(40, 30, 0))
+        if role:
+            d.text((nx + 6, ny + 50), role, font=hs, fill=(255, 225, 77), stroke_width=2, stroke_fill=(40, 30, 0))
+    for n in notes or []:
+        d.text((int(W * n.get("x", 0.8)), int(H * n.get("y", 0.2))), n.get("text", ""), font=hs,
+               fill=(255, 255, 255), stroke_width=3, stroke_fill=(20, 20, 20))
+    _logo(base, fonts, logo)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    base.convert("RGB").save(out, quality=93)
+    return out
+
 def make_variants(folder: Path, project: dict, fonts: dict, tcfg: dict, main_image: Path | None,
-                  channel: str = "") -> list[Path]:
-    """썸네일 3종 — 유튜브 '테스트 및 비교(A/B)'에 그대로 올릴 수 있다."""
+                  channel: str = "", theme: dict | None = None) -> list[Path]:
+    """썸네일 3종 — 긴 영상은 유튜브 'A/B 테스트'에 그대로 올릴 수 있다.
+
+    project 에 thumbnail_quote(인용, *강조*)가 있으면 새롭게하소서형(testimony·talk)을 먼저 만든다.
+    """
     text = project.get("thumbnail_text") or project.get("title", "")
+    quote = project.get("thumbnail_quote", "")
     label = project.get("thumbnail_label", "")
     sub = project.get("thumbnail_sub", "")
     person = tcfg.get("person_image", "")
     key = project.get("title", text)
+    logo = tcfg.get("logo_text", channel if tcfg.get("show_channel", True) else "")
+    outs: list[Path] = []
+    names = ["thumbnail.jpg", "thumbnail_2.jpg", "thumbnail_3.jpg"]
+    n = int(tcfg.get("variants", 3))
+    if quote:
+        th = theme or theme_for(key, 0, tcfg.get("theme", ""))
+        common = dict(fonts=fonts, main_image=main_image, name=project.get("thumbnail_name", ""),
+                      role=project.get("thumbnail_role", ""), logo=logo, theme=th)
+        outs.append(testimony_thumbnail(folder / names[0], quote, side=project.get("thumbnail_side", "left"),
+                                        **common))
+        if n > 1:
+            nxy = project.get("thumbnail_name_xy") or (0.22, 0.28)
+            outs.append(talk_thumbnail(folder / names[1], project.get("thumbnail_quote2") or quote,
+                                       kicker=project.get("thumbnail_kicker", ""),
+                                       notes=project.get("thumbnail_notes") or [], name_xy=tuple(nxy),
+                                       **common))
+        if n > 2:
+            outs.append(make_thumbnail(folder / names[2], text, fonts, main_image, person, label, sub,
+                                       channel if tcfg.get("show_channel", True) else "", "split",
+                                       theme_for(key, 1)))
+        return outs
     first = tcfg.get("layout", "split")
     layouts = [first] + [l for l in ("split", "impact", "series") if l != first]
-    outs = []
-    for i, layout in enumerate(layouts[: int(tcfg.get("variants", 3))]):
-        theme = theme_for(key, i, tcfg.get("theme", "") if i == 0 else "")
-        name = "thumbnail.jpg" if i == 0 else f"thumbnail_{i + 1}.jpg"
-        outs.append(make_thumbnail(folder / name, text, fonts, main_image, person, label, sub,
-                                   channel if tcfg.get("show_channel", True) else "", layout, theme))
+    for i, layout in enumerate(layouts[:n]):
+        th = theme if (theme and i == 0) else theme_for(key, i, tcfg.get("theme", "") if i == 0 else "")
+        outs.append(make_thumbnail(folder / names[i], text, fonts, main_image, person, label, sub,
+                                   channel if tcfg.get("show_channel", True) else "", layout, th))
     return outs
