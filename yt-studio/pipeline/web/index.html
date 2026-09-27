@@ -105,6 +105,8 @@
       <label class="f music-file hidden"><span>음악 파일</span><input type="file" name="music_file" accept="audio/*"><small>유튜브 오디오 보관함 곡 추천</small></label>
       <label class="f"><span>효과음</span><select name="effects"><option value="1">넣기 ('팡'·'휙'·'딩')</option><option value="0">빼기</option></select></label>
       <label class="f"><span>썸네일도 만들기</span><select name="thumb"><option value="1">예 (3종)</option><option value="0">아니요</option></select></label>
+      <label class="f"><span>썸네일 배지 (선택)</span><input type="text" name="badge" placeholder="예: 7기 모집"></label>
+      <label class="f"><span>썸네일 로고 (선택)</span><input type="file" name="logo_image" accept="image/*"><small>교회·SaGA 로고. 오른쪽 위에 들어가요</small></label>
     </div>
     <div class="row"><button class="go" type="submit">쇼츠 만들기</button><span class="muted">20초 영상 기준 1분 안팎</span></div>
   </form>
@@ -178,7 +180,7 @@
 <!-- 5. 썸네일 -->
 <section id="t-thumb" class="card hidden">
   <h2>새롭게하소서형 썸네일</h2>
-  <p class="lead">실제 장면 사진 한 장에 그 사람의 말을 얹어요. 인용형·최근형·기본형 3종이 한 번에 나와요.</p>
+  <p class="lead">실제 장면 사진 한 장으로 3종이 한 번에 나와요: <b>인용형</b>(새롭게하소서 고전) · <b>예능 자막형</b>(새롭게하소서 최근) · <b>얼굴 + 큰 두 줄형</b>(오빠두엑셀). 글자는 얼굴을 피해 들어가요.</p>
   <form id="f-thumb">
     <div class="drop"><input type="file" name="photo" accept="image/*"><b>장면 사진</b><div class="names"></div></div>
     <div class="grid" style="margin-top:14px">
@@ -190,6 +192,10 @@
       <label class="f"><span>글자 쪽</span><select name="side"><option value="left">왼쪽</option><option value="right">오른쪽</option></select></label>
       <label class="f"><span>색</span><select name="series"></select></label>
       <label class="f"><span>왼쪽 위 로고 글자</span><input type="text" name="logo" value="SaGA 일터아카데미"></label>
+      <label class="f"><span>큰 두 줄형: 위 작은 줄</span><input type="text" name="hook" placeholder="예: 직장인 성도님께 드리는 60초"><small>오빠두엑셀처럼 맥락 한 줄</small></label>
+      <label class="f"><span>큰 두 줄형: 큰 줄 (선택)</span><input type="text" name="big" placeholder="비우면 인용 문구를 씀. 예: 월요일도 *예배*입니다"></label>
+      <label class="f"><span>배지 (선택)</span><input type="text" name="badge" placeholder="예: 7기 모집"></label>
+      <label class="f"><span>로고 이미지 (선택)</span><input type="file" name="logo_image" accept="image/*"></label>
     </div>
     <div class="row"><button class="go" type="submit">썸네일 만들기</button></div>
   </form>

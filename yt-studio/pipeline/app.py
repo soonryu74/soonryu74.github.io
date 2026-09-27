@@ -223,6 +223,8 @@ def api_cheer():
     if not videos:
         return jsonify({"error": "영상을 한 개 이상 올려 주세요."}), 400
     music_files = _save_uploads("music_file", up / "music")
+    logo_img = _save_uploads("logo_image", up / "logo")
+    badge = _form("badge")
     music = _form("music", "auto")
     if music == "file":
         music = str(music_files[0]) if music_files else "none"
@@ -248,9 +250,11 @@ def api_cheer():
             proj = {"title": p["shout"].replace("*", ""), "thumbnail_quote": p["shout"] + ("\n" + p["sub"] if p["sub"] else ""),
                     "thumbnail_name": p["tag"], "thumbnail_role": p["tag_role"], "thumbnail_kicker": p["label"],
                     "thumbnail_text": p["shout"].replace("*", ""), "thumbnail_label": p["tag"], "thumbnail_sub": p["sub"],
-                    "thumbnail_name_xy": [0.05, 0.07]}
+                    "thumbnail_name_xy": [0.05, 0.07], "thumbnail_hook": p["label"], "thumbnail_big": p["shout"],
+                    "thumbnail_badge": badge}
             th = series.get(p["series"] or "intro")["theme"]
-            for f in thumbs.make_variants(work, proj, fonts(), dict(CFG["thumbnail"], logo_text=""), use, "", th):
+            tc = dict(CFG["thumbnail"], logo_text="", logo_image=str(logo_img[0]) if logo_img else "")
+            for f in thumbs.make_variants(work, proj, fonts(), tc, use, "", th):
                 res.append((f, "썸네일"))
         return res
 
@@ -445,7 +449,9 @@ def api_thumb():
     from ytauto import thumbs
     up = UPLOADS / f"thumb-{uuid.uuid4().hex[:6]}"
     photo = _save_uploads("photo", up)
-    p = {k: _form(k) for k in ("quote", "name", "role", "kicker", "notes", "side", "series", "logo")}
+    logo_img = _save_uploads("logo_image", up / "logo")
+    p = {k: _form(k) for k in ("quote", "name", "role", "kicker", "notes", "side", "series", "logo",
+                               "hook", "big", "badge")}
     if not p["quote"]:
         return jsonify({"error": "인용 문구를 적어 주세요."}), 400
 
@@ -453,11 +459,13 @@ def api_thumb():
         out_dir = SAGA / "thumbnails" / slug(p["quote"].replace("*", ""))
         proj = {"title": p["quote"].replace("*", ""), "thumbnail_quote": p["quote"], "thumbnail_name": p["name"],
                 "thumbnail_role": p["role"], "thumbnail_kicker": p["kicker"], "thumbnail_side": p["side"] or "left",
-                "thumbnail_text": p["quote"].replace("*", "").replace("\n", " ")}
+                "thumbnail_text": p["quote"].replace("*", "").replace("\n", " "),
+                "thumbnail_hook": p["hook"], "thumbnail_big": p["big"], "thumbnail_badge": p["badge"]}
         if p["notes"]:
             proj["thumbnail_notes"] = [{"text": t.strip(), "x": 0.72, "y": 0.14 + 0.1 * i}
                                        for i, t in enumerate(p["notes"].split("|")) if t.strip()]
-        files = thumbs.make_variants(out_dir, proj, fonts(), dict(CFG["thumbnail"], logo_text=p["logo"]),
+        files = thumbs.make_variants(out_dir, proj, fonts(), dict(CFG["thumbnail"], logo_text=p["logo"],
+                                                                  logo_image=str(logo_img[0]) if logo_img else ""),
                                      photo[0] if photo else None, "", series.get(p["series"] or "referral")["theme"])
         return [(f, "썸네일") for f in files]
 

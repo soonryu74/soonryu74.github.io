@@ -354,6 +354,15 @@ def _logo(base, fonts, text: str, color=(255, 255, 255, 200)) -> None:
         ImageDraw.Draw(base).text((26, 18), text, font=f, fill=color)
 
 
+
+def _face_boxes(base: Image.Image) -> list[tuple[int, int, int, int]]:
+    try:
+        from . import faces
+        return faces.in_image(base.convert("RGB"))
+    except Exception:
+        return []
+
+
 def testimony_thumbnail(out: Path, quote: str, fonts: dict, main_image: Path | None = None,
                         name: str = "", role: str = "", logo: str = "", theme: dict | None = None,
                         side: str = "left") -> Path:
@@ -365,6 +374,18 @@ def testimony_thumbnail(out: Path, quote: str, fonts: dict, main_image: Path | N
     base.alpha_composite(_side_shade((W, H), dark, side))
     rows = _rich_lines(quote, 4)
     max_w = int(W * 0.50)
+    fb = _face_boxes(base)
+    if fb:  # 얼굴을 피해서: 얼굴이 없는 쪽으로, 얼굴까지의 폭만큼만
+        fx1 = min(b[0] for b in fb) - int(0.12 * (max(b[2] for b in fb) - min(b[0] for b in fb)))
+        fx2 = max(b[2] for b in fb) + int(0.12 * (max(b[2] for b in fb) - min(b[0] for b in fb)))
+        room_left, room_right = fx1 - 56 - 20, W - 56 - fx2 - 20
+        if side == "left" and room_left < W * 0.30 and room_right > room_left:
+            side = "right"
+        elif side == "right" and room_right < W * 0.30 and room_left > room_right:
+            side = "left"
+        max_w = max(int(W * 0.24), min(max_w, room_left if side == "left" else room_right))
+        base = _photo_base(main_image, theme)
+        base.alpha_composite(_side_shade((W, H), dark, side))
     pt = _fit_rich(rows, fonts["bold"], max_w, {1: 130, 2: 122, 3: 110, 4: 96}[len(rows)])
     f = _font(fonts["bold"], pt)
     nf = _font(fonts["subtitle"], 34)
@@ -410,6 +431,11 @@ def talk_thumbnail(out: Path, quote: str, fonts: dict, main_image: Path | None =
     accent = _rgb(theme["accent"])
     rows = _rich_lines(quote, 2)
     pt = _fit_rich(rows, fonts["bold"], W - 110, 92 if len(rows) == 2 else 104)
+    fb = _face_boxes(base)
+    if fb:  # 아래 두 줄(+사연 상자)이 얼굴 턱보다 아래에 오도록 글자를 줄인다
+        fbot = max(b[3] for b in fb) + int((max(b[3] for b in fb) - min(b[1] for b in fb)) * 0.12)
+        while pt > 50 and H - 46 - int(pt * 1.12) * len(rows) - (60 if kicker else 0) < fbot:
+            pt -= 4
     f = _font(fonts["bold"], pt)
     line_h = int(pt * 1.12)
     y = H - 46 - line_h * len(rows)
@@ -439,6 +465,84 @@ def talk_thumbnail(out: Path, quote: str, fonts: dict, main_image: Path | None =
     base.convert("RGB").save(out, quality=93)
     return out
 
+
+# ── 오빠두엑셀에서 배운 '얼굴 + 두 줄' 썸네일 ───────────────────────
+# 얼굴은 위쪽 가운데 크게, 아래에 작은 맥락 줄 + 아주 큰 결론 줄(핵심 단어만 형광색),
+# 옆에 로고(무슨 이야기인지 한눈에). 글자는 얼굴 아래에만 둔다.
+
+def _logo_card(img: Image.Image, size: int) -> Image.Image:
+    img = img.convert("RGBA")
+    img.thumbnail((size, size), Image.LANCZOS)
+    pad = int(size * 0.14)
+    card = Image.new("RGBA", (img.width + pad * 2, img.height + pad * 2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(card)
+    d.rounded_rectangle((0, 0, card.width - 1, card.height - 1), radius=int(size * 0.22),
+                        fill=(255, 255, 255, 245))
+    card.alpha_composite(img, (pad, pad))
+    glow = Image.new("RGBA", (card.width + 60, card.height + 60), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).rounded_rectangle((30, 30, 30 + card.width, 30 + card.height),
+                                           radius=int(size * 0.22), fill=(255, 255, 255, 110))
+    glow = glow.filter(ImageFilter.GaussianBlur(18))
+    glow.alpha_composite(card, (30, 30))
+    return glow
+
+
+def hero_thumbnail(out: Path, big: str, fonts: dict, main_image: Path | None = None, hook: str = "",
+                   logo: str = "", badge: str = "", theme: dict | None = None, accent: str = "#2BE38B") -> Path:
+    """오빠두엑셀형: 얼굴 크게 + 아래 두 줄(작은 맥락 줄 + 큰 결론 줄) + 로고. 핵심 단어는 *별표*."""
+    theme = theme or THEMES[2]
+    base = _photo_base(main_image, theme)
+    # 가장자리 어둡게 + 아래쪽 짙게 (글자 받침)
+    vig = Image.radial_gradient("L").resize((W, H)).point(lambda v: int(min(255, v * 1.15)))
+    shade = Image.new("RGBA", (W, H), (5, 7, 12, 255))
+    shade.putalpha(vig.point(lambda v: int(v * 0.55)))
+    base.alpha_composite(shade)
+    base.alpha_composite(_bottom_shade((W, H), start=0.45, strength=235))
+    # 얼굴 아래 끝 찾기 → 글자는 그 아래에
+    face_bottom = 0
+    try:
+        from . import faces
+        fb = faces.in_image(base.convert("RGB"))
+        if fb:
+            face_bottom = max(b[3] for b in fb) + int((max(b[3] for b in fb) - min(b[1] for b in fb)) * 0.15)
+    except Exception:
+        pass
+    rows = _rich_lines(big, 2)
+    hook_pt = 50
+    avail_top = max(face_bottom + 10, int(H * 0.46))
+    gap = 10
+    pt = _fit_rich(rows, fonts["bold"], W - 90, 150 if len(rows) == 1 else 112)
+    need = (hook_pt + gap if hook else 0) + int(pt * 1.08) * len(rows)
+    while pt > 60 and avail_top + need > H - 26:  # 얼굴을 피하려면 글자를 줄인다
+        pt -= 6
+        need = (hook_pt + gap if hook else 0) + int(pt * 1.08) * len(rows)
+    y = H - 26 - need
+    acc = _rgb(accent)
+    if hook:
+        hf = _font(fonts["bold"], hook_pt)
+        _draw_rich(base, W / 2, y, parse_rich(hook), hf, (255, 255, 255), acc, 4, "center")
+        y += hook_pt + gap
+    bf = _font(fonts["bold"], pt)
+    for r in rows:
+        _draw_rich(base, W / 2, y, r, bf, (255, 255, 255), acc, max(5, pt // 16), "center")
+        y += int(pt * 1.08)
+    if logo and Path(logo).exists():
+        try:
+            card = _logo_card(Image.open(logo), 170)
+            base.alpha_composite(card, (W - card.width - 20, 20))
+        except Exception:
+            pass
+    if badge:
+        bf2 = _font(fonts["bold"], 38)
+        bw = bf2.getlength(badge) + 40
+        d = ImageDraw.Draw(base)
+        d.rounded_rectangle((34, 34, 34 + bw, 34 + 62), radius=14, fill=acc + (255,))
+        d.text((54, 42), badge, font=bf2, fill=(10, 20, 14))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    base.convert("RGB").save(out, quality=93)
+    return out
+
+
 def make_variants(folder: Path, project: dict, fonts: dict, tcfg: dict, main_image: Path | None,
                   channel: str = "", theme: dict | None = None) -> list[Path]:
     """썸네일 3종 — 긴 영상은 유튜브 'A/B 테스트'에 그대로 올릴 수 있다.
@@ -467,10 +571,12 @@ def make_variants(folder: Path, project: dict, fonts: dict, tcfg: dict, main_ima
                                        kicker=project.get("thumbnail_kicker", ""),
                                        notes=project.get("thumbnail_notes") or [], name_xy=tuple(nxy),
                                        **common))
-        if n > 2:
-            outs.append(make_thumbnail(folder / names[2], text, fonts, main_image, person, label, sub,
-                                       channel if tcfg.get("show_channel", True) else "", "split",
-                                       theme_for(key, 1)))
+        if n > 2:  # 오빠두엑셀형: 작은 맥락 줄 + 큰 결론 줄
+            hook = project.get("thumbnail_hook") or project.get("thumbnail_kicker") or label
+            big = project.get("thumbnail_big") or quote
+            outs.append(hero_thumbnail(folder / names[2], big, fonts, main_image, hook,
+                                       tcfg.get("logo_image", ""), project.get("thumbnail_badge", ""), th,
+                                       tcfg.get("hero_accent", "#2BE38B")))
         return outs
     first = tcfg.get("layout", "split")
     layouts = [first] + [l for l in ("split", "impact", "series") if l != first]
