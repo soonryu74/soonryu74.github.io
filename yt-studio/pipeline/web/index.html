@@ -115,7 +115,7 @@
 
 <!-- 2. 칼럼 -->
 <section id="t-column" class="card hidden">
-  <h2>극동방송 1분 칼럼 → 쇼츠</h2>
+  <h2>극동방송 1분 칼럼 → 영상</h2>
   <p class="lead">녹음 파일과 원고를 올리면 원고 그대로 정확한 자막이 들어가요. 원고가 없으면 AI 가 받아쓰고, 끝난 뒤 자막을 고쳐 다시 만들 수 있어요.</p>
   <form id="f-column">
     <div class="grid">
@@ -124,19 +124,36 @@
       <div class="drop"><input type="file" name="images" accept="image/*" multiple><b>장면 사진 여러 장</b> (선택)<div class="names"></div></div>
     </div>
     <div class="grid" style="margin-top:14px">
+      <label class="f"><span>영상 모양</span><select name="format">
+        <option value="miracle">가로 16:9 · '3분 미라클'형</option>
+        <option value="shorts">세로 쇼츠</option>
+        <option value="both">둘 다</option></select>
+        <small>가로: 타이틀 화면 + 문장마다 바뀌는 장면 + 핵심어 색 자막 + 영어 자막</small></label>
       <label class="f"><span>화면 위 제목</span><input type="text" name="title" placeholder="월요일 사무실이\n*첫 번째 선교지*입니다"><small>줄바꿈 \n · 강조 *단어*</small></label>
       <label class="f"><span>칼럼니스트 이름</span><input type="text" name="name"></label>
       <label class="f"><span>직함</span><input type="text" name="role"></label>
       <label class="f"><span>결과 폴더 이름</span><input type="text" name="out" placeholder="예: 칼럼12"><small>같은 이름으로 다시 만들면 고친 자막이 반영돼요</small></label>
     </div>
     <label class="f" style="margin-top:14px"><span>원고 (붙여 넣기)</span><textarea name="script" placeholder="방송 원고를 붙여 넣으면 자막이 정확해져요"></textarea></label>
-    <details style="margin-top:10px"><summary>썸네일도 만들기 (선택)</summary>
+    <details style="margin-top:10px"><summary>가로 영상 설정 (선택)</summary>
+      <div class="grid" style="margin-top:10px">
+        <label class="f"><span>장면 그림</span><select name="visual">
+          <option value="ai">AI 그림 (원고에 맞춰 자동)</option>
+          <option value="abstract">부드러운 추상 배경</option></select>
+          <small>장면 사진을 올리면 그 사진이 먼저 쓰여요. 무료 AI 그림엔 오른쪽 아래 작은 표시가 있어요</small></label>
+        <label class="f"><span>왼쪽 위 채널 표시</span><input type="text" name="bug" placeholder="극동방송 × SaGA"></label>
+        <label class="f"><span>썸네일 제목 (3줄)</span><input type="text" name="thumb" placeholder="월요일 아침이\n*선교지*가\n됩니다"></label>
+        <label class="f"><span>썸네일 옅은 영어 단어</span><input type="text" name="ghost" placeholder="MONDAY"></label>
+      </div>
+      <label class="f" style="margin-top:10px"><span>영어 자막 (한 줄 = 한 문장)</span><textarea name="english" placeholder="원고 문장 순서대로 영어 한 줄씩. 비워 두면 영어 자막 없이 만들어요. auto 라고 쓰면 AI 번역(AI 연결 시)"></textarea></label>
+    </details>
+    <details style="margin-top:10px"><summary>세로 쇼츠 썸네일도 만들기 (선택)</summary>
       <div class="grid" style="margin-top:10px">
         <label class="f"><span>인용 문구</span><input type="text" name="quote" placeholder="일터가 곧\n*예배의 자리*입니다"></label>
         <div class="drop"><input type="file" name="shot" accept="image/*"><b>썸네일 배경 사진</b><div class="names"></div></div>
       </div>
     </details>
-    <div class="row"><button class="go" type="submit">칼럼 쇼츠 만들기</button></div>
+    <div class="row"><button class="go" type="submit">칼럼 영상 만들기</button></div>
   </form>
   <div class="jobbox"></div>
   <div class="srtbox hidden card" style="margin-top:14px">

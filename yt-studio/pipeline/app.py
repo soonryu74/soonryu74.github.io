@@ -281,23 +281,45 @@ def api_column():
     if not script and script_files:
         script = script_files[0].read_text(encoding="utf-8", errors="replace")
     shot = _save_uploads("shot", up / "shot")
-    p = {k: _form(k) for k in ("name", "role", "quote", "series")}
+    p = {k: _form(k) for k in ("name", "role", "quote", "series", "format", "english", "visual", "bug", "thumb", "ghost")}
+    fmt = p["format"] or "shorts"
 
     def run(job):
+        res = []
         work = SAGA / (p["series"] or "column") / name
-        out = column.make(str(audio[0]), work, CFG, fonts(), title, p["name"], p["role"],
-                          str(photo[0]) if photo else "", script, str(up / "scenes") if pics else "",
-                          p["series"] or "column", "shorts")
-        res = [(out, "완성 쇼츠"), (work / "자막.srt", "자막 파일 (고칠 수 있어요)")]
-        _check_faces(out, work / "parts" / "base.mp4", job)
-        if p["quote"]:
-            proj = {"title": title.replace("*", ""), "thumbnail_quote": p["quote"], "thumbnail_name": p["name"],
-                    "thumbnail_role": p["role"], "thumbnail_text": title.replace("*", "")}
-            bg = shot[0] if shot else (photo[0] if photo else None)
-            for f in thumbs.make_variants(work, proj, fonts(), dict(CFG["thumbnail"], logo_text="SaGA 일터아카데미"),
-                                          bg, "", series.get(p["series"] or "column")["theme"]):
-                res.append((f, "썸네일"))
-        job.extra["srt"] = str((work / "자막.srt").relative_to(PROJECTS))
+        if fmt in ("shorts", "both"):
+            out = column.make(str(audio[0]), work, CFG, fonts(), title, p["name"], p["role"],
+                              str(photo[0]) if photo else "", script, str(up / "scenes") if pics else "",
+                              p["series"] or "column", "shorts")
+            res += [(out, "완성 쇼츠"), (work / "자막.srt", "자막 파일 (고칠 수 있어요)")]
+            _check_faces(out, work / "parts" / "base.mp4", job)
+            job.extra["srt"] = str((work / "자막.srt").relative_to(PROJECTS))
+            if p["quote"]:
+                proj = {"title": title.replace("*", ""), "thumbnail_quote": p["quote"], "thumbnail_name": p["name"],
+                        "thumbnail_role": p["role"], "thumbnail_text": title.replace("*", "")}
+                bg = shot[0] if shot else (photo[0] if photo else None)
+                for f in thumbs.make_variants(work, proj, fonts(), dict(CFG["thumbnail"], logo_text="SaGA 일터아카데미"),
+                                              bg, "", series.get(p["series"] or "column")["theme"]):
+                    res.append((f, "썸네일"))
+        if fmt in ("miracle", "both"):
+            from ytauto import miracle
+            mw = work.with_name(work.name + "-가로")
+            print("▶ 3분 미라클형 가로 영상")
+            out = miracle.make(str(audio[0]), mw, CFG, fonts(), title.replace("\\n", " "), p["series"] or "column",
+                               "극동방송 1분 칼럼", p["name"], p["role"], str(photo[0]) if photo else "", script,
+                               str(up / "scenes") if pics else "", p["english"], p["visual"] or "ai",
+                               p["bug"] or "극동방송 × SaGA")
+            res += [(out, "완성 가로 영상 (3분 미라클형)"), (mw / "자막.srt", "가로 영상 자막 (고칠 수 있어요)")]
+            if (mw / "subtitles_en.srt").exists():
+                res.append((mw / "subtitles_en.srt", "영어 자막 파일 (유튜브에 따로 올릴 수 있어요)"))
+            _check_faces(out, mw / "parts" / "base.mp4", job)
+            scenes = json.loads((mw / "scenes.json").read_text(encoding="utf-8"))
+            bg = shot[0] if shot else next((Path(s["bg"]) for s in scenes[1:] if s.get("bg")), None)
+            th = miracle.miracle_thumbnail(mw / "thumb_miracle.jpg", p["thumb"] or title, fonts(), bg,
+                                           "극동방송 1분 칼럼", p["ghost"], series.get(p["series"] or "column")["theme"])
+            res.append((th, "썸네일 (3분 미라클형)"))
+            if fmt == "miracle":
+                job.extra["srt"] = str((mw / "자막.srt").relative_to(PROJECTS))
         return res
 
     j = submit("극동방송 칼럼", title.replace("*", "").replace("\\n", " "), run)

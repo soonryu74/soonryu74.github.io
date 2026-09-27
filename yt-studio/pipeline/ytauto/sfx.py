@@ -123,3 +123,28 @@ def stomp(path: Path, sec: float, bpm: int = 116) -> Path:
     out[end - fade:end] *= np.linspace(1, 0, fade)
     out[end:] = 0
     return _write(path, out[:end] / max(1e-6, np.abs(out).max()) * 0.8)
+
+
+def ambient(path: Path, sec: float) -> Path:
+    """잔잔한 배경 화음 (칼럼·묵상용). C–Am–F–G 를 부드럽게, 목소리를 가리지 않게."""
+    t = np.arange(int(SR * (sec + 1))) / SR
+    out = np.zeros(len(t))
+    chords = [(261.6, 329.6, 392.0, 523.3), (220.0, 261.6, 329.6, 440.0),
+              (174.6, 220.0, 261.6, 349.2), (196.0, 246.9, 293.7, 392.0)]
+    bar = 4.0
+    i = 0
+    while i * bar < sec:
+        s = int(i * bar * SR)
+        n = int((bar + 1.5) * SR)
+        tt = np.arange(n) / SR
+        env = np.clip(tt / 1.2, 0, 1) * np.clip((bar + 1.5 - tt) / 1.6, 0, 1)
+        x = sum(np.sin(2 * np.pi * f * tt) * (0.6 if k else 1) + 0.3 * np.sin(2 * np.pi * f * 1.004 * tt)
+                for k, f in enumerate(chords[i % 4]))
+        seg = x * env / 4 * 0.5
+        out[s:s + n] += seg[: max(0, len(out) - s)]
+        i += 1
+    end = int(sec * SR)
+    fade = int(1.5 * SR)
+    out[end - fade:end] *= np.linspace(1, 0, fade)
+    out = out[:end]
+    return _write(path, out / max(1e-6, np.abs(out).max()) * 0.6)

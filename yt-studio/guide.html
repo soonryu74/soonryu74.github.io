@@ -309,6 +309,14 @@ python3 studio.py upload projects/날짜-주제</code></pre></div>
     </div>
     <p class="small">장면 사진을 넣고 싶으면 <code>--images 사진폴더</code>. 썸네일도 함께 만들려면 <code>--quote "인용 *강조*" --shot 배경사진.jpg</code>.</p>
 
+    <h3>②-가로 극동방송 칼럼 → '3분 미라클'형 가로 영상</h3>
+    <p>시작 타이틀 화면 → 문장마다 바뀌는 장면 → 핵심어만 노랑·민트로 칠한 자막 → 아래 띠의 영어 자막 → 모집 안내 화면 순서로 만들어요. 영어 자막은 영어 원고 파일(한 줄에 한 문장)을 주면 들어갑니다. 썸네일(오른쪽 큰 제목 + 금색 시리즈 이름)도 같이 나와요.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py miracle C:\녹음\칼럼12.mp3 --title "월요일, 첫 번째 선교지" --script C:\녹음\칼럼12.txt --english C:\녹음\칼럼12_영어.txt --name "칼럼니스트 이름" --role "직함" --thumb "월요일 아침이\n*선교지*가\n됩니다" --ghost MONDAY</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py miracle ~/녹음/칼럼12.mp3 --title "월요일, 첫 번째 선교지" --script ~/녹음/칼럼12.txt --english ~/녹음/칼럼12_영어.txt --name "칼럼니스트 이름" --role "직함" --thumb "월요일 아침이\n*선교지*가\n됩니다" --ghost MONDAY</code></pre></div>
+    </div>
+    <p class="small">장면 그림: <code>--images 사진폴더</code>가 있으면 그 사진, 없으면 무료 AI 그림(오른쪽 아래에 작은 'pollinations' 표시가 남아요), <code>--visual abstract</code>면 부드러운 추상 배경. 표시 없는 그림을 원하면 설정에서 Gemini 이미지를 켜세요. 스튜디오에서는 '극동방송 칼럼' 탭 → 영상 모양 '가로 16:9'.</p>
+
     <h3>③ 긴 강의·특강 → 핵심 쇼츠 여러 편</h3>
     <p>받아쓰기 후 AI가 30~60초 구간과 "맨 앞에 먼저 보여 줄 한 문장"을 고릅니다. 결과 폴더의 <code>clips.json</code>에서 구간·제목을 고치고 다시 실행하면 그대로 다시 만듭니다.</p>
     <div class="os">

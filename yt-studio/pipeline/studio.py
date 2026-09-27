@@ -11,6 +11,7 @@
 
   [SaGA 일터아카데미 캠페인]
   python studio.py column 녹음.mp3 --title "…" --name "…"      극동방송 1분 칼럼 → 쇼츠
+  python studio.py miracle 녹음.mp3 --title "…"                  극동방송 칼럼 → '3분 미라클'형 가로 영상
   python studio.py clip 강의.mp4 --series dean --count 3         긴 강의 → 핵심 쇼츠
   python studio.py referral init / referral make                 추천 영상 0~7번 틀 만들기 / 영상 만들기
   python studio.py compose 장면대본.json                          장면 대본 하나로 영상 만들기
@@ -313,6 +314,23 @@ def cmd_column(args, cfg):
     _series_thumbs(work, args, cfg)
 
 
+def cmd_miracle(args, cfg):
+    from ytauto import miracle, series
+    work = SAGA / args.series / slugify(args.out or Path(args.audio).stem)
+    print(f"▶ 3분 미라클형 가로 영상: {args.audio}")
+    fonts = font_set(cfg)
+    english = "auto" if args.english == "auto" else _read_text(args.english)
+    out = miracle.make(args.audio, work, cfg, fonts, args.title, args.series, args.series_title, args.name,
+                       args.role, args.photo, _read_text(args.script), args.images, english, args.visual,
+                       args.bug, args.music)
+    print(f"✔ 완성: {out}")
+    scenes = json.loads((work / "scenes.json").read_text(encoding="utf-8"))
+    bg = Path(args.shot) if args.shot else next((Path(s["bg"]) for s in scenes[1:] if s.get("bg")), None)
+    th = miracle.miracle_thumbnail(work / "thumb_miracle.jpg", args.thumb or args.title, fonts, bg,
+                                   args.series_title, args.ghost, series.get(args.series)["theme"])
+    print(f"✔ 썸네일: {th}")
+
+
 def _series_thumbs(work: Path, args, cfg):
     """썸네일(가로)도 함께: --quote 가 있으면 새롭게하소서형."""
     from ytauto import series
@@ -462,6 +480,25 @@ def main():
     sp.add_argument("--shot", default="", help="썸네일 배경 사진(선택)")
     sp.add_argument("--kicker", default="")
 
+    sp = sub.add_parser("miracle", help="녹음 파일 → '3분 미라클'형 가로 영상")
+    sp.add_argument("audio")
+    sp.add_argument("--title", required=True, help="타이틀 화면 아래 제목")
+    sp.add_argument("--series-title", default="극동방송 1분 칼럼", help="타이틀 화면 큰 글씨")
+    sp.add_argument("--name", default="")
+    sp.add_argument("--role", default="")
+    sp.add_argument("--photo", default="", help="첫 장면에 쓸 칼럼니스트 사진(선택)")
+    sp.add_argument("--script", default="", help="원고 파일(.txt)")
+    sp.add_argument("--images", default="", help="장면 사진 폴더(있으면 AI 그림 대신)")
+    sp.add_argument("--english", default="", help="영어 원고 파일(한 줄 = 한 문장) 또는 auto(AI 번역)")
+    sp.add_argument("--visual", default="ai", choices=["ai", "abstract"], help="장면 그림: ai · abstract(추상 배경)")
+    sp.add_argument("--bug", default="극동방송 × SaGA", help="왼쪽 위 채널 표시")
+    sp.add_argument("--music", default="auto", help="auto · none · 음악파일")
+    sp.add_argument("--series", default="column")
+    sp.add_argument("--out", default="")
+    sp.add_argument("--thumb", default="", help="썸네일 제목(3줄, \\n 로 줄바꿈, *강조*)")
+    sp.add_argument("--ghost", default="", help="썸네일 옅은 영어 단어(예: MONDAY)")
+    sp.add_argument("--shot", default="", help="썸네일 배경 사진(선택)")
+
     sp = sub.add_parser("clip", help="긴 강의 → 쇼츠 여러 편")
     sp.add_argument("video")
     sp.add_argument("--series", default="lecture", help="lecture(강의) · dean(학장 특강) · intro · scic · trip")
@@ -529,7 +566,7 @@ def main():
     args = ap.parse_args()
     cfg = load_config(args.config)
     {"plan": cmd_plan, "make": cmd_make, "upload": cmd_upload, "auto": cmd_auto,
-     "batch": cmd_batch, "doctor": cmd_doctor, "voices": cmd_voices, "column": cmd_column,
+     "batch": cmd_batch, "doctor": cmd_doctor, "voices": cmd_voices, "column": cmd_column, "miracle": cmd_miracle,
      "clip": cmd_clip, "referral": cmd_referral, "compose": cmd_compose, "thumb": cmd_thumb,
      "transcribe": cmd_transcribe, "cheer": cmd_cheer, "facecheck": cmd_facecheck}[args.cmd](args, cfg)
 
