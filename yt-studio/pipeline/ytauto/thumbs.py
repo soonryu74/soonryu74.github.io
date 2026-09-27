@@ -724,3 +724,62 @@ def make_variants(folder: Path, project: dict, fonts: dict, tcfg: dict, main_ima
         outs.append(make_thumbnail(folder / names[i], text, fonts, main_image, person, label, sub,
                                    channel if tcfg.get("show_channel", True) else "", layout, th))
     return outs
+
+
+# ── 쇼츠 표지 (세로 1080×1920) ───────────────────────────────
+def shorts_cover(out: Path, big: str, fonts: dict, photo: Path | None = None, tag: str = "", sub: str = "",
+                 brand: str = "SaGA 일터아카데미", theme: dict | None = None, accent: str = "#FFD400") -> Path:
+    """쇼츠 피드·재생목록에 보이는 세로 표지.
+    - 큰 제목 2~3줄(Black Han Sans) + 핵심어 노랑, 위 꼬리표, 아래 한 줄
+    - 얼굴이 있는 쪽을 피해 위(상단 1/3) 또는 가운데 아래에 글자를 둔다
+    - 아래 1/6 은 유튜브 제목·버튼이 덮으므로 비운다
+    """
+    W, H = 1080, 1920
+    theme = theme or {"c1": "#0B1F3A", "c2": "#1B4F8A", "accent": accent}
+    if photo and Path(photo).exists():
+        base = fit_cover_faces(Image.open(photo), (W, H)).convert("RGBA")
+    else:  # 사진 없으면 시리즈 색 그라데이션
+        g = Image.linear_gradient("L").resize((W, H))
+        base = Image.composite(Image.new("RGB", (W, H), _rgb(theme["c2"])),
+                               Image.new("RGB", (W, H), _rgb(theme["c1"])), g).convert("RGBA")
+    fb = _face_boxes(base)
+    rows = [r for r in big.replace("\\n", "\n").split("\n") if r.strip()][:3]
+    pt = _fit_rich([parse_rich(r) for r in rows], fonts["title"], W * 0.86, 170, 90)
+    f = _font(fonts["title"], pt)
+    line_h = int(pt * 1.14)
+    sf = _font(fonts["subtitle"], 48)
+    block = line_h * len(rows) + (80 if sub else 0) + (110 if tag else 0)
+    # 후보 자리: 위(290), 가운데 아래(1560-block)
+    cands = [290, max(290, 1560 - block)]
+    def hit(y0):
+        return any(not (b[3] < y0 - 20 or b[1] > y0 + block + 20) for b in fb)
+    y = next((c for c in cands if not hit(c)), cands[0])
+    # 글자 뒤 그늘
+    sh = Image.new("L", (1, H), 0)
+    for yy in range(H):
+        k = 1 - min(1.0, abs(yy - (y + block / 2)) / (block / 2 + 260))
+        sh.putpixel((0, yy), int(175 * k ** 0.8))
+    dark = Image.new("RGBA", (W, H), (6, 8, 14, 255))
+    dark.putalpha(sh.resize((W, H)))
+    base.alpha_composite(dark)
+    d = ImageDraw.Draw(base)
+    if tag:
+        tf = _font(fonts["bold"], 46)
+        tw = tf.getlength(tag) + 60
+        d.rounded_rectangle(((W - tw) / 2, y, (W + tw) / 2, y + 80), 40, fill=_rgb(theme.get("accent", accent)))
+        d.text((W / 2, y + 40), tag, font=tf, fill=(14, 16, 24), anchor="mm")
+        y += 110
+    for r in rows:
+        _draw_rich(base, W / 2, y, parse_rich(r), f, (255, 255, 255), _rgb(accent), max(4, pt // 20), "center")
+        y += line_h
+    if sub:
+        d = ImageDraw.Draw(base)
+        d.text((W / 2, y + 24), sub, font=sf, fill=(236, 240, 248), anchor="ma", stroke_width=3,
+               stroke_fill=(0, 0, 0))
+    if brand:  # 왼쪽 위 작은 표시 (아래는 유튜브 버튼 자리)
+        bf = _font(fonts["bold"], 38)
+        ImageDraw.Draw(base).text((56, 120), brand, font=bf, fill=(255, 255, 255, 235), stroke_width=3,
+                                  stroke_fill=(0, 0, 0, 160))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    base.convert("RGB").save(out, quality=93)
+    return out
