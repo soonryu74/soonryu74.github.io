@@ -165,28 +165,42 @@ def outro(out: Path, fmt: str, fonts: dict, brand: dict, theme: dict, headline: 
     return p
 
 
-def pop(out_dir: Path, fmt: str, fonts: dict, text: str, sub: str, theme: dict,
-        y_frac: float = 0.60, scales=(0.55, 0.8, 1.08, 1.0)) -> list[Path]:
-    """외침에 맞춰 튀어나오는 큰 글자 (몇 단계 크기로 '팡' 하고 커지는 효과). 마지막 그림이 기본 상태."""
+def pop_block(fmt: str, fonts: dict, text: str, sub: str, scale: float = 1.0) -> tuple[int, int]:
+    """(글자 크기 pt, 덩어리 높이 px) — 얼굴 피해 자리 잡을 때 쓴다."""
     W, H = size_of(fmt)
-    base_pt = 150 if fmt == "shorts" else 120
     rows = _rich_lines(text, 2)
-    fit = _fit_rich(rows, fonts["title"], int(W * 0.88), base_pt)
+    pt = int(_fit_rich(rows, fonts["title"], int(W * 0.88), 150 if fmt == "shorts" else 120) * scale)
+    sub_h = int((52 if fmt == "shorts" else 44) * scale) + 32 if sub else 0
+    return pt, int(pt * 1.1) * len(rows) + sub_h
+
+
+def pop(out_dir: Path, fmt: str, fonts: dict, text: str, sub: str, theme: dict,
+        top: int | None = None, scale: float = 1.0, steps=(0.55, 0.8, 1.08, 1.0)) -> list[Path]:
+    """외침에 맞춰 튀어나오는 큰 글자 (몇 단계 크기로 '팡' 커지는 효과). 마지막 그림이 기본 상태.
+    top: 글자 덩어리 위쪽 y(px). 없으면 화면 60% 높이 가운데."""
+    W, H = size_of(fmt)
+    rows = _rich_lines(text, 2)
+    fit, block = pop_block(fmt, fonts, text, sub, scale)
+    if top is None:
+        top = int(H * 0.60) - block // 2
+    center = top + block / 2
     outs = []
-    for k, sc in enumerate(scales):
+    for k, sc in enumerate(steps):
         img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         pt = max(20, int(fit * sc))
         tf = _f(fonts["title"], pt)
-        y = int(H * y_frac) - int(pt * 1.1 * len(rows) / 2)
+        sub_h = int((52 if fmt == "shorts" else 44) * scale * sc) + 32 if sub else 0
+        h = int(pt * 1.1) * len(rows) + sub_h
+        y = int(center - h / 2)
         for r in rows:
             _draw_rich(img, W / 2, y, r, tf, (255, 255, 255), _rgb(theme["accent"]), max(4, pt // 14), "center")
             y += int(pt * 1.1)
         if sub:
-            sf = _f(fonts["bold"], max(16, int((52 if fmt == "shorts" else 44) * sc)))
+            sf = _f(fonts["bold"], max(16, int((52 if fmt == "shorts" else 44) * scale * sc)))
             sw = sf.getlength(sub) + 40
             d = ImageDraw.Draw(img)
-            d.rounded_rectangle(((W - sw) / 2, y + 10, (W + sw) / 2, y + 10 + sf.size + 22), radius=12,
+            d.rounded_rectangle(((W - sw) / 2, y + 6, (W + sw) / 2, y + 6 + sf.size + 20), radius=12,
                                 fill=_rgb(theme["accent"]) + (255,))
-            d.text((W / 2, y + 20), sub, font=sf, fill=_rgb(theme["c1"]), anchor="ma")
+            d.text((W / 2, y + 15), sub, font=sf, fill=_rgb(theme["c1"]), anchor="ma")
         outs.append(_save(img, out_dir / f"pop{k}.png"))
     return outs
