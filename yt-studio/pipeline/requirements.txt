@@ -4,6 +4,9 @@ pillow>=10.0
 edge-tts>=7.0
 imageio-ffmpeg>=0.5     # ffmpeg 를 따로 설치하지 않아도 되게 해 줍니다
 
+# 제작실 화면 (app.py)
+flask>=3.0
+
 # 받아쓰기 — 녹음·강의 영상 자막 (column · clip · compose 의 captions:auto)
 faster-whisper>=1.0
 

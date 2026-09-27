@@ -53,6 +53,7 @@
 </div></header>
 <main>
   <nav class="toc" aria-label="목차"><ol>
+    <li><a href="#studio">제작실 화면 (가장 쉬운 방법)</a></li>
     <li><a href="#flow">전체 흐름</a></li>
     <li><a href="#python">파이썬 설치</a></li>
     <li><a href="#install">스튜디오 설치</a></li>
@@ -66,6 +67,34 @@
     <li><a href="#honest">수익화를 지키는 원칙</a></li>
     <li><a href="#faq">문제 해결</a></li>
   </ol></nav>
+
+  <section id="studio">
+    <h2>0. SaGA 영상 제작실 — 더블클릭으로 켜기</h2>
+    <p>명령어 없이 쓰는 화면입니다. 파일을 끌어다 놓고 버튼만 누르면 쇼츠가 만들어져요. 이 컴퓨터에서만 열리고, 영상은 인터넷에 올라가지 않습니다.</p>
+    <div class="os">
+      <div><h4>Windows</h4>
+        <ol>
+          <li><a href="#python">2번</a>대로 파이썬을 설치 (처음 한 번)</li>
+          <li><code>yt-studio\pipeline</code> 폴더의 <b>시작하기.bat</b> 더블클릭</li>
+          <li>처음에는 설치 때문에 5~10분 걸려요. 끝나면 브라우저에 제작실이 열립니다.</li>
+        </ol></div>
+      <div><h4>Mac</h4>
+        <ol>
+          <li><a href="#python">2번</a>대로 파이썬을 설치 (처음 한 번)</li>
+          <li><code>yt-studio/pipeline</code> 폴더의 <b>시작하기.command</b>를 <b>오른쪽 클릭 → 열기</b> (처음 한 번만, 보안 확인 때문)</li>
+          <li>처음에는 설치 때문에 5~10분 걸려요. 끝나면 브라우저에 제작실이 열립니다.</li>
+        </ol></div>
+    </div>
+    <div class="tbl"><table>
+      <tr><th>탭</th><th>넣는 것</th><th>나오는 것</th></tr>
+      <tr><td>응원 릴레이</td><td>여러 사람이 외치는 영상 (여러 개 가능)</td><td>외칠 때마다 큰 글자 쇼츠 + 효과음·리듬 + 썸네일 3종</td></tr>
+      <tr><td>극동방송 칼럼</td><td>녹음 파일 + 원고 + 사진</td><td>자막·이름표·음성 파형 쇼츠. 자막을 화면에서 고쳐 다시 만들기</td></tr>
+      <tr><td>강의에서 쇼츠</td><td>긴 강의 영상</td><td>핵심 30~60초 쇼츠 여러 편. 제목·구간을 표에서 고쳐 다시 만들기</td></tr>
+      <tr><td>추천 영상 0~7</td><td>칸마다 사진·인터뷰 영상, 문구 수정</td><td>세로 쇼츠·가로 영상. 없는 칸은 "[촬영 예정]" 화면</td></tr>
+      <tr><td>썸네일</td><td>장면 사진 + 인용 문구</td><td>새롭게하소서형 3종</td></tr>
+    </table></div>
+    <p class="small">모든 결과는 <code>pipeline/projects/saga</code> 폴더에도 저장되고, 영상마다 "얼굴 가림 검사" 결과가 함께 표시됩니다. 창(검은 창)을 닫으면 제작실도 꺼집니다.</p>
+  </section>
 
   <section id="flow">
     <h2>1. 전체 흐름</h2>

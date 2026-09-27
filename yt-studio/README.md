@@ -6,6 +6,7 @@
 | --- | --- |
 | `index.html` | 웹 스튜디오: 로컬 AI·Gemini 로 기획, 제목 금지어 검사, 장면 편집, 음성 미리듣기, 썸네일 3종 미리보기, `project.json` 내보내기 |
 | `guide.html` | 설치 안내 (윈도우·맥 명령어 비교, 업로드 연결, 예약 실행) |
+| `pipeline/app.py` · `시작하기.bat` · `시작하기.command` | **SaGA 영상 제작실** — 내 컴퓨터 웹 화면(127.0.0.1:7860). 응원 릴레이·칼럼·강의 쇼츠·추천 영상·썸네일을 버튼으로 |
 | `pipeline/studio.py` | 명령줄 프로그램: `doctor` · `plan` · `make` · `upload` · `auto` · `batch` · `voices` |
 | `pipeline/ytauto/` | 대본(llm·prompts), 음성(tts), 장면(visuals), 합성(assemble), 썸네일(thumbs), 업로드(upload) |
 

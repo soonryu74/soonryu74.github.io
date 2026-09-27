@@ -169,7 +169,7 @@ def make_thumbnail(out: Path, text: str, fonts: dict, main_image: Path | None = 
             main = None
 
     if layout == "impact" and main is not None:
-        base = fit_cover(main, (W, H))
+        base = fit_cover_faces(main, (W, H))
         base = Image.blend(base, Image.new("RGB", (W, H), (0, 0, 0)), 0.45).convert("RGBA")
     else:
         base = _diag_gradient((W, H), c1, c2).convert("RGBA")
@@ -193,7 +193,7 @@ def make_thumbnail(out: Path, text: str, fonts: dict, main_image: Path | None = 
         # 메인 화면(결과·스크린샷)을 오른쪽에 크게 — 인물보다 화면이 주인공
         if main is not None:
             panel_w = int(W * 0.58)
-            shot = fit_cover(main, (panel_w, H)).convert("RGBA")
+            shot = fit_cover_faces(main, (panel_w, H)).convert("RGBA")
             fade = Image.linear_gradient("L").rotate(90).resize((panel_w, H))
             shot.putalpha(fade.point(lambda v: min(255, int(v * 2.4))))
             base.alpha_composite(shot, (W - panel_w, 0))
@@ -294,10 +294,55 @@ def _bottom_shade(size, start: float = 0.42, strength: int = 215) -> Image.Image
     return layer
 
 
+def fit_cover_faces(img: Image.Image, size: tuple[int, int]) -> Image.Image:
+    """꽉 채우되, 얼굴이 잘리지 않게 얼굴을 기준으로 자른다 (세로 사진 → 가로 썸네일 등)."""
+    w, h = size
+    img = img.convert("RGB")
+    try:
+        from . import faces
+        fb = faces.in_image(img)
+    except Exception:
+        fb = []
+    scale = max(w / img.width, h / img.height)
+    big = img.resize((round(img.width * scale), round(img.height * scale)), Image.LANCZOS)
+    if not fb:
+        left, top = (big.width - w) // 2, (big.height - h) // 2
+    else:
+        x1 = min(b[0] for b in fb) * scale
+        y1 = min(b[1] for b in fb) * scale
+        x2 = max(b[2] for b in fb) * scale
+        y2 = max(b[3] for b in fb) * scale
+        cx, fh = (x1 + x2) / 2, (y2 - y1)
+        left = int(min(max(0, cx - w / 2), big.width - w))
+        top = int(min(max(0, y1 - fh * 0.9), big.height - h))  # 머리 위 여유를 두고
+    return big.crop((left, top, left + w, top + h))
+
+
+def _portrait_base(img: Image.Image) -> Image.Image:
+    """세로 사진: 흐린 배경 위에 사람 전체를 오른쪽에 세운다 (억지로 확대해 얼굴이 뭉개지지 않게)."""
+    img = img.convert("RGB")
+    back = fit_cover(img, (W, H)).filter(ImageFilter.GaussianBlur(28))
+    back = Image.blend(back, Image.new("RGB", (W, H), (10, 14, 24)), 0.35)
+    ph = H
+    pw = round(img.width * ph / img.height)
+    person = img.resize((pw, ph), Image.LANCZOS)
+    x = int(W * 0.66 - pw / 2)
+    x = min(max(0, x), W - pw)
+    shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(shadow).rectangle((x - 6, 0, x + pw + 6, H), fill=(0, 0, 0, 120))
+    base = back.convert("RGBA")
+    base.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(14)))
+    base.paste(person, (x, 0))
+    return base
+
+
 def _photo_base(main_image, theme) -> Image.Image:
     if main_image and Path(main_image).exists():
         try:
-            return fit_cover(Image.open(main_image), (W, H)).convert("RGBA")
+            img = Image.open(main_image)
+            if img.height > img.width * 1.1:
+                return _portrait_base(img)
+            return fit_cover_faces(img, (W, H)).convert("RGBA")
         except Exception:
             pass
     return _diag_gradient((W, H), _rgb(theme["c1"]), _rgb(theme["c2"])).convert("RGBA")

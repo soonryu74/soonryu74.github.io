@@ -211,3 +211,20 @@ def verify(base: str, final: str, every: int = 3) -> tuple[list[tuple[float, int
             if cov > 0.03:
                 bad.append((round(i / 30, 2), int(cov * 100)))
     return bad, n
+
+
+def in_image(img) -> list[tuple[int, int, int, int]]:
+    """PIL 그림에서 실제 얼굴 상자 [(x1,y1,x2,y2)] (원본 좌표)."""
+    import numpy as np
+    w, h = img.size
+    sw = SCAN_W
+    sh = max(2, int(h * sw / w))
+    arr = np.asarray(img.convert("RGB").resize((sw, sh)))[:, :, ::-1].copy()
+    det = _detector(sw, sh)
+    if det is None:
+        return []
+    det.setInputSize((sw, sh))
+    _, found = det.detect(arr)
+    k = w / sw
+    return [(int(f[0] * k), int(f[1] * k), int((f[0] + f[2]) * k), int((f[1] + f[3]) * k))
+            for f in (found if found is not None else []) if f[-1] >= 0.7]
