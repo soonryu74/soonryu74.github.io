@@ -400,6 +400,20 @@ def cmd_cheer(args, cfg):
     print(f"✔ 완성: {out}")
 
 
+def cmd_facecheck(args, cfg):
+    from ytauto import faces
+    v = Path(args.video)
+    base = v.with_suffix("") / "base.mp4"
+    if not base.exists():
+        cands = list(v.parent.glob(v.stem + "*/base.mp4")) + list(v.parent.glob("*/base.mp4"))
+        base = cands[0] if cands else None
+    if not base:
+        sys.exit("비교할 원본(base.mp4)을 찾지 못했어요. 이 도구로 만든 영상만 검사할 수 있어요.")
+    bad, n = faces.verify(str(base), str(v))
+    print(f"{n}프레임 검사 → " + ("얼굴을 가린 순간 없음 ✔" if not bad else
+          "얼굴을 가린 순간: " + ", ".join(f"{t}초({p}%)" for t, p in bad[:15])))
+
+
 def main():
     ap = argparse.ArgumentParser(description="유튜브 자동화 스튜디오")
     ap.add_argument("--config", help="설정 파일 경로 (기본: pipeline/config.json)")
@@ -500,6 +514,9 @@ def main():
     sp.add_argument("--at", default="", help="외침 시각 직접 지정: 영상별 쉼표, 영상 사이 / (예: 1,3.8/1.4,5.5)")
     sp.add_argument("--out", default="")
     sp.add_argument("--wide", action="store_true")
+    sp = sub.add_parser("facecheck", help="완성 영상에서 글자가 얼굴을 가렸는지 검사")
+    sp.add_argument("video")
+
     sp = sub.add_parser("transcribe", help="받아쓰기 → .srt")
     sp.add_argument("file")
     sp.add_argument("--script", default="")
@@ -511,7 +528,7 @@ def main():
     {"plan": cmd_plan, "make": cmd_make, "upload": cmd_upload, "auto": cmd_auto,
      "batch": cmd_batch, "doctor": cmd_doctor, "voices": cmd_voices, "column": cmd_column,
      "clip": cmd_clip, "referral": cmd_referral, "compose": cmd_compose, "thumb": cmd_thumb,
-     "transcribe": cmd_transcribe, "cheer": cmd_cheer}[args.cmd](args, cfg)
+     "transcribe": cmd_transcribe, "cheer": cmd_cheer, "facecheck": cmd_facecheck}[args.cmd](args, cfg)
 
 
 if __name__ == "__main__":

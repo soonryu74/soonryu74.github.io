@@ -9,7 +9,7 @@ import json
 import shutil
 from pathlib import Path
 
-from . import layout, llm, media, series, shorts, transcribe, visuals
+from . import faces, layout, llm, media, series, shorts, transcribe, visuals
 from .assemble import write_srt
 from .prompts import extract_json
 
@@ -92,13 +92,15 @@ def make(audio: str, work: Path, cfg: dict, fonts: dict, title: str, name: str =
     parts.append(shorts.piece(work / "parts" / "outro.mp4", fmt, str(end_card), 3.5, zoom=False))
     base = shorts.join(parts, work / "parts" / "base.mp4")
     W, H = layout.size_of(fmt)
-    ov = [(layout.header(work / "ov" / "header.png", fmt, fonts, S["label"], title, S["theme"]), 0, main_end)]
+    ov = faces.keep_clear(str(base), layout.header(work / "ov" / "header.png", fmt, fonts, S["label"], title,
+                                                   S["theme"]), 0, main_end)
     if name:
-        ov.append((layout.person_tag(work / "ov" / "tag.png", fmt, fonts, name, role, photo,
-                                     (0.06, 0.40) if fmt == "shorts" else (0.04, 0.55)), 0, main_end))
-    for j, (a, b, t) in enumerate(shorts.chunk(cues, fmt)):
-        ov.append((layout.caption(work / "ov" / f"c{j:03d}.png", t, fmt, fonts,
-                                  cfg["video"].get("subtitle_style", "boxed")), a, min(b, main_end)))
+        ov += faces.keep_clear(str(base), layout.person_tag(work / "ov" / "tag.png", fmt, fonts, name, role, photo,
+                                                            (0.06, 0.40) if fmt == "shorts" else (0.04, 0.55)),
+                               0, main_end)
+    chunks = [(a, min(b, main_end), t) for a, b, t in shorts.chunk(cues, fmt)]
+    ov += faces.safe_captions(str(base), chunks, fmt, fonts, cfg["video"].get("subtitle_style", "boxed"),
+                              work / "ov")
     wave = ({"x": 90, "y": int(H * 0.49), "w": W - 180, "h": 110, "start": 0, "end": main_end,
              "color": "0x" + S["accent"].lstrip("#")} if fmt == "shorts" else None)
     out = work / f"{Path(work).name}.mp4"

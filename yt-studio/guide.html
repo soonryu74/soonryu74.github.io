@@ -306,7 +306,13 @@ python3 studio.py referral make --format both</code></pre></div>
       <div><h4>Mac</h4><pre><code>python3 studio.py thumb ~/사진/장면.jpg --quote "주일엔 제자,\n월요일엔 *그냥 직장인*" --name "홍길동 집사" --role "6기 동문" --kicker "20년 차 직장인의 고백" --notes "공감…|눈물 주의" --series intro</code></pre></div>
     </div>
     <div class="box"><b class="t">새롭게하소서에서 배운 썸네일 원칙</b>실제 장면 속 인물은 크게, 제목은 그 사람이 한 말(1인칭 인용), 강조는 단어 한두 개만, 이름·직함은 작게. 인용형(글자 한쪽)과 최근형(아래 두 줄 + 손글씨 이름표·반응 자막) 두 가지가 함께 만들어집니다.</div>
-    <div class="box warn"><b class="t">받아쓰기 준비</b>처음 한 번 <code>pip install faster-whisper</code>가 필요하고, 첫 실행 때 AI 받아쓰기 모델(약 500MB)을 내려받습니다. 더 정확하게 하려면 <code>config.json</code>의 <code>transcribe.model</code>을 <code>medium</code>으로 바꾸세요.</div>
+    <h3>⑥ 얼굴 가림 검사</h3>
+    <p>구호·자막·제목·이름표는 장면마다 얼굴 위치를 찾아 얼굴을 피해서 놓입니다. 자리가 없으면 얼굴 위로 옮기거나 글자를 조금 줄이고, 얼굴이 다가오면 잠깐 비켜 줍니다. 완성 영상을 프레임 단위로 검사하려면:</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py facecheck projects\saga\intro\영상이름.mp4</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py facecheck projects/saga/intro/영상이름.mp4</code></pre></div>
+    </div>
+    <div class="box warn"><b class="t">받아쓰기 준비</b>처음 한 번 <code>pip install -r requirements.txt</code>(받아쓰기·얼굴 찾기 포함)가 필요하고, 첫 실행 때 AI 받아쓰기 모델(약 500MB)을 내려받습니다. 더 정확하게 하려면 <code>config.json</code>의 <code>transcribe.model</code>을 <code>medium</code>으로 바꾸세요.</div>
   </section>
 
   <section id="auto">

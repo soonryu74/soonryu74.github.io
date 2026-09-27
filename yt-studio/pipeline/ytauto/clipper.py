@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import layout, llm, media, series, shorts, transcribe
+from . import faces, layout, llm, media, series, shorts, transcribe
 from .prompts import extract_json
 
 SYSTEM = ("당신은 기독교 강의 영상을 유튜브 쇼츠로 만드는 편집자입니다. 과장하지 않고, 강사의 말을 왜곡하지 않으며, "
@@ -94,14 +94,15 @@ def render_clip(video: str, cues, clip: dict, idx: int, work: Path, cfg: dict, f
                             headline=clip.get("outro", "전체 강의는\n*설명란 링크*에서"))
     parts.append(shorts.piece(d / "p_outro.mp4", fmt, str(end_card), 3.0, zoom=False))
     base = shorts.join(parts, d / "base.mp4")
-    ov = [(layout.header(d / "header.png", fmt, fonts, S["label"] + (f" · {name}" if name else ""),
-                         clip.get("title", ""), S["theme"]), 0, main_end)]
+    ov = faces.keep_clear(str(base), layout.header(d / "header.png", fmt, fonts,
+                                                   S["label"] + (f" · {name}" if name else ""),
+                                                   clip.get("title", ""), S["theme"]), 0, main_end)
     if name:
-        ov.append((layout.person_tag(d / "tag.png", fmt, fonts, name, role,
-                                     xy=(0.06, 0.44) if fmt == "shorts" else (0.04, 0.6)), 0, min(5, main_end)))
-    for j, (a, b, t) in enumerate(shorts.chunk(captions, fmt)):
-        ov.append((layout.caption(d / f"c{j:03d}.png", t, fmt, fonts, cfg["video"].get("subtitle_style", "boxed")),
-                   a, min(b, main_end)))
+        ov += faces.keep_clear(str(base), layout.person_tag(d / "tag.png", fmt, fonts, name, role,
+                                                            xy=(0.06, 0.44) if fmt == "shorts" else (0.04, 0.6)),
+                               0, min(5, main_end))
+    chunks = [(a, min(b, main_end), t) for a, b, t in shorts.chunk(captions, fmt)]
+    ov += faces.safe_captions(str(base), chunks, fmt, fonts, cfg["video"].get("subtitle_style", "boxed"), d)
     out = work / f"{series_key}_{idx:02d}.mp4"
     shorts.finish(base, out, ov)
     return out

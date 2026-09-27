@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import layout, series, shorts, transcribe, tts
+from . import faces, layout, series, shorts, transcribe, tts
 from .media import duration
 
 
@@ -41,7 +41,7 @@ def render(recipe_path: Path, cfg: dict, fonts: dict, fmt: str = "shorts", out_d
     tcfg = dict(cfg["tts"])
     if R.get("voice"):
         tcfg["voice"] = R["voice"]
-    parts, ov, t0 = [], [], 0.0
+    parts, ov, chunks, t0 = [], [], [], 0.0
     header = layout.header(work / "ov_header.png", fmt, fonts, R.get("label", S["label"]), R.get("title", ""),
                            S["theme"])
     for i, bt in enumerate(R.get("beats", []), 1):
@@ -82,7 +82,7 @@ def render(recipe_path: Path, cfg: dict, fonts: dict, fmt: str = "shorts", out_d
             if bt.get("name"):
                 ov.append((layout.person_tag(work / f"tag{i:02d}.png", fmt, fonts, bt["name"], bt.get("role", ""),
                                              xy=(0.06, 0.44) if fmt == "shorts" else (0.04, 0.6)),
-                           t0, t0 + min(dur, 5)))
+                           t0, t0 + min(dur, 5)))  # 얼굴 확인은 아래에서
             show_header = True
         elif kind == "image":
             src = _missing(bt.get("src", ""), root)
@@ -103,10 +103,12 @@ def render(recipe_path: Path, cfg: dict, fonts: dict, fmt: str = "shorts", out_d
         if show_header and R.get("title"):
             ov.append((header, t0, t0 + dur))
         for a, b, text in shorts.chunk(cues, fmt):
-            ov.append((layout.caption(work / f"c{i:02d}_{len(ov):03d}.png", text, fmt, fonts,
-                                      cfg["video"].get("subtitle_style", "boxed")), t0 + a, t0 + min(b, dur)))
+            chunks.append((t0 + a, t0 + min(b, dur), text))
         t0 += dur
     base = shorts.join(parts, work / "base.mp4")
+    ov = [item for png, a, b in ov for item in faces.keep_clear(str(base), png, a, b)]
+    ov += faces.safe_captions(str(base), chunks, fmt, fonts, cfg["video"].get("subtitle_style", "boxed"),
+                              work / "captions")
     out = (out_dir or root / "output") / f"{stem}_{fmt}.mp4"
     shorts.finish(base, out, ov, bgm=R.get("bgm") or cfg["video"].get("bgm_path", ""),
                   bgm_volume=float(R.get("bgm_volume", 0.08)))

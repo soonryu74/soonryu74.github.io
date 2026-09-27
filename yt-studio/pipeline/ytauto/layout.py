@@ -61,14 +61,23 @@ def header(out: Path, fmt: str, fonts: dict, label: str, title: str, theme: dict
     return _save(img, out)
 
 
-def caption(out: Path, text: str, fmt: str, fonts: dict, style: str = "boxed") -> Path:
-    """자막 한 장. 쇼츠는 화면 62~74% 높이(아래 안전 영역 위), 가로는 아래쪽."""
+def caption_height(text: str, fmt: str, fonts: dict) -> int:
+    W, _ = size_of(fmt)
+    pt = 64 if fmt == "shorts" else 54
+    f = _f(fonts["subtitle"], pt)
+    return int(pt * 1.34) * len(wrap(text, f, int(W * (0.84 if fmt == "shorts" else 0.78)))[:3])
+
+
+def caption(out: Path, text: str, fmt: str, fonts: dict, style: str = "boxed", bottom: int | None = None) -> Path:
+    """자막 한 장. 쇼츠는 화면 62~74% 높이(아래 안전 영역 위), 가로는 아래쪽.
+    bottom: 자막 아래 끝 y(px) — 얼굴을 피해 옮길 때."""
     W, H = size_of(fmt)
     pt = 64 if fmt == "shorts" else 54
     f = _f(fonts["subtitle"], pt)
     lines = wrap(text, f, int(W * (0.84 if fmt == "shorts" else 0.78)))[:3]
     line_h = int(pt * 1.34)
-    bottom = int(H * 0.735) if fmt == "shorts" else H - int(H * 0.08)
+    if bottom is None:
+        bottom = int(H * 0.735) if fmt == "shorts" else H - int(H * 0.08)
     y = bottom - line_h * len(lines)
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)

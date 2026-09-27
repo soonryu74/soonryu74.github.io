@@ -148,3 +148,66 @@ def clear_spans(video: str, box: tuple, t0: float, t1: float, step: float = 0.2,
     if start is not None:
         spans.append((start, t1))
     return [(a, b) for a, b in spans if b - a > 0.15]
+
+
+def safe_captions(video: str, chunks, fmt: str, fonts: dict, style: str, out_dir: Path,
+                  offset: float = 0.0) -> list[tuple[Path, float, float]]:
+    """자막 조각마다 그 시간의 얼굴을 찾아, 얼굴을 가리면 자막을 얼굴 아래(또는 위)로 옮긴다."""
+    from . import layout
+    W, H = layout.size_of(fmt)
+    default_bottom = int(H * 0.735) if fmt == "shorts" else H - int(H * 0.08)
+    lo = int(H * 0.30) if fmt == "shorts" else int(H * 0.18)   # 위 제목 아래
+    hi = int(H * 0.80) if fmt == "shorts" else H - 20          # 아래 끝 (쇼츠는 조금 더 내려도 허용)
+    out = []
+    for j, (a, b, text) in enumerate(chunks):
+        h = layout.caption_height(text, fmt, fonts) + 20
+        fb = boxes(video, offset + a + 0.05, offset + max(a + 0.05, b - 0.05), step=0.3) if b - a > 0.1 else []
+        top, _ = place(fb, H, h, default_bottom - h, lo, hi)
+        png = layout.caption(out_dir / f"c{j:03d}.png", text, fmt, fonts, style, bottom=top + h - 10)
+        out.append((png, a, b))
+    return out
+
+
+def glyph_box(png: Path, alpha: int = 200):
+    """투명 그림에서 글자 부분(진한 부분)만의 상자. 옅은 어두운 띠는 빼고."""
+    from PIL import Image
+    a = Image.open(png).getchannel("A").point(lambda v: 255 if v >= alpha else 0)
+    return a.getbbox()
+
+
+def keep_clear(video: str, png: Path, t0: float, t1: float) -> list[tuple[Path, float, float]]:
+    """글자 그림을 t0~t1 동안 얹되, 얼굴이 그 글자 자리에 들어온 순간은 잠깐 뺀다."""
+    box = glyph_box(png)
+    if not box or t1 - t0 < 0.2:
+        return [(png, t0, t1)]
+    return [(png, a, b) for a, b in clear_spans(video, box, t0, t1)]
+
+
+def verify(base: str, final: str, every: int = 3) -> tuple[list[tuple[float, int]], int]:
+    """완성 영상에서 글자가 얼굴을 가린 순간 찾기: 글자 없는 영상(base)과 프레임 단위로 비교.
+    돌려주는 값: ([(초, 가려진 비율%)], 검사한 프레임 수)"""
+    import numpy as np
+
+    def decode(path, w=SCAN_W):
+        vw, vh = media.video_size(path)
+        h = int(round(vh * w / vw / 2) * 2)
+        raw = subprocess.run([media.ffmpeg_exe(), "-loglevel", "error", "-i", path, "-vf", f"scale={w}:{h}",
+                              "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], capture_output=True).stdout
+        return np.frombuffer(raw, np.uint8).reshape(-1, h, w, 3)
+
+    A, B = decode(base), decode(final)
+    n = min(len(A), len(B))
+    det = _detector(A.shape[2], A.shape[1])
+    if det is None:
+        return [], 0
+    bad = []
+    for i in range(0, n, every):
+        _, found = det.detect(A[i])
+        for f in (found if found is not None else []):
+            if f[-1] < 0.8:
+                continue
+            x, y, w, h = [max(0, int(v)) for v in f[:4]]
+            cov = (np.abs(A[i][y:y + h, x:x + w].astype(int) - B[i][y:y + h, x:x + w].astype(int)).sum(axis=2) > 90).mean()
+            if cov > 0.03:
+                bad.append((round(i / 30, 2), int(cov * 100)))
+    return bad, n
