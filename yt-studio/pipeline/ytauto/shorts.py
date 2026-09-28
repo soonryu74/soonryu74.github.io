@@ -172,3 +172,21 @@ def parse_time(v) -> float:
     for p in parts:
         t = t * 60 + p
     return t
+
+
+def with_cover(video: Path, cover: Path, out: Path, sec: float = 0.6) -> Path:
+    """표지 그림을 영상 맨 앞에 잠깐(기본 0.6초) 붙인다.
+    휴대폰 유튜브 앱에서 쇼츠 표지를 '영상 속 장면'으로 고를 때 이 장면을 고르면 된다."""
+    W, H = media.video_size(str(video))
+    fps = 30
+    media.run(["-loop", "1", "-t", f"{sec}", "-i", str(cover),
+               "-f", "lavfi", "-t", f"{sec}", "-i", "anullsrc=r=48000:cl=stereo",
+               "-i", str(video),
+               "-filter_complex",
+               f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,fps={fps},format=yuv420p[c];"
+               f"[2:v]fps={fps},setsar=1,format=yuv420p[v];"
+               f"[2:a]aresample=48000,aformat=channel_layouts=stereo[a];"
+               f"[c][1:a][v][a]concat=n=2:v=1:a=1[ov][oa]",
+               "-map", "[ov]", "-map", "[oa]", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+               "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(out)])
+    return out
