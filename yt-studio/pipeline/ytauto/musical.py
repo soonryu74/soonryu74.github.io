@@ -453,3 +453,109 @@ def make(mp3: str, work: Path, cfg: dict, fonts: dict, series: str = "밧모섬�
     shorts.finish(base, out, ov, audio=str(mp3), audio_offset=PRE, sfx=fx, duck=False)
     rec_f.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
     return out
+
+
+# ── 영화형 (참고: '마가 다락방 성령강림') ───────────────────────
+# 2.39:1 검은 띠 · 넓은 실사풍 장면 · 빛줄기·먼지·연기가 움직이고 · 주의 음성·피날레엔 무지개빛 광선.
+# 자막은 아래 검은 띠에, 배역은 위 검은 띠에 — 그림(얼굴)을 가리지 않는다.
+def cine_title(out: Path, series: str, ep: str, subtitle: str, fonts: dict) -> Path:
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    sf = fonts.get("serif", fonts["bold"])
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).text((W / 2, H * 0.40), series, font=_f(sf, 128), fill=GOLD + (220,), anchor="mm")
+    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(22)))
+    d = ImageDraw.Draw(img)
+    d.text((W / 2, H * 0.40), series, font=_f(sf, 128), fill=(250, 228, 170), anchor="mm",
+           stroke_width=2, stroke_fill=(40, 26, 6))
+    d.text((W / 2, H * 0.53), f"{ep}   " + subtitle.replace("\n", "  ·  "), font=_f(sf, 44), fill=(240, 236, 226),
+           anchor="mm", stroke_width=2, stroke_fill=(0, 0, 0))
+    return layout._save(img, out)
+
+
+def cine_role(out: Path, text: str, kind: str, fonts: dict) -> Path:
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    if text:
+        sf = fonts.get("serif", fonts["bold"])
+        name, sub = SPEAKER.get(kind, (text, ""))
+        if kind == "choir":
+            name, sub = text.replace(" 합창", ""), "합창"
+        d = ImageDraw.Draw(img)
+        d.text((80, 70), name, font=_f(sf, 38), fill=SPEAKER_COLOR.get(kind, (240, 236, 228)), anchor="lm")
+        x = 80 + _f(sf, 38).getlength(name) + 18
+        d.text((x, 72), sub, font=_f(fonts["subtitle"], 24), fill=(170, 164, 150), anchor="lm")
+    return layout._save(img, out)
+
+
+def cine_lyric(out: Path, text: str, kind: str, fonts: dict) -> Path:
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    sf = fonts.get("serif", fonts["bold"])
+    f = _f(sf, 50)
+    t = text.replace("*", "")
+    while f.size > 32 and f.getlength(t) > W * 0.9:
+        f = _f(sf, f.size - 2)
+    fill = (246, 214, 140) if kind == "god" else (250, 250, 250)
+    ImageDraw.Draw(img).text((W / 2, H - 69), t, font=f, fill=fill, anchor="mm")
+    return layout._save(img, out)
+
+
+def cine_end(out: Path, series: str, next_ep: str, fonts: dict) -> Path:
+    img = Image.new("RGB", (W, H), (0, 0, 0))
+    sf = fonts.get("serif", fonts["bold"])
+    d = ImageDraw.Draw(img)
+    d.text((W / 2, H * 0.42), series, font=_f(sf, 96), fill=GOLD, anchor="mm")
+    if next_ep:
+        d.text((W / 2, H * 0.56), "다음 이야기  ·  " + next_ep, font=_f(sf, 42), fill=(230, 226, 214), anchor="mm")
+    img.save(out, quality=93)
+    return out
+
+
+def make_cinema(mp3: str, work: Path, cfg: dict, fonts: dict, scene_imgs: dict, series: str = "밧모섬의 증인",
+                ep: str = "", subtitle: str = "", next_ep: str = "", burst_shots: set | None = None,
+                out_name: str = "") -> Path:
+    """recipe.json(가사·시간) + shots.json(장면 시간표) + 장면별 그림 → 영화형 뮤직비디오.
+    scene_imgs: {장면 번호: [그림, …]} — 한 장면 안에서 컷마다 그림·카메라 움직임을 바꾼다."""
+    from . import stagefx
+    R = json.loads((work / "recipe.json").read_text(encoding="utf-8"))
+    shots = json.loads((work / "shots.json").read_text(encoding="utf-8"))
+    secs = R["sections"]
+    total = media.duration(mp3)
+    A = stagefx.assets(work / "fx")
+    PRE_C, POST_C = 3.5, 5.0
+    first_of = {}
+    for sh in shots:
+        first_of.setdefault(sh["sec"], sh["no"])
+    auto_burst = {first_of[i] for i, s in enumerate(secs) if s["kind"] == "god" and i in first_of}
+    burst = (burst_shots or set()) | auto_burst
+    parts = []
+    c00 = scene_imgs[0][0]
+    parts.append(stagefx.piece(work / "cine" / "p000.mp4", Path(c00), PRE_C, 99, A, warm=True, letterbox=True))
+    seen = {}
+    for k, sh in enumerate(shots):
+        a = PRE_C + (sh["start"] if k else 0.0)
+        b = PRE_C + (shots[k + 1]["start"] if k + 1 < len(shots) else total)
+        imgs = scene_imgs.get(sh["sec"]) or [c00]
+        n = seen.get(sh["sec"], 0)
+        seen[sh["sec"]] = n + 1
+        kind = secs[sh["sec"]]["kind"]
+        warm = kind in ("god", "choir") and sh["sec"] != 7
+        parts.append(stagefx.piece(work / "cine" / f"p{k + 1:03d}.mp4", Path(imgs[n % len(imgs)]), b - a, k, A,
+                                   warm=warm, letterbox=True, burst=sh["no"] in burst))
+    end = cine_end(work / "cine" / "end.jpg", series, next_ep, fonts)
+    parts.append(shorts.piece(work / "cine" / "p999.mp4", FMT, str(end), POST_C, zoom=False))
+    base = shorts.join(parts, work / "cine" / "base.mp4")
+    ov = [(cine_title(work / "cine_ov" / "title.png", series, ep, subtitle, fonts), 0.4, PRE_C + 0.6),
+          (bug(work / "cine_ov" / "bug.png", f"{series}  ·  {ep}", fonts), PRE_C, PRE_C + total)]
+    starts = [PRE_C + (s["times"][0][0] - 0.4 if i else 0.0) for i, s in enumerate(secs)]
+    ends = starts[1:] + [PRE_C + total]
+    for i, s in enumerate(secs):
+        ov.append((cine_role(work / "cine_ov" / f"r{i:02d}.png", s["speaker"], s["kind"], fonts),
+                   max(starts[i], PRE_C), ends[i]))
+        for j, (ln, (a, b)) in enumerate(zip(s["lines"], s["times"])):
+            nxt = s["times"][j + 1][0] if j + 1 < len(s["times"]) else (secs[i + 1]["times"][0][0] if i + 1 < len(secs) else total)
+            b2 = min(max(b + 0.6, a + 1.6), nxt - 0.05)
+            ov.append((cine_lyric(work / "cine_ov" / f"l{i:02d}_{j:02d}.png", ln, s["kind"], fonts),
+                       PRE_C + a, PRE_C + b2))
+    out = work / (out_name or f"{work.name}_영화형.mp4")
+    fx = [(str(sfx.ding(work / "sfx" / "ding.wav")), PRE_C + total + 0.3, 0.3)]
+    shorts.finish(base, out, ov, audio=str(mp3), audio_offset=PRE_C, sfx=fx, duck=False)
+    return out
