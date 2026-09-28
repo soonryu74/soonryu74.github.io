@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>바이브코딩 실전 8주 — 혼자서 14개 서비스를 만든 과정 그대로</title>
+<meta name="description" content="코딩 경험 없이 AI(클로드 코드·코워크)로 실제 서비스 14개를 만든 과정을 8주 동안 그대로 따라 만듭니다. 사전판매 얼리버드 접수 중. 개강 전 전액 환불.">
+<meta name="theme-color" content="#1f3b5c">
+<link rel="canonical" href="https://soonryu74.github.io/vibe/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="바이브코딩 실전 8주 — 혼자서 14개 서비스를 만든 과정 그대로">
+<meta property="og:description" content="이론이 아니라 실제로 돌아가는 서비스 14개가 증거입니다. 8주 뒤 여러분 이름으로 된 서비스 하나가 인터넷에 올라갑니다.">
+<meta property="og:url" content="https://soonryu74.github.io/vibe/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<style>
+:root{
+  --ground:#f3f5f8; --card:#fff; --card-2:#f7f9fc;
+  --ink:#16202b; --body:#334252; --muted:#65758a;
+  --line:#d9e0e8; --line-soft:#e7ecf2;
+  --primary:#1f3b5c; --primary-deep:#152b44; --primary-soft:#e2eaf4;
+  --accent:#c0641e; --accent-soft:#fbeee2;
+  --ok:#1d6b4a; --ok-soft:#e1f1e8;
+  --shadow:0 1px 2px rgba(22,32,43,.05),0 10px 28px rgba(22,32,43,.07);
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ground);color:var(--body);
+  font-family:"Pretendard Variable","Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  font-size:17px;line-height:1.72;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;word-break:keep-all}
+.wrap{max-width:920px;margin:0 auto;padding:0 18px}
+h1,h2,h3,h4{color:var(--ink);line-height:1.28;letter-spacing:-.02em;margin:0}
+h2{font-size:1.55rem;margin-bottom:14px}
+h3{font-size:1.12rem}
+p{margin:0 0 12px}
+strong,b{color:var(--ink);font-weight:700}
+a{color:var(--primary);text-underline-offset:3px}
+section{padding:46px 0}
+section + section{border-top:1px solid var(--line-soft)}
+.eyebrow{display:inline-block;font-size:.82rem;font-weight:700;color:var(--accent);letter-spacing:.02em;margin-bottom:8px}
+.btn{display:inline-block;font-weight:700;border-radius:12px;padding:14px 26px;text-decoration:none;
+  border:1.5px solid transparent;cursor:pointer;font-size:1.02rem;font-family:inherit;transition:transform .12s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.ghost{background:#fff;color:var(--primary);border-color:var(--line)}
+.btn.block{display:block;text-align:center;width:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.muted{color:var(--muted);font-size:.92rem}
+ul{padding-left:20px;margin:6px 0 12px}
+li{margin:4px 0}
+
+/* 상단 바 */
+.bar{position:sticky;top:0;z-index:20;background:rgba(243,245,248,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line-soft)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;padding-bottom:10px}
+.bar .brand{font-weight:800;color:var(--ink);text-decoration:none;font-size:.98rem}
+.bar .brand span{color:var(--muted);font-weight:500;font-size:.86rem;margin-left:6px}
+.bar .btn{padding:9px 16px;font-size:.92rem}
+
+/* 히어로 */
+.hero{background:linear-gradient(135deg,var(--primary-deep) 0%,var(--primary) 60%,#2b5a86 100%);color:#e6eef8;padding:60px 0 56px}
+.hero h1{color:#fff;font-size:2.2rem;max-width:760px}
+.hero .lead{font-size:1.12rem;color:#d3dfee;max-width:680px;margin:16px 0 6px}
+.hero .proof{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 26px}
+.hero .proof span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:.9rem;color:#fff}
+.hero .cta-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hero .btn.ghost{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.4)}
+.hero .fine{font-size:.86rem;color:#b9c9dc;margin-top:14px}
+
+/* 증거 */
+.proof-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.proof-grid a{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--body);transition:border-color .12s}
+.proof-grid a:hover{border-color:var(--primary)}
+.proof-grid b{display:block;font-size:1rem;margin-bottom:3px}
+.proof-grid small{display:block;color:var(--muted);font-size:.84rem;line-height:1.5}
+.proof-grid .tag{display:inline-block;margin-top:8px;font-size:.76rem;font-weight:700;color:var(--primary);background:var(--primary-soft);border-radius:6px;padding:2px 8px}
+
+/* 커리큘럼 */
+.week{display:grid;grid-template-columns:64px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line-soft)}
+.week:first-of-type{border-top:0}
+.week .n{font-weight:800;color:var(--accent);font-size:1.05rem;line-height:1.3}
+.week .n small{display:block;color:var(--muted);font-weight:500;font-size:.8rem}
+.week h3{margin-bottom:4px}
+.week .made{font-size:.88rem;color:var(--muted);margin-top:6px}
+.week .made a{color:var(--primary)}
+
+/* 가격 */
+.price-card{border:2px solid var(--accent);position:relative}
+.price-card .badge{position:absolute;top:-14px;left:22px;background:var(--accent);color:#fff;font-weight:800;font-size:.82rem;border-radius:999px;padding:4px 14px}
+.price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:10px 0 4px}
+.price .now{font-size:2.3rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+.price .was{font-size:1.05rem;color:var(--muted);text-decoration:line-through}
+.price .pct{font-size:.9rem;font-weight:800;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:2px 10px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:.95rem;margin:14px 0}
+.kv dt{color:var(--muted);font-weight:600}
+.kv dd{margin:0;color:var(--ink);font-weight:600}
+.seats{margin:12px 0 4px}
+.seats .track{height:10px;background:var(--line-soft);border-radius:999px;overflow:hidden}
+.seats .fill{height:100%;background:var(--accent);width:0;transition:width .6s ease}
+.seats .lbl{font-size:.86rem;color:var(--muted);margin-top:6px}
+
+/* 신청 */
+.form{display:grid;gap:12px}
+label{display:block;font-size:.86rem;font-weight:700;color:var(--muted);margin-bottom:5px}
+input,select,textarea{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:10px;font-size:1rem;font-family:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.form-embed iframe{width:100%;min-height:900px;border:0;border-radius:12px;background:#fff}
+.notice{background:var(--accent-soft);border:1px solid #efd3ba;border-left:4px solid var(--accent);border-radius:10px;padding:14px 16px;font-size:.92rem}
+.ok-box{background:var(--ok-soft);border:1px solid #bfe0cf;border-left:4px solid var(--ok);border-radius:10px;padding:14px 16px;font-size:.92rem;display:none}
+.ok-box.on{display:block}
+
+/* FAQ */
+details{border-top:1px solid var(--line-soft);padding:12px 0}
+details:last-of-type{border-bottom:1px solid var(--line-soft)}
+summary{cursor:pointer;font-weight:700;color:var(--ink);font-size:1rem;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--muted);font-weight:400}
+details[open] summary::after{content:"−"}
+details p{margin:8px 0 0;font-size:.95rem}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.two{grid-template-columns:1fr}.hero h1{font-size:1.7rem}.week{grid-template-columns:52px 1fr}}
+footer{padding:36px 0 60px;font-size:.86rem;color:var(--muted)}
+footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<!-- ===== 여기만 고치면 됩니다 ===== -->
+<script>
+window.CONFIG = {
+  brand: "노모어매뉴얼",
+  youtube: "https://www.youtube.com/@nomoremanual",   // 채널 주소로 교체
+  courseName: "바이브코딩 실전 8주",
+  listPrice: 890000,          // 정가
+  earlyPrice: 490000,         // 얼리버드
+  seats: 100,                 // 사전판매 정원
+  seatsTaken: 0,              // 접수된 인원 (직접 갱신)
+  earlyDeadline: "2026-10-19", // 얼리버드 마감일
+  startDate: "2026-11-02",    // 개강일 (첫 강의 공개)
+  fundingUrl: "",             // 와디즈·텀블벅 펀딩 페이지 주소. 넣으면 신청 버튼이 펀딩 페이지로 연결됩니다.
+  formUrl: "",                // 구글폼·탈리 등 신청 폼 주소. 펀딩 주소가 없을 때만 사용. 둘 다 비우면 이메일 신청 폼이 뜹니다.
+  email: "soonryu74@gmail.com", // 신청 메일 받을 주소
+  kakao: "",                  // 카카오톡 채널 주소 (선택)
+  bank: ""                    // 입금 계좌 안내 문구 (선택, 예: "국민 000-00-0000 서순려")
+};
+</script>
+
+<nav class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top" id="brand">노모어매뉴얼 <span>바이브코딩 실전 8주</span></a>
+    <a class="btn primary" href="#apply">얼리버드 신청</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="eyebrow" style="color:#f4c79b">사전판매 · 얼리버드 접수 중</span>
+    <h1>코딩을 배운 적 없는 사람이 혼자서 서비스 14개를 만들었습니다. 그 과정을 그대로 가르칩니다.</h1>
+    <p class="lead">이 페이지도, 아래 14개 서비스도 전부 AI에게 말로 시켜서 만들었습니다. 8주 뒤에는 여러분 이름으로 된 서비스 하나가 인터넷에 올라갑니다.</p>
+    <div class="proof">
+      <span>실제 돌아가는 서비스 14개</span>
+      <span>매일 자동 갱신되는 데이터 3종</span>
+      <span>로그인·DB·AI 연결까지</span>
+      <span>맥·윈도우 명령어 나란히</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn primary" href="#apply">얼리버드 <span id="hero-price"></span>에 신청</a>
+      <a class="btn ghost" href="#proof">만든 것부터 보기</a>
+    </div>
+    <p class="fine">사전판매입니다. 강의는 <b id="hero-start" style="color:#fff"></b>부터 매주 공개됩니다. 개강 전 취소는 전액 환불입니다.</p>
+  </div>
+</header>
+
+<section id="proof">
+  <div class="wrap">
+    <span class="eyebrow">증거</span>
+    <h2>말이 아니라 결과물로 보여드립니다</h2>
+    <p class="muted">아래는 전부 지금 접속되는 실제 페이지입니다. 눌러서 확인하세요. 8주 커리큘럼은 이것들을 만든 순서 그대로입니다.</p>
+    <div class="proof-grid" style="margin-top:16px">
+      <a href="../" target="_blank" rel="noopener"><b>동네 부동산 사이트</b><small>실거래가 매일 자동 수집, 매물, 인쇄용 포스터, 광고 제휴 페이지</small><span class="tag">2·3·8주차</span></a>
+      <a href="../silgeorae-lab.html" target="_blank" rel="noopener"><b>실거래가 분석</b><small>국토부 공공데이터를 GitHub Actions로 매일 받아 그래프로</small><span class="tag">3주차</span></a>
+      <a href="../ipsi/" target="_blank" rel="noopener"><b>입시 나침반</b><small>대학 493곳·학과 1만 3천 개 검색, 성적표 분석, 상담지 인쇄</small><span class="tag">4·5주차</span></a>
+      <a href="../yeongyangje/" target="_blank" rel="noopener"><b>근거영양</b><small>임상연구 82건, 성분×질환 금기 매트릭스, 상한 계산기</small><span class="tag">4·5주차</span></a>
+      <a href="../gukgam.html" target="_blank" rel="noopener"><b>국정감사 자료 DB</b><small>국회 Open API 자동 수집, 검색·필터</small><span class="tag">3·4주차</span></a>
+      <a href="../newsletter/" target="_blank" rel="noopener"><b>뉴스레터 메이커</b><small>78개 공식 소스 자동 수집 → AI가 서식대로 작성</small><span class="tag">7주차</span></a>
+      <a href="../health-dashboard/" target="_blank" rel="noopener"><b>지역 건강 대시보드</b><small>KOSIS 통계를 React 대시보드로, 지도 포함</small><span class="tag">심화</span></a>
+      <a href="../nunchi/" target="_blank" rel="noopener"><b>눈치 (한국어 학습 AI)</b><small>AI API 연결, 서버 프록시로 키 숨기기, 하루 호출 상한</small><span class="tag">7주차</span></a>
+      <a href="../gajeong/" target="_blank" rel="noopener"><b>목장 나눔터</b><small>로그인, 행 단위 권한(RLS), 서버 없이 Supabase만으로</small><span class="tag">6주차</span></a>
+      <a href="../dasibom/" target="_blank" rel="noopener"><b>다시봄 (사람 기억 노트)</b><small>설치형 웹앱(PWA), 기기 안에만 저장</small><span class="tag">6주차</span></a>
+      <a href="../dolbom/" target="_blank" rel="noopener"><b>모심 (돌봄 포털)</b><small>공단 평가등급 기관 검색, 광고·제휴 안내</small><span class="tag">8주차</span></a>
+      <a href="../gyeotae/" target="_blank" rel="noopener"><b>곁애</b><small>사전등록(대기명단) 랜딩 페이지</small><span class="tag">8주차</span></a>
+      <a href="../sangjo/" target="_blank" rel="noopener"><b>고마움 상조</b><small>부고장 생성, 후불 정산 안내</small><span class="tag">8주차</span></a>
+      <a href="../edu/" target="_blank" rel="noopener"><b>통합돌봄사이버교육원</b><small>과정 안내·수강 신청·정보공개 페이지</small><span class="tag">8주차</span></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">누구를 위한 강의인가</span>
+    <h2>이런 분께 맞습니다</h2>
+    <div class="two">
+      <div class="card">
+        <h3>이런 분</h3>
+        <ul>
+          <li>엑셀·PPT는 쓰지만 코딩은 한 줄도 모르는 직장인</li>
+          <li>내 업무·내 동네·내 가게에 필요한 작은 서비스를 직접 만들고 싶은 분</li>
+          <li>유튜브에서 "되는 건 알겠는데 처음부터 끝까지가 없다"고 느낀 분</li>
+          <li>50대 이상, 천천히 따라가되 결과물은 확실히 갖고 싶은 분</li>
+        </ul>
+      </div>
+      <div class="card" style="background:var(--card-2)">
+        <h3>이런 분은 맞지 않습니다</h3>
+        <ul>
+          <li>이미 개발자라서 코드 문법을 깊게 배우고 싶은 분</li>
+          <li>앱스토어 출시용 네이티브 앱을 원하는 분 (이 과정은 웹 서비스입니다)</li>
+          <li>주 3시간을 낼 수 없는 분. 강의만 보면 안 되고 직접 만들어야 합니다</li>
+        </ul>
+        <p class="muted" style="margin:6px 0 0">해당된다면 신청하지 마세요. 돈과 시간이 아깝습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="curriculum">
+  <div class="wrap">
+    <span class="eyebrow">커리큘럼</span>
+    <h2>8주, 매주 하나씩 실제로 만듭니다</h2>
+    <p class="muted">모든 명령어는 맥(터미널)과 윈도우(PowerShell)를 나란히 보여드립니다. 강의 시점의 최신 버전 기준입니다.</p>
+    <div class="card" style="margin-top:16px;padding-top:6px;padding-bottom:6px">
+      <div class="week"><div class="n">1주<small>준비</small></div><div><h3>도구 세팅과 첫 대화</h3>클로드 코드·코워크 설치, 깃허브 계정, 폴더 구조. "AI에게 어떻게 말해야 하는가"를 여기서 익힙니다.<div class="made">결과물: 내 컴퓨터에서 AI가 파일을 만들고 고치는 것을 직접 확인</div></div></div>
+      <div class="week"><div class="n">2주<small>배포</small></div><div><h3>내 사이트를 인터넷에 올리기</h3>GitHub Pages로 무료 배포, 내 도메인 연결, 검색 노출(사이트맵·네이버 등록).<div class="made">결과물: 주소를 남에게 보낼 수 있는 내 페이지 · 사례 <a href="../domain-guide.html" target="_blank">도메인 가이드</a></div></div></div>
+      <div class="week"><div class="n">3주<small>자동화</small></div><div><h3>공공데이터를 매일 자동으로 받기</h3>공공데이터포털 API 키, GitHub Actions로 새벽마다 자동 수집, 실패했을 때 보는 법.<div class="made">결과물: 매일 갱신되는 데이터 페이지 · 사례 <a href="../silgeorae-lab.html" target="_blank">실거래가 분석</a>, <a href="../gukgam.html" target="_blank">국정감사 DB</a></div></div></div>
+      <div class="week"><div class="n">4주<small>데이터</small></div><div><h3>검색·필터·정렬이 되는 자료 페이지</h3>엑셀을 JSON으로 바꾸고, 수천 건을 검색하는 페이지. 서버 없이 됩니다.<div class="made">결과물: 내 분야 자료 DB · 사례 <a href="../ipsi/hakgwa.html" target="_blank">학과 1만 3천 개 검색</a></div></div></div>
+      <div class="week"><div class="n">5주<small>도구</small></div><div><h3>계산기와 인쇄물 만들기</h3>입력하면 계산해서 보여주고, 인쇄·PDF로 뽑는 페이지. 상담지·견적서·포스터.<div class="made">결과물: 내 업무용 계산기 · 사례 <a href="../yeongyangje/bokyong.html" target="_blank">영양제 상한 계산기</a>, <a href="../ipsi/my.html" target="_blank">성적표 분석 상담지</a></div></div></div>
+      <div class="week"><div class="n">6주<small>DB</small></div><div><h3>로그인과 저장</h3>Supabase로 회원가입·로그인, 내 것만 보이는 권한 설정. 서버 코드 없이.<div class="made">결과물: 로그인되는 내 서비스 · 사례 <a href="../gajeong/" target="_blank">목장 나눔터</a></div></div></div>
+      <div class="week"><div class="n">7주<small>AI</small></div><div><h3>내 서비스에 AI 붙이기</h3>AI API 키 발급, 키를 숨기는 프록시, 비용이 폭주하지 않게 하루 상한 걸기.<div class="made">결과물: AI가 답하는 기능 하나 · 사례 <a href="../nunchi/" target="_blank">눈치</a>, <a href="../newsletter/" target="_blank">뉴스레터 메이커</a></div></div></div>
+      <div class="week"><div class="n">8주<small>수익</small></div><div><h3>돈이 들어오는 구조</h3>사전등록 페이지, 광고·제휴 안내 페이지, 결제 링크 연결, 이 사전판매 페이지를 만든 방법.<div class="made">결과물: 신청·결제가 되는 내 서비스 · 사례 <a href="../jehyu.html" target="_blank">광고 제휴 모집</a>, <a href="../gyeotae/" target="_blank">사전등록</a>, 이 페이지</div></div></div>
+    </div>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card"><h3>강의 형식</h3><p class="muted" style="margin:6px 0 0">매주 60~90분 영상 + 따라 하기 과제. 영상은 무기한 다시 보기.</p></div>
+      <div class="card"><h3>질문</h3><p class="muted" style="margin:6px 0 0">수강생 전용 질문 게시판. 막힌 화면 캡처를 올리면 답합니다.</p></div>
+      <div class="card"><h3>수료 기준</h3><p class="muted" style="margin:6px 0 0">8주 뒤 본인 서비스 주소 1개 제출. 제출자에게 수료증 발급.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="price">
+  <div class="wrap">
+    <span class="eyebrow">사전판매</span>
+    <h2>얼리버드 조건</h2>
+    <div class="grid g2">
+      <div class="card price-card">
+        <span class="badge">얼리버드</span>
+        <div class="price"><span class="now" id="p-now"></span><span class="was" id="p-was"></span><span class="pct" id="p-pct"></span></div>
+        <dl class="kv">
+          <dt>마감</dt><dd id="p-deadline"></dd>
+          <dt>개강</dt><dd id="p-start"></dd>
+          <dt>정원</dt><dd id="p-seats"></dd>
+          <dt>포함</dt><dd>8주 영상, 과제, 질문 게시판, 무기한 다시 보기</dd>
+        </dl>
+        <div class="seats"><div class="track"><div class="fill" id="seat-fill"></div></div><div class="lbl" id="seat-lbl"></div></div>
+        <a class="btn primary block" href="#apply" style="margin-top:14px">신청하기</a>
+      </div>
+      <div class="card">
+        <h3>왜 사전판매인가</h3>
+        <p style="font-size:.95rem">강의는 아직 촬영 중입니다. 먼저 신청하신 분들의 질문을 받아 그 내용을 강의에 넣습니다. 그래서 먼저 오신 분께 싸게 드립니다. 낚시가 아니라 순서의 문제입니다.</p>
+        <h3 style="margin-top:14px">환불</h3>
+        <ul style="font-size:.95rem">
+          <li>개강 전: 이유 불문 전액 환불</li>
+          <li>개강 후: 아직 공개되지 않은 주차 비율만큼 환불</li>
+          <li>환불 요청은 이메일 한 통이면 됩니다</li>
+        </ul>
+        <h3 style="margin-top:14px">정가로 오를 때</h3>
+        <p class="muted" style="margin:0">마감일이 지나거나 정원이 차면 정가로 바뀝니다. 그 전에 신청하신 분은 계속 얼리버드 가격입니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="apply">
+  <div class="wrap">
+    <span class="eyebrow">신청</span>
+    <h2>얼리버드 신청</h2>
+    <div id="apply-embed" class="form-embed" style="display:none"></div>
+    <div id="apply-mail" class="card" style="display:none">
+      <p class="muted">아래를 적고 보내기를 누르면 메일 앱이 열립니다. 보내신 뒤 1~2일 안에 입금 안내와 함께 답장드립니다.</p>
+      <form class="form" id="mail-form">
+        <div class="two">
+          <div><label for="f-name">이름</label><input id="f-name" required placeholder="홍길동"></div>
+          <div><label for="f-phone">연락처</label><input id="f-phone" required placeholder="010-0000-0000"></div>
+        </div>
+        <div><label for="f-email">이메일 (강의 안내 받을 주소)</label><input id="f-email" type="email" required placeholder="name@example.com"></div>
+        <div><label for="f-level">지금 수준</label>
+          <select id="f-level">
+            <option>컴퓨터 기본 사용만 가능</option>
+            <option>엑셀·PPT 업무용으로 사용</option>
+            <option>AI 챗봇은 써봤지만 만들어본 적 없음</option>
+            <option>클로드 코드·코워크 설치까지 해봄</option>
+          </select></div>
+        <div><label for="f-goal">8주 뒤 만들고 싶은 것 (한 줄)</label><textarea id="f-goal" rows="3" placeholder="예: 우리 가게 예약 페이지, 우리 동네 정보 사이트, 업무용 계산기"></textarea></div>
+        <button class="btn primary block" type="submit">신청 메일 보내기</button>
+      </form>
+      <div class="ok-box" id="mail-ok">메일 앱이 열리지 않으면 <b id="mail-addr"></b> 로 이름·연락처·이메일을 직접 보내주세요.</div>
+      <p class="muted" style="margin:12px 0 0;font-size:.84rem">보내주신 정보는 수강 안내와 결제 확인에만 쓰고, 과정 종료 후 삭제합니다.</p>
+    </div>
+    <div id="apply-none" class="notice" style="display:none">신청 접수가 아직 열리지 않았습니다. 잠시 후 다시 확인해 주세요.</div>
+    <div id="apply-extra" class="muted" style="margin-top:14px"></div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <span class="eyebrow">자주 묻는 질문</span>
+    <h2>솔직하게 답합니다</h2>
+    <details><summary>정말 코딩을 몰라도 되나요?</summary><p>됩니다. 대신 "AI에게 정확히 말하는 법"은 배워야 합니다. 그게 이 과정의 절반입니다. 코드는 읽을 줄만 알면 되고, 그것도 강의 중에 자연스럽게 됩니다.</p></details>
+    <details><summary>AI 도구 비용은 얼마나 드나요?</summary><p>강의비와 별도로 AI 구독료가 듭니다. 클로드 유료 요금제 기준 월 2~3만 원대부터 시작할 수 있습니다. 요금은 바뀌므로 개강 시점 기준으로 다시 안내합니다. 배포·DB는 무료 범위로 충분합니다.</p></details>
+    <details><summary>맥이 아니라 윈도우인데요.</summary><p>모든 명령어를 맥과 윈도우 나란히 보여드립니다. 만든 사람도 두 환경을 다 씁니다.</p></details>
+    <details><summary>8주 안에 못 따라가면요?</summary><p>영상은 무기한 다시 볼 수 있고 질문 게시판도 계속 열려 있습니다. 8주는 권장 속도이지 마감이 아닙니다.</p></details>
+    <details><summary>만든 걸로 돈을 벌 수 있나요?</summary><p>보장하지 않습니다. 8주차에 신청·결제·광고 제휴 페이지 만드는 법은 가르치지만, 팔리는 건 여러분 아이템에 달렸습니다. "수익 보장"이라고 말하는 강의는 피하세요.</p></details>
+    <details><summary>영상은 언제부터 볼 수 있나요?</summary><p>개강일부터 매주 하나씩 공개됩니다. 사전판매 기간에는 영상이 없습니다. 그래서 개강 전 전액 환불입니다.</p></details>
+  </div>
+</section>
+
+<section id="who">
+  <div class="wrap">
+    <span class="eyebrow">만든 사람</span>
+    <h2>왜 제가 가르치나</h2>
+    <div class="card">
+      <p>개발자가 아닙니다. 위에 있는 14개 서비스를 전부 AI에게 말로 시켜서 만들었습니다. 막힌 곳, 돌아간 곳, 돈 낭비한 곳을 다 겪었기 때문에 어디서 여러분이 막힐지 압니다.</p>
+      <p>유튜브 <a id="yt-link" href="#" target="_blank" rel="noopener">노모어매뉴얼</a>에서 AI 도구를 발굴하고 조합하는 영상을 올립니다. 이 강의는 그 영상들에서 "처음부터 끝까지"가 빠져 있다는 댓글에 대한 답입니다.</p>
+      <p class="muted" style="margin:0">과장하지 않겠습니다. 위 14개를 눌러 보고, 이 정도면 배울 만하다고 느끼실 때 신청하세요.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b id="ft-brand"></b> · 문의 <a id="ft-mail" href="#"></a></p>
+    <p>사전판매 페이지 · 가격·일정은 위 표기 기준이며 변경 시 이 페이지에 먼저 반영합니다.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const C = window.CONFIG;
+  const won = n => n.toLocaleString('ko-KR') + '원';
+  const kdate = s => { const d = new Date(s + 'T00:00:00'); const w = '일월화수목금토'[d.getDay()]; return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${w})`; };
+  const pct = Math.round((1 - C.earlyPrice / C.listPrice) * 100);
+
+  document.getElementById('hero-price').textContent = won(C.earlyPrice);
+  document.getElementById('hero-start').textContent = kdate(C.startDate);
+  document.getElementById('p-now').textContent = won(C.earlyPrice);
+  document.getElementById('p-was').textContent = '정가 ' + won(C.listPrice);
+  document.getElementById('p-pct').textContent = pct + '% 할인';
+  document.getElementById('p-deadline').textContent = kdate(C.earlyDeadline) + ' 까지';
+  document.getElementById('p-start').textContent = kdate(C.startDate);
+  document.getElementById('p-seats').textContent = C.seats + '명';
+  const taken = Math.min(C.seatsTaken, C.seats);
+  document.getElementById('seat-fill').style.width = (taken / C.seats * 100) + '%';
+  document.getElementById('seat-lbl').textContent = `${taken}명 접수 · ${C.seats - taken}자리 남음`;
+  document.getElementById('brand').firstChild.textContent = C.brand + ' ';
+  document.getElementById('ft-brand').textContent = C.brand;
+  document.getElementById('yt-link').href = C.youtube || '#';
+  const fm = document.getElementById('ft-mail'); fm.textContent = C.email; fm.href = 'mailto:' + C.email;
+  document.title = C.courseName + ' — 혼자서 14개 서비스를 만든 과정 그대로';
+
+  // 마감·정원 초과 처리
+  const closed = new Date() > new Date(C.earlyDeadline + 'T23:59:59') || taken >= C.seats;
+  if (closed) {
+    document.querySelector('.price-card .badge').textContent = '얼리버드 마감';
+    document.getElementById('p-now').textContent = won(C.listPrice);
+    document.getElementById('p-was').textContent = '';
+    document.getElementById('p-pct').textContent = '정가';
+    document.getElementById('hero-price').textContent = won(C.listPrice);
+  }
+
+  // 신청 방식
+  const extra = [];
+  if (C.kakao) extra.push(`카카오톡 채널: <a href="${C.kakao}" target="_blank" rel="noopener">${C.kakao}</a>`);
+  if (C.bank) extra.push(`입금 계좌: ${C.bank}`);
+  document.getElementById('apply-extra').innerHTML = extra.join(' · ');
+
+  if (C.fundingUrl) {
+    const box = document.getElementById('apply-embed');
+    box.style.display = 'block';
+    box.innerHTML = `<div class="card"><p>신청과 결제는 펀딩 페이지에서 합니다. 환불도 펀딩 플랫폼 규정을 따릅니다.</p><a class="btn primary block" href="${C.fundingUrl}" target="_blank" rel="noopener">펀딩 페이지에서 신청하기</a></div>`;
+    document.querySelectorAll('a[href="#apply"]').forEach(a => { a.href = C.fundingUrl; a.target = '_blank'; a.rel = 'noopener'; });
+  } else if (C.formUrl) {
+    const box = document.getElementById('apply-embed');
+    box.style.display = 'block';
+    box.innerHTML = `<a class="btn primary block" href="${C.formUrl}" target="_blank" rel="noopener" style="margin-bottom:12px">신청 폼 열기</a><iframe src="${C.formUrl}" loading="lazy" title="신청 폼"></iframe>`;
+  } else if (C.email) {
+    document.getElementById('apply-mail').style.display = 'block';
+    document.getElementById('mail-addr').textContent = C.email;
+    document.getElementById('mail-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const g = id => document.getElementById(id).value.trim();
+      const subject = `[${C.courseName} 얼리버드 신청] ${g('f-name')}`;
+      const body = [`이름: ${g('f-name')}`, `연락처: ${g('f-phone')}`, `이메일: ${g('f-email')}`, `지금 수준: ${g('f-level')}`, `만들고 싶은 것: ${g('f-goal')}`, '', `신청 가격: ${closed ? won(C.listPrice) : won(C.earlyPrice)}`].join('\n');
+      location.href = `mailto:${C.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      document.getElementById('mail-ok').classList.add('on');
+    });
+  } else {
+    document.getElementById('apply-none').style.display = 'block';
+  }
+})();
+</script>
+</body>
+</html>
