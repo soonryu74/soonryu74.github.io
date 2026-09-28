@@ -17,12 +17,15 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from . import faces, layout, media, shorts, sfx
-from .thumbs import _draw_rich, fit_cover_faces, parse_rich
+from .thumbs import fit_cover_faces
 
 W, H = 1920, 1080
 FMT = "long"
-STYLE = ("biblical epic oil painting, dramatic chiaroscuro, warm gold and deep blue, cinematic light, "
-         "first century, no text, no letters, no watermark, no depiction of Jesus' face")
+# 유럽 대형 뮤지컬(레미제라블·노트르담 드 파리·엘리자벳) 무대 사진처럼
+STYLE = ("production photograph of a grand European stage musical like Les Miserables and Notre-Dame de Paris, "
+         "on a theatre stage, dramatic stage lighting, follow spotlight, volumetric light beams through haze, "
+         "backlit silhouettes, glossy dark stage floor reflecting light, painted scenic backdrop, cinematic, "
+         "no text, no letters, no watermark, no audience, no depiction of Jesus' face")
 
 
 def _f(path: str, pt: int) -> ImageFont.FreeTypeFont:
@@ -159,81 +162,181 @@ def align(lines: list[str], words: list, total: float) -> list[tuple[float, floa
     return [(float(a), float(b)) for a, b in spans]
 
 
-# ── 그림 ────────────────────────────────────────────────────
-def title_card(out: Path, series: str, ep: str, subtitle: str, cover: Path | None, fonts: dict) -> Path:
+# ── 무대 그림 ───────────────────────────────────────────────
+GOLD = (222, 186, 106)
+CRIMSON = (120, 12, 24)
+
+
+def curtain_half(w: int, h: int, left: bool) -> Image.Image:
+    """붉은 벨벳 커튼 반쪽 (주름 + 아래 금술)."""
+    import math
+    col = Image.new("RGB", (w, 1))
+    for x in range(w):
+        fold = 0.55 + 0.45 * abs(math.sin((x + (0 if left else 17)) / 38.0))
+        edge = 0.75 + 0.25 * (x / w if left else 1 - x / w)
+        k = fold * edge
+        col.putpixel((x, 0), tuple(int(c * k * 1.6) for c in CRIMSON))
+    img = col.resize((w, h)).convert("RGBA")
+    shade = Image.linear_gradient("L").resize((w, h)).point(lambda v: int(v * 0.45))
+    dark = Image.new("RGBA", (w, h), (0, 0, 0, 255))
+    dark.putalpha(shade)
+    img.alpha_composite(dark)
+    d = ImageDraw.Draw(img)
+    d.rectangle((0, h - 26, w, h), fill=GOLD + (255,))
+    for x in range(0, w, 14):
+        d.line((x, h - 26, x, h), fill=(150, 110, 40, 255), width=2)
+    return img
+
+
+def valance(w: int) -> Image.Image:
+    v = curtain_half(w, 150, True).resize((w, 150))
+    d = ImageDraw.Draw(v)
+    d.rectangle((0, 124, w, 150), fill=GOLD + (255,))
+    return v
+
+
+def stage_frame(img: Image.Image) -> Image.Image:
+    """장면에 무대 틀(가장자리 어둡게)을 씌운다."""
+    img = img.convert("RGBA")
+    w, h = img.size
+    m = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(m).ellipse((-w * 0.15, -h * 0.25, w * 1.15, h * 1.2), fill=255)
+    m = m.filter(ImageFilter.GaussianBlur(120)).point(lambda v: 255 - v)
+    dark = Image.new("RGBA", (w, h), (0, 0, 0, 255))
+    dark.putalpha(m.point(lambda v: int(v * 0.75)))
+    img.alpha_composite(dark)
+    return img
+
+
+def stage_bg(src: Path, out: Path) -> Path:
+    im = fit_cover_faces(Image.open(src).convert("RGB"), (W, H))
+    stage_frame(im).convert("RGB").save(out, quality=93)
+    return out
+
+
+def poster(out: Path, series: str, ep: str, subtitle: str, art: Path | None, fonts: dict,
+           kicker: str = "A BIBLICAL MUSICAL") -> Path:
+    """뮤지컬 포스터형 타이틀 (검은 무대 + 금색 명조 제목 + 장면 그림)."""
     out.parent.mkdir(parents=True, exist_ok=True)
-    base = Image.new("RGB", (W, H), (8, 10, 22))
-    if cover and Path(cover).exists():
-        im = Image.open(cover).convert("RGB")
-        bg = fit_cover_faces(im, (W, H)).filter(ImageFilter.GaussianBlur(26))
-        base = Image.blend(bg, Image.new("RGB", (W, H), (8, 10, 22)), 0.55)
-        side = int(H * 0.62)
-        art = im.resize((side, side), Image.LANCZOS)
-        base.paste(art, (W - side - 150, (H - side) // 2))
-        ImageDraw.Draw(base).rectangle((W - side - 150, (H - side) // 2, W - 150, (H + side) // 2),
-                                       outline=(214, 176, 92), width=4)
-    base = base.convert("RGBA")
+    base = Image.new("RGBA", (W, H), (6, 6, 10, 255))
+    if art and Path(art).exists():
+        im = fit_cover_faces(Image.open(art).convert("RGB"), (W, H))
+        base = stage_frame(Image.blend(im, Image.new("RGB", (W, H), (6, 6, 10)), 0.45))
+    g = Image.linear_gradient("L").rotate(90).resize((W, H)).point(lambda v: int((255 - v) * 0.85))
+    dark = Image.new("RGBA", (W, H), (4, 4, 8, 255))
+    dark.putalpha(g)
+    base.alpha_composite(dark)
+    base.alpha_composite(valance(W), (0, 0))
     d = ImageDraw.Draw(base)
-    gold = (226, 190, 110)
-    d.text((140, 300), series, font=_f(fonts["title"], 130), fill=gold, stroke_width=3, stroke_fill=(30, 20, 5))
-    d.line((144, 470, 760, 470), fill=gold, width=3)
-    d.text((140, 500), ep, font=_f(fonts["title"], 96), fill=(255, 255, 255))
-    y = 630
+    sf = fonts.get("serif", fonts["bold"])
+    d.text((150, 300), " ".join(kicker), font=_f(fonts["subtitle"], 30), fill=GOLD)
+    tf = _f(sf, 150)
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).text((144, 350), series, font=tf, fill=GOLD + (200,))
+    base.alpha_composite(glow.filter(ImageFilter.GaussianBlur(18)))
+    d = ImageDraw.Draw(base)
+    d.text((144, 350), series, font=tf, fill=(244, 214, 140), stroke_width=2, stroke_fill=(60, 40, 10))
+    d.line((150, 560, 700, 560), fill=GOLD, width=2)
+    d.text((150, 590), ep, font=_f(sf, 64), fill=(255, 255, 255))
+    y = 690
     for row in subtitle.split("\n")[:2]:
-        d.text((144, y), row, font=_f(fonts["bold"], 52), fill=(230, 232, 240))
-        y += 70
+        d.text((150, y), row, font=_f(sf, 46), fill=(232, 226, 214))
+        y += 64
     base.convert("RGB").save(out, quality=93)
     return out
 
 
-SPEAKER_COLOR = {"john": (120, 190, 255), "god": (230, 190, 100), "choir": (255, 255, 255), "music": (200, 200, 200)}
+def curtain_open(poster_img: Path, out: Path, sec: float = 1.6, fps: int = 30) -> Path:
+    """커튼이 양옆으로 열리는 짧은 영상."""
+    frames = out.parent / "curtain_frames"
+    frames.mkdir(parents=True, exist_ok=True)
+    bg = Image.open(poster_img).convert("RGBA")
+    L, R = curtain_half(W // 2 + 40, H, True), curtain_half(W // 2 + 40, H, False)
+    n = int(sec * fps)
+    for i in range(n + 1):
+        t = i / n
+        e = t * t * (3 - 2 * t)  # 부드럽게
+        f = bg.copy()
+        off = int(e * (W // 2 + 60))
+        f.alpha_composite(L, (-off, 0))
+        f.alpha_composite(R, (W // 2 - 40 + off, 0))
+        f.alpha_composite(valance(W), (0, 0))
+        f.convert("RGB").save(frames / f"f{i:03d}.jpg", quality=90)
+    media.run(["-framerate", str(fps), "-i", str(frames / "f%03d.jpg"), "-c:v", "libx264", "-pix_fmt", "yuv420p",
+               "-r", str(fps), str(out)])
+    return out
+
+
+SPEAKER = {"john": ("요한", "사도 · 테너"), "god": ("주의 음성", "내레이션"), "music": ("", "")}
+SPEAKER_COLOR = {"john": (140, 196, 255), "god": GOLD, "choir": (240, 236, 228), "music": (200, 200, 200)}
 
 
 def speaker_chip(out: Path, text: str, kind: str, fonts: dict) -> Path:
+    """공연 프로그램북처럼: 배역 이름(명조) + 가는 금선 + 작은 설명."""
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     if text:
-        f = _f(fonts["bold"], 38)
-        tw = int(f.getlength(text)) + 56
-        x, y = 72, 60
+        sf = fonts.get("serif", fonts["bold"])
+        name, sub = SPEAKER.get(kind, (text, ""))
+        if kind == "choir":
+            name, sub = text.replace(" 합창", ""), "합창 · Ensemble"
         col = SPEAKER_COLOR.get(kind, (255, 255, 255))
         d = ImageDraw.Draw(img)
-        d.rounded_rectangle((x, y, x + tw, y + 64), 32, fill=(8, 10, 20, 170), outline=col + (255,), width=3)
-        d.text((x + 28, y + 32), text, font=f, fill=col, anchor="lm")
+        x, y = 80, 64
+        d.text((x + 2, y + 3), name, font=_f(sf, 44), fill=(0, 0, 0, 160))
+        d.text((x, y), name, font=_f(sf, 44), fill=col)
+        d.line((x, y + 62, x + 260, y + 62), fill=GOLD + (220,), width=2)
+        d.text((x, y + 72), sub, font=_f(fonts["subtitle"], 26), fill=(220, 214, 200, 230))
     return layout._save(img, out)
 
 
 def bug(out: Path, text: str, fonts: dict) -> Path:
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    f = _f(fonts["title"], 40)
-    ImageDraw.Draw(img).text((W - 70, 70), text, font=f, fill=(226, 190, 110, 230), anchor="ra",
-                             stroke_width=2, stroke_fill=(0, 0, 0, 160))
+    f = _f(fonts.get("serif", fonts["title"]), 34)
+    ImageDraw.Draw(img).text((W - 80, 72), text, font=f, fill=GOLD + (220,), anchor="ra",
+                             stroke_width=2, stroke_fill=(0, 0, 0, 150))
     return layout._save(img, out)
 
 
 def lyric_png(out: Path, text: str, kind: str, fonts: dict, top: int) -> Path:
+    """공연 자막: 명조, 흰색(주의 음성은 금색), 은은한 그림자만."""
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    f = _f(fonts["title"] if kind == "choir" else fonts["bold"], 66 if kind == "choir" else 60)
-    while f.size > 40 and f.getlength(text.replace("*", "")) > W * 0.84:
-        f = _f(f.path, f.size - 4)
-    fill = (250, 232, 180) if kind == "god" else (255, 255, 255)
-    accent = (255, 214, 90)
-    # 뒤 그늘
-    band = Image.new("L", (W, 1), 0)
-    for x in range(W):
-        band.putpixel((x, 0), int(150 * max(0.0, 1 - abs(x - W / 2) / (W * 0.55))))
-    sh = Image.new("RGBA", (W, 150), (0, 0, 0, 255))
-    sh.putalpha(band.resize((W, 150)).filter(ImageFilter.GaussianBlur(30)))
-    img.alpha_composite(sh, (0, max(0, top - 30)))
-    _draw_rich(img, W / 2, top, parse_rich(text), f, fill, accent, 4, "center")
+    sf = fonts.get("serif", fonts["bold"])
+    size = 64 if kind == "choir" else 58
+    f = _f(sf, size)
+    t = text.replace("*", "")
+    while f.size > 38 and f.getlength(t) > W * 0.84:
+        f = _f(sf, f.size - 3)
+    fill = (246, 214, 140) if kind == "god" else (255, 255, 255)
+    sh = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(sh).text((W / 2 + 3, top + 4), t, font=f, fill=(0, 0, 0, 230), anchor="ma",
+                            stroke_width=10, stroke_fill=(0, 0, 0, 200))
+    img.alpha_composite(sh.filter(ImageFilter.GaussianBlur(9)))
+    ImageDraw.Draw(img).text((W / 2, top), t, font=f, fill=fill, anchor="ma", stroke_width=2, stroke_fill=(20, 14, 6))
     return layout._save(img, out)
 
 
-LYRIC_H = 90
+def curtain_call(out: Path, series: str, next_ep: str, fonts: dict, art: Path | None) -> Path:
+    base = poster(out, series, "", "", art, fonts, kicker="CURTAIN CALL")
+    img = Image.open(base).convert("RGBA")
+    d = ImageDraw.Draw(img)
+    sf = fonts.get("serif", fonts["bold"])
+    if next_ep:
+        d.text((150, 600), "다음 무대", font=_f(fonts["subtitle"], 34), fill=GOLD)
+        d.text((150, 650), next_ep, font=_f(sf, 56), fill=(255, 255, 255))
+    img.convert("RGB").save(out, quality=93)
+    return out
+
+
+LYRIC_H = 84
+PRE = 4.0    # 커튼 + 타이틀 (노래 시작 전)
+POST = 5.0   # 커튼콜
 
 
 # ── 만들기 ─────────────────────────────────────────────────
 def make(mp3: str, work: Path, cfg: dict, fonts: dict, series: str = "밧모섬의 증인", ep: str = "",
-         subtitle: str = "", images: str = "", prompts: list[str] | None = None, ai: bool = True) -> Path:
+         subtitle: str = "", images: str = "", prompts: list | None = None, ai: bool = True,
+         next_ep: str = "") -> Path:
+    """prompts[i]: 장면 i 의 무대 그림 설명 — 문자열 또는 [설명1, 설명2] (긴 장면을 둘로)."""
     from .miracle import ai_image
     work.mkdir(parents=True, exist_ok=True)
     title, lyrics = read_lyrics(mp3)
@@ -245,6 +348,10 @@ def make(mp3: str, work: Path, cfg: dict, fonts: dict, series: str = "밧모섬�
     if rec_f.exists():
         R = json.loads(rec_f.read_text(encoding="utf-8"))
         print("  recipe.json 사용 (고친 장면·시간 반영)")
+        if prompts:
+            for i, s in enumerate(R["sections"]):
+                if i < len(prompts):
+                    s["prompt"] = prompts[i]
     else:
         secs = parse(lyrics)
         lines = [ln for s in secs for ln in s["lines"]]
@@ -255,43 +362,62 @@ def make(mp3: str, work: Path, cfg: dict, fonts: dict, series: str = "밧모섬�
             s["times"] = spans[k:k + len(s["lines"])]
             k += len(s["lines"])
             s["prompt"] = (prompts[i] if prompts and i < len(prompts) else "")
-        R = {"title": title, "series": series, "ep": ep, "subtitle": subtitle, "sections": secs}
-        rec_f.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+        R = {"title": title, "series": series, "ep": ep, "subtitle": subtitle, "next": next_ep, "sections": secs}
+    R.update({"series": series, "ep": ep, "subtitle": subtitle, "next": next_ep or R.get("next", "")})
     secs = R["sections"]
-    intro_end = max(3.0, min(secs[0]["times"][0][0] - 0.3, 14.0))
-    # 장면 경계
-    starts = [intro_end] + [s["times"][0][0] - 0.4 for s in secs[1:]]
-    ends = starts[1:] + [total]
+    # 장면 경계 (노래 시간 + PRE)
+    starts = [PRE] + [PRE + s["times"][0][0] - 0.4 for s in secs[1:]]
+    ends = starts[1:] + [PRE + total]
     pics = sorted(p for p in Path(images).iterdir() if p.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp")) \
         if images else []
-    parts = []
-    tc = title_card(work / "bg" / "title.jpg", R["series"], R["ep"], R["subtitle"], cover, fonts)
-    parts.append(shorts.piece(work / "parts" / "p00.mp4", FMT, str(tc), intro_end, zoom=True))
+    bgdir = work / "bg"
+    bgdir.mkdir(parents=True, exist_ok=True)
+
+    def scene_img(prompt: str, name: str) -> Path | None:
+        if not (ai and prompt):
+            return None
+        raw = ai_image(prompt + ", " + STYLE, bgdir / f"{name}.jpg", cfg)
+        return stage_bg(raw, bgdir / f"{name}_stage.jpg") if raw else None
+
+    plan = []  # (시작, 끝, 그림)
     for i, s in enumerate(secs):
-        dur = ends[i] - starts[i]
-        bg = None
+        pr = s.get("prompt") or ""
+        prs = pr if isinstance(pr, list) else [pr]
+        imgs = []
         if pics:
-            bg = pics[i % len(pics)]
-        elif ai and s.get("prompt"):
-            bg = ai_image(s["prompt"] + ", " + STYLE, work / "bg" / f"s{i:02d}.jpg", cfg)
-        if not bg:
-            bg = cover or tc
-        s["bg"] = str(bg)
-        parts.append(shorts.piece(work / "parts" / f"p{i + 1:02d}.mp4", FMT, str(bg), dur, zoom=True))
+            imgs = [pics[i % len(pics)]]
+        else:
+            imgs = [p for p in (scene_img(q, f"s{i:02d}{chr(97 + j)}") for j, q in enumerate(prs)) if p]
+        if not imgs:
+            imgs = [stage_bg(cover, bgdir / "cover_stage.jpg") if cover else None]
+        seg = (ends[i] - starts[i]) / len(imgs)
+        for j, im in enumerate(imgs):
+            plan.append((starts[i] + seg * j, starts[i] + seg * (j + 1), im))
+        s["bg"] = [str(x) for x in imgs if x]
+    key_art = next((Path(b) for s in reversed(secs) for b in s.get("bg", [])), cover)
+    pst = poster(bgdir / "poster.jpg", R["series"], R["ep"], R["subtitle"], key_art, fonts)
+    parts = [shorts.piece(work / "parts" / "p000.mp4", FMT, str(curtain_open(pst, work / "parts" / "curtain.mp4")),
+                          1.6, zoom=False)]
+    parts.append(shorts.piece(work / "parts" / "p001.mp4", FMT, str(pst), PRE - 1.6, zoom=True))
+    for k2, (a, b, im) in enumerate(plan):
+        parts.append(shorts.piece(work / "parts" / f"p{k2 + 2:03d}.mp4", FMT, str(im or pst), b - a, zoom=True))
+    cc = curtain_call(bgdir / "curtain_call.jpg", R["series"], R.get("next", ""), fonts, key_art)
+    parts.append(shorts.piece(work / "parts" / "p999.mp4", FMT, str(cc), POST, zoom=False))
     base = shorts.join(parts, work / "parts" / "base.mp4")
-    ov = [(bug(work / "ov" / "bug.png", f"{R['series']}  {R['ep']}", fonts), intro_end, total)]
-    default_top = H - 170
+    ov = [(bug(work / "ov" / "bug.png", f"{R['series']}  ·  {R['ep']}", fonts), PRE, PRE + total)]
+    default_top = H - 160
     for i, s in enumerate(secs):
         ov.append((speaker_chip(work / "ov" / f"sp{i:02d}.png", s["speaker"], s["kind"], fonts), starts[i], ends[i]))
         for j, (ln, (a, b)) in enumerate(zip(s["lines"], s["times"])):
             nxt = s["times"][j + 1][0] if j + 1 < len(s["times"]) else (secs[i + 1]["times"][0][0] if i + 1 < len(secs) else total)
             b2 = min(max(b + 0.6, a + 1.6), nxt - 0.05)
-            fb = faces.boxes(str(base), a + 0.05, max(a + 0.1, b2 - 0.05), step=0.6)
-            top, _ = faces.place(fb, H, LYRIC_H, default_top, int(H * 0.2), H - 60)
+            fb = faces.boxes(str(base), PRE + a + 0.05, PRE + max(a + 0.1, b2 - 0.05), step=0.6)
+            top, _ = faces.place(fb, H, LYRIC_H, default_top, int(H * 0.2), H - 50)
             png = lyric_png(work / "ov" / f"l{i:02d}_{j:02d}.png", ln, s["kind"], fonts, top)
-            ov.append((png, a, b2))
+            ov.append((png, PRE + a, PRE + b2))
     out = work / f"{work.name}.mp4"
-    fx = [(str(sfx.ding(work / "sfx" / "ding.wav")), max(0.0, intro_end - 0.2), 0.25)]
-    shorts.finish(base, out, ov, audio=str(mp3), audio_offset=0.0, sfx=fx, duck=False)
-    (work / "recipe.json").write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    fx = [(str(sfx.ambient(work / "sfx" / "overture.wav", PRE + 1.0)), 0.0, 0.35),
+          (str(sfx.ding(work / "sfx" / "ding.wav")), PRE + total + 0.3, 0.3)]
+    shorts.finish(base, out, ov, audio=str(mp3), audio_offset=PRE, sfx=fx, duck=False)
+    rec_f.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
     return out

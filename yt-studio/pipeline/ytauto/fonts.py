@@ -4,6 +4,7 @@
   subtitle : 영상 자막 — 프리텐다드 SemiBold. 방송 자막처럼 또렷한 본문체
   bold     : 인용 제목·강조 — 프리텐다드 Black (새롭게하소서형 썸네일 제목)
   hand     : 손글씨 이름표·반응 자막 — 나눔손글씨 펜
+  serif    : 뮤지컬·공연 자막과 제목 — 나눔명조 ExtraBold
 
 처음 한 번 pipeline/fonts/ 에 내려받고, 받을 수 없으면 컴퓨터에 있는 한글 글꼴을 쓴다.
 """
@@ -33,6 +34,10 @@ DOWNLOADS = {
     "hand": ("NanumPenScript-Regular.ttf", [
         "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/nanumpenscript/NanumPenScript-Regular.ttf",
         "https://github.com/google/fonts/raw/main/ofl/nanumpenscript/NanumPenScript-Regular.ttf",
+    ]),
+    "serif": ("NanumMyeongjo-ExtraBold.ttf", [
+        "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/nanummyeongjo/NanumMyeongjo-ExtraBold.ttf",
+        "https://github.com/google/fonts/raw/main/ofl/nanummyeongjo/NanumMyeongjo-ExtraBold.ttf",
     ]),
 }
 
@@ -91,4 +96,5 @@ def font_set(cfg: dict) -> dict:
         "subtitle": find_font("subtitle", f.get("subtitle", "") or legacy),
         "bold": find_font("bold", f.get("bold", "")),
         "hand": find_font("hand", f.get("hand", "")),
+        "serif": find_font("serif", f.get("serif", "")),
     }
