@@ -25,8 +25,8 @@ body = lines[first_h1:]
 book = {
     "title": "역학조사관",
     "subtitle": "제1권 전설의 훈련단 · 제2권 일천일야",
-    "edition": "감량 개고 확정본",
-    "author": "soonryu",
+    "edition": "",
+    "author": "서해원",
     "language": "ko",
     "volumes": [],
 }
