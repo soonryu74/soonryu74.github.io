@@ -333,10 +333,21 @@ POST = 5.0   # 커튼콜
 
 
 # ── 만들기 ─────────────────────────────────────────────────
+def _fit_clip(src: Path, slot: float, out: Path) -> Path:
+    """영상 조각을 자리 길이에 맞춘다: 짧으면 최대 1.35배까지 천천히, 소리는 뺀다."""
+    d = media.duration(str(src))
+    k = min(max(slot / d, 1.0), 1.35) if d > 0 else 1.0
+    media.run(["-i", str(src), "-an", "-vf", f"setpts={k:.4f}*PTS", "-c:v", "libx264", "-preset", "veryfast",
+               "-crf", "18", "-pix_fmt", "yuv420p", str(out)])
+    return out
+
+
 def make(mp3: str, work: Path, cfg: dict, fonts: dict, series: str = "밧모섬의 증인", ep: str = "",
          subtitle: str = "", images: str = "", prompts: list | None = None, ai: bool = True,
-         next_ep: str = "") -> Path:
-    """prompts[i]: 장면 i 의 무대 그림 설명 — 문자열 또는 [설명1, 설명2] (긴 장면을 둘로)."""
+         next_ep: str = "", clips: str = "") -> Path:
+    """prompts[i]: 장면 i 의 무대 그림 설명 — 문자열 또는 [설명1, 설명2] (긴 장면을 둘로).
+    clips: Flow·Veo 로 뽑은 영상 폴더 (shot01.mp4 …). 결과 폴더의 shots.json 시간표대로 노래에 맞춰 붙이고,
+    빠진 장면은 무대 그림으로 채운다."""
     from .miracle import ai_image
     work.mkdir(parents=True, exist_ok=True)
     title, lyrics = read_lyrics(mp3)
@@ -394,13 +405,33 @@ def make(mp3: str, work: Path, cfg: dict, fonts: dict, series: str = "밧모섬�
         for j, im in enumerate(imgs):
             plan.append((starts[i] + seg * j, starts[i] + seg * (j + 1), im))
         s["bg"] = [str(x) for x in imgs if x]
+    shots_f = work / "shots.json"
+    if clips and shots_f.exists():  # 촬영 대본 시간표대로 영상 조각을 쓴다
+        shots = json.loads(shots_f.read_text(encoding="utf-8"))
+        cdir = Path(clips)
+        new_plan, used = [], 0
+        for k2, sh in enumerate(shots):
+            a = PRE + (sh["start"] if k2 else 0.0)
+            b = PRE + (shots[k2 + 1]["start"] if k2 + 1 < len(shots) else total)
+            src = next((cdir / f"shot{sh['no']:02d}{ext}" for ext in (".mp4", ".mov", ".webm")
+                        if (cdir / f"shot{sh['no']:02d}{ext}").exists()), None)
+            if src:
+                used += 1
+                src = _fit_clip(src, b - a, work / "clips_fit" / f"shot{sh['no']:02d}.mp4")
+            else:
+                sec_bg = secs[sh["sec"]].get("bg") or []
+                src = Path(sec_bg[0]) if sec_bg else None
+            new_plan.append((a, b, src))
+        print(f"  영상 조각 {used}/{len(shots)}개 사용 (나머지는 무대 그림)")
+        plan = new_plan
     key_art = next((Path(b) for s in reversed(secs) for b in s.get("bg", [])), cover)
     pst = poster(bgdir / "poster.jpg", R["series"], R["ep"], R["subtitle"], key_art, fonts)
     parts = [shorts.piece(work / "parts" / "p000.mp4", FMT, str(curtain_open(pst, work / "parts" / "curtain.mp4")),
                           1.6, zoom=False)]
     parts.append(shorts.piece(work / "parts" / "p001.mp4", FMT, str(pst), PRE - 1.6, zoom=True))
     for k2, (a, b, im) in enumerate(plan):
-        parts.append(shorts.piece(work / "parts" / f"p{k2 + 2:03d}.mp4", FMT, str(im or pst), b - a, zoom=True))
+        parts.append(shorts.piece(work / "parts" / f"p{k2 + 2:03d}.mp4", FMT, str(im or pst), b - a, zoom=True,
+                                  keep_audio=False))
     cc = curtain_call(bgdir / "curtain_call.jpg", R["series"], R.get("next", ""), fonts, key_art)
     parts.append(shorts.piece(work / "parts" / "p999.mp4", FMT, str(cc), POST, zoom=False))
     base = shorts.join(parts, work / "parts" / "base.mp4")
