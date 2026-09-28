@@ -202,6 +202,7 @@
     <label class="f" style="margin-bottom:12px"><span>틀 고르기</span><select name="layout" id="thumb-layout">
       <option value="saga">사진 한 장 3종 (인용형 · 예능 자막형 · 얼굴+두 줄형)</option>
       <option value="showcase">장면 카드형 (오빠두·어비월드·언더스탠딩 공통 공식, 노모어매뉴얼용)</option>
+      <option value="shorts">쇼츠 세로 표지 4종 (말풍선 · 자막상자 · 질문-답 · 카드)</option>
     </select></label>
     <div class="drop"><input type="file" name="photo" accept="image/*"><b>장면 사진</b> (장면 카드형에서는 결과 화면·장면)<div class="names"></div></div>
     <div class="grid sc-only hidden" style="margin-top:14px">
@@ -210,7 +211,16 @@
       <label class="f"><span>손글씨 반응</span><input type="text" name="doodle" placeholder="예: 진짜 자동?"><small>| 로 여러 개</small></label>
       <div class="drop"><input type="file" name="person" accept="image/png"><b>대표님 사진</b> (배경 지운 PNG, 선택)<br><small>넣으면 오른쪽에 크게 서요</small><div class="names"></div></div>
     </div>
-    <div class="grid" style="margin-top:14px">
+    <div class="grid sh-only hidden" style="margin-top:14px">
+      <label class="f"><span>큰 말 (필수)</span><input type="text" name="s_big" placeholder="일이\n*선교*다!"><small>줄바꿈 \n · 강조 *단어* 하나만</small></label>
+      <label class="f"><span>위 작은 줄</span><input type="text" name="s_hook" placeholder="남군산교회에서 온 한마디"><small>자막상자형·질문-답형 위 줄</small></label>
+      <label class="f"><span>말한 사람</span><input type="text" name="s_who" placeholder="SaGA 거점교회 · 남군산교회"><small>말풍선 아래</small></label>
+      <label class="f"><span>누구에게 (꼬리표)</span><input type="text" name="s_target" placeholder="월요일이 무거운 직장인께"></label>
+      <label class="f"><span>답 한 단어 (질문-답형)</span><input type="text" name="s_answer" placeholder="비우면 *강조* 단어를 씀"></label>
+      <label class="f"><span>도장 (카드형)</span><input type="text" name="s_stamp" placeholder="60초"></label>
+      <label class="f"><span>색</span><select name="s_series"></select></label>
+    </div>
+    <div class="grid main-only" style="margin-top:14px">
       <label class="f"><span>인용 문구</span><input type="text" name="quote" placeholder="주일엔 제자,\n월요일엔 *그냥 직장인*"><small>줄바꿈 \n · 강조 *단어*</small></label>
       <label class="f"><span>이름</span><input type="text" name="name"></label>
       <label class="f"><span>직함·기수</span><input type="text" name="role"></label>
@@ -277,6 +287,7 @@
     pick("#f-cheer select[name=series]", "intro");
     pick("#f-clip select[name=series]", "dean");
     pick("#f-thumb select[name=series]", "referral");
+    pick("#f-thumb select[name=s_series]", "referral");
   }).catch(() => { $("#status").innerHTML = "<span class='no'>서버 연결 안 됨</span>"; });
 
   $("#f-cheer select[name=music]").addEventListener("change", (e) => $(".music-file").classList.toggle("hidden", e.target.value !== "file"));
@@ -327,8 +338,10 @@
   formWire("#f-cheer", "/api/cheer");
   formWire("#f-thumb", "/api/thumb");
   $("#thumb-layout").addEventListener("change", (e) => {
-    const sc = e.target.value === "showcase";
+    const sc = e.target.value === "showcase", sh = e.target.value === "shorts";
     $$("#f-thumb .sc-only").forEach((el) => el.classList.toggle("hidden", !sc));
+    $$("#f-thumb .sh-only").forEach((el) => el.classList.toggle("hidden", !sh));
+    $$("#f-thumb .main-only").forEach((el) => el.classList.toggle("hidden", sh));
     $("#f-thumb input[name=big]").placeholder = sc ? "!윗줄은 전체 노란색\n아랫줄 *핵심어*만 초록" : "비우면 인용 문구를 씀. 예: 월요일도 *예배*입니다";
     const sel = $("#f-thumb select[name=series]"); if (sc && sel) sel.value = "nomore";
   });

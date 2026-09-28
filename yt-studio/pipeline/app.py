@@ -475,6 +475,31 @@ def api_thumb():
     p = {k: _form(k) for k in ("quote", "name", "role", "kicker", "notes", "side", "series", "logo",
                                "hook", "big", "badge", "layout", "channel", "logo_text", "doodle")}
     person = _save_uploads("person", up / "person")
+    if p["layout"] == "shorts":
+        from ytauto import covers
+        q = {k: _form(k) for k in ("s_big", "s_hook", "s_who", "s_target", "s_answer", "s_stamp", "s_series")}
+        if not q["s_big"]:
+            return jsonify({"error": "큰 말을 적어 주세요."}), 400
+
+        def run_sh(job):
+            out_dir = SAGA / "thumbnails" / ("쇼츠_" + slug(q["s_big"].replace("*", "").replace("\\n", " ")))
+            th = series.get(q["s_series"] or "referral")["theme"]
+            ph = photo[0] if photo else None
+            m = re.search(r"\*([^*]+)\*", q["s_big"])
+            answer = q["s_answer"] or (m.group(1) if m else q["s_big"].replace("*", "").split("\n")[-1])
+            cta = (series.brand(CFG).get("cta") or [""])[0]
+            plan = [("1_말풍선", "bubble", dict(big=q["s_big"], who=q["s_who"])),
+                    ("2_자막상자", "box", dict(hook=q["s_hook"], big=q["s_big"])),
+                    ("3_질문답", "answer", dict(hook=q["s_hook"], big=answer, target=q["s_target"])),
+                    ("4_카드", "card", dict(target=q["s_target"], big=q["s_big"], stamp=q["s_stamp"], cta=cta))]
+            res = []
+            for name, style, kw in plan:
+                o = covers.shorts_cover(out_dir / f"{name}.jpg", style, fonts(), ph, theme=th, **kw)
+                res.append((o, f"쇼츠 표지 · {name.split('_')[1]}"))
+            return res
+
+        j = submit("쇼츠 표지", q["s_big"].replace("*", "").replace("\n", " "), run_sh)
+        return jsonify({"id": j.id})
     if p["layout"] == "showcase":
         if not p["big"]:
             return jsonify({"error": "큰 두 줄 문구를 적어 주세요."}), 400
