@@ -479,6 +479,7 @@ def cine_role(out: Path, text: str, kind: str, fonts: dict) -> Path:
         name, sub = SPEAKER.get(kind, (text, ""))
         if kind == "choir":
             name, sub = text.replace(" 합창", ""), "합창"
+            name = re.sub(r"\s+[A-Za-z][A-Za-z ]*$", "", name.replace(": ", " · "))  # '첫째 유형 · 그리스도 대 문화'
         d = ImageDraw.Draw(img)
         d.text((80, 70), name, font=_f(sf, 38), fill=SPEAKER_COLOR.get(kind, (240, 236, 228)), anchor="lm")
         x = 80 + _f(sf, 38).getlength(name) + 18
@@ -559,3 +560,56 @@ def make_cinema(mp3: str, work: Path, cfg: dict, fonts: dict, scene_imgs: dict, 
     fx = [(str(sfx.ding(work / "sfx" / "ding.wav")), PRE_C + total + 0.3, 0.3)]
     shorts.finish(base, out, ov, audio=str(mp3), audio_offset=PRE_C, sfx=fx, duck=False)
     return out
+
+
+def build_shots(R: dict, total: float, max_len: float = 8.0, min_len: float = 4.0) -> list[dict]:
+    """가사 줄 경계를 따라 5~8초 컷으로 나눈다 (짧은 자투리는 앞 컷에 붙인다)."""
+    secs, raw = R["sections"], []
+    for i, s in enumerate(secs):
+        t = s["times"]
+        sec_end = secs[i + 1]["times"][0][0] - 0.3 if i + 1 < len(secs) else total
+        cur, lines = (0.0 if i == 0 else t[0][0] - 0.3), []
+        for j, ln in enumerate(s["lines"]):
+            lines.append(ln)
+            nxt = t[j + 1][0] - 0.3 if j + 1 < len(t) else sec_end
+            if nxt - cur >= 5.0 or j + 1 == len(t):
+                while nxt - cur > max_len + 0.4:
+                    raw.append({"sec": i, "speaker": s["speaker"], "start": round(cur, 2), "end": round(cur + max_len - 0.5, 2), "lines": lines})
+                    cur += max_len - 0.5
+                    lines = []
+                raw.append({"sec": i, "speaker": s["speaker"], "start": round(cur, 2), "end": round(nxt, 2), "lines": lines})
+                cur, lines = nxt, []
+    shots = []
+    for s in raw:
+        if shots and s["end"] - s["start"] < min_len and shots[-1]["sec"] == s["sec"]:
+            shots[-1]["end"] = s["end"]
+            shots[-1]["lines"] += s["lines"]
+        else:
+            shots.append(s)
+    for k, s in enumerate(shots, 1):
+        s["no"], s["file"] = k, f"shot{k:02d}.mp4"
+    return shots
+
+
+def prepare(mp3: str, work: Path, series: str, ep: str, subtitle: str) -> dict:
+    """받아쓰기로 가사-노래 시간 맞춤 → recipe.json, 컷 시간표 → shots.json (이미 있으면 그대로)."""
+    work.mkdir(parents=True, exist_ok=True)
+    title, lyrics = read_lyrics(mp3)
+    total = media.duration(mp3)
+    rec_f = work / "recipe.json"
+    if rec_f.exists():
+        R = json.loads(rec_f.read_text(encoding="utf-8"))
+    else:
+        secs = parse(lyrics)
+        lines = [ln for s in secs for ln in s["lines"]]
+        spans = align(lines, whisper_words(mp3, work / "words.json", " ".join(lines)), total)
+        k = 0
+        for s in secs:
+            s["times"] = spans[k:k + len(s["lines"])]
+            k += len(s["lines"])
+        R = {"title": title, "series": series, "ep": ep, "subtitle": subtitle, "sections": secs}
+        rec_f.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    sh_f = work / "shots.json"
+    if not sh_f.exists():
+        sh_f.write_text(json.dumps(build_shots(R, total), ensure_ascii=False, indent=1), encoding="utf-8")
+    return R
