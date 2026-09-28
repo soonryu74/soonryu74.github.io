@@ -335,6 +335,7 @@ POST = 5.0   # 커튼콜
 # ── 만들기 ─────────────────────────────────────────────────
 def _fit_clip(src: Path, slot: float, out: Path) -> Path:
     """영상 조각을 자리 길이에 맞춘다: 짧으면 최대 1.35배까지 천천히, 소리는 뺀다."""
+    out.parent.mkdir(parents=True, exist_ok=True)
     d = media.duration(str(src))
     k = min(max(slot / d, 1.0), 1.35) if d > 0 else 1.0
     media.run(["-i", str(src), "-an", "-vf", f"setpts={k:.4f}*PTS", "-c:v", "libx264", "-preset", "veryfast",

@@ -24,8 +24,10 @@ def has_audio(path: str) -> bool:
 
 
 def _enc(out: Path, dur: float) -> list[str]:
+    # 색 정보를 모든 조각에 똑같이 적는다 — 영상·그림 조각이 섞여도 이어 붙인 뒤 글자 얹기가 끊기지 않게
     return ["-t", f"{dur:.3f}", "-r", str(FPS), "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
-            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
+            "-pix_fmt", "yuv420p", "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
+            "-color_range", "tv", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
             "-movflags", "+faststart", str(out)]
 
 
@@ -87,7 +89,7 @@ def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
     wave: {"x","y","w","h","start","end","color"} 음성 파형 표시.
     sfx: [(효과음 파일, 시작초, 음량)].  duck: 말소리가 나올 때 배경음을 자동으로 줄이기."""
     dur = media.duration(str(base))
-    args = ["-i", str(base)]
+    args = ["-reinit_filter", "0", "-i", str(base)]  # 조각마다 영상 정보가 달라도 필터를 다시 만들지 않는다
     n = 1
     aud_idx = 0
     if audio:
