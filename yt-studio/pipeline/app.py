@@ -162,6 +162,20 @@ def _frame_at(video: Path, t: float, out: Path) -> Path | None:
         return None
 
 
+def _covers(job: Job, video: Path, out_dir: Path, plan: list, theme: dict, need_face: bool = False) -> list:
+    """쇼츠 표지를 영상과 함께 자동으로. plan: [(파일이름, style, kw), ...]"""
+    from ytauto import covers
+    res = []
+    try:
+        shot = covers.best_frame(video, out_dir / "_frames" / "cover_src.jpg", need_face=need_face)
+        for name, style, kw in plan:
+            o = covers.shorts_cover(out_dir / f"{name}.jpg", style, fonts(), shot, theme=theme, **kw)
+            res.append((o, f"쇼츠 표지 · {name.split('_', 1)[-1]}"))
+    except Exception as e:
+        print(f"  쇼츠 표지를 건너뜀 ({type(e).__name__}: {e})")
+    return res
+
+
 # ── 화면 ─────────────────────────────────────────────────
 @app.get("/")
 def index():
@@ -241,6 +255,11 @@ def api_cheer():
                          p["tag_role"], "shorts", None, music, effects)
         res = [(out, "완성 쇼츠")]
         _check_faces(out, work / "base.mp4", job)
+        who = " · ".join(x for x in (p["tag"], p["tag_role"]) if x)
+        res += _covers(job, work / "base.mp4", work / "쇼츠표지", [
+            ("표지_말풍선", "bubble", dict(big=p["shout"], who=who)),
+            ("표지_자막상자", "box", dict(hook=p["label"] or who, big=p["shout"]))],
+            series.get(p["series"] or "intro")["theme"])
         if make_thumb:
             ev = json.loads((work / "events.json").read_text(encoding="utf-8"))
             t = (ev[len(ev) // 2][0] + 0.4) if ev else 1.0
@@ -293,6 +312,12 @@ def api_column():
                               p["series"] or "column", "shorts")
             res += [(out, "완성 쇼츠"), (work / "자막.srt", "자막 파일 (고칠 수 있어요)")]
             _check_faces(out, work / "parts" / "base.mp4", job)
+            from ytauto import covers
+            th_c = series.get(p["series"] or "column")["theme"]
+            res += _covers(job, work / "parts" / "base.mp4", work / "쇼츠표지", [
+                ("표지_질문답", "answer", dict(hook=p["name"] or "극동방송 1분 칼럼", big=covers.star_word(title),
+                                             target="극동방송 1분 칼럼")),
+                ("표지_자막상자", "box", dict(hook="극동방송 1분 칼럼", big=title))], th_c)
             job.extra["srt"] = str((work / "자막.srt").relative_to(PROJECTS))
             if p["quote"]:
                 proj = {"title": title.replace("*", ""), "thumbnail_quote": p["quote"], "thumbnail_name": p["name"],
@@ -358,11 +383,22 @@ def api_clip():
         work = SAGA / (p["series"] or "lecture") / name
         outs = clipper.make(str(vids[0]), work, CFG, fonts(), p["series"] or "lecture", count, p["name"], p["role"],
                             p["fit"] or "blur", 0.5, p["script"], p["source_url"], "shorts")
-        for o in outs:
-            _check_faces(o, o.with_suffix("").parent / f"clip{int(o.stem.split('_')[-1]):02d}" / "base.mp4", job)
+        res = []
+        clips = json.loads((work / "clips.json").read_text(encoding="utf-8"))
+        th_l = series.get(p["series"] or "lecture")["theme"]
+        for i, o in enumerate(outs):
+            base = o.with_suffix("").parent / f"clip{int(o.stem.split('_')[-1]):02d}" / "base.mp4"
+            _check_faces(o, base, job)
+            res.append((o, "쇼츠"))
+            t = clips[i].get("title", "") if i < len(clips) else ""
+            if t:
+                res += _covers(job, base, work / "쇼츠표지", [
+                    (f"표지{i + 1:02d}_자막상자", "box",
+                     dict(hook=" · ".join(x for x in (p["name"], series.get(p["series"] or "lecture")["name"]) if x), big=t))],
+                    th_l)
         job.extra["clips"] = str((work / "clips.json").relative_to(PROJECTS))
         job.extra["rerun"] = {"video": str(vids[0]), **p, "count": count, "out": name}
-        return [(o, "쇼츠") for o in outs] + [(work / "업로드정보.txt", "제목·원본 구간 정보")]
+        return res + [(work / "업로드정보.txt", "제목·원본 구간 정보")]
 
     j = submit("강의 쇼츠", f"{vids[0].stem} → {count}편", run)
     return jsonify({"id": j.id})
@@ -459,6 +495,13 @@ def ref_make(key):
             out = compose.render(f, CFG, fonts(), fm)
             _check_faces(out, REF / "output" / f"{key}_{fm}" / "base.mp4", job)
             res.append((out, "세로 쇼츠" if fm == "shorts" else "가로 영상"))
+            if fm == "shorts":
+                r = json.loads(f.read_text(encoding="utf-8"))
+                cta = (series.brand(CFG).get("cta") or [""])[0]
+                res += _covers(job, REF / "output" / f"{key}_{fm}" / "base.mp4", REF / "output" / f"{key}_표지", [
+                    ("표지_카드", "card", dict(target=r.get("label", ""), big=r.get("title", ""), stamp="60초", cta=cta)),
+                    ("표지_자막상자", "box", dict(hook=r.get("label", ""), big=r.get("title", "")))],
+                    series.get("referral")["theme"], need_face=True)
         return res
 
     j = submit("추천 영상", key, run)

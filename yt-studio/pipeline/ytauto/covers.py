@@ -75,6 +75,8 @@ def _hits(fb, y0, y1, x0=0, x1=W, pad=30) -> bool:
 def _pick_y(fb, block_h: int, prefer: str = "top") -> int:
     """얼굴을 피하는 글자 덩어리 위쪽 y. 위·아래 후보를 차례로 본다."""
     top, low = SAFE_TOP + 40, SAFE_BOTTOM - block_h
+    if not fb:  # 얼굴이 없으면 화면 가운데보다 조금 위 (위만 차고 아래가 비어 보이지 않게)
+        return int(max(top, (SAFE_TOP + SAFE_BOTTOM - block_h) / 2 - 80))
     cands = [top, low] if prefer == "top" else [low, top]
     if fb:  # 얼굴 바로 아래·바로 위도 후보로
         cands += [max(b[3] for b in fb) + 40, min(b[1] for b in fb) - 40 - block_h]
@@ -362,3 +364,43 @@ def shorts_cover(out: Path, style: str, fonts: dict, photo=None, big: str = "", 
     out.parent.mkdir(parents=True, exist_ok=True)
     base.convert("RGB").save(out, quality=93)
     return out
+
+
+# ── 영상에서 표지용 장면 고르기 ─────────────────────────────
+def best_frame(video, out: Path, n: int = 8, need_face: bool = False) -> Path | None:
+    """영상 여러 지점을 보고 얼굴이 가장 크게 나온 장면 한 장. 얼굴이 없으면 가운데 장면
+    (need_face=True 면 None — 글자 화면만 있는 영상에서 글자 위에 글자가 겹치지 않게)."""
+    from . import media
+    try:
+        dur = media.duration(str(video))
+    except Exception:
+        return None
+    out.parent.mkdir(parents=True, exist_ok=True)
+    best, best_area = None, -1
+    for i in range(n):
+        t = dur * (0.12 + 0.76 * i / max(1, n - 1))
+        p = out.with_name(f"{out.stem}_{i}.jpg")
+        try:
+            media.run(["-ss", f"{t:.2f}", "-i", str(video), "-frames:v", "1", "-q:v", "2", str(p)])
+            img = Image.open(p).convert("RGB")
+        except Exception:
+            continue
+        area = sum((b[2] - b[0]) * (b[3] - b[1]) for b in _face_boxes(img)) / (img.width * img.height)
+        if i == n // 2 and best is None:
+            best = p
+        if area > best_area:
+            best, best_area = p, area
+    if best is None or (need_face and best_area <= 0):
+        return None
+    Image.open(best).save(out, quality=94)
+    return out
+
+
+def star_word(text: str) -> str:
+    """'일이 *선교*다!' → '선교'. 별표가 없으면 마지막 낱말."""
+    import re
+    m = re.search(r"\*([^*]+)\*", text or "")
+    if m:
+        return m.group(1)
+    words = re.sub(r"\\n", " ", text or "").split()
+    return words[-1].strip(".,!?") if words else ""
