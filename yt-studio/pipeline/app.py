@@ -509,6 +509,12 @@ def ref_make(key):
 
 
 # ── 5. 썸네일 ────────────────────────────────────────────
+@app.get("/api/brandkit")
+def brandkit_list():
+    from ytauto import brandkit
+    return jsonify(brandkit.PRESETS)
+
+
 @app.post("/api/thumb")
 def api_thumb():
     from ytauto import thumbs
@@ -518,6 +524,21 @@ def api_thumb():
     p = {k: _form(k) for k in ("quote", "name", "role", "kicker", "notes", "side", "series", "logo",
                                "hook", "big", "badge", "layout", "channel", "logo_text", "doodle")}
     person = _save_uploads("person", up / "person")
+    if p["layout"] == "kit":
+        from ytauto import brandkit
+        q = {k[2:]: _form(k) for k in ("k_series", "k_big", "k_hook", "k_who", "k_role", "k_target", "k_sub",
+                                        "k_day", "k_total", "k_places")}
+        if not q["big"]:
+            return jsonify({"error": "큰 말을 적어 주세요."}), 400
+        kphotos = _save_uploads("k_photos", up / "kit")
+        key = q.pop("series") or "intro"
+
+        def run_kit(job):
+            out_dir = SAGA / "thumbnails" / (series.get(key)["name"] + "_" + slug(q["big"].replace("*", "").replace("\\n", " ")))
+            return brandkit.make(key, out_dir, fonts(), CFG, kphotos, q)
+
+        j = submit("고정 틀 썸네일", series.get(key)["name"] + " · " + q["big"].replace("*", "").replace("\\n", " "), run_kit)
+        return jsonify({"id": j.id})
     if p["layout"] == "shorts":
         from ytauto import covers
         q = {k: _form(k) for k in ("s_big", "s_hook", "s_who", "s_target", "s_answer", "s_stamp", "s_series")}

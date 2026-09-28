@@ -196,15 +196,35 @@
 
 <!-- 5. 썸네일 -->
 <section id="t-thumb" class="card hidden">
-  <h2>새롭게하소서형 썸네일</h2>
-  <p class="lead">실제 장면 사진 한 장으로 3종이 한 번에 나와요: <b>인용형</b>(새롭게하소서 고전) · <b>예능 자막형</b>(새롭게하소서 최근) · <b>얼굴 + 큰 두 줄형</b>(오빠두엑셀). 글자는 얼굴을 피해 들어가요.</p>
+  <h2>썸네일 · 쇼츠 표지</h2>
+  <p class="lead"><b>재생목록 고정 틀</b>을 고르면 재생목록마다 확정된 모양·색으로 쇼츠 표지(9:16)와 가로 썸네일(16:9)이 한 번에 나와요. 누가 만들어도 같은 모양이라 채널이 통일돼 보여요. 글자는 얼굴을 피해서 들어가요.</p>
   <form id="f-thumb">
     <label class="f" style="margin-bottom:12px"><span>틀 고르기</span><select name="layout" id="thumb-layout">
+      <option value="kit" selected>재생목록 고정 틀 (추천 · 누가 만들어도 같은 모양)</option>
       <option value="saga">사진 한 장 3종 (인용형 · 예능 자막형 · 얼굴+두 줄형)</option>
       <option value="showcase">장면 카드형 (오빠두·어비월드·언더스탠딩 공통 공식, 노모어매뉴얼용)</option>
       <option value="shorts">쇼츠 세로 표지 4종 (말풍선 · 자막상자 · 질문-답 · 카드)</option>
     </select></label>
-    <div class="drop"><input type="file" name="photo" accept="image/*"><b>장면 사진</b> (장면 카드형에서는 결과 화면·장면)<div class="names"></div></div>
+    <div class="kit-only">
+      <div class="grid">
+        <label class="f"><span>재생목록</span><select name="k_series"></select><small id="kit-desc"></small></label>
+        <div class="drop"><input type="file" name="k_photos" accept="image/*" multiple><b>사진 (여러 장 가능)</b> — 첫 장이 대표 사진. 응원 릴레이는 사람마다 한 장씩<div class="names"></div></div>
+      </div>
+      <div class="grid" style="margin-top:14px">
+        <label class="f"><span>큰 말 (필수)</span><input type="text" name="k_big" placeholder="일이\n*선교*다!"><small>줄바꿈 \n · 강조 *단어* 하나</small></label>
+        <label class="f"><span>위 작은 줄</span><input type="text" name="k_hook" placeholder="남군산교회에서 온 한마디"></label>
+        <label class="f"><span>이름</span><input type="text" name="k_who" placeholder="예: 홍길동"></label>
+        <label class="f"><span>직함·소속</span><input type="text" name="k_role" placeholder="예: SaGA 거점교회"></label>
+        <label class="f"><span>누구에게 (꼬리표)</span><input type="text" name="k_target" placeholder="월요일이 무거운 직장인께"></label>
+        <label class="f"><span>영어·보조 한 줄</span><input type="text" name="k_sub" placeholder="Business is Mission!"></label>
+      </div>
+      <div class="grid kit-trip hidden" style="margin-top:14px">
+        <label class="f"><span>DAY (며칠째)</span><input type="number" name="k_day" value="1" min="1"></label>
+        <label class="f"><span>전체 일수</span><input type="number" name="k_total" value="9" min="1"></label>
+        <label class="f"><span>장소 (줄마다 하나)</span><input type="text" name="k_places" placeholder="빌라델비아\n사데\n*에베소*"></label>
+      </div>
+    </div>
+    <div class="drop not-kit hidden"><input type="file" name="photo" accept="image/*"><b>장면 사진</b> (장면 카드형에서는 결과 화면·장면)<div class="names"></div></div>
     <div class="grid sc-only hidden" style="margin-top:14px">
       <label class="f"><span>채널 이름 (왼쪽 위 상자)</span><input type="text" name="channel" value="노모어매뉴얼"></label>
       <label class="f"><span>도구 이름 로고</span><input type="text" name="logo_text" placeholder="예: Flow · SUNO · Claude"></label>
@@ -220,7 +240,7 @@
       <label class="f"><span>도장 (카드형)</span><input type="text" name="s_stamp" placeholder="60초"></label>
       <label class="f"><span>색</span><select name="s_series"></select></label>
     </div>
-    <div class="grid main-only" style="margin-top:14px">
+    <div class="grid main-only hidden" style="margin-top:14px">
       <label class="f"><span>인용 문구</span><input type="text" name="quote" placeholder="주일엔 제자,\n월요일엔 *그냥 직장인*"><small>줄바꿈 \n · 강조 *단어*</small></label>
       <label class="f"><span>이름</span><input type="text" name="name"></label>
       <label class="f"><span>직함·기수</span><input type="text" name="role"></label>
@@ -282,12 +302,14 @@
       chip(s.ai, s.ai ? "대본 AI 연결됨" : "대본 AI 꺼짐 (강의 구간은 고르게 나눠요)");
     $("#ai-note").textContent = s.ai ? "AI 가 구간을 골라요" : "로컬 AI 가 꺼져 있어 고르게 나눠 뽑아요. LM Studio 를 켜면 AI 가 골라요.";
     const opts = Object.entries(s.series).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("");
-    $$("select[name=series]").forEach((sel) => { sel.innerHTML = opts; });
+    $$("select[name=series], select[name=s_series], select[name=k_series]").forEach((sel) => { sel.innerHTML = opts; });
     const pick = (sel, v) => { const el = $(sel); if (el) el.value = v; };
     pick("#f-cheer select[name=series]", "intro");
     pick("#f-clip select[name=series]", "dean");
     pick("#f-thumb select[name=series]", "referral");
     pick("#f-thumb select[name=s_series]", "referral");
+    pick("#f-thumb select[name=k_series]", "intro");
+    kitDesc();
   }).catch(() => { $("#status").innerHTML = "<span class='no'>서버 연결 안 됨</span>"; });
 
   $("#f-cheer select[name=music]").addEventListener("change", (e) => $(".music-file").classList.toggle("hidden", e.target.value !== "file"));
@@ -337,11 +359,22 @@
 
   formWire("#f-cheer", "/api/cheer");
   formWire("#f-thumb", "/api/thumb");
+  let KIT = {};
+  fetch("/api/brandkit").then((r) => r.json()).then((d) => { KIT = d; kitDesc(); }).catch(() => {});
+  function kitDesc() {
+    const sel = $("#f-thumb select[name=k_series]"); if (!sel) return;
+    const k = sel.value, p = KIT[k];
+    $("#kit-desc").textContent = p ? "확정 틀: " + p.desc : "";
+    $$("#f-thumb .kit-trip").forEach((el) => el.classList.toggle("hidden", k !== "trip"));
+  }
+  $("#f-thumb select[name=k_series]").addEventListener("change", kitDesc);
   $("#thumb-layout").addEventListener("change", (e) => {
-    const sc = e.target.value === "showcase", sh = e.target.value === "shorts";
+    const sc = e.target.value === "showcase", sh = e.target.value === "shorts", kit = e.target.value === "kit";
     $$("#f-thumb .sc-only").forEach((el) => el.classList.toggle("hidden", !sc));
     $$("#f-thumb .sh-only").forEach((el) => el.classList.toggle("hidden", !sh));
-    $$("#f-thumb .main-only").forEach((el) => el.classList.toggle("hidden", sh));
+    $$("#f-thumb .main-only").forEach((el) => el.classList.toggle("hidden", sh || kit));
+    $$("#f-thumb .kit-only").forEach((el) => el.classList.toggle("hidden", !kit));
+    $$("#f-thumb .not-kit").forEach((el) => el.classList.toggle("hidden", kit));
     $("#f-thumb input[name=big]").placeholder = sc ? "!윗줄은 전체 노란색\n아랫줄 *핵심어*만 초록" : "비우면 인용 문구를 씀. 예: 월요일도 *예배*입니다";
     const sel = $("#f-thumb select[name=series]"); if (sc && sel) sel.value = "nomore";
   });

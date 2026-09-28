@@ -86,9 +86,18 @@ def _pick_y(fb, block_h: int, prefer: str = "top") -> int:
     return int(low)
 
 
+def _trim_bars(img: Image.Image) -> Image.Image:
+    """위아래·좌우 검은 띠(유튜브 장면 캡처 등)를 잘라낸다."""
+    g = img.convert("L").point(lambda v: 255 if v > 18 else 0)
+    box = g.getbbox()
+    if box and (box[2] - box[0]) * (box[3] - box[1]) > img.width * img.height * 0.4:
+        return img.crop(box)
+    return img
+
+
 def _photo(photo) -> Image.Image | None:
     if photo and Path(photo).exists():
-        return fit_cover_faces(Image.open(photo), (W, H)).convert("RGBA")
+        return fit_cover_faces(_trim_bars(Image.open(photo).convert("RGB")), (W, H)).convert("RGBA")
     return None
 
 
@@ -233,9 +242,9 @@ def _boxbar(base, cx, y, text, f, bg, fg, accent, rot, pad_x=46, pad_y=22) -> in
 
 
 def _boxes(base, fb, hook: str, big: str, fonts: dict, accent) -> None:
-    rows = _rows(big)[:2]
+    rows = _rows(big)[:3]
     hf = _f(fonts["bold"], 58)
-    pt = _fit(rows, fonts["title"], W * 0.80, 150, 80)
+    pt = _fit(rows, fonts["title"], W * 0.80, 150 if len(rows) < 3 else 124, 80)
     bf = _f(fonts["title"], pt)
     block = (110 if hook else 0) + int(pt * 1.55) * len(rows)
     y = _pick_y(fb, block, "top")
