@@ -413,3 +413,35 @@ def star_word(text: str) -> str:
         return m.group(1)
     words = re.sub(r"\\n", " ", text or "").split()
     return words[-1].strip(".,!?") if words else ""
+
+
+def sharp_face_frame(video, t0: float, t1: float, out: Path, step: float = 0.12) -> Path | None:
+    """t0~t1 사이에서 얼굴이 크고 선명한(흔들리지 않은) 장면 한 장."""
+    import numpy as np
+    from . import media
+    out.parent.mkdir(parents=True, exist_ok=True)
+    best, best_s = None, -1.0
+    t = t0
+    tmp = out.with_name(out.stem + "_tmp.jpg")
+    while t <= t1:
+        try:
+            media.run(["-ss", f"{t:.2f}", "-i", str(video), "-frames:v", "1", "-q:v", "2", str(tmp)])
+            im = Image.open(tmp).convert("RGB")
+        except Exception:
+            t += step
+            continue
+        fb = _face_boxes(im)
+        if fb:
+            f = max(fb, key=lambda b: (b[2] - b[0]) * (b[3] - b[1]))
+            g = np.asarray(im.crop(f).convert("L"), dtype=float)
+            sharp = float(((g[1:, :] - g[:-1, :]) ** 2).mean() + ((g[:, 1:] - g[:, :-1]) ** 2).mean())
+            area = (f[2] - f[0]) * (f[3] - f[1]) / (im.width * im.height)
+            s = sharp * area ** 0.5
+            if s > best_s:
+                best_s = s
+                im.save(out, quality=94)
+                best = out
+        t += step
+    if tmp.exists():
+        tmp.unlink()
+    return best

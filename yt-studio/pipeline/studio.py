@@ -416,6 +416,16 @@ def cmd_cheer(args, cfg):
                      args.series, args.fit, args.crop_x, args.outro, args.between, args.tag, args.tag_role,
                      "long" if args.wide else "shorts", at, args.music, not args.no_sfx, args.music_volume)
     print(f"✔ 완성: {out}")
+    if not args.wide:  # 확정 표지(일터가 선교다): 얼굴 모음 9:16 + 영상 맨 앞 0.6초
+        from ytauto import brandkit, series, shorts
+        ev = json.loads((work / "events.json").read_text(encoding="utf-8"))
+        cov = brandkit.relay_cover(work / "base.mp4", ev, work / "쇼츠표지" / "대표표지_얼굴모음.jpg", font_set(cfg),
+                                   args.shout, args.sub, series.get(args.series)["theme"])
+        if cov:
+            print(f"✔ 대표 표지: {cov}")
+            if brandkit.preset(args.series).get("prepend"):
+                wc = shorts.with_cover(out, cov, out.with_name(out.stem + "_표지포함.mp4"))
+                print(f"✔ 표지 포함 영상: {wc}")
 
 
 def cmd_facecheck(args, cfg):

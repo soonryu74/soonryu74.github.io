@@ -22,7 +22,9 @@ from . import covers, series, thumbs
 
 # 재생목록 → 확정 틀 (쇼츠 표지 9:16, 가로 썸네일 16:9)
 PRESETS: dict[str, dict] = {
-    "intro":    {"shorts": ["bubble", "box"], "long": "group", "desc": "응원·소개: 말풍선 + 자막상자 / 여러 얼굴 모음"},
+    # '일터가 선교다' 응원 릴레이 확정(2026-09-28): 대표 표지 = 여러 얼굴 모음 9:16, 영상 맨 앞 0.6초에 붙임
+    "intro":    {"shorts": ["bubble", "box"], "long": "group", "cover": "group_vertical", "prepend": True,
+                 "desc": "응원·소개(일터가 선교다): 여러 얼굴 모음 9:16 대표 표지 / 여러 얼굴 모음"},
     "column":   {"shorts": ["answer", "box"], "long": "miracle", "desc": "극동방송 칼럼: 질문-답 + 자막상자 / 3분 미라클형"},
     "scic":     {"shorts": ["box", "bubble"], "long": "testimony", "desc": "SCIC: 자막상자 + 말풍선 / 인용형"},
     "trip":     {"shorts": ["box"], "long": "diary", "desc": "비전트립: 자막상자 / DAY 여행 일지형"},
@@ -116,6 +118,30 @@ def _usable(p) -> bool:
         return 25 < m < 235
     except Exception:
         return False
+
+
+KO_NUM = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열"]
+
+
+def shout_footer(n: int) -> str:
+    return f"{KO_NUM[n]} 명의 외침" if 0 < n < len(KO_NUM) else f"{n}명의 외침"
+
+
+def relay_cover(video: Path, events: list, out: Path, fonts: dict, shout: str, sub: str, theme: dict,
+                brand: str = "SaGA 일터아카데미") -> Path | None:
+    """응원 릴레이 대표 표지: 외친 사람마다 얼굴이 가장 선명한 장면 한 장씩 → 9:16 모음."""
+    if not events:
+        return None
+    ev = events if len(events) <= 5 else [events[round(i * (len(events) - 1) / 4)] for i in range(5)]
+    shots = []
+    for i, (a, b) in enumerate(ev):
+        p = covers.sharp_face_frame(video, a, max(a + 0.3, b), out.parent / "_frames" / f"relay{i}.jpg")
+        if p:
+            shots.append(p)
+    if not shots:
+        return None
+    return group_thumbnail(out, shots, shout, sub, fonts, vertical=True, footer=shout_footer(len(events)),
+                           brand=brand, theme=theme)
 
 
 # ── 한 번에 만들기 ──────────────────────────────────────────

@@ -255,6 +255,21 @@ def api_cheer():
                          p["tag_role"], "shorts", None, music, effects)
         res = [(out, "완성 쇼츠")]
         _check_faces(out, work / "base.mp4", job)
+        # 확정 표지(일터가 선교다): 외친 사람들 얼굴 모음 9:16 → 영상 맨 앞 0.6초에도 붙인다
+        from ytauto import brandkit
+        key = p["series"] or "intro"
+        try:
+            ev = json.loads((work / "events.json").read_text(encoding="utf-8"))
+            cov = brandkit.relay_cover(work / "base.mp4", ev, work / "쇼츠표지" / "대표표지_얼굴모음.jpg", fonts(),
+                                       p["shout"], p["sub"], series.get(key)["theme"])
+            if cov:
+                res.append((cov, "대표 표지 · 얼굴 모음 9:16 (확정 틀)"))
+                if brandkit.preset(key).get("prepend"):
+                    from ytauto import shorts
+                    wc = shorts.with_cover(out, cov, out.with_name(out.stem + "_표지포함.mp4"))
+                    res.insert(0, (wc, "완성 쇼츠 · 표지 포함 (올릴 때 첫 장면을 표지로)"))
+        except Exception as e:
+            print(f"  대표 표지를 건너뜀 ({type(e).__name__}: {e})")
         who = " · ".join(x for x in (p["tag"], p["tag_role"]) if x)
         res += _covers(job, work / "base.mp4", work / "쇼츠표지", [
             ("표지_말풍선", "bubble", dict(big=p["shout"], who=who)),
