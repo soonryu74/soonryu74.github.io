@@ -132,11 +132,11 @@ def _frame(d: ImageDraw.ImageDraw, box, width: int = 4):
 
 def _corner_labels(img, fonts, W, series_label, top_right, margin, scale=1.0, pad: float = 26):
     """왼쪽 위 시리즈 이름 · 오른쪽 위 채널·화자. pad: 테두리에서 띄우는 여백(px, scale 전)."""
-    sf = _f(fonts["serif"], int(38 * scale))  # 오른쪽 '극동방송 × SaGA' 글자와 같은 크기
+    sf = _f(fonts["bold"], int(38 * scale))  # 굵은 고딕, 흰색 — 오른쪽 글자와 같은 크기
     lx, ly = margin + (pad + 8) * scale, margin + pad * scale
-    d = ImageDraw.Draw(img)  # 그림자·흰 테두리 없이, 얇은 어두운 윤곽만 (가장 또렷하게 읽힘)
-    d.text((lx, ly), series_label, font=sf, fill=GOLD, stroke_width=max(2, int(2 * scale)),
-           stroke_fill=(40, 28, 10))
+    d = ImageDraw.Draw(img)
+    d.text((lx, ly), series_label, font=sf, fill=(255, 255, 255), stroke_width=max(2, int(2 * scale)),
+           stroke_fill=(0, 0, 0))
     if top_right:
         a, b = (top_right + [""])[:2]
         rf1, rf2 = _f(fonts["subtitle"], int(38 * scale)), _f(fonts["subtitle"], int(34 * scale))
