@@ -385,7 +385,7 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
                 ov.append((png, ts[m], ts[m + 1]))
     raw = work / f"{ep['key']}_가로_본편.mp4"
     shorts.finish(base, raw, ov, audio=str(voice), sfx=[(str(sfx.ding(work / "sfx" / "ding.wav")), total + 0.1, 0.4)],
-                  duck=False, fade=0.15)
+                  duck=False, fade=0.35, rise=14)  # 자막이 서서히, 살짝 떠오르며 나타난다
     first = Path(sc[0]["bg_h"]) if sc[0].get("bg_h") else None
     cov = cover(work / f"{ep['key']}_표지_가로.jpg", first, ep["rows"], fonts, series_label, top_right, (1920, 1080),
                 ep.get("hand", ""))

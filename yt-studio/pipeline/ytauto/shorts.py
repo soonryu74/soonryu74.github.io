@@ -104,11 +104,12 @@ def join_xfade(parts: list[Path], out: Path, d: float = 0.4) -> Path:
 def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
            audio: str | None = None, audio_offset: float = 0.0, bgm: str = "", bgm_volume: float = 0.10,
            wave: dict | None = None, sfx: list[tuple[str, float, float]] | None = None,
-           duck: bool = True, fade: float = 0.0) -> Path:
+           duck: bool = True, fade: float = 0.0, rise: float = 0.0) -> Path:
     """overlays: [(투명 png, 시작초, 끝초)].  audio: 바탕 영상 소리 대신 쓸 음성.
     wave: {"x","y","w","h","start","end","color"} 음성 파형 표시.
     sfx: [(효과음 파일, 시작초, 음량)].  duck: 말소리가 나올 때 배경음을 자동으로 줄이기.
-    fade: 얹는 그림이 이 초만큼 서서히 나타나고 사라진다 (0 = 바로 켜고 끔)."""
+    fade: 얹는 그림이 이 초만큼 서서히 나타나고(사라질 땐 그 70%) 0 = 바로 켜고 끔.
+    rise: 나타날 때 이만큼(px) 아래에서 살짝 떠오른다 (fade 와 함께 쓸 때만)."""
     dur = media.duration(str(base))
     args = ["-reinit_filter", "0", "-i", str(base)]  # 조각마다 영상 정보가 달라도 필터를 다시 만들지 않는다
     n = 1
@@ -152,10 +153,12 @@ def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
         nxt = f"o{i}"
         if fade > 0:
             d = max(b - a, 0.1)
-            f = min(fade, d / 2)
-            fil.append(f"[{ov_start + i}:v]format=rgba,fade=t=in:st=0:d={f:.3f}:alpha=1,"
-                       f"fade=t=out:st={d - f:.3f}:d={f:.3f}:alpha=1,setpts=PTS+{a:.3f}/TB[f{i}]")
-            fil.append(f"[{last}][f{i}]overlay=0:0:eof_action=pass:enable='between(t,{a:.3f},{b:.3f})'[{nxt}]")
+            fi = min(fade, d / 2)
+            fo = min(fade * 0.7, d / 2)
+            fil.append(f"[{ov_start + i}:v]format=rgba,fade=t=in:st=0:d={fi:.3f}:alpha=1,"
+                       f"fade=t=out:st={d - fo:.3f}:d={fo:.3f}:alpha=1,setpts=PTS+{a:.3f}/TB[f{i}]")
+            y = (f"'if(lt(t-{a:.3f},{fi:.3f}),{rise:.1f}*(1-(t-{a:.3f})/{fi:.3f}),0)'" if rise > 0 else "0")
+            fil.append(f"[{last}][f{i}]overlay=0:{y}:eof_action=pass:enable='between(t,{a:.3f},{b:.3f})'[{nxt}]")
         else:
             fil.append(f"[{last}][{ov_start + i}:v]overlay=0:0:enable='between(t,{a:.3f},{b:.3f})'[{nxt}]")
         last = nxt
