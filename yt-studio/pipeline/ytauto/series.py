@@ -20,6 +20,9 @@ SERIES: dict[str, dict] = {
                  "c1": "#123A22", "c2": "#2F7D45", "accent": "#FFF08A"},
     "referral": {"name": "추천 영상", "label": "일터아카데미 7기",
                  "c1": "#0E1E3F", "c2": "#23407A", "accent": "#F2C14E"},
+    # 7기 모집 홍보 영상(브랜드 필름): 왼쪽 글자 판 + 오른쪽 장면 — 극동방송 칼럼과 다른 틀
+    "recruit":  {"name": "7기 모집 홍보", "label": "SaGA 7기 모집",
+                 "c1": "#0E1E3F", "c2": "#23407A", "accent": "#F2C14E"},
     # 노모어매뉴얼 채널 (SaGA 와 별개) — 짙은 남색 + 노모어 노랑
     "nomore":   {"name": "노모어매뉴얼", "label": "노모어매뉴얼",
                  "c1": "#070B1A", "c2": "#1B2A6B", "accent": "#FFD400"},

@@ -31,6 +31,8 @@ PRESETS: dict[str, dict] = {
     "dean":     {"shorts": ["bubble", "box"], "long": "testimony", "desc": "학장 특강: 말풍선 + 자막상자 / 인용형"},
     "lecture":  {"shorts": ["box", "answer"], "long": "talk", "desc": "강의: 자막상자 + 질문-답 / 예능 자막형"},
     "referral": {"shorts": ["card", "box"], "long": "hero", "desc": "추천 영상: 카드 + 자막상자 / 얼굴 + 큰 두 줄"},
+    # 7기 모집 홍보 확정(2026-09-30): 왼쪽 남색 판(꼬리표·제목 2줄·보조 줄) + 오른쪽 장면, 사랑의교회 설교 썸네일식 좌·우 구도
+    "recruit":  {"shorts": ["card", "box"], "long": "recruit", "desc": "7기 모집 홍보: 카드 + 자막상자 / 왼쪽 글자 판 + 오른쪽 장면"},
     "nomore":   {"shorts": ["box", "answer"], "long": "showcase", "desc": "노모어매뉴얼: 자막상자 + 질문-답 / 장면 카드형"},
 }
 STYLE_KO = {"bubble": "말풍선", "box": "자막상자", "answer": "질문답", "card": "카드"}
@@ -187,6 +189,10 @@ def make(key: str, out_dir: Path, fonts: dict, cfg: dict, photos: list, f: dict)
         thumbs.talk_thumbnail(o, big, fonts, main, who, role, hook, None, logo="SaGA 일터아카데미", theme=th)
     elif lo == "hero":
         thumbs.hero_thumbnail(o, big, fonts, main, hook or target, "SaGA 일터아카데미", f.get("badge", ""), th)
+    elif lo == "recruit":
+        from .recruit import recruit_thumbnail
+        recruit_thumbnail(o, big, fonts, main, tag=hook or S["label"],
+                          sub=sub or series.brand(cfg).get("program", ""), theme=th)
     elif lo == "showcase":
         thumbs.showcase_thumbnail(o, big, fonts, main, hook, badge=f.get("badge", ""), channel=S["name"], theme=th)
     res.append((o, f"가로 썸네일 · {PRESETS.get(key, PRESETS['intro'])['desc'].split('/')[-1].strip()}"))
