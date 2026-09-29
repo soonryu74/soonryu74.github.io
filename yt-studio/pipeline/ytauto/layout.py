@@ -163,7 +163,7 @@ def outro(out: Path, fmt: str, fonts: dict, brand: dict, theme: dict, headline: 
     img = Image.open(p).convert("RGBA")
     d = ImageDraw.Draw(img)
     f = _f(fonts["subtitle"], 46 if fmt == "shorts" else 40)
-    y = int(H * (0.52 if fmt == "shorts" else 0.60))
+    y = int(H * (0.58 if fmt == "shorts" else 0.70))  # 큰 제목 아래로 여유를 두고 안내 글
     for l in rest:
         d.text((W / 2, y), l, font=f, fill=(255, 255, 255), anchor="ma")
         y += int(f.size * 1.6)
