@@ -285,6 +285,14 @@ python3 studio.py upload projects/날짜-주제</code></pre></div>
     </div>
     <p>처음 한 번 브라우저가 열리면 채널 계정으로 로그인해 주세요. 영상은 <b>비공개</b>로 올라가고, 썸네일과 자막 파일도 함께 등록돼요. 예약 공개는 <code>--publish-at 2026-10-01T09:00:00+09:00</code>를 붙이면 됩니다.</p>
     <div class="box warn"><b class="t">꼭 알아 두세요</b>구글의 감사(audit)를 받지 않은 API 프로젝트로 올린 영상은 <b>비공개로 잠겨요</b>. 공개하려면 ‘YouTube API Services 감사 신청’을 통과해야 합니다. 그 전까지는 <code>make</code>로 만든 파일을 유튜브 스튜디오에서 직접 올리는 방법을 권장해요. 하루 업로드 횟수에도 한도(할당량)가 있고, 썸네일 등록은 채널 전화번호 인증이 필요합니다.</div>
+    <h3>여러 편 한 번에 올리기 + 재생목록</h3>
+    <p>폴더에 <code>업로드.json</code>(영상·썸네일·제목·설명·태그·재생목록 목록)이 있으면 한 줄로 전부 올라가요. 재생목록이 없으면 만들고, 이미 올린 편은 건너뛰어요. 결과 링크는 <code>업로드_결과.txt</code>에 남아요.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py publish jobs\1분칼럼
+python studio.py publish jobs\1분칼럼 --only 0824</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py publish jobs/1분칼럼
+python3 studio.py publish jobs/1분칼럼 --only 0824</code></pre></div>
+    </div>
     <p><code>client_secret.json</code>과 <code>token.json</code>은 비밀번호와 같아요. 절대 공유하거나 GitHub 에 올리지 마세요. 이 저장소는 자동으로 제외되게 설정돼 있습니다.</p>
   </section>
 

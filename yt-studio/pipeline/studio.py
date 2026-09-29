@@ -215,6 +215,13 @@ def cmd_upload(args, cfg) -> str:
     return vid
 
 
+def cmd_publish(args, cfg):
+    """폴더의 업로드.json 대로 여러 편을 올리고 재생목록에 넣는다."""
+    from ytauto import publish
+    links = publish.publish(Path(args.folder), cfg["upload"], args.public, args.only)
+    print("✔ 올린 영상: " + (", ".join(links) if links else "없음 (이미 올렸거나 파일이 없어요)"))
+
+
 def cmd_auto(args, cfg):
     folder = cmd_plan(args, cfg)
     args.project, args.fresh = str(folder), False
@@ -475,6 +482,11 @@ def main():
         if name == "batch":
             p.add_argument("--limit", type=int, default=1, help="한 번에 만들 영상 수 (기본 1)")
 
+    sp = sub.add_parser("publish", help="폴더의 업로드.json 대로 여러 편 올리기 + 재생목록")
+    sp.add_argument("folder", help="업로드.json 이 있는 폴더 (예: jobs/1분칼럼)")
+    sp.add_argument("--public", action="store_true", help="바로 공개 (기본은 비공개로 올려요)")
+    sp.add_argument("--only", nargs="*", default=None, help="이 글자가 들어간 편만 (예: 0824 0921)")
+
     sp = sub.add_parser("column", help="녹음 파일 → 칼럼 쇼츠")
     sp.add_argument("audio")
     sp.add_argument("--title", required=True, help='화면 위 제목. 줄바꿈 \\n, 강조 *단어*')
@@ -576,7 +588,7 @@ def main():
     args = ap.parse_args()
     cfg = load_config(args.config)
     {"plan": cmd_plan, "make": cmd_make, "upload": cmd_upload, "auto": cmd_auto,
-     "batch": cmd_batch, "doctor": cmd_doctor, "voices": cmd_voices, "column": cmd_column, "miracle": cmd_miracle,
+     "batch": cmd_batch, "doctor": cmd_doctor, "voices": cmd_voices, "column": cmd_column, "publish": cmd_publish, "miracle": cmd_miracle,
      "clip": cmd_clip, "referral": cmd_referral, "compose": cmd_compose, "thumb": cmd_thumb,
      "transcribe": cmd_transcribe, "cheer": cmd_cheer, "facecheck": cmd_facecheck}[args.cmd](args, cfg)
 
