@@ -238,10 +238,8 @@ def make_short(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str =
                             "당신의 일터도\n*선교지*입니다")
     parts.append(shorts.piece(work / "parts" / "p99.mp4", "shorts", str(end_card), OUTRO, zoom=False))
     base = shorts.join(parts, work / "parts" / "base.mp4")
-    HEAD = 4.0  # 제목 틀은 처음 몇 초만 — 같은 문구가 영상 내내 보이지 않게
-    ov = [(header_png(work / "ov" / "header.png", ep["rows"], fonts, series_label, top_right, ep.get("hand", "")),
-           0.0, HEAD),
-          (small_bug(work / "ov" / "bug.png", series_label, top_right, fonts), HEAD, total)]
+    # 제목은 표지(맨 앞 0.6초)에만. 본편에는 위쪽 구석의 작은 표시만 (제목을 줄여서 다시 얹으면 어색해요)
+    ov = [(small_bug(work / "ov" / "bug.png", series_label, top_right, fonts), 0.0, total)]
     starts = [c[0] for s in sc for c in s["cues"]] + [total]
     k = 0
     for s in sc:
