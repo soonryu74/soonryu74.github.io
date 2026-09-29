@@ -341,13 +341,11 @@ def caption_steps(text: str, fonts: dict, wide: bool) -> list[str]:
     return [" ".join(rows[:i + 1]) for i in range(len(rows))] if len(rows) > 1 else [text]
 
 
-def step_times(a: float, b: float, steps: list[str]) -> list[float]:
-    """각 단계가 나타나는 시각: 글자 수 비율로 나누되 최소 0.3초 간격."""
-    n = [len(x.replace("*", "").replace(" ", "")) for x in steps]
-    out, tot = [a], n[-1] or 1
+def step_times(a: float, b: float, steps: list[str], gap: float = 0.35) -> list[float]:
+    """각 줄이 나타나는 시각: 윗줄 다음 gap 초 뒤에 아랫줄 (글자 비율로 나누면 짧은 아랫줄이 끝에 잠깐만 떠서 읽기 어렵다)."""
+    out = [a]
     for k in range(1, len(steps)):
-        t = a + (b - a) * n[k - 1] / tot
-        out.append(min(max(t, out[-1] + 0.3), b - 0.2))
+        out.append(min(out[-1] + gap, b - 0.2))
     return out
 
 
@@ -394,14 +392,19 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
     for s in sc:
         bg = photo(s["prompt"], work / "bg" / f"h{s['i']:02d}.jpg", (1920, 1080), cfg)
         s["bg_h"] = str(bg) if bg else ""
-        parts.append(shorts.piece(work / "parts" / f"w{s['i']:02d}.mp4", "long", str(bg or sc[0].get("bg_h")),
-                                  s["end"] - s["start"] + XF, zoom=True))
+        pc = work / "parts" / f"w{s['i']:02d}.mp4"
+        dur = s["end"] - s["start"] + XF
+        if not (pc.exists() and abs(media.duration(str(pc)) - dur) < 0.2):  # 사진·길이가 같으면 다시 만들지 않는다
+            shorts.piece(pc, "long", str(bg or sc[0].get("bg_h")), dur, zoom=True)
+        parts.append(pc)
     S = series.get("column")
     OUTRO = 3.0
     end_card = layout.outro(work / "bg" / "outro_w", "long", fonts, series.brand(cfg), S["theme"],
                             "당신의 일터도\n*선교지*입니다")
     parts.append(shorts.piece(work / "parts" / "w99.mp4", "long", str(end_card), OUTRO, zoom=False))
-    base = shorts.join_xfade(parts, work / "parts" / "base_w.mp4", XF)
+    base = work / "parts" / "base_w.mp4"
+    if not (base.exists() and abs(media.duration(str(base)) - (total + OUTRO)) < 0.3):
+        shorts.join_xfade(parts, base, XF)
     ov = [(miracle.bug_png(work / "ov" / "bug_w.png", f"{series_label}  ·  {top_right_a}", fonts), 0.0, total)]
     starts = [c[0] for s in sc for c in s["cues"]] + [total]
     k = 0
