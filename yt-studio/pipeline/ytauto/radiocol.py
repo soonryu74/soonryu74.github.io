@@ -132,10 +132,15 @@ def _frame(d: ImageDraw.ImageDraw, box, width: int = 4):
 
 def _corner_labels(img, fonts, W, series_label, top_right, margin, scale=1.0, pad: float = 26):
     """왼쪽 위 시리즈 이름 · 오른쪽 위 채널·화자. pad: 테두리에서 띄우는 여백(px, scale 전)."""
-    d = ImageDraw.Draw(img)
     sf = _f(fonts["serif"], int(38 * scale))  # 오른쪽 '극동방송 × SaGA' 글자와 같은 크기
-    d.text((margin + (pad + 8) * scale, margin + pad * scale), series_label, font=sf, fill=GOLD,
-           stroke_width=2, stroke_fill=(40, 28, 10))
+    lx, ly = margin + (pad + 8) * scale, margin + pad * scale
+    sh = Image.new("RGBA", img.size, (0, 0, 0, 0))  # 그림자 + 흰 테두리로 어떤 사진 위에서도 잘 보이게
+    ImageDraw.Draw(sh).text((lx + 3 * scale, ly + 4 * scale), series_label, font=sf, fill=(0, 0, 0, 190),
+                            stroke_width=int(3 * scale), stroke_fill=(0, 0, 0, 190))
+    img.alpha_composite(sh.filter(ImageFilter.GaussianBlur(3 * scale)))
+    d = ImageDraw.Draw(img)
+    d.text((lx, ly), series_label, font=sf, fill=GOLD, stroke_width=max(2, int(2 * scale)),
+           stroke_fill=(255, 255, 255))
     if top_right:
         a, b = (top_right + [""])[:2]
         rf1, rf2 = _f(fonts["subtitle"], int(38 * scale)), _f(fonts["subtitle"], int(34 * scale))
