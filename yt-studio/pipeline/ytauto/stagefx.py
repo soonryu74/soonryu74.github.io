@@ -188,3 +188,21 @@ def piece(out: Path, img: Path, dur: float, k: int, A: dict, warm: bool = False,
                "-pix_fmt", "yuv420p", "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
                "-color_range", "tv", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2", str(out)])
     return out
+
+
+def clip_piece(out: Path, src: Path, dur: float, letterbox: bool = True) -> Path:
+    """Flow·Veo 로 뽑은 영상 조각 → dur 초짜리 조각 (영상 소리는 빼고 무음 트랙).
+    짧으면 최대 1.35배까지 천천히 틀고, 그래도 모자라면 마지막 장면을 잠깐 멈춰 채운다."""
+    out.parent.mkdir(parents=True, exist_ok=True)
+    d = media.duration(str(src)) or dur
+    k = min(max(dur / d, 1.0), 1.35)
+    v = (f"[0:v]setpts={k:.4f}*PTS,scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
+         f"fps={FPS},setsar=1,tpad=stop_mode=clone:stop_duration={dur:.2f},trim=duration={dur:.3f}")
+    v += (f",crop={W}:{LB}:0:{(H - LB) // 2},pad={W}:{H}:0:{(H - LB) // 2}:black" if letterbox else "")
+    v += ",format=yuv420p[v]"
+    media.run(["-i", str(src), "-f", "lavfi", "-t", f"{dur:.3f}", "-i", "anullsrc=r=48000:cl=stereo",
+               "-filter_complex", v, "-map", "[v]", "-map", "1:a",
+               "-t", f"{dur:.3f}", "-r", str(FPS), "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+               "-pix_fmt", "yuv420p", "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
+               "-color_range", "tv", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2", str(out)])
+    return out

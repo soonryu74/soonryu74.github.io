@@ -510,11 +510,23 @@ def cine_end(out: Path, series: str, next_ep: str, fonts: dict) -> Path:
     return out
 
 
+def _find_clip(folder: str, no: int) -> Path | None:
+    """shot07.mp4 · 2-2_shot07.mp4 · shot7.mov 처럼 이름을 조금 다르게 붙여도 찾는다."""
+    if not folder or not Path(folder).is_dir():
+        return None
+    for p in sorted(Path(folder).iterdir()):
+        m = re.search(r"shot[_ -]?0*(\d+)", p.stem, re.I)
+        if m and int(m.group(1)) == no and p.suffix.lower() in (".mp4", ".mov", ".webm", ".m4v"):
+            return p
+    return None
+
+
 def make_cinema(mp3: str, work: Path, cfg: dict, fonts: dict, scene_imgs: dict, series: str = "밧모섬의 증인",
                 ep: str = "", subtitle: str = "", next_ep: str = "", burst_shots: set | None = None,
-                out_name: str = "") -> Path:
+                out_name: str = "", clips: str = "") -> Path:
     """recipe.json(가사·시간) + shots.json(장면 시간표) + 장면별 그림 → 영화형 뮤직비디오.
-    scene_imgs: {장면 번호: [그림, …]} — 한 장면 안에서 컷마다 그림·카메라 움직임을 바꾼다."""
+    scene_imgs: {장면 번호: [그림, …]} — 한 장면 안에서 컷마다 그림·카메라 움직임을 바꾼다.
+    clips: Flow·Veo 영상 폴더 (shot01.mp4 …) — 있는 컷은 영상으로, 없는 컷은 그림 합성으로 채운다."""
     from . import stagefx
     R = json.loads((work / "recipe.json").read_text(encoding="utf-8"))
     shots = json.loads((work / "shots.json").read_text(encoding="utf-8"))
@@ -530,7 +542,7 @@ def make_cinema(mp3: str, work: Path, cfg: dict, fonts: dict, scene_imgs: dict, 
     parts = []
     c00 = scene_imgs[0][0]
     parts.append(stagefx.piece(work / "cine" / "p000.mp4", Path(c00), PRE_C, 99, A, warm=True, letterbox=True))
-    seen = {}
+    seen, used = {}, 0
     for k, sh in enumerate(shots):
         a = PRE_C + (sh["start"] if k else 0.0)
         b = PRE_C + (shots[k + 1]["start"] if k + 1 < len(shots) else total)
@@ -539,8 +551,15 @@ def make_cinema(mp3: str, work: Path, cfg: dict, fonts: dict, scene_imgs: dict, 
         seen[sh["sec"]] = n + 1
         kind = secs[sh["sec"]]["kind"]
         warm = kind in ("god", "choir") and sh["sec"] != 7
+        src = _find_clip(clips, sh["no"])
+        if src:
+            used += 1
+            parts.append(stagefx.clip_piece(work / "cine" / f"v{k + 1:03d}.mp4", src, b - a))
+            continue
         parts.append(stagefx.piece(work / "cine" / f"p{k + 1:03d}.mp4", Path(imgs[n % len(imgs)]), b - a, k, A,
                                    warm=warm, letterbox=True, burst=sh["no"] in burst))
+    if clips:
+        print(f"  영상 조각 {used}/{len(shots)}개 사용 (나머지는 그림 합성)")
     end = cine_end(work / "cine" / "end.jpg", series, next_ep, fonts)
     parts.append(shorts.piece(work / "cine" / "p999.mp4", FMT, str(end), POST_C, zoom=False))
     base = shorts.join(parts, work / "cine" / "base.mp4")
@@ -613,3 +632,33 @@ def prepare(mp3: str, work: Path, series: str, ep: str, subtitle: str) -> dict:
     if not sh_f.exists():
         sh_f.write_text(json.dumps(build_shots(R, total), ensure_ascii=False, indent=1), encoding="utf-8")
     return R
+
+
+# Flow·Veo 카메라 움직임 (영어 지시, 한글 이름)
+CAMERA = [
+    ("Slow dolly push-in.", "천천히 다가감"),
+    ("Slow lateral tracking shot from left to right.", "옆으로 흐름"),
+    ("Slow crane up revealing the scene.", "위로 솟으며 보여 줌"),
+    ("Slow pull-back to a wide shot.", "뒤로 물러남"),
+    ("Gentle slow orbit around the subject.", "주위를 천천히 돎"),
+    ("Locked-off wide shot; only light, haze and cloth move.", "고정, 빛·연기만 움직임"),
+]
+
+
+def flow_prompts(shots: list[dict], secs: list[dict], scenes: dict, style: str) -> list[dict]:
+    """컷마다 Flow·Veo 에 붙여 넣을 영어 대본을 단다.
+    scenes[장면 번호] = [(영어, 한글), …] — 한 장면 안의 컷들이 차례로 돌려 쓴다.
+    결과: 각 컷에 prompt · ko · camera · star(장면 첫 컷 = 먼저 만들 컷) 추가."""
+    seen: dict[int, int] = {}
+    for k, sh in enumerate(shots):
+        n = seen.get(sh["sec"], 0)
+        seen[sh["sec"]] = n + 1
+        opts = scenes.get(sh["sec"]) or scenes[0]
+        en, ko = opts[n % len(opts)]
+        cam_en, cam_ko = CAMERA[(sh["sec"] * 2 + n) % len(CAMERA)]
+        dur = sh["end"] - sh["start"]
+        sh.update({
+            "prompt": f"{en[0].upper()}{en[1:]}. {cam_en} {style} 16:9, {min(8, max(4, round(dur)))} seconds, no dialogue.",
+            "ko": ko, "camera": cam_ko, "star": n == 0 or sh["sec"] == len(secs) - 1,
+        })
+    return shots
