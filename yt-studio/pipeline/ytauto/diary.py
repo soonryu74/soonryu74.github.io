@@ -52,17 +52,41 @@ def _text(d, xy, text, f, fill, sw=8, stroke=INK):
     d.text(xy, text, font=f, fill=fill, stroke_width=sw, stroke_fill=stroke)
 
 
+def paper_gradient(size: tuple[int, int], c1: str = "#0A1A33", c2: str = "#2B5C97", grain: int = 14) -> Image.Image:
+    """종이 질감이 있는 대각선 그라데이션 (왼쪽 위 짙은 남색 → 오른쪽 아래 밝은 파랑).
+    비전트립 확정 배경(2026-09-30): 흐린 사진 대신 이 파랑 판을 깐다."""
+    import numpy as np
+    w, h = size
+    a, b = np.array(_rgb(c1), float), np.array(_rgb(c2), float)
+    yy, xx = np.mgrid[0:h, 0:w]
+    t = np.clip(0.7 * xx / max(w - 1, 1) + 0.3 * (1 - yy / max(h - 1, 1)) * 0.6 + 0.2 * yy / max(h - 1, 1), 0, 1)
+    t = t ** 1.1
+    img = a[None, None, :] * (1 - t[..., None]) + b[None, None, :] * t[..., None]
+    rng = np.random.default_rng(7)
+    noise = rng.normal(0, grain, (h, w, 1))  # 거친 종이 알갱이
+    blotch = np.asarray(Image.fromarray(rng.integers(0, 255, (h // 90, w // 90), dtype=np.uint8), "L")
+                        .resize((w, h), Image.BICUBIC).filter(ImageFilter.GaussianBlur(30)), float)[..., None]
+    img = img + noise + (blotch - 128) * 0.10
+    # 왼쪽 아래를 조금 더 어둡게 (예시처럼 아래로 갈수록 짙은 남색)
+    img = img * (1 - 0.28 * (yy / max(h - 1, 1))[..., None] ** 2 * (1 - xx / max(w - 1, 1))[..., None])
+    return Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), "RGB")
+
+
 def diary_thumbnail(out: Path, day: int, total: int, places: str, fonts: dict, photo, photo2=None,
                     series_label: str = "2026 비전트립", sub_label: str = "튀르키예 & 그리스", kicker: str = "",
-                    accent: str = "#FFD400") -> Path:
+                    accent: str = "#FFD400", bg: tuple[str, str] | None = ("#0A1A33", "#2B5C97")) -> Path:
+    """bg=(c1, c2) 이면 종이 질감 파랑 그라데이션 배경, None 이면 예전처럼 큰 사진을 흐리게 깐다."""
     ac = _rgb(accent)
     main = _load(photo)
-    base = fit_cover(main, (W, H)).filter(ImageFilter.GaussianBlur(22)).convert("RGBA")
-    base = Image.blend(base, Image.new("RGBA", (W, H), (12, 16, 28, 255)), 0.52)
-    g = Image.linear_gradient("L").rotate(90).resize((W, H)).point(lambda v: int((255 - v) * 0.55))
-    dark = Image.new("RGBA", (W, H), (6, 8, 16, 255))
-    dark.putalpha(g)  # 왼쪽 더 어둡게 (글자 자리)
-    base.alpha_composite(dark)
+    if bg:
+        base = paper_gradient((W, H), *bg).convert("RGBA")
+    else:
+        base = fit_cover(main, (W, H)).filter(ImageFilter.GaussianBlur(22)).convert("RGBA")
+        base = Image.blend(base, Image.new("RGBA", (W, H), (12, 16, 28, 255)), 0.52)
+        g = Image.linear_gradient("L").rotate(90).resize((W, H)).point(lambda v: int((255 - v) * 0.55))
+        dark = Image.new("RGBA", (W, H), (6, 8, 16, 255))
+        dark.putalpha(g)  # 왼쪽 더 어둡게 (글자 자리)
+        base.alpha_composite(dark)
 
     # 오른쪽 큰 폴라로이드
     card, ph = _polaroid(main, 640, -3.5)
