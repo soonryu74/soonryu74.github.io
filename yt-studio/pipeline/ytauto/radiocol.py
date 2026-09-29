@@ -130,18 +130,19 @@ def _frame(d: ImageDraw.ImageDraw, box, width: int = 4):
     d.rounded_rectangle(box, radius=26, outline=(255, 255, 255, 235), width=width)
 
 
-def _corner_labels(img, fonts, W, series_label, top_right, margin, scale=1.0):
+def _corner_labels(img, fonts, W, series_label, top_right, margin, scale=1.0, pad: float = 26):
+    """왼쪽 위 시리즈 이름 · 오른쪽 위 채널·화자. pad: 테두리에서 띄우는 여백(px, scale 전)."""
     d = ImageDraw.Draw(img)
     sf = _f(fonts["serif"], int(38 * scale))  # 오른쪽 '극동방송 × SaGA' 글자와 같은 크기
-    d.text((margin + 34 * scale, margin + 26 * scale), series_label, font=sf, fill=GOLD,
+    d.text((margin + (pad + 8) * scale, margin + pad * scale), series_label, font=sf, fill=GOLD,
            stroke_width=2, stroke_fill=(40, 28, 10))
     if top_right:
         a, b = (top_right + [""])[:2]
         rf1, rf2 = _f(fonts["subtitle"], int(38 * scale)), _f(fonts["subtitle"], int(34 * scale))
-        x = W - margin - 34 * scale
-        d.text((x, margin + 26 * scale), a, font=rf1, fill=BLUE, anchor="ra", stroke_width=2, stroke_fill=(0, 0, 0))
+        x = W - margin - (pad + 8) * scale
+        d.text((x, margin + pad * scale), a, font=rf1, fill=BLUE, anchor="ra", stroke_width=2, stroke_fill=(0, 0, 0))
         if b:
-            d.text((x, margin + 26 * scale + rf1.size * 1.35), b, font=rf2, fill=(255, 255, 255), anchor="ra",
+            d.text((x, margin + pad * scale + rf1.size * 1.35), b, font=rf2, fill=(255, 255, 255), anchor="ra",
                    stroke_width=2, stroke_fill=(0, 0, 0))
 
 
@@ -210,11 +211,11 @@ def cover(out: Path, bg: Path | None, rows: list[str], fonts: dict, series_label
     m = int(min(W, H) * 0.05)
     s = min(W, H) / 720
     _frame(d, (m, m, W - m, H - m), max(3, int(4 * s)))
-    _corner_labels(base, fonts, W, series_label, top_right, m, s)
-    pt = int(150 * s) if W > H else int(128 * s * 1.0)
+    _corner_labels(base, fonts, W, series_label, top_right, m, s, pad=58)  # 위쪽에 숨통이 트이게
+    pt = int(76 * s) if W > H else int(96 * s)  # 제목은 고정 크기 (긴 제목만 폭에 맞춰 줄어든다)
     rows_h = pt * 1.18 * len(rows)
     y = _rows(base, rows, fonts, W / 2, (H - rows_h) / 2 + (0 if W > H else -H * 0.04), int(W * 0.84), pt)
-    _hand(base, hand, fonts, W / 2, y + 6 * s, int(60 * s))
+    _hand(base, hand, fonts, W / 2, y + 10 * s, int(40 * s))
     out.parent.mkdir(parents=True, exist_ok=True)
     base.convert("RGB").save(out, quality=93)
     return out
