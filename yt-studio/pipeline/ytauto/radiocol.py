@@ -317,3 +317,42 @@ def make_compilation(eps: list[dict], works: list[Path], out_dir: Path, cfg: dic
     out = out_dir / "1분칼럼_모아보기.mp4"
     shorts.finish(base, out, ov, audio=str(audio), duck=False)
     return {"video": out}
+
+
+def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = "1분 칼럼",
+              top_right_a: str = "극동방송 × SaGA") -> dict:
+    """16:9 가로 한 편: 표지(0.6초) → 장면 사진 + 3분 미라클식 자막 → 마무리."""
+    work.mkdir(parents=True, exist_ok=True)
+    voice = cut_audio(ep["audio"], work / "voice.wav", ep["start"], ep.get("end", 0.0))
+    total = media.duration(str(voice))
+    sc = timeline(ep, voice, work, cfg)
+    top_right = [top_right_a, ep["speaker"]]
+    parts = []
+    for s in sc:
+        bg = photo(s["prompt"], work / "bg" / f"h{s['i']:02d}.jpg", (1920, 1080), cfg)
+        s["bg_h"] = str(bg) if bg else ""
+        parts.append(shorts.piece(work / "parts" / f"w{s['i']:02d}.mp4", "long", str(bg or sc[0].get("bg_h")),
+                                  s["end"] - s["start"], zoom=True))
+    S = series.get("column")
+    OUTRO = 3.0
+    end_card = layout.outro(work / "bg" / "outro_w", "long", fonts, series.brand(cfg), S["theme"],
+                            "당신의 일터도\n*선교지*입니다")
+    parts.append(shorts.piece(work / "parts" / "w99.mp4", "long", str(end_card), OUTRO, zoom=False))
+    base = shorts.join(parts, work / "parts" / "base_w.mp4")
+    ov = [(miracle.bug_png(work / "ov" / "bug_w.png", f"{series_label}  ·  {top_right_a}", fonts), 0.0, total)]
+    starts = [c[0] for s in sc for c in s["cues"]] + [total]
+    k = 0
+    for s in sc:
+        for j, (a, b, t) in enumerate(s["cues"]):
+            k += 1
+            png = miracle.caption_png(work / "ov" / f"w{s['i']:02d}_{j}.png", auto_highlight(t), "", fonts, None, j)
+            ov.append((png, a, min(b + 0.25, starts[k] - 0.02, total)))
+    raw = work / f"{ep['key']}_가로_본편.mp4"
+    shorts.finish(base, raw, ov, audio=str(voice), sfx=[(str(sfx.ding(work / "sfx" / "ding.wav")), total + 0.1, 0.4)],
+                  duck=False)
+    first = Path(sc[0]["bg_h"]) if sc[0].get("bg_h") else None
+    cov = cover(work / f"{ep['key']}_표지_가로.jpg", first, ep["rows"], fonts, series_label, top_right, (1920, 1080),
+                ep.get("hand", ""))
+    out = shorts.with_cover(raw, cov, work / f"{ep['key']}_가로.mp4")
+    (work / "scenes_w.json").write_text(json.dumps(sc, ensure_ascii=False, indent=1), encoding="utf-8")
+    return {"video": out, "cover": cov, "scenes": sc}
