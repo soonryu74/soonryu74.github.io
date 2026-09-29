@@ -213,8 +213,8 @@ def cover(out: Path, bg: Path | None, rows: list[str], fonts: dict, series_label
     s = min(W, H) / 720
     _frame(d, (m, m, W - m, H - m), max(3, int(4 * s)))
     _corner_labels(base, fonts, W, series_label, top_right, m, s, pad=58)  # 위쪽에 숨통이 트이게
-    # 제목 크기: 기본 90 (1280 기준, 원래 150의 3/5). 편마다 title_pt 로 정할 수 있고, 폭에 안 맞으면 줄어든다
-    pt = int((title_pt or (90 if W > H else 77)) * s)
+    # 제목 크기: 기본 117 (1280 기준). 편마다 title_pt 로 정할 수 있고, 폭에 안 맞으면 줄어든다
+    pt = int((title_pt or (117 if W > H else 100)) * s)
     rows_h = pt * 1.18 * len(rows)
     y = _rows(base, rows, fonts, W / 2, (H - rows_h) / 2 + (0 if W > H else -H * 0.04), int(W * 0.84), pt)
     _hand(base, hand, fonts, W / 2, y + 10 * s, int(40 * s))
