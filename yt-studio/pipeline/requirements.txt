@@ -18,5 +18,5 @@ numpy
 google-api-python-client>=2.100
 google-auth-oauthlib>=1.2
 
-# 선택 — 구글 Veo 영상 생성 (visual.provider = "veo")
-# google-genai>=1.30
+# 구글 그림(GEMINI_API_KEY) · Veo 영상 생성
+google-genai>=1.30
