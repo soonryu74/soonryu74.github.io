@@ -134,13 +134,9 @@ def _corner_labels(img, fonts, W, series_label, top_right, margin, scale=1.0, pa
     """왼쪽 위 시리즈 이름 · 오른쪽 위 채널·화자. pad: 테두리에서 띄우는 여백(px, scale 전)."""
     sf = _f(fonts["serif"], int(38 * scale))  # 오른쪽 '극동방송 × SaGA' 글자와 같은 크기
     lx, ly = margin + (pad + 8) * scale, margin + pad * scale
-    sh = Image.new("RGBA", img.size, (0, 0, 0, 0))  # 그림자 + 흰 테두리로 어떤 사진 위에서도 잘 보이게
-    ImageDraw.Draw(sh).text((lx + 3 * scale, ly + 4 * scale), series_label, font=sf, fill=(0, 0, 0, 190),
-                            stroke_width=int(3 * scale), stroke_fill=(0, 0, 0, 190))
-    img.alpha_composite(sh.filter(ImageFilter.GaussianBlur(3 * scale)))
-    d = ImageDraw.Draw(img)
+    d = ImageDraw.Draw(img)  # 그림자·흰 테두리 없이, 얇은 어두운 윤곽만 (가장 또렷하게 읽힘)
     d.text((lx, ly), series_label, font=sf, fill=GOLD, stroke_width=max(2, int(2 * scale)),
-           stroke_fill=(255, 255, 255))
+           stroke_fill=(40, 28, 10))
     if top_right:
         a, b = (top_right + [""])[:2]
         rf1, rf2 = _f(fonts["subtitle"], int(38 * scale)), _f(fonts["subtitle"], int(34 * scale))
@@ -204,7 +200,7 @@ def caption_short(out: Path, text: str, fonts: dict, top: int = 1220) -> Path:
 
 
 def cover(out: Path, bg: Path | None, rows: list[str], fonts: dict, series_label: str, top_right: list[str],
-          size=(1280, 720), hand: str = "") -> Path:
+          size=(1280, 720), hand: str = "", title_pt: int = 0) -> Path:
     """3분 미라클형 표지·썸네일: 사진 + 흰 둥근 테두리 + 왼쪽 위 시리즈 이름 + 오른쪽 위 두 줄 + 가운데 큰 제목."""
     W, H = size
     base = fit_cover_faces(Image.open(bg), size).convert("RGBA") if bg and Path(bg).exists() else \
@@ -217,7 +213,8 @@ def cover(out: Path, bg: Path | None, rows: list[str], fonts: dict, series_label
     s = min(W, H) / 720
     _frame(d, (m, m, W - m, H - m), max(3, int(4 * s)))
     _corner_labels(base, fonts, W, series_label, top_right, m, s, pad=58)  # 위쪽에 숨통이 트이게
-    pt = int(76 * s) if W > H else int(96 * s)  # 제목은 고정 크기 (긴 제목만 폭에 맞춰 줄어든다)
+    # 제목 크기: 기본 150 (1280 기준). 편마다 title_pt 로 정할 수 있고, 폭에 안 맞으면 줄어든다
+    pt = int((title_pt or (150 if W > H else 128)) * s)
     rows_h = pt * 1.18 * len(rows)
     y = _rows(base, rows, fonts, W / 2, (H - rows_h) / 2 + (0 if W > H else -H * 0.04), int(W * 0.84), pt)
     _hand(base, hand, fonts, W / 2, y + 10 * s, int(40 * s))
@@ -422,7 +419,7 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
                   duck=False, fade=0.35, rise=14)  # 자막이 서서히, 살짝 떠오르며 나타난다
     first = Path(sc[0]["bg_h"]) if sc[0].get("bg_h") else None
     cov = cover(work / f"{ep['key']}_표지_가로.jpg", first, ep["rows"], fonts, series_label, top_right, (1920, 1080),
-                ep.get("hand", ""))
+                ep.get("hand", ""), ep.get("title_pt", 0))
     out = shorts.with_cover(raw, cov, work / f"{ep['key']}_가로.mp4")
     (work / "scenes_w.json").write_text(json.dumps(sc, ensure_ascii=False, indent=1), encoding="utf-8")
     return {"video": out, "cover": cov, "scenes": sc}
