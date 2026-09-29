@@ -28,8 +28,9 @@ from .thumbs import _draw_rich, fit_cover_faces, parse_rich
 YELLOW = (255, 204, 0)
 GOLD = (236, 200, 120)
 BLUE = (140, 200, 255)
-PHOTO_STYLE = ("realistic photograph, natural light, cinematic, shallow depth of field, people only from behind or at a "
-               "distance, no faces in close-up, no text, no watermark, no logo")
+# 사람·손은 아예 그리지 않는다 — 무료 그림 서비스는 손가락·몸을 자주 망가뜨린다
+PHOTO_STYLE = ("ultra detailed realistic photograph, 8k, sharp focus, natural light, cinematic, shallow depth of field, "
+               "no people, no hands, no faces, no body parts, no text, no watermark, no logo")
 
 
 # ── 음원 ───────────────────────────────────────────────────
@@ -83,19 +84,21 @@ def photo(prompt: str, out: Path, size: tuple[int, int], cfg: dict) -> Path | No
     if out.exists() and out.stat().st_size > 5000:
         return out
     full = f"{prompt}, {PHOTO_STYLE}"
-    url = ("https://image.pollinations.ai/prompt/" + urllib.parse.quote(full)
-           + f"?width={size[0]}&height={size[1]}&nologo=true&seed="
-           + str(int(hashlib.md5(prompt.encode()).hexdigest()[:6], 16)))
-    for k in range(4):
-        try:
-            r = requests.get(url, timeout=180)
-            if r.status_code == 200 and r.headers.get("content-type", "").startswith("image"):
-                out.parent.mkdir(parents=True, exist_ok=True)
-                out.write_bytes(r.content)
-                return out
-        except Exception:
-            pass
-        time.sleep(6 * (k + 1))
+    seed = int(hashlib.md5(prompt.encode()).hexdigest()[:6], 16)
+    big = (int(size[0] * 4 / 3), int(size[1] * 4 / 3))  # 크게 받아서 줄이면 더 또렷하다
+    for sz in (big, size):
+        url = ("https://image.pollinations.ai/prompt/" + urllib.parse.quote(full)
+               + f"?width={sz[0]}&height={sz[1]}&model=flux&enhance=true&nologo=true&seed={seed}")
+        for k in range(3):
+            try:
+                r = requests.get(url, timeout=240)
+                if r.status_code == 200 and r.headers.get("content-type", "").startswith("image"):
+                    out.parent.mkdir(parents=True, exist_ok=True)
+                    out.write_bytes(r.content)
+                    return out
+            except Exception:
+                pass
+            time.sleep(6 * (k + 1))
     return None
 
 
