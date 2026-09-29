@@ -348,6 +348,36 @@ def step_times(a: float, b: float, steps: list[str]) -> list[float]:
     return out
 
 
+def wide_caption_parts(out_dir: Path, name: str, text: str, fonts: dict, accent_i: int) -> tuple[Path, list[Path]]:
+    """가로 자막을 '그늘 한 장 + 줄마다 한 장'으로 나눠 그린다.
+    줄이 하나씩 나타나도 이미 뜬 줄은 그대로 있고(다시 깜빡이지 않고) 새 줄만 서서히 나타나게 하기 위해서."""
+    W, H = 1920, 1080
+    acc = [(255, 225, 60), (92, 242, 200)][accent_i % 2]
+    f = _f(fonts["bold"], 64)
+    lines = _wrap_rich(auto_highlight(text), f, int(W * 0.74))[:2]
+    line_h = 84
+    block = line_h * len(lines)
+    y0 = H - 40 - block
+    out_dir.mkdir(parents=True, exist_ok=True)
+    shade = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    g0, g1 = max(0, y0 - 90), min(H, y0 + block + 70)
+    col = Image.new("L", (1, g1 - g0))
+    for yy in range(g1 - g0):
+        k = 1 - abs((yy / max(1, g1 - g0 - 1)) * 2 - 1)
+        col.putpixel((0, yy), int(130 * min(1.0, k * 1.8)))
+    shade.paste((0, 0, 0, 255), (0, g0, W, g1), col.resize((W, g1 - g0)))
+    sp = out_dir / f"{name}_shade.png"
+    shade.save(sp)
+    outs = []
+    for i, ln in enumerate(lines):
+        img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        _draw_rich(img, W / 2, y0 + i * line_h, ln, f, (255, 255, 255), acc, 4, "center")
+        lp = out_dir / f"{name}_l{i}.png"
+        img.save(lp)
+        outs.append(lp)
+    return sp, outs
+
+
 def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = "1분 칼럼",
               top_right_a: str = "극동방송 × SaGA") -> dict:
     """16:9 가로 한 편: 표지(0.6초) → 장면 사진 + 3분 미라클식 자막 → 마무리."""
@@ -372,17 +402,15 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
     ov = [(miracle.bug_png(work / "ov" / "bug_w.png", f"{series_label}  ·  {top_right_a}", fonts), 0.0, total)]
     starts = [c[0] for s in sc for c in s["cues"]] + [total]
     k = 0
-    top2 = 1080 - 40 - 84 * 2  # 두 줄 자막 위치 — 첫 줄만 뜰 때도 같은 자리에
     for s in sc:
         for j, (a, b, t) in enumerate(s["cues"]):
             k += 1
             end = min(b + 0.25, starts[k] - 0.02, total)
-            steps = caption_steps(t, fonts, wide=True)
-            ts = step_times(a, b, steps) + [end]
-            for m, txt in enumerate(steps):
-                png = miracle.caption_png(work / "ov" / f"w{s['i']:02d}_{j}_{m}.png", txt, "", fonts,
-                                          top2 if len(steps) > 1 else None, j)
-                ov.append((png, ts[m], ts[m + 1]))
+            shade, lines = wide_caption_parts(work / "ov", f"w{s['i']:02d}_{j}", t, fonts, j)
+            ts = step_times(a, b, caption_steps(t, fonts, wide=True))
+            ov.append((shade, a, end))  # 그늘은 처음부터 끝까지
+            for m, png in enumerate(lines):  # 줄은 말이 닿는 시각에 하나씩, 이미 뜬 줄은 그대로
+                ov.append((png, ts[min(m, len(ts) - 1)], end))
     raw = work / f"{ep['key']}_가로_본편.mp4"
     shorts.finish(base, raw, ov, audio=str(voice), sfx=[(str(sfx.ding(work / "sfx" / "ding.wav")), total + 0.1, 0.4)],
                   duck=False, fade=0.35, rise=14)  # 자막이 서서히, 살짝 떠오르며 나타난다
