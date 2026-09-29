@@ -398,8 +398,10 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
             shorts.piece(pc, "long", str(bg or sc[0].get("bg_h")), dur, zoom=True)
         parts.append(pc)
     S = series.get("column")
-    OUTRO = 3.0
-    end_card = layout.outro(work / "bg" / "outro_w", "long", fonts, series.brand(cfg), S["theme"],
+    OUTRO = 5.0
+    # 마지막 화면: 딥 인디고(위) → 테라코타(아래) 그라데이션 — 직전 노을 도시 장면에서 자연스럽게 이어진다
+    end_theme = dict(S["theme"], c1="#1E1B2E", c2="#8A4B3F")
+    end_card = layout.outro(work / "bg" / "outro_w", "long", fonts, series.brand(cfg), end_theme,
                             "당신의 일터도\n*선교지*입니다")
     parts.append(shorts.piece(work / "parts" / "w99.mp4", "long", str(end_card), OUTRO, zoom=False))
     base = work / "parts" / "base_w.mp4"
@@ -417,8 +419,7 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
             for png in lines:  # 두 줄이 함께 서서히 나타난다 (줄을 따로 띄우지 않는다)
                 ov.append((png, a, end))
     raw = work / f"{ep['key']}_가로_본편.mp4"
-    shorts.finish(base, raw, ov, audio=str(voice), sfx=[(str(sfx.ding(work / "sfx" / "ding.wav")), total + 0.1, 0.4)],
-                  duck=False, fade=0.35, rise=14)  # 자막이 서서히, 살짝 떠오르며 나타난다
+    shorts.finish(base, raw, ov, audio=str(voice), duck=False, fade=0.35, rise=14)  # 끝 효과음 없음, 자막은 서서히
     ci = ep.get("cover_scene", 0)  # 표지 사진: 편마다 다른 장면을 고른다 (첫 장면이 같은 편이 여럿이라)
     first = Path(sc[ci]["bg_h"]) if sc[ci].get("bg_h") else None
     cov = cover(work / f"{ep['key']}_표지_가로.jpg", first, ep["rows"], fonts, series_label, top_right, (1920, 1080),
