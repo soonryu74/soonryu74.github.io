@@ -413,10 +413,9 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
             k += 1
             end = min(b + 0.25, starts[k] - 0.02, total)
             shade, lines = wide_caption_parts(work / "ov", f"w{s['i']:02d}_{j}", t, fonts, j)
-            ts = step_times(a, b, caption_steps(t, fonts, wide=True))
-            ov.append((shade, a, end))  # 그늘은 처음부터 끝까지
-            for m, png in enumerate(lines):  # 줄은 말이 닿는 시각에 하나씩, 이미 뜬 줄은 그대로
-                ov.append((png, ts[min(m, len(ts) - 1)], end))
+            ov.append((shade, a, end))
+            for png in lines:  # 두 줄이 함께 서서히 나타난다 (줄을 따로 띄우지 않는다)
+                ov.append((png, a, end))
     raw = work / f"{ep['key']}_가로_본편.mp4"
     shorts.finish(base, raw, ov, audio=str(voice), sfx=[(str(sfx.ding(work / "sfx" / "ding.wav")), total + 0.1, 0.4)],
                   duck=False, fade=0.35, rise=14)  # 자막이 서서히, 살짝 떠오르며 나타난다
