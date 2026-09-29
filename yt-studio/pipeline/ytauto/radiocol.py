@@ -248,8 +248,11 @@ def make_short(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str =
     for s in sc:
         for j, (a, b, t) in enumerate(s["cues"]):
             k += 1  # 다음 자막이 뜨기 전에 내린다 (두 줄이 겹치지 않게)
-            ov.append((caption_short(work / "ov" / f"c{s['i']:02d}_{j}.png", t, fonts), a,
-                       min(b + 0.25, starts[k] - 0.02, total)))
+            end = min(b + 0.25, starts[k] - 0.02, total)
+            steps = caption_steps(t, fonts, wide=False)
+            ts = step_times(a, b, steps) + [end]
+            for m, txt in enumerate(steps):
+                ov.append((caption_short(work / "ov" / f"c{s['i']:02d}_{j}_{m}.png", txt, fonts), ts[m], ts[m + 1]))
     raw = work / f"{ep['key']}_쇼츠_본편.mp4"
     shorts.finish(base, raw, ov, audio=str(voice), sfx=[(str(sfx.ding(work / "sfx" / "ding.wav")), total + 0.1, 0.4)],
                   duck=False)
@@ -319,6 +322,32 @@ def make_compilation(eps: list[dict], works: list[Path], out_dir: Path, cfg: dic
     return {"video": out}
 
 
+# ── 자막을 줄 단위로 자연스럽게 ──────────────────────────────
+def _rich_text(segs) -> str:
+    return "".join(f"*{t}*" if h else t for t, h in segs)
+
+
+def caption_steps(text: str, fonts: dict, wide: bool) -> list[str]:
+    """두 줄 자막이면 [첫 줄, 첫 줄+둘째 줄] — 말이 둘째 줄에 닿을 때 둘째 줄이 나타나게 쓴다."""
+    text = auto_highlight(text)
+    if wide:
+        lines = _wrap_rich(text, _f(fonts["bold"], 64), int(1920 * 0.74))[:2]
+    else:
+        lines = _wrap_rich(text, _f(fonts["bold"], 68), int(1080 * 0.86))[:3]
+    rows = [_rich_text(ln).strip() for ln in lines]
+    return [" ".join(rows[:i + 1]) for i in range(len(rows))] if len(rows) > 1 else [text]
+
+
+def step_times(a: float, b: float, steps: list[str]) -> list[float]:
+    """각 단계가 나타나는 시각: 글자 수 비율로 나누되 최소 0.3초 간격."""
+    n = [len(x.replace("*", "").replace(" ", "")) for x in steps]
+    out, tot = [a], n[-1] or 1
+    for k in range(1, len(steps)):
+        t = a + (b - a) * n[k - 1] / tot
+        out.append(min(max(t, out[-1] + 0.3), b - 0.2))
+    return out
+
+
 def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = "1분 칼럼",
               top_right_a: str = "극동방송 × SaGA") -> dict:
     """16:9 가로 한 편: 표지(0.6초) → 장면 사진 + 3분 미라클식 자막 → 마무리."""
@@ -342,11 +371,17 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
     ov = [(miracle.bug_png(work / "ov" / "bug_w.png", f"{series_label}  ·  {top_right_a}", fonts), 0.0, total)]
     starts = [c[0] for s in sc for c in s["cues"]] + [total]
     k = 0
+    top2 = 1080 - 40 - 84 * 2  # 두 줄 자막 위치 — 첫 줄만 뜰 때도 같은 자리에
     for s in sc:
         for j, (a, b, t) in enumerate(s["cues"]):
             k += 1
-            png = miracle.caption_png(work / "ov" / f"w{s['i']:02d}_{j}.png", auto_highlight(t), "", fonts, None, j)
-            ov.append((png, a, min(b + 0.25, starts[k] - 0.02, total)))
+            end = min(b + 0.25, starts[k] - 0.02, total)
+            steps = caption_steps(t, fonts, wide=True)
+            ts = step_times(a, b, steps) + [end]
+            for m, txt in enumerate(steps):
+                png = miracle.caption_png(work / "ov" / f"w{s['i']:02d}_{j}_{m}.png", txt, "", fonts,
+                                          top2 if len(steps) > 1 else None, j)
+                ov.append((png, ts[m], ts[m + 1]))
     raw = work / f"{ep['key']}_가로_본편.mp4"
     shorts.finish(base, raw, ov, audio=str(voice), sfx=[(str(sfx.ding(work / "sfx" / "ding.wav")), total + 0.1, 0.4)],
                   duck=False)
