@@ -83,7 +83,18 @@ def photo(prompt: str, out: Path, size: tuple[int, int], cfg: dict) -> Path | No
     import requests
     if out.exists() and out.stat().st_size > 5000:
         return out
+    png = out.with_suffix(".png")
+    if png.exists() and png.stat().st_size > 5000:
+        return png
     full = f"{prompt}, {PHOTO_STYLE}"
+    import os
+    if os.environ.get("GEMINI_API_KEY"):  # 구글 키가 있으면 워터마크 없는 구글 그림
+        from . import visuals
+        out.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            return visuals._gemini_image(full, png, "shorts" if size[1] > size[0] else "long", cfg.get("visual", {}))
+        except Exception as e:
+            print(f"  ! 구글 그림 실패 ({e}) → 무료 서비스로")
     seed = int(hashlib.md5(prompt.encode()).hexdigest()[:6], 16)
     big = (int(size[0] * 4 / 3), int(size[1] * 4 / 3))  # 크게 받아서 줄이면 더 또렷하다
     for sz in (big, size):
