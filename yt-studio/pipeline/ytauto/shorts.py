@@ -81,13 +81,34 @@ def join(parts: list[Path], out: Path) -> Path:
     return out
 
 
+def join_xfade(parts: list[Path], out: Path, d: float = 0.4) -> Path:
+    """조각을 d초씩 겹치며(크로스페이드) 이어 붙인다. 마지막 조각을 뺀 모든 조각이 d초씩 길게 만들어져 있어야
+    장면이 바뀌는 시각이 원래 시간표와 같다 (겹침이 그 경계의 앞뒤 d/2초에 걸린다). 소리는 무음."""
+    if len(parts) == 1:
+        return join(parts, out)
+    args: list[str] = []
+    for p in parts:
+        args += ["-i", str(p)]
+    fil, last, acc = [], "0:v", media.duration(str(parts[0]))
+    for i in range(1, len(parts)):
+        off = acc - d
+        fil.append(f"[{last}][{i}:v]xfade=transition=fade:duration={d:.3f}:offset={off:.3f}[x{i}]")
+        last = f"x{i}"
+        acc = acc + media.duration(str(parts[i])) - d
+    args += ["-f", "lavfi", "-t", f"{acc:.3f}", "-i", "anullsrc=r=48000:cl=stereo",
+             "-filter_complex", ";".join(fil), "-map", f"[{last}]", "-map", f"{len(parts)}:a", *_enc(out, acc)]
+    media.run(args)
+    return out
+
+
 def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
            audio: str | None = None, audio_offset: float = 0.0, bgm: str = "", bgm_volume: float = 0.10,
            wave: dict | None = None, sfx: list[tuple[str, float, float]] | None = None,
-           duck: bool = True) -> Path:
+           duck: bool = True, fade: float = 0.0) -> Path:
     """overlays: [(투명 png, 시작초, 끝초)].  audio: 바탕 영상 소리 대신 쓸 음성.
     wave: {"x","y","w","h","start","end","color"} 음성 파형 표시.
-    sfx: [(효과음 파일, 시작초, 음량)].  duck: 말소리가 나올 때 배경음을 자동으로 줄이기."""
+    sfx: [(효과음 파일, 시작초, 음량)].  duck: 말소리가 나올 때 배경음을 자동으로 줄이기.
+    fade: 얹는 그림이 이 초만큼 서서히 나타나고 사라진다 (0 = 바로 켜고 끔)."""
     dur = media.duration(str(base))
     args = ["-reinit_filter", "0", "-i", str(base)]  # 조각마다 영상 정보가 달라도 필터를 다시 만들지 않는다
     n = 1
@@ -107,8 +128,11 @@ def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
         sfx_idx.append((n, at, gain))
         n += 1
     ov_start = n
-    for png, _, _ in overlays:
-        args += ["-i", str(png)]
+    for png, a, b in overlays:
+        if fade > 0:  # 그 구간만큼만 그림을 돌리고, 시작 시각으로 밀어서 얹는다
+            args += ["-loop", "1", "-framerate", str(FPS), "-t", f"{max(b - a, 0.1):.3f}", "-i", str(png)]
+        else:
+            args += ["-i", str(png)]
     fil = []
     if audio:
         delay = int(audio_offset * 1000)
@@ -126,7 +150,14 @@ def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
         last = "w0"
     for i, (_, a, b) in enumerate(overlays):
         nxt = f"o{i}"
-        fil.append(f"[{last}][{ov_start + i}:v]overlay=0:0:enable='between(t,{a:.3f},{b:.3f})'[{nxt}]")
+        if fade > 0:
+            d = max(b - a, 0.1)
+            f = min(fade, d / 2)
+            fil.append(f"[{ov_start + i}:v]format=rgba,fade=t=in:st=0:d={f:.3f}:alpha=1,"
+                       f"fade=t=out:st={d - f:.3f}:d={f:.3f}:alpha=1,setpts=PTS+{a:.3f}/TB[f{i}]")
+            fil.append(f"[{last}][f{i}]overlay=0:0:eof_action=pass:enable='between(t,{a:.3f},{b:.3f})'[{nxt}]")
+        else:
+            fil.append(f"[{last}][{ov_start + i}:v]overlay=0:0:enable='between(t,{a:.3f},{b:.3f})'[{nxt}]")
         last = nxt
     mix = ["[vmain]"]
     if bgm_idx is not None:

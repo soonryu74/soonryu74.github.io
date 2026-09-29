@@ -356,18 +356,19 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
     total = media.duration(str(voice))
     sc = timeline(ep, voice, work, cfg)
     top_right = [top_right_a, ep["speaker"]]
+    XF = 0.4  # 사진이 겹치며 바뀌는 시간
     parts = []
     for s in sc:
         bg = photo(s["prompt"], work / "bg" / f"h{s['i']:02d}.jpg", (1920, 1080), cfg)
         s["bg_h"] = str(bg) if bg else ""
         parts.append(shorts.piece(work / "parts" / f"w{s['i']:02d}.mp4", "long", str(bg or sc[0].get("bg_h")),
-                                  s["end"] - s["start"], zoom=True))
+                                  s["end"] - s["start"] + XF, zoom=True))
     S = series.get("column")
     OUTRO = 3.0
     end_card = layout.outro(work / "bg" / "outro_w", "long", fonts, series.brand(cfg), S["theme"],
                             "당신의 일터도\n*선교지*입니다")
     parts.append(shorts.piece(work / "parts" / "w99.mp4", "long", str(end_card), OUTRO, zoom=False))
-    base = shorts.join(parts, work / "parts" / "base_w.mp4")
+    base = shorts.join_xfade(parts, work / "parts" / "base_w.mp4", XF)
     ov = [(miracle.bug_png(work / "ov" / "bug_w.png", f"{series_label}  ·  {top_right_a}", fonts), 0.0, total)]
     starts = [c[0] for s in sc for c in s["cues"]] + [total]
     k = 0
@@ -384,7 +385,7 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
                 ov.append((png, ts[m], ts[m + 1]))
     raw = work / f"{ep['key']}_가로_본편.mp4"
     shorts.finish(base, raw, ov, audio=str(voice), sfx=[(str(sfx.ding(work / "sfx" / "ding.wav")), total + 0.1, 0.4)],
-                  duck=False)
+                  duck=False, fade=0.15)
     first = Path(sc[0]["bg_h"]) if sc[0].get("bg_h") else None
     cov = cover(work / f"{ep['key']}_표지_가로.jpg", first, ep["rows"], fonts, series_label, top_right, (1920, 1080),
                 ep.get("hand", ""))
