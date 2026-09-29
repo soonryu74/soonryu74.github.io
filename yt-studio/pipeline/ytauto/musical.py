@@ -537,8 +537,9 @@ def make_cinema(mp3: str, work: Path, cfg: dict, fonts: dict, scene_imgs: dict, 
     first_of = {}
     for sh in shots:
         first_of.setdefault(sh["sec"], sh["no"])
-    auto_burst = {first_of[i] for i, s in enumerate(secs) if s["kind"] == "god" and i in first_of}
-    burst = (burst_shots or set()) | auto_burst
+    # 하늘 광선은 주의 음성이 처음 들리는 컷 + 넘겨준 컷(피날레)에만 — 모든 컷에 빛을 쏟지 않는다
+    god_first = next((first_of[i] for i, s in enumerate(secs) if s["kind"] == "god" and i in first_of), None)
+    burst = (burst_shots or set()) | ({god_first} if god_first else set())
     parts = []
     c00 = scene_imgs[0][0]
     parts.append(stagefx.piece(work / "cine" / "p000.mp4", Path(c00), PRE_C, 99, A, warm=True, letterbox=True))
@@ -557,7 +558,7 @@ def make_cinema(mp3: str, work: Path, cfg: dict, fonts: dict, scene_imgs: dict, 
             parts.append(stagefx.clip_piece(work / "cine" / f"v{k + 1:03d}.mp4", src, b - a))
             continue
         parts.append(stagefx.piece(work / "cine" / f"p{k + 1:03d}.mp4", Path(imgs[n % len(imgs)]), b - a, k, A,
-                                   warm=warm, letterbox=True, burst=sh["no"] in burst))
+                                   warm=warm, letterbox=True, burst=sh["no"] in burst, beams=False))
     if clips:
         print(f"  영상 조각 {used}/{len(shots)}개 사용 (나머지는 그림 합성)")
     end = cine_end(work / "cine" / "end.jpg", series, next_ep, fonts)
@@ -654,6 +655,8 @@ def flow_prompts(shots: list[dict], secs: list[dict], scenes: dict, style: str) 
         n = seen.get(sh["sec"], 0)
         seen[sh["sec"]] = n + 1
         opts = scenes.get(sh["sec"]) or scenes[0]
+        if n >= len(opts):  # 두 바퀴째부터는 하늘 빛기둥 컷을 다시 쓰지 않는다
+            opts = [o for o in opts if "Voice of God" not in o[0]] or opts
         en, ko = opts[n % len(opts)]
         cam_en, cam_ko = CAMERA[(sh["sec"] * 2 + n) % len(CAMERA)]
         dur = sh["end"] - sh["start"]
