@@ -416,7 +416,9 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
                             "당신의 일터도\n*선교지*입니다")
     parts.append(shorts.piece(work / "parts" / "w99.mp4", "long", str(end_card), OUTRO, zoom=False))
     base = work / "parts" / "base_w.mp4"
-    if not (base.exists() and abs(media.duration(str(base)) - (total + OUTRO)) < 0.3):
+    fresh = base.exists() and abs(media.duration(str(base)) - (total + OUTRO)) < 0.3 \
+        and base.stat().st_mtime > max(q.stat().st_mtime for q in parts)  # 조각(마지막 화면 포함)이 바뀌었으면 다시
+    if not fresh:
         shorts.join_xfade(parts, base, XF)
     ov = [(miracle.bug_png(work / "ov" / "bug_w.png", f"{series_label}  ·  {top_right_a}", fonts), 0.0, total)]
     starts = [c[0] for s in sc for c in s["cues"]] + [total]
