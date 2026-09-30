@@ -386,7 +386,7 @@ def scenes() -> list[Scene]:
               kicker="02 / PARTICIPATION", caption="기업가 · 직장인 · 공무원 · 자영업자 · 크리스천 청년",
               say="전국 다섯 권역에서 이백삼십 명을 모집합니다."),
         Money(5.5, kicker="03 / TUITION", caption="세례(입교) 후 3년 이상 · 학사 이상 지원 가능",
-              say="학기당 백이십오만 원, 거점캠퍼스와 삼십 대 청년은 칠십오만 원입니다."),
+              say="학기당 백이십오만 원, 거쩜캠퍼스와 삼십 대 청년은 칠십오만 원입니다."),
         Dates(5.5, kicker="04 / SCHEDULE", caption="1차 접수 기간에 지원하면 전형료가 면제됩니다",
               say="접수는 시월 일일부터 십일월 삼십일까지, 이 기간엔 전형료가 면제됩니다."),
         Apply(5.0, "https://www.saga121.com/admission-guide/register/", kicker="05 / APPLY",
@@ -424,7 +424,7 @@ def build(bgm: str) -> Path:
     W.mkdir(parents=True, exist_ok=True)
     bg = background()
     sc = scenes()
-    tcfg = dict(cfg["tts"]); tcfg["voice"] = "ko-KR-InJoonNeural"; tcfg["rate"] = "+12%"  # 쇼츠는 조금 빠르게
+    tcfg = dict(cfg["tts"]); tcfg.update(voice="ko-KR-SunHiNeural", pitch="-8Hz", rate="+8%")  # 굵은 여성 톤, 쇼츠는 조금 빠르게
     voices, t = [], 0.0
     for i, s in enumerate(sc):
         if s.say:
