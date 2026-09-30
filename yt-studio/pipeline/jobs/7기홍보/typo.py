@@ -11,7 +11,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from ytauto import media, shorts  # noqa: E402
+from ytauto import media, shorts, tts  # noqa: E402
 from ytauto.config import load_config  # noqa: E402
 from ytauto.fonts import font_set  # noqa: E402
 
@@ -65,8 +65,8 @@ def rich(d: ImageDraw.ImageDraw, layer: Image.Image, xy, text: str, f, color=WHI
 
 
 class Scene:
-    def __init__(self, dur: float, kicker: str, caption: str):
-        self.dur, self.kicker, self.caption = dur, kicker, caption
+    def __init__(self, dur: float, kicker: str, caption: str, say: str = ""):
+        self.dur, self.kicker, self.caption, self.say = dur, kicker, caption, say
 
     def chrome(self, d: ImageDraw.ImageDraw, t: float, fonts: dict) -> None:
         sf = F(fonts["bold"], 22)
@@ -79,11 +79,11 @@ class Scene:
             d.text((X0 + 24, 128), self.kicker, font=kf, fill=GOLD + (255,))
         if self.caption:
             a = ease(t, 0.9, 0.5)
-            cf = F(fonts["subtitle"], 30)
+            cf = F(fonts["bold"], 40)
             tw = cf.getlength(self.caption)
-            x0, y0 = WD / 2 - tw / 2 - 26, 985
-            d.rounded_rectangle((x0, y0, x0 + tw + 52, y0 + 56), 10, fill=GOLD + (int(240 * a),))
-            d.text((WD / 2, y0 + 28), self.caption, font=cf, fill=(20, 24, 36, int(255 * a)), anchor="mm")
+            x0, y0 = WD / 2 - tw / 2 - 34, 950
+            d.rounded_rectangle((x0, y0, x0 + tw + 68, y0 + 76), 14, fill=GOLD + (int(245 * a),))
+            d.text((WD / 2, y0 + 38), self.caption, font=cf, fill=(20, 24, 36, int(255 * a)), anchor="mm")
 
     def draw(self, d, layer, t, fonts):  # 장면별 구현
         pass
@@ -91,8 +91,8 @@ class Scene:
 
 class Headline(Scene):
     """큰 제목 여러 줄 (줄마다 차례로 떠오름) + 작은 앞말."""
-    def __init__(self, dur, kicker, caption, lines, pre="", pt=132, accent=GOLD, x=None, y=None):
-        super().__init__(dur, kicker, caption)
+    def __init__(self, dur, kicker, caption, lines, pre="", pt=132, accent=GOLD, x=None, y=None, say=""):
+        super().__init__(dur, kicker, caption, say)
         self.lines, self.pre, self.pt, self.accent, self.x, self.y = lines, pre, pt, accent, x, y
 
     def draw(self, d, layer, t, fonts):
@@ -111,8 +111,8 @@ class Headline(Scene):
 
 class Bullets(Scene):
     """왼쪽 소제목 + 오른쪽 목록이 한 줄씩 켜진다 (참고 영상 'What we invited')."""
-    def __init__(self, dur, kicker, caption, title, items, sub=""):
-        super().__init__(dur, kicker, caption)
+    def __init__(self, dur, kicker, caption, title, items, sub="", say=""):
+        super().__init__(dur, kicker, caption, say)
         self.title, self.items, self.sub = title, items, sub
 
     def draw(self, d, layer, t, fonts):
@@ -133,20 +133,25 @@ class Bullets(Scene):
 
 class Stats(Scene):
     """큰 숫자 카운트업 여러 개."""
-    def __init__(self, dur, kicker, caption, stats):
-        super().__init__(dur, kicker, caption)
+    def __init__(self, dur, kicker, caption, stats, say=""):
+        super().__init__(dur, kicker, caption, say)
         self.stats = stats  # [(숫자, 단위, 설명)]
 
     def draw(self, d, layer, t, fonts):
         n = len(self.stats)
-        colw = (WD - 2 * X0) / n
         bf, uf, lf = F(fonts["bold"], 200), F(fonts["bold"], 60), F(fonts["subtitle"], 34)
+        # 각 덩어리(숫자+단위·설명)의 폭을 재서 같은 간격으로 늘어놓는다
+        widths = [max(bf.getlength(f"{num:,}") + 14 + uf.getlength(unit), lf.getlength(label)) for num, unit, label in self.stats]
+        gap = (WD - 2 * X0 - sum(widths)) / max(1, n - 1)
+        xs, cur = [], X0
+        for w in widths:
+            xs.append(cur); cur += w + gap
         for i, (num, unit, label) in enumerate(self.stats):
             t0 = 0.3 + i * 0.5
             a = ease(t, t0, 0.4)
             k = ease(t, t0, 1.3)
             val = int(round(num * k))
-            x = X0 + i * colw
+            x = xs[i]
             y = 360 + (1 - a) * 40
             s = f"{val:,}"
             d.text((x, y), s, font=bf, fill=WHITE + (int(255 * a),))
@@ -156,8 +161,8 @@ class Stats(Scene):
 
 class Columns(Scene):
     """학기별 3열 카드: 색 꼬리표 + 과목이 차례로."""
-    def __init__(self, dur, kicker, caption, cols):
-        super().__init__(dur, kicker, caption)
+    def __init__(self, dur, kicker, caption, cols, say=""):
+        super().__init__(dur, kicker, caption, say)
         self.cols = cols  # [(꼬리표, 제목, 부제, 색, [과목...])]
 
     def draw(self, d, layer, t, fonts):
@@ -182,8 +187,8 @@ class Columns(Scene):
 
 class Bars(Scene):
     """막대 비교 (등록금)."""
-    def __init__(self, dur, kicker, caption, title, rows, maxv):
-        super().__init__(dur, kicker, caption)
+    def __init__(self, dur, kicker, caption, title, rows, maxv, say=""):
+        super().__init__(dur, kicker, caption, say)
         self.title, self.rows, self.maxv = title, rows, maxv  # rows: [(라벨, 값, 표시글, 색)]
 
     def draw(self, d, layer, t, fonts):
@@ -204,8 +209,8 @@ class Bars(Scene):
 
 class Timeline(Scene):
     """가로 타임라인: 점이 차례로 켜지고 날짜·설명이 뜬다."""
-    def __init__(self, dur, kicker, caption, title, points):
-        super().__init__(dur, kicker, caption)
+    def __init__(self, dur, kicker, caption, title, points, say=""):
+        super().__init__(dur, kicker, caption, say)
         self.title, self.points = title, points  # [(날짜, 설명, 강조여부)]
 
     def draw(self, d, layer, t, fonts):
@@ -229,8 +234,8 @@ class Timeline(Scene):
 
 class Apply(Scene):
     """지원 안내 + QR."""
-    def __init__(self, dur, kicker, caption, url):
-        super().__init__(dur, kicker, caption)
+    def __init__(self, dur, kicker, caption, url, say=""):
+        super().__init__(dur, kicker, caption, say)
         self.url = url
         try:
             import qrcode
@@ -299,28 +304,37 @@ def scenes() -> list[Scene]:
     return [
         opening(),
         Headline(6.5, "", "SaGA 일터선교 & 글로벌네트워크아카데미 2027학년도 7기 모집을 시작합니다",
-                 ["일터를", "새롭게", "*보다.*"], pt=150, accent=BLUE),
+                 ["일터를", "새롭게", "*보다.*"], pt=150, accent=BLUE,
+                 say="일터를 새롭게 봅니다. 사랑글로벌아카데미 일터선교 글로벌네트워크아카데미가 2027학년도 7기를 모집합니다."),
         Headline(7.0, "01 / INTENT", "일터는 삶의 현장이고, 그곳이 곧 선교지입니다",
-                 ["주일의 믿음은", "*월요일*에도", "살아 있습니까?"], pre="하나의 질문에서 시작했습니다.", pt=118),
+                 ["주일의 믿음은", "*월요일*에도", "살아 있습니까?"], pre="하나의 질문에서 시작했습니다.", pt=118,
+                 say="하나의 질문에서 시작했습니다. 주일의 믿음은, 월요일에도 살아 있습니까? 일터는 삶의 현장이고, 그곳이 곧 선교지입니다."),
         Bullets(9.0, "02 / PROGRAM", "직장을 그만두지 않고, 일하면서 배웁니다", "우리가\n준비한 것",
                 ["1년 3학기 · 학기당 10주", "매주 화 저녁 7~10시 | 토 오전 9~12시", "강남캠퍼스 + 전국 5개 권역 거점캠퍼스",
-                 "온전론 → 일터신학 → 영역별 선교전략", "동문 커뮤니티 · 비전트립"], sub="School of Marketplace Mission & Global Network"),
+                 "온전론 → 일터신학 → 영역별 선교전략", "동문 커뮤니티 · 비전트립"], sub="School of Marketplace Mission & Global Network",
+                say="1년 3학기, 매주 화요일 저녁이나 토요일 오전. 강남캠퍼스와 전국 거점캠퍼스에서, 직장을 그만두지 않고 일하면서 배웁니다."),
         Stats(7.5, "03 / PARTICIPATION", "서울·수도권 / 대전·충청 / 군산·호남 / 부산·영남 / 강원·제주·해외",
-              [(230, "명", "2027학년도 모집 정원"), (5, "개 권역", "거점캠퍼스 포함"), (7, "기", "2027학년도")]),
+              [(230, "명", "2027학년도 모집 정원"), (5, "개 권역", "거점캠퍼스 포함"), (7, "기", "2027학년도")],
+              say="서울과 수도권, 대전과 충청, 군산과 호남, 부산과 영남, 강원과 제주와 해외까지. 전국 다섯 권역에서 이백삼십 명을 모집합니다."),
         Columns(10.0, "04 / CURRICULUM", "신학적 이론 → 실천적 이론 → 영역별 선교전략",
                 [("TERM 1", "Biblical Theory", "신학적 이론 · 2.16 ~ 4.24", GOLD, ["온전론 · 오정현", "기독교 세계관 · 전광식", "일터선교 1 · Paul Stevens", "성경적 일터신학 · 박재은"]),
                  ("TERM 2", "Practical Theory", "실천적 이론 · 5.8 ~ 7.13", BLUE, ["교회사 · 주연종", "글로벌 네트워크 · 고성삼, M. Reeves 외", "일터선교 2 · Paul Stevens", "일터선교와 전문성 · 조정현 외"]),
-                 ("TERM 3", "Missional Strategy", "영역별 선교전략 · 9.4 ~ 11.20", PURPLE, ["Business is Mission · 송동호, 이병구 외", "K-Marketplace Mission · 윤종록 외", "Christian-MBA · 이돈주", "영역별 선교전략 · 유종성"])]),
+                 ("TERM 3", "Missional Strategy", "영역별 선교전략 · 9.4 ~ 11.20", PURPLE, ["Business is Mission · 송동호, 이병구 외", "K-Marketplace Mission · 윤종록 외", "Christian-MBA · 이돈주", "영역별 선교전략 · 유종성"])],
+                say="1학기는 신학적 이론, 2학기는 실천적 이론, 3학기는 영역별 선교전략입니다. 폴 스티븐스와 마이클 리브스를 비롯한 국내외 교수진이 함께합니다."),
         Bullets(7.5, "05 / WHO", "세례(입교) 후 3년 이상 · 학사 이상 (특별한 경우 예외 가능)", "누구를 위한\n과정인가",
-                ["기업가 · 경영자 · 창업자 · 관리자", "직장인 · 공무원 · 자영업자 · 프리랜서", "크리스천 청년 및 모든 분"]),
+                ["기업가 · 경영자 · 창업자 · 관리자", "직장인 · 공무원 · 자영업자 · 프리랜서", "크리스천 청년 및 모든 분"],
+                say="기업가와 경영자, 직장인과 공무원, 자영업자와 프리랜서, 그리고 크리스천 청년까지. 세례받은 지 삼 년이 지난 분이면 지원할 수 있습니다."),
         Bars(8.0, "06 / TUITION", "학기당 등록금 · 각 교회가 개인별 50% 장학금 지급을 권장합니다", "등록금은 *이렇습니다*",
              [("강남캠퍼스", 125, "125만원 · 1년 375만원", GOLD), ("거점캠퍼스", 75, "75만원 · 1년 225만원", BLUE),
-              ("목회자 · 선교사 · 30대 청년", 75, "75만원", PURPLE)], 125),
+              ("목회자 · 선교사 · 30대 청년", 75, "75만원", PURPLE)], 125,
+             say="등록금은 학기당 백이십오만 원. 거점캠퍼스와 목회자, 선교사, 삼십 대 청년은 칠십오만 원입니다."),
         Timeline(9.5, "07 / SCHEDULE", "1차 접수 기간(10.1 ~ 11.30)에 지원하면 입학전형료가 면제됩니다", "*전형 일정*",
                  [("10.1", "원서 접수\n시작", True), ("11.30", "1차 마감\n전형료 면제", True), ("12.31", "2차 마감", False),
-                  ("1.4", "서류 합격\n발표", False), ("1.9", "면접(토)", True), ("1.13", "최종 발표", False), ("2.16", "개강", True)]),
-        Apply(8.0, "08 / APPLY", "QR 을 스캔하면 온라인 입학원서로 바로 이동합니다", "https://www.saga121.com/admission-guide/register/"),
-        Closing(7.0, "", ""),
+                  ("1.4", "서류 합격\n발표", False), ("1.9", "면접(토)", True), ("1.13", "최종 발표", False), ("2.16", "개강", True)],
+                 say="원서 접수는 시월 일일부터 십일월 삼십일까지. 이 기간에 지원하면 입학전형료가 면제됩니다. 면접은 일월 구일, 개강은 이월 십육일입니다."),
+        Apply(8.0, "08 / APPLY", "QR 을 스캔하면 온라인 입학원서로 바로 이동합니다", "https://www.saga121.com/admission-guide/register/",
+              say="지금 지원하세요. 홈페이지 saga121.com 에서 입학전형, 입학신청. 궁금한 점은 카카오톡 사랑글로벌아카데미 채널로 물어보세요."),
+        Closing(7.0, "", "", say="당신의 일터도 선교지입니다."),
     ]
 
 
@@ -350,10 +364,29 @@ def build(bgm: str) -> Path:
     W.mkdir(parents=True, exist_ok=True)
     bg = background()
     sc = scenes()
+    tcfg = dict(cfg["tts"]); tcfg["voice"] = "ko-KR-InJoonNeural"
+    voices = []  # (파일, 시작초)
+    t = 0.0
+    for i, s in enumerate(sc):
+        if s.say:
+            mp3 = W / f"say{i:02d}.mp3"
+            tts.synthesize(s.say, mp3, tcfg)
+            s.dur = max(s.dur, media.duration(str(mp3)) + 1.2)  # 말이 끝나고 잠깐 여유
+            voices.append((mp3, t + 0.6))
+        t += s.dur
     parts = [render_scene(i, s, fonts, bg, 0 if i == len(sc) - 1 else XF) for i, s in enumerate(sc)]
     base = shorts.join_xfade(parts, W / "base.mp4", XF)
+    total = media.duration(str(base))
+    narration = W / "narration.wav"
+    args = []
+    for mp3, _ in voices:
+        args += ["-i", str(mp3)]
+    fil = "".join(f"[{k}:a]aresample=48000,aformat=channel_layouts=stereo,adelay={int(st * 1000)}|{int(st * 1000)}[a{k}];"
+                  for k, (_, st) in enumerate(voices))
+    fil += "".join(f"[a{k}]" for k in range(len(voices))) + f"amix=inputs={len(voices)}:normalize=0,apad[mix]"
+    media.run([*args, "-filter_complex", fil, "-map", "[mix]", "-t", f"{total:.3f}", str(narration)])
     out = ROOT / "output" / "타이포형_long.mp4"
-    shorts.finish(base, out, [], bgm=bgm, bgm_volume=0.9, duck=False)
+    shorts.finish(base, out, [], audio=str(narration), bgm=bgm, bgm_volume=0.75, duck=True)
     return out
 
 
