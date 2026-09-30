@@ -164,7 +164,10 @@ def finish(base: Path, out: Path, overlays: list[tuple[Path, float, float]],
         last = nxt
     mix = ["[vmain]"]
     if bgm_idx is not None:
-        fil.append(f"[{bgm_idx}:a]aresample=48000,aformat=channel_layouts=stereo,volume={bgm_volume}[bg0]")
+        total = media.duration(str(base))
+        fo = min(3.0, total / 4)  # 영상 끝에서 배경음악이 자연스럽게 잦아든다
+        fil.append(f"[{bgm_idx}:a]aresample=48000,aformat=channel_layouts=stereo,volume={bgm_volume},"
+                   f"afade=t=out:st={max(0.0, total - fo):.3f}:d={fo:.3f}[bg0]")
         if duck:  # 말소리를 신호로 배경음을 눌러 준다
             fil.append("[voice]asplit=2[vmain][vsc]")
             fil.append("[bg0][vsc]sidechaincompress=threshold=0.02:ratio=8:attack=10:release=350[bg]")
