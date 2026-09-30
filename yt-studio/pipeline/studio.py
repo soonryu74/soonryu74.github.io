@@ -218,6 +218,10 @@ def cmd_upload(args, cfg) -> str:
 def cmd_publish(args, cfg):
     """폴더의 업로드.json 대로 여러 편을 올리고 재생목록에 넣는다."""
     from ytauto import publish
+    if getattr(args, "update", False):
+        links = publish.update_meta(Path(args.folder), cfg["upload"], args.only)
+        print("✔ 글 고친 영상: " + (", ".join(links) if links else "없음 (업로드.json 에 video_id 가 적힌 편이 없어요)"))
+        return
     links = publish.publish(Path(args.folder), cfg["upload"], args.public, args.only)
     print("✔ 올린 영상: " + (", ".join(links) if links else "없음 (이미 올렸거나 파일이 없어요)"))
 
@@ -486,6 +490,7 @@ def main():
     sp.add_argument("folder", help="업로드.json 이 있는 폴더 (예: jobs/1분칼럼)")
     sp.add_argument("--public", action="store_true", help="바로 공개 (기본은 비공개로 올려요)")
     sp.add_argument("--only", nargs="*", default=None, help="이 글자가 들어간 편만 (예: 0824 0921)")
+    sp.add_argument("--update", action="store_true", help="이미 올린 편(video_id 있는 편)의 제목·설명·태그만 고치기")
 
     sp = sub.add_parser("column", help="녹음 파일 → 칼럼 쇼츠")
     sp.add_argument("audio")
