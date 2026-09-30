@@ -67,6 +67,44 @@ def photo_wide(out: Path, bg: Path, fonts: dict, big: list[str], kicker: str, ta
     return out
 
 
+def photo_tall(out: Path, bg: Path, fonts: dict, big: list[str], kicker: str, tag: str) -> Path:
+    """9:16 쇼츠 표지 — 사진 위 아래쪽 남색 그라데이션 + 큰 글자 (쇼츠 UI 를 피해 세로 260~1560 안에)."""
+    W, H = 1080, 1920
+    base = fit_cover(Image.open(bg).convert("RGB"), (W, H))
+    base = ImageEnhance.Brightness(base).enhance(0.85).convert("RGBA")
+    g = Image.linear_gradient("L").resize((W, H)).point(lambda v: int(max(0, min(255, (v - 110) * 1.9))))
+    navy = Image.new("RGBA", (W, H), (10, 22, 50, 255)); navy.putalpha(g)
+    base.alpha_composite(navy)
+    d = ImageDraw.Draw(base)
+    logo = Image.open(A / "saga_logo_w.png").convert("RGBA")
+    lw = 240
+    logo = logo.resize((lw, int(logo.height * lw / logo.width)), Image.LANCZOS)
+    base.alpha_composite(logo, ((W - lw) // 2, 290))
+    x = 72
+    kf = F(fonts["bold"], 36)
+    y = 1010
+    d.text((x + 2, y + 2), kicker, font=kf, fill=(0, 0, 0, 140))
+    d.text((x, y), kicker, font=kf, fill=GOLD)
+    tf = F(fonts["title"], 112)
+    y += 60
+    for ln in big:
+        cx = x
+        for i, part in enumerate(ln.split("*")):
+            if not part:
+                continue
+            d.text((cx + 5, y + 6), part, font=tf, fill=(0, 0, 0, 160))
+            d.text((cx, y), part, font=tf, fill=GOLD if i % 2 else (255, 255, 255), stroke_width=3, stroke_fill=(10, 14, 28))
+            cx += tf.getlength(part)
+        y += 126
+    pf = F(fonts["bold"], 36)
+    tw = pf.getlength(tag) + 48
+    d.rounded_rectangle((x, y + 20, x + tw, y + 20 + 62), 31, fill=GOLD)
+    d.text((x + 24, y + 20 + 12), tag, font=pf, fill=(14, 18, 30))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    base.convert("RGB").save(out, quality=94)
+    return out
+
+
 def main() -> list[Path]:
     cfg = load_config(None)
     fonts = font_set(cfg)
@@ -79,8 +117,9 @@ def main() -> list[Path]:
     dawn = frame(M / "v_seoul_dawn_crop.mp4", 6.0, O / "thumb_src_dawn_crop.jpg")  # 원본은 건물에 깨진 글자가 있어 자른 클립을 쓴다
     res.append(photo_wide(O / "스케치_썸네일_S2.jpg", dawn, fonts, ["직장을 그만두지 않고", "선교사가 되는 *1년*"],
                           "2027  일터선교 & 글로벌네트워크아카데미", "사가 SaGA 7기 모집  ·  10.1 ~ 11.30 전형료 면제"))
-    # 쇼츠 표지 후보: 출근길 장면 + 질문 자막이 다 뜬 프레임
-    res.append(frame(O / "스케치형_shorts.mp4", 9.2, O / "스케치_썸네일_S3_쇼츠표지프레임.jpg"))
+    # 쇼츠 표지(9:16): 출근길 그림 + 질문 — 영상 맨 앞 0.6초에 붙여 두면 유튜브 앱에서 이 장면을 표지로 고를 수 있다
+    res.append(photo_tall(O / "스케치_썸네일_S3_쇼츠표지.jpg", M / "s_commute.png", fonts,
+                          ["주일의 믿음은", "*월요일*에도", "살아 있습니까?"], "2027  일터선교 & 글로벌네트워크아카데미", "사가 SaGA 7기 모집  ·  10.1 ~ 11.30"))
     return res
 
 
