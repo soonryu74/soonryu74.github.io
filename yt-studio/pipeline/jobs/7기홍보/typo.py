@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import math
 import random
+import shutil
 import sys
 from pathlib import Path
 
@@ -340,6 +341,8 @@ def scenes() -> list[Scene]:
 
 def render_scene(i: int, sc: Scene, fonts: dict, bg: Image.Image, extra: float) -> Path:
     fdir = W / f"s{i:02d}"
+    if fdir.exists():
+        shutil.rmtree(fdir)  # 지난 렌더의 남는 프레임이 섞이지 않게
     fdir.mkdir(parents=True, exist_ok=True)
     n = int((sc.dur + extra) * FPS)
     for k in range(n):
