@@ -82,7 +82,7 @@ def photo_tall(out: Path, bg: Path, fonts: dict, big: list[str], kicker: str, ta
     base.alpha_composite(logo, ((W - lw) // 2, 290))
     x = 72
     kf = F(fonts["bold"], 36)
-    y = 1010
+    y = 1560 - 126 * len(big) - 200  # 아래 태그까지 쇼츠 안전 구간 안에
     d.text((x + 2, y + 2), kicker, font=kf, fill=(0, 0, 0, 140))
     d.text((x, y), kicker, font=kf, fill=GOLD)
     tf = F(fonts["title"], 112)
@@ -119,7 +119,7 @@ def main() -> list[Path]:
                           "2027  일터선교 & 글로벌네트워크아카데미", "사가 SaGA 7기 모집  ·  10.1 ~ 11.30 전형료 면제"))
     # 쇼츠 표지(9:16): 출근길 그림 + 질문 — 영상 맨 앞 0.6초에 붙여 두면 유튜브 앱에서 이 장면을 표지로 고를 수 있다
     res.append(photo_tall(O / "스케치_썸네일_S3_쇼츠표지.jpg", M / "s_commute.png", fonts,
-                          ["주일의 믿음은", "*월요일*에도", "살아 있습니까?"], "2027  일터선교 & 글로벌네트워크아카데미", "사가 SaGA 7기 모집  ·  10.1 ~ 11.30"))
+                          ["직장을", "그만두지 않고", "선교사가 되는", "*1년*"], "2027  일터선교 & 글로벌네트워크아카데미", "사가 SaGA 7기 모집  ·  10.1 ~ 11.30"))
     return res
 
 
