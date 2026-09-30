@@ -20,6 +20,7 @@ A, W = ROOT / "assets", ROOT / "typo_work"
 FPS, XF = 30, 0.45
 WD, HT = 1920, 1080
 GOLD, BLUE, PURPLE, WHITE, GREY = (242, 193, 78), (90, 150, 255), (170, 140, 255), (245, 246, 250), (150, 158, 178)
+X0 = 200  # 본문 왼쪽 여백 (가장자리 글자는 72)
 HEAD_L = "SAGA 2027  ·  일터선교 & 글로벌네트워크아카데미"
 HEAD_R = "7기 모집  ·  원서 접수 2026.10.1 ~ 11.30"
 
@@ -74,8 +75,8 @@ class Scene:
         d.line((72, 84, WD - 72, 84), fill=(60, 70, 100, 255), width=1)
         if self.kicker:
             kf = F(fonts["bold"], 24)
-            d.rectangle((72, 138, 82, 148), fill=GOLD + (255,))
-            d.text((96, 128), self.kicker, font=kf, fill=GOLD + (255,))
+            d.rectangle((X0, 138, X0 + 10, 148), fill=GOLD + (255,))
+            d.text((X0 + 24, 128), self.kicker, font=kf, fill=GOLD + (255,))
         if self.caption:
             a = ease(t, 0.9, 0.5)
             cf = F(fonts["subtitle"], 30)
@@ -90,7 +91,7 @@ class Scene:
 
 class Headline(Scene):
     """큰 제목 여러 줄 (줄마다 차례로 떠오름) + 작은 앞말."""
-    def __init__(self, dur, kicker, caption, lines, pre="", pt=132, accent=GOLD, x=72, y=None):
+    def __init__(self, dur, kicker, caption, lines, pre="", pt=132, accent=GOLD, x=None, y=None):
         super().__init__(dur, kicker, caption)
         self.lines, self.pre, self.pt, self.accent, self.x, self.y = lines, pre, pt, accent, x, y
 
@@ -98,12 +99,14 @@ class Headline(Scene):
         f = F(fonts["bold"], self.pt)
         lh = int(self.pt * 1.08)
         y0 = self.y if self.y is not None else (HT - lh * len(self.lines)) / 2 + 20
+        bw = max(sum(f.getlength(pp) for pp in ln.split("*")) for ln in self.lines)
+        x = self.x if self.x is not None else max(X0, (WD - bw) / 2)  # 가운데 블록
         if self.pre:
             a = ease(t, 0.1)
-            d.text((self.x, y0 - 70 + (1 - a) * 20), self.pre, font=F(fonts["subtitle"], 34), fill=GREY + (int(255 * a),))
+            d.text((x, y0 - 70 + (1 - a) * 20), self.pre, font=F(fonts["subtitle"], 34), fill=GREY + (int(255 * a),))
         for i, ln in enumerate(self.lines):
             a = ease(t, 0.35 + i * 0.28)
-            rich(d, layer, (self.x, y0 + i * lh + (1 - a) * 40), ln, f, alpha=a, accent=self.accent)
+            rich(d, layer, (x, y0 + i * lh + (1 - a) * 40), ln, f, alpha=a, accent=self.accent)
 
 
 class Bullets(Scene):
@@ -114,9 +117,9 @@ class Bullets(Scene):
 
     def draw(self, d, layer, t, fonts):
         a = ease(t, 0.2)
-        rich(d, layer, (72, 300 + (1 - a) * 30), self.title, F(fonts["bold"], 76), alpha=a)
+        rich(d, layer, (X0, 300 + (1 - a) * 30), self.title, F(fonts["bold"], 76), alpha=a)
         if self.sub:
-            d.text((72, 480), self.sub, font=F(fonts["subtitle"], 30), fill=GREY + (int(255 * a),))
+            d.text((X0, 480), self.sub, font=F(fonts["subtitle"], 30), fill=GREY + (int(255 * a),))
         nf, itf = F(fonts["bold"], 26), F(fonts["bold"], 46)
         for i, it in enumerate(self.items):
             b = ease(t, 0.8 + i * 0.45)
@@ -136,14 +139,14 @@ class Stats(Scene):
 
     def draw(self, d, layer, t, fonts):
         n = len(self.stats)
-        colw = (WD - 144) / n
+        colw = (WD - 2 * X0) / n
         bf, uf, lf = F(fonts["bold"], 200), F(fonts["bold"], 60), F(fonts["subtitle"], 34)
         for i, (num, unit, label) in enumerate(self.stats):
             t0 = 0.3 + i * 0.5
             a = ease(t, t0, 0.4)
             k = ease(t, t0, 1.3)
             val = int(round(num * k))
-            x = 72 + i * colw
+            x = X0 + i * colw
             y = 360 + (1 - a) * 40
             s = f"{val:,}"
             d.text((x, y), s, font=bf, fill=WHITE + (int(255 * a),))
@@ -160,10 +163,10 @@ class Columns(Scene):
     def draw(self, d, layer, t, fonts):
         n = len(self.cols)
         gap = 40
-        cw = (WD - 144 - gap * (n - 1)) / n
+        cw = (WD - 260 - gap * (n - 1)) / n
         tf, hf, sf, itf = F(fonts["bold"], 24), F(fonts["bold"], 46), F(fonts["subtitle"], 28), F(fonts["subtitle"], 32)
         for i, (tag, title, sub, col, items) in enumerate(self.cols):
-            x = 72 + i * (cw + gap)
+            x = 130 + i * (cw + gap)
             a = ease(t, 0.2 + i * 0.35)
             y = 200 + (1 - a) * 30
             d.rounded_rectangle((x, y, x + tf.getlength(tag) + 40, y + 44), 8, fill=col + (int(255 * a),))
@@ -185,17 +188,18 @@ class Bars(Scene):
 
     def draw(self, d, layer, t, fonts):
         a = ease(t, 0.2)
-        rich(d, layer, (72, 190 + (1 - a) * 30), self.title, F(fonts["bold"], 72), alpha=a)
+        rich(d, layer, (X0, 190 + (1 - a) * 30), self.title, F(fonts["bold"], 72), alpha=a)
         lf, vf = F(fonts["subtitle"], 34), F(fonts["bold"], 56)
-        full = WD - 144 - 520 - 440  # 오른쪽에 금액 글자 자리를 남긴다
+        bx = X0 + 450
+        full = WD - X0 - bx - 470  # 오른쪽에 금액 글자 자리를 남긴다
         for i, (label, val, shown, col) in enumerate(self.rows):
             b = ease(t, 0.9 + i * 0.45, 1.0)
             y = 360 + i * 150
-            d.text((72, y + 10), label, font=lf, fill=WHITE + (int(255 * ease(t, 0.8 + i * 0.45)),))
+            d.text((X0, y + 10), label, font=lf, fill=WHITE + (int(255 * ease(t, 0.8 + i * 0.45)),))
             w = int(full * val / self.maxv * b)
-            d.rounded_rectangle((520, y, 520 + max(w, 6), y + 58), 12, fill=col + (255,))
+            d.rounded_rectangle((bx, y, bx + max(w, 6), y + 58), 12, fill=col + (255,))
             if b > 0.05:
-                d.text((520 + w + 24, y - 2), shown, font=vf, fill=col + (int(255 * b),))
+                d.text((bx + w + 24, y - 2), shown, font=vf, fill=col + (int(255 * b),))
 
 
 class Timeline(Scene):
@@ -206,7 +210,7 @@ class Timeline(Scene):
 
     def draw(self, d, layer, t, fonts):
         a = ease(t, 0.2)
-        rich(d, layer, (72, 190 + (1 - a) * 30), self.title, F(fonts["bold"], 72), alpha=a)
+        rich(d, layer, (X0, 190 + (1 - a) * 30), self.title, F(fonts["bold"], 72), alpha=a)
         n = len(self.points)
         x0, x1, y = 120, WD - 120, 600
         prog = ease(t, 0.8, 2.6)
@@ -240,12 +244,12 @@ class Apply(Scene):
     def draw(self, d, layer, t, fonts):
         a = ease(t, 0.2)
         f = F(fonts["bold"], 120)
-        rich(d, layer, (72, 250 + (1 - a) * 40), "지금", f, alpha=a)
-        rich(d, layer, (72, 380 + (1 - ease(t, 0.5)) * 40), "*지원*하세요.", f, alpha=ease(t, 0.5))
+        rich(d, layer, (X0, 250 + (1 - a) * 40), "지금", f, alpha=a)
+        rich(d, layer, (X0, 380 + (1 - ease(t, 0.5)) * 40), "*지원*하세요.", f, alpha=ease(t, 0.5))
         b = ease(t, 0.9)
-        d.text((72, 560), "saga121.com  →  입학전형  →  입학신청", font=F(fonts["subtitle"], 36), fill=GREY + (int(255 * b),))
-        d.text((72, 620), "카카오톡 ‘사랑글로벌아카데미’  ·  02-3495-8300", font=F(fonts["subtitle"], 36), fill=GREY + (int(255 * b),))
-        d.text((72, 700), self.url, font=F(fonts["bold"], 34), fill=BLUE + (int(255 * b),))
+        d.text((X0, 560), "saga121.com  →  입학전형  →  입학신청", font=F(fonts["subtitle"], 36), fill=GREY + (int(255 * b),))
+        d.text((X0, 620), "카카오톡 ‘사랑글로벌아카데미’  ·  02-3495-8300", font=F(fonts["subtitle"], 36), fill=GREY + (int(255 * b),))
+        d.text((X0, 700), self.url, font=F(fonts["bold"], 34), fill=BLUE + (int(255 * b),))
         if self.qr is not None and b > 0:
             box = (WD - 72 - 470, 260, WD - 72, 730)
             d.rounded_rectangle(box, 24, fill=(255, 255, 255, int(255 * b)))
