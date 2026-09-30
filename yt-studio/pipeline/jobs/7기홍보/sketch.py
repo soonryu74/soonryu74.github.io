@@ -140,7 +140,7 @@ def end_card(out: Path, fonts: dict, bg_frame: Path) -> Path:
     t2 = _f(fonts["title"], 84)
     d.text((WIDTH / 2 + 3, 430 + 5), "일터선교 & 글로벌네트워크아카데미", font=t2, fill=(0, 0, 0, 130), anchor="ma")
     d.text((WIDTH / 2, 430), "일터선교 & 글로벌네트워크아카데미", font=t2, fill=(255, 255, 255), anchor="ma")
-    d.text((WIDTH / 2, 545), "100만 일터 선교사 양성을 꿈꾸는 · 사랑글로벌아카데미 SaGA", font=_f(fonts["hand"], 54),
+    d.text((WIDTH / 2, 545), "100만 일터 선교사 양성을 꿈꾸는, 사랑글로벌아카데미 SaGA", font=_f(fonts["hand"], 54),
            fill=GOLD, anchor="ma")
     sf = _f(fonts["bold"], 40)
     lines = ["원서 접수  1차 2026.10.1 ~ 11.30 (전형료 면제)  ·  2차 12.1 ~ 12.31",
