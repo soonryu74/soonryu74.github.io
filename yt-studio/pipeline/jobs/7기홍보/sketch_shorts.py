@@ -6,7 +6,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -110,7 +110,9 @@ def watermark(out: Path, fonts: dict) -> Path:
 
 def end_card(out: Path, fonts: dict, bg_frame: Path) -> Path:
     base = fit_cover(Image.open(bg_frame).convert("RGB"), (WD, HT)).filter(ImageFilter.GaussianBlur(1.5))
-    g = Image.linear_gradient("L").resize((WD, HT)).point(lambda v: int(max(0, 255 - v * 1.25)))
+    base = ImageEnhance.Brightness(base).enhance(0.62)  # 글자가 도시 야경 위에서도 읽히게 어둡게
+    # 위 60% 는 짙은 남색, 그 아래로 서서히 도시 장면
+    g = Image.linear_gradient("L").resize((WD, HT)).point(lambda v: int(max(0, min(255, 255 - max(0, v - 130) * 2.4))))
     base = Image.composite(Image.new("RGB", (WD, HT), (10, 22, 50)), base, g).convert("RGBA")
     logo = Image.open(A / "saga_logo_w.png").convert("RGBA")
     lw = 300
