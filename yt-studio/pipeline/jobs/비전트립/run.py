@@ -24,6 +24,23 @@ DAYS = [  # (유튜브 ID, 큰 사진, 작은 사진, 장소, 손글씨 한 줄)
     ("jpTIYt9kDeI", 1, 2, "*이스탄불*\n아야 소피아", "9일 여정의 마지막 날"),
 ]
 BG = ("#0A1A33", "#2B5C97")  # 확정 배경: 짙은 남색 → 파랑 종이 질감 (2026-09-30)
+# 구글 드라이브 '비전트립' 폴더의 파일 이름 → 일차 (2026-09-30 확인). src/ 에 이 이름 그대로 넣어도 된다.
+SRC_ALIASES = {
+    "2026_09_30 13_27.mp4": 1, "2026_09_30 13_27 (1).mp4": 2, "2026_09_30 13_27 (2).mp4": 3,
+    "2026_09_30 13_27 (3).mp4": 4, "2026_09_30 13_29.mp4": 5, "2026_09_30 13_30.mp4": 6,
+    "2026_09_30 13_33.mp4": 7, "2026_09_30 13_31.mp4": 8, "2026_09_30 13_31 (1).mp4": 9,
+}
+
+
+def source_video(R: Path, day: int) -> Path | None:
+    """src/day{N}.mp4 가 있으면 그것, 없으면 드라이브 파일 이름으로 찾는다."""
+    p = R / "src" / f"day{day}.mp4"
+    if p.exists():
+        return p
+    for name, d in SRC_ALIASES.items():
+        if d == day and (R / "src" / name).exists():
+            return R / "src" / name
+    return None
 
 
 def frame(vid: str, n: int, out: Path) -> Path:
@@ -50,7 +67,7 @@ if __name__ == "__main__":
         p2 = frame(vid, small, W / "frames" / f"maxres{small}.jpg")
         th = diary_thumbnail(W / f"day{i}_썸네일_가로.jpg", i, len(DAYS), places, F, p1, p2, kicker=kicker, bg=BG)
         print("THUMB", th, flush=True)
-        src = R / "src" / f"day{i}.mp4"
-        if src.exists():
+        src = source_video(R, i)
+        if src:
             out = shorts.with_cover(src, th, W / f"day{i}_표지포함.mp4")
             print("VIDEO", out, flush=True)
