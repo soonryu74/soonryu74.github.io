@@ -187,7 +187,7 @@ class Bars(Scene):
         a = ease(t, 0.2)
         rich(d, layer, (72, 190 + (1 - a) * 30), self.title, F(fonts["bold"], 72), alpha=a)
         lf, vf = F(fonts["subtitle"], 34), F(fonts["bold"], 56)
-        full = WD - 144 - 520
+        full = WD - 144 - 520 - 440  # 오른쪽에 금액 글자 자리를 남긴다
         for i, (label, val, shown, col) in enumerate(self.rows):
             b = ease(t, 0.9 + i * 0.45, 1.0)
             y = 360 + i * 150
