@@ -498,7 +498,7 @@ def thumbs() -> list[Path]:
         bg.convert("RGB").save(p, quality=94)
         res.append(p)
 
-    wide("A_질문", ["직장을", "그만두지 않고", "선교사가 되는 *1년*"], 140, "일터선교 & 글로벌네트워크아카데미  ·  2027학년도 7기", "7기 모집  ·  10.1 ~ 11.30 전형료 면제")
+    wide("A_질문", ["직장을", "그만두지 않고", "선교사가 되는 *1년*"], 140, "일터선교 & 글로벌네트워크아카데미  ·  2027학년도 7기", "사가 SaGA 7기 모집  ·  10.1 ~ 11.30 전형료 면제")
     wide("B_선언", ["일터를", "새롭게", "*보다.*"], 190, "SaGA 일터선교 & 글로벌네트워크아카데미  ·  직장을 그만두지 않고 배우는 1년", "2027학년도 7기 모집  ·  230명")
     # 9:16 쇼츠 표지
     bg = bg_frame(background(), 0.4).convert("RGBA")
@@ -519,7 +519,7 @@ def thumbs() -> list[Path]:
     lg = logo.resize((240, int(logo.height * 240 / logo.width)), Image.LANCZOS)
     bg.alpha_composite(lg, (int(540 - 120), 300))
     tf = F(fonts["bold"], 40)
-    tag = "SaGA 7기 모집  ·  10.1 ~ 11.30"
+    tag = "사가 SaGA 7기 모집  ·  10.1 ~ 11.30"
     tw = tf.getlength(tag)
     d.rounded_rectangle((540 - tw / 2 - 30, 1470, 540 + tw / 2 + 30, 1546), 14, fill=GOLD + (255,))
     d.text((540, 1508), tag, font=tf, fill=(20, 24, 36, 255), anchor="mm")
