@@ -32,10 +32,12 @@ def build(src: Path, bgm: str = "", end: float = 71.0, end_dur: float = 6.0) -> 
     media.run(["-ss", "6", "-i", str(M / "v_seoul_dawn.mp4"), "-frames:v", "1", "-q:v", "2", str(bgf)])
     card = end_card(W / "end_card.jpg", fonts, bgf)
     tail = shorts.piece(W / "p01.mp4", "shorts", str(card), end_dur, zoom=False)
-    base = shorts.join_xfade([body, tail], W / "base.mp4", XF)
-    # ⑤ 음악 (있으면) — 말소리는 영상 소리 그대로, 음악은 덕킹
+    base = shorts.join_xfade([body, tail], W / "base.mp4", XF)  # 이어 붙이면 소리가 비므로 말소리는 따로 얹는다
+    narr = W / "narration.wav"
+    media.run(["-i", str(src), "-t", f"{end:.3f}", "-vn", "-ac", "2", "-ar", "48000", str(narr)])
+    # ⑤ 음악 (있으면) — 말소리 아래로 덕킹
     mixed = W / "mixed.mp4"
-    shorts.finish(base, mixed, [], bgm=bgm, bgm_volume=0.6, duck=True)
+    shorts.finish(base, mixed, [], audio=str(narr), bgm=bgm, bgm_volume=0.6, duck=True)
     # ④ 표지
     cover = photo_tall(O / "노트북LM_표지.jpg", M / "s_commute.png", fonts, ["주일엔 충만한데", "*월요일*엔 왜", "무너질까요?"],
                        "2027  일터선교 & 글로벌네트워크아카데미", "사가 SaGA 7기 모집  ·  10.1 ~ 11.30")
