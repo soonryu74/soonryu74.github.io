@@ -39,7 +39,7 @@ def build(src: Path, bgm: str = "", end: float = 71.0, end_dur: float = 6.0) -> 
     mixed = W / "mixed.mp4"
     shorts.finish(base, mixed, [], audio=str(narr), bgm=bgm, bgm_volume=0.6, duck=True)
     # ④ 표지
-    cover = photo_tall(O / "노트북LM_표지.jpg", M / "s_commute.png", fonts, ["주일엔 충만한데", "*월요일*엔 왜", "무너질까요?"],
+    cover = photo_tall(O / "노트북LM_표지.jpg", M / "s_bag_evening.png", fonts,  # 쇼츠5(출근길)와 겹치지 않게 퇴근길 가방 장면 ["주일엔 충만한데", "*월요일*엔 왜", "무너질까요?"],
                        "2027  일터선교 & 글로벌네트워크아카데미", "사가 SaGA 7기 모집  ·  10.1 ~ 11.30")
     out = O / "노트북LM_shorts.mp4"
     shorts.with_cover(mixed, cover, out)
