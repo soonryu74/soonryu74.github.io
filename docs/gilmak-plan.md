@@ -34,7 +34,23 @@
 - 알림 단독 유료 앱: 약함. 지자체·경찰이 무료로 풀기 시작.
 - 현실적 가치: **콘텐츠**. "공공 데이터 + 바이브코딩으로 30분 만에 내 출근길 시위 알림 만들기" — 채널 공식(아는 도구 + 모르는 활용법)에 맞고, 강의 실습 과제로 그대로 쓸 수 있음.
 
+## 실시간 사고·통제 (`supabase/functions/gilmak-live/`)
+집회는 "신고된 예정"이라 아침 게시로 충분하지만, 사고·고장·현장 통제는 실시간이어야 한다.
+그래서 서울시 실시간 돌발 정보(열린데이터광장 `AccInfo`, TOPIS 제공)를 Supabase 엣지 함수가 대신 호출한다.
+- 배포 위치: Supabase 프로젝트 korea-now(`dxhmprqfgigljgbstqrg`) → `https://dxhmprqfgigljgbstqrg.supabase.co/functions/v1/gilmak-live`
+- 인증키는 함수 안에만 있고(비밀값), 응답은 1분 캐시. 허용 출처: soonryu74.github.io, galmae-budongsan.com, localhost
+- 좌표: 원본 GRS80 TM(중부원점) → 위경도 변환을 함수 안에서 처리(pyproj 대비 0.5m 이내 확인)
+- 페이지는 열릴 때 + 보고 있는 동안 2분마다 호출. 실패하면 하루 2회 정리본으로 자동 대체하고 상단에 표시
+
+### 켜는 순서 (한 번만)
+1. [서울 열린데이터광장](https://data.seoul.go.kr) 로그인 → 나의 화면 → 인증키 신청(무료, 즉시 발급) → "서울시 실시간 돌발 정보" 활용 신청
+2. Supabase 대시보드 → korea-now → Edge Functions → Secrets → `SEOUL_OPEN_KEY` = 발급받은 키
+3. 확인: 브라우저에서 `https://dxhmprqfgigljgbstqrg.supabase.co/functions/v1/gilmak-live?debug=1` → `"ok":true` 와 `rawFirst`(원본 첫 행) 확인
+4. `rawFirst`의 필드명이 `acc_info / occr_date / occr_time / grs80tm_x / grs80tm_y` 와 다르면 `toItem()`의 필드명만 맞추면 됨
+
+주의: 이 저장소 작업 환경에서는 서울시 서버가 차단돼 실제 응답으로 검증하지 못했다. 3번에서 확인해야 한다.
+
 ## 다음 단계(선택)
-1. TOPIS 실시간 돌발 API를 직접 붙여 사고·고장을 10분 단위로 갱신 (서울 열린데이터광장 키 1개 필요)
+1. 실시간 돌발 키 등록 후 실제 필드명 확인(위 '켜는 순서')
 2. 관심 지역 저장 → 아침 카톡/메일 알림 (Supabase + Actions, 이 저장소 다른 하위 사이트와 같은 방식)
 3. 영상: 이 페이지를 만드는 과정 자체를 시연

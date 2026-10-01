@@ -59,6 +59,7 @@ a{color:var(--navy)}
 .badge.march{background:#e5ecf7;color:#1b3a5c}
 .badge.near{background:#e2efff;color:#1456b8}
 .badge.approx{background:#efeee9;color:#6b7280;font-weight:500}
+.badge.live{background:#e6f4ea;color:#1b7a3d}
 .empty{color:var(--muted);font-size:.92rem;padding:6px 2px}
 .more{background:none;border:0;color:var(--navy);font-weight:700;font-size:.9rem;padding:6px 2px;cursor:pointer;font-family:inherit}
 .src{padding:18px 16px 0;font-size:.82rem;color:var(--muted)}
@@ -119,6 +120,8 @@ a{color:var(--navy)}
   const $ = s => document.querySelector(s);
   const params = new URLSearchParams(location.search);
   const DATA_URL = params.get('data') || '../data/gilmak/today.json';
+  // 실시간 돌발(사고·고장·공사·집회): Supabase 엣지 함수가 서울시 TOPIS를 대신 호출(1분 캐시)
+  const LIVE_URL = params.get('live') || 'https://dxhmprqfgigljgbstqrg.supabase.co/functions/v1/gilmak-live';
 
   // 지도 라이브러리를 못 받는 환경(차단된 망·오래된 브라우저)에서도 목록은 보이게 한다
   const hasMap = typeof L !== 'undefined';
@@ -152,7 +155,7 @@ a{color:var(--navy)}
     const out=[];
     d.rallies.forEach(r=>out.push(Object.assign({_k:'rally', _title:r.place||r.route.join(' → '), _sub:[r.people?`신고 ${people(r.people)}`:'', r.march?'행진':'', r.stations.length?`${r.stations.join('·')}서 관할`:''].filter(Boolean).join(' · ')}, r)));
     d.controls.forEach(c=>{ if(!state.showLong && (c.longTerm||c.minor)) return; out.push(Object.assign({_k:'work', _title:c.title, _sub:(c.detail||c.road||'')+(c.endDate&&c.endDate!==state.day?` · ${c.endDate.slice(5).replace('-','/')}까지`:'')}, c)); });
-    d.incidents.forEach(c=>out.push(Object.assign({_k:'crash', _title:c.title, _sub:(c.sub==='crash'?'사고':c.sub==='breakdown'?'고장차량':'돌발')+(c.road?` · ${c.road}`:'')}, c)));
+    d.incidents.forEach(c=>out.push(Object.assign({_k:'crash', _title:c.title, _sub:(c._label||(c.sub==='crash'?'사고':c.sub==='breakdown'?'고장차량':'돌발'))+(c.road?` · ${c.road}`:'')+(c.end?` · ${c.end} 해제 예정`:'')}, c)));
     d.crowds.forEach(c=>out.push(Object.assign({_k:'crowd', _title:c.title, _sub:c.place}, c)));
     out.forEach(it=>{ it._near = state.me && it.at ? dist(state.me,it.at) : null; });
     return out.filter(it=>state.on[it._k]);
@@ -218,7 +221,7 @@ a{color:var(--navy)}
     KINDS.forEach(k=>{
       if(!state.on[k.key]) return;
       const arr=list.filter(it=>it._k===k.key).sort(state.me?byNear:sortT);
-      const h=document.createElement('h2'); h.innerHTML=`<span class="dot" style="background:${k.hex}"></span>${k.label} <span style="color:var(--muted);font-weight:500">${arr.length}건</span>`;
+      const h=document.createElement('h2'); h.innerHTML=`<span class="dot" style="background:${k.hex}"></span>${k.label} <span style="color:var(--muted);font-weight:500">${arr.length}건</span>${k.key==='crash'&&state.liveAt?'<span class="badge live">실시간</span>':''}`;
       box.appendChild(h);
       if(!arr.length){ const e=document.createElement('div'); e.className='empty'; e.textContent=k.key==='rally'?'신고된 집회가 없거나 아직 게시 전입니다.':'해당 없음'; box.appendChild(e); }
       arr.forEach(it=>{
@@ -239,6 +242,8 @@ a{color:var(--navy)}
     renderDays(); renderFilters(); renderNotice();
     const list=items(); renderMap(list); renderList(list);
   }
+
+  setInterval(()=>{ if(document.visibilityState==='visible' && state.data) loadLive().then(ok=>{ if(ok){ render(); const st=$('#stamp').textContent.replace(/사고·통제 실시간 [^(]*\(TOPIS\)/, `사고·통제 실시간 ${fmtStamp(state.liveAt)} (TOPIS)`); $('#stamp').textContent=st; } }); }, 120000);
 
   $('#btnMe').onclick=()=>{
     if(!navigator.geolocation){ alert('이 브라우저는 위치 기능을 지원하지 않습니다.'); return; }
@@ -261,11 +266,37 @@ a{color:var(--navy)}
     try{ await navigator.clipboard.writeText(url); $('#btnShare').textContent='✅ 주소 복사됨'; setTimeout(()=>$('#btnShare').textContent='🔗 공유',1500); }catch(e){ prompt('주소를 복사하세요', url); }
   };
 
+  function mergeLive(live){
+    if(!live || !live.ok || !Array.isArray(live.items)) return false;
+    const t=kstToday(); const d=state.data.days[t]; if(!d) return false;
+    const inc=[], work=[], crowd=[];
+    live.items.forEach(it=>{
+      const base={id:it.id, start:it.start||'', end:it.end||'', title:it.title||it.label, detail:'', road:it.road||'', districts:[], longTerm:false, minor:false, at:it.at||null, live:true};
+      if(it.kind==='work') work.push(Object.assign(base,{kind:'work', sub:it.sub}));
+      else if(it.kind==='crowd') crowd.push({id:it.id, kind:'crowd', start:it.start||'', end:it.end||'', title:(it.label?it.label+' · ':'')+it.title, place:it.road||'', districts:[], url:'', at:it.at||null, live:true});
+      else inc.push(Object.assign(base,{kind:'incident', sub:it.sub==='breakdown'?'breakdown':it.sub==='crash'?'crash':'other', _label:it.label}));
+    });
+    // 실시간이 있으면 오늘 사고·고장은 실시간으로 통째로 교체, 공사·행사는 겹치지 않는 것만 추가
+    d.incidents=inc;
+    const have=new Set(d.controls.map(c=>(c.title||'').replace(/\s+/g,''))); work.forEach(w=>{ if(!have.has((w.title||'').replace(/\s+/g,''))) d.controls.unshift(w); });
+    const haveC=new Set(d.crowds.map(c=>(c.title||'').replace(/\s+/g,''))); crowd.forEach(c=>{ if(!haveC.has((c.title||'').replace(/\s+/g,''))) d.crowds.unshift(c); });
+    state.liveAt=live.fetchedAt; return true;
+  }
+  function loadLive(){
+    if(!LIVE_URL || LIVE_URL==='off') return Promise.resolve(false);
+    return fetch(LIVE_URL,{cache:'no-store'}).then(r=>r.json()).then(j=>{ const ok=mergeLive(j); if(!ok && j && j.error) console.warn('live:', j.error); return ok; }).catch(e=>{ console.warn('live 실패', e); return false; });
+  }
+
   fetch(DATA_URL,{cache:'no-store'}).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); }).then(j=>{
     state.data=j; const days=Object.keys(j.days); const t=kstToday(); state.day=days.includes(t)?t:days[0];
     const age=(Date.now()-new Date(j.sourceGeneratedAt||j.fetchedAt))/3600e3;
-    $('#stamp').textContent=(params.get('data')?'⚠ 샘플 자료(화면 예시용) · ':'')+`자료 기준 ${fmtStamp(j.sourceGeneratedAt||j.fetchedAt)} (서울경찰청·TOPIS)`+(age>14?' · 오래된 자료일 수 있음':'');
+    const baseStamp=(params.get('data')?'⚠ 샘플 자료(화면 예시용) · ':'')+`집회 기준 ${fmtStamp(j.sourceGeneratedAt||j.fetchedAt)} (서울경찰청)`+(age>14?' · 오래된 자료일 수 있음':'');
+    $('#stamp').textContent=baseStamp+' · 사고 실시간 확인 중…';
     render();
+    loadLive().then(ok=>{
+      $('#stamp').textContent=baseStamp+(ok?` · 사고·통제 실시간 ${fmtStamp(state.liveAt)} (TOPIS)`:' · 사고는 하루 2회 정리본(실시간 연결 안 됨)');
+      if(ok){ state._fitted=false; render(); }
+    });
   }).catch(e=>{
     $('#stamp').textContent='데이터를 불러오지 못했습니다.'; const n=$('#notice'); n.hidden=false; n.className='notice err'; n.innerHTML='잠시 후 다시 열어 주세요. 급하면 <a href="https://www.smpa.go.kr/user/nd54882.do" target="_blank" rel="noopener">서울경찰청 오늘의 집회</a>를 직접 확인하세요.';
   });

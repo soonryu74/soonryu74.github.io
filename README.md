@@ -24,7 +24,7 @@
 대규모 임상연구 82건(하버드 COSMOS·VITAL·PHS II, NIH-AARP 39만 명 20년, USPSTF, 코크란)으로 정리한 영양제 근거 플랫폼. 성분 40종 근거 카드, 성분 × 질환·상태 18종 금기·주의 매트릭스(329셀, NIH ODS·LiverTox·FDA·학회 지침 출처), 성분 × 약물군 23종 상호작용(161셀)·성분 조합·복용 타이밍, 생애주기 6단계(영아~고령자·성인 남성), 증상별 15종, 검사 가이드 12종, 2025 한국인 영양소 섭취기준 28종 상한 합산 계산기, 연구 DB, 건강 수준(L1~L4)별 추천 엔진, 제품 선택 기준, 제품 효과 R&D 설계. **전문가 감수 전(베타)**: 모든 페이지에 표시. 기획안: `docs/yeongyangje-platform-plan.md`.
 
 ## 하위 사이트: 오늘 서울 길막 (`/gilmak/`)
-택시 타기 전·운전 나가기 전 30초. 서울경찰청 '오늘의 집회'와 서울시 TOPIS 돌발정보(통제·공사·사고)를 지도 하나에 보여 주는 모바일 웹페이지. 키·서버 없이 GitHub Actions(`gilmak.yml`)가 매시간 공개 JSON을 받아 `data/gilmak/today.json`을 갱신한다. "내 주변 2km" 정렬, 공유, 게시 전 안내 포함. 화면 예시 `/gilmak/?data=sample.json`. 기획·사업성 메모: `docs/gilmak-plan.md`.
+택시 타기 전·운전 나가기 전 30초. 서울경찰청 '오늘의 집회'와 서울시 TOPIS 돌발정보(통제·공사·사고)를 지도 하나에 보여 주는 모바일 웹페이지. 키·서버 없이 GitHub Actions(`gilmak.yml`)가 매시간 공개 JSON을 받아 `data/gilmak/today.json`을 갱신한다. 사고·고장·현장 통제는 Supabase 엣지 함수(`supabase/functions/gilmak-live/`)가 서울시 실시간 돌발 API를 대신 호출해 열 때마다 최신으로 보여 준다(키 등록 필요, `docs/gilmak-plan.md`). "내 주변 2km" 정렬, 공유, 게시 전 안내 포함. 화면 예시 `/gilmak/?data=sample.json`. 기획·사업성 메모: `docs/gilmak-plan.md`.
 
 ## 하위 사이트: 목장 나눔터 (`/gajeong/`)
 멜번방주교회 & ALF의 가정교회 목장 주간 일기와 기도제목을 목자와 목사가 나누는 비공개 공간. 목자는 자기 목장만, 목사는 모든 목장을 봅니다.
