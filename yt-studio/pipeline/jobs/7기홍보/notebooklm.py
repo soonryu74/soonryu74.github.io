@@ -2,7 +2,7 @@
   ① 끝의 Gemini Notebook 로고 꼬리 자르기  ② 1080×1920 으로 키우기  ③ SaGA 엔딩 카드(정식 명칭·일정·문의) 붙이기
   ④ 표지 0.6초 앞에 붙이기  ⑤ 배경음악이 있으면 말소리 아래로 깔기(덕킹)
   ⑥ 끝 장면의 잘못된 과정명(마켓플레이스 트랜스포메이션)을 종이 카드로 덮고 정식 명칭으로, 음성도 TTS 로 바꿈(--keep-voice 면 자막만)
-사용: cd yt-studio/pipeline && python jobs/7기홍보/notebooklm.py 원본.mp4 [bgm.mp3] [--end 71.0] [--keep-voice]
+사용: cd yt-studio/pipeline && python jobs/7기홍보/notebooklm.py 원본.mp4 [bgm.mp3] [--end 70.4] [--keep-voice]
 결과: output/노트북LM_shorts.mp4, output/노트북LM_표지.jpg"""
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ def poster_overlay(out: Path, fonts: dict) -> Path:
     return out
 
 
-def build(src: Path, bgm: str = "", end: float = 71.0, end_dur: float = 6.0, keep_voice: bool = False) -> Path:
+def build(src: Path, bgm: str = "", end: float = 70.4, end_dur: float = 6.0, keep_voice: bool = False) -> Path:
     cfg = load_config(None)
     fonts = font_set(cfg)
     W.mkdir(parents=True, exist_ok=True)
@@ -80,7 +80,7 @@ def build(src: Path, bgm: str = "", end: float = 71.0, end_dur: float = 6.0, kee
                    f"[0:a]atrim=0:{SAY_AT:.3f},asetpts=N/SR/TB,aresample=48000,aformat=channel_layouts=stereo[a0];"
                    f"[1:a]aresample=48000,aformat=channel_layouts=stereo[a1];[a0][a1]concat=n=2:v=0:a=1,apad[a]",
                    "-map", "[a]", "-t", f"{end + XF + end_dur:.3f}", str(narr)])
-    ov = [(poster_overlay(W / "poster_fix.png", fonts), POSTER_AT, end + XF)]
+    ov = [(poster_overlay(W / "poster_fix.png", fonts), POSTER_AT, end + XF / 2)]  # 엔딩 카드로 넘어가는 중간까지
     # ⑤ 음악 (있으면) — 말소리 아래로 덕킹
     mixed = W / "mixed.mp4"
     shorts.finish(base, mixed, ov, audio=str(narr), bgm=bgm, bgm_volume=0.6, duck=True)
@@ -95,7 +95,7 @@ def build(src: Path, bgm: str = "", end: float = 71.0, end_dur: float = 6.0, kee
 
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    end = 71.0
+    end = 70.4  # 이 뒤는 Gemini Notebook 흰 로고 화면
     if "--end" in sys.argv:
         end = float(sys.argv[sys.argv.index("--end") + 1]); args = [a for a in args if a != str(end)]
     src = Path(args[0])
