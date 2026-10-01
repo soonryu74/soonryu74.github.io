@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b3a5c">
+<title>오늘 서울 길막 — 집회·통제·사고 한눈에</title>
+<meta name="description" content="서울경찰청 '오늘의 집회'와 서울시 TOPIS 돌발정보를 지도 하나에. 택시 타기 전, 운전 나가기 전 30초 확인.">
+<meta property="og:title" content="오늘 서울 길막 — 집회·통제·사고 한눈에">
+<meta property="og:description" content="택시 타기 전, 운전 나가기 전 30초 확인. 서울경찰청·서울시 공개 데이터 기반.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://soonryu74.github.io/gilmak/">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  --bg:#f6f4ee; --card:#ffffff; --ink:#1d2430; --muted:#5f6b7a; --line:#e3e0d7;
+  --navy:#1b3a5c; --rally:#d6453d; --work:#e39b1c; --crash:#7a3fb8; --crowd:#1f8a5c; --me:#1f6feb;
+  --chip:#ebe8e0; --chip-on:#1b3a5c;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;line-height:1.55;-webkit-text-size-adjust:100%}
+a{color:var(--navy)}
+.top{background:var(--navy);color:#fff;padding:14px 16px 12px}
+.top h1{margin:0;font-size:1.3rem;font-weight:900;letter-spacing:-.02em}
+.top p{margin:4px 0 0;font-size:.9rem;color:#cfdbea}
+.top .stamp{font-size:.8rem;color:#a9bdd4;margin-top:6px}
+.wrap{max-width:720px;margin:0 auto;padding:0 0 60px}
+.days{display:flex;gap:8px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{flex:0 0 auto;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 12px;text-align:center;cursor:pointer;min-width:84px}
+.day b{display:block;font-size:1rem}
+.day small{color:var(--muted);font-size:.78rem}
+.day.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.day.on small{color:#cfdbea}
+.filters{display:flex;gap:8px;padding:10px 16px 0;flex-wrap:wrap}
+.chip{border:0;background:var(--chip);color:var(--ink);border-radius:999px;padding:7px 12px;font-size:.88rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+.chip .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip.on{background:var(--chip-on);color:#fff}
+.chip.on .dot{outline:2px solid #fff}
+.chip .n{opacity:.75;font-size:.8rem}
+.notice{margin:12px 16px 0;padding:12px 14px;border-radius:12px;background:#fff7e0;border:1px solid #f1dc9a;font-size:.92rem}
+.notice.ok{background:#e8f6ee;border-color:#bfe3cf}
+.notice.err{background:#fdeceb;border-color:#f3bfbb}
+#map{height:46vh;min-height:300px;margin:12px 16px 0;border-radius:14px;border:1px solid var(--line);background:#e9eef3;position:relative;z-index:0}
+.maptools{display:flex;gap:8px;padding:10px 16px 0}
+.btn{flex:1;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 10px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink)}
+.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.list{padding:14px 16px 0}
+.list h2{font-size:1.02rem;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.list h2 .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.item:active{background:#f3f1ea}
+.item .t{font-weight:700;font-size:1rem}
+.item .time{font-weight:900;color:var(--navy);margin-right:8px;white-space:nowrap}
+.item .m{color:var(--muted);font-size:.86rem;margin-top:3px}
+.badge{display:inline-block;border-radius:6px;padding:1px 7px;font-size:.76rem;font-weight:700;margin-left:6px;vertical-align:1px}
+.badge.big{background:#fde3e1;color:#a52f29}
+.badge.march{background:#e5ecf7;color:#1b3a5c}
+.badge.near{background:#e2efff;color:#1456b8}
+.badge.approx{background:#efeee9;color:#6b7280;font-weight:500}
+.empty{color:var(--muted);font-size:.92rem;padding:6px 2px}
+.more{background:none;border:0;color:var(--navy);font-weight:700;font-size:.9rem;padding:6px 2px;cursor:pointer;font-family:inherit}
+.src{padding:18px 16px 0;font-size:.82rem;color:var(--muted)}
+.src p{margin:6px 0}
+.leaflet-popup-content{font-family:inherit;font-size:.9rem;line-height:1.5;margin:10px 12px}
+.leaflet-popup-content b{display:block;margin-bottom:2px}
+.pin{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.pin.big{width:20px;height:20px}
+.pin.me{background:var(--me);box-shadow:0 0 0 6px rgba(31,111,235,.25)}
+.leaflet-div-icon{background:none;border:0}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#141820;--card:#1c222c;--ink:#e8ecf2;--muted:#9aa5b4;--line:#2b3340;--chip:#28303c;--chip-on:#4a7fc0}
+  .notice{background:#3a3220;border-color:#5a4c23;color:#f1e6c6}
+  .notice.ok{background:#1f3328;border-color:#2f5a3f;color:#d8f0e2}
+  .notice.err{background:#3b2220;border-color:#5f3330;color:#f5d5d2}
+  .badge.approx{background:#2b3340;color:#9aa5b4}
+  .item:active{background:#242c38}
+  #map{background:#222a35}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>오늘 서울 길막 🚕</h1>
+    <p>집회 · 도로통제 · 사고를 지도 하나로. 택시 타기 전 30초 확인.</p>
+    <div class="stamp" id="stamp">데이터 불러오는 중…</div>
+  </header>
+
+  <div class="days" id="days"></div>
+  <div class="filters" id="filters"></div>
+  <div id="notice" class="notice" hidden></div>
+  <div id="map"></div>
+  <div class="maptools">
+    <button class="btn primary" id="btnMe">📍 내 주변 2km</button>
+    <button class="btn" id="btnShare">🔗 공유</button>
+  </div>
+
+  <section class="list" id="list"></section>
+
+  <section class="src">
+    <p><b>출처</b> · 집회: <a href="https://www.smpa.go.kr/user/nd54882.do" target="_blank" rel="noopener">서울경찰청 '오늘의 집회'</a> 게시 내용(일시·장소·신고 인원). 통제·공사·사고: <a href="https://topis.seoul.go.kr/" target="_blank" rel="noopener">서울시 TOPIS 돌발정보</a>. 두 자료를 하루 2회 정리하는 <a href="https://github.com/qhshdlwl/seoul-block-data" target="_blank" rel="noopener">seoul-block-data</a>를 매시간 받아옵니다.</p>
+    <p><b>유의</b> · 좌표는 추정치이며 실제 통제는 현장 상황에 따라 달라집니다. 집회 주최·목적은 원문에 없어 표시하지 않습니다. 실시간 경로 안내는 내비 앱을 함께 쓰세요.</p>
+    <p>만든 곳: 노모어매뉴얼 · 공공 데이터 + 바이브코딩으로 만든 무료 페이지입니다.</p>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+(function(){
+  const KINDS = [
+    {key:'rally',  label:'집회',      color:'var(--rally)', hex:'#d6453d'},
+    {key:'work',   label:'통제·공사', color:'var(--work)',  hex:'#e39b1c'},
+    {key:'crash',  label:'사고·고장', color:'var(--crash)', hex:'#7a3fb8'},
+    {key:'crowd',  label:'행사',      color:'var(--crowd)', hex:'#1f8a5c'},
+  ];
+  const state = { data:null, day:null, on:{rally:true,work:true,crash:true,crowd:true}, me:null, showLong:false };
+  const $ = s => document.querySelector(s);
+  const params = new URLSearchParams(location.search);
+  const DATA_URL = params.get('data') || '../data/gilmak/today.json';
+
+  // 지도 라이브러리를 못 받는 환경(차단된 망·오래된 브라우저)에서도 목록은 보이게 한다
+  const hasMap = typeof L !== 'undefined';
+  let map=null, layer=null;
+  if(hasMap){
+    map = L.map('map', {zoomControl:true, attributionControl:true}).setView([37.5665,126.9780], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'&copy; OpenStreetMap'}).addTo(map);
+    layer = L.layerGroup().addTo(map);
+  } else {
+    $('#map').innerHTML='<div style="padding:18px;color:var(--muted);font-size:.9rem">지도를 불러오지 못했습니다. 아래 목록으로 확인하세요.</div>'; $('#map').style.minHeight='0'; $('#map').style.height='auto';
+  }
+  let meMarker=null, meCircle=null;
+  const markers = {};
+
+  function kstToday(){ const d=new Date(Date.now()+9*3600e3); return d.toISOString().slice(0,10); }
+  function dayLabel(iso){
+    const t=kstToday();
+    const w='일월화수목금토'[new Date(iso+'T12:00:00Z').getUTCDay()];
+    const diff=Math.round((new Date(iso)-new Date(t))/86400e3);
+    const name = diff===0?'오늘':diff===1?'내일':diff===2?'모레':'';
+    return {b:(name||`${+iso.slice(8)}일`), s:`${+iso.slice(5,7)}/${+iso.slice(8)} (${w})`};
+  }
+  function fmtStamp(iso){ if(!iso) return ''; const d=new Date(iso); if(isNaN(d)) return iso; return d.toLocaleString('ko-KR',{timeZone:'Asia/Seoul',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  function dist(a,b){ const R=6371, toR=x=>x*Math.PI/180; const dLat=toR(b.lat-a.lat), dLng=toR(b.lng-a.lng); const s=Math.sin(dLat/2)**2+Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLng/2)**2; return 2*R*Math.asin(Math.sqrt(s)); }
+  function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function kindOf(it){ if(it.kind==='rally') return 'rally'; if(it.kind==='crowd') return 'crowd'; if(it.kind==='incident') return 'crash'; return 'work'; }
+  function people(n){ return n>=10000?`${(n/10000).toFixed(n%10000?1:0)}만명`:n>=1000?`${(n/1000).toFixed(n%1000?1:0)}천명`:`${n}명`; }
+
+  function items(){
+    const d=state.data.days[state.day]; if(!d) return [];
+    const out=[];
+    d.rallies.forEach(r=>out.push(Object.assign({_k:'rally', _title:r.place||r.route.join(' → '), _sub:[r.people?`신고 ${people(r.people)}`:'', r.march?'행진':'', r.stations.length?`${r.stations.join('·')}서 관할`:''].filter(Boolean).join(' · ')}, r)));
+    d.controls.forEach(c=>{ if(!state.showLong && (c.longTerm||c.minor)) return; out.push(Object.assign({_k:'work', _title:c.title, _sub:(c.detail||c.road||'')+(c.endDate&&c.endDate!==state.day?` · ${c.endDate.slice(5).replace('-','/')}까지`:'')}, c)); });
+    d.incidents.forEach(c=>out.push(Object.assign({_k:'crash', _title:c.title, _sub:(c.sub==='crash'?'사고':c.sub==='breakdown'?'고장차량':'돌발')+(c.road?` · ${c.road}`:'')}, c)));
+    d.crowds.forEach(c=>out.push(Object.assign({_k:'crowd', _title:c.title, _sub:c.place}, c)));
+    out.forEach(it=>{ it._near = state.me && it.at ? dist(state.me,it.at) : null; });
+    return out.filter(it=>state.on[it._k]);
+  }
+
+  function renderDays(){
+    const box=$('#days'); box.innerHTML='';
+    Object.keys(state.data.days).forEach(iso=>{
+      const l=dayLabel(iso), d=state.data.days[iso];
+      const el=document.createElement('div'); el.className='day'+(iso===state.day?' on':'');
+      el.innerHTML=`<b>${l.b}</b><small>${l.s}</small><small>집회 ${d.rallies.length}</small>`;
+      el.onclick=()=>{ state.day=iso; render(); };
+      box.appendChild(el);
+    });
+  }
+  function renderFilters(){
+    const d=state.data.days[state.day]; const box=$('#filters'); box.innerHTML='';
+    const counts={rally:d.rallies.length, work:d.controls.filter(c=>state.showLong||!(c.longTerm||c.minor)).length, crash:d.incidents.length, crowd:d.crowds.length};
+    KINDS.forEach(k=>{
+      const b=document.createElement('button'); b.className='chip'+(state.on[k.key]?' on':'');
+      b.innerHTML=`<span class="dot" style="background:${k.hex}"></span>${k.label} <span class="n">${counts[k.key]}</span>`;
+      b.onclick=()=>{ state.on[k.key]=!state.on[k.key]; render(); };
+      box.appendChild(b);
+    });
+  }
+  function renderNotice(){
+    const d=state.data.days[state.day], n=$('#notice'); n.hidden=false; n.className='notice';
+    if(!d.posted && d.rallies.length===0){
+      n.innerHTML=`이 날짜의 <b>경찰청 집회 게시가 아직 없습니다</b>. 보통 전날 저녁~당일 아침에 올라옵니다. <a href="${esc(d.sourceUrl)}" target="_blank" rel="noopener">원문 확인</a>`;
+    } else if(d.rallies.length===0){
+      n.className='notice ok'; n.innerHTML='이 날짜에 신고된 집회가 없습니다.';
+    } else {
+      const big=d.rallies.filter(r=>r.big).length, march=d.rallies.filter(r=>r.march).length, tot=d.rallies.reduce((s,r)=>s+(r.people||0),0);
+      n.className='notice'+(big?'':' ok');
+      n.innerHTML=`집회 <b>${d.rallies.length}건</b>, 신고 인원 합계 <b>${people(tot)}</b>${big?` · 대규모 ${big}건`:''}${march?` · 행진 ${march}건`:''}. <a href="${esc(d.sourceUrl)}" target="_blank" rel="noopener">경찰청 원문</a>`;
+    }
+  }
+  function pin(it){
+    const k=KINDS.find(x=>x.key===it._k);
+    return L.divIcon({className:'', html:`<div class="pin${it.big?' big':''}" style="background:${k.hex}"></div>`, iconSize:[it.big?20:14,it.big?20:14], iconAnchor:[it.big?10:7,it.big?10:7]});
+  }
+  function popup(it){
+    const k=KINDS.find(x=>x.key===it._k);
+    const time=it.start?`${it.start}${it.end?'~'+it.end:''}`:'';
+    return `<b style="color:${k.hex}">${esc(k.label)}${time?' · '+time:''}</b>${esc(it._title)}<br><span style="color:#6b7280">${esc(it._sub)}</span>${it._near!=null?`<br><span style="color:#1456b8">내 위치에서 ${it._near.toFixed(1)}km</span>`:''}`;
+  }
+  function renderMap(list){
+    if(!hasMap) return;
+    layer.clearLayers(); for(const k in markers) delete markers[k];
+    const pts=[];
+    list.forEach(it=>{
+      if(!it.at) return;
+      const m=L.marker([it.at.lat,it.at.lng],{icon:pin(it)}).bindPopup(popup(it)); layer.addLayer(m); markers[it.id]=m; pts.push([it.at.lat,it.at.lng]);
+      if(it._k==='rally' && it.pts && it.pts.length>1){ layer.addLayer(L.polyline(it.pts.map(p=>[p.lat,p.lng]),{color:'#d6453d',weight:4,opacity:.6,dashArray:'6 6'})); }
+    });
+    if(state.me){ pts.push([state.me.lat,state.me.lng]); }
+    if(pts.length && !state._fitted){ map.fitBounds(pts, {padding:[24,24], maxZoom:13}); state._fitted=true; }
+  }
+  function renderList(list){
+    const box=$('#list'); box.innerHTML='';
+    const sortT=(a,b)=>(a.start||'99').localeCompare(b.start||'99');
+    const byNear=(a,b)=>(a._near??1e9)-(b._near??1e9);
+    KINDS.forEach(k=>{
+      if(!state.on[k.key]) return;
+      const arr=list.filter(it=>it._k===k.key).sort(state.me?byNear:sortT);
+      const h=document.createElement('h2'); h.innerHTML=`<span class="dot" style="background:${k.hex}"></span>${k.label} <span style="color:var(--muted);font-weight:500">${arr.length}건</span>`;
+      box.appendChild(h);
+      if(!arr.length){ const e=document.createElement('div'); e.className='empty'; e.textContent=k.key==='rally'?'신고된 집회가 없거나 아직 게시 전입니다.':'해당 없음'; box.appendChild(e); }
+      arr.forEach(it=>{
+        const el=document.createElement('div'); el.className='item';
+        const time=it.start?`${it.start}${it.end?'~'+it.end:''}`:'';
+        const badges=(it.big?'<span class="badge big">대규모</span>':'')+(it.march?'<span class="badge march">행진</span>':'')+(it._near!=null&&it._near<=2?'<span class="badge near">내 주변</span>':'')+(it.at&&it.at.approx&&it._k==='rally'?'<span class="badge approx">위치 추정</span>':'');
+        el.innerHTML=`<div class="t">${time?`<span class="time">${esc(time)}</span>`:''}${esc(it._title)}${badges}</div><div class="m">${esc(it._sub)}${it._near!=null?` · ${it._near.toFixed(1)}km`:''}${it.districts&&it.districts.length?` · ${esc(it.districts.join('·'))}`:''}</div>`;
+        el.onclick=()=>{ const m=hasMap&&markers[it.id]; if(m){ map.setView(m.getLatLng(), Math.max(map.getZoom(),14)); m.openPopup(); $('#map').scrollIntoView({behavior:'smooth',block:'center'}); } };
+        box.appendChild(el);
+      });
+      if(k.key==='work'){
+        const d=state.data.days[state.day]; const hidden=d.controls.filter(c=>c.longTerm||c.minor).length;
+        if(hidden){ const b=document.createElement('button'); b.className='more'; b.textContent=state.showLong?'장기 공사·경미한 통제 숨기기':`장기 공사·경미한 통제 ${hidden}건 더 보기`; b.onclick=()=>{state.showLong=!state.showLong; render();}; box.appendChild(b); }
+      }
+    });
+  }
+  function render(){
+    renderDays(); renderFilters(); renderNotice();
+    const list=items(); renderMap(list); renderList(list);
+  }
+
+  $('#btnMe').onclick=()=>{
+    if(!navigator.geolocation){ alert('이 브라우저는 위치 기능을 지원하지 않습니다.'); return; }
+    $('#btnMe').textContent='위치 확인 중…';
+    navigator.geolocation.getCurrentPosition(p=>{
+      state.me={lat:p.coords.latitude,lng:p.coords.longitude};
+      if(hasMap){
+        if(meMarker){ map.removeLayer(meMarker); map.removeLayer(meCircle); }
+        meMarker=L.marker([state.me.lat,state.me.lng],{icon:L.divIcon({className:'',html:'<div class="pin me"></div>',iconSize:[14,14],iconAnchor:[7,7]})}).bindPopup('내 위치');
+        meCircle=L.circle([state.me.lat,state.me.lng],{radius:2000,color:'#1f6feb',weight:1,fillOpacity:.06}).addTo(map);
+        meMarker.addTo(map); map.setView([state.me.lat,state.me.lng],13); state._fitted=true;
+      }
+      $('#btnMe').textContent='📍 내 주변 2km (가까운 순)'; render();
+    }, err=>{ $('#btnMe').textContent='📍 내 주변 2km'; alert('위치를 가져오지 못했습니다. 브라우저 위치 권한을 허용해 주세요.'); }, {enableHighAccuracy:false, timeout:10000, maximumAge:60000});
+  };
+  $('#btnShare').onclick=async()=>{
+    const url='https://soonryu74.github.io/gilmak/'; const d=state.data&&state.data.days[state.day];
+    const text=d?`오늘 서울 집회 ${d.rallies.length}건 · 통제 ${d.controls.length}건 — 택시 타기 전 확인`:'오늘 서울 길막';
+    try{ if(navigator.share){ await navigator.share({title:'오늘 서울 길막',text,url}); return; } }catch(e){ return; }
+    try{ await navigator.clipboard.writeText(url); $('#btnShare').textContent='✅ 주소 복사됨'; setTimeout(()=>$('#btnShare').textContent='🔗 공유',1500); }catch(e){ prompt('주소를 복사하세요', url); }
+  };
+
+  fetch(DATA_URL,{cache:'no-store'}).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); }).then(j=>{
+    state.data=j; const days=Object.keys(j.days); const t=kstToday(); state.day=days.includes(t)?t:days[0];
+    const age=(Date.now()-new Date(j.sourceGeneratedAt||j.fetchedAt))/3600e3;
+    $('#stamp').textContent=(params.get('data')?'⚠ 샘플 자료(화면 예시용) · ':'')+`자료 기준 ${fmtStamp(j.sourceGeneratedAt||j.fetchedAt)} (서울경찰청·TOPIS)`+(age>14?' · 오래된 자료일 수 있음':'');
+    render();
+  }).catch(e=>{
+    $('#stamp').textContent='데이터를 불러오지 못했습니다.'; const n=$('#notice'); n.hidden=false; n.className='notice err'; n.innerHTML='잠시 후 다시 열어 주세요. 급하면 <a href="https://www.smpa.go.kr/user/nd54882.do" target="_blank" rel="noopener">서울경찰청 오늘의 집회</a>를 직접 확인하세요.';
+  });
+})();
+</script>
+</body>
+</html>

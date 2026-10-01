@@ -1,0 +1,45 @@
+name: 오늘 서울 길막(집회·통제·사고) 자동 갱신
+
+# seoul-block-data(서울경찰청 오늘의 집회 + 서울시 TOPIS 돌발정보를 하루 2회 정리한 공개 JSON)를
+# 받아 data/gilmak/today.json 을 갱신합니다. 별도 키가 필요 없습니다.
+# 원천이 하루 2회(아침·오후) 갱신되므로 낮 시간에 매시간 확인해 바뀐 게 있을 때만 커밋합니다.
+on:
+  schedule:
+    - cron: '20 21-23,0-13 * * *'   # UTC 21:20~13:20 = KST 06:20~22:20 매시간
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-push-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 수집 → data/gilmak/today.json
+        env:
+          TZ: Asia/Seoul
+        run: python3 scripts/build_gilmak.py
+
+      - name: 변경 시 커밋
+        run: |
+          if git diff --quiet -- data/gilmak/today.json; then
+            echo "변경 없음"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/gilmak/today.json
+            git commit -m "오늘 서울 길막 데이터 자동 갱신"
+            for i in 1 2 3 4; do
+              if git push; then break; fi
+              echo "push 경합 — pull --rebase 후 재시도 ($i)"
+              git pull --rebase origin "${GITHUB_REF_NAME}" || true
+              sleep $((i*3))
+            done
+          fi
