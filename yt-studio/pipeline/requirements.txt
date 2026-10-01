@@ -1,0 +1,22 @@
+# 필수 — 대본·음성·영상 만들기
+requests>=2.31
+pillow>=10.0
+edge-tts>=7.0
+imageio-ffmpeg>=0.5     # ffmpeg 를 따로 설치하지 않아도 되게 해 줍니다
+
+# 제작실 화면 (app.py)
+flask>=3.0
+
+# 받아쓰기 — 녹음·강의 영상 자막 (column · clip · compose 의 captions:auto)
+faster-whisper>=1.0
+
+# 얼굴 찾기 — 글자가 얼굴을 가리지 않게 (cheer 등)
+opencv-python-headless>=4.9
+numpy
+
+# 선택 — 유튜브 자동 업로드 (upload 명령)
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.2
+
+# 구글 그림(GEMINI_API_KEY) · Veo 영상 생성
+google-genai>=1.30

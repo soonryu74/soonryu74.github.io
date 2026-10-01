@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaGA 영상 제작실</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --bg:#F3F5F9; --card:#FFFFFF; --ink:#16213A; --muted:#5B6579; --line:#DCE2EB;
+    --navy:#14264F; --gold:#C8962E; --gold-soft:#F7EEDB; --ok:#1B7A5A; --ok-soft:#E4F4EE;
+    --bad:#B23A2C; --bad-soft:#FBE9E6; --chip:#EAEFF6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0F1522; --card:#172032; --ink:#E6EAF2; --muted:#9DA8BC; --line:#2A3650;
+      --navy:#9DB8EE; --gold:#E0B25A; --gold-soft:#2E2718; --ok:#4FC79B; --ok-soft:#15302A;
+      --bad:#F0907F; --bad-soft:#3A201C; --chip:#212C42; color-scheme:dark; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:17px;line-height:1.65;word-break:keep-all}
+  header{background:linear-gradient(120deg,#14264F,#2B4A8B);color:#fff;padding:22px 20px 0}
+  header .in,main{max-width:1100px;margin:0 auto}
+  header h1{margin:0;font-size:1.7rem;letter-spacing:-.01em}
+  header p{margin:2px 0 12px;color:#D7E1F5}
+  .status{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .status span{font-size:.85rem;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.14)}
+  .status span.no{background:rgba(255,120,100,.3)}
+  nav.tabs{display:flex;gap:4px;overflow-x:auto}
+  nav.tabs button{font:inherit;border:0;background:transparent;color:#D7E1F5;padding:12px 18px;border-radius:12px 12px 0 0;cursor:pointer;white-space:nowrap;font-weight:600}
+  nav.tabs button.on{background:var(--bg);color:var(--ink)}
+  main{padding:20px 20px 80px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:16px}
+  .card h2{margin:0 0 4px;font-size:1.35rem;color:var(--navy)}
+  .card .lead{margin:0 0 14px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px 18px}
+  label.f{display:block}
+  label.f > span{display:block;font-weight:600;margin-bottom:4px}
+  label.f small{display:block;color:var(--muted);font-weight:400;font-size:.86rem}
+  input[type=text],input[type=number],select,textarea{width:100%;font:inherit;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+  textarea{min-height:90px;resize:vertical}
+  .drop{border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center;color:var(--muted);background:var(--bg);cursor:pointer;position:relative}
+  .drop.over{border-color:var(--gold);background:var(--gold-soft)}
+  .drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .drop b{color:var(--ink)}
+  .drop .names{margin-top:6px;font-size:.9rem;color:var(--ok)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+  button.go{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 26px;background:var(--gold);color:#fff;cursor:pointer;font-size:1.05rem}
+  button.sub{font:inherit;border:1px solid var(--line);border-radius:10px;padding:9px 16px;background:var(--card);color:var(--ink);cursor:pointer}
+  button:disabled{opacity:.5;cursor:default}
+  button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .hint{background:var(--gold-soft);border-radius:10px;padding:10px 14px;font-size:.93rem;margin-top:12px}
+  .job{border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+  .job .st{display:inline-block;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--chip)}
+  .job .st.ok{background:var(--ok-soft);color:var(--ok)} .job .st.bad{background:var(--bad-soft);color:var(--bad)}
+  .log{background:#0E1628;color:#DDE6FA;border-radius:10px;padding:10px 12px;font-size:.85rem;max-height:180px;overflow:auto;white-space:pre-wrap;margin-top:8px;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .outs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:12px}
+  .outs figure{margin:0;background:var(--bg);border-radius:12px;padding:8px}
+  .outs video,.outs img{width:100%;border-radius:8px;display:block;background:#000}
+  .outs video.v{aspect-ratio:9/16;object-fit:contain}
+  .outs figcaption{font-size:.85rem;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between;gap:6px;align-items:center}
+  .outs a{color:var(--navy);font-weight:600}
+  .fc{color:var(--ok);font-size:.9rem;margin-top:6px}
+  .ref{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-top:12px;background:var(--bg)}
+  .ref summary{cursor:pointer;font-weight:700;font-size:1.08rem}
+  .beat{border-left:4px solid var(--gold);background:var(--card);border-radius:10px;padding:10px 12px;margin:10px 0}
+  .beat .t{font-weight:700;color:var(--navy)}
+  .have{color:var(--ok);font-weight:600} .need{color:var(--bad);font-weight:600}
+  table.clips{width:100%;border-collapse:collapse;margin-top:10px;font-size:.95rem}
+  table.clips td,table.clips th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  .hidden{display:none!important}
+  .muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <h1>SaGA 영상 제작실</h1>
+  <p>파일을 끌어다 놓고 버튼을 누르면 쇼츠가 만들어집니다. 글자는 얼굴을 피해서 들어가요.</p>
+  <div class="status" id="status"><span>상태 확인 중…</span></div>
+  <nav class="tabs" id="tabs">
+    <button data-t="cheer" class="on">응원 릴레이</button>
+    <button data-t="column">극동방송 칼럼</button>
+    <button data-t="clip">강의에서 쇼츠</button>
+    <button data-t="ref">추천 영상 0~7</button>
+    <button data-t="thumb">썸네일</button>
+    <button data-t="jobs">작업 목록</button>
+  </nav>
+</div></header>
+
+<main>
+<!-- 1. 응원 릴레이 -->
+<section id="t-cheer" class="card">
+  <h2>응원 릴레이 쇼츠</h2>
+  <p class="lead">여러 사람이 한 명씩 같은 구호를 외치는 영상 → 외칠 때마다 큰 글자가 '팡'. 영상을 여러 개 올리면 "한 번 더!"로 이어 붙여요.</p>
+  <form id="f-cheer">
+    <div class="drop"><input type="file" name="videos" accept="video/*" multiple><b>영상 파일을 여기에 끌어다 놓기</b><br>또는 눌러서 고르기 (여러 개 가능)<div class="names"></div></div>
+    <div class="grid" style="margin-top:14px">
+      <label class="f"><span>외치는 말</span><input type="text" name="shout" value="일이 *선교*다!"><small>*별표*로 감싼 단어가 금색으로 강조돼요</small></label>
+      <label class="f"><span>아래 작은 글씨</span><input type="text" name="sub" value="Business is Mission!"></label>
+      <label class="f"><span>위 꼬리표</span><input type="text" name="label" value="남군산교회에서 보내온 응원"></label>
+      <label class="f"><span>손글씨 이름표</span><input type="text" name="tag" value="남군산교회"></label>
+      <label class="f"><span>이름표 아래 한 줄</span><input type="text" name="tag_role" value="SaGA 거점교회"></label>
+      <label class="f"><span>마지막 화면 문구</span><input type="text" name="outro" value="당신의 일터도\n*선교지*입니다"><small>줄바꿈은 \n</small></label>
+      <label class="f"><span>재생목록</span><select name="series"></select></label>
+      <label class="f"><span>배경 음악</span><select name="music"><option value="auto">응원 리듬 (기본, 저작권 없음)</option><option value="none">없음</option><option value="file">내 음악 파일</option></select></label>
+      <label class="f music-file hidden"><span>음악 파일</span><input type="file" name="music_file" accept="audio/*"><small>유튜브 오디오 보관함 곡 추천</small></label>
+      <label class="f"><span>효과음</span><select name="effects"><option value="1">넣기 ('팡'·'휙'·'딩')</option><option value="0">빼기</option></select></label>
+      <label class="f"><span>썸네일도 만들기</span><select name="thumb"><option value="1">예 (3종)</option><option value="0">아니요</option></select></label>
+      <label class="f"><span>썸네일 배지 (선택)</span><input type="text" name="badge" placeholder="예: 7기 모집"></label>
+      <label class="f"><span>썸네일 로고 (선택)</span><input type="file" name="logo_image" accept="image/*"><small>교회·SaGA 로고. 오른쪽 위에 들어가요</small></label>
+    </div>
+    <div class="row"><button class="go" type="submit">쇼츠 만들기</button><span class="muted">20초 영상 기준 1분 안팎</span></div>
+  </form>
+  <div class="jobbox"></div>
+</section>
+
+<!-- 2. 칼럼 -->
+<section id="t-column" class="card hidden">
+  <h2>극동방송 1분 칼럼 → 영상</h2>
+  <p class="lead">녹음 파일과 원고를 올리면 원고 그대로 정확한 자막이 들어가요. 원고가 없으면 AI 가 받아쓰고, 끝난 뒤 자막을 고쳐 다시 만들 수 있어요.</p>
+  <form id="f-column">
+    <div class="grid">
+      <div class="drop"><input type="file" name="audio" accept="audio/*,video/*"><b>녹음 파일</b> (mp3·wav·m4a)<div class="names"></div></div>
+      <div class="drop"><input type="file" name="photo" accept="image/*"><b>칼럼니스트 사진</b> (선택)<div class="names"></div></div>
+      <div class="drop"><input type="file" name="images" accept="image/*" multiple><b>장면 사진 여러 장</b> (선택)<div class="names"></div></div>
+    </div>
+    <div class="grid" style="margin-top:14px">
+      <label class="f"><span>영상 모양</span><select name="format">
+        <option value="miracle">가로 16:9 · '3분 미라클'형</option>
+        <option value="shorts">세로 쇼츠</option>
+        <option value="both">둘 다</option></select>
+        <small>가로: 타이틀 화면 + 문장마다 바뀌는 장면 + 핵심어 색 자막 + 영어 자막</small></label>
+      <label class="f"><span>화면 위 제목</span><input type="text" name="title" placeholder="월요일 사무실이\n*첫 번째 선교지*입니다"><small>줄바꿈 \n · 강조 *단어*</small></label>
+      <label class="f"><span>칼럼니스트 이름</span><input type="text" name="name"></label>
+      <label class="f"><span>직함</span><input type="text" name="role"></label>
+      <label class="f"><span>결과 폴더 이름</span><input type="text" name="out" placeholder="예: 칼럼12"><small>같은 이름으로 다시 만들면 고친 자막이 반영돼요</small></label>
+    </div>
+    <label class="f" style="margin-top:14px"><span>원고 (붙여 넣기)</span><textarea name="script" placeholder="방송 원고를 붙여 넣으면 자막이 정확해져요"></textarea></label>
+    <details style="margin-top:10px"><summary>가로 영상 설정 (선택)</summary>
+      <div class="grid" style="margin-top:10px">
+        <label class="f"><span>장면 그림</span><select name="visual">
+          <option value="ai">AI 그림 (원고에 맞춰 자동)</option>
+          <option value="abstract">부드러운 추상 배경</option></select>
+          <small>장면 사진을 올리면 그 사진이 먼저 쓰여요. 무료 AI 그림엔 오른쪽 아래 작은 표시가 있어요</small></label>
+        <label class="f"><span>왼쪽 위 채널 표시</span><input type="text" name="bug" placeholder="극동방송 × SaGA"></label>
+        <label class="f"><span>썸네일 제목 (3줄)</span><input type="text" name="thumb" placeholder="월요일 아침이\n*선교지*가\n됩니다"></label>
+        <label class="f"><span>썸네일 옅은 영어 단어</span><input type="text" name="ghost" placeholder="MONDAY"></label>
+      </div>
+      <label class="f" style="margin-top:10px"><span>영어 자막 (한 줄 = 한 문장)</span><textarea name="english" placeholder="원고 문장 순서대로 영어 한 줄씩. 비워 두면 영어 자막 없이 만들어요. auto 라고 쓰면 AI 번역(AI 연결 시)"></textarea></label>
+    </details>
+    <details style="margin-top:10px"><summary>세로 쇼츠 썸네일도 만들기 (선택)</summary>
+      <div class="grid" style="margin-top:10px">
+        <label class="f"><span>인용 문구</span><input type="text" name="quote" placeholder="일터가 곧\n*예배의 자리*입니다"></label>
+        <div class="drop"><input type="file" name="shot" accept="image/*"><b>썸네일 배경 사진</b><div class="names"></div></div>
+      </div>
+    </details>
+    <div class="row"><button class="go" type="submit">칼럼 영상 만들기</button></div>
+  </form>
+  <div class="jobbox"></div>
+  <div class="srtbox hidden card" style="margin-top:14px">
+    <h2>자막 고치기</h2><p class="lead">틀린 글자를 고치고 '다시 만들기'를 누르세요. 시간(숫자 줄)은 그대로 두세요.</p>
+    <textarea style="min-height:260px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9rem"></textarea>
+    <div class="row"><button class="go redo" type="button">고친 자막으로 다시 만들기</button></div>
+  </div>
+</section>
+
+<!-- 3. 강의 쇼츠 -->
+<section id="t-clip" class="card hidden">
+  <h2>긴 강의에서 쇼츠 뽑기</h2>
+  <p class="lead">받아쓰기 → AI 가 30~60초 구간과 "맨 앞에 먼저 보여 줄 한 문장"을 골라요. 끝난 뒤 제목과 구간을 고쳐 다시 만들 수 있어요.</p>
+  <form id="f-clip">
+    <div class="drop"><input type="file" name="video" accept="video/*"><b>강의 영상</b><div class="names"></div></div>
+    <div class="grid" style="margin-top:14px">
+      <label class="f"><span>재생목록</span><select name="series"></select></label>
+      <label class="f"><span>몇 편</span><input type="number" name="count" value="3" min="1" max="12"></label>
+      <label class="f"><span>강사 이름</span><input type="text" name="name" placeholder="이돈주 학장"></label>
+      <label class="f"><span>직함</span><input type="text" name="role"></label>
+      <label class="f"><span>화면 방식</span><select name="fit"><option value="blur">화면 전체 (슬라이드까지)</option><option value="crop">강사를 세로로 크게</option></select></label>
+      <label class="f"><span>원본 강의 주소 (선택)</span><input type="text" name="source_url" placeholder="https://"></label>
+    </div>
+    <div class="row"><button class="go" type="submit">쇼츠 뽑기</button><span class="muted" id="ai-note"></span></div>
+  </form>
+  <div class="jobbox"></div>
+  <div class="clipbox hidden card" style="margin-top:14px">
+    <h2>고른 구간 고치기</h2><p class="lead">제목(줄바꿈 \n, 강조 *단어*)과 시작·끝 문장 번호를 고칠 수 있어요.</p>
+    <div style="overflow-x:auto"><table class="clips"><colgroup><col style="width:4%"><col style="width:13%"><col style="width:45%"><col style="width:12%"><col style="width:12%"><col style="width:14%"></colgroup><thead><tr><th>#</th><th>구간</th><th>제목</th><th>시작 번호</th><th>끝 번호</th><th>맨 앞 문장 번호<br><small class="muted">-1 은 없음</small></th></tr></thead><tbody></tbody></table></div>
+    <div class="row"><button class="go redo" type="button">고친 대로 다시 만들기</button></div>
+  </div>
+</section>
+
+<!-- 4. 추천 영상 -->
+<section id="t-ref" class="card hidden">
+  <h2>추천 영상 0~7번</h2>
+  <p class="lead">받는 사람별 60초 영상. 사진·인터뷰 영상을 칸마다 올리고 '만들기'를 누르세요. 아직 없는 칸은 "[촬영 예정]" 화면으로 대신 들어가서 흐름을 먼저 볼 수 있어요.</p>
+  <div id="ref-list"><p class="muted">불러오는 중…</p></div>
+</section>
+
+<!-- 5. 썸네일 -->
+<section id="t-thumb" class="card hidden">
+  <h2>썸네일 · 쇼츠 표지</h2>
+  <p class="lead"><b>재생목록 고정 틀</b>을 고르면 재생목록마다 확정된 모양·색으로 쇼츠 표지(9:16)와 가로 썸네일(16:9)이 한 번에 나와요. 누가 만들어도 같은 모양이라 채널이 통일돼 보여요. 글자는 얼굴을 피해서 들어가요.</p>
+  <form id="f-thumb">
+    <label class="f" style="margin-bottom:12px"><span>틀 고르기</span><select name="layout" id="thumb-layout">
+      <option value="kit" selected>재생목록 고정 틀 (추천 · 누가 만들어도 같은 모양)</option>
+      <option value="saga">사진 한 장 3종 (인용형 · 예능 자막형 · 얼굴+두 줄형)</option>
+      <option value="showcase">장면 카드형 (오빠두·어비월드·언더스탠딩 공통 공식, 노모어매뉴얼용)</option>
+      <option value="shorts">쇼츠 세로 표지 4종 (말풍선 · 자막상자 · 질문-답 · 카드)</option>
+    </select></label>
+    <div class="kit-only">
+      <div class="grid">
+        <label class="f"><span>재생목록</span><select name="k_series"></select><small id="kit-desc"></small></label>
+        <div class="drop"><input type="file" name="k_photos" accept="image/*" multiple><b>사진 (여러 장 가능)</b> — 첫 장이 대표 사진. 응원 릴레이는 사람마다 한 장씩<div class="names"></div></div>
+      </div>
+      <div class="grid" style="margin-top:14px">
+        <label class="f"><span>큰 말 (필수)</span><input type="text" name="k_big" placeholder="일이\n*선교*다!"><small>줄바꿈 \n · 강조 *단어* 하나</small></label>
+        <label class="f"><span>위 작은 줄</span><input type="text" name="k_hook" placeholder="남군산교회에서 온 한마디"></label>
+        <label class="f"><span>이름</span><input type="text" name="k_who" placeholder="예: 홍길동"></label>
+        <label class="f"><span>직함·소속</span><input type="text" name="k_role" placeholder="예: SaGA 거점교회"></label>
+        <label class="f"><span>누구에게 (꼬리표)</span><input type="text" name="k_target" placeholder="월요일이 무거운 직장인께"></label>
+        <label class="f"><span>영어·보조 한 줄</span><input type="text" name="k_sub" placeholder="Business is Mission!"></label>
+      </div>
+      <div class="grid kit-trip hidden" style="margin-top:14px">
+        <label class="f"><span>DAY (며칠째)</span><input type="number" name="k_day" value="1" min="1"></label>
+        <label class="f"><span>전체 일수</span><input type="number" name="k_total" value="9" min="1"></label>
+        <label class="f"><span>장소 (줄마다 하나)</span><input type="text" name="k_places" placeholder="빌라델비아\n사데\n*에베소*"></label>
+      </div>
+    </div>
+    <div class="drop not-kit hidden"><input type="file" name="photo" accept="image/*"><b>장면 사진</b> (장면 카드형에서는 결과 화면·장면)<div class="names"></div></div>
+    <div class="grid sc-only hidden" style="margin-top:14px">
+      <label class="f"><span>채널 이름 (왼쪽 위 상자)</span><input type="text" name="channel" value="노모어매뉴얼"></label>
+      <label class="f"><span>도구 이름 로고</span><input type="text" name="logo_text" placeholder="예: Flow · SUNO · Claude"></label>
+      <label class="f"><span>손글씨 반응</span><input type="text" name="doodle" placeholder="예: 진짜 자동?"><small>| 로 여러 개</small></label>
+      <div class="drop"><input type="file" name="person" accept="image/png"><b>대표님 사진</b> (배경 지운 PNG, 선택)<br><small>넣으면 오른쪽에 크게 서요</small><div class="names"></div></div>
+    </div>
+    <div class="grid sh-only hidden" style="margin-top:14px">
+      <label class="f"><span>큰 말 (필수)</span><input type="text" name="s_big" placeholder="일이\n*선교*다!"><small>줄바꿈 \n · 강조 *단어* 하나만</small></label>
+      <label class="f"><span>위 작은 줄</span><input type="text" name="s_hook" placeholder="남군산교회에서 온 한마디"><small>자막상자형·질문-답형 위 줄</small></label>
+      <label class="f"><span>말한 사람</span><input type="text" name="s_who" placeholder="SaGA 거점교회 · 남군산교회"><small>말풍선 아래</small></label>
+      <label class="f"><span>누구에게 (꼬리표)</span><input type="text" name="s_target" placeholder="월요일이 무거운 직장인께"></label>
+      <label class="f"><span>답 한 단어 (질문-답형)</span><input type="text" name="s_answer" placeholder="비우면 *강조* 단어를 씀"></label>
+      <label class="f"><span>도장 (카드형)</span><input type="text" name="s_stamp" placeholder="60초"></label>
+      <label class="f"><span>색</span><select name="s_series"></select></label>
+    </div>
+    <div class="grid main-only hidden" style="margin-top:14px">
+      <label class="f"><span>인용 문구</span><input type="text" name="quote" placeholder="주일엔 제자,\n월요일엔 *그냥 직장인*"><small>줄바꿈 \n · 강조 *단어*</small></label>
+      <label class="f"><span>이름</span><input type="text" name="name"></label>
+      <label class="f"><span>직함·기수</span><input type="text" name="role"></label>
+      <label class="f"><span>사연 한 줄</span><input type="text" name="kicker"></label>
+      <label class="f"><span>반응 자막</span><input type="text" name="notes" placeholder="공감…|눈물 주의"><small>| 로 여러 개</small></label>
+      <label class="f"><span>글자 쪽</span><select name="side"><option value="left">왼쪽</option><option value="right">오른쪽</option></select></label>
+      <label class="f"><span>색</span><select name="series"></select></label>
+      <label class="f"><span>왼쪽 위 로고 글자</span><input type="text" name="logo" value="SaGA 일터아카데미"></label>
+      <label class="f"><span>큰 두 줄형: 위 작은 줄</span><input type="text" name="hook" placeholder="예: 직장인 성도님께 드리는 60초"><small>오빠두엑셀처럼 맥락 한 줄</small></label>
+      <label class="f"><span>큰 두 줄형: 큰 줄 (선택)</span><input type="text" name="big" placeholder="비우면 인용 문구를 씀. 예: 월요일도 *예배*입니다"></label>
+      <label class="f"><span>배지 (선택)</span><input type="text" name="badge" placeholder="예: 7기 모집"></label>
+      <label class="f"><span>로고 이미지 (선택)</span><input type="file" name="logo_image" accept="image/*"></label>
+    </div>
+    <div class="row"><button class="go" type="submit">썸네일 만들기</button></div>
+  </form>
+  <div class="jobbox"></div>
+</section>
+
+<!-- 작업 목록 -->
+<section id="t-jobs" class="card hidden">
+  <h2>작업 목록</h2>
+  <p class="lead">이번에 켠 뒤 만든 것들. 결과 파일은 <b>pipeline/projects/saga</b> 폴더에도 저장돼요.</p>
+  <div id="jobs"></div>
+</section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // 탭
+  $$("#tabs button").forEach((b) => b.addEventListener("click", () => {
+    $$("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
+    $$("main > section").forEach((s) => s.classList.toggle("hidden", s.id !== "t-" + b.dataset.t));
+    if (b.dataset.t === "ref") loadRef();
+    if (b.dataset.t === "jobs") loadJobs();
+  }));
+
+  // 끌어다 놓기 표시
+  function wireDrops(root = document) {
+    $$(".drop", root).forEach((d) => {
+      const inp = $("input", d);
+      if (!inp || inp.dataset.w) return;
+      inp.dataset.w = 1;
+      ["dragenter", "dragover"].forEach((e) => d.addEventListener(e, () => d.classList.add("over")));
+      ["dragleave", "drop"].forEach((e) => d.addEventListener(e, () => d.classList.remove("over")));
+      inp.addEventListener("change", () => { $(".names", d).textContent = [...inp.files].map((f) => f.name).join(", "); });
+    });
+  }
+  wireDrops();
+
+  // 상태
+  fetch("/api/status").then((r) => r.json()).then((s) => {
+    const chip = (ok, t) => `<span class="${ok ? "" : "no"}">${ok ? "✔" : "✖"} ${t}</span>`;
+    $("#status").innerHTML = chip(s.ffmpeg, "영상 도구") + chip(s.whisper, "받아쓰기") + chip(s.faces, "얼굴 찾기") +
+      chip(s.ai, s.ai ? "대본 AI 연결됨" : "대본 AI 꺼짐 (강의 구간은 고르게 나눠요)");
+    $("#ai-note").textContent = s.ai ? "AI 가 구간을 골라요" : "로컬 AI 가 꺼져 있어 고르게 나눠 뽑아요. LM Studio 를 켜면 AI 가 골라요.";
+    const opts = Object.entries(s.series).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("");
+    $$("select[name=series], select[name=s_series], select[name=k_series]").forEach((sel) => { sel.innerHTML = opts; });
+    const pick = (sel, v) => { const el = $(sel); if (el) el.value = v; };
+    pick("#f-cheer select[name=series]", "intro");
+    pick("#f-clip select[name=series]", "dean");
+    pick("#f-thumb select[name=series]", "referral");
+    pick("#f-thumb select[name=s_series]", "referral");
+    pick("#f-thumb select[name=k_series]", "intro");
+    kitDesc();
+  }).catch(() => { $("#status").innerHTML = "<span class='no'>서버 연결 안 됨</span>"; });
+
+  $("#f-cheer select[name=music]").addEventListener("change", (e) => $(".music-file").classList.toggle("hidden", e.target.value !== "file"));
+
+  // 작업 보기
+  function renderJob(box, j) {
+    const cls = j.status === "완료" ? "ok" : j.status === "실패" ? "bad" : "";
+    const outs = (j.outputs || []).map((o) => {
+      const media = o.kind === "video" ? `<video class="v" src="${o.url}" controls preload="metadata"></video>`
+        : o.kind === "image" ? `<img src="${o.url}" alt="${esc(o.name)}">` : "";
+      return `<figure>${media}<figcaption><span>${esc(o.label || o.name)}</span><a href="${o.url}?dl=1">내려받기</a></figcaption></figure>`;
+    }).join("");
+    const fc = (j.extra && j.extra.facecheck || []).map((t) => `<div class="fc">${esc(t)}</div>`).join("");
+    box.innerHTML = `<div class="job"><b>${esc(j.kind)}</b> · ${esc(j.title)} <span class="st ${cls}">${esc(j.status)}</span>
+      <div class="log">${esc((j.log || []).slice(-14).join("\n")) || "준비 중…"}</div>${fc}<div class="outs">${outs}</div></div>`;
+  }
+  function watch(id, box, onDone) {
+    const tick = () => fetch("/api/job/" + id).then((r) => r.json()).then((j) => {
+      renderJob(box, j);
+      if (j.status === "완료" || j.status === "실패") { onDone && onDone(j); return; }
+      setTimeout(tick, 1500);
+    }).catch(() => setTimeout(tick, 3000));
+    tick();
+  }
+  async function send(url, fd, box, onDone, btn) {
+    btn && (btn.disabled = true);
+    box.innerHTML = `<div class="job">파일을 올리는 중…</div>`;
+    try {
+      const r = await fetch(url, { method: "POST", body: fd });
+      const j = await r.json();
+      if (!r.ok || j.error) { box.innerHTML = `<div class="job"><span class="st bad">확인해 주세요</span> ${esc(j.error || r.status)}</div>`; return; }
+      watch(j.id, box, (job) => { btn && (btn.disabled = false); onDone && onDone(job); });
+    } catch (e) {
+      box.innerHTML = `<div class="job"><span class="st bad">실패</span> ${esc(e.message)}</div>`;
+    } finally { setTimeout(() => btn && (btn.disabled = false), 2000); }
+  }
+  function formWire(id, url, onDone) {
+    const f = $(id), box = $(".jobbox", f.parentElement);
+    f.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fd = new FormData(f);
+      f._last = fd;
+      send(url, fd, box, onDone, $("button[type=submit]", f));
+    });
+    return f;
+  }
+
+  formWire("#f-cheer", "/api/cheer");
+  formWire("#f-thumb", "/api/thumb");
+  let KIT = {};
+  fetch("/api/brandkit").then((r) => r.json()).then((d) => { KIT = d; kitDesc(); }).catch(() => {});
+  function kitDesc() {
+    const sel = $("#f-thumb select[name=k_series]"); if (!sel) return;
+    const k = sel.value, p = KIT[k];
+    $("#kit-desc").textContent = p ? "확정 틀: " + p.desc : "";
+    $$("#f-thumb .kit-trip").forEach((el) => el.classList.toggle("hidden", k !== "trip"));
+  }
+  $("#f-thumb select[name=k_series]").addEventListener("change", kitDesc);
+  $("#thumb-layout").addEventListener("change", (e) => {
+    const sc = e.target.value === "showcase", sh = e.target.value === "shorts", kit = e.target.value === "kit";
+    $$("#f-thumb .sc-only").forEach((el) => el.classList.toggle("hidden", !sc));
+    $$("#f-thumb .sh-only").forEach((el) => el.classList.toggle("hidden", !sh));
+    $$("#f-thumb .main-only").forEach((el) => el.classList.toggle("hidden", sh || kit));
+    $$("#f-thumb .kit-only").forEach((el) => el.classList.toggle("hidden", !kit));
+    $$("#f-thumb .not-kit").forEach((el) => el.classList.toggle("hidden", kit));
+    $("#f-thumb input[name=big]").placeholder = sc ? "!윗줄은 전체 노란색\n아랫줄 *핵심어*만 초록" : "비우면 인용 문구를 씀. 예: 월요일도 *예배*입니다";
+    const sel = $("#f-thumb select[name=series]"); if (sc && sel) sel.value = "nomore";
+  });
+
+  // 칼럼 + 자막 고치기
+  const fcol = formWire("#f-column", "/api/column", (job) => {
+    if (!job.extra || !job.extra.srt) return;
+    const sb = $("#t-column .srtbox");
+    fetch("/api/text/" + job.extra.srt).then((r) => r.json()).then((d) => {
+      $("textarea", sb).value = d.text; sb.classList.remove("hidden"); sb.dataset.rel = job.extra.srt;
+    });
+  });
+  $("#t-column .srtbox .redo").addEventListener("click", async () => {
+    const sb = $("#t-column .srtbox");
+    await fetch("/api/text/" + sb.dataset.rel, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: $("textarea", sb).value }) });
+    if (fcol._last) send("/api/column", fcol._last, $(".jobbox", fcol.parentElement), null, $(".redo", sb));
+  });
+
+  // 강의 + 구간 고치기
+  let clipState = null;
+  formWire("#f-clip", "/api/clip", (job) => showClips(job));
+  function showClips(job) {
+    if (!job.extra || !job.extra.clips) return;
+    fetch("/api/text/" + job.extra.clips).then((r) => r.json()).then((d) => {
+      const data = JSON.parse(d.text);
+      clipState = { rel: job.extra.clips, params: job.extra.rerun, data };
+      $("#t-clip .clipbox tbody").innerHTML = data.map((c, i) => `<tr>
+        <td>${i + 1}</td><td>${esc(c.from || "")}~${esc(c.to || "")}</td>
+        <td><input type="text" data-i="${i}" data-k="title" value="${esc((c.title || "").replace(/\n/g, "\\n"))}"></td>
+        <td><input type="number" data-i="${i}" data-k="start" value="${c.start}"></td>
+        <td><input type="number" data-i="${i}" data-k="end" value="${c.end}"></td>
+        <td><input type="number" data-i="${i}" data-k="hook" value="${c.hook}"><small class="muted">${esc(c.hook_text || "")}</small></td></tr>`).join("");
+      $("#t-clip .clipbox").classList.remove("hidden");
+    });
+  }
+  $("#t-clip .clipbox .redo").addEventListener("click", (e) => {
+    if (!clipState) return;
+    $$("#t-clip .clipbox input").forEach((inp) => {
+      const c = clipState.data[+inp.dataset.i];
+      c[inp.dataset.k] = inp.dataset.k === "title" ? inp.value.replace(/\\n/g, "\n") : parseInt(inp.value, 10);
+    });
+    const box = $("#t-clip .jobbox");
+    fetch("/api/clip/rerun", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clips: clipState.rel, params: clipState.params, data: clipState.data }) })
+      .then((r) => r.json()).then((j) => watch(j.id, box, showClips));
+  });
+
+  // 추천 영상
+  const BEAT = { card: "글자 화면", image: "사진 + 내레이션", clip: "인터뷰 영상", outro: "마무리 화면" };
+  function loadRef() {
+    fetch("/api/referral").then((r) => r.json()).then((list) => {
+      $("#ref-list").innerHTML = list.map((it) => refCard(it)).join("");
+      wireDrops($("#ref-list"));
+      $$("#ref-list .ref").forEach((el) => wireRef(el, list.find((x) => x.key === el.dataset.key)));
+    });
+  }
+  function field(label, key, v, bi, wide) {
+    const multi = key === "text" || key === "title";
+    const box = multi
+      ? `<textarea rows="3" data-b="${bi}" data-k="${key}" style="min-height:0">${esc(String(v ?? ""))}</textarea>`
+      : `<input type="text" data-b="${bi}" data-k="${key}" value="${esc(String(v ?? ""))}">`;
+    const tip = multi ? "<small>줄을 바꾸면 화면에서도 줄이 바뀌어요 · 강조는 *단어*</small>" : "";
+    return `<label class="f" ${wide ? 'style="grid-column:1/-1"' : ""}><span>${label}</span>${box}${tip}</label>`;
+  }
+  function refCard(it) {
+    const r = it.recipe;
+    const beats = r.beats.map((b, i) => {
+      let inner = "";
+      if (b.type === "card" || b.type === "outro") inner += field("화면 글자", "text", b.text, i, true);
+      if (b.say !== undefined || b.type === "image" || b.type === "card") inner += field("내레이션 (읽어 줄 말)", "say", b.say || "", i, true);
+      if (b.type === "clip") inner += field("동문 이름", "name", b.name, i) + field("직함·기수", "role", b.role, i) + field("시작 (분:초)", "start", b.start, i) + field("끝 (분:초)", "end", b.end, i);
+      if (b.src) inner += `<div class="drop" style="grid-column:1/-1"><input type="file" data-src="${esc(b.src)}" accept="${b.type === "clip" ? "video/*" : "image/*"}">
+        <b>${b.type === "clip" ? "인터뷰 영상" : "사진"} 올리기</b> — ${esc(b.hint || "")}<br>
+        <span class="${b._exists ? "have" : "need"}">${b._exists ? "✔ 올라와 있음" : "아직 없음 ([촬영 예정] 화면으로 대신)"}</span><div class="names"></div></div>`;
+      return `<div class="beat"><div class="t">${i + 1}. ${BEAT[b.type] || b.type}</div><div class="grid">${inner}</div></div>`;
+    }).join("");
+    const vids = (it.videos || []).map((o) => `<figure><video class="v" src="${o.url}" controls preload="metadata"></video><figcaption><span>${esc(o.name)}</span><a href="${o.url}?dl=1">내려받기</a></figcaption></figure>`).join("");
+    return `<details class="ref" data-key="${esc(it.key)}"><summary>${esc(it.key.replace("_", "번 · "))} — ${esc(r.label || "")}</summary>
+      <div class="grid" style="margin-top:10px">${field("화면 위 제목", "title", r.title, -1)}${field("꼬리표", "label", r.label, -1)}</div>
+      ${beats}
+      <div class="row"><button class="sub save" type="button">저장</button>
+        <button class="go mk" data-f="shorts" type="button">세로 만들기</button>
+        <button class="sub mk" data-f="long" type="button">가로 만들기</button>
+        <button class="sub mk" data-f="both" type="button">둘 다</button></div>
+      <div class="jobbox"></div><div class="outs">${vids}</div></details>`;
+  }
+  function wireRef(el, it) {
+    const r = it.recipe;
+    const collect = () => {
+      $$("[data-k]", el).forEach((inp) => {
+        const v = inp.value.replace(/\\n/g, "\n");
+        const bi = +inp.dataset.b;
+        if (bi < 0) r[inp.dataset.k] = v;
+        else if (inp.dataset.k === "say" && !v) delete r.beats[bi].say;
+        else r.beats[bi][inp.dataset.k] = v;
+      });
+      return fetch("/api/referral/" + encodeURIComponent(it.key), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(r) });
+    };
+    $$("input[data-src]", el).forEach((inp) => inp.addEventListener("change", async () => {
+      const fd = new FormData(); fd.append("src", inp.dataset.src); fd.append("file", inp.files[0]);
+      const res = await (await fetch(`/api/referral/${encodeURIComponent(it.key)}/media`, { method: "POST", body: fd })).json();
+      const tag = inp.parentElement.querySelector(".have,.need");
+      if (res.ok) { tag.className = "have"; tag.textContent = "✔ 올라와 있음"; r.beats.forEach((b) => { if (b.src === inp.dataset.src) b.src = res.src; }); inp.dataset.src = res.src; }
+    }));
+    $(".save", el).addEventListener("click", async (e) => { await collect(); e.target.textContent = "저장됨"; setTimeout(() => (e.target.textContent = "저장"), 1500); });
+    $$(".mk", el).forEach((b) => b.addEventListener("click", async () => {
+      await collect();
+      const box = $(".jobbox", el);
+      const j = await (await fetch(`/api/referral/${encodeURIComponent(it.key)}/make`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ format: b.dataset.f }) })).json();
+      watch(j.id, box);
+    }));
+  }
+
+  // 작업 목록
+  function loadJobs() {
+    fetch("/api/jobs").then((r) => r.json()).then((list) => {
+      const box = $("#jobs");
+      if (!list.length) { box.innerHTML = "<p class='muted'>아직 만든 것이 없어요.</p>"; return; }
+      box.innerHTML = list.map((j) => `<div data-id="${j.id}"></div>`).join("");
+      list.forEach((j) => renderJob($(`[data-id="${j.id}"]`, box), j));
+    });
+  }
+})();
+</script>
+</body>
+</html>

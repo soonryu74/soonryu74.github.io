@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>자동화 스튜디오 설치 안내</title>
+<meta name="description" content="유튜브 자동화 스튜디오 설치부터 로컬 AI 연결, 영상 만들기, 유튜브 업로드, 매일 자동 실행까지. 윈도우와 맥 명령어를 나란히 비교합니다.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{--bg:#f4f6fa;--card:#fff;--ink:#1d2433;--muted:#5b6678;--line:#e1e6ee;--navy:#123a6b;--green:#0e8a6b;--warn:#b03a2e;--warn-bg:#fdecec;--ok-bg:#e8f6f1;--code-bg:#0f2442;--code-ink:#e6f0ff;--chip:#eef2f8}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0f141c;--card:#171e29;--ink:#e6ebf2;--muted:#9aa6b8;--line:#2a3444;--navy:#8fb6ea;--green:#3cc79f;--warn:#ff8a7a;--warn-bg:#3a1f1f;--ok-bg:#16322a;--code-bg:#0a1220;--code-ink:#d6e4ff;--chip:#222b39}}
+  :root[data-theme="dark"]{--bg:#0f141c;--card:#171e29;--ink:#e6ebf2;--muted:#9aa6b8;--line:#2a3444;--navy:#8fb6ea;--green:#3cc79f;--warn:#ff8a7a;--warn-bg:#3a1f1f;--ok-bg:#16322a;--code-bg:#0a1220;--code-ink:#d6e4ff;--chip:#222b39}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;line-height:1.75;word-break:keep-all}
+  header{background:linear-gradient(120deg,#123a6b,#0e8a6b);color:#fff;padding:26px 16px}
+  header .in,main{max-width:900px;margin:0 auto}
+  header h1{margin:0;font-size:1.6rem}
+  header p{margin:4px 0 0;color:#dfeaf7}
+  header a{color:#fff}
+  main{padding:14px 16px 60px}
+  nav.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:12px 0}
+  nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+  @media (max-width:640px){nav.toc ol{columns:1}}
+  nav.toc a{color:var(--navy);text-decoration:none}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+  h2{margin:0 0 8px;font-size:1.2rem;color:var(--navy)}
+  h3{margin:14px 0 4px;font-size:1rem}
+  p{margin:6px 0}
+  ul,ol{padding-left:22px;margin:6px 0}
+  li{margin:3px 0}
+  .os{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+  @media (max-width:720px){.os{grid-template-columns:1fr}}
+  .os > div{min-width:0}
+  .os h4{margin:0 0 2px;font-size:.92rem;color:var(--muted)}
+  pre{background:var(--code-bg);color:var(--code-ink);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:.86rem;margin:4px 0;white-space:pre}
+  code{background:var(--chip);border-radius:4px;padding:1px 5px;font-size:.9em}
+  pre code{background:none;padding:0}
+  .box{border-radius:10px;padding:10px 14px;margin:10px 0;background:var(--ok-bg)}
+  .box.warn{background:var(--warn-bg)}
+  .small{font-size:.88rem}
+  .box b.t{display:block;margin-bottom:2px}
+  table{border-collapse:collapse;width:100%;font-size:.92rem;margin:8px 0}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--chip)}
+  .tbl{overflow-x:auto}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <h1>설치 안내 · 유튜브 자동화 스튜디오</h1>
+  <p>윈도우와 맥 명령어를 나란히 적었어요. 내 컴퓨터 쪽만 따라 하시면 됩니다. <a href="./">← 스튜디오로</a></p>
+</div></header>
+<main>
+  <nav class="toc" aria-label="목차"><ol>
+    <li><a href="#studio">제작실 화면 (가장 쉬운 방법)</a></li>
+    <li><a href="#flow">전체 흐름</a></li>
+    <li><a href="#python">파이썬 설치</a></li>
+    <li><a href="#install">스튜디오 설치</a></li>
+    <li><a href="#ai">로컬 AI 연결</a></li>
+    <li><a href="#make">첫 영상 만들기</a></li>
+    <li><a href="#screen">내 화면 녹화 넣기</a></li>
+    <li><a href="#look">그림·글씨·썸네일 바꾸기</a></li>
+    <li><a href="#upload">유튜브 업로드 연결</a></li>
+    <li><a href="#saga">SaGA 캠페인 영상</a></li>
+    <li><a href="#auto">매일 자동 실행</a></li>
+    <li><a href="#honest">수익화를 지키는 원칙</a></li>
+    <li><a href="#faq">문제 해결</a></li>
+  </ol></nav>
+
+  <section id="studio">
+    <h2>0. SaGA 영상 제작실 — 더블클릭으로 켜기</h2>
+    <p>명령어 없이 쓰는 화면입니다. 파일을 끌어다 놓고 버튼만 누르면 쇼츠가 만들어져요. 이 컴퓨터에서만 열리고, 영상은 인터넷에 올라가지 않습니다.</p>
+    <div class="os">
+      <div><h4>Windows</h4>
+        <ol>
+          <li><a href="#python">2번</a>대로 파이썬을 설치 (처음 한 번)</li>
+          <li><code>yt-studio\pipeline</code> 폴더의 <b>시작하기.bat</b> 더블클릭</li>
+          <li>처음에는 설치 때문에 5~10분 걸려요. 끝나면 브라우저에 제작실이 열립니다.</li>
+        </ol></div>
+      <div><h4>Mac</h4>
+        <ol>
+          <li><a href="#python">2번</a>대로 파이썬을 설치 (처음 한 번)</li>
+          <li><code>yt-studio/pipeline</code> 폴더의 <b>시작하기.command</b>를 <b>오른쪽 클릭 → 열기</b> (처음 한 번만, 보안 확인 때문)</li>
+          <li>처음에는 설치 때문에 5~10분 걸려요. 끝나면 브라우저에 제작실이 열립니다.</li>
+        </ol></div>
+    </div>
+    <div class="tbl"><table>
+      <tr><th>탭</th><th>넣는 것</th><th>나오는 것</th></tr>
+      <tr><td>응원 릴레이</td><td>여러 사람이 외치는 영상 (여러 개 가능)</td><td>외칠 때마다 큰 글자 쇼츠 + 효과음·리듬 + 썸네일 3종</td></tr>
+      <tr><td>극동방송 칼럼</td><td>녹음 파일 + 원고 + 사진</td><td>자막·이름표·음성 파형 쇼츠. 자막을 화면에서 고쳐 다시 만들기</td></tr>
+      <tr><td>강의에서 쇼츠</td><td>긴 강의 영상</td><td>핵심 30~60초 쇼츠 여러 편. 제목·구간을 표에서 고쳐 다시 만들기</td></tr>
+      <tr><td>추천 영상 0~7</td><td>칸마다 사진·인터뷰 영상, 문구 수정</td><td>세로 쇼츠·가로 영상. 없는 칸은 "[촬영 예정]" 화면</td></tr>
+      <tr><td>썸네일</td><td>장면 사진 + 인용 문구</td><td>새롭게하소서형 3종</td></tr>
+    </table></div>
+    <p class="small">모든 결과는 <code>pipeline/projects/saga</code> 폴더에도 저장되고, 영상마다 "얼굴 가림 검사" 결과가 함께 표시됩니다. 창(검은 창)을 닫으면 제작실도 꺼집니다.</p>
+  </section>
+
+  <section id="flow">
+    <h2>1. 전체 흐름</h2>
+    <div class="tbl"><table>
+      <tr><th>단계</th><th>하는 일</th><th>쓰는 도구</th></tr>
+      <tr><td>대본</td><td>주제 → 제목 후보·대본·장면·썸네일 문구</td><td>로컬 AI (LM Studio·Ollama) 또는 Gemini</td></tr>
+      <tr><td>음성</td><td>장면마다 한국어 낭독 + 문장별 자막 시간</td><td>edge-tts (무료)</td></tr>
+      <tr><td>장면</td><td>배경 그림·영상, 또는 내 화면 녹화</td><td>기본 카드 / 로컬 Stable Diffusion / 이미지·영상 생성 API</td></tr>
+      <tr><td>영상</td><td>자막 입히기, 천천히 확대 효과, 이어 붙이기, 배경음</td><td>ffmpeg (자동 설치)</td></tr>
+      <tr><td>썸네일</td><td>레이아웃 3종 · 영상마다 다른 시리즈 색</td><td>블랙한산스·프리텐다드 글꼴</td></tr>
+      <tr><td>업로드</td><td>비공개로 올리고, 사람이 확인한 뒤 공개</td><td>YouTube Data API</td></tr>
+    </table></div>
+    <p>웹 스튜디오(<a href="./">index.html</a>)는 기획·대본 수정·썸네일 미리보기용이고, 실제 영상은 내 컴퓨터의 파이썬 프로그램이 만듭니다.</p>
+  </section>
+
+  <section id="python">
+    <h2>2. 파이썬 설치 (처음 한 번)</h2>
+    <div class="os">
+      <div><h4>Windows</h4>
+        <ol>
+          <li><a href="https://www.python.org/downloads/" rel="noopener">python.org</a>에서 3.12 이상 설치 파일 받기</li>
+          <li>설치 첫 화면에서 <b>Add python.exe to PATH</b> 반드시 체크</li>
+          <li>시작 메뉴 → <b>PowerShell</b> 열고 확인</li>
+        </ol>
+        <pre><code>py --version</code></pre>
+      </div>
+      <div><h4>Mac</h4>
+        <ol>
+          <li><a href="https://www.python.org/downloads/" rel="noopener">python.org</a>에서 macOS 설치 파일 받기</li>
+          <li>설치가 끝나면 <b>Install Certificates.command</b>도 한 번 실행</li>
+          <li>Spotlight(⌘+Space) → <b>터미널</b> 열고 확인</li>
+        </ol>
+        <pre><code>python3 --version</code></pre>
+      </div>
+    </div>
+    <div class="box"><b class="t">어렵지 않아요</b>숫자가 3.10 이상으로 나오면 준비 끝이에요. 윈도우는 <code>py</code>, 맥은 <code>python3</code>라고 부르는 것만 기억하세요.</div>
+  </section>
+
+  <section id="install">
+    <h2>3. 스튜디오 설치</h2>
+    <p>GitHub 저장소 화면에서 <b>Code → Download ZIP</b>으로 받아 압축을 풀거나, git 을 쓰신다면 clone 해 주세요. 그다음 <code>yt-studio/pipeline</code> 폴더에서 아래를 차례로 입력합니다.</p>
+    <div class="os">
+      <div><h4>Windows (PowerShell)</h4>
+<pre><code>cd 다운로드폴더\yt-studio\pipeline
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+copy config.example.json config.json
+python studio.py doctor</code></pre>
+        <p style="font-size:.88rem">빨간 글씨로 "스크립트를 실행할 수 없습니다"가 나오면 한 번만:</p>
+<pre><code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code></pre>
+      </div>
+      <div><h4>Mac (터미널)</h4>
+<pre><code>cd ~/Downloads/yt-studio/pipeline
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp config.example.json config.json
+python3 studio.py doctor</code></pre>
+      </div>
+    </div>
+    <p><code>doctor</code>가 준비 상태를 ✔ / ✖ 로 보여 줘요. ffmpeg·글꼴은 자동으로 준비됩니다.</p>
+    <div class="box"><b class="t">다음부터는</b>터미널을 새로 열 때마다 <code>cd</code>로 폴더에 들어간 뒤 가상환경만 켜면 돼요. 윈도우는 <code>.venv\Scripts\Activate.ps1</code>, 맥은 <code>source .venv/bin/activate</code> 입니다.</div>
+  </section>
+
+  <section id="ai">
+    <h2>4. 로컬 AI 연결 (대본 작가)</h2>
+    <h3>방법 A · LM Studio (화면으로 쉽게)</h3>
+    <ol>
+      <li><a href="https://lmstudio.ai" rel="noopener">lmstudio.ai</a>에서 설치 → 검색창에서 한국어가 되는 모델을 받기 (예: Qwen3 8B, Gemma 3 12B. 메모리 16GB 이상 권장)</li>
+      <li>왼쪽 <b>Developer</b> 탭 → 모델 Load → <b>Start Server</b> (주소 <code>http://localhost:1234</code>)</li>
+      <li>웹 스튜디오에서도 쓰려면 서버 설정의 <b>Enable CORS</b>를 켜기</li>
+      <li><code>config.json</code>의 <code>"provider": "lmstudio"</code> 그대로 두면 끝</li>
+    </ol>
+    <h3>방법 B · Ollama (명령어 한 줄)</h3>
+    <div class="os">
+      <div><h4>Windows</h4>
+<pre><code>ollama pull qwen3:8b
+setx OLLAMA_ORIGINS "*"
+# 작업표시줄의 Ollama 를 종료했다 다시 켜기</code></pre></div>
+      <div><h4>Mac</h4>
+<pre><code>ollama pull qwen3:8b
+launchctl setenv OLLAMA_ORIGINS "*"
+# 메뉴 막대의 Ollama 를 종료했다 다시 켜기</code></pre></div>
+    </div>
+    <p><code>config.json</code>에서 <code>"provider": "ollama"</code>, <code>"model": "qwen3:8b"</code>로 바꿔 주세요. <code>OLLAMA_ORIGINS</code>는 웹 스튜디오에서 부를 때만 필요해요.</p>
+    <h3>방법 C · Gemini API (컴퓨터 사양이 낮을 때)</h3>
+    <p><a href="https://aistudio.google.com/apikey" rel="noopener">Google AI Studio</a>에서 키를 만들고 환경변수로 넣어 둡니다.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>setx GEMINI_API_KEY "여기에_키"
+# PowerShell 창을 닫고 새로 열기</code></pre></div>
+      <div><h4>Mac (zsh)</h4><pre><code>echo 'export GEMINI_API_KEY="여기에_키"' >> ~/.zshrc
+source ~/.zshrc</code></pre></div>
+    </div>
+    <div class="box warn"><b class="t">웹 스튜디오 주의</b>인터넷 주소(https)의 웹 스튜디오에서 내 컴퓨터(localhost) AI를 부르면 크롬·엣지가 "로컬 네트워크 접근" 허용을 물을 수 있어요. <b>허용</b>을 눌러 주세요. 사파리는 막는 경우가 있어 크롬·엣지를 권장합니다.</div>
+  </section>
+
+  <section id="make">
+    <h2>5. 첫 영상 만들기</h2>
+    <h3>한 번에 (주제 → 완성 영상)</h3>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py auto "엑셀 반복작업 무료 AI 자동화" --minutes 5
+python studio.py auto "노트북LM 숨은 기능" --shorts</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py auto "엑셀 반복작업 무료 AI 자동화" --minutes 5
+python3 studio.py auto "노트북LM 숨은 기능" --shorts</code></pre></div>
+    </div>
+    <h3>나눠서 (대본을 직접 다듬고 싶을 때, 추천)</h3>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py plan "주제"
+notepad projects\날짜-주제\project.json
+python studio.py make projects\날짜-주제</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py plan "주제"
+open -e projects/날짜-주제/project.json
+python3 studio.py make projects/날짜-주제</code></pre></div>
+    </div>
+    <p>결과는 <code>projects/날짜-주제/</code> 폴더에 생겨요.</p>
+    <ul>
+      <li><code>video.mp4</code> 또는 <code>shorts.mp4</code> — 완성 영상 (자막 포함)</li>
+      <li><code>thumbnail.jpg</code>, <code>thumbnail_2.jpg</code>, <code>thumbnail_3.jpg</code> — 썸네일 3종</li>
+      <li><code>subtitles.srt</code> — 자막 파일</li>
+      <li><code>업로드정보.txt</code> — 제목·설명(챕터 포함)·태그</li>
+    </ul>
+    <p>대본을 고치고 <code>make</code>를 다시 하면, 바뀐 장면의 음성만 새로 만들어요. 전부 새로 만들려면 끝에 <code>--fresh</code>를 붙입니다.</p>
+    <p>AI 서버 없이 하고 싶다면 <code>config.json</code>의 provider 를 <code>"manual"</code>로 바꾸세요. 화면에 나온 프롬프트를 ChatGPT·Claude 에 붙여 넣고, 답을 다시 붙여 넣으면 됩니다.</p>
+  </section>
+
+  <section id="screen">
+    <h2>6. 내 화면 녹화 넣기 (실전 시연)</h2>
+    <p>엑셀·PPT 시연처럼 <b>실제 화면</b>이 들어가야 신뢰가 생겨요. 장면마다 녹화 파일을 지정할 수 있습니다.</p>
+    <div class="os">
+      <div><h4>Windows 11 화면 녹화</h4><p><b>캡처 도구</b> 실행 → 녹화(비디오) 선택 → 영역 지정. 또는 게임 바 <code>Win + Alt + R</code></p></div>
+      <div><h4>Mac 화면 녹화</h4><p><code>⌘ + Shift + 5</code> → 화면 기록 → 저장 위치 선택</p></div>
+    </div>
+    <p>녹화 파일을 프로젝트 폴더의 <code>rec</code> 폴더에 넣고, <code>project.json</code>의 해당 장면에 한 줄 추가하세요.</p>
+<pre><code>{ "narration": "첫 번째 단계입니다. …", "keyword": "1단계 복사", "media": "rec/step1.mp4" }</code></pre>
+    <ul>
+      <li>가로 녹화를 세로 쇼츠에 넣으면 잘리지 않게 흐린 배경 위에 통째로 들어가요.</li>
+      <li>녹화가 대본보다 짧으면 마지막 화면에서 멈춰 있고, 길면 대본 길이에서 잘립니다.</li>
+      <li>첫 녹화 화면은 썸네일의 ‘메인 화면’으로도 자동 사용돼요. 특정 캡처를 쓰려면 <code>"thumbnail_image": "rec/result.png"</code>를 적어 주세요.</li>
+    </ul>
+  </section>
+
+  <section id="look">
+    <h2>7. 그림·글씨·썸네일 바꾸기 (<code>config.json</code>)</h2>
+    <h3>장면 그림 <code>visual.provider</code></h3>
+    <div class="tbl"><table>
+      <tr><th>값</th><th>설명</th><th>비용</th></tr>
+      <tr><td><code>card</code></td><td>핵심어가 크게 들어간 깔끔한 카드 (기본)</td><td>무료·오프라인</td></tr>
+      <tr><td><code>sd-webui</code></td><td>내 컴퓨터 Stable Diffusion (AUTOMATIC1111·Forge 를 <code>--api</code>로 실행)</td><td>무료·그래픽카드 필요</td></tr>
+      <tr><td><code>pollinations</code></td><td>무료 온라인 이미지 생성</td><td>무료·속도 들쭉날쭉</td></tr>
+      <tr><td><code>gemini</code></td><td>Gemini 이미지 생성 (<code>GEMINI_API_KEY</code>)</td><td>유료 요금제 기준</td></tr>
+      <tr><td><code>veo</code></td><td>구글 Veo 영상 클립 생성 (<code>pip install google-genai</code>)</td><td>유료, 가장 비쌈</td></tr>
+      <tr><td><code>folder</code></td><td>내가 모아 둔 이미지·영상 폴더를 차례로 사용</td><td>무료</td></tr>
+    </table></div>
+    <p>어떤 방식이 실패해도 그 장면은 카드로 대신 만들어서 영상 제작이 멈추지 않아요.</p>
+    <h3>목소리 <code>tts.voice</code></h3>
+    <p>예: <code>ko-KR-SunHiNeural</code>(여성), <code>ko-KR-InJoonNeural</code>(남성). 전체 목록은 <code>studio.py voices</code>로 볼 수 있어요. 빠르기 <code>"rate": "+10%"</code>.</p>
+    <h3>글씨체</h3>
+    <ul>
+      <li>썸네일·장면 핵심어: <b>블랙한산스</b> (굵은 제목체)</li>
+      <li>자막: <b>프리텐다드 SemiBold</b>, 줄마다 검은 상자 (<code>video.subtitle_style</code>: <code>boxed</code> / <code>outline</code> / <code>box</code>)</li>
+      <li>다른 글꼴을 쓰려면 <code>"fonts": {"title": "C:/Windows/Fonts/글꼴.ttf"}</code>처럼 경로를 적기</li>
+    </ul>
+    <h3>썸네일 <code>thumbnail</code></h3>
+    <div class="tbl"><table>
+      <tr><th>항목</th><th>설명</th></tr>
+      <tr><td><code>layout</code></td><td><code>split</code> 메인 화면 강조(기본) · <code>impact</code> 강한 3색 글씨 · <code>series</code> 인물·시리즈형. 세 가지가 모두 만들어지고, 여기서 고른 것이 1번이 됩니다.</td></tr>
+      <tr><td><code>theme</code></td><td>시리즈 색 고정: 보라·초록·남색·주황·청록·와인·먹색. 비워 두면 영상마다 자동으로 바뀝니다.</td></tr>
+      <tr><td><code>person_image</code></td><td>내 얼굴 사진 경로. 배경을 지운 PNG 가 가장 좋아요 (캔바 ‘배경 제거’ 등). <code>pip install rembg</code>를 해 두면 자동으로 지워요.</td></tr>
+    </table></div>
+    <div class="box"><b class="t">잘 눌리는 썸네일 공식</b>메인 대상(얼굴·결과 화면)은 가리지 않고 크게, 글자는 한쪽에 2~3줄, 마지막 줄만 강조색. 영상마다 색은 바꾸되 배치는 같게 해서 ‘내 채널’로 알아보게 합니다.</div>
+  </section>
+
+  <section id="upload">
+    <h2>8. 유튜브 업로드 연결 (선택)</h2>
+    <ol>
+      <li><a href="https://console.cloud.google.com/" rel="noopener">Google Cloud 콘솔</a> → 새 프로젝트 만들기</li>
+      <li>‘API 및 서비스’ → 라이브러리 → <b>YouTube Data API v3</b> 사용 설정</li>
+      <li>‘OAuth 동의 화면’ → 외부 → 테스트 사용자에 <b>내 유튜브 계정 이메일</b> 추가</li>
+      <li>‘사용자 인증 정보’ → OAuth 클라이언트 ID → 유형 <b>데스크톱 앱</b> → JSON 다운로드</li>
+      <li>받은 파일 이름을 <code>client_secret.json</code>으로 바꿔 <code>pipeline</code> 폴더에 넣기</li>
+    </ol>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>pip install google-api-python-client google-auth-oauthlib
+python studio.py upload projects\날짜-주제</code></pre></div>
+      <div><h4>Mac</h4><pre><code>pip install google-api-python-client google-auth-oauthlib
+python3 studio.py upload projects/날짜-주제</code></pre></div>
+    </div>
+    <p>처음 한 번 브라우저가 열리면 채널 계정으로 로그인해 주세요. 영상은 <b>비공개</b>로 올라가고, 썸네일과 자막 파일도 함께 등록돼요. 예약 공개는 <code>--publish-at 2026-10-01T09:00:00+09:00</code>를 붙이면 됩니다.</p>
+    <div class="box warn"><b class="t">꼭 알아 두세요</b>구글의 감사(audit)를 받지 않은 API 프로젝트로 올린 영상은 <b>비공개로 잠겨요</b>. 공개하려면 ‘YouTube API Services 감사 신청’을 통과해야 합니다. 그 전까지는 <code>make</code>로 만든 파일을 유튜브 스튜디오에서 직접 올리는 방법을 권장해요. 하루 업로드 횟수에도 한도(할당량)가 있고, 썸네일 등록은 채널 전화번호 인증이 필요합니다.</div>
+    <h3>여러 편 한 번에 올리기 + 재생목록</h3>
+    <p>폴더에 <code>업로드.json</code>(영상·썸네일·제목·설명·태그·재생목록 목록)이 있으면 한 줄로 전부 올라가요. 재생목록이 없으면 만들고, 이미 올린 편은 건너뛰어요. 결과 링크는 <code>업로드_결과.txt</code>에 남아요.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py publish jobs\1분칼럼
+python studio.py publish jobs\1분칼럼 --only 0824</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py publish jobs/1분칼럼
+python3 studio.py publish jobs/1분칼럼 --only 0824</code></pre></div>
+    </div>
+    <p><code>client_secret.json</code>과 <code>token.json</code>은 비밀번호와 같아요. 절대 공유하거나 GitHub 에 올리지 마세요. 이 저장소는 자동으로 제외되게 설정돼 있습니다.</p>
+  </section>
+
+  <section id="saga">
+    <h2>SaGA 일터아카데미 캠페인 영상 만들기</h2>
+    <p>결과는 <code>projects/saga/재생목록/</code> 폴더에 쌓입니다. 재생목록 이름은 <code>intro</code>(소개), <code>column</code>(극동방송 칼럼), <code>scic</code>, <code>trip</code>(비전트립), <code>dean</code>(학장 특강), <code>lecture</code>(강의), <code>referral</code>(추천 영상)입니다. 목록마다 색과 꼬리표가 정해져 있어요.</p>
+
+    <h3>① 응원 릴레이 영상 → 쇼츠 (예: 남군산교회 "일이 선교다!")</h3>
+    <p>여러 사람이 한 명씩 외치는 영상을 넣으면, 외칠 때마다 큰 글자가 튀어나옵니다. 영상을 여러 개 주면 "한 번 더!" 화면으로 이어 붙여요. 가로 영상은 가운데 인물을 세로로 잘라 얼굴을 크게 보여 줍니다.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py cheer C:\영상\남군산1.mp4 C:\영상\남군산2.mp4 --shout "일이 *선교*다!" --sub "Business is Mission!" --label "남군산교회에서 보내온 응원" --tag "남군산교회" --outro "당신의 일터도\n*선교지*입니다"</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py cheer ~/Movies/남군산1.mp4 ~/Movies/남군산2.mp4 --shout "일이 *선교*다!" --sub "Business is Mission!" --label "남군산교회에서 보내온 응원" --tag "남군산교회" --outro "당신의 일터도\n*선교지*입니다"</code></pre></div>
+    </div>
+    <p class="small">외치는 순간을 소리로 찾습니다. 어긋나면 <code>--at 1,3.8,6.8/1.4,5.5</code> 처럼 초를 직접 적어 주세요(영상 사이는 <code>/</code>).</p>
+    <p class="small"><b>소리:</b> 기본으로 글자가 뜰 때 '팡', 영상 사이 '휙', 끝 화면 '딩' 효과음과 박수·발 구르기 응원 리듬이 들어갑니다(모두 코드로 만든 소리라 저작권 걱정 없음). 말할 때는 음악이 자동으로 작아지고, 최종 음량은 유튜브 표준(-14 LUFS)에 맞춥니다. 음악 끄기 <code>--music none</code>, 오디오 보관함 음악 쓰기 <code>--music 음악파일.mp3</code>, 효과음 끄기 <code>--no-sfx</code>.</p>
+
+    <h3>② 극동방송 1분 칼럼 녹음 → 쇼츠</h3>
+    <p>녹음 파일과 원고(.txt)를 함께 주면 자막이 원고 그대로 정확하게 들어갑니다. 원고가 없으면 AI가 받아쓰고, 폴더에 생긴 <code>자막.srt</code>를 메모장으로 고친 뒤 같은 명령을 다시 실행하면 반영돼요.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py column C:\녹음\칼럼12.mp3 --title "월요일 사무실이\n*첫 번째 선교지*입니다" --name "칼럼니스트 이름" --role "직함" --photo C:\사진\얼굴.jpg --script C:\녹음\칼럼12.txt</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py column ~/녹음/칼럼12.mp3 --title "월요일 사무실이\n*첫 번째 선교지*입니다" --name "칼럼니스트 이름" --role "직함" --photo ~/사진/얼굴.jpg --script ~/녹음/칼럼12.txt</code></pre></div>
+    </div>
+    <p class="small">장면 사진을 넣고 싶으면 <code>--images 사진폴더</code>. 썸네일도 함께 만들려면 <code>--quote "인용 *강조*" --shot 배경사진.jpg</code>.</p>
+
+    <h3>②-가로 극동방송 칼럼 → '3분 미라클'형 가로 영상</h3>
+    <p>시작 타이틀 화면 → 문장마다 바뀌는 장면 → 핵심어만 노랑·민트로 칠한 자막 → 아래 띠의 영어 자막 → 모집 안내 화면 순서로 만들어요. 영어 자막은 영어 원고 파일(한 줄에 한 문장)을 주면 들어갑니다. 썸네일(오른쪽 큰 제목 + 금색 시리즈 이름)도 같이 나와요.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py miracle C:\녹음\칼럼12.mp3 --title "월요일, 첫 번째 선교지" --script C:\녹음\칼럼12.txt --english C:\녹음\칼럼12_영어.txt --name "칼럼니스트 이름" --role "직함" --thumb "월요일 아침이\n*선교지*가\n됩니다" --ghost MONDAY</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py miracle ~/녹음/칼럼12.mp3 --title "월요일, 첫 번째 선교지" --script ~/녹음/칼럼12.txt --english ~/녹음/칼럼12_영어.txt --name "칼럼니스트 이름" --role "직함" --thumb "월요일 아침이\n*선교지*가\n됩니다" --ghost MONDAY</code></pre></div>
+    </div>
+    <p class="small">장면 그림: <code>--images 사진폴더</code>가 있으면 그 사진, 없으면 무료 AI 그림(오른쪽 아래에 작은 'pollinations' 표시가 남아요), <code>--visual abstract</code>면 부드러운 추상 배경. 표시 없는 그림을 원하면 설정에서 Gemini 이미지를 켜세요. 스튜디오에서는 '극동방송 칼럼' 탭 → 영상 모양 '가로 16:9'.</p>
+
+    <h3>③ 긴 강의·특강 → 핵심 쇼츠 여러 편</h3>
+    <p>받아쓰기 후 AI가 30~60초 구간과 "맨 앞에 먼저 보여 줄 한 문장"을 고릅니다. 결과 폴더의 <code>clips.json</code>에서 구간·제목을 고치고 다시 실행하면 그대로 다시 만듭니다.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py clip C:\강의\바이블에센셜.mp4 --series dean --count 5 --name "이돈주 학장" --source-url "원본 강의 주소"</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py clip ~/강의/바이블에센셜.mp4 --series dean --count 5 --name "이돈주 학장" --source-url "원본 강의 주소"</code></pre></div>
+    </div>
+    <p class="small">화면: <code>--fit blur</code>(기본, 슬라이드까지 전체) 또는 <code>--fit crop --crop-x 0.3</code>(화자만 크게, 0 왼쪽~1 오른쪽).</p>
+
+    <h3>④ 추천 영상 0~7번</h3>
+    <p>처음에 틀을 만들고, <code>media</code> 폴더에 사진·인터뷰 영상을 넣을 때마다 다시 만들면 됩니다. 파일이 아직 없으면 "[촬영 예정]" 화면으로 대신 들어가서, 촬영 전에도 전체 흐름을 볼 수 있어요.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py referral init
+notepad projects\saga\referral\media\필요한_파일.txt
+python studio.py referral make --format both</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py referral init
+open -e projects/saga/referral/media/필요한_파일.txt
+python3 studio.py referral make --format both</code></pre></div>
+    </div>
+    <p class="small">장면 대본은 <code>projects/saga/referral/recipes/*.json</code>. 인터뷰 구간은 <code>"start": "0:12", "end": "0:31"</code>, 동문 이름은 <code>"name"</code>에 적어 주세요.</p>
+
+    <h3>⑤ 새롭게하소서형 썸네일</h3>
+    <p>실제 장면 사진 한 장에 인용 제목을 얹습니다. <code>*별표*</code>로 감싼 단어만 강조색이 됩니다.</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py thumb C:\사진\장면.jpg --quote "주일엔 제자,\n월요일엔 *그냥 직장인*" --name "홍길동 집사" --role "6기 동문" --kicker "20년 차 직장인의 고백" --notes "공감…|눈물 주의" --series intro</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py thumb ~/사진/장면.jpg --quote "주일엔 제자,\n월요일엔 *그냥 직장인*" --name "홍길동 집사" --role "6기 동문" --kicker "20년 차 직장인의 고백" --notes "공감…|눈물 주의" --series intro</code></pre></div>
+    </div>
+    <div class="box"><b class="t">새롭게하소서에서 배운 썸네일 원칙</b>실제 장면 속 인물은 크게, 제목은 그 사람이 한 말(1인칭 인용), 강조는 단어 한두 개만, 이름·직함은 작게. 인용형(글자 한쪽)과 최근형(아래 두 줄 + 손글씨 이름표·반응 자막) 두 가지가 함께 만들어집니다.</div>
+    <h3>다른 사람과 함께 쓰기 · 통일된 썸네일</h3>
+    <p>함께 쓰실 분께 <code>pipeline/처음_설치_안내.txt</code> 를 보내 주세요. 각자 자기 컴퓨터에 설치해 쓰고, 영상·사진은 인터넷에 올라가지 않아요. 모두 같은 프로그램이라 <b>썸네일 탭 → 재생목록 고정 틀</b>로 만들면 누가 만들어도 같은 모양이 나와요.</p>
+    <p class="small">틀을 바꾸고 싶으면 <code>ytauto/brandkit.py</code> 의 PRESETS 한 곳만 고치면 되고, 새 버전을 받은 모든 사람에게 똑같이 적용돼요.</p>
+
+    <h3>확정 표지: 일터가 선교다 (응원 릴레이)</h3>
+    <p>응원 릴레이를 만들면 외친 사람마다 얼굴이 가장 선명한 장면을 골라 <b>얼굴 모음 9:16 대표 표지</b>가 자동으로 나오고, 그 표지를 영상 맨 앞 0.6초에 붙인 <code>…_표지포함.mp4</code> 도 함께 만들어져요. 휴대폰 유튜브 앱으로 올릴 때 표지는 <b>첫 장면</b>을 고르세요.</p>
+
+    <h3>쇼츠 표지 (자동)</h3>
+    <p>제작실에서 세로 쇼츠를 만들면 표지도 함께 나와요. 영상에서 얼굴이 가장 잘 보이는 장면을 골라 글자를 얼굴 밖에 얹습니다.</p>
+    <ul>
+      <li>응원 릴레이 → 말풍선형 · 자막상자형</li>
+      <li>극동방송 칼럼(세로) → 질문-답형 · 자막상자형</li>
+      <li>강의에서 쇼츠 → 편마다 자막상자형</li>
+      <li>추천 영상 → 카드형 · 자막상자형 (얼굴 장면이 없으면 색 배경)</li>
+    </ul>
+    <p class="small">결과 폴더의 <code>쇼츠표지</code>(추천 영상은 <code>output/번호_표지</code>)에 저장돼요. 휴대폰 유튜브 앱에서 쇼츠를 올릴 때 표지로 고르세요. 문구를 바꿔 따로 만들려면 썸네일 탭 → '쇼츠 세로 표지 4종'.</p>
+
+    <h3>⑥ 얼굴 가림 검사</h3>
+    <p>구호·자막·제목·이름표는 장면마다 얼굴 위치를 찾아 얼굴을 피해서 놓입니다. 자리가 없으면 얼굴 위로 옮기거나 글자를 조금 줄이고, 얼굴이 다가오면 잠깐 비켜 줍니다. 완성 영상을 프레임 단위로 검사하려면:</p>
+    <div class="os">
+      <div><h4>Windows</h4><pre><code>python studio.py facecheck projects\saga\intro\영상이름.mp4</code></pre></div>
+      <div><h4>Mac</h4><pre><code>python3 studio.py facecheck projects/saga/intro/영상이름.mp4</code></pre></div>
+    </div>
+    <div class="box warn"><b class="t">받아쓰기 준비</b>처음 한 번 <code>pip install -r requirements.txt</code>(받아쓰기·얼굴 찾기 포함)가 필요하고, 첫 실행 때 AI 받아쓰기 모델(약 500MB)을 내려받습니다. 더 정확하게 하려면 <code>config.json</code>의 <code>transcribe.model</code>을 <code>medium</code>으로 바꾸세요.</div>
+  </section>
+
+  <section id="auto">
+    <h2>9. 매일 자동 실행</h2>
+    <p><code>topics.example.txt</code>를 <code>topics.txt</code>로 복사하고 주제를 한 줄에 하나씩 적어 두세요. <code>batch</code>는 아직 안 만든 주제를 위에서부터 하나씩 처리합니다.</p>
+    <div class="os">
+      <div><h4>Windows — 작업 스케줄러</h4>
+<pre><code>copy topics.example.txt topics.txt
+schtasks /create /tn "YT자동화" /sc daily /st 09:00 /tr "C:\경로\yt-studio\pipeline\run_batch.bat"</code></pre>
+        <p style="font-size:.88rem">확인·삭제: <code>schtasks /query /tn "YT자동화"</code> · <code>schtasks /delete /tn "YT자동화"</code></p></div>
+      <div><h4>Mac — crontab</h4>
+<pre><code>cp topics.example.txt topics.txt
+crontab -e
+# 아래 한 줄 추가 (매일 오전 9시)
+0 9 * * * /Users/내이름/yt-studio/pipeline/run_batch.sh</code></pre>
+        <p style="font-size:.88rem">확인: <code>crontab -l</code> · 처음 실행 때 ‘전체 디스크 접근’ 허용을 물을 수 있어요.</p></div>
+    </div>
+    <p>예약 시각에 컴퓨터가 켜져 있고, LM Studio 서버(또는 Ollama)가 켜져 있어야 해요. 결과 기록은 <code>batch.log</code>에 쌓입니다. 업로드까지 자동으로 하려면 스크립트 안의 명령 끝에 <code>--upload</code>를 붙이세요 (비공개로 올라가요).</p>
+  </section>
+
+  <section id="honest">
+    <h2>10. 수익화를 지키는 원칙</h2>
+    <ul>
+      <li><b>사람이 확인하고 공개해요.</b> 자동화는 초안까지, 공개 버튼은 내가 누릅니다. 기본값이 비공개인 이유예요.</li>
+      <li><b>내 시연과 해설을 넣어요.</b> 유튜브는 똑같은 틀로 찍어 낸 반복·대량 생산 영상을 수익 창출에서 제외합니다. 화면 녹화, 내 경험, 내 목소리를 섞어 ‘내 영상’으로 만드세요.</li>
+      <li><b>AI 사용을 밝혀요.</b> 업로드 때 ‘변형·합성 콘텐츠’ 표시를 켜고, 설명란 끝에 AI 사용 문구를 자동으로 넣습니다.</li>
+      <li><b>과장하지 않아요.</b> 대본 규칙에 "확실하지 않은 숫자·가격은 지어내지 않기"가 들어 있어요. 그래도 수치는 꼭 직접 확인해 주세요.</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <h2>11. 문제 해결</h2>
+    <div class="tbl"><table>
+      <tr><th>증상</th><th>해결</th></tr>
+      <tr><td>로컬 AI 연결 안 됨</td><td>LM Studio 에서 모델 Load + Start Server 했는지 확인. <code>doctor</code>로 다시 점검.</td></tr>
+      <tr><td>대본 형식이 어긋남</td><td>작은 모델에서 가끔 생겨요. 자동으로 3번 다시 시도하고, 계속되면 더 큰 모델이나 Gemini 로 바꿔 보세요.</td></tr>
+      <tr><td>음성 만들기 실패</td><td>edge-tts 는 인터넷이 필요해요. 회사망이면 <code>HTTPS_PROXY</code>·<code>SSL_CERT_FILE</code> 설정을 따릅니다. 테스트만 할 때는 <code>"tts": {"provider": "silent"}</code>.</td></tr>
+      <tr><td>한글이 네모로 나옴</td><td>글꼴 다운로드가 막힌 환경이에요. <code>config.json</code>의 <code>fonts</code>에 컴퓨터에 있는 한글 글꼴 경로를 적어 주세요.</td></tr>
+      <tr><td>윈도우 한글 깨짐</td><td>PowerShell 에서 <code>chcp 65001</code> 입력 후 다시 실행.</td></tr>
+      <tr><td>"pip 를 찾을 수 없음"</td><td>가상환경이 꺼져 있어요. 3번의 Activate 명령부터 다시.</td></tr>
+    </table></div>
+  </section>
+</main>
+</body>
+</html>

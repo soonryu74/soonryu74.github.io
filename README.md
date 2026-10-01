@@ -61,5 +61,8 @@
 
 데이터 갱신: `python3 scripts/build_gwajeong.py`(어디가 권장과목) · `python3 scripts/build_kess.py` · `python3 scripts/build_edss.py`(EDSS 개방데이터 성취도 집계) (KESS 교육통계 엑셀 자동 탐색·변환, 매월 5일 GitHub Actions `kess-data.yml`). 나이스 학교기본정보는 `NEIS_API_KEY` Secret 등록 시 `scripts/build_schools.py`로 수집.
 
+## 하위 프로젝트: 유튜브 자동화 스튜디오 (`yt-studio/`)
+로컬 AI(LM Studio·Ollama)·Gemini 로 대본을 쓰고, 무료 음성(edge-tts)·장면 그림·ffmpeg 로 자막 입힌 영상과 썸네일 3종을 만들어 유튜브에 비공개로 올리는 도구. 웹 스튜디오 `yt-studio/index.html`, 설치 안내 `yt-studio/guide.html`, 파이프라인 `yt-studio/pipeline/studio.py`. 검색 노출 안 함(noindex).
+
 ---
 안녕하세요, 만든 사람은 **서순려**입니다. 보건학을 전공하고 공무원으로 근무하며, 인공지능을 활용한 연구·데이터 분석·시각화·창작에 관심을 두고 꾸준히 배우고 있습니다.

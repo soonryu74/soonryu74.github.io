@@ -2,3 +2,14 @@ __pycache__/
 *.pyc
 scripts/kess_cache/
 scripts/adiga_cache/
+
+# 유튜브 자동화 스튜디오 — 비밀 키·결과물은 올리지 않는다
+yt-studio/pipeline/config.json
+yt-studio/pipeline/client_secret*.json
+yt-studio/pipeline/token.json
+yt-studio/pipeline/projects/
+yt-studio/pipeline/fonts/
+yt-studio/pipeline/topics.txt
+yt-studio/pipeline/.venv/
+yt-studio/pipeline/*.log
+yt-studio/pipeline/models/
