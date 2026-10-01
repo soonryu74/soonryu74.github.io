@@ -213,11 +213,21 @@ def parse_time(v) -> float:
     return t
 
 
-def with_cover(video: Path, cover: Path, out: Path, sec: float = 0.6) -> Path:
-    """표지 그림을 영상 맨 앞에 잠깐(기본 0.6초) 붙인다.
-    휴대폰 유튜브 앱에서 쇼츠 표지를 '영상 속 장면'으로 고를 때 이 장면을 고르면 된다."""
+def with_cover(video: Path, cover: Path, out: Path, sec: float = 0.6, overlay: bool = True) -> Path:
+    """표지 그림을 영상 맨 앞에 잠깐(기본 0.6초) 보여 준다.
+    휴대폰 유튜브 앱에서 쇼츠 표지를 '영상 속 장면'으로 고를 때 이 장면을 고르면 된다.
+    overlay=True(기본): 영상 첫 sec초 위에 표지를 덮는다 — 소리(음악)는 처음부터 그대로 나오고 길이도 안 변한다.
+    overlay=False: 표지를 무음으로 앞에 끼워 넣는다 (영상이 sec초 길어지고, 그동안 소리가 없다)."""
     W, H = media.video_size(str(video))
     fps = 30
+    if overlay:
+        media.run(["-i", str(video), "-loop", "1", "-t", f"{sec}", "-i", str(cover),
+                   "-filter_complex",
+                   f"[1:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,format=rgba[c];"
+                   f"[0:v][c]overlay=0:0:enable='lt(t,{sec})':eof_action=pass[ov]",
+                   "-map", "[ov]", "-map", "0:a?", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+                   "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(out)])
+        return out
     media.run(["-loop", "1", "-t", f"{sec}", "-i", str(cover),
                "-f", "lavfi", "-t", f"{sec}", "-i", "anullsrc=r=48000:cl=stereo",
                "-i", str(video),
