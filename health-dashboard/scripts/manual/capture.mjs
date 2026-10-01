@@ -41,6 +41,9 @@ await go('#ind=DT_H_OBE_OBE&sido=001&sgg=00101&year=2025&scope=nation');
 await p.screenshot({ path: `${OUT}/A_home_top.png` }); manifest.push({ name: 'A_home_top', file: `${OUT}/A_home_top.png`, note: '첫 화면(지표 분석) 상단' });
 await shot('A_header', 'header.top', '제목·부제');
 await shot('A_nav', '.seg.views', '메뉴 탭');
+// 전역 검색(오른쪽 위 ⌕ 검색): 「건강수명」을 쳐서 메뉴·카드·지표가 함께 나오는 모습
+try { await p.locator('.srch-btn').first().click({ timeout: 2000 }); await p.waitForTimeout(300); await p.keyboard.type('건강수명'); await p.waitForTimeout(500);
+  await shot('A_search', '.srch-panel', '검색 상자: 「건강수명」 결과(메뉴·카드·지표)'); await p.keyboard.press('Escape'); await p.waitForTimeout(300); } catch (e) { console.log('search', e.message.slice(0, 60)); }
 await shot('A_controls', '.controls', '지표·지역·비교·값 유형 선택');
 await shot('A_year', '.ctrl.yearctrl', '연도 슬라이더·재생');
 await shot('A_kpis', '.kpis', '상단 요약 타일 4개');

@@ -17,6 +17,7 @@ import Tooltip from "./components/Tooltip";
 import UnitsView from "./components/UnitsView";
 import CONTACT from "../../data/contact.json";
 import NcdView from "./components/NcdView";
+import Search from "./components/Search";
 import CorrelationView from "./components/CorrelationView";
 import HotspotView from "./components/HotspotView";
 import ChronicleView from "./components/ChronicleView";
@@ -81,6 +82,7 @@ export default function App() {
   const [cmp, setCmp] = useState(init.cmp);         // 비교 대상 코드 목록 (NAT = 전국 중앙값)
   const [rankOpt, setRankOpt] = useState(init.rankOpt); // 순위 산출 방식 (방법론 v1)
   const [ncdInd, setNcdInd] = useState(init.ncdInd);     // 지식베이스 지표 필터
+  const [ncdQ, setNcdQ] = useState("");                 // 검색에서 넘어온 지식베이스 검색어
   const [playing, setPlaying] = useState(false);
   const bodyRef = useRef(null);   // 재생을 누르면 본문(그래프)이 화면에 들어오도록 스크롤
   const [tip, setTip] = useState(null);
@@ -151,6 +153,29 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", next);
     setTheme(next);
   };
+  // 검색 결과로 이동: 메뉴 전환 → (지표·지역 적용) → 카드 제목까지 스크롤하고 잠깐 강조. 화면이 그려질 때까지 80ms 간격으로 최대 20번 찾는다.
+  const goCard = (title) => {
+    const nz = (t) => String(t || "").toLowerCase().replace(/[\s·()\-_,.「」]/g, "");
+    const want = nz(title); let n = 0;
+    const t = setInterval(() => {
+      const el = [...document.querySelectorAll(".card h3, .card h2, .srccard .sc-head, .reflist h3, .fb-faq summary")].find((e) => nz(e.textContent).includes(want));
+      if (el || ++n > 20) {
+        clearInterval(t);
+        if (!el) return;
+        const box = el.closest(".card, .srccard, .reflist, details") || el;
+        box.scrollIntoView({ behavior: "smooth", block: "start" });
+        box.classList.add("srch-hit"); setTimeout(() => box.classList.remove("srch-hit"), 2400);
+      }
+    }, 80);
+  };
+  const goSearch = ({ view: v, ind: i, code, card, ncdQ: nq }) => {
+    if (i) { setInd(i); setPlaying(false); }
+    if (code) selectRegion(code);
+    if (nq != null) { setNcdInd(null); setNcdQ(nq); }
+    const target = v || (code && ["home", "units", "sources", "feedback", "chronicle", "ncd"].includes(view) ? "analysis" : view);
+    if (target !== view) setView(target);
+    if (card) goCard(card); else window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   const pickFromProfile = (i, y) => { setInd(i); setYearSel(y); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const inCmp = cmp.includes(sel.c);
   const addToCompare = () => {
@@ -177,6 +202,7 @@ export default function App() {
               <span className="sub-note">건강수준 모니터링과 목표치 설정 지원 도구입니다. 보건소 사업 실적(투입·산출) 자료를 담고 있지 않아 사업 성과 평가 도구가 아닙니다.</span></div>
           </div>
           <div className="topright">
+            <Search view={view} onGo={goSearch} />
             <div className="seg views">
               <button className={`seg-btn ${view === "home" ? "on" : ""}`} onClick={() => setView("home")}>홈</button>
               <button className={`seg-btn ${view === "analysis" ? "on" : ""}`} onClick={() => setView("analysis")}>지표 분석</button>
@@ -253,7 +279,7 @@ export default function App() {
         ) : view === "hot" ? (
           <HotspotView setTip={setTip} onPick={(i, code, y) => { const r = RBY.get(code); if (!r) return; setInd(i); if (r.l === "sgg") { setSido(r.p); setSgg(code); } else { setSido(code); setSgg(null); } if (y) setYearSel(y); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "ncd" ? (
-          <NcdView filterInd={ncdInd} onClearInd={() => setNcdInd(null)} sidoFull={RBY.get(sido)?.n}
+          <NcdView filterInd={ncdInd} onClearInd={() => setNcdInd(null)} sidoFull={RBY.get(sido)?.n} initQ={ncdQ}
             onPickInd={(i) => { if (i) { setInd(i); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); } }} />
         ) : view === "compare" ? (
           <Compare ind={ind} item={item} year={year} codes={cmp} onCodes={setCmp} onYear={(y) => setYearSel(y)} sel={sel}
