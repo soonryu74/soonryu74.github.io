@@ -166,7 +166,7 @@ def scenes(fonts: dict, theme: dict) -> list[dict]:
         {"kind": "card", "src": str(layout.card(W / "card_title", "long", fonts, "2027\n일터선교 & 글로벌네트워크아카데미", theme,
                                                  "SCHOOL OF MARKETPLACE MISSION & GLOBAL NETWORK  ·  사랑글로벌아카데미 SaGA")), "dur": 4.5},
         {"kind": "still", "src": str(collage(W / "collage1.jpg", ["i_shop", "i_clinic", "i_whiteboard", "i_globe"])), "dur": 5.0,
-         "cap": "기업가 · 직장인 · 공무원 · 자영업자 · 프리랜서 · 크리스천 청년"},
+         "cap": "기업가 · 직장인 · 공무원 · 자영업자 · 청년"},
         {"kind": "clip", "src": _pick("v_seminar"), "dur": 7.0, "cap": "1학기  온전론 · 기독교 세계관 · 성경적 일터신학"},
         {"kind": "still", "src": _pick("i_globe"), "dur": 5.0, "cap": "2학기  교회사 · 글로벌 네트워크 · 일터선교와 전문성"},
         {"kind": "still", "src": _pick("i_whiteboard"), "dur": 5.0, "cap": "3학기  Business is Mission · Christian-MBA · 영역별 선교전략"},
@@ -182,6 +182,7 @@ def build(bgm: str) -> Path:
     cfg = load_config(None)
     fonts = font_set(cfg)
     theme = series.get("recruit")["theme"]
+    layout.CAPTION_SCALE = 2.0  # 자막 글씨 2배
     W.mkdir(parents=True, exist_ok=True)
     parts, caps, t = [], [], 0.0
     intro = intro_search(W / "intro.mp4", fonts)

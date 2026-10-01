@@ -61,9 +61,12 @@ def header(out: Path, fmt: str, fonts: dict, label: str, title: str, theme: dict
     return _save(img, out)
 
 
+CAPTION_SCALE = 1.0  # 자막 글자 배율 (작업 스크립트에서 layout.CAPTION_SCALE = 2.0 처럼 바꿔 쓴다)
+
+
 def caption_height(text: str, fmt: str, fonts: dict) -> int:
     W, _ = size_of(fmt)
-    pt = 64 if fmt == "shorts" else 54
+    pt = int((64 if fmt == "shorts" else 54) * CAPTION_SCALE)
     f = _f(fonts["subtitle"], pt)
     return int(pt * 1.34) * len(wrap(text, f, int(W * (0.84 if fmt == "shorts" else 0.78)))[:3])
 
@@ -72,7 +75,7 @@ def caption(out: Path, text: str, fmt: str, fonts: dict, style: str = "boxed", b
     """자막 한 장. 쇼츠는 화면 62~74% 높이(아래 안전 영역 위), 가로는 아래쪽.
     bottom: 자막 아래 끝 y(px) — 얼굴을 피해 옮길 때."""
     W, H = size_of(fmt)
-    pt = 64 if fmt == "shorts" else 54
+    pt = int((64 if fmt == "shorts" else 54) * CAPTION_SCALE)
     f = _f(fonts["subtitle"], pt)
     lines = wrap(text, f, int(W * (0.84 if fmt == "shorts" else 0.78)))[:3]
     line_h = int(pt * 1.34)
