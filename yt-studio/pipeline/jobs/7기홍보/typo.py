@@ -80,11 +80,11 @@ class Scene:
             d.text((X0 + 24, 128), self.kicker, font=kf, fill=GOLD + (255,))
         if self.caption:
             a = ease(t, 0.9, 0.5)
-            cf = F(fonts["bold"], 40)
+            cf = F(fonts["bold"], 52)  # 1.3배 키움
             tw = cf.getlength(self.caption)
-            x0, y0 = WD / 2 - tw / 2 - 34, 950
-            d.rounded_rectangle((x0, y0, x0 + tw + 68, y0 + 76), 14, fill=GOLD + (int(245 * a),))
-            d.text((WD / 2, y0 + 38), self.caption, font=cf, fill=(20, 24, 36, int(255 * a)), anchor="mm")
+            x0, y0 = WD / 2 - tw / 2 - 44, 932
+            d.rounded_rectangle((x0, y0, x0 + tw + 88, y0 + 98), 16, fill=GOLD + (int(245 * a),))
+            d.text((WD / 2, y0 + 49), self.caption, font=cf, fill=(20, 24, 36, int(255 * a)), anchor="mm")
 
     def draw(self, d, layer, t, fonts):  # 장면별 구현
         pass
