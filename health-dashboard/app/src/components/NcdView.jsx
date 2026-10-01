@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NCD, DOMAINS, INDICATORS, SIDOS } from "../data";
 import ExportButtons from "./ExportButtons";
 
@@ -6,11 +6,12 @@ const LEVELS = ["global", "regional", "national", "sido"];
 const LEVEL_SHORT = { global: "WHO 글로벌", regional: "WPRO 서태평양", national: "국가", sido: "시도" };
 
 /* 만성질환 예방·관리 탭: 국제→지역→국가→시도 계층 지식베이스 */
-export default function NcdView({ filterInd, onClearInd, sidoFull, onPickInd }) {
+export default function NcdView({ filterInd, onClearInd, sidoFull, onPickInd, initQ }) {
   const [level, setLevel] = useState("all");
   const [area, setArea] = useState("all");
   const [sido, setSido] = useState(sidoFull || "all");
   const [q, setQ] = useState("");
+  useEffect(() => { if (initQ) setQ(initQ); }, [initQ]);   // 전역 검색에서 넘어온 검색어
   const [showDocs, setShowDocs] = useState(false);
   const indByName = Object.fromEntries(INDICATORS.map((i) => [i.name, i]));
 
