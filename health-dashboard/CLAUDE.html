@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=4d8724819e0a7510f6ae62334caaa94c4cda699f">
+    <link rel="stylesheet" href="/assets/css/style.css?v=32d2cfafac3e63bf7c57686dc54018f570e51ec8">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -402,6 +402,10 @@ scripts/manual/demo_video.mjs — Playwright recordVideo(1280×720 VP8) → imag
 ① 「하위 3%」 = 서울특별시(시도) 프로파일이 <strong>17개 시도 중 17위</strong>(0.5÷17 = 2.9%)였음. 30곳 이하 풀에서는 분위를 쓰지 않고 「17개 시도 중 17위」로 표기(Profile.jsx pctLabel), 값 뒤에 「2025년 기준 3년 평균 / 2025년」 명시(basisOf). 권고 카드 소제목에 순위 산출 방식 설정을 따른다고 적음.
 ② 「가장 개선된 지표」 배지가 <strong>방향 보정 개선폭을 「+18.3%p」로</strong> 보여 결핵 신고율이 오른 것처럼 읽혔다(실제 서울 43.8→25.5 명/10만명 감소 = 개선, 분류는 맞음). 원 변화량을 ▲▼ + 지표 단위(명/10만명 등, % 지표만 %p)로 바꾸고 「낮아져 개선 / 높아져 악화」 문구 추가.</li>
   <li>[완료] <strong>health-profile.kr 거울 배포 재개</strong>(2026-10-02, add_repo 승인됨): /home/user/health-profile 클론 → build_dashboard.py 가 index.html + docs/ 32개(설명서·활용법·영상·md) 복사. contact.json docs_base 를 상대 경로 <code class="language-plaintext highlighter-rouge">docs/</code> 로 바꿔 두 도메인 모두 같은 도메인의 파일을 연다. 거울 커밋·푸시는 수동(<code class="language-plaintext highlighter-rouge">git -C /home/user/health-profile add -A &amp;&amp; commit &amp;&amp; push origin main</code>).</li>
+  <li>[완료] <strong>지역 범위 선택을 「비교 범위」 드롭다운 하나로 통일</strong>(2026-10-02, 소유자 지적 “메뉴마다 반복되어 보이고 헷갈려”, 설계는 소유자 선택): 상단 컨트롤의 「비교 범위」 select 하나(전국 — 17개 시도 / 전국 — 시군구(조사 단위 258곳) / 시도 내 시군구 — 17개 시도 나열)가 지도·순위·격차·연도표를 함께 움직인다.
+App.jsx scope = sidoAll | nation | sido(해시 scope=, 「시도 내 — X」를 고르면 선택 지역도 X 로), 지도 카드 탭 3개·시도 select 와 순위 카드 집단 탭 제거(각 카드에 「범위: … — 위 비교 범위에서 바꿉니다」 안내만). 시군구 자료는 순위 카드 「보건소 단위」 토글로 258곳 기준.
+기본값: 시도를 고르면 「시도 내 시군구」, 시군구를 고르면 「전국 시군구」(RegionPicker·selectRegion 이 scope 를 맞춤). data.js poolFor(sel, scope, ind) 3값, 프로파일은 시도면 17개 시도·시군구면 전국/시도 내.
+capture.mjs(A_scope 샷)·deck.mjs·deck_use.mjs·demo_video.mjs 동기화, 두 덱·PDF·영상 재생성.</li>
   <li>[검토] 지역·필수·공공의료 거버넌스 질문(2026-10-02): docs/지역필수공공의료_거버넌스_자료검토_v1.md — 거버넌스가 묻는 4가지(어디가 나쁜가·자원·흐름·성과) 중 ①은 거의, ②는 절반 가능, <strong>자체충족률·접근성·공공병원 현황이 비어 있음</strong>. 수집 후보 1순위 공단 지역별의료이용통계 관내·관외 진료(KOSIS 표 ID 확인 필요), 2순위 응급·분만·소아 취약지 고시, 3순위 심평원 의료기관 Open API.</li>
   <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>

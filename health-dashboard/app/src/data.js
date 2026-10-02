@@ -208,10 +208,11 @@ export function latestYear(ind, item, code) {
 
 /** 비교 집단: 시군구 선택 시 전국/시도 내 시군구, 시도 선택 시 17개 시도 */
 export function poolFor(sel, scope, ind = null) {
-  if (!sel) return SIDOS;
-  if (sel.l === "sido") return SIDOS;
-  if (ind && isSurvey(ind)) return scope === "sido" ? sidoPoolOf(ind, sel.p) : HC_POOL;
-  return scope === "sido" ? SGG_BY_SIDO[sel.p] : SGG_ALL;
+  if (!sel || scope === "sidoAll") return SIDOS;                       // 17개 시도
+  const sidoCode = sel.l === "sido" ? sel.c : sel.p;
+  if (scope === "sido") return ind ? sidoPoolOf(ind, sidoCode) : (SGG_BY_SIDO[sidoCode] || []);   // 시도 내 시군구(조사 지표는 조사 단위)
+  if (sel.l === "sido" && !ind) return SIDOS;                          // 지표 없이 시도를 고른 경우(프로파일)
+  return ind ? natPool(ind) : SGG_ALL;                                  // 전국 시군구
 }
 
 /** 방향 보정 비교: "a가 b보다 양호"면 음수 */

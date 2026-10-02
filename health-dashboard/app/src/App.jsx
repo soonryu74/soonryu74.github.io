@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Cite from "./components/Cite";
 import RefList from "./components/RefList";
-import { DS, INDICATORS, RBY, SIDOS, label, DEFAULT_RANK_OPT, KDH_SOURCE, TIER_INFO , indRef } from "./data";
+import { DS, INDICATORS, RBY, SIDOS, HC_POOL, isSurvey, label, DEFAULT_RANK_OPT, KDH_SOURCE, TIER_INFO, indRef } from "./data";
 import { IndicatorPicker, RegionPicker, YearControl, ItemToggle } from "./components/Pickers";
 import Kpis from "./components/Kpis";
 import TrendChart from "./components/TrendChart";
@@ -43,7 +43,7 @@ function readHash() {
     sido: RBY.get(sido)?.l === "sido" ? sido : (RBY.get(sgg0)?.l === "sgg" ? RBY.get(sgg0).p : "001"),
     sgg: RBY.get(sgg0)?.l === "sgg" ? sgg0 : null,
     year: h.get("year") ? +h.get("year") : null,
-    scope: h.get("scope") === "sido" ? "sido" : "nation",
+    scope: ["sidoAll", "sido", "nation"].includes(h.get("scope")) ? h.get("scope") : (RBY.get(sgg0)?.l === "sgg" ? "nation" : "sido"),
     // 주소에 아무 상태가 없으면(처음 방문) 메인 화면, view=home 도 메인 화면
     view: !window.location.hash.replace(/^#/, "") || h.get("view") === "home" ? "home"
       : ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback"].includes(h.get("view")) ? h.get("view") : "analysis",
@@ -79,9 +79,8 @@ export default function App() {
   const [sido, setSido] = useState(init.sido);
   const [sgg, setSgg] = useState(init.sgg);
   const [yearSel, setYearSel] = useState(init.year);
-  const [scope, setScope] = useState(init.scope);   // 순위·격차 비교 범위: nation | sido
+  const [scope, setScope] = useState(init.scope);   // 비교 범위(지도·순위·격차·연도표 공통): sidoAll(17개 시도) | nation(전국 시군구) | sido(시도 내 시군구)
   // 지도 범위(CIAT 단계구분도와 동일): sidoAll = 전국 시도 · nation = 전국 시군구 · sido = 시도 내 시군구
-  const [mapMode, setMapMode] = useState("auto");
   const [mapLabels, setMapLabels] = useState(true);
   const [view, setView] = useState(init.view);      // analysis | profile | compare
   // 「의견·문의」에 자동으로 붙일 「보고 있던 화면」 주소 — 문의 탭이 아닌 마지막 화면의 해시를 기억
@@ -150,9 +149,15 @@ export default function App() {
   const selectRegion = (code) => {
     const r = RBY.get(code);
     if (!r) return;
-    if (r.l === "sido") { setSido(r.c); setSgg(null); }
-    else if (r.l === "sub") { const p = RBY.get(r.p); if (p) { setSido(p.p); setSgg(p.c); } }   // 보건소 세부 단위 → 소속 시군구
-    else { setSido(r.p); setSgg(r.c); }
+    if (r.l === "sido") { setSido(r.c); setSgg(null); setScope((sc) => (sc === "sidoAll" ? sc : "sido")); }
+    else if (r.l === "sub") { const p = RBY.get(r.p); if (p) { setSido(p.p); setSgg(p.c); } setScope((sc) => (sc === "sidoAll" ? "nation" : sc)); }   // 보건소 세부 단위 → 소속 시군구
+    else { setSido(r.p); setSgg(r.c); setScope((sc) => (sc === "sidoAll" ? "nation" : sc)); }
+  };
+  // 비교 범위 드롭다운 값: sidoAll | nation | sido:<시도코드>. 「시도 내 시군구 — X」를 고르면 선택 지역도 그 시도 안으로 옮긴다
+  const scopeValue = scope === "sido" ? `sido:${sel.l === "sido" ? sel.c : sel.p}` : scope;
+  const pickScope = (v) => {
+    if (v.startsWith("sido:")) { const c = v.slice(5); const cur = sel.l === "sido" ? sel.c : sel.p; if (c !== cur) { setSido(c); setSgg(null); } setScope("sido"); }
+    else setScope(v);
   };
   const [fs, setFs] = useState(() => { try { return Number(localStorage.getItem("hd-fs") || 0); } catch { return 0; } });
   const bumpFs = (d) => setFs((v) => { const n = Math.max(-1, Math.min(2, v + d)); try { localStorage.setItem("hd-fs", String(n)); } catch {} return n; });
@@ -194,11 +199,11 @@ export default function App() {
     setCmp(cmp.length ? [...cmp, sel.c] : [NAT, sel.c]);
   };
 
-  const scopeLabel = sel.l === "sido" ? "17개 시도" : scope === "sido" ? `${RBY.get(sel.p).n} 내 시군구` : "전국 시군구";
-  // 지도 범위: 「자동」이면 시도를 고르면 그 시도 내 시군구, 시군구를 고르면 비교 범위를 따른다
   const mapSidoCode = sel.l === "sido" ? sel.c : sel.p;
-  const mapScope = mapMode !== "auto" ? mapMode : sel.l === "sido" ? "sido" : scope === "sido" ? "sido" : "nation";
-  const mapScopeName = mapScope === "sidoAll" ? "전국 시도" : mapScope === "sido" ? `${RBY.get(mapSidoCode)?.n || ""} 시군구` : "전국 시군구";
+  const scopeLabel = scope === "sidoAll" ? "17개 시도" : scope === "sido" ? `${RBY.get(mapSidoCode)?.n || ""} 내 시군구` : "전국 시군구";
+  // 지도·순위·격차·연도표가 모두 같은 비교 범위를 쓴다(2026-10-02 소유자 지시: 범위 선택을 드롭다운 하나로)
+  const mapScope = scope;
+  const mapScopeName = scope === "sidoAll" ? "전국 시도" : scope === "sido" ? `${RBY.get(mapSidoCode)?.n || ""} 시군구` : "전국 시군구";
 
   return (
     <div className={`viz-root fs-${fs}${playing ? " playing" : ""}`}>
@@ -246,7 +251,7 @@ export default function App() {
 
         {!["home", "units", "ncd", "corr", "hot", "chronicle", "sources", "feedback"].includes(view) && <div className="controls">
           {view !== "profile" && view !== "kpi" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
-          {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); }} onSgg={setSgg} />}
+          {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); setScope((sc) => (sc === "sidoAll" ? sc : "sido")); }} onSgg={(c) => { setSgg(c); if (c) setScope((sc) => (sc === "sidoAll" ? "nation" : sc)); }} />}
           {view !== "compare" && view !== "kpi" && (
             <div className="ctrl">
               <label>비교 담기</label>
@@ -256,13 +261,19 @@ export default function App() {
               </button>
             </div>
           )}
-          {view !== "compare" && view !== "kpi" && sel.l === "sgg" && (
+          {(view === "analysis" || (view === "profile" && sel.l === "sgg")) && (
             <div className="ctrl">
               <label>비교 범위</label>
-              <div className="seg">
-                <button className={`seg-btn ${scope === "nation" ? "on" : ""}`} onClick={() => setScope("nation")}>전국</button>
-                <button className={`seg-btn ${scope === "sido" ? "on" : ""}`} onClick={() => setScope("sido")}>{RBY.get(sel.p).n}</button>
-              </div>
+              <select className="scope-sel" value={view === "profile" && scope === "sidoAll" ? "nation" : scopeValue} onChange={(e) => pickScope(e.target.value)}
+                title="지도·순위·격차·연도표가 함께 쓰는 비교 집단">
+                {view === "analysis" && <optgroup label="시도"><option value="sidoAll">전국 — 17개 시도</option></optgroup>}
+                <optgroup label="시군구">
+                  <option value="nation">전국 — 시군구{isSurvey(ind) ? ` (조사 단위 ${HC_POOL.length}곳)` : ""}</option>
+                </optgroup>
+                <optgroup label="시도 내 시군구">
+                  {SIDOS.map((s) => <option key={s.c} value={`sido:${s.c}`}>{s.n} 내 시군구</option>)}
+                </optgroup>
+              </select>
             </div>
           )}
           <ItemToggle item={item} onChange={setItem} ind={ind} />
@@ -307,15 +318,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="seg map-seg">
-                  {[["sidoAll", "전국 시도"], ["nation", "전국 시군구"], ["sido", "시도 내 시군구"]].map(([k, nm]) => (
-                    <button key={k} className={`seg-btn ${mapScope === k ? "on" : ""}`} onClick={() => setMapMode(k)}>{nm}</button>
-                  ))}
-                  {mapScope === "sido" && (
-                    <select className="map-sido" value={mapSidoCode} onChange={(e) => selectRegion(e.target.value)}
-                      title="지도에 표시할 시도">
-                      {SIDOS.map((s) => <option key={s.c} value={s.c}>{s.n}</option>)}
-                    </select>
-                  )}
+                  <span className="desc map-scope-note">범위: <b>{mapScopeName}</b> — 위 「비교 범위」에서 바꿉니다</span>
                   <button className={`seg-btn ${mapLabels ? "on" : ""}`} style={{ marginLeft: "auto" }}
                     onClick={() => setMapLabels(!mapLabels)}
                     title={mapLabels ? "지도 위 지역명을 숨깁니다" : "지도 위에 지역명을 표시합니다"}>
