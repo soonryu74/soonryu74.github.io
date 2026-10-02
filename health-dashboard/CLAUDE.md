@@ -323,6 +323,9 @@
   **health-profile.kr 거울에는 docs 폴더가 없다**(index.html·CNAME 만 복사) → build_dashboard.py 가 docs/ 도 copytree 하도록 바꿈. 거울 저장소(soonryu74/health-profile)는 이 컨테이너에 없고 add_repo 거부 상태라 아직 미반영 — 그래서 문서 주소는 GitHub Pages 절대 주소를 유지(거울 동기화 뒤 상대 경로 docs/ 로 바꿔도 됨).
 - [완료] McMaster Forum 「Evidence Commission」 검토(2026-10-02): docs/McMaster_근거위원회_검토_v1.md — 2022 보고서 권고 24·실행 우선순위 3·의사결정자 4군·4단계·근거 8형태·SHOW ME 6특징·RESSA. 반영 후보: 근거 통화·질·적용성 caveat, 4단계=홈 카드 ④ 대응표, 「측정된 소통」 문장, 근거 수준 배지, living evidence(갱신 자동화), 형평성 렌즈 — 미구현. 미반영: 글로벌 아키텍처·시민 패널·Indigenous ways of knowing.
 - [완료] 예방·관리 출처 링크 점검(2026-10-02, 소유자 "소스를 클릭하면 연결이 안 된다"): 56개 URL 전부 200·제목 일치, Playwright 로 새 탭 열림 확인(PC·휴대폰). 링크를 밑줄 + 「원문 열기 ↗」로 눈에 띄게만 바꿈. 정부 사이트 응답 10초 이상인 곳 있음.
+- [완료] **홈 카드 ⑤ 「처음이세요?」 + 머리글 「? 도움말」**(2026-10-02, 소유자 지시 "활용법 MP4·PPT·PDF를 홈페이지 안에", 위치는 소유자가 홈 카드+도움말 버튼 선택): app/src/components/Help.jsx(HelpContent) 를 홈 카드(가로 전체, .hc-help)와 App.jsx 모달(.help-modal, Esc·배경 클릭·✕)이 공유.
+  영상은 `<video preload="none" poster>`(포스터 app/src/assets/intro_poster.jpg 27KB 인라인) + 하이라이트/전체 토글(src 교체 후 load()). 링크 6개(설명서·활용법 PDF/PPT, 영상 2편)는 contact.json docs_base + 파일명. 「방법론 문서 N건 →」은 goSearch card 이동(goCard 가 details 를 펼치도록 보강).
+  검색 색인 「처음이세요?」 카드 추가. 홈 카드 수 4→5 — 설명서 3.0·활용법 13쪽 문구와 A0_home 캡처 재생성(두 덱·PDF 재생성). 소개 영상은 재녹화하지 않음(홈 장면 3초만 다름 — 다음 화면 변경 때 `demo_video.mjs both` 로 함께).
 - [검토] 지역·필수·공공의료 거버넌스 질문(2026-10-02): docs/지역필수공공의료_거버넌스_자료검토_v1.md — 거버넌스가 묻는 4가지(어디가 나쁜가·자원·흐름·성과) 중 ①은 거의, ②는 절반 가능, **자체충족률·접근성·공공병원 현황이 비어 있음**. 수집 후보 1순위 공단 지역별의료이용통계 관내·관외 진료(KOSIS 표 ID 확인 필요), 2순위 응급·분만·소아 취약지 고시, 3순위 심평원 의료기관 Open API.
 - [대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.
 - [대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)
