@@ -50,9 +50,11 @@ await shot('A_kpis', '.kpis', '상단 요약 타일 4개');
 await cards('B_analysis');
 // 지도 3모드
 const mapCard = cardBy('단계구분도');
-await clickBtn(null, '전국 시도'); await shot('B_map_sido', mapCard, '지도: 전국 시도 모드');
-await clickBtn(null, '전국 시군구'); await shot('B_map_nation', mapCard, '지도: 전국 시군구');
-await clickBtn(null, '시도 내 시군구'); await shot('B_map_insido', mapCard, '지도: 시도 내 시군구');
+// 비교 범위 드롭다운(지도·순위·격차 공통): 17개 시도 / 전국 시군구 / 시도 내 시군구
+await p.selectOption('.scope-sel', 'sidoAll'); await p.waitForTimeout(600); await shot('B_map_sido', mapCard, '지도: 비교 범위 「전국 — 17개 시도」');
+await p.selectOption('.scope-sel', 'nation'); await p.waitForTimeout(600); await shot('B_map_nation', mapCard, '지도: 비교 범위 「전국 — 시군구」');
+await p.selectOption('.scope-sel', 'sido:001'); await p.waitForTimeout(600); await shot('B_map_insido', mapCard, '지도: 비교 범위 「서울특별시 내 시군구」');
+await shot('A_scope', '.ctrl:has(.scope-sel)', '비교 범위 드롭다운');
 // 순위 토글
 const rankCard = cardBy('순위');
 await clickBtn(null, '⑩ 묶음'); await shot('B_rank_group', rankCard, '순위: 10개 묶음 보기'); await clickBtn(null, '⑩ 묶음');

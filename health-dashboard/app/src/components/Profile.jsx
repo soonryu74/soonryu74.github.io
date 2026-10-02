@@ -73,7 +73,7 @@ function RankSettings({ opt, onChange, isSgg }) {
 
 /* 지역 프로파일: 방법론 v1 기반 영역·종합 순위, 등급 배지, 강점·개선·과제 */
 export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, onRegion, setTip }) {
-  const pool = poolFor(sel, scope);
+  const pool = sel.l === "sido" ? poolFor(sel, "sidoAll") : poolFor(sel, scope === "sidoAll" ? "nation" : scope);   // 시도 프로파일은 17개 시도, 시군구는 전국/시도 내
   const isSgg = sel.l === "sgg";
   const rk = useMemo(() => computeRanking(item, pool, rankOpt), [item, pool, rankOpt]);
   const me = rk.byCode.get(sel.c);
