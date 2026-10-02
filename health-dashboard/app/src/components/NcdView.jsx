@@ -91,7 +91,7 @@ export default function NcdView({ filterInd, onClearInd, sidoFull, onPickInd, in
               {e.interventions?.length > 0 && <div className="ncdint">{e.interventions.map((s, i) => <span key={i} className="intchip">{s}</span>)}</div>}
               <div className="ncdfoot">
                 <span className="linked">{e.linked.map((n) => <button key={n} className="indlink" onClick={() => onPickInd(indByName[n])} title="지표 분석으로 이동">{n}</button>)}</span>
-                {e.url ? <a href={e.url} target="_blank" rel="noopener" className="src">{e.source || "출처"} ↗</a> : <span className="src muted">{e.source}</span>}
+                {e.url ? <a href={e.url} target="_blank" rel="noopener noreferrer" className="src srclink" title="출처 원문을 새 창에서 엽니다">{e.source || "출처"} <b>원문 열기 ↗</b></a> : <span className="src muted">{e.source}</span>}
               </div>
             </article>,
           ])}

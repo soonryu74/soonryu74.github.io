@@ -309,6 +309,21 @@
   **미완(권한 거부로 보류)**: ① 사용설명서 재생성 — deck.mjs 에 「검색」 슬라이드(68쪽, REF_SLIDE_FIRST 66)·capture.mjs A_search 샷은 넣었으나 scratchpad npm install(pptxgenjs·jszip)이 거부돼 pptx·pdf 미갱신(FeedbackView 는 67쪽 유지). ② health-profile.kr 거울 배포 — 새 컨테이너에 /home/user/health-profile 없음, add_repo 거부. GitHub Pages(main)만 반영.
 - [완료] **예방·관리 목록 영역별 묶음**(2026-10-02, 소유자 제보 "모든 영역을 선택했는데 아래는 모두 흡연만 나오네"): 자료는 온전했고(국가 40 = 만성질환 11·흡연 7·음주 4…) 원문 순서대로 흡연이 앞에 와 첫 화면이 한 영역으로만 보인 표시 문제.
   NcdView: 「모든 영역」이면 영역(칩 순서) → 계층 순으로 정렬하고 영역마다 소제목(.ncdgroup, 개수)과 상단 영역 목차 칩(.ncdtoc, 누르면 해당 묶음으로 스크롤). 영역을 하나 고르면 묶음 제목 없이 계층 순. QA 1400·390 오류 없음.
+- [완료] **활용법 발표자료 100쪽(PPT·PDF)**(2026-10-02, 소유자 지시 "현재 수준으로 활용법 ppt 100장, 마무리에 communityhealth.kr 방법론 비교와 발전방안"): docs/health-profile.kr_활용법_v1.pptx·.pdf.
+  생성기 scripts/manual/deck_use.mjs(deck.mjs 조판 도우미 재사용 + compareSlide·verdictSlide·roadmapSlide·quoteSlide). 캡처 108장은 sharp 로 JPEG(폭 1400·품질 82) 변환해 삽입 → 11.9MB(원본 PNG 삽입은 27MB).
+  구성: PART1 왜 이 도구인가 · 2 시작하기 · 3 메뉴별 활용(지표 분석 12·프로파일 12·…) · 4 시나리오 5 · 5 해석 주의·FAQ · 6 K-Health 랭킹(communityhealth.kr) 비교(2024년 257곳 실증 대조: 종합 순위 스피어만 0.53, 상위 20 겹침 13곳) · 7 발전방안 4갈래+로드맵 · 방법론 문서 11건 · 참고문헌(98~99) · 100 감사.
+  실행: `cp scripts/manual/deck_use.mjs deck.mjs scratchpad/manual/ && HD_JPG_DIR=… REF_SLIDE_FIRST=98 node deck_use.mjs out.pptx`. **PDF 변환은 libreoffice-impress 패키지가 있어야 한다**(새 컨테이너는 core 만 있어 "source file could not be loaded" — `apt-get update && apt-get install libreoffice-impress fonts-nanum`).
+  docs/communityhealth_검토_v1.md: 반영 ○/△ 6 · 미반영 ✕ 5(AHP 가중치·Z-합산·여건 합산·최하위 공개·결측 대체)와 이유, 사이트 구조·방법론·실증 대조.
+- [완료] **소개 영상 MP4 2편**(2026-10-02, 소유자 지시 "숨어 있는 모의 패널이나 직접 조절하는 메뉴들도 클릭해서 다 확인할 수 있게", 형식은 「둘 다」): docs/health-profile.kr_소개영상_전체_v1.mp4(42장면) · _하이라이트_v1.mp4(hl 장면만).
+  scripts/manual/demo_video.mjs — Playwright recordVideo(1280×720 VP8) → imageio_ffmpeg 의 ffmpeg 로 H.264(yuv420p·25fps·crf 23·faststart, 60MB 초과 시 850k 재인코딩). ffprobe 없음 → `ffmpeg -i`.
+  자막·커서·클릭 파문·진행 칩·타이틀/엔드 카드는 **페이지 안 DOM 오버레이**(addInitScript, 나눔 글꼴) — 후처리 없이 영상에 찍힌다. 슬라이더는 네이티브 setter + input 이벤트, 화면 전환은 `location.hash=`.
+  모드 dry(선택자 점검, ✗ 표시) / full / hl / both / fonttest. 장면: 홈 4 · 검색 · 지표 분석 14(지표·지역·조율·연도 재생·지도 3모드·순위 토글 4종·⛶ 전체 보기 재생·연도표·격차·형평성 산출 예시·근거 CPSTF 펼침·[n]·다크/A+) · 프로파일 12(**가중치 균등→모의 패널→직접 조정 슬라이더 3개**·단년도/통합/포함·황금다이아몬드·동류군·고위험군·우선순위 기준·펼쳐 보기) · 성과지표 계산기 · 비교 담기 · 예방·관리 · 연관 ▶ · 핫스팟 · 연대기 자동 관람 · 조사 단위 · 자료원 한계 · 의견·문의 미리보기 · 공유.
+  피함: 🖨 인쇄·🎬 영상 저장·내려받기·mailto·GitHub 이슈·새 탭 문서. 화면이 바뀌면 dry 로 먼저 점검 후 both 재녹화(약 12분).
+- [완료] 의견·문의 「이 대시보드에 대하여」에 활용법 PDF/PPT · 소개 영상 2편 · **방법론 문서 14건 목록**(details) 추가. data/contact.json 은 docs_base + 파일명 구조(manual/usage/videos/method_docs), 앱이 encodeURIComponent 로 주소를 만든다(Home 카드·FeedbackView). 검색 색인에 「활용법·영상·방법론 문서」.
+  **health-profile.kr 거울에는 docs 폴더가 없다**(index.html·CNAME 만 복사) → build_dashboard.py 가 docs/ 도 copytree 하도록 바꿈. 거울 저장소(soonryu74/health-profile)는 이 컨테이너에 없고 add_repo 거부 상태라 아직 미반영 — 그래서 문서 주소는 GitHub Pages 절대 주소를 유지(거울 동기화 뒤 상대 경로 docs/ 로 바꿔도 됨).
+- [완료] McMaster Forum 「Evidence Commission」 검토(2026-10-02): docs/McMaster_근거위원회_검토_v1.md — 2022 보고서 권고 24·실행 우선순위 3·의사결정자 4군·4단계·근거 8형태·SHOW ME 6특징·RESSA. 반영 후보: 근거 통화·질·적용성 caveat, 4단계=홈 카드 ④ 대응표, 「측정된 소통」 문장, 근거 수준 배지, living evidence(갱신 자동화), 형평성 렌즈 — 미구현. 미반영: 글로벌 아키텍처·시민 패널·Indigenous ways of knowing.
+- [완료] 예방·관리 출처 링크 점검(2026-10-02, 소유자 "소스를 클릭하면 연결이 안 된다"): 56개 URL 전부 200·제목 일치, Playwright 로 새 탭 열림 확인(PC·휴대폰). 링크를 밑줄 + 「원문 열기 ↗」로 눈에 띄게만 바꿈. 정부 사이트 응답 10초 이상인 곳 있음.
+- [검토] 지역·필수·공공의료 거버넌스 질문(2026-10-02): docs/지역필수공공의료_거버넌스_자료검토_v1.md — 거버넌스가 묻는 4가지(어디가 나쁜가·자원·흐름·성과) 중 ①은 거의, ②는 절반 가능, **자체충족률·접근성·공공병원 현황이 비어 있음**. 수집 후보 1순위 공단 지역별의료이용통계 관내·관외 진료(KOSIS 표 ID 확인 필요), 2순위 응급·분만·소아 취약지 고시, 3순위 심평원 의료기관 Open API.
 - [대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.
 - [대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)
 - [대기] Vercel/GitHub Pages 배포 결정

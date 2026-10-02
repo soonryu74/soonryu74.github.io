@@ -168,7 +168,7 @@ export default function Home({ sel, setTip, onGo }) {
           </ol>
           <div className="desc hc-note">
             계획서 「현황 분석」 작성 순서는 사용설명서 시나리오 1에 있습니다 ·{" "}
-            <a href={CONTACT.manual_pdf} target="_blank" rel="noopener noreferrer">사용설명서 PDF</a>
+            <a href={CONTACT.docs_base + encodeURIComponent(CONTACT.manual.pdf)} target="_blank" rel="noopener noreferrer">사용설명서 PDF</a>
           </div>
           <button type="button" className="hc-cta" onClick={() => onGo({ view: "profile" })}>우리 지역 현황 분석 시작 →</button>
         </section>

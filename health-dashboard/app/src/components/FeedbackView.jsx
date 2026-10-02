@@ -25,6 +25,8 @@ async function copyText(t) {
   } catch { return false; }
 }
 
+const doc = (f) => CONTACT.docs_base + encodeURIComponent(f);
+
 export default function FeedbackView({ currentUrl }) {
   const d0 = useMemo(() => loadDraft() || {}, []);
   const [cat, setCat] = useState(d0.cat || CATS[0]);
@@ -132,9 +134,27 @@ export default function FeedbackView({ currentUrl }) {
           자료별 출처·산식·갱신 주기·한계는 「자료원」 탭에, 지표 방향·계층·근거는 각 지표 화면에 적혀 있습니다. 주소: <a href={CONTACT.site} target="_blank" rel="noreferrer">{CONTACT.site}</a>
         </div>
         <div className="desc" style={{ marginTop: 6 }}>
-          <b>사용설명서(67쪽)</b> — 자료 소개·기본 조작·메뉴별 설명과 활용 팁·활용 시나리오·해석 주의:{" "}
-          <a href={CONTACT.manual_pdf} target="_blank" rel="noreferrer">PDF 보기</a> · <a href={CONTACT.manual_pptx} target="_blank" rel="noreferrer">파워포인트 내려받기</a>
+          <b>사용설명서({CONTACT.manual.pages}쪽)</b> — 자료 소개·기본 조작·메뉴별 설명과 활용 팁·활용 시나리오·해석 주의:{" "}
+          <a href={doc(CONTACT.manual.pdf)} target="_blank" rel="noreferrer">PDF 보기</a> · <a href={doc(CONTACT.manual.pptx)} target="_blank" rel="noreferrer">파워포인트 내려받기</a>
         </div>
+        <div className="desc" style={{ marginTop: 6 }}>
+          <b>활용법 발표자료({CONTACT.usage.pages}쪽)</b> — 지금 수준에서 무엇을 어떻게 쓰나 · 메뉴별 활용 · 시나리오 5가지 · K-Health 랭킹(communityhealth.kr) 방법론 비교 · 발전방안:{" "}
+          <a href={doc(CONTACT.usage.pdf)} target="_blank" rel="noreferrer">PDF 보기</a> · <a href={doc(CONTACT.usage.pptx)} target="_blank" rel="noreferrer">파워포인트 내려받기</a>
+        </div>
+        <div className="desc" style={{ marginTop: 6 }}>
+          <b>소개 영상(MP4)</b> — 모든 메뉴와 숨은 옵션(순위 산출 방식·모의 패널·직접 가중치·전체 보기 등)을 실제로 눌러 보여 줍니다:{" "}
+          {(CONTACT.videos || []).map((v, i) => (
+            <span key={v.file}>{i ? " · " : ""}<a href={doc(v.file)} target="_blank" rel="noreferrer">{v.title}</a> ({v.len})</span>
+          ))}
+        </div>
+        <details className="method-docs" style={{ marginTop: 8 }}>
+          <summary><b>방법론 문서 {(CONTACT.method_docs || []).length}건</b> — 순위·건강수명·박탈지수·격차 등 산출 방식과 검토 보고서(새 창, 저장소 docs 폴더)</summary>
+          <ul className="desc" style={{ marginTop: 6, paddingLeft: 18 }}>
+            {(CONTACT.method_docs || []).map(([f, t]) => (
+              <li key={f}><a href={doc(f)} target="_blank" rel="noreferrer">{t}</a> <span className="muted">({f})</span></li>
+            ))}
+          </ul>
+        </details>
       </div>
     </div>
   );
