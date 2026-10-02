@@ -25,8 +25,88 @@
       "a": "카카오톡·인스타그램 등 앱 안의 브라우저는 파일 저장이 막혀 있습니다. 메뉴에서 「다른 브라우저로 열기」를 누르거나 크롬·사파리에서 열어 주세요."
     }
   ],
-  "manual_pdf": "https://soonryu74.github.io/health-dashboard/docs/%EC%A7%80%EC%97%AD%EA%B1%B4%EA%B0%95%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC_%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C_%EC%82%AC%EC%9A%A9%EC%84%A4%EB%AA%85%EC%84%9C_v1.pdf",
-  "manual_pptx": "https://soonryu74.github.io/health-dashboard/docs/%EC%A7%80%EC%97%AD%EA%B1%B4%EA%B0%95%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC_%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C_%EC%82%AC%EC%9A%A9%EC%84%A4%EB%AA%85%EC%84%9C_v1.pptx",
+  "docs_base": "https://soonryu74.github.io/health-dashboard/docs/",
+  "docs_note": "문서 주소 = docs_base + 파일명(앱이 encodeURIComponent 로 붙인다). GitHub Pages 주소를 쓰는 이유: health-profile.kr 거울에는 docs 폴더가 아직 없다. build_dashboard.py 가 거울에 docs 를 복사하기 시작하면 상대 경로 docs/ 로 바꿔도 된다.",
+  "manual": {
+    "pdf": "지역건강프로파일_대시보드_사용설명서_v1.pdf",
+    "pptx": "지역건강프로파일_대시보드_사용설명서_v1.pptx",
+    "pages": 68
+  },
+  "usage": {
+    "pdf": "health-profile.kr_활용법_v1.pdf",
+    "pptx": "health-profile.kr_활용법_v1.pptx",
+    "pages": 100
+  },
+  "videos": [
+    {
+      "file": "health-profile.kr_소개영상_하이라이트_v1.mp4",
+      "title": "소개 영상 — 하이라이트",
+      "len": "약 3분"
+    },
+    {
+      "file": "health-profile.kr_소개영상_전체_v1.mp4",
+      "title": "소개 영상 — 전체 시연(모든 메뉴·숨은 옵션 클릭)",
+      "len": "약 8분"
+    }
+  ],
+  "method_docs": [
+    [
+      "랭킹_방법론_v1.md",
+      "랭킹 방법론 — 종합 순위 산출(가중치·3년 평균·리그·결과지표 제외·등급)"
+    ],
+    [
+      "건강수명_산출법_v1.md",
+      "건강수명 산출법 — 시군구 생명표·Sullivan·오즈비 보정, 예상 반박과 답변"
+    ],
+    [
+      "지역박탈지수_산출_v2.md",
+      "지역박탈지수 산출 — 2020 총조사 집계표 7개 변수, 국내 선행연구 대조"
+    ],
+    [
+      "감염병_고위험군_v1.md",
+      "감염병 고위험군 — 245개 지역 × 30개 집단, 실측/추정 구분"
+    ],
+    [
+      "지표_방향성_v1.md",
+      "지표 방향성 — 좋음/나쁨/맥락 판정 근거(국내·국제·미국 12개 체계)"
+    ],
+    [
+      "지역보건사업_평가이론_v1.md",
+      "지역보건사업 평가이론 — Donabedian·로직모델·WHO 결과사슬·RE-AIM, 계층 분류의 출처"
+    ],
+    [
+      "건강격차_지표_검토_v1.md",
+      "건강격차 지표 검토 — Keppel 2005·WHO HEAT Plus·HP2030 격차 방식"
+    ],
+    [
+      "미국_CountyHealthRankings_검토_v1.md",
+      "미국 County Health Rankings 기술문서 검토 — 신뢰구간·묶음·강점 최소 3개"
+    ],
+    [
+      "미국_CHR_2025보고서_검토_v1.md",
+      "미국 CHR&R 2025 연례보고서 검토 — 취약집단 분리·격차 체감 환산"
+    ],
+    [
+      "미국_CPSTF_검토_v1.md",
+      "미국 CPSTF(Community Guide) 검토 — 권고 224건과 지표 매핑"
+    ],
+    [
+      "communityhealth_검토_v1.md",
+      "communityhealth.kr(K-Health 랭킹) 검토 — 반영/미반영과 실증 대조"
+    ],
+    [
+      "McMaster_근거위원회_검토_v1.md",
+      "McMaster 근거위원회(Evidence Commission) 검토 — 근거 8형태·반영 후보"
+    ],
+    [
+      "데이터_최신성_점검_v1.md",
+      "데이터 최신성 점검 — 지표별 최신 연도·공표 일정"
+    ],
+    [
+      "사용설명서_정오표_v1.md",
+      "사용설명서 정오표 — 고친 숫자와 이유"
+    ]
+  ],
   "credit": {
     "org": "지음웍스",
     "url": "https://jieumworks.com",
