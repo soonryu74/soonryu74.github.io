@@ -25,8 +25,8 @@
       "a": "카카오톡·인스타그램 등 앱 안의 브라우저는 파일 저장이 막혀 있습니다. 메뉴에서 「다른 브라우저로 열기」를 누르거나 크롬·사파리에서 열어 주세요."
     }
   ],
-  "docs_base": "https://soonryu74.github.io/health-dashboard/docs/",
-  "docs_note": "문서 주소 = docs_base + 파일명(앱이 encodeURIComponent 로 붙인다). GitHub Pages 주소를 쓰는 이유: health-profile.kr 거울에는 docs 폴더가 아직 없다. build_dashboard.py 가 거울에 docs 를 복사하기 시작하면 상대 경로 docs/ 로 바꿔도 된다.",
+  "docs_base": "docs/",
+  "docs_note": "문서 주소 = docs_base + 파일명(앱이 encodeURIComponent 로 붙인다). 상대 경로라 GitHub Pages(/health-dashboard/docs/)와 health-profile.kr(/docs/) 어디서 열어도 같은 도메인의 파일이 열린다. build_dashboard.py 가 거울 저장소에 docs/ 를 함께 복사한다(2026-10-02부터).",
   "manual": {
     "pdf": "지역건강프로파일_대시보드_사용설명서_v1.pdf",
     "pptx": "지역건강프로파일_대시보드_사용설명서_v1.pptx",
