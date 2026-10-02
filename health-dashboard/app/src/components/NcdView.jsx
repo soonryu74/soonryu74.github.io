@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { NCD, DOMAINS, INDICATORS, SIDOS } from "../data";
 import ExportButtons from "./ExportButtons";
+import KhepiCases from "./KhepiCases";
 
 const LEVELS = ["global", "regional", "national", "sido"];
 const LEVEL_SHORT = { global: "WHO 글로벌", regional: "WPRO 서태평양", national: "국가", sido: "시도" };
@@ -101,6 +102,8 @@ export default function NcdView({ filterInd, onClearInd, sidoFull, onPickInd, in
         <table hidden><thead><tr><th>계층</th><th>시도</th><th>영역</th><th>목표</th><th>목표치</th><th>전략</th><th>중재/사업</th><th>연결 지표</th><th>출처</th><th>URL</th></tr></thead>
           <tbody>{list.map((e) => <tr key={e.id}><td>{LEVEL_SHORT[e.level]}</td><td>{e.sido || ""}</td><td>{e.area}</td><td>{e.goal}</td><td>{e.target ? `${e.target.indicator || ""} ${e.target.target_value || ""} ${e.target.target_year || ""}` : ""}</td><td>{(e.strategies || []).join(" / ")}</td><td>{(e.interventions || []).join(" / ")}</td><td>{e.linked.join(", ")}</td><td>{e.source}</td><td>{e.url}</td></tr>)}</tbody></table>
       </div>
+
+      <KhepiCases area={area} sidoName={sido === "all" ? null : sido} />
 
       <div className="card">
         <h3>수집 문서 {NCD.documents.length}건 <button className="themebtn" onClick={() => setShowDocs((s) => !s)}>{showDocs ? "접기" : "펼치기"}</button></h3>

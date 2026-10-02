@@ -3,6 +3,7 @@ import Cite from "./Cite";
 // 기준 숫자 카드 → 참고문헌 key (258 한눈에 보기 · 263 지역보건의료기관 현황 · 255 보건소 정보 · 229 행정안전부)
 const CNT_REF = { 258: "chs25", 263: "fac", 255: "kdcahc", 229: "mois" };
 import COV from "../../../data/coverage.json";
+import ChsPubs from "./ChsPubs";
 import { saveCsvRows } from "../export";
 
 /* 자료원 — 보건소 258개소 기준표와 자료원별 보유 현황.
@@ -13,7 +14,7 @@ const MARK = { O: { t: "●", c: "mk-o", d: "이 보건소 단위로 값이 있�
                P: { t: "◐", c: "mk-p", d: "소속 시군구 값으로 대체" },
                X: { t: "○", c: "mk-x", d: "없음" } };
 
-export default function SourcesView() {
+export default function SourcesView({ sel }) {
   const [q, setQ] = useState("");
   const [only, setOnly] = useState("all");     // all | gap
   const srcs = COV.sources;
@@ -108,6 +109,8 @@ export default function SourcesView() {
           })}
         </div>
       </div>
+
+      <ChsPubs sel={sel} />
 
       <div className="card span2">
         <h3>보건소별 자료 보유 현황 <small className="muted">({rows.length}/{COV.standard})</small></h3>

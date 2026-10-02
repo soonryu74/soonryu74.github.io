@@ -288,7 +288,7 @@ export default function App() {
         ) : view === "feedback" ? (
           <FeedbackView currentUrl={feedbackFrom} />
         ) : view === "sources" ? (
-          <SourcesView />
+          <SourcesView sel={sel} />
         ) : view === "units" ? (
           <UnitsView setTip={setTip} />
         ) : view === "corr" ? (
