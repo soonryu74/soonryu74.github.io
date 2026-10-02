@@ -1011,3 +1011,19 @@ details.reflist[open] > summary h3::after { content: " ▴"; }
 .scope-sel { border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary); border-radius: 8px; padding: 5px 8px; font-size: 14.5px; max-width: 100%; }
 .map-scope-note, .rank-scope-note { font-size: 13.5px; color: var(--text-secondary); align-self: center; padding: 2px 4px; }
 .map-scope-note b, .rank-scope-note b { color: var(--text-primary); }
+
+/* ─── 질병관리청 발간물 목록(자료원) ─── */
+.pub-ctrls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+.pub-ctrls .pick-search { flex: 1 1 200px; min-width: 160px; }
+.pub-ctrls .linkbtn { all: unset; cursor: pointer; color: var(--series-1); font-weight: 600; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+.pub-list { max-height: 420px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; }
+.pub-row { display: grid; grid-template-columns: 52px minmax(0, 1fr) 96px 90px; gap: 8px; align-items: center; padding: 6px 10px; font-size: 14px; border-bottom: 1px solid var(--border); }
+.pub-row:last-child { border-bottom: none; }
+.pub-no { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.pub-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pub-d { color: var(--text-secondary); font-size: 13px; }
+.pub-dl a { color: var(--series-1); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; margin-right: 6px; }
+@media (max-width: 600px) { .pub-row { grid-template-columns: 44px minmax(0, 1fr) 70px; } .pub-d { display: none; } .pub-t { white-space: normal; } }
+.kc-row.me { background: color-mix(in srgb, var(--series-1) 8%, transparent); }
+.kc-books { margin-top: 8px; }
+.kc-books summary { cursor: pointer; font-weight: 600; }
