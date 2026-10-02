@@ -100,6 +100,11 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
   const weak = [...scored].sort((a, b) => a.pct - b.pct).slice(0, 5);
   const [showWeak, setShowWeak] = useState(false);
   const smoothNote = rankOpt.smooth === 3 ? "최근 3년 평균" : "최신 연도";
+  // 백분위 문구: 30곳 이하 풀(17개 시도 등)에서는 「17곳 중 17위」처럼 순위로만 쓴다 — 17곳 꼴찌의 백분위 2.9%가 「하위 3%」로 읽히는 문제(건강격차 검토 P1: 소집단 분위 금지)
+  const pctLabel = (r, side) => (r.n <= 30
+    ? (poolName === "17개 시도" ? `17개 시도 중 ${r.rank}위` : `${poolName} ${r.n}곳 중 ${r.rank}위`)
+    : side === "top" ? `상위 ${Math.max(1, Math.round(100 - r.pct))}% · ${r.rank}/${r.n}위` : `하위 ${Math.max(1, Math.round(r.pct))}% · ${r.rank}/${r.n}위`);
+  const basisOf = (r) => (rankOpt.smooth === 3 ? `${r.y}년 기준 3년 평균` : `${r.y}년`);
 
   return (
     <div className="profile">
@@ -146,7 +151,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
                   <div className="indchips">
                     {inds.map((i) => { const r = byId[i.id]; return (
                       <button key={i.id} className={`indchip ${r.excluded || r.neutral ? "off" : ""}`} onClick={() => onPick(i, r.y)}
-                        title={`${i.name} · ${r.y}년${rankOpt.smooth === 3 ? " 기준 3년 평균" : ""} · ${r.excluded ? "순위 산정 제외" : r.neutral ? "중립 지표" : "백분위 " + Math.round(r.pct)}`}>
+                        title={`${i.name} · ${basisOf(r)} · ${r.excluded ? "순위 산정 제외" : r.neutral ? "중립 지표" : r.n <= 30 ? pctLabel(r) : "백분위 " + Math.round(r.pct)}`}>
                         <span className="ic-name">{i.name}</span>
                         <span className="ic-val">{fmt(r.v)}<small>{i.unit}</small></span>
                         <span className={`ic-rank ${r.pct == null ? "" : r.pct >= 75 ? "k-good" : r.pct < 25 ? "k-bad" : ""}`}>{r.rank ? `${r.rank}/${r.n}` : "제외"}</span>
@@ -166,7 +171,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
               <button key={r.ind.id} className={`badge-card ${tone(r.pct)}`} onClick={() => onPick(r.ind, r.y)}>
                 <div className="b-name">{r.ind.name}</div>
                 <div className="b-val">{fmt(r.v)}<small>{r.ind.unit}</small></div>
-                <div className="b-sub">상위 {Math.max(1, Math.round(100 - r.pct))}% · {r.rank}/{r.n}위 · {r.y}</div>
+                <div className="b-sub">{pctLabel(r, "top")} · {basisOf(r)}</div>
               </button>
             ))}
           </div>
@@ -174,20 +179,20 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
 
         <div className="card">
           <h3>가장 개선된 지표 TOP 5<Cite k="chs" /></h3>
-          <div className="desc">최근 5년 방향 보정 개선폭(%p) — "올해 가장 건강해진" 후보</div>
+          <div className="desc">최근 5년 변화 중 방향을 고려해 가장 좋아진 지표 — 낮을수록 좋은 지표(사망·감염병·질환 등)는 값이 줄어든 것이 개선입니다</div>
           <div className="badges">
             {improved.map((r) => (
               <button key={r.ind.id} className={`badge-card ${r.improve > 0 ? "t-high" : "t-low"}`} onClick={() => onPick(r.ind, r.y)}>
                 <div className="b-name">{r.ind.name}</div>
-                <div className="b-val">{r.improve > 0 ? "+" : ""}{fmt(r.improve)}<small>%p</small></div>
-                <div className="b-sub">{r.baseY}→{r.y}</div>
+                <div className="b-val">{r.delta > 0 ? "▲" : r.delta < 0 ? "▼" : ""}{fmt(Math.abs(r.delta))}<small>{r.ind.unit === "%" ? "%p" : r.ind.unit}</small></div>
+                <div className="b-sub">{r.baseY}→{r.y} · {r.improve > 0 ? (r.ind.bad ? "낮아져 개선" : "높아져 개선") : (r.ind.bad ? "높아져 악화" : "낮아져 악화")}</div>
               </button>
             ))}
           </div>
         </div>
 
         <div className="card span2">
-          <h3>권고 예방·관리 사업 <small className="muted">(하위 25% 지표 기준 · 지식베이스 연결)</small></h3>
+          <h3>권고 예방·관리 사업 <small className="muted">(하위 25% 지표 기준 · 값과 순위는 위 「순위 산출 방식」 설정을 따름 — 기본 {smoothNote}·{poolName} · 지식베이스 연결)</small></h3>
           <div className="desc">이 지역의 낮은 지표마다 시도 계획 → 국가 사업 → WHO 권고 순으로 연결된 항목을 보여줍니다. "더 보기"를 누르면 예방·관리 탭에서 전체를 볼 수 있습니다.</div>
           {(() => {
             const sidoFull = isSgg ? RBY.get(sel.p)?.n : sel.n;
@@ -197,7 +202,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
             if (!items.length) return <div className="empty">낮은 지표({lows.map((x) => x.ind.name).join(", ")})에 연결된 지식베이스 항목이 아직 없습니다</div>;
             return <div className="recs">{items.map(({ r, recs }) => (
               <div key={r.ind.id} className="rec">
-                <div className="rechead"><b>{r.ind.name}</b> <span className="k-bad">{fmt(r.v)}{r.ind.unit} · 하위 {Math.max(1, Math.round(r.pct))}%</span>
+                <div className="rechead"><b>{r.ind.name}</b> <span className="k-bad">{fmt(r.v)}{r.ind.unit} <small className="muted">({basisOf(r)})</small> · {pctLabel(r, "bottom")}</span>
                   <button className="xbtn" onClick={() => onRecommend(r.ind.name)}>더 보기 →</button></div>
                 {recs.map((e) => <div key={e.id} className="recitem"><span className={`lvbadge lv-${e.level}`}>{e.level === "sido" ? e.sido : e.level === "national" ? "국가" : e.level === "regional" ? "WPRO" : "WHO"}</span>
                   <span className="recgoal">{e.goal}</span>{e.interventions?.[0] && <span className="intchip">{e.interventions[0]}</span>}</div>)}
@@ -218,7 +223,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
                 <button key={r.ind.id} className={`badge-card ${tone(r.pct)}`} onClick={() => onPick(r.ind, r.y)}>
                   <div className="b-name">{r.ind.name}</div>
                   <div className="b-val">{fmt(r.v)}<small>{r.ind.unit}</small></div>
-                  <div className="b-sub">하위 {Math.max(1, Math.round(r.pct))}% · {r.rank}/{r.n}위 · {r.y}</div>
+                  <div className="b-sub">{pctLabel(r, "bottom")} · {basisOf(r)}</div>
                 </button>
               ))}
             </div>
