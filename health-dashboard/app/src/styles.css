@@ -974,3 +974,8 @@ details.reflist[open] > summary h3::after { content: " ▴"; }
 .ncdtoc { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px; }
 .ncdgroup { grid-column:1 / -1; font-weight:700; font-size:16px; margin:14px 0 2px; padding:6px 0 4px; border-bottom:2px solid var(--series-1); scroll-margin-top:12px; }
 .ncdgroup:first-child { margin-top:2px; }
+
+/* 예방·관리 출처 링크 — 글자만 있어 링크인 줄 모르던 문제: 밑줄 + 「원문 열기 ↗」 */
+.ncd .srclink { text-decoration:underline; text-decoration-color:var(--border); text-underline-offset:3px; }
+.ncd .srclink b { color:var(--series-1); font-weight:700; white-space:nowrap; }
+.ncd .srclink:hover { text-decoration-color:var(--series-1); }

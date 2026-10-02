@@ -41,6 +41,9 @@ MIRROR = ROOT.parent.parent / "health-profile"
 if (MIRROR / ".git").exists():
     (MIRROR / "index.html").write_bytes(out.read_bytes())
     (MIRROR / "CNAME").write_text("health-profile.kr\n", encoding="utf-8")
-    print(f"거울 배포: {MIRROR / 'index.html'}")
+    # docs(방법론 md·설명서·활용법 pptx/pdf·소개 영상 mp4)도 함께 복사 → health-profile.kr/docs/... 로 열린다
+    import shutil
+    shutil.copytree(ROOT / "docs", MIRROR / "docs", dirs_exist_ok=True)
+    print(f"거울 배포: {MIRROR / 'index.html'} + docs/ {len(list((MIRROR / 'docs').iterdir()))}개")
 else:
     print(f"거울 배포 생략: {MIRROR} 없음")
