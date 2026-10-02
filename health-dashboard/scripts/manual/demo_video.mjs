@@ -174,9 +174,10 @@ S('title', true, null, async () => {
 }, 0.3);
 
 // ── 1. 홈 ──
-S('home', false, ['홈 — 카드 4장', '17개 시도 지도 · 258개 보건소 순위 · 취약인구 · 지자체 계획 수립'], async () => {
+S('home', false, ['홈 — 카드 5장', '17개 시도 지도 · 258개 보건소 순위 · 취약인구 · 지자체 계획 수립 · 처음이세요?(소개 영상·설명서)'], async () => {
   await sleep(1200);
   await hover('.home .hc-map', { pause: 700 });
+  await hover('.hc-help .help-links', { pause: 900 }).catch(() => {});
 }, 0.8);
 S('home-chip', true, ['지도 위 지표 칩을 바꾸면 17개 시도 색과 순위가 함께 바뀝니다', '흡연 → 비만 → 걷기'], async () => {
   for (const t of ['비만', '걷기', '고위험음주', '흡연']) await click(`.home-ind .seg-btn:has-text("${t}")`, { pause: 1000 });

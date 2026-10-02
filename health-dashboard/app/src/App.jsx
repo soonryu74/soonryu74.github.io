@@ -18,6 +18,7 @@ import UnitsView from "./components/UnitsView";
 import CONTACT from "../../data/contact.json";
 import NcdView from "./components/NcdView";
 import Search from "./components/Search";
+import HelpContent from "./components/Help";
 import CorrelationView from "./components/CorrelationView";
 import HotspotView from "./components/HotspotView";
 import ChronicleView from "./components/ChronicleView";
@@ -66,6 +67,13 @@ const nKdh = INDICATORS.filter((i) => i.kdh).length;
 
 export default function App() {
   const init = useMemo(readHash, []);
+  const [helpOpen, setHelpOpen] = useState(false);   // 머리글 「? 도움말」 창(홈 카드 ⑤와 같은 내용, 해시에는 넣지 않음)
+  useEffect(() => {
+    if (!helpOpen) return;
+    const onKey = (e) => { if (e.key === "Escape") setHelpOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [helpOpen]);
   const [ind, setInd] = useState(init.ind);
   const [item, setItem] = useState(init.item);
   const [sido, setSido] = useState(init.sido);
@@ -158,11 +166,12 @@ export default function App() {
     const nz = (t) => String(t || "").toLowerCase().replace(/[\s·()\-_,.「」]/g, "");
     const want = nz(title); let n = 0;
     const t = setInterval(() => {
-      const el = [...document.querySelectorAll(".card h3, .card h2, .srccard .sc-head, .reflist h3, .fb-faq summary")].find((e) => nz(e.textContent).includes(want));
+      const el = [...document.querySelectorAll(".card h3, .card h2, .srccard .sc-head, .reflist h3, .fb-faq summary, details.method-docs summary")].find((e) => nz(e.textContent).includes(want));
       if (el || ++n > 20) {
         clearInterval(t);
         if (!el) return;
         const box = el.closest(".card, .srccard, .reflist, details") || el;
+        if (box.tagName === "DETAILS") box.open = true;   // 접힌 목록(방법론 문서·FAQ)은 펼쳐서 보여 준다
         box.scrollIntoView({ behavior: "smooth", block: "start" });
         box.classList.add("srch-hit"); setTimeout(() => box.classList.remove("srch-hit"), 2400);
       }
@@ -203,6 +212,7 @@ export default function App() {
           </div>
           <div className="topright">
             <Search view={view} onGo={goSearch} />
+            <button type="button" className="themebtn help-btn" onClick={() => setHelpOpen(true)} title="소개 영상 · 사용설명서 · 활용법 내려받기" aria-haspopup="dialog"><b>?</b> 도움말</button>
             <div className="seg views">
               <button className={`seg-btn ${view === "home" ? "on" : ""}`} onClick={() => setView("home")}>홈</button>
               <button className={`seg-btn ${view === "analysis" ? "on" : ""}`} onClick={() => setView("analysis")}>지표 분석</button>
@@ -262,7 +272,7 @@ export default function App() {
         <div ref={bodyRef} className="body-anchor" />
 
         {view === "home" ? (
-          <Home sel={sel} setTip={setTip}
+          <Home sel={sel} setTip={setTip} onGoCard={goSearch}
             onGo={({ view: v, ind: i, code, scope: sc }) => { if (i) setInd(i); if (code) selectRegion(code); if (sc) setScope(sc); setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "feedback" ? (
           <FeedbackView currentUrl={feedbackFrom} />
@@ -366,6 +376,17 @@ export default function App() {
             onRecommend={(name) => { setNcdInd(name); setView("ncd"); window.scrollTo({ top: 0, behavior: "smooth" }); }} onRegion={selectRegion} />
         )}
 
+        {helpOpen && (
+          <div className="help-modal" role="dialog" aria-modal="true" aria-label="도움말 — 소개 영상·사용설명서·활용법" onMouseDown={(e) => { if (e.target === e.currentTarget) setHelpOpen(false); }}>
+            <div className="card help-box">
+              <div className="help-head">
+                <h3>처음이세요? — 소개 영상 · 사용설명서 · 활용법</h3>
+                <button type="button" className="themebtn" onClick={() => setHelpOpen(false)} aria-label="닫기">✕ 닫기</button>
+              </div>
+              <HelpContent compact onGo={(g) => { setHelpOpen(false); goSearch(g); }} />
+            </div>
+          </div>
+        )}
         <RefList collapsed={view === "home"} />
         <footer>
           자료원: 질병관리청 「지역사회건강조사」 — 통계청 KOSIS 공유서비스(openAPI), 수집일 {DS.generated}.

@@ -4,8 +4,9 @@ import { INDICATORS, HC_POOL, SIDOS, RBY, RISK, ranked, fmt, nationalMedian, uni
 import ChoroplethMap, { SIDO_FEATS } from "./ChoroplethMap";
 import Cite from "./Cite";
 import CONTACT from "../../../data/contact.json";
+import HelpContent from "./Help";
 
-/* 메인(첫) 화면 — 카드 4장: 17개 시도 지도 · 258개 보건소 순위 · 취약인구 · 지자체 계획 수립.
+/* 메인(첫) 화면 — 카드 5장: 17개 시도 지도 · 258개 보건소 순위 · 취약인구 · 지자체 계획 수립 · 처음이세요?(소개 영상·설명서·활용법).
    원칙: 카드 하나에 질문 하나. 자세한 분석은 카드의 버튼으로 해당 메뉴에 넘긴다.
    순위 카드는 상위 10곳만 싣는다(랭킹 기획안 원칙: 하위 공개 대신 「우리 보건소 찾기」). */
 
@@ -24,7 +25,7 @@ const BG = (() => {
   return SIDO_FEATS.map((f) => p(f)).join(" ");
 })();
 
-export default function Home({ sel, setTip, onGo }) {
+export default function Home({ sel, setTip, onGo, onGoCard }) {
   const [hid, setHid] = useState(HEAD[0][0]);
   const ind = INDICATORS.find((i) => i.id === hid) || INDICATORS[0];
   const year = ind.years[ind.years.length - 1];
@@ -171,6 +172,15 @@ export default function Home({ sel, setTip, onGo }) {
             <a href={CONTACT.docs_base + encodeURIComponent(CONTACT.manual.pdf)} target="_blank" rel="noopener noreferrer">사용설명서 PDF</a>
           </div>
           <button type="button" className="hc-cta" onClick={() => onGo({ view: "profile" })}>우리 지역 현황 분석 시작 →</button>
+        </section>
+
+        {/* ⑤ 처음이세요? — 소개 영상·사용설명서·활용법 (머리글 「? 도움말」과 같은 내용) */}
+        <section className="card hcard hc-help">
+          <div className="hc-head"><span className="hc-no">5</span>
+            <div><h3>처음이세요? — 소개 영상 · 사용설명서 · 활용법</h3>
+              <div className="desc">3분 영상으로 메뉴 12개를 훑고, 설명서·발표자료는 PDF·파워포인트로 내려받습니다. 어느 화면에서든 오른쪽 위 「? 도움말」로 다시 열 수 있습니다.</div></div>
+          </div>
+          <HelpContent onGo={onGoCard} />
         </section>
       </div>
     </div>
