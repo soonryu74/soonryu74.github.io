@@ -607,3 +607,33 @@ import REFS_RAW from "../../data/refs.json";
 export const REFS = REFS_RAW.refs;
 export const REF_BY_KEY = new Map(REFS.map((r) => [r.key, r]));
 export const indRef = (ind) => (ind && REFS_RAW.by_ind[ind.id]) || null;
+
+// ── 10년 변화 기울기(추세) ─────────────────────────────────────────────────────
+// 김동현 외(2025) 「지역사회 통합건강증진사업의 건강증진 효과성 분석 연구」의 방법: 시군구별 2015~2024년 값에 직선을 맞춰
+// 연간 변화량(기울기)을 구하고, 기울기로 3등분(좋음·보통·나쁨)한다. 우리 자료(표준화율·시군구 229곳)로 그 연구의 3분위 평균을
+// 그대로 재현함(남성흡연율 −1.39/−0.89/−0.37 vs 연구 −1.4/−0.9/−0.4, 비만율 0.46/0.81/1.17 동일). docs/통합건강증진사업_효과성분석_검토_v1.md
+export const TREND_START = 2015;        // 통합건강증진사업 2013 도입 → 연구는 2015년부터 10년
+export const TREND_PRE = [2008, 2014];  // 도입 전후 비교용 앞 구간
+
+/** OLS 기울기(연간 변화량). y0~y1 사이 값이 있는 해만, nmin개 미만이면 null */
+export function slopeOf(ind, item, code, y0, y1, nmin = 5) {
+  const pts = [];
+  for (const y of ind.years) if (y >= y0 && y <= y1) { const v = val(ind, item, y, code); if (v != null) pts.push([y, v]); }
+  if (pts.length < nmin) return null;
+  const n = pts.length, mx = pts.reduce((a, p) => a + p[0], 0) / n, my = pts.reduce((a, p) => a + p[1], 0) / n;
+  let sxy = 0, sxx = 0;
+  for (const [x, v] of pts) { sxy += (x - mx) * (v - my); sxx += (x - mx) ** 2; }
+  return sxx ? sxy / sxx : null;
+}
+
+/** 집단의 기울기 분포와 3분위(방향 보정: 좋음 = 나쁜 지표는 더 많이 내려간 쪽). rows 는 좋은 순 */
+export function slopeGroups(ind, item, pool, y0, y1) {
+  const rows = pool.map((r) => ({ r, s: slopeOf(ind, item, r.c, y0, y1) })).filter((x) => x.s != null);
+  const good = ind.bad === false ? (a, b) => b.s - a.s : (a, b) => a.s - b.s;   // 맥락 지표(bad==null)는 감소를 「좋음」으로 두지 않고 표시만
+  rows.sort(good);
+  const n = rows.length, t = Math.floor(n / 3);
+  const groups = n >= 6 ? [rows.slice(0, t), rows.slice(t, n - t), rows.slice(n - t)] : null;   // 연구와 같은 방식: 앞·뒤 t개, 가운데 나머지
+  const mean = (xs) => (xs.length ? xs.reduce((a, x) => a + x.s, 0) / xs.length : null);
+  const tierOf = (code) => { const k = rows.findIndex((x) => x.r.c === code); if (k < 0 || !groups) return null; return k < t ? 0 : k >= n - t ? 2 : 1; };
+  return { rows, n, groups, means: groups ? groups.map(mean) : null, all: mean(rows), tierOf, rankOf: (code) => rows.findIndex((x) => x.r.c === code) + 1 };
+}
