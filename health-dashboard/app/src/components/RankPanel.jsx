@@ -10,14 +10,13 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
   // 순위 집단 탭: 17개 시도 · 전국 시군구 · 시도 내 시군구 (기본은 선택 지역에 따라 자동)
   const sidoCode = sel.l === "sido" ? sel.c : sel.p;
   const sidoName = RBY.get(sidoCode)?.n || "";
-  const [mode, setMode] = useState("auto");
-  useEffect(() => setMode("auto"), [sel.c, scope]);
-  // 기본: 시도를 고르면 그 시도의 시군구 순위, 시군구를 고르면 비교 범위(전국/시도)에 따라. 17개 시도 순위는 탭으로.
-  const auto = sel.l === "sido" ? "insido" : scope === "sido" ? "insido" : "nation";
-  const m = mode === "auto" ? auto : mode;
+  // 비교 집단은 상단 「비교 범위」 드롭다운(전역 scope)을 따른다: sidoAll → 17개 시도, nation → 전국 시군구, sido → 시도 내 시군구
   // 지역사회건강조사 지표는 「전국 시군구」·「시도 내 시군구」가 곧 조사 단위(보건소) 기준 — 질병관리청 공표 방식
   const survey = isSurvey(ind);
-  const pool = m === "sido" ? SIDOS : m === "nation" ? natPool(ind) : m === "insido" ? sidoPoolOf(ind, sidoCode) : m === "hc" ? HC_POOL : poolFor(sel, scope, ind);
+  const [hc, setHc] = useState(false);   // 조사 지표가 아닌 자료를 보건소 단위(258곳)로 보기
+  useEffect(() => setHc(false), [ind.id]);
+  const m = !survey && hc && scope !== "sidoAll" ? "hc" : scope === "sidoAll" ? "sido" : scope === "sido" ? "insido" : "nation";
+  const pool = m === "sido" ? SIDOS : m === "nation" ? natPool(ind) : m === "insido" ? sidoPoolOf(ind, sidoCode) : HC_POOL;
   const [rev, setRev] = useState(false);
   const [allOpen, setAllOpen] = useState(false);
   // 표본오차가 있는 지표(지역사회건강조사)만 신뢰구간·불안정값 제외를 적용한다.
@@ -34,9 +33,7 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
   const selInPool = rowsAsc.some((x) => x.r.c === sel.c);
   const selCi = se && selInPool ? ci(ind, item, year, sel.c) : null;
   const rankNo = (k) => (rev ? rows.length - k : k + 1);
-  const TABS = survey
-    ? [["sido", "17개 시도"], ["nation", `전국 시군구 ${HC_POOL.length}`], ["insido", `${sidoName} 시군구`]]
-    : [["sido", "17개 시도"], ["nation", "전국 시군구"], ["insido", `${sidoName} 시군구`], ["hc", "보건소 단위"]];
+  const groupName = m === "sido" ? "17개 시도" : m === "nation" ? (survey ? `전국 시군구 (조사 단위 ${HC_POOL.length}곳)` : `전국 시군구 ${rowsAsc.length}곳`) : m === "insido" ? `${sidoName} 내 시군구 ${rowsAsc.length}곳` : `보건소 단위 ${rowsAsc.length}곳`;
   const unitMode = m === "hc" || (survey && (m === "nation" || m === "insido"));
   const hcOf = (c) => HC_POOL.find((u) => u.c === c);
   // 오차막대가 트랙을 넘지 않도록 상한은 신뢰구간 상단까지 포함해 잡는다.
@@ -58,7 +55,8 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
   return (
     <>
       <div className="seg" style={{ marginBottom: 8, flexWrap: "wrap" }}>
-        {TABS.map(([k, name]) => <button key={k} className={`seg-btn ${m === k ? "on" : ""}`} onClick={() => setMode(k)}>{name}</button>)}
+        <span className="desc rank-scope-note">집단: <b>{groupName}</b> — 위 「비교 범위」에서 바꿉니다</span>
+        {!survey && scope !== "sidoAll" && <button className={`seg-btn ${hc ? "on" : ""}`} onClick={() => setHc(!hc)} title="시군구 자료를 지역사회건강조사 조사 단위(보건소 258곳)로 펼쳐 봅니다">보건소 단위</button>}
         <span className="muted" style={{ alignSelf: "center", fontSize: "13px", marginLeft: 6 }}>· 총 {rows.length}개 지역{rows.length > SHOW_ALL_MAX ? " (아래로 스크롤)" : ""}</span>
         <button className="seg-btn" style={{ marginLeft: "auto" }} onClick={() => setAllOpen(true)} title="순위 전체를 한 화면에 펼치고 연도별 변동을 애니메이션으로 보기">⛶ 전체 보기</button>
         <button className={`seg-btn ${rev ? "on" : ""}`} onClick={() => setRev(!rev)} title="양호한 순 ↔ 나쁜 순">{rev ? "나쁜 순 ▲" : "양호한 순 ▼"}</button>
@@ -119,7 +117,7 @@ export default function RankPanel({ ind, item, year, sel, scope, onSelect, onYea
         </div>
       )}
       {allOpen && (
-        <RankAll ind={ind} item={item} year={year} pool={pool} poolName={TABS.find(([k]) => k === m)?.[1] || ""} rev={rev} sel={sel}
+        <RankAll ind={ind} item={item} year={year} pool={pool} poolName={groupName} rev={rev} sel={sel}
           onYear={(y) => onYear && onYear(y)} onClose={() => setAllOpen(false)} onSelect={onSelect} />
       )}
       {subs && (

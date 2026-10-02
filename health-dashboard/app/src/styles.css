@@ -1006,3 +1006,8 @@ details.reflist[open] > summary h3::after { content: " ▴"; }
 @media (max-width: 480px) { .help-links { grid-template-columns: minmax(0, 1fr); } .help-btn { padding: 5px 8px; } }
 @media print { .help-modal, .help-btn { display: none; } }
 .help-more .linkbtn { all: unset; cursor: pointer; color: var(--series-1); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ─── 비교 범위 드롭다운(지도·순위·격차·연도표 공통) ─── */
+.scope-sel { border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary); border-radius: 8px; padding: 5px 8px; font-size: 14.5px; max-width: 100%; }
+.map-scope-note, .rank-scope-note { font-size: 13.5px; color: var(--text-secondary); align-self: center; padding: 2px 4px; }
+.map-scope-note b, .rank-scope-note b { color: var(--text-primary); }

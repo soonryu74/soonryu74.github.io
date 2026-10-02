@@ -224,8 +224,8 @@ S('an-std', false, ['조율 ↔ 표준화율 — 연령 구조를 보정한 값�
   await go(ANAL, { pause: 1000 });
   await click(CTL + '.seg .seg-btn:has-text("조율")', { pause: 1100 });
   await click(CTL + '.seg .seg-btn:has-text("표준화율")', { pause: 1000 });
-  await click(CTL + '.seg .seg-btn:has-text("강원")', { pause: 1200 });
-  await click(CTL + '.seg .seg-btn:text-is("전국")', { pause: 1000 });
+  await select('.scope-sel', 'sido:009', { pause: 1200 });
+  await select('.scope-sel', 'nation', { pause: 1000 });
 }, 0.5);
 S('an-year', true, ['연도 — 슬라이더를 끌거나 ▶ 로 2008년부터 재생하면 지도·순위·게이지가 같이 움직입니다'], async () => {
   await range('#selYear', 6, { pause: 800 });
@@ -235,20 +235,19 @@ S('an-year', true, ['연도 — 슬라이더를 끌거나 ▶ 로 2008년부터 
   const max = Number(await page.locator('#selYear').evaluate((e) => e.max));
   await range('#selYear', max, { pause: 600 });
 }, 0.4);
-S('an-map', false, ['단계구분도 — 전국 시도 / 전국 시군구 / 시도 내 시군구 3모드 + 🏷 지역명', '붉을수록 나쁨 · 푸를수록 좋음 · 겹치지 않게 배치한 라벨'], async () => {
+S('an-map', true, ['비교 범위 — 드롭다운 하나로 지도·순위·격차·연도표가 함께 바뀝니다', '전국 17개 시도 / 전국 시군구(조사 단위 258곳) / 시도 내 시군구(17개 시도 중 선택) · 🏷 지역명'], async () => {
   await scrollTo('.mapcard', { offset: 80 });
-  await click('.map-seg .seg-btn:has-text("전국 시도")', { pause: 1300 });
-  await click('.map-seg .seg-btn:has-text("전국 시군구")', { pause: 1300 });
-  await click('.map-seg .seg-btn:has-text("시도 내 시군구")', { pause: 1200 });
+  await select('.scope-sel', 'sidoAll', { pause: 1400 });
+  await select('.scope-sel', 'nation', { pause: 1400 });
+  await select('.scope-sel', 'sido:001', { pause: 1400 });
+  await select('.scope-sel', 'sido:009', { pause: 1200 });
   await click('.map-seg .seg-btn:has-text("🏷")', { pause: 1100 });
   await click('.map-seg .seg-btn:has-text("🏷")', { pause: 900 });
   await hover('.mapcard path.poly.sel', { pause: 1000 }).catch(() => {});
   await hover('.mapcard path.poly:nth-of-type(6)', { pause: 1000 }).catch(() => {});
 }, 0.5);
-S('an-rank', true, ['순위 — 집단 탭(17개 시도 · 전국 258 · 시도 내) · 양호/나쁜 순 · ⟺ 신뢰구간 · 불안정값 제외 · ⑩ 묶음', '신뢰구간이 겹치는 지역은 흐리게 = 차이가 불확실'], async () => {
+S('an-rank', true, ['순위 — 비교 범위를 따르는 집단(시도 내 시군구) · 양호/나쁜 순 · ⟺ 신뢰구간 · 불안정값 제외 · ⑩ 묶음', '신뢰구간이 겹치는 지역은 흐리게 = 차이가 불확실'], async () => {
   await scrollTo(RK, { offset: 70 });
-  await click(RK + '.seg-btn:has-text("17개 시도")', { pause: 1200 });
-  await click(RK + '.seg-btn:has-text("전국 시군구")', { pause: 1200 });
   await click(RK + '.seg-btn:has-text("양호한 순"), ' + RK + '.seg-btn:has-text("나쁜 순")', { pause: 1200 });
   await click(RK + '.seg-btn:has-text("양호한 순"), ' + RK + '.seg-btn:has-text("나쁜 순")', { pause: 800 });
   await click(RK + '.ci-bar .seg-btn:has-text("신뢰구간")', { pause: 1200 });
@@ -280,6 +279,7 @@ S('an-gap', false, ['격차 — 상자그림으로 분포와 최대·최소 지�
   await hover('.card:has(h3:has-text("격차")) svg', { pause: 1200 });
 }, 0.6);
 S('an-equity', false, ['건강형평성 — 지역박탈지수 5분위별 분포, 「산출 예시」를 펼치면 우리 지역 숫자로 산식을 검산'], async () => {
+  await go(ANAL, { pause: 1000 });
   await scrollTo('.card:has(h3:has-text("건강형평성"))', { offset: 70 });
   await sleep(800);
   await click('.card:has(h3:has-text("건강형평성")) details.calc > summary', { pause: 1500 });
