@@ -8,6 +8,27 @@ import ExportButtons from "./ExportButtons";
 const PRI = { "악화|나쁨": 1, "악화|비슷": 2, "유지|나쁨": 2, "악화|좋음": 3, "유지|비슷": 3, "개선|나쁨": 3, "유지|좋음": 4, "개선|비슷": 4, "개선|좋음": 5 };
 const PRI_LABEL = { 1: "1순위 — 악화 중이고 비교지역보다 나쁨", 2: "2순위 — 악화 또는 비교지역보다 나쁨", 3: "3순위 — 혼재", 4: "4순위 — 개선 또는 비교지역보다 좋음", 5: "5순위 — 개선 중이고 비교지역보다 좋음" };
 const TIME = ["악화", "유지", "개선"], SPACE = ["나쁨", "비슷", "좋음"];
+const du = (ind) => (ind.unit === "%" ? "%p" : ind.unit ? ` ${ind.unit}` : "");
+const dAbs = (d, ind) => `${d > 0 ? "+" : d < 0 ? "−" : "±"}${fmt(Math.abs(d), Math.abs(d) < 1 ? 2 : 1)}${du(ind)}`;
+
+/* 「시간」「공간」 열 읽는 법 — 괄호 속 %는 상대 변화율(%p 아님). 실제 차이를 함께 보여 준다 */
+function GdHowto({ rows, curLabel, baseLabel, refName, tol }) {
+  const ex = rows.find((r) => r.ind.unit === "%" && r.t !== "유지") || rows[0];
+  const pct = (d) => `${d > 0 ? "+" : ""}${fmt(d, 0)}%`;
+  return (
+    <div className="gd-howto">
+      <div className="gd-howto-h">「시간」「공간」 읽는 법</div>
+      <ul>
+        <li><b>시간</b> — 우리 지역이 <b>예전보다</b> 나아졌나. 당해연도({curLabel}) 평균을 기준연도({baseLabel}) 평균과 비교한 변화율입니다. ±{tol}% 안이면 「유지」, 밖이면 지표 방향에 따라 「개선」 또는 「악화」입니다.</li>
+        <li><b>공간</b> — 우리 지역이 <b>다른 곳보다</b> 나은가. 같은 당해연도 값을 비교값({refName})에 견준 차이입니다. ±{tol}% 안이면 「비슷」, 밖이면 「좋음」 또는 「나쁨」입니다.</li>
+        <li><b>괄호 속 %는 %p가 아닙니다.</b> (우리 값 − 비교값) ÷ 비교값 × 100으로 구한 상대 비율입니다. 그 아래 작은 글씨가 실제 차이(지표 단위)입니다.</li>
+        <li><b>방향은 지표마다 자동으로 적용됩니다.</b> 흡연율처럼 낮을수록 좋은 지표는 +가 악화·나쁨이고, 걷기 실천율처럼 높을수록 좋은 지표는 +가 개선·좋음입니다.</li>
+        {ex && <li><b>예</b> — {ex.ind.name}: 시간은 기준 {fmt(ex.base)}{ex.ind.unit} → 당해 {fmt(ex.v)}{ex.ind.unit}, 실제 차이 {dAbs(ex.v - ex.base, ex.ind)} · 상대 {pct(ex.dT)} → 「{ex.t}」. 공간은 비교값 {fmt(ex.refV)}{ex.ind.unit} 대비 실제 차이 {dAbs(ex.v - ex.refV, ex.ind)} · 상대 {pct(ex.dS)} → 「{ex.s}」.</li>}
+        <li><b>비교값이 작은 지표는 %가 크게 부풀습니다.</b> 0.1과 0.4는 실제 차이가 0.3인데 상대 비율로는 +300%입니다. 사망률·발생률처럼 값이 작은 지표는 실제 차이와 표본오차를 함께 보세요.</li>
+      </ul>
+    </div>
+  );
+}
 
 export default function GoldenDiamond({ item, sel }) {
   const isSgg = sel.l === "sgg";
@@ -94,14 +115,15 @@ export default function GoldenDiamond({ item, sel }) {
         <div style={{ flex: "1 1 260px", minWidth: 0 }}>
           <div className="tblscroll">
             <table className="yeartbl">
-              <thead><tr><th>순위</th><th>지표</th><th>{curLabel}</th><th>기준 {baseLabel}</th><th>{refName}</th><th>시간</th><th>공간</th></tr></thead>
+              <thead><tr><th>순위</th><th>지표</th><th>{curLabel}</th><th>기준 {baseLabel}</th><th>{refName}</th><th title="당해연도 평균이 기준연도 평균보다 몇 % 달라졌나(상대 변화율)">시간</th><th title="당해연도 값이 비교값보다 몇 % 다른가(상대 차이)">공간</th></tr></thead>
               <tbody>
                 {[...rows].sort((a, b) => a.pri - b.pri || Math.abs(b.dS) - Math.abs(a.dS)).slice(0, 15).map((r) => (
-                  <tr key={r.ind.id}><td style={{ fontWeight: 700 }}>{r.pri}</td><td>{r.ind.name}</td><td>{fmt(r.v)}</td><td>{fmt(r.base)}</td><td>{fmt(r.refV)}</td><td>{r.t} ({r.dT > 0 ? "+" : ""}{fmt(r.dT, 0)}%)</td><td>{r.s} ({r.dS > 0 ? "+" : ""}{fmt(r.dS, 0)}%)</td></tr>
+                  <tr key={r.ind.id}><td style={{ fontWeight: 700 }}>{r.pri}</td><td>{r.ind.name}</td><td>{fmt(r.v)}</td><td>{fmt(r.base)}</td><td>{fmt(r.refV)}</td><td>{r.t} ({r.dT > 0 ? "+" : ""}{fmt(r.dT, 0)}%)<small className="gd-abs">{dAbs(r.v - r.base, r.ind)}</small></td><td>{r.s} ({r.dS > 0 ? "+" : ""}{fmt(r.dS, 0)}%)<small className="gd-abs">{dAbs(r.v - r.refV, r.ind)}</small></td></tr>
                 ))}
               </tbody>
             </table>
           </div>
+          <GdHowto rows={rows} curLabel={curLabel} baseLabel={baseLabel} refName={refName} tol={tol} />
           <div className="desc" style={{ marginTop: 4 }}>{Object.entries(PRI_LABEL).map(([k, v]) => <div key={k}>{v}</div>)}</div>
         </div>
       </div>

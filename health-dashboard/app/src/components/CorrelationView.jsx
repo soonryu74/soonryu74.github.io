@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import Cite from "./Cite";
-import { INDICATORS, IND_BY_DOMAIN, DOMAINS_ALL, SIDOS, SGG_ALL, SGG_BY_SIDO, fmt, val, label, RBY , isSurvey, HC_POOL, sidoPoolOf } from "../data";
+import { INDICATORS, IND_BY_DOMAIN, DOMAINS_ALL, SIDOS, SGG_ALL, SGG_BY_SIDO, fmt, val, label, RBY , isSurvey, HC_POOL, sidoPoolOf, slopeOf, TREND_START } from "../data";
 import ExportButtons from "./ExportButtons";
 import { clientXY } from "./svgUtil";
 
@@ -25,8 +25,17 @@ export default function CorrelationView({ setTip }) {
   const [level, setLevel] = useState("sgg");
   const [sidoF, setSidoF] = useState("all");
   const [item, setItem] = useState("std");
+  const [yMode, setYMode] = useState("value");   // value: 그해 값 · slope: 2015년 이후 연간 변화(직선 기울기)
   const xi = INDICATORS.find((i) => i.id === xId), yi = INDICATORS.find((i) => i.id === yId);
-  const years = useMemo(() => xi.years.filter((y) => yi.years.includes(y)), [xi, yi]);
+  const yLast = yi.years[yi.years.length - 1];
+  const slopeOk = yi.years[0] <= TREND_START && yLast - TREND_START >= 4;
+  const ySlope = yMode === "slope" && slopeOk;
+  const years = useMemo(() => (ySlope ? xi.years : xi.years.filter((y) => yi.years.includes(y))), [xi, yi, ySlope]);
+  const yUnit = ySlope ? (yi.unit === "%" ? "%p/년" : `${yi.unit}/년`) : yi.unit;
+  const yName = ySlope ? `${yi.name} 연간 변화(${TREND_START}~${yLast})` : yi.name;
+  const slopeMap = useMemo(() => (ySlope ? new Map() : null), [ySlope, yi, item]);
+  const yv = (y, c) => { if (!ySlope) return val(yi, item, y, c); if (!slopeMap.has(c)) slopeMap.set(c, slopeOf(yi, item, c, TREND_START, yLast)); return slopeMap.get(c); };
+  const preset = () => { setXId("K_ECO_FIN"); setYId("DT_H_OBE_OBE"); setYMode("slope"); setLevel("sgg"); setSidoF("all"); setItem("std"); setPlay(false); setTimeout(() => setYear(2014), 0); };
   const [year, setYear] = useState(years[years.length - 1]);
   useEffect(() => { if (!years.includes(year)) setYear(years[years.length - 1]); }, [years]);
   const [play, setPlay] = useState(false);
@@ -34,7 +43,7 @@ export default function CorrelationView({ setTip }) {
   // 두 지표가 모두 지역사회건강조사면 조사 단위 258곳, 하나라도 시군구 자료면 시군구 229곳에서 짝을 짓는다
   const both = isSurvey(xi) && isSurvey(yi);
   const pool = level === "sido" ? SIDOS : sidoF === "all" ? (both ? HC_POOL : SGG_ALL) : (both ? sidoPoolOf(xi, sidoF) : SGG_BY_SIDO[sidoF]);
-  const pts = useMemo(() => pool.map((r) => ({ r, x: val(xi, item, year, r.c), y: val(yi, item, year, r.c) })).filter((p) => p.x != null && p.y != null), [pool, xi, yi, item, year]);
+  const pts = useMemo(() => pool.map((r) => ({ r, x: val(xi, item, year, r.c), y: yv(year, r.c) })).filter((p) => p.x != null && p.y != null), [pool, xi, yi, item, year, ySlope]);
   const xs = pts.map((p) => p.x), ys = pts.map((p) => p.y), n = pts.length;
   const rP = pearson(xs, ys), rS = pearson(ranks(xs), ranks(ys)), tK = kendall(xs, ys);
   const pP = pPearson(rP, n), pS = pPearson(rS, n), pK = pKendall(tK, n);
@@ -95,23 +104,26 @@ export default function CorrelationView({ setTip }) {
           <label className="subchip">Y <Sel value={yId} onChange={setYId} /></label>
           <label className="subchip">단위 <select value={level} onChange={(e) => setLevel(e.target.value)}><option value="sgg">시군구</option><option value="sido">17개 시도</option></select></label>
           {level === "sgg" && <label className="subchip">범위 <select value={sidoF} onChange={(e) => setSidoF(e.target.value)}><option value="all">전국</option>{SIDOS.map((s) => <option key={s.c} value={s.c}>{s.n}</option>)}</select></label>}
+          <label className="subchip" title={slopeOk ? "" : `${yi.name}은 ${TREND_START}년 이후 5개 연도 이상 자료가 없어 기울기를 계산할 수 없습니다`}>Y 형태 <select value={ySlope ? "slope" : "value"} onChange={(e) => setYMode(e.target.value)}><option value="value">그해 값</option><option value="slope" disabled={!slopeOk}>10년 변화 기울기({TREND_START}~)</option></select></label>
           <label className="subchip">값 <select value={item} onChange={(e) => setItem(e.target.value)}><option value="std">표준화율</option><option value="crude">조율</option></select></label>
           <label className="subchip">연도 <button className="seg-btn" onClick={() => setPlay(!play)}>{play ? "■" : "▶"}</button> <select value={year} onChange={(e) => setYear(+e.target.value)}>{years.map((y) => <option key={y} value={y}>{y}</option>)}</select></label>
+          <button type="button" className="seg-btn chip" onClick={preset} title="김동현 외(2025) 효과성 분석 연구의 핵심 결과를 우리 자료로 확인">연구 재현 예시: 재정자립도(2014) × 비만율 10년 기울기</button>
         </div>
+        {ySlope && <div className="desc">Y는 지역마다 {TREND_START}~{yLast}년 {yi.name} 값에 직선을 맞춘 기울기(연간 변화량, {yUnit})입니다. 연도 선택은 X에만 적용됩니다. 연구에서는 기울기가 좋은 지역일수록 재정자립도가 높고 고령인구·독거노인 비율이 낮았습니다(지역 수준 관계 — 인과 아님).<Cite k="effect" /></div>}
       </div>
       <div className="grid2">
         <div className="card span2">
-          <h3>{year}년 · {xi.name}<Cite ind={xi} /> × {yi.name}<Cite ind={yi} /> <small className="muted">(n={n})</small></h3>
+          <h3>{year}년 · {xi.name}<Cite ind={xi} /> × {yName}<Cite ind={yi} /> <small className="muted">(n={n})</small></h3>
           <ExportButtons name={`${year}_${xi.name}_x_${yi.name}_연관`} kinds={["svg", "png"]} />
-          <div className="desc">X: {xi.name}({xi.unit}) · Y: {yi.name}({yi.unit}) · 점선 = 최소제곱 추세선 · 점을 누르면 지역명{level === "sido" && narrowChart ? " · 좁은 화면에서는 양 끝 지역만 이름 표시" : ""}</div>
+          <div className="desc">X: {xi.name}({xi.unit}) · Y: {yName}({yUnit}) · 점선 = 최소제곱 추세선 · 점을 누르면 지역명{level === "sido" && narrowChart ? " · 좁은 화면에서는 양 끝 지역만 이름 표시" : ""}</div>
           <div ref={wrapRef}>
           {n < 3 ? <div className="empty">해당 연도에 두 지표를 모두 가진 지역이 없습니다</div> : (
             <svg className="chart" viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ maxWidth: "100%" }} data-title={`${year} ${xi.name} × ${yi.name}`}>
               <defs><clipPath id="corr-clip"><rect x={L} y={T} width={W - L - R} height={H - T - B} /></clipPath></defs>
-              {ticks(ylo, yhi).map((v) => <g key={"y" + v}><line x1={L} x2={W - R} y1={py(v)} y2={py(v)} stroke="var(--border)" /><text x={L - 6} y={py(v) + 4} fontSize="11.5" textAnchor="end" fill="var(--muted)">{fmt(v)}</text></g>)}
+              {ticks(ylo, yhi).map((v) => <g key={"y" + v}><line x1={L} x2={W - R} y1={py(v)} y2={py(v)} stroke="var(--border)" /><text x={L - 6} y={py(v) + 4} fontSize="11.5" textAnchor="end" fill="var(--muted)">{fmt(v, ySlope ? 2 : 1)}</text></g>)}
               {ticks(xlo, xhi).map((v) => <g key={"x" + v}><line y1={T} y2={H - B} x1={px(v)} x2={px(v)} stroke="var(--border)" strokeOpacity="0.5" /><text x={px(v)} y={H - B + 14} fontSize="11.5" textAnchor="middle" fill="var(--muted)">{fmt(v)}</text></g>)}
               <text x={L + (W - L - R) / 2} y={H - 6} fontSize="12.5" textAnchor="middle" fill="var(--text-secondary)">{xi.name}</text>
-              <text x={12} y={T + (H - T - B) / 2} fontSize="12.5" textAnchor="middle" fill="var(--text-secondary)" transform={`rotate(-90 12 ${T + (H - T - B) / 2})`}>{yi.name}</text>
+              <text x={12} y={T + (H - T - B) / 2} fontSize="12.5" textAnchor="middle" fill="var(--text-secondary)" transform={`rotate(-90 12 ${T + (H - T - B) / 2})`}>{yName}</text>
               {n > 2 && (() => {                                   // 추세선은 그래프 안에서만 (축 밖으로 삐져나오지 않게)
                 const x0 = Math.max(xlo, Math.min(...xs)), x1 = Math.min(xhi, Math.max(...xs));
                 return <line x1={px(x0)} y1={py(my + slope * (x0 - mx))} x2={px(x1)} y2={py(my + slope * (x1 - mx))}
@@ -119,7 +131,7 @@ export default function CorrelationView({ setTip }) {
               })()}
               {pts.map((p) => (
                 <circle key={p.r.c} cx={px(p.x)} cy={py(p.y)} r={level === "sido" ? 6 : 3.5} fill="var(--series-1)" fillOpacity="0.55" stroke="var(--surface-1)" strokeWidth="0.8"
-                  onMouseMove={(ev) => { const { x, y } = clientXY(ev); setTip({ x, y, title: label(p.r), rows: [[xi.name, fmt(p.x) + xi.unit], [yi.name, fmt(p.y) + yi.unit]] }); }}
+                  onMouseMove={(ev) => { const { x, y } = clientXY(ev); setTip({ x, y, title: label(p.r), rows: [[xi.name, fmt(p.x) + xi.unit], [yName, fmt(p.y, ySlope ? 2 : 1) + yUnit]] }); }}
                   onMouseLeave={() => setTip(null)} />
               ))}
               {labels.map((o) => (
@@ -149,7 +161,7 @@ export default function CorrelationView({ setTip }) {
           <div className="tblscroll"><table className="yeartbl">
             <thead><tr><th>연도</th><th>n</th><th>피어슨</th><th>스피어만</th></tr></thead>
             <tbody>
-              {years.map((y) => { const q = pool.map((r) => [val(xi, item, y, r.c), val(yi, item, y, r.c)]).filter((v) => v[0] != null && v[1] != null); if (q.length < 3) return null; const a = q.map((v) => v[0]), b = q.map((v) => v[1]); return <tr key={y} className={y === year ? "sel" : ""} onClick={() => setYear(y)}><td>{y}</td><td>{q.length}</td><td>{fmt(pearson(a, b), 3)}</td><td>{fmt(q.length > 2 ? pearson(ranks(a), ranks(b)) : null, 3)}</td></tr>; })}
+              {years.map((y) => { const q = pool.map((r) => [val(xi, item, y, r.c), yv(y, r.c)]).filter((v) => v[0] != null && v[1] != null); if (q.length < 3) return null; const a = q.map((v) => v[0]), b = q.map((v) => v[1]); return <tr key={y} className={y === year ? "sel" : ""} onClick={() => setYear(y)}><td>{y}</td><td>{q.length}</td><td>{fmt(pearson(a, b), 3)}</td><td>{fmt(q.length > 2 ? pearson(ranks(a), ranks(b)) : null, 3)}</td></tr>; })}
             </tbody>
           </table></div>
         </div>
