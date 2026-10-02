@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Cite from "./components/Cite";
 import RefList from "./components/RefList";
-import { DS, INDICATORS, RBY, SIDOS, HC_POOL, isSurvey, label, DEFAULT_RANK_OPT, KDH_SOURCE, TIER_INFO, indRef } from "./data";
+import { DS, INDICATORS, RBY, SIDOS, HC_POOL, isSurvey, label, DEFAULT_RANK_OPT, KDH_SOURCE, TIER_INFO, indRef, TREND_START } from "./data";
 import { IndicatorPicker, RegionPicker, YearControl, ItemToggle } from "./components/Pickers";
 import Kpis from "./components/Kpis";
 import TrendChart from "./components/TrendChart";
@@ -9,6 +9,7 @@ import ChoroplethMap from "./components/ChoroplethMap";
 import RankPanel from "./components/RankPanel";
 import YearTable from "./components/YearTable";
 import GapBoxplot from "./components/GapBoxplot";
+import TrendCard from "./components/TrendCard";
 import EquityPanel from "./components/EquityPanel";
 import Profile from "./components/Profile";
 import Compare, { NAT, MAX_CMP } from "./components/Compare";
@@ -342,6 +343,13 @@ export default function App() {
                 )}
                 {ind.dirNote && <div className="desc dirnote"><b>{ind.bad === true ? "높을수록 나쁨" : ind.bad === false ? "높을수록 좋음" : "방향 없음(맥락 지표)"}</b> — {ind.dirNote}{ind.dirRefs?.length ? <> · 근거: {ind.dirRefs.map((r, i) => <a key={i} className="src" style={{ whiteSpace: "normal" }} href={r.url} target="_blank" rel="noreferrer">{r.name}</a>).reduce((a, b) => [a, ", ", b])}</> : null}<Cite k="dir" /></div>}
                 <TrendChart ind={ind} item={item} year={year} sel={sel} setTip={setTip} />
+              </div>
+
+              <div className="card">
+                <h3>10년 추세 — {TREND_START}년 이후 연간 변화<Cite k="effect" /></h3>
+                <ExportButtons name={`${ind.name}_10년추세_${scopeLabel}`} kinds={["svg", "png"]} />
+                <div className="desc">지역마다 {TREND_START}년 이후 값의 직선 기울기(연간 변화량) · 비교 집단 안에서 좋음·보통·나쁨 3분위</div>
+                <TrendCard ind={ind} item={item} sel={sel} scope={scope} scopeLabel={scopeLabel} setTip={setTip} />
               </div>
 
               <div className="card">

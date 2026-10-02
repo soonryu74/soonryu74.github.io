@@ -1027,3 +1027,30 @@ details.reflist[open] > summary h3::after { content: " ▴"; }
 .kc-row.me { background: color-mix(in srgb, var(--series-1) 8%, transparent); }
 .kc-books { margin-top: 8px; }
 .kc-books summary { cursor: pointer; font-weight: 600; }
+/* 10년 추세 카드 (김동현 외 2025 효과성 분석 방법) */
+.tr-ctrls { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin-bottom:8px; }
+.tr-tiles { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; margin:6px 0 10px; }
+.tr-tile { border:1px solid var(--border); border-radius:10px; padding:10px 12px; background:var(--surface-1); min-width:0; }
+.tr-tile .k-label { font-size:14px; color:var(--text-secondary); line-height:1.35; }
+.tr-tile .k-val { font-size:26px; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; }
+.tr-tile .k-val small { font-size:14.5px; font-weight:600; color:var(--text-secondary); }
+.tr-tile .k-sub { font-size:14px; color:var(--text-secondary); margin-top:4px; line-height:1.45; }
+.tr-tile .k-sub.muted { color:var(--muted); font-size:13px; }
+.tr-means { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:16px; margin-top:4px; font-variant-numeric:tabular-nums; }
+b.tr-good { color:var(--series-1); } b.tr-mid { color:var(--text-secondary); } b.tr-bad { color:#d8402a; }
+rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad { fill:#d8402a; }
+.tr-zero { stroke:var(--text-secondary); stroke-dasharray:3 3; stroke-width:1; }
+.tr-me { stroke:var(--text-primary); stroke-width:2; }
+.tr-melabel { font-size:13px; font-weight:700; fill:var(--text-primary); }
+@media (max-width: 900px) { .tr-tiles { grid-template-columns:minmax(0, 1fr); } }
+.decile-gap { margin-top:10px; border-top:1px dashed var(--border); padding-top:8px; }
+.dg-head { font-size:15px; margin-bottom:4px; }
+.dg-sparks { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+.dg-title { font-size:13.5px; color:var(--text-secondary); font-weight:600; }
+.dg-line { fill:none; stroke:var(--series-2, #d95926); stroke-width:2; }
+.dg-dot { fill:var(--series-2, #d95926); stroke:var(--surface-1); stroke-width:1.5; }
+@media (max-width: 480px) { .dg-sparks { grid-template-columns:minmax(0, 1fr); } }
+.gd .yeartbl .gd-abs { display:block; font-size:12.5px; color:var(--muted); font-weight:500; line-height:1.2; }
+.gd-howto { margin-top:8px; border:1px solid var(--border); border-radius:10px; padding:8px 12px; background:var(--surface-1); font-size:14px; line-height:1.5; color:var(--text-secondary); }
+.gd-howto-h { font-weight:700; color:var(--text-primary); margin-bottom:2px; }
+.gd-howto ul { margin:0; padding-left:18px; } .gd-howto li { margin:2px 0; }
