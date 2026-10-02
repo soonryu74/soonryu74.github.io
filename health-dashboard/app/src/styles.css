@@ -969,3 +969,8 @@ details.reflist[open] > summary h3::after { content: " ▴"; }
 .srch-foot kbd { border:1px solid var(--border); border-radius:4px; padding:0 5px; font-family:inherit; font-size:12px; }
 .card.srch-hit, .srccard.srch-hit, .reflist.srch-hit, details.srch-hit { animation: refhit 2.4s ease-out; }
 @media (max-width: 720px) { .srch-overlay { padding:3vh 8px 8px; } .srch-item { flex-direction:column; align-items:flex-start; gap:2px; } .srch-item .si-sub { max-width:100%; white-space:normal; } }
+
+/* 예방·관리 — 영역별 묶음(모든 영역일 때) */
+.ncdtoc { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px; }
+.ncdgroup { grid-column:1 / -1; font-weight:700; font-size:16px; margin:14px 0 2px; padding:6px 0 4px; border-bottom:2px solid var(--series-1); scroll-margin-top:12px; }
+.ncdgroup:first-child { margin-top:2px; }
