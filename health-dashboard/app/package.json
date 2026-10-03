@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node postbuild.mjs"
+    "build": "vite build && node postbuild.mjs",
+    "test": "node tests/run.mjs"
   },
   "dependencies": {
     "d3-geo": "^3.1.1",

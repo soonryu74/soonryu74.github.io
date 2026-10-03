@@ -13,8 +13,10 @@ const AXES = [
 ];
 const SIZE = 12;
 
-export default function PeerCard({ item, sel, onPick }) {
-  const [indId, setIndId] = useState("HLE_HLE");
+export default function PeerCard({ item, sel, onPick, ind = null, onInd = null }) {
+  const [indIdOwn, setIndIdOwn] = useState("HLE_HLE");
+  const indId = ind && IND_BY_ID[ind] ? ind : indIdOwn;               // 우선 검토 카드에서 넘겨받으면 그 지표, 아니면 기존 기본값
+  const setIndId = (id) => { setIndIdOwn(id); onInd && onInd(id); };
   const target = IND_BY_ID[indId];
   const isSgg = sel.l === "sgg";
 

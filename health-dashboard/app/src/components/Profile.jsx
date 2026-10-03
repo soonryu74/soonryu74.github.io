@@ -7,6 +7,7 @@ import HleCard from "./HleCard";
 import RiskCard from "./RiskCard";
 import GoldenDiamond from "./GoldenDiamond";
 import PeerCard from "./PeerCard";
+import EquityPriorityCard from "./equity/EquityPriorityCard";
 
 const tone = (p) => (p == null ? "" : p >= 75 ? "t-high" : p >= 50 ? "t-mid" : p >= 25 ? "t-low" : "t-min");
 
@@ -72,7 +73,8 @@ function RankSettings({ opt, onChange, isSgg }) {
 }
 
 /* 지역 프로파일: 방법론 v1 기반 영역·종합 순위, 등급 배지, 강점·개선·과제 */
-export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, onRegion, setTip }) {
+export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, onRegion, onGoCard, setTip }) {
+  const [peerInd, setPeerInd] = useState(null);   // 우선 검토 카드의 「유사 지역 비교」 → 동류군 카드 지표
   const pool = sel.l === "sido" ? poolFor(sel, "sidoAll") : poolFor(sel, scope === "sidoAll" ? "nation" : scope);   // 시도 프로파일은 17개 시도, 시군구는 전국/시도 내
   const isSgg = sel.l === "sgg";
   const rk = useMemo(() => computeRanking(item, pool, rankOpt), [item, pool, rankOpt]);
@@ -125,13 +127,16 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         </div>
       </div>
 
+      <EquityPriorityCard sel={sel} item={item} smooth={rankOpt.smooth} onPick={onPick} onRecommend={onRecommend} onGoCard={onGoCard}
+        onPeer={(id) => { setPeerInd(id); setTimeout(() => document.querySelector(".peer")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60); }} />
+
       <RankSettings opt={rankOpt} onChange={onRankOpt} isSgg={isSgg} />
 
       <div className="grid2">
         <HleCard sel={sel} pool={pool} poolName={poolName} setTip={setTip} />
         <RiskCard sel={sel} pool={pool} poolName={poolName} />
         <GoldenDiamond item={item} sel={sel} />
-        <PeerCard item={item} sel={sel} onPick={onRegion} />
+        <PeerCard item={item} sel={sel} onPick={onRegion} ind={peerInd} onInd={setPeerInd} />
         <div className="card span2">
           <h3>영역별 순위와 수치<Cite k={["chs", "rank"]} /></h3>
           <ExportButtons name={`${label(sel)}_영역별순위`} kinds={["list"]} />
@@ -261,6 +266,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
           </table>
         </div>
       </div>
+      <div className="desc prof-limits"><b>데이터 출처와 한계</b> — 각 수치 옆 [n]·ⓘ에 자료원과 연도가 있습니다. 보건소 사업의 투입·산출 자료가 없으므로 사업 성과평가나 인과효과 판단에 쓸 수 없고, 표본조사 지표는 표본오차를 함께 봐야 합니다.</div>
       <div className="desc">산출 방식 상세: docs/랭킹_방법론_v1.md — 표준화율·3년 이동평균·리그·가중치 근거(공인 체계 조사, AI 모의 패널은 검증용, 232개 시군구 실증)</div>
     </div>
   );

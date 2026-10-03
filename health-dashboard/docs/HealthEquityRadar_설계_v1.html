@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Health Equity Radar 설계 — 지역보건 검토 우선순위 (v1, 2026-10-03) | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Health Equity Radar 설계 — 지역보건 검토 우선순위 (v1, 2026-10-03)" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Health Equity Radar 설계 — 지역보건 검토 우선순위 (v1, 2026-10-03)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Health Equity Radar 설계 — 지역보건 검토 우선순위 (v1, 2026-10-03)","url":"/health-dashboard/docs/HealthEquityRadar_%EC%84%A4%EA%B3%84_v1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=2af9aacf31542564fcdc717ad99ccd02ec3fde4f">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="health-equity-radar-설계--지역보건-검토-우선순위-v1-2026-10-03">Health Equity Radar 설계 — 지역보건 검토 우선순위 (v1, 2026-10-03)</h1>
+
+<p>소유자 지시서 「health-profile.kr → Health Equity Radar 고도화」(0~21절)에 따라 기존 대시보드를 지우지 않고 덧붙인 기능의 설계·계산·한계 기록.</p>
+
+<h2 id="1-포지셔닝">1. 포지셔닝</h2>
+
+<ul>
+  <li>이름: <strong>Health Equity Radar</strong> — <em>From local health data to local action.</em> (기존 이름 「지역 건강프로파일 대시보드」 유지)</li>
+  <li>한 줄: 지역 평균에 가려진 건강격차를 찾아내고, 어느 지역의 어떤 건강문제를 먼저 살펴볼지 보여주는 지역보건 의사결정 지원 도구.</li>
+  <li>성격: 진단·처방·예측이 아니라 <strong>지역보건 검토 순서</strong>를 돕는 표시. 보건소 사업의 투입·산출 자료가 없으므로 사업 성과평가·인과효과 판단에 쓰지 않는다(머리글 문구 유지·보강).</li>
+</ul>
+
+<h2 id="2-추가된-화면">2. 추가된 화면</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>위치</th>
+      <th>기능</th>
+      <th>파일</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>지역 프로파일 맨 위</td>
+      <td>우리 지역 우선 검토 항목 3개(등급·지역 값·전국 중앙값·상대 위치·최근 추세·사회경제적 취약성) + 왜 우선인가? + 참고할 수 있는 예방·관리 자료 + 버튼 4종 + 전체 판정·계산 방법·데이터 출처와 한계</td>
+      <td><code class="language-plaintext highlighter-rouge">components/equity/EquityPriorityCard.jsx</code> · <code class="language-plaintext highlighter-rouge">WhyThisMatters.jsx</code> · <code class="language-plaintext highlighter-rouge">EvidenceActions.jsx</code></td>
+    </tr>
+    <tr>
+      <td>홈 카드 ③</td>
+      <td>내 지역 건강격차 빠르게 보기(검색 → 미니 카드 3개 → 프로파일) + 히어로 서브카피(지표·지역·연도 수 자동 계산)</td>
+      <td><code class="language-plaintext highlighter-rouge">HomeEquityQuick.jsx</code> · <code class="language-plaintext highlighter-rouge">Home.jsx</code></td>
+    </tr>
+    <tr>
+      <td>핫스팟</td>
+      <td>「복합 취약 신호」 모드 — 2개 이상 조건의 불리한 쪽 상위 N% 겹침 지도·목록</td>
+      <td><code class="language-plaintext highlighter-rouge">EquityHotspot.jsx</code> · <code class="language-plaintext highlighter-rouge">HotspotView.jsx</code></td>
+    </tr>
+    <tr>
+      <td>지역 비교</td>
+      <td>형평성 요약 비교 표(현재 수준·전국 중앙값 대비·추세·상대순위·박탈·우선 검토 지표)</td>
+      <td><code class="language-plaintext highlighter-rouge">CompareEquity.jsx</code> · <code class="language-plaintext highlighter-rouge">Compare.jsx</code></td>
+    </tr>
+    <tr>
+      <td>지표 분석 추이 카드·우선 검토 카드·비교 표</td>
+      <td>ⓘ 지표 정보 창(자료원·조사연도·지표 정의·표준화 여부·방향·업데이트·주의사항)</td>
+      <td><code class="language-plaintext highlighter-rouge">IndInfo.jsx</code></td>
+    </tr>
+    <tr>
+      <td>영문 소개</td>
+      <td><code class="language-plaintext highlighter-rouge">#view=radar</code> + <code class="language-plaintext highlighter-rouge">/solve/</code> 리다이렉트, 머리글 「EN」</td>
+      <td><code class="language-plaintext highlighter-rouge">RadarAbout.jsx</code> · <code class="language-plaintext highlighter-rouge">solve/index.html</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="3-계산-로직-appsrclibequity-데이터와-분리된-순수-함수">3. 계산 로직 (<code class="language-plaintext highlighter-rouge">app/src/lib/equity/</code>, 데이터와 분리된 순수 함수)</h2>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>방향 메타데이터</strong>: 모든 지표에 <code class="language-plaintext highlighter-rouge">direction</code> = <code class="language-plaintext highlighter-rouge">lower_is_better</code></td>
+          <td><code class="language-plaintext highlighter-rouge">higher_is_better</code></td>
+          <td><code class="language-plaintext highlighter-rouge">context</code> (기존 <code class="language-plaintext highlighter-rouge">bad</code>에서 파생, <code class="language-plaintext highlighter-rouge">data/directions.json</code> 근거 유지).</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><strong>후보 지표</strong>: 기본 = 지역사회건강조사 지표 중 방향이 있는 40개(258개 조사 단위 비교·95% 신뢰구간·예방·관리 자료 연결 가능). 토글 「전체 방향 지표」 = 방향이 있는 지표 중 지역박탈지수와 투입·과정(자원) 지표를 뺀 130개.
+    <ul>
+      <li>기본을 지역사회건강조사로 둔 이유: 전체로 계산하면 표본오차 정보가 없는 소규모 감염병 발생률(성홍열·매독)·진료실인원이 상위 3개를 차지했다. 지시서의 예시(흡연·음주·걷기)·258개 지역 순위·예방·관리 연결 설계와 맞는 쪽을 기본으로 했다.</li>
+    </ul>
+  </li>
+  <li><strong>값</strong>: 프로파일 순위 설정의 3년 평균/단년을 따름. 지역 값이 지표 최신 연도보다 3년 넘게 오래되면 「자료 부족」.</li>
+  <li><strong>비교 집단</strong>: 시군구 → 지역사회건강조사 258개 조사 단위(그 밖 지표는 시군구), 전국 중앙값 = 그 집단 중앙값(기존 <code class="language-plaintext highlighter-rouge">nationalMedian</code>과 일치 — 테스트 7). 시도 → 순위는 17개 시도, 격차는 전국 중앙값. 다보건소 시(수원 등)는 집단 밖이므로 값으로 분포 속 위치를 계산.</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>요소</th>
+      <th>가중</th>
+      <th>계산</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>gapScore</td>
+      <td>0.35</td>
+      <td>(지역 값 − 전국 중앙값) ÷ 전국 중앙값, 방향 보정(불리 +). 불리 30%에서 1(상한)</td>
+    </tr>
+    <tr>
+      <td>rankScore</td>
+      <td>0.25</td>
+      <td>비교 집단 중 나보다 양호한 비율(동률 절반, 결측 제외)</td>
+    </tr>
+    <tr>
+      <td>trendScore</td>
+      <td>0.20</td>
+      <td>최근 5개 연도 중 유효 3개 이상일 때만 OLS 기울기 → 비교 집단 기울기 3분위(악화 쪽 1 · 가운데 0.5 · 개선 쪽 0)</td>
+    </tr>
+    <tr>
+      <td>deprivationScore</td>
+      <td>0.20</td>
+      <td>지역박탈지수 5분위 (q−1)/4, 시군구만</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>없는 요소는 <strong>0으로 두지 않고 빼서 남은 가중치로 재정규화</strong>. 격차·위치가 없으면 계산하지 않음.</li>
+  <li>점수는 <strong>화면 내부용 기술 점수(공식 지수 아님)</strong>, 화면에는 등급만.</li>
+  <li>등급: <strong>우선 검토</strong> = 불리 방향 · 하위 25% · 점수 0.55 이상 · 단년 95% 신뢰구간이 같은 해 전국 중앙값을 포함하지 않음 · 상대표준오차 20% 이하 / <strong>관찰 필요</strong> = 불리 방향 · (하위 50% 또는 점수 0.4 이상) / <strong>상대적으로 양호</strong> / <strong>자료 부족</strong>.</li>
+  <li>추세 라벨: 연간 변화가 전국 중앙값의 1% 미만이면 「변화 적음」, 그 밖은 방향대로 「악화 경향」「개선 경향」(3분위는 점수에만).</li>
+  <li>상위 3개: 우선 검토 → 관찰 필요, 점수 순, 영역당 1개.</li>
+  <li>근거 문장(<code class="language-plaintext highlighter-rouge">buildReasons</code>): 계산된 사실만. 박탈은 「~지역이며, 이 지표도 불리한 수준」 병렬 서술(인과 금지 — 테스트로 「때문·원인·최악·가장 위험·정책 실패」 부재 확인).</li>
+  <li>박탈 분위는 지역마다 하나라 지표 사이 순서는 바꾸지 않고 등급에만 영향.</li>
+</ul>
+
+<h2 id="4-참고할-수-있는-예방관리-자료">4. 「참고할 수 있는 예방·관리 자료」</h2>
+
+<p>예방·관리 지식베이스(<code class="language-plaintext highlighter-rouge">recommendFor</code>: 시도 계획 → 국가 → WHO 서태평양 → WHO, 수집 2026-09-07, AI 수집·요약 표시) 상위 2건 + NICE 지침(최종 갱신일) + CPSTF 주제(권고 수·최근 연도) + 같은 영역 우수사례 수. 없으면 「연결된 공식 자료 없음 — 근거 부족 · 추가 검토 필요」. 표현은 「검토 가능한 근거」「참고 가능한 중재」 — 정책 처방·명령형 없음.</p>
+
+<h2 id="5-복합-취약-신호">5. 복합 취약 신호</h2>
+
+<p>조건(기본: 높은 현재흡연율·낮은 걷기 실천율·높은 지역박탈지수, 칩으로 비만율·고위험음주율·인플루엔자 예방접종률 추가, 임의 지표 추가 가능) × 기준(불리한 쪽 상위 10/20/25/33%) × 규칙(모두 / N개 이상). 지도 폴리곤 250곳 기준 백분위, 지표별 최신 연도 표기. 명칭은 「복합 취약 신호 지역」 — 고위험 판정 아님.</p>
+
+<h2 id="6-테스트">6. 테스트</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">cd app &amp;&amp; npm test</code> — 새 패키지 없이 Vite의 esbuild로 묶어 Node 내장 테스트 실행. 11건: ① 낮을수록 좋음 ② 높을수록 좋음 ③ 결측≠0 ④ 박탈 없음 재정규화 ⑤ 유효 연도 3개 미만 추세 생략 ⑥ 동률·근접(같은 백분위, 신뢰구간 포함·불안정 값은 우선 검토 불가) ⑦ 258 풀·전국 중앙값 = 기존 계산 + direction 메타데이터·지역별 결과·상위 3개 영역 중복 없음·근거 문장 금지어.</li>
+  <li><code class="language-plaintext highlighter-rouge">scripts/qa/equity_e2e.mjs</code>(Playwright) — ⑧ 390px 카드·A+ 넘침 ⑨ 다크모드 캡처 ⑩ 기존 12개 라우트 + radar 1400·390 회귀, 버튼 동작, 홈 검색→프로파일, 핫스팟 지도=목록, 비교 표, 영문 수치, <code class="language-plaintext highlighter-rouge">/solve/</code> 리다이렉트.</li>
+</ul>
+
+<h2 id="7-만들지-않은-것-지시서-16절">7. 만들지 않은 것 (지시서 16절)</h2>
+
+<p>질병 진단 AI · 개인 건강상담 챗봇 · 미래 질병 발생 확률 예측 · 정책효과 자동 예측 · 디지털트윈 · 개인 건강정보 입력 · 로그인/회원가입 · 결제 · 환자 데이터 저장 · 근거 없는 「AI 추천」 · LLM 자동 정책 생성. 영문 페이지에도 존재하지 않는 국제 실적·사용자 수·정책효과·매출·파트너·AI 성능을 쓰지 않았다(「Republic of Korea only」 명시).</p>
+
+<h2 id="8-한계다음-과제">8. 한계·다음 과제</h2>
+
+<ul>
+  <li>지역사회건강조사 지표만 신뢰구간이 있다. 「전체 방향 지표」 모드의 시군구 자료는 표본오차·소수 사건 변동을 반영하지 못한다.</li>
+  <li>박탈지수는 2020년 총조사 집계표 근사(2015·2020)이고 시군구 단위다. 창원 3개 보건소는 값이 없다.</li>
+  <li>예방·관리 지식베이스는 AI 수집·요약이며 지표명 일치로 연결 — 원문 확인 필요.</li>
+  <li>복합 취약 신호의 백분위는 지도 폴리곤 기준이라 258개 조사 단위 순위와 약간 다를 수 있다.</li>
+  <li>사용설명서·활용법·소개 영상은 홈 카드 번호(③ 신설로 6장)와 새 화면을 아직 반영하지 않았다(다음 재생성 때).</li>
+  <li>「/en」 전체 번역은 하지 않았다(지시서대로 소개 페이지 1개).</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

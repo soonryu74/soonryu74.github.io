@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import Cite from "./Cite";
 import { INDICATORS, DOMAINS_ALL as DOMAINS, SIDOS, SGG_BY_SIDO, SGG_ALL, RBY, fmt, val, nationalMedian, ranked, percentile, latestYear, label, betterCmp , natPool } from "../data";
 import { pathOf, nearestIndex, clientXY, Gridlines, XAxis } from "./svgUtil";
+import CompareEquity from "./equity/CompareEquity";
 import ExportButtons from "./ExportButtons";
 
 export const NAT = "NAT";                       // 전국(전 시군구 중앙값) 가상 지역
@@ -206,7 +207,7 @@ function AllIndicatorTable({ item, year, codes, onPick }) {
   );
 }
 
-export default function Compare({ ind, item, year, codes, onCodes, onYear, onPick, setTip, sel }) {
+export default function Compare({ ind, item, year, codes, onCodes, onYear, onPick, setTip, sel, onRegionProfile }) {
   return (
     <div className="compare">
       <div className="card">
@@ -216,6 +217,7 @@ export default function Compare({ ind, item, year, codes, onCodes, onYear, onPic
       </div>
       {codes.length > 0 && (
         <>
+          <CompareEquity ind={ind} item={item} codes={codes.filter((c) => c !== NAT)} onRegionProfile={onRegionProfile} />
           <div className="grid2">
             <div className="card">
               <h3>{ind.name} 추이 비교<Cite ind={ind} /></h3>

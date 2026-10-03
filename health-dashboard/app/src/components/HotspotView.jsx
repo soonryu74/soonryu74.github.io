@@ -6,6 +6,7 @@ import { INDICATORS, IND_BY_DOMAIN, DOMAINS_ALL, RBY, fmt, val } from "../data";
 import { TOPO, OBJ, FC, GEOMAP, SIDO_MESH } from "./ChoroplethMap";
 import ExportButtons from "./ExportButtons";
 import { clientXY } from "./svgUtil";
+import EquityHotspot from "./equity/EquityHotspot";
 
 /* 핫스팟 분석 — CIAT 심층분석 2 대응
    ① Getis-Ord Gi*: 당해연도 값이 이웃(경계를 맞댄 시군구)과 함께 높은 군집(핫스팟)·낮은 군집(콜드스팟), z값·유의수준 90/95/99%
@@ -113,16 +114,17 @@ export default function HotspotView({ setTip, onPick }) {
         <h3>핫스팟 분석 <small className="muted">Getis-Ord Gi* 공간 군집 · Mann-Kendall 추세</small></h3>
         <div className="desc">이웃 시군구와 함께 값이 높거나(핫스팟) 낮은(콜드스팟) 지역 군집을 찾고, 연도별 값의 증가·감소 추세를 검정합니다. 붉은색 = 높은 값 군집/증가, 파란색 = 낮은 값 군집/감소이며, 선택 지표는 {dirWord}입니다. 인접 = 경계를 맞댄 시군구(자기 포함), 섬은 가장 가까운 2곳을 이웃으로 씁니다. 지도를 클릭하면 지표 분석 화면으로 이동합니다.</div>
         <div className="ctrls" style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "8px 0" }}>
-          <label className="subchip">지표 <Sel value={id} onChange={setId} /></label>
-          <label className="subchip">값 <select value={item} onChange={(e) => setItem(e.target.value)}><option value="std">표준화율</option><option value="crude">조율</option></select></label>
+          {mode !== "multi" && <label className="subchip">지표 <Sel value={id} onChange={setId} /></label>}
+          {mode !== "multi" && <label className="subchip">값 <select value={item} onChange={(e) => setItem(e.target.value)}><option value="std">표준화율</option><option value="crude">조율</option></select></label>}
           <div className="seg">
             <button className={`seg-btn ${mode === "gi" ? "on" : ""}`} onClick={() => setMode("gi")}>공간 군집(Gi*)</button>
             <button className={`seg-btn ${mode === "mk" ? "on" : ""}`} onClick={() => setMode("mk")}>시간 추세(Mann-Kendall)</button>
+            <button className={`seg-btn ${mode === "multi" ? "on" : ""}`} onClick={() => setMode("multi")}>복합 취약 신호</button>
           </div>
           {mode === "gi" && <label className="subchip">연도 <button className="seg-btn" onClick={() => setPlay(!play)}>{play ? "■" : "▶"}</button> <select value={year} onChange={(e) => setYear(+e.target.value)}>{years.map((y) => <option key={y} value={y}>{y}</option>)}</select></label>}
         </div>
       </div>
-      <div className="grid2">
+      {mode === "multi" ? <EquityHotspot setTip={setTip} onPick={onPick} /> : <div className="grid2">
         <div className="card">
           <h3>{mode === "gi" ? `${year}년 · ${ind.name} 핫스팟·콜드스팟` : `${ind.name} 추세 ${years[0]}–${years[years.length - 1]}`}<Cite ind={ind} k="geo" /></h3>
           <ExportButtons name={`${mode === "gi" ? year + "_" : ""}${ind.name}_${mode === "gi" ? "핫스팟" : "추세"}`} kinds={["svg", "png"]} />
@@ -162,7 +164,7 @@ export default function HotspotView({ setTip, onPick }) {
           )}
           {rows.length > 60 && <div className="desc">상위 60곳만 표시 · CSV에도 60곳</div>}
         </div>
-      </div>
+      </div>}
     </div>
   );
 }
