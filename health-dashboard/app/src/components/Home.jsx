@@ -5,8 +5,10 @@ import ChoroplethMap, { SIDO_FEATS } from "./ChoroplethMap";
 import Cite from "./Cite";
 import CONTACT from "../../../data/contact.json";
 import HelpContent from "./Help";
+import HomeEquityQuick from "./equity/HomeEquityQuick";
+import { YEARS_ALL, INDICATORS as ALL_INDS } from "../data";
 
-/* 메인(첫) 화면 — 카드 5장: 17개 시도 지도 · 258개 보건소 순위 · 취약인구 · 지자체 계획 수립 · 처음이세요?(소개 영상·설명서·활용법).
+/* 메인(첫) 화면 — 카드 6장: 17개 시도 지도 · 258개 보건소 순위 · 내 지역 건강격차 빠르게 보기(Health Equity Radar) · 취약인구 · 지자체 계획 수립 · 처음이세요?(소개 영상·설명서·활용법).
    원칙: 카드 하나에 질문 하나. 자세한 분석은 카드의 버튼으로 해당 메뉴에 넘긴다.
    순위 카드는 상위 10곳만 싣는다(랭킹 기획안 원칙: 하위 공개 대신 「우리 보건소 찾기」). */
 
@@ -77,6 +79,8 @@ export default function Home({ sel, setTip, onGo, onGoCard }) {
         <div>
           <h2>우리 지역 건강, 한 화면에서 시작하기</h2>
           <p className="muted">지역사회건강조사 {year}년 · 조사 단위 {HC_POOL.length}곳<Cite k={["chs", "chs25"]} /> — 카드를 눌러 자세한 분석으로 들어가세요.</p>
+          <p className="home-radar"><b>Health Equity Radar</b> · 지역 건강격차와 우선과제를 한눈에 · 데이터에서 지역보건 행동으로 · {ALL_INDS.length}개 지표 × {HC_POOL.length}개 지역 × {YEARS_ALL[0]}–{YEARS_ALL[YEARS_ALL.length - 1]}
+            {" "}<button type="button" className="linkbtn" lang="en" onClick={() => onGo({ view: "radar" })}>English overview →</button></p>
         </div>
         <div className="seg home-ind" role="group" aria-label="지도·순위 카드의 지표">
           {HEAD.map(([id, nm]) => <button key={id} className={`seg-btn ${hid === id ? "on" : ""}`} onClick={() => setHid(id)}>{nm}</button>)}
@@ -128,9 +132,18 @@ export default function Home({ sel, setTip, onGo, onGoCard }) {
           <button type="button" className="hc-cta" onClick={() => onGo({ view: "analysis", ind, scope: "nation" })}>전체 순위·신뢰구간 보기 →</button>
         </section>
 
+        {/* ③ 내 지역 건강격차 빠르게 보기 (Health Equity Radar) */}
+        <section className="card hcard hc-eq">
+          <div className="hc-head"><span className="hc-no">3</span>
+            <div><h3>내 지역 건강격차 빠르게 보기<Cite k={["chs", "dep"]} /></h3>
+              <div className="desc">지역을 고르면 우선 검토 지표 · 최근 개선 지표 · 지역 간 격차가 큰 지표를 보여 줍니다. 진단이 아니라 지역보건 검토 순서를 돕는 표시입니다.</div></div>
+          </div>
+          <HomeEquityQuick sel={sel} onGo={onGo} />
+        </section>
+
         {/* ③ 취약인구 */}
         <section className="card hcard">
-          <div className="hc-head"><span className="hc-no">3</span>
+          <div className="hc-head"><span className="hc-no">4</span>
             <div><h3>취약인구 규모<Cite k="risk" /></h3>
               <div className="desc">전국 {man(vuln.pop)} 명 중 · {vuln.year}년 주민등록 연앙인구 등 · 막대는 인구 대비 비율</div></div>
           </div>
@@ -152,7 +165,7 @@ export default function Home({ sel, setTip, onGo, onGoCard }) {
 
         {/* ④ 지자체 계획 수립 */}
         <section className="card hcard">
-          <div className="hc-head"><span className="hc-no">4</span>
+          <div className="hc-head"><span className="hc-no">5</span>
             <div><h3>지자체 계획 수립<Cite k={["hplan", "khepi"]} /></h3>
               <div className="desc">제9기 지역보건의료계획(2027~2030) 수립이 2026년 하반기에 시작됐습니다</div></div>
           </div>
@@ -176,7 +189,7 @@ export default function Home({ sel, setTip, onGo, onGoCard }) {
 
         {/* ⑤ 처음이세요? — 소개 영상·사용설명서·활용법 (머리글 「? 도움말」과 같은 내용) */}
         <section className="card hcard hc-help">
-          <div className="hc-head"><span className="hc-no">5</span>
+          <div className="hc-head"><span className="hc-no">6</span>
             <div><h3>처음이세요? — 소개 영상 · 사용설명서 · 활용법</h3>
               <div className="desc">3분 영상으로 메뉴 12개를 훑고, 설명서·발표자료는 PDF·파워포인트로 내려받습니다. 어느 화면에서든 오른쪽 위 「? 도움말」로 다시 열 수 있습니다.</div></div>
           </div>

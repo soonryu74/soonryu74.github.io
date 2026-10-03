@@ -25,6 +25,8 @@ import HotspotView from "./components/HotspotView";
 import ChronicleView from "./components/ChronicleView";
 import KpiView from "./components/KpiView";
 import SourcesView from "./components/SourcesView";
+import RadarAbout from "./components/equity/RadarAbout";
+import IndInfo from "./components/equity/IndInfo";
 import FeedbackView from "./components/FeedbackView";
 import Home from "./components/Home";
 import ExportButtons from "./components/ExportButtons";
@@ -47,7 +49,7 @@ function readHash() {
     scope: ["sidoAll", "sido", "nation"].includes(h.get("scope")) ? h.get("scope") : (RBY.get(sgg0)?.l === "sgg" ? "nation" : "sido"),
     // 주소에 아무 상태가 없으면(처음 방문) 메인 화면, view=home 도 메인 화면
     view: !window.location.hash.replace(/^#/, "") || h.get("view") === "home" ? "home"
-      : ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback"].includes(h.get("view")) ? h.get("view") : "analysis",
+      : ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback", "radar"].includes(h.get("view")) ? h.get("view") : "analysis",
     ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
@@ -214,11 +216,12 @@ export default function App() {
             <button type="button" className="title title-home" title="처음 화면으로"
               onClick={() => { setView("home"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>지역 건강프로파일 대시보드</button>
             <div className="subtitle">지표 {INDICATORS.length}개 — 지역사회건강조사 {nSrc("chs")}<Cite k="chs" /> · 결과·환경 DB {nKdh}<Cite k="kdh" /> · 국가암검진 {nSrc("cancer")}<Cite k="cancer" /> · 일반검진 {INDICATORS.filter((i) => i.id.startsWith("CHK_")).length}<Cite k="nhis" /> · 건강수명 {nSrc("hle")}<Cite k="hle" /> · 박탈지수 {nSrc("dep")}<Cite k="dep" /> · 시도/시군구 · {DS.years[0]}–{DS.years[DS.years.length - 1]}
-              <span className="sub-note">건강수준 모니터링과 목표치 설정 지원 도구입니다. 보건소 사업 실적(투입·산출) 자료를 담고 있지 않아 사업 성과 평가 도구가 아닙니다.</span></div>
+              <span className="sub-note">지역 건강수준과 격차를 모니터링하고, 지역보건 검토 우선순위를 탐색할 수 있도록 지원합니다(건강수준 모니터링과 목표치 설정 지원 도구). 본 서비스는 보건소 사업의 투입·산출 자료를 포함하지 않으므로 사업 성과평가나 인과효과 판단에 사용할 수 없습니다.</span></div>
           </div>
           <div className="topright">
             <Search view={view} onGo={goSearch} />
             <button type="button" className="themebtn help-btn" onClick={() => setHelpOpen(true)} title="소개 영상 · 사용설명서 · 활용법 내려받기" aria-haspopup="dialog"><b>?</b> 도움말</button>
+            <button type="button" className={`themebtn en-btn ${view === "radar" ? "on" : ""}`} lang="en" onClick={() => { setView("radar"); window.scrollTo({ top: 0, behavior: "smooth" }); }} title="Health Equity Radar — English overview">EN</button>
             <div className="seg views">
               <button className={`seg-btn ${view === "home" ? "on" : ""}`} onClick={() => setView("home")}>홈</button>
               <button className={`seg-btn ${view === "analysis" ? "on" : ""}`} onClick={() => setView("analysis")}>지표 분석</button>
@@ -250,7 +253,7 @@ export default function App() {
           </div>
         )}
 
-        {!["home", "units", "ncd", "corr", "hot", "chronicle", "sources", "feedback"].includes(view) && <div className="controls">
+        {!["home", "units", "ncd", "corr", "hot", "chronicle", "sources", "feedback", "radar"].includes(view) && <div className="controls">
           {view !== "profile" && view !== "kpi" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); setScope((sc) => (sc === "sidoAll" ? sc : "sido")); }} onSgg={(c) => { setSgg(c); if (c) setScope((sc) => (sc === "sidoAll" ? "nation" : sc)); }} />}
           {view !== "compare" && view !== "kpi" && (
@@ -286,6 +289,8 @@ export default function App() {
         {view === "home" ? (
           <Home sel={sel} setTip={setTip} onGoCard={goSearch}
             onGo={({ view: v, ind: i, code, scope: sc }) => { if (i) setInd(i); if (code) selectRegion(code); if (sc) setScope(sc); setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+        ) : view === "radar" ? (
+          <RadarAbout sel={sel} onGo={(v) => { setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "feedback" ? (
           <FeedbackView currentUrl={feedbackFrom} />
         ) : view === "sources" ? (
@@ -304,7 +309,7 @@ export default function App() {
           <NcdView filterInd={ncdInd} onClearInd={() => setNcdInd(null)} sidoFull={RBY.get(sido)?.n} initQ={ncdQ}
             onPickInd={(i) => { if (i) { setInd(i); setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); } }} />
         ) : view === "compare" ? (
-          <Compare ind={ind} item={item} year={year} codes={cmp} onCodes={setCmp} onYear={(y) => setYearSel(y)} sel={sel}
+          <Compare ind={ind} item={item} year={year} codes={cmp} onCodes={setCmp} onYear={(y) => setYearSel(y)} sel={sel} onRegionProfile={(c) => { selectRegion(c); setView("profile"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
             onPick={(i, y) => { setInd(i); setYearSel(y); window.scrollTo({ top: 0, behavior: "smooth" }); }} setTip={setTip} />
         ) : view === "analysis" ? (
           <>
@@ -330,7 +335,7 @@ export default function App() {
               </div>
 
               <div className="card">
-                <h3>{ind.name} 추이<Cite ind={ind} /></h3>
+                <h3>{ind.name} 추이<Cite ind={ind} /><IndInfo ind={ind} /></h3>
                 <ExportButtons name={`${ind.name}_추이_${label(sel)}`} />
                 <div className="desc">{years[0]}–{years[years.length - 1]} · {ind.src}</div>
                 {ind.note && <div className="desc indnote">⚠ {ind.note}</div>}
@@ -383,7 +388,7 @@ export default function App() {
             </div>
           </>
         ) : (
-          <Profile item={item} sel={sel} scope={scope} rankOpt={rankOpt} onRankOpt={setRankOpt} onPick={pickFromProfile} setTip={setTip}
+          <Profile item={item} sel={sel} scope={scope} rankOpt={rankOpt} onRankOpt={setRankOpt} onPick={pickFromProfile} onGoCard={goSearch} setTip={setTip}
             onRecommend={(name) => { setNcdInd(name); setView("ncd"); window.scrollTo({ top: 0, behavior: "smooth" }); }} onRegion={selectRegion} />
         )}
 
@@ -398,7 +403,7 @@ export default function App() {
             </div>
           </div>
         )}
-        <RefList collapsed={view === "home"} />
+        <RefList collapsed={view === "home" || view === "radar"} />
         <footer>
           자료원: 질병관리청 「지역사회건강조사」 — 통계청 KOSIS 공유서비스(openAPI), 수집일 {DS.generated}.
           {KDH_SOURCE && <> 사망률·감염병·의료이용·자원·인구·환경 지표: <a className="src" style={{ whiteSpace: "normal" }} href={KDH_SOURCE.url} target="_blank" rel="noreferrer">{KDH_SOURCE.name}</a>.</>}
