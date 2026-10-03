@@ -118,6 +118,9 @@ import DIR_RAW from "../../data/directions.json";
     ind.dirRefs = d.refs || [];
   }
 })();
+// 방향 문자열 메타데이터(Health Equity Radar): 기존 bad 는 그대로 두고 모든 지표에 direction 을 붙인다
+import { directionOf } from "./lib/equity/normalizeIndicator.js";
+for (const ind of RAW.indicators) ind.direction = directionOf(ind.bad);
 
 export const DS = RAW;
 export const YEARS_ALL = RAW.years;
