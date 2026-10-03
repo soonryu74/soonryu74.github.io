@@ -44,6 +44,9 @@ if (MIRROR / ".git").exists():
     # docs(방법론 md·설명서·활용법 pptx/pdf·소개 영상 mp4)도 함께 복사 → health-profile.kr/docs/... 로 열린다
     import shutil
     shutil.copytree(ROOT / "docs", MIRROR / "docs", dirs_exist_ok=True)
-    print(f"거울 배포: {MIRROR / 'index.html'} + docs/ {len(list((MIRROR / 'docs').iterdir()))}개")
+    # 영문 소개 바로가기 health-profile.kr/solve → #view=radar (Health Equity Radar)
+    if (ROOT / "solve").exists():
+        shutil.copytree(ROOT / "solve", MIRROR / "solve", dirs_exist_ok=True)
+    print(f"거울 배포: {MIRROR / 'index.html'} + docs/ {len(list((MIRROR / 'docs').iterdir()))}개 + solve/")
 else:
     print(f"거울 배포 생략: {MIRROR} 없음")

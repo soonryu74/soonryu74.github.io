@@ -1054,3 +1054,101 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
 .gd-howto { margin-top:8px; border:1px solid var(--border); border-radius:10px; padding:8px 12px; background:var(--surface-1); font-size:14px; line-height:1.5; color:var(--text-secondary); }
 .gd-howto-h { font-weight:700; color:var(--text-primary); margin-bottom:2px; }
 .gd-howto ul { margin:0; padding-left:18px; } .gd-howto li { margin:2px 0; }
+/* ── Health Equity Radar: 우선 검토 카드 ── */
+.eq-card { border-top:3px solid var(--series-1); }
+.eq-summary { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:space-between; margin:2px 0 6px; }
+.eq-sum-text { font-size:15px; line-height:1.9; }
+.eq-tier { display:inline-flex; align-items:center; gap:3px; font-size:13px; font-weight:700; border-radius:999px; padding:1px 8px; border:1px solid currentColor; white-space:nowrap; line-height:1.5; }
+.eq-t-priority.eq-tier, .eq-tier.eq-t-priority { color:var(--bad-text); background:color-mix(in srgb, var(--bad-text) 10%, transparent); }
+.eq-tier.eq-t-watch { color:#9a6a00; background:color-mix(in srgb, #c48f12 12%, transparent); }
+.eq-tier.eq-t-ok { color:var(--good-text); background:color-mix(in srgb, var(--good-text) 10%, transparent); }
+.eq-tier.eq-t-na { color:var(--muted); }
+:root[data-theme="dark"] .eq-tier.eq-t-watch { color:#e0b04a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .eq-tier.eq-t-watch { color:#e0b04a; } }
+.eq-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin:10px 0 6px; }
+.eq-item { border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--surface-1); min-width:0; display:flex; flex-direction:column; gap:8px; }
+.eq-item.eq-t-priority { border-left:4px solid var(--bad-text); }
+.eq-item.eq-t-watch { border-left:4px solid #c48f12; }
+.eq-head { display:flex; gap:8px; align-items:flex-start; }
+.eq-no { flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--series-1); color:#fff; font-weight:700; display:grid; place-items:center; font-size:14px; }
+.eq-title { flex:1 1 auto; min-width:0; }
+.eq-dom { font-size:12.5px; }
+.eq-name { font-size:16.5px; font-weight:700; line-height:1.3; word-break:keep-all; }
+.eq-facts { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:6px; margin:0; }
+.eq-facts > div { background:var(--surface-2, var(--band)); border-radius:8px; padding:6px 8px; min-width:0; }
+.eq-facts > div:last-child { grid-column:1 / -1; }
+.eq-facts dt { font-size:12.5px; color:var(--text-secondary); }
+.eq-facts dd { margin:0; display:flex; flex-direction:column; }
+.eq-facts dd b { font-size:15.5px; font-variant-numeric:tabular-nums; }
+.eq-facts dd small { font-size:12.5px; color:var(--muted); }
+.eq-sub { font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:3px; }
+.eq-why ul, .eq-res { margin:0; padding:0; list-style:none; font-size:13.5px; line-height:1.5; color:var(--text-secondary); }
+.eq-why li { display:flex; gap:6px; margin:2px 0; }
+.eq-ico { flex:0 0 16px; text-align:center; color:var(--series-1); font-weight:700; }
+.eq-res li { margin:3px 0; }
+.eq-res a, .eq-why a { color:var(--series-1); text-decoration:underline; text-underline-offset:2px; }
+.eq-lv { display:inline-block; font-size:11.5px; font-weight:700; border:1px solid var(--border); border-radius:6px; padding:0 5px; margin-right:5px; color:var(--text-secondary); }
+.eq-none { font-size:13.5px; color:var(--muted); }
+.eq-meta { font-size:12px; margin-top:3px; }
+.eq-btns { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+.eq-btns .themebtn { font-size:13px; padding:3px 8px; text-decoration:none; }
+.eq-btns .themebtn.is-off { opacity:.45; cursor:not-allowed; }
+.eq-more { margin-top:8px; }
+.eq-more summary { cursor:pointer; font-weight:600; font-size:14.5px; }
+.eq-method { font-size:13.5px; color:var(--text-secondary); line-height:1.55; padding-left:18px; }
+.eq-all td { vertical-align:middle; }
+.prof-limits { margin-top:10px; }
+.info-btn { border:none; background:none; color:var(--series-1); cursor:pointer; font-size:14px; padding:0 3px; line-height:1; vertical-align:baseline; }
+.info-btn:focus-visible, .eq-btns .themebtn:focus-visible { outline:2px solid var(--series-1); outline-offset:2px; }
+.info-pop .info-title { display:block; margin-bottom:4px; }
+.info-dl { display:grid; grid-template-columns:auto minmax(0, 1fr); gap:3px 10px; margin:0; font-size:13px; }
+.info-dl dt { color:var(--text-secondary); font-weight:600; white-space:nowrap; }
+.info-dl dd { margin:0; }
+.info-dl ul { margin:0; padding-left:16px; }
+@media (max-width: 1100px) { .eq-grid { grid-template-columns:minmax(0, 1fr); } .eq-facts { grid-template-columns:repeat(3, minmax(0, 1fr)); } .eq-facts > div:last-child { grid-column:auto; } }
+@media (max-width: 600px) { .eq-facts { grid-template-columns:repeat(2, minmax(0, 1fr)); } .eq-facts > div:last-child { grid-column:1 / -1; } }
+/* 홈 「내 지역 건강격차 빠르게 보기」 */
+.hc-eq { grid-column:1 / -1; }
+.home-radar { font-size:14.5px; color:var(--text-secondary); margin:4px 0 0; }
+.home-radar b { color:var(--series-1); }
+.heq { display:flex; flex-direction:column; gap:10px; }
+.heq-search { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; }
+.heq-label { font-weight:600; font-size:14px; }
+.heq-search input { flex:1 1 240px; min-width:0; max-width:420px; padding:7px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface-1); color:var(--text-primary); font-size:15px; }
+.heq-hits { flex-basis:100%; display:flex; flex-wrap:wrap; gap:5px; }
+.heq-cur { flex-basis:100%; font-size:14px; }
+.heq-cards { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; }
+.heq-mini { border:1px solid var(--border); border-radius:10px; padding:10px 12px; background:var(--surface-1); min-width:0; }
+.heq-k { font-size:13px; color:var(--text-secondary); font-weight:600; }
+.heq-v { font-size:16.5px; font-weight:700; margin:2px 0; word-break:keep-all; }
+.heq-s { font-size:13.5px; color:var(--text-secondary); line-height:1.5; }
+@media (max-width: 760px) { .heq-cards { grid-template-columns:minmax(0, 1fr); } }
+/* 핫스팟 복합 취약 신호 */
+.ehs-conds { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
+.poly.ehs-flag { stroke:var(--text-primary); stroke-width:1.6; }
+.ehs-lg-flag { background:transparent !important; border:2px solid var(--text-primary); }
+/* 비교 형평성 표 */
+.ceq td { vertical-align:top; }
+.ceq-gap { min-width:150px; }
+.ceq-bar { display:block; height:6px; border-radius:3px; background:var(--muted); margin:3px 0; }
+.ceq-bar.bad { background:var(--bad-text); } .ceq-bar.good { background:var(--good-text); }
+.ceq-top div { margin:2px 0; white-space:nowrap; }
+/* 영문 소개(Health Equity Radar) */
+.en-btn { font-weight:700; letter-spacing:.5px; }
+.radar-hero h2 { font-size:28px; margin:2px 0 8px; line-height:1.25; }
+.radar-kicker { font-size:14px; font-weight:700; color:var(--series-1); letter-spacing:.5px; text-transform:uppercase; }
+.radar-hero p { font-size:16px; line-height:1.6; max-width:880px; }
+.radar-stats { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:10px; margin:12px 0; }
+.radar-stats > div { border:1px solid var(--border); border-radius:10px; padding:10px 12px; background:var(--surface-1); display:flex; flex-direction:column; }
+.radar-stats b { font-size:26px; font-variant-numeric:tabular-nums; color:var(--text-primary); }
+.radar-stats span { font-size:13.5px; color:var(--text-secondary); }
+.radar-list { margin:0; padding-left:18px; font-size:15px; line-height:1.6; color:var(--text-secondary); }
+.radar-list code { font-size:13px; }
+.radar-flow { list-style:none; margin:4px 0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
+.radar-flow li { position:relative; flex:1 1 140px; border:1px solid var(--border); border-radius:10px; padding:8px 10px; background:var(--surface-1); display:flex; flex-direction:column; gap:2px; min-width:0; }
+.radar-flow li b { color:var(--series-1); }
+.radar-flow li span { font-size:13.5px; color:var(--text-secondary); }
+.radar-flow li i { position:absolute; right:-9px; top:50%; transform:translateY(-50%); font-style:normal; color:var(--muted); }
+.radar-demo { display:flex; flex-wrap:wrap; gap:8px; }
+.radar .card { margin-bottom:12px; }
+@media (max-width: 700px) { .radar-stats { grid-template-columns:repeat(2, minmax(0, 1fr)); } .radar-hero h2 { font-size:22px; } .radar-flow li i { display:none; } }
