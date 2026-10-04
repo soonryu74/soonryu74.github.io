@@ -174,7 +174,7 @@ S('title', true, null, async () => {
 }, 0.3);
 
 // ── 1. 홈 ──
-S('home', false, ['홈 — 카드 5장', '17개 시도 지도 · 258개 보건소 순위 · 취약인구 · 지자체 계획 수립 · 처음이세요?(소개 영상·설명서)'], async () => {
+S('home', false, ['홈 — 카드 6장', '17개 시도 지도 · 258개 보건소 순위 · 내 지역 건강격차 · 취약인구 · 지자체 계획 수립 · 처음이세요?'], async () => {
   await sleep(1200);
   await hover('.home .hc-map', { pause: 700 });
   await hover('.hc-help .help-links', { pause: 900 }).catch(() => {});
@@ -186,6 +186,13 @@ S('home-find', true, ['우리 보건소 찾기 — 「강릉」을 치면 258곳
   await scrollTo('.hc-find input', { offset: 200 });
   await type('.hc-find input', '강릉', { pause: 1600 });
 }, 1);
+S('home-eq', true, ['내 지역 건강격차 빠르게 보기 — 지역을 고르면 우선 검토 · 최근 개선 · 지역 간 격차가 큰 지표', '「우리 지역 Health Equity Profile 보기」로 프로파일 맨 위 우선 검토 카드로 이어집니다'], async () => {
+  await scrollTo('.hc-eq', { offset: 120 });
+  await type('#heq-q', '고흥', { pause: 900 });
+  await click('.heq-hits button', { pause: 1400 });
+  await hover('.heq-cards .heq-mini:nth-child(1)', { pause: 900 });
+  await hover('.heq-cards .heq-mini:nth-child(3)', { pause: 900 });
+}, 0.6);
 S('home-plan', false, ['지자체 계획 수립 카드 — 제9기 지역보건의료계획(2027~2030) 4단계가 메뉴로 이어집니다', '현황 분석 → 우선순위 → 목표치 → 사업 선정'], async () => {
   await scrollTo('.hc-steps', { offset: 220 });
   for (let i = 1; i <= 4; i++) await hover(`.hc-steps li:nth-child(${i}) button`, { pause: 650 });
@@ -316,6 +323,16 @@ S('pf-overview', true, ['지역 프로파일 — 종합 양호도 · 등급 배�
   await scrollBy(500, { pause: 1000 });
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' })); await sleep(700);
 }, 0.5);
+S('pf-equity', true, ['우리 지역 우선 검토 항목 — 진단이 아니라 「검토 순서」 · 등급 + 왜 우선인가 + 참고할 수 있는 예방·관리 자료', '격차 35% · 위치 25% · 추세 20% · 박탈 20%(내부 기술 점수) · 신뢰구간이 중앙값을 포함하면 우선 검토로 올리지 않음'], async () => {
+  await scrollTo('.eq-card', { offset: 70 });
+  await hover('.eq-item:nth-child(1) .eq-facts', { pause: 1200 });
+  await click('.eq-item:nth-child(1) .info-btn', { pause: 1900 });
+  await key('Escape', { pause: 400 });
+  await scrollTo('.eq-item:nth-child(1) .eq-why', { offset: 140 });
+  await sleep(1400);
+  await scrollTo('.eq-item:nth-child(1) .eq-act', { offset: 140 });
+  await hover('.eq-item:nth-child(1) .eq-btns', { pause: 1100 });
+}, 0.6);
 S('pf-weights', true, ['순위 산출 방식 ① 가중치 — 균등 → 모의 패널(AI 시뮬레이션, 검증용) → 직접 조정', '직접 조정을 누르면 영역 9개 슬라이더가 나타나고 순위·등급이 바로 바뀝니다'], async () => {
   await scrollTo('.card.rankset', { offset: 70 });
   await click('.rankset .seg-btn:has-text("모의 패널")', { pause: 1600 });
@@ -416,6 +433,12 @@ S('cmp', true, ['지역 비교 — 분석 화면의 「+ 비교에 추가」로 
   await click('table.cmptbl tbody tr:nth-child(3)', { pause: 1400 });
 }, 0.5);
 
+S('cmp-eq', false, ['형평성 요약 비교 — 담은 지역을 한 표로: 현재 수준 · 중앙값 대비 · 추세 · 상대순위 · 박탈 · 우선 검토 지표', '지역 이름을 누르면 그 지역 프로파일로'], async () => {
+  await scrollTo('table.ceq', { offset: 140 });
+  await hover('table.ceq tbody tr:nth-child(1) .ceq-gap', { pause: 1000 });
+  await hover('table.ceq tbody tr:nth-child(1) .ceq-top', { pause: 1300 });
+}, 0.5);
+
 // ── 7. 예방·관리 ──
 S('ncd', true, ['예방·관리 — WHO · WPRO · 국가 · 시도 계획 182개 항목, 영역별 묶음 · 목차 칩 · 검색', '「원문 열기 ↗」는 출처 원문을 새 창에서 엽니다'], async () => {
   await go('view=ncd&sido=009&sgg=00901');
@@ -450,6 +473,13 @@ S('hot', false, ['핫스팟 — Getis-Ord Gi* 공간 군집(90/95/99%) ↔ Mann-
   await click('.hot .ctrls .seg .seg-btn:has-text("공간 군집")', { pause: 1300 });
   await select('.hot .ctrls label.subchip:has-text("지표") select', 'DT_H_OBE_OBE', { pause: 1600 });
 }, 0.4);
+S('hot-multi', true, ['핫스팟 「복합 취약 신호」 — 여러 지표가 함께 불리한 쪽 상위 N%인 시군구를 겹쳐 봅니다', '고위험 판정이 아니라 신호 · 지표마다 최신 연도와 표본오차가 다릅니다'], async () => {
+  await click('.hot .ctrls .seg .seg-btn:has-text("복합 취약 신호")', { pause: 1600 });
+  await click('.ehs-conds .chip:has-text("비만율")', { pause: 1200 });
+  await select('.hot label.subchip:has-text("규칙") select', 'atleast', { pause: 1400 });
+  await scrollTo('.hot .mapwrap', { offset: 90 });
+  await hover('.hot .mapwrap path.ehs-flag', { pause: 1500 }).catch(() => {});
+}, 0.6);
 S('chron', false, ['연대기 전시관 — 3D 복도에서 연도별 사건 · 10대 뉴스 · 주제 칩 · ▶ 자동 관람'], async () => {
   await go('view=chronicle');
   await sleep(1200);
@@ -493,6 +523,12 @@ S('feedback', false, ['의견·문의 — 서버 없이 이메일 앱 · 내용 
   await hover('.feedback a:has-text("파워포인트 내려받기") >> nth=1', { pause: 900 }).catch(() => {});
   await click('details.method-docs summary', { pause: 1500 });
   await scrollBy(300, { pause: 800 });
+}, 0.5);
+S('radar', true, ['영문 소개 — 머리글 「EN」 또는 health-profile.kr/solve', '지표·지역·연도 수는 자료에서 자동 계산 · 한국 배포만 명시 · 진단·예측·인과 주장 없음'], async () => {
+  await go('view=home', { pause: 900 });
+  await click('.en-btn', { pause: 1600 });
+  await scrollBy(560, { pause: 1300 });
+  await scrollBy(700, { pause: 1300 });
 }, 0.5);
 S('share', true, ['공유 — 주소창의 해시가 곧 화면 상태입니다. 링크를 복사해 보내면 같은 지표·지역·연도·설정이 열립니다', 'health-profile.kr/#view=analysis&ind=…&sido=009&sgg=00901&year=2025'], async () => {
   await go(ANAL, { pause: 1200 });
@@ -542,7 +578,7 @@ async function run(mode) {
   }
   await cap(null); await chip(null);
   if (!DRY) {
-    await card('health-profile.kr', ['지역 건강프로파일 대시보드 · 사용설명서 68쪽 · 활용법 100쪽은 「의견·문의」 탭에서', 'khealth.profile@gmail.com'], '감사합니다');
+    await card('health-profile.kr', ['지역 건강프로파일 대시보드 · 사용설명서 75쪽 · 활용법 100쪽은 「의견·문의」 탭에서', 'khealth.profile@gmail.com'], '감사합니다');
     await sleep(3000);
   }
   const video = DRY ? null : await page.video();
