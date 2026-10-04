@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>MIT Solve Readiness — Health Equity Radar | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="MIT Solve Readiness — Health Equity Radar" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="MIT Solve Readiness — Health Equity Radar" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"MIT Solve Readiness — Health Equity Radar","url":"/health-dashboard/docs/MIT_SOLVE_READINESS.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=8f3d8afc868ae5e482c10973179bccb8fc8a98c4">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="mit-solve-readiness--health-equity-radar">MIT Solve Readiness — Health Equity Radar</h1>
+
+<ul>
+  <li>Date: 2026-10-04 · Build shown in the site footer (「빌드 …」) identifies the exact code version.</li>
+  <li>Principle: Trustworthiness &gt; Features · Evidence &gt; Marketing · Working prototype &gt; Future promises.</li>
+</ul>
+
+<h2 id="1-verified-facts">1. Verified Facts</h2>
+<p>Counted from the data files the app actually loads (<code class="language-plaintext highlighter-rouge">node scripts/qa/data_validation.mjs</code> → <a href="/health-dashboard/docs/DATA_VALIDATION.html">DATA_VALIDATION.md</a>):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Fact</th>
+      <th>Value</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Health indicators</td>
+      <td><strong>171</strong></td>
+      <td>41 Korea Community Health Survey (KCHS) + 130 administrative / derived</td>
+    </tr>
+    <tr>
+      <td>Survey units</td>
+      <td><strong>258</strong></td>
+      <td>KCHS units (one per public health centre area); only the 41 survey indicators exist at this level</td>
+    </tr>
+    <tr>
+      <td>Municipalities</td>
+      <td><strong>229</strong></td>
+      <td>si·gun·gu (226 local governments + 2 Jeju administrative cities + Sejong); level of the other 130 indicators</td>
+    </tr>
+    <tr>
+      <td>Provinces</td>
+      <td><strong>17</strong></td>
+      <td>all indicators</td>
+    </tr>
+    <tr>
+      <td>Years</td>
+      <td><strong>2008–2025</strong></td>
+      <td>KCHS 2008–2025; mortality 2008–2025; most administrative data to 2024; coverage differs by source</td>
+    </tr>
+    <tr>
+      <td>Sources</td>
+      <td>9</td>
+      <td>KCHS 41 · NHIS 33 · environment/safety 28 · population/socioeconomic 24 · cause-of-death 22 · infectious disease 12 · cancer screening 7 · healthy life expectancy (derived) 3 · deprivation (derived) 1</td>
+    </tr>
+    <tr>
+      <td>Source verification</td>
+      <td>52 with original table ID + URL; 115 with original producer named via a public research database; 4 derived in this project; 0 unverified</td>
+      <td>see <code class="language-plaintext highlighter-rouge">indicator_metadata.csv</code></td>
+    </tr>
+    <tr>
+      <td>Tests</td>
+      <td>12 unit tests pass (<code class="language-plaintext highlighter-rouge">cd app &amp;&amp; npm test</code>); browser checks pass at 390×844, 430×932, 768×1024, 1440×900</td>
+      <td><code class="language-plaintext highlighter-rouge">scripts/qa/equity_e2e.mjs</code>, <code class="language-plaintext highlighter-rouge">scripts/qa/solve_readiness_e2e.mjs</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="2-implemented-features-working-today">2. Implemented Features (working today)</h2>
+<ul>
+  <li>Indicator analysis for every indicator: map, ranking (with 95% confidence intervals for survey indicators), trend, year table, gap box plot, 10-year trend.</li>
+  <li>Regional profile with <strong>Health Equity Priority</strong> card: ① PRIORITY (up to three indicators, one per domain) → ② WHY IT MATTERS (computed reasons: gap from national median, relative position, 5-year trend, deprivation quintile, confidence-interval check) → ③ POSSIBLE ACTION (linked official guidance: Korean national/provincial plans, WHO, NICE, CPSTF). Switchable to English (<code class="language-plaintext highlighter-rouge">en=1</code>).</li>
+  <li>“How priorities are identified” methodology link (in the card and in the English overview).</li>
+  <li>Combined-vulnerability signals map (hotspot screen), equity summary in region comparison, peer-group comparison.</li>
+  <li>Sources tab with per-source cards, update dates, limitations, external-review record (0 published, requests in progress).</li>
+  <li>1-minute usability feedback form (“Give Feedback” / 「사용 의견 보내기」) — builds text for copy/email; no data collected by the site.</li>
+  <li>English landing page <code class="language-plaintext highlighter-rouge">/solve</code> (static, 18 KB, real screenshots, OpenGraph/JSON-LD metadata) and in-app English overview.</li>
+</ul>
+
+<h2 id="3-claims-we-can-safely-make">3. Claims We Can Safely Make</h2>
+<ul>
+  <li>“A working prototype, deployed at health-profile.kr, covering the Republic of Korea.”</li>
+  <li>“171 indicators from official Korean sources: 41 Community Health Survey indicators across 258 survey units and 130 administrative indicators across 229 municipalities, 2008–2025.” (Always state the two levels separately.)</li>
+  <li>“For a selected community it flags up to three indicators to review first, explains why using computed facts, and links official guidance.”</li>
+  <li>“Survey uncertainty is built in: an indicator is not flagged ‘Review first’ if its 95% confidence interval includes the national median or its relative standard error exceeds 20%.”</li>
+  <li>“The prioritization logic is a small, unit-tested set of pure functions separated from the Korean data.” (Structure only — no deployment elsewhere.)</li>
+  <li>“Sources, update dates and limitations are disclosed in the product.”</li>
+  <li>“External review requests have been sent; no reviews have been published yet.”</li>
+</ul>
+
+<h2 id="4-claims-we-must-not-make">4. Claims We Must NOT Make</h2>
+<ul>
+  <li>AI predicts disease / predictive analytics / forecasting — not built.</li>
+  <li>AI recommends policy / optimizes health budgets — possible actions are links to official documents, not generated advice.</li>
+  <li>Real-time surveillance — data are annual statistics.</li>
+  <li>Causal inference / programme impact — no programme input/output data; deprivation is shown side by side only.</li>
+  <li>User numbers, “proven impact”, adoption by health centres — no user testing yet.</li>
+  <li>Government partnership, “KDCA official project”, WHO partnership, MIT affiliation — none exist.</li>
+  <li>“258 areas” for all indicators, or multiplying indicators × areas — wrong unit mixing.</li>
+  <li>Healthy life expectancy or the deprivation index as official statistics — they are approximations computed here.</li>
+</ul>
+
+<h2 id="5-data-validation-results">5. Data Validation Results</h2>
+<p>See <a href="/health-dashboard/docs/DATA_VALIDATION.html">DATA_VALIDATION.md</a>. Summary: regions 17 / 229 / 258 (dataset holds 233 municipality records; 4 are abolished or duplicate codes — Cheongwon-gun, Yeongi-gun, Gunwi-gun old code, a Sejong sub-record). Latest-year gaps are mostly structural (values stored at district level for multi-district cities, Sejong at province code). Ten administrative indicators have recent years with province values only; their municipality comparisons end earlier.</p>
+
+<p>Errors found and fixed in this round:</p>
+<ol>
+  <li>English overview showed “171 indicators” next to “258 local health jurisdictions” — misleading; now split by level with definitions.</li>
+  <li>Home sub-title “171 indicators × 258 areas” — removed the multiplication.</li>
+  <li><code class="language-plaintext highlighter-rouge">/solve</code> was an instant redirect (crawlers saw almost nothing) — now a standalone English landing page.</li>
+  <li>health-profile.kr requested <code class="language-plaintext highlighter-rouge">/assets/credit.js</code>, which exists only on the personal site → 404 console error on every load; removed (the app renders its own credit line).</li>
+  <li>430 px phones: 16 px horizontal overflow on the indicator screen (year slider) — fixed.</li>
+  <li>Muted text colour in light mode had 3.4:1 contrast (below WCAG AA 4.5:1) — darkened to 5.1:1; dark mode unchanged (5.4:1). <code class="language-plaintext highlighter-rouge">/solve</code> text colours are 5.4–16.8:1.</li>
+</ol>
+
+<h2 id="6-known-limitations">6. Known Limitations</h2>
+<ul>
+  <li>Interface is Korean except <code class="language-plaintext highlighter-rouge">/solve</code>, the English overview and the Health Equity Priority card; indicator English names are unofficial working translations (40 survey indicators).</li>
+  <li>Survey sampling error; neighbouring ranks may not differ meaningfully.</li>
+  <li>No programme input/output data → no performance or effect evaluation.</li>
+  <li>115 administrative indicators came via a research database (original producers named; original table IDs not stored). Mortality 2018–2025 re-checked against Statistics Korea.</li>
+  <li>Prevention knowledge base collected/summarized with AI assistance (2026-09-07); originals linked.</li>
+  <li>Single 10.5 MB HTML (2.4 MB gzip) — see <a href="/health-dashboard/docs/PERFORMANCE_PLAN.html">PERFORMANCE_PLAN.md</a>.</li>
+  <li>12 px-or-smaller text remains in some dense tables/footnotes (about 3% of text elements on the profile screen).</li>
+  <li>One developer; no user testing yet.</li>
+</ul>
+
+<h2 id="7-next-validation-steps">7. Next Validation Steps</h2>
+<ol>
+  <li>Practitioner testing (5–8 local public-health staff): find one priority for their area and explain it; record time and errors.</li>
+  <li>Usability testing on mobile and desktop using the in-app feedback form.</li>
+  <li>Decision-usefulness: compare the tool’s priorities with practitioners’ own judgement for their area.</li>
+  <li>Publish independent methodological reviews (with consent) on the Sources tab.</li>
+  <li>Performance step 1–2 of the plan on a separate branch.</li>
+</ol>
+
+<h2 id="8-urls">8. URLs</h2>
+<ul>
+  <li>Main product: https://health-profile.kr/ (mirror: https://soonryu74.github.io/health-dashboard/)</li>
+  <li>Health Equity Radar (English priority card): https://health-profile.kr/#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1</li>
+  <li>English overview in the app: https://health-profile.kr/#view=radar</li>
+  <li>Solve landing page: https://health-profile.kr/solve/</li>
+  <li>Data validation: https://health-profile.kr/docs/DATA_VALIDATION.md</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

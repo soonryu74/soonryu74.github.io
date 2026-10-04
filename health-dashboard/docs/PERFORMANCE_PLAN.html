@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Performance Plan — index.html 크기 분석과 개선안 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Performance Plan — index.html 크기 분석과 개선안" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Performance Plan — index.html 크기 분석과 개선안" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Performance Plan — index.html 크기 분석과 개선안","url":"/health-dashboard/docs/PERFORMANCE_PLAN.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=8f3d8afc868ae5e482c10973179bccb8fc8a98c4">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="performance-plan--indexhtml-크기-분석과-개선안">Performance Plan — index.html 크기 분석과 개선안</h1>
+
+<ul>
+  <li>기준일: 2026-10-04 · 이번 작업에서는 <strong>구조를 바꾸지 않았다</strong>(기존 기능을 깨뜨릴 위험). 분석과 단계안만 기록한다.</li>
+</ul>
+
+<h2 id="1-현재-상태실측">1. 현재 상태(실측)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>항목</th>
+      <th>값</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>index.html 원본</td>
+      <td>10.5MB (10,497,127 bytes)</td>
+    </tr>
+    <tr>
+      <td>실제 전송량(gzip, GitHub Pages 자동 압축)</td>
+      <td><strong>약 2.42MB</strong> — health-profile.kr·GitHub Pages 모두 <code class="language-plaintext highlighter-rouge">content-encoding: gzip</code></td>
+    </tr>
+    <tr>
+      <td>다운로드 시간(이 서버에서 1회 측정)</td>
+      <td>0.75~1.4초 — 모바일 회선에서는 더 길다</td>
+    </tr>
+    <tr>
+      <td>JS(인라인)</td>
+      <td>10.41MB — React 앱 + <strong>JSON 데이터 인라인</strong></td>
+    </tr>
+    <tr>
+      <td>CSS(인라인)</td>
+      <td>86KB</td>
+    </tr>
+    <tr>
+      <td>base64 이미지</td>
+      <td>1개(소개 영상 포스터 JPEG, 약 36KB)</td>
+    </tr>
+    <tr>
+      <td>/solve 랜딩</td>
+      <td>HTML 18KB + 캡처 이미지 4장(지연 로딩) — 앱 데이터 없음</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="2-원인--데이터가-html-안에-들어-있다">2. 원인 — 데이터가 HTML 안에 들어 있다</h2>
+
+<p>vite-plugin-singlefile 로 앱과 데이터를 한 파일에 합친다(설계 의도: 파일로 열어도 동작, 어디든 배포). 큰 데이터:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>파일</th>
+      <th>크기</th>
+      <th>쓰는 곳</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>data/kdh_dataset.json</td>
+      <td>4.08MB</td>
+      <td>시군구 단위 지표 115개(모든 화면)</td>
+    </tr>
+    <tr>
+      <td>data/dataset.json</td>
+      <td>2.93MB</td>
+      <td>지역사회건강조사 41개(조율·표준화율·표준오차 4행렬)</td>
+    </tr>
+    <tr>
+      <td>data/units.json</td>
+      <td>0.79MB</td>
+      <td>조사 단위 탭</td>
+    </tr>
+    <tr>
+      <td>지도 TopoJSON(시군구·시도)</td>
+      <td>0.77MB</td>
+      <td>지도</td>
+    </tr>
+    <tr>
+      <td>data/chs_publications.json</td>
+      <td>0.47MB</td>
+      <td>자료원 탭 발간물 목록</td>
+    </tr>
+    <tr>
+      <td>data/ncd.json</td>
+      <td>0.37MB</td>
+      <td>예방·관리 탭·우선 검토 카드</td>
+    </tr>
+    <tr>
+      <td>data/khepi_kpi_1116.json</td>
+      <td>0.33MB</td>
+      <td>성과지표 탭</td>
+    </tr>
+    <tr>
+      <td>그 밖(hle·risk·cancer·mort·checkup·evidence 등)</td>
+      <td>약 1.3MB</td>
+      <td>여러 화면</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>중복: dataset.json 의 표준오차 행렬(cse·sse)이 값 행렬만큼 크다. 사망률은 kdh_dataset.json 과 mort_kosis.json 에 겹치는 연도가 있다(원천 우선 병합).</p>
+
+<h2 id="3-개선-단계안위험-낮은-순">3. 개선 단계안(위험 낮은 순)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>단계</th>
+      <th>내용</th>
+      <th>예상 효과</th>
+      <th>위험</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>탭 전용 데이터(units·chs_publications·khepi_kpi_1116·chronicle)를 <code class="language-plaintext highlighter-rouge">fetch()</code> 지연 로드로 분리</td>
+      <td>원본 −1.6MB</td>
+      <td>파일로 열기(file://)에서 그 탭만 안 열림 → 안내 문구 필요</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>지도 TopoJSON 을 별도 파일로</td>
+      <td>−0.77MB</td>
+      <td>지도 첫 표시가 조금 늦어짐</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>dataset·kdh 를 별도 JSON 으로 두고 첫 화면은 홈 대표 지표 4개만 먼저</td>
+      <td>첫 화면 전송량 대폭 감소</td>
+      <td>모든 화면이 비동기 로드로 바뀜 — 가장 큰 변경</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>표준오차 행렬을 표준화율만 남기거나 정수 압축</td>
+      <td>−0.7MB</td>
+      <td>조율 신뢰구간 표시 영향</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>권장: 국제 심사 전에는 <strong>바꾸지 않는다</strong>(지금 gzip 2.4MB, 동작 검증 완료). 심사위원 첫 화면은 가벼운 <code class="language-plaintext highlighter-rouge">/solve</code>(18KB)이고, 거기서 앱으로 들어간다. 이후 1·2단계부터 별도 브랜치에서 진행하고 equity_e2e·solve_readiness_e2e 로 회귀 확인.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

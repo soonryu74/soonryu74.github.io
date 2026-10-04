@@ -5,7 +5,7 @@
   --surface-1:     #fcfcfb;
   --text-primary:  #0b0b0b;
   --text-secondary:#52514e;
-  --muted:         #898781;
+  --muted:         #6b6a65;   /* 2026-10-04 대비 3.4→5.1:1 (WCAG AA). 다크 모드는 아래에서 #898781 유지 */
   --grid:          #e1e0d9;
   --baseline:      #c3c2b7;
   --border:        rgba(11,11,11,0.10);
@@ -53,9 +53,10 @@ header.top { display:flex; align-items:baseline; justify-content:space-between; 
 .controls label { font-size:14px; color:var(--muted); display:block; margin-bottom:3px; }
 .ctrl { background:var(--surface-1); border:1px solid var(--border); border-radius:10px; padding:8px 10px; }
 select { border:none; background:transparent; color:var(--text-primary); font-size:16px; font-weight:600; outline:none; max-width:180px; }
-.yearctrl { flex:1 1 220px; min-width:200px; }
+.yearctrl { flex:1 1 220px; min-width:min(200px, 100%); }
+.yearval { white-space:nowrap; }
 .yearrow { display:flex; align-items:center; gap:10px; }
-input[type=range]{ flex:1; accent-color: var(--series-1); }
+input[type=range]{ flex:1; min-width:0; accent-color: var(--series-1); }
 .yearval { font-weight:700; font-size:16px; font-variant-numeric: tabular-nums; }
 @media (max-width: 480px){
   .controls { align-items: stretch; }
@@ -1144,7 +1145,9 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
 .radar-hero h2 { font-size:28px; margin:2px 0 8px; line-height:1.25; }
 .radar-kicker { font-size:14px; font-weight:700; color:var(--series-1); letter-spacing:.5px; text-transform:uppercase; }
 .radar-hero p { font-size:16px; line-height:1.6; max-width:880px; }
-.radar-stats { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:10px; margin:12px 0; }
+.radar-stats { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:10px; margin:12px 0; }
+.radar-stats small { font-size:12.5px; color:var(--muted); margin-top:2px; }
+.radar-note { font-size:13.5px; }
 .radar-stats > div { border:1px solid var(--border); border-radius:10px; padding:10px 12px; background:var(--surface-1); display:flex; flex-direction:column; }
 .radar-stats b { font-size:26px; font-variant-numeric:tabular-nums; color:var(--text-primary); }
 .radar-stats span { font-size:13.5px; color:var(--text-secondary); }
@@ -1194,3 +1197,26 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
 .rev-foot .linkbtn { all:unset; cursor:pointer; color:var(--series-1); font-weight:600; text-decoration:underline; text-underline-offset:3px; }
 @media (max-width: 600px) { .rev-grid, .rev-scope-pick { grid-template-columns:1fr; } .rev-scope-tbl td:first-child { white-space:normal; } }
 @media print { .rev-foot, .rev-btns, .rev-form { display:none !important; } }
+/* 우선 검토 카드: 머리 도구(방법 링크·언어·사용 의견) · 3단계 표시 · 사용 의견 설문 */
+.eq-titlebar { display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:6px 12px; }
+.eq-titlebar h3 { margin-bottom:4px; }
+.eq-tools { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; }
+.eq-method-link { font-size:14px; color:var(--series-1); text-decoration:underline; text-underline-offset:3px; background:none; border:0; cursor:pointer; padding:2px 0; }
+.eq-lang .seg-btn { padding:3px 9px; font-size:13.5px; }
+.uf-btn { font-size:13.5px; padding:4px 9px; }
+.eq-step { margin:10px 0 6px; font-size:14.5px; }
+.eq-step b { color:var(--text-primary); letter-spacing:.01em; }
+.eq-actnote { font-size:13px; margin:2px 0 6px; }
+.eq-ko { font-size:12.5px; }
+.uf-box { width:min(620px, 100%); }
+.uf-row { display:flex; flex-direction:column; gap:4px; margin:8px 0; font-size:14.5px; }
+.uf-row select, .uf-row textarea { font:inherit; font-size:14.5px; padding:6px 8px; border:1px solid var(--border); border-radius:6px; background:var(--surface-1); color:var(--text-primary); }
+.uf-q { border:1px solid var(--border); border-radius:8px; margin:8px 0; padding:8px 10px; }
+.uf-q legend { font-size:14.5px; padding:0 4px; color:var(--text-primary); }
+.uf-scale { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:4px; }
+.uf-opt { display:flex; align-items:center; gap:4px; font-size:13px; border:1px solid var(--border); border-radius:6px; padding:5px 6px; cursor:pointer; color:var(--text-secondary); }
+.uf-opt.on { border-color:var(--series-1); color:var(--text-primary); background:var(--band); }
+.uf-opt input { margin:0; }
+.uf-preview { max-height:160px; }
+.radar-cta { margin:8px 0 4px; align-items:center; }
+@media (max-width: 600px) { .uf-scale { grid-template-columns:1fr; } .eq-tools { width:100%; } }

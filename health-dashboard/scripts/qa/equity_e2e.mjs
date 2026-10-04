@@ -109,8 +109,9 @@ for (const [code, sido, name] of [["00901", "009", "강릉시"], [null, "001", "
   await go(pg, "view=radar", 1500);
   const t = await pg.locator(".radar-stats").innerText();
   check(/171/.test(t) && /258/.test(t) && /2008–2025/.test(t), `영문 페이지 수치: ${t.replace(/\s+/g, " ")}`);
-  await pg.goto(`${BASE}/solve/index.html`, { waitUntil: "load" }); await pg.waitForURL(/#view=radar/, { timeout: 10000 }).catch(() => {}); await pg.waitForTimeout(3000);
-  check(await pg.evaluate(() => location.hash.includes("view=radar") && !!document.querySelector(".radar")), "solve/ → #view=radar");
+  // 2026-10-04: /solve 는 리다이렉트가 아니라 독립 영문 랜딩(scripts/build_solve.py) — 앱으로 들어가는 링크를 확인
+  await pg.goto(`${BASE}/solve/index.html`, { waitUntil: "load" }); await pg.waitForTimeout(500);
+  check(/From local health data to local action/.test(await pg.locator("h1").innerText()) && (await pg.locator('a[href*="en=1"]').count()) > 0, "solve/ 영문 랜딩 · Live Radar 링크");
   await pg.close();
 }
 

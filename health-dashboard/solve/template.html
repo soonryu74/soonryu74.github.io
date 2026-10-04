@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health Equity Radar | Local Health Data to Action</title>
+<meta name="description" content="A working prototype that transforms official Korean local health data into health equity priorities, interpretation, and evidence-informed public-health action.">
+<link rel="canonical" href="https://health-profile.kr/solve/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Health Equity Radar">
+<meta property="og:title" content="Health Equity Radar | Local Health Data to Action">
+<meta property="og:description" content="A working prototype that transforms official Korean local health data into health equity priorities, interpretation, and evidence-informed public-health action.">
+<meta property="og:url" content="https://health-profile.kr/solve/">
+<meta property="og:image" content="https://health-profile.kr/solve/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Screenshot of the Health Equity Priority card for Gangneung-si, showing three indicators flagged for review with local value, national median, relative position and trend.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Health Equity Radar | Local Health Data to Action">
+<meta name="twitter:description" content="A working prototype that transforms official Korean local health data into health equity priorities, interpretation, and evidence-informed public-health action.">
+<meta name="twitter:image" content="https://health-profile.kr/solve/og.jpg">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Crect%20width=%2264%22%20height=%2264%22%20rx=%2214%22%20fill=%22%232a78d6%22/%3E%3Crect%20x=%2212%22%20y=%2234%22%20width=%2210%22%20height=%2218%22%20rx=%222%22%20fill=%22%23fff%22/%3E%3Crect%20x=%2227%22%20y=%2222%22%20width=%2210%22%20height=%2230%22%20rx=%222%22%20fill=%22%23fff%22/%3E%3Crect%20x=%2242%22%20y=%2212%22%20width=%2210%22%20height=%2240%22%20rx=%222%22%20fill=%22%23fff%22/%3E%3C/svg%3E">
+<script type="application/ld+json">{{JSONLD}}</script>
+<style>
+:root{--bg:#fbfbf9;--surface:#ffffff;--text:#1a1a18;--text2:#4a4a45;--muted:#62625c;--border:#dcdcd5;--accent:#1f66c1;--accent-bg:#e8f0fb;--warn:#a3321f;--ok:#2d6a3a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121211;--surface:#1b1b1a;--text:#f3f3ef;--text2:#cfcfc6;--muted:#a9a99f;--border:#38382f;--accent:#7fb2f0;--accent-bg:#1a2a40;--warn:#f08a75;--ok:#8cd29a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans KR",sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.hero{padding:44px 0 28px;border-bottom:1px solid var(--border)}
+.kicker{font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(30px,6vw,46px);line-height:1.12;margin:6px 0 10px}
+.lead{font-size:clamp(17px,2.4vw,20px);color:var(--text2);max-width:46em;margin:0 0 18px}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{display:inline-block;padding:11px 18px;border-radius:10px;font-weight:600;text-decoration:none;border:1px solid var(--accent)}
+.btn.primary{background:var(--accent);color:#fff}
+@media (prefers-color-scheme:dark){.btn.primary{color:#0e1a2b}}
+.btn.ghost{color:var(--accent);background:transparent}
+.stage{display:inline-block;margin-top:14px;font-size:14px;color:var(--text2);border:1px solid var(--border);border-radius:999px;padding:4px 12px;background:var(--surface)}
+section{padding:34px 0;border-bottom:1px solid var(--border)}
+h2{font-size:clamp(22px,3.6vw,28px);margin:0 0 12px}
+h3{font-size:18px;margin:0 0 6px}
+p{margin:0 0 12px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.flow{list-style:none;padding:0;margin:0;counter-reset:s}
+.flow li{position:relative}
+.flow .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-weight:700;margin-bottom:6px}
+.flow .lbl{font-weight:700;letter-spacing:.03em}
+.arrow{position:absolute;right:-14px;top:22px;color:var(--muted);font-size:20px}
+.stats .card b{display:block;font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stats .card span{font-weight:600}
+.stats .card small{display:block;color:var(--muted);font-size:13.5px;margin-top:4px}
+figure{margin:0}
+figure img{width:100%;height:auto;border:1px solid var(--border);border-radius:10px;display:block;background:#fff}
+figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;border-bottom:1px solid var(--border);padding:8px 6px;vertical-align:top}
+th{font-weight:600;color:var(--text2)}
+ul.clean{margin:0;padding-left:20px}
+ul.clean li{margin:4px 0}
+.no{color:var(--warn);font-weight:600}
+footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
+@media (max-width:860px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:1fr}.arrow{display:none}}
+@media (max-width:520px){.g4,.g2{grid-template-columns:1fr}.btn{width:100%;text-align:center}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Health Equity Radar</div>
+    <h1>From local health data to local action.</h1>
+    <p class="lead">Health Equity Radar helps local public-health practitioners identify geographic health disparities, understand why they matter, and explore evidence-informed actions using official Korean health data.</p>
+    <div class="ctas">
+      <a class="btn primary" href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Explore the Live Radar →</a>
+      <a class="btn ghost" href="../#view=radar">English overview in the app</a>
+    </div>
+    <div class="stage">Current stage: <b>Working prototype</b> · deployed in the Republic of Korea only · data verified {{VERIFIED}}</div>
+  </div>
+</header>
+
+<main>
+<section id="problem">
+  <div class="wrap">
+    <h2>The problem</h2>
+    <p>In Korea, the health data a local public-health team needs for one area are published by different agencies in different systems: the Korea Community Health Survey (Korea Disease Control and Prevention Agency), cause-of-death statistics (Statistics Korea), and health-screening and insurance statistics (National Health Insurance Service). Each has its own tables, years and geographic units — the survey is reported for {{N_HC}} survey units, most administrative statistics for {{N_SGG}} municipalities.</p>
+    <p>Local governments prepare four-year local health plans; preparation of the next cycle (2027–2030) begins in the second half of 2026. Comparing an area across these sources means opening several systems, reconciling units and years, and judging whether a difference is larger than survey uncertainty.</p>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <ol class="flow grid g4" aria-label="Four-step workflow">
+      <li class="card"><span class="num">1</span><div class="lbl">DATA</div><p class="small">Official public-health data, {{N_IND}} indicators, {{Y0}}–{{Y1}}, with sources and update dates.</p><span class="arrow" aria-hidden="true">→</span></li>
+      <li class="card"><span class="num">2</span><div class="lbl">PRIORITY</div><p class="small">Identify health disparities: gap from the national median, relative position, recent trend and area deprivation.</p><span class="arrow" aria-hidden="true">→</span></li>
+      <li class="card"><span class="num">3</span><div class="lbl">INTERPRET</div><p class="small">Understand why they matter: plain-language reasons computed from the data, with 95% confidence intervals.</p><span class="arrow" aria-hidden="true">→</span></li>
+      <li class="card"><span class="num">4</span><div class="lbl">ACTION</div><p class="small">Explore possible public-health responses: linked official guidance (Korean national and provincial plans, WHO, NICE, CPSTF).</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <h2>Live product</h2>
+    <p>Real screenshots of the running site (not mock-ups). The Health Equity Priority card can be switched to English; the other screens are in Korean.</p>
+    <figure class="card">
+      <img src="img/priority_en.jpg" width="1180" height="1000" loading="lazy" alt="Health Equity Priority card for Gangneung-si in English mode: summary of 40 survey indicators by tier, three indicators flagged ‘Review first’ with local value, national median, relative position, recent trend and socioeconomic context, followed by ‘Why it matters’ reasons.">
+      <figcaption>Priority → Why it matters → Possible action, for one municipality (Gangneung-si). Values are 3-year averages; the confidence-interval check is shown in the reasons.</figcaption>
+    </figure>
+    <div class="grid g2" style="margin-top:12px">
+      <figure class="card"><img src="img/map_ko.jpg" width="1180" height="806" loading="lazy" alt="Choropleth map of self-reported obesity rate in 2025 across Korean municipalities, seven quantile classes, darker red means higher (worse)."><figcaption>Indicator map (Korean screen): obesity rate, 2025, municipalities in seven classes.</figcaption></figure>
+      <figure class="card"><img src="img/hotspot_ko.jpg" width="584" height="496" loading="lazy" alt="Map of combined-vulnerability signals: municipalities colored by how many selected unfavourable conditions they meet, six areas meeting all three outlined."><figcaption>Combined-vulnerability signals (Korean screen): areas meeting several unfavourable conditions at once.</figcaption></figure>
+    </div>
+    <p style="margin-top:14px"><a class="btn primary" href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Try the Live Health Equity Radar →</a></p>
+  </div>
+</section>
+
+<section id="numbers">
+  <div class="wrap">
+    <h2>What is in the data</h2>
+    <p class="small muted">Counted directly from the data files the app loads (<a href="../docs/DATA_VALIDATION.md">data validation</a>, {{VERIFIED}}). Numbers at different geographic levels are not added or multiplied.</p>
+    <div class="grid g4 stats">
+      <div class="card"><b>{{N_IND}}</b><span>health indicators</span><small>{{N_SURVEY}} survey + {{N_ADMIN}} administrative / derived</small></div>
+      <div class="card"><b>{{N_HC}}</b><span>survey units</span><small>Community Health Survey areas (one per public health centre area) — for the {{N_SURVEY}} survey indicators</small></div>
+      <div class="card"><b>{{N_SGG}}</b><span>municipalities</span><small>si·gun·gu — for the other {{N_ADMIN}} indicators</small></div>
+      <div class="card"><b>{{Y0}}–{{Y1}}</b><span>years of data</span><small>{{N_YEARS}} years; coverage differs by source</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="data">
+  <div class="wrap">
+    <h2>Evidence &amp; data sources</h2>
+    <table>
+      <thead><tr><th scope="col">Source</th><th scope="col">Role in the tool</th><th scope="col">Indicators</th></tr></thead>
+      <tbody>{{SOURCE_ROWS}}</tbody>
+    </table>
+    <p class="small muted" style="margin-top:8px">Most administrative indicators were obtained from their original producers via a public research database (Kim D. et al., v1.7, KDCA archive); mortality 2018–2025 was re-checked against Statistics Korea tables. Linked guidance: Korean national and provincial health plans, WHO, NICE (UK) and the US Community Preventive Services Task Force. Per-indicator metadata: <a href="../docs/indicator_metadata.csv">indicator_metadata.csv</a>.</p>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <h2>How priorities are identified</h2>
+    <p>For each indicator the tool combines four components scored 0–1 and averages those available (missing parts are dropped and weights renormalized, never set to zero):</p>
+    <ul class="clean">
+      <li><b>Gap</b> (35%) — direction-aware relative difference from the national median.</li>
+      <li><b>Relative position</b> (25%) — share of comparable areas with a better value.</li>
+      <li><b>Recent trend</b> (20%) — 5-year slope, by tertile of the comparison group.</li>
+      <li><b>Socioeconomic context</b> (20%) — area deprivation quintile (shown side by side, never as a cause).</li>
+    </ul>
+    <p>“Review first” additionally requires the lower 25%, a score ≥ 0.55, a 95% confidence interval that excludes the national median, and a relative standard error ≤ 20%. Only tiers are shown, not scores. No prediction models, z-scores or causal inference are used.</p>
+  </div>
+</section>
+
+<section id="different">
+  <div class="wrap">
+    <h2>What makes it different</h2>
+    <p>Not “more data”. Statistical dashboards show values; this prototype connects them into one decision-support workflow — <b>Data → Priority → Interpretation → Action</b> — for a single community, and shows its uncertainty and limits on the same screen:</p>
+    <ul class="clean">
+      <li>Survey and administrative sources compared on their own correct geographic level ({{N_HC}} survey units or {{N_SGG}} municipalities).</li>
+      <li>Every flagged indicator explains itself with computed facts (gap, position, trend, confidence interval).</li>
+      <li>Possible actions link to official guidance documents instead of generated advice.</li>
+      <li>Sources, update dates and known limitations are disclosed in the product.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="impact">
+  <div class="wrap">
+    <h2>Impact</h2>
+    <p><b>Current stage: Working prototype.</b> There is no user-testing or impact evidence yet, and no usage figures are claimed. {{REVIEW_STATUS}}</p>
+    <h3>Next validation steps</h3>
+    <ul class="clean">
+      <li>Testing with local public-health practitioners (task: find and explain one priority for their area).</li>
+      <li>Usability testing on desktop and mobile; the in-app 1-minute feedback form (“Give Feedback”) is ready.</li>
+      <li>Decision-usefulness evaluation: does the priority list match practitioners’ own assessment, and does it change what they review first?</li>
+      <li>Independent methodological review, published with reviewer consent.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="wrap">
+    <h2>Known limitations</h2>
+    <ul class="clean">
+      <li>Korean interface except this page, the in-app English overview and the Health Equity Priority card.</li>
+      <li>Survey indicators carry sampling error; neighbouring ranks may not differ meaningfully.</li>
+      <li>No programme input or output data, so the tool cannot evaluate programme performance or effects.</li>
+      <li>Healthy life expectancy and the deprivation index are approximations computed for this project, not official statistics.</li>
+      <li>The prevention knowledge base was collected and summarized with AI assistance; original documents are linked and should be checked.</li>
+      <li>Not built: disease prediction, policy-effect prediction, chatbots, personal health data entry or accounts.</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Live product: <a href="../">health-profile.kr</a> · <a href="../#view=radar">English overview</a> · <a href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Health Equity Priority (English)</a> · <a href="../docs/MIT_SOLVE_READINESS.md">readiness report</a></p>
+    <p>Feedback: use “Give Feedback” in the app or email <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>. Built by {{CREDIT}} as an independent project; not an official government service.</p>
+  </div>
+</footer>
+</body>
+</html>

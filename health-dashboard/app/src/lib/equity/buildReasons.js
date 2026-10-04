@@ -36,3 +36,41 @@ export function buildReasons(r) {
   else if (r.ciIncludesRef === false) out.push({ k: "ci", t: `${r.y}년 단년 값 ${f(r.ci.v)}${r.unit}의 95% 신뢰구간(${f(r.ci.lo)}–${f(r.ci.hi)})이 같은 해 전국 중앙값(${f(r.refY)})과 겹치지 않음` });
   return out;
 }
+
+/* English mode (Health Equity Radar · international reviewers) — same facts and numbers as buildReasons, no extra claims. */
+export const POOL_EN = { "17개 시도": "17 provinces", "전국 조사 단위(보건소)": "survey units nationwide", "전국 시군구": "municipalities nationwide" };
+export const TREND_EN = { "악화 경향": "Worsening", "변화 적음": "Little change", "개선 경향": "Improving" };
+const deltaUnitEn = (unit) => (unit === "%" ? " pp" : unit ? ` ${unit}` : "");
+const ord = (n) => { const s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+
+export function buildReasonsEn(r) {
+  const out = [];
+  const du = deltaUnitEn(r.unit);
+  const pool = POOL_EN[r.poolName] || r.poolName;
+  if (r.gap && isNum(r.gap.abs)) {
+    const word = r.gap.abs > 0 ? "higher" : r.gap.abs < 0 ? "lower" : "equal to";
+    const fav = r.gap.dirAbs > 0 ? "unfavourable direction" : r.gap.dirAbs < 0 ? "favourable direction" : "";
+    out.push({ k: "gap", t: `${f(Math.abs(r.gap.abs))}${du} ${word} than the national median (${f(r.ref)}${r.unit})${fav ? ` — ${fav}` : ""} (${r.direction === DIRECTION.LOWER ? "lower" : "higher"} is better)` });
+  }
+  if (r.pos) {
+    if (r.pos.n <= 30) out.push({ k: "rank", t: `Ranked ${ord(r.pos.rank)} of ${r.pos.n} ${/시도/.test(r.poolName) ? "provinces" : "areas"} (best first)` });
+    else {
+      const top = Math.max(1, Math.round((1 - r.pos.u) * 100));
+      out.push({ k: "rank", t: r.pos.u >= 0.5 ? `Among the least favourable ${top}% of ${r.pos.n} ${pool}` : `Among the most favourable ${Math.max(1, Math.round(r.pos.u * 100))}% of ${r.pos.n} ${pool}` });
+    }
+  }
+  if (r.trend && r.trendCls) {
+    const s = r.trend.slope, sg = s > 0 ? "▲" : s < 0 ? "▼" : "";
+    const third = ["improving third", "middle third", "worsening third"][r.trendCls.tertile];
+    out.push({ k: "trend", t: `${r.trend.y0}–${r.trend.y1} (${r.trend.n} years): ${sg}${f(Math.abs(s), 2)}${du} per year — ${TREND_EN[r.trendCls.label] || r.trendCls.label} (pace in the ${third} of the comparison group)` });
+  } else out.push({ k: "trend", t: "Fewer than 3 valid years in the last 5 — trend not assessed" });
+  if (Number.isInteger(r.depQ)) {
+    out.push({ k: "dep", t: r.depQ >= 4 && r.gap?.dirAbs > 0
+      ? `Area deprivation quintile ${r.depQ} (5 = most deprived), and this indicator is also at an unfavourable level`
+      : `Area deprivation quintile ${r.depQ} (5 = most deprived)` });
+  }
+  if (r.ci?.unstable) out.push({ k: "rse", t: `${r.y} estimate has a relative standard error above 20% (unstable) — not placed in “Review first”` });
+  if (r.ciIncludesRef === true) out.push({ k: "ci", t: `The 95% confidence interval of the ${r.y} single-year estimate includes that year’s national median — the difference may be sampling error, so it is not placed in “Review first”` });
+  else if (r.ciIncludesRef === false) out.push({ k: "ci", t: `${r.y} single-year estimate ${f(r.ci.v)}${r.unit} (95% CI ${f(r.ci.lo)}–${f(r.ci.hi)}) does not overlap that year’s national median (${f(r.refY)})` });
+  return out;
+}

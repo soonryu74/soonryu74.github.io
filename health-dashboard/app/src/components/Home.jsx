@@ -7,7 +7,7 @@ import CONTACT from "../../../data/contact.json";
 import HelpContent from "./Help";
 import HomeEquityQuick from "./equity/HomeEquityQuick";
 import RankAll from "./RankAll";
-import { YEARS_ALL, INDICATORS as ALL_INDS } from "../data";
+import { YEARS_ALL, INDICATORS as ALL_INDS, isSurvey } from "../data";
 
 /* 메인(첫) 화면 — 카드 6장: 17개 시도 지도 · 258개 보건소 순위 · 내 지역 건강격차 빠르게 보기(Health Equity Radar) · 취약인구 · 지자체 계획 수립 · 처음이세요?(소개 영상·설명서·활용법).
    원칙: 카드 하나에 질문 하나. 자세한 분석은 카드의 버튼으로 해당 메뉴에 넘긴다.
@@ -82,7 +82,7 @@ export default function Home({ sel, setTip, onGo, onGoCard }) {
         <div>
           <h2>우리 지역 건강, 한 화면에서 시작하기</h2>
           <p className="muted">지역사회건강조사 {year}년 · 조사 단위 {HC_POOL.length}곳<Cite k={["chs", "chs25"]} /> — 카드를 눌러 자세한 분석으로 들어가세요.</p>
-          <p className="home-radar"><b>Health Equity Radar</b> · 지역 건강격차와 우선과제를 한눈에 · 데이터에서 지역보건 행동으로 · {ALL_INDS.length}개 지표 × {HC_POOL.length}개 지역 × {YEARS_ALL[0]}–{YEARS_ALL[YEARS_ALL.length - 1]}
+          <p className="home-radar"><b>Health Equity Radar</b> · 지역 건강격차와 우선과제를 한눈에 · 데이터에서 지역보건 행동으로 · 지표 {ALL_INDS.length}개(지역사회건강조사 {ALL_INDS.filter(isSurvey).length}개는 조사 단위 {HC_POOL.length}곳, 나머지 {ALL_INDS.length - ALL_INDS.filter(isSurvey).length}개는 시군구 단위) · {YEARS_ALL[0]}–{YEARS_ALL[YEARS_ALL.length - 1]}
             {" "}<button type="button" className="linkbtn" lang="en" onClick={() => onGo({ view: "radar" })}>English overview →</button></p>
         </div>
         <div className="seg home-ind" role="group" aria-label="지도·순위 카드의 지표">

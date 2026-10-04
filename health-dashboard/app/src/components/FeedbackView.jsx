@@ -17,7 +17,7 @@ function saveDraft(d) {
 }
 function clearDraft() { try { localStorage.removeItem(KEY); } catch { /* noop */ } }
 
-async function copyText(t) {
+export async function copyText(t) {
   try { if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(t); return true; } } catch { /* fallback */ }
   try {
     const ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.left = "-9999px";

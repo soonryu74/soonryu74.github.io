@@ -21,6 +21,9 @@ if not (app / "node_modules").exists():
 
 # 참고문헌 목록(data/refs.json)은 자료원 카드(coverage.json)의 갱신일을 쓰므로 빌드 때마다 새로 만든다
 subprocess.run([sys.executable, str(ROOT / "scripts" / "build_refs.py")], check=True)
+# 숫자 전수 검증(data/validation_summary.json · docs/DATA_VALIDATION.md) → /solve 랜딩 생성. 영문 소개·/solve 는 이 숫자만 쓴다
+subprocess.run(["node", str(ROOT / "scripts" / "qa" / "data_validation.mjs")], check=True, stdout=subprocess.DEVNULL)
+subprocess.run([sys.executable, str(ROOT / "scripts" / "build_solve.py")], check=True)
 
 # 데이터 무결성 확인: 지표별 시도 17개, 연도-값 길이 일치
 data = json.loads(data_path.read_text(encoding="utf-8"))
@@ -44,9 +47,9 @@ if (MIRROR / ".git").exists():
     # docs(방법론 md·설명서·활용법 pptx/pdf·소개 영상 mp4)도 함께 복사 → health-profile.kr/docs/... 로 열린다
     import shutil
     shutil.copytree(ROOT / "docs", MIRROR / "docs", dirs_exist_ok=True)
-    # 영문 소개 바로가기 health-profile.kr/solve → #view=radar (Health Equity Radar)
+    # 영문 랜딩 health-profile.kr/solve (정적 페이지 + 실제 화면 캡처, scripts/build_solve.py)
     if (ROOT / "solve").exists():
-        shutil.copytree(ROOT / "solve", MIRROR / "solve", dirs_exist_ok=True)
+        shutil.copytree(ROOT / "solve", MIRROR / "solve", dirs_exist_ok=True, ignore=shutil.ignore_patterns("template.html"))
     print(f"거울 배포: {MIRROR / 'index.html'} + docs/ {len(list((MIRROR / 'docs').iterdir()))}개 + solve/")
 else:
     print(f"거울 배포 생략: {MIRROR} 없음")
