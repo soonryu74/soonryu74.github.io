@@ -1,0 +1,271 @@
+{
+ "iso3": "VNM",
+ "survey": "VNM_2021_STEPS_v01",
+ "report": "Viet Nam STEPS 2021 report (WHO NCD Microdata Repository catalog 948, download 6937)",
+ "age": "18-69",
+ "indicators": {
+  "smoking": {
+   "status": "partial",
+   "note": "Official current-smoking headline 20.8% (19.2–22.4) is for ages 15+ (n=4738) with a 15+ weight; no 18–69 headline. Only age bands overlap: 25–44 21.9% (n 1738), 45–64 28.1% (n 2101).",
+   "source": "report (15+ tables)",
+   "official": {
+    "15+": {
+     "both": {
+      "n": 4738,
+      "pct": 20.8,
+      "lo": 19.2,
+      "hi": 22.4
+     },
+     "men": {
+      "n": null,
+      "pct": 41.1,
+      "lo": null,
+      "hi": null
+     },
+     "women": {
+      "n": null,
+      "pct": 0.6,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "25-44": {
+     "both": {
+      "n": 1738,
+      "pct": 21.9,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "45-64": {
+     "both": {
+      "n": 2101,
+      "pct": 28.1,
+      "lo": null,
+      "hi": null
+     }
+    }
+   }
+  },
+  "inactive": {
+   "definition": "<600 MET-minutes/week (GPAQ)",
+   "source": "Table 18 / p53",
+   "official": {
+    "18-69": {
+     "both": {
+      "n": 4300,
+      "pct": 22.2,
+      "lo": 20.1,
+      "hi": 24.4
+     },
+     "men": {
+      "n": null,
+      "pct": 16.1,
+      "lo": null,
+      "hi": null
+     },
+     "women": {
+      "n": null,
+      "pct": 28.3,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "18-29": {
+     "both": {
+      "n": null,
+      "pct": 26.2,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "30-49": {
+     "both": {
+      "n": null,
+      "pct": 19.7,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "50-69": {
+     "both": {
+      "n": null,
+      "pct": 22.4,
+      "lo": null,
+      "hi": null
+     }
+    }
+   },
+   "urban_rural": {
+    "rural": 19.1,
+    "urban": 28.3
+   }
+  },
+  "bmi25": {
+   "definition": "BMI ≥25 kg/m², pregnant women excluded",
+   "source": "Table 33 / p55",
+   "official": {
+    "18-69": {
+     "both": {
+      "n": 3717,
+      "pct": 19.5,
+      "lo": 17.4,
+      "hi": 21.6
+     },
+     "men": {
+      "n": null,
+      "pct": 19.3,
+      "lo": null,
+      "hi": null
+     },
+     "women": {
+      "n": null,
+      "pct": 19.7,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "18-29": {
+     "both": {
+      "n": null,
+      "pct": 16.1,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "30-49": {
+     "both": {
+      "n": null,
+      "pct": 19.6,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "50-69": {
+     "both": {
+      "n": null,
+      "pct": 22.8,
+      "lo": null,
+      "hi": null
+     }
+    }
+   },
+   "urban_rural": {
+    "rural": 16.7,
+    "urban": 24.2
+   }
+  },
+  "raisedbp": {
+   "definition": "SBP ≥140 and/or DBP ≥90 mmHg or on medication; BP = mean of three readings per report",
+   "source": "Table 34 / p57",
+   "official": {
+    "18-69": {
+     "both": {
+      "n": 3654,
+      "pct": 26.2,
+      "lo": 24.4,
+      "hi": 28.0
+     },
+     "men": {
+      "n": null,
+      "pct": 33.3,
+      "lo": null,
+      "hi": null
+     },
+     "women": {
+      "n": null,
+      "pct": 19.1,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "18-29": {
+     "both": {
+      "n": null,
+      "pct": 5.9,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "30-49": {
+     "both": {
+      "n": null,
+      "pct": 23.7,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "50-69": {
+     "both": {
+      "n": null,
+      "pct": 51.9,
+      "lo": null,
+      "hi": null
+     }
+    }
+   },
+   "urban_rural": {
+    "rural": 25.5,
+    "urban": 28.0
+   },
+   "also": {
+    "measured_only_18-69": 23.3
+   }
+  },
+  "raisedglu": {
+   "definition": "Fasting glucose ≥7.0 mmol/L (126 mg/dL) or on medication; non-fasting excluded",
+   "source": "Table 39 / p60",
+   "official": {
+    "18-69": {
+     "both": {
+      "n": 3338,
+      "pct": 7.1,
+      "lo": 6.0,
+      "hi": 8.2
+     },
+     "men": {
+      "n": null,
+      "pct": 7.3,
+      "lo": null,
+      "hi": null
+     },
+     "women": {
+      "n": null,
+      "pct": 6.9,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "18-29": {
+     "both": {
+      "n": null,
+      "pct": 3.0,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "30-49": {
+     "both": {
+      "n": null,
+      "pct": 5.6,
+      "lo": null,
+      "hi": null
+     }
+    },
+    "50-69": {
+     "both": {
+      "n": null,
+      "pct": 13.4,
+      "lo": null,
+      "hi": null
+     }
+    }
+   },
+   "urban_rural": {
+    "rural": 6.0,
+    "urban": 8.7
+   }
+  }
+ },
+ "design": "6 strata (urban/rural × 3 area types), PSU = enumeration area (400 EAs). Strata are not provinces."
+}
