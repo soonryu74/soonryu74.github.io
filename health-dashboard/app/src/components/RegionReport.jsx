@@ -6,6 +6,7 @@ import { evidenceFor } from "./equity/EvidenceActions";
 import { BUILD } from "./ReviewsCard";
 import { download, safe } from "../export";
 import { copyText } from "./FeedbackView";
+import ReportMode from "./ReportMode";
 import VS from "../../../data/validation_summary.json";
 
 /* 지역 보고서 자동 생성(무료 공개 기능) — 선택한 시도·시군구의 「지역 건강 현황」 보고서를 화면에서 만들어 인쇄·PDF·워드로 저장.
@@ -17,7 +18,7 @@ const posTxt = (r) => (!r.pos ? r.why || "–" : r.pos.n <= 30 ? `${r.pos.n}곳 
 const LEVEL = { sido: "시도 계획", national: "국가", regional: "WHO 서태평양", global: "WHO" };
 const ADMIN_DOMAINS = ["사망률(표준화)", "암검진"];
 
-export default function RegionReport({ sel, item = "std", smooth = 3, onBack, onIndicatorReport }) {
+export default function RegionReport({ sel, item = "std", smooth = 3, onBack, onMode }) {
   const docRef = useRef(null);
   const [msg, setMsg] = useState("");
   const p = useMemo(() => priorityFor(sel, item, { smooth, scope: "core" }), [sel, item, smooth]);
@@ -52,12 +53,7 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
   return (
     <div className="rpt-wrap">
       <div className="card rpt-actions">
-        {onIndicatorReport && (
-          <div className="seg rpt-mode" role="group" aria-label="보고서 종류">
-            <button type="button" className="seg-btn on" aria-pressed="true">지역별 보고서</button>
-            <button type="button" className="seg-btn" onClick={onIndicatorReport} title="지표 하나를 골라 전국 취약지역 현황을 보는 보고서">지표별 보고서</button>
-          </div>
-        )}
+        <ReportMode cur="report" onMode={onMode} />
         <div>
           <b>지역 보고서 자동 생성</b> <span className="muted">— 위에서 시도·시군구를 바꾸면 보고서도 바뀝니다. 무료 · 로그인 없음 · 화면에서만 만들어지며 서버로 보내지 않습니다.</span>
         </div>

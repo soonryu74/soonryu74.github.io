@@ -58,7 +58,7 @@ function CovidRef({ sel }) {
 }
 
 /* 감염병 대응 고위험군 규모 (프로파일 카드) */
-export default function RiskCard({ sel, pool, poolName }) {
+export default function RiskCard({ sel, pool, poolName, onElder }) {
   const rec = riskOf(sel.c);
   const [cat, setCat] = useState("전체");
   const rows = useMemo(() => {
@@ -81,6 +81,7 @@ export default function RiskCard({ sel, pool, poolName }) {
       <ExportButtons name={`${label(sel)}_고위험군`} kinds={["list"]} />
       <div className="desc">
         질병관리청 지침(코로나19·인플루엔자·감염취약시설)의 고위험군 정의를 지역 자료로 옮겨 규모를 잡은 것입니다. 인구 기준 {RISK.pop_year}년 연앙인구 {nf(rec.pop)}명.
+        {onElder && <> <button type="button" className="linkbtn" onClick={onElder} title="65세 이상 고령층이 취약한 시군구를 전국에서 보는 보고서">고령층(65세+) 취약 보고서 →</button></>}
       </div>
       <details className="method">
         <summary>산출 방법과 읽을 때 주의할 점</summary>

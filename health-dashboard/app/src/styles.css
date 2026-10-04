@@ -1242,10 +1242,12 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
 .rpt-draft p { margin:0 0 8px; }
 .rpt-item { margin-bottom:14px; }
 /* 지표별 보고서(view=ireport) — 보고서 종류 전환·시도별 막대·선택 지역 행 */
-.rpt-mode { align-self:flex-start; }
+.rpt-mode { align-self:flex-start; align-items:center; }
+.rpt-mode-l { padding:0 8px 0 10px; font-size:13px; color:var(--text-secondary); }
 .rpt-bar { display:inline-block; height:.7em; min-width:2px; margin-right:6px; vertical-align:middle; border-radius:2px; background:var(--series-1); opacity:.75; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 .rpt-me td { background:color-mix(in srgb, var(--series-1) 12%, transparent); font-weight:600; }
 .rpt-vul td:first-child { color:var(--text-secondary); width:2.2em; }
+.el-sig { display:inline-block; min-width:2.4em; text-align:center; font-weight:700; border-radius:999px; padding:0 6px; background:color-mix(in srgb, var(--series-1) 14%, transparent); color:var(--text-primary); }
 @media (max-width: 600px) { .rpt { padding:18px 14px; } .rpt h1 { font-size:22px; } .rpt-tbl { font-size:12.5px; } .rpt-tbl th, .rpt-tbl td { padding:4px 5px; } .rpt-all, .rpt-item .rpt-tbl, .rpt-vul, .rpt-wide { display:block; overflow-x:auto; } .rpt-sum th { width:auto; } }
 @media print {
   @page { size:A4; margin:14mm; }
