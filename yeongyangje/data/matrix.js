@@ -497,5 +497,16 @@
   X.msm = X.msm || {};
   X.msm.ckd = c("caution", "고시 주의사항: 신장질환이 있는 사람은 섭취 전 전문가와 상담", "https://www.foodsafetykorea.go.kr/portal/healthyfoodlife/functionalityView.do?viewNo=03");
 
+  /* ===== 추가 성분 — 보스웰리아·히알루론산·글루타치온(경구)·NMN·레스베라트롤·스피루리나 (2026-10) ===== */
+  X.boswellia = X.boswellia || {};
+  X.boswellia.pregnancy = c("caution", "개별인정 주의사항: 임산부·수유부 섭취 시 주의", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.resveratrol = X.resveratrol || {};
+  X.resveratrol.cancer = c("caution", "다발골수종 고용량 제형 임상 신장 이상반응으로 조기 종료", "https://clinicaltrials.gov/study/NCT00920556");
+  X.resveratrol.anticoag = c("caution", "1 g/일에서 CYP2C9·3A4·2D6 억제 — 와파린 등 대사 영향 가능", "https://pubmed.ncbi.nlm.nih.gov/20716633/");
+  X.spirulina = X.spirulina || {};
+  X.spirulina.autoimmune = c("caution", "천포창 악화·피부근염 발병 증례", "https://pubmed.ncbi.nlm.nih.gov/15210464/");
+  X.spirulina.liver = c("caution", "오염 제품의 간독소 마이크로시스틴", "https://pubmed.ncbi.nlm.nih.gov/37317149/");
+  X.spirulina.pregnancy = c("caution", "개별인정 주의사항: 임산부·수유부 섭취를 피할 것, 수유 안전성 자료 없음", "https://pubmed.ncbi.nlm.nih.gov/30000909/");
+
   window.EBN_MATRIX = X;
 })();
