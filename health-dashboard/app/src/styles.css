@@ -1220,3 +1220,36 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
 .uf-preview { max-height:160px; }
 .radar-cta { margin:8px 0 4px; align-items:center; }
 @media (max-width: 600px) { .uf-scale { grid-template-columns:1fr; } .eq-tools { width:100%; } }
+/* 지역 보고서 자동 생성(view=report) — 화면은 문서 모양, 인쇄는 보고서만 A4 */
+.rpt-open { font-size:13.5px; padding:4px 10px; margin-left:8px; vertical-align:middle; }
+.hc-cta2 { background:var(--surface-1); color:var(--series-1); border:1px solid var(--series-1); }
+.rpt-actions { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+.rpt { background:var(--surface-1); border:1px solid var(--border); border-radius:12px; padding:28px clamp(16px, 4vw, 44px); max-width:960px; margin:0 auto 16px; color:var(--text-primary); line-height:1.65; }
+.rpt h1 { font-size:28px; margin:4px 0 6px; }
+.rpt h2 { font-size:19px; margin:26px 0 8px; padding-bottom:4px; border-bottom:2px solid var(--border); }
+.rpt h3 { font-size:16px; margin:14px 0 6px; }
+.rpt p, .rpt li { font-size:15px; }
+.rpt ul { padding-left:20px; margin:4px 0 8px; }
+.rpt a { word-break:break-all; }
+.rpt-kicker { font-size:13px; font-weight:700; color:var(--series-1); letter-spacing:.02em; }
+.rpt-note { border-left:3px solid var(--series-1); padding:6px 10px; background:var(--page); font-size:14px; }
+.rpt-tbl { width:100%; border-collapse:collapse; margin:6px 0 10px; font-size:14px; }
+.rpt-tbl th, .rpt-tbl td { border:1px solid var(--border); padding:5px 8px; text-align:left; vertical-align:top; }
+.rpt-tbl thead th, .rpt-sum th { background:var(--page); color:var(--text-secondary); font-weight:600; }
+.rpt-sum th { width:9.5em; }
+.rpt-all td:first-child { font-weight:600; color:var(--text-secondary); }
+.rpt-draft { background:var(--page); border:1px dashed var(--border); border-radius:8px; padding:10px 14px; }
+.rpt-draft p { margin:0 0 8px; }
+.rpt-item { margin-bottom:14px; }
+@media (max-width: 600px) { .rpt { padding:18px 14px; } .rpt h1 { font-size:22px; } .rpt-tbl { font-size:12.5px; } .rpt-tbl th, .rpt-tbl td { padding:4px 5px; } .rpt-all, .rpt-item .rpt-tbl { display:block; overflow-x:auto; } .rpt-sum th { width:auto; } }
+@media print {
+  @page { size:A4; margin:14mm; }
+  .view-report header.top, .view-report .controls, .view-report .rpt-actions, .view-report footer, .view-report .reflist, .view-report .rev-foot, .view-report .playbar, .view-report .site-credit { display:none !important; }
+  .view-report .rpt { border:0 !important; padding:0 !important; max-width:none; background:#fff !important; color:#111 !important; }
+  .view-report .rpt * { color:#111 !important; }
+  .view-report .rpt-tbl th, .view-report .rpt-tbl td { border-color:#999 !important; }
+  .view-report .rpt-tbl thead th, .view-report .rpt-sum th, .view-report .rpt-draft, .view-report .rpt-note { background:#f1f3f6 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .view-report .rpt h2 { break-after:avoid; }
+  .view-report .rpt-item, .view-report .rpt-tbl tr { break-inside:avoid; }
+  .view-report .rpt-all { display:table !important; }
+}

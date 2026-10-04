@@ -28,6 +28,7 @@ import SourcesView from "./components/SourcesView";
 import RadarAbout from "./components/equity/RadarAbout";
 import IndInfo from "./components/equity/IndInfo";
 import FeedbackView from "./components/FeedbackView";
+import RegionReport from "./components/RegionReport";
 import REV from "../../data/reviews.json";
 import { BUILD } from "./components/ReviewsCard";
 import Home from "./components/Home";
@@ -51,7 +52,7 @@ function readHash() {
     scope: ["sidoAll", "sido", "nation"].includes(h.get("scope")) ? h.get("scope") : (RBY.get(sgg0)?.l === "sgg" ? "nation" : "sido"),
     // 주소에 아무 상태가 없으면(처음 방문) 메인 화면, view=home 도 메인 화면
     view: !window.location.hash.replace(/^#/, "") || h.get("view") === "home" ? "home"
-      : ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback", "radar"].includes(h.get("view")) ? h.get("view") : "analysis",
+      : ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback", "radar", "report"].includes(h.get("view")) ? h.get("view") : "analysis",
     ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
@@ -213,7 +214,7 @@ export default function App() {
   const mapScopeName = scope === "sidoAll" ? "전국 시도" : scope === "sido" ? `${RBY.get(mapSidoCode)?.n || ""} 시군구` : "전국 시군구";
 
   return (
-    <div className={`viz-root fs-${fs}${playing ? " playing" : ""}`}>
+    <div className={`viz-root fs-${fs}${playing ? " playing" : ""}${view === "report" ? " view-report" : ""}`}>
       <div className="wrap">
         <header className="top">
           <div>
@@ -258,7 +259,7 @@ export default function App() {
         )}
 
         {!["home", "units", "ncd", "corr", "hot", "chronicle", "sources", "feedback", "radar"].includes(view) && <div className="controls">
-          {view !== "profile" && view !== "kpi" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
+          {view !== "profile" && view !== "kpi" && view !== "report" && <IndicatorPicker ind={ind} onChange={(i) => { setInd(i); setPlaying(false); }} />}
           {view !== "compare" && <RegionPicker sido={sido} sgg={sgg} onSido={(c) => { setSido(c); setSgg(null); setScope((sc) => (sc === "sidoAll" ? sc : "sido")); }} onSgg={(c) => { setSgg(c); if (c) setScope((sc) => (sc === "sidoAll" ? "nation" : sc)); }} />}
           {view !== "compare" && view !== "kpi" && (
             <div className="ctrl">
@@ -285,7 +286,7 @@ export default function App() {
             </div>
           )}
           <ItemToggle item={item} onChange={setItem} ind={ind} />
-          {view !== "profile" && view !== "kpi" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
+          {view !== "profile" && view !== "kpi" && view !== "report" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
         </div>}
 
         <div ref={bodyRef} className="body-anchor" />
@@ -293,6 +294,8 @@ export default function App() {
         {view === "home" ? (
           <Home sel={sel} setTip={setTip} onGoCard={goSearch}
             onGo={({ view: v, ind: i, code, scope: sc }) => { if (i) setInd(i); if (code) selectRegion(code); if (sc) setScope(sc); setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+        ) : view === "report" ? (
+          <RegionReport key={sel?.c} sel={sel} item={item} smooth={rankOpt.smooth} onBack={() => { setView("profile"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "radar" ? (
           <RadarAbout sel={sel} onGo={(v) => { if (v === "profile-en") { setEn(true); setView("profile"); } else setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "feedback" ? (
