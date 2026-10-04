@@ -465,5 +465,37 @@
   X.banaba.ckd = c("caution", "신기능 저하 환자에서 코로솔산 관련 급성 신손상·젖산산증 증례", "https://pubmed.ncbi.nlm.nih.gov/20659629/");
   X.banaba.diabetes = c("caution", "혈당 저하 작용이 혈당강하제와 겹칠 수 있음(직접 상호작용 연구는 미확인)", "https://pubmed.ncbi.nlm.nih.gov/16549220/");
 
+  /* ===== 추가 성분 — 아미노산 A: 아르기닌·시트룰린·글루타민·BCAA·HMB (2026-10) ===== */
+  X.arginine = X.arginine || {};
+  X.arginine.dyslip = c("avoid", "심근경색 후 RCT에서 사망 8.6% vs 0%로 조기 중단, 국내 일반의약품도 심근경색 병력 금기", "https://pubmed.ncbi.nlm.nih.gov/16391217/");
+  X.arginine.pregnancy = c("caution", "개별인정 주의사항: 임산부 및 수유부는 섭취에 주의", "https://www.fmis.kr/public/pro/hfg/selectHtfsIndvdlzRcognInfo.do?hfFncltyMtralRcognNo=\uc81c2015-19\ud638");
+  X.arginine.ckd = c("caution", "경구 아르기닌 의약품은 심한 신기능 장애에서 금기", "https://common.health.kr/shared/healthkr/pharmreview/\uc5d8-\uc544\ub974\uae30\ub2cc(l-arginine)(0).pdf");
+  X.arginine.liver = c("caution", "경구 아르기닌 의약품은 심한 간기능 장애에서 금기", "https://common.health.kr/shared/healthkr/pharmreview/\uc5d8-\uc544\ub974\uae30\ub2cc(l-arginine)(0).pdf");
+  X.bcaa_leucine = X.bcaa_leucine || {};
+  X.bcaa_leucine.liver = c("caution", "간경변에서는 전문의약품으로 처방 관리, 간성뇌증 감소 근거는 확실성 낮음", "https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetailCache?cacheSeq=199900606");
+  X.bcaa_leucine.ckd = c("caution", "BCAA 의약품 허가사항상 BUN 상승 등 신기능장해 보고", "https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetailCache?cacheSeq=199900606");
+  X.hmb = X.hmb || {};
+  X.hmb.pregnancy = c("avoid", "개별인정 주의사항: 영·유아·어린이·임산부·수유부는 섭취를 피할 것", "https://www.fmis.kr/public/pro/hfg/selectHtfsIndvdlzRcognInfo.do?hfFncltyMtralRcognNo=\uc81c2023-26\ud638");
+  X.hmb.dyslip = c("caution", "개별인정 주의사항: 고콜레스테롤혈증 등 특정질환은 섭취 주의", "https://www.fmis.kr/public/pro/hfg/selectHtfsIndvdlzRcognInfo.do?hfFncltyMtralRcognNo=\uc81c2023-26\ud638");
+
+  /* ===== 추가 성분 — 쏘팔메토·폴리코사놀·프로폴리스·크릴오일·초록입홍합·MSM (2026-10) ===== */
+  X.saw_palmetto = X.saw_palmetto || {};
+  X.saw_palmetto.anticoag = c("caution", "고시 주의사항: 출혈성 질환이 있거나 항응고제 등 복용 시 전문가와 상담", "https://www.nccih.nih.gov/health/saw-palmetto");
+  X.saw_palmetto.surgery = c("caution", "고시 주의사항: 수술 전후 전문가와 상담", "https://www.nccih.nih.gov/health/saw-palmetto");
+  X.saw_palmetto.pregnancy = c("avoid", "고시: 성인남성만 섭취 / NCCIH: 임신·수유 중 안전하지 않을 수 있음", "https://www.nccih.nih.gov/health/saw-palmetto");
+  X.policosanol = X.policosanol || {};
+  X.policosanol.anticoag = c("caution", "개별인정 주의사항: 혈액응고장애·심혈관약 복용 시 전문가 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.policosanol.surgery = c("caution", "개별인정 주의사항: 수술예정인 사람은 전문가 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.policosanol.pregnancy = c("avoid", "개별인정 주의사항: 임산부·수유부는 섭취를 피할 것", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.krill_oil = X.krill_oil || {};
+  X.krill_oil.anticoag = c("caution", "개별인정 주의사항: 항응고제·항혈소판제 복용 시 상담(와파린 병용 후향 연구 573명에서 INR·출혈 변화는 없었음)", "https://pubmed.ncbi.nlm.nih.gov/27657121/");
+  X.krill_oil.pregnancy = c("caution", "개별인정 주의사항: 임산부 및 수유부는 섭취에 주의", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.green_lipped_mussel = X.green_lipped_mussel || {};
+  X.green_lipped_mussel.pregnancy = c("avoid", "개별인정 주의사항: 임신부 및 수유부는 섭취를 피할 것", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.green_lipped_mussel.liver = c("caution", "개별인정 주의사항: 간질환이 있으면 전문가와 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.green_lipped_mussel.anticoag = c("caution", "개별인정 주의사항: 혈전용해제 등 복용 시 전문가와 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.msm = X.msm || {};
+  X.msm.ckd = c("caution", "고시 주의사항: 신장질환이 있는 사람은 섭취 전 전문가와 상담", "https://www.foodsafetykorea.go.kr/portal/healthyfoodlife/functionalityView.do?viewNo=03");
+
   window.EBN_MATRIX = X;
 })();

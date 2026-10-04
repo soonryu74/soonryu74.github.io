@@ -37,7 +37,7 @@ window.EBN_LEAKY = {
     '<div class="callout warn"><span class="t">검사를 권유받았다면 물어볼 것</span>① 이 검사 결과에 따라 치료가 어떻게 달라지나요? ② 이 검사는 어떤 기준값으로 판정하나요? ③ 결과가 "이상"이면 무엇을 끊거나 먹게 되나요, 그 방법에는 무작위 대조시험이 있나요?</div>',
 
   supps: [
-    { id: 'lg-glutamine', name: 'L-글루타민', ing: null, dose: '연구 용량 5 g × 1일 3회', verdict: 'opt', grade: 'C',
+    { id: 'lg-glutamine', name: 'L-글루타민', ing: 'glutamine', dose: '연구 용량 5 g × 1일 3회', verdict: 'opt', grade: 'C',
       perm: '메타분석 전체: 효과 없음(WMD −0.00). 크론병 RCT 음성', clinical: '감염 후 설사형 IBS 1건: 반응 79.6% vs 5.8%(독립 재현 RCT 아직 없음)', who: '감염 후 설사형 IBS이면서 투과성 높은 사람',
       status: [], krShort: '건기식 기능성 원료 아님',
       claim: '장 세포의 주 에너지원이라 장벽을 복구한다.',

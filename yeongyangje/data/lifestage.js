@@ -108,9 +108,9 @@ window.EBN_LIFESTAGE = [
     { v: "cond", title: "크레아틴 — 근력운동을 함께할 때만", ing: "creatine",
       why: "2025년 메타분석에서 크레아틴+저항운동은 위약+저항운동보다 하지 근력 0.29, 제지방량 0.27만큼 좋았습니다(상지 근력은 유의하지 않음). 여러 분석을 합치면 제지방량 약 1.2 kg 증가입니다. 운동 없이 먹는 효과는 아닙니다.",
       src: ["https://link.springer.com/article/10.1186/s11556-025-00392-9"] },
-    { v: "no", title: "HMB — 근감소증", ing: "creatine",
-      why: "근감소증 환자 메타분석(6개 RCT 667명): 악력만 소폭 개선됐고 근육량(제지방량·골격근지수)과 보행속도는 차이가 없었습니다.",
-      src: ["https://pmc.ncbi.nlm.nih.gov/articles/PMC11272589/"] },
+    { v: "opt", title: "HMB — 근감소증", ing: "hmb",
+      why: "근감소증 환자 메타분석 2편이 엇갈립니다. 2024년(6개 RCT)은 악력만 소폭 개선, 2025년(5개 RCT 359명)은 골격근지수·악력이 경계선 수준으로 개선됐고, 보행속도는 두 분석 모두 차이가 없었습니다. 운동을 함께 하면 추가 효과가 없었습니다(노인 9개 RCT).",
+      src: ["https://pubmed.ncbi.nlm.nih.gov/39071082/", "https://pubmed.ncbi.nlm.nih.gov/39999663/", "https://pubmed.ncbi.nlm.nih.gov/33034021/"] },
     { v: "avoid", title: "다약제 복용 중 영양제 추가", ing: "multi",
       why: "한국 65세 이상 환자의 35.7%가 5종 이상을 처방받습니다(2014~2018 건강보험 자료 185만 명). 이 통계는 처방약만 센 것이라 실제 복용 품목은 더 많습니다. 여기에 영양제를 더하면 약물 상호작용, 복약 순응도 저하, 성분 중복이 겹칩니다. 새로 시작하기 전 반드시 약사에게 전체 목록을 보여주세요.",
       src: ["https://link.springer.com/article/10.1186/s12877-024-05141-8", "https://pmc.ncbi.nlm.nih.gov/articles/PMC9124766/"] }
