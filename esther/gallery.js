@@ -92,3 +92,36 @@ const WORKS = [
     setTimeout(() => window.open('https://ig.me/m/artist_artdirector_park', '_blank', 'noopener'), 900);
   });
 })();
+
+/* ───────── 전시장 음악: 누르면 천천히 커지고, 다시 누르면 천천히 꺼짐 ───────── */
+(() => {
+  const btn = document.getElementById('sound'), audio = document.getElementById('bgm');
+  if (!btn || !audio) return;
+  const en = document.documentElement.lang === 'en';
+  const TARGET = 0.45;
+  let on = false, timer;
+  const fade = (to, ms, done) => {
+    clearInterval(timer);
+    const from = audio.volume, steps = 30; let i = 0;
+    timer = setInterval(() => {
+      i++; audio.volume = Math.max(0, Math.min(1, from + (to - from) * (i / steps)));
+      if (i >= steps) { clearInterval(timer); done && done(); }
+    }, ms / steps);
+  };
+  const set = v => {
+    on = v; btn.classList.toggle('on', v); btn.setAttribute('aria-pressed', v);
+    btn.setAttribute('aria-label', v ? (en ? 'Pause music' : '음악 끄기') : (en ? 'Play gallery music' : '전시장 음악 켜기'));
+  };
+  btn.addEventListener('click', () => {
+    if (!on) {
+      audio.volume = 0;
+      audio.play().then(() => { set(true); fade(TARGET, 1800); }).catch(() => {});
+    } else {
+      set(false); fade(0, 900, () => audio.pause());
+    }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (!on) return;
+    if (document.hidden) audio.pause(); else audio.play().catch(() => {});
+  });
+})();
