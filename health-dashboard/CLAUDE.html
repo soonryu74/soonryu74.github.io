@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=2af9aacf31542564fcdc717ad99ccd02ec3fde4f">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2cf61b466109162a0eb3a902189e3d5edf76df65">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -418,7 +418,9 @@ capture.mjs(A_scope 샷)·deck.mjs·deck_use.mjs·demo_video.mjs 동기화, 두 
 ① 모든 지표에 <code class="language-plaintext highlighter-rouge">direction</code>(lower_is_better/higher_is_better/context, bad 에서 파생) ② <code class="language-plaintext highlighter-rouge">app/src/lib/equity/</code>(normalizeIndicator·calculateGap·calculateTrend·calculatePriority·buildReasons 순수 함수 + index.js 어댑터 priorityFor/assess, 가중 격차 .35·위치 .25·추세 .20·박탈 .20, 결측 재정규화, CI가 중앙값 포함·RSE&gt;20%면 우선 검토 불가, 영역당 1개 상위 3)
 ③ 프로파일 맨 위 「우리 지역 우선 검토 항목」(EquityPriorityCard·WhyThisMatters·EvidenceActions, 기본 후보 = 지역사회건강조사 40개 / 토글 전체 방향 지표 130개 — 전체 기본이면 감염병·진료실인원이 상위를 차지해 기본에서 뺌) ④ ⓘ IndInfo(자료원·연도·정의=원표·표준화·방향·갱신·주의) — 우선 검토 카드·지표 분석 추이·비교 표
 ⑤ 홈 카드 ③ 「내 지역 건강격차 빠르게 보기」(HomeEquityQuick, 이후 카드 번호 4~6으로 밀림) + 히어로 서브카피(171×258×2008–2025 자동) ⑥ 핫스팟 「복합 취약 신호」 모드(EquityHotspot) ⑦ 비교 「형평성 요약 비교」(CompareEquity) ⑧ 영문 <code class="language-plaintext highlighter-rouge">#view=radar</code>(RadarAbout, 수치 자동, Korea only) + <code class="language-plaintext highlighter-rouge">solve/index.html</code> 리다이렉트(build_dashboard.py 거울 복사) + 머리글 「EN」 ⑨ 머리글·의견 탭 문구를 지시서 개선문으로(성과평가·인과판단 불가 유지).
-테스트: <code class="language-plaintext highlighter-rouge">cd app &amp;&amp; npm test</code>(esbuild+node:test, 새 패키지 없음, 11건) · <code class="language-plaintext highlighter-rouge">scripts/qa/equity_e2e.mjs</code>(Playwright, 13개 라우트×2폭·버튼·다크·A+). 백업 태그 <code class="language-plaintext highlighter-rouge">pre-equity-radar</code>(로컬). <strong>미반영: 사용설명서·활용법·영상(홈 카드 6장·새 화면) 재생성.</strong></li>
+테스트: <code class="language-plaintext highlighter-rouge">cd app &amp;&amp; npm test</code>(esbuild+node:test, 새 패키지 없음, 11건) · <code class="language-plaintext highlighter-rouge">scripts/qa/equity_e2e.mjs</code>(Playwright, 13개 라우트×2폭·버튼·다크·A+). 백업 태그 <code class="language-plaintext highlighter-rouge">pre-equity-radar</code>(로컬).
+문서 갱신(2026-10-04): 사용설명서 68→75쪽(새 쪽 6장: 홈 빠르게 보기·영문 / 10년 추세 / 우선 검토 2쪽 / 형평성 요약 비교 / 복합 취약 신호, 참고문헌 27건이라 3쪽, REF_SLIDE_FIRST 72) · 활용법 100쪽 유지(새 4쪽 넣고 비교·핫스팟·연관지표·조사 단위·자료원 쪽 합침, REF_SLIDE_FIRST 97) · 소개 영상 장면 5개 추가(home-eq·pf-equity·cmp-eq·hot-multi·radar).
+<strong>capture.mjs 번호 규칙</strong>: 2026-10-02~03 에 생긴 카드(우선 검토·홈 ③·형평성 요약 비교·10년 추세·시군구 우수사례·지역사회건강조사 발간물)는 <code class="language-plaintext highlighter-rouge">cards()</code> 번호에서 빼고 N_* 이름으로 따로 찍는다 — 덱이 C_profile_07 같은 번호로 그림을 찾으므로 새 카드가 번호를 밀면 엉뚱한 그림이 들어간다. 새 카드를 넣으면 NEW_CARD 에 제목을 추가할 것.</li>
   <li>[검토] 지역·필수·공공의료 거버넌스 질문(2026-10-02): docs/지역필수공공의료_거버넌스_자료검토_v1.md — 거버넌스가 묻는 4가지(어디가 나쁜가·자원·흐름·성과) 중 ①은 거의, ②는 절반 가능, <strong>자체충족률·접근성·공공병원 현황이 비어 있음</strong>. 수집 후보 1순위 공단 지역별의료이용통계 관내·관외 진료(KOSIS 표 ID 확인 필요), 2순위 응급·분만·소아 취약지 고시, 3순위 심평원 의료기관 Open API.</li>
   <li>[대기] 시군구 × 연령대 자살률: KOSIS·서울 열린데이터광장·서울시정신건강통계 모두 교차표 미공표 확인(2026-09-18). 필요 시 통계청 MDIS 사망원인통계 원시자료 신청.</li>
   <li>[대기] e-지방지표 FAIL 15개 원인 조사 (prdSe 월/분기 가능성)</li>
