@@ -516,8 +516,8 @@
   X.theanine = X.theanine || {};
   X.theanine.pregnancy = c("avoid", "식약처 섭취 시 주의사항: 임산부 및 수유부는 섭취를 피할 것(보도 기준)", "https://www.docdocdoc.co.kr/news/articleView.html?idxno=3012765");
   X.gaba = X.gaba || {};
-  X.gaba.htn = c("caution", "일시적 혈압 하강 — 혈압약 병용 시 저혈압 가능, 개별인정 주의사항에 혈압약 명시", "https://pubmed.ncbi.nlm.nih.gov/34444905/");
-  X.gaba.pregnancy = c("caution", "임신·수유 자료 없음(USP 주의 권고)", "https://pubmed.ncbi.nlm.nih.gov/34444905/");
+  X.gaba.htn = c("caution", "일시적 혈압 하강 — 혈압약 병용 시 저혈압 가능, 개별인정(제2022-19호) 주의사항에 혈압약 명시", ["https://pubmed.ncbi.nlm.nih.gov/34444905/", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do"]);
+  X.gaba.pregnancy = c("caution", "임신·수유 자료 없음(USP 주의 권고), 개별인정 주의사항: 임산부·수유부 섭취 주의", "https://pubmed.ncbi.nlm.nih.gov/34444905/");
   X.protein = X.protein || {};
   X.protein.ckd = c("caution", "비투석 3~5단계는 0.55~0.6 g/kg/일(당뇨 0.6~0.8) 제한 권고 — 보충 전 의료진 상의", "https://pmc.ncbi.nlm.nih.gov/articles/PMC8045140/");
 
