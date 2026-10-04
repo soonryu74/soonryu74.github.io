@@ -20,6 +20,7 @@ const VIEWS = [
   { view: "hot", name: "핫스팟", kw: "공간 군집 Getis-Ord 콜드스팟 Mann-Kendall 추세 이웃" },
   { view: "chronicle", name: "연대기 전시관", kw: "연도별 10대 뉴스 사건 법 제도 백서 지침 변화의 벽 박물관" },
   { view: "units", name: "조사 단위", kw: "보건소 258 시군구 229 보건지소 보건진료소 지역보건의료기관 매핑" },
+  { view: "report", name: "지역 보고서", kw: "보고서 자동 생성 인쇄 PDF 워드 doc 계획서 현황 분석 문장 초안 지역보건의료계획" },
   { view: "sources", name: "자료원", kw: "출처 기관 갱신 주기 다음 공표 보유 현황 매트릭스 결측 산식 한계" },
   { view: "feedback", name: "의견·문의", kw: "오류 신고 질문 이메일 FAQ 사용설명서 활용법 영상 방법론 문서 PDF PPT MP4 제작" },
   { view: "radar", name: "Health Equity Radar (English)", kw: "영문 영어 English overview MIT Solve 소개 solve 공모전" },

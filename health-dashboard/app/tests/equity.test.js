@@ -109,3 +109,15 @@ test("영어 근거 문장은 한국어와 같은 숫자를 쓰고 인과·예�
   assert.ok(!/[가-힣]/.test(en), "no Korean in English reasons");
   for (const bad of ["because", "cause", "predict", "risk of", "worst"]) assert.ok(!en.toLowerCase().includes(bad), bad);
 });
+
+test("지역 보고서 문장 초안: 계산된 사실만, 인과·처방 표현 없음", async () => {
+  const { draftParagraphs, strengthsOf, trendGroups } = await import("../src/lib/report.js");
+  const mk = (id, name, tier, dirAbs, u, trendKey) => ({ id, name, domain: "흡연", unit: "%", v: 20, ref: 18, tier, gap: { abs: 2, dirAbs }, pos: { u, n: 258, rank: 1 }, trendCls: trendKey ? { key: trendKey, u: 0.5 } : null });
+  const rows = [mk("a", "현재흡연율", "priority", 2, 0.9, "worsening"), mk("b", "걷기 실천율", "ok", -3, 0.1, "improving"), mk("c", "비만율", "watch", 1, 0.6, null)];
+  const p = { rows, top: [rows[0]], counts: { priority: 1, watch: 1, ok: 1, insufficient: 0 } };
+  const s = strengthsOf(rows);
+  assert.deepEqual(s.map((r) => r.id), ["b"]);
+  const t = draftParagraphs({ regionName: "가나시", p, strengths: s, trends: trendGroups(rows), dep: { q: 4, year: 2020 }, hle: null, poolDesc: "전국 중앙값", basis: "3년 평균" }).join(" ");
+  assert.ok(t.includes("「우선 검토」 1개") && t.includes("「현재흡연율」") && t.includes("「걷기 실천율」") && t.includes("4분위"));
+  for (const bad of ["때문", "원인으로", "해야 한다", "효과가 있", "최악", "위험 지역"]) assert.ok(!t.includes(bad), bad);
+});
