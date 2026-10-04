@@ -455,7 +455,7 @@
   /* ===== 추가 성분 — 마카·에키네시아·엘더베리·홍경천·바나바 (2026-10) ===== */
   X.echinacea = X.echinacea || {};
   X.echinacea.autoimmune = c("avoid", "국내 개별인정 주의사항: 자가면역 장애·다발성 경화증·교원증·결핵·백혈병·HIV는 섭취 금지", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
-  X.echinacea.pregnancy = c("caution", "개별인정 주의사항상 임산부·수유부는 전문가 상담", "https://www.nccih.nih.gov/health/echinacea");
+  X.echinacea.pregnancy = c("caution", "개별인정 주의사항상 영·유아·어린이·임산부·수유부는 섭취 시 전문가와 상담", ["https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do", "https://www.nccih.nih.gov/health/echinacea"]);
   X.elderberry = X.elderberry || {};
   X.elderberry.pregnancy = c("caution", "임신·수유 중 안전성 정보 부족(NCCIH)", "https://www.nccih.nih.gov/health/elderberry");
   X.rhodiola = X.rhodiola || {};
@@ -467,7 +467,7 @@
 
   /* ===== 추가 성분 — 아미노산 A: 아르기닌·시트룰린·글루타민·BCAA·HMB (2026-10) ===== */
   X.arginine = X.arginine || {};
-  X.arginine.dyslip = c("avoid", "심근경색 후 RCT에서 사망 8.6% vs 0%로 조기 중단, 국내 일반의약품도 심근경색 병력 금기", "https://pubmed.ncbi.nlm.nih.gov/16391217/");
+  X.arginine.dyslip = c("avoid", "심근경색 후 RCT에서 사망 8.6% vs 0%로 조기 중단, 국내 경구 아르기닌 의약품 정보도 심근경색이 우려되는 경우 복용 금기", ["https://pubmed.ncbi.nlm.nih.gov/16391217/", "https://common.health.kr/shared/healthkr/pharmreview/%EC%97%98-%EC%95%84%EB%A5%B4%EA%B8%B0%EB%8B%8C(l-arginine)(0).pdf"]);
   X.arginine.pregnancy = c("caution", "개별인정 주의사항: 임산부 및 수유부는 섭취에 주의", "https://www.fmis.kr/public/pro/hfg/selectHtfsIndvdlzRcognInfo.do?hfFncltyMtralRcognNo=\uc81c2015-19\ud638");
   X.arginine.ckd = c("caution", "경구 아르기닌 의약품은 심한 신기능 장애에서 금기", "https://common.health.kr/shared/healthkr/pharmreview/\uc5d8-\uc544\ub974\uae30\ub2cc(l-arginine)(0).pdf");
   X.arginine.liver = c("caution", "경구 아르기닌 의약품은 심한 간기능 장애에서 금기", "https://common.health.kr/shared/healthkr/pharmreview/\uc5d8-\uc544\ub974\uae30\ub2cc(l-arginine)(0).pdf");
