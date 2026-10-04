@@ -367,3 +367,9 @@ body{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
 .trio div{text-align:center}
 .trio small{letter-spacing:.25em;padding-left:.25em}
 @media(max-width:520px){.trio{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* 선언문: 모두 가운데 정렬 */
+.manifesto{text-align:center}
+.manifesto .kicker{justify-content:center!important}
+.manifesto p,.manifesto .m2{text-align:center;text-wrap:balance}
+@media(max-width:520px){html[lang=en] .manifesto p{font-size:clamp(2rem,9.5vw,2.6rem)}}
