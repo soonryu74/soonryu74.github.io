@@ -5,7 +5,7 @@
   --surface-1:     #fcfcfb;
   --text-primary:  #0b0b0b;
   --text-secondary:#52514e;
-  --muted:         #898781;
+  --muted:         #6b6a65;   /* 2026-10-04 대비 3.4→5.1:1 (WCAG AA). 다크 모드는 아래에서 #898781 유지 */
   --grid:          #e1e0d9;
   --baseline:      #c3c2b7;
   --border:        rgba(11,11,11,0.10);
@@ -53,9 +53,10 @@ header.top { display:flex; align-items:baseline; justify-content:space-between; 
 .controls label { font-size:14px; color:var(--muted); display:block; margin-bottom:3px; }
 .ctrl { background:var(--surface-1); border:1px solid var(--border); border-radius:10px; padding:8px 10px; }
 select { border:none; background:transparent; color:var(--text-primary); font-size:16px; font-weight:600; outline:none; max-width:180px; }
-.yearctrl { flex:1 1 220px; min-width:200px; }
+.yearctrl { flex:1 1 220px; min-width:min(200px, 100%); }
+.yearval { white-space:nowrap; }
 .yearrow { display:flex; align-items:center; gap:10px; }
-input[type=range]{ flex:1; accent-color: var(--series-1); }
+input[type=range]{ flex:1; min-width:0; accent-color: var(--series-1); }
 .yearval { font-weight:700; font-size:16px; font-variant-numeric: tabular-nums; }
 @media (max-width: 480px){
   .controls { align-items: stretch; }
