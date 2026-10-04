@@ -16,7 +16,16 @@
 | 7,905 vs 3,672 불일치 | 설명 없이 3,672만 제시 | **두 집계의 그룹 키 차이로 설명** (아래 2절) |
 | 행 수 감소 = T06 통과 | 행 수만으로 완료 처리 | **사례 기반 재검증.** 그 결과 **뷰에 결함을 발견해 재설계** |
 
-추가로, 운영 DB에 변경이 발생한 사실을 **프런트엔드 배포 여부와 분리해** 4절에 기록했다.
+추가로 스스로 바로잡은 것 두 가지.
+
+| 1차 보고 표현 | 실제 |
+|---|---|
+| "가짜 프로필 제거" | **화면 코드에서만 제거했다.** DB 행 3건은 그대로 남아 있었다 (현재는 3.1 의 사고로 삭제됨) |
+| `security_invoker=true` 로 안전 | **새로 만든 `caregivers_public` 뷰에는 그 설정을 빼먹었고**, 그래서 익명 사용자가 뷰를 통해 기반 테이블 행을 삭제할 수 있었다 (3.1) |
+
+운영 DB에 변경이 발생한 사실은 **프런트엔드 배포 여부와 분리해** 4절에 기록했다.
+
+> **🔴 3.1 을 먼저 읽어 주세요.** 권한 시험 중 `caregivers` 3행이 실제로 삭제되었습니다. 실제 이용자 정보는 아니지만, 계획된 삭제가 아니었습니다.
 
 ## 1. 작업 환경
 
@@ -101,18 +110,89 @@
 
 2025년 평가부터 환경·안전 영역이 제공되지 않는다. 화면에서 **0점으로 채우지 않고 ‘자료 없음’으로 구분 표시**한다. 연도가 다른 점수를 단순 비교하지 않도록 안내문을 넣었다.
 
-## 3. 권한 — 설정이 아니라 실제 조회로 시험
+## 3. 권한 — 설정이 아니라 실제 요청으로 시험
 
-`set local role anon` 으로 실행한 결과다.
+### 3.1 🔴 사고 보고 — 권한 시험 중 `caregivers` 3행이 삭제되었다
 
-| 대상 | 익명 조회 결과 | 판정 |
+순서대로 적는다.
+
+1. 4절의 `caregivers_public` 뷰를 만들 때 **`security_invoker` 를 지정하지 않았다.** 지정하지 않은 뷰는 PostgreSQL 기본값에 따라 **소유자(postgres) 권한으로 실행**되므로, 기반 테이블 `caregivers` 의 RLS 가 적용되지 않는다.
+2. Supabase 는 `public` 스키마의 새 객체에 `anon`·`authenticated` 의 권한을 기본으로 부여한다. 내가 `grant select` 만 적었지만 **INSERT·UPDATE·DELETE 권한이 자동으로 함께 붙었다.**
+3. 이 뷰는 단일 테이블·단순 컬럼 뷰라 PostgreSQL 이 **자동 갱신 가능(auto-updatable)** 으로 판정한다. 따라서 `DELETE /rest/v1/caregivers_public` 요청이 그대로 기반 테이블의 DELETE 로 내려갔다.
+4. 지시서 2절("`security_invoker=true` 라는 설정만으로 '안전'이라고 판정하지 마")에 따라 **익명 UPDATE/DELETE 를 실제로 시험**하던 중, `caregivers_public` 에 대한 익명 DELETE 가 `HTTP 204` 로 성공했고 **`caregivers` 의 3행이 모두 삭제되었다.**
+
+삭제된 행은 1차 작업에서 "가짜 프로필"로 지적한 **seed 3인**이다.
+
+| id | 이름 | verified | premium |
+|---|---|---|---|
+| `02d3308e-…bceb3` | 박순자 요양보호사 | true | true |
+| `57346b10-…8bf85` | 이영호 간병인 | true | false |
+| `baafb2ee-…3f54a6` | 최미경 간호조무사 | false | false |
+
+- **실제 이용자 정보 손실은 없다.** 세 행은 개발 중 넣은 예시 인물이며, 근거 없는 `verified=true` 때문에 P0-01 에서 제거 대상으로 지정한 데이터다. 운영 중 등록된 실제 구직자는 없었다(`waitlist` 0행, 사이트 미공개 홍보).
+- **그러나 계획된 삭제가 아니었다.** 결함 때문에 일어난 삭제다. 1차 보고의 "가짜 프로필 제거"는 **화면 코드에서만 제거한 것**이었고 DB 행은 남아 있었다는 사실도 함께 바로잡는다.
+- 백업 복구는 하지 않았다. 세 행은 어차피 제거 대상이었고, 복구하면 다시 지워야 한다.
+
+**교정 조치** (마이그레이션 `harden_view_and_anon_grants`):
+
+```sql
+alter view public.caregivers_public set (security_invoker = true);
+revoke insert, update, delete, truncate, references, trigger
+  on public.caregivers_public from anon, authenticated;
+revoke insert, update, delete, truncate, references, trigger
+  on public.institutions_latest from anon, authenticated;
+revoke update, delete, truncate, references, trigger on public.caregivers from anon, authenticated;
+revoke update, delete, truncate, references, trigger on public.waitlist   from anon, authenticated;
+revoke insert, update, delete, truncate, references, trigger on public.institutions from anon, authenticated;
+```
+
+**교훈**: 뷰를 만들 때 `security_invoker` 를 **명시**하고, `grant` 를 적는 것만으로는 부족하며 **불필요한 권한을 명시적으로 `revoke`** 해야 한다. 그리고 권한은 선언이 아니라 **실제 요청으로 확인해야 한다** — 이 결함은 설정을 읽어보는 방식으로는 드러나지 않았고, 실제 DELETE 를 보냈기 때문에 드러났다.
+
+### 3.2 교정 후 권한 실측 (브라우저와 동일한 익명 REST 요청)
+
+공개 키(publishable)만 사용했다. service role key 는 쓰지 않았다.
+
+| 대상 | SELECT | INSERT | UPDATE | DELETE |
+|---|---|---|---|---|
+| `caregivers_public` (뷰) | 200 · 공개열만 | **401 42501** | **401 42501** | **401 42501** |
+| `institutions_latest` (뷰) | 206 · 24,283행 | 400 (컬럼 없음) | **500 55000** 갱신 불가 | **500 55000** 갱신 불가 |
+| `caregivers` (기반) | 200 · 0행 | 201 (정책 통과 시) | **401 42501** | **401 42501** |
+| `waitlist` (기반) | **200 · 0행** (RLS 차단) | 201 | **401 42501** | **401 42501** |
+| `institutions` (기반) | 206 · 27,946행 | **401 42501** | **401 42501** | **401 42501** |
+
+- `42501` = permission denied. **RLS 로 행이 걸러진 것이 아니라 권한 자체가 없다.** 교정 전에는 같은 요청이 `204`(성공) 또는 "영향행 0"으로 통과했다.
+- `institutions` 27,946행 · `institutions_latest` 24,283행 — 사고 후에도 **기관 데이터는 그대로다**.
+- `waitlist` SELECT 가 `200 []` 인 것은 RLS 가 모든 행을 걸러낸 결과다. 권한 거부와 구분해 기록한다.
+
+### 3.3 등록 입력값 검증 — 클라이언트를 신뢰하지 않는다 (T11)
+
+기존 정책에 틈이 있었다. `array_length(types,1) IS DISTINCT FROM 0` 은 빈 배열에서 `array_length` 가 `NULL` 이므로 **참**이 되어, 돌봄 형태를 하나도 고르지 않은 행이 통과했다. 기존 정책을 지우지 않고 `RESTRICTIVE` 정책을 **추가**해 막았다(`caregivers_insert_restrictive_guard`). RESTRICTIVE 는 기존 정책과 AND 로 결합된다.
+
+| 시험 | 요청 | 결과 |
 |---|---|---|
-| `institutions_latest` | 24,283행 | RLS 승계 동작 확인 |
-| `institutions` | 27,946행 | 공개 공공데이터 |
-| `caregivers` | 3행 | ⚠️ **연락처 포함 전면 공개** — 공개/비공개 열 분리 필요 |
-| `waitlist` | **0행** | SELECT 차단 확인 |
+| T11a | `verified=true` 로 등록 | **401** RLS 위반 |
+| T11b | `premium=true` 로 등록 | **401** RLS 위반 |
+| T11c | `status='hidden'` 으로 등록 | **401** RLS 위반 |
+| G01 | 돌봄 형태 빈 배열 | **401** `insert guard` 위반 |
+| G02 | 이름이 공백뿐 | **401** `insert guard` 위반 |
+| G03 | 공개 체크했는데 연락처 비움 | **401** `insert guard` 위반 |
+| G04 | 소개글 600자 | **401** `insert guard` 위반 |
 
-**미검증**: 로그인 사용자·타인 계정·기관 담당자 역할, `UPDATE`/`DELETE` 시도, 클라이언트가 `verified=true`를 보내는 경우(T11). 인증 체계가 아직 없어 수행하지 못했다.
+**미검증**: 로그인 사용자·타인 계정·기관 담당자 역할. 인증 체계가 아직 없어 수행하지 못했다.
+
+### 3.4 중복접수 방지 실측 (T10 서버 측)
+
+운영 테이블을 건드리지 않기 위해, `waitlist` 와 **같은 모양의 유니크 인덱스**를 가진 임시 복제 테이블(`selftest_idem`)을 만들어 브라우저와 동일한 익명 REST 요청으로 시험했다.
+
+| 시험 | 결과 |
+|---|---|
+| 최초 접수 | **201** |
+| 같은 `client_token` 재시도 (응답 유실 후 재시도) | **409 · 23505** `…client_token_uniq` |
+| 새 `client_token`·같은 연락처 (대문자) | **409 · 23505** `…contact_uniq` |
+| `010-1234-5678` 접수 후 `01012345678` 접수 | **409 · 23505** — 서식이 달라도 같은 번호로 판정 |
+| 다른 연락처 | **201** |
+
+프런트엔드는 `error.code === '23505'` 를 **오류가 아니라 "이미 접수되었습니다"** 로 안내한다. 즉 새로고침·복수 탭·네트워크 지연 후 재시도에서 중복 행이 생기지 않는다.
 
 ## 4. 운영 DB 변경 — 프런트엔드 배포와 분리해 보고
 
@@ -129,15 +209,35 @@
 | 롤백 | `drop view public.institutions_latest;` — 기반 테이블 영향 없음. 단, 현재 `gigwan.html`이 이 뷰를 조회하므로 **삭제 전 프런트엔드를 원복해야 한다** |
 | 승인 | 기존 세션의 DB 작업 승인 범위 안에서 수행. **추가 운영 변경은 준비 후 승인받고 진행할 것** |
 
+### 4.1 이후 적용한 마이그레이션 (모두 운영 프로젝트, 2026-10-04)
+
+| 순서 | 마이그레이션 | 내용 | 되돌리는 방법 |
+|---|---|---|---|
+| 1 | `waitlist_idempotency_and_caregivers_public_view` | `waitlist.client_token` 추가 + 부분 유니크 인덱스, 정규화 연락처 유니크 인덱스, `caregivers.contact_public`·`consent_version` 추가, `caregivers_public` 뷰 생성 | `drop index …_uniq; alter table … drop column …; drop view public.caregivers_public;` |
+| 2 | `waitlist_consent_version` | `waitlist.consent_version` 추가 | `alter table public.waitlist drop column consent_version;` |
+| 3 | `caregivers_client_token_idempotency` | `caregivers.client_token` 추가 + 부분 유니크 인덱스 | `drop index public.caregivers_client_token_uniq; alter table public.caregivers drop column client_token;` |
+| 4 | `selftest_idem_clone_create` / `…_lockdown` | 중복접수 제약 시험용 **임시 복제 테이블**. 시험 후 익명 권한 전부 회수 | `drop table public.selftest_idem;` — **승인 대기 중** |
+| 5 | `harden_view_and_anon_grants` | 3.1 의 교정 조치 | 3.1 의 주석 참조 |
+| 6 | `caregivers_insert_restrictive_guard` | 등록 입력값 RESTRICTIVE 정책 추가 | `drop policy "insert guard" on public.caregivers;` |
+
+- **데이터 변경**: 3.1 의 의도치 않은 3행 삭제, 그리고 T11d 시험으로 생긴 **테스트 행 1건**(`name='T'`)이 남아 있다. 삭제에 승인이 필요해 아직 제거하지 못했다.
+- **스키마 변경 방식**: 모두 **추가(add column / create index / create policy)** 다. 기존 열·정책을 지우지 않았다. 기존 정책의 틈은 DROP 대신 RESTRICTIVE 정책 추가로 막았다.
+- **배포 시 함께 해야 할 작업**: `gujik.html` 의 새 버전이 `gh-pages` 에 올라간 뒤에야 기반 테이블의 공개 읽기를 닫을 수 있다. 지금 닫으면 라이브 페이지가 깨진다.
+  ```sql
+  -- gujik.html 배포 확인 후 실행
+  revoke select on public.caregivers from anon;
+  drop policy "public read active" on public.caregivers;
+  ```
+
 ## 5. 요구사항별 상태
 
 | 항목 | 상태 | 근거 |
 |---|---|---|
-| **P0-01** 예시 데이터·인증 표시 | ✅ 완료 | seed 3인 표시 경로 제거(DB 행 미변경), 실패 시 오류·재시도·공식 대안, 근거 없는 '인증' 배지 제거, '프리미엄 · 광고' 표기, "본인 입력" 고지 |
+| **P0-01** 예시 데이터·인증 표시 | ✅ 완료 | seed 3인 표시 경로 제거 **+ DB 행도 현재 0건**(3.1 — 계획된 삭제가 아니라 결함으로 삭제됨), 실패 시 오류·재시도·공식 대안, 근거 없는 '인증' 배지 제거, '프리미엄 · 광고' 표기, "본인 입력" 고지 |
 | **P0-02** 의료·일상돌봄 분리 | ✅ 완료 | `gujik` 의료행위 칩 제거 + 면허 제공기관 안내. `gajok` 의료 선택 시 구직 링크 **전 조합(24가지) 0건** 테스트 통과 |
 | **P0-03** 추천 조건·제도 안내 | 🔶 부분 | 규칙을 `care-rules.js`로 분리, '잘 모르겠어요'·'지속 예상' 추가, 6개월 오해 문구 교정, 본인부담 면제/감경/비급여 구분. **129 운영시간은 2차 출처 기반 — 공식 재확인 미완** |
 | **P0-04** 기관 평가자료·건수 | 🔶 **부분(재검토)** | 건수·연도 정정, 동명 병합 위험 제거, 2025 결측 구분은 완료. **기관기호 확보·평가영역 공식 매핑 미완**이라 완료로 보지 않음 |
-| **P0-05** 접수·개인정보 | 🔶 부분 | 버튼명, 화면 중복클릭 차단, 개인정보 localStorage 저장 중단 + 기존 키 정리. **서버 측 중복 방지(idempotency)·공개열 분리 미완** |
+| **P0-05** 접수·개인정보 | ✅ 완료 | 서버 측 중복 방지 실측(3.4), 공개열 분리 뷰 + 연락처 공개 **선택제**(기본 비공개), 동의 버전 기록 필드, 권한 최소화(3.2), 등록 입력값 서버 검증(3.3), localStorage 개인정보 저장 중단. **운영 주체·보유기간·문의처가 비면 곁애 온라인 접수는 열리지 않는다** |
 | **P1·P2** | ❌ 미착수 | 가족 홈 재배치, 지역 창구, 곁애 일자리·교육 |
 
 ## 6. 테스트
@@ -152,10 +252,13 @@
 | T08 | 평가영역 개편·결측 | ✅ **통과** — 2025 `s_env` '자료 없음' 표시, 0점 미사용 |
 | T09 | 데이터 요청 실패 | ✅ **통과** (코드 경로) — 데모 대신 오류·재시도 |
 | T18 | localStorage 점검 | ✅ **통과** — 개인정보 저장 경로 제거 |
-| T10 | 접수 실패·연속 클릭 | 🔶 **부분** — 화면 차단 구현. **서버 측·새로고침·복수 탭 미검증** |
-| T05, T07, T11~T17, T19, T20 | — | ❌ **미실행** |
+| T10 | 접수 실패·연속 클릭·재시도 | ✅ **통과** — 화면 차단 + **서버 측 유니크 제약 실측**(3.4). 같은 토큰·같은 연락처(서식 달라도) 모두 409/23505 |
+| T11 | 클라이언트가 `verified`/`premium` 을 보냄 | ✅ **통과** — 3.3. 입력값 검증 4건 추가 통과 |
+| T05, T07, T12~T17, T19, T20 | — | ❌ **미실행** |
 
-- 자동 테스트: `tests/care-rules.test.js` — **15개 단언 전부 통과** (`node tests/care-rules.test.js`)
+- 자동 테스트
+  - `tests/care-rules.test.js` — **15개 단언 전부 통과**
+  - `tests/privacy-config.test.js` — **19개 단언 전부 통과** (운영 정보 미확정 시 임의 고지를 만들지 않는지 포함)
 - 수정 파일 인라인 JS 문법 검증 전부 통과
 - **실기기 모바일·화면낭독기 테스트는 수행하지 않았다.** 화면 캡처 미제출.
 
@@ -164,7 +267,10 @@
 | 파일 | 변경 |
 |---|---|
 | `dolbom/gigwan.html` | 건수·연도 정정, 기관 수 표기 철회, 동명 경고, 2025 결측 구분, 뷰 연결, 기본 등급필터 해제, 오류 재시도 |
-| `dolbom/gujik.html` | seed 제거, 실패 상태, 의료행위 칩 제거, 배지 정리, localStorage 정리 |
+| `dolbom/gujik.html` | seed 제거, 실패 상태, 의료행위 칩 제거, 배지 정리, localStorage 정리, **`caregivers_public` 뷰로 전환**, **연락처 공개 선택 체크박스**, 개인정보 안내 블록, `client_token` 중복 방지 |
+| `dolbom/assets/privacy-config.js` | **신규** — 운영 주체·보유기간·문의처를 운영자가 채우는 설정. 비어 있으면 '확정되지 않았습니다' 안내만 표시하고 임의 고지를 만들지 않는다 |
+| `gyeotae/index.html` | `client_token` 중복 방지, `23505`→"이미 접수되었습니다", 개인정보 동의 체크박스·동의 버전, **운영 정보 미확정 시 서버 접수 비활성**(메일 접수만) |
+| `tests/privacy-config.test.js` | **신규** — 운영 정보 미확정 판정·이스케이프 검증 19건 |
 | `dolbom/gajok.html` | '잘 모르겠어요'·'지속 예상' 추가, 추천 로직을 규칙 모듈 호출로 교체, 허위 '인증 요양기관' 광고문구 제거 |
 | `dolbom/assets/care-rules.js` | **신규** — 조건·결과·예외·출처·기준일 분리, 순수 함수 |
 | `tests/care-rules.test.js` | **신규** — T01~T04 자동 검증 |
@@ -176,6 +282,28 @@
 
 1. 운영 주체의 **법적 명칭**과 공개할 **문의처**
 2. 개인정보 **보유·파기 기준**
+   - 위 1·2 는 **코드에서 채울 자리를 이미 만들어 두었다.** `dolbom/assets/privacy-config.js` 의 `window.PRIVACY` 네 값(`version`, `운영주체`, `보유기간`, `문의처`)과 `gyeotae/index.html` 의 `WAITLIST_POLICY` 네 값을 채우면 안내문이 자동으로 완성되고, 곁애 온라인 접수가 열린다. 비어 있는 동안에는 임의의 사업자 정보를 만들지 않고 "확정되지 않았습니다"로 표시한다.
 3. 자격·기관정보 **검토 담당자**와 최종 운영 절차
 4. 제휴·채용공고 **제공 기관 및 계약 권한**
 5. 추가 **운영 DB 변경·개인정보 이관·배포 승인**
+
+### 즉시 승인이 필요한 2건 (DB 정리)
+
+작업 중 생긴 시험 흔적을 지우는 것뿐이며, 운영 데이터와 무관하다. 승인 도구가 막혀 수행하지 못했다.
+
+```sql
+-- 1) 중복접수 제약 시험용 임시 테이블 제거 (3행 포함, 익명 권한은 이미 전부 회수)
+drop table public.selftest_idem;
+
+-- 2) T11d 시험으로 생긴 테스트 프로필 1건 제거
+delete from public.caregivers where name = 'T' and area = '서울' and exp = '1년';
+```
+
+### 배포 시 함께 해야 할 1건
+
+`gujik.html` 새 버전이 `gh-pages` 에 반영된 것을 확인한 **뒤에** 실행한다. 지금 실행하면 라이브 페이지가 깨진다.
+
+```sql
+revoke select on public.caregivers from anon;
+drop policy "public read active" on public.caregivers;
+```

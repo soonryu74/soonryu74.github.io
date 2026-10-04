@@ -142,12 +142,20 @@
  <div class="field">
  <label>연락 방법 <span class="hint">전화 뒤 4자리·오픈카톡 등 (선택)</span></label>
  <input type="text" id="f-contact" placeholder="예: 연락처 문의 / 오픈카톡 링크">
+ <label style="display:flex;gap:8px;align-items:flex-start;margin-top:8px;font-weight:400;cursor:pointer">
+ <input type="checkbox" id="f-contact-public" style="margin-top:3px;width:20px;height:20px">
+ <span class="hint" style="margin:0">이 연락 방법을 <b>디렉토리에 공개</b>합니다. 체크하지 않으면 입력하신 연락처는 화면에 표시되지 않습니다.</span>
+ </label>
  </div>
  <div class="field full">
  <label>한 줄 소개 <span class="hint">가족이 신뢰할 수 있게</span></label>
  <textarea id="f-intro" placeholder="예: 뇌졸중·와상 어르신 케어 경험 많습니다. 성실하고 꼼꼼하게 모시겠습니다."></textarea>
  </div>
  </div>
+ <!-- 개인정보 처리 안내. 운영 주체·보유기간·문의처는 운영자가 확정해야 하는 값이므로
+ assets/privacy-config.js 에서 읽어오고, 비어 있으면 '확인 중'으로 표시한다. -->
+ <div id="pv-notice" style="margin-top:18px"></div>
+
  <p style="margin-top:18px">
  <button class="btn btn-primary" id="save">프로필 등록하기</button>
  <button class="btn btn-ghost" id="gen">홍보문구만 만들기</button>
@@ -190,6 +198,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/privacy-config.js"></script>
 <script>
 // 모심 구직 디렉토리 — Supabase(실제 DB) 연동 + 로컬 폴백
 const SB_URL = 'https://gancotctztwqsuupektl.supabase.co';
@@ -206,9 +215,14 @@ try { localStorage.removeItem(LEGACY_LKEY); } catch(e){}
 let cache = [];
 let loadFailed = false;
 
+// caregivers_public: 공개 의도된 열만 담은 뷰. 연락처는 본인이 공개에 동의한
+// 경우(contact_public)에만 값이 내려오고, 그 밖의 내부 열은 들어 있지 않다.
+// 기반 테이블(caregivers)을 직접 읽지 않는다.
+const PUBLIC_COLS = 'id,created_at,name,role,exp,area,types,skills,time,contact,contact_public,intro,premium,verified,status';
+
 async function fetchProfiles(){
  if (!sb){ cache = []; loadFailed = true; return false; }
- const { data, error } = await sb.from('caregivers').select('*')
+ const { data, error } = await sb.from('caregivers_public').select(PUBLIC_COLS)
  .eq('status','active').order('premium',{ascending:false}).order('created_at',{ascending:false});
  if (!error && Array.isArray(data)){ cache = data; loadFailed = false; return true; }
  // 조회 실패 시 예시 인물을 실제 등록자처럼 대신 보여주지 않는다. (P0-01)
@@ -216,13 +230,23 @@ async function fetchProfiles(){
  cache = []; loadFailed = true; return false;
 }
 
+// 이 브라우저 창에서의 등록 1건을 식별하는 값. 서버의 caregivers_client_token_uniq
+// 와 짝을 이뤄, 응답을 받지 못해 다시 누른 경우에도 프로필이 하나만 남게 한다.
+const clientToken = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : null;
+
 async function saveProfile(p){
  if (!sb) return 'nodb';
- const { error } = await sb.from('caregivers').insert({
+ const row = {
  name:p.name, role:p.role, exp:p.exp, area:p.area,
- types:p.types, skills:p.skills, time:p.time, contact:p.contact, intro:p.intro
- });
+ types:p.types, skills:p.skills, time:p.time, contact:p.contact, intro:p.intro,
+ contact_public:p.contact_public, client_token:clientToken
+ };
+ // 동의 안내가 확정된 뒤에만 '어느 버전에 동의했는지'를 기록한다.
+ if (window.privacyReady && window.privacyReady()) row.consent_version = window.PRIVACY.version;
+ const { error } = await sb.from('caregivers').insert(row);
  if (!error) return 'db';
+ // 23505 = unique_violation. 같은 등록 요청이 이미 저장되어 있다는 뜻이다.
+ if (error.code === '23505') return 'dup';
  // 서버 저장이 실패하면 성공으로 표시하지 않는다. 로컬에 몰래 쌓아두지도 않는다.
  console.warn('Supabase insert 실패:', error && error.message);
  return 'fail';
@@ -246,6 +270,7 @@ function collect(){
  skills: chipVals('f-skills'),
  time: document.getElementById('f-time').value,
  contact: document.getElementById('f-contact').value.trim(),
+ contact_public: document.getElementById('f-contact-public').checked,
  intro: document.getElementById('f-intro').value.trim()
  };
 }
@@ -283,9 +308,13 @@ document.getElementById('save').addEventListener('click', async ()=>{
  const btn=document.getElementById('save'); const old=btn.textContent; btn.disabled=true; btn.textContent='등록 중…';
  const res = await saveProfile(p);
  btn.disabled=false; btn.textContent=old;
- if (res === 'db'){
+ if (res === 'db' || res === 'dup'){
  await fetchProfiles(); render();
- alert('프로필이 등록되었습니다. 아래 디렉토리에 공개됩니다.');
+ alert(res === 'dup'
+ ? '이미 등록되었습니다. 중복 프로필은 만들지 않았습니다.'
+ : (p.contact && p.contact_public
+ ? '프로필이 등록되었습니다. 아래 디렉토리에 연락 방법까지 공개됩니다.'
+ : '프로필이 등록되었습니다. 연락 방법은 공개하지 않도록 접수했습니다.'));
  document.getElementById('directory').scrollIntoView({behavior:'smooth'});
  } else {
  // 실패를 성공처럼 보이게 하지 않는다. 입력값은 화면에 그대로 남겨 다시 시도할 수 있게 한다.
@@ -304,7 +333,9 @@ function card(p){
  <div class="meta">${esc(p.area)} · ⏰ ${esc(p.time)}</div>
  ${p.intro?`<div style="font-size:.9rem;color:var(--ink)">${esc(p.intro)}</div>`:''}
  <div class="tags">${p.types.map(t=>`<span class="pill">${esc(t)}</span>`).join('')}${p.skills.map(s=>`<span class="pill amber">${esc(s)}</span>`).join('')}</div>
- ${p.contact?`<div class="meta" style="margin-top:8px">${esc(p.contact)}</div>`:''}
+ ${p.contact
+ ? `<div class="meta" style="margin-top:8px">${esc(p.contact)}</div>`
+ : `<div class="meta" style="margin-top:8px;opacity:.6">연락 방법 비공개</div>`}
  <div class="meta" style="margin-top:8px;font-size:.78rem">본인이 직접 입력한 정보입니다. 자격·경력은 채용 전 원본 서류로 확인하세요.</div>
  </div>`;
 }
@@ -340,6 +371,13 @@ function render(){
  ? '<p style="color:var(--muted)">조건에 맞는 프로필이 없습니다. 직종·지역 조건을 바꿔보세요.</p>'
  : '<p style="color:var(--muted)">아직 등록된 프로필이 없습니다. 위 양식에서 첫 프로필을 등록해 보세요.</p>');
 }
+if (typeof window.renderPrivacyNotice === 'function'){
+ window.renderPrivacyNotice(document.getElementById('pv-notice'), {
+ 수집항목: '표시 이름, 직종, 경력, 희망 지역, 가능 형태·자격·시간, 연락 방법(공개 선택), 한 줄 소개',
+ 목적: '디렉토리 공개 및 구인·구직 연결'
+ });
+}
+
 document.getElementById('flt-role').addEventListener('change', render);
 document.getElementById('flt-area').addEventListener('input', render);
 document.getElementById('dir').innerHTML = '<p style="color:var(--muted)">불러오는 중…</p>';
