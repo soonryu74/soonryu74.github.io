@@ -20,22 +20,14 @@ a{color:inherit;text-decoration:none}
 h2{font-family:var(--serif);font-weight:300;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.5;letter-spacing:-.01em}
 html[lang=en] h2{font-weight:500;letter-spacing:0}
 
-.stroke{
-  background-color:var(--ultra);
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2400' height='800'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0025 0.16' numOctaves='3' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93  0 0 0 0 0.80  0 0 0 0 0.52  0 0 0 5.5 -3.95'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2400' height='1000'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0025 0.3' numOctaves='2' seed='29' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.79  0 0 0 0 0.63  0 0 0 0 0.29  0 0 0 7 -4.85'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2400' height='600'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005 0.09' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.05  0 0 0 0 0.12  0 0 0 0 0.45  0 0 0 1.6 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2400' height='500'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.00625 0.14' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.5  0 0 0 0 0.95  0 0 0 1.4 -0.75'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size:2400px 800px,2400px 1000px,2400px 600px,2400px 500px;
-}
+.stroke{background:var(--ultra) url(assets/texture.jpg?v=1) left top/1600px auto repeat}
 .goldtext{background:linear-gradient(100deg,var(--gold-lo) 0%,var(--gold-hi) 35%,var(--gold) 50%,var(--gold-hi) 65%,var(--gold-lo) 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s ease-in-out infinite}
 @keyframes shine{0%,100%{background-position:100% 0}50%{background-position:0 0}}
 .seal{display:inline-grid;place-items:center;width:26px;height:26px;background:var(--seal);color:#fff;font-size:.8rem;font-family:var(--serif);border-radius:3px}
 
 /* nav */
 nav{position:fixed;inset:0 0 auto 0;z-index:20;transition:background .4s}
-nav.solid{background:rgba(7,14,48,.9);backdrop-filter:blur(10px)}
+nav.solid{background:rgba(7,14,48,.96)}
 nav .wrap{display:flex;justify-content:space-between;align-items:center;height:64px}
 nav .logo{color:var(--gold-hi);font-family:var(--serif);font-size:1.12rem;display:flex;align-items:center;gap:10px}
 nav .right{display:flex;align-items:center;gap:30px}
@@ -47,7 +39,7 @@ nav ul a:hover{color:var(--gold-hi)}
 @media(max-width:760px){nav ul{display:none}}
 
 /* hero */
-.hero{min-height:100vh;min-height:100svh;color:#fff;display:flex;align-items:center;position:relative;overflow:hidden}
+.hero{min-height:640px;min-height:100svh;color:#fff;display:flex;align-items:center;position:relative;overflow:hidden}
 .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 75% 30%,transparent 0%,rgba(7,14,48,.75) 75%)}
 .hero .wrap{position:relative;width:100%}
 .hero .en{color:var(--gold-hi);margin-bottom:36px;display:block}
@@ -263,7 +255,7 @@ footer{background:var(--abyss);color:#6f79a3;font-size:.78rem;text-align:center;
 /* ═════════ 거장의 무게: 모뉴먼트 레이어 ═════════ */
 .mono-hero{background:var(--abyss);align-items:stretch;flex-direction:column;justify-content:space-between;padding-top:64px}
 .mono-hero::before{display:none}
-.hero-bg{position:absolute;inset:0;opacity:.32;mask-image:linear-gradient(90deg,transparent 0%,#000 55%);-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 55%)}
+.hero-bg{position:absolute;inset:0;opacity:.32}
 .mono-hero > .wrap{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;width:100%}
 .h-top{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid rgba(236,217,160,.25);padding-bottom:18px;margin-bottom:5vh}
 .h-top .en{margin:0;color:var(--gold-hi)}
@@ -348,7 +340,7 @@ html[lang=en] .years b small{font-family:var(--display);font-style:italic;font-s
 .role .ceo{display:inline-block;font-family:var(--serif);font-weight:400;font-size:1.25rem;color:var(--night);margin-bottom:6px}
 
 /* 전시장 음악 버튼 */
-.sound{position:fixed;right:20px;bottom:20px;z-index:40;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 14px;background:rgba(7,14,48,.78);backdrop-filter:blur(8px);border:1px solid rgba(236,217,160,.45);border-radius:999px;color:var(--gold-hi);font-family:var(--garamond);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:background .3s,border-color .3s}
+.sound{position:fixed;right:20px;bottom:20px;z-index:40;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 14px;background:rgba(7,14,48,.92);border:1px solid rgba(236,217,160,.45);border-radius:999px;color:var(--gold-hi);font-family:var(--garamond);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:background .3s,border-color .3s}
 .sound:hover{background:rgba(7,14,48,.95);border-color:var(--gold-hi)}
 .sound .bars{display:flex;align-items:flex-end;gap:2px;height:12px}
 .sound .bars i{display:block;width:2px;height:3px;background:var(--gold-hi);transition:height .3s}
@@ -357,3 +349,6 @@ html[lang=en] .years b small{font-family:var(--display);font-style:italic;font-s
 @keyframes eq{0%,100%{height:3px}50%{height:12px}}
 @media(prefers-reduced-motion:reduce){.sound.on .bars i{animation:none;height:9px}}
 .toast{bottom:80px}
+
+/* 휴대폰: 스크롤 중 흔들림 방지 — 위로 떠오르는 움직임 없이 은은하게만 나타남 */
+@media(max-width:860px){.rv{transform:none;transition:opacity .8s ease}.piece:hover .frame,.ocard:hover{transform:none}}
