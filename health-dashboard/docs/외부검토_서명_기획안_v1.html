@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"외부 검토·서명 공간 기획안 (v1, 2026-10-04)","url":"/health-dashboard/docs/%EC%99%B8%EB%B6%80%EA%B2%80%ED%86%A0_%EC%84%9C%EB%AA%85_%EA%B8%B0%ED%9A%8D%EC%95%88_v1.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cab00ade061f1857924ea0e9d181e9f6d33dd41f">
+    <link rel="stylesheet" href="/assets/css/style.css?v=8be3b77fbb75be454ce7dd3d2d71020054fd05ad">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -323,6 +323,17 @@
   <li>전자서명 서비스: 검토자에게 특정 서비스를 권할지, PDF 서명 스캔도 받을지(권장: 둘 다 받음).</li>
   <li>첫 검토 요청 대상 2~3명.</li>
   <li>사례비 여부(있으면 이해관계에 표시).</li>
+</ol>
+
+<h3 id="10-1-소유자-결정2026-10-04--1단계-구현-완료">10-1. 소유자 결정(2026-10-04) — 1단계 구현 완료</h3>
+
+<ol>
+  <li><strong>자리: 「자료원」 탭 맨 위</strong> 카드 「외부 검토·자문」. 모든 화면 맨 아래에 「외부 검토 — 게시 N건 · 요청 진행 중 · 기록 보기 →」 한 줄, 크레딧 줄에 빌드 번호.</li>
+  <li><strong>검토 요청은 이미 보냄</strong> → <code class="language-plaintext highlighter-rouge">data/reviews.json</code> <code class="language-plaintext highlighter-rouge">pending.active: true</code>, 화면에는 검토자 이름 없이 「검토 요청 진행 중」만. 동의를 받으면 <code class="language-plaintext highlighter-rouge">reviews</code>에 추가하고, 다 끝나면 <code class="language-plaintext highlighter-rouge">pending.active: false</code>.</li>
+  <li><strong>사례비 없음</strong> — 「무보수 자원 검토」를 원칙 문구와 의견서 서식 이해관계 기본값에 명시(<code class="language-plaintext highlighter-rouge">policy.paid: false</code>).</li>
+  <li>서명: 전자서명 PDF·서명 스캔 둘 다 받음(서식의 「인쇄해서 서명」 → PDF 저장 가능).</li>
+  <li>이후 방향: 개인 검토 기록을 쌓은 뒤, 이 앱을 가장 잘 쓸 기관·단체 이름으로 공표하고 이어 가는 구조 → <code class="language-plaintext highlighter-rouge">docs/기관공표_지속가능성_기획안_v1.md</code>.</li>
+  <li>검토자용 안내: <code class="language-plaintext highlighter-rouge">docs/외부검토_가이드_v1.md</code>(카드의 「검토 참여 가이드 ↗」).</li>
 </ol>
 
 

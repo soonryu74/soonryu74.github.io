@@ -4,6 +4,7 @@ import Cite from "./Cite";
 const CNT_REF = { 258: "chs25", 263: "fac", 255: "kdcahc", 229: "mois" };
 import COV from "../../../data/coverage.json";
 import ChsPubs from "./ChsPubs";
+import ReviewsCard from "./ReviewsCard";
 import { saveCsvRows } from "../export";
 
 /* 자료원 — 보건소 258개소 기준표와 자료원별 보유 현황.
@@ -41,6 +42,7 @@ export default function SourcesView({ sel }) {
 
   return (
     <div className="srcview">
+      <ReviewsCard />
       <div className="card span2">
         <h3>기준 보건소 수 — {COV.standard}개소</h3>
         <div className="desc">
