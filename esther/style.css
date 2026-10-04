@@ -356,3 +356,14 @@ html[lang=en] .years b small{font-family:var(--display);font-style:italic;font-s
 /* 직접 연락 */
 .direct{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
 .direct .btn{margin:0;padding:12px 20px;font-size:.88rem;letter-spacing:.04em}
+
+/* 숫자 높이 통일(모든 숫자를 같은 높이의 숫자형으로) */
+body{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
+.years{display:grid;grid-template-columns:repeat(2,max-content);column-gap:clamp(40px,8vw,70px);align-items:end}
+.years b{display:flex;align-items:baseline;line-height:1}
+
+/* 안목 · 해석 · 동행: 같은 폭 3칸으로 간격 통일 */
+.trio{display:grid!important;grid-template-columns:repeat(3,minmax(0,150px));justify-content:center;gap:0!important}
+.trio div{text-align:center}
+.trio small{letter-spacing:.25em;padding-left:.25em}
+@media(max-width:520px){.trio{grid-template-columns:repeat(3,minmax(0,1fr))}}
