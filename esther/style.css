@@ -373,3 +373,8 @@ body{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
 .manifesto .kicker{justify-content:center!important}
 .manifesto p,.manifesto .m2{text-align:center;text-wrap:balance}
 @media(max-width:520px){html[lang=en] .manifesto p{font-size:clamp(2rem,9.5vw,2.6rem)}}
+
+/* 첫 화면 하단 이력 줄: 작게 · 촘촘하게 · 이탤릭 */
+.h-bar span{font-size:.624rem;font-style:italic;letter-spacing:.14em;line-height:1.45}
+.h-bar .wrap{row-gap:2px;padding-top:12px;padding-bottom:14px}
+@media(max-width:720px){.h-bar .wrap{flex-direction:column;gap:2px}}
