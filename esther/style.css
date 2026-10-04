@@ -395,3 +395,8 @@ body{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
 .mono-hero > .wrap{padding-top:6px!important;justify-content:flex-start}
 .mono-hero .h-top{padding-top:4px}
 @media(max-width:720px){.mono-hero > .wrap{padding-top:4px!important}}
+
+/* 동행 방식 목록: 누르거나 마우스를 올려도 글자가 밀리지 않게 */
+.sline,.sline:hover{padding-left:0!important;background:none}
+.sline{transition:background .4s}
+@media(hover:hover){.sline:hover{background:linear-gradient(90deg,rgba(201,162,74,.08),transparent)}}
