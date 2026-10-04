@@ -28,6 +28,8 @@ import SourcesView from "./components/SourcesView";
 import RadarAbout from "./components/equity/RadarAbout";
 import IndInfo from "./components/equity/IndInfo";
 import FeedbackView from "./components/FeedbackView";
+import REV from "../../data/reviews.json";
+import { BUILD } from "./components/ReviewsCard";
 import Home from "./components/Home";
 import ExportButtons from "./components/ExportButtons";
 
@@ -412,8 +414,13 @@ export default function App() {
           구조는 질병관리청 수도권질병대응센터 CIAT를 참조했습니다<Cite k="ciat" />.
           {" "}<button type="button" className="linkbtn" onClick={() => { setView("feedback"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>수정 의견·문의 보내기 →</button>
         </footer>
+        {/* 외부 검토 기록 한 줄 — 게시 건수는 data/reviews.json 에서 자동(인증 표시가 아니라 기록으로 가는 길) */}
+        <div className="rev-foot">
+          외부 검토 — 게시 {REV.reviews.filter((r) => r.status !== "withdrawn").length}건{REV.pending?.active ? " · 요청 진행 중" : ""}
+          {" · "}<button type="button" className="linkbtn" onClick={() => goSearch({ view: "sources", card: "외부 검토·자문" })}>기록 보기 →</button>
+        </div>
         {CONTACT.credit && (
-          <div className="site-credit">기획·제작 {CONTACT.credit.org} · <a href={CONTACT.credit.url} target="_blank" rel="noopener noreferrer">{CONTACT.credit.urlLabel || CONTACT.credit.url}</a> · {CONTACT.credit.date}</div>
+          <div className="site-credit">기획·제작 {CONTACT.credit.org} · <a href={CONTACT.credit.url} target="_blank" rel="noopener noreferrer">{CONTACT.credit.urlLabel || CONTACT.credit.url}</a> · {CONTACT.credit.date} · 빌드 {BUILD.commit}{BUILD.date ? ` (${BUILD.date})` : ""}</div>
         )}
       </div>
       <Tooltip tip={tip} />

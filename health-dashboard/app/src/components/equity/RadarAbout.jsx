@@ -1,6 +1,7 @@
 import { INDICATORS, HC_POOL, YEARS_ALL, SIDOS, label } from "../../data";
 import { CORE, WEIGHTS } from "../../lib/equity";
 import CONTACT from "../../../../data/contact.json";
+import REV from "../../../../data/reviews.json";
 
 /* English overview (MIT Solve / international reviewers). Every number below is computed from the loaded data — nothing is typed in by hand.
    States only what exists today: a working Korean deployment. No users, partners, impact, revenue or AI-performance claims. */
@@ -86,6 +87,17 @@ export default function RadarAbout({ onGo, sel }) {
           </ul>
         </section>
       </div>
+
+      <section className="card">
+        <h3>Independent review</h3>
+        {(() => {
+          const pub = REV.reviews.filter((r) => r.status !== "withdrawn");
+          const scopes = [...new Set(pub.flatMap((r) => r.scope || []))].length;
+          return <p className="desc">{pub.length
+            ? `${pub.length} external review${pub.length > 1 ? "s" : ""} published, covering ${scopes} of ${Object.keys(REV.scopes).length} review scopes. Each record names the reviewer, the scope checked and the software build reviewed.`
+            : `${REV.pending?.active ? "Review requests are in progress; no" : "No"} reviews have been published yet.`} Reviews are unpaid and published only with the reviewer’s consent; they are review opinions, not certification. The record is on the 자료원 (Sources) tab.</p>;
+        })()}
+      </section>
 
       <section className="card">
         <h3>Designed to be adapted</h3>
