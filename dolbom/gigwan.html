@@ -59,18 +59,18 @@
  <section class="section">
  <h3 style="margin-top:0">기관 검색 <span style="font-weight:400;font-size:.85rem;color:var(--muted)">— 지역을 고르면 우리 동네 기관이 등급순으로 나옵니다</span></h3>
  <div class="form-grid">
- <div class="field"><label>지역(시·도)</label>
+ <div class="field"><label for="flt-region">지역(시·도)</label>
  <select id="flt-region"><option value="">시·도 선택</option></select></div>
- <div class="field"><label>시·군·구</label>
+ <div class="field"><label for="flt-sigungu">시·군·구</label>
  <select id="flt-sigungu"><option value="">전체</option></select></div>
- <div class="field"><label>유형</label>
+ <div class="field"><label for="flt-type">유형</label>
  <select id="flt-type"><option value="">전체</option>
  <option>노인요양시설</option><option>방문요양</option><option>주야간보호</option>
  <option>방문목욕</option><option>방문간호</option><option>단기보호</option><option>복지용구</option></select></div>
- <div class="field"><label>최소 등급</label>
+ <div class="field"><label for="flt-grade">최소 등급</label>
  <select id="flt-grade"><option value="">전체</option>
  <option value="최우수">최우수만</option><option value="우수">우수 이상</option><option value="양호">양호 이상</option></select></div>
- <div class="field full"><label>기관명 검색</label>
+ <div class="field full"><label for="flt-name">기관명 검색</label>
  <input type="text" id="flt-name" placeholder="예: 햇살 / 요양원 (지역과 함께 쓰면 정확)"></div>
  </div>
  <div style="margin-top:12px;font-size:.86rem;color:var(--muted)">
@@ -98,14 +98,14 @@
  <h2 style="margin-top:0">이 기관 정보 정정·삭제 요청</h2>
  <p style="color:var(--muted)">폐업·재평가·기관명 변경 등으로 <strong>내용이 사실과 다르다면</strong> 아래를 채워 알려주세요. 확인 후 신속히 <strong>정정 또는 삭제</strong>하겠습니다. 기관 관계자·이용자 누구나 요청할 수 있으며, 비용은 없습니다.</p>
  <div class="form-grid">
- <div class="field"><label>기관명</label><input type="text" id="c-name" placeholder="정정·삭제를 원하는 기관명"></div>
- <div class="field"><label>지역</label><input type="text" id="c-area" placeholder="예: 서울 노원구"></div>
- <div class="field"><label>요청 유형</label>
+ <div class="field"><label for="c-name">기관명</label><input type="text" id="c-name" placeholder="정정·삭제를 원하는 기관명"></div>
+ <div class="field"><label for="c-area">지역</label><input type="text" id="c-area" placeholder="예: 서울 노원구"></div>
+ <div class="field"><label for="c-type">요청 유형</label>
  <select id="c-type"><option>정보 정정(등급·점수·주소 등)</option><option>기관 정보 삭제</option><option>폐업·휴업 반영</option><option>기타</option></select></div>
- <div class="field"><label>요청자 구분</label>
+ <div class="field"><label for="c-who">요청자 구분</label>
  <select id="c-who"><option>기관 관계자</option><option>이용자·보호자</option><option>기타</option></select></div>
- <div class="field"><label>연락처</label><input type="text" id="c-contact" placeholder="전화 또는 이메일 (회신용)"></div>
- <div class="field full"><label>요청 내용</label><textarea id="c-msg" placeholder="어떤 정보가 사실과 다른지, 정확한 내용을 함께 적어주세요."></textarea></div>
+ <div class="field"><label for="c-contact">연락처</label><input type="text" id="c-contact" placeholder="전화 또는 이메일 (회신용)"></div>
+ <div class="field full"><label for="c-msg">요청 내용</label><textarea id="c-msg" placeholder="어떤 정보가 사실과 다른지, 정확한 내용을 함께 적어주세요."></textarea></div>
  </div>
  <p style="margin-top:16px"><button class="btn btn-coral" id="c-gen">요청 내용 정리하기</button></p>
  <div id="c-out"></div>

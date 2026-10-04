@@ -69,7 +69,9 @@
     // 플로팅 상담 버튼
     var help = document.createElement('a');
     help.className = 'float-help'; help.href = 'jaryo.html';
-    help.innerHTML = '<span class="txt">상담·전화 안내</span><span>&nbsp;›</span>';
+    // 작은 화면에서도 버튼 이름을 숨기지 않는다. 글자만 조금 작아진다.
+    help.setAttribute('aria-label', '상담·전화 안내 보기');
+    help.innerHTML = '<span class="txt">상담·전화 안내</span><span aria-hidden="true">&nbsp;›</span>';
     document.body.appendChild(help);
   }
 

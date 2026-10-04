@@ -72,11 +72,11 @@
  <h2 style="margin-top:0">내 프로필 만들기</h2>
  <div class="form-grid">
  <div class="field">
- <label>표시 이름/닉네임 <span class="hint">실명 대신 "김○○ 요양보호사" 형태 권장</span></label>
+ <label for="f-name">표시 이름/닉네임 <span class="hint">실명 대신 "김○○ 요양보호사" 형태 권장</span></label>
  <input type="text" id="f-name" placeholder="예: 김정숙 요양보호사">
  </div>
  <div class="field">
- <label>직종</label>
+ <label for="f-role">직종</label>
  <select id="f-role">
  <option value="요양보호사">요양보호사</option>
  <option value="간병인">간병인</option>
@@ -87,7 +87,7 @@
  </select>
  </div>
  <div class="field">
- <label>경력</label>
+ <label for="f-exp">경력</label>
  <select id="f-exp">
  <option value="신입">신입 (1년 미만)</option>
  <option value="1~3년">1~3년</option>
@@ -97,12 +97,12 @@
  </select>
  </div>
  <div class="field">
- <label>희망 근무지역 <span class="hint">시·군·구</span></label>
+ <label for="f-area">희망 근무지역 <span class="hint">시·군·구</span></label>
  <input type="text" id="f-area" placeholder="예: 서울 노원구 / 경기 구리시">
  </div>
  <div class="field full">
- <label>가능한 돌봄 형태 <span class="hint">여러 개 선택</span></label>
- <div class="chip-row" id="f-types">
+ <label id="lbl-types">가능한 돌봄 형태 <span class="hint">여러 개 선택</span></label>
+ <div class="chip-row" id="f-types" role="group" aria-labelledby="lbl-types">
  <span class="chip" data-v="방문요양">방문요양</span>
  <span class="chip" data-v="병원간병">병원간병</span>
  <span class="chip" data-v="입주간병">입주(24시간)</span>
@@ -114,8 +114,8 @@
  </div>
  </div>
  <div class="field full">
- <label>보유 자격·강점 <span class="hint">여러 개 선택</span></label>
- <div class="chip-row" id="f-skills">
+ <label id="lbl-skills">보유 자격·강점 <span class="hint">여러 개 선택</span></label>
+ <div class="chip-row" id="f-skills" role="group" aria-labelledby="lbl-skills">
  <span class="chip" data-v="요양보호사 1급">요양보호사 1급</span>
  <span class="chip" data-v="간호조무사 자격">간호조무사</span>
  <span class="chip" data-v="치매전문교육 이수">치매전문교육</span>
@@ -130,7 +130,7 @@
  </p>
  </div>
  <div class="field">
- <label>가능 시간대</label>
+ <label for="f-time">가능 시간대</label>
  <select id="f-time">
  <option value="주간(낮)">주간(낮)</option>
  <option value="야간">야간</option>
@@ -140,15 +140,15 @@
  </select>
  </div>
  <div class="field">
- <label>연락 방법 <span class="hint">전화 뒤 4자리·오픈카톡 등 (선택)</span></label>
+ <label for="f-contact">연락 방법 <span class="hint">전화 뒤 4자리·오픈카톡 등 (선택)</span></label>
  <input type="text" id="f-contact" placeholder="예: 연락처 문의 / 오픈카톡 링크">
- <label style="display:flex;gap:8px;align-items:flex-start;margin-top:8px;font-weight:400;cursor:pointer">
- <input type="checkbox" id="f-contact-public" style="margin-top:3px;width:20px;height:20px">
+ <label class="check-row" style="align-items:flex-start;margin-top:8px;font-weight:400">
+ <input type="checkbox" id="f-contact-public" style="margin-top:3px">
  <span class="hint" style="margin:0">이 연락 방법을 <b>디렉토리에 공개</b>합니다. 체크하지 않으면 입력하신 연락처는 화면에 표시되지 않습니다.</span>
  </label>
  </div>
  <div class="field full">
- <label>한 줄 소개 <span class="hint">가족이 신뢰할 수 있게</span></label>
+ <label for="f-intro">한 줄 소개 <span class="hint">가족이 신뢰할 수 있게</span></label>
  <textarea id="f-intro" placeholder="예: 뇌졸중·와상 어르신 케어 경험 많습니다. 성실하고 꼼꼼하게 모시겠습니다."></textarea>
  </div>
  </div>
@@ -168,7 +168,7 @@
  <p style="color:var(--muted)">등록된 프로필입니다. 직종·지역으로 검색하세요. (프리미엄은 상단 고정 노출)</p>
  <div class="form-grid" style="margin-bottom:14px">
  <div class="field">
- <label>직종 필터</label>
+ <label for="flt-role">직종 필터</label>
  <select id="flt-role">
  <option value="">전체</option>
  <option>요양보호사</option><option>간병인</option><option>간호조무사</option>
@@ -176,7 +176,7 @@
  </select>
  </div>
  <div class="field">
- <label>지역 검색</label>
+ <label for="flt-area">지역 검색</label>
  <input type="text" id="flt-area" placeholder="예: 노원 / 구리">
  </div>
  </div>
