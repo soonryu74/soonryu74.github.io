@@ -499,14 +499,14 @@
 
   /* ===== 추가 성분 — 보스웰리아·히알루론산·글루타치온(경구)·NMN·레스베라트롤·스피루리나 (2026-10) ===== */
   X.boswellia = X.boswellia || {};
-  X.boswellia.pregnancy = c("caution", "개별인정 주의사항: 임산부·수유부 섭취 시 주의", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.boswellia.pregnancy = c("caution", "개별인정 주의사항(원료별 상이): 영유아·어린이·임산부·수유부 섭취를 피할 것 또는 섭취에 주의", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
   X.resveratrol = X.resveratrol || {};
-  X.resveratrol.cancer = c("caution", "다발골수종 고용량 제형 임상 신장 이상반응으로 조기 종료", "https://clinicaltrials.gov/study/NCT00920556");
+  X.resveratrol.cancer = c("caution", "다발골수종 고용량(5 g/일) 제형 임상에서 24명 중 중대한 신장 이상반응(급성 신부전 3명·신부전 2명·신기능 저하 1명) 보고 후 종료", ["https://clinicaltrials.gov/study/NCT00920556", "https://pubmed.ncbi.nlm.nih.gov/23205612/"]);
   X.resveratrol.anticoag = c("caution", "1 g/일에서 CYP2C9·3A4·2D6 억제 — 와파린 등 대사 영향 가능", "https://pubmed.ncbi.nlm.nih.gov/20716633/");
   X.spirulina = X.spirulina || {};
   X.spirulina.autoimmune = c("caution", "천포창 악화·피부근염 발병 증례", "https://pubmed.ncbi.nlm.nih.gov/15210464/");
   X.spirulina.liver = c("caution", "오염 제품의 간독소 마이크로시스틴", "https://pubmed.ncbi.nlm.nih.gov/37317149/");
-  X.spirulina.pregnancy = c("caution", "개별인정 주의사항: 임산부·수유부 섭취를 피할 것, 수유 안전성 자료 없음", "https://pubmed.ncbi.nlm.nih.gov/30000909/");
+  X.spirulina.pregnancy = c("caution", "스피루리나추출물 개별인정(제2023-15호) 주의사항: 영유아·어린이·임산부·수유부 섭취를 피할 것(고시형 스피루리나 주의사항에는 없음). 수유 안전성 자료 없음", ["https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do", "https://pubmed.ncbi.nlm.nih.gov/30000909/"]);
 
   /* ===== 추가 성분 — 아미노산 B·단백질: 타우린·카르니틴·테아닌·글리신·GABA·베타알라닌·트립토판·단백질 (2026-10) ===== */
   X.carnitine = X.carnitine || {};
