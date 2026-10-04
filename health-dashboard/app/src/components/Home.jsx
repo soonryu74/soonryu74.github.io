@@ -6,6 +6,7 @@ import Cite from "./Cite";
 import CONTACT from "../../../data/contact.json";
 import HelpContent from "./Help";
 import HomeEquityQuick from "./equity/HomeEquityQuick";
+import RankAll from "./RankAll";
 import { YEARS_ALL, INDICATORS as ALL_INDS } from "../data";
 
 /* 메인(첫) 화면 — 카드 6장: 17개 시도 지도 · 258개 보건소 순위 · 내 지역 건강격차 빠르게 보기(Health Equity Radar) · 취약인구 · 지자체 계획 수립 · 처음이세요?(소개 영상·설명서·활용법).
@@ -43,6 +44,8 @@ export default function Home({ sel, setTip, onGo, onGoCard }) {
   const max = hcRows.length ? Math.max(...hcRows.map((x) => x.v)) : 1;
   const unitName = (r) => `${r.s} ${r.hc25 || r.n}`;
   const [q, setQ] = useState("");
+  const [allOpen, setAllOpen] = useState(false);          // 258곳 전체 순위(CIAT 화면처럼 왼쪽 지역명 + 오른쪽 막대, 2008년부터 재생)
+  const [allYear, setAllYear] = useState(year);
   const mineCodes = useMemo(() => {
     if (q.trim()) return hcRows.filter((x) => unitName(x.r).replace(/\s/g, "").includes(q.replace(/\s/g, ""))).slice(0, 4).map((x) => x.r.c);
     if (!sel || sel.l === "sido") return [];
@@ -129,7 +132,12 @@ export default function Home({ sel, setTip, onGo, onGoCard }) {
             )}
           </div>
           <div className="desc hc-note">표본조사 값이라 이웃한 순위의 차이는 작을 수 있습니다. 하위 순위는 첫 화면에 싣지 않습니다.</div>
-          <button type="button" className="hc-cta" onClick={() => onGo({ view: "analysis", ind, scope: "nation" })}>전체 순위·신뢰구간 보기 →</button>
+          <div className="hc-ctas">
+            <button type="button" className="hc-cta" onClick={() => { setAllYear(year); setAllOpen(true); }}>⛶ {HC_POOL.length}곳 전체 순위 · {ind.years[0]}년부터 재생</button>
+            <button type="button" className="hc-cta" onClick={() => onGo({ view: "analysis", ind, scope: "nation" })}>전체 순위·신뢰구간 보기 →</button>
+          </div>
+          {allOpen && <RankAll ind={ind} item="std" year={ind.years.includes(allYear) ? allYear : year} pool={HC_POOL} poolName="전국 보건소(조사 단위)" rev={false} sel={sel || {}}
+            onYear={setAllYear} onClose={() => setAllOpen(false)} onSelect={(c) => onGo({ view: "analysis", ind, code: c, scope: "nation" })} />}
         </section>
 
         {/* ③ 내 지역 건강격차 빠르게 보기 (Health Equity Radar) */}

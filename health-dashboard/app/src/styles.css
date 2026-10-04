@@ -571,22 +571,28 @@ tr.muted td { color: var(--muted); }
 .ra-ends { margin-left:auto; font-size:12.5px; color:var(--muted); }
 .ra-grid { flex:1 1 auto; min-height:120px; padding:8px 14px; overflow:auto; }
 .ra-canvas { position:relative; }
-.ra-cell { position:absolute; left:0; top:0; display:flex; align-items:center; gap:5px; padding:0 6px; border-radius:4px;
-  background:var(--ra-track); font-size:12px; cursor:pointer; overflow:hidden; white-space:nowrap;
+.ra-cell { position:absolute; left:0; top:0; display:flex; align-items:center; gap:6px; padding:0 6px; border-radius:4px;
+  background:transparent; font-size:12px; cursor:pointer; overflow:hidden; white-space:nowrap;
   transition: transform .85s cubic-bezier(.22,.75,.25,1), box-shadow .3s; will-change:transform; }
-.ra-fill { position:absolute; left:0; top:0; bottom:0; background:var(--ra-bar); border-radius:4px; transition: width .85s cubic-bezier(.22,.75,.25,1); }
-.ra-cell > span:not(.ra-fill) { position:relative; z-index:1; }
+.ra-fill { position:absolute; left:0; top:0; bottom:0; background:var(--ra-bar); border-radius:3px; transition: width .85s cubic-bezier(.22,.75,.25,1); }
+/* CIAT 화면처럼: 왼쪽 지역명 열 + 오른쪽 막대 트랙 */
+.ra-track { position:relative; flex:1 1 auto; align-self:stretch; margin:3px 0; background:var(--ra-track); border-radius:3px; overflow:hidden; min-width:40px; }
 .ra-cell:hover { box-shadow:0 0 0 1.5px var(--series-1); z-index:5; }
 .ra-cell.kin .ra-fill { background:var(--ra-bar-kin); }
 .ra-cell.me { box-shadow:0 0 0 2px var(--ra-me-line); z-index:8; font-weight:800; }
 .ra-cell.me .ra-fill { background:var(--ra-bar-me); }
 .ra-cell.me .ra-nm, .ra-cell.me .ra-v, .ra-cell.me .ra-no { color:var(--text-primary); }
 .ra-no { min-width:24px; text-align:right; color:var(--muted); font-variant-numeric:tabular-nums; font-size:11px; }
-.ra-nm { flex:1; overflow:hidden; text-overflow:ellipsis; color:var(--text-primary); }
-.ra-v { font-variant-numeric:tabular-nums; color:var(--text-primary); font-weight:700; }
-.ra-d { font-size:10px; font-weight:800; }
+.ra-nm { flex:0 0 11.5em; overflow:hidden; text-overflow:ellipsis; color:var(--text-primary); }
+.ra-v { flex:0 0 3.6em; text-align:right; font-variant-numeric:tabular-nums; color:var(--text-primary); font-weight:700; }
+.ra-d { flex:0 0 2.6em; text-align:right; font-size:10px; font-weight:800; }
+.ra-cell.me { background:color-mix(in srgb, var(--ra-me-line) 8%, transparent); }
+.ra-scope { flex:0 0 auto; margin-right:8px; font-size:13px; font-weight:700; color:var(--text-secondary); white-space:nowrap; } .ra-scope-sel { display:inline-block !important; margin-left:3px; width:auto; min-width:15.5em; }
+.ra-t { min-width:220px; }
 .ra-d.up { color:var(--seq-600); } .ra-d.down { color:var(--seqr-600); }
-.ra-cell.cmp { gap:2px; padding:0 3px; font-size:10.5px; }
+.ra-cell.cmp { gap:3px; padding:0 3px; font-size:10.5px; }
+.ra-cell.cmp .ra-nm { flex-basis:6.6em; }
+.ra-cell.cmp .ra-v { flex-basis:2.8em; } .ra-cell.cmp .ra-d { flex-basis:1.6em; }
 .ra-cell.cmp .ra-no { min-width:14px; font-size:9px; }
 .ra-cell.cmp .ra-v { font-size:9.5px; }
 .ra-cell.cmp .ra-d { font-size:8px; }
@@ -1152,3 +1158,5 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
 .radar-demo { display:flex; flex-wrap:wrap; gap:8px; }
 .radar .card { margin-bottom:12px; }
 @media (max-width: 700px) { .radar-stats { grid-template-columns:repeat(2, minmax(0, 1fr)); } .radar-hero h2 { font-size:22px; } .radar-flow li i { display:none; } }
+.hc-ctas { display:flex; flex-wrap:wrap; gap:6px; }
+.hc-ctas .hc-cta { margin-top:0; }
