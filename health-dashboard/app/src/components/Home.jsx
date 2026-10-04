@@ -169,6 +169,7 @@ export default function Home({ sel, setTip, onGo, onGoCard }) {
           )}
           <div className="desc hc-note">추정 표시 집단은 유병률 × 인구로 계산한 규모입니다. 집단 간 중복이 있습니다.</div>
           <button type="button" className="hc-cta" onClick={() => onGo({ view: "profile" })}>우리 지역 고위험군 30개 집단 →</button>
+          <button type="button" className="hc-cta hc-cta2" onClick={() => onGo({ view: "elder" })} title="65세 이상 고령층이 취약한 시군구를 전국에서 보는 보고서">📄 고령층(65세+) 취약 보고서</button>
         </section>
 
         {/* ④ 지자체 계획 수립 */}

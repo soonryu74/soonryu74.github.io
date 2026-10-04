@@ -4,6 +4,7 @@ import { buildIndicatorReport, draftIndicatorParagraphs, regionLabel } from "../
 import { BUILD } from "./ReviewsCard";
 import { download, safe, saveCsvRows } from "../export";
 import { copyText } from "./FeedbackView";
+import ReportMode from "./ReportMode";
 
 /* 지표별 보고서(전국 취약지역 현황) — 금연·절주 같은 사업을 기획하는 정책 담당자용. 해시 view=ireport, 지표는 위 지표 선택을 따른다.
    분석 방향: 전국 분포·추이 → 시도별 집중도 → 검토 대상 지역(불리한 쪽 10%, 신뢰구간 확인) → 불리 + 악화 → 개선 폭 큰 지역(참고) → 박탈 분위별 → 사업 참고 자료.
@@ -13,7 +14,7 @@ const sign = (v) => (v > 0 ? "+" : v < 0 ? "−" : "±");
 const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : "–");
 const LEVEL = { national: "국가", regional: "WHO 서태평양", global: "WHO" };
 
-export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, onBack, onRegionReport, onNcd }) {
+export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, onBack, onMode, onNcd }) {
   const docRef = useRef(null);
   const [msg, setMsg] = useState("");
   const m = useMemo(() => (ind.direction === "context" ? null : buildIndicatorReport(ind, item, smooth)), [ind, item, smooth]);
@@ -25,6 +26,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
   if (!m) {
     return (
       <div className="card rpt-actions">
+        <ReportMode cur="ireport" onMode={onMode} />
         <b>지표별 보고서</b>
         <div className="desc">「{ind.name}」은 {ind.direction === "context" ? "높고 낮음의 좋고 나쁨을 정하지 않은 맥락 지표라" : "값이 있는 지역이 부족해"} 취약지역을 정하지 않습니다. 위에서 흡연·음주·비만처럼 방향이 있는 지표를 고르세요.</div>
         {onBack && <div className="rev-btns"><button type="button" className="themebtn" onClick={onBack}>← 지표 분석</button></div>}
@@ -56,10 +58,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
   return (
     <div className="rpt-wrap">
       <div className="card rpt-actions">
-        <div className="seg rpt-mode" role="group" aria-label="보고서 종류">
-          <button type="button" className="seg-btn" onClick={onRegionReport} title="선택한 지역 하나의 건강 현황 보고서">지역별 보고서</button>
-          <button type="button" className="seg-btn on" aria-pressed="true">지표별 보고서</button>
-        </div>
+        <ReportMode cur="ireport" onMode={onMode} />
         <div><b>지표별 보고서 — 전국 취약지역 현황</b> <span className="muted">— 위에서 지표를 바꾸면 보고서도 바뀝니다. 금연·절주 같은 사업 대상지 검토용 · 화면에서만 만들어집니다.</span></div>
         <div className="rev-btns">
           <button type="button" className="themebtn" onClick={() => window.print()}>🖨 인쇄 · PDF 저장</button>
