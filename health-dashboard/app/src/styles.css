@@ -1241,7 +1241,12 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
 .rpt-draft { background:var(--page); border:1px dashed var(--border); border-radius:8px; padding:10px 14px; }
 .rpt-draft p { margin:0 0 8px; }
 .rpt-item { margin-bottom:14px; }
-@media (max-width: 600px) { .rpt { padding:18px 14px; } .rpt h1 { font-size:22px; } .rpt-tbl { font-size:12.5px; } .rpt-tbl th, .rpt-tbl td { padding:4px 5px; } .rpt-all, .rpt-item .rpt-tbl { display:block; overflow-x:auto; } .rpt-sum th { width:auto; } }
+/* 지표별 보고서(view=ireport) — 보고서 종류 전환·시도별 막대·선택 지역 행 */
+.rpt-mode { align-self:flex-start; }
+.rpt-bar { display:inline-block; height:.7em; min-width:2px; margin-right:6px; vertical-align:middle; border-radius:2px; background:var(--series-1); opacity:.75; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.rpt-me td { background:color-mix(in srgb, var(--series-1) 12%, transparent); font-weight:600; }
+.rpt-vul td:first-child { color:var(--text-secondary); width:2.2em; }
+@media (max-width: 600px) { .rpt { padding:18px 14px; } .rpt h1 { font-size:22px; } .rpt-tbl { font-size:12.5px; } .rpt-tbl th, .rpt-tbl td { padding:4px 5px; } .rpt-all, .rpt-item .rpt-tbl, .rpt-vul, .rpt-wide { display:block; overflow-x:auto; } .rpt-sum th { width:auto; } }
 @media print {
   @page { size:A4; margin:14mm; }
   .view-report header.top, .view-report .controls, .view-report .rpt-actions, .view-report footer, .view-report .reflist, .view-report .rev-foot, .view-report .playbar, .view-report .site-credit { display:none !important; }
@@ -1252,4 +1257,8 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
   .view-report .rpt h2 { break-after:avoid; }
   .view-report .rpt-item, .view-report .rpt-tbl tr { break-inside:avoid; }
   .view-report .rpt-all { display:table !important; }
+  .view-report .rpt-vul, .view-report .rpt-wide { display:table !important; }
+  .view-report .rpt-noprint, .view-report .rpt-mode { display:none !important; }
+  .view-report .rpt-me td { background:#e6eefb !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }
+@media print { #hd-toast { display:none !important; } }
