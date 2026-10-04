@@ -20,7 +20,7 @@
 <meta name="twitter:description" content="A working prototype that transforms official Korean local health data into health equity priorities, interpretation, and evidence-informed public-health action.">
 <meta name="twitter:image" content="https://health-profile.kr/solve/og.jpg">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Crect%20width=%2264%22%20height=%2264%22%20rx=%2214%22%20fill=%22%232a78d6%22/%3E%3Crect%20x=%2212%22%20y=%2234%22%20width=%2210%22%20height=%2218%22%20rx=%222%22%20fill=%22%23fff%22/%3E%3Crect%20x=%2227%22%20y=%2222%22%20width=%2210%22%20height=%2230%22%20rx=%222%22%20fill=%22%23fff%22/%3E%3Crect%20x=%2242%22%20y=%2212%22%20width=%2210%22%20height=%2240%22%20rx=%222%22%20fill=%22%23fff%22/%3E%3C/svg%3E">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Health Equity Radar", "url": "https://health-profile.kr/solve/", "applicationCategory": "HealthApplication", "operatingSystem": "Web browser", "inLanguage": ["en", "ko"], "isAccessibleForFree": true, "description": "A working prototype that transforms official Korean local health data into health equity priorities, interpretation, and evidence-informed public-health action.", "spatialCoverage": "Republic of Korea", "temporalCoverage": "2008/2025"}</script>
+<script type="application/ld+json">{{JSONLD}}</script>
 <style>
 :root{--bg:#fbfbf9;--surface:#ffffff;--text:#1a1a18;--text2:#4a4a45;--muted:#62625c;--border:#dcdcd5;--accent:#1f66c1;--accent-bg:#e8f0fb;--warn:#a3321f;--ok:#2d6a3a}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121211;--surface:#1b1b1a;--text:#f3f3ef;--text2:#cfcfc6;--muted:#a9a99f;--border:#38382f;--accent:#7fb2f0;--accent-bg:#1a2a40;--warn:#f08a75;--ok:#8cd29a}}
@@ -81,7 +81,7 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
       <a class="btn primary" href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Explore the Live Radar →</a>
       <a class="btn ghost" href="../#view=radar">English overview in the app</a>
     </div>
-    <div class="stage">Current stage: <b>Working prototype</b> · deployed in the Republic of Korea only · data verified 2026-10-04</div>
+    <div class="stage">Current stage: <b>Working prototype</b> · deployed in the Republic of Korea only · data verified {{VERIFIED}}</div>
   </div>
 </header>
 
@@ -89,7 +89,7 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
 <section id="problem">
   <div class="wrap">
     <h2>The problem</h2>
-    <p>In Korea, the health data a local public-health team needs for one area are published by different agencies in different systems: the Korea Community Health Survey (Korea Disease Control and Prevention Agency), cause-of-death statistics (Statistics Korea), and health-screening and insurance statistics (National Health Insurance Service). Each has its own tables, years and geographic units — the survey is reported for 258 survey units, most administrative statistics for 229 municipalities.</p>
+    <p>In Korea, the health data a local public-health team needs for one area are published by different agencies in different systems: the Korea Community Health Survey (Korea Disease Control and Prevention Agency), cause-of-death statistics (Statistics Korea), and health-screening and insurance statistics (National Health Insurance Service). Each has its own tables, years and geographic units — the survey is reported for {{N_HC}} survey units, most administrative statistics for {{N_SGG}} municipalities.</p>
     <p>Local governments prepare four-year local health plans; preparation of the next cycle (2027–2030) begins in the second half of 2026. Comparing an area across these sources means opening several systems, reconciling units and years, and judging whether a difference is larger than survey uncertainty.</p>
   </div>
 </section>
@@ -98,7 +98,7 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
   <div class="wrap">
     <h2>How it works</h2>
     <ol class="flow grid g4" aria-label="Four-step workflow">
-      <li class="card"><span class="num">1</span><div class="lbl">DATA</div><p class="small">Official public-health data, 171 indicators, 2008–2025, with sources and update dates.</p><span class="arrow" aria-hidden="true">→</span></li>
+      <li class="card"><span class="num">1</span><div class="lbl">DATA</div><p class="small">Official public-health data, {{N_IND}} indicators, {{Y0}}–{{Y1}}, with sources and update dates.</p><span class="arrow" aria-hidden="true">→</span></li>
       <li class="card"><span class="num">2</span><div class="lbl">PRIORITY</div><p class="small">Identify health disparities: gap from the national median, relative position, recent trend and area deprivation.</p><span class="arrow" aria-hidden="true">→</span></li>
       <li class="card"><span class="num">3</span><div class="lbl">INTERPRET</div><p class="small">Understand why they matter: plain-language reasons computed from the data, with 95% confidence intervals.</p><span class="arrow" aria-hidden="true">→</span></li>
       <li class="card"><span class="num">4</span><div class="lbl">ACTION</div><p class="small">Explore possible public-health responses: linked official guidance (Korean national and provincial plans, WHO, NICE, CPSTF).</p></li>
@@ -125,12 +125,12 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
 <section id="numbers">
   <div class="wrap">
     <h2>What is in the data</h2>
-    <p class="small muted">Counted directly from the data files the app loads (<a href="../docs/DATA_VALIDATION.md">data validation</a>, 2026-10-04). Numbers at different geographic levels are not added or multiplied.</p>
+    <p class="small muted">Counted directly from the data files the app loads (<a href="../docs/DATA_VALIDATION.md">data validation</a>, {{VERIFIED}}). Numbers at different geographic levels are not added or multiplied.</p>
     <div class="grid g4 stats">
-      <div class="card"><b>171</b><span>health indicators</span><small>41 survey + 130 administrative / derived</small></div>
-      <div class="card"><b>258</b><span>survey units</span><small>Community Health Survey areas (one per public health centre area) — for the 41 survey indicators</small></div>
-      <div class="card"><b>229</b><span>municipalities</span><small>si·gun·gu — for the other 130 indicators</small></div>
-      <div class="card"><b>2008–2025</b><span>years of data</span><small>18 years; coverage differs by source</small></div>
+      <div class="card"><b>{{N_IND}}</b><span>health indicators</span><small>{{N_SURVEY}} survey + {{N_ADMIN}} administrative / derived</small></div>
+      <div class="card"><b>{{N_HC}}</b><span>survey units</span><small>Community Health Survey areas (one per public health centre area) — for the {{N_SURVEY}} survey indicators</small></div>
+      <div class="card"><b>{{N_SGG}}</b><span>municipalities</span><small>si·gun·gu — for the other {{N_ADMIN}} indicators</small></div>
+      <div class="card"><b>{{Y0}}–{{Y1}}</b><span>years of data</span><small>{{N_YEARS}} years; coverage differs by source</small></div>
     </div>
   </div>
 </section>
@@ -140,7 +140,7 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
     <h2>Evidence &amp; data sources</h2>
     <table>
       <thead><tr><th scope="col">Source</th><th scope="col">Role in the tool</th><th scope="col">Indicators</th></tr></thead>
-      <tbody><tr><td>Korea Disease Control and Prevention Agency (KDCA) — Korea Community Health Survey, via KOSIS</td><td>Health behaviours, chronic-disease management, prevention, mental and oral health; survey-weighted rates with standard errors (used for confidence intervals)</td><td>41</td></tr><tr><td>Statistics Korea — Cause-of-death statistics</td><td>Age-standardized mortality by cause</td><td>22</td></tr><tr><td>National Health Insurance Service (NHIS) — National cancer screening statistics</td><td>Cancer screening rates (people screened ÷ people eligible)</td><td>7</td></tr><tr><td>National Health Insurance Service (NHIS) — health insurance, health screening and medical-use statistics</td><td>Screening, medical use and health-workforce context</td><td>33</td></tr><tr><td>KDCA — Notifiable infectious disease reports</td><td>Infectious disease incidence</td><td>12</td></tr><tr><td>Statistics Korea, Ministry of the Interior and Safety and others</td><td>Population, social and economic context</td><td>24</td></tr><tr><td>Ministry of Environment, Ministry of Land, Infrastructure and Transport, Korea Road Traffic Authority and others</td><td>Environment and safety context</td><td>28</td></tr><tr><td>Derived in this project from Statistics Korea life tables and the Community Health Survey</td><td>Healthy life expectancy (approximation, not an official statistic)</td><td>3</td></tr><tr><td>Derived in this project from the Population and Housing Census (2015, 2020)</td><td>Area deprivation index (approximation) — socioeconomic context</td><td>1</td></tr></tbody>
+      <tbody>{{SOURCE_ROWS}}</tbody>
     </table>
     <p class="small muted" style="margin-top:8px">Most administrative indicators were obtained from their original producers via a public research database (Kim D. et al., v1.7, KDCA archive); mortality 2018–2025 was re-checked against Statistics Korea tables. Linked guidance: Korean national and provincial health plans, WHO, NICE (UK) and the US Community Preventive Services Task Force. Per-indicator metadata: <a href="../docs/indicator_metadata.csv">indicator_metadata.csv</a>.</p>
   </div>
@@ -165,7 +165,7 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
     <h2>What makes it different</h2>
     <p>Not “more data”. Statistical dashboards show values; this prototype connects them into one decision-support workflow — <b>Data → Priority → Interpretation → Action</b> — for a single community, and shows its uncertainty and limits on the same screen:</p>
     <ul class="clean">
-      <li>Survey and administrative sources compared on their own correct geographic level (258 survey units or 229 municipalities).</li>
+      <li>Survey and administrative sources compared on their own correct geographic level ({{N_HC}} survey units or {{N_SGG}} municipalities).</li>
       <li>Every flagged indicator explains itself with computed facts (gap, position, trend, confidence interval).</li>
       <li>Possible actions link to official guidance documents instead of generated advice.</li>
       <li>Sources, update dates and known limitations are disclosed in the product.</li>
@@ -176,7 +176,7 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
 <section id="impact">
   <div class="wrap">
     <h2>Impact</h2>
-    <p><b>Current stage: Working prototype.</b> There is no user-testing or impact evidence yet, and no usage figures are claimed. External review requests have been sent; no reviews have been published yet.</p>
+    <p><b>Current stage: Working prototype.</b> There is no user-testing or impact evidence yet, and no usage figures are claimed. {{REVIEW_STATUS}}</p>
     <h3>Next validation steps</h3>
     <ul class="clean">
       <li>Testing with local public-health practitioners (task: find and explain one priority for their area).</li>
@@ -205,7 +205,7 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
 <footer>
   <div class="wrap">
     <p>Live product: <a href="../">health-profile.kr</a> · <a href="../#view=radar">English overview</a> · <a href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Health Equity Priority (English)</a> · <a href="../docs/MIT_SOLVE_READINESS.md">readiness report</a></p>
-    <p>Feedback: use “Give Feedback” in the app or email <a href="mailto:khealth.profile@gmail.com">khealth.profile@gmail.com</a>. Built by 지음웍스 as an independent project; not an official government service.</p>
+    <p>Feedback: use “Give Feedback” in the app or email <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>. Built by {{CREDIT}} as an independent project; not an official government service.</p>
   </div>
 </footer>
 </body>

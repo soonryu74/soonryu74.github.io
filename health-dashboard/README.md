@@ -35,3 +35,9 @@ KOSIS는 연속 호출을 몇 분간 차단하므로 스크립트에 호출 간�
 1. `python scripts/kosis_fetch_hle.py data` → `python scripts/build_hle.py` → data/hle.json (검증: `python scripts/validate_hle.py`)
 2. `KDH_XLSX=<엑셀 경로> python scripts/kdh_extract.py` → `python scripts/build_kdh_dataset.py` → data/kdh_dataset.json
 3. `python scripts/build_dashboard.py`
+
+## 숫자 검증·국제 심사 자료 (2026-10)
+- `node scripts/qa/data_validation.mjs` → `docs/DATA_VALIDATION.md` · `docs/indicator_metadata.csv` · `data/validation_summary.json` (빌드 때 자동 실행)
+- 숫자의 뜻: 지표 171개 = 지역사회건강조사 41개(조사 단위 258곳) + 시군구 단위 130개(시군구 229곳) · 시도 17 · 2008–2025. 단위가 다른 숫자를 곱하거나 더하지 않는다.
+- 영문 랜딩 `/solve`: `scripts/build_solve.py`(solve/template.html + validation_summary.json), 화면 캡처 `scripts/qa/solve_shots.mjs`
+- 점검: `scripts/qa/equity_e2e.mjs` · `scripts/qa/solve_readiness_e2e.mjs`(390·430·768·1440) · 보고서 `docs/MIT_SOLVE_READINESS.md` · 성능안 `docs/PERFORMANCE_PLAN.md`

@@ -62,6 +62,7 @@ function readHash() {
       league: h.get("lg") === "nation" ? "nation" : "league",
       exclude: h.get("ex") !== "0",
     },
+    en: h.get("en") === "1",   // 우선 검토 카드 영어 모드(국제 심사용, /solve 에서 들어옴)
   };
 }
 
@@ -94,6 +95,7 @@ export default function App() {
   const [cmp, setCmp] = useState(init.cmp);         // 비교 대상 코드 목록 (NAT = 전국 중앙값)
   const [rankOpt, setRankOpt] = useState(init.rankOpt); // 순위 산출 방식 (방법론 v1)
   const [ncdInd, setNcdInd] = useState(init.ncdInd);     // 지식베이스 지표 필터
+  const [en, setEn] = useState(init.en);                 // 우선 검토 카드 영어 모드
   const [ncdQ, setNcdQ] = useState("");                 // 검색에서 넘어온 지식베이스 검색어
   const [playing, setPlaying] = useState(false);
   const bodyRef = useRef(null);   // 재생을 누르면 본문(그래프)이 화면에 들어오도록 스크롤
@@ -109,9 +111,9 @@ export default function App() {
       ...(cmp.length ? { cmp: cmp.join(",") } : {}),
       w: typeof rankOpt.weights === "object" ? "custom" : rankOpt.weights, sm: String(rankOpt.smooth), lg: rankOpt.league, ex: rankOpt.exclude ? "1" : "0",
       ...(typeof rankOpt.weights === "object" ? { cw: DS.domains.map((d) => rankOpt.weights[d] ?? 0).join(",") } : {}),
-      ...(ncdInd ? { nind: ncdInd } : {}) });
+      ...(ncdInd ? { nind: ncdInd } : {}), ...(en ? { en: "1" } : {}) });
     window.history.replaceState(null, "", "#" + h.toString());
-  }, [ind, item, sido, sgg, year, scope, view, cmp, rankOpt, ncdInd]);
+  }, [ind, item, sido, sgg, year, scope, view, cmp, rankOpt, ncdInd, en]);
 
   // 주소창 해시가 바뀌면(링크 붙여넣기·뒤로가기) 화면 상태를 다시 읽는다
   useEffect(() => {
@@ -119,7 +121,7 @@ export default function App() {
       const h = readHash();
       setInd(h.ind); setItem(h.item); setSido(h.sido); setSgg(h.sgg);
       setYearSel(h.year); setScope(h.scope); setView(h.view); setCmp(h.cmp);
-      setRankOpt(h.rankOpt); setNcdInd(h.ncdInd); setPlaying(false);
+      setRankOpt(h.rankOpt); setNcdInd(h.ncdInd); setEn(h.en); setPlaying(false);
     };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
@@ -292,7 +294,7 @@ export default function App() {
           <Home sel={sel} setTip={setTip} onGoCard={goSearch}
             onGo={({ view: v, ind: i, code, scope: sc }) => { if (i) setInd(i); if (code) selectRegion(code); if (sc) setScope(sc); setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "radar" ? (
-          <RadarAbout sel={sel} onGo={(v) => { setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+          <RadarAbout sel={sel} onGo={(v) => { if (v === "profile-en") { setEn(true); setView("profile"); } else setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "feedback" ? (
           <FeedbackView currentUrl={feedbackFrom} />
         ) : view === "sources" ? (
@@ -390,7 +392,7 @@ export default function App() {
             </div>
           </>
         ) : (
-          <Profile item={item} sel={sel} scope={scope} rankOpt={rankOpt} onRankOpt={setRankOpt} onPick={pickFromProfile} onGoCard={goSearch} setTip={setTip}
+          <Profile item={item} sel={sel} scope={scope} rankOpt={rankOpt} onRankOpt={setRankOpt} onPick={pickFromProfile} onGoCard={goSearch} setTip={setTip} lang={en ? "en" : "ko"} onLang={(l) => setEn(l === "en")}
             onRecommend={(name) => { setNcdInd(name); setView("ncd"); window.scrollTo({ top: 0, behavior: "smooth" }); }} onRegion={selectRegion} />
         )}
 

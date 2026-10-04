@@ -1,0 +1,94 @@
+{
+  "generated": "2026-10-04",
+  "regions": {
+    "provinces": 17,
+    "municipality_records": 233,
+    "municipalities_active": 229,
+    "municipalities_inactive": [
+      "세종 세종시 (007101)",
+      "충북 청원군 (01010)",
+      "충남 연기군 (01111)",
+      "경북 군위군 (01405)"
+    ],
+    "municipalities_reference": "기대수명(추정) 2024",
+    "sub_city_units": 48,
+    "region_records_total": 298,
+    "survey_units": 258,
+    "survey_units_breakdown": {
+      "municipality": 212,
+      "sub_city": 46
+    }
+  },
+  "indicators": {
+    "total": 171,
+    "by_source": {
+      "chs": 41,
+      "hle": 3,
+      "mort": 22,
+      "inf": 12,
+      "nhis": 33,
+      "pop": 24,
+      "env": 28,
+      "cancer": 7,
+      "dep": 1
+    },
+    "survey": 41,
+    "municipality_level": 130,
+    "directional": 154,
+    "context": 17,
+    "radar_core": 40,
+    "radar_all": 130,
+    "verified_table": 52,
+    "verification_required": 0
+  },
+  "years": {
+    "first": 2008,
+    "last": 2025,
+    "survey": [
+      2008,
+      2025
+    ],
+    "by_source": {
+      "chs": [
+        2008,
+        2025
+      ],
+      "hle": [
+        2017,
+        2024
+      ],
+      "mort": [
+        2008,
+        2025
+      ],
+      "inf": [
+        2008,
+        2024
+      ],
+      "nhis": [
+        2008,
+        2024
+      ],
+      "pop": [
+        2008,
+        2024
+      ],
+      "env": [
+        2008,
+        2024
+      ],
+      "cancer": [
+        2015,
+        2024
+      ],
+      "dep": [
+        2015,
+        2020
+      ]
+    }
+  },
+  "missing": {
+    "indicators_with_gaps_latest_year": 121,
+    "indicators_with_province_only_recent_years": 10
+  }
+}
