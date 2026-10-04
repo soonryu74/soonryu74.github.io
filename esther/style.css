@@ -323,3 +323,8 @@ html[lang=en] h2{font-family:var(--display)!important;font-weight:400!important;
 .install .cap .wrap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
 .install .cap .en{color:var(--gold-hi)}
 .install .cap b{font-family:var(--serif);font-weight:400;color:#fff;font-size:1rem}
+
+/* 숫자 옆에 단위(년 / years) */
+.years b small{font-family:var(--serif);font-size:.26em;letter-spacing:0;margin-left:.18em;color:var(--gold-lo);vertical-align:baseline}
+html[lang=en] .years b small{font-family:var(--display);font-style:italic;font-size:.24em}
+@media(max-width:720px){section{padding:96px 0}.years{gap:40px}}
