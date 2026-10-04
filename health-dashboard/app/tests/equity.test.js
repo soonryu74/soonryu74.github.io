@@ -5,7 +5,7 @@ import { DIRECTION, directionOf, toUnfavorable } from "../src/lib/equity/normali
 import { medianOf, gapOf, gapScore, unfavorablePercentile, ciIncludes } from "../src/lib/equity/calculateGap.js";
 import { recentTrend, trendClass } from "../src/lib/equity/calculateTrend.js";
 import { combine, depScore, tierOf, pickTop, WEIGHTS } from "../src/lib/equity/calculatePriority.js";
-import { buildReasons } from "../src/lib/equity/buildReasons.js";
+import { buildReasons, buildReasonsEn } from "../src/lib/equity/buildReasons.js";
 
 const L = DIRECTION.LOWER, H = DIRECTION.HIGHER;
 
@@ -97,4 +97,15 @@ test("근거 문장은 인과 표현 없이 병렬 서술", () => {
   assert.ok(txt.includes("불리한 방향 상위 10%"));
   assert.ok(txt.includes("지역이며, 이 지표도 불리한 수준"));
   for (const bad of ["때문", "높아서", "원인", "가장 위험", "최악", "정책 실패"]) assert.ok(!txt.includes(bad), bad);
+});
+
+test("영어 근거 문장은 한국어와 같은 숫자를 쓰고 인과·예측 표현이 없다", () => {
+  const row = { unit: "%", direction: L, gap: gapOf(22.8, 17.9, L), ref: 17.9, pos: { u: 0.9, rank: 230, n: 258 }, poolName: "전국 조사 단위(보건소)", trend: null, trendCls: null, depQ: 5, ciIncludesRef: null };
+  const en = buildReasonsEn(row).map((x) => x.t).join(" ");
+  assert.ok(en.includes("4.9 pp higher than the national median (17.9%)"));
+  assert.ok(en.includes("least favourable 10% of 258 survey units nationwide"));
+  assert.ok(en.includes("quintile 5"));
+  assert.equal(buildReasonsEn(row).length, buildReasons(row).length);
+  assert.ok(!/[가-힣]/.test(en), "no Korean in English reasons");
+  for (const bad of ["because", "cause", "predict", "risk of", "worst"]) assert.ok(!en.toLowerCase().includes(bad), bad);
 });

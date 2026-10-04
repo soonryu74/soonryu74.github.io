@@ -73,7 +73,7 @@ function RankSettings({ opt, onChange, isSgg }) {
 }
 
 /* 지역 프로파일: 방법론 v1 기반 영역·종합 순위, 등급 배지, 강점·개선·과제 */
-export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, onRegion, onGoCard, setTip }) {
+export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, onRegion, onGoCard, setTip, lang = "ko", onLang }) {
   const [peerInd, setPeerInd] = useState(null);   // 우선 검토 카드의 「유사 지역 비교」 → 동류군 카드 지표
   const pool = sel.l === "sido" ? poolFor(sel, "sidoAll") : poolFor(sel, scope === "sidoAll" ? "nation" : scope);   // 시도 프로파일은 17개 시도, 시군구는 전국/시도 내
   const isSgg = sel.l === "sgg";
@@ -127,7 +127,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         </div>
       </div>
 
-      <EquityPriorityCard sel={sel} item={item} smooth={rankOpt.smooth} onPick={onPick} onRecommend={onRecommend} onGoCard={onGoCard}
+      <EquityPriorityCard sel={sel} item={item} smooth={rankOpt.smooth} onPick={onPick} onRecommend={onRecommend} onGoCard={onGoCard} lang={lang} onLang={onLang}
         onPeer={(id) => { setPeerInd(id); setTimeout(() => document.querySelector(".peer")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60); }} />
 
       <RankSettings opt={rankOpt} onChange={onRankOpt} isSgg={isSgg} />

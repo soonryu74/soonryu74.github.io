@@ -2,6 +2,9 @@ import { INDICATORS, HC_POOL, YEARS_ALL, SIDOS, label } from "../../data";
 import { CORE, WEIGHTS } from "../../lib/equity";
 import CONTACT from "../../../../data/contact.json";
 import REV from "../../../../data/reviews.json";
+import VS from "../../../../data/validation_summary.json";
+import { isSurvey } from "../../data";
+import UsabilityFeedback from "../UsabilityFeedback";
 
 /* English overview (MIT Solve / international reviewers). Every number below is computed from the loaded data — nothing is typed in by hand.
    States only what exists today: a working Korean deployment. No users, partners, impact, revenue or AI-performance claims. */
@@ -23,6 +26,7 @@ const STEPS = [["Data", "Official statistics for every local jurisdiction, 2008 
 export default function RadarAbout({ onGo, sel }) {
   const byDom = (doms) => INDICATORS.filter((i) => doms.includes(i.domain) || (doms.includes("건강수명") && i.id.startsWith("HLE_"))).length;
   const y0 = YEARS_ALL[0], y1 = YEARS_ALL[YEARS_ALL.length - 1];
+  const nSurvey = INDICATORS.filter(isSurvey).length;
   const demo = [["Indicator Analysis", "analysis"], ["Regional Profile", "profile"], ["Regional Comparison", "compare"], ["Hotspot", "hot"]];
   return (
     <div className="radar" lang="en">
@@ -31,12 +35,19 @@ export default function RadarAbout({ onGo, sel }) {
         <h2>From local health data to local action.</h2>
         <p>A working decision-support tool that helps public-health teams find local health disparities hidden by regional averages, and see which health issues in which areas to review first.</p>
         <div className="radar-stats">
-          <div><b>{INDICATORS.length}</b><span>indicators</span></div>
-          <div><b>{HC_POOL.length}</b><span>local health jurisdictions</span></div>
-          <div><b>{y0}–{y1}</b><span>longitudinal data</span></div>
-          <div><b>{SIDOS.length}</b><span>provinces / metropolitan cities</span></div>
+          <div title="All indicators loaded in the app, counted from the data files (docs/DATA_VALIDATION.md)."><b>{INDICATORS.length}</b><span>indicators</span><small>{nSurvey} survey + {INDICATORS.length - nSurvey} administrative</small></div>
+          <div title="Korea Community Health Survey units (one per public health centre area). Only the survey indicators are available at this level."><b>{HC_POOL.length}</b><span>survey units</span><small>for the {nSurvey} survey indicators</small></div>
+          <div title="Municipalities (si·gun·gu): 226 local governments + 2 Jeju administrative cities + Sejong. Used for mortality, screening and other administrative data."><b>{VS.regions.municipalities_active}</b><span>municipalities</span><small>for the other {INDICATORS.length - nSurvey} indicators</small></div>
+          <div title="Provinces and metropolitan cities."><b>{SIDOS.length}</b><span>provinces</span><small>all indicators</small></div>
+          <div title="Earliest and latest year with data; coverage differs by source."><b>{y0}–{y1}</b><span>years of data</span><small>range differs by source</small></div>
         </div>
-        <p className="muted">Current deployment: <b>Republic of Korea only</b>. The site interface is in Korean; this page is an English overview. Live at <a href={CONTACT.site} target="_blank" rel="noreferrer">{CONTACT.site.replace(/^https?:\/\//, "")}</a>.</p>
+        <p className="muted radar-note">Numbers are not multiplied or added across levels: survey indicators are compared across {HC_POOL.length} survey units, administrative indicators across {VS.regions.municipalities_active} municipalities. Verified {VS.generated} — see <a href="docs/DATA_VALIDATION.md" target="_blank" rel="noopener noreferrer">data validation</a>.</p>
+        <div className="radar-demo radar-cta">
+          <button type="button" className="hc-cta" onClick={() => onGo("profile-en")}>Explore the live Health Equity Radar{sel ? ` — ${label(sel)}` : ""} →</button>
+          <a className="themebtn" href="#methodology" onClick={(e) => { e.preventDefault(); document.getElementById("methodology")?.scrollIntoView({ behavior: "smooth" }); }}>How priorities are identified</a>
+          <UsabilityFeedback lang="en" context="radar overview" />
+        </div>
+        <p className="muted">Current deployment: <b>Republic of Korea only</b>. The site interface is in Korean; this page and the Health Equity Priority card (English mode) are in English. Live at <a href={CONTACT.site} target="_blank" rel="noreferrer">{CONTACT.site.replace(/^https?:\/\//, "")}</a>.</p>
       </section>
 
       <div className="grid2">
@@ -53,7 +64,7 @@ export default function RadarAbout({ onGo, sel }) {
           <h3>Current deployment</h3>
           <ul className="radar-list">
             <li>Republic of Korea · {HC_POOL.length} survey units of the Korea Community Health Survey (one per public health centre area) · {SIDOS.length} provinces</li>
-            <li>{INDICATORS.length} indicators · {y0}–{y1}</li>
+            <li>{INDICATORS.length} indicators ({nSurvey} survey indicators at survey-unit level; {INDICATORS.length - nSurvey} administrative indicators at municipality level, {VS.regions.municipalities_active} municipalities) · {y0}–{y1}</li>
             {DOMAIN_EN.map(([en, doms]) => { const n = byDom(doms); return n ? <li key={en}>{en} — {n}</li> : null; })}
           </ul>
         </section>
@@ -65,7 +76,7 @@ export default function RadarAbout({ onGo, sel }) {
       </section>
 
       <div className="grid2">
-        <section className="card">
+        <section className="card" id="methodology">
           <h3>How the review priority is computed</h3>
           <ul className="radar-list">
             <li>Default candidates: {CORE.length} directional indicators of the Korea Community Health Survey (compared across {HC_POOL.length} units, with standard errors). A wider view adds mortality, screening and other jurisdiction-level data.</li>
