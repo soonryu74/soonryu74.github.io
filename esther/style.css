@@ -257,3 +257,55 @@ footer{background:var(--abyss);color:#6f79a3;font-size:.78rem;text-align:center;
 .toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);background:var(--gold);color:var(--abyss);padding:12px 22px;font-size:.9rem;opacity:0;transition:.4s;z-index:50;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 @media(max-width:560px){.form .row{grid-template-columns:1fr}}
+
+/* ═════════ 거장의 무게: 모뉴먼트 레이어 ═════════ */
+.mono-hero{background:var(--abyss);align-items:stretch;flex-direction:column;justify-content:space-between;padding-top:64px}
+.mono-hero::before{display:none}
+.hero-bg{position:absolute;inset:0;opacity:.32;mask-image:linear-gradient(90deg,transparent 0%,#000 55%);-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 55%)}
+.mono-hero > .wrap{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;width:100%}
+.h-top{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid rgba(236,217,160,.25);padding-bottom:18px;margin-bottom:5vh}
+.h-top .en{margin:0;color:var(--gold-hi)}
+.giant{font-family:var(--display)!important;font-weight:400!important;font-size:clamp(4.6rem,17vw,15.5rem)!important;line-height:.86!important;letter-spacing:-.035em!important;text-transform:uppercase}
+.giant .goldtext{font-style:italic;text-transform:none;letter-spacing:-.02em}
+.h-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-top:5vh;flex-wrap:wrap}
+.h-name{font-family:'Noto Serif KR',serif;font-weight:200;font-size:clamp(1.6rem,3vw,2.4rem);letter-spacing:.35em;color:#fff}
+.h-state{margin:0!important;max-width:520px;text-align:right;font-family:var(--serif);font-weight:300;font-size:clamp(1.05rem,1.6vw,1.3rem)!important;line-height:1.8;color:#cfd6f0!important}
+.h-state b{font-weight:500;color:var(--gold-hi)}
+.h-bar{position:relative;border-top:1px solid rgba(236,217,160,.25)}
+.h-bar .wrap{display:flex;flex-direction:row;justify-content:space-between;gap:8px 30px;flex-wrap:wrap;padding-top:18px;padding-bottom:20px}
+.h-bar span{font-family:var(--garamond);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:#8f9bc8}
+@media(max-width:720px){.h-state{text-align:left}.h-top span:last-child{display:none}}
+
+/* 선언문 */
+.manifesto{background:#05091f;color:#fff;padding:170px 0;overflow:hidden}
+.manifesto .kicker{color:var(--gold)}
+.manifesto p{font-family:'Noto Serif KR',serif;font-weight:200;font-size:clamp(2.3rem,7.2vw,6.2rem);line-height:1.2;letter-spacing:-.04em}
+html[lang=en] .manifesto p{font-family:var(--display);font-weight:400;letter-spacing:-.03em}
+.manifesto .m2{text-align:right;margin-top:.25em}
+.manifesto .m2 .goldtext{font-weight:400}
+html[lang=en] .manifesto .m2 .goldtext{font-style:italic}
+
+/* 모든 섹션 제목을 크게, 단정하게 */
+h2{font-size:clamp(2.2rem,5.4vw,4.2rem)!important;line-height:1.22!important;letter-spacing:-.03em!important;font-weight:200!important}
+html[lang=en] h2{font-family:var(--display)!important;font-weight:400!important;letter-spacing:-.02em!important}
+.kicker{display:flex!important;align-items:center;gap:14px}
+.kicker::before{content:"";width:46px;height:1px;background:currentColor}
+.prologue .kicker,.contact .kicker{justify-content:center}
+
+/* 숫자는 기념비처럼 */
+.about{background:var(--pearl)!important}
+.about::before{display:none}
+.years b{font-size:clamp(5rem,10vw,8.5rem)!important;letter-spacing:-.04em}
+.about .name{font-size:clamp(2.6rem,5vw,3.8rem)!important;font-weight:200!important}
+.portrait .ph img{filter:grayscale(.15) contrast(1.08)}
+
+/* 갤러리 필터: 알약 → 단정한 탭 */
+.filters button{border:0!important;border-bottom:1px solid transparent!important;border-radius:0!important;padding:6px 0!important;margin-right:26px;letter-spacing:.2em;text-transform:uppercase;font-family:var(--garamond)!important;font-size:.85rem!important;background:none!important;color:#8f9bc8!important}
+.filters button.on,.filters button:hover{color:var(--gold-hi)!important;border-bottom-color:var(--gold-hi)!important}
+
+/* 의뢰 카드: 각지고 단호하게 */
+.ocard{border-color:#d9d0bd}
+.ocard h3{font-size:1.7rem!important;font-weight:300!important}
+.ocard .ask{background:#05091f;letter-spacing:.14em}
+.sline h3{font-size:1.5rem!important;font-weight:300!important}
+.chapter h3{font-weight:400!important;font-size:1.75rem!important}
