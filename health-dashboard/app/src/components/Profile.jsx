@@ -134,7 +134,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
 
       <div className="grid2">
         <HleCard sel={sel} pool={pool} poolName={poolName} setTip={setTip} />
-        <RiskCard sel={sel} pool={pool} poolName={poolName} />
+        <RiskCard sel={sel} pool={pool} poolName={poolName} onElder={onGoCard ? () => onGoCard({ view: "elder" }) : undefined} />
         <GoldenDiamond item={item} sel={sel} />
         <PeerCard item={item} sel={sel} onPick={onRegion} ind={peerInd} onInd={setPeerInd} />
         <div className="card span2">

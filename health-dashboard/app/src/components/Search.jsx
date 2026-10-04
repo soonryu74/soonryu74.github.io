@@ -22,6 +22,7 @@ const VIEWS = [
   { view: "units", name: "조사 단위", kw: "보건소 258 시군구 229 보건지소 보건진료소 지역보건의료기관 매핑" },
   { view: "report", name: "지역 보고서", kw: "보고서 자동 생성 인쇄 PDF 워드 doc 계획서 현황 분석 문장 초안 지역보건의료계획" },
   { view: "ireport", name: "지표 보고서 — 전국 취약지역", kw: "지표별 보고서 전국 취약지역 금연 절주 음주 비만 사업 대상지 시도별 검토 대상 악화 지역 박탈 분위 인쇄 PDF 워드 CSV" },
+  { view: "elder", name: "고령층(65세 이상) 취약 보고서", kw: "노인 고령 65세 어르신 독거노인 치매 낙상 방문건강관리 장기요양 기초연금 저작불편 폐렴 노인교통사고 대상지 보고서" },
   { view: "sources", name: "자료원", kw: "출처 기관 갱신 주기 다음 공표 보유 현황 매트릭스 결측 산식 한계" },
   { view: "feedback", name: "의견·문의", kw: "오류 신고 질문 이메일 FAQ 사용설명서 활용법 영상 방법론 문서 PDF PPT MP4 제작" },
   { view: "radar", name: "Health Equity Radar (English)", kw: "영문 영어 English overview MIT Solve 소개 solve 공모전" },

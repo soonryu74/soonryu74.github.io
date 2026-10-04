@@ -5,7 +5,7 @@ import { natPool, nationalMedian, quantile, SIDOS, sidoPoolOf, valSmooth, depOf,
 import { assess } from "./equity";
 import KC from "../../../data/khepi_cases.json";
 
-const LEGACY = { "01405": "00309" }; // 옛 코드 → 현재 코드
+export const LEGACY = { "01405": "00309" }; // 옛 코드 → 현재 코드(군위군 2023 경북→대구)
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const median = (a) => { const s = a.filter(isNum).sort((x, y) => x - y); return s.length ? quantile(s, 0.5) : null; };
 

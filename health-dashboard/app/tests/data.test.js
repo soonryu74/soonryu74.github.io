@@ -66,3 +66,24 @@ test("지표별 보고서(전국 취약지역): 비교 집단 전체를 판정�
   }
   assert.equal(INDICATORS.filter((i) => i.direction === "context").length > 0, true);
 });
+
+test("고령층 취약 보고서: 시군구 229곳 기준, 비율·신호 범위가 맞고 문장은 사실만", async () => {
+  const { buildElderReport, draftElderParagraphs, SIGNAL_KEYS, SIGNAL_MIN } = await import("../src/lib/elderReport.js");
+  const m = buildElderReport("std", 3);
+  assert.ok(m.n >= 228 && m.n <= 229, `n=${m.n}`);
+  assert.equal(SIGNAL_KEYS.length, 6);
+  for (const o of m.rows) {
+    for (const k of ["aged", "alone", "bpen"]) if (o.v[k] != null) assert.ok(o.v[k] >= 0 && o.v[k] <= 100, `${o.r.n} ${k}=${o.v[k]}`);
+    if (o.sig != null) assert.ok(o.sig >= 0 && o.sig <= 6 && o.sig === o.flags.length);
+  }
+  assert.equal(m.sigDist.reduce((a, b) => a + b, 0), m.rows.filter((o) => o.sig != null).length);
+  assert.ok(m.signal.every((o) => o.sig >= SIGNAL_MIN));
+  // 불리한 쪽 20% 경계: 독거노인 비율(높을수록 불리)은 P80
+  assert.equal(m.itemBy.alone.cut, m.itemBy.alone.p80);
+  assert.equal(m.itemBy.ltcfac.cut, m.itemBy.ltcfac.p20);
+  // 전국 65세 이상 인구 합은 시도 합(천만 명 안팎)
+  assert.ok(m.nat.age65 > 8e6 && m.nat.age65 < 1.2e7);
+  const t = draftElderParagraphs(m).join(" ");
+  assert.ok(t.includes("65세 이상") && t.includes("복합 고령 취약 신호"));
+  for (const bad of ["때문", "원인으로", "해야 한다", "효과가 있", "최악", "고위험 지역"]) assert.ok(!t.includes(bad), bad);
+});
