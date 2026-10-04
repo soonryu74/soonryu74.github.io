@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Health Equity Radar — WHO STEPS Cross-Country Proof of Concept | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Health Equity Radar — WHO STEPS Cross-Country Proof of Concept" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Health Equity Radar — WHO STEPS Cross-Country Proof of Concept" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Health Equity Radar — WHO STEPS Cross-Country Proof of Concept","url":"/health-dashboard/docs/WHO_CROSS_COUNTRY_POC.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=186fec5345cfc2928ec27d438e244f9f6d07f4e4">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="health-equity-radar--who-steps-cross-country-proof-of-concept">Health Equity Radar — WHO STEPS Cross-Country Proof of Concept</h1>
+
+<ul>
+  <li>Status (2026-10-04): <strong>preparation complete — waiting for microdata.</strong> No reproduced values yet; nothing is shown on the site.</li>
+  <li>Plan: Korea (existing Health Profile) → Viet Nam 2021 → Timor-Leste 2023 → Uganda 2023, same five axes: current smoking → insufficient physical activity → BMI ≥ 25 → raised blood pressure → raised fasting glucose.</li>
+  <li>Principle: three countries reproduced exactly (weights, design-based CIs, harmonized definitions) are stronger than many countries loosely.</li>
+  <li>Data use: WHO NCD Microdata Repository public-use datasets, for non-commercial, not-for-profit public health research and demonstration. Raw microdata are never committed or redistributed; only aggregates are published.</li>
+</ul>
+
+<h2 id="1-datasets-checked-on-the-public-who-catalogue-and-data-dictionaries">1. Datasets (checked on the public WHO catalogue and data dictionaries)</h2>
+<p>| | Viet Nam | Timor-Leste | Uganda |
+|—|—|—|—|
+| Survey ID | VNM_2021_STEPS_v01 (<a href="https://extranet.who.int/ncdsmicrodata/index.php/catalog/948">catalog 948</a>) | TLS_2023_STEPS_v01 (<a href="https://extranet.who.int/ncdsmicrodata/index.php/catalog/998">catalog 998</a>), listed 2026-07-29 | UGA_2023_STEPS_v01 (<a href="https://extranet.who.int/ncdsmicrodata/index.php/catalog/995">catalog 995</a>), listed 2026-06-30 |
+| File | 4,435 cases × 186 variables | tls2023 · 3,516 × 262 | uga2023 · 3,694 × 219 |
+| Population | adults 18–69 | adults 18–69, response 82% | adults 18–69, response 86% |
+| Design variables | stratum, psu, wstep1–3 | stratum, psu, wstep1–3 | stratum, psu, wstep1–3, wsteplab |
+| Official report | report (download 6937) | report 7172, fact sheet 7171 | report 7153 (data-book tables with 95% CI) |
+| Subgroups in public file | sex, age (no urban/rural variable) | sex, age (no urban/rural variable) | sex, age, urban/rural (+ region, not used for ranking) |</p>
+
+<p>Microdata download requires a WHO account and acceptance of the terms of use, so the files are obtained by the project owner and placed in a private folder; the computation runs locally.</p>
+
+<h2 id="2-harmonization-common-schema-dataglobalschemajson">2. Harmonization (common schema: <code class="language-plaintext highlighter-rouge">data/global/schema.json</code>)</h2>
+<p>| Axis | Viet Nam | Timor-Leste | Uganda | Korea (concept only) |
+|—|—|—|—|—|
+| Smoking <code class="language-plaintext highlighter-rouge">t1</code> | same; <strong>official headline is 15+</strong>, so 18–69 checked only on overlapping age bands | same (“any tobacco”) | same | KCHS current smoking, self-report |
+| Insufficient PA (&lt; 600 MET-min/week) | GPAQ p1–p15 | <strong>reduced module px1–px6</strong> (vigorous + moderate only) → approximate | GPAQ p1–p15 | different questionnaire |
+| BMI ≥ 25 (measured, pregnant excluded) | same | same | same | self-reported height/weight |
+| Raised BP (SBP ≥ 140/DBP ≥ 90 or medication) | same; report says mean of three readings — both “mean of readings 2–3” and “mean of three” are computed | same | same | self-reported diagnosis |
+| Raised fasting glucose (or medication) | ≥ 7.0 mmol/L, b5 in mmol/L | b5 in <strong>mg/dL</strong>; report threshold text ambiguous (see §3) — 6.1 and 7.0 mmol/L both computed | b5 in mmol/L; threshold to confirm — both computed | self-reported diagnosis |</p>
+
+<p>Korea is shown only as a <strong>comparable public-health concept with different national data sources</strong> (median of 258 KCHS survey units), never ranked against other countries.</p>
+
+<h2 id="3-inconsistencies-found-in-the-official-reports-recorded-before-reproduction">3. Inconsistencies found in the official reports (recorded before reproduction)</h2>
+<ul>
+  <li><strong>Timor-Leste, physical activity:</strong> executive summary 35.7% “insufficient” (&lt; 150 min moderate/week) vs annex table “not meeting WHO recommendations” 2.4%.</li>
+  <li><strong>Timor-Leste, BMI:</strong> summary overweight 18.1% + obese 3.4% (21.5%) vs annex 14.5% + 3.4% (17.9%).</li>
+  <li><strong>Timor-Leste, glucose:</strong> summary 5.3% vs annex 5.6%; definition says “capillary ≥ 6.1 mmol/L (126 mg/dl)”, but 6.1 mmol/L = 110 mg/dL.</li>
+  <li><strong>Timor-Leste, raised BP:</strong> the annex “or on medication” table shows only the 18–44 row; 18–69 = 22.3% (narrative, no CI).</li>
+  <li><strong>Viet Nam, smoking:</strong> no 18–69 headline (15+ only).
+Validation targets use the data-book/annex tables with 95% CI where they exist; narrative values are kept for reference (<code class="language-plaintext highlighter-rouge">scripts/who/targets/*.json</code>).</li>
+</ul>
+
+<h2 id="4-pipeline">4. Pipeline</h2>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">scripts/who/compute_steps.py &lt;ISO3&gt; &lt;microdata&gt;</code> — same code for every country; country settings come from the schema. Weighted prevalence with stratified-cluster Taylor-linearization 95% CI (single-PSU strata centred on the overall mean; Wald or logit CI to match each report). Self-test on synthetic data: <code class="language-plaintext highlighter-rouge">python3 scripts/who/compute_steps.py --selftest</code>.</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>Validation against the official values: **PASS if</td>
+          <td>difference</td>
+          <td>≤ 1.0 percentage point or inside the official 95% CI**, for the 18–69 total and at least 80% of sex/age checks. Ambiguous definitions (BP averaging, glucose threshold) are computed both ways and the reproducing variant is recorded.</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">node scripts/who/radar_who.mjs &lt;aggregated.json&gt;</code> — applies the <strong>same functions as the Korean Radar</strong> (<code class="language-plaintext highlighter-rouge">app/src/lib/equity/calculateGap.js</code>: direction-aware gap, CI overlap) to within-country subgroup gaps; “review first” = subgroup ≥ 20% worse than the national value with a 95% CI that excludes it. No regional ranking, trend or deprivation component.</li>
+  <li>Only PASS indicators are shown with numbers on a separate static page (<code class="language-plaintext highlighter-rouge">poc/</code>), outside the Korean app.</li>
+</ol>
+
+<h2 id="5-what-can-and-cannot-be-claimed">5. What can and cannot be claimed</h2>
+<ul>
+  <li>Now: “Health Equity Radar’s prioritisation logic is a set of pure functions separated from the Korean data; a common schema and computation pipeline for WHO STEPS datasets (Viet Nam, Timor-Leste, Uganda) has been prepared.”</li>
+  <li>Only after a country passes: “…its portability was subsequently tested using standardized WHO STEPS datasets from <countries that="" passed="">."</countries></li>
+  <li>Only after ≥ 2 countries pass: “A portable public-health decision framework tested across multiple national health systems using standardized WHO data.”</li>
+  <li>Never: proven/validated globally, WHO partnership/endorsement/funding, province-level WHO data, real-time data, AI prediction or diagnosis, global deployment.</li>
+</ul>
+
+<h2 id="6-next-step">6. Next step</h2>
+<p>The project owner downloads the three public-use files (VNM, TLS, UGA) from the WHO repository and uploads them to the private Google Drive folder; then each country is computed, validated and documented in turn (Viet Nam → Timor-Leste → Uganda).</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
