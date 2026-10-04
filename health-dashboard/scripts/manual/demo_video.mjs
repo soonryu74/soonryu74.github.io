@@ -474,6 +474,7 @@ S('hot', false, ['핫스팟 — Getis-Ord Gi* 공간 군집(90/95/99%) ↔ Mann-
   await select('.hot .ctrls label.subchip:has-text("지표") select', 'DT_H_OBE_OBE', { pause: 1600 });
 }, 0.4);
 S('hot-multi', true, ['핫스팟 「복합 취약 신호」 — 여러 지표가 함께 불리한 쪽 상위 N%인 시군구를 겹쳐 봅니다', '고위험 판정이 아니라 신호 · 지표마다 최신 연도와 표본오차가 다릅니다'], async () => {
+  if (!(await page.evaluate(() => location.hash.includes('view=hot')))) { await go('view=hot', { pause: 1600 }); }   // 하이라이트판은 앞 장면(hot)이 없으므로 직접 연다
   await click('.hot .ctrls .seg .seg-btn:has-text("복합 취약 신호")', { pause: 1600 });
   await click('.ehs-conds .chip:has-text("비만율")', { pause: 1200 });
   await select('.hot label.subchip:has-text("규칙") select', 'atleast', { pause: 1400 });
