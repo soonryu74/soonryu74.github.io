@@ -29,6 +29,7 @@ import RadarAbout from "./components/equity/RadarAbout";
 import IndInfo from "./components/equity/IndInfo";
 import FeedbackView from "./components/FeedbackView";
 import RegionReport from "./components/RegionReport";
+import IndicatorReport from "./components/IndicatorReport";
 import REV from "../../data/reviews.json";
 import { BUILD } from "./components/ReviewsCard";
 import Home from "./components/Home";
@@ -52,7 +53,7 @@ function readHash() {
     scope: ["sidoAll", "sido", "nation"].includes(h.get("scope")) ? h.get("scope") : (RBY.get(sgg0)?.l === "sgg" ? "nation" : "sido"),
     // 주소에 아무 상태가 없으면(처음 방문) 메인 화면, view=home 도 메인 화면
     view: !window.location.hash.replace(/^#/, "") || h.get("view") === "home" ? "home"
-      : ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback", "radar", "report"].includes(h.get("view")) ? h.get("view") : "analysis",
+      : ["profile", "compare", "units", "ncd", "corr", "hot", "chronicle", "kpi", "sources", "feedback", "radar", "report", "ireport"].includes(h.get("view")) ? h.get("view") : "analysis",
     ncdInd: h.get("nind") || null,
     cmp: (h.get("cmp") || "").split(",").filter((c) => c === NAT || RBY.has(c)).slice(0, MAX_CMP),
     rankOpt: {
@@ -214,7 +215,7 @@ export default function App() {
   const mapScopeName = scope === "sidoAll" ? "전국 시도" : scope === "sido" ? `${RBY.get(mapSidoCode)?.n || ""} 시군구` : "전국 시군구";
 
   return (
-    <div className={`viz-root fs-${fs}${playing ? " playing" : ""}${view === "report" ? " view-report" : ""}`}>
+    <div className={`viz-root fs-${fs}${playing ? " playing" : ""}${view === "report" || view === "ireport" ? " view-report" : ""}`}>
       <div className="wrap">
         <header className="top">
           <div>
@@ -286,7 +287,14 @@ export default function App() {
             </div>
           )}
           <ItemToggle item={item} onChange={setItem} ind={ind} />
-          {view !== "profile" && view !== "kpi" && view !== "report" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
+          {view === "analysis" && ind.direction !== "context" && (
+            <div className="ctrl">
+              <label>보고서</label>
+              <button className="themebtn" onClick={() => { setView("ireport"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                title="이 지표의 전국 취약지역 현황 보고서(시도별·검토 대상 지역·악화 지역·박탈 분위)">📄 전국 취약지역 보고서</button>
+            </div>
+          )}
+          {view !== "profile" && view !== "kpi" && view !== "report" && view !== "ireport" && <YearControl years={years} year={year} onYear={(y) => { setYearSel(y); setPlaying(false); }} playing={playing} onPlay={togglePlay} />}
         </div>}
 
         <div ref={bodyRef} className="body-anchor" />
@@ -295,8 +303,14 @@ export default function App() {
           <Home sel={sel} setTip={setTip} onGoCard={goSearch}
             onGo={({ view: v, ind: i, code, scope: sc }) => { if (i) setInd(i); if (code) selectRegion(code); if (sc) setScope(sc); setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "report" ? (
-          <RegionReport key={sel?.c} sel={sel} item={item} smooth={rankOpt.smooth} onBack={() => { setView("profile"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
-        ) : view === "radar" ? (
+          <RegionReport key={sel?.c} sel={sel} item={item} smooth={rankOpt.smooth} onBack={() => { setView("profile"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+            onIndicatorReport={() => { setView("ireport"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+        ) : view === "ireport" ? (
+          <IndicatorReport key={ind.id} ind={ind} sel={sel} item={item} smooth={rankOpt.smooth}
+            onBack={() => { setView("analysis"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+            onRegionReport={() => { setView("report"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+            onNcd={() => { setNcdInd(ind.name); setView("ncd"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+) : view === "radar" ? (
           <RadarAbout sel={sel} onGo={(v) => { if (v === "profile-en") { setEn(true); setView("profile"); } else setView(v); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
         ) : view === "feedback" ? (
           <FeedbackView currentUrl={feedbackFrom} />
