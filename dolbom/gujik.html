@@ -119,12 +119,15 @@
  <span class="chip" data-v="요양보호사 1급">요양보호사 1급</span>
  <span class="chip" data-v="간호조무사 자격">간호조무사</span>
  <span class="chip" data-v="치매전문교육 이수">치매전문교육</span>
- <span class="chip" data-v="와상·욕창 케어">와상·욕창케어</span>
- <span class="chip" data-v="흡인·석션 가능">흡인·석션</span>
- <span class="chip" data-v="콧줄·위루 관리">콧줄·위루</span>
+ <span class="chip" data-v="체위변경·이동 보조">체위변경·이동보조</span>
  <span class="chip" data-v="운전 가능">운전 가능</span>
  <span class="chip" data-v="요리 가능">요리 가능</span>
  </div>
+ <p class="hint" style="margin-top:8px;line-height:1.6">
+ 흡인·석션, 콧줄·위루 관리, 투약·주사 같은 <b>의료행위</b>는 개인의 강점으로 표시하지 않습니다.
+ 해당 처치가 필요하면 <a href="jangki-yoyang.html">방문간호</a>·의료기관 가정간호·방문진료 등
+ <b>면허를 갖춘 제공기관</b>을 통해야 합니다.
+ </p>
  </div>
  <div class="field">
  <label>가능 시간대</label>
@@ -191,41 +194,38 @@
 // 모심 구직 디렉토리 — Supabase(실제 DB) 연동 + 로컬 폴백
 const SB_URL = 'https://gancotctztwqsuupektl.supabase.co';
 const SB_KEY = 'sb_publishable_SJHf3habT8mpWmF9vedxuw_g1e3pLkT';
-const LKEY = 'mosim_profiles_local';
+// 과거 버전이 이 브라우저에 남긴 '이름·연락처 백업' 키. 정리 대상이다. (P0-05)
+const LEGACY_LKEY = 'mosim_profiles_local';
 let sb = null;
 try { if (window.supabase && SB_URL) sb = window.supabase.createClient(SB_URL, SB_KEY); } catch(e){}
-const seed = [
- {id:'s1', premium:true, verified:true, name:'박순자 요양보호사', role:'요양보호사', exp:'10년 이상', area:'서울 노원구', types:['방문요양','치매돌봄','방문목욕'], skills:['요양보호사 1급','치매전문교육 이수','와상·욕창 케어'], time:'주간(낮)', contact:'연락처 문의', intro:'치매·와상 어르신 10년 이상 모셨습니다. 가족처럼 정성껏 돌봐드립니다.'},
- {id:'s2', premium:false, verified:true, name:'이영호 간병인', role:'간병인', exp:'5~10년', area:'경기 구리시', types:['병원간병','입주간병','병원동행'], skills:['흡인·석션 가능','콧줄·위루 관리','운전 가능'], time:'24시간 입주', contact:'오픈카톡 문의', intro:'중환자·수술 후 회복 환자 병원간병 전문입니다. 남성 환자 케어 가능.'},
- {id:'s3', premium:false, verified:false, name:'최미경 간호조무사', role:'간호조무사', exp:'3~5년', area:'서울 강북구', types:['방문요양','주야간보호'], skills:['간호조무사 자격','요리 가능'], time:'시간 협의', intro:'꼼꼼한 복약·건강관리와 따뜻한 말벗이 강점입니다.'}
-];
+
+// 개인정보를 브라우저에 영구 보관하지 않는다. 과거 백업 키만 지우고,
+// localStorage.clear() 로 글자크기·고대비 같은 다른 설정까지 건드리지 않는다.
+try { localStorage.removeItem(LEGACY_LKEY); } catch(e){}
 
 let cache = [];
-function localLoad(){ try{ return JSON.parse(localStorage.getItem(LKEY)) || []; }catch(e){ return []; } }
-function localSave(list){ try{ localStorage.setItem(LKEY, JSON.stringify(list)); }catch(e){} }
+let loadFailed = false;
+
 async function fetchProfiles(){
- if (sb){
+ if (!sb){ cache = []; loadFailed = true; return false; }
  const { data, error } = await sb.from('caregivers').select('*')
  .eq('status','active').order('premium',{ascending:false}).order('created_at',{ascending:false});
- if (!error && Array.isArray(data)){ cache = data; return true; }
+ if (!error && Array.isArray(data)){ cache = data; loadFailed = false; return true; }
+ // 조회 실패 시 예시 인물을 실제 등록자처럼 대신 보여주지 않는다. (P0-01)
  console.warn('Supabase select 실패:', error && error.message);
- }
- cache = [...seed, ...localLoad()];
- return false;
+ cache = []; loadFailed = true; return false;
 }
+
 async function saveProfile(p){
- if (sb){
+ if (!sb) return 'nodb';
  const { error } = await sb.from('caregivers').insert({
  name:p.name, role:p.role, exp:p.exp, area:p.area,
  types:p.types, skills:p.skills, time:p.time, contact:p.contact, intro:p.intro
  });
  if (!error) return 'db';
+ // 서버 저장이 실패하면 성공으로 표시하지 않는다. 로컬에 몰래 쌓아두지도 않는다.
  console.warn('Supabase insert 실패:', error && error.message);
- }
- const list = localLoad();
- list.unshift({...p, id:'u'+Date.now(), premium:false, verified:false, created_at:new Date().toISOString()});
- localSave(list);
- return sb ? 'localfail' : 'local';
+ return 'fail';
 }
 
 // 칩 선택 유틸
@@ -282,16 +282,22 @@ document.getElementById('save').addEventListener('click', async ()=>{
  if(!p.types.length){ alert('가능한 돌봄 형태를 한 가지 이상 선택해 주세요.'); return; }
  const btn=document.getElementById('save'); const old=btn.textContent; btn.disabled=true; btn.textContent='등록 중…';
  const res = await saveProfile(p);
- await fetchProfiles(); render();
  btn.disabled=false; btn.textContent=old;
- alert(res==='db' ? '프로필이 등록되었습니다! 전국 가족·기관에게 공개됩니다.'
- : res==='local' ? '이 브라우저에 저장되었습니다. (온라인 연결 시 전체 공개)'
- : '서버 연결에 실패해 임시로 이 브라우저에만 저장했습니다.');
+ if (res === 'db'){
+ await fetchProfiles(); render();
+ alert('프로필이 등록되었습니다. 아래 디렉토리에 공개됩니다.');
  document.getElementById('directory').scrollIntoView({behavior:'smooth'});
+ } else {
+ // 실패를 성공처럼 보이게 하지 않는다. 입력값은 화면에 그대로 남겨 다시 시도할 수 있게 한다.
+ alert('등록하지 못했습니다. 서버 연결을 확인한 뒤 다시 시도해 주세요.\n입력하신 내용은 화면에 그대로 남아 있습니다.');
+ }
 });
 
 function card(p){
- const badges = (p.premium?'<span class="badge-premium">프리미엄</span> ':'')+(p.verified?'<span class="badge-verified">인증</span>':'');
+ // 자격 서류 확인 절차가 아직 운영되지 않으므로 '인증' 배지를 붙이지 않는다.
+ // 모든 프로필은 본인이 직접 입력한 정보임을 명시한다. (P0-01)
+ // '프리미엄'은 광고 노출 상품이며 자격 확인과 무관하다.
+ const badges = (p.premium?'<span class="badge-premium" title="광고 노출 상품입니다. 자격 확인과 무관합니다.">프리미엄 · 광고</span> ':'');
  return `<div class="profile-card">
  <div class="top"><div class="avatar">${esc((p.name||' ').trim()[0]||'인')}</div>
  <div><h4>${esc(p.name)} ${badges}</h4><div class="role">${esc(p.role)} · 경력 ${esc(p.exp)}</div></div></div>
@@ -299,10 +305,27 @@ function card(p){
  ${p.intro?`<div style="font-size:.9rem;color:var(--ink)">${esc(p.intro)}</div>`:''}
  <div class="tags">${p.types.map(t=>`<span class="pill">${esc(t)}</span>`).join('')}${p.skills.map(s=>`<span class="pill amber">${esc(s)}</span>`).join('')}</div>
  ${p.contact?`<div class="meta" style="margin-top:8px">${esc(p.contact)}</div>`:''}
+ <div class="meta" style="margin-top:8px;font-size:.78rem">본인이 직접 입력한 정보입니다. 자격·경력은 채용 전 원본 서류로 확인하세요.</div>
  </div>`;
 }
 
 function render(){
+ const dirEl = document.getElementById('dir');
+ if (loadFailed){
+ // 조회 실패 — 예시 인물 대신 오류·재시도·공식 대안을 표시한다. (P0-01 / T09)
+ dirEl.innerHTML = `<div class="callout warn"><span class="t">프로필을 불러오지 못했습니다</span>
+ 일시적인 연결 문제일 수 있습니다. 다시 시도하시거나 공식 구인·구직 창구를 이용하세요.
+ <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+ <button class="btn btn-sm btn-primary" id="dir-retry">다시 시도</button>
+ <a class="btn btn-sm btn-ghost" href="https://www.work24.go.kr/cm/main.do" target="_blank" rel="noopener">고용24에서 찾기</a>
+ </div></div>`;
+ const rb = document.getElementById('dir-retry');
+ if (rb) rb.addEventListener('click', async ()=>{
+ dirEl.innerHTML = '<p style="color:var(--muted)">불러오는 중…</p>';
+ await fetchProfiles(); render();
+ });
+ return;
+ }
  const roleF = document.getElementById('flt-role').value;
  const areaF = document.getElementById('flt-area').value.trim();
  let list = cache.filter(p=>{
@@ -313,7 +336,9 @@ function render(){
  list.sort((a,b)=> (b.premium?1:0)-(a.premium?1:0));
  const dir = document.getElementById('dir');
  dir.innerHTML = list.length ? list.map(card).join('') :
- '<p style="color:var(--muted)">조건에 맞는 프로필이 없습니다.</p>';
+ (cache.length
+ ? '<p style="color:var(--muted)">조건에 맞는 프로필이 없습니다. 직종·지역 조건을 바꿔보세요.</p>'
+ : '<p style="color:var(--muted)">아직 등록된 프로필이 없습니다. 위 양식에서 첫 프로필을 등록해 보세요.</p>');
 }
 document.getElementById('flt-role').addEventListener('change', render);
 document.getElementById('flt-area').addEventListener('input', render);

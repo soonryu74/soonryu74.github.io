@@ -239,7 +239,7 @@ footer.foot b{color:#dcebe7}
         <div class="field full"><label>연락처</label><input id="w-contact" placeholder="전화 또는 이메일 (오픈 안내를 받을 곳)"></div>
         <div class="field full"><label>남기실 말 (선택)</label><textarea id="w-msg" placeholder="필요하신 내용이나 궁금한 점을 적어주세요."></textarea></div>
       </div>
-      <p style="margin:18px 0 0"><button class="btn btn-primary" id="w-gen">사전등록 신청서 만들기</button></p>
+      <p style="margin:18px 0 0"><button class="btn btn-primary" id="w-gen">사전등록 접수</button></p>
       <div id="out"></div>
       <p style="font-size:.8rem;color:var(--muted);margin:14px 0 0">신청 내용은 오픈 안내 목적에 한해 사용되며, 제3자에게 제공하지 않습니다. 정식 서비스는 「직업안정법」상 <b>직업정보제공사업 신고</b>를 마친 뒤 운영됩니다.</p>
     </div>
@@ -304,20 +304,31 @@ function successBox(role){
   out.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
+// 과거 버전이 이 브라우저에 남긴 이름·연락처 백업만 제거한다.
+// localStorage.clear() 는 쓰지 않는다 — 글자크기·고대비 등 다른 설정까지 지워지기 때문이다. (P0-05)
+try { localStorage.removeItem('gyeotae_waitlist'); } catch(e){}
+
+let submitting = false;   // 이중 클릭으로 같은 내용이 두 번 접수되는 것을 막는다.
+let submitted  = false;   // 접수 성공 후 같은 입력으로 재전송되지 않게 한다.
+
 btn.addEventListener('click', async ()=>{
+  if (submitting || submitted) return;
   const v=id=>document.getElementById(id).value.trim();
   const role=document.getElementById('w-role').value;
   if(!v('w-contact')){ alert('오픈 안내를 받으실 연락처를 입력해 주세요.'); document.getElementById('w-contact').focus(); return; }
   const row={ role, job:v('w-job')||null, name:v('w-name')||null, area:v('w-area')||null, contact:v('w-contact'), msg:v('w-msg')||null, source:'gyeotae' };
-  // 로컬 백업(선택)
-  try{ const k='gyeotae_waitlist'; const a=JSON.parse(localStorage.getItem(k)||'[]'); a.push(row); localStorage.setItem(k,JSON.stringify(a)); }catch(e){}
+  // 개인정보(이름·연락처)를 브라우저에 보관하지 않는다. 서버 접수만 한다.
   if(!sb){ fallbackBox(role,v); return; }
+  submitting = true;
   const old=btn.textContent; btn.disabled=true; btn.textContent='접수 중…';
   try{
     const { error } = await sb.from('waitlist').insert(row);
-    if(error){ fallbackBox(role,v); } else { successBox(role); }
+    // 서버 성공을 확인한 뒤에만 '접수 완료'로 표시한다.
+    if(error){ fallbackBox(role,v); } else { submitted = true; successBox(role); }
   }catch(e){ fallbackBox(role,v); }
-  btn.disabled=false; btn.textContent=old;
+  submitting = false;
+  btn.disabled = submitted;
+  btn.textContent = submitted ? '접수 완료' : old;
 });
 </script>
 <script src="/assets/credit.js" defer></script>
