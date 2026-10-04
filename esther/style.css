@@ -345,3 +345,4 @@ html[lang=en] .years b small{font-family:var(--display);font-style:italic;font-s
 .cbody .form .send{justify-self:start}
 .cbody .form .hint{text-align:left}
 @media(max-width:860px){.cgrid{grid-template-columns:1fr;gap:50px}.cphoto{max-width:340px}}
+.role .ceo{display:inline-block;font-family:var(--serif);font-weight:400;font-size:1.25rem;color:var(--night);margin-bottom:6px}
