@@ -311,3 +311,15 @@ html[lang=en] h2{font-family:var(--display)!important;font-weight:400!important;
 .ocard .ask{background:#05091f;letter-spacing:.14em}
 .sline h3{font-size:1.5rem!important;font-weight:300!important}
 .chapter h3{font-weight:400!important;font-size:1.75rem!important}
+
+/* 실제 작품 사진 */
+.artwork{margin:0}
+.artwork .aframe{padding:14px;background:linear-gradient(135deg,#7b5c22,#e8cf8a 22%,#a8833a 45%,#f1dfa6 62%,#8a6a28 85%,#c9a24a);box-shadow:0 40px 70px -30px rgba(11,22,71,.6);max-width:440px}
+.artwork img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover}
+.artwork figcaption{margin-top:20px;font-family:var(--garamond);font-style:italic;color:var(--gold-lo);font-size:.95rem}
+.install{padding:0;position:relative;background:var(--abyss)}
+.install img{display:block;width:100%;height:clamp(320px,62vw,720px);object-fit:cover}
+.install .cap{position:absolute;left:0;right:0;bottom:0;padding:70px 0 26px;background:linear-gradient(transparent,rgba(5,9,31,.85))}
+.install .cap .wrap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.install .cap .en{color:var(--gold-hi)}
+.install .cap b{font-family:var(--serif);font-weight:400;color:#fff;font-size:1rem}
