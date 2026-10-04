@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>돌봄 교육·자격 안내 — 자격 취득·보수교육·훈련과정 공식 경로 | 모심</title>
+<meta name="description" content="요양보호사·간호조무사·간호사·산후관리사의 자격 취득, 보수·법정의무교육, 직업훈련 과정을 어디에서 신청하는지 공식 기관 경로로 안내합니다. 모심은 교육을 운영하거나 모집하지 않습니다.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/png/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2c4227">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+ <div class="nav-inner">
+ <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo-mark.svg" alt="모심 로고"> <span class="brand-word">모심</span> <span class="tag">돌봄 종합포털</span></a>
+ <nav class="site-nav">
+ <a href="gajok.html">환자·가족</a>
+ <a href="gujik.html">돌봄종사자</a>
+ <a href="gyoyuk.html" class="active">교육·자격</a>
+ <a href="tonghap-dolbom.html">통합돌봄</a>
+ <a href="jangki-yoyang.html">장기요양</a>
+ <a href="jiyeok.html">지역 찾기</a>
+ <a href="gigwan.html">기관 평가</a>
+ <a href="about.html">소개</a>
+ </nav>
+ </div>
+</header>
+
+<main class="wrap">
+ <div class="breadcrumb"><a href="index.html">홈</a> › 교육·자격 안내</div>
+ <div class="page-head">
+ <h1>돌봄 교육·자격 안내</h1>
+ <p class="lead">자격을 처음 따는 길, 자격을 유지하는 보수·의무교육, 그리고 훈련과정을 <strong>어느 공식 창구에서 신청하는지</strong> 정리했습니다.</p>
+ </div>
+
+ <div class="callout warn">
+ <span class="t">먼저 알아두실 것</span>
+ 모심은 교육을 <b>운영하지 않고, 모집하지도 않습니다.</b> 여기에는 <b>모집 일정·접수 기간·교육비를 적지 않습니다</b> —
+ 실제 일정을 모심이 매번 확인할 방법이 없는데 '모집 중'이라고 적으면 거짓이 되기 때문입니다.
+ 아래 링크는 모두 <b>공식 기관 사이트</b>로 바로 연결되며, 일정과 비용은 그곳에서 확인하셔야 합니다.
+ </div>
+
+ <section class="section">
+ <h2 style="margin-top:0">직종을 고르세요</h2>
+ <div class="chip-row" id="job-row" role="group" aria-labelledby="job-lbl"></div>
+ <span id="job-lbl" class="sr-only" style="position:absolute;left:-9999px">직종 선택</span>
+ </section>
+
+ <div id="edu-result"></div>
+
+ <section class="section">
+ <h2 style="margin-top:0">공식 기관 바로가기</h2>
+ <ul class="source-list" id="org-list"></ul>
+ <p class="hint" id="org-checked"></p>
+ </section>
+
+ <div class="cta-band">
+ <h2>일자리도 함께 찾아보세요</h2>
+ <p>프로필을 등록해 공개하거나, 공식 구인 창구에서 일자리를 찾을 수 있습니다.</p>
+ <a class="btn btn-lg btn-ghost" href="gujik.html">돌봄종사자 페이지</a>
+ </div>
+
+ <div class="disclaimer">
+ 교육과정·자격 요건·이수 시간·비용은 제도 개정과 기관 사정에 따라 바뀝니다.
+ 신청 전 반드시 각 기관의 공식 공지에서 확인하세요. 모심은 교육기관이 아니며 수강 신청을 대행하지 않습니다.
+ </div>
+</main>
+
+<footer class="site-footer">
+ <div class="footer-inner">
+ <h4>모심</h4>
+ <div class="footer-links">
+ <a href="gajok.html">환자·가족</a><a href="gujik.html">돌봄종사자</a><a href="gyoyuk.html">교육·자격</a><a href="tonghap-dolbom.html">통합돌봄</a><a href="jangki-yoyang.html">장기요양</a><a href="jiyeok.html">지역 찾기</a><a href="jaryo.html">자료실</a>
+ </div>
+ <div class="footer-note">© 2026 모심.</div>
+ </div>
+</footer>
+
+<script src="assets/education-paths.js"></script>
+<script>
+function esc(s){ return String(s||'').replace(/[<>&]/g, m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m])); }
+
+const P = window.EDU_PATHS;
+const jobRow = document.getElementById('job-row');
+const result = document.getElementById('edu-result');
+
+if (!P || !Array.isArray(P.직종)) {
+  result.innerHTML = '<div class="callout warn"><span class="t">교육 안내를 불러오지 못했습니다</span>' +
+    '페이지를 새로고침해 주세요. 계속 안 되면 아래 공식 기관으로 바로 가실 수 있습니다.</div>';
+} else {
+  P.직종.forEach((j, i) => {
+    const c = document.createElement('button');
+    c.className = 'chip'; c.type = 'button'; c.textContent = j.이름;
+    c.setAttribute('aria-pressed', 'false');
+    c.addEventListener('click', () => {
+      jobRow.querySelectorAll('.chip').forEach(x => { x.classList.remove('on'); x.setAttribute('aria-pressed','false'); });
+      c.classList.add('on'); c.setAttribute('aria-pressed','true');
+      showJob(j);
+    });
+    jobRow.appendChild(c);
+  });
+}
+
+function stepList(steps){
+ return '<ol class="steps">' + steps.map(s => {
+   const org = s.기관 ? window.findEduOrg(s.기관) : null;
+   return '<li><strong>' + esc(s.단계) + '</strong>' + esc(s.설명) +
+     (org ? '<div style="margin-top:8px"><a class="btn btn-sm btn-ghost" href="' + esc(org.url) +
+            '" target="_blank" rel="noopener">' + esc(org.이름.split(' — ')[0]) + ' 바로가기 →</a></div>'
+          : '<div class="hint" style="margin-top:6px">모심이 확인한 공식 온라인 창구가 없습니다. 시·도 또는 교육기관에 직접 문의하세요.</div>') +
+     '</li>';
+ }).join('') + '</ol>';
+}
+
+function showJob(j){
+ result.innerHTML =
+  '<section class="section">' +
+  '<h2 style="margin-top:0">' + esc(j.이름) + '</h2>' +
+  '<h3>1) 자격을 처음 딸 때</h3>' + stepList(j.자격취득) +
+  '<h3>2) 자격을 유지할 때 — 보수·법정의무교육</h3>' + stepList(j.보수의무) +
+  '<h3>3) 실무·훈련과정</h3>' + stepList(j.실무) +
+  '<p class="hint">모심이 공식 사이트를 직접 열어 확인한 날: ' + esc(P.확인일) +
+  '. 일정·비용·세부 요건은 적지 않았습니다 — 각 기관 공지에서 확인하세요.</p>' +
+  '</section>';
+ result.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// 공식 기관 목록
+(function(){
+ const ul = document.getElementById('org-list');
+ if (!P || !Array.isArray(P.기관)) return;
+ ul.innerHTML = P.기관.map(o =>
+   '<li><a href="' + esc(o.url) + '" target="_blank" rel="noopener">' + esc(o.이름) + '</a>' +
+   '<span class="desc">' + esc(o.역할) +
+   (o.전화 ? ' · <b>' + esc(o.전화) + '</b>' + (o.전화안내 ? ' (' + esc(o.전화안내) + ')' : '') : '') +
+   '<br>확인한 메뉴: ' + esc((o.메뉴||[]).join(' · ')) +
+   ' · 확인일 ' + esc(o.checked_at) + '</span></li>').join('');
+ document.getElementById('org-checked').textContent =
+   '위 네 곳은 ' + P.확인일 + '에 공식 사이트를 직접 열어 메뉴와 연락처를 확인한 것입니다. 기관 사정으로 주소·메뉴가 바뀔 수 있습니다.';
+})();
+</script>
+<script src="assets/app.js"></script>
+<script src="/assets/credit.js" defer></script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 /* 접근성 점검(터치 영역 44px, 조작 요소 이름). 실행: node tests/a11y.js */
 const { chromium } = require('playwright-core');
 const ROOT='file:///home/user/soonryu74.github.io/';
-const PAGES=['dolbom/index.html','dolbom/gajok.html','dolbom/jiyeok.html','dolbom/gigwan.html','dolbom/gujik.html','gyeotae/index.html'];
+const PAGES=['dolbom/gyoyuk.html','dolbom/index.html','dolbom/gajok.html','dolbom/jiyeok.html','dolbom/gigwan.html','dolbom/gujik.html','gyeotae/index.html'];
 (async()=>{
  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome',args:['--no-sandbox']});
  for (const f of PAGES){

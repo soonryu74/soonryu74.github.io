@@ -1,7 +1,7 @@
 /* 좁은 화면·200% 확대 시 가로 스크롤 점검. 실행: node tests/zoom.js */
 const { chromium } = require('playwright-core');
 const ROOT='file:///home/user/soonryu74.github.io/';
-const PAGES=['dolbom/index.html','dolbom/gajok.html','dolbom/jiyeok.html','dolbom/gigwan.html','dolbom/gujik.html','gyeotae/index.html'];
+const PAGES=['dolbom/gyoyuk.html','dolbom/index.html','dolbom/gajok.html','dolbom/jiyeok.html','dolbom/gigwan.html','dolbom/gujik.html','gyeotae/index.html'];
 (async()=>{
  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome',args:['--no-sandbox']});
  // 390px 기기에서 200% 확대 = CSS 뷰포트 195px
