@@ -79,17 +79,19 @@ const WORKS = [
     document.getElementById('contact').scrollIntoView({ behavior:'smooth' });
     setTimeout(() => form.name.focus({ preventScroll:true }), 700);
   }));
+  const MAIL = 'qtgpark@naver.com';
   const toast = document.getElementById('toast');
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const f = form;
-    const text = en
-      ? `[Inquiry] ${f.kind.value}\nName: ${f.name.value}\nContact: ${f.reach.value}\n\n${f.msg.value}`
-      : `[문의] ${f.kind.value}\n성함: ${f.name.value}\n연락처: ${f.reach.value}\n\n${f.msg.value}`;
-    try { await navigator.clipboard.writeText(text); } catch (_) {}
-    toast.textContent = en ? 'Copied — paste it into the Instagram message.' : '문의 내용이 복사되었습니다. 인스타그램 메시지에 붙여 넣어 주세요.';
+    const subject = en ? `[Artselah Inquiry] ${f.kind.value} — ${f.name.value}` : `[Artselah 문의] ${f.kind.value} — ${f.name.value}`;
+    const body = en
+      ? `Inquiry: ${f.kind.value}\nName: ${f.name.value}\nContact: ${f.reach.value}\n\n${f.msg.value}`
+      : `문의 분야: ${f.kind.value}\n성함: ${f.name.value}\n연락처: ${f.reach.value}\n\n${f.msg.value}`;
+    try { await navigator.clipboard.writeText(body); } catch (_) {}
+    toast.textContent = en ? 'Opening your mail app…' : '메일 앱이 열립니다. 보내기만 누르시면 됩니다.';
     toast.classList.add('on'); setTimeout(() => toast.classList.remove('on'), 3500);
-    setTimeout(() => window.open('https://ig.me/m/artist_artdirector_park', '_blank', 'noopener'), 900);
+    location.href = `mailto:${MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 })();
 

@@ -352,3 +352,7 @@ html[lang=en] .years b small{font-family:var(--display);font-style:italic;font-s
 
 /* 휴대폰: 스크롤 중 흔들림 방지 — 위로 떠오르는 움직임 없이 은은하게만 나타남 */
 @media(max-width:860px){.rv{transform:none;transition:opacity .8s ease}.piece:hover .frame,.ocard:hover{transform:none}}
+
+/* 직접 연락 */
+.direct{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.direct .btn{margin:0;padding:12px 20px;font-size:.88rem;letter-spacing:.04em}
