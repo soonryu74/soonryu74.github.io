@@ -73,7 +73,10 @@ export default function HomeEquityQuick({ sel, onGo }) {
           </div>
         </div>
       )}
-      <button type="button" className="hc-cta" disabled={!reg} onClick={() => reg && onGo({ view: "profile", code: reg.c })}>우리 지역 Health Equity Profile 보기 →</button>
+      <div className="hc-ctas">
+        <button type="button" className="hc-cta" disabled={!reg} onClick={() => reg && onGo({ view: "profile", code: reg.c })}>우리 지역 Health Equity Profile 보기 →</button>
+        <button type="button" className="hc-cta hc-cta2" disabled={!reg} onClick={() => reg && onGo({ view: "report", code: reg.c })}>📄 지역 보고서 만들기</button>
+      </div>
     </div>
   );
 }

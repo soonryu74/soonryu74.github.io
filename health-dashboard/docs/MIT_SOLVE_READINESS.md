@@ -20,6 +20,7 @@ Counted from the data files the app actually loads (`node scripts/qa/data_valida
 ## 2. Implemented Features (working today)
 - Indicator analysis for every indicator: map, ranking (with 95% confidence intervals for survey indicators), trend, year table, gap box plot, 10-year trend.
 - Regional profile with **Health Equity Priority** card: ① PRIORITY (up to three indicators, one per domain) → ② WHY IT MATTERS (computed reasons: gap from national median, relative position, 5-year trend, deprivation quintile, confidence-interval check) → ③ POSSIBLE ACTION (linked official guidance: Korean national/provincial plans, WHO, NICE, CPSTF). Switchable to English (`en=1`).
+- **Community health report (auto-generated draft)**: for any province or municipality, one click builds a printable report (print / PDF / Word .doc, Korean) — summary, draft situation-analysis sentences built only from computed facts, priority items with reasons and linked guidance, strengths, all 40 survey indicators, mortality and cancer screening, methods and sources. Generated in the browser; nothing is sent to a server.
 - “How priorities are identified” methodology link (in the card and in the English overview).
 - Combined-vulnerability signals map (hotspot screen), equity summary in region comparison, peer-group comparison.
 - Sources tab with per-source cards, update dates, limitations, external-review record (0 published, requests in progress).
