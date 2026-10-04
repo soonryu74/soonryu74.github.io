@@ -1,14 +1,14 @@
 /* ───────── 갤러리 액자 목록 (한/영 공용) ─────────
    새 작가나 전시를 추가하려면 아래에 한 덩어리씩 넣으면 됩니다.
    type : 'artist'(작가) 또는 'show'(전시)
-   img  : 작품 사진 주소 (비워 두면 붓결 그림 위에 glyph 글자로 표시)
+   img  : 작품 사진 파일명(esther/assets/ 폴더에 넣기) 또는 https 주소 — 비워 두면 붓결 그림 위에 glyph 글자로 표시
    glyph: 사진이 없을 때 액자 안 글자,  small: true 면 영문용 작은 글씨
    link : 누르면 열릴 홈페이지 / 기사 / 이력 주소                         */
 const WORKS = [
-  { type:'artist', glyph:'息', link:'https://www.ohjiyoon.com/',
+  { type:'artist', glyph:'息', img:'ohjiyoon-blue.jpg', link:'https://www.ohjiyoon.com/',
     ko:{ name:'오지윤 OH JIYOON', note:'현대미술가 · 아트 매니지먼트' },
     en:{ name:'OH JIYOON', note:'Contemporary Artist · Art Management' } },
-  { type:'show', glyph:'尊<br>嚴', link:'https://www.businesskorea.co.kr/news/articleView.html?idxno=277796',
+  { type:'show', glyph:'尊<br>嚴', img:'jonum-installation.jpg', link:'https://www.businesskorea.co.kr/news/articleView.html?idxno=277796',
     ko:{ name:'尊嚴 — 숨결의 정수', note:'2026 · 하나은행 PLACE 1, 서울' },
     en:{ name:'尊嚴 — l\'essence du souffle', note:'2026 · Hana Bank PLACE 1, Seoul' } },
   { type:'show', glyph:'Blue<br>Ocean', small:true, link:'https://www.heraldk.com/article/2026050517292658262',
@@ -29,8 +29,9 @@ const WORKS = [
     en:{ view:'View Story →', next:['A place for<br>the next artist','Next Artist','Awaiting the next story'], contact:'Contact →' },
   }[L];
 
+  const BASE = document.documentElement.lang === 'en' ? '../assets/' : 'assets/';
   const art = w => w.img
-    ? `<div class="art"><img src="${w.img}" alt="${w[L].name}" loading="lazy"></div>`
+    ? `<div class="art"><img src="${/^https?:/.test(w.img) ? w.img : BASE + w.img}" alt="${w[L].name}" loading="lazy"></div>`
     : `<div class="art stroke"><span class="glyph${w.small ? ' sm' : ''}">${w.glyph}</span></div>`;
 
   document.getElementById('frames').innerHTML = WORKS.map(w => `
