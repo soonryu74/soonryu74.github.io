@@ -378,3 +378,15 @@ body{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
 .h-bar span{font-size:.624rem;font-style:italic;letter-spacing:.14em;line-height:1.45}
 .h-bar .wrap{row-gap:2px;padding-top:12px;padding-bottom:14px}
 @media(max-width:720px){.h-bar .wrap{flex-direction:column;gap:2px}}
+
+/* 첫 화면 높이를 화면 높이(vh/svh)와 분리 — 앱 내 브라우저에서 주소창이 접힐 때 간격이 출렁이지 않게 */
+.hero{min-height:0!important}
+.mono-hero{min-height:760px!important}
+.mono-hero > .wrap{padding-top:40px;padding-bottom:56px}
+@media(max-width:720px){
+  .mono-hero{min-height:0!important}
+  .mono-hero > .wrap{flex:none;padding-top:72px;padding-bottom:64px}
+}
+.h-top{margin-bottom:40px!important}
+.h-bottom{margin-top:40px!important}
+@media(max-width:720px){.h-top{margin-bottom:34px!important}.h-bottom{margin-top:32px!important}}
