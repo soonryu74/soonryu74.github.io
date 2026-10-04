@@ -328,3 +328,18 @@ html[lang=en] h2{font-family:var(--display)!important;font-weight:400!important;
 .years b small{font-family:var(--serif);font-size:.26em;letter-spacing:0;margin-left:.18em;color:var(--gold-lo);vertical-align:baseline}
 html[lang=en] .years b small{font-family:var(--display);font-style:italic;font-size:.24em}
 @media(max-width:720px){section{padding:96px 0}.years{gap:40px}}
+
+/* artselah Agency 워드마크 */
+.brand{flex-direction:column;align-items:flex-start;gap:0!important;line-height:1}
+.brand .wm{font-family:'Montserrat',sans-serif;font-weight:400;font-size:1.45rem;letter-spacing:-.01em;color:#fff;text-transform:lowercase}
+.brand .ag{font-family:'Montserrat',sans-serif;font-weight:300;font-size:.58rem;letter-spacing:.42em;color:var(--gold-hi);text-transform:uppercase;margin-top:4px;padding-left:.1em}
+
+/* 문의: 사진 + 문의서 */
+.cgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:70px;align-items:center;text-align:left}
+.cphoto{margin:0;padding:12px;background:linear-gradient(135deg,#7b5c22,#e8cf8a 22%,#a8833a 45%,#f1dfa6 62%,#8a6a28 85%,#c9a24a);box-shadow:0 40px 70px -30px rgba(0,0,0,.7)}
+.cphoto img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%}
+.cbody .kicker{justify-content:flex-start!important}
+.cbody .form{margin:10px 0 0}
+.cbody .form .send{justify-self:start}
+.cbody .form .hint{text-align:left}
+@media(max-width:860px){.cgrid{grid-template-columns:1fr;gap:50px}.cphoto{max-width:340px}}
