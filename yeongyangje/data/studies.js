@@ -3075,7 +3075,7 @@ window.EBN_STUDIES = [
 {
   id: "camus-barry-2011",
   name: "CAMUS — 쏘팔메토 최대 3배 용량에서도 효과 없음",
-  inst: "미국 NIH CAMUS 연구그룹(11개 기관)",
+  inst: "NIH 지원 CAMUS 연구그룹(북미 11개 기관)",
   journal: "JAMA",
   year: 2011,
   n: 369,
@@ -3107,8 +3107,8 @@ window.EBN_STUDIES = [
   outcome: ["safety"],
   effect: ["PSA 변화 0.16 vs 0.23 ng/mL, p=0.50"],
   finding: "고용량에서도 PSA를 위약보다 더 바꾸지 않았다.",
-  caveat: "사후 분석.",
-  grade: "B",
+  caveat: "CAMUS 사전 지정 이차 결과(PSA) 분석.",
+  grade: "D",
   urls: ["https://pubmed.ncbi.nlm.nih.gov/23253958/"],
   updated: "2026-10"
 },
@@ -3168,7 +3168,7 @@ window.EBN_STUDIES = [
   effect: ["총·LDL·HDL 콜레스테롤·중성지방 군간 유의차 없음"],
   finding: "콜레스테롤 저하가 재현되지 않았다.",
   caveat: "소규모, 단기간.",
-  grade: "D",
+  grade: "C",
   urls: ["https://pubmed.ncbi.nlm.nih.gov/17093150/"],
   updated: "2026-10"
 },
@@ -3245,7 +3245,7 @@ window.EBN_STUDIES = [
   intervention: "프로폴리스 경구 보충 vs 대조",
   ing: ["propolis"],
   outcome: ["immune", "other"],
-  effect: ["CRP −1.23 (−1.76~−0.69)", "IL-6 −1.52 (−2.10~−0.93)", "산화지표(MDA·SOD) 효과 없음"],
+  effect: ["CRP −1.23 (−1.76~−0.69)", "IL-6 −1.52 (−2.10~−0.93)", "TAC·GSH·GPx 증가, MDA·SOD는 효과 없음"],
   finding: "일부 염증지표는 낮아졌지만 대리지표이고 이질성이 크다.",
   caveat: "용량·대상 이질적.",
   grade: "C",
@@ -3267,7 +3267,7 @@ window.EBN_STUDIES = [
   outcome: ["immune"],
   effect: ["3일째 증상 소실 83% vs 위약군 72%는 증상 남음"],
   finding: "증상 소실이 약 2일 빨랐다고 보고했다.",
-  caveat: "단일기관 소규모, 원료사 이해관계 미확인.",
+  caveat: "단일기관 소규모, 공저자 1인이 원료 업체 연구소 소속.",
   grade: "C",
   urls: ["https://pubmed.ncbi.nlm.nih.gov/33091857/"],
   updated: "2026-10"
@@ -3347,7 +3347,7 @@ window.EBN_STUDIES = [
   outcome: ["joint", "pain"],
   effect: ["통증 변화 −19.9 vs −20.2, 군간차 −0.3 (−6.9~6.4)"],
   finding: "무릎 통증을 위약보다 더 줄이지 못했다.",
-  caveat: "공공재원.",
+  caveat: "공공재원(호주 NHMRC), 캡슐·위약은 제조사 제공.",
   grade: "D",
   urls: ["https://pubmed.ncbi.nlm.nih.gov/38776073/"],
   updated: "2026-10"
@@ -3427,8 +3427,8 @@ window.EBN_STUDIES = [
   outcome: ["joint", "pain"],
   effect: ["통증 유의차 없음", "강직만 p=0.046"],
   finding: "주평가변수인 통증은 위약과 차이가 없었다.",
-  caveat: "저자 1인이 제조사 소속.",
-  grade: "D",
+  caveat: "제조사 연구비 지원, 저자 1인이 제조사 소속. 80명·12주로 소규모.",
+  grade: "C",
   urls: ["https://pubmed.ncbi.nlm.nih.gov/28830491/"],
   updated: "2026-10"
 },
@@ -3447,7 +3447,7 @@ window.EBN_STUDIES = [
   outcome: ["joint", "pain"],
   effect: ["ITT 분석 주평가변수 p=0.061(유의하지 않음)", "계획서 순응 분석 −3.66 (−6.87~−0.45)", "통증 VAS −19.93 mm"],
   finding: "통증 지표는 개선됐지만 주평가변수는 ITT 분석에서 유의하지 않았다.",
-  caveat: "12주, 개별인정 원료(추출오일)와 형태가 다름.",
+  caveat: "12주, 개별인정 원료(추출오일)와 형태가 다름. 원료 업체 연구비 지원, 공저자 1인 업체 소속.",
   grade: "C",
   urls: ["https://pubmed.ncbi.nlm.nih.gov/42464085/"],
   updated: "2026-10"
@@ -3535,7 +3535,7 @@ window.EBN_STUDIES = [
 {
   id: "msm-toguchi-2023",
   name: "일본 RCT — MSM 2 g, 경증 무릎통증",
-  inst: "일본 연구진",
+  inst: "일본 기업 연구소·구루메대",
   journal: "Nutrients",
   year: 2023,
   n: 88,
@@ -3547,7 +3547,7 @@ window.EBN_STUDIES = [
   outcome: ["joint"],
   effect: ["무릎 점수 군간 p=0.046"],
   finding: "국내 기준과 비슷한 용량에서 경계 수준의 유의성만 보였다.",
-  caveat: "저자 기업 소속 여부 미확인.",
+  caveat: "원료 기업 연구비 지원, 저자 4명 중 3명이 해당 기업 연구개발부 소속.",
   grade: "C",
   urls: ["https://pubmed.ncbi.nlm.nih.gov/37447322/"],
   updated: "2026-10"

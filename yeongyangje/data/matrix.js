@@ -480,15 +480,15 @@
 
   /* ===== 추가 성분 — 쏘팔메토·폴리코사놀·프로폴리스·크릴오일·초록입홍합·MSM (2026-10) ===== */
   X.saw_palmetto = X.saw_palmetto || {};
-  X.saw_palmetto.anticoag = c("caution", "고시 주의사항: 출혈성 질환이 있거나 항응고제 등 복용 시 전문가와 상담", "https://www.nccih.nih.gov/health/saw-palmetto");
-  X.saw_palmetto.surgery = c("caution", "고시 주의사항: 수술 전후 전문가와 상담", "https://www.nccih.nih.gov/health/saw-palmetto");
+  X.saw_palmetto.anticoag = c("caution", "고시 주의사항: 출혈성 질환이 있거나 항응고제 등 복용 시 전문가와 상담", "https://www.law.go.kr/행정규칙/건강기능식품의기준및규격");
+  X.saw_palmetto.surgery = c("caution", "고시 주의사항: 수술 전후 전문가와 상담", "https://www.law.go.kr/행정규칙/건강기능식품의기준및규격");
   X.saw_palmetto.pregnancy = c("avoid", "고시: 성인남성만 섭취 / NCCIH: 임신·수유 중 안전하지 않을 수 있음", "https://www.nccih.nih.gov/health/saw-palmetto");
   X.policosanol = X.policosanol || {};
   X.policosanol.anticoag = c("caution", "개별인정 주의사항: 혈액응고장애·심혈관약 복용 시 전문가 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
   X.policosanol.surgery = c("caution", "개별인정 주의사항: 수술예정인 사람은 전문가 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
   X.policosanol.pregnancy = c("avoid", "개별인정 주의사항: 임산부·수유부는 섭취를 피할 것", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
   X.krill_oil = X.krill_oil || {};
-  X.krill_oil.anticoag = c("caution", "개별인정 주의사항: 항응고제·항혈소판제 복용 시 상담(와파린 병용 후향 연구 573명에서 INR·출혈 변화는 없었음)", "https://pubmed.ncbi.nlm.nih.gov/27657121/");
+  X.krill_oil.anticoag = c("caution", "개별인정 주의사항: 항응고제·항혈소판제 복용 시 상담(와파린 복용자 573명 후향 연구: 어유·크릴오일 병용 145명에서 와파린 조절(TTR)·출혈 차이 없음)", "https://pubmed.ncbi.nlm.nih.gov/27657121/");
   X.krill_oil.pregnancy = c("caution", "개별인정 주의사항: 임산부 및 수유부는 섭취에 주의", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
   X.green_lipped_mussel = X.green_lipped_mussel || {};
   X.green_lipped_mussel.pregnancy = c("avoid", "개별인정 주의사항: 임신부 및 수유부는 섭취를 피할 것", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
