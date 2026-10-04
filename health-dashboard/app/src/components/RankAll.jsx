@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Cite from "./Cite";
 import { createPortal } from "react-dom";
-import { fmt, ranked, label, val, RBY } from "../data";
+import { fmt, ranked, label, val, RBY, SIDOS, natPool, sidoPoolOf, isSurvey } from "../data";
 import { saveSvgString, savePngFromSvg, saveCsvRows } from "../export";
 import { renderRankVideo, saveBlob } from "../video";
 import { safe } from "../export";
@@ -9,18 +9,34 @@ import { safe } from "../export";
 /* 전체 보기 — 순위 전체를 막대그래프로 펼치고, 연도를 재생하면 막대 길이와 자리(순위)가 함께 움직인다.
    막대 길이 = 값(0 기준, 모든 연도 공통 척도라 늘고 줌이 그대로 보임) · 선택 지역 = 붉은 막대 · ▲▼ = 전년 대비 순위 변동.
    2026-09-23 소유자 지시: 좌우로 나누지 말고 **항상 한 줄(1열)** 로, 258개라도 위에서 아래로. 막대가 화면 폭 전체를 쓰므로 격차가 한눈에 보인다.
-   인쇄(🖨)하면 이 화면만 세로로 길게 나온다(styles.css @media print). SVG·PNG·CSV 내려받기 지원. 모든 지표·모든 집단 탭 공통. */
+   인쇄(🖨)하면 이 화면만 세로로 길게 나온다(styles.css @media print). SVG·PNG·CSV 내려받기 지원. 모든 지표·모든 집단 탭 공통.
+   2026-10-04 소유자 지시(CIAT 화면처럼): 지역명은 왼쪽 열에 모두 나열하고 막대는 오른쪽 · 화면 안 「범위」로 전국 보건소 258곳/17개 시도/시도 내 전환 ·
+   선택 연도 그래프를 같은 모양(1열)으로 SVG·PNG 저장(6열 PPT 한 장 조판도 유지) · 영상 「전체」는 258곳이 다 읽히도록 세로로 긴 영상. */
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onYear, onClose, onSelect }) {
+export default function RankAll({ ind, item, year, pool: poolIn, poolName: poolNameIn, rev, sel, onYear, onClose, onSelect }) {
   const years = ind.years;
+  // 범위 전환(화면 안에서): 처음엔 들어온 비교 범위, 바꾸면 전국 보건소 258곳 · 17개 시도 · 시도 내
+  const sidoCode = sel.l === "sido" ? sel.c : sel.p;
+  const scopes = useMemo(() => {
+    const nat = natPool(ind), out = [{ k: "in", label: `${poolNameIn} ${poolIn.length}곳`, pool: poolIn, name: poolNameIn }];
+    const add = (k, label, pool, name) => { if (pool?.length && !out.some((o) => o.pool.length === pool.length && o.pool[0]?.c === pool[0]?.c)) out.push({ k, label, pool, name }); };
+    add("nat", isSurvey(ind) ? `전국 보건소(조사 단위) ${nat.length}곳` : `전국 시군구 ${nat.length}곳`, nat, isSurvey(ind) ? "전국 보건소" : "전국 시군구");
+    add("sido", `17개 시도`, SIDOS, "17개 시도");
+    if (sidoCode) add("insido", `${RBY.get(sidoCode)?.n || ""} 내 ${sidoPoolOf(ind, sidoCode).length}곳`, sidoPoolOf(ind, sidoCode), `${RBY.get(sidoCode)?.n || ""} 내`);
+    return out;
+  }, [ind, poolIn, poolNameIn, sidoCode]);
+  const [scopeK, setScopeK] = useState("in");
+  const cur = scopes.find((o) => o.k === scopeK) || scopes[0];
+  const pool = cur.pool, poolName = cur.name;
+  const [svgLayout, setSvgLayout] = useState("list");   // list = 1열(화면과 같은 모양) · grid = 6열(PPT 한 장)
   const [play, setPlay] = useState(false);
   const [speed, setSpeed] = useState(1100);
   const [big, setBig] = useState(false);
   const [size, setSize] = useState({ w: 1200, h: 620 });
   const [vid, setVid] = useState(null);           // {pct, msg} 영상 생성 진행 상태
-  const [vidTop, setVidTop] = useState("auto");   // 영상에 담을 순위 수: auto(≤40이면 전체, 아니면 상위 30) | all | 30 | 50
+  const [vidTop, setVidTop] = useState("auto");   // 영상에 담을 순위 수: auto(≤40이면 전체, 아니면 상위 30) | all(세로로 긴 영상) | 30 | 50
   const wrapRef = useRef(null);
 
   useEffect(() => {
@@ -80,7 +96,7 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
   const compact = narrow;
   const tiny = size.w < 340;
 
-  const nameOf = (r, short) => (r.hc ? r.hc.replace(/보건소$/, "") : r.l === "sgg" && !short ? `${r.s} ${r.n}` : r.n);
+  const nameOf = (r, short) => (r.hc ? (short || !r.s ? r.hc.replace(/보건소$/, "") : `${r.s} ${r.hc.replace(/보건소$/, "")}`) : r.l === "sgg" && !short ? `${r.s} ${r.n}` : r.n);   // 보건소 이름은 시도를 앞에 붙여 중구·동구 같은 동명을 구분
   const isMineC = (r) => r.c === sel.c || (r.l === "sub" && r.p === sel.c);
   const myIdx = rows.findIndex((x) => isMineC(x.r));
   const my = myIdx >= 0 ? rows[myIdx] : null;
@@ -99,12 +115,14 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
     const nAll = Math.max(...years.map((y) => frames[y].length));
     const topN = vidTop === "all" ? 0 : vidTop === "auto" ? (nAll <= 40 ? 0 : 30) : +vidTop;
     const rowsShown = (topN || nAll) + 1;
-    const height = rowsShown <= 26 ? 720 : rowsShown <= 40 ? 1080 : Math.min(2160, Math.ceil((118 + 48 + rowsShown * 12) / 2) * 2);
+    // 줄 높이 14px 이상이어야 지역명이 읽힌다 → 80줄이 넘으면(258곳 등) 폭 1080의 세로로 긴 영상
+    const width = rowsShown > 80 ? 1080 : 1280;
+    const height = rowsShown <= 26 ? 720 : rowsShown <= 40 ? 1080 : Math.max(1080, Math.ceil((118 + 48 + rowsShown * 14) / 2) * 2);
     setVid({ pct: 0, msg: "영상 만드는 중" });
     try {
       const out = await renderRankVideo({
         title: ind.name, subtitle: `${item === "std" ? "표준화율" : "조율"} · ${dirWord} · ${rev ? "나쁜 순" : "양호한 순"}`, poolName, years, frames,
-        selCode: sel.l === "sgg" || sel.l === "sido" ? sel.c : null, gmax, unit: ind.unit, topN, width: 1280, height, fps: 30,
+        selCode: sel.l === "sgg" || sel.l === "sido" ? sel.c : null, gmax, unit: ind.unit, topN, width, height, fps: 30,
         holdMs: Math.round(speed * 0.55), moveMs: Math.round(speed * 0.75),
         source: `자료: 질병관리청 지역사회건강조사(KOSIS) 등 · 지역 건강프로파일 대시보드 health-profile.kr`,
         onProgress: (p) => setVid({ pct: p, msg: "영상 만드는 중" }),
@@ -118,7 +136,37 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
   };
 
   /* ── 내려받기: 화면과 같은 막대 순위표를 독립 SVG로 생성 ── */
-  const buildSvg = () => {
+  const buildSvg = () => (svgLayout === "grid" ? buildSvgGrid() : buildSvgList());
+  // 1열(CIAT 화면처럼): 왼쪽 순위·지역명 열, 오른쪽 막대, 끝에 값과 전년 대비 순위 변동
+  const buildSvgList = () => {
+    const RH = 19, PAD = 18, TOP = 86, NO = 34, NM = 190, VW = 66, DW = 40, W = 980;
+    const barX = PAD + NO + NM, barW = W - barX - DW - VW - PAD, H = TOP + n * RH + 56;
+    const ink = "#141413", mut = "#6b7280", track = "#f1f2f4", bar = "#9cc3f0", barMe = "#f08a6e", meLine = "#d8402a";
+    const font = "'Malgun Gothic','Apple SD Gothic Neo',system-ui,sans-serif";
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="${font}">
+<rect width="${W}" height="${H}" fill="#ffffff"/>
+<text x="${PAD}" y="30" font-size="19" font-weight="700" fill="${ink}">${esc(ind.name)} — ${esc(poolName)} ${n}곳 순위</text>
+<text x="${W - PAD}" y="34" font-size="30" font-weight="900" fill="#2a78d6" text-anchor="end">${year}</text>
+<text x="${PAD}" y="52" font-size="12" fill="${mut}">${item === "std" ? "표준화율" : "조율"} · ${dirWord} · ${rev ? "나쁜 순" : "양호한 순"} · 막대 길이 = 값(0 기준, 전 연도 공통 척도 최대 ${fmt(gmax)}${esc(ind.unit)})</text>
+<text x="${PAD}" y="70" font-size="12" fill="${mut}">중앙값 ${fmt(med)}${esc(ind.unit)}${my ? ` · 선택 ${esc(nameOf(my.r, false))} ${myIdx + 1}위 ${fmt(my.v)}` : ""}</text>`;
+    for (const f of [0.25, 0.5, 0.75, 1]) s += `<line x1="${(barX + barW * f).toFixed(1)}" y1="${TOP - 4}" x2="${(barX + barW * f).toFixed(1)}" y2="${TOP + n * RH}" stroke="#e5e7eb"/>`;
+    rows.forEach(({ r, v }, i) => {
+      const y = TOP + i * RH, me = isMineC(r);
+      const pr = prevRank ? prevRank.get(r.c) : null, d = pr != null ? pr - (i + 1) : null;
+      const bw = Math.max(1, (barW * v) / gmax);
+      if (me) s += `<rect x="${PAD}" y="${y}" width="${W - PAD * 2}" height="${RH - 2}" rx="3" fill="#fff1ec"/>`;
+      s += `<text x="${PAD + NO - 8}" y="${y + 13}" font-size="10.5" text-anchor="end" fill="${mut}">${i + 1}</text>` +
+        `<text x="${PAD + NO}" y="${y + 13}" font-size="11.5" fill="${ink}"${me ? ' font-weight="700"' : ""}>${esc(nameOf(r, false))}</text>` +
+        `<rect x="${barX}" y="${y + 2}" width="${barW}" height="${RH - 6}" rx="2" fill="${track}"/>` +
+        `<rect x="${barX}" y="${y + 2}" width="${bw.toFixed(1)}" height="${RH - 6}" rx="2" fill="${me ? barMe : bar}"/>` +
+        (me ? `<rect x="${barX}" y="${y + 2}" width="${barW}" height="${RH - 6}" rx="2" fill="none" stroke="${meLine}" stroke-width="1.5"/>` : "") +
+        (d ? `<text x="${barX + barW + DW - 6}" y="${y + 13}" font-size="9.5" text-anchor="end" fill="${d > 0 ? "#184f95" : "#ab2a19"}">${d > 0 ? "▲" : "▼"}${Math.abs(d)}</text>` : "") +
+        `<text x="${W - PAD}" y="${y + 13}" font-size="11.5" text-anchor="end" fill="${ink}"${me ? ' font-weight="700"' : ""}>${fmt(v)}</text>`;
+    });
+    s += `<text x="${PAD}" y="${H - 20}" font-size="11" fill="${mut}">붉은 막대 = 선택 지역 · ▲▼ = 전년 대비 순위 변동 · 자료: 질병관리청 지역사회건강조사(KOSIS) 등 · 지역 건강프로파일 대시보드 health-profile.kr</text></svg>`;
+    return s;
+  };
+  const buildSvgGrid = () => {
     const C = 6, R = Math.ceil(n / C), RH = 21, CW = 268, PAD = 18, TOP = 84;
     const W = PAD * 2 + C * CW, H = TOP + R * RH + 54;
     const ink = "#141413", mut = "#6b7280", line = "#e5e7eb", bar = "#cfe3fb", barMe = "#f5a58f", meLine = "#d8402a";
@@ -173,13 +221,16 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
           </select>
           <span className="ra-dl">
             <select className="ra-sel sm" value={vidTop} onChange={(e) => setVidTop(e.target.value)} title="영상에 담을 지역 수">
-              <option value="auto">영상: 자동</option><option value="all">영상: 전체</option><option value="30">영상: 상위 30</option><option value="50">영상: 상위 50</option>
+              <option value="auto">영상: 자동</option><option value="all">영상: 전체{n > 80 ? "(세로로 긴 영상)" : ""}</option><option value="30">영상: 상위 30</option><option value="50">영상: 상위 50</option>
             </select>
             <button className={`ra-btn sm ${vid ? "on" : ""}`} onClick={makeVideo} disabled={!!vid} title={`${years[0]}년부터 ${years[years.length - 1]}년까지 순위·막대 변화를 MP4 영상으로 저장(발표용)`}>
               {vid && vid.pct < 1 && !vid.msg.startsWith("실패") ? `🎬 ${Math.round(vid.pct * 100)}%` : "🎬 영상 저장"}
             </button>
-            <button className="ra-btn sm" onClick={() => saveSvgString(buildSvg(), fileBase)} title="편집 가능한 벡터(PPT용)">↓ SVG</button>
-            <button className="ra-btn sm" onClick={() => savePngFromSvg(buildSvg(), fileBase)} title="이미지">↓ PNG</button>
+            <select className="ra-sel sm" value={svgLayout} onChange={(e) => setSvgLayout(e.target.value)} title="그림(SVG·PNG) 모양 — 선택 연도 기준">
+              <option value="list">그림: {year}년 1열</option><option value="grid">그림: {year}년 6열(PPT 한 장)</option>
+            </select>
+            <button className="ra-btn sm" onClick={() => saveSvgString(buildSvg(), fileBase)} title={`${year}년 그래프 — 편집 가능한 벡터(PPT용)`}>↓ SVG</button>
+            <button className="ra-btn sm" onClick={() => savePngFromSvg(buildSvg(), fileBase, n > 120 ? 1.5 : 2)} title={`${year}년 그래프 — 이미지`}>↓ PNG</button>
             <button className="ra-btn sm" onClick={dlCsv} title="전 연도 값·순위 표">↓ CSV</button>
           </span>
           <button className="ra-btn" onClick={onClose} aria-label="닫기">✕ 닫기</button>
@@ -188,6 +239,8 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
 
       {vid && <div className={`ra-vid ${vid.msg.startsWith("실패") ? "err" : ""}`}><i style={{ width: `${Math.round(vid.pct * 100)}%` }} /><span>{vid.msg}{vid.pct < 1 && !vid.msg.startsWith("실패") ? ` ${Math.round(vid.pct * 100)}% — 창을 닫지 마세요` : ""}</span></div>}
       <div className="ra-bar">
+        {scopes.length > 1 && <label className="ra-scope">범위 <select className="ra-sel sm ra-scope-sel" value={cur.k} onChange={(e) => setScopeK(e.target.value)} aria-label="순위 범위">
+          {scopes.map((o) => <option key={o.k} value={o.k}>{o.label}</option>)}</select></label>}
         <button className="ra-step" onClick={() => step(-1)} aria-label="이전 연도">‹</button>
         {years.map((y) => <button key={y} className={`ra-y ${y === year ? "on" : ""}`} onClick={() => { setPlay(false); onYear(y); }}>{String(y).slice(2)}</button>)}
         <button className="ra-step" onClick={() => step(1)} aria-label="다음 연도">›</button>
@@ -213,10 +266,10 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
                 title={`${label(r)} · ${fmt(v)}${ind.unit}${d != null ? ` · 전년 대비 ${d > 0 ? "▲" + d : d < 0 ? "▼" + -d : "="}` : ""}`}
                 style={{ transform: `translate3d(${col * colW}px, ${row * rowH}px, 0)`, width: colW - 4, height: rowH - 2 }}
                 onClick={() => { onSelect(r.l === "sub" ? r.p : r.c); onClose(); }}>
-                <span className="ra-fill" style={{ width: `${((v / gmax) * 100).toFixed(1)}%` }} />
                 <span className="ra-no">{i + 1}</span>
                 <span className="ra-nm">{nameOf(r, compact)}</span>
-                {d != null && d !== 0 && <span className={`ra-d ${d > 0 ? "up" : "down"}`}>{d > 0 ? "▲" : "▼"}{tiny ? "" : Math.abs(d)}</span>}
+                <span className="ra-track"><span className="ra-fill" style={{ width: `${((v / gmax) * 100).toFixed(1)}%` }} /></span>
+                <span className={`ra-d ${d > 0 ? "up" : d < 0 ? "down" : ""}`}>{d != null && d !== 0 ? `${d > 0 ? "▲" : "▼"}${tiny ? "" : Math.abs(d)}` : ""}</span>
                 <span className="ra-v">{fmt(v)}</span>
               </div>
             );
@@ -228,7 +281,7 @@ export default function RankAll({ ind, item, year, pool, poolName, rev, sel, onY
       <footer className="ra-foot">
         <span className="ra-swbar" /><span className="ra-lg">막대 길이 = 값 (0 기준 · 모든 연도 공통 척도, 최대 {fmt(gmax)}{ind.unit})</span>
         <span className="ra-swbar me" /><span className="ra-lg">선택 지역</span>
-        <span className="ra-lg">{rev ? "오른쪽·아래로 갈수록 양호" : "왼쪽·위가 양호"} · ▲▼ = 전년 대비 순위 변동 · 칸을 누르면 그 지역으로 이동 · Space 재생, ← → 연도, Esc 닫기</span>
+        <span className="ra-lg">{rev ? "아래로 갈수록 양호" : "위가 양호"} · ▲▼ = 전년 대비 순위 변동 · 칸을 누르면 그 지역으로 이동 · Space 재생, ← → 연도, Esc 닫기</span>
       </footer>
     </div>,
     document.querySelector(".viz-root") || document.body     // 테마 변수(--page 등)가 .viz-root 에 있어 그 안에 띄운다
