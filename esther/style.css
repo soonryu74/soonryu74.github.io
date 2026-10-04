@@ -390,3 +390,8 @@ body{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
 .h-top{margin-bottom:40px!important}
 .h-bottom{margin-top:40px!important}
 @media(max-width:720px){.h-top{margin-bottom:34px!important}.h-bottom{margin-top:32px!important}}
+
+/* CEO 라벨 줄을 로고 바로 아래로 */
+.mono-hero > .wrap{padding-top:6px!important;justify-content:flex-start}
+.mono-hero .h-top{padding-top:4px}
+@media(max-width:720px){.mono-hero > .wrap{padding-top:4px!important}}
