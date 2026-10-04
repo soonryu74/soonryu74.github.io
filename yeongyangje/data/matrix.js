@@ -452,5 +452,18 @@
     stones: c('ok', '구연산칼륨은 칼슘 결석 재발 약 75% 감소(염화칼륨은 효과 없음)', 'https://www.aafp.org/pubs/afp/issues/2017/0501/p552.html')
   };
 
+  /* ===== 추가 성분 — 마카·에키네시아·엘더베리·홍경천·바나바 (2026-10) ===== */
+  X.echinacea = X.echinacea || {};
+  X.echinacea.autoimmune = c("avoid", "국내 개별인정 주의사항: 자가면역 장애·다발성 경화증·교원증·결핵·백혈병·HIV는 섭취 금지", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.echinacea.pregnancy = c("caution", "개별인정 주의사항상 임산부·수유부는 전문가 상담", "https://www.nccih.nih.gov/health/echinacea");
+  X.elderberry = X.elderberry || {};
+  X.elderberry.pregnancy = c("caution", "임신·수유 중 안전성 정보 부족(NCCIH)", "https://www.nccih.nih.gov/health/elderberry");
+  X.rhodiola = X.rhodiola || {};
+  X.rhodiola.htn = c("caution", "로사르탄 상호작용 보고, 사람 연구에서 CYP2C9 억제", "https://www.nccih.nih.gov/health/rhodiola");
+  X.rhodiola.pregnancy = c("caution", "임신·수유 중 안전성 정보 부족(NCCIH)", "https://www.nccih.nih.gov/health/rhodiola");
+  X.banaba = X.banaba || {};
+  X.banaba.ckd = c("caution", "신기능 저하 환자에서 코로솔산 관련 급성 신손상·젖산산증 증례", "https://pubmed.ncbi.nlm.nih.gov/20659629/");
+  X.banaba.diabetes = c("caution", "혈당 저하 작용이 혈당강하제와 겹칠 수 있음(직접 상호작용 연구는 미확인)", "https://pubmed.ncbi.nlm.nih.gov/16549220/");
+
   window.EBN_MATRIX = X;
 })();
