@@ -452,5 +452,74 @@
     stones: c('ok', '구연산칼륨은 칼슘 결석 재발 약 75% 감소(염화칼륨은 효과 없음)', 'https://www.aafp.org/pubs/afp/issues/2017/0501/p552.html')
   };
 
+  /* ===== 추가 성분 — 마카·에키네시아·엘더베리·홍경천·바나바 (2026-10) ===== */
+  X.echinacea = X.echinacea || {};
+  X.echinacea.autoimmune = c("avoid", "국내 개별인정 주의사항: 자가면역 장애·다발성 경화증·교원증·결핵·백혈병·HIV는 섭취 금지", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.echinacea.pregnancy = c("caution", "개별인정 주의사항상 영·유아·어린이·임산부·수유부는 섭취 시 전문가와 상담", ["https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do", "https://www.nccih.nih.gov/health/echinacea"]);
+  X.elderberry = X.elderberry || {};
+  X.elderberry.pregnancy = c("caution", "임신·수유 중 안전성 정보 부족(NCCIH)", "https://www.nccih.nih.gov/health/elderberry");
+  X.rhodiola = X.rhodiola || {};
+  X.rhodiola.htn = c("caution", "로사르탄 상호작용 보고, 사람 연구에서 CYP2C9 억제", "https://www.nccih.nih.gov/health/rhodiola");
+  X.rhodiola.pregnancy = c("caution", "임신·수유 중 안전성 정보 부족(NCCIH)", "https://www.nccih.nih.gov/health/rhodiola");
+  X.banaba = X.banaba || {};
+  X.banaba.ckd = c("caution", "신기능 저하 환자에서 코로솔산 관련 급성 신손상·젖산산증 증례", "https://pubmed.ncbi.nlm.nih.gov/20659629/");
+  X.banaba.diabetes = c("caution", "혈당 저하 작용이 혈당강하제와 겹칠 수 있음(직접 상호작용 연구는 미확인)", "https://pubmed.ncbi.nlm.nih.gov/16549220/");
+
+  /* ===== 추가 성분 — 아미노산 A: 아르기닌·시트룰린·글루타민·BCAA·HMB (2026-10) ===== */
+  X.arginine = X.arginine || {};
+  X.arginine.dyslip = c("avoid", "심근경색 후 RCT에서 사망 8.6% vs 0%로 조기 중단, 국내 경구 아르기닌 의약품 정보도 심근경색이 우려되는 경우 복용 금기", ["https://pubmed.ncbi.nlm.nih.gov/16391217/", "https://common.health.kr/shared/healthkr/pharmreview/%EC%97%98-%EC%95%84%EB%A5%B4%EA%B8%B0%EB%8B%8C(l-arginine)(0).pdf"]);
+  X.arginine.pregnancy = c("caution", "개별인정 주의사항: 임산부 및 수유부는 섭취에 주의", "https://www.fmis.kr/public/pro/hfg/selectHtfsIndvdlzRcognInfo.do?hfFncltyMtralRcognNo=\uc81c2015-19\ud638");
+  X.arginine.ckd = c("caution", "경구 아르기닌 의약품은 심한 신기능 장애에서 금기", "https://common.health.kr/shared/healthkr/pharmreview/\uc5d8-\uc544\ub974\uae30\ub2cc(l-arginine)(0).pdf");
+  X.arginine.liver = c("caution", "경구 아르기닌 의약품은 심한 간기능 장애에서 금기", "https://common.health.kr/shared/healthkr/pharmreview/\uc5d8-\uc544\ub974\uae30\ub2cc(l-arginine)(0).pdf");
+  X.bcaa_leucine = X.bcaa_leucine || {};
+  X.bcaa_leucine.liver = c("caution", "간경변에서는 전문의약품으로 처방 관리, 간성뇌증 감소 근거는 확실성 낮음", "https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetailCache?cacheSeq=199900606");
+  X.bcaa_leucine.ckd = c("caution", "BCAA 의약품 허가사항상 BUN 상승 등 신기능장해 보고", "https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetailCache?cacheSeq=199900606");
+  X.hmb = X.hmb || {};
+  X.hmb.pregnancy = c("avoid", "개별인정 주의사항: 영·유아·어린이·임산부·수유부는 섭취를 피할 것", "https://www.fmis.kr/public/pro/hfg/selectHtfsIndvdlzRcognInfo.do?hfFncltyMtralRcognNo=\uc81c2023-26\ud638");
+  X.hmb.dyslip = c("caution", "개별인정 주의사항: 고콜레스테롤혈증 등 특정질환은 섭취 주의", "https://www.fmis.kr/public/pro/hfg/selectHtfsIndvdlzRcognInfo.do?hfFncltyMtralRcognNo=\uc81c2023-26\ud638");
+
+  /* ===== 추가 성분 — 쏘팔메토·폴리코사놀·프로폴리스·크릴오일·초록입홍합·MSM (2026-10) ===== */
+  X.saw_palmetto = X.saw_palmetto || {};
+  X.saw_palmetto.anticoag = c("caution", "고시 주의사항: 출혈성 질환이 있거나 항응고제 등 복용 시 전문가와 상담", "https://www.law.go.kr/행정규칙/건강기능식품의기준및규격");
+  X.saw_palmetto.surgery = c("caution", "고시 주의사항: 수술 전후 전문가와 상담", "https://www.law.go.kr/행정규칙/건강기능식품의기준및규격");
+  X.saw_palmetto.pregnancy = c("avoid", "고시: 성인남성만 섭취 / NCCIH: 임신·수유 중 안전하지 않을 수 있음", "https://www.nccih.nih.gov/health/saw-palmetto");
+  X.policosanol = X.policosanol || {};
+  X.policosanol.anticoag = c("caution", "개별인정 주의사항: 혈액응고장애·심혈관약 복용 시 전문가 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.policosanol.surgery = c("caution", "개별인정 주의사항: 수술예정인 사람은 전문가 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.policosanol.pregnancy = c("avoid", "개별인정 주의사항: 임산부·수유부는 섭취를 피할 것", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.krill_oil = X.krill_oil || {};
+  X.krill_oil.anticoag = c("caution", "개별인정 주의사항: 항응고제·항혈소판제 복용 시 상담(와파린 복용자 573명 후향 연구: 어유·크릴오일 병용 145명에서 와파린 조절(TTR)·출혈 차이 없음)", "https://pubmed.ncbi.nlm.nih.gov/27657121/");
+  X.krill_oil.pregnancy = c("caution", "개별인정 주의사항: 임산부 및 수유부는 섭취에 주의", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.green_lipped_mussel = X.green_lipped_mussel || {};
+  X.green_lipped_mussel.pregnancy = c("avoid", "개별인정 주의사항: 임신부 및 수유부는 섭취를 피할 것", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.green_lipped_mussel.liver = c("caution", "개별인정 주의사항: 간질환이 있으면 전문가와 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.green_lipped_mussel.anticoag = c("caution", "개별인정 주의사항: 혈전용해제 등 복용 시 전문가와 상담", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.msm = X.msm || {};
+  X.msm.ckd = c("caution", "고시 주의사항: 신장질환이 있는 사람은 섭취 전 전문가와 상담", "https://www.foodsafetykorea.go.kr/portal/healthyfoodlife/functionalityView.do?viewNo=03");
+
+  /* ===== 추가 성분 — 보스웰리아·히알루론산·글루타치온(경구)·NMN·레스베라트롤·스피루리나 (2026-10) ===== */
+  X.boswellia = X.boswellia || {};
+  X.boswellia.pregnancy = c("caution", "개별인정 주의사항(원료별 상이): 영유아·어린이·임산부·수유부 섭취를 피할 것 또는 섭취에 주의", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do");
+  X.resveratrol = X.resveratrol || {};
+  X.resveratrol.cancer = c("caution", "다발골수종 고용량(5 g/일) 제형 임상에서 24명 중 중대한 신장 이상반응(급성 신부전 3명·신부전 2명·신기능 저하 1명) 보고 후 종료", ["https://clinicaltrials.gov/study/NCT00920556", "https://pubmed.ncbi.nlm.nih.gov/23205612/"]);
+  X.resveratrol.anticoag = c("caution", "1 g/일에서 CYP2C9·3A4·2D6 억제 — 와파린 등 대사 영향 가능", "https://pubmed.ncbi.nlm.nih.gov/20716633/");
+  X.spirulina = X.spirulina || {};
+  X.spirulina.autoimmune = c("caution", "천포창 악화·피부근염 발병 증례", "https://pubmed.ncbi.nlm.nih.gov/15210464/");
+  X.spirulina.liver = c("caution", "오염 제품의 간독소 마이크로시스틴", "https://pubmed.ncbi.nlm.nih.gov/37317149/");
+  X.spirulina.pregnancy = c("caution", "스피루리나추출물 개별인정(제2023-15호) 주의사항: 영유아·어린이·임산부·수유부 섭취를 피할 것(고시형 스피루리나 주의사항에는 없음). 수유 안전성 자료 없음", ["https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do", "https://pubmed.ncbi.nlm.nih.gov/30000909/"]);
+
+  /* ===== 추가 성분 — 아미노산 B·단백질: 타우린·카르니틴·테아닌·글리신·GABA·베타알라닌·트립토판·단백질 (2026-10) ===== */
+  X.carnitine = X.carnitine || {};
+  X.carnitine.anticoag = c("caution", "L-카르니틴이 쿠마린계 항응고제 작용을 증강시킨 증례", "https://pubmed.ncbi.nlm.nih.gov/8429297/");
+  X.carnitine.thyroid = c("caution", "말초 갑상선호르몬 작용 길항(RCT) — 호르몬 치료 효과 감소 가능성", "https://pubmed.ncbi.nlm.nih.gov/11502782/");
+  X.carnitine.ckd = c("caution", "투석 환자 결핍은 의약품 적응증, 메타분석상 염증·빈혈·삶의 질 개선 근거 없음", "https://pubmed.ncbi.nlm.nih.gov/24535997/");
+  X.theanine = X.theanine || {};
+  X.theanine.pregnancy = c("avoid", "식약처 섭취 시 주의사항: 임산부 및 수유부는 섭취를 피할 것(보도 기준)", "https://www.docdocdoc.co.kr/news/articleView.html?idxno=3012765");
+  X.gaba = X.gaba || {};
+  X.gaba.htn = c("caution", "일시적 혈압 하강 — 혈압약 병용 시 저혈압 가능, 개별인정(제2022-19호) 주의사항에 혈압약 명시", ["https://pubmed.ncbi.nlm.nih.gov/34444905/", "https://www.fmis.kr/public/pro/hfg/htfsIndvdlzRcognList.do"]);
+  X.gaba.pregnancy = c("caution", "임신·수유 자료 없음(USP 주의 권고), 개별인정 주의사항: 임산부·수유부 섭취 주의", "https://pubmed.ncbi.nlm.nih.gov/34444905/");
+  X.protein = X.protein || {};
+  X.protein.ckd = c("caution", "비투석 3~5단계는 0.55~0.6 g/kg/일(당뇨 0.6~0.8) 제한 권고 — 보충 전 의료진 상의", "https://pmc.ncbi.nlm.nih.gov/articles/PMC8045140/");
+
   window.EBN_MATRIX = X;
 })();
