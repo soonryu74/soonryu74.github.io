@@ -508,5 +508,18 @@
   X.spirulina.liver = c("caution", "오염 제품의 간독소 마이크로시스틴", "https://pubmed.ncbi.nlm.nih.gov/37317149/");
   X.spirulina.pregnancy = c("caution", "개별인정 주의사항: 임산부·수유부 섭취를 피할 것, 수유 안전성 자료 없음", "https://pubmed.ncbi.nlm.nih.gov/30000909/");
 
+  /* ===== 추가 성분 — 아미노산 B·단백질: 타우린·카르니틴·테아닌·글리신·GABA·베타알라닌·트립토판·단백질 (2026-10) ===== */
+  X.carnitine = X.carnitine || {};
+  X.carnitine.anticoag = c("caution", "L-카르니틴이 쿠마린계 항응고제 작용을 증강시킨 증례", "https://pubmed.ncbi.nlm.nih.gov/8429297/");
+  X.carnitine.thyroid = c("caution", "말초 갑상선호르몬 작용 길항(RCT) — 호르몬 치료 효과 감소 가능성", "https://pubmed.ncbi.nlm.nih.gov/11502782/");
+  X.carnitine.ckd = c("caution", "투석 환자 결핍은 의약품 적응증, 메타분석상 염증·빈혈·삶의 질 개선 근거 없음", "https://pubmed.ncbi.nlm.nih.gov/24535997/");
+  X.theanine = X.theanine || {};
+  X.theanine.pregnancy = c("avoid", "식약처 섭취 시 주의사항: 임산부 및 수유부는 섭취를 피할 것(보도 기준)", "https://www.docdocdoc.co.kr/news/articleView.html?idxno=3012765");
+  X.gaba = X.gaba || {};
+  X.gaba.htn = c("caution", "일시적 혈압 하강 — 혈압약 병용 시 저혈압 가능, 개별인정 주의사항에 혈압약 명시", "https://pubmed.ncbi.nlm.nih.gov/34444905/");
+  X.gaba.pregnancy = c("caution", "임신·수유 자료 없음(USP 주의 권고)", "https://pubmed.ncbi.nlm.nih.gov/34444905/");
+  X.protein = X.protein || {};
+  X.protein.ckd = c("caution", "비투석 3~5단계는 0.55~0.6 g/kg/일(당뇨 0.6~0.8) 제한 권고 — 보충 전 의료진 상의", "https://pmc.ncbi.nlm.nih.gov/articles/PMC8045140/");
+
   window.EBN_MATRIX = X;
 })();
