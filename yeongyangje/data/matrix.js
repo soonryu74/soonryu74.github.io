@@ -341,7 +341,7 @@
     healthy: c('ok', '가임기 여성 400 µg. 상한 1,000 µg(B12 결핍 신경손상 가림)', 'https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/'),
     dyslip: c('na', 'KDOQI 5.1.1: 호모시스테인 목적 엽산 무의미', KDOQI),
     ckd: c('ok', '결핍 시 보충(KDOQI 5.1.2)', KDOQI),
-    gi: c('ok', '설파살라진 복용자 1 mg, 비만수술 후 ASMBS. B12 먼저 확인', ASMBS),
+    gi: c('ok', '비만수술 후 엽산 보충은 ASMBS 기준(종합비타민에 포함). 보충 전 B12 결핍을 먼저 확인', ASMBS),
     autoimmune: c('ok', '류마티스 메트렉세이트 독성 감소(표준 병용 처방)', 'https://sps.nhs.uk/articles/using-folic-acid-with-methotrexate-in-rheumatoid-arthritis/'),
     cancer: c('caution', '항엽산제(메토트렉세이트)와 병용·카페시타빈과 과량 시 독성. 페메트렉시드는 350~1,000 µg 필수', ['https://www.accessdata.fda.gov/drugsatfda_docs/label/2024/210661s000lbl.pdf', 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9693983/']),
     pregnancy: c('ok', '임신 전~12주 400~800 µg. 상한 1,000 µg', 'https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/'),
