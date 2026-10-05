@@ -5,3 +5,5 @@
 # nunchi/test/ 는 앱 테스트 코드라 사이트에 올리지 않는다.
 exclude:
   - nunchi/test
+  # CareGap: 소스·node_modules는 배포하지 않는다(빌드 결과 caregap/index.html, assets/, data/만 제공)
+  - caregap/app

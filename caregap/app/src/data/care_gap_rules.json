@@ -1,0 +1,228 @@
+{
+  "_comment": "CareGap 규칙 엔진 정의. 의료적 진단·예측이 아니라 '입력된 걱정 + 등록된 일정'의 조합으로 확인이 필요한 돌봄 영역을 찾습니다. 기준값은 설계값이며 docs/CARE_GAP_METHOD.md 에 근거를 적었습니다.",
+  "version": "2026-10-05",
+  "windows": {
+    "night": { "label": "저녁·야간", "start": "18:00", "end": "09:00" },
+    "day": { "label": "낮", "start": "09:00", "end": "18:00" },
+    "meals": [
+      { "id": "breakfast", "label": "아침", "start": "07:00", "end": "09:00" },
+      { "id": "lunch", "label": "점심", "start": "11:30", "end": "13:30" },
+      { "id": "dinner", "label": "저녁", "start": "17:30", "end": "19:30" }
+    ],
+    "mealMinOverlapMinutes": 30
+  },
+  "facts": {
+    "profile.livesAlone": { "label": "혼자 사심", "unit": "bool" },
+    "profile.hasLtcGrade": { "label": "장기요양 등급을 받음", "unit": "bool" },
+    "concern.mobility": { "label": "이동이 어렵다", "unit": "bool" },
+    "concern.recentFall": { "label": "최근 넘어진 적이 있다", "unit": "bool" },
+    "concern.forgetsMeds": { "label": "약 복용을 자주 잊는다", "unit": "bool" },
+    "concern.skipsMeals": { "label": "식사를 거르는 경우가 있다", "unit": "bool" },
+    "concern.memory": { "label": "기억력이 걱정된다", "unit": "bool" },
+    "concern.frequentHospital": { "label": "병원 방문이 잦다", "unit": "bool" },
+    "concern.nightAlone": { "label": "밤에 혼자 있는 것이 걱정된다", "unit": "bool" },
+    "concern.emergency": { "label": "응급상황이 걱정된다", "unit": "bool" },
+    "concern.isolation": { "label": "외로움·사회적 고립이 걱정된다", "unit": "bool" },
+    "service.emergency_safety": { "label": "응급안전서비스 이용", "unit": "bool" },
+    "service.med_check": { "label": "복약확인 서비스 이용(선택)", "unit": "bool" },
+    "service.hospital_escort": { "label": "병원동행 서비스 이용(선택)", "unit": "bool" },
+    "time.nightUncoveredHours": { "label": "저녁·야간(18:00–09:00) 중 사람이 함께하는 일정이 없는 시간", "unit": "hours" },
+    "time.nightAloneHours": { "label": "저녁·야간(18:00–09:00) 혼자 계신 시간", "unit": "hours" },
+    "time.dayAloneHours": { "label": "낮(09:00–18:00) 혼자 계신 시간", "unit": "hours" },
+    "time.daysWithoutVisit": { "label": "사람이 함께하는 일정이 하나도 없는 요일", "unit": "days" },
+    "time.weeklyCareHours": { "label": "사람이 함께하는 돌봄 시간", "unit": "hours" },
+    "time.familyHours": { "label": "가족이 맡는 돌봄 시간", "unit": "hours" },
+    "time.familyOnlyDays": { "label": "가족 외 돌봄이 없는(가족만 돌보는) 요일", "unit": "days" },
+    "meal.uncoveredSlots": { "label": "식사 지원 일정이 없는 끼니 시간대(주 21끼 중)", "unit": "meals" },
+    "med.coveredDays": { "label": "복약 확인 일정(복약확인·방문간호)이 있는 요일", "unit": "days" },
+    "hospital.visitCount": { "label": "등록된 병원 진료 일정", "unit": "count" },
+    "hospital.unescortedVisits": { "label": "병원동행·가족 일정과 겹치지 않는 진료 일정", "unit": "count" },
+    "hygiene.supportDays": { "label": "위생 지원(방문요양·방문목욕·주야간보호) 일정이 있는 요일", "unit": "days" },
+    "cognition.sessions": { "label": "인지 관련 일정(인지 프로그램·주야간보호)", "unit": "count" },
+    "group.sessions": { "label": "사람들과 어울리는 일정(주야간보호·복지관·인지 프로그램)", "unit": "count" }
+  },
+  "domains": [
+    {
+      "id": "meal", "label": "식사", "icon": "🍚",
+      "description": "끼니 시간대에 식사를 챙기는 일정이 있는지 봅니다.",
+      "checkItems": ["어느 끼니를 주로 거르시는지", "냉장고에 바로 드실 수 있는 음식이 있는지", "식사 지원(도시락·반찬 배달) 이용 가능 여부를 주민센터에 문의했는지"],
+      "services": ["meal_support", "customized_care", "ltc_insurance"],
+      "ltcTypes": ["방문요양", "주야간보호"],
+      "noGapText": "식사 관련 걱정을 입력하지 않으셔서 공백으로 판단하지 않았습니다."
+    },
+    {
+      "id": "meds", "label": "복약", "icon": "💊",
+      "description": "약을 챙기는 일정이 매일 있는지 봅니다.",
+      "checkItems": ["하루 몇 번, 어떤 시간에 약을 드시는지", "약 달력·요일별 약통을 쓰고 계신지", "복약 방법을 담당 의사·약사와 상의했는지"],
+      "services": ["health_center_visit", "ltc_insurance", "customized_care"],
+      "ltcTypes": ["방문간호"],
+      "noGapText": "복약 관련 걱정을 입력하지 않으셔서 공백으로 판단하지 않았습니다."
+    },
+    {
+      "id": "mobility", "label": "이동", "icon": "🦯",
+      "description": "이동이 어려울 때 곁에서 도울 사람이 오는 날이 있는지 봅니다.",
+      "checkItems": ["집 안에서 화장실·현관까지 혼자 이동하실 수 있는지", "외출이 필요한 일(장보기·은행)을 누가 돕는지", "보행 보조기구가 필요한지 전문가와 상의했는지"],
+      "services": ["ltc_insurance", "mobility_support", "customized_care"],
+      "ltcTypes": ["방문요양", "주야간보호", "복지용구"],
+      "noGapText": "이동 관련 걱정을 입력하지 않으셨거나, 매일 사람이 함께하는 일정이 있습니다."
+    },
+    {
+      "id": "hygiene", "label": "개인위생", "icon": "🧼",
+      "description": "이동이 어려운 경우 목욕·위생을 돕는 일정이 있는지 봅니다.",
+      "checkItems": ["혼자 목욕·샤워하시기 어려운지", "욕실에 미끄럼 방지·손잡이가 있는지", "방문목욕 이용 가능 여부(장기요양 등급)"],
+      "services": ["ltc_insurance"],
+      "ltcTypes": ["방문목욕", "방문요양"],
+      "noGapText": "이동 관련 걱정을 입력하지 않으셔서 위생 공백으로 판단하지 않았습니다."
+    },
+    {
+      "id": "hospital", "label": "병원 이동", "icon": "🏥",
+      "description": "병원 진료 일정에 동행하거나 이동을 돕는 사람이 있는지 봅니다.",
+      "checkItems": ["진료 때 누가 같이 가는지, 혼자 가시는지", "진료 후 안내받은 내용(약·주의사항)을 가족이 전달받는지", "거주지에 병원동행·교통약자 이동지원이 있는지"],
+      "services": ["hospital_escort_local", "mobility_support", "integrated_care"],
+      "ltcTypes": [],
+      "noGapText": "병원 진료 일정이나 병원 방문 관련 걱정이 입력되지 않았습니다."
+    },
+    {
+      "id": "cognition", "label": "인지·기억", "icon": "🧠",
+      "description": "기억력 걱정이 있을 때 확인·프로그램 일정이 있는지 봅니다. 진단이 아닙니다.",
+      "checkItems": ["최근 달라진 점(날짜·약속을 잊는 등)을 메모해 두었는지", "치매안심센터에서 상담·검사 안내를 받아봤는지", "의료진 상담이 필요한지 담당 의사에게 물어봤는지"],
+      "services": ["dementia_center", "ltc_insurance"],
+      "ltcTypes": ["주야간보호"],
+      "noGapText": "기억력 관련 걱정을 입력하지 않으셔서 공백으로 판단하지 않았습니다."
+    },
+    {
+      "id": "fall", "label": "낙상 안전", "icon": "🪜",
+      "description": "넘어진 경험이 있을 때 낮 시간에 혼자 계신 시간을 봅니다. 낙상 위험을 예측하지 않습니다.",
+      "checkItems": ["집 안 문턱·전선·미끄러운 바닥을 정리했는지", "넘어졌을 때 연락할 방법(휴대폰·장비)이 손 닿는 곳에 있는지", "안전손잡이·미끄럼방지 용품(복지용구) 이용 가능 여부"],
+      "services": ["ltc_insurance", "emergency_safety", "customized_care"],
+      "ltcTypes": ["복지용구", "방문요양"],
+      "noGapText": "최근 넘어진 경험을 입력하지 않으셨거나, 낮 시간에 혼자 계신 시간이 없습니다."
+    },
+    {
+      "id": "night", "label": "야간 안전", "icon": "🌙",
+      "description": "저녁·밤 시간에 사람이 함께하는 일정이 있는지 봅니다.",
+      "checkItems": ["밤에 화장실 가는 길에 조명(센서등)이 있는지", "밤에 몸이 불편할 때 누구에게 어떻게 연락하시는지", "가족이 밤에 연락을 받을 수 있는지"],
+      "services": ["emergency_safety", "integrated_care", "ltc_insurance"],
+      "ltcTypes": [],
+      "noGapText": "낙상 경험이나 밤 시간 걱정을 입력하지 않으셨거나, 밤 시간에도 함께하는 사람이 있습니다."
+    },
+    {
+      "id": "emergency", "label": "응급대응", "icon": "🚨",
+      "description": "응급상황 때 알림을 받을 수단이 있는지 봅니다.",
+      "checkItems": ["응급 시 연락할 가족·이웃 번호가 정리되어 있는지", "복용 약 목록·병력 메모가 집에 있는지", "응급안전안심서비스 대상인지 주민센터에 문의했는지"],
+      "services": ["emergency_safety", "emergency_119"],
+      "ltcTypes": [],
+      "noGapText": "응급상황 걱정을 입력하지 않으셨고, 혼자 사시며 낙상 경험이 있는 조합이 아닙니다."
+    },
+    {
+      "id": "social", "label": "사회적 교류", "icon": "🤝",
+      "description": "외로움 걱정이 있을 때 사람들과 어울리는 일정이 있는지 봅니다.",
+      "checkItems": ["가까운 복지관·경로당 프로그램을 알아봤는지", "정기적으로 안부 전화를 하는 사람이 있는지", "노인맞춤돌봄서비스 대상인지"],
+      "services": ["welfare_center", "customized_care"],
+      "ltcTypes": ["주야간보호"],
+      "noGapText": "외로움·고립 걱정을 입력하지 않으셔서 공백으로 판단하지 않았습니다."
+    },
+    {
+      "id": "family", "label": "가족 돌봄 부담", "icon": "🫶",
+      "description": "가족이 맡는 돌봄의 양이 많은지 봅니다.",
+      "checkItems": ["가족 중 한 사람에게 돌봄이 몰려 있지 않은지", "돌보는 가족이 쉴 수 있는 날이 있는지", "단기보호·가족돌봄휴가 등 쉼 제도를 알아봤는지"],
+      "services": ["ltc_insurance", "family_care_leave", "counsel_129"],
+      "ltcTypes": ["단기보호", "주야간보호"],
+      "noGapText": "현재 입력된 가족 돌봄 시간이 기준(주 20시간 또는 가족만 돌보는 날 3일)보다 적습니다."
+    }
+  ],
+  "rules": [
+    { "id": "meal.skip_uncovered", "domain": "meal", "result": "check",
+      "when": { "all": [ { "fact": "concern.skipsMeals", "op": "eq", "value": true }, { "fact": "meal.uncoveredSlots", "op": "gt", "value": 0 } ] },
+      "reason": "식사를 거르는 경우가 있다고 입력했습니다. 주 21끼 중 {meal.uncoveredSlots} 시간대에 식사를 챙기는 일정이 등록되어 있지 않습니다." },
+    { "id": "meal.covered", "domain": "meal", "result": "covered",
+      "when": { "all": [ { "fact": "concern.skipsMeals", "op": "eq", "value": true }, { "fact": "meal.uncoveredSlots", "op": "eq", "value": 0 } ] },
+      "reason": "모든 끼니 시간대에 식사를 챙기는 일정이 등록되어 있습니다." },
+
+    { "id": "meds.service_unscheduled", "domain": "meds", "result": "check",
+      "when": { "all": [ { "fact": "concern.forgetsMeds", "op": "eq", "value": true }, { "fact": "service.med_check", "op": "eq", "value": true }, { "fact": "med.coveredDays", "op": "eq", "value": 0 } ] },
+      "reason": "복약확인 서비스를 이용 중이라고 선택했지만 요일·시간이 등록되지 않아, 매일 확인되는지 알 수 없습니다." },
+    { "id": "meds.none", "domain": "meds", "result": "check",
+      "when": { "all": [ { "fact": "concern.forgetsMeds", "op": "eq", "value": true }, { "fact": "service.med_check", "op": "eq", "value": false }, { "fact": "med.coveredDays", "op": "eq", "value": 0 } ] },
+      "reason": "약 복용을 잊는 경우가 있다고 입력했습니다. 현재 등록된 일정에서는 정기적인 복약 확인이 확인되지 않았습니다." },
+    { "id": "meds.partial", "domain": "meds", "result": "check",
+      "when": { "all": [ { "fact": "concern.forgetsMeds", "op": "eq", "value": true }, { "fact": "med.coveredDays", "op": "gt", "value": 0 }, { "fact": "med.coveredDays", "op": "lt", "value": 7 } ] },
+      "reason": "약 복용을 잊는 경우가 있다고 입력했습니다. 복약 확인 일정은 주 {med.coveredDays} 있고, {med.missingDaysList}에는 없습니다." },
+    { "id": "meds.covered", "domain": "meds", "result": "covered",
+      "when": { "all": [ { "fact": "concern.forgetsMeds", "op": "eq", "value": true }, { "fact": "med.coveredDays", "op": "eq", "value": 7 } ] },
+      "reason": "매일 복약 확인 일정이 등록되어 있습니다." },
+
+    { "id": "mobility.days_without_visit", "domain": "mobility", "result": "check",
+      "when": { "all": [ { "fact": "concern.mobility", "op": "eq", "value": true }, { "fact": "profile.livesAlone", "op": "eq", "value": true }, { "fact": "time.daysWithoutVisit", "op": "gt", "value": 0 } ] },
+      "reason": "이동이 어렵다고 입력했고 혼자 사십니다. 사람이 함께하는 일정이 하나도 없는 요일이 {time.daysWithoutVisit}({time.daysWithoutVisitList}) 있습니다." },
+    { "id": "mobility.covered", "domain": "mobility", "result": "covered",
+      "when": { "all": [ { "fact": "concern.mobility", "op": "eq", "value": true }, { "fact": "time.daysWithoutVisit", "op": "eq", "value": 0 } ] },
+      "reason": "매일 사람이 함께하는 일정이 등록되어 있습니다." },
+
+    { "id": "hygiene.no_support", "domain": "hygiene", "result": "check",
+      "when": { "all": [ { "fact": "concern.mobility", "op": "eq", "value": true }, { "fact": "hygiene.supportDays", "op": "eq", "value": 0 } ] },
+      "reason": "이동이 어렵다고 입력했습니다. 목욕·위생을 도울 수 있는 일정(방문요양·방문목욕·주야간보호)이 등록되어 있지 않습니다." },
+    { "id": "hygiene.covered", "domain": "hygiene", "result": "covered",
+      "when": { "all": [ { "fact": "concern.mobility", "op": "eq", "value": true }, { "fact": "hygiene.supportDays", "op": "gt", "value": 0 } ] },
+      "reason": "위생을 도울 수 있는 일정이 주 {hygiene.supportDays} 등록되어 있습니다." },
+
+    { "id": "hospital.unescorted", "domain": "hospital", "result": "check",
+      "when": { "all": [ { "fact": "hospital.unescortedVisits", "op": "gt", "value": 0 },
+        { "any": [ { "fact": "profile.livesAlone", "op": "eq", "value": true }, { "fact": "concern.mobility", "op": "eq", "value": true }, { "fact": "concern.recentFall", "op": "eq", "value": true } ] } ] },
+      "reason": "병원 진료 일정({hospital.unescortedList})에 동행하거나 이동을 돕는 일정이 등록되어 있지 않습니다." },
+    { "id": "hospital.frequent_unplanned", "domain": "hospital", "result": "check",
+      "when": { "all": [ { "fact": "concern.frequentHospital", "op": "eq", "value": true }, { "fact": "hospital.visitCount", "op": "eq", "value": 0 }, { "fact": "service.hospital_escort", "op": "eq", "value": false } ] },
+      "reason": "병원 방문이 잦다고 입력했지만, 진료 일정과 이동·동행 계획이 등록되어 있지 않습니다." },
+    { "id": "hospital.covered", "domain": "hospital", "result": "covered",
+      "when": { "all": [ { "fact": "hospital.visitCount", "op": "gt", "value": 0 }, { "fact": "hospital.unescortedVisits", "op": "eq", "value": 0 } ] },
+      "reason": "등록된 병원 진료 일정에 동행·가족 일정이 함께 있습니다." },
+
+    { "id": "cognition.no_program", "domain": "cognition", "result": "check",
+      "when": { "all": [ { "fact": "concern.memory", "op": "eq", "value": true }, { "fact": "cognition.sessions", "op": "eq", "value": 0 } ] },
+      "reason": "기억력이 걱정된다고 입력했습니다. 현재 등록된 일정에 상담·인지 프로그램 등 확인 일정이 없습니다." },
+    { "id": "cognition.covered", "domain": "cognition", "result": "covered",
+      "when": { "all": [ { "fact": "concern.memory", "op": "eq", "value": true }, { "fact": "cognition.sessions", "op": "gt", "value": 0 } ] },
+      "reason": "인지 관련 일정이 주 {cognition.sessions} 등록되어 있습니다." },
+
+    { "id": "fall.day_alone", "domain": "fall", "result": "check",
+      "when": { "all": [ { "fact": "concern.recentFall", "op": "eq", "value": true }, { "fact": "time.dayAloneHours", "op": "gt", "value": 0 } ] },
+      "reason": "최근 넘어진 적이 있다고 입력했습니다. 낮(09:00–18:00)에도 혼자 계신 시간이 {time.dayAloneHours} 있습니다." },
+    { "id": "fall.covered", "domain": "fall", "result": "covered",
+      "when": { "all": [ { "fact": "concern.recentFall", "op": "eq", "value": true }, { "fact": "time.dayAloneHours", "op": "eq", "value": 0 } ] },
+      "reason": "낮 시간 동안 혼자 계신 시간이 등록 일정상 없습니다." },
+
+    { "id": "night.fall_alone", "domain": "night", "result": "check",
+      "when": { "all": [ { "fact": "concern.recentFall", "op": "eq", "value": true }, { "fact": "time.nightAloneHours", "op": "gt", "value": 0 } ] },
+      "reason": "최근 낙상 경험이 있으며, 저녁·야간(18:00–09:00)에 혼자 계신 시간이 {time.nightAloneHours} 있습니다." },
+    { "id": "night.worry_uncovered", "domain": "night", "result": "check",
+      "when": { "all": [ { "fact": "concern.nightAlone", "op": "eq", "value": true }, { "fact": "time.nightUncoveredHours", "op": "gt", "value": 0 } ] },
+      "reason": "밤에 혼자 있는 것이 걱정된다고 입력했습니다. 저녁·야간(18:00–09:00)에 사람이 함께하는 일정이 없는 시간이 {time.nightUncoveredHours} 있습니다." },
+    { "id": "night.covered", "domain": "night", "result": "covered",
+      "when": { "all": [ { "any": [ { "fact": "concern.recentFall", "op": "eq", "value": true }, { "fact": "concern.nightAlone", "op": "eq", "value": true } ] }, { "fact": "time.nightUncoveredHours", "op": "eq", "value": 0 } ] },
+      "reason": "저녁·야간 시간에도 사람이 함께하는 일정이 등록되어 있습니다." },
+
+    { "id": "emergency.worry_no_service", "domain": "emergency", "result": "check",
+      "when": { "all": [ { "fact": "concern.emergency", "op": "eq", "value": true }, { "fact": "service.emergency_safety", "op": "eq", "value": false } ] },
+      "reason": "응급상황이 걱정된다고 입력했고, 현재 이용 중인 서비스에 응급안전서비스가 없습니다." },
+    { "id": "emergency.alone_fall_no_service", "domain": "emergency", "result": "check",
+      "when": { "all": [ { "fact": "profile.livesAlone", "op": "eq", "value": true }, { "fact": "concern.recentFall", "op": "eq", "value": true }, { "fact": "service.emergency_safety", "op": "eq", "value": false } ] },
+      "reason": "혼자 사시고 최근 넘어진 적이 있다고 입력했습니다. 현재 이용 중인 서비스에 응급 시 알림을 보내는 응급안전서비스가 없습니다." },
+    { "id": "emergency.covered", "domain": "emergency", "result": "covered",
+      "when": { "all": [ { "fact": "service.emergency_safety", "op": "eq", "value": true } ] },
+      "reason": "응급안전서비스를 이용 중이라고 입력했습니다." },
+
+    { "id": "social.no_group", "domain": "social", "result": "check",
+      "when": { "all": [ { "fact": "concern.isolation", "op": "eq", "value": true }, { "fact": "group.sessions", "op": "eq", "value": 0 } ] },
+      "reason": "외로움·고립이 걱정된다고 입력했습니다. 등록된 일정 중 사람들과 어울리는 일정(복지관·주야간보호 등)이 없습니다." },
+    { "id": "social.covered", "domain": "social", "result": "covered",
+      "when": { "all": [ { "fact": "concern.isolation", "op": "eq", "value": true }, { "fact": "group.sessions", "op": "gt", "value": 0 } ] },
+      "reason": "사람들과 어울리는 일정이 주 {group.sessions} 등록되어 있습니다." },
+
+    { "id": "family.many_hours", "domain": "family", "result": "check",
+      "when": { "all": [ { "fact": "time.familyHours", "op": "gte", "value": 20 } ] },
+      "reason": "가족이 맡는 돌봄 시간이 {time.familyHours}로 입력되었습니다. 돌보는 가족의 쉼 계획을 함께 확인해 보세요." },
+    { "id": "family.family_only_days", "domain": "family", "result": "check",
+      "when": { "all": [ { "fact": "time.familyOnlyDays", "op": "gte", "value": 3 } ] },
+      "reason": "가족 외 돌봄 없이 가족만 돌보는 요일이 {time.familyOnlyDays} 있습니다." }
+  ]
+}
