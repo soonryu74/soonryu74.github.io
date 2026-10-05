@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import CONTACT from "../../../data/contact.json";
+import { gmailCompose } from "../lib/mail";
 
 /* 「의견·문의」 — 서버 없이도 깨지지 않게 만든 문의 창구.
    · 보내는 길 3가지: ① 이메일 앱으로 보내기(mailto) ② 내용 복사(카카오톡·메신저에 붙여넣기) ③ GitHub 이슈(개발자용)
@@ -60,6 +61,7 @@ export default function FeedbackView({ currentUrl }) {
   ].filter((x) => x != null).join("\n");
 
   const mailto = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const gmailUrl = gmailCompose(CONTACT.email, subject, body);
   const issueUrl = CONTACT.github_repo
     ? `https://github.com/${CONTACT.github_repo}/issues/new?title=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     : null;
@@ -68,7 +70,11 @@ export default function FeedbackView({ currentUrl }) {
     if (!ready) { e.preventDefault(); setStatus({ kind: "err", text: "내용을 5자 이상 적어 주세요." + (!emailOk ? " 회신 이메일 형식도 확인해 주세요." : "") }); return; }
     // mailto 가 너무 길면 일부 메일 앱이 본문을 자릅니다 → 안내
     if (mailto.length > 1800) setStatus({ kind: "info", text: "내용이 길어 메일 앱에서 본문이 잘릴 수 있습니다. 잘렸다면 「내용 복사」로 붙여 넣어 주세요." });
-    else setStatus({ kind: "ok", text: "메일 앱이 열립니다. 메일 앱이 열리지 않으면 「내용 복사」를 눌러 직접 보내 주세요." });
+    else setStatus({ kind: "ok", text: "메일 앱이 열립니다. 열리지 않거나 Gmail 계정 선택 뒤 아무 창도 뜨지 않으면 「Gmail로 보내기」나 「내용 복사」를 이용해 주세요." });
+  };
+  const onGmail = (e) => {
+    if (!ready) { e.preventDefault(); setStatus({ kind: "err", text: "내용을 5자 이상 적어 주세요." + (!emailOk ? " 회신 이메일 형식도 확인해 주세요." : "") }); return; }
+    setStatus({ kind: "ok", text: "새 탭에서 Gmail 작성 창이 열립니다(로그인·계정 선택 후 작성 창으로 이어집니다). Gmail을 쓰지 않으면 「이메일 앱으로 보내기」나 「내용 복사」를 이용해 주세요." });
   };
   const onCopy = async () => {
     if (!ready) { setStatus({ kind: "err", text: "내용을 5자 이상 적어 주세요." }); return; }
@@ -101,6 +107,7 @@ export default function FeedbackView({ currentUrl }) {
 
           <div className="fb-actions">
             <a className={`fb-btn primary ${ready ? "" : "dim"}`} href={mailto} onClick={onMail}>✉ 이메일 앱으로 보내기</a>
+            <a className={`fb-btn ${ready ? "" : "dim"}`} href={ready ? gmailUrl : "#"} target={ready ? "_blank" : undefined} rel="noopener noreferrer" onClick={onGmail} title="Gmail 웹에서 바로 작성 창을 엽니다">Gmail로 보내기</a>
             <button type="button" className="fb-btn" onClick={onCopy}>📋 내용 복사</button>
             {issueUrl && <a className="fb-btn" href={ready ? issueUrl : "#"} target={ready ? "_blank" : undefined} rel="noreferrer" onClick={(e) => { if (!ready) { e.preventDefault(); setStatus({ kind: "err", text: "내용을 5자 이상 적어 주세요." }); } }} title="GitHub 계정이 있는 분(개발자)용">🐙 GitHub 이슈로 올리기</a>}
             <button type="button" className="fb-btn ghost" onClick={onReset}>지우기</button>

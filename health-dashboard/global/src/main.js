@@ -404,7 +404,7 @@ function renderCompare() {
     </div>
     <p class="muted small">Each value keeps its own observation year; values from different years are flagged and should not be read as the same point in time. Signals are relative to each country's own income group (${esc(S.data.countries[a].income)} / ${esc(S.data.countries[b].income)}). "Trend" summarises each country's own observed values in its recent window (years shown) and is not used for signals.</p>
     <div class="tblwrap"><table class="itbl ctbl"><thead><tr><th scope="col">Indicator</th><th scope="col">${esc(na)}</th><th scope="col">${esc(nb)}</th><th scope="col">Note</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-  $("#cmp-a").addEventListener("change", (e) => { S.sel = e.target.value; writeHash(); renderAll(); });
+  $("#cmp-a").addEventListener("change", (e) => { S.sel = e.target.value; writeHash({ push: true }); renderAll(); });
   $("#cmp-b").addEventListener("change", (e) => { S.vs = e.target.value; writeHash(); renderCompare(); });
 }
 
@@ -456,13 +456,15 @@ function readHash() {
   S.vs = ok(h.get("vs")) || S.vs;
   if (h.get("ind") && S.inds[h.get("ind")]) S.ind = h.get("ind");
 }
-function writeHash() {
+/** push = new browser-history entry (choosing a country), otherwise the current entry is updated (compare B, map indicator) */
+function writeHash({ push = false } = {}) {
   const h = new URLSearchParams();
   if (S.sel) h.set("c", S.sel); if (S.vs) h.set("vs", S.vs); if (S.ind) h.set("ind", S.ind);
-  history.replaceState(null, "", "#" + h.toString());
+  const url = "#" + h.toString();
+  if (push && location.hash !== url) history.pushState(null, "", url); else history.replaceState(null, "", url);
 }
 function select(c, { scroll } = {}) {
-  S.sel = c; S.open = null; writeHash(); renderAll();
+  S.sel = c; S.open = null; writeHash({ push: true }); renderAll();
   if (scroll) $("#country").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 let mapShown = false;
@@ -483,7 +485,8 @@ async function main() {
   const mapSec = $("#map");
   const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting) && !mapShown) { mapShown = true; renderMap(); io.disconnect(); } }, { rootMargin: "200px" }) : null;
   io ? io.observe(mapSec) : (mapShown = true, renderMap());
-  window.addEventListener("hashchange", () => { readHash(); renderAll(); });
+  const onNav = () => { readHash(); S.open = null; renderAll(); };
+  window.addEventListener("hashchange", onNav); window.addEventListener("popstate", onNav);
   window.__GHER = { S, profileOf, positionOf, fmtValue, fmtDelta, TREND_NOTE }; // for automated checks
   document.documentElement.dataset.ready = "1";
 }

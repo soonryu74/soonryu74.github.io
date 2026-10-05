@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import CONTACT from "../../../data/contact.json";
 import { copyText } from "./FeedbackView";
+import { gmailCompose } from "../lib/mail";
 
 /* 사용 의견(사용성) 1분 설문 — 「사용 의견 보내기 / Give Feedback」.
    서버·외부 서비스 없음: 답을 글로 만들어 복사하거나 메일 앱으로 보낸다. 개인정보·환자정보는 받지 않는다.
@@ -86,6 +87,7 @@ export default function UsabilityFeedback({ lang = "ko", context = "" }) {
             <div className="rev-btns">
               <button type="button" className="themebtn" onClick={async () => setMsg((await copyText(text)) ? L.copied : L.fail)}>{L.copy}</button>
               <a className="themebtn" href={mailto}>{L.mail}</a>
+              <a className="themebtn" href={gmailCompose(CONTACT.email, `[${lang === "en" ? "Feedback" : "사용 의견"}] Health Equity Radar`, text)} target="_blank" rel="noopener noreferrer">{lang === "en" ? "Send with Gmail" : "Gmail로 보내기"}</a>
             </div>
             {msg && <div className="desc" role="status">{msg}</div>}
             <pre className="rev-preview uf-preview" aria-label="preview">{text}</pre>
