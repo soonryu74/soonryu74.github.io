@@ -12,6 +12,7 @@
     ['seongbun.html', '성분별 근거'],
     ['jilhwan.html', '질환별 판정'],
     ['bokyong.html', '약·복용법'],
+    ['haru.html', '하루 영양소 기준'],
     ['saengae.html', '생애주기'],
     ['jeungsang.html', '증상별'],
     ['geomsa.html', '검사·계산기'],
