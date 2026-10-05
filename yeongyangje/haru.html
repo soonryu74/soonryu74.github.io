@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>하루 영양소 기준표 | 근거영양</title>
+<meta name="description" content="연령·성별·임신 여부와 건강문제를 고르면 하루 영양소 기준량(2025 한국인 영양소 섭취기준)·상한, 진료지침이 달리 정한 목표, 영양제 근거를 묶어서 보여 줍니다.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.hr-group { margin: 22px 0 8px; }
+.hr-group h3 { margin: 0 0 4px; }
+.hr-group > p { margin: 0 0 10px; }
+.hr-row { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.2fr; gap: 6px 14px; padding: 11px 0; border-bottom: 1px solid var(--line); align-items: start; }
+.hr-row:last-child { border-bottom: none; }
+.hr-row .lab { display: block; font-size: .74rem; color: var(--muted); }
+.hr-row .nm { font-weight: 700; }
+.hr-row .val b { font-size: 1.02rem; }
+.hr-row .cflag { display: block; margin-top: 4px; }
+.hr-row > div { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 640px) { .hr-row { grid-template-columns: 1fr 1fr; } .hr-row .nm-cell { grid-column: 1 / -1; } }
+.vmini { display: inline-block; font-size: .78rem; font-weight: 800; padding: 2px 9px; border-radius: 8px; }
+.vmini.rec { background: var(--green-soft); color: var(--green); }
+.vmini.cond { background: var(--blue-soft); color: var(--blue); }
+.vmini.opt, .vmini.none { background: var(--gray-soft); color: var(--gray); }
+.vmini.no { background: var(--amber-soft); color: var(--amber); }
+.vmini.avoid { background: var(--red-soft); color: var(--red); }
+.cond-item { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.cond-item:last-child { border-bottom: none; }
+.cond-item .tg { font-weight: 800; }
+.cond-item p { margin: 4px 0; }
+.dir { display: inline-block; font-size: .76rem; font-weight: 800; padding: 2px 9px; border-radius: 8px; margin-right: 6px; }
+.dir.limit { background: var(--red-soft); color: var(--red); }
+.dir.more { background: var(--green-soft); color: var(--green); }
+.dir.same { background: var(--gray-soft); color: var(--gray); }
+.dir.check { background: var(--blue-soft); color: var(--blue); }
+.dir.nosupp { background: var(--amber-soft); color: var(--amber); }
+.legend-line { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .84rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div id="site-header"></div>
+<main class="wrap">
+  <div class="page-head">
+    <h1>하루 영양소 기준표</h1>
+    <p>나이·성별과 건강문제를 고르면 하루에 필요한 영양소를 묶어서 보여 줍니다. 숫자는 <b>식사와 영양제를 모두 합친 하루 총량</b>의 공식 기준이며, "이만큼 영양제로 먹으라"는 뜻이 아닙니다.</p>
+  </div>
+
+  <div class="section">
+    <h2 style="margin-top:0">1. 나에게 맞추기</h2>
+    <div class="form-grid">
+      <div class="field"><label for="h-sex">성별</label><select id="h-sex"><option value="F">여성</option><option value="M">남성</option></select></div>
+      <div class="field"><label for="h-age">나이</label><select id="h-age"></select></div>
+      <div class="field" id="h-preg-wrap"><label for="h-preg">임신·수유</label><select id="h-preg"><option value="">해당 없음</option><option value="preg">임신 중</option><option value="lact">수유 중</option></select></div>
+      <div class="field"><label for="h-cond">건강문제</label><select id="h-cond"></select></div>
+    </div>
+    <div class="legend-line" style="margin-top:12px">
+      <span><b>하루 기준</b>: 권장섭취량(대부분의 사람이 충족) 또는 충분섭취량(자료가 부족해 정한 값)</span>
+      <span><b>상한</b>: 매일 오래 먹어도 해가 없을 최대치(식사+영양제 합계)</span>
+    </div>
+  </div>
+
+  <div class="section" id="cond-box" hidden></div>
+
+  <div class="section" id="result">
+    <h2 style="margin-top:0">2. 하루 기준량 — <span id="who"></span></h2>
+    <div id="groups"></div>
+  </div>
+
+  <div class="callout info"><span class="t">이 표를 읽는 법</span>
+    <ul style="margin:6px 0 0;padding-left:20px">
+      <li>기준량은 건강한 사람 집단을 위한 값입니다. 한 사람에게 부족한지는 식사 내용과 검사로 판단합니다(<a href="geomsa.html#tests">검사 가이드</a>).</li>
+      <li>"영양제 근거"는 이 사이트 성분 카드의 판정입니다. 기준량이 높다고 영양제가 필요하다는 뜻은 아닙니다.</li>
+      <li>여러 제품을 함께 먹는다면 <a href="geomsa.html#calc">상한 합산 계산기</a>로 합계를 확인하세요.</li>
+    </ul>
+  </div>
+
+  <div class="disclaimer">기준: 2025 한국인 영양소 섭취기준(보건복지부·한국영양학회). 건강문제별 목표는 각 항목에 적힌 진료지침·연구에서 옮겼으며, 같은 질환이라도 병기·복용 약에 따라 달라집니다. 이 페이지는 정보 제공용이며 진료·처방을 대신하지 않습니다.</div>
+</main>
+<div id="site-footer"></div>
+<script src="data/glossary.js"></script>
+<script src="assets/app.js"></script>
+<script src="data/ingredients.js"></script>
+<script src="data/conditions.js"></script>
+<script src="data/kdri.js"></script>
+<script src="data/kdri_child.js"></script>
+<script src="data/haru.js"></script>
+<script src="data/haru_cond.js"></script>
+<script>
+(function(){
+  var K=window.EBN_KDRI||{nutrients:[]}, KC=window.EBN_KDRI_CHILD||null, H=window.EBN_HARU, I=window.EBN_INGREDIENTS||{},
+      CONDS=window.EBN_CONDITIONS||[], HC=window.EBN_HARU_COND||[], esc=EBN.esc, VL=EBN.verdictLabel||{};
+  var KDRI_URL='https://www.mohw.go.kr/board.es?mid=a10411010200&bid=0019&act=view&list_no=1488446';
+  var ADULT=[['19-29','19~29세'],['30-49','30~49세'],['50-64','50~64세'],['65-74','65~74세'],['75+','75세 이상']];
+  var CHILD_L={'0-5m':'0~5개월','6-11m':'6~11개월','1-2':'1~2세','3-5':'3~5세','6-8':'6~8세','9-11':'9~11세','12-14':'12~14세','15-18':'15~18세'};
+  var ages=(KC&&KC.ages?KC.ages.map(function(a){return [a, CHILD_L[a]||a];}):[]).concat(ADULT);
+  var $=function(id){return document.getElementById(id);};
+  $('h-age').innerHTML=ages.map(function(a){return '<option value="'+a[0]+'"'+(a[0]==='30-49'?' selected':'')+'>'+a[1]+'</option>';}).join('');
+  $('h-cond').innerHTML=CONDS.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');
+  var byId={}; K.nutrients.forEach(function(n){byId[n.id]=n;});
+  var NAME={energy:'에너지(필요추정량)', protein:'단백질', fiber:'식이섬유', water:'수분(총량)'};
+  var UNIT={energy:'kcal', protein:'g', fiber:'g', water:'mL'};
+  function isAdult(age){ return ADULT.some(function(a){return a[0]===age;}); }
+  function fmt(v){ return (typeof v==='number')? v.toLocaleString('ko-KR') : v; }
+  function ref(id, sex, age, pg){
+    var n=byId[id], r=null, unit, name, kind, ul, add=null, ulb='', note='';
+    if(n && isAdult(age)){ r=n[sex][age]; unit=n.unit; name=n.name; kind=r.kind; ul=r.ul; add=pg?n[pg]:null; if(pg&&n[pg+'_ul']!==undefined) ul=n[pg+'_ul']; ulb=n.ulBasis||''; note=n.note||''; return {name:name, unit:unit, kind:kind, rni:r.rni, add:add, ul:ul, ulb:ulb, note:note}; }
+    if(KC && KC.nutrients && KC.nutrients[id] && !isAdult(age)){ var c=KC.nutrients[id]; r=(c[sex]||{})[age]||{}; return {name:(n&&n.name)||c.name||id, unit:c.unit||(n&&n.unit), kind:r.kind||c.kind, rni:r.rni, add:(pg&&c[pg]!=null)?c[pg]:((pg&&n&&n[pg]!=null)?n[pg]:null), ul:r.ul, ulb:c.ulBasis||(n&&n.ulBasis)||'', note:c.note||''}; }
+    if(NAME[id]){ var m=KC&&KC.macro&&KC.macro[id]; var mr=m&&m[sex]&&m[sex][age]; return {name:NAME[id], unit:(m&&m.unit)||UNIT[id], kind:(mr&&mr.kind)||(m&&m.kind)||'', rni:mr?mr.rni:null, add:(pg&&m&&m[pg]!=null)?m[pg]:null, ul:mr?mr.ul:null, ulb:'', note:(m&&m.note)||''}; }
+    return {name:(n&&n.name)||id, unit:n?n.unit:'', kind:'', rni:null, ul:null, add:null, ulb:'', note:''};
+  }
+  var KIND={RNI:'권장섭취량', AI:'충분섭취량', EER:'필요추정량'};
+  function supCell(id){
+    var cid=H.card[id], c=cid&&I[cid];
+    if(c) return '<span class="lab">영양제 근거</span><span class="vmini '+esc(c.verdict)+'">'+esc(VL[c.verdict]||c.verdict)+'</span> <a href="seongbun.html#'+esc(cid)+'" class="small">카드</a>';
+    var x=H.extra[id]; if(x) return '<span class="lab">영양제 근거</span><a href="'+esc(x[1])+'" class="small">'+esc(x[0])+'</a>';
+    return '<span class="lab">영양제 근거</span><span class="vmini none">카드 없음</span>';
+  }
+  function render(){
+    var sex=$('h-sex').value, age=$('h-age').value, adult=isAdult(age);
+    var pgOK = sex==='F' && (adult || age==='15-18' || age==='12-14');
+    $('h-preg-wrap').style.display = pgOK?'':'none'; if(!pgOK) $('h-preg').value='';
+    var pg=$('h-preg').value, cid=$('h-cond').value;
+    var cond=HC.filter(function(c){return c.id===cid;})[0], condObj=CONDS.filter(function(c){return c.id===cid;})[0]||{};
+    var flag={}; if(cond) (cond.items||[]).forEach(function(it,i){ if(it.nut) (flag[it.nut]=flag[it.nut]||[]).push(i); });
+    var ageL=(ages.filter(function(a){return a[0]===age;})[0]||[])[1];
+    $('who').textContent=(age.indexOf('m')>0||age==='1-2'||age==='3-5'?'':(sex==='F'?'여성 ':'남성 '))+ageL+(pg==='preg'?' · 임신 중':pg==='lact'?' · 수유 중':'');
+    /* 건강문제 박스 */
+    var box=$('cond-box');
+    if(cid==='healthy' || !cond){ box.hidden = !(cid!=='healthy'); if(cid!=='healthy') box.innerHTML='<h2 style="margin-top:0">'+esc(condObj.name||'')+'</h2><p class="small">이 건강문제의 기준 조정 내용은 정리 중입니다. 성분별 주의는 <a href="jilhwan.html">질환별 페이지</a>를 보세요.</p>'; }
+    else {
+      box.hidden=false;
+      box.innerHTML='<h2 style="margin-top:0">'+esc(condObj.name)+' — 기준이 달라지는 영양소</h2>'+(cond.lead?'<p>'+esc(cond.lead)+'</p>':'')+
+        (adult?'':'<div class="callout warn"><span class="t">성인 기준입니다</span>아래 목표는 성인 진료지침 값입니다. 소아·청소년은 담당 의료진과 확인하세요.</div>')+
+        (cond.items||[]).map(function(it,i){ return '<div class="cond-item" id="ci-'+i+'"><span class="dir '+esc(it.dir)+'">'+esc(DIR[it.dir]||it.dir)+'</span><b>'+esc(it.label)+'</b><p class="tg">'+esc(it.target)+'</p>'+(it.vsKdri?'<p class="small">일반 기준과 비교: '+esc(it.vsKdri)+'</p>':'')+'<p class="small">'+esc(it.why)+'</p><p class="small">'+(it.src||[]).map(function(s){return '<a href="'+esc(s[1])+'" target="_blank" rel="noopener">'+esc(s[0])+' ↗</a>';}).join(' · ')+'</p></div>'; }).join('')+
+        (cond.notes&&cond.notes.length?'<ul class="small" style="margin:10px 0 0;padding-left:20px">'+cond.notes.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>':'')+
+        '<p class="small" style="margin-top:10px">성분별 "먹어도 되나"는 <a href="jilhwan.html">질환별 페이지</a>에서 확인하세요.</p>';
+    }
+    /* 그룹 */
+    $('groups').innerHTML=H.groups.map(function(g){
+      var rows=g.nuts.map(function(id){
+        var r=ref(id,sex,age,pg); if(r.rni==null && r.ul==null && !NAME[id] && !byId[id]) return '';
+        var val = r.rni==null ? '<b>—</b>' : '<b>'+fmt(r.rni)+(r.add?' + '+fmt(r.add):'')+'</b> '+esc(r.unit||'');
+        var ul = r.ul==null ? '<span class="small">미설정</span>' : '<b>'+fmt(r.ul)+'</b> '+esc(r.unit||'')+(r.ulb?'<span class="small"> ('+esc(r.ulb)+')</span>':'');
+        var fl = (flag[id]||[]).map(function(i){ var it=cond.items[i]; return '<a class="cflag" href="#ci-'+i+'"><span class="dir '+esc(it.dir)+'">'+esc(DIR[it.dir]||it.dir)+'</span><span class="small">'+esc(it.target)+'</span></a>'; }).join('');
+        return '<div class="hr-row"><div class="nm-cell"><span class="nm">'+esc(r.name)+'</span>'+(r.note?'<span class="lab">'+esc(r.note)+'</span>':'')+fl+'</div>'+
+          '<div class="val"><span class="lab">하루 기준'+(r.kind?' · '+esc(KIND[r.kind]||r.kind):'')+(r.add?' (임신·수유 부가량 포함)':'')+'</span>'+val+'</div>'+
+          '<div><span class="lab">상한</span>'+ul+'</div><div>'+supCell(id)+'</div></div>';
+      }).join('');
+      return '<div class="hr-group"><h3>'+esc(g.name)+'</h3><p class="small">'+esc(g.desc)+'</p>'+rows+'</div>';
+    }).join('')+'<p class="small" style="margin-top:14px">출처: <a href="'+KDRI_URL+'" target="_blank" rel="noopener">2025 한국인 영양소 섭취기준 ↗</a>'+(KC&&KC.errata?' · '+esc(KC.errata):'')+'</p>';
+  }
+  var DIR={limit:'줄이기·제한', more:'더 필요', same:'일반 기준과 같음', check:'검사로 확인', nosupp:'보충제 권하지 않음'};
+  ['h-sex','h-age','h-preg','h-cond'].forEach(function(id){ $(id).addEventListener('change', render); });
+  var q=new URLSearchParams(location.search); ['sex','age','cond'].forEach(function(k){ var v=q.get(k), el=$('h-'+k); if(v && el && [].some.call(el.options,function(o){return o.value===v;})) el.value=v; });
+  render();
+})();
+</script>
+</body>
+</html>
