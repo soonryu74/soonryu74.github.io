@@ -25,10 +25,10 @@
 .vmini.opt, .vmini.none { background: var(--gray-soft); color: var(--gray); }
 .vmini.no { background: var(--amber-soft); color: var(--amber); }
 .vmini.avoid { background: var(--red-soft); color: var(--red); }
-.cond-item { padding: 12px 0; border-bottom: 1px solid var(--line); }
-.cond-item:last-child { border-bottom: none; }
-.cond-item .tg { font-weight: 800; }
-.cond-item p { margin: 4px 0; }
+.hc-item { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.hc-item:last-child { border-bottom: none; }
+.hc-item .tg { font-weight: 800; }
+.hc-item p { margin: 4px 0; }
 .dir { display: inline-block; font-size: .76rem; font-weight: 800; padding: 2px 9px; border-radius: 8px; margin-right: 6px; }
 .dir.limit { background: var(--red-soft); color: var(--red); }
 .dir.more { background: var(--green-soft); color: var(--green); }
@@ -127,12 +127,12 @@
     $('who').textContent=(age.indexOf('m')>0||age==='1-2'||age==='3-5'?'':(sex==='F'?'여성 ':'남성 '))+ageL+(pg==='preg'?' · 임신 중':pg==='lact'?' · 수유 중':'');
     /* 건강문제 박스 */
     var box=$('cond-box');
-    if(cid==='healthy' || !cond){ box.hidden = !(cid!=='healthy'); if(cid!=='healthy') box.innerHTML='<h2 style="margin-top:0">'+esc(condObj.name||'')+'</h2><p class="small">이 건강문제의 기준 조정 내용은 정리 중입니다. 성분별 주의는 <a href="jilhwan.html">질환별 페이지</a>를 보세요.</p>'; }
+    if(!cond){ box.hidden = (cid==='healthy'); if(cid!=='healthy') box.innerHTML='<h2 style="margin-top:0">'+esc(condObj.name||'')+'</h2><p class="small">이 건강문제의 기준 조정 내용은 정리 중입니다. 성분별 주의는 <a href="jilhwan.html">질환별 페이지</a>를 보세요.</p>'; }
     else {
       box.hidden=false;
       box.innerHTML='<h2 style="margin-top:0">'+esc(condObj.name)+' — 기준이 달라지는 영양소</h2>'+(cond.lead?'<p>'+esc(cond.lead)+'</p>':'')+
         (adult?'':'<div class="callout warn"><span class="t">성인 기준입니다</span>아래 목표는 성인 진료지침 값입니다. 소아·청소년은 담당 의료진과 확인하세요.</div>')+
-        (cond.items||[]).map(function(it,i){ return '<div class="cond-item" id="ci-'+i+'"><span class="dir '+esc(it.dir)+'">'+esc(DIR[it.dir]||it.dir)+'</span><b>'+esc(it.label)+'</b><p class="tg">'+esc(it.target)+'</p>'+(it.vsKdri?'<p class="small">일반 기준과 비교: '+esc(it.vsKdri)+'</p>':'')+'<p class="small">'+esc(it.why)+'</p><p class="small">'+(it.src||[]).map(function(s){return '<a href="'+esc(s[1])+'" target="_blank" rel="noopener">'+esc(s[0])+' ↗</a>';}).join(' · ')+'</p></div>'; }).join('')+
+        (cond.items||[]).map(function(it,i){ return '<div class="hc-item" id="ci-'+i+'"><span class="dir '+esc(it.dir)+'">'+esc(DIR[it.dir]||it.dir)+'</span><b>'+esc(it.label)+'</b><p class="tg">'+esc(it.target)+'</p>'+(it.vsKdri?'<p class="small">일반 기준과 비교: '+esc(it.vsKdri)+'</p>':'')+'<p class="small">'+esc(it.why)+'</p><p class="small">'+(it.src||[]).map(function(s){return '<a href="'+esc(s[1])+'" target="_blank" rel="noopener">'+esc(s[0])+' ↗</a>';}).join(' · ')+'</p></div>'; }).join('')+
         (cond.notes&&cond.notes.length?'<ul class="small" style="margin:10px 0 0;padding-left:20px">'+cond.notes.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>':'')+
         '<p class="small" style="margin-top:10px">성분별 "먹어도 되나"는 <a href="jilhwan.html">질환별 페이지</a>에서 확인하세요.</p>';
     }
