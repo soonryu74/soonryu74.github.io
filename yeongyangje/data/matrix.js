@@ -20,7 +20,7 @@
     cancer: c('ok', 'CYP 상호작용 없음. 악액질에 흔히 사용', 'https://ods.od.nih.gov/factsheets/Omega3FattyAcids-HealthProfessional/'),
     pregnancy: c('ok', 'NIH: 저수은 생선 주 8~12 oz 권장. 보충제 이득은 불확실하나 위해 신호 없음', ODS + 'Omega3FattyAcids-HealthProfessional/'),
     anticoag: c('caution', '11개 RCT 12만 명 메타(2024): 전체 출혈 증가 없음(RR 1.09). 고용량 정제 EPA만 상대 50%(절대 +0.6%) 증가. NIH는 와파린 병용 시 주의 권고', ['https://www.ahajournals.org/doi/10.1161/JAHA.123.032390', ODS + 'Omega3FattyAcids-HealthProfessional/']),
-    surgery: c('caution', 'SPAQI 합의: 수술 1~2주 전 중단 고려(혈소판 영향, 근거는 약함)', SPAQI)
+    surgery: c('caution', 'SPAQI 합의: 어유는 수술 전후 계속 복용 권고(심장수술 연구에서 출혈 증가 없음). 국내 고시 주의사항은 수술 전후 전문가 상담. 최종 판단은 수술팀', [SPAQI, 'https://pubmed.ncbi.nlm.nih.gov/30571332/'])
   };
 
   /* ===== 프로바이오틱스 ===== */
@@ -71,7 +71,7 @@
     pregnancy: c('avoid', 'NCCIH: 보충제 용량은 임신 중 안전하지 않을 수 있음', NC + 'turmeric'),
     anticoag: c('caution', '혈소판 응집 억제(시험관·동물). 임상 의미는 미확인', 'https://pubmed.ncbi.nlm.nih.gov/22531131/'),
     stones: c('avoid', '강황(수용성 옥살산 91%)은 소변 옥살산을 유의하게 올림(교차 RCT)', 'https://pubmed.ncbi.nlm.nih.gov/18469248/'),
-    surgery: c('caution', '항혈소판 작용, 수술 1~2주 전 중단', SPAQI)
+    surgery: c('caution', '항혈소판 작용. SPAQI: 수술 2주 전 중단', SPAQI)
   };
 
   /* ===== 콜라겐 ===== */
@@ -173,7 +173,7 @@
     cancer: c('caution', 'CYP3A4/P-gp 유도: 사퀴나비르 AUC −51%. CYP3A4 대사 항암제 이론적', 'https://pubmed.ncbi.nlm.nih.gov/11740713/'),
     pregnancy: c('caution', 'NCCIH: 식품량 초과는 안전 불확실', NC + 'garlic'),
     anticoag: c('caution', 'NCCIH: 항응고제·아스피린과 출혈 위험 증가', NC + 'garlic'),
-    surgery: c('avoid', '수술 7일~2주 전 중단(혈소판 억제, SPAQI)', SPAQI)
+    surgery: c('avoid', 'SPAQI: 수술 2주 전 중단(혈소판 억제). 다른 리뷰는 최소 7일 제시', SPAQI)
   };
 
   /* ===== 은행잎 ===== */
@@ -197,7 +197,7 @@
     cancer: c('avoid', '이리노테칸 활성대사체 SN-38 AUC −42%(Mathijssen 2002). 이마티닙 AUC 약 30% 감소', ['https://pubmed.ncbi.nlm.nih.gov/12189228/', 'https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2019.01356/full']),
     pregnancy: c('avoid', '안전 자료 부족. 경구피임약 실패(돌발 출혈·의도치 않은 임신)', NC + 'st-johns-wort-and-depression-in-depth'),
     anticoag: c('avoid', '와파린 효과 약화, DOAC 농도 감소(P-gp/CYP3A4)', NC + 'st-johns-wort-and-depression-in-depth'),
-    surgery: c('avoid', '수술 5일~2주 전 중단: 마취제·아편유사제 대사 유도', SPAQI)
+    surgery: c('avoid', 'SPAQI: 수술 2주 전 중단(다른 리뷰는 최소 5일): 마취제·아편유사제 대사 유도', SPAQI)
   };
 
   /* ===== 아슈와간다 ===== */
@@ -286,7 +286,7 @@
     hf_af: c('ok', 'VITAL Rhythm: 2,000 IU 심방세동 영향 없음', 'https://www.acc.org/clinical-topics/arrhythmias-and-clinical-ep/~/media/67142EC297834666B0CF741690027D9D.pdf'),
     thyroid: c('ok', '갑상선항진 골소실에 칼슘+D 권장. 레보티록신 흡수 문제 없음', 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/'),
     gi: c('ok', '비만수술 후 ASMBS: 3,000 IU 이상, 25(OH)D 30 목표. 염증성 장질환 흡수 저하', ASMBS),
-    autoimmune: c('caution', 'ACR 스테로이드 골다공증: 600~800 IU 권장. 단 사르코이드증 등 육아종 질환은 고칼슘혈증 — 저용량·혈중/소변 칼슘 모니터', ['https://acrjournals.onlinelibrary.wiley.com/doi/10.1002/art.42646', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7886067/']),
+    autoimmune: c('caution', 'ACR(미국) 2022 스테로이드 골다공증: 혈중 25(OH)D 30~50 ng/mL 이상 유지 목표, 보통 600~800 IU/일 이상 필요(조건부 권고, 근거 확실성 낮음). 단 사르코이드증 등 육아종 질환은 고칼슘혈증 — 저용량·혈중/소변 칼슘 모니터', ['https://acrjournals.onlinelibrary.wiley.com/doi/10.1002/art.42646', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7886067/']),
     cancer: c('ok', '결핍 시 보충. 림프종·육아종성 종양은 고칼슘혈증 모니터', 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/'),
     pregnancy: c('ok', 'ACOG: 1,000~2,000 IU 안전, 상한 4,000 IU', 'https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2011/07/vitamin-d-screening-and-supplementation-during-pregnancy'),
     stones: c('caution', 'WHI 칼슘 1,000 mg + D 400 IU: 결석 HR 1.17. 고칼슘뇨 있으면 24시간 소변 칼슘 확인', 'https://www.nejm.org/doi/full/10.1056/NEJMoa055218')
