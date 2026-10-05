@@ -101,3 +101,19 @@ export function computeFacts(input: CareInput): Facts {
 
   return facts;
 }
+
+/** 결과 카드의 '현재 관련 일정' — 영역과 관련된 등록 일정(및 상시 서비스)을 그대로 보여준다 */
+export function relatedSchedule(input: CareInput, fns: string[]): string[] {
+  const out = [...input.schedule]
+    .sort((a, b) => a.day - b.day || a.start.localeCompare(b.start))
+    .filter((e) => {
+      const t = serviceType(e.type);
+      return fns.some((f) => (f === 'presence' ? t.presence : f === 'family' ? e.type === 'family' : t.functions.includes(f as CareFunction)));
+    })
+    .map((e) => `${DAYS[e.day]} ${e.start}–${e.end} ${serviceType(e.type).short}`);
+  for (const s of input.servicesInUse) {
+    const t = serviceType(s);
+    if (t.continuous && fns.some((f) => t.functions.includes(f as CareFunction))) out.push(`상시 · ${t.short}`);
+  }
+  return out;
+}

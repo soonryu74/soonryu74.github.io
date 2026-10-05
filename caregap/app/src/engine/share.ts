@@ -12,6 +12,7 @@ export interface ShareCard {
   meta: string[];
   days: { day: string; items: string[] }[];
   checks: string[];
+  tasks: string[];
   footer: string;
 }
 
@@ -36,7 +37,8 @@ export function buildShareCard(input: CareInput, result: EvaluationResult, opt: 
     title: '이번 주 돌봄계획',
     meta,
     days,
-    checks: result.domains.filter((d) => d.status === 'check').map((d) => d.domain.label),
+    tasks: input.familyTasks.map((t) => (t.who ? `${t.text} — ${t.who}` : t.text)),
+    checks: result.domains.filter((d) => d.status === 'needs_confirmation').map((d) => d.domain.label),
     footer: 'CareGap AI · 입력 기준 참고자료(진단 아님)',
   };
 }
@@ -48,6 +50,11 @@ export function shareText(card: ShareCard): string {
   for (const d of card.days) lines.push(`${d.day}  ${d.items.length ? d.items.join(', ') : '등록된 돌봄 없음'}`);
   lines.push('');
   lines.push(card.checks.length ? `확인 필요: ${card.checks.join(', ')}` : '확인 필요 영역: 없음(현재 입력 기준)');
+  if (card.tasks.length) {
+    lines.push('');
+    lines.push('가족 할 일:');
+    for (const t of card.tasks) lines.push(`- ${t}`);
+  }
   lines.push('');
   lines.push(`— ${card.footer}`);
   return lines.join('\n');

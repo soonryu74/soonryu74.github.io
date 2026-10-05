@@ -27,7 +27,8 @@ const segTime = (s: Segment) => `${fmtMinutes(s.start)}–${fmtMinutes(s.end)}`;
 export default function CareMap({ schedule, livesAlone }: { schedule: ScheduleEntry[]; livesAlone: boolean }) {
   const segs = useMemo(() => toSegments(schedule), [schedule]);
   const days = [0, 1, 2, 3, 4, 5, 6] as DayIndex[];
-  const emptyLabel = livesAlone ? '등록된 돌봄 없음 · 혼자 계신 시간' : '등록된 돌봄 없음';
+  // 일정이 없는 시간이 곧 위험하다는 뜻은 아니므로 중립적으로 표기
+  const emptyLabel = livesAlone ? '등록된 일정 없음 (혼자 계신 시간)' : '등록된 일정 없음';
 
   return (
     <div className="caremap" data-testid="caremap">

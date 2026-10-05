@@ -21,7 +21,7 @@ describe('CASE 1 — 최근 낙상 + 야간 독거 → 야간 안전 확인 필�
     const i = base();
     i.concerns.recentFall = true;
     const d = status(i, 'night');
-    expect(d.status).toBe('check');
+    expect(d.status).toBe('needs_confirmation');
     expect(d.matches[0].ruleId).toBe('night.fall_alone');
     expect(d.reason).toContain('주 105시간');
     // 설명: 입력 → 규칙 → 결과의 근거 조건이 남아 있어야 한다
@@ -29,18 +29,18 @@ describe('CASE 1 — 최근 낙상 + 야간 독거 → 야간 안전 확인 필�
     expect(labels).toContain('최근 넘어진 적이 있다=예');
     expect(labels.some((l) => l.startsWith('저녁·야간(18:00–09:00) 혼자 계신 시간=주 105시간'))).toBe(true);
   });
-  it('밤새 가족이 함께하면(18:00–09:00 매일) 야간 안전은 돌봄 확인됨', () => {
+  it('밤새 가족이 함께하면(18:00–09:00 매일) 야간 안전은 입력으로 확인됨', () => {
     const i = base();
     i.concerns.recentFall = true;
     i.schedule = [0, 1, 2, 3, 4, 5, 6].map((d) => ({ id: `n${d}`, day: d as never, start: '18:00', end: '09:00', type: 'family' as const }));
-    expect(status(i, 'night').status).toBe('covered');
+    expect(status(i, 'night').status).toBe('confirmed_by_input');
   });
   it('낙상만 있고 함께 사는 가족이 있으면 야간 혼자 시간은 0', () => {
     const i = base();
     i.profile.livesAlone = false;
     i.concerns.recentFall = true;
     expect(computeFacts(i)['time.nightAloneHours']).toBe(0);
-    expect(status(i, 'night').status).not.toBe('check');
+    expect(status(i, 'night').status).not.toBe('needs_confirmation');
   });
 });
 
@@ -50,7 +50,7 @@ describe('CASE 2 — 복약 잊음 + 복약관리 일정 없음 → 복약 확�
     i.concerns.forgetsMeds = true;
     i.schedule = [{ id: 'a', day: 0, start: '09:00', end: '12:00', type: 'visit_care' }];
     const d = status(i, 'meds');
-    expect(d.status).toBe('check');
+    expect(d.status).toBe('needs_confirmation');
     expect(d.reason).toContain('정기적인 복약 확인이 확인되지 않았습니다');
   });
   it('주 3일만 복약확인이 있으면 빠진 요일을 알려준다', () => {
@@ -58,15 +58,15 @@ describe('CASE 2 — 복약 잊음 + 복약관리 일정 없음 → 복약 확�
     i.concerns.forgetsMeds = true;
     i.schedule = [0, 2, 4].map((d) => ({ id: `m${d}`, day: d as never, start: '08:00', end: '08:30', type: 'med_check' as const }));
     const d = status(i, 'meds');
-    expect(d.status).toBe('check');
+    expect(d.status).toBe('needs_confirmation');
     expect(d.reason).toContain('주 3일');
     expect(d.reason).toContain('화·목·토·일');
   });
-  it('매일 복약확인이 있으면 돌봄 확인됨', () => {
+  it('매일 복약확인이 있으면 입력으로 확인됨', () => {
     const i = base();
     i.concerns.forgetsMeds = true;
     i.schedule = [0, 1, 2, 3, 4, 5, 6].map((d) => ({ id: `m${d}`, day: d as never, start: '08:00', end: '08:30', type: 'med_check' as const }));
-    expect(status(i, 'meds').status).toBe('covered');
+    expect(status(i, 'meds').status).toBe('confirmed_by_input');
   });
 });
 
@@ -76,7 +76,7 @@ describe('CASE 3 — 식사 문제 없음 → 식사 공백을 임의로 만들�
     i.concerns.skipsMeals = false;
     i.schedule = [];
     const d = status(i, 'meal');
-    expect(d.status).toBe('no_gap');
+    expect(d.status).toBe('covered_or_no_gap_detected');
     expect(d.matches).toHaveLength(0);
   });
   it('아무 걱정도 입력하지 않고 일정도 없으면 확인 필요 0개(가족 부담 포함)', () => {
@@ -89,7 +89,7 @@ describe('CASE 3 — 식사 문제 없음 → 식사 공백을 임의로 만들�
     i.schedule = [{ id: 'a', day: 0, start: '09:00', end: '12:00', type: 'visit_care' }];
     // 월 점심(11:30–13:30)과 30분 겹침 → 1끼 덮임
     expect(computeFacts(i)['meal.uncoveredSlots']).toBe(20);
-    expect(status(i, 'meal').status).toBe('check');
+    expect(status(i, 'meal').status).toBe('needs_confirmation');
   });
 });
 
@@ -113,16 +113,16 @@ describe('CASE 4 — 방문요양 일정 → Care Map 구간에 정확히 표시
 describe('대표 시나리오(82세 독거)', () => {
   it('야간 안전·낙상 안전·복약·병원 이동·응급대응이 확인 필요, 식사는 공백으로 만들지 않음', () => {
     const r = evaluate(demoInput());
-    const checks = r.domains.filter((d) => d.status === 'check').map((d) => d.domain.id).sort();
+    const checks = r.domains.filter((d) => d.status === 'needs_confirmation').map((d) => d.domain.id).sort();
     expect(checks).toEqual(['emergency', 'fall', 'hospital', 'meds', 'night'].sort());
-    expect(r.domains.find((d) => d.domain.id === 'meal')!.status).toBe('no_gap');
+    expect(r.domains.find((d) => d.domain.id === 'meal')!.status).toBe('covered_or_no_gap_detected');
     expect(r.facts['time.dayAloneHours']).toBe(48);
     expect(r.facts['hospital.unescortedList']).toBe('화 10:00–12:00');
   });
-  it('병원 진료에 병원동행을 추가하면 병원 이동은 돌봄 확인됨', () => {
+  it('병원 진료에 병원동행을 추가하면 병원 이동은 입력으로 확인됨', () => {
     const i = demoInput();
     i.schedule.push({ id: 'esc', day: 1, start: '09:30', end: '12:30', type: 'hospital_escort' });
-    expect(status(i, 'hospital').status).toBe('covered');
+    expect(status(i, 'hospital').status).toBe('confirmed_by_input');
   });
 });
 
@@ -170,5 +170,42 @@ describe('가족 공유 카드', () => {
     expect(t).not.toContain('딸 방문');
     expect(t).toContain('월  09–12 방문요양');
     expect(t).toContain('확인 필요: ');
+  });
+});
+
+describe('MASTER SPEC 추가 요구', () => {
+  it('모든 규칙에 ID·버전·조건·영역·상태·설명·서비스 범주·근거가 있고, 서비스 범주는 안내 목록에 존재', async () => {
+    const catalog = (await import('../data/services_catalog.json')).default;
+    const ids = new Set(catalog.services.map((s) => s.id));
+    const seen = new Set<string>();
+    for (const r of rules.rules as any[]) {
+      expect(seen.has(r.id), r.id).toBe(false);
+      seen.add(r.id);
+      for (const k of ['id', 'version', 'when', 'domain', 'result', 'reason', 'serviceCategories', 'rationale']) expect(r[k], `${r.id}.${k}`).toBeTruthy();
+      expect(['needs_confirmation', 'confirmed_by_input']).toContain(r.result);
+      for (const c of r.serviceCategories) expect(ids.has(c), c).toBe(true);
+    }
+  });
+  it('참고 정보(고혈압·당뇨 등)는 판단 결과를 바꾸지 않는다', () => {
+    const a = demoInput();
+    const b = demoInput();
+    b.profile.contextNote = '';
+    const sa = evaluate(a).domains.map((d) => [d.domain.id, d.status, d.reason]);
+    const sb = evaluate(b).domains.map((d) => [d.domain.id, d.status, d.reason]);
+    expect(sa).toEqual(sb);
+  });
+  it('공유 카드: 가족 할 일은 포함, 참고 정보는 제외', () => {
+    const i = demoInput();
+    i.familyTasks = [{ id: 't1', text: '응급안전안심서비스 문의', who: '딸' }];
+    const t = shareText(buildShareCard(i, evaluate(i), { includeAgeBand: false, includeRegion: false }));
+    expect(t).toContain('응급안전안심서비스 문의 — 딸');
+    expect(t).not.toContain('고혈압');
+    expect(t).not.toContain('당뇨');
+  });
+  it('데모 사례는 정적 값이 아니라 입력에서 계산된다(일정을 바꾸면 결과가 바뀜)', () => {
+    const i = demoInput();
+    expect(evaluate(i).domains.find((d) => d.domain.id === 'meds')!.status).toBe('needs_confirmation');
+    i.schedule.push(...[0, 1, 2, 3, 4, 5, 6].map((d) => ({ id: `mc${d}`, day: d as never, start: '08:00', end: '08:30', type: 'med_check' as const })));
+    expect(evaluate(i).domains.find((d) => d.domain.id === 'meds')!.status).toBe('confirmed_by_input');
   });
 });

@@ -18,9 +18,11 @@ test('예시로 체험하기 → 즉시 결과 · 이유 보기 · Care Map', as
 
   await expect(page.getByTestId('result-summary')).toContainText('확인이 필요한 돌봄 영역 5개가 발견되었습니다');
   await expect(page.getByTestId('result-summary')).not.toContainText('위험');
-  await expect(page.getByTestId('gap-night')).toHaveAttribute('data-status', 'check');
-  await expect(page.getByTestId('gap-meds')).toHaveAttribute('data-status', 'check');
-  await expect(page.getByTestId('gap-meal')).toHaveAttribute('data-status', 'no_gap');
+  await expect(page.getByTestId('gap-night')).toHaveAttribute('data-status', 'needs_confirmation');
+  await expect(page.getByTestId('gap-meds')).toHaveAttribute('data-status', 'needs_confirmation');
+  await expect(page.getByTestId('gap-meal')).toHaveAttribute('data-status', 'covered_or_no_gap_detected');
+  await expect(page.getByTestId('context-note')).toContainText('판단 규칙에 사용하지 않음');
+  await expect(page.getByTestId('gap-meds')).toContainText('현재 관련 일정');
   await noHorizontalScroll(page);
 
   // 왜 이 결과가 나왔나요?
@@ -107,31 +109,41 @@ test('온보딩 4단계 · 일정 추가/삭제 · 결과 반영', async ({ page
   // 삭제
   await page.getByRole('button', { name: /목요일 10:00부터 13:00까지 방문요양 일정 삭제/ }).click();
   await expect(page.locator('.entry')).toHaveCount(8);
+  // 수정: 월 10–13 방문요양 → 화 14–17 방문요양
+  await page.getByRole('button', { name: /월요일 10:00부터 13:00까지 방문요양 일정 수정/ }).click();
+  await expect(page.getByRole('heading', { name: '일정 수정' })).toBeVisible();
+  await page.getByRole('button', { name: '화요일', exact: true }).click();
+  await page.getByLabel('시작').selectOption('14:00');
+  await page.getByLabel('끝').selectOption('17:00');
+  await page.getByRole('button', { name: '수정 저장' }).click();
+  await expect(page.locator('.entry')).toHaveCount(8);
+  await expect(page.locator('.entry', { hasText: '14:00–17:00' })).toContainText('화');
+  await expect(page.locator('.entry', { hasText: '10:00–13:00' })).toHaveCount(0);
   await noHorizontalScroll(page);
 
   await page.getByRole('button', { name: 'Care Map 만들기' }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Care Map');
   await page.getByRole('link', { name: '확인 필요한 영역 보기' }).click();
-  await expect(page.getByTestId('gap-meds')).toHaveAttribute('data-status', 'covered');
-  await expect(page.getByTestId('gap-night')).toHaveAttribute('data-status', 'check');
-  await expect(page.getByTestId('gap-meal')).toHaveAttribute('data-status', 'no_gap');
+  await expect(page.getByTestId('gap-meds')).toHaveAttribute('data-status', 'confirmed_by_input');
+  await expect(page.getByTestId('gap-night')).toHaveAttribute('data-status', 'needs_confirmation');
+  await expect(page.getByTestId('gap-meal')).toHaveAttribute('data-status', 'covered_or_no_gap_detected');
 
   // 새로고침해도 유지(localStorage)
   await page.reload();
-  await expect(page.getByTestId('gap-meds')).toHaveAttribute('data-status', 'covered');
+  await expect(page.getByTestId('gap-meds')).toHaveAttribute('data-status', 'confirmed_by_input');
 });
 
 test('관련 서비스 · 실제 공공데이터 기관 목록 · 미연결 데이터는 0/가짜로 표시하지 않음', async ({ page }) => {
   await page.getByRole('button', { name: '예시로 체험하기' }).click();
   await page.getByTestId('gap-night').getByRole('link', { name: '관련 서비스 찾아보기' }).click();
   await expect(page.getByTestId('svc-emergency_safety')).toBeVisible();
-  await expect(page.getByTestId('dataset-ltc')).toContainText('공공데이터 · 실제 데이터');
+  await expect(page.getByTestId('dataset-ltc')).toContainText('VERIFIED PUBLIC DATA');
   await expect(page.getByTestId('dataset-ltc')).toContainText('국민건강보험공단_장기요양기관 평가결과');
   await expect(page.locator('.inst-card').first()).toBeVisible();
 
   await page.goto('./#/services/cognition');
   const dem = page.getByTestId('dataset-dementia');
-  await expect(dem).toContainText('서비스 정보 출처 확인 중');
+  await expect(dem).toContainText('SOURCE NOT YET CONNECTED');
   await expect(dem.getByTestId('dataset-dementia-missing')).toBeVisible();
   await expect(dem).not.toContainText(/\b0곳|\b0개/);
   await expect(dem.locator('.inst-card')).toHaveCount(0);
@@ -148,6 +160,13 @@ test('가족 공유 카드: 민감정보 기본 제외 · 글 생성', async ({ 
   expect(t).toContain('확인 필요: ');
   expect(t).not.toContain('82');
   expect(t).not.toContain('수원');
+  await page.getByRole('button', { name: '＋ 응급대응 확인' }).click();
+  await page.getByLabel('할 일', { exact: true }).fill('주민센터에 응급안전안심서비스 문의');
+  await page.getByLabel(/담당/).fill('딸');
+  await page.getByRole('button', { name: '할 일 추가' }).click();
+  await expect(page.getByTestId('share-card')).toContainText('주민센터에 응급안전안심서비스 문의 — 딸');
+  expect(await text.textContent()).toContain('가족 할 일:');
+  expect(await text.textContent()).not.toContain('고혈압');
   await page.getByLabel('시·군·구').check();
   expect(await text.textContent()).toContain('수원시 장안구');
   const dl = page.waitForEvent('download');

@@ -65,16 +65,26 @@ export interface Profile {
   sigungu: string;
   livesAlone: boolean | null;
   ltcGrade: LtcGrade;
+  /** 참고 정보(예: 고혈압·당뇨). 규칙 판단에 쓰지 않고 공유 카드에도 넣지 않는다 */
+  contextNote: string;
+}
+
+export interface FamilyTask {
+  id: string;
+  text: string;
+  /** 담당(이름 대신 '딸', '첫째' 같은 역할) */
+  who: string;
 }
 
 export interface CareInput {
   profile: Profile;
+  familyTasks: FamilyTask[];
   concerns: Record<ConcernId, boolean>;
   servicesInUse: ServiceTypeId[];
   schedule: ScheduleEntry[];
 }
 
-export type GapStatus = 'check' | 'covered' | 'no_gap';
+export type GapStatus = 'needs_confirmation' | 'confirmed_by_input' | 'covered_or_no_gap_detected';
 
 export type FactValue = number | boolean | string;
 export type Facts = Record<string, FactValue>;
@@ -91,8 +101,11 @@ export interface Rule {
   id: string;
   domain: string;
   when: When;
-  result: 'check' | 'covered';
+  result: 'needs_confirmation' | 'confirmed_by_input';
   reason: string;
+  version: string;
+  serviceCategories: string[];
+  rationale: string;
 }
 
 export interface DomainDef {
@@ -104,6 +117,8 @@ export interface DomainDef {
   services: string[];
   ltcTypes: string[];
   noGapText: string;
+  /** 결과 카드에 '현재 관련 일정'으로 보여줄 기능. presence=사람이 함께하는 일정, family=가족 일정 */
+  relatedFunctions: string[];
 }
 
 export interface ConditionTrace {
@@ -119,7 +134,7 @@ export interface ConditionTrace {
 
 export interface RuleMatch {
   ruleId: string;
-  result: 'check' | 'covered';
+  result: 'needs_confirmation' | 'confirmed_by_input';
   reason: string;
   conditions: ConditionTrace[];
 }

@@ -1,24 +1,25 @@
 import { useMemo, useState } from 'react';
 import { useStore } from '../state/store';
 import { evaluate, traceDomain } from '../engine/evaluate';
+import { relatedSchedule } from '../engine/facts';
 import type { DomainResult, Facts, GapStatus } from '../types';
 import NeedsInput from './NeedsInput';
 
 export const STATUS_TEXT: Record<GapStatus, string> = {
-  check: '확인 필요',
-  covered: '돌봄 확인됨',
-  no_gap: '현재 입력상 공백 발견 안 됨',
+  needs_confirmation: '확인 필요',
+  confirmed_by_input: '입력으로 확인됨',
+  covered_or_no_gap_detected: '현재 입력상 공백 발견 안 됨',
 };
-export const STATUS_MARK: Record<GapStatus, string> = { check: '!', covered: '✓', no_gap: '–' };
+export const STATUS_MARK: Record<GapStatus, string> = { needs_confirmation: '!', confirmed_by_input: '✓', covered_or_no_gap_detected: '–' };
 
 export default function Results() {
   const { input, hasData } = useStore();
   const result = useMemo(() => evaluate(input), [input]);
   if (!hasData) return <NeedsInput />;
 
-  const checks = result.domains.filter((d) => d.status === 'check');
-  const covered = result.domains.filter((d) => d.status === 'covered');
-  const noGap = result.domains.filter((d) => d.status === 'no_gap');
+  const checks = result.domains.filter((d) => d.status === 'needs_confirmation');
+  const covered = result.domains.filter((d) => d.status === 'confirmed_by_input');
+  const noGap = result.domains.filter((d) => d.status === 'covered_or_no_gap_detected');
 
   return (
     <div className="page narrow">
@@ -34,8 +35,14 @@ export default function Results() {
         11개 돌봄 영역을 정해진 규칙으로 점검한 결과입니다. 진단이나 위험 예측이 아니며, 가족이 함께 확인해 볼 지점을 정리한 것입니다.
       </p>
 
+      {input.profile.contextNote && (
+        <p className="context-note" data-testid="context-note">
+          <b>참고 정보</b> {input.profile.contextNote} <small className="muted">— 판단 규칙에 사용하지 않음</small>
+        </p>
+      )}
+
       <div className="status-legend" aria-label="상태 표시 안내">
-        {(['check', 'covered', 'no_gap'] as GapStatus[]).map((s) => (
+        {(['needs_confirmation', 'confirmed_by_input', 'covered_or_no_gap_detected'] as GapStatus[]).map((s) => (
           <span key={s} className={`badge badge-${s}`}><span className="badge-mark" aria-hidden="true">{STATUS_MARK[s]}</span>{STATUS_TEXT[s]}</span>
         ))}
       </div>
@@ -43,13 +50,13 @@ export default function Results() {
       {checks.length > 0 && (
         <section aria-labelledby="sec-check">
           <h2 id="sec-check" className="group-title">확인 필요 <span className="count">{checks.length}</span></h2>
-          {checks.map((d) => <GapCard key={d.domain.id} d={d} facts={result.facts} />)}
+          {checks.map((d) => <GapCard key={d.domain.id} d={d} facts={result.facts} related={relatedSchedule(input, d.domain.relatedFunctions)} />)}
         </section>
       )}
       {covered.length > 0 && (
         <section aria-labelledby="sec-covered">
-          <h2 id="sec-covered" className="group-title">돌봄 확인됨 <span className="count">{covered.length}</span></h2>
-          {covered.map((d) => <GapCard key={d.domain.id} d={d} facts={result.facts} />)}
+          <h2 id="sec-covered" className="group-title">입력으로 확인됨 <span className="count">{covered.length}</span></h2>
+          {covered.map((d) => <GapCard key={d.domain.id} d={d} facts={result.facts} related={relatedSchedule(input, d.domain.relatedFunctions)} />)}
         </section>
       )}
       <section aria-labelledby="sec-nogap">
@@ -66,7 +73,7 @@ export default function Results() {
   );
 }
 
-function GapCard({ d, facts, compact }: { d: DomainResult; facts: Facts; compact?: boolean }) {
+function GapCard({ d, facts, compact, related }: { d: DomainResult; facts: Facts; compact?: boolean; related?: string[] }) {
   const [open, setOpen] = useState(false);
   const id = `why-${d.domain.id}`;
   return (
@@ -85,7 +92,14 @@ function GapCard({ d, facts, compact }: { d: DomainResult; facts: Facts; compact
         </ul>
       )}
 
-      {d.status === 'check' && (
+      {related && (
+        <p className="gap-related">
+          <span className="gap-related-label">현재 관련 일정</span>
+          {related.length ? related.join(' · ') : '등록된 관련 일정 없음'}
+        </p>
+      )}
+
+      {d.status === 'needs_confirmation' && (
         <div className="gap-check">
           <h4>가족이 확인해 볼 것</h4>
           <ul>{d.domain.checkItems.map((c) => <li key={c}>{c}</li>)}</ul>
@@ -96,7 +110,7 @@ function GapCard({ d, facts, compact }: { d: DomainResult; facts: Facts; compact
         <button type="button" className="btn btn-soft btn-sm" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
           {open ? '설명 닫기' : '왜 이 결과가 나왔나요?'}
         </button>
-        {d.status !== 'no_gap' && (
+        {d.status !== 'covered_or_no_gap_detected' && (
           <a className="btn btn-outline btn-sm" href={`#/services/${d.domain.id}`}>관련 서비스 찾아보기</a>
         )}
       </div>
@@ -107,7 +121,7 @@ function GapCard({ d, facts, compact }: { d: DomainResult; facts: Facts; compact
 
 function Explain({ d, facts, id }: { d: DomainResult; facts: Facts; id: string }) {
   const traces = traceDomain(d.domain.id, facts);
-  const matched = traces.filter((t) => t.matched && t.rule.result === (d.status === 'covered' ? 'covered' : 'check'));
+  const matched = traces.filter((t) => t.matched && t.rule.result === (d.status === 'confirmed_by_input' ? 'confirmed_by_input' : 'needs_confirmation'));
   return (
     <div className="explain" id={id} data-testid={`explain-${d.domain.id}`}>
       <p className="explain-intro">{d.domain.description}</p>
@@ -125,15 +139,16 @@ function Explain({ d, facts, id }: { d: DomainResult; facts: Facts; id: string }
             <li className="flow-arrow" aria-hidden="true">↓</li>
             <li className="flow-step">
               <span className="flow-label">적용 규칙</span>
-              <p><code>{t.rule.id}</code> — 아래 조건을 모두 만족하면 “{t.rule.result === 'check' ? '확인 필요' : '돌봄 확인됨'}”</p>
+              <p><code>{t.rule.id}</code> <small className="muted">v{t.rule.version}</small> — 아래 조건을 모두 만족하면 “{t.rule.result === 'needs_confirmation' ? '확인 필요' : '입력으로 확인됨'}”</p>
               <ul className="rule-conds">
                 {t.conditions.filter((c) => c.passed).map((c, i) => <li key={i}>{c.label} {c.expectedText}</li>)}
               </ul>
+              <p className="muted small">근거: {t.rule.rationale}</p>
             </li>
             <li className="flow-arrow" aria-hidden="true">↓</li>
             <li className="flow-step flow-result">
               <span className="flow-label">결과</span>
-              <p><b>{d.domain.label} {t.rule.result === 'check' ? '확인 필요' : '돌봄 확인됨'}</b></p>
+              <p><b>{d.domain.label} {t.rule.result === 'needs_confirmation' ? '확인 필요' : '입력으로 확인됨'}</b></p>
             </li>
           </ol>
         ))

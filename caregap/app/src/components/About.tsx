@@ -23,7 +23,7 @@ export default function About() {
         <tbody>
           <tr>
             <td>장기요양기관 목록(기관명·급여종류·시군구·평가등급)</td>
-            <td><span className="tag tag-real">실제 공공데이터</span></td>
+            <td><span className="tag tag-real">VERIFIED PUBLIC DATA</span></td>
             <td>
               <a href="https://www.data.go.kr/data/15104801/fileData.do" target="_blank" rel="noopener noreferrer">국민건강보험공단_장기요양기관 평가결과</a> (공공데이터포털)
               {meta && <> · {meta.count.toLocaleString()}곳 · {meta.evalYears?.join('~')}년 평가 · 정리일 {meta.builtAt}</>}
@@ -32,12 +32,12 @@ export default function About() {
           </tr>
           <tr>
             <td>치매안심센터 · 보건소</td>
-            <td><span className="tag tag-pending">미연결(출처 확인 중)</span></td>
+            <td><span className="tag tag-pending">SOURCE NOT YET CONNECTED</span></td>
             <td>공공데이터포털 표준데이터 수집 스크립트 준비됨(인증키 필요). 연결 전까지 공식 누리집으로 안내합니다.</td>
           </tr>
           <tr>
             <td>공공·지역 돌봄서비스 안내</td>
-            <td><span className="tag tag-curated">안내 정보(수기 정리)</span></td>
+            <td><span className="tag tag-curated">안내 정보(수기 정리·공식 링크)</span></td>
             <td>각 기관 공식 누리집 링크 · 확인일 {catalog.checkedAt}. API 데이터가 아닙니다.</td>
           </tr>
           <tr>
@@ -50,7 +50,7 @@ export default function About() {
 
       <h2>Care Gap은 어떻게 찾나요?</h2>
       <p>
-        AI가 판단하지 않습니다. 공개된 규칙 파일(<code>care_gap_rules.json</code>, 버전 {rules.version})에 정해진 {rules.rules.length}개 규칙이
+        AI가 판단하지 않습니다. 공개된 규칙 파일(<code>care_gap_rules.json</code>, 버전 {rules.version})에 정해진 {rules.rules.length}개 규칙(각 규칙에 ID·버전·근거 기재)이
         ‘입력한 걱정’과 ‘등록된 일정으로 계산한 시간’을 조합해 11개 영역을 점검합니다. 결과마다 “왜 이 결과가 나왔나요?”에서 근거를 볼 수 있습니다.
       </p>
       <p>

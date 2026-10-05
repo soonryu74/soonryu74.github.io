@@ -14,7 +14,7 @@ export default function Services({ domainId }: { domainId?: string }) {
   const domain = DOMAINS.find((d) => d.id === domainId);
   const dr = result.domains.find((d) => d.domain.id === domainId);
 
-  const ids = domain ? domain.services : [...new Set(result.domains.filter((d) => d.status === 'check').flatMap((d) => d.domain.services))];
+  const ids = domain ? domain.services : [...new Set(result.domains.filter((d) => d.status === 'needs_confirmation').flatMap((d) => d.domain.services))];
   const services = ids.map((id) => SVC.get(id)).filter(Boolean) as Svc[];
   const ltcTypes = domain ? domain.ltcTypes : [];
   const showDementia = !domain || domain.id === 'cognition';
@@ -35,8 +35,8 @@ export default function Services({ domainId }: { domainId?: string }) {
             {result.domains.map((d) => (
               <a key={d.domain.id} className={`chip chip-${d.status}`} href={`#/services/${d.domain.id}`}>
                 <span aria-hidden="true">{d.domain.icon}</span> {d.domain.label}
-                {d.status === 'check' && <span className="sr-only"> (확인 필요)</span>}
-                {d.status === 'check' && <span className="chip-mark" aria-hidden="true">!</span>}
+                {d.status === 'needs_confirmation' && <span className="sr-only"> (확인 필요)</span>}
+                {d.status === 'needs_confirmation' && <span className="chip-mark" aria-hidden="true">!</span>}
               </a>
             ))}
           </div>
@@ -44,7 +44,8 @@ export default function Services({ domainId }: { domainId?: string }) {
       )}
 
       <div className="notice">
-        <b>안내 정보입니다.</b> 아래 서비스는 공식 누리집으로 연결하는 안내이며, CareGap이 서비스를 처방하거나 대상 여부를 판정하지 않습니다.
+        <span className="tag tag-curated">안내 정보(수기 정리·공식 링크)</span><br />
+        <b>공공데이터 API가 아닌 안내 정보입니다.</b> 아래 서비스는 공식 누리집으로 연결하는 안내이며, CareGap이 서비스를 처방하거나 대상 여부를 판정하지 않습니다.
         대상·비용·운영 여부는 지역과 시점에 따라 다르니 <b>반드시 공식 창구에서 확인</b>하세요. (안내 정보 확인일 {catalog.checkedAt})
       </div>
 

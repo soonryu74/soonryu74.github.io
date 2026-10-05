@@ -74,16 +74,16 @@ export function evaluateFacts(facts: Facts): EvaluationResult {
         matches.push({ ruleId: rule.id, result: rule.result, reason: fillTemplate(rule.reason, facts), conditions: shown });
       }
     }
-    const checks = matches.filter((m) => m.result === 'check');
-    if (checks.length) return { domain, status: 'check', reason: checks[0].reason, matches: checks };
-    const covered = matches.filter((m) => m.result === 'covered');
-    if (covered.length) return { domain, status: 'covered', reason: covered[0].reason, matches: covered };
-    return { domain, status: 'no_gap', reason: domain.noGapText, matches: [] };
+    const checks = matches.filter((m) => m.result === 'needs_confirmation');
+    if (checks.length) return { domain, status: 'needs_confirmation', reason: checks[0].reason, matches: checks };
+    const covered = matches.filter((m) => m.result === 'confirmed_by_input');
+    if (covered.length) return { domain, status: 'confirmed_by_input', reason: covered[0].reason, matches: covered };
+    return { domain, status: 'covered_or_no_gap_detected', reason: domain.noGapText, matches: [] };
   });
   // 확인 필요 → 확인됨 → 공백 발견 안 됨 순서(같은 상태 안에서는 정의 순서 유지)
-  const order = { check: 0, covered: 1, no_gap: 2 } as const;
+  const order = { needs_confirmation: 0, confirmed_by_input: 1, covered_or_no_gap_detected: 2 } as const;
   domains.sort((a, b) => order[a.status] - order[b.status]);
-  return { facts, domains, checkCount: domains.filter((d) => d.status === 'check').length };
+  return { facts, domains, checkCount: domains.filter((d) => d.status === 'needs_confirmation').length };
 }
 
 export function evaluate(input: CareInput): EvaluationResult {

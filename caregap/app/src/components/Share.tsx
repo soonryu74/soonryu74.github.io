@@ -5,7 +5,9 @@ import { buildShareCard, shareText, type ShareCard } from '../engine/share';
 import NeedsInput from './NeedsInput';
 
 export default function Share() {
-  const { input, hasData } = useStore();
+  const { input, hasData, setInput } = useStore();
+  const [taskText, setTaskText] = useState('');
+  const [taskWho, setTaskWho] = useState('');
   const result = useMemo(() => evaluate(input), [input]);
   const [opt, setOpt] = useState({ includeAgeBand: false, includeRegion: false });
   const [status, setStatus] = useState('');
@@ -14,6 +16,16 @@ export default function Share() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   if (!hasData) return <NeedsInput />;
+
+  const checks = result.domains.filter((d) => d.status === 'needs_confirmation');
+  const addTask = (text: string, who = '') => {
+    const t = text.trim();
+    if (!t) return;
+    setInput((prev) => ({ ...prev, familyTasks: [...prev.familyTasks, { id: `t${Date.now().toString(36)}${prev.familyTasks.length}`, text: t.slice(0, 60), who: who.trim().slice(0, 12) }] }));
+    setTaskText('');
+    setTaskWho('');
+  };
+  const removeTask = (id: string) => setInput((prev) => ({ ...prev, familyTasks: prev.familyTasks.filter((x) => x.id !== id) }));
 
   const copy = async () => {
     try {
@@ -54,6 +66,41 @@ export default function Share() {
         <label className="check-inline"><input type="checkbox" checked={opt.includeRegion} onChange={(e) => setOpt({ ...opt, includeRegion: e.target.checked })} /> 시·군·구</label>
       </fieldset>
 
+      <section className="card task-card" aria-labelledby="task-title">
+        <h2 id="task-title" className="h3">가족이 함께 정한 할 일</h2>
+        <p className="field-help">이름 대신 ‘딸’, ‘첫째’처럼 역할로 적어 주세요. 할 일은 공유 카드에 들어갑니다.</p>
+        {checks.length > 0 && (
+          <div className="chip-row">
+            {checks.map((d) => (
+              <button key={d.domain.id} type="button" className="chip" onClick={() => addTask(`${d.domain.label}: ${d.domain.checkItems[0]} 확인`)}>
+                ＋ {d.domain.label} 확인
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="task-form">
+          <div className="field">
+            <label htmlFor="task-text">할 일</label>
+            <input id="task-text" type="text" maxLength={60} value={taskText} onChange={(e) => setTaskText(e.target.value)} placeholder="예: 주민센터에 응급안전안심서비스 문의" />
+          </div>
+          <div className="field">
+            <label htmlFor="task-who">담당 <span className="opt">선택</span></label>
+            <input id="task-who" type="text" maxLength={12} value={taskWho} onChange={(e) => setTaskWho(e.target.value)} placeholder="예: 딸" />
+          </div>
+          <button type="button" className="btn btn-outline" onClick={() => addTask(taskText, taskWho)} disabled={!taskText.trim()}>할 일 추가</button>
+        </div>
+        {input.familyTasks.length > 0 && (
+          <ul className="task-list">
+            {input.familyTasks.map((t) => (
+              <li key={t.id}>
+                <span>{t.text}{t.who && <b> — {t.who}</b>}</span>
+                <button type="button" className="btn-icon" onClick={() => removeTask(t.id)} aria-label={`할 일 삭제: ${t.text}`}>삭제</button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <figure className="share-card" data-testid="share-card" aria-label="공유 카드 미리보기">
         <div className="sc-head">
           <span className="sc-brand">CareGap</span>
@@ -72,6 +119,12 @@ export default function Share() {
           <b>확인 필요</b>
           <p>{card.checks.length ? card.checks.join(' · ') : '없음 (현재 입력 기준)'}</p>
         </div>
+        {card.tasks.length > 0 && (
+          <div className="sc-tasks">
+            <b>가족 할 일</b>
+            <ul>{card.tasks.map((t) => <li key={t}>{t}</li>)}</ul>
+          </div>
+        )}
         <figcaption className="sc-foot">{card.footer}</figcaption>
       </figure>
 
@@ -116,7 +169,10 @@ export function drawCard(c: HTMLCanvasElement, card: ShareCard) {
   const dayLines = card.days.map((d) => wrap(ctx, d.items.length ? d.items.join(' · ') : '등록된 돌봄 없음', W - P * 2 - 90));
   ctx.font = `600 38px ${font}`;
   const checkLines = wrap(ctx, card.checks.length ? card.checks.join(' · ') : '없음 (현재 입력 기준)', W - P * 2 - 48);
-  const H = 300 + dayLines.reduce((a, l) => a + l.length * 48 + 28, 0) + 140 + checkLines.length * 52 + 120;
+  ctx.font = `500 32px ${font}`;
+  const taskLines = card.tasks.flatMap((t) => wrap(ctx, `· ${t}`, W - P * 2));
+  const taskH = taskLines.length ? 80 + taskLines.length * 46 : 0;
+  const H = 300 + dayLines.reduce((a, l) => a + l.length * 48 + 28, 0) + 140 + checkLines.length * 52 + taskH + 120;
   c.width = W;
   c.height = H;
   ctx.fillStyle = '#F7F3EC';
@@ -154,6 +210,15 @@ export function drawCard(c: HTMLCanvasElement, card: ShareCard) {
   ctx.fillStyle = '#1E2B28';
   ctx.font = `600 38px ${font}`;
   checkLines.forEach((l, j) => ctx.fillText(l, P + 24, y + 104 + j * 52));
+  y += boxH + 30;
+  if (taskLines.length) {
+    ctx.fillStyle = '#2F5D57';
+    ctx.font = `800 32px ${font}`;
+    ctx.fillText('가족 할 일', P, y + 40);
+    ctx.fillStyle = '#1E2B28';
+    ctx.font = `500 32px ${font}`;
+    taskLines.forEach((l, j) => ctx.fillText(l, P, y + 92 + j * 46));
+  }
   ctx.fillStyle = '#8A7F72';
   ctx.font = `500 26px ${font}`;
   ctx.fillText(card.footer, P, H - 50);

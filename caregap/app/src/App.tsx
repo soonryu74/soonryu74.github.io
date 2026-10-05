@@ -49,7 +49,7 @@ export default function App() {
         </div>
         {isDemo && route.name !== 'home' && (
           <div className="demo-banner" role="note">
-            <b>예시 체험 중</b> · 가상의 82세 어르신 사례입니다. 실제 정보로 바꾸려면 <a href="#/start/1">입력 화면</a>에서 수정하세요.
+            <span className="tag tag-demo">DEMO DATA</span> <b>예시 체험 중</b> · 가상의 82세 어르신 사례입니다. 실제 정보로 바꾸려면 <a href="#/start/1">입력 화면</a>에서 수정하세요.
           </div>
         )}
       </header>

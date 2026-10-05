@@ -18,10 +18,11 @@ export function emptyConcerns(): Record<ConcernId, boolean> {
 
 export function emptyInput(): CareInput {
   return {
-    profile: { age: null, sex: 'unspecified', sido: '', sigungu: '', livesAlone: null, ltcGrade: 'unknown' },
+    profile: { age: null, sex: 'unspecified', sido: '', sigungu: '', livesAlone: null, ltcGrade: 'unknown', contextNote: '' },
     concerns: emptyConcerns(),
     servicesInUse: [],
     schedule: [],
+    familyTasks: [],
   };
 }
 
@@ -38,9 +39,10 @@ export function demoInput(): CareInput {
   concerns.frequentHospital = true;
   concerns.nightAlone = true;
   return {
-    profile: { age: 82, sex: 'female', sido: '경기도', sigungu: '수원시 장안구', livesAlone: true, ltcGrade: '3' },
+    profile: { age: 82, sex: 'female', sido: '경기도', sigungu: '수원시 장안구', livesAlone: true, ltcGrade: '3', contextNote: '고혈압·당뇨로 정기 진료 중(참고용)' },
     concerns,
     servicesInUse: ['visit_care', 'family'],
+    familyTasks: [],
     schedule: [
       { id: 'demo-1', day: 0, start: '09:00', end: '12:00', type: 'visit_care' },
       { id: 'demo-2', day: 2, start: '09:00', end: '12:00', type: 'visit_care' },

@@ -37,9 +37,9 @@ export default function NearbyInstitutions(props: {
 }
 
 function StatusTag({ d }: { d: DatasetResult }) {
-  if (d.status === 'connected') return <span className="tag tag-real">공공데이터 · 실제 데이터</span>;
-  if (d.status === 'error') return <span className="tag tag-warn">불러오기 실패</span>;
-  return <span className="tag tag-pending">서비스 정보 출처 확인 중</span>;
+  if (d.status === 'connected') return <span className="tag tag-real" data-label="verified">VERIFIED PUBLIC DATA · 공공데이터 파일</span>;
+  if (d.status === 'error') return <span className="tag tag-warn">불러오기 실패 · 대체 데이터 없음</span>;
+  return <span className="tag tag-pending" data-label="not-connected">SOURCE NOT YET CONNECTED · 서비스 정보 출처 확인 중</span>;
 }
 
 function SourceLine({ d }: { d: DatasetResult }) {

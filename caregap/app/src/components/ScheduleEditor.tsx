@@ -20,6 +20,36 @@ export default function ScheduleEditor() {
   const [type, setType] = useState<ServiceTypeId>(firstType);
   const [note, setNote] = useState('');
   const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const startEdit = (e: ScheduleEntry) => {
+    setEditingId(e.id);
+    setDays(new Set([e.day]));
+    setStart(e.start);
+    setEnd(e.end);
+    setType(e.type);
+    setNote(e.note ?? '');
+    setMsg(null);
+    document.getElementById('add-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  const cancelEdit = () => {
+    setEditingId(null);
+    setDays(new Set());
+    setNote('');
+  };
+
+  const saveEdit = () => {
+    if (days.size !== 1) return setMsg({ kind: 'err', text: '수정할 때는 요일을 하나만 골라 주세요.' });
+    const err = validateEntry({ start, end });
+    if (err) return setMsg({ kind: 'err', text: err });
+    const day = [...days][0];
+    setInput((prev) => ({
+      ...prev,
+      schedule: prev.schedule.map((x) => (x.id === editingId ? { ...x, day, start, end, type, note: note.trim() || undefined } : x)),
+    }));
+    setMsg({ kind: 'ok', text: `${DAYS[day]} ${start}–${end} ${serviceType(type).short} 일정으로 수정했습니다.` });
+    cancelEdit();
+  };
 
   const add = () => {
     if (days.size === 0) return setMsg({ kind: 'err', text: '요일을 하나 이상 골라 주세요.' });
@@ -39,6 +69,7 @@ export default function ScheduleEditor() {
   const remove = (id: string) => {
     const e = input.schedule.find((x) => x.id === id);
     setInput((prev) => ({ ...prev, schedule: prev.schedule.filter((x) => x.id !== id) }));
+    if (editingId === id) cancelEdit();
     if (e) setMsg({ kind: 'ok', text: `${DAYS[e.day]} ${e.start}–${e.end} ${serviceType(e.type).short} 일정을 삭제했습니다.` });
   };
 
@@ -52,7 +83,7 @@ export default function ScheduleEditor() {
       </p>
 
       <section className="card add-card" aria-labelledby="add-title">
-        <h2 id="add-title" className="h3">일정 추가</h2>
+        <h2 id="add-title" className="h3">{editingId ? '일정 수정' : '일정 추가'}</h2>
         <fieldset className="field">
           <legend>요일</legend>
           <div className="day-pick">
@@ -62,6 +93,7 @@ export default function ScheduleEditor() {
                 <button
                   key={d} type="button" className={`day-chip ${on ? 'on' : ''}`} aria-pressed={on} aria-label={DAYS_LONG[i]}
                   onClick={() => {
+                    if (editingId) return setDays(new Set([i as DayIndex]));
                     const n = new Set(days);
                     if (on) n.delete(i as DayIndex); else n.add(i as DayIndex);
                     setDays(n);
@@ -98,7 +130,14 @@ export default function ScheduleEditor() {
           <label htmlFor="t-note">메모 <span className="opt">선택</span></label>
           <input id="t-note" type="text" maxLength={30} value={note} onChange={(e) => setNote(e.target.value)} placeholder="예: 딸 방문, 정기 진료 (이름은 적지 마세요)" />
         </div>
-        <button type="button" className="btn btn-primary btn-block" onClick={add}>＋ 일정 추가</button>
+        {editingId ? (
+          <div className="row-gap">
+            <button type="button" className="btn btn-primary" onClick={saveEdit}>수정 저장</button>
+            <button type="button" className="btn btn-ghost" onClick={cancelEdit}>취소</button>
+          </div>
+        ) : (
+          <button type="button" className="btn btn-primary btn-block" onClick={add}>＋ 일정 추가</button>
+        )}
         <div aria-live="polite">{msg && <p className={msg.kind === 'ok' ? 'ok-text' : 'error-text'}>{msg.text}</p>}</div>
       </section>
 
@@ -123,9 +162,14 @@ export default function ScheduleEditor() {
                     <span className="entry-day">{DAYS[e.day]}</span>
                     <span className="entry-time">{e.start}–{e.end}{toMinutes(e.end)! <= toMinutes(e.start)! ? ' (+1일)' : ''}</span>
                     <span className="entry-type"><span aria-hidden="true">{t.icon}</span> {t.short}{e.note ? ` · ${e.note}` : ''}</span>
+                    <div className="entry-btns">
+                    <button type="button" className="btn-icon btn-edit" onClick={() => startEdit(e)} aria-label={`${DAYS_LONG[e.day]} ${e.start}부터 ${e.end}까지 ${t.short} 일정 수정`}>
+                      수정
+                    </button>
                     <button type="button" className="btn-icon" onClick={() => remove(e.id)} aria-label={`${DAYS_LONG[e.day]} ${e.start}부터 ${e.end}까지 ${t.short} 일정 삭제`}>
                       삭제
                     </button>
+                    </div>
                   </li>
                 );
               })}
