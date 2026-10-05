@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- {{TITLE}} = 책 제목, {{CH}} = 챕터 표기, {{DESC}} = 한 줄 소개 -->
+<title>{{TITLE}} | {{BRAND}}</title>
+<meta name="description" content="{{DESC}}">
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&display=swap');
+:root{--bg:#eceae5;--paper:#fdfcfa;--ink:#15130f;--ink2:#33302a;--muted:#6b6560;--dim:#a39c93;
+ --line:#e6e1d9;--line2:#d6d0c6;--wash:#f5f2ec;--amber:#c8811f;--code:#16161f;--codeink:#e9e9f2}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);overflow:hidden;
+ font-family:'Noto Serif KR',serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.eyebrow,.foot,.kick,table,pre,.note,.src,.chnum,.tn,.tt b,.tp,.by,.vnote,.tocnote,.cta,.vqr b,.vqr span{font-family:'Pretendard',-apple-system,sans-serif}
+#prog{position:fixed;top:0;left:0;height:2px;background:var(--ink);z-index:70;width:0;transition:width .2s}
+#deck{position:relative;width:100vw;height:100vh}
+.s{position:absolute;inset:0;display:none;justify-content:center;align-items:center;padding:20px 16px 70px}
+.s.on{display:flex;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* 세로 종이 (A4 비율 0.707) */
+.paper{position:relative;background:var(--paper);width:min(calc((100vh - 90px) * 0.707), 94vw);
+ height:min(calc(100vh - 90px), 1000px);box-shadow:0 8px 34px rgba(0,0,0,.13);border:1px solid var(--line2);
+ display:flex;flex-direction:column;overflow:hidden}
+.s.alt .paper{background:var(--wash)}
+.pin{flex:1;overflow-y:auto;padding:clamp(28px,4.4vh,52px) clamp(24px,4vh,48px) 12px;
+ display:flex;flex-direction:column;justify-content:center}
+.s.cover .pin,.s.open .pin{text-align:center;align-items:center}
+.s.cover .pin>*,.s.open .pin>*{max-width:100%}
+.eyebrow{display:block;font-size:10.5px;font-weight:900;letter-spacing:1.8px;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
+h1{font-size:clamp(26px,4.6vh,40px);font-weight:900;letter-spacing:-1.8px;line-height:1.1;margin:0;font-family:'Pretendard',sans-serif}
+h2{font-size:clamp(21px,3.5vh,31px);font-weight:900;letter-spacing:-1.2px;line-height:1.2;margin:0}
+h3{font-size:clamp(18px,2.9vh,25px);font-weight:900;letter-spacing:-.8px;line-height:1.25;margin:0 0 16px}
+.prose p{font-size:clamp(13.5px,1.94vh,16px);line-height:1.95;margin:0 0 15px;color:var(--ink2);word-break:keep-all}
+.prose p b{color:var(--ink);font-weight:700}.prose p:last-child{margin-bottom:0}
+.fml{font-family:ui-monospace,Menlo,monospace;font-size:clamp(15px,2.4vh,21px)!important;text-align:center;
+ letter-spacing:.6px;padding:15px 10px;background:#fff;border:1px solid var(--line);margin:16px 0!important;color:var(--ink)!important}
+blockquote{margin:16px 0;padding:14px 18px;border-left:3px solid var(--amber);background:#fff;
+ font-size:clamp(14px,2.1vh,17px);line-height:1.8;color:var(--ink);font-weight:500}
+pre{background:var(--code);color:var(--codeink);padding:12px 14px;overflow-x:auto;font-size:11.5px;line-height:1.75;
+ font-family:ui-monospace,Menlo,monospace;margin:14px 0}
+.note{margin:16px 0 0;padding:12px 15px;background:#fff;border-left:3px solid var(--ink);
+ font-size:12.5px;line-height:1.75;color:var(--ink2);font-weight:600}
+.src{font-size:11px!important;color:var(--dim)!important;line-height:1.7!important;margin-top:12px!important}
+.tw{overflow-x:auto;margin:16px 0;border:1px solid var(--line)}
+.tw.gl td:first-child,.tw.gl th:first-child{white-space:nowrap;width:1%;vertical-align:top}
+table{border-collapse:collapse;width:100%;background:#fff}
+th,td{padding:9px 12px;text-align:left;font-size:12.5px;border-bottom:1px solid var(--line)}
+th{background:var(--wash);font-size:10.5px;font-weight:900;letter-spacing:.5px;color:var(--ink2);white-space:nowrap}
+td{color:var(--muted)}td b{color:var(--ink)}tr:last-child td{border-bottom:none}
+.fig{margin:0 0 16px}
+.fig img{width:100%;max-width:100%;height:auto;display:block;margin:0 auto;border:1px solid var(--line)}
+.covfig img,.openfig img{border:none;max-width:min(300px,62%)}
+.covfig{margin:14px auto 18px}.openfig{margin:20px auto 0;max-width:78%}
+.kick{display:inline-block;background:var(--ink);color:#fff;font-size:10.5px;font-weight:900;letter-spacing:1.4px;padding:5px 12px}
+.rule{width:48px;height:3px;background:var(--ink);margin:16px auto}
+.rule.mid{margin:20px auto 0}
+.lede{font-size:clamp(13.5px,1.95vh,16px);line-height:1.85;color:var(--muted);margin:0 auto;max-width:32em}
+.by{font-size:11px;color:var(--dim);margin:20px 0 0;line-height:1.75}
+.tochead{margin-bottom:18px}
+.toclist{border-top:1px solid var(--line2)}
+.tocrow{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:center;padding:11px 4px;
+ border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none}
+.tocrow:hover{background:#fff}
+.toclist.dense{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}
+.toclist.dense .tocrow{padding:7px 2px;gap:8px;grid-template-columns:20px 1fr}
+.toclist.dense .tt b{font-size:13px}
+.toclist.dense .tt i{font-size:11px}
+.tn{font-size:12px;font-weight:900;color:var(--dim)}
+.tt b{display:block;font-size:14.5px;font-weight:800;color:var(--ink);letter-spacing:-.3px}
+.tt i{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:2px}
+.tocnote{font-size:11.5px;color:var(--muted);line-height:1.8;margin-top:18px}
+.tocnote a{color:var(--ink)}
+.chnum{display:inline-block;width:44px;height:44px;line-height:44px;background:var(--ink);color:#fff;font-weight:900;font-size:18px;margin-bottom:16px}
+.chsub{font-size:clamp(13px,1.9vh,15.5px);color:var(--muted);margin:10px 0 0}
+.vidpg{text-align:center}
+.vnote{font-size:11.5px;color:var(--muted);margin:0 0 16px}
+.vwrap{border:1px solid var(--line2);background:#000}
+.vframe{position:relative;border:0;padding:0;margin:0;cursor:pointer;background:#000;display:block;width:100%;aspect-ratio:16/9;overflow:hidden}
+.vframe img{width:100%;height:100%;object-fit:cover;opacity:.85}
+.vframe:hover img{opacity:1}
+.vplay{position:absolute;inset:0;margin:auto;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:0 4px 16px rgba(0,0,0,.35)}
+.vplay:after{content:"";position:absolute;inset:0;margin:auto;width:0;height:0;border-left:16px solid var(--ink);
+ border-top:10px solid transparent;border-bottom:10px solid transparent;transform:translateX(3px)}
+.vwrap iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
+.vqr{display:flex;align-items:center;gap:14px;margin-top:14px;padding:12px 14px;background:#fff;border:1px solid var(--line);text-align:left}
+.vqr svg,.vqr img.qr{width:74px;height:74px;flex:none}
+.vqr b{display:block;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--ink)}
+.vqr span{display:block;font-size:11px;color:var(--dim);margin-top:4px}
+.cta{display:inline-block;margin-top:20px;background:var(--ink);color:#fff;text-decoration:none;
+ padding:12px 24px;font-size:13.5px;font-weight:800}
+.foot{flex:none;display:flex;justify-content:space-between;align-items:center;
+ padding:9px clamp(24px,4vh,48px);font-size:9.5px;letter-spacing:.7px;color:var(--dim);border-top:1px solid var(--line)}
+.brand{font-weight:800}
+#bar{position:fixed;left:0;right:0;bottom:16px;display:flex;justify-content:center;align-items:center;gap:10px;z-index:60;pointer-events:none}
+#bar > *{pointer-events:auto}
+#bar button{width:36px;height:36px;border:1px solid var(--line2);background:var(--paper);cursor:pointer;font-size:16px;
+ color:var(--ink);line-height:1;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#bar button:hover{background:var(--ink);color:#fff}
+#bar select{font-family:'Pretendard',sans-serif;font-size:11.5px;padding:7px 10px;border:1px solid var(--line2);
+ background:var(--paper);color:var(--ink2);max-width:210px;border-radius:18px}
+#dl{position:fixed;top:12px;right:14px;z-index:60;font-family:'Pretendard',sans-serif;font-size:11px;font-weight:800;
+ color:var(--ink2);text-decoration:none;background:var(--paper);border:1px solid var(--line2);padding:6px 11px;border-radius:15px}
+#dl:hover{background:var(--ink);color:#fff}
+@media(max-width:760px){
+  .s{padding:8px 8px 62px}
+  .paper{width:100%;height:calc(100vh - 70px);box-shadow:none}
+  .pin{padding:24px 20px 10px}
+  .covfig img,.openfig img{max-width:56%}
+}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  body{overflow:visible;background:#fff}
+  #bar,#prog,#dl,.vframe{display:none!important}
+  #deck{height:auto}
+  .s{position:static!important;display:block!important;padding:0;page-break-after:always}
+  .paper{width:210mm;height:297mm;box-shadow:none;border:none}
+  .s.alt .paper{background:var(--wash)!important}
+  .pin{padding:20mm 18mm 6mm}
+  .prose p{font-size:11pt;line-height:1.85;margin-bottom:11px}
+  h1{font-size:30pt}h2{font-size:22pt}h3{font-size:16pt}
+  .fig img{max-height:66mm;width:auto}
+  .covfig img,.openfig img{max-width:74mm;max-height:none}
+  .vqr svg,.vqr img.qr{width:92px;height:92px}
+  .foot{padding:6mm 18mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<!-- PDF 버튼: 완성 후 브라우저 '인쇄 → PDF로 저장'으로 만든 파일 경로를 넣는다 (없으면 이 줄 삭제) -->
+<a id="dl" href="{{PDF_PATH}}" download="{{PDF_NAME}}.pdf">PDF</a>
+
+<div id="deck">
+
+  <!-- ===== 1) 표지 (cover) ===== -->
+  <section class="s cover on" data-label="표지"><div class="paper"><div class="pin">
+    <span class="kick">{{BOOK}} · {{CH}}</span>
+    <div class="fig covfig"><img src="img/cover.webp" alt="" loading="lazy"></div>
+    <h1>{{CHAPTER_TITLE}}</h1>
+    <div class="rule"></div>
+    <p class="lede">{{ONE_LINE_PROMISE}}</p>
+    <p class="by">{{AUTHOR}} 지음 · {{BRAND}}</p>
+  </div><div class="foot"><span class="brand">{{BRAND}}</span><span class="pnum"></span></div></div></section>
+
+  <!-- ===== 2) 차례 (toc, alt 배경) — tocrow data-go = 챕터오프너의 chnum 값 ===== -->
+  <section class="s alt" data-label="차례"><div class="paper"><div class="pin">
+    <span class="eyebrow">차례</span><h2 class="tochead">이 챕터에서</h2>
+    <div class="toclist">
+      <a class="tocrow" data-go="1"><span class="tn">1</span><span class="tt"><b>{{SEC1_TITLE}}</b><i>{{SEC1_SUB}}</i></span></a>
+      <a class="tocrow" data-go="2"><span class="tn">2</span><span class="tt"><b>{{SEC2_TITLE}}</b><i>{{SEC2_SUB}}</i></span></a>
+    </div>
+    <p class="tocnote">각 절 끝에 <b>강의 영상</b>이 붙어 있습니다. QR 을 찍으면 휴대폰에서도 열립니다.</p>
+  </div><div class="foot"><span class="brand">{{BRAND}}</span><span class="pnum"></span></div></div></section>
+
+  <!-- ===== 3) 챕터 오프너 (open) — chnum 은 차례의 data-go 와 일치 ===== -->
+  <section class="s open" data-label="{{SEC1_TITLE}}"><div class="paper"><div class="pin">
+    <div class="chopen"><span class="chnum">1</span><h2>{{SEC1_TITLE}}</h2>
+    <p class="chsub">{{SEC1_SUB}}</p><div class="rule mid"></div></div>
+  </div><div class="foot"><span class="brand">{{BRAND}}</span><span class="pnum"></span></div></div></section>
+
+  <!-- ===== 4) 본문 (글만) ===== -->
+  <section class="s " data-label="{{SEC1_TITLE}}"><div class="paper"><div class="pin">
+    <h3>{{PAGE_HEADING}}</h3>
+    <div class="prose">
+      <p>{{문단 1 — 한 페이지엔 한 가지 생각만. 짧게.}} <b>중요한 말은 굵게.</b></p>
+      <p>{{문단 2}}</p>
+      <p>{{문단 3}}</p>
+    </div>
+  </div><div class="foot"><span class="brand">{{BRAND}}</span><span class="pnum"></span></div></div></section>
+
+  <!-- ===== 5) 본문 (그림 + 글) ===== -->
+  <section class="s " data-label="{{SEC1_TITLE}}"><div class="paper"><div class="pin">
+    <h3>{{PAGE_HEADING}}</h3>
+    <div class="fig "><img src="img/figure1.webp" alt="" loading="lazy"></div>
+    <div class="prose">
+      <p>{{그림을 설명하거나 그림이 받쳐 주는 핵심 문단.}}</p>
+      <p>{{문단}}</p>
+    </div>
+    <p class="note">{{한 줄 핵심 — 이 페이지에서 꼭 남길 한 문장.}}</p>
+  </div><div class="foot"><span class="brand">{{BRAND}}</span><span class="pnum"></span></div></div></section>
+
+  <!-- ===== 6) 영상 페이지 (alt 배경) — data-v = 유튜브 ID ===== -->
+  <section class="s alt" data-label="{{SEC1_TITLE}}"><div class="paper"><div class="pin">
+    <div class="vidpg">
+      <span class="eyebrow">영상으로 보기</span><h3>{{VIDEO_TITLE}}</h3>
+      <p class="vnote">약 {{길이}}</p>
+      <div class="vwrap" data-v="{{YOUTUBE_ID}}">
+        <button class="vframe" aria-label="영상 재생"><img loading="lazy" src="https://i.ytimg.com/vi/{{YOUTUBE_ID}}/hqdefault.jpg" alt=""><span class="vplay"></span></button>
+      </div>
+      <!-- QR 은 선택: finalize.py 가 있으면 자동 생성, 없으면 이 .vqr 블록 삭제 가능 -->
+      <div class="vqr"><img class="qr" alt="QR" src="data:image/svg+xml;utf8,{{QR_SVG}}"><div><b>youtu.be/{{YOUTUBE_ID}}</b><span>휴대폰 카메라로 QR 을 찍으세요</span></div></div>
+    </div>
+  </div><div class="foot"><span class="brand">{{BRAND}}</span><span class="pnum"></span></div></div></section>
+
+  <!-- ===== 7) 맺음 / 다음 챕터 안내 (open) ===== -->
+  <section class="s open" data-label="맺음"><div class="paper"><div class="pin">
+    <div class="chopen"><span class="kick">다음 챕터</span><h2 style="margin-top:14px">{{NEXT_CHAPTER_TITLE}}</h2>
+    <p class="chsub">{{NEXT_CHAPTER_TEASER}}</p>
+    <a class="cta" href="{{NEXT_URL}}">이어서 읽기 →</a></div>
+  </div><div class="foot"><span class="brand">{{BRAND}}</span><span class="pnum"></span></div></div></section>
+
+</div>
+
+<!-- 고정 네비게이션: 이전 / 쪽 이동 / 다음 (jump 옵션은 finalize.py 가 채움) -->
+<div id="bar">
+  <button id="prev" aria-label="이전 쪽">‹</button>
+  <select id="jump" aria-label="쪽 이동"></select>
+  <button id="next" aria-label="다음 쪽">›</button>
+</div>
+
+<script>
+/* 넘기는 책 엔진: 한 번에 한 .s 만 보인다. 좌우키/스와이프/차례/점프 지원. */
+function start(){
+  var S=[].slice.call(document.querySelectorAll('.s')),i=0,N=S.length;
+  if(!N) return;
+  var prog=document.getElementById('prog'),jump=document.getElementById('jump'),KEY='ebook_page';
+  // 쪽 번호 + 점프 메뉴 자동 채우기 (finalize.py 를 안 썼어도 동작)
+  S.forEach(function(s,n){
+    var pn=s.querySelector('.pnum'); if(pn) pn.textContent=(n+1)+' / '+N;
+    var o=document.createElement('option'); o.value=n; o.textContent=s.dataset.label||('쪽 '+(n+1)); jump.appendChild(o);
+  });
+  function go(n){
+    n=Math.max(0,Math.min(N-1,n));
+    S[i].classList.remove('on'); i=n; S[i].classList.add('on');
+    var pin=S[i].querySelector('.pin'); if(pin) pin.scrollTop=0;
+    prog.style.width=((i+1)/N*100)+'%'; jump.value=i;
+    try{history.replaceState(null,'','#p'+(i+1));}catch(e){}
+    try{localStorage.setItem(KEY,i);}catch(e){}
+  }
+  document.getElementById('prev').onclick=function(){go(i-1)};
+  document.getElementById('next').onclick=function(){go(i+1)};
+  jump.onchange=function(){go(+jump.value)};
+  addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(i+1);}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1);}
+    if(e.key==='Home')go(0); if(e.key==='End')go(N-1);
+  });
+  var x0=null;
+  addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+  addEventListener('touchend',function(e){
+    if(x0===null)return; var dx=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(dx)>55) go(i+(dx<0?1:-1));
+  },{passive:true});
+  // 차례 → 해당 챕터 오프너로 점프
+  document.querySelectorAll('.tocrow').forEach(function(r){
+    r.onclick=function(){
+      var t=S.findIndex(function(s){return s.classList.contains('open')&&s.querySelector('.chnum')&&s.querySelector('.chnum').textContent===r.dataset.go;});
+      if(t>=0) go(t);
+    };
+  });
+  // 영상: 클릭하면 그 자리에서 유튜브 재생
+  document.querySelectorAll('.vframe').forEach(function(b){
+    b.onclick=function(){
+      var w=b.closest('.vwrap'),f=document.createElement('iframe');
+      f.src='https://www.youtube.com/embed/'+w.dataset.v+'?autoplay=1&rel=0';
+      f.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
+      f.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+      f.allowFullscreen=true; f.title='강의 영상'; b.replaceWith(f);
+    };
+  });
+  var m=location.hash.match(/^#p(\d+)$/),saved=null;
+  try{saved=localStorage.getItem(KEY);}catch(e){}
+  go(m?(+m[1]-1):(saved!==null?+saved:0));
+}
+start();
+</script>
+</body>
+</html>
