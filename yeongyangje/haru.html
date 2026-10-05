@@ -105,8 +105,8 @@
   function ref(id, sex, age, pg){
     var n=byId[id], r=null, unit, name, kind, ul, add=null, ulb='', note='';
     if(n && isAdult(age)){ r=n[sex][age]; unit=n.unit; name=n.name; kind=r.kind; ul=r.ul; add=pg?n[pg]:null; if(pg&&n[pg+'_ul']!==undefined) ul=n[pg+'_ul']; ulb=n.ulBasis||''; note=n.note||''; return {name:name, unit:unit, kind:kind, rni:r.rni, add:add, ul:ul, ulb:ulb, note:note}; }
-    if(KC && KC.nutrients && KC.nutrients[id] && !isAdult(age)){ var c=KC.nutrients[id]; r=(c[sex]||{})[age]||{}; return {name:(n&&n.name)||c.name||id, unit:c.unit||(n&&n.unit), kind:r.kind||c.kind, rni:r.rni, add:(pg&&c[pg]!=null)?c[pg]:((pg&&n&&n[pg]!=null)?n[pg]:null), ul:r.ul, ulb:c.ulBasis||(n&&n.ulBasis)||'', note:c.note||''}; }
-    if(NAME[id]){ var m=KC&&KC.macro&&KC.macro[id]; var mr=m&&m[sex]&&m[sex][age]; return {name:NAME[id], unit:(m&&m.unit)||UNIT[id], kind:(mr&&mr.kind)||(m&&m.kind)||'', rni:mr?mr.rni:null, add:(pg&&m&&m[pg]!=null)?m[pg]:null, ul:mr?mr.ul:null, ulb:'', note:(m&&m.note)||''}; }
+    if(KC && KC.nutrients && KC.nutrients[id] && !isAdult(age)){ var c=KC.nutrients[id]; r=(c[sex]||{})[age]||{}; return {name:(n&&n.name)||c.name||id, unit:(n&&n.unit)||c.unit, kind:r.kind||c.kind, rni:r.rni, add:(pg&&n&&n[pg])?n[pg]:null, ul:r.ul, ulb:(n&&n.ulBasis)||'', note:r.note||''}; }
+    if(NAME[id]){ var m=KC&&KC.macro&&KC.macro[id]; var mr=m&&m[sex]&&m[sex][age]; return {name:NAME[id], unit:(m&&m.unit)||UNIT[id], kind:(mr&&mr.kind)||(m&&m.kind)||'', rni:mr?mr.rni:null, add:(pg&&m&&m[pg])?m[pg]:null, ul:null, ulb:'', note:(mr&&mr.note)||(m&&m.note)||''}; }
     return {name:(n&&n.name)||id, unit:n?n.unit:'', kind:'', rni:null, ul:null, add:null, ulb:'', note:''};
   }
   var KIND={RNI:'권장섭취량', AI:'충분섭취량', EER:'필요추정량'};
@@ -139,9 +139,9 @@
     /* 그룹 */
     $('groups').innerHTML=H.groups.map(function(g){
       var rows=g.nuts.map(function(id){
-        var r=ref(id,sex,age,pg); if(r.rni==null && r.ul==null && !NAME[id] && !byId[id]) return '';
-        var val = r.rni==null ? '<b>—</b>' : '<b>'+fmt(r.rni)+(r.add?' + '+fmt(r.add):'')+'</b> '+esc(r.unit||'');
-        var ul = r.ul==null ? '<span class="small">미설정</span>' : '<b>'+fmt(r.ul)+'</b> '+esc(r.unit||'')+(r.ulb?'<span class="small"> ('+esc(r.ulb)+')</span>':'');
+        var r=ref(id,sex,age,pg); r.name=String(r.name).split(' — ')[0]; if(r.rni==null && r.ul==null && !NAME[id] && !byId[id]) return '';
+        var val = r.rni==null ? '<b>—</b>' : '<b>'+fmt(r.rni)+(r.add&&typeof r.add==='number'?' + '+fmt(r.add):'')+'</b> '+esc(r.unit||'')+(r.add&&typeof r.add!=='number'?'<span class="small"> ('+esc(r.add)+')</span>':'');
+        var ul = r.ul==null ? '<span class="small">미설정</span>' : '<b>'+fmt(r.ul)+'</b> '+esc(String(r.unit||'').replace(/ \(.*\)$/,''))+(r.ulb?'<span class="small"> ('+esc(r.ulb)+')</span>':'');
         var fl = (flag[id]||[]).map(function(i){ var it=cond.items[i]; return '<a class="cflag" href="#ci-'+i+'"><span class="dir '+esc(it.dir)+'">'+esc(DIR[it.dir]||it.dir)+'</span><span class="small">'+esc(it.target)+'</span></a>'; }).join('');
         return '<div class="hr-row"><div class="nm-cell"><span class="nm">'+esc(r.name)+'</span>'+(r.note?'<span class="lab">'+esc(r.note)+'</span>':'')+fl+'</div>'+
           '<div class="val"><span class="lab">하루 기준'+(r.kind?' · '+esc(KIND[r.kind]||r.kind):'')+(r.add?' (임신·수유 부가량 포함)':'')+'</span>'+val+'</div>'+
