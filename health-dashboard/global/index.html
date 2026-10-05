@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Global Health Equity Radar — prototype</title>
+<meta name="description" content="Global Health Equity Radar (prototype): from global signals to local action. Country profiles, priority signals, explanations and possible action areas built from World Bank World Development Indicators.">
+<link rel="canonical" href="https://health-profile.kr/global/">
+<meta property="og:title" content="Global Health Equity Radar — prototype">
+<meta property="og:description" content="Screening → Priority → Why → Action, using standardized open data for 217 economies. Exploratory, for screening and prioritization — not causal inference.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://health-profile.kr/global/">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2214%22 fill=%22none%22 stroke=%22%231f66c1%22 stroke-width=%223%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%225%22 fill=%22%231f66c1%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/global.css">
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#country">Skip to country profile</a>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="./">Global Health Equity Radar <span>· prototype</span></a>
+    <nav aria-label="Global prototype">
+      <a href="#search">Countries</a><a href="#compare">Compare</a><a href="#map">Map</a><a href="methodology/">Methodology</a><a href="../" title="Korea implementation (health-profile.kr)">Korea ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <p class="kicker">Global Health Equity Radar · prototype v0.1</p>
+    <h1>From global signals to local action.</h1>
+    <p class="lead">Health Equity Radar transforms fragmented public-health data into interpretable signals for priority setting. Korea is the initial implementation; this Global prototype tests whether the same decision framework — <b>screening → priority → why → action</b> — can operate across countries using standardized open data.</p>
+    <ol class="flow" aria-label="Workflow">
+      <li><b>Screening</b><span>latest available values, each with its year</span></li>
+      <li><b>Priority</b><span>position against income-group peers</span></li>
+      <li><b>Why</b><span>the comparison behind each signal</span></li>
+      <li><b>Action</b><span>possible areas to review — not prescriptions</span></li>
+    </ol>
+    <div id="cov" class="cov" aria-live="polite"><p class="muted">Loading data…</p></div>
+  </div>
+</section>
+
+<section id="search" class="band">
+  <div class="wrap">
+    <h2>Choose a country or economy</h2>
+    <div class="search">
+      <label for="q" class="sr">Search countries</label>
+      <input id="q" type="search" placeholder="Search, e.g. Viet Nam, Japan, Uganda" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list">
+      <ul id="q-list" role="listbox" hidden></ul>
+    </div>
+    <div class="quick" aria-label="Examples">
+      <button type="button" data-quick="KOR">Republic of Korea</button><button type="button" data-quick="VNM">Viet Nam</button><button type="button" data-quick="JPN">Japan</button><button type="button" data-quick="USA">United States</button><button type="button" data-quick="AUS">Australia</button><button type="button" data-quick="UGA">Uganda</button><button type="button" data-quick="TLS">Timor-Leste</button>
+    </div>
+  </div>
+</section>
+
+<div id="country" class="wrap country" tabindex="-1"></div>
+
+<section id="compare" class="band">
+  <div class="wrap">
+    <p class="kicker">Cross-country comparison</p>
+    <h2>Compare two countries</h2>
+    <div id="compare-body"></div>
+  </div>
+</section>
+
+<section id="map" class="band">
+  <div class="wrap">
+    <p class="kicker">Indicator Map</p>
+    <h2>Where does each country stand?</h2>
+    <label class="mapsel">Indicator <select id="map-ind"></select></label>
+    <div id="map-body" class="mapbox"></div>
+  </div>
+</section>
+
+<section id="about" class="band">
+  <div class="wrap narrow">
+    <p class="kicker">About this prototype</p>
+    <h2>What it is — and is not</h2>
+    <p>Health Equity Radar was first built for the Republic of Korea (<a href="../">health-profile.kr</a>), using official sub-national statistics to show which local health problems to review first and why. This Global prototype applies the same idea between countries: each indicator is compared with countries in the same World Bank income group, signals are explained with the numbers behind them, and possible action areas are listed from a transparent rule file.</p>
+    <ul class="plain">
+      <li><b>Exploratory.</b> Signals and the score are for screening and prioritization, not clinical or causal inference, and they do not predict disease or policy effects.</li>
+      <li><b>Latest available, not current.</b> Every value carries its own observation year; years differ by indicator and country.</li>
+      <li><b>Open data only.</b> World Bank World Development Indicators; no restricted microdata.</li>
+      <li><b>Transparent rules.</b> Directions, thresholds and weights are written in the code and on the <a href="methodology/">methodology page</a>.</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p><b>Data:</b> World Bank, World Development Indicators (WDI), extract dated 2026-10-01 — licensed CC BY 4.0 per the WDI series metadata. Underlying sources include UN Population Division, WHO, UNICEF, UN IGME, ILO, UNESCO UIS, the WHO/UNICEF JMP and the World Bank; indicator-level sources are shown with each indicator and on the <a href="methodology/">methodology page</a>.</p>
+    <p><b>Map:</b> Natural Earth (public domain). Boundaries and names do not imply any judgement on the legal status of any territory.</p>
+    <p class="muted">Health Equity Radar — Global prototype v0.1. Not affiliated with or endorsed by the World Bank or any data provider. Planning &amp; development: Jieum Works · <a href="../">Korea implementation</a></p>
+  </div>
+</footer>
+</body>
+</html>

@@ -47,7 +47,7 @@ export default function RadarAbout({ onGo, sel }) {
           <a className="themebtn" href="#methodology" onClick={(e) => { e.preventDefault(); document.getElementById("methodology")?.scrollIntoView({ behavior: "smooth" }); }}>How priorities are identified</a>
           <UsabilityFeedback lang="en" context="radar overview" />
         </div>
-        <p className="muted">Current deployment: <b>Republic of Korea only</b>. The site interface is in Korean; this page and the Health Equity Priority card (English mode) are in English. Live at <a href={CONTACT.site} target="_blank" rel="noreferrer">{CONTACT.site.replace(/^https?:\/\//, "")}</a>.</p>
+        <p className="muted">Current deployment: <b>Republic of Korea only</b>. The site interface is in Korean; this page and the Health Equity Priority card (English mode) are in English. Live at <a href={CONTACT.site} target="_blank" rel="noreferrer">{CONTACT.site.replace(/^https?:\/\//, "")}</a>. A separate <a href="global/">Global prototype</a> applies the same screening → priority → why → action framework between countries using World Bank open data.</p>
       </section>
 
       <div className="grid2">

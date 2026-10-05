@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methodology — Global Health Equity Radar</title>
+<meta name="description" content="Data source, indicator selection, latest-available years, missing data, comparison method, priority signals, exploratory score, limitations and licence of the Global Health Equity Radar prototype.">
+<link rel="canonical" href="https://health-profile.kr/global/methodology/">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2214%22 fill=%22none%22 stroke=%22%231f66c1%22 stroke-width=%223%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%225%22 fill=%22%231f66c1%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<header class="top"><div class="wrap top-in"><a class="brand" href="../">Global Health Equity Radar <span>· prototype</span></a><nav aria-label="Pages"><a href="../">Countries</a><a href="../#compare">Compare</a><a href="../#map">Map</a><a href="../../">Korea</a></nav></div></header>
+<main class="wrap narrow" style="padding:30px 16px 40px">
+<p class="kicker">Methodology</p>
+<h1>How the Global Radar works</h1>
+<p class="lead">Every number on the Global Radar comes from one open file and a few explicit rules. This page lists all of them, so any result can be checked by hand.</p>
+
+<h2 id="source">1. Data source</h2>
+<p>World Bank, <b>World Development Indicators (WDI)</b>, extract dated 2026-10-01 (file <code>health_equity_wdi_latest.json</code>): for each country/economy and indicator, the <b>latest available observation</b>. The site reads a compact copy built from that file by <code>scripts/build_global.py</code>; the build checks that every value and year matches the original (<span id="m-records">…</span> records, 0 mismatches). WDI compiles data from original producers (UN Population Division, WHO, UNICEF, UN IGME, ILO, UNESCO UIS, WHO/UNICEF JMP, the World Bank and others); each indicator's source is listed below. Restricted microdata (for example WHO STEPS) are <b>not</b> used.</p>
+
+<h2 id="selection">2. Indicator selection</h2>
+<p><span id="m-ind">…</span> indicators were selected for a health-equity lens and screened by licence (section 9). They are grouped into five product domains. "Disease burden" contains a single indicator (tuberculosis incidence); the prototype does not measure the overall burden of noncommunicable diseases.</p>
+<div class="tblwrap"><table class="itbl" id="m-table"><thead><tr><th scope="col">Indicator</th><th scope="col">Domain</th><th scope="col">Direction</th><th scope="col">Countries</th><th scope="col">Latest years</th><th scope="col">Source</th></tr></thead><tbody></tbody></table></div>
+<p class="small muted">Direction is defined explicitly in the code (no automatic guessing): <b>Higher = concern</b> — under-5, infant and maternal mortality, tuberculosis incidence, out-of-pocket share of health spending, poverty headcount, unemployment. <b>Lower = concern</b> — life expectancy, UHC service coverage index, physicians, nurses and midwives, measles immunization, secondary school enrolment, safely managed drinking water and sanitation, access to electricity. <b>Context</b> (shown, never judged) — GDP per capita, health expenditure (% of GDP and per capita), crude birth and death rates (driven by age structure), fertility, population aged 65+, population, urban share.</p>
+
+<h2 id="year">3. Latest available year</h2>
+<p>Values are the latest available observation, not the current situation. Years differ by indicator and by country (for example, life expectancy is 2024 for all economies, while physician density ranges from 1980 to 2023). The interface shows the year next to every value with a freshness label: <b>Recent</b> 2024–2025 · <b>Moderate</b> 2022–2023 · <b>Caution</b> 2015–2021 · <b>Old</b> before 2015 — old values are displayed but excluded from comparisons, signals and the score. The data are not real-time.</p>
+
+<h2 id="missing">4. Missing data</h2>
+<p>A missing value is shown as <b>"No data available"</b>. It is never replaced by zero, imputed or estimated. A country without a value is left out of that indicator's comparison group; the score uses only indicators the country has (with a minimum, section 7).</p>
+
+<h2 id="comparison">5. Comparison method</h2>
+<p>For each indicator, a country's value is placed among <b>countries in the same World Bank income group</b> (as recorded in the dataset) that have a value from 2015 or later. If fewer than 10 such peers exist, all countries are used instead. A worldwide position is always shown as well.</p>
+<p>The position is a <b>mid-rank percentile</b>: the share of peers with a more favourable value, counting ties as half. It is computed with the same function as the Korean Health Equity Radar (<code>unfavorablePercentile</code> in <code>app/src/lib/equity/calculateGap.js</code>). Peers' values may come from different years; the range of their years is shown with each explanation.</p>
+
+<h2 id="signal">6. Priority Signal calculation</h2>
+<ul class="plain">
+<li><b>Priority signal</b>: less favourable than at least <b>80%</b> of income-group peers with data.</li>
+<li><b>Watch</b>: less favourable than 60–80%.</li>
+<li>Only the 16 directional indicators can signal; context indicators never do.</li>
+<li><b>Exclusion:</b> poverty headcount at $3.00/day is shown but not used for signals or the score for <b>high-income</b> economies — values are near zero for most of them, so small differences are not meaningful at this line.</li>
+<li>Up to three signals are highlighted, preferring different domains. "Why this signal?" shows the value, year, peer count, peer median, peer years and the worldwide position.</li>
+<li><b>Possible action areas</b> come from a rule file (<code>global/data/action_rules.json</code>) and appear only for highlighted priority signals. They are areas to review, not prescriptions, and their suitability depends on national context.</li>
+</ul>
+
+<h2 id="score">7. Exploratory Priority Score</h2>
+<p>The score is the <b>simple average</b> of a country's relative positions (0–1) across the directional indicators it has, multiplied by 100. All indicators have equal weight; domain sub-scores are averages within each domain. No score is shown if fewer than 8 directional indicators are available. 0 means the most favourable positions among peers and 100 the least favourable.</p>
+<p class="note">This exploratory score is intended for screening and prioritization, not clinical or causal inference. It is not an official index, does not rank health systems, and is sensitive to which indicators are available for each country.</p>
+
+<h2 id="limits">8. Limitations</h2>
+<ul class="plain">
+<li>National averages hide differences within countries — the core of health equity. This prototype screens between countries; within-country analysis (as in the Korean implementation) needs sub-national data.</li>
+<li>Many values are modelled estimates (for example maternal mortality, under-5 mortality, unemployment) with their own uncertainty, which WDI does not carry in this extract.</li>
+<li>Comparing different observation years can mislead; years are always displayed and old values excluded, but moderate/caution years remain in comparisons.</li>
+<li>Income-group peers are a pragmatic comparison set, not a judgement that countries should have similar results.</li>
+<li>Poverty at $3.00/day is near zero in most high-income economies; it is therefore excluded from their signals and score (section 6).</li>
+<li>Relative position is not a cause, a prediction or an evaluation of any policy or government.</li>
+</ul>
+
+<h2 id="license">9. License and attribution</h2>
+<p>Indicators included in this prototype were screened using the licence metadata supplied in the World Development Indicators dataset: only series whose WDI <code>License Type</code> field reads <b>CC BY-4.0</b> were kept (all <span id="m-ind2">…</span>). This is a metadata-level screening, not a legal opinion, and it does not mean that every World Bank dataset may be used without conditions; third-party terms of original producers may apply. Source and attribution information are retained for each indicator (table above and in the country view).</p>
+<p>Attribution: <i>World Bank, World Development Indicators (CC BY 4.0), with original sources as listed per indicator.</i> Map boundaries: Natural Earth (public domain); boundaries do not imply any judgement on the legal status of any territory. This prototype is not affiliated with or endorsed by the World Bank, WHO or any data provider.</p>
+
+<h2 id="about">About Health Equity Radar</h2>
+<p>Health Equity Radar transforms fragmented public-health data into interpretable signals for priority setting. The Republic of Korea is the initial implementation (<a href="../../">health-profile.kr</a>, sub-national official statistics). The Global prototype tests whether the same decision framework can operate across countries using standardized open data.</p>
+</main>
+<footer class="foot"><div class="wrap"><p class="muted">Global Health Equity Radar — prototype v0.1 · <a href="../">Back to the Global Radar</a></p></div></footer>
+<script type="module">
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const [inds, data] = await Promise.all([fetch("../data/indicators.json").then((r) => r.json()), fetch("../data/wdi_compact.json").then((r) => r.json())]);
+const D = ["Health outcomes", "Disease burden", "Health system", "Social determinants", "Demographic context"];
+const dir = { higher_is_concern: "Higher = concern", lower_is_concern: "Lower = concern", context: "Context" };
+document.getElementById("m-records").textContent = data.n_records.toLocaleString("en-US");
+document.getElementById("m-ind").textContent = data.n_indicators;
+document.getElementById("m-ind2").textContent = data.n_indicators;
+document.querySelector("#m-table tbody").innerHTML = Object.values(inds).sort((a, b) => D.indexOf(a.domain) - D.indexOf(b.domain) || a.label.localeCompare(b.label)).map((i) =>
+  `<tr><th scope="row">${esc(i.label)}<div class="small muted">${esc(i.code)}</div></th><td data-label="Domain">${esc(i.domain)}</td><td data-label="Direction">${dir[i.direction]}${i.context_note ? `<div class="small muted">${esc(i.context_note)}</div>` : ""}</td><td data-label="Countries">${i.n}</td><td data-label="Latest years">${i.year_min === i.year_max ? i.year_max : `${i.year_min}–${i.year_max}`}</td><td data-label="Source" class="small">${esc(i.source)}</td></tr>`).join("");
+</script>
+</body>
+</html>
