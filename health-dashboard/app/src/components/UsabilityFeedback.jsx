@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import CONTACT from "../../../data/contact.json";
 import { copyText } from "./FeedbackView";
 import { gmailCompose } from "../lib/mail";
+import { download } from "../export";
 
 /* 사용 의견(사용성) 1분 설문 — 「사용 의견 보내기 / Give Feedback」.
    서버·외부 서비스 없음: 답을 글로 만들어 복사하거나 메일 앱으로 보낸다. 개인정보·환자정보는 받지 않는다.
@@ -25,8 +26,15 @@ const Q = {
   },
 };
 
-export function buildPayload({ lang, role, ratings, improve, context }) {
-  return { form: "usability-v1", lang, role, q1_easy_to_find: ratings[0] ?? null, q2_explanation_helpful: ratings[1] ?? null, q3_useful_for_work: ratings[2] ?? null, improve: improve.trim(), context, page: typeof location !== "undefined" ? location.href : "" };
+/** 화면 맥락(개인정보 없음): 보던 화면·지역·지표는 주소(해시)에서, 화면 크기는 창에서 읽는다 */
+export function viewContext() {
+  if (typeof location === "undefined") return {};
+  const h = new URLSearchParams(location.hash.replace(/^#/, ""));
+  return { view: h.get("view") || "home", region_code: h.get("sgg") || h.get("sido") || null, indicator_id: h.get("ind") || null,
+    viewport: typeof innerWidth === "number" ? `${innerWidth}x${innerHeight}` : null };
+}
+export function buildPayload({ lang, role, ratings, improve, context, now = new Date() }) {
+  return { form: "usability-v1", lang, timestamp: now.toISOString(), role, q1_easy_to_find: ratings[0] ?? null, q2_explanation_helpful: ratings[1] ?? null, q3_useful_for_work: ratings[2] ?? null, improve: improve.trim(), context, ...viewContext(), page: typeof location !== "undefined" ? location.href : "" };
 }
 
 export default function UsabilityFeedback({ lang = "ko", context = "" }) {
@@ -87,6 +95,9 @@ export default function UsabilityFeedback({ lang = "ko", context = "" }) {
             <div className="rev-btns">
               <button type="button" className="themebtn" onClick={async () => setMsg((await copyText(text)) ? L.copied : L.fail)}>{L.copy}</button>
               <a className="themebtn" href={mailto}>{L.mail}</a>
+              {/* 서버 전송 없이 이 기기에 파일로 저장(사용자 테스트 기록용) */}
+              <button type="button" className="themebtn" onClick={() => download(new Blob([JSON.stringify(p, null, 2)], { type: "application/json" }), `feedback_${p.timestamp.slice(0, 19).replace(/[:T]/g, "-")}.json`)}>{lang === "en" ? "Download .json" : ".json 저장"}</button>
+              <button type="button" className="themebtn" onClick={() => download(new Blob([text], { type: "text/plain;charset=utf-8" }), `feedback_${p.timestamp.slice(0, 19).replace(/[:T]/g, "-")}.txt`)}>{lang === "en" ? "Download .txt" : ".txt 저장"}</button>
               <a className="themebtn" href={gmailCompose(CONTACT.email, `[${lang === "en" ? "Feedback" : "사용 의견"}] Health Equity Radar`, text)} target="_blank" rel="noopener noreferrer">{lang === "en" ? "Send with Gmail" : "Gmail로 보내기"}</a>
             </div>
             {msg && <div className="desc" role="status">{msg}</div>}

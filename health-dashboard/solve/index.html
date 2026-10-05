@@ -67,6 +67,22 @@ ul.clean{margin:0;padding-left:20px}
 ul.clean li{margin:4px 0}
 .no{color:var(--warn);font-weight:600}
 footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
+.tour{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.tour li{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;align-items:start}
+.tour .step{font-size:13px;font-weight:700;letter-spacing:.05em;color:var(--accent)}
+.tour h3{margin:2px 0 6px}
+.tour .open{font-weight:600;font-size:14px}
+.real .card b{display:block;font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums}
+.real .card span{font-weight:600;font-size:15px}
+.real .card small{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+.real h3{margin:18px 0 8px}
+.notdo{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.notdo li{border:1px solid var(--border);border-left:4px solid var(--warn);border-radius:8px;padding:8px 12px;background:var(--surface);font-weight:600}
+.notdo li::before{content:"✕ ";color:var(--warn)}
+.tests{border-left:4px solid var(--ok);padding:8px 12px;background:var(--surface);border-radius:0 8px 8px 0;font-size:14.5px}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;padding:1px 9px;border-radius:999px;border:1px solid currentColor}
+.pill.k{color:var(--accent)} .pill.g{color:var(--ok)}
+@media (max-width:860px){.tour li{grid-template-columns:1fr}.notdo{grid-template-columns:1fr}}
 @media (max-width:860px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:1fr}.arrow{display:none}}
 @media (max-width:520px){.g4,.g2{grid-template-columns:1fr}.btn{width:100%;text-align:center}}
 </style>
@@ -76,115 +92,135 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
   <div class="wrap">
     <div class="kicker">Health Equity Radar</div>
     <h1>From local health data to local action.</h1>
-    <p class="lead">Health Equity Radar helps local public-health practitioners identify geographic health disparities, understand why they matter, and explore evidence-informed actions using official Korean health data.</p>
+    <p class="lead">Health Equity Radar helps local public-health teams see which health indicators in their community deserve closer review, why, and which official guidance they can consult. It uses official Korean data and transparent rules.</p>
+    <p class="lead" style="font-size:17px"><b>It is a decision-support and screening tool for identifying indicators that deserve closer review.</b> It does not diagnose, predict or prescribe.</p>
     <div class="ctas">
-      <a class="btn primary" href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Explore the Live Radar →</a>
-      <a class="btn ghost" href="../#view=radar">English overview in the app</a>
-      <a class="btn ghost" href="../global/">Global prototype (World Bank open data) →</a>
+      <a class="btn primary" href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Try Korea Demo →</a>
+      <a class="btn ghost" href="../global/">Open Global Prototype</a>
+      <a class="btn ghost" href="#method">View Methodology</a>
+      <a class="btn ghost" href="../docs/DATA_VALIDATION.md">View Data Validation</a>
     </div>
-    <div class="stage">Current stage: <b>Working prototype</b> · deployed in the Republic of Korea only · data verified 2026-10-06</div>
+    <div class="stage">Current stage: <b>Working prototype</b> · detailed deployment in the Republic of Korea · data verified 2026-10-06</div>
   </div>
 </header>
 
 <main>
-<section id="problem">
+<section id="tour">
   <div class="wrap">
-    <h2>The problem</h2>
-    <p>In Korea, the health data a local public-health team needs for one area are published by different agencies in different systems: the Korea Community Health Survey (Korea Disease Control and Prevention Agency), cause-of-death statistics (Statistics Korea), and health-screening and insurance statistics (National Health Insurance Service). Each has its own tables, years and geographic units — the survey is reported for 258 survey units, most administrative statistics for 229 municipalities.</p>
-    <p>Local governments prepare four-year local health plans; preparation of the next cycle (2027–2030) begins in the second half of 2026. Comparing an area across these sources means opening several systems, reconciling units and years, and judging whether a difference is larger than survey uncertainty.</p>
-  </div>
-</section>
-
-<section id="how">
-  <div class="wrap">
-    <h2>How it works</h2>
-    <ol class="flow grid g4" aria-label="Four-step workflow">
-      <li class="card"><span class="num">1</span><div class="lbl">DATA</div><p class="small">Official public-health data, 171 indicators, 2008–2025, with sources and update dates.</p><span class="arrow" aria-hidden="true">→</span></li>
-      <li class="card"><span class="num">2</span><div class="lbl">PRIORITY</div><p class="small">Identify health disparities: gap from the national median, relative position, recent trend and area deprivation.</p><span class="arrow" aria-hidden="true">→</span></li>
-      <li class="card"><span class="num">3</span><div class="lbl">INTERPRET</div><p class="small">Understand why they matter: plain-language reasons computed from the data, with 95% confidence intervals.</p><span class="arrow" aria-hidden="true">→</span></li>
-      <li class="card"><span class="num">4</span><div class="lbl">ACTION</div><p class="small">Explore possible public-health responses: linked official guidance (Korean national and provincial plans, WHO, NICE, CPSTF).</p></li>
+    <h2>90-second tour</h2>
+    <p class="muted small">Real screenshots of the running site, with a link to open each screen. Korea is the detailed deployment; the last step shows the same framework applied to open global data.</p>
+    <ol class="tour">
+      <li class="card"><div><div class="step">1 · FIND A COMMUNITY</div><h3>Choose a municipality or health-centre area</h3><p class="small">Search any of the 229 municipalities or 258 survey units. The example is Gangneung-si (Korean home screen).</p><a class="open" href="../#view=home">Open the home screen →</a></div>
+        <figure><img src="img/tour_1_find.jpg" loading="lazy" alt="Korean home-screen card ‘Quick look at local health gaps’ with ‘Gangneung’ typed in the search box and three mini cards: an indicator to review first, a recently improved indicator and an indicator with large regional gaps."></figure></li>
+      <li class="card"><div><div class="step">2 · IDENTIFY WHAT TO REVIEW FIRST</div><h3>Up to three indicators, one per domain</h3><p class="small">Each indicator shows the local value, the national median, the relative position, the recent trend and deprivation context. Tiers: <i>Review first</i>, <i>Monitor</i>, <i>Relatively favourable</i>, <i>Insufficient data</i>.</p><a class="open" href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Open this screen →</a></div>
+        <figure><img src="img/tour_2_priority.jpg" loading="lazy" alt="Health Equity Priority card for Gangneung-si in English: counts by tier and the first indicators flagged for review with local value, national median, relative position, recent trend and deprivation context."></figure></li>
+      <li class="card"><div><div class="step">3 · SEE WHY</div><h3>Reasons computed from the data</h3><p class="small">Gap from the national median, position among comparable areas, recent trend, deprivation (side by side, never as a cause) and whether the 95% confidence interval excludes the median.</p><a class="open" href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Open this screen →</a></div>
+        <figure><img src="img/tour_3_why.jpg" loading="lazy" alt="‘Why it matters’ list for the first flagged indicator: difference from the national median, position among survey units, five-year trend, deprivation quintile and confidence-interval check."></figure></li>
+      <li class="card"><div><div class="step">4 · REVIEW POSSIBLE ACTION</div><h3>Official guidance, not generated advice</h3><p class="small">Links to Korean national and provincial plans, WHO, NICE and CPSTF documents, with collection dates. If nothing is linked, the card says so.</p><a class="open" href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Open this screen →</a></div>
+        <figure><img src="img/tour_4_action.jpg" loading="lazy" alt="‘Possible public-health action’ list for the first flagged indicator: linked provincial and national plan items, NICE guideline and CPSTF recommendations, each with a link to the original document."></figure></li>
+      <li class="card"><div><div class="step">5 · SCALE THE FRAMEWORK</div><h3>Same rules, open global data</h3><p class="small">The global prototype applies the framework to World Bank data from 217 countries and economies. Current position and observed historical trend are shown separately.</p><a class="open" href="../global/#c=KOR">Open the global prototype →</a></div>
+        <figure><img src="img/tour_5_global.jpg" loading="lazy" alt="Global prototype signal card for the Republic of Korea: current position compared with high-income economies on one side and the observed historical trend since 2000 on the other, with a note that trends do not explain causes or predict future values."></figure></li>
     </ol>
   </div>
 </section>
 
-<section id="demo">
-  <div class="wrap">
-    <h2>Live product</h2>
-    <p>Real screenshots of the running site (not mock-ups). The Health Equity Priority card can be switched to English; the other screens are in Korean.</p>
-    <figure class="card">
-      <img src="img/priority_en.jpg" width="1180" height="1000" loading="lazy" alt="Health Equity Priority card for Gangneung-si in English mode: summary of 40 survey indicators by tier, three indicators flagged ‘Review first’ with local value, national median, relative position, recent trend and socioeconomic context, followed by ‘Why it matters’ reasons.">
-      <figcaption>Priority → Why it matters → Possible action, for one municipality (Gangneung-si). Values are 3-year averages; the confidence-interval check is shown in the reasons.</figcaption>
-    </figure>
-    <div class="grid g2" style="margin-top:12px">
-      <figure class="card"><img src="img/map_ko.jpg" width="1180" height="806" loading="lazy" alt="Choropleth map of self-reported obesity rate in 2025 across Korean municipalities, seven quantile classes, darker red means higher (worse)."><figcaption>Indicator map (Korean screen): obesity rate, 2025, municipalities in seven classes.</figcaption></figure>
-      <figure class="card"><img src="img/hotspot_ko.jpg" width="584" height="496" loading="lazy" alt="Map of combined-vulnerability signals: municipalities colored by how many selected unfavourable conditions they meet, six areas meeting all three outlined."><figcaption>Combined-vulnerability signals (Korean screen): areas meeting several unfavourable conditions at once.</figcaption></figure>
+<section id="real">
+  <div class="wrap real">
+    <h2>What is real today</h2>
+    <p class="small muted">Counted from the data files the site loads (<a href="../docs/COMPETITION_EVIDENCE.md">Competition Evidence Pack</a>, 2026-10-06). Numbers at different geographic levels are not added or multiplied.</p>
+    <h3><span class="pill k">Korea</span> detailed local deployment</h3>
+    <div class="grid g4">
+      <div class="card"><b>171</b><span>health indicators</span><small>9 source groups</small></div>
+      <div class="card"><b>41</b><span>survey indicators</span><small>Korea Community Health Survey, across 258 survey units</small></div>
+      <div class="card"><b>130</b><span>administrative / derived indicators</span><small>across 229 municipalities</small></div>
+      <div class="card"><b>2008–2025</b><span>years</span><small>17 provinces; coverage differs by source</small></div>
     </div>
-    <p style="margin-top:14px"><a class="btn primary" href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Try the Live Health Equity Radar →</a></p>
+    <h3><span class="pill g">Global prototype</span> portability test</h3>
+    <div class="grid g4">
+      <div class="card"><b>217</b><span>countries and economies</span><small>prototype applied to their published data</small></div>
+      <div class="card"><b>25</b><span>World Bank WDI indicators</span><small>standardized open data (CC BY 4.0)</small></div>
+      <div class="card"><b>115,457</b><span>observed values</span><small>2000–2025; observed years only, no interpolation</small></div>
+      <div class="card"><b>21</b><span>evidence links checked</span><small>address and title verified; expert relevance review pending</small></div>
+    </div>
+    <p class="tests" style="margin-top:14px"><b>Automated checks:</b> Not recorded — run node scripts/qa/run_all.mjs.</p>
   </div>
 </section>
 
-<section id="numbers">
+<section id="not">
   <div class="wrap">
-    <h2>What is in the data</h2>
-    <p class="small muted">Counted directly from the data files the app loads (<a href="../docs/DATA_VALIDATION.md">data validation</a>, 2026-10-06). Numbers at different geographic levels are not added or multiplied.</p>
-    <div class="grid g4 stats">
-      <div class="card"><b>171</b><span>health indicators</span><small>41 survey + 130 administrative / derived</small></div>
-      <div class="card"><b>258</b><span>survey units</span><small>Community Health Survey areas (one per public health centre area) — for the 41 survey indicators</small></div>
-      <div class="card"><b>229</b><span>municipalities</span><small>si·gun·gu — for the other 130 indicators</small></div>
-      <div class="card"><b>2008–2025</b><span>years of data</span><small>18 years; coverage differs by source</small></div>
-    </div>
+    <h2>What it does not do</h2>
+    <p>It is a decision-support and screening tool for identifying indicators that deserve closer review.</p>
+    <ul class="notdo">
+      <li>Does not diagnose disease</li>
+      <li>Does not predict future disease</li>
+      <li>Does not estimate causal policy effects</li>
+      <li>Does not automatically recommend public-budget allocation</li>
+      <li>Does not claim neighbouring ranks are meaningfully different</li>
+      <li>Does not replace local public-health judgement</li>
+    </ul>
   </div>
 </section>
 
-<section id="data">
+<section id="global">
   <div class="wrap">
-    <h2>Evidence &amp; data sources</h2>
-    <table>
-      <thead><tr><th scope="col">Source</th><th scope="col">Role in the tool</th><th scope="col">Indicators</th></tr></thead>
-      <tbody><tr><td>Korea Disease Control and Prevention Agency (KDCA) — Korea Community Health Survey, via KOSIS</td><td>Health behaviours, chronic-disease management, prevention, mental and oral health; survey-weighted rates with standard errors (used for confidence intervals)</td><td>41</td></tr><tr><td>Statistics Korea — Cause-of-death statistics</td><td>Age-standardized mortality by cause</td><td>22</td></tr><tr><td>National Health Insurance Service (NHIS) — National cancer screening statistics</td><td>Cancer screening rates (people screened ÷ people eligible)</td><td>7</td></tr><tr><td>National Health Insurance Service (NHIS) — health insurance, health screening and medical-use statistics</td><td>Screening, medical use and health-workforce context</td><td>33</td></tr><tr><td>KDCA — Notifiable infectious disease reports</td><td>Infectious disease incidence</td><td>12</td></tr><tr><td>Statistics Korea, Ministry of the Interior and Safety and others</td><td>Population, social and economic context</td><td>24</td></tr><tr><td>Ministry of Environment, Ministry of Land, Infrastructure and Transport, Korea Road Traffic Authority and others</td><td>Environment and safety context</td><td>28</td></tr><tr><td>Derived in this project from Statistics Korea life tables and the Community Health Survey</td><td>Healthy life expectancy (approximation, not an official statistic)</td><td>3</td></tr><tr><td>Derived in this project from the Population and Housing Census (2015, 2020)</td><td>Area deprivation index (approximation) — socioeconomic context</td><td>1</td></tr></tbody>
-    </table>
-    <p class="small muted" style="margin-top:8px">Most administrative indicators were obtained from their original producers via a public research database (Kim D. et al., v1.7, KDCA archive); mortality 2018–2025 was re-checked against Statistics Korea tables. Linked guidance: Korean national and provincial health plans, WHO, NICE (UK) and the US Community Preventive Services Task Force. Per-indicator metadata: <a href="../docs/indicator_metadata.csv">indicator_metadata.csv</a>.</p>
+    <h2>Built in Korea. Tested as a portable framework globally.</h2>
+    <div class="grid g2">
+      <div class="card"><h3>Korea — detailed local deployment</h3><ul class="clean small">
+        <li>171 indicators for 258 survey units and 229 municipalities, 2008–2025.</li>
+        <li>Priority, reasons and linked official guidance for one community at a time.</li>
+        <li>Survey uncertainty (95% confidence intervals, relative standard error) built into the rules.</li></ul></div>
+      <div class="card"><h3>Global prototype — portability test</h3><ul class="clean small">
+        <li>Prototype applied to data from 217 countries and economies, using 25 standardized WDI indicators.</li>
+        <li>Each value is compared with economies in the same World Bank income group.</li>
+        <li>Observed historical trends shown separately from the current position; no interpolation.</li>
+        <li>Evidence links technically verified (21 sources); expert relevance review still pending.</li>
+        <li>National averages only: it does not show differences within countries.</li></ul></div>
+    </div>
+    <p class="small muted" style="margin-top:10px">The global prototype is not deployed in, used by or endorsed by any country or organisation. <a href="../global/methodology/">Global methodology</a></p>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="wrap">
+    <h2>The problem</h2>
+    <p>In Korea, the data a local public-health team needs for one area are published by different agencies in different systems: the Korea Community Health Survey (Korea Disease Control and Prevention Agency), cause-of-death statistics (Statistics Korea), and screening and insurance statistics (National Health Insurance Service). Each has its own tables, years and geographic units — the survey is reported for 258 survey units, most administrative statistics for 229 municipalities.</p>
+    <p>Local governments prepare four-year local health plans; preparation of the next cycle (2027–2030) begins in the second half of 2026. Comparing an area across sources means opening several systems, reconciling units and years, and judging whether a difference is larger than survey uncertainty.</p>
   </div>
 </section>
 
 <section id="method">
   <div class="wrap">
     <h2>How priorities are identified</h2>
-    <p>For each indicator the tool combines four components scored 0–1 and averages those available (missing parts are dropped and weights renormalized, never set to zero):</p>
+    <p>For each indicator the tool combines four components scored 0–1 and averages those available. Missing parts are dropped and the weights renormalized; they are never set to zero.</p>
     <ul class="clean">
       <li><b>Gap</b> (35%) — direction-aware relative difference from the national median.</li>
       <li><b>Relative position</b> (25%) — share of comparable areas with a better value.</li>
-      <li><b>Recent trend</b> (20%) — 5-year slope, by tertile of the comparison group.</li>
-      <li><b>Socioeconomic context</b> (20%) — area deprivation quintile (shown side by side, never as a cause).</li>
+      <li><b>Recent trend</b> (20%) — five-year slope, by tertile of the comparison group.</li>
+      <li><b>Socioeconomic context</b> (20%) — area deprivation quintile, shown side by side, never as a cause.</li>
     </ul>
-    <p>“Review first” additionally requires the lower 25%, a score ≥ 0.55, a 95% confidence interval that excludes the national median, and a relative standard error ≤ 20%. Only tiers are shown, not scores. No prediction models, z-scores or causal inference are used.</p>
+    <p>“Review first” also requires the lower 25%, a score of at least 0.55, a 95% confidence interval that excludes the national median, and a relative standard error of 20% or less. Only tiers are shown, not scores. No prediction models or causal inference are used. Full rules: <a href="../#view=radar">English overview</a> · <a href="../docs/DATA_VALIDATION.md">data validation</a> · <a href="../docs/indicator_metadata.csv">indicator metadata</a>.</p>
   </div>
 </section>
 
-<section id="different">
+<section id="data">
   <div class="wrap">
-    <h2>What makes it different</h2>
-    <p>Not “more data”. Statistical dashboards show values; this prototype connects them into one decision-support workflow — <b>Data → Priority → Interpretation → Action</b> — for a single community, and shows its uncertainty and limits on the same screen:</p>
-    <ul class="clean">
-      <li>Survey and administrative sources compared on their own correct geographic level (258 survey units or 229 municipalities).</li>
-      <li>Every flagged indicator explains itself with computed facts (gap, position, trend, confidence interval).</li>
-      <li>Possible actions link to official guidance documents instead of generated advice.</li>
-      <li>A one-click community health report (print / PDF / Word, Korean) assembles the same facts into a draft that practitioners can check and adapt for local health plans.</li>
-      <li>Sources, update dates and known limitations are disclosed in the product.</li>
-    </ul>
+    <h2>Data sources</h2>
+    <table>
+      <thead><tr><th scope="col">Source</th><th scope="col">Role in the tool</th><th scope="col">Indicators</th></tr></thead>
+      <tbody><tr><td>Korea Disease Control and Prevention Agency (KDCA) — Korea Community Health Survey, via KOSIS</td><td>Health behaviours, chronic-disease management, prevention, mental and oral health; survey-weighted rates with standard errors (used for confidence intervals)</td><td>41</td></tr><tr><td>Statistics Korea — Cause-of-death statistics</td><td>Age-standardized mortality by cause</td><td>22</td></tr><tr><td>National Health Insurance Service (NHIS) — National cancer screening statistics</td><td>Cancer screening rates (people screened ÷ people eligible)</td><td>7</td></tr><tr><td>National Health Insurance Service (NHIS) — health insurance, health screening and medical-use statistics</td><td>Screening, medical use and health-workforce context</td><td>33</td></tr><tr><td>KDCA — Notifiable infectious disease reports</td><td>Infectious disease incidence</td><td>12</td></tr><tr><td>Statistics Korea, Ministry of the Interior and Safety and others</td><td>Population, social and economic context</td><td>24</td></tr><tr><td>Ministry of Environment, Ministry of Land, Infrastructure and Transport, Korea Road Traffic Authority and others</td><td>Environment and safety context</td><td>28</td></tr><tr><td>Derived in this project from Statistics Korea life tables and the Community Health Survey</td><td>Healthy life expectancy (approximation, not an official statistic)</td><td>3</td></tr><tr><td>Derived in this project from the Population and Housing Census (2015, 2020)</td><td>Area deprivation index (approximation) — socioeconomic context</td><td>1</td></tr></tbody>
+    </table>
+    <p class="small muted" style="margin-top:8px">Most administrative indicators were obtained from their original producers via a public research database (Kim D. et al., v1.7, KDCA archive); mortality 2018–2025 was re-checked against Statistics Korea tables. Linked guidance: Korean national and provincial health plans, WHO, NICE (UK) and the US Community Preventive Services Task Force.</p>
   </div>
 </section>
 
 <section id="impact">
   <div class="wrap">
-    <h2>Impact</h2>
-    <p><b>Current stage: Working prototype.</b> There is no user-testing or impact evidence yet, and no usage figures are claimed. External review requests have been sent; no reviews have been published yet.</p>
-    <h3>Next validation steps</h3>
+    <h2>Evidence of use and next validation</h2>
+    <p><b>No user-testing or impact evidence yet, and no usage figures are claimed.</b> External review requests have been sent; no reviews have been published yet.</p>
     <ul class="clean">
-      <li>Testing with local public-health practitioners (task: find and explain one priority for their area).</li>
-      <li>Usability testing on desktop and mobile; the in-app 1-minute feedback form (“Give Feedback”) is ready.</li>
-      <li>Decision-usefulness evaluation: does the priority list match practitioners’ own assessment, and does it change what they review first?</li>
-      <li>Independent methodological review, published with reviewer consent.</li>
+      <li>Planned: a structured test with 5–8 local public-health practitioners (find their area, identify one priority, explain why, open the evidence, compare with another area).</li>
+      <li>The in-app “Give Feedback” form records answers locally (copy, email or .json/.txt file); nothing is sent to a server.</li>
+      <li>Independent methodological review, published only with the reviewer’s consent.</li>
     </ul>
   </div>
 </section>
@@ -193,12 +229,11 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
   <div class="wrap">
     <h2>Known limitations</h2>
     <ul class="clean">
-      <li>Korean interface except this page, the in-app English overview and the Health Equity Priority card.</li>
+      <li>Korean interface except this page, the English overview and the Health Equity Priority card.</li>
       <li>Survey indicators carry sampling error; neighbouring ranks may not differ meaningfully.</li>
       <li>No programme input or output data, so the tool cannot evaluate programme performance or effects.</li>
       <li>Healthy life expectancy and the deprivation index are approximations computed for this project, not official statistics.</li>
       <li>The prevention knowledge base was collected and summarized with AI assistance; original documents are linked and should be checked.</li>
-      <li>Not built: disease prediction, policy-effect prediction, chatbots, personal health data entry or accounts.</li>
     </ul>
   </div>
 </section>
@@ -206,7 +241,7 @@ footer{padding:24px 0 40px;font-size:14px;color:var(--muted)}
 
 <footer>
   <div class="wrap">
-    <p>Live product: <a href="../">health-profile.kr</a> · <a href="../#view=radar">English overview</a> · <a href="../#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">Health Equity Priority (English)</a> · <a href="../docs/MIT_SOLVE_READINESS.md">readiness report</a></p>
+    <p>Live product: <a href="../">health-profile.kr</a> · <a href="../#view=radar">English overview</a> · <a href="../global/">Global prototype</a> · <a href="../docs/COMPETITION_EVIDENCE.md">Competition Evidence Pack</a> · <a href="../docs/MIT_SOLVE_READINESS.md">readiness report</a></p>
     <p>Feedback: use “Give Feedback” in the app or email <a href="mailto:khealth.profile@gmail.com">khealth.profile@gmail.com</a>. Built by 지음웍스 as an independent project; not an official government service.</p>
   </div>
 </footer>

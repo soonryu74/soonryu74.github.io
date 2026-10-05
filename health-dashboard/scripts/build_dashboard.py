@@ -23,9 +23,11 @@ if not (app / "node_modules").exists():
 subprocess.run([sys.executable, str(ROOT / "scripts" / "build_refs.py")], check=True)
 # 숫자 전수 검증(data/validation_summary.json · docs/DATA_VALIDATION.md) → /solve 랜딩 생성. 영문 소개·/solve 는 이 숫자만 쓴다
 subprocess.run(["node", str(ROOT / "scripts" / "qa" / "data_validation.mjs")], check=True, stdout=subprocess.DEVNULL)
-subprocess.run([sys.executable, str(ROOT / "scripts" / "build_solve.py")], check=True)
 # Global Health Equity Radar(/global/, World Bank WDI) — 파생 데이터 생성·원본 전수 대조·JS 묶기
 subprocess.run([sys.executable, str(ROOT / "scripts" / "build_global.py")], check=True)
+# 공모전 증거 묶음(docs/COMPETITION_EVIDENCE.md · MIT_SOLVE_CRITERIA_MAP.md · data/competition_evidence.json) — 실제 데이터·점검 기록에서 계산, 금지 표현이 있으면 중단
+subprocess.run(["node", str(ROOT / "scripts" / "build_competition_evidence.mjs")], check=True)
+subprocess.run([sys.executable, str(ROOT / "scripts" / "build_solve.py")], check=True)
 
 # 데이터 무결성 확인: 지표별 시도 17개, 연도-값 길이 일치
 data = json.loads(data_path.read_text(encoding="utf-8"))

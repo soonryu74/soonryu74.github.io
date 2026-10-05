@@ -1,0 +1,35 @@
+{
+ "generated": "2026-10-06",
+ "build": "89d0a44",
+ "korea": {
+  "indicators": 171,
+  "survey_indicators": 41,
+  "survey_units": 258,
+  "admin_indicators": 130,
+  "municipalities": 229,
+  "provinces": 17,
+  "year_first": 2008,
+  "year_last": 2025,
+  "source_groups": 9,
+  "directional_indicators": 154,
+  "references": 27
+ },
+ "global": {
+  "economies": 217,
+  "indicators": 25,
+  "directional_indicators": 16,
+  "latest_records": 4977,
+  "observed_values_since_2000": 115457,
+  "ts_year_first": 2000,
+  "ts_year_last": 2025,
+  "series": 4955,
+  "series_classified": 2837,
+  "evidence_sources_verified": 21,
+  "evidence_sources_registered": 21,
+  "action_areas": 48,
+  "action_areas_linked": 40
+ },
+ "reviews_published": 0,
+ "qa": null,
+ "qa_line": "Not recorded — run node scripts/qa/run_all.mjs"
+}

@@ -40,5 +40,30 @@ const jpg = { type: "jpeg", quality: 78 };
   if (await hot.count()) await hot.screenshot({ ...jpg, path: path.join(OUT, "hotspot_ko.jpg") });
   await pg.close();
 }
+// 4) 90초 투어(/solve) — 실제 화면 5장: ① 지역 찾기 ② 먼저 검토할 지표 ③ 왜 ④ 근거·가능한 대응 ⑤ 같은 틀의 Global 프로토타입
+{
+  const pg = await b.newPage({ viewport: { width: 1180, height: 900 }, colorScheme: "light" });
+  // ① 홈 「내 지역 건강격차 빠르게 보기」에서 「강릉」 검색
+  await go(pg, "view=home", 2500);
+  await pg.fill("#heq-q", "강릉"); await pg.waitForTimeout(500);
+  await pg.locator(".heq-hits button").first().click(); await pg.waitForTimeout(600);   // 강릉시 선택 → 미니 카드가 강릉시 값
+  await pg.fill("#heq-q", "강릉"); await pg.waitForTimeout(500);                          // 검색어도 함께 보이게
+  const heq = pg.locator(".card", { has: pg.locator(".heq") }).first();
+  await heq.screenshot({ ...jpg, path: path.join(OUT, "tour_1_find.jpg") });
+  // ②③④ 강릉시 우선 검토 카드(영어 모드)
+  await go(pg, "view=profile&sido=009&sgg=00901&en=1", 3000);
+  await pg.evaluate(() => window.scrollTo(0, 0)); await pg.waitForTimeout(400);
+  const card = await pg.locator(".eq-card").boundingBox();
+  const item = await pg.locator(".eq-item").first().locator(".eq-facts").boundingBox();
+  await pg.screenshot({ ...jpg, path: path.join(OUT, "tour_2_priority.jpg"), clip: { x: card.x, y: card.y, width: card.width, height: item.y + item.height + 12 - card.y }, fullPage: true });
+  const pad = async (loc, file) => { const bb = await loc.boundingBox(); await pg.screenshot({ ...jpg, path: path.join(OUT, file), clip: { x: bb.x - 8, y: bb.y - 8, width: bb.width + 16, height: bb.height + 16 }, fullPage: true }); };
+  await pad(pg.locator(".eq-item").first().locator(".eq-why"), "tour_3_why.jpg");
+  await pad(pg.locator(".eq-item").first().locator(".eq-act"), "tour_4_action.jpg");
+  // ⑤ Global 프로토타입: 대한민국 첫 신호 카드(현재 위치 / 과거 추세 분리)
+  await pg.goto(`${BASE}/global/#c=KOR`, { waitUntil: "load" }); await pg.waitForSelector("html[data-ts='KOR']");
+  await pg.locator(".sigs > .sig .sig-head").first().click(); await pg.waitForTimeout(500);
+  await pg.locator(".sigs > .sig").first().screenshot({ ...jpg, path: path.join(OUT, "tour_5_global.jpg") });
+  await pg.close();
+}
 await b.close();
 console.log("saved", OUT);

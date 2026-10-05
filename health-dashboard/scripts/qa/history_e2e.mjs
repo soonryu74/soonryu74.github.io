@@ -83,6 +83,20 @@ for (const [w, h] of [[1280, 900], [390, 844]]) {
   ck(pg.url() === "about:blank", "공유 링크 첫 진입에서 ← = 들어오기 전 페이지");
   await pg.close();
 }
+// 사용 의견 → 파일 저장(.json): 서버 전송 없음, 맥락(시각·화면 크기·화면·지역·지표)만, 개인정보 칸 없음
+{
+  const pg = await (await b.newContext({ viewport: { width: 1280, height: 900 }, acceptDownloads: true })).newPage();
+  await pg.goto(BASE + "/#view=profile&sido=009&sgg=00901&en=1"); await pg.waitForSelector(".uf-btn");
+  await pg.locator(".uf-btn").first().click(); await pg.waitForSelector(".uf-box");
+  await pg.locator(".uf-box select").selectOption({ index: 1 });
+  await pg.locator('.uf-box input[name="uf-q0"][value="4"]').check();
+  const [dl] = await Promise.all([pg.waitForEvent("download"), pg.locator(".uf-box button", { hasText: ".json" }).click()]);
+  const j = JSON.parse(await (await import("node:fs")).promises.readFile(await dl.path(), "utf8"));
+  const okKeys = ["timestamp", "viewport", "view", "region_code", "indicator_id", "role", "q1_easy_to_find", "page"].every((k) => k in j);
+  const noPii = !Object.keys(j).some((k) => /name|email|phone|contact/i.test(k));
+  ck(okKeys && noPii && j.view === "profile" && j.region_code === "00901" && j.q1_easy_to_find === 4 && /^\d{3,4}x\d{3,4}$/.test(j.viewport), `사용 의견 .json 저장(${dl.suggestedFilename()}): 시각·화면 크기 ${j.viewport}·화면 ${j.view}·지역 ${j.region_code}·지표 ${j.indicator_id}·개인정보 칸 없음`);
+  await pg.close();
+}
 // Global: 나라 선택 → 뒤로 = 이전 나라
 {
   const pg = await (await b.newContext()).newPage();
