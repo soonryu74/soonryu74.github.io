@@ -1,6 +1,6 @@
 # Data Validation — 데이터 숫자 전수 검증
 
-- 기준일: 2026-10-05 (스크립트 실행일)
+- 기준일: 2026-10-06 (스크립트 실행일)
 - 방법: `node scripts/qa/data_validation.mjs` — 앱이 실제로 불러오는 `app/src/data.js`(data/dataset.json · kdh_dataset.json · mort_kosis.json · cancer_screening.json · checkup.json · hle.json · deprivation.json 주입)를 esbuild 로 묶어 그대로 읽고 센다. 화면·문서의 숫자를 입력값으로 쓰지 않는다.
 - 결과 파일: `data/validation_summary.json`(요약 숫자) · `docs/indicator_metadata.csv`(지표 171개 메타데이터·결측)
 
