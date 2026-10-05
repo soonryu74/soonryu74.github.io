@@ -1,0 +1,78 @@
+{
+ "generated": "2026-10-06 00:27 KST",
+ "commit": "20e4810",
+ "working_tree_clean": true,
+ "global_v01_comparison": "run (tag pre-global-v0.2)",
+ "all_ok": true,
+ "suites": [
+  {
+   "id": "unit",
+   "name": "Unit tests (priority engine, data, reports)",
+   "ok": true,
+   "passed": 15,
+   "failed": 0,
+   "seconds": 2
+  },
+  {
+   "id": "korea_e2e",
+   "name": "Korea app — routes, Health Equity Priority, mobile, dark mode",
+   "ok": true,
+   "passed": 53,
+   "failed": 0,
+   "seconds": 180
+  },
+  {
+   "id": "solve_readiness",
+   "name": "Judge flow at 390/430/768/1440 px, accessibility, links",
+   "ok": true,
+   "passed": 106,
+   "failed": 0,
+   "seconds": 71
+  },
+  {
+   "id": "history",
+   "name": "Browser back/forward, header, feedback export",
+   "ok": true,
+   "passed": 32,
+   "failed": 0,
+   "seconds": 35
+  },
+  {
+   "id": "report_region",
+   "name": "Community health report",
+   "ok": true,
+   "passed": 28,
+   "failed": 0,
+   "seconds": 46
+  },
+  {
+   "id": "report_indicator",
+   "name": "Indicator report (national)",
+   "ok": true,
+   "passed": 44,
+   "failed": 0,
+   "seconds": 72
+  },
+  {
+   "id": "report_elder",
+   "name": "Older-adults report",
+   "ok": true,
+   "passed": 44,
+   "failed": 0,
+   "seconds": 43
+  },
+  {
+   "id": "global_e2e",
+   "name": "Global prototype — values = source data, signals, trends, evidence links",
+   "ok": true,
+   "passed": 77,
+   "failed": 0,
+   "seconds": 39
+  }
+ ],
+ "totals": {
+  "unit_tests": 15,
+  "browser_suites": 7,
+  "browser_checks": 384
+ }
+}

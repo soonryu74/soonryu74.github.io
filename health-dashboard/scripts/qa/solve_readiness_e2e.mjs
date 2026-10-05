@@ -98,7 +98,7 @@ for (const [w, h] of VPS) {
       const K = CE.korea, G = CE.global, n = (v) => Number(v).toLocaleString("en-US");
       const nums = [K.indicators, K.survey_indicators, K.survey_units, K.admin_indicators, K.municipalities, `${K.year_first}–${K.year_last}`, G.economies, G.indicators, n(G.observed_values_since_2000), G.evidence_sources_verified].map(String);
       check(nums.every((x) => real.includes(x)) && real.includes(CE.qa_line.slice(0, 20)), `[/solve] What is real today 숫자 = 증거 묶음(${nums.join(", ")})`);
-      check(!/\b171 indicators across 258\b/i.test(real), "[/solve] 데이터 수준 섞은 표현 없음");
+      check(!/\b\d+ (health )?indicators (across|for|in) \d+ (survey units|areas|jurisdictions)( and \d+ municipalities)?/i.test((await pg.locator("body").innerText()).replace(/\b\d+ survey indicators across \d+ survey units/gi, "")), "[/solve] 데이터 수준 섞은 표현 없음(지표 총수 × 조사 단위)");
       check((await pg.locator("#not .notdo li").count()) === 6, "[/solve] 하지 않는 것 6개");
       const body = await pg.locator("body").innerText();
       const bad = [/deployed (in|across) \d+ countr/i, /used by \d+ countr/i, /validated by (the )?government/i, /WHO[- ](supported|approved)/i, /MIT[- ](supported|funded)/i, /in partnership with/i].filter((re) => re.test(body));

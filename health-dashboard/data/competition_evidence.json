@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-06",
- "build": "89d0a44",
+ "build": "20e4810",
  "korea": {
   "indicators": 171,
   "survey_indicators": 41,
@@ -30,6 +30,13 @@
   "action_areas_linked": 40
  },
  "reviews_published": 0,
- "qa": null,
- "qa_line": "Not recorded — run node scripts/qa/run_all.mjs"
+ "qa": {
+  "unit_tests": 15,
+  "browser_suites": 7,
+  "browser_checks": 384,
+  "all_ok": true,
+  "last_run": "2026-10-06 00:27 KST",
+  "commit": "20e4810"
+ },
+ "qa_line": "All passed — 15 unit tests; 7 browser test suites with 384 checks (last run 2026-10-06 00:27 KST, commit 20e4810)"
 }
