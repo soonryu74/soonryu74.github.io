@@ -1,0 +1,18 @@
+{
+  "_comment": "일정/서비스 유형 정의. presence=그 시간에 사람이 곁에 있는지, functions=그 일정이 맡는 돌봄 기능. 규칙 엔진이 이 표만 보고 계산합니다.",
+  "types": [
+    { "id": "visit_care", "label": "방문요양", "short": "방문요양", "icon": "🏠", "presence": true, "functions": ["meal", "hygiene", "mobility"], "onboarding": true, "schedulable": true, "note": "장기요양 요양보호사 방문(신체활동·가사 지원)" },
+    { "id": "visit_nursing", "label": "방문간호", "short": "방문간호", "icon": "🩺", "presence": true, "functions": ["meds"], "onboarding": true, "schedulable": true, "note": "장기요양 방문간호(간호사 등)" },
+    { "id": "visit_bath", "label": "방문목욕", "short": "방문목욕", "icon": "🛁", "presence": true, "functions": ["hygiene"], "onboarding": false, "schedulable": true, "note": "장기요양 방문목욕" },
+    { "id": "day_care", "label": "주야간보호", "short": "주야간보호", "icon": "🏫", "presence": true, "functions": ["meal", "hygiene", "mobility", "cognition", "group"], "onboarding": true, "schedulable": true, "note": "센터에서 낮 시간 보호(송영 포함 시간으로 입력)" },
+    { "id": "family", "label": "가족돌봄·가족방문", "short": "가족", "icon": "👨‍👩‍👧", "presence": true, "functions": ["meal", "mobility", "hospital"], "onboarding": true, "schedulable": true },
+    { "id": "meal", "label": "식사지원(도시락·반찬 배달 등)", "short": "식사지원", "icon": "🍱", "presence": false, "functions": ["meal"], "onboarding": true, "schedulable": true, "note": "전달 시간이 짧아 '사람이 곁에 있는 시간'으로 계산하지 않습니다" },
+    { "id": "hospital_escort", "label": "병원동행", "short": "병원동행", "icon": "🚶", "presence": true, "functions": ["hospital", "mobility"], "onboarding": true, "schedulable": true },
+    { "id": "med_check", "label": "복약확인", "short": "복약확인", "icon": "💊", "presence": false, "functions": ["meds"], "onboarding": true, "schedulable": true, "note": "전화·방문 등 방식이 다양해 '곁에 있는 시간'으로 계산하지 않습니다" },
+    { "id": "emergency_safety", "label": "응급안전서비스(장비)", "short": "응급안전", "icon": "📟", "presence": false, "functions": ["emergency"], "continuous": true, "onboarding": true, "schedulable": false, "note": "상시 장비 기반 서비스 — 사람이 곁에 있는 시간은 아닙니다" },
+    { "id": "cognitive", "label": "인지 프로그램(치매안심센터 등)", "short": "인지 프로그램", "icon": "🧩", "presence": true, "functions": ["cognition", "group"], "onboarding": false, "schedulable": true },
+    { "id": "community", "label": "복지관·경로당 프로그램", "short": "복지관", "icon": "☕", "presence": true, "functions": ["group"], "onboarding": false, "schedulable": true },
+    { "id": "hospital_visit", "label": "병원 진료(일정)", "short": "병원 진료", "icon": "🏥", "presence": false, "functions": [], "onboarding": false, "schedulable": true, "note": "진료 일정 자체. 동행 여부는 병원동행·가족 일정으로 판단합니다" },
+    { "id": "other", "label": "기타(사람이 함께하는 일정)", "short": "기타", "icon": "➕", "presence": true, "functions": [], "onboarding": true, "schedulable": true }
+  ]
+}
