@@ -80,6 +80,35 @@ for (const [w, h] of VPS) {
   await pg.close();
 }
 
+// /solve 2분 심사 흐름: 90초 투어(실제 캡처 5장) · CTA 4개 · 「What is real today」 숫자 = 증거 묶음 · 하지 않는 것 6개 · 과장 표현 없음 · 다크
+{
+  const { readFileSync } = await import("node:fs");
+  const CE = JSON.parse(readFileSync(new URL("../../data/competition_evidence.json", import.meta.url), "utf8"));
+  for (const scheme of ["light", "dark"]) {
+    const pg = await (await b.newContext({ viewport: scheme === "dark" ? { width: 390, height: 844 } : { width: 1440, height: 900 }, colorScheme: scheme })).newPage();
+    await pg.goto(`${BASE}/solve/`, { waitUntil: "load" });
+    await pg.evaluate(async () => { for (const i of document.querySelectorAll("img")) { i.loading = "eager"; if (!i.complete) await new Promise((r) => { i.onload = i.onerror = r; }); } });
+    const tour = await pg.$$eval(".tour > li", (lis) => lis.map((li) => ({ step: li.querySelector(".step")?.textContent.trim(), img: li.querySelector("img")?.naturalWidth || 0, open: li.querySelector("a.open")?.getAttribute("href") })));
+    check(tour.length === 5 && tour.every((t) => t.img > 0 && t.open) && /FIND A COMMUNITY/.test(tour[0].step) && /SCALE THE FRAMEWORK/.test(tour[4].step), `[/solve ${scheme}] 90초 투어 5단계 · 실제 캡처 로드 ${tour.filter((t) => t.img > 0).length}/5`);
+    if (scheme === "light") {
+      const ctas = await pg.$$eval(".hero .ctas a", (as) => as.map((a) => [a.textContent.trim(), a.getAttribute("href")]));
+      const want = [["Try Korea Demo", /view=profile.*en=1/], ["Open Global Prototype", /global\//], ["View Methodology", /#method/], ["View Data Validation", /DATA_VALIDATION/]];
+      check(want.every(([t, re]) => ctas.some(([x, h]) => x.startsWith(t) && re.test(h))), `[/solve] CTA 4개 ${ctas.map((c) => c[0]).join(" · ")}`);
+      const real = await pg.locator("#real").innerText();
+      const K = CE.korea, G = CE.global, n = (v) => Number(v).toLocaleString("en-US");
+      const nums = [K.indicators, K.survey_indicators, K.survey_units, K.admin_indicators, K.municipalities, `${K.year_first}–${K.year_last}`, G.economies, G.indicators, n(G.observed_values_since_2000), G.evidence_sources_verified].map(String);
+      check(nums.every((x) => real.includes(x)) && real.includes(CE.qa_line.slice(0, 20)), `[/solve] What is real today 숫자 = 증거 묶음(${nums.join(", ")})`);
+      check(!/\b\d+ (health )?indicators (across|for|in) \d+ (survey units|areas|jurisdictions)( and \d+ municipalities)?/i.test((await pg.locator("body").innerText()).replace(/\b\d+ survey indicators across \d+ survey units/gi, "")), "[/solve] 데이터 수준 섞은 표현 없음(지표 총수 × 조사 단위)");
+      check((await pg.locator("#not .notdo li").count()) === 6, "[/solve] 하지 않는 것 6개");
+      const body = await pg.locator("body").innerText();
+      const bad = [/deployed (in|across) \d+ countr/i, /used by \d+ countr/i, /validated by (the )?government/i, /WHO[- ](supported|approved)/i, /MIT[- ](supported|funded)/i, /in partnership with/i].filter((re) => re.test(body));
+      check(bad.length === 0 && /prototype applied to data from \d+ countries and economies/i.test(body) && /Built in Korea\. Tested as a portable framework globally\./.test(body), `[/solve] 과장 표현 0 · 「prototype applied to data from … countries and economies」 문구`);
+    }
+    check(await overflow(pg) <= 0, `[/solve ${scheme}] 가로 넘침 ${await overflow(pg)}px`);
+    await pg.screenshot({ path: `${OUT}/solve_demo_${scheme}.png`, fullPage: true });
+    await pg.close();
+  }
+}
 // 링크: /solve 와 영문 소개의 내부 링크 상태
 {
   const pg = await b.newPage();

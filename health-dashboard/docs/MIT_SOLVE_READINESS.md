@@ -3,6 +3,8 @@
 - Date: 2026-10-04 · Build shown in the site footer (「빌드 …」) identifies the exact code version.
 - Principle: Trustworthiness > Features · Evidence > Marketing · Working prototype > Future promises.
 
+> **Numbers for applications: use [COMPETITION_EVIDENCE.md](COMPETITION_EVIDENCE.md)** — regenerated from the data files and the latest automated test record on every build (`scripts/build_competition_evidence.mjs`). Criteria-by-criteria evidence and gaps: [MIT_SOLVE_CRITERIA_MAP.md](MIT_SOLVE_CRITERIA_MAP.md). Practitioner test plan (not yet run): [PRACTITIONER_TEST_PROTOCOL.md](PRACTITIONER_TEST_PROTOCOL.md). If a number below differs from the Evidence Pack, the Evidence Pack is correct.
+
 ## 1. Verified Facts
 Counted from the data files the app actually loads (`node scripts/qa/data_validation.mjs` → [DATA_VALIDATION.md](DATA_VALIDATION.md)):
 

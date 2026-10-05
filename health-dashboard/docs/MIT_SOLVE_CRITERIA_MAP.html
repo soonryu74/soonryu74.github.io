@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>MIT Solve — criteria map (current evidence and gaps) | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="MIT Solve — criteria map (current evidence and gaps)" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="MIT Solve — criteria map (current evidence and gaps)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"MIT Solve — criteria map (current evidence and gaps)","url":"/health-dashboard/docs/MIT_SOLVE_CRITERIA_MAP.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=a216ac97e4e05dbcf2794272ce0648299d336172">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="mit-solve--criteria-map-current-evidence-and-gaps">MIT Solve — criteria map (current evidence and gaps)</h1>
+
+<p>Generated automatically on 2026-10-06 with the Competition Evidence Pack (numbers from data files; see <code class="language-plaintext highlighter-rouge">docs/COMPETITION_EVIDENCE.md</code>). Missing evidence is written as “Not yet demonstrated”. Criterion names follow the general Solve judging themes; check the exact wording of the current challenge before submission.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Criterion</th>
+      <th>Current evidence</th>
+      <th>URL / file</th>
+      <th>Gap</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Impact (alignment with the problem; potential to improve lives)</td>
+      <td>Working tool for local health plans: 171 indicators, priorities with computed reasons, reports for planning</td>
+      <td>/solve/ · docs/MIT_SOLVE_READINESS.md</td>
+      <td>Not yet demonstrated: no measured change in decisions or health outcomes; practitioner test planned (docs/PRACTITIONER_TEST_PROTOCOL.md)</td>
+    </tr>
+    <tr>
+      <td>Feasibility (can it be built and run)</td>
+      <td>Live at health-profile.kr; static site, no server or login; annual data refresh scripts in the repository</td>
+      <td>https://health-profile.kr/ · scripts/</td>
+      <td>Single maintainer; no funded operations plan yet</td>
+    </tr>
+    <tr>
+      <td>Innovation</td>
+      <td>Connects official data → priority → explanation → linked official evidence for one community, with uncertainty on the same screen; same engine reused for the global prototype</td>
+      <td>app/src/lib/equity/ · global/src/main.js</td>
+      <td>Not yet demonstrated: no external comparison study</td>
+    </tr>
+    <tr>
+      <td>Human-centered design</td>
+      <td>Korean public-health terms, English mode for judges, mobile layout, accessibility checks, in-app feedback with file export</td>
+      <td>scripts/qa/solve_readiness_e2e.mjs · UsabilityFeedback</td>
+      <td>User testing needed — Not yet demonstrated (0 sessions run)</td>
+    </tr>
+    <tr>
+      <td>Scalability</td>
+      <td>Global prototype applied to data from 217 countries and economies, 25 WDI indicators, 115,457 observed values</td>
+      <td>/global/ · docs/GLOBAL_RADAR_v0.2.md</td>
+      <td>External pilot needed; within-country data outside Korea not tested</td>
+    </tr>
+    <tr>
+      <td>Partnership potential</td>
+      <td>External review requests sent; 0 reviews published</td>
+      <td>Sources tab → External review</td>
+      <td>No formal partners</td>
+    </tr>
+    <tr>
+      <td>Technical feasibility</td>
+      <td>All passed — 15 unit tests; 7 browser test suites with 384 checks (last run 2026-10-06 00:27 KST, commit 20e4810)</td>
+      <td>data/qa_status.json · docs/DATA_VALIDATION.md · docs/COMPETITION_EVIDENCE.md</td>
+      <td>Single-file build is 10 MB (gzip ~2.4 MB); lazy-loading plan not yet executed (docs/PERFORMANCE_PLAN.md)</td>
+    </tr>
+    <tr>
+      <td>Equity focus</td>
+      <td>Gap from the national median, deprivation shown side by side (never as cause), combined-vulnerability signals, older-adults report</td>
+      <td>#view=profile · #view=hot · #view=elder</td>
+      <td>Within-area (sex, income) breakdowns limited by public data</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Owner actions that would close the largest gaps: run the practitioner test (5–8 people) and record results; obtain at least one independent methodological review with consent to publish; identify one organisation willing to pilot (no partnership may be claimed before a written agreement).</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Competition Evidence Pack | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Competition Evidence Pack" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Competition Evidence Pack" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Competition Evidence Pack","url":"/health-dashboard/docs/COMPETITION_EVIDENCE.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=a216ac97e4e05dbcf2794272ce0648299d336172">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="competition-evidence-pack">Competition Evidence Pack</h1>
+
+<p>Generated automatically on 2026-10-06 from the data files and test records in this repository (<code class="language-plaintext highlighter-rouge">node scripts/build_competition_evidence.mjs</code>, run by <code class="language-plaintext highlighter-rouge">scripts/build_dashboard.py</code>). <strong>Use these numbers in applications; do not retype them from memory.</strong> If a number here differs from any other document, this file wins until the data change.</p>
+
+<h2 id="1-build">1. Build</h2>
+<ul>
+  <li>Source repository commit at generation: <code class="language-plaintext highlighter-rouge">20e4810</code> (the site footer shows the build of the deployed page).</li>
+  <li>Data validation date: 2026-10-06 (<code class="language-plaintext highlighter-rouge">docs/DATA_VALIDATION.md</code>).</li>
+</ul>
+
+<h2 id="24-korea-deployment--indicators-geography-years">2–4. Korea deployment — indicators, geography, years</h2>
+<p>| Fact | Value | Note |
+|—|—|—|
+| Health indicators | 171 | 41 survey + 130 administrative / derived |
+| Survey indicators | 41 | Korea Community Health Survey, compared across <strong>258 survey units</strong> |
+| Administrative / derived indicators | 130 | compared across <strong>229 municipalities</strong> (si·gun·gu) |
+| Provinces | 17 | |
+| Years | 2008–2025 | coverage differs by source |
+| Directional indicators (used for priorities) | 154 | the rest are context, never judged |
+| Source groups | 9 | see section 5 |</p>
+
+<p>Do not combine levels (wrong: “171 indicators across 258 areas”).</p>
+
+<h2 id="5-source-groups">5. Source groups</h2>
+<p>| Source | Indicators | Years |
+|—|—|—|
+| Korea Community Health Survey (KDCA) | 41 | 2008–2025 |
+| Healthy life expectancy (derived in this project) | 3 | 2017–2024 |
+| Cause-of-death statistics (Statistics Korea) | 22 | 2008–2025 |
+| Notifiable infectious disease reports (KDCA) | 12 | 2008–2024 |
+| Health insurance, screening and medical-use statistics (NHIS) | 33 | 2008–2024 |
+| Population, social and economic statistics | 24 | 2008–2024 |
+| Environment and safety statistics | 28 | 2008–2024 |
+| National cancer screening (NHIS) | 7 | 2015–2024 |
+| Area deprivation index (derived in this project) | 1 | 2015–2020 |</p>
+
+<h2 id="6-tests">6. Tests</h2>
+<p>All passed — 15 unit tests; 7 browser test suites with 384 checks (last run 2026-10-06 00:27 KST, commit 20e4810).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Suite</th>
+      <th>Passed</th>
+      <th>Failed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Unit tests (priority engine, data, reports)</td>
+      <td>15</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Korea app — routes, Health Equity Priority, mobile, dark mode</td>
+      <td>53</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Judge flow at 390/430/768/1440 px, accessibility, links</td>
+      <td>106</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Browser back/forward, header, feedback export</td>
+      <td>32</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Community health report</td>
+      <td>28</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Indicator report (national)</td>
+      <td>44</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Older-adults report</td>
+      <td>44</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Global prototype — values = source data, signals, trends, evidence links</td>
+      <td>77</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Global v0.1 comparison (all 217 economies: signals, Watch, top 3, scores unchanged): run (tag pre-global-v0.2).</p>
+
+<h2 id="7-implemented-functions-each-file-checked-to-exist">7. Implemented functions (each file checked to exist)</h2>
+<p>| Function | File | Live |
+|—|—|—|
+| Health Equity Priority (priority → why → possible action) for any province or municipality, Korean/English | <code class="language-plaintext highlighter-rouge">app/src/components/equity/EquityPriorityCard.jsx</code> | <a href="https://health-profile.kr/#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1">open</a> |
+| Transparent priority engine (gap, relative position, trend, deprivation; missing parts renormalized; confidence-interval and RSE checks) | <code class="language-plaintext highlighter-rouge">app/src/lib/equity/calculatePriority.js</code> | – |
+| Indicator information panel (source, years, definition, standardization, direction, update date, cautions) | <code class="language-plaintext highlighter-rouge">app/src/components/equity/IndInfo.jsx</code> | – |
+| Indicator analysis: map, ranking with confidence intervals, trends, gaps | <code class="language-plaintext highlighter-rouge">app/src/components/ChoroplethMap.jsx</code> | <a href="https://health-profile.kr/#view=analysis">open</a> |
+| Combined-vulnerability signals (several unfavourable conditions at once) | <code class="language-plaintext highlighter-rouge">app/src/components/equity/EquityHotspot.jsx</code> | <a href="https://health-profile.kr/#view=hot">open</a> |
+| Region comparison with equity summary | <code class="language-plaintext highlighter-rouge">app/src/components/equity/CompareEquity.jsx</code> | <a href="https://health-profile.kr/#view=compare">open</a> |
+| Peer-group comparison (areas with similar ageing, fiscal capacity, density, deprivation) | <code class="language-plaintext highlighter-rouge">app/src/components/PeerCard.jsx</code> | – |
+| Community health report, national indicator report and older-adults report (print / PDF / Word) | <code class="language-plaintext highlighter-rouge">app/src/components/RegionReport.jsx</code> | <a href="https://health-profile.kr/#view=report&amp;sido=009&amp;sgg=00901">open</a> |
+| Prevention knowledge base linked to WHO, national and provincial plans, NICE and CPSTF | <code class="language-plaintext highlighter-rouge">app/src/components/NcdView.jsx</code> | <a href="https://health-profile.kr/#view=ncd">open</a> |
+| Sources tab with per-source coverage of all survey units | <code class="language-plaintext highlighter-rouge">app/src/components/SourcesView.jsx</code> | <a href="https://health-profile.kr/#view=sources">open</a> |
+| In-app feedback (copy, email, .json/.txt download; no server, no personal data) | <code class="language-plaintext highlighter-rouge">app/src/components/UsabilityFeedback.jsx</code> | – |
+| English overview page | <code class="language-plaintext highlighter-rouge">app/src/components/equity/RadarAbout.jsx</code> | <a href="https://health-profile.kr/#view=radar">open</a> |
+| Global prototype (World Bank WDI): income-group peer comparison, observed trends, verified evidence links | <code class="language-plaintext highlighter-rouge">global/src/main.js</code> | <a href="https://health-profile.kr/global/">open</a> |</p>
+
+<h2 id="8-known-limitations">8. Known limitations</h2>
+<ul>
+  <li>Survey indicators carry sampling error; neighbouring ranks may not differ meaningfully.</li>
+  <li>No programme input or output data: the tool cannot evaluate programme performance or effects.</li>
+  <li>Healthy life expectancy and the deprivation index are approximations computed for this project, not official statistics.</li>
+  <li>The prevention knowledge base was collected and summarized with AI assistance; original documents are linked and must be checked.</li>
+  <li>Korean interface except /solve, the English overview and the Health Equity Priority card.</li>
+  <li>Global prototype: national averages only (no within-country data), many values are modelled estimates, evidence relevance not yet reviewed by a domain expert.</li>
+  <li>No user testing or impact evidence yet; 0 independent reviews published.</li>
+</ul>
+
+<h2 id="9-global-prototype-portability-test">9. Global prototype (portability test)</h2>
+<p>| Fact | Value |
+|—|—|
+| Countries and economies | 217 (prototype applied to their data — <strong>not</strong> deployed in or used by them) |
+| World Bank WDI indicators | 25 (16 used for signals, the rest context) |
+| Latest-value records | 4,977 |
+| Observed values in the time series | 115,457 (2000–2025, observed years only, no interpolation) |
+| Country–indicator series / with trend classification | 4,955 / 2,837 |</p>
+
+<h2 id="10-evidence-sources">10. Evidence sources</h2>
+<ul>
+  <li>Global action areas: 21 of 21 registered public sources technically verified (HTTP status, page title, key terms); linked to 40 of 48 action areas. Expert relevance review: <strong>not yet done</strong>.</li>
+  <li>Korea: reference list of 27 official sources; prevention knowledge base with original-document links.</li>
+  <li>Independent reviews published: 0.</li>
+</ul>
+
+<h2 id="11-urls">11. URLs</h2>
+<ul>
+  <li>Judge page: https://health-profile.kr/solve/</li>
+  <li>Korea demo (English priority card): https://health-profile.kr/#view=profile&amp;sido=009&amp;sgg=00901&amp;en=1</li>
+  <li>English overview: https://health-profile.kr/#view=radar</li>
+  <li>Global prototype: https://health-profile.kr/global/ · methodology: https://health-profile.kr/global/methodology/</li>
+  <li>Data validation: https://health-profile.kr/docs/DATA_VALIDATION.md · this file: https://health-profile.kr/docs/COMPETITION_EVIDENCE.md</li>
+</ul>
+
+<h2 id="12-what-it-does-not-do--claims-we-must-not-make">12. What it does not do / claims we must not make</h2>
+<ul>
+  <li>Does not diagnose disease.</li>
+  <li>Does not predict future disease.</li>
+  <li>Does not estimate causal policy effects.</li>
+  <li>Does not automatically recommend public-budget allocation.</li>
+  <li>Does not claim that neighbouring ranks are meaningfully different.</li>
+  <li>Does not replace local public-health judgement.</li>
+</ul>
+
+<p>Never claim: deployed in / used by 217 countries (correct: prototype applied to data from 217 countries and economies); validated by governments, WHO, MIT or any partner; user numbers, adoption, impact or cost savings; AI prediction, AI diagnosis or AI-generated policy; risk map, real-time surveillance, proven impact. The build stops if these phrases appear in the English page sources (6 files checked, 0 found on 2026-10-06).</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
