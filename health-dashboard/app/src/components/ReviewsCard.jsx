@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import REV from "../../../data/reviews.json";
 import CONTACT from "../../../data/contact.json";
+import { gmailCompose } from "../lib/mail";
 
 /* 외부 검토·자문 — 「인증 마크」가 아니라 누가·무엇을(범위)·어느 빌드를·어떻게 확인했는지 공개하는 기록.
    docs/외부검토_서명_기획안_v1.md · 소유자 결정(2026-10-04): 자료원 탭 맨 위 · 무보수 자원 검토 · 동의 후 게시.
@@ -117,6 +118,7 @@ export default function ReviewsCard() {
           <div className="rev-btns">
             <button type="button" className="themebtn" disabled={!ready} onClick={async () => setMsg((await copyText(text)) ? "복사했습니다. 메일·메신저에 붙여 넣어 보내 주세요." : "복사하지 못했습니다. 미리보기를 드래그해 복사해 주세요.")}>복사</button>
             <a className={`themebtn ${ready ? "" : "is-off"}`} href={ready ? mailto : undefined} onClick={(e) => { if (!ready) e.preventDefault(); }}>✉ 이메일로 보내기</a>
+            <a className={`themebtn ${ready ? "" : "is-off"}`} href={ready ? gmailCompose(CONTACT.email, `[외부 검토 의견서] ${f.name} · ${f.org}`, text) : undefined} target="_blank" rel="noopener noreferrer" onClick={(e) => { if (!ready) e.preventDefault(); }} title="Gmail 웹에서 바로 작성 창을 엽니다">Gmail로 보내기</a>
             <button type="button" className="themebtn" disabled={!ready} onClick={print}>🖨 인쇄해서 서명</button>
             {!ready && <span className="muted">이름·소속과 확인한 범위 1개 이상을 넣으면 보낼 수 있습니다.</span>}
           </div>

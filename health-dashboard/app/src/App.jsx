@@ -96,6 +96,8 @@ export default function App() {
   const [feedbackFrom, setFeedbackFrom] = useState(() => window.location.href);
   useEffect(() => { if (view !== "feedback") setFeedbackFrom(window.location.href); }, [view, window.location.hash]);
   const [cmp, setCmp] = useState(init.cmp);         // 비교 대상 코드 목록 (NAT = 전국 중앙값)
+  const [histDepth, setHistDepth] = useState(() => window.history.state?.hd || 0);  // 이 사이트 안에서 쌓인 방문 기록 깊이(0이면 「← 이전」 숨김)
+  const navMounted = useRef(false);
   const [rankOpt, setRankOpt] = useState(init.rankOpt); // 순위 산출 방식 (방법론 v1)
   const [ncdInd, setNcdInd] = useState(init.ncdInd);     // 지식베이스 지표 필터
   const [en, setEn] = useState(init.en);                 // 우선 검토 카드 영어 모드
@@ -115,19 +117,32 @@ export default function App() {
       w: typeof rankOpt.weights === "object" ? "custom" : rankOpt.weights, sm: String(rankOpt.smooth), lg: rankOpt.league, ex: rankOpt.exclude ? "1" : "0",
       ...(typeof rankOpt.weights === "object" ? { cw: DS.domains.map((d) => rankOpt.weights[d] ?? 0).join(",") } : {}),
       ...(ncdInd ? { nind: ncdInd } : {}), ...(en ? { en: "1" } : {}) });
-    window.history.replaceState(null, "", "#" + h.toString());
+    // 방문 기록: 화면·지역·지표가 바뀌는 「이동」만 새 기록(push)으로 쌓고, 연도·값 유형·비교 범위 같은 세부 설정은 같은 기록을 고친다(replace).
+    // 예전엔 모두 replace 라 브라우저 ← 가 사이트 밖(들어오기 전 페이지)으로 나갔다(2026-10-05 소유자 제보).
+    const url = "#" + h.toString(), nav = `${view}|${sido}|${sgg || ""}|${ind.id}`, st = window.history.state;
+    if (st && st.nav === nav) window.history.replaceState({ ...st, nav }, "", url);          // 같은 화면(뒤로 가기로 돌아온 경우 포함)
+    else if (!st) window.history.replaceState({ hd: navMounted.current ? histDepth : 0, nav }, "", url);   // 첫 진입 / 주소창에서 직접 고친 해시
+    else window.history.pushState({ hd: (st.hd || 0) + 1, nav }, "", url);
+    navMounted.current = true;
+    setHistDepth(window.history.state?.hd || 0);
   }, [ind, item, sido, sgg, year, scope, view, cmp, rankOpt, ncdInd, en]);
 
-  // 주소창 해시가 바뀌면(링크 붙여넣기·뒤로가기) 화면 상태를 다시 읽는다
+  // 주소창 해시가 바뀌면(링크 붙여넣기·뒤로/앞으로 가기) 화면 상태를 다시 읽는다
   useEffect(() => {
+    try { window.history.scrollRestoration = "manual"; } catch {}
+    let lastView = readHash().view;
     const onHash = () => {
       const h = readHash();
       setInd(h.ind); setItem(h.item); setSido(h.sido); setSgg(h.sgg);
       setYearSel(h.year); setScope(h.scope); setView(h.view); setCmp(h.cmp);
       setRankOpt(h.rankOpt); setNcdInd(h.ncdInd); setEn(h.en); setPlaying(false);
+      setHistDepth(window.history.state?.hd || 0);
+      if (h.view !== lastView) window.scrollTo({ top: 0 });
+      lastView = h.view;
     };
     window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    window.addEventListener("popstate", onHash);
+    return () => { window.removeEventListener("hashchange", onHash); window.removeEventListener("popstate", onHash); };
   }, []);
 
   // 연도 애니메이션
@@ -227,9 +242,18 @@ export default function App() {
               <span className="sub-note">지역 건강수준과 격차를 모니터링하고, 지역보건 검토 우선순위를 탐색할 수 있도록 지원합니다(건강수준 모니터링과 목표치 설정 지원 도구). 본 서비스는 보건소 사업의 투입·산출 자료를 포함하지 않으므로 사업 성과평가나 인과효과 판단에 사용할 수 없습니다.</span></div>
           </div>
           <div className="topright">
+            {histDepth > 0 && <button type="button" className="themebtn back-btn" onClick={() => window.history.back()} title="직전에 보던 화면으로 (브라우저 ← 와 같음)">← 이전</button>}
             <Search view={view} onGo={goSearch} />
             <button type="button" className="themebtn help-btn" onClick={() => setHelpOpen(true)} title="소개 영상 · 사용설명서 · 활용법 내려받기" aria-haspopup="dialog"><b>?</b> 도움말</button>
             <button type="button" className={`themebtn en-btn ${view === "radar" ? "on" : ""}`} lang="en" onClick={() => { setView("radar"); window.scrollTo({ top: 0, behavior: "smooth" }); }} title="Health Equity Radar — English overview">EN</button>
+            {/* 글자 크기·테마는 한 묶음으로 오른쪽 위에(줄이 바뀌어도 서로 떨어지지 않게 — 2026-10-05 소유자 지시) */}
+            <span className="tool-grp">
+              <button className="themebtn" onClick={() => bumpFs(-1)} disabled={fs <= -1} title="글자 작게" aria-label="글자 작게">A−</button>
+              <button className="themebtn" onClick={() => bumpFs(1)} disabled={fs >= 2} title="글자 크게" aria-label="글자 크게">A+</button>
+              <button className="themebtn" onClick={toggleTheme}>{theme === "dark" ? "☀ 라이트" : "☾ 다크"}</button>
+            </span>
+          </div>
+          <nav className="nav-row" aria-label="메뉴">
             <div className="seg views">
               <button className={`seg-btn ${view === "home" ? "on" : ""}`} onClick={() => setView("home")}>홈</button>
               <button className={`seg-btn ${view === "analysis" ? "on" : ""}`} onClick={() => setView("analysis")}>지표 분석</button>
@@ -246,10 +270,7 @@ export default function App() {
               <button className={`seg-btn ${view === "sources" ? "on" : ""}`} onClick={() => setView("sources")}>자료원</button>
               <button className={`seg-btn fb-tab ${view === "feedback" ? "on" : ""}`} onClick={() => setView("feedback")} title="수정 의견·오류 신고·자료 문의">의견·문의</button>
             </div>
-            <button className="themebtn" onClick={() => bumpFs(-1)} disabled={fs <= -1} title="글자 작게">A−</button>
-            <button className="themebtn" onClick={() => bumpFs(1)} disabled={fs >= 2} title="글자 크게">A+</button>
-            <button className="themebtn" onClick={toggleTheme}>{theme === "dark" ? "☀ 라이트" : "☾ 다크"}</button>
-          </div>
+          </nav>
         </header>
 
         {playing && (

@@ -1264,3 +1264,12 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
   .view-report .rpt-me td { background:#e6eefb !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }
 @media print { #hd-toast { display:none !important; } }
+
+/* 머리글 배치(2026-10-05): 제목 | 오른쪽 위 도구(이전·검색·도움말·EN·A−·A+·다크) / 다음 줄 메뉴 탭 */
+header.top { align-items:flex-start; }
+header.top > div:first-child { flex:1 1 520px; min-width:0; }
+header.top > .topright { flex:0 1 auto; justify-content:flex-end; margin-left:auto; }
+.tool-grp { display:inline-flex; gap:6px; flex-wrap:nowrap; white-space:nowrap; }
+.nav-row { flex:1 0 100%; display:flex; min-width:0; }
+.back-btn { font-weight:600; }
+@media print { .nav-row, .back-btn { display:none; } }
