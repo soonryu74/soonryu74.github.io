@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>돌봄·의료 일자리 찾기 — 곁애 (준비 중)</title>
+<meta name="description" content="요양보호사·간병사·간호조무사·간호사 일자리를 지역·직종·근무조건으로 찾습니다. 곁애 공고 기능은 준비 중이며, 지금은 고용24 등 공식 구인 창구를 안내합니다.">
+<meta name="theme-color" content="#184a48">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/png/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/png/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="canonical" href="https://soonryu74.github.io/gyeotae/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="곁애">
+<meta property="og:title" content="돌봄·의료 일자리 찾기 — 곁애 (준비 중)">
+<meta property="og:description" content="간호사·요양보호사·간병사 등 의료·돌봄 전문인력과 가정·기관을 잇는 매칭 플랫폼을 준비 중입니다. 아직 운영 전이며 오픈 안내 신청만 받습니다. 모심 자매 서비스.">
+<meta property="og:url" content="https://soonryu74.github.io/gyeotae/">
+<meta property="og:image" content="https://soonryu74.github.io/gyeotae/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="돌봄·의료 일자리 찾기 — 곁애 (준비 중)">
+<meta name="twitter:description" content="돌봄·의료 전문인력 매칭을 준비 중입니다. 아직 운영 전이며 오픈 안내 신청만 받습니다.">
+<meta name="twitter:image" content="https://soonryu74.github.io/gyeotae/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --ground:#eaf0ef; --card:#ffffff; --card-2:#f4f7f6;
+  --ink:#152428; --body:#33454a; --muted:#61757a;
+  --line:#d5e0dd; --line-soft:#e4ecea;
+  --primary:#23625f; --primary-deep:#184a48; --primary-soft:#d7e7e3;
+  --gold:#c58a4a; --gold-soft:#f0e2cf; --warn:#b3701f;
+  --shadow:0 1px 2px rgba(21,36,40,.05),0 10px 30px rgba(21,36,40,.08);
+  --radius:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--body);
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  font-size:17px;line-height:1.72;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 22px}
+h1,h2,h3,h4{color:var(--ink);line-height:1.28;text-wrap:balance;letter-spacing:-.02em;margin:0}
+strong,b{color:var(--ink);font-weight:700}
+a{color:var(--primary);text-underline-offset:3px}
+.btn{display:inline-block;font-weight:700;border-radius:12px;padding:14px 24px;text-decoration:none;
+  border:1.5px solid transparent;cursor:pointer;font-size:1rem;transition:transform .12s ease,box-shadow .12s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--gold);color:#3a2a12;box-shadow:0 6px 18px rgba(197,138,74,.35)}
+.btn-ghost{background:transparent;color:#eaf6f3;border-color:rgba(255,255,255,.55)}
+.btn-ghost.dark{color:var(--primary);border-color:var(--primary)}
+.btn-block{display:block;width:100%;text-align:center}
+.btn-sm{padding:9px 15px;font-size:.9rem;border-radius:10px}
+
+/* top bar */
+.topbar{background:var(--primary-deep);color:#eaf6f3}
+.topbar .in{max-width:960px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar .brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+.topbar .brand .blogo{width:32px;height:32px;border-radius:9px;display:block}
+.topbar .brand .m{font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:-.03em}
+.topbar .brand .s{font-size:.82rem;color:#bcd6d1}
+.topbar .back{font-size:.84rem;color:#cfe3df;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;min-height:44px}
+.topbar .back:hover{color:#fff}
+.topbar .tnav{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.topbar .tnav a{font-size:.88rem;color:#cfe3df;text-decoration:none;padding:0 10px;border-radius:9px;display:inline-flex;align-items:center;min-height:44px}
+.topbar .tnav a:hover{color:#fff;background:rgba(255,255,255,.09)}
+.topbar .tnav a.on{color:#fff;background:rgba(255,255,255,.14)}
+
+/* hero */
+.hero{background:
+    radial-gradient(120% 90% at 100% -10%, rgba(197,138,74,.14), transparent 55%),
+    linear-gradient(160deg,var(--primary-deep),var(--primary) 75%);
+  color:#eef6f4;padding:64px 0 60px;position:relative;overflow:hidden}
+.hero .eyebrow{font-size:.78rem;letter-spacing:.26em;text-transform:uppercase;color:#e7c99a;font-weight:700;margin-bottom:18px}
+.hero h1{color:#fff;font-size:2.7rem;font-weight:800;letter-spacing:-.03em;max-width:16ch;line-height:1.2}
+.hero p.sub{font-size:1.16rem;color:#d3e5e1;margin:20px 0 0;max-width:46ch}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.hero .trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:34px;border-top:1px solid rgba(255,255,255,.16);padding-top:20px;font-size:.88rem;color:#bcd6d1}
+.hero .trust b{color:#fff;display:block;font-size:.98rem}
+.hero .ring{position:absolute;right:-60px;top:40px;width:280px;height:280px;border-radius:50%;border:1.5px solid rgba(255,255,255,.10);pointer-events:none}
+.hero .ring::after{content:"";position:absolute;inset:40px;border-radius:50%;border:1.5px solid rgba(197,138,74,.28)}
+
+section{padding:52px 0}
+.sec-eyebrow{font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:800;margin-bottom:8px}
+h2.title{font-size:1.8rem;margin-bottom:8px}
+.sec-lead{color:var(--muted);max-width:52ch;margin:0 0 26px}
+
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.vs .col{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+.vs .col.a{border-top:4px solid var(--primary)}
+.vs .col.b{border-top:4px solid var(--gold)}
+.vs .col h3{font-size:1.2rem}
+.vs .col .role{font-size:.82rem;color:var(--muted);margin:4px 0 14px}
+.vs .col ul{margin:0;padding-left:18px}
+.vs .col li{margin:8px 0;font-size:.98rem}
+
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+@media (max-width:400px){
+  body{overflow-x:hidden}
+  .steps,.vs,.form-grid{grid-template-columns:minmax(0,1fr) !important}
+  .field,.step,.col{min-width:0}
+  .field input,.field select,.field textarea{width:100%;min-width:0;max-width:100%}
+  .hero .ring{display:none}
+  .topbar .back{white-space:normal}
+  .topbar .in{flex-direction:column;align-items:flex-start;gap:6px}
+  .topbar .tnav{gap:0}
+  .topbar .tnav a{padding:0 8px;font-size:.84rem}
+  h1,h2,h3,h4,p,li{overflow-wrap:anywhere;word-break:keep-all}
+}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+.step .n{width:34px;height:34px;border-radius:10px;background:var(--primary-soft);color:var(--primary);font-weight:800;display:grid;place-items:center;margin-bottom:12px}
+.step h4{font-size:1.05rem;margin-bottom:5px}
+.step p{margin:0;color:var(--muted);font-size:.93rem}
+
+.badge-note{display:flex;gap:14px;align-items:flex-start;background:var(--gold-soft);border:1px solid #e6d3b4;
+  border-radius:14px;padding:18px 20px;margin-top:22px;color:#5a4321}
+.badge-note b{color:#3a2a12}
+.badge-note .ic{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:var(--gold);color:#3a2a12;display:grid;place-items:center;font-weight:800}
+
+/* waitlist */
+.signup{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px;box-shadow:var(--shadow)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+label{font-size:.86rem;font-weight:700;color:var(--ink)}
+input,select,textarea{font:inherit;font-size:.98rem;padding:12px 13px;border:1.5px solid var(--line);border-radius:11px;background:var(--card-2);color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);background:#fff}
+textarea{min-height:88px;resize:vertical}
+#out{margin-top:16px}
+.callout{background:var(--card-2);border:1px solid var(--line);border-left:4px solid var(--primary);border-radius:12px;padding:16px 18px}
+.callout .t{display:block;font-weight:800;color:var(--ink);margin-bottom:6px}
+
+.tie{background:var(--primary-deep);color:#dcebe7}
+.tie .in{display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:space-between;padding:34px 0}
+.tie h3{color:#fff;font-size:1.3rem}
+.tie p{margin:6px 0 0;color:#bcd6d1;max-width:52ch}
+
+footer.foot{background:#0f1b1d;color:#93a8a4;padding:34px 0;font-size:.86rem}
+footer.foot b{color:#dcebe7}
+.disclaimer{margin-top:12px;font-size:.8rem;color:#7c918d;line-height:1.7}
+
+@media(max-width:640px){
+  .hero h1{font-size:2.1rem}
+  .vs{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  body{font-size:16px}
+}
+
+/* dark theme */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0e1719;--card:#152225;--card-2:#1a2a2d;--ink:#eaf2f0;--body:#c3d2cf;--muted:#8ba09d;
+    --line:#294044;--line-soft:#22383b;--primary:#5fb0a9;--primary-deep:#123330;--primary-soft:#1d3b39;
+    --gold:#d9a763;--gold-soft:#2c2416;--warn:#dca85a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.45);
+  }
+  :root:not([data-theme="light"]) .btn-primary{color:#1a1206}
+  :root:not([data-theme="light"]) .badge-note{background:#2c2416;border-color:#4a3a20;color:#e5cfa6}
+  :root:not([data-theme="light"]) .badge-note b{color:#f0dcb6}
+  :root:not([data-theme="light"]) .badge-note .ic{color:#1a1206}
+}
+
+/* 키보드로 이동할 때 지금 어디에 있는지 보이게 한다. 마우스 클릭에는 나타나지 않는다. */
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:8px}
+.btn:focus-visible,.topbar a:focus-visible{outline-color:#fff}
+/* input:focus 의 outline:none 이 더 구체적이라 위 규칙을 덮는다. 같은 구체도로 되살린다. */
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="in">
+    <a class="brand" href="index.html"><img class="blogo" src="assets/logo-mark.svg" alt="곁애 로고"><span class="m">곁애</span> <span class="s">돌봄·의료 전문가 매칭</span></a>
+    <nav class="tnav" aria-label="곁애 주요 메뉴">
+      <a class="on" href="ilja.html">일자리 찾기</a>
+      <a href="../dolbom/gyoyuk.html">교육·자격</a>
+      <a href="index.html#signup">오픈 안내 신청</a>
+      <a class="back" href="../dolbom/index.html">← 모심</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap" style="padding:36px 22px 10px">
+  <div class="sec-eyebrow">일자리 찾기</div>
+  <h1 class="title" style="margin-top:4px">돌봄·의료 일자리</h1>
+  <p class="sec-lead">지역·직종·근무조건으로 공고를 찾습니다. 로그인하지 않아도 보실 수 있습니다.</p>
+
+  <div class="callout" id="supply-note" style="border-left-color:var(--gold)">
+    <span class="t">지금은 곁애에 올라온 공고가 없습니다</span>
+    곁애의 공고 기능은 <b>준비 중</b>입니다. 기관이 공고를 올리고 <b>사람이 검토한 뒤에만</b> 공개하도록 만들고 있습니다.
+    <b>가짜 공고로 화면을 채우지 않습니다.</b> 그래서 지금은 목록이 비어 있고, 아래에 <b>공식 구인 창구</b>를 안내합니다.
+  </div>
+
+  <section style="margin-top:22px">
+    <div class="form-grid" role="group" aria-labelledby="flt-h">
+      <h2 id="flt-h" class="sr-only" style="position:absolute;left:-9999px">공고 검색 조건</h2>
+      <div class="field">
+        <label for="f-role">직종</label>
+        <select id="f-role">
+          <option value="">전체</option>
+          <option>요양보호사</option><option>간병인</option><option>간호조무사</option>
+          <option>간호사</option><option>산후관리사</option><option>장애인활동지원사</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-sido">시·도</label>
+        <select id="f-sido"><option value="">전체</option></select>
+      </div>
+      <div class="field">
+        <label for="f-sigungu">시·군·구</label>
+        <select id="f-sigungu"><option value="">전체</option></select>
+      </div>
+      <div class="field">
+        <label for="f-employment">고용 형태</label>
+        <select id="f-employment">
+          <option value="">전체</option>
+          <option>정규직</option><option>계약직</option><option>시간제</option><option>입주</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-shift">근무 시간대</label>
+        <select id="f-shift">
+          <option value="">전체</option>
+          <option>주간</option><option>야간</option><option>교대</option><option>협의</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-keyword">검색어</label>
+        <input type="text" id="f-keyword" placeholder="예: 요양원 / 주야간보호">
+      </div>
+    </div>
+    <p style="margin:14px 0 0"><button class="btn btn-primary" id="f-run">공고 찾기</button>
+      <button class="btn btn-ghost" id="f-reset">조건 지우기</button></p>
+  </section>
+
+  <section style="margin-top:26px">
+    <h2 class="title" style="font-size:1.3rem">검색 결과 <span id="cnt" style="font-weight:400;font-size:.9rem;color:var(--muted)"></span></h2>
+    <div id="list" role="region" aria-live="polite" aria-busy="false"></div>
+  </section>
+
+  <section style="margin-top:34px">
+    <h2 class="title" style="font-size:1.3rem">공식 구인 창구</h2>
+    <p class="sec-lead">곁애 공고가 없어도 아래에서 실제 일자리를 찾으실 수 있습니다. 모두 공식 사이트입니다.</p>
+    <ul class="source-list" id="official"></ul>
+  </section>
+
+  <section style="margin-top:34px">
+    <h2 class="title" style="font-size:1.3rem">기관이신가요?</h2>
+    <div class="callout">
+      <span class="t">공고 등록은 아직 받지 않습니다</span>
+      기관 확인 절차와 공고 검토 담당자가 정해진 뒤에 엽니다. 확인 없이 올라온 공고를 그대로 내보내지 않기 위해서입니다.
+      준비 상황을 안내받으시려면 <a href="index.html#signup">오픈 안내 신청</a>에서 <b>가정·기관</b>으로 남겨주세요.
+    </div>
+  </section>
+
+  <div class="disclaimer" style="margin:26px 0 10px">
+    곁애는 구인·구직 정보를 제공하는 플랫폼이며 <b>고용의 당사자가 아닙니다.</b> 근로조건·임금·계약은 당사자가 직접 확인하고 결정하셔야 합니다.
+    공고에 표시되는 금액은 기관이 입력한 값이며 곁애가 보증하지 않습니다.
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <b>곁애</b> — 돌봄·의료 전문인력 매칭 플랫폼 <b>준비 중</b> · 모심 자매 서비스
+    <div class="disclaimer">
+      곁애는 구인·구직 정보를 제공하는 플랫폼으로, 고용의 당사자가 아니며 당사자 간 계약을 보증하지 않습니다. 자격 확인 절차는 <b>아직 운영되지 않습니다.</b> 운영을 시작하더라도 이용자는 계약 전 자격·등록 여부를 직접 확인하시기 바랍니다. 본 페이지는 정식 오픈 전 사전등록 안내이며, 서비스 범위·요금 구조는 관련 법령 및 전문가 자문에 따라 확정됩니다. © 2026 곁애.
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../dolbom/assets/regions.js"></script>
+<script>
+const SB_URL='https://gancotctztwqsuupektl.supabase.co';
+const SB_KEY='sb_publishable_SJHf3habT8mpWmF9vedxuw_g1e3pLkT';
+let sb=null; try{ if(window.supabase) sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){}
+function esc(s){ return String(s||'').replace(/[<>&]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m])); }
+
+/* 공식 구인 창구 — 직접 확인한 곳만 싣는다. 확인일을 함께 적는다. */
+const OFFICIAL = [
+  { name:'고용24 (고용노동부)', url:'https://www.work24.go.kr/',
+    desc:'전국 구인정보 검색과 구직 신청. 국민내일배움카드 훈련과정도 함께 찾을 수 있습니다.',
+    tel:'1350', tel_note:'고용노동부 고객상담센터 · 평일 09:00~18:00', checked:'2026-10-04' },
+  { name:'워크넷 복지·보건 직종', url:'https://www.work24.go.kr/',
+    desc:'요양보호사·간병인·간호조무사 채용공고가 가장 많이 모이는 공식 경로입니다.',
+    checked:'2026-10-04' },
+  { name:'노인장기요양보험 (국민건강보험공단)', url:'https://www.longtermcare.or.kr/',
+    desc:'장기요양기관을 찾아 직접 문의하실 수 있습니다. 기관 평가등급은 모심에서 확인하세요.',
+    tel:'1577-1000', checked:'2026-10-04' },
+  { name:'모심 — 기관 평가등급 검색', url:'../dolbom/gigwan.html',
+    desc:'일할 기관을 고르기 전에 공단 평가등급·평가일을 확인해 보세요.', checked:'2026-10-05' }
+];
+
+(function(){
+  const ul=document.getElementById('official');
+  ul.innerHTML = OFFICIAL.map(o=>
+    `<li><a href="${esc(o.url)}"${o.url.startsWith('http')?' target="_blank" rel="noopener"':''}>${esc(o.name)}</a>`+
+    `<span class="desc">${esc(o.desc)}`+
+    (o.tel?` · <b>${esc(o.tel)}</b>${o.tel_note?` (${esc(o.tel_note)})`:''}`:'')+
+    ` · 확인일 ${esc(o.checked)}</span></li>`).join('');
+})();
+
+/* 지역 선택 */
+const sidoSel=document.getElementById('f-sido'), sgSel=document.getElementById('f-sigungu');
+if (window.REGIONS) {
+  Object.keys(REGIONS).forEach(s=>{ const o=document.createElement('option'); o.value=s; o.textContent=s; sidoSel.appendChild(o); });
+  sidoSel.addEventListener('change', ()=>{
+    sgSel.innerHTML='<option value="">전체</option>';
+    (REGIONS[sidoSel.value]||[]).forEach(g=>{ const o=document.createElement('option'); o.value=g; o.textContent=g; sgSel.appendChild(o); });
+  });
+}
+
+function payText(j){
+  if (j.pay_type==='negotiable' || !j.pay_type) return '급여 협의';
+  const unit = { hour:'시급', day:'일급', month:'월급' }[j.pay_type] || '';
+  const n = v => Number(v).toLocaleString();
+  if (j.pay_min && j.pay_max && j.pay_min!==j.pay_max) return `${unit} ${n(j.pay_min)}~${n(j.pay_max)}원`;
+  if (j.pay_min) return `${unit} ${n(j.pay_min)}원~`;
+  if (j.pay_max) return `${unit} ~${n(j.pay_max)}원`;
+  return '급여 협의';
+}
+
+function card(j){
+  const 마감 = j.closes_at ? `마감 ${esc(j.closes_at)}` : '상시';
+  const 지원 = j.apply_method==='external' && j.apply_url
+    ? `<a class="btn btn-sm btn-primary" href="${esc(j.apply_url)}" target="_blank" rel="noopener">공식 지원 페이지로 →</a>`
+    : `<span class="hint">기관에 직접 연락해 지원하는 공고입니다.</span>`;
+  return `<article class="callout" style="margin:14px 0">
+    <span class="t">${esc(j.title)}</span>
+    <div style="font-size:.92rem;line-height:1.8">
+      ${esc(j.org_name)}${j.org_verified?' <b style="color:var(--gold)">· 기관 확인됨</b>':' <span class="hint">· 기관 확인 전</span>'}
+      ${j.org_ltc_sym?`<span class="hint"> · 기관기호 ${esc(j.org_ltc_sym)}</span>`:''}<br>
+      ${esc(j.job_role)} · ${esc(j.region||'지역 미입력')}
+      ${j.employment?` · ${esc(j.employment)}`:''}${j.shift?` · ${esc(j.shift)}`:''}<br>
+      <b>${esc(payText(j))}</b> · ${마감}
+    </div>
+    ${j.description?`<p style="margin:8px 0 0;font-size:.92rem">${esc(j.description)}</p>`:''}
+    <div style="margin-top:10px">${지원}</div>
+  </article>`;
+}
+
+const listEl=document.getElementById('list'), cntEl=document.getElementById('cnt');
+
+async function search(){
+  listEl.setAttribute('aria-busy','true');
+  listEl.innerHTML='<p style="color:var(--muted)">불러오는 중…</p>';
+  cntEl.textContent='';
+
+  if(!sb){ showEmpty('nodb'); return; }
+  let q = sb.from('jobs_public').select('*', {count:'exact'});
+  const r=document.getElementById('f-role').value, sido=sidoSel.value, sg=sgSel.value,
+        em=document.getElementById('f-employment').value, sh=document.getElementById('f-shift').value,
+        kw=document.getElementById('f-keyword').value.trim();
+  if(r)  q=q.eq('job_role', r);
+  if(sido) q=q.eq('sido', sido);
+  if(sg) q=q.eq('sigungu', sg);
+  if(em) q=q.eq('employment', em);
+  if(sh) q=q.eq('shift', sh);
+  if(kw) q=q.ilike('title', '%'+kw+'%');
+
+  const { data, error, count } = await q.order('created_at', {ascending:false}).limit(50);
+  listEl.setAttribute('aria-busy','false');
+
+  if(error){
+    // 공고 테이블이 아직 없는 상태(기능 준비 중)와 일시적 오류를 구분한다.
+    const code = error.code || '';
+    showEmpty(code==='42P01' || code==='PGRST205' ? 'notready' : 'error', error.message);
+    return;
+  }
+  if(!data || !data.length){ showEmpty('none'); return; }
+  cntEl.textContent = `${Number(count||data.length).toLocaleString()}건`;
+  listEl.innerHTML = data.map(card).join('');
+}
+
+function showEmpty(kind, msg){
+  listEl.setAttribute('aria-busy','false');
+  const 공식 = '<div style="margin-top:10px"><a class="btn btn-sm btn-primary" href="https://www.work24.go.kr/" target="_blank" rel="noopener">고용24에서 찾기 →</a></div>';
+  if(kind==='none'){
+    listEl.innerHTML = '<div class="callout"><span class="t">조건에 맞는 공고가 없습니다</span>'+
+      '조건을 넓혀 보시거나, 아래 공식 구인 창구를 이용해 주세요.'+공식+'</div>';
+  } else if(kind==='notready'){
+    listEl.innerHTML = '<div class="callout"><span class="t">곁애 공고 기능은 아직 열리지 않았습니다</span>'+
+      '기관 확인과 공고 검토 절차가 준비되면 엽니다. 그때까지는 공식 구인 창구를 이용해 주세요.'+공식+'</div>';
+  } else if(kind==='nodb'){
+    listEl.innerHTML = '<div class="callout"><span class="t">연결이 어렵습니다</span>'+
+      '잠시 후 다시 시도해 주세요. 아래 공식 구인 창구는 바로 이용하실 수 있습니다.'+공식+'</div>';
+  } else {
+    listEl.innerHTML = '<div class="callout"><span class="t">공고를 불러오지 못했습니다</span>'+
+      '일시적인 문제일 수 있습니다. 다시 시도하시거나 공식 구인 창구를 이용해 주세요.'+
+      '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">'+
+      '<button class="btn btn-sm btn-ghost" id="retry">다시 시도</button>'+
+      '<a class="btn btn-sm btn-primary" href="https://www.work24.go.kr/" target="_blank" rel="noopener">고용24에서 찾기 →</a></div></div>';
+    const rb=document.getElementById('retry'); if(rb) rb.addEventListener('click', search);
+  }
+  cntEl.textContent='0건';
+}
+
+document.getElementById('f-run').addEventListener('click', search);
+document.getElementById('f-reset').addEventListener('click', ()=>{
+  ['f-role','f-sido','f-sigungu','f-employment','f-shift'].forEach(id=>document.getElementById(id).value='');
+  sgSel.innerHTML='<option value="">전체</option>';
+  document.getElementById('f-keyword').value='';
+  search();
+});
+document.getElementById('f-keyword').addEventListener('keydown', e=>{ if(e.key==='Enter') search(); });
+search();
+</script>
+<script src="/assets/credit.js" defer></script>
+
+</body>
+</html>

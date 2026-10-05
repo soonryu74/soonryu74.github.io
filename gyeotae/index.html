@@ -63,6 +63,10 @@ a{color:var(--primary);text-underline-offset:3px}
 .topbar .brand .s{font-size:.82rem;color:#bcd6d1}
 .topbar .back{font-size:.84rem;color:#cfe3df;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;min-height:44px}
 .topbar .back:hover{color:#fff}
+.topbar .tnav{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.topbar .tnav a{font-size:.88rem;color:#cfe3df;text-decoration:none;padding:0 10px;border-radius:9px;display:inline-flex;align-items:center;min-height:44px}
+.topbar .tnav a:hover{color:#fff;background:rgba(255,255,255,.09)}
+.topbar .tnav a.on{color:#fff;background:rgba(255,255,255,.14)}
 
 /* hero */
 .hero{background:
@@ -100,6 +104,9 @@ h2.title{font-size:1.8rem;margin-bottom:8px}
   .field input,.field select,.field textarea{width:100%;min-width:0;max-width:100%}
   .hero .ring{display:none}
   .topbar .back{white-space:normal}
+  .topbar .in{flex-direction:column;align-items:flex-start;gap:6px}
+  .topbar .tnav{gap:0}
+  .topbar .tnav a{padding:0 8px;font-size:.84rem}
   h1,h2,h3,h4,p,li{overflow-wrap:anywhere;word-break:keep-all}
 }
 .step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
@@ -154,6 +161,12 @@ footer.foot b{color:#dcebe7}
   :root:not([data-theme="light"]) .badge-note b{color:#f0dcb6}
   :root:not([data-theme="light"]) .badge-note .ic{color:#1a1206}
 }
+
+/* 키보드로 이동할 때 지금 어디에 있는지 보이게 한다. 마우스 클릭에는 나타나지 않는다. */
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:8px}
+.btn:focus-visible,.topbar a:focus-visible{outline-color:#fff}
+/* input:focus 의 outline:none 이 더 구체적이라 위 규칙을 덮는다. 같은 구체도로 되살린다. */
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -161,7 +174,12 @@ footer.foot b{color:#dcebe7}
 <div class="topbar">
   <div class="in">
     <a class="brand" href="index.html"><img class="blogo" src="assets/logo-mark.svg" alt="곁애 로고"><span class="m">곁애</span> <span class="s">돌봄·의료 전문가 매칭</span></a>
-    <a class="back" href="../dolbom/index.html">← 모심(어르신 돌봄 포털)</a>
+    <nav class="tnav" aria-label="곁애 주요 메뉴">
+      <a href="ilja.html">일자리 찾기</a>
+      <a href="../dolbom/gyoyuk.html">교육·자격</a>
+      <a href="index.html#signup">오픈 안내 신청</a>
+      <a class="back" href="../dolbom/index.html">← 모심</a>
+    </nav>
   </div>
 </div>
 
@@ -253,8 +271,9 @@ footer.foot b{color:#dcebe7}
            아래 안내가 '확인 필요' 상태로 표시되고 서버 접수는 열리지 않는다. -->
       <div id="w-policy" style="margin:18px 0 0"></div>
 
+      <div id="w-formerr" role="alert" aria-live="assertive" style="margin-top:14px"></div>
       <p style="margin:18px 0 0"><button class="btn btn-primary" id="w-gen">사전등록 접수</button></p>
-      <div id="out"></div>
+      <div id="out" role="region" aria-live="polite"></div>
       <p style="font-size:.8rem;color:var(--muted);margin:14px 0 0">신청 내용은 오픈 안내 목적에 한해 사용되며, 제3자에게 제공하지 않습니다. 정식 서비스는 「직업안정법」상 <b>직업정보제공사업 신고</b>를 마친 뒤 운영됩니다.</p>
     </div>
   </div>
@@ -287,6 +306,16 @@ let sb=null; try{ if(window.supabase) sb=window.supabase.createClient(SB_URL,SB_
 function esc(s){ return (s||'').replace(/[<>&]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m])); }
 
 const btn=document.getElementById('w-gen'), out=document.getElementById('out');
+const wMsg=document.getElementById('w-formerr');   // 'w-msg' 는 '남기실 말' textarea 의 id 다
+
+// 오류를 alert 로만 알리지 않는다. 화면 안에 적고(role="alert") 고칠 곳으로 초점을 옮긴다.
+function formError(text, focusId){
+  wMsg.innerHTML = `<div class="callout" style="margin:0;border-left-color:var(--warn)"><span class="t">입력을 확인해 주세요</span>${esc(text)}</div>`;
+  const t = focusId && document.getElementById(focusId);
+  if (t) t.focus();
+  wMsg.scrollIntoView({behavior:'smooth', block:'center'});
+}
+function formClear(){ wMsg.innerHTML=''; }
 
 /* ── 개인정보 수집 안내 설정 ───────────────────────────────────────────────
    운영 주체의 법적 명칭·보유기간·문의처는 운영자가 확정해야 하는 항목이다.
@@ -393,17 +422,17 @@ const clientToken = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() :
 
 btn.addEventListener('click', async ()=>{
   if (submitting || submitted) return;
+  formClear();
   const v=id=>document.getElementById(id).value.trim();
   const role=document.getElementById('w-role').value;
-  if(!v('w-contact')){ alert('오픈 안내를 받으실 연락처를 입력해 주세요.'); document.getElementById('w-contact').focus(); return; }
+  if(!v('w-contact')){ formError('오픈 안내를 받으실 연락처를 입력해 주세요.', 'w-contact'); return; }
 
   // 운영 정보가 확정되기 전에는 서버에 저장하지 않는다. 메일 접수 안내만 한다.
   if(!policyReady()){ fallbackBox(role,v); return; }
 
   const consent=document.getElementById('w-consent');
   if(!consent || !consent.checked){
-    alert('개인정보 수집·이용에 동의해 주셔야 접수할 수 있습니다. 동의 없이 보내시려면 메일 접수를 이용해 주세요.');
-    consent && consent.focus();
+    formError('개인정보 수집·이용에 동의해 주셔야 접수할 수 있습니다. 동의 없이 보내시려면 아래 메일 접수를 이용해 주세요.', 'w-consent');
     return;
   }
 

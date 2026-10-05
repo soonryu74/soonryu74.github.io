@@ -91,7 +91,7 @@
  </section>
 
  <p id="count" style="color:var(--muted);font-weight:700;margin:6px 2px"></p>
- <div class="result-grid" id="list"></div>
+ <div class="result-grid" id="list" role="region" aria-live="polite" aria-busy="false" aria-label="기관 검색 결과"></div>
  <p id="more" style="text-align:center"></p>
 
  <div class="ad-slot"><strong>평가 우수 기관</strong>이라면 프리미엄으로 지역 상단에 노출하세요. <a href="partner.html">제휴 안내 →</a></div>
@@ -215,11 +215,12 @@ function card(x){
 async function load(append){
  if(!sb){ document.getElementById('list').innerHTML='<p style="color:var(--muted)">데이터 연결이 필요합니다. 잠시 후 다시 시도해 주세요.</p>'; return; }
  const listEl=document.getElementById('list'), moreEl=document.getElementById('more'), cntEl=document.getElementById('count');
- if(!append){ offset=0; listEl.innerHTML='<p style="color:var(--muted)">불러오는 중…</p>'; moreEl.innerHTML=''; }
+ if(!append){ offset=0; listEl.setAttribute('aria-busy','true'); listEl.innerHTML='<p style="color:var(--muted)">불러오는 중…</p>'; moreEl.innerHTML=''; }
  const { data, error, count } = await buildQuery(false)
  .order('score',{ascending:false,nullsFirst:false}).order('ltc_sym',{ascending:true})
  .range(offset, offset+PAGE-1);
  if(error){
+   listEl.setAttribute('aria-busy','false');
    cntEl.textContent='';
    listEl.innerHTML=`<div class="callout warn"><span class="t">평가자료를 불러오지 못했습니다</span>
      일시적인 연결 문제일 수 있습니다. 아래 버튼으로 다시 시도하시거나, 공식 사이트에서 직접 확인하세요.
@@ -230,6 +231,7 @@ async function load(append){
    const rb=document.getElementById('retry-btn'); if(rb) rb.addEventListener('click',()=>load(false));
    return;
  }
+ listEl.setAttribute('aria-busy','false');
  lastCount = count||0;
  cntEl.textContent = `검색 결과 ${Number(lastCount).toLocaleString()}건` + (lastCount>PAGE?` (상위 ${Math.min(offset+PAGE,lastCount)}건 표시)`:'') + ' · 기관기호·급여종류별 최신 평가';
  const html=(data||[]).map(card).join('');

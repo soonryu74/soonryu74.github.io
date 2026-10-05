@@ -54,6 +54,7 @@ window.REGION_NATIONAL = {
  * 키는 '시·도 시·군·구' 또는 시·도 전체에 적용되면 '시·도' 한 가지. */
 window.REGION_CONTACTS = {
   '경기도 부천시': {
+    범위종류: 'sigungu',
     담당: '부천시청 돌봄지원과',
     전화: '032-625-9012~9016',
     추가: [
@@ -67,6 +68,7 @@ window.REGION_CONTACTS = {
   },
 
   '인천광역시 부평구': {
+    범위종류: 'sigungu',
     담당: '부평구청 복지정책과 통합돌봄팀',
     전화: '032-509-3930',
     신청: '각 동 통합돌봄창구 (22개 동)',
@@ -76,6 +78,7 @@ window.REGION_CONTACTS = {
   },
 
   '강원특별자치도 원주시': {
+    범위종류: 'sigungu',
     담당: '원주시 경로복지과 통합돌봄팀',
     전화: '033-737-2696, 2698',
     신청: '주소지 행정복지센터 (면)복지팀 · (읍·동)찾아가는 보건복지팀 · 국민건강보험공단 지사',
@@ -85,6 +88,7 @@ window.REGION_CONTACTS = {
   },
 
   '광주광역시 광산구': {
+    범위종류: 'sigungu',
     담당: '광산구 통합돌봄과 통합돌봄팀',
     전화: '062-960-8326',
     추가: [
@@ -97,8 +101,10 @@ window.REGION_CONTACTS = {
     checked_at: '2026-10-04'
   },
 
-  /* 시·도 전체에 적용되는 창구 */
+  /* 시·도 전체에 적용되는 창구.
+     범위: 'sido' 는 시·도 전역 번호라는 뜻이다. 자치구의 직통 담당부서가 아니다. */
   '서울특별시': {
+    범위종류: 'sido',
     담당: '서울시 안심돌봄120',
     전화: '1668-0120',
     신청: '본인 또는 가족이 자치구 또는 동주민센터에 신청. 긴급한 경우 자치구 직권 신청 가능',
@@ -112,9 +118,19 @@ window.REGION_CONTACTS = {
  * 둘 다 없으면 null 을 돌려주고, 화면은 전국 공식 경로를 안내한다. */
 window.findRegionContact = function(sido, gu){
   var C = window.REGION_CONTACTS || {};
-  if (sido && gu && C[sido + ' ' + gu]) return { 범위: sido + ' ' + gu, 정보: C[sido + ' ' + gu] };
-  if (sido && C[sido])                  return { 범위: sido,             정보: C[sido] };
+  // 시·군·구 직통을 먼저 찾고, 없으면 시·도 전역 창구로 내려간다.
+  // 둘은 성격이 다르므로 화면에서 반드시 구분해 표시한다.
+  if (sido && gu && C[sido + ' ' + gu])
+    return { 범위: sido + ' ' + gu, 범위종류: 'sigungu', 정보: C[sido + ' ' + gu] };
+  if (sido && C[sido])
+    return { 범위: sido, 범위종류: 'sido', 정보: C[sido] };
   return null;
+};
+
+/* 직접 확인한 시·군·구 직통 창구의 수 (시·도 전역 항목은 세지 않는다) */
+window.sigunguContactCount = function(){
+  var C = window.REGION_CONTACTS || {};
+  return Object.keys(C).filter(function(k){ return (C[k].범위종류 || '') === 'sigungu'; }).length;
 };
 
 /* 확인한 지역 수 — 화면에 "현재 N개 지역을 직접 확인했습니다" 로 쓴다. */

@@ -103,25 +103,25 @@
  <div class="field full">
  <label id="lbl-types">가능한 돌봄 형태 <span class="hint">여러 개 선택</span></label>
  <div class="chip-row" id="f-types" role="group" aria-labelledby="lbl-types">
- <span class="chip" data-v="방문요양">방문요양</span>
- <span class="chip" data-v="병원간병">병원간병</span>
- <span class="chip" data-v="입주간병">입주(24시간)</span>
- <span class="chip" data-v="주야간보호">주야간보호</span>
- <span class="chip" data-v="방문목욕">방문목욕</span>
- <span class="chip" data-v="병원동행">병원동행</span>
- <span class="chip" data-v="산후조리">산후조리</span>
- <span class="chip" data-v="치매돌봄">치매돌봄</span>
+ <button type="button" class="chip" aria-pressed="false" data-v="방문요양">방문요양</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="병원간병">병원간병</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="입주간병">입주(24시간)</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="주야간보호">주야간보호</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="방문목욕">방문목욕</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="병원동행">병원동행</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="산후조리">산후조리</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="치매돌봄">치매돌봄</button>
  </div>
  </div>
  <div class="field full">
  <label id="lbl-skills">보유 자격·강점 <span class="hint">여러 개 선택</span></label>
  <div class="chip-row" id="f-skills" role="group" aria-labelledby="lbl-skills">
- <span class="chip" data-v="요양보호사 1급">요양보호사 1급</span>
- <span class="chip" data-v="간호조무사 자격">간호조무사</span>
- <span class="chip" data-v="치매전문교육 이수">치매전문교육</span>
- <span class="chip" data-v="체위변경·이동 보조">체위변경·이동보조</span>
- <span class="chip" data-v="운전 가능">운전 가능</span>
- <span class="chip" data-v="요리 가능">요리 가능</span>
+ <button type="button" class="chip" aria-pressed="false" data-v="요양보호사 1급">요양보호사 1급</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="간호조무사 자격">간호조무사</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="치매전문교육 이수">치매전문교육</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="체위변경·이동 보조">체위변경·이동보조</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="운전 가능">운전 가능</button>
+ <button type="button" class="chip" aria-pressed="false" data-v="요리 가능">요리 가능</button>
  </div>
  <p class="hint" style="margin-top:8px;line-height:1.6">
  흡인·석션, 콧줄·위루 관리, 투약·주사 같은 <b>의료행위</b>는 개인의 강점으로 표시하지 않습니다.
@@ -155,6 +155,7 @@
  <!-- 개인정보 처리 안내. 운영 주체·보유기간·문의처는 운영자가 확정해야 하는 값이므로
  assets/privacy-config.js 에서 읽어오고, 비어 있으면 '확인 중'으로 표시한다. -->
  <div id="pv-notice" style="margin-top:18px"></div>
+ <div id="form-msg" role="alert" aria-live="assertive" style="margin-top:14px"></div>
 
  <p style="margin-top:18px">
  <button class="btn btn-primary" id="save">프로필 등록하기</button>
@@ -181,7 +182,7 @@
  </div>
  </div>
  <div class="ad-slot"><b>프리미엄 프로필</b>은 이 디렉토리 최상단에 고정 노출됩니다. <a href="partner.html">프리미엄 안내 →</a></div>
- <div class="result-grid" id="dir"></div>
+ <div class="result-grid" id="dir" role="region" aria-live="polite" aria-busy="false" aria-label="돌봄종사자 디렉토리"></div>
  </section>
 
  <div class="disclaimer">등록된 프로필은 이용자가 직접 입력한 정보입니다. 채용·계약 전 자격증·경력을 원본 서류로 반드시 확인하세요. 모심은 개인 간 연결을 돕는 정보 플랫폼이며 고용·근로계약의 당사자가 아닙니다.</div>
@@ -255,7 +256,10 @@ async function saveProfile(p){
 // 칩 선택 유틸
 function chipVals(id){ return [...document.querySelectorAll('#'+id+' .chip.on')].map(c=>c.dataset.v); }
 document.querySelectorAll('#f-types .chip, #f-skills .chip').forEach(c=>{
- c.addEventListener('click', ()=> c.classList.toggle('on'));
+ c.addEventListener('click', ()=>{
+   c.classList.toggle('on');
+   c.setAttribute('aria-pressed', c.classList.contains('on') ? 'true' : 'false');
+ });
 });
 
 function esc(s){ return (s||'').replace(/[<>&]/g, m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m])); }
@@ -301,24 +305,40 @@ document.getElementById('gen').addEventListener('click', ()=>{
  });
 });
 
+// 오류를 alert 로만 알리면 화면낭독기 사용자가 맥락을 잃는다.
+// 화면 안에 role="alert" 로 적고, 고쳐야 할 곳으로 초점을 옮긴다.
+const msgEl = document.getElementById('form-msg');
+function formError(text, focusSel){
+ msgEl.innerHTML = `<div class="callout warn" style="margin:0"><span class="t">입력을 확인해 주세요</span>${esc(text)}</div>`;
+ const t = focusSel && document.querySelector(focusSel);
+ if (t) t.focus();
+ msgEl.scrollIntoView({behavior:'smooth', block:'center'});
+}
+function formNotice(text, kind){
+ msgEl.innerHTML = `<div class="callout ${kind||'tip'}" style="margin:0"><span class="t">${kind==='warn'?'등록하지 못했습니다':'등록되었습니다'}</span>${esc(text)}</div>`;
+ msgEl.scrollIntoView({behavior:'smooth', block:'center'});
+}
+function formClear(){ msgEl.innerHTML=''; }
+
 document.getElementById('save').addEventListener('click', async ()=>{
+ formClear();
  const p = collect();
- if(p.name==='이름 미입력'){ alert('표시 이름을 입력해 주세요.'); return; }
- if(!p.types.length){ alert('가능한 돌봄 형태를 한 가지 이상 선택해 주세요.'); return; }
+ if(p.name==='이름 미입력'){ formError('표시 이름을 입력해 주세요. 실명 대신 "김○○ 요양보호사" 형태를 권합니다.', '#f-name'); return; }
+ if(!p.types.length){ formError('가능한 돌봄 형태를 한 가지 이상 선택해 주세요.', '#f-types .chip'); return; }
  const btn=document.getElementById('save'); const old=btn.textContent; btn.disabled=true; btn.textContent='등록 중…';
  const res = await saveProfile(p);
  btn.disabled=false; btn.textContent=old;
  if (res === 'db' || res === 'dup'){
  await fetchProfiles(); render();
- alert(res === 'dup'
- ? '이미 등록되었습니다. 중복 프로필은 만들지 않았습니다.'
+ formNotice(res === 'dup'
+ ? '이미 등록되어 있어 중복 프로필은 만들지 않았습니다.'
  : (p.contact && p.contact_public
- ? '프로필이 등록되었습니다. 아래 디렉토리에 연락 방법까지 공개됩니다.'
- : '프로필이 등록되었습니다. 연락 방법은 공개하지 않도록 접수했습니다.'));
+ ? '아래 디렉토리에 연락 방법까지 공개됩니다.'
+ : '연락 방법은 공개하지 않도록 접수했습니다.'));
  document.getElementById('directory').scrollIntoView({behavior:'smooth'});
  } else {
  // 실패를 성공처럼 보이게 하지 않는다. 입력값은 화면에 그대로 남겨 다시 시도할 수 있게 한다.
- alert('등록하지 못했습니다. 서버 연결을 확인한 뒤 다시 시도해 주세요.\n입력하신 내용은 화면에 그대로 남아 있습니다.');
+ formNotice('서버 연결을 확인한 뒤 다시 시도해 주세요. 입력하신 내용은 화면에 그대로 남아 있습니다.', 'warn');
  }
 });
 
@@ -342,6 +362,7 @@ function card(p){
 
 function render(){
  const dirEl = document.getElementById('dir');
+ dirEl.setAttribute('aria-busy','false');
  if (loadFailed){
  // 조회 실패 — 예시 인물 대신 오류·재시도·공식 대안을 표시한다. (P0-01 / T09)
  dirEl.innerHTML = `<div class="callout warn"><span class="t">프로필을 불러오지 못했습니다</span>
@@ -352,6 +373,7 @@ function render(){
  </div></div>`;
  const rb = document.getElementById('dir-retry');
  if (rb) rb.addEventListener('click', async ()=>{
+ dirEl.setAttribute('aria-busy','true');
  dirEl.innerHTML = '<p style="color:var(--muted)">불러오는 중…</p>';
  await fetchProfiles(); render();
  });
