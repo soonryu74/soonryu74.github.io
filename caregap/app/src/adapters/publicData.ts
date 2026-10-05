@@ -89,7 +89,8 @@ export async function loadLtc(sido: string, sigungu: string): Promise<DatasetRes
       `./data/ltc/${r.file}`,
     );
     const items = file.items
-      .filter((x) => x.g === sigungu)
+      // 원자료에 '안산시'와 '안산시 단원구'처럼 시·구 단위가 섞여 있어 상·하위 단위를 함께 포함
+      .filter((x) => x.g === sigungu || sigungu.startsWith(`${x.g} `) || x.g.startsWith(`${sigungu} `))
       .map((x) => ({ name: x.n, kind: x.t, sigungu: x.g, grade: x.gr, basis: x.y ? `${x.y}년 평가` : '평가연도 미상' }));
     const years = regions.evalYears ? `${regions.evalYears[0]}~${regions.evalYears[1]}년 평가` : undefined;
     return { ...base, status: 'connected', source: file.source, asOf: years, items };
