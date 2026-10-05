@@ -1,0 +1,215 @@
+{
+ "note": "Public sources that may help a national or local team review a possible action area. A source appears on the site only after scripts/verify_global_evidence.py has fetched its URL and confirmed the HTTP status, the page title and the listed key terms. Relevance to each action area has not yet been reviewed by a domain expert. Listing a source does not mean the publisher endorses this prototype or any conclusion drawn from it.",
+ "sources": [
+  {
+   "id": "who-fs-child-mortality",
+   "title": "Child mortality (under 5 years)",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/child-mortality-under-5-years",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-newborn-mortality",
+   "title": "Newborn mortality",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/newborn-mortality",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-postnatal-recs",
+   "title": "WHO recommendations on maternal and newborn care for a positive postnatal experience",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/publications/i/item/9789240045989",
+   "type": "guideline",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-anc-recs",
+   "title": "WHO recommendations on antenatal care for a positive pregnancy experience",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/publications/i/item/9789241549912",
+   "type": "guideline",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-maternal-mortality",
+   "title": "Maternal mortality",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/maternal-mortality",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-tuberculosis",
+   "title": "Tuberculosis",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/tuberculosis",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-uhc",
+   "title": "Universal health coverage (UHC)",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/universal-health-coverage-(uhc)",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-uhc-gmr-2023",
+   "title": "Tracking Universal Health Coverage: 2023 Global monitoring report",
+   "publisher": "World Health Organization; World Bank",
+   "url": "https://www.who.int/publications/i/item/9789240080379",
+   "type": "report",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-primary-health-care",
+   "title": "Primary health care",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/primary-health-care",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "wb-poverty",
+   "title": "Poverty",
+   "publisher": "World Bank Group",
+   "url": "https://www.worldbank.org/ext/en/topic/poverty",
+   "type": "topic_page",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-mental-health-at-work",
+   "title": "Mental health at work",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/mental-health-at-work",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-world-health-statistics",
+   "title": "World Health Statistics",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/data/gho/publications/world-health-statistics",
+   "type": "report",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-hrh-workforce-2030",
+   "title": "Global strategy on human resources for health: Workforce 2030",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/publications/i/item/9789241511131",
+   "type": "technical_document",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-topic-health-workforce",
+   "title": "Health workforce",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/health-topics/health-workforce",
+   "type": "topic_page",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-nursing-midwifery",
+   "title": "Nursing and midwifery",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/nursing-and-midwifery",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-immunization-coverage",
+   "title": "Immunization coverage",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/immunization-coverage",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-measles",
+   "title": "Measles",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/measles",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-topic-health-promoting-schools",
+   "title": "Health promoting schools",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/health-topics/health-promoting-schools",
+   "type": "topic_page",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-drinking-water",
+   "title": "Drinking-water",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/drinking-water",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-fs-sanitation",
+   "title": "Sanitation",
+   "publisher": "World Health Organization",
+   "url": "https://www.who.int/news-room/fact-sheets/detail/sanitation",
+   "type": "fact_sheet",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  },
+  {
+   "id": "who-energizing-health",
+   "title": "Energizing health: accelerating electricity access in health-care facilities",
+   "publisher": "World Health Organization; World Bank; Sustainable Energy for All; International Renewable Energy Agency",
+   "url": "https://www.who.int/publications/i/item/9789240066960",
+   "type": "report",
+   "language": "en",
+   "relevance_review": "not yet reviewed by a domain expert",
+   "checked": "2026-10-05"
+  }
+ ]
+}

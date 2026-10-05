@@ -57,19 +57,43 @@
 <li>Income-group peers are a pragmatic comparison set, not a judgement that countries should have similar results.</li>
 <li>Poverty at $3.00/day is near zero in most high-income economies; it is therefore excluded from their signals and score (section 6).</li>
 <li>Relative position is not a cause, a prediction or an evaluation of any policy or government.</li>
+<li>Historical trends use each country's own observed years, which differ between countries and indicators; a short or irregular series can look flat or steep by chance. Trends are descriptions, not explanations (section 10).</li>
 </ul>
 
 <h2 id="license">9. License and attribution</h2>
 <p>Indicators included in this prototype were screened using the licence metadata supplied in the World Development Indicators dataset: only series whose WDI <code>License Type</code> field reads <b>CC BY-4.0</b> were kept (all <span id="m-ind2">…</span>). This is a metadata-level screening, not a legal opinion, and it does not mean that every World Bank dataset may be used without conditions; third-party terms of original producers may apply. Source and attribution information are retained for each indicator (table above and in the country view).</p>
 <p>Attribution: <i>World Bank, World Development Indicators (CC BY 4.0), with original sources as listed per indicator.</i> Map boundaries: Natural Earth (public domain); boundaries do not imply any judgement on the legal status of any territory. This prototype is not affiliated with or endorsed by the World Bank, WHO or any data provider.</p>
 
+<h2 id="trends">10. Historical trends (v0.2)</h2>
+<p><b>Data.</b> A second file from the same WDI extract (<code>health_equity_wdi_timeseries_2000_latest.csv</code>, <span id="t-obs">…</span> observed values, <span id="t-c">…</span> economies, <span id="t-i">…</span> indicators, <span id="t-y">…</span>). The full file is not published; the build (<code>scripts/build_global_trends.mjs</code>) writes one small file per economy with its observed points exactly as recorded. Before writing, it checks that the last observation of every country–indicator series equals the latest value used above (<span id="t-match">…</span> of <span id="t-latest">…</span> series matched, <span id="t-mis">…</span> mismatches; the remaining <span id="t-pre">…</span> latest values were observed before 2000 and have no series). SHA-256 of the file: <code id="t-sha" class="small">…</code>.</p>
+<ul class="plain">
+<li><b>Observed years only.</b> A year without an observation stays empty. Nothing is interpolated, carried forward, smoothed or estimated, and a missing value is never 0. Charts draw a line only between consecutive observed years; a gap in the line means no observation.</li>
+<li><b>Recent trend.</b> A straight line (ordinary least squares) through the observed values in the 10 years up to and including the country's last observation, only when at least 4 years were observed in that window (Korean engine function <code>olsSlope</code>). Because last observation years differ, windows differ between countries; each window is displayed.</li>
+<li><b>Classification</b> (signal indicators only, last observation 2015 or later): <b>Improving</b> or <b>Worsening</b> when the 95% range of the slope lies entirely on the more or less favourable side of zero; otherwise <b>No clear change</b>. This rule does not depend on the indicator's scale. The high-income poverty exclusion of section 6 also applies here. <span id="t-cls">…</span></li>
+<li><b>Compared with peers.</b> The slope is also placed among the slopes of the same income group (all economies if fewer than 10), using the Korean engine's <code>trendClass</code> tertiles: most favourable, middle or least favourable third.</li>
+<li><b>Long-term change.</b> The difference between the first observation since 2000 and the last observation, with both years shown.</li>
+<li><b>Peer line.</b> For each year, the median of the economies in the income group that were observed in that year; years with fewer than 10 observing economies are omitted, and the number of economies is shown on hover.</li>
+<li><b>Kept apart from signals.</b> Priority signals, Watch and the exploratory score still use the latest available value only (sections 5–7), so they are identical to v0.1. The trend is shown next to the current position, never merged into it. The "Trend watch" list shows signal indicators classified as Worsening and is not part of the signals or the score.</li>
+<li><b>Not causal.</b> Trend describes past observed values; it does not explain why they changed or predict future values. Many series are modelled estimates that are revised as a whole, so a past value may change in later WDI releases.</li>
+</ul>
+
+<h2 id="evidence">11. Evidence links (v0.2)</h2>
+<p>Each possible action area (section 6) can list public sources in <code>global/data/evidence_registry.json</code>: identifier, title, publisher, address, type (fact sheet, guideline, report, technical document, topic page), language, the date it was checked and the relevance-review status. <code>scripts/verify_global_evidence.py</code> opens every address and records the HTTP status, the page title it saw and whether the listed key terms appear on the page; a source appears on the site only if all three checks pass and the address did not redirect elsewhere. Addresses were added only after they were opened and checked; none are guessed. Currently <span id="e-n">…</span> sources are shown, linked to <span id="e-a">…</span> of <span id="e-t">…</span> action areas; areas without a checked source show "No verified evidence linked yet".</p>
+<p class="note">A checked link confirms that the document exists at that address with that title — not that it supports a particular action in a particular country. Relevance to each area has not yet been reviewed by a domain expert, and listing a source does not mean its publisher endorses this prototype.</p>
+
 <h2 id="about">About Health Equity Radar</h2>
 <p>Health Equity Radar transforms fragmented public-health data into interpretable signals for priority setting. The Republic of Korea is the initial implementation (<a href="../../">health-profile.kr</a>, sub-national official statistics). The Global prototype tests whether the same decision framework can operate across countries using standardized open data.</p>
 </main>
-<footer class="foot"><div class="wrap"><p class="muted">Global Health Equity Radar — prototype v0.1 · <a href="../">Back to the Global Radar</a></p></div></footer>
+<footer class="foot"><div class="wrap"><p class="muted">Global Health Equity Radar — prototype v0.2 · <a href="../">Back to the Global Radar</a></p></div></footer>
 <script type="module">
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const [inds, data] = await Promise.all([fetch("../data/indicators.json").then((r) => r.json()), fetch("../data/wdi_compact.json").then((r) => r.json())]);
+const [inds, data, ts, rules, ev] = await Promise.all(["../data/indicators.json", "../data/wdi_compact.json", "../data/ts_index.json", "../data/action_rules.json", "../data/evidence.json"].map((u) => fetch(u).then((r) => r.json())));
+const set = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+set("t-obs", ts.n_obs.toLocaleString("en-US")); set("t-c", ts.n_countries); set("t-i", ts.n_indicators); set("t-y", `${ts.year_min}–${ts.year_max}`);
+set("t-match", ts.cross_check.matched_last_observation.toLocaleString("en-US")); set("t-latest", ts.cross_check.latest_records.toLocaleString("en-US")); set("t-mis", ts.cross_check.mismatches); set("t-pre", ts.cross_check.latest_before_2000_without_series); set("t-sha", ts.sha256);
+set("t-cls", `In this extract, ${ts.n_series_classified.toLocaleString("en-US")} country–indicator series are classified: ${ts.classified.improving.toLocaleString("en-US")} Improving, ${ts.classified.stable.toLocaleString("en-US")} No clear change, ${ts.classified.worsening.toLocaleString("en-US")} Worsening.`);
+const areas = Object.values(rules.rules).flatMap((r) => r.areas), ok = new Set(ev.sources.map((x) => x.id));
+set("e-n", ev.sources.length); set("e-t", areas.length); set("e-a", areas.filter((a) => typeof a !== "string" && (a.evidence || []).some((id) => ok.has(id))).length);
 const D = ["Health outcomes", "Disease burden", "Health system", "Social determinants", "Demographic context"];
 const dir = { higher_is_concern: "Higher = concern", lower_is_concern: "Lower = concern", context: "Context" };
 document.getElementById("m-records").textContent = data.n_records.toLocaleString("en-US");

@@ -135,3 +135,40 @@ h3{font-size:17px;margin:0 0 4px}
   .itbl tbody th{min-width:0}
   .top nav{gap:12px}
 }
+/* v0.2 — historical trend (observed values only) and evidence links */
+.cov{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.sig-trend{grid-column:1;font-size:14px;color:var(--text2)}
+.sig-cta{grid-row:3/5}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.why-grid>div{min-width:0}
+.why h4 span,.why-trend h4 span{display:block;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);font-size:12px}
+.why-trend h4{font-size:13px;letter-spacing:.06em;color:var(--accent);margin:12px 0 4px}
+.why-trend p{margin:4px 0;font-size:14px}
+.tnote{font-size:13px;color:var(--text2);border-left:3px solid var(--border);padding-left:8px}
+.trend{display:inline-block;font-size:12px;font-weight:700;padding:0 7px;border-radius:5px;border:1px solid currentColor;white-space:nowrap}
+.tr-improving{color:var(--ok)} .tr-worsening{color:var(--warn)} .tr-stable{color:var(--muted)}
+.spark{vertical-align:middle;margin-right:4px}
+.spark path{fill:none;stroke:var(--accent);stroke-width:1.2}
+.spark circle{fill:var(--accent)}
+.tcell{min-width:9em}
+.tchart{margin:6px 0 8px;max-width:600px}
+.tchart svg{width:100%;height:auto;display:block}
+.tchart text{font-size:13px;fill:var(--muted)}
+.tchart .grid{stroke:var(--border);stroke-width:.6}
+.tchart .tick{stroke:var(--muted);stroke-width:.6}
+.tchart .win{fill:var(--accent-bg)}
+.tchart .obsl{fill:none;stroke:var(--accent);stroke-width:2}
+.tchart circle.obs{fill:var(--accent);stroke:var(--surface);stroke-width:1}
+.tchart path.pm{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3}
+.tchart circle.pm{fill:var(--muted)}
+.lg{display:inline-block;width:18px;height:0;border-top:2px solid var(--accent);vertical-align:middle;margin-right:4px}
+.lg-pm{border-top:2px dashed var(--muted);margin-left:8px}
+.twl{padding-left:18px} .twl li{margin:6px 0}
+.ctrend{margin-top:2px}
+.act li{margin:6px 0}
+.area{display:block}
+.ev{font-size:13px;margin:2px 0 0;padding-left:0;list-style:none}
+.ev li{margin:2px 0}
+.ev-none{color:var(--muted);font-style:italic}
+@media (max-width:760px){.why-grid{grid-template-columns:1fr;gap:4px}}
