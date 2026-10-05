@@ -328,23 +328,21 @@ function fallbackBox(role,v){
   out.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-function dupBox(role){
-  out.innerHTML=
-    `<div class="callout" style="margin-top:16px;border-left-color:var(--gold)">
-      <span class="t">이미 접수되었습니다</span>
-      입력하신 연락처로 <b>${esc(role)}</b> 사전등록이 이미 저장되어 있어 중복 접수는 만들지 않았습니다.
-      내용을 바꾸거나 취소하시려면 아래 메일로 알려주세요.
-      <div style="margin-top:10px"><a class="btn btn-ghost dark btn-sm" href="mailto:soonryu74@gmail.com?subject=곁애 사전등록 수정·취소 요청">수정·취소 요청</a></div>
-    </div>`;
-  out.scrollIntoView({behavior:'smooth',block:'center'});
-}
-
 function successBox(role){
+  // 중복 접수였는지 새 접수였는지 구분해 보여주지 않는다.
+  // 구분해 보여주면 "이 연락처가 이미 등록되어 있는지" 를 밖에서 알아낼 수 있다.
   out.innerHTML=
     `<div class="callout" style="margin-top:16px;border-left-color:var(--gold)">
-      <span class="t">사전등록이 완료되었습니다 ✓</span>
-      <b>${esc(role)}</b>(으)로 접수했어요. 정식 오픈 시 남겨주신 연락처로 가장 먼저 안내드리겠습니다. 감사합니다.
-      <div style="margin-top:10px"><a class="btn btn-ghost dark btn-sm" href="../dolbom/index.html">모심 둘러보기 →</a></div>
+      <span class="t">접수되었습니다 ✓</span>
+      <b>${esc(role)}</b>(으)로 접수했어요. 정식 오픈 시 남겨주신 연락처로 안내드리겠습니다.
+      <div style="margin-top:10px;font-size:.9rem">
+        접수 확인 번호 — <code style="background:rgba(255,255,255,.08);padding:2px 7px;border-radius:6px;user-select:all">${esc(clientToken||'(생성 안 됨)')}</code><br>
+        <span style="opacity:.8">수정·삭제를 요청하실 때 이 번호를 알려주시면 빠릅니다. 이 번호는 이 화면에서만 보여드리며 저장하지 않습니다.</span>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn btn-ghost dark btn-sm" href="../dolbom/index.html">모심 둘러보기 →</a>
+        <a class="btn btn-ghost dark btn-sm" href="mailto:soonryu74@gmail.com?subject=곁애 사전등록 수정·삭제 요청">수정·삭제 요청</a>
+      </div>
     </div>`;
   out.scrollIntoView({behavior:'smooth',block:'center'});
 }
@@ -388,9 +386,9 @@ try { localStorage.removeItem('gyeotae_waitlist'); } catch(e){}
 let submitting = false;   // 이중 클릭으로 같은 내용이 두 번 접수되는 것을 막는다.
 let submitted  = false;   // 접수 성공 후 같은 입력으로 재전송되지 않게 한다.
 
-// 이 브라우저 창에서의 접수 1건을 식별하는 값. 서버의 waitlist_client_token_uniq
-// 유니크 인덱스와 짝을 이뤄, 응답을 받지 못해 다시 누른 경우에도 행이 하나만 남게 한다.
-// 개인정보가 아니며 저장소에 남기지 않는다.
+// 이 접수 1건을 식별하는 요청번호. 서버의 submit_waitlist 가 이것으로
+// '응답을 못 받아 다시 보낸 요청'을 알아보고 같은 결과로 수렴시킨다.
+// 추측하기 어려운 난수이며, URL·저장소·로그에 남기지 않는다.
 const clientToken = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : null;
 
 btn.addEventListener('click', async ()=>{
@@ -409,21 +407,26 @@ btn.addEventListener('click', async ()=>{
     return;
   }
 
-  const row={ role, job:v('w-job')||null, name:v('w-name')||null, area:v('w-area')||null,
-              contact:v('w-contact'), msg:v('w-msg')||null, source:'gyeotae',
-              client_token:clientToken, consent_version:WAITLIST_POLICY.version };
-  // 개인정보(이름·연락처)를 브라우저에 보관하지 않는다. 서버 접수만 한다.
   if(!sb){ fallbackBox(role,v); return; }
   submitting = true;
   const old=btn.textContent; btn.disabled=true; btn.textContent='접수 중…';
   try{
-    const { error } = await sb.from('waitlist').insert(row);
-    // 서버 성공을 확인한 뒤에만 '접수 완료'로 표시한다.
-    // 23505 = unique_violation. 같은 연락처 또는 같은 요청이 이미 저장되어 있다는 뜻이므로
-    // 오류가 아니라 '이미 접수됨'으로 안내한다. (새로고침·복수 탭·응답 유실 후 재시도)
-    if(error && error.code === '23505'){ submitted = true; dupBox(role); }
-    else if(error){ fallbackBox(role,v); }
-    else { submitted = true; successBox(role); }
+    // 테이블에 직접 넣지 않고 접수 함수를 호출한다.
+    // 함수는 새로 저장했든 이미 있든 똑같이 'accepted' 를 돌려준다.
+    // 그래서 어떤 연락처가 이미 등록되어 있는지 밖에서 알아낼 수 없다.
+    const { data, error } = await sb.rpc('submit_waitlist', {
+      p_role: role,
+      p_job: v('w-job') || null,
+      p_name: v('w-name') || null,
+      p_area: v('w-area') || null,
+      p_contact: v('w-contact'),
+      p_msg: v('w-msg') || null,
+      p_source: 'gyeotae',
+      p_client_token: clientToken,
+      p_consent_version: WAITLIST_POLICY.version
+    });
+    if(!error && data === 'accepted'){ submitted = true; successBox(role); }
+    else { fallbackBox(role,v); }
   }catch(e){ fallbackBox(role,v); }
   submitting = false;
   btn.disabled = submitted;
