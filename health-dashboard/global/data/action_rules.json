@@ -1,0 +1,22 @@
+{
+  "version": "0.1",
+  "note": "Rule-based mapping from a priority signal to areas a national or local team may wish to review. These are not prescriptions, policy recommendations or predicted effects; suitability depends on national context, existing programmes and expert review.",
+  "rules": {
+    "SH.DYN.MORT": { "title": "Child survival", "areas": ["Coverage of essential newborn and child health services", "Access to primary care for children under five", "Quality of care at birth and in the first month of life"] },
+    "SP.DYN.IMRT.IN": { "title": "Infant survival", "areas": ["Antenatal, delivery and postnatal care coverage", "Newborn care and immunization continuity", "Data quality of birth and death registration"] },
+    "SH.STA.MMRT": { "title": "Maternal health", "areas": ["Skilled birth attendance and emergency obstetric care access", "Antenatal care coverage and continuity", "Referral pathways for obstetric complications"] },
+    "SH.TBS.INCD": { "title": "Tuberculosis", "areas": ["Case detection and diagnostic access", "Treatment continuity and adherence support", "Outreach to populations with higher exposure"] },
+    "SH.XPD.OOPC.CH.ZS": { "title": "Financial protection", "areas": ["Financial protection for households using health services", "Primary care access and benefit package review", "Health financing arrangements toward universal health coverage"] },
+    "SI.POV.DDAY": { "title": "Poverty and health", "areas": ["Social protection linkages for health access", "Removing cost barriers for low-income households", "Cross-sector coordination on living conditions"] },
+    "SL.UEM.TOTL.ZS": { "title": "Employment and health", "areas": ["Health coverage continuity for people without work", "Cross-sector review of labour-market conditions affecting health", "Mental health and social support access"] },
+    "SP.DYN.LE00.IN": { "title": "Overall mortality", "areas": ["Review of leading causes of premature death with national data", "Coverage of core preventive and primary care services", "Health information to identify groups with shorter lives"] },
+    "SH_UHC_SCI": { "title": "Service coverage", "areas": ["Coverage gaps across reproductive, infectious and noncommunicable disease services", "Service capacity and access in underserved areas", "Monitoring of tracer indicators behind the index"] },
+    "SH.MED.PHYS.ZS": { "title": "Health workforce — physicians", "areas": ["Workforce planning and distribution", "Retention in rural and underserved areas", "Task-sharing within primary care teams"] },
+    "SH.MED.NUMW.P3": { "title": "Health workforce — nurses and midwives", "areas": ["Nursing and midwifery workforce planning", "Training and retention", "Deployment to primary care and maternal services"] },
+    "SH.IMM.MEAS": { "title": "Immunization", "areas": ["Coverage gap assessment by area and group", "Access barriers to routine immunization", "Outreach and catch-up activities"] },
+    "SE.SEC.ENRR": { "title": "Education", "areas": ["Cross-sector review of secondary school participation", "School-based health and nutrition services", "Barriers to school attendance"] },
+    "SH.H2O.SMDW.ZS": { "title": "Safe drinking water", "areas": ["Drinking water quality monitoring", "Access and availability of water services", "Water safety planning with environmental agencies"] },
+    "SH.STA.SMSS.ZS": { "title": "Sanitation", "areas": ["Safely managed sanitation coverage", "Faecal sludge and wastewater management", "Hygiene promotion with sanitation programmes"] },
+    "EG.ELC.ACCS.ZS": { "title": "Electricity access", "areas": ["Electrification of health facilities", "Cold-chain reliability for vaccines and medicines", "Cross-sector coordination on energy access"] }
+  }
+}

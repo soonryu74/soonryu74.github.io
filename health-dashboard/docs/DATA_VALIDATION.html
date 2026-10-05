@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"Data Validation — 데이터 숫자 전수 검증","url":"/health-dashboard/docs/DATA_VALIDATION.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=2c8a595ce759752023ac262c345b715f02a9ec9a">
+    <link rel="stylesheet" href="/assets/css/style.css?v=a18237edef1327f59cce5950cbd4ed0589646954">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -40,7 +40,7 @@
       <h1 id="data-validation--데이터-숫자-전수-검증">Data Validation — 데이터 숫자 전수 검증</h1>
 
 <ul>
-  <li>기준일: 2026-10-04 (스크립트 실행일)</li>
+  <li>기준일: 2026-10-05 (스크립트 실행일)</li>
   <li>방법: <code class="language-plaintext highlighter-rouge">node scripts/qa/data_validation.mjs</code> — 앱이 실제로 불러오는 <code class="language-plaintext highlighter-rouge">app/src/data.js</code>(data/dataset.json · kdh_dataset.json · mort_kosis.json · cancer_screening.json · checkup.json · hle.json · deprivation.json 주입)를 esbuild 로 묶어 그대로 읽고 센다. 화면·문서의 숫자를 입력값으로 쓰지 않는다.</li>
   <li>결과 파일: <code class="language-plaintext highlighter-rouge">data/validation_summary.json</code>(요약 숫자) · <code class="language-plaintext highlighter-rouge">docs/indicator_metadata.csv</code>(지표 171개 메타데이터·결측)</li>
 </ul>

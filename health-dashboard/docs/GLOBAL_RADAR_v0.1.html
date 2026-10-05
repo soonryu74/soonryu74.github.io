@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Global Health Equity Radar v0.1 — build notes | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Global Health Equity Radar v0.1 — build notes" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Global Health Equity Radar v0.1 — build notes" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Global Health Equity Radar v0.1 — build notes","url":"/health-dashboard/docs/GLOBAL_RADAR_v0.1.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=a18237edef1327f59cce5950cbd4ed0589646954">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="global-health-equity-radar-v01--build-notes">Global Health Equity Radar v0.1 — build notes</h1>
+
+<ul>
+  <li>URL: https://health-profile.kr/global/ (mirror: https://soonryu74.github.io/health-dashboard/global/) · Methodology: /global/methodology/</li>
+  <li>Purpose: test whether the Korean Health Equity Radar decision framework (screening → priority → why → action) operates between countries on standardized open data. Independent static pages; the Korean app is unchanged apart from one link on the English pages.</li>
+</ul>
+
+<h2 id="data">Data</h2>
+<ul>
+  <li>World Bank WDI extract (file date 2026-10-01) supplied as <code class="language-plaintext highlighter-rouge">health_equity_wdi_latest.json</code> + <code class="language-plaintext highlighter-rouge">indicator_metadata.csv</code> (kept unmodified in <code class="language-plaintext highlighter-rouge">global/data/</code>).</li>
+  <li>Verified by <code class="language-plaintext highlighter-rouge">scripts/build_global.py</code>: 4,977 records · 217 countries/economies (no regional aggregates) · 25 indicators · observation years 1980–2025 (most recent year per indicator 2023–2025) · 0 nulls · 0 duplicates · every series <code class="language-plaintext highlighter-rouge">License Type</code> = CC BY-4.0 and <code class="language-plaintext highlighter-rouge">license_check</code> = PASS. The compact file used by the page matches every original value and year (0 mismatches).</li>
+  <li>Map: Natural Earth 1:110m (public domain), 176 shapes, 170 of 217 economies drawable; 47 small economies are search-only.</li>
+</ul>
+
+<h2 id="rules-also-on-the-methodology-page">Rules (also on the methodology page)</h2>
+<ul>
+  <li>Direction: 7 higher-is-concern, 9 lower-is-concern, 9 context (never judged). Defined explicitly in <code class="language-plaintext highlighter-rouge">scripts/build_global.py</code>.</li>
+  <li>Comparison: same World Bank income group with data from 2015 or later (all countries if &lt; 10 peers); mid-rank percentile using the Korean engine’s <code class="language-plaintext highlighter-rouge">unfavorablePercentile</code> (<code class="language-plaintext highlighter-rouge">app/src/lib/equity/calculateGap.js</code>). Worldwide position shown alongside.</li>
+  <li>Priority signal ≥ 80% less favourable than peers; Watch 60–80%; top 3 preferring different domains. Exclusion: poverty at $3.00/day is not used for signals/score in high-income economies (near-zero values).</li>
+  <li>Exploratory Priority Score: equal-weight mean of relative positions × 100, ≥ 8 indicators required; “for screening and prioritization, not clinical or causal inference”.</li>
+  <li>Freshness: recent 2024–25 · moderate 2022–23 · caution 2015–21 · old &lt; 2015 (shown, not compared). Missing → “No data available”, never 0.</li>
+  <li>Possible action areas: <code class="language-plaintext highlighter-rouge">global/data/action_rules.json</code>, shown only for highlighted priority signals.</li>
+</ul>
+
+<h2 id="verification-scriptsqaglobal_e2emjs-all-passing-on-2026-10-05">Verification (<code class="language-plaintext highlighter-rouge">scripts/qa/global_e2e.mjs</code>, all passing on 2026-10-05)</h2>
+<ul>
+  <li>390/430/768/1440 px, light and dark: no JS errors, no horizontal overflow.</li>
+  <li>KOR, VNM, USA, JPN, AUS, TLS, UGA: all 25 rows match the original JSON (value and year); missing indicators shown as “No data available” (AUS 1, TLS 2); priority signals equal an independent recomputation from the original JSON; direction checked against the peer median; source shown for every indicator.</li>
+  <li>10 random data points (fixed seed): UI = original 10/10.</li>
+  <li>WHY text, action areas, KOR vs VNM comparison (7 indicators with different years flagged), search (Vietnam / korea / united st), map (indicator switch, click to select), methodology 9 sections, banned-phrase scan.</li>
+</ul>
+
+<h2 id="known-limitations--todo">Known limitations / TODO</h2>
+<ul>
+  <li>National averages only — no within-country equity (the Korean implementation’s core). Modelled estimates carry no uncertainty in this extract.</li>
+  <li>Income-group framing: a low-income country can show few signals while its absolute levels are far from other groups — the worldwide context line under the signals addresses this.</li>
+  <li>Indicator names and UI are English only; no time series yet (time-series CSV exists in the WDI package but is not used).</li>
+  <li>Action areas are generic rules, not linked to evidence sources yet.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
