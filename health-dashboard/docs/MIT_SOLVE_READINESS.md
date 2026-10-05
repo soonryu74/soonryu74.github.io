@@ -25,6 +25,7 @@ Counted from the data files the app actually loads (`node scripts/qa/data_valida
 - Combined-vulnerability signals map (hotspot screen), equity summary in region comparison, peer-group comparison.
 - Sources tab with per-source cards, update dates, limitations, external-review record (0 published, requests in progress).
 - 1-minute usability feedback form (“Give Feedback” / 「사용 의견 보내기」) — builds text for copy/email; no data collected by the site.
+- **Global Health Equity Radar prototype** `/global/` (2026-10-05): the same screening → priority → why → action framework applied between 217 countries/economies with 25 World Bank WDI indicators (CC BY 4.0 per series metadata); income-group peer comparison using the Korean engine's percentile function, explained signals, rule-based possible action areas, two-country comparison with observation years, indicator map, methodology page. See [GLOBAL_RADAR_v0.1.md](GLOBAL_RADAR_v0.1.md).
 - English landing page `/solve` (static, 18 KB, real screenshots, OpenGraph/JSON-LD metadata) and in-app English overview.
 
 ## 3. Claims We Can Safely Make
@@ -34,6 +35,7 @@ Counted from the data files the app actually loads (`node scripts/qa/data_valida
 - “Survey uncertainty is built in: an indicator is not flagged ‘Review first’ if its 95% confidence interval includes the national median or its relative standard error exceeds 20%.”
 - “The prioritization logic is a small, unit-tested set of pure functions separated from the Korean data.” (Structure only — no deployment elsewhere.)
 - “Sources, update dates and limitations are disclosed in the product.”
+- “A Global prototype applies the same decision framework to 217 countries and economies using World Bank open data (latest available values, each with its observation year).”
 - “External review requests have been sent; no reviews have been published yet.”
 
 ## 4. Claims We Must NOT Make
@@ -79,4 +81,5 @@ Errors found and fixed in this round:
 - Health Equity Radar (English priority card): https://health-profile.kr/#view=profile&sido=009&sgg=00901&en=1
 - English overview in the app: https://health-profile.kr/#view=radar
 - Solve landing page: https://health-profile.kr/solve/
+- Global prototype: https://health-profile.kr/global/ (methodology: /global/methodology/)
 - Data validation: https://health-profile.kr/docs/DATA_VALIDATION.md
