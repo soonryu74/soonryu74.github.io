@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Global Health Equity Radar v0.2 — build notes | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Global Health Equity Radar v0.2 — build notes" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Global Health Equity Radar v0.2 — build notes" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Global Health Equity Radar v0.2 — build notes","url":"/health-dashboard/docs/GLOBAL_RADAR_v0.2.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=95aa03054dea63a37ee149e174831f331177d9fc">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="global-health-equity-radar-v02--build-notes">Global Health Equity Radar v0.2 — build notes</h1>
+
+<ul>
+  <li>URL: https://health-profile.kr/global/ (mirror: https://soonryu74.github.io/health-dashboard/global/) · Methodology sections 10–11: /global/methodology/#trends, #evidence</li>
+  <li>Scope: v0.1 kept intact (same signals, Watch, top 3, scores for all 217 economies — verified). Added: historical trends from observed values since 2000, shown separately from the current position, and an evidence structure for possible action areas.</li>
+</ul>
+
+<h2 id="time-series-data">Time-series data</h2>
+<ul>
+  <li>File: <code class="language-plaintext highlighter-rouge">health_equity_wdi_timeseries_2000_latest.csv</code> (World Bank WDI extract, CC BY-4.0 per series metadata), 56,371,689 bytes, SHA-256 <code class="language-plaintext highlighter-rouge">a73dc5e2c6f92041480e0e6c5822834169a7f5df5ec65bc2fe9c42efa840c8fa</code>. Kept in <code class="language-plaintext highlighter-rouge">private/wdi/</code> (not committed; the full CSV is not published).</li>
+  <li>Checked by <code class="language-plaintext highlighter-rouge">scripts/build_global_trends.mjs</code>: 115,457 rows = 115,457 observations · 0 empty values · 0 duplicate country–indicator–year · 217 economies · 25 indicators · years 2000–2025 · every row CC BY-4.0 · country region/income identical to the latest file.</li>
+  <li>Cross-check with v0.1 <code class="language-plaintext highlighter-rouge">health_equity_wdi_latest.json</code>: last observation (year and value) of each series = latest record for 4,955 of 4,977 records, 0 mismatches; the other 22 latest values were observed before 2000 and have no series. Any mismatch stops the build.</li>
+  <li>Output: <code class="language-plaintext highlighter-rouge">global/data/ts/&lt;ISO3&gt;.json</code> (217 files, observed <code class="language-plaintext highlighter-rouge">[year, value]</code> exactly as recorded + trend summary; loaded only when a country is selected) · <code class="language-plaintext highlighter-rouge">ts_peer_median.json</code> (income-group median per year from economies observed that year, years with n ≥ 10 only) · <code class="language-plaintext highlighter-rouge">ts_index.json</code> (counts, checks, settings).</li>
+</ul>
+
+<h2 id="trend-rules-methodology-section-10">Trend rules (methodology section 10)</h2>
+<ul>
+  <li>Observed years only: no interpolation, carry-forward, smoothing or imputation; missing is never 0. Lines join consecutive observed years only.</li>
+  <li>Recent trend: OLS slope (Korean engine <code class="language-plaintext highlighter-rouge">olsSlope</code>) over the 10 years up to the country’s last observation, ≥ 4 observed years.</li>
+  <li>Classification (16 signal indicators, last observation ≥ 2015, high-income poverty excluded as in v0.1): Improving / Worsening when the 95% range of the slope is entirely on one side of zero (direction-adjusted), else No clear change. The Korean rule “change &lt; 1% of the median per year = little change” was not reused because it would label almost every life-expectancy trend as flat (scale-dependent); the 95%-range rule is scale-free.</li>
+  <li>Peer comparison of the slope: Korean engine <code class="language-plaintext highlighter-rouge">trendClass</code> tertile within the income group (all economies if &lt; 10).</li>
+  <li>Long-term change: first observation since 2000 → last observation, both years shown.</li>
+  <li>Signals and the score are unchanged (latest value only). “Trend watch” lists Worsening signal indicators and is not part of signals or the score. Every trend block carries: “Trend describes past observed values; it does not explain why they changed or predict future values.”</li>
+</ul>
+
+<h3 id="coverage">Coverage</h3>
+<ul>
+  <li>Time series shown: 25 indicators × 217 economies = 4,955 country–indicator series; slope computed for 4,792.</li>
+  <li>Trend classified: 16 signal indicators, 2,837 series in 217 economies — Improving 1,408 · No clear change 1,142 · Worsening 287.</li>
+  <li>Classified series per indicator: life expectancy 217 · electricity 215 · TB 208 · under-5 196 · infant 196 · maternal 194 · measles 193 · OOP 193 · UHC 193 · unemployment 187 · secondary enrolment 176 · nurses 170 · physicians 166 · water 151 · sanitation 146 · poverty 36.</li>
+</ul>
+
+<h2 id="screen">Screen</h2>
+<ul>
+  <li>Signal card: “Current position” and “Historical trend” labelled separately in the header; the “Why” panel has two blocks — CURRENT POSITION (v0.1 text, the basis of the signal) and HISTORICAL TREND (chart with peer median and shaded window, factual lines, note).</li>
+  <li>Indicator table: new “Trend since 2000 (observed)” column with a sparkline (dots = observed years) and classification; the chart is inside each indicator’s details.</li>
+  <li>Trend watch section; compare table shows each country’s trend; coverage adds “115,457 observed values since 2000”.</li>
+</ul>
+
+<h2 id="evidence-structure-methodology-section-11">Evidence structure (methodology section 11)</h2>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">global/data/evidence_registry.json</code>: <code class="language-plaintext highlighter-rouge">sources[{id, title, publisher, url, type, language, expect_title, key_terms, verified{date, http_status, final_url, title_seen, terms_found, ok}, relevance_review}]</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">global/data/action_rules.json</code> v0.2: each area is <code class="language-plaintext highlighter-rouge">{text, evidence:[ids]}</code> (plain strings still read).</li>
+  <li><code class="language-plaintext highlighter-rouge">scripts/verify_global_evidence.py</code> GETs every URL and requires HTTP 200, no redirect, <code class="language-plaintext highlighter-rouge">expect_title</code> in the page title and all <code class="language-plaintext highlighter-rouge">key_terms</code> in the page text. <code class="language-plaintext highlighter-rouge">build_global.py</code> writes only <code class="language-plaintext highlighter-rouge">ok</code> sources to <code class="language-plaintext highlighter-rouge">global/data/evidence.json</code> (the file the site reads) and stops if a rule cites an unknown id.</li>
+  <li>2026-10-05: 21 sources registered, 21 verified (WHO fact sheets, guidelines and reports; World Bank poverty page); linked to 40 of 48 action areas. 8 areas show “No verified evidence linked yet”. One candidate (Tracking SDG7 site) returned 403 and was not registered. Relevance: “not yet reviewed by a domain expert” on every source.</li>
+</ul>
+
+<h2 id="verification-2026-10-05-all-passing">Verification (2026-10-05, all passing)</h2>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scripts/qa/global_e2e.mjs</code> (77 checks, with <code class="language-plaintext highlighter-rouge">BASE_V01</code> pointing at the v0.1 build): all v0.1 checks (4 viewports light/dark with all chart details open, 7 countries × 25 values, independent signal recomputation, 10 random points, compare, search, map, methodology, banned phrases) + 12 countries’ time-series points = CSV (no extra years, segments only between consecutive years, last point = latest) + 10 random time-series points + no causal/predictive wording in trend text + current/trend separation + evidence links only from verified sources + compare trends + <strong>217 economies: signals, Watch, top 3, score and domain scores identical to v0.1</strong>.</li>
+  <li>Korean app regressions: <code class="language-plaintext highlighter-rouge">npm test</code> (15), <code class="language-plaintext highlighter-rouge">equity_e2e.mjs</code>, <code class="language-plaintext highlighter-rouge">solve_readiness_e2e.mjs</code>, region / indicator / elder report checks — all passing.</li>
+</ul>
+
+<h2 id="limitations">Limitations</h2>
+<ul>
+  <li>Windows end at each country’s last observation, so they differ between countries.</li>
+  <li>Many WDI series are modelled estimates revised as a whole; the 95% range describes the straight-line fit to the published points, not measurement uncertainty.</li>
+  <li>Evidence links confirm address and title only; relevance needs expert review.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

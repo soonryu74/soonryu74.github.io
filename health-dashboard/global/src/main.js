@@ -1,5 +1,8 @@
-/* Global Health Equity Radar v0.1 — GLOBAL SCREENING → PRIORITY → WHY → ACTION
+/* Global Health Equity Radar v0.2 — GLOBAL SCREENING → PRIORITY → WHY → ACTION
    Data: World Bank WDI extract (data/wdi_compact.json, built and cross-checked by scripts/build_global.py).
+   v0.2: historical observed values since 2000 (data/ts/<ISO3>.json, loaded per country; scripts/build_global_trends.mjs) are shown
+   SEPARATELY from the current position. Signals and the score still use the latest available value only. No interpolation.
+   Possible action areas may link public sources whose link and title were checked (data/evidence.json).
    The relative-position calculation reuses the Korean Health Equity Radar engine (app/src/lib/equity/calculateGap.js)
    so both products use the same direction-aware, mid-rank percentile code. No predictions, no causal claims. */
 import { unfavorablePercentile, medianOf } from "../../app/src/lib/equity/calculateGap.js";
@@ -22,7 +25,8 @@ const DOMAINS = ["Health outcomes", "Disease burden", "Health system", "Social d
 const NAME_OVERRIDE = { KOR: "Republic of Korea", PRK: "Democratic People's Republic of Korea" };
 const ALIASES = { KOR: ["korea", "south korea", "korea rep", "한국", "대한민국"], VNM: ["vietnam", "viet nam", "베트남"], USA: ["usa", "us", "america", "united states of america", "미국"], JPN: ["japan", "일본"], AUS: ["australia", "호주"], GBR: ["uk", "britain", "united kingdom", "영국"], UGA: ["uganda", "우간다"], TLS: ["east timor", "timor leste", "동티모르"], CHN: ["china", "중국"], RUS: ["russia"], IRN: ["iran"], EGY: ["egypt"], LAO: ["laos"], SYR: ["syria"], VEN: ["venezuela"], YEM: ["yemen"], TUR: ["turkey"], CZE: ["czech republic"], SVK: ["slovakia"], KGZ: ["kyrgyzstan"], COD: ["congo dr", "drc"], COG: ["congo republic"], GMB: ["gambia"], BHS: ["bahamas"], FSM: ["micronesia"] };
 
-const S = { data: null, inds: null, rules: null, world: null, sel: null, vs: null, ind: "SH.XPD.OOPC.CH.ZS", open: null };
+const S = { data: null, inds: null, rules: null, world: null, sel: null, vs: null, ind: "SH.XPD.OOPC.CH.ZS", open: null, ts: {}, peerMed: null, tsIndex: null, ev: {} };
+export const TREND_NOTE = "Trend describes past observed values; it does not explain why they changed or predict future values.";
 const dirParam = (d) => (d === "higher_is_concern" ? "lower_is_better" : d === "lower_is_concern" ? "higher_is_better" : null);
 export const displayName = (code, name) => NAME_OVERRIDE[code] || name;
 
@@ -114,6 +118,107 @@ export function whyText(r, countryName) {
   return lines;
 }
 
+// ── historical trend (v0.2) — observed points only, loaded per country ──
+const tsState = (c) => S.ts[c];
+async function loadTs(c) {
+  if (!c || S.ts[c]) return;
+  S.ts[c] = "loading";
+  try {
+    const [ts, pm] = await Promise.all([fetch(`data/ts/${c}.json`).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }),
+      S.peerMed ? S.peerMed : fetch("data/ts_peer_median.json").then((r) => r.json())]);
+    S.ts[c] = ts; S.peerMed = pm;
+  } catch { S.ts[c] = "error"; }
+  if (c === S.sel || c === (S.vs || null) || c === cmpPair()[1]) renderAll();
+}
+const seriesOf = (c, code) => { const t = tsState(c); return t && typeof t === "object" ? t.series[code] || null : null; };
+const decFor = (a) => (a >= 100 ? 0 : a >= 10 ? 1 : a >= 1 ? 2 : a >= 0.1 ? 2 : 3);
+/** a change (difference of two observed values, or a slope per year) in the indicator's unit */
+export function fmtDelta(d, ind, { perYear = false } = {}) {
+  if (d == null || !Number.isFinite(d)) return "—";
+  const sign = d > 0 ? "+" : d < 0 ? "−" : "±", a = Math.abs(d);
+  let t;
+  if (ind.code === "SP.POP.TOTL") t = a >= 1e6 ? `${nf(2).format(a / 1e6)} million` : nf(0).format(a);
+  else if (ind.unit === "US$") t = `US$ ${nf(a >= 10 ? 0 : 2).format(a)}`;
+  else if (ind.unit === "%") t = `${nf(decFor(a)).format(a)} percentage points`;
+  else if (ind.unit === "years") t = `${nf(decFor(a)).format(a)} years`;
+  else t = `${nf(decFor(a)).format(a)}${unitAfter(ind) ? " " + unitAfter(ind) : ""}`;
+  return `${sign}${t}${perYear ? " per year" : ""}`;
+}
+const tertilePhrase = (t) => (t === 2 ? "in the least favourable third" : t === 0 ? "in the most favourable third" : "in the middle third");
+const trendChip = (rec) => (rec && rec.key ? `<span class="trend tr-${rec.key}">${esc(rec.label)}</span>` : "");
+/** one-line trend label for tables and cards (or null when nothing to show) */
+function trendShort(c, code) {
+  const t = tsState(c);
+  if (t === "loading" || t === undefined) return `<span class="muted small">Loading…</span>`;
+  if (t === "error") return `<span class="muted small">Not available</span>`;
+  const s = seriesOf(c, code);
+  if (!s) return `<span class="muted small">No observations since 2000</span>`;
+  const r = s.recent;
+  if (r.key) return `${trendChip(r)} <span class="small muted">${r.y0}–${r.y1}</span>`;
+  return `<span class="small muted">${r.slope == null ? "Too few observed years" : S.inds[code].direction === "context" ? `${fmtDelta(r.slope, S.inds[code], { perYear: true })}, ${r.y0}–${r.y1}` : "Not classified"}</span>`;
+}
+
+const X0 = 2000, X1 = 2025;
+/** consecutive-year segments only — a missing year breaks the line (nothing is drawn across gaps) */
+function segs(pts, xs, ys) {
+  let d = "";
+  for (let i = 1; i < pts.length; i++) if (pts[i][0] === pts[i - 1][0] + 1) d += `M${xs(pts[i - 1][0]).toFixed(1)},${ys(pts[i - 1][1]).toFixed(1)}L${xs(pts[i][0]).toFixed(1)},${ys(pts[i][1]).toFixed(1)}`;
+  return d;
+}
+export function sparkline(obs, label) {
+  const w = 104, h = 26, p = 3;
+  const vs = obs.map((o) => o[1]), lo = Math.min(...vs), hi = Math.max(...vs);
+  const xs = (y) => p + ((y - X0) / (X1 - X0)) * (w - 2 * p), ys = (v) => (hi === lo ? h / 2 : h - p - ((v - lo) / (hi - lo)) * (h - 2 * p));
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="${esc(label)}"><title>${esc(label)}</title><path d="${segs(obs, xs, ys)}"/>${obs.map((o) => `<circle cx="${xs(o[0]).toFixed(1)}" cy="${ys(o[1]).toFixed(1)}" r="1.5"/>`).join("")}</svg>`;
+}
+export function trendChart(c, code) {
+  const s = seriesOf(c, code), ind = S.inds[code], inc = S.data.countries[c].income;
+  const pm = (S.peerMed?.groups?.[inc]?.[code] || []).filter((r) => r[0] >= X0);
+  const w = 560, h = 190, L = 52, R = 18, T = 12, B = 26;
+  const vals = [...s.obs.map((o) => o[1]), ...pm.map((r) => r[1])];
+  let lo = Math.min(...vals), hi = Math.max(...vals); if (hi === lo) { lo -= 1; hi += 1; }
+  const pad = (hi - lo) * 0.08; lo -= pad; hi += pad; if (lo < 0 && Math.min(...vals) >= 0) lo = 0;
+  const xs = (y) => L + ((y - X0) / (X1 - X0)) * (w - L - R), ys = (v) => T + (1 - (v - lo) / (hi - lo)) * (h - T - B);
+  const r = s.recent, band = r.slope != null ? `<rect class="win" x="${xs(r.y0 - 0.5).toFixed(1)}" y="${T}" width="${(xs(r.y1 + 0.5) - xs(r.y0 - 0.5)).toFixed(1)}" height="${h - T - B}"><title>Recent window ${r.y0}–${r.y1}</title></rect>` : "";
+  const xt = [2000, 2005, 2010, 2015, 2020, 2025].map((y) => `<text x="${xs(y)}" y="${h - 8}" text-anchor="middle">${y}</text><line class="tick" x1="${xs(y)}" x2="${xs(y)}" y1="${h - B}" y2="${h - B + 4}"/>`).join("");
+  const yt = [lo, (lo + hi) / 2, hi].map((v) => `<text x="${L - 6}" y="${ys(v) + 4}" text-anchor="end">${esc(fmtValue(v, ind).replace(" years", "").replace("US$ ", "$"))}</text><line class="grid" x1="${L}" x2="${w - R}" y1="${ys(v)}" y2="${ys(v)}"/>`).join("");
+  const name = displayName(c, S.data.countries[c].name);
+  return `<figure class="tchart"><svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(`${ind.label}, ${name}: ${s.obs.length} observed years ${s.obs[0][0]}–${s.obs[s.obs.length - 1][0]}`)}">
+    ${band}${yt}${xt}
+    ${pm.length ? `<path class="pm" d="${segs(pm, xs, ys)}"/>${pm.map((q) => `<circle class="pm" cx="${xs(q[0]).toFixed(1)}" cy="${ys(q[1]).toFixed(1)}" r="1.8"><title>${q[0]}: ${esc(incomeShort(inc))} median ${esc(fmtValue(q[1], ind))} (${q[2]} economies observed)</title></circle>`).join("")}` : ""}
+    <path class="obsl" d="${segs(s.obs, xs, ys)}"/>
+    ${s.obs.map((o) => `<circle class="obs" data-year="${o[0]}" data-v="${o[1]}" cx="${xs(o[0]).toFixed(1)}" cy="${ys(o[1]).toFixed(1)}" r="3"><title>${o[0]}: ${esc(fmtValue(o[1], ind))}</title></circle>`).join("")}
+  </svg><figcaption class="small muted"><span class="lg lg-obs"></span>${esc(name)} — observed years only (${s.obs.length}); a gap in the line means no observation that year, not a filled value. ${pm.length ? `<span class="lg lg-pm"></span>Median of ${esc(incomeShort(inc))} economies observed in each year (years with fewer than ${S.peerMed.min_n} omitted).` : ""}${r.slope != null ? " Shaded: recent window used for the trend." : ""}</figcaption></figure>`;
+}
+/** HISTORICAL TREND block — factual description of observed values; kept separate from the current position */
+export function trendLines(c, code) {
+  const s = seriesOf(c, code), ind = S.inds[code];
+  if (!s) return [`No observations since ${X0} for this indicator in this dataset.`];
+  const o = s.obs, r = s.recent, out = [`Observed in ${o.length} year${o.length > 1 ? "s" : ""} between ${o[0][0]} and ${o[o.length - 1][0]}; years without an observation are left empty.`];
+  if (s.long) out.push(`First to last observation: ${fmtValue(s.long.v0, ind)} (${s.long.y0}) → ${fmtValue(s.long.v1, ind)} (${s.long.y1}), a change of ${fmtDelta(s.long.v1 - s.long.v0, ind)}.`);
+  if (r.slope != null) {
+    out.push(`Recent window ${r.y0}–${r.y1} (${r.n} observed years): straight-line average change ${fmtDelta(r.slope, ind, { perYear: true })} (95% range ${fmtDelta(r.lo, ind)} to ${fmtDelta(r.hi, ind)}).`);
+    if (r.key) out.push(`Classification: ${r.label}${r.key === "stable" ? " — the 95% range includes no change" : r.key === "improving" ? " — the observed values moved in the more favourable direction" : " — the observed values moved in the less favourable direction"}. Compared with the recent trends of ${r.peerN} ${r.peerIsIncome ? `${incomeShort(S.data.countries[c].income)} economies` : "economies worldwide"}, this change is ${tertilePhrase(r.peerTertile)}.`);
+    else if (r.reason) out.push(`Trend not classified: ${r.reason}.`);
+  } else out.push(`No trend line: ${r.reason}.`);
+  return out;
+}
+function trendBlock(c, code) {
+  const t = tsState(c);
+  if (t === "loading" || t === undefined) return `<p class="muted">Loading observed values…</p>`;
+  if (t === "error") return `<p class="muted">Observed values could not be loaded.</p>`;
+  const s = seriesOf(c, code);
+  return `${s ? trendChart(c, code) : ""}${trendLines(c, code).map((x) => `<p>${esc(x)}</p>`).join("")}<p class="tnote">${esc(TREND_NOTE)}</p>`;
+}
+// evidence for one action area (only checked sources are in data/evidence.json)
+function evidenceHtml(area) {
+  const ids = typeof area === "string" ? [] : area.evidence || [];
+  const srcs = ids.map((id) => S.ev[id]).filter(Boolean);
+  if (!srcs.length) return `<div class="ev ev-none">No verified evidence linked yet</div>`;
+  return `<ul class="ev">${srcs.map((x) => `<li data-ev="${esc(x.id)}"><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a> <span class="muted">— ${esc(x.publisher)} · link checked ${esc(x.checked)} · relevance not yet expert-reviewed</span></li>`).join("")}</ul>`;
+}
+const areaText = (a) => (typeof a === "string" ? a : a.text);
+
 // ── search ──
 function norm(s) { return s.toLowerCase().normalize("NFKD").replace(/[^\p{L}\p{N} ]/gu, " ").replace(/\s+/g, " ").trim(); }
 let INDEX = [];
@@ -161,7 +266,8 @@ function renderCoverage() {
     <div><b>${d.n_countries}</b><span>countries and economies</span></div>
     <div><b>${d.n_indicators}</b><span>indicators (${inds.filter((i) => i.direction !== "context").length} used for signals)</span></div>
     <div><b>${Math.min(...latestYears)}–${Math.max(...latestYears)}</b><span>most recent observation year, by indicator</span><small>${inds.filter((i) => i.year_max >= 2024).length} of ${inds.length} indicators reach 2024 or later. Individual country values range ${d.year_min}–${d.year_max}; values before ${STALE_BEFORE} are shown but not compared.</small></div>
-    <div><b>${d.n_records.toLocaleString("en-US")}</b><span>latest observations</span></div>`;
+    <div><b>${d.n_records.toLocaleString("en-US")}</b><span>latest observations</span></div>
+    ${S.tsIndex ? `<div><b>${S.tsIndex.n_obs.toLocaleString("en-US")}</b><span>observed values since ${S.tsIndex.year_min}</span><small>Historical trends for ${S.tsIndex.n_indicators} indicators in ${S.tsIndex.n_countries} economies — observed years only, no interpolation.</small></div>` : ""}`;
 }
 
 function renderCountry() {
@@ -176,12 +282,17 @@ function renderCountry() {
       <button type="button" class="sig-head" aria-expanded="${open}" aria-controls="why-${r.code.replace(/\./g, "_")}" data-why="${r.code}">
         <span class="sig-name">${esc(r.ind.label)}</span>${tierChip(r.tier)}
         <span class="sig-val">${esc(fmtValue(r.v, r.ind))} ${esc(unitAfter(r.ind))} ${badge(r.fresh, r.y)}</span>
-        <span class="sig-pos">Less favourable than ${Math.round(r.peer.u * 100)}% of ${r.peer.n} ${esc(r.peerName)}</span>
+        <span class="sig-pos"><b class="lbl">Current position</b> Less favourable than ${Math.round(r.peer.u * 100)}% of ${r.peer.n} ${esc(r.peerName)}</span>
+        <span class="sig-trend"><b class="lbl">Historical trend</b> ${trendShort(c, r.code)}</span>
         <span class="sig-cta">${open ? "Hide why" : "Why this signal?"}</span>
       </button>
       <div class="why" id="why-${r.code.replace(/\./g, "_")}" ${open ? "" : "hidden"}>
-        <h4>WHY THIS SIGNAL?</h4>
-        ${whyText(r, name).map((t) => `<p>${esc(t)}</p>`).join("")}
+        <div class="why-grid">
+          <div class="why-now"><h4>CURRENT POSITION <span>latest available value · this is what the signal is based on</span></h4>
+            ${whyText(r, name).map((t) => `<p>${esc(t)}</p>`).join("")}</div>
+          <div class="why-trend" data-trend="${r.code}"><h4>HISTORICAL TREND <span>observed values since 2000 · not used for the signal</span></h4>
+            ${trendBlock(c, r.code)}</div>
+        </div>
         <p class="muted small">Definition: ${esc(r.ind.definition)}</p>
         <p class="muted small">Source: ${esc(r.ind.source)} — via World Bank WDI.</p>
       </div></li>`;
@@ -190,7 +301,7 @@ function renderCountry() {
   const domRows = DOMAINS.map((dname) => {
     const rows = P.rows.filter((r) => r.ind.domain === dname);
     if (!rows.length) return "";
-    return `<tbody><tr class="dom"><th colspan="5" scope="colgroup">${esc(dname)}${dname === "Disease burden" ? ' <span class="muted small">(tuberculosis incidence only)</span>' : ""}${dname === "Demographic context" ? ' <span class="muted small">(context — not judged)</span>' : ""}</th></tr>
+    return `<tbody><tr class="dom"><th colspan="6" scope="colgroup">${esc(dname)}${dname === "Disease burden" ? ' <span class="muted small">(tuberculosis incidence only)</span>' : ""}${dname === "Demographic context" ? ' <span class="muted small">(context — not judged)</span>' : ""}</th></tr>
       ${rows.map((r) => {
         const ind = r.ind;
         const val = r.missing ? `<span class="nodata">No data available</span>` : `${esc(fmtValue(r.v, ind))} <span class="unit">${esc(unitAfter(ind))}</span>`;
@@ -200,8 +311,10 @@ function renderCountry() {
         else if (r.notCompared) pos = `<span class="muted small">${esc(r.notCompared)}</span>`;
         else if (r.directional) pos = `${bar(r.peer.u, `Less favourable than ${Math.round(r.peer.u * 100)}% of ${r.peerName}`)} <span class="small">Less favourable than ${Math.round(r.peer.u * 100)}% of ${r.peer.n} ${esc(r.peerName)}</span> ${tierChip(r.tier)}`;
         else pos = `<span class="small muted">Higher than ${Math.round(r.peer.u * 100)}% of ${r.peer.n} ${esc(r.peerName)} · context, not judged${ind.context_note ? ` (${esc(ind.context_note)})` : ""}</span>`;
-        return `<tr><th scope="row"><details><summary>${esc(ind.label)}</summary><div class="ind-info"><p>${esc(ind.definition)}</p>${ind.limitations ? `<p class="muted"><b>Limitations:</b> ${esc(ind.limitations.slice(0, 420))}${ind.limitations.length > 420 ? "…" : ""}</p>` : ""}<p class="muted"><b>Source:</b> ${esc(ind.source)} · WDI code ${esc(ind.code)} · ${esc(ind.license)}</p></div></details></th>
-          <td data-label="Value">${val}</td><td data-label="Year">${yr}</td><td data-label="Relative position">${pos}</td><td data-label="Direction" class="small muted">${ind.direction === "higher_is_concern" ? "Higher = concern" : ind.direction === "lower_is_concern" ? "Lower = concern" : "Context"}</td></tr>`;
+        const s = seriesOf(c, r.code);
+        const trendCell = s ? `${sparkline(s.obs, `${ind.label}: observed values ${s.obs[0][0]}–${s.obs[s.obs.length - 1][0]} (${s.obs.length} years)`)} ${trendShort(c, r.code)}` : trendShort(c, r.code);
+        return `<tr data-code="${r.code}"><th scope="row"><details><summary>${esc(ind.label)}</summary><div class="ind-info">${s ? `<div class="why-trend"><h4>HISTORICAL TREND <span>observed values since 2000</span></h4>${trendBlock(c, r.code)}</div>` : ""}<p>${esc(ind.definition)}</p>${ind.limitations ? `<p class="muted"><b>Limitations:</b> ${esc(ind.limitations.slice(0, 420))}${ind.limitations.length > 420 ? "…" : ""}</p>` : ""}<p class="muted"><b>Source:</b> ${esc(ind.source)} · WDI code ${esc(ind.code)} · ${esc(ind.license)}</p></div></details></th>
+          <td data-label="Value">${val}</td><td data-label="Year">${yr}</td><td data-label="Relative position">${pos}</td><td data-label="Trend since 2000" class="tcell">${trendCell}</td><td data-label="Direction" class="small muted">${ind.direction === "higher_is_concern" ? "Higher = concern" : ind.direction === "lower_is_concern" ? "Lower = concern" : "Context"}</td></tr>`;
       }).join("")}</tbody>`;
   }).join("");
   const missing = P.rows.filter((r) => r.missing).map((r) => r.ind.label);
@@ -228,17 +341,31 @@ function renderCountry() {
     ${P.signals.length ? `<ol class="sigs">${P.signals.map(sigCard).join("")}</ol>` : ""}
     ${P.watch.length ? `<details class="watch"><summary>Watch (${P.watch.length})</summary><ol class="sigs">${P.watch.map(sigCard).join("")}</ol></details>` : ""}
   </section>
+  <section aria-labelledby="tw-h" class="tw">
+    <p class="kicker">Trend watch</p>
+    <h2 id="tw-h">Observed values that moved in the less favourable direction</h2>
+    <p class="muted small">Separate from the signals above: signals and the score use the latest available value only. This list uses the recent window of observed values (up to 10 years, at least 4 observed years). ${esc(TREND_NOTE)}</p>
+    ${(() => {
+      const t = tsState(c);
+      if (t === "loading" || t === undefined) return `<p class="muted">Loading observed values…</p>`;
+      if (t === "error") return `<p class="muted">Observed values could not be loaded.</p>`;
+      const w = P.rows.filter((r) => r.directional && seriesOf(c, r.code)?.recent?.key === "worsening");
+      if (!w.length) return `<p>No signal indicator shows a clear worsening in its recent observed window.</p>`;
+      return `<ul class="twl">${w.map((r) => { const q = seriesOf(c, r.code).recent; return `<li data-code="${r.code}"><b>${esc(r.ind.label)}</b> ${trendChip(q)} <span class="small">${esc(fmtDelta(q.slope, r.ind, { perYear: true }))}, ${q.y0}–${q.y1} (${q.n} observed years)</span>${r.tier === "priority" || r.tier === "watch" ? ` <span class="small muted">· also ${r.tier === "priority" ? "a priority signal" : "on the watch list"} by current position</span>` : ""}</li>`; }).join("")}</ul>`;
+    })()}
+  </section>
   <section aria-labelledby="act-h">
     <p class="kicker">Possible action areas</p>
     <h2 id="act-h">${actions.length ? "Areas a national or local team may wish to review" : "No mapped action areas"}</h2>
-    ${actions.length ? `<div class="acts">${actions.map(({ r, rule }) => `<div class="act"><h3>${esc(rule.title)}</h3><p class="muted small">From: ${esc(r.ind.label)} (${r.y})</p><ul>${rule.areas.map((a) => `<li>${esc(a)}</li>`).join("")}</ul></div>`).join("")}</div>
-      <p class="note">${esc(S.rules.note)}</p>` : `<p class="muted">Action areas are shown only for priority signals.</p>`}
+    ${actions.length ? `<div class="acts">${actions.map(({ r, rule }) => `<div class="act"><h3>${esc(rule.title)}</h3><p class="muted small">From: ${esc(r.ind.label)} (${r.y})</p><ul>${rule.areas.map((a) => `<li><span class="area">${esc(areaText(a))}</span>${evidenceHtml(a)}</li>`).join("")}</ul></div>`).join("")}</div>
+      <p class="note">${esc(S.rules.note)}</p>
+      <p class="small muted">Evidence links point to public documents whose address and title were checked on the date shown. Their relevance to each area has not yet been reviewed by a domain expert, and listing a source does not mean its publisher endorses this prototype.</p>` : `<p class="muted">Action areas are shown only for priority signals.</p>`}
   </section>
   <section aria-labelledby="ind-h">
     <p class="kicker">Indicators</p>
     <h2 id="ind-h">All ${P.rows.length} indicators — latest available values</h2>
-    <p class="muted small">Each value shows its own observation year. Values are compared with ${esc(incomeShort(cx.income))} economies that have data from ${STALE_BEFORE} or later. Select an indicator name for its definition, limitations and source.</p>
-    <div class="tblwrap"><table class="itbl"><thead><tr><th scope="col">Indicator</th><th scope="col">Value</th><th scope="col">Year</th><th scope="col">Relative position</th><th scope="col">Direction</th></tr></thead>${domRows}</table></div>
+    <p class="muted small">Each value shows its own observation year. Values are compared with ${esc(incomeShort(cx.income))} economies that have data from ${STALE_BEFORE} or later. The trend column summarises observed values since 2000 separately (dots = observed years; no line is drawn across missing years). Select an indicator name for its chart, definition, limitations and source.</p>
+    <div class="tblwrap"><table class="itbl"><thead><tr><th scope="col">Indicator</th><th scope="col">Value</th><th scope="col">Year</th><th scope="col">Relative position <span class="muted">(latest)</span></th><th scope="col">Trend since 2000 <span class="muted">(observed)</span></th><th scope="col">Direction</th></tr></thead>${domRows}</table></div>
   </section>
   <section aria-labelledby="dq-h">
     <p class="kicker">Data quality / year</p>
@@ -259,22 +386,23 @@ function renderCountry() {
 function countryOptions(selected) {
   return INDEX.map((e) => `<option value="${e.c}"${e.c === selected ? " selected" : ""}>${esc(e.name)}</option>`).join("");
 }
+const cmpPair = () => { const a = S.sel || "KOR"; return [a, S.vs || (a === "VNM" ? "KOR" : "VNM")]; };
 function renderCompare() {
-  const a = S.sel || "KOR", b = S.vs || (a === "VNM" ? "KOR" : "VNM");
+  const [a, b] = cmpPair();
   const A = profileOf(a), B = profileOf(b);
   const na = displayName(a, S.data.countries[a].name), nb = displayName(b, S.data.countries[b].name);
-  const cell = (r) => (r.missing ? `<span class="nodata">No data available</span>` : `${esc(fmtValue(r.v, r.ind))} <span class="unit">${esc(unitAfter(r.ind))}</span> ${badge(r.fresh, r.y)} ${tierChip(r.tier)}`);
+  const cell = (r, c) => (r.missing ? `<span class="nodata">No data available</span>` : `${esc(fmtValue(r.v, r.ind))} <span class="unit">${esc(unitAfter(r.ind))}</span> ${badge(r.fresh, r.y)} ${tierChip(r.tier)}`) + `<div class="ctrend small"><span class="muted">Trend:</span> ${trendShort(c, r.code)}</div>`;
   const rows = Object.keys(S.inds).sort((x, y) => DOMAINS.indexOf(S.inds[x].domain) - DOMAINS.indexOf(S.inds[y].domain)).map((code) => {
     const ra = A.rows.find((r) => r.code === code), rb = B.rows.find((r) => r.code === code);
     const diffYear = !ra.missing && !rb.missing && ra.y !== rb.y;
-    return `<tr><th scope="row">${esc(S.inds[code].label)}<div class="small muted">${esc(S.inds[code].domain)}</div></th><td data-label="${esc(na)}">${cell(ra)}</td><td data-label="${esc(nb)}">${cell(rb)}</td><td ${diffYear ? 'data-label="Note"' : ""} class="small">${diffYear ? `<span class="warn">Different years (${ra.y} vs ${rb.y})</span>` : ""}</td></tr>`;
+    return `<tr><th scope="row">${esc(S.inds[code].label)}<div class="small muted">${esc(S.inds[code].domain)}</div></th><td data-label="${esc(na)}">${cell(ra, a)}</td><td data-label="${esc(nb)}">${cell(rb, b)}</td><td ${diffYear ? 'data-label="Note"' : ""} class="small">${diffYear ? `<span class="warn">Different years (${ra.y} vs ${rb.y})</span>` : ""}</td></tr>`;
   }).join("");
   $("#compare-body").innerHTML = `
     <div class="cmp-pick">
       <label>Country A <select id="cmp-a">${countryOptions(a)}</select></label>
       <label>Country B <select id="cmp-b">${countryOptions(b)}</select></label>
     </div>
-    <p class="muted small">Each value keeps its own observation year; values from different years are flagged and should not be read as the same point in time. Signals are relative to each country's own income group (${esc(S.data.countries[a].income)} / ${esc(S.data.countries[b].income)}).</p>
+    <p class="muted small">Each value keeps its own observation year; values from different years are flagged and should not be read as the same point in time. Signals are relative to each country's own income group (${esc(S.data.countries[a].income)} / ${esc(S.data.countries[b].income)}). "Trend" summarises each country's own observed values in its recent window (years shown) and is not used for signals.</p>
     <div class="tblwrap"><table class="itbl ctbl"><thead><tr><th scope="col">Indicator</th><th scope="col">${esc(na)}</th><th scope="col">${esc(nb)}</th><th scope="col">Note</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   $("#cmp-a").addEventListener("change", (e) => { S.sel = e.target.value; writeHash(); renderAll(); });
   $("#cmp-b").addEventListener("change", (e) => { S.vs = e.target.value; writeHash(); renderCompare(); });
@@ -339,21 +467,24 @@ function select(c, { scroll } = {}) {
 }
 let mapShown = false;
 function renderAll() {
+  loadTs(S.sel); loadTs(cmpPair()[1]);
   renderCountry(); renderCompare();
+  const t = tsState(S.sel); document.documentElement.dataset.ts = t && typeof t === "object" ? S.sel : "";
   if (mapShown) renderMap();
   document.title = `${displayName(S.sel, S.data.countries[S.sel].name)} — Global Health Equity Radar`;
 }
 
 async function main() {
-  const [data, inds, rules] = await Promise.all(["data/wdi_compact.json", "data/indicators.json", "data/action_rules.json"].map((u) => fetch(u).then((r) => r.json())));
-  Object.assign(S, { data, inds, rules });
+  const [data, inds, rules, ev, tsIndex] = await Promise.all(["data/wdi_compact.json", "data/indicators.json", "data/action_rules.json", "data/evidence.json", "data/ts_index.json"].map((u) => fetch(u).then((r) => r.json()).catch(() => null)));
+  if (!data || !inds || !rules) throw new Error("core data files missing");
+  Object.assign(S, { data, inds, rules, tsIndex, ev: Object.fromEntries((ev?.sources || []).map((x) => [x.id, x])) });
   buildPools(); buildIndex(); readHash();
   renderCoverage(); wireSearch(); initMapSelect(); renderAll();
   const mapSec = $("#map");
   const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting) && !mapShown) { mapShown = true; renderMap(); io.disconnect(); } }, { rootMargin: "200px" }) : null;
   io ? io.observe(mapSec) : (mapShown = true, renderMap());
   window.addEventListener("hashchange", () => { readHash(); renderAll(); });
-  window.__GHER = { S, profileOf, positionOf, fmtValue }; // for automated checks
+  window.__GHER = { S, profileOf, positionOf, fmtValue, fmtDelta, TREND_NOTE }; // for automated checks
   document.documentElement.dataset.ready = "1";
 }
 if (typeof document !== "undefined") main().catch((e) => { const b = document.getElementById("country"); if (b) b.innerHTML = `<p class="warn">Data could not be loaded (${esc(e.message)}).</p>`; console.error(e); });
