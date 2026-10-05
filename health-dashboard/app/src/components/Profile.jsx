@@ -8,6 +8,7 @@ import RiskCard from "./RiskCard";
 import GoldenDiamond from "./GoldenDiamond";
 import PeerCard from "./PeerCard";
 import EquityPriorityCard from "./equity/EquityPriorityCard";
+import IndInfo from "./equity/IndInfo";
 
 const tone = (p) => (p == null ? "" : p >= 75 ? "t-high" : p >= 50 ? "t-mid" : p >= 25 ? "t-low" : "t-min");
 
@@ -208,7 +209,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
             if (!items.length) return <div className="empty">낮은 지표({lows.map((x) => x.ind.name).join(", ")})에 연결된 지식베이스 항목이 아직 없습니다</div>;
             return <div className="recs">{items.map(({ r, recs }) => (
               <div key={r.ind.id} className="rec">
-                <div className="rechead"><b>{r.ind.name}</b> <span className="k-bad">{fmt(r.v)}{r.ind.unit} <small className="muted">({basisOf(r)})</small> · {pctLabel(r, "bottom")}</span>
+                <div className="rechead"><b>{r.ind.name}</b><IndInfo ind={r.ind} /> <span className="k-bad">{fmt(r.v)}{r.ind.unit} <small className="muted">({basisOf(r)})</small> · {pctLabel(r, "bottom")}</span>
                   <button className="xbtn" onClick={() => onRecommend(r.ind.name)}>더 보기 →</button></div>
                 {recs.map((e) => <div key={e.id} className="recitem"><span className={`lvbadge lv-${e.level}`}>{e.level === "sido" ? e.sido : e.level === "national" ? "국가" : e.level === "regional" ? "WPRO" : "WHO"}</span>
                   <span className="recgoal">{e.goal}</span>{e.interventions?.[0] && <span className="intchip">{e.interventions[0]}</span>}</div>)}
