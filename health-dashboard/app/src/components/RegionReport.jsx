@@ -15,6 +15,10 @@ import VS from "../../../data/validation_summary.json";
 const du = (u) => (u === "%" ? "%p" : u ? ` ${u}` : "");
 const sign = (v) => (v > 0 ? "+" : v < 0 ? "−" : "±");
 const posTxt = (r) => (!r.pos ? r.why || "–" : r.pos.n <= 30 ? `${r.pos.n}곳 중 ${r.pos.rank}위` : r.band?.label || "–");
+// 판정 배지(우선 검토 카드와 같은 색·아이콘) — 글자만 많던 보고서를 한눈에 읽히게(2026-10-05 소유자 지시)
+const TIER_ICON = { priority: "▲", watch: "●", ok: "✓", insufficient: "?" };
+const Tier = ({ t }) => <span className={`eq-tier eq-t-${t === "insufficient" ? "na" : t}`}>{TIER_ICON[t]} {TIER_KO[t]}</span>;
+const Lab = ({ k, children }) => <div className={`rpt-lab rpt-lab-${k}`}>{children}</div>;
 const LEVEL = { sido: "시도 계획", national: "국가", regional: "WHO 서태평양", global: "WHO" };
 const ADMIN_DOMAINS = ["사망률(표준화)", "암검진"];
 
@@ -45,7 +49,7 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
 
   const saveWord = () => {
     const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${regionName} 지역 건강 현황 보고서</title>
-<style>body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-size:10.5pt;line-height:1.55;color:#111}h1{font-size:18pt}h2{font-size:14pt;margin-top:16pt}h3{font-size:12pt}table{border-collapse:collapse;width:100%;margin:6pt 0}th,td{border:1px solid #999;padding:3pt 5pt;font-size:9.5pt;vertical-align:top}th{background:#eef2f7}.muted{color:#555}</style></head><body>${docRef.current?.innerHTML || ""}</body></html>`;
+<style>body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-size:10.5pt;line-height:1.55;color:#111}h1{font-size:18pt}h2{font-size:14pt;margin-top:16pt;background:#e8f0fb;border-left:5pt solid #2a78d6;padding:3pt 8pt}h3{font-size:12pt;border-bottom:1pt solid #c9d6e8}.rpt-kpi{display:inline-block;border:1px solid #c9d6e8;padding:3pt 8pt;margin:0 4pt 4pt 0}.rpt-kpi b{font-size:14pt;margin-right:4pt}.rpt-lab{font-weight:bold;color:#1f5aa6;margin-top:6pt}.eq-tier{font-weight:bold}.k-priority b,.eq-t-priority{color:#b3261e}.k-watch b,.eq-t-watch{color:#8a5a00}.k-ok b,.eq-t-ok{color:#1e6b34}.row-pri td{background:#fdeceb}table{border-collapse:collapse;width:100%;margin:6pt 0}th,td{border:1px solid #999;padding:3pt 5pt;font-size:9.5pt;vertical-align:top}th{background:#eef2f7}.muted{color:#555}</style></head><body>${docRef.current?.innerHTML || ""}</body></html>`;
     download(new Blob(["﻿" + html], { type: "application/msword" }), `${fileBase}.doc`);
   };
   const copyDraft = async () => setMsg((await copyText(paras.join("\n\n"))) ? "현황 분석 문장 초안을 복사했습니다. 계획서에 붙여 넣고 원자료와 대조해 고쳐 쓰세요." : "복사하지 못했습니다. 문장을 드래그해 복사해 주세요.");
@@ -75,26 +79,32 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
         </header>
 
         <section>
-          <h2>1. 요약</h2>
+          <h2><span className="rpt-no">1</span>요약</h2>
+          <div className="rpt-kpis" role="list" aria-label={`지역사회건강조사 지표 ${p.rows.length}개 판정`}>
+            <div className="rpt-kpi k-all" role="listitem"><b>{p.rows.length}</b><span>지역사회건강조사 지표</span></div>
+            <div className="rpt-kpi k-priority" role="listitem"><b>{p.counts.priority}</b><span>▲ 우선 검토</span></div>
+            <div className="rpt-kpi k-watch" role="listitem"><b>{p.counts.watch}</b><span>● 관찰 필요</span></div>
+            <div className="rpt-kpi k-ok" role="listitem"><b>{p.counts.ok}</b><span>✓ 상대적으로 양호</span></div>
+            {p.counts.insufficient ? <div className="rpt-kpi k-na" role="listitem"><b>{p.counts.insufficient}</b><span>? 자료 부족</span></div> : null}
+          </div>
           <table className="rpt-tbl rpt-sum"><tbody>
-            <tr><th scope="row">지역사회건강조사 지표</th><td>{p.rows.length}개 — 우선 검토 <b>{p.counts.priority}</b> · 관찰 필요 <b>{p.counts.watch}</b> · 상대적으로 양호 <b>{p.counts.ok}</b>{p.counts.insufficient ? ` · 자료 부족 ${p.counts.insufficient}` : ""}</td></tr>
-            <tr><th scope="row">먼저 검토할 지표</th><td>{p.top.length ? p.top.map((r) => `${r.name}(${TIER_KO[r.tier]})`).join(", ") : "뚜렷이 불리한 지표 없음"}</td></tr>
-            <tr><th scope="row">강점 지표</th><td>{strengths.length ? strengths.map((r) => r.name).join(", ") : "해당 없음(양호한 쪽 25% 안 지표 없음)"}</td></tr>
+            <tr><th scope="row">먼저 검토할 지표</th><td>{p.top.length ? <span className="rpt-chips">{p.top.map((r) => <span key={r.id} className="rpt-chip c-bad">{r.name} <Tier t={r.tier} /></span>)}</span> : "뚜렷이 불리한 지표 없음"}</td></tr>
+            <tr><th scope="row">강점 지표</th><td>{strengths.length ? <span className="rpt-chips">{strengths.map((r) => <span key={r.id} className="rpt-chip c-good">✓ {r.name}</span>)}</span> : "해당 없음(양호한 쪽 25% 안 지표 없음)"}</td></tr>
             <tr><th scope="row">사회경제 맥락</th><td>{dep ? `지역박탈지수(근사, ${dep.year}년) ${dep.q}분위(5 = 가장 박탈)` : isSido ? "시도 단위라 지역박탈지수는 쓰지 않음" : "지역박탈지수 자료 없음"}</td></tr>
             <tr><th scope="row">기대수명·건강수명</th><td>{hle ? `기대수명 ${fmt(hle.le)}세 · 건강수명(주관적 건강 기반·근사) ${fmt(hle.hle)}세 (${hle.y}년, 3년 합산)` : "산출 자료 없음"}</td></tr>
           </tbody></table>
-          <h3>현황 분석 문장(초안)</h3>
+          <Lab k="draft">현황 분석 문장(초안) — 계획서에 붙여 넣고 원자료와 대조해 고쳐 쓰세요</Lab>
           <div className="rpt-draft">{paras.map((t, i) => <p key={i}>{t}</p>)}</div>
         </section>
 
         <section>
-          <h2>2. 우선 검토 항목 — 왜 강조됐고, 무엇을 검토할 수 있나</h2>
+          <h2><span className="rpt-no">2</span>우선 검토 항목 <small>왜 강조됐고, 무엇을 검토할 수 있나</small></h2>
           {p.top.length === 0 ? <p>전국 중앙값보다 뚜렷이 불리한 지표가 없습니다.</p> : p.top.map((r, i) => {
             const e = evidenceFor(r.ind, sel);
             return (
-              <div key={r.id} className="rpt-item">
-                <h3>2-{i + 1}. {r.name} <span className="muted">· {r.domain} · {TIER_KO[r.tier]}</span></h3>
-                <table className="rpt-tbl"><thead><tr><th>지역 값</th><th>전국 중앙값</th><th>차이</th><th>상대 위치</th><th>최근 추세</th></tr></thead>
+              <div key={r.id} className={`rpt-item t-${r.tier}`}>
+                <h3><span className="rpt-ino">{i + 1}</span>{r.name} <span className="muted">· {r.domain}</span> <Tier t={r.tier} /></h3>
+                <table className="rpt-tbl rpt-facts"><thead><tr><th>지역 값</th><th>전국 중앙값</th><th>차이</th><th>상대 위치 <small>(1위 = 가장 양호)</small></th><th>최근 추세</th></tr></thead>
                   <tbody><tr>
                     <td>{fmt(r.v)}{r.unit} <span className="muted">({r.y}년{r.k === 3 ? " 기준 3년 평균" : ""})</span></td>
                     <td>{fmt(r.ref)}{r.unit}</td>
@@ -102,9 +112,9 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
                     <td>{posTxt(r)}</td>
                     <td>{r.trendCls ? r.trendCls.label : "평가 안 함"}{r.trend ? ` (${r.trend.y0}–${r.trend.y1})` : ""}</td>
                   </tr></tbody></table>
-                <p><b>왜 강조됐나</b></p>
+                <Lab k="why">왜 강조됐나</Lab>
                 <ul>{r.reasons.map((x, k) => <li key={k}>{x.t}</li>)}</ul>
-                <p><b>검토해 볼 수 있는 공중보건 대응</b> <span className="muted">(공식 문서 목록 — 처방이 아님)</span></p>
+                <Lab k="act">검토해 볼 수 있는 공중보건 대응 <span className="muted">(공식 문서 목록 — 처방이 아님)</span></Lab>
                 {!e.any ? <p className="muted">연결된 공식 자료 없음 — 근거 부족 · 추가 검토 필요</p> : (
                   <ul>
                     {e.recs.map((x) => <li key={x.id}>[{LEVEL[x.level] || x.level}] {x.goal} — {x.source}{x.url ? <> · <a href={x.url}>{x.url}</a></> : null}</li>)}
@@ -119,27 +129,27 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
 
         {strengths.length > 0 && (
           <section>
-            <h2>3. 강점 지표</h2>
-            <table className="rpt-tbl"><thead><tr><th>지표</th><th>영역</th><th>지역 값</th><th>전국 중앙값</th><th>상대 위치</th></tr></thead>
+            <h2><span className="rpt-no">3</span>강점 지표 <small>전국 중앙값보다 양호하고 비교 집단에서 양호한 쪽 25% 안</small></h2>
+            <table className="rpt-tbl"><thead><tr><th>지표</th><th>영역</th><th>지역 값</th><th>전국 중앙값</th><th>상대 위치 <small>(1위 = 가장 양호)</small></th></tr></thead>
               <tbody>{strengths.map((r) => <tr key={r.id}><td>{r.name}</td><td>{r.domain}</td><td>{fmt(r.v)}{r.unit}</td><td>{fmt(r.ref)}{r.unit}</td><td>{posTxt(r)}</td></tr>)}</tbody></table>
           </section>
         )}
 
         <section>
-          <h2>{strengths.length ? 4 : 3}. 지역사회건강조사 지표 전체</h2>
-          <p className="muted">{p.rows.length}개 · 값: {basis} · 차이는 지역 값 − 전국 중앙값 · 위치는 비교 집단에서의 구간(30곳 이하는 순위).</p>
+          <h2><span className="rpt-no">{strengths.length ? 4 : 3}</span>지역사회건강조사 지표 전체</h2>
+          <p className="muted">{p.rows.length}개 · 값: {basis} · 차이는 지역 값 − 전국 중앙값 · 위치는 비교 집단에서의 구간(30곳 이하는 양호한 순 순위, 1위 = 가장 양호).</p>
           <table className="rpt-tbl rpt-all"><thead><tr><th>영역</th><th>지표</th><th>지역 값</th><th>전국 중앙값</th><th>차이</th><th>위치</th><th>추세</th><th>판정</th></tr></thead>
             <tbody>{byDomain(p.rows).flatMap(([d, rs]) => rs.map((r, i) => (
-              <tr key={r.id}>{i === 0 && <td rowSpan={rs.length}>{d}</td>}<td>{r.name}</td>
+              <tr key={r.id} className={r.tier === "priority" ? "row-pri" : r.tier === "watch" ? "row-watch" : undefined}>{i === 0 && <td rowSpan={rs.length} className="rpt-dom">{d}</td>}<td>{r.name}</td>
                 <td>{r.v == null ? "–" : `${fmt(r.v)}${r.unit}`}</td><td>{r.ref == null ? "–" : `${fmt(r.ref)}${r.unit}`}</td>
                 <td>{r.gap ? `${sign(r.gap.abs)}${fmt(Math.abs(r.gap.abs))}${du(r.unit)}` : "–"}</td><td>{posTxt(r)}</td>
-                <td>{r.trendCls?.label || "–"}</td><td>{TIER_KO[r.tier]}</td></tr>
+                <td>{r.trendCls?.label || "–"}</td><td><Tier t={r.tier} /></td></tr>
             )))}</tbody></table>
         </section>
 
         {admin.length > 0 && (
           <section>
-            <h2>{strengths.length ? 5 : 4}. 사망률·암검진(시군구 단위 자료)</h2>
+            <h2><span className="rpt-no">{strengths.length ? 5 : 4}</span>사망률·암검진 <small>시군구 단위 행정 자료</small></h2>
             <p className="muted">비교 집단: {isSido ? "17개 시도" : `전국 시군구 ${VS.regions.municipalities_active}곳`} · 표본오차가 없는 행정 통계입니다.</p>
             <table className="rpt-tbl"><thead><tr><th>지표</th><th>지역 값</th><th>전국 중앙값</th><th>차이</th><th>위치</th><th>추세</th></tr></thead>
               <tbody>{admin.map((r) => <tr key={r.id}><td>{r.name} <span className="muted">({r.y}년)</span></td><td>{fmt(r.v)} {r.unit}</td><td>{fmt(r.ref)} {r.unit}</td><td>{sign(r.gap.abs)}{fmt(Math.abs(r.gap.abs))}{du(r.unit)}</td><td>{posTxt(r)}</td><td>{r.trendCls?.label || "–"}</td></tr>)}</tbody></table>
@@ -147,7 +157,7 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
         )}
 
         <section>
-          <h2>방법</h2>
+          <h2 className="rpt-h2-sub">방법</h2>
           <ul>
             <li>판정은 대시보드 「우리 지역 우선 검토 항목」과 같은 계산입니다: 전국 중앙값 대비 방향 보정 격차 {WEIGHTS.gap * 100}% · 비교 집단 안 위치 {WEIGHTS.rank * 100}% · 최근 5년 추세 {WEIGHTS.trend * 100}% · 지역박탈지수 {WEIGHTS.dep * 100}%(없으면 빼고 나머지 가중치로 다시 나눔).</li>
             <li>「우선 검토」는 불리한 쪽 · 하위 {Math.round((1 - THRESHOLDS.priorityU) * 100)}% · 점수 {THRESHOLDS.priorityScore} 이상 · 95% 신뢰구간이 전국 중앙값을 포함하지 않음 · 상대표준오차 20% 이하일 때만 붙습니다. 점수는 화면 내부용이며 공식 지수가 아닙니다.</li>
@@ -156,7 +166,7 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
           </ul>
         </section>
         <section>
-          <h2>자료원과 한계</h2>
+          <h2 className="rpt-h2-sub">자료원과 한계</h2>
           <ul>{sources.map((s) => <li key={s.key}>{s.org} — {s.title}{s.updated ? ` (갱신 ${s.updated})` : ""}{s.url ? <> · <a href={s.url}>{s.url}</a></> : null}</li>)}</ul>
           <p className="muted">보건소 사업의 투입·산출 자료가 없으므로 사업 성과평가나 인과효과 판단에 쓸 수 없습니다. 건강수명과 지역박탈지수는 이 대시보드의 근사 산출값이며 공식 통계가 아닙니다. 지표별 출처·정의는 대시보드 각 지표의 ⓘ와 「자료원」 탭, 데이터 검증 문서(docs/DATA_VALIDATION.md)에서 확인할 수 있습니다.</p>
           <p className="muted">출처: 지역 건강프로파일 대시보드(health-profile.kr) · 기획·제작 지음웍스 · 자동 생성 {today}</p>
