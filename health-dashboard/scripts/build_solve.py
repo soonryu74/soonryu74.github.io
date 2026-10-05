@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 VS = json.loads((ROOT / "data" / "validation_summary.json").read_text(encoding="utf-8"))
 REV = json.loads((ROOT / "data" / "reviews.json").read_text(encoding="utf-8"))
 CONTACT = json.loads((ROOT / "data" / "contact.json").read_text(encoding="utf-8"))
+CE = json.loads((ROOT / "data" / "competition_evidence.json").read_text(encoding="utf-8"))  # scripts/build_competition_evidence.mjs
 
 R, I, Y = VS["regions"], VS["indicators"], VS["years"]
 src = I["by_source"]
@@ -56,6 +57,10 @@ rep = {
     "{{N_HC}}": str(R["survey_units"]), "{{N_SGG}}": str(R["municipalities_active"]),
     "{{Y0}}": str(Y["first"]), "{{Y1}}": str(Y["last"]), "{{N_YEARS}}": str(n_years),
     "{{VERIFIED}}": VS["generated"], "{{SOURCE_ROWS}}": rows, "{{REVIEW_STATUS}}": html.escape(review),
+    "{{N_PROV}}": str(R["provinces"]), "{{N_SOURCES}}": str(CE["korea"]["source_groups"]),
+    "{{G_ECON}}": str(CE["global"]["economies"]), "{{G_IND}}": str(CE["global"]["indicators"]), "{{G_OBS}}": f'{CE["global"]["observed_values_since_2000"]:,}',
+    "{{G_TS0}}": str(CE["global"]["ts_year_first"]), "{{G_TS1}}": str(CE["global"]["ts_year_last"]), "{{G_EV}}": str(CE["global"]["evidence_sources_verified"]),
+    "{{QA_LINE}}": html.escape(CE["qa_line"]), "{{EVIDENCE_DATE}}": CE["generated"],
     "{{EMAIL}}": html.escape(CONTACT["email"]), "{{CREDIT}}": html.escape(CONTACT.get("credit", {}).get("org", "the developer")),
 }
 out = (ROOT / "solve" / "template.html").read_text(encoding="utf-8")
