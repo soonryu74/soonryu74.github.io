@@ -1,8 +1,10 @@
 /* Global Health Equity Radar(/global/) 검증 — 원본 WDI JSON 과 화면을 독립적으로 대조한다.
    사용: 로컬 서버(health-dashboard 를 루트로 8911)를 띄운 뒤 node scripts/qa/global_e2e.mjs [출력 폴더]
    점검: 4개 화면 크기·라이트/다크 오류·가로 넘침 / 5개국(+TLS·UGA) 전 지표 값·연도 = 원본 / 결측은 「No data available」 /
-   우선 신호를 원본에서 따로 계산한 백분위로 재확인(방향 포함) / 무작위 10개 데이터 포인트 / 비교 연도 표기 / 검색 / WHY / 지도 / 방법론 / 금지 표현 */
-import { readFileSync, mkdirSync } from "node:fs";
+   우선 신호를 원본에서 따로 계산한 백분위로 재확인(방향 포함) / 무작위 10개 데이터 포인트 / 비교 연도 표기 / 검색 / WHY / 지도 / 방법론 / 금지 표현
+   v0.2: 시계열 점 = 원본 CSV(보간 0·연속 연도만 선) · 마지막 점 = latest · 현재 위치/추세 분리 · 인과 표현 0 · 근거 링크는 확인된 것만 ·
+         (BASE_V01 을 주면) 217개국 신호·Watch·점수가 v0.1 과 같음 */
+import { readFileSync, mkdirSync, existsSync } from "node:fs";
 const { chromium } = await import("/opt/node22/lib/node_modules/playwright/index.mjs");
 const ROOT = new URL("../../", import.meta.url).pathname;
 const OUT = process.argv[2] || "/tmp/global_e2e"; mkdirSync(OUT, { recursive: true });
@@ -12,6 +14,25 @@ const IND = JSON.parse(readFileSync(ROOT + "global/data/indicators.json", "utf8"
 const fails = []; const ck = (ok, m) => { console.log(`${ok ? "✔" : "✘"} ${m}`); if (!ok) fails.push(m); };
 const raw = {}; for (const r of RAW) (raw[r["Country Code"]] ||= {})[r["Indicator Code"]] = r;
 const byLabel = Object.fromEntries(Object.values(IND).map((i) => [i.label, i]));
+// v0.2 시계열 원본(CSV, 비공개 — 없으면 시계열 원본 대조는 실패로 처리)
+const CSVP = ROOT + "private/wdi/health_equity_wdi_timeseries_2000_latest.csv";
+const TSRAW = {}; // c → code → [[y, v(문자열)]]
+if (existsSync(CSVP)) {
+  let t = readFileSync(CSVP, "utf8"); if (t.charCodeAt(0) === 0xfeff) t = t.slice(1);
+  const rows = []; let row = [], f = "", q = false;
+  for (let i = 0; i < t.length; i++) { const ch = t[i];
+    if (q) { if (ch === '"') { if (t[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += ch; }
+    else if (ch === '"') q = true; else if (ch === ",") { row.push(f); f = ""; }
+    else if (ch === "\n" || ch === "\r") { if (ch === "\r" && t[i + 1] === "\n") i++; row.push(f); f = ""; rows.push(row); row = []; } else f += ch; }
+  if (row.length || f) { row.push(f); rows.push(row); }
+  const h = rows.shift(), ci = Object.fromEntries(h.map((x, i) => [x, i]));
+  for (const r of rows) if (r.length > 3) ((TSRAW[r[ci["Country Code"]]] ||= {})[r[ci["Indicator Code"]]] ||= []).push([+r[ci.year], r[ci.value]]);
+  for (const c in TSRAW) for (const k in TSRAW[c]) TSRAW[c][k].sort((a, b) => a[0] - b[0]);
+}
+const EVREG = JSON.parse(readFileSync(ROOT + "global/data/evidence_registry.json", "utf8"));
+const RULES = JSON.parse(readFileSync(ROOT + "global/data/action_rules.json", "utf8"));
+const EV_OK = new Set(EVREG.sources.filter((x) => x.verified?.ok).map((x) => x.id));
+const EV_URL = Object.fromEntries(EVREG.sources.filter((x) => x.verified?.ok).map((x) => [x.url, x.id]));
 
 // 원본에서 독립 계산: 같은 소득그룹·2015년 이후 값 중 더 양호한 비율(동률 절반)
 function indepU(c, code) {
@@ -39,7 +60,9 @@ const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" })
 for (const [w, h, s] of [[390, 844, "light"], [430, 932, "dark"], [768, 1024, "light"], [1440, 900, "dark"]]) {
   const pg = await (await b.newContext({ viewport: { width: w, height: h }, colorScheme: s })).newPage(); const errs = [];
   pg.on("pageerror", (e) => errs.push(e.message)); pg.on("console", (m) => { if (m.type() === "error") errs.push(m.text()); });
-  await pg.goto(BASE + "#c=KOR", { waitUntil: "load" }); await pg.waitForSelector("html[data-ready='1']");
+  await pg.goto(BASE + "#c=KOR", { waitUntil: "load" }); await pg.waitForSelector("html[data-ts='KOR']");
+  await pg.locator(".sigs > .sig .sig-head").first().click(); await pg.waitForTimeout(150);
+  await pg.evaluate(() => document.querySelectorAll(".itbl details").forEach((d) => (d.open = true)));
   await pg.evaluate(() => document.getElementById("map").scrollIntoView()); await pg.waitForSelector("#map-body svg path", { timeout: 15000 });
   const ov = await pg.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   ck(errs.length === 0 && ov <= 0, `[${w} ${s}] JS 오류 ${errs.length} · 가로 넘침 ${ov}px`);
@@ -128,7 +151,75 @@ ck(nPath > 150 && nHas > 120 && (await pg.evaluate(() => window.__GHER.S.sel)) =
 await pg.goto(BASE + "methodology/"); await pg.waitForFunction(() => document.querySelectorAll("#m-table tbody tr").length > 0);
 ck((await pg.locator("#m-table tbody tr").count()) === nI, `방법론 지표 표 ${nI}행`);
 const mtxt = await pg.locator("main").innerText();
-ck(["Data source", "Indicator selection", "Latest available year", "Missing data", "Comparison method", "Priority Signal", "Exploratory Priority Score", "Limitations", "License"].every((k) => mtxt.includes(k)), "방법론 9개 항목");
+ck(["Data source", "Indicator selection", "Latest available year", "Missing data", "Comparison method", "Priority Signal", "Exploratory Priority Score", "Limitations", "License", "Historical trends", "Evidence links"].every((k) => mtxt.includes(k)), "방법론 11개 항목(10 추세 · 11 근거 포함)");
+ck(!/…/.test(await pg.locator("#trends").evaluate((h) => { let t = "", n = h.nextElementSibling; while (n && n.tagName !== "H2") { t += n.textContent; n = n.nextElementSibling; } return t; })), "방법론 10절 숫자 채워짐");
+
+// 10b) v0.2 시계열·추세·근거
+ck(Object.keys(TSRAW).length > 0, `시계열 원본 CSV 읽음 (${Object.keys(TSRAW).length}개국)`);
+const CAUSAL = /\b(because|due to|caused|causes|led to|leads to|driven by|result(?:ed)? (?:of|from)|attributable|will|forecast|expected to|predicts?)\b/i;
+let seedT = 5102026; const rndT = () => (seedT = (seedT * 1103515245 + 12345) % 2 ** 31) / 2 ** 31;
+const allC = Object.keys(TSRAW).sort();
+const tsCountries = ["KOR", "VNM", "USA", "JPN", "AUS", "TLS", "UGA", ...Array.from({ length: 5 }, () => allC[Math.floor(rndT() * allC.length)])];
+for (const c of tsCountries) {
+  await pg.goto(BASE + `#c=${c}`); await pg.waitForFunction((cc) => document.documentElement.dataset.ts === cc, c);
+  const ui = await pg.$$eval(".itbl tr[data-code]", (trs) => trs.map((tr) => ({ code: tr.dataset.code, pts: [...tr.querySelectorAll("circle.obs")].map((e) => [+e.dataset.year, e.dataset.v]), segs: ((tr.querySelector("path.obsl")?.getAttribute("d") || "").match(/M/g) || []).length })));
+  let nPts = 0, bad = [], extraYears = 0, segBad = 0, lastBad = 0;
+  for (const r of ui) {
+    const src = TSRAW[c]?.[r.code] || [];
+    if (!src.length) { if (r.pts.length) bad.push(`${r.code}: 원본 없음인데 점 ${r.pts.length}`); continue; }
+    const srcYears = new Set(src.map((x) => x[0]));
+    extraYears += r.pts.filter((p) => !srcYears.has(p[0])).length;
+    if (r.pts.length !== src.length) bad.push(`${r.code}: 점 ${r.pts.length} vs 원본 ${src.length}`);
+    src.forEach(([y, v], i) => { const p = r.pts[i]; if (!p || p[0] !== y || Number(p[1]) !== Number(v)) bad.push(`${r.code} ${y}: 화면 ${p?.[1]} vs 원본 ${v}`); else nPts++; });
+    const consec = src.filter((x, i) => i > 0 && x[0] === src[i - 1][0] + 1).length;
+    if (r.segs !== consec) segBad++;
+    const L = raw[c]?.[r.code], last = src[src.length - 1];
+    if (L && (L.year !== last[0] || L.value !== Number(last[1]))) lastBad++;
+  }
+  ck(!bad.length && extraYears === 0 && segBad === 0 && lastBad === 0, `[${c}] 시계열 점 ${nPts}개 = 원본 CSV · 원본에 없는 연도 점 ${extraYears} · 연속 연도 외 선 ${segBad} · 마지막 점≠latest ${lastBad}${bad.length ? " — " + bad.slice(0, 2).join(" | ") : ""}`);
+  const blocks = await pg.$$eval(".why-trend, section.tw", (els) => els.map((e) => e.innerText));
+  const note = await pg.evaluate(() => window.__GHER.TREND_NOTE);
+  const causal = blocks.map((t) => t.split(note).join("")).filter((t) => CAUSAL.test(t));
+  ck(causal.length === 0 && blocks.length > 0, `[${c}] 추세 문장 ${blocks.length}곳 인과·예측 표현 0${causal.length ? " — " + causal[0].match(CAUSAL)[0] : ""}`);
+}
+// 무작위 10개 시계열 점(고정 시드) — 화면 점 = 원본
+let tok = 0;
+for (let i = 0; i < 10; i++) {
+  const c = allC[Math.floor(rndT() * allC.length)], codes = Object.keys(TSRAW[c]), code = codes[Math.floor(rndT() * codes.length)];
+  const [y, v] = TSRAW[c][code][Math.floor(rndT() * TSRAW[c][code].length)];
+  await pg.goto(BASE + `#c=${c}`); await pg.waitForFunction((cc) => document.documentElement.dataset.ts === cc, c);
+  const shown = await pg.$eval(`.itbl tr[data-code="${code}"] circle.obs[data-year="${y}"]`, (e) => e.dataset.v).catch(() => null);
+  const good = shown != null && Number(shown) === Number(v); if (good) tok++;
+  console.log(`   ${good ? "·" : "✘"} ${c} · ${code} · ${y}: 원본 ${v} / 화면 ${shown}`);
+}
+ck(tok === 10, `무작위 10개 시계열 점 화면 = 원본 ${tok}/10`);
+// 현재 위치와 추세 분리 · 문구
+await pg.goto(BASE + "#c=KOR"); await pg.waitForFunction(() => document.documentElement.dataset.ts === "KOR");
+await pg.locator(".sigs > .sig .sig-head").first().click(); await pg.waitForTimeout(150);
+const w2 = await pg.locator(".why:not([hidden])").first();
+const nowT = await w2.locator(".why-now").innerText(), trT = await w2.locator(".why-trend").innerText();
+ck(/CURRENT POSITION/.test(nowT) && /HISTORICAL TREND/.test(trT) && !/HISTORICAL TREND/.test(nowT) && /not used for the signal/.test(trT) && trT.includes(await pg.evaluate(() => window.__GHER.TREND_NOTE)), "신호 카드: CURRENT POSITION / HISTORICAL TREND 분리 + 추세 고지문");
+const headT = await pg.locator(".sigs > .sig .sig-head").first().innerText();
+ck(/Current position/i.test(headT) && /Historical trend/i.test(headT), "신호 머리: 현재 위치·추세 라벨 따로");
+// 근거: 화면 링크는 레지스트리에서 확인(ok)된 것만, 근거 없는 영역은 문구
+const evLinks = await pg.$$eval(".acts .ev a", (as) => as.map((a) => a.getAttribute("href")));
+const evAreas = await pg.$$eval(".acts li", (lis) => lis.filter((li) => li.querySelector(".area")).map((li) => ({ t: li.querySelector(".area").textContent, none: !!li.querySelector(".ev-none") })));
+const expectNone = Object.values(RULES.rules).flatMap((r) => r.areas).filter((a) => !(a.evidence || []).some((id) => EV_OK.has(id))).map((a) => a.text);
+const noneOk = evAreas.every((a) => a.none === expectNone.includes(a.t));
+ck(evLinks.length > 0 && evLinks.every((u) => EV_URL[u]) && noneOk && evAreas.some((a) => a.none), `근거 링크 ${evLinks.length}개 모두 확인된 출처 · 「No verified evidence linked yet」 ${evAreas.filter((a) => a.none).length}곳(규칙과 일치)`);
+// 비교 표 추세 열
+await pg.goto(BASE + "#c=KOR&vs=VNM"); await pg.waitForFunction(() => document.querySelectorAll(".ctbl .ctrend .trend").length > 10);
+ck(true, `비교 표 추세 표시 ${await pg.locator(".ctbl .ctrend .trend").count()}칸`);
+// v0.1 과 신호·Watch·점수 동일(217개국 전수)
+if (process.env.BASE_V01) {
+  const snap = async (base) => { const p2 = await (await b.newContext()).newPage(); await p2.goto(base + "#c=KOR"); await p2.waitForSelector("html[data-ready='1']");
+    const r = await p2.evaluate(() => Object.fromEntries(Object.keys(window.__GHER.S.data.countries).map((c) => { const P = window.__GHER.profileOf(c); return [c, { sig: P.signals.map((x) => x.code).sort().join(","), watch: P.watch.map((x) => x.code).sort().join(","), top: P.top.map((x) => x.code).join(","), score: P.score, ds: JSON.stringify(P.domainScores) }]; })));
+    await p2.close(); return r; };
+  const A = await snap(process.env.BASE_V01), B2 = await snap(BASE);
+  const diff = Object.keys(A).filter((c) => JSON.stringify(A[c]) !== JSON.stringify(B2[c]));
+  const nSig = Object.values(B2).reduce((s, x) => s + (x.sig ? x.sig.split(",").length : 0), 0);
+  ck(Object.keys(A).length === 217 && diff.length === 0, `v0.1 대비 217개국 신호·Watch·상위 3·점수·영역 점수 동일 (차이 ${diff.length}, 신호 합계 ${nSig})${diff.length ? " — " + diff.slice(0, 3).join(",") : ""}`);
+} else ck(false, "BASE_V01 미지정 — v0.1 신호 동일성 점검 못 함");
 
 // 10) 금지 표현(본문 텍스트)
 await pg.goto(BASE + "#c=KOR"); await pg.waitForSelector("html[data-ready='1']");

@@ -152,6 +152,25 @@ def main():
     elif not (D / "world_110m.json").exists():
         print("지도 파일 없음 — --world <ne_110m_admin_0_countries.geojson> 로 한 번 만들 것")
 
+    # ── v0.2 근거(evidence): 레지스트리에서 링크·제목·용어가 확인된(ok) 출처만 화면용 evidence.json 으로 ──
+    reg = json.loads((D / "evidence_registry.json").read_text(encoding="utf-8"))
+    rules = json.loads((D / "action_rules.json").read_text(encoding="utf-8"))
+    ids = {s["id"] for s in reg["sources"]}
+    assert len(ids) == len(reg["sources"]), "evidence id 중복"
+    for code, rule in rules["rules"].items():
+        assert code in HIGHER_IS_CONCERN + LOWER_IS_CONCERN, f"행동 규칙이 방향 지표가 아님 {code}"
+        for a in rule["areas"]:
+            for e in ([] if isinstance(a, str) else a.get("evidence", [])):
+                assert e in ids, f"레지스트리에 없는 근거 id {e} ({code})"
+    shown = [{k: s[k] for k in ("id", "title", "publisher", "url", "type", "language", "relevance_review")} | {"checked": s["verified"]["date"]}
+             for s in reg["sources"] if (s.get("verified") or {}).get("ok")]
+    dropped = [s["id"] for s in reg["sources"] if not (s.get("verified") or {}).get("ok")]
+    (D / "evidence.json").write_text(json.dumps({"note": reg["note"], "sources": shown}, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"근거: 등록 {len(ids)} · 확인되어 화면에 표시 {len(shown)}" + (f" · ⚠ 확인 안 됨(화면 제외) {dropped}" if dropped else ""))
+
+    # ── v0.2 장기 추세(2000년 이후 관측 시계열 → global/data/ts/, 원본 CSV 가 없으면 기존 산출물 유지) ──
+    subprocess.run(["node", str(ROOT / "scripts" / "build_global_trends.mjs")], check=True)
+
     # ── JS 묶기(esbuild) ──
     esb = ROOT / "app" / "node_modules" / ".bin" / "esbuild"
     subprocess.run([str(esb), str(G / "src" / "main.js"), "--bundle", "--format=esm", "--minify", "--target=es2019", f"--outfile={G / 'js' / 'app.js'}", "--log-level=warning"], check=True)
