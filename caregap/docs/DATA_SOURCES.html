@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CareGap AI — 공공데이터 출처 조사 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="CareGap AI — 공공데이터 출처 조사" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="CareGap AI — 공공데이터 출처 조사" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"CareGap AI — 공공데이터 출처 조사","url":"/caregap/docs/DATA_SOURCES.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=203f677eea5b89c48ed78b1c123d7ec44b3b2f36">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="caregap-ai--공공데이터-출처-조사">CareGap AI — 공공데이터 출처 조사</h1>
+
+<ul>
+  <li>조사일: <strong>2026-10-05</strong></li>
+  <li>조사 방법과 한계
+    <ul>
+      <li>컨테이너에서 <code class="language-plaintext highlighter-rouge">www.data.go.kr</code>, <code class="language-plaintext highlighter-rouge">apis.data.go.kr</code>, <code class="language-plaintext highlighter-rouge">api.data.go.kr</code>, <code class="language-plaintext highlighter-rouge">opendata.hira.or.kr</code>, <code class="language-plaintext highlighter-rouge">nid.or.kr</code> 직접 접속(curl·WebFetch)이 <strong>프록시 403으로 차단</strong>되었다.</li>
+      <li>따라서 아래 정보는 <strong>WebSearch 결과(검색엔진이 data.go.kr 페이지 내용을 요약한 것)</strong> 로 확인했다. 데이터셋 ID·이름은 검색 결과의 data.go.kr URL로 확인된 것만 적었다.</li>
+      <li><strong>엔드포인트 신뢰도 표기</strong>
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">[포털 확인]</code> : data.go.kr(또는 기관 공식 페이지) 검색 결과에 해당 요청주소가 나타남</li>
+          <li><code class="language-plaintext highlighter-rouge">[2차 출처]</code> : GitHub 코드 등 비공식 출처에서만 확인됨 → 사용 전 data.go.kr 페이지에서 반드시 대조</li>
+          <li><code class="language-plaintext highlighter-rouge">미확인(페이지에서 확인 필요)</code> : 확인하지 못함</li>
+        </ul>
+      </li>
+      <li>실제 연동 전 <strong>브라우저로 각 data.go.kr 페이지의 “요청주소”, “상세기능”, “이용허락범위”를 다시 확인</strong>할 것.</li>
+    </ul>
+  </li>
+  <li>공통 사항(data.go.kr OpenAPI)
+    <ul>
+      <li>인증: 공공데이터포털 회원 <strong>활용신청 → 개인 인증키(serviceKey)</strong> 필요. 파일데이터는 인증 없이 다운로드.</li>
+      <li>트래픽: 대부분 개발계정 10,000건/일, 운영계정은 활용사례 등록 후 증량.</li>
+      <li>「공공데이터의 제공 및 이용 활성화에 관한 법률」에 따라 제공 공공데이터는 원칙적으로 영리 목적 포함 자유 이용 가능. 단 “공공누리 제1유형(출처표시)” 등 <strong>이용허락범위가 표시된 경우 그 조건을 따름</strong>.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="1-국민건강보험공단-장기요양기관-정보">1. 국민건강보험공단 장기요양기관 정보</h2>
+
+<h3 id="1-1-장기요양기관-평가-결과-파일--현재-저장소에서-사용-중">1-1. 장기요양기관 평가 결과 (파일) — <strong>현재 저장소에서 사용 중</strong></h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 데이터명 | 국민건강보험공단_장기요양기관 평가 결과_20260625 |
+| 제공기관 | 국민건강보험공단 |
+| 형태 | 파일데이터(CSV). 포털 표기상 XML·JSON 변환 제공도 언급됨 |
+| API endpoint | 해당 없음(파일). 포털 자동변환 API 주소는 미확인(페이지에서 확인 필요) |
+| 인증 | 다운로드 시 불필요 |
+| 제공 필드 | 연번, 평가구분, <strong>장기요양기관기호</strong>, 장기요양기관명, 급여종류, 설립주체, 관할시도명, 관할시군구명, 평가일자, 평가등급, 평가총점, 영역별 점수(기관운영, 환경및안전, 수급자권리보장, 급여제공과정, 급여제공결과). 2025년 정기평가부터 평가영역 5→4개(기관운영, 수급자존중, 서비스제공, 서비스결과) |
+| 범위 | 2021~2025 정기평가(2021 시설, 2023 재가 홀수, 2024 재가 짝수, 2025 시설; 2021 시설평가는 코로나로 2022까지 연장) |
+| 갱신주기 | 연간(차기 등록 예정 2027-06-26) |
+| 이용허락범위 | 제한 없음 |
+| 상업적 이용 | 가능(이용허락범위 제한 없음) |
+| 출처 표시 | 법적 의무 표기는 없으나 “국민건강보험공단, 공공데이터포털” 출처 표기 권장(현 저장소 관행 유지) |
+| 페이지 | https://www.data.go.kr/data/15104801/fileData.do (ID <strong>15104801</strong>, 페이지 존재·제목 확인) |
+| 확인일 | 2026-10-05 |</p>
+
+<p>저장소 현황(<code class="language-plaintext highlighter-rouge">/dolbom/data/eval/chunk_*.json</code>): <strong>27,946개 기관</strong>, 필드 <code class="language-plaintext highlighter-rouge">name, type, region, sigungu, grade, score, s_mgmt, s_env, s_rights, s_process, s_result, eval_year</code>. 평가연도 분포 2021: 1,140 / 2022: 3,283 / 2023: 9,083 / 2024: 9,035 / 2025: 5,405. <strong>주소·전화·좌표·기관기호 없음.</strong></p>
+<ul>
+  <li>참고: <code class="language-plaintext highlighter-rouge">dolbom/gigwan.html</code> 안내문에 “최근 평가(2021~2022) 기준”이라고 되어 있으나 실제 데이터는 2025년까지 포함 → 문구 갱신 필요.</li>
+  <li>권장: 다음 빌드 때 원본 CSV의 <strong>장기요양기관기호</strong>를 유지하면 1-2/1-3 API와 기관 단위 조인이 가능하다.</li>
+</ul>
+
+<h3 id="1-2-장기요양기관-검색-서비스-openapi">1-2. 장기요양기관 검색 서비스 (OpenAPI)</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 데이터명 | 국민건강보험공단_장기요양기관 검색 서비스 |
+| 제공기관 | 국민건강보험공단 (기관코드 B550928) |
+| 형태 | OpenAPI, REST, XML |
+| API endpoint | <strong>미확인(페이지에서 확인 필요)</strong>. <code class="language-plaintext highlighter-rouge">apis.data.go.kr/B550928/...</code> 형식임은 확인되었으나 서비스명·오퍼레이션명은 검색 결과에 나타나지 않음 |
+| 인증 | serviceKey 필요 |
+| 제공 필드 | 기관명, 주소, 급여(서비스) 유형, 지역 구분 등(포털 설명 기준). 세부 응답 항목 미확인 |
+| 갱신주기 | 실시간 |
+| 이용허락범위 | 제한 없음 |
+| 상업적 이용 | 가능 |
+| 출처 표시 | 권장 |
+| 페이지 | https://www.data.go.kr/data/15059029/openapi.do (ID <strong>15059029</strong>, 등록 2016-03-02, 수정 2025-11-10) |
+| 확인일 | 2026-10-05 |</p>
+
+<h3 id="1-3-장기요양기관-시설별-상세조회-서비스-openapi">1-3. 장기요양기관 시설별 상세조회 서비스 (OpenAPI)</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 데이터명 | 국민건강보험공단_장기요양기관 시설별 상세조회 서비스 |
+| 제공기관 | 국민건강보험공단 |
+| 형태 | OpenAPI, REST, XML |
+| API endpoint | <code class="language-plaintext highlighter-rouge">[포털 확인]</code> 서비스URL <code class="language-plaintext highlighter-rouge">http://apis.data.go.kr/B550928/getLtcInsttDetailInfoService02</code> / 요청주소 예 <code class="language-plaintext highlighter-rouge">http://apis.data.go.kr/B550928/getLtcInsttDetailInfoService02/getConvInsttDetailInfoList02</code> (협약기관 목록: 협약기관명·협약기간). 일반현황·시설·인력 등 기타 오퍼레이션명은 미확인 |
+| 인증 | serviceKey 필요 |
+| 제공 필드 | 기관 기본정보·상세정보·시설정보·의료장비 정보(포털 설명). 세부 항목 미확인 |
+| 갱신주기 | 미확인(페이지에서 확인 필요) |
+| 이용허락범위 | 미확인(페이지에서 확인 필요) |
+| 페이지 | https://www.data.go.kr/data/15058856/openapi.do (ID <strong>15058856</strong>) |
+| 확인일 | 2026-10-05 |</p>
+
+<hr />
+
+<h2 id="2-장기요양기관-위치급여종류-파일">2. 장기요양기관 위치·급여종류 (파일)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>데이터명</th>
+      <th>ID</th>
+      <th>내용</th>
+      <th>형식·이용조건</th>
+      <th>확인일</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>국민건강보험공단_장기요양기관 시설별 현황_20260610</td>
+      <td><strong>15124763</strong></td>
+      <td>시설별 일반현황(기관코드, 기관명, 지정·설치신고일 등), 입소인원(기관유형코드, 정원, 현원), 인력현황. 147,150행</td>
+      <td>XLSX, 무료, 이용허락범위 제한 없음. <strong>주소·좌표 포함 여부 미확인</strong></td>
+      <td>2026-10-05</td>
+    </tr>
+    <tr>
+      <td>국민건강보험공단_치매관련급여 제공 장기요양기관 현황_20250807</td>
+      <td><strong>15145962</strong></td>
+      <td>치매 관련 급여 제공 기관 목록(세부 필드 미확인)</td>
+      <td>파일, 이용조건 미확인</td>
+      <td>2026-10-05</td>
+    </tr>
+    <tr>
+      <td>국민건강보험공단_재택의료센터기관정보_20250821</td>
+      <td><strong>15149305</strong></td>
+      <td>재택의료센터 기관(세부 미확인) — “병원 이동·의료” 공백 연결 후보</td>
+      <td>파일, 이용조건 미확인</td>
+      <td>2026-10-05</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>페이지: https://www.data.go.kr/data/15124763/fileData.do , https://www.data.go.kr/data/15145962/fileData.do , https://www.data.go.kr/data/15149305/fileData.do</li>
+  <li>위치(주소·전화)가 필요하면 1-2 검색 API 또는 아래 지자체 파일을 써야 하며, 이는 serviceKey 연동 대상이다.</li>
+</ul>
+
+<hr />
+
+<h2 id="3-치매안심센터">3. 치매안심센터</h2>
+
+<h3 id="3-1-전국치매센터표준데이터">3-1. 전국치매센터표준데이터</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 데이터명 | 전국치매센터표준데이터 |
+| 제공기관 | 소관 보건복지부 / 제공 각 지방자치단체(234개 제공기관) |
+| 형태 | 표준데이터: 파일(다운로드) + OpenAPI |
+| API endpoint | <code class="language-plaintext highlighter-rouge">[포털 확인]</code> <code class="language-plaintext highlighter-rouge">https://api.data.go.kr/openapi/tn_pubr_public_imbclty_cnter_api</code> (검색 결과 요약 기준. 오탈자 가능성 있으므로 페이지 대조 필수) |
+| 인증 | serviceKey 필요(개발·운영 자동승인, 개발 10,000건) |
+| 제공 필드 | 치매센터명, 치매센터유형, 소재지 주소, 위도·경도, 설립연월, 건물면적, 시설정보, 인력(의사·간호사·사회복지사·기타), 운영기관 정보, 전화번호, 주요 치매관리 프로그램, 데이터기준일자 등 |
+| 갱신주기 | 연간(최종 수정 2026-06-19) |
+| 이용허락범위 | 미확인(표준데이터는 통상 제한 없음 — 페이지 확인 필요) |
+| 페이지 | https://www.data.go.kr/data/15021138/standard.do (ID <strong>15021138</strong>) |
+| 확인일 | 2026-10-05 |</p>
+
+<h3 id="3-2-국립중앙의료원_치매안심센터-정보-파일">3-2. 국립중앙의료원_치매안심센터 정보 (파일)</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 데이터명 | 국립중앙의료원_치매안심센터 정보_20260128 |
+| 제공기관 | 국립중앙의료원(중앙치매센터 치매안심통합관리시스템) |
+| 형태 | 파일(CSV) |
+| API endpoint | 해당 없음 |
+| 인증 | 불필요 |
+| 제공 필드 | 안심센터명, 시도/시군구, 주소, 도로명·법정동·행정동코드, 위도·경도, 홈페이지 URL, 전화번호, 팩스번호, 개소일 (256개 센터) |
+| 갱신주기 / 이용허락범위 | 미확인(페이지에서 확인 필요) |
+| 페이지 | https://www.data.go.kr/data/15138421/fileData.do (ID <strong>15138421</strong>) |
+| 확인일 | 2026-10-05 |</p>
+
+<p>→ <strong>MVP 권장</strong>: 3-2 CSV는 인증 없이 받을 수 있고 256개로 작아 <strong>정적 JSON으로 저장소에 포함</strong>하기 좋다(이용허락범위 확인 후).</p>
+
+<hr />
+
+<h2 id="4-보건소">4. 보건소</h2>
+
+<h3 id="4-1-전국보건기관표준데이터">4-1. 전국보건기관표준데이터</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 데이터명 | 전국보건기관표준데이터 |
+| 제공기관 | 소관 보건복지부 / 제공 각 지방자치단체 |
+| 범위 | 지역보건법상 보건소·보건의료원·보건지소·보건진료소(건강생활지원센터 제외) |
+| 형태 | 표준데이터: 파일 + OpenAPI |
+| API endpoint | <code class="language-plaintext highlighter-rouge">[포털 확인]</code> <code class="language-plaintext highlighter-rouge">https://api.data.go.kr/openapi/tn_pubr_public_ht_inst_api</code> |
+| 요청 파라미터 | pageNo, numOfRows, type(xml/json), HT_INST_NM, CTPV_NM, SGG_NM, HTCT_TYPE_NM, LCTN_ROAD_NM_ADDR, LCTN_LOTNO_ADDR, MCARE_EXMD_CN, HMPG_ADDR, TELNO, CRTR_YMD, instt_code, instt_nm |
+| 인증 | serviceKey 필요 |
+| 제공 필드 | 보건기관명, 시도명, 시군구명, 보건기관유형명, 소재지도로명주소, 소재지지번주소, 진료검진내용, 홈페이지주소, 전화번호, 데이터기준일자 |
+| 갱신주기 | 연간 |
+| 이용허락범위 | 미확인(페이지에서 확인 필요) |
+| 페이지 | https://www.data.go.kr/data/15107750/standard.do (ID <strong>15107750</strong>) |
+| 확인일 | 2026-10-05 |</p>
+
+<ul>
+  <li>대안: HIRA 병원정보서비스(5-1)에서 종별코드로 보건소류를 거르는 방법도 있으나 종별코드 값은 미확인.</li>
+</ul>
+
+<hr />
+
+<h2 id="5-의료기관">5. 의료기관</h2>
+
+<h3 id="5-1-건강보험심사평가원_병원정보서비스">5-1. 건강보험심사평가원_병원정보서비스</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 데이터명 | 건강보험심사평가원_병원정보서비스 |
+| 제공기관 | 건강보험심사평가원 (B551182) |
+| 형태 | OpenAPI, REST, XML |
+| API endpoint | <code class="language-plaintext highlighter-rouge">[기관 공식 문서 검색결과 확인]</code> <code class="language-plaintext highlighter-rouge">https://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList</code> — HIRA 보건의료빅데이터개방시스템 OpenAPI 안내 페이지(opendata.hira.or.kr …sno=713)가 이 문자열로 검색됨. data.go.kr 페이지 본문 직접 대조는 못 함 |
+| 요청 파라미터(일부) | sidoCd, sgguCd, yadmNm, dgsbjtCd 등 |
+| 인증 | serviceKey 필요(개발 자동승인 / 운영 승인) |
+| 제공 필드 | 요양기관명, 주소, 전화번호, 홈페이지 URL, 종별 등(세부 항목 페이지 확인 필요) |
+| 갱신주기 | 실시간 |
+| 이용허락범위 | <strong>공공누리 제1유형(출처표시)</strong> |
+| 상업적 이용 | 가능(출처표시 조건) |
+| 출처 표시 | <strong>필수</strong>: “건강보험심사평가원, 병원정보서비스” |
+| 페이지 | https://www.data.go.kr/data/15001698/openapi.do (ID <strong>15001698</strong>) |
+| 확인일 | 2026-10-05 |</p>
+
+<ul>
+  <li>참고(파일): 건강보험심사평가원_전국 병의원 및 약국 현황_20251231 — https://www.data.go.kr/data/15051059/fileData.do (ID 15051059, 세부 미확인)</li>
+  <li>참고(표준): 전국의료기관표준데이터 — https://www.data.go.kr/data/15096293/standard.do (ID 15096293, 세부 미확인)</li>
+</ul>
+
+<hr />
+
+<h2 id="6-응급의료기관">6. 응급의료기관</h2>
+
+<h3 id="6-1-국립중앙의료원_전국-응급의료기관-정보-조회-서비스">6-1. 국립중앙의료원_전국 응급의료기관 정보 조회 서비스</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 데이터명 | 국립중앙의료원_전국 응급의료기관 정보 조회 서비스 |
+| 제공기관 | 국립중앙의료원(응급의료정보화팀), B552657 |
+| 형태 | OpenAPI, REST, XML, 전국 |
+| API endpoint | <code class="language-plaintext highlighter-rouge">[2차 출처]</code> 서비스URL <code class="language-plaintext highlighter-rouge">https://apis.data.go.kr/B552657/ErmctInfoInqireService</code> / 오퍼레이션 예: <code class="language-plaintext highlighter-rouge">getEgytListInfoInqire</code>(기관 목록), <code class="language-plaintext highlighter-rouge">getEmrrmRltmUsefulSckbdInfoInqire</code>(실시간 가용병상), <code class="language-plaintext highlighter-rouge">getSrsillDissAceptncPosblInfoInqire</code>(중증질환 수용가능), <code class="language-plaintext highlighter-rouge">getEmrrmSrsillDissMsgInqire</code>(메시지) — GitHub·위키독스 등에서 확인, data.go.kr 본문 대조 필요 |
+| 인증 | serviceKey 필요(개발·운영 자동승인) |
+| 제공 필드 | 진료요일·시간, 진료과목, 응급의료기관 분류, 대표전화, 응급실 전화, 위도·경도, 실시간 응급실·수술실·중환자실 가용병상 등 |
+| 갱신주기 | 실시간 |
+| 이용허락범위 | 제한 없음 |
+| 페이지 | https://www.data.go.kr/data/15000563/openapi.do (ID <strong>15000563</strong>, 등록 2017-03-16) |
+| 확인일 | 2026-10-05 |</p>
+
+<ul>
+  <li>대안(표준, 정적용): 전국응급의료기관표준데이터 https://www.data.go.kr/data/15096291/standard.do (ID 15096291, 엔드포인트 미확인). CareGap은 실시간 병상이 필요 없으므로 <strong>정적 목록(표준데이터)</strong> 이 더 적합.</li>
+</ul>
+
+<hr />
+
+<h2 id="7-복지시설-사회복지시설-전반">7. 복지시설 (사회복지시설 전반)</h2>
+
+<h3 id="7-1-한국사회보장정보원_사회복지시설정보서비스">7-1. 한국사회보장정보원_사회복지시설정보서비스</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 제공기관 | 한국사회보장정보원(B554287), 소관 보건복지부 |
+| 형태 | OpenAPI, REST, XML |
+| API endpoint | <code class="language-plaintext highlighter-rouge">[포털 확인]</code> 서비스URL <code class="language-plaintext highlighter-rouge">http://apis.data.go.kr/B554287/sclWlfrFcltInfoInqirService1</code> / 요청주소 예 <code class="language-plaintext highlighter-rouge">http://apis.data.go.kr/B554287/sclWlfrFcltInfoInqirService1/getNFcltBizInqire</code> |
+| 기능 | 시설목록, 시설별 기본정보, 행사정보, 구인정보, 시설종류코드 조회 등 |
+| 인증 | serviceKey(개발·운영 자동승인) |
+| 갱신주기 | 실시간 |
+| 이용허락범위 | 제한 없음(검색 요약 기준) |
+| 페이지 | https://www.data.go.kr/data/15001848/openapi.do (ID <strong>15001848</strong>) |
+| 확인일 | 2026-10-05 |</p>
+
+<h3 id="7-2-전국사회복지시설표준데이터">7-2. 전국사회복지시설표준데이터</h3>
+<ul>
+  <li>소관 보건복지부, 제공 사회보장정보원. 페이지 https://www.data.go.kr/data/15096296/standard.do (ID <strong>15096296</strong>)</li>
+  <li>API endpoint: <strong>미확인(페이지에서 확인 필요)</strong> — 검색 요약이 7-1 서비스URL과 섞여 나와 신뢰할 수 없음.</li>
+</ul>
+
+<hr />
+
+<h2 id="8-노인복지시설">8. 노인복지시설</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>데이터명</th>
+      <th>ID</th>
+      <th>내용</th>
+      <th>비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>보건복지부_노인복지 시설현황_20241231</td>
+      <td><strong>15039034</strong></td>
+      <td>2024년 말 기준 노인주거·의료·여가복지시설, 재가노인복지시설, 노인보호전문기관, 노인일자리지원기관, 학대피해노인 전용쉼터</td>
+      <td>파일. 개별 시설 목록인지 집계표인지 <strong>미확인</strong></td>
+    </tr>
+    <tr>
+      <td>보건복지부_보건·복지현황_노인복지 이용시설 현황</td>
+      <td>15098828</td>
+      <td>통계성 OpenAPI</td>
+      <td>집계로 추정, 세부 미확인</td>
+    </tr>
+    <tr>
+      <td>경기도 고양시_노인복지시설(주거_의료_재가)현황 등 지자체별 파일</td>
+      <td>예: 3080905</td>
+      <td>지자체별 개별 목록</td>
+      <td>전국 통합 아님</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>페이지: https://www.data.go.kr/data/15039034/fileData.do</li>
+  <li>노인복지관·경로당 등 <strong>전국 단일 시설 목록 API는 확인하지 못함</strong> → 7-1 사회복지시설정보서비스의 시설종류코드로 노인복지시설을 거르는 방식이 유력(코드값 미확인).</li>
+</ul>
+
+<hr />
+
+<h2 id="9-교통약자-이동지원">9. 교통약자 이동지원</h2>
+
+<h3 id="9-1-전국교통약자이동지원센터정보표준데이터">9-1. 전국교통약자이동지원센터정보표준데이터</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 제공기관 | 각 지방자치단체(표준데이터) |
+| 형태 | 파일(XLS·CSV·JSON·XML·RDF) + OpenAPI |
+| API endpoint | <code class="language-plaintext highlighter-rouge">[포털 확인]</code> <code class="language-plaintext highlighter-rouge">https://api.data.go.kr/openapi/tn_pubr_public_tfcwker_mvmn_cnter_api</code> |
+| 인증 | serviceKey(개발·운영 자동승인, 개발 10,000건) |
+| 제공 필드 | 교통약자이동지원센터 명칭·연락처·운영시간·차량 정보 등(세부 미확인) |
+| 갱신주기 / 이용허락범위 | 미확인(페이지에서 확인 필요) |
+| 페이지 | https://www.data.go.kr/data/15028207/standard.do (ID <strong>15028207</strong>) |
+| 확인일 | 2026-10-05 |</p>
+
+<p>→ “병원 이동·이동 지원” 공백에 연결. 시군구당 1곳 내외라 정적 파일 포함 적합.</p>
+
+<hr />
+
+<h2 id="10-지역-돌봄복지서비스-서비스-정보">10. 지역 돌봄·복지서비스 (서비스 정보)</h2>
+
+<h3 id="10-1-한국사회보장정보원_지자체복지서비스">10-1. 한국사회보장정보원_지자체복지서비스</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| 제공기관 | 한국사회보장정보원(B554287), 포털운영부 |
+| 형태 | OpenAPI, REST, XML(복지로 기반) |
+| API endpoint | <code class="language-plaintext highlighter-rouge">[2차 출처]</code> 서비스URL <code class="language-plaintext highlighter-rouge">http://apis.data.go.kr/B554287/LocalGovernmentWelfareInformations</code> / 목록 <code class="language-plaintext highlighter-rouge">…/LcgvWelfarelist</code>, 상세 <code class="language-plaintext highlighter-rouge">…/LcgvWelfaredetailed</code> (GitHub 코드에서 확인. data.go.kr 본문 대조 필요) |
+| 기능 | 지자체 복지서비스 목록 조회(17개 시도), 상세 조회(지원대상·선정기준·신청방법, servId=WLF…) |
+| 인증 | serviceKey |
+| 갱신주기 | 실시간 |
+| 이용허락범위 | 제한 없음 |
+| 기타 | 등록 2022-11-23, 수정 2026-04-13. 페이지에 SWAGGER 및 「지자체복지서비스 코드표」 첨부 |
+| 페이지 | https://www.data.go.kr/data/15108347/openapi.do (ID <strong>15108347</strong>) |
+| 확인일 | 2026-10-05 |</p>
+
+<h3 id="10-2-한국사회보장정보원_중앙부처복지서비스">10-2. 한국사회보장정보원_중앙부처복지서비스</h3>
+<p>| 항목 | 내용 |
+|—|—|
+| API endpoint | <code class="language-plaintext highlighter-rouge">[2차 출처]</code> 서비스URL <code class="language-plaintext highlighter-rouge">http://apis.data.go.kr/B554287/NationalWelfareInformations</code> / 목록 <code class="language-plaintext highlighter-rouge">…/NationalWelfarelistV001</code>, 상세 <code class="language-plaintext highlighter-rouge">…/NationalWelfaredetailedV001</code> |
+| 기능 | 복지부 사회보장조정과 선정 중앙부처 복지서비스 목록·상세 |
+| 인증 | serviceKey(개발·운영 자동승인) |
+| 갱신주기 / 이용허락범위 | 실시간 / 미확인 |
+| 페이지 | https://www.data.go.kr/data/15090532/openapi.do (ID <strong>15090532</strong>) |
+| 확인일 | 2026-10-05 |</p>
+
+<h3 id="10-3-한국사회보장정보원_복지서비스정보-파일">10-3. 한국사회보장정보원_복지서비스정보 (파일)</h3>
+<ul>
+  <li>한국사회보장정보원_복지서비스정보_20260819 — https://www.data.go.kr/data/15083323/fileData.do (ID <strong>15083323</strong>). 복지서비스 목록 파일. <strong>API 키 없이</strong> 빌드에 쓸 수 있는 후보. 필드·이용조건 미확인.</li>
+</ul>
+
+<h3 id="10-4-기타-후보">10-4. 기타 후보</h3>
+<ul>
+  <li>한국사회보장정보원_사회서비스 제공기관 정보 검색 — https://www.data.go.kr/data/15057683/openapi.do (ID 15057683, 엔드포인트 미확인). 노인맞춤돌봄 등 사회서비스 제공기관 검색 가능성.</li>
+</ul>
+
+<hr />
+
+<h2 id="11-요약표">11. 요약표</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>데이터</th>
+      <th>제공</th>
+      <th>ID</th>
+      <th>형태</th>
+      <th>엔드포인트</th>
+      <th>키</th>
+      <th>이용허락</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>장기요양기관 평가 결과</td>
+      <td>건보공단</td>
+      <td>15104801</td>
+      <td>CSV</td>
+      <td>–</td>
+      <td>불필요</td>
+      <td>제한 없음</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>장기요양기관 검색 서비스</td>
+      <td>건보공단</td>
+      <td>15059029</td>
+      <td>API</td>
+      <td>미확인</td>
+      <td>필요</td>
+      <td>제한 없음</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>장기요양기관 시설별 상세조회</td>
+      <td>건보공단</td>
+      <td>15058856</td>
+      <td>API</td>
+      <td><code class="language-plaintext highlighter-rouge">apis.data.go.kr/B550928/getLtcInsttDetailInfoService02</code> [포털]</td>
+      <td>필요</td>
+      <td>미확인</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>장기요양기관 시설별 현황</td>
+      <td>건보공단</td>
+      <td>15124763</td>
+      <td>XLSX</td>
+      <td>–</td>
+      <td>불필요</td>
+      <td>제한 없음</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>전국치매센터표준데이터</td>
+      <td>복지부/지자체</td>
+      <td>15021138</td>
+      <td>파일+API</td>
+      <td><code class="language-plaintext highlighter-rouge">api.data.go.kr/openapi/tn_pubr_public_imbclty_cnter_api</code> [포털]</td>
+      <td>필요(API)</td>
+      <td>미확인</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>치매안심센터 정보</td>
+      <td>NMC</td>
+      <td>15138421</td>
+      <td>CSV</td>
+      <td>–</td>
+      <td>불필요</td>
+      <td>미확인</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>전국보건기관표준데이터</td>
+      <td>복지부/지자체</td>
+      <td>15107750</td>
+      <td>파일+API</td>
+      <td><code class="language-plaintext highlighter-rouge">api.data.go.kr/openapi/tn_pubr_public_ht_inst_api</code> [포털]</td>
+      <td>필요(API)</td>
+      <td>미확인</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>병원정보서비스</td>
+      <td>HIRA</td>
+      <td>15001698</td>
+      <td>API</td>
+      <td><code class="language-plaintext highlighter-rouge">apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList</code> [기관문서]</td>
+      <td>필요</td>
+      <td>공공누리 1유형</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>응급의료기관 정보 조회</td>
+      <td>NMC</td>
+      <td>15000563</td>
+      <td>API</td>
+      <td><code class="language-plaintext highlighter-rouge">apis.data.go.kr/B552657/ErmctInfoInqireService</code> [2차]</td>
+      <td>필요</td>
+      <td>제한 없음</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>전국응급의료기관표준데이터</td>
+      <td>지자체</td>
+      <td>15096291</td>
+      <td>파일+API</td>
+      <td>미확인</td>
+      <td>–</td>
+      <td>미확인</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>사회복지시설정보서비스</td>
+      <td>사회보장정보원</td>
+      <td>15001848</td>
+      <td>API</td>
+      <td><code class="language-plaintext highlighter-rouge">apis.data.go.kr/B554287/sclWlfrFcltInfoInqirService1</code> [포털]</td>
+      <td>필요</td>
+      <td>제한 없음</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>전국사회복지시설표준데이터</td>
+      <td>사회보장정보원</td>
+      <td>15096296</td>
+      <td>파일+API</td>
+      <td>미확인</td>
+      <td>–</td>
+      <td>미확인</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>노인복지 시설현황</td>
+      <td>복지부</td>
+      <td>15039034</td>
+      <td>파일</td>
+      <td>–</td>
+      <td>불필요</td>
+      <td>미확인</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>교통약자이동지원센터 표준</td>
+      <td>지자체</td>
+      <td>15028207</td>
+      <td>파일+API</td>
+      <td><code class="language-plaintext highlighter-rouge">api.data.go.kr/openapi/tn_pubr_public_tfcwker_mvmn_cnter_api</code> [포털]</td>
+      <td>필요(API)</td>
+      <td>미확인</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>지자체복지서비스</td>
+      <td>사회보장정보원</td>
+      <td>15108347</td>
+      <td>API</td>
+      <td><code class="language-plaintext highlighter-rouge">apis.data.go.kr/B554287/LocalGovernmentWelfareInformations</code> [2차]</td>
+      <td>필요</td>
+      <td>제한 없음</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>중앙부처복지서비스</td>
+      <td>사회보장정보원</td>
+      <td>15090532</td>
+      <td>API</td>
+      <td><code class="language-plaintext highlighter-rouge">apis.data.go.kr/B554287/NationalWelfareInformations</code> [2차]</td>
+      <td>필요</td>
+      <td>미확인</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>복지서비스정보</td>
+      <td>사회보장정보원</td>
+      <td>15083323</td>
+      <td>파일</td>
+      <td>–</td>
+      <td>불필요</td>
+      <td>미확인</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="12-caregap-mvp-적용-계획">12. CareGap MVP 적용 계획</h2>
+
+<h3 id="12-1-지금-사용하는-것-연결됨">12-1. 지금 사용하는 것 (연결됨)</h3>
+<ul>
+  <li><strong>장기요양기관 평가 결과(15104801)</strong> — 저장소 <code class="language-plaintext highlighter-rouge">dolbom/data/eval/chunk_*.json</code>, 27,946개 기관, 필드 <code class="language-plaintext highlighter-rouge">name/type/region/sigungu/grade/score/eval_year</code>(+영역별 점수).</li>
+  <li>용도: CareGap 결과 화면에서 “우리 시군구에 방문요양·주야간보호·단기보호 등 <strong>급여종류별 기관이 몇 곳 있는지</strong>“를 보여주는 <strong>지역 자원 개수</strong> 정도로만 쓴다.</li>
+  <li>한계: 주소·전화·좌표가 없어 “가까운 기관”을 안내할 수 없다. CareGap은 시설 검색 서비스가 아니므로 <strong>기관 목록·순위 노출은 하지 않고</strong>, 상세 검색은 노인장기요양보험 누리집(longtermcare.or.kr)으로 연결한다.</li>
+</ul>
+
+<h3 id="12-2-키-없이-바로-넣을-수-있는-것-다음-단계-파일-다운로드--정적-json">12-2. 키 없이 바로 넣을 수 있는 것 (다음 단계, 파일 다운로드 → 정적 JSON)</h3>
+<p>| 데이터 | 이유 | 선행 확인 |
+|—|—|—|
+| 치매안심센터 정보(15138421) | 256개, 주소·전화·좌표 포함 → “인지” 공백 연결에 바로 사용 | 이용허락범위 |
+| 전국보건기관표준데이터 파일(15107750) | 보건소 연락처 → “복약·건강관리” 공백 | 이용허락범위, 파일 다운로드 형식 |
+| 교통약자이동지원센터 표준 파일(15028207) | “병원 이동” 공백 | 이용허락범위 |
+| 복지서비스정보 파일(15083323) | 지역 복지서비스 키워드 매칭(오프라인) | 필드·이용조건 |</p>
+
+<p>※ 컨테이너에서 data.go.kr 다운로드가 막혀 있으므로, 파일은 <strong>사람이 브라우저로 받아 커밋</strong>하거나 GitHub Actions(외부망)에서 받는다.</p>
+
+<h3 id="12-3-servicekey가-필요한-것--빌드-시-github-action으로만-호출">12-3. serviceKey가 필요한 것 → 빌드 시 GitHub Action으로만 호출</h3>
+<ul>
+  <li>원칙: <strong>serviceKey는 프런트엔드·저장소에 절대 넣지 않는다.</strong> GitHub Secrets(<code class="language-plaintext highlighter-rouge">DATA_GO_KR_KEY</code>)에 저장하고, 예약 워크플로(예: 주 1회)에서 API를 호출해 <strong>결과를 정적 JSON으로 커밋</strong>한다. 브라우저는 정적 JSON만 읽는다.</li>
+  <li>대상(우선순위)
+    <ol>
+      <li>지자체복지서비스(15108347) + 중앙부처복지서비스(15090532): 노인·돌봄 관련 서비스만 필터 → 공백 기능별 “알아볼 서비스” 목록</li>
+      <li>장기요양기관 검색 서비스(15059029): 기관 주소·급여종류(엔드포인트 확인 후)</li>
+      <li>전국치매센터표준데이터 API(15021138), 전국보건기관표준데이터 API(15107750), 교통약자이동지원센터 API(15028207): 파일 대신 정기 갱신이 필요할 때</li>
+      <li>사회복지시설정보서비스(15001848): 노인복지관 등 시설종류 필터</li>
+    </ol>
+  </li>
+  <li>공공누리 제1유형(HIRA 등) 데이터를 쓰면 화면에 <strong>출처 표시 필수</strong>.</li>
+</ul>
+
+<h3 id="12-4-당분간-연결하지-않는-것">12-4. 당분간 연결하지 않는 것</h3>
+<ul>
+  <li>HIRA 병원정보서비스(15001698): CareGap은 병원 찾기가 목적이 아니며, 범위가 넓어 MVP에 불필요.</li>
+  <li>응급의료기관 정보 조회(15000563): 실시간 병상은 CareGap 용도와 맞지 않음. “응급 대응” 공백에는 119·응급안전안심서비스 안내로 충분.</li>
+  <li>장기요양기관 시설별 상세조회(15058856), 시설별 현황(15124763): 기관 상세는 시설 검색 서비스 영역.</li>
+  <li>노인복지 시설현황(15039034): 형태(목록/집계) 미확인.</li>
+  <li>통합돌봄 서비스 목록: 2026-10-05 기준 <strong>data.go.kr 전용 데이터셋을 찾지 못함</strong> → 보건복지부 안내 페이지·읍면동 안내 문구를 수기로 정리해 사용.</li>
+</ul>
+
+<h3 id="12-5-연동-전-체크리스트">12-5. 연동 전 체크리스트</h3>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />각 data.go.kr 페이지에서 요청주소·오퍼레이션명·응답 필드 대조(특히 <code class="language-plaintext highlighter-rouge">[2차]</code>, <code class="language-plaintext highlighter-rouge">미확인</code> 항목)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />이용허락범위·출처표시 조건 확인 후 화면 하단 출처 문구 작성</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />데이터 기준일을 화면에 표시(예: “평가결과 2026-06-25 등록본”)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><code class="language-plaintext highlighter-rouge">dolbom/gigwan.html</code>의 “2021~2022 기준” 문구 갱신</li>
+</ul>
+
+<hr />
+
+<h2 id="13-master-spec-기준-보완표--지역-범위--mvp-연결-여부-2026-10-05">13. MASTER SPEC 기준 보완표 — 지역 범위 · MVP 연결 여부 (2026-10-05)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>데이터</th>
+      <th>지역 범위</th>
+      <th>MVP 연결</th>
+      <th>화면 라벨</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>장기요양기관 평가결과 (15104801)</td>
+      <td>전국 17개 시·도, 258개 시·군·구(원자료 표기 기준, 세종은 ‘세종시 전체’)</td>
+      <td><strong>연결됨</strong> — 정적 JSON 스냅샷(<code class="language-plaintext highlighter-rouge">caregap/data/ltc/*.json</code>)</td>
+      <td>VERIFIED PUBLIC DATA · 공공데이터 파일</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>장기요양기관 검색/상세 API (15059029, 15058856)</td>
+      <td>전국</td>
+      <td>미연결(오퍼레이션명 미확인·인증키 필요)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>치매안심센터 정보 (15138421, CSV) / 전국치매센터표준데이터 (15021138)</td>
+      <td>전국(256개 센터)</td>
+      <td>미연결 — 가져오기 스크립트 준비(<code class="language-plaintext highlighter-rouge">import_institutions_csv.py dementia</code>)</td>
+      <td>SOURCE NOT YET CONNECTED</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>전국보건기관표준데이터 (15107750)</td>
+      <td>전국</td>
+      <td>미연결 — 가져오기 스크립트 준비(<code class="language-plaintext highlighter-rouge">... health_center</code>)</td>
+      <td>SOURCE NOT YET CONNECTED</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>HIRA 병원정보서비스 (15001698)</td>
+      <td>전국</td>
+      <td>연결 안 함(범위 밖)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>응급의료기관 정보 (15000563)</td>
+      <td>전국</td>
+      <td>연결 안 함(119 안내로 대체)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>7·8</td>
+      <td>사회복지시설정보 (15001848) / 노인복지 시설현황 (15039034)</td>
+      <td>전국</td>
+      <td>미연결</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>교통약자이동지원센터 표준 (15028207)</td>
+      <td>전국(지자체 등록분)</td>
+      <td>미연결</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>지자체·중앙부처 복지서비스 (15108347, 15090532)</td>
+      <td>전국</td>
+      <td>미연결(엔드포인트 [2차 출처])</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>데이터 정합성 점검 결과(2026-10-05, 자동 스크립트):</p>
+<ul>
+  <li>원자료 시·군·구 표기에 시 단위와 구 단위가 섞인 곳이 있음(안산시/안산시 단원구·상록구, 천안시/천안시 동남구·서북구, 화성시/화성시 4개 구). → 어댑터에서 상·하위 단위를 함께 포함하도록 수정(커밋 <code class="language-plaintext highlighter-rouge">0a4a3a1</code>).</li>
+  <li>258개 시·군·구 중 110곳은 원자료에 ‘방문간호’ 기관이 없음. 평가 대상만 포함된 파일이라 실제 기관 부재를 뜻하지 않을 수 있어, 화면에 “원자료에 없음 — 실제로는 더 있을 수 있음”으로 표시.</li>
+  <li>결측값은 0으로 바꾸지 않음(주소·전화는 ‘원자료 미포함’ 표기).</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

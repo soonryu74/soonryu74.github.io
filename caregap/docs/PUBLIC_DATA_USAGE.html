@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>공공데이터 활용 현황 (2026-10-05 기준) | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="공공데이터 활용 현황 (2026-10-05 기준)" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="공공데이터 활용 현황 (2026-10-05 기준)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"공공데이터 활용 현황 (2026-10-05 기준)","url":"/caregap/docs/PUBLIC_DATA_USAGE.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=203f677eea5b89c48ed78b1c123d7ec44b3b2f36">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="공공데이터-활용-현황-2026-10-05-기준">공공데이터 활용 현황 (2026-10-05 기준)</h1>
+
+<blockquote>
+  <p>원칙: 공공데이터라고 표시한 것은 실제 출처가 있다. 연결되지 않은 데이터는 0건·가짜 기관으로 채우지 않고 <strong>“서비스 정보 출처 확인 중”</strong> 으로 표시한다.
+데이터셋별 상세(제공 필드·endpoint·이용조건)는 <a href="/caregap/docs/DATA_SOURCES.html">DATA_SOURCES.md</a> 참고.</p>
+</blockquote>
+
+<h2 id="1-실제로-사용-중인-공공데이터">1. 실제로 사용 중인 공공데이터</h2>
+<p>| 데이터 | 제공기관 | 어디에 쓰나 | 처리 |
+|—|—|—|—|
+| 장기요양기관 평가결과 (<a href="https://www.data.go.kr/data/15104801/fileData.do">data.go.kr 15104801</a>) | 국민건강보험공단 | 서비스 화면 “우리 동네 기관” — 시군구별 장기요양기관(기관명·급여종류·평가등급·평가연도), 공백 영역에 맞는 급여종류(방문요양·방문간호·방문목욕·주야간보호·단기보호·복지용구) 자동 필터 | <code class="language-plaintext highlighter-rouge">scripts/build_ltc.py</code>가 저장소 내 정리본(<code class="language-plaintext highlighter-rouge">dolbom/data/eval</code>, 27,946곳, 2021~2025 평가)에서 필드만 골라 <code class="language-plaintext highlighter-rouge">data/ltc/*.json</code>(시도별)·<code class="language-plaintext highlighter-rouge">data/regions.json</code> 생성. 값 변경 없음 |
+| 지역(시도·시군구) 목록 | 위 데이터에서 파생 | 온보딩 1단계 지역 선택 | 세종특별자치시는 단층제라 “세종시 전체”로 표기 |</p>
+
+<p>화면 라벨(MASTER SPEC §12): <strong>VERIFIED PUBLIC DATA · 공공데이터 파일</strong>(정적 스냅샷이며 실시간 API 아님) / <strong>SOURCE NOT YET CONNECTED</strong> / <strong>DEMO DATA</strong>. 불러오기 실패 시 대체 데이터로 바꾸지 않고 “불러오기 실패 · 대체 데이터 없음”.</p>
+
+<p>기관 카드마다 <strong>데이터 기준(평가연도)</strong>, 블록마다 <strong>출처 링크</strong>와 “원자료에 주소·전화번호 없음” 고지. 목록은 가나다순, 추천·보증 아님.</p>
+
+<h2 id="2-연결-준비됨데이터-파일만-넣으면-자동-연결">2. 연결 준비됨(데이터 파일만 넣으면 자동 연결)</h2>
+<p>| 데이터 | 방법 | 화면 상태(현재) |
+|—|—|—|
+| 국립중앙의료원_치매안심센터 정보 (15138421, CSV, 인증 불필요) | <code class="language-plaintext highlighter-rouge">python3 caregap/scripts/import_institutions_csv.py dementia &lt;CSV&gt;</code> → <code class="language-plaintext highlighter-rouge">data/dementia.json</code> | 서비스 정보 출처 확인 중 + 중앙치매센터 링크 |
+| 전국보건기관표준데이터 (15107750) | <code class="language-plaintext highlighter-rouge">... import_institutions_csv.py health_center &lt;CSV&gt;</code> → <code class="language-plaintext highlighter-rouge">data/health_center.json</code> | 서비스 정보 출처 확인 중 + 정부24 링크 |</p>
+
+<p>어댑터(<code class="language-plaintext highlighter-rouge">app/src/adapters/publicData.ts</code>)는 파일이 있으면 출처·수집일과 함께 표시하고, 없으면 미연결로 표시한다.
+작업 컨테이너에서는 data.go.kr 접속이 차단되어 파일을 직접 받지 못했다(공모전 제출 전 브라우저로 내려받아 실행 필요).</p>
+
+<h2 id="3-안내-정보api-아님-수기-정리">3. 안내 정보(API 아님, 수기 정리)</h2>
+<p><code class="language-plaintext highlighter-rouge">app/src/data/services_catalog.json</code> — 노인장기요양보험, 응급안전안심서비스, 노인맞춤돌봄서비스, 지역사회 통합돌봄, 치매안심센터, 보건소 방문건강관리,
+교통약자 이동지원, 지자체 병원동행, 식사 지원, 노인복지관, 가족돌봄휴가, 129, 119 (13종). 공식 누리집 링크와 <strong>확인일</strong>을 함께 표시하고,
+대상·자격은 “공식 창구 확인”으로 안내한다. 화면 태그: “안내 정보(수기 정리)”.</p>
+
+<h2 id="4-demo-data">4. DEMO DATA</h2>
+<p>“예시로 체험하기”의 82세 사례는 가상 사례. 화면 상단 배너와 데이터 출처 표에 <strong>DEMO DATA</strong>로 표시.</p>
+
+<h2 id="5-인증키servicekey가-필요한-api의-원칙">5. 인증키(serviceKey)가 필요한 API의 원칙</h2>
+<ul>
+  <li>키는 프론트엔드·저장소에 넣지 않는다. GitHub Actions Secret <code class="language-plaintext highlighter-rouge">DATA_GO_KR_KEY</code> → 빌드 시 정적 JSON 생성 → 브라우저는 JSON만 읽는다.</li>
+  <li><code class="language-plaintext highlighter-rouge">.env.example</code>에 변수 이름만 둔다(<code class="language-plaintext highlighter-rouge">VITE_</code> 접두사 금지 — 붙이면 번들에 포함됨).</li>
+  <li>다음 연결 후보(우선순위): 지자체복지서비스(15108347)·중앙부처복지서비스(15090532) → 지역별 실제 돌봄 사업 목록, 장기요양기관 검색(15059029) → 주소·연락처.</li>
+</ul>
+
+<h2 id="6-출처-표시">6. 출처 표시</h2>
+<ul>
+  <li>공공데이터포털 데이터는 이용허락범위에 따른 출처를 화면에 표시한다(기관 목록 하단 “출처: …”).</li>
+  <li>공공누리 제1유형 데이터를 추가할 때는 출처 표시가 필수.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
