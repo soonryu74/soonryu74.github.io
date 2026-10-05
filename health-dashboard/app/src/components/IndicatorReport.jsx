@@ -79,7 +79,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
         </header>
 
         <section>
-          <h2>1. 요약</h2>
+          <h2><span className="rpt-no">1</span>요약</h2>
           <table className="rpt-tbl rpt-sum"><tbody>
             <tr><th scope="row">전국 중앙값</th><td>{fmt(m.ref)}{ind.unit} (비교 지역 {m.n}곳)</td></tr>
             <tr><th scope="row">지역 간 격차</th><td>하위 20% 경계 {fmt(m.p20)} · 상위 20% 경계 {fmt(m.p80)}{ind.unit} → 차이 {fmt(m.p80 - m.p20)}{du(ind.unit)} · 범위 {fmt(m.min)}–{fmt(m.max)}</td></tr>
@@ -92,7 +92,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
         </section>
 
         <section>
-          <h2>2. 전국 추이 — 중앙값과 지역 간 격차</h2>
+          <h2><span className="rpt-no">2</span>전국 추이 <small>중앙값과 지역 간 격차</small></h2>
           <p className="muted">격차 = 비교 지역의 상위 20% 경계 − 하위 20% 경계(P80−P20, 단년 값). 격차가 줄어도 모두 나빠져 줄어든 것인지(하향 수렴) 함께 봐야 합니다.</p>
           <table className="rpt-tbl rpt-wide"><thead><tr><th>연도</th>{recent.map((s) => <th key={s.y}>{s.y}</th>)}</tr></thead>
             <tbody>
@@ -102,7 +102,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
         </section>
 
         <section>
-          <h2>3. 시도별 현황 — 불리한 쪽 20%에 든 지역 수</h2>
+          <h2><span className="rpt-no">3</span>시도별 현황 <small>불리한 쪽 20%에 든 지역 수</small></h2>
           <table className="rpt-tbl"><thead><tr><th>시도</th><th>시도 값</th><th>비교 지역</th><th>불리한 쪽 20%</th><th>비율</th></tr></thead>
             <tbody>{m.sido.map((x) => (
               <tr key={x.s.c}><td>{x.s.n}</td><td>{x.v == null ? "–" : `${fmt(x.v)}${ind.unit}`}</td><td>{x.n}</td><td>{x.n20}</td>
@@ -111,7 +111,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
         </section>
 
         <section>
-          <h2>4. 검토 대상 지역 — 불리한 쪽 상위 10% ({m.vulnerable.length}곳)</h2>
+          <h2><span className="rpt-no">4</span>검토 대상 지역 <small>불리한 쪽 상위 10% ({m.vulnerable.length}곳)</small></h2>
           <p className="muted">{m.hasCi ? "「신뢰구간」 뚜렷 = 95% 신뢰구간(단년)이 전국 중앙값과 겹치지 않음 · 불확실 = 겹침(표본오차 범위의 차이일 수 있음) · ⚠ = 상대표준오차 20% 초과(불안정 값)." : "행정 통계라 표본오차 정보가 없습니다. 경계 근처 지역은 해마다 바뀔 수 있습니다."} 순서는 불리한 정도 순이며 순위 발표가 아닙니다.</p>
           <table className="rpt-tbl rpt-vul"><thead><tr><th>#</th><th>지역</th><th>값</th>{m.hasCi && <th>95% CI</th>}<th>중앙값과 차이</th>{m.hasCi && <th>신뢰구간</th>}<th>최근 추세</th><th>박탈</th></tr></thead>
             <tbody>{m.vulnerable.map((x, i) => (
@@ -122,7 +122,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
 
         {m.worsening.length > 0 && (
           <section>
-            <h2>{no()}. 불리하면서 악화 속도가 빠른 지역 ({m.worsening.length}곳)</h2>
+            <h2><span className="rpt-no">{no()}</span>불리하면서 악화 속도가 빠른 지역 ({m.worsening.length}곳)</h2>
             <table className="rpt-tbl"><thead><tr><th>지역</th><th>값</th><th>최근 5년 연간 변화</th><th>위치</th></tr></thead>
               <tbody>{m.worsening.slice(0, 20).map((x) => (
                 <tr key={x.r.c} className={isMine(x) ? "rpt-me" : ""}><td>{regionLabel(x.r)}</td><td>{fmt(x.a.v)}{ind.unit}</td>
@@ -134,7 +134,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
 
         {m.improving.length > 0 && (
           <section>
-            <h2>{no()}. 개선 폭이 큰 지역(참고)</h2>
+            <h2><span className="rpt-no">{no()}</span>개선 폭이 큰 지역(참고)</h2>
             <p className="muted">비교 집단에서 개선 속도가 빠른 쪽 지역입니다. 사업 사례를 찾아볼 출발점일 뿐, 개선의 원인을 뜻하지 않습니다.</p>
             <table className="rpt-tbl"><thead><tr><th>지역</th><th>값</th><th>최근 5년 연간 변화</th></tr></thead>
               <tbody>{m.improving.map((x) => (
@@ -145,7 +145,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
 
         {m.depQ.some((d) => d.n) && (
           <section>
-            <h2>{no()}. 박탈 분위별 현황</h2>
+            <h2><span className="rpt-no">{no()}</span>박탈 분위별 현황</h2>
             <p className="muted">지역박탈지수(근사, 2020년 총조사) 5분위별로 불리한 쪽 20%에 든 비율입니다. 함께 놓고 본 것이며 원인 관계를 뜻하지 않습니다.</p>
             <table className="rpt-tbl rpt-wide"><thead><tr><th>박탈 분위</th>{m.depQ.map((d) => <th key={d.q}>{d.q}{d.q === 1 ? "(덜 박탈)" : d.q === 5 ? "(가장 박탈)" : ""}</th>)}</tr></thead>
               <tbody>
@@ -157,7 +157,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
         )}
 
         <section>
-          <h2>{no()}. 사업 참고 자료</h2>
+          <h2><span className="rpt-no">{no()}</span>사업 참고 자료</h2>
           <p className="muted">공식 문서 목록이며 처방이 아닙니다. 지역 여건과 전문가 검토로 판단하세요.</p>
           <ul>
             {m.evidence.national.map((e) => <li key={e.id}>[{LEVEL[e.level] || e.level}] {e.goal} — {e.source}{e.url ? <> · <a href={e.url}>{e.url}</a></> : null}</li>)}
@@ -169,7 +169,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
         </section>
 
         <section>
-          <h2>{no()}. 방법과 한계</h2>
+          <h2><span className="rpt-no">{no()}</span>방법과 한계</h2>
           <ul>
             <li>지역마다 대시보드 「우선 검토」와 같은 계산(전국 중앙값 대비 방향 보정 격차, 비교 집단 안 불리한 쪽 백분위, 최근 5년 기울기의 3분위, 지역박탈지수)을 돌려 집계했습니다. 검토 대상 = 불리한 쪽 백분위 90% 이상, 시도별 집계 = 80% 이상.</li>
             <li>{m.survey ? `지역사회건강조사 지표는 조사 단위(보건소 관할) ${m.pool.length}곳과 비교합니다. 표본조사라 95% 신뢰구간을 함께 봐야 합니다.` : "시군구 단위 행정 통계로, 표본오차 정보가 없습니다."} 일반구가 있는 시는 구(보건소) 단위로 나옵니다.</li>

@@ -7,7 +7,7 @@ import { copyText } from "./FeedbackView";
 import ReportMode from "./ReportMode";
 
 /* 고령층(65세 이상) 취약 보고서 — 해시 view=elder. 노인보건·방문건강관리·낙상 예방·치매 사업의 대상지 검토용.
-   분석 방향: 전국 고령 인구 규모 → 항목별 전국 분포 → 복합 고령 취약 신호(B·C 6개 중 3개 이상이 불리한 쪽 20%) → 시도별 → 수요 대비 자원 → 코로나19 참고 → 사업 참고 자료.
+   분석 방향: 전국 고령 인구 규모 → 항목별 전국 분포 → 복합 고령 취약 신호(B·C 6개 중 3개 이상이 불리한 쪽 20%) → 시도별 → 수요 대비 자원 부족 → 코로나19 참고 → 사업 참고 자료.
    「고위험 지역」이 아니라 「복합 고령 취약 신호 지역」이며, 순위 발표·원인·효과·처방이 아니다. */
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const pctOf = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : "–");
@@ -65,12 +65,12 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
         </header>
 
         <section>
-          <h2>1. 요약</h2>
+          <h2><span className="rpt-no">1</span>요약</h2>
           <table className="rpt-tbl rpt-sum"><tbody>
             <tr><th scope="row">고령 인구</th><td>65세 이상 {man(m.nat.age65)}명(전체의 {fmt(m.nat.aged)}%) · 75세 이상 {man(m.nat.age75)}명 · 독거노인 {man(m.nat.alone)}명(65세 이상의 {fmt(m.nat.aloneShare)}%) · {I.aged.y}년</td></tr>
             <tr><th scope="row">시군구 간 차이</th><td>65세 이상 비율 중앙값 {fmt(I.aged.med)}% · 하위 20%·상위 20% 경계 {fmt(I.aged.p20)}–{fmt(I.aged.p80)}% · 범위 {fmt(I.aged.min)}–{fmt(I.aged.max)}%</td></tr>
             <tr><th scope="row">복합 고령 취약 신호</th><td>{m.signal.length}곳(6개 항목 중 {SIGNAL_MIN}개 이상이 불리한 쪽 20%) · 신호 개수별 지역 수 {m.sigDist.map((n, k) => `${k}개 ${n}`).join(" · ")}</td></tr>
-            <tr><th scope="row">수요 대비 자원</th><td>{m.demand.length}곳(65세 이상 비율 높은 쪽 20% + 돌봄·여가 자원 적은 쪽 20%)</td></tr>
+            <tr><th scope="row">수요 대비 자원 부족</th><td>{m.demand.length}곳(65세 이상 비율 높은 쪽 20% + 돌봄·여가 자원 적은 쪽 20%)</td></tr>
             {me?.row && <tr><th scope="row">{label(me.row.r)}</th><td>65세 이상 {fmt(me.row.v.aged)}%({man(me.row.age65)}명) · 신호 {me.row.sig ?? "–"}개{me.row.flags.length ? `(${me.row.flags.map(shortName).join("·")})` : ""}{me.row.lowRes.length ? ` · 자원 적은 쪽: ${me.row.lowRes.map(shortName).join("·")}` : ""}</td></tr>}
             {me?.sido && <tr><th scope="row">{me.sido.s.n}</th><td>65세 이상 {fmt(me.sido.aged)}%({man(me.sido.age65)}명) · 독거노인 {fmt(me.sido.aloneShare)}% · 복합 신호 시군구 {me.sido.nSig}/{me.sido.n}곳</td></tr>}
           </tbody></table>
@@ -79,7 +79,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
         </section>
 
         <section>
-          <h2>2. 시도별 고령 인구와 복합 신호 지역</h2>
+          <h2><span className="rpt-no">2</span>시도별 고령 인구와 복합 신호 지역</h2>
           <table className="rpt-tbl rpt-wide"><thead><tr><th>시도</th><th>65세 이상</th><th>비율</th><th>75세 이상</th><th>독거노인 비율</th><th>복합 신호 시군구</th></tr></thead>
             <tbody>{m.sido.map((x) => (
               <tr key={x.s.c} className={me?.sido?.s.c === x.s.c || me?.row?.r.p === x.s.c ? "rpt-me" : ""}><td>{x.s.n}</td><td>{man(x.age65)}명</td><td>{fmt(x.aged)}%</td><td>{man(x.age75)}명</td><td>{fmt(x.aloneShare)}%</td>
@@ -88,7 +88,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
         </section>
 
         <section>
-          <h2>3. 항목별 전국 분포</h2>
+          <h2><span className="rpt-no">3</span>항목별 전국 분포</h2>
           <p className="muted">값이 있는 시군구의 중앙값과 하위 20%·상위 20% 경계입니다. 인구 구조는 크기만 보여 주고 좋고 나쁨을 판정하지 않습니다.</p>
           <table className="rpt-tbl rpt-wide"><thead><tr><th>묶음</th><th>항목</th><th>연도</th><th>중앙값</th><th>P20–P80</th><th>불리한 쪽 20% 경계</th>{me?.row && <th>{me.row.r.n}</th>}</tr></thead>
             <tbody>{m.items.map((it) => (
@@ -100,7 +100,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
         </section>
 
         <section>
-          <h2>4. 복합 고령 취약 신호 지역 ({m.signal.length}곳)</h2>
+          <h2><span className="rpt-no">4</span>복합 고령 취약 신호 지역 ({m.signal.length}곳)</h2>
           <p className="muted">사회·경제적 취약 2개(독거노인 비율·기초연금 수급률)와 건강 결과 4개(저작불편·폐렴 사망·낙상 사망·노인 교통사고 사망) 중 {SIGNAL_MIN}개 이상이 불리한 쪽 20%에 든 시군구입니다. 6개 중 4개 이상 값이 있는 곳만 셉니다. 신호 개수 → 65세 이상 인구 순이며 순위가 아닙니다.</p>
           <table className="rpt-tbl rpt-vul"><thead><tr><th>신호</th><th>지역</th><th>65세 이상</th><th>독거노인</th><th>불리한 쪽 20% 항목</th><th>박탈</th></tr></thead>
             <tbody>{m.signal.map((o) => (
@@ -112,7 +112,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
 
         {m.demand.length > 0 && (
           <section>
-            <h2>5. 고령 인구 비중이 큰데 돌봄·여가 자원이 적은 지역 ({m.demand.length}곳)</h2>
+            <h2><span className="rpt-no">5</span>수요 대비 자원 부족 <small>고령 인구 비중이 큰데 돌봄·여가 자원이 적은 지역 ({m.demand.length}곳)</small></h2>
             <p className="muted">65세 이상 비율이 높은 쪽 20%이면서 장기요양 시설·재가 정원(65세 이상 1천 명당)이나 노인여가복지시설 중 하나 이상이 적은 쪽 20%인 시군구입니다. 정원은 시설 소재지 기준이라 인근 지역 시설 이용을 함께 봐야 합니다.</p>
             <table className="rpt-tbl rpt-wide"><thead><tr><th>지역</th><th>65세 이상</th><th>시설 정원</th><th>재가 정원</th><th>여가복지시설</th><th>적은 쪽 20%</th></tr></thead>
               <tbody>{m.demand.map((o) => (
@@ -122,7 +122,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
         )}
 
         <section>
-          <h2>{m.demand.length ? 6 : 5}. 박탈 분위별 · 코로나19 참고</h2>
+          <h2><span className="rpt-no">{m.demand.length ? 6 : 5}</span>박탈 분위별 · 코로나19 참고</h2>
           <p className="muted">지역박탈지수(근사, {m.depYear}년 총조사) 5분위별 복합 신호 지역 비율입니다. 박탈지수 구성 변수 7개에 고령인구 비율이 들어 있어 고령 지역에서 박탈 분위가 높게 나오는 경향이 있습니다. 함께 놓고 본 것이며 원인 관계를 뜻하지 않습니다.</p>
           <table className="rpt-tbl rpt-wide"><thead><tr><th>박탈 분위</th>{m.depQ.map((d) => <th key={d.q}>{d.q}{d.q === 1 ? "(덜 박탈)" : d.q === 5 ? "(가장 박탈)" : ""}</th>)}</tr></thead>
             <tbody>
@@ -138,7 +138,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
         </section>
 
         <section>
-          <h2>{m.demand.length ? 7 : 6}. 사업 참고 자료</h2>
+          <h2><span className="rpt-no">{m.demand.length ? 7 : 6}</span>사업 참고 자료</h2>
           <p className="muted">공식 문서와 사례 목록이며 처방이 아닙니다. 지역 여건과 전문가 검토로 판단하세요.</p>
           <ul>
             {m.evidence.national.map((e) => <li key={e.id}>[{{ national: "국가", regional: "WHO 서태평양", global: "WHO" }[e.level] || e.level}] {e.goal} — {e.source}{e.url ? <> · <a href={e.url}>{e.url}</a></> : null}</li>)}
@@ -154,7 +154,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
         </section>
 
         <section>
-          <h2>{m.demand.length ? 8 : 7}. 방법과 한계</h2>
+          <h2><span className="rpt-no">{m.demand.length ? 8 : 7}</span>방법과 한계</h2>
           <ul>
             <li>분석 단위는 시군구 {m.n}곳입니다(감염병 고위험군 자료와 행정 통계가 시군구 단위). 저작불편호소율은 지역사회건강조사의 시군구 값입니다.</li>
             <li>독거노인 비율 = 독거노인(65세 이상 1인가구) 수 ÷ 65세 이상 주민등록 연앙인구, 기초연금 수급률 = 수급자 수 ÷ 65세 이상 인구(소득 하위 70% 대상 제도), 장기요양 정원 = 시설·재가급여 기관 정원 ÷ 65세 이상 인구 × 1,000(시설 소재지 기준).</li>
