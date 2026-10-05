@@ -1273,3 +1273,64 @@ header.top > .topright { flex:0 1 auto; justify-content:flex-end; margin-left:au
 .nav-row { flex:1 0 100%; display:flex; min-width:0; }
 .back-btn { font-weight:600; }
 @media print { .nav-row, .back-btn { display:none; } }
+
+/* 보고서 편집(2026-10-05 소유자 지시 "글만 많아 눈에 안 들어온다 — 소제목 색 상자 등 눈에 잘 들어오게"): 지역·지표·고령층 보고서 공통 */
+.rpt { --rpt-acc: var(--series-1); --rpt-tint: color-mix(in srgb, var(--series-1) 9%, var(--surface-1)); }
+.rpt h2 { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--rpt-tint); border:0; border-left:5px solid var(--rpt-acc); border-radius:8px; padding:9px 14px; margin:30px 0 12px; font-size:19px; }
+.rpt h2 small { font-size:13.5px; font-weight:500; color:var(--text-secondary); }
+.rpt h2.rpt-h2-sub { background:transparent; border-left-color:var(--border); padding:4px 12px; font-size:17px; }
+.rpt-no { display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:28px; border-radius:50%; background:var(--rpt-acc); color:#fff; font-size:15px; font-weight:700; }
+.rpt h3 { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.rpt-head { border-bottom:3px solid var(--rpt-acc); padding-bottom:10px; margin-bottom:6px; }
+.rpt-head h1 { font-size:32px; letter-spacing:-.5px; }
+.rpt-head .muted { font-size:13.5px; }
+.rpt-note { border-radius:0 6px 6px 0; }
+/* 요약 숫자 타일 */
+.rpt-kpis { display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:10px; margin:4px 0 14px; }
+.rpt-kpi { border:1px solid var(--border); border-top:4px solid var(--border); border-radius:8px; padding:10px 12px; background:var(--surface-1); display:flex; flex-direction:column; }
+.rpt-kpi b { font-size:30px; line-height:1.1; font-variant-numeric:tabular-nums; }
+.rpt-kpi span { font-size:13.5px; color:var(--text-secondary); font-weight:600; }
+.rpt-kpi.k-all { border-top-color:var(--rpt-acc); }
+.rpt-kpi.k-priority { border-top-color:var(--bad-text); } .rpt-kpi.k-priority b { color:var(--bad-text); }
+.rpt-kpi.k-watch { border-top-color:#c48f12; } .rpt-kpi.k-watch b { color:#9a6a00; }
+.rpt-kpi.k-ok { border-top-color:var(--good-text); } .rpt-kpi.k-ok b { color:var(--good-text); }
+.rpt-kpi.k-na b { color:var(--muted); }
+:root[data-theme="dark"] .rpt-kpi.k-watch b { color:#e0b04a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rpt-kpi.k-watch b { color:#e0b04a; } }
+/* 칩·소제목 라벨 */
+.rpt-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.rpt-chip { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:999px; padding:2px 4px 2px 10px; font-size:14px; font-weight:600; background:var(--page); }
+.rpt-chip.c-good { padding-right:10px; color:var(--good-text); border-color:color-mix(in srgb, var(--good-text) 40%, transparent); background:color-mix(in srgb, var(--good-text) 7%, transparent); }
+.rpt-lab { display:inline-block; font-size:13.5px; font-weight:700; padding:3px 10px; border-radius:6px; margin:10px 0 4px; background:var(--page); border:1px solid var(--border); }
+.rpt-lab-why { color:var(--bad-text); border-color:color-mix(in srgb, var(--bad-text) 35%, transparent); background:color-mix(in srgb, var(--bad-text) 6%, transparent); }
+.rpt-lab-act { color:var(--good-text); border-color:color-mix(in srgb, var(--good-text) 35%, transparent); background:color-mix(in srgb, var(--good-text) 6%, transparent); }
+.rpt-lab-draft { color:var(--rpt-acc); border-color:color-mix(in srgb, var(--rpt-acc) 35%, transparent); background:var(--rpt-tint); }
+.rpt-draft { border-left:4px solid var(--rpt-acc); border-style:solid; border-width:1px 1px 1px 4px; border-color:var(--border) var(--border) var(--border) var(--rpt-acc); }
+/* 우선 검토 항목 카드 */
+.rpt-item { border:1px solid var(--border); border-left:5px solid var(--border); border-radius:10px; padding:4px 16px 10px; background:var(--surface-1); }
+.rpt-item.t-priority { border-left-color:var(--bad-text); }
+.rpt-item.t-watch { border-left-color:#c48f12; }
+.rpt-item h3 { font-size:17px; margin:10px 0 8px; }
+.rpt-ino { display:inline-flex; align-items:center; justify-content:center; min-width:24px; height:24px; border-radius:50%; background:var(--bad-text); color:#fff; font-size:13px; font-weight:700; }
+.rpt-item.t-watch .rpt-ino { background:#c48f12; }
+.rpt-facts td { font-size:15px; font-weight:600; }
+.rpt-tbl thead th small { font-weight:500; color:var(--muted); }
+.rpt-tbl thead th { background:var(--rpt-tint); }
+.rpt-all tbody tr:nth-child(even) td:not(.rpt-dom) { background:color-mix(in srgb, var(--page) 70%, transparent); }
+.rpt-all tr.row-pri td:not(.rpt-dom) { background:color-mix(in srgb, var(--bad-text) 7%, transparent); }
+.rpt-all tr.row-watch td:not(.rpt-dom) { background:color-mix(in srgb, #c48f12 7%, transparent); }
+.rpt-all td.rpt-dom { background:var(--rpt-tint); font-weight:700; color:var(--text-primary); }
+.rpt .eq-tier { font-size:12.5px; }
+@media (max-width: 600px) { .rpt h2 { font-size:17px; padding:8px 10px; } .rpt-kpi b { font-size:24px; } .rpt-head h1 { font-size:24px; } }
+@media print {
+  .view-report .rpt h2 { background:#e8f0fb !important; border-left:5px solid #2a78d6 !important; }
+  .view-report .rpt h2.rpt-h2-sub { background:transparent !important; border-left-color:#bbb !important; }
+  .view-report .rpt .rpt-no, .view-report .rpt .rpt-ino { background:#2a78d6 !important; color:#fff !important; }
+  .view-report .rpt .eq-t-priority, .view-report .rpt .k-priority b, .view-report .rpt .rpt-lab-why { color:#b3261e !important; }
+  .view-report .rpt .eq-t-watch, .view-report .rpt .k-watch b { color:#8a5a00 !important; }
+  .view-report .rpt .eq-t-ok, .view-report .rpt .k-ok b, .view-report .rpt .rpt-chip.c-good, .view-report .rpt .rpt-lab-act { color:#1e6b34 !important; }
+  .view-report .rpt .rpt-item.t-priority { border-left:5px solid #b3261e !important; }
+  .view-report .rpt .rpt-all tr.row-pri td:not(.rpt-dom) { background:#fdeceb !important; }
+  .view-report .rpt .rpt-kpi, .view-report .rpt-item, .view-report .rpt-kpis { break-inside:avoid; }
+  .view-report .rpt h2, .view-report .rpt .rpt-no, .view-report .rpt .rpt-ino, .view-report .rpt .eq-tier, .view-report .rpt .rpt-all td, .view-report .rpt-chip, .view-report .rpt-lab, .view-report .rpt thead th { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
