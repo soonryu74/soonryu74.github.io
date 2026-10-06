@@ -1,0 +1,38 @@
+[
+  {
+    "id": "A",
+    "title": "독거노인 — 병원 이동·돌봄",
+    "short": "혼자 사시는 어머니, 무릎이 아파 병원 가기 어려워요",
+    "text": "78세 어머니가 혼자 사시고 무릎이 안 좋아 병원 가기 어렵습니다.",
+    "expected_tags": ["older_adult", "living_alone", "mobility_issue", "knee_pain", "hospital_access"],
+    "expected_who": "family",
+    "expected_ageBand": "75_84",
+    "answers": { "who": "family", "ageBand": "75_84", "region": null, "livesAlone": "yes", "disability": "none", "ltc": "no_grade", "mainNeed": "hospital", "urgent": "no" },
+    "expected_primary": ["ltc-recognition", "elderly-care", "mobility-special-transport"],
+    "expected_mentioned": ["home-health", "knee-surgery-support", "emergency-safety"]
+  },
+  {
+    "id": "B",
+    "title": "장애인 보호자 — 낮 시간 돌봄",
+    "short": "성인 발달장애 자녀, 낮 시간 돌봄이 필요해요",
+    "text": "성인 발달장애 자녀가 있고 낮 시간 돌봄이 필요합니다.",
+    "expected_tags": ["developmental_disability", "disability_registered", "daytime_care_need", "caregiver_burden"],
+    "expected_who": "family",
+    "expected_ageBand": null,
+    "answers": { "who": "family", "ageBand": "under60", "region": null, "livesAlone": "no", "disability": "registered_dev", "ltc": "unknown", "mainNeed": "daytime", "urgent": "no" },
+    "expected_primary": ["day-activity", "activity-support", "parent-counseling"],
+    "expected_mentioned": ["welfare-membership"]
+  },
+  {
+    "id": "C",
+    "title": "경제·생활 위기 — 생활비·에너지",
+    "short": "혼자 사는데 소득이 줄고 전기요금이 부담돼요",
+    "text": "혼자 사는데 최근 소득이 줄고 전기요금이 부담됩니다.",
+    "expected_tags": ["living_alone", "income_drop", "energy_cost"],
+    "expected_who": "self",
+    "expected_ageBand": null,
+    "answers": { "who": "self", "ageBand": "60_64", "region": null, "livesAlone": "yes", "disability": "none", "ltc": "unknown", "mainNeed": "money", "urgent": "no" },
+    "expected_primary": ["emergency-welfare", "basic-livelihood", "kepco-discount"],
+    "expected_mentioned": ["energy-voucher", "welfare-membership"]
+  }
+]

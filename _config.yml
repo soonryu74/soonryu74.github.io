@@ -7,3 +7,5 @@ exclude:
   - nunchi/test
   # CareGap: 소스·node_modules는 배포하지 않는다(빌드 결과 caregap/index.html, assets/, data/만 제공)
   - caregap/app
+  # 모두의 복지 AI: 소스·node_modules는 배포하지 않는다(빌드 결과 bokji/index.html, assets/만 제공)
+  - bokji/app
