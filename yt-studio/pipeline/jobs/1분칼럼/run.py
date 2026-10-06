@@ -15,6 +15,12 @@ for ep in EPS:
     if only and ep["key"] not in only:
         continue
     W = R / ep["key"]; W.mkdir(parents=True, exist_ok=True)
+    bgd = HERE / f"{ep['key']}_bg"          # gen_bg.py 로 받은 구글 그림이 있으면 먼저 복사
+    if bgd.is_dir():
+        (W / "bg").mkdir(exist_ok=True)
+        for f in bgd.iterdir():
+            if f.suffix.lower() in (".jpg", ".png") and not (W / "bg" / f.name).exists():
+                shutil.copy(f, W / "bg" / f.name)
     srt = HERE / f"{ep['key']}_자막.srt"
     if srt.exists() and not (W / "자막.srt").exists():
         shutil.copy(srt, W / "자막.srt")
