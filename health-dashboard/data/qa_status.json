@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-06 00:27 KST",
- "commit": "20e4810",
+ "generated": "2026-10-06 10:20 KST",
+ "commit": "80ee2bf",
  "working_tree_clean": true,
  "global_v01_comparison": "run (tag pre-global-v0.2)",
  "all_ok": true,
@@ -11,7 +11,7 @@
    "ok": true,
    "passed": 15,
    "failed": 0,
-   "seconds": 2
+   "seconds": 1
   },
   {
    "id": "korea_e2e",
@@ -19,7 +19,7 @@
    "ok": true,
    "passed": 53,
    "failed": 0,
-   "seconds": 180
+   "seconds": 170
   },
   {
    "id": "solve_readiness",
@@ -27,7 +27,7 @@
    "ok": true,
    "passed": 106,
    "failed": 0,
-   "seconds": 71
+   "seconds": 65
   },
   {
    "id": "history",
@@ -35,7 +35,7 @@
    "ok": true,
    "passed": 32,
    "failed": 0,
-   "seconds": 35
+   "seconds": 28
   },
   {
    "id": "report_region",
@@ -43,7 +43,7 @@
    "ok": true,
    "passed": 28,
    "failed": 0,
-   "seconds": 46
+   "seconds": 41
   },
   {
    "id": "report_indicator",
@@ -51,15 +51,15 @@
    "ok": true,
    "passed": 44,
    "failed": 0,
-   "seconds": 72
+   "seconds": 68
   },
   {
    "id": "report_elder",
    "name": "Older-adults report",
    "ok": true,
-   "passed": 44,
+   "passed": 48,
    "failed": 0,
-   "seconds": 43
+   "seconds": 38
   },
   {
    "id": "global_e2e",
@@ -67,12 +67,12 @@
    "ok": true,
    "passed": 77,
    "failed": 0,
-   "seconds": 39
+   "seconds": 28
   }
  ],
  "totals": {
   "unit_tests": 15,
   "browser_suites": 7,
-  "browser_checks": 384
+  "browser_checks": 388
  }
 }

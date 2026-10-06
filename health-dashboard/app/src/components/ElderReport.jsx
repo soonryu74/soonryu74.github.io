@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { fmt, label } from "../data";
-import { buildElderReport, draftElderParagraphs, elderRowFor, GROUPS, SIGNAL_MIN, elderMan as man } from "../lib/elderReport";
+import { buildElderReport, draftElderParagraphs, elderRowFor, GROUPS, SIGNAL_MIN, SIGNAL_KEYS, SIGNAL_AVAIL_MIN, CUT, elderMan as man } from "../lib/elderReport";
 import { BUILD } from "./ReviewsCard";
 import { download, saveCsvRows } from "../export";
 import { copyText } from "./FeedbackView";
@@ -12,6 +12,23 @@ import ReportMode from "./ReportMode";
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const pctOf = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : "–");
 const posTxt = (it, u) => (!isNum(u) ? "–" : it.dir === "context" ? `높은 쪽 ${Math.max(1, Math.round((1 - u) * 100))}%` : u >= 0.8 ? "불리한 쪽 20%" : u <= 0.2 ? "양호한 쪽 20%" : "중간");
+
+// 「복합 고령 취약 신호 시군구」 정의 — 2절·4절 공통. 숫자·항목명은 lib/elderReport.js 상수와 m.items 에서 읽는다.
+function SignalDef({ m }) {
+  const its = SIGNAL_KEYS.map((k) => m.itemBy[k]).filter(Boolean);
+  const byGrp = ["B", "C"].map((g) => [g, its.filter((it) => it.grp === g)]).filter(([, a]) => a.length);
+  const top = Math.round((1 - CUT) * 100);
+  return (
+    <div className="rpt-def">
+      <span className="rpt-def-lab">정의</span>
+      <p><b>복합 고령 취약 신호 시군구</b> = 아래 {its.length}개 항목 중 <b>{SIGNAL_MIN}개 이상</b>이 전국 시군구 {m.n}곳 가운데 불리한 쪽 {top}%에 든 곳</p>
+      <ul>
+        {byGrp.map(([g, a]) => <li key={g}>{GROUPS[g]}({a.length}개): {a.map((it) => it.name).join(" · ")}</li>)}
+      </ul>
+      <p className="muted">불리한 쪽 {top}% = 그 항목 값이 다른 시군구의 {100 - top}%보다 불리한 곳(값이 높을수록 불리한 항목들). 값이 있는 항목이 {SIGNAL_AVAIL_MIN}개 미만인 시군구는 판정하지 않습니다. 65세 이상 비율(인구 구조)과 돌봄·여가 자원은 개수에 넣지 않습니다. 고위험 판정이나 순위가 아닙니다.</p>
+    </div>
+  );
+}
 
 export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onMode, onNcd }) {
   const docRef = useRef(null);
@@ -32,7 +49,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
     const doc = docRef.current?.cloneNode(true);
     doc?.querySelectorAll(".rpt-noprint").forEach((n) => n.remove());
     const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>고령층 취약 보고서</title>
-<style>body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-size:10.5pt;line-height:1.55;color:#111}h1{font-size:18pt}h2{font-size:14pt;margin-top:16pt}h3{font-size:12pt}table{border-collapse:collapse;width:100%;margin:6pt 0}th,td{border:1px solid #999;padding:3pt 5pt;font-size:9.5pt;vertical-align:top}th{background:#eef2f7}.muted{color:#555}.rpt-bar{display:none}</style></head><body>${doc?.innerHTML || ""}</body></html>`;
+<style>body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-size:10.5pt;line-height:1.55;color:#111}h1{font-size:18pt}h2{font-size:14pt;margin-top:16pt}h3{font-size:12pt}table{border-collapse:collapse;width:100%;margin:6pt 0}th,td{border:1px solid #999;padding:3pt 5pt;font-size:9.5pt;vertical-align:top}th{background:#eef2f7}.muted{color:#555}.rpt-bar{display:none}.rpt-def{border:1px solid #2a6fdb;padding:6pt 8pt;margin:6pt 0;background:#f4f7fc}.rpt-def-lab{font-weight:bold;color:#2a6fdb}.rpt-th-sub{font-weight:normal;font-size:8.5pt}</style></head><body>${doc?.innerHTML || ""}</body></html>`;
     download(new Blob(["﻿" + html], { type: "application/msword" }), `${fileBase}.doc`);
   };
   const saveCsv = () => saveCsvRows([
@@ -69,7 +86,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
           <table className="rpt-tbl rpt-sum"><tbody>
             <tr><th scope="row">고령 인구</th><td>65세 이상 {man(m.nat.age65)}명(전체의 {fmt(m.nat.aged)}%) · 75세 이상 {man(m.nat.age75)}명 · 독거노인 {man(m.nat.alone)}명(65세 이상의 {fmt(m.nat.aloneShare)}%) · {I.aged.y}년</td></tr>
             <tr><th scope="row">시군구 간 차이</th><td>65세 이상 비율 중앙값 {fmt(I.aged.med)}% · 하위 20%·상위 20% 경계 {fmt(I.aged.p20)}–{fmt(I.aged.p80)}% · 범위 {fmt(I.aged.min)}–{fmt(I.aged.max)}%</td></tr>
-            <tr><th scope="row">복합 고령 취약 신호</th><td>{m.signal.length}곳(6개 항목 중 {SIGNAL_MIN}개 이상이 불리한 쪽 20%) · 신호 개수별 지역 수 {m.sigDist.map((n, k) => `${k}개 ${n}`).join(" · ")}</td></tr>
+            <tr><th scope="row">복합 고령 취약 신호</th><td>{m.signal.length}곳({SIGNAL_KEYS.length}개 항목 중 {SIGNAL_MIN}개 이상이 불리한 쪽 {Math.round((1 - CUT) * 100)}% — 정의는 2절) · 신호 개수별 지역 수 {m.sigDist.map((n, k) => `${k}개 ${n}`).join(" · ")}</td></tr>
             <tr><th scope="row">수요 대비 자원 부족</th><td>{m.demand.length}곳(65세 이상 비율 높은 쪽 20% + 돌봄·여가 자원 적은 쪽 20%)</td></tr>
             {me?.row && <tr><th scope="row">{label(me.row.r)}</th><td>65세 이상 {fmt(me.row.v.aged)}%({man(me.row.age65)}명) · 신호 {me.row.sig ?? "–"}개{me.row.flags.length ? `(${me.row.flags.map(shortName).join("·")})` : ""}{me.row.lowRes.length ? ` · 자원 적은 쪽: ${me.row.lowRes.map(shortName).join("·")}` : ""}</td></tr>}
             {me?.sido && <tr><th scope="row">{me.sido.s.n}</th><td>65세 이상 {fmt(me.sido.aged)}%({man(me.sido.age65)}명) · 독거노인 {fmt(me.sido.aloneShare)}% · 복합 신호 시군구 {me.sido.nSig}/{me.sido.n}곳</td></tr>}
@@ -80,11 +97,13 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
 
         <section>
           <h2><span className="rpt-no">2</span>시도별 고령 인구와 복합 신호 지역</h2>
-          <table className="rpt-tbl rpt-wide"><thead><tr><th>시도</th><th>65세 이상</th><th>비율</th><th>75세 이상</th><th>독거노인 비율</th><th>복합 신호 시군구</th></tr></thead>
+          <SignalDef m={m} />
+          <table className="rpt-tbl rpt-wide"><thead><tr><th>시도</th><th>65세 이상</th><th>비율</th><th>75세 이상</th><th>독거노인 비율</th><th>복합 신호 시군구<div className="rpt-th-sub">신호 지역 수 / 시도 안 시군구 수</div></th></tr></thead>
             <tbody>{m.sido.map((x) => (
               <tr key={x.s.c} className={me?.sido?.s.c === x.s.c || me?.row?.r.p === x.s.c ? "rpt-me" : ""}><td>{x.s.n}</td><td>{man(x.age65)}명</td><td>{fmt(x.aged)}%</td><td>{man(x.age75)}명</td><td>{fmt(x.aloneShare)}%</td>
                 <td><span className="rpt-bar" style={{ width: `${((x.n ? x.nSig / x.n : 0) / maxShare) * 5}em` }} aria-hidden="true" />{x.nSig}/{x.n}곳 ({pctOf(x.nSig, x.n)})</td></tr>
             ))}</tbody></table>
+          <p className="muted">예: 「11/22곳(50%)」 = 그 시도 시군구 22곳 중 11곳이 복합 신호 시군구. 괄호 % = 그 비율 · 막대 길이 = 그 비율(시도 간 비교용).</p>
         </section>
 
         <section>
@@ -101,7 +120,8 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
 
         <section>
           <h2><span className="rpt-no">4</span>복합 고령 취약 신호 지역 ({m.signal.length}곳)</h2>
-          <p className="muted">사회·경제적 취약 2개(독거노인 비율·기초연금 수급률)와 건강 결과 4개(저작불편·폐렴 사망·낙상 사망·노인 교통사고 사망) 중 {SIGNAL_MIN}개 이상이 불리한 쪽 20%에 든 시군구입니다. 6개 중 4개 이상 값이 있는 곳만 셉니다. 신호 개수 → 65세 이상 인구 순이며 순위가 아닙니다.</p>
+          <SignalDef m={m} />
+          <p className="muted">신호 개수 → 65세 이상 인구 순으로 놓았으며 순위가 아닙니다.</p>
           <table className="rpt-tbl rpt-vul"><thead><tr><th>신호</th><th>지역</th><th>65세 이상</th><th>독거노인</th><th>불리한 쪽 20% 항목</th><th>박탈</th></tr></thead>
             <tbody>{m.signal.map((o) => (
               <tr key={o.r.c} className={isMine(o) ? "rpt-me" : ""}><td><span className="el-sig">{o.sig}/{o.nAvail}</span></td><td>{label(o.r)}</td><td>{fmt(o.v.aged)}% · {man(o.age65)}명</td><td>{val(o, "alone")}</td>

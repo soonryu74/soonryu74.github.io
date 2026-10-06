@@ -36,7 +36,8 @@ export const ELDER_ITEMS = [
 export const GROUPS = { A: "인구 구조(규모)", B: "사회·경제적 취약", C: "건강 결과", D: "돌봄·여가 자원" };
 export const SIGNAL_KEYS = ELDER_ITEMS.filter((it) => it.grp === "B" || it.grp === "C").map((it) => it.key);
 export const SIGNAL_MIN = 3; // 6개 중 3개 이상
-const CUT = 0.8; // 불리한 쪽 20%
+export const CUT = 0.8; // 불리한 쪽 20%
+export const SIGNAL_AVAIL_MIN = 4; // 6개 중 값이 있는 항목이 4개 이상인 곳만 판정
 
 /** 지표의 기준연도: 시군구 값이 가장 많은 연도 중 최신(최대의 80% 이상 채워진 마지막 해) */
 function baseYear(ind, item, rows) {
@@ -100,7 +101,7 @@ export function buildElderReport(item = "std", smooth = 3) {
     const avail = SIGNAL_KEYS.filter((k) => isNum(o.u[k]));
     o.flags = avail.filter((k) => o.u[k] >= CUT);
     o.nAvail = avail.length;
-    o.sig = avail.length >= 4 ? o.flags.length : null;
+    o.sig = avail.length >= SIGNAL_AVAIL_MIN ? o.flags.length : null;
     o.dep = depOf(o.r.c);
     o.age65 = rv(o.x, "age65");
     o.lowRes = ["ltcfac", "ltchome", "welf"].filter((k) => isNum(o.u[k]) && o.u[k] >= CUT);

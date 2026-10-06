@@ -14,6 +14,12 @@ for (const [w,h,s] of [[1440,900,"light"],[390,844,"dark"],[430,932,"light"],[76
   const sec = await pg.locator("article.rpt h2").allInnerTexts(); ck(sec.length>=7, `[${w}] 절 ${sec.length}: ${sec.join(" | ")}`);
   const ns = await pg.locator(".rpt-vul tbody tr").count(); ck(ns>=20 && ns<=80, `[${w}] 신호 지역 ${ns}행`);
   ck(await pg.locator("article.rpt .rpt-sum th").filter({hasText:"강원 강릉시"}).count()===1, `[${w}] 선택 지역(강릉) 요약 행`);
+  { // 「복합 고령 취약 신호 시군구」 정의 상자: 2절(표 바로 위)·4절, 6개 항목 이름 포함
+    const NAMES = ["독거노인", "기초연금", "저작불편", "폐렴", "낙상", "교통사고"];
+    const defs = await pg.$$eval("article.rpt section", (ss) => ss.map((s) => { const d = s.querySelector(".rpt-def"); return d ? { h: s.querySelector("h2")?.textContent || "", t: d.textContent, beforeTable: !!(d.nextElementSibling && d.nextElementSibling.tagName === "TABLE") } : null; }).filter(Boolean));
+    const s2 = defs.find((d) => d.h.includes("시도별")), s4 = defs.find((d) => d.h.includes("복합 고령 취약 신호 지역"));
+    ck(!!s2 && s2.beforeTable && !!s4 && [s2, s4].every((d) => NAMES.every((n) => d.t.includes(n)) && /3개 이상/.test(d.t) && /4개 미만/.test(d.t)), `[${w}] 정의 상자 2절(표 위)·4절 — 항목 6개·3개 이상·4개 미만 미판정`);
+  }
   ck(await pg.evaluate(()=>document.documentElement.scrollWidth-innerWidth)<=0, `[${w}] 가로 넘침 없음`);
   ck(await pg.locator(".yearctrl").count()===0, `[${w}] 연도 컨트롤 숨김`);
   await pg.getByRole("button",{name:"📋 문장 초안 복사"}).click(); await pg.waitForTimeout(300);
@@ -22,7 +28,7 @@ for (const [w,h,s] of [[1440,900,"light"],[390,844,"dark"],[430,932,"light"],[76
   if (w===1440) {
     for (const [btn, ext] of [[/워드/, "doc"], [/전체 시군구 CSV/, "csv"]]) {
       const [dl] = await Promise.all([pg.waitForEvent("download",{timeout:8000}).catch(()=>null), pg.getByRole("button",{name:btn}).click()]);
-      if (dl) { const p = `${OUT}/el.${ext}`; await dl.saveAs(p); const t=fs.readFileSync(p,"utf8"); ck(ext==="doc" ? (t.includes("고령층 취약 현황") && !t.includes("예방·관리 탭에서")) : t.trim().split("\n").length===230, `[${w}] ${ext} ${t.length}B ${t.trim().split("\n").length}줄`); }
+      if (dl) { const p = `${OUT}/el.${ext}`; await dl.saveAs(p); const t=fs.readFileSync(p,"utf8"); ck(ext==="doc" ? (t.includes("고령층 취약 현황") && !t.includes("예방·관리 탭에서") && (t.match(/class="rpt-def"/g)||[]).length===2 && t.includes("신호 지역 수 / 시도 안 시군구 수")) : t.trim().split("\n").length===230, `[${w}] ${ext} ${t.length}B ${t.trim().split("\n").length}줄`); }
       else ck(false, `[${w}] ${ext} 다운로드 없음`);
     }
     await pg.waitForTimeout(2500);
