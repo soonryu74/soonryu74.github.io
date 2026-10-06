@@ -92,7 +92,7 @@ def anim_boards():
         T(790, 390, 420, 44, '[실종 안내]', 30, wt=700, color=red),
         T(760, 440, 460, 60, '직지 상권 (直指 卷上)', 42, fam='Serif', wt=700, color=c),
         T(760, 512, 460, 150, '1377년 여름 청주 흥덕사에서 태어남<br>특징: 금속활자로 찍은 책 · 표지 「直指」<br>동생(하권)이 파리에서 찾고 있습니다', 27, color=c, lh=44),
-        T(120, 950, 700, 50, '649년 전에 헤어진 형을 찾습니다', 40, fam='Pen', color=dim),
+        T(120, 60, 700, 50, '649년 전에 헤어진 형을 찾습니다', 40, fam='Pen', color=dim),
     ]
     # S02 흥덕사지 + 제목
     hall = (f'<path d="M 60 330 L 740 330 L 700 250 C 500 200 300 200 100 250 Z" {S(c, 6)}/>'       # 지붕
@@ -139,7 +139,7 @@ def anim_boards():
         T(1100, 240, 760, 100, '형은 상권, 저는 하권', 66, fam='Myeongjo', wt=800, color=c),
         T(1180, 790, 260, 48, '卷上', 40, fam='Serif', wt=700, color=c, align='center'),
         T(1500, 790, 220, 48, '卷下', 40, fam='Serif', wt=700, color=c, align='center'),
-        T(140, 640, 700, 50, '쇠활자에 먹을 바르고 한지를 문질러 찍습니다', 36, fam='Pen', color=dim),
+        T(140, 60, 900, 50, '금속활자에 먹을 바르고 한지를 문질러 찍습니다', 36, fam='Pen', color=dim),
     ]
     # S05 간기 카드
     B['S05'] = [
@@ -157,8 +157,8 @@ def anim_boards():
         SVG(900, 340, 320, 360, book(30, 30, 260, 300, c), 'brush'),
         SVG(1360, 420, 120, 240, candle(60, 100, c, red), 'brush'),
         T(120, 140, 1680, 70, '언제 어디서 헤어졌는지, 저도 모릅니다', 48, fam='Myeongjo', wt=800, color=c, align='center'),
-        T(450, 880, 260, 50, '卷上', 40, fam='Serif', wt=700, color=dim, align='center'),
-        T(930, 880, 260, 50, '卷下', 40, fam='Serif', wt=700, color=c, align='center'),
+        T(450, 250, 260, 50, '卷上', 40, fam='Serif', wt=700, color=dim, align='center'),
+        T(930, 250, 260, 50, '卷下', 40, fam='Serif', wt=700, color=c, align='center'),
     ]
     # S07 A4 파리 경매장
     heads = ''.join(f'<circle cx="{80 + i * 95}" cy="{330 + (i % 2) * 14}" r="26" {S(c, 4)}/><path d="M {52 + i * 95} {318 + (i % 2) * 14} L {108 + i * 95} {318 + (i % 2) * 14}" {S(c, 5)}/>' for i in range(9))
@@ -172,7 +172,7 @@ def anim_boards():
         T(1500, 622, 90, 50, '711', 34, wt=700, color=red, align='center'),
         T(120, 100, 1000, 60, '1911 · 파리 드루오 경매장', 34, color=dim, ls=2),
         T(1200, 160, 640, 200, '711번<br>180프랑', 90, fam='Myeongjo', wt=800, color=c, lh=110),
-        T(1200, 880, 640, 50, '저는 그렇게 팔렸습니다', 40, fam='Pen', color=red),
+        T(1200, 380, 640, 50, '저는 그렇게 팔렸습니다', 40, fam='Pen', color=red),
     ]
     # S08 경로 카드 청주→파리
     B['S08'] = [
@@ -216,7 +216,7 @@ def anim_boards():
                                 f'<path d="M 700 60 C 760 30 820 60 860 20 C 820 100 760 120 700 100 Z" {S(c, 5)}/>', 'brush'),                 # 장갑 낀 손
         T(120, 150, 900, 60, '1985 · 청주 운천동 공사장', 34, color=dim, ls=2),
         T(120, 220, 900, 180, '「흥덕사」가 새겨진<br>쇠북 조각', 70, fam='Myeongjo', wt=800, color=c, lh=92),
-        T(500, 960, 400, 48, '興德寺', 40, fam='Serif', wt=700, color=gold, align='center'),
+        T(500, 880, 400, 48, '興德寺', 40, fam='Serif', wt=700, color=gold, align='center'),
     ]
     # S12 문패 카드
     B['S12'] = [
@@ -236,7 +236,7 @@ def anim_boards():
                                 f'<path d="M 300 560 C 330 540 360 560 400 540" {S(c, 4)}/><path d="M 420 580 C 450 560 480 580 520 560" {S(c, 4)}/>', 'brush'),
         SVG(1000, 180, 840, 700, f'<g opacity="0.95">{types}</g>' + book(300, 120, 300, 360, c, dashed=True), 'pencil'),
         T(120, 100, 900, 60, '1378 · 이듬해 나무에 새겨 찍은 목판본', 34, color=dim, ls=2),
-        T(1000, 900, 840, 50, '형의 얼굴은 몰라도, 형이 한 말은 압니다', 40, fam='Pen', color=red, align='center'),
+        T(1000, 60, 840, 50, '형의 얼굴은 몰라도, 형이 한 말은 압니다', 40, fam='Pen', color=red, align='center'),
         T(1480, 110, 380, 44, '상상도 · 실물 아님', 26, wt=700, color=red, align='center', extra=f'border: 3px solid {red}; border-radius: 22px; line-height: 38px'),
     ]
     # S14 상태 카드 卷上 / 卷下
@@ -260,7 +260,7 @@ def anim_boards():
         SVG(1280, 520, 520, 380, f'<path d="M 60 300 L 260 240 L 460 300 L 460 320 L 260 262 L 60 320 Z" {S(gold, 6)}/>'       # 펼친 책 조형물
                                  f'<path d="M 60 300 C 120 230 200 230 260 240 C 320 230 400 230 460 300" {S(gold, 6)}/><rect x="200" y="320" width="120" height="40" {S(c, 5)}/>', 'brush'),
         T(120, 100, 1200, 60, '오늘 · 청주고인쇄박물관', 34, color=dim, ls=2),
-        T(120, 930, 1680, 50, '청주는 1996년부터 형을 찾고 있습니다', 42, fam='Pen', color=red),
+        T(120, 40, 1680, 50, '청주는 1996년부터 형을 찾고 있습니다', 42, fam='Pen', color=red),
     ]
     B['S16'] = [
         SVG(120, 160, 1680, 760, f'<path d="M 0 700 L 400 700 L 400 620 L 700 620 L 700 540 L 1000 540 L 1000 460 L 1680 460" {S(c, 6)}/>'    # 계단 골목
@@ -270,7 +270,7 @@ def anim_boards():
                                  f'<path d="M 1120 320 L 1120 200 L 1240 130 L 1360 200 L 1360 320" {S(c, 5)}/>'
                                  f'<path d="M 1400 180 C 1440 120 1520 120 1560 180 C 1600 120 1660 140 1660 200" {S(c, 4)}/>', 'pen'),
         T(120, 80, 1200, 60, '오늘 · 청주 수암골', 34, color=dim, ls=2),
-        T(120, 950, 1680, 50, '청주는 1996년부터 형을 찾고 있습니다', 42, fam='Pen', color=red),
+        T(120, 130, 1680, 50, '청주는 1996년부터 형을 찾고 있습니다', 42, fam='Pen', color=red),
     ]
     # S17 직지 찾기 카드
     B['S17'] = [
@@ -291,7 +291,7 @@ def anim_boards():
                                  f'<path d="M 260 420 C 300 340 500 340 540 420 C 560 470 520 500 400 500 C 280 500 240 470 260 420 Z" {S(red, 6)}/>'               # 보자기
                                  f'<path d="M 380 370 L 420 330 L 450 370" {S(red, 5)}/>', 'brush'),
         T(1020, 160, 800, 60, '어쩌면, 어느 집 다락', 34, color=dim, ls=2),
-        T(1020, 940, 800, 50, '낡은 보자기 속에 있을지 모릅니다', 40, fam='Pen', color=red, align='center'),
+        T(1020, 220, 800, 50, '낡은 보자기 속에 있을지 모릅니다', 40, fam='Pen', color=red, align='center'),
         T(1480, 110, 380, 44, '상상도 · 실물 아님', 26, wt=700, color=red, align='center', extra=f'border: 3px solid {red}; border-radius: 22px; line-height: 38px'),
     ]
     # S19 A9 하권 옆의 빈자리
@@ -302,7 +302,7 @@ def anim_boards():
         SVG(1360, 420, 120, 240, candle(60, 100, c, red), 'brush'),
         T(120, 120, 1680, 120, '오래된 책에서 이 글자를 보시면', 46, fam='Myeongjo', wt=800, color=c, align='center'),
         T(450, 450, 260, 100, '直指 卷上', 56, fam='Serif', wt=700, color=red, align='center'),
-        T(120, 900, 1680, 60, '청주에 알려 주세요', 48, fam='Pen', color=red, align='center'),
+        T(120, 200, 1680, 60, '청주에 알려 주세요', 48, fam='Pen', color=red, align='center'),
     ]
     # S20 엔딩
     B['S20'] = [
@@ -440,7 +440,11 @@ TITLES = {'S01': '실종 안내', 'S02': '흥덕사지 · 제목', 'S03': 'A1 �
           'S20': '엔딩', 'S21': '만든 방법'}
 
 if __name__ == '__main__':
-    for name, boards, pal in (('anim', anim_boards(), A), ('real', real_boards(), R)):
+    try:
+        import anim_collage; AB = anim_collage.boards()      # v2 — 손그림 + 옛 사진 콜라주
+    except ImportError:
+        AB = anim_boards()
+    for name, boards, pal in (('anim', AB, A), ('real', real_boards(), R)):
         d = HERE / 'canvas' / name; d.mkdir(parents=True, exist_ok=True)
         for k, els in boards.items():
             (d / f'{k}.dc.html').write_text(page(f'{k} · {TITLES[k]}', '\n'.join(els), pal['bg'], pal['ink']), encoding='utf-8')

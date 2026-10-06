@@ -102,34 +102,44 @@ def still(root, els, key):
 
 # ═══ 손그림 판 — 선이 그려지고 글이 써진다 ═══
 def anim_scene(i, lt, root, els):
+    """전단 위에 차례로: 사진이 툭 붙고(pop) · 선이 그려지고(draw_on) · 제목이 써진다(write) — 아트보드 순서가 등장 순서"""
     img = canvas.background(root)
-    sv, tx = svgs(els), texts(els); dur = DURS[i]
-    q = motion.steps(lt, 12)                                   # 끊김 — 손그림 애니처럼
-    title = max(tx, key=lambda e: e['size']) if tx else None
-    # 그림: svg 조각들을 차례로 그린다 (조각 수에 따라 시간 배분 · 전체의 60% 안에)
-    n = max(1, len(sv)); span = min(dur * 0.6, 1.2 + 1.3 * n); per = span / n
-    for j, e in enumerate(sv):
-        t0 = 0.2 + j * per * 0.85
-        motion.draw_on(img, e, seg(q, t0, t0 + per), stagger=0.5, t=q, fill_in='fade')
-    # 글: 제목은 쓰기(write) · 나머지는 올라오기
+    dur = DURS[i]; q = motion.steps(lt, 12)
+    tx = texts(els); title = max(tx, key=lambda e: e['size']) if tx else None
+    items = [e for e in els if not e.get('text')]
+    budget = min(dur * 0.62, 1.0 + 1.1 * len(items)); t0 = 0.2
+    per = (budget - 0.2) / max(1, len(items))
+    for e in items:
+        if e.get('svg'):
+            big = e['w'] * canvas.box_h(e) > W * H * 0.04
+            d = per * (1.4 if big else 0.6)
+            motion.draw_on(img, e, seg(q, t0, t0 + d), stagger=0.5, t=q, fill_in='fade')
+        elif e.get('src') and e['w'] >= W * 0.9:                      # 바탕 사진(지도 · 열람실)은 서서히
+            appear.put(img, e, seg(lt, t0, t0 + 0.9), 'fade'); d = per * 0.5
+        else:                                                           # 사진 틀 · 사진 · 그늘 → 툭 붙는다
+            appear.put(img, e, seg(lt, t0, t0 + 0.4), 'pop'); d = per * 0.35
+        t0 += d * 0.8
     for e in tx:
         if e is title: motion.write(img, e, seg(lt, 0.4, min(dur * 0.45, 0.4 + 0.08 * len(e['text']) + 0.6)))
         else:
-            k = tx.index(e); t0 = 0.9 + 0.25 * k
-            if e['family'].startswith("'Pen"): appear.put(img, e, seg(lt, t0 + 0.6, t0 + 1.2), 'fade')
-            else: appear.put(img, e, seg(lt, t0, t0 + 0.5), 'up', dist=24)
-    # 찍기 — 장면마다 다르게 (흐르기 · 훑기 · 밀고 들어가기)
-    draw_box = _union(sv) if sv else _union(tx)
-    if draw_box[2] * draw_box[3] < W * H * 0.12: draw_box = _union(sv + tx)      # 작은 장식(밑줄 · 상자)뿐이면 글까지 묶어서
+            k = tx.index(e); t1 = 0.9 + 0.25 * k
+            if e['family'].startswith("'Pen"): appear.put(img, e, seg(lt, t1 + 0.6, t1 + 1.2), 'fade')
+            else: appear.put(img, e, seg(lt, t1, t1 + 0.5), 'up', dist=24)
+    pics = [e for e in items if e.get('svg') or (e.get('src') and e['w'] < W * 0.9)]
+    draw_box = _union(pics) if pics else _union(tx)
+    if draw_box[2] * draw_box[3] < W * H * 0.12: draw_box = _union(pics + tx)
     kind = i % 4
-    if kind == 0:   # 천천히 다가가기 → 다 그려지면 전체
-        c = C.keys(lt, [(0, C.on(draw_box, img, fill=0.8)), (span + 0.4, C.full(img), '부드럽게')])
-        c = C.drift(c, max(0, lt - span - 0.4), dur, amt=0.02)
-    elif kind == 1:  # 전체에서 그림으로 밀고 들어가기
+    if i == 7:                                                          # 지도 위 이동: 전체 → 사진 셋으로 천천히
+        ph = [e for e in items if e.get('src') and e['w'] < W * 0.9]
+        c = C.keys(lt, [(0, C.full(img)), (dur * 0.45, C.full(img)), (dur, C.on(_union(ph), img, fill=0.92, dy=-0.02), '부드럽게')])
+    elif kind == 0:
+        c = C.keys(lt, [(0, C.on(draw_box, img, fill=0.8)), (budget + 0.4, C.full(img), '부드럽게')])
+        c = C.drift(c, max(0, lt - budget - 0.4), dur, amt=0.02)
+    elif kind == 1:
         c = C.keys(lt, [(0, C.full(img)), (0.3, C.full(img)), (dur - 0.6, C.on(draw_box, img, fill=0.72), '부드럽게')])
-    elif kind == 2:  # 훑기 — 왼쪽에서 오른쪽으로 흐른다
+    elif kind == 2:
         c = C.drift(C.full(img), lt, dur, amt=0.05, dir=1, side=70)
-    else:            # 그림 가운데로 천천히
+    else:
         c = C.keys(lt, [(0, C.full(img)), (dur, C.on(draw_box, img, fill=0.85), '선형')])
     out = C.shoot(img, c, (W, H))
     return with_caption(out, i, lt)
