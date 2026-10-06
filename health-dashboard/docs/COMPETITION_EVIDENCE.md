@@ -3,7 +3,7 @@
 Generated automatically on 2026-10-06 from the data files and test records in this repository (`node scripts/build_competition_evidence.mjs`, run by `scripts/build_dashboard.py`). **Use these numbers in applications; do not retype them from memory.** If a number here differs from any other document, this file wins until the data change.
 
 ## 1. Build
-- Source repository commit at generation: `37f9966` (the site footer shows the build of the deployed page).
+- Source repository commit at generation: `80ee2bf` (the site footer shows the build of the deployed page).
 - Data validation date: 2026-10-06 (`docs/DATA_VALIDATION.md`).
 
 ## 2–4. Korea deployment — indicators, geography, years
@@ -33,7 +33,7 @@ Do not combine levels (wrong: "171 indicators across 258 areas").
 | Area deprivation index (derived in this project) | 1 | 2015–2020 |
 
 ## 6. Tests
-All passed — 15 unit tests; 7 browser test suites with 384 checks (last run 2026-10-06 00:27 KST, commit 20e4810).
+All passed — 15 unit tests; 7 browser test suites with 388 checks (last run 2026-10-06 10:20 KST, commit 80ee2bf).
 
 | Suite | Passed | Failed |
 |---|---|---|
@@ -43,7 +43,7 @@ All passed — 15 unit tests; 7 browser test suites with 384 checks (last run 20
 | Browser back/forward, header, feedback export | 32 | 0 |
 | Community health report | 28 | 0 |
 | Indicator report (national) | 44 | 0 |
-| Older-adults report | 44 | 0 |
+| Older-adults report | 48 | 0 |
 | Global prototype — values = source data, signals, trends, evidence links | 77 | 0 |
 
 Global v0.1 comparison (all 217 economies: signals, Watch, top 3, scores unchanged): run (tag pre-global-v0.2).
