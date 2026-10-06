@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>콘텐츠 자동화의 정석 — 학습 노트 | soonryu74</title>
+<meta name="description" content="유튜브와 블로그를 손이 아니라 코드로 짓는다. AI 콘텐츠 자동화를 내 방식으로 다시 정리한 읽는 이북(학습 노트).">
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&display=swap');
+:root{--bg:#eceae5;--paper:#fdfcfa;--ink:#15130f;--ink2:#33302a;--muted:#6b6560;--dim:#a39c93;
+ --line:#e6e1d9;--line2:#d6d0c6;--wash:#f5f2ec;--amber:#c8811f;--code:#16161f;--codeink:#e9e9f2}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);overflow:hidden;
+ font-family:'Noto Serif KR',serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.eyebrow,.foot,.kick,table,pre,.note,.src,.chnum,.tn,.tt b,.tp,.by,.vnote,.tocnote,.cta,.vqr b,.vqr span{font-family:'Pretendard',-apple-system,sans-serif}
+#prog{position:fixed;top:0;left:0;height:2px;background:var(--ink);z-index:70;width:0;transition:width .2s}
+#deck{position:relative;width:100vw;height:100vh}
+.s{position:absolute;inset:0;display:none;justify-content:center;align-items:center;padding:20px 16px 70px}
+.s.on{display:flex;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.paper{position:relative;background:var(--paper);width:min(calc((100vh - 90px) * 0.707), 94vw);
+ height:min(calc(100vh - 90px), 1000px);box-shadow:0 8px 34px rgba(0,0,0,.13);border:1px solid var(--line2);
+ display:flex;flex-direction:column;overflow:hidden}
+.s.alt .paper{background:var(--wash)}
+.pin{flex:1;overflow-y:auto;padding:clamp(28px,4.4vh,52px) clamp(24px,4vh,48px) 12px;
+ display:flex;flex-direction:column;justify-content:center}
+.s.cover .pin,.s.open .pin{text-align:center;align-items:center}
+.s.cover .pin>*,.s.open .pin>*{max-width:100%}
+.eyebrow{display:block;font-size:10.5px;font-weight:900;letter-spacing:1.8px;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
+h1{font-size:clamp(26px,4.6vh,40px);font-weight:900;letter-spacing:-1.8px;line-height:1.1;margin:0;font-family:'Pretendard',sans-serif}
+h2{font-size:clamp(21px,3.5vh,31px);font-weight:900;letter-spacing:-1.2px;line-height:1.2;margin:0}
+h3{font-size:clamp(18px,2.9vh,25px);font-weight:900;letter-spacing:-.8px;line-height:1.25;margin:0 0 16px}
+.prose p{font-size:clamp(13.5px,1.94vh,16px);line-height:1.95;margin:0 0 15px;color:var(--ink2);word-break:keep-all}
+.prose p b{color:var(--ink);font-weight:700}.prose p:last-child{margin-bottom:0}
+blockquote{margin:16px 0;padding:14px 18px;border-left:3px solid var(--amber);background:#fff;
+ font-size:clamp(14px,2.1vh,17px);line-height:1.8;color:var(--ink);font-weight:500}
+pre{background:var(--code);color:var(--codeink);padding:12px 14px;overflow-x:auto;font-size:11.5px;line-height:1.75;
+ font-family:ui-monospace,Menlo,monospace;margin:14px 0}
+.note{margin:16px 0 0;padding:12px 15px;background:#fff;border-left:3px solid var(--ink);
+ font-size:12.5px;line-height:1.75;color:var(--ink2);font-weight:600}
+.src{font-size:11px!important;color:var(--dim)!important;line-height:1.7!important;margin-top:12px!important}
+.tw{overflow-x:auto;margin:16px 0;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;background:#fff}
+th,td{padding:9px 12px;text-align:left;font-size:12.5px;border-bottom:1px solid var(--line)}
+th{background:var(--wash);font-size:10.5px;font-weight:900;letter-spacing:.5px;color:var(--ink2);white-space:nowrap}
+td{color:var(--muted)}td b{color:var(--ink)}tr:last-child td{border-bottom:none}
+.fig{margin:0 0 16px}
+.fig svg{width:100%;height:auto;display:block;border:1px solid var(--line);background:#fff}
+.covfig{margin:14px auto 18px;max-width:min(320px,66%)}
+.covfig svg{border:none;background:none;width:100%;height:auto;display:block}
+.kick{display:inline-block;background:var(--ink);color:#fff;font-size:10.5px;font-weight:900;letter-spacing:1.4px;padding:5px 12px}
+.rule{width:48px;height:3px;background:var(--ink);margin:16px auto}
+.rule.mid{margin:20px auto 0}
+.lede{font-size:clamp(13.5px,1.95vh,16px);line-height:1.85;color:var(--muted);margin:0 auto;max-width:32em}
+.by{font-size:11px;color:var(--dim);margin:20px 0 0;line-height:1.75}
+.tochead{margin-bottom:18px}
+.toclist{border-top:1px solid var(--line2)}
+.toclist.dense{display:grid;grid-template-columns:1fr;gap:0}
+.tocrow{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:center;padding:12px 4px;
+ border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none}
+.tocrow:hover{background:#fff}
+.tn{font-size:12px;font-weight:900;color:var(--dim)}
+.tt b{display:block;font-size:14.5px;font-weight:800;color:var(--ink);letter-spacing:-.3px}
+.tt i{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:2px}
+.tocnote{font-size:11.5px;color:var(--muted);line-height:1.8;margin-top:18px}
+.tocnote a{color:var(--ink)}
+.chnum{display:inline-block;width:44px;height:44px;line-height:44px;background:var(--ink);color:#fff;font-weight:900;font-size:18px;margin-bottom:16px}
+.chsub{font-size:clamp(13px,1.9vh,15.5px);color:var(--muted);margin:10px 0 0}
+.cta{display:inline-block;margin-top:20px;background:var(--ink);color:#fff;text-decoration:none;
+ padding:12px 24px;font-size:13.5px;font-weight:800}
+.foot{flex:none;display:flex;justify-content:space-between;align-items:center;
+ padding:9px clamp(24px,4vh,48px);font-size:9.5px;letter-spacing:.7px;color:var(--dim);border-top:1px solid var(--line)}
+.brand{font-weight:800}
+#bar{position:fixed;left:0;right:0;bottom:16px;display:flex;justify-content:center;align-items:center;gap:10px;z-index:60;pointer-events:none}
+#bar > *{pointer-events:auto}
+#bar button{width:36px;height:36px;border:1px solid var(--line2);background:var(--paper);cursor:pointer;font-size:16px;
+ color:var(--ink);line-height:1;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#bar button:hover{background:var(--ink);color:#fff}
+#bar select{font-family:'Pretendard',sans-serif;font-size:11.5px;padding:7px 10px;border:1px solid var(--line2);
+ background:var(--paper);color:var(--ink2);max-width:210px;border-radius:18px}
+.svg-ink{fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.svg-amber{fill:none;stroke:var(--amber);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.svg-fa{fill:var(--amber)}.svg-fi{fill:var(--ink)}.svg-fw{fill:#fff}
+@media(max-width:760px){
+  .s{padding:8px 8px 62px}
+  .paper{width:100%;height:calc(100vh - 70px);box-shadow:none}
+  .pin{padding:24px 20px 10px}
+}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  body{overflow:visible;background:#fff}
+  #bar,#prog{display:none!important}
+  #deck{height:auto}
+  .s{position:static!important;display:block!important;padding:0;page-break-after:always}
+  .paper{width:210mm;height:297mm;box-shadow:none;border:none}
+  .s.alt .paper{background:var(--wash)!important}
+  .pin{padding:20mm 18mm 6mm}
+  .prose p{font-size:11pt;line-height:1.85;margin-bottom:11px}
+  h1{font-size:30pt}h2{font-size:22pt}h3{font-size:16pt}
+  .foot{padding:6mm 18mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div id="deck">
+
+  <!-- 1. 표지 -->
+  <section class="s cover on" data-label="표지"><div class="paper"><div class="pin">
+    <span class="kick">콘텐츠 자동화 · 학습 노트</span>
+    <div class="fig covfig"><svg viewBox="0 0 320 200" role="img" aria-label="하나의 아이디어가 공장을 거쳐 여러 콘텐츠로">
+      <rect x="20" y="86" width="40" height="28" class="svg-ink"/>
+      <path d="M44 100 h40" class="svg-amber"/><path d="M78 94 l8 6 -8 6" class="svg-amber"/>
+      <rect x="92" y="64" width="86" height="72" rx="6" class="svg-ink"/>
+      <circle cx="118" cy="100" r="12" class="svg-ink"/><circle cx="150" cy="100" r="8" class="svg-ink"/>
+      <path d="M135 100 a6 6 0 0 0 7 0" class="svg-amber"/>
+      <path d="M178 84 h30 M178 100 h30 M178 116 h30" class="svg-amber"/>
+      <g transform="translate(228,52)"><rect width="64" height="34" rx="5" class="svg-ink"/><path d="M26 10 l16 7 -16 7 z" class="svg-fa"/></g>
+      <g transform="translate(228,96)"><rect width="64" height="34" rx="5" class="svg-ink"/><path d="M12 12 h40 M12 20 h40 M12 28 h26" class="svg-ink"/></g>
+      <g transform="translate(228,140)"><rect width="64" height="34" rx="5" class="svg-ink"/><path d="M8 10 l24 14 24 -14" class="svg-ink"/></g>
+    </svg></div>
+    <h1>콘텐츠 자동화의 정석</h1>
+    <div class="rule"></div>
+    <p class="lede">유튜브와 블로그를, 손이 아니라 코드로 짓는다</p>
+    <p class="by">soonryu74 지음 · AI 학습 노트 · 2026</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 2. 차례 -->
+  <section class="s alt" data-label="차례"><div class="paper"><div class="pin">
+    <span class="eyebrow">차례</span><h2 class="tochead">이 노트에서</h2>
+    <div class="toclist dense">
+      <a class="tocrow" data-go="1"><span class="tn">1</span><span class="tt"><b>플랫폼의 본질</b><i>채널마다 작동하는 이유가 다르다</i></span></a>
+      <a class="tocrow" data-go="2"><span class="tn">2</span><span class="tt"><b>무엇을, 어떻게</b><i>잘된 것 하나를 뜯어 복제한다</i></span></a>
+      <a class="tocrow" data-go="3"><span class="tn">3</span><span class="tt"><b>자동화 파이프라인</b><i>다섯 도구를 하나로 합친다</i></span></a>
+    </div>
+    <p class="tocnote">이 노트는 <b>‘AI 콘텐츠 자동화’ 강의</b>를 듣고, 제 방식으로 다시 정리한 개인 학습 기록입니다. 원문·그림이 아니라 제가 새로 쓴 요약입니다.</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 3. 1부 오프너 -->
+  <section class="s open" data-label="플랫폼의 본질"><div class="paper"><div class="pin">
+    <div class="chopen"><span class="chnum">1</span><h2>플랫폼의 본질</h2>
+    <p class="chsub">알고리즘을 이기려 하지 말고, 성질을 안다</p><div class="rule mid"></div></div>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 4. 쇼트폼은 멋 -->
+  <section class="s " data-label="플랫폼의 본질"><div class="paper"><div class="pin">
+    <h3>쇼트폼은 멋이다</h3>
+    <div class="prose">
+      <p>손가락은 <b>0.12초</b>면 다음으로 넘어갑니다. 그 짧은 순간에 붙잡지 못하면, 내용이 아무리 좋아도 끝입니다.</p>
+      <p>그래서 쇼트폼은 설명이 아니라 <b>첫 동작</b>입니다. 멈칫하게 만드는 한 장면, 궁금하게 만드는 한 마디.</p>
+      <p>길게 말할 생각을 버립니다. 넘기지 못하게 만드는 것, 그게 전부입니다.</p>
+    </div>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 5. 블로그는 횟수 -->
+  <section class="s " data-label="플랫폼의 본질"><div class="paper"><div class="pin">
+    <h3>글은 횟수로 이긴다</h3>
+    <div class="prose">
+      <p>글 한 편의 수명은 생각보다 짧습니다. 검색에 자리 잡기 전까지는 거의 아무도 읽지 않습니다.</p>
+      <p>그래서 블로그는 <b>한 편의 완성도보다 발행 횟수</b>입니다. 자주, 꾸준히 쌓는 쪽이 이깁니다.</p>
+      <p>자동화가 바로 여기서 빛납니다. 사람이 매번 쓰면 지칩니다. <b>공장을 지으면 멈추지 않습니다.</b></p>
+    </div>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 6. 유튜브는 소리 (그림+글) -->
+  <section class="s " data-label="플랫폼의 본질"><div class="paper"><div class="pin">
+    <h3>유튜브는 소리다</h3>
+    <div class="fig"><svg viewBox="0 0 320 150" role="img" aria-label="많은 사람이 화면을 보지 않고 듣는다">
+      <path d="M40 95 a34 34 0 0 1 68 0" class="svg-ink"/>
+      <rect x="34" y="92" width="16" height="30" rx="7" class="svg-ink"/><rect x="98" y="92" width="16" height="30" rx="7" class="svg-ink"/>
+      <path d="M126 70 q10 -4 10 10 v18 q0 14 -10 10" class="svg-amber"/>
+      <path d="M150 64 q16 -6 16 16 v10 q0 22 -16 16" class="svg-amber"/>
+      <path d="M176 58 q22 -8 22 22 v6 q0 30 -22 22" class="svg-amber"/>
+      <circle cx="250" cy="70" r="16" class="svg-ink"/><path d="M234 118 a16 20 0 0 1 32 0" class="svg-ink"/>
+      <path d="M276 66 h22 M276 74 h22" class="svg-amber"/>
+    </svg></div>
+    <div class="prose">
+      <p>많은 사람이 유튜브를 <b>보지 않고 듣습니다.</b> 설거지하며, 걸으며, 일하며 틀어 둡니다.</p>
+      <p>그래서 화면보다 <b>말</b>이 먼저입니다. 눈을 안 봐도 이해되게 만들어야 합니다.</p>
+    </div>
+    <p class="note">화면은 거들 뿐, 전달은 소리가 합니다. 자막·더빙·내 목소리가 중요한 이유입니다.</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 7. 뉴스레터는 소유 (그림+글) -->
+  <section class="s " data-label="플랫폼의 본질"><div class="paper"><div class="pin">
+    <h3>뉴스레터는 소유다</h3>
+    <div class="fig"><svg viewBox="0 0 320 150" role="img" aria-label="알고리즘은 우연, 명단은 확신">
+      <path d="M40 60 a26 18 0 1 1 6 34 h-8 a16 16 0 1 1 2 -32 z" class="svg-ink"/>
+      <rect x="52" y="74" width="16" height="16" rx="3" class="svg-amber" transform="rotate(12 60 82)"/>
+      <circle cx="57" cy="79" r="1.6" class="svg-fi"/><circle cx="63" cy="85" r="1.6" class="svg-fi"/>
+      <text x="86" y="120" font-family="Pretendard,sans-serif" font-size="11" fill="#a39c93">우연</text>
+      <path d="M150 40 v70" stroke="#d6d0c6" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <rect x="196" y="36" width="86" height="80" rx="5" class="svg-ink"/>
+      <path d="M208 56 h8 M208 72 h8 M208 88 h8" class="svg-amber"/>
+      <path d="M224 56 h46 M224 72 h46 M224 88 h30" class="svg-ink"/>
+      <text x="214" y="134" font-family="Pretendard,sans-serif" font-size="11" fill="#6b6560">내 명단</text>
+    </svg></div>
+    <div class="prose">
+      <p>유튜브·인스타의 도달은 <b>알고리즘이 정합니다.</b> 내 것이 아닙니다. 어느 날 갑자기 줄어도 물어볼 곳이 없습니다.</p>
+      <p>뉴스레터의 구독자 명단은 <b>내 것</b>입니다. 플랫폼이 바뀌어도 남습니다.</p>
+    </div>
+    <p class="note">알고리즘은 우연, 명단은 확신. 빌린 땅에만 짓지 말고 내 땅을 가지세요.</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 8. 2부 오프너 -->
+  <section class="s open" data-label="무엇을, 어떻게"><div class="paper"><div class="pin">
+    <div class="chopen"><span class="chnum">2</span><h2>무엇을, 어떻게</h2>
+    <p class="chsub">창작보다 먼저, 해부다</p><div class="rule mid"></div></div>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 9. 잘된 것을 뜯는다 -->
+  <section class="s " data-label="무엇을, 어떻게"><div class="paper"><div class="pin">
+    <h3>먼저 하나를 완전히 뜯는다</h3>
+    <div class="prose">
+      <p>빈 화면에서 시작하지 않습니다. 이미 <b>잘된 것 하나</b>를 고릅니다.</p>
+      <p>조회수나 댓글 수가 아니라 <b>구조</b>를 봅니다. 첫 3초, 전개, 끝맺음.</p>
+      <p>왜 사람들이 멈췄는지, 왜 끝까지 봤는지. 그 이유를 글로 적어 둡니다.</p>
+    </div>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 10. 해부→복제 3단계 (그림+글) -->
+  <section class="s " data-label="무엇을, 어떻게"><div class="paper"><div class="pin">
+    <h3>뜯고, 바꾸고, 다시 짓는다</h3>
+    <div class="fig"><svg viewBox="0 0 320 140" role="img" aria-label="해부 치환 재조립 3단계">
+      <g transform="translate(24,40)"><rect width="56" height="56" rx="4" class="svg-ink"/><path d="M0 28 h56 M28 0 v56" class="svg-ink"/></g>
+      <path d="M92 68 h26" class="svg-amber"/><path d="M112 62 l8 6 -8 6" class="svg-amber"/>
+      <g transform="translate(132,34)"><rect width="26" height="26" rx="3" class="svg-ink"/><rect x="34" y="6" width="26" height="26" rx="3" class="svg-ink"/><rect x="12" y="38" width="26" height="26" rx="3" class="svg-amber"/></g>
+      <path d="M204 68 h26" class="svg-amber"/><path d="M224 62 l8 6 -8 6" class="svg-amber"/>
+      <g transform="translate(240,40)"><rect width="56" height="56" rx="4" class="svg-ink"/><rect x="6" y="6" width="20" height="20" class="svg-amber"/><path d="M0 28 h56" class="svg-ink"/></g>
+    </svg></div>
+    <div class="prose">
+      <p><b>①해부</b> — 잘된 것의 뼈대를 분해합니다. <b>②치환</b> — 그 뼈대에 내 소재를 끼웁니다. <b>③재조립</b> — 내 색으로 다시 세웁니다.</p>
+    </div>
+    <p class="note">따라 하는 건 소재가 아니라 구조입니다.</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 11. 구조를 가져오기 -->
+  <section class="s " data-label="무엇을, 어떻게"><div class="paper"><div class="pin">
+    <h3>베끼기와 배우기는 다르다</h3>
+    <div class="prose">
+      <p>문장을 베끼면 표절입니다. <b>구조를 배우면 실력</b>입니다.</p>
+      <p>잘된 것 열 개를 뜯으면 공통된 뼈대가 보입니다. 그게 나만의 <b>공식</b>이 됩니다.</p>
+      <p>공식이 생기면 자동화할 수 있습니다. 사람이 아니라 <b>틀</b>이 만들기 시작합니다.</p>
+    </div>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 12. 3부 오프너 -->
+  <section class="s open" data-label="자동화 파이프라인"><div class="paper"><div class="pin">
+    <div class="chopen"><span class="chnum">3</span><h2>자동화 파이프라인</h2>
+    <p class="chsub">손으로 하던 걸 코드로 옮긴다</p><div class="rule mid"></div></div>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 13. 내 목소리 만들기 (그림+글) -->
+  <section class="s " data-label="자동화 파이프라인"><div class="paper"><div class="pin">
+    <h3>글을 넣으면 내 목소리로</h3>
+    <div class="fig"><svg viewBox="0 0 320 130" role="img" aria-label="글이 내 목소리 파형으로 바뀐다">
+      <rect x="24" y="36" width="78" height="58" rx="4" class="svg-ink"/>
+      <path d="M36 52 h54 M36 62 h54 M36 72 h40 M36 82 h48" class="svg-ink"/>
+      <path d="M116 65 h26" class="svg-amber"/><path d="M136 59 l8 6 -8 6" class="svg-amber"/>
+      <g transform="translate(160,65)" class="svg-amber">
+        <path d="M0 0 v-8 M10 0 v-22 M20 0 v-14 M30 0 v-30 M40 0 v-18 M50 0 v-26 M60 0 v-10 M70 0 v-20 M80 0 v-14 M90 0 v-24 M100 0 v-8"/>
+        <path d="M0 0 v8 M10 0 v22 M20 0 v14 M30 0 v30 M40 0 v18 M50 0 v26 M60 0 v10 M70 0 v20 M80 0 v14 M90 0 v24 M100 0 v8"/>
+      </g>
+    </svg></div>
+    <div class="prose">
+      <p>자동화의 시작은 <b>목소리</b>입니다. 글만 넣으면 내 목소리로 읽히게 만들어 둡니다.</p>
+      <p>한 번 내 목소리를 학습시키면, 매번 녹음할 필요가 없습니다.</p>
+    </div>
+    <p class="note">녹음 부스가 아니라, 텍스트 한 줄. 영상이 백 개여도 읽는 건 코드입니다.</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 14. 이미지가 먼저 -->
+  <section class="s " data-label="자동화 파이프라인"><div class="paper"><div class="pin">
+    <h3>영상 전에, 이미지부터</h3>
+    <div class="prose">
+      <p>바로 영상을 만들지 않습니다. <b>이미지가 먼저</b>입니다.</p>
+      <p>장면을 이미지로 먼저 잡아 두면, 영상은 그걸 <b>잇는 일</b>이 됩니다. 어려운 일이 쉬운 일로 바뀝니다.</p>
+      <p>이미지 → 영상. 이 순서가 자동화의 뼈대입니다. 순서를 지키면 코드가 단순해집니다.</p>
+    </div>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 15. 영상 자동화 (코드) -->
+  <section class="s " data-label="자동화 파이프라인"><div class="paper"><div class="pin">
+    <h3>손작업을 코드로 옮긴다</h3>
+    <div class="prose">
+      <p>자르고 붙이고 자막 넣는 일을 매번 손으로 하면, 그건 공장이 아닙니다.</p>
+      <p>한 번 <b>코드로 짜 두면</b>, 소재만 바꿔 같은 품질을 반복합니다.</p>
+    </div>
+    <pre>for 소재 in 오늘_만들_것:
+    대본   = 글쓰기(소재)
+    목소리 = 내목소리(대본)
+    장면   = 이미지(대본)
+    영상   = 합치기(장면, 목소리, 자막)
+    발행(영상)   # 유튜브·블로그·뉴스레터 동시에</pre>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 16. 다섯 도구가 하나로 (그림+글) -->
+  <section class="s " data-label="자동화 파이프라인"><div class="paper"><div class="pin">
+    <h3>다섯 도구가 한 프로그램이 된다</h3>
+    <div class="fig"><svg viewBox="0 0 320 150" role="img" aria-label="다섯 도구가 하나의 발행으로 모인다">
+      <g class="svg-ink">
+        <rect x="24" y="20" width="30" height="22" rx="3"/><rect x="24" y="52" width="30" height="22" rx="3"/>
+        <rect x="24" y="84" width="30" height="22" rx="3"/><rect x="24" y="116" width="30" height="22" rx="3"/>
+        <rect x="70" y="68" width="30" height="22" rx="3"/>
+      </g>
+      <path d="M58 31 L150 72 M58 63 L150 74 M58 95 L150 76 M58 127 L150 78 M104 79 L150 78" class="svg-amber"/>
+      <circle cx="168" cy="76" r="22" class="svg-fa"/><circle cx="168" cy="76" r="22" class="svg-ink"/>
+      <path d="M198 76 h30" class="svg-amber"/><path d="M222 70 l8 6 -8 6" class="svg-amber"/>
+      <g transform="translate(238,58)"><rect width="58" height="36" rx="5" class="svg-ink"/><path d="M10 12 l19 11 19 -11" class="svg-ink"/></g>
+    </svg></div>
+    <div class="prose">
+      <p>처음엔 글·그림·목소리·편집·발행이 <b>따로 노는 다섯 도구</b>입니다.</p>
+      <p>하나씩 코드로 연결하면, 결국 <b>버튼 하나</b>가 됩니다.</p>
+    </div>
+    <p class="note">도구를 모으면 작업, 연결하면 공장. 나는 소재만 고르고, 공장이 찍습니다.</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 17. 손작업 vs 자동화 (표) -->
+  <section class="s " data-label="자동화 파이프라인"><div class="paper"><div class="pin">
+    <h3>무엇이 달라지나</h3>
+    <div class="tw"><table>
+      <tr><th>구분</th><th>손작업</th><th>자동화</th></tr>
+      <tr><td><b>한 편 제작</b></td><td>반나절</td><td>몇 분</td></tr>
+      <tr><td><b>품질</b></td><td>그날 컨디션</td><td>항상 같음</td></tr>
+      <tr><td><b>확장</b></td><td>내 시간만큼</td><td>거의 무한</td></tr>
+      <tr><td><b>지속</b></td><td>지친다</td><td>멈추지 않는다</td></tr>
+    </table></div>
+    <p class="note">자동화는 ‘더 빨리’가 아니라 ‘지치지 않고 계속’이 핵심입니다.</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 18. 맺음 / CTA -->
+  <section class="s open" data-label="맺음"><div class="paper"><div class="pin">
+    <div class="chopen"><span class="kick">다음 단계</span>
+    <h2 style="margin-top:14px">이제, 내 공장을 짓는다</h2>
+    <p class="chsub">도구 하나를 코드로 연결하는 것부터. 작게 시작해서, 버튼 하나까지.</p>
+    <a class="cta" href="./guide.html">학습 가이드로 돌아가기 →</a></div>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+</div>
+
+<div id="bar">
+  <button id="prev" aria-label="이전 쪽">‹</button>
+  <select id="jump" aria-label="쪽 이동"></select>
+  <button id="next" aria-label="다음 쪽">›</button>
+</div>
+
+<script>
+function start(){
+  var S=[].slice.call(document.querySelectorAll('.s')),i=0,N=S.length;
+  if(!N) return;
+  var prog=document.getElementById('prog'),jump=document.getElementById('jump'),KEY='ebook_automation_page';
+  S.forEach(function(s,n){
+    var pn=s.querySelector('.pnum'); if(pn) pn.textContent=(n+1)+' / '+N;
+    var o=document.createElement('option'); o.value=n; o.textContent=s.dataset.label||('쪽 '+(n+1)); jump.appendChild(o);
+  });
+  function go(n){
+    n=Math.max(0,Math.min(N-1,n));
+    S[i].classList.remove('on'); i=n; S[i].classList.add('on');
+    var pin=S[i].querySelector('.pin'); if(pin) pin.scrollTop=0;
+    prog.style.width=((i+1)/N*100)+'%'; jump.value=i;
+    try{history.replaceState(null,'','#p'+(i+1));}catch(e){}
+    try{localStorage.setItem(KEY,i);}catch(e){}
+  }
+  document.getElementById('prev').onclick=function(){go(i-1)};
+  document.getElementById('next').onclick=function(){go(i+1)};
+  jump.onchange=function(){go(+jump.value)};
+  addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(i+1);}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1);}
+    if(e.key==='Home')go(0); if(e.key==='End')go(N-1);
+  });
+  var x0=null;
+  addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+  addEventListener('touchend',function(e){
+    if(x0===null)return; var dx=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(dx)>55) go(i+(dx<0?1:-1));
+  },{passive:true});
+  document.querySelectorAll('.tocrow').forEach(function(r){
+    r.onclick=function(){
+      var t=S.findIndex(function(s){return s.classList.contains('open')&&s.querySelector('.chnum')&&s.querySelector('.chnum').textContent===r.dataset.go;});
+      if(t>=0) go(t);
+    };
+  });
+  var m=location.hash.match(/^#p(\d+)$/),saved=null;
+  try{saved=localStorage.getItem(KEY);}catch(e){}
+  go(m?(+m[1]-1):(saved!==null?+saved:0));
+}
+start();
+</script>
+</body>
+</html>
