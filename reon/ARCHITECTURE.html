@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>ARCHITECTURE — 다시ON AI | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="ARCHITECTURE — 다시ON AI" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="ARCHITECTURE — 다시ON AI" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"ARCHITECTURE — 다시ON AI","url":"/reon/ARCHITECTURE.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=70cb4a3cc31b7b02a90b1336ad5c89beff349110">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="architecture--다시on-ai">ARCHITECTURE — 다시ON AI</h1>
+
+<h2 id="1-한-장-요약">1. 한 장 요약</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[브라우저 — 정적 파일(GitHub Pages)]
+ index.html ─ js/app.js (해시 라우터, 세션 상태)
+    │
+    ├─ views/  home → input → analyzing → skills → jobs → gap/:id → training/:id → openings/:id → report, evidence
+    │
+    ├─ engine/ careerAnalyzer ─┬─ adapters/ai.js ──(AI_ENDPOINT 있을 때만)──▶ 본인 서버(키 보관) ──▶ LLM
+    │                          │        └─ 없거나 실패 ▶ skillExtractor(규칙, DEMO 표기)
+    │                          ├─ jobMatcher (Career Transition Score)
+    │                          ├─ gapAnalyzer
+    │                          └─ explanationGenerator (이유 문장 + Evidence)
+    │
+    ├─ adapters/work24.js ──▶ data/cache/*.json (있으면 "고용24 수집 데이터") ── 없으면 ▶ data/training.js, openings.js (DEMO)
+    │
+    └─ state.js ──▶ sessionStorage (서버 저장 없음)
+
+[서버측(선택) — GitHub Actions]
+ scripts/fetch_work24.py + WORK24_API_KEY(Secret) ──▶ 고용24 OPEN-API ──▶ data/cache/{training,openings}.json 커밋
+</code></pre></div></div>
+
+<h2 id="2-왜-이-구조인가">2. 왜 이 구조인가</h2>
+<ul>
+  <li>저장소가 GitHub Pages 정적 호스팅이라 서버 코드가 없다. 인증키가 필요한 공공 API는 브라우저에서 직접 부르면 키가 노출되므로, <strong>수집 스크립트 → 캐시 JSON → 화면</strong> 구조로 분리했다.</li>
+  <li>빌드 단계 없이(바닐라 JS, ES 모듈) 동작해 심사·수정·배포가 단순하다. 저장소의 다른 하위 사이트와 같은 방식이다.</li>
+  <li>AI 분석기와 규칙 분석기는 <strong>같은 출력 형식</strong>(<code class="language-plaintext highlighter-rouge">{mode, skills:[{id, evidence, from}]}</code>)을 내므로 UI는 동일하고, 화면에 mode 배지만 바뀐다.</li>
+</ul>
+
+<h2 id="3-모듈">3. 모듈</h2>
+<p>| 파일 | 역할 | 입력 → 출력 |
+|—|—|—|
+| <code class="language-plaintext highlighter-rouge">engine/careerAnalyzer.js</code> | 파이프라인 진입점 | input → analysis / profile → ranked jobs / gap |
+| <code class="language-plaintext highlighter-rouge">engine/skillExtractor.js</code> | 규칙 기반 역량 추출(DEMO) | text, quals → <code class="language-plaintext highlighter-rouge">[{id, hits, evidence[], from}]</code> |
+| <code class="language-plaintext highlighter-rouge">engine/jobMatcher.js</code> | Career Transition Score | profile → <code class="language-plaintext highlighter-rouge">[{jobId, score, parts{transfer,prefs,barrier,outlook,access}}]</code> |
+| <code class="language-plaintext highlighter-rouge">engine/gapAnalyzer.js</code> | 갖춤/보완/자격(필수·권장) | job, profile → <code class="language-plaintext highlighter-rouge">{have, improve, requiredQuals, recommendedQuals, blocked}</code> |
+| <code class="language-plaintext highlighter-rouge">engine/explanationGenerator.js</code> | 이유 문장·Evidence | job, match → <code class="language-plaintext highlighter-rouge">{why, strengths, improve}</code> / session → evidence |
+| <code class="language-plaintext highlighter-rouge">adapters/ai.js</code> | 원격 AI ↔ 규칙 분석기 | text → <code class="language-plaintext highlighter-rouge">{mode:'ai'|'demo', skills, error}</code> |
+| <code class="language-plaintext highlighter-rouge">adapters/work24.js</code> | 고용24 캐시 ↔ DEMO | → <code class="language-plaintext highlighter-rouge">{source:{mode:'live'|'demo', …}, items}</code> |
+| <code class="language-plaintext highlighter-rouge">state.js</code> | 세션 상태 | sessionStorage <code class="language-plaintext highlighter-rouge">reon.session.v1</code> |</p>
+
+<h2 id="4-점수career-transition-score">4. 점수(Career Transition Score)</h2>
+<p>| 요소 | 가중치 | 현재 데모 | 계산 |
+|—|—|—|—|
+| 전이역량 유사도 | 40% | 반영 | 일치 핵심역량 가중합 / 직무 핵심역량 가중합 + 보조역량 보너스(최대 0.15) |
+| 희망조건 적합도 | 20% | 반영 | 근무시간·근무형태 선호 ↔ 직무 일반 근무 패턴(수기 정리). 희망임금 미반영 |
+| 진입장벽 | 15% | 반영 | 필수 자격 보유 여부 × 교육 의향 × 직무 진입장벽 수준 |
+| 직업전망·노동시장 | 15% | <strong>미반영</strong> | 고용24 직업정보 상세 연결 예정 |
+| 지역·근무형태 접근성 | 10% | <strong>미반영</strong> | 지역별 채용 밀도 데이터 없음 |
+미반영 요소는 적용 가중치 합(75%)으로 재정규화. 화면의 “점수는 어떻게 계산했나요?” 와 Evidence 페이지에 그대로 표시.</p>
+
+<h2 id="5-데이터-파일">5. 데이터 파일</h2>
+<p>| 파일 | 건수 | 성격 |
+|—|—|—|
+| <code class="language-plaintext highlighter-rouge">data/skills.js</code> | 역량 40 · 자격 12 | 수기 정리 사전(키워드 규칙 포함) |
+| <code class="language-plaintext highlighter-rouge">data/jobs.js</code> | 직무 18 | 수기 정리. 핵심·보조 역량, 필수·권장 자격(공식 링크), 근무 패턴, 진입장벽 |
+| <code class="language-plaintext highlighter-rouge">data/training.js</code> | 16 | DEMO(고용24 훈련과정 API 항목에 맞춘 구조) |
+| <code class="language-plaintext highlighter-rouge">data/openings.js</code> | 25 | DEMO(고용24 채용정보 API 항목에 맞춘 구조, 원문 없음) |
+| <code class="language-plaintext highlighter-rouge">data/personas.js</code> | 5 | 가상 사례 |
+| <code class="language-plaintext highlighter-rouge">data/regions.js</code> | 17 시도 | <code class="language-plaintext highlighter-rouge">dolbom/assets/regions.js</code> 복사 |
+| <code class="language-plaintext highlighter-rouge">data/cache/*.json</code> | 0 | 수집 전 빈 캐시 |</p>
+
+<h2 id="6-라우팅상태-보호">6. 라우팅·상태 보호</h2>
+<ul>
+  <li>해시 라우트. 분석 전에 <code class="language-plaintext highlighter-rouge">#/jobs</code> 등으로 들어오면 <code class="language-plaintext highlighter-rouge">#/input</code> 으로 안내(막히는 화면 없음).</li>
+  <li>새로고침해도 sessionStorage 로 복원. “내 기록 지우기”로 전부 삭제.</li>
+</ul>
+
+<h2 id="7-접근성">7. 접근성</h2>
+<p>기본 글자 18px(가+/가++ 전환, localStorage), 버튼 최소 44~50px, 포커스 링, <code class="language-plaintext highlighter-rouge">aria-live</code> 로딩 안내, <code class="language-plaintext highlighter-rouge">aria-current</code> 단계 표시, 키보드로 전 과정 진행 가능, 390px 가로 스크롤 0px(QA 확인), 인쇄용 CSS.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

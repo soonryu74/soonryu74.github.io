@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>IMPLEMENTATION_PLAN — 다시ON AI MVP | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="IMPLEMENTATION_PLAN — 다시ON AI MVP" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="IMPLEMENTATION_PLAN — 다시ON AI MVP" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"IMPLEMENTATION_PLAN — 다시ON AI MVP","url":"/reon/IMPLEMENTATION_PLAN.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=70cb4a3cc31b7b02a90b1336ad5c89beff349110">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="implementation_plan--다시on-ai-mvp">IMPLEMENTATION_PLAN — 다시ON AI MVP</h1>
+
+<p>작성일 2026-10-06. REON_AUDIT.md의 결정을 실행 단계로 옮긴 계획.</p>
+
+<h2 id="0-범위">0. 범위</h2>
+<p>심사위원이 <code class="language-plaintext highlighter-rouge">/reon/</code>에서 회원가입 없이 3분 안에
+경력 입력 → AI 경력 번역 → 전환직무 TOP3 → 역량 Gap → 교육훈련 → 채용정보 → 전환 리포트
+를 끝까지 체험. 가짜 API·가짜 통계 없음. DEMO 데이터는 화면에 DEMO 표기.</p>
+
+<h2 id="1-파일-구조">1. 파일 구조</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>reon/
+├─ index.html                 단일 페이지 앱(해시 라우터)
+├─ demo.html                  심사위원 모드 진입(?demo=judge로 리다이렉트)
+├─ css/reon.css               디자인 시스템(따뜻한 오렌지·딥틸·크림, 큰 글자)
+├─ js/app.js                  라우터·상태·화면 조립
+├─ js/state.js                세션 상태(sessionStorage), 초기화
+├─ js/views/*.js              home, input, skills, jobs, gap, training, openings, report, evidence
+├─ js/engine/
+│   ├─ careerAnalyzer.js      파이프라인 진입점(원격 AI ↔ DEMO fallback, 모드 표기)
+│   ├─ skillExtractor.js      자연어 → 역량 태그(키워드 사전, 결정론적)
+│   ├─ jobMatcher.js          Career Transition Score(가중치 명시, 미반영 요소 표시)
+│   ├─ gapAnalyzer.js         보유/보완/필수자격 3분류
+│   └─ explanationGenerator.js "왜 추천했나" 문장·Evidence 생성
+├─ js/adapters/
+│   ├─ work24.js              고용24 OPEN API 어댑터(키 없으면 not_connected + 공식 링크)
+│   └─ ai.js                  원격 AI 어댑터(AI_ENDPOINT, 키는 서버에)
+├─ data/
+│   ├─ skills.js              역량 사전(태그·동의어·키워드)
+│   ├─ jobs.js                전환직무 사전(역량 요구·필수/권장 자격·출처 링크)
+│   ├─ training.js            훈련과정 DEMO(구조는 고용24 훈련과정 API 필드와 정렬)
+│   ├─ openings.js            채용 DEMO + 공식 검색 링크 생성기
+│   ├─ personas.js            Persona A/B/C + QA용 2종
+│   └─ regions.js             시도·시군구(dolbom/assets/regions.js 복사)
+├─ scripts/
+│   ├─ screenshots.mjs        Playwright 스크린샷 10장 생성
+│   ├─ qa.mjs                 Persona 5종 E2E(노드에서 엔진 직접 실행 + 브라우저 흐름)
+│   └─ fetch_work24.py        (구조) 키가 있으면 훈련·채용을 수집해 data/cache/*.json 생성
+├─ evidence/screenshots/      01_home … 10_mobile
+├─ .env.example
+└─ README.md, REON_AUDIT.md, IMPLEMENTATION_PLAN.md, DATA_SOURCES.md,
+   ARCHITECTURE.md, QA_REPORT.md, DEMO_SCRIPT.md, SUBMISSION_NOTES.md
+</code></pre></div></div>
+
+<h2 id="2-단계별-작업-우선순위">2. 단계별 작업 (우선순위)</h2>
+<p>| 순서 | 우선 | 작업 | 완료 조건 |
+|—|—|—|—|
+| 1 | P0 | 디자인 시스템 + 라우터 + 상태 | 모든 단계 화면 간 이동, 새로고침 후 상태 유지 |
+| 2 | P0 | 역량 사전·직무 사전 데이터 | 직무 12개 이상, 역량 30개 이상, 각 직무에 출처 링크 |
+| 3 | P0 | skillExtractor + 사용자 수정/삭제/추가 UI | Persona 3종 입력 시 5~10개 역량 추출 |
+| 4 | P0 | jobMatcher + explanationGenerator | TOP3 + 적합도 + 이유 문장 + 강점/보완 |
+| 5 | P0 | gapAnalyzer 화면 | 갖춘 것/보완/필수자격 3분류, 필수·권장 구분 |
+| 6 | P1 | 훈련 연결(DEMO 표기 + 공식 검색 링크) | 과정명·기관·지역·기간·방식·관련역량 |
+| 7 | P1 | 채용 연결(DEMO 표기 + 고용24 검색 링크) | 가짜를 실제처럼 보이지 않게 |
+| 8 | P1 | Evidence 패널 | 입력·역량·비교 직무·조건·출처 표시 |
+| 9 | P2 | 리포트(인쇄/PDF) + 다음 행동 3가지 | 브라우저 인쇄로 PDF 저장 |
+| 10 | P2 | 심사위원 모드, 스크린샷, QA, 문서 | 10장 스크린샷, QA_REPORT 5 Persona |</p>
+
+<h2 id="3-점수-설계career-transition-score">3. 점수 설계(Career Transition Score)</h2>
+<ul>
+  <li>전이역량 유사도 40%: 사용자 역량 태그 ∩ 직무 핵심역량(가중 합) / 직무 핵심역량 가중 합</li>
+  <li>희망조건 적합도 20%: 근무형태·근무시간 선호와 직무 일반 근무 패턴 일치(직무 사전에 정의)</li>
+  <li>진입장벽 15%: 필수 자격 없음=만점, 필수 자격 있으나 미보유=감점(교육 의향 있으면 완화)</li>
+  <li>직업전망·노동시장 15%: <strong>현재 데모에서는 반영하지 않음</strong>(고용24 직업정보 상세 연결 예정) → 화면 표시, 가중치는 나머지로 재정규화</li>
+  <li>지역·근무형태 접근성 10%: 희망지역 입력 시 직무의 “전국 분포” 속성으로만 판단, 실제 채용 밀도 데이터 없음 → “데이터 연결 예정” 표시</li>
+</ul>
+
+<h2 id="4-금지-준수-체크">4. 금지 준수 체크</h2>
+<ul>
+  <li>존재하지 않는 API 금지 → DATA_SOURCES.md에 확인된 것만 기록, 미확인은 “미확인” 표기</li>
+  <li>가짜 채용 금지 → DEMO 배지 + “실제 공고 아님” 문구 + 고용24 검색 링크</li>
+  <li>로그인 없음, Coming Soon 없음, 기능 없는 버튼 없음</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
