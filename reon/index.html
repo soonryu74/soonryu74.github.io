@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>다시ON AI — 경력을 다시 켜다</title>
+<meta name="description" content="구직자가 직업 이름을 몰라도 됩니다. 다시ON AI가 지금까지의 삶과 경력을 다음 일자리의 언어로 번역합니다. 경력 입력 → AI 경력 번역 → 전환직무 TOP3 → 역량 Gap → 훈련 → 채용.">
+<meta property="og:title" content="다시ON AI — 경력을 다시 켜다">
+<meta property="og:description" content="지금까지 해온 일, 다음 직업의 자산이 됩니다. 3분 만에 내 다음 직업 찾기.">
+<meta name="theme-color" content="#d9622b">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="css/reon.css">
+<script src="js/config.js"></script>
+</head>
+<body>
+<a class="sr-only" href="#app">본문으로 건너뛰기</a>
+<header class="site-header">
+  <div class="nav-inner">
+    <a class="brand" href="#/"><span class="mark" aria-hidden="true">ON</span><span>다시ON AI</span><span class="sub">경력을 다시 켜다</span></a>
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <a href="#/">홈</a>
+      <a href="#/input">시작하기</a>
+      <a href="demo.html">심사위원 데모</a>
+      <button type="button" class="fs-btn" id="fs-toggle" aria-label="글자 크기 바꾸기">가+</button>
+      <button type="button" id="clear-btn">내 기록 지우기</button>
+    </nav>
+  </div>
+</header>
+<div id="judge-bar" class="judge-bar" hidden></div>
+<nav id="stepper" class="stepper" hidden></nav>
+<main id="app" class="wrap" tabindex="-1">
+  <noscript><div class="notice notice-warn">이 서비스는 자바스크립트가 켜져 있어야 동작합니다.</div></noscript>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span><b>다시ON AI</b> · 2026 고용24 국민참여 AI 고용서비스 발굴 온라인 해커톤 출품용 MVP</span>
+    <span>입력 내용은 서버에 저장되지 않습니다(브라우저 세션에만 보관).</span>
+    <span>DEMO 표시가 있는 정보는 실제 데이터가 아닙니다.</span>
+    <span><a href="README.md">문서</a> · <a href="DATA_SOURCES.md">데이터 출처</a></span>
+  </div>
+</footer>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
