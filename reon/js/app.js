@@ -12,6 +12,7 @@ import * as training from './views/training.js';
 import * as openings from './views/openings.js';
 import * as report from './views/report.js';
 import * as evidence from './views/evidence.js';
+import * as about from './views/about.js';
 
 const STEPS = [
   { key: 'input', label: '경력 입력', href: '#/input' },
@@ -34,6 +35,7 @@ const ROUTES = [
   { re: /^#\/openings\/([a-z0-9_]+)$/, key: 'openings', view: openings, needs: 'skills' },
   { re: /^#\/report$/, key: 'report', view: report, needs: 'skills' },
   { re: /^#\/evidence$/, key: 'evidence', view: evidence, needs: 'skills' },
+  { re: /^#\/about$/, key: 'about', view: about, needs: null },
 ];
 
 const app = document.getElementById('app');

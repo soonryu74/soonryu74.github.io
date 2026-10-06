@@ -51,6 +51,9 @@ for (const vp of [{ width: 1280, height: 860 }, { width: 390, height: 844 }]) {
       const jobId = (await page.getAttribute('[data-rank="1"]', 'data-testid')).replace('job-', '');
       await page.click(`[data-testid="select-${jobId}"]`);
       await page.waitForSelector('[data-testid="gap-quals"]');
+      const evCount = await page.locator('[data-testid="gap-evidence"] li').count();
+      if (evCount < 1) throw new Error('직무 요건 근거 없음');
+      r.steps.push(`요건근거 ${evCount}건`);
       const have = await page.locator('[data-testid="gap-have"] li').count();
       const improve = await page.locator('[data-testid="gap-improve"] li').count();
       r.steps.push(`Gap 갖춤${have}/보완${improve}`);
@@ -70,7 +73,12 @@ for (const vp of [{ width: 1280, height: 860 }, { width: 390, height: 844 }]) {
       await page.waitForSelector('[data-testid="ev-compare"]');
       const compared = await page.locator('[data-testid="ev-compare"] tbody tr').count();
       r.steps.push(`근거 비교직무 ${compared}`);
-      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      await page.goto(BASE + '#/about');
+      await page.waitForSelector('#app h1');
+      const aboutOverflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      await page.goto(BASE + '#/evidence');
+      await page.waitForSelector('[data-testid="ev-compare"]');
+      const overflow = Math.max(aboutOverflow, await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth));
       r.steps.push(`가로넘침 ${overflow}px`);
       if (overflow > 1) throw new Error('가로 스크롤 발생');
       if (errors.length) throw new Error('브라우저 오류: ' + errors.join(' | '));

@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"QA_REPORT — 다시ON AI MVP","url":"/reon/QA_REPORT.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=70cb4a3cc31b7b02a90b1336ad5c89beff349110">
+    <link rel="stylesheet" href="/assets/css/style.css?v=7623e2921479ef295053d56772f772021379915f">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -40,10 +40,10 @@
       <h1 id="qa_report--다시on-ai-mvp">QA_REPORT — 다시ON AI MVP</h1>
 
 <ul>
-  <li>실행일: 2026-10-06</li>
+  <li>실행일: 2026-10-06 (근거 보강 후 재실행)</li>
   <li>도구: Playwright 1.56.1 + Chromium(헤드리스), 뷰포트 1280×860 / 390×844(모바일)</li>
   <li>스크립트: <code class="language-plaintext highlighter-rouge">reon/scripts/qa.mjs</code>(Persona 5종), <code class="language-plaintext highlighter-rouge">reon/scripts/qa_judge.mjs</code>(심사위원 모드), <code class="language-plaintext highlighter-rouge">reon/scripts/engine_check.mjs</code>(엔진 단독)</li>
-  <li>각 Persona 흐름: 입력 → 분석 → 역량 확인(1개 삭제 + 1개 추가로 수정 기능 검증) → TOP3(이유 문장 존재 확인) → 1위 직무 선택 → Gap → 훈련(DEMO 표기 확인) → 채용(DEMO 표기 확인) → 리포트(다음 행동 3가지) → Evidence(비교 직무 18개) → 가로 스크롤 0px → 브라우저 오류 0건</li>
+  <li>각 Persona 흐름: 입력 → 분석 → 역량 확인(1개 삭제 + 1개 추가로 수정 기능 검증) → TOP3(이유 문장 존재 확인) → 1위 직무 선택 → Gap(직무 요건 근거 1건 이상 확인) → 훈련(DEMO 표기 확인) → 채용(DEMO 표기 확인) → 리포트(다음 행동 3가지) → 근거·한계 페이지 → Evidence(비교 직무 18개) → 가로 스크롤 0px → 브라우저 오류 0건</li>
 </ul>
 
 <h2 id="결과-1010-통과-persona-5--뷰포트-2--심사위원-모드-통과">결과: 10/10 통과 (Persona 5 × 뷰포트 2) + 심사위원 모드 통과</h2>
@@ -179,7 +179,8 @@
 | 필수 자격 미보유 직무에 경고 표시(AI가 적합 판정을 대신하지 않음) | 통과(Persona C 안전관리자) |
 | 미반영 점수 요소에 “미반영/데이터 연결 예정” 표시 | 통과 |
 | 훈련·채용 DEMO 배지 및 “실제 아님” 문구, 원문 링크 없음 명시 | 통과 |
-| 모바일 390px 가로 스크롤 | 0px(10개 화면 모두) |
+| 모바일 390px 가로 스크롤 | 0px(11개 화면 모두, 근거·한계 페이지 포함) |
+| 직무별 요건 근거(법령·공식·공고) 표시 | 통과(18개 직무 모두 1건 이상) |
 | 새로고침 후 상태 유지(sessionStorage) | 통과(수동 확인) |
 | 인쇄 CSS(헤더·단계·버튼 숨김) | 통과(수동 확인) |
 | 브라우저 콘솔 오류 | 0건(외부 폰트 CDN 차단에 따른 네트워크 오류는 개발 환경 한정) |</p>

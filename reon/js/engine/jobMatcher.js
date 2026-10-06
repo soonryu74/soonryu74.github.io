@@ -43,7 +43,7 @@ function prefsScore(job, prefs) {
 
 function barrierScore(job, qualSet, training) {
   const required = job.quals.filter((q) => q.required);
-  const missing = required.filter((q) => !qualSet.has(q.id));
+  const missing = required.filter((q) => !(q.anyOf ? q.anyOf.some((id) => qualSet.has(id)) : qualSet.has(q.id)));
   let req = 1;
   let note = required.length ? '필수 자격 보유' : '법정 필수 자격 없음';
   if (missing.length) {

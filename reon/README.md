@@ -38,14 +38,19 @@
 | 엔진 단독 검증 | `node reon/scripts/engine_check.mjs` | `node reon\scripts\engine_check.mjs` |
 | Persona 5종 E2E QA | `npm i playwright@1.56.1` 후 `node reon/scripts/qa.mjs` | 동일(`npx playwright install chromium` 필요할 수 있음) |
 | 심사위원 모드 E2E | `node reon/scripts/qa_judge.mjs` | 동일 |
-| 증거 스크린샷 10장 | `node reon/scripts/screenshots.mjs` | 동일 |
+| 증거 스크린샷 11장 | `node reon/scripts/screenshots.mjs` | 동일 |
 
 `file://` 로 직접 열면 ES 모듈 정책 때문에 동작하지 않습니다. 반드시 서버로 여세요.
 
 ## 환경변수·API
 - 키는 소스에 넣지 않습니다. `reon/.env.example` 참고.
-- `WORK24_API_KEY`: 고용24 OPEN-API 인증키(서버·GitHub Actions 전용). `reon/scripts/fetch_work24.py` 가 채용·훈련을 수집해 `reon/data/cache/*.json` 에 저장하면 화면이 자동으로 "고용24 수집 데이터"로 전환됩니다. 비어 있으면 DEMO 표시.
+- `WORK24_API_KEY`: 고용24 OPEN-API 인증키(서버·GitHub Actions 전용). GitHub Secrets 에 등록하면 `.github/workflows/reon-work24.yml` 이 주 1회(또는 수동 실행) `reon/scripts/fetch_work24.py` 로 채용·훈련을 수집해 `reon/data/cache/*.json` 에 저장하고, 화면이 자동으로 "고용24 수집 데이터"로 전환됩니다. 비어 있으면 DEMO 표시. 발급 절차는 `DATA_SOURCES.md` 끝부분.
 - `AI_ENDPOINT`(`js/config.js`): 경력 서술을 구조화하는 본인 서버 주소(선택). 비우면 브라우저 안 규칙 분석기(DEMO 표시).
+
+## 근거 보기
+- 각 직무의 Gap 화면 → "이 직무 요건의 근거"(법령·공식 안내·채용공고 등급 표시)
+- `#/about` 근거와 한계 — 정책 근거, 추천이 근거한 것, 연결되지 않은 것
+- 상세 조사: `DATA_SOURCES.md`
 
 ## 데이터 구분 (화면 표시 원칙)
 | 표시 | 의미 |
