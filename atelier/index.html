@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>순려의 아틀리에 — 시각 표현 모음</title>
+<meta name="description" content="순려의 아틀리에. AI로 만든 시각 표현(스타일 코드·프롬프트·이미지)을 모아 두는 작업실. 코드와 프롬프트를 바로 복사해 쓸 수 있습니다." />
+<meta property="og:site_name" content="순려의 아틀리에" />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="순려의 아틀리에 — 시각 표현 모음" />
+<meta property="og:description" content="AI로 만든 스타일 코드·프롬프트·이미지를 모아 두는 작업실." />
+<meta property="og:url" content="https://soonryu74.github.io/atelier/" />
+<link rel="canonical" href="https://soonryu74.github.io/atelier/" />
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #f3efe7; --bg2: #ebe6db; --paper: #fbf9f4; --ink: #1d1b17; --ink2: #5d584f; --ink3: #8d877c;
+  --line: #d9d2c4; --accent: #b4432c; --accent2: #f1dbc9; --tag: #e9e3d6;
+  --shadow: 0 18px 50px rgba(40, 30, 10, .14);
+  font-family: 'Noto Sans KR', sans-serif; color: var(--ink); background: var(--bg); font-synthesis: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161411; --bg2: #1f1c17; --paper: #221f1a; --ink: #efe9dd; --ink2: #b3aa9a; --ink3: #7f786c;
+    --line: #342f27; --accent: #e07a5f; --accent2: #3a2a22; --tag: #2c2822; --shadow: 0 18px 50px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161411; --bg2: #1f1c17; --paper: #221f1a; --ink: #efe9dd; --ink2: #b3aa9a; --ink3: #7f786c;
+  --line: #342f27; --accent: #e07a5f; --accent2: #3a2a22; --tag: #2c2822; --shadow: 0 18px 50px rgba(0,0,0,.5);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; background: var(--bg); color: var(--ink); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+.modalOpen { overflow: hidden; }
+.serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; }
+
+.topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 64px; padding: 0 max(20px, calc((100vw - 1320px) / 2)); border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(16px); }
+.brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; }
+.brand .mark { font: 600 26px/1 'Cormorant Garamond', serif; letter-spacing: -.02em; }
+.brand .mark i { font-style: italic; color: var(--accent); }
+.brand small { color: var(--ink3); font-size: 12px; font-weight: 500; }
+.topLinks { display: flex; align-items: center; gap: 6px; }
+.topLinks a, .topLinks button { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border: 1px solid transparent; border-radius: 999px; background: none; color: var(--ink2); font-size: 12px; font-weight: 700; text-decoration: none; }
+.topLinks a:hover, .topLinks button:hover { border-color: var(--line); background: var(--paper); }
+.topLinks button.on { border-color: var(--accent); color: var(--accent); background: var(--accent2); }
+.topLinks b { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 10px; }
+
+main { width: min(1320px, calc(100% - 40px)); margin: 0 auto; padding-bottom: 90px; }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; align-items: end; padding: 70px 0 44px; border-bottom: 1px solid var(--line); }
+.eyebrow { margin: 0 0 16px; color: var(--accent); font: 700 11px 'DM Sans', sans-serif; letter-spacing: .22em; text-transform: uppercase; }
+.hero h1 { margin: 0; font: 500 clamp(44px, 7vw, 96px)/1 'Cormorant Garamond', serif; letter-spacing: -.02em; }
+.hero h1 i { font-style: italic; color: var(--accent); }
+.hero h1 span { display: block; margin-top: 10px; font: 500 clamp(18px, 2.2vw, 26px)/1.4 'Noto Sans KR', sans-serif; color: var(--ink2); letter-spacing: -.01em; }
+.heroCopy { max-width: 640px; margin: 22px 0 0; color: var(--ink2); font-size: 15px; line-height: 1.85; word-break: keep-all; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat { padding: 16px 18px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
+.stat strong { display: block; font: 600 30px/1 'Cormorant Garamond', serif; white-space: nowrap; }
+.stat strong.sm { font-size: 22px; }
+.stat span { display: block; margin-top: 6px; color: var(--ink3); font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+
+.toolbar { position: sticky; top: 64px; z-index: 15; display: flex; flex-direction: column; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 93%, transparent); backdrop-filter: blur(16px); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { height: 32px; padding: 0 13px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--ink2); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.chip.on { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.chips.tags .chip { height: 28px; padding: 0 11px; font-size: 11px; font-weight: 500; background: transparent; }
+.chips.tags .chip.on { background: var(--accent2); border-color: var(--accent); color: var(--accent); }
+.searchBox { display: flex; align-items: center; gap: 8px; width: min(360px, 100%); height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink3); }
+.searchBox:focus-within { border-color: var(--ink); }
+.searchBox input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; }
+.searchBox input::placeholder { color: var(--ink3); }
+.searchBox button { display: grid; place-items: center; padding: 3px; border: 0; background: none; color: var(--ink3); }
+.searchBox button[hidden] { display: none; }
+.resultMeta { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 18px 0 12px; color: var(--ink3); font-size: 12px; }
+.resultMeta strong { color: var(--ink); }
+.sortSel { height: 34px; padding: 0 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); font-size: 12px; }
+
+.grid { columns: 4 260px; column-gap: 14px; }
+.card { position: relative; display: inline-block; width: 100%; margin: 0 0 14px; break-inside: avoid; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); transition: transform .2s, box-shadow .2s, border-color .2s; }
+.card:hover { transform: translateY(-2px); border-color: var(--ink3); box-shadow: var(--shadow); }
+.card .visual { display: block; width: 100%; padding: 0; border: 0; background: var(--bg2); cursor: zoom-in; }
+.card .visual img { display: block; width: 100%; height: auto; }
+.card .codeTile { display: grid; place-items: center; min-height: 190px; padding: 20px; background: linear-gradient(135deg, var(--accent2), var(--bg2)); color: var(--accent); font: 600 28px 'Cormorant Garamond', serif; letter-spacing: .02em; word-break: break-all; }
+.card .body { padding: 14px 14px 12px; }
+.card .line { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--ink3); font: 700 10px 'DM Sans', sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+.card .line .tool { color: var(--accent); }
+.card h3 { margin: 8px 0 6px; font-size: 14px; font-weight: 700; line-height: 1.5; letter-spacing: -.01em; word-break: keep-all; }
+.card .code { margin: 6px 0 0; font: 600 13px 'DM Sans', monospace; color: var(--ink); word-break: break-all; }
+.card p { display: -webkit-box; overflow: hidden; margin: 6px 0 0; color: var(--ink2); font-size: 12px; line-height: 1.7; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.card .tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 10px; }
+.card .tags span { padding: 3px 7px; border-radius: 999px; background: var(--tag); color: var(--ink2); font-size: 10px; font-weight: 500; }
+.card .foot { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.btn.primary { flex: 1; border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.btn.primary.done { border-color: var(--accent); background: var(--accent); color: #fff; }
+.btn.icon { width: 34px; padding: 0; color: var(--ink3); }
+.btn.icon.on { border-color: var(--accent); color: var(--accent); background: var(--accent2); }
+.empty { display: grid; place-items: center; min-height: 300px; padding: 20px; color: var(--ink3); text-align: center; line-height: 1.8; }
+.empty b { color: var(--ink); }
+
+.modalBackdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: rgba(20, 16, 10, .78); backdrop-filter: blur(8px); }
+.modalBackdrop[hidden] { display: none; }
+.modal { position: relative; display: grid; grid-template-columns: minmax(320px, 1fr) minmax(380px, .9fr); grid-template-rows: minmax(0, 1fr); width: min(1180px, 100%); height: min(calc(100vh - 48px), 860px); overflow: hidden; border-radius: 8px; background: var(--paper); box-shadow: var(--shadow); }
+.modalClose { position: absolute; z-index: 3; top: 12px; right: 12px; display: grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 50%; background: var(--paper); color: var(--ink); box-shadow: 0 2px 10px rgba(0,0,0,.2); }
+.modalVisual { display: flex; align-items: center; justify-content: center; min-height: 0; background: var(--bg2); }
+.modalVisual img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.modalVisual .codeTile { width: 100%; height: 100%; min-height: 420px; font-size: 44px; }
+.modalContent { display: flex; flex-direction: column; min-height: 0; padding: 36px 36px 28px; overflow: auto; }
+.modalContent .line { color: var(--ink3); font: 700 10px 'DM Sans', sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+.modalContent .line .tool { color: var(--accent); }
+.modalContent h2 { margin: 10px 0 14px; font-size: 24px; line-height: 1.35; letter-spacing: -.02em; word-break: keep-all; }
+.modalContent .code { margin: 0 0 14px; padding: 12px 14px; border: 1px dashed var(--accent); border-radius: 4px; background: var(--accent2); color: var(--accent); font: 600 16px 'DM Sans', monospace; word-break: break-all; }
+.full { flex: 1; min-height: 120px; overflow: auto; padding: 16px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.85; white-space: pre-wrap; word-break: break-word; }
+.note { margin: 12px 0 0; color: var(--ink2); font-size: 12px; line-height: 1.7; }
+.modalContent .tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 12px; }
+.modalContent .tags span { padding: 4px 8px; border-radius: 999px; background: var(--tag); color: var(--ink2); font-size: 11px; }
+.modalActions { display: flex; gap: 8px; margin-top: 16px; }
+.modalActions .btn { height: 44px; }
+.modalActions a.btn { text-decoration: none; }
+.toast { position: fixed; left: 50%; bottom: 26px; z-index: 200; transform: translateX(-50%) translateY(20px); padding: 11px 18px; border-radius: 999px; background: var(--ink); color: var(--bg); font-size: 13px; font-weight: 700; opacity: 0; transition: .25s; pointer-events: none; }
+.toast.show { transform: translateX(-50%); opacity: 1; }
+footer { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--ink3); font-size: 12px; line-height: 1.8; text-align: center; }
+svg { flex: none; }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 26px; padding: 44px 0 34px; }
+  .stats { max-width: 420px; }
+  .modal { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); height: calc(100vh - 16px); }
+  .modalVisual { height: 44vh; }
+  .modalVisual .codeTile { min-height: 240px; }
+  .modalContent { padding: 24px 20px 20px; }
+}
+@media (max-width: 600px) {
+  main { width: calc(100% - 32px); }
+  .topbar { padding: 0 16px; }
+  .brand small, .topLinks .hideSm { display: none; }
+  .chips.tags { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  .chips.tags::-webkit-scrollbar { display: none; }
+  .toolbar { position: static; }
+  .grid { columns: 2 150px; column-gap: 10px; }
+  .card { margin-bottom: 10px; }
+  .card .body { padding: 10px 10px 8px; }
+  .card p { display: none; }
+  .modalBackdrop { padding: 8px; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-heart-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+</defs></svg>
+
+<header class="topbar">
+  <a class="brand" href="./">
+    <span class="mark serif">Soonryu's <i>atelier</i></span>
+    <small>시각 표현 모음</small>
+  </a>
+  <div class="topLinks">
+    <button type="button" id="favToggle" title="내 컬렉션만 보기"><svg width="14" height="14"><use href="#i-heart"/></svg><span class="hideSm">내 컬렉션</span> <b id="favCount">0</b></button>
+    <button type="button" id="themeToggle" title="밝게/어둡게"><svg width="14" height="14"><use href="#i-sun"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Atelier · Style codes · Prompts</p>
+      <h1 class="serif">A collection of <i>visual expressions</i><span>AI로 빚은 시각 표현을 한곳에 차곡차곡 모아 둡니다.</span></h1>
+      <p class="heroCopy">스타일 코드(sref)·프롬프트·결과 이미지를 카드 하나로 정리한 작업실입니다. 마음에 드는 카드는 ♥로 내 컬렉션에 담고, 코드나 프롬프트는 버튼 한 번으로 복사해 바로 쓰세요.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><strong id="statTotal">0</strong><span>작품</span></div>
+      <div class="stat"><strong id="statTools">0</strong><span>도구</span></div>
+      <div class="stat"><strong id="statSref">0</strong><span>스타일 코드</span></div>
+      <div class="stat"><strong id="statUpdated" class="sm">—</strong><span>최근 갱신</span></div>
+    </div>
+  </section>
+
+  <section class="toolbar" aria-label="필터">
+    <div class="row">
+      <div class="chips" id="toolChips"></div>
+      <label class="searchBox">
+        <svg width="16" height="16"><use href="#i-search"/></svg>
+        <input id="search" type="search" placeholder="제목·프롬프트·코드·태그 검색" autocomplete="off" />
+        <button type="button" id="searchClear" hidden aria-label="지우기"><svg width="14" height="14"><use href="#i-x"/></svg></button>
+      </label>
+    </div>
+    <div class="chips tags" id="tagChips"></div>
+  </section>
+
+  <div class="resultMeta">
+    <span><strong id="resultCount">0</strong>개 표시</span>
+    <select class="sortSel" id="sort" aria-label="정렬">
+      <option value="new">최신순</option>
+      <option value="old">오래된순</option>
+      <option value="title">제목순</option>
+    </select>
+  </div>
+
+  <section class="grid" id="grid" aria-live="polite"></section>
+  <div class="empty" id="empty" hidden></div>
+
+  <footer>
+    <div>이 작업실의 코드·프롬프트는 자유롭게 가져가 쓰셔도 됩니다. 결과 이미지는 출처를 남겨 주세요.</div>
+    <div>작품 추가 방법: <code>atelier/data/works.json</code>에 한 항목씩 더하고 이미지를 <code>atelier/img/</code>에 넣습니다.</div>
+  </footer>
+</main>
+
+<div class="modalBackdrop" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button type="button" class="modalClose" id="modalClose" aria-label="닫기"><svg width="18" height="18"><use href="#i-x"/></svg></button>
+    <div class="modalVisual" id="modalVisual"></div>
+    <div class="modalContent">
+      <div class="line"><span class="tool" id="modalTool"></span> <span id="modalDate"></span></div>
+      <h2 id="modalTitle"></h2>
+      <div class="code" id="modalCode" hidden></div>
+      <div class="full" id="modalPrompt"></div>
+      <p class="note" id="modalNote" hidden></p>
+      <div class="tags" id="modalTags"></div>
+      <div class="modalActions">
+        <button type="button" class="btn primary" id="modalCopy"><svg width="15" height="15"><use href="#i-copy"/></svg> <span>복사</span></button>
+        <button type="button" class="btn icon" id="modalFav" aria-label="컬렉션에 담기"><svg width="16" height="16"><use href="#i-heart"/></svg></button>
+        <a class="btn icon" id="modalSource" href="#" target="_blank" rel="noopener" aria-label="원본 페이지" hidden><svg width="15" height="15"><use href="#i-link"/></svg></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var DATA_URL = 'data/works.json';
+  var TOOL_LABEL = { midjourney: 'Midjourney', 'gpt-image': 'GPT Image', 'nano-banana': 'Nano Banana', imagen: 'Imagen', flux: 'Flux', 'stable-diffusion': 'Stable Diffusion', other: '기타' };
+  var FAV_KEY = 'atelier.favs';
+  var THEME_KEY = 'atelier.theme';
+
+  var works = [], favs = loadFavs(), state = { tool: 'all', tag: '', q: '', favOnly: false, sort: 'new' }, current = null;
+  var $ = function (id) { return document.getElementById(id); };
+  var els = { grid: $('grid'), empty: $('empty'), toolChips: $('toolChips'), tagChips: $('tagChips'), search: $('search'), searchClear: $('searchClear'), resultCount: $('resultCount'), sort: $('sort'), favToggle: $('favToggle'), favCount: $('favCount'), modal: $('modal'), modalVisual: $('modalVisual'), modalTool: $('modalTool'), modalDate: $('modalDate'), modalTitle: $('modalTitle'), modalCode: $('modalCode'), modalPrompt: $('modalPrompt'), modalNote: $('modalNote'), modalTags: $('modalTags'), modalCopy: $('modalCopy'), modalFav: $('modalFav'), modalSource: $('modalSource'), modalClose: $('modalClose'), toast: $('toast') };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function loadFavs() { try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch (e) { return []; } }
+  function saveFavs() { try { localStorage.setItem(FAV_KEY, JSON.stringify(favs)); } catch (e) {} els.favCount.textContent = favs.length; }
+  function isFav(id) { return favs.indexOf(id) !== -1; }
+  function toggleFav(id) { var i = favs.indexOf(id); if (i === -1) favs.push(id); else favs.splice(i, 1); saveFavs(); render(); if (current && current.id === id) syncModalFav(); }
+  function toolLabel(w) { return w.model || TOOL_LABEL[w.tool] || w.tool || ''; }
+  function copyText(w) { return w.sref ? ('--sref ' + w.sref + (w.params ? ' ' + w.params : '')) : (w.prompt || ''); }
+  function copyLabel(w) { return w.sref ? '코드 복사' : '프롬프트 복사'; }
+  function toast(msg) { els.toast.textContent = msg; els.toast.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { els.toast.classList.remove('show'); }, 1600); }
+  function copy(text, btn) {
+    var done = function () { toast('복사했습니다'); if (btn) { btn.classList.add('done'); setTimeout(function () { btn.classList.remove('done'); }, 1200); } };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { fallback(text); done(); });
+    else { fallback(text); done(); }
+  }
+  function fallback(text) { var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); }
+
+  function visual(w, big) {
+    if (w.image) return '<img src="' + esc(w.image) + '" alt="' + esc(w.title) + '"' + (big ? '' : ' loading="lazy"') + ' />';
+    return '<div class="codeTile serif">' + (w.sref ? '--sref ' + esc(w.sref) : esc(w.title)) + '</div>';
+  }
+
+  function filtered() {
+    var q = state.q.trim().toLowerCase();
+    var list = works.filter(function (w) {
+      if (state.favOnly && !isFav(w.id)) return false;
+      if (state.tool !== 'all' && w.tool !== state.tool) return false;
+      if (state.tag && (w.tags || []).indexOf(state.tag) === -1) return false;
+      if (q) {
+        var hay = [w.title, w.prompt, w.sref, w.params, w.note, w.model, (w.tags || []).join(' ')].join(' ').toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+    if (state.sort === 'old') list = list.slice().reverse();
+    else if (state.sort === 'title') list = list.slice().sort(function (a, b) { return String(a.title).localeCompare(String(b.title), 'ko'); });
+    return list;
+  }
+
+  function card(w) {
+    var fav = isFav(w.id);
+    return '<article class="card" data-id="' + esc(w.id) + '">' +
+      '<button type="button" class="visual" data-open="' + esc(w.id) + '">' + visual(w) + '</button>' +
+      '<div class="body">' +
+        '<div class="line"><span class="tool">' + esc(toolLabel(w)) + '</span><span>' + esc(w.date || '') + '</span></div>' +
+        '<h3>' + esc(w.title) + '</h3>' +
+        (w.sref ? '<div class="code">--sref ' + esc(w.sref) + (w.params ? ' ' + esc(w.params) : '') + '</div>' : '') +
+        (w.prompt && !w.sref ? '<p>' + esc(w.prompt) + '</p>' : '') +
+        (w.tags && w.tags.length ? '<div class="tags">' + w.tags.map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('') + '</div>' : '') +
+        '<div class="foot">' +
+          '<button type="button" class="btn primary" data-copy="' + esc(w.id) + '"><svg width="14" height="14"><use href="#i-copy"/></svg> ' + copyLabel(w) + '</button>' +
+          '<button type="button" class="btn icon' + (fav ? ' on' : '') + '" data-fav="' + esc(w.id) + '" aria-label="컬렉션"><svg width="15" height="15"><use href="#' + (fav ? 'i-heart-fill' : 'i-heart') + '"/></svg></button>' +
+        '</div>' +
+      '</div></article>';
+  }
+
+  function render() {
+    var list = filtered();
+    els.resultCount.textContent = list.length;
+    els.grid.innerHTML = list.map(card).join('');
+    els.empty.hidden = list.length > 0;
+    if (!list.length) els.empty.innerHTML = state.favOnly && !favs.length ? '<div>아직 담은 작품이 없습니다.<br>카드의 <b>♥</b>를 눌러 내 컬렉션을 만들어 보세요.</div>' : '<div>조건에 맞는 작품이 없습니다.</div>';
+  }
+
+  function renderChips() {
+    var tools = {}; works.forEach(function (w) { tools[w.tool] = (tools[w.tool] || 0) + 1; });
+    var html = '<button type="button" class="chip' + (state.tool === 'all' ? ' on' : '') + '" data-tool="all">전체 ' + works.length + '</button>';
+    Object.keys(tools).forEach(function (t) { html += '<button type="button" class="chip' + (state.tool === t ? ' on' : '') + '" data-tool="' + esc(t) + '">' + esc(TOOL_LABEL[t] || t) + ' ' + tools[t] + '</button>'; });
+    els.toolChips.innerHTML = html;
+    var tags = {}; works.forEach(function (w) { (w.tags || []).forEach(function (t) { tags[t] = (tags[t] || 0) + 1; }); });
+    var keys = Object.keys(tags).sort(function (a, b) { return tags[b] - tags[a]; }).slice(0, 24);
+    els.tagChips.innerHTML = keys.map(function (t) { return '<button type="button" class="chip' + (state.tag === t ? ' on' : '') + '" data-tag="' + esc(t) + '">#' + esc(t) + '</button>'; }).join('');
+    els.tagChips.hidden = !keys.length;
+  }
+
+  function openModal(id) {
+    var w = works.filter(function (x) { return x.id === id; })[0]; if (!w) return;
+    current = w;
+    els.modalVisual.innerHTML = visual(w, true);
+    els.modalTool.textContent = toolLabel(w);
+    els.modalDate.textContent = w.date || '';
+    els.modalTitle.textContent = w.title;
+    els.modalCode.hidden = !w.sref; els.modalCode.textContent = w.sref ? '--sref ' + w.sref + (w.params ? ' ' + w.params : '') : '';
+    els.modalPrompt.textContent = w.prompt || (w.sref ? '프롬프트 없이 스타일 코드만 쓴 작품입니다.' : '');
+    els.modalPrompt.hidden = !els.modalPrompt.textContent;
+    els.modalNote.hidden = !w.note; els.modalNote.textContent = w.note || '';
+    els.modalTags.innerHTML = (w.tags || []).map(function (t) { return '<span>#' + esc(t) + '</span>'; }).join('');
+    els.modalCopy.querySelector('span').textContent = copyLabel(w);
+    els.modalSource.hidden = !w.source; if (w.source) els.modalSource.href = w.source;
+    syncModalFav();
+    els.modal.hidden = false; document.body.classList.add('modalOpen');
+    if (history.replaceState) history.replaceState(null, '', '#' + encodeURIComponent(w.id));
+  }
+  function syncModalFav() { var on = current && isFav(current.id); els.modalFav.classList.toggle('on', !!on); els.modalFav.innerHTML = '<svg width="16" height="16"><use href="#' + (on ? 'i-heart-fill' : 'i-heart') + '"/></svg>'; }
+  function closeModal() { els.modal.hidden = true; document.body.classList.remove('modalOpen'); current = null; if (history.replaceState) history.replaceState(null, '', location.pathname + location.search); }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-open],[data-copy],[data-fav],[data-tool],[data-tag]'); if (!t) return;
+    if (t.dataset.open) openModal(t.dataset.open);
+    else if (t.dataset.copy) { var w = works.filter(function (x) { return x.id === t.dataset.copy; })[0]; if (w) copy(copyText(w), t); }
+    else if (t.dataset.fav) toggleFav(t.dataset.fav);
+    else if (t.dataset.tool) { state.tool = t.dataset.tool; renderChips(); render(); }
+    else if (t.dataset.tag) { state.tag = state.tag === t.dataset.tag ? '' : t.dataset.tag; renderChips(); render(); }
+  });
+  els.search.addEventListener('input', function () { state.q = els.search.value; els.searchClear.hidden = !state.q; render(); });
+  els.searchClear.addEventListener('click', function () { els.search.value = ''; state.q = ''; els.searchClear.hidden = true; render(); els.search.focus(); });
+  els.sort.addEventListener('change', function () { state.sort = els.sort.value; render(); });
+  els.favToggle.addEventListener('click', function () { state.favOnly = !state.favOnly; els.favToggle.classList.toggle('on', state.favOnly); render(); });
+  els.modalClose.addEventListener('click', closeModal);
+  els.modal.addEventListener('click', function (e) { if (e.target === els.modal) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !els.modal.hidden) closeModal(); });
+  els.modalCopy.addEventListener('click', function () { if (current) copy(copyText(current), els.modalCopy); });
+  els.modalFav.addEventListener('click', function () { if (current) toggleFav(current.id); });
+
+  var themeBtn = $('themeToggle');
+  try { var saved = localStorage.getItem(THEME_KEY); if (saved) document.documentElement.setAttribute('data-theme', saved); } catch (e) {}
+  themeBtn.addEventListener('click', function () {
+    var cur = document.documentElement.getAttribute('data-theme');
+    var dark = cur ? cur === 'dark' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = dark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+  });
+
+  fetch(DATA_URL).then(function (r) { return r.json(); }).then(function (data) {
+    works = (data.works || []).filter(function (w) { return w && w.id; });
+    $('statTotal').textContent = works.length;
+    $('statTools').textContent = Object.keys(works.reduce(function (m, w) { m[w.tool] = 1; return m; }, {})).length;
+    $('statSref').textContent = works.filter(function (w) { return w.sref; }).length;
+    $('statUpdated').textContent = data.updatedAt || '—';
+    saveFavs(); renderChips(); render();
+    var h = decodeURIComponent((location.hash || '').slice(1)); if (h) openModal(h);
+  }).catch(function () {
+    els.empty.hidden = false; els.empty.innerHTML = '<div>작품 목록(<b>data/works.json</b>)을 불러오지 못했습니다.</div>';
+  });
+})();
+</script>
+<script src="/assets/credit.js" defer></script>
+</body>
+</html>
