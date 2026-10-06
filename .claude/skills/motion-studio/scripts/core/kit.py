@@ -9,10 +9,14 @@
   K.ease · K.music · K.sfx · K.enter · K.camera · K.emph · K.kicks   — 기획 · 장면 코드가 참고
   report = check(M)                    점검 보고 (bake --check) — M.KIT · M.PLAN · M.EDIT 를 본다
 """
+import os
 import re
+import sys
 
 import numpy as np
 
+if __package__ in (None, ''):   # python3 <스킬>/scripts/core/kit.py 팝 — 바로 실행해도 되게
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__)))); __package__ = 'core'
 from . import camera, finish as _finish
 
 DUR = {'cut': 0.0, 'flash': 0.24, 'dip': 0.4, 'dissolve': 0.5, 'blur_cut': 0.6, 'burn': 0.7, 'impact': 0.5, 'zoom_cut': 0.5,
@@ -47,7 +51,7 @@ KITS = {
                kicks=['빨리 감기', '앞뒤 흔들기', '되감고 바꿔 보기']),
     '손그림': dict(grade='β', label='손그림 · 종이',
                 cuts={1: ['cover(left)', 'reveal(left)'], 2: ['clock', 'stretch(left)', 'tiles'], 3: ['drop']},
-                camera=['천천히 흐르기', '훑기'], enter=['pop', 'wipe', 'spin_in'],
+                camera=['천천히 흐르기', '훑기'], enter=['pop', 'wipe', 'spin_in', 'draw_on', 'write', 'draw'],
                 emph=['hand_circle', 'underline', 'highlight', 'arrow_draw'], ease='튕김', finish={'grade': 'warm', 'paper': 0.08},
                 music='tale', sfx={'cut': 'whoosh', 'enter': 'mallet', 'emph': 'chime', 'impact': 'hit'},
                 kicks=['결과 먼저 → 되감기', '아니지~ 다시']),
@@ -138,7 +142,7 @@ def check(M, step=0.5, still_s=2.5):
     for i, p in enumerate(plan):
         used = list(p.get('camera', [])) + list(p.get('enter', [])) + list(p.get('emph', []))
         cut = edit.get(i + 1, ('', 0, {}))[0] if (i + 1) in edit else ''
-        out = [u for u in dict.fromkeys(used + ([cut] if cut else [])) if u not in allowed]
+        out = [u for u in dict.fromkeys(used + ([cut] if cut else [])) if u not in allowed and not (u in STRONG_ENTER and p.get('level', 1) == 3)]   # 내려앉기는 세기 3 장면이면 어느 키트든 된다
         note, borrow = [], ''
         if out and p.get('borrow'): borrow = ', '.join(out); borrowed_all += out
         elif out: note.append('키트 밖(이유 없음): ' + ', '.join(out)); issues += len(out)
@@ -147,7 +151,7 @@ def check(M, step=0.5, still_s=2.5):
         if cut and cut == prev_cut: note.append(f'같은 편집 연달아({cut})'); issues += 1
         if len(p.get('emph', [])) > 1: note.append('강조 ' + str(len(p['emph'])) + '개 — 한 장면에 하나'); issues += 1
         if lv < 3 and STRONG_ENTER & set(p.get('enter', [])): note.append('내려앉기는 세기 3 장면만'); issues += 1
-        for e in set(p.get('enter', [])): enter_cnt[e] = enter_cnt.get(e, 0) + 1
+        for e in set(p.get('enter', [])) - set(getattr(M, 'SIGNATURE', [])): enter_cnt[e] = enter_cnt.get(e, 0) + 1   # 스타일 서명(SIGNATURE)은 반복으로 안 센다
         mv = moves.get(i)
         if mv is not None and not mv[0]: note.append(f'카메라 거의 그대로(배율 {mv[1]:.2f}배 · 이동 {mv[2] * 100:.0f}%)')
         if p.get('kick'): kicks += 1
@@ -159,6 +163,8 @@ def check(M, step=0.5, still_s=2.5):
     if n and l3 > max(2, round(n * LEVEL3_MAX)): issues += 1; notes.append(f'⚠ 세기 3이 {n}장면 중 {l3} — 봉우리는 훅 · 킥 · 마무리 정도')
     rep = [f'{e} {c}/{n}' for e, c in enter_cnt.items() if n >= 4 and c > n / 2 and e not in ('fade',)]
     if rep: issues += 1; notes.append('⚠ 같은 등장이 절반 넘는 장면에: ' + ', '.join(rep) + ' — 키트 안에서도 장면마다 바꾼다')
+    if M.KIT == '손그림' and not any({'draw_on', 'write', 'draw'} & set(p.get('enter', [])) for p in plan):
+        notes.append('손그림 키트인데 그려지며(draw_on) · 글씨 쓰기(write)가 한 장면도 없다 — 의도면 그대로 (문제로 세지 않음)')
     still_cam = [i + 1 for i, m in moves.items() if not m[0]]
     if moves and len(still_cam) > len(moves) / 2: issues += 1; notes.append(f'⚠ 카메라가 거의 안 움직이는 장면 {len(still_cam)}/{len(moves)} — 장면마다 화면이 바뀔 만큼 움직이는 카메라를 하나 이상')
     if kicks > 1: issues += 1
@@ -166,7 +172,7 @@ def check(M, step=0.5, still_s=2.5):
     b_sc = sum(1 for p in plan if p.get('borrow'))
     btxt = f'- 빌림: {b_sc}/{n}장면 (벌점 아님 — 이유를 보고 맞는지만 본다)'
     if n and b_sc > n / 2:
-        bk = _best_kit([x for x in borrowed_all if x not in K.allowed()])
+        bk = _best_kit([x for x in borrowed_all if x not in K.allowed() and x not in getattr(M, 'SIGNATURE', [])])
         btxt += ' · 빌림이 많다 → 키트가 내용과 맞는지 한 번 돌아보기' + (f' (빌린 것을 가장 많이 품은 키트: {bk[0]})' if bk and bk[0] != M.KIT else '')
     head = [f'## 점검 보고 — 키트 «{K.label}» ({K.grade}) · 키트는 바닥이지 제한이 아니다', '',
             '이 키트의 이름(기본 움직임 포함): ' + ' · '.join(sorted(allowed)), '',

@@ -14,7 +14,7 @@ return camera.shoot(img, c, (W, H))     # 찍어서 화면 크기로
 - 카메라 `Cam(cx, cy, z, rot)` = 아트보드의 (cx, cy)를 화면 가운데에 · z 배 · rot 도 기울기.
 - `camera.on(요소, img, fill)` = 그 요소가 화면의 fill 만큼 차는 카메라. `dx · dy`(화면 비율)로 살짝 비켜 두면 삼분할 자리.
 - `camera.keys(lt, [(t, Cam, 느낌), …])` — 느낌: `부드럽게`(기본) · `빠르게` · `선형` · `튕김`. **같은 시각을 두 번 적으면 그 순간 컷**.
-- 장면 경계는 `frame(t)`에서 `camera.EDITS[이름](a, b, u)` 또는 효과 사전의 전환으로 잇는다(본보기 `examples/scenes_example.py`).
+- 장면 경계는 `frame(t)`에서 `camera.EDITS[이름](a, b, u)` 또는 효과 사전의 전환으로 잇는다(샘플 `examples/scenes_example.py`).
 
 ## 2. 찍기 — 장면 안
 | 기법 | 쓰는 법 | 잘 맞는 자리 · 주의 |

@@ -14,7 +14,7 @@
   그림  MOTION_ASSETS → <작업 폴더>/재료 — 캔버스 그림 번호(/_blob/<번호>)와 같은 이름 <번호>.<확장자>
 
 읽는 것: 위치 left/top/width/height(px) · background(단색 · linear/radial-gradient) · border-radius · 테두리 ·
-box-shadow · text-shadow · transform rotate/scale(가운데 기준) · opacity · filter: blur · 글자 font-size/weight/line-height/
+padding · border · box-sizing · width 없는 글자 상자 · box-shadow · text-shadow · transform rotate/scale(가운데 기준) · opacity · filter: blur · 글자 font-size/weight/line-height/
 color(투명도 포함)/text-align/font-family/letter-spacing · -webkit-text-stroke · 글자 속 그라데이션(background-clip: text) ·
 <br> 줄바꿈 · 한글 글자 사이 줄바꿈(keep-all 이면 띄어쓰기에서만) · <img> object-fit cover/contain/fill · 화면 밖으로 넘친 요소(잘려 보임).
 아직 못 읽는 것이 디자인에 필요하면 → 여기에 보탠다. 디자인을 엔진에 맞춰 낮추지 않는다.
@@ -192,7 +192,7 @@ class _P(HTMLParser):
     VOID = ('br', 'img', 'input', 'hr', 'meta', 'link')
 
     def __init__(self):
-        super().__init__(); self.stack = []; self.nodes = []; self.root = None; self.in_xdc = 0; self.skip = 0
+        super().__init__(); self.stack = []; self.nodes = []; self.root = None; self.in_xdc = 0; self.skip = 0; self.svg = None; self.gs = []
 
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
@@ -203,22 +203,58 @@ class _P(HTMLParser):
         if tag == 'br':
             if self.stack: self.stack[-1]['text'] += '\n'
             return
+        if self.svg is not None:   # SVG 속 모양 — 요소로 세지 않고 svg 요소에 모은다 (svgline 이 그린다)
+            ctx = self._svgkid(tag, a)
+            if tag not in self.VOID:
+                self.stack.append({'tag': tag, 'style': {}, 'text': '', 'src': None, '_svgkid': True}); self.gs.append(ctx)
+            return
         st = css(a.get('style'))
-        node = {'tag': tag, 'style': st, 'text': '', 'src': a.get('src')}
+        node = {'tag': tag, 'style': st, 'text': '', 'src': a.get('src'), 'data': {k[5:]: v for k, v in a.items() if k.startswith('data-') and v is not None}}
+        if tag == 'svg':
+            vb = [float(v) for v in re.findall(r'-?[\d.]+', a.get('viewbox') or a.get('viewBox') or '')]
+            node['svg'] = {'viewBox': vb if len(vb) == 4 else None, 'kids': [], 'par': a.get('preserveaspectratio', ''),
+                           'hand': a.get('data-hand'), 'handline': a.get('data-handline'), 't': a.get('data-t')}
+            from . import svgline
+            self.gs = [svgline.ctx_root(a)]
+            if 'width' not in st and a.get('width'): st['width'] = a['width'] + ('px' if a['width'].replace('.', '').isdigit() else '')
+            if 'height' not in st and a.get('height'): st['height'] = a['height'] + ('px' if a['height'].replace('.', '').isdigit() else '')
         if self.root is None and 'width' in st and 'height' in st:
             self.root = node
         elif st.get('position') == 'absolute' or tag == 'img':
             self.nodes.append(node)
         if tag not in self.VOID: self.stack.append(node)
+        if tag == 'svg': self.svg = node
+
+    def handle_startendtag(self, tag, attrs):   # <path … /> 같은 닫힌 태그
+        if self.svg is not None and self.in_xdc and not self.skip:
+            self._svgkid(tag, dict(attrs)); return
+        self.handle_starttag(tag, attrs)
+        if tag not in self.VOID: self.handle_endtag(tag)
 
     def handle_endtag(self, tag):
         if tag == 'x-dc': self.in_xdc -= 1; return
         if tag in ('helmet', 'style', 'script') and self.skip: self.skip -= 1; return
-        if self.in_xdc and not self.skip and tag not in self.VOID and self.stack: self.stack.pop()
+        if self.in_xdc and not self.skip and tag not in self.VOID and self.stack:
+            n = self.stack.pop()
+            if n.get('_svgkid') and len(self.gs) > 1: self.gs.pop()
+            if n is self.svg: self.svg = None; self.gs = []
+
+    def _svgkid(self, tag, a):
+        """svg 속 태그 하나 — 묶음(g)에서 물려받은 속성 · 변형 · 투명도를 합쳐 모은다 (svgline.ctx_child)"""
+        from . import svgline
+        ctx = svgline.ctx_child(self.gs[-1] if self.gs else svgline.ctx_root({}), tag, a)
+        if not ctx['hidden']: self.svg['svg']['kids'].append({'tag': tag, 'attrs': ctx['attrs'], 'tf': ctx['tf'], 'op': ctx['op'], 'grp': ctx['grp']})
+        return ctx
 
     def handle_data(self, data):
-        if self.in_xdc and not self.skip and self.stack and data.strip():
+        if self.in_xdc and not self.skip and self.stack and data.strip() and self.svg is None:
             self.stack[-1]['text'] += re.sub(r'\s+', ' ', data)
+
+
+def _hand_of(svg):
+    """svg 의 손맛 — 캔버스 손 선(handline)으로 이미 바꾼 svg 면 선 모양은 그대로 두고 결 · 굵기 변화만 (흔들림을 또 얹지 않는다)"""
+    if not svg or not svg.get('hand'): return None
+    return {'base': svg['hand'], 'wobble': 0.3, 'over': 0.0} if svg.get('handline') else svg['hand']
 
 
 def read_board(path):
@@ -253,12 +289,50 @@ def read_board(path):
              'weight': int(px(s.get('font-weight'), 400)) if s.get('font-weight', '').strip() not in ('bold',) else 700,
              'lh': px(s.get('line-height'), None), 'color': color(s.get('color')) or root['color'],
              'align': s.get('text-align', 'left'), 'family': s.get('font-family') or root['family'],
-             'keep_all': (s.get('word-break') or root['word_break']) == 'keep-all'}
+             'keep_all': (s.get('word-break') or root['word_break']) == 'keep-all',
+             'svg': n.get('svg'), 'hand': _hand_of(n.get('svg')), 'data': n.get('data', {})}
         if e['text_fill']: e['bg'] = None
+        if s.get('border') and not s.get('border-width'):   # border: 5px solid #색 (줄여 쓰기)
+            toks = s['border'].replace(', ', ',').split()
+            w = next((px(t) for t in toks if re.match(r'^[\d.]+px$', t)), 3.0 if any(t in ('solid', 'dashed', 'dotted', 'double') for t in toks) else 0)
+            sty = next((t for t in toks if t in ('solid', 'dashed', 'dotted', 'double', 'none', 'hidden')), 'none')
+            col = next((color(t) for t in toks if color(t)), None)
+            e['bw'] = w if sty not in ('none', 'hidden') else 0
+            if col: e['bc'] = col
         if e['lh'] is not None and s.get('line-height', '').strip().replace('.', '').isdigit():
             e['lh'] = e['lh'] * e['size']   # 단위 없는 line-height (배수)
+        _box_model(e, s)
         els.append(e)
     return root, els
+
+
+def _pads(v):
+    """CSS padding 줄임말 → (위, 오른쪽, 아래, 왼쪽)"""
+    p = [px(x) for x in (v or '').split()] or [0]
+    if len(p) == 1: return p * 4
+    if len(p) == 2: return [p[0], p[1], p[0], p[1]]
+    if len(p) == 3: return [p[0], p[1], p[2], p[1]]
+    return p[:4]
+
+
+def _box_model(e, s):
+    """브라우저 상자 모델 맞추기 — padding · border 를 안쪽 여백(pad)으로, w · h 는 바깥 크기(테두리 포함)로.
+    box-sizing 기본(content-box)이면 width · height 는 글자 칸 크기 → 바깥 = 칸 + 여백 + 테두리.
+    width 가 없는 글자 상자(꼬리표 등)는 글자 폭에 맞춘다(브라우저의 shrink-to-fit)."""
+    t, r, b, l = _pads(s.get('padding'))
+    t = px(s.get('padding-top'), t); r = px(s.get('padding-right'), r); b = px(s.get('padding-bottom'), b); l = px(s.get('padding-left'), l)
+    bw = e['bw']
+    e['pad'] = (l + bw, t + bw, r + bw, b + bw)
+    border_box = s.get('box-sizing', '').strip() == 'border-box'; e['border_box'] = border_box
+    if not s.get('width') and e['text'] and not e['src'] and not e.get('svg'):
+        f = font(e); e['cw'] = max(tlen(f, ln, e.get('ls', 0)) for ln in e['text'].split('\n')) + 1
+        e['w'] = e['cw'] + l + r + 2 * bw
+    elif border_box:
+        e['cw'] = max(1.0, e['w'] - l - r - 2 * bw)
+    else:
+        e['cw'] = e['w']; e['w'] = e['w'] + l + r + 2 * bw
+    if e['h'] is not None and not border_box:
+        e['h'] = e['h'] + t + b + 2 * bw
 
 
 # ── 글꼴 ─────────────────────────────────────────
@@ -301,9 +375,41 @@ def font_file(family, weight=400):
 
 
 def font(e):
-    k = (e['family'], e['weight'], int(e['size']))
-    if k not in _fcache: _fcache[k] = ImageFont.truetype(font_file(e['family'], e['weight']), int(e['size']))
+    k = (e['family'], e['weight'], e['size'])
+    if k not in _fcache:
+        fp = font_file(e['family'], e['weight'])
+        try: _fcache[k] = ImageFont.truetype(fp, e['size'])          # 소수 크기 그대로 (브라우저와 같게)
+        except Exception: _fcache[k] = ImageFont.truetype(fp, int(round(e['size'])))
     return _fcache[k]
+
+
+_vm = {}
+
+
+def vmetrics(e):
+    """글꼴 세로 치수(글자 크기 대비 비율) → (ascent, descent, normal 줄 간격) — 브라우저가 쓰는 값과 같게 (hhea)"""
+    fp = font_file(e['family'], e['weight'])
+    if fp not in _vm:
+        f = ImageFont.truetype(fp, 1000); a, d = f.getmetrics()
+        _vm[fp] = (a / 1000, d / 1000, getattr(f.font, 'height', a + d) / 1000)
+    return _vm[fp]
+
+
+def line_h(e):
+    """줄 간격 px — line-height 가 없으면 브라우저의 normal(글꼴 치수 · 1.2 고정 아님)"""
+    return e['lh'] or vmetrics(e)[2] * e['size']
+
+
+def baseline(e, i=0):
+    """i 번째 줄 기준선 — 상자 위에서부터 (여백 · 테두리 포함 · CSS 반행간)"""
+    a, d, _ = vmetrics(e); lh = line_h(e)
+    return e.get('pad', (0, 0, 0, 0))[1] + i * lh + (lh - (a + d) * e['size']) / 2 + a * e['size']
+
+
+def content_x(e):
+    """글자 줄의 x 와 anchor — 상자 왼쪽에서부터"""
+    l = e.get('pad', (0, 0, 0, 0))[0]; cw = e.get('cw', e['w'])
+    return (l + cw / 2, 'ms') if e['align'] == 'center' else (l + cw, 'rs') if e['align'] in ('right', 'end') else (l, 'ls')
 
 
 def fonts_used(els):
@@ -318,9 +424,43 @@ def fonts_used(els):
 
 
 # ── 그리기 ────────────────────────────────────────
+_gl = {}
+
+
+def _has(f, ch):
+    """글꼴에 그 글자가 있나 — 없는 글자는 브라우저처럼 다른 글꼴(Pretendard)로 대신 그린다 (□ 방지)"""
+    if ch.isspace(): return True
+    k = (getattr(f, 'path', id(f)), f.size, ch)
+    if k not in _gl:
+        try:
+            nd = f.getmask('\U0010FFFD'); m = f.getmask(ch)
+            _gl[k] = not (m.size == nd.size and bytes(m) == bytes(nd))
+        except Exception: _gl[k] = True
+    return _gl[k]
+
+
+def _fb(f):
+    """대신 그릴 글꼴 — Pretendard 같은 크기"""
+    c = _registry().get('pretendard') or [(400, os.path.join(SKILL, 'assets', 'fonts', 'Pretendard-Regular.otf'))]
+    k = ('_fb', f.size)
+    if k not in _fcache: _fcache[k] = ImageFont.truetype(min(c, key=lambda wf: abs(wf[0] - 700))[1], f.size)
+    return _fcache[k]
+
+
+def _runs(f, s):
+    """[(글꼴, 조각)] — 없는 글자만 대신 글꼴로"""
+    out = []
+    for ch in s:
+        g = f if _has(f, ch) else _fb(f)
+        if out and out[-1][0] is g: out[-1] = (g, out[-1][1] + ch)
+        else: out.append((g, ch))
+    return out
+
+
 def tlen(f, s, ls=0.0):
     """글자 폭 (자간 포함)"""
-    return f.getlength(s) + ls * max(0, len(s) - 1) if ls else f.getlength(s)
+    w = sum(g.getlength(t) for g, t in _runs(f, s))
+    return w + ls * max(0, len(s) - 1) if ls else w
 
 
 def wrap(f, text, width, keep_all=False, ls=0.0):
@@ -341,20 +481,22 @@ def wrap(f, text, width, keep_all=False, ls=0.0):
 def draw_text(d, xy, s, f, fill, anchor='ls', ls=0.0, stroke=0, stroke_c=None):
     """한 줄 그리기 — 자간이 있으면 한 자씩 (anchor 는 ls · ms · rs)"""
     sw = int(round(stroke)); sc = (stroke_c + (255,)) if stroke_c and len(stroke_c) == 3 else stroke_c
-    if not ls:
+    runs = _runs(f, s)
+    if not ls and len(runs) <= 1:
         d.text(xy, s, font=f, fill=fill, anchor=anchor, stroke_width=sw, stroke_fill=sc if sw else None); return
     x, y = xy; w = tlen(f, s, ls)
     x = x - w / 2 if anchor == 'ms' else x - w if anchor == 'rs' else x
-    for ch in s:
-        d.text((x, y), ch, font=f, fill=fill, anchor='ls', stroke_width=sw, stroke_fill=sc if sw else None); x += f.getlength(ch) + ls
+    for g, t in runs:
+        for ch in (t if ls else [t]):
+            d.text((x, y), ch, font=g, fill=fill, anchor='ls', stroke_width=sw, stroke_fill=sc if sw else None); x += g.getlength(ch) + ls
 
 
 def box_h(e):
     """요소 높이 — height 가 없으면 글자 줄 수 × 줄 간격"""
     if e['h'] is not None: return e['h']
     if e['text']:
-        lh = e['lh'] or e['size'] * 1.2
-        return lh * max(1, len(wrap(font(e), e['text'], e['w'], e['keep_all'], e.get('ls', 0))))
+        p = e.get('pad', (0, 0, 0, 0))
+        return p[1] + p[3] + line_h(e) * max(1, len(wrap(font(e), e['text'], e.get('cw', e['w']), e['keep_all'], e.get('ls', 0))))
     return 0
 
 
@@ -396,6 +538,9 @@ def _margin(e, pad=2):
 def _core(e, W, H, o=0):
     """요소 몸통 (상자 그림자 · 회전 · 투명도 전) → RGBA (W+2o)×(H+2o) · 몸통은 (o, o) 에서 시작"""
     body = Image.new('RGBA', (W + 2 * o, H + 2 * o), (0, 0, 0, 0))
+    if e.get('svg'):   # 캔버스 SVG — 선 · 면 (svgline · 다 그려진 모습)
+        from . import svgline
+        body.alpha_composite(svgline.render(e, W, H, o, hand=e.get('hand'))); return body
     if e['src']:
         tile = _img_tile(e, W, H); m = _rr_mask(W, H, e['radius'])
         tile.putalpha(Image.composite(tile.getchannel('A'), Image.new('L', (W, H), 0), m)); body.alpha_composite(tile, (o, o)); return body
@@ -406,14 +551,13 @@ def _core(e, W, H, o=0):
     if e['bw']:
         ImageDraw.Draw(body).rounded_rectangle([o, o, o + W - 1, o + H - 1], r, outline=e['bc'] + (255,), width=max(1, int(e['bw'])))
     if e['text']:
-        f = font(e); lh = e['lh'] or e['size'] * 1.2; asc, desc = f.getmetrics(); ls = e.get('ls', 0)
-        lines = wrap(f, e['text'], e['w'], e['keep_all'], ls)
+        f = font(e); ls = e.get('ls', 0)
+        lines = wrap(f, e['text'], e.get('cw', e['w']), e['keep_all'], ls)
+        x, anc = content_x(e)
         def glyphs(fill, dx=0, dy=0, stroke=0, sc=None):
             g = Image.new('RGBA', body.size, (0, 0, 0, 0)); d = ImageDraw.Draw(g)
             for i, ln in enumerate(lines):
-                base = o + i * lh + (lh - (asc + desc)) / 2 + asc + dy   # CSS 반행간 → 기준선
-                x, anc = ((W / 2, 'ms') if e['align'] == 'center' else (W, 'rs') if e['align'] in ('right', 'end') else (0, 'ls'))
-                draw_text(d, (o + x + dx, base), ln, f, fill, anc, ls, stroke, sc)
+                draw_text(d, (o + x + dx, o + baseline(e, i) + dy), ln, f, fill, anc, ls, stroke, sc)   # 기준선 = 브라우저와 같은 식
             return g
         for sx, sy, bl, _sp, sc in e.get('tshadow', []):   # 글자 그림자
             g = glyphs(sc, sx, sy)
@@ -473,12 +617,9 @@ def pic(e, bg=None):
 
 def text_lines(e):
     """글자 요소의 줄들과 기준선 — 한 자씩 · 줄마다 등장에 쓴다 → [(줄, x, 기준선, anchor)] (화면 좌표)"""
-    f = font(e); lh = e['lh'] or e['size'] * 1.2; asc, desc = f.getmetrics(); out = []
-    for i, ln in enumerate(wrap(f, e['text'], e['w'], e['keep_all'], e.get('ls', 0))):
-        base = e['y'] + i * lh + (lh - (asc + desc)) / 2 + asc
-        if e['align'] == 'center': out.append((ln, e['x'] + e['w'] / 2, base, 'ms'))
-        elif e['align'] in ('right', 'end'): out.append((ln, e['x'] + e['w'], base, 'rs'))
-        else: out.append((ln, e['x'], base, 'ls'))
+    f = font(e); out = []; x, anc = content_x(e)
+    for i, ln in enumerate(wrap(f, e['text'], e.get('cw', e['w']), e['keep_all'], e.get('ls', 0))):
+        out.append((ln, e['x'] + x, e['y'] + baseline(e, i), anc))
     return out
 
 
@@ -523,12 +664,16 @@ def read_notes(canvas_json):
     return sorted(out, key=lambda m: (order.index(m['board']) if m['board'] in order else 99, m['by']))
 
 
-def near(els, bx, by):
-    """아트보드 안 좌표에서 가장 가까운 요소 (메모가 어느 요소 얘기인지)"""
+def near(els, bx, by, text=''):
+    """아트보드 안 좌표에서 가장 가까운 요소 (메모가 어느 요소 얘기인지).
+    메모 글에 «영상 … 재생» 같은 타임코드가 있으면 그림 요소(영상 자리)만 본다 · 화면을 거의 덮는 바탕 요소는 뒤로 미룬다"""
     def dist(e):
         h = box_h(e); dx = max(e['x'] - bx, 0, bx - (e['x'] + e['w'])); dy = max(e['y'] - by, 0, by - (e['y'] + h))
-        return dx * dx + dy * dy
-    return min(els, key=dist) if els else None
+        big = 1e12 if e['w'] * h > 0.45 * 1920 * 1080 else 0
+        return dx * dx + dy * dy + big
+    pool = els
+    if re.search(r'\d+:\d\d', text or '') and any(e['src'] for e in els): pool = [e for e in els if e['src']]
+    return min(pool, key=dist) if pool else None
 
 
 def summary(els):
@@ -553,7 +698,8 @@ if __name__ == '__main__':
         if '--json' in a: json.dump({'root': root, 'els': _clean(els)}, open(a[a.index('--json') + 1], 'w'), ensure_ascii=False, indent=1)
         print('\n'.join(summary(els))); print(f'ok {len(els)}개 요소 → {a[2]}')
     elif a[0] == 'notes':
-        for m in read_notes(a[1]): print(f"{m['board']} ({int(m['bx'])},{int(m['by'])}){'' if m['inside'] else ' [틀 밖]'}: {m['text']}")
+        ms = read_notes(a[1]); print(f'메모 {len(ms)}개')
+        for m in ms: print(f"{m['board']} ({int(m['bx'])},{int(m['by'])}){'' if m['inside'] else ' [틀 밖]'}: {m['text']}")
     elif a[0] == 'fonts':
         allf = {}
         for p in a[1:]:

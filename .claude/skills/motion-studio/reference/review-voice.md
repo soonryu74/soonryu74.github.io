@@ -4,7 +4,8 @@
 
 ## ④ 캔버스 다시 읽기 → 정리
 1. `canvas.json` + 모든 아트보드를 읽어 `canvas/확정/`에 저장한다(방법 = canvas-rules.md §6-5). 새 그림은 번호로 내려받아 `재료/`에.
-2. **메모 → 장면**: `python3 scripts/core/canvas.py notes canvas/확정/canvas.json` — 메모가 올라간 아트보드와 그 안의 좌표가 나온다. `canvas.near(els, bx, by)`로 어느 요소 근처 메모인지 본다.
+2. **메모 → 장면**: `python3 scripts/core/canvas.py notes canvas/확정/canvas.json` — 메모가 올라간 아트보드와 그 안의 좌표가 나온다. `canvas.near(els, bx, by, 메모글)`로 어느 요소 근처 메모인지 본다(타임코드 메모면 영상 자리를 고른다).
+2-B. **글자 화면 점검 다시** — `python3 <스킬>/scripts/textcheck.py canvas/확정` (유저가 글자 · 글꼴 · 상자를 고쳤을 수 있다). 상자 안 어긋남은 유저가 일부러 둔 것일 수 있으니 고치지 말고 기획서 §8에 적는다 · 엔진 − 캔버스 2px 넘음은 알린다(canvas-rules §6-B).
 3. **유저가 고친 것**: `canvas/처음/`과 `canvas/확정/`을 비교해 장면별로 한 줄씩(옮김 · 크기 · 글자 · 색 · 추가 · 삭제). 편집기는 색을 `background-color`로 바꿔 쓰는 등 표기를 바꾸기도 하니 값으로 비교한다(`canvas.py board … --json`).
 4. 기획서 §5를 채우고 바로 다음으로 간다(유저 개입 최소). 메모 뜻이 애매할 때만 한 줄로 묻는다.
 

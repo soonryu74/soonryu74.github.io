@@ -44,7 +44,7 @@ Design 캔버스는 웹 · 앱 화면 감각(얌전한 여백 · 카드 · 작�
 | 깔끔 · 미니멀 | 흰 / 아주 옅은 회색 · 강조색 하나 | Paperlogy · 나눔스퀘어 네오 Heavy · Gmarket Sans Bold | 여백 크게 · 화면을 가르는 큰 글자 하나 |
 | 밝고 경쾌 | 쨍한 단색 · 두 색 그라데이션 | Black Han Sans(검은고딕) · Jua · Do Hyeon · 여기어때 잘난체 | 기운 띠 · 둥근 배지 · 튀어나온 그림자 |
 | 어둡고 세련 | 짙은 바탕 · 빛 번짐 · 밝은 글자 · 강조색 하나 | Noto Serif KR Black · Hahmlet · Paperlogy | 큰 대비 · 얇은 선 · 넘치는 배경 글자 |
-| 따뜻한 손그림 | 크림 · 종이색 · 낮은 채도 | Nanum Pen Script · Gaegu · 고운바탕 | 손그림 동그라미 · 밑줄 · 살짝 기운 메모 |
+| 따뜻한 손그림 | 크림 · 종이색 · 낮은 채도 | Nanum Pen Script · Gaegu · 고운바탕 | 손그림 동그라미 · 밑줄 · 살짝 기운 메모 · 선 그림은 SVG + `data-hand` → `scripts/handline.py` (§4 SVG 줄) |
 | 내용 보고 정하기 | 내용의 성격(정보 · 감성 · 제품 · 이야기)에 맞게 | | |
 
 - 글꼴은 제한하지 않는다 — 무료 · 상업 이용 가능한 오픈 글꼴이면 무엇이든. 위 이름은 예시다. 쓴 글꼴은 기획서 §6에 적는다(⑤에서 유저에게 받는다).
@@ -55,7 +55,7 @@ Design 캔버스는 웹 · 앱 화면 감각(얌전한 여백 · 카드 · 작�
 디자인을 제한하는 규칙이 아니라 «캔버스 = 영상 마지막 화면»(바닥 3)을 지키는 **적는 방식**이다. 아래로 적으면 `scripts/core/canvas.py`가 그대로 읽어 그린다.
 1. 루트 `div` = `position: relative` + 고정 `width/height`(px) + `background` + `font-family` + `color`.
 2. **모든 요소 `position: absolute` + `left/top/width`(+ `height`) px.** flex · grid로 쌓으면 좌표를 읽을 수 없다. 음수 좌표 · 화면보다 큰 요소도 된다(넘치는 글자 · 잘린 도형).
-3. 글자: `font-size` · `font-weight` · `line-height` px · `text-align` · `letter-spacing` px · 색. 줄을 직접 끊으려면 `<br>`.
+3. 글자: `font-size` · `font-weight` · `line-height` px · `text-align` · `letter-spacing` px · 색. 줄을 직접 끊으려면 `<br>`. 글자 상자의 `padding` · 테두리 · `box-sizing` · width 없는 꼬리표(글자 폭에 맞춤)도 브라우저와 같게 읽는다. line-height 를 안 적으면 글꼴마다 다른 기본 줄 간격(normal)으로 — 그래도 상자 안 한 줄 글자는 height · line-height 를 적어 두는 게 고치기 쉽다.
 4. 색: hex · `rgb()` · `rgba()` (반투명 그대로).
 5. 바탕 칠: 단색 · `linear-gradient(각도, 색 위치%, …)` · `radial-gradient(색 위치%, …)` — 루트 바탕에도 요소에도.
 6. 도형: `border-radius` px · 테두리 `border`(굵기 · 색).
@@ -66,6 +66,13 @@ Design 캔버스는 웹 · 앱 화면 감각(얌전한 여백 · 카드 · 작�
 11. 글꼴 파일도 캔버스에 올려 `@font-face`로 건다(캔버스에서 실제 글꼴로 보이게).
 12. **디자인이 먼저다.** 위에 없는 표현(마스크 · 혼합 모드 · 기울임 변형 · 패턴 …)이 내용에 맞으면 쓰고, canvas.py에 읽기 · 그리기를 보탠 뒤 캔버스 내려받은 이미지와 맞춰 본다. 엔진 한계 때문에 디자인을 낮추지 않는다.
 
+### SVG (선이 중심인 그림)
+- 인라인 `<svg>` 를 쓸 수 있다 — 엔진(svgline)이 path(호 A 포함) · circle · ellipse · rect · line · polyline · polygon · g(묶음) 와 stroke · fill · 선 끝 · 이음 · 점선 · 구멍(evenodd) · transform 을 읽어 캔버스와 같은 모습으로 그린다. **조각마다 따로** `<svg style="position: absolute; left · top · width · height" viewBox="…">`(움직임 단위로). svg 안 글자 · 그라데이션 · 마스크 · 클립은 읽지 않는다. 손맛은 `data-hand="pen"` 처럼 svg 에 달고, 올리기 전에 `scripts/handline.py` 로 선 모양을 손 선으로 바꾼다(꼬리표만 달면 캔버스엔 벡터 선). 그리는 · 쓰는 시각은 `data-t="1.6-2.2"`(획 · 글자 div) — 자세히 = style-ref.md §5 · §5-C.
+
+### 영상 자리
+- 캔버스는 영상을 재생하지 못한다 — 영상이 들어갈 자리에 **대표 장면 그림**(`video.poster` → `재료/영상_<이름>.png`)을 `<img>` 로 올리고 그 칸 크기 · 자리를 영상 칸으로 쓴다. 엔진은 이름으로 찾아(`video.find`) 그 칸에 영상을 넣는다. 칸 비율이 영상과 다르면 잘린다 — 남길 자리는 코드의 `focus`. 자세히 = video.md.
+- 유저는 영상 칸 옆 메모로 구간 · 동작을 준다 — «영상 3:12~3:15 재생» · «3:40에서 멈추고 짚기» · «소리 끄기». ④에서 `video.timecode`로 읽어 영상 컷 표에 반영하고, 구간이 바뀌면 대표 장면 그림을 다시 올린다(video.md §2-B).
+
 ## 5. 폰에서 읽히게 (바닥 2)
 - 핵심 글자 64px 이상.
 - 9:16 안전 영역 — 위 300 · 아래 480 · 오른쪽 200 · 왼쪽 60px 안쪽에 핵심 글자(쇼츠 화면의 버튼 · 자막 자리).
@@ -73,12 +80,20 @@ Design 캔버스는 웹 · 앱 화면 감각(얌전한 여백 · 카드 · 작�
 
 ## 6. 도구 — 캔버스 만들기 · 다시 읽기
 Artifact 도구의 **Design** 타입을 쓴다. 타입이 주는 지시(SKILL.md · format.md)를 따른다. 여기는 이 스킬에 필요한 부분만.
-1. 만들기: `type_url` = Design 타입 · `title` = 영상 제목 · `auto_open: "after_first_write"`. 받은 `url`을 기획서 §4에.
+1. 만들기: `type_url` = Design 타입(계정마다 다르다 — Artifact `list` · `scope: "types"`에서 «Design»의 링크) · `title` = 영상 제목 · `auto_open: "after_first_write"`. 받은 `url`을 기획서 §4에.
+   - Design 타입 지시와 다른 점: 디자인 시스템은 고르지 않는다(이 스킬은 영상 프레임을 직접 짓는다 · 묻지 않고 없이 진행). «Playwright 로 확인하지 말라»는 캔버스 아티팩트를 열어 보는 것에 대한 말이다 — §6-B 글자 화면 점검은 작업 폴더의 보드 파일을 그리는 이 스킬의 점검이라 그대로 한다.
 2. 파일 올리기: `{action: publish, url, asset: true, file_paths: [글꼴 · 그림]}` → `/_blob/<번호>`. 그림은 `재료/<번호>.<확장자>`로 복사.
 3. 쓰기: 클라우드 쪽 한 폴더(`<root>`)에 `project/canvas.json`(먼저) + `project/Main.dc.html` … 를 쓰고 한 번에 publish(`root` · `file_path`=canvas.json · `files`=아트보드들).
-4. **올린 아트보드 원본을 작업 폴더 `canvas/처음/`에 저장** — ④에서 무엇이 고쳐졌는지 비교할 기준.
-5. 다시 읽기(④): `{action: read, url, paths: [project/canvas.json, project/Main.dc.html, …]}` → `canvas/확정/`에 저장. 유저가 새로 올린 그림은 번호마다 `{action: read, url, path: <번호>}` (**한 번에 하나씩** — paths로 묶으면 그림은 못 읽는다).
-6. 비교 기준은 **캔버스에서 내려받은 이미지**다. 클라우드 브라우저로 찍은 화면은 한글 대체 글꼴이 달라 틀릴 수 있다.
+4. **올린 아트보드 원본을 작업 폴더 `canvas/처음/`에 저장** — ④에서 무엇이 고쳐졌는지 비교할 기준. §6-B 글자 화면 점검으로 고쳐 다시 올렸으면 고친 판으로 덮어쓴다(유저에게 넘긴 판이 기준).
+5. 다시 읽기(④): `{action: read, url, paths: [project/canvas.json, project/Main.dc.html, …]}` → `canvas/확정/`에 저장(`out_dir`을 주면 `<out_dir>/project/` 아래로 떨어진다 — 한 단계 올린다). 유저가 새로 올린 그림은 번호마다 `{action: read, url, path: <번호>}` (**한 번에 하나씩** — paths로 묶으면 그림은 못 읽는다).
+6. 화면 비교는 §6-B 글자 화면 점검(textcheck · 캔버스에 올린 글꼴을 넣어 그린다)으로 한다. 글꼴 없이 찍은 브라우저 화면은 한글 대체 글꼴이 달라 틀린다.
+
+## 6-B. 글자 화면 점검 — 올린 뒤, 넘기기 전에 (좌표가 아니라 화면으로)
+한글은 글꼴마다 상자 안에서 아래로 처지거나 위로 뜬다(같은 좌표 · 같은 line-height 라도). 좌표만 맞춰서는 못 잡는다 — 화면으로 본다.
+1. `canvas/처음/`에 보드를 저장한 뒤 `python3 <스킬>/scripts/textcheck.py canvas/처음` — 캔버스에 올린 글꼴(작업 폴더 `fonts/`)로 브라우저 화면을 그려 글자마다 잰다.
+2. **상자 안 글자 어긋남**(배지 · 꼬리표 · 버튼처럼 한 줄 글자 상자)이 나오면 그 보드를 고쳐 다시 올린다 — 보고서의 «고치는 법»대로 height 를 적고 line-height 를 바꾸면 상자는 그대로 두고 글자만 움직인다. 다시 돌려 0이 될 때까지.
+3. **엔진 − 캔버스**가 2px 넘으면 엔진 문제다 — 고치지 말고 기획서 §8에 적어 알린다(유저에게는 «영상에서 이 글자가 N px 다르게 나올 수 있어요» 한 줄).
+4. playwright 가 없으면 건너뛰고 안내만 남긴다(`pip install playwright && python3 -m playwright install chromium`). 굽기와는 상관없다.
 
 ## 7. 유저에게 넘길 때 (짧게)
 캔버스가 열린 상태에서 한 줄:

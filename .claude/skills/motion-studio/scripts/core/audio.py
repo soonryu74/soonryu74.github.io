@@ -225,11 +225,17 @@ def synth_stem(events, dur, programs):
     return np.concatenate(out).reshape(-1, 2)
 
 
+MOODS = ('sting', 'intro', 'calm', 'groove', 'bouncy', 'build', 'drop', 'main', 'tense', 'outro')
+
+
 def bgm(sections, dur, seed=3, bpm=112, palette='pop', transpose=0, drum_gain=0.8):
     """sections = [(시작초, 끝초, 무드, {옵션}), …] → mono float32"""
     from pedalboard import Pedalboard, Reverb, Compressor, Limiter, HighpassFilter
     S = Score(seed, bpm or 112)
-    for t0, t1, mood, o in sections: section(S, t0, t1, mood, o)
+    for t0, t1, mood, o in sections:
+        if mood not in MOODS:   # ⛔되돌리지 말 것 — 모르는 이름은 오류 없이 거의 무음이 된다
+            print(f'⚠️ 배경음 무드 «{mood}» 는 없다 → groove 로 ({t0:.1f}~{t1:.1f}초) · 쓸 수 있는 것: {" · ".join(MOODS)}'); mood = 'groove'
+        section(S, t0, t1, mood, o)
     if transpose: S.ev['mus'] = [(t, on, ch, k + transpose, v) for t, on, ch, k, v in S.ev['mus']]
     mus = synth_stem(S.ev['mus'], dur, PALETTES[palette or 'pop']); drm = synth_stem(S.ev['drm'], dur, {9: 0})
     env = np.ones(len(mus))   # 펌핑 — 킥 자리에서 음악 층을 살짝 눌렀다 놓는다
@@ -267,14 +273,20 @@ def write_wav(path, x):
 
 
 def mixdown(dur, path, bgm_track=None, sfx=None, voices=(), bgm_gain=0.33, sfx_gain=0.7, voice_gain=0.8,
-            duck=0.5, ramp=0.25, peak=0.85, soft=1.1, fade_in=0.2, fade_out=0.4):
+            duck=0.5, ramp=0.25, peak=0.85, soft=1.1, fade_in=0.2, fade_out=0.4, bgm_fade=2.5):
     """완성 소리 wav.
     bgm_track  bgm() 결과 (없으면 배경음 없이)
     sfx        효과음 트랙 — new_track(dur) 에 whoosh/hit/chime… 을 쌓은 것
     voices     [(시작초, wav 경로), …] — 나오는 동안 배경음 × duck (앞뒤 ramp 초 부드럽게)
+    bgm_fade   배경음은 영상 끝 이만큼 앞에서부터 서서히 줄어 영상 끝에서 0 (뚝 끊기지 않게 · 0 = 끄기)
+    fade_out   전체 소리도 영상 끝(dur)에서 0 이 되게 (트랙 꼬리 0.5초가 아니라 영상 끝 기준)
     """
     n = _T(dur + 0.5)
     xb = np.zeros(n) if bgm_track is None else np.pad(np.asarray(bgm_track, np.float64), (0, max(0, n - len(bgm_track))))[:n] * bgm_gain
+    end = min(n, _T(dur))
+    if bgm_fade and bgm_track is not None:   # 배경음 끝 — 서서히 (sin² 곡선 · 영상 끝에서 0)
+        f = min(end, _T(bgm_fade)); u = np.linspace(0, 1, f)
+        xb[end - f:end] *= np.cos(u * np.pi / 2) ** 2; xb[end:] = 0
     x = np.zeros(n) if sfx is None else np.pad(sfx, (0, max(0, n - len(sfx))))[:n]
     v = np.zeros(n); dk = np.ones(n)
     for at, p in voices:
@@ -287,7 +299,8 @@ def mixdown(dur, path, bgm_track=None, sfx=None, voices=(), bgm_gain=0.33, sfx_g
     y = y * (peak / (np.abs(y).max() + 1e-9)) if np.abs(y).max() > 0 else y
     y = y + voice_gain * v
     if soft: y = np.tanh(y * soft) / np.tanh(soft)   # 겹친 자리 피크만 부드럽게 누른다
-    fi, fo = _T(fade_in), _T(fade_out); y[:fi] *= np.linspace(0, 1, fi); y[-fo:] *= np.linspace(1, 0, fo)
+    fi, fo = _T(fade_in), min(end, _T(fade_out)); y[:fi] *= np.linspace(0, 1, fi)
+    y[end - fo:end] *= np.linspace(1, 0, fo); y[end:] = 0
     write_wav(path, y)
     return path
 

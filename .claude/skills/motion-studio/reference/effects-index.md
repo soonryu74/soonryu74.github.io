@@ -46,6 +46,9 @@
 |---|---|:-:|:-:|
 | 등장 | fade · up/down/left/right · pop · zoom(내려앉기) · wipe · type_text(한 자씩) · lines(줄마다) — `appear` | 1~2 · zoom 3 | ✓ |
 | 등장 | blur_in · spin_in · flip_in — `motion` | 1~2 | β |
+| 등장 | draw_on(선 그려지기 → 면 채우기 · 캔버스 SVG 요소 · 손맛 hand · 면 채우는 법 fill_in · 끊김 steps · 떨림 boil) — `motion` · style-ref.md §5 | 1~2 | β |
+| 등장 | write(글자를 손으로 쓰듯 획 순서대로 · 끝 모습 = 캔버스 글자) · draw(캔버스 꼬리표 data-t 대로 그리기 · 쓰기) — `motion` · style-ref.md §5-C | 1~2 | β |
+| 캔버스 손 선 | handline(캔버스 SVG 를 손 선으로 · 연필 · 크레용 결 필터 — 보드를 올리기 전에) — `scripts/handline.py` · style-ref.md §5-B | — | β |
 | 퇴장 | appear.out(거꾸로) ✓ · burst_out(터지기) · scatter_out(흩어지기) — `motion` β | 1~2 | |
 | 머무는 동안 | float_(둥실) · breathe(숨쉬기) · blink(깜빡) · pulse(맥박) — `motion.put` 과 함께 | 1 | β |
 | 강조 | underline · highlight(형광펜) — `motion` | 1 | β |
@@ -66,6 +69,18 @@
 | 화면 겹 (`finish`) | grain · vignette · scan · paper · grade(warm · cool · fade · punch · mono) · glow | β |
 | 효과음 (`audio`) | whoosh · hit · chime · tick · mallet · bell · buzzer(timewarp) | ✓ |
 | 배경음 | palette pop · cinema · study · tale · groove · calm … | ✓ |
+
+## 6. 영상 넣기 (`video.py` · video.md)
+| 이름 | 한 줄 | 세기 | 등급 |
+|---|---|:-:|:-:|
+| 영상 칸 | 캔버스 칸에 영상 구간을 넣는다 — 카메라 뒤에 그려 줌해도 원본 화질 (`paste_on_screen`) | 1 | β |
+| 모니터 벽 | 여러 영상이 함께 돌다 → 하나로 밀고 들어가 설명 → 빠져나와 다른 화면으로 | 2~3 | β |
+| TV 켜짐 | 가로 선이 위아래로 열리며 영상이 켜진다 | 1 | β |
+| 멈추고 짚기 (영상) | 영상이 멈추며 색이 바래고 번쩍 → 원 · 한 마디 → 다시 재생 (원본 소리도 쉰다) | 2~3 | β |
+| 원본 발언 | 발언 구간 = 목소리 쪽(배경음이 내려감) · 인용문이 한 줄씩 · 소리 막대 + «원본 발언» 표시 | 2 | β |
+| 현장 소리 | 원본 구간 소리를 효과음 쪽에 낮게 — 무음 구간을 메운다 (`sound` · `put_sound`) | — | β |
+| 설명형 칸 | 쇼츠 위 제목 · 가운데 4:3 영상 칸(좌우 자르기 · 아래 기준 다가가기) · 아래 설명 · 칸 안 밀어내기 | 1 | β |
+| 지도형 | 큰 판 위 장면들을 카메라가 이동 · 영상은 판 위 창 · 글은 카메라 배율대로 화면에서 | 2~3 | β |
 
 ## 보태는 법 (엔진을 늘릴 때 — 문서가 흩어지지 않게)
 1. 코드: 갈래에 맞는 모듈 하나에 — 컷 전환 = `camera.py` + `EDITS` · 카메라 = `camera.py` · 등장 · 머무는 동안 = `appear.py`(✓) / `motion.py`(β) · 요소 효과 · 정보 · 그림 공개 = `fx.py` · 화면 겹 = `finish.py` · 시간 = `timewarp.py`. 새 모듈은 갈래가 새로 생길 때만.

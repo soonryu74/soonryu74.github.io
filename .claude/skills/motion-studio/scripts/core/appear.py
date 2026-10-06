@@ -22,7 +22,7 @@ import math
 
 from PIL import Image, ImageDraw
 
-from .canvas import layer, text_lines, font, tlen
+from .canvas import layer, text_lines, font, tlen, line_h, box_h
 from .ease import cl, eo, eio, back
 
 
@@ -80,7 +80,7 @@ def _split(e):
     if '_split' not in e:
         bare = None
         if e['bg'] or e['bw'] or e.get('shadow'):
-            bare = layer({k: v for k, v in e.items() if k != '_layer'} | {'text': ''})
+            bare = layer({k: v for k, v in e.items() if k != '_layer'} | {'text': '', 'h': box_h(e)})
         txt = layer({k: v for k, v in e.items() if k != '_layer'} | {'bg': None, 'bw': 0, 'shadow': []})
         e['_split'] = (bare, txt)
     return e['_split']
@@ -88,7 +88,7 @@ def _split(e):
 
 def _bands(e, ty, th):
     """줄마다 글자 조각의 세로 구간 [(위, 아래)] (조각 좌표) — 그림자 몫까지 이웃 줄과 겹치지 않게 나눈다"""
-    lh = e['lh'] or e['size'] * 1.2; n = len(text_lines(e)); top = e['y'] - ty
+    lh = line_h(e); n = len(text_lines(e)); top = e['y'] + e.get('pad', (0, 0, 0, 0))[1] - ty
     cuts = [0] + [int(round(top + i * lh)) for i in range(1, n)] + [th]
     return list(zip(cuts[:-1], cuts[1:]))
 

@@ -12,8 +12,14 @@
   breathe(lt, amt=0.03, period=2)  → 배율 (숨쉬기)
   blink(lt, period=1.2)            → 투명도 (깜빡임)
   pulse(lt, t0, amt=0.12)          → 배율 (t0 에 한 번 «툭» 커졌다 돌아오기 · 맥박)
-강조
-  underline(img, e, k, col)      글자 아래 선이 왼쪽부터 그어짐
+선 그리기 (캔버스 SVG 요소 — 선이 중심인 스타일)
+  draw_on(img, e, k, stagger=0.6, hand=None, t=None, fill_in=None)   선이 길이 비율로 그려지고 → 면이 채워진다 · 획이 여럿이면 차례로
+                                    (k=1 = 캔버스 모습 그대로 · hand = 손맛 · t = 떨림용 장면 시각 · fill_in = 면 채우는 법)
+  steps(lt, fps=12)                 끊김 — 시각을 초당 12장으로 (손그림 애니처럼)
+  draw(img, e, lt, t0, t1, …)       캔버스 꼬리표(data-t · data-order · data-dir)대로 그리기 · 글자는 쓰기 — 장면 시각만 넘긴다
+글자 쓰기
+  write(img, e, k)                  글자 요소를 손으로 쓰듯 획 순서대로 (끝 모습 = 캔버스 글자 그대로 · write.py)
+강조      글자 아래 선이 왼쪽부터 그어짐
   highlight(img, e, k, col)      형광펜 — ★요소를 그리기 «전에» 부른다(글자 뒤에 칠해지게)
   put(img, e, s=1, alpha=1, off=(0,0), rot=0)   요소를 배율 · 투명도 · 기울기로 한 번 붙이기 (위 값들과 같이)
 """
@@ -118,3 +124,69 @@ def highlight(img, e, k, col=(255, 230, 80), alpha=0.55, pad=8):
     x, y, w, h = e['x'] - pad, e['y'] + box_h(e) * 0.35, e['w'] + pad * 2, box_h(e) * 0.6
     o = Image.new('RGBA', img.size, (0, 0, 0, 0)); ImageDraw.Draw(o).rounded_rectangle([x, y, x + w * k, y + h], 8, fill=col + (int(255 * alpha),))
     base = img.convert('RGBA'); base.alpha_composite(o); img.paste(base.convert(img.mode)); return img
+
+
+def steps(lt, fps=12):
+    """끊김 — 시각을 초당 fps 장으로 끊는다 (손그림 애니처럼). draw_on(img, e, seg(steps(lt), t0, t1), …)"""
+    st = 1.0 / fps
+    return math.floor(lt / st + 1e-6) * st
+
+
+def draw_on(img, e, k, stagger=0.6, hand=None, t=None, fill_in=None, seed=0, lt=None):
+    """캔버스 SVG 요소를 «선 → 면» 순서로 그린다 (svgline). SVG 가 아닌 요소는 나타나기로 대신.
+    hand = 손맛('pen' · 'brush' · 'pencil' · 'crayon' · 'marker' · dict · None=캔버스 그대로 · 없으면 svg 의 data-hand)
+    t = 장면 시각 — 손맛의 boil(다 그린 뒤 떨림)이 움직이려면 넘긴다 · 다 그린 뒤에도 draw_on(…, 1, hand=…, t=lt)로 계속 부른다
+    fill_in = 면이 채워지는 법 'fade' · 'wipe' · 'hatch'"""
+    k = cl(k)
+    if k <= 0: return img
+    hand = hand if hand is not None else e.get('hand')
+    if not e.get('svg'):
+        return put(img, e, alpha=k) if k < 1 else put(img, e)
+    from . import svgline
+    hs = svgline.hand_spec(hand)
+    if k >= 1 and fill_in != 'hatch' and not (hs and hs.get('boil') and t is not None) and hand == e.get('hand') and not seed and lt is None:
+        return put(img, e)   # 다 그린 모습 = 캔버스 조각 (저장해 둔 것)
+    W, H = max(1, int(round(e['w']))), max(1, int(round(box_h(e)))); o = 4 + int(hs['wobble'] * 3 if hs else 0)
+    done = k >= 1 and not (hs and hs.get('boil') and t is not None)
+    key = (repr(hand), fill_in, seed, stagger)
+    done = done and (lt is None or k >= 1)
+    if done and key in e.get('_done', {}): lay = e['_done'][key]   # 다 그린 모습은 한 번만 그린다 (굽기 속도)
+    else:
+        lay = svgline.render(e, W, H, o, k, stagger, hand=hand, t=t, fill_in=fill_in, seed=seed, lt=lt)
+        if e.get('opacity', 1) < 1: lay.putalpha(lay.getchannel('A').point(lambda v: int(v * e['opacity'])))
+        if e.get('rot'): lay = lay.rotate(-e['rot'], resample=Image.BICUBIC, expand=True)
+        if done: e.setdefault('_done', {})[key] = lay
+    cx, cy = e['x'] + W / 2, e['y'] + H / 2
+    img.paste(lay, (int(round(cx - lay.width / 2)), int(round(cy - lay.height / 2))), lay)
+    return img
+
+
+def write(img, e, k, pause=0.25):
+    """글자 요소를 «손으로 쓰듯» 획 순서대로 드러낸다 (write.py) — 끝 모습은 캔버스 글자 그대로. 글자가 아닌 요소는 나타나기로 대신"""
+    k = cl(k)
+    if k <= 0: return img
+    if k >= 1 or not e.get('text'): return put(img, e, alpha=k) if k < 1 else put(img, e)
+    from . import write as WR
+    r = WR.reveal(e, k, pause)
+    if r: lay, x, y = r; img.paste(lay, (x, y), lay)
+    return img
+
+
+def draw(img, e, lt, t0=0.0, t1=None, **kw):
+    """캔버스 꼬리표대로 그리기 · 쓰기 — 장면 안 시각 lt 만 넘기면 된다.
+    · SVG: 획마다 data-t="0.5-1.2"(장면 안 초) · data-order · data-dir="reverse" — 꼬리표 없는 획은 t0~t1 동안 차례로
+           svg 자체의 data-t 가 있으면 그게 t0~t1 · hand · fill_in · seed · stagger 는 draw_on 그대로
+    · 글자: data-t 가 있으면 그 시간 동안 «쓰기»(write) — 없으면 t0~t1
+    t1 을 안 주면 t0 + 1초"""
+    from . import svgline
+    from .ease import seg
+    data = e.get('data') or {}
+    win = svgline.span((e.get('svg') or {}).get('t') or data.get('t')) or (t0, t0 + 1.0 if t1 is None else t1)
+    if e.get('svg'):
+        tags = [s['t'] for s in svgline.shapes(e) if s.get('t')]
+        end = max([win[1]] + [b for _, b in tags])
+        k = seg(lt, win[0], win[1]) if lt < end else 1.0
+        if tags and k >= 1 and lt < end: k = 0.999                     # 꼬리표 획이 아직 남았다
+        return draw_on(img, e, k, lt=lt, **kw)
+    if e.get('text'): return write(img, e, seg(lt, *win), kw.get('pause', 0.25))
+    return put(img, e, alpha=seg(lt, *win)) if lt < win[1] else put(img, e)

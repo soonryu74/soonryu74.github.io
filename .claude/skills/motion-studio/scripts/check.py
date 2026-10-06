@@ -33,6 +33,8 @@ line(r.returncode == 0, 'pedalboard (배경음 다듬기)',
      'pip install pedalboard  · 설치돼 있는데 죽으면: pip install "pedalboard==0.9.16"')
 from core import paths
 line(bool(paths.SF2), f'사운드폰트 {paths.SF2_NAME}', paths.SF2_GUIDE.replace('\n', '\n    '))
+r = subprocess.run([sys.executable, '-c', 'import playwright'], capture_output=True)
+print(('✓ ' if r.returncode == 0 else '· ') + 'playwright (글자 화면 점검 · 없어도 굽기는 됨)' + ('' if r.returncode == 0 else '\n    → pip install playwright && python3 -m playwright install chromium'))
 from core import canvas
 pre = canvas._registry().get('pretendard')
 line(bool(pre), '기본 글꼴 Pretendard', '스킬 assets/fonts 가 비었어요 — 스킬을 다시 설치')

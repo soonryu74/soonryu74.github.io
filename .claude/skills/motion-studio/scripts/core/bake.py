@@ -30,7 +30,7 @@ _MEMO = {}
 
 def memo(key, fn, keep=12):
     """같은 key 면 한 번만 그리고 다시 쓴다 — 다 나와서 더 안 바뀌는 바탕 · 크게 흐린 화면 등 (프레임마다 다시 그리면 굽기가 느려진다).
-    돌려받은 그림은 고치지 말고 .copy() 해서 쓴다. 굽기 일꾼마다 따로 기억한다."""
+    돌려받은 그림은 고치지 말고 .copy() 해서 쓴다. 굽기 프로세스마다 따로 기억한다."""
     if key not in _MEMO:
         if len(_MEMO) >= keep: _MEMO.pop(next(iter(_MEMO)))
         _MEMO[key] = fn()
