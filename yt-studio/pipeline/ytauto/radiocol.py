@@ -405,7 +405,8 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
         s["bg_h"] = str(bg) if bg else ""
         pc = work / "parts" / f"w{s['i']:02d}.mp4"
         dur = s["end"] - s["start"] + XF
-        if not (pc.exists() and abs(media.duration(str(pc)) - dur) < 0.2):  # 사진·길이가 같으면 다시 만들지 않는다
+        if not (pc.exists() and abs(media.duration(str(pc)) - dur) < 0.2
+                and (bg is None or pc.stat().st_mtime > Path(bg).stat().st_mtime)):  # 사진·길이가 같으면 다시 만들지 않는다
             shorts.piece(pc, "long", str(bg or sc[0].get("bg_h")), dur, zoom=True)
         parts.append(pc)
     S = series.get("column")
