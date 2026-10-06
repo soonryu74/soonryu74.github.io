@@ -1285,6 +1285,11 @@ header.top > .topright { flex:0 1 auto; justify-content:flex-end; margin-left:au
 .rpt-head h1 { font-size:32px; letter-spacing:-.5px; }
 .rpt-head .muted { font-size:13.5px; }
 .rpt-note { border-radius:0 6px 6px 0; }
+.rpt-def { position:relative; border:1px solid var(--series-1); border-radius:8px; padding:18px 12px 8px; margin:8px 0 12px; background:var(--page); font-size:14px; }
+.rpt-def p { margin:4px 0; } .rpt-def ul { margin:4px 0 4px 18px; padding:0; }
+.rpt-def-lab { position:absolute; top:-10px; left:10px; background:var(--series-1); color:#fff; font-size:12px; font-weight:700; padding:1px 8px; border-radius:10px; }
+.rpt-th-sub { font-weight:400; font-size:11px; opacity:.8; }
+@media print { .view-report .rpt-def { background:#f7f9fc !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:avoid; } .view-report .rpt-def-lab { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
 /* 요약 숫자 타일 */
 .rpt-kpis { display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:10px; margin:4px 0 14px; }
 .rpt-kpi { border:1px solid var(--border); border-top:4px solid var(--border); border-radius:8px; padding:10px 12px; background:var(--surface-1); display:flex; flex-direction:column; }
