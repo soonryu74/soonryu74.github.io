@@ -3,7 +3,7 @@
 Generated automatically on 2026-10-06 from the data files and test records in this repository (`node scripts/build_competition_evidence.mjs`, run by `scripts/build_dashboard.py`). **Use these numbers in applications; do not retype them from memory.** If a number here differs from any other document, this file wins until the data change.
 
 ## 1. Build
-- Source repository commit at generation: `20e4810` (the site footer shows the build of the deployed page).
+- Source repository commit at generation: `37f9966` (the site footer shows the build of the deployed page).
 - Data validation date: 2026-10-06 (`docs/DATA_VALIDATION.md`).
 
 ## 2–4. Korea deployment — indicators, geography, years
