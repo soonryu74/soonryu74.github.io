@@ -8,7 +8,8 @@ export function analyzeGap(job, profile) {
   const improve = [];
   for (const [id, w] of job.core) (skillSet.has(id) ? have : improve).push({ id, label: SKILL_MAP[id].label, type: 'core', weight: w });
   for (const id of job.nice) (skillSet.has(id) ? have : improve).push({ id, label: SKILL_MAP[id].label, type: 'nice', weight: 1 });
-  const quals = job.quals.map((q) => ({ ...q, held: qualSet.has(q.id) }));
+  const held = (q) => (q.anyOf ? q.anyOf.some((id) => qualSet.has(id)) : qualSet.has(q.id));
+  const quals = job.quals.map((q) => ({ ...q, held: held(q) }));
   return {
     have,
     improve: improve.sort((a, b) => b.weight - a.weight),

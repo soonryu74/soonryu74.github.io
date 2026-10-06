@@ -25,7 +25,7 @@ export const JOBS = [
     core: [['counsel', 3], ['civil', 3], ['docs', 2], ['admin', 2], ['communication', 2], ['empathy', 1]],
     nice: ['welfare_knowledge', 'coordination', 'law', 'data'],
     quals: [
-      { id: 'social_worker', label: '사회복지사 2급', required: false, note: '권장. 기관·사업에 따라 채용 요건으로 요구하는 경우가 있음', url: 'https://lic.welfare.net' },
+      { id: 'social_worker', label: '사회복지사 2급', required: false, note: '권장. 기관·사업에 따라 채용 요건으로 요구. 취득: 전문학사 이상 + 지정 17과목 + 현장실습 160시간(2020년 이후 기준)', url: 'https://lic.welfare.net' },
     ],
     recommended: ['사회복지서비스 체계 기본 이해', '복지 관련 법·제도(기초생활보장·노인·장애인) 개요'],
     pattern: { day: true, partTime: true, physical: 'low' }, barrier: 'low',
@@ -52,7 +52,7 @@ export const JOBS = [
     core: [['counsel', 3], ['docs', 2], ['teach', 2], ['communication', 2], ['planning', 1], ['data', 1], ['coordination', 1]],
     nice: ['hr', 'law', 'computer', 'empathy'],
     quals: [
-      { id: 'job_counselor', label: '직업상담사 2급', required: true, note: '공공 취업지원기관 채용공고 대부분이 요구하는 자격(민간 기관은 상이)', url: 'https://www.q-net.or.kr' },
+      { id: 'job_counselor', label: '직업상담사 2급 또는 사회복지사 2급', required: true, anyOf: ['job_counselor', 'social_worker'], note: '국민취업지원제도 위탁기관 채용공고 기준 둘 중 하나 필수(채용공고 확인, 2026-10). 고용센터·민간 기관은 공고별 상이', url: 'https://www.q-net.or.kr' },
     ],
     recommended: ['고용보험·취업지원 제도 이해', '이력서·자기소개서 코칭 방법'],
     pattern: { day: true, partTime: false, physical: 'low' }, barrier: 'mid',
@@ -65,7 +65,7 @@ export const JOBS = [
     core: [['eldercare', 3], ['empathy', 2], ['hygiene', 2], ['physical', 2], ['cooking', 1], ['communication', 1], ['record', 1]],
     nice: ['medical_knowledge', 'driving', 'family'],
     quals: [
-      { id: 'care_worker', label: '요양보호사 자격증', required: true, note: '노인복지법상 필수. 교육기관 이수(이론·실기·실습) 후 국가시험 합격', url: 'https://www.kuksiwon.or.kr' },
+      { id: 'care_worker', label: '요양보호사 자격증', required: true, note: '노인복지법 제39조의2: 교육기관 240시간(이론80·실기80·실습80) 이수 후 시·도지사 시행 자격시험 합격', url: 'https://www.law.go.kr' },
     ],
     recommended: ['치매 전문교육(선택)', '응급처치 기본'],
     pattern: { day: true, partTime: true, physical: 'high' }, barrier: 'mid',
@@ -78,7 +78,7 @@ export const JOBS = [
     core: [['eldercare', 2], ['communication', 2], ['empathy', 2], ['phone', 1], ['record', 1], ['hygiene', 1], ['problem', 1]],
     nice: ['driving', 'welfare_knowledge', 'digital', 'cooking'],
     quals: [
-      { id: 'care_worker', label: '요양보호사·사회복지사 등', required: false, note: '우대. 수행기관 채용공고마다 요건이 다름', url: 'https://www.mohw.go.kr' },
+      { id: 'care_worker', label: '요양보호사·사회복지사 등', required: false, note: '우대(채용공고 기준). 필수 요건은 사회복지시설 종사자 결격사유·범죄경력 조회 통과. 주 25시간 계약직 공고가 많음', url: 'https://www.mohw.go.kr' },
     ],
     recommended: ['노인맞춤돌봄서비스 사업 안내 숙지', '스마트폰 기록 앱 사용'],
     pattern: { day: true, partTime: true, physical: 'mid' }, barrier: 'low',
@@ -128,7 +128,7 @@ export const JOBS = [
     core: [['childcare', 3], ['teach', 2], ['empathy', 2], ['record', 1], ['hygiene', 1], ['safety', 1]],
     nice: ['cooking', 'communication', 'problem'],
     quals: [
-      { id: 'childcare_teacher', label: '보육교사·유치원/초등 교사·사회복지사 등', required: true, note: '교육청별 채용 요건으로 관련 자격 중 1개 이상을 요구하는 경우가 대부분. 해당 교육청 공고 확인 필요', url: 'https://www.kcpi.or.kr' },
+      { id: 'childcare_teacher', label: '보육교사 2급 이상 또는 유·초·중등 교원자격', required: true, note: '교육청 채용공고 기준(2026 서울 공고 등). 교육청·회차마다 응시자격이 달라 지원할 공고 확인 필수', url: 'https://www.kcpi.or.kr' },
     ],
     recommended: ['아동 안전·응급처치 교육', '놀이·독서 지도'],
     pattern: { day: true, partTime: true, physical: 'mid' }, barrier: 'mid',
@@ -141,7 +141,7 @@ export const JOBS = [
     core: [['childcare', 3], ['empathy', 2], ['communication', 1], ['cooking', 1], ['hygiene', 1], ['family', 1]],
     nice: ['teach', 'record', 'driving'],
     quals: [
-      { id: 'idolbom_edu', label: '아이돌보미 양성교육 이수', required: true, note: '아이돌봄지원법에 따른 양성교육(이론·실습) 이수 후 활동', url: 'https://idolbom.go.kr' },
+      { id: 'idolbom_edu', label: '아이돌보미 양성교육 이수', required: true, note: '양성교육 80시간 + 현장실습 10시간(보육교사·유치원교사·간호사·초등교사 등 자격자는 30시간). 보육교사 2급 이상·교원·간호사 자격자는 양성교육 대체', url: 'https://idolbom.go.kr' },
     ],
     recommended: ['아동 발달 기초', '영유아 응급처치'],
     pattern: { day: true, partTime: true, physical: 'mid' }, barrier: 'mid',
@@ -154,7 +154,7 @@ export const JOBS = [
     core: [['safety', 3], ['site', 3], ['leadership', 2], ['docs', 1], ['law', 1], ['problem', 1], ['teach', 1]],
     nice: ['record', 'facility', 'quality'],
     quals: [
-      { id: 'safety_cert', label: '산업안전(산업)기사·건설안전(산업)기사 등', required: true, note: '산업안전보건법 시행령상 안전관리자 선임 자격. 자격 없이 선임 불가', url: 'https://www.q-net.or.kr' },
+      { id: 'safety_cert', label: '산업안전(산업)기사·건설안전(산업)기사 등', required: true, note: '산업안전보건법 시행령 별표4(안전관리자의 자격). 산업기사는 선임 가능 사업장 규모에 제한이 있어 기사 등급을 요구하는 공고가 많음', url: 'https://www.law.go.kr' },
     ],
     recommended: ['안전보건교육 강사 역량', '위험성평가 실무'],
     pattern: { day: true, partTime: false, physical: 'mid' }, barrier: 'high',
@@ -167,7 +167,7 @@ export const JOBS = [
     core: [['facility', 3], ['site', 2], ['safety', 2], ['problem', 1], ['record', 1], ['physical', 1]],
     nice: ['driving', 'communication', 'civil'],
     quals: [
-      { id: 'electric', label: '전기·소방·보일러 등 기능사', required: false, note: '우대. 전기안전관리자·소방안전관리자 선임 자리는 해당 자격이 법정 필수', url: 'https://www.q-net.or.kr' },
+      { id: 'electric', label: '전기·소방·보일러 등 기능사', required: false, note: '우대. 소방안전관리자(화재예방법)·전기안전관리자 선임 자리는 등급별 법정 자격이 필수', url: 'https://www.q-net.or.kr' },
     ],
     recommended: ['소방안전관리자 교육', '건물 설비 기초'],
     pattern: { day: false, partTime: false, physical: 'mid' }, barrier: 'low',
@@ -180,7 +180,7 @@ export const JOBS = [
     core: [['driving', 3], ['communication', 2], ['eldercare', 1], ['schedule', 1], ['safety', 1], ['physical', 1]],
     nice: ['empathy', 'facility', 'problem'],
     quals: [
-      { id: 'driver', label: '1종 보통 운전면허', required: true, note: '승합차 운행에 필요. 어린이 통학버스는 추가 안전교육 이수 필요', url: 'https://www.safedriving.or.kr' },
+      { id: 'driver', label: '1종 보통 운전면허', required: true, note: '승차정원 15인 이하 승합차 운전 가능(16인 이상은 1종 대형). 어린이통학버스는 도로교통법상 운영자·운전자 안전교육 별도', url: 'https://www.safedriving.or.kr' },
     ],
     recommended: ['승하차 보조·휠체어 고정 요령', '응급처치 기본'],
     pattern: { day: true, partTime: true, physical: 'mid' }, barrier: 'low',
@@ -193,7 +193,7 @@ export const JOBS = [
     core: [['safety', 2], ['physical', 2], ['communication', 1], ['record', 1], ['problem', 1], ['civil', 1]],
     nice: ['facility', 'driving', 'digital'],
     quals: [
-      { id: 'security_edu', label: '경비원 신임교육 이수', required: true, note: '경비업법에 따라 배치 전 신임교육 이수 필요(교육기관에서 진행)', url: 'https://www.law.go.kr' },
+      { id: 'security_edu', label: '일반경비원 신임교육 이수', required: true, note: '경비업법 제13조·시행규칙 별표2: 배치 전 24시간 법정 신임교육(3년 내 이수·근무 경력자는 면제)', url: 'https://www.law.go.kr' },
     ],
     recommended: ['응급처치·소방 기초', '민원 응대 요령'],
     pattern: { day: false, partTime: false, physical: 'mid' }, barrier: 'low',

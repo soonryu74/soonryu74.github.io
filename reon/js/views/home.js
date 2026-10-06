@@ -29,6 +29,7 @@ export function view(ctx) {
   ${['경력 입력', 'AI 경력 번역', '전환직무 TOP3', '역량 Gap', '훈련', '채용'].map((s, i, a) => `<div class="step">${s}</div>${i < a.length - 1 ? '<span class="arrow" aria-hidden="true">→</span>' : ''}`).join('')}
 </div>
 <p class="muted" style="text-align:center">직업 이름을 몰라도 됩니다. "내가 해온 일"에서 시작합니다.</p>
+<p class="small muted" style="text-align:center">정책 근거: 고용노동부 중장년 취업지원(중장년내일센터·경력지원제)과 고령자고용법 재취업지원서비스 의무 — 다시ON AI는 이 서비스들을 발견·연결하는 디지털 입구입니다. <a href="#/about">근거와 한계 보기</a></p>
 
 <div class="trust">
   <div><b>설명 가능한 추천</b>점수만 주지 않습니다. 어떤 경험이 어떤 능력과 연결됐는지 문장으로 보여주고, 근거를 열어볼 수 있습니다.</div>

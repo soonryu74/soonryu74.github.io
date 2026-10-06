@@ -63,6 +63,10 @@ await page.goto(BASE + '#/evidence');
 await page.waitForSelector('[data-testid="ev-compare"]');
 await settle(); await shot('09_evidence');
 
+await page.goto(BASE + '#/about');
+await page.waitForSelector('#app h1');
+await settle(); await shot('11_about_evidence');
+
 // 모바일(390px) — 직무 TOP3 화면
 await page.setViewportSize({ width: 390, height: 844 });
 await page.goto(BASE + '#/jobs');
@@ -71,6 +75,6 @@ await settle(); await shot('10_mobile');
 const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
 
 await browser.close();
-console.log(`스크린샷 10장 저장: ${OUT}`);
+console.log(`스크린샷 11장 저장: ${OUT}`);
 console.log(`모바일 가로 넘침: ${overflow}px`);
 if (errors.length) { console.log('브라우저 오류:'); errors.forEach((e) => console.log(' -', e)); process.exitCode = 1; } else console.log('브라우저 오류 없음');

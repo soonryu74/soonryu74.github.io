@@ -1,5 +1,6 @@
 import { JOB_MAP, FIELDS } from '../../data/jobs.js';
 import { esc, badge } from '../ui.js';
+import { JOB_EVIDENCE, GRADE_LABEL } from '../../data/evidence.js';
 
 export function view(ctx) {
   const job = JOB_MAP[ctx.params.jobId];
@@ -25,6 +26,10 @@ ${gap.blocked ? '<div class="notice notice-warn"><strong>먼저 확인할 것</s
     ${gap.requiredQuals.length + gap.recommendedQuals.length === 0 ? '<li class="muted">법정 필수·권장 자격 없음</li>' : ''}
     </ul></section>
 </div>
+<details class="card soft" data-testid="gap-evidence"><summary>이 직무 요건의 근거 (${(JOB_EVIDENCE[job.id] || []).length}건)</summary>
+  <ul style="padding-left:18px">${(JOB_EVIDENCE[job.id] || []).map((e) => `<li style="margin:6px 0">${badge(e.grade === 'law' ? 'ok' : e.grade === 'official' ? 'ai' : 'muted', GRADE_LABEL[e.grade])} ${esc(e.claim)} <span class="small muted">— ${esc(e.source)}</span> <a class="small" href="${e.url}" target="_blank" rel="noopener">↗</a></li>`).join('')}</ul>
+  <p class="small muted">확인일 2026-10-06. "채용공고"·"2차 출처"는 공고·매체 기준이라 기관·시기에 따라 다를 수 있습니다. 법령은 국가법령정보센터에서 원문을 확인하세요.</p>
+</details>
 <p class="small muted">직무 요건 출처: ${job.sources.map((s) => `<a href="${s.url}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join(' · ')} (확인일 2026-10-06). 직업전망·임금은 고용24 직업정보 상세 연결 예정이라 표시하지 않습니다.</p>
 <div class="actions">
   <a class="btn btn-primary btn-lg" href="#/training/${job.id}" data-testid="to-training">이 역량을 이렇게 채울 수 있습니다 → 훈련 보기</a>
