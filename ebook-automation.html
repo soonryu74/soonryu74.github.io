@@ -134,7 +134,7 @@ td{color:var(--muted)}td b{color:var(--ink)}tr:last-child td{border-bottom:none}
       <a class="tocrow" data-go="1"><span class="tn">1</span><span class="tt"><b>플랫폼의 본질</b><i>채널마다 작동하는 이유가 다르다</i></span></a>
       <a class="tocrow" data-go="2"><span class="tn">2</span><span class="tt"><b>무엇을, 어떻게</b><i>잘된 것 하나를 뜯어 복제한다</i></span></a>
       <a class="tocrow" data-go="3"><span class="tn">3</span><span class="tt"><b>자동화 파이프라인</b><i>다섯 도구를 하나로 합친다</i></span></a>
-      <a class="tocrow" data-go="4"><span class="tn">4</span><span class="tt"><b>실습 — 클로드로 공장 짓기</b><i>추천 스택으로 처음부터 끝까지</i></span></a>
+      <a class="tocrow" data-go="4"><span class="tn">4</span><span class="tt"><b>실습 — 말로 시키는 공장</b><i>도구 말고 지시. 에이전트에게 말한다</i></span></a>
     </div>
     <p class="tocnote">이 노트는 <b>‘AI 콘텐츠 자동화’ 강의</b>를 듣고, 제 방식으로 다시 정리한 개인 학습 기록입니다. 원문·그림이 아니라 제가 새로 쓴 요약입니다.</p>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
@@ -331,130 +331,117 @@ td{color:var(--muted)}td b{color:var(--ink)}tr:last-child td{border-bottom:none}
     <p class="note">자동화는 ‘더 빨리’가 아니라 ‘지치지 않고 계속’이 핵심입니다.</p>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
 
-  <!-- ===== 4부 · 실습 ===== -->
-  <section class="s open" data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <div class="chopen"><span class="chnum">4</span><h2>실습 — 클로드로 공장 짓기</h2>
-    <p class="chsub">추천 스택으로, 소재 하나를 끝까지 만들어 본다</p><div class="rule mid"></div></div>
+  <!-- ===== 4부 · 실습 (말로 시키기) ===== -->
+  <section class="s open" data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <div class="chopen"><span class="chnum">4</span><h2>실습 — 말로 시키는 공장</h2>
+    <p class="chsub">도구를 배우지 말고, 에이전트에게 말한다</p><div class="rule mid"></div></div>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
 
-  <!-- 준비물 -->
-  <section class="s " data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <h3>준비물 — 다섯 가지</h3>
-    <div class="tw"><table>
-      <tr><th>단계</th><th>도구(추천)</th><th>비용</th></tr>
-      <tr><td><b>글·대본·코드</b></td><td>Claude (유료)</td><td>이미 보유</td></tr>
-      <tr><td><b>목소리</b></td><td>ElevenLabs</td><td>무료~</td></tr>
-      <tr><td><b>이미지</b></td><td>Midjourney / ChatGPT 이미지</td><td>유료~</td></tr>
-      <tr><td><b>합치기</b></td><td>ffmpeg(무료) 또는 CapCut</td><td>무료</td></tr>
-      <tr><td><b>발행</b></td><td>유튜브·블로그·뉴스레터</td><td>무료</td></tr>
-    </table></div>
-    <p class="note">핵심은 <b>Claude 하나로 대본·코드·재편집까지</b> 다 끝낸다는 점. 나머지는 거드는 도구입니다.</p>
-  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
-
-  <!-- 전체 흐름 -->
-  <section class="s " data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <h3>흐름: 소재 하나가 공장을 지난다</h3>
+  <!-- 패러다임 전환 -->
+  <section class="s " data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <h3>당신은 도구를 다루지 않는다</h3>
     <div class="prose">
-      <p>순서는 딱 다섯입니다.</p>
-      <p><b>소재 → ①Claude 대본 → ②ElevenLabs 목소리 → ③이미지 → ④ffmpeg 합치기 → ⑤발행.</b></p>
-      <p>다음 장부터 하나씩 따라 합니다. 한 바퀴만 돌면, 그다음부턴 <b>소재만 바꾸면</b> 됩니다.</p>
+      <p>앞에서 본 다섯 도구를 하나씩 배울 필요가 없습니다. 당신이 할 일은 <b>말하는 것</b> 하나뿐입니다.</p>
+      <p>도구를 쓰는 건 <b>Claude(에이전트)</b>입니다. 당신은 “무엇을 만들지”를 말하고, 결과를 확인하고, “이렇게 바꿔”라고 합니다.</p>
+    </div>
+    <p class="note">지금 당신이 읽는 이 교재도, 누군가 에이전트에게 <b>말로 시켜서</b> 만들어졌습니다.</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 준비물: 딱 둘 -->
+  <section class="s " data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <h3>준비물 — 딱 둘</h3>
+    <div class="prose">
+      <p><b>① Claude (유료)</b> — 기획하고 일하는 두뇌.</p>
+      <p><b>② 실행할 수 있는 ‘몸’</b> — 코드를 돌리고 파일을 다루고 올릴 수 있는 환경. 예: <b>Claude Code</b>, 또는 도구가 연결된 에이전트.</p>
+      <p>목소리·이미지 같은 외부 생성은 <b>에이전트가 대신</b> 불러 씁니다. 당신은 계정/키를 한 번만 꽂아 둡니다.</p>
+    </div>
+    <p class="note">‘몸’을 한 번 만들어 두면, 그다음부턴 <b>말만 하면</b> 됩니다.</p>
+  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
+
+  <!-- 흐름 -->
+  <section class="s " data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <h3>흐름: 말 한마디가 공장을 돌린다</h3>
+    <div class="prose">
+      <p>당신: <b>“○○ 주제로 쇼츠 하나 만들어서 유튜브랑 블로그에 올려줘.”</b></p>
+      <p>에이전트: 대본 → 이미지 → 목소리 → 합치기 → 발행. 중간중간 당신에게 확인을 받으며.</p>
+      <p>당신은 <b>고르고, 확인하고, 고쳐 달라</b> 말할 뿐입니다.</p>
     </div>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
 
-  <!-- 실습 A: 대본 -->
-  <section class="s " data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <h3>① 대본 — 클로드에게 이렇게</h3>
-    <div class="prose">
-      <p>빈 화면에서 쓰지 않습니다. Claude에 아래를 그대로 붙여넣으세요.</p>
-    </div>
-    <pre>너는 내 유튜브 쇼츠 작가다.
-주제: {오늘의 주제}
-조건:
-- 첫 문장은 0.12초 안에 멈추게 하는 후킹
-- 60초 분량, 말하듯 짧은 문장
-- 끝에 한 줄 CTA
-대본만, 장면 구분(#1, #2 …)과 함께 써줘.</pre>
-    <p class="note">Claude <b>Projects</b>에 ‘내 채널 톤’을 저장해 두면, 매번 같은 목소리로 나옵니다.</p>
+  <!-- ① 대본 (대화) -->
+  <section class="s " data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <h3>① 대본 — 그냥 말한다</h3>
+    <pre>나   : ‘직장인 아침 루틴 3가지’로 60초 쇼츠 대본 써줘.
+       첫 3초 후킹 세게, 끝에 CTA 한 줄.
+Claude : (장면 #1~#5 대본 출력)
+나   : 2번 장면 더 공감되게 바꿔줘.
+Claude : (해당 장면만 수정)</pre>
+    <p class="note">맘에 들 때까지 “이렇게 바꿔”만 반복. 도구 조작은 없습니다.</p>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
 
-  <!-- 실습 B: 목소리 -->
-  <section class="s " data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <h3>② 목소리 — 한 번 만들고 계속 쓴다</h3>
+  <!-- ② 이미지·목소리 (대화) -->
+  <section class="s " data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <h3>② 이미지·목소리 — 그것도 말로</h3>
+    <pre>나   : 이 대본 장면별로 이미지 만들어줘. 미니멀 라인아트로.
+Claude : (이미지 생성 도구를 호출 → 장면 이미지 5장)
+나   : 그리고 내 목소리로 읽어줘.
+Claude : (TTS 호출 → voice.mp3)</pre>
     <div class="prose">
-      <p><b>1.</b> ElevenLabs 가입 → <b>Voice 복제</b>에 내 목소리 1~2분 샘플을 올립니다.</p>
-      <p><b>2.</b> 대본을 붙여넣고 재생 → <b>mp3 다운로드</b>. (한국어 지원)</p>
-      <p>이제 영상이 백 개여도 <b>녹음은 0번</b>입니다.</p>
-    </div>
-    <p class="note">샘플은 조용한 곳에서 또박또박. 그 품질이 앞으로 평생 갑니다.</p>
-  </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
-
-  <!-- 실습 C: 이미지 -->
-  <section class="s " data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <h3>③ 이미지 — 장면부터 그린다</h3>
-    <div class="prose">
-      <p>대본을 장면으로 쪼갭니다. 이것도 Claude에게 시킵니다.</p>
-    </div>
-    <pre>위 대본을 장면별로 나누고,
-각 장면을 이미지 생성 프롬프트(영어)로 만들어줘.
-스타일: {내 채널 톤 — 예: 미니멀 라인아트, 따뜻한 색}</pre>
-    <div class="prose">
-      <p>나온 프롬프트를 <b>이미지 툴</b>(Midjourney·ChatGPT 이미지 등)에 넣어 장면 수만큼 뽑습니다. 파일명은 <b>scene1, scene2 …</b></p>
+      <p>생성 도구는 <b>에이전트가 부릅니다.</b> 당신은 <b>스타일</b>만 말합니다.</p>
     </div>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
 
-  <!-- 실습 D: 합치기 -->
-  <section class="s " data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <h3>④ 합치기 — 클로드가 코드를 써 준다</h3>
+  <!-- ③ 합치기 (대화 + under the hood) -->
+  <section class="s " data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <h3>③ 합치기 — “영상으로 만들어줘”</h3>
+    <pre>나   : 이미지랑 목소리 합쳐서 영상으로 만들어줘.
+Claude : 네, 코드를 짜서 바로 돌릴게요.
+       → (ffmpeg 실행) → out.mp4 완성</pre>
     <div class="prose">
-      <p>코드 몰라도 됩니다. 이미지들과 목소리를 한 폴더에 두고, Claude에게 “이 폴더로 영상 만드는 ffmpeg 명령 써줘” 하면 끝. 기본형은 이겁니다.</p>
+      <p>속에서 Claude가 돌리는 건 이런 코드입니다. <b>당신이 치는 게 아닙니다.</b></p>
     </div>
     <pre>ffmpeg -framerate 1/4 -i scene%d.png -i voice.mp3 \
-  -c:v libx264 -r 30 -pix_fmt yuv420p \
-  -c:a aac -shortest out.mp4</pre>
-    <p class="note">scene1.png·scene2.png … 와 voice.mp3 를 한 폴더에. 자막·전환 효과는 Claude에게 더 시키면 됩니다.</p>
+  -c:v libx264 -r 30 -pix_fmt yuv420p -c:a aac -shortest out.mp4</pre>
+    <p class="note">코드를 배우는 게 아니라, 코드를 부리는 쪽에게 말하는 겁니다.</p>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
 
-  <!-- 실습 E: 발행 -->
-  <section class="s " data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <h3>⑤ 발행 — 한 소재, 세 곳</h3>
+  <!-- ④ 발행 (대화) -->
+  <section class="s " data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <h3>④ 발행 — “올려줘”</h3>
+    <pre>나   : 유튜브엔 영상, 블로그엔 글로, 뉴스레터엔 3줄로 올려줘.
+Claude : 영상 업로드 / 대본을 블로그 글로 재편 / 핵심 3줄 발송 완료.</pre>
     <div class="prose">
-      <p>만든 하나를 세 곳에 풉니다.</p>
-      <p><b>영상</b> → 유튜브·쇼츠.</p>
-      <p>같은 대본 → Claude에게 “블로그 글로 바꿔줘” → <b>블로그</b>.</p>
-      <p>핵심만 → Claude에게 “3줄 뉴스레터로” → <b>뉴스레터(내 명단)</b>.</p>
+      <p>하나의 소재가 <b>세 곳</b>으로. 당신은 “올려줘” 한 마디입니다.</p>
     </div>
-    <p class="note">하나 만들어 셋을 발행. 이게 ‘합쳐 발행’입니다.</p>
+    <p class="note">한 번 연결해 두면, 발행도 매번 말 한마디로 끝납니다.</p>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
 
-  <!-- 완성 예시 -->
-  <section class="s " data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <h3>예시 — ‘아침 루틴’ 하나로</h3>
-    <div class="tw"><table>
-      <tr><th>단계</th><th>한 일</th></tr>
-      <tr><td><b>소재</b></td><td>“직장인 아침 루틴 3가지”</td></tr>
-      <tr><td><b>① 대본</b></td><td>Claude로 60초 쇼츠 대본</td></tr>
-      <tr><td><b>② 목소리</b></td><td>ElevenLabs 내 목소리 mp3</td></tr>
-      <tr><td><b>③ 이미지</b></td><td>장면 3장 생성</td></tr>
-      <tr><td><b>④ 합치기</b></td><td>ffmpeg로 out.mp4</td></tr>
-      <tr><td><b>⑤ 발행</b></td><td>유튜브 + 블로그 + 뉴스레터</td></tr>
-    </table></div>
-    <p class="note">손으로 반나절 걸리던 게, 이 흐름이면 <b>30분 안쪽</b>. 두 번째부턴 더 빨라집니다.</p>
+  <!-- 완성 예시: 실제 대화 -->
+  <section class="s alt" data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <h3>예시 — 말 몇 마디로 끝까지</h3>
+    <pre>나   : ‘아침 루틴 3가지’ 쇼츠 만들어서 유튜브·블로그·뉴스레터에 올려줘.
+Claude : 대본 뽑았어요. (확인)
+나   : 좋아. 진행해.
+Claude : 이미지·목소리·영상까지 만들었어요. 미리보기 보냈어요.
+나   : 2번 이미지만 바꿔.
+Claude : 교체했어요. 세 곳에 발행했습니다. ✅</pre>
+    <p class="note">여섯 마디로 한 편 완성. 두 번째 소재부턴 더 짧아집니다.</p>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
 
-  <!-- 체크리스트 -->
-  <section class="s " data-label="실습 — 공장 짓기"><div class="paper"><div class="pin">
-    <h3>따라 했는지 점검</h3>
+  <!-- 잘 시키는 법 -->
+  <section class="s " data-label="실습 — 말로 시키기"><div class="paper"><div class="pin">
+    <h3>잘 시키는 법 — 말의 기술</h3>
     <div class="prose">
-      <p>☐ Claude Projects에 내 채널 톤을 저장했다</p>
-      <p>☐ ElevenLabs에 내 목소리를 만들었다</p>
-      <p>☐ 대본 → 장면 → 이미지까지 한 바퀴 돌렸다</p>
-      <p>☐ ffmpeg로 영상 1개를 뽑았다</p>
-      <p>☐ 한 소재를 세 곳에 발행했다</p>
+      <p><b>명확하게.</b> “좋게” 말고 “60초, 후킹 세게, 끝에 CTA”.</p>
+      <p><b>예시를 준다.</b> “이 영상처럼”, “이 톤으로”.</p>
+      <p><b>반복은 저장.</b> 잘 된 지시는 Claude Projects에 저장 → 다음엔 더 짧게.</p>
+      <p><b>확인하고 고친다.</b> 한 번에 완벽을 바라지 않는다. “이 부분만 이렇게”.</p>
     </div>
-    <p class="note">다섯 개가 다 체크됐다면, 이제 <b>소재만 바꾸면</b> 됩니다. 공장이 생긴 겁니다.</p>
+    <p class="note">실력은 ‘도구 다루는 법’이 아니라 <b>‘잘 시키는 법’</b>입니다.</p>
   </div><div class="foot"><span class="brand">soonryu74 · AI 학습 노트</span><span class="pnum"></span></div></div></section>
 
   <!-- 18. 맺음 / CTA -->
+
   <section class="s open" data-label="맺음"><div class="paper"><div class="pin">
     <div class="chopen"><span class="kick">다음 단계</span>
     <h2 style="margin-top:14px">이제, 내 공장을 짓는다</h2>
