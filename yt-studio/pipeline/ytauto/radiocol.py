@@ -341,11 +341,14 @@ def _rich_text(segs) -> str:
     return "".join(f"*{t}*" if h else t for t, h in segs)
 
 
+WIDE_PT, WIDE_LH, WIDE_W = 83, 109, 0.84   # 가로 자막 글자 크기(64의 1.3배) · 줄 간격 · 줄 너비 비율
+
+
 def caption_steps(text: str, fonts: dict, wide: bool) -> list[str]:
     """두 줄 자막이면 [첫 줄, 첫 줄+둘째 줄] — 말이 둘째 줄에 닿을 때 둘째 줄이 나타나게 쓴다."""
     text = auto_highlight(text)
     if wide:
-        lines = _wrap_rich(text, _f(fonts["bold"], 64), int(1920 * 0.74))[:2]
+        lines = _wrap_rich(text, _f(fonts["bold"], WIDE_PT), int(1920 * WIDE_W))[:2]
     else:
         lines = _wrap_rich(text, _f(fonts["bold"], 68), int(1080 * 0.86))[:3]
     rows = [_rich_text(ln).strip() for ln in lines]
@@ -365,9 +368,9 @@ def wide_caption_parts(out_dir: Path, name: str, text: str, fonts: dict, accent_
     줄이 하나씩 나타나도 이미 뜬 줄은 그대로 있고(다시 깜빡이지 않고) 새 줄만 서서히 나타나게 하기 위해서."""
     W, H = 1920, 1080
     acc = [(255, 225, 60), (92, 242, 200)][accent_i % 2]
-    f = _f(fonts["bold"], 64)
-    lines = _wrap_rich(auto_highlight(text), f, int(W * 0.74))[:2]
-    line_h = 84
+    f = _f(fonts["bold"], WIDE_PT)
+    lines = _wrap_rich(auto_highlight(text), f, int(W * WIDE_W))[:2]
+    line_h = WIDE_LH
     block = line_h * len(lines)
     y0 = H - 40 - block
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -383,7 +386,7 @@ def wide_caption_parts(out_dir: Path, name: str, text: str, fonts: dict, accent_
     outs = []
     for i, ln in enumerate(lines):
         img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        _draw_rich(img, W / 2, y0 + i * line_h, ln, f, (255, 255, 255), acc, 4, "center")
+        _draw_rich(img, W / 2, y0 + i * line_h, ln, f, (255, 255, 255), acc, 5, "center")
         lp = out_dir / f"{name}_l{i}.png"
         img.save(lp)
         outs.append(lp)
