@@ -8,9 +8,20 @@ HERE = Path(__file__).resolve().parent
 KEY = os.environ.get("GEMINI_API_KEY")
 if not KEY: raise SystemExit("GEMINI_API_KEY 없음")
 VOICE = sys.argv[1] if len(sys.argv) > 1 else "Kore"
-STYLE = "따뜻하고 차분한 전문 성우가 베이커리 홍보 영상 내레이션을 읽듯, 또박또박 자연스러운 한국어 억양으로, 조금 느리게: "
+STYLE = os.environ.get("TTS_STYLE", "밝고 친근한 홍보 영상 내레이터처럼, 미소 띤 또렷한 목소리로, 자연스러운 한국어 억양으로 읽어 주세요: ")
+SUFFIX = os.environ.get("TTS_SUFFIX", "")   # 후보 꼬리표(_v2 등)
 URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key={KEY}"
-def tts(text, out):
+def tts(text, out, tries=3):
+    """길이가 글자 수에 비해 너무 길면(지시문까지 읽음) 다시 만든다"""
+    for k in range(tries):
+        _tts(text, out)
+        with wave.open(str(out)) as w: d = w.getnframes() / w.getframerate()
+        if d <= 0.9 + 0.22 * len(text): return d
+        print("  너무 김 → 다시", round(d, 1), text[:20]); time.sleep(2)
+    return d
+
+
+def _tts(text, out):
     body = {"contents": [{"parts": [{"text": STYLE + text}]}],
             "generationConfig": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": VOICE}}}}}
     for i in range(4):
@@ -27,6 +38,6 @@ L = json.load(open(HERE / "lines.json", encoding="utf-8"))
 D = HERE / "voice"; D.mkdir(exist_ok=True)
 for tag in ("A", "B"):
     for i, (t, txt) in enumerate(L[tag]):
-        out = D / f"{tag}{i:02d}.wav"
+        out = D / f"{tag}{i:02d}{SUFFIX}.wav"
         if out.exists(): continue
-        tts(txt, out); print(tag, i, txt[:30], flush=True); time.sleep(1)
+        d = tts(txt, out); print(tag, i, round(d, 1), txt[:30], flush=True); time.sleep(1)
