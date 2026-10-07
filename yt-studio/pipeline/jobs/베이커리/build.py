@@ -76,10 +76,10 @@ def build(tag, src, lines, seed, mood):
     else:
         bg = AU.bgm([(0, 1.0, 'intro', {}), (1.0, DUR - 2.0, mood, {}), (DUR - 2.0, DUR, 'outro', {})], DUR, seed=seed, bpm=76, palette='tale', drum_gain=0.0)
     sfx = AU.new_track(DUR)
-    last_end = max(t + d for t, w, d in vo); DM = max(DUR, last_end + 0.5); pad = DM - DUR
+    last_end = max(t + d for t, w, d in vo); DM = max(DUR, last_end) + 3.0; pad = DM - DUR   # 끝나고 3초 여유(마지막 화면 유지)
     if pad > 0:
         bg = AU.read_wav(ext)[:int((DM + 0.5) * AU.SR)] if os.path.exists(ext) else bg; bg = bg / (abs(bg).max() + 1e-9) * 0.9; sfx = AU.new_track(DM)
-    mix = AU.mixdown(DM, f'out/{tag}_mix.wav', bg, sfx, [(t, w) for t, w, d in vo], bgm_gain=0.28, voice_gain=0.95, duck=0.35, fade_in=0.6, fade_out=1.5)
+    mix = AU.mixdown(DM, f'out/{tag}_mix.wav', bg, sfx, [(t, w) for t, w, d in vo], bgm_gain=0.28, voice_gain=0.95, duck=0.35, fade_in=0.6, fade_out=2.5)
     out = f'out/{tag}.mp4'
     clean = f'clean_{tag.lower()}.mp4'
     if os.path.exists(clean):                       # 구운 자막을 지운 영상 + 새 자막(PNG · 페이드)
