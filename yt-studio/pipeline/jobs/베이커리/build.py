@@ -67,8 +67,10 @@ def build(tag, src, lines, seed, mood):
     for (t, w, d), (_, txt) in zip(vo, [l for l in lines if not l[1].startswith('#')]):
         t2 = max(t, prev_end + 0.25); sched.append((t2, w, d)); prev_end = t2 + d
         print(f'{tag} {t:5.1f}→{t2:5.1f}s +{d:4.1f}s  {txt}')
-    vo = sched
-    # 겹침 점검: 다음 대사 시작 전에 끝나는지
+    HEAD = 2.5                                       # 앞에 썸네일 정지화면
+    vo = [(t + HEAD, w, d) for t, w, d in sched]
+    thumb = f'out/사랑의베이커리_{1 if tag == "A" else 2}_썸네일.jpg'
+    DUR += HEAD
 
     ext = '/home/user/soonryu74.github.io/yt-studio/pipeline/jobs/베이커리/bgm.mp3'
     if os.path.exists(ext):
@@ -102,11 +104,12 @@ def build(tag, src, lines, seed, mood):
         subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y'] + inputs + ['-filter_complex', fc, '-map', '[vout]', '-map', '1:a',
                         '-c:v', 'libx264', '-crf', '18', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', out], check=True)
         print(f'  새 자막 {len(caps)}개 · 길이 {DM:.1f}s'); return
-    if pad > 0.05:   # 마지막 대사가 영상보다 길면 끝 화면(로고)을 그만큼 붙잡아 둔다
-        subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', src, '-i', mix, '-map', '0:v', '-map', '1:a', '-vf', f'tpad=stop_mode=clone:stop_duration={pad:.2f}',
-                        '-c:v', 'libx264', '-crf', '18', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', out], check=True)
-    else:
-        subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', src, '-i', mix, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', out], check=True)
+    # 썸네일 정지화면(HEAD초) + 원본 + 끝 여유(마지막 화면 유지)
+    fc = (f'[2:v]scale=1280:720,setsar=1,format=yuv420p,fps=24[th];[0:v]fps=24,setsar=1,format=yuv420p[v0];'
+          f'[th][v0]concat=n=2:v=1:a=0[vc];[vc]tpad=stop_mode=clone:stop_duration={max(0, pad):.2f}[vout]')
+    subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', src, '-i', mix, '-loop', '1', '-framerate', '24', '-t', f'{HEAD:.2f}', '-i', thumb,
+                    '-filter_complex', fc, '-map', '[vout]', '-map', '1:a',
+                    '-c:v', 'libx264', '-crf', '18', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', out], check=True)
     print(f'  길이 {DUR:.1f}s → {DM:.1f}s (pad {pad:.1f})')
     print('→', out)
 
