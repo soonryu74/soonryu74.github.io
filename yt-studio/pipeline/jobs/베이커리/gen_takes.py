@@ -5,7 +5,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location("gv", HERE / "gen_voice_gemini.py")
 src = (HERE / "gen_voice_gemini.py").read_text(encoding="utf-8").split("L = json.load")[0]   # tts 정의까지만
-ns = {"__file__": str(HERE / "gen_voice_gemini.py")}; exec(src, ns)
+argv = sys.argv; sys.argv = [argv[0], os.environ.get("TTS_VOICE", "Kore")]   # 줄 키(A17)가 음성 이름으로 읽히지 않게
+ns = {"__file__": str(HERE / "gen_voice_gemini.py")}; exec(src, ns); sys.argv = argv
 tts = ns["tts"]
 L = json.load(open(HERE / "lines.json", encoding="utf-8"))
 D = HERE / "voice"; D.mkdir(exist_ok=True)
