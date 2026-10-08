@@ -10,7 +10,8 @@ if not KEY: raise SystemExit("GEMINI_API_KEY 없음")
 VOICE = sys.argv[1] if len(sys.argv) > 1 else "Kore"
 STYLE = os.environ.get("TTS_STYLE", "밝고 친근한 홍보 영상 내레이터처럼, 미소 띤 또렷한 목소리로, 자연스러운 한국어 억양으로 읽어 주세요: ")
 SUFFIX = os.environ.get("TTS_SUFFIX", "")   # 후보 꼬리표(_v2 등)
-URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key={KEY}"
+MODEL = os.environ.get("TTS_MODEL", "gemini-2.5-flash-preview-tts")   # 일일 한도 초과 시 gemini-2.5-pro-preview-tts
+URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={KEY}"
 def tts(text, out, tries=3):
     """길이가 글자 수에 비해 너무 길면(지시문까지 읽음) 다시 만든다"""
     for k in range(tries):
