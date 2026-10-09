@@ -53,7 +53,7 @@ EPS = [
    OUTRO]},
 
  {"key": "0907", "cover_scene": 1, "audio": f("260907"), "start": 0.0, "end": 0, "speaker": "오정현 총장",
-  "rows": ["예수님의 일 철학", "*세 가지*"], "hand": "\"사명\" \"임재\" \"이타\"",
+  "rows": ["예수님은 일을", "*어떻게* 보셨을까?"], "hand": "\"사명\" \"임재\" \"이타\"",
   "scenes": [
    {"lines": ["일은 하나님을 온전히 닮아 가는 거룩한 도구가 될 수 있습니다."],
     "prompt": "a set of well-worn carpenter's tools (hand plane, chisels, mallet) laid neatly on a sunlit wooden workbench with curls of wood shavings, warm morning light"},
