@@ -31,7 +31,7 @@ EPS = [
    OUTRO]},
 
  {"key": "0831", "cover_scene": 4, "audio": f("260831"), "start": 0.0, "end": 0, "speaker": "오정현 총장",
-  "rows": ["하나님이 지금도 일하시니", "우리도 *일합니다*"], "hand": "\"일은 창조의 축복\"", "title_pt": 91,
+  "rows": ["일은 정말 저주일까,", "*축복*일까?"], "hand": "\"일은 창조의 축복\"", "title_pt": 91,
   "scenes": [
    {"lines": ["일은 하나님을 온전히 닮아 가는 거룩한 도구가 될 수 있습니다."],
     "prompt": "a set of well-worn carpenter's tools (hand plane, chisels, mallet) laid neatly on a sunlit wooden workbench with curls of wood shavings, warm morning light"},
@@ -74,7 +74,7 @@ EPS = [
     "prompt": "an open bible beside a laptop and a mug on an office desk, soft morning window light"},
    OUTRO]},
  {"key": "0914", "cover_scene": 1, "audio": f("260914"), "start": 0.0, "end": 0, "speaker": "오정현 총장",
-  "rows": ["성경 최초 성령 충만", "그는 *일꾼*이었다"], "hand": "\"브살렐, 출애굽기 31장\"",
+  "rows": ["성경 최초의 성령 충만자는", "*일꾼*이었습니다"], "hand": "\"브살렐, 출애굽기 31장\"", "title_pt": 91,
   "scenes": [
    {"lines": ["성경에서 최초로 성령 충만하다고 직접 언급된 분이", "누군지 아십니까?"],
     "prompt": "an old leather-bound bible lying open on a wooden table by a window, thin pages lit by soft daylight"},
