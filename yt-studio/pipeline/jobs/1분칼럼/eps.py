@@ -147,16 +147,19 @@ EPS = [
 
 
 # ── 주차판 (2026-10-10, 사가 설명텍스트 문서 기준) ──────────────────────────
-# 앞머리: 시작 자막(문서의 검정 머리글, 무음 3초) → 아나운서 멘트(Gemini TTS) → 본문. 음성은 build 때 합쳐 {key}_voice.m4a 로 둔다.
+# 음성은 극동방송 원본 녹음(로고송 → 아나운서 멘트 → 본문 → 마무리)을 그대로 쓴다. 앞 1.5초는 시작 자막(문서의 검정 머리글)만 뜨는 무음.
+INTRO_PROMPT = "a classic broadcast studio microphone on a wooden desk in warm morning light, soft bokeh, radio station, still life"
+TOOLS_PROMPT = "a set of well-worn carpenter's tools (hand plane, chisels, mallet) laid neatly on a sunlit wooden workbench with curls of wood shavings, warm morning light"
+
+
 def _intro(start_caption):
-    return {"lines": [start_caption, "FEBC 1분 칼럼!", "사랑글로벌아카데미와 함께합니다.", "말씀에는 오정현 총장입니다."],
-            "prompt": "a classic broadcast studio microphone on a wooden desk in warm morning light, soft bokeh, radio station, still life"}
+    return {"lines": [start_caption, "FEBC 1분 칼럼!", "사랑글로벌아카데미와 함께합니다.", "말씀에는 오정현 총장입니다."], "prompt": INTRO_PROMPT}
 
 
-def _week(src_key, key, start_caption, **over):
+def _week(src_key, key, start_caption, extra=(), **over):
     base = next(e for e in EPS if e["key"] == src_key)
-    ep = dict(base, key=key, audio=str(HERE / f"{key}_voice.m4a"), scenes=[_intro(start_caption)] + base["scenes"],
-              cover_scene=base["cover_scene"] + 1)
+    ep = dict(base, key=key, audio=str(HERE / f"{key}_voice.m4a"), scenes=[_intro(start_caption), *extra] + base["scenes"],
+              cover_scene=base["cover_scene"] + 1 + len(extra))
     ep.update(over)
     return ep
 
@@ -166,6 +169,7 @@ EPS += [
        rows=["[사가일터선교 1분 칼럼]", "일은 정말 저주일까,", "*축복*일까?"], hand="\"일은 창조의 축복\"", title_pt=91, cover_scene=7),
  _week("0907", "w2", "[사가일터선교 1분 칼럼] 예수님의 일터 철학",
        rows=["[사가일터선교 1분 칼럼]", "예수님은 일을", "*어떻게* 보셨을까?"]),
- _week("0914", "w3", "[사가일터선교 1분 칼럼] 예수님의 일 철학 세 가지",
+ _week("0914", "w3", "[사가일터선교 1분 칼럼] 예수님의 일 철학 세 가지",   # 9/14 원본에는 첫 문장이 있다 (예전 본문 음원에서 잘려 있었음)
+       extra=[{"lines": ["일은 하나님을 온전히 닮아 가는 거룩한 도구가 될 수 있습니다."], "prompt": TOOLS_PROMPT}],
        rows=["[사가일터선교 1분 칼럼]", "성경 최초의 성령 충만자는", "*일꾼*이었습니다"], title_pt=91),
 ]
