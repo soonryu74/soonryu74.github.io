@@ -16,6 +16,8 @@ J = json.load(open(HERE / "narration_sketch.json", encoding="utf-8"))
 OUT = HERE / "output" / "스케치형_long_나레이션.mp4"
 WORK = HERE / "voice_sketch" / "_cut"; WORK.mkdir(parents=True, exist_ok=True)
 GAP, DUCK_DB = 0.25, -11
+TEMPO = float(__import__("os").environ.get("NARR_TEMPO", "1.06"))   # 나레이션 미세 빠르기
+END_PAD = float(__import__("os").environ.get("END_PAD", "3.0"))      # 끝 화면 여유(초)
 
 
 def wlen(p: Path) -> float:
@@ -27,7 +29,7 @@ def trim(src: Path, dst: Path) -> float:
     """앞뒤 무음 정리 + 44.1k 스테레오 (빠르기 보정 없음 — 자연 속도)"""
     subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(src), "-af",
                     "silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
-                    "aresample=44100,aformat=channel_layouts=stereo", str(dst)], check=True)
+                    f"atempo={TEMPO},aresample=44100,aformat=channel_layouts=stereo", str(dst)], check=True)
     return wlen(dst)
 
 
@@ -53,8 +55,11 @@ def main() -> Path:
         fil += f"[{k}:a]adelay={int(st * 1000)}|{int(st * 1000)},volume=1.0[v{k}];"
     fil += "[bg]" + "".join(f"[v{k}]" for k in range(1, len(voices) + 1)) + f"amix=inputs={len(voices) + 1}:normalize=0:dropout_transition=0[aout]"
     OUT.parent.mkdir(exist_ok=True)
-    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *args, "-filter_complex", fil, "-map", "0:v", "-map", "[aout]",
-                    "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(OUT)], check=True)
+    # 끝 화면을 END_PAD 초 붙잡아 마지막 대사가 끝나게(영상은 마지막 프레임 유지 · 음악은 그대로 끝나고 무음)
+    fil = fil.replace("[0:a]volume=", "[0:a]apad,volume=")
+    fil += f";[0:v]tpad=stop_mode=clone:stop_duration={END_PAD:.2f}[vout]"
+    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *args, "-filter_complex", fil, "-map", "[vout]", "-map", "[aout]",
+                    "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(OUT)], check=True)
     print("DONE", OUT, flush=True)
     return OUT
 
