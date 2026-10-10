@@ -33,7 +33,7 @@
 
 ## 기획 중: 한뼘(HANDSPAN) — 작은 책만 파는 온라인 마켓
 한 뼘(장변 190mm) 안에 들어오는 미니북만 파는 작가 직판 플랫폼 기획. 한국·일본·세계 미니북 시장 검토, ISBN 2트랙 결정, 수수료·정산·물류 설계, 해외 작가 온보딩.
-MVP 화면(목업 데이터, 결제 미연결): `handspan/` (`handspan/README.md`). 기획안: `docs/minibook-platform-plan.md` · 시장 검토(출처 링크 포함): `docs/minibook-market-review.md` · 법무·세무 질의서: `docs/handspan-legal-queries.md` · 작가 모집 유튜브 패키지: `docs/handspan-youtube-first-minibook.md`.
+MVP 화면(목업 데이터, 결제 미연결): `handspan/` (`handspan/README.md`). 기획안: `docs/minibook-platform-plan.md` · 시장 검토(출처 링크 포함): `docs/minibook-market-review.md` · 단가 실측: `docs/handspan-unit-cost.md` · 법무·세무 질의서: `docs/handspan-legal-queries.md` · 작가 모집 유튜브 패키지: `docs/handspan-youtube-first-minibook.md`.
 
 ## 출처
 법제처(국가법령정보센터·찾기 쉬운 생활법령정보), 국토교통부(실거래가·전자계약), 국세청·행정안전부, 한국부동산원(청약홈), 주택도시보증공사(HUG), 대법원 인터넷등기소 등 공식 자료.
