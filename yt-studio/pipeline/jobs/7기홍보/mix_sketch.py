@@ -59,7 +59,7 @@ def main() -> Path:
     fil = fil.replace("[0:a]volume=", "[0:a]apad,volume=")
     fil += f";[0:v]tpad=stop_mode=clone:stop_duration={END_PAD:.2f}[vout]"
     subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *args, "-filter_complex", fil, "-map", "[vout]", "-map", "[aout]",
-                    "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(OUT)], check=True)
+                    "-c:v", "libx264", "-crf", "18", "-preset", "fast", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(OUT)], check=True)
     print("DONE", OUT, flush=True)
     return OUT
 
