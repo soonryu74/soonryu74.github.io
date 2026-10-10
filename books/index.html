@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>노모어매뉴얼 전자책 | 매뉴얼 없이 바로 써먹는 AI 실무 자동화</title>
+<meta name="description" content="수노·노트북LM·클로드 코워크·바이브코딩. 유튜브 노모어매뉴얼의 실전 활용법을 책으로. 50대도 따라하는 읽는 이북.">
+<meta property="og:title" content="노모어매뉴얼 전자책">
+<meta property="og:description" content="매뉴얼 없이 바로 써먹는 AI 실무 자동화 전자책 시리즈">
+<meta property="og:type" content="website">
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+:root{--bg:#eceae5;--paper:#fdfcfa;--ink:#15130f;--ink2:#33302a;--muted:#6b6560;--dim:#a39c93;
+ --line:#e6e1d9;--line2:#d6d0c6;--wash:#f5f2ec;--amber:#c8811f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',-apple-system,sans-serif;
+ -webkit-font-smoothing:antialiased;line-height:1.7;word-break:keep-all}
+a{color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+header.top{padding:18px 0;border-bottom:1px solid var(--line2);background:var(--paper)}
+header.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:900;letter-spacing:-.5px;text-decoration:none;font-size:17px}
+.brand span{color:var(--amber)}
+nav.top-nav a{font-size:13px;color:var(--muted);text-decoration:none;margin-left:16px}
+.hero{padding:56px 0 40px;text-align:center}
+.kick{display:inline-block;background:var(--ink);color:#fff;font-size:10.5px;font-weight:900;letter-spacing:1.4px;padding:5px 12px}
+h1{font-size:clamp(28px,5vw,44px);font-weight:900;letter-spacing:-1.6px;line-height:1.15;margin:18px 0 12px}
+.lede{font-size:clamp(14px,2vw,17px);color:var(--muted);max-width:34em;margin:0 auto}
+.rule{width:48px;height:3px;background:var(--ink);margin:22px auto 0}
+.promise{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:36px 0 0}
+.promise div{background:var(--paper);border:1px solid var(--line);padding:18px 18px 16px}
+.promise b{display:block;font-size:14px;margin-bottom:6px}
+.promise p{margin:0;font-size:13px;color:var(--muted)}
+section{padding:40px 0}
+h2{font-size:clamp(20px,3vw,28px);font-weight:900;letter-spacing:-1px;margin:0 0 6px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.book{background:var(--paper);border:1px solid var(--line2);display:flex;flex-direction:column;box-shadow:0 4px 18px rgba(0,0,0,.06)}
+.cover{aspect-ratio:0.707;background:var(--wash);border-bottom:1px solid var(--line);display:flex;flex-direction:column;
+ justify-content:flex-end;padding:20px;position:relative}
+.cover .no{position:absolute;top:16px;left:20px;font-size:11px;font-weight:900;letter-spacing:1.4px;color:var(--dim)}
+.cover .stage{position:absolute;top:14px;right:16px;font-size:10.5px;font-weight:900;padding:4px 9px;background:#fff;border:1px solid var(--line2)}
+.cover h3{font-size:21px;font-weight:900;letter-spacing:-.9px;line-height:1.2;margin:0 0 8px}
+.cover p{margin:0;font-size:13px;color:var(--muted)}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.meta{padding:16px 20px 20px;display:flex;flex-direction:column;gap:12px;flex:1}
+.meta ul{margin:0;padding-left:18px;font-size:13px;color:var(--ink2)}
+.meta li{margin:2px 0}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:auto;gap:8px;flex-wrap:wrap}
+.price{font-weight:900;font-size:17px}
+.price s{color:var(--dim);font-weight:400;font-size:13px;margin-right:6px}
+.btn{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;font-weight:800;font-size:13.5px;padding:10px 16px;border:1px solid var(--ink)}
+.btn.soon{background:#fff;color:var(--muted);border-color:var(--line2);cursor:default}
+.btn.ghost{background:transparent;color:var(--ink)}
+.badge{font-size:11px;font-weight:800;color:var(--amber)}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.flow div{background:var(--paper);border:1px solid var(--line);padding:16px;text-align:center}
+.flow .n{display:block;font-size:11px;font-weight:900;letter-spacing:1.4px;color:var(--dim);margin-bottom:6px}
+.flow b{display:block;font-size:14px;margin-bottom:4px}
+.flow p{margin:0;font-size:12.5px;color:var(--muted)}
+.faq details{background:var(--paper);border:1px solid var(--line);padding:14px 18px;margin-bottom:8px}
+.faq summary{font-weight:800;cursor:pointer;font-size:14.5px}
+.faq p{margin:10px 0 0;font-size:14px;color:var(--ink2)}
+.cta{background:var(--ink);color:#fff;padding:48px 0;text-align:center}
+.cta h2{color:#fff}
+.cta p{color:#cfc9bf;max-width:34em;margin:0 auto 20px;font-size:14.5px}
+.cta .btn{background:var(--amber);border-color:var(--amber)}
+footer{padding:28px 0 40px;font-size:12px;color:var(--muted);border-top:1px solid var(--line2)}
+footer p{margin:4px 0}
+.note{font-size:12.5px;color:var(--dim);margin-top:14px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./">노모어<span>매뉴얼</span> 전자책</a>
+  <nav class="top-nav">
+    <a href="#books">책</a><a href="#how">구매 방법</a><a href="#faq">자주 묻는 질문</a>
+    <a href="https://www.youtube.com/results?search_query=%EB%85%B8%EB%AA%A8%EC%96%B4%EB%A7%A4%EB%89%B4%EC%96%BC" target="_blank" rel="noopener">유튜브</a>
+  </nav>
+</div></header>
+
+<main>
+<div class="hero"><div class="wrap">
+  <span class="kick">노모어매뉴얼 출판</span>
+  <h1>매뉴얼 없이 바로 써먹는<br>AI 실무 자동화 책</h1>
+  <p class="lede">유튜브에서 반응이 확인된 활용법만 골라 한 권에 한 가지씩. 기능 나열은 없고, 따라하기와 수익화만 있습니다.</p>
+  <div class="rule"></div>
+  <div class="promise">
+    <div><b>영상에 없는 것이 들어 있습니다</b><p>프롬프트 모음, 템플릿 파일, 체크리스트. 책마다 하나 이상.</p></div>
+    <div><b>50대도 따라할 수 있게</b><p>전문용어는 비유로, 영어는 한글 발음 병기, Mac·Windows 명령 나란히.</p></div>
+    <div><b>바뀌면 다시 드립니다</b><p>도구가 업데이트되면 갱신판을 구매자에게 다시 보냅니다.</p></div>
+  </div>
+</div></div>
+
+<section id="books"><div class="wrap">
+  <h2>책 목록</h2>
+  <p class="sub">왕초보 → 실무 → 실전 순서. 번호대로 읽지 않아도 됩니다.</p>
+  <div class="grid" id="grid"></div>
+  <p class="note">정가는 출간 시 확정됩니다. 서점(교보문고·리디·알라딘·예스24)에서도 같은 가격에 판매합니다. 여기서 사면 부록 자료가 함께 갑니다.</p>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <h2>구매 방법</h2>
+  <p class="sub">결제부터 파일 받기까지 3단계.</p>
+  <div class="flow">
+    <div><span class="n">1</span><b>책을 고른다</b><p>위 목록에서 "구매" 버튼</p></div>
+    <div><span class="n">2</span><b>결제한다</b><p>카드·계좌이체·간편결제</p></div>
+    <div><span class="n">3</span><b>이메일로 받는다</b><p>PDF와 EPUB, 부록 링크</p></div>
+  </div>
+  <p class="note">전자책은 디지털 파일 특성상 다운로드 후 환불이 어렵습니다. 결제 전 목차와 미리보기를 확인해 주세요.</p>
+</div></section>
+
+<section id="faq" class="faq"><div class="wrap">
+  <h2>자주 묻는 질문</h2>
+  <p class="sub">궁금한 것을 눌러 보세요.</p>
+  <details><summary>영상을 다 봤는데 책을 또 사야 하나요?</summary><p>영상은 "이게 된다"를 보여 주고, 책은 "내 손으로 끝까지"를 돕습니다. 책에만 있는 프롬프트 모음과 체크리스트가 있습니다. 영상으로 충분하면 사지 않으셔도 됩니다.</p></details>
+  <details><summary>스마트폰에서도 읽을 수 있나요?</summary><p>네. PDF는 어디서나 열리고, EPUB은 리디·교보 앱이나 애플 북에서 글자 크기를 키워 읽을 수 있습니다.</p></details>
+  <details><summary>도구가 업데이트되면 책 내용이 안 맞을 텐데요.</summary><p>큰 변화가 있으면 갱신판을 만들어 구매자 이메일로 다시 보냅니다. 추가 비용은 없습니다.</p></details>
+  <details><summary>종이책도 있나요?</summary><p>반응이 좋은 책부터 주문형 인쇄(POD)로 종이책을 냅니다. 출간되면 각 책 카드에 표시됩니다.</p></details>
+  <details><summary>강의와는 어떻게 다른가요?</summary><p>책은 한 가지 도구를 혼자 끝내는 안내서입니다. 강의는 바이브코딩으로 내 업무 프로그램을 직접 만드는 과정이며 질문과 피드백이 있습니다. 책 구매자에게는 강의 쿠폰을 드립니다.</p></details>
+</div></section>
+
+<div class="cta"><div class="wrap">
+  <span class="kick">다음 단계</span>
+  <h2>책으로 익히고, 강의에서 직접 만듭니다</h2>
+  <p>업무 자동화와 1인 창업을 위한 바이브코딩 실전 강의. 책 구매자는 사전예약 안내를 먼저 받습니다.</p>
+  <a class="btn" href="#" id="course-link">강의 사전예약 안내 받기</a>
+</div></div>
+</main>
+
+<footer><div class="wrap">
+  <p><b>노모어매뉴얼 출판</b> · 대표 서순려</p>
+  <p>사업자등록번호 000-00-00000 · 통신판매업신고 제0000-서울XX-0000호 · 출판사신고 제0000-000000호</p>
+  <p>주소 (사업자등록 후 기재) · 이메일 soonryu74@gmail.com</p>
+  <p>© 2026 노모어매뉴얼. 이 페이지의 글과 그림은 저작권법의 보호를 받습니다.</p>
+</div></footer>
+
+<script>
+// 책 데이터. 출간되면 status를 'sale'로, buy에 결제 링크를 넣는다.
+const BOOKS = [
+ {no:'01',stage:'왕초보',title:'수노로 음악 자동 생성, 몰랐죠?',sub:'들으면서 만드는 AI 음악 수익화',
+  bullets:['프롬프트 40개 부록','가사 자동화 레시피 3개','상업적 이용 조건 체크리스트'],price:9900,status:'writing',buy:'',preview:''},
+ {no:'02',stage:'왕초보',title:'노트북LM 숨겨진 활용 12가지',sub:'내 자료로 나만의 AI 비서 만들기',
+  bullets:['자료 정리 템플릿','질문 프롬프트 모음','음성 요약 활용법'],price:9900,status:'planned',buy:'',preview:''},
+ {no:'03',stage:'실무',title:'클로드 코워크로 엑셀 업무 자동화',sub:'매일 하는 보고서를 한 번에',
+  bullets:['엑셀 자동화 예제 파일 10개','지시문 모음','실수 방지 체크리스트'],price:14900,status:'planned',buy:'',preview:''},
+ {no:'04',stage:'실무',title:'클로드 코워크로 PPT 보고서 자동화',sub:'자료만 주면 발표 자료가 나온다',
+  bullets:['PPT 템플릿 5종','보고서 지시문 모음','발표 전 점검표'],price:14900,status:'planned',buy:'',preview:''},
+ {no:'05',stage:'실무',title:'오팔 자동화 꿀조합',sub:'클릭 없이 돌아가는 나만의 앱',
+  bullets:['조합 레시피 8개','복사해 쓰는 워크플로우','오류 해결 모음'],price:14900,status:'planned',buy:'',preview:''},
+ {no:'06',stage:'실무',title:'유튜브 채널 자동화, 이거면 끝',sub:'대본부터 업로드까지 한 흐름으로',
+  bullets:['대본 프롬프트 세트','썸네일 대량 제작법','업로드 자동화 스크립트'],price:14900,status:'planned',buy:'',preview:''},
+ {no:'07',stage:'실전',title:'바이브코딩 첫 프로그램',sub:'무료 도구만으로 내 첫 프로그램',
+  bullets:['따라하기 프로젝트 3개','Mac·Windows 명령 병기','막혔을 때 질문법'],price:19900,status:'planned',buy:'',preview:''},
+ {no:'08',stage:'실전',title:'내 업무 앱 직접 만들기',sub:'매일 쓰는 도구를 코드 없이 코드로',
+  bullets:['업무 앱 설계 템플릿','배포까지 한 번에','데이터 저장 기초'],price:19900,status:'planned',buy:'',preview:''},
+ {no:'09',stage:'실전',title:'1인 창업 자동화 세트',sub:'결제·고객·콘텐츠를 혼자 돌리는 법',
+  bullets:['창업 자동화 지도','도구 조합표','월 운영 체크리스트'],price:19900,status:'planned',buy:'',preview:''},
+ {no:'10',stage:'실전',title:'AI로 전자책 만들어 파는 법',sub:'이 책이 만들어진 과정 그대로',
+  bullets:['출판사 신고·ISBN 절차','읽는 이북 템플릿','판매 페이지 틀'],price:19900,status:'planned',buy:'',preview:''}
+];
+const LABEL={sale:'판매 중',writing:'집필 중',planned:'출간 예정'};
+const won=n=>n.toLocaleString('ko-KR')+'원';
+document.getElementById('grid').innerHTML=BOOKS.map(b=>`
+ <article class="book">
+  <div class="cover">
+   ${b.cover?`<img src="${b.cover}" alt="${b.title} 표지">`:''}
+   <span class="no">BOOK ${b.no}</span><span class="stage">${b.stage}</span>
+   <h3>${b.title}</h3><p>${b.sub}</p>
+  </div>
+  <div class="meta">
+   <ul>${b.bullets.map(x=>`<li>${x}</li>`).join('')}</ul>
+   <div class="row">
+    <span class="price">${won(b.price)}</span>
+    ${b.status==='sale'?`<a class="btn" href="${b.buy}">구매</a>`:`<span class="btn soon">${LABEL[b.status]}</span>`}
+   </div>
+   ${b.preview?`<a class="btn ghost" href="${b.preview}">미리보기</a>`:''}
+  </div>
+ </article>`).join('');
+</script>
+</body>
+</html>
