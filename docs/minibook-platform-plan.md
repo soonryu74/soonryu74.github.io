@@ -1,4 +1,4 @@
-# 한뼘(HANDSPAN) — 작은 책만 파는 곳 기획안 v0.1
+# 한뼘(HANDSPAN) — 작은 책만 파는 곳 기획안 v0.2
 
 > 작성 서순려 · 2026-10-10 · 브랜치 `ccr-6f7d4cfd-9shv27`
 > 근거 자료: `docs/minibook-market-review.md` (한국·일본·세계 시장 검토, 출처 링크 포함)
@@ -56,7 +56,7 @@
 영문 'tiny·mini·palm·pocket + book' 조합 .com은 거의 전부 선점(mamehon.com, sonbadak.com 포함).
 
 ### 결정
-**한뼘(HANDSPAN)**. 국내는 한뼘, 해외는 HANDSPAN, 도메인은 `handspan.kr` + `handspanbooks.com` + `hanppyeom.kr` 세 개를 즉시 확보한다. 슬로건은 "한 뼘 안에 들어오는 책만 팝니다 / Books that fit in a hand."
+**한뼘(HANDSPAN)으로 확정(2026-10-10).** 국내는 한뼘, 해외는 HANDSPAN, 도메인은 `handspan.kr` + `handspanbooks.com` + `hanppyeom.kr` 세 개를 즉시 확보한다. 슬로건은 "한 뼘 안에 들어오는 책만 팝니다 / Books that fit in a hand."
 
 ## 5. 무엇을 파는가
 
