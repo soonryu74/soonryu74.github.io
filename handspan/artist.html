@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>작가 — 한뼘 HANDSPAN</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header id="site-top"></header>
+
+<main class="wrap">
+  <div id="artist"><p class="muted" style="padding-top:24px">불러오는 중</p></div>
+  <section id="books" style="display:none">
+    <div class="section-head"><h2>이 작가의 책</h2><span class="more" id="books-n"></span></div>
+    <div class="shelf" id="grid"></div>
+  </section>
+  <section id="others" style="padding-top:0">
+    <div class="section-head"><h3>다른 작가들</h3></div>
+    <div class="row" id="others-list" style="gap:8px"></div>
+  </section>
+</main>
+
+<footer id="site-foot"></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  var H = window.HS, $ = H.$, esc = H.esc;
+  H.mount('shop');
+  var id = H.qs('id');
+
+  H.loadCatalog().then(function (c) {
+    var a = c.artistById[id];
+    if (!a) { $('#artist').innerHTML = '<p class="notice" style="margin-top:24px">그런 작가를 찾지 못했습니다. <a href="shop.html">책 보기</a>로 돌아가 주세요.</p>'; }
+    else {
+      document.title = a.name + ' — 한뼘 HANDSPAN';
+      var mine = c.books.filter(function (b) { return b.author_id === a.id; });
+      var fairs = (a.fair_history || []).slice().sort(function (x, y) { return y.year - x.year; });
+      var mailto = 'mailto:hello@handspan.kr?subject=' + encodeURIComponent('[한뼘] ' + a.name + ' 작가에게 묻기') + '&body=' + encodeURIComponent('작가에게 전할 질문을 적어 주세요. 한뼘이 작가에게 그대로 전하고, 답을 받으면 알려 드립니다.\n\n(이 메일은 시안 단계의 임시 창구입니다.)');
+      $('#artist').innerHTML =
+        '<div class="artist-head">' +
+          '<div>' +
+            '<div class="row" style="gap:10px"><div class="avatar" style="width:64px;height:64px;font-size:24px">' + esc(a.name.slice(0, 1)) + '</div>' +
+              '<div><h1 style="font-size:28px">' + esc(a.name) + '</h1><div class="muted">' + (H.FLAG[a.country] || '') + ' ' + (H.COUNTRY[a.country] || a.country) + ' · ' + esc(a.city) + '</div></div></div>' +
+            '<p style="margin-top:16px; color:var(--ink-2); max-width:600px">' + esc(a.bio) + '</p>' +
+            '<div class="row" style="gap:8px">' +
+              '<a class="btn small" href="https://www.instagram.com/' + esc(a.instagram) + '" rel="noopener" target="_blank">@' + esc(a.instagram) + '</a>' +
+              '<a class="btn small accent" href="' + mailto + '">작가에게 묻기</a>' +
+            '</div>' +
+            '<div class="notice" style="margin-top:14px">발송지: ' + (H.FLAG[a.ships_from] || '') + ' ' + (H.COUNTRY[a.ships_from] || a.ships_from) +
+              (a.ships_from !== a.country ? ' — 한국 허브 창고에 책을 맡겨 두어 국내 배송비로 받으실 수 있습니다.' : (a.country === 'KR' ? ' — 작가가 직접 보냅니다. 같은 작가 책 ' + H.FREE_SHIP_QTY + '권부터 배송비가 없습니다.' : ' — 작가가 현지에서 직접 보냅니다. 받기까지 1~3주 걸립니다.')) +
+            '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="eyebrow">페어 이력</div>' +
+            (fairs.length ? '<ul class="timeline">' + fairs.map(function (f) { return '<li><span class="y">' + f.year + '</span>' + esc(f.event) + ' <span class="c">' + esc(f.city) + '</span></li>'; }).join('') + '</ul>' : '<p class="muted">아직 없습니다.</p>') +
+            '<p class="small">행사 직후에는 남은 재고가 온라인으로 바로 올라옵니다.</p>' +
+          '</div>' +
+        '</div>';
+      $('#books').style.display = '';
+      $('#books-n').textContent = mine.length + '권';
+      $('#grid').innerHTML = mine.length ? mine.map(H.cardHTML).join('') : '<p class="muted">아직 올린 책이 없습니다.</p>';
+    }
+    $('#others-list').innerHTML = c.artists.filter(function (x) { return x.id !== id; }).map(function (x) {
+      return '<a class="chip" href="artist.html?id=' + x.id + '">' + (H.FLAG[x.country] || '') + ' ' + esc(x.name) + '</a>';
+    }).join('');
+  }).catch(function (e) { $('#artist').innerHTML = '<p class="notice">' + esc(e.message) + '</p>'; });
+})();
+</script>
+</body>
+</html>

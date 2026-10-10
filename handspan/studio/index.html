@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>작가 스튜디오 — 한뼘 HANDSPAN</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .kpis{display:grid; gap:10px; grid-template-columns:repeat(2,1fr); margin:14px 0}
+  @media (min-width:700px){ .kpis{grid-template-columns:repeat(4,1fr)} }
+  .kpi{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:12px 14px}
+  .kpi .l{font-size:12.5px; color:var(--muted)} .kpi .v{font-family:var(--serif); font-size:22px; font-weight:700}
+  .mm-preview{display:flex; align-items:flex-end; gap:14px; margin-top:10px; min-height:60px}
+  .mm-preview .box{border:1.5px solid var(--ink-2); background:var(--paper); border-radius:2px}
+  .mm-preview .box.bad{border-color:var(--accent); border-style:dashed}
+  .status{font-size:12px; font-weight:700; padding:2px 8px; border-radius:999px}
+  .status.paid{background:var(--green-soft); color:var(--green)}
+  .status.ship{background:#e2e6ee; color:#2d4160}
+  .status.wait{background:var(--accent-soft); color:var(--accent-dk)}
+  .status.hold{background:#f3e3b8; color:#6b531c}
+  .login-card{max-width:420px}
+</style>
+</head>
+<body>
+<div class="preview-banner">로그인 전 미리보기 — 이 화면은 모의 데이터로 그린 작가 대시보드입니다. 계정·Supabase 연결은 다음 단계에서 붙습니다.</div>
+<header id="site-top"></header>
+
+<main class="wrap" style="padding-top:24px">
+  <div class="section-head">
+    <div><div class="eyebrow">작가 스튜디오</div><h1 style="font-size:26px">고요문방 <span class="muted" style="font-family:var(--sans); font-size:14px; font-weight:400">🇰🇷 전주 · 트랙 B</span></h1></div>
+    <a class="btn small" href="../artist.html?id=a02">공개 작가 페이지</a>
+  </div>
+
+  <!-- 다음 지급: 항상 맨 위 -->
+  <div class="payout" id="payout">
+    <div><div class="lbl">다음 지급일</div><div class="d">10월 16일 (금)</div></div>
+    <div><div class="lbl">지급 예정 금액</div><div class="amt">187,440원</div></div>
+    <div><div class="lbl">구매확정 대기</div><div class="d">62,480원</div></div>
+    <div><div class="lbl">보류</div><div class="d">0원</div></div>
+    <div class="note">구매확정(배송완료 + 7일) 후 7일 안에 자동 지급, 매월 1일·16일. 보류가 생기면 사유와 해제일을 여기에 먼저 적습니다. 다음 작은 책의 날: 11월 6일(금) — 그날 판매는 수수료 0%.</div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">이달 판매</div><div class="v">31권</div></div>
+    <div class="kpi"><div class="l">이달 작가 수취</div><div class="v">249,920원</div></div>
+    <div class="kpi"><div class="l">올린 책</div><div class="v">2종</div></div>
+    <div class="kpi"><div class="l">한 권 더 보내기</div><div class="v">4권</div></div>
+  </div>
+
+  <nav class="tabs" aria-label="스튜디오 메뉴">
+    <button type="button" class="on" data-pane="new">상품 등록</button>
+    <button type="button" data-pane="split">분배 설정</button>
+    <button type="button" data-pane="isbn">트랙 A · ISBN</button>
+    <button type="button" data-pane="orders">주문</button>
+    <button type="button" data-pane="statement">정산서</button>
+  </nav>
+
+  <!-- 상품 등록 -->
+  <section class="pane on" id="pane-new" style="padding-top:20px">
+    <div class="card" style="margin:0">
+      <h2>새 책 올리기</h2>
+      <p class="desc">심사는 없습니다. 치수를 mm로 적으면 등급이 바로 붙고, 긴 쪽이 190mm를 넘으면 올릴 수 없습니다.</p>
+      <form id="new-form">
+        <div class="grid-2">
+          <div><label for="n-title">제목</label><input id="n-title" name="title" type="text" required placeholder="예: 새벽 두 시의 식탁"></div>
+          <div><label for="n-genre">장르</label><select id="n-genre" name="genre"></select></div>
+        </div>
+        <div class="grid-2">
+          <div><label for="n-w">가로 (mm)</label><input id="n-w" name="w" type="number" min="1" max="400" inputmode="numeric" required placeholder="105"></div>
+          <div><label for="n-h">세로 (mm)</label><input id="n-h" name="h" type="number" min="1" max="400" inputmode="numeric" required placeholder="148"></div>
+        </div>
+        <div class="tier-live" id="tier-live"><span class="muted">치수를 적으면 등급이 여기 붙습니다.</span></div>
+        <div class="mm-preview" id="mm-preview"></div>
+        <div class="msg" id="mm-msg"></div>
+        <div class="grid-2">
+          <div><label for="n-pages">쪽수</label><input id="n-pages" name="pages" type="number" min="4" inputmode="numeric" placeholder="64"></div>
+          <div><label for="n-bind">제본</label><input id="n-bind" name="binding" type="text" placeholder="예: 무선제본, 사철제본, 아코디언"></div>
+        </div>
+        <div class="grid-2">
+          <div><label for="n-method">제작</label><select id="n-method" name="method"></select></div>
+          <div><label for="n-edition">에디션 <span class="opt">한정이면 "번호/총수"</span></label><input id="n-edition" name="edition" type="text" placeholder="예: 7/30"></div>
+        </div>
+        <div class="grid-2">
+          <div><label for="n-price">값 (원)</label><input id="n-price" name="price" type="number" min="0" step="100" inputmode="numeric" required placeholder="9000"><div class="hint" id="fee-hint"></div></div>
+          <div><label for="n-stock">수량</label><input id="n-stock" name="stock" type="number" min="0" inputmode="numeric" placeholder="20"></div>
+        </div>
+        <label class="check"><input type="checkbox" name="taxable"> 책이 아니라 문구·굿즈입니다 (과세) <span class="muted">책+굿즈 세트는 두 상품으로 나눠 올려 주세요</span></label>
+        <label class="check"><input type="checkbox" name="digital"> 디지털 책입니다 (PDF·넘기는 이북, 배송 없음)</label>
+        <label for="n-first">첫 문장 <span class="opt">福袋에 쓰입니다</span></label>
+        <input id="n-first" name="first_line" type="text" maxlength="80" placeholder="책의 첫 문장 한 줄">
+        <label for="n-desc">소개 <span class="opt">두세 문장</span></label>
+        <textarea id="n-desc" name="description"></textarea>
+        <p class="hint">실물 사진에는 자를 함께 두어 주세요. 사진 올리기는 Supabase Storage 연결 뒤에 열립니다.</p>
+        <div class="msg" id="new-msg"></div>
+        <div class="row" style="margin-top:12px"><button type="submit" class="primary" id="new-submit">올리기</button><button type="reset" class="ghost">지우기</button></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 분배 설정 -->
+  <section class="pane" id="pane-split" style="padding-top:20px">
+    <div class="card" style="margin:0">
+      <h2>분배 설정</h2>
+      <p class="desc">앤솔러지나 합작이면 공동작업자와 비율을 적어 주세요. 정산 때 비율대로 각자에게 따로 보냅니다. 합이 100%여야 저장됩니다.</p>
+      <form id="split-form">
+        <label for="s-book">책</label>
+        <select id="s-book"><option>새벽 두 시의 식탁</option><option>할머니의 콩국수</option></select>
+        <div id="split-rows" style="margin-top:10px"></div>
+        <div class="row" style="margin-top:8px"><button type="button" class="small" id="split-add">공동작업자 추가</button></div>
+        <div class="split-sum" id="split-sum"></div>
+        <div class="msg" id="split-msg"></div>
+        <div class="row" style="margin-top:12px"><button type="submit" class="primary">분배 저장</button></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 트랙 A -->
+  <section class="pane" id="pane-isbn" style="padding-top:20px">
+    <div class="card" style="margin:0">
+      <h2>트랙 A · ISBN 신청</h2>
+      <p class="desc">서점·도서관·공공구매로 나가고 싶은 책만 신청합니다. 한뼘이 발행인이 되어 ISBN을 붙이고 납본을 대신합니다. 수수료는 12%에서 15%가 됩니다.</p>
+      <label class="check" style="font-size:16px"><input type="checkbox" id="isbn-toggle"> 이 책을 트랙 A(ISBN 도서)로 신청합니다</label>
+      <div id="isbn-body" style="display:none">
+        <div class="notice" style="margin-top:10px">신청하면 다음이 자동으로 따라옵니다.</div>
+        <ul class="oblig">
+          <li><b>납본 2부 대행</b> — 발행 30일 안에 국립중앙도서관에 2부를 한뼘이 보냅니다. 보상금은 작가에게 돌아갑니다.</li>
+          <li><b>할인 15% 상한</b> — 도서정가제에 따라 가격 할인 10% + 혜택 5%를 넘을 수 없습니다. 1+1, 무료배포, 福袋 묶음은 막힙니다.</li>
+          <li><b>정가 표시</b> — 책과 화면에 정가를 적습니다. 12개월 뒤에는 재정가를 할 수 있습니다.</li>
+          <li><b>비독점 이용허락</b> — 발행처에 '한뼘'을 적는 데 동의합니다. 독점은 요구하지 않습니다.</li>
+          <li><b>면세</b> — 도서로 분류되어 정산서의 면세 줄에 적힙니다.</li>
+        </ul>
+        <div class="grid-2" style="margin-top:8px">
+          <div><label for="i-book">책</label><select id="i-book"><option>새벽 두 시의 식탁</option><option>할머니의 콩국수</option></select></div>
+          <div><label for="i-price">정가 (원)</label><input id="i-price" type="number" step="100" placeholder="9000"></div>
+        </div>
+        <p class="hint">2026년 하반기 정가제 재검토 결론이 나면 상한 숫자만 바뀝니다. 지금은 설정값 15%입니다.</p>
+        <div class="msg" id="isbn-msg"></div>
+        <div class="row" style="margin-top:12px"><button type="button" class="primary" id="isbn-submit">ISBN 신청서 보내기</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 주문 -->
+  <section class="pane" id="pane-orders" style="padding-top:20px">
+    <div class="card" style="margin:0">
+      <h2>주문</h2>
+      <p class="desc">1단계는 작가가 직접 보냅니다. 운송장 번호를 적으면 구매자에게 알림이 갑니다. 준등기·K-Packet API 연동은 2단계입니다.</p>
+      <div class="table-wrap">
+        <table id="orders">
+          <thead><tr><th>주문</th><th>책</th><th>수량</th><th>배송</th><th class="num">작가 수취</th><th>상태</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 정산서 -->
+  <section class="pane" id="pane-statement" style="padding-top:20px">
+    <div class="card" style="margin:0">
+      <div class="section-head" style="margin-bottom:6px"><h2>정산서 · 2026년 9월</h2><span class="more">면세와 과세를 나눠 적습니다</span></div>
+      <p class="desc">월 1회 통합 정산서입니다. 책은 면세, 메모북·키링 같은 굿즈는 과세입니다. 계산서는 자동으로 발행됩니다.</p>
+      <div class="table-wrap">
+        <table id="statement">
+          <thead><tr><th>구분</th><th>항목</th><th class="num">수량</th><th class="num">판매액</th><th class="num">수수료</th><th class="num">작가 수취</th></tr></thead>
+          <tbody></tbody>
+          <tfoot></tfoot>
+        </table>
+      </div>
+      <p class="small" style="margin-top:10px">작은 책의 날(9/4) 판매 6권은 수수료 0%로 계산되었습니다. 한 권 더 보내기 4권은 수신처(전주 송천 작은도서관)를 함께 적었습니다.</p>
+    </div>
+  </section>
+</main>
+
+<footer id="site-foot"></footer>
+
+<script src="../app.js"></script>
+<script>
+(function () {
+  var H = window.HS, $ = H.$, $$ = H.$$, esc = H.esc;
+  H.mount('login');
+
+  /* 탭 */
+  $$('.tabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      $$('.tabs button').forEach(function (x) { x.classList.remove('on'); });
+      $$('.pane').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on'); $('#pane-' + b.dataset.pane).classList.add('on');
+    });
+  });
+
+  /* ── 상품 등록: mm 검증 ─────────────────────────── */
+  var nf = $('#new-form');
+  H.GENRES.forEach(function (g) { var o = document.createElement('option'); o.textContent = g; nf.elements.genre.appendChild(o); });
+  H.METHODS.forEach(function (g) { var o = document.createElement('option'); o.textContent = g; nf.elements.method.appendChild(o); });
+
+  function checkSize() {
+    var w = Number(nf.elements.w.value), h = Number(nf.elements.h.value);
+    var live = $('#tier-live'), pv = $('#mm-preview'), msg = $('#mm-msg'), btn = $('#new-submit');
+    if (!w || !h) { live.innerHTML = '<span class="muted">치수를 적으면 등급이 여기 붙습니다.</span>'; pv.innerHTML = ''; msg.className = 'msg'; btn.disabled = false; return true; }
+    var L = H.longEdge(w, h), t = H.tierOf(w, h);
+    var s = Math.min(1, 150 / Math.max(L, 1)); // 미리보기는 최대 150px
+    if (!t) {
+      live.innerHTML = H.tierBadge(w, h) + '<span>긴 쪽 ' + L + 'mm</span>';
+      pv.innerHTML = '<div class="box bad" style="width:' + Math.round(w * s) + 'px;height:' + Math.round(h * s) + 'px"></div><div class="small">점선 190mm 경계를 넘었습니다</div>';
+      H.say(msg, '한 뼘(190mm)을 넘습니다 — 한뼘에는 입점할 수 없어요', 'err');
+      btn.disabled = true; return false;
+    }
+    live.innerHTML = H.tierBadge(w, h) + '<span>등급 · 긴 쪽 ' + L + 'mm (' + t.note + ')</span>';
+    pv.innerHTML = '<div class="box" style="width:' + Math.round(w * s) + 'px;height:' + Math.round(h * s) + 'px"></div><div class="small">' + w + '×' + h + 'mm</div>';
+    msg.className = 'msg'; btn.disabled = false; return true;
+  }
+  function feeHint() {
+    var p = Number(nf.elements.price.value) || 0;
+    $('#fee-hint').textContent = p ? '트랙 B 수수료 12% → 작가 수취 ' + H.won(Math.round(p * (1 - H.FEE.B))) + ' (작은 책의 날에는 ' + H.won(p) + ')' : '';
+  }
+  nf.addEventListener('input', function (e) { if (e.target.name === 'w' || e.target.name === 'h') checkSize(); if (e.target.name === 'price') feeHint(); });
+  nf.addEventListener('reset', function () { setTimeout(checkSize, 0); setTimeout(feeHint, 0); });
+  nf.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!checkSize()) return;
+    var rec = { title: nf.elements.title.value, w: Number(nf.elements.w.value), h: Number(nf.elements.h.value), genre: nf.elements.genre.value,
+      method: nf.elements.method.value, price: Number(nf.elements.price.value), stock: Number(nf.elements.stock.value), taxable: nf.elements.taxable.checked,
+      digital: nf.elements.digital.checked, first_line: nf.elements.first_line.value, at: new Date().toISOString() };
+    var ok = H.stash('handspan-studio-drafts', rec);
+    H.say($('#new-msg'), ok ? '"' + rec.title + '" 초안을 저장했습니다 (' + H.tierOf(rec.w, rec.h).name + ' 등급). 실제 등록은 Supabase 연결 뒤에 됩니다.' : '이 브라우저에는 저장할 수 없었습니다.', ok ? 'ok' : 'err');
+  });
+
+  /* ── 분배 설정 ──────────────────────────────────── */
+  var rows = [{ name: '고요문방 (나)', pct: 70 }, { name: '김보리', pct: 30 }];
+  function renderSplit() {
+    $('#split-rows').innerHTML = rows.map(function (r, i) {
+      return '<div class="split-row"><input type="text" value="' + esc(r.name) + '" data-i="' + i + '" data-k="name" placeholder="이름" aria-label="공동작업자 이름">' +
+        '<input type="number" min="0" max="100" value="' + r.pct + '" data-i="' + i + '" data-k="pct" aria-label="비율 %">' +
+        '<button type="button" class="small ghost" data-rm="' + i + '" ' + (i === 0 ? 'disabled' : '') + '>빼기</button></div>';
+    }).join('');
+    var sum = rows.reduce(function (n, r) { return n + (Number(r.pct) || 0); }, 0);
+    var el = $('#split-sum'); el.textContent = '합계 ' + sum + '%' + (sum === 100 ? ' — 됐습니다' : ' — 100%가 되어야 합니다');
+    el.className = 'split-sum ' + (sum === 100 ? 'ok' : 'bad');
+    return sum;
+  }
+  $('#split-rows').addEventListener('input', function (e) {
+    var i = Number(e.target.dataset.i), k = e.target.dataset.k; if (isNaN(i)) return;
+    rows[i][k] = k === 'pct' ? Number(e.target.value) : e.target.value;
+    var sum = rows.reduce(function (n, r) { return n + (Number(r.pct) || 0); }, 0);
+    var el = $('#split-sum'); el.textContent = '합계 ' + sum + '%' + (sum === 100 ? ' — 됐습니다' : ' — 100%가 되어야 합니다');
+    el.className = 'split-sum ' + (sum === 100 ? 'ok' : 'bad');
+  });
+  $('#split-rows').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-rm]'); if (!b) return; rows.splice(Number(b.dataset.rm), 1); renderSplit();
+  });
+  $('#split-add').addEventListener('click', function () { rows.push({ name: '', pct: 0 }); renderSplit(); });
+  $('#split-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var sum = rows.reduce(function (n, r) { return n + (Number(r.pct) || 0); }, 0);
+    if (sum !== 100) { H.say($('#split-msg'), '비율 합이 ' + sum + '%입니다. 100%로 맞춰 주세요.', 'err'); return; }
+    if (rows.some(function (r) { return !r.name.trim(); })) { H.say($('#split-msg'), '이름이 빈 줄이 있습니다.', 'err'); return; }
+    H.say($('#split-msg'), '저장했습니다. 다음 정산부터 ' + rows.map(function (r) { return r.name + ' ' + r.pct + '%'; }).join(', ') + '로 나눠 보냅니다. (모의)', 'ok');
+  });
+  renderSplit();
+
+  /* ── 트랙 A ────────────────────────────────────── */
+  $('#isbn-toggle').addEventListener('change', function () { $('#isbn-body').style.display = this.checked ? '' : 'none'; });
+  $('#isbn-submit').addEventListener('click', function () {
+    var p = Number($('#i-price').value);
+    if (!p) { H.say($('#isbn-msg'), '정가를 적어 주세요. 트랙 A는 정가 표시가 의무입니다.', 'err'); return; }
+    H.say($('#isbn-msg'), '신청서를 받았습니다. 한뼘 발행자번호로 ISBN을 받으면 알려 드리고, 그때부터 판매가는 ' + H.won(Math.round(p * 0.9)) + '(할인 10%) 아래로 내려가지 않습니다. 수수료 15%. (모의)', 'ok');
+  });
+
+  /* ── 주문 (모의) ────────────────────────────────── */
+  var orders = [
+    { id: 'HS-2610-0412', book: '새벽 두 시의 식탁', qty: 3, ship: '준등기 · 무료(3권)', net: 23760, status: 'wait', label: '발송 대기' },
+    { id: 'HS-2610-0398', book: '할머니의 콩국수', qty: 1, ship: 'CU 알뜰택배', net: 8360, status: 'ship', label: '배송 중' },
+    { id: 'HS-2610-0371', book: '새벽 두 시의 식탁 +1 기부', qty: 2, ship: '준등기', net: 15840, status: 'ship', label: '배송 중' },
+    { id: 'HS-2609-0355', book: '새벽 두 시의 식탁', qty: 1, ship: '일본 K-Packet', net: 7920, status: 'paid', label: '구매확정 · 10/16 지급' },
+    { id: 'HS-2609-0340', book: '할머니의 콩국수', qty: 2, ship: 'GS25 반값택배', net: 16720, status: 'paid', label: '지급 완료 10/1' },
+    { id: 'HS-2609-0322', book: '새벽 두 시의 식탁', qty: 1, ship: '등기소포', net: 7920, status: 'hold', label: '보류 · 파손 신고 확인 중 · 해제 예정 10/14' }
+  ];
+  $('#orders tbody').innerHTML = orders.map(function (o) {
+    return '<tr><td><span class="small">' + o.id + '</span></td><td>' + esc(o.book) + '</td><td>' + o.qty + '</td><td>' + esc(o.ship) + '</td><td class="num">' + H.won(o.net) + '</td><td><span class="status ' + o.status + '">' + esc(o.label) + '</span></td></tr>';
+  }).join('');
+
+  /* ── 정산서 (모의): 면세/과세 분리 ─────────────────── */
+  var lines = [
+    { tax: '면세', item: '새벽 두 시의 식탁 (도서)', qty: 19, sales: 171000, fee: 0.12 },
+    { tax: '면세', item: '할머니의 콩국수 (도서)', qty: 9, sales: 85500, fee: 0.12 },
+    { tax: '면세', item: '작은 책의 날 9/4 판매 (수수료 0%)', qty: 6, sales: 55500, fee: 0 },
+    { tax: '과세', item: '콩국수 레시피 카드 세트 (문구)', qty: 3, sales: 12000, fee: 0.12 }
+  ];
+  var tb = '', tot = { s: 0, f: 0, n: 0 }, byTax = {};
+  lines.forEach(function (l) {
+    var f = Math.round(l.sales * l.fee), n = l.sales - f; tot.s += l.sales; tot.f += f; tot.n += n;
+    byTax[l.tax] = byTax[l.tax] || { s: 0, n: 0 }; byTax[l.tax].s += l.sales; byTax[l.tax].n += n;
+    tb += '<tr><td>' + l.tax + '</td><td>' + esc(l.item) + '</td><td class="num">' + l.qty + '</td><td class="num">' + H.won(l.sales) + '</td><td class="num">' + (l.fee * 100) + '% · ' + H.won(f) + '</td><td class="num">' + H.won(n) + '</td></tr>';
+  });
+  $('#statement tbody').innerHTML = tb;
+  $('#statement tfoot').innerHTML =
+    '<tr><th colspan="3">면세 소계</th><th class="num">' + H.won(byTax['면세'].s) + '</th><th></th><th class="num">' + H.won(byTax['면세'].n) + '</th></tr>' +
+    '<tr><th colspan="3">과세 소계 (부가세 별도 계산서)</th><th class="num">' + H.won(byTax['과세'].s) + '</th><th></th><th class="num">' + H.won(byTax['과세'].n) + '</th></tr>' +
+    '<tr><th colspan="3">합계</th><th class="num">' + H.won(tot.s) + '</th><th class="num">' + H.won(tot.f) + '</th><th class="num">' + H.won(tot.n) + '</th></tr>';
+})();
+</script>
+</body>
+</html>

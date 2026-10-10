@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>한뼘 HANDSPAN — 한 뼘 안에 들어오는 책만 팝니다</title>
+<meta name="description" content="장변 190mm 안에 들어오는 작은 책만 파는 곳. 콩·손·뼘 세 등급, 이번 주 한 권, 골라주는 세 권, 첫 문장만 보이는 福袋.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header id="site-top"></header>
+
+<main>
+  <!-- 슬로건 -->
+  <section class="hero wrap">
+    <div class="eyebrow">작은 책만 파는 곳</div>
+    <h1>한 뼘 안에 들어오는<br>책만 팝니다.</h1>
+    <div class="en">Books that fit in a hand.</div>
+    <p class="lead">장변 190mm를 넘는 책은 들어올 수 없습니다. 그 안에서라면 豆本이든 문고판이든, 손으로 꿰맸든 세 부만 찍었든, 심사 없이 올릴 수 있습니다.</p>
+    <div class="row" style="margin-top:18px">
+      <a class="btn primary" href="shop.html">책 보기</a>
+      <a class="btn" href="join.html">작가로 입점</a>
+    </div>
+  </section>
+
+  <!-- 크기 자 -->
+  <section class="wrap" style="padding-top:8px">
+    <div class="size-band" aria-label="입점 규격">
+      <div class="section-head" style="margin-bottom:8px">
+        <h2>세 가지 크기, 하나의 선</h2>
+        <span class="more">장변(긴 쪽) 기준 · 실제 비율로 그렸습니다</span>
+      </div>
+      <div class="tiers">
+        <div class="tier">
+          <div class="box" style="--w:52;--h:76"></div>
+          <div class="name"><span class="badge tier-kong">콩</span></div>
+          <div class="mm"><b>≤ 76mm</b><span class="ex"><br>豆本 · 펜던트북</span></div>
+        </div>
+        <div class="tier">
+          <div class="box" style="--w:105;--h:148"></div>
+          <div class="name"><span class="badge tier-son">손</span></div>
+          <div class="mm"><b>≤ 148mm</b><span class="ex"><br>A6 문고 · 손바닥책</span></div>
+        </div>
+        <div class="tier">
+          <div class="box" style="--w:113;--h:190"></div>
+          <div class="name"><span class="badge tier-ppyeom">뼘</span></div>
+          <div class="mm"><b>≤ 190mm</b><span class="ex"><br>쏜살문고 · 위픽</span></div>
+        </div>
+        <div class="tier no">
+          <div class="box no" style="--w:148;--h:210"></div>
+          <div class="name">입점 불가</div>
+          <div class="mm"><b>&gt; 190mm</b><span class="ex"><br>A5(148×210)는 못 들어옵니다</span></div>
+        </div>
+      </div>
+      <div class="rule">
+        <span><b>A5(148×210mm)는 못 들어옵니다.</b> 치수는 작가가 mm로 직접 적고, 상품 사진에 자를 함께 둡니다.</span>
+        <span>예외는 두지 않습니다. 예외를 두는 순간 '작은 책 전문'이 무너지기 때문입니다.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 이번 주 한 권 -->
+  <section class="wrap" id="weekly">
+    <div class="eyebrow">이번 주 한 권</div>
+    <div class="section-head">
+      <h2 id="wk-head">불러오는 중</h2>
+      <span class="more" id="wk-label"></span>
+    </div>
+    <div class="weekly" id="wk"></div>
+  </section>
+
+  <!-- 작은 책의 날 -->
+  <div class="strip">
+    <div class="in">
+      <b>작은 책의 날</b>
+      <span>매월 첫째 금요일, 판매수수료 0%</span>
+      <span class="r">작가가 그날 판 돈은 결제수수료만 빼고 전부 작가에게 갑니다.</span>
+    </div>
+  </div>
+
+  <!-- 세 선반 -->
+  <section class="wrap" id="shelves">
+    <div class="section-head">
+      <div><div class="eyebrow">콩</div><h2>콩 — 76mm 안쪽</h2></div>
+      <a class="more" href="shop.html?tier=kong">콩 전부 보기 →</a>
+    </div>
+    <div class="shelf" id="shelf-kong"></div>
+
+    <div class="section-head" style="margin-top:48px">
+      <div><div class="eyebrow">손</div><h2>손 — 148mm 안쪽</h2></div>
+      <a class="more" href="shop.html?tier=son">손 전부 보기 →</a>
+    </div>
+    <div class="shelf" id="shelf-son"></div>
+
+    <div class="section-head" style="margin-top:48px">
+      <div><div class="eyebrow">뼘</div><h2>뼘 — 190mm 안쪽</h2></div>
+      <a class="more" href="shop.html?tier=ppyeom">뼘 전부 보기 →</a>
+    </div>
+    <div class="shelf" id="shelf-ppyeom"></div>
+  </section>
+
+  <!-- 큐레이션 두 가지 -->
+  <section class="wrap">
+    <div class="grid-2">
+      <div class="card" style="margin:0">
+        <div class="eyebrow">골라주는 세 권</div>
+        <h2>취향을 적어 주시면 세 권을 고릅니다</h2>
+        <p class="desc">받는 사람, 좋아하는 것, 피하고 싶은 것을 적어 주세요. 29,000원부터 시작하고, 선물이면 받는 분 이름으로 보냅니다.</p>
+        <a class="btn" href="box.html#pick">신청하기</a>
+      </div>
+      <div class="card" style="margin:0">
+        <div class="eyebrow">福袋</div>
+        <h2>첫 문장만 보이는 福袋</h2>
+        <p class="desc">제목도 작가도 가린 채 첫 문장 세 개만 보여 드립니다. 마음에 드는 문장이 있으면 그 책이 특제 커버에 싸여 갑니다.</p>
+        <a class="btn" href="box.html#fukubukuro">첫 문장 보기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 한 권 더 보내기 -->
+  <section class="wrap">
+    <div class="callout">
+      <div class="eyebrow">한 권 더 보내기</div>
+      <h2>같은 책을 한 권 더, 작은도서관으로</h2>
+      <p style="margin-top:10px; max-width:640px; color:var(--ink-2)">주문할 때 '한 권 더 보내기'를 고르면 같은 값으로 한 권이 더 만들어지고, 지역 작은도서관이나 병원 어린이실로 갑니다. 작가는 두 권 값을 받고, 받는 곳의 이름은 다음 달 정산서와 함께 알려 드립니다. 일본 ブックサンタ가 2025년 한 해 122,018권을 보낸 방식을 빌렸습니다.</p>
+      <ol class="steps" style="margin-top:14px; max-width:640px">
+        <li>책 화면에서 '한 권 더 보내기'를 켭니다. 값은 책값과 같습니다.</li>
+        <li>작가가 두 권을 만들고, 한 권은 한뼘이 모아 둔 수신처로 보냅니다.</li>
+        <li>어디로 갔는지 작가와 주문자 모두에게 알립니다.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 약속 -->
+  <section class="wrap">
+    <div class="section-head"><h2>작가에게 드리는 다섯 가지 약속</h2><a class="more" href="join.html">자세히 →</a></div>
+    <div class="promises">
+      <div class="promise"><b>고정비 0</b><span>월 이용료, 등록비, 최소 정산액이 없습니다.</span></div>
+      <div class="promise"><b>7일 내 지급</b><span>구매확정 후 7일 안에, 월 2회(1일·16일) 자동으로.</span></div>
+      <div class="promise"><b>무심사 입점</b><span>규격만 맞으면 올립니다. 고르는 일은 노출에서 합니다.</span></div>
+      <div class="promise"><b>광고 없음</b><span>돈 내고 올라가는 자리를 만들지 않습니다.</span></div>
+      <div class="promise"><b>분배 지급</b><span>공동작업 비율을 작가가 정하면 그대로 나눠 보냅니다.</span></div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-foot"></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  var H = window.HS, $ = H.$, esc = H.esc;
+  H.mount('home');
+
+  Promise.all([H.loadCatalog(), H.load('weekly')]).then(function (r) {
+    var books = r[0].books, wk = r[1];
+
+    /* 이번 주 한 권 */
+    var book = books.filter(function (b) { return b.id === wk.book_id; })[0];
+    if (book) {
+      $('#wk-head').textContent = wk.headline;
+      $('#wk-label').textContent = wk.week_label;
+      var a = book.artist;
+      $('#wk').innerHTML =
+        '<div class="big">' + H.coverHTML(book, { scale: 3, href: 'book.html?id=' + book.id }) + '</div>' +
+        '<div>' +
+          '<div class="row" style="gap:8px">' + H.tierBadge(book.width_mm, book.height_mm) +
+            '<span class="small">' + book.width_mm + '×' + book.height_mm + 'mm · ' + book.pages + '쪽 · ' + esc(book.binding) + (book.edition ? ' · 에디션 ' + esc(book.edition) : '') + '</span></div>' +
+          '<h3 style="font-size:24px; margin-top:8px"><a href="book.html?id=' + book.id + '">' + esc(book.title) + '</a></h3>' +
+          '<div class="muted" style="margin-bottom:10px"><a href="artist.html?id=' + a.id + '">' + esc(a.name) + '</a> · ' + esc(a.city) + '</div>' +
+          '<p style="color:var(--ink-2)">' + esc(wk.intro) + '</p>' +
+          '<div class="price-line"><span class="now">' + H.priceHTML(book) + '</span></div>' +
+          '<a class="btn primary" href="book.html?id=' + book.id + '">이 책 보기</a>' +
+          '<ul class="qa">' + wk.interview.map(function (x) {
+            return '<li><div class="q">' + esc(x.q) + '</div><p class="a">' + esc(x.a) + '</p></li>'; }).join('') + '</ul>' +
+          '<div class="eyebrow" style="margin-top:14px">만드는 과정</div>' +
+          '<div class="making">' + wk.making_of.map(function (m, i) {
+            return '<figure><div class="ph" style="background:' + esc(m.tone) + '" role="img" aria-label="제작 사진 ' + (i + 1) + ' 자리"></div><figcaption>' + esc(m.caption) + '</figcaption></figure>'; }).join('') + '</div>' +
+          '<p class="small" style="margin-top:12px">' + esc(wk.goods) + '</p>' +
+        '</div>';
+    }
+
+    /* 세 선반: 등급별 4권씩, 최근 등록순 */
+    ['kong', 'son', 'ppyeom'].forEach(function (k) {
+      var list = books.filter(function (b) { return b.tier && b.tier.key === k; })
+        .sort(function (x, y) { return (y.added || '').localeCompare(x.added || ''); }).slice(0, 4);
+      $('#shelf-' + k).innerHTML = list.map(H.cardHTML).join('');
+    });
+  }).catch(function (e) {
+    $('#wk').innerHTML = '<p class="notice">' + esc(e.message) + ' — 로컬에서는 python3 -m http.server 로 열어 주세요.</p>';
+  });
+})();
+</script>
+</body>
+</html>

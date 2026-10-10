@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>골라주는 세 권 · 福袋 — 한뼘 HANDSPAN</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .budget{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+  .budget label{margin:0; cursor:pointer}
+  .budget input{position:absolute; opacity:0; width:0; height:0}
+  .budget .b{display:block; border:1.5px solid var(--line-2); border-radius:8px; padding:12px 10px; text-align:center; background:#fff}
+  .budget .b b{display:block; font-family:var(--serif); font-size:18px}
+  .budget .b span{font-size:12px; color:var(--muted); font-weight:400}
+  .budget input:checked + .b{border-color:var(--ink); box-shadow:0 0 0 1px var(--ink)}
+  .blind .fl{cursor:pointer; border-width:1.5px; position:relative}
+  .blind .fl.pick{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent)}
+  .blind .fl .no{position:absolute; top:10px; right:14px; font-family:var(--sans); font-size:12px; color:var(--muted)}
+  .tier-pick{display:flex; gap:8px; flex-wrap:wrap}
+  .tier-pick label{margin:0; cursor:pointer}
+  .tier-pick input{position:absolute; opacity:0; width:0; height:0}
+  .tier-pick .t{display:inline-block; border:1.5px solid var(--line-2); border-radius:999px; padding:6px 14px; background:#fff; font-weight:500}
+  .tier-pick input:checked + .t{border-color:var(--ink); background:var(--ink); color:var(--paper)}
+</style>
+</head>
+<body>
+<header id="site-top"></header>
+
+<main class="wrap" style="padding-top:28px">
+  <div class="eyebrow">큐레이션</div>
+  <h1 style="font-size:28px">고르는 재미를 팝니다</h1>
+  <p style="color:var(--ink-2); max-width:620px; margin-top:8px">일본 서점이 오래 해 온 두 가지를 온라인으로 옮겼습니다. 文喫의 선서(選書)와 本の福袋입니다. 두 상품 모두 지금은 신청만 받고, 결제는 다음 단계에서 붙습니다.</p>
+
+  <!-- 골라주는 세 권 -->
+  <section id="pick">
+    <div class="card" style="margin:0">
+      <div class="eyebrow">골라주는 세 권</div>
+      <h2>취향을 적어 주시면 세 권을 고릅니다</h2>
+      <p class="desc">큐레이터가 읽고 고릅니다. 29,000원부터이고, 세 권 값과 배송비가 전부 들어 있습니다. 선물이면 받는 분 이름으로 보내고 값은 적지 않습니다.</p>
+      <form id="pick-form">
+        <div class="grid-2">
+          <div><label for="p-to">받는 사람</label><input id="p-to" name="to" type="text" placeholder="예: 저 자신 / 어머니 / 퇴사하는 동료" required></div>
+          <div><label for="p-mail">연락받을 이메일</label><input id="p-mail" name="email" type="email" placeholder="you@example.com" required></div>
+        </div>
+        <label for="p-theme">테마나 취향 <span class="opt">자유롭게</span></label>
+        <textarea id="p-theme" name="theme" placeholder="예: 밤에 부엌에서 읽을 만한 짧은 글. 사진이 있으면 좋고, 너무 슬픈 건 말고요." required></textarea>
+        <label for="p-avoid">피하고 싶은 것 <span class="opt">없으면 비워 두세요</span></label>
+        <input id="p-avoid" name="avoid" type="text" placeholder="예: 종교, 레시피, 영어로만 된 책">
+        <label>예산</label>
+        <div class="budget">
+          <label><input type="radio" name="budget" value="29000" checked><span class="b"><b>29,000원</b><span>손·콩 위주 세 권</span></span></label>
+          <label><input type="radio" name="budget" value="49000"><span class="b"><b>49,000원</b><span>에디션본 한 권 포함</span></span></label>
+          <label><input type="radio" name="budget" value="79000"><span class="b"><b>79,000원</b><span>해외 작가 수제본 포함</span></span></label>
+        </div>
+        <label class="check" style="margin-top:14px"><input type="checkbox" name="gift"> 선물입니다 (받는 분 이름으로 보내고, 값은 적지 않습니다)</label>
+        <div class="msg" id="pick-msg"></div>
+        <div class="row" style="margin-top:12px"><button type="submit" class="primary">세 권 신청하기</button><span class="small">신청 후 3일 안에 고른 책 목록을 이메일로 먼저 보여 드립니다.</span></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 福袋 -->
+  <section id="fukubukuro">
+    <div class="card" style="margin:0">
+      <div class="eyebrow">福袋</div>
+      <h2>첫 문장만 보이는 福袋</h2>
+      <p class="desc">제목도 작가도 가렸습니다. 세 문장 가운데 마음에 드는 것을 하나 고르면, 그 책이 꼭 들어가고 나머지 두 권은 비슷한 결로 큐레이터가 채웁니다. 특제 커버로 싸서 보내므로 열기 전까지 어떤 책인지 알 수 없습니다.</p>
+      <form id="fuku-form">
+        <label>크기</label>
+        <div class="tier-pick" id="fuku-tier">
+          <label><input type="radio" name="tier" value="" checked><span class="t">상관없음</span></label>
+          <label><input type="radio" name="tier" value="kong"><span class="t">콩 ≤76mm</span></label>
+          <label><input type="radio" name="tier" value="son"><span class="t">손 ≤148mm</span></label>
+          <label><input type="radio" name="tier" value="ppyeom"><span class="t">뼘 ≤190mm</span></label>
+        </div>
+        <div class="row" style="justify-content:space-between; margin-top:16px">
+          <label style="margin:0">첫 문장 세 개 <span class="opt">하나를 골라 주세요</span></label>
+          <button type="button" class="small ghost" id="shuffle">다른 문장 보기</button>
+        </div>
+        <div class="blind" id="blind" style="margin-top:10px"></div>
+        <div class="grid-2" style="margin-top:8px">
+          <div><label for="f-mail">연락받을 이메일</label><input id="f-mail" name="email" type="email" placeholder="you@example.com" required></div>
+          <div><label>값</label><div style="padding:10px 0"><b class="serif" style="font-size:20px">29,000원</b> <span class="small">세 권 + 특제 커버 + 배송비</span></div></div>
+        </div>
+        <p class="small">福袋는 성격상 열어 본 뒤에는 청약철회가 제한됩니다. 파손·오배송은 당연히 바꿔 드립니다.</p>
+        <div class="msg" id="fuku-msg"></div>
+        <div class="row" style="margin-top:8px"><button type="submit" class="accent">이 문장으로 福袋 신청</button></div>
+      </form>
+    </div>
+  </section>
+
+  <p class="notice" style="margin-top:8px">두 상품의 신청은 지금 이 브라우저에만 저장됩니다. 실제 주문과 결제는 MVP 다음 단계(PG 지급대행)에서 붙습니다.</p>
+</main>
+
+<footer id="site-foot"></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  var H = window.HS, $ = H.$, $$ = H.$$, esc = H.esc;
+  H.mount('pick');
+  var books = [], shown = [], picked = null;
+
+  function draw() {
+    var tier = ($$('#fuku-tier input:checked')[0] || {}).value || '';
+    var pool = books.filter(function (b) { return !b.digital && b.stock > 0 && (!tier || (b.tier && b.tier.key === tier)); });
+    shown = pool.sort(function () { return Math.random() - .5; }).slice(0, 3);
+    picked = null;
+    $('#blind').innerHTML = shown.map(function (b, i) {
+      return '<div class="fl" data-i="' + i + '" role="button" tabindex="0" aria-pressed="false"><span class="no">' + (i + 1) + '</span><div>' + esc(b.first_line) + '</div>' +
+        '<div class="k">' + b.tier.name + ' · ' + b.width_mm + '×' + b.height_mm + 'mm · ' + esc(b.genre) + '</div></div>';
+    }).join('') || '<p class="muted">이 크기에는 지금 고를 책이 모자랍니다.</p>';
+    $$('#blind .fl').forEach(function (el) {
+      var on = function () {
+        $$('#blind .fl').forEach(function (x) { x.classList.remove('pick'); x.setAttribute('aria-pressed', 'false'); });
+        el.classList.add('pick'); el.setAttribute('aria-pressed', 'true'); picked = shown[Number(el.dataset.i)];
+      };
+      el.addEventListener('click', on);
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); on(); } });
+    });
+  }
+
+  H.loadCatalog().then(function (c) {
+    books = c.books; draw();
+    $('#shuffle').addEventListener('click', draw);
+    $$('#fuku-tier input').forEach(function (r) { r.addEventListener('change', draw); });
+  });
+
+  $('#pick-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = e.target, rec = {
+      type: 'pick3', to: f.elements.to.value, email: f.elements.email.value, theme: f.elements.theme.value,
+      avoid: f.elements.avoid.value, budget: Number(f.elements.budget.value), gift: f.elements.gift.checked, at: new Date().toISOString()
+    };
+    var ok = H.stash('handspan-box-requests', rec);
+    H.say($('#pick-msg'), ok
+      ? '신청을 받았습니다. ' + H.won(rec.budget) + ' 예산으로 세 권을 골라 ' + rec.email + '로 먼저 보여 드리겠습니다. (지금은 이 브라우저에만 저장되었습니다)'
+      : '이 브라우저에는 저장할 수 없었습니다. 다른 브라우저에서 다시 시도해 주세요.', ok ? 'ok' : 'err');
+    if (ok) f.reset();
+  });
+
+  $('#fuku-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!picked) { H.say($('#fuku-msg'), '첫 문장 세 개 가운데 하나를 골라 주세요.', 'err'); return; }
+    var f = e.target, rec = {
+      type: 'fukubukuro', email: f.elements.email.value, tier: ($$('#fuku-tier input:checked')[0] || {}).value || '',
+      picked_book_id: picked.id, shown_book_ids: shown.map(function (b) { return b.id; }), price: 29000, at: new Date().toISOString()
+    };
+    var ok = H.stash('handspan-box-requests', rec);
+    H.say($('#fuku-msg'), ok
+      ? '福袋 신청을 받았습니다. 고르신 문장의 책은 꼭 들어갑니다. 어떤 책인지는 받아 보실 때까지 저희도 말하지 않겠습니다. (지금은 이 브라우저에만 저장되었습니다)'
+      : '이 브라우저에는 저장할 수 없었습니다.', ok ? 'ok' : 'err');
+  });
+})();
+</script>
+</body>
+</html>

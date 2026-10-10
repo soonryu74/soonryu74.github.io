@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>장바구니 — 한뼘 HANDSPAN</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .cart-layout{display:grid; gap:24px; grid-template-columns:1fr}
+  @media (min-width:860px){ .cart-layout{grid-template-columns:1.6fr 1fr; gap:40px} .summary{position:sticky; top:80px; align-self:start} }
+  .free{color:var(--green); font-weight:600}
+</style>
+</head>
+<body>
+<header id="site-top"></header>
+
+<main class="wrap" style="padding-top:28px">
+  <div class="section-head"><h1 style="font-size:26px">장바구니</h1><button type="button" class="small ghost" id="clear">비우기</button></div>
+  <div class="cart-layout">
+    <div id="lines"><p class="muted">불러오는 중</p></div>
+    <aside class="summary">
+      <div class="card" style="margin:0">
+        <h2>합계</h2>
+        <label for="ship">배송 방법 <span class="opt">작가별로 따로 보냅니다</span></label>
+        <select id="ship"></select>
+        <div class="hint" id="ship-note"></div>
+        <div class="totals" style="margin-top:14px" id="totals"></div>
+        <button type="button" class="accent block" style="margin-top:16px" id="checkout">결제로</button>
+        <div class="msg" id="msg"></div>
+        <p class="notice" style="margin-top:12px">결제는 MVP 다음 단계(PG 지급대행)에서 붙습니다. 플랫폼이 대금을 직접 쥐지 않도록 토스페이먼츠 지급대행 또는 포트원 파트너정산을 씁니다. 지금은 아무것도 결제되지 않습니다.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer id="site-foot"></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  var H = window.HS, $ = H.$, $$ = H.$$, esc = H.esc;
+  H.mount('cart');
+  var catalog = null, shipSel = $('#ship');
+  var COVER = { none: '커버 없음', kraft: '크라프트 커버', stripe: '줄무늬 커버', check: '체크 커버' };
+
+  H.SHIPPING.forEach(function (s) {
+    var o = document.createElement('option'); o.value = s.key; o.textContent = s.name + ' · ' + H.won(s.fee); shipSel.appendChild(o);
+  });
+  try { shipSel.value = localStorage.getItem('handspan-ship') || 'jundeunggi'; } catch (e) {}
+
+  function unitPrice(b) { return b.currency === 'KRW' ? H.sellPrice(b) : b.krw_equiv; }
+
+  function render() {
+    var lines = H.cart.get();
+    var ship = H.SHIPPING.filter(function (s) { return s.key === shipSel.value; })[0] || H.SHIPPING[0];
+    $('#ship-note').textContent = ship.note || '';
+    if (!lines.length) {
+      $('#lines').innerHTML = '<div class="empty">아직 담긴 책이 없습니다.<br><a class="btn" style="margin-top:14px" href="shop.html">책 보러 가기</a></div>';
+      $('#totals').innerHTML = ''; $('#checkout').disabled = true; return;
+    }
+    $('#checkout').disabled = false;
+
+    /* 작가별 묶음 */
+    var groups = {}, order = [];
+    lines.forEach(function (l, i) {
+      var b = catalog.byId[l.book_id]; if (!b) return;
+      var k = b.author_id; if (!groups[k]) { groups[k] = { artist: b.artist, lines: [], qty: 0, goods: 0, options: 0, digital: true, isA: false }; order.push(k); }
+      var g = groups[k], copies = l.qty * (l.extra ? 2 : 1);
+      g.lines.push({ l: l, b: b, i: i, copies: copies, amt: unitPrice(b) * copies + (l.card ? H.OPTIONS.card * l.qty : 0) });
+      g.qty += copies; g.goods += unitPrice(b) * copies; g.options += (l.card ? H.OPTIONS.card * l.qty : 0);
+      if (!b.digital) g.digital = false; if (b.track === 'A') g.isA = true;
+    });
+
+    var goods = 0, options = 0, shipping = 0, listPriceA = 0, sellA = 0;
+    $('#lines').innerHTML = order.map(function (k) {
+      var g = groups[k];
+      var free = g.digital || g.qty >= H.FREE_SHIP_QTY;
+      var fee = free ? 0 : ship.fee;
+      goods += g.goods; options += g.options; shipping += fee;
+      var from = g.artist.ships_from || 'KR';
+      return '<div class="cart-group">' +
+        '<div class="gh"><div><b>' + esc(g.artist.name) + '</b> <span class="muted">' + (H.FLAG[from] || '') + ' ' + (H.COUNTRY[from] || from) + '에서 발송</span></div>' +
+          '<div>' + (g.digital ? '<span class="free">배송 없음</span>' : free ? '<span class="free">같은 작가 ' + g.qty + '권 — 무료배송</span>' : '배송비 ' + H.won(fee) + ' <span class="small">(' + (H.FREE_SHIP_QTY - g.qty) + '권 더 담으면 무료)</span>') + '</div></div>' +
+        g.lines.map(function (x) {
+          var l = x.l, b = x.b;
+          var opts = [COVER[l.cover] || '', l.bookmark ? '계절 책갈피' : '', l.card ? '손글씨 카드' + (l.card_text ? ' "' + l.card_text + '"' : '') : '', l.extra ? '한 권 더 보내기(기부 ' + l.qty + '권)' : ''].filter(Boolean).join(' · ');
+          var priceNote = '';
+          if (b.track === 'A') { listPriceA += b.price_krw * x.copies; sellA += H.sellPrice(b) * x.copies; priceNote = '<div class="small">정가 ' + H.won(b.price_krw) + ' → ' + H.won(H.sellPrice(b)) + ' (할인 10%, 도서정가제 상한 15%)</div>'; }
+          else if (b.currency !== 'KRW') priceNote = '<div class="small">' + H.money(b.price, b.currency) + ' ≈ ' + H.won(b.krw_equiv) + '</div>';
+          return '<div class="cart-line">' +
+            '<div class="cv">' + H.coverHTML(b, { scale: 0.45, href: 'book.html?id=' + b.id }) + '</div>' +
+            '<div class="info"><b><a href="book.html?id=' + b.id + '">' + esc(b.title) + '</a></b> ' + H.tierBadge(b.width_mm, b.height_mm) + (b.track === 'A' ? ' <span class="badge isbn">ISBN</span>' : '') +
+              '<div class="small">' + b.width_mm + '×' + b.height_mm + 'mm · ' + l.qty + '권' + (l.extra ? ' + 기부 ' + l.qty + '권' : '') + '</div>' +
+              '<div class="opts">' + esc(opts) + '</div>' + priceNote + '</div>' +
+            '<div class="amt">' + H.won(x.amt) + '<button type="button" class="rm" data-i="' + x.i + '">빼기</button></div>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+    }).join('');
+
+    $$('#lines .rm').forEach(function (b) { b.addEventListener('click', function () { H.cart.remove(Number(b.dataset.i)); render(); }); });
+
+    var total = goods + options + shipping;
+    $('#totals').innerHTML =
+      '<div class="ln"><span>책값</span><span>' + H.won(goods) + '</span></div>' +
+      (options ? '<div class="ln"><span>손글씨 카드</span><span>' + H.won(options) + '</span></div>' : '') +
+      '<div class="ln"><span>배송비 (작가 ' + order.length + '곳)</span><span>' + H.won(shipping) + '</span></div>' +
+      (ship.zone === 'US' ? '<div class="ln small"><span>관세 대납 수수료</span><span>결제 단계에서 안내</span></div>' : '') +
+      (listPriceA ? '<div class="ln small"><span>트랙 A 정가 합계 ' + H.won(listPriceA) + ' → 할인 ' + H.won(listPriceA - sellA) + '</span><span>상한 15%</span></div>' : '') +
+      '<div class="ln sum"><span>합계</span><span>' + H.won(total) + '</span></div>';
+  }
+
+  shipSel.addEventListener('change', function () { try { localStorage.setItem('handspan-ship', shipSel.value); } catch (e) {} render(); });
+  $('#clear').addEventListener('click', function () { if (confirm('장바구니를 비울까요?')) { H.cart.clear(); render(); } });
+  $('#checkout').addEventListener('click', function () {
+    H.say($('#msg'), '결제는 아직 붙어 있지 않습니다. PG 지급대행 계약 뒤에 이 단추가 결제창을 엽니다.', 'err');
+  });
+
+  H.loadCatalog().then(function (c) {
+    catalog = c; catalog.byId = {}; c.books.forEach(function (b) { catalog.byId[b.id] = b; });
+    render();
+  }).catch(function (e) { $('#lines').innerHTML = '<p class="notice">' + esc(e.message) + '</p>'; });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>책 보기 — 한뼘 HANDSPAN</title>
+<meta name="description" content="콩·손·뼘 크기, mm 범위, 장르, 제작 방식, 작가 국적으로 작은 책을 고릅니다.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  @media (max-width:859px){
+    .filters{display:none}
+    .filters.open{display:block}
+  }
+  @media (min-width:860px){ #toggle-filters{display:none} }
+</style>
+</head>
+<body>
+<header id="site-top"></header>
+
+<main class="wrap" style="padding-top:28px">
+  <div class="section-head">
+    <div><div class="eyebrow">책 보기</div><h1 style="font-size:26px">작은 책 전부</h1></div>
+    <span class="more">표지는 실제 비율입니다. 76mm 책은 190mm 책보다 그만큼 작게 보입니다.</span>
+  </div>
+
+  <div class="shop">
+    <aside>
+      <button id="toggle-filters" class="block" type="button" style="margin-bottom:10px">거르기 열기</button>
+      <form class="filters" id="filters" aria-label="거르기">
+        <details open>
+          <summary>크기</summary>
+          <label class="check"><input type="checkbox" name="tier" value="kong"> <span class="badge tier-kong">콩</span> ≤ 76mm</label>
+          <label class="check"><input type="checkbox" name="tier" value="son"> <span class="badge tier-son">손</span> ≤ 148mm</label>
+          <label class="check"><input type="checkbox" name="tier" value="ppyeom"> <span class="badge tier-ppyeom">뼘</span> ≤ 190mm</label>
+          <label for="wmin">가로 (mm)</label>
+          <div class="mm-row"><input id="wmin" name="wmin" type="number" min="0" max="190" placeholder="0" inputmode="numeric"><span class="muted">~</span><input name="wmax" type="number" min="0" max="190" placeholder="190" inputmode="numeric" aria-label="가로 최대"></div>
+          <label for="hmin">세로 (mm)</label>
+          <div class="mm-row"><input id="hmin" name="hmin" type="number" min="0" max="190" placeholder="0" inputmode="numeric"><span class="muted">~</span><input name="hmax" type="number" min="0" max="190" placeholder="190" inputmode="numeric" aria-label="세로 최대"></div>
+        </details>
+        <details open>
+          <summary>장르</summary>
+          <select name="genre" aria-label="장르"><option value="">전체</option></select>
+        </details>
+        <details>
+          <summary>제작</summary>
+          <select name="method" aria-label="제작 방식"><option value="">전체</option></select>
+        </details>
+        <details>
+          <summary>작가 국적</summary>
+          <select name="country" aria-label="작가 국적"><option value="">전체</option></select>
+        </details>
+        <details>
+          <summary>트랙</summary>
+          <label class="check"><input type="radio" name="track" value="" checked> 전체</label>
+          <label class="check"><input type="radio" name="track" value="B"> 핸드메이드·굿즈 (트랙 B)</label>
+          <label class="check"><input type="radio" name="track" value="A"> ISBN 도서 (트랙 A)</label>
+          <label class="check"><input type="checkbox" name="digital" value="1"> 디지털만</label>
+        </details>
+        <details>
+          <summary>값 (원)</summary>
+          <div class="mm-row"><input name="pmin" type="number" min="0" step="1000" placeholder="0" inputmode="numeric" aria-label="최저가"><span class="muted">~</span><input name="pmax" type="number" min="0" step="1000" placeholder="상한 없음" inputmode="numeric" aria-label="최고가"></div>
+        </details>
+        <div class="row" style="margin-top:12px">
+          <button type="button" class="small ghost" id="reset">모두 지우기</button>
+        </div>
+      </form>
+    </aside>
+
+    <div>
+      <div class="shop-top">
+        <div><span id="count">0</span>권 <span class="chips" id="chips"></span></div>
+        <label style="margin:0; display:flex; gap:8px; align-items:center; font-weight:400">정렬
+          <select id="sort" aria-label="정렬">
+            <option value="new">최신</option>
+            <option value="price-asc">값 낮은 순</option>
+            <option value="price-desc">값 높은 순</option>
+            <option value="pop">인기</option>
+            <option value="small">작은 순</option>
+          </select>
+        </label>
+      </div>
+      <div class="shelf" id="grid"></div>
+      <div class="empty" id="empty" style="display:none">이 조건에 맞는 책이 아직 없습니다. 조건을 하나 풀어 보세요.</div>
+    </div>
+  </div>
+</main>
+
+<footer id="site-foot"></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  var H = window.HS, $ = H.$, $$ = H.$$, esc = H.esc;
+  H.mount('shop');
+  var form = $('#filters'), sortEl = $('#sort'), all = [];
+
+  $('#toggle-filters').addEventListener('click', function () {
+    form.classList.toggle('open');
+    this.textContent = form.classList.contains('open') ? '거르기 닫기' : '거르기 열기';
+  });
+
+  function fill(sel, values, labelFn) {
+    values.forEach(function (v) {
+      var o = document.createElement('option'); o.value = v; o.textContent = labelFn ? labelFn(v) : v; sel.appendChild(o);
+    });
+  }
+
+  /* URL → 폼 */
+  function readURL() {
+    var p = new URLSearchParams(location.search);
+    $$('input[name=tier]', form).forEach(function (c) { c.checked = (p.getAll('tier').indexOf(c.value) >= 0); });
+    ['wmin', 'wmax', 'hmin', 'hmax', 'pmin', 'pmax', 'genre', 'method', 'country'].forEach(function (k) {
+      var el = form.elements[k]; if (el) el.value = p.get(k) || '';
+    });
+    var t = p.get('track') || ''; $$('input[name=track]', form).forEach(function (r) { r.checked = (r.value === t); });
+    form.elements.digital.checked = p.get('digital') === '1';
+    sortEl.value = p.get('sort') || 'new';
+  }
+  /* 폼 → URL (history.replaceState라 뒤로가기가 쌓이지 않는다) */
+  function writeURL(f) {
+    var p = new URLSearchParams();
+    f.tiers.forEach(function (t) { p.append('tier', t); });
+    ['wmin', 'wmax', 'hmin', 'hmax', 'pmin', 'pmax', 'genre', 'method', 'country', 'track'].forEach(function (k) { if (f[k] !== '' && f[k] != null) p.set(k, f[k]); });
+    if (f.digital) p.set('digital', '1');
+    if (f.sort !== 'new') p.set('sort', f.sort);
+    var q = p.toString();
+    history.replaceState(null, '', location.pathname + (q ? '?' + q : ''));
+  }
+  function readForm() {
+    var num = function (k) { var v = form.elements[k].value; return v === '' ? null : Number(v); };
+    return {
+      tiers: $$('input[name=tier]:checked', form).map(function (c) { return c.value; }),
+      wmin: form.elements.wmin.value, wmax: form.elements.wmax.value, hmin: form.elements.hmin.value, hmax: form.elements.hmax.value,
+      pmin: form.elements.pmin.value, pmax: form.elements.pmax.value,
+      genre: form.elements.genre.value, method: form.elements.method.value, country: form.elements.country.value,
+      track: ($$('input[name=track]:checked', form)[0] || {}).value || '',
+      digital: form.elements.digital.checked, sort: sortEl.value,
+      n: { wmin: num('wmin'), wmax: num('wmax'), hmin: num('hmin'), hmax: num('hmax'), pmin: num('pmin'), pmax: num('pmax') }
+    };
+  }
+
+  function apply() {
+    var f = readForm(); writeURL(f);
+    var list = all.filter(function (b) {
+      if (f.tiers.length && (!b.tier || f.tiers.indexOf(b.tier.key) < 0)) return false;
+      if (f.n.wmin != null && b.width_mm < f.n.wmin) return false;
+      if (f.n.wmax != null && b.width_mm > f.n.wmax) return false;
+      if (f.n.hmin != null && b.height_mm < f.n.hmin) return false;
+      if (f.n.hmax != null && b.height_mm > f.n.hmax) return false;
+      if (f.genre && b.genre !== f.genre) return false;
+      if (f.method && b.method !== f.method) return false;
+      if (f.country && b.country !== f.country) return false;
+      if (f.track && b.track !== f.track) return false;
+      if (f.digital && !b.digital) return false;
+      var price = b.krw_equiv || H.sellPrice(b);
+      if (f.n.pmin != null && price < f.n.pmin) return false;
+      if (f.n.pmax != null && price > f.n.pmax) return false;
+      return true;
+    });
+    var priceOf = function (b) { return b.krw_equiv || H.sellPrice(b); };
+    var sorters = {
+      'new': function (x, y) { return (y.added || '').localeCompare(x.added || ''); },
+      'price-asc': function (x, y) { return priceOf(x) - priceOf(y); },
+      'price-desc': function (x, y) { return priceOf(y) - priceOf(x); },
+      'pop': function (x, y) { return (x.stock - y.stock) || (y.pages - x.pages); }, /* 재고가 적게 남은 순을 인기로 본다 (모의) */
+      'small': function (x, y) { return (x.long_mm - y.long_mm) || (x.width_mm * x.height_mm - y.width_mm * y.height_mm); }
+    };
+    list.sort(sorters[f.sort] || sorters['new']);
+    $('#count').textContent = list.length;
+    $('#grid').innerHTML = list.map(H.cardHTML).join('');
+    $('#empty').style.display = list.length ? 'none' : '';
+
+    /* 켜진 조건을 작은 알약으로 */
+    var chips = [];
+    f.tiers.forEach(function (t) { var tt = H.TIERS.filter(function (x) { return x.key === t; })[0]; chips.push(tt.name + ' ≤' + tt.max + 'mm'); });
+    if (f.wmin || f.wmax) chips.push('가로 ' + (f.wmin || 0) + '~' + (f.wmax || 190) + 'mm');
+    if (f.hmin || f.hmax) chips.push('세로 ' + (f.hmin || 0) + '~' + (f.hmax || 190) + 'mm');
+    if (f.genre) chips.push(f.genre); if (f.method) chips.push(f.method);
+    if (f.country) chips.push(H.COUNTRY[f.country] || f.country);
+    if (f.track) chips.push(f.track === 'A' ? 'ISBN 도서' : '핸드메이드·굿즈');
+    if (f.digital) chips.push('디지털');
+    if (f.pmin || f.pmax) chips.push((f.pmin ? H.won(f.pmin) : '0원') + '~' + (f.pmax ? H.won(f.pmax) : ''));
+    $('#chips').innerHTML = chips.map(function (c) { return '<span class="chip">' + esc(c) + '</span>'; }).join('');
+  }
+
+  H.loadCatalog().then(function (c) {
+    all = c.books;
+    fill(form.elements.genre, H.GENRES);
+    fill(form.elements.method, H.METHODS);
+    var countries = []; all.forEach(function (b) { if (countries.indexOf(b.country) < 0) countries.push(b.country); });
+    fill(form.elements.country, countries, function (v) { return (H.FLAG[v] || '') + ' ' + (H.COUNTRY[v] || v); });
+    readURL(); apply();
+    form.addEventListener('input', apply);
+    form.addEventListener('change', apply);
+    sortEl.addEventListener('change', apply);
+    $('#reset').addEventListener('click', function () { form.reset(); sortEl.value = 'new'; apply(); });
+  }).catch(function (e) { $('#grid').innerHTML = '<p class="notice">' + esc(e.message) + '</p>'; });
+})();
+</script>
+</body>
+</html>

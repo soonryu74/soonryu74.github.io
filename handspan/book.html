@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>책 — 한뼘 HANDSPAN</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .sw-kraft{background:#c9a97a}
+  .sw-stripe{background:repeating-linear-gradient(90deg,#f3ede1 0 4px,#8b2f1f 4px 6px)}
+  .sw-check{background:
+    linear-gradient(90deg, rgba(31,27,22,.18) 1px, transparent 1px) 0 0/8px 8px,
+    linear-gradient(0deg, rgba(31,27,22,.18) 1px, transparent 1px) 0 0/8px 8px, #3b5b8c}
+  .sw-none{background:var(--paper-2); border:1px dashed var(--line-2)}
+  .ship-note{font-size:13px; color:var(--muted); margin-top:8px}
+</style>
+</head>
+<body>
+<header id="site-top"></header>
+
+<main class="wrap" style="padding-top:24px">
+  <p class="small" id="crumb"><a href="shop.html">책 보기</a></p>
+  <div class="product" id="product">
+    <p class="muted">불러오는 중</p>
+  </div>
+
+  <section id="related" style="display:none">
+    <div class="section-head"><h2 id="related-h">같은 크기의 다른 책</h2><a class="more" id="related-more" href="shop.html">더 보기 →</a></div>
+    <div class="shelf" id="related-grid"></div>
+  </section>
+</main>
+
+<footer id="site-foot"></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  var H = window.HS, $ = H.$, $$ = H.$$, esc = H.esc;
+  H.mount('shop');
+  var id = H.qs('id');
+
+  /* ── 자 사진: SVG 안에 표지와 mm 눈금을 같이 그린다. 단위는 전부 mm ── */
+  function rulerSVG(book) {
+    var w = book.width_mm, h = book.height_mm;
+    var OX = 22, OY = 204;                 // 원점(책의 왼쪽 아래)
+    var MAX = 200;                          // 자 길이
+    var s = '';
+    // 신용카드 윤곽 (85.6×54) — 크기 감을 잡는 기준
+    s += '<rect x="' + OX + '" y="' + (OY - 54) + '" width="85.6" height="54" rx="2" fill="none" stroke="#b9ad96" stroke-width=".5" stroke-dasharray="2 1.5"/>';
+    s += '<text x="' + (OX + 87.6) + '" y="' + (OY - 2) + '" font-size="3.6" fill="#8a7f70">신용카드 85.6×54</text>';
+    // 한 뼘 경계
+    s += '<line x1="' + (OX + 190) + '" y1="' + (OY - MAX) + '" x2="' + (OX + 190) + '" y2="' + OY + '" stroke="#c9532b" stroke-width=".5" stroke-dasharray="2 2"/>';
+    s += '<line x1="' + OX + '" y1="' + (OY - 190) + '" x2="' + (OX + MAX) + '" y2="' + (OY - 190) + '" stroke="#c9532b" stroke-width=".5" stroke-dasharray="2 2"/>';
+    s += '<text x="' + (OX + 191.5) + '" y="' + (OY - 194) + '" font-size="5" fill="#c9532b" font-weight="700">한 뼘 190</text>';
+    // 표지
+    var dark = H.isDark(book.cover_color);
+    s += '<rect x="' + OX + '" y="' + (OY - h) + '" width="' + w + '" height="' + h + '" fill="' + esc(book.cover_color) + '" stroke="rgba(0,0,0,.25)" stroke-width=".4"/>';
+    s += '<rect x="' + OX + '" y="' + (OY - h) + '" width="' + Math.min(2.5, w * 0.06) + '" height="' + h + '" fill="rgba(0,0,0,.18)"/>';
+    if (w >= 40) {
+      var fs = Math.max(3.2, Math.min(9, w / 9));
+      s += '<text x="' + (OX + w * 0.12) + '" y="' + (OY - h + w * 0.12 + fs) + '" font-size="' + fs + '" font-family="Noto Serif KR,serif" font-weight="600" fill="' + (dark ? '#fff' : '#1f1b16') + '">' + esc(book.title.length > Math.floor(w / fs * 1.6) ? book.title.slice(0, Math.floor(w / fs * 1.6)) + '…' : book.title) + '</text>';
+    }
+    // 치수선
+    s += '<line x1="' + OX + '" y1="' + (OY - h - 5) + '" x2="' + (OX + w) + '" y2="' + (OY - h - 5) + '" stroke="#1f1b16" stroke-width=".4"/>';
+    s += '<text x="' + (OX + w / 2) + '" y="' + (OY - h - 7.5) + '" font-size="5.2" text-anchor="middle" fill="#1f1b16" font-weight="700">' + w + 'mm</text>';
+    s += '<line x1="' + (OX + w + 5) + '" y1="' + (OY - h) + '" x2="' + (OX + w + 5) + '" y2="' + OY + '" stroke="#1f1b16" stroke-width=".4"/>';
+    s += '<text x="' + (OX + w + 7) + '" y="' + (OY - h / 2 + 1.5) + '" font-size="5.2" fill="#1f1b16" font-weight="700">' + h + 'mm</text>';
+    // 가로 자
+    s += '<rect x="' + OX + '" y="' + (OY + 1) + '" width="' + MAX + '" height="10" fill="#efe7d8" stroke="#cdbfa6" stroke-width=".3"/>';
+    for (var i = 0; i <= MAX; i++) {
+      var len = i % 10 === 0 ? 5 : (i % 5 === 0 ? 3.2 : 1.6);
+      s += '<line x1="' + (OX + i) + '" y1="' + (OY + 1) + '" x2="' + (OX + i) + '" y2="' + (OY + 1 + len) + '" stroke="#4a433b" stroke-width="' + (i % 10 === 0 ? .35 : .2) + '"/>';
+      if (i % 20 === 0) s += '<text x="' + (OX + i) + '" y="' + (OY + 10) + '" font-size="4.4" text-anchor="middle" fill="#4a433b">' + i + '</text>';
+    }
+    // 세로 자
+    s += '<rect x="' + (OX - 11) + '" y="' + (OY - MAX) + '" width="10" height="' + MAX + '" fill="#efe7d8" stroke="#cdbfa6" stroke-width=".3"/>';
+    for (var j = 0; j <= MAX; j++) {
+      var l2 = j % 10 === 0 ? 5 : (j % 5 === 0 ? 3.2 : 1.6);
+      s += '<line x1="' + (OX - 1) + '" y1="' + (OY - j) + '" x2="' + (OX - 1 - l2) + '" y2="' + (OY - j) + '" stroke="#4a433b" stroke-width="' + (j % 10 === 0 ? .35 : .2) + '"/>';
+      if (j % 20 === 0 && j > 0) s += '<text x="' + (OX - 6.5) + '" y="' + (OY - j + 1.2) + '" font-size="4.4" text-anchor="end" fill="#4a433b" transform="rotate(-90 ' + (OX - 6.5) + ' ' + (OY - j + 1.2) + ')">' + j + '</text>';
+    }
+    s += '<text x="' + (OX - 3) + '" y="' + (OY + 9) + '" font-size="3.2" text-anchor="end" fill="#8a7f70">mm</text>';
+    return '<svg viewBox="0 0 236 218" role="img" aria-label="' + esc(book.title) + ' 실제 크기: 가로 ' + w + 'mm, 세로 ' + h + 'mm. 한 뼘 190mm 경계와 신용카드 윤곽을 함께 그림">' + s + '</svg>';
+  }
+
+  function shippingTable(book) {
+    var from = book.artist.ships_from || 'KR';
+    var rows = H.SHIPPING.map(function (r) {
+      return '<tr><td>' + esc(r.name) + (r.note ? '<div class="small">' + esc(r.note) + '</div>' : '') + '</td><td class="num">' + H.won(r.fee) + '</td></tr>';
+    }).join('');
+    var note = from === 'KR'
+      ? '작가가 한국에서 직접 보냅니다. 같은 작가 책 ' + H.FREE_SHIP_QTY + '권부터 배송비가 없습니다.'
+      : (H.COUNTRY[from] || from) + '에서 작가가 직접 보냅니다. 위 표는 한국 작가 기준 참고값이고, 실제 요금은 장바구니에서 발송지 기준으로 다시 계산합니다. 같은 작가 책 ' + H.FREE_SHIP_QTY + '권부터 배송비가 없습니다.';
+    if (book.digital) note = '디지털 책은 배송이 없습니다. 결제 후 바로 내려받습니다.';
+    return '<div class="opt-group"><h3>배송 (2026년 요금)</h3>' +
+      (book.digital ? '' : '<div class="table-wrap"><table><thead><tr><th>방법</th><th class="num">요금</th></tr></thead><tbody>' + rows + '</tbody></table></div>') +
+      '<div class="ship-note">' + note + ' 봉투는 두께 3cm 안쪽 안전봉투에 보드 심지 한 장을 넣습니다.</div></div>';
+  }
+
+  H.loadCatalog().then(function (c) {
+    var book = c.books.filter(function (b) { return b.id === id; })[0];
+    if (!book) { $('#product').innerHTML = '<p class="notice">그런 책을 찾지 못했습니다. <a href="shop.html">책 보기</a>로 돌아가 주세요.</p>'; return; }
+    var a = book.artist, t = book.tier;
+    document.title = book.title + ' — 한뼘 HANDSPAN';
+    $('#crumb').innerHTML = '<a href="shop.html">책 보기</a> · <a href="shop.html?tier=' + t.key + '">' + t.name + '</a> · ' + esc(book.genre);
+
+    var soldOut = !book.digital && book.stock <= 0;
+    var isA = book.track === 'A';
+    var sell = H.sellPrice(book);
+    var priceBlock = book.currency !== 'KRW'
+      ? '<span class="now">' + H.money(book.price, book.currency) + '</span><span class="eq">≈ ' + H.won(book.krw_equiv) + ' · 결제는 원화로, 환율은 결제일 기준</span>'
+      : (isA ? '<span class="now">' + H.won(sell) + '</span><span class="was">정가 ' + H.won(book.price_krw) + '</span><span class="eq">할인 10%</span>' : '<span class="now">' + H.won(book.price_krw) + '</span>');
+
+    $('#product').innerHTML =
+      '<div>' +
+        '<div class="ruler-box">' + rulerSVG(book) +
+          '<div class="cap">자는 mm 눈금입니다. 점선 상자는 신용카드(85.6×54mm), 감색 점선은 한 뼘(190mm) 경계입니다. 실물 사진에는 작가가 자를 함께 둡니다.</div></div>' +
+        '<div class="first-line">' + esc(book.first_line) + '<div class="small" style="font-family:var(--sans); margin-top:6px">첫 문장</div></div>' +
+        '<p style="color:var(--ink-2)">' + esc(book.description) + '</p>' +
+        '<div class="row" style="gap:6px">' + book.tags.map(function (x) { return '<span class="chip">' + esc(x) + '</span>'; }).join('') + '</div>' +
+        '<div class="table-wrap" style="margin-top:20px"><table class="spec">' +
+          '<tr><th>크기</th><td>가로 ' + book.width_mm + ' × 세로 ' + book.height_mm + ' mm ' + H.tierBadge(book.width_mm, book.height_mm) + '</td></tr>' +
+          '<tr><th>쪽수</th><td>' + book.pages + '쪽</td></tr>' +
+          '<tr><th>제본</th><td>' + esc(book.binding) + '</td></tr>' +
+          '<tr><th>에디션</th><td>' + (book.edition ? esc(book.edition) : '—') + '</td></tr>' +
+          '<tr><th>제작</th><td>' + esc(book.method) + '</td></tr>' +
+          '<tr><th>발송지</th><td>' + (H.FLAG[a.ships_from] || '') + ' ' + (H.COUNTRY[a.ships_from] || a.ships_from) + (a.ships_from !== a.country ? ' (한국 허브 위탁)' : '') + '</td></tr>' +
+          '<tr><th>트랙</th><td>' + (isA ? 'A · ISBN 도서 <span class="badge isbn">ISBN</span>' : 'B · 핸드메이드/굿즈') + '</td></tr>' +
+          '<tr><th>ISBN</th><td>' + (book.isbn ? esc(book.isbn) : '없음 (개인 발행, 납본 없음)') + '</td></tr>' +
+          '<tr><th>남은 수량</th><td>' + (book.digital ? '제한 없음' : book.stock + '권') + '</td></tr>' +
+        '</table></div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="row" style="gap:8px">' + H.tierBadge(book.width_mm, book.height_mm) + (isA ? '<span class="badge isbn">ISBN</span>' : '') + (book.digital ? '<span class="badge digital">디지털</span>' : '') + (book.edition ? '<span class="badge edition">에디션 ' + esc(book.edition) + '</span>' : '') + '</div>' +
+        '<h1 style="margin-top:10px">' + esc(book.title) + '</h1>' +
+        '<div style="margin-top:6px"><a href="artist.html?id=' + a.id + '">' + esc(a.name) + '</a> <span class="muted">' + (H.FLAG[book.country] || '') + ' ' + esc(a.city) + '</span></div>' +
+        '<div class="price-line">' + priceBlock + '</div>' +
+        (isA ? '<div class="notice">도서정가제 적용 — 할인 최대 15% (가격 할인 10% + 혜택 5%). 정가 ' + H.won(book.price_krw) + '가 표시되고 1+1·무료배포는 할 수 없습니다. 납본 2부는 한뼘이 대행합니다.</div>' : '') +
+        '<form id="buy">' +
+          '<div class="opt-group"><h3>커버 선택</h3><div class="covers">' +
+            '<label><input type="radio" name="cover" value="none" checked><span class="sw sw-none"></span><span class="nm">없음</span></label>' +
+            '<label><input type="radio" name="cover" value="kraft"><span class="sw sw-kraft"></span><span class="nm">크라프트</span></label>' +
+            '<label><input type="radio" name="cover" value="stripe"><span class="sw sw-stripe"></span><span class="nm">줄무늬</span></label>' +
+            '<label><input type="radio" name="cover" value="check"><span class="sw sw-check"></span><span class="nm">체크</span></label>' +
+          '</div><div class="hint">책 크기에 맞춰 종이 커버를 접어 드립니다. 값은 받지 않습니다.</div></div>' +
+          '<div class="opt-group"><h3>함께 넣기</h3>' +
+            '<label class="check"><input type="checkbox" name="bookmark" checked> 계절 책갈피 동봉 <span class="muted">무료</span></label>' +
+            '<label class="check"><input type="checkbox" name="card"> 손글씨 카드 <span class="muted">+' + H.won(H.OPTIONS.card) + '</span></label>' +
+            '<input type="text" name="card_text" placeholder="카드에 적을 한 줄 (40자)" maxlength="40" style="display:none; margin-top:6px">' +
+          '</div>' +
+          (book.digital ? '' :
+          '<div class="opt-group"><h3>한 권 더 보내기</h3>' +
+            '<label class="check"><input type="checkbox" name="extra"> 같은 값으로 한 권을 더 만들어 작은도서관·병원 어린이실로 보냅니다 <span class="muted">+' + H.won(book.currency === 'KRW' ? sell : book.krw_equiv) + '</span></label>' +
+            '<div class="hint">어디로 갔는지 다음 달에 알려 드립니다.</div></div>') +
+          '<div class="row" style="margin-top:18px; gap:14px">' +
+            '<div class="qty"><button type="button" data-d="-1" aria-label="하나 빼기">−</button><input type="number" name="qty" value="1" min="1" max="' + (book.digital ? 1 : Math.max(1, book.stock)) + '" aria-label="수량"><button type="button" data-d="1" aria-label="하나 더하기">+</button></div>' +
+            '<button type="submit" class="accent" style="flex:1" ' + (soldOut ? 'disabled' : '') + '>' + (soldOut ? '품절' : '장바구니 담기') + '</button>' +
+          '</div>' +
+          '<div class="msg" id="msg"></div>' +
+          '<div class="small" style="margin-top:8px">합계 <b id="sum"></b> · 결제는 다음 단계(PG 지급대행)에서 붙습니다.</div>' +
+        '</form>' +
+        shippingTable(book) +
+        '<div class="author-block"><div class="avatar">' + esc(a.name.slice(0, 1)) + '</div><div>' +
+          '<div><b><a href="artist.html?id=' + a.id + '">' + esc(a.name) + '</a></b> <span class="muted">' + (H.FLAG[a.country] || '') + ' ' + esc(a.city) + '</span></div>' +
+          '<p class="small" style="margin:4px 0 8px; color:var(--ink-2)">' + esc(a.bio) + '</p>' +
+          '<a class="btn small" href="artist.html?id=' + a.id + '">작가의 다른 책</a></div></div>' +
+      '</div>';
+
+    /* 합계·수량·카드 글귀 */
+    var form = $('#buy');
+    function unit() {
+      var base = book.currency === 'KRW' ? sell : book.krw_equiv;
+      var per = base + (form.elements.card.checked ? H.OPTIONS.card : 0) + (form.elements.extra && form.elements.extra.checked ? base : 0);
+      return per;
+    }
+    function refresh() {
+      var q = Math.max(1, Number(form.elements.qty.value) || 1);
+      $('#sum').textContent = H.won(unit() * q);
+      form.elements.card_text.style.display = form.elements.card.checked ? '' : 'none';
+    }
+    $$('.qty button', form).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var el = form.elements.qty, v = (Number(el.value) || 1) + Number(b.dataset.d);
+        el.value = Math.min(Number(el.max) || 99, Math.max(1, v)); refresh();
+      });
+    });
+    form.addEventListener('input', refresh); form.addEventListener('change', refresh); refresh();
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var q = Math.max(1, Number(form.elements.qty.value) || 1);
+      H.cart.add({
+        book_id: book.id, qty: q,
+        cover: form.elements.cover.value, bookmark: form.elements.bookmark.checked,
+        card: form.elements.card.checked, card_text: form.elements.card.checked ? form.elements.card_text.value : '',
+        extra: !!(form.elements.extra && form.elements.extra.checked), added_at: new Date().toISOString()
+      });
+      H.say($('#msg'), '장바구니에 담았습니다. 지금 ' + H.cart.count() + '권이 들어 있습니다.', 'ok');
+      $('#msg').innerHTML += ' <a href="cart.html">장바구니 보기</a>';
+    });
+
+    /* 같은 등급의 다른 책 */
+    var rel = c.books.filter(function (b) { return b.id !== book.id && b.tier && b.tier.key === t.key; }).slice(0, 4);
+    if (rel.length) {
+      $('#related').style.display = '';
+      $('#related-h').textContent = t.name + ' 등급의 다른 책';
+      $('#related-more').href = 'shop.html?tier=' + t.key;
+      $('#related-grid').innerHTML = rel.map(H.cardHTML).join('');
+    }
+  }).catch(function (e) { $('#product').innerHTML = '<p class="notice">' + esc(e.message) + '</p>'; });
+})();
+</script>
+</body>
+</html>
