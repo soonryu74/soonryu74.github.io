@@ -55,11 +55,14 @@ def main() -> Path:
         fil += f"[{k}:a]adelay={int(st * 1000)}|{int(st * 1000)},volume=1.0[v{k}];"
     fil += "[bg]" + "".join(f"[v{k}]" for k in range(1, len(voices) + 1)) + f"amix=inputs={len(voices) + 1}:normalize=0:dropout_transition=0[aout]"
     OUT.parent.mkdir(exist_ok=True)
+    import re as _re
+    _r = subprocess.run(["ffmpeg", "-i", str(SRC)], capture_output=True, text=True).stderr
+    _m = _re.search(r"Duration: (\d+):(\d+):([\d.]+)", _r); dur_total = int(_m[1]) * 3600 + int(_m[2]) * 60 + float(_m[3]) + END_PAD
     # 끝 화면을 END_PAD 초 붙잡아 마지막 대사가 끝나게(영상은 마지막 프레임 유지 · 음악은 그대로 끝나고 무음)
     fil = fil.replace("[0:a]volume=", "[0:a]apad,volume=")
     fil += f";[0:v]tpad=stop_mode=clone:stop_duration={END_PAD:.2f}[vout]"
     subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *args, "-filter_complex", fil, "-map", "[vout]", "-map", "[aout]",
-                    "-c:v", "libx264", "-crf", "18", "-preset", "fast", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(OUT)], check=True)
+                    "-c:v", "libx264", "-crf", "18", "-preset", "fast", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-t", f"{dur_total:.2f}", "-movflags", "+faststart", str(OUT)], check=True)
     print("DONE", OUT, flush=True)
     return OUT
 
