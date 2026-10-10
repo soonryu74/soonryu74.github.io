@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>디자이너를 위한 웹사이트 9곳 | 아트 세션</title>
+<meta name="description" content="프롬프트 모션, 샷릴, 앱라마, 아미콘즈 등 디자이너·바이브코더가 바로 써먹는 웹사이트 9곳. 무엇을 하는 곳인지, 얼마인지, 누구에게 맞는지 한 장에 정리.">
+<link rel="canonical" href="https://soonryu74.github.io/art/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="디자이너를 위한 웹사이트 9곳 | 아트 세션">
+<meta property="og:description" content="무엇을 하는 곳인지, 얼마인지, 누구에게 맞는지. 디자이너·바이브코더용 웹사이트 9곳 정리.">
+<meta property="og:url" content="https://soonryu74.github.io/art/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ef; --paper:#fffdf9; --ink:#1c1b18; --muted:#6b675e; --line:#e3ded3;
+  --accent:#c2410c; --accent-soft:#fde8dc; --tag:#eef0e6; --tag-ink:#4c5a2a;
+  --free:#dcf3e6; --free-ink:#14532d; --paid:#fde8dc; --paid-ink:#9a3412;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#171511; --paper:#201e19; --ink:#f0ece3; --muted:#a8a295; --line:#34302a;
+    --accent:#fb923c; --accent-soft:#3a2416; --tag:#2b2d22; --tag-ink:#c7d49b;
+    --free:#163b27; --free-ink:#9ee6b9; --paid:#3a2416; --paid-ink:#fdba74;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+
+.top{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:58px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:15px}
+.brand .mark{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:700 13px 'DM Sans',sans-serif}
+.brand b{color:var(--muted);font-weight:500}
+.top .count{font:700 12px 'DM Sans',sans-serif;color:var(--muted);letter-spacing:.08em}
+
+.hero{padding:56px 0 34px;border-bottom:1px solid var(--line)}
+.eyebrow{margin:0 0 14px;color:var(--accent);font:700 12px 'DM Sans','Noto Sans KR',sans-serif;letter-spacing:.18em}
+.hero h1{margin:0;font-size:clamp(30px,5vw,54px);line-height:1.15;letter-spacing:-.03em;font-weight:900}
+.hero h1 em{font-style:normal;color:var(--muted);font-weight:500}
+.hero p{max-width:640px;margin:18px 0 0;color:var(--muted);font-size:16px}
+.hero .meta{margin-top:18px;font-size:13px;color:var(--muted)}
+
+.filters{position:sticky;top:58px;z-index:9;display:flex;flex-wrap:wrap;gap:8px;padding:14px 0;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px)}
+.filters button{height:36px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--muted);font:700 13px 'Noto Sans KR',sans-serif;cursor:pointer}
+.filters button.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.filters button span{margin-left:5px;color:var(--muted);font-weight:500}
+.filters button.on span{color:inherit;opacity:.7}
+
+.result{padding:18px 0 8px;color:var(--muted);font-size:13px}
+.result strong{color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding-bottom:70px}
+.card{display:flex;flex-direction:column;padding:22px 22px 18px;border:1px solid var(--line);border-radius:14px;background:var(--paper);transition:transform .18s,border-color .18s}
+.card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.card[hidden]{display:none}
+.card .head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.card .no{font:700 12px 'DM Sans',sans-serif;color:var(--accent);letter-spacing:.12em}
+.card .host{font:500 12px 'DM Sans',sans-serif;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card h2{margin:10px 0 2px;font-size:22px;line-height:1.25;letter-spacing:-.02em}
+.card h2 small{display:block;margin-top:2px;font-size:13px;font-weight:500;color:var(--muted)}
+.card .hook{margin:10px 0 0;font-weight:700;font-size:15px;line-height:1.55}
+.card .what{margin:12px 0 0;font-size:14px;color:var(--ink);opacity:.9}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tags span{padding:3px 9px;border-radius:999px;background:var(--tag);color:var(--tag-ink);font-size:11px;font-weight:700}
+.tags span.free{background:var(--free);color:var(--free-ink)}
+.tags span.paid{background:var(--paid);color:var(--paid-ink)}
+dl{margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--line);font-size:13.5px}
+dl div{display:grid;grid-template-columns:52px 1fr;gap:8px;margin:0 0 6px}
+dt{color:var(--muted);font-weight:700}
+dd{margin:0}
+.tip{margin:12px 0 0;padding:12px 14px;border-radius:10px;background:var(--accent-soft);font-size:13.5px}
+.tip b{display:block;margin-bottom:2px;color:var(--accent);font-size:12px;letter-spacing:.04em}
+.card .go{margin-top:auto;padding-top:16px}
+.card .go a{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;background:var(--ink);color:var(--bg);font-weight:700;font-size:14px;text-decoration:none}
+.card .go a:hover{background:var(--accent);color:#fff}
+
+.note{margin:0 0 40px;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--paper);font-size:13.5px;color:var(--muted)}
+.note b{color:var(--ink)}
+footer{padding:26px 0 40px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+@media (max-width:560px){
+  .hero{padding:38px 0 26px}
+  .card{padding:18px 16px 16px}
+  .card h2{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><span class="mark">A</span>아트 세션 <b>· 디자이너를 위한 웹사이트</b></a>
+    <span class="count" id="count">9 SITES</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">ART SESSION · 01</p>
+    <h1>디자이너를 위한<br>웹사이트 9곳 <em>— 무엇을, 얼마에, 누구에게</em></h1>
+    <p>이름만 들어서는 뭐 하는 곳인지 모르는 사이트들이에요. 직접 들어가 보고 <strong>무엇을 하는 곳인지, 가격은 어떤지, 누구에게 맞는지</strong>를 한 장에 정리했어요. 어렵지 않아요. 마음에 드는 카드 하나만 골라 눌러 보세요.</p>
+    <p class="meta">확인일 2026년 10월 10일 · 가격과 기능은 바뀔 수 있어요. 결제 전에는 사이트에서 다시 확인하세요.</p>
+  </section>
+
+  <nav class="filters" id="filters" aria-label="분류">
+    <button data-f="all" class="on">전체<span id="n-all"></span></button>
+    <button data-f="free">무료로 시작<span id="n-free"></span></button>
+    <button data-f="inspire">영감·레퍼런스<span id="n-inspire"></span></button>
+    <button data-f="tool">제작 도구<span id="n-tool"></span></button>
+    <button data-f="code">코드·컴포넌트<span id="n-code"></span></button>
+    <button data-f="ai">AI·바이브코딩<span id="n-ai"></span></button>
+  </nav>
+
+  <p class="result"><strong id="shown">9</strong>곳 표시</p>
+  <section class="grid" id="grid" aria-live="polite"></section>
+
+  <div class="note">
+    <b>정리 기준.</b> 각 사이트 첫 화면과 가격 페이지에 적힌 내용만 옮겼어요. 사이트에 적혀 있지 않은 건 "표시 없음"으로 두었고, 추정은 추정이라고 적었어요. 맥 전용 앱(앨코브)은 윈도우에서는 쓸 수 없어요.
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">아트 세션 · 디자이너를 위한 웹사이트 모음 · 다음 세션에서 이어집니다.</div>
+</footer>
+
+<script src="sites.js"></script>
+<script>
+(function(){
+  var LABEL = {free:"무료", paid:"유료", inspire:"영감", tool:"도구", code:"코드", ai:"AI", opensource:"오픈소스", video:"영상", mac:"맥 전용", directory:"디렉터리", resource:"리소스"};
+  var sites = window.ART_SITES || [];
+  var grid = document.getElementById("grid");
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function host(u){try{return new URL(u).host.replace(/^www\./,"");}catch(e){return u;}}
+  grid.innerHTML = sites.map(function(s){
+    return '<article class="card" data-tags="'+esc(s.tags.join(" "))+'">'+
+      '<div class="head"><span class="no">NO. '+String(s.no).padStart(2,"0")+'</span><span class="host">'+esc(host(s.url))+'</span></div>'+
+      '<h2>'+esc(s.name)+'<small>'+esc(s.ko)+'</small></h2>'+
+      '<p class="hook">'+esc(s.hook)+'</p>'+
+      '<p class="what">'+esc(s.what)+'</p>'+
+      '<div class="tags">'+s.tags.map(function(t){return '<span class="'+esc(t)+'">'+esc(LABEL[t]||t)+'</span>';}).join("")+'</div>'+
+      '<dl><div><dt>가격</dt><dd>'+esc(s.price)+'</dd></div><div><dt>누구에게</dt><dd>'+esc(s.who)+'</dd></div></dl>'+
+      '<div class="tip"><b>이렇게 써 보세요</b>'+esc(s.tip)+'</div>'+
+      '<div class="go"><a href="'+esc(s.url)+'" target="_blank" rel="noopener">사이트 열기 ↗</a></div>'+
+    '</article>';
+  }).join("");
+
+  var cards = Array.prototype.slice.call(grid.children);
+  var btns = Array.prototype.slice.call(document.querySelectorAll("#filters button"));
+  btns.forEach(function(b){
+    var f = b.dataset.f, n = f==="all" ? cards.length : cards.filter(function(c){return (" "+c.dataset.tags+" ").indexOf(" "+f+" ")>=0;}).length;
+    var sp = document.getElementById("n-"+f); if (sp) sp.textContent = n;
+  });
+  function apply(f){
+    var shown = 0;
+    cards.forEach(function(c){
+      var ok = f==="all" || (" "+c.dataset.tags+" ").indexOf(" "+f+" ")>=0;
+      c.hidden = !ok; if (ok) shown++;
+    });
+    document.getElementById("shown").textContent = shown;
+    btns.forEach(function(b){ b.classList.toggle("on", b.dataset.f===f); });
+    try { history.replaceState(null, "", f==="all" ? location.pathname : "#"+f); } catch(e){}
+  }
+  btns.forEach(function(b){ b.addEventListener("click", function(){ apply(b.dataset.f); }); });
+  var init = location.hash.slice(1);
+  if (init && btns.some(function(b){return b.dataset.f===init;})) apply(init);
+  document.getElementById("count").textContent = sites.length + " SITES";
+})();
+</script>
+<script src="/assets/credit.js" defer></script>
+</body>
+</html>
