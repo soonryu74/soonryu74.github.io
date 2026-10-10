@@ -13,3 +13,6 @@ yt-studio/pipeline/topics.txt
 yt-studio/pipeline/.venv/
 yt-studio/pipeline/*.log
 yt-studio/pipeline/models/
+
+# 작업 로그는 보관하지 않는다
+yt-studio/pipeline/jobs/*/output/*.log
