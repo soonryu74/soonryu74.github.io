@@ -144,3 +144,26 @@ EPS = [
     "prompt": "a city street at sunrise with modern office towers, golden sunlight between the buildings, empty road and sidewalks, wide shot, photorealistic, no people"},
    OUTRO]},
 ]
+
+
+# ── 주차판 (2026-10-10, 사가 설명텍스트 문서 기준) ──────────────────────────
+# 앞머리: 시작 자막(문서의 검정 머리글, 무음 3초) → 아나운서 멘트(Gemini TTS) → 본문. 음성은 build 때 합쳐 {key}_voice.m4a 로 둔다.
+def _intro(start_caption):
+    return {"lines": [start_caption, "FEBC 1분 칼럼!", "사랑글로벌아카데미와 함께합니다.", "말씀에는 오정현 총장입니다."],
+            "prompt": "a classic broadcast studio microphone on a wooden desk in warm morning light, soft bokeh, radio station, still life"}
+
+
+def _week(src_key, key, start_caption, **over):
+    base = next(e for e in EPS if e["key"] == src_key)
+    ep = dict(base, key=key, audio=str(HERE / f"{key}_voice.m4a"), scenes=[_intro(start_caption)] + base["scenes"],
+              cover_scene=base["cover_scene"] + 1)
+    ep.update(over)
+    return ep
+
+
+EPS += [
+ _week("0824", "w1", "[사가일터선교 1분 칼럼] 예수님의 일 철학 세 가지",   # 1번: 문서 순서 = 8/24 음원
+       rows=["일은 정말 저주일까,", "*축복*일까?"], hand="\"일은 창조의 축복\"", title_pt=91, cover_scene=7),
+ _week("0907", "w2", "[사가일터선교 1분 칼럼] 예수님의 일터 철학"),
+ _week("0914", "w3", "[사가일터선교 1분 칼럼] 예수님의 일 철학 세 가지"),
+]
