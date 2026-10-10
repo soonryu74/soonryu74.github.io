@@ -226,8 +226,16 @@ def cover(out: Path, bg: Path | None, rows: list[str], fonts: dict, series_label
     _corner_labels(base, fonts, W, series_label, top_right, m, s, pad=58)  # 위쪽에 숨통이 트이게
     # 제목 크기: 기본 117 (1280 기준). 편마다 title_pt 로 정할 수 있고, 폭에 안 맞으면 줄어든다
     pt = int((title_pt or (117 if W > H else 100)) * s)
-    rows_h = pt * 1.18 * len(rows)
-    y = _rows(base, rows, fonts, W / 2, (H - rows_h) / 2 + (0 if W > H else -H * 0.04), int(W * 0.84), pt)
+    tag = ""
+    if rows and rows[0].startswith("["):  # 첫 줄이 [시리즈 표시] 면 큰 제목 위에 작은 꼬리표로 둔다
+        tag, rows = rows[0], rows[1:]
+    rows_h = pt * 1.18 * len(rows) + (pt * 0.8 if tag else 0)
+    y = (H - rows_h) / 2 + (0 if W > H else -H * 0.04)
+    if tag:
+        _draw_rich(base, W / 2, y, [(tag, False)], _f(fonts["bold"], int(pt * 0.42)), (255, 255, 255), YELLOW,
+                   max(2, pt // 40), "center")
+        y += pt * 0.8
+    y = _rows(base, rows, fonts, W / 2, y, int(W * 0.84), pt)
     _hand(base, hand, fonts, W / 2, y + 10 * s, int(40 * s))
     out.parent.mkdir(parents=True, exist_ok=True)
     base.convert("RGB").save(out, quality=93)
