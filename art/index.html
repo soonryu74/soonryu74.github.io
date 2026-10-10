@@ -78,7 +78,9 @@ dd{margin:0}
 .tip{margin:12px 0 0;padding:12px 14px;border-radius:10px;background:var(--accent-soft);font-size:13.5px}
 .tip b{display:block;margin-bottom:2px;color:var(--accent);font-size:12px;letter-spacing:.04em}
 .card .go{margin-top:auto;padding-top:16px}
+.card .go{display:flex;flex-wrap:wrap;gap:8px}
 .card .go a{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;background:var(--ink);color:var(--bg);font-weight:700;font-size:14px;text-decoration:none}
+.card .go a.deep{background:var(--accent-soft);color:var(--accent)}
 .card .go a:hover{background:var(--accent);color:#fff}
 
 .note{margin:0 0 40px;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--paper);font-size:13.5px;color:var(--muted)}
@@ -146,7 +148,7 @@ footer{padding:26px 0 40px;border-top:1px solid var(--line);color:var(--muted);f
       '<div class="tags">'+s.tags.map(function(t){return '<span class="'+esc(t)+'">'+esc(LABEL[t]||t)+'</span>';}).join("")+'</div>'+
       '<dl><div><dt>가격</dt><dd>'+esc(s.price)+'</dd></div><div><dt>누구에게</dt><dd>'+esc(s.who)+'</dd></div></dl>'+
       '<div class="tip"><b>이렇게 써 보세요</b>'+esc(s.tip)+'</div>'+
-      '<div class="go"><a href="'+esc(s.url)+'" target="_blank" rel="noopener">사이트 열기 ↗</a></div>'+
+      '<div class="go"><a href="'+esc(s.url)+'" target="_blank" rel="noopener">사이트 열기 ↗</a>'+(s.deep?'<a class="deep" href="'+esc(s.deep)+'">심층 분석 읽기 →</a>':'')+'</div>'+
     '</article>';
   }).join("");
 

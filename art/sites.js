@@ -3,7 +3,7 @@
    checked: 내용·가격을 직접 확인한 날짜. 가격은 바뀌니 링크에서 다시 확인. */
 window.ART_SITES = [
   {
-    no: 1, name: "Prompt Motion", ko: "프롬프트 모션", url: "https://prompt-motion.com",
+    no: 1, name: "Prompt Motion", ko: "프롬프트 모션", url: "https://prompt-motion.com", deep: "prompt-motion.html",
     tags: ["free", "inspire", "ai"],
     hook: "AI로 만든 모션 영상과, 그걸 만든 프롬프트를 통째로 공개하는 갤러리",
     what: "클로드(Claude)로 만든 모션 그래픽 영상을 모아 둔 사이트예요. 영상마다 어떤 프롬프트와 스킬(Skill)을 썼는지 그대로 보여 줘서, 마음에 드는 걸 골라 그대로 따라 해 볼 수 있어요. Product UI, Charts, Kinetic type, Particles 같은 카테고리로 걸러 볼 수 있고 이메일로 새 영상 알림도 받아요.",

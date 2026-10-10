@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>프롬프트 모션 심층 분석 | 아트 세션</title>
+<meta name="description" content="prompt-motion.com 233개 영상 전부를 뜯어본 분석. 클로드 Opus 5.5로 모션 영상을 만든 사람들이 실제로 쓴 프롬프트 유형, 뒤에서 돌아가는 기술, 스킬 4종, 유튜브 꼭지 제안까지.">
+<link rel="canonical" href="https://soonryu74.github.io/art/prompt-motion.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="프롬프트 모션 심층 분석 | 아트 세션">
+<meta property="og:description" content="233개 영상, 216명, 16일. 클로드가 모션 디자이너가 된 2주를 숫자와 프롬프트로 해부.">
+<meta property="og:url" content="https://soonryu74.github.io/art/prompt-motion.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=DM+Sans:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ef; --paper:#fffdf9; --ink:#1c1b18; --muted:#6b675e; --line:#e3ded3;
+  --accent:#c2410c; --accent-soft:#fde8dc; --bar:#d9652f; --bar-track:#efeae0;
+  --tag:#eef0e6; --tag-ink:#4c5a2a; --code-bg:#1f1d19; --code-ink:#f1ece2;
+  --free:#dcf3e6; --free-ink:#14532d;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#171511; --paper:#201e19; --ink:#f0ece3; --muted:#a8a295; --line:#34302a;
+    --accent:#fb923c; --accent-soft:#3a2416; --bar:#f0904f; --bar-track:#2a2721;
+    --tag:#2b2d22; --tag-ink:#c7d49b; --code-bg:#0f0e0c; --code-ink:#e8e2d6;
+    --free:#163b27; --free-ink:#9ee6b9;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:inherit}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+
+.top{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:15px;white-space:nowrap}
+.brand .mark{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:700 13px 'DM Sans',sans-serif}
+.brand b{color:var(--muted);font-weight:500}
+.top .back{font-size:13px;color:var(--muted);text-decoration:none;white-space:nowrap}
+.top .back:hover{color:var(--accent)}
+
+.hero{padding:52px 0 30px;border-bottom:1px solid var(--line)}
+.eyebrow{margin:0 0 14px;color:var(--accent);font:700 12px 'DM Sans','Noto Sans KR',sans-serif;letter-spacing:.18em}
+.hero h1{margin:0;font-size:clamp(28px,4.6vw,48px);line-height:1.18;letter-spacing:-.03em;font-weight:900}
+.hero h1 em{font-style:normal;color:var(--muted);font-weight:500}
+.hero .lead{max-width:680px;margin:18px 0 0;color:var(--muted);font-size:16px}
+.hero .meta{margin-top:16px;font-size:13px;color:var(--muted)}
+.hero .meta a{color:var(--accent)}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;margin:26px 0 0}
+.tile{padding:16px 16px 14px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.tile b{display:block;font:700 30px/1.1 'DM Sans',sans-serif;letter-spacing:-.02em}
+.tile span{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}
+
+.toc{margin:26px 0 0;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--paper);font-size:14px}
+.toc b{display:block;margin-bottom:6px;font-size:12px;letter-spacing:.08em;color:var(--muted)}
+.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+.toc li{break-inside:avoid;margin:2px 0}
+.toc a{text-decoration:none}
+.toc a:hover{color:var(--accent);text-decoration:underline}
+
+section.block{padding:40px 0 8px;border-bottom:1px solid var(--line)}
+section.block:last-of-type{border-bottom:0}
+h2{margin:0 0 6px;font-size:26px;line-height:1.3;letter-spacing:-.02em}
+h2 .n{display:inline-block;margin-right:10px;color:var(--accent);font:700 14px 'DM Sans',sans-serif;letter-spacing:.1em;vertical-align:middle}
+h3{margin:28px 0 8px;font-size:18px;letter-spacing:-.01em}
+p{margin:12px 0}
+.sub{color:var(--muted);margin-top:0}
+ul,ol{padding-left:22px}
+li{margin:4px 0}
+strong{font-weight:700}
+
+.callout{margin:18px 0;padding:14px 16px;border-radius:12px;background:var(--accent-soft);font-size:14.5px}
+.callout b{display:block;margin-bottom:4px;color:var(--accent);font-size:12px;letter-spacing:.06em}
+.ebook{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:11px;font-weight:700;vertical-align:middle}
+
+.chart{margin:16px 0 8px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.chart h4{margin:0 0 12px;font-size:14px}
+.chart h4 small{margin-left:8px;color:var(--muted);font-weight:500}
+.chart table{width:100%;border-collapse:collapse;font-size:13.5px}
+.chart th{text-align:left;font-weight:500;color:var(--ink);padding:5px 10px 5px 0;width:34%;white-space:nowrap}
+.chart td{padding:5px 0}
+.chart td.v{width:48px;text-align:right;font:600 13px 'DM Sans',sans-serif;color:var(--muted);padding-left:10px}
+.bar{position:relative;height:14px;border-radius:4px;background:var(--bar-track)}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--bar)}
+.chart tr:hover th{color:var(--accent)}
+.chart tr:hover .bar i{opacity:.85}
+.chart .note{margin:10px 0 0;font-size:12px;color:var(--muted)}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+
+.prompt{margin:14px 0;border:1px solid var(--line);border-radius:12px;background:var(--paper);overflow:hidden}
+.prompt .ph{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.prompt .ph b{color:var(--ink)}
+.prompt .ph a{color:var(--accent)}
+.prompt pre{margin:0;padding:14px;white-space:pre-wrap;word-break:break-word;font:13px/1.65 'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;background:var(--code-bg);color:var(--code-ink)}
+.prompt .ko{padding:12px 14px;font-size:14px;border-top:1px dashed var(--line)}
+.prompt .ko b{color:var(--accent);font-size:12px;letter-spacing:.05em;margin-right:6px}
+
+.steps{counter-reset:s;padding:0;list-style:none}
+.steps li{position:relative;padding:12px 14px 12px 50px;margin:8px 0;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:700 13px 'DM Sans',sans-serif}
+.steps li b{display:block}
+.steps li small{color:var(--muted)}
+
+table.cmp{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+table.cmp th,table.cmp td{padding:9px 10px;border:1px solid var(--line);vertical-align:top;text-align:left}
+table.cmp th{background:var(--paper);font-weight:700;white-space:nowrap}
+table.cmp code{font:12.5px 'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;background:var(--tag);padding:2px 6px;border-radius:4px;word-break:break-all}
+.cmp-wrap{overflow-x:auto}
+
+.skill{padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.skill h4{margin:0;font-size:16px}
+.skill h4 small{display:block;margin-top:2px;font-size:12.5px;color:var(--muted);font-weight:500}
+.skill p{font-size:14px;margin:10px 0}
+.skill code{display:block;padding:10px 12px;border-radius:8px;background:var(--code-bg);color:var(--code-ink);font:12.5px/1.5 'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
+.skill a{color:var(--accent);font-size:13px}
+
+.idea{padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.idea h4{margin:0 0 6px;font-size:16px}
+.idea .thumb{display:inline-block;margin:4px 0 8px;padding:3px 9px;border-radius:999px;background:var(--tag);color:var(--tag-ink);font-size:12px;font-weight:700}
+.idea p,.idea li{font-size:14px}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tags span{padding:3px 9px;border-radius:999px;background:var(--tag);color:var(--tag-ink);font-size:12px;font-weight:700}
+
+footer{padding:26px 0 40px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+footer a{color:var(--accent)}
+@media (max-width:560px){
+  .hero{padding:36px 0 24px}
+  .toc ol{columns:1}
+  h2{font-size:22px}
+  .chart th{width:40%;white-space:normal}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><span class="mark">A</span>아트 세션 <b>· 심층 분석</b></a>
+    <a class="back" href="./">← 디자이너를 위한 웹사이트 9곳</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">DEEP DIVE · PROMPT MOTION</p>
+    <h1>프롬프트 모션 심층 분석 <em>— 클로드가 모션 디자이너가 된 16일</em></h1>
+    <p class="lead">프롬프트 모션(Prompt Motion)은 클로드 오퍼스 5.5(Claude Opus 5.5)로 만든 모션 영상과, 그 영상을 만든 프롬프트를 짝지어 모아 둔 갤러리예요. 겉만 보지 않고 <strong>233개 항목 전부를 내려받아</strong> 누가, 어떤 프롬프트로, 어떤 기술로 만들었는지 세어 봤어요. 어렵지 않아요. 숫자부터 보고, 프롬프트 유형으로 넘어갈게요.</p>
+    <p class="meta">수집일 2026년 10월 10일 · 원본 <a href="https://prompt-motion.com" target="_blank" rel="noopener">prompt-motion.com ↗</a> · 영상과 프롬프트의 권리는 각 제작자에게 있어요. 이 페이지는 짧은 인용과 통계만 담고, 모든 항목에 원본 링크를 붙였어요.</p>
+
+    <div class="tiles" aria-label="핵심 숫자">
+      <div class="tile"><b>233</b><span>영상 (프롬프트 229 · 스킬 4)</span></div>
+      <div class="tile"><b>216</b><span>제작자 수 (대부분 1인 1편)</span></div>
+      <div class="tile"><b>16일</b><span>2026.9.23 ~ 10.8 등록 기간</span></div>
+      <div class="tile"><b>100%</b><span>모델이 Opus 5.5 (전부)</span></div>
+      <div class="tile"><b>26단어</b><span>프롬프트 길이 중앙값</span></div>
+      <div class="tile"><b>27%</b><span>같은 '쇼릴' 프롬프트 (63편)</span></div>
+    </div>
+
+    <nav class="toc" aria-label="차례">
+      <b>차례</b>
+      <ol>
+        <li><a href="#what">이 사이트는 무엇인가</a></li>
+        <li><a href="#numbers">숫자로 보는 233편</a></li>
+        <li><a href="#viral">63명이 똑같이 쓴 한 줄</a></li>
+        <li><a href="#types">프롬프트 3가지 유형</a></li>
+        <li><a href="#how">클로드가 영상을 '만드는' 방법</a></li>
+        <li><a href="#skills">설치해서 쓰는 스킬 4종</a></li>
+        <li><a href="#youtube">유튜브 꼭지 제안</a></li>
+        <li><a href="#caveats">시작 전에 알아야 할 것</a></li>
+      </ol>
+    </nav>
+  </section>
+
+  <section class="block" id="what">
+    <h2><span class="n">01</span>이 사이트는 무엇인가</h2>
+    <p class="sub">한 사람이 X(옛 트위터)에서 긁어모은, 영상과 프롬프트의 짝 맞추기 갤러리.</p>
+    <p>사이트 첫 줄은 이렇게 적혀 있어요. <em>"A collection of motion videos made with Claude Opus 5.5, with the prompts and skills behind them."</em> 클로드 오퍼스 5.5로 만든 모션 영상 모음이고, 그 뒤에 있는 프롬프트와 스킬을 같이 보여 준다는 뜻이에요.</p>
+    <ul>
+      <li><strong>누가 만들었나.</strong> 큐레이터는 X 계정 <a href="https://x.com/p4nthera_" target="_blank" rel="noopener">@p4nthera_</a> 한 명이에요. 모든 항목 아래에 "Curated by @p4nthera_"가 붙어요. 회사 사이트가 아니라 개인 수집물이에요.</li>
+      <li><strong>어디서 가져오나.</strong> 233편 전부 X 게시물에서 왔어요. 항목마다 "View post" 버튼이 원본 게시물로 연결되고, "이 프롬프트는 @아무개의 게시물에서 그대로 가져왔다"는 문장이 붙어요.</li>
+      <li><strong>항목 하나에 뭐가 있나.</strong> 영상(미리보기 자동 재생), 제목, 카테고리 태그, 프롬프트 전문과 복사 버튼, 그리고 메타 정보예요. 메타는 모델(Model), 노력 수준(Effort), 기술 스택(Stack), 반복 횟수(Iterations), 게시일(Posted)인데 제작자가 밝힌 것만 적혀 있어요.</li>
+      <li><strong>걸러 보기.</strong> 프롬프트/스킬 두 종류, 인기순(Popular), 그리고 내용 태그 11개(Product UI, Phone, Charts, Diagrams, Kinetic type, Shapes, Particles, Characters, Photos, Music, Code)로 걸러요.</li>
+      <li><strong>구독과 제출.</strong> 이메일을 넣으면 새 영상 알림과 주간 요약을 보내 줘요. "Submit" 버튼으로 내 영상을 제출할 수 있어요.</li>
+      <li><strong>가격.</strong> 가격 페이지도, 로그인도 없어요. 지금은 전부 무료로 열람해요.</li>
+    </ul>
+    <div class="callout"><b>왜 하필 9월 23일부터일까</b>가장 이른 항목이 2026년 9월 23일이고, 220편이 9월 마지막 주에 몰려 있어요. 프롬프트 안에 "Anthropic's new launch(앤트로픽의 새 출시)"라는 표현이 보이는 걸로 미루어, 오퍼스 5.5 공개 직후 X에서 "클로드한테 쇼릴 만들어 달라고 해 봤다" 유행이 번졌고, 큐레이터가 그 파도를 그대로 담은 거예요. 즉 이 사이트는 <strong>특정 모델의 출시 2주를 기록한 타임캡슐</strong>에 가까워요.</div>
+  </section>
+
+  <section class="block" id="numbers">
+    <h2><span class="n">02</span>숫자로 보는 233편</h2>
+    <p class="sub">233개 항목 페이지를 모두 읽어 세었어요. 표시 안 된 항목은 "미표시"로 따로 셌어요.</p>
+
+    <div class="chart" role="figure" aria-label="내용 태그별 영상 수">
+      <h4>어떤 종류의 영상이 많나 <small>내용 태그 · 한 영상에 여러 태그 가능 · 233편 기준</small></h4>
+      <table>
+        <tr><th>Product UI (제품 화면)</th><td><div class="bar"><i style="width:100%"></i></div></td><td class="v">100</td></tr>
+        <tr><th>Kinetic type (움직이는 글자)</th><td><div class="bar"><i style="width:97%"></i></div></td><td class="v">97</td></tr>
+        <tr><th>Music (음악)</th><td><div class="bar"><i style="width:50%"></i></div></td><td class="v">50</td></tr>
+        <tr><th>Shapes (도형)</th><td><div class="bar"><i style="width:44%"></i></div></td><td class="v">44</td></tr>
+        <tr><th>Particles (입자 효과)</th><td><div class="bar"><i style="width:43%"></i></div></td><td class="v">43</td></tr>
+        <tr><th>Charts (차트)</th><td><div class="bar"><i style="width:33%"></i></div></td><td class="v">33</td></tr>
+        <tr><th>Diagrams (다이어그램)</th><td><div class="bar"><i style="width:31%"></i></div></td><td class="v">31</td></tr>
+        <tr><th>Characters (캐릭터)</th><td><div class="bar"><i style="width:27%"></i></div></td><td class="v">27</td></tr>
+        <tr><th>Photos (사진)</th><td><div class="bar"><i style="width:23%"></i></div></td><td class="v">23</td></tr>
+        <tr><th>Phone (폰 목업)</th><td><div class="bar"><i style="width:22%"></i></div></td><td class="v">22</td></tr>
+        <tr><th>Code (코드 화면)</th><td><div class="bar"><i style="width:21%"></i></div></td><td class="v">21</td></tr>
+      </table>
+      <p class="note">제품 화면과 움직이는 글자가 나란히 1, 2위. "내 앱 홍보 영상"과 "글자가 춤추는 쇼릴"이 이 사이트의 두 기둥이에요.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="chart" role="figure" aria-label="프롬프트 길이 분포">
+        <h4>프롬프트 길이 <small>단어 수 · 프롬프트가 있는 230편</small></h4>
+        <table>
+          <tr><th>30단어 이하</th><td><div class="bar"><i style="width:100%"></i></div></td><td class="v">161</td></tr>
+          <tr><th>31~100단어</th><td><div class="bar"><i style="width:31%"></i></div></td><td class="v">50</td></tr>
+          <tr><th>101~300단어</th><td><div class="bar"><i style="width:4%"></i></div></td><td class="v">6</td></tr>
+          <tr><th>300단어 초과</th><td><div class="bar"><i style="width:8%"></i></div></td><td class="v">13</td></tr>
+        </table>
+        <p class="note">10편 중 7편이 트윗 한 개 길이. 가장 짧은 건 11글자, 가장 긴 건 14,877글자.</p>
+      </div>
+      <div class="chart" role="figure" aria-label="기술 스택 분포">
+        <h4>무엇으로 만들었나 <small>Stack 표시 54편 · 미표시 179편</small></h4>
+        <table>
+          <tr><th>HTML 계열 (+Playwright, ffmpeg)</th><td><div class="bar"><i style="width:100%"></i></div></td><td class="v">15</td></tr>
+          <tr><th>Remotion (리모션)</th><td><div class="bar"><i style="width:73%"></i></div></td><td class="v">11</td></tr>
+          <tr><th>HyperFrames (하이퍼프레임즈)</th><td><div class="bar"><i style="width:60%"></i></div></td><td class="v">9</td></tr>
+          <tr><th>Three.js (3D)</th><td><div class="bar"><i style="width:33%"></i></div></td><td class="v">5</td></tr>
+          <tr><th>JavaScript / SVG·Canvas</th><td><div class="bar"><i style="width:40%"></i></div></td><td class="v">6</td></tr>
+          <tr><th>Python (+ffmpeg, Manim)</th><td><div class="bar"><i style="width:20%"></i></div></td><td class="v">3</td></tr>
+        </table>
+        <p class="note">제작자 4명 중 3명은 기술을 안 밝혔어요. 밝힌 사람 중에선 "웹 페이지를 찍어서 영상으로" 방식이 1위.</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart" role="figure" aria-label="반복 횟수와 노력 수준">
+        <h4>몇 번 만에 나왔나 <small>Iterations · Effort</small></h4>
+        <table>
+          <tr><th>한 번에 (One-shot)</th><td><div class="bar"><i style="width:66%"></i></div></td><td class="v">90</td></tr>
+          <tr><th>몇 번 주고받음 (A few rounds)</th><td><div class="bar"><i style="width:4%"></i></div></td><td class="v">6</td></tr>
+          <tr><th>미표시</th><td><div class="bar"><i style="width:100%;opacity:.35"></i></div></td><td class="v">137</td></tr>
+        </table>
+        <table style="margin-top:10px">
+          <tr><th>Effort: Max</th><td><div class="bar"><i style="width:100%"></i></div></td><td class="v">22</td></tr>
+          <tr><th>Effort: High</th><td><div class="bar"><i style="width:32%"></i></div></td><td class="v">7</td></tr>
+          <tr><th>Effort: Medium</th><td><div class="bar"><i style="width:32%"></i></div></td><td class="v">7</td></tr>
+        </table>
+        <p class="note">밝힌 96편 중 90편이 "한 번에". 다만 잘 된 것만 올리는 갤러리라는 점을 기억하세요.</p>
+      </div>
+      <div class="chart" role="figure" aria-label="화면 비율과 언어">
+        <h4>화면 비율과 언어</h4>
+        <table>
+          <tr><th>가로 (16:9 등)</th><td><div class="bar"><i style="width:100%"></i></div></td><td class="v">200</td></tr>
+          <tr><th>세로 (9:16, 쇼츠용)</th><td><div class="bar"><i style="width:10%"></i></div></td><td class="v">19</td></tr>
+          <tr><th>정사각 (1:1)</th><td><div class="bar"><i style="width:7%"></i></div></td><td class="v">14</td></tr>
+        </table>
+        <table style="margin-top:10px">
+          <tr><th>영어 프롬프트</th><td><div class="bar"><i style="width:100%"></i></div></td><td class="v">212</td></tr>
+          <tr><th>중국어</th><td><div class="bar"><i style="width:5%"></i></div></td><td class="v">10</td></tr>
+          <tr><th>일본어</th><td><div class="bar"><i style="width:3%"></i></div></td><td class="v">7</td></tr>
+          <tr><th>한국어</th><td><div class="bar"><i style="width:1%"></i></div></td><td class="v">1</td></tr>
+        </table>
+        <p class="note">세로 영상이 19편뿐이에요. 쇼츠·릴스용 세로 모션은 아직 빈자리예요. 한국어 프롬프트는 단 1편, 추석 픽셀 애니메이션(@hoyoyoda).</p>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--muted)">전체 메타데이터(제목·제작자·날짜·태그·스택·단어 수·원본 링크)는 <a href="data/prompt-motion.json">data/prompt-motion.json</a>에 있어요. 프롬프트 본문은 제작자 것이라 싣지 않았어요.</p>
+  </section>
+
+  <section class="block" id="viral">
+    <h2><span class="n">03</span>63명이 똑같이 쓴 한 줄</h2>
+    <p class="sub">233편 중 63편(27%)이 같은 문장으로 시작해요. 52편은 토씨 하나 안 바꿨어요.</p>
+
+    <div class="prompt">
+      <div class="ph"><span><b>바이럴 쇼릴 프롬프트</b> · 가장 이른 등록 2026.9.24 @shneural · 이후 62편이 반복</span><a href="https://prompt-motion.com/stephanlivera-df17a2" target="_blank" rel="noopener">원본 항목 ↗</a></div>
+<pre>make a dynamic 15-second motion graphics video that shows what an incredible motion designer you are, like it's your showreel for a résumé. go all out.</pre>
+      <div class="ko"><b>우리말로</b>네가 얼마나 뛰어난 모션 디자이너인지 보여 주는 15초짜리 역동적인 모션 그래픽 영상을 만들어 줘. 이력서에 붙일 쇼릴(showreel, 작품 모음 영상)이라고 생각하고. 전력을 다해.</div>
+    </div>
+
+    <h3>왜 이 한 줄이 통했을까</h3>
+    <p>프롬프트 공부할 때 외우기 좋은 구조예요. 네 조각으로 이뤄져 있어요.</p>
+    <ol class="steps">
+      <li><b>역할을 준다</b><small>"네가 얼마나 뛰어난 모션 디자이너인지" — 무엇을 만들라가 아니라 누구로서 만들라고 말해요. 클로드가 스스로 기준을 높게 잡게 돼요.</small></li>
+      <li><b>크기를 못 박는다</b><small>"15초" — 짧으니 한 번에 끝낼 수 있고, 밀도가 높아져요. 프롬프트 230편 중 82편이 15초를 지정했어요.</small></li>
+      <li><b>이유를 붙인다</b><small>"이력서용 쇼릴" — 보여 주기 위한 영상이라는 맥락이 생기니, 설명 대신 기교를 뽐내는 쪽으로 가요.</small></li>
+      <li><b>고삐를 푼다</b><small>"go all out(전력을 다해)" — 무엇을 넣을지 정해 주지 않아요. 글자, 도형, 입자, 음악까지 클로드가 알아서 고르게 돼요. 그래서 63편이 전부 다르게 나왔어요.</small></li>
+    </ol>
+    <div class="callout"><b>응용 패턴 <span class="ebook">이 부분은 전자책에!</span></b>63편 중 11편은 이 한 줄 끝에 자기 제품을 한 줄 더 붙였어요. 예를 들어 @steventey는 같은 문장 뒤에 "it should be a launch saas video for https://dub.co(dub.co의 출시 영상이어야 해)"만 더했어요. <strong>검증된 한 줄 + 내 것 한 줄.</strong> 왕초보가 가장 먼저 따라 할 공식이에요.</div>
+  </section>
+
+  <section class="block" id="types">
+    <h2><span class="n">04</span>프롬프트 3가지 유형</h2>
+    <p class="sub">길이로 나누면 세 가지예요. 짧다고 못한 게 아니고, 길다고 잘한 게 아니에요. 목적이 달라요.</p>
+
+    <h3>유형 A · 한 줄형 (161편, 30단어 이하)</h3>
+    <p>"뭘 만들지"만 말하고 "어떻게"는 통째로 맡기는 방식이에요. 결과가 매번 달라서 복권 같지만, 그 대신 생각지도 못한 걸 받아요.</p>
+    <div class="prompt">
+      <div class="ph"><span><b>Recursion explained in genres</b> · Ethan Mollick @emollick · 한 번에 · 캐릭터·코드</span><a href="https://prompt-motion.com/emollick-8661a8" target="_blank" rel="noopener">원본 ↗</a></div>
+<pre>A video explaining recursion, where every explanation about recursion has a radically different video style, make this self-referential &amp; clever &amp; fast moving.</pre>
+      <div class="ko"><b>우리말로</b>재귀(recursion)를 설명하는 영상인데, 재귀에 대한 설명마다 완전히 다른 영상 스타일로. 자기 자신을 가리키는 식으로, 영리하고 빠르게.</div>
+    </div>
+    <div class="prompt">
+      <div class="ph"><span><b>History of AI timeline</b> · @kloss_xyz · 한 번에 · 다이어그램·글자·입자</span><a href="https://prompt-motion.com/kloss-xyz-fe0c31" target="_blank" rel="noopener">원본 ↗</a></div>
+<pre>make a video highlighting key moments in the history of AI.</pre>
+      <div class="ko"><b>우리말로</b>AI 역사의 중요한 순간들을 짚는 영상 만들어 줘. (이게 전부예요.)</div>
+    </div>
+    <div class="prompt">
+      <div class="ph"><span><b>추석 픽셀 애니메이션</b> · @hoyoyoda · 사이트 유일의 한국어 프롬프트</span><a href="https://prompt-motion.com/hoyoyoda-3a5c08" target="_blank" rel="noopener">원본 ↗</a></div>
+<pre>한국의 추석에 어울리는 요소를 서치해서 픽셀 애니메이션을 구성해서 제작해줘</pre>
+      <div class="ko"><b>눈여겨볼 점</b>"서치해서(검색해서)"가 들어 있어요. 클로드가 먼저 자료를 찾고 그다음 만들게 하는 두 단계 지시예요. 한국어로도 됩니다.</div>
+    </div>
+
+    <h3>유형 B · 조건 몇 개형 (50편, 31~100단어)</h3>
+    <p>한 줄형에 비율, 길이, 분위기, 도구 같은 조건을 두세 개 얹어요. 실무에서 가장 쓸모 있는 길이예요.</p>
+    <div class="prompt">
+      <div class="ph"><span><b>Negroni recipe animation</b> · Rory Flynn @Ror_Fly · 사이트 최초 등록(9.23) · HTML</span><a href="https://prompt-motion.com/ror-fly-9950f1" target="_blank" rel="noopener">원본 ↗</a></div>
+<pre>We're going to try a little test. Do you think you could render a recipe motion graphic animation using javascript or html (w/e you think will produce the best) to show the full recipe from start to finish (empty glass to completed cocktail) - Explainer video style - Showing the recipe ingreidents + measurements as they're going into the cup. Should be a 30s video.</pre>
+      <div class="ko"><b>우리말로</b>작은 실험 하나 해 보자. 자바스크립트나 HTML로(네가 더 좋다고 보는 쪽으로) 레시피 모션 그래픽을 만들 수 있을까? 빈 잔에서 완성된 칵테일까지 전 과정을, 설명 영상 스타일로, 재료와 분량이 잔에 들어갈 때 같이 보여 주면서. 30초 길이로.</div>
+    </div>
+    <div class="prompt">
+      <div class="ph"><span><b>Chaotic Claude POV video</b> · @kloss_xyz · Python + ffmpeg · 세로 9:16</span><a href="https://prompt-motion.com/kloss-xyz-15182a" target="_blank" rel="noopener">원본 ↗</a></div>
+<pre>Use Python to generate a 9:16 chaotic brain rot video with excellent motion + sound design and render it using ffmpeg. Put your own personal spin on it so it's aligned with Anthropic's new launch. Also fully express what it's like to be a very creative LLM used by me every day from your POV to give it some extra personality.</pre>
+      <div class="ko"><b>눈여겨볼 점</b>도구(Python, ffmpeg)와 비율(9:16)을 지정하고, 나머지는 "네 관점에서 표현해 봐"로 열어 뒀어요. 쇼츠용 세로 영상은 이렇게 비율 한 단어만 넣으면 돼요.</div>
+    </div>
+
+    <h3>유형 C · 설계도형 (19편, 100단어 초과)</h3>
+    <p>영상 기획서를 통째로 넣는 방식이에요. 결과를 통제하고 싶은 전문가들이 써요. 가장 잘 짜인 예시 하나를 뜯어볼게요. 전문은 원본에서 보시고, 여기선 뼈대만 옮겨요.</p>
+    <div class="prompt">
+      <div class="ph"><span><b>Shape morphing through UI states</b> · @twoclipping · HTML + Playwright · 정사각 1440</span><a href="https://prompt-motion.com/twoclipping-5cba86" target="_blank" rel="noopener">원본 전문 ↗</a></div>
+<pre>&lt;inputs&gt;    나한테 먼저 물어볼 것: 도형이 변신할 UI 상태 8~12개, 흑백인지 포인트 색 하나인지, 120 BPM 근처의 무료 음악
+&lt;direction&gt; 드리블 수준의 UI 모션. 도형 하나가 한 번도 끊기지 않고 계속 변신. 커서가 실제로 클릭하고 드래그. 마지막 프레임 = 첫 프레임(루프)
+            금지: 통통 튀는 이징, 입자 폭발, 글로우, UI에 그라데이션, 죽은 시간, 템플릿처럼 보이는 모든 것
+&lt;structure&gt; 120 BPM, 7마디, 박자마다 사건 하나. 버튼 → 로더 → 체크 → 다이내믹 아일랜드 → 음악 플레이어 → … → 다시 버튼
+&lt;build&gt;     HTML 파일 하나, 모든 스타일은 시간의 함수 seek(t)로 계산. 스프링은 닫힌 식. 음악은 numpy로 박자 분석. Playwright로 렌더, ffmpeg로 모션 블러
+&lt;gotchas&gt;   카메라가 확대하는 요소에 will-change 금지(글자 흐려짐). 루프는 커서 위치·속도까지 똑같아야 안 끊김
+&lt;start&gt;     코드 쓰기 전에 입력부터 물어보고, 박자표 위에 상태 목록을 먼저 보여 줄 것</pre>
+      <div class="ko"><b>구조 읽는 법</b>여섯 칸이에요. <strong>입력(물어볼 것) → 방향(느낌과 금지 목록) → 구조(시간표) → 제작(기술 지시) → 함정(겪어 본 실수) → 시작(첫 행동)</strong>. 꺾쇠 태그로 칸을 나눈 건 클로드가 칸 단위로 읽게 하려는 거예요. 특히 "금지 목록(Banned)"이 11편에 등장하는데, 무엇을 하지 말라가 무엇을 하라보다 결과를 더 또렷하게 바꿔요.</div>
+    </div>
+    <div class="callout"><b>세 유형을 고르는 기준 <span class="ebook">이 부분은 전자책에!</span></b>처음엔 A로 "클로드가 뭘 할 수 있는지" 구경하고, 쓸 만한 게 나오면 B로 비율·길이·도구를 박고, 같은 품질을 반복해야 할 때 C로 설계도를 만들어 두세요. C는 한 번 만들면 재사용 자산이에요.</div>
+  </section>
+
+  <section class="block" id="how">
+    <h2><span class="n">05</span>클로드가 영상을 '만드는' 방법</h2>
+    <p class="sub">클로드는 영상 파일을 직접 뱉지 못해요. 그런데 어떻게 MP4가 나올까요.</p>
+    <p>비유하면 이래요. 클로드는 <strong>움직이는 웹 페이지(HTML)를 그리는 화가</strong>이고, 그 페이지를 <strong>카메라(Playwright, 플레이라이트)가 1초에 60장씩 찍고</strong>, <strong>편집기(ffmpeg, 에프에프엠펙)가 사진들을 이어 붙여 영상</strong>으로 만들어요. 사이트에서 스택을 밝힌 54편을 보면 거의 전부 이 구조의 변형이에요.</p>
+    <ol class="steps">
+      <li><b>HTML + Playwright + ffmpeg (가장 기본, 15편)</b><small>클로드가 HTML 한 장에 애니메이션을 코드로 쓰고, 플레이라이트로 프레임마다 스크린샷을 찍고, ffmpeg로 합쳐요. 별도 프로그램 없이 클로드 코드(Claude Code)만으로 가능해요. 음악은 Python의 numpy로 박자를 분석해 맞춰요.</small></li>
+      <li><b>Remotion (리모션, 11편)</b><small>리액트(React)로 영상을 만드는 전용 도구. "프레임 번호를 받아 그 순간의 화면을 그리는 함수"를 쓰면 리모션이 렌더링을 해요. 제품 출시 영상에 많이 쓰였어요.</small></li>
+      <li><b>HyperFrames (하이퍼프레임즈, 9편)</b><small>헤이젠(HeyGen)이 공개한 "AI 에이전트용 영상 제작 프레임워크". 클로드 코드 스킬로 설치해 쓰고, 아래 스킬 4종 중 1개가 이걸 써요.</small></li>
+      <li><b>Three.js (3D, 5편)</b><small>브라우저 3D 라이브러리. "Douglas A-1H Skyraider를 Three.js로 만들어" 한 줄로 비행기 3D 모델 영상이 나온 사례(@BuildFastWithAI)가 있어요.</small></li>
+      <li><b>Manim + edge-tts (수학 설명 영상, 1편)</b><small>3Blue1Brown이 쓰는 수학 애니메이션 도구 Manim과 마이크로소프트의 무료 음성 edge-tts 조합. 중국어 프롬프트 한 줄로 '도함수 개념' 설명 영상이 나왔어요(@LinearUncle).</small></li>
+    </ol>
+
+    <h3>따라 하려면 깔아야 하는 것 (윈도우 · 맥)</h3>
+    <p>기본 방식(1번)을 기준으로, 2026년 10월 현재 명령어예요. 윈도우는 윈도우 터미널(PowerShell), 맥은 터미널(Terminal)에서 입력해요. 맥은 Homebrew(홈브루)가 먼저 깔려 있어야 해요.</p>
+    <div class="cmp-wrap">
+    <table class="cmp">
+      <tr><th>할 일</th><th>윈도우 (PowerShell)</th><th>맥 (Terminal)</th></tr>
+      <tr><td>Node.js 설치<br><small>플레이라이트·리모션이 필요로 함</small></td><td><code>winget install OpenJS.NodeJS.LTS</code></td><td><code>brew install node</code></td></tr>
+      <tr><td>ffmpeg 설치<br><small>프레임을 영상으로 합침</small></td><td><code>winget install Gyan.FFmpeg</code></td><td><code>brew install ffmpeg</code></td></tr>
+      <tr><td>Python 설치<br><small>음악 박자 분석(numpy)에 필요</small></td><td><code>winget install Python.Python.3.13</code></td><td><code>brew install python</code></td></tr>
+      <tr><td>플레이라이트 브라우저<br><small>프로젝트 폴더에서</small></td><td><code>npx playwright install chromium</code></td><td><code>npx playwright install chromium</code></td></tr>
+      <tr><td>리모션 새 프로젝트<br><small>2번 방식일 때만</small></td><td><code>npx create-video@latest</code></td><td><code>npx create-video@latest</code></td></tr>
+      <tr><td>설치 확인</td><td><code>node -v; ffmpeg -version</code></td><td><code>node -v &amp;&amp; ffmpeg -version</code></td></tr>
+    </table>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">윈도우에서 winget이 없다고 나오면 마이크로소프트 스토어에서 "앱 설치 관리자"를 업데이트하세요. 설치 뒤에는 터미널을 한 번 닫았다 열어야 명령어를 알아봐요. 사실 클로드 코드에 "플레이라이트랑 ffmpeg 깔아 줘"라고 하면 이 표를 대신 해 줘요. 표는 뭘 깔았는지 알고 있자는 뜻이에요.</p>
+  </section>
+
+  <section class="block" id="skills">
+    <h2><span class="n">06</span>설치해서 쓰는 스킬 4종</h2>
+    <p class="sub">프롬프트 대신 "스킬(Skill)"로 등록된 4편. 스킬은 클로드 코드에 설치하는 작업 설명서예요. 한 번 깔면 "출시 영상 만들어"만 해도 절차대로 움직여요.</p>
+    <div class="grid2">
+      <div class="skill">
+        <h4>Cinetic<small>Leon Lin @LexnLin · 2026.10.4</small></h4>
+        <p>코딩 에이전트가 콘셉트를 잡고, 브랜드를 입히고, 음악을 붙이고, 코드로 짧은 시네마틱 출시 영상을 렌더링하게 하는 스킬이에요.</p>
+        <code>깃허브: github.com/Leonxlnx/cinetic</code>
+        <p><a href="https://prompt-motion.com/lexnlin-6161a6" target="_blank" rel="noopener">사이트 항목 ↗</a> · <a href="https://github.com/Leonxlnx/cinetic" target="_blank" rel="noopener">저장소 ↗</a></p>
+      </div>
+      <div class="skill">
+        <h4>product-film<small>@anthonyriera · 2026.9.26 · Remotion</small></h4>
+        <p>내 제품의 디자인 시스템을 읽고, 영상에 대해 나를 인터뷰한 다음, 실제 컴포넌트·로고·음악으로 리모션 출시 영상을 만들어요. 플러그인 형태라 클로드 코드 안에서 두 줄로 설치해요.</p>
+        <code>/plugin marketplace add Rieranthony/product-film-skill
+/plugin install product-film@product-film-skill</code>
+        <p><a href="https://prompt-motion.com/anthonyriera-9b1b2a" target="_blank" rel="noopener">사이트 항목 ↗</a> · <a href="https://github.com/Rieranthony/product-film-skill" target="_blank" rel="noopener">저장소 ↗</a></p>
+      </div>
+      <div class="skill">
+        <h4>session-story<small>Jake Moran @jake11moran · HyperFrames · HeyGen 커뮤니티</small></h4>
+        <p>내 컴퓨터의 클로드 코드 대화 기록을 읽어서, 나와 클로드가 일하는 하루를 짧은 애니메이션 영화로 만들어요. 재미 요소지만 "에이전트가 내 데이터를 읽어 영상화"하는 발상이 눈에 띄어요.</p>
+        <code>npx skills add heygen-com/hyperframes-community-skills --skill session-story</code>
+        <p><a href="https://prompt-motion.com/jake11moran-a269c4" target="_blank" rel="noopener">사이트 항목 ↗</a> · <a href="https://github.com/heygen-com/hyperframes-community-skills/tree/master/skills/session-story" target="_blank" rel="noopener">저장소 ↗</a></p>
+      </div>
+      <div class="skill">
+        <h4>generative-film<small>@BuildFastWithAI · 2026.9.27</small></h4>
+        <p>어떤 주제든 애니메이션 MP4 영화로 만들어요. 모든 프레임을 코드로 그리고, 박자에 맞춘 사운드트랙까지 합성해요. 예시 영상은 '인도 문명사'예요. 교육 영상 쪽에 가장 가까운 스킬이에요.</p>
+        <code>npx skills@latest add https://github.com/buildfastwithai/buildfast-skills</code>
+        <p><a href="https://prompt-motion.com/buildfastwithai-53234e" target="_blank" rel="noopener">사이트 항목 ↗</a> · <a href="https://github.com/buildfastwithai/buildfast-skills/tree/main/generative-film-skill" target="_blank" rel="noopener">저장소 ↗</a></p>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">설치 명령어는 윈도우·맥 동일해요(npx는 Node.js에 딸려 와요). 다른 사람의 스킬을 깔기 전엔 저장소의 SKILL.md를 한 번 읽어 보세요. 스킬은 내 컴퓨터에서 명령을 실행해요.</p>
+  </section>
+
+  <section class="block" id="youtube">
+    <h2><span class="n">07</span>유튜브 꼭지 제안</h2>
+    <p class="sub">노모어매뉴얼 채널 기준. "누구나 아는 툴 + 아무도 모르는 활용법" 공식에 맞춰 세 개만.</p>
+    <div class="grid2">
+      <div class="idea">
+        <h4>① 클로드한테 한 줄 보냈더니 15초 영상이 나왔어요</h4>
+        <span class="thumb">썸네일: 프롬프트 한 줄 + 결과 화면 한 장, 과장 없음</span>
+        <p>03번의 바이럴 한 줄을 그대로 보내고 결과를 기다리는 과정을 통째로 보여 줘요. 그다음 끝에 "우리 가게 전단지 영상으로" 한 줄을 붙여 두 번째 결과를 비교해요.</p>
+        <ul>
+          <li>놀라움: 영상 편집 프로그램을 안 켰는데 MP4가 생김</li>
+          <li>50대 가능: 프롬프트 복사·붙여넣기뿐</li>
+          <li>30~40대 가치: 제품 소개 영상 외주비 절감</li>
+        </ul>
+      </div>
+      <div class="idea">
+        <h4>② 영상 편집 없이 쇼츠 만드는 숨겨진 방법 (세로 9:16)</h4>
+        <span class="thumb">썸네일: 폰 화면 세로 영상 + "편집 프로그램 0개"</span>
+        <p>사이트에 세로 영상이 19편뿐이라 빈자리예요. 04번 유형 B처럼 "9:16, 20초, 자막 큼직하게"만 넣어 쇼츠용 모션을 뽑고, 유튜브 쇼츠에 바로 올리는 것까지 보여 줘요.</p>
+        <ul>
+          <li>독자적 각도: 다른 유튜버는 아직 가로 쇼릴만 따라 함</li>
+          <li>수익화 연결: 수노 플레이리스트 채널 비주얼로 바로 활용</li>
+        </ul>
+      </div>
+      <div class="idea">
+        <h4>③ 엑셀 표 하나가 움직이는 차트 영상이 되는 자동화</h4>
+        <span class="thumb">썸네일: 엑셀 화면 → 애니메이션 차트, 화살표 없이 나란히</span>
+        <p>Charts 태그 33편의 접근을 업무용으로 꺾어요. 매출 엑셀을 주고 "이 표로 30초 차트 애니메이션, 회사 색은 파랑"이라고 지시. 보고서 발표용 영상이 나와요.</p>
+        <ul>
+          <li>클로드 코워크 영상 성공 공식(익숙한 업무 툴 + AI) 그대로</li>
+          <li>바이브코딩 강의의 '결과물 미리보기'로 연결</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout"><b>제목 점검</b>세 제목 모두 금지어(기본기·총정리·사용법·기초·완벽 정리) 없음. "숨겨진", "자동화" 포함. 썸네일 문구는 결과 화면이 그대로 증거가 되므로 과장이 필요 없어요.</div>
+  </section>
+
+  <section class="block" id="caveats">
+    <h2><span class="n">08</span>시작 전에 알아야 할 것</h2>
+    <ul>
+      <li><strong>전부 오퍼스 5.5예요.</strong> 233편 중 다른 모델이 하나도 없어요. 노력 수준을 Max로 올린 게 22편이고요. 가벼운 플랜이나 작은 모델로는 같은 결과를 보장 못 해요. 시연 전엔 내 계정으로 한 번 돌려 보세요.</li>
+      <li><strong>잘 된 것만 모은 갤러리예요.</strong> "한 번에 성공" 90편은 실패작을 올리지 않은 결과예요. 영상에서는 실패 장면도 한 번 보여 주는 게 신뢰를 지켜요.</li>
+      <li><strong>영어가 212편이에요.</strong> 한국어 1편도 잘 됐지만 표본이 적어요. 한국어로 시도해 보고, 안 되면 영어 한 줄을 그대로 쓰세요.</li>
+      <li><strong>권리는 제작자에게.</strong> 사이트 문구 그대로예요. 영상이나 프롬프트를 내 콘텐츠에 쓸 땐 원본 X 게시물 링크와 아이디를 밝히세요. 이 페이지도 그렇게 했어요.</li>
+      <li><strong>시간이 걸려요.</strong> 설계도형 프롬프트 하나는 "10시간 이상 작업해도 된다"고 적혀 있어요. 한 줄형도 렌더링까지 몇 분에서 수십 분이에요. 라이브 시연보다는 미리 돌려 두고 보여 주세요.</li>
+      <li><strong>사이트가 바뀔 수 있어요.</strong> 개인 큐레이션이라 갑자기 멈추거나 유료가 될 수 있어요. 마음에 드는 프롬프트는 지금 복사해 두세요.</li>
+    </ul>
+    <h3>이 분석을 만든 방법</h3>
+    <p style="font-size:14px;color:var(--muted)">2026년 10월 10일, 첫 화면에 실린 233개 항목 페이지를 전부 내려받아 제목·제작자·날짜·태그·모델·노력·스택·반복 횟수·프롬프트 길이·원본 링크를 추출했어요. 언어는 글자 종류로 판별했고, 바이럴 프롬프트는 "showreel for a résumé" 문구 포함 여부로 셌어요. 메타가 없는 항목은 추정하지 않고 미표시로 두었어요.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">아트 세션 · <a href="./">디자이너를 위한 웹사이트 9곳</a>으로 돌아가기 · 원본 <a href="https://prompt-motion.com" target="_blank" rel="noopener">prompt-motion.com</a> (큐레이터 @p4nthera_)</div>
+</footer>
+<script src="/assets/credit.js" defer></script>
+</body>
+</html>
