@@ -16,12 +16,3 @@ yt-studio/pipeline/models/
 
 # 작업 로그는 보관하지 않는다
 yt-studio/pipeline/jobs/*/output/*.log
-
-# 영상·썸네일·사진·음악은 비공개 저장소 soonryu74/yt-studio-output 에 보관 (공개 저장소에 올리지 않는다)
-yt-studio/pipeline/jobs/**/*.mp4
-yt-studio/pipeline/jobs/**/*.mp3
-yt-studio/pipeline/jobs/**/*.jpg
-yt-studio/pipeline/jobs/**/*.jpeg
-yt-studio/pipeline/jobs/**/*.png
-!yt-studio/pipeline/jobs/7기홍보/assets/saga_logo_w.png
-!yt-studio/pipeline/jobs/7기홍보/assets/saga_logo_navy.png
