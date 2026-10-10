@@ -16,3 +16,7 @@ yt-studio/pipeline/models/
 
 # 작업 로그는 보관하지 않는다
 yt-studio/pipeline/jobs/*/output/*.log
+
+# 결과물 영상은 비공개 저장소(yt-studio-output)에만 둔다 (CLAUDE.md 2026-10-10)
+yt-studio/pipeline/jobs/**/output/*.mp4
+yt-studio/pipeline/jobs/**/output/part8k_*
