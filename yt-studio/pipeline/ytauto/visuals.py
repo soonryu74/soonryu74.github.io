@@ -119,7 +119,7 @@ def _veo(prompt: str, out: Path, fmt: str, vis: dict) -> Path:
 
     client = genai.Client()  # GEMINI_API_KEY 환경변수를 읽는다
     op = client.models.generate_videos(
-        model=vis.get("veo_model", "veo-3.1-generate-preview"),
+        model=vis.get("veo_model", "gemini-omni-1.1-flash"),
         prompt=prompt,
         config=types.GenerateVideosConfig(number_of_videos=1,
                                           aspect_ratio="9:16" if fmt == "shorts" else "16:9"),

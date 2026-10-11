@@ -27,7 +27,7 @@ DEFAULTS: dict = {
         "provider": "card",
         "sd_webui_url": "http://127.0.0.1:7860",
         "gemini_image_model": "gemini-2.5-flash-image",
-        "veo_model": "veo-3.1-generate-preview",
+        "veo_model": "gemini-omni-1.1-flash",
         "folder": "",
         "style": "clean, warm, soft light, minimal, no text",
         "fallback": "card",

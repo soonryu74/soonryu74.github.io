@@ -1,7 +1,7 @@
 """7기 스케치형 롱 나레이션 — 구글 AI 스튜디오 Gemini TTS. GEMINI_API_KEY 가 있는 환경에서.
 사용: cd yt-studio/pipeline && python jobs/7기홍보/gen_narration.py [takes=2]
 결과: jobs/7기홍보/voice_sketch/N00_t1.wav … (24kHz mono). 줄마다 takes 개씩 → 받아쓰기로 고른다.
-환경변수: TTS_MODEL (기본 gemini-2.5-flash-preview-tts · 한도 초과 시 gemini-2.5-pro-preview-tts)"""
+환경변수: TTS_MODEL (기본 gemini-3.8-flash-tts · 한도 초과 시 gemini-3.8-flash-lite-tts)"""
 import base64, json, os, sys, time, wave
 from pathlib import Path
 
@@ -13,7 +13,7 @@ if not KEY:
     raise SystemExit("GEMINI_API_KEY 없음")
 J = json.load(open(HERE / "narration_sketch.json", encoding="utf-8"))
 VOICE, STYLE = J["voice"], J["style"]
-MODEL = os.environ.get("TTS_MODEL", "gemini-2.5-flash-preview-tts")
+MODEL = os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts")
 URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={KEY}"
 TAKES = int(sys.argv[1]) if len(sys.argv) > 1 else 2
 D = HERE / "voice_sketch"; D.mkdir(exist_ok=True)
