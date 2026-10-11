@@ -207,7 +207,7 @@ footer a{color:var(--accent)}
     <label for="key">API key</label>
     <input id="key" type="password" placeholder="AIza…" autocomplete="off">
     <label for="model" style="margin-top:10px">Model</label>
-    <input id="model" value="gemini-2.5-flash" autocomplete="off">
+    <input id="model" value="gemini-3.8-flash" autocomplete="off">
     <div class="row" style="margin-top:16px">
       <button id="save-key" class="primary" type="button">Save</button>
       <button id="close-key" type="button">Close</button>
@@ -227,13 +227,17 @@ const $ = s => document.querySelector(s);
    panel disappears.  e.g. 'https://<project>.supabase.co/functions/v1/nunchi'  */
 const PROXY = '';
 
+/* Nunchi is a text app, so it needs a text model (ai.google.dev/gemini-api/docs/models).
+   - 2.5 Flash is limited to past users, so a fresh key gets 404 on it.
+   - gemini-omni-flash-preview shuts down 2026-10-22. Google names gemini-omni-1.1-flash as its
+     replacement, but that is a video-generation model and cannot answer chat or JSON requests.
+   Any of these names saved in this browser is sent as the current GA text model instead. */
+const DEFAULT_MODEL = 'gemini-3.8-flash';
+const NOT_FOR_TEXT = { 'gemini-2.5-flash':1, 'gemini-omni-flash-preview':1, 'gemini-omni-1.1-flash':1 };
 const LS = { key:'nunchi.key', model:'nunchi.model', device:'nunchi.device' };
-/* Preview models Google has shut down → their GA replacement (ai.google.dev/gemini-api/docs/deprecations).
-   A model name saved in this browser before the shutdown keeps working instead of returning 404. */
-const RETIRED = { 'gemini-omni-flash-preview':'gemini-omni-1.1-flash' };
 const store = {
   get k(){ try{ return localStorage.getItem(LS.key)||'' }catch(e){ return '' } },
-  get m(){ let m; try{ m = localStorage.getItem(LS.model)||'gemini-2.5-flash' }catch(e){ m = 'gemini-2.5-flash' } return RETIRED[m] || m },
+  get m(){ let m; try{ m = localStorage.getItem(LS.model)||DEFAULT_MODEL }catch(e){ m = DEFAULT_MODEL } return NOT_FOR_TEXT[m] ? DEFAULT_MODEL : m },
   set(k,m){ try{ localStorage.setItem(LS.key,k); localStorage.setItem(LS.model,m) }catch(e){} },
   clear(){ try{ localStorage.removeItem(LS.key) }catch(e){} },
   get device(){
@@ -246,6 +250,18 @@ const store = {
 };
 
 /* ── model call ─────────────────────────────── */
+/* Gemini 3.x thinks by default and thought tokens count toward maxOutputTokens, so a
+   220-token cap can return an empty reply. Thinking goes to "low" and the cap gets headroom;
+   the system prompts already keep replies to 1-2 sentences. thinkingLevel is an error on
+   pre-3 models, so a learner who picks one of those keeps the original config. */
+function genConfig(model, schema){
+  const g3 = /^gemini-3/.test(model);
+  const cfg = schema
+    ? { responseMimeType:'application/json', responseSchema:schema, temperature:0.4 }
+    : { temperature:0.8, maxOutputTokens: g3 ? 1024 : 220 };
+  if(g3) cfg.thinkingConfig = { thinkingLevel:'low' };
+  return cfg;
+}
 async function ask(system, user, schema, meta){
   if(PROXY) return askProxy(system, user, schema, meta);
   const key = store.k;
@@ -253,9 +269,7 @@ async function ask(system, user, schema, meta){
   const body = {
     systemInstruction:{ parts:[{text:system}] },
     contents:[{ role:'user', parts:[{text:user}] }],
-    generationConfig: schema
-      ? { responseMimeType:'application/json', responseSchema:schema, temperature:0.4 }
-      : { temperature:0.8, maxOutputTokens:220 }
+    generationConfig: genConfig(store.m, schema)
   };
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(store.m)}:generateContent`;
   const res = await fetch(url, {
@@ -312,7 +326,7 @@ $('#keybtn').addEventListener('click', () => {
 });
 $('#close-key').addEventListener('click', () => { $('#sheet').hidden = true; });
 $('#save-key').addEventListener('click', () => {
-  store.set($('#key').value.trim(), $('#model').value.trim() || 'gemini-2.5-flash');
+  store.set($('#key').value.trim(), $('#model').value.trim() || DEFAULT_MODEL);
   $('#sheet').hidden = true;
   $('#keybtn').textContent = store.k ? 'API key ✓' : 'API key';
 });
