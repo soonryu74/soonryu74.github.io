@@ -1,0 +1,13 @@
+{
+  "name": "handspan-a6-print",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "마크다운 원고 → 레드프린팅 토너 무선 책자용 A6 내지·표지 PDF",
+  "scripts": {
+    "make": "node make-minibook.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.56.1"
+  }
+}
