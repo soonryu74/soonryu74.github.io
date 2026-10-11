@@ -207,7 +207,7 @@ footer a{color:var(--accent)}
     <label for="key">API key</label>
     <input id="key" type="password" placeholder="AIza…" autocomplete="off">
     <label for="model" style="margin-top:10px">Model</label>
-    <input id="model" value="gemini-2.5-flash" autocomplete="off">
+    <input id="model" value="gemini-omni-1.1-flash" autocomplete="off">
     <div class="row" style="margin-top:16px">
       <button id="save-key" class="primary" type="button">Save</button>
       <button id="close-key" type="button">Close</button>
@@ -230,7 +230,7 @@ const PROXY = '';
 const LS = { key:'nunchi.key', model:'nunchi.model', device:'nunchi.device' };
 const store = {
   get k(){ try{ return localStorage.getItem(LS.key)||'' }catch(e){ return '' } },
-  get m(){ try{ return localStorage.getItem(LS.model)||'gemini-2.5-flash' }catch(e){ return 'gemini-2.5-flash' } },
+  get m(){ try{ return localStorage.getItem(LS.model)||'gemini-omni-1.1-flash' }catch(e){ return 'gemini-omni-1.1-flash' } },
   set(k,m){ try{ localStorage.setItem(LS.key,k); localStorage.setItem(LS.model,m) }catch(e){} },
   clear(){ try{ localStorage.removeItem(LS.key) }catch(e){} },
   get device(){
@@ -241,6 +241,8 @@ const store = {
     }catch(e){ return 'anon' }
   }
 };
+/* 프리뷰 모델은 2026-10-22부터 호출이 막힘. 예전에 저장한 *-preview 모델명은 정식 모델로 바꿔 둔다. */
+try{ const sm = localStorage.getItem(LS.model); if(sm && /-preview$/.test(sm)) localStorage.setItem(LS.model, 'gemini-omni-1.1-flash'); }catch(e){}
 
 /* ── model call ─────────────────────────────── */
 async function ask(system, user, schema, meta){
@@ -309,7 +311,7 @@ $('#keybtn').addEventListener('click', () => {
 });
 $('#close-key').addEventListener('click', () => { $('#sheet').hidden = true; });
 $('#save-key').addEventListener('click', () => {
-  store.set($('#key').value.trim(), $('#model').value.trim() || 'gemini-2.5-flash');
+  store.set($('#key').value.trim(), $('#model').value.trim() || 'gemini-omni-1.1-flash');
   $('#sheet').hidden = true;
   $('#keybtn').textContent = store.k ? 'API key ✓' : 'API key';
 });

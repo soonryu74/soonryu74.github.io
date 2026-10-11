@@ -18,7 +18,7 @@ function json(body: unknown, status = 200): Response {
   })
 }
 
-const MODEL = Deno.env.get('NUNCHI_MODEL') ?? 'gemini-2.5-flash'
+const MODEL = Deno.env.get('NUNCHI_MODEL') ?? 'gemini-omni-1.1-flash'
 const DAILY_LIMIT = Number(Deno.env.get('NUNCHI_DAILY_LIMIT') ?? '120') // 기기 하나당 하루 호출 수
 
 type Mode = 'dial' | 'chat' | 'review'
