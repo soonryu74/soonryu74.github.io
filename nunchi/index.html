@@ -207,7 +207,7 @@ footer a{color:var(--accent)}
     <label for="key">API key</label>
     <input id="key" type="password" placeholder="AIza…" autocomplete="off">
     <label for="model" style="margin-top:10px">Model</label>
-    <input id="model" value="gemini-2.5-flash" autocomplete="off">
+    <input id="model" value="gemini-3.8-flash" autocomplete="off">
     <div class="row" style="margin-top:16px">
       <button id="save-key" class="primary" type="button">Save</button>
       <button id="close-key" type="button">Close</button>
@@ -228,12 +228,21 @@ const $ = s => document.querySelector(s);
 const PROXY = '';
 
 const LS = { key:'nunchi.key', model:'nunchi.model', device:'nunchi.device' };
-/* Preview models Google has shut down → their GA replacement (ai.google.dev/gemini-api/docs/deprecations).
-   A model name saved in this browser before the shutdown keeps working instead of returning 404. */
-const RETIRED = { 'gemini-omni-flash-preview':'gemini-omni-1.1-flash' };
+/* Text model for every call (ai.google.dev/gemini-api/docs/models, Stable). */
+const DEFAULT_MODEL = 'gemini-3.8-flash';
+/* Model names a browser may have saved that cannot serve this text app → DEFAULT_MODEL.
+   - gemini-omni-*: video-generation models. The omni preview shuts down 2026-10-22 and
+     Google's listed replacement, gemini-omni-1.1-flash, is also a video model.
+   - gemini-2.5-flash: the old pre-filled default; since 2026-09 Google serves it only to
+     keys that used it before, so a new learner's key gets 404. */
+const RETIRED = {
+  'gemini-omni-flash-preview': DEFAULT_MODEL,
+  'gemini-omni-1.1-flash': DEFAULT_MODEL,
+  'gemini-2.5-flash': DEFAULT_MODEL
+};
 const store = {
   get k(){ try{ return localStorage.getItem(LS.key)||'' }catch(e){ return '' } },
-  get m(){ let m; try{ m = localStorage.getItem(LS.model)||'gemini-2.5-flash' }catch(e){ m = 'gemini-2.5-flash' } return RETIRED[m] || m },
+  get m(){ let m; try{ m = localStorage.getItem(LS.model)||DEFAULT_MODEL }catch(e){ m = DEFAULT_MODEL } return RETIRED[m] || m },
   set(k,m){ try{ localStorage.setItem(LS.key,k); localStorage.setItem(LS.model,m) }catch(e){} },
   clear(){ try{ localStorage.removeItem(LS.key) }catch(e){} },
   get device(){
@@ -246,6 +255,17 @@ const store = {
 };
 
 /* ── model call ─────────────────────────────── */
+/* Gemini 3.x thinks at level "high" by default and thought tokens use up the output cap,
+   so a 220-token cap can come back empty. 3.x gets thinkingLevel "low" and headroom;
+   the system prompts already keep replies to 1-2 sentences. Other models keep the old config. */
+function genConfig(model, schema){
+  const g3 = /^gemini-3/.test(model);
+  const cfg = schema
+    ? { responseMimeType:'application/json', responseSchema:schema, temperature:0.4 }
+    : { temperature:0.8, maxOutputTokens: g3 ? 1024 : 220 };
+  if(g3) cfg.thinkingConfig = { thinkingLevel:'low' };
+  return cfg;
+}
 async function ask(system, user, schema, meta){
   if(PROXY) return askProxy(system, user, schema, meta);
   const key = store.k;
@@ -253,9 +273,7 @@ async function ask(system, user, schema, meta){
   const body = {
     systemInstruction:{ parts:[{text:system}] },
     contents:[{ role:'user', parts:[{text:user}] }],
-    generationConfig: schema
-      ? { responseMimeType:'application/json', responseSchema:schema, temperature:0.4 }
-      : { temperature:0.8, maxOutputTokens:220 }
+    generationConfig: genConfig(store.m, schema)
   };
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(store.m)}:generateContent`;
   const res = await fetch(url, {
@@ -312,7 +330,7 @@ $('#keybtn').addEventListener('click', () => {
 });
 $('#close-key').addEventListener('click', () => { $('#sheet').hidden = true; });
 $('#save-key').addEventListener('click', () => {
-  store.set($('#key').value.trim(), $('#model').value.trim() || 'gemini-2.5-flash');
+  store.set($('#key').value.trim(), $('#model').value.trim() || DEFAULT_MODEL);
   $('#sheet').hidden = true;
   $('#keybtn').textContent = store.k ? 'API key ✓' : 'API key';
 });
