@@ -18,8 +18,9 @@ function json(body: unknown, status = 200): Response {
   })
 }
 
-// 구글이 종료한 프리뷰 모델 → 정식 대체 모델(ai.google.dev/gemini-api/docs/deprecations). NUNCHI_MODEL 에 옛 이름이 남아 있어도 404 없이 동작
-const RETIRED: Record<string, string> = { 'gemini-omni-flash-preview': 'gemini-omni-1.1-flash' }
+// 구글이 종료한 프리뷰 모델 → 이 앱이 쓰는 텍스트 모델(ai.google.dev/gemini-api/docs/deprecations). NUNCHI_MODEL 에 옛 이름이 남아 있어도 404 없이 동작
+// 메일이 안내한 정식 대체 모델 gemini-omni-1.1-flash 는 Interactions API 전용 영상 모델이라 generateContent 로 글을 받을 수 없다
+const RETIRED: Record<string, string> = { 'gemini-omni-flash-preview': 'gemini-2.5-flash' }
 const MODEL_RAW = Deno.env.get('NUNCHI_MODEL') ?? 'gemini-2.5-flash'
 const MODEL = RETIRED[MODEL_RAW] ?? MODEL_RAW
 const DAILY_LIMIT = Number(Deno.env.get('NUNCHI_DAILY_LIMIT') ?? '120') // 기기 하나당 하루 호출 수

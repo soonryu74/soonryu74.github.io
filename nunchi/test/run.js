@@ -54,7 +54,7 @@ let lastBody = null, lastUrl = '', mode = 'dial';
   ok('renders returned lines', (await p.locator('#dial-out .rung .ko').first().textContent()).includes('나 내일 못 가'));
   ok('asks for exactly 5 speech levels', /five listeners/.test(lastBody.systemInstruction.parts[0].text));
   ok('uses JSON schema mode', lastBody.generationConfig.responseMimeType === 'application/json');
-  ok('retired preview model name is replaced by its GA model', /models\/gemini-omni-1\.1-flash:/.test(lastUrl), lastUrl);
+  ok('retired preview model name is replaced by a text model, not the video model', /models\/gemini-2\.5-flash:/.test(lastUrl), lastUrl);
   ok('highlighted rung follows the slider', (await p.locator('#dial-out .rung.on .who').textContent()).trim() === 'Boss');
   await p.fill('#dial-range', '0');
   await p.dispatchEvent('#dial-range','input'); await p.waitForTimeout(150);

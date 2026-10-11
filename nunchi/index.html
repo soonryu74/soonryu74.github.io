@@ -228,9 +228,10 @@ const $ = s => document.querySelector(s);
 const PROXY = '';
 
 const LS = { key:'nunchi.key', model:'nunchi.model', device:'nunchi.device' };
-/* Preview models Google has shut down → their GA replacement (ai.google.dev/gemini-api/docs/deprecations).
+/* Preview models Google has shut down → a text model this app can call (ai.google.dev/gemini-api/docs/deprecations).
+   Google's listed GA replacement, gemini-omni-1.1-flash, is a video model on the Interactions API and cannot answer generateContent.
    A model name saved in this browser before the shutdown keeps working instead of returning 404. */
-const RETIRED = { 'gemini-omni-flash-preview':'gemini-omni-1.1-flash' };
+const RETIRED = { 'gemini-omni-flash-preview':'gemini-2.5-flash' };
 const store = {
   get k(){ try{ return localStorage.getItem(LS.key)||'' }catch(e){ return '' } },
   get m(){ let m; try{ m = localStorage.getItem(LS.model)||'gemini-2.5-flash' }catch(e){ m = 'gemini-2.5-flash' } return RETIRED[m] || m },
