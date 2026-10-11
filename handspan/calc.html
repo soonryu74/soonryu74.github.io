@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>작가 수익 계산기 — 한뼘 HANDSPAN</title>
+<meta name="description" content="같은 책을 어디서 팔면 손에 얼마가 남는지. 판매가·월 판매량·인쇄 원가·배송비를 바꿔 가며 채널별 작가 수익을 비교합니다.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .ctl{display:grid; gap:14px; grid-template-columns:1fr}
+  @media (min-width:700px){ .ctl{grid-template-columns:1fr 1fr} }
+  .ctl label{display:flex; justify-content:space-between; font-size:14px; margin-bottom:4px}
+  .ctl label b{font-variant-numeric:tabular-nums}
+  .ctl input[type=range]{width:100%}
+  table.sim{width:100%; border-collapse:collapse; font-size:14px; margin-top:10px}
+  table.sim th,table.sim td{padding:9px 8px; border-bottom:1px solid var(--line); text-align:right; vertical-align:top; font-variant-numeric:tabular-nums; white-space:nowrap}
+  table.sim th:first-child,table.sim td:first-child{text-align:left; white-space:normal}
+  table.sim th{font-weight:600; color:var(--ink-2); border-bottom:1.5px solid var(--ink)}
+  table.sim tr.hs td{background:#fdf6f2; font-weight:600}
+  table.sim td.neg{color:#b3261e}
+  .note{font-size:13.5px; color:var(--muted); margin-top:10px; line-height:1.6}
+  .wrapx{overflow-x:auto}
+</style>
+</head>
+<body>
+<header id="site-top"></header>
+
+<main class="wrap" style="padding-top:28px">
+  <section class="hero" style="padding-top:20px">
+    <div class="eyebrow">작가 수익 계산기</div>
+    <h1>같은 책, 어디서 팔면<br>손에 얼마가 남나요.</h1>
+    <p class="lead">값을 움직여 보세요. 수수료보다 배송비와 고정비가 더 큰 변수라는 것이 보입니다. 한뼘이 가장 싼 곳은 아닙니다. 고정비가 없고, 작은 책만 보러 오는 손님이 있는 곳입니다.</p>
+  </section>
+
+  <section class="card">
+    <div class="ctl">
+      <div><label>판매가 <b id="v-price"></b></label><input id="price" type="range" min="3000" max="40000" step="500" value="9000"></div>
+      <div><label>월 판매량 <b id="v-n"></b></label><input id="n" type="range" min="1" max="300" step="1" value="30"></div>
+      <div><label>권당 제작 원가(인쇄·재료) <b id="v-cost"></b></label><input id="cost" type="range" min="0" max="30000" step="100" value="1361"></div>
+      <div><label>권당 포장 <b id="v-pack"></b></label><input id="pack" type="range" min="0" max="3000" step="50" value="450"></div>
+      <div><label>권당 국내 배송(작가 부담) <b id="v-ship"></b></label><input id="ship" type="range" min="0" max="6000" step="100" value="1800"></div>
+      <div><label><span>구매자가 배송비를 냄</span><input id="buyerpays" type="checkbox"></label><div class="note">켜면 배송비를 0으로 계산합니다(배송비 별도 수취).</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>채널별 한 달 수익</h2>
+    <p class="desc">권당 작가 몫 = 판매가 × 작가 수취율 − 제작 원가 − 포장 − 배송. 월 수익 = 권당 몫 × 판매량 − 고정비.</p>
+    <div class="wrapx"><table class="sim" id="tbl"></table></div>
+    <p class="note" id="bep"></p>
+    <p class="note">근거: 레드프린팅 토너 흑백 A6 64p 100부 권당 1,361원(2026-10 실측), 인디펍 공급률 60%·등록비 10만 원, 아이디어스 15%+월 5만 원(2024.5 개편), 스마트스토어 2.73%+네이버페이 약 3.6%(2026 요율 미확인), 텀블벅 5%+3%(VAT 별도), Etsy 11.3%+Payoneer 2.5%, K-Packet 미국 100g 8,090원. 채널마다 손님 수가 다르다는 점은 계산에 없습니다.</p>
+  </section>
+</main>
+
+<footer id="site-foot"></footer>
+<script src="app.js"></script>
+<script>
+(function () {
+  var H = window.HS, $ = H.$;
+  H.mount('calc');
+  var CH = [
+    { name: '한뼘 HANDSPAN', share: 0.88, fixed: 0, monthly: 0, ship: null, hs: true, note: '12% 결제 포함, 고정비 0' },
+    { name: '스마트스토어', share: 0.936, fixed: 0, monthly: 0, ship: null, note: '2.73% + 네이버페이 약 3.6%' },
+    { name: '텀블벅', share: 0.912, fixed: 0, monthly: 0, ship: null, note: '8% + VAT, 성공 시 1회' },
+    { name: '아이디어스', share: 0.85, fixed: 0, monthly: 50000, ship: null, note: '15% + 월 서버이용료 5만' },
+    { name: '독립서점 위탁', share: 0.67, fixed: 0, monthly: 0, ship: 500, note: '공급률 67%, 10권 묶음 입고' },
+    { name: '인디펍', share: 0.60, fixed: 100000, monthly: 0, ship: 400, note: '공급률 60%, 종당 등록비 10만(첫 달)' },
+    { name: 'Etsy 미국 직배', share: 0.86, fixed: 0, monthly: 0, ship: 8090, note: '14%, K-Packet 미국 100g' }
+  ];
+  function won(x) { return (x < 0 ? '−' : '') + Math.abs(Math.round(x)).toLocaleString('ko-KR') + '원'; }
+  function calc() {
+    var P = +$('#price').value, N = +$('#n').value, c = +$('#cost').value, pk = +$('#pack').value, sh = +$('#ship').value;
+    var buyer = $('#buyerpays').checked;
+    $('#v-price').textContent = won(P); $('#v-n').textContent = N + '권'; $('#v-cost').textContent = won(c); $('#v-pack').textContent = won(pk); $('#v-ship').textContent = won(sh);
+    var rows = CH.map(function (ch) {
+      var ship = ch.ship === null ? sh : ch.ship; if (buyer) ship = 0;
+      var per = P * ch.share - c - pk - ship;
+      var month = per * N - ch.monthly - ch.fixed;
+      var bep = ch.monthly || ch.fixed ? Math.ceil((ch.monthly + ch.fixed) / Math.max(per, 1)) : 0;
+      return { ch: ch, per: per, month: month, bep: bep };
+    }).sort(function (a, b) { return b.month - a.month; });
+    var h = '<tr><th>채널</th><th>권당 작가 몫</th><th>' + N + '권 한 달</th><th>고정비 회수 권수</th><th>비고</th></tr>';
+    rows.forEach(function (r) {
+      h += '<tr' + (r.ch.hs ? ' class="hs"' : '') + '><td>' + r.ch.name + '</td><td class="' + (r.per < 0 ? 'neg' : '') + '">' + won(r.per) + '</td><td class="' + (r.month < 0 ? 'neg' : '') + '">' + won(r.month) + '</td><td>' + (r.bep ? r.bep + '권' : '—') + '</td><td style="text-align:left;white-space:normal;color:var(--muted)">' + r.ch.note + '</td></tr>';
+    });
+    $('#tbl').innerHTML = h;
+    var hs = rows.filter(function (r) { return r.ch.hs; })[0];
+    var top = rows[0];
+    $('#bep').textContent = top.ch.hs ? '이 조건에서는 한뼘이 가장 많이 남습니다.' : '이 조건에서는 ' + top.ch.name + ' 쪽이 권당 ' + won(top.per - hs.per) + ' 더 남습니다. 그 차이가 한뼘의 노출·정산 자동·해외 판매 값입니다.';
+  }
+  ['price', 'n', 'cost', 'pack', 'ship'].forEach(function (id) { $('#' + id).addEventListener('input', calc); });
+  $('#buyerpays').addEventListener('change', calc);
+  calc();
+})();
+</script>
+</body>
+</html>
