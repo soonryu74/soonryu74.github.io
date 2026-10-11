@@ -18,7 +18,11 @@ function json(body: unknown, status = 200): Response {
   })
 }
 
-const MODEL = Deno.env.get('NUNCHI_MODEL') ?? 'gemini-2.5-flash'
+// 2.5 Flash는 2026-09-18부터 기존 사용자만 접근 가능. 신규 키는 404가 나므로 GA인 3.8 Flash를 기본값으로 둔다.
+const MODEL = Deno.env.get('NUNCHI_MODEL') ?? 'gemini-3.8-flash'
+// 3.x는 기본으로 사고(thinking)하며 사고 토큰이 maxOutputTokens에 포함된다. 220이면 답이 비어 올 수 있어
+// 사고 수준을 low로 낮추고 한도에 여유를 둔다. 2.5는 thinkingLevel을 거부하므로 기존 설정을 유지한다.
+const G3 = /^gemini-3/.test(MODEL)
 const DAILY_LIMIT = Number(Deno.env.get('NUNCHI_DAILY_LIMIT') ?? '120') // 기기 하나당 하루 호출 수
 
 type Mode = 'dial' | 'chat' | 'review'
@@ -78,9 +82,12 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: body.system }] },
         contents: [{ role: 'user', parts: [{ text: body.prompt }] }],
-        generationConfig: body.schema
-          ? { responseMimeType: 'application/json', responseSchema: body.schema, temperature: 0.4 }
-          : { temperature: 0.8, maxOutputTokens: 220 },
+        generationConfig: {
+          ...(body.schema
+            ? { responseMimeType: 'application/json', responseSchema: body.schema, temperature: 0.4 }
+            : { temperature: 0.8, maxOutputTokens: G3 ? 1024 : 220 }),
+          ...(G3 ? { thinkingConfig: { thinkingLevel: 'low' } } : {}),
+        },
       }),
     },
   )

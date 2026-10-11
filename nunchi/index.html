@@ -207,7 +207,7 @@ footer a{color:var(--accent)}
     <label for="key">API key</label>
     <input id="key" type="password" placeholder="AIza…" autocomplete="off">
     <label for="model" style="margin-top:10px">Model</label>
-    <input id="model" value="gemini-2.5-flash" autocomplete="off">
+    <input id="model" value="gemini-3.8-flash" autocomplete="off">
     <div class="row" style="margin-top:16px">
       <button id="save-key" class="primary" type="button">Save</button>
       <button id="close-key" type="button">Close</button>
@@ -227,10 +227,13 @@ const $ = s => document.querySelector(s);
    panel disappears.  e.g. 'https://<project>.supabase.co/functions/v1/nunchi'  */
 const PROXY = '';
 
+/* 2.5 Flash is limited to past users since 2026-09-18, so new keys get 404 on it.
+   3.8 Flash is the current GA text model. */
+const DEFAULT_MODEL = 'gemini-3.8-flash';
 const LS = { key:'nunchi.key', model:'nunchi.model', device:'nunchi.device' };
 const store = {
   get k(){ try{ return localStorage.getItem(LS.key)||'' }catch(e){ return '' } },
-  get m(){ try{ return localStorage.getItem(LS.model)||'gemini-2.5-flash' }catch(e){ return 'gemini-2.5-flash' } },
+  get m(){ try{ return localStorage.getItem(LS.model)||DEFAULT_MODEL }catch(e){ return DEFAULT_MODEL } },
   set(k,m){ try{ localStorage.setItem(LS.key,k); localStorage.setItem(LS.model,m) }catch(e){} },
   clear(){ try{ localStorage.removeItem(LS.key) }catch(e){} },
   get device(){
@@ -243,6 +246,18 @@ const store = {
 };
 
 /* ── model call ─────────────────────────────── */
+/* Gemini 3.x thinks by default and thought tokens count toward maxOutputTokens,
+   so a 220-token cap can leave the reply empty. Thinking goes to "low" and the
+   cap gets headroom; the system prompts already keep replies to 1-2 sentences.
+   Older models (2.5) reject thinkingLevel, so they keep the original config. */
+function genConfig(model, schema){
+  const g3 = /^gemini-3/.test(model);
+  const cfg = schema
+    ? { responseMimeType:'application/json', responseSchema:schema, temperature:0.4 }
+    : { temperature:0.8, maxOutputTokens: g3 ? 1024 : 220 };
+  if(g3) cfg.thinkingConfig = { thinkingLevel:'low' };
+  return cfg;
+}
 async function ask(system, user, schema, meta){
   if(PROXY) return askProxy(system, user, schema, meta);
   const key = store.k;
@@ -250,9 +265,7 @@ async function ask(system, user, schema, meta){
   const body = {
     systemInstruction:{ parts:[{text:system}] },
     contents:[{ role:'user', parts:[{text:user}] }],
-    generationConfig: schema
-      ? { responseMimeType:'application/json', responseSchema:schema, temperature:0.4 }
-      : { temperature:0.8, maxOutputTokens:220 }
+    generationConfig: genConfig(store.m, schema)
   };
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(store.m)}:generateContent`;
   const res = await fetch(url, {
@@ -309,7 +322,7 @@ $('#keybtn').addEventListener('click', () => {
 });
 $('#close-key').addEventListener('click', () => { $('#sheet').hidden = true; });
 $('#save-key').addEventListener('click', () => {
-  store.set($('#key').value.trim(), $('#model').value.trim() || 'gemini-2.5-flash');
+  store.set($('#key').value.trim(), $('#model').value.trim() || DEFAULT_MODEL);
   $('#sheet').hidden = true;
   $('#keybtn').textContent = store.k ? 'API key ✓' : 'API key';
 });
