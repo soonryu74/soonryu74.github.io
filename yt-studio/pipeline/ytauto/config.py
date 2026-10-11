@@ -27,7 +27,7 @@ DEFAULTS: dict = {
         "provider": "card",
         "sd_webui_url": "http://127.0.0.1:7860",
         "gemini_image_model": "gemini-2.5-flash-image",
-        "veo_model": "gemini-omni-1.1-flash",
+        "veo_model": "veo-3.1-generate-preview",  # 2026-10-22 이후 Gemini Enterprise Agent Platform 전환 필요
         "folder": "",
         "style": "clean, warm, soft light, minimal, no text",
         "fallback": "card",

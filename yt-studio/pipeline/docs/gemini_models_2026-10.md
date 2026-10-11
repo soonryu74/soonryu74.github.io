@@ -52,3 +52,7 @@ predictLongRunning 을 지원하는 **정식(preview 아닌) 영상 모델은 �
 1. **영상 생성(`_veo`)은 지금 기본값으로 실패한다.** gemini-omni-1.1-flash 는 generate_videos(predictLongRunning)를 지원하지 않음(404). 10-22 전까지는 설정에서 `veo_model` 을 `veo-3.1-generate-preview` 로 바꾸면 동작, 그 이후는 정식 Veo 출시 또는 omni 의 generateContent 영상 출력 방식으로 `_veo()` 재작성 필요.
 2. 3.8 TTS 는 응답 형식이 WAV 로 바뀌었다. 이 저장소의 다른 곳에서 Gemini TTS 응답을 PCM 으로 가정하는 코드가 생기면 같은 문제가 난다.
 3. 10-22 이후 모델 목록·차단 범위를 다시 확인할 것 (이번 확인은 10-11 기준).
+
+## 후속 조치 (2026-10-11 21:50 UTC)
+- `veo_model` 기본값을 **veo-3.1-generate-preview 로 되돌림** (visuals.py, config.py, config.example.json). gemini-omni-1.1-flash 는 지금 바로 404 라 7기홍보 `run.py` 의 veo 클립 생성이 멈추기 때문. 되돌린 값은 10-22 까지만 동작.
+- 10-22 이후 영상 생성을 계속하려면 공지대로 **Gemini Enterprise Agent Platform** 으로 연동 전환이 필요하다(대표님 결정 사항). 전환 전까지는 영상 클립 대신 이미지(gemini-2.5-flash-image)+켄번스 또는 미드저니 V1 클립(midjourney-ref 스킬)으로 대체.
