@@ -1,0 +1,48 @@
+{
+ "duration": 246.02,
+ "intro": 8.4,
+ "outro": 243.78,
+ "lag": 0.35,
+ "interludes": [
+  [
+   46.02,
+   50.48,
+   2
+  ]
+ ],
+ "order": [
+  {
+   "ref": 1,
+   "spoken": "고린도후서 5장 17절"
+  },
+  {
+   "verse": 1,
+   "repeat": 4
+  },
+  {
+   "ref": 2,
+   "spoken": "갈라디아서 2장 20절"
+  },
+  {
+   "verse": 2,
+   "repeat": 5
+  },
+  {
+   "ref": 3,
+   "spoken": "로마서 12장 1절"
+  },
+  {
+   "verse": 3,
+   "repeat": 3
+  },
+  {
+   "ref": 4,
+   "spoken": "요한복음 14장 21절"
+  },
+  {
+   "verse": 4,
+   "repeat": 2
+  }
+ ],
+ "note": "large-v3 가 2절 4·5회차(113~170초)를 건너뜀 → patch_words.py series/A1-4 113 170 필요"
+}
