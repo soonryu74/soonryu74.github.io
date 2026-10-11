@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>다시봄 — 사람 기억 노트</title>
+<meta name="description" content="상대는 모른다. 나만 기억한다. 만난 사람을 내 기기 안에서만 기억하는 노트.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#3D7A5A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="#home"><img src="assets/icon.svg" alt="" width="26" height="26"><span>다시봄</span></a>
+  <div class="top-right">
+    <span id="storage-badge" class="badge" title="사람 정보는 이 기기 안에만 있습니다">이 기기에만 저장</span>
+    <button id="lock-now" class="icon-btn" type="button" title="지금 잠그기" hidden>잠금</button>
+  </div>
+</header>
+
+<main id="view" class="view"></main>
+
+<nav class="tabbar" aria-label="주요 메뉴">
+  <a href="#home" data-tab="home">찾기</a>
+  <a href="#new" data-tab="new" class="tab-new">기록</a>
+  <a href="#groups" data-tab="groups">그룹</a>
+  <a href="#practice" data-tab="practice">연습</a>
+  <a href="#settings" data-tab="settings">설정</a>
+</nav>
+
+<!-- 잠금 화면 -->
+<div id="lock-screen" class="overlay" hidden>
+  <form id="unlock-form" class="sheet narrow">
+    <img src="assets/icon.svg" alt="" width="44" height="44">
+    <h2>잠겨 있어요</h2>
+    <p class="muted">PIN을 넣으면 이 기기 안의 기록을 풀어서 보여드립니다.</p>
+    <input id="unlock-pin" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN" aria-label="PIN" required>
+    <p id="unlock-error" class="error" hidden>PIN이 맞지 않아요.</p>
+    <button class="btn primary" type="submit">열기</button>
+    <p class="fine">PIN을 잊으면 복구할 방법이 없어요. 우리도 열 수 없습니다.</p>
+  </form>
+</div>
+
+<!-- 약속(첫 실행) -->
+<div id="promise-screen" class="overlay" hidden>
+  <div class="sheet">
+    <div class="eyebrow">다시봄 · 약속</div>
+    <h2>다시봄이 하지 않는 것</h2>
+    <ol class="promise-list">
+      <li>상대에게 알리지 않습니다.</li>
+      <li>여러분이 적은 사람 정보를 우리 서버에 저장하지 않습니다. 이 기기 안에만 있습니다.</li>
+      <li>연락처·SNS·사진에서 아무것도 자동으로 가져오지 않습니다.</li>
+      <li>얼굴을 인식하지 않습니다.</li>
+      <li>다른 사용자가 여러분의 기록을 검색할 수 없습니다.</li>
+    </ol>
+    <div class="promise-yes">
+      <h3>다시봄이 하는 것</h3>
+      <p>여러분이 직접 적은 메모를, 여러분 기기 안에서, 다시 만날 때 보여드립니다.</p>
+    </div>
+    <p class="fine">한 가지 부탁: 상대가 어깨 너머로 봐도 "아, 나 기억하려고 적으셨구나"로 끝나는 메모만 적어 주세요.</p>
+    <button id="promise-ok" class="btn primary" type="button">알겠어요, 시작할게요</button>
+  </div>
+</div>
+
+<!-- 민감 내용 확인 -->
+<div id="sensitive-screen" class="overlay" hidden>
+  <div class="sheet narrow">
+    <h2>본인이 봐도 괜찮은 메모인가요?</h2>
+    <p id="sensitive-msg" class="muted"></p>
+    <div class="row-btns">
+      <button id="sensitive-edit" class="btn" type="button">다시 고칠게요</button>
+      <button id="sensitive-save" class="btn primary" type="button">괜찮아요, 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 확인 -->
+<div id="confirm-screen" class="overlay" hidden>
+  <div class="sheet narrow">
+    <h2 id="confirm-title"></h2>
+    <p id="confirm-msg" class="muted"></p>
+    <input id="confirm-input" type="text" hidden autocomplete="off">
+    <div class="row-btns">
+      <button id="confirm-no" class="btn" type="button">아니요</button>
+      <button id="confirm-yes" class="btn danger" type="button">네</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

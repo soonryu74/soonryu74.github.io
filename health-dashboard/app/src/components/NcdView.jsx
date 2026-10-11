@@ -1,16 +1,18 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NCD, DOMAINS, INDICATORS, SIDOS } from "../data";
 import ExportButtons from "./ExportButtons";
+import KhepiCases from "./KhepiCases";
 
 const LEVELS = ["global", "regional", "national", "sido"];
 const LEVEL_SHORT = { global: "WHO 글로벌", regional: "WPRO 서태평양", national: "국가", sido: "시도" };
 
 /* 만성질환 예방·관리 탭: 국제→지역→국가→시도 계층 지식베이스 */
-export default function NcdView({ filterInd, onClearInd, sidoFull, onPickInd }) {
+export default function NcdView({ filterInd, onClearInd, sidoFull, onPickInd, initQ }) {
   const [level, setLevel] = useState("all");
   const [area, setArea] = useState("all");
   const [sido, setSido] = useState(sidoFull || "all");
   const [q, setQ] = useState("");
+  useEffect(() => { if (initQ) setQ(initQ); }, [initQ]);   // 전역 검색에서 넘어온 검색어
   const [showDocs, setShowDocs] = useState(false);
   const indByName = Object.fromEntries(INDICATORS.map((i) => [i.name, i]));
 
@@ -22,6 +24,12 @@ export default function NcdView({ filterInd, onClearInd, sidoFull, onPickInd }) 
     (!q || [e.goal, ...(e.strategies || []), ...(e.interventions || []), e.source].join(" ").includes(q))
   ), [level, area, sido, q, filterInd]);
   const counts = Object.fromEntries(LEVELS.map((l) => [l, NCD.entries.filter((e) => e.level === l).length]));
+  // 정렬: 「모든 영역」이면 영역(칩 순서) → 계층, 영역을 고르면 계층 순
+  const AREA_ORDER = [...DOMAINS, "공통"];
+  const sorted = useMemo(() => [...list].sort((a, b) =>
+    (area === "all" ? (AREA_ORDER.indexOf(a.area) - AREA_ORDER.indexOf(b.area)) : 0) ||
+    (LEVELS.indexOf(b.level) - LEVELS.indexOf(a.level))), [list, area]);   // LEVELS 는 global→sido 순이라 뒤집어 시도 → 국가 → 서태평양 → 국제
+  const byArea = useMemo(() => sorted.reduce((m, e) => { (m[e.area] ||= []).push(e); return m; }, {}), [sorted]);
   const sidoList = [...new Set(NCD.entries.filter((e) => e.level === "sido" && e.sido).map((e) => e.sido))];
 
   return (
@@ -56,10 +64,21 @@ export default function NcdView({ filterInd, onClearInd, sidoFull, onPickInd }) 
       </div>
 
       <div className="card">
-        <h3>항목 {list.length}개 <small className="muted">계층 순: 시도 → 국가 → 서태평양 → 국제</small></h3>
+        <h3>항목 {list.length}개 <small className="muted">{area === "all" ? "영역별로 묶음 · 묶음 안은 계층 순(시도 → 국가 → 서태평양 → 국제)" : "계층 순: 시도 → 국가 → 서태평양 → 국제"}</small></h3>
         <ExportButtons name="만성질환_지식베이스" kinds={["csv"]} />
+        {/* 「모든 영역」일 때 영역별 개수 목차 — 원문 순서대로 흡연이 먼저 나와 첫 화면이 한 영역으로만 보이던 문제(소유자 제보 2026-10-02) */}
+        {area === "all" && list.length > 0 && (
+          <div className="ncdtoc">
+            {AREA_ORDER.filter((d) => byArea[d]?.length).map((d) => (
+              <button key={d} type="button" className="chip" onClick={() => document.getElementById(`ncd-area-${d}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}>{d} <small>{byArea[d].length}</small></button>
+            ))}
+          </div>
+        )}
         <div className="ncdlist">
-          {[...list].sort((a, b) => ["sido", "national", "regional", "global"].indexOf(a.level) - ["sido", "national", "regional", "global"].indexOf(b.level)).map((e) => (
+          {sorted.map((e, k) => [
+            area === "all" && (k === 0 || sorted[k - 1].area !== e.area) && (
+              <div key={`h-${e.area}`} id={`ncd-area-${e.area}`} className="ncdgroup">{e.area} <small className="muted">{byArea[e.area].length}개</small></div>
+            ),
             <article key={e.id} className={`ncdcard lv-${e.level}`}>
               <div className="ncdhead">
                 <span className={`lvbadge lv-${e.level}`}>{LEVEL_SHORT[e.level]}{e.sido ? ` · ${e.sido}` : ""}</span>
@@ -73,16 +92,18 @@ export default function NcdView({ filterInd, onClearInd, sidoFull, onPickInd }) 
               {e.interventions?.length > 0 && <div className="ncdint">{e.interventions.map((s, i) => <span key={i} className="intchip">{s}</span>)}</div>}
               <div className="ncdfoot">
                 <span className="linked">{e.linked.map((n) => <button key={n} className="indlink" onClick={() => onPickInd(indByName[n])} title="지표 분석으로 이동">{n}</button>)}</span>
-                {e.url ? <a href={e.url} target="_blank" rel="noopener" className="src">{e.source || "출처"} ↗</a> : <span className="src muted">{e.source}</span>}
+                {e.url ? <a href={e.url} target="_blank" rel="noopener noreferrer" className="src srclink" title="출처 원문을 새 창에서 엽니다">{e.source || "출처"} <b>원문 열기 ↗</b></a> : <span className="src muted">{e.source}</span>}
               </div>
-            </article>
-          ))}
+            </article>,
+          ])}
           {!list.length && <div className="empty">조건에 맞는 항목이 없습니다</div>}
         </div>
         {/* CSV 내보내기용 숨은 표 */}
         <table hidden><thead><tr><th>계층</th><th>시도</th><th>영역</th><th>목표</th><th>목표치</th><th>전략</th><th>중재/사업</th><th>연결 지표</th><th>출처</th><th>URL</th></tr></thead>
           <tbody>{list.map((e) => <tr key={e.id}><td>{LEVEL_SHORT[e.level]}</td><td>{e.sido || ""}</td><td>{e.area}</td><td>{e.goal}</td><td>{e.target ? `${e.target.indicator || ""} ${e.target.target_value || ""} ${e.target.target_year || ""}` : ""}</td><td>{(e.strategies || []).join(" / ")}</td><td>{(e.interventions || []).join(" / ")}</td><td>{e.linked.join(", ")}</td><td>{e.source}</td><td>{e.url}</td></tr>)}</tbody></table>
       </div>
+
+      <KhepiCases area={area} sidoName={sido === "all" ? null : sido} />
 
       <div className="card">
         <h3>수집 문서 {NCD.documents.length}건 <button className="themebtn" onClick={() => setShowDocs((s) => !s)}>{showDocs ? "접기" : "펼치기"}</button></h3>

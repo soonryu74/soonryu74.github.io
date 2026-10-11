@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { KHEPI, KHEPI_INDS, val, fmt, label, RBY, SGG_ALL, SGG_BY_SIDO, SIDOS, nationalMedian, ranked, quantile } from "../data";
+import Cite from "./Cite";
+import { KHEPI, KHEPI_INDS, val, fmt, label, RBY, SGG_ALL, SGG_BY_SIDO, SIDOS, nationalMedian, ranked, quantile, natPool, sidoPoolOf } from "../data";
 import ExportButtons from "./ExportButtons";
 import { saveCsvRows } from "../export";
 
@@ -15,10 +16,10 @@ const score = (rate) => (rate == null ? null : rate >= 95 ? 8 : rate >= 90 ? 7 :
 export default function KpiView({ item, sel, onPick }) {
   const isSgg = sel.l === "sgg";
   const sidoCode = isSgg ? sel.p : sel.c;
-  const pool = SGG_ALL, sidoPool = SGG_BY_SIDO[sidoCode] || [];
   const rows = useMemo(() => KHEPI_INDS.map((k) => {
     if (!k.ind) return { ...k, missing: true };
     const ind = k.ind;
+    const pool = natPool(ind), sidoPool = sidoPoolOf(ind, sidoCode);   // 지역사회건강조사는 조사 단위 258곳 기준
     const ys = ind.years.filter((y) => val(ind, item, y, sel.c) != null);
     const last = ys[ys.length - 1];
     const last3 = ys.slice(-3);
@@ -71,7 +72,7 @@ export default function KpiView({ item, sel, onPick }) {
   return (
     <div className="kpiview">
       <div className="card">
-        <h3>통합건강증진사업 핵심성과지표 <small className="muted">{label(sel)} · 16개 전량 결과지표</small></h3>
+        <h3>통합건강증진사업 핵심성과지표<Cite k={["khepi", "chs"]} /> <small className="muted">{label(sel)} · 16개 전량 결과지표</small></h3>
         <div className="desc">
           보건복지부 「지역사회 통합건강증진사업 안내」가 정한 핵심성과지표입니다. 보건소는 광역 공통지표 2개(건강생활실천율 필수)와 자체 지표 1개 이상, <b>총 3개 이상</b>을 골라 <b>2년 이상</b> 관리합니다.
           평가 산식은 <b>최근 3개년 평균 실적 ÷ 자체 목표값</b>이며, 득점은 95% 이상 8점, 90% 이상 7점, 85% 이상 6점, 그 미만 5점입니다.
@@ -129,7 +130,7 @@ export default function KpiView({ item, sel, onPick }) {
 
       {cur && (
         <div className="card">
-          <h3>{cur.kpi} — 목표치 설정 <small className="muted">안내서 제시 방법 5종</small></h3>
+          <h3>{cur.kpi} — 목표치 설정<Cite k="khepi" /> <small className="muted">안내서 제시 방법 5종</small></h3>
           <div className="desc">
             {cur.last}년 {label(sel)} 값 <b>{fmt(cur.v)}{cur.ind.unit}</b> · 최근 3개년 평균 <b>{fmt(cur.avg3)}{cur.ind.unit}</b> · {cur.ind.bad ? "낮을수록 양호" : "높을수록 양호"}
             {" · "}<a href="#" onClick={(e) => { e.preventDefault(); onPick && onPick(cur.ind, cur.last); }}>지표 분석에서 보기</a>

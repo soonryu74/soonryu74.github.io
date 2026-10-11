@@ -28,10 +28,13 @@ CHS25 = load("chs2025_units.json")
 DS = load("dataset.json")
 UNITS = load("units.json")
 KDH = load("kdh_dataset.json")
+MORT = load("mort_kosis.json")      # 사망원인통계 새 공표분(KOSIS 직접) — scripts/build_mort.py
+MORT_LAST = max([2024] + [y for v in MORT.get("indicators", {}).values() for y in v["years"]])
 CANCER = load("cancer_screening.json")
 try: CHECKUP = load("checkup.json")
 except Exception: CHECKUP = {"indicators": [], "values": {}}
 HLE = load("hle.json")
+HLE_LAST = max(HLE["periods"]["sgg"]) + 1     # 3년 합산 생명표의 중심 연도 + 1 = 쓰인 마지막 자료 연도
 DEP = load("deprivation.json")
 try: RISK = load("risk.json")
 except Exception: RISK = {}
@@ -61,6 +64,12 @@ KDH_IDS = [i["id"] for i in KDH["indicators"]]
 CANCER_IDS = [i["id"] for i in CANCER["indicators"]]
 CHECKUP_IDS = [i["id"] for i in CHECKUP["indicators"]]
 CHK_YEARS = [y for i in CHECKUP["indicators"] for y in i["years"]]
+CHECKUP_NEW = [i["id"] for i in CHECKUP["indicators"] if not i.get("cont")]   # 기존 시계열을 잇는 3종(cont)은 같은 지표라 개수에서 뺀다
+# 보건의료자원 16종 중 원천이 공단이 아닌 4종(data/kdh/catalog.csv 「자료생산기관」 기준, 2026-09-24 확인):
+#   보건소 의사 인력 = 보건복지부 「보건소 및 보건지소 운영현황」, 노인여가복지시설 = 보건복지부·행정안전부 「노인복지시설현황」,
+#   문화기반시설 = 문화체육관광부·행정안전부 「전국 문화기반시설 총람」, 사회복지시설 = 지방자치단체·행정안전부 「지방자치단체 통계연보」.
+#   나머지 12종(의사·간호사·전문의·병상·의원 수 등)은 국민건강보험공단 「건강보험통계」·「지역별의료이용통계」.
+RES_NON_NHIS = ["K_RES_PHCDOC", "K_RES_WELF", "K_RES_CULT", "K_RES_SOC"]
 
 # 원 출처별로 나누기 위한 영역 → 지표 id 묶음
 KDH_BY_DOMAIN = {}
@@ -126,10 +135,13 @@ SRC = [
 
     {"key": "mort", "name": "사망원인통계", "org": "국가데이터처(옛 통계청)",
      "ids": KDH_BY_DOMAIN.get("사망률(표준화)", []), "unit": "시군구",
-     "years": [2008, 2024], "cycle": "연 1회(9월 하순)", "next": "2026년 9월 하순 — 2025년분 미공표",
-     "tbl": "KOSIS 101 DT_1B34E13", "via": VIA_KDH,
-     "url": "https://mods.go.kr/menu.es?mid=a10301060200", "updated": "2025-09-23",
-     "note": "표준화사망률 22종의 원천. 2024년분은 2025-09-25 공표됐고 KOSIS는 이틀 전 갱신됐다."},
+     "years": [2008, MORT_LAST], "cycle": "연 1회(9월 하순)", "next": f"{MORT_LAST + 2}년 9월 하순 — {MORT_LAST + 1}년분",
+     "tbl": "KOSIS 101 DT_1B34E13", "via": VIA_KDH + f" (2024년까지) · {MORT_LAST}년분은 KOSIS에서 직접",
+     "url": "https://mods.go.kr/menu.es?mid=a10301060200", "updated": "2026-09-22",
+     "note": (f"표준화사망률 22종의 원천. 2024년까지는 김동현 교수 DB 경유, {MORT_LAST}년분(2026-09-22 공표)은 KOSIS DT_1B34E13에서 직접 받아 같은 지표에 이었다. "
+              "2018~2024년을 원천과 한 칸씩 대조(35,867칸)해 정의가 같음을 확인했고(99.99% 일치), 이때 드러난 DB 쪽 오류 — 2023년 82개 지역(주로 군)의 사망률 전 항목 「0」, "
+              "결핵 등 정수 반올림, 빈 칸 — 은 원천 값으로 바로잡았다. DB가 일찍 끊긴 만성하기도질환(2021~)·낙상(2018~)의 빈 해도 같은 표로 채웠다. "
+              "영아사망률은 이 표에 없어(출생아 기준) 2024년까지다.")},
 
     {"key": "inf", "name": "법정감염병 발생보고", "org": "질병관리청",
      "ids": KDH_BY_DOMAIN.get("감염병 발생률", []), "unit": "시군구",
@@ -141,8 +153,8 @@ SRC = [
      "next": "2026년 12월~2027년 1월", "tbl": "KOSIS 350 DT_35007_N009",
      "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N009", "updated": "2026-01-06"},
 
-    {"key": "nhis", "name": "건강보험·의료이용·검진 통계", "org": "국민건강보험공단",
-     "ids": KDH_BY_DOMAIN.get("의료이용·검진", []) + KDH_BY_DOMAIN.get("보건의료자원", []) + CHECKUP_IDS, "unit": "시군구",
+    {"key": "nhis", "name": "건강보험·의료이용·검진·의료자원 통계", "org": "국민건강보험공단",
+     "ids": KDH_BY_DOMAIN.get("의료이용·검진", []) + [i for i in KDH_BY_DOMAIN.get("보건의료자원", []) if i not in RES_NON_NHIS] + CHECKUP_NEW, "unit": "시군구",
      "years": [2008, max([2024] + CHK_YEARS)], "cycle": "연 1회", "next": "2026년 12월~2027년 1월",
      "tbl": "건강보험통계·건강검진통계(KOSIS 350 DT_35007_N001_1·N098·N103·N105)·지역별의료이용통계", "via": VIA_KDH + " (일반건강검진 2018년~은 KOSIS 직접)",
      "url": "https://kosis.kr/statHtml/statHtml.do?orgId=350&tblId=DT_35007_N001_1", "updated": "2026-01-06",
@@ -150,10 +162,10 @@ SRC = [
               "고혈압·당뇨병 「판정 비율」(2차 판정)은 2018년 2차 검진 폐지로 2017년에서 끝나고, 2018년부터는 1차 판정 「의심」·「유질환자」 비율 4종을 별도 지표로 둔다.") if CHK_YEARS else
              "일반건강검진 수검률·판정결과 5종은 우리 데이터가 2017년에 멈춰 있고 원천은 2024년까지 있다."},
 
-    {"key": "pop", "name": "인구·사회·경제 통계", "org": "국가데이터처 · 행정안전부 등",
-     "ids": KDH_BY_DOMAIN.get("인구·사회·경제", []), "unit": "시군구",
+    {"key": "pop", "name": "인구·사회·경제·복지시설 통계", "org": "국가데이터처 · 행정안전부 · 보건복지부 · 문화체육관광부 등",
+     "ids": KDH_BY_DOMAIN.get("인구·사회·경제", []) + RES_NON_NHIS, "unit": "시군구",
      "years": [2008, 2024], "cycle": "연 1회", "next": "연 1회 수시",
-     "tbl": "인구총조사·경제활동인구조사·주민등록인구현황·지방자치단체 통합재정 개요 등",
+     "tbl": "인구총조사·경제활동인구조사·주민등록인구현황·지방자치단체 통합재정 개요·노인복지시설현황·전국 문화기반시설 총람·보건소 및 보건지소 운영현황 등",
      "via": VIA_KDH, "url": "https://kosis.kr/", "updated": "2026-09-08"},
 
     {"key": "env", "name": "환경·안전 통계", "org": "환경부 · 국토교통부 · 도로교통공단 등",
@@ -163,8 +175,8 @@ SRC = [
      "via": VIA_KDH, "url": "https://kosis.kr/", "updated": "2026-09-08"},
 
     {"key": "hle", "name": "건강수명(근사 산출)", "org": "자체 산출", "ids": None, "unit": "시군구",
-     "years": [2008, 2024], "cycle": "사망원인통계 공표 후", "next": "2026년 9월 하순 공표 직후",
-     "tbl": "scripts/build_hle.py · docs/건강수명_산출법_v1.md", "url": "", "updated": "2026-09-08",
+     "years": [2008, HLE_LAST], "cycle": "사망원인통계 공표 후", "next": f"{HLE_LAST + 2}년 9월 하순 사망원인통계 공표 직후",
+     "tbl": "scripts/build_hle.py · docs/건강수명_산출법_v1.md", "url": "", "updated": "2026-09-25",
      "approx": True,
      "formula": "HLE_x = Σ_{i≥x} L_i (1 − π_i) / l_x   ·   π_i(지역) = r·π_i / (1 − π_i + r·π_i),  r = [u/(1−u)] / [u₀/(1−u₀)]",
      "formula_note": "검산: 기대수명 × (1 − 평균 불건강률) ≈ 건강수명. 지역별 실제 숫자는 프로파일의 「기대수명·건강수명」 카드 안 「산출 예시」에서 펼쳐 볼 수 있다.",
@@ -199,11 +211,11 @@ SRC = [
 ]
 
 counts = [
-    {"n": 258, "label": "지역사회건강조사 조사 단위", "note": "본 대시보드 기준. 질병관리청 「2025 지역건강통계 한눈에 보기」 부록 시군구별 표",
+    {"n": 258, "label": "지역사회건강조사 조사 단위", "note": "본 대시보드 기준 · 지역사회건강조사 지표의 순위·중앙값 기준(질병관리청 공표 방식). 질병관리청 「2025 지역건강통계 한눈에 보기」 부록 시군구별 표",
      "std": True},
     {"n": 263, "label": "지역보건의료기관 현황의 보건소", "note": "보건소 247 + 보건의료원 16 (공공데이터포털, 2025-12-31 기준)"},
     {"n": UNITS.get("official_count", 255), "label": "질병관리청 보건소정보 공식 목록", "note": UNITS.get("official_source", "")},
-    {"n": 229, "label": "행정안전부 기초자치단체", "note": "지역보건의료계획 수립 주체(시·군·구). 시·도 17개 계획은 별도"},
+    {"n": 229, "label": "시군구", "note": "행정안전부 기초자치단체 226곳 + 제주 행정시 2곳(제주시·서귀포시) + 세종시. 사망률·검진·인구 등 시군구 단위 자료의 순위 기준(지역사회건강조사 지표는 조사 단위 258곳 기준)"},
     {"n": len([r for r in DS["regions"] if r["l"] == "sgg"]), "label": "우리 데이터셋 시군구 레코드", "note": "중복·폐지 레코드 포함"},
 ]
 

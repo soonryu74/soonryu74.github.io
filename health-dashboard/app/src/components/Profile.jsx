@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Cite from "./Cite";
 import PriorityCard from "./PriorityCard";
 import { INDICATORS, DOMAINS, fmt, val, poolFor, label, RBY, computeRanking, PANEL_WEIGHTS, EQUAL_WEIGHTS, EXCLUDE_IDS, LEAGUE_NAME, recommendFor, depOf, DEP } from "../data";
 import ExportButtons from "./ExportButtons";
@@ -6,6 +7,8 @@ import HleCard from "./HleCard";
 import RiskCard from "./RiskCard";
 import GoldenDiamond from "./GoldenDiamond";
 import PeerCard from "./PeerCard";
+import EquityPriorityCard from "./equity/EquityPriorityCard";
+import IndInfo from "./equity/IndInfo";
 
 const tone = (p) => (p == null ? "" : p >= 75 ? "t-high" : p >= 50 ? "t-mid" : p >= 25 ? "t-low" : "t-min");
 
@@ -17,7 +20,7 @@ function RankSettings({ opt, onChange, isSgg }) {
   const total = DOMAINS.reduce((a, d) => a + (w[d] || 0), 0);
   return (
     <div className="card rankset">
-      <h3>순위 산출 방식 <small className="muted">방법론 v1 · 기본 균등 가중</small></h3>
+      <h3>순위 산출 방식<Cite k="rank" /> <small className="muted">방법론 v1 · 기본 균등 가중</small></h3>
       <div className="desc">기본: 영역 균등 가중 · 3년 이동평균 · 도시/군 리그 · 결과지표 4개 제외.
         <b>결과·임팩트 지표를 순위에서 빼는 것은 이론적 근거가 있습니다.</b> 사망률·유병률 같은 지표는 변화가 느리고 보건소 활동에 귀인할 수 없어, 국제 지침(WHO/IHP+ 2011)도 5년에 1~2회 모니터링용으로만 권고합니다(docs/지역보건사업_평가이론_v1.md). "모의 패널" 가중치는 AI가 시뮬레이션한 값으로 실제 전문가 조사 결과가 아니며 민감도 검증용입니다. 바꿔 보면 순위가 얼마나 흔들리는지 확인할 수 있습니다.</div>
       <div className="setrow">
@@ -71,8 +74,9 @@ function RankSettings({ opt, onChange, isSgg }) {
 }
 
 /* 지역 프로파일: 방법론 v1 기반 영역·종합 순위, 등급 배지, 강점·개선·과제 */
-export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, onRegion, setTip }) {
-  const pool = poolFor(sel, scope);
+export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, onRecommend, onRegion, onGoCard, setTip, lang = "ko", onLang }) {
+  const [peerInd, setPeerInd] = useState(null);   // 우선 검토 카드의 「유사 지역 비교」 → 동류군 카드 지표
+  const pool = sel.l === "sido" ? poolFor(sel, "sidoAll") : poolFor(sel, scope === "sidoAll" ? "nation" : scope);   // 시도 프로파일은 17개 시도, 시군구는 전국/시도 내
   const isSgg = sel.l === "sgg";
   const rk = useMemo(() => computeRanking(item, pool, rankOpt), [item, pool, rankOpt]);
   const me = rk.byCode.get(sel.c);
@@ -99,13 +103,19 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
   const weak = [...scored].sort((a, b) => a.pct - b.pct).slice(0, 5);
   const [showWeak, setShowWeak] = useState(false);
   const smoothNote = rankOpt.smooth === 3 ? "최근 3년 평균" : "최신 연도";
+  // 백분위 문구: 30곳 이하 풀(17개 시도 등)에서는 「17곳 중 17위」처럼 순위로만 쓴다 — 17곳 꼴찌의 백분위 2.9%가 「하위 3%」로 읽히는 문제(건강격차 검토 P1: 소집단 분위 금지)
+  // 순위는 항상 「양호한 순」(1위 = 가장 양호) — 방향 보정된 순위라 값이 크고 작음과 다를 수 있어 글자로 밝힌다(2026-10-05 소유자 지적 "좋은 순·나쁜 순 헷갈려")
+  const pctLabel = (r, side) => (r.n <= 30
+    ? (poolName === "17개 시도" ? `17개 시도 중 ${r.rank}위(양호한 순)` : `${poolName} ${r.n}곳 중 ${r.rank}위(양호한 순)`)
+    : side === "top" ? `상위 ${Math.max(1, Math.round(100 - r.pct))}% · 양호한 순 ${r.rank}/${r.n}위` : `하위 ${Math.max(1, Math.round(r.pct))}% · 양호한 순 ${r.rank}/${r.n}위`);
+  const basisOf = (r) => (rankOpt.smooth === 3 ? `${r.y}년 기준 3년 평균` : `${r.y}년`);
 
   return (
     <div className="profile">
       <div className="card prof-head">
         <div>
-          <div className="prof-name">{label(sel)}</div>
-          <div className="desc">{poolName} 기준 백분위(높을수록 양호) · {smoothNote} · 순위 산정 지표 {scored.length}개</div>
+          <div className="prof-name">{label(sel)} <button type="button" className="themebtn rpt-open" onClick={() => onGoCard && onGoCard({ view: "report" })} title="이 지역의 현황 보고서를 만들어 인쇄·PDF·워드로 저장">📄 지역 보고서 만들기</button></div>
+          <div className="desc">{poolName} 기준 백분위(높을수록 양호) · {smoothNote} · 순위 산정 지표 {scored.length}개 · 종합 순위는 여러 자료를 합치므로 행정 시군구 단위로 비교합니다</div>
           <div className="badgesrow">
             {me?.grade && <span className={`gradebadge g-${me.grade}`}>{me.grade}</span>}
             {me?.overallRank && <span className="subchip">{poolName} <b>{me.overallRank}위</b> / {me.n}</span>}
@@ -119,15 +129,18 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         </div>
       </div>
 
+      <EquityPriorityCard sel={sel} item={item} smooth={rankOpt.smooth} onPick={onPick} onRecommend={onRecommend} onGoCard={onGoCard} lang={lang} onLang={onLang}
+        onPeer={(id) => { setPeerInd(id); setTimeout(() => document.querySelector(".peer")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60); }} />
+
       <RankSettings opt={rankOpt} onChange={onRankOpt} isSgg={isSgg} />
 
       <div className="grid2">
         <HleCard sel={sel} pool={pool} poolName={poolName} setTip={setTip} />
-        <RiskCard sel={sel} pool={pool} poolName={poolName} />
+        <RiskCard sel={sel} pool={pool} poolName={poolName} onElder={onGoCard ? () => onGoCard({ view: "elder" }) : undefined} />
         <GoldenDiamond item={item} sel={sel} />
-        <PeerCard item={item} sel={sel} onPick={onRegion} />
+        <PeerCard item={item} sel={sel} onPick={onRegion} ind={peerInd} onInd={setPeerInd} />
         <div className="card span2">
-          <h3>영역별 순위와 수치</h3>
+          <h3>영역별 순위와 수치<Cite k={["chs", "rank"]} /></h3>
           <ExportButtons name={`${label(sel)}_영역별순위`} kinds={["list"]} />
           <div className="desc">영역 점수 = 소속 지표 백분위 평균 · 순위는 {poolName} 기준 · 칩의 숫자는 지표별 순위 (회색 칩은 순위 산정 제외 지표)</div>
           <div className="domains">
@@ -145,7 +158,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
                   <div className="indchips">
                     {inds.map((i) => { const r = byId[i.id]; return (
                       <button key={i.id} className={`indchip ${r.excluded || r.neutral ? "off" : ""}`} onClick={() => onPick(i, r.y)}
-                        title={`${i.name} · ${r.y}년${rankOpt.smooth === 3 ? " 기준 3년 평균" : ""} · ${r.excluded ? "순위 산정 제외" : r.neutral ? "중립 지표" : "백분위 " + Math.round(r.pct)}`}>
+                        title={`${i.name} · ${basisOf(r)} · ${r.excluded ? "순위 산정 제외" : r.neutral ? "중립 지표" : r.n <= 30 ? pctLabel(r) : "백분위 " + Math.round(r.pct)}`}>
                         <span className="ic-name">{i.name}</span>
                         <span className="ic-val">{fmt(r.v)}<small>{i.unit}</small></span>
                         <span className={`ic-rank ${r.pct == null ? "" : r.pct >= 75 ? "k-good" : r.pct < 25 ? "k-bad" : ""}`}>{r.rank ? `${r.rank}/${r.n}` : "제외"}</span>
@@ -158,35 +171,35 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         </div>
 
         <div className="card">
-          <h3>강점 TOP 5</h3>
+          <h3>강점 TOP 5<Cite k="chs" /></h3>
           <div className="desc">백분위가 가장 높은 지표 — 이 지역이 이미 잘하고 있는 것</div>
           <div className="badges">
             {strengths.map((r) => (
               <button key={r.ind.id} className={`badge-card ${tone(r.pct)}`} onClick={() => onPick(r.ind, r.y)}>
                 <div className="b-name">{r.ind.name}</div>
                 <div className="b-val">{fmt(r.v)}<small>{r.ind.unit}</small></div>
-                <div className="b-sub">상위 {Math.max(1, Math.round(100 - r.pct))}% · {r.rank}/{r.n}위 · {r.y}</div>
+                <div className="b-sub">{pctLabel(r, "top")} · {basisOf(r)}</div>
               </button>
             ))}
           </div>
         </div>
 
         <div className="card">
-          <h3>가장 개선된 지표 TOP 5</h3>
-          <div className="desc">최근 5년 방향 보정 개선폭(%p) — "올해 가장 건강해진" 후보</div>
+          <h3>가장 개선된 지표 TOP 5<Cite k="chs" /></h3>
+          <div className="desc">최근 5년 변화 중 방향을 고려해 가장 좋아진 지표 — 낮을수록 좋은 지표(사망·감염병·질환 등)는 값이 줄어든 것이 개선입니다</div>
           <div className="badges">
             {improved.map((r) => (
               <button key={r.ind.id} className={`badge-card ${r.improve > 0 ? "t-high" : "t-low"}`} onClick={() => onPick(r.ind, r.y)}>
                 <div className="b-name">{r.ind.name}</div>
-                <div className="b-val">{r.improve > 0 ? "+" : ""}{fmt(r.improve)}<small>%p</small></div>
-                <div className="b-sub">{r.baseY}→{r.y}</div>
+                <div className="b-val">{r.delta > 0 ? "▲" : r.delta < 0 ? "▼" : ""}{fmt(Math.abs(r.delta))}<small>{r.ind.unit === "%" ? "%p" : r.ind.unit}</small></div>
+                <div className="b-sub">{r.baseY}→{r.y} · {r.improve > 0 ? (r.ind.bad ? "낮아져 개선" : "높아져 개선") : (r.ind.bad ? "높아져 악화" : "낮아져 악화")}</div>
               </button>
             ))}
           </div>
         </div>
 
         <div className="card span2">
-          <h3>권고 예방·관리 사업 <small className="muted">(하위 25% 지표 기준 · 지식베이스 연결)</small></h3>
+          <h3>권고 예방·관리 사업 <small className="muted">(하위 25% 지표 기준 · 순위는 양호한 순(1위 = 가장 양호) · 값과 순위는 위 「순위 산출 방식」 설정을 따름 — 기본 {smoothNote}·{poolName} · 지식베이스 연결)</small></h3>
           <div className="desc">이 지역의 낮은 지표마다 시도 계획 → 국가 사업 → WHO 권고 순으로 연결된 항목을 보여줍니다. "더 보기"를 누르면 예방·관리 탭에서 전체를 볼 수 있습니다.</div>
           {(() => {
             const sidoFull = isSgg ? RBY.get(sel.p)?.n : sel.n;
@@ -196,7 +209,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
             if (!items.length) return <div className="empty">낮은 지표({lows.map((x) => x.ind.name).join(", ")})에 연결된 지식베이스 항목이 아직 없습니다</div>;
             return <div className="recs">{items.map(({ r, recs }) => (
               <div key={r.ind.id} className="rec">
-                <div className="rechead"><b>{r.ind.name}</b> <span className="k-bad">{fmt(r.v)}{r.ind.unit} · 하위 {Math.max(1, Math.round(r.pct))}%</span>
+                <div className="rechead"><b>{r.ind.name}</b><IndInfo ind={r.ind} /> <span className="k-bad">{fmt(r.v)}{r.ind.unit} <small className="muted">({basisOf(r)})</small> · {pctLabel(r, "bottom")}</span>
                   <button className="xbtn" onClick={() => onRecommend(r.ind.name)}>더 보기 →</button></div>
                 {recs.map((e) => <div key={e.id} className="recitem"><span className={`lvbadge lv-${e.level}`}>{e.level === "sido" ? e.sido : e.level === "national" ? "국가" : e.level === "regional" ? "WPRO" : "WHO"}</span>
                   <span className="recgoal">{e.goal}</span>{e.interventions?.[0] && <span className="intchip">{e.interventions[0]}</span>}</div>)}
@@ -207,7 +220,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         <PriorityCard scored={scored} item={item} pool={pool} onPick={onPick} />
 
         <div className="card span2">
-          <h3>개선 과제 <small className="muted">(지자체 참고용)</small></h3>
+          <h3>개선 과제<Cite k="chs" /> <small className="muted">(지자체 참고용)</small></h3>
           <div className="desc">백분위가 낮은 지표 — 공개 화면에서는 비공개 원칙(랭킹 기획안)</div>
           {!showWeak ? (
             <button className="themebtn" onClick={() => setShowWeak(true)}>펼쳐 보기</button>
@@ -217,7 +230,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
                 <button key={r.ind.id} className={`badge-card ${tone(r.pct)}`} onClick={() => onPick(r.ind, r.y)}>
                   <div className="b-name">{r.ind.name}</div>
                   <div className="b-val">{fmt(r.v)}<small>{r.ind.unit}</small></div>
-                  <div className="b-sub">하위 {Math.max(1, Math.round(r.pct))}% · {r.rank}/{r.n}위 · {r.y}</div>
+                  <div className="b-sub">{pctLabel(r, "bottom")} · {basisOf(r)}</div>
                 </button>
               ))}
             </div>
@@ -226,7 +239,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
       </div>
 
       <div className="card">
-        <h3>전체 지표</h3>
+        <h3>전체 지표<Cite k={["chs", "kdh", "cancer", "nhis"]} /></h3>
         <ExportButtons name={`${label(sel)}_프로파일_전체지표`} kinds={["csv"]} />
         <div className="desc">행을 누르면 해당 지표 분석 화면으로 이동합니다</div>
         <div className="tblscroll">
@@ -255,6 +268,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
           </table>
         </div>
       </div>
+      <div className="desc prof-limits"><b>데이터 출처와 한계</b> — 각 수치 옆 [n]·ⓘ에 자료원과 연도가 있습니다. 보건소 사업의 투입·산출 자료가 없으므로 사업 성과평가나 인과효과 판단에 쓸 수 없고, 표본조사 지표는 표본오차를 함께 봐야 합니다.</div>
       <div className="desc">산출 방식 상세: docs/랭킹_방법론_v1.md — 표준화율·3년 이동평균·리그·가중치 근거(공인 체계 조사, AI 모의 패널은 검증용, 232개 시군구 실증)</div>
     </div>
   );

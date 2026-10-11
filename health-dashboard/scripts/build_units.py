@@ -94,14 +94,15 @@ for r in R:
     ys = have_year.get(r["c"], [])
     units.append({"c": r["c"], "n": r["n"], "l": r["l"], "s": r["s"], "p": r["p"], "parent": R[IDX[r["p"]]]["n"] if r["p"] in IDX else None,
                   "chs": mapping.get(r["c"]), "first": ys[0] if ys else None, "last": ys[-1] if ys else None, "status": status(r),
-                  "has_subs": r["c"] in subs, "subs": [s["n"] for s in subs.get(r["c"], [])]})
+                  "has_subs": r["c"] in subs, "subs": [s["n"] for s in subs.get(r["c"], []) if have_year.get(s["c"])]})   # 값이 한 번도 없는 빈 코드는 목록에서 뺀다
 # ---- 보건기관 3,607건 (공공데이터포털 API) → 조사 단위별 매핑 ----
 import csv as _csv
 fac_rows = list(_csv.DictReader(open(ROOT / "data/health_facilities.csv", encoding="utf-8-sig"))) if (ROOT / "data/health_facilities.csv").exists() else []
 by_unit = {}
 unmapped_fac = collections.Counter()
 sgg_by_sido_name = defaultdict(dict); sub_by_parent = defaultdict(dict)
-for u in units:
+# 같은 이름의 단위가 둘 이상이면(세종시 00711·007101, 서귀포 01601·0160000 등) 값이 있는 단위를 우선한다
+for u in sorted(units, key=lambda u: u["status"] == "no_data", reverse=True):
     if u["l"] == "sgg": sgg_by_sido_name[u["s"]][u["n"]] = u["c"]
     else: sub_by_parent[u["p"]][u["n"]] = u["c"]
 SUBFIX = {"상록구": "상록구", "단원구": "단원구", "마산합포구": "마산", "마산회원구": "마산", "진해구": "진해", "의창구": "창원", "성산구": "창원"}

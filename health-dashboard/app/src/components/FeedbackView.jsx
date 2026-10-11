@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import CONTACT from "../../../data/contact.json";
+import { gmailCompose } from "../lib/mail";
 
 /* 「의견·문의」 — 서버 없이도 깨지지 않게 만든 문의 창구.
    · 보내는 길 3가지: ① 이메일 앱으로 보내기(mailto) ② 내용 복사(카카오톡·메신저에 붙여넣기) ③ GitHub 이슈(개발자용)
@@ -17,13 +18,15 @@ function saveDraft(d) {
 }
 function clearDraft() { try { localStorage.removeItem(KEY); } catch { /* noop */ } }
 
-async function copyText(t) {
+export async function copyText(t) {
   try { if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(t); return true; } } catch { /* fallback */ }
   try {
     const ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.left = "-9999px";
     document.body.appendChild(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok;
   } catch { return false; }
 }
+
+const doc = (f) => CONTACT.docs_base + encodeURIComponent(f);
 
 export default function FeedbackView({ currentUrl }) {
   const d0 = useMemo(() => loadDraft() || {}, []);
@@ -58,6 +61,7 @@ export default function FeedbackView({ currentUrl }) {
   ].filter((x) => x != null).join("\n");
 
   const mailto = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const gmailUrl = gmailCompose(CONTACT.email, subject, body);
   const issueUrl = CONTACT.github_repo
     ? `https://github.com/${CONTACT.github_repo}/issues/new?title=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     : null;
@@ -66,7 +70,11 @@ export default function FeedbackView({ currentUrl }) {
     if (!ready) { e.preventDefault(); setStatus({ kind: "err", text: "내용을 5자 이상 적어 주세요." + (!emailOk ? " 회신 이메일 형식도 확인해 주세요." : "") }); return; }
     // mailto 가 너무 길면 일부 메일 앱이 본문을 자릅니다 → 안내
     if (mailto.length > 1800) setStatus({ kind: "info", text: "내용이 길어 메일 앱에서 본문이 잘릴 수 있습니다. 잘렸다면 「내용 복사」로 붙여 넣어 주세요." });
-    else setStatus({ kind: "ok", text: "메일 앱이 열립니다. 메일 앱이 열리지 않으면 「내용 복사」를 눌러 직접 보내 주세요." });
+    else setStatus({ kind: "ok", text: "메일 앱이 열립니다. 열리지 않거나 Gmail 계정 선택 뒤 아무 창도 뜨지 않으면 「Gmail로 보내기」나 「내용 복사」를 이용해 주세요." });
+  };
+  const onGmail = (e) => {
+    if (!ready) { e.preventDefault(); setStatus({ kind: "err", text: "내용을 5자 이상 적어 주세요." + (!emailOk ? " 회신 이메일 형식도 확인해 주세요." : "") }); return; }
+    setStatus({ kind: "ok", text: "새 탭에서 Gmail 작성 창이 열립니다(로그인·계정 선택 후 작성 창으로 이어집니다). Gmail을 쓰지 않으면 「이메일 앱으로 보내기」나 「내용 복사」를 이용해 주세요." });
   };
   const onCopy = async () => {
     if (!ready) { setStatus({ kind: "err", text: "내용을 5자 이상 적어 주세요." }); return; }
@@ -99,6 +107,7 @@ export default function FeedbackView({ currentUrl }) {
 
           <div className="fb-actions">
             <a className={`fb-btn primary ${ready ? "" : "dim"}`} href={mailto} onClick={onMail}>✉ 이메일 앱으로 보내기</a>
+            <a className={`fb-btn ${ready ? "" : "dim"}`} href={ready ? gmailUrl : "#"} target={ready ? "_blank" : undefined} rel="noopener noreferrer" onClick={onGmail} title="Gmail 웹에서 바로 작성 창을 엽니다">Gmail로 보내기</a>
             <button type="button" className="fb-btn" onClick={onCopy}>📋 내용 복사</button>
             {issueUrl && <a className="fb-btn" href={ready ? issueUrl : "#"} target={ready ? "_blank" : undefined} rel="noreferrer" onClick={(e) => { if (!ready) { e.preventDefault(); setStatus({ kind: "err", text: "내용을 5자 이상 적어 주세요." }); } }} title="GitHub 계정이 있는 분(개발자)용">🐙 GitHub 이슈로 올리기</a>}
             <button type="button" className="fb-btn ghost" onClick={onReset}>지우기</button>
@@ -128,13 +137,31 @@ export default function FeedbackView({ currentUrl }) {
       <div className="card">
         <h3>이 대시보드에 대하여</h3>
         <div className="desc">
-          지역 건강프로파일 대시보드는 질병관리청 지역사회건강조사(KOSIS)·사망원인통계·국민건강보험공단 검진통계 등 공표 자료를 모아 시군구·보건소 단위 건강수준을 보여 주는 <b>모니터링·목표치 설정 지원 도구</b>입니다. 보건소 사업 실적 자료는 담고 있지 않아 사업 성과 평가 도구가 아닙니다.
+          지역 건강프로파일 대시보드는 질병관리청 지역사회건강조사(KOSIS)·사망원인통계·국민건강보험공단 검진통계 등 공표 자료를 모아 시군구·보건소 단위 건강수준과 격차를 모니터링하고 지역보건 검토 우선순위를 탐색하도록 돕는 <b>모니터링·목표치 설정 지원 도구</b>입니다. 보건소 사업의 투입·산출 자료를 포함하지 않으므로 사업 성과평가나 인과효과 판단에 사용할 수 없습니다.
           자료별 출처·산식·갱신 주기·한계는 「자료원」 탭에, 지표 방향·계층·근거는 각 지표 화면에 적혀 있습니다. 주소: <a href={CONTACT.site} target="_blank" rel="noreferrer">{CONTACT.site}</a>
         </div>
         <div className="desc" style={{ marginTop: 6 }}>
-          <b>사용설명서(64쪽)</b> — 자료 소개·기본 조작·메뉴별 설명과 활용 팁·활용 시나리오·해석 주의:{" "}
-          <a href={CONTACT.manual_pdf} target="_blank" rel="noreferrer">PDF 보기</a> · <a href={CONTACT.manual_pptx} target="_blank" rel="noreferrer">파워포인트 내려받기</a>
+          <b>사용설명서({CONTACT.manual.pages}쪽)</b> — 자료 소개·기본 조작·메뉴별 설명과 활용 팁·활용 시나리오·해석 주의:{" "}
+          <a href={doc(CONTACT.manual.pdf)} target="_blank" rel="noreferrer">PDF 보기</a> · <a href={doc(CONTACT.manual.pptx)} target="_blank" rel="noreferrer">파워포인트 내려받기</a>
         </div>
+        <div className="desc" style={{ marginTop: 6 }}>
+          <b>활용법 발표자료({CONTACT.usage.pages}쪽)</b> — 지금 수준에서 무엇을 어떻게 쓰나 · 메뉴별 활용 · 시나리오 5가지 · K-Health 랭킹(communityhealth.kr) 방법론 비교 · 발전방안:{" "}
+          <a href={doc(CONTACT.usage.pdf)} target="_blank" rel="noreferrer">PDF 보기</a> · <a href={doc(CONTACT.usage.pptx)} target="_blank" rel="noreferrer">파워포인트 내려받기</a>
+        </div>
+        <div className="desc" style={{ marginTop: 6 }}>
+          <b>소개 영상(MP4)</b> — 모든 메뉴와 숨은 옵션(순위 산출 방식·모의 패널·직접 가중치·전체 보기 등)을 실제로 눌러 보여 줍니다:{" "}
+          {(CONTACT.videos || []).map((v, i) => (
+            <span key={v.file}>{i ? " · " : ""}<a href={doc(v.file)} target="_blank" rel="noreferrer">{v.title}</a> ({v.len})</span>
+          ))}
+        </div>
+        <details className="method-docs" style={{ marginTop: 8 }}>
+          <summary><b>방법론 문서 {(CONTACT.method_docs || []).length}건</b> — 순위·건강수명·박탈지수·격차 등 산출 방식과 검토 보고서(새 창, 저장소 docs 폴더)</summary>
+          <ul className="desc" style={{ marginTop: 6, paddingLeft: 18 }}>
+            {(CONTACT.method_docs || []).map(([f, t]) => (
+              <li key={f}><a href={doc(f)} target="_blank" rel="noreferrer">{t}</a> <span className="muted">({f})</span></li>
+            ))}
+          </ul>
+        </details>
       </div>
     </div>
   );

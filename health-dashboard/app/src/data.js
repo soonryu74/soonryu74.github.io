@@ -29,6 +29,27 @@ import KDH_RAW from "../../data/kdh_dataset.json";
 })();
 export const KDH_SOURCE = KDH_RAW.source || null;
 
+// ── 사망원인통계 새 공표분 주입 (data/mort_kosis.json, KOSIS DT_1B34E13) ──
+// 김동현 교수 DB의 사망률 21종은 2024년까지다. DB에 없는 해(새 공표분·DB가 일찍 끊긴 지표의 빈 해)만
+// 같은 지표 id 에 이어 붙인다. 겹치는 해의 값이 DB와 같은지는 scripts/build_mort.py 가 대조한다.
+import MORT_RAW from "../../data/mort_kosis.json";
+(function injectMort() {
+  for (const [id, rec] of Object.entries(MORT_RAW.indicators || {})) {
+    const base = RAW.indicators.find((i) => i.id === id);
+    const bv = RAW.values[id];
+    if (!base || !bv || base.mortSpliced) continue;
+    const rows = new Map(base.years.map((y, k) => [y, { crude: bv.crude[k], std: bv.std[k] }]));
+    rec.years.forEach((y, k) => rows.set(y, { crude: rec.crude[k], std: rec.std[k] }));
+    base.years = [...rows.keys()].sort((a, b) => a - b);
+    for (const key of ["crude", "std"]) bv[key] = base.years.map((y) => rows.get(y)[key]);
+    base.mortSpliced = true;
+    const yy = (a) => (a.length > 2 && a[a.length - 1] - a[0] === a.length - 1 ? `${a[0]}~${a[a.length - 1]}` : a.join("·"));
+    const add = rec.added || rec.years, fix = rec.fixed || [];
+    base.src = `${base.src} ‖ ${add.length ? `${yy(add)}년은 ` : ""}${MORT_RAW.source}에서 직접${fix.length ? ` · ${yy(fix)}년은 같은 원천 값으로 교정(DB의 0·빈 칸·반올림)` : ""}`;
+  }
+})();
+export const MORT_SOURCE = MORT_RAW.source || null;
+
 // ── 국가암검진 수검률 주입 (data/cancer_screening.json) ──
 // 미국 CPSTF 최대 근거 블록이 암(권고 49건·강력 24건)이고 그 대부분이 검진 수검률을
 // 올리는 중재인데 우리에겐 암 사망률·진료실인원만 있었다. (docs/미국_CPSTF_검토_v1.md 6.1)
@@ -97,6 +118,9 @@ import DIR_RAW from "../../data/directions.json";
     ind.dirRefs = d.refs || [];
   }
 })();
+// 방향 문자열 메타데이터(Health Equity Radar): 기존 bad 는 그대로 두고 모든 지표에 direction 을 붙인다
+import { directionOf } from "./lib/equity/normalizeIndicator.js";
+for (const ind of RAW.indicators) ind.direction = directionOf(ind.bad);
 
 export const DS = RAW;
 export const YEARS_ALL = RAW.years;
@@ -109,7 +133,9 @@ export const SIDOS = REGIONS.filter((r) => r.l === "sido");
 export const SGG_ALL = REGIONS.filter((r) => r.l === "sgg");
 export const SGG_BY_SIDO = Object.fromEntries(SIDOS.map((s) => [s.c, SGG_ALL.filter((r) => r.p === s.c)]));
 export const SUBS_BY_SGG = {};
-REGIONS.filter((r) => r.l === "sub").forEach((r) => (SUBS_BY_SGG[r.p] ??= []).push(r));
+// 값이 한 번도 없는 자리표시 코드(예: 제주 0160000·0160400)는 세부 단위 목록에서 뺀다
+const hasAnyValue = (i) => Object.values(RAW.values).some((v) => ["crude", "std"].some((k) => v[k]?.some((row) => row?.[i] != null)));
+REGIONS.forEach((r, i) => { if (r.l === "sub" && hasAnyValue(i)) (SUBS_BY_SGG[r.p] ??= []).push(r); });
 
 export const INDICATORS = RAW.indicators;
 export const IND_BY_ID = Object.fromEntries(INDICATORS.map((d) => [d.id, d]));
@@ -184,10 +210,12 @@ export function latestYear(ind, item, code) {
 }
 
 /** 비교 집단: 시군구 선택 시 전국/시도 내 시군구, 시도 선택 시 17개 시도 */
-export function poolFor(sel, scope) {
-  if (!sel) return SIDOS;
-  if (sel.l === "sido") return SIDOS;
-  return scope === "sido" ? SGG_BY_SIDO[sel.p] : SGG_ALL;
+export function poolFor(sel, scope, ind = null) {
+  if (!sel || scope === "sidoAll") return SIDOS;                       // 17개 시도
+  const sidoCode = sel.l === "sido" ? sel.c : sel.p;
+  if (scope === "sido") return ind ? sidoPoolOf(ind, sidoCode) : (SGG_BY_SIDO[sidoCode] || []);   // 시도 내 시군구(조사 지표는 조사 단위)
+  if (sel.l === "sido" && !ind) return SIDOS;                          // 지표 없이 시도를 고른 경우(프로파일)
+  return ind ? natPool(ind) : SGG_ALL;                                  // 전국 시군구
 }
 
 /** 방향 보정 비교: "a가 b보다 양호"면 음수 */
@@ -306,7 +334,7 @@ export function boxStats(vals) {
 
 /** 전국 기준값: 전 시군구 중앙값 */
 export function nationalMedian(ind, item, year) {
-  return median(SGG_ALL.map((r) => val(ind, item, year, r.c)));
+  return median(natPool(ind).map((r) => val(ind, item, year, r.c)));
 }
 
 /** 7단계 분위 경계 (단계구분도용) */
@@ -453,6 +481,21 @@ export const HC_POOL = CHS25.units.filter((u) => RBY.has(u.c)).map((u) => {
   return { ...RBY.get(u.c), hc: off || `${u.n}보건소`, hc25: u.n };
 });
 
+/* ── 지역사회건강조사 지표의 전국 기준 = 258개 조사 단위(보건소) ──
+   질병관리청은 지역사회건강조사를 「시·군·구별 약 900명 × 258개 지역」으로 조사하고 「전국 대푯값은 시·군·구 중앙값」으로 공표한다.
+   이때 시·군·구는 행정 시군구 229곳이 아니라 조사 단위 258곳(일반구가 있는 시는 보건소별)이다.
+   검증(2026-09-24): 2024·2025 담배제품 현재사용률·고위험음주율·비만율·걷기 실천율 공식 중앙값 8개 중 258곳 기준 7개 일치(1개 0.1 차),
+   229곳 기준은 6개 불일치 → 지역사회건강조사 지표는 순위·중앙값·백분위·지도 분위를 258곳으로 계산한다.
+   사망률·검진·인구 등 시군구 단위 자료와 지역 프로파일 종합 순위는 시군구 229곳을 유지한다. */
+export const isSurvey = (ind) => indRef(ind)?.refs?.[0] === "chs";
+const sidoOfUnit = (r) => (r.l === "sub" ? RBY.get(r.p)?.p : r.p);
+export const HC_BY_SIDO = {};
+HC_POOL.forEach((u) => (HC_BY_SIDO[sidoOfUnit(u)] ??= []).push(u));
+export const natPool = (ind) => (isSurvey(ind) ? HC_POOL : SGG_ALL);
+export const sidoPoolOf = (ind, sidoCode) => (isSurvey(ind) ? HC_BY_SIDO[sidoCode] || [] : SGG_BY_SIDO[sidoCode] || []);
+/** 선택한 시(시 전체)가 여러 보건소로 조사되는 경우 그 보건소들 */
+export const unitsOfCity = (code) => HC_POOL.filter((u) => u.l === "sub" && u.p === code);
+
 /* ===== 만성질환 예방·관리 지식베이스 ===== */
 import NCD_RAW from "../../data/ncd.json";
 export const NCD = NCD_RAW;
@@ -559,4 +602,41 @@ export function evidenceVerdict(indId) {
   if (cp) return cp.median_year != null && now - cp.median_year > 15
     ? { key: "stale", label: "근거 낡음", cpstf: cp } : { key: "cpstf", label: "근거 있음(CPSTF)", cpstf: cp };
   return { key: "none", label: "근거 없음" };
+}
+
+/* ===== 참고문헌 (data/refs.json · scripts/build_refs.py) =====
+   번호는 대시보드·사용설명서 공통. 지표별 원 통계표는 by_ind. */
+import REFS_RAW from "../../data/refs.json";
+export const REFS = REFS_RAW.refs;
+export const REF_BY_KEY = new Map(REFS.map((r) => [r.key, r]));
+export const indRef = (ind) => (ind && REFS_RAW.by_ind[ind.id]) || null;
+
+// ── 10년 변화 기울기(추세) ─────────────────────────────────────────────────────
+// 김동현 외(2025) 「지역사회 통합건강증진사업의 건강증진 효과성 분석 연구」의 방법: 시군구별 2015~2024년 값에 직선을 맞춰
+// 연간 변화량(기울기)을 구하고, 기울기로 3등분(좋음·보통·나쁨)한다. 우리 자료(표준화율·시군구 229곳)로 그 연구의 3분위 평균을
+// 그대로 재현함(남성흡연율 −1.39/−0.89/−0.37 vs 연구 −1.4/−0.9/−0.4, 비만율 0.46/0.81/1.17 동일). docs/통합건강증진사업_효과성분석_검토_v1.md
+export const TREND_START = 2015;        // 통합건강증진사업 2013 도입 → 연구는 2015년부터 10년
+export const TREND_PRE = [2008, 2014];  // 도입 전후 비교용 앞 구간
+
+/** OLS 기울기(연간 변화량). y0~y1 사이 값이 있는 해만, nmin개 미만이면 null */
+export function slopeOf(ind, item, code, y0, y1, nmin = 5) {
+  const pts = [];
+  for (const y of ind.years) if (y >= y0 && y <= y1) { const v = val(ind, item, y, code); if (v != null) pts.push([y, v]); }
+  if (pts.length < nmin) return null;
+  const n = pts.length, mx = pts.reduce((a, p) => a + p[0], 0) / n, my = pts.reduce((a, p) => a + p[1], 0) / n;
+  let sxy = 0, sxx = 0;
+  for (const [x, v] of pts) { sxy += (x - mx) * (v - my); sxx += (x - mx) ** 2; }
+  return sxx ? sxy / sxx : null;
+}
+
+/** 집단의 기울기 분포와 3분위(방향 보정: 좋음 = 나쁜 지표는 더 많이 내려간 쪽). rows 는 좋은 순 */
+export function slopeGroups(ind, item, pool, y0, y1) {
+  const rows = pool.map((r) => ({ r, s: slopeOf(ind, item, r.c, y0, y1) })).filter((x) => x.s != null);
+  const good = ind.bad === false ? (a, b) => b.s - a.s : (a, b) => a.s - b.s;   // 맥락 지표(bad==null)는 감소를 「좋음」으로 두지 않고 표시만
+  rows.sort(good);
+  const n = rows.length, t = Math.floor(n / 3);
+  const groups = n >= 6 ? [rows.slice(0, t), rows.slice(t, n - t), rows.slice(n - t)] : null;   // 연구와 같은 방식: 앞·뒤 t개, 가운데 나머지
+  const mean = (xs) => (xs.length ? xs.reduce((a, x) => a + x.s, 0) / xs.length : null);
+  const tierOf = (code) => { const k = rows.findIndex((x) => x.r.c === code); if (k < 0 || !groups) return null; return k < t ? 0 : k >= n - t ? 2 : 1; };
+  return { rows, n, groups, means: groups ? groups.map(mean) : null, all: mean(rows), tierOf, rankOf: (code) => rows.findIndex((x) => x.r.c === code) + 1 };
 }

@@ -1,6 +1,8 @@
 import { useMemo, useRef, useState } from "react";
-import { INDICATORS, DOMAINS_ALL as DOMAINS, SIDOS, SGG_BY_SIDO, SGG_ALL, RBY, fmt, val, nationalMedian, ranked, percentile, latestYear, label, betterCmp } from "../data";
+import Cite from "./Cite";
+import { INDICATORS, DOMAINS_ALL as DOMAINS, SIDOS, SGG_BY_SIDO, SGG_ALL, RBY, fmt, val, nationalMedian, ranked, percentile, latestYear, label, betterCmp , natPool } from "../data";
 import { pathOf, nearestIndex, clientXY, Gridlines, XAxis } from "./svgUtil";
+import CompareEquity from "./equity/CompareEquity";
 import ExportButtons from "./ExportButtons";
 
 export const NAT = "NAT";                       // 전국(전 시군구 중앙값) 가상 지역
@@ -97,7 +99,7 @@ function MultiTrend({ ind, item, year, codes, setTip }) {
 
 /* 선택 연도 막대 비교 + 전국 순위 */
 function YearBars({ ind, item, year, codes }) {
-  const natRank = ranked(ind, item, year, SGG_ALL);
+  const natRank = ranked(ind, item, year, natPool(ind));
   const sidoRank = ranked(ind, item, year, SIDOS);
   const rows = codes.map((c, k) => {
     const v = valueOf(ind, item, year, c);
@@ -158,7 +160,7 @@ function YearCompareTable({ ind, item, year, codes, onYear }) {
 function AllIndicatorTable({ item, year, codes, onPick }) {
   const rows = useMemo(() => INDICATORS.map((ind) => {
     const y = ind.years.includes(year) ? year : ind.years[ind.years.length - 1];
-    const pool = ranked(ind, item, y, SGG_ALL).map((x) => x.v);
+    const pool = ranked(ind, item, y, natPool(ind)).map((x) => x.v);
     const cells = codes.map((c) => {
       const v = valueOf(ind, item, y, c);
       const pct = c === NAT || ind.bad == null ? null : percentile(ind, v, pool);
@@ -205,7 +207,7 @@ function AllIndicatorTable({ item, year, codes, onPick }) {
   );
 }
 
-export default function Compare({ ind, item, year, codes, onCodes, onYear, onPick, setTip, sel }) {
+export default function Compare({ ind, item, year, codes, onCodes, onYear, onPick, setTip, sel, onRegionProfile }) {
   return (
     <div className="compare">
       <div className="card">
@@ -215,28 +217,29 @@ export default function Compare({ ind, item, year, codes, onCodes, onYear, onPic
       </div>
       {codes.length > 0 && (
         <>
+          <CompareEquity ind={ind} item={item} codes={codes.filter((c) => c !== NAT)} onRegionProfile={onRegionProfile} />
           <div className="grid2">
             <div className="card">
-              <h3>{ind.name} 추이 비교</h3>
+              <h3>{ind.name} 추이 비교<Cite ind={ind} /></h3>
               <ExportButtons name={`${ind.name}_추이비교`} />
               <div className="desc">{ind.years[0]}–{ind.years[ind.years.length - 1]} · {ind.bad == null ? "중립 지표" : ind.bad ? "낮을수록 양호" : "높을수록 양호"}</div>
               <MultiTrend ind={ind} item={item} year={year} codes={codes} setTip={setTip} />
             </div>
             <div className="card">
-              <h3>{year}년 {ind.name}</h3>
+              <h3>{year}년 {ind.name}<Cite ind={ind} /></h3>
               <ExportButtons name={`${year}_${ind.name}_비교`} kinds={["list"]} />
               <div className="desc">막대 비교 · 시군구는 전국 시군구 순위, 시도는 17개 시도 순위</div>
               <YearBars ind={ind} item={item} year={year} codes={codes} />
             </div>
           </div>
           <div className="card">
-            <h3>연도별 비교표</h3>
+            <h3>연도별 비교표<Cite ind={ind} /></h3>
             <ExportButtons name={`${ind.name}_연도별비교`} kinds={["csv"]} />
             <div className="desc">행을 누르면 연도 이동 · 차이는 첫 번째 지역에서 두 번째 지역을 뺀 값</div>
             <YearCompareTable ind={ind} item={item} year={year} codes={codes} onYear={onYear} />
           </div>
           <div className="card">
-            <h3>전 지표 비교 ({INDICATORS.length}개)</h3>
+            <h3>전 지표 비교 ({INDICATORS.length}개)<Cite k={["chs", "kdh", "cancer", "nhis", "hle", "dep"]} /></h3>
             <ExportButtons name={`${year}_전지표비교`} kinds={["csv"]} />
             <div className="desc">{year}년 기준(해당 연도 없으면 최신) · 값 아래 막대는 전국 시군구 백분위(높을수록 양호) · 색 강조는 비교 지역 중 가장 양호 · 행을 누르면 그 지표로 이동</div>
             <AllIndicatorTable item={item} year={year} codes={codes} onPick={onPick} />

@@ -1,0 +1,149 @@
+{
+  "_comment": "공공·지역 돌봄서비스 안내. API 데이터가 아니라 공식 누리집으로 연결하는 '안내 정보'입니다. 대상·자격·운영 여부는 지역과 시점에 따라 다르므로 반드시 공식 창구에서 확인하도록 안내합니다. 확인일: 2026-10-05",
+  "checkedAt": "2026-10-05",
+  "services": [
+    {
+      "id": "ltc_insurance",
+      "name": "노인장기요양보험 (방문요양·방문간호·방문목욕·주야간보호·단기보호·복지용구)",
+      "operator": "국민건강보험공단",
+      "summary": "장기요양 등급을 받으면 방문요양·방문간호·방문목욕·주야간보호·단기보호와 안전손잡이 같은 복지용구를 이용할 수 있습니다. 등급이 없으면 먼저 장기요양 인정 신청을 합니다.",
+      "howTo": "국민건강보험공단 지사 방문·우편·팩스 또는 노인장기요양보험 누리집에서 인정 신청. 등급 판정은 공단이 합니다.",
+      "contact": "국민건강보험공단 고객센터 1577-1000",
+      "url": "https://www.longtermcare.or.kr",
+      "urlLabel": "노인장기요양보험 누리집",
+      "kind": "national"
+    },
+    {
+      "id": "emergency_safety",
+      "name": "응급안전안심서비스",
+      "operator": "보건복지부 · 지방자치단체",
+      "summary": "집에 화재·활동량 감지 장비와 응급호출기를 설치해, 응급상황이 감지되면 119와 담당 기관에 알리는 서비스입니다. 혼자 사시는 어르신 등이 대상이며, 세부 기준은 지자체에서 확인합니다.",
+      "howTo": "거주지 읍·면·동 행정복지센터에 문의·신청",
+      "contact": "보건복지상담센터 129",
+      "url": "https://www.gov.kr/portal/service/serviceInfo/WII000000320",
+      "urlLabel": "정부24 서비스 안내(응급안전안심서비스)",
+      "kind": "national"
+    },
+    {
+      "id": "customized_care",
+      "name": "노인맞춤돌봄서비스",
+      "operator": "보건복지부 · 지방자치단체(수행기관)",
+      "summary": "일상생활이 어려운 어르신에게 안부 확인, 생활 지원, 사회참여 프로그램 등을 연계합니다. 소득·돌봄 필요도 등 대상 기준이 있어 신청 후 확인됩니다.",
+      "howTo": "거주지 읍·면·동 행정복지센터에 신청",
+      "contact": "보건복지상담센터 129",
+      "url": "https://www.gov.kr/portal/service/serviceInfo/SSE000000050",
+      "urlLabel": "정부24 서비스 안내(노인맞춤돌봄서비스)",
+      "kind": "national"
+    },
+    {
+      "id": "integrated_care",
+      "name": "지역사회 통합돌봄 (의료·요양 통합지원)",
+      "operator": "시·군·구",
+      "summary": "2026년 3월 27일 전국 시행된 「돌봄통합지원법」에 따라, 의료·요양·돌봄이 함께 필요한 어르신이 살던 곳에서 지낼 수 있도록 시·군·구가 필요한 서비스를 연계합니다. 운영 방식과 서비스 내용은 지자체마다 다릅니다.",
+      "howTo": "거주지 시·군·구청 또는 읍·면·동 행정복지센터 통합돌봄 창구에 문의",
+      "contact": "보건복지상담센터 129",
+      "url": "https://www.bokjiro.go.kr",
+      "urlLabel": "복지로에서 '통합돌봄' 검색",
+      "kind": "local"
+    },
+    {
+      "id": "dementia_center",
+      "name": "치매안심센터",
+      "operator": "시·군·구 보건소",
+      "summary": "전국 시·군·구 보건소에 설치되어 치매 상담, 조기검진 안내, 인지 프로그램, 가족 지원을 합니다. 진단은 의료기관에서 이루어집니다.",
+      "howTo": "거주지 치매안심센터에 전화 또는 방문",
+      "contact": "치매상담콜센터 1899-9988",
+      "url": "https://www.nid.or.kr",
+      "urlLabel": "중앙치매센터 누리집(치매안심센터 찾기)",
+      "kind": "national"
+    },
+    {
+      "id": "health_center_visit",
+      "name": "보건소 방문건강관리",
+      "operator": "시·군·구 보건소",
+      "summary": "보건소 방문간호사 등이 건강관리가 필요한 가정을 방문해 건강 상태 확인과 생활 관리를 돕는 사업입니다. 대상과 운영 방식은 보건소마다 다릅니다.",
+      "howTo": "거주지 보건소에 문의",
+      "contact": "거주지 보건소",
+      "url": "https://www.gov.kr",
+      "urlLabel": "정부24에서 거주지 보건소 찾기",
+      "kind": "local"
+    },
+    {
+      "id": "mobility_support",
+      "name": "교통약자 이동지원센터",
+      "operator": "시·도 / 시·군·구",
+      "summary": "이동이 어려운 분을 위한 특별교통수단(차량) 등을 운영합니다. 이용 대상(장애·고령 등) 기준은 지역마다 다릅니다.",
+      "howTo": "거주지 교통약자 이동지원센터에 이용 등록 문의",
+      "contact": "거주지 시·군·구청",
+      "url": "https://www.gov.kr",
+      "urlLabel": "정부24에서 '교통약자 이동지원' 검색",
+      "kind": "local"
+    },
+    {
+      "id": "hospital_escort_local",
+      "name": "지자체 병원동행 서비스",
+      "operator": "일부 시·군·구",
+      "summary": "일부 지자체는 혼자 병원에 가기 어려운 분께 동행 인력을 연결합니다. 운영 여부·비용·대상은 지역마다 달라 직접 확인이 필요합니다.",
+      "howTo": "거주지 시·군·구청 또는 행정복지센터에 '병원동행' 운영 여부 문의",
+      "contact": "보건복지상담센터 129",
+      "url": "https://www.bokjiro.go.kr",
+      "urlLabel": "복지로에서 '병원동행' 검색",
+      "kind": "local"
+    },
+    {
+      "id": "meal_support",
+      "name": "어르신 식사 지원 (경로식당·식사 배달)",
+      "operator": "지방자치단체 · 복지관",
+      "summary": "지역에 따라 경로식당 무료급식, 거동이 불편한 분께 도시락·밑반찬 배달을 운영합니다. 대상 기준은 지역마다 다릅니다.",
+      "howTo": "거주지 행정복지센터 또는 노인복지관에 문의",
+      "contact": "보건복지상담센터 129",
+      "url": "https://www.bokjiro.go.kr",
+      "urlLabel": "복지로에서 '식사 배달' 검색",
+      "kind": "local"
+    },
+    {
+      "id": "welfare_center",
+      "name": "노인복지관·경로당 프로그램",
+      "operator": "지방자치단체 · 복지법인",
+      "summary": "여가·운동·교육·사회참여 프로그램을 운영합니다.",
+      "howTo": "가까운 노인복지관에 문의",
+      "contact": "거주지 행정복지센터",
+      "url": "https://www.bokjiro.go.kr",
+      "urlLabel": "복지로에서 지역 복지시설 찾기",
+      "kind": "local"
+    },
+    {
+      "id": "family_care_leave",
+      "name": "가족돌봄휴가 · 가족돌봄휴직 (일하는 자녀용)",
+      "operator": "고용노동부",
+      "summary": "근로자가 가족 돌봄을 위해 쓸 수 있는 휴가·휴직 제도입니다. 사용 요건과 기간은 고용노동부 안내에서 확인하세요.",
+      "howTo": "회사 인사담당 부서에 신청 / 고용노동부 상담",
+      "contact": "고용노동부 고객상담센터 1350",
+      "url": "https://www.moel.go.kr",
+      "urlLabel": "고용노동부 누리집",
+      "kind": "national"
+    },
+    {
+      "id": "counsel_129",
+      "name": "보건복지상담센터",
+      "operator": "보건복지부",
+      "summary": "복지 서비스 대상 여부와 신청 방법을 전화로 상담할 수 있습니다.",
+      "howTo": "국번 없이 129",
+      "contact": "129",
+      "url": "https://www.bokjiro.go.kr",
+      "urlLabel": "복지로",
+      "kind": "national"
+    },
+    {
+      "id": "emergency_119",
+      "name": "119 (응급상황)",
+      "operator": "소방청",
+      "summary": "응급상황에서는 이 서비스를 찾기보다 먼저 119에 전화하세요.",
+      "howTo": "국번 없이 119",
+      "contact": "119",
+      "url": "https://www.119.go.kr",
+      "urlLabel": "소방청 119",
+      "kind": "national"
+    }
+  ]
+}

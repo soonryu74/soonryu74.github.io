@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Cite from "./Cite";
 import { RISK, COVID, riskOf, riskRank, fmt, label, RBY } from "../data";
 import ExportButtons from "./ExportButtons";
 
@@ -26,7 +27,7 @@ function CovidRef({ sel }) {
   );
   return (
     <div className="covidref">
-      <h4>코로나19 실적 참고 <small className="muted">2020.1.20~2023.8.31 전수감시 기간 누적 · 신고 보건소 관할 기준</small></h4>
+      <h4>코로나19 실적 참고<Cite k="covid" /> <small className="muted">2020.1.20~2023.8.31 전수감시 기간 누적 · 신고 보건소 관할 기준</small></h4>
       <div className="tblscroll">
         <table className="yeartbl covidtbl">
           <thead><tr><th>지역</th><th>확진율(인구 100명당)</th><th>사망(10만 명당)</th><th>치명률(사망÷확진)</th></tr></thead>
@@ -57,7 +58,7 @@ function CovidRef({ sel }) {
 }
 
 /* 감염병 대응 고위험군 규모 (프로파일 카드) */
-export default function RiskCard({ sel, pool, poolName }) {
+export default function RiskCard({ sel, pool, poolName, onElder }) {
   const rec = riskOf(sel.c);
   const [cat, setCat] = useState("전체");
   const rows = useMemo(() => {
@@ -76,10 +77,11 @@ export default function RiskCard({ sel, pool, poolName }) {
   const shown = rows.filter((r) => cat === "전체" || r.g.cat === cat);
   return (
     <div className="card span2 risk">
-      <h3>감염병 대응 고위험군 <small className="muted">(규모 추정 · 집단 간 중복 있음)</small></h3>
+      <h3>감염병 대응 고위험군<Cite k="risk" /> <small className="muted">(규모 추정 · 집단 간 중복 있음)</small></h3>
       <ExportButtons name={`${label(sel)}_고위험군`} kinds={["list"]} />
       <div className="desc">
         질병관리청 지침(코로나19·인플루엔자·감염취약시설)의 고위험군 정의를 지역 자료로 옮겨 규모를 잡은 것입니다. 인구 기준 {RISK.pop_year}년 연앙인구 {nf(rec.pop)}명.
+        {onElder && <> <button type="button" className="linkbtn" onClick={onElder} title="65세 이상 고령층이 취약한 시군구를 전국에서 보는 보고서">고령층(65세+) 취약 보고서 →</button></>}
       </div>
       <details className="method">
         <summary>산출 방법과 읽을 때 주의할 점</summary>

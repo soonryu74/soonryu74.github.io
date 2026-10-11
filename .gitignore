@@ -2,3 +2,8 @@ __pycache__/
 *.pyc
 scripts/kess_cache/
 scripts/adiga_cache/
+
+# 다시ON AI — 비밀키 파일은 커밋하지 않는다
+.env
+reon/.env
+reon/node_modules/

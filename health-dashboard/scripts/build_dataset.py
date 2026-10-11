@@ -83,13 +83,30 @@ POLY_SPECIAL = {"창원시마산합포구": ("창원시", "마산"), "창원시�
 MULTI = re.compile(r"^(.+?시)(.+구)$")
 
 
+# 제주: KOSIS 코드 체계가 다른 시도와 다르다. 01600=서귀포시, 01600A=제주시(시 전체)이고,
+# 01601 「서귀포」(영문 Seogwipo-si Seogwipo)·01603 「제주」(Jeju-si Jeju)는 5자리지만 시 아래 보건소 단위다.
+# 이 둘을 시군구로 두면 전국 시군구 목록에 제주가 두 번 들어가 순위 분모가 229→231로 부풀고 중앙값이 흔들린다
+# (2026-09-24 발견·수정). 동부·서부(0160201·0160202 / 0160401·0160402)도 각 시 아래로 붙인다.
+JEJU_SUB = {"01601": "01600", "01603": "01600A"}
+JEJU_GROUP = {"01602": "01600", "01604": "01600A"}
+# 「시·군·구별 아침식사 실천율」 표만 제주 두 보건소를 다른 코드로 싣는다 → 같은 보건소이므로 표준 코드로 합친다.
+# (지역 목록에서는 코드를 지우지 않는다 — 암검진·검진·김동현 DB 행렬이 이 지역 순서로 정렬되어 있기 때문. 값이 없으면 앱이 숨긴다.)
+CODE_ALIAS = {"0160000": "01601", "0160400": "01603"}
+
+
 def level_of(code):
+    if code in JEJU_SUB:
+        return "sub"
     return "sido" if len(code) <= 4 else ("sub" if len(code) == 7 else "sgg")
 
 
 def parent_of(code):
     if len(code) <= 4:
         return None
+    if code in JEJU_SUB:
+        return JEJU_SUB[code]
+    if len(code) == 7 and code[:5] in JEJU_GROUP:
+        return JEJU_GROUP[code[:5]]
     return code[:5] if len(code) == 7 else (code[:3] if not code.startswith("0071") else "0071")
 
 
@@ -144,7 +161,7 @@ def main():
             for r in rows:
                 if r["ITM_NM"] != item:
                     continue
-                m[yi[r["PRD_DE"][:4]]][idx[r["C1"]]] = to_int(r["DT"])
+                m[yi[r["PRD_DE"][:4]]][idx[CODE_ALIAS.get(r["C1"], r["C1"])]] = to_int(r["DT"])
             mats[key] = m
         unit = next((r["UNIT_NM"] for r in rows if r.get("UNIT_NM")), "%")
         filled = sum(1 for row in mats["crude"] for v in row if v is not None)
@@ -178,7 +195,7 @@ def main():
 
     # 폴리곤 이름 → 후보 KOSIS 코드 목록. 앱은 해당 연도에 값이 있는 첫 후보를 사용
     RENAME = {("004", "남구"): "미추홀구"}      # 인천 남구 → 미추홀구(2018)
-    ALT = {"세종시": ["00711", "0071"], "제주시": ["01600A", "01603"], "서귀포시": ["01600", "01601"]}
+    ALT = {"세종시": ["00711", "0071"], "제주시": ["01600A"], "서귀포시": ["01600"]}   # 01601·01603 은 보건소 단위라 지도 후보에서 뺀다
     geo_map, unmapped = {}, []
     for g in geoms:
         code, pname = g["properties"]["code"], g["properties"]["name"]

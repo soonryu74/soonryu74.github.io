@@ -25,7 +25,7 @@ const MOCK = {
     // 3) OVERCORRECTION  → must be dropped (whole sentence rewritten)
     {kind:'odd', label:'style', original:'배 아파요', fixed:'제가 어제 저녁부터 복통이 심해서 병원에 방문하게 되었습니다', why:'z'} ] }
 };
-let lastBody = null, mode = 'dial';
+let lastBody = null, lastUrl = '', mode = 'dial';
 
 (async () => {
   const b = await chromium.launch(CHROME ? { executablePath: CHROME } : {});
@@ -33,14 +33,14 @@ let lastBody = null, mode = 'dial';
   const errs = []; p.on('pageerror', e => errs.push(String(e)));
 
   await p.route('**/generativelanguage.googleapis.com/**', async route => {
-    lastBody = JSON.parse(route.request().postData());
+    lastBody = JSON.parse(route.request().postData()); lastUrl = route.request().url();
     const payload = mode === 'chat' ? MOCK.chat : JSON.stringify(MOCK[mode]);
     await route.fulfill({ status:200, contentType:'application/json',
       body: JSON.stringify({ candidates:[{ content:{ parts:[{ text: payload }] } }] }) });
   });
 
   await p.goto(APP);
-  await p.evaluate(() => localStorage.setItem('nunchi.key','TEST-KEY'));
+  await p.evaluate(() => { localStorage.setItem('nunchi.key','TEST-KEY'); localStorage.setItem('nunchi.model','gemini-omni-flash-preview'); });
   await p.reload(); await p.waitForTimeout(400);
 
   console.log('\n[1] opens with a worked example, no key needed');
@@ -54,6 +54,7 @@ let lastBody = null, mode = 'dial';
   ok('renders returned lines', (await p.locator('#dial-out .rung .ko').first().textContent()).includes('나 내일 못 가'));
   ok('asks for exactly 5 speech levels', /five listeners/.test(lastBody.systemInstruction.parts[0].text));
   ok('uses JSON schema mode', lastBody.generationConfig.responseMimeType === 'application/json');
+  ok('retired preview model name is replaced by its GA model', /models\/gemini-omni-1\.1-flash:/.test(lastUrl), lastUrl);
   ok('highlighted rung follows the slider', (await p.locator('#dial-out .rung.on .who').textContent()).trim() === 'Boss');
   await p.fill('#dial-range', '0');
   await p.dispatchEvent('#dial-range','input'); await p.waitForTimeout(150);

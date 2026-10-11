@@ -1,0 +1,70 @@
+{
+  "version": "2026-10-04",
+  "title": "Health Equity Radar — common indicator schema for WHO STEPS cross-country proof of concept",
+  "note": "Built from the public WHO NCD Microdata Repository data dictionaries and official reports only. No individual records. Use of the WHO public-use datasets is for non-commercial, not-for-profit public health research and demonstration.",
+  "sources": {
+    "VNM": { "country": "Viet Nam", "survey_id": "VNM_2021_STEPS_v01", "catalog": "https://extranet.who.int/ncdsmicrodata/index.php/catalog/948", "year": 2021, "cases": 4435, "variables": 186, "age": "18-69", "file": "public-use dataset (WHO login required)", "subgroups": ["sex", "age"], "urban_rural": "not in the public-use file (strata combine urban/rural × area type; strata are not provinces)", "glucose_unit": "mmol/L", "pa_module": "GPAQ (p1–p15)", "ci": "wald", "age_groups": [[18, 29], [30, 49], [50, 69]] },
+    "TLS": { "country": "Timor-Leste", "survey_id": "TLS_2023_STEPS_v01", "catalog": "https://extranet.who.int/ncdsmicrodata/index.php/catalog/998", "year": 2023, "cases": 3516, "variables": 262, "age": "18-69", "response_rate": "82%", "file": "tls2023 public-use dataset (WHO login required)", "subgroups": ["sex", "age"], "urban_rural": "not in the public-use file", "glucose_unit": "mg/dL", "pa_module": "reduced module (px1–px6: vigorous and moderate activity only)", "ci": "logit", "age_groups": [[18, 44], [45, 69]] },
+    "UGA": { "country": "Uganda", "survey_id": "UGA_2023_STEPS_v01", "catalog": "https://extranet.who.int/ncdsmicrodata/index.php/catalog/995", "year": 2023, "cases": 3694, "variables": 219, "age": "18-69", "response_rate": "86%", "file": "uga2023 public-use dataset (WHO login required)", "subgroups": ["sex", "age", "urban_rural"], "urban_rural": "urban_rural variable present; region variable present but not used for ranking", "glucose_unit": "mmol/L", "pa_module": "GPAQ (p1–p15)", "ci": "wald", "age_groups": [[18, 29], [30, 44], [45, 69]] },
+    "KOR": { "country": "Republic of Korea", "survey": "Korea Community Health Survey (KDCA), 258 survey units", "note": "Comparable public-health concept with different national data sources — self-reported, adults 19+, standardized rates; shown as the median of 258 survey units, never ranked against other countries." }
+  },
+  "design": { "strata": "stratum", "psu": "psu", "variance": "Taylor linearization, with-replacement PSU approximation; strata with a single PSU are centred on the overall mean", "age_var": "age", "sex_var": "sex (1 = men, 2 = women)", "age_range": [18, 69] },
+  "indicators": [
+    {
+      "key": "smoking", "name": "Current tobacco smoking", "name_ko": "현재 흡연",
+      "direction": "lower_is_better", "weight": "wstep1",
+      "rule": "t1 == 1 among valid t1 (1 = yes, 2 = no)",
+      "by_country": {
+        "VNM": { "vars": ["t1"], "harmonization": "same definition; the official headline is for ages 15+ (separate 15+ weight), so 18–69 can only be checked against overlapping age bands", "label": "current smoking" },
+        "TLS": { "vars": ["t1"], "harmonization": "same", "label": "Currently smoke any tobacco" },
+        "UGA": { "vars": ["t1"], "harmonization": "same", "label": "current smoking" }
+      },
+      "korea": { "indicator": "현재흡연율 (DT_H_SM)", "definition": "self-reported current smoking, lifetime ≥5 packs, adults 19+" }
+    },
+    {
+      "key": "inactive", "name": "Insufficient physical activity", "name_ko": "신체활동 부족",
+      "direction": "lower_is_better", "weight": "wstep1",
+      "rule": "total MET-minutes/week < 600; minutes per day capped per STEPS cleaning (days 1–7, ≤ 16 h/day per domain); 'no' answers count as 0",
+      "by_country": {
+        "VNM": { "vars": ["p1", "p2", "p3a", "p3b", "p4", "p5", "p6a", "p6b", "p7", "p8", "p9a", "p9b", "p10", "p11", "p12a", "p12b", "p13", "p14", "p15a", "p15b"], "formula": "8·vig work + 4·mod work + 4·transport + 8·vig leisure + 4·mod leisure (minutes × days)", "harmonization": "same (GPAQ)" },
+        "TLS": { "vars": ["px1", "px2", "px3hrs", "px3mins", "px4", "px5", "px6hrs", "px6mins"], "formula": "8·vigorous + 4·moderate (minutes × days), no domain split", "harmonization": "approximate — reduced module; the report's executive summary uses a different definition (<150 min moderate/week, 35.7%) from its annex table (2.4%)" },
+        "UGA": { "vars": ["p1", "p2", "p3a", "p3b", "p4", "p5", "p6a", "p6b", "p7", "p8", "p9a", "p9b", "p10", "p11", "p12a", "p12b", "p13", "p14", "p15a", "p15b"], "formula": "same as VNM", "harmonization": "same (GPAQ)" }
+      },
+      "korea": { "indicator": "중강도 이상 신체활동 실천율 (inverse concept)", "definition": "self-reported, different questionnaire and threshold — concept only" }
+    },
+    {
+      "key": "bmi25", "name": "Overweight or obesity (BMI ≥ 25)", "name_ko": "과체중·비만(BMI≥25)",
+      "direction": "lower_is_better", "weight": "wstep2",
+      "rule": "measured height m11 (cm) and weight m12 (kg); BMI = kg/m²; pregnant women (m8 == 1) excluded; BMI kept in 14–60",
+      "by_country": {
+        "VNM": { "vars": ["m11", "m12", "m8"], "harmonization": "same" },
+        "TLS": { "vars": ["m11", "m12", "m8"], "harmonization": "same; report narrative (21.5%) and annex table (17.9%) differ" },
+        "UGA": { "vars": ["m11", "m12", "m8"], "harmonization": "same" }
+      },
+      "korea": { "indicator": "비만율 (자가보고, BMI ≥ 25)", "definition": "self-reported height and weight — measured vs self-reported differ" }
+    },
+    {
+      "key": "raisedbp", "name": "Raised blood pressure", "name_ko": "혈압 상승",
+      "direction": "lower_is_better", "weight": "wstep2",
+      "rule": "SBP ≥ 140 and/or DBP ≥ 90 mmHg (mean of readings 2 and 3, STEPS standard; VNM report says mean of three — both tested) or on medication (m7 == 1)",
+      "by_country": {
+        "VNM": { "vars": ["m4a", "m4b", "m5a", "m5b", "m6a", "m6b", "m7"], "harmonization": "same" },
+        "TLS": { "vars": ["m4a", "m4b", "m5a", "m5b", "m6a", "m6b", "m7"], "harmonization": "same; annex table row for 18–69 missing — narrative 22.3% used, no CI" },
+        "UGA": { "vars": ["m4a", "m4b", "m5a", "m5b", "m6a", "m6b", "m7"], "harmonization": "same" }
+      },
+      "korea": { "indicator": "고혈압 진단 경험률 (30세 이상)", "definition": "self-reported diagnosis — not measured" }
+    },
+    {
+      "key": "raisedglu", "name": "Raised fasting blood glucose", "name_ko": "공복혈당 상승",
+      "direction": "lower_is_better", "weight": "wstep3",
+      "rule": "fasting (b1 == 2, did not eat/drink in past 12 h) and fasting glucose ≥ threshold, or on medication for diabetes (h8 == 1 or b6 == 1)",
+      "by_country": {
+        "VNM": { "vars": ["b1", "b5", "b6", "h8"], "unit": "mmol/L", "threshold": "7.0 mmol/L", "harmonization": "same" },
+        "TLS": { "vars": ["b1", "b5", "b6", "h8"], "unit": "mg/dL", "threshold": "report text: capillary ≥ 6.1 mmol/L ('126 mg/dl'); 6.1 mmol/L = 110 mg/dL — both tested", "harmonization": "approximate until the threshold is confirmed by reproduction" },
+        "UGA": { "vars": ["b1", "b5", "b6", "h8"], "unit": "mmol/L", "threshold": "to confirm (7.0 plasma or 6.1 capillary) — both tested", "harmonization": "same once threshold confirmed" }
+      },
+      "korea": { "indicator": "당뇨병 진단 경험률 (30세 이상)", "definition": "self-reported diagnosis — not measured" }
+    }
+  ],
+  "validation_rule": "PASS if |reproduced − official| ≤ 1.0 percentage point or the reproduced value lies inside the official 95% CI; otherwise investigate (age, missing, pregnancy, weights, BP averaging, MET cleaning, fasting rule). Indicators that do not pass are not shown with numbers."
+}

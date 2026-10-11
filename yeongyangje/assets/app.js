@@ -12,6 +12,7 @@
     ['seongbun.html', '성분별 근거'],
     ['jilhwan.html', '질환별 판정'],
     ['bokyong.html', '약·복용법'],
+    ['haru.html', '하루 영양소 기준'],
     ['saengae.html', '생애주기'],
     ['jeungsang.html', '증상별'],
     ['geomsa.html', '검사·계산기'],
@@ -21,7 +22,9 @@
     ['chucheon.html', '내게 맞는 영양제'],
     ['jepum.html', '제품 고르는 법'],
     ['bigyo.html', '제품 환산 계산기'],
+    ['seongbunpyo.html', '성분표 읽기'],
     ['goyongryang.html', '고용량 요법·주사'],
+    ['jangnusu.html', '장누수'],
     ['rnd.html', 'R&D'],
     ['about.html', '원칙·소개']
   ];

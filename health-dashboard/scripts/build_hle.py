@@ -136,6 +136,11 @@ def sido_code(nm):
     return None
 
 # ── 4. 시군구: 사망자(DT_1B80A18) + 연앙인구(DT_1B040M5) ───────────────────────
+# 마지막 연도 = 시군구 사망자·연앙인구 원자료가 모두 있는 가장 최근 해(사망원인통계 공표 후 kosis_fetch_hle.py year <연도>)
+_dy = {int(m.group(1)) for f in RAW.glob("DT_1B80A18_*_T2_SBB0.json") for m in [re.match(r"DT_1B80A18_(\d{4})_", f.name)] if m}
+_py = {int(m.group(1)) for f in RAW.glob("DT_1B040M5*_SBB0.json") for m in [re.match(r"DT_1B040M5(?:_1)?_(\d{4})_", f.name)] if m}
+LAST_Y = max(_dy & _py)
+print("시군구 사망자·인구 마지막 연도", LAST_Y)
 AGES_SGG = [0] + list(range(5, 90, 5))      # 0-4, 5-9, …, 85+
 D_AGE = {"520": 0, "040": 1, "050": 5, "070": 10, "100": 15, "120": 20, "130": 25, "150": 30, "160": 35, "180": 40, "190": 45,
          "210": 50, "230": 55, "260": 60, "280": 65, "310": 70, "330": 75, "360": 80, "380": 85, "390": 90}
@@ -144,7 +149,7 @@ P_AGE = {"020": 0, "050": 5, "070": 10, "100": 15, "120": 20, "130": 25, "150": 
 DEATH = collections.defaultdict(lambda: collections.defaultdict(float))   # (year, stat_code) -> {age0: deaths}
 DEATH_UNK = collections.defaultdict(float)
 NAMES = {}
-for y in range(2016, 2025):
+for y in range(2016, LAST_Y + 1):
     for r in load_years("DT_1B80A18", y, y):
         c = cls(r)
         if r["ITM_ID"] != "T2" or c["성별"][1] != "계": continue   # 성별 계, 사망자 수
@@ -155,7 +160,7 @@ for y in range(2016, 2025):
         DEATH[(y, code)][D_AGE[age]] += v
 POP = collections.defaultdict(lambda: collections.defaultdict(float))
 POP_SIDO = collections.defaultdict(dict)
-for y in range(2016, 2025):
+for y in range(2016, LAST_Y + 1):
     rows = load_years("DT_1B040M5", y, y) or load_years("DT_1B040M5_1", y, y)
     for r in rows:
         c = cls(r)
@@ -280,7 +285,7 @@ def sido_official_le(code, yc):
 KFAC = {}
 for sc, snm in STAT_SIDO.items():
     code = next((r["c"] for r in DS["regions"] if r["l"] == "sido" and r["s"] == snm), None)
-    for yc in range(2017, 2024):
+    for yc in range(2017, LAST_Y):          # 3년 합산 중심 연도(마지막은 LAST_Y-1)
         pl = pooled({sc}, yc); off = sido_official_le(code, yc) if code else None
         if not pl or not off: continue
         D, P, _ = pl; lo, hi = 0.7, 1.4
@@ -292,7 +297,7 @@ for sc, snm in STAT_SIDO.items():
 print("시도 보정계수 k 범위", round(min(KFAC.values()), 3), "~", round(max(KFAC.values()), 3))
 out["method"]["kfac"] = {f"{STAT_SIDO[sc]}_{yc}": round(k, 4) for (sc, yc), k in KFAC.items()}
 
-for yc in range(2017, 2024):
+for yc in range(2017, LAST_Y):          # 3년 합산 중심 연도(마지막은 LAST_Y-1)
     for dst, codes in DST2CODES.items():
         pl = pooled(codes, yc)
         if not pl: continue

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Cite from "./Cite";
 import { feature, mesh } from "topojson-client";
 import { geoMercator, geoPath } from "d3-geo";
 import { DS, RBY, UNITS, UNIT_BY_CODE, SIDOS } from "../data";
@@ -50,18 +51,18 @@ export default function UnitsView({ setTip }) {
   return (
     <div className="units">
       <div className="card">
-        <h3>이 대시보드의 "시군구"는 무엇을 뜻하나</h3>
+        <h3>이 대시보드의 "시군구"는 무엇을 뜻하나<Cite k={["chs25", "mois", "kdcahc"]} /></h3>
         <div className="unitsdoc">
-          <p><b>조사 단위는 행정안전부 행정구역이 아니라 보건소입니다.</b> 지역사회건강조사는 매년 전국 보건소가 각자 관할 주민 약 900명을 조사하고, 통계도 보건소 단위로 만들어집니다. 2025년 조사 단위는 질병관리청 「2025 지역건강통계 한눈에 보기」 부록 기준 <b>258개 보건소</b>(KOSIS 수록 단위 {yearly[yearly.length - 1].units}개는 시 전체 행 포함, 보건소정보 페이지 공식 목록은 {UNITS.official_count}곳), 행정안전부 기초자치단체는 229곳(2025년)입니다.</p>
+          <p><b>조사 단위는 행정안전부 행정구역이 아니라 보건소입니다.</b> 지역사회건강조사는 매년 전국 보건소가 각자 관할 주민 약 900명을 조사하고, 통계도 보건소 단위로 만들어집니다. 2025년 조사 단위는 질병관리청 「2025 지역건강통계 한눈에 보기」 부록 기준 <b>258개 보건소</b>(KOSIS 수록 단위 {yearly[yearly.length - 1].units}개는 시 전체 행 포함, 보건소정보 페이지 공식 목록은 {UNITS.official_count}곳), 시군구는 229곳(행정안전부 기초자치단체 226곳 + 제주 행정시 2곳 + 세종시)입니다.</p>
           <p>숫자가 다른 이유: ① <b>큰 시의 일반구마다 보건소</b>가 있습니다(수원 4·청주 4·성남 3·고양 3·부천 3·용인 3·창원 3·안양 2·안산 2·포항 2·평택 2·구미 2·남양주 2·제주시 3·서귀포시 3). KOSIS는 이런 시에 "시 전체" 행과 "보건소별" 행을 모두 제공하고, 이 대시보드는 시 전체 행을 시군구로, 보건소별 행을 세부 단위로 씁니다. ② 군 지역의 <b>보건의료원</b>은 보건소 역할을 겸합니다. ③ <b>행정구역 변경</b> — 군위군은 2023년 대구로 편입, 인천 남구는 2018년 미추홀구로 개명, 청원군(2014년 청주 통합)·연기군(2012년 세종 출범)은 폐지되어 과거 연도에만 있습니다.</p>
-          <p><b>순위 분모가 232·231·226으로 조금씩 다른 이유</b>: 지표마다 그 해에 값이 있는 단위 수가 다르기 때문입니다(폐지·신설 단위, 일부 지표의 미조사). 화면의 "N/231"은 <i>그 지표·그 해에 값이 있는 시군구 수</i>입니다.</p>
+          <p><b>전국 순위·중앙값의 기준</b>은 자료에 따라 다릅니다. <b>지역사회건강조사 지표는 조사 단위 258곳</b>(일반구가 있는 시는 보건소별)이 기준입니다. 질병관리청이 「시·군·구별 약 900명 × 258개 지역」으로 조사하고 「전국 대푯값은 시·군·구 중앙값」으로 공표하는 방식과 같으며, 2024·2025년 공표 중앙값과 대조해 확인했습니다. 수원시처럼 보건소 여러 곳으로 조사되는 시는 시 전체 순위를 매기지 않고 보건소별로 봅니다. <b>사망률·검진·인구 등 시군구 단위 자료는 시군구 229곳</b>이 기준이고, 그 해에 값이 없는 곳이 있으면 분모가 줄어듭니다. 지역 프로파일의 종합 순위도 여러 자료를 합치므로 시군구 229곳으로 비교합니다.</p>
           <p><b>법정동과 행정동</b>: 법정동은 지번·등기에 쓰는 법적 구역이고, 행정동은 주민센터가 실제로 행정을 맡는 단위입니다. 보건소 관할과 표본추출(통·반/리, 주민등록 주소 기준)은 <b>행정동·읍·면</b>을 따릅니다. 이 대시보드의 지도는 통계청 2018년 시군구 경계를 쓰며, 일반구까지 그려져 있어 보건소 단위와 거의 일치합니다.</p>
         </div>
       </div>
 
       <div className="grid2">
         <div className="card span2 unitmap">
-          <h3>조사 단위 지도 — 시군구·보건소 확인</h3>
+          <h3>조사 단위 지도 — 시군구·보건소 확인<Cite k={["chs25", "geo"]} /></h3>
           <ExportButtons name="조사단위_지도" />
           <div className="desc">폴리곤을 누르면 KOSIS 코드·공식 보건소명·세부 단위·수록 기간을 표시합니다. 색은 단위 유형.</div>
           <div className="unitwrap">
@@ -108,7 +109,7 @@ export default function UnitsView({ setTip }) {
         </div>
 
         <div className="card">
-          <h3>연도별 조사 참여 단위 수</h3>
+          <h3>연도별 조사 참여 단위 수<Cite k={["chs", "chs25"]} /></h3>
           <ExportButtons name="연도별_참여단위" />
           <div className="desc">KOSIS에 값이 수록된 단위(현재흡연율 기준). 시군구 행 + 보건소 세부 행, 세부가 있는 시는 세부로 계산</div>
           <svg viewBox="0 0 560 220" width="100%" role="img" aria-label="연도별 참여 단위 수">
@@ -125,7 +126,7 @@ export default function UnitsView({ setTip }) {
         </div>
 
         <div className="card">
-          <h3>시도별 지역보건의료기관 수 ({UNITS.facilities_year})</h3>
+          <h3>시도별 지역보건의료기관 수 ({UNITS.facilities_year})<Cite k="fac" /></h3>
           <ExportButtons name="시도별_보건기관수" kinds={["csv"]} />
           <div className="desc">{UNITS.facilities_source}. 보건지소·보건진료소는 조사 단위가 아니라 보건소 산하 기관입니다.</div>
           <div className="tblscroll">
@@ -138,7 +139,7 @@ export default function UnitsView({ setTip }) {
       </div>
 
       <div className="card">
-        <h3>조사 단위 목록 <small className="muted">기준 258개소 · 과거 폐지 단위 포함 전체 {UNITS.units.length}개</small></h3>
+        <h3>조사 단위 목록<Cite k={["chs25", "fac"]} /> <small className="muted">기준 258개소 · 과거 폐지 단위 포함 전체 {UNITS.units.length}개</small></h3>
         <div className="desc">이 대시보드의 지역 기준은 <b>지역사회건강조사 258개 조사 단위</b>입니다. 자료원별 보유 현황은 <b>「자료원」 탭</b>에서 볼 수 있습니다.</div>
         <ExportButtons name="조사단위_목록" kinds={["csv"]} />
         <div className="desc">공식 보건소명은 질병관리청 지역사회건강조사 보건소정보 페이지 기준({UNITS.official_count}곳). 행을 누르면 지도에서 강조됩니다.</div>

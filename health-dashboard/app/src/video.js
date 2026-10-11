@@ -50,7 +50,7 @@ export async function renderRankVideo(o) {
     ctx.fillStyle = C.ink; ctx.font = `700 ${W >= 1000 ? 30 : 22}px ${font}`; ctx.textBaseline = "alphabetic";
     ctx.fillText(o.title, LEFT, 44);
     ctx.fillStyle = C.mut; ctx.font = `400 ${W >= 1000 ? 15 : 12}px ${font}`;
-    ctx.fillText(`${o.poolName} 순위 · ${o.subtitle} · 막대 길이 = 값(0 기준, ${years[0]}~${years[years.length - 1]} 공통 척도)`, LEFT, 70);
+    ctx.fillText(clipText(ctx, `${o.poolName} 순위 · ${o.subtitle} · 막대 길이 = 값(0 기준, ${years[0]}~${years[years.length - 1]} 공통 척도)`, W - LEFT - RIGHT - 190), LEFT, 70);
     // 연도(우상단)
     ctx.textAlign = "right"; ctx.fillStyle = C.blue; ctx.font = `900 ${W >= 1000 ? 64 : 44}px ${font}`;
     ctx.fillText(String(yearLabel), W - RIGHT, 78); ctx.textAlign = "left";
@@ -86,7 +86,7 @@ export async function renderRankVideo(o) {
       ctx.fillStyle = it.me ? C.barMe : C.bar; roundRect(ctx, barX, it.y, bw, h, 3); ctx.fill();
       if (it.me) { ctx.strokeStyle = C.meLine; ctx.lineWidth = 2; roundRect(ctx, barX + 1, it.y + 1, barW - 2, h - 2, 3); ctx.stroke(); }
       if (showText) {
-        const fs = Math.min(15, Math.max(10, rowH - 9));
+        const fs = Math.min(15, Math.max(rowH >= 14 ? 11 : 10, rowH - 9));   // 258곳 세로 영상(줄 14px)은 11px
         ctx.font = `${it.me ? 700 : 500} ${fs}px ${font}`; ctx.textBaseline = "middle";
         ctx.fillStyle = C.mut; ctx.textAlign = "right"; ctx.fillText(String(Math.round(it.rank) + 1), LEFT + 30, it.y + h / 2);
         ctx.fillStyle = C.ink; ctx.textAlign = "left";
@@ -120,16 +120,20 @@ export async function renderRankVideo(o) {
   // ── 인코딩 ──
   const supportsWC = typeof VideoEncoder !== "undefined" && typeof VideoFrame !== "undefined";
   let avc = null;
+  // 큰 화면(258곳 세로 영상 1080×약 3,800)은 H.264 레벨 4.0(최대 1920×1080급)을 넘으므로 5.2·5.1 레벨을 먼저 시도한다
+  const big = W * H > 1920 * 1088;
+  const bitrate = Math.min(20_000_000, Math.round(6_000_000 * Math.max(1, (W * H) / (1280 * 720))));
   if (supportsWC) {
-    for (const codec of ["avc1.640028", "avc1.4d0028", "avc1.42001f"]) {
-      try { const r = await VideoEncoder.isConfigSupported({ codec, width: W, height: H, bitrate: 6_000_000, framerate: fps }); if (r.supported) { avc = codec; break; } } catch { /* noop */ }
+    const list = big ? ["avc1.640034", "avc1.640033", "avc1.4d0034"] : ["avc1.640028", "avc1.4d0028", "avc1.42001f"];
+    for (const codec of list) {
+      try { const r = await VideoEncoder.isConfigSupported({ codec, width: W, height: H, bitrate, framerate: fps }); if (r.supported) { avc = codec; break; } } catch { /* noop */ }
     }
   }
   if (avc) {
     const muxer = new Muxer({ target: new ArrayBufferTarget(), video: { codec: "avc", width: W, height: H, frameRate: fps }, fastStart: "in-memory" });
     let err = null;
     const enc = new VideoEncoder({ output: (chunk, meta) => muxer.addVideoChunk(chunk, meta), error: (e) => { err = e; } });
-    enc.configure({ codec: avc, width: W, height: H, bitrate: 6_000_000, framerate: fps, avc: { format: "avc" } });
+    enc.configure({ codec: avc, width: W, height: H, bitrate, framerate: fps, avc: { format: "avc" } });
     for (let k = 0; k < totalFrames; k++) {
       const f = frameAt(k); drawFrame(f.yi, f.p, f.label);
       const vf = new VideoFrame(canvas, { timestamp: Math.round((k * 1e6) / fps), duration: Math.round(1e6 / fps) });
@@ -147,7 +151,7 @@ export async function renderRankVideo(o) {
   const mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find((m) => MediaRecorder.isTypeSupported(m));
   if (!mime) throw new Error("이 브라우저는 영상 저장을 지원하지 않습니다. 크롬·엣지에서 시도해 주세요.");
   const stream = canvas.captureStream(fps);
-  const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6_000_000 });
+  const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: bitrate });
   const chunks = []; rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
   const done = new Promise((res) => { rec.onstop = res; });
   rec.start(200);
