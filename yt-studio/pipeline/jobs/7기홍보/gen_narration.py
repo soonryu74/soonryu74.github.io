@@ -2,7 +2,7 @@
 사용: cd yt-studio/pipeline && python jobs/7기홍보/gen_narration.py [takes=2]
 결과: jobs/7기홍보/voice_sketch/N00_t1.wav … (24kHz mono). 줄마다 takes 개씩 → 받아쓰기로 고른다.
 환경변수: TTS_MODEL (기본 gemini-3.8-flash-tts · 한도 초과 시 gemini-3.8-flash-lite-tts)"""
-import base64, json, os, sys, time, wave
+import base64, io, json, os, sys, time, wave
 from pathlib import Path
 
 import requests
@@ -14,7 +14,8 @@ if not KEY:
 J = json.load(open(HERE / "narration_sketch.json", encoding="utf-8"))
 VOICE, STYLE = J["voice"], J["style"]
 MODEL = os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts")
-URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={KEY}"
+FALLBACK = os.environ.get("TTS_FALLBACK", "gemini-3.8-flash-lite-tts")   # 모델 없음·미지원(404/400)이면 한 번 전환
+URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key=" + KEY
 TAKES = int(sys.argv[1]) if len(sys.argv) > 1 else 2
 D = HERE / "voice_sketch"; D.mkdir(exist_ok=True)
 
@@ -22,15 +23,21 @@ D = HERE / "voice_sketch"; D.mkdir(exist_ok=True)
 def _tts(text: str, out: Path) -> float:
     body = {"contents": [{"parts": [{"text": STYLE + text}]}],
             "generationConfig": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": VOICE}}}}}
+    global MODEL
     for i in range(4):
-        r = requests.post(URL, json=body, timeout=120)
+        r = requests.post(URL.format(MODEL), json=body, timeout=120)
         if r.status_code == 200:
             break
+        if MODEL != FALLBACK and (r.status_code == 404 or r.status_code == 400 and "model" in r.text.lower()):
+            print("  모델 전환", MODEL, "→", FALLBACK, r.status_code, flush=True); MODEL = FALLBACK
+            continue
         print("  재시도", r.status_code, r.text[:200], flush=True); time.sleep(5 * (i + 1))
     r.raise_for_status()
     part = r.json()["candidates"][0]["content"]["parts"][0]["inlineData"]
     pcm = base64.b64decode(part["data"]); mime = part.get("mimeType", "audio/L16;rate=24000")
     rate = int(mime.split("rate=")[1].split(";")[0]) if "rate=" in mime else 24000
+    if pcm[:4] == b"RIFF":   # 3.8 계열은 PCM 이 아니라 WAV(audio/wav)로 준다
+        with wave.open(io.BytesIO(pcm)) as w: rate, pcm = w.getframerate(), w.readframes(w.getnframes())
     with wave.open(str(out), "wb") as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(rate); w.writeframes(pcm)
     return len(pcm) / 2 / rate
