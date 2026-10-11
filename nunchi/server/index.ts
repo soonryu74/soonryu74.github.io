@@ -18,10 +18,17 @@ function json(body: unknown, status = 200): Response {
   })
 }
 
-// 구글이 종료한 프리뷰 모델 → 정식 대체 모델(ai.google.dev/gemini-api/docs/deprecations). NUNCHI_MODEL 에 옛 이름이 남아 있어도 404 없이 동작
-const RETIRED: Record<string, string> = { 'gemini-omni-flash-preview': 'gemini-omni-1.1-flash' }
-const MODEL_RAW = Deno.env.get('NUNCHI_MODEL') ?? 'gemini-2.5-flash'
-const MODEL = RETIRED[MODEL_RAW] ?? MODEL_RAW
+// 눈치는 글·대화 앱이라 글 모델이 필요하다(ai.google.dev/gemini-api/docs/models).
+// - 2.5 Flash는 기존 사용자만 접근 가능해 새 키는 404가 난다.
+// - gemini-omni-flash-preview는 2026-10-22 종료. 구글이 대체로 적은 gemini-omni-1.1-flash는 영상 생성 모델이라 대화·JSON 요청에 못 쓴다.
+// NUNCHI_MODEL에 이 이름들이 남아 있어도 현재 정식 글 모델로 보낸다.
+const DEFAULT_MODEL = 'gemini-3.8-flash'
+const NOT_FOR_TEXT = new Set(['gemini-2.5-flash', 'gemini-omni-flash-preview', 'gemini-omni-1.1-flash'])
+const MODEL_RAW = Deno.env.get('NUNCHI_MODEL') ?? DEFAULT_MODEL
+const MODEL = NOT_FOR_TEXT.has(MODEL_RAW) ? DEFAULT_MODEL : MODEL_RAW
+// 3.x는 기본으로 사고(thinking)하며 사고 토큰이 maxOutputTokens에 포함된다. 220이면 답이 비어 올 수 있어
+// 사고 수준을 low로 낮추고 한도에 여유를 둔다. thinkingLevel은 3 이전 모델에서 오류이므로 그때는 기존 설정을 쓴다.
+const G3 = /^gemini-3/.test(MODEL)
 const DAILY_LIMIT = Number(Deno.env.get('NUNCHI_DAILY_LIMIT') ?? '120') // 기기 하나당 하루 호출 수
 
 type Mode = 'dial' | 'chat' | 'review'
@@ -81,9 +88,12 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: body.system }] },
         contents: [{ role: 'user', parts: [{ text: body.prompt }] }],
-        generationConfig: body.schema
-          ? { responseMimeType: 'application/json', responseSchema: body.schema, temperature: 0.4 }
-          : { temperature: 0.8, maxOutputTokens: 220 },
+        generationConfig: {
+          ...(body.schema
+            ? { responseMimeType: 'application/json', responseSchema: body.schema, temperature: 0.4 }
+            : { temperature: 0.8, maxOutputTokens: G3 ? 1024 : 220 }),
+          ...(G3 ? { thinkingConfig: { thinkingLevel: 'low' } } : {}),
+        },
       }),
     },
   )

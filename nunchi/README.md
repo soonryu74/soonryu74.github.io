@@ -15,6 +15,18 @@ LLM은 학습자 문장을 통째로 고쳐 쓰는 경향이 있다(과교정). 
 정적 파일 하나. 빌드 없음. `nunchi/index.html`을 열면 끝.
 모델 호출은 학습자 본인의 Gemini API 키(무료 등급)를 쓰고, 키는 브라우저 localStorage에만 저장된다. 키가 없어도 예시 데이터로 화면 전체가 돌아간다.
 
+### 모델 (2026-10 기준)
+기본 모델은 글·대화용 정식 모델 `gemini-3.8-flash`다.
+
+| 이름 | 상태 | 눈치에서의 처리 |
+|---|---|---|
+| `gemini-omni-flash-preview` | 2026-10-22 호출 차단 | `gemini-3.8-flash`로 보냄 |
+| `gemini-omni-1.1-flash` | 구글이 적은 위 모델의 대체. **영상 생성 모델**이라 대화·JSON 불가 | `gemini-3.8-flash`로 보냄 |
+| `gemini-2.5-flash` | 기존 사용자만 접근. 새 키는 404 | `gemini-3.8-flash`로 보냄 |
+
+Gemini 3 계열은 기본으로 사고(thinking)하고 사고 토큰이 출력 한도에 포함된다. 그래서 `thinkingLevel: low`를 넣고 대화 출력 한도를 1024로 둔다.
+`thinkingLevel`은 3 이전 모델에서 오류이므로 그런 모델을 직접 고르면 예전 설정으로 보낸다.
+
 ## 2단계 — 서버 프록시 (키 숨김 + 로그 적재)
 `nunchi/server/index.ts` 가 대신 모델을 호출하고 `nunchi_turns` 에 대화를 남긴다. 기기당 하루 호출 상한(`NUNCHI_DAILY_LIMIT`, 기본 120)이 걸려 있다.
 켜는 방법은 한 줄 — `nunchi/index.html` 상단의 상수만 채우면 API 키 버튼이 사라지고 자동으로 서버 모드가 된다.
