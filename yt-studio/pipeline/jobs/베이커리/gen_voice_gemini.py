@@ -8,19 +8,22 @@ HERE = Path(__file__).resolve().parent
 KEY = os.environ.get("GEMINI_API_KEY")
 if not KEY: raise SystemExit("GEMINI_API_KEY 없음")
 VOICE = sys.argv[1] if len(sys.argv) > 1 else "Kore"
-STYLE = os.environ.get("TTS_STYLE", "밝고 친근한 홍보 영상 내레이터처럼, 미소 띤 또렷한 목소리로, 자연스러운 한국어 억양으로 읽어 주세요: ")
+STYLE = os.environ.get("TTS_STYLE", "[bright, friendly] ")   # 3.8 TTS 는 문장형 지시문을 소리 내어 읽는다 → 대괄호 태그만 (docs/gemini_models_2026-10.md)
 SUFFIX = os.environ.get("TTS_SUFFIX", "")   # 후보 꼬리표(_v2 등)
 MODEL = os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts")   # 일일 한도 초과 시 gemini-3.8-flash-lite-tts
 FALLBACK = os.environ.get("TTS_FALLBACK", "gemini-3.8-flash-lite-tts")   # 모델 없음·미지원(404/400)이면 한 번 전환
 URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key=" + KEY
 def tts(text, out, tries=3):
     """길이가 글자 수에 비해 너무 길면(지시문까지 읽음) 다시 만든다"""
+    best = None
     for k in range(tries):
         _tts(text, out)
         with wave.open(str(out)) as w: d = w.getnframes() / w.getframerate()
         if d <= 0.9 + 0.22 * len(text): return d
+        if best is None or d < best[0]: best = (d, out.read_bytes())
         print("  너무 김 → 다시", round(d, 1), text[:20]); time.sleep(2)
-    return d
+    out.write_bytes(best[1])   # 끝까지 길면 가장 짧은 테이크
+    return best[0]
 
 
 def _tts(text, out):

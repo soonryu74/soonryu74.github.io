@@ -51,7 +51,7 @@ def gemini_tts(txt: str, wav: Path) -> None:
     import base64, io, time
     import requests
     key = os.environ["GEMINI_API_KEY"]
-    style = "따뜻하고 차분한 선생님 말투로, 또렷하고 자연스러운 한국어 억양으로 읽어 주세요: "
+    style = "[warm, calm] "  # 문장형 지시문은 3.8 TTS 가 소리 내어 읽는다 → 대괄호 태그만
     body = {"contents": [{"parts": [{"text": style + txt}]}],
             "generationConfig": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Kore"}}}}}
     best = None  # (길이, rate, pcm) — 끝까지 길면 가장 짧은 것을 쓴다

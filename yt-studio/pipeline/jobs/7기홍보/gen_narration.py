@@ -12,7 +12,8 @@ KEY = os.environ.get("GEMINI_API_KEY")
 if not KEY:
     raise SystemExit("GEMINI_API_KEY 없음")
 J = json.load(open(HERE / "narration_sketch.json", encoding="utf-8"))
-VOICE, STYLE = J["voice"], J["style"]
+VOICE = J["voice"]
+STYLE = "[warm, calm] "   # J["style"] 문장형 지시문은 3.8 TTS 가 소리 내어 읽는다 → 대괄호 태그만 (docs/gemini_models_2026-10.md)
 MODEL = os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts")
 FALLBACK = os.environ.get("TTS_FALLBACK", "gemini-3.8-flash-lite-tts")   # 모델 없음·미지원(404/400)이면 한 번 전환
 URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key=" + KEY
@@ -45,13 +46,16 @@ def _tts(text: str, out: Path) -> float:
 
 def tts(text: str, out: Path, tries: int = 3) -> float:
     """지시문까지 읽어 너무 길면 다시"""
-    d = 0.0
+    best = None
     for _ in range(tries):
         d = _tts(text, out)
         if d <= 0.9 + 0.22 * len(text):
             return d
+        if best is None or d < best[0]:
+            best = (d, out.read_bytes())
         print("  너무 김 → 다시", round(d, 1), text[:20], flush=True); time.sleep(2)
-    return d
+    out.write_bytes(best[1])   # 끝까지 길면 가장 짧은 테이크
+    return best[0]
 
 
 for i, (t, txt) in enumerate(J["lines"]):

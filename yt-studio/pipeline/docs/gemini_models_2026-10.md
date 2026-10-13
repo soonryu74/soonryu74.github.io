@@ -56,3 +56,24 @@ predictLongRunning 을 지원하는 **정식(preview 아닌) 영상 모델은 �
 ## 후속 조치 (2026-10-11 21:50 UTC)
 - `veo_model` 기본값을 **veo-3.1-generate-preview 로 되돌림** (visuals.py, config.py, config.example.json). gemini-omni-1.1-flash 는 지금 바로 404 라 7기홍보 `run.py` 의 veo 클립 생성이 멈추기 때문. 되돌린 값은 10-22 까지만 동작.
 - 10-22 이후 영상 생성을 계속하려면 공지대로 **Gemini Enterprise Agent Platform** 으로 연동 전환이 필요하다(대표님 결정 사항). 전환 전까지는 영상 클립 대신 이미지(gemini-2.5-flash-image)+켄번스 또는 미드저니 V1 클립(midjourney-ref 스킬)으로 대체.
+
+## 3.8 TTS 지시문 낭독 (2026-10-13)
+
+문장 "매주 월요일, 엑셀 정리에 두 시간씩 쓰고 계시죠?"(28자, 허용 길이 0.9+0.22×28 = 7.06초), gemini-3.8-flash-tts · voice Kore, 방식별 2회. 길이는 WAV 헤더를 벗긴 PCM 기준, 받아쓰기는 faster-whisper small(ko).
+
+| 방식 | 회차 | 길이(초) | 받아쓰기 첫 15자 | 판정 |
+|---|---|---|---|---|
+| A 본문만 | 1 | 4.00 | 매주 월요일 엑셀 정리에 2시 | 정상(지시 없음) |
+| A 본문만 | 2 | 4.12 | 매주 월요일 엑셀 정리해 2시 | 정상(지시 없음) |
+| B systemInstruction | 1 | – | (HTTP 400 "Developer instruction is not enabled for this model") | 실패 |
+| B systemInstruction | 2 | – | (HTTP 400 동일) | 실패 |
+| C 영어 지시 "Say in a warm, calm teacher's voice: " | 1 | 8.44 | 매주 월요일, 엑셀 정리해 2시 | 실패 — 길이 2배(영어 지시문 낭독, ko 받아쓰기에서 누락) |
+| C 영어 지시 | 2 | 8.16 | Say in a warm, | 실패 — 지시문 낭독 |
+| D 대괄호 태그 "[warm, calm] " | 1 | 4.40 | 매주 월요일 엑셀 정리해 2시 | 성공 |
+| D 대괄호 태그 | 2 | 4.56 | 매주 월요일 엑셀 정리에 2시 | 성공 |
+
+**고른 방식: D (대괄호 태그).** 세 파일을 문장형 지시문 → 태그로 바꿈.
+- jobs/베이커리/gen_voice_gemini.py: `TTS_STYLE` 기본값 `[bright, friendly] ` (기존 "밝고 친근한" 말투를 태그로 옮김)
+- jobs/7기홍보/gen_narration.py: `[warm, calm] ` 고정. narration_sketch.json 의 `style` 은 남겨 두되 코드에서 쓰지 않음
+- .claude/skills/talk-studio/scripts/sample.py `gemini_tts()`: `[warm, calm] `
+- 길이 검사는 그대로, 모든 시도가 길면 가장 짧은 테이크를 저장(베이커리 · 7기홍보에 추가, sample.py 는 이미 그렇게 동작).
