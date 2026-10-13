@@ -56,6 +56,7 @@ let lastBody = null, lastUrl = '', mode = 'dial';
   ok('uses JSON schema mode', lastBody.generationConfig.responseMimeType === 'application/json');
   ok('retired preview model name is sent as the GA text model', /models\/gemini-3\.8-flash:/.test(lastUrl), lastUrl);
   ok('Gemini 3 calls set thinking to low', lastBody.generationConfig.thinkingConfig && lastBody.generationConfig.thinkingConfig.thinkingLevel === 'low', JSON.stringify(lastBody.generationConfig));
+  ok('Gemini 3 calls send no temperature', !('temperature' in lastBody.generationConfig), JSON.stringify(lastBody.generationConfig));
   ok('highlighted rung follows the slider', (await p.locator('#dial-out .rung.on .who').textContent()).trim() === 'Boss');
   await p.fill('#dial-range', '0');
   await p.dispatchEvent('#dial-range','input'); await p.waitForTimeout(150);
