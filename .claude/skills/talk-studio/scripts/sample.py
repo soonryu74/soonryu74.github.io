@@ -54,6 +54,7 @@ def gemini_tts(txt: str, wav: Path) -> None:
     style = "따뜻하고 차분한 선생님 말투로, 또렷하고 자연스러운 한국어 억양으로 읽어 주세요: "
     body = {"contents": [{"parts": [{"text": style + txt}]}],
             "generationConfig": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Kore"}}}}}
+    best = None  # (길이, rate, pcm) — 끝까지 길면 가장 짧은 것을 쓴다
     for model in (os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts"), "gemini-3.8-flash-lite-tts"):
         for _ in range(3):
             r = requests.post(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
@@ -66,12 +67,20 @@ def gemini_tts(txt: str, wav: Path) -> None:
                 with wave.open(io.BytesIO(data)) as w:
                     rate, data = w.getframerate(), w.readframes(w.getnframes())
             d = len(data) / 2 / rate
-            if d > 1.0 + 0.24 * len(txt):  # 지시문까지 읽으면 다시
-                print("  너무 김 → 다시", round(d, 1), flush=True); continue
-            with wave.open(str(wav), "wb") as w:
-                w.setnchannels(1); w.setsampwidth(2); w.setframerate(rate); w.writeframes(data)
-            return
-    raise RuntimeError("Gemini TTS 실패: " + txt[:20])
+            if best is None or d < best[0]:
+                best = (d, rate, data)
+            if d > 2.0 + 0.32 * len(txt):  # 지시문까지 읽은 듯 → 다시 (앞뒤 무음 포함 여유)
+                print("  너무 김 → 다시", model, round(d, 1), "s /", len(txt), "자", flush=True); continue
+            break
+        else:
+            continue
+        break
+    if best is None:
+        raise RuntimeError("Gemini TTS 실패: " + txt[:20])
+    d, rate, data = best
+    print(f"  {d:.1f}s  {txt[:20]}", flush=True)
+    with wave.open(str(wav), "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(rate); w.writeframes(data)
 
 
 def narration() -> tuple[Path, list[tuple[float, float]]]:
