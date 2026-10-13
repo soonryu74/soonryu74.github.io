@@ -4,10 +4,44 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>지역 건강프로파일 대시보드</title>
+  <meta name="description" content="질병관리청·국가데이터처·국민건강보험공단 공개 통계로 우리 지역 건강수준과 격차를 한눈에 보고, 먼저 검토할 지표와 지역보건의료계획 현황 분석 보고서 초안까지 만드는 무료 대시보드입니다." />
+  <link rel="canonical" href="https://health-profile.kr/" />
+  <meta name="theme-color" content="#2a78d6" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="지역 건강프로파일 대시보드" />
+  <meta property="og:title" content="지역 건강프로파일 대시보드 — 우리 지역 건강격차를 한눈에" />
+  <meta property="og:description" content="질병관리청·국가데이터처·국민건강보험공단 공개 통계로 우리 지역 건강수준과 격차를 한눈에 보고, 먼저 검토할 지표와 지역보건의료계획 현황 분석 보고서 초안까지 만드는 무료 대시보드입니다." />
+  <meta property="og:url" content="https://health-profile.kr/" />
+  <meta property="og:image" content="https://health-profile.kr/og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="지역 건강프로파일 대시보드 홈 화면" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="지역 건강프로파일 대시보드 — 우리 지역 건강격차를 한눈에" />
+  <meta name="twitter:description" content="질병관리청·국가데이터처·국민건강보험공단 공개 통계로 우리 지역 건강수준과 격차를 한눈에 보고, 먼저 검토할 지표와 지역보건의료계획 현황 분석 보고서 초안까지 만드는 무료 대시보드입니다." />
+  <meta name="twitter:image" content="https://health-profile.kr/og.jpg" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "지역 건강프로파일 대시보드", "alternateName": "Health Equity Radar", "url": "https://health-profile.kr/", "description": "질병관리청·국가데이터처·국민건강보험공단 공개 통계로 우리 지역 건강수준과 격차를 한눈에 보고, 먼저 검토할 지표와 지역보건의료계획 현황 분석 보고서 초안까지 만드는 무료 대시보드입니다.", "inLanguage": "ko", "applicationCategory": "HealthApplication", "operatingSystem": "Web", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"}, "author": {"@type": "Organization", "name": "지음웍스", "url": "https://jieumworks.com"}}</script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2264%22%20height=%2264%22%20viewBox=%220%200%2064%2064%22%3E%3Crect%20width=%2264%22%20height=%2264%22%20rx=%2214%22%20fill=%22%232a78d6%22/%3E%3Crect%20x=%2212%22%20y=%2234%22%20width=%2210%22%20height=%2218%22%20rx=%222%22%20fill=%22%23fff%22/%3E%3Crect%20x=%2227%22%20y=%2222%22%20width=%2210%22%20height=%2230%22%20rx=%222%22%20fill=%22%23fff%22/%3E%3Crect%20x=%2242%22%20y=%2212%22%20width=%2210%22%20height=%2240%22%20rx=%222%22%20fill=%22%23fff%22/%3E%3C/svg%3E" />
 </head>
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <!-- 자바스크립트가 실행되기 전·검색엔진에 보이는 소개(앱이 뜨면 React 가 이 내용을 대체한다) -->
+    <main style="max-width:720px;margin:48px auto;padding:0 16px;font-family:system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;line-height:1.7;color:#1f2328">
+      <h1 style="font-size:1.6rem;margin:0 0 8px">지역 건강프로파일 대시보드</h1>
+      <p>질병관리청 지역사회건강조사, 국가데이터처 사망원인통계, 국민건강보험공단 검진 통계 등 공개 통계로 우리 지역 건강수준과 격차를 한눈에 보는 무료 대시보드입니다.</p>
+      <ul>
+        <li>시도·시군구·보건소(지역사회건강조사 조사 단위) 지표 분석 — 지도, 순위, 연도별 추이, 격차</li>
+        <li>지역 프로파일 — 먼저 검토할 지표, 왜 강조됐는지, 참고할 수 있는 공중보건 대응</li>
+        <li>보고서 자동 생성 — 지역별·지표별(전국 취약지역)·고령층(65세 이상)</li>
+        <li>자료원·방법론·한계 공개, 사용설명서와 소개 영상</li>
+      </ul>
+      <p>건강수준 모니터링과 목표치 설정을 돕는 도구이며, 사업 성과평가나 인과효과 판단에는 쓸 수 없습니다.</p>
+      <p style="color:#57606a">화면을 불러오는 중입니다… 자료가 많아 처음 여는 데 시간이 걸릴 수 있습니다.</p>
+      <noscript><p><b>이 대시보드는 자바스크립트가 켜져 있어야 동작합니다.</b></p></noscript>
+      <p><a href="https://health-profile.kr/solve/">English overview (Health Equity Radar)</a></p>
+    </main>
+  </div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

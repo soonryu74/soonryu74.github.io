@@ -56,6 +56,18 @@ if (MIRROR / ".git").exists():
         shutil.copytree(ROOT / "solve", MIRROR / "solve", dirs_exist_ok=True, ignore=shutil.ignore_patterns("template.html"))
     if (ROOT / "global").exists():  # health-profile.kr/global (src/ 는 원본 소스라 제외)
         shutil.copytree(ROOT / "global", MIRROR / "global", dirs_exist_ok=True, ignore=shutil.ignore_patterns("src"))
+    # 검색·공유 기본 파일(health-profile.kr 루트에만): 카톡·검색 미리보기 그림, robots.txt, sitemap.xml
+    if (ROOT / "og.jpg").exists():
+        shutil.copy2(ROOT / "og.jpg", MIRROR / "og.jpg")
+    site = "https://health-profile.kr"
+    (MIRROR / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {site}/sitemap.xml\n", encoding="utf-8")
+    from datetime import datetime, timedelta, timezone
+    from urllib.parse import quote
+    today = (datetime.now(timezone.utc) + timedelta(hours=9)).strftime("%Y-%m-%d")
+    pages = ["/", "/solve/", "/global/", "/global/methodology/"]
+    pages += ["/docs/" + quote(f) for f in ("지역건강프로파일_대시보드_사용설명서_v1.pdf", "health-profile.kr_활용법_v1.pdf") if (ROOT / "docs" / f).exists()]
+    urls = "".join(f"  <url><loc>{site}{p}</loc><lastmod>{today}</lastmod></url>\n" for p in pages)
+    (MIRROR / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n', encoding="utf-8")
     print(f"거울 배포: {MIRROR / 'index.html'} + docs/ {len(list((MIRROR / 'docs').iterdir()))}개 + solve/")
 else:
     print(f"거울 배포 생략: {MIRROR} 없음")
