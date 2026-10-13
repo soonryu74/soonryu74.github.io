@@ -43,7 +43,19 @@ h1,h2,h3{font-family:"Gowun Batang","Noto Serif KR",serif;margin:0;line-height:1
 header{padding-block:34px 20px;border-bottom:1px solid var(--line-strong);display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}
 header h1{font-size:1.8rem;font-weight:700}
 header h1 span{font-family:"Noto Sans KR",sans-serif;font-size:.8rem;font-weight:400;color:var(--muted);display:block;margin-top:5px}
-#keybtn{margin-left:auto}
+header .hbtns{margin-left:auto;display:flex;gap:8px}
+.badge{position:absolute;top:6px;right:2px;background:var(--accent);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:.62rem;line-height:1.5;padding:0 6px;border-radius:9px}
+:root[data-theme="dark"] .badge{color:#0d1310}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge{color:#0d1310}}
+.qcard{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--line-strong);padding:18px 20px;border-radius:3px}
+.qcard.err{border-left-color:var(--alert)}.qcard.odd{border-left-color:var(--accent)}
+.qcard .scene-tag{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;color:var(--faint);margin-bottom:8px}
+.qcard .ask{font-size:1.15rem;line-height:1.6;margin:4px 0 14px}
+.qcard .answer{border-top:1px dashed var(--line);padding-top:12px;margin-top:4px}
+.qcard .answer[hidden]{display:none}
+.qcard .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.qcard .actions .spacer{flex:1}
+.qsum{font-size:.8rem;color:var(--muted);font-family:"IBM Plex Mono",monospace;margin-bottom:14px}
 button{font-family:inherit;font-size:.86rem;cursor:pointer;border-radius:3px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);padding:8px 13px;transition:border-color .15s,background .15s}
 button:hover{border-color:var(--accent)}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
@@ -57,7 +69,7 @@ textarea{resize:vertical;line-height:1.6}
 label{font-size:.78rem;color:var(--muted);display:block;margin-bottom:5px}
 /* tabs */
 nav.tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin-block:22px 26px;overflow-x:auto}
-nav.tabs button{border:none;border-bottom:2px solid transparent;background:none;border-radius:0;padding:11px 16px;color:var(--muted);white-space:nowrap}
+nav.tabs button{position:relative;border:none;border-bottom:2px solid transparent;background:none;border-radius:0;padding:11px 16px;color:var(--muted);white-space:nowrap}
 nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:500}
 nav.tabs button small{display:block;font-size:.68rem;color:var(--faint);font-weight:400}
 .panel[hidden]{display:none}
@@ -127,31 +139,35 @@ footer a{color:var(--accent)}
 <div class="wrap">
 
 <header>
-  <h1>눈치 Nunchi<span>Korean that sounds right — not just correct.</span></h1>
-  <button id="keybtn" type="button">API key</button>
+  <h1>눈치 Nunchi<span data-i18n="tagline"></span></h1>
+  <div class="hbtns">
+    <button id="langbtn" type="button" aria-label="Language · 언어"></button>
+    <button id="keybtn" type="button"></button>
+  </div>
 </header>
 
 <nav class="tabs" role="tablist">
-  <button id="tab-dial" role="tab" aria-selected="true" aria-controls="p-dial">Relationship dial<small>관계 다이얼</small></button>
-  <button id="tab-chat" role="tab" aria-selected="false" aria-controls="p-chat">Situation<small>상황 롤플레이</small></button>
-  <button id="tab-review" role="tab" aria-selected="false" aria-controls="p-review">Review cards<small>복기 카드</small></button>
+  <button id="tab-dial" role="tab" aria-selected="true" aria-controls="p-dial"><span data-i18n="tabDial"></span></button>
+  <button id="tab-chat" role="tab" aria-selected="false" aria-controls="p-chat"><span data-i18n="tabChat"></span></button>
+  <button id="tab-review" role="tab" aria-selected="false" aria-controls="p-review"><span data-i18n="tabReview"></span></button>
+  <button id="tab-queue" role="tab" aria-selected="false" aria-controls="p-queue"><span data-i18n="tabQueue"></span><b class="badge" id="queue-count" hidden></b></button>
 </nav>
 
 <!-- ── MODE 1 ───────────────────────────────── -->
 <section class="panel" id="p-dial" role="tabpanel" aria-labelledby="tab-dial">
-  <p class="intro">Type one thing you want to say. See how it changes depending on <b>who is listening</b>. This is the part textbooks skip.</p>
+  <p class="intro" data-i18n="dialIntro"></p>
   <div class="card dial">
     <div class="row">
       <div style="flex:3 1 260px">
-        <label for="dial-input">What do you want to say? (English or Korean)</label>
+        <label for="dial-input" data-i18n="dialInputLabel"></label>
         <input id="dial-input" value="I'll be about 30 minutes late." autocomplete="off">
       </div>
-      <div class="fit" style="flex:0 0 auto"><button id="dial-go" class="primary" type="button">Show all five</button></div>
+      <div class="fit" style="flex:0 0 auto"><button id="dial-go" class="primary" type="button" data-i18n="dialGo"></button></div>
     </div>
     <div style="margin-top:16px">
-      <output id="dial-label" for="dial-range">Boss · 사장님</output>
+      <output id="dial-label" for="dial-range"></output>
       <input type="range" id="dial-range" min="0" max="4" step="1" value="4">
-      <div class="ticks"><span>close friend</span><span>senior</span><span>coworker</span><span>stranger</span><span>boss</span></div>
+      <div class="ticks"><span data-i18n="tickFriend"></span><span data-i18n="tickSenior"></span><span data-i18n="tickCoworker"></span><span data-i18n="tickStranger"></span><span data-i18n="tickBoss"></span></div>
     </div>
     <div class="ladder" id="dial-out"></div>
     <div class="status" id="dial-status"></div>
@@ -160,63 +176,69 @@ footer a{color:var(--accent)}
 
 <!-- ── MODE 2 ───────────────────────────────── -->
 <section class="panel" id="p-chat" role="tabpanel" aria-labelledby="tab-chat" hidden>
-  <p class="intro">A real situation you will actually be in. <b>Nothing gets corrected while you talk</b> — mistakes are collected and shown afterwards, so you can keep going.</p>
+  <p class="intro" data-i18n="chatIntro"></p>
   <div class="card">
     <div class="scene" id="scenes"></div>
     <div class="row" style="margin-bottom:14px">
-      <div><label for="level">Your level · 급수</label>
+      <div><label for="level" data-i18n="levelLabel"></label>
         <select id="level">
-          <option value="1">TOPIK 1 — beginner</option>
-          <option value="2" selected>TOPIK 2 — high beginner</option>
-          <option value="3">TOPIK 3 — intermediate</option>
-          <option value="4">TOPIK 4 — high intermediate</option>
+          <option value="1" data-i18n="lvl1"></option>
+          <option value="2" selected data-i18n="lvl2"></option>
+          <option value="3" data-i18n="lvl3"></option>
+          <option value="4" data-i18n="lvl4"></option>
         </select>
       </div>
-      <div class="fit"><button id="end-chat" type="button">End &amp; review · 대화 끝내기</button></div>
+      <div class="fit"><button id="end-chat" type="button" data-i18n="endChat"></button></div>
     </div>
     <div id="log"></div>
     <div class="composer">
-      <label for="say" style="position:absolute;left:-9999px">Your reply in Korean</label>
-      <input id="say" placeholder="한국어로 답해 보세요…" autocomplete="off">
-      <button id="send" class="primary" type="button">Send</button>
+      <label for="say" style="position:absolute;left:-9999px" data-i18n="sayLabel"></label>
+      <input id="say" data-i18n-ph="sayPh" autocomplete="off">
+      <button id="send" class="primary" type="button" data-i18n="send"></button>
     </div>
-    <p class="hint">Tip: don't worry about mistakes. That's what the review cards are for.</p>
+    <p class="hint" data-i18n="chatHint"></p>
     <div class="status" id="chat-status"></div>
   </div>
 </section>
 
 <!-- ── MODE 3 ───────────────────────────────── -->
 <section class="panel" id="p-review" role="tabpanel" aria-labelledby="tab-review" hidden>
-  <p class="intro">Two kinds of feedback. <b class="mono" style="color:var(--alert)">WRONG</b> is a grammar error. <b class="mono" style="color:var(--accent)">ODD</b> is correct grammar that a Korean would not say — the part no other app tells you.</p>
+  <p class="intro" data-i18n="reviewIntro"></p>
   <div id="cards"></div>
   <p class="kept" id="kept"></p>
   <div class="status" id="rev-status"></div>
 </section>
 
+<!-- ── MODE 4 · spaced review queue ─────────── -->
+<section class="panel" id="p-queue" role="tabpanel" aria-labelledby="tab-queue" hidden>
+  <p class="intro" data-i18n="queueIntro"></p>
+  <p class="qsum" id="queue-sum"></p>
+  <div id="queue"></div>
+</section>
+
 <footer>
-  MVP · <span id="privacy">runs entirely in your browser. Your API key is stored only on this device (localStorage) and is sent only to Google's API.</span>
-  Built for the <a href="https://soonryu74.github.io/">노모어매뉴얼</a> Nunchi project.
+  MVP · <span id="privacy"></span>
+  <span data-i18n="builtFor"></span>
 </footer>
 </div>
 
 <!-- key sheet -->
 <div class="sheet" id="sheet" hidden>
   <div class="box">
-    <h2>Connect a model</h2>
-    <p>Nunchi runs on your own free Gemini API key. Get one at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> — it takes about a minute and costs nothing on the free tier.</p>
-    <label for="key">API key</label>
+    <h2 data-i18n="sheetTitle"></h2>
+    <p data-i18n="sheetP"></p>
+    <label for="key" data-i18n="keyLabel"></label>
     <input id="key" type="password" placeholder="AIza…" autocomplete="off">
-    <label for="model" style="margin-top:10px">Model</label>
+    <label for="model" style="margin-top:10px" data-i18n="modelLabel"></label>
     <input id="model" value="gemini-3.8-flash" autocomplete="off">
     <div class="row" style="margin-top:16px">
-      <button id="save-key" class="primary" type="button">Save</button>
-      <button id="close-key" type="button">Close</button>
-      <button id="clear-key" type="button">Forget key</button>
+      <button id="save-key" class="primary" type="button" data-i18n="save"></button>
+      <button id="close-key" type="button" data-i18n="close"></button>
+      <button id="clear-key" type="button" data-i18n="forget"></button>
     </div>
-    <p class="hint" style="margin-top:12px">Without a key you can still look around — the screens below are loaded with a worked example.</p>
+    <p class="hint" style="margin-top:12px" data-i18n="sheetHint"></p>
   </div>
 </div>
-
 <script>
 "use strict";
 const $ = s => document.querySelector(s);
@@ -225,7 +247,7 @@ const $ = s => document.querySelector(s);
    (stage 1 — zero running cost). Fill it in with the deployed Edge Function URL
    and the key moves to the server, conversations get logged, and the API key
    panel disappears.  e.g. 'https://<project>.supabase.co/functions/v1/nunchi'  */
-const PROXY = '';
+const PROXY = 'https://dxhmprqfgigljgbstqrg.supabase.co/functions/v1/nunchi';
 
 /* Nunchi is a text app, so it needs a text model (ai.google.dev/gemini-api/docs/models).
    - 2.5 Flash is limited to past users, so a fresh key gets 404 on it.
@@ -234,7 +256,7 @@ const PROXY = '';
    Any of these names saved in this browser is sent as the current GA text model instead. */
 const DEFAULT_MODEL = 'gemini-3.8-flash';
 const NOT_FOR_TEXT = { 'gemini-2.5-flash':1, 'gemini-omni-flash-preview':1, 'gemini-omni-1.1-flash':1 };
-const LS = { key:'nunchi.key', model:'nunchi.model', device:'nunchi.device' };
+const LS = { key:'nunchi.key', model:'nunchi.model', device:'nunchi.device', lang:'nunchi.lang', queue:'nunchi.queue' };
 const store = {
   get k(){ try{ return localStorage.getItem(LS.key)||'' }catch(e){ return '' } },
   get m(){ let m; try{ m = localStorage.getItem(LS.model)||DEFAULT_MODEL }catch(e){ m = DEFAULT_MODEL } return NOT_FOR_TEXT[m] ? DEFAULT_MODEL : m },
@@ -248,6 +270,111 @@ const store = {
     }catch(e){ return 'anon' }
   }
 };
+
+/* ── UI language (en / ko) ──────────────────── */
+/* Learners get English; a Korean teacher (or a learner who prefers it) flips the whole UI to Korean.
+   Static text is keyed by data-i18n, dynamic text goes through t(). The model's "why" lines follow the UI language. */
+const T = {
+  en: {
+    tagline:'Korean that sounds right — not just correct.',
+    keyBtn:'API key', langBtn:'한국어',
+    tabDial:'Relationship dial<small>관계 다이얼</small>', tabChat:'Situation<small>상황 롤플레이</small>',
+    tabReview:'Review cards<small>복기 카드</small>', tabQueue:'Review queue<small>복습 큐</small>',
+    dialIntro:'Type one thing you want to say. See how it changes depending on <b>who is listening</b>. This is the part textbooks skip.',
+    dialInputLabel:'What do you want to say? (English or Korean)', dialGo:'Show all five',
+    tickFriend:'close friend', tickSenior:'senior', tickCoworker:'coworker', tickStranger:'stranger', tickBoss:'boss',
+    working:'Working…',
+    chatIntro:'A real situation you will actually be in. <b>Nothing gets corrected while you talk</b> — mistakes are collected and shown afterwards, so you can keep going.',
+    levelLabel:'Your level · 급수', lvl1:'TOPIK 1 — beginner', lvl2:'TOPIK 2 — high beginner', lvl3:'TOPIK 3 — intermediate', lvl4:'TOPIK 4 — high intermediate',
+    endChat:'End &amp; review · 대화 끝내기', sayLabel:'Your reply in Korean', sayPh:'한국어로 답해 보세요…', send:'Send',
+    chatHint:"Tip: don't worry about mistakes. That's what the review cards are for.",
+    sayFirst:'Say something first — then the review has material.',
+    reviewIntro:'Two kinds of feedback. <b class="mono" style="color:var(--alert)">WRONG</b> is a grammar error. <b class="mono" style="color:var(--accent)">ODD</b> is correct grammar that a Korean would not say — the part no other app tells you.',
+    reading:'Reading the conversation…', kindWrong:'WRONG', kindOdd:'ODD BUT CORRECT', or:'or',
+    dropped: n => `${n} suggestion(s) dropped — they rewrote your sentence instead of fixing it.`,
+    saved: n => `${n} card(s) saved to the review queue.`,
+    exampleReview:'Example review from the clinic conversation.',
+    nothing:'Nothing worth correcting in that conversation. 잘하셨어요.',
+    queueIntro:'Your own sentences come back here on a schedule — tomorrow, then 3, 7, 14 and 30 days later. Say the repaired version out loud <b>before</b> you reveal it.',
+    queueSum: (d,n) => `${d} due now · ${n} saved`,
+    queueEmpty:'Nothing due right now. Finish a conversation and the review cards land here.',
+    queueNext: d => `Next card comes back in ${d} day(s).`,
+    reveal:'Show the fix', again:'Again', good:'Got it', remove:'Remove', yours:'You said',
+    privacyLocal:"runs entirely in your browser. Your API key is stored only on this device (localStorage) and is sent only to Google's API.",
+    privacyServer:'no sign-up needed. Conversations are stored anonymously so the lessons can improve.',
+    builtFor:'Built for the <a href="https://soonryu74.github.io/">노모어매뉴얼</a> Nunchi project.',
+    sheetTitle:'Connect a model',
+    sheetP:'Nunchi runs on your own free Gemini API key. Get one at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> — it takes about a minute and costs nothing on the free tier.',
+    keyLabel:'API key', modelLabel:'Model', save:'Save', close:'Close', forget:'Forget key',
+    sheetHint:'Without a key you can still look around — the screens below are loaded with a worked example.',
+    noKey:'Add an API key first (button at the top right) — the example below stays visible.',
+    keyRejected:'That API key was rejected. Check it in the API key panel.',
+    modelNotFound: m => `Model "${m}" not found for this key. Try another model name.`,
+    reqFailed: s => `Request failed (${s}).`,
+    empty:'The model returned nothing. Try again.', wrong:'Something went wrong.',
+    whyLang:'plain English'
+  },
+  ko: {
+    tagline:'맞는 한국어가 아니라, 자연스러운 한국어.',
+    keyBtn:'API 키', langBtn:'English',
+    tabDial:'관계 다이얼<small>Relationship dial</small>', tabChat:'상황 롤플레이<small>Situation</small>',
+    tabReview:'복기 카드<small>Review cards</small>', tabQueue:'복습 큐<small>Review queue</small>',
+    dialIntro:'하고 싶은 말을 한 줄 적어 보세요. <b>듣는 사람이 누구인지</b>에 따라 어떻게 달라지는지 보여 드려요. 교과서가 건너뛰는 부분이에요.',
+    dialInputLabel:'무슨 말을 하고 싶으세요? (영어나 한국어)', dialGo:'다섯 가지 보기',
+    tickFriend:'친한 친구', tickSenior:'선배', tickCoworker:'동료', tickStranger:'모르는 사람', tickBoss:'사장님',
+    working:'생각 중…',
+    chatIntro:'실제로 겪게 될 상황이에요. <b>대화 중에는 아무것도 고치지 않아요.</b> 실수는 모아 두었다가 끝난 뒤에 보여 드리니 편하게 이어 가세요.',
+    levelLabel:'내 급수', lvl1:'TOPIK 1급 — 초급', lvl2:'TOPIK 2급 — 초급 상', lvl3:'TOPIK 3급 — 중급', lvl4:'TOPIK 4급 — 중급 상',
+    endChat:'대화 끝내고 복기', sayLabel:'한국어 답변', sayPh:'한국어로 답해 보세요…', send:'보내기',
+    chatHint:'실수해도 괜찮아요. 그걸 위해 복기 카드가 있어요.',
+    sayFirst:'먼저 한마디라도 해 보세요. 그래야 복기할 재료가 생겨요.',
+    reviewIntro:'피드백은 두 종류예요. <b class="mono" style="color:var(--alert)">WRONG</b>은 문법 오류. <b class="mono" style="color:var(--accent)">ODD</b>는 문법은 맞지만 한국 사람은 그렇게 말하지 않는 표현이에요. 다른 앱은 알려 주지 않는 부분이죠.',
+    reading:'대화를 읽는 중…', kindWrong:'WRONG · 틀림', kindOdd:'ODD · 맞지만 어색함', or:'또는',
+    dropped: n => `${n}개 제안은 뺐어요. 고친 게 아니라 문장을 통째로 다시 쓴 것이라서요.`,
+    saved: n => `카드 ${n}장을 복습 큐에 넣었어요.`,
+    exampleReview:'병원 접수 대화의 복기 예시예요.',
+    nothing:'고칠 게 없는 대화였어요. 잘하셨어요.',
+    queueIntro:'내가 쓴 문장이 내일, 3일, 7일, 14일, 30일 뒤에 다시 찾아와요. 답을 열기 <b>전에</b> 고친 문장을 먼저 소리 내어 말해 보세요.',
+    queueSum: (d,n) => `지금 복습할 카드 ${d}장 · 저장 ${n}장`,
+    queueEmpty:'지금은 복습할 카드가 없어요. 대화를 끝내면 복기 카드가 여기로 들어와요.',
+    queueNext: d => `다음 카드는 ${d}일 뒤에 돌아와요.`,
+    reveal:'답 보기', again:'다시', good:'기억했어요', remove:'삭제', yours:'내가 한 말',
+    privacyLocal:'전부 브라우저 안에서만 돌아가요. API 키는 이 기기(localStorage)에만 저장되고 구글 API로만 전송돼요.',
+    privacyServer:'가입이 필요 없어요. 대화는 익명으로 저장되어 수업 개선에만 쓰여요.',
+    builtFor:'<a href="https://soonryu74.github.io/">노모어매뉴얼</a> 눈치 프로젝트.',
+    sheetTitle:'모델 연결',
+    sheetP:'눈치는 본인의 무료 Gemini API 키로 돌아가요. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>에서 1분이면 받을 수 있고 무료 등급은 비용이 없어요.',
+    keyLabel:'API 키', modelLabel:'모델', save:'저장', close:'닫기', forget:'키 지우기',
+    sheetHint:'키가 없어도 둘러볼 수 있어요. 화면마다 예시가 채워져 있어요.',
+    noKey:'먼저 API 키를 넣어 주세요(오른쪽 위 버튼). 아래 예시는 그대로 볼 수 있어요.',
+    keyRejected:'API 키가 거절됐어요. API 키 창에서 확인해 주세요.',
+    modelNotFound: m => `이 키로는 "${m}" 모델을 찾을 수 없어요. 다른 모델 이름을 써 보세요.`,
+    reqFailed: s => `요청 실패 (${s}).`,
+    empty:'모델이 빈 답을 보냈어요. 다시 시도해 주세요.', wrong:'문제가 생겼어요.',
+    whyLang:'simple Korean (한국어), written for a learner'
+  }
+};
+let lang = (() => {
+  try{ const l = localStorage.getItem(LS.lang); if(l === 'ko' || l === 'en') return l; }catch(e){}
+  return /^ko/i.test(navigator.language || '') ? 'ko' : 'en';
+})();
+function t(k, ...a){ const v = (T[lang] && k in T[lang]) ? T[lang][k] : T.en[k]; return typeof v === 'function' ? v(...a) : (v ?? k); }
+/* bilingual value: {en, ko} → current language; plain string passes through */
+const L = v => (v && typeof v === 'object') ? (v[lang] || v.en) : v;
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  $('#langbtn').textContent = t('langBtn');
+  $('#keybtn').textContent = t('keyBtn') + (store.k ? ' ✓' : '');
+  $('#privacy').textContent = t(PROXY ? 'privacyServer' : 'privacyLocal');
+  dialLabel(); renderScenes(); renderCards(lastCards, lastKept); renderQueue();
+}
+$('#langbtn').addEventListener('click', () => {
+  lang = lang === 'en' ? 'ko' : 'en';
+  try{ localStorage.setItem(LS.lang, lang) }catch(e){}
+  applyLang();
+});
 
 /* ── model call ─────────────────────────────── */
 /* Gemini 3.x thinks by default and thought tokens count toward maxOutputTokens, so a
@@ -283,13 +410,13 @@ async function ask(system, user, schema, meta){
   if(!res.ok){
     let detail = '';
     try{ detail = (await res.json())?.error?.message || '' }catch(e){}
-    throw new Error(res.status === 400 && /API key/i.test(detail) ? 'That API key was rejected. Check it in the API key panel.'
-      : res.status === 404 ? `Model "${store.m}" not found for this key. Try another model name.`
-      : detail || `Request failed (${res.status}).`);
+    throw new Error(res.status === 400 && /API key/i.test(detail) ? t('keyRejected')
+      : res.status === 404 ? t('modelNotFound', store.m)
+      : detail || t('reqFailed', res.status));
   }
   const data = await res.json();
   const text = data?.candidates?.[0]?.content?.parts?.map(p=>p.text).filter(Boolean).join('') || '';
-  if(!text) throw new Error('The model returned nothing. Try again.');
+  if(!text) throw new Error(t('empty'));
   return schema ? JSON.parse(text) : text.trim();
 }
 /* Stage 2 — the key lives on the server, so the browser sends only the conversation. */
@@ -302,26 +429,28 @@ async function askProxy(system, user, schema, meta){
   });
   let data = {};
   try{ data = await res.json() }catch(e){}
-  if(!res.ok) throw new Error(data.error || `Request failed (${res.status}).`);
-  if(!data.text) throw new Error('The model returned nothing. Try again.');
+  if(!res.ok) throw new Error(data.error || t('reqFailed', res.status));
+  if(!data.text) throw new Error(t('empty'));
   return schema ? JSON.parse(data.text) : String(data.text).trim();
 }
 
 function fail(el, err){
   el.className = 'status bad';
-  el.textContent = err && err.noKey ? 'Add an API key first (button at the top right) — the example below stays visible.' : (err?.message || 'Something went wrong.');
+  el.textContent = err && err.noKey ? t('noKey') : (err?.message || t('wrong'));
 }
 function busy(el, msg){ el.className = 'status'; el.textContent = msg; }
 
 /* ── tabs ───────────────────────────────────── */
-const TABS = [['tab-dial','p-dial'],['tab-chat','p-chat'],['tab-review','p-review']];
-TABS.forEach(([t,p]) => $('#'+t).addEventListener('click', () => {
+const TABS = [['tab-dial','p-dial'],['tab-chat','p-chat'],['tab-review','p-review'],['tab-queue','p-queue']];
+function showTab(t){
   TABS.forEach(([tt,pp]) => {
     const on = tt === t;
     $('#'+tt).setAttribute('aria-selected', String(on));
     $('#'+pp).hidden = !on;
   });
-}));
+  if(t === 'tab-queue') renderQueue();
+}
+TABS.forEach(([t]) => $('#'+t).addEventListener('click', () => showTab(t)));
 
 /* ── key sheet ──────────────────────────────── */
 $('#keybtn').addEventListener('click', () => {
@@ -331,12 +460,11 @@ $('#close-key').addEventListener('click', () => { $('#sheet').hidden = true; });
 $('#save-key').addEventListener('click', () => {
   store.set($('#key').value.trim(), $('#model').value.trim() || DEFAULT_MODEL);
   $('#sheet').hidden = true;
-  $('#keybtn').textContent = store.k ? 'API key ✓' : 'API key';
+  $('#keybtn').textContent = t('keyBtn') + (store.k ? ' ✓' : '');
 });
-$('#clear-key').addEventListener('click', () => { store.clear(); $('#key').value=''; $('#keybtn').textContent='API key'; });
+$('#clear-key').addEventListener('click', () => { store.clear(); $('#key').value=''; $('#keybtn').textContent = t('keyBtn'); });
 document.addEventListener('keydown', e => { if(e.key==='Escape') $('#sheet').hidden = true; });
-if(PROXY){ $('#keybtn').hidden = true; $('#privacy').textContent = 'no sign-up needed. Conversations are stored anonymously so the lessons can improve.'; }
-else if(store.k) $('#keybtn').textContent = 'API key ✓';
+if(PROXY) $('#keybtn').hidden = true;
 
 /* ── MODE 1 · relationship dial ─────────────── */
 const LISTENERS = [
@@ -347,13 +475,13 @@ const LISTENERS = [
   { id:'boss',    who:'Boss',         ko:'사장님',    style:'하십시오체' }
 ];
 const DIAL_EXAMPLE = [
-  { ko:'나 좀 늦어', why:'No ending, no apology. Only for people you are genuinely close to.' },
-  { ko:'형, 저 조금 늦을 것 같아요', why:'해요체 plus 저 — polite but still warm. Address term 형/누나 does the work.' },
-  { ko:'저 조금 늦을 것 같아요. 먼저 시작하세요', why:'Adding what the other person should do is what makes it considerate.' },
-  { ko:'죄송합니다. 조금 늦을 것 같습니다', why:'With a stranger, apologise first — the reason comes second.' },
-  { ko:'사장님, 죄송합니다. 30분 정도 늦을 것 같습니다. 최대한 빨리 가겠습니다', why:'Grammar alone is not enough: apology → fact → what you will do. Leaving out the apology reads as rude even though nothing is wrong.' }
+  { ko:'나 좀 늦어', why:{ en:'No ending, no apology. Only for people you are genuinely close to.', ko:'어미도 사과도 없어요. 정말 가까운 사이에서만 쓰는 말이에요.' } },
+  { ko:'형, 저 조금 늦을 것 같아요', why:{ en:'해요체 plus 저 — polite but still warm. Address term 형/누나 does the work.', ko:'해요체에 "저"까지 — 공손하지만 여전히 따뜻해요. 형/누나 같은 호칭이 그 역할을 해요.' } },
+  { ko:'저 조금 늦을 것 같아요. 먼저 시작하세요', why:{ en:'Adding what the other person should do is what makes it considerate.', ko:'상대가 뭘 하면 좋을지 덧붙이는 것이 배려로 들리는 포인트예요.' } },
+  { ko:'죄송합니다. 조금 늦을 것 같습니다', why:{ en:'With a stranger, apologise first — the reason comes second.', ko:'모르는 사람에게는 사과가 먼저, 이유는 그다음이에요.' } },
+  { ko:'사장님, 죄송합니다. 30분 정도 늦을 것 같습니다. 최대한 빨리 가겠습니다', why:{ en:'Grammar alone is not enough: apology → fact → what you will do. Leaving out the apology reads as rude even though nothing is wrong.', ko:'문법만으로는 부족해요. 사과 → 사실 → 앞으로 할 일 순서예요. 사과를 빼면 틀린 데가 없어도 무례하게 들려요.' } }
 ];
-const DIAL_SYSTEM = `You are a Korean 화계(speech level) coach for foreign learners. The user gives one message. Write how a Korean would really say it to five listeners, in this fixed order:
+const DIAL_SYSTEM = () => `You are a Korean 화계(speech level) coach for foreign learners. The user gives one message. Write how a Korean would really say it to five listeners, in this fixed order:
 1 close friend — 해체/반말
 2 senior 선배 — 해요체, address term (형/누나/선배님) where natural
 3 coworker 동료 — 해요체
@@ -365,7 +493,7 @@ Rules:
 - Write what a real person would type in a message today — short. No textbook sentences, no romanization, no English inside the Korean.
 - Keep the user's actual content. Do not invent new reasons or facts.
 - If the user writes in Korean, treat their sentence as the meaning to convey, not as text to correct.
-- "why" is ONE sentence of plain English about the social reason (who outranks whom, what a Korean expects to hear first). Never state a grammar rule. Never repeat the Korean line.`;
+- "why" is ONE sentence of ${t('whyLang')} about the social reason (who outranks whom, what a Korean expects to hear first). Never state a grammar rule. Never repeat the Korean line.`;
 
 const dialSchema = {
   type:'object',
@@ -377,25 +505,25 @@ function renderDial(lines){
   const at = +$('#dial-range').value;
   $('#dial-out').innerHTML = LISTENERS.map((l,i) => `
     <div class="rung${i===at?' on':''}">
-      <div><div class="who">${l.who}</div><div class="style">${l.ko} · ${l.style}</div></div>
-      <div><div class="ko">${esc(lines[i].korean)}</div><div class="why">${esc(lines[i].why)}</div></div>
+      <div><div class="who">${lang === 'ko' ? l.ko : l.who}</div><div class="style">${lang === 'ko' ? l.style : l.ko + ' · ' + l.style}</div></div>
+      <div><div class="ko">${esc(lines[i].korean)}</div><div class="why">${esc(L(lines[i].why))}</div></div>
     </div>`).join('');
 }
 function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 let dialLines = DIAL_EXAMPLE.map(d => ({korean:d.ko, why:d.why}));
 function dialLabel(){
   const l = LISTENERS[+$('#dial-range').value];
-  $('#dial-label').textContent = `${l.who} · ${l.ko}`;
+  $('#dial-label').textContent = lang === 'ko' ? l.ko : `${l.who} · ${l.ko}`;
   renderDial(dialLines);
 }
 $('#dial-range').addEventListener('input', dialLabel);
 $('#dial-go').addEventListener('click', async () => {
   const msg = $('#dial-input').value.trim();
   if(!msg) return;
-  busy($('#dial-status'), 'Working…'); $('#dial-go').disabled = true;
+  busy($('#dial-status'), t('working')); $('#dial-go').disabled = true;
   try{
     dialLines = (await ask(
-      DIAL_SYSTEM,
+      DIAL_SYSTEM(),
       msg, dialSchema, { mode:'dial' })).lines;
     $('#dial-status').textContent = '';
     renderDial(dialLines);
@@ -405,14 +533,19 @@ $('#dial-go').addEventListener('click', async () => {
 
 /* ── MODE 2 · situation roleplay ────────────── */
 const SCENES = [
-  { id:'clinic', label:'Clinic reception 병원 접수', role:'a receptionist at a small neighbourhood clinic in Seoul', open:'어디가 불편하셔서 오셨어요?' },
-  { id:'store',  label:'First shift at a convenience store 편의점 첫 알바', role:'the store owner training a new part-timer on their first shift', open:'어서 오세요. 오늘 첫날이죠? 우선 계산부터 배워 볼게요.' },
-  { id:'landlord', label:'Calling the landlord 집주인 통화', role:'a landlord answering a call from a tenant about a broken boiler', open:'네, 여보세요. 무슨 일이세요?' },
-  { id:'team', label:'Reporting to your manager 팀장 보고', role:'a team manager at a Korean company receiving a short status report', open:'네, 어제 말한 자료는 어떻게 됐어요?' }
+  { id:'clinic',   en:'Clinic reception',          ko:'병원 접수',      role:'a receptionist at a small neighbourhood clinic in Seoul', open:'어디가 불편하셔서 오셨어요?' },
+  { id:'store',    en:'First shift at a convenience store', ko:'편의점 첫 알바', role:'the store owner training a new part-timer on their first shift', open:'어서 오세요. 오늘 첫날이죠? 우선 계산부터 배워 볼게요.' },
+  { id:'landlord', en:'Calling the landlord',      ko:'집주인 통화',    role:'a landlord answering a call from a tenant about a broken boiler', open:'네, 여보세요. 무슨 일이세요?' },
+  { id:'team',     en:'Reporting to your manager', ko:'팀장 보고',      role:'a team manager at a Korean company receiving a short status report', open:'네, 어제 말한 자료는 어떻게 됐어요?' },
+  { id:'realty',   en:'Signing a lease at the realtor', ko:'부동산 계약', role:'a real-estate agent (공인중개사) in Seoul going over a one-room lease with a foreign tenant — deposit, monthly rent, move-in date, who pays repairs', open:'네, 앉으세요. 보증금이랑 월세는 아까 말씀드린 대로 괜찮으세요?' },
+  { id:'dinner',   en:'Team dinner with a senior', ko:'회식 자리',      role:'a senior colleague (선배) sitting next to the learner at a company dinner (회식), pouring drinks, making small talk about work and life, expecting the junior to pour back and respond politely', open:'자, 한 잔 받아요. 회사 생활은 좀 적응됐어요?' },
+  { id:'courier',  en:'Calling about a missing parcel', ko:'택배 문의 전화', role:'a courier company call-centre agent handling a call about a parcel marked delivered but not received — asks for the tracking number, address, where it might have been left', open:'네, 고객센터입니다. 송장 번호 알려 주시겠어요?' },
+  { id:'interview',en:'Job interview',             ko:'면접',           role:'an interviewer at a mid-sized Korean company — formal, polite, asking short questions about the candidate, why they applied, and what they can do', open:'안녕하세요, 앉으세요. 먼저 간단하게 자기소개 부탁드립니다.' }
 ];
+const sceneLabel = s => lang === 'ko' ? s.ko : `${s.en} ${s.ko}`;
 let scene = SCENES[0], turns = [];
 function renderScenes(){
-  $('#scenes').innerHTML = SCENES.map(s => `<button type="button" data-id="${s.id}" aria-pressed="${s.id===scene.id}">${esc(s.label)}</button>`).join('');
+  $('#scenes').innerHTML = SCENES.map(s => `<button type="button" data-id="${s.id}" aria-pressed="${s.id===scene.id}">${esc(sceneLabel(s))}</button>`).join('');
   $('#scenes').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
     scene = SCENES.find(s => s.id === b.dataset.id); startScene();
   }));
@@ -457,10 +590,9 @@ async function send(){
   }
   finally{ $('#send').disabled = false; $('#say').focus(); }
 }
-renderScenes(); startScene();
 
 /* ── MODE 3 · review cards ──────────────────── */
-const REVIEW_SYSTEM = `You review a foreign learner's Korean AFTER the conversation is over. Only the lines marked B: are theirs. Return at most 5 cards.
+const REVIEW_SYSTEM = () => `You review a foreign learner's Korean AFTER the conversation is over. Only the lines marked B: are theirs. Return at most 5 cards.
 
 kind="wrong" — a real error: particle, ending, conjugation, wrong word.
 kind="odd" — grammatical, but no Korean would say it that way: word order, missing apology or hedge, too blunt for the listener, unnatural collocation, wrong speech level for who they are talking to.
@@ -477,7 +609,7 @@ Example of a good card:
   kind     odd
   why      Nothing here is ungrammatical, but Korean puts the time first. Trailing it sounds like you remembered halfway through.
 
-"alternative" is one other thing a Korean might say — optional, and only if it is genuinely different. "why" is one or two sentences of plain English, written to the learner. "label" is a short tag like "particle · 조사".`;
+"alternative" is one other thing a Korean might say — optional, and only if it is genuinely different. "why" is one or two sentences of ${t('whyLang')}, written to the learner. "label" is a short tag like "particle · 조사".`;
 
 const revSchema = {
   type:'object',
@@ -513,42 +645,122 @@ function changeRatio(a, b){
   return total ? 1 - shared/total : 1;
 }
 const REVIEW_EXAMPLE = [
-  { kind:'odd', label:'word order · 어순', original:'배가 아파요 어제부터', fixed:'어제부터 배가 아파요', alternative:'어제부터 배가 좀 아파요', why:'Nothing here is ungrammatical. But Korean puts the time expression first, so trailing it sounds like an afterthought.' },
-  { kind:'wrong', label:'particle · 조사', original:'저는 보험증이 없어요', fixed:'저는 보험증을 안 가져왔어요', alternative:'보험증을 집에 두고 왔어요', why:'없어요 says you do not own one at all. At a clinic you mean you did not bring it today.' },
-  { kind:'odd', label:'politeness · 화용', original:'빨리 해 주세요', fixed:'혹시 빨리 될까요?', alternative:'조금만 서둘러 주실 수 있을까요?', why:'주세요 is polite, but a bare request to hurry lands as pushy. Korean softens with 혹시 and a question.' }
+  { kind:'odd', label:'word order · 어순', original:'배가 아파요 어제부터', fixed:'어제부터 배가 아파요', alternative:'어제부터 배가 좀 아파요', why:{ en:'Nothing here is ungrammatical. But Korean puts the time expression first, so trailing it sounds like an afterthought.', ko:'문법적으로 틀린 곳은 없어요. 하지만 한국어는 시간 표현을 앞에 두기 때문에 뒤에 붙이면 뒤늦게 생각난 말처럼 들려요.' } },
+  { kind:'wrong', label:'particle · 조사', original:'저는 보험증이 없어요', fixed:'저는 보험증을 안 가져왔어요', alternative:'보험증을 집에 두고 왔어요', why:{ en:'없어요 says you do not own one at all. At a clinic you mean you did not bring it today.', ko:'"없어요"는 아예 갖고 있지 않다는 뜻이에요. 병원에서는 오늘 안 가져왔다는 말을 하려던 거죠.' } },
+  { kind:'odd', label:'politeness · 화용', original:'빨리 해 주세요', fixed:'혹시 빨리 될까요?', alternative:'조금만 서둘러 주실 수 있을까요?', why:{ en:'주세요 is polite, but a bare request to hurry lands as pushy. Korean softens with 혹시 and a question.', ko:'"주세요"는 공손하지만 서두르라는 말을 그대로 하면 재촉하는 느낌이에요. 한국어는 "혹시"와 질문형으로 부드럽게 해요.' } }
 ];
-function renderCards(cards, kept){
-  $('#cards').innerHTML = cards.map(c => `
-    <div class="rcard ${c.kind === 'wrong' ? 'err' : 'odd'}">
-      <div class="kind">${c.kind === 'wrong' ? 'WRONG' : 'ODD BUT CORRECT'} · ${esc(c.label||'')}</div>
+let lastCards = REVIEW_EXAMPLE, lastKept = null, lastSaved = 0;
+function cardHTML(c, cls){
+  return `
+    <div class="${cls} ${c.kind === 'wrong' ? 'err' : 'odd'}">
+      <div class="kind">${c.kind === 'wrong' ? t('kindWrong') : t('kindOdd')} · ${esc(c.label||'')}</div>
       <div class="was">${esc(c.original)}</div>
       <div class="now">${esc(c.fixed)}</div>
-      ${c.alternative ? `<div class="alt">or · ${esc(c.alternative)}</div>` : ''}
-      <div class="why">${esc(c.why)}</div>
-    </div>`).join('');
-  $('#kept').textContent = kept != null
-    ? `${kept} suggestion(s) dropped — they rewrote your sentence instead of fixing it.`
-    : 'Example review from the clinic conversation.';
+      ${c.alternative ? `<div class="alt">${t('or')} · ${esc(c.alternative)}</div>` : ''}
+      <div class="why">${esc(L(c.why))}</div>
+    </div>`;
 }
-renderCards(REVIEW_EXAMPLE, null);
+function renderCards(cards, kept){
+  lastCards = cards; lastKept = kept;
+  $('#cards').innerHTML = cards.length ? cards.map(c => cardHTML(c, 'rcard')).join('')
+    : (kept != null ? `<div class="card">${t('nothing')}</div>` : '');
+  $('#kept').textContent = kept != null
+    ? t('dropped', kept) + (lastSaved ? ' · ' + t('saved', lastSaved) : '')
+    : t('exampleReview');
+}
 $('#end-chat').addEventListener('click', async () => {
   const mine = turns.filter(t => t.role === 'me');
-  if(!mine.length){ busy($('#chat-status'), 'Say something first — then the review has material.'); return; }
-  TABS.forEach(([tt,pp]) => { const on = tt === 'tab-review'; $('#'+tt).setAttribute('aria-selected',String(on)); $('#'+pp).hidden = !on; });
-  busy($('#rev-status'), 'Reading the conversation…');
+  if(!mine.length){ busy($('#chat-status'), t('sayFirst')); return; }
+  showTab('tab-review');
+  busy($('#rev-status'), t('reading'));
   try{
     const out = await ask(
-      REVIEW_SYSTEM,
+      REVIEW_SYSTEM(),
       `Situation: ${scene.role}\n\n` + turns.map(t => (t.role === 'ai' ? 'A: ' : 'B: ') + t.text).join('\n'),
       revSchema, { mode:'review', scene: scene.id, level: $('#level').value });
     const all = out.cards || [];
     const keep = all.filter(c => changeRatio(c.original, c.fixed) <= 0.45);
     $('#rev-status').textContent = '';
-    if(!keep.length){ renderCards([], all.length); $('#cards').innerHTML = '<div class="card">Nothing worth correcting in that conversation. 잘하셨어요.</div>'; }
-    else renderCards(keep, all.length - keep.length);
+    lastSaved = enqueue(keep, scene.id);
+    renderCards(keep, all.length - keep.length);
   }catch(err){ fail($('#rev-status'), err); }
 });
+
+/* ── MODE 4 · spaced review queue ───────────── */
+/* Every kept card goes into localStorage and comes back on a fixed ladder:
+   first pass right away, then 1 → 3 → 7 → 14 → 30 days. "Again" drops the card
+   back to the start and keeps it in today's pile; "Got it" climbs one step.
+   No account, no server — a learner's queue lives on their own device. */
+const STEPS = [1, 3, 7, 14, 30], DAY = 864e5;
+function loadQueue(){ try{ const q = JSON.parse(localStorage.getItem(LS.queue) || '[]'); return Array.isArray(q) ? q : [] }catch(e){ return [] } }
+function saveQueue(q){ try{ localStorage.setItem(LS.queue, JSON.stringify(q)) }catch(e){} }
+function enqueue(cards, sceneId){
+  const q = loadQueue(); let added = 0;
+  for(const c of cards){
+    const id = `${c.original}→${c.fixed}`;
+    if(q.some(x => x.id === id)) continue;
+    q.push({ id, kind:c.kind, label:c.label||'', original:c.original, fixed:c.fixed, alternative:c.alternative||'', why:c.why,
+             scene:sceneId, step:0, reps:0, due:Date.now(), added:Date.now() });
+    added++;
+  }
+  if(added) saveQueue(q);
+  renderQueue();
+  return added;
+}
+function grade(id, ok){
+  const q = loadQueue(); const c = q.find(x => x.id === id);
+  if(!c) return;
+  c.reps = (c.reps||0) + 1;
+  if(ok){ c.due = Date.now() + STEPS[Math.min(c.step, STEPS.length-1)] * DAY; c.step = Math.min(c.step + 1, STEPS.length-1); }
+  else { c.step = 0; c.due = Date.now(); c.added = Date.now(); } // back to the start, end of today's pile
+  saveQueue(q); qOpen = false; renderQueue();
+}
+function removeCard(id){ saveQueue(loadQueue().filter(x => x.id !== id)); qOpen = false; renderQueue(); }
+let qOpen = false;
+function renderQueue(){
+  const q = loadQueue(), now = Date.now();
+  const due = q.filter(c => c.due <= now).sort((a,b) => a.due - b.due || a.added - b.added);
+  const badge = $('#queue-count');
+  badge.hidden = !due.length; badge.textContent = due.length;
+  $('#queue-sum').textContent = q.length ? t('queueSum', due.length, q.length) : '';
+  if(!due.length){
+    const next = q.length ? Math.max(1, Math.ceil((Math.min(...q.map(c => c.due)) - now) / DAY)) : 0;
+    $('#queue').innerHTML = `<div class="card">${t('queueEmpty')}${next ? ' ' + t('queueNext', next) : ''}</div>`;
+    return;
+  }
+  const c = due[0], sc = SCENES.find(s => s.id === c.scene);
+  $('#queue').innerHTML = `
+    <div class="qcard ${c.kind === 'wrong' ? 'err' : 'odd'}" data-id="${esc(c.id)}">
+      <div class="scene-tag">${sc ? esc(sceneLabel(sc)) : ''}${c.label ? ' · ' + esc(c.label) : ''}</div>
+      <div class="kind">${t('yours')}</div>
+      <div class="ask">${esc(c.original)}</div>
+      <div class="answer" id="q-answer" ${qOpen ? '' : 'hidden'}>
+        <div class="now">${esc(c.fixed)}</div>
+        ${c.alternative ? `<div class="alt">${t('or')} · ${esc(c.alternative)}</div>` : ''}
+        <div class="why">${esc(L(c.why))}</div>
+      </div>
+      <div class="actions">
+        ${qOpen
+          ? `<button id="q-again" type="button">${t('again')}</button><button id="q-ok" class="primary" type="button">${t('good')}</button>`
+          : `<button id="q-reveal" class="primary" type="button">${t('reveal')}</button>`}
+        <span class="spacer"></span>
+        <button id="q-del" type="button">${t('remove')}</button>
+      </div>
+    </div>`;
+  const id = c.id;
+  $('#q-del').addEventListener('click', () => removeCard(id));
+  if(qOpen){
+    $('#q-again').addEventListener('click', () => grade(id, false));
+    $('#q-ok').addEventListener('click', () => grade(id, true));
+  } else $('#q-reveal').addEventListener('click', () => { qOpen = true; renderQueue(); });
+}
+
+/* ── boot ───────────────────────────────────── */
+applyLang();      // fills every data-i18n node, then re-renders the dynamic parts below
+startScene();
+renderCards(REVIEW_EXAMPLE, null);
 dialLabel();
+renderQueue();
 </script>
 <script src="/assets/credit.js" defer></script>
 </body>

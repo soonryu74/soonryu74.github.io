@@ -1,8 +1,9 @@
 // 눈치(Nunchi) — 한국어 학습 LLM 프록시
 // 브라우저가 API 키를 들고 있지 않도록 서버에서 대신 호출하고, 학습자 오류를 로그로 남긴다.
-// 시크릿: GEMINI_API_KEY (Edge Function Secrets 또는 app_secrets 테이블)
+// 시크릿: GEMINI_API_KEY (Edge Function Secrets 또는 app_secrets 테이블) — 둘 중 하나만 있으면 된다
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2'
 
 // 이 파일은 supabase 프로젝트의 supabase/functions/nunchi/index.ts 로 복사해 배포한다.
 // 다른 저장소로 옮겨 붙여도 되도록 의존성 없이 혼자 돌아가게 써 둔다.
@@ -10,6 +11,14 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+// 키는 Edge Function 시크릿(GEMINI_API_KEY)이 먼저, 없으면 app_secrets 테이블(name='GEMINI_API_KEY')을 본다.
+// 같은 프로젝트의 다른 함수들과 같은 방식이라 대시보드 SQL 한 줄로도 키를 넣을 수 있다.
+async function getSecret(db: SupabaseClient, name: string): Promise<string> {
+  const env = Deno.env.get(name)
+  if (env) return env
+  const { data } = await db.from('app_secrets').select('value').eq('name', name).maybeSingle()
+  return data?.value ?? ''
 }
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -63,8 +72,8 @@ Deno.serve(async (req) => {
   if (body.prompt.length > 6000) return json({ error: '대화가 너무 깁니다. 대화를 끝내고 복기 카드를 받아 보세요.' }, 413)
 
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
-  const key = Deno.env.get('GEMINI_API_KEY') ?? ''
-  if (!key) return json({ error: 'GEMINI_API_KEY not set' }, 500)
+  const key = await getSecret(db, 'GEMINI_API_KEY')
+  if (!key) return json({ error: '서버에 모델 키가 아직 없어요. 운영자가 GEMINI_API_KEY를 넣으면 바로 됩니다.' }, 503)
 
   // 기기당 하루 호출 상한 — 키가 서버로 옮겨온 순간부터 비용이 우리 것이 되므로 반드시 건다
   const device = (body.device ?? '').slice(0, 64) || 'anon'
