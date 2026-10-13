@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Craft 앱 체험 | 설치 없이 브라우저에서 엑셀·포토샵형 오픈소스 앱 써보기</title>
+<meta name="description" content="ArtCraft의 오픈소스 Craft 앱(GridCraft·PhotoCraft) 웹 버전을 설치 없이 브라우저에서 바로 체험합니다. 알파 단계, 한글 입력 제한 등 솔직한 안내 포함.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://soonryu74.github.io/craft/">
+<style>
+  :root{--navy:#123a6b;--blue:#1f6fd1;--green:#0e8a6b;--muted:#5b6673;--bg:#f6f8fb;--line:#e3e8ef}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;color:#1d2733;background:var(--bg);line-height:1.6}
+  header{background:linear-gradient(120deg,#0e8a6b 0%,#123a6b 100%);color:#fff;padding:44px 18px 40px;text-align:center}
+  header h1{margin:0 0 8px;font-size:1.9rem;letter-spacing:-.02em}
+  header p{margin:4px auto;max-width:640px;color:#e6f1ec}
+  main{max-width:900px;margin:0 auto;padding:28px 16px 60px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:18px 0}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h2{margin:0 0 6px;font-size:1.2rem;color:var(--navy)}
+  .card .sub{color:var(--muted);font-size:.92rem;margin:0 0 12px}
+  .btn{display:inline-block;padding:11px 18px;border-radius:30px;background:var(--blue);color:#fff;font-weight:700;text-decoration:none}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+  .btn+.btn{margin-left:8px}
+  .note{background:#fff8e6;border:1px solid #f1dfa4;border-radius:12px;padding:14px 16px;margin:18px 0}
+  .note h3,.box h3{margin:0 0 8px;font-size:1.02rem}
+  .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+  ul{padding-left:20px;margin:6px 0}
+  li{margin:3px 0}
+  code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:.92em}
+  table{border-collapse:collapse;width:100%;font-size:.93rem;background:#fff}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:#eef3f9}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px 16px}
+  a{color:var(--blue)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Craft 앱 체험</h1>
+  <p>Claude 에이전트가 Rust로 만든 오픈소스 앱, 설치 없이 브라우저에서 바로 열어 봅니다.</p>
+  <p style="font-size:.9rem;color:#cfe7dd">GridCraft 0.6.1 · PhotoCraft 0.8.2 · 2026-10-13 기준 릴리스 웹 빌드</p>
+</header>
+<main>
+  <div class="grid">
+    <div class="card">
+      <h2>GridCraft</h2>
+      <p class="sub">엑셀(Excel)과 같은 모양의 스프레드시트. 함수 500여 개, 피벗, 차트 17종, xlsx 저장.</p>
+      <a class="btn" href="gridcraft/?sample">샘플과 함께 열기</a>
+      <a class="btn ghost" href="gridcraft/">빈 문서로 열기</a>
+      <p class="sub" style="margin-top:10px">18MB 내려받음. 첫 로딩 10~20초.</p>
+    </div>
+    <div class="card">
+      <h2>PhotoCraft</h2>
+      <p class="sub">포토샵(Photoshop)과 같은 모양의 사진 편집기. 레이어·마스크·필터, PSD 열기와 저장.</p>
+      <a class="btn" href="photocraft/">열기</a>
+      <p class="sub" style="margin-top:10px">24MB 내려받음. 첫 로딩 15~30초. 크롬·엣지 권장.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <h3>먼저 알아 두세요 (정직하게)</h3>
+    <ul>
+      <li><b>알파 단계</b>입니다. 개발팀 스스로 "실무 대체율 45~60%"로 평가합니다. 중요한 파일은 사본으로 열어 보세요.</li>
+      <li><b>웹 버전은 한글이 네모(□)로 보입니다.</b> 한글 글꼴을 싣지 않았기 때문입니다. 한글 문서는 컴퓨터에 설치하는 데스크톱 버전(시스템 글꼴 사용)으로 여세요.</li>
+      <li>이 체험판은 <b>파일을 서버로 보내지 않습니다.</b> 전부 내 브라우저 안에서만 돌아갑니다. 저장은 "내려받기"로 됩니다.</li>
+      <li>어도비·마이크로소프트와 무관한 제3자 프로젝트입니다. 화면 구성이 비슷해 법적 논쟁이 진행 중이라는 보도가 있습니다.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h3>컴퓨터에 설치하려면 (Windows·Mac 공통)</h3>
+    <ol style="padding-left:20px;margin:6px 0">
+      <li><a href="https://github.com/storytold/craft-launcher/releases/latest" target="_blank" rel="noopener">ArtCraft Launcher 최신 릴리스</a>에서 내려받기
+        <ul>
+          <li>Windows: <code>artcraft-launcher-버전-windows-x64.msi</code> 더블클릭 → 설치</li>
+          <li>Mac: <code>artcraft-launcher-버전-macos-universal.dmg</code> 열고 Applications로 드래그 (Big Sur 이상, 인텔·애플실리콘 공용)</li>
+        </ul>
+      </li>
+      <li>런처를 열면 GridCraft·WordCraft·DeckCraft·PhotoCraft 등 12개 앱 목록이 나옵니다. 원하는 앱만 설치하고, 업데이트도 여기서 합니다.</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <h3>Craft 앱 한눈에 (2026-10-13)</h3>
+    <table>
+      <tr><th>앱</th><th>닮은 프로그램</th><th>개발팀 자체 평가 "실무 대체율"</th><th>한국어 메뉴</th></tr>
+      <tr><td>GridCraft</td><td>Excel</td><td>약 50%</td><td>일부(12%)</td></tr>
+      <tr><td>WordCraft</td><td>Word</td><td>약 60%</td><td>없음</td></tr>
+      <tr><td>DeckCraft</td><td>PowerPoint</td><td>약 55%</td><td>없음</td></tr>
+      <tr><td>PdfCraft</td><td>Acrobat Pro</td><td>약 50%</td><td>없음</td></tr>
+      <tr><td>PhotoCraft</td><td>Photoshop</td><td>약 45% (핵심 기능만 61%)</td><td>있음(100%)</td></tr>
+      <tr><td>FilmCraft · LightCraft · VectorCraft · EffectCraft · DesignCraft · CADCraft · SoundCraft</td><td>Premiere · Lightroom · Illustrator · After Effects · InDesign · AutoCAD · Pro Tools</td><td>초기</td><td>없음</td></tr>
+    </table>
+    <p class="sub" style="margin:8px 0 0">출처: 각 저장소 ROADMAP.md, docs/target-app-parity.md (프로젝트 자체 추정치)</p>
+  </div>
+
+  <div class="box">
+    <h3>출처·라이선스</h3>
+    <ul>
+      <li>원본: <a href="https://github.com/storytold" target="_blank" rel="noopener">github.com/storytold</a> (ArtCraft Team). 공식 안내 <a href="https://getartcraft.com/apps" target="_blank" rel="noopener">getartcraft.com/apps</a></li>
+      <li>라이선스: MIT 또는 Apache-2.0 (각 폴더의 LICENSE-MIT, LICENSE-APACHE 동봉). ArtCraft·PhotoCraft·GridCraft 이름과 로고는 ArtCraft 팀의 상표입니다.</li>
+      <li>이 페이지는 공식 릴리스의 웹 빌드 zip을 수정 없이 그대로 올린 것입니다. 최신 버전은 원본 릴리스 페이지를 확인하세요.</li>
+    </ul>
+  </div>
+</main>
+<footer><a href="/">사이트 홈</a></footer>
+</body>
+</html>
