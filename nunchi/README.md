@@ -25,7 +25,8 @@ LLM은 학습자 문장을 통째로 고쳐 쓰는 경향이 있다(과교정). 
 | `gemini-2.5-flash` | 기존 사용자만 접근. 새 키는 404 | `gemini-3.8-flash`로 보냄 |
 
 Gemini 3 계열은 기본으로 사고(thinking)하고 사고 토큰이 출력 한도에 포함된다. 그래서 `thinkingLevel: low`를 넣고 대화 출력 한도를 1024로 둔다.
-`thinkingLevel`은 3 이전 모델에서 오류이므로 그런 모델을 직접 고르면 예전 설정으로 보낸다.
+`temperature`는 Gemini 3에서 지원이 끝나 보내지 않는다. 구글 이전 안내가 temperature·top_p·top_k를 빼라고 하고, 1.0 아래로 내리면 반복이나 품질 저하가 생길 수 있다고 적는다.
+`thinkingLevel`은 3 이전 모델에서 오류이므로 그런 모델을 직접 고르면 예전 설정(temperature 포함)으로 보낸다.
 
 ## 2단계 — 서버 프록시 (키 숨김 + 로그 적재)
 `nunchi/server/index.ts` 가 대신 모델을 호출하고 `nunchi_turns` 에 대화를 남긴다. 기기당 하루 호출 상한(`NUNCHI_DAILY_LIMIT`, 기본 120)이 걸려 있다.

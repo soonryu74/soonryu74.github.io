@@ -88,10 +88,12 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: body.system }] },
         contents: [{ role: 'user', parts: [{ text: body.prompt }] }],
+        // 3.x는 temperature가 지원 종료(구글 이전 안내: temperature·top_p·top_k 제거,
+        // 1.0 아래로 내리면 반복·품질 저하). 그래서 3.x에는 보내지 않는다.
         generationConfig: {
           ...(body.schema
-            ? { responseMimeType: 'application/json', responseSchema: body.schema, temperature: 0.4 }
-            : { temperature: 0.8, maxOutputTokens: G3 ? 1024 : 220 }),
+            ? { responseMimeType: 'application/json', responseSchema: body.schema, ...(G3 ? {} : { temperature: 0.4 }) }
+            : { maxOutputTokens: G3 ? 1024 : 220, ...(G3 ? {} : { temperature: 0.8 }) }),
           ...(G3 ? { thinkingConfig: { thinkingLevel: 'low' } } : {}),
         },
       }),

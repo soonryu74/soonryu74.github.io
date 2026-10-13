@@ -257,9 +257,12 @@ const store = {
 function genConfig(model, schema){
   const g3 = /^gemini-3/.test(model);
   const cfg = schema
-    ? { responseMimeType:'application/json', responseSchema:schema, temperature:0.4 }
-    : { temperature:0.8, maxOutputTokens: g3 ? 1024 : 220 };
+    ? { responseMimeType:'application/json', responseSchema:schema }
+    : { maxOutputTokens: g3 ? 1024 : 220 };
+  /* temperature is retired on 3.x (Google's migration list: drop temperature/top_p/top_k;
+     going below 1.0 can cause looping), so it is only sent to older models. */
   if(g3) cfg.thinkingConfig = { thinkingLevel:'low' };
+  else cfg.temperature = schema ? 0.4 : 0.8;
   return cfg;
 }
 async function ask(system, user, schema, meta){
