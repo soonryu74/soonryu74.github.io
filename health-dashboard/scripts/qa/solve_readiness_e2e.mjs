@@ -124,6 +124,21 @@ for (const [w, h] of VPS) {
   }
   await pg.close();
 }
+// 메인 공유·검색 기본값(카톡·네이버·구글 미리보기): 설명·canonical·OG·JSON-LD, 미리보기 그림 1200×630
+{
+  const html = await (await fetch(`${BASE}/index.html`)).text();
+  const head = html.slice(0, html.indexOf("</head>"));
+  const has = (re) => re.test(head);
+  check(has(/<meta name="description" content="[^"]{30,}"/) && has(/<link rel="canonical" href="https:\/\/health-profile\.kr\/"/), "메인 head: 설명·canonical");
+  check(["og:title", "og:description", "og:image", "og:url", "twitter:card"].every((k) => head.includes(`"${k}"`)) && /og:image" content="https:\/\/health-profile\.kr\/og\.jpg"/.test(head), "메인 head: OG·트위터 카드(og.jpg)");
+  const ld = head.match(/<script type="application\/ld\+json">([^<]+)<\/script>/);
+  let okLd = false; try { const j = JSON.parse(ld[1]); okLd = j["@type"] === "WebApplication" && j.url === "https://health-profile.kr/" && !("aggregateRating" in j); } catch (e) {}
+  check(okLd, "메인 head: JSON-LD WebApplication(평점·사용자 수 없음)");
+  const { readFileSync } = await import("node:fs");
+  const og = readFileSync(new URL("../../og.jpg", import.meta.url));
+  let w = 0, h = 0; for (let i = 2; i < og.length - 9;) { if (og[i] !== 0xff) break; const m = og[i + 1], len = og.readUInt16BE(i + 2); if (m >= 0xc0 && m <= 0xc3) { h = og.readUInt16BE(i + 5); w = og.readUInt16BE(i + 7); break; } i += 2 + len; }
+  check(w === 1200 && h === 630, `og.jpg ${w}×${h}`);
+}
 await b.close();
 console.log("\n" + notes.join("\n"));
 console.log(fails.length ? `\n실패 ${fails.length}건` : "\n전부 통과");
