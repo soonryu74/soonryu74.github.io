@@ -1,6 +1,6 @@
 # MIT Solve — criteria map (current evidence and gaps)
 
-Generated automatically on 2026-10-06 with the Competition Evidence Pack (numbers from data files; see `docs/COMPETITION_EVIDENCE.md`). Missing evidence is written as “Not yet demonstrated”. Criterion names follow the general Solve judging themes; check the exact wording of the current challenge before submission.
+Generated automatically on 2026-10-14 with the Competition Evidence Pack (numbers from data files; see `docs/COMPETITION_EVIDENCE.md`). Missing evidence is written as “Not yet demonstrated”. Criterion names follow the general Solve judging themes; check the exact wording of the current challenge before submission.
 
 | Criterion | Current evidence | URL / file | Gap |
 |---|---|---|---|
