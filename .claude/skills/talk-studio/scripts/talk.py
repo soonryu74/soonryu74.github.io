@@ -78,11 +78,13 @@ def navy_bg(size=(W, H), grid=60) -> Image.Image:
     glow = Image.radial_gradient("L").resize((int(w * 1.4), int(h * 1.6))).point(lambda v: max(0, 70 - v // 3))
     lay = Image.new("RGBA", glow.size, (40, 70, 130, 255)); lay.putalpha(glow)
     img.alpha_composite(lay, (int(-w * 0.2), int(-h * 0.45)))
-    d = ImageDraw.Draw(img)
+    lines = Image.new("RGBA", size, (0, 0, 0, 0))   # 선은 따로 그려 반투명으로 합성 (RGBA 직접 그리기는 섞이지 않음)
+    d = ImageDraw.Draw(lines)
     for x in range(0, w, grid):
-        d.line([(x, 0), (x, h)], fill=(255, 255, 255, 9))
+        d.line([(x, 0), (x, h)], fill=(255, 255, 255, 14))
     for y in range(0, h, grid):
-        d.line([(0, y), (w, y)], fill=(255, 255, 255, 9))
+        d.line([(0, y), (w, y)], fill=(255, 255, 255, 14))
+    img.alpha_composite(lines)
     return img
 
 
@@ -158,9 +160,10 @@ def render_slide(spec: dict, out: Path) -> Path:
         for ln in spec["quote"].split("\n"):
             draw_rich(d, (280, ty), ln, qf, shadow=False)
             ty += 76
-    if spec.get("note"):
+    if spec.get("note"):  # 카드/인용 아래 — 자막 자리(아래 200px)는 비운다
         nf = F("semi", 34)
-        d.text(((W - nf.getlength(spec["note"])) / 2, H - 150), spec["note"], font=nf, fill=DIM + (255,))
+        ny = (max(y + 40, 470) + 330 + 44) if cards else (max(y + 50, 470) + 300 + 44) if spec.get("quote") else H - 300
+        d.text(((W - nf.getlength(spec["note"])) / 2, min(ny, H - 260)), spec["note"], font=nf, fill=DIM + (255,))
     img.convert("RGB").save(out)
     return out
 

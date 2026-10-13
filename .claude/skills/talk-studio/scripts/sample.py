@@ -164,9 +164,9 @@ def main() -> None:
     (OUT / "timeline.json").write_text(json.dumps(tl, ensure_ascii=False, indent=1), encoding="utf-8")
     talk.build(str(OUT / "timeline.json"))
     ff(["-ss", "1.0", "-i", str(base), "-frames:v", "1", str(OUT / "face_frame.png")])
-    th = {"face": str(OUT / "face_frame.png"), "face_crop": [520, 120, 900, 960], "title": ["엑셀 월요일 2시간,", "*5분*으로 끝"],
+    th = {"face": str(OUT / "face_frame.png"), "face_crop": [640, 120, 720, 960], "title": ["엑셀 월요일", "2시간, *5분*으로"], "title_size": 100,
           "shot": str(OUT / "talk_sample_work" / "slide01.png"), "shot_w": 600, "shot_rot": 2, "shot_xy": [30, 392],
-          "stickers": [{"text": "코드 몰라도 OK", "xy": [560, 360], "rot": -4}, {"text": "말로 시키면 끝", "xy": [470, 610], "rot": 3, "size": 32}],
+          "stickers": [{"text": "코드 몰라도 OK", "xy": [470, 400], "rot": -4}, {"text": "말로 시키면 끝", "xy": [430, 616], "rot": 3, "size": 32}],
           "pill": "노모어매뉴얼", "out": str(OUT / "talk_sample_썸네일.jpg")}
     (OUT / "thumb.json").write_text(json.dumps(th, ensure_ascii=False, indent=1), encoding="utf-8")
     talk.thumb(str(OUT / "thumb.json"))
