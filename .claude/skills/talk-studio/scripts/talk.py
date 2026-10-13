@@ -321,45 +321,70 @@ def build(tl_path: str) -> Path:
 
 
 # ───────── 썸네일 ─────────
+def save_psd(layers: list[tuple[str, Image.Image]], size, out: Path) -> Path:
+    """요소별 레이어 PSD — PhotoCraft(photo-craft.online/editor)·포토샵에서 열어 옮기기/숨기기/바꾸기.
+    글자는 픽셀 레이어(편집용 문구는 레이어 이름에 적어 둠). 이름은 유니코드(luni) 블록에 한글로."""
+    from psd_tools import PSDImage
+    from psd_tools.api.layers import PixelLayer
+    psd = PSDImage.new("RGB", size)
+    for i, (name, im) in enumerate(layers):
+        bb = im.getbbox()
+        if not bb:
+            continue
+        lay = PixelLayer.frompil(im.crop(bb), psd, f"layer{i}", top=bb[1], left=bb[0])
+        lay.name = name                      # 유니코드 이름(luni)
+        lay._record.name = f"layer{i:02d}"   # 옛 파스칼 이름은 ASCII 로 (호환)
+        psd.append(lay)
+    psd.save(str(out))
+    return out
+
+
 def thumb(spec_path: str) -> Path:
+    """썸네일 1280×720 — JPG + 같은 이름의 레이어 PSD(_레이어.psd)"""
     sp = json.load(open(spec_path, encoding="utf-8"))
     root = Path(spec_path).resolve().parent
     P = lambda p: str((root / p).resolve()) if not os.path.isabs(p) else p  # noqa: E731
     TW, TH = 1280, 720
-    img = navy_bg((TW, TH), grid=40)
     accent = tuple(sp.get("accent", GOLD))
+    layers: list[tuple[str, Image.Image]] = []
+    new = lambda: Image.new("RGBA", (TW, TH), (0, 0, 0, 0))  # noqa: E731
+    layers.append(("배경", navy_bg((TW, TH), grid=40)))
     if sp.get("face"):  # 오른쪽 얼굴 — 왼쪽 가장자리를 남색으로 녹인다
         fimg = Image.open(P(sp["face"])).convert("RGB")
         fx, fy, fw, fh = sp.get("face_crop", [0, 0, fimg.width, fimg.height])
         fimg = fimg.crop((fx, fy, fx + fw, fy + fh))
         fh2 = TH; fw2 = int(fimg.width * fh2 / fimg.height)
         fimg = fimg.resize((fw2, fh2), Image.LANCZOS).convert("RGBA")
-        g = Image.linear_gradient("L").rotate(90).resize((fw2, fh2)).point(lambda v: min(255, int((255 - v) * 2.4)))
+        g = Image.linear_gradient("L").rotate(90).resize((fw2, fh2)).point(lambda v: min(255, int(v * 2.6)))  # 왼쪽 0 → 오른쪽 불투명
         fimg.putalpha(g)
-        img.alpha_composite(fimg, (TW - fw2, 0))
-    d = ImageDraw.Draw(img)
-    pf = F("bold", 24)  # 채널 알약
+        L = new(); L.alpha_composite(fimg, (TW - fw2, 0)); layers.append(("얼굴", L))
+    L = new(); d = ImageDraw.Draw(L)  # 채널 알약
+    pf = F("bold", 24)
     pill = sp.get("pill", "노모어매뉴얼")
     pw = pf.getlength(pill) + 66
     d.rounded_rectangle((44, 30, 44 + pw, 78), 24, fill=(12, 18, 32, 230), outline=accent + (255,), width=2)
     d.ellipse((64, 48, 76, 60), fill=accent)
     d.text((88, 38), pill, font=pf, fill=WHITE)
+    layers.append((f"채널 알약: {pill}", L))
     tf = F("black", sp.get("title_size", 104))
     y = 104
     for ln in sp["title"]:
         x = 44
+        T = new(); d = ImageDraw.Draw(T)
         for i, part in enumerate(ln.split("*")):
             if not part:
                 continue
-            if i % 2:  # 강조 단어 = 색 상자 + 남색 글자
+            if i % 2:  # 강조 단어 = 색 상자(따로 레이어) + 남색 글자
                 w = tf.getlength(part)
-                d.rectangle((x - 6, y + 14, x + w + 14, y + tf.size + 26), fill=accent)
+                B = new(); ImageDraw.Draw(B).rectangle((x - 6, y + 14, x + w + 14, y + tf.size + 26), fill=accent)
+                layers.append((f"강조 상자: {part}", B))
                 d.text((x + 4, y), part, font=tf, fill=NAVY)
                 x += w + 24
             else:
                 d.text((x + 4, y + 6), part, font=tf, fill=(0, 0, 0, 150))
                 d.text((x, y), part, font=tf, fill=WHITE, stroke_width=3, stroke_fill=NAVY)
                 x += tf.getlength(part)
+        layers.append((f"제목: {ln.replace('*', '')}", T))
         y += tf.size + 30
     if sp.get("shot"):  # 데모 화면 캡처 — 비스듬히
         sw = sp.get("shot_w", 660)
@@ -370,9 +395,11 @@ def thumb(spec_path: str) -> Path:
         card.paste(s, (8, 8)); card.putalpha(m)
         card = card.rotate(sp.get("shot_rot", 2), expand=True, resample=Image.BICUBIC)
         sx, sy = sp.get("shot_xy", [30, TH - card.height - 10])
-        sh = Image.new("RGBA", img.size, (0, 0, 0, 0)); sh.alpha_composite(Image.new("RGBA", card.size, (0, 0, 0, 160)), (sx + 10, sy + 16))
-        sh.putalpha(sh.getchannel("A")); img.alpha_composite(sh.filter(ImageFilter.GaussianBlur(14)))
-        img.alpha_composite(card, (sx, sy))
+        L = new(); sh = new()
+        sh.alpha_composite(Image.new("RGBA", card.size, (0, 0, 0, 160)), (sx + 10, sy + 16))
+        L.alpha_composite(sh.filter(ImageFilter.GaussianBlur(14)))
+        L.alpha_composite(card, (sx, sy))
+        layers.insert(1 + bool(sp.get("face")), ("데모 캡처", L))  # 제목 아래로
     for st in sp.get("stickers", []):  # 스티커
         sf = F("black", st.get("size", 38))
         tw = sf.getlength(st["text"])
@@ -380,9 +407,17 @@ def thumb(spec_path: str) -> Path:
         ImageDraw.Draw(lab).rounded_rectangle((0, 0, lab.width - 1, lab.height - 1), 14, fill=tuple(st.get("color", CORAL)) + (255,), outline=WHITE + (255,), width=3)
         ImageDraw.Draw(lab).text((30, 14), st["text"], font=sf, fill=WHITE)
         lab = lab.rotate(st.get("rot", -3), expand=True, resample=Image.BICUBIC)
-        img.alpha_composite(lab, tuple(st["xy"]))
+        L = new(); L.alpha_composite(lab, tuple(st["xy"])); layers.append((f"스티커: {st['text']}", L))
+    img = new()
+    for _, L in layers:
+        img.alpha_composite(L)
     out = Path(P(sp["out"]))
     img.convert("RGB").save(out, quality=93)
+    if sp.get("psd", True):
+        try:
+            save_psd(layers, (TW, TH), out.with_name(out.stem + "_레이어.psd"))
+        except ImportError:
+            print("  (psd-tools 없음 → PSD 생략: pip install psd-tools)", flush=True)
     print("DONE", out, flush=True)
     return out
 
