@@ -1,0 +1,77 @@
+---
+name: video-factory
+description: 영상 자동화 공장 — 이미 찍은 영상(강의·설교·회의·행사·폰 영상)과 글로 쇼츠·자막·표지·고화질본을 찍어 내는 우리 자체 스킬. 받아쓰기(faster-whisper) → 명장면 고르기 → 세로/가로 하이라이트(위 슬라이드+아래 사람 · 한 영역 크게 · 전체+흐린 배경) → 핵심 단어만 금색인 자막 → 키네틱 타이포 쇼츠(튀어나오기·닦기·밀기·숫자·목록·도장) → 표지/썸네일(JPG + 레이어 PSD) → 4K/8K 업스케일 → 비공개 저장소 보관까지. "강의를 쇼츠로", "3분 하이라이트", "자막 넣어줘", "받아써줘", "타이포 쇼츠", "글자 영상", "표지 만들어줘", "썸네일", "8K로", "업스케일", "보관해", "영상 공장", "video-factory" 요청에 사용. 얼굴 토킹헤드 16:9 편집(카드·원형 얼굴)은 talk-studio, 디자인형 모션그래픽은 motion-studio(조남경, MIT) 를 쓴다.
+---
+
+# video-factory — 영상 자동화 공장
+
+> **편집은 기술이 아니라 반복이다. 반복은 스크립트에게, 사람은 고르고 OK 만.**
+> 코드는 전부 이 저장소에서 새로 짠 것(MIT 아님 · 노모어매뉴얼 소유). 글꼴 Pretendard 는 OFL(`assets/fonts/OFL-Pretendard.txt`).
+
+## 0. 도구 7개 (`scripts/`)
+| 파일 | 하는 일 | 입력 → 출력 |
+|---|---|---|
+| `transcribe.py` | 받아쓰기(+단어 시각) | 영상/음성 → `segs.json` |
+| `highlight.py` | 구간 이어 붙이기 · 세로/가로 화면 짜기 · 쉼에 맞춰 자르기 | `plan.json` → mp4 |
+| `subs.py draft` | 자막 초안(두 줄 균형, 쉼·문장 끝에서 끊기) | 단어 JSON → `subs.json` |
+| `subs.py burn` | 자막 굽기(*강조* 금색, 반투명 상자) | mp4 + `subs.json` → mp4 |
+| `typo.py` | 키네틱 타이포 쇼츠/가로 | `script.json` → mp4 |
+| `cover.py` | 쇼츠 표지(1080×1920) · 썸네일(1280×720) + 레이어 PSD | `cover.json` → jpg + psd |
+| `upscale.py` | 4K/8K, 조각 굽기(끊겨도 이어서), 100MB 넘으면 crf 올려 다시 | mp4 → mp4 |
+| `archive.py` | 비공개 저장소 `<작업명>/<편키>/` 복사 · README · 커밋 · 푸시 | 파일들 → 커밋 |
+`common.py` 는 공통(글꼴·색·ASS·PSD·전송용 저화질 `small_copy`). 각 파일 맨 위 설명에 JSON 형식 전체가 있다.
+
+## 1. 일하는 순서 (모든 메뉴 공통)
+1. **재료 받기** — 채팅 첨부 · 구글 드라이브(«링크가 있는 모든 사용자» 공유 → `drive.usercontent.google.com/download?id=…&confirm=t` 로 받기) · 큰 파일은 드라이브로.
+2. **초안** → 30MB 아래 전송용(`small_copy`)을 보내고 **대표님 OK 를 받는다**. OK 전에는 자막·표지를 만들지 않는다.
+3. **OK 후** 자막 → 표지 → (원하면) 8K.
+4. **보관**: `archive.py` 로 비공개 저장소에. 채팅엔 결과 + 저장 위치 한 줄.
+5. 실존 인물 얼굴을 공개용에 쓸 땐 먼저 묻는다. 비밀 파일(config.json · token.json · 키)은 어디에도 안 올린다.
+
+## 2. 메뉴
+### ① 강의·설교 → 3분 하이라이트 쇼츠
+1. `python transcribe.py 원본.mp4 segs.json` (30분 영상 ≈ 7~10분)
+2. Claude 가 받아쓰기를 읽고 **명장면 6~10개**를 고른다: 한 문장으로 완결되는 말 · 숫자·비유·결론 · 처음과 끝 인사. 합계 2분 50초~3분 10초.
+3. 프레임 몇 장을 뽑아 보고 `crops` 를 정한다(슬라이드 화면 · 사람). `plan.json` → `python highlight.py plan.json`
+4. 초안 전송 → OK → ② 자막 → ⑤ 표지.
+
+### ② 자막
+1. `python transcribe.py 완성본.mp4 words.json --words` → `python subs.py draft words.json subs.json`
+2. 받아쓰기 오류를 고치고(고유명사·숫자·성경 구절 주의) 줄마다 핵심 한 단어에 `*강조*`. 확신 없는 줄은 보고에 적는다.
+3. `python subs.py burn 완성본.mp4 subs.json 자막본.mp4`
+
+### ③ 글 → 타이포 쇼츠
+- 문장을 장면으로 쪼개고(장면당 한 생각) 장면 종류를 고른다: title · pop · wipe · slide · count · list · stamp · end.
+- 나레이션을 넣으면 장면마다 `"voice"` — 길이가 자동으로 맞는다. **Gemini 3.8 TTS 는 문장형 말투 지시를 소리 내 읽는다 → `[warm, calm] ` 같은 대괄호 태그만** (yt-studio/pipeline/docs/gemini_models_2026-10.md).
+- 배경음 `bgm` 은 말할 때 자동으로 낮아진다.
+
+### ④ 폰 세로 영상 ↔ 가로
+`layout: "fit"` — 영상 전체를 넣고 남는 곳은 같은 화면을 흐리게. 회전 정보(폰 세로 촬영) 자동 반영.
+
+### ⑤ 표지 · 썸네일
+`cover.json` (쇼츠 9:16 / 유튜브 16:9). 같은 이름 `_레이어.psd` 가 함께 나온다 → photo-craft.online/editor · 포토샵에서 손보기(talk-studio §7). 채널 원칙: 낚시 금지, 강조는 사실인 숫자·결과에만, 금지어(기본기·총정리·사용법·기초·완벽 정리) 쓰지 않음.
+
+### ⑥ 4K/8K
+`python upscale.py 입력.mp4 출력_8K.mp4 --to 8k` — 오래 걸리면 백그라운드로 돌리고 같은 명령을 다시 실행하면 이어서 굽는다(조각 단위). 최종 crf 를 그 폴더 README 에 적는다.
+
+### ⑦ 보관
+`python archive.py --repo /home/user/yt-studio-output --job SCIC강의 --key 하이라이트 결과.mp4 표지.jpg --materials cuts.json subs.json --note "v2 자막" --trailer "<세션 규칙의 Co-Authored-By · Claude-Session 줄>"`
+
+## 3. 대표님 PC 에서 직접 돌릴 때 (강의 수강생용)
+| 단계 | Windows (PowerShell) | Mac (터미널) |
+|---|---|---|
+| 파이썬 설치 | `winget install Python.Python.3.12` | `brew install python` |
+| ffmpeg 설치 | `winget install Gyan.FFmpeg` | `brew install ffmpeg` |
+| 부품 설치 | `py -m pip install faster-whisper pillow numpy psd-tools` | `python3 -m pip install faster-whisper pillow numpy psd-tools` |
+| 실행 예 | `py highlight.py plan.json` | `python3 highlight.py plan.json` |
+| 폴더 이동 | `cd C:\Users\이름\video-factory\scripts` | `cd ~/video-factory/scripts` |
+설치 후 터미널을 한 번 닫았다 열어야 ffmpeg 가 잡힌다(두 OS 공통). Mac 에 brew 가 없으면 brew.sh 안내 한 줄로 먼저 설치.
+
+## 4. 강의(«영상 자동화 공장») 연결
+1강 ①하이라이트 · 2강 talk-studio(얼굴 영상 편집) · 3강 ③타이포+AI 목소리 · 4강 ⑤표지+PhotoCraft+미드저니 Edit · 5강 ⑥⑦ 고화질·보관·재사용. 샘플: 비공개 저장소 `video-factory/샘플/`.
+
+## 5. 알려진 한계
+- 받아쓰기는 small 모델 기준 고유명사·숫자가 자주 틀린다 → 자막은 반드시 사람이 확인. medium 은 더 정확하지만 2~3배 느림. `--prompt` 를 길게 쓰면 같은 문장 반복 환각.
+- 장면 자동 선택(명장면)은 Claude 판단 — 대표님 OK 단계가 품질 관문.
+- 타이포 쇼츠는 글자 모션 전용(사진·영상 합성 없음). 사진·영상을 섞은 모션그래픽은 motion-studio.
+- 이 클라우드 서버의 백그라운드 작업은 30분 제한 → 8K 는 조각 굽기 + 재실행으로.
