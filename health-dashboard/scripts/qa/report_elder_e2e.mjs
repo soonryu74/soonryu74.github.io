@@ -26,7 +26,7 @@ for (const [w,h,s] of [[1440,900,"light"],[390,844,"dark"],[430,932,"light"],[76
   const clip = await pg.evaluate(()=>navigator.clipboard.readText()).catch(()=>"");
   ck(clip.includes("65세 이상") && clip.includes("복합 고령 취약 신호"), `[${w}] 초안 복사`);
   if (w===1440) {
-    for (const [btn, ext] of [[/워드/, "doc"], [/전체 시군구 CSV/, "csv"]]) {
+    for (const [btn, ext] of [[/워드\(\.doc\) 저장/, "doc"], [/전체 시군구 CSV/, "csv"]]) {
       const [dl] = await Promise.all([pg.waitForEvent("download",{timeout:8000}).catch(()=>null), pg.getByRole("button",{name:btn}).click()]);
       if (dl) { const p = `${OUT}/el.${ext}`; await dl.saveAs(p); const t=fs.readFileSync(p,"utf8"); ck(ext==="doc" ? (t.includes("고령층 취약 현황") && !t.includes("예방·관리 탭에서") && (t.match(/class="rpt-def"/g)||[]).length===2 && t.includes("신호 지역 수 / 시도 안 시군구 수")) : t.trim().split("\n").length===230, `[${w}] ${ext} ${t.length}B ${t.trim().split("\n").length}줄`); }
       else ck(false, `[${w}] ${ext} 다운로드 없음`);

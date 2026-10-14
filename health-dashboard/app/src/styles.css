@@ -1089,6 +1089,18 @@ rect.tr-good { fill:var(--series-1); } rect.tr-mid { fill:#9aa3ad; } rect.tr-bad
 .eq-facts dd b { font-size:15.5px; font-variant-numeric:tabular-nums; }
 .eq-facts dd small { font-size:12.5px; color:var(--muted); }
 .eq-sub { font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:3px; }
+/* 점수 구성 막대(ScoreBar) — 색·너비는 인라인(인쇄·워드 공통), 여기서는 배치만 */
+.eq-sbar { font-size:12.5px; }
+.eq-sbar-h { display:flex; flex-wrap:wrap; gap:2px 8px; align-items:baseline; margin-bottom:4px; }
+.eq-sbar-h > span { font-weight:700; color:var(--text-secondary); }
+/* 남은 몫 칸만 다크에서 어둡게(인라인 #e3e8ef 덮어씀) */
+:root[data-theme="dark"] .eq-sbar-rest { background:#2a3446 !important; }
+@media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .eq-sbar-rest { background:#2a3446 !important; } }
+.eq-sbar-leg { list-style:none; margin:4px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:2px 12px; color:var(--text-secondary); }
+.eq-sbar-leg li { display:flex; align-items:center; gap:4px; min-width:0; }
+.eq-sbar-leg i { display:inline-block; width:10px; height:10px; border-radius:2px; border:1.5px solid; flex:none; }
+.eq-sbar-leg b { font-variant-numeric:tabular-nums; color:var(--text-primary); }
+.eq-sbar-note { font-size:12px; margin-top:2px; }
 .eq-why ul, .eq-res { margin:0; padding:0; list-style:none; font-size:13.5px; line-height:1.5; color:var(--text-secondary); }
 .eq-why li { display:flex; gap:6px; margin:2px 0; }
 .eq-ico { flex:0 0 16px; text-align:center; color:var(--series-1); font-weight:700; }
@@ -1273,6 +1285,20 @@ header.top > .topright { flex:0 1 auto; justify-content:flex-end; margin-left:au
 .nav-row { flex:1 0 100%; display:flex; min-width:0; }
 .back-btn { font-weight:600; }
 @media print { .nav-row, .back-btn { display:none; } }
+/* 계획 수립 단계 안내 띠(PlanSteps, 2026-10-14) — 메뉴 아래 한 줄, 좁은 화면은 띠 안에서만 가로 스크롤 */
+.plan-steps { flex:1 0 100%; display:flex; align-items:center; gap:8px; min-width:0; margin-top:6px; font-size:13px; }
+.plan-steps .ps-lab { flex:none; color:var(--text-secondary); font-weight:600; font-size:12.5px; }
+.plan-steps ol { display:flex; gap:4px; list-style:none; margin:0; padding:0 0 2px; min-width:0; overflow-x:auto; scrollbar-width:thin; }
+.plan-steps li { flex:none; display:flex; align-items:center; }
+.plan-steps li + li::before { content:"→"; color:var(--muted); margin:0 4px 0 0; font-size:12px; }
+.plan-steps button { display:inline-flex; align-items:baseline; gap:4px; border:1px solid var(--border); background:var(--surface-1); color:var(--text-primary); border-radius:999px; padding:3px 10px; cursor:pointer; font:inherit; white-space:nowrap; }
+.plan-steps button small { color:var(--muted); font-size:11.5px; }
+.plan-steps button:hover { border-color:var(--series-1); }
+.plan-steps button.on { background:color-mix(in srgb, var(--series-1) 14%, var(--surface-1)); border-color:var(--series-1); color:var(--series-1); }
+.plan-steps button.on small { color:inherit; }
+.plan-steps .ps-n { font-weight:700; }
+@media (max-width: 600px) { .plan-steps .ps-lab { display:none; } .plan-steps button small { display:none; } }
+@media print { .plan-steps { display:none; } }
 
 /* 보고서 편집(2026-10-05 소유자 지시 "글만 많아 눈에 안 들어온다 — 소제목 색 상자 등 눈에 잘 들어오게"): 지역·지표·고령층 보고서 공통 */
 .rpt { --rpt-acc: var(--series-1); --rpt-tint: color-mix(in srgb, var(--series-1) 9%, var(--surface-1)); }

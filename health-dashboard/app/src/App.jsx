@@ -9,6 +9,7 @@ import ChoroplethMap from "./components/ChoroplethMap";
 import RankPanel from "./components/RankPanel";
 import YearTable from "./components/YearTable";
 import GapBoxplot from "./components/GapBoxplot";
+import PlanSteps from "./components/PlanSteps";
 import ReadMyRegion from "./components/ReadMyRegion";
 import TrendCard from "./components/TrendCard";
 import EquityPanel from "./components/EquityPanel";
@@ -272,6 +273,7 @@ export default function App() {
               <button className={`seg-btn fb-tab ${view === "feedback" ? "on" : ""}`} onClick={() => setView("feedback")} title="수정 의견·오류 신고·자료 문의">의견·문의</button>
             </div>
           </nav>
+          {view !== "radar" && <PlanSteps view={view} onGo={(st) => goSearch({ view: st.view, card: st.card })} />}
         </header>
 
         {playing && (

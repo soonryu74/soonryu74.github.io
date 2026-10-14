@@ -4,6 +4,7 @@ import { buildIndicatorReport, draftIndicatorParagraphs, regionLabel } from "../
 import { BUILD } from "./ReviewsCard";
 import { download, safe, saveCsvRows } from "../export";
 import { copyText } from "./FeedbackView";
+import { pasteHtml, copyRich } from "../lib/richCopy";
 import ReportMode from "./ReportMode";
 
 /* 지표별 보고서(전국 취약지역 현황) — 금연·절주 같은 사업을 기획하는 정책 담당자용. 해시 view=ireport, 지표는 위 지표 선택을 따른다.
@@ -54,6 +55,11 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
     ...m.rows.slice().sort((a, b) => b.a.pos.u - a.a.pos.u).map((x) => [x.a.pos.u >= 0.9 ? "검토 대상(10%)" : x.a.pos.u >= 0.8 ? "불리한 쪽 20%" : "", regionLabel(x.r), fmt(x.a.v), x.a.ci?.lo ?? "", x.a.ci?.hi ?? "", x.a.gap ? fmt(x.a.gap.abs) : "", ciFlag(x.a), Math.round(x.a.pos.u * 100), x.a.trendCls?.label || "", x.dep?.q ?? "", x.a.ci?.unstable ? "예" : ""]),
   ], fileBase);
   const copyDraft = async () => setMsg((await copyText(paras.join("\n\n"))) ? "현황 문장 초안을 복사했습니다. 원자료와 대조해 고쳐 쓰세요." : "복사하지 못했습니다. 문장을 드래그해 복사해 주세요.");
+  // 표 서식째 복사 — 한글·워드에 Ctrl+V 하면 표·단위·출처가 그대로(2026-10-14)
+  const copyTables = async () => {
+    const c = pasteHtml(docRef.current, `${ind.name} 지표 보고서`);
+    setMsg(c && (await copyRich(c.html, c.text)) ? "보고서를 표 서식째 복사했습니다. 한글·워드에 Ctrl+V 하면 표·단위·출처가 그대로 들어갑니다. 원자료와 대조해 고쳐 쓰세요." : "복사하지 못했습니다. 「워드(.doc) 저장」을 이용해 주세요.");
+  };
 
   return (
     <div className="rpt-wrap">
@@ -64,6 +70,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
           <button type="button" className="themebtn" onClick={() => window.print()}>🖨 인쇄 · PDF 저장</button>
           <button type="button" className="themebtn" onClick={saveWord}>⬇ 워드(.doc) 저장</button>
           <button type="button" className="themebtn" onClick={saveCsv}>⬇ 전체 지역 CSV</button>
+          <button type="button" className="themebtn" onClick={copyTables} title="한글(HWP)·워드에 붙여 넣으면 표·단위·출처가 그대로 들어갑니다">📋 표 서식째 복사(한글·워드)</button>
           <button type="button" className="themebtn" onClick={copyDraft}>📋 문장 초안 복사</button>
           {onBack && <button type="button" className="themebtn" onClick={onBack}>← 지표 분석</button>}
         </div>
