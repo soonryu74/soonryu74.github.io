@@ -87,3 +87,15 @@ test("고령층 취약 보고서: 시군구 229곳 기준, 비율·신호 범위
   assert.ok(t.includes("65세 이상") && t.includes("복합 고령 취약 신호"));
   for (const bad of ["때문", "원인으로", "해야 한다", "효과가 있", "최악", "고위험 지역"]) assert.ok(!t.includes(bad), bad);
 });
+
+test("발표 예시 재현: 2025 비만율(표준화) 조사 단위 258곳 하위 20% 31.3 · 중앙 35.4 · 상위 20% 38.6, 수도권역 101곳", async () => {
+  const { gapMeasures } = await import("../src/lib/gapMeasures.js");
+  const { val, KDCA_REGIONS, kdcaPoolOf } = await import("../src/data.js");
+  const ind = INDICATORS.find((i) => i.name === "비만율(자가보고)") || INDICATORS.find((i) => /비만율/.test(i.name) && isSurvey(i));
+  assert.ok(ind, "비만율 지표");
+  const g = gapMeasures(natPool(ind).map((r) => val(ind, "std", 2025, r.c)));
+  assert.equal(g.n, 258);
+  assert.equal(g.p20.toFixed(1), "31.3"); assert.equal(g.med.toFixed(1), "35.4"); assert.equal(g.p80.toFixed(1), "38.6");
+  assert.equal(kdcaPoolOf(ind, KDCA_REGIONS[0]).length, 101);
+  assert.equal(KDCA_REGIONS.flatMap((k) => k.sidos).length, 17);
+});

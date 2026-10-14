@@ -1,5 +1,6 @@
 import { useRef } from "react";
-import { fmt, val, boxStats, poolFor, label } from "../data";
+import { fmt, val, boxStats, poolFor, label, ITEMS } from "../data";
+import { gapMeasures, QUANTILE_MIN_N } from "../lib/gapMeasures";
 import { nearestIndex, clientXY, Gridlines, XAxis } from "./svgUtil";
 
 /* 격차: 연도별 비교 집단 분포 상자그림 + 선택 지역 점 (CIAT 패널 6 재현) */
@@ -57,10 +58,40 @@ export default function GapBoxplot({ ind, item, year, sel, scope, setTip }) {
         <rect x={L} y={T} width={W - L - R} height={H - T - B} fill="transparent"
           onMouseMove={onMove} onTouchMove={onMove} onMouseLeave={() => setTip(null)} onTouchEnd={() => setTip(null)} />
       </svg>
-      {(() => { const i = ys.indexOf(year); const e = ext[i]; const s = stats[i];
-        return e && s ? <div className="desc" style={{ marginTop: 4 }}>{year}년 최댓값 <b>{label(e.mx.r)} {fmt(e.mx.v)}</b> · 최솟값 <b>{label(e.mn.r)} {fmt(e.mn.v)}</b> · 격차 {fmt(e.mx.v - e.mn.v)}{ind.unit === "%" ? "%p" : " " + ind.unit} (n={s.n})</div> : null; })()}
+      <GapTable ind={ind} item={item} year={year} pool={pool} ext={ext[ys.indexOf(year)]} />
       <DecileGap ind={ind} item={item} year={year} pool={pool} />
     </>
+  );
+}
+
+/* 격차 읽기 — 같은 해·같은 비교 지역을 세 가지 방식으로 계산해 절대(%p)·상대(배)를 함께 보여 준다.
+   노은정(2026-09-29) 발표: 「격차를 제시할 때 무엇과 비교했는지(기준)와 어떻게 계산했는지(방식)를 반드시 함께 표기」. */
+function GapTable({ ind, item, year, pool, ext }) {
+  const g = gapMeasures(pool.map((r) => val(ind, item, year, r.c)));
+  if (!g) return null;
+  const du = ind.unit === "%" ? "%p" : ` ${ind.unit}`;
+  const rel = (x) => (x == null ? "–" : `${fmt(x, 2)}배`);
+  const rows = [
+    { m: "최댓값 − 최솟값", calc: ext?.mx && ext?.mn ? `${label(ext.mx.r)} ${fmt(g.max)} − ${label(ext.mn.r)} ${fmt(g.min)}` : `${fmt(g.max)} − ${fmt(g.min)}`, abs: g.maxMin.abs, r: g.maxMin.rel,
+      note: "가장 단순하지만 극단 지역 한 곳이 바뀌면 크게 흔들림" },
+    { m: "상·하위 20% 경계값 차이", calc: g.p80 != null ? `${fmt(g.p80)} − ${fmt(g.p20)}` : null, abs: g.boundary?.abs, r: g.boundary?.rel,
+      note: "분포 가운데 60%의 폭. 극단값 영향이 거의 없어 추이 추적에 적합(HP2030 지역 건강수명 격차 방식)" },
+    { m: "상·하위 20% 평균 차이", calc: g.quintile ? `${fmt(g.quintile.hi)} − ${fmt(g.quintile.lo)} (각 ${g.quintile.k}곳 평균)` : null, abs: g.quintile?.abs, r: g.quintile?.rel,
+      note: "양 끝 20% 지역 전체의 수준. 취약 지역 전체가 좋아졌는지 볼 때(HP2030 소득 격차 방식)" },
+  ];
+  return (
+    <div className="gap-read">
+      <div className="gr-head"><b>격차 읽기 — {year}년</b> <span className="muted">기준: 비교 지역 {g.n}곳 · {ITEMS[item] || item} · 중앙값 {fmt(g.med)}{ind.unit === "%" ? "%" : ` ${ind.unit}`}</span></div>
+      <div className="tbl-wrap"><table className="gr-tbl">
+        <thead><tr><th>방식</th><th>계산</th><th className="num">절대 격차</th><th className="num">상대 격차</th><th>특징</th></tr></thead>
+        <tbody>{rows.map((x) => (
+          <tr key={x.m} className={x.calc == null ? "gr-na" : ""}><th scope="row">{x.m}</th>
+            {x.calc == null ? <td colSpan={3} className="muted">비교 지역이 {QUANTILE_MIN_N}곳 이하라 쓰지 않음(20%가 몇 곳뿐이라 불안정)</td>
+              : <><td>{x.calc}</td><td className="num"><b>{fmt(x.abs)}{du}</b></td><td className="num">{rel(x.r)}</td></>}
+            <td className="muted">{x.note}</td></tr>))}</tbody>
+      </table></div>
+      <div className="desc">절대 격차는 줄여야 할 부담의 양(단위 %p), 상대 격차는 몇 배인지입니다. 유병률이 낮으면 상대 격차는 쉽게 커지므로 둘을 함께 봅니다. 「격차가 줄었다」는 불리한 쪽이 좋아져서인지(끌어올림), 양호한 쪽이 나빠져서인지(하향 수렴) 함께 확인해야 합니다.</div>
+    </div>
   );
 }
 

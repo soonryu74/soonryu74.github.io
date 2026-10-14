@@ -121,3 +121,54 @@ test("지역 보고서 문장 초안: 계산된 사실만, 인과·처방 표현
   assert.ok(t.includes("「우선 검토」 1개") && t.includes("「현재흡연율」") && t.includes("「걷기 실천율」") && t.includes("4분위"));
   for (const bad of ["때문", "원인으로", "해야 한다", "효과가 있", "최악", "위험 지역"]) assert.ok(!t.includes(bad), bad);
 });
+
+// ── 격차 측정(노은정 2026 기준) ──
+import { gapMeasures, sides, positionIn, versus, gapChangeType, precisionNote } from "../src/lib/gapMeasures.js";
+
+test("격차 3방식: 30곳 이하면 분위 방식 없음, 넘으면 경계값·분위 평균을 절대·상대로", () => {
+  const small = gapMeasures([10, 20, 30, null, 40]);
+  assert.equal(small.n, 4); assert.equal(small.maxMin.abs, 30); assert.equal(small.maxMin.rel, 4);
+  assert.equal(small.boundary, null); assert.equal(small.quintile, null);
+  const vals = Array.from({ length: 101 }, (_, i) => 10 + i * 0.1);   // 10.0 ~ 20.0
+  const g = gapMeasures(vals);
+  assert.equal(g.n, 101);
+  assert.ok(Math.abs(g.p20 - 12) < 1e-9 && Math.abs(g.p80 - 18) < 1e-9);
+  assert.ok(Math.abs(g.boundary.abs - 6) < 1e-9 && Math.abs(g.boundary.rel - 1.5) < 1e-9);
+  assert.equal(g.quintile.k, 20);
+  assert.ok(g.quintile.abs > g.boundary.abs);   // 꼬리 평균 차이는 경계값 차이보다 크다
+});
+
+test("방향에 따른 양호한 쪽·위치·비교", () => {
+  const vals = Array.from({ length: 101 }, (_, i) => 10 + i * 0.1);
+  const g = gapMeasures(vals);
+  assert.deepEqual(sides(g, true), { fav: g.p20, unfav: g.p80 });     // 낮을수록 좋음 → 하위 20% 경계가 양호한 쪽
+  assert.deepEqual(sides(g, false), { fav: g.p80, unfav: g.p20 });
+  assert.equal(sides(g, null), null);
+  const p = positionIn(vals, 19.5, true);
+  assert.equal(p.k, 6); assert.equal(p.n, 101); assert.equal(p.unfav20, true);
+  assert.equal(positionIn(vals, 19.5, false).unfav20, false);
+  const vs = versus(38.4, 31.3);
+  assert.ok(Math.abs(vs.abs - 7.1) < 1e-9 && Math.abs(vs.rel - 1.2268) < 1e-3);   // 발표 예시: 7.1%p · 1.23배
+});
+
+test("격차 변화 4유형: 끌어올림만 바람직, 하향 수렴·동반 악화는 성과로 보지 않음", () => {
+  // 낮을수록 좋은 지표(흡연율)
+  const a = { fav: 20, unfav: 32 };
+  assert.equal(gapChangeType(a, { fav: 19, unfav: 26 }, true).type, "level_up");
+  assert.equal(gapChangeType(a, { fav: 19, unfav: 26 }, true).good, true);
+  assert.equal(gapChangeType(a, { fav: 25, unfav: 32 }, true).type, "level_down");
+  assert.equal(gapChangeType(a, { fav: 27, unfav: 34 }, true).type, "both_worse");
+  assert.equal(gapChangeType(a, { fav: 18, unfav: 30 }, true).type, "shift");
+  assert.equal(gapChangeType(a, { fav: 20, unfav: 36 }, true).type, "widen_worse");
+  assert.equal(gapChangeType(a, { fav: 20, unfav: 36 }, true).good, false);
+  // 높을수록 좋은 지표(걷기 실천율): 불리한 쪽(낮은 값)이 크게 오르면 끌어올림
+  assert.equal(gapChangeType({ fav: 60, unfav: 40 }, { fav: 61, unfav: 48 }, false).type, "level_up");
+  assert.equal(gapChangeType(a, a, null), null);
+});
+
+test("정밀도: 통계청 30% 기준과 대시보드 순위 제외 20% 기준을 구분", () => {
+  assert.equal(precisionNote(0.049).level, "ok");
+  assert.equal(precisionNote(0.25).level, "warn");
+  assert.equal(precisionNote(0.31).level, "bad");
+  assert.equal(precisionNote(null), null);
+});
