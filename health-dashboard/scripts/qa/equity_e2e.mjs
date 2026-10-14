@@ -56,7 +56,7 @@ for (const [code, sido, name] of [["00901", "009", "강릉시"], [null, "001", "
   await pg.waitForTimeout(900);
   const peerSel = await pg.evaluate(() => { const s = document.querySelector(".peer select"); return s ? s.options[s.selectedIndex].text : null; });
   check(peerSel && peerSel.includes(first.slice(0, 6)), `유사 지역 비교 → 동류군 지표 「${peerSel}」`);
-  await pg.locator(".eq-item").first().scrollIntoViewIfNeeded(); await pg.waitForTimeout(1200);   // 부드러운 스크롤이 끝난 뒤(스크롤 중엔 팝오버가 닫힘)
+  await pg.locator(".eq-item").first().locator(".info-btn").scrollIntoViewIfNeeded(); await pg.waitForTimeout(1200);   // 부드러운 스크롤이 끝난 뒤(스크롤 중엔 팝오버가 닫힘) — 카드가 화면보다 길 수 있어 ⓘ 버튼 자체를 화면에
   await pg.locator(".eq-item").first().locator(".info-btn").click(); await pg.waitForTimeout(300);
   check(await pg.locator(".info-pop").count() === 1, "ⓘ 지표 정보 창 열림");
   await pg.keyboard.press("Escape");

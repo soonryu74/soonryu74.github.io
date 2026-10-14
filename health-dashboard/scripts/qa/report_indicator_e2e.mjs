@@ -21,7 +21,7 @@ for (const [w,h,s] of [[1440,900,"light"],[390,844,"dark"],[430,932,"light"],[76
   const clip = await pg.evaluate(()=>navigator.clipboard.readText()).catch(()=>"");
   ck(clip.includes("「현재흡연율」의") && clip.includes("검토 대상"), `[${w}] 초안 복사`);
   if (w===1440) {
-    for (const [btn, ext] of [[/워드/, "doc"], [/전체 지역 CSV/, "csv"]]) {
+    for (const [btn, ext] of [[/워드\(\.doc\) 저장/, "doc"], [/전체 지역 CSV/, "csv"]]) {
       const [dl] = await Promise.all([pg.waitForEvent("download",{timeout:8000}).catch(()=>null), pg.getByRole("button",{name:btn}).click()]);
       if (dl) { const p = `${OUT}/ir.${ext}`; await dl.saveAs(p); const t=fs.readFileSync(p,"utf8"); ck(ext==="doc" ? (t.includes("<h1>현재흡연율</h1>") && !t.includes("예방·관리 탭에서")) : t.split("\n").length>=250, `[${w}] ${ext} 저장 ${t.length}B ${t.split("\n").length}줄`); }
       else ck(false, `[${w}] ${ext} 다운로드 없음`);

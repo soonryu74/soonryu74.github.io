@@ -14,7 +14,7 @@ for (const [w,h,s] of [[1440,900,"light"],[390,844,"dark"],[768,1024,"light"]]) 
   await pg.getByRole("button",{name:"📋 문장 초안 복사"}).click(); await pg.waitForTimeout(300);
   const clip = await pg.evaluate(()=>navigator.clipboard.readText()).catch(()=>"");
   ck(clip.includes("강원 강릉시의 지역사회건강조사 지표 40개"), `[${w}] 문장 초안 복사`);
-  const [dl] = await Promise.all([pg.waitForEvent("download",{timeout:8000}).catch(()=>null), pg.getByRole("button",{name:/워드/}).click()]);
+  const [dl] = await Promise.all([pg.waitForEvent("download",{timeout:8000}).catch(()=>null), pg.getByRole("button",{name:/워드\(\.doc\) 저장/}).click()]);
   if (dl) { const p = `${OUT}/report_${w}.doc`; await dl.saveAs(p); const fs = await import("node:fs"); const t=fs.readFileSync(p,"utf8"); ck(t.includes("<h1>강원 강릉시</h1>") && t.length>20000, `[${w}] 워드 저장 ${dl.suggestedFilename()} ${t.length}B`); } else ck(false, `[${w}] 워드 저장 다운로드 없음`);
   // 지역 바꾸면 보고서 갱신(시도 선택)
   await pg.goto((process.env.BASE || "http://127.0.0.1:8911") + "/index.html#view=report&sido=001", {waitUntil:"load"}); await pg.waitForTimeout(1800);
