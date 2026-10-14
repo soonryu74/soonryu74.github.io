@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { DIRECTION, directionOf, toUnfavorable } from "../src/lib/equity/normalizeIndicator.js";
 import { medianOf, gapOf, gapScore, unfavorablePercentile, ciIncludes } from "../src/lib/equity/calculateGap.js";
 import { recentTrend, trendClass } from "../src/lib/equity/calculateTrend.js";
-import { combine, depScore, tierOf, pickTop, WEIGHTS } from "../src/lib/equity/calculatePriority.js";
+import { combine, depScore, tierOf, pickTop, scoreBreakdown, WEIGHTS } from "../src/lib/equity/calculatePriority.js";
 import { buildReasons, buildReasonsEn } from "../src/lib/equity/buildReasons.js";
 
 const L = DIRECTION.LOWER, H = DIRECTION.HIGHER;
@@ -171,4 +171,21 @@ test("정밀도: 통계청 30% 기준과 대시보드 순위 제외 20% 기준�
   assert.equal(precisionNote(0.25).level, "warn");
   assert.equal(precisionNote(0.31).level, "bad");
   assert.equal(precisionNote(null), null);
+});
+
+test("점수 구성 막대: 기여분의 합 = 점수, 빠진 요소는 0이 아니라 missing", () => {
+  const full = { gap: 0.8, rank: 0.9, trend: 0.5, dep: 0.75 };
+  const c1 = combine(full);
+  const b1 = scoreBreakdown(full, c1.weights);
+  assert.equal(b1.length, 4);
+  assert.ok(Math.abs(b1.reduce((a, s) => a + s.contrib, 0) - c1.score) < 1e-12);
+  assert.ok(Math.abs(b1.find((s) => s.key === "gap").w - WEIGHTS.gap) < 1e-12);
+  const part = { gap: 0.8, rank: 0.9, trend: null, dep: null };   // 시도: 박탈 없음 · 추세 평가 안 함
+  const c2 = combine(part);
+  const b2 = scoreBreakdown(part, c2.weights);
+  assert.deepEqual(b2.filter((s) => s.missing).map((s) => s.key), ["trend", "dep"]);
+  const live = b2.filter((s) => !s.missing);
+  assert.ok(Math.abs(live.reduce((a, s) => a + s.w, 0) - 1) < 1e-12);   // 남은 가중치 재정규화
+  assert.ok(Math.abs(live.reduce((a, s) => a + s.contrib, 0) - c2.score) < 1e-12);
+  assert.equal(scoreBreakdown(null, null), null);
 });

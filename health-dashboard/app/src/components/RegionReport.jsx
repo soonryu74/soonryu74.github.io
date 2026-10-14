@@ -6,7 +6,9 @@ import { evidenceFor } from "./equity/EvidenceActions";
 import { BUILD } from "./ReviewsCard";
 import { download, safe } from "../export";
 import { copyText } from "./FeedbackView";
+import { pasteHtml, copyRich } from "../lib/richCopy";
 import ReportMode from "./ReportMode";
+import ScoreBar from "./equity/ScoreBar";
 import VS from "../../../data/validation_summary.json";
 
 /* 지역 보고서 자동 생성(무료 공개 기능) — 선택한 시도·시군구의 「지역 건강 현황」 보고서를 화면에서 만들어 인쇄·PDF·워드로 저장.
@@ -53,6 +55,11 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
     download(new Blob(["﻿" + html], { type: "application/msword" }), `${fileBase}.doc`);
   };
   const copyDraft = async () => setMsg((await copyText(paras.join("\n\n"))) ? "현황 분석 문장 초안을 복사했습니다. 계획서에 붙여 넣고 원자료와 대조해 고쳐 쓰세요." : "복사하지 못했습니다. 문장을 드래그해 복사해 주세요.");
+  // 표 서식째 복사 — 한글·워드에 Ctrl+V 하면 표·단위·출처가 그대로(2026-10-14)
+  const copyTables = async () => {
+    const c = pasteHtml(docRef.current, `${regionName} 지역 건강 현황 보고서`);
+    setMsg(c && (await copyRich(c.html, c.text)) ? "보고서를 표 서식째 복사했습니다. 한글·워드에 Ctrl+V 하면 표·단위·출처가 그대로 들어갑니다. 원자료와 대조해 고쳐 쓰세요." : "복사하지 못했습니다. 「워드(.doc) 저장」을 이용해 주세요.");
+  };
 
   return (
     <div className="rpt-wrap">
@@ -64,6 +71,7 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
         <div className="rev-btns">
           <button type="button" className="themebtn" onClick={() => window.print()}>🖨 인쇄 · PDF 저장</button>
           <button type="button" className="themebtn" onClick={saveWord}>⬇ 워드(.doc) 저장</button>
+          <button type="button" className="themebtn" onClick={copyTables} title="한글(HWP)·워드에 붙여 넣으면 표·단위·출처가 그대로 들어갑니다">📋 표 서식째 복사(한글·워드)</button>
           <button type="button" className="themebtn" onClick={copyDraft}>📋 문장 초안 복사</button>
           {onBack && <button type="button" className="themebtn" onClick={onBack}>← 지역 프로파일</button>}
         </div>
@@ -112,6 +120,7 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
                     <td>{posTxt(r)}</td>
                     <td>{r.trendCls ? r.trendCls.label : "평가 안 함"}{r.trend ? ` (${r.trend.y0}–${r.trend.y1})` : ""}</td>
                   </tr></tbody></table>
+                <ScoreBar row={r} />
                 <Lab k="why">왜 강조됐나</Lab>
                 <ul>{r.reasons.map((x, k) => <li key={k}>{x.t}</li>)}</ul>
                 <Lab k="act">검토해 볼 수 있는 공중보건 대응 <span className="muted">(공식 문서 목록 — 처방이 아님)</span></Lab>

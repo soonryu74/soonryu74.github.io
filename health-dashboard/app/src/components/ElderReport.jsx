@@ -4,6 +4,7 @@ import { buildElderReport, draftElderParagraphs, elderRowFor, GROUPS, SIGNAL_MIN
 import { BUILD } from "./ReviewsCard";
 import { download, saveCsvRows } from "../export";
 import { copyText } from "./FeedbackView";
+import { pasteHtml, copyRich } from "../lib/richCopy";
 import ReportMode from "./ReportMode";
 
 /* 고령층(65세 이상) 취약 보고서 — 해시 view=elder. 노인보건·방문건강관리·낙상 예방·치매 사업의 대상지 검토용.
@@ -57,6 +58,11 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
     ...m.rows.slice().sort((a, b) => (b.sig ?? -1) - (a.sig ?? -1)).map((o) => [label(o.r), o.age65 ?? "", ...m.items.map((it) => (isNum(o.v[it.key]) ? +o.v[it.key].toFixed(2) : "")), o.sig ?? "", o.flags.map(shortName).join(" "), o.dep?.q ?? ""]),
   ], fileBase);
   const copyDraft = async () => setMsg((await copyText(paras.join("\n\n"))) ? "현황 문장 초안을 복사했습니다. 원자료와 대조해 고쳐 쓰세요." : "복사하지 못했습니다. 문장을 드래그해 복사해 주세요.");
+  // 표 서식째 복사 — 한글·워드에 Ctrl+V 하면 표·단위·출처가 그대로(2026-10-14)
+  const copyTables = async () => {
+    const c = pasteHtml(docRef.current, "고령층 취약 보고서");
+    setMsg(c && (await copyRich(c.html, c.text)) ? "보고서를 표 서식째 복사했습니다. 한글·워드에 Ctrl+V 하면 표·단위·출처가 그대로 들어갑니다. 원자료와 대조해 고쳐 쓰세요." : "복사하지 못했습니다. 「워드(.doc) 저장」을 이용해 주세요.");
+  };
 
   return (
     <div className="rpt-wrap">
@@ -67,6 +73,7 @@ export default function ElderReport({ sel, item = "std", smooth = 3, onBack, onM
           <button type="button" className="themebtn" onClick={() => window.print()}>🖨 인쇄 · PDF 저장</button>
           <button type="button" className="themebtn" onClick={saveWord}>⬇ 워드(.doc) 저장</button>
           <button type="button" className="themebtn" onClick={saveCsv}>⬇ 전체 시군구 CSV</button>
+          <button type="button" className="themebtn" onClick={copyTables} title="한글(HWP)·워드에 붙여 넣으면 표·단위·출처가 그대로 들어갑니다">📋 표 서식째 복사(한글·워드)</button>
           <button type="button" className="themebtn" onClick={copyDraft}>📋 문장 초안 복사</button>
           {onBack && <button type="button" className="themebtn" onClick={onBack}>← 지역 프로파일</button>}
         </div>
