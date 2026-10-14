@@ -9,6 +9,7 @@ import ChoroplethMap from "./components/ChoroplethMap";
 import RankPanel from "./components/RankPanel";
 import YearTable from "./components/YearTable";
 import GapBoxplot from "./components/GapBoxplot";
+import ReadMyRegion from "./components/ReadMyRegion";
 import TrendCard from "./components/TrendCard";
 import EquityPanel from "./components/EquityPanel";
 import Profile from "./components/Profile";
@@ -379,6 +380,12 @@ export default function App() {
                 </div>
                 <ChoroplethMap ind={ind} item={item} year={year} sel={sel} scope={mapScope}
                   showLabels={mapLabels} onSelect={selectRegion} setTip={setTip} />
+              </div>
+
+              <div className="card span2 rmr-card">
+                <h3>우리 지역 읽기 — {label(sel)} · {year}년 {ind.name}<Cite ind={ind} /></h3>
+                <div className="desc">정의 → 분포 속 위치(전국·권역·시도) → 정밀도 → 격차 판단 → 해석 문장 순서로 자동 작성 · 노은정(2026) 「지역 간 건강격차 지표의 활용」 5단계를 따름<Cite k="gapguide" /></div>
+                <ReadMyRegion ind={ind} item={item} year={year} sel={sel} />
               </div>
 
               <div className="card">

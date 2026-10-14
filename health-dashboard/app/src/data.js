@@ -493,6 +493,21 @@ export const HC_BY_SIDO = {};
 HC_POOL.forEach((u) => (HC_BY_SIDO[sidoOfUnit(u)] ??= []).push(u));
 export const natPool = (ind) => (isSurvey(ind) ? HC_POOL : SGG_ALL);
 export const sidoPoolOf = (ind, sidoCode) => (isSurvey(ind) ? HC_BY_SIDO[sidoCode] || [] : SGG_BY_SIDO[sidoCode] || []);
+/* ── 질병관리청 권역질병대응센터 5권역(지역 격차 「분포 속 위치」의 권역 기준) ──
+   수도권(서울·인천·경기·강원)은 센터 소개·노은정(2026-09-29) 발표 「수도권역 101곳」(25+10+48+18)으로, 충청권·호남권 관할은 질병관리청 자료로 확인.
+   경북권(대구·경북)·경남권(부산·울산·경남)은 나머지 시도(경북권 청사 대구, 경남권 연락처 051). */
+export const KDCA_REGIONS = [
+  { id: "capital", n: "수도권", sidos: ["001", "004", "008", "009"] },
+  { id: "chungcheong", n: "충청권", sidos: ["006", "0071", "010", "011"] },
+  { id: "honam", n: "호남권", sidos: ["005", "012", "013", "016"] },
+  { id: "gyeongbuk", n: "경북권", sidos: ["003", "014"] },
+  { id: "gyeongnam", n: "경남권", sidos: ["002", "007", "015"] },
+];
+/** 지역(시도·시군구·조사 단위) → 소속 시도 코드 */
+export const sidoCodeOfRegion = (r) => (!r ? null : r.l === "sido" ? r.c : r.l === "sub" ? RBY.get(r.p)?.p : r.p);
+export const kdcaRegionOf = (sidoCode) => KDCA_REGIONS.find((k) => k.sidos.includes(sidoCode)) || null;
+/** 권역 안 비교 집단(조사 지표는 조사 단위, 그 밖은 시군구) */
+export const kdcaPoolOf = (ind, region) => (region ? natPool(ind).filter((r) => region.sidos.includes(sidoCodeOfRegion(r))) : []);
 /** 선택한 시(시 전체)가 여러 보건소로 조사되는 경우 그 보건소들 */
 export const unitsOfCity = (code) => HC_POOL.filter((u) => u.l === "sub" && u.p === code);
 
