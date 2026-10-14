@@ -68,6 +68,23 @@ if (MIRROR / ".git").exists():
     pages += ["/docs/" + quote(f) for f in ("지역건강프로파일_대시보드_사용설명서_v1.pdf", "health-profile.kr_활용법_v1.pdf") if (ROOT / "docs" / f).exists()]
     urls = "".join(f"  <url><loc>{site}{p}</loc><lastmod>{today}</lastmod></url>\n" for p in pages)
     (MIRROR / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n', encoding="utf-8")
+    # 외부 AI·검토자용 코드 묶음(health-profile.kr/code/…zip): git 이 추적하는 공개 파일만(=GitHub 공개 저장소와 같은 내용).
+    # 영상·PDF·pptx·이미지·대용량 데이터 제외, private/·.env·data/kdh 는 애초에 추적되지 않음. sitemap 에는 넣지 않는다.
+    import subprocess as _sp, zipfile
+    keep = ("app/src/", "app/tests/", "scripts/", "docs/", "global/src/", "global/methodology/")
+    files = ["CLAUDE.md", "app/package.json", "app/vite.config.js", "app/index.html", "global/index.html", "solve/template.html",
+             "data/directions.json", "data/validation_summary.json", "data/competition_evidence.json", "data/refs.json",
+             "data/coverage.json", "data/reviews.json", "data/contact.json"]
+    tracked = _sp.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.splitlines()
+    pick = sorted(set(f for f in tracked if (f in files or (f.startswith(keep) and not (f.startswith("docs/") and not f.endswith(".md"))))
+                      and not f.lower().endswith((".jpg", ".png", ".mp4", ".pptx", ".pdf"))))
+    assert not any(p.startswith(("private/", "data/kdh/")) or p.endswith(".env") for p in pick), "비공개 경로가 묶음에 섞임"
+    (MIRROR / "code").mkdir(exist_ok=True)
+    zpath = MIRROR / "code" / "health-dashboard_code_for_review.zip"
+    with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
+        for f in pick:
+            z.write(ROOT / f, f)
+    print(f"코드 묶음: {zpath.name} {len(pick)}개 파일 {zpath.stat().st_size // 1024}KB")
     print(f"거울 배포: {MIRROR / 'index.html'} + docs/ {len(list((MIRROR / 'docs').iterdir()))}개 + solve/")
 else:
     print(f"거울 배포 생략: {MIRROR} 없음")
