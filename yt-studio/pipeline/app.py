@@ -585,7 +585,7 @@ def api_thumb():
 
         def run_sc(job):
             out_dir = SAGA / "thumbnails" / slug(p["big"].replace("*", "").replace("!", ""))
-            keys = [p["series"] or "nomore"] + [k for k in ("nomore", "intro", "dean", "column") if k != (p["series"] or "nomore")]
+            keys = [p["series"] or "autosam"] + [k for k in ("autosam", "intro", "dean", "column") if k != (p["series"] or "autosam")]
             res = []
             for i, k in enumerate(keys[:3]):
                 o = out_dir / ("thumbnail.jpg" if i == 0 else f"thumbnail_{i + 1}.jpg")

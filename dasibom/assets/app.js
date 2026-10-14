@@ -242,7 +242,7 @@
   function meetingFields(m = {}) {
     return `
       <label for="f-date">언제</label><input id="f-date" type="date" value="${esc(m.date || today())}">
-      <label for="f-where">어디서 · 어떤 자리 <small>(맥락이 기억의 열쇠)</small></label><input id="f-where" value="${esc(m.where || '')}" placeholder="노모어매뉴얼 오프라인 모임, 2학년 3반 첫 수업">
+      <label for="f-where">어디서 · 어떤 자리 <small>(맥락이 기억의 열쇠)</small></label><input id="f-where" value="${esc(m.where || '')}" placeholder="오토샘 오프라인 모임, 2학년 3반 첫 수업">
       <label for="f-talked">나눈 이야기</label><textarea id="f-talked" placeholder="노트북LM으로 논문 정리 중이라고">${esc(m.talked || '')}</textarea>
       <label for="f-ask">다음에 물어볼 것 <small>(기억해줬다는 감동이 여기서)</small></label><input id="f-ask" value="${esc(m.ask || '')}" placeholder="딸 수능 결과, 캠핑 다녀온 얘기">`;
   }
@@ -538,7 +538,7 @@
 
   async function addSamples() {
     const samples = [
-      { name: '예시 · 안경 사장님', group: '예시', traits: ['안경', '부산 말투', '캠핑 좋아함'], family: '딸 고3', meetings: [{ date: '2026-09-03', where: '노모어매뉴얼 오프라인 모임', talked: '노트북LM으로 논문 정리 중', ask: '딸 수능 결과' }] },
+      { name: '예시 · 안경 사장님', group: '예시', traits: ['안경', '부산 말투', '캠핑 좋아함'], family: '딸 고3', meetings: [{ date: '2026-09-03', where: '오토샘 오프라인 모임', talked: '노트북LM으로 논문 정리 중', ask: '딸 수능 결과' }] },
       { name: '예시 · 민지', group: '예시', traits: ['앞자리', '질문 많음', '축구'], meetings: [{ date: '2026-03-02', where: '2학년 3반 첫 수업', talked: '영어 듣기가 어렵다고', ask: '축구 대회 결과' }] },
       { name: '예시 · 카페 옆자리 분', group: '예시', traits: ['보라색 노트북', '조용함', '아이스 라떼'], meetings: [{ date: '2026-08-20', where: '동네 카페', talked: '1인 창업 준비 중, 바이브코딩 관심', ask: '앱 만들기 시작했는지' }] }
     ];

@@ -360,7 +360,7 @@ def thumb(spec_path: str) -> Path:
         L = new(); L.alpha_composite(fimg, (TW - fw2, 0)); layers.append(("얼굴", L))
     L = new(); d = ImageDraw.Draw(L)  # 채널 알약
     pf = F("bold", 24)
-    pill = sp.get("pill", "노모어매뉴얼")
+    pill = sp.get("pill", "오토샘")
     pw = pf.getlength(pill) + 66
     d.rounded_rectangle((44, 30, 44 + pw, 78), 24, fill=(12, 18, 32, 230), outline=accent + (255,), width=2)
     d.ellipse((64, 48, 76, 60), fill=accent)

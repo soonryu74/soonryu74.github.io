@@ -6,7 +6,7 @@ description: 영상 자동화 공장 — 이미 찍은 영상(강의·설교·�
 # video-factory — 영상 자동화 공장
 
 > **편집은 기술이 아니라 반복이다. 반복은 스크립트에게, 사람은 고르고 OK 만.**
-> 코드는 전부 이 저장소에서 새로 짠 것(MIT 아님 · 노모어매뉴얼 소유). 글꼴 Pretendard 는 OFL(`assets/fonts/OFL-Pretendard.txt`).
+> 코드는 전부 이 저장소에서 새로 짠 것(MIT 아님 · 오토샘 소유). 글꼴 Pretendard 는 OFL(`assets/fonts/OFL-Pretendard.txt`).
 
 ## 0. 도구 7개 (`scripts/`)
 | 파일 | 하는 일 | 입력 → 출력 |

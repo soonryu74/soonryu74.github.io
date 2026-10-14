@@ -33,7 +33,7 @@ PRESETS: dict[str, dict] = {
     "referral": {"shorts": ["card", "box"], "long": "hero", "desc": "추천 영상: 카드 + 자막상자 / 얼굴 + 큰 두 줄"},
     # 7기 모집 홍보 확정(2026-09-30): 왼쪽 남색 판(꼬리표·제목 2줄·보조 줄) + 오른쪽 장면, 사랑의교회 설교 썸네일식 좌·우 구도
     "recruit":  {"shorts": ["card", "box"], "long": "recruit", "desc": "7기 모집 홍보: 카드 + 자막상자 / 왼쪽 글자 판 + 오른쪽 장면"},
-    "nomore":   {"shorts": ["box", "answer"], "long": "showcase", "desc": "노모어매뉴얼: 자막상자 + 질문-답 / 장면 카드형"},
+    "autosam":   {"shorts": ["box", "answer"], "long": "showcase", "desc": "오토샘: 자막상자 + 질문-답 / 장면 카드형"},
 }
 STYLE_KO = {"bubble": "말풍선", "box": "자막상자", "answer": "질문답", "card": "카드"}
 
