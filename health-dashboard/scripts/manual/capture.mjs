@@ -21,7 +21,7 @@ const shot = async (name, loc, note = '') => {
 };
 // Health Equity Radar 로 새로 생긴 카드(우선 검토·홈 빠르게 보기·형평성 요약 비교)는 번호 매기기에서 빼고 따로 찍는다
 // → 기존 카드 번호(C_profile_07 등, 설명서·활용법이 이 번호로 그림을 찾음)가 밀리지 않게 한다.
-const NEW_CARD = (el) => el.matches('.eq-card, .hc-eq') || /^(형평성 요약 비교|10년 추세|시군구 우수사례|질병관리청 지역사회건강조사 발간물)/.test(el.querySelector('h3')?.textContent?.trim() || '');   // 2026-10-02~03 에 생긴 카드
+const NEW_CARD = (el) => el.matches('.eq-card, .hc-eq') || /^(형평성 요약 비교|10년 추세|시군구 우수사례|질병관리청 지역사회건강조사 발간물|우리 지역 읽기)/.test(el.querySelector('h3')?.textContent?.trim() || '');   // 2026-10-02~03 에 생긴 카드
 const cards = async (prefix) => {
   const n = await p.locator('.card').count();
   let skipped = 0;

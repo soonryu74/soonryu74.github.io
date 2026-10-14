@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import Cite from "./Cite";
 import { INDICATORS, EVIDENCE, evidenceVerdict, ranked, fmt } from "../data";
 import { Badge } from "./EvidencePanel";
+import { gapMeasures } from "../lib/gapMeasures";
 
 const ORDER = { now: 0, thin: 1, cpstf: 2, stale: 3, none: 4 };
 const DESC = {
@@ -17,7 +18,8 @@ export default function PriorityCard({ scored, item, pool, onPick }) {
   const rows = useMemo(() => scored.filter((r) => r.pct != null && r.pct < cut).map((r) => {
     const rs = ranked(r.ind, item, r.y, pool);
     const vs = rs.map((x) => x.v).filter((x) => x != null);
-    const gap = vs.length ? Math.max(...vs) - Math.min(...vs) : null;
+    const g = gapMeasures(vs);   // 30곳 넘으면 상·하위 20% 경계값 차이, 이하면 최댓값−최솟값(노은정 2026 · WHO HEAT)
+    const gap = g ? (g.boundary ? g.boundary.abs : g.maxMin.abs) : null;
     const med = vs.length ? [...vs].sort((a, b) => a - b)[Math.floor(vs.length / 2)] : null;
     return { ...r, gap, med, verdict: evidenceVerdict(r.ind.id) };
   }).sort((a, b) => (ORDER[a.verdict.key] - ORDER[b.verdict.key]) || (a.pct - b.pct)), [scored, item, pool, cut]);
@@ -28,7 +30,7 @@ export default function PriorityCard({ scored, item, pool, onPick }) {
     <div className="card span2 prio">
       <h3>무엇부터 손댈 것인가<Cite k={["chs", "nice", "cpstf"]} /> <small className="muted">(하위 {cut}% 지표 × 현행 근거)</small></h3>
       <div className="desc">
-        축 1 <b>부담</b>(백분위) · 축 2 <b>격차</b>(전국 최대−최소) · 축 3 <b>수단</b>(NICE 현행 지침 유무와 갱신 연도). 나쁘고, 격차가 크고, 검증된 수단이 있는 지표가 위로 옵니다.
+        축 1 <b>부담</b>(백분위) · 축 2 <b>격차</b>({pool.length > 30 ? "비교 지역 상·하위 20% 경계값 차이" : "비교 지역 최댓값−최솟값"}) · 축 3 <b>수단</b>(NICE 현행 지침 유무와 갱신 연도). 나쁘고, 격차가 크고, 검증된 수단이 있는 지표가 위로 옵니다.
         <span className="cutsel"> 기준 <select value={cut} onChange={(e) => setCut(Number(e.target.value))}><option value={25}>하위 25%</option><option value={30}>하위 30%</option><option value={40}>하위 40%</option></select></span>
       </div>
       {!rows.length ? <div className="empty">하위 {cut}% 지표가 없습니다</div> : (

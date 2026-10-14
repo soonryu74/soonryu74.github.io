@@ -124,6 +124,20 @@ for (const [w, h] of VPS) {
   }
   await pg.close();
 }
+// 격차 정의(노은정 2026 발표 기준): 발표 예시(경기 광주시 2025 비만율 표준화)를 화면이 그대로 재현하는지
+{
+  const pg = await b.newPage({ viewport: { width: 1280, height: 1000 } });
+  await pg.goto(`${BASE}/index.html#view=analysis&ind=DT_H_OBE_OBE&sido=008&sgg=00819&year=2025&scope=nation`, { waitUntil: "load" });
+  await pg.waitForSelector(".rmr-card"); await pg.waitForTimeout(800);
+  const t = await pg.locator(".rmr-sentence").innerText();
+  check(["38.4%(95% 신뢰구간 34.7~42.1%)", "258곳 중 값이 높은 순 58번째(상위 약 22%)", "수도권 101곳 중 값이 높은 순 19번째(상위 약 19%)", "3.0%p 높지만", "통계적으로 유의하지 않다", "31.3%)와는 7.1%p(1.23배)"].every((x) => t.includes(x)), "우리 지역 읽기: 발표 예시(경기 광주시 비만율) 해석 문장 재현");
+  check((await pg.locator(".rmr-steps > li").count()) === 5, "우리 지역 읽기 5단계");
+  const rows = await pg.locator(".gr-tbl tbody tr").allInnerTexts();
+  check(rows.length === 3 && /24\.9%p/.test(rows[0]) && /7\.3%p/.test(rows[1]) && /1\.23배/.test(rows[1]), `격차 읽기 3방식(최대−최소 24.9%p · 경계값 7.3%p·1.23배): ${rows.map((r) => r.split("\t")[0]).join(" / ")}`);
+  await pg.goto(`${BASE}/index.html#view=analysis&ind=DT_H_OBE_OBE&sido=008&year=2025&scope=sidoAll`, { waitUntil: "load" }); await pg.waitForTimeout(800);
+  check(/30곳 이하라 쓰지 않음/.test(await pg.locator(".gap-read").innerText()), "17개 시도 비교에서는 분위 방식 미적용 표시");
+  await pg.close();
+}
 // 메인 공유·검색 기본값(카톡·네이버·구글 미리보기): 설명·canonical·OG·JSON-LD, 미리보기 그림 1200×630
 {
   const html = await (await fetch(`${BASE}/index.html`)).text();

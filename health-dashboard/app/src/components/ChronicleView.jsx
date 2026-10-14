@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Cite from "./Cite";
-import { INDICATORS, DS, SIDOS, SGG_ALL, val, fmt, nationalMedian, NCD } from "../data";
+import { INDICATORS, DS, SIDOS, SGG_ALL, val, fmt, nationalMedian, natPool, NCD } from "../data";
+import { gapMeasures, sides, gapChangeType } from "../lib/gapMeasures";
 import EV from "../../../data/chronicle_events.json";
 import S25 from "../../../data/chs2025_summary25.json";
 
@@ -31,7 +32,12 @@ export default function ChronicleView({ setTip, onPick }) {
 
   // 지표별 전국(시군구 중앙값) 시계열·시도 격차
   const MED = useMemo(() => Object.fromEntries(CHS.map((ind) => [ind.id, Object.fromEntries(ind.years.map((y) => [y, nationalMedian(ind, "std", y)]))])), []);
-  const SPREAD = useMemo(() => Object.fromEntries(CHS.map((ind) => [ind.id, Object.fromEntries(ind.years.map((y) => { const vs = SIDOS.map((s) => val(ind, "std", y, s.c)).filter((v) => v != null); return [y, vs.length > 3 ? Math.max(...vs) - Math.min(...vs) : null]; }))])), []);
+  // 격차 = 조사 단위(보건소) 상·하위 20% 평균 차이(분위 평균). 시도 17곳 최대−최소는 세종 한 곳에 흔들려 쓰지 않는다(노은정 2026, WHO HEAT 30곳 기준).
+  const SPREAD = useMemo(() => Object.fromEntries(CHS.map((ind) => [ind.id, Object.fromEntries(ind.years.map((y) => {
+    const g = gapMeasures(natPool(ind).map((r) => val(ind, "std", y, r.c)));
+    const sd = sides(g, ind.bad, "quintile");
+    return [y, sd ? { gap: g.quintile.abs, sd } : null];
+  }))])), []);
 
   // 올해의 10대 뉴스 (연도별 자동 산출)
   const NEWS = useMemo(() => {
@@ -49,7 +55,11 @@ export default function ChronicleView({ setTip, onPick }) {
         const good = ind.bad ? d < 0 : d > 0;
         items.push({ kind: "change", ind, v, p, d, rel, good, record: record?.[0] || null, score: Math.abs(rel) + (record ? 8 : 0) + (Math.abs(d) < 0.3 ? -6 : 0) });
         const s = SPREAD[ind.id][y], sp = SPREAD[ind.id][y - 1];
-        if (s != null && sp != null && sp > 0) { const gd = s - sp; items.push({ kind: "gap", ind, v: s, p: sp, d: gd, rel: (gd / sp) * 100, good: gd < 0, record: null, score: Math.abs(gd / sp) * 30 - 2 }); }
+        if (s && sp && sp.gap > 0) {
+          const ct = gapChangeType(sp.sd, s.sd, ind.bad);   // 끌어올림·하향 수렴·동반 악화·전체 이동·격차 확대 — 「격차 축소 = 좋음」으로 읽지 않는다
+          const gd = s.gap - sp.gap;
+          if (ct && ct.type !== "flat") items.push({ kind: "gap", ind, v: s.gap, p: sp.gap, d: gd, rel: (gd / sp.gap) * 100, good: ct.good, ct, record: null, score: Math.abs(gd / sp.gap) * 30 - 2 });
+        }
       }
       items.sort((a, b) => b.score - a.score);
       const picked = [], perDomain = {}, perInd = {}; let gaps = 0;
@@ -73,7 +83,7 @@ export default function ChronicleView({ setTip, onPick }) {
 
   const headline = (it) => {
     const u = it.ind.unit || "";
-    if (it.kind === "gap") return `${it.ind.name} 시도 간 격차 ${fmt(it.p)}→${fmt(it.v)}${punit(u)} · ${it.d < 0 ? "축소" : "확대"}`;
+    if (it.kind === "gap") return `${it.ind.name} 보건소 간 격차(상·하위 20% 평균) ${fmt(it.p)}→${fmt(it.v)}${punit(u)} · ${it.ct.label}`;
     if (it.kind === "record") return `${it.ind.name} ${fmt(it.v)}${u} · ${it.record}`;
     return `${it.ind.name} ${fmt(it.p)}→${fmt(it.v)}${u} (${sign(it.d)}${fmt(it.d)}${punit(u)})`;
   };
@@ -149,7 +159,7 @@ export default function ChronicleView({ setTip, onPick }) {
                   <div className="m-body">
                     <div className="m-hl">{headline(it)}</div>
                     <div className="m-sub">
-                      <span className={`m-badge ${it.good ? "good" : "bad"}`}>{it.kind === "gap" ? (it.good ? "격차 축소" : "격차 확대") : it.good ? "개선" : "악화"}</span>
+                      <span className={`m-badge ${it.good == null ? "neutral" : it.good ? "good" : "bad"}`} title={it.kind === "gap" ? it.ct.why : undefined}>{it.kind === "gap" ? it.ct.label : it.good ? "개선" : "악화"}</span>
                       {it.record && <span className="m-badge rec">{it.record}</span>}
                       <span className="m-dom">{it.ind.domain}</span>
                       {it.kind === "change" && <span className="m-rel">{sign(it.rel)}{fmt(it.rel, 1)}%</span>}
@@ -216,7 +226,7 @@ export default function ChronicleView({ setTip, onPick }) {
           })}
         </div>
       </section>
-      <div className="m-foot">전시 원칙: 문서 원문은 보관하지 않고 발행기관 링크만 둡니다. 연도 표제와 사건 요약은 편집자(AI) 정리이므로 인용 전 원문을 확인하세요. 뉴스 순위 = |전년 대비 상대변화| + 역대 기록 가산, 영역당 최대 3개·격차 뉴스 최대 3개.</div>
+      <div className="m-foot">전시 원칙: 문서 원문은 보관하지 않고 발행기관 링크만 둡니다. 연도 표제와 사건 요약은 편집자(AI) 정리이므로 인용 전 원문을 확인하세요. 뉴스 순위 = |전년 대비 상대변화| + 역대 기록 가산, 영역당 최대 3개·격차 뉴스 최대 3개. 격차 뉴스는 보건소 상·하위 20% 평균 차이로 계산하고, 줄어든 이유에 따라 끌어올림(바람직)·하향 수렴·동반 악화로 나눠 표시합니다(격차 축소를 곧 개선으로 보지 않음).</div>
     </div>
   );
 }
