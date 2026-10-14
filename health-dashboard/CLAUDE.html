@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"프로젝트: 지역 건강프로파일 대시보드 (+ 후속 「랭킹」 플랫폼)","url":"/health-dashboard/CLAUDE.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=1f4b48406cddc88620b89ea30794c1a6438ae3b1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=cc5ccb47bd029deffd3cda577d7d552a59b05ee4">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -482,6 +482,11 @@ docs/PRACTITIONER_TEST_PROTOCOL.md(실무자 5–8명, 과제 T1–T5, 기록 �
 <code class="language-plaintext highlighter-rouge">app/src/lib/gapMeasures.js</code>(순수 함수): gapMeasures(최대−최소·P80−P20 경계값·상하위 20% 평균, 각 %p·배, 30곳 이하 분위 null) · sides(방향별 양호/불리 쪽) · positionIn(값이 높은 순 k번째·상위 약 x%·불리한 쪽 20%) · versus · gapChangeType(끌어올림·하향 수렴·동반 악화·전체 이동·전체 악화·격차 확대) · precisionNote(RSE 30% 통계청 인용 기준 vs 20% 순위 제외 기준).
 화면: ① 지역 간 격차 카드 아래 「격차 읽기」 표(GapBoxplot GapTable) ② 지도 아래 「우리 지역 읽기」 5단계 카드(ReadMyRegion.jsx, 해석 문장 복사) ③ 연대기 격차 뉴스 = 조사 단위 258곳 상·하위 20% 평균 + 4유형 배지(「격차 축소=좋음」 삭제) ④ PriorityCard 격차 축 = 30곳 초과면 경계값 차이. data.js <code class="language-plaintext highlighter-rouge">KDCA_REGIONS</code>·<code class="language-plaintext highlighter-rouge">kdcaRegionOf</code>·<code class="language-plaintext highlighter-rouge">kdcaPoolOf</code>·<code class="language-plaintext highlighter-rouge">sidoCodeOfRegion</code>(질병대응센터 5권역).
 재현: 발표 예시(경기 광주시 2025 비만율 표준화) 31.3/35.4/38.6·58번째(22%)·수도권 101곳 중 19번째·CI 34.7~42.1·7.1%p(1.23배) 전부 일치 — 단위 테스트 20건·solve_readiness 점검 4건에 고정. 검색 카드 「우리 지역 읽기」, capture.mjs NEW_CARD 에 추가. 사용설명서·활용법·영상에는 아직 없음.</li>
+  <li>[완료] <strong>아르곤 검토 제안 3종</strong>(2026-10-14, 소유자 승인 「③ 점수 구성 막대, ④ 한글용 표 복사, ① 계획 수립 단계 안내 띠」 — 계산·메뉴·기존 기능 변경 없음):
+③ <code class="language-plaintext highlighter-rouge">components/equity/ScoreBar.jsx</code> + <code class="language-plaintext highlighter-rouge">calculatePriority.js scoreBreakdown(parts, weights)</code> — 우선 검토 항목마다 격차·위치·추세·박탈 기여분(재정규화 가중치 × 요소 점수, 합 = 점수) 가로 막대·범례, 빠진 요소는 「없음」(0 아님), 영어 모드. 막대는 인라인 스타일 표 한 줄(워드·한글에서도 보이게). 지역 보고서 우선 검토 카드에도 같은 막대. 「계산 방법」에 읽는 법 추가.
+④ <code class="language-plaintext highlighter-rouge">lib/richCopy.js</code>(pasteHtml·copyRich) — 보고서 3종 「📋 표 서식째 복사(한글·워드)」: 본문 복제 → 버튼·.rpt-noprint·.rpt-bar 제거, 표 border=”1”·칸 인라인 테두리·머리 배경·판정 행 색 → ClipboardItem(text/html+text/plain), 실패 시 선택 영역 + execCommand. 실제 한글 붙여넣기는 소유자 PC 확인 필요(헤드리스는 클립보드 HTML 까지만 확인).
+① <code class="language-plaintext highlighter-rouge">components/PlanSteps.jsx</code> — 메뉴 아래 「계획 수립 순서 ① 진단(프로파일) → ② 비교 → ③ 격차(지표 분석 「우리 지역 읽기」 카드) → ④ 우선순위·근거(우선 검토 카드) → ⑤ 보고서」, goSearch 로 이동, 현재 단계 강조, 영문 소개(radar)·인쇄에서 숨김, 600px 이하 부제 숨김·띠 안 가로 스크롤. 카드 제목(「우리 지역 읽기」「우리 지역 우선 검토 항목」)을 바꾸면 PLAN_STEPS card 도 고칠 것.
+점검: 단위 테스트 21건 · solve_readiness_e2e 9건 추가. 사용설명서·활용법·영상에는 아직 없음.</li>
   <li>[기획·비공개] 운영·지속가능성 기획(2026-10-04): 소유자 지시 “미확정이라 공개하지 마” — 공개 저장소·사이트에 올리지 않는다. 원본은 health-dashboard/private/(.git/info/exclude 로 제외, 이 컨테이너에만 있음)와 소유자 보관본. 관련 내용을 docs·화면·커밋 메시지에 쓰지 말 것.</li>
   <li>[검토] 지역·필수·공공의료 거버넌스 질문(2026-10-02): docs/지역필수공공의료_거버넌스_자료검토_v1.md — 거버넌스가 묻는 4가지(어디가 나쁜가·자원·흐름·성과) 중 ①은 거의, ②는 절반 가능, <strong>자체충족률·접근성·공공병원 현황이 비어 있음</strong>. 수집 후보 1순위 공단 지역별의료이용통계 관내·관외 진료(KOSIS 표 ID 확인 필요), 2순위 응급·분만·소아 취약지 고시, 3순위 심평원 의료기관 Open API.</li>
   <li>[대기] <strong>고령층·고위험군 자료 2025 갱신</strong>(2026-10-06~08, 소유자 질문 “연앙인구는 업데이트 안 해도 돼?” → 「2025 분자 자료부터 조사」 → 「키 등록 후 새 세션」): 건강수명은 이미 2025 연앙인구, 표준화 사망률은 KOSIS 표준화율이라 무관. <strong>data/risk.json 은 pop_year 2024</strong>(고위험군 카드·고령층 보고서·코로나 분모) — 분자도 김동현 DB 경유 2024(독거노인·기초연금), 장기요양 정원 2022(216곳)/2023(17곳)이라 분모만 바꾸면 연도가 어긋남 → 분자·분모를 함께 2025로.

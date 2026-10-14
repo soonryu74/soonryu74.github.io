@@ -138,6 +138,42 @@ for (const [w, h] of VPS) {
   check(/30곳 이하라 쓰지 않음/.test(await pg.locator(".gap-read").innerText()), "17개 시도 비교에서는 분위 방식 미적용 표시");
   await pg.close();
 }
+// 아르곤 검토 반영(2026-10-14): ③ 점수 구성 막대 · ④ 표 서식째 복사 · ① 계획 수립 단계 안내 띠
+{
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, permissions: ["clipboard-read", "clipboard-write"] });
+  const pg = await ctx.newPage();
+  await pg.goto(`${BASE}/index.html#view=profile&sido=014&sgg=01401`, { waitUntil: "load" });
+  await pg.waitForSelector(".eq-item .eq-sbar");
+  const sb = await pg.$$eval(".eq-item", (els) => els.map((e) => {
+    const nums = [...e.querySelectorAll(".eq-sbar-leg b")].map((x) => x.textContent);
+    const tot = +(e.querySelector(".eq-sbar-h small")?.textContent.match(/([\d.]+) \/ 1/) || [])[1];
+    const sum = nums.filter((x) => /^[\d.]+$/.test(x)).reduce((a, x) => a + +x, 0);
+    const w = [...e.querySelectorAll(".eq-sbar-track td")].reduce((a, td) => a + parseFloat(td.style.width), 0);
+    return { n: nums.length, tot, sum, w };
+  }));
+  check(sb.length > 0 && sb.every((x) => x.n === 4 && Math.abs(x.sum - x.tot) <= 0.02 && Math.abs(x.w - 100) <= 0.3), `점수 구성 막대: 항목마다 4요소, 범례 합 = 합계, 칸 너비 합 100% (${sb.map((x) => x.tot).join(", ")})`);
+  await pg.goto(`${BASE}/index.html#view=profile&sido=001`, { waitUntil: "load" });
+  await pg.waitForSelector(".eq-item .eq-sbar");
+  check(/박탈\s*없음/.test(await pg.locator(".eq-item .eq-sbar-leg").first().innerText()), "점수 구성 막대: 시도(서울)는 박탈 「없음」(0점 아님)");
+  const on = async () => (await pg.locator(".plan-steps button.on").innerText()).replace(/\s+/g, " ");
+  check((await pg.locator(".plan-steps li").count()) === 5, "계획 수립 띠 5단계");
+  await pg.locator(".plan-steps li").nth(2).locator("button").click(); await pg.waitForTimeout(2200);
+  const rmrTop = await pg.evaluate(() => document.querySelector(".rmr-card")?.getBoundingClientRect().top);
+  check(/격차/.test(await on()) && rmrTop != null && Math.abs(rmrTop) < 120, `계획 수립 띠 ③ 격차 → 지표 분석 「우리 지역 읽기」 (top ${Math.round(rmrTop)})`);
+  await pg.locator(".plan-steps li").nth(3).locator("button").click(); await pg.waitForTimeout(2200);
+  const eqTop = await pg.evaluate(() => document.querySelector(".eq-card")?.getBoundingClientRect().top);
+  check(/우선순위/.test(await on()) && eqTop != null && Math.abs(eqTop) < 120, "계획 수립 띠 ④ → 우선 검토 항목 카드");
+  await pg.locator(".plan-steps li").nth(4).locator("button").click(); await pg.waitForSelector(".rpt");
+  check(await pg.evaluate(() => document.documentElement.scrollWidth - innerWidth) <= 1, "계획 수립 띠 ⑤ → 보고서, 390px 가로 넘침 없음");
+  for (const v of ["report", "ireport", "elder"]) {
+    await pg.goto(`${BASE}/index.html#view=${v}&sido=014&sgg=01401&ind=DT_H_SM`, { waitUntil: "load" });
+    await pg.waitForSelector(".rpt");
+    await pg.locator("button", { hasText: "표 서식째 복사" }).click(); await pg.waitForTimeout(400);
+    const c = await pg.evaluate(async () => { const it = (await navigator.clipboard.read())[0]; const h = await (await it.getType("text/html")).text(); return { tbl: (h.match(/border="1"/g) || []).length, inl: /border:1px solid #999/.test(h), btn: /<button/.test(h), src: /자료원|출처/.test(h) }; });
+    check(c.tbl >= 3 && c.inl && !c.btn && c.src, `${v}: 표 서식째 복사 — 클립보드 HTML 표 ${c.tbl}개(인라인 테두리, 버튼 제외, 출처 포함)`);
+  }
+  await ctx.close();
+}
 // 메인 공유·검색 기본값(카톡·네이버·구글 미리보기): 설명·canonical·OG·JSON-LD, 미리보기 그림 1200×630
 {
   const html = await (await fetch(`${BASE}/index.html`)).text();

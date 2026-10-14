@@ -5,6 +5,7 @@ import { buildReasonsEn, POOL_EN, TREND_EN } from "../../lib/equity/buildReasons
 import WhyThisMatters from "./WhyThisMatters";
 import EvidenceActions from "./EvidenceActions";
 import IndInfo from "./IndInfo";
+import ScoreBar from "./ScoreBar";
 import UsabilityFeedback from "../UsabilityFeedback";
 import { T, TIER_EN, BAND_EN, DEP_EN, indName, domName, EN_STATUS } from "./i18n";
 
@@ -89,6 +90,7 @@ export default function EquityPriorityCard({ sel, item, smooth = 3, onPick, onPe
                 <div><dt>{L.trend}</dt><dd><b>{r.trendCls ? (en ? TREND_EN[r.trendCls.label] : r.trendCls.label) : en ? "Not assessed" : "평가 안 함"}</b><small>{r.trend ? `${r.trend.y0}–${r.trend.y1} ${en ? "per year" : "연"} ${r.trend.slope > 0 ? "▲" : r.trend.slope < 0 ? "▼" : ""}${fmt(Math.abs(r.trend.slope), 2)}${du(r.unit, lang)}` : en ? `fewer than ${TREND_MIN} valid years` : `유효 연도 ${TREND_MIN}개 미만`}</small></dd></div>
                 <div><dt>{L.dep}</dt><dd><b>{depWord(r.depQ) ? (en ? DEP_EN[depWord(r.depQ)] : depWord(r.depQ)) : isSido ? (en ? "Not applicable" : "해당 없음") : en ? "No data" : "자료 없음"}</b><small>{r.depQ ? (en ? `deprivation quintile ${r.depQ}` : `지역박탈 ${r.depQ}분위`) : en ? "weights renormalized" : "가중치 재정규화"}</small></dd></div>
               </dl>
+              <ScoreBar row={r} lang={lang} />
               <WhyThisMatters reasons={en ? buildReasonsEn(r) : r.reasons} title={L.why} />
               <EvidenceActions row={r} sel={sel} onPick={onPick} onPeer={onPeer} onGoCard={onGoCard} onRecommend={onRecommend} lang={lang} />
             </section>
@@ -127,7 +129,7 @@ export default function EquityPriorityCard({ sel, item, smooth = 3, onPick, onPe
             <li><b>Recent trend</b> ({WEIGHTS.trend * 100}%): straight-line slope over the last {TREND_WINDOW} years when at least {TREND_MIN} valid years exist, scored by tertile of the comparison group (worsening third = 1, middle = 0.5, improving = 0). Labelled “Little change” when the yearly change is below 1% of the national median.</li>
             <li><b>Socioeconomic context</b> ({WEIGHTS.dep * 100}%): area deprivation quintile (1 → 0 … 5 → 1). Not available for provinces. It is shown side by side with the indicator and never implies cause.</li>
             <li><b>Tiers</b>: Review first = unfavourable direction · lower {Math.round((1 - THRESHOLDS.priorityU) * 100)}% · score ≥ {THRESHOLDS.priorityScore} · 95% confidence interval excludes the national median · relative standard error ≤ 20%. Monitor = unfavourable and lower half, or score ≥ {THRESHOLDS.watchScore}. Fewer than {THRESHOLDS.minPool} comparison areas, no value, or a value more than 3 years old = insufficient data.</li>
-            <li>The score is an internal technical score, not an official index; only the tier is shown. Top three = Review first, then Monitor, one per domain.</li>
+            <li>The score is an internal technical score, not an official index. Each item shows the tier and a <b>score composition bar</b>: each segment = renormalized weight × component score, so the segments add up to the score (the empty part is 1 − score). Top three = Review first, then Monitor, one per domain.</li>
           </ul>
         ) : (
           <ul className="eq-method">
@@ -137,7 +139,7 @@ export default function EquityPriorityCard({ sel, item, smooth = 3, onPick, onPe
             <li><b>최근 추세</b>(가중 {WEIGHTS.trend * 100}%): 최근 {TREND_WINDOW}개 연도 안에 유효 값이 {TREND_MIN}개 이상일 때만 직선 기울기를 구해 비교 집단 기울기의 3분위(악화 쪽 1/3 = 1점·가운데 0.5·개선 쪽 0)로 씁니다. 라벨은 연간 변화가 전국 중앙값의 1% 미만이면 「변화 적음」.</li>
             <li><b>사회경제적 취약성</b>(가중 {WEIGHTS.dep * 100}%): 지역박탈지수 5분위(1→0점 … 5→1점). 시도이거나 값이 없으면 0으로 두지 않고 빼고 나머지 가중치로 다시 나눕니다. 박탈 분위는 지역마다 하나라 지표 사이 순서는 바꾸지 않고 등급에만 영향을 줍니다.</li>
             <li><b>등급</b>: 우선 검토 = 불리한 쪽 · 하위 {Math.round((1 - THRESHOLDS.priorityU) * 100)}% · 점수 {THRESHOLDS.priorityScore} 이상 · 95% 신뢰구간이 전국 중앙값을 포함하지 않음 · 상대표준오차 20% 이하. 관찰 필요 = 불리한 쪽이면서 하위 50% 또는 점수 {THRESHOLDS.watchScore} 이상. 비교 집단 {THRESHOLDS.minPool}곳 미만·값 없음·최근 값이 3년 넘게 오래됨 = 자료 부족.</li>
-            <li>가중치는 지시된 설계값을 쓴 <b>화면 내부용 기술 점수</b>이며 공식 지수가 아닙니다. 상위 3개는 우선 검토 → 관찰 필요 순, 같은 영역은 하나만 보여 줍니다.</li>
+            <li>가중치는 지시된 설계값을 쓴 <b>화면 내부용 기술 점수</b>이며 공식 지수가 아닙니다. 항목마다 등급과 함께 <b>점수 구성 막대</b>를 보여 줍니다 — 칸 하나 = 재정규화한 가중치 × 요소 점수라 칸을 모두 더하면 점수이고, 오른쪽 빈칸은 1 − 점수입니다. 상위 3개는 우선 검토 → 관찰 필요 순, 같은 영역은 하나만 보여 줍니다.</li>
           </ul>
         )}
       </details>

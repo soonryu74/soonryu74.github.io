@@ -21,6 +21,15 @@ export function combine(parts, weights = WEIGHTS) {
   return { score, used, weights: norm };
 }
 
+/** 점수 구성(화면 표시용): 요소별 기여분 = 재정규화 가중치 × 요소 점수. 기여분의 합 = score.
+ *  값이 없는 요소는 0이 아니라 { missing: true } 로 돌려준다. */
+export function scoreBreakdown(parts, weights) {
+  if (!parts || !weights) return null;
+  return Object.keys(WEIGHTS).map((key) => (isNum(weights[key]) && isNum(parts[key])
+    ? { key, part: parts[key], w: weights[key], contrib: weights[key] * parts[key] }
+    : { key, missing: true }));
+}
+
 /** 등급. 표본오차 범위(95% 신뢰구간이 전국 중앙값을 포함)이거나 불안정 값(상대표준오차 20% 초과)이면 「우선 검토」로 올리지 않는다. */
 export function tierOf({ dirRel, u, score, ciIncludesRef, unstable = false, n, t = THRESHOLDS }) {
   if (!isNum(u) || !isNum(score) || !isNum(dirRel) || !(n >= t.minPool)) return "insufficient";

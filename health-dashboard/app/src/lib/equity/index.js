@@ -5,10 +5,10 @@ import { INDICATORS, SIDOS, natPool, val, valSmooth, ci, hasSe, depOf, RBY, isSu
 import { isDirectional } from "./normalizeIndicator.js";
 import { medianOf, gapOf, gapScore, unfavorablePercentile, positionBand, ciIncludes, validValues } from "./calculateGap.js";
 import { recentTrend, trendClass } from "./calculateTrend.js";
-import { combine, depScore, tierOf, pickTop, TIERS, WEIGHTS, THRESHOLDS } from "./calculatePriority.js";
+import { combine, depScore, tierOf, pickTop, scoreBreakdown, TIERS, WEIGHTS, THRESHOLDS } from "./calculatePriority.js";
 import { buildReasons } from "./buildReasons.js";
 
-export { TIERS, WEIGHTS, THRESHOLDS };
+export { TIERS, WEIGHTS, THRESHOLDS, scoreBreakdown };
 export const TREND_WINDOW = 5;     // 최근 5개 연도
 export const TREND_MIN = 3;        // 유효 연도 3개 이상일 때만 추세 평가
 export const STALE_YEARS = 3;      // 지역 값이 지표 최신 연도보다 3년 넘게 오래되면 자료 부족
