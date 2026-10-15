@@ -67,10 +67,10 @@ const db = p => p.evaluate(() => window.__DB());
     { const c2 = await b.newContext(); const q = await c2.newPage();
       await q.route('**/rpc/**', r => new Promise(res => setTimeout(() => res(r.abort()), 3000)));
       await q.route('**/cdn.jsdelivr.net/**', r => r.abort());
-      await q.goto(BASE + 'index.html?c=bangjoo', { waitUntil: 'domcontentloaded' });
-      ok('서버 답 전에도 처음부터 교회 로고(깜빡임 없음)', /assets\/logo\.png$/.test(await q.getAttribute('#hero-logo', 'src')) && !(await q.isVisible('#to-setup')));
+      await q.goto(BASE + 'bangjoo/'); await q.waitForURL(/\?c=bangjoo/, { waitUntil: 'domcontentloaded' });
+      ok('교회 주소로 들어오면 서버 답 전에도 처음부터 교회 로고(깜빡임 없음)', /assets\/logo\.png$/.test(await q.getAttribute('#hero-logo', 'src')) && !(await q.isVisible('#to-setup')));
       await q.goto(BASE + 'index.html?c=zzzz', { waitUntil: 'domcontentloaded' });
-      ok('처음 보는 교회는 일반 아이콘을 먼저 그리지 않음', (await q.getAttribute('#hero-logo', 'src')) === null);
+      ok('다른 교회 주소면 기억한 교회 로고를 쓰지 않음(섞이지 않음)', (await q.getAttribute('#hero-logo', 'src')) === null && (await q.textContent('#hero-church')) === '');
       await c2.close(); }
     await p.goto(BASE + 'index.html?new=BJ-V3DEXG'); await p.waitForTimeout(300);
     ok('?new=코드 → 초대 코드 미리 채움', (await p.inputValue('#scode')) === 'BJ-V3DEXG');
@@ -191,6 +191,16 @@ const db = p => p.evaluate(() => window.__DB());
     ok('머리말 이름이 바로 바뀜', (await p.textContent('.top .church')) === '멜번방주교회');
     const ch = (await db(p)).church_church.find(x => x.id === 'cb');
     ok('이름·시간대 저장', ch.name === '멜번방주교회' && ch.timezone === 'Asia/Seoul');
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVR42mP8z8BQz0AEYBxVSF8FAJ2YB/2D4nBRAAAAAElFTkSuQmCC', 'base64');
+    await p.setInputFiles('#ch-logo-file', { name: 'logo.png', mimeType: 'image/png', buffer: png }); await p.waitForTimeout(600);
+    const ch2 = (await db(p)).church_church.find(x => x.id === 'cb');
+    ok('로고 올리기 → 서버 저장', /storage\.example\/cb\.png/.test(ch2.logo_url), ch2.logo_url);
+    ok('로고 올리기 → 머리말·미리보기 바로 바뀜', /storage\.example/.test(await p.getAttribute('.top img.mark', 'src')) && /storage\.example/.test(await p.getAttribute('#ch-logo', 'src')));
+    const call = (await calls(p)).find(x => x.body.action === 'set_logo');
+    ok('화면이 PNG로 줄여 보냄', call && /^data:image\/png;base64,/.test(call.body.data));
+    p.once('dialog', d => d.accept());
+    await p.click('#ch-logo-del'); await p.waitForTimeout(400);
+    ok('로고 지우기', (await db(p)).church_church.find(x => x.id === 'cb').logo_url === '' && /icon-192\.png$/.test(await p.getAttribute('#ch-logo', 'src')));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 

@@ -5,6 +5,7 @@
 //  · create_pastor   : 목사 계정을 하나 더 만든다 (내 교회)
 //  · reset_password  : 같은 교회 계정의 비밀번호를 새로 정한다
 //  · delete_user     : 같은 교회 계정을 지운다 (마지막 목사는 못 지움)
+//  · set_logo        : 우리 교회 로고(PNG, 화면에서 512px 이하로 줄여 보냄)를 올린다 / remove_logo : 지운다
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
@@ -21,6 +22,7 @@ const json = (body: unknown, status = 200) =>
 
 // 아이디는 메일 주소 앞부분으로 쓰이므로 영문 소문자·숫자·밑줄만 받는다 (모든 교회에서 하나뿐)
 const DOMAIN = 'gajeong.local'
+const LOGO_BUCKET = 'church-logo'   // 공개 읽기, 쓰기는 이 함수(서버)만
 const ID_RE = /^[a-z0-9_]{3,30}$/
 const emailOf = (id: string) => `${id}@${DOMAIN}`
 
@@ -177,6 +179,31 @@ Deno.serve(async (req) => {
         if ((count ?? 0) <= 1) return json({ error: '마지막 목사 계정은 지울 수 없습니다' }, 400)
       }
       const { error } = await admin.auth.admin.deleteUser(uid)
+      if (error) throw new Error(error.message)
+      return json({ ok: true })
+    }
+
+    if (action === 'set_logo') {
+      // 'data:image/png;base64,....' — 화면이 캔버스로 줄여 PNG로 보낸다
+      const m = /^data:image\/png;base64,([A-Za-z0-9+/=]+)$/.exec(String(body.data ?? ''))
+      if (!m) return json({ error: '그림을 읽지 못했습니다. PNG·JPG 사진을 골라 주세요' }, 400)
+      const bytes = Uint8Array.from(atob(m[1]), (ch) => ch.charCodeAt(0))
+      if (bytes.length > 1024 * 1024) return json({ error: '그림이 너무 큽니다 (1MB 이하)' }, 400)
+      const PNG = [0x89, 0x50, 0x4e, 0x47]
+      if (!PNG.every((b, i) => bytes[i] === b)) return json({ error: 'PNG 그림이 아닙니다' }, 400)
+      const path = `${me.church_id}.png`
+      const { error: ue } = await admin.storage.from(LOGO_BUCKET)
+        .upload(path, bytes, { contentType: 'image/png', upsert: true, cacheControl: '300' })
+      if (ue) throw new Error(ue.message)
+      const url = admin.storage.from(LOGO_BUCKET).getPublicUrl(path).data.publicUrl + '?v=' + Date.now()
+      const { error: ce } = await admin.from('church_church').update({ logo_url: url }).eq('id', me.church_id)
+      if (ce) throw new Error(ce.message)
+      return json({ ok: true, logo_url: url })
+    }
+
+    if (action === 'remove_logo') {
+      await admin.storage.from(LOGO_BUCKET).remove([`${me.church_id}.png`])
+      const { error } = await admin.from('church_church').update({ logo_url: '' }).eq('id', me.church_id)
       if (error) throw new Error(error.message)
       return json({ ok: true })
     }

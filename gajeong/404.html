@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>목장 나눔터</title>
+<meta name="robots" content="noindex, nofollow">
+<!-- 교회 주소(/코드/)가 아직 만들어지지 않았으면(등록 직후 몇 분) 교회 로그인 화면으로 넘긴다 -->
+<script>
+(function () {
+  var m = /^\/([a-z0-9-]{2,40})\/?$/.exec(location.pathname);
+  location.replace('/' + (m ? '?c=' + m[1] : '') + location.hash);
+})();
+</script>
+</head>
+<body style="background:#f1f5fa;margin:0"></body>
+</html>

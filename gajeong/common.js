@@ -123,12 +123,9 @@ window.CHURCH = (function () {
     rememberChurch(c);   // 다음에 열 때는 서버 답을 기다리지 않고 바로 그린다
     return c;
   }
-  // 카카오톡 미리보기에 교회 로고가 뜨도록 교회 전용 폴더를 둔 교회 (예: /bangjoo/)
-  var CHURCH_PAGES = { bangjoo: true };
+  // 교회 전용 주소 /코드/ — 카카오톡 미리보기에 교회 이름·로고가 뜬다 (GitHub Actions가 만들어 둠, 없으면 404.html이 넘겨 줌)
   function churchLink(c) {
-    var base = location.origin + location.pathname.replace(/[^/]*$/, '');
-    if (CHURCH_PAGES[c.slug]) return base + encodeURIComponent(c.slug) + '/';
-    return base + '?c=' + encodeURIComponent(c.slug);
+    return location.origin + location.pathname.replace(/[^/]*$/, '') + encodeURIComponent(c.slug) + '/';
   }
 
   /* ── 계정 ────────────────────────────────────────────── */

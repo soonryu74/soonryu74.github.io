@@ -1,0 +1,21 @@
+# 교회 전용 주소(/코드/)를 15분마다 다시 만든다 — 카카오톡 미리보기에 교회 이름·로고가 뜨게
+name: church-pages
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: church-pages
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/church_pages.py .
+      - name: 바뀐 것이 있으면 커밋
+        run: |
+          git add -A
+          if git diff --cached --quiet; then echo "바뀐 것 없음"; exit 0; fi
+          git -c user.name="church-pages" -c user.email="actions@users.noreply.github.com" commit -m "교회 주소 갱신"
+          git push

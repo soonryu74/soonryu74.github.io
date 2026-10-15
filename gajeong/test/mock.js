@@ -147,6 +147,16 @@
         reply = { ok: true, slug: 'newch1' };
       }
     }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'set_logo') {
+      var me0 = me();
+      var ch0 = me0 && DB.church_church.find(function (x) { return x.id === me0.church_id; });
+      if (!/^data:image\/png;base64,/.test(b.data || '')) reply = { error: 'PNG 그림이 아닙니다' };
+      else { ch0.logo_url = 'https://storage.example/' + ch0.id + '.png?v=1'; reply = { ok: true, logo_url: ch0.logo_url }; }
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'remove_logo') {
+      var me1 = me();
+      DB.church_church.find(function (x) { return x.id === me1.church_id; }).logo_url = ''; reply = { ok: true };
+    }
     if (u.indexOf('church-notify') >= 0) reply = b.action === 'key' ? { publicKey: 'BEd3W7naVVZVjZKZZYJiVVxsVFqwxfQM4oNwgxuRb88ja3SPrlpHK0WKduDOHUVXfRhz3I6ZlC-iNnyB4Ob64p4' } : { ok: true, sent: b.action === 'test' ? DB.church_push.length : 1, devices: 1 };
     persist();
     var status = reply.error ? 403 : 200;
