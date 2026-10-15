@@ -173,6 +173,10 @@ const db = p => p.evaluate(() => window.__DB());
     await p.waitForTimeout(600);
     ok('열린 화면: 그 일기의 주로 이동', (await p.textContent('#wk-label')).startsWith('2026년 10월 12일'), await p.textContent('#wk-label'));
     ok('열린 화면: 그 목장이 펼쳐짐', await p.evaluate(() => !!document.querySelector('#week-list .mj[data-mj="mj1"]')?.open));
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    await p.evaluate(() => { location.hash = 'j=11111111-1111-4111-8111-111111111111'; });
+    await p.waitForTimeout(600);
+    ok('다른 탭을 보던 중에 알림을 눌러도 그 일기가 보임', await p.isVisible('#week-list .mj[data-mj="mj1"] summary'));
     // 새로 열 때
     await p.goto(BASE + 'index.html'); await p.waitForTimeout(300);
     await p.goto(BASE + 'moksa.html#j=11111111-1111-4111-8111-111111111111');
