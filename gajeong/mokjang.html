@@ -2,6 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<script>/* 예전 주소로 들어오면 교회 주소로 옮긴다 (주소 뒤 ?c=·#j= 그대로) */
+if (location.hostname === 'soonryu74.github.io') location.replace('https://bangjoo-church.github.io/' + location.pathname.replace(/^\/gajeong\//, '') + location.search + location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>목장 나눔터 — 목자 화면</title>
 <meta name="robots" content="noindex, nofollow">

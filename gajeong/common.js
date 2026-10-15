@@ -8,6 +8,7 @@ window.CHURCH = (function () {
   // 웹 푸시 공개키 (비밀키는 서버 함수에만 있다)
   var LS_CHURCH = 'gajeong-church';   // 마지막으로 들어간 교회 — 다음 로그인 화면에 이름·로고를 보여 준다
   var NEUTRAL_ICON = 'assets/icon-192.png';
+  var HOST_CHURCH = { 'bangjoo-church.github.io': 'bangjoo' };   // 교회 이름 주소로 열면 처음부터 그 교회 화면
 
   var sb = window.supabase.createClient(SB_URL, SB_KEY, {
     auth: { persistSession: true, autoRefreshToken: true, storageKey: 'gajeong-auth' }
@@ -112,7 +113,12 @@ window.CHURCH = (function () {
   // 로그인 전: 주소의 ?c=… 또는 이 기기가 기억하는 교회의 이름·로고
   async function publicChurch() {
     var slug = new URLSearchParams(location.search).get('c');
-    if (!slug) { var mem = rememberedChurch(); return mem && mem.slug ? mem : null; }
+    if (!slug) {
+      var mem = rememberedChurch();
+      if (mem && mem.slug) return mem;
+      slug = HOST_CHURCH[location.hostname];
+      if (!slug) return null;
+    }
     var r = await sb.rpc('church_public_info', { p_slug: slug });
     var row = r.data && r.data[0];
     return row ? { slug: slug, name: row.name, logo_url: row.logo_url } : null;
