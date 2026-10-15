@@ -120,8 +120,12 @@ window.CHURCH = (function () {
     var row = r.data && r.data[0];
     return row ? { slug: slug, name: row.name, logo_url: row.logo_url } : null;
   }
+  // 카카오톡 미리보기에 교회 로고가 뜨도록 교회 전용 폴더를 둔 교회 (예: /bangjoo/)
+  var CHURCH_PAGES = { bangjoo: true };
   function churchLink(c) {
-    return location.origin + location.pathname.replace(/[^/]*$/, '') + '?c=' + encodeURIComponent(c.slug);
+    var base = location.origin + location.pathname.replace(/[^/]*$/, '');
+    if (CHURCH_PAGES[c.slug]) return base + encodeURIComponent(c.slug) + '/';
+    return base + '?c=' + encodeURIComponent(c.slug);
   }
 
   /* ── 계정 ────────────────────────────────────────────── */
