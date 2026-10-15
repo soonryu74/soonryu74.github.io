@@ -22,6 +22,9 @@
     var r = await sb.from('church_journal').select('id, mokjang_id, week_start').eq('id', m[1]).maybeSingle();
     if (!r.data) return false;
     week = r.data.week_start;
+    // 다른 탭을 보고 있었으면 주간 현황으로 (알림을 눌렀는데 안 보이는 일이 없게)
+    var tb = $('.tabs button[data-pane="week"]');
+    if (tb && !tb.classList.contains('on')) tb.click();
     await loadWeek();
     var d = $('#week-list .mj[data-mj="' + r.data.mokjang_id + '"]');
     if (d) { d.open = true; d.scrollIntoView({ block: 'start' }); }
