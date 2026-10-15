@@ -6,7 +6,6 @@ window.CHURCH = (function () {
   var FN = SB_URL + '/functions/v1/';
   var DOMAIN = 'gajeong.local';
   // 웹 푸시 공개키 (비밀키는 서버 함수에만 있다)
-  var VAPID_PUBLIC = 'BEd3W7naVVZVjZKZZYJiVVxsVFqwxfQM4oNwgxuRb88ja3SPrlpHK0WKduDOHUVXfRhz3I6ZlC-iNnyB4Ob64p4';
   var LS_CHURCH = 'gajeong-church';   // 마지막으로 들어간 교회 — 다음 로그인 화면에 이름·로고를 보여 준다
   var NEUTRAL_ICON = 'assets/icon-192.png';
 
@@ -201,7 +200,7 @@ window.CHURCH = (function () {
     var reg = await pushRegistration();
     await navigator.serviceWorker.ready;
     var sub = await reg.pushManager.getSubscription() ||
-      await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64(VAPID_PUBLIC) });
+      await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64((await notify({ action: 'key' })).publicKey) });
     var j = sub.toJSON();
     var r = await sb.rpc('church_push_save', {
       p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_ua: navigator.userAgent.slice(0, 200)

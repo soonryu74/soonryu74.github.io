@@ -147,7 +147,7 @@
         reply = { ok: true, slug: 'newch1' };
       }
     }
-    if (u.indexOf('church-notify') >= 0) reply = { ok: true, sent: b.action === 'test' ? DB.church_push.length : 1, devices: 1 };
+    if (u.indexOf('church-notify') >= 0) reply = b.action === 'key' ? { publicKey: 'BEd3W7naVVZVjZKZZYJiVVxsVFqwxfQM4oNwgxuRb88ja3SPrlpHK0WKduDOHUVXfRhz3I6ZlC-iNnyB4Ob64p4' } : { ok: true, sent: b.action === 'test' ? DB.church_push.length : 1, devices: 1 };
     persist();
     var status = reply.error ? 403 : 200;
     return Promise.resolve(new Response(JSON.stringify(reply), { status: status, headers: { 'Content-Type': 'application/json' } }));

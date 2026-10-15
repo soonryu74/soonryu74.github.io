@@ -2,6 +2,9 @@
 //  · submitted : 목자가 일기를 제출하면 같은 교회 목사들의 기기로 웹 푸시를 보낸다
 //  · test      : 지금 로그인한 사람의 기기로 시험 알림을 보낸다
 // 비밀값: VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY (선택: VAPID_SUBJECT)
+//   함수 비밀값이 없으면 church_secret 표(서버 전용, RLS 정책 없음)에서 읽고,
+//   거기도 없으면 처음 한 번 서버에서 만들어 둔다 (비밀키는 서버 밖으로 나가지 않는다)
+//  · key       : 화면이 구독할 때 쓰는 공개키를 돌려준다
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import webpush from 'npm:web-push@3.6.7'
@@ -27,6 +30,29 @@ const VAPID = {
   subject: Deno.env.get('VAPID_SUBJECT') ?? 'https://soonryu74.github.io/gajeong/',
   publicKey: Deno.env.get('VAPID_PUBLIC_KEY') ?? '',
   privateKey: Deno.env.get('VAPID_PRIVATE_KEY') ?? '',
+}
+async function loadVapid() {
+  if (VAPID.publicKey && VAPID.privateKey) return
+  const { data } = await admin.from('church_secret').select('name, value')
+    .in('name', ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'])
+  for (const r of data ?? []) {
+    if (r.name === 'VAPID_PUBLIC_KEY') VAPID.publicKey = r.value
+    if (r.name === 'VAPID_PRIVATE_KEY') VAPID.privateKey = r.value
+  }
+  if (VAPID.publicKey && VAPID.privateKey) return
+  const k = webpush.generateVAPIDKeys()
+  // 동시에 두 번 만들어도 먼저 들어간 짝만 남도록 한 번에 넣고 다시 읽는다
+  await admin.from('church_secret').upsert([
+    { name: 'VAPID_PUBLIC_KEY', value: k.publicKey },
+    { name: 'VAPID_PRIVATE_KEY', value: k.privateKey },
+  ], { onConflict: 'name', ignoreDuplicates: true })
+  VAPID.publicKey = ''; VAPID.privateKey = ''
+  const { data: again } = await admin.from('church_secret').select('name, value')
+    .in('name', ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'])
+  for (const r of again ?? []) {
+    if (r.name === 'VAPID_PUBLIC_KEY') VAPID.publicKey = r.value
+    if (r.name === 'VAPID_PRIVATE_KEY') VAPID.privateKey = r.value
+  }
 }
 const RESEND_AFTER_MIN = 60 // 같은 일기를 다시 제출해도 이 시간 안에는 한 번만 알린다
 
@@ -64,15 +90,17 @@ function weekLabel(weekStart: string) {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   if (req.method !== 'POST') return json({ error: 'POST만 받습니다' }, 405)
+  await loadVapid()
   if (!VAPID.publicKey || !VAPID.privateKey) return json({ error: '알림 키가 설정되지 않았습니다' }, 500)
+
+  let body: Record<string, string>
+  try { body = await req.json() } catch { return json({ error: '요청을 읽지 못했습니다' }, 400) }
+  if (body.action === 'key') return json({ publicKey: VAPID.publicKey })
 
   const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '')
   const { data: u } = token ? await admin.auth.getUser(token) : { data: null }
   if (!u?.user) return json({ error: '로그인이 필요합니다' }, 401)
   const uid = u.user.id
-
-  let body: Record<string, string>
-  try { body = await req.json() } catch { return json({ error: '요청을 읽지 못했습니다' }, 400) }
 
   try {
     if (body.action === 'test') {
