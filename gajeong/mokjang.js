@@ -18,7 +18,7 @@
       $('.wrap').innerHTML =
         T('<div class="card"><h2>아직 목장이 배정되지 않았습니다</h2>') +
         T('<p class="desc">목사님께서 목장을 만들어 주시면 이 화면에 일기 쓰는 곳이 열립니다.</p>') +
-        '<button id="o">로그아웃</button></div>';
+        T('<button id="o">로그아웃</button></div>');
       $('#o').addEventListener('click', C.signOut);
       return;
     }
@@ -34,8 +34,8 @@
     });
   })();
 
-  function fail(m) { alert('불러오지 못했습니다: ' + m); }
-  function markDirty() { dirty = true; $('#save-state').textContent = '아직 저장되지 않았습니다'; }
+  function fail(m) { alert(T('불러오지 못했습니다: ') + m); }
+  function markDirty() { dirty = true; $('#save-state').textContent = T('아직 저장되지 않았습니다'); }
 
   /* ── 탭 ────────────────────────────────────────── */
   function bindTabs() {
@@ -58,7 +58,7 @@
     $('#wk-next').addEventListener('click', function () { go(C.addWeeks(week, 1)); });
   }
   async function go(w) {
-    if (dirty && !confirm('저장하지 않은 내용이 있습니다. 그래도 옮기시겠습니까?')) return;
+    if (dirty && !confirm(T('저장하지 않은 내용이 있습니다. 그래도 옮기시겠습니까?'))) return;
     week = w; dirty = false; await loadWeek();
   }
 
@@ -78,10 +78,10 @@
       return '<div class="list-item" data-id="' + m.id + '">' +
         '<div class="grow"><div class="t">' + esc(m.name) +
         (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
-        (m.active ? '' : ' <span class="badge">쉼</span>') + '</div></div>' +
-        '<button class="small act-edit">이름 고치기</button>' +
-        '<button class="small act-toggle">' + (m.active ? '잠시 쉼으로' : '다시 참여') + '</button>' +
-        '<button class="small danger act-del">삭제</button></div>';
+        (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div></div>' +
+        T('<button class="small act-edit">이름 고치기</button>') +
+        '<button class="small act-toggle">' + (m.active ? T('잠시 쉼으로') : T('다시 참여')) + '</button>' +
+        T('<button class="small danger act-del">삭제</button></div>');
     }).join('');
   }
 
@@ -97,7 +97,7 @@
       if (r.error) return C.say($('#msg-members'), r.error.message, 'err');
       $('#new-name').value = ''; $('#new-tag').value = '';
       await loadMokwon(); renderMembers();
-      C.say($('#msg-members'), name + ' 님을 넣었습니다.', 'ok');
+      C.say($('#msg-members'), T('{0} 님을 넣었습니다.', name), 'ok');
     });
 
     $('#member-list').addEventListener('click', async function (e) {
@@ -107,13 +107,13 @@
       if (!m) return;
 
       if (btn.classList.contains('act-edit')) {
-        var nm = prompt('이름', m.name); if (nm === null) return;
-        var tg = prompt('표시 (새가족·VIP 등, 비워도 됩니다)', m.tag || ''); if (tg === null) tg = m.tag;
+        var nm = prompt(T('이름'), m.name); if (nm === null) return;
+        var tg = prompt(T('표시 (새가족·VIP 등, 비워도 됩니다)'), m.tag || ''); if (tg === null) tg = m.tag;
         await sb.from('church_mokwon').update({ name: nm.trim(), tag: (tg || '').trim() }).eq('id', id);
       } else if (btn.classList.contains('act-toggle')) {
         await sb.from('church_mokwon').update({ active: !m.active }).eq('id', id);
       } else if (btn.classList.contains('act-del')) {
-        if (!confirm(m.name + ' 님을 명단에서 지울까요?\n지난 주 기록에 적힌 기도제목은 그대로 남습니다.')) return;
+        if (!confirm(T('{0} 님을 명단에서 지울까요?\n지난 주 기록에 적힌 기도제목은 그대로 남습니다.', m.name))) return;
         await sb.from('church_mokwon').delete().eq('id', id);
       }
       await loadMokwon(); renderMembers();
@@ -123,7 +123,7 @@
   /* ── 한 주 불러오기 ────────────────────────────── */
   async function loadWeek() {
     $('#wk-label').textContent = C.weekLabel(week);
-    $('#wk-state').textContent = '불러오는 중';
+    $('#wk-state').textContent = T('불러오는 중');
     $('#wk-state').className = 'badge';
 
     var r = await sb.from('church_journal').select('*')
@@ -143,9 +143,9 @@
     $('#mprayer').value = (journal && journal.mokjang_prayer) || '';
 
     var submitted = journal && journal.status === 'submitted';
-    $('#wk-state').textContent = submitted ? '제출함' : (journal ? '임시 저장됨' : '아직 안 썼습니다');
+    $('#wk-state').textContent = submitted ? T('제출함') : (journal ? T('임시 저장됨') : T('아직 안 썼습니다'));
     $('#wk-state').className = 'badge ' + (submitted ? 'done' : 'todo');
-    $('#save-state').textContent = journal && journal.updated_at ? ('마지막 저장 ' + C.whenText(journal.updated_at)) : '';
+    $('#save-state').textContent = journal && journal.updated_at ? (T('마지막 저장 ') + C.whenText(journal.updated_at)) : '';
     dirty = false;
     rendered = null;
     renderMembers();
@@ -201,10 +201,10 @@
         '<div class="head"><span class="name">' + esc(p.name) + '</span>' +
         (tag ? '<span class="badge gold">' + esc(tag) + '</span>' : '') +
         '<span class="spacer"></span>' +
-        '<label class="check"><input type="checkbox" class="f-att"' + (p.attended ? ' checked' : '') + '> 참석</label>' +
-        '<label class="check"><input type="checkbox" class="f-ans"' + (p.answered ? ' checked' : '') + '> 응답됨</label>' +
+        '<label class="check"><input type="checkbox" class="f-att"' + (p.attended ? ' checked' : '') + T('> 참석</label>') +
+        '<label class="check"><input type="checkbox" class="f-ans"' + (p.answered ? ' checked' : '') + T('> 응답됨</label>') +
         '</div>' +
-        '<textarea class="f-con" placeholder="' + esc(p.name) + ' 님의 기도제목">' + esc(p.content) + '</textarea>' +
+        '<textarea class="f-con" placeholder="' + esc(T('{0} 님의 기도제목', p.name)) + '">' + esc(p.content) + '</textarea>' +
         '</div>';
     }).join('');
     $$('#members-box textarea').forEach(grow);
@@ -291,14 +291,14 @@
       dirty = false;
       // 제출이면 목사님 휴대전화로 알림 (실패해도 제출은 이미 끝났다)
       if (status === 'submitted') C.notify({ action: 'submitted', journal_id: journal.id }).catch(function () {});
-      $('#wk-state').textContent = status === 'submitted' ? '제출함' : '임시 저장됨';
+      $('#wk-state').textContent = status === 'submitted' ? T('제출함') : T('임시 저장됨');
       $('#wk-state').className = 'badge ' + (status === 'submitted' ? 'done' : 'todo');
-      $('#save-state').textContent = '마지막 저장 ' + C.whenText(journal.updated_at);
+      $('#save-state').textContent = T('마지막 저장 ') + C.whenText(journal.updated_at);
       C.say($('#msg-write'), status === 'submitted'
-        ? '목사님께 전달했습니다. 제출한 뒤에도 고치실 수 있습니다.'
-        : '저장했습니다. 나중에 이어서 쓰셔도 됩니다.', 'ok');
+        ? T('목사님께 전달했습니다. 제출한 뒤에도 고치실 수 있습니다.')
+        : T('저장했습니다. 나중에 이어서 쓰셔도 됩니다.'), 'ok');
     } catch (err) {
-      C.say($('#msg-write'), '저장하지 못했습니다: ' + err.message, 'err');
+      C.say($('#msg-write'), T('저장하지 못했습니다: ') + err.message, 'err');
     }
     bs.disabled = bu.disabled = false;
   }
@@ -307,7 +307,7 @@
     var prev = C.addWeeks(week, -1);
     var j = await sb.from('church_journal').select('id')
       .eq('mokjang_id', mokjang.id).eq('week_start', prev).maybeSingle();
-    if (!j.data) return C.say($('#msg-write'), '지난주에 쓰신 일기가 없습니다.', 'err');
+    if (!j.data) return C.say($('#msg-write'), T('지난주에 쓰신 일기가 없습니다.'), 'err');
     var pr = await sb.from('church_prayer').select('*').eq('journal_id', j.data.id);
     var by = {}; (pr.data || []).forEach(function (p) { if (p.mokwon_id) by[p.mokwon_id] = p.content; });
     var n = 0;
@@ -317,23 +317,23 @@
       if (!ta.value.trim() && by[row.mokwon_id]) { ta.value = by[row.mokwon_id]; ta.dispatchEvent(new Event('input')); n++; }
     });
     markDirty();
-    C.say($('#msg-write'), n ? (n + '명의 지난주 기도제목을 가져왔습니다. 바뀐 부분만 고쳐 주세요.') : '가져올 내용이 없습니다.', n ? 'ok' : 'err');
+    C.say($('#msg-write'), n ? T('{0}명의 지난주 기도제목을 가져왔습니다. 바뀐 부분만 고쳐 주세요.', n) : T('가져올 내용이 없습니다.'), n ? 'ok' : 'err');
   }
 
   /* ── 지난 일기 ─────────────────────────────────── */
   async function loadPast() {
     var box = $('#past-list');
-    box.innerHTML = '<p class="empty">불러오는 중…</p>';
+    box.innerHTML = T('<p class="empty">불러오는 중…</p>');
     var r = await sb.from('church_journal').select('*')
       .eq('mokjang_id', mokjang.id).order('week_start', { ascending: false }).limit(60);
     var js = r.data || [];
-    if (!js.length) { box.innerHTML = '<p class="empty">아직 쓴 일기가 없습니다.</p>'; return; }
+    if (!js.length) { box.innerHTML = T('<p class="empty">아직 쓴 일기가 없습니다.</p>'); return; }
     box.innerHTML = js.map(function (j) {
       return '<details data-id="' + j.id + '" style="border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin:10px 0; background:#fff">' +
         '<summary style="cursor:pointer; font-weight:700">' + esc(C.weekLabel(j.week_start)) +
         ' <span class="badge ' + (j.status === 'submitted' ? 'done' : 'todo') + '">' +
-        (j.status === 'submitted' ? '제출함' : '임시') + '</span></summary>' +
-        '<div class="detail quiet" style="margin-top:10px">펼치는 중…</div></details>';
+        (j.status === 'submitted' ? T('제출함') : T('임시')) + '</span></summary>' +
+        T('<div class="detail quiet" style="margin-top:10px">펼치는 중…</div></details>');
     }).join('');
     $$('#past-list details').forEach(function (d) {
       d.addEventListener('toggle', function () {
@@ -352,26 +352,26 @@
 
   function renderJournal(j, ps, cs) {
     var h = '';
-    if (j.met_on) h += '<p class="quiet" style="margin:0 0 10px">모인 날 ' + esc(j.met_on) +
-      (j.present_count != null ? ' · ' + j.present_count + '명' : '') + '</p>';
+    if (j.met_on) h += T('<p class="quiet" style="margin:0 0 10px">모인 날 ') + esc(j.met_on) +
+      (j.present_count != null ? ' · ' + T('{0}명', j.present_count) : '') + '</p>';
     if (ps.length) {
       h += T('<div class="section-title">목원별 기도제목</div>');
       h += ps.map(function (p) {
         return '<div class="member"><div class="head"><span class="name">' + esc(p.name) + '</span>' +
-          (p.attended ? '' : '<span class="badge">결석</span>') +
-          (p.answered ? '<span class="badge done">응답됨</span>' : '') + '</div>' +
-          '<div class="prose">' + (p.content ? esc(p.content) : '<span class="quiet">(적지 않음)</span>') + '</div></div>';
+          (p.attended ? '' : T('<span class="badge">결석</span>')) +
+          (p.answered ? T('<span class="badge done">응답됨</span>') : '') + '</div>' +
+          '<div class="prose">' + (p.content ? esc(p.content) : T('<span class="quiet">(적지 않음)</span>')) + '</div></div>';
       }).join('');
     }
     if (j.body) h += T('<div class="section-title">목장 이야기</div><div class="prose">') + esc(j.body) + '</div>';
     if (j.mokjang_prayer) h += T('<div class="section-title">목장 전체 기도제목</div><div class="prose">') + esc(j.mokjang_prayer) + '</div>';
-    h += '<div class="section-title">목사님 말씀</div>';
+    h += T('<div class="section-title">목사님 말씀</div>');
     h += cs.length ? cs.map(function (c) {
       return '<div class="member" style="background:var(--brand-soft); border-color:#cfe0d5">' +
         '<div class="head"><span class="name">' + esc(c.author_name) + '</span>' +
         '<span class="quiet" style="font-size:13px">' + C.whenText(c.created_at) + '</span></div>' +
         '<div class="prose">' + esc(c.body) + '</div></div>';
-    }).join('') : '<p class="quiet">아직 없습니다.</p>';
+    }).join('') : T('<p class="quiet">아직 없습니다.</p>');
     return h;
   }
 
@@ -385,7 +385,7 @@
       if (r.error) return C.say($('#msg-mokjang'), r.error.message, 'err');
       mokjang = r.data;
       $('.top h1').textContent = mokjang.name;
-      C.say($('#msg-mokjang'), '저장했습니다.', 'ok');
+      C.say($('#msg-mokjang'), T('저장했습니다.'), 'ok');
     });
 
 
@@ -393,24 +393,24 @@
     $('#form-myname').addEventListener('submit', async function (e) {
       e.preventDefault();
       var nm = $('#my-name').value.trim();
-      if (!nm) return C.say($('#msg-myname'), '이름을 적어 주세요.', 'err');
+      if (!nm) return C.say($('#msg-myname'), T('이름을 적어 주세요.'), 'err');
       var r = await sb.from('church_profile').update({ name: nm }).eq('id', me.id).select().single();
       if (r.error) return C.say($('#msg-myname'), r.error.message, 'err');
       me.name = r.data.name;
       $('.top .who span').textContent = C.title2(me);
       await sb.from('church_mokjang').update({ mokja_name: nm }).eq('id', mokjang.id);
-      C.say($('#msg-myname'), '이름을 바꿨습니다.', 'ok');
+      C.say($('#msg-myname'), T('이름을 바꿨습니다.'), 'ok');
     });
 
     $('#form-pw').addEventListener('submit', async function (e) {
       e.preventDefault();
       var a = $('#pw1').value, b = $('#pw2').value;
-      if (a.length < 8) return C.say($('#msg-pw'), '비밀번호는 8자 이상으로 정해 주세요.', 'err');
-      if (a !== b) return C.say($('#msg-pw'), '두 번 넣으신 비밀번호가 서로 다릅니다.', 'err');
+      if (a.length < 8) return C.say($('#msg-pw'), T('비밀번호는 8자 이상으로 정해 주세요.'), 'err');
+      if (a !== b) return C.say($('#msg-pw'), T('두 번 넣으신 비밀번호가 서로 다릅니다.'), 'err');
       var r = await sb.auth.updateUser({ password: a });
       if (r.error) return C.say($('#msg-pw'), r.error.message, 'err');
       $('#pw1').value = $('#pw2').value = '';
-      C.say($('#msg-pw'), '비밀번호를 바꿨습니다.', 'ok');
+      C.say($('#msg-pw'), T('비밀번호를 바꿨습니다.'), 'ok');
     });
   }
 })();

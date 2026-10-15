@@ -10,6 +10,32 @@ window.CHURCH = (function () {
   var LS_MINE = 'gajeong-my-church';  // (목사·목자 화면용) 로그인한 내 교회   // 마지막으로 들어간 교회 — 다음 로그인 화면에 이름·로고를 보여 준다
   var NEUTRAL_ICON = 'assets/icon-192.png';
 
+  /* ── 화면 언어 ─────────────────────────────────────────────
+     화면 글자는 한국어로 써 두고, 고른 언어의 사전(lang-<코드>.js → window.I18N[코드])에서 찾아 바꾼다.
+     사전에 없는 글은 한국어로 둔다. 언어를 더하려면 사전 파일 하나를 더하고 LANGS에 한 줄 넣으면 된다. */
+  var LANGS = [{ id: 'ko', name: '한국어' }, { id: 'en', name: 'English' }];
+  var LS_LANG = 'gajeong-lang';
+  var LANG = (function () {
+    var v = ''; try { v = localStorage.getItem(LS_LANG) || ''; } catch (e) {}
+    return LANGS.some(function (x) { return x.id === v; }) ? v : 'ko';
+  })();
+  var DICT = (window.I18N && window.I18N[LANG]) || {};
+  document.documentElement.setAttribute('lang', LANG);
+  async function setLang(id) {
+    try { localStorage.setItem(LS_LANG, id); } catch (e) {}
+    // 알림을 켜 둔 기기면 알림 글도 새 언어로 오게 서버에 알려 둔다
+    try {
+      var reg = 'serviceWorker' in navigator && await navigator.serviceWorker.getRegistration('./');
+      var sub = reg && await reg.pushManager.getSubscription();
+      if (sub && (await sb.auth.getSession()).data.session) {
+        var j = sub.toJSON();
+        await sb.rpc('church_push_save2', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth,
+          p_ua: navigator.userAgent.slice(0, 200), p_lang: id });
+      }
+    } catch (e) {}
+    location.reload();
+  }
+
   var sb = window.supabase.createClient(SB_URL, SB_KEY, {
     auth: { persistSession: true, autoRefreshToken: true, storageKey: 'gajeong-auth' }
   });
@@ -54,14 +80,17 @@ window.CHURCH = (function () {
     d.setUTCDate(d.getUTCDate() + n * 7);
     return ymd(d);
   }
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   function weekLabel(weekStart) {
     var a = new Date(weekStart + 'T00:00:00Z');
     var b = new Date(weekStart + 'T00:00:00Z'); b.setUTCDate(b.getUTCDate() + 6);
     var m = a.getUTCMonth() + 1, d1 = a.getUTCDate(), m2 = b.getUTCMonth() + 1, d2 = b.getUTCDate();
+    if (LANG === 'en') return MON[m - 1] + ' ' + d1 + ' – ' + MON[m2 - 1] + ' ' + d2 + ', ' + b.getUTCFullYear();
     return a.getUTCFullYear() + '년 ' + m + '월 ' + d1 + '일 ~ ' + m2 + '월 ' + d2 + '일';
   }
   function weekShort(weekStart) {
     var a = new Date(weekStart + 'T00:00:00Z');
+    if (LANG === 'en') return 'Week of ' + MON[a.getUTCMonth()] + ' ' + a.getUTCDate();
     return (a.getUTCMonth() + 1) + '월 ' + a.getUTCDate() + '일 주';
   }
   function whenText(iso) {
@@ -70,6 +99,7 @@ window.CHURCH = (function () {
     new Intl.DateTimeFormat('en-GB', {
       timeZone: TZ, month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false
     }).formatToParts(new Date(iso)).forEach(function (x) { p[x.type] = x.value; });
+    if (LANG === 'en') return MON[+p.month - 1] + ' ' + p.day + ', ' + p.hour + ':' + p.minute;
     return p.month + '월 ' + p.day + '일 ' + p.hour + ':' + p.minute;
   }
 
@@ -88,7 +118,7 @@ window.CHURCH = (function () {
     if (dev && !list.some(function (x) { return x[0] === dev; })) list.unshift([dev, '이 기기 시간대']);
     if (current && !list.some(function (x) { return x[0] === current; })) list.unshift([current, '지금 설정']);
     sel.innerHTML = list.map(function (x) {
-      return '<option value="' + esc(x[0]) + '">' + esc(x[1]) + ' (' + esc(x[0]) + ')</option>';
+      return '<option value="' + esc(x[0]) + '">' + esc(t(x[1])) + ' (' + esc(x[0]) + ')</option>';
     }).join('');
     sel.value = current || dev || 'Australia/Melbourne';
   }
@@ -131,12 +161,28 @@ window.CHURCH = (function () {
     return j;
   }
   var TERM_RE = /(목장|목자|목원)(으로|로|이|가|을|를|은|는|과|와)?/g;
-  function t(str) {
+  function lookup(str) {
+    if (Object.prototype.hasOwnProperty.call(DICT, str)) return DICT[str];
+    var m = /^(\s*)([\s\S]*?)(\s*)$/.exec(str), core = m[2].replace(/\s+/g, ' ');
+    if (core && Object.prototype.hasOwnProperty.call(DICT, core)) return m[1] + DICT[core] + m[3];
+    return null;
+  }
+  function termed(str) {
     if (terms === BASE_TERMS) return str;
-    return String(str).replace(TERM_RE, function (m, w, j) {
+    return str.replace(TERM_RE, function (m, w, j) {
       var y = terms[w === '목장' ? 'unit' : w === '목자' ? 'leader' : 'member'];
       return y + (j ? josa(y, j) : '');
     });
+  }
+  function fill(str, args) {
+    return args.length ? str.replace(/\{(\d)\}/g, function (m, i) { return args[+i] == null ? '' : String(args[+i]); }) : str;
+  }
+  // t('글', 값0, 값1…) — 고른 언어로 바꾸고, 교회 부르는 말을 입히고, {0}{1}…에 값을 넣는다
+  function t(str) {
+    str = String(str);
+    var args = Array.prototype.slice.call(arguments, 1);
+    if (LANG !== 'ko') { var x = lookup(str); if (x != null) return fill(x, args); }
+    return fill(termed(str), args);
   }
   // 화면에 원래 있던 글자(HTML)만 바꾼다. 원문을 기억해 두어 다시 바꿔도 처음 글에서 시작한다.
   // 처음 한 번 화면에 있던 글자만 기억한다. 그 뒤에 그려지는 자료(사람이 쓴 글)는 건드리지 않는다.
@@ -147,20 +193,21 @@ window.CHURCH = (function () {
     var w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, {
       acceptNode: function (n) {
         var p = n.parentNode;
-        if (!p || /^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName) || (p.closest && p.closest('[data-noterm]'))) return NodeFilter.FILTER_REJECT;
+        if (!p || /^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName)) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
     });
     var n;
     while ((n = w.nextNode())) {
-      if (!ORIG.has(n)) { if (!first || !/목[장자원]/.test(n.nodeValue)) continue; ORIG.set(n, n.nodeValue); }
-      n.nodeValue = t(ORIG.get(n));
+      if (!ORIG.has(n)) { if (!first || !/[가-힣]/.test(n.nodeValue)) continue; ORIG.set(n, n.nodeValue); }
+      var noterm = n.parentNode.closest && n.parentNode.closest('[data-noterm]');
+      n.nodeValue = noterm ? (LANG !== 'ko' && lookup(ORIG.get(n)) != null ? lookup(ORIG.get(n)) : ORIG.get(n)) : t(ORIG.get(n));
     }
     $$('[placeholder],[title],[aria-label]', root || document.body).forEach(function (el) {
       ['placeholder', 'title', 'aria-label'].forEach(function (a) {
         var v = el.getAttribute(a); if (v == null) return;
         var k = 'data-orig-' + a;
-        if (!el.hasAttribute(k)) { if (!first || !/목[장자원]/.test(v)) return; el.setAttribute(k, v); }
+        if (!el.hasAttribute(k)) { if (!first || !/[가-힣]/.test(v)) return; el.setAttribute(k, v); }
         el.setAttribute(a, t(el.getAttribute(k)));
       });
     });
@@ -239,7 +286,7 @@ window.CHURCH = (function () {
     var r = await sb.auth.signInWithPassword({ email: emailOf(loginId), password: password });
     if (r.error) {
       var m = r.error.message || '';
-      if (/invalid login|credentials/i.test(m)) throw new Error('아이디나 비밀번호가 맞지 않습니다.');
+      if (/invalid login|credentials/i.test(m)) throw new Error(t('아이디나 비밀번호가 맞지 않습니다.'));
       throw new Error(m);
     }
     return r.data;
@@ -279,7 +326,7 @@ window.CHURCH = (function () {
     var res = await fetch(FN + name, { method: 'POST', headers: headers, body: JSON.stringify(payload) });
     var out = {};
     try { out = await res.json(); } catch (e) { out = {}; }
-    if (!res.ok || out.error) throw new Error(out.error || ('처리하지 못했습니다 (' + res.status + ')'));
+    if (!res.ok || out.error) throw new Error(out.error ? t(out.error) : t('처리하지 못했습니다 ({0})', res.status));
     return out;
   }
   function callAdmin(payload) { return callFn('church-admin', payload); }
@@ -310,15 +357,15 @@ window.CHURCH = (function () {
   async function pushEnable() {
     var perm = await Notification.requestPermission();
     if (perm !== 'granted') throw new Error(perm === 'denied'
-      ? '알림이 막혀 있습니다. 브라우저 설정에서 이 사이트 알림을 허용해 주세요.'
-      : '알림 허용을 눌러 주셔야 받을 수 있습니다.');
+      ? t('알림이 막혀 있습니다. 브라우저 설정에서 이 사이트 알림을 허용해 주세요.')
+      : t('알림 허용을 눌러 주셔야 받을 수 있습니다.'));
     var reg = await pushRegistration();
     await navigator.serviceWorker.ready;
     var sub = await reg.pushManager.getSubscription() ||
       await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64((await notify({ action: 'key' })).publicKey) });
     var j = sub.toJSON();
-    var r = await sb.rpc('church_push_save', {
-      p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_ua: navigator.userAgent.slice(0, 200)
+    var r = await sb.rpc('church_push_save2', {
+      p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_ua: navigator.userAgent.slice(0, 200), p_lang: LANG
     });
     if (r.error) throw new Error(r.error.message);
   }
@@ -333,6 +380,7 @@ window.CHURCH = (function () {
   // '홍길동' → '홍길동 목사님'. 이미 직함이 붙어 있으면 겹쳐 붙이지 않는다.
   function title2(p) {
     var n = (p.name || '').trim();
+    if (LANG === 'en') return (p.role === 'pastor' ? 'Pastor ' : 'Leader ') + n.replace(/\s*(목사|목자)님?$/, '');
     var suffix = p.role === 'pastor' ? '목사님' : t('목자') + '님';
     if (/(목사|목자)(님)?$/.test(n) || (terms.leader && n.slice(-terms.leader.length) === terms.leader)) return n;
     return n ? n + ' ' + suffix : suffix;
@@ -349,11 +397,22 @@ window.CHURCH = (function () {
       '<span class="church">' + esc(c.name || t('목장 나눔터')) + '</span></div>' +
       (extraHtml || '') +
       '<div class="who"><span>' + esc(title2(profile)) + '</span>' +
-      '<button class="small" id="btn-signout">로그아웃</button></div></div>';
+      langButton() +
+      '<button class="small" id="btn-signout">' + esc(t('로그아웃')) + '</button></div></div>';
     document.body.insertBefore(el, document.body.firstChild);
     el.querySelector('#btn-signout').addEventListener('click', signOut);
+    bindLangButton(el);
     if (c.logo_url) { var fav = document.querySelector('link[rel="icon"]'); if (fav) fav.href = c.logo_url; }
     return el;
+  }
+
+  // 언어 단추: 지금 언어가 아닌 쪽 이름을 보여 주고, 누르면 바꾼다 (언어가 셋 이상이면 차례로 돈다)
+  function langButton() {
+    var i = LANGS.findIndex(function (x) { return x.id === LANG; }), next = LANGS[(i + 1) % LANGS.length];
+    return '<button class="small lang-btn" type="button" data-lang="' + next.id + '" aria-label="Language">' + esc(next.name) + '</button>';
+  }
+  function bindLangButton(root) {
+    $$('.lang-btn', root).forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.lang); }); });
   }
 
   return {
@@ -367,7 +426,8 @@ window.CHURCH = (function () {
     pushSupported: pushSupported, pushState: pushState, pushEnable: pushEnable, pushDisable: pushDisable,
     isIOS: isIOS, standalone: standalone,
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
-    THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage
+    THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
+    lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();
 
@@ -380,3 +440,5 @@ window.CHURCH = (function () {
     if (mem) window.CHURCH.applyLook(mem);
   } catch (e) {}
 })();
+// 화면에 있는 글자를 고른 언어로 (교회 모양이 나중에 오면 그때 한 번 더)
+window.CHURCH.translatePage();
