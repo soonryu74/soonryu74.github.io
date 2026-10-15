@@ -392,7 +392,7 @@
         await C.callAdmin({
           action: 'create_mokja',
           login_id: $('#n-id').value, password: $('#n-pw').value,
-          name: $('#n-name').value, mokjang_name: $('#n-mj').value, meet_day: $('#n-day').value
+          name: $('#n-name').value, mokjang_name: $('#n-mj').value.trim() || T('{0} 목장', $('#n-name').value.trim()), meet_day: $('#n-day').value
         });
         C.say($('#msg-new'), T('{0} 목자 계정을 만들었습니다. 아이디 {1} · 비밀번호 {2} 를 알려 주세요.',
           $('#n-name').value, $('#n-id').value.trim().toLowerCase(), $('#n-pw').value), 'ok', true);
