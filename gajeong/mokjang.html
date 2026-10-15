@@ -2,8 +2,13 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<script>/* 예전 주소로 들어오면 교회 주소로 옮긴다 (주소 뒤 ?c=·#j= 그대로) */
-if (location.hostname === 'soonryu74.github.io') location.replace('https://bangjoo-church.github.io/' + location.pathname.replace(/^\/gajeong\//, '') + location.search + location.hash);</script>
+<script>/* 예전 주소로 들어오면 새 주소로 옮긴다 (주소 뒤 ?c=·#j= 그대로) */
+(function (h) {
+  if (h !== 'soonryu74.github.io' && h !== 'bangjoo-church.github.io') return;
+  var q = location.search;
+  if (!/[?&]c=/.test(q)) q = (q ? q + '&' : '?') + 'c=bangjoo';
+  location.replace('https://mokjang.github.io/' + location.pathname.replace(/^\/(gajeong\/)?/, '') + q + location.hash);
+})(location.hostname);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>목장 나눔터 — 목자 화면</title>
 <meta name="robots" content="noindex, nofollow">
