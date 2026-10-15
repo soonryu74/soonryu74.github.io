@@ -8,7 +8,6 @@ window.CHURCH = (function () {
   // 웹 푸시 공개키 (비밀키는 서버 함수에만 있다)
   var LS_CHURCH = 'gajeong-church';   // 마지막으로 들어간 교회 — 다음 로그인 화면에 이름·로고를 보여 준다
   var NEUTRAL_ICON = 'assets/icon-192.png';
-  var HOST_CHURCH = { 'bangjoo-church.github.io': 'bangjoo' };   // 교회 이름 주소로 열면 처음부터 그 교회 화면
 
   var sb = window.supabase.createClient(SB_URL, SB_KEY, {
     auth: { persistSession: true, autoRefreshToken: true, storageKey: 'gajeong-auth' }
@@ -115,9 +114,7 @@ window.CHURCH = (function () {
     var slug = new URLSearchParams(location.search).get('c');
     if (!slug) {
       var mem = rememberedChurch();
-      if (mem && mem.slug) return mem;
-      slug = HOST_CHURCH[location.hostname];
-      if (!slug) return null;
+      return mem && mem.slug ? mem : null;
     }
     var r = await sb.rpc('church_public_info', { p_slug: slug });
     var row = r.data && r.data[0];
@@ -154,7 +151,7 @@ window.CHURCH = (function () {
   // 로그인 안 했으면 로그인 화면으로, 역할이 다르면 제 화면으로 돌려보낸다. 교회 시간대도 여기서 맞춘다.
   async function guard(needRole) {
     var p = await me();
-    if (!p) { location.replace('index.html'); return null; }
+    if (!p) { location.replace('index.html' + location.search); return null; }
     if (needRole && p.role !== needRole) {
       location.replace(p.role === 'pastor' ? 'moksa.html' : 'mokjang.html');
       return null;
