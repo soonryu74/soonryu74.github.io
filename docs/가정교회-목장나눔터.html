@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"목장 나눔터 — 멜번방주교회 &amp; ALF","url":"/docs/%EA%B0%80%EC%A0%95%EA%B5%90%ED%9A%8C-%EB%AA%A9%EC%9E%A5%EB%82%98%EB%88%94%ED%84%B0.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=cc5ccb47bd029deffd3cda577d7d552a59b05ee4">
+    <link rel="stylesheet" href="/assets/css/style.css?v=75e5f2dcaf4cdc821c03b49ab090f0f1f81e4e32">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -184,6 +184,33 @@
   <li>제출 안 한 목장에 주 초 알림 (카카오톡·문자)</li>
   <li>분기별 기도 응답 모아보기</li>
 </ul>
+
+<h2 id="여러-교회가-함께-쓰기-2026-10-15-적용">여러 교회가 함께 쓰기 (2026-10-15 적용)</h2>
+
+<ul>
+  <li>교회마다 따로 쓴다. 목사는 자기 교회 목장만, 목자는 자기 목장만 본다. 다른 교회 목장은 서로 보이지 않는다.</li>
+  <li>새 교회는 로그인 화면의 <strong>우리 교회도 쓰고 싶어요 — 새 교회 등록</strong>에서 초대 코드로 만든다. 교회 이름, 교회가 있는 곳(시간대), 목사님 계정을 한 번에 만든다.</li>
+  <li>‘이번 주’는 교회마다 정한 시간대로 센다.</li>
+  <li>로그인 화면에 교회 이름·로고를 보이려면 <code class="language-plaintext highlighter-rouge">?c=교회주소</code> 가 붙은 주소를 쓴다. 한 번 들어간 기기는 기억한다. 멜번방주교회는 <code class="language-plaintext highlighter-rouge">?c=bangjoo</code>.</li>
+  <li>아이디는 모든 교회를 통틀어 하나뿐이다.</li>
+</ul>
+
+<h2 id="목사님-휴대전화-알림-2026-10-15-적용">목사님 휴대전화 알림 (2026-10-15 적용)</h2>
+
+<ul>
+  <li>목자가 <strong>목사님께 제출</strong>을 누르면 같은 교회 목사님 기기로 알림이 간다. 알림을 누르면 그 일기가 바로 펼쳐진다.</li>
+  <li>목사 화면 → 목장·목자 관리 → <strong>휴대전화 알림</strong>에서 기기마다 켠다. 시험 알림도 보낼 수 있다.</li>
+  <li>안드로이드: 크롬에서 바로 된다. 아이폰: 사파리 공유 단추 → 홈 화면에 추가 → 홈 화면 아이콘으로 열어 켠다(iOS 16.4 이상).</li>
+  <li>같은 일기를 1시간 안에 다시 제출하면 알림은 한 번만 간다.</li>
+</ul>
+
+<h2 id="고친-버그">고친 버그</h2>
+
+<ul>
+  <li>일기를 여러 번 저장하면 목원 기도제목이 저장할 때마다 중복으로 쌓였다. 화면을 고쳤고, 데이터베이스도 같은 목원 줄이 두 번 들어가지 못하게 막았다(예전 화면이 열려 있어도 기존 줄을 고쳐 쓴다). 이미 쌓인 중복은 내용이 같은 것만 정리한다.</li>
+</ul>
+
+<p>서버 쪽 올리는 순서는 <code class="language-plaintext highlighter-rouge">gajeong/server/README.md</code>.</p>
 
 
       

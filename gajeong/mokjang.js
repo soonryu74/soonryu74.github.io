@@ -8,6 +8,7 @@
   (async function start() {
     me = await C.guard('mokja');
     if (!me) return;
+    week = C.mondayOf();                 // 교회 시간대가 정해진 뒤 다시 센다
 
     var r = await sb.from('church_mokjang').select('*').order('sort_order').limit(1);
     if (r.error) return fail(r.error.message);
@@ -282,7 +283,14 @@
 
       var pr = await sb.from('church_prayer').select('*').eq('journal_id', journal.id).order('sort_order');
       prayers = pr.data || [];
+      // 방금 새로 넣은 줄의 id를 화면 상태에 되돌려 적는다.
+      // (이게 없으면 다음 저장 때 같은 기도제목을 또 넣어 중복이 쌓였다)
+      var idOf = {};
+      prayers.forEach(function (p) { if (p.mokwon_id) idOf[p.mokwon_id] = p.id; });
+      (rendered || []).forEach(function (row) { if (!row.id && row.mokwon_id && idOf[row.mokwon_id]) row.id = idOf[row.mokwon_id]; });
       dirty = false;
+      // 제출이면 목사님 휴대전화로 알림 (실패해도 제출은 이미 끝났다)
+      if (status === 'submitted') C.notify({ action: 'submitted', journal_id: journal.id }).catch(function () {});
       $('#wk-state').textContent = status === 'submitted' ? '제출함' : '임시 저장됨';
       $('#wk-state').className = 'badge ' + (status === 'submitted' ? 'done' : 'todo');
       $('#save-state').textContent = '마지막 저장 ' + C.whenText(journal.updated_at);
