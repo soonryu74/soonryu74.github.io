@@ -1,0 +1,190 @@
+// 목장 나눔터 — 계정 관리 (Supabase Edge Function: church-admin, verify_jwt=false)
+// 함수 안에서 직접 권한을 확인한다. 모든 계정 작업은 "같은 교회 안에서만" 된다.
+//  · register_church : 초대 코드로 새 교회 + 첫 목사 계정을 만든다
+//  · create_mokja    : 목자 계정 + 목장을 한 번에 만든다 (내 교회)
+//  · create_pastor   : 목사 계정을 하나 더 만든다 (내 교회)
+//  · reset_password  : 같은 교회 계정의 비밀번호를 새로 정한다
+//  · delete_user     : 같은 교회 계정을 지운다 (마지막 목사는 못 지움)
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
+import { createClient } from 'jsr:@supabase/supabase-js@2'
+
+const cors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...cors, 'Content-Type': 'application/json; charset=utf-8' },
+  })
+
+// 아이디는 메일 주소 앞부분으로 쓰이므로 영문 소문자·숫자·밑줄만 받는다 (모든 교회에서 하나뿐)
+const DOMAIN = 'gajeong.local'
+const ID_RE = /^[a-z0-9_]{3,30}$/
+const emailOf = (id: string) => `${id}@${DOMAIN}`
+
+const admin = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  { auth: { autoRefreshToken: false, persistSession: false } },
+)
+
+type Me = { id: string; role: string; name: string; church_id: string }
+
+async function callerProfile(req: Request): Promise<Me | null> {
+  const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '')
+  if (!token) return null
+  const { data, error } = await admin.auth.getUser(token)
+  if (error || !data?.user) return null
+  const { data: profile } = await admin
+    .from('church_profile').select('id, role, name, church_id').eq('id', data.user.id).maybeSingle()
+  return (profile as Me) ?? null
+}
+
+async function createAccount(login_id: string, password: string, name: string) {
+  const { data, error } = await admin.auth.admin.createUser({
+    email: emailOf(login_id), password, email_confirm: true, user_metadata: { login_id, name },
+  })
+  if (error) throw new Error(error.message)
+  return data.user
+}
+
+function checkAccount(login_id: string, password: string, name: string): string | null {
+  if (!ID_RE.test(login_id)) return '아이디는 영문 소문자·숫자 3~30자입니다'
+  if (password.length < 8) return '비밀번호는 8자 이상으로 정해 주세요'
+  if (!name) return '이름을 적어 주세요'
+  return null
+}
+
+function validTimezone(tz: string) {
+  try { new Intl.DateTimeFormat('en', { timeZone: tz }); return true } catch { return false }
+}
+
+// 로그인 화면 주소용 짧은 이름 — 영문 6자, 겹치면 다시 뽑는다
+function randomSlug() {
+  const a = 'abcdefghjkmnpqrstuvwxyz23456789'
+  let s = ''
+  for (const b of crypto.getRandomValues(new Uint8Array(6))) s += a[b % a.length]
+  return s
+}
+
+async function targetInMyChurch(me: Me, uid: string) {
+  const { data } = await admin.from('church_profile').select('id, role, church_id').eq('id', uid).maybeSingle()
+  return data && data.church_id === me.church_id ? data : null
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method !== 'POST') return json({ error: 'POST만 받습니다' }, 405)
+
+  let body: Record<string, string>
+  try { body = await req.json() } catch { return json({ error: '요청을 읽지 못했습니다' }, 400) }
+
+  const action = String(body.action ?? '')
+  const login_id = String(body.login_id ?? '').trim().toLowerCase()
+  const password = String(body.password ?? '')
+  const name = String(body.name ?? '').trim()
+
+  try {
+    // ── 새 교회 등록 (로그인 전) ────────────────────────────────
+    if (action === 'register_church') {
+      const bad = checkAccount(login_id, password, name)
+      if (bad) return json({ error: bad }, 400)
+      const churchName = String(body.church_name ?? '').trim()
+      if (!churchName) return json({ error: '교회 이름을 적어 주세요' }, 400)
+      const tz = String(body.timezone ?? '').trim() || 'Australia/Melbourne'
+      if (!validTimezone(tz)) return json({ error: '시간대를 다시 골라 주세요' }, 400)
+
+      const code = String(body.invite_code ?? '').trim().toUpperCase()
+      const { data: inv } = await admin.from('church_invite').select('*').eq('code', code).maybeSingle()
+      if (!inv || !inv.active) return json({ error: '초대 코드가 맞지 않습니다' }, 403)
+      if (inv.max_uses != null && inv.uses >= inv.max_uses) return json({ error: '이미 다 쓴 초대 코드입니다' }, 403)
+
+      let church: { id: string; slug: string } | null = null
+      for (let i = 0; i < 5 && !church; i++) {
+        const { data, error } = await admin.from('church_church')
+          .insert({ slug: randomSlug(), name: churchName, timezone: tz }).select('id, slug').single()
+        if (!error) church = data
+      }
+      if (!church) throw new Error('교회를 만들지 못했습니다')
+
+      let userId = ''
+      try {
+        const user = await createAccount(login_id, password, name)
+        userId = user.id
+        const { error: pe } = await admin.from('church_profile')
+          .insert({ id: user.id, login_id, name, role: 'pastor', church_id: church.id })
+        if (pe) throw new Error(pe.message)
+      } catch (e) {
+        if (userId) await admin.auth.admin.deleteUser(userId)
+        await admin.from('church_church').delete().eq('id', church.id)
+        throw e
+      }
+      await admin.from('church_invite').update({ uses: inv.uses + 1 }).eq('code', code)
+      return json({ ok: true, slug: church.slug })
+    }
+
+    // ── 아래부터는 로그인한 목사만 ──────────────────────────────
+    const me = await callerProfile(req)
+    if (!me) return json({ error: '로그인이 필요합니다' }, 401)
+    if (me.role !== 'pastor') return json({ error: '목사 계정만 쓸 수 있습니다' }, 403)
+    if (!me.church_id) return json({ error: '교회 정보가 없는 계정입니다' }, 403)
+
+    if (action === 'create_mokja') {
+      const bad = checkAccount(login_id, password, name)
+      if (bad) return json({ error: bad }, 400)
+      const user = await createAccount(login_id, password, name)
+      const { error: pe } = await admin.from('church_profile')
+        .insert({ id: user.id, login_id, name, role: 'mokja', church_id: me.church_id })
+      if (pe) { await admin.auth.admin.deleteUser(user.id); throw new Error(pe.message) }
+      const { data: mj, error: me2 } = await admin.from('church_mokjang').insert({
+        name: String(body.mokjang_name ?? '').trim() || `${name} 목장`,
+        mokja_id: user.id, mokja_name: name, church_id: me.church_id,
+        meet_day: String(body.meet_day ?? '').trim(),
+      }).select('id').single()
+      if (me2) throw new Error(me2.message)
+      return json({ ok: true, user_id: user.id, mokjang_id: mj.id })
+    }
+
+    if (action === 'create_pastor') {
+      const bad = checkAccount(login_id, password, name)
+      if (bad) return json({ error: bad }, 400)
+      const user = await createAccount(login_id, password, name)
+      const { error: pe } = await admin.from('church_profile')
+        .insert({ id: user.id, login_id, name, role: 'pastor', church_id: me.church_id })
+      if (pe) { await admin.auth.admin.deleteUser(user.id); throw new Error(pe.message) }
+      return json({ ok: true, user_id: user.id })
+    }
+
+    if (action === 'reset_password') {
+      const uid = String(body.user_id ?? '')
+      if (password.length < 8) return json({ error: '비밀번호는 8자 이상으로 정해 주세요' }, 400)
+      if (!uid || !(await targetInMyChurch(me, uid))) return json({ error: '우리 교회 계정이 아닙니다' }, 403)
+      const { error } = await admin.auth.admin.updateUserById(uid, { password })
+      if (error) throw new Error(error.message)
+      return json({ ok: true })
+    }
+
+    if (action === 'delete_user') {
+      const uid = String(body.user_id ?? '')
+      if (uid === me.id) return json({ error: '자기 계정은 지울 수 없습니다' }, 400)
+      const target = uid ? await targetInMyChurch(me, uid) : null
+      if (!target) return json({ error: '우리 교회 계정이 아닙니다' }, 403)
+      if (target.role === 'pastor') {
+        const { count } = await admin.from('church_profile').select('id', { count: 'exact', head: true })
+          .eq('role', 'pastor').eq('church_id', me.church_id)
+        if ((count ?? 0) <= 1) return json({ error: '마지막 목사 계정은 지울 수 없습니다' }, 400)
+      }
+      const { error } = await admin.auth.admin.deleteUser(uid)
+      if (error) throw new Error(error.message)
+      return json({ ok: true })
+    }
+
+    return json({ error: '알 수 없는 요청입니다' }, 400)
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    const dup = /already|duplicate|registered|exists/i.test(msg)
+    return json({ error: dup ? '이미 쓰고 있는 아이디입니다. 다른 아이디를 골라 주세요' : msg }, dup ? 409 : 500)
+  }
+})

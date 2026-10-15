@@ -1,0 +1,116 @@
+// 목장 나눔터 — 목사님 휴대전화 알림 (Supabase Edge Function: church-notify, verify_jwt=false)
+//  · submitted : 목자가 일기를 제출하면 같은 교회 목사들의 기기로 웹 푸시를 보낸다
+//  · test      : 지금 로그인한 사람의 기기로 시험 알림을 보낸다
+// 비밀값: VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY (선택: VAPID_SUBJECT)
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
+import { createClient } from 'jsr:@supabase/supabase-js@2'
+import webpush from 'npm:web-push@3.6.7'
+
+const cors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...cors, 'Content-Type': 'application/json; charset=utf-8' },
+  })
+
+const admin = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  { auth: { autoRefreshToken: false, persistSession: false } },
+)
+
+const VAPID = {
+  subject: Deno.env.get('VAPID_SUBJECT') ?? 'https://soonryu74.github.io/gajeong/',
+  publicKey: Deno.env.get('VAPID_PUBLIC_KEY') ?? '',
+  privateKey: Deno.env.get('VAPID_PRIVATE_KEY') ?? '',
+}
+const RESEND_AFTER_MIN = 60 // 같은 일기를 다시 제출해도 이 시간 안에는 한 번만 알린다
+
+type Payload = { title: string; body: string; url: string; tag?: string }
+type Sub = { id: string; endpoint: string; p256dh: string; auth: string }
+
+// 암호화·서명은 라이브러리에 맡기고, 보내기는 fetch로 직접 한다
+async function push(sub: Sub, payload: Payload) {
+  const req = webpush.generateRequestDetails(
+    { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+    JSON.stringify(payload),
+    { vapidDetails: VAPID, TTL: 60 * 60 * 24, urgency: 'normal' },
+  )
+  const res = await fetch(req.endpoint, { method: req.method, headers: req.headers, body: req.body })
+  // 404·410 = 그 기기는 구독을 끊었다 → 지운다
+  if (res.status === 404 || res.status === 410) await admin.from('church_push').delete().eq('id', sub.id)
+  return res.status
+}
+
+async function sendTo(userIds: string[], payload: Payload) {
+  if (!userIds.length) return { sent: 0, devices: 0 }
+  const { data: subs } = await admin.from('church_push')
+    .select('id, endpoint, p256dh, auth').in('user_id', userIds)
+  const results = await Promise.allSettled((subs ?? []).map((s) => push(s as Sub, payload)))
+  const sent = results.filter((r) => r.status === 'fulfilled' && r.value >= 200 && r.value < 300).length
+  results.forEach((r) => { if (r.status === 'rejected') console.error('push', String(r.reason).slice(0, 200)) })
+  return { sent, devices: subs?.length ?? 0 }
+}
+
+function weekLabel(weekStart: string) {
+  const d = new Date(weekStart + 'T00:00:00Z')
+  return `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일 주`
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method !== 'POST') return json({ error: 'POST만 받습니다' }, 405)
+  if (!VAPID.publicKey || !VAPID.privateKey) return json({ error: '알림 키가 설정되지 않았습니다' }, 500)
+
+  const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '')
+  const { data: u } = token ? await admin.auth.getUser(token) : { data: null }
+  if (!u?.user) return json({ error: '로그인이 필요합니다' }, 401)
+  const uid = u.user.id
+
+  let body: Record<string, string>
+  try { body = await req.json() } catch { return json({ error: '요청을 읽지 못했습니다' }, 400) }
+
+  try {
+    if (body.action === 'test') {
+      const r = await sendTo([uid], {
+        title: '목장 나눔터', body: '알림이 잘 옵니다. 목자가 일기를 올리면 이렇게 알려 드립니다.',
+        url: 'moksa.html', tag: 'test',
+      })
+      return json({ ok: true, ...r })
+    }
+
+    if (body.action === 'submitted') {
+      const { data: j } = await admin.from('church_journal')
+        .select('id, mokjang_id, week_start, status, notified_at').eq('id', String(body.journal_id ?? '')).maybeSingle()
+      if (!j) return json({ error: '일기를 찾지 못했습니다' }, 404)
+      const { data: mj } = await admin.from('church_mokjang')
+        .select('id, name, mokja_id, mokja_name, church_id').eq('id', j.mokjang_id).maybeSingle()
+      // 그 목장 목자 본인만 알림을 보낼 수 있다
+      if (!mj || mj.mokja_id !== uid) return json({ error: '내 목장 일기가 아닙니다' }, 403)
+      if (j.status !== 'submitted') return json({ ok: true, skipped: 'not-submitted' })
+      if (j.notified_at && Date.now() - new Date(j.notified_at).getTime() < RESEND_AFTER_MIN * 60000) {
+        return json({ ok: true, skipped: 'recent' })
+      }
+      await admin.from('church_journal').update({ notified_at: new Date().toISOString() }).eq('id', j.id)
+
+      const { data: pastors } = await admin.from('church_profile')
+        .select('id').eq('church_id', mj.church_id).eq('role', 'pastor')
+      const r = await sendTo((pastors ?? []).map((p) => p.id), {
+        title: `${mj.name} 일기가 올라왔습니다`,
+        body: `${mj.mokja_name} 목자 · ${weekLabel(j.week_start)}`,
+        url: `moksa.html#j=${j.id}`,
+        tag: `j-${j.id}`,
+      })
+      return json({ ok: true, ...r })
+    }
+
+    return json({ error: '알 수 없는 요청입니다' }, 400)
+  } catch (e) {
+    console.error('notify', e)
+    return json({ error: '알림을 보내지 못했습니다' }, 500)
+  }
+})
