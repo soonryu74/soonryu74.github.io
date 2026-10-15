@@ -64,6 +64,14 @@ const db = p => p.evaluate(() => window.__DB());
     ok('교회 화면에는 새 교회 등록 링크 없음', !(await p.isVisible('#to-setup')));
     await p.goto(BASE + 'index.html?new'); await p.waitForTimeout(300);
     ok('?new → 기억한 교회가 있어도 등록 화면 바로', await p.isVisible('#setup') && (await p.textContent('#hero-church')).trim() === '');
+    { const c2 = await b.newContext(); const q = await c2.newPage();
+      await q.route('**/rpc/**', r => new Promise(res => setTimeout(() => res(r.abort()), 3000)));
+      await q.route('**/cdn.jsdelivr.net/**', r => r.abort());
+      await q.goto(BASE + 'index.html?c=bangjoo', { waitUntil: 'domcontentloaded' });
+      ok('서버 답 전에도 처음부터 교회 로고(깜빡임 없음)', /assets\/logo\.png$/.test(await q.getAttribute('#hero-logo', 'src')) && !(await q.isVisible('#to-setup')));
+      await q.goto(BASE + 'index.html?c=zzzz', { waitUntil: 'domcontentloaded' });
+      ok('처음 보는 교회는 일반 아이콘을 먼저 그리지 않음', (await q.getAttribute('#hero-logo', 'src')) === null);
+      await c2.close(); }
     await p.goto(BASE + 'index.html?new=BJ-V3DEXG'); await p.waitForTimeout(300);
     ok('?new=코드 → 초대 코드 미리 채움', (await p.inputValue('#scode')) === 'BJ-V3DEXG');
     await p.goto(BASE + 'bangjoo/'); await p.waitForURL(/\?c=bangjoo/); await p.waitForTimeout(300);
