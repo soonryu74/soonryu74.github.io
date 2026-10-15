@@ -120,7 +120,7 @@
         var c = DB.church_church.filter(function (x) { return x.slug === args.p_slug; })[0];
         return Promise.resolve({ data: c ? [{ name: c.name, logo_url: c.logo_url, theme: c.theme || 'note', terms: c.terms || {} }] : [], error: null });
       }
-      if (fn === 'church_push_save') {
+      if (fn === 'church_push_save' || fn === 'church_push_save2') {
         DB.church_push = DB.church_push.filter(function (r) { return r.endpoint !== args.p_endpoint; });
         DB.church_push.push({ id: 'push' + (++nid), user_id: session.user.id, endpoint: args.p_endpoint, p256dh: args.p_p256dh, auth: args.p_auth });
         persist();

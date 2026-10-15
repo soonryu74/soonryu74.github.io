@@ -72,11 +72,12 @@ async function push(sub: Sub, payload: Payload) {
   return res.status
 }
 
-async function sendTo(userIds: string[], payload: Payload) {
+// 기기마다 고른 화면 언어로 보낸다 (payload: 언어 → 알림 글)
+async function sendTo(userIds: string[], payload: (lang: string) => Payload) {
   if (!userIds.length) return { sent: 0, devices: 0 }
   const { data: subs } = await admin.from('church_push')
-    .select('id, endpoint, p256dh, auth').in('user_id', userIds)
-  const results = await Promise.allSettled((subs ?? []).map((s) => push(s as Sub, payload)))
+    .select('id, endpoint, p256dh, auth, lang').in('user_id', userIds)
+  const results = await Promise.allSettled((subs ?? []).map((s) => push(s as Sub, payload((s as { lang?: string }).lang ?? 'ko'))))
   const sent = results.filter((r) => r.status === 'fulfilled' && r.value >= 200 && r.value < 300).length
   results.forEach((r) => { if (r.status === 'rejected') console.error('push', String(r.reason).slice(0, 200)) })
   return { sent, devices: subs?.length ?? 0 }
@@ -90,8 +91,10 @@ async function churchTerms(churchId: string) {
   return { unit: ok(t.unit, '목장'), leader: ok(t.leader, '목자') }
 }
 
-function weekLabel(weekStart: string) {
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+function weekLabel(weekStart: string, lang = 'ko') {
   const d = new Date(weekStart + 'T00:00:00Z')
+  if (lang === 'en') return `Week of ${MON[d.getUTCMonth()]} ${d.getUTCDate()}`
   return `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일 주`
 }
 
@@ -114,10 +117,9 @@ Deno.serve(async (req) => {
     if (body.action === 'test') {
       const { data: pf } = await admin.from('church_profile').select('church_id').eq('id', uid).maybeSingle()
       const tm = pf?.church_id ? await churchTerms(pf.church_id) : { unit: '목장', leader: '목자' }
-      const r = await sendTo([uid], {
-        title: `${tm.unit} 나눔터`, body: `알림이 잘 옵니다. ${tm.leader}님이 일기를 올리면 이렇게 알려 드립니다.`,
-        url: 'moksa.html', tag: 'test',
-      })
+      const r = await sendTo([uid], (lang) => lang === 'en'
+        ? { title: 'Mokjang Sharing', body: "Alerts are working. You'll be notified like this when a leader submits a journal.", url: 'moksa.html', tag: 'test' }
+        : { title: `${tm.unit} 나눔터`, body: `알림이 잘 옵니다. ${tm.leader}님이 일기를 올리면 이렇게 알려 드립니다.`, url: 'moksa.html', tag: 'test' })
       return json({ ok: true, ...r })
     }
 
@@ -138,12 +140,12 @@ Deno.serve(async (req) => {
       const { data: pastors } = await admin.from('church_profile')
         .select('id').eq('church_id', mj.church_id).eq('role', 'pastor')
       const tm = await churchTerms(mj.church_id)
-      const r = await sendTo((pastors ?? []).map((p) => p.id), {
-        title: `${mj.name} 일기가 올라왔습니다`,
-        body: `${mj.mokja_name} ${tm.leader} · ${weekLabel(j.week_start)}`,
+      const r = await sendTo((pastors ?? []).map((p) => p.id), (lang) => ({
+        title: lang === 'en' ? `New journal: ${mj.name}` : `${mj.name} 일기가 올라왔습니다`,
+        body: lang === 'en' ? `${mj.mokja_name} · ${weekLabel(j.week_start, 'en')}` : `${mj.mokja_name} ${tm.leader} · ${weekLabel(j.week_start)}`,
         url: `moksa.html#j=${j.id}`,
         tag: `j-${j.id}`,
-      })
+      }))
       return json({ ok: true, ...r })
     }
 

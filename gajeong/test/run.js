@@ -168,7 +168,7 @@ const db = p => p.evaluate(() => window.__DB());
     await login(p, 'pastor1');
     ok('알림이 꺼져 있으면 주간 현황 맨 위에 안내', await p.isVisible('#notify-ask'));
     await p.click('#notify-ask-on'); await p.waitForTimeout(400);
-    const saved = (await calls(p)).find(x => x.rpc === 'church_push_save');
+    const saved = (await calls(p)).find(x => x.rpc === 'church_push_save2');
     ok('구독을 서버에 저장', saved && /push\.example/.test(saved.args.p_endpoint));
     ok('켜면 안내가 사라짐', !(await p.isVisible('#notify-ask')));
     await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
@@ -244,6 +244,43 @@ const db = p => p.evaluate(() => window.__DB());
     p.once('dialog', d => d.accept());
     await p.click('#ch-logo-del'); await p.waitForTimeout(400);
     ok('로고 지우기', (await db(p)).church_church.find(x => x.id === 'cb').logo_url === '' && /icon-192\.png$/.test(await p.getAttribute('#ch-logo', 'src')));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
+  console.log('\n[8] 영어 화면');
+  { const { c, p } = await ctx(b);
+    await p.goto(BASE + 'index.html'); await p.waitForTimeout(300);
+    ok('처음엔 한국어 + English 단추', (await p.textContent('.hero h1')) === '목장 나눔터' && (await p.textContent('#lang-bar')).includes('English'));
+    await p.click('#lang-bar .lang-btn'); await p.waitForTimeout(500);
+    ok('English 누르면 로그인 화면이 영어로', (await p.textContent('.hero h1')) === 'Mokjang Sharing' && (await p.textContent('#login h2')) === 'Sign in');
+    ok('입력칸 안내도 영어', (await p.getAttribute('#pw', 'placeholder')) === 'Password');
+    ok('단추는 한국어로 돌아가기', (await p.textContent('#lang-bar')).includes('한국어'));
+    await p.fill('#lid', 'nobody'); await p.fill('#pw', 'x'); await p.click('#btn-login'); await p.waitForTimeout(300);
+    ok('오류 글도 영어', (await p.textContent('#msg-login')).includes('incorrect'));
+    await login(p, 'pastor1');
+    ok('목사 화면 탭 영어', (await p.textContent('.tabs')).includes('Groups & leaders') && (await p.textContent('.tabs')).includes('Prayer overview'));
+    ok('주 표시 영어', /^Oct 19 – Oct 25, 2026/.test(await p.textContent('#wk-label')), await p.textContent('#wk-label'));
+    ok('직함 영어', (await p.textContent('.top .who')).includes('Pastor 담임'), await p.textContent('.top .who'));
+    await p.click('#wk-prev'); await p.waitForTimeout(300);
+    ok('목장 상태 뱃지 영어', (await p.textContent('#week-list')).includes('Submitted'));
+    ok('사람이 쓴 목장 이름은 그대로', (await p.textContent('#week-list')).includes('김 목장'));
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    ok('관리 화면 영어', (await p.textContent('#pane-manage')).includes('Create a leader account'));
+    ok('한국어 글자가 거의 안 남음', await p.evaluate(() => {
+      const w = document.createTreeWalker(document.querySelector('#pane-manage'), NodeFilter.SHOW_TEXT); let n, left = [];
+      while ((n = w.nextNode())) if (/[가-힣]/.test(n.nodeValue) && n.parentNode.offsetParent && !n.parentNode.closest('#ch-terms,#manage-list,#pastor-list,input')) left.push(n.nodeValue.trim());
+      return left.filter(x => !/^(멜번방주교회|담임목사|목장|목자|목원|다락방|순장|순원|구역|구역장|구역원|셀|리더|셀원|순)/.test(x)).length === 0 || left;
+    }) === true);
+    await p.click('.top .lang-btn'); await p.waitForTimeout(600);
+    ok('머리말 단추로 한국어로 돌아옴', (await p.textContent('.tabs')).includes('목장·목자 관리'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await p.addInitScript(() => localStorage.setItem('gajeong-lang', 'en'));
+    await login(p, 'mokja1');
+    ok('목자 화면 탭 영어', (await p.textContent('.tabs')).includes('Members') && (await p.textContent('.tabs')).includes('Past journals'));
+    ok('저장 단추 영어', (await p.textContent('#btn-submit')) === 'Submit to pastor');
+    ok('기도제목 칸 안내 영어', /'s prayer request$/.test(await p.getAttribute('#members-box textarea', 'placeholder')));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 

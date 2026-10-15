@@ -42,7 +42,7 @@
       $('#notify-ask').hidden = true;
     });
     $('#notify-off').addEventListener('click', async function () {
-      try { await C.pushDisable(); C.say($('#msg-notify'), '이 기기 알림을 껐습니다.', 'ok'); }
+      try { await C.pushDisable(); C.say($('#msg-notify'), T('이 기기 알림을 껐습니다.'), 'ok'); }
       catch (e) { C.say($('#msg-notify'), e.message, 'err'); }
       showNotify();
     });
@@ -50,8 +50,8 @@
       var b = $('#notify-test'); b.disabled = true;
       try {
         var r = await C.notify({ action: 'test' });
-        C.say($('#msg-notify'), r.sent ? '시험 알림을 보냈습니다. 몇 초 안에 와야 합니다.'
-          : '알림을 받을 기기가 없습니다. 먼저 [이 기기에서 알림 받기]를 눌러 주세요.', r.sent ? 'ok' : 'err', true);
+        C.say($('#msg-notify'), r.sent ? T('시험 알림을 보냈습니다. 몇 초 안에 와야 합니다.')
+          : T('알림을 받을 기기가 없습니다. 먼저 [이 기기에서 알림 받기]를 눌러 주세요.'), r.sent ? 'ok' : 'err', true);
       } catch (e) { C.say($('#msg-notify'), e.message, 'err'); }
       b.disabled = false;
     });
@@ -69,14 +69,14 @@
   async function showNotify() {
     var st = 'unsupported';
     try { st = await C.pushState(); } catch (e) {}
-    var label = { on: '이 기기에서 받는 중', off: '꺼져 있음', denied: '브라우저에서 막혀 있음',
-                  'ios-home': '홈 화면에 추가해야 함', unsupported: '이 브라우저는 알림을 못 받음' }[st];
+    var label = { on: T('이 기기에서 받는 중'), off: T('꺼져 있음'), denied: T('브라우저에서 막혀 있음'),
+                  'ios-home': T('홈 화면에 추가해야 함'), unsupported: T('이 브라우저는 알림을 못 받음') }[st];
     var help = {
-      on: '다른 휴대전화나 컴퓨터에서도 받으시려면 그 기기에서 한 번 더 켜 주세요.',
+      on: T('다른 휴대전화나 컴퓨터에서도 받으시려면 그 기기에서 한 번 더 켜 주세요.'),
       off: '',
-      denied: '주소창 왼쪽 자물쇠(또는 설정 → 사이트 설정 → 알림)에서 이 사이트 알림을 허용으로 바꿔 주세요.',
-      'ios-home': '아이폰은 사파리 아래쪽 공유 단추 → [홈 화면에 추가]를 하신 뒤, 홈 화면의 아이콘으로 열어서 켜 주세요.',
-      unsupported: '안드로이드는 크롬, 아이폰은 사파리(홈 화면에 추가)에서 받을 수 있습니다.'
+      denied: T('주소창 왼쪽 자물쇠(또는 설정 → 사이트 설정 → 알림)에서 이 사이트 알림을 허용으로 바꿔 주세요.'),
+      'ios-home': T('아이폰은 사파리 아래쪽 공유 단추 → [홈 화면에 추가]를 하신 뒤, 홈 화면의 아이콘으로 열어서 켜 주세요.'),
+      unsupported: T('안드로이드는 크롬, 아이폰은 사파리(홈 화면에 추가)에서 받을 수 있습니다.')
     }[st];
     $('#notify-state').textContent = label;
     $('#notify-state').className = 'badge ' + (st === 'on' ? 'done' : 'todo');
@@ -109,7 +109,7 @@
     var idx = P.findIndex(function (x) { return x.unit === cur.unit && x.leader === cur.leader && x.member === cur.member; });
     $('#ch-terms').innerHTML = P.map(function (x, i) {
       return '<option value="' + i + '">' + esc(x.unit + ' · ' + x.leader + ' · ' + x.member) + '</option>';
-    }).join('') + '<option value="own">직접 쓰기</option>';
+    }).join('') + T('<option value="own">직접 쓰기</option>');
     $('#ch-terms').value = idx >= 0 ? String(idx) : 'own';
     $('#ch-t-unit').value = cur.unit; $('#ch-t-leader').value = cur.leader; $('#ch-t-member').value = cur.member;
     function pickedTerms() {
@@ -127,7 +127,7 @@
       return '<button type="button" class="theme-pick" data-theme-id="' + x.id + '">' +
         '<span class="sw" style="background:' + x.colors[0] + '"><i style="background:' + x.colors[1] + '"></i>' +
         '<b style="background:' + x.colors[1] + '"></b><u style="background:' + x.colors[2] + '"></u></span>' +
-        '<span><span class="nm">' + esc(x.name) + '</span><br><span class="ds">' + esc(x.desc) + '</span></span></button>';
+        '<span><span class="nm">' + esc(T(x.name)) + '</span><br><span class="ds">' + esc(T(x.desc)) + '</span></span></button>';
     }).join('');
     function markTheme() { $$('#ch-theme .theme-pick').forEach(function (b) { b.classList.toggle('on', b.dataset.themeId === theme); }); }
     markTheme();
@@ -137,8 +137,8 @@
 
     $('#ch-copy').addEventListener('click', async function () {
       var v = $('#ch-link').value;
-      try { await navigator.clipboard.writeText(v); C.say($('#msg-church'), '주소를 복사했습니다.', 'ok'); }
-      catch (e) { $('#ch-link').select(); C.say($('#msg-church'), '주소를 길게 눌러 복사해 주세요.', 'ok'); }
+      try { await navigator.clipboard.writeText(v); C.say($('#msg-church'), T('주소를 복사했습니다.'), 'ok'); }
+      catch (e) { $('#ch-link').select(); C.say($('#msg-church'), T('주소를 길게 눌러 복사해 주세요.'), 'ok'); }
     });
     $('#form-church').addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -151,7 +151,7 @@
       C.setTimezone(c.timezone); C.rememberChurch(c); C.applyLook(c);
       $('.top .church').textContent = c.name;
       $('.top h1').textContent = C.t('목장 나눔터');
-      C.say($('#msg-church'), '저장했습니다. 다른 화면은 새로 열 때 바뀝니다.', 'ok');
+      C.say($('#msg-church'), T('저장했습니다. 다른 화면은 새로 열 때 바뀝니다.'), 'ok');
     });
   }
 
@@ -166,7 +166,7 @@
         cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
         URL.revokeObjectURL(url); resolve(cv.toDataURL('image/png'));
       };
-      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('이 그림은 열 수 없습니다. PNG나 JPG로 골라 주세요.')); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error(T('이 그림은 열 수 없습니다. PNG나 JPG로 골라 주세요.'))); };
       img.src = url;
     });
   }
@@ -182,20 +182,20 @@
     $('#ch-logo-file').addEventListener('change', async function () {
       var f = this.files && this.files[0]; this.value = '';
       if (!f) return;
-      C.say($('#msg-logo'), '올리는 중…', 'ok');
+      C.say($('#msg-logo'), T('올리는 중…'), 'ok');
       try {
         var data = await shrinkToPng(f, 512);
         var r = await C.callAdmin({ action: 'set_logo', data: data });
         c.logo_url = r.logo_url; C.rememberChurch(c); show(c.logo_url);
-        C.say($('#msg-logo'), '로고를 바꿨습니다.', 'ok');
+        C.say($('#msg-logo'), T('로고를 바꿨습니다.'), 'ok');
       } catch (e) { C.say($('#msg-logo'), e.message, 'err'); }
     });
     $('#ch-logo-del').addEventListener('click', async function () {
-      if (!confirm('교회 로고를 지울까요?')) return;
+      if (!confirm(T('교회 로고를 지울까요?'))) return;
       try {
         await C.callAdmin({ action: 'remove_logo' });
         c.logo_url = ''; C.rememberChurch(c); show('');
-        C.say($('#msg-logo'), '로고를 지웠습니다.', 'ok');
+        C.say($('#msg-logo'), T('로고를 지웠습니다.'), 'ok');
       } catch (e) { C.say($('#msg-logo'), e.message, 'err'); }
     });
   }
@@ -226,7 +226,7 @@
 
   async function loadMokjangs() {
     var r = await sb.from('church_mokjang').select('*').order('sort_order').order('created_at');
-    if (r.error) { alert('불러오지 못했습니다: ' + r.error.message); return; }
+    if (r.error) { alert(T('불러오지 못했습니다: ') + r.error.message); return; }
     mokjangs = r.data || [];
   }
 
@@ -250,7 +250,7 @@
   /* ── 주간 현황 ─────────────────────────────────── */
   async function loadWeek() {
     $('#wk-label').textContent = C.weekLabel(week);
-    $('#week-list').innerHTML = '<p class="empty">불러오는 중…</p>';
+    $('#week-list').innerHTML = T('<p class="empty">불러오는 중…</p>');
     var data = await fetchWeek();
     var live = mokjangs.filter(function (m) { return m.active; });
     var done = live.filter(function (m) { return data[m.id] && data[m.id].j.status === 'submitted'; }).length;
@@ -258,9 +258,9 @@
 
     $('#stat').innerHTML =
       '<div><b>' + live.length + T('</b><span>목장</span></div>') +
-      '<div><b>' + done + '</b><span>제출함</span></div>' +
-      '<div><b>' + (live.length - done) + '</b><span>아직</span></div>' +
-      '<div><b>' + (wrote - done) + '</b><span>쓰는 중</span></div>';
+      '<div><b>' + done + T('</b><span>제출함</span></div>') +
+      '<div><b>' + (live.length - done) + T('</b><span>아직</span></div>') +
+      '<div><b>' + (wrote - done) + T('</b><span>쓰는 중</span></div>');
 
     if (!live.length) {
       $('#week-list').innerHTML = T('<div class="card"><p class="empty">아직 목장이 없습니다. <b>목장·목자 관리</b>에서 목자 계정을 만들어 주세요.</p></div>');
@@ -269,15 +269,15 @@
 
     $('#week-list').innerHTML = live.map(function (m) {
       var d = data[m.id];
-      var state = !d ? '<span class="badge todo">아직 안 씀</span>'
-        : d.j.status === 'submitted' ? '<span class="badge done">제출함</span>'
-        : '<span class="badge">쓰는 중</span>';
-      var reply = d && d.cs.length ? '<span class="badge gold">답글 ' + d.cs.length + '</span>' : '';
+      var state = !d ? T('<span class="badge todo">아직 안 씀</span>')
+        : d.j.status === 'submitted' ? T('<span class="badge done">제출함</span>')
+        : T('<span class="badge">쓰는 중</span>');
+      var reply = d && d.cs.length ? '<span class="badge gold">' + T('답글 {0}', d.cs.length) + '</span>' : '';
       return '<details class="mj" data-mj="' + m.id + '"' + (d ? '' : ' data-empty="1"') + '>' +
         '<summary>' + esc(m.name) + ' ' + state + ' ' + reply +
         '<span class="spacer"></span><span class="quiet" style="font-weight:400; font-size:14px">' +
         esc(m.mokja_name || '') + '</span></summary>' +
-        '<div>' + (d ? detailHtml(m, d) : '<p class="quiet">이번 주 일기가 아직 없습니다.</p>') + '</div>' +
+        '<div>' + (d ? detailHtml(m, d) : T('<p class="quiet">이번 주 일기가 아직 없습니다.</p>')) + '</div>' +
         '</details>';
     }).join('');
 
@@ -291,34 +291,34 @@
     var j = d.j;
     var h = '';
     h += '<p class="quiet" style="margin:0 0 10px">' +
-      (j.met_on ? '모인 날 ' + esc(j.met_on) : '모인 날 미기재') +
-      (j.present_count != null ? ' · ' + j.present_count + '명 참석' : '') +
-      (j.submitted_at ? ' · 제출 ' + C.whenText(j.submitted_at) : '') + '</p>';
+      (j.met_on ? T('모인 날 ') + esc(j.met_on) : T('모인 날 미기재')) +
+      (j.present_count != null ? ' · ' + T('{0}명 참석', j.present_count) : '') +
+      (j.submitted_at ? T(' · 제출 ') + C.whenText(j.submitted_at) : '') + '</p>';
 
     if (d.ps.length) {
       h += T('<div class="section-title">목원별 기도제목</div>');
       h += d.ps.map(function (p) {
         return '<div class="member"><div class="head"><span class="name">' + esc(p.name) + '</span>' +
-          (p.attended ? '' : '<span class="badge">결석</span>') +
-          (p.answered ? '<span class="badge done">응답됨</span>' : '') + '</div>' +
-          '<div class="prose">' + (p.content ? esc(p.content) : '<span class="quiet">(적지 않음)</span>') + '</div></div>';
+          (p.attended ? '' : T('<span class="badge">결석</span>')) +
+          (p.answered ? T('<span class="badge done">응답됨</span>') : '') + '</div>' +
+          '<div class="prose">' + (p.content ? esc(p.content) : T('<span class="quiet">(적지 않음)</span>')) + '</div></div>';
       }).join('');
     }
     if (j.body) h += T('<div class="section-title">목장 이야기</div><div class="prose">') + esc(j.body) + '</div>';
     if (j.mokjang_prayer) h += T('<div class="section-title">목장 전체 기도제목</div><div class="prose">') + esc(j.mokjang_prayer) + '</div>';
 
-    h += '<div class="section-title">목사님 말씀</div>';
+    h += T('<div class="section-title">목사님 말씀</div>');
     h += d.cs.map(function (c) {
       return '<div class="member" style="background:var(--brand-soft); border-color:#cfe0d5">' +
         '<div class="head"><span class="name">' + esc(c.author_name) + '</span>' +
         '<span class="quiet" style="font-size:13px">' + C.whenText(c.created_at) + '</span>' +
-        (c.author_id === me.id ? '<span class="spacer"></span><button class="small danger del-cmt" data-id="' + c.id + '">지우기</button>' : '') +
+        (c.author_id === me.id ? '<span class="spacer"></span><button class="small danger del-cmt" data-id="' + c.id + T('">지우기</button>') : '') +
         '</div><div class="prose">' + esc(c.body) + '</div></div>';
     }).join('');
 
     h += '<form class="cmt noprint" data-j="' + j.id + '" style="margin-top:10px">' +
       T('<textarea name="b" placeholder="목자에게 남길 말씀을 적어 주세요" required></textarea>') +
-      '<div class="row end" style="margin-top:8px"><button class="primary small" type="submit">남기기</button></div></form>';
+      T('<div class="row end" style="margin-top:8px"><button class="primary small" type="submit">남기기</button></div></form>');
     return h;
   }
 
@@ -331,7 +331,7 @@
       journal_id: jid, author_id: me.id, author_name: me.name, body: body
     });
     form.querySelector('button').disabled = false;
-    if (r.error) return alert('남기지 못했습니다: ' + r.error.message);
+    if (r.error) return alert(T('남기지 못했습니다: ') + r.error.message);
     form.b.value = '';
     var open = $$('#week-list .mj').filter(function (d) { return d.open; }).map(function (d) { return d.dataset.mj; });
     await loadWeek();
@@ -340,7 +340,7 @@
 
   document.addEventListener('click', async function (e) {
     var b = e.target.closest('.del-cmt'); if (!b) return;
-    if (!confirm('이 말씀을 지울까요?')) return;
+    if (!confirm(T('이 말씀을 지울까요?'))) return;
     await sb.from('church_comment').delete().eq('id', b.dataset.id);
     loadWeek();
   });
@@ -349,25 +349,25 @@
   async function loadGather() {
     $('#g-label').textContent = C.weekLabel(week);
     $('#g-print-head').innerHTML = T('<h2 style="margin:0">목장 기도제목 — ') + esc(C.weekLabel(week)) + '</h2>';
-    $('#gather-list').innerHTML = '<p class="empty">불러오는 중…</p>';
+    $('#gather-list').innerHTML = T('<p class="empty">불러오는 중…</p>');
     var data = await fetchWeek();
     var only = $('#g-only').checked;
     var live = mokjangs.filter(function (m) { return m.active && data[m.id]; });
     if (!live.length) {
-      $('#gather-list').innerHTML = '<div class="card"><p class="empty">이 주에 올라온 일기가 없습니다.</p></div>';
+      $('#gather-list').innerHTML = T('<div class="card"><p class="empty">이 주에 올라온 일기가 없습니다.</p></div>');
       return;
     }
     $('#gather-list').innerHTML = live.map(function (m) {
       var d = data[m.id], j = d.j, h = '';
       h += '<div class="card"><h2>' + esc(m.name) +
-        (j.status === 'submitted' ? '' : ' <span class="badge todo">임시</span>') + '</h2>' +
+        (j.status === 'submitted' ? '' : T(' <span class="badge todo">임시</span>')) + '</h2>' +
         '<p class="desc">' + esc(m.mokja_name || '') +
-        (j.present_count != null ? ' · ' + j.present_count + '명 참석' : '') + '</p>';
+        (j.present_count != null ? ' · ' + T('{0}명 참석', j.present_count) : '') + '</p>';
       var withText = d.ps.filter(function (p) { return p.content; });
       if (withText.length) {
         h += '<ul style="margin:0 0 12px; padding-left:20px">' + withText.map(function (p) {
           return '<li style="margin:6px 0"><b>' + esc(p.name) + '</b> — ' + esc(p.content) +
-            (p.answered ? ' <span class="badge done">응답됨</span>' : '') + '</li>';
+            (p.answered ? T(' <span class="badge done">응답됨</span>') : '') + '</li>';
         }).join('') + '</ul>';
       } else {
         h += T('<p class="quiet">적힌 목원 기도제목이 없습니다.</p>');
@@ -387,21 +387,21 @@
   function bindManage() {
     $('#form-new').addEventListener('submit', async function (e) {
       e.preventDefault();
-      var b = $('#btn-new'); b.disabled = true; b.textContent = '만드는 중…';
+      var b = $('#btn-new'); b.disabled = true; b.textContent = T('만드는 중…');
       try {
         await C.callAdmin({
           action: 'create_mokja',
           login_id: $('#n-id').value, password: $('#n-pw').value,
           name: $('#n-name').value, mokjang_name: $('#n-mj').value, meet_day: $('#n-day').value
         });
-        C.say($('#msg-new'), $('#n-name').value + T(' 목자 계정을 만들었습니다. 아이디 ') +
-          $('#n-id').value.trim().toLowerCase() + ' · 비밀번호 ' + $('#n-pw').value + ' 를 알려 주세요.', 'ok', true);
+        C.say($('#msg-new'), T('{0} 목자 계정을 만들었습니다. 아이디 {1} · 비밀번호 {2} 를 알려 주세요.',
+          $('#n-name').value, $('#n-id').value.trim().toLowerCase(), $('#n-pw').value), 'ok', true);
         $('#form-new').reset();
         await loadMokjangs(); renderManage(); loadWeek();
       } catch (err) {
         C.say($('#msg-new'), err.message, 'err');
       }
-      b.disabled = false; b.textContent = '계정 만들기';
+      b.disabled = false; b.textContent = T('계정 만들기');
     });
 
 
@@ -409,41 +409,41 @@
     $('#form-myname').addEventListener('submit', async function (e) {
       e.preventDefault();
       var nm = $('#my-name').value.trim();
-      if (!nm) return C.say($('#msg-myname'), '이름을 적어 주세요.', 'err');
+      if (!nm) return C.say($('#msg-myname'), T('이름을 적어 주세요.'), 'err');
       var r = await sb.from('church_profile').update({ name: nm }).eq('id', me.id).select().single();
       if (r.error) return C.say($('#msg-myname'), r.error.message, 'err');
       me.name = r.data.name;
       $('.top .who span').textContent = C.title2(me);
-      C.say($('#msg-myname'), '이름을 바꿨습니다.', 'ok');
+      C.say($('#msg-myname'), T('이름을 바꿨습니다.'), 'ok');
     });
 
     $('#form-pw').addEventListener('submit', async function (e) {
       e.preventDefault();
       var a = $('#pw1').value, b2 = $('#pw2').value;
-      if (a.length < 8) return C.say($('#msg-pw'), '비밀번호는 8자 이상으로 정해 주세요.', 'err');
-      if (a !== b2) return C.say($('#msg-pw'), '두 번 넣으신 비밀번호가 서로 다릅니다.', 'err');
+      if (a.length < 8) return C.say($('#msg-pw'), T('비밀번호는 8자 이상으로 정해 주세요.'), 'err');
+      if (a !== b2) return C.say($('#msg-pw'), T('두 번 넣으신 비밀번호가 서로 다릅니다.'), 'err');
       var r = await sb.auth.updateUser({ password: a });
       if (r.error) return C.say($('#msg-pw'), r.error.message, 'err');
       $('#pw1').value = $('#pw2').value = '';
-      C.say($('#msg-pw'), '비밀번호를 바꿨습니다.', 'ok');
+      C.say($('#msg-pw'), T('비밀번호를 바꿨습니다.'), 'ok');
     });
 
     $('#form-pastor').addEventListener('submit', async function (e) {
       e.preventDefault();
-      var b = $('#btn-pastor'); b.disabled = true; b.textContent = '만드는 중…';
+      var b = $('#btn-pastor'); b.disabled = true; b.textContent = T('만드는 중…');
       try {
         await C.callAdmin({
           action: 'create_pastor',
           login_id: $('#p-id').value, password: $('#p-pw').value, name: $('#p-name').value
         });
-        C.say($('#msg-pastor'), $('#p-name').value + ' 목사 계정을 만들었습니다. 아이디 ' +
-          $('#p-id').value.trim().toLowerCase() + ' · 비밀번호 ' + $('#p-pw').value + ' 를 알려 주세요.', 'ok', true);
+        C.say($('#msg-pastor'), T('{0} 목사 계정을 만들었습니다. 아이디 {1} · 비밀번호 {2} 를 알려 주세요.',
+          $('#p-name').value, $('#p-id').value.trim().toLowerCase(), $('#p-pw').value), 'ok', true);
         $('#form-pastor').reset();
         renderManage();
       } catch (err) {
         C.say($('#msg-pastor'), err.message, 'err');
       }
-      b.disabled = false; b.textContent = '목사 계정 만들기';
+      b.disabled = false; b.textContent = T('목사 계정 만들기');
     });
 
     $('#manage-list').addEventListener('click', onManageClick);
@@ -455,14 +455,14 @@
     var item = e.target.closest('.list-item'), uid = item.dataset.uid, nm = item.dataset.name;
     try {
       if (btn.classList.contains('act-pw')) {
-        var np = prompt('새 비밀번호를 정해 주세요 (8자 이상).');
+        var np = prompt(T('새 비밀번호를 정해 주세요 (8자 이상).'));
         if (np === null) return;
         await C.callAdmin({ action: 'reset_password', user_id: uid, password: np });
-        C.say($('#msg-pastor'), nm + ' 목사의 새 비밀번호는 ' + np + ' 입니다.', 'ok', true);
+        C.say($('#msg-pastor'), T('{0} 목사의 새 비밀번호는 {1} 입니다.', nm, np), 'ok', true);
         return;
       }
       if (btn.classList.contains('act-del')) {
-        if (!confirm(nm + ' 목사 계정을 지울까요?')) return;
+        if (!confirm(T('{0} 목사 계정을 지울까요?', nm))) return;
         await C.callAdmin({ action: 'delete_user', user_id: uid });
         renderManage();
       }
@@ -478,10 +478,10 @@
       var mine = p.id === me.id;
       return '<div class="list-item" data-uid="' + p.id + '" data-name="' + esc(p.name) + '">' +
         '<div class="grow"><div class="t">' + esc(p.name) +
-        (mine ? ' <span class="badge done">지금 나</span>' : '') + '</div>' +
-        '<div class="s">아이디 ' + esc(p.login_id || '') + '</div></div>' +
-        (mine ? '' : '<button class="small act-pw">비밀번호 새로</button>') +
-        (mine || pastors.length <= 1 ? '' : '<button class="small danger act-del">계정 삭제</button>') +
+        (mine ? T(' <span class="badge done">지금 나</span>') : '') + '</div>' +
+        T('<div class="s">아이디 ') + esc(p.login_id || '') + '</div></div>' +
+        (mine ? '' : T('<button class="small act-pw">비밀번호 새로</button>')) +
+        (mine || pastors.length <= 1 ? '' : T('<button class="small danger act-del">계정 삭제</button>')) +
         '</div>';
     }).join('');
 
@@ -490,14 +490,14 @@
     box.innerHTML = mokjangs.map(function (m) {
       var p = m.mokja_id ? byId[m.mokja_id] : null;
       return '<div class="list-item" data-mj="' + m.id + '" data-uid="' + (m.mokja_id || '') + '">' +
-        '<div class="grow"><div class="t">' + esc(m.name) + (m.active ? '' : ' <span class="badge">쉼</span>') + '</div>' +
+        '<div class="grow"><div class="t">' + esc(m.name) + (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
         '<div class="s">' + esc(m.mokja_name || T('담당 목자 없음')) +
-        (p ? ' · 아이디 ' + esc(p.login_id) : '') +
+        (p ? T(' · 아이디 ') + esc(p.login_id) : '') +
         (m.meet_day ? ' · ' + esc(m.meet_day) : '') + '</div></div>' +
-        (m.mokja_id ? '<button class="small act-pw">비밀번호 새로</button>' : '') +
-        '<button class="small act-rename">이름 고치기</button>' +
-        '<button class="small act-hide">' + (m.active ? '잠시 쉼으로' : '다시 활동') + '</button>' +
-        (m.mokja_id ? '<button class="small danger act-del">계정 삭제</button>' : '') +
+        (m.mokja_id ? T('<button class="small act-pw">비밀번호 새로</button>') : '') +
+        T('<button class="small act-rename">이름 고치기</button>') +
+        '<button class="small act-hide">' + (m.active ? T('잠시 쉼으로') : T('다시 활동')) + '</button>' +
+        (m.mokja_id ? T('<button class="small danger act-del">계정 삭제</button>') : '') +
         T('<button class="small danger act-drop">목장 지우기</button>') +
         '</div>';
     }).join('');
@@ -514,22 +514,22 @@
         var np = prompt(T('새 비밀번호를 정해 주세요 (8자 이상).\n정하신 뒤 목자에게 알려 주세요.'));
         if (np === null) return;
         await C.callAdmin({ action: 'reset_password', user_id: uid, password: np });
-        C.say($('#msg-manage'), m.mokja_name + T(' 목자의 새 비밀번호는 ') + np + ' 입니다.', 'ok', true);
+        C.say($('#msg-manage'), T('{0} 목자의 새 비밀번호는 {1} 입니다.', m.mokja_name, np), 'ok', true);
         return;
       }
       if (btn.classList.contains('act-rename')) {
         var nn = prompt(T('목장 이름'), m.name); if (nn === null) return;
-        var nd = prompt('모이는 요일 (비워도 됩니다)', m.meet_day || ''); if (nd === null) nd = m.meet_day;
+        var nd = prompt(T('모이는 요일 (비워도 됩니다)'), m.meet_day || ''); if (nd === null) nd = m.meet_day;
         await sb.from('church_mokjang').update({ name: nn.trim(), meet_day: (nd || '').trim() }).eq('id', mjId);
       } else if (btn.classList.contains('act-hide')) {
         await sb.from('church_mokjang').update({ active: !m.active }).eq('id', mjId);
       } else if (btn.classList.contains('act-del')) {
-        if (!confirm(m.mokja_name + T(' 목자의 계정을 지울까요?\n지금까지 쓴 일기와 기도제목은 그대로 남습니다.'))) return;
+        if (!confirm(T('{0} 목자의 계정을 지울까요?\n지금까지 쓴 일기와 기도제목은 그대로 남습니다.', m.mokja_name))) return;
         await C.callAdmin({ action: 'delete_user', user_id: uid });
         await sb.from('church_mokjang').update({ mokja_name: m.mokja_name + T(' (지난 목자)') }).eq('id', mjId);
       } else if (btn.classList.contains('act-drop')) {
-        if (!confirm(m.name + T(' 을(를) 통째로 지울까요?\n\n이 목장의 목원 명단과 지금까지의 일기·기도제목이 모두 함께 사라지고, 되돌릴 수 없습니다.\n(시험 삼아 만든 목장을 치울 때 쓰세요.)'))) return;
-        if (uid && !confirm(T('담당 목자 ') + m.mokja_name + T(' 의 계정도 함께 지울까요?\n[확인]을 누르면 계정까지 지웁니다. [취소]를 누르면 목장만 지웁니다.'))) {
+        if (!confirm(T('{0} 을(를) 통째로 지울까요?\n\n이 목장의 목원 명단과 지금까지의 일기·기도제목이 모두 함께 사라지고, 되돌릴 수 없습니다.\n(시험 삼아 만든 목장을 치울 때 쓰세요.)', m.name))) return;
+        if (uid && !confirm(T('담당 목자 {0} 의 계정도 함께 지울까요?\n[확인]을 누르면 계정까지 지웁니다. [취소]를 누르면 목장만 지웁니다.', m.mokja_name))) {
           await sb.from('church_mokjang').delete().eq('id', mjId);
         } else {
           await sb.from('church_mokjang').delete().eq('id', mjId);
