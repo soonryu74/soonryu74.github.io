@@ -98,6 +98,7 @@
     $('#ch-name').value = c.name || '';
     C.fillTimezones($('#ch-tz'), c.timezone);
     $('#ch-link').value = c.slug ? C.churchLink(c) : '';
+    bindLogo();
     $('#ch-copy').addEventListener('click', async function () {
       var v = $('#ch-link').value;
       try { await navigator.clipboard.writeText(v); C.say($('#msg-church'), '주소를 복사했습니다.', 'ok'); }
@@ -112,6 +113,51 @@
       c = r.data; C.setTimezone(c.timezone); C.rememberChurch(c);
       $('.top .church').textContent = c.name;
       C.say($('#msg-church'), '저장했습니다.', 'ok');
+    });
+  }
+
+  /* ── 교회 로고: 화면에서 512px 이하 PNG로 줄여 서버 함수로 보낸다 ── */
+  function shrinkToPng(file, max) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+        var cv = document.createElement('canvas');
+        cv.width = Math.max(1, Math.round(img.naturalWidth * k)); cv.height = Math.max(1, Math.round(img.naturalHeight * k));
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        URL.revokeObjectURL(url); resolve(cv.toDataURL('image/png'));
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('이 그림은 열 수 없습니다. PNG나 JPG로 골라 주세요.')); };
+      img.src = url;
+    });
+  }
+  function bindLogo() {
+    var c = C.getChurch() || {};
+    function show(u) {
+      $('#ch-logo').src = u || C.logoOf({});
+      $('#ch-logo-del').hidden = !u;
+      $('.top img.mark').src = u || C.logoOf({});
+    }
+    show(c.logo_url);
+    $('#ch-logo-pick').addEventListener('click', function () { $('#ch-logo-file').click(); });
+    $('#ch-logo-file').addEventListener('change', async function () {
+      var f = this.files && this.files[0]; this.value = '';
+      if (!f) return;
+      C.say($('#msg-logo'), '올리는 중…', 'ok');
+      try {
+        var data = await shrinkToPng(f, 512);
+        var r = await C.callAdmin({ action: 'set_logo', data: data });
+        c.logo_url = r.logo_url; C.rememberChurch(c); show(c.logo_url);
+        C.say($('#msg-logo'), '로고를 바꿨습니다.', 'ok');
+      } catch (e) { C.say($('#msg-logo'), e.message, 'err'); }
+    });
+    $('#ch-logo-del').addEventListener('click', async function () {
+      if (!confirm('교회 로고를 지울까요?')) return;
+      try {
+        await C.callAdmin({ action: 'remove_logo' });
+        c.logo_url = ''; C.rememberChurch(c); show('');
+        C.say($('#msg-logo'), '로고를 지웠습니다.', 'ok');
+      } catch (e) { C.say($('#msg-logo'), e.message, 'err'); }
     });
   }
 

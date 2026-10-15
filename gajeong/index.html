@@ -5,9 +5,10 @@
 <script>/* 예전 주소로 들어오면 새 주소로 옮긴다 (주소 뒤 ?c=·#j= 그대로) */
 (function (h) {
   if (h !== 'soonryu74.github.io' && h !== 'bangjoo-church.github.io') return;
-  var q = location.search;
+  var page = location.pathname.replace(/^\/(gajeong\/)?/, ''), q = location.search;
+  if (!page || page === 'index.html') return location.replace('https://mokjang.github.io/bangjoo/' + location.hash);
   if (!/[?&]c=/.test(q)) q = (q ? q + '&' : '?') + 'c=bangjoo';
-  location.replace('https://mokjang.github.io/' + location.pathname.replace(/^\/(gajeong\/)?/, '') + q + location.hash);
+  location.replace('https://mokjang.github.io/' + page + q + location.hash);
 })(location.hostname);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>목장 나눔터 — 들어가기</title>
@@ -45,13 +46,13 @@
   <div class="hero">
     <img class="logo" id="hero-logo" alt="" width="104" height="104">
     <div class="church" id="hero-church"></div>
-    <script>/* 서버에 묻기 전에, 알고 있는 교회면 로고·이름을 바로 그린다 (일반 아이콘이 먼저 보였다 바뀌는 깜빡임 방지) */
+    <script>/* 서버에 묻기 전에, 이 기기가 기억하는 교회면 로고·이름을 바로 그린다 (깜빡임 방지).
+       교회 주소(/코드/)로 들어오면 그 페이지가 미리 기억시켜 둔다. 다른 교회 것은 쓰지 않는다. */
     (function () {
-      var KNOWN = { bangjoo: { slug: 'bangjoo', name: '멜번방주교회 & ALF', logo_url: 'assets/logo.png' } };
       var q = new URLSearchParams(location.search), slug = q.get('c'), mem = null, c = null;
       if (q.has('new')) return void (document.getElementById('hero-logo').src = 'assets/icon-192.png');
       try { mem = JSON.parse(localStorage.getItem('gajeong-church') || 'null'); } catch (e) {}
-      c = slug ? (KNOWN[slug] || (mem && mem.slug === slug ? mem : null)) : mem;
+      c = slug ? (mem && mem.slug === slug ? mem : null) : mem;
       if (c && c.name) {
         document.documentElement.classList.add('branded');
         document.getElementById('hero-church').textContent = c.name;

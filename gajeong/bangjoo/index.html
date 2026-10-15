@@ -12,8 +12,11 @@
 <meta property="og:image" content="https://mokjang.github.io/assets/og-bangjoo.png">
 <meta property="og:url" content="https://mokjang.github.io/bangjoo/">
 <link rel="icon" type="image/png" href="../assets/logo.png">
-<!-- 카카오톡 미리보기용 교회 주소. 열면 교회 화면으로 바로 간다 -->
-<script>location.replace('../?c=bangjoo' + location.hash);</script>
+<!-- 카카오톡 미리보기용 교회 주소(그림을 따로 맞춰 직접 만든 것 — 자동 생성이 건드리지 않음). 열면 교회 화면으로 바로 간다 -->
+<script>
+try { localStorage.setItem('gajeong-church', JSON.stringify({ slug: 'bangjoo', name: '멜번방주교회 & ALF', logo_url: 'assets/logo.png' })); } catch (e) {}
+location.replace('../?c=bangjoo' + location.hash);
+</script>
 </head>
 <body style="background:#f1f5fa;margin:0">
 <noscript><p style="font-family:sans-serif;text-align:center;padding:40px 16px"><a href="../?c=bangjoo">멜번방주교회 & ALF 목장 나눔터로 가기</a></p></noscript>
