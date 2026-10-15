@@ -64,6 +64,8 @@ const db = p => p.evaluate(() => window.__DB());
     ok('교회 화면에는 새 교회 등록 링크 없음', !(await p.isVisible('#to-setup')));
     await p.goto(BASE + 'index.html?new'); await p.waitForTimeout(300);
     ok('?new → 기억한 교회가 있어도 등록 화면 바로', await p.isVisible('#setup') && (await p.textContent('#hero-church')).trim() === '');
+    await p.goto(BASE + 'index.html?new=BJ-V3DEXG'); await p.waitForTimeout(300);
+    ok('?new=코드 → 초대 코드 미리 채움', (await p.inputValue('#scode')) === 'BJ-V3DEXG');
     await p.goto(BASE + 'bangjoo/'); await p.waitForURL(/\?c=bangjoo/); await p.waitForTimeout(300);
     ok('/bangjoo/ → 교회 화면으로', (await p.textContent('#hero-church')).includes('멜번방주교회'));
     await c.close(); }
