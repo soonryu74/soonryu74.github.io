@@ -118,7 +118,10 @@ window.CHURCH = (function () {
     }
     var r = await sb.rpc('church_public_info', { p_slug: slug });
     var row = r.data && r.data[0];
-    return row ? { slug: slug, name: row.name, logo_url: row.logo_url } : null;
+    if (!row) return null;
+    var c = { slug: slug, name: row.name, logo_url: row.logo_url };
+    rememberChurch(c);   // 다음에 열 때는 서버 답을 기다리지 않고 바로 그린다
+    return c;
   }
   // 카카오톡 미리보기에 교회 로고가 뜨도록 교회 전용 폴더를 둔 교회 (예: /bangjoo/)
   var CHURCH_PAGES = { bangjoo: true };

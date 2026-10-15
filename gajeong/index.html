@@ -36,13 +36,30 @@
   .foot{text-align:center; color:var(--muted); font-size:13.5px; margin-top:22px}
   .foot a{color:var(--muted)}
   #setup{display:none}
+  .hero .logo:not([src]){visibility:hidden}
+  .branded #setup-link{display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hero">
-    <img class="logo" id="hero-logo" src="assets/icon-192.png" alt="" width="104" height="104">
+    <img class="logo" id="hero-logo" alt="" width="104" height="104">
     <div class="church" id="hero-church"></div>
+    <script>/* 서버에 묻기 전에, 알고 있는 교회면 로고·이름을 바로 그린다 (일반 아이콘이 먼저 보였다 바뀌는 깜빡임 방지) */
+    (function () {
+      var KNOWN = { bangjoo: { slug: 'bangjoo', name: '멜번방주교회 & ALF', logo_url: 'assets/logo.png' } };
+      var q = new URLSearchParams(location.search), slug = q.get('c'), mem = null, c = null;
+      if (q.has('new')) return void (document.getElementById('hero-logo').src = 'assets/icon-192.png');
+      try { mem = JSON.parse(localStorage.getItem('gajeong-church') || 'null'); } catch (e) {}
+      c = slug ? (KNOWN[slug] || (mem && mem.slug === slug ? mem : null)) : mem;
+      if (c && c.name) {
+        document.documentElement.classList.add('branded');
+        document.getElementById('hero-church').textContent = c.name;
+        document.getElementById('hero-logo').src = c.logo_url || 'assets/icon-192.png';
+      } else if (!slug) document.getElementById('hero-logo').src = 'assets/icon-192.png';
+      /* 처음 보는 ?c= 교회면 서버 답이 올 때까지 비워 둔다 */
+    })();
+    </script>
     <h1>목장 나눔터</h1>
     <p>한 주 목장 이야기와 기도제목을 담는 곳</p>
   </div>
@@ -119,12 +136,13 @@
 
   // 주소의 ?c=… 또는 이 기기가 기억하는 교회 이름·로고를 보여 준다
   (wantNew ? Promise.resolve(null) : C.publicChurch()).then(function (c) {
-    if (!c) return;
+    if (!c) { if (!$('#hero-logo').getAttribute('src')) $('#hero-logo').src = 'assets/icon-192.png'; return; }
+    document.documentElement.classList.add('branded');
     $('#setup-link').style.display = 'none';
     $('#hero-church').textContent = c.name;
     if (c.logo_url) { $('#hero-logo').src = c.logo_url; $('#hero-logo').alt = c.name + ' 로고'; }
     document.title = c.name + ' 목장 나눔터 — 들어가기';
-  }).catch(function () {});
+  }).catch(function () { if (!$('#hero-logo').getAttribute('src')) $('#hero-logo').src = 'assets/icon-192.png'; });
 
   C.fillTimezones($('#stz'));
   $('#to-setup').addEventListener('click', function (e) { e.preventDefault(); showSetup(); });
