@@ -109,6 +109,23 @@ const db = p => p.evaluate(() => window.__DB());
     ok('다락방 교회: 밤 디자인', (await p.getAttribute('html', 'data-theme')) === 'night');
     await c.close(); }
 
+  console.log('\n[2b] 로그인한 채 다른 교회·등록 주소를 열면');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    await p.goto(BASE + 'index.html?new=BJ-V3DEXG'); await p.waitForTimeout(500);
+    ok('등록 주소: 내 교회로 넘기지 않고 등록 화면', /index\.html/.test(p.url()) && await p.isVisible('#setup'));
+    ok('등록 주소: 지금 들어가 있는 교회를 알려 줌', await p.isVisible('#signed-in') && (await p.textContent('#signed-in')).includes('멜번방주교회'));
+    ok('등록 주소: 교회 이름·디자인 섞이지 않음', (await p.textContent('#hero-church')).trim() === '' && (await p.getAttribute('html', 'data-theme')) !== 'sky');
+    await p.goto(BASE + 'index.html?c=lach01'); await p.waitForTimeout(500);
+    ok('다른 교회 주소: 그 교회 화면 그대로', /index\.html/.test(p.url()) && (await p.textContent('#hero-church')).includes('LA 새소망'));
+    ok('다른 교회 주소: 내 교회로 가기 단추', await p.isVisible('#go-mine'));
+    await p.click('#go-mine'); await p.waitForURL(/moksa/); await p.waitForSelector('.top h1'); await p.waitForTimeout(300);
+    ok('내 교회로 돌아오면 내 교회 모양(파랑, 목장)', (await p.getAttribute('html', 'data-theme')) === 'sky' && (await p.textContent('.top h1')) === '목장 나눔터');
+    await p.goto(BASE + 'index.html?c=bangjoo'); await p.waitForURL(/moksa/);
+    ok('내 교회 주소면 바로 내 화면으로', /moksa/.test(p.url()));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   console.log('\n[3] 새 교회 등록');
   { const { c, p } = await ctx(b);
     await p.goto(BASE + 'index.html'); await p.waitForTimeout(250);

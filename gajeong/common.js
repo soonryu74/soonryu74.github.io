@@ -6,7 +6,8 @@ window.CHURCH = (function () {
   var FN = SB_URL + '/functions/v1/';
   var DOMAIN = 'gajeong.local';
   // 웹 푸시 공개키 (비밀키는 서버 함수에만 있다)
-  var LS_CHURCH = 'gajeong-church';   // 마지막으로 들어간 교회 — 다음 로그인 화면에 이름·로고를 보여 준다
+  var LS_CHURCH = 'gajeong-church';   // (로그인 화면용) 마지막으로 본 교회
+  var LS_MINE = 'gajeong-my-church';  // (목사·목자 화면용) 로그인한 내 교회   // 마지막으로 들어간 교회 — 다음 로그인 화면에 이름·로고를 보여 준다
   var NEUTRAL_ICON = 'assets/icon-192.png';
 
   var sb = window.supabase.createClient(SB_URL, SB_KEY, {
@@ -208,6 +209,7 @@ window.CHURCH = (function () {
     church = r.data;
     setTimezone(church.timezone);
     rememberChurch(church);
+    try { localStorage.setItem(LS_MINE, localStorage.getItem(LS_CHURCH)); } catch (e) {}
     applyLook(church);
     return church;
   }
@@ -243,7 +245,11 @@ window.CHURCH = (function () {
     return r.data;
   }
 
-  async function signOut() { await sb.auth.signOut(); location.href = 'index.html'; }
+  async function signOut() {
+    await sb.auth.signOut();
+    try { localStorage.removeItem(LS_MINE); } catch (e) {}
+    location.href = 'index.html';
+  }
 
   async function me() {
     var s = await sb.auth.getSession();
@@ -370,7 +376,7 @@ window.CHURCH = (function () {
 (function () {
   if (/(^|\/)(index\.html)?$/.test(location.pathname)) return;
   try {
-    var mem = JSON.parse(localStorage.getItem('gajeong-church') || 'null');
+    var mem = JSON.parse(localStorage.getItem('gajeong-my-church') || 'null');
     if (mem) window.CHURCH.applyLook(mem);
   } catch (e) {}
 })();

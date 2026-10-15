@@ -77,6 +77,12 @@ try { (function (m, q) { var s = q.get('c');
   </div>
 
   <!-- 로그인 -->
+  <!-- 이 기기가 이미 다른 교회로 들어가 있을 때 -->
+  <div class="card signed-in" id="signed-in" hidden data-noterm>
+    <p class="desc" style="margin:0 0 12px" id="signed-in-text"></p>
+    <div class="row"><button class="primary" type="button" id="go-mine"></button></div>
+  </div>
+
   <div class="card" id="login">
     <h2>들어가기</h2>
     <p class="desc">목사님께 받으신 아이디와 비밀번호를 넣어 주세요.</p>
@@ -134,8 +140,18 @@ try { (function (m, q) { var s = q.get('c');
   var C = window.CHURCH, $ = C.$;
 
   // 이미 로그인돼 있으면 바로 제 화면으로
-  C.me().then(function (p) {
-    if (p) location.replace(p.role === 'pastor' ? 'moksa.html' : 'mokjang.html');
+  // 이미 로그인돼 있으면 제 화면으로 — 단, 다른 교회 주소나 새 교회 등록 주소로 왔으면 넘기지 않고 알려만 준다
+  var urlSlug = new URLSearchParams(location.search).get('c');
+  C.me().then(async function (p) {
+    if (!p) return;
+    var home = p.role === 'pastor' ? 'moksa.html' : 'mokjang.html';
+    var mine = urlSlug || wantNew ? ((await C.sb.from('church_church').select('slug, name').maybeSingle()).data || {}) : null;
+    if (!mine || (!wantNew && mine.slug === urlSlug)) return location.replace(home);
+    $('#signed-in-text').textContent = '이 기기는 지금 ' + (mine.name || '다른 교회') + '(' + C.title2(p) + ')로 들어가 있습니다. ' +
+      (wantNew ? '새 교회를 등록하면 이 기기는 새 교회로 바뀝니다.' : '이 교회로 들어가려면 아래에서 로그인하세요.');
+    $('#go-mine').textContent = (mine.name || '내 교회') + '로 가기';
+    $('#go-mine').onclick = function () { location.replace(home); };
+    $('#signed-in').hidden = false;
   });
 
   // 새 교회 등록은 교회 이름이 없는 첫 화면(또는 주소 끝 ?new)에서만 보인다 — 교회 화면에서는 헷갈리지 않게 숨긴다
