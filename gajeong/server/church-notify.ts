@@ -27,7 +27,7 @@ const admin = createClient(
 )
 
 const VAPID = {
-  subject: Deno.env.get('VAPID_SUBJECT') ?? 'https://soonryu74.github.io/gajeong/',
+  subject: Deno.env.get('VAPID_SUBJECT') ?? 'https://bangjoo-church.github.io/',
   publicKey: Deno.env.get('VAPID_PUBLIC_KEY') ?? '',
   privateKey: Deno.env.get('VAPID_PRIVATE_KEY') ?? '',
 }
