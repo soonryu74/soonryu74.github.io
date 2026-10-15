@@ -10,7 +10,13 @@
   --brand:#1f4d3b; --brand-dk:#153829; --brand-soft:#e7efe9; --brand-ink:#e9f1ec;
   --gold:#a77a2a; --gold-soft:#f6eedc; --gold-line:#d9c49a;
   --green:#3f7a3a; --green-soft:#e9f2e5;
-  --warn:#a5472a; --warn-soft:#f8e9e2;
+  --warn:#a5472a; --warn-soft:#f8e9e2; --warn-ink:#7f3519; --warn-line:#e8cfc3;
+  --brand-2:#275e47; --on-brand:#fff; --focus:rgba(31,77,59,.12); --brand-shadow:rgba(21,56,41,.7);
+  --field:#fff; --sheet-2:#fffefb; --placeholder:#a6a395; --hover-line:#bfb49c; --glow:rgba(255,255,255,.75);
+  --top-bg:linear-gradient(180deg, #23573f 0%, #1f4d3b 100%); --top-ink:#fff; --top-sub:#cfe0d5; --top-who:#e3eee7; --top-shadow:rgba(10,30,20,.5);
+  --notify-bg:#fffaf0; --savebar:rgba(255,253,248,.82); --shadow-c:rgba(45,38,20,.14);
+  --arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%231f4d3b' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --title-weight:700;
   --serif:'Gowun Batang', 'Nanum Myeongjo', 'AppleMyungjo', serif;
   --sans:'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
   --r:16px; --r-sm:12px;
@@ -19,6 +25,7 @@
   --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 *{box-sizing:border-box}
+[hidden]{display:none !important}
 html,body{margin:0}
 body{
   background:var(--paper) var(--grain); color:var(--ink);
@@ -28,7 +35,7 @@ body{
 }
 body::before{ /* 위쪽에 은은한 빛 */
   content:''; position:fixed; inset:0 0 auto 0; height:420px; pointer-events:none; z-index:-1;
-  background:radial-gradient(120% 80% at 50% -10%, rgba(255,255,255,.75), rgba(255,255,255,0) 70%);
+  background:radial-gradient(120% 80% at 50% -10%, var(--glow), transparent 70%);
 }
 a{color:var(--brand)}
 ::selection{background:var(--gold-soft)}
@@ -38,17 +45,17 @@ a{color:var(--brand)}
 /* ── 머리말: 짙은 상록 띠 + 금빛 가는 선 ───────────────── */
 .top{
   position:sticky; top:0; z-index:20;
-  background:linear-gradient(180deg, #23573f 0%, var(--brand) 100%); color:#fff;
-  box-shadow:0 1px 0 var(--gold-line), 0 6px 18px -10px rgba(10,30,20,.5);
+  background:var(--top-bg); color:var(--top-ink);
+  box-shadow:0 1px 0 var(--gold-line), 0 6px 18px -10px var(--top-shadow);
 }
 .top-in{max-width:860px; margin:0 auto; padding:12px 18px; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
 .top-in.wide{max-width:1100px}
-.top h1{font-family:var(--serif); font-size:20px; margin:0; font-weight:700; letter-spacing:-.02em}
+.top h1{font-family:var(--serif); font-size:20px; margin:0; font-weight:var(--title-weight); letter-spacing:-.02em}
 .top .mark{height:36px; width:36px; object-fit:contain; display:block; flex:0 0 auto;
   background:#fffdf8; border-radius:10px; padding:3px; box-shadow:0 0 0 1px rgba(255,255,255,.25)}
 .top .titles{display:flex; flex-direction:column; line-height:1.25}
-.top .church{font-size:12.5px; color:#cfe0d5; letter-spacing:.02em}
-.top .who{margin-left:auto; font-size:14px; color:#e3eee7; display:flex; align-items:center; gap:10px}
+.top .church{font-size:12.5px; color:var(--top-sub); letter-spacing:.02em}
+.top .who{margin-left:auto; font-size:14px; color:var(--top-who); display:flex; align-items:center; gap:10px}
 .top .who button{background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.25); border-radius:999px}
 .top .who button:hover{background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.4)}
 
@@ -74,7 +81,7 @@ a{color:var(--brand)}
   background:var(--sheet); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow);
   padding:22px 22px 24px; margin:18px 0; position:relative;
 }
-.card h2{font-family:var(--serif); font-size:21px; font-weight:700; margin:0 0 6px; letter-spacing:-.02em; color:var(--ink)}
+.card h2{font-family:var(--serif); font-size:21px; font-weight:var(--title-weight); margin:0 0 6px; letter-spacing:-.02em; color:var(--ink)}
 .card h2::after{content:''; display:block; width:28px; height:2px; background:var(--gold-line); margin-top:10px; border-radius:2px}
 .card .desc{color:var(--muted); font-size:15px; margin:0 0 16px; line-height:1.65}
 .section-title{
@@ -87,13 +94,13 @@ a{color:var(--brand)}
 label{display:block; font-weight:600; font-size:15px; margin:16px 0 7px; color:var(--ink-2)}
 input[type=text],input[type=password],input[type=date],input[type=number],select,textarea{
   width:100%; padding:13px 14px; font:inherit; font-size:17px; color:var(--ink);
-  background:#fff; border:1px solid var(--line-2); border-radius:var(--r-sm);
+  background:var(--field); border:1px solid var(--line-2); border-radius:var(--r-sm);
   box-shadow:inset 0 1px 2px rgba(45,38,20,.04); transition:border-color .15s, box-shadow .15s;
 }
-input::placeholder,textarea::placeholder{color:#a6a395}
-input:focus,select:focus,textarea:focus{outline:none; border-color:var(--brand); box-shadow:0 0 0 4px rgba(31,77,59,.12)}
+input::placeholder,textarea::placeholder{color:var(--placeholder)}
+input:focus,select:focus,textarea:focus{outline:none; border-color:var(--brand); box-shadow:0 0 0 4px var(--focus)}
 select{appearance:none; -webkit-appearance:none; padding-right:40px;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%231f4d3b' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 15px center}
+  background:var(--field) var(--arrow) no-repeat right 15px center}
 textarea{min-height:116px; resize:vertical; line-height:1.7}
 .hint{color:var(--muted); font-size:13.5px; margin-top:7px; line-height:1.55}
 
@@ -103,16 +110,16 @@ button{
   border:1px solid var(--line-2); background:var(--sheet); color:var(--ink); cursor:pointer;
   transition:transform .08s, background .15s, border-color .15s, box-shadow .15s;
 }
-button:hover{border-color:#bfb49c; background:#fff}
+button:hover{border-color:var(--hover-line); background:var(--field)}
 button:active{transform:translateY(1px)}
 button.primary{
-  background:linear-gradient(180deg, #275e47, var(--brand)); border-color:var(--brand-dk); color:#fff;
-  box-shadow:0 1px 0 rgba(255,255,255,.15) inset, 0 6px 14px -8px rgba(21,56,41,.7);
+  background:linear-gradient(180deg, var(--brand-2), var(--brand)); border-color:var(--brand-dk); color:var(--on-brand);
+  box-shadow:0 1px 0 rgba(255,255,255,.15) inset, 0 6px 14px -8px var(--brand-shadow);
 }
-button.primary:hover{background:linear-gradient(180deg, #23573f, var(--brand-dk))}
+button.primary:hover{background:linear-gradient(180deg, var(--brand), var(--brand-dk))}
 button.ghost{background:transparent; border-color:transparent; color:var(--muted)}
 button.ghost:hover{background:var(--paper-2); border-color:transparent; color:var(--ink)}
-button.danger{color:var(--warn); border-color:#e8cfc3; background:var(--sheet)}
+button.danger{color:var(--warn); border-color:var(--warn-line); background:var(--sheet)}
 button.danger:hover{background:var(--warn-soft)}
 button.small{padding:8px 13px; font-size:14px; border-radius:10px}
 button:disabled{opacity:.45; cursor:not-allowed; transform:none}
@@ -123,7 +130,7 @@ button:disabled{opacity:.45; cursor:not-allowed; transform:none}
 /* ── 안내 글 ─────────────────────────────────────── */
 .msg{padding:12px 15px; border-radius:var(--r-sm); font-size:15px; margin:12px 0; display:none; border-left:3px solid}
 .msg.show{display:block; animation:rise .25s ease both}
-.msg.err{background:var(--warn-soft); color:#7f3519; border-color:var(--warn)}
+.msg.err{background:var(--warn-soft); color:var(--warn-ink); border-color:var(--warn)}
 .msg.ok{background:var(--brand-soft); color:var(--brand-dk); border-color:var(--brand)}
 
 /* ── 뱃지 ─────────────────────────────────────────── */
@@ -136,7 +143,7 @@ button:disabled{opacity:.45; cursor:not-allowed; transform:none}
 .badge.ok{background:var(--green-soft); color:var(--green)}
 
 /* ── 목원 줄 ─────────────────────────────────────── */
-.member{border:1px solid var(--line); border-radius:var(--r-sm); padding:15px 16px; margin:10px 0; background:#fffefb; position:relative}
+.member{border:1px solid var(--line); border-radius:var(--r-sm); padding:15px 16px; margin:10px 0; background:var(--sheet-2); position:relative}
 .member::before{content:''; position:absolute; left:-1px; top:14px; bottom:14px; width:3px; border-radius:0 3px 3px 0; background:var(--gold-line)}
 .member .head{display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap}
 .member .name{font-family:var(--serif); font-weight:700; font-size:18px}
@@ -145,7 +152,7 @@ button:disabled{opacity:.45; cursor:not-allowed; transform:none}
 .check input{width:21px; height:21px; accent-color:var(--brand); margin:0}
 
 /* ── 목록 ─────────────────────────────────────────── */
-.list-item{border:1px solid var(--line); border-radius:var(--r-sm); padding:14px 16px; margin:10px 0; background:#fffefb;
+.list-item{border:1px solid var(--line); border-radius:var(--r-sm); padding:14px 16px; margin:10px 0; background:var(--sheet-2);
   display:flex; gap:12px; align-items:center; flex-wrap:wrap}
 .list-item .grow{flex:1; min-width:180px}
 .list-item .t{font-weight:700; font-size:16.5px}
@@ -163,14 +170,14 @@ button:disabled{opacity:.45; cursor:not-allowed; transform:none}
 
 /* ── 주간 숫자 ───────────────────────────────────── */
 .stat{display:grid; grid-template-columns:repeat(4, 1fr); gap:0; margin:10px 0 16px;
-  border:1px solid var(--line); border-radius:var(--r-sm); background:#fffefb; overflow:hidden}
+  border:1px solid var(--line); border-radius:var(--r-sm); background:var(--sheet-2); overflow:hidden}
 .stat div{padding:12px 10px 10px; text-align:center; border-left:1px solid var(--line)}
 .stat div:first-child{border-left:0}
 .stat b{display:block; font-family:var(--serif); font-size:28px; line-height:1.15; color:var(--brand)}
 .stat span{color:var(--muted); font-size:13px}
 
 /* ── 목장 펼침 ───────────────────────────────────── */
-.mj{border:1px solid var(--line); border-radius:var(--r-sm); margin:10px 0; background:#fffefb; overflow:hidden; transition:box-shadow .2s, border-color .2s}
+.mj{border:1px solid var(--line); border-radius:var(--r-sm); margin:10px 0; background:var(--sheet-2); overflow:hidden; transition:box-shadow .2s, border-color .2s}
 .mj[open]{border-color:var(--line-2); box-shadow:var(--shadow)}
 .mj > summary{cursor:pointer; padding:15px 16px; font-family:var(--serif); font-size:18px; font-weight:700;
   display:flex; gap:10px; align-items:center; flex-wrap:wrap; list-style:none}
@@ -183,22 +190,74 @@ button:disabled{opacity:.45; cursor:not-allowed; transform:none}
 .mj > div{padding:2px 16px 18px; border-top:1px dashed var(--line)}
 
 /* ── 알림 권유 띠 ─────────────────────────────────── */
-.notify-ask{border-color:var(--gold-line); background:linear-gradient(180deg, #fffaf0, var(--sheet))}
+.notify-ask{border-color:var(--gold-line); background:linear-gradient(180deg, var(--notify-bg), var(--sheet))}
 .notify-ask h2::after{background:var(--gold)}
 
 /* ── 저장 띠 (목자) ──────────────────────────────── */
 .savebar{position:sticky; bottom:12px; z-index:5; margin:18px -6px 0; padding:12px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-  background:rgba(255,253,248,.82); -webkit-backdrop-filter:blur(14px) saturate(1.2); backdrop-filter:blur(14px) saturate(1.2);
-  border:1px solid var(--line); border-radius:18px; box-shadow:0 14px 34px -14px rgba(45,38,20,.35)}
+  background:var(--savebar); -webkit-backdrop-filter:blur(14px) saturate(1.2); backdrop-filter:blur(14px) saturate(1.2);
+  border:1px solid var(--line); border-radius:18px; box-shadow:0 14px 34px -14px var(--shadow-c)}
 .savebar .primary{flex:1}
 .savebar .state{color:var(--muted); font-size:13.5px; flex-basis:100%; text-align:center; margin-top:-2px}
 .savebar .state:empty{display:none}
 .two{display:flex; gap:12px; flex-wrap:wrap}
 .two > div{flex:1; min-width:150px}
 
+/* ── 디자인 고르기 ─────────────────────────────── */
+.themes{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px}
+.theme-pick{display:flex; flex-direction:column; align-items:stretch; gap:8px; padding:10px; text-align:left; border-radius:14px; background:var(--sheet-2)}
+.theme-pick .sw{height:58px; border-radius:10px; position:relative; overflow:hidden; box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.theme-pick .sw i{position:absolute; left:0; right:0; top:0; height:16px}
+.theme-pick .sw b{position:absolute; left:10px; bottom:10px; width:42%; height:10px; border-radius:5px}
+.theme-pick .sw u{position:absolute; right:10px; bottom:10px; width:16px; height:16px; border-radius:50%}
+.theme-pick .nm{font-weight:700; font-size:15px; color:var(--ink)}
+.theme-pick .ds{font-size:12px; color:var(--muted); line-height:1.4}
+.theme-pick.on{border-color:var(--brand); box-shadow:0 0 0 3px var(--focus)}
+@media (max-width:560px){ .themes{grid-template-columns:1fr} .theme-pick{flex-direction:row; align-items:center} .theme-pick .sw{width:84px; flex:0 0 84px; height:52px} }
+
 /* ── 인쇄 ─────────────────────────────────────────── */
 .print-head{display:none}
+/* ── 디자인 2: 맑은 하늘 — 흰 바탕, 짙은 파랑, 주황 포인트, 산세리프 제목 ── */
+html[data-theme="sky"]{
+  --paper:#eef3f8; --paper-2:#e2e9f2; --sheet:#ffffff; --sheet-2:#fbfcfe;
+  --ink:#122033; --ink-2:#33445a; --muted:#5d6b7c; --line:#dce4ee; --line-2:#c8d3e0; --hover-line:#a9b9cc;
+  --brand:#0b57a4; --brand-2:#1a6bbd; --brand-dk:#07427d; --brand-soft:#e5eef9; --focus:rgba(11,87,164,.14); --brand-shadow:rgba(7,66,125,.55);
+  --gold:#c9650f; --gold-soft:#fdf0e2; --gold-line:#f2c9a0;
+  --placeholder:#9aa7b6; --glow:rgba(255,255,255,.9);
+  --top-bg:linear-gradient(180deg, #1466b8 0%, #0b57a4 100%); --top-sub:#cfe0f5; --top-who:#e3eefa; --top-shadow:rgba(7,40,80,.45);
+  --notify-bg:#f1f7fe; --savebar:rgba(255,255,255,.85); --shadow-c:rgba(20,40,70,.18);
+  --shadow:0 1px 2px rgba(20,40,70,.05), 0 10px 28px -14px rgba(20,40,70,.16);
+  --serif:var(--sans); --title-weight:800;
+  --arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%230b57a4' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --grain:none;
+}
+html[data-theme="sky"] .card h2::after{background:var(--gold); width:22px; height:3px}
+html[data-theme="sky"] .member::before{background:var(--brand); opacity:.35}
+
+/* ── 디자인 3: 밤 기도 — 어두운 화면, 금빛 포인트, 명조 제목 (밤에 눈부시지 않게) ── */
+html[data-theme="night"]{
+  color-scheme:dark;
+  --paper:#121517; --paper-2:#1b1f22; --sheet:#1a1e21; --sheet-2:#161a1d; --field:#101315;
+  --ink:#eeece4; --ink-2:#d2d0c6; --muted:#9c9e95; --line:#2b3135; --line-2:#3a4145; --hover-line:#5a5f5f;
+  --brand:#d6b36e; --brand-2:#e2c385; --brand-dk:#b8944f; --brand-soft:rgba(214,179,110,.13); --on-brand:#1b160a;
+  --focus:rgba(214,179,110,.22); --brand-shadow:rgba(0,0,0,.6);
+  --gold:#d6b36e; --gold-soft:rgba(214,179,110,.13); --gold-line:#6e5c37;
+  --green:#9fcf8f; --green-soft:rgba(159,207,143,.12);
+  --warn:#ec9478; --warn-soft:rgba(236,148,120,.12); --warn-ink:#f2b6a2; --warn-line:#5a3a30;
+  --placeholder:#6f7370; --glow:rgba(214,179,110,.07);
+  --top-bg:linear-gradient(180deg, #1c2124 0%, #15191b 100%); --top-ink:#f3efe3; --top-sub:#b9b29d; --top-who:#d8d3c4; --top-shadow:rgba(0,0,0,.6);
+  --notify-bg:#201d16; --savebar:rgba(26,30,33,.86); --shadow-c:rgba(0,0,0,.6);
+  --shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 12px 30px -14px rgba(0,0,0,.7);
+  --arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23d6b36e' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --grain:none;
+}
+html[data-theme="night"] .top .who button{background:rgba(214,179,110,.1); border-color:rgba(214,179,110,.35); color:#f3efe3}
+html[data-theme="night"] .tabs button.on{color:var(--gold)}
+html[data-theme="night"] .check input{accent-color:#d6b36e}
+html[data-theme="night"] input[type=date]{color-scheme:dark}
+
 @media print{
+  html, html[data-theme]{--ink:#1d2621; --ink-2:#38423c; --muted:#555; --sheet:#fff; --sheet-2:#fff; --line:#ddd; --brand:#1d2621; --gold:#555; color-scheme:light}
   .top,.noprint{display:none !important}
   body{background:#fff; font-size:12.5pt}
   body::before{display:none}

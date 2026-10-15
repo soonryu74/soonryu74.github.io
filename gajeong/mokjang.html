@@ -10,6 +10,10 @@
   if (!/[?&]c=/.test(q)) q = (q ? q + '&' : '?') + 'c=bangjoo';
   location.replace('https://mokjang.github.io/' + page + q + location.hash);
 })(location.hostname);</script>
+<script>/* 기억한 교회 디자인을 그리기 전에 입힌다 (깜빡임 방지) */
+try { (function (m, q) { var s = q.get('c');
+  if (m && m.theme && !q.has('new') && (!s || s === m.slug)) document.documentElement.setAttribute('data-theme', m.theme);
+})(JSON.parse(localStorage.getItem('gajeong-church') || 'null'), new URLSearchParams(location.search)); } catch (e) {}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>목장 나눔터 — 목자 화면</title>
 <meta name="robots" content="noindex, nofollow">

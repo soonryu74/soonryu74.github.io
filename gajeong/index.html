@@ -10,6 +10,10 @@
   if (!/[?&]c=/.test(q)) q = (q ? q + '&' : '?') + 'c=bangjoo';
   location.replace('https://mokjang.github.io/' + page + q + location.hash);
 })(location.hostname);</script>
+<script>/* 기억한 교회 디자인을 그리기 전에 입힌다 (깜빡임 방지) */
+try { (function (m, q) { var s = q.get('c');
+  if (m && m.theme && !q.has('new') && (!s || s === m.slug)) document.documentElement.setAttribute('data-theme', m.theme);
+})(JSON.parse(localStorage.getItem('gajeong-church') || 'null'), new URLSearchParams(location.search)); } catch (e) {}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>목장 나눔터 — 들어가기</title>
 <meta name="robots" content="noindex, nofollow">
@@ -60,6 +64,7 @@
       c = slug ? (mem && mem.slug === slug ? mem : null) : mem;
       if (c && c.name) {
         document.documentElement.classList.add('branded');
+        window.__EARLY_CHURCH = c;
         document.getElementById('hero-church').textContent = c.name;
         document.getElementById('hero-logo').src = c.logo_url || 'assets/icon-192.png';
       } else if (!slug) document.getElementById('hero-logo').src = 'assets/icon-192.png';
@@ -137,6 +142,8 @@
   var wantNew = /[?&]new\b/.test(location.search);
   function showSetup() { $('#login').style.display = 'none'; $('#setup').style.display = 'block'; }
   if (wantNew) showSetup();
+  // 이 기기가 기억하는 교회 모양(디자인·부르는 말)을 먼저 입힌다 — 서버 답은 뒤에 와서 고친다
+  if (window.__EARLY_CHURCH) C.applyLook(window.__EARLY_CHURCH);
   // 등록 주소에 코드가 붙어 오면(?new=코드) 미리 채워 둔다
   var codeInLink = new URLSearchParams(location.search).get('new');
   if (codeInLink) $('#scode').value = codeInLink;
@@ -146,6 +153,7 @@
     if (!c) { if (!$('#hero-logo').getAttribute('src')) $('#hero-logo').src = 'assets/icon-192.png'; return; }
     document.documentElement.classList.add('branded');
     $('#setup-link').style.display = 'none';
+    C.applyLook(c);
     $('#hero-church').textContent = c.name;
     if (c.logo_url) { $('#hero-logo').src = c.logo_url; $('#hero-logo').alt = c.name + ' 로고'; }
     document.title = c.name + ' 목장 나눔터 — 들어가기';

@@ -1,13 +1,13 @@
 /* 목사 화면 — 모든 목장을 본다 */
 (function () {
-  var C = window.CHURCH, sb = C.sb, $ = C.$, $$ = C.$$, esc = C.esc;
+  var C = window.CHURCH, sb = C.sb, $ = C.$, $$ = C.$$, esc = C.esc, T = C.t;
   var me = null, week = C.mondayOf(), mokjangs = [];
 
   (async function start() {
     me = await C.guard('pastor');
     if (!me) return;
     week = C.mondayOf();                 // 교회 시간대가 정해진 뒤 다시 센다
-    C.header(me, '목장 나눔터');
+    C.header(me, T('목장 나눔터'));
     bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch();
     await loadMokjangs();
     await openFromLink() || await loadWeek();
@@ -61,7 +61,7 @@
   async function turnOn(msgEl) {
     try {
       await C.pushEnable();
-      C.say(msgEl, '알림을 켰습니다. 목자가 일기를 제출하면 이 기기로 알려 드립니다.', 'ok', true);
+      C.say(msgEl, T('알림을 켰습니다. 목자가 일기를 제출하면 이 기기로 알려 드립니다.'), 'ok', true);
     } catch (e) { C.say(msgEl, e.message, 'err'); }
     showNotify();
   }
@@ -98,10 +98,43 @@
   /* ── 교회 정보 ─────────────────────────────────── */
   function bindChurch() {
     var c = C.getChurch() || {};
+    var saved = { theme: c.theme || 'note', terms: c.terms || {} };
     $('#ch-name').value = c.name || '';
     C.fillTimezones($('#ch-tz'), c.timezone);
     $('#ch-link').value = c.slug ? C.churchLink(c) : '';
     bindLogo();
+
+    // 부르는 말: 자주 쓰는 묶음 + 직접 쓰기
+    var P = C.TERM_PRESETS, cur = C.cleanTerms(c.terms);
+    var idx = P.findIndex(function (x) { return x.unit === cur.unit && x.leader === cur.leader && x.member === cur.member; });
+    $('#ch-terms').innerHTML = P.map(function (x, i) {
+      return '<option value="' + i + '">' + esc(x.unit + ' · ' + x.leader + ' · ' + x.member) + '</option>';
+    }).join('') + '<option value="own">직접 쓰기</option>';
+    $('#ch-terms').value = idx >= 0 ? String(idx) : 'own';
+    $('#ch-t-unit').value = cur.unit; $('#ch-t-leader').value = cur.leader; $('#ch-t-member').value = cur.member;
+    function pickedTerms() {
+      var v = $('#ch-terms').value;
+      if (v !== 'own') return P[+v];
+      return C.cleanTerms({ unit: $('#ch-t-unit').value, leader: $('#ch-t-leader').value, member: $('#ch-t-member').value });
+    }
+    function showOwn() { $('#ch-terms-own').hidden = $('#ch-terms').value !== 'own'; }
+    showOwn();
+    $('#ch-terms').addEventListener('change', showOwn);
+
+    // 디자인: 누르면 바로 미리 보기
+    var theme = saved.theme;
+    $('#ch-theme').innerHTML = C.THEMES.map(function (x) {
+      return '<button type="button" class="theme-pick" data-theme-id="' + x.id + '">' +
+        '<span class="sw" style="background:' + x.colors[0] + '"><i style="background:' + x.colors[1] + '"></i>' +
+        '<b style="background:' + x.colors[1] + '"></b><u style="background:' + x.colors[2] + '"></u></span>' +
+        '<span><span class="nm">' + esc(x.name) + '</span><br><span class="ds">' + esc(x.desc) + '</span></span></button>';
+    }).join('');
+    function markTheme() { $$('#ch-theme .theme-pick').forEach(function (b) { b.classList.toggle('on', b.dataset.themeId === theme); }); }
+    markTheme();
+    $$('#ch-theme .theme-pick').forEach(function (b) {
+      b.addEventListener('click', function () { theme = b.dataset.themeId; C.setTheme(theme); markTheme(); });
+    });
+
     $('#ch-copy').addEventListener('click', async function () {
       var v = $('#ch-link').value;
       try { await navigator.clipboard.writeText(v); C.say($('#msg-church'), '주소를 복사했습니다.', 'ok'); }
@@ -110,12 +143,15 @@
     $('#form-church').addEventListener('submit', async function (e) {
       e.preventDefault();
       var r = await sb.from('church_church')
-        .update({ name: $('#ch-name').value.trim(), timezone: $('#ch-tz').value })
+        .update({ name: $('#ch-name').value.trim(), timezone: $('#ch-tz').value, theme: theme, terms: pickedTerms() })
         .eq('id', c.id).select().single();
       if (r.error) return C.say($('#msg-church'), r.error.message, 'err');
-      c = r.data; C.setTimezone(c.timezone); C.rememberChurch(c);
+      var keepId = c.id; Object.assign(c, r.data); c.id = keepId;
+      saved = { theme: c.theme, terms: c.terms };
+      C.setTimezone(c.timezone); C.rememberChurch(c); C.applyLook(c);
       $('.top .church').textContent = c.name;
-      C.say($('#msg-church'), '저장했습니다.', 'ok');
+      $('.top h1').textContent = C.t('목장 나눔터');
+      C.say($('#msg-church'), '저장했습니다. 다른 화면은 새로 열 때 바뀝니다.', 'ok');
     });
   }
 
@@ -221,13 +257,13 @@
     var wrote = live.filter(function (m) { return data[m.id]; }).length;
 
     $('#stat').innerHTML =
-      '<div><b>' + live.length + '</b><span>목장</span></div>' +
+      '<div><b>' + live.length + T('</b><span>목장</span></div>') +
       '<div><b>' + done + '</b><span>제출함</span></div>' +
       '<div><b>' + (live.length - done) + '</b><span>아직</span></div>' +
       '<div><b>' + (wrote - done) + '</b><span>쓰는 중</span></div>';
 
     if (!live.length) {
-      $('#week-list').innerHTML = '<div class="card"><p class="empty">아직 목장이 없습니다. <b>목장·목자 관리</b>에서 목자 계정을 만들어 주세요.</p></div>';
+      $('#week-list').innerHTML = T('<div class="card"><p class="empty">아직 목장이 없습니다. <b>목장·목자 관리</b>에서 목자 계정을 만들어 주세요.</p></div>');
       return;
     }
 
@@ -260,7 +296,7 @@
       (j.submitted_at ? ' · 제출 ' + C.whenText(j.submitted_at) : '') + '</p>';
 
     if (d.ps.length) {
-      h += '<div class="section-title">목원별 기도제목</div>';
+      h += T('<div class="section-title">목원별 기도제목</div>');
       h += d.ps.map(function (p) {
         return '<div class="member"><div class="head"><span class="name">' + esc(p.name) + '</span>' +
           (p.attended ? '' : '<span class="badge">결석</span>') +
@@ -268,8 +304,8 @@
           '<div class="prose">' + (p.content ? esc(p.content) : '<span class="quiet">(적지 않음)</span>') + '</div></div>';
       }).join('');
     }
-    if (j.body) h += '<div class="section-title">목장 이야기</div><div class="prose">' + esc(j.body) + '</div>';
-    if (j.mokjang_prayer) h += '<div class="section-title">목장 전체 기도제목</div><div class="prose">' + esc(j.mokjang_prayer) + '</div>';
+    if (j.body) h += T('<div class="section-title">목장 이야기</div><div class="prose">') + esc(j.body) + '</div>';
+    if (j.mokjang_prayer) h += T('<div class="section-title">목장 전체 기도제목</div><div class="prose">') + esc(j.mokjang_prayer) + '</div>';
 
     h += '<div class="section-title">목사님 말씀</div>';
     h += d.cs.map(function (c) {
@@ -281,7 +317,7 @@
     }).join('');
 
     h += '<form class="cmt noprint" data-j="' + j.id + '" style="margin-top:10px">' +
-      '<textarea name="b" placeholder="목자에게 남길 말씀을 적어 주세요" required></textarea>' +
+      T('<textarea name="b" placeholder="목자에게 남길 말씀을 적어 주세요" required></textarea>') +
       '<div class="row end" style="margin-top:8px"><button class="primary small" type="submit">남기기</button></div></form>';
     return h;
   }
@@ -312,7 +348,7 @@
   /* ── 기도제목 모아보기 ─────────────────────────── */
   async function loadGather() {
     $('#g-label').textContent = C.weekLabel(week);
-    $('#g-print-head').innerHTML = '<h2 style="margin:0">목장 기도제목 — ' + esc(C.weekLabel(week)) + '</h2>';
+    $('#g-print-head').innerHTML = T('<h2 style="margin:0">목장 기도제목 — ') + esc(C.weekLabel(week)) + '</h2>';
     $('#gather-list').innerHTML = '<p class="empty">불러오는 중…</p>';
     var data = await fetchWeek();
     var only = $('#g-only').checked;
@@ -334,14 +370,14 @@
             (p.answered ? ' <span class="badge done">응답됨</span>' : '') + '</li>';
         }).join('') + '</ul>';
       } else {
-        h += '<p class="quiet">적힌 목원 기도제목이 없습니다.</p>';
+        h += T('<p class="quiet">적힌 목원 기도제목이 없습니다.</p>');
       }
       if (j.mokjang_prayer) {
-        h += '<div class="section-title" style="margin-top:8px">목장 전체</div>' +
+        h += T('<div class="section-title" style="margin-top:8px">목장 전체</div>') +
           '<div class="prose">' + esc(j.mokjang_prayer) + '</div>';
       }
       if (!only && j.body) {
-        h += '<div class="section-title">목장 이야기</div><div class="prose">' + esc(j.body) + '</div>';
+        h += T('<div class="section-title">목장 이야기</div><div class="prose">') + esc(j.body) + '</div>';
       }
       return h + '</div>';
     }).join('');
@@ -358,7 +394,7 @@
           login_id: $('#n-id').value, password: $('#n-pw').value,
           name: $('#n-name').value, mokjang_name: $('#n-mj').value, meet_day: $('#n-day').value
         });
-        C.say($('#msg-new'), $('#n-name').value + ' 목자 계정을 만들었습니다. 아이디 ' +
+        C.say($('#msg-new'), $('#n-name').value + T(' 목자 계정을 만들었습니다. 아이디 ') +
           $('#n-id').value.trim().toLowerCase() + ' · 비밀번호 ' + $('#n-pw').value + ' 를 알려 주세요.', 'ok', true);
         $('#form-new').reset();
         await loadMokjangs(); renderManage(); loadWeek();
@@ -450,19 +486,19 @@
     }).join('');
 
     var box = $('#manage-list');
-    if (!mokjangs.length) { box.innerHTML = '<p class="empty">아직 목장이 없습니다.</p>'; return; }
+    if (!mokjangs.length) { box.innerHTML = T('<p class="empty">아직 목장이 없습니다.</p>'); return; }
     box.innerHTML = mokjangs.map(function (m) {
       var p = m.mokja_id ? byId[m.mokja_id] : null;
       return '<div class="list-item" data-mj="' + m.id + '" data-uid="' + (m.mokja_id || '') + '">' +
         '<div class="grow"><div class="t">' + esc(m.name) + (m.active ? '' : ' <span class="badge">쉼</span>') + '</div>' +
-        '<div class="s">' + esc(m.mokja_name || '담당 목자 없음') +
+        '<div class="s">' + esc(m.mokja_name || T('담당 목자 없음')) +
         (p ? ' · 아이디 ' + esc(p.login_id) : '') +
         (m.meet_day ? ' · ' + esc(m.meet_day) : '') + '</div></div>' +
         (m.mokja_id ? '<button class="small act-pw">비밀번호 새로</button>' : '') +
         '<button class="small act-rename">이름 고치기</button>' +
         '<button class="small act-hide">' + (m.active ? '잠시 쉼으로' : '다시 활동') + '</button>' +
         (m.mokja_id ? '<button class="small danger act-del">계정 삭제</button>' : '') +
-        '<button class="small danger act-drop">목장 지우기</button>' +
+        T('<button class="small danger act-drop">목장 지우기</button>') +
         '</div>';
     }).join('');
   }
@@ -475,25 +511,25 @@
 
     try {
       if (btn.classList.contains('act-pw')) {
-        var np = prompt('새 비밀번호를 정해 주세요 (8자 이상).\n정하신 뒤 목자에게 알려 주세요.');
+        var np = prompt(T('새 비밀번호를 정해 주세요 (8자 이상).\n정하신 뒤 목자에게 알려 주세요.'));
         if (np === null) return;
         await C.callAdmin({ action: 'reset_password', user_id: uid, password: np });
-        C.say($('#msg-manage'), m.mokja_name + ' 목자의 새 비밀번호는 ' + np + ' 입니다.', 'ok', true);
+        C.say($('#msg-manage'), m.mokja_name + T(' 목자의 새 비밀번호는 ') + np + ' 입니다.', 'ok', true);
         return;
       }
       if (btn.classList.contains('act-rename')) {
-        var nn = prompt('목장 이름', m.name); if (nn === null) return;
+        var nn = prompt(T('목장 이름'), m.name); if (nn === null) return;
         var nd = prompt('모이는 요일 (비워도 됩니다)', m.meet_day || ''); if (nd === null) nd = m.meet_day;
         await sb.from('church_mokjang').update({ name: nn.trim(), meet_day: (nd || '').trim() }).eq('id', mjId);
       } else if (btn.classList.contains('act-hide')) {
         await sb.from('church_mokjang').update({ active: !m.active }).eq('id', mjId);
       } else if (btn.classList.contains('act-del')) {
-        if (!confirm(m.mokja_name + ' 목자의 계정을 지울까요?\n지금까지 쓴 일기와 기도제목은 그대로 남습니다.')) return;
+        if (!confirm(m.mokja_name + T(' 목자의 계정을 지울까요?\n지금까지 쓴 일기와 기도제목은 그대로 남습니다.'))) return;
         await C.callAdmin({ action: 'delete_user', user_id: uid });
-        await sb.from('church_mokjang').update({ mokja_name: m.mokja_name + ' (지난 목자)' }).eq('id', mjId);
+        await sb.from('church_mokjang').update({ mokja_name: m.mokja_name + T(' (지난 목자)') }).eq('id', mjId);
       } else if (btn.classList.contains('act-drop')) {
-        if (!confirm(m.name + ' 을(를) 통째로 지울까요?\n\n이 목장의 목원 명단과 지금까지의 일기·기도제목이 모두 함께 사라지고, 되돌릴 수 없습니다.\n(시험 삼아 만든 목장을 치울 때 쓰세요.)')) return;
-        if (uid && !confirm('담당 목자 ' + m.mokja_name + ' 의 계정도 함께 지울까요?\n[확인]을 누르면 계정까지 지웁니다. [취소]를 누르면 목장만 지웁니다.')) {
+        if (!confirm(m.name + T(' 을(를) 통째로 지울까요?\n\n이 목장의 목원 명단과 지금까지의 일기·기도제목이 모두 함께 사라지고, 되돌릴 수 없습니다.\n(시험 삼아 만든 목장을 치울 때 쓰세요.)'))) return;
+        if (uid && !confirm(T('담당 목자 ') + m.mokja_name + T(' 의 계정도 함께 지울까요?\n[확인]을 누르면 계정까지 지웁니다. [취소]를 누르면 목장만 지웁니다.'))) {
           await sb.from('church_mokjang').delete().eq('id', mjId);
         } else {
           await sb.from('church_mokjang').delete().eq('id', mjId);

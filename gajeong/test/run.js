@@ -8,8 +8,9 @@ const NOW = new Date('2026-10-19T02:00:00Z'); // 멜번 월 13시(→10/19 주) 
 
 const SEED = { db: {
   church_church: [
-    { id: 'cb', slug: 'bangjoo', name: '멜번방주교회 & ALF', timezone: 'Australia/Melbourne', logo_url: 'assets/logo.png' },
-    { id: 'cl', slug: 'lach01', name: 'LA 새소망교회', timezone: 'America/Los_Angeles', logo_url: '' } ],
+    { id: 'cb', slug: 'bangjoo', name: '멜번방주교회 & ALF', timezone: 'Australia/Melbourne', logo_url: 'assets/logo.png', theme: 'sky' },
+    { id: 'cl', slug: 'lach01', name: 'LA 새소망교회', timezone: 'America/Los_Angeles', logo_url: '', theme: 'night',
+      terms: { unit: '다락방', leader: '순장', member: '순원' } } ],
   church_profile: [
     { id: 'p1', login_id: 'pastor1', name: '담임목사', role: 'pastor', church_id: 'cb' },
     { id: 'm1', login_id: 'mokja1', name: '김목자', role: 'mokja', church_id: 'cb' },
@@ -61,6 +62,11 @@ const db = p => p.evaluate(() => window.__DB());
     await p.goto(BASE + 'index.html?c=bangjoo'); await p.waitForTimeout(300);
     ok('?c=bangjoo → 교회 이름', (await p.textContent('#hero-church')).includes('멜번방주교회'));
     ok('?c=bangjoo → 교회 로고', /assets\/logo\.png$/.test(await p.getAttribute('#hero-logo', 'src')));
+    ok('?c=bangjoo → 파란 디자인', (await p.getAttribute('html', 'data-theme')) === 'sky');
+    await p.goto(BASE + 'index.html?c=lach01'); await p.waitForTimeout(300);
+    ok('?c=lach01 → 다락방 나눔터 · 밤 디자인', (await p.textContent('.hero h1')) === '다락방 나눔터' && (await p.getAttribute('html', 'data-theme')) === 'night');
+    await p.goto(BASE + 'index.html?c=bangjoo'); await p.waitForTimeout(300);
+    ok('다시 방주 → 목장 나눔터로 돌아옴(섞이지 않음)', (await p.textContent('.hero h1')) === '목장 나눔터' && (await p.getAttribute('html', 'data-theme')) === 'sky');
     ok('교회 화면에는 새 교회 등록 링크 없음', !(await p.isVisible('#to-setup')));
     await p.goto(BASE + 'index.html?new'); await p.waitForTimeout(300);
     ok('?new → 기억한 교회가 있어도 등록 화면 바로', await p.isVisible('#setup') && (await p.textContent('#hero-church')).trim() === '');
@@ -96,6 +102,11 @@ const db = p => p.evaluate(() => window.__DB());
     const list = await p.textContent('#week-list');
     ok('LA 목사는 LA 목장만', list.includes('LA 목장') && !list.includes('김 목장'));
     ok('공용 아이콘(로고 없는 교회)', /icon-192\.png$/.test(await p.getAttribute('.top img.mark', 'src')));
+    ok('다락방 교회: 탭 이름이 바뀜', (await p.textContent('.tabs')).includes('다락방·순장 관리') && !(await p.textContent('.tabs')).includes('목장'));
+    ok('다락방 교회: 머리말', (await p.textContent('.top h1')) === '다락방 나눔터');
+    ok('다락방 교회: 조사도 맞춤(순장이)', (await p.textContent('body')).includes('순장이 일기를'), '');
+    ok('다락방 교회: 사람이 쓴 이름은 그대로', list.includes('LA 목장'));
+    ok('다락방 교회: 밤 디자인', (await p.getAttribute('html', 'data-theme')) === 'night');
     await c.close(); }
 
   console.log('\n[3] 새 교회 등록');
@@ -195,6 +206,17 @@ const db = p => p.evaluate(() => window.__DB());
     ok('머리말 이름이 바로 바뀜', (await p.textContent('.top .church')) === '멜번방주교회');
     const ch = (await db(p)).church_church.find(x => x.id === 'cb');
     ok('이름·시간대 저장', ch.name === '멜번방주교회' && ch.timezone === 'Asia/Seoul');
+    await p.selectOption('#ch-terms', '1');
+    await p.click('#ch-theme .theme-pick[data-theme-id="night"]');
+    ok('디자인 누르면 바로 미리 보기', (await p.getAttribute('html', 'data-theme')) === 'night');
+    await p.click('#form-church button[type="submit"]'); await p.waitForTimeout(300);
+    const ch3 = (await db(p)).church_church.find(x => x.id === 'cb');
+    ok('부르는 말·디자인 저장', ch3.theme === 'night' && ch3.terms.unit === '다락방' && ch3.terms.leader === '순장', JSON.stringify(ch3.terms));
+    ok('저장하면 화면 글자도 바로 바뀜', (await p.textContent('.tabs')).includes('다락방·순장 관리') && (await p.textContent('.top h1')) === '다락방 나눔터');
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(300);
+    ok('다시 열어도 다락방·밤 디자인', (await p.textContent('.top h1')) === '다락방 나눔터' && (await p.getAttribute('html', 'data-theme')) === 'night');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    ok('다시 열면 고른 부르는 말이 선택돼 있음', (await p.inputValue('#ch-terms')) === '1');
     const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVR42mP8z8BQz0AEYBxVSF8FAJ2YB/2D4nBRAAAAAElFTkSuQmCC', 'base64');
     await p.setInputFiles('#ch-logo-file', { name: 'logo.png', mimeType: 'image/png', buffer: png }); await p.waitForTimeout(600);
     const ch2 = (await db(p)).church_church.find(x => x.id === 'cb');

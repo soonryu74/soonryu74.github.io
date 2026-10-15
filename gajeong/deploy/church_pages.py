@@ -2,7 +2,7 @@
 """교회 전용 주소(/코드/index.html)를 만든다 — 카카오톡 미리보기에 교회 이름·로고가 뜨게.
 
 mokjang.github.io 저장소의 GitHub Actions가 15분마다 돌린다.
-서버에서 교회 이름·로고만 읽고(공개 함수 church_public_list), 바뀐 것이 있으면 커밋한다.
+서버에서 교회 이름·로고만 읽고(공개 함수 church_public_churches), 바뀐 것이 있으면 커밋한다.
 이 스크립트가 만든 폴더에는 .church-page 표시 파일을 둔다. 교회가 없어지면 그 폴더만 지운다.
 """
 import html, json, os, re, shutil, sys, urllib.request
@@ -34,14 +34,14 @@ location.replace('../?c={slug}' + location.hash);
 </script>
 </head>
 <body style="background:#f5f1e8;margin:0">
-<noscript><p style="font-family:sans-serif;text-align:center;padding:40px 16px"><a href="../?c={slug}">{name} 목장 나눔터로 가기</a></p></noscript>
+<noscript><p style="font-family:sans-serif;text-align:center;padding:40px 16px"><a href="../?c={slug}">{name} {unit} 나눔터로 가기</a></p></noscript>
 </body>
 </html>
 """
 
 
 def fetch():
-    req = urllib.request.Request(SB_URL + '/rest/v1/rpc/church_public_list', data=b'{}', method='POST',
+    req = urllib.request.Request(SB_URL + '/rest/v1/rpc/church_public_churches', data=b'{}', method='POST',
                                  headers={'apikey': SB_KEY, 'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
@@ -55,11 +55,13 @@ def absolute(u):
 
 def render(c):
     slug, name, logo = c['slug'], c['name'], c.get('logo_url') or ''
+    terms = c.get('terms') or {}
+    unit = terms.get('unit') if isinstance(terms.get('unit'), str) and re.match(r'^[가-힣A-Za-z0-9 ]{1,8}$', terms.get('unit', '')) else '목장'
     # 자바스크립트 문자열로 넣을 JSON 글자 (</script> 가 끼어들지 못하게)
-    mem = json.dumps(json.dumps({'slug': slug, 'name': name, 'logo_url': logo}, ensure_ascii=False),
+    mem = json.dumps(json.dumps({'slug': slug, 'name': name, 'logo_url': logo, 'theme': c.get('theme') or 'note', 'terms': terms}, ensure_ascii=False),
                      ensure_ascii=False).replace('</', '<\\/')
     return PAGE.format(
-        title=html.escape(name + ' 목장 나눔터'), name=html.escape(name), slug=slug,
+        title=html.escape(name + ' ' + unit + ' 나눔터'), name=html.escape(name), unit=html.escape(unit), slug=slug,
         image=html.escape(absolute(logo) or SITE + 'assets/og.png'),
         icon=html.escape(absolute(logo) or SITE + 'assets/icon-192.png'),
         url=SITE + slug + '/',

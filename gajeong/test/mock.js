@@ -116,9 +116,9 @@
     from: qb,
     rpc: function (fn, args) {
       record({ rpc: fn, args: args });
-      if (fn === 'church_public_info') {
+      if (fn === 'church_public_church') {
         var c = DB.church_church.filter(function (x) { return x.slug === args.p_slug; })[0];
-        return Promise.resolve({ data: c ? [{ name: c.name, logo_url: c.logo_url }] : [], error: null });
+        return Promise.resolve({ data: c ? [{ name: c.name, logo_url: c.logo_url, theme: c.theme || 'note', terms: c.terms || {} }] : [], error: null });
       }
       if (fn === 'church_push_save') {
         DB.church_push = DB.church_push.filter(function (r) { return r.endpoint !== args.p_endpoint; });
