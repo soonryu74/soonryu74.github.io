@@ -33,7 +33,7 @@ try {{ localStorage.setItem('gajeong-church', {mem}); }} catch (e) {{}}
 location.replace('../?c={slug}' + location.hash);
 </script>
 </head>
-<body style="background:#f1f5fa;margin:0">
+<body style="background:#f5f1e8;margin:0">
 <noscript><p style="font-family:sans-serif;text-align:center;padding:40px 16px"><a href="../?c={slug}">{name} 목장 나눔터로 가기</a></p></noscript>
 </body>
 </html>

@@ -82,7 +82,8 @@
     } else if (st.op === 'insert') {
       var items = Array.isArray(st.data) ? st.data : [st.data];
       var made = items.map(function (d) {
-        var row = Object.assign({ id: 'n' + (++nid), created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, d);
+        var row = Object.assign({ id: 'n' + (++nid), created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          table === 'church_mokwon' || table === 'church_mokjang' ? { active: true, tag: '' } : {}, d);   // DB 기본값 흉내
         all.push(row); return Object.assign({}, row);
       });
       out = wrap(made, st);

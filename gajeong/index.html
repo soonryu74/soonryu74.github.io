@@ -14,7 +14,7 @@
 <title>목장 나눔터 — 들어가기</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="목장 일기와 기도제목을 목자와 목사가 나누는 곳입니다.">
-<meta name="theme-color" content="#0B57A4">
+<meta name="theme-color" content="#1f4d3b">
 <meta property="og:type" content="website">
 <meta property="og:title" content="목장 나눔터">
 <meta property="og:description" content="가정교회 목장 일기와 기도제목을 목사님과 나누는 곳">
@@ -27,15 +27,20 @@
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
 <link rel="stylesheet" href="style.css">
 <style>
-  .hero{text-align:center; padding:36px 16px 8px}
-  .hero .logo{height:104px; width:auto; max-width:80%; display:block; margin:0 auto; border-radius:22px}
-  .hero .church{font-size:22px; font-weight:800; letter-spacing:-.03em; color:#123c74; margin-top:14px; min-height:1em}
-  .hero h1{font-size:24px; margin:18px 0 6px; letter-spacing:-.03em;
-    padding-top:16px; border-top:1px solid var(--line); display:inline-block; padding-left:26px; padding-right:26px}
+  .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
+  .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
+    background:#fffdf8; border-radius:28px; padding:8px; box-shadow:0 0 0 1px var(--line), 0 18px 40px -18px rgba(45,38,20,.35)}
+  .hero .church{font-family:var(--serif); font-size:21px; font-weight:700; letter-spacing:-.02em; color:var(--brand);
+    margin-top:18px; min-height:1.2em}
+  .hero h1{font-family:var(--serif); font-size:34px; font-weight:700; margin:14px 0 8px; letter-spacing:-.03em; color:var(--ink)}
+  .hero .orn{display:flex; align-items:center; justify-content:center; gap:12px; color:var(--gold); margin:4px 0 0}
+  .hero .orn::before,.hero .orn::after{content:''; width:56px; height:1px; background:linear-gradient(90deg, transparent, var(--gold-line))}
+  .hero .orn::after{transform:scaleX(-1)}
   .hero p{color:var(--muted); margin:0; font-size:15.5px}
-  .wrap{max-width:440px}
-  .foot{text-align:center; color:var(--muted); font-size:13.5px; margin-top:22px}
-  .foot a{color:var(--muted)}
+  .wrap{max-width:460px}
+  .card{animation:rise .6s .12s ease both}
+  .foot{text-align:center; color:var(--muted); font-size:14px; margin-top:22px; line-height:1.7}
+  .foot a{color:var(--brand); font-weight:600; text-decoration:none; border-bottom:1px solid var(--gold-line)}
   #setup{display:none}
   .hero .logo:not([src]){visibility:hidden}
   .branded #setup-link{display:none}
@@ -62,6 +67,7 @@
     })();
     </script>
     <h1>목장 나눔터</h1>
+    <div class="orn">✦</div>
     <p>한 주 목장 이야기와 기도제목을 담는 곳</p>
   </div>
 
