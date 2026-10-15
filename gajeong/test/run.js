@@ -57,9 +57,15 @@ const db = p => p.evaluate(() => window.__DB());
     await p.goto(BASE + 'index.html'); await p.waitForTimeout(300);
     ok('처음 오면 특정 교회 이름 없음', (await p.textContent('#hero-church')).trim() === '');
     ok('처음 오면 공용 아이콘', /icon-192\.png$/.test(await p.getAttribute('#hero-logo', 'src')));
+    ok('공용 화면에는 새 교회 등록 링크', await p.isVisible('#to-setup'));
     await p.goto(BASE + 'index.html?c=bangjoo'); await p.waitForTimeout(300);
     ok('?c=bangjoo → 교회 이름', (await p.textContent('#hero-church')).includes('멜번방주교회'));
     ok('?c=bangjoo → 교회 로고', /assets\/logo\.png$/.test(await p.getAttribute('#hero-logo', 'src')));
+    ok('교회 화면에는 새 교회 등록 링크 없음', !(await p.isVisible('#to-setup')));
+    await p.goto(BASE + 'index.html?new'); await p.waitForTimeout(300);
+    ok('?new → 기억한 교회가 있어도 등록 화면 바로', await p.isVisible('#setup') && (await p.textContent('#hero-church')).trim() === '');
+    await p.goto(BASE + 'bangjoo/'); await p.waitForURL(/\?c=bangjoo/); await p.waitForTimeout(300);
+    ok('/bangjoo/ → 교회 화면으로', (await p.textContent('#hero-church')).includes('멜번방주교회'));
     await c.close(); }
 
   console.log('\n[2] 교회마다 시간대 · 서로 안 보임');
@@ -169,7 +175,7 @@ const db = p => p.evaluate(() => window.__DB());
   { const { c, p } = await ctx(b);
     await login(p, 'pastor1');
     await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
-    ok('목자에게 보낼 주소에 교회 표시', /\?c=bangjoo$/.test(await p.inputValue('#ch-link')));
+    ok('목자에게 보낼 주소 = 교회 전용 주소', /\/bangjoo\/$/.test(await p.inputValue('#ch-link')));
     await p.fill('#ch-name', '멜번방주교회'); await p.selectOption('#ch-tz', 'Asia/Seoul');
     await p.click('#form-church button[type="submit"]'); await p.waitForTimeout(300);
     ok('머리말 이름이 바로 바뀜', (await p.textContent('.top .church')) === '멜번방주교회');

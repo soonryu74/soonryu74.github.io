@@ -14,6 +14,11 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="목장 일기와 기도제목을 목자와 목사가 나누는 곳입니다.">
 <meta name="theme-color" content="#0B57A4">
+<meta property="og:type" content="website">
+<meta property="og:title" content="목장 나눔터">
+<meta property="og:description" content="가정교회 목장 일기와 기도제목을 목사님과 나누는 곳">
+<meta property="og:image" content="https://mokjang.github.io/assets/og.png">
+<meta property="og:url" content="https://mokjang.github.io/">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="assets/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -58,8 +63,8 @@
       </div>
     </form>
     <p class="foot">
-      비밀번호를 잊으셨으면 목사님께 말씀해 주세요. 새로 정해 드립니다.<br>
-      <a href="#" id="to-setup">우리 교회도 쓰고 싶어요 — 새 교회 등록</a>
+      비밀번호를 잊으셨으면 목사님께 말씀해 주세요. 새로 정해 드립니다.
+      <span id="setup-link"><br><a href="#" id="to-setup">우리 교회도 쓰고 싶어요 — 새 교회 등록</a></span>
     </p>
   </div>
 
@@ -104,18 +109,22 @@
     if (p) location.replace(p.role === 'pastor' ? 'moksa.html' : 'mokjang.html');
   });
 
+  // 새 교회 등록은 교회 이름이 없는 첫 화면(또는 주소 끝 ?new)에서만 보인다 — 교회 화면에서는 헷갈리지 않게 숨긴다
+  var wantNew = /[?&]new\b/.test(location.search);
+  function showSetup() { $('#login').style.display = 'none'; $('#setup').style.display = 'block'; }
+  if (wantNew) showSetup();
+
   // 주소의 ?c=… 또는 이 기기가 기억하는 교회 이름·로고를 보여 준다
-  C.publicChurch().then(function (c) {
+  (wantNew ? Promise.resolve(null) : C.publicChurch()).then(function (c) {
     if (!c) return;
+    $('#setup-link').style.display = 'none';
     $('#hero-church').textContent = c.name;
     if (c.logo_url) { $('#hero-logo').src = c.logo_url; $('#hero-logo').alt = c.name + ' 로고'; }
     document.title = c.name + ' 목장 나눔터 — 들어가기';
   }).catch(function () {});
 
   C.fillTimezones($('#stz'));
-  $('#to-setup').addEventListener('click', function (e) {
-    e.preventDefault(); $('#login').style.display = 'none'; $('#setup').style.display = 'block';
-  });
+  $('#to-setup').addEventListener('click', function (e) { e.preventDefault(); showSetup(); });
   $('#to-login').addEventListener('click', function () {
     $('#setup').style.display = 'none'; $('#login').style.display = 'block';
   });
