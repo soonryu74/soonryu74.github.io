@@ -10,6 +10,10 @@
   if (!/[?&]c=/.test(q)) q = (q ? q + '&' : '?') + 'c=bangjoo';
   location.replace('https://mokjang.github.io/' + page + q + location.hash);
 })(location.hostname);</script>
+<script>/* 기억한 교회 디자인을 그리기 전에 입힌다 (깜빡임 방지) */
+try { (function (m, q) { var s = q.get('c');
+  if (m && m.theme && !q.has('new') && (!s || s === m.slug)) document.documentElement.setAttribute('data-theme', m.theme);
+})(JSON.parse(localStorage.getItem('gajeong-church') || 'null'), new URLSearchParams(location.search)); } catch (e) {}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>목장 나눔터 — 목사 화면</title>
 <meta name="robots" content="noindex, nofollow">
@@ -93,6 +97,17 @@
         <input id="ch-name" type="text" required>
         <label for="ch-tz">교회가 있는 곳</label>
         <select id="ch-tz"></select>
+        <label for="ch-terms">우리 교회에서 부르는 말</label>
+        <select id="ch-terms" data-noterm></select>
+        <div class="two" id="ch-terms-own" hidden data-noterm>
+          <div><label for="ch-t-unit">모임</label><input id="ch-t-unit" type="text" maxlength="8" placeholder="예: 다락방"></div>
+          <div><label for="ch-t-leader">인도자</label><input id="ch-t-leader" type="text" maxlength="8" placeholder="예: 순장"></div>
+          <div><label for="ch-t-member">식구</label><input id="ch-t-member" type="text" maxlength="8" placeholder="예: 순원"></div>
+        </div>
+        <p class="hint">화면의 글자가 이 말로 바뀝니다. 이미 적은 일기와 이름은 바뀌지 않습니다.</p>
+        <label>디자인</label>
+        <div class="themes" id="ch-theme" data-noterm></div>
+        <p class="hint">누르면 바로 미리 보입니다. 저장하면 우리 교회 모든 분의 화면이 이 디자인으로 바뀝니다.</p>
         <div class="row" style="margin-top:16px"><button class="primary" type="submit">저장</button></div>
       </form>
       <div class="msg" id="msg-church"></div>

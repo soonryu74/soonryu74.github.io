@@ -1,6 +1,6 @@
 /* 목자 화면 — 내 목장 하나만 다룬다 */
 (function () {
-  var C = window.CHURCH, sb = C.sb, $ = C.$, $$ = C.$$, esc = C.esc;
+  var C = window.CHURCH, sb = C.sb, $ = C.$, $$ = C.$$, esc = C.esc, T = C.t;
   var me = null, mokjang = null, mokwon = [], week = C.mondayOf(), journal = null, prayers = [], dirty = false;
   var rendered = null;  // 지금 화면에 그려져 있는 기도제목 줄
 
@@ -14,10 +14,10 @@
     if (r.error) return fail(r.error.message);
     mokjang = (r.data || [])[0];
     if (!mokjang) {
-      C.header(me, '목장 나눔터');
+      C.header(me, T('목장 나눔터'));
       $('.wrap').innerHTML =
-        '<div class="card"><h2>아직 목장이 배정되지 않았습니다</h2>' +
-        '<p class="desc">목사님께서 목장을 만들어 주시면 이 화면에 일기 쓰는 곳이 열립니다.</p>' +
+        T('<div class="card"><h2>아직 목장이 배정되지 않았습니다</h2>') +
+        T('<p class="desc">목사님께서 목장을 만들어 주시면 이 화면에 일기 쓰는 곳이 열립니다.</p>') +
         '<button id="o">로그아웃</button></div>';
       $('#o').addEventListener('click', C.signOut);
       return;
@@ -73,7 +73,7 @@
 
   function renderMemberList() {
     var box = $('#member-list');
-    if (!mokwon.length) { box.innerHTML = '<p class="empty">아직 목원이 없습니다. 위에 이름을 넣어 주세요.</p>'; return; }
+    if (!mokwon.length) { box.innerHTML = T('<p class="empty">아직 목원이 없습니다. 위에 이름을 넣어 주세요.</p>'); return; }
     box.innerHTML = mokwon.map(function (m) {
       return '<div class="list-item" data-id="' + m.id + '">' +
         '<div class="grow"><div class="t">' + esc(m.name) +
@@ -355,7 +355,7 @@
     if (j.met_on) h += '<p class="quiet" style="margin:0 0 10px">모인 날 ' + esc(j.met_on) +
       (j.present_count != null ? ' · ' + j.present_count + '명' : '') + '</p>';
     if (ps.length) {
-      h += '<div class="section-title">목원별 기도제목</div>';
+      h += T('<div class="section-title">목원별 기도제목</div>');
       h += ps.map(function (p) {
         return '<div class="member"><div class="head"><span class="name">' + esc(p.name) + '</span>' +
           (p.attended ? '' : '<span class="badge">결석</span>') +
@@ -363,8 +363,8 @@
           '<div class="prose">' + (p.content ? esc(p.content) : '<span class="quiet">(적지 않음)</span>') + '</div></div>';
       }).join('');
     }
-    if (j.body) h += '<div class="section-title">목장 이야기</div><div class="prose">' + esc(j.body) + '</div>';
-    if (j.mokjang_prayer) h += '<div class="section-title">목장 전체 기도제목</div><div class="prose">' + esc(j.mokjang_prayer) + '</div>';
+    if (j.body) h += T('<div class="section-title">목장 이야기</div><div class="prose">') + esc(j.body) + '</div>';
+    if (j.mokjang_prayer) h += T('<div class="section-title">목장 전체 기도제목</div><div class="prose">') + esc(j.mokjang_prayer) + '</div>';
     h += '<div class="section-title">목사님 말씀</div>';
     h += cs.length ? cs.map(function (c) {
       return '<div class="member" style="background:var(--brand-soft); border-color:#cfe0d5">' +
