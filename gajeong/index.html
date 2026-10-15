@@ -75,7 +75,7 @@
       내려받거나 깔 것은 없습니다.</p>
     <form id="form-setup">
       <label for="scode">초대 코드</label>
-      <input id="scode" type="text" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX-XXXX" required>
+      <input id="scode" type="text" autocapitalize="characters" autocomplete="off" placeholder="안내받은 코드" required>
       <label for="schurch">교회 이름</label>
       <input id="schurch" type="text" placeholder="예: 새소망교회" required>
       <label for="stz">교회가 있는 곳</label>
@@ -113,6 +113,9 @@
   var wantNew = /[?&]new\b/.test(location.search);
   function showSetup() { $('#login').style.display = 'none'; $('#setup').style.display = 'block'; }
   if (wantNew) showSetup();
+  // 등록 주소에 코드가 붙어 오면(?new=코드) 미리 채워 둔다
+  var codeInLink = new URLSearchParams(location.search).get('new');
+  if (codeInLink) $('#scode').value = codeInLink;
 
   // 주소의 ?c=… 또는 이 기기가 기억하는 교회 이름·로고를 보여 준다
   (wantNew ? Promise.resolve(null) : C.publicChurch()).then(function (c) {
