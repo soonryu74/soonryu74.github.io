@@ -9,6 +9,8 @@
 //  · delete_church   : 교회 전체 지우기 — 교회 이름을 그대로 적어야 한다. 모든 계정·목장·일기·로고가 사라진다
 //  · new_recovery_code : 목사 복구 코드를 새로 받는다 (예전 코드는 못 쓰게 된다)
 //  · recover         : (로그인 전) 아이디 + 복구 코드로 새 비밀번호를 정한다. 다섯 번 틀리면 한 시간 잠근다
+//  · join_mokja      : (로그인 전) 교회 가입 코드로 목자(순장)가 스스로 계정 + 목장(다락방)을 만든다
+//  · join_code_get / join_code_new / join_code_off : 목사가 가입 코드를 보기 / 새로 만들기 / 끄기
 //  · set_logo        : 우리 교회 로고(PNG, 화면에서 512px 이하로 줄여 보냄)를 올린다 / remove_logo : 지운다
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
@@ -93,6 +95,36 @@ async function issueRecovery(userId: string) {
   return code
 }
 
+// 가입 코드: 헷갈리는 글자를 뺀 8자 (XXXX-XXXX). 맞춰 볼 때는 글자만 비교한다
+function newJoinCode() {
+  const a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+  let raw = ''
+  for (const b of crypto.getRandomValues(new Uint8Array(8))) raw += a[b % a.length]
+  return raw
+}
+const showJoin = (raw: string) => `${raw.slice(0, 4)}-${raw.slice(4)}`
+
+// 교회가 부르는 말 (목장/다락방…) — 새 목장 이름 기본값에 쓴다
+async function unitOf(church_id: string) {
+  const { data } = await admin.from('church_church').select('terms').eq('id', church_id).maybeSingle()
+  const u = (data?.terms as Record<string, string> | null)?.unit
+  return typeof u === 'string' && /^[가-힣A-Za-z0-9 ]{1,8}$/.test(u) ? u : '목장'
+}
+
+// 목자 계정 + 목장 하나를 함께 만든다 (목사가 만들 때·스스로 가입할 때 같이 쓴다)
+async function makeMokja(church_id: string, login_id: string, password: string, name: string, mokjang_name: string, meet_day = '') {
+  const user = await createAccount(login_id, password, name)
+  const { error: pe } = await admin.from('church_profile')
+    .insert({ id: user.id, login_id, name, role: 'mokja', church_id })
+  if (pe) { await admin.auth.admin.deleteUser(user.id); throw new Error(pe.message) }
+  const { data: mj, error: me2 } = await admin.from('church_mokjang').insert({
+    name: mokjang_name || `${name} ${await unitOf(church_id)}`,
+    mokja_id: user.id, mokja_name: name, church_id, meet_day,
+  }).select('id').single()
+  if (me2) throw new Error(me2.message)
+  return { user_id: user.id, mokjang_id: mj.id }
+}
+
 async function targetInMyChurch(me: Me, uid: string) {
   const { data } = await admin.from('church_profile').select('id, role, church_id').eq('id', uid).maybeSingle()
   return data && data.church_id === me.church_id ? data : null
@@ -174,6 +206,18 @@ Deno.serve(async (req) => {
       return json({ ok: true })
     }
 
+    // ── 목자(순장) 스스로 가입 (로그인 전) — 목사님이 알려 준 교회 가입 코드가 있어야 한다 ──
+    if (action === 'join_mokja') {
+      const raw = normCode(String(body.join_code ?? ''))
+      const bad = checkAccount(login_id, password, name)
+      if (bad) return json({ error: bad }, 400)
+      const { data: jc } = raw.length === 8 ? await admin.from('church_join').select('church_id').eq('code', raw).maybeSingle() : { data: null }
+      if (!jc) return json({ error: '가입 코드가 맞지 않습니다. 목사님께 다시 물어봐 주세요' }, 403)
+      const { data: ch } = await admin.from('church_church').select('slug').eq('id', jc.church_id).single()
+      const made = await makeMokja(jc.church_id, login_id, password, name, String(body.mokjang_name ?? '').trim())
+      return json({ ok: true, slug: ch?.slug, ...made })
+    }
+
     // ── 아래부터는 로그인한 목사만 ──────────────────────────────
     const me = await callerProfile(req)
     if (!me) return json({ error: '로그인이 필요합니다' }, 401)
@@ -200,17 +244,29 @@ Deno.serve(async (req) => {
     if (action === 'create_mokja') {
       const bad = checkAccount(login_id, password, name)
       if (bad) return json({ error: bad }, 400)
-      const user = await createAccount(login_id, password, name)
-      const { error: pe } = await admin.from('church_profile')
-        .insert({ id: user.id, login_id, name, role: 'mokja', church_id: me.church_id })
-      if (pe) { await admin.auth.admin.deleteUser(user.id); throw new Error(pe.message) }
-      const { data: mj, error: me2 } = await admin.from('church_mokjang').insert({
-        name: String(body.mokjang_name ?? '').trim() || `${name} 목장`,
-        mokja_id: user.id, mokja_name: name, church_id: me.church_id,
-        meet_day: String(body.meet_day ?? '').trim(),
-      }).select('id').single()
-      if (me2) throw new Error(me2.message)
-      return json({ ok: true, user_id: user.id, mokjang_id: mj.id })
+      const made = await makeMokja(me.church_id, login_id, password, name,
+        String(body.mokjang_name ?? '').trim(), String(body.meet_day ?? '').trim())
+      return json({ ok: true, ...made })
+    }
+
+    // ── 목자(순장) 스스로 가입 코드 ──
+    if (action === 'join_code_get') {
+      const { data } = await admin.from('church_join').select('code').eq('church_id', me.church_id).maybeSingle()
+      return json({ ok: true, code: data ? showJoin(data.code) : null })
+    }
+    if (action === 'join_code_new') {
+      for (let i = 0; i < 5; i++) {
+        const raw = newJoinCode()
+        const { error } = await admin.from('church_join')
+          .upsert({ church_id: me.church_id, code: raw, created_at: new Date().toISOString() })
+        if (!error) return json({ ok: true, code: showJoin(raw) })
+      }
+      throw new Error('가입 코드를 만들지 못했습니다')
+    }
+    if (action === 'join_code_off') {
+      const { error } = await admin.from('church_join').delete().eq('church_id', me.church_id)
+      if (error) throw new Error(error.message)
+      return json({ ok: true })
     }
 
     if (action === 'create_pastor') {

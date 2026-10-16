@@ -386,6 +386,56 @@ const db = p => p.evaluate(() => window.__DB());
     ok('다른 교회(기능 안 켬): 목원 날짜 단추 없음', (await p.$$('#member-list .act-dates')).length === 0);
     await c.close(); }
 
+  console.log('\n[스스로 가입] 목자(순장)가 가입 코드로 직접 계정·목장 만들기');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    ok('처음엔 가입 꺼짐', await p.isVisible('#join-make') && !(await p.isVisible('#join-code')));
+    await p.click('#join-make'); await p.waitForTimeout(300);
+    const code = (await p.textContent('#join-code')).trim(), link = await p.inputValue('#join-link');
+    ok('가입 코드·주소 보임', /^[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code) && link.endsWith('/bangjoo/?join=' + code), code + ' ' + link);
+    await p.evaluate(() => CHURCH.signOut());
+    await p.goto(BASE + 'index.html?c=bangjoo&join=' + code); await p.waitForTimeout(400);
+    ok('가입 주소로 오면 가입 화면이 바로 열림', await p.isVisible('#form-join') && (await p.inputValue('#jcode')) === code && !(await p.isVisible('#form-login')));
+    await p.fill('#jname', '새목자'); await p.fill('#jlid', 'newmokja'); await p.fill('#jpw', 'secret99'); await p.fill('#jpw2', 'secret98');
+    await p.click('#btn-join'); await p.waitForTimeout(200);
+    ok('비밀번호 두 번이 다르면 막음', (await p.textContent('#msg-join')).includes('서로 다릅니다'));
+    await p.fill('#jpw2', 'secret99'); await p.click('#btn-join');
+    await p.waitForURL(/mokjang\.html/); await p.waitForSelector('.top h1'); await p.waitForTimeout(400);
+    const d = await db(p), mj = d.church_mokjang.find(m => m.mokja_name === '새목자');
+    ok('가입하면 목자 계정 + 목장이 생김', mj && mj.church_id === 'cb' && mj.name === '새목자 목장' && d.church_profile.some(x => x.login_id === 'newmokja' && x.role === 'mokja'), JSON.stringify(mj));
+    ok('가입 후 바로 목자 화면', (await p.textContent('.top h1')).includes('새목자 목장'));
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    await p.fill('#new-name', '이순원'); await p.click('#form-add button[type=submit]'); await p.waitForTimeout(300);
+    ok('가입한 목자가 목원을 넣음', (await db(p)).church_mokwon.some(w => w.name === '이순원' && w.mokjang_id === mj.id));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastorla');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    ok('다락방 교회: 순장 말로 나옴', (await p.textContent('#join-card h2')).includes('순장'));
+    await p.click('#join-make'); await p.waitForTimeout(300);
+    const code = (await p.textContent('#join-code')).trim();
+    await p.evaluate(() => CHURCH.signOut());
+    await p.goto(BASE + 'index.html?c=lach01'); await p.waitForTimeout(400);
+    ok('로그인 화면에 순장 가입 링크', (await p.textContent('#to-join')).includes('순장으로 가입하기'), await p.textContent('#to-join'));
+    await p.click('#to-join');
+    await p.fill('#jcode', 'WRON-GCOD'); await p.fill('#jname', '최순장'); await p.fill('#jlid', 'choisj'); await p.fill('#jpw', 'secret99'); await p.fill('#jpw2', 'secret99');
+    await p.click('#btn-join'); await p.waitForTimeout(300);
+    ok('틀린 코드는 막음', (await p.textContent('#msg-join')).includes('가입 코드가 맞지 않습니다'));
+    await p.fill('#jcode', code.toLowerCase()); await p.click('#btn-join');
+    await p.waitForURL(/mokjang\.html/); await p.waitForTimeout(400);
+    ok('다락방 이름 기본값', (await db(p)).church_mokjang.some(m => m.name === '최순장 다락방' && m.church_id === 'cl'));
+    await p.evaluate(() => CHURCH.signOut());
+    await login(p, 'pastorla');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    ok('목사 목장 목록에 새 다락방', (await p.textContent('#pane-manage')).includes('최순장 다락방'));
+    p.on('dialog', dlg => dlg.accept());
+    await p.click('#join-stop'); await p.waitForTimeout(300);
+    ok('가입 끄기', await p.isVisible('#join-make') && !(await p.isVisible('#join-code')));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
