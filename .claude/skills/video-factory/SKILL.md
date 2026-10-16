@@ -17,6 +17,7 @@ description: 영상 자동화 공장 — 이미 찍은 영상(강의·설교·�
 | `subs.py burn` | 자막 굽기(*강조* 금색, 반투명 상자) | mp4 + `subs.json` → mp4 |
 | `typo.py` | 키네틱 타이포 쇼츠/가로 (모션 메뉴 19가지) | `script.json` → mp4 |
 | `menu.py` | 모션 메뉴 미리보기 영상 + `menu.json` | → 360×640 mp4 · jpg |
+| `oneline.py` | 코스 C01 «한 줄의 선» — 크림 종이에 파란 펜 한 줄이 끊기지 않고 아이콘·손글씨를 그리며 내려감(9:16) | `spec.json` → mp4 |
 | `cover.py` | 쇼츠 표지(1080×1920) · 썸네일(1280×720) + 레이어 PSD | `cover.json` → jpg + psd |
 | `upscale.py` | 4K/8K, 조각 굽기(끊겨도 이어서), 100MB 넘으면 crf 올려 다시 | mp4 → mp4 |
 | `archive.py` | 비공개 저장소 `<작업명>/<편키>/` 복사 · README · 커밋 · 푸시 | 파일들 → 커밋 |
@@ -72,6 +73,13 @@ description: 영상 자동화 공장 — 이미 찍은 영상(강의·설교·�
 - 주문 예: «제목은 T02, ‘5분’은 T09, 끝은 B01» → 장면 JSON 으로 바꿔 `typo.py`.
 - 새 움직임을 추가하면 `typo.py` 의 `MENU` 와 `menu.py` 의 `ITEMS` 에 넣고 `python menu.py 출력폴더` 로 미리보기를 다시 만든 뒤 메뉴판을 갱신.
 - motion-studio 의 «모션 메뉴판»(조남경, motion-studio 0.27 이상 전용, 2026-10 기준 비공개 판)과는 별개. 코드 체계도 다르다.
+
+### 코스 (영상 전체를 한 스타일로)
+| 코드 | 이름 | 도구 | 쓰는 법 |
+|---|---|---|---|
+| C01 | 한 줄의 선 | `oneline.py` | `title`(2줄) · `stations`[{icon, text}] 3~6개 · `sign` · `sign_sub` · `dur`(기본 26초) · `bgm`. icon: phone · wave · star · bubble · phones · bulb · check · heart. 손글씨 글꼴 나눔손글씨 펜(OFL) |
+- 코스는 한 편에 하나. 코스를 담으면 단품 장면은 쓰지 않는다(메뉴판 주문서도 그렇게 동작).
+- 주문 예: «C01 한 줄의 선으로, 제목 ‘강의 30분이 / 쇼츠가 되는 길’, 단계는 찍기·받아쓰기·명장면·자막·완성».
 
 ### ④ 폰 세로 영상 ↔ 가로
 `layout: "fit"` — 영상 전체를 넣고 남는 곳은 같은 화면을 흐리게. 회전 정보(폰 세로 촬영) 자동 반영.
