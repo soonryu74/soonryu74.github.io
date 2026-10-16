@@ -1,0 +1,245 @@
+/* 목장 나눔터 테스트용 가짜 서버 — supabase 클라이언트·서버 함수·푸시 API를 흉내 낸다.
+   실제 RLS와 같은 결과가 나오게 '교회 범위'를 흉내 낸다. 기도제목 중복 방지 트리거는 일부러 흉내 내지 않는다
+   (화면이 스스로 중복을 만들지 않는지 보려고). */
+(function () {
+  var seed = window.__SEED || {};
+  var DB = JSON.parse(JSON.stringify(seed.db || {}));
+  ['church_church','church_profile','church_mokjang','church_mokwon','church_journal','church_prayer','church_comment','church_push']
+    .forEach(function (t) { DB[t] = DB[t] || []; });
+  var nid = 1000;
+  var KEY = '__mock_session';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+  function save(s) { try { s ? localStorage.setItem(KEY, JSON.stringify(s)) : localStorage.removeItem(KEY); } catch (e) {} }
+  // 화면을 옮겨도 자료가 남게 sessionStorage에 DB를 둔다
+  try { var kept = sessionStorage.getItem('__mock_db'); if (kept) DB = JSON.parse(kept); } catch (e) {}
+  function persist() { try { sessionStorage.setItem('__mock_db', JSON.stringify(DB)); } catch (e) {} }
+  window.__DB = function () { return DB; };
+  window.__calls = JSON.parse(sessionStorage.getItem('__mock_calls') || '[]');
+  function record(c) { window.__calls.push(c); sessionStorage.setItem('__mock_calls', JSON.stringify(window.__calls)); }
+
+  var session = load();
+  function me() { return session ? DB.church_profile.filter(function (p) { return p.id === session.user.id; })[0] : null; }
+  function mjOf(id) { return DB.church_mokjang.filter(function (m) { return m.id === id; })[0]; }
+  function jOf(id) { return DB.church_journal.filter(function (j) { return j.id === id; })[0]; }
+  function canSeeMj(p, mid) {
+    var m = mjOf(mid); if (!m) return false;
+    return m.mokja_id === p.id || (p.role === 'pastor' && m.church_id === p.church_id);
+  }
+  function rls(table, rows) {
+    var p = me(); if (!p) return [];
+    switch (table) {
+      case 'church_church': return rows.filter(function (r) { return r.id === p.church_id; });
+      case 'church_profile': return rows.filter(function (r) { return r.id === p.id || (p.role === 'pastor' && r.church_id === p.church_id); });
+      case 'church_mokjang': return rows.filter(function (r) { return canSeeMj(p, r.id); });
+      case 'church_mokwon': case 'church_journal': return rows.filter(function (r) { return canSeeMj(p, r.mokjang_id); });
+      case 'church_prayer': case 'church_comment':
+        return rows.filter(function (r) { var j = jOf(r.journal_id); return j && canSeeMj(p, j.mokjang_id); });
+      case 'church_push': return rows.filter(function (r) { return r.user_id === p.id; });
+    }
+    return rows;
+  }
+
+  function qb(table) {
+    var st = { op: 'select', filters: [], orders: [], limit: null, data: null, ret: false, single: null };
+    var api = {
+      select: function () { if (st.op !== 'select') st.ret = true; return api; },
+      eq: function (c, v) { st.filters.push(function (r) { return String(r[c]) === String(v); }); return api; },
+      in: function (c, arr) { var a = (arr || []).map(String); st.filters.push(function (r) { return a.indexOf(String(r[c])) >= 0; }); return api; },
+      order: function (c, o) { st.orders.push([c, !o || o.ascending !== false]); return api; },
+      limit: function (n) { st.limit = n; return api; },
+      maybeSingle: function () { st.single = 'maybe'; return api; },
+      single: function () { st.single = 'one'; return api; },
+      insert: function (d) { st.op = 'insert'; st.data = d; return api; },
+      update: function (d) { st.op = 'update'; st.data = d; return api; },
+      delete: function () { st.op = 'delete'; return api; },
+      then: function (res, rej) { return Promise.resolve(run(table, st)).then(res, rej); }
+    };
+    return api;
+  }
+  function match(rows, st) { return rows.filter(function (r) { return st.filters.every(function (f) { return f(r); }); }); }
+  function sortRows(rows, st) {
+    if (!st.orders.length) return rows;
+    return rows.slice().sort(function (a, b) {
+      for (var i = 0; i < st.orders.length; i++) {
+        var c = st.orders[i][0], asc = st.orders[i][1], x = a[c] == null ? '' : a[c], y = b[c] == null ? '' : b[c];
+        if (x < y) return asc ? -1 : 1; if (x > y) return asc ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+  function wrap(rows, st) {
+    if (st.single === 'maybe') return { data: rows[0] || null, error: null };
+    if (st.single === 'one') return rows[0] ? { data: rows[0], error: null } : { data: null, error: { message: '없음' } };
+    return { data: rows, error: null };
+  }
+  function run(table, st) {
+    var all = DB[table];
+    var out;
+    if (st.op === 'select') {
+      var rows = sortRows(match(rls(table, all), st), st);
+      if (st.limit) rows = rows.slice(0, st.limit);
+      out = wrap(rows.map(function (r) { return Object.assign({}, r); }), st);
+    } else if (st.op === 'insert') {
+      var items = Array.isArray(st.data) ? st.data : [st.data];
+      var made = items.map(function (d) {
+        var row = Object.assign({ id: 'n' + (++nid), created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          table === 'church_mokwon' || table === 'church_mokjang' ? { active: true, tag: '' } : {}, d);   // DB 기본값 흉내
+        all.push(row); return Object.assign({}, row);
+      });
+      out = wrap(made, st);
+    } else if (st.op === 'update') {
+      var hit = match(rls(table, all), st);
+      hit.forEach(function (r) { Object.assign(r, st.data, { updated_at: new Date().toISOString() }); });
+      out = wrap(hit.map(function (r) { return Object.assign({}, r); }), st);
+    } else if (st.op === 'delete') {
+      var gone = match(rls(table, all), st);
+      DB[table] = all.filter(function (r) { return gone.indexOf(r) < 0; });
+      out = wrap([], st);
+    }
+    persist();
+    return out;
+  }
+
+  var client = {
+    auth: {
+      signInWithPassword: function (o) {
+        var id = String(o.email).split('@')[0];
+        var p = DB.church_profile.filter(function (x) { return x.login_id === id; })[0];
+        var pw = (DB.__newpw && p && DB.__newpw[p.id]) || 'pass1234';
+        if (!p || o.password !== pw) return Promise.resolve({ data: null, error: { message: 'Invalid login credentials' } });
+        session = { access_token: 'tok-' + p.id, user: { id: p.id } }; save(session);
+        return Promise.resolve({ data: { session: session }, error: null });
+      },
+      signOut: function () { session = null; save(null); return Promise.resolve({ error: null }); },
+      getSession: function () { return Promise.resolve({ data: { session: session } }); },
+      updateUser: function () { return Promise.resolve({ data: {}, error: null }); }
+    },
+    from: qb,
+    rpc: function (fn, args) {
+      record({ rpc: fn, args: args });
+      if (fn === 'church_public_church') {
+        var c = DB.church_church.filter(function (x) { return x.slug === args.p_slug; })[0];
+        return Promise.resolve({ data: c ? [{ name: c.name, logo_url: c.logo_url, theme: c.theme || 'note', terms: c.terms || {} }] : [], error: null });
+      }
+      if (fn === 'church_push_save' || fn === 'church_push_save2') {
+        DB.church_push = DB.church_push.filter(function (r) { return r.endpoint !== args.p_endpoint; });
+        DB.church_push.push({ id: 'push' + (++nid), user_id: session.user.id, endpoint: args.p_endpoint, p256dh: args.p_p256dh, auth: args.p_auth });
+        persist();
+        return Promise.resolve({ data: null, error: null });
+      }
+      return Promise.resolve({ data: null, error: { message: 'unknown rpc' } });
+    }
+  };
+  window.supabase = { createClient: function () { return client; } };
+
+  // 서버 함수 흉내
+  var realFetch = window.fetch;
+  window.fetch = function (url, opt) {
+    var u = String(url);
+    if (u.indexOf('/functions/v1/') < 0) return realFetch.apply(window, arguments);
+    var b = {}; try { b = JSON.parse(opt.body); } catch (e) {}
+    record({ fn: u.split('/functions/v1/')[1], body: b });
+    var reply = { ok: true };
+    if (u.indexOf('church-admin') >= 0 && b.action === 'register_church') {
+      if (b.invite_code !== 'GOOD-CODE') reply = { error: '초대 코드가 맞지 않습니다' };
+      else {
+        var cid = 'c' + (++nid), uid = 'u' + (++nid);
+        DB.church_church.push({ id: cid, slug: 'newch1', name: b.church_name, timezone: b.timezone, logo_url: '' });
+        DB.church_profile.push({ id: uid, login_id: b.login_id, name: b.name, role: 'pastor', church_id: cid });
+        DB.__recovery = DB.__recovery || {}; DB.__recovery[uid] = 'ABCD-EFGH-JKMN';
+        reply = { ok: true, slug: 'newch1', recovery_code: 'ABCD-EFGH-JKMN' };
+      }
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'set_logo') {
+      var me0 = me();
+      var ch0 = me0 && DB.church_church.find(function (x) { return x.id === me0.church_id; });
+      if (!/^data:image\/png;base64,/.test(b.data || '')) reply = { error: 'PNG 그림이 아닙니다' };
+      else { ch0.logo_url = 'https://storage.example/' + ch0.id + '.png?v=1'; reply = { ok: true, logo_url: ch0.logo_url }; }
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'remove_logo') {
+      var me1 = me();
+      DB.church_church.find(function (x) { return x.id === me1.church_id; }).logo_url = ''; reply = { ok: true };
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'delete_me') {
+      var me2 = me();
+      var pastors = DB.church_profile.filter(function (x) { return x.role === 'pastor' && x.church_id === me2.church_id; });
+      if (me2.role === 'pastor' && pastors.length <= 1) reply = { error: '마지막 목사 계정은 탈퇴할 수 없습니다. 교회를 그만 쓰시려면 [교회 지우기]를 눌러 주세요' };
+      else {
+        DB.church_profile = DB.church_profile.filter(function (x) { return x.id !== me2.id; });
+        DB.church_mokjang.forEach(function (m) { if (m.mokja_id === me2.id) m.mokja_id = null; });
+      }
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'delete_church') {
+      var me3 = me(), ch3 = DB.church_church.find(function (x) { return x.id === me3.church_id; });
+      if ((b.confirm_name || '').trim() !== ch3.name) reply = { error: '교회 이름이 맞지 않습니다' };
+      else {
+        var mjs = DB.church_mokjang.filter(function (m) { return m.church_id === ch3.id; }).map(function (m) { return m.id; });
+        DB.church_mokjang = DB.church_mokjang.filter(function (m) { return mjs.indexOf(m.id) < 0; });
+        DB.church_journal = DB.church_journal.filter(function (j) { return mjs.indexOf(j.mokjang_id) < 0; });
+        DB.church_profile = DB.church_profile.filter(function (x) { return x.church_id !== ch3.id; });
+        DB.church_church = DB.church_church.filter(function (x) { return x.id !== ch3.id; });
+      }
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'new_recovery_code') {
+      DB.__recovery = DB.__recovery || {}; DB.__recovery[me().id] = 'PQRS-TUVW-XYZ2'; reply = { ok: true, recovery_code: 'PQRS-TUVW-XYZ2' };
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'recover') {
+      var pf = DB.church_profile.find(function (x) { return x.login_id === String(b.login_id || '').toLowerCase(); });
+      var want = pf && DB.__recovery && DB.__recovery[pf.id];
+      if (!want || want.replace(/-/g, '') !== String(b.code || '').toUpperCase().replace(/[^A-Z0-9]/g, '')) reply = { error: '아이디나 복구 코드가 맞지 않습니다' };
+      else { DB.__newpw = DB.__newpw || {}; DB.__newpw[pf.id] = b.password; }
+    }
+    if (u.indexOf('darak-admin') >= 0 && b.action === 'join_mokja') {
+      var jc = (DB.__join || {})[String(b.join_code || '').toUpperCase().replace(/[^A-Z0-9]/g, '')];
+      if (!jc) reply = { error: '가입 코드가 맞지 않습니다. 목사님께 다시 물어봐 주세요' };
+      else if (DB.church_profile.some(function (x) { return x.login_id === b.login_id; })) reply = { error: '이미 쓰고 있는 아이디입니다. 다른 아이디를 골라 주세요' };
+      else {
+        var ju = 'u' + (++nid), jch = DB.church_church.find(function (x) { return x.id === jc; });
+        var unit = (jch.terms && jch.terms.unit) || '다락방';
+        DB.church_profile.push({ id: ju, login_id: b.login_id, name: b.name, role: 'mokja', church_id: jc });
+        DB.__newpw = DB.__newpw || {}; DB.__newpw[ju] = b.password;
+        DB.church_mokjang.push({ id: 'mj' + (++nid), name: (b.mokjang_name || '').trim() || b.name + ' ' + unit, mokja_id: ju, mokja_name: b.name,
+          church_id: jc, sort_order: 0, active: true, created_at: '2026-10-16' });
+        reply = { ok: true, slug: jch.slug };
+      }
+    }
+    if (u.indexOf('darak-admin') >= 0 && /^join_code_/.test(b.action)) {
+      var mej = me(); DB.__join = DB.__join || {};
+      var cur = Object.keys(DB.__join).find(function (k) { return DB.__join[k] === mej.church_id; });
+      if (mej.role !== 'pastor') reply = { error: '목사 계정만 쓸 수 있습니다' };
+      else if (b.action === 'join_code_get') reply = { ok: true, code: cur ? cur.slice(0, 4) + '-' + cur.slice(4) : null };
+      else {
+        if (cur) delete DB.__join[cur];
+        if (b.action === 'join_code_new') { var nc = 'JOIN' + (1000 + (++nid)); DB.__join[nc] = mej.church_id; reply = { ok: true, code: nc.slice(0, 4) + '-' + nc.slice(4) }; }
+      }
+    }
+    if (u.indexOf('church-notify') >= 0) reply = b.action === 'key' ? { publicKey: 'BEd3W7naVVZVjZKZZYJiVVxsVFqwxfQM4oNwgxuRb88ja3SPrlpHK0WKduDOHUVXfRhz3I6ZlC-iNnyB4Ob64p4' } : { ok: true, sent: b.action === 'test' ? DB.church_push.length : 1, devices: 1 };
+    persist();
+    var status = reply.error ? 403 : 200;
+    return Promise.resolve(new Response(JSON.stringify(reply), { status: status, headers: { 'Content-Type': 'application/json' } }));
+  };
+
+  // 푸시 API 흉내 (window.__NO_PUSH 가 있으면 지원 안 하는 브라우저로)
+  if (!window.__NO_PUSH) {
+    var state = JSON.parse(sessionStorage.getItem('__mock_push') || '{"perm":"default","sub":null}');
+    function keep() { sessionStorage.setItem('__mock_push', JSON.stringify(state)); }
+    function subObj() {
+      return state.sub && { endpoint: state.sub, toJSON: function () { return { endpoint: state.sub, keys: { p256dh: 'P256', auth: 'AUTH' } }; },
+        unsubscribe: function () { state.sub = null; keep(); return Promise.resolve(true); } };
+    }
+    var reg = { pushManager: {
+      getSubscription: function () { return Promise.resolve(subObj()); },
+      subscribe: function () { state.sub = 'https://push.example/dev-' + Date.now(); keep(); return Promise.resolve(subObj()); }
+    } };
+    window.PushManager = function () {};
+    window.Notification = { get permission() { return state.perm; },
+      requestPermission: function () { state.perm = window.__DENY ? 'denied' : 'granted'; keep(); return Promise.resolve(state.perm); } };
+    Object.defineProperty(navigator, 'serviceWorker', { configurable: true, value: {
+      register: function () { state.reg = true; keep(); return Promise.resolve(reg); },
+      getRegistration: function () { return Promise.resolve(state.reg ? reg : undefined); },
+      ready: Promise.resolve(reg)
+    } });
+  } else {
+    try { delete window.PushManager; } catch (e) {}
+  }
+})();
