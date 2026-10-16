@@ -2,6 +2,16 @@ import { useRef } from "react";
 import { DepCalc } from "./CalcExample";
 import { DEP, depOf, depQuintiles, boxStats, fmt, val, label, poolFor, SGG_ALL } from "../data";
 import { clientXY } from "./svgUtil";
+import { siiRii, quintileRidits } from "../lib/gapMeasures";
+import Cite from "./Cite";
+
+/* 경사불평등지수(SII)·상대불평등지수(RII): 박탈 분위는 순서가 있는 집단이므로 순서를 반영한 요약지표(Keppel 2005 지침 10, WHO HEAT).
+   지역마다 소속 분위의 누적 비율 중간점(0 = 가장 덜 박탈 … 1 = 가장 박탈)에 놓고 지역 단위 비가중 회귀. */
+function gradient(ind, item, year, groups) {
+  const withV = [1, 2, 3, 4, 5].map((q) => groups[q].filter((r) => val(ind, item, year, r.c) != null));
+  const xs = quintileRidits(withV.map((a) => a.length));
+  return siiRii(withV.flatMap((a, k) => a.map((r) => ({ x: xs[k], y: val(ind, item, year, r.c) }))));
+}
 
 const QN = { 1: "1분위(가장 덜 박탈)", 2: "2분위", 3: "3분위", 4: "4분위", 5: "5분위(가장 박탈)" };
 
@@ -53,7 +63,48 @@ export default function EquityPanel({ ind, item, year, sel, setTip }) {
         {ind.bad != null && gap != null && <> → 박탈이 큰 지역일수록 {(ind.bad ? gap > 0 : gap < 0) ? "나쁨" : "좋음"}</>}
         . 지역박탈지수는 {DEP.year}년 인구주택총조사 집계표로 근사 산출(공식값 아님).
       </div>
+      <SiiBlock ind={ind} item={item} year={year} groups={groups} />
       <DepCalc code={sel.c} name={label(sel)} />
     </>
+  );
+}
+
+function SiiBlock({ ind, item, year, groups }) {
+  const g = gradient(ind, item, year, groups);
+  if (!g) return null;
+  const du = ind.unit === "%" ? "%p" : ` ${ind.unit}`;
+  const sgn = (v) => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v));
+  const clear = g.lo > 0 || g.hi < 0;                       // 95% 구간이 0을 포함하지 않음
+  const worse = ind.bad == null ? null : ind.bad ? g.sii > 0 : g.sii < 0;
+  const ys = ind.years.filter((y) => y <= year).slice(-10);
+  const trend = ys.map((y) => ({ y, g: gradient(ind, item, y, groups) })).filter((t) => t.g);
+  return (
+    <div className="gap-read sii-read">
+      <div className="gr-head"><b>박탈 경사 — {year}년</b> <span className="muted">순서가 있는 5개 분위를 한 줄로 요약(시군구 {g.n}곳, 지역 단위·비가중)<Cite k={["heat", "whomon"]} /></span></div>
+      <div className="tbl-wrap"><table className="gr-tbl">
+        <thead><tr><th>지표</th><th className="num">값</th><th>뜻</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">경사불평등지수(SII, 절대)</th><td className="num"><b>{sgn(g.sii)}{du}</b><br /><small className="muted">95% 구간 {fmt(g.lo)} ~ {fmt(g.hi)}</small></td>
+            <td className="muted">가장 덜 박탈한 끝에서 가장 박탈한 끝으로 갈 때 값이 얼마나 달라지는지(회귀선 기준). 5분위−1분위 차이와 달리 가운데 분위까지 모두 씁니다.</td></tr>
+          <tr><th scope="row">상대불평등지수(RII, 상대)</th><td className="num"><b>{g.rii == null ? "–" : `${fmt(g.rii, 2)}배`}</b></td>
+            <td className="muted">회귀선의 가장 박탈한 끝 값 ÷ 가장 덜 박탈한 끝 값({fmt(g.y1)} ÷ {fmt(g.y0)}). 1이면 경사 없음.</td></tr>
+        </tbody>
+      </table></div>
+      <div className="desc">
+        {!clear ? <>95% 구간이 0을 포함 — <b>박탈 분위에 따른 뚜렷한 경사는 확인되지 않습니다.</b></>
+          : <>박탈이 큰 지역일수록 값이 <b>{g.sii > 0 ? "높습니다" : "낮습니다"}</b>{worse == null ? " (맥락 지표라 좋고 나쁨은 판단하지 않음)." : worse ? " — 박탈이 큰 쪽이 불리한 방향." : " — 박탈이 큰 쪽이 유리한 방향."}</>}
+        {" "}지역 평균끼리의 관계이므로 개인의 소득·학력에 따른 차이를 뜻하지 않습니다(생태학적 비교). 지역박탈지수는 근사 산출값입니다.
+      </div>
+      {trend.length > 1 && (
+        <details className="sii-trend"><summary>최근 {trend.length}개 연도 추이</summary>
+          <div className="tbl-wrap"><table className="gr-tbl">
+            <thead><tr><th>연도</th><th className="num">SII</th><th className="num">95% 구간</th><th className="num">RII</th></tr></thead>
+            <tbody>{trend.map(({ y, g: t }) => (
+              <tr key={y}><th scope="row">{y}</th><td className="num">{sgn(t.sii)}{du}</td><td className="num">{fmt(t.lo)} ~ {fmt(t.hi)}</td><td className="num">{t.rii == null ? "–" : `${fmt(t.rii, 2)}배`}</td></tr>))}</tbody>
+          </table></div>
+          <div className="desc muted">박탈 분위는 {DEP.year}년 기준으로 고정 — 연도별 차이는 지표 값의 변화입니다.</div>
+        </details>
+      )}
+    </div>
   );
 }

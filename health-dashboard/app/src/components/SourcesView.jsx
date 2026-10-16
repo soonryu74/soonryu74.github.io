@@ -5,6 +5,7 @@ const CNT_REF = { 258: "chs25", 263: "fac", 255: "kdcahc", 229: "mois" };
 import COV from "../../../data/coverage.json";
 import ChsPubs from "./ChsPubs";
 import ReviewsCard from "./ReviewsCard";
+import WhoMonitorCard from "./WhoMonitorCard";
 import { saveCsvRows } from "../export";
 
 /* 자료원 — 보건소 258개소 기준표와 자료원별 보유 현황.
@@ -112,6 +113,7 @@ export default function SourcesView({ sel }) {
         </div>
       </div>
 
+      <WhoMonitorCard />
       <ChsPubs sel={sel} />
 
       <div className="card span2">

@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { fmt, val, boxStats, poolFor, label, ITEMS } from "../data";
-import { gapMeasures, QUANTILE_MIN_N } from "../lib/gapMeasures";
+import { gapMeasures, distSummary, QUANTILE_MIN_N } from "../lib/gapMeasures";
+import Cite from "./Cite";
 import { nearestIndex, clientXY, Gridlines, XAxis } from "./svgUtil";
 
 /* 격차: 연도별 비교 집단 분포 상자그림 + 선택 지역 점 (CIAT 패널 6 재현) */
@@ -59,6 +60,7 @@ export default function GapBoxplot({ ind, item, year, sel, scope, setTip }) {
           onMouseMove={onMove} onTouchMove={onMove} onMouseLeave={() => setTip(null)} onTouchEnd={() => setTip(null)} />
       </svg>
       <GapTable ind={ind} item={item} year={year} pool={pool} ext={ext[ys.indexOf(year)]} />
+      <DistSummary ind={ind} item={item} year={year} pool={pool} />
       <DecileGap ind={ind} item={item} year={year} pool={pool} />
     </>
   );
@@ -80,7 +82,7 @@ function GapTable({ ind, item, year, pool, ext }) {
       note: "양 끝 20% 지역 전체의 수준. 취약 지역 전체가 좋아졌는지 볼 때(HP2030 소득 격차 방식)" },
   ];
   return (
-    <div className="gap-read">
+    <div className="gap-read gap-main">
       <div className="gr-head"><b>격차 읽기 — {year}년</b> <span className="muted">기준: 비교 지역 {g.n}곳 · {ITEMS[item] || item} · 중앙값 {fmt(g.med)}{ind.unit === "%" ? "%" : ` ${ind.unit}`}</span></div>
       <div className="tbl-wrap"><table className="gr-tbl">
         <thead><tr><th>방식</th><th>계산</th><th className="num">절대 격차</th><th className="num">상대 격차</th><th>특징</th></tr></thead>
@@ -92,6 +94,34 @@ function GapTable({ ind, item, year, pool, ext }) {
       </table></div>
       <div className="desc">절대 격차는 줄여야 할 부담의 양(단위 %p), 상대 격차는 몇 배인지입니다. 유병률이 낮으면 상대 격차는 쉽게 커지므로 둘을 함께 봅니다. 「격차가 줄었다」는 불리한 쪽이 좋아져서인지(끌어올림), 양호한 쪽이 나빠져서인지(하향 수렴) 함께 확인해야 합니다.</div>
     </div>
+  );
+}
+
+/* 분포 요약지표(연구자용) — 순서가 없는 지역 집단 전체의 퍼짐. WHO HEAT Plus 기술노트 v4.0 의 비가중 지표.
+   COV(변동계수, 상대) · MDMU(평균으로부터의 평균 절대차, 절대) · IDISU(격차지수, 상대). 보건소 단위 인구가 없어 인구 가중 지표(BGV·Theil)는 쓰지 않는다. */
+function DistSummary({ ind, item, year, pool }) {
+  const cur = distSummary(pool.map((r) => val(ind, item, year, r.c)));
+  if (!cur) return null;
+  const du = ind.unit === "%" ? "%p" : ` ${ind.unit}`;
+  const rows = ind.years.filter((y) => y <= year).slice(-10)
+    .map((y) => ({ y, d: distSummary(pool.map((r) => val(ind, item, y, r.c))) })).filter((r) => r.d);
+  const pct = (v) => (v == null ? "–" : `${fmt(v)}%`);
+  return (
+    <details className="gap-read dist-sum">
+      <summary><b>분포 요약지표(연구자용)</b> <span className="muted">— {year}년 COV {pct(cur.cov)} · MDMU {fmt(cur.mdmu)}{du} · IDISU {pct(cur.idisu)} (비교 지역 {cur.n}곳)</span></summary>
+      <div className="desc">
+        양 끝만 보는 「격차 읽기」와 달리 <b>모든 비교 지역의 퍼짐</b>을 한 숫자로 요약합니다(순서가 없는 지역 집단용, WHO HEAT 정의<Cite k="heat" />).
+        <b> COV</b>(변동계수) = 표준편차 ÷ 평균 × 100 · <b>MDMU</b> = 각 지역 값과 평균의 차이(절대값)의 평균 · <b>IDISU</b>(격차지수) = MDMU ÷ 평균 × 100.
+        MDMU 는 절대(단위 {du.trim()}), COV·IDISU 는 상대(%)라 함께 봅니다.
+      </div>
+      <div className="tbl-wrap"><table className="gr-tbl">
+        <thead><tr><th>연도</th><th className="num">평균</th><th className="num">MDMU(절대)</th><th className="num">COV(상대)</th><th className="num">IDISU(상대)</th><th className="num">지역 수</th></tr></thead>
+        <tbody>{rows.map(({ y, d }) => (
+          <tr key={y} className={y === year ? "row-cur" : undefined}><th scope="row">{y}</th><td className="num">{fmt(d.mean)}</td><td className="num">{fmt(d.mdmu)}{du}</td>
+            <td className="num">{pct(d.cov)}</td><td className="num">{pct(d.idisu)}</td><td className="num">{d.n}</td></tr>))}</tbody>
+      </table></div>
+      <div className="desc muted">비가중 — 표본이 작은 지역의 불안정한 값도 같은 비중으로 들어갑니다. 지역별 인구로 가중하는 지표(BGV·Theil)는 보건소 단위 인구 자료가 없어 넣지 않았습니다. 해마다 참여 지역 수가 다르면 비교에 주의하세요.</div>
+    </details>
   );
 }
 

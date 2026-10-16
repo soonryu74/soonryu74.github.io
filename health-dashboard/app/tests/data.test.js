@@ -1,7 +1,7 @@
 /* 실제 자료로 확인(지시서 18절 7): 258개 조사 단위 필터와 전국 중앙값이 기존 계산과 일치하는가 */
 import test from "node:test";
 import assert from "node:assert/strict";
-import { INDICATORS, HC_POOL, SGG_ALL, natPool, nationalMedian, isSurvey, RBY } from "../src/data.js";
+import { INDICATORS, HC_POOL, SGG_ALL, natPool, nationalMedian, isSurvey, RBY, val } from "../src/data.js";
 import { assess, priorityFor, CANDIDATES, CORE } from "../src/lib/equity/index.js";
 
 const byId = (id) => INDICATORS.find((i) => i.id === id);
@@ -108,4 +108,13 @@ test("출처 표기: 사망원인통계 경유 지표는 원 출처가 먼저, �
   assert.ok(kdh.length >= 100);
   assert.deepEqual(kdh.filter((i) => /지역사회건강조사 DB/.test(i.src)).map((i) => i.id), []);
   assert.deepEqual(kdh.filter((i) => !/^원 출처 /.test(i.src)).map((i) => i.id), []);
+});
+
+test("분포 요약지표 재현: 2025 비만율(표준화) 258곳 COV 12.4% · MDMU 3.43%p (건강격차 검토 문서 5절)", async () => {
+  const { distSummary } = await import("../src/lib/gapMeasures.js");
+  const ind = INDICATORS.find((i) => i.id === "DT_H_OBE_OBE");
+  const d = distSummary(natPool(ind).map((r) => val(ind, "std", 2025, r.c)));
+  assert.equal(d.n, 258);
+  assert.equal(+d.cov.toFixed(1), 12.4);
+  assert.equal(+d.mdmu.toFixed(2), 3.43);
 });

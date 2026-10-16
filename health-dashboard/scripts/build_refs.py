@@ -78,6 +78,11 @@ REFS = [
      "detail": "2025-11-03 발표자료 · 2015~2024 시군구 229곳 남성흡연율·고위험음주율·걷기실천율·비만율의 10년 변화 기울기 3분위와 사회적 여건·보건세출 비교, 유사지역군 층화, 상·하위 10% 격차 추세 · 비공개 발표자료(소유자 제공)", "url": "", "updated": "2025-11-03"},
     {"key": "gapguide", "org": "노은정(울산대학교 의과대학 예방의학교실) · 질병관리청 수도권질병대응센터 세미나", "title": "지역사회건강조사 기반 지역 간 건강격차 지표의 활용 — 지역격차 지표의 산출, 해석, 보고",
      "detail": "2026-09-29 발표 · 2026년 지역사회건강조사 결과 활용 학술활동 촉진사업(발주 질병관리청, 수행 대한예방의학회, 최종보고서 2026년 12월 예정) · 격차 3방식(최대−최소·상하위 20% 경계값·분위 평균), 절대·상대 병기, 30곳 이하 분위 미적용(WHO HEAT), 우리 지역 읽기 5단계, 끌어올림·하향 수렴 판정 · 검토 문서 건강격차_지표_검토_v1.md", "url": doc("건강격차_지표_검토_v1.md"), "updated": "2026-09-29"},
+    # 2026-10-16 WHO 건강 불평등 모니터링 기준 반영(분포 요약지표·박탈 경사) — 번호는 맨 뒤에만 추가
+    {"key": "heat", "org": "World Health Organization", "title": "Health Equity Assessment Toolkit Plus (HEAT Plus) — Technical Notes, version 4.0",
+     "detail": "불평등 요약지표 정의: 비서열 집단 COV·MDMU·IDISU(비가중)·BGV·Theil, 서열 집단 SII·RII, 30곳 초과 시 분위 방식 · 이 대시보드는 비가중 지표만 사용", "url": "https://cdn.who.int/media/docs/default-source/gho-documents/health-equity/health-equity-assessment-toolkit/heat-plus/heatplus_4.0_technical_notes.pdf", "updated": "2024"},
+    {"key": "whomon", "org": "World Health Organization", "title": "National health inequality monitoring: a step-by-step manual",
+     "detail": "건강 불평등 모니터링 5단계(범위 정하기·자료 확보·분석·보고·지식 전환), 절대·상대 요약지표를 함께, 집단별 값과 요약값을 함께 보고 · 2017", "url": "https://iris.who.int/handle/10665/255652", "updated": "2017"},
 ]
 for i, r in enumerate(REFS, 1):
     r["n"] = i
