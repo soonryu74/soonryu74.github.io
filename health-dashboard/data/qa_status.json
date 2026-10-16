@@ -1,7 +1,7 @@
 {
- "generated": "2026-10-14 12:51 KST",
- "commit": "8de317b",
- "working_tree_clean": false,
+ "generated": "2026-10-16 16:21 KST",
+ "commit": "f00425c",
+ "working_tree_clean": true,
  "global_v01_comparison": "run (tag pre-global-v0.2)",
  "all_ok": true,
  "suites": [
@@ -9,9 +9,9 @@
    "id": "unit",
    "name": "Unit tests (priority engine, data, reports)",
    "ok": true,
-   "passed": 21,
+   "passed": 22,
    "failed": 0,
-   "seconds": 2
+   "seconds": 1
   },
   {
    "id": "korea_e2e",
@@ -19,7 +19,7 @@
    "ok": true,
    "passed": 53,
    "failed": 0,
-   "seconds": 173
+   "seconds": 178
   },
   {
    "id": "solve_readiness",
@@ -27,7 +27,7 @@
    "ok": true,
    "passed": 123,
    "failed": 0,
-   "seconds": 78
+   "seconds": 76
   },
   {
    "id": "history",
@@ -35,7 +35,7 @@
    "ok": true,
    "passed": 32,
    "failed": 0,
-   "seconds": 29
+   "seconds": 27
   },
   {
    "id": "report_region",
@@ -43,7 +43,7 @@
    "ok": true,
    "passed": 28,
    "failed": 0,
-   "seconds": 42
+   "seconds": 40
   },
   {
    "id": "report_indicator",
@@ -51,7 +51,7 @@
    "ok": true,
    "passed": 44,
    "failed": 0,
-   "seconds": 69
+   "seconds": 68
   },
   {
    "id": "report_elder",
@@ -59,7 +59,7 @@
    "ok": true,
    "passed": 48,
    "failed": 0,
-   "seconds": 39
+   "seconds": 37
   },
   {
    "id": "global_e2e",
@@ -67,11 +67,11 @@
    "ok": true,
    "passed": 77,
    "failed": 0,
-   "seconds": 31
+   "seconds": 27
   }
  ],
  "totals": {
-  "unit_tests": 21,
+  "unit_tests": 22,
   "browser_suites": 7,
   "browser_checks": 405
  }
