@@ -4,26 +4,6 @@
    translate the values, and add { id: '<code>', name: '<language name>' } to LANGS in common.js. */
 window.I18N = window.I18N || {};
 window.I18N.en = {
-  // ── 목자(순장) 스스로 가입 ─────
-  "목자가 스스로 가입하기": "Let leaders sign up themselves",
-  "가입 코드를 만들어 목자들에게 알려 주면, 목자가 첫 화면에서 직접 계정과 목장을 만들고 목원을 관리합니다. 목사님이 계정을 하나하나 만들지 않아도 됩니다.": "Make a sign-up code and share it with your leaders. They create their own account and group on the first screen and manage their members — no need to make each account yourself.",
-  "지금은 꺼져 있습니다.": "Sign-up is off right now.",
-  "가입 코드 만들기": "Make a sign-up code",
-  "가입 주소 — 카카오톡으로 보내 주세요": "Sign-up link — send it by KakaoTalk or text",
-  "코드를 아는 사람은 누구나 목자로 가입할 수 있습니다. 가입이 다 끝나면 [코드 바꾸기]나 [가입 끄기]를 눌러 주세요. 가입한 목자는 아래 목장 목록에 나옵니다.": "Anyone with the code can sign up as a leader. When everyone has joined, press [Change code] or [Turn off sign-up]. New leaders appear in the group list below.",
-  "코드 바꾸기": "Change code",
-  "가입 끄기": "Turn off sign-up",
-  "새 가입 코드를 만들었습니다. 예전 코드는 이제 쓸 수 없습니다.": "New sign-up code made. The old code no longer works.",
-  "코드를 바꾸면 예전 코드와 주소로는 가입할 수 없습니다. 바꿀까요?": "After changing, the old code and link stop working. Change it?",
-  "가입을 끌까요? 이미 가입한 목자는 그대로 씁니다.": "Turn off sign-up? Leaders who already joined keep their accounts.",
-  "가입을 껐습니다.": "Sign-up turned off.",
-  "목자로 가입하기 (목사님께 받은 가입 코드가 있으면)": "Sign up as a leader (if your pastor gave you a sign-up code)",
-  "목자로 가입하기": "Sign up as a leader",
-  "목사님께 받은 가입 코드로 내 계정과 목장을 직접 만듭니다. 가입하면 바로 목원을 넣고 일기를 쓸 수 있습니다.": "Use the sign-up code from your pastor to create your account and group. Then you can add members and write journals right away.",
-  "가입 코드": "Sign-up code",
-  "비워 두면 '내 이름 목장'이 됩니다": "Leave blank to use 'Your name's group'",
-  "가입하기": "Sign up",
-  "가입 코드가 맞지 않습니다. 목사님께 다시 물어봐 주세요": "That sign-up code doesn't match. Please check with your pastor.",
   // ── 성도 날짜 (교회 등록·생명의 삶·침례) ─────
   "교회 등록": "Joined church",
   "생명의 삶": "Life Study",

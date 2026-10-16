@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script>/* 기억한 교회 디자인을 그리기 전에 입힌다 (깜빡임 방지) */
+try { (function (m, q) { var s = q.get('c');
+  if (m && m.theme && !q.has('new') && (!s || s === m.slug)) document.documentElement.setAttribute('data-theme', m.theme);
+})(JSON.parse(localStorage.getItem('darak-my-church') || 'null'), new URLSearchParams(location.search)); } catch (e) {}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>다락방 나눔터 — 목사 화면</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1f4d3b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="다락방나눔터">
+<link rel="stylesheet" href="style.css?v=202610161400">
+</head>
+<body>
+<div class="wrap wrap-wide">
+  <div class="tabs noprint">
+    <button data-pane="week" class="on">주간 현황</button>
+    <button data-pane="gather">기도제목 모아보기</button>
+    <button data-pane="people" hidden>성도 명단</button>
+    <button data-pane="manage">목장·목자 관리</button>
+  </div>
+
+  <!-- ── 주간 현황 ───────────────────────────────── -->
+  <section class="pane on" id="pane-week">
+    <div class="card notify-ask" id="notify-ask" hidden>
+      <h2>목자가 일기를 올리면 알려 드릴까요?</h2>
+      <p class="desc" id="notify-ask-desc">이 휴대전화(또는 컴퓨터)로 바로 알림이 옵니다. 한 번만 허용하시면 됩니다.</p>
+      <div class="row">
+        <button class="primary" id="notify-ask-on">알림 받기</button>
+        <button class="ghost" id="notify-ask-later">나중에</button>
+      </div>
+      <div class="msg" id="msg-notify-ask"></div>
+    </div>
+    <div class="card">
+      <div class="weekbar">
+        <button class="small" id="wk-prev">‹ 지난주</button>
+        <span class="label" id="wk-label">…</span>
+        <button class="small" id="wk-next">다음주 ›</button>
+        <span class="spacer"></span>
+        <button class="small" id="wk-this">이번 주로</button>
+      </div>
+      <div class="stat" id="stat"></div>
+      <p class="desc" style="margin:0">목장 이름을 누르면 그 주 일기와 기도제목이 펼쳐집니다. 아래에 말씀을 남기시면 목자에게 보입니다.</p>
+    </div>
+    <div id="week-list"></div>
+  </section>
+
+  <!-- ── 기도제목 모아보기 ───────────────────────── -->
+  <section class="pane" id="pane-gather">
+    <div class="card noprint">
+      <div class="weekbar">
+        <button class="small" id="g-prev">‹ 지난주</button>
+        <span class="label" id="g-label">…</span>
+        <button class="small" id="g-next">다음주 ›</button>
+        <span class="spacer"></span>
+        <label class="check"><input type="checkbox" id="g-only"> 기도제목만</label>
+        <button class="small primary" id="g-print">인쇄 · PDF로 저장</button>
+      </div>
+      <p class="desc" style="margin:8px 0 0">주일 중보기도 시간에 쓰실 수 있게 한 주 전체를 한 장으로 모았습니다.</p>
+    </div>
+    <div class="print-head" id="g-print-head"></div>
+    <div id="gather-list"></div>
+  </section>
+
+  <!-- ── 관리 ────────────────────────────────────── -->
+  <!-- ── 성도 명단 (교회 등록·생명의 삶·침례 날짜) ── -->
+  <section class="pane" id="pane-people">
+    <div class="card">
+      <h2>성도 명단</h2>
+      <p class="desc">목장마다 목원의 교회 등록, 생명의 삶, 침례 날짜를 넣고 봅니다. 목자도 자기 목원 날짜를 넣을 수 있습니다.</p>
+      <div class="people-head">
+        <select id="pp-filter" aria-label="보기">
+          <option value="">모두 보기</option>
+          <option value="nobap">침례 아직</option>
+          <option value="nolife">생명의 삶 아직</option>
+          <option value="life">생명의 삶 하는 중</option>
+          <option value="nodate">날짜를 하나도 안 넣은 분</option>
+        </select>
+      </div>
+      <div class="stat" id="pp-stat"></div>
+      <div class="msg" id="msg-people"></div>
+      <div id="people-list"><p class="empty">불러오는 중…</p></div>
+    </div>
+  </section>
+
+  <section class="pane" id="pane-manage">
+    <div class="card">
+      <h2>휴대전화 알림</h2>
+      <p class="desc">목자가 일기를 제출하면 이 기기로 알려 드립니다. 휴대전화·컴퓨터마다 따로 켭니다.</p>
+      <p><span class="badge" id="notify-state">확인하는 중</span></p>
+      <p class="hint" id="notify-help"></p>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="notify-on">이 기기에서 알림 받기</button>
+        <button id="notify-test">시험 알림 보내기</button>
+        <button class="danger" id="notify-off">이 기기 알림 끄기</button>
+      </div>
+      <div class="msg" id="msg-notify"></div>
+    </div>
+    <div class="card">
+      <h2>교회 정보</h2>
+      <p class="desc">교회 이름은 화면 위쪽과 로그인 화면에 나옵니다. '이번 주'는 아래 시간대로 셉니다.</p>
+      <form id="form-church">
+        <label for="ch-name">교회 이름</label>
+        <input id="ch-name" type="text" required>
+        <label for="ch-tz">교회가 있는 곳</label>
+        <select id="ch-tz"></select>
+        <label for="ch-terms">우리 교회에서 부르는 말</label>
+        <select id="ch-terms" data-noterm></select>
+        <div class="two" id="ch-terms-own" hidden data-noterm>
+          <div><label for="ch-t-unit">모임</label><input id="ch-t-unit" type="text" maxlength="8" placeholder="예: 다락방"></div>
+          <div><label for="ch-t-leader">인도자</label><input id="ch-t-leader" type="text" maxlength="8" placeholder="예: 순장"></div>
+          <div><label for="ch-t-member">식구</label><input id="ch-t-member" type="text" maxlength="8" placeholder="예: 순원"></div>
+        </div>
+        <p class="hint">화면의 글자가 이 말로 바뀝니다. 이미 적은 일기와 이름은 바뀌지 않습니다.</p>
+        <label>디자인</label>
+        <div class="themes" id="ch-theme" data-noterm></div>
+        <p class="hint">누르면 바로 미리 보입니다. 저장하면 우리 교회 모든 분의 화면이 이 디자인으로 바뀝니다.</p>
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit">저장</button></div>
+      </form>
+      <div class="msg" id="msg-church"></div>
+      <label style="margin-top:18px">교회 로고</label>
+      <div class="row" style="align-items:center">
+        <img id="ch-logo" alt="" width="64" height="64" style="width:64px;height:64px;object-fit:contain;border:1px solid var(--line);border-radius:12px;background:#fff">
+        <button type="button" id="ch-logo-pick">로고 고르기</button>
+        <button type="button" class="ghost" id="ch-logo-del">지우기</button>
+        <input id="ch-logo-file" type="file" accept="image/*" hidden>
+      </div>
+      <p class="hint">로그인 화면, 화면 위쪽, 카카오톡 미리보기에 나옵니다. 정사각형에 가까운 그림이 잘 보입니다.</p>
+      <div class="msg" id="msg-logo"></div>
+      <label style="margin-top:18px">목자에게 보낼 주소</label>
+      <div class="row">
+        <input id="ch-link" type="text" readonly style="flex:1; min-width:200px">
+        <button id="ch-copy" type="button">복사</button>
+      </div>
+      <p class="hint">이 주소로 들어오면 로그인 화면에 우리 교회 이름과 로고가 보입니다.</p>
+    </div>
+    <div class="card">
+      <h2>목자 계정 만들기</h2>
+      <p class="desc">계정을 만들면 그 목자의 목장도 함께 생깁니다. 아이디와 첫 비밀번호를 목자에게 알려 주세요.</p>
+      <form id="form-new">
+        <label for="n-name">목자 이름</label>
+        <input id="n-name" type="text" placeholder="예: 김철수" required>
+        <label for="n-mj">목장 이름</label>
+        <input id="n-mj" type="text" placeholder="비워 두면 '김철수 목장'이 됩니다">
+        <label for="n-day">모이는 요일</label>
+        <input id="n-day" type="text" placeholder="예: 금요일 저녁 8시">
+        <label for="n-id">아이디</label>
+        <input id="n-id" type="text" inputmode="latin" autocapitalize="none" autocorrect="off"
+               placeholder="영문 소문자와 숫자로 3자 이상 (예: kimcs)" required>
+        <label for="n-pw">첫 비밀번호</label>
+        <input id="n-pw" type="text" placeholder="8자 이상" required>
+        <p class="hint">목자가 들어간 뒤 스스로 바꿀 수 있습니다.</p>
+        <div class="msg" id="msg-new"></div>
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit" id="btn-new">계정 만들기</button></div>
+      </form>
+    </div>
+    <div class="card" id="join-card">
+      <h2>목자가 스스로 가입하기</h2>
+      <p class="desc">가입 코드를 만들어 목자들에게 알려 주면, 목자가 첫 화면에서 직접 계정과 목장을 만들고 목원을 관리합니다.
+        목사님이 계정을 하나하나 만들지 않아도 됩니다.</p>
+      <div id="join-off">
+        <p class="hint">지금은 꺼져 있습니다.</p>
+        <button class="primary" type="button" id="join-make">가입 코드 만들기</button>
+      </div>
+      <div id="join-on" hidden>
+        <div class="code-box" id="join-code" data-noterm></div>
+        <label for="join-link">가입 주소 — 카카오톡으로 보내 주세요</label>
+        <div class="row"><input id="join-link" type="text" readonly style="flex:1; min-width:200px"><button type="button" id="join-copy">복사</button></div>
+        <p class="hint">코드를 아는 사람은 누구나 목자로 가입할 수 있습니다. 가입이 다 끝나면 [코드 바꾸기]나 [가입 끄기]를 눌러 주세요. 가입한 목자는 아래 목장 목록에 나옵니다.</p>
+        <div class="row" style="margin-top:12px">
+          <button type="button" id="join-new">코드 바꾸기</button>
+          <button type="button" class="danger" id="join-stop">가입 끄기</button>
+        </div>
+      </div>
+      <div class="msg" id="msg-join"></div>
+    </div>
+    <div class="card">
+      <h2>목사 계정 추가</h2>
+      <p class="desc">처음 교회를 등록할 때 만든 계정이 첫 목사 계정입니다. 부목사님·사모님처럼
+        우리 교회 목장을 함께 보실 분이 있으면 여기서 계정을 더 만들어 드리세요. 처음 계정과 할 수 있는 일이 똑같습니다.</p>
+      <form id="form-pastor">
+        <label for="p-name">이름</label>
+        <input id="p-name" type="text" placeholder="예: 홍길동" required>
+        <label for="p-id">아이디</label>
+        <input id="p-id" type="text" inputmode="latin" autocapitalize="none" autocorrect="off"
+               placeholder="영문 소문자와 숫자로 3자 이상" required>
+        <label for="p-pw">첫 비밀번호</label>
+        <input id="p-pw" type="text" placeholder="8자 이상" required>
+        <div class="msg" id="msg-pastor"></div>
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit" id="btn-pastor">목사 계정 만들기</button></div>
+      </form>
+      <div id="pastor-list" style="margin-top:16px"></div>
+    </div>
+    <div class="card">
+      <h2>목장 목록</h2>
+      <p class="desc">비밀번호를 잊은 목자는 여기서 새 비밀번호를 정해 주시면 됩니다.</p>
+      <div class="msg" id="msg-manage"></div>
+      <div id="manage-list"></div>
+    </div>
+    <div class="card">
+      <h2>내 이름</h2>
+      <p class="desc">머리말과 목자에게 남기는 말씀에 이 이름으로 나옵니다.</p>
+      <form id="form-myname">
+        <label for="my-name">이름</label>
+        <input id="my-name" type="text" required>
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit">저장</button></div>
+      </form>
+      <div class="msg" id="msg-myname"></div>
+    </div>
+    <div class="card">
+      <h2>내 비밀번호 바꾸기</h2>
+      <form id="form-pw">
+        <label for="pw1">새 비밀번호</label>
+        <input id="pw1" type="password" autocomplete="new-password" placeholder="8자 이상" required>
+        <label for="pw2">한 번 더</label>
+        <input id="pw2" type="password" autocomplete="new-password" required>
+        <div class="row" style="margin-top:16px"><button class="primary" type="submit">바꾸기</button></div>
+      </form>
+      <div class="msg" id="msg-pw"></div>
+    </div>
+    <div class="card">
+      <h2>복구 코드</h2>
+      <p class="desc">비밀번호를 잊으셨을 때 로그인 화면의 [비밀번호를 잊으셨나요?]에서 이 코드로 새 비밀번호를 정합니다.
+        아직 없으시거나 잃어버리셨으면 새로 받아 적어 두세요. 새로 받으면 예전 코드는 쓸 수 없습니다.</p>
+      <div class="code-box" id="code-box" hidden data-noterm></div>
+      <div class="row" style="margin-top:14px"><button type="button" id="btn-new-code">복구 코드 새로 받기</button></div>
+      <div class="msg" id="msg-code"></div>
+    </div>
+    <div class="card danger-zone">
+      <h2>탈퇴 · 교회 지우기</h2>
+      <p class="desc">내 계정만 지우거나, 교회를 그만 쓰실 때는 교회 전체를 지울 수 있습니다. 둘 다 되돌릴 수 없습니다.</p>
+      <label for="leave-pw">비밀번호 확인</label>
+      <input id="leave-pw" type="password" autocomplete="current-password" placeholder="지금 비밀번호">
+      <div class="row" style="margin-top:16px"><button class="danger" type="button" id="btn-leave">내 계정만 탈퇴</button></div>
+      <p class="hint">다른 목사 계정이 있을 때만 됩니다. 교회와 목장은 그대로 남습니다.</p>
+      <label for="leave-church" style="margin-top:22px">교회 전체 지우기 — 확인을 위해 교회 이름을 그대로 적어 주세요</label>
+      <input id="leave-church" type="text" autocomplete="off" data-noterm>
+      <div class="row" style="margin-top:16px"><button class="danger" type="button" id="btn-drop-church">교회 전체 지우기</button></div>
+      <p class="hint">우리 교회의 모든 계정, 목장, 일기, 기도제목, 로고가 사라집니다.</p>
+      <div class="msg" id="msg-leave"></div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="lang-en.js?v=202610161400"></script>
+<script src="common.js?v=202610161400"></script>
+<script src="moksa.js?v=202610161400"></script>
+
+</body>
+</html>
