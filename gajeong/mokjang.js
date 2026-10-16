@@ -78,8 +78,10 @@
       return '<div class="list-item" data-id="' + m.id + '">' +
         '<div class="grow"><div class="t">' + esc(m.name) +
         (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
-        (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div></div>' +
+        (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
+        '<div class="s">' + esc(C.memberDatesLine(m)) + '</div></div>' +
         T('<button class="small act-edit">이름 고치기</button>') +
+        T('<button class="small act-dates">날짜</button>') +
         '<button class="small act-toggle">' + (m.active ? T('잠시 쉼으로') : T('다시 참여')) + '</button>' +
         T('<button class="small danger act-del">삭제</button></div>');
     }).join('');
@@ -100,12 +102,28 @@
       C.say($('#msg-members'), T('{0} 님을 넣었습니다.', name), 'ok');
     });
 
+    $('#member-list').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var form = e.target, got = C.readDatesForm(form);
+      if (got.error) return C.say($('#msg-members'), got.error, 'err');
+      var r = await sb.from('church_mokwon').update(got.values).eq('id', form.dataset.id);
+      if (r.error) return C.say($('#msg-members'), r.error.message, 'err');
+      await loadMokwon(); renderMembers();
+      C.say($('#msg-members'), T('날짜를 저장했습니다.'), 'ok');
+    });
+
     $('#member-list').addEventListener('click', async function (e) {
       var btn = e.target.closest('button'); if (!btn) return;
       var id = e.target.closest('.list-item').dataset.id;
       var m = mokwon.find(function (x) { return x.id === id; });
       if (!m) return;
 
+      if (btn.getAttribute('type') === 'submit') return;   // 날짜 저장은 아래 submit에서
+      if (btn.classList.contains('act-dates') || btn.classList.contains('act-close')) {   // 교회 등록·생명의 삶·침례 날짜
+        var item = e.target.closest('.list-item'), open = item.querySelector('.dates-form');
+        if (open) open.remove(); else item.insertAdjacentHTML('beforeend', C.memberDatesForm(m));
+        return;
+      }
       if (btn.classList.contains('act-edit')) {
         var nm = prompt(T('이름'), m.name); if (nm === null) return;
         var tg = prompt(T('표시 (새가족·VIP 등, 비워도 됩니다)'), m.tag || ''); if (tg === null) tg = m.tag;

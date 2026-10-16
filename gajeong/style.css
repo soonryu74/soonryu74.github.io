@@ -156,6 +156,15 @@ button:disabled{opacity:.45; cursor:not-allowed; transform:none}
   display:flex; gap:12px; align-items:center; flex-wrap:wrap}
 .list-item .grow{flex:1; min-width:180px}
 .list-item .t{font-weight:700; font-size:16.5px}
+/* 성도 날짜 (교회 등록·생명의 삶·침례) */
+.dates-form{flex-basis:100%; border-top:1px dashed var(--line); padding-top:12px}
+.dates-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:4px 12px; margin-bottom:10px}
+.dates-grid label{margin:0; font-size:14px}
+.dates-grid input{margin-top:4px}
+.people-head{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:6px}
+.people-head select{width:auto; flex:1; min-width:180px}
+.people-mj{margin-top:22px}
+.people-mj h3{margin:0 0 4px; font-family:var(--serif); font-size:18px}
 .list-item .s{color:var(--muted); font-size:14px}
 
 /* ── 읽기용 본문 ─────────────────────────────────── */

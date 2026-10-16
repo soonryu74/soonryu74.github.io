@@ -332,6 +332,50 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[성도 날짜] 교회 등록·생명의 삶·침례');
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    await p.click('#member-list .list-item[data-id="w1"] .act-dates'); await p.waitForTimeout(100);
+    const f = '#member-list .list-item[data-id="w1"] .dates-form';
+    ok('목자: 날짜 칸 4개', (await p.$$(f + ' input[type=date]')).length === 4);
+    await p.fill(f + ' [name=life_start]', '2026-03-01'); await p.fill(f + ' [name=life_end]', '2026-01-01');
+    await p.click(f + ' button[type=submit]'); await p.waitForTimeout(300);
+    ok('목자: 끝이 시작보다 앞이면 막음', (await p.textContent('#msg-members')).includes('앞입니다'));
+    await p.fill(f + ' [name=registered_on]', '2024-05-12'); await p.fill(f + ' [name=life_end]', '');
+    await p.fill(f + ' [name=baptized_on]', '2025-01-05');
+    await p.click(f + ' button[type=submit]'); await p.waitForTimeout(400);
+    const w1 = (await db(p)).church_mokwon.find(x => x.id === 'w1');
+    ok('목자: 날짜 저장됨', w1.registered_on === '2024-05-12' && w1.life_start === '2026-03-01' && !w1.life_end && w1.baptized_on === '2025-01-05', JSON.stringify(w1));
+    const line = (await p.textContent('#member-list .list-item[data-id="w1"] .s')).replace(/\u00a0/g, ' ');
+    ok('목자: 명단에 날짜 줄', line.includes('교회 등록 2024. 5. 12.') && line.includes('생명의 삶 2026. 3. 1. ~ 하는 중') && line.includes('침례 2025. 1. 5.'), line);
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    await p.evaluate(() => { const d = window.__DB().church_mokwon[0]; d.baptized_on = '2025-01-05'; d.life_start = '2026-03-01'; });
+    await p.click('.tabs button[data-pane="people"]'); await p.waitForTimeout(400);
+    const txt = await p.textContent('#people-list');
+    ok('목사: 성도 명단에 목장별 목원', txt.includes('김 목장') && txt.includes('정하늘') && txt.includes('최민수'), txt);
+    ok('목사: 다른 교회 목원은 안 보임', !txt.includes('LA 목장'));
+    await p.selectOption('#pp-filter', 'nobap'); await p.waitForTimeout(100);
+    const nb = await p.textContent('#people-list');
+    ok('목사: 침례 아직 → 최민수만', nb.includes('최민수') && !nb.includes('정하늘'), nb);
+    await p.click('#people-list .list-item[data-id="w2"] .act-dates');
+    await p.fill('#people-list .dates-form [name=baptized_on]', '2026-10-11');
+    await p.click('#people-list .dates-form button[type=submit]'); await p.waitForTimeout(400);
+    ok('목사: 날짜 저장됨', (await db(p)).church_mokwon.find(x => x.id === 'w2').baptized_on === '2026-10-11');
+    ok('목사: 저장 후 필터에서 빠짐', (await p.textContent('#people-list')).includes('해당하는 분이 없습니다'));
+    ok('목사: 숫자 칸', (await p.textContent('#pp-stat')).replace(/\s/g, '').startsWith('2목원2침례1생명의 삶 하는 중'.replace(/\s/g, '')), await p.textContent('#pp-stat'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await p.addInitScript(() => localStorage.setItem('gajeong-lang', 'en'));
+    await login(p, 'pastor1');
+    await p.click('.tabs button[data-pane="people"]'); await p.waitForTimeout(400);
+    ok('영어: 성도 명단 탭·필터', (await p.textContent('.tabs')).includes('Church members') && (await p.textContent('#pp-filter')).includes('Not yet baptized'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);

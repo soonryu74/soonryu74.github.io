@@ -8,7 +8,7 @@
     if (!me) return;
     week = C.mondayOf();                 // 교회 시간대가 정해진 뒤 다시 센다
     C.header(me, T('목장 나눔터'));
-    bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch();
+    bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch(); bindPeople();
     await loadMokjangs();
     await openFromLink() || await loadWeek();
     // 화면이 열려 있는 채로 알림을 누르면 주소 끝(#j=…)만 바뀐다 — 그때도 그 일기로 간다
@@ -200,6 +200,62 @@
     });
   }
 
+  /* ── 성도 명단: 교회 등록·생명의 삶·침례 날짜 ───────── */
+  var people = [];
+  var PEOPLE_FILTER = {
+    nobap: function (m) { return !m.baptized_on; },
+    nolife: function (m) { return !m.life_start && !m.life_end; },
+    life: function (m) { return m.life_start && !m.life_end; },
+    nodate: function (m) { return !C.DATE_FIELDS.some(function (f) { return m[f.key]; }); }
+  };
+  async function loadPeople() {
+    var r = await sb.from('church_mokwon').select('*').order('sort_order').order('created_at');
+    if (r.error) return C.say($('#msg-people'), r.error.message, 'err');
+    people = r.data || [];
+    renderPeople();
+  }
+  function renderPeople() {
+    var f = PEOPLE_FILTER[$('#pp-filter').value], all = people.filter(function (m) { return m.active; });
+    $('#pp-stat').innerHTML =
+      '<div><b>' + all.length + T('</b><span>목원</span></div>') +
+      '<div><b>' + all.filter(function (m) { return m.baptized_on; }).length + T('</b><span>침례</span></div>') +
+      '<div><b>' + all.filter(PEOPLE_FILTER.life).length + T('</b><span>생명의 삶 하는 중</span></div>') +
+      '<div><b>' + all.filter(function (m) { return m.life_end; }).length + T('</b><span>생명의 삶 마침</span></div>');
+    var html = mokjangs.map(function (mj) {
+      var list = people.filter(function (m) { return m.mokjang_id === mj.id && (!f || f(m)); });
+      if (!list.length) return '';
+      return '<div class="people-mj"><h3>' + esc(mj.name) + '</h3>' + list.map(function (m) {
+        return '<div class="list-item" data-id="' + esc(m.id) + '"><div class="grow"><div class="t">' + esc(m.name) +
+          (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
+          (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
+          '<div class="s">' + (esc(C.memberDatesLine(m)) || T('날짜 없음')) + '</div></div>' +
+          T('<button class="small act-dates">날짜</button>') + '</div>';
+      }).join('') + '</div>';
+    }).join('');
+    $('#people-list').innerHTML = html || T('<p class="empty">해당하는 분이 없습니다.</p>');
+  }
+  function bindPeople() {
+    $('#pp-filter').addEventListener('change', renderPeople);
+    $('#people-list').addEventListener('click', function (e) {
+      var btn = e.target.closest('button'); if (!btn || btn.getAttribute('type') === 'submit') return;
+      var item = e.target.closest('.list-item'), m = people.find(function (x) { return x.id === item.dataset.id; });
+      if (!m) return;
+      var open = item.querySelector('.dates-form');
+      if (open) open.remove(); else item.insertAdjacentHTML('beforeend', C.memberDatesForm(m));
+    });
+    $('#people-list').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var form = e.target, got = C.readDatesForm(form);
+      if (got.error) return C.say($('#msg-people'), got.error, 'err');
+      var r = await sb.from('church_mokwon').update(got.values).eq('id', form.dataset.id);
+      if (r.error) return C.say($('#msg-people'), r.error.message, 'err');
+      var m = people.find(function (x) { return x.id === form.dataset.id; });
+      if (m) Object.assign(m, got.values);
+      renderPeople();
+      C.say($('#msg-people'), T('{0} 님 날짜를 저장했습니다.', m ? m.name : ''), 'ok');
+    });
+  }
+
   function bindTabs() {
     $$('.tabs button').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -209,6 +265,7 @@
         $('#pane-' + b.dataset.pane).classList.add('on');
         if (b.dataset.pane === 'gather') loadGather();
         if (b.dataset.pane === 'manage') renderManage();
+        if (b.dataset.pane === 'people') loadPeople();
         window.scrollTo(0, 0);
       });
     });

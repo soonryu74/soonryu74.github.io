@@ -439,6 +439,44 @@ window.CHURCH = (function () {
     $$('.lang-btn', root).forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.lang); }); });
   }
 
+  /* ── 성도 날짜 (교회 등록·생명의 삶·침례) — 목자 화면·목사 화면이 함께 쓴다 ── */
+  var DATE_FIELDS = [
+    { key: 'registered_on', label: '교회 등록' },
+    { key: 'life_start', label: '생명의 삶 시작' },
+    { key: 'life_end', label: '생명의 삶 끝' },
+    { key: 'baptized_on', label: '침례' }
+  ];
+  function dayText(v) {
+    if (!v) return '';
+    var p = v.split('-').map(Number);
+    if (LANG === 'en') return MON[p[1] - 1] + ' ' + p[2] + ', ' + p[0];
+    return p[0] + '. ' + p[1] + '. ' + p[2] + '.';
+  }
+  function memberDatesLine(m) {
+    var out = [];
+    if (m.registered_on) out.push(t('교회 등록') + ' ' + dayText(m.registered_on));
+    if (m.life_start || m.life_end)
+      out.push(t('생명의 삶') + ' ' + (dayText(m.life_start) || '?') + ' ~ ' + (m.life_end ? dayText(m.life_end) : (m.life_start ? t('하는 중') : '?')));
+    if (m.baptized_on) out.push(t('침례') + ' ' + dayText(m.baptized_on));
+    return out.map(function (x) { return x.replace(/ /g, '\u00a0'); }).join(' · ');   // 날짜 하나가 두 줄로 갈라지지 않게
+  }
+  function memberDatesForm(m) {
+    return '<form class="dates-form" data-id="' + esc(m.id) + '"><div class="dates-grid">' +
+      DATE_FIELDS.map(function (f) {
+        return '<label>' + esc(t(f.label)) + '<input type="date" name="' + f.key + '" value="' + esc(m[f.key] || '') + '"></label>';
+      }).join('') + '</div><div class="row">' +
+      '<button class="primary small" type="submit">' + esc(t('날짜 저장')) + '</button>' +
+      '<button class="small act-close" type="button">' + esc(t('닫기')) + '</button></div>' +
+      '<p class="hint">' + esc(t('모르는 날짜는 비워 두셔도 됩니다.')) + '</p></form>';
+  }
+  // 고른 날짜를 읽는다 — 틀리면 { error }
+  function readDatesForm(form) {
+    var v = {};
+    DATE_FIELDS.forEach(function (f) { v[f.key] = form.elements[f.key].value || null; });
+    if (v.life_start && v.life_end && v.life_end < v.life_start) return { error: t('생명의 삶 끝난 날이 시작한 날보다 앞입니다.') };
+    return { values: v };
+  }
+
   return {
     sb: sb, $: $, $$: $$, esc: esc, say: say,
     mondayOf: mondayOf, addWeeks: addWeeks, weekLabel: weekLabel, weekShort: weekShort,
@@ -452,6 +490,7 @@ window.CHURCH = (function () {
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave,
+    DATE_FIELDS: DATE_FIELDS, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();

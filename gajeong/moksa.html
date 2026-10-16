@@ -23,13 +23,14 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610161215">
+<link rel="stylesheet" href="style.css?v=202610161300">
 </head>
 <body>
 <div class="wrap wrap-wide">
   <div class="tabs noprint">
     <button data-pane="week" class="on">주간 현황</button>
     <button data-pane="gather">기도제목 모아보기</button>
+    <button data-pane="people">성도 명단</button>
     <button data-pane="manage">목장·목자 관리</button>
   </div>
 
@@ -76,6 +77,26 @@ try { (function (m, q) { var s = q.get('c');
   </section>
 
   <!-- ── 관리 ────────────────────────────────────── -->
+  <!-- ── 성도 명단 (교회 등록·생명의 삶·침례 날짜) ── -->
+  <section class="pane" id="pane-people">
+    <div class="card">
+      <h2>성도 명단</h2>
+      <p class="desc">목장마다 목원의 교회 등록, 생명의 삶, 침례 날짜를 넣고 봅니다. 목자도 자기 목원 날짜를 넣을 수 있습니다.</p>
+      <div class="people-head">
+        <select id="pp-filter" aria-label="보기">
+          <option value="">모두 보기</option>
+          <option value="nobap">침례 아직</option>
+          <option value="nolife">생명의 삶 아직</option>
+          <option value="life">생명의 삶 하는 중</option>
+          <option value="nodate">날짜를 하나도 안 넣은 분</option>
+        </select>
+      </div>
+      <div class="stat" id="pp-stat"></div>
+      <div class="msg" id="msg-people"></div>
+      <div id="people-list"><p class="empty">불러오는 중…</p></div>
+    </div>
+  </section>
+
   <section class="pane" id="pane-manage">
     <div class="card">
       <h2>휴대전화 알림</h2>
@@ -217,9 +238,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610161215"></script>
-<script src="common.js?v=202610161215"></script>
-<script src="moksa.js?v=202610161215"></script>
+<script src="lang-en.js?v=202610161300"></script>
+<script src="common.js?v=202610161300"></script>
+<script src="moksa.js?v=202610161300"></script>
 
 </body>
 </html>
