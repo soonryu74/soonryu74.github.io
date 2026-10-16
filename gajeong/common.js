@@ -276,7 +276,7 @@ window.CHURCH = (function () {
   }
   // 교회 전용 주소 /코드/ — 카카오톡 미리보기에 교회 이름·로고가 뜬다 (GitHub Actions가 만들어 둠, 없으면 404.html이 넘겨 줌)
   function churchLink(c) {
-    return location.origin + location.pathname.replace(/[^/]*$/, '') + encodeURIComponent(c.slug) + '/';
+    return new URL(encodeURIComponent(c.slug) + '/', document.baseURI).href;   // 교회 주소(/코드/)에서 열어도 맨 위 기준
   }
 
   /* ── 계정 ────────────────────────────────────────────── */
