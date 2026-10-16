@@ -22,6 +22,7 @@ script.json:
 from __future__ import annotations
 
 import math
+import random
 import subprocess
 import sys
 import wave
@@ -29,7 +30,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 
-from common import FPS, GOLD, NAVY, WHITE, DIM, F, ff, fit_cover, load, navy_bg, rich_len
+from common import FPS, GOLD, NAVY, WHITE, DIM, F, ff, fit_cover, load, navy_bg, rich_len, wrap
 
 XF = 0.22   # 장면 들고 나는 페이드
 
@@ -54,8 +55,9 @@ class Stage:
         self.accent = tuple(accent)
         self.cache: dict = {}
 
-    def text(self, s: str, kind: str, size: int, color=WHITE) -> Image.Image:
-        key = (s, kind, size, color)
+    def text(self, s: str, kind: str, size: int, color=WHITE, accent=None) -> Image.Image:
+        acc = accent or self.accent
+        key = (s, kind, size, color, acc)
         if key in self.cache:
             return self.cache[key]
         f = F(kind, size)
@@ -66,7 +68,7 @@ class Stage:
             if not part:
                 continue
             d.text((x + 4, 10), part, font=f, fill=(0, 0, 0, 150))
-            d.text((x, 4), part, font=f, fill=self.accent if i % 2 else color, stroke_width=2, stroke_fill=NAVY)
+            d.text((x, 4), part, font=f, fill=acc if i % 2 else color, stroke_width=0 if (i % 2 and acc == NAVY) else 2, stroke_fill=NAVY)
             x += f.getlength(part)
         self.cache[key] = im
         return im
@@ -120,8 +122,69 @@ def block_y(st: Stage, heights: list[int], gap: int) -> list[float]:
     return out
 
 
+# ───────── 한글 자모 (IME 처럼 한 획씩 조립) ─────────
+CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ"
+
+
+def jamo_stages(ch: str) -> list[str]:
+    """'한' → ['ㅎ', '하', '한'] — 초성 → 초성+중성 → 완성"""
+    o = ord(ch) - 0xAC00
+    if not 0 <= o < 11172:
+        return [ch]
+    cho, jung, jong = o // 588, (o % 588) // 28, o % 28
+    st = [CHO[cho], chr(0xAC00 + cho * 588 + jung * 28)]
+    if jong:
+        st.append(ch)
+    return st
+
+
+def typed(text: str, n: float, jamo: bool) -> str:
+    """앞에서부터 n 단계만큼 친 글자(별표 강조 표시는 유지)"""
+    out, k = "", 0.0
+    for ch in text:
+        if ch == "*":
+            out += ch; continue
+        stages = jamo_stages(ch) if jamo else [ch]
+        if n - k >= len(stages):
+            out += ch; k += len(stages)
+        else:
+            i = int(n - k)
+            if i >= 1:
+                out += stages[min(i, len(stages)) - 1]
+            break
+    if out.count("*") % 2:
+        out += "*"
+    return out
+
+
+def total_steps(text: str, jamo: bool) -> int:
+    return sum(len(jamo_stages(c)) if jamo else 1 for c in text if c != "*")
+
+
+DECODE_POOL = "가나다라마바사아자차카타파하#%&@*+=<>01"
+
+# ───────── 오토샘 모션 메뉴: 코드 · 이름 → 장면 종류 ─────────
+MENU = {
+    "O01": ("title", "여는 제목"), "O02": ("end", "끝 화면"),
+    "T01": ("type", "타자 치기"), "T02": ("jamo", "한글 자모 타자"), "T03": ("slam", "글자 쾅"),
+    "T04": ("pop", "단어 튀어나오기"), "T05": ("rise", "단어 올라오기"), "T06": ("decode", "해독 글자"),
+    "T07": ("wipe", "줄 닦기"), "T08": ("slide", "좌우에서 밀기"), "T09": ("highlight", "형광펜 칠하기"),
+    "T10": ("underline", "밑줄 긋기"), "T11": ("strike", "지우고 고쳐 쓰기"), "T12": ("stack", "우르르 쌓기"),
+    "T13": ("wave", "물결 글자"), "T14": ("quote", "인용 카드"),
+    "N01": ("count", "숫자 올라가기"), "N02": ("list", "목록 차례로"), "B01": ("stamp", "도장 쾅"),
+}
+NAMES = {name: kind for kind, name in MENU.values()}
+
+
+def resolve(kind: str) -> str:
+    """'T03' · '글자 쾅' · 'slam' 어느 것으로 써도 장면 종류로"""
+    if kind in MENU:
+        return MENU[kind][0]
+    return NAMES.get(kind, kind)
+
+
 def draw_scene(st: Stage, sc: dict, t: float, frame: Image.Image) -> None:
-    k = sc["type"]; X0 = st.X0
+    k = resolve(sc["type"]); X0 = st.X0
     if k == "title":
         lines = sc["lines"]; sz = st.fitsize(lines, "black", st.big)
         ims = [st.text(l, "black", sz) for l in lines]
@@ -207,6 +270,148 @@ def draw_scene(st: Stage, sc: dict, t: float, frame: Image.Image) -> None:
         if sc.get("sub"):
             sub = st.text(sc["sub"], "bold", st.small + 10, WHITE)
             put(frame, sub, st.W / 2, cy + box.height / 2 + 90, alpha=out3((t - 0.7) / 0.4), anchor="c")
+    elif k in ("type", "jamo"):
+        jm = k == "jamo" or sc.get("jamo", False)
+        lines = sc["lines"]; sz = st.fitsize(lines, "black", st.mid)
+        steps = [total_steps(l, jm) for l in lines]
+        rate = sc.get("rate", 22 if jm else 14)  # 초당 단계
+        ys = block_y(st, [int(sz * 1.35) + 20] * len(lines), 12)
+        n_all = max(0.0, t - 0.2) * rate; done = 0
+        for i, (l, y) in enumerate(zip(lines, ys)):
+            n = n_all - done; done += steps[i] + 3
+            if n <= 0:
+                break
+            part = typed(l, n, jm)
+            if part.strip("*"):
+                im = st.text(part, "black", sz); put(frame, im, X0, y)
+                cur_x = X0 + rich_len(part, F("black", sz)) + 10
+            else:
+                cur_x = X0 + 6
+            if n < steps[i] + 3 and int(t * 2.4) % 2 == 0:  # 깜빡이는 커서
+                ImageDraw.Draw(frame).rectangle((cur_x, y + 14, cur_x + 8, y + sz * 1.2), fill=st.accent + (255,))
+    elif k == "slam":
+        sz = st.fitsize([sc["text"]], "black", int(st.big * 1.15))
+        im = st.text(sc["text"], "black", sz)
+        p = (t - 0.15) / 0.2
+        if p > 0:
+            sh = (14 * math.sin(t * 70) * max(0.0, 1 - (t - 0.35) / 0.3)) if t > 0.35 else 0
+            put(frame, im, st.W / 2 + sh, (st.top + st.bot) / 2 + sh * 0.5, scale=1 + 2.2 * (1 - out3(p)), alpha=min(1, p * 3), anchor="c")
+            fl = max(0.0, 1 - (t - 0.35) / 0.25) if t > 0.35 else 0
+            if fl > 0:
+                frame.alpha_composite(Image.new("RGBA", frame.size, (255, 255, 255, int(150 * fl))))
+        if sc.get("sub"):
+            sub = st.text(sc["sub"], "bold", st.small + 10, WHITE)
+            put(frame, sub, st.W / 2, (st.top + st.bot) / 2 + im.height * 0.75, alpha=out3((t - 0.8) / 0.4), anchor="c")
+    elif k == "rise":
+        lines = sc["lines"]; sz = st.fitsize(lines, "black", st.mid); f = F("black", sz)
+        ys = block_y(st, [int(sz * 1.35) + 20] * len(lines), 12); n = 0
+        for l, y in zip(lines, ys):
+            x = X0
+            for w in accent_words(l):
+                im = st.text(w, "black", sz); p = out3((t - 0.15 - n * 0.12) / 0.45)
+                if p > 0:
+                    h = int(im.height * p) or 1
+                    crop = im.crop((0, 0, im.width, h))
+                    put(frame, crop, x, y + im.height - h)
+                x += rich_len(w, f) + f.getlength(" "); n += 1
+    elif k == "decode":
+        lines = sc["lines"]; sz = st.fitsize(lines, "black", st.mid)
+        ys = block_y(st, [int(sz * 1.35) + 20] * len(lines), 12)
+        rnd = random.Random(int(t * 18)); idx = 0
+        for l, y in zip(lines, ys):
+            out = ""
+            for ch in l:
+                if ch in "* ":
+                    out += ch; continue
+                lock = 0.25 + idx * 0.06; idx += 1
+                out += ch if t >= lock + 0.35 else (rnd.choice(DECODE_POOL) if t >= lock else "")
+            if out.count("*") % 2:
+                out += "*"
+            if out.strip("* "):
+                put(frame, st.text(out, "black", sz), X0, y)
+    elif k in ("highlight", "underline"):
+        lines = sc["lines"]; sz = st.fitsize(lines, "black", st.mid); f = F("black", sz)
+        d = ImageDraw.Draw(frame)
+        ys = block_y(st, [int(sz * 1.35) + 20] * len(lines), 16)
+        for i, (l, y) in enumerate(zip(lines, ys)):
+            a = out3((t - 0.1 - i * 0.2) / 0.35)
+            segs = l.split("*")
+            base = st.text(l if k == "underline" else l.replace("*", ""), "black", sz)
+            navy = st.text(l, "black", sz, WHITE, NAVY) if k == "highlight" else None
+            cuts, x = [], 0.0
+            for j, seg in enumerate(segs):
+                w = f.getlength(seg)
+                if j % 2 and seg:
+                    p = out3((t - 0.6 - i * 0.25) / 0.45)
+                    if p > 0:
+                        bx0, bx1 = X0 + x - 6, X0 + x - 6 + (w + 12) * p
+                        if k == "highlight":
+                            d.rectangle((bx0, y + sz * 0.22, bx1, y + sz * 1.28), fill=st.accent + (255,))
+                            cuts.append((int(bx0 - X0), int(bx1 - X0)))
+                        else:
+                            d.rounded_rectangle((X0 + x, y + sz * 1.2, X0 + x + w * p, y + sz * 1.2 + 10), 5, fill=st.accent + (255,))
+                x += w
+            if cuts:  # 칠이 지나간 곳: 흰 글자를 비우고 같은 자리에 남색 글자
+                base = base.copy(); bd = ImageDraw.Draw(base)
+                for c0, c1 in cuts:
+                    bd.rectangle((max(0, c0), 0, c1, base.height), fill=(0, 0, 0, 0))
+            put(frame, base, X0, y, alpha=a)
+            for c0, c1 in cuts:
+                c0 = max(0, c0)
+                put(frame, navy.crop((c0, 0, min(navy.width, c1), navy.height)), X0 + c0, y, alpha=a)
+    elif k == "strike":
+        sz = st.fitsize([sc["wrong"], sc["right"]], "black", st.mid); f = F("black", sz)
+        wr = st.text(sc["wrong"], "black", sz, DIM); rt = st.text(sc["right"], "black", sz)
+        ys = block_y(st, [wr.height, rt.height], 30)
+        put(frame, wr, X0, ys[0], alpha=out3((t - 0.1) / 0.3))
+        p = out3((t - 0.7) / 0.35)
+        if p > 0:
+            ww = rich_len(sc["wrong"], f)
+            ImageDraw.Draw(frame).rectangle((X0 - 6, ys[0] + sz * 0.62, X0 - 6 + (ww + 12) * p, ys[0] + sz * 0.62 + 12), fill=(232, 80, 80, 255))
+        q = (t - 1.15) / 0.4
+        put(frame, rt, X0 + 40 * (1 - out3(q)), ys[1], scale=0.9 + 0.1 * back(q), alpha=out3(q))
+    elif k == "stack":
+        sz = st.fitsize([sc["text"]], "black", st.big); f = F("black", sz)
+        chars = [c for c in sc["text"].replace("*", "")]
+        tw = rich_len(sc["text"], f); x = (st.W - tw) / 2; y0 = (st.top + st.bot) / 2 - sz / 2
+        acc_on, acc = False, []
+        for c in sc["text"]:
+            if c == "*":
+                acc_on = not acc_on; continue
+            acc.append(acc_on)
+        for i, (c, on) in enumerate(zip(chars, acc)):
+            w = f.getlength(c)
+            if c != " ":
+                p = (t - 0.1 - i * 0.07) / 0.5
+                if p > 0:
+                    yy = y0 - 700 * (1 - min(1, p)) ** 2 if p < 1 else y0 - 26 * math.sin(min(1, (p - 1) * 3) * math.pi) * max(0, 1 - (p - 1) * 3)
+                    put(frame, st.text(("*" + c + "*") if on else c, "black", sz), x, yy, alpha=min(1, p * 4))
+            x += w
+    elif k == "wave":
+        sz = st.fitsize([sc["text"]], "black", st.big); f = F("black", sz)
+        tw = rich_len(sc["text"], f); x = (st.W - tw) / 2; y0 = (st.top + st.bot) / 2 - sz / 2
+        on, i = False, 0
+        for c in sc["text"]:
+            if c == "*":
+                on = not on; continue
+            w = f.getlength(c)
+            if c != " ":
+                a = out3((t - 0.1 - i * 0.05) / 0.3)
+                yy = y0 + 34 * math.sin(t * 5 - i * 0.55)
+                put(frame, st.text(("*" + c + "*") if on else c, "black", sz), x, yy, alpha=a)
+            x += w; i += 1
+    elif k == "quote":
+        sz = st.mid - 20; lines = wrap(sc["text"], F("bold", sz), st.maxw - 40)
+        ims = [st.text(l, "bold", sz) for l in lines]
+        by = sc.get("by"); by_im = st.text("— " + by, "semi", st.small, DIM) if by else None
+        hts = [180] + [im.height for im in ims] + ([by_im.height + 30] if by_im else [])
+        ys = block_y(st, hts, 10)
+        q = st.text("“", "black", 260, st.accent)
+        put(frame, q, X0 - 10, ys[0] - 40, alpha=out3(t / 0.35), scale=0.8 + 0.2 * back(t / 0.45))
+        for i, (im, y) in enumerate(zip(ims, ys[1:])):
+            p = out3((t - 0.35 - i * 0.22) / 0.45); put(frame, im, X0 + 20, y + 20 * (1 - p), alpha=p)
+        if by_im:
+            put(frame, by_im, X0 + 20, ys[-1] + 30, alpha=out3((t - 0.9) / 0.4))
     elif k == "end":
         lines = sc["lines"]; sz = st.fitsize(lines, "black", st.mid)
         ims = [st.text(l, "black", sz) for l in lines]
