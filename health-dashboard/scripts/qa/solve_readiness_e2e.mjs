@@ -132,10 +132,10 @@ for (const [w, h] of VPS) {
   const t = await pg.locator(".rmr-sentence").innerText();
   check(["38.4%(95% 신뢰구간 34.7~42.1%)", "258곳 중 값이 높은 순 58번째(상위 약 22%)", "수도권 101곳 중 값이 높은 순 19번째(상위 약 19%)", "3.0%p 높지만", "통계적으로 유의하지 않다", "31.3%)와는 7.1%p(1.23배)"].every((x) => t.includes(x)), "우리 지역 읽기: 발표 예시(경기 광주시 비만율) 해석 문장 재현");
   check((await pg.locator(".rmr-steps > li").count()) === 5, "우리 지역 읽기 5단계");
-  const rows = await pg.locator(".gr-tbl tbody tr").allInnerTexts();
+  const rows = await pg.locator(".gap-main .gr-tbl tbody tr").allInnerTexts();
   check(rows.length === 3 && /24\.9%p/.test(rows[0]) && /7\.3%p/.test(rows[1]) && /1\.23배/.test(rows[1]), `격차 읽기 3방식(최대−최소 24.9%p · 경계값 7.3%p·1.23배): ${rows.map((r) => r.split("\t")[0]).join(" / ")}`);
   await pg.goto(`${BASE}/index.html#view=analysis&ind=DT_H_OBE_OBE&sido=008&year=2025&scope=sidoAll`, { waitUntil: "load" }); await pg.waitForTimeout(800);
-  check(/30곳 이하라 쓰지 않음/.test(await pg.locator(".gap-read").innerText()), "17개 시도 비교에서는 분위 방식 미적용 표시");
+  check(/30곳 이하라 쓰지 않음/.test(await pg.locator(".gap-main").innerText()), "17개 시도 비교에서는 분위 방식 미적용 표시");
   await pg.close();
 }
 // 아르곤 검토 반영(2026-10-14): ③ 점수 구성 막대 · ④ 표 서식째 복사 · ① 계획 수립 단계 안내 띠
@@ -173,6 +173,23 @@ for (const [w, h] of VPS) {
     check(c.tbl >= 3 && c.inl && !c.btn && c.src, `${v}: 표 서식째 복사 — 클립보드 HTML 표 ${c.tbl}개(인라인 테두리, 버튼 제외, 출처 포함)`);
   }
   await ctx.close();
+}
+// WHO 건강 불평등 모니터링 기준(2026-10-16): 분포 요약지표·박탈 경사·자료원 대응표
+{
+  const pg = await b.newPage({ viewport: { width: 390, height: 900 } });
+  await pg.goto(`${BASE}/index.html#view=analysis&ind=DT_H_OBE_OBE&sido=008&sgg=00819&year=2025&scope=nation`, { waitUntil: "load" });
+  await pg.waitForSelector("details.dist-sum"); await pg.waitForTimeout(500);
+  const sum = await pg.locator("details.dist-sum summary").innerText();
+  check(/COV 12\.4%/.test(sum) && /MDMU 3\.4%p/.test(sum) && /258곳/.test(sum), `분포 요약지표: ${sum.replace(/\s+/g, " ").slice(0, 90)}`);
+  await pg.locator("details.dist-sum summary").click(); await pg.waitForTimeout(200);
+  check((await pg.locator("details.dist-sum tbody tr").count()) >= 5, "분포 요약지표 연도 표");
+  const sii = await pg.locator(".sii-read").innerText();
+  check(/경사불평등지수\(SII/.test(sii) && /상대불평등지수\(RII/.test(sii) && /95% 구간/.test(sii) && /\+4\.4%p/.test(sii) && /1\.13배/.test(sii), "건강형평성 카드: 박탈 경사 SII·RII(비만율 +4.4%p · 1.13배)");
+  check(await pg.evaluate(() => document.documentElement.scrollWidth - innerWidth) <= 1, "390px 지표 분석 가로 넘침 없음(새 표 포함)");
+  await pg.goto(`${BASE}/index.html#view=sources`, { waitUntil: "load" }); await pg.waitForSelector(".who-mon");
+  const who = await pg.locator(".who-mon").innerText();
+  check(/① 범위 정하기/.test(who) && /⑤ 지식 전환/.test(who) && /성별·연령·소득·교육/.test(who), "자료원 탭: WHO 5단계 대응표·한계");
+  await pg.close();
 }
 // 메인 공유·검색 기본값(카톡·네이버·구글 미리보기): 설명·canonical·OG·JSON-LD, 미리보기 그림 1200×630
 {

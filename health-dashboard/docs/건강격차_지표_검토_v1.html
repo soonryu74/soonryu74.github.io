@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"지역 간 건강격차 지표 — 참고문헌 기준 검토와 대시보드 반영안","url":"/health-dashboard/docs/%EA%B1%B4%EA%B0%95%EA%B2%A9%EC%B0%A8_%EC%A7%80%ED%91%9C_%EA%B2%80%ED%86%A0_v1.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=536036d2466c45a08cf8f356c887ea5b31fce06f">
+    <link rel="stylesheet" href="/assets/css/style.css?v=a5fe11aa2c6b1c3ac8464c8bf2f421766703795b">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -673,15 +673,54 @@
       <td><code class="language-plaintext highlighter-rouge">KDCA_REGIONS</code>(수도권 서울·인천·경기·강원 / 충청권 대전·세종·충북·충남 / 호남권 광주·전북·전남·제주 / 경북권 대구·경북 / 경남권 부산·울산·경남)</td>
     </tr>
     <tr>
-      <td>P4~P7</td>
+      <td>P5·P6</td>
+      <td>○ (2026-10-16)</td>
+      <td>9절 참조 — 분포 요약지표 COV·MDMU·IDISU, 박탈 경사 SII·RII</td>
+    </tr>
+    <tr>
+      <td>P7·P8</td>
       <td>미반영</td>
-      <td>COV·MDMU·IDISU, SII·RII, 건강수명 HP2030 방식은 다음 단계</td>
+      <td>건강수명 HP2030 방식, 기여 위험(PAR·PAF)은 다음 단계</td>
     </tr>
   </tbody>
 </table>
 
 <p><strong>재현 검증</strong>: 발표 19~24쪽 예시(경기 OO시 = 경기 광주시, 2025 비만율 표준화)를 화면이 그대로 만든다 — 258곳 하위 20% 31.3·중앙값 35.4·상위 20% 38.6, 전국 58번째(상위 약 22%), 수도권 101곳 중 19번째(상위 약 19%), 경기 48곳 중 7번째, RSE 4.9%, 95% CI 34.7~42.1(중앙값 포함 → 유의하지 않음), 하위 20% 경계와 7.1%p(1.23배), 전국 경계값 격차 7.3%p(1.23배), 최대−최소 24.9%p(2.15배). 단위 테스트(<code class="language-plaintext highlighter-rouge">app/tests/data.test.js</code>·<code class="language-plaintext highlighter-rouge">equity.test.js</code>)와 브라우저 점검(<code class="language-plaintext highlighter-rouge">scripts/qa/solve_readiness_e2e.mjs</code>)에 고정.
 <strong>발표와 다른 점</strong>: 발표 표는 서울(25곳)·인천(10곳) 같은 30곳 이하 시도에도 20% 경계를 적었지만, 우리는 WHO HEAT 기준대로 30곳 이하에서는 경계를 비워 둔다(순위만 표시).</p>
+
+<h2 id="9-who-건강-불평등-모니터링-기준-반영2026-10-16">9. WHO 건강 불평등 모니터링 기준 반영(2026-10-16)</h2>
+
+<p>계기: 소유자가 WHO 도구·자료를 가르치는 강좌(The GRAPH Courses 「Health Inequality Monitoring 101」, The GRAPH Network·Bloomberg Philanthropies Data for Health 지원, 2026-10-22~12-10)를 보고 반영 여부를 물음. 강좌 안내 페이지에는 세부 강의안이 없어 강좌가 다룬다고 밝힌 WHO 모니터링 5단계(R3)와 HEAT 요약지표(R2)를 기준으로 대조. 소유자 선택: 「SII·RII 추가」「COV·MDMU·IDISU 추가」「WHO 5단계 대응표·한계 문구」.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>반영</th>
+      <th>위치</th>
+      <th>계산</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>분포 요약지표(P5)</td>
+      <td>지표 분석 「격차 읽기」 아래 접기 「분포 요약지표(연구자용)」 — 현재 연도 + 최근 10년 표</td>
+      <td><code class="language-plaintext highlighter-rouge">gapMeasures.js distSummary</code> — COV = SD(모집단)/평균×100, MDMU = Σ|y−평균|/n, IDISU = MDMU/평균×100, <strong>비가중</strong>, 비교 범위는 격차 읽기와 같음</td>
+    </tr>
+    <tr>
+      <td>박탈 경사(P6)</td>
+      <td>지표 분석 「건강형평성」 카드 — SII(95% 구간)·RII + 해석 한 줄 + 최근 10년 추이</td>
+      <td><code class="language-plaintext highlighter-rouge">siiRii</code>·<code class="language-plaintext highlighter-rouge">quintileRidits</code> — 시군구마다 소속 박탈 분위의 누적 비율 중간점(0 = 가장 덜 박탈 … 1 = 가장 박탈)에 놓고 지역 단위 비가중 최소제곱. SII = 기울기(95% 구간 ±1.96·SE), RII = ŷ(1)/ŷ(0). 95% 구간이 0을 포함하면 「뚜렷한 경사 아님」</td>
+    </tr>
+    <tr>
+      <td>5단계 대응표·한계</td>
+      <td>자료원 탭 카드 「건강 불평등 모니터링 기준(WHO)과 이 대시보드」</td>
+      <td>①범위 ②자료 ③분석(단순·복합·시간) ④보고 ⑤지식 전환 × 대시보드 기능 / 없는 것: 성·연령·소득·교육·도시농촌별 비교(KOSIS 시군구 교차표 없음), 인구 가중 지표, PAR·PAF</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>재현 값</strong>: 2025 비만율(표준화) 258곳 COV 12.4% · MDMU 3.43%p · IDISU 9.8% (5.1절 계획값과 일치, <code class="language-plaintext highlighter-rouge">app/tests/data.test.js</code> 고정). 2025 박탈 경사(시군구 227곳): 현재흡연율 SII +4.66%p(3.16~6.15)·RII 1.30, 비만율 +4.39%p(2.45~6.33)·1.13, 자살 표준화사망률 +1.29(−1.82~4.41, 뚜렷한 경사 아님)·1.06.
+<strong>한계</strong>: 모두 지역 평균끼리의 비교(생태학적)라 개인 소득·학력 격차가 아니다. 비가중이라 표본이 작은 지역 값도 같은 비중. 박탈 분위는 2020년 기준 고정.</p>
 
 <h2 id="참고문헌">참고문헌</h2>
 

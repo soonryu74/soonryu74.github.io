@@ -85,6 +85,44 @@ export function gapChangeType(a, b, bad) {
   return { type: "widen", good: false, label: "격차 확대", why: "격차가 벌어짐" };
 }
 
+/** 분포 요약지표(비서열 다집단 — 전국 시군구·시도처럼 순서가 없는 지역 집단). WHO HEAT Plus 기술노트 v4.0 정의, 비가중.
+ *  COV = 표준편차 ÷ 평균 × 100(상대), MDMU = 평균으로부터의 평균 절대차(절대, 지표 단위), IDISU = MDMU ÷ 평균 × 100(상대).
+ *  결측은 빼고 계산(0으로 바꾸지 않음). 평균이 0 이하이면 상대지표는 null. */
+export function distSummary(values) {
+  const a = values.filter((v) => v != null && Number.isFinite(v));
+  const n = a.length;
+  if (n < 2) return null;
+  const m = mean(a);
+  const sd = Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / n);   // 모집단 표준편차(HEAT 와 같이 n 으로 나눔)
+  const mdmu = a.reduce((s, x) => s + Math.abs(x - m), 0) / n;
+  return { n, mean: m, sd, mdmu, cov: m > 0 ? (sd / m) * 100 : null, idisu: m > 0 ? (mdmu / m) * 100 : null };
+}
+
+/** 서열 집단(박탈 분위)의 분위별 누적 비율 중간점(ridit). counts = [1분위 지역 수, …, 5분위 지역 수] → [x1…x5] (0~1) */
+export function quintileRidits(counts) {
+  const tot = counts.reduce((s, c) => s + c, 0);
+  let cum = 0;
+  return counts.map((c) => { const x = tot ? (cum + c / 2) / tot : null; cum += c; return x; });
+}
+
+/** 경사불평등지수(SII)·상대불평등지수(RII) — 서열 집단용 복합지표(Keppel 2005 지침 10, WHO HEAT).
+ *  points = [{x: 순위 위치 0(가장 덜 박탈)~1(가장 박탈), y: 지역 값}], 지역 단위 비가중 최소제곱 회귀.
+ *  SII = 기울기(가장 덜 박탈 → 가장 박탈 끝의 값 차이, 95% CI), RII = ŷ(1) ÷ ŷ(0). 결측 지역은 뺀다. */
+export function siiRii(points) {
+  const p = points.filter((q) => q && q.y != null && Number.isFinite(q.y) && q.x != null && Number.isFinite(q.x));
+  const n = p.length;
+  if (n < 3) return null;
+  const mx = mean(p.map((q) => q.x)), my = mean(p.map((q) => q.y));
+  const sxx = p.reduce((s, q) => s + (q.x - mx) ** 2, 0);
+  if (sxx === 0) return null;
+  const sii = p.reduce((s, q) => s + (q.x - mx) * (q.y - my), 0) / sxx;
+  const b0 = my - sii * mx;
+  const rss = p.reduce((s, q) => s + (q.y - (b0 + sii * q.x)) ** 2, 0);
+  const se = Math.sqrt(rss / (n - 2) / sxx);
+  const y0 = b0, y1 = b0 + sii;
+  return { n, sii, se, lo: sii - 1.96 * se, hi: sii + 1.96 * se, y0, y1, rii: y0 > 0 ? y1 / y0 : null };
+}
+
 /** 정밀도 판정(지역사회건강조사 표본오차): RSE 20% 초과는 대시보드 순위 제외 기준(CHR&R), 30% 이상은 통계청 인용 주의 기준. */
 export function precisionNote(rse) {
   if (rse == null) return null;

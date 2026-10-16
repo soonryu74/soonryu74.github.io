@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-16",
- "build": "f00425c",
+ "generated": "2026-10-17",
+ "build": "54c6d3f",
  "korea": {
   "indicators": 171,
   "survey_indicators": 41,
@@ -12,7 +12,7 @@
   "year_last": 2025,
   "source_groups": 9,
   "directional_indicators": 154,
-  "references": 28
+  "references": 30
  },
  "global": {
   "economies": 217,
@@ -31,12 +31,12 @@
  },
  "reviews_published": 0,
  "qa": {
-  "unit_tests": 22,
+  "unit_tests": 25,
   "browser_suites": 7,
-  "browser_checks": 405,
+  "browser_checks": 410,
   "all_ok": true,
-  "last_run": "2026-10-16 16:21 KST",
-  "commit": "f00425c"
+  "last_run": "2026-10-17 00:33 KST",
+  "commit": "54c6d3f"
  },
- "qa_line": "All passed — 22 unit tests; 7 browser test suites with 405 checks (last run 2026-10-16 16:21 KST, commit f00425c)"
+ "qa_line": "All passed — 25 unit tests; 7 browser test suites with 410 checks (last run 2026-10-17 00:33 KST, commit 54c6d3f)"
 }
