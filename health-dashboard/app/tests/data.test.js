@@ -99,3 +99,13 @@ test("발표 예시 재현: 2025 비만율(표준화) 조사 단위 258곳 하�
   assert.equal(kdcaPoolOf(ind, KDCA_REGIONS[0]).length, 101);
   assert.equal(KDCA_REGIONS.flatMap((k) => k.sidos).length, 17);
 });
+
+test("출처 표기: 사망원인통계 경유 지표는 원 출처가 먼저, 「지역사회건강조사 DB」 표기 없음", () => {
+  const sui = INDICATORS.find((i) => i.id === "K_MORT_SUI");
+  assert.ok(sui.src.startsWith("원 출처 국가데이터처 「사망원인통계」"), sui.src);
+  assert.ok(/KOSIS 원표\(DT_1B34E13\)에서 직접/.test(sui.src) && /경유/.test(sui.src), sui.src);
+  const kdh = INDICATORS.filter((i) => i.kdh);
+  assert.ok(kdh.length >= 100);
+  assert.deepEqual(kdh.filter((i) => /지역사회건강조사 DB/.test(i.src)).map((i) => i.id), []);
+  assert.deepEqual(kdh.filter((i) => !/^원 출처 /.test(i.src)).map((i) => i.id), []);
+});
