@@ -8,6 +8,7 @@
     if (!me) return;
     week = C.mondayOf();                 // 교회 시간대가 정해진 뒤 다시 센다
     C.header(me, T('목장 나눔터'));
+    if (C.has('member_dates')) $('.tabs button[data-pane="people"]').hidden = false;   // 성도 날짜는 켠 교회만
     bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch(); bindPeople();
     await loadMokjangs();
     await openFromLink() || await loadWeek();

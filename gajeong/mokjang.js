@@ -74,14 +74,15 @@
   function renderMemberList() {
     var box = $('#member-list');
     if (!mokwon.length) { box.innerHTML = T('<p class="empty">아직 목원이 없습니다. 위에 이름을 넣어 주세요.</p>'); return; }
+    var dates = C.has('member_dates');   // 성도 날짜(교회 등록·생명의 삶·침례)는 켠 교회만
     box.innerHTML = mokwon.map(function (m) {
       return '<div class="list-item" data-id="' + m.id + '">' +
         '<div class="grow"><div class="t">' + esc(m.name) +
         (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
         (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
-        '<div class="s">' + esc(C.memberDatesLine(m)) + '</div></div>' +
+        (dates ? '<div class="s">' + esc(C.memberDatesLine(m)) + '</div>' : '') + '</div>' +
         T('<button class="small act-edit">이름 고치기</button>') +
-        T('<button class="small act-dates">날짜</button>') +
+        (dates ? T('<button class="small act-dates">날짜</button>') : '') +
         '<button class="small act-toggle">' + (m.active ? T('잠시 쉼으로') : T('다시 참여')) + '</button>' +
         T('<button class="small danger act-del">삭제</button></div>');
     }).join('');
