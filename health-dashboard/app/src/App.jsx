@@ -462,7 +462,7 @@ export default function App() {
         <RefList collapsed={view === "home" || view === "radar"} />
         <footer>
           자료원: 질병관리청 「지역사회건강조사」 — 통계청 KOSIS 공유서비스(openAPI), 수집일 {DS.generated}.
-          {KDH_SOURCE && <> 사망률·감염병·의료이용·자원·인구·환경 지표: <a className="src" style={{ whiteSpace: "normal" }} href={KDH_SOURCE.url} target="_blank" rel="noreferrer">{KDH_SOURCE.name}</a>.</>}
+          {KDH_SOURCE && <> 사망률: 국가데이터처 「사망원인통계」 · 감염병·의료이용·자원·인구·환경: 각 기관 통계 — 2024년까지 <a className="src" style={{ whiteSpace: "normal" }} href={KDH_SOURCE.url} target="_blank" rel="noreferrer">{KDH_SOURCE.name}</a> 경유(사망률 새 공표분은 KOSIS 원표에서 직접).</>}
           지도 경계: 통계청 2018 행정구역(행정구역 변경분은 최신 코드로 연결).<br />
           전국 기준값은 전 시군구 중앙값. 표준화율은 연령 표준화 값으로 지역 간 비교에 적합합니다.
           구조는 질병관리청 수도권질병대응센터 CIAT를 참조했습니다<Cite k="ciat" />.

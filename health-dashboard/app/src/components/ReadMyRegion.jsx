@@ -53,7 +53,7 @@ export default function ReadMyRegion({ ind, item, year, sel }) {
     parts.push(`이는 전국 중앙값(${fmt(med)}${unit})보다 ${fmt(Math.abs(d))}${du} ${word}${ciHasMed == null ? "다(표본오차 정보가 없는 행정 통계)." : ciHasMed ? "지만, 95% 신뢰구간이 전국 중앙값을 포함하므로 이 차이는 통계적으로 유의하지 않다." : "고, 95% 신뢰구간이 전국 중앙값을 포함하지 않는다."}`);
   }
   if (vsNat) parts.push(inFav(natFav.fav) ? `전국 양호한 쪽 20% 경계(${fmt(natFav.fav)}${unit}) 안에 있다.` : `전국 양호한 쪽 20% 경계(${fmt(natFav.fav)}${unit})와는 ${fmt(Math.abs(vsNat.abs))}${du}${vsNat.rel != null ? `(${fmt(vsNat.rel, 2)}배)` : ""} 차이가 있다.`);
-  parts.push(`(자료: ${isSurvey(ind) ? "질병관리청 지역사회건강조사" + (ind.src ? `, ${ind.src}` : "") : ind.src || "자료원 탭 참고"})`);
+  parts.push(`(자료: ${isSurvey(ind) ? "질병관리청 지역사회건강조사" + (ind.src ? `, ${ind.src}` : "") : (ind.kdh && ind.srcOrigin) || ind.src || "자료원 탭 참고"})`);   // DB 경유 지표는 원 출처만(문장에 붙여 쓰기 좋게)
   const sentence = parts.join(" ");
 
   const copy = async () => {
