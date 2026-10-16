@@ -23,11 +23,26 @@ import HLE_RAW from "../../data/hle.json";
 
 // ── 지역사회건강조사 DB(질병관리청 자료실·김동현 교수 구축) 보조 지표 주입: 결과·환경 지표 → 순위 산정 제외 ──
 import KDH_RAW from "../../data/kdh_dataset.json";
+// 화면 출처 표기는 원 출처가 먼저, 이 DB는 「경유」로만(2026-10-16 — 「지역사회건강조사 DB」라는 이름 때문에 자살률 같은
+// 사망원인통계를 지역사회건강조사(표본 설문) 결과로 오해한 사례가 있었다). 원 출처는 refs.json by_ind 의 첫 참고문헌.
+export const KDH_VIA = "지역사회 건강결과 및 건강결정요인 DB(질병관리청 자료실·한림대 김동현 교수 v1.7)";
+const MORT_ORIGIN = "국가데이터처 「사망원인통계」";
+function kdhOrigin(ind) {
+  const b = REFS_RAW.by_ind[ind.id];
+  if (b?.refs?.[0] === "mort") return MORT_ORIGIN;
+  const ref = b && REFS_RAW.refs.find((r) => r.key === b.refs[0]);
+  return ref && ref.key !== "kdh" ? `${ref.org} 「${ref.title}」` : null;
+}
 (function injectKdh() {
   if (!KDH_RAW.indicators || RAW.indicators.some((i) => i.kdh)) return;
-  for (const ind of KDH_RAW.indicators) { RAW.indicators.push(ind); RAW.values[ind.id] = KDH_RAW.values[ind.id]; }
+  for (const ind of KDH_RAW.indicators) {
+    ind.srcRaw = (String(ind.src || "").match(/원자료명 「[^」]*」/) || [""])[0];
+    ind.srcOrigin = kdhOrigin(ind);
+    ind.src = [ind.srcOrigin ? `원 출처 ${ind.srcOrigin}` : null, ind.srcRaw || null, `${KDH_VIA} 경유`].filter(Boolean).join(" · ");
+    RAW.indicators.push(ind); RAW.values[ind.id] = KDH_RAW.values[ind.id];
+  }
 })();
-export const KDH_SOURCE = KDH_RAW.source || null;
+export const KDH_SOURCE = KDH_RAW.source ? { ...KDH_RAW.source, name: KDH_VIA } : null;
 
 // ── 사망원인통계 새 공표분 주입 (data/mort_kosis.json, KOSIS DT_1B34E13) ──
 // 김동현 교수 DB의 사망률 21종은 2024년까지다. DB에 없는 해(새 공표분·DB가 일찍 끊긴 지표의 빈 해)만
@@ -45,7 +60,10 @@ import MORT_RAW from "../../data/mort_kosis.json";
     base.mortSpliced = true;
     const yy = (a) => (a.length > 2 && a[a.length - 1] - a[0] === a.length - 1 ? `${a[0]}~${a[a.length - 1]}` : a.join("·"));
     const add = rec.added || rec.years, fix = rec.fixed || [];
-    base.src = `${base.src} ‖ ${add.length ? `${yy(add)}년은 ` : ""}${MORT_RAW.source}에서 직접${fix.length ? ` · ${yy(fix)}년은 같은 원천 값으로 교정(DB의 0·빈 칸·반올림)` : ""}`;
+    const viaYears = base.years.filter((y) => !add.includes(y));
+    base.src = [`원 출처 ${MORT_ORIGIN}`, base.srcRaw || null,
+      `${viaYears.length ? `${yy(viaYears)}년은 ${KDH_VIA} 경유, ` : ""}${add.length ? `${yy(add)}년은 ` : ""}KOSIS 원표(DT_1B34E13)에서 직접`
+        + (fix.length ? ` · ${yy(fix)}년은 같은 원천 값으로 교정(DB의 0·빈 칸·반올림)` : "")].filter(Boolean).join(" · ");
   }
 })();
 export const MORT_SOURCE = MORT_RAW.source || null;

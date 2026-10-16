@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-14",
- "build": "8de317b",
+ "generated": "2026-10-16",
+ "build": "f00425c",
  "korea": {
   "indicators": 171,
   "survey_indicators": 41,
@@ -31,12 +31,12 @@
  },
  "reviews_published": 0,
  "qa": {
-  "unit_tests": 21,
+  "unit_tests": 22,
   "browser_suites": 7,
   "browser_checks": 405,
   "all_ok": true,
-  "last_run": "2026-10-14 12:51 KST",
-  "commit": "8de317b"
+  "last_run": "2026-10-16 16:21 KST",
+  "commit": "f00425c"
  },
- "qa_line": "All passed — 21 unit tests; 7 browser test suites with 405 checks (last run 2026-10-14 12:51 KST, commit 8de317b + uncommitted changes)"
+ "qa_line": "All passed — 22 unit tests; 7 browser test suites with 405 checks (last run 2026-10-16 16:21 KST, commit f00425c)"
 }
