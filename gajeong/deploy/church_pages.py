@@ -17,6 +17,7 @@ MARK = '.church-page'
 SLUG_RE = re.compile(r'^[a-z0-9-]{2,40}$')
 
 HEAD = """<meta charset="utf-8">
+{og}
 <base href="../">
 <!-- 자동으로 만든 교회 주소 (deploy/church_pages.py): 첫 화면 그대로, 미리보기 글·그림만 교회 것.
      주소창이 /{slug}/ 에 남으니 브라우저에서 바로 카톡 공유해도 교회 로고가 뜬다 -->
@@ -32,8 +33,9 @@ OG = """<title>{title}</title>
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:image" content="{image}">{size}
-<meta property="og:url" content="{url}">
 <meta property="og:site_name" content="{name}">"""
+# og:url 은 일부러 넣지 않는다 — 카톡은 og:url 이 있으면 그 주소의 (예전에 저장해 둔) 미리보기를 쓴다.
+# 미리보기 줄은 맨 앞에 둔다 — 카톡은 문서 앞부분만 읽는다.
 
 DESC = '한 주 목장 이야기와 기도제목을 담는 곳'
 
@@ -63,10 +65,10 @@ def render(c, root, base):
     image = SITE + 'assets/og-' + slug + '.png' if wide else (absolute(logo) or SITE + 'assets/og.png')
     og = OG.format(title=html.escape(name + ' ' + unit + ' 나눔터'), desc=DESC, image=html.escape(image), name=html.escape(name),
                    size='\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">' if wide else '',
-                   url=SITE + slug + '/')
-    page = base.replace('<meta charset="utf-8">', HEAD.format(slug=slug, mem=mem), 1)
-    # 첫 화면의 제목·미리보기 줄(<title> ~ og:url)을 교회 것으로 바꾼다
-    page, n = re.subn(r'<title>.*?<meta property="og:url"[^>]*>', lambda m: og, page, count=1, flags=re.S)
+                   )
+    # 첫 화면의 제목·미리보기 줄(<title> ~ og:url)은 빼고, 교회 것을 맨 앞(charset 바로 뒤)에 넣는다
+    page, n = re.subn(r'<title>.*?<meta property="og:url"[^>]*>\n?', '', base, count=1, flags=re.S)
+    page = page.replace('<meta charset="utf-8">', HEAD.format(slug=slug, mem=mem, og=og), 1)
     if n != 1 or page.count('<base ') != 1:
         raise SystemExit('index.html 모양이 달라져 교회 주소를 만들 수 없음')
     return page
