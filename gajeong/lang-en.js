@@ -301,6 +301,24 @@ window.I18N.en = {
   "영국": "United Kingdom",
   "독일·유럽 중부": "Germany · Central Europe",
 
+  // 비밀번호 복구
+  "비밀번호를 잊으셨나요?": "Forgot your password?",
+  "새 비밀번호 정하기": "Set a new password",
+  "목자님": "Leaders",
+  "은 목사님께 말씀해 주세요. 목사님 화면에서 바로 새 비밀번호를 정해 드립니다.": ": please ask your pastor — they can set a new password right away.",
+  "목사님": "Pastors",
+  "은 교회를 등록할 때 받으신 복구 코드로 여기서 새 비밀번호를 정하실 수 있습니다.": ": use the recovery code you got when registering your church to set a new password here.",
+  "복구 코드": "Recovery code",
+  "새 비밀번호로 바꾸기": "Change password",
+  "복구 코드를 꼭 적어 두세요": "Write down your recovery code",
+  "비밀번호를 잊었을 때 이 코드로 새 비밀번호를 정합니다. 사진을 찍거나 수첩에 적어 두세요. 다시 보여 드리지 않습니다.": "If you forget your password, you'll use this code to set a new one. Take a photo or write it down — it won't be shown again.",
+  "적어 두었어요 — 시작하기": "I've saved it — get started",
+  "비밀번호를 잊으셨을 때 로그인 화면의 [비밀번호를 잊으셨나요?]에서 이 코드로 새 비밀번호를 정합니다. 아직 없으시거나 잃어버리셨으면 새로 받아 적어 두세요. 새로 받으면 예전 코드는 쓸 수 없습니다.": "If you forget your password, tap [Forgot your password?] on the sign-in page and use this code. If you don't have one or lost it, get a new one and write it down. Getting a new code cancels the old one.",
+  "복구 코드 새로 받기": "Get a new recovery code",
+  "새 복구 코드입니다. 사진을 찍거나 적어 두세요.": "Here's your new recovery code. Take a photo or write it down.",
+  "아이디나 복구 코드가 맞지 않습니다": "The ID or recovery code is incorrect",
+  "여러 번 틀려서 잠시 잠겼습니다. 한 시간 뒤에 다시 해 주세요": "Too many attempts. Please try again in an hour",
+
   // 사용법 영상
   "사용법 영상": "How-to videos",
   "처음이시면 2분만 보세요. 보시면서 그대로 따라 하시면 됩니다.": "New here? Watch for two minutes and follow along.",

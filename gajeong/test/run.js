@@ -136,6 +136,9 @@ const db = p => p.evaluate(() => window.__DB());
     await p.click('#btn-setup'); await p.waitForTimeout(300);
     ok('틀린 초대 코드 → 안내', /초대 코드가 맞지 않습니다/.test(await p.textContent('#msg-setup')));
     await p.fill('#scode', 'GOOD-CODE'); await p.click('#btn-setup');
+    await p.waitForSelector('#got-code:not([hidden])'); 
+    ok('등록하면 복구 코드를 보여 줌', (await p.textContent('#code-box')) === 'ABCD-EFGH-JKMN');
+    await p.click('#code-done');
     await p.waitForURL(/moksa\.html/); await p.waitForSelector('.top h1'); await p.waitForTimeout(300);
     ok('등록 뒤 새 교회 목사 화면', (await p.textContent('.top .church')) === '새소망교회');
     const reg = (await calls(p)).find(x => x.body && x.body.action === 'register_church');
@@ -244,6 +247,24 @@ const db = p => p.evaluate(() => window.__DB());
     p.once('dialog', d => d.accept());
     await p.click('#ch-logo-del'); await p.waitForTimeout(400);
     ok('로고 지우기', (await db(p)).church_church.find(x => x.id === 'cb').logo_url === '' && /icon-192\.png$/.test(await p.getAttribute('#ch-logo', 'src')));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
+  console.log('\n[10] 비밀번호 잊었을 때');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    await p.click('#btn-new-code'); await p.waitForTimeout(300);
+    ok('목사: 복구 코드 새로 받기', (await p.textContent('#code-box')) === 'PQRS-TUVW-XYZ2' && await p.isVisible('#code-box'));
+    await p.click('#btn-signout'); await p.waitForURL(/index/); await p.waitForTimeout(300);
+    await p.click('#to-recover'); await p.waitForTimeout(200);
+    ok('잊었나요 → 새 비밀번호 화면', await p.isVisible('#recover') && !(await p.isVisible('#login')));
+    await p.fill('#rid', 'pastor1'); await p.fill('#rcode', 'wrong-code-xx'); await p.fill('#rpw1', 'newpass99'); await p.fill('#rpw2', 'newpass99');
+    await p.click('#btn-recover'); await p.waitForTimeout(300);
+    ok('틀린 복구 코드는 안 됨', (await p.textContent('#msg-recover')).includes('맞지 않습니다'));
+    await p.fill('#rcode', 'pqrs tuvw xyz2'); await p.click('#btn-recover');
+    await p.waitForURL(/moksa/); await p.waitForSelector('.top h1');
+    ok('맞는 코드(띄어쓰기·소문자도 됨)면 새 비밀번호로 바로 들어감', /moksa/.test(p.url()));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 

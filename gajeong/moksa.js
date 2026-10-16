@@ -428,6 +428,16 @@
       C.say($('#msg-pw'), T('비밀번호를 바꿨습니다.'), 'ok');
     });
 
+    $('#btn-new-code').addEventListener('click', async function () {
+      var b = this; b.disabled = true;
+      try {
+        var r = await C.callAdmin({ action: 'new_recovery_code' });
+        $('#code-box').textContent = r.recovery_code; $('#code-box').hidden = false;
+        C.say($('#msg-code'), T('새 복구 코드입니다. 사진을 찍거나 적어 두세요.'), 'ok', true);
+      } catch (err) { C.say($('#msg-code'), err.message, 'err'); }
+      b.disabled = false;
+    });
+
     $('#btn-leave').addEventListener('click', async function () {
       if (!$('#leave-pw').value) return C.say($('#msg-leave'), T('비밀번호를 넣어 주세요.'), 'err');
       if (!confirm(T('정말 탈퇴할까요? 되돌릴 수 없습니다.'))) return;

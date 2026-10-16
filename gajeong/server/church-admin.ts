@@ -7,6 +7,8 @@
 //  · delete_user     : 같은 교회 계정을 지운다 (마지막 목사는 못 지움)
 //  · delete_me       : 내 계정 탈퇴 (목자·목사, 마지막 목사는 delete_church로)
 //  · delete_church   : 교회 전체 지우기 — 교회 이름을 그대로 적어야 한다. 모든 계정·목장·일기·로고가 사라진다
+//  · new_recovery_code : 목사 복구 코드를 새로 받는다 (예전 코드는 못 쓰게 된다)
+//  · recover         : (로그인 전) 아이디 + 복구 코드로 새 비밀번호를 정한다. 다섯 번 틀리면 한 시간 잠근다
 //  · set_logo        : 우리 교회 로고(PNG, 화면에서 512px 이하로 줄여 보냄)를 올린다 / remove_logo : 지운다
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
@@ -73,6 +75,24 @@ function randomSlug() {
   return s
 }
 
+// 복구 코드: 헷갈리는 글자(0/O, 1/I/L)를 뺀 12자. 해시만 저장한다
+async function sha(text: string) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
+  return Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('')
+}
+const normCode = (c: string) => c.toUpperCase().replace(/[^A-Z0-9]/g, '')
+async function issueRecovery(userId: string) {
+  const a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+  let raw = ''
+  for (const b of crypto.getRandomValues(new Uint8Array(12))) raw += a[b % a.length]
+  const code = `${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8)}`
+  const { error } = await admin.from('church_recovery').upsert({
+    user_id: userId, code_hash: await sha(userId + ':' + raw), created_at: new Date().toISOString(), fails: 0, locked_until: null,
+  })
+  if (error) throw new Error(error.message)
+  return code
+}
+
 async function targetInMyChurch(me: Me, uid: string) {
   const { data } = await admin.from('church_profile').select('id, role, church_id').eq('id', uid).maybeSingle()
   return data && data.church_id === me.church_id ? data : null
@@ -126,7 +146,32 @@ Deno.serve(async (req) => {
         throw e
       }
       await admin.from('church_invite').update({ uses: inv.uses + 1 }).eq('code', code)
-      return json({ ok: true, slug: church.slug })
+      const recovery_code = await issueRecovery(userId)
+      return json({ ok: true, slug: church.slug, recovery_code })
+    }
+
+    // ── 비밀번호 잊었을 때 (로그인 전) ──
+    if (action === 'recover') {
+      const raw = normCode(String(body.code ?? ''))
+      if (password.length < 8) return json({ error: '비밀번호는 8자 이상으로 정해 주세요' }, 400)
+      const { data: pf } = await admin.from('church_profile').select('id').eq('login_id', login_id).maybeSingle()
+      const { data: rc } = pf ? await admin.from('church_recovery').select('*').eq('user_id', pf.id).maybeSingle() : { data: null }
+      if (rc?.locked_until && new Date(rc.locked_until).getTime() > Date.now()) {
+        return json({ error: '여러 번 틀려서 잠시 잠겼습니다. 한 시간 뒤에 다시 해 주세요' }, 429)
+      }
+      if (!pf || !rc || rc.code_hash !== await sha(pf.id + ':' + raw)) {
+        if (rc) {
+          const fails = (rc.fails ?? 0) + 1
+          await admin.from('church_recovery').update({
+            fails: fails >= 5 ? 0 : fails, locked_until: fails >= 5 ? new Date(Date.now() + 3600e3).toISOString() : null,
+          }).eq('user_id', rc.user_id)
+        }
+        return json({ error: '아이디나 복구 코드가 맞지 않습니다' }, 403)
+      }
+      const { error } = await admin.auth.admin.updateUserById(pf.id, { password })
+      if (error) throw new Error(error.message)
+      await admin.from('church_recovery').update({ fails: 0, locked_until: null }).eq('user_id', pf.id)
+      return json({ ok: true })
     }
 
     // ── 아래부터는 로그인한 목사만 ──────────────────────────────
@@ -147,6 +192,10 @@ Deno.serve(async (req) => {
 
     if (me.role !== 'pastor') return json({ error: '목사 계정만 쓸 수 있습니다' }, 403)
     if (!me.church_id) return json({ error: '교회 정보가 없는 계정입니다' }, 403)
+
+    if (action === 'new_recovery_code') {
+      return json({ ok: true, recovery_code: await issueRecovery(me.id) })
+    }
 
     if (action === 'create_mokja') {
       const bad = checkAccount(login_id, password, name)

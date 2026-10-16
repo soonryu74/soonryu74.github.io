@@ -105,7 +105,8 @@
       signInWithPassword: function (o) {
         var id = String(o.email).split('@')[0];
         var p = DB.church_profile.filter(function (x) { return x.login_id === id; })[0];
-        if (!p || o.password !== 'pass1234') return Promise.resolve({ data: null, error: { message: 'Invalid login credentials' } });
+        var pw = (DB.__newpw && p && DB.__newpw[p.id]) || 'pass1234';
+        if (!p || o.password !== pw) return Promise.resolve({ data: null, error: { message: 'Invalid login credentials' } });
         session = { access_token: 'tok-' + p.id, user: { id: p.id } }; save(session);
         return Promise.resolve({ data: { session: session }, error: null });
       },
@@ -145,7 +146,8 @@
         var cid = 'c' + (++nid), uid = 'u' + (++nid);
         DB.church_church.push({ id: cid, slug: 'newch1', name: b.church_name, timezone: b.timezone, logo_url: '' });
         DB.church_profile.push({ id: uid, login_id: b.login_id, name: b.name, role: 'pastor', church_id: cid });
-        reply = { ok: true, slug: 'newch1' };
+        DB.__recovery = DB.__recovery || {}; DB.__recovery[uid] = 'ABCD-EFGH-JKMN';
+        reply = { ok: true, slug: 'newch1', recovery_code: 'ABCD-EFGH-JKMN' };
       }
     }
     if (u.indexOf('church-admin') >= 0 && b.action === 'set_logo') {
@@ -177,6 +179,15 @@
         DB.church_profile = DB.church_profile.filter(function (x) { return x.church_id !== ch3.id; });
         DB.church_church = DB.church_church.filter(function (x) { return x.id !== ch3.id; });
       }
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'new_recovery_code') {
+      DB.__recovery = DB.__recovery || {}; DB.__recovery[me().id] = 'PQRS-TUVW-XYZ2'; reply = { ok: true, recovery_code: 'PQRS-TUVW-XYZ2' };
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'recover') {
+      var pf = DB.church_profile.find(function (x) { return x.login_id === String(b.login_id || '').toLowerCase(); });
+      var want = pf && DB.__recovery && DB.__recovery[pf.id];
+      if (!want || want.replace(/-/g, '') !== String(b.code || '').toUpperCase().replace(/[^A-Z0-9]/g, '')) reply = { error: '아이디나 복구 코드가 맞지 않습니다' };
+      else { DB.__newpw = DB.__newpw || {}; DB.__newpw[pf.id] = b.password; }
     }
     if (u.indexOf('church-notify') >= 0) reply = b.action === 'key' ? { publicKey: 'BEd3W7naVVZVjZKZZYJiVVxsVFqwxfQM4oNwgxuRb88ja3SPrlpHK0WKduDOHUVXfRhz3I6ZlC-iNnyB4Ob64p4' } : { ok: true, sent: b.action === 'test' ? DB.church_push.length : 1, devices: 1 };
     persist();
