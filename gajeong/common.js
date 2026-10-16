@@ -235,7 +235,16 @@ window.CHURCH = (function () {
   function applyLook(c) {
     setTheme(c && c.theme);
     setTerms(c && c.terms);
+    setAppIcon(c);
     translatePage();
+  }
+  // 홈 화면에 추가할 때 교회 로고·이름으로 — 교회 주소 폴더(/코드/)의 manifest·아이콘 (GitHub Actions가 만들어 둠)
+  function setAppIcon(c) {
+    if (!c || !/^[a-z0-9-]{2,40}$/.test(c.slug || '') || !c.logo_url) return;
+    var base = new URL(c.slug + '/', document.baseURI).href;
+    var m = document.querySelector('link[rel="manifest"]'); if (m) m.href = base + 'manifest.webmanifest';
+    var a = document.querySelector('link[rel="apple-touch-icon"]'); if (a) a.href = base + 'icon-180.png';
+    var t = document.querySelector('meta[name="apple-mobile-web-app-title"]'); if (t && c.name) t.setAttribute('content', c.name);
   }
 
   /* ── 교회 ────────────────────────────────────────────── */
