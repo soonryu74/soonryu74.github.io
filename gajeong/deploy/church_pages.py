@@ -26,11 +26,12 @@ PAGE = """<!doctype html>
 <meta property="og:description" content="한 주 목장 이야기와 기도제목을 담는 곳">
 <meta property="og:image" content="{image}">
 <meta property="og:url" content="{url}">
+<meta property="og:site_name" content="{name}">
 <link rel="icon" type="image/png" href="{icon}">
 <!-- 자동으로 만든 교회 주소 (deploy/church_pages.py). 열면 교회 로그인 화면으로 간다 -->
 <script>
 try {{ localStorage.setItem('gajeong-church', {mem}); }} catch (e) {{}}
-location.replace('../?c={slug}' + location.hash);
+if (!/kakaotalk|facebookexternalhit|bot|crawl|spider|preview|scrap/i.test(navigator.userAgent)) location.replace('../?c={slug}' + location.hash);
 </script>
 </head>
 <body style="background:#f5f1e8;margin:0">
