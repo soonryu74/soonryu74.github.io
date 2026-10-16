@@ -412,5 +412,16 @@
       $('#pw1').value = $('#pw2').value = '';
       C.say($('#msg-pw'), T('비밀번호를 바꿨습니다.'), 'ok');
     });
+
+    $('#form-leave').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (!confirm(T('정말 탈퇴할까요? 되돌릴 수 없습니다.'))) return;
+      var b = $('#btn-leave'); b.disabled = true;
+      try {
+        await C.checkPassword(me.login_id, $('#leave-pw').value);
+        await C.callAdmin({ action: 'delete_me' });
+        await C.afterLeave();
+      } catch (err) { C.say($('#msg-leave'), err.message, 'err'); b.disabled = false; }
+    });
   }
 })();

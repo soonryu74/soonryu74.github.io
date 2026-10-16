@@ -203,6 +203,10 @@ button:disabled{opacity:.45; cursor:not-allowed; transform:none}
 .two{display:flex; gap:12px; flex-wrap:wrap}
 .two > div{flex:1; min-width:150px}
 
+/* ── 되돌릴 수 없는 일 ───────────────────────────── */
+.danger-zone{border-color:var(--warn-line)}
+.danger-zone h2::after{background:var(--warn)}
+
 /* ── 디자인 고르기 ─────────────────────────────── */
 .themes{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px}
 .theme-pick{display:flex; flex-direction:column; align-items:stretch; gap:8px; padding:10px; text-align:left; border-radius:14px; background:var(--sheet-2)}

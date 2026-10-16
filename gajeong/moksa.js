@@ -428,6 +428,29 @@
       C.say($('#msg-pw'), T('비밀번호를 바꿨습니다.'), 'ok');
     });
 
+    $('#btn-leave').addEventListener('click', async function () {
+      if (!$('#leave-pw').value) return C.say($('#msg-leave'), T('비밀번호를 넣어 주세요.'), 'err');
+      if (!confirm(T('정말 탈퇴할까요? 되돌릴 수 없습니다.'))) return;
+      var b = this; b.disabled = true;
+      try {
+        await C.checkPassword(me.login_id, $('#leave-pw').value);
+        await C.callAdmin({ action: 'delete_me' });
+        await C.afterLeave();
+      } catch (err) { C.say($('#msg-leave'), err.message, 'err'); b.disabled = false; }
+    });
+    $('#btn-drop-church').addEventListener('click', async function () {
+      var c = C.getChurch() || {};
+      if (!$('#leave-pw').value) return C.say($('#msg-leave'), T('비밀번호를 넣어 주세요.'), 'err');
+      if ($('#leave-church').value.trim() !== (c.name || '').trim()) return C.say($('#msg-leave'), T('교회 이름이 맞지 않습니다'), 'err');
+      if (!confirm(T('{0} 의 모든 자료를 지울까요? 되돌릴 수 없습니다.', c.name))) return;
+      var b = this; b.disabled = true;
+      try {
+        await C.checkPassword(me.login_id, $('#leave-pw').value);
+        await C.callAdmin({ action: 'delete_church', confirm_name: $('#leave-church').value });
+        await C.afterLeave();
+      } catch (err) { C.say($('#msg-leave'), err.message, 'err'); b.disabled = false; }
+    });
+
     $('#form-pastor').addEventListener('submit', async function (e) {
       e.preventDefault();
       var b = $('#btn-pastor'); b.disabled = true; b.textContent = T('만드는 중…');

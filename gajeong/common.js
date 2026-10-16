@@ -319,6 +319,21 @@ window.CHURCH = (function () {
     return p;
   }
 
+  // 탈퇴처럼 되돌릴 수 없는 일 앞에서 비밀번호를 한 번 더 확인한다
+  async function checkPassword(loginId, password) {
+    var r = await sb.auth.signInWithPassword({ email: emailOf(loginId), password: password });
+    if (r.error) throw new Error(t('비밀번호가 맞지 않습니다.'));
+  }
+  async function afterLeave() {
+    try { await sb.auth.signOut(); } catch (e) {}
+    try { localStorage.removeItem(LS_MINE); localStorage.removeItem(LS_CHURCH); } catch (e) {}
+    try {
+      var reg = 'serviceWorker' in navigator && await navigator.serviceWorker.getRegistration('./');
+      var sub = reg && await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe();
+    } catch (e) {}
+    location.replace('index.html?left=1');
+  }
+
   async function callFn(name, payload) {
     var s = await sb.auth.getSession();
     var headers = { 'Content-Type': 'application/json', apikey: SB_KEY };
@@ -427,6 +442,7 @@ window.CHURCH = (function () {
     isIOS: isIOS, standalone: standalone,
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
+    checkPassword: checkPassword, afterLeave: afterLeave,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();

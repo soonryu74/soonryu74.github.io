@@ -23,7 +23,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610152330">
+<link rel="stylesheet" href="style.css?v=202610160004">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -192,13 +192,26 @@ try { (function (m, q) { var s = q.get('c');
       </form>
       <div class="msg" id="msg-pw"></div>
     </div>
+    <div class="card danger-zone">
+      <h2>탈퇴 · 교회 지우기</h2>
+      <p class="desc">내 계정만 지우거나, 교회를 그만 쓰실 때는 교회 전체를 지울 수 있습니다. 둘 다 되돌릴 수 없습니다.</p>
+      <label for="leave-pw">비밀번호 확인</label>
+      <input id="leave-pw" type="password" autocomplete="current-password" placeholder="지금 비밀번호">
+      <div class="row" style="margin-top:16px"><button class="danger" type="button" id="btn-leave">내 계정만 탈퇴</button></div>
+      <p class="hint">다른 목사 계정이 있을 때만 됩니다. 교회와 목장은 그대로 남습니다.</p>
+      <label for="leave-church" style="margin-top:22px">교회 전체 지우기 — 확인을 위해 교회 이름을 그대로 적어 주세요</label>
+      <input id="leave-church" type="text" autocomplete="off" data-noterm>
+      <div class="row" style="margin-top:16px"><button class="danger" type="button" id="btn-drop-church">교회 전체 지우기</button></div>
+      <p class="hint">우리 교회의 모든 계정, 목장, 일기, 기도제목, 로고가 사라집니다.</p>
+      <div class="msg" id="msg-leave"></div>
+    </div>
   </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610152330"></script>
-<script src="common.js?v=202610152330"></script>
-<script src="moksa.js?v=202610152330"></script>
+<script src="lang-en.js?v=202610160004"></script>
+<script src="common.js?v=202610160004"></script>
+<script src="moksa.js?v=202610160004"></script>
 
 </body>
 </html>
