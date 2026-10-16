@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-16 16:21 KST",
- "commit": "f00425c",
+ "generated": "2026-10-17 00:33 KST",
+ "commit": "54c6d3f",
  "working_tree_clean": true,
  "global_v01_comparison": "run (tag pre-global-v0.2)",
  "all_ok": true,
@@ -9,9 +9,9 @@
    "id": "unit",
    "name": "Unit tests (priority engine, data, reports)",
    "ok": true,
-   "passed": 22,
+   "passed": 25,
    "failed": 0,
-   "seconds": 1
+   "seconds": 2
   },
   {
    "id": "korea_e2e",
@@ -19,15 +19,15 @@
    "ok": true,
    "passed": 53,
    "failed": 0,
-   "seconds": 178
+   "seconds": 176
   },
   {
    "id": "solve_readiness",
    "name": "Judge flow at 390/430/768/1440 px, accessibility, links",
    "ok": true,
-   "passed": 123,
+   "passed": 128,
    "failed": 0,
-   "seconds": 76
+   "seconds": 85
   },
   {
    "id": "history",
@@ -35,7 +35,7 @@
    "ok": true,
    "passed": 32,
    "failed": 0,
-   "seconds": 27
+   "seconds": 32
   },
   {
    "id": "report_region",
@@ -43,7 +43,7 @@
    "ok": true,
    "passed": 28,
    "failed": 0,
-   "seconds": 40
+   "seconds": 44
   },
   {
    "id": "report_indicator",
@@ -51,7 +51,7 @@
    "ok": true,
    "passed": 44,
    "failed": 0,
-   "seconds": 68
+   "seconds": 70
   },
   {
    "id": "report_elder",
@@ -59,7 +59,7 @@
    "ok": true,
    "passed": 48,
    "failed": 0,
-   "seconds": 37
+   "seconds": 40
   },
   {
    "id": "global_e2e",
@@ -67,12 +67,12 @@
    "ok": true,
    "passed": 77,
    "failed": 0,
-   "seconds": 27
+   "seconds": 34
   }
  ],
  "totals": {
-  "unit_tests": 22,
+  "unit_tests": 25,
   "browser_suites": 7,
-  "browser_checks": 405
+  "browser_checks": 410
  }
 }

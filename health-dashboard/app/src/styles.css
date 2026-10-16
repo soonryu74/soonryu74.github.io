@@ -1370,6 +1370,19 @@ header.top > .topright { flex:0 1 auto; justify-content:flex-end; margin-left:au
 .gap-read { margin-top:10px; display:flex; flex-direction:column; gap:6px; }
 .gr-head { font-size:14px; }
 .tbl-wrap { overflow-x:auto; }
+/* 분포 요약지표·박탈 경사(WHO HEAT 복합지표, 2026-10-16) */
+.who-mon .gr-tbl { min-width:640px; }
+.who-gaps { font-size:13.5px; line-height:1.55; margin-top:8px; }
+.who-gaps ul { margin:4px 0 0; padding-left:18px; }
+.who-gaps li { margin:3px 0; color:var(--text-secondary); }
+details.dist-sum { display:block; border:1px solid var(--border); border-radius:10px; padding:8px 10px; }
+details.dist-sum > summary { cursor:pointer; font-size:13.5px; line-height:1.5; }
+details.dist-sum[open] > summary { margin-bottom:6px; }
+details.dist-sum > * + * { margin-top:6px; }
+.gr-tbl tr.row-cur td, .gr-tbl tr.row-cur th { background:color-mix(in srgb, var(--series-1) 8%, transparent); }
+.sii-read .gr-tbl { min-width:520px; }
+details.sii-trend > summary { cursor:pointer; font-size:13px; color:var(--text-secondary); }
+details.sii-trend[open] > summary { margin-bottom:6px; }
 .gr-tbl, .rmr-tbl { border-collapse:collapse; width:100%; font-size:13px; font-variant-numeric:tabular-nums; }
 .gr-tbl { min-width:620px; } .rmr-tbl { min-width:560px; }
 .gr-tbl tbody th, .rmr-tbl tbody th { min-width:9em; }

@@ -123,7 +123,7 @@ test("지역 보고서 문장 초안: 계산된 사실만, 인과·처방 표현
 });
 
 // ── 격차 측정(노은정 2026 기준) ──
-import { gapMeasures, sides, positionIn, versus, gapChangeType, precisionNote } from "../src/lib/gapMeasures.js";
+import { gapMeasures, sides, positionIn, versus, gapChangeType, precisionNote, distSummary, siiRii, quintileRidits } from "../src/lib/gapMeasures.js";
 
 test("격차 3방식: 30곳 이하면 분위 방식 없음, 넘으면 경계값·분위 평균을 절대·상대로", () => {
   const small = gapMeasures([10, 20, 30, null, 40]);
@@ -188,4 +188,24 @@ test("점수 구성 막대: 기여분의 합 = 점수, 빠진 요소는 0이 아
   assert.ok(Math.abs(live.reduce((a, s) => a + s.w, 0) - 1) < 1e-12);   // 남은 가중치 재정규화
   assert.ok(Math.abs(live.reduce((a, s) => a + s.contrib, 0) - c2.score) < 1e-12);
   assert.equal(scoreBreakdown(null, null), null);
+});
+
+test("분포 요약지표(비가중): COV·MDMU·IDISU 정의, 결측 무시", () => {
+  const d = distSummary([10, 20, 30, null]);
+  assert.equal(d.n, 3); assert.equal(d.mean, 20);
+  assert.ok(Math.abs(d.mdmu - 20 / 3) < 1e-12);                       // (10+0+10)/3
+  assert.ok(Math.abs(d.sd - Math.sqrt(200 / 3)) < 1e-12);              // 모집단 표준편차
+  assert.ok(Math.abs(d.cov - (Math.sqrt(200 / 3) / 20) * 100) < 1e-9);
+  assert.ok(Math.abs(d.idisu - (20 / 3 / 20) * 100) < 1e-9);
+  assert.equal(distSummary([5]), null);
+  assert.equal(distSummary([-1, 1]).cov, null);                         // 평균 0 → 상대지표 없음
+});
+
+test("박탈 경사: 완전 직선이면 SII = 기울기, RII = 끝값 비, 분위 ridit", () => {
+  assert.deepEqual(quintileRidits([1, 1, 1, 1, 1]).map((x) => +x.toFixed(2)), [0.1, 0.3, 0.5, 0.7, 0.9]);
+  const pts = [0.1, 0.3, 0.5, 0.7, 0.9].map((x) => ({ x, y: 10 + 5 * x }));
+  const s = siiRii(pts);
+  assert.ok(Math.abs(s.sii - 5) < 1e-9 && Math.abs(s.rii - 1.5) < 1e-9 && s.se < 1e-9);
+  assert.equal(siiRii([{ x: 0.5, y: 1 }, { x: 0.5, y: 2 }, { x: 0.5, y: 3 }]), null);   // x 변화 없음
+  assert.equal(siiRii([{ x: 0.1, y: 1 }, { x: 0.9, y: null }]), null);                  // 결측 제외 후 3곳 미만
 });
