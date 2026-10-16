@@ -23,7 +23,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610160004">
+<link rel="stylesheet" href="style.css?v=202610160029">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -192,6 +192,14 @@ try { (function (m, q) { var s = q.get('c');
       </form>
       <div class="msg" id="msg-pw"></div>
     </div>
+    <div class="card">
+      <h2>복구 코드</h2>
+      <p class="desc">비밀번호를 잊으셨을 때 로그인 화면의 [비밀번호를 잊으셨나요?]에서 이 코드로 새 비밀번호를 정합니다.
+        아직 없으시거나 잃어버리셨으면 새로 받아 적어 두세요. 새로 받으면 예전 코드는 쓸 수 없습니다.</p>
+      <div class="code-box" id="code-box" hidden data-noterm></div>
+      <div class="row" style="margin-top:14px"><button type="button" id="btn-new-code">복구 코드 새로 받기</button></div>
+      <div class="msg" id="msg-code"></div>
+    </div>
     <div class="card danger-zone">
       <h2>탈퇴 · 교회 지우기</h2>
       <p class="desc">내 계정만 지우거나, 교회를 그만 쓰실 때는 교회 전체를 지울 수 있습니다. 둘 다 되돌릴 수 없습니다.</p>
@@ -209,9 +217,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610160004"></script>
-<script src="common.js?v=202610160004"></script>
-<script src="moksa.js?v=202610160004"></script>
+<script src="lang-en.js?v=202610160029"></script>
+<script src="common.js?v=202610160029"></script>
+<script src="moksa.js?v=202610160029"></script>
 
 </body>
 </html>

@@ -29,7 +29,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610160004">
+<link rel="stylesheet" href="style.css?v=202610160029">
 <style>
   .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
   .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
@@ -105,12 +105,42 @@ try { (function (m, q) { var s = q.get('c');
       </div>
     </form>
     <p class="foot">
-      비밀번호를 잊으셨으면 목사님께 말씀해 주세요. 새로 정해 드립니다.
+      <a href="#" id="to-recover">비밀번호를 잊으셨나요?</a>
       <span id="setup-link"><br><a href="#" id="to-setup">우리 교회도 쓰고 싶어요 — 새 교회 등록</a></span>
     </p>
   </div>
 
   <!-- 새 교회 등록 -->
+  <!-- 비밀번호 잊었을 때 -->
+  <div class="card" id="recover" hidden>
+    <h2>새 비밀번호 정하기</h2>
+    <p class="desc"><b>목자님</b>은 목사님께 말씀해 주세요. 목사님 화면에서 바로 새 비밀번호를 정해 드립니다.<br>
+      <b>목사님</b>은 교회를 등록할 때 받으신 복구 코드로 여기서 새 비밀번호를 정하실 수 있습니다.</p>
+    <form id="form-recover">
+      <label for="rid">아이디</label>
+      <input id="rid" type="text" inputmode="latin" autocapitalize="none" autocorrect="off" autocomplete="username" required>
+      <label for="rcode">복구 코드</label>
+      <input id="rcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX-XXXX" required>
+      <label for="rpw1">새 비밀번호</label>
+      <input id="rpw1" type="password" autocomplete="new-password" placeholder="8자 이상" required>
+      <label for="rpw2">한 번 더</label>
+      <input id="rpw2" type="password" autocomplete="new-password" required>
+      <div class="msg" id="msg-recover"></div>
+      <div class="row" style="margin-top:18px">
+        <button type="button" class="ghost" id="recover-back">뒤로</button>
+        <button class="primary" type="submit" id="btn-recover" style="flex:1">새 비밀번호로 바꾸기</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 등록 직후: 복구 코드 보여 주기 -->
+  <div class="card" id="got-code" hidden>
+    <h2>복구 코드를 꼭 적어 두세요</h2>
+    <p class="desc">비밀번호를 잊었을 때 이 코드로 새 비밀번호를 정합니다. 사진을 찍거나 수첩에 적어 두세요. 다시 보여 드리지 않습니다.</p>
+    <div class="code-box" id="code-box" data-noterm></div>
+    <div class="row" style="margin-top:18px"><button class="primary" type="button" id="code-done" style="flex:1">적어 두었어요 — 시작하기</button></div>
+  </div>
+
   <div class="card" id="setup">
     <h2>새 교회 등록</h2>
     <p class="desc">받으신 초대 코드로 교회와 목사님 계정을 함께 만듭니다. 교회마다 따로 쓰므로 다른 교회 목장은 서로 보이지 않습니다.
@@ -153,8 +183,8 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610160004"></script>
-<script src="common.js?v=202610160004"></script>
+<script src="lang-en.js?v=202610160029"></script>
+<script src="common.js?v=202610160029"></script>
 <script>
 (function () {
   var C = window.CHURCH, $ = C.$;
@@ -232,7 +262,7 @@ try { (function (m, q) { var s = q.get('c');
     e.preventDefault();
     var b = $('#btn-setup'); b.disabled = true; b.textContent = C.t('만드는 중…');
     try {
-      await C.callAdmin({
+      var made = await C.callAdmin({
         action: 'register_church',
         invite_code: $('#scode').value,
         church_name: $('#schurch').value,
@@ -242,11 +272,34 @@ try { (function (m, q) { var s = q.get('c');
         name: $('#sname').value
       });
       await C.signIn($('#slid').value, $('#spw').value);
-      location.replace('moksa.html');
+      if (!made.recovery_code) return location.replace('moksa.html');
+      $('#setup').style.display = 'none'; $('#signed-in').hidden = true;
+      $('#code-box').textContent = made.recovery_code; $('#got-code').hidden = false;
+      window.scrollTo(0, 0);
     } catch (err) {
       C.say($('#msg-setup'), err.message, 'err');
       b.disabled = false; b.textContent = C.t('교회 등록하기');
     }
+  });
+
+  $('#code-done').addEventListener('click', function () { location.replace('moksa.html'); });
+
+  // 비밀번호 잊었을 때
+  $('#to-recover').addEventListener('click', function (e) {
+    e.preventDefault(); $('#login').style.display = 'none'; $('#recover').hidden = false;
+    $('#rid').value = $('#lid').value;
+  });
+  $('#recover-back').addEventListener('click', function () { $('#recover').hidden = true; $('#login').style.display = 'block'; });
+  $('#form-recover').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if ($('#rpw1').value !== $('#rpw2').value) return C.say($('#msg-recover'), C.t('두 번 넣으신 비밀번호가 서로 다릅니다.'), 'err');
+    var b = $('#btn-recover'); b.disabled = true;
+    try {
+      await C.callAdmin({ action: 'recover', login_id: $('#rid').value, code: $('#rcode').value, password: $('#rpw1').value });
+      await C.signIn($('#rid').value, $('#rpw1').value);
+      var p = await C.me();
+      location.replace(p && p.role === 'pastor' ? 'moksa.html' : 'mokjang.html');
+    } catch (err) { C.say($('#msg-recover'), err.message, 'err'); b.disabled = false; }
   });
 })();
 </script>
