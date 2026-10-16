@@ -247,6 +247,33 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[9] 탈퇴');
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1');
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
+    await p.fill('#leave-pw', 'wrong'); p.once('dialog', d => d.accept());
+    await p.click('#btn-leave'); await p.waitForTimeout(400);
+    ok('목자: 비밀번호 틀리면 탈퇴 안 됨', (await p.textContent('#msg-leave')).includes('비밀번호가 맞지 않습니다') && (await db(p)).church_profile.some(x => x.id === 'm1'));
+    await p.fill('#leave-pw', 'pass1234'); p.once('dialog', d => d.accept());
+    await p.click('#btn-leave'); await p.waitForURL(/left=1/); await p.waitForTimeout(400);
+    ok('목자: 탈퇴하면 계정이 지워지고 로그인 화면으로', !(await db(p)).church_profile.some(x => x.id === 'm1') && (await p.textContent('#msg-login')).includes('탈퇴했습니다'));
+    ok('목자: 쓴 일기는 교회 기록으로 남음', (await db(p)).church_journal.some(x => x.mokjang_id === 'mj1'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastorla');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    await p.fill('#leave-pw', 'pass1234'); p.once('dialog', d => d.accept());
+    await p.click('#btn-leave'); await p.waitForTimeout(400);
+    ok('마지막 목사는 내 계정만 탈퇴 못 함', (await p.textContent('#msg-leave')).length > 5 && (await db(p)).church_profile.some(x => x.id === 'p2'));
+    await p.fill('#leave-church', '틀린 이름'); await p.click('#btn-drop-church'); await p.waitForTimeout(300);
+    ok('교회 이름이 다르면 안 지워짐', (await db(p)).church_church.some(x => x.id === 'cl'));
+    await p.fill('#leave-church', 'LA 새소망교회'); p.once('dialog', d => d.accept());
+    await p.click('#btn-drop-church'); await p.waitForURL(/left=1/); await p.waitForTimeout(300);
+    const d9 = await db(p);
+    ok('교회 전체 지우기: 교회·계정·목장·일기 모두 사라짐', !d9.church_church.some(x => x.id === 'cl') && !d9.church_profile.some(x => x.church_id === 'cl') && !d9.church_mokjang.some(x => x.church_id === 'cl') && !d9.church_journal.some(x => x.mokjang_id === 'mj2'));
+    ok('다른 교회는 그대로', d9.church_church.some(x => x.id === 'cb') && d9.church_mokjang.some(x => x.id === 'mj1'));
+    await c.close(); }
+
   console.log('\n[8] 영어 화면');
   { const { c, p } = await ctx(b);
     await p.goto(BASE + 'index.html'); await p.waitForTimeout(300);

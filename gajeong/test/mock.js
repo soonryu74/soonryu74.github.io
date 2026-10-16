@@ -158,6 +158,26 @@
       var me1 = me();
       DB.church_church.find(function (x) { return x.id === me1.church_id; }).logo_url = ''; reply = { ok: true };
     }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'delete_me') {
+      var me2 = me();
+      var pastors = DB.church_profile.filter(function (x) { return x.role === 'pastor' && x.church_id === me2.church_id; });
+      if (me2.role === 'pastor' && pastors.length <= 1) reply = { error: '마지막 목사 계정은 탈퇴할 수 없습니다. 교회를 그만 쓰시려면 [교회 지우기]를 눌러 주세요' };
+      else {
+        DB.church_profile = DB.church_profile.filter(function (x) { return x.id !== me2.id; });
+        DB.church_mokjang.forEach(function (m) { if (m.mokja_id === me2.id) m.mokja_id = null; });
+      }
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'delete_church') {
+      var me3 = me(), ch3 = DB.church_church.find(function (x) { return x.id === me3.church_id; });
+      if ((b.confirm_name || '').trim() !== ch3.name) reply = { error: '교회 이름이 맞지 않습니다' };
+      else {
+        var mjs = DB.church_mokjang.filter(function (m) { return m.church_id === ch3.id; }).map(function (m) { return m.id; });
+        DB.church_mokjang = DB.church_mokjang.filter(function (m) { return mjs.indexOf(m.id) < 0; });
+        DB.church_journal = DB.church_journal.filter(function (j) { return mjs.indexOf(j.mokjang_id) < 0; });
+        DB.church_profile = DB.church_profile.filter(function (x) { return x.church_id !== ch3.id; });
+        DB.church_church = DB.church_church.filter(function (x) { return x.id !== ch3.id; });
+      }
+    }
     if (u.indexOf('church-notify') >= 0) reply = b.action === 'key' ? { publicKey: 'BEd3W7naVVZVjZKZZYJiVVxsVFqwxfQM4oNwgxuRb88ja3SPrlpHK0WKduDOHUVXfRhz3I6ZlC-iNnyB4Ob64p4' } : { ok: true, sent: b.action === 'test' ? DB.church_push.length : 1, devices: 1 };
     persist();
     var status = reply.error ? 403 : 200;

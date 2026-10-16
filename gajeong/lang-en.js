@@ -301,6 +301,34 @@ window.I18N.en = {
   "영국": "United Kingdom",
   "독일·유럽 중부": "Germany · Central Europe",
 
+  // 사용법 영상
+  "사용법 영상": "How-to videos",
+  "처음이시면 2분만 보세요. 보시면서 그대로 따라 하시면 됩니다.": "New here? Watch for two minutes and follow along.",
+  "목사님용": "For pastors",
+  "목자용": "For leaders",
+  "영상 파일 받기": "Download video",
+  "· 카카오톡으로 보내실 때는 이 페이지 주소를 보내 주세요.": "· To share by message, send this page's link.",
+
+  // 탈퇴
+  "탈퇴하기": "Delete my account",
+  "내 계정을 지웁니다. 지금까지 쓴 일기와 기도제목은 교회 기록으로 남고, 목사님이 새 목자를 정하실 수 있습니다. 되돌릴 수 없습니다.": "This deletes your account. Journals and prayer requests you wrote stay in your church's records, and your pastor can assign a new leader. This can't be undone.",
+  "비밀번호 확인": "Confirm password",
+  "지금 비밀번호": "Current password",
+  "탈퇴 · 교회 지우기": "Delete account · Delete church",
+  "내 계정만 지우거나, 교회를 그만 쓰실 때는 교회 전체를 지울 수 있습니다. 둘 다 되돌릴 수 없습니다.": "Delete just your account, or—if your church stops using this—delete the whole church. Neither can be undone.",
+  "내 계정만 탈퇴": "Delete my account only",
+  "다른 목사 계정이 있을 때만 됩니다. 교회와 목장은 그대로 남습니다.": "Only possible if there's another pastor account. Your church and groups stay.",
+  "교회 전체 지우기 — 확인을 위해 교회 이름을 그대로 적어 주세요": "Delete the whole church — type your church name exactly to confirm",
+  "교회 전체 지우기": "Delete whole church",
+  "우리 교회의 모든 계정, 목장, 일기, 기도제목, 로고가 사라집니다.": "All accounts, groups, journals, prayer requests and the logo will be removed.",
+  "정말 탈퇴할까요? 되돌릴 수 없습니다.": "Really delete your account? This can't be undone.",
+  "비밀번호를 넣어 주세요.": "Please enter your password.",
+  "비밀번호가 맞지 않습니다.": "The password is incorrect.",
+  "{0} 의 모든 자료를 지울까요? 되돌릴 수 없습니다.": "Delete everything for {0}? This can't be undone.",
+  "탈퇴했습니다. 그동안 함께해 주셔서 감사합니다.": "Your account has been deleted. Thank you for being with us.",
+  "교회 이름이 맞지 않습니다": "The church name doesn't match",
+  "마지막 목사 계정은 탈퇴할 수 없습니다. 교회를 그만 쓰시려면 [교회 지우기]를 눌러 주세요": "The last pastor account can't be deleted. To stop using this, choose [Delete whole church]",
+
   // ── 서버에서 오는 안내 ──────────────────────
   "POST만 받습니다": "Invalid request method",
   "요청을 읽지 못했습니다": "Couldn't read the request",

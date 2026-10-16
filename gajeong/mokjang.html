@@ -23,7 +23,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610152330">
+<link rel="stylesheet" href="style.css?v=202610160004">
 </head>
 <body>
 <div class="wrap">
@@ -146,13 +146,23 @@ try { (function (m, q) { var s = q.get('c');
       </form>
       <div class="msg" id="msg-pw"></div>
     </div>
+    <div class="card danger-zone">
+      <h2>탈퇴하기</h2>
+      <p class="desc">내 계정을 지웁니다. 지금까지 쓴 일기와 기도제목은 교회 기록으로 남고, 목사님이 새 목자를 정하실 수 있습니다. 되돌릴 수 없습니다.</p>
+      <form id="form-leave">
+        <label for="leave-pw">비밀번호 확인</label>
+        <input id="leave-pw" type="password" autocomplete="current-password" placeholder="지금 비밀번호" required>
+        <div class="row" style="margin-top:16px"><button class="danger" type="submit" id="btn-leave">탈퇴하기</button></div>
+      </form>
+      <div class="msg" id="msg-leave"></div>
+    </div>
   </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610152330"></script>
-<script src="common.js?v=202610152330"></script>
-<script src="mokjang.js?v=202610152330"></script>
+<script src="lang-en.js?v=202610160004"></script>
+<script src="common.js?v=202610160004"></script>
+<script src="mokjang.js?v=202610160004"></script>
 
 </body>
 </html>

@@ -5,6 +5,8 @@
 //  · create_pastor   : 목사 계정을 하나 더 만든다 (내 교회)
 //  · reset_password  : 같은 교회 계정의 비밀번호를 새로 정한다
 //  · delete_user     : 같은 교회 계정을 지운다 (마지막 목사는 못 지움)
+//  · delete_me       : 내 계정 탈퇴 (목자·목사, 마지막 목사는 delete_church로)
+//  · delete_church   : 교회 전체 지우기 — 교회 이름을 그대로 적어야 한다. 모든 계정·목장·일기·로고가 사라진다
 //  · set_logo        : 우리 교회 로고(PNG, 화면에서 512px 이하로 줄여 보냄)를 올린다 / remove_logo : 지운다
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
@@ -130,6 +132,19 @@ Deno.serve(async (req) => {
     // ── 아래부터는 로그인한 목사만 ──────────────────────────────
     const me = await callerProfile(req)
     if (!me) return json({ error: '로그인이 필요합니다' }, 401)
+
+    // ── 내 계정 탈퇴 (목자도 됨) ── 쓴 일기·기도제목은 교회 기록으로 남는다
+    if (action === 'delete_me') {
+      if (me.role === 'pastor') {
+        const { count } = await admin.from('church_profile').select('id', { count: 'exact', head: true })
+          .eq('role', 'pastor').eq('church_id', me.church_id)
+        if ((count ?? 0) <= 1) return json({ error: '마지막 목사 계정은 탈퇴할 수 없습니다. 교회를 그만 쓰시려면 [교회 지우기]를 눌러 주세요' }, 400)
+      }
+      const { error } = await admin.auth.admin.deleteUser(me.id)
+      if (error) throw new Error(error.message)
+      return json({ ok: true })
+    }
+
     if (me.role !== 'pastor') return json({ error: '목사 계정만 쓸 수 있습니다' }, 403)
     if (!me.church_id) return json({ error: '교회 정보가 없는 계정입니다' }, 403)
 
@@ -204,6 +219,18 @@ Deno.serve(async (req) => {
     if (action === 'remove_logo') {
       await admin.storage.from(LOGO_BUCKET).remove([`${me.church_id}.png`])
       const { error } = await admin.from('church_church').update({ logo_url: '' }).eq('id', me.church_id)
+      if (error) throw new Error(error.message)
+      return json({ ok: true })
+    }
+
+    if (action === 'delete_church') {
+      const { data: ch } = await admin.from('church_church').select('id, name').eq('id', me.church_id).maybeSingle()
+      if (!ch) return json({ error: '교회 정보가 없는 계정입니다' }, 403)
+      if (String(body.confirm_name ?? '').trim() !== ch.name.trim()) return json({ error: '교회 이름이 맞지 않습니다' }, 400)
+      const { data: people } = await admin.from('church_profile').select('id').eq('church_id', ch.id)
+      for (const p of people ?? []) await admin.auth.admin.deleteUser(p.id)
+      await admin.storage.from(LOGO_BUCKET).remove([`${ch.id}.png`])
+      const { error } = await admin.from('church_church').delete().eq('id', ch.id)   // 목장·일기·기도제목·답글은 함께 지워진다
       if (error) throw new Error(error.message)
       return json({ ok: true })
     }
