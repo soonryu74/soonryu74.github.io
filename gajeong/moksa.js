@@ -442,35 +442,7 @@
   }
 
   /* ── 관리 ──────────────────────────────────────── */
-  /* ── 목자(순장) 스스로 가입 코드 ── */
-  function showJoin(code) {
-    $('#join-off').hidden = !!code; $('#join-on').hidden = !code;
-    if (!code) return;
-    $('#join-code').textContent = code;
-    $('#join-link').value = C.churchLink(C.getChurch()) + '?join=' + encodeURIComponent(code);
-  }
-  function bindJoin() {
-    C.callAdmin({ action: 'join_code_get' }).then(function (r) { showJoin(r.code); }).catch(function () {});
-    async function make() {
-      try { showJoin((await C.callAdmin({ action: 'join_code_new' })).code); C.say($('#msg-join'), T('새 가입 코드를 만들었습니다. 예전 코드는 이제 쓸 수 없습니다.'), 'ok'); }
-      catch (e) { C.say($('#msg-join'), e.message, 'err'); }
-    }
-    $('#join-make').addEventListener('click', make);
-    $('#join-new').addEventListener('click', function () { if (confirm(T('코드를 바꾸면 예전 코드와 주소로는 가입할 수 없습니다. 바꿀까요?'))) make(); });
-    $('#join-stop').addEventListener('click', async function () {
-      if (!confirm(T('가입을 끌까요? 이미 가입한 목자는 그대로 씁니다.'))) return;
-      try { await C.callAdmin({ action: 'join_code_off' }); showJoin(null); C.say($('#msg-join'), T('가입을 껐습니다.'), 'ok'); }
-      catch (e) { C.say($('#msg-join'), e.message, 'err'); }
-    });
-    $('#join-copy').addEventListener('click', async function () {
-      var v = $('#join-link').value;
-      try { await navigator.clipboard.writeText(v); C.say($('#msg-join'), T('주소를 복사했습니다.'), 'ok'); }
-      catch (e) { $('#join-link').select(); C.say($('#msg-join'), T('주소를 길게 눌러 복사해 주세요.'), 'ok'); }
-    });
-  }
-
   function bindManage() {
-    bindJoin();
     $('#form-new').addEventListener('submit', async function (e) {
       e.preventDefault();
       var b = $('#btn-new'); b.disabled = true; b.textContent = T('만드는 중…');

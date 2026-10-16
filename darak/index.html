@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script>/* 기억한 교회 디자인을 그리기 전에 입힌다 (깜빡임 방지) */
+try { (function (m, q) { var s = q.get('c');
+  if (m && m.theme && !q.has('new') && (!s || s === m.slug)) document.documentElement.setAttribute('data-theme', m.theme);
+})(JSON.parse(localStorage.getItem('darak-church') || 'null'), new URLSearchParams(location.search)); } catch (e) {}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>다락방 나눔터 — 들어가기</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="목장 일기와 기도제목을 목자와 목사가 나누는 곳입니다.">
+<meta name="theme-color" content="#1f4d3b">
+<meta property="og:type" content="website">
+<meta property="og:title" content="다락방 나눔터">
+<meta property="og:description" content="다락방 이야기와 기도제목을 순장과 목사님이 나누는 곳">
+<meta property="og:image" content="https://mokjang.github.io/assets/og.png">
+<meta property="og:url" content="https://mokjang.github.io/darak/">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="다락방나눔터">
+<link rel="stylesheet" href="style.css?v=202610161400">
+<style>
+  .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
+  .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
+    background:#fffdf8; border-radius:28px; padding:8px; box-shadow:0 0 0 1px var(--line), 0 18px 40px -18px rgba(45,38,20,.35)}
+  .hero .church{font-family:var(--serif); font-size:21px; font-weight:700; letter-spacing:-.02em; color:var(--brand);
+    margin-top:18px; min-height:1.2em}
+  .hero h1{font-family:var(--serif); font-size:34px; font-weight:700; margin:14px 0 8px; letter-spacing:-.03em; color:var(--ink)}
+  .hero .orn{display:flex; align-items:center; justify-content:center; gap:12px; color:var(--gold); margin:4px 0 0}
+  .hero .orn::before,.hero .orn::after{content:''; width:56px; height:1px; background:linear-gradient(90deg, transparent, var(--gold-line))}
+  .hero .orn::after{transform:scaleX(-1)}
+  .hero p{color:var(--muted); margin:0; font-size:15.5px}
+  .wrap{max-width:460px; position:relative}
+  .guide-tabs{display:flex; gap:8px; margin:4px 0 12px}
+  .guide-tabs button{border-radius:999px}
+  .guide-tabs button.on{background:var(--brand); color:var(--on-brand); border-color:var(--brand)}
+  .guide video{display:block; width:100%; max-height:72vh; aspect-ratio:9/16; object-fit:contain; background:#111; border-radius:14px}
+  .lang-bar{position:absolute; top:14px; right:16px; z-index:2}
+  .lang-bar button{border-radius:999px; background:var(--sheet)}
+  .card{animation:rise .6s .12s ease both}
+  .foot{text-align:center; color:var(--muted); font-size:14px; margin-top:22px; line-height:1.7}
+  .foot a{color:var(--brand); font-weight:600; text-decoration:none; border-bottom:1px solid var(--gold-line)}
+  #setup{display:none}
+  .hero .logo:not([src]){visibility:hidden}
+  .branded #setup-link{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="lang-bar" id="lang-bar"></div>
+  <div class="hero">
+    <img class="logo" id="hero-logo" alt="" width="104" height="104">
+    <div class="church" id="hero-church"></div>
+    <script>/* 서버에 묻기 전에, 이 기기가 기억하는 교회면 로고·이름을 바로 그린다 (깜빡임 방지).
+       교회 주소(/코드/)로 들어오면 그 페이지가 미리 기억시켜 둔다. 다른 교회 것은 쓰지 않는다. */
+    (function () {
+      var q = new URLSearchParams(location.search), slug = q.get('c'), mem = null, c = null;
+      if (q.has('new')) return void (document.getElementById('hero-logo').src = 'assets/icon-192.png');
+      try { mem = JSON.parse(localStorage.getItem('darak-church') || 'null'); } catch (e) {}
+      c = slug ? (mem && mem.slug === slug ? mem : null) : mem;
+      if (c && c.name) {
+        document.documentElement.classList.add('branded');
+        window.__EARLY_CHURCH = c;
+        document.getElementById('hero-church').textContent = c.name;
+        document.getElementById('hero-logo').src = c.logo_url || 'assets/icon-192.png';
+      } else if (!slug) document.getElementById('hero-logo').src = 'assets/icon-192.png';
+      /* 처음 보는 ?c= 교회면 서버 답이 올 때까지 비워 둔다 */
+    })();
+    </script>
+    <h1>목장 나눔터</h1>
+    <div class="orn">✦</div>
+    <p>한 주 목장 이야기와 기도제목을 담는 곳</p>
+  </div>
+
+  <!-- 로그인 -->
+  <!-- 이 기기가 이미 다른 교회로 들어가 있을 때 -->
+  <div class="card signed-in" id="signed-in" hidden data-noterm>
+    <p class="desc" style="margin:0 0 12px" id="signed-in-text"></p>
+    <div class="row"><button class="primary" type="button" id="go-mine"></button></div>
+  </div>
+
+  <div class="card" id="login">
+    <h2>들어가기</h2>
+    <p class="desc">목사님은 교회를 등록할 때 정한 아이디로, 목자님은 목사님께 받으신 아이디로 들어오세요.</p>
+    <form id="form-login" autocomplete="on">
+      <label for="lid">아이디</label>
+      <input id="lid" type="text" inputmode="latin" autocapitalize="none" autocorrect="off"
+             autocomplete="username" placeholder="예: kimmokja" required>
+      <label for="pw">비밀번호</label>
+      <input id="pw" type="password" autocomplete="current-password" placeholder="비밀번호" required>
+      <div class="msg" id="msg-login"></div>
+      <div class="row" style="margin-top:18px">
+        <button class="primary" type="submit" id="btn-login" style="flex:1">들어가기</button>
+      </div>
+    </form>
+    <p class="foot">
+      <a href="#" id="to-recover">비밀번호를 잊으셨나요?</a><br>
+      <a href="#" id="to-join">목자로 가입하기 (목사님께 받은 가입 코드가 있으면)</a>
+      <span id="setup-link"><br><a href="#" id="to-setup">우리 교회도 쓰고 싶어요 — 새 교회 등록</a></span>
+    </p>
+  </div>
+
+  <!-- 새 교회 등록 -->
+  <!-- 비밀번호 잊었을 때 -->
+  <div class="card" id="recover" hidden>
+    <h2>새 비밀번호 정하기</h2>
+    <p class="desc"><b>목자님</b>은 목사님께 말씀해 주세요. 목사님 화면에서 바로 새 비밀번호를 정해 드립니다.<br>
+      <b>목사님</b>은 교회를 등록할 때 받으신 복구 코드로 여기서 새 비밀번호를 정하실 수 있습니다.</p>
+    <form id="form-recover">
+      <label for="rid">아이디</label>
+      <input id="rid" type="text" inputmode="latin" autocapitalize="none" autocorrect="off" autocomplete="username" required>
+      <label for="rcode">복구 코드</label>
+      <input id="rcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX-XXXX" required>
+      <label for="rpw1">새 비밀번호</label>
+      <input id="rpw1" type="password" autocomplete="new-password" placeholder="8자 이상" required>
+      <label for="rpw2">한 번 더</label>
+      <input id="rpw2" type="password" autocomplete="new-password" required>
+      <div class="msg" id="msg-recover"></div>
+      <div class="row" style="margin-top:18px">
+        <button type="button" class="ghost" id="recover-back">뒤로</button>
+        <button class="primary" type="submit" id="btn-recover" style="flex:1">새 비밀번호로 바꾸기</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 목자(순장) 스스로 가입 -->
+  <div class="card" id="join" hidden>
+    <h2>목자로 가입하기</h2>
+    <p class="desc">목사님께 받은 가입 코드로 내 계정과 목장을 직접 만듭니다. 가입하면 바로 목원을 넣고 일기를 쓸 수 있습니다.</p>
+    <form id="form-join">
+      <label for="jcode">가입 코드</label>
+      <input id="jcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX" required>
+      <label for="jname">내 이름</label>
+      <input id="jname" type="text" placeholder="예: 김철수" required>
+      <label for="jmj">목장 이름</label>
+      <input id="jmj" type="text" placeholder="비워 두면 '내 이름 목장'이 됩니다">
+      <label for="jlid">쓰실 아이디</label>
+      <input id="jlid" type="text" inputmode="latin" autocapitalize="none" autocorrect="off" autocomplete="username"
+             placeholder="영문 소문자와 숫자로 3자 이상" required>
+      <p class="hint">아이디는 모든 교회를 통틀어 하나뿐이어야 합니다. 겹치면 다른 아이디를 골라 주세요.</p>
+      <label for="jpw">비밀번호</label>
+      <input id="jpw" type="password" autocomplete="new-password" placeholder="8자 이상" required>
+      <label for="jpw2">한 번 더</label>
+      <input id="jpw2" type="password" autocomplete="new-password" required>
+      <div class="msg" id="msg-join"></div>
+      <div class="row" style="margin-top:18px">
+        <button type="button" class="ghost" id="join-back">뒤로</button>
+        <button class="primary" type="submit" id="btn-join" style="flex:1">가입하기</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 등록 직후: 복구 코드 보여 주기 -->
+  <div class="card" id="got-code" hidden>
+    <h2>복구 코드를 꼭 적어 두세요</h2>
+    <p class="desc">비밀번호를 잊었을 때 이 코드로 새 비밀번호를 정합니다. 사진을 찍거나 수첩에 적어 두세요. 다시 보여 드리지 않습니다.</p>
+    <div class="code-box" id="code-box" data-noterm></div>
+    <div class="row" style="margin-top:18px"><button class="primary" type="button" id="code-done" style="flex:1">적어 두었어요 — 시작하기</button></div>
+  </div>
+
+  <div class="card" id="setup">
+    <h2>새 교회 등록</h2>
+    <p class="desc">받으신 초대 코드로 교회와 목사님 계정을 함께 만듭니다. 교회마다 따로 쓰므로 다른 교회 목장은 서로 보이지 않습니다.
+      내려받거나 깔 것은 없습니다.</p>
+    <form id="form-setup">
+      <label for="scode">초대 코드</label>
+      <input id="scode" type="text" autocapitalize="characters" autocomplete="off" placeholder="안내받은 코드" required>
+      <label for="schurch">교회 이름</label>
+      <input id="schurch" type="text" placeholder="예: 새소망교회" required>
+      <label for="stz">교회가 있는 곳</label>
+      <select id="stz"></select>
+      <p class="hint">'이번 주'를 이 시간대로 셉니다. 나중에 바꿀 수 있습니다.</p>
+      <label for="sname">목사님 이름</label>
+      <input id="sname" type="text" placeholder="예: 홍길동" required>
+      <label for="slid">쓰실 아이디</label>
+      <input id="slid" type="text" inputmode="latin" autocapitalize="none" autocorrect="off"
+             placeholder="영문 소문자와 숫자로 3자 이상" required>
+      <p class="hint">아이디는 모든 교회를 통틀어 하나뿐이어야 합니다. 겹치면 다른 아이디를 골라 주세요.</p>
+      <label for="spw">비밀번호</label>
+      <input id="spw" type="password" autocomplete="new-password" placeholder="8자 이상" required>
+      <div class="msg" id="msg-setup"></div>
+      <div class="row" style="margin-top:18px">
+        <button type="button" class="ghost" id="to-login">뒤로</button>
+        <button class="primary" type="submit" id="btn-setup" style="flex:1">교회 등록하기</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 사용법 영상 -->
+  <section class="card guide" id="guide">
+    <h2>사용법 영상</h2>
+    <p class="desc">처음이시면 2분만 보세요. 보시면서 그대로 따라 하시면 됩니다.</p>
+    <div class="guide-tabs">
+      <button type="button" class="small" data-who="pastor">목사님용</button>
+      <button type="button" class="small" data-who="leader">목자용</button>
+    </div>
+    <video id="guide-video" controls playsinline preload="none"></video>
+    <p class="hint"><a id="guide-dl" href="#" download>영상 파일 받기</a> · 카카오톡으로 보내실 때는 이 페이지 주소를 보내 주세요.</p>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="lang-en.js?v=202610161400"></script>
+<script src="common.js?v=202610161400"></script>
+<script>
+(function () {
+  var C = window.CHURCH, $ = C.$;
+
+  // 이미 로그인돼 있으면 바로 제 화면으로
+  // 이미 로그인돼 있으면 제 화면으로 — 단, 다른 교회 주소나 새 교회 등록 주소로 왔으면 넘기지 않고 알려만 준다
+  var urlSlug = new URLSearchParams(location.search).get('c');
+  C.me().then(async function (p) {
+    if (!p) return;
+    var home = p.role === 'pastor' ? 'moksa.html' : 'mokjang.html';
+    var mine = urlSlug || wantNew ? ((await C.sb.from('church_church').select('slug, name').maybeSingle()).data || {}) : null;
+    if (!mine || (!wantNew && mine.slug === urlSlug)) return location.replace(home);
+    $('#signed-in-text').textContent = C.t('이 기기는 지금 {0}({1}) 계정으로 들어가 있습니다.', mine.name || C.t('다른 교회'), C.title2(p)) + ' ' +
+      C.t(wantNew ? C.t('새 교회를 등록하면 이 기기는 새 교회로 바뀝니다.') : C.t('이 교회로 들어가려면 아래에서 로그인하세요.'));
+    $('#go-mine').textContent = C.t('{0}로 가기', mine.name || C.t('내 교회'));
+    $('#go-mine').onclick = function () { location.replace(home); };
+    $('#signed-in').hidden = false;
+  });
+
+  // 새 교회 등록은 교회 이름이 없는 첫 화면(또는 주소 끝 ?new)에서만 보인다 — 교회 화면에서는 헷갈리지 않게 숨긴다
+  var wantNew = /[?&]new\b/.test(location.search);
+  function showSetup() { $('#login').style.display = 'none'; $('#setup').style.display = 'block'; }
+  if (wantNew) showSetup();
+  if (/[?&]left=1/.test(location.search)) C.say($('#msg-login'), C.t('탈퇴했습니다. 그동안 함께해 주셔서 감사합니다.'), 'ok', true);
+  $('#lang-bar').innerHTML = C.langButton(); C.bindLangButton($('#lang-bar'));
+
+  // 사용법 영상: 교회 주소로 온 분(대개 목자)은 목자용, 등록하러 온 분은 목사님용을 먼저
+  function showGuide(who) {
+    var base = '../video/guide-' + who + '-' + (C.lang() === 'en' ? 'en' : 'ko');
+    var v = $('#guide-video');
+    if (v.dataset.src !== base) { v.dataset.src = base; v.poster = base + '.jpg'; v.src = base + '.mp4'; }
+    $('#guide-dl').href = base + '.mp4';
+    C.$$('.guide-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.who === who); });
+  }
+  C.$$('.guide-tabs button').forEach(function (b) { b.addEventListener('click', function () { showGuide(b.dataset.who); }); });
+  showGuide(!wantNew && document.documentElement.classList.contains('branded') ? 'leader' : 'pastor');
+  // 이 기기가 기억하는 교회 모양(디자인·부르는 말)을 먼저 입힌다 — 서버 답은 뒤에 와서 고친다
+  if (window.__EARLY_CHURCH) C.applyLook(window.__EARLY_CHURCH);
+  // 등록 주소에 코드가 붙어 오면(?new=코드) 미리 채워 둔다
+  var codeInLink = new URLSearchParams(location.search).get('new');
+  if (codeInLink) $('#scode').value = codeInLink;
+
+  // 주소의 ?c=… 또는 이 기기가 기억하는 교회 이름·로고를 보여 준다
+  (wantNew ? Promise.resolve(null) : C.publicChurch()).then(function (c) {
+    if (!c) { if (!$('#hero-logo').getAttribute('src')) $('#hero-logo').src = 'assets/icon-192.png'; return; }
+    document.documentElement.classList.add('branded');
+    $('#setup-link').style.display = 'none';
+    C.applyLook(c);
+    $('#hero-church').textContent = c.name;
+    if (c.logo_url) { $('#hero-logo').src = c.logo_url; $('#hero-logo').alt = C.t('{0} 로고', c.name); }
+    document.title = C.t('{0} 목장 나눔터 — 들어가기', c.name);
+  }).catch(function () { if (!$('#hero-logo').getAttribute('src')) $('#hero-logo').src = 'assets/icon-192.png'; });
+
+  C.fillTimezones($('#stz'));
+  $('#to-setup').addEventListener('click', function (e) { e.preventDefault(); showSetup(); });
+  $('#to-login').addEventListener('click', function () {
+    $('#setup').style.display = 'none'; $('#login').style.display = 'block';
+  });
+
+  $('#form-login').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var b = $('#btn-login'); b.disabled = true; b.textContent = C.t('확인하는 중…');
+    try {
+      await C.signIn($('#lid').value, $('#pw').value);
+      var p = await C.me();
+      if (!p) throw new Error(C.t('계정 정보를 찾지 못했습니다. 목사님께 알려 주세요.'));
+      location.replace(p.role === 'pastor' ? 'moksa.html' : 'mokjang.html');
+    } catch (err) {
+      C.say($('#msg-login'), err.message, 'err');
+      b.disabled = false; b.textContent = C.t('들어가기');
+    }
+  });
+
+  $('#form-setup').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var b = $('#btn-setup'); b.disabled = true; b.textContent = C.t('만드는 중…');
+    try {
+      var made = await C.callAdmin({
+        action: 'register_church',
+        invite_code: $('#scode').value,
+        church_name: $('#schurch').value,
+        timezone: $('#stz').value,
+        login_id: $('#slid').value,
+        password: $('#spw').value,
+        name: $('#sname').value
+      });
+      await C.signIn($('#slid').value, $('#spw').value);
+      // 다락방 앱으로 등록한 교회는 처음부터 다락방·순장·순원으로 부른다 (목사 화면에서 바꿀 수 있다)
+      await C.sb.from('church_church').update({ terms: { unit: '다락방', leader: '순장', member: '순원' } }).eq('slug', made.slug);
+      if (!made.recovery_code) return location.replace('moksa.html');
+      $('#setup').style.display = 'none'; $('#signed-in').hidden = true;
+      $('#code-box').textContent = made.recovery_code; $('#got-code').hidden = false;
+      window.scrollTo(0, 0);
+    } catch (err) {
+      C.say($('#msg-setup'), err.message, 'err');
+      b.disabled = false; b.textContent = C.t('교회 등록하기');
+    }
+  });
+
+  $('#code-done').addEventListener('click', function () { location.replace('moksa.html'); });
+
+  // 목자(순장) 스스로 가입 — 주소 끝 ?join=코드 로 오면 바로 연다
+  function showJoinForm() { $('#login').style.display = 'none'; $('#setup').style.display = 'none'; $('#join').hidden = false; }
+  var joinInLink = new URLSearchParams(location.search).get('join');
+  if (joinInLink && !wantNew) { $('#jcode').value = joinInLink; showJoinForm(); }
+  $('#to-join').addEventListener('click', function (e) { e.preventDefault(); showJoinForm(); });
+  $('#join-back').addEventListener('click', function () { $('#join').hidden = true; $('#login').style.display = 'block'; });
+  $('#form-join').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if ($('#jpw').value !== $('#jpw2').value) return C.say($('#msg-join'), C.t('두 번 넣으신 비밀번호가 서로 다릅니다.'), 'err');
+    var b = $('#btn-join'); b.disabled = true; b.textContent = C.t('만드는 중…');
+    try {
+      await C.callAdmin({ action: 'join_mokja', join_code: $('#jcode').value, name: $('#jname').value,
+        mokjang_name: $('#jmj').value, login_id: $('#jlid').value, password: $('#jpw').value });
+      await C.signIn($('#jlid').value, $('#jpw').value);
+      location.replace('mokjang.html');
+    } catch (err) {
+      C.say($('#msg-join'), err.message, 'err');
+      b.disabled = false; b.textContent = C.t('가입하기');
+    }
+  });
+
+  // 비밀번호 잊었을 때
+  $('#to-recover').addEventListener('click', function (e) {
+    e.preventDefault(); $('#login').style.display = 'none'; $('#recover').hidden = false;
+    $('#rid').value = $('#lid').value;
+  });
+  $('#recover-back').addEventListener('click', function () { $('#recover').hidden = true; $('#login').style.display = 'block'; });
+  $('#form-recover').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if ($('#rpw1').value !== $('#rpw2').value) return C.say($('#msg-recover'), C.t('두 번 넣으신 비밀번호가 서로 다릅니다.'), 'err');
+    var b = $('#btn-recover'); b.disabled = true;
+    try {
+      await C.callAdmin({ action: 'recover', login_id: $('#rid').value, code: $('#rcode').value, password: $('#rpw1').value });
+      await C.signIn($('#rid').value, $('#rpw1').value);
+      var p = await C.me();
+      location.replace(p && p.role === 'pastor' ? 'moksa.html' : 'mokjang.html');
+    } catch (err) { C.say($('#msg-recover'), err.message, 'err'); b.disabled = false; }
+  });
+})();
+</script>
+
+</body>
+</html>
