@@ -29,7 +29,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610161400">
+<link rel="stylesheet" href="style.css?v=202610161330">
 <style>
   .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
   .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
@@ -105,8 +105,7 @@ try { (function (m, q) { var s = q.get('c');
       </div>
     </form>
     <p class="foot">
-      <a href="#" id="to-recover">비밀번호를 잊으셨나요?</a><br>
-      <a href="#" id="to-join">목자로 가입하기 (목사님께 받은 가입 코드가 있으면)</a>
+      <a href="#" id="to-recover">비밀번호를 잊으셨나요?</a>
       <span id="setup-link"><br><a href="#" id="to-setup">우리 교회도 쓰고 싶어요 — 새 교회 등록</a></span>
     </p>
   </div>
@@ -130,33 +129,6 @@ try { (function (m, q) { var s = q.get('c');
       <div class="row" style="margin-top:18px">
         <button type="button" class="ghost" id="recover-back">뒤로</button>
         <button class="primary" type="submit" id="btn-recover" style="flex:1">새 비밀번호로 바꾸기</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- 목자(순장) 스스로 가입 -->
-  <div class="card" id="join" hidden>
-    <h2>목자로 가입하기</h2>
-    <p class="desc">목사님께 받은 가입 코드로 내 계정과 목장을 직접 만듭니다. 가입하면 바로 목원을 넣고 일기를 쓸 수 있습니다.</p>
-    <form id="form-join">
-      <label for="jcode">가입 코드</label>
-      <input id="jcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX" required>
-      <label for="jname">내 이름</label>
-      <input id="jname" type="text" placeholder="예: 김철수" required>
-      <label for="jmj">목장 이름</label>
-      <input id="jmj" type="text" placeholder="비워 두면 '내 이름 목장'이 됩니다">
-      <label for="jlid">쓰실 아이디</label>
-      <input id="jlid" type="text" inputmode="latin" autocapitalize="none" autocorrect="off" autocomplete="username"
-             placeholder="영문 소문자와 숫자로 3자 이상" required>
-      <p class="hint">아이디는 모든 교회를 통틀어 하나뿐이어야 합니다. 겹치면 다른 아이디를 골라 주세요.</p>
-      <label for="jpw">비밀번호</label>
-      <input id="jpw" type="password" autocomplete="new-password" placeholder="8자 이상" required>
-      <label for="jpw2">한 번 더</label>
-      <input id="jpw2" type="password" autocomplete="new-password" required>
-      <div class="msg" id="msg-join"></div>
-      <div class="row" style="margin-top:18px">
-        <button type="button" class="ghost" id="join-back">뒤로</button>
-        <button class="primary" type="submit" id="btn-join" style="flex:1">가입하기</button>
       </div>
     </form>
   </div>
@@ -211,8 +183,8 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610161400"></script>
-<script src="common.js?v=202610161400"></script>
+<script src="lang-en.js?v=202610161330"></script>
+<script src="common.js?v=202610161330"></script>
 <script>
 (function () {
   var C = window.CHURCH, $ = C.$;
@@ -311,27 +283,6 @@ try { (function (m, q) { var s = q.get('c');
   });
 
   $('#code-done').addEventListener('click', function () { location.replace('moksa.html'); });
-
-  // 목자(순장) 스스로 가입 — 주소 끝 ?join=코드 로 오면 바로 연다
-  function showJoinForm() { $('#login').style.display = 'none'; $('#setup').style.display = 'none'; $('#join').hidden = false; }
-  var joinInLink = new URLSearchParams(location.search).get('join');
-  if (joinInLink && !wantNew) { $('#jcode').value = joinInLink; showJoinForm(); }
-  $('#to-join').addEventListener('click', function (e) { e.preventDefault(); showJoinForm(); });
-  $('#join-back').addEventListener('click', function () { $('#join').hidden = true; $('#login').style.display = 'block'; });
-  $('#form-join').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    if ($('#jpw').value !== $('#jpw2').value) return C.say($('#msg-join'), C.t('두 번 넣으신 비밀번호가 서로 다릅니다.'), 'err');
-    var b = $('#btn-join'); b.disabled = true; b.textContent = C.t('만드는 중…');
-    try {
-      await C.callAdmin({ action: 'join_mokja', join_code: $('#jcode').value, name: $('#jname').value,
-        mokjang_name: $('#jmj').value, login_id: $('#jlid').value, password: $('#jpw').value });
-      await C.signIn($('#jlid').value, $('#jpw').value);
-      location.replace('mokjang.html');
-    } catch (err) {
-      C.say($('#msg-join'), err.message, 'err');
-      b.disabled = false; b.textContent = C.t('가입하기');
-    }
-  });
 
   // 비밀번호 잊었을 때
   $('#to-recover').addEventListener('click', function (e) {

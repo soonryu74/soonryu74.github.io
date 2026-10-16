@@ -23,7 +23,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610161400">
+<link rel="stylesheet" href="style.css?v=202610161330">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -169,26 +169,6 @@ try { (function (m, q) { var s = q.get('c');
         <div class="row" style="margin-top:16px"><button class="primary" type="submit" id="btn-new">계정 만들기</button></div>
       </form>
     </div>
-    <div class="card" id="join-card">
-      <h2>목자가 스스로 가입하기</h2>
-      <p class="desc">가입 코드를 만들어 목자들에게 알려 주면, 목자가 첫 화면에서 직접 계정과 목장을 만들고 목원을 관리합니다.
-        목사님이 계정을 하나하나 만들지 않아도 됩니다.</p>
-      <div id="join-off">
-        <p class="hint">지금은 꺼져 있습니다.</p>
-        <button class="primary" type="button" id="join-make">가입 코드 만들기</button>
-      </div>
-      <div id="join-on" hidden>
-        <div class="code-box" id="join-code" data-noterm></div>
-        <label for="join-link">가입 주소 — 카카오톡으로 보내 주세요</label>
-        <div class="row"><input id="join-link" type="text" readonly style="flex:1; min-width:200px"><button type="button" id="join-copy">복사</button></div>
-        <p class="hint">코드를 아는 사람은 누구나 목자로 가입할 수 있습니다. 가입이 다 끝나면 [코드 바꾸기]나 [가입 끄기]를 눌러 주세요. 가입한 목자는 아래 목장 목록에 나옵니다.</p>
-        <div class="row" style="margin-top:12px">
-          <button type="button" id="join-new">코드 바꾸기</button>
-          <button type="button" class="danger" id="join-stop">가입 끄기</button>
-        </div>
-      </div>
-      <div class="msg" id="msg-join"></div>
-    </div>
     <div class="card">
       <h2>목사 계정 추가</h2>
       <p class="desc">처음 교회를 등록할 때 만든 계정이 첫 목사 계정입니다. 부목사님·사모님처럼
@@ -258,9 +238,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610161400"></script>
-<script src="common.js?v=202610161400"></script>
-<script src="moksa.js?v=202610161400"></script>
+<script src="lang-en.js?v=202610161330"></script>
+<script src="common.js?v=202610161330"></script>
+<script src="moksa.js?v=202610161330"></script>
 
 </body>
 </html>

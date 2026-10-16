@@ -189,30 +189,6 @@
       if (!want || want.replace(/-/g, '') !== String(b.code || '').toUpperCase().replace(/[^A-Z0-9]/g, '')) reply = { error: '아이디나 복구 코드가 맞지 않습니다' };
       else { DB.__newpw = DB.__newpw || {}; DB.__newpw[pf.id] = b.password; }
     }
-    if (u.indexOf('church-admin') >= 0 && b.action === 'join_mokja') {
-      var jc = (DB.__join || {})[String(b.join_code || '').toUpperCase().replace(/[^A-Z0-9]/g, '')];
-      if (!jc) reply = { error: '가입 코드가 맞지 않습니다. 목사님께 다시 물어봐 주세요' };
-      else if (DB.church_profile.some(function (x) { return x.login_id === b.login_id; })) reply = { error: '이미 쓰고 있는 아이디입니다. 다른 아이디를 골라 주세요' };
-      else {
-        var ju = 'u' + (++nid), jch = DB.church_church.find(function (x) { return x.id === jc; });
-        var unit = (jch.terms && jch.terms.unit) || '목장';
-        DB.church_profile.push({ id: ju, login_id: b.login_id, name: b.name, role: 'mokja', church_id: jc });
-        DB.__newpw = DB.__newpw || {}; DB.__newpw[ju] = b.password;
-        DB.church_mokjang.push({ id: 'mj' + (++nid), name: (b.mokjang_name || '').trim() || b.name + ' ' + unit, mokja_id: ju, mokja_name: b.name,
-          church_id: jc, sort_order: 0, active: true, created_at: '2026-10-16' });
-        reply = { ok: true, slug: jch.slug };
-      }
-    }
-    if (u.indexOf('church-admin') >= 0 && /^join_code_/.test(b.action)) {
-      var mej = me(); DB.__join = DB.__join || {};
-      var cur = Object.keys(DB.__join).find(function (k) { return DB.__join[k] === mej.church_id; });
-      if (mej.role !== 'pastor') reply = { error: '목사 계정만 쓸 수 있습니다' };
-      else if (b.action === 'join_code_get') reply = { ok: true, code: cur ? cur.slice(0, 4) + '-' + cur.slice(4) : null };
-      else {
-        if (cur) delete DB.__join[cur];
-        if (b.action === 'join_code_new') { var nc = 'JOIN' + (1000 + (++nid)); DB.__join[nc] = mej.church_id; reply = { ok: true, code: nc.slice(0, 4) + '-' + nc.slice(4) }; }
-      }
-    }
     if (u.indexOf('church-notify') >= 0) reply = b.action === 'key' ? { publicKey: 'BEd3W7naVVZVjZKZZYJiVVxsVFqwxfQM4oNwgxuRb88ja3SPrlpHK0WKduDOHUVXfRhz3I6ZlC-iNnyB4Ob64p4' } : { ok: true, sent: b.action === 'test' ? DB.church_push.length : 1, devices: 1 };
     persist();
     var status = reply.error ? 403 : 200;
