@@ -8,7 +8,7 @@ const NOW = new Date('2026-10-19T02:00:00Z'); // 멜번 월 13시(→10/19 주) 
 
 const SEED = { db: {
   church_church: [
-    { id: 'cb', slug: 'bangjoo', name: '멜번방주교회 & ALF', timezone: 'Australia/Melbourne', logo_url: 'assets/logo.png', theme: 'sky' },
+    { id: 'cb', slug: 'bangjoo', name: '멜번방주교회 & ALF', timezone: 'Australia/Melbourne', logo_url: 'assets/logo.png', theme: 'sky', features: { member_dates: true } },
     { id: 'cl', slug: 'lach01', name: 'LA 새소망교회', timezone: 'America/Los_Angeles', logo_url: '', theme: 'night',
       terms: { unit: '다락방', leader: '순장', member: '순원' } } ],
   church_profile: [
@@ -374,6 +374,16 @@ const db = p => p.evaluate(() => window.__DB());
     await login(p, 'pastor1');
     await p.click('.tabs button[data-pane="people"]'); await p.waitForTimeout(400);
     ok('영어: 성도 명단 탭·필터', (await p.textContent('.tabs')).includes('Church members') && (await p.textContent('#pp-filter')).includes('Not yet baptized'));
+    await c.close(); }
+
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastorla');
+    ok('다른 교회(기능 안 켬): 성도 명단 탭 없음', !(await p.isVisible('.tabs button[data-pane="people"]')));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokjala');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    ok('다른 교회(기능 안 켬): 목원 날짜 단추 없음', (await p.$$('#member-list .act-dates')).length === 0);
     await c.close(); }
 
   await b.close();

@@ -260,7 +260,7 @@ window.CHURCH = (function () {
     try { return JSON.parse(localStorage.getItem(LS_CHURCH) || 'null'); } catch (e) { return null; }
   }
   async function loadChurch() {
-    var r = await sb.from('church_church').select('id, slug, name, timezone, logo_url, theme, terms').maybeSingle();
+    var r = await sb.from('church_church').select('id, slug, name, timezone, logo_url, theme, terms, features').maybeSingle();
     if (r.error || !r.data) return null;
     church = r.data;
     setTimezone(church.timezone);
@@ -460,6 +460,8 @@ window.CHURCH = (function () {
     if (m.baptized_on) out.push(t('침례') + ' ' + dayText(m.baptized_on));
     return out.map(function (x) { return x.replace(/ /g, '\u00a0'); }).join(' · ');   // 날짜 하나가 두 줄로 갈라지지 않게
   }
+  // 교회마다 켠 기능 (church_church.features) — 예: member_dates(성도 날짜)는 방주교회부터
+  function has(feature) { return !!(church && church.features && church.features[feature]); }
   function memberDatesForm(m) {
     return '<form class="dates-form" data-id="' + esc(m.id) + '"><div class="dates-grid">' +
       DATE_FIELDS.map(function (f) {
@@ -490,7 +492,7 @@ window.CHURCH = (function () {
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave,
-    DATE_FIELDS: DATE_FIELDS, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
+    has: has, DATE_FIELDS: DATE_FIELDS, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();
