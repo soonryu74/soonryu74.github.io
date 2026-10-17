@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>06_지도데이터.json 출처·검증 메모 (2026-10-17 생성) | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="06_지도데이터.json 출처·검증 메모 (2026-10-17 생성)" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="06_지도데이터.json 출처·검증 메모 (2026-10-17 생성)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"06_지도데이터.json 출처·검증 메모 (2026-10-17 생성)","url":"/research_notes/%ED%95%AD%EA%B3%B5%EA%B8%B0%20%EC%84%A0%EB%B0%95%20%EC%86%8C%EB%8F%85%20%EC%9E%90%EA%B2%A9%20%EA%B8%B0%EC%A4%80/06_%EC%A7%80%EB%8F%84%EB%8D%B0%EC%9D%B4%ED%84%B0_%EC%B6%9C%EC%B2%98.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=85b7099f0d63c2a116dff9871ee3e5c176a9a06c">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="06_지도데이터json-출처검증-메모-2026-10-17-생성">06_지도데이터.json 출처·검증 메모 (2026-10-17 생성)</h1>
+
+<blockquote>
+  <p>목적: 국립검역소·검역지소(25개소)가 인근 소독업체(47개)를 지도에서 찾을 수 있도록 만든 <code class="language-plaintext highlighter-rouge">06_지도데이터.json</code>의 데이터 출처, 좌표 산출 방법, 검증하지 못한 항목을 기록한다. 지도 UI에서는 <code class="language-plaintext highlighter-rouge">coord_source</code>·<code class="language-plaintext highlighter-rouge">coord_precision</code>·<code class="language-plaintext highlighter-rouge">note</code> 필드를 반드시 노출해 “근사 좌표”와 “미검증 업체”를 구분해야 한다.</p>
+</blockquote>
+
+<h2 id="1-파일-구조-요약">1. 파일 구조 요약</h2>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">stations[]</code> 25건 = 검역소(본소) 13 + 지소 12. 필드: id, name, type(검역소</td>
+          <td>지소), parent, address, phone, lat, lng, coord_source, coord_precision, geocode_query, source_url, phone_source_url, note(선택).</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">companies[]</code> 47건 = 농림축산검역본부 방제업체(훈증) 35 + 컨테이너 훈증시설 보유업체 2 + 지상조업사 3 + 기내청소 하청 3 + 종합방역 1 + 일반 방역업체 2 + 선박소독(미검증) 1. 필드: id, name, category, region, address, phone, representative(일부), registration_no(일부), lat, lng, coord_source, coord_precision, geocode_query, source_url, capabilities{fumigation, ship, aircraft, terminal_facility, pathogen_tags[], disinfectants[], fumigation_facility_confirmed(일부)}, fumigation_facility(일부), note(선택).</li>
+  <li>좌표계 WGS84. <code class="language-plaintext highlighter-rouge">coord_source</code>: geocode(주소가 건물번호 또는 명칭 POI 수준으로 매칭) / approx(도로·동 중심 또는 인근 공항·항만·터미널 좌표) / city(시 중심). <code class="language-plaintext highlighter-rouge">coord_precision</code>: building / poi / road / area.</li>
+</ul>
+
+<h2 id="2-검역소지소-출처">2. 검역소·지소 출처</h2>
+<p>| 항목 | 출처 | 비고 |
+|—|—|—|
+| 13 검역소 + 12 지소 명단, 본소 대표번호 | 질병관리청 해외감염병NOW 「국립검역소」 현황표 https://travelhealth.kdca.go.kr/travel/www/QRNTN_INFO/QRNTN_INFO_NQS.jsp?gubun=info (구 nqs.kdca.go.kr/nqs/quaStation/nation.do?gubun=info 에서 301 리다이렉트) | 2026-10-17 열람. 권역별 질병대응센터(수도권·충청권·호남권·경북권·경남권) 아래 본소/지소·전화 표기 |
+| 13 검역소 명단(교차확인) | 질병관리청 소속기관 &gt; 국립검역소 https://kdca.go.kr/kdca/3443/subview.do , 조직구성 https://kdca.go.kr/kdca/3441/subview.do | “전국 공항·항만에 13개 검역소 및 11개 검역지소” 문구 |
+| 본소·지소 주소, 세부 전화 | 각 권역센터 누리집의 검역소별 「찾아오시는길」 페이지: 인천공항 https://www.kdca.go.kr/capital/3788/subview.do · 인천 /capital/3797 · 동해 /capital/3807 · 평택 /chungcheong/3823 · 군산 /chungcheong/3834 · 목포 /honam/3852 · 여수 /honam/3861 · 제주 /honam/3870 · 포항 /gyeongbuk/3886 · 울산 /gyeongbuk/3895 · 부산 /gyeongnam/3912 · 마산 /gyeongnam/3922 · 김해공항 /gyeongnam/3931 | 약도는 이미지뿐이며 좌표값 없음 → Nominatim 지오코딩 |
+| 지소 관할 검역항(참고) | 각 검역소 「검역장소안내」 페이지(예: 부산 /gyeongnam/3908, 마산 /gyeongnam/3918) | 통영지소: 통영항·삼천포항, 거제지소: 옥포항·장승포항·고현항, 대산지소: 대산항·태안항 등 |
+| 청주공항지소 개소일 | 서울신문 보도(2025-03-26 개소) https://go.seoul.co.kr/news/prnewsView.php?id=371876 | 종전 사무소 형태 → 정규 지소 |</p>
+
+<h3 id="2-1-13-검역소--12-지소와의-대조">2-1. “13 검역소 + 12 지소”와의 대조</h3>
+<ul>
+  <li>travelhealth 현황표(2026-10 열람) = 본소 13 + 지소 12(김포공항·속초·고성·대산·청주공항·무안공항·광양·제주공항·대구공항·신항·통영·거제). <strong>사용자 전제(13+약12)와 일치.</strong></li>
+  <li>kdca.go.kr 소개 페이지는 “11개 검역지소”로 기재(게시 시점 미상). 차이 1건의 후보: ① 2025-03 정규 지소가 된 청주공항지소 반영 전 수치, ② 동해선남북출입사무소에 둔 고성지소(현황표 전화 “-“, 상시 운영 여부 미확인)를 제외한 수치. 어느 쪽인지 확정할 1차 자료(「질병관리청과 그 소속기관 직제 시행규칙」 별표 3)는 law.go.kr·nepla.ai에서 본문 미노출(HWP/PDF 첨부만)로 확인하지 못함.</li>
+  <li>전화번호 불일치: 여수 본소(현황표 061-662-2372 vs 찾아오시는길 061-665-2367~9), 부산(051-602-0604 vs 0600), 마산(055-981-5336 vs 5300), 제주(064-728-5514 vs 5500), 평택(031-682-5216 vs 5213), 울산(052-255-4504 vs 4502/4501). JSON의 <code class="language-plaintext highlighter-rouge">phone</code>은 현황표 대표번호, 페이지 번호는 <code class="language-plaintext highlighter-rouge">note</code>에 수록.</li>
+  <li>인천공항검역소 주소는 제2합동청사(T2) 기준이나 같은 페이지의 교통안내는 제1여객터미널 기준 → <code class="language-plaintext highlighter-rouge">note</code>에 기재. 좌표는 T2 여객터미널 POI(approx).</li>
+</ul>
+
+<h2 id="3-업체-출처">3. 업체 출처</h2>
+<p>| 구분 | 출처 | 건수 | 비고 |
+|—|—|—|—|
+| 훈증 방제업체 | 농림축산검역본부 「방제업체현황」 총 35건(4쪽) https://www.apqa.go.kr/plant/disinpect/listFzqyqkWebAction.do?clear=1&amp;type=1 (2·3·4쪽은 <code class="language-plaintext highlighter-rouge">type=1&amp;pager.offset=10/20/30</code>) | 35 | 지정번호·업체명·소재지·전화·대표자 원문 그대로. 전화번호 표기만 하이픈 정규화(예: 0519778088 → 051-977-8088) |
+| 컨테이너 훈증시설 확인 | 농림축산검역본부 「소독 시설확인 및 관리」 https://www.apqa.go.kr/plant/disinpect/plant_sterilize_fumi_fac.jsp (구 qia.go.kr URL은 apqa.go.kr로 리다이렉트) | 2 신규(우림교역, ㈜서정인터내셔날) + 6 기존 업체에 <code class="language-plaintext highlighter-rouge">fumigation_facility_confirmed</code> 부여(신흥방역, 한국방역산업(주), 세림방역, 경인방역, 신우티앤씨, 인천훈증) | 인천공항지역본부 관할분만. 창원·평택·청주·의왕 관할 시설업체(델.디.씨, 진원무역, 디엘씨, 돌로지스틱스, 충북원예농협, 그린피아기술)는 04 노트에 없어 미수록 |
+| 지상조업사 | 한국공항(주) https://jasoseol.com/companies/2372 , 아시아나에어포트 https://jasoseol.com/companies/2398 , 스위스포트코리아 https://jasoseol.com/companies/5209 (공공데이터 기반 기업정보) + 서울신문 2018-07-13(한국공항 객실 청소·소독 담당) | 3 | 샤프에비에이션케이는 본사 주소 미확인으로 미수록 |
+| 기내청소 하청 | ㈜조은시스템(잡코리아 48676508; 본사 주소는 알바몬 기업정보), ㈜윌앤비전(알바천국 145364274; 본사 주소는 알바몬), ㈜제일비엠시(잡코리아 47549615, 알바몬 118133743) | 3 | 모두 “기내청소” 공고 기준이며 소독 명시 없음 → <code class="language-plaintext highlighter-rouge">aircraft:true</code>는 기내 작업 가능 의미 |
+| 종합 방역 | 세스코 https://www.cesco.co.kr/ (본사 주소·대표번호) | 1 | 항공기 소독 수행 1차 근거 없음(04 노트와 동일) |
+| 일반 방역업체 | 하나방역 http://habangman.com/ (403), 네이처가드 http://www.natureguard.co.kr/ (접근제한) | 2 | 주소·전화 미확인 → <code class="language-plaintext highlighter-rouge">address:null</code>, 좌표 city |
+| 선박 소독(미검증) | 거륭 https://cleanarea.adlabs.co.kr/222 (403) | 1 | 검색 스니펫만 존재. 실재·주소·검역소 등록 여부 모두 미검증 |</p>
+
+<ul>
+  <li>인천국제공항공사 터미널 방역소독 수탁업체: 04 노트에 업체명이 없고, 나라장터/공사 입찰 낙찰 검색에서도 업체명을 찾지 못해 <strong>미수록</strong>.</li>
+  <li>케어원·탐라위생방역(04 노트의 임금 사례)은 항공기·선박과 무관한 일반 방역 채용 사례라 제외.</li>
+</ul>
+
+<h2 id="4-좌표-산출-방법과-정밀도">4. 좌표 산출 방법과 정밀도</h2>
+<ul>
+  <li>Nominatim(https://nominatim.openstreetmap.org/search, <code class="language-plaintext highlighter-rouge">format=json&amp;accept-language=ko&amp;countrycodes=kr</code>), User-Agent <code class="language-plaintext highlighter-rouge">kdca-disinfection-map-research/1.0</code>, 요청 간격 1.1초, 총 4회 패스(원주소 → 괄호·건물명 제거 → 특별자치도 명칭 변환 → 도로명만 → 명칭/인근 랜드마크 → 시 중심).</li>
+  <li>결과 요약
+    <ul>
+      <li>검역소·지소 25: geocode 10(building 9, poi 1) / approx 15(road 9, poi 5, area 1) / city 0.</li>
+      <li>업체 47: geocode 7(building 7) / approx 38(road 31, poi 2, area 5) / city 2.</li>
+      <li>한국 OSM은 도로명주소 건물번호 수록률이 낮아 다수가 “도로 중심(road)”으로만 매칭됨. road·area 매칭은 수백 m~수 km 오차가 가능하므로 전부 <code class="language-plaintext highlighter-rouge">coord_source:"approx"</code>로 표기했다. 지도에서는 approx 마커를 다른 모양·투명도로 그리고, 정확한 위치는 <code class="language-plaintext highlighter-rouge">address</code>로 네이버·카카오 지도에서 재검색하도록 안내할 것.</li>
+    </ul>
+  </li>
+  <li>랜드마크 대체 사례: 인천공항검역소→T2 여객터미널, 목포 본소→목포항국제여객터미널(주소 해안로177번길 20은 OSM 미수록), 무안공항지소→무안국제공항, 포항 본소→포항여객선터미널(페이지에 “터미널에서 도보 180m” 기재), 대구공항지소→대구국제공항, 광양지소→광양시 중동 중심, PCS(주)→광양시 중마동 중심, 우리에프앤씨 광양지사→광양항역, 대진방역→광양시 중동 중심, 한국방역써비스→군산시 소룡동 중심, 우림교역·서정인터내셔날→인천공항 화물터미널(공항동로296번길 미수록), 거륭→인천항(내항).</li>
+  <li>지오코딩 오매칭을 걸러낸 사례: 포항 본소 주소 “해안로 27”이 포항시 북구 청하면의 동명 도로로 매칭됨(폐기), “속초항”이 서울 동작구 상도로의 동명 상호로 매칭됨(폐기).</li>
+  <li>명칭 검색으로 OSM POI가 확인된 검역소: 국립여수검역소, 국립인천검역소, 국립인천공항검역소(단, 인천공항검역소 POI는 영종해안남로321번길 소재로 현 주소(T2)와 달라 미사용).</li>
+</ul>
+
+<h2 id="5-검증하지-못한-것--한계">5. 검증하지 못한 것 / 한계</h2>
+<ol>
+  <li>「질병관리청과 그 소속기관 직제 시행규칙」 별표 2·3(검역항·지소 위치) 원문 미확인 → 지소 12개는 질병관리청 현황표 기준.</li>
+  <li>고성지소의 실제 운영 여부(전화 “-“).</li>
+  <li>하나방역·네이처가드·거륭: 홈페이지 접근 차단으로 주소·전화·실적 미확인. 거륭은 업체 실재 자체가 미검증.</li>
+  <li>아시아나에어포트·스위스포트코리아·한국공항(주) 주소는 기업정보 사이트(공공데이터 기반)이며 법인등기 대조 안 함. 샤프에비에이션케이 주소 미확인으로 제외.</li>
+  <li>검역소 선박 소독대행자(검역법 시행규칙) 지정 명단은 어떤 공개 자료에도 없음 → <code class="language-plaintext highlighter-rouge">capabilities.ship</code>은 전 업체 null. 훈증 방제업체의 선박 훈증 수행 여부도 업체별 근거 없음.</li>
+  <li><code class="language-plaintext highlighter-rouge">pathogen_tags</code>·<code class="language-plaintext highlighter-rouge">disinfectants</code>는 업체별 공개 근거가 없어 전부 빈 배열. (약제 정보는 시설 단위로만 공개: 창원사무소 시설의 EF(에틸포메이트)+CO2/N2 등, 미수록 업체)</li>
+  <li>방제업체현황은 수시 변동(검색엔진 캐시에는 36건 표시 이력) → 재생성 시 4쪽 재열람 필요.</li>
+  <li>전화번호는 2026-10-17 열람 시점 값이며 현황표와 찾아오시는길 페이지가 다른 경우 <code class="language-plaintext highlighter-rouge">note</code>에 병기.</li>
+</ol>
+
+<h2 id="6-재생성-방법">6. 재생성 방법</h2>
+<p>스크래치 스크립트(<code class="language-plaintext highlighter-rouge">geocode.py</code>, <code class="language-plaintext highlighter-rouge">build.py</code>)는 세션 임시 디렉터리에 있었으며 저장소에는 포함하지 않았다. 재생성 시: ① 위 출처 URL에서 주소 재수집 → ② Nominatim 1 req/s로 지오코딩(캐시 파일 유지) → ③ <code class="language-plaintext highlighter-rouge">coord_precision</code>이 building/poi가 아니면 <code class="language-plaintext highlighter-rouge">coord_source=approx</code> → ④ <code class="language-plaintext highlighter-rouge">python3 -I -c 'import json,sys; json.load(open(sys.argv[1]))' 06_지도데이터.json</code> 으로 검증.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
