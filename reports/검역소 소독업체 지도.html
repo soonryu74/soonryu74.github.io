@@ -127,6 +127,12 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);ou
 .foot{font-size:.75rem;color:var(--muted);max-width:95ch}
 .foot p{margin:4px 0}
 .cnt{font-family:var(--font-mono);font-size:.76rem;color:var(--muted)}
+.hint{font-size:.72rem;color:var(--muted);margin-top:4px}
+.me circle.core{fill:#e5484d;stroke:var(--panel);stroke-width:2}
+.me circle.halo{fill:#e5484d;fill-opacity:.18;stroke:none}
+.me text{font-size:14px;font-weight:700;fill:var(--fg);paint-order:stroke;stroke:var(--sea);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.mapbox svg.pick{cursor:crosshair}
+@media (prefers-reduced-motion:no-preference){.me circle.halo{animation:pulse 1.6s ease-out infinite}@keyframes pulse{0%{r:10;fill-opacity:.35}100%{r:26;fill-opacity:0}}}
 @media (prefers-reduced-motion:no-preference){.item,.chip,.muni{transition:background .15s,fill .15s}}
 </style>
 
@@ -134,7 +140,7 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);ou
 <header>
   <div>
     <h1>검역소 소독업체 지도</h1>
-    <p>지도의 시·군·구를 누르면 확대되어 그 지역 정보가 나오고, 검역소를 누르면 반경 1·2·5 km 안의 소독업체가 거리순으로 나옵니다. 업체 색은 자격 확인 수준입니다.</p>
+    <p>지도의 시·군·구를 누르면 확대되어 그 지역 정보가 나오고, 검역소나 내 위치를 기준으로 반경 1·2·5 km 안의 소독업체가 거리순으로 나옵니다. 업체 색은 자격 확인 수준입니다.</p>
   </div>
   <div class="stats" id="stats"></div>
 </header>
@@ -174,6 +180,15 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);ou
           <button class="chip" data-ty="general" aria-pressed="true">일반</button>
         </div>
       </div>
+    </div>
+    <div>
+      <label class="lb">내 위치</label>
+      <div class="radios" id="meRow">
+        <button id="meGeo" type="button">📍 내 위치 찾기</button>
+        <button id="mePick" type="button" aria-pressed="false">지도에서 지정</button>
+        <button id="meClear" type="button" hidden>해제</button>
+      </div>
+      <div class="hint" id="meHint">GPS가 안 되면 "지도에서 지정"을 누른 뒤 지도를 한 번 누르세요. 지도를 더블클릭해도 됩니다.</div>
     </div>
     <div>
       <label class="lb">검색 반경</label>
@@ -276,6 +291,7 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     const inv=1/k;
     for(const c of DATA.companies)coEls[c.id].setAttribute('transform',`translate(${c.px.toFixed(1)} ${c.py.toFixed(1)}) scale(${inv})`);
     for(const st of DATA.stations)stEls[st.id].setAttribute('transform',`translate(${st.px.toFixed(1)} ${st.py.toFixed(1)}) scale(${inv})`);
+    if(state&&state.me)gMe.setAttribute('transform',`translate(${state.me.px.toFixed(1)} ${state.me.py.toFixed(1)}) scale(${inv})`);
     gMl.style.display=k>=4?'block':'none';
     for(const m of munis){m.label.style.fontSize=(15/k).toFixed(2)+'px';}
     svg.classList.toggle('z2',k>=9);
@@ -312,17 +328,31 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     const o=document.createElement('option');o.value=m.id;o.textContent=m.name+' (본소)';og.appendChild(o);
     for(const sub of DATA.stations.filter(s=>s.parent===m.name||s.parent===m.id)){const o2=document.createElement('option');o2.value=sub.id;o2.textContent='└ '+sub.name;og.appendChild(o2);}
     stSel.appendChild(og);}
-  const state={st:null,rad:5,ty:new Set(['fumig','air','ship','general']),q:'',muni:null};
+  const state={st:null,rad:5,ty:new Set(['fumig','air','ship','general']),q:'',muni:null,me:null,pick:false};
+  const meOpt=document.createElement('option');meOpt.value='me';meOpt.textContent='📍 내 위치';meOpt.hidden=true;stSel.insertBefore(meOpt,stSel.firstChild);
   try{const sv=localStorage.getItem('nqs-map-st');if(sv&&DATA.stations.some(s=>s.id===sv))state.st=sv;}catch(e){}
   if(!state.st)state.st=DATA.stations[0].id;
   stSel.value=state.st;
   stSel.addEventListener('change',()=>select(stSel.value,true));
+  // my location
+  const gMe=el('g',{class:'me'});gSt.appendChild(gMe);
+  function setMe(lat,lng,label){const [x,y]=P(lng,lat);state.me={id:'me',name:label||'내 위치',type:'내 위치',address:`위도 ${lat.toFixed(5)}, 경도 ${lng.toFixed(5)}`,phone:null,lat,lng,px:x,py:y,src:'geocode',muni:null,prov:null};
+    const m=muniOf(state.me),pp=provOf(state.me);state.me.muni=m?m.name:null;state.me.prov=pp?pp.name:null;
+    gMe.innerHTML='';gMe.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${1/k})`);gMe.appendChild(el('circle',{class:'halo',r:18}));gMe.appendChild(el('circle',{class:'core',r:6}));const tx=el('text',{x:10,y:5});tx.textContent='내 위치';gMe.appendChild(tx);
+    meOpt.hidden=false;$('#meClear').hidden=false;state.pick=false;$('#mePick').setAttribute('aria-pressed','false');svg.classList.remove('pick');select('me',true);}
+  $('#meGeo').addEventListener('click',()=>{const h=$('#meHint');if(!navigator.geolocation){h.textContent='이 화면에서는 GPS를 쓸 수 없습니다. "지도에서 지정"을 누르세요.';return;}h.textContent='위치 확인 중…';
+    navigator.geolocation.getCurrentPosition(pos=>{setMe(pos.coords.latitude,pos.coords.longitude);h.textContent=`현재 위치 기준 (오차 약 ${Math.round(pos.coords.accuracy)} m)`;},err=>{h.textContent='GPS 위치를 받지 못했습니다('+(err.code===1?'권한 거부':'신호 없음')+'). "지도에서 지정"을 누른 뒤 지도를 한 번 누르세요.';},{enableHighAccuracy:true,timeout:8000,maximumAge:60000});});
+  $('#mePick').addEventListener('click',()=>{state.pick=!state.pick;$('#mePick').setAttribute('aria-pressed',state.pick);svg.classList.toggle('pick',state.pick);$('#meHint').textContent=state.pick?'지도에서 위치를 한 번 누르세요.':'GPS가 안 되면 "지도에서 지정"을 누른 뒤 지도를 한 번 누르세요.';});
+  $('#meClear').addEventListener('click',()=>{state.me=null;gMe.innerHTML='';meOpt.hidden=true;$('#meClear').hidden=true;select(DATA.stations[0].id,true);});
+  svg.addEventListener('click',e=>{if(!state.pick||moved)return;const [x,y]=pt(e.clientX,e.clientY);setMe(latOf(y),lngOf(x));e.stopPropagation();},true);
+  svg.addEventListener('dblclick',e=>{e.preventDefault();const [x,y]=pt(e.clientX,e.clientY);setMe(latOf(y),lngOf(x));});
   document.querySelectorAll('#radios button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#radios button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');state.rad=+b.dataset.r;render(true);}));
   $('#q').addEventListener('input',e=>{state.q=e.target.value.trim().toLowerCase();render(false);});
   document.querySelectorAll('#chips .chip').forEach(b=>b.addEventListener('click',()=>{const c=b.dataset.ty;
     if(state.ty.has(c))state.ty.delete(c);else state.ty.add(c);b.setAttribute('aria-pressed',state.ty.has(c));render(false);}));
 
-  function select(id,zoom){state.st=id;stSel.value=id;try{localStorage.setItem('nqs-map-st',id);}catch(e){}clearMuni();render(zoom);}
+  function select(id,zoom){if(id==='me'&&!state.me)return;state.st=id;stSel.value=id;try{if(id!=='me')localStorage.setItem('nqs-map-st',id);}catch(e){}clearMuni();render(zoom);}
+  const origin=()=>state.st==='me'?state.me:DATA.stations.find(s=>s.id===state.st);
   function clearMuni(){if(state.muni){state.muni.el.classList.remove('sel');state.muni=null;}$('#region').classList.remove('show');crumb();}
   function selectMuni(m){if(state.muni)state.muni.el.classList.remove('sel');state.muni=m;m.el.classList.add('sel');zoomBox(m.bbox,0.25);
     const sts=DATA.stations.filter(s=>s.muni===m.name&&s.prov===provOfMuni(m));
@@ -340,16 +370,17 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     crumb();}
   const provOfMuni=m=>{const o={lng:lngOf(m.cx),lat:latOf(m.cy)};const p=provOf(o);return p?p.name:(DATA.stations.find(s=>s.muni===m.name)||{}).prov||'';};
   const lngOf=x=>((x-ox)/s+xL)*180/Math.PI; const latOf=y=>(2*Math.atan(Math.exp(yTop-(y-oy)/s))-Math.PI/2)*180/Math.PI;
-  function crumb(){const st=DATA.stations.find(s=>s.id===state.st);const c=$('#crumb');
+  function crumb(){const st=origin();const c=$('#crumb');
     c.innerHTML=`<button id="cAll">전국</button>${state.muni?` › <b>${state.muni.name}</b>`:''} › <b>${st.name}</b> <span style="color:var(--muted)">반경 ${state.rad>5000?'전국':state.rad+' km'}</span>`;
     $('#cAll').addEventListener('click',()=>{view={...full};applyView();clearMuni();});}
 
   function render(zoom){
-    const st=DATA.stations.find(s=>s.id===state.st);
-    Object.values(stEls).forEach(g=>g.classList.remove('sel'));stEls[st.id].classList.add('sel');
+    const st=origin();
+    Object.values(stEls).forEach(g=>g.classList.remove('sel'));if(stEls[st.id])stEls[st.id].classList.add('sel');
     const srcNote=st.src==='geocode'?'정확 좌표':'근사 좌표';
-    $('#selSt').innerHTML=`<h2>${st.name}</h2><div class="meta">${st.address} · <span>${st.phone||'-'}</span></div>
-      <small>${st.type==='지소'?'소속: '+(st.parent||'')+' · ':''}${st.prov||''} ${st.muni||''} · ${srcNote}${st.note?' · '+st.note:''}</small>`;
+    const nearSt=st.id==='me'?DATA.stations.map(s=>({s,d:hav(st,s)})).sort((a,b)=>a.d-b.d)[0]:null;
+    $('#selSt').innerHTML=`<h2>${st.name}</h2><div class="meta">${st.address}${st.phone?' · <span>'+st.phone+'</span>':''}</div>
+      <small>${st.type==='지소'?'소속: '+(st.parent||'')+' · ':''}${st.prov||''} ${st.muni||''} · ${srcNote}${st.note?' · '+st.note:''}${nearSt?' · 가장 가까운 검역소: '+nearSt.s.name+' ('+Math.round(nearSt.d)+' km, '+(nearSt.s.phone||'')+')':''}</small>`;
     const rows=DATA.companies.map(c=>({c,d:hav(st,c)}))
       .filter(r=>state.ty.has(r.c.typ)).filter(r=>r.d<=state.rad)
       .filter(r=>!state.q||[r.c.name,r.c.address,r.c.region,r.c.cat].join(' ').toLowerCase().includes(state.q))
@@ -379,7 +410,7 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
   function showDetail(c){const d=$('#detail');const cap=c.cap||{};
     const capHtml=['fumigation:훈증','ship:선박','aircraft:항공기','terminal_facility:터미널·시설'].map(p=>{const [kk,l]=p.split(':');const v=cap[kk];
       return `<span class="cap${v===true?' y':''}">${l}: ${v===true?'확인':v===false?'아니오':'미확인'}</span>`;}).join('');
-    const st=DATA.stations.find(s=>s.id===state.st);const km=hav(st,c);
+    const st=origin();const km=hav(st,c);
     Object.values(coEls).forEach(g=>g.classList.remove('focus'));coEls[c.id].classList.add('focus');
     d.innerHTML=`<h3>${c.name} <span class="tag lv${c.lv}">${LV[c.lv]}</span><span class="tag ty">${TY[c.typ]}</span></h3>
       <dl><dt>분류</dt><dd>${c.cat}</dd><dt>주소</dt><dd>${c.address||'-'}</dd><dt>전화</dt><dd class="mono">${c.phone||'공개 안 됨'}</dd>
