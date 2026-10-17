@@ -357,7 +357,7 @@ window.CHURCH = (function () {
     return out;
   }
   // 순장 스스로 가입(join_…)은 다락방 앱 전용 함수로, 나머지는 목장 나눔터와 같은 함수로
-  function callAdmin(payload) { return callFn(/^join_/.test(payload.action) ? 'darak-admin' : 'church-admin', payload); }
+  function callAdmin(payload) { return callFn(/^(join_|start_solo|link_church|delete_solo)/.test(payload.action) ? 'darak-admin' : 'church-admin', payload); }
   function notify(payload) { return callFn('church-notify', payload); }
 
   /* ── 휴대전화 알림 (웹 푸시) ──────────────────────────────

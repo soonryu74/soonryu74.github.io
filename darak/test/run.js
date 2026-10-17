@@ -408,7 +408,7 @@ const db = p => p.evaluate(() => window.__DB());
     const code = (await p.textContent('#join-code')).trim();
     await p.evaluate(() => CHURCH.signOut());
     await p.goto(BASE + 'index.html?c=lach01'); await p.waitForTimeout(400);
-    ok('로그인 화면에 순장 가입 링크', (await p.textContent('#to-join')).includes('순장으로 가입하기'), await p.textContent('#to-join'));
+    ok('로그인 화면에 순장 시작 링크', (await p.textContent('#to-join')).includes('순장으로 시작하기'), await p.textContent('#to-join'));
     await p.click('#to-join');
     await p.fill('#jcode', 'WRON-GCOD'); await p.fill('#jname', '최순장'); await p.fill('#jlid', 'choisj'); await p.fill('#jpw', 'secret99'); await p.fill('#jpw2', 'secret99');
     await p.click('#btn-join'); await p.waitForTimeout(300);
@@ -423,6 +423,63 @@ const db = p => p.evaluate(() => window.__DB());
     p.on('dialog', dlg => dlg.accept());
     await p.click('#join-stop'); await p.waitForTimeout(300);
     ok('가입 끄기', await p.isVisible('#join-make') && !(await p.isVisible('#join-code')));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
+  console.log('\n[혼자 시작] 코드 없이 순장 혼자 → 나중에 교회 연결');
+  { const { c, p } = await ctx(b);
+    // 목사님이 먼저 가입 코드를 만들어 둔다 (나중에 연결할 때 씀)
+    await login(p, 'pastor1');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    await p.click('#join-make'); await p.waitForTimeout(300);
+    const code = (await p.textContent('#join-code')).trim();
+    await p.evaluate(() => CHURCH.signOut());
+    await p.goto(BASE + 'index.html'); await p.waitForTimeout(400);
+    await p.click('#to-join');
+    await p.fill('#jname', '혼자순장'); await p.fill('#jlid', 'solosj'); await p.fill('#jpw', 'secret99'); await p.fill('#jpw2', 'secret99');
+    await p.click('#btn-join'); await p.waitForTimeout(500);
+    ok('코드 없이 가입 → 복구 코드를 보여 줌', await p.isVisible('#got-code') && (await p.textContent('#code-box')).includes('SOLO-CODE-1234'));
+    await p.click('#code-done'); await p.waitForURL(/mokjang\.html/); await p.waitForSelector('.top h1'); await p.waitForTimeout(400);
+    let d = await db(p); const mj = d.church_mokjang.find(m => m.mokja_name === '혼자순장'), ch = d.church_church.find(x => x.id === mj.church_id);
+    ok('나 혼자 쓰는 다락방이 생김', mj.name === '혼자순장 다락방' && ch.features.solo === true && !d.church_profile.some(x => x.church_id === ch.id && x.role === 'pastor'));
+    ok('혼자 쓰면 제출 단추 없이 저장만', !(await p.isVisible('#btn-submit')) && (await p.textContent('#btn-save')).trim() === '저장');
+    await p.fill('#body', '혼자 쓴 다락방 이야기'); await p.click('#btn-save'); await p.waitForTimeout(400);
+    ok('저장하면 저장됨', (await p.textContent('#wk-state')).trim() === '저장됨');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    await p.fill('#new-name', '혼자순원'); await p.click('#form-add button[type=submit]'); await p.waitForTimeout(300);
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
+    ok('[내 계정]에 교회 연결 칸', await p.isVisible('#form-link'));
+    await p.fill('#link-code', 'NOPE-NOPE'); await p.click('#btn-link'); await p.waitForTimeout(300);
+    ok('틀린 코드로는 연결 안 됨', (await p.textContent('#msg-link')).includes('가입 코드가 맞지 않습니다'));
+    await p.fill('#link-code', code); await p.click('#btn-link'); await p.waitForTimeout(300);
+    ok('연결하면 교회 이름을 알려 줌', (await p.textContent('#msg-link')).includes('멜번방주교회'));
+    await p.waitForTimeout(2200); await p.waitForSelector('.top h1'); await p.waitForTimeout(400);
+    d = await db(p);
+    const mj2 = d.church_mokjang.find(m => m.id === mj.id);
+    ok('다락방·순원·일기가 그대로 교회로 옮겨짐', mj2.church_id === 'cb' && d.church_profile.find(x => x.login_id === 'solosj').church_id === 'cb'
+      && d.church_mokwon.some(w => w.mokjang_id === mj.id && w.name === '혼자순원') && d.church_journal.some(j => j.mokjang_id === mj.id && j.body === '혼자 쓴 다락방 이야기'));
+    ok('혼자 쓰던 자리는 지워짐', !d.church_church.some(x => x.id === ch.id));
+    ok('연결 뒤에는 목사님께 제출 단추', await p.isVisible('#btn-submit'));
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
+    ok('연결 뒤에는 연결 칸이 사라짐', !(await p.isVisible('#form-link')));
+    await p.evaluate(() => CHURCH.signOut());
+    await login(p, 'pastor1');
+    ok('목사님 화면에 옮겨 온 다락방이 보임', (await p.textContent('#week-list')).includes('혼자순장 다락방'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await p.goto(BASE + 'index.html'); await p.waitForTimeout(400);
+    await p.click('#to-join');
+    await p.fill('#jname', '떠날순장'); await p.fill('#jlid', 'leavesj'); await p.fill('#jpw', 'secret99'); await p.fill('#jpw2', 'secret99');
+    await p.click('#btn-join'); await p.waitForTimeout(500);
+    await p.click('#code-done'); await p.waitForURL(/mokjang\.html/); await p.waitForSelector('.top h1'); await p.waitForTimeout(400);
+    const cid = (await db(p)).church_profile.find(x => x.login_id === 'leavesj').church_id;
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
+    ok('혼자 쓰는 순장 탈퇴 안내', (await p.textContent('#leave-desc')).includes('모두 지워집니다'));
+    await p.fill('#leave-pw', 'secret99'); p.once('dialog', dl => dl.accept());
+    await p.click('#btn-leave'); await p.waitForURL(/left=1/); await p.waitForTimeout(400);
+    const d = await db(p);
+    ok('탈퇴하면 계정과 나만의 다락방이 함께 지워짐', !d.church_profile.some(x => x.login_id === 'leavesj') && !d.church_church.some(x => x.id === cid) && !d.church_mokjang.some(m => m.church_id === cid));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 

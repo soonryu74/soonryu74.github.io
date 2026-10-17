@@ -4,6 +4,23 @@
    translate the values, and add { id: '<code>', name: '<language name>' } to LANGS in common.js. */
 window.I18N = window.I18N || {};
 window.I18N.en = {
+  // ── 혼자 시작 · 교회 연결 ─────
+  "목자로 시작하기 — 가입 코드가 없어도 됩니다": "Start as a leader — no sign-up code needed",
+  "목자로 시작하기": "Start as a leader",
+  "내 계정과 목장을 직접 만듭니다. 가입하면 바로 목원을 넣고 일기를 쓸 수 있습니다.": "Create your own account and group. Then you can add members and write journals right away.",
+  "(있으면)": "(if you have one)",
+  "목사님께 받은 코드가 있으면 넣어 주세요. 일기가 목사님께 전달됩니다.": "If your pastor gave you a code, enter it. Your journals will go to your pastor.",
+  "코드가 없으면 비워 두세요. 나 혼자 쓰는 목장으로 시작하고, 나중에 교회 코드를 받으면 [내 계정]에서 연결할 수 있습니다.": "No code? Leave it blank. You'll start a group just for you, and you can connect it to your church later under [My account].",
+  "과": " and",
+  "혼자 시작한 목자님": "leaders who started on their own",
+  "은 처음에 받으신 복구 코드로 여기서 새 비밀번호를 정하실 수 있습니다.": " can set a new password here with the recovery code they got at the start.",
+  "교회에 속한 목자님": "Leaders in a church",
+  "우리 교회에 연결하기": "Connect to my church",
+  "지금은 나 혼자 쓰는 목장입니다. 목사님께 교회 가입 코드를 받으시면 여기서 연결하세요. 목원 명단과 지금까지 쓴 일기가 그대로 교회로 옮겨지고, 그다음부터 일기를 목사님께 제출할 수 있습니다.": "This group is just for you right now. When your pastor gives you the church sign-up code, connect here. Your members and journals move to the church as they are, and from then on you can submit journals to your pastor.",
+  "연결하기": "Connect",
+  "{0}에 연결했습니다. 이제 일기를 목사님께 제출할 수 있습니다.": "Connected to {0}. You can now submit journals to your pastor.",
+  "저장됨": "Saved",
+  "내 계정과 목장, 목원 명단, 지금까지 쓴 일기가 모두 지워집니다. 되돌릴 수 없습니다.": "Your account, group, member list and all journals will be deleted. This can't be undone.",
   "이 주소로 들어오면 로그인 화면에 우리 교회 이름과 로고가 보입니다.": "This link opens a sign-in page with your church's name and logo.",
   "다락방 나눔터 — 들어가기": "Darakbang Sharing — Sign in",
   "다락방 나눔터 — 목사 화면": "Darakbang Sharing — Pastor",
