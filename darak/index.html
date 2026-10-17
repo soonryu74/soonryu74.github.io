@@ -252,16 +252,17 @@ try { (function (m, q) { var s = q.get('c');
   if (/[?&]left=1/.test(location.search)) C.say($('#msg-login'), C.t('탈퇴했습니다. 그동안 함께해 주셔서 감사합니다.'), 'ok', true);
   $('#lang-bar').innerHTML = C.langButton(); C.bindLangButton($('#lang-bar'));
 
-  // 사용법 영상: 교회 주소로 온 분(대개 목자)은 목자용, 등록하러 온 분은 목사님용을 먼저
+  // 사용법 영상: 다락방 앱은 대개 순장이 쓰니 순장용을 먼저 (교회 등록하러 온 분은 목사님용)
+  // 순장용은 다락방 앱 전용 영상(비밀번호 없이·열쇠 코드), 목사님용은 목장 나눔터 영상을 같이 쓴다
   function showGuide(who) {
-    var base = '../video/guide-' + who + '-' + (C.lang() === 'en' ? 'en' : 'ko');
+    var base = (who === 'leader' ? 'video/guide-' : '../video/guide-') + who + '-' + (C.lang() === 'en' ? 'en' : 'ko');
     var v = $('#guide-video');
     if (v.dataset.src !== base) { v.dataset.src = base; v.poster = base + '.jpg'; v.src = base + '.mp4'; }
     $('#guide-dl').href = base + '.mp4';
     C.$$('.guide-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.who === who); });
   }
   C.$$('.guide-tabs button').forEach(function (b) { b.addEventListener('click', function () { showGuide(b.dataset.who); }); });
-  showGuide(!wantNew && document.documentElement.classList.contains('branded') ? 'leader' : 'pastor');
+  showGuide(wantNew ? 'pastor' : 'leader');
   // 이 기기가 기억하는 교회 모양(디자인·부르는 말)을 먼저 입힌다 — 서버 답은 뒤에 와서 고친다
   if (window.__EARLY_CHURCH) C.applyLook(window.__EARLY_CHURCH);
   // 등록 주소에 코드가 붙어 오면(?new=코드) 미리 채워 둔다
