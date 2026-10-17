@@ -35,10 +35,9 @@ header p{margin:3px 0 0;color:var(--muted);max-width:70ch;font-size:.9rem}
 @media (max-width:900px){.grid{grid-template-columns:1fr}}
 .mapbox{background:var(--sea);border:1px solid var(--line);border-radius:6px;position:relative;overflow:hidden;min-width:0;height:min(78vh,760px);touch-action:pan-y;user-select:none}
 .mapbox.lock{touch-action:none}
-.touchhint{display:none;position:absolute;right:10px;bottom:10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:4px 8px;font-size:.7rem;color:var(--muted);max-width:46%;z-index:2}
-#lockBtn{display:none}
-@media (pointer:coarse){.touchhint{display:block}#lockBtn{display:block}}
-.ctl button[aria-pressed="true"]{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+.modebadge{display:none;position:absolute;left:10px;top:46px;background:var(--accent);color:var(--panel);border-radius:4px;padding:3px 8px;font-size:.7rem;z-index:2}
+.mapbox.active{box-shadow:inset 0 0 0 2px var(--accent)}
+@media (pointer:coarse){.mapbox.active .modebadge{display:block}}
 @media (max-width:900px){.mapbox{height:min(58vh,520px)}
   .legend{position:static;max-width:none;grid-template-columns:1fr 1fr;border-radius:0 0 6px 6px;border-width:1px 0 0;padding:6px 10px}
   .legend .h{grid-column:1/-1}
@@ -145,7 +144,7 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);ou
 <header>
   <div>
     <h1>검역소 소독업체 지도</h1>
-    <p>지도를 누르면 그 자리가 확대되고 시·군·구 정보가 나오며, 검역소나 내 위치를 기준으로 반경 1·2·5 km 안의 소독업체가 거리순으로 나옵니다. 업체 색은 자격 확인 수준입니다.</p>
+    <p>지도를 한 번 누르면 확대되면서 손가락으로 움직일 수 있고(지도 밖을 누르면 해제), 검역소나 내 위치를 기준으로 반경 1·2·5 km 안의 소독업체가 거리순으로 나옵니다. 업체 색은 자격 확인 수준입니다.</p>
   </div>
   <div class="stats" id="stats"></div>
 </header>
@@ -158,10 +157,9 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);ou
       <button id="zin" title="확대" aria-label="확대">+</button>
       <button id="zout" title="축소" aria-label="축소">−</button>
       <button id="zall" class="wide" title="전국 보기">전국</button>
-      <button id="lockBtn" class="wide" title="한 손가락으로 지도 이동" aria-pressed="false">✋ 지도 고정</button>
     </div>
     <div class="tip" id="tip"></div>
-    <div class="touchhint" id="touchhint">한 손가락: 화면 스크롤 · 두 손가락: 지도 이동·확대 · 탭: 그 자리 확대</div>
+    <div class="modebadge">지도 조작 중 · 지도 밖을 누르면 해제</div>
     <div class="legend">
       <span><i class="sw d"></i>국립검역소 13</span>
       <span><i class="sw d o"></i>검역지소 12</span>
@@ -332,7 +330,7 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     view.x=drag.vx-dx;view.y=drag.vy-dy;applyView();});
   const up=e=>{if(pinch){pinch=null;drag=null;setTimeout(()=>{moved=false;},50);return;}
     if(drag&&e.pointerId===drag.id){const d=drag;drag=null;svg.classList.remove('drag');const isTap=!moved&&Date.now()-d.t<600;setTimeout(()=>{moved=false;},50);if(isTap)tap(e,d.target);}};
-  function tap(e,target){const [x,y]=pt(e.clientX,e.clientY);
+  function tap(e,target){const [x,y]=pt(e.clientX,e.clientY);if(e.pointerType==='touch'&&!lock)setActive(true);
     if(state.pick){setMe(latOf(y),lngOf(x));return;}
     const stG=target.closest&&target.closest('.st');if(stG){select(stG.dataset.id,true);return;}
     const coG=target.closest&&target.closest('.co');if(coG){const c=DATA.companies.find(c=>c.id===coG.dataset.id);if(c){showDetail(c);const ru=kmToUnits(2,c.lat);zoomBox([c.px-ru,c.py-ru,c.px+ru,c.py+ru],0.2);}return;}
@@ -344,7 +342,8 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
   $('#zin').addEventListener('click',()=>zoomTo(view.x+view.w/2,view.y+view.h/2,view.w*0.6));
   $('#zout').addEventListener('click',()=>zoomTo(view.x+view.w/2,view.y+view.h/2,view.w/0.6));
   $('#zall').addEventListener('click',()=>{view={...full};applyView();clearMuni();});
-  let lock=false;$('#lockBtn').addEventListener('click',()=>{lock=!lock;mapbox.classList.toggle('lock',lock);$('#lockBtn').setAttribute('aria-pressed',lock);$('#touchhint').textContent=lock?'지도 고정됨: 한 손가락으로 지도 이동 · 다시 누르면 해제':'한 손가락: 화면 스크롤 · 두 손가락: 지도 이동·확대 · 탭: 그 자리 확대';});
+  let lock=false;function setActive(v){lock=v;mapbox.classList.toggle('lock',v);mapbox.classList.toggle('active',v);}
+  document.addEventListener('pointerdown',e=>{if(lock&&!mapbox.contains(e.target))setActive(false);},true);
 
   // ---- state & UI ----
   const stSel=$('#stSel');
