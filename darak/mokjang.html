@@ -15,7 +15,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="다락방나눔터">
-<link rel="stylesheet" href="style.css?v=202610170900">
+<link rel="stylesheet" href="style.css?v=202610171100">
 </head>
 <body>
 <div class="wrap">
@@ -127,7 +127,15 @@ try { (function (m, q) { var s = q.get('c');
       </form>
       <div class="msg" id="msg-myname"></div>
     </div>
-    <div class="card">
+    <div class="card" id="key-card" hidden>
+      <h2>열쇠 코드</h2>
+      <p class="desc">다른 휴대폰이나 컴퓨터에서 들어갈 때, 또는 로그아웃한 뒤에 쓰는 코드입니다.
+        잃어버렸으면 여기서 새로 받으세요. 새로 받으면 예전 코드는 쓸 수 없습니다.</p>
+      <div class="code-box" id="my-key" data-noterm hidden></div>
+      <div class="row" style="margin-top:16px"><button class="primary" type="button" id="btn-new-key">새 열쇠 코드 받기</button></div>
+      <div class="msg" id="msg-key"></div>
+    </div>
+    <div class="card" id="pw-card">
       <h2>비밀번호 바꾸기</h2>
       <form id="form-pw">
         <label for="pw1">새 비밀번호</label>
@@ -153,8 +161,8 @@ try { (function (m, q) { var s = q.get('c');
       <h2>탈퇴하기</h2>
       <p class="desc" id="leave-desc">내 계정을 지웁니다. 지금까지 쓴 일기와 기도제목은 교회 기록으로 남고, 목사님이 새 목자를 정하실 수 있습니다. 되돌릴 수 없습니다.</p>
       <form id="form-leave">
-        <label for="leave-pw">비밀번호 확인</label>
-        <input id="leave-pw" type="password" autocomplete="current-password" placeholder="지금 비밀번호" required>
+        <div id="leave-pw-box"><label for="leave-pw">비밀번호 확인</label>
+        <input id="leave-pw" type="password" autocomplete="current-password" placeholder="지금 비밀번호" required></div>
         <div class="row" style="margin-top:16px"><button class="danger" type="submit" id="btn-leave">탈퇴하기</button></div>
       </form>
       <div class="msg" id="msg-leave"></div>
@@ -163,9 +171,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610170900"></script>
-<script src="common.js?v=202610170900"></script>
-<script src="mokjang.js?v=202610170900"></script>
+<script src="lang-en.js?v=202610171100"></script>
+<script src="common.js?v=202610171100"></script>
+<script src="mokjang.js?v=202610171100"></script>
 
 </body>
 </html>
