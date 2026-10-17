@@ -17,6 +17,7 @@
   digest(subs, per=60)                      ★대용량 입력: 분 단위 묶음 글 (긴 자막을 통째로 읽지 않는다) → 고른 구간만 subs 로 다시
   near(subs, '눈물')                        낱말이 나오는 줄들 [(시작, 끝, 문장)]
   timecode('영상 3:12~3:15 재생')           캔버스 메모 → {'a': 192.0, 'b': 195.0, 'file': None} (없으면 None) · «원본2 1:02:10~1:02:14» 도 읽는다
+  hold_time(lt, [(2.2, 2.4)])               장면 안 시각 → 원본 구간 안 시각 (2.2초에 2.4초 멈춤 = 그동안 같은 장면 · 끝나면 이어서) · 장면 길이 = 구간 + 멈춤 합
 """
 import hashlib
 import json
@@ -80,6 +81,17 @@ def sheet(path, cs, out, cols=6, tw=320, font_path=None):
     return shots
 
 
+def hold_time(lt, holds):
+    """멈춤 — 장면 안 시각 lt → 원본 구간 안 시각. holds = [(멈출 시각(원본 구간 기준), 멈춤 길이), …]
+    멈춘 동안은 같은 장면을 붙잡고, 끝나면 멈춘 자리부터 이어서 재생한다(앞의 멈춤만큼 뒤로 밀린다)."""
+    t, shift = lt, 0.0
+    for at, hold in sorted(holds):
+        if t - shift < at: break
+        if t - shift < at + hold: return at
+        shift += hold
+    return t - shift
+
+
 def poster(path, t, out, crop=None):
     im = _grab(path, t)
     if crop: x, y, w, h = crop; im = im.crop((x, y, x + w, y + h))
@@ -93,7 +105,7 @@ class Clip:
         self.path, self.a, self.loop = path, float(a), loop
         info = probe(path); self.fps = info['fps']; self.b = float(b if b is not None else info['dur']); self.dur = self.b - self.a
         self.crop = crop
-        key = hashlib.md5(f'{os.path.abspath(path)}|{self.a}|{self.b}|{crop}|{max_w}'.encode()).hexdigest()[:10]
+        st = os.stat(path); key = hashlib.md5(f'{os.path.abspath(path)}|{st.st_size}|{int(st.st_mtime)}|{self.a}|{self.b}|{crop}|{max_w}'.encode()).hexdigest()[:10]   # 파일이 바뀌면(같은 이름 · 같은 길이라도) 다시 꺼낸다
         self.dir = os.path.join('.cache', 'video', key); self.n = 0
         done = os.path.join(self.dir, '.done')
         if not os.path.exists(done):

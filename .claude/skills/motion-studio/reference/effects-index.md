@@ -49,6 +49,7 @@
 | 등장 | draw_on(선 그려지기 → 면 채우기 · 캔버스 SVG 요소 · 손맛 hand · 면 채우는 법 fill_in · 끊김 steps · 떨림 boil) — `motion` · style-ref.md §5 | 1~2 | β |
 | 등장 | write(글자를 손으로 쓰듯 획 순서대로 · 끝 모습 = 캔버스 글자) · draw(캔버스 꼬리표 data-t 대로 그리기 · 쓰기) — `motion` · style-ref.md §5-C | 1~2 | β |
 | 캔버스 손 선 | handline(캔버스 SVG 를 손 선으로 · 연필 · 크레용 결 필터 — 보드를 올리기 전에) — `scripts/handline.py` · style-ref.md §5-B | — | β |
+| 만화 페이지 | comic(완성된 페이지 만화 — 읽는 칸만 밝게 · 칸 성격 → 카메라 · 효과음 글자 → 소리 · 그림 위 빛 sparkle · glow · sweep · rain · 박자 맞춤) — `comic` · comic.md | — | β |
 | 퇴장 | appear.out(거꾸로) ✓ · burst_out(터지기) · scatter_out(흩어지기) — `motion` β | 1~2 | |
 | 머무는 동안 | float_(둥실) · breathe(숨쉬기) · blink(깜빡) · pulse(맥박) — `motion.put` 과 함께 | 1 | β |
 | 강조 | underline · highlight(형광펜) — `motion` | 1 | β |
@@ -62,13 +63,22 @@
 | 아니지~ 다시 | A 쌓기 → 삐! ✕ → 되감기 → 같은 출발점에서 B | 3 | ✓ |
 | 결과 먼저 → 되감기 · 멈추고 짚기 · 쾅 직전 슬로 · 빨리 감기 · 되감고 바꿔 보기 · 멈춘 채 카메라만 · 끝에서 처음으로 · 앞뒤 흔들기 · 닿을 듯 → 제자리 | `timewarp` (time.md) | 2~3 | β |
 | 매치 컷 | 앞뒤 장면 같은 자리 · 같은 모양 → 컷 | 2 | ✓ |
+| 회상 | 지금에서 멈춤 → 물결 → 세피아 «그때» → 물결 → 지금으로 돌아와 물러남 (`show.cross` · `memory_look` · show.md §2) | 2~3 | β |
+
+## 4-B. 방송 연출 (사람이 찍은 영상 · show.md)
+| 이름 | 한 줄 | 세기 | 등급 |
+|---|---|:-:|:-:|
+| 예능 자막 | 상황(괄호) · 말 · 쾅(집중선 · 당김 · 흔들림) · 분위기(하트) · 물결 · 딱지 · 끝 도장 (`show.Variety`) | 2~3 | β |
+| 분할 대담 | 두 사람 반반 · 말하는 쪽이 넓어지고 밝아짐 · 소리 막대 (`show.Split`) | 2 | β |
+| 리액션 화면 속 화면 | 구석 동그란 얼굴 창 · 반응 순간 창이 커지고 큰 화면이 그 자리로 (`show.Pip` · `zoom_to`) | 2 | β |
 
 ## 5. 화면 겹 · 소리
 | 갈래 | 이름 | 등급 |
 |---|---|:-:|
 | 화면 겹 (`finish`) | grain · vignette · scan · paper · grade(warm · cool · fade · punch · mono) · glow | β |
-| 효과음 (`audio`) | whoosh · hit · chime · tick · mallet · bell · buzzer(timewarp) | ✓ |
-| 배경음 | palette pop · cinema · study · tale · groove · calm … | ✓ |
+| 효과음 (`sfx`) | 81가지 · 묶음 7개(경쾌 팝 · 시네마 · 동화 · 테크·앱 · 코믹 · 레트로 게임 · 차분) × 자리(cut · enter · emph · impact · done · tick) — `sound.md` §1 · 옛 이름 hit · tick · whoosh · chime 도 묶음 소리로 | ✓ |
+| 긴 소리 (`crowd`) | 함성 · 웅성웅성 · 웃음 · 휘파람 · 발소리 · 비 · 바람 · 카페 (길이 마음대로) — `sound.md` §2 | β |
+| 배경음 (`music`) | 장르 13가지 · 영상마다 새 곡 — `audio.bgm(…, style=)` · `sound.md` §3 · 배경음만 새로 = `--rebgm` §4 | ✓ |
 
 ## 6. 영상 넣기 (`video.py` · video.md)
 | 이름 | 한 줄 | 세기 | 등급 |
@@ -81,9 +91,18 @@
 | 현장 소리 | 원본 구간 소리를 효과음 쪽에 낮게 — 무음 구간을 메운다 (`sound` · `put_sound`) | — | β |
 | 설명형 칸 | 쇼츠 위 제목 · 가운데 4:3 영상 칸(좌우 자르기 · 아래 기준 다가가기) · 아래 설명 · 칸 안 밀어내기 | 1 | β |
 | 지도형 | 큰 판 위 장면들을 카메라가 이동 · 영상은 판 위 창 · 글은 카메라 배율대로 화면에서 | 2~3 | β |
+| 멈추고 이름표 | 화면이 멈추고(살짝 번쩍) 이름 칩 + 손그림 화살표가 얼굴을 가리킨 뒤 함께 사라지고 다시 재생 (`video.hold_time` · `label.chip/arrow/fade_layer` · video-shorts.md §5) | 2 | β |
+| 글귀 튀어나옴 · 바뀜 | 결정적 순간에 글귀가 튀어나오고 · 같은 자리에서 접히며 다른 글귀로 (`label.pop` · `label.swap`) | 1~2 | β |
+| 스포트라이트 (짚기) | 한 곳만 남기고 어둡게 — 구멍이 줄어들며 맞고 · 다음 대상으로 옮겨 가고 · 여러 곳 · 둥근 구멍 · 화면 속 창만 어둡게 (`label.spot` + `label.box_path` · 영상 · 사진 · 화면 녹화) | 1~2 | β |
+| 돋보기 (짚기) | 렌즈가 미끄러져 와 멈추고 그 밑을 크게 — 렌즈 안 대상에 X · 동그라미 (`label.lens` + `label.path` · 반환 함수로 렌즈 안 자리) | 2 | β |
+| 손그림 짚기 표시 | 펜 · 붓 화살표 · 동그라미 · 네모 · X · 밑줄 · 체크가 손으로 그어지며 등장 — 캔버스와 같은 모양 (`label.mark` · `draw_mark` · 캔버스 `scripts/mark.py` · canvas-rules §4) | 1~2 | β |
+| 손가락 탭 · 질감 화살표 | 손가락이 들어와 «톡» · 크레용 결 덩어리 화살표가 꼬리 → 머리로 차오름 (`label.finger` · `bold_arrow` + `bold_reveal`) | 2 | β |
+| 사진 툭 떨어지기 · 쌓기 | 사진 스티커 카드가 위에서 툭 떨어져 살짝 튕기고 화면이 흔들림 · 2~3장 차례로 쌓기 (`fx.drop` + `fx.photo_card` · photo-shorts.md) | 2 | β |
+| 박자 넘기기 · 몽타주 | 한 카드 자리에서 박자마다(몽타주는 반 박자) 다른 사진 · 바뀔 때 «툭» · 아래 점 줄 · 넘길 때 똑 (`fx.photo_flip` · `fx.flip_times`) | 2 | β |
+| 사진 모아 마무리 | 여러 장이 화면 밖에서 돌며 날아와 격자로 모인다 (`fx.photo_gather`) | 2 | β |
 
 ## 보태는 법 (엔진을 늘릴 때 — 문서가 흩어지지 않게)
-1. 코드: 갈래에 맞는 모듈 하나에 — 컷 전환 = `camera.py` + `EDITS` · 카메라 = `camera.py` · 등장 · 머무는 동안 = `appear.py`(✓) / `motion.py`(β) · 요소 효과 · 정보 · 그림 공개 = `fx.py` · 화면 겹 = `finish.py` · 시간 = `timewarp.py`. 새 모듈은 갈래가 새로 생길 때만.
+1. 코드: 갈래에 맞는 모듈 하나에 — 컷 전환 = `camera.py` + `EDITS` · 카메라 = `camera.py` · 등장 · 머무는 동안 = `appear.py`(✓) / `motion.py`(β) · 요소 효과 · 정보 · 그림 공개 · 사진 카드 = `fx.py` · 화면 겹 = `finish.py` · 시간 = `timewarp.py` · 영상 위 이름표 · 화살표 · 글귀 · 스포트라이트 · 돋보기(짚기) = `label.py`. 새 모듈은 갈래가 새로 생길 때만.
 2. 이 목차에 **한 줄**(이름 · 한 줄 · 세기 · 비용 · 등급 β). 쓰는 법이 한 줄로 안 끝나면 그 갈래의 상세 문서에 한 줄 더.
 3. 키트에 넣을 만하면 `kit.py` KITS 의 칸에 — 전환이면 `DUR` 에 길이도.
 4. 실사용 영상에서 좋았으면 β → ✓ (이 목차 · 키트 등급 둘 다).

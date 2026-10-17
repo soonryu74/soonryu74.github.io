@@ -135,6 +135,10 @@ def check(paths, out='out'):
     for r in bad_box: print(f"  상자 {r['board']} #{r['id']} {r['font']} {r['box']:+.1f}px → {r['fix']}  «{r['text']}»")
     for r in bad_eng: print(f"  엔진 {r['board']} #{r['id']} {r['font']} {r['eng']:+.1f}px  «{r['text']}»")
     print(f'→ {out}/_textcheck.md' + (f' · {out}/_textcheck.jpg' if tiles else ''))
+    fm = sorted(m for m in C.missing if m.startswith('글꼴'))
+    if fm:   # 글꼴 이름을 못 찾으면 엔진은 Pretendard 로 그린다 — 별명(@font-face 이름)을 쓰면 캔버스와 영상 글꼴이 달라진다
+        print('⚠ fonts/ 에서 못 찾은 글꼴: ' + ' · '.join(fm) +
+              "\n  → font-family 를 글꼴의 실제 이름으로(예: 'Noto Sans KR' · 'Jua') — @font-face 별명('NotoK' 등)은 엔진이 못 찾아 다른 글꼴로 굽는다 · 파일이 없으면 check.py --fix --fonts")
     return rows
 
 

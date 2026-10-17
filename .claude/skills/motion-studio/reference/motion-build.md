@@ -27,7 +27,7 @@
    - 강조 = `core/fx.py`(효과 32개 — reference/effects.md «캔버스 요소에 거는 법»: `canvas.box(e)` · `canvas.pic(e)`).
    - 찍기 = `camera.keys` · `camera.on` · `camera.drift` · `camera.defocus` … → `camera.shoot(img, c, (W, H))` (reference/camera.md).
    - 머무는 동안 · β 등장 · 퇴장 = `core/motion.py`(둥실 · 숨쉬기 · 맥박 · 밑줄 · 형광펜 · 흐림→또렷 · 돌며 · 뒤집혀 · 터지기 · 흩어지기).
-   - **키트** = `K = kit.load('<기획서 §2-B 키트>')`. 장면 경계 편집은 `EDIT = K.cuts([들어오는 장면의 세기 …])`(키트 안에서 세기대로 · 같은 것 연달아 안 나오게) → `frame(t)`에서 `K.edit(이름, a, b, u, **옵션)`. 메모로 정한 편집은 그 칸만 손으로 바꾼다.
+   - **키트** = `K = kit.load('<기획서 §2-B 키트>')`. 장면 경계 편집은 `EDIT = K.cuts([들어오는 장면의 세기 …], names=[장면 이름 …])`(키트 안에서 세기대로 · 같은 것 연달아 안 나오게 · 이름으로 골라 피드백으로 장면을 빼도 다른 경계는 그대로) → `frame(t)`에서 `K.edit(이름, a, b, u, **옵션)`. 메모로 정한 편집은 그 칸만 손으로 바꾼다.
    - **화면 겹** = `frame(t)` 끝에서 `K.finish(img, t)` 한 번(전환 중에도 같은 겹이 걸리게).
    - **PLAN** = 기획서 §5를 장면마다 dict 로 옮긴다 — `{'level': 1~3, 'camera': [...], 'enter': [...], 'emph': [...], 'kick': '이름' 또는 None, 'borrow': '이유'(키트 밖일 때)}`. `--check`가 이걸 본다. 이름은 effects-index · kits.md 에 쓰인 이름 그대로.
    - **킥이 시간 조작이면** `reference/time.md` + `examples/rewind_example.py` — 원본 시간에 A · B 갈래를 그리고 `timewarp.Warp` 지도로 화면 · 소리를 함께 바꾼다.
@@ -37,9 +37,11 @@
    - 다 나와서 더 안 바뀌는 바탕 · 크게 흐린 화면은 `bake.memo(키, 그리는 함수)`로 한 번만 그리고 다시 쓴다(샘플 참고). 카메라만 움직이는 구간이 가장 큰 덕을 본다.
    - 움직임 흐림(`shoot(mblur=…)`)은 빠르게 옮겨 가는 순간에만 · 기울기 없는 카메라가 가장 빠르다.
 3. 장면 길이 = 대사 길이 + 0.7초 이상(대사가 있을 때) · 대사 없는 장면은 다 읽히고 지루하지 않을 만큼(지난 영상 감 2~4초).
-4. 소리 `build_audio(path)`: `audio.bgm(sections, DUR, palette)` + 효과음(`audio.new_track` 에 `whoosh` · `hit` · `chime` · `tick` · `mallet`) + 대사 → `audio.mixdown(DUR, path, bgm, sfx, voices)`.
+4. 소리 `build_audio(path)`: `audio.bgm(sections, DUR, style=장르)` + 효과음(`S = sfx.Kit(묶음)` → `S.put(audio.new_track(DUR), 자리, 초, g)` · 이름으로 `sfx.put_sfx`) + 대사 → `audio.mixdown(DUR, path, bgm, 트랙, voices)` — 장르 · 묶음 고르는 법 = `reference/sound.md` · 굽기 때 `out/소리지도.json`(음표 · 효과음 시각)이 같이 남는다(§6).
    - 무드: sting · intro · calm · groove · bouncy · build · drop · main · tense · outro — 장면 흐름에 맞춰 구간을 나눈다(훅 짧게 치고 · 설명에서 쌓고 · 결과에서 터지고 · 마무리 …는 지난 영상의 감).
-   - 사운드폰트가 없으면 `bgm`이 안내를 띄우고 멈춘다 → 배경음 없이 진행하거나 받게 한다(check.py).
+   - 사운드폰트가 없으면 `bgm`이 안내를 띄우고 멈춘다 → 클라우드면 `check.py <작업 폴더> --fix` 로 묻지 않고 받고 · 로컬 굽기면 배경음 없이 진행하거나 유저에게 받게 한다.
+4-B. **영상 속 말 자막** — 넣은 영상에 말이 있고 자막을 얹으면 받아쓰기(`transcribe.md`) 확인표를 거친 `stt.final_lines(json)` → `frame(t)` 안에서 `stt.draw(img, lines, 원본 시각)` (모양은 캔버스 «자막 판» 값). 말 사이 쉼 = `stt.speech_spans`.
+4-C. **준비가 필요한 재료**(녹화 컷 미리 굽기 등)는 `M.prepare` 에 걸어 둔다 — `bake.cli` 가 still · sheet · part · bake 전에 부른다(이미 됐으면 그냥 지나감). 녹화 컷 = `cut.Reel(...).prepare`(rec-cut.md).
 5. 끝에 `bake.cli(sys.modules[__name__], out='out/<제목>.mp4', audio=build_audio)`.
 
 ## 3. 굽기 전 확인 — 유저 개입은 여기 한 번
@@ -57,6 +59,7 @@
   `--part 1/3` → `--part 2/3` → `--part 3/3` → `--join 3` (조각마다 따로 돌려 한 번 명령이 오래 걸리지 않게).
 - 완성 파일을 유저에게 전한다(폴더 연결이면 작업 폴더 `out/` · 클라우드면 파일로 보낸다). 기획서 «지금 단계» = 완성.
 - 결과 영상은 유저가 먼저 본다 — 굽고 나서 프레임을 뜯어 따로 분석하지 않는다.
+- 굽기(`--bake` · `--join`) 끝에 작업 폴더에 **`피드백뷰어.html`** 이 같이 생긴다(영상 이름 · fps 채움 · 다시 만들기 `--viewer`). ★**내 컴퓨터 굽기면 굽기 명령을 줄 때 미리** 한 줄로 알린다(끝나는 걸 스킬이 못 본다) — 터미널 끝에도 «✅ 완성 · 📝 피드백뷰어.html → 목록 복사 → 붙여 넣기»가 크게 찍힌다. 클라우드면 완성을 전할 때 영상과 뷰어를 같이 보낸다. 고칠 곳이 오면 ⑧ `feedback.md`.
 
 ## 5. 썸네일 (요청할 때만)
 같은 캔버스에 썸네일 아트보드(`Thumb.dc.html` · 1280×720 또는 1080×1920)를 하나 더해 그린다. 필요하면 `canvas.py board`로 PNG를 만든다.

@@ -8,12 +8,15 @@
 명령 (scenes.py 에서):
   --still 1.5 8.2 …     그 시각 한 장씩 → out/still_*.png
   --sheet [n]           장면마다 n장(기본 3: 시작 · 가운데 · 끝) 모음 → out/_sheet.jpg   (SCENES 가 있으면 장면 경계로)
-  --audio               소리만 → out/mix.wav
+  --audio               소리만 → out/mix.wav (+ out/소리지도.json — 작곡된 음표 · 효과음 시각 · 대사 · 굽기 때도 남는다)
   --check               점검 보고 → out/_check.md (scenes.py 에 KIT · PLAN · EDIT) + 움직임 시간 띠 → out/_motion.jpg
   --draft               확인용 굽기 — 초당 프레임 절반 · 낮은 화질로 절반 시간에 → out/<제목>_draft.mp4
   --bake                전체 굽기 (소리까지)
   --part K/N            K번째 조각만 굽기 (길면 part 1/2/3 …로 나눠 굽는다) → out/_part_K.mp4
   --join N              조각 N개 잇고 소리 입히기
+  --viewer              피드백 뷰어만 다시 → 작업 폴더 피드백뷰어.html (--bake · --join 끝에는 자동)
+  --rebgm [장르] [--seed N]   배경음만 새로 → out/<제목>_새배경음.mp4 (화면은 다시 굽지 않는다 · 효과음 · 나레이션은 그대로)
+                        장르 = music.STYLES (없으면 원래 장르로 새 곡) · seed 를 안 주면 매번 다른 곡
 """
 import math
 import multiprocessing as mp
@@ -133,10 +136,66 @@ def motion_strip(M, outdir, n=6, gap=0.2, thumb=200):
     p = os.path.join(outdir, '_motion.jpg'); S.save(p, quality=85); return p
 
 
+def _viewer(out):
+    """굽기 끝 — 작업 폴더에 피드백뷰어.html (영상 이름 · fps 채움). 실패해도 굽기는 그대로"""
+    try:
+        from . import feedback
+        if os.path.exists(out):
+            v = feedback.viewer(out, work=os.getcwd()); bar = '=' * 60
+            print(f"\n{bar}\n✅ 완성: {os.path.relpath(out)}\n"
+                  f"📝 고칠 곳이 있으면 → {os.path.relpath(v)} 을 열어 보면서 메모\n"
+                  f"   → «목록 복사» → Claude 에게 붙여 넣기\n{bar}")
+    except Exception as ex:
+        print('(피드백 뷰어 못 만듦:', ex, ')')
+
+
+def _free(p):
+    """같은 이름이 있으면 _2 · _3 … (덮어쓰지 않는다)"""
+    if not os.path.exists(p): return p
+    b, e = os.path.splitext(p); k = 2
+    while os.path.exists(f'{b}_{k}{e}'): k += 1
+    return f'{b}_{k}{e}'
+
+
+def rebgm(a, out, outdir, audio):
+    """배경음만 새로 — 소리를 다시 만들고(장르 · seed 를 바꿔) 이미 구운 화면에 입힌다"""
+    import random
+    if not audio: return '소리 함수(build_audio)가 없어요'
+    i = a.index('--rebgm'); style = a[i + 1] if len(a) > i + 1 and not a[i + 1].startswith('--') else None
+    if style: os.environ['MOTION_BGM_STYLE'] = style
+    seed = a[a.index('--seed') + 1] if '--seed' in a else str(random.randint(1, 9999))
+    os.environ['MOTION_BGM_SEED'] = seed
+    video = out if os.path.exists(out) else os.path.join(outdir, '_silent.mp4')
+    if not os.path.exists(video): return f'⛔ 구운 영상이 없어요 ({out}) — 먼저 --bake'
+    w = audio(os.path.join(outdir, 'mix_rebgm.wav'))
+    dst = _free(out[:-4] + '_새배경음.mp4')
+    subprocess.run(FF + ['-i', video, '-i', w, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '160k',
+                         '-shortest', '-movflags', '+faststart', dst], check=True)
+    print(f'🎵 같은 곡을 다시 만들려면: --rebgm {style or ""} --seed {seed}'.replace('  ', ' '))
+    return dst
+
+
+def _with_map(audio, outdir, M, name='소리지도.json'):
+    """소리 함수를 감싸 — 소리를 만든 뒤 out/소리지도.json (작곡된 음표 · 효과음 · 대사) 를 남긴다. 실패해도 굽기는 그대로"""
+    if not audio: return None
+    def run(path):
+        w = audio(path)
+        try:
+            from . import audio as AU
+            AU.save_map(os.path.join(outdir, name), getattr(M, 'DUR', None))
+        except Exception as ex:
+            print('(소리 지도 못 남김:', ex, ')')
+        return w
+    return run
+
+
 def cli(M, out, audio=None):
     """scenes.py 의 명령 처리. audio = (wav 경로) → wav 경로 를 만드는 함수 (없으면 무음)"""
     a = sys.argv[1:]; outdir = os.path.dirname(out) or 'out'; os.makedirs(outdir, exist_ok=True)
     wavp = os.path.join(outdir, 'mix.wav')
+    audio = _with_map(audio, outdir, M, '소리지도_새배경음.json' if '--rebgm' in a else '소리지도.json')
+    if hasattr(M, 'prepare') and any(k in a for k in ('--still', '--sheet', '--part', '--check', '--draft', '--bake')):
+        M.prepare()                                    # 굽기 전 준비 (녹화 컷 미리 굽기 등 — 이미 됐으면 그냥 지나간다)
     if '--still' in a:
         ts = [float(x) for x in a[a.index('--still') + 1:] if not x.startswith('--')]
         print('\n'.join(still(M, ts, outdir)))
@@ -148,7 +207,7 @@ def cli(M, out, audio=None):
     elif '--part' in a:
         k, n = map(int, a[a.index('--part') + 1].split('/')); print(part(M, k, n, outdir))
     elif '--join' in a:
-        n = int(a[a.index('--join') + 1]); w = audio(wavp) if audio else None; print(join(n, outdir, out, w))
+        n = int(a[a.index('--join') + 1]); w = audio(wavp) if audio else None; print(join(n, outdir, out, w)); _viewer(out)
     elif '--check' in a:   # 점검 보고(키트 · 세기 · 편집 · 킥 · 멈춘 구간) + 움직임 시간 띠
         from . import kit
         rep, n = kit.check(M); p = os.path.join(outdir, '_check.md'); open(p, 'w', encoding='utf-8').write(rep)
@@ -159,6 +218,10 @@ def cli(M, out, audio=None):
         print(mux(silent, audio(wavp), dp) if audio else os.replace(silent, dp) or dp)
     elif '--bake' in a:
         silent = frames(M, 0, total(M), os.path.join(outdir, '_silent.mp4'))
-        print(mux(silent, audio(wavp), out) if audio else os.replace(silent, out) or out)
+        print(mux(silent, audio(wavp), out) if audio else os.replace(silent, out) or out); _viewer(out)
+    elif '--rebgm' in a:   # 배경음만 새로 (reference/sound.md §4)
+        print(rebgm(a, out, outdir, audio))
+    elif '--viewer' in a:  # 피드백 뷰어만 다시 (reference/feedback.md)
+        _viewer(out)
     else:
         print(__doc__)

@@ -6,7 +6,7 @@
   EDIT = K.cuts([1, 2, 1, 3])          장면 경계마다 세기(1~3) → {경계 j: (편집 이름, 길이, 옵션)} · 같은 편집이 연달아 나오지 않게 고른다
   img = K.edit(name, a, b, u, **opt)   경계 편집 실행 (camera.EDITS + 효과 사전 전환 whip · glitch · zoom_through)
   img = K.finish(img, t)               화면 겹 (finish.py)
-  K.ease · K.music · K.sfx · K.enter · K.camera · K.emph · K.kicks   — 기획 · 장면 코드가 참고
+  K.ease · K.music(배경음 장르 출발점) · K.sounds(효과음 묶음 출발점) · K.sfx(그 묶음의 자리별 후보) · K.enter · K.camera · K.emph · K.kicks   — 기획 · 장면 코드가 참고
   report = check(M)                    점검 보고 (bake --check) — M.KIT · M.PLAN · M.EDIT 를 본다
 """
 import os
@@ -28,38 +28,37 @@ KITS = {
     '팝': dict(grade='✓', label='팝 · 경쾌',
               cuts={1: ['push(left)', 'cover(up)', 'stretch(left)'], 2: ['cube(left)', 'tiles', 'drop'], 3: ['impact']},
               camera=['빠지며 공개', '끊어 다가가기', '훑기', '시선 옮기기', '천천히 흐르기'], enter=['pop', 'up', 'left', 'right', 'spin_in'],
-              emph=['pulse', 'underline', 'shine', 'sparkles'], ease='튕김', finish={'grade': 'punch'}, music='pop',
-              sfx={'cut': 'whoosh', 'enter': 'mallet', 'emph': 'chime', 'impact': 'hit'},
+              emph=['pulse', 'underline', 'shine', 'sparkles'], ease='튕김', finish={'grade': 'punch'}, music='경쾌 팝', sounds='경쾌 팝',
               kicks=['아니지~ 다시', '닿을 듯 → 제자리', '앞뒤 흔들기']),
     '시네마': dict(grade='✓', label='시네마 · 강렬',
                 cuts={1: ['cut', 'dip'], 2: ['zoom_cut', 'whip', 'zoom_blur'], 3: ['impact', 'flash', 'zoom_through']},
                 camera=['빠른 줌', '손에 든 카메라', '기울기', '밀고 들어가기', '초점 옮기기'], enter=['zoom', 'blur_in', 'wipe', 'left', 'right', 'lines'],
                 emph=['burst', 'shake', 'punch_zoom', 'spotlight'], ease='빠르게', finish={'grade': 'punch', 'vignette': 0.35, 'grain': 0.04},
-                music='cinema', sfx={'cut': 'whoosh', 'enter': 'whoosh', 'emph': 'whoosh', 'impact': 'hit'},
+                music='시네마틱', sounds='시네마',
                 kicks=['쾅 직전 슬로', '멈추고 짚기', '결과 먼저 → 되감기']),
     '차분': dict(grade='✓', label='차분 · 감성',
                cuts={1: ['dissolve', 'blur_cut'], 2: ['burn', 'blinds', 'reveal(left)'], 3: ['dip(white)']},
                camera=['천천히 흐르기', '초점 옮기기', '밀고 들어가기'], enter=['fade', 'lines', 'blur_in', 'up'],
                emph=['highlight', 'underline', 'shine'], ease='부드럽게', finish={'grade': 'warm', 'glow': 0.2, 'vignette': 0.2, 'grain': 0.03},
-               music='study', sfx={'cut': None, 'enter': 'chime', 'emph': 'chime', 'impact': 'bell'},
+               music='감성 피아노', sounds='차분',
                kicks=['멈추고 짚기', '끝에서 처음으로']),
     '테크': dict(grade='β', label='테크 · 디지털',
                cuts={1: ['cut', 'slice'], 2: ['glitch', 'rgb_split', 'pixelate'], 3: ['zoom_blur']},
                camera=['점프 컷', '훑기', '끊어 다가가기'], enter=['type_text', 'wipe', 'flip_in'],
                emph=['rgb_split', 'blink', 'spotlight'], ease='선형', finish={'grade': 'cool', 'scan': 0.1, 'grain': 0.03},
-               music='pop', sfx={'cut': 'tick', 'enter': 'tick', 'emph': 'tick', 'impact': 'hit'},
+               music='일렉 · 테크', sounds='테크·앱',
                kicks=['빨리 감기', '앞뒤 흔들기', '되감고 바꿔 보기']),
     '손그림': dict(grade='β', label='손그림 · 종이',
                 cuts={1: ['cover(left)', 'reveal(left)'], 2: ['clock', 'stretch(left)', 'tiles'], 3: ['drop']},
                 camera=['천천히 흐르기', '훑기'], enter=['pop', 'wipe', 'spin_in', 'draw_on', 'write', 'draw'],
                 emph=['hand_circle', 'underline', 'highlight', 'arrow_draw'], ease='튕김', finish={'grade': 'warm', 'paper': 0.08},
-                music='tale', sfx={'cut': 'whoosh', 'enter': 'mallet', 'emph': 'chime', 'impact': 'hit'},
+                music='동화', sounds='동화',
                 kicks=['결과 먼저 → 되감기', '아니지~ 다시']),
     '다큐': dict(grade='β', label='다큐 · 현장',
                cuts={1: ['cut', 'dissolve'], 2: ['dip', 'push(left)'], 3: ['flash']},
                camera=['손에 든 카메라', '시선 옮기기', '초점 옮기기'], enter=['fade', 'up'],
                emph=['arrow_draw', 'spotlight', 'underline'], ease='부드럽게', finish={'grade': 'fade', 'grain': 0.03},
-               music='study', sfx={'cut': None, 'enter': None, 'emph': 'tick', 'impact': 'hit'},
+               music='어쿠스틱', sounds='차분',
                kicks=['멈추고 짚기', '멈춘 채 카메라만']),
 }
 
@@ -95,14 +94,20 @@ class Kit:
     def __init__(self, name, d):
         self.name = name; self.pool = d['cuts']; self.spec = d.get('finish', {})
         self.__dict__.update({k: v for k, v in d.items() if k not in ('cuts', 'finish')})
+        from . import sfx as _sfx
+        self.sfx = _sfx.SETS.get(d.get('sounds', '경쾌 팝'), {})   # 자리 → 효과음 후보 (sound.md)
 
-    def cuts(self, levels):
-        """장면 경계(1번째 경계 = 장면 1→2)마다 세기 → {j: (이름, 길이, 옵션)}"""
+    def cuts(self, levels, names=None):
+        """장면 경계(1번째 경계 = 장면 1→2)마다 세기 → {j: (이름, 길이, 옵션)}
+        names = 장면 이름 목록(len(levels)+1) 을 주면 경계마다 «앞 장면 → 뒤 장면» 이름으로 고른다 —
+        피드백으로 장면 하나를 빼거나 넣어도 다른 경계의 전환이 바뀌지 않는다 (reference/feedback.md §6)"""
+        import zlib
         out, last = {}, None
         for j, lv in enumerate(levels, start=1):
             pool = self.pool.get(lv) or self.pool[1]
             pick = [p for p in pool if _parse(p)[0] != last] or pool
-            name, dur, opt = _parse(pick[(j * 7 + lv) % len(pick)]); out[j] = (name, dur, opt); last = name
+            k = zlib.crc32(f'{names[j - 1]}>{names[j]}'.encode()) if names and len(names) > j else j * 7 + lv
+            name, dur, opt = _parse(pick[k % len(pick)]); out[j] = (name, dur, opt); last = name
         return out
 
     def edit(self, name, a, b, u, **opt):
@@ -134,6 +139,11 @@ def check(M, step=0.5, still_s=2.5):
     문제로 세는 것: 이유 없는 키트 밖 · 세기 3 연달아 / 너무 잦음 · 같은 편집 연달아 · 한 장면 강조 둘 이상 ·
     같은 등장 반복 · 내려앉기가 세기 3 밖 · 킥 둘 이상 · 멈춘 구간 · 카메라가 거의 안 움직이는 장면이 절반 넘음
     → (표 문자열, 문제 수)"""
+    if not getattr(M, 'KIT', None):                                    # 짧은 쇼츠 등 효과 계획(KIT · PLAN)을 안 단 장면 코드 — 멈춘 구간만 본다
+        still, _ = _scan(M, step, still_s)
+        lines = ['# 점검 보고 (간이)', '', '- KIT · PLAN 이 없어 키트 · 세기 · 편집 점검은 건너뜀 — 정지 화면(--still · --sheet)으로 확인',
+                 *[f'- ⚠ 멈춘 구간 {a:.1f} ~ {b:.1f}초' for a, b in still]]
+        return '\n'.join(lines) + '\n', len(still)
     K = load(M.KIT); rows, issues, notes = [], 0, []
     allowed = K.allowed(); plan = getattr(M, 'PLAN', []); edit = getattr(M, 'EDIT', {})
     still, cams = _scan(M, step, still_s)
@@ -228,4 +238,4 @@ if __name__ == '__main__':      # python3 kit.py 팝  → 그 키트에서 쓰�
         K = load(n); print(f'## {n} — {K.label} ({K.grade})')
         for lv, p in K.pool.items(): print(f'  전환 세기 {lv}: {", ".join(p)}')
         print(f'  카메라: {", ".join(K.camera)}\n  등장: {", ".join(K.enter)}\n  강조: {", ".join(K.emph)}')
-        print(f'  속도 곡선: {K.ease} · 화면 겹: {K.spec} · 배경음: {K.music} · 소리: {K.sfx}\n  킥 후보: {", ".join(K.kicks)}')
+        print(f'  속도 곡선: {K.ease} · 화면 겹: {K.spec} · 배경음: {K.music} · 효과음 묶음: {K.sounds}\n  킥 후보: {", ".join(K.kicks)}')

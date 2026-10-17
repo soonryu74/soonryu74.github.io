@@ -6,6 +6,8 @@
   layer(el)                 → (RGBA 조각, x, y)  요소 하나만 투명 바탕에 — appear.py 가 움직인다
   box(el) · pic(el)         → 요소 자리 · 요소 그림 — 효과 사전(fx)에 캔버스 요소를 넘길 때
   read_notes(canvas.json)   → 메모 목록 (어느 아트보드 위인지 · 아트보드 안 좌표)
+  fx_note(n, 시간, 지금, [다른 효과…], x, y)  → 🎬 효과 노트 (글자 40 · «바꿀 수 있는 다른 효과» A/B/C…) — canvas-rules §8-B
+  picks(말) · note_pick(노트 글)  → «화면 2는 B로, 화면 5는 C» → {2: 'B', 5: 'C'} · 노트에 ✔ 붙인 줄 → 'B'
   fonts_used(els)           → 쓰인 글꼴 (이름 · 굵기) — ⑤ 글꼴 받기 목록
   missing                   → 그리다가 못 찾은 글꼴 · 그림 (경고)
 
@@ -20,7 +22,8 @@ color(투명도 포함)/text-align/font-family/letter-spacing · -webkit-text-st
 아직 못 읽는 것이 디자인에 필요하면 → 여기에 보탠다. 디자인을 엔진에 맞춰 낮추지 않는다.
 
   python3 canvas.py board <아트보드.dc.html> <출력.png> [--json 요소.json]
-  python3 canvas.py notes <canvas.json>
+  python3 canvas.py notes <canvas.json>          (✔ 붙인 효과 줄 = ★고름)
+  python3 canvas.py picks "화면 2는 B로, 화면 5는 C로"
   python3 canvas.py fonts <아트보드.dc.html> …
 """
 import glob
@@ -664,6 +667,33 @@ def read_notes(canvas_json):
     return sorted(out, key=lambda m: (order.index(m['board']) if m['board'] in order else 99, m['by']))
 
 
+NOTE_SIZE = 40          # 🎬 노트 글자 크기 (유저가 맞춘 값 · 72 는 너무 크다)
+
+
+def fx_note(n, span, now, alts, x, y, w=1120, fill='teal'):
+    """🎬 효과 노트 하나 — «🎬 화면 N · 시간 / 지금: … / 바꿀 수 있는 다른 효과 / A — … B — …»
+    alts = 엔진에 실제로 있는 효과만(effects-index) · 같은 갈래(등장이면 등장) 3~4개 · 쉬운 말로"""
+    lines = [f'🎬 화면 {n} · {span}', '', f'지금: {now}', '', '바꿀 수 있는 다른 효과']
+    lines += [f'{chr(65 + i)} — {a}' for i, a in enumerate(alts)]
+    return {'x': x, 'y': y, 'w': w, 'fill': fill, 'size': NOTE_SIZE, 'text': '\n'.join(lines)}
+
+
+def picks(text):
+    """유저 말 → {화면 번호: 글자} · «화면 2는 B 효과로, 화면 5는 C로» · «2번 B» · «장면 3 → A»"""
+    out = {}
+    for m in re.finditer(r'(?:화면|장면)?\s*(\d+)\s*(?:번)?\s*(?:은|는|=|→|:)?\s*([A-Ha-h])(?![A-Za-z])', text or ''):
+        out[int(m[1])] = m[2].upper()
+    return out
+
+
+def note_pick(text):
+    """🎬 효과 노트 글 → 유저가 고른 글자 (✔ · ✓ · v · ○ 를 붙인 줄) · 없으면 None"""
+    for ln in (text or '').splitlines():
+        m = re.match(r'\s*(?:✔|✓|☑|○|●|v|V)\s*([A-H])\s*[—\-:]', ln) or re.match(r'\s*([A-H])\s*[—\-:].*(?:✔|✓|☑)\s*$', ln)
+        if m: return m[1]
+    return None
+
+
 def near(els, bx, by, text=''):
     """아트보드 안 좌표에서 가장 가까운 요소 (메모가 어느 요소 얘기인지).
     메모 글에 «영상 … 재생» 같은 타임코드가 있으면 그림 요소(영상 자리)만 본다 · 화면을 거의 덮는 바탕 요소는 뒤로 미룬다"""
@@ -699,7 +729,11 @@ if __name__ == '__main__':
         print('\n'.join(summary(els))); print(f'ok {len(els)}개 요소 → {a[2]}')
     elif a[0] == 'notes':
         ms = read_notes(a[1]); print(f'메모 {len(ms)}개')
-        for m in ms: print(f"{m['board']} ({int(m['bx'])},{int(m['by'])}){'' if m['inside'] else ' [틀 밖]'}: {m['text']}")
+        for m in ms:
+            pk = note_pick(m['text'])
+            print(f"{m['board']} ({int(m['bx'])},{int(m['by'])}){'' if m['inside'] else ' [틀 밖]'}{' ★고름 ' + pk if pk else ''}: {m['text']}")
+    elif a[0] == 'picks':
+        print(picks(' '.join(a[1:])))
     elif a[0] == 'fonts':
         allf = {}
         for p in a[1:]:

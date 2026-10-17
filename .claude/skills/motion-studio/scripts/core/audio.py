@@ -1,35 +1,76 @@
-"""소리 — 사운드폰트 배경음 · 합성 효과음 · 나레이션 덕킹 · 마스터 (motion-studio).
+"""소리 — 효과음 · 배경음 · 나레이션 덕킹 · 마스터 (motion-studio · reference/sound.md).
 
-  bgm(sections, dur, palette=…)   배경음 — sections = [(시작초, 끝초, 무드, {옵션}), …]
-        무드: sting · intro · calm · groove · bouncy · build · drop · main · tense · outro
-        옵션: alt(밝은 진행 2) · hits[강조 시각] · hit(outro 마지막 한 방)
-        palette: pop(경쾌) · cinema(웅장) · study(차분) · tale(동화)   ← 출발점 예시, 내용에 맞게
-  효과음: whoosh(휙) · hit(쿵) · chime(반짝) · tick(틱) · mallet(실로폰) · bell(종)
-  mixdown(dur, path, …)           배경음 + 효과음 + 나레이션 → 완성 wav
-배경음은 사운드폰트 GeneralUser-GS.sf2 가 필요하다 (스킬 밖 · paths.need_sf2 가 안내).
+  효과음  sfx.py (81가지 · 묶음 7개) — 영상마다 묶음 하나: audio.use('동화') 다음
+          tick · hit · chime · whoosh 같은 옛 이름도 그 묶음의 소리로 나간다 (장면 코드는 그대로)
+          새로 쓸 때: K = sfx.Kit('동화'); K.put(트랙, 'enter', 초, g) · 이름으로: sfx.put_sfx(트랙, 'harp_up', 초, g)
+  긴 소리  crowd.py — 함성 · 웅성웅성 · 웃음 · 발소리 · 비 · 바람 · 카페 (길이 마음대로)
+  배경음  bgm(sections, dur, style=…)  → music.py 작곡기 (장르 13가지 · 영상마다 새 곡)
+          sections = [(시작, 끝, 무드 또는 세기 0~3, {hits: [초], hit: 초}), …]
+          무드(옛 이름도 그대로): sting · intro · calm · groove · bouncy · build · drop · main · tense · outro
+  mixdown(dur, path, …)   배경음 + 효과음 + 나레이션 → 완성 wav
+배경음 · sf2 효과음은 사운드폰트 GeneralUser-GS.sf2 가 필요하다 (스킬 밖 · paths.SF2_GUIDE). 없으면 효과음은 합성 소리로 바뀐다.
+배경음만 새로: scenes.py --rebgm [장르] [--seed N] → out/<제목>_새배경음.mp4 (화면은 다시 굽지 않는다)
+소리 지도: 굽기 · --audio 때 out/소리지도.json (작곡된 음표 · 효과음 시각 · 대사) — save_map · scripts/soundmap.py 로 미리 보기
 """
 import os
-import random
 import wave
 
 import numpy as np
 
-from . import paths
+from . import paths, sfx
 
 SR = 44100
 
 
-# ── 합성 효과음 (cut-follow bgm.py 에서) ─────────────────
 def _T(sec): return int(sec * SR)
 def _f(n, base=261.63): return base * 2 ** (n / 12)
 
 
 def _put(tr, sig, at, g=1.0):
-    p = _T(at); m = min(len(sig), len(tr) - p)
+    for i, (oid, nm, g0) in enumerate(_PENDING):   # 옛 whoosh 신호 → 소리 지도에 시각 기록
+        if oid == id(sig): sfx.LOG.append((round(float(at), 4), nm, round(float(g0 * g), 3), 'cut')); _PENDING.pop(i); break
+    p = _T(at)
+    if p < 0: sig = sig[-p:]; p = 0
+    m = min(len(sig), len(tr) - p)
     if m > 0: tr[p:p + m] += sig[:m] * g
+    return tr
+
+
+# ── 효과음 묶음 ───────────────────────────────────
+SOUND_SET = os.environ.get('MOTION_SFX_SET') or '경쾌 팝'
+_KITS = {}
+
+
+def use(name, seed=0):
+    """이 영상의 효과음 묶음 — 경쾌 팝 · 시네마 · 동화 · 테크·앱 · 코믹 · 레트로 게임 · 차분"""
+    global SOUND_SET
+    if name not in sfx.SETS: raise KeyError(f'효과음 묶음 «{name}» 없음 — {" · ".join(sfx.SETS)}')
+    SOUND_SET = name; _KITS[name] = sfx.Kit(name, seed); return _KITS[name]
+
+
+def kit():
+    if SOUND_SET not in _KITS: _KITS[SOUND_SET] = sfx.Kit(SOUND_SET)
+    return _KITS[SOUND_SET]
+
+
+# 옛 이름 → 지금 묶음의 자리 (장면 코드를 고치지 않아도 새 소리로)
+def whoosh(rng, dur, g, fc=2200, bw=1500, pw=2):
+    """휙 — 신호를 돌려준다 (옛 방식: _put(트랙, whoosh(…), 초))"""
+    k = kit(); nm, sd = k.name_for('cut')
+    if dur >= 0.65 and '시네마' not in SOUND_SET and 'deep_whoosh' in sfx.LIB and SOUND_SET != '동화': nm = 'deep_whoosh'
+    x = sfx.make(nm, sd) * g * 1.3; _PENDING.append((id(x), nm, g)); return x
+
+
+def hit(x, rng, at, g=0.8): kit().put(x, 'impact', at, g * 0.9)
+def tick(x, rng, at, g=0.12): kit().put(x, 'tick', at, min(0.6, g * 2.2))
+
+
+def chime(x, at, base=1046.5, g=0.25, ratios=None, step=None, dur=None):
+    kit().put(x, 'done' if g >= 0.2 else 'emph', at, min(0.7, g * 2.0))
 
 
 def mallet(freq, dur, decay=9.0):
+    """마림바 한 음 (음높이를 직접 정할 때 — 오르는 음 · 뒤죽박죽 음)"""
     n = _T(dur); t = np.arange(n) / SR; out = np.zeros(n)
     for m, a in zip((1, 3.9, 10.4), (1, .30, .10)):
         out += a * np.sin(2 * np.pi * freq * m * t) * np.exp(-decay * m ** 0.35 * t)
@@ -38,7 +79,7 @@ def mallet(freq, dur, decay=9.0):
 
 
 def bell(freq, dur, decay=5.5):
-    """종 — 배음 넷 · 마림바보다 길게 울린다"""
+    """종 한 음"""
     n = _T(dur); t = np.arange(n) / SR; out = np.zeros(n)
     for m, a in zip((1, 2, 3.01, 4.2), (1, .45, .22, .10)):
         out += a * np.sin(2 * np.pi * freq * m * t) * np.exp(-decay * m ** 0.5 * t)
@@ -46,209 +87,53 @@ def bell(freq, dur, decay=5.5):
     return out
 
 
-def pad(freqs, dur, rng):
-    """패드 — 화음이 천천히 들어왔다 빠진다"""
-    n = _T(dur); t = np.arange(n) / SR; out = np.zeros(n)
-    for f in freqs:
-        for mul, amp in ((1, 1.0), (2, .3), (3, .12)):
-            out += amp * np.sin(2 * np.pi * f * mul * t + rng.random() * 6)
-    a, r = _T(0.4), _T(0.6)
-    e = np.ones(n); e[:a] = np.linspace(0, 1, a); e[-r:] = np.linspace(1, 0, r)
-    return out / (np.abs(out).max() + 1e-9) * e
-
-
-def tick(x, rng, at, g=0.12):
-    """타자 «틱»"""
-    m = _T(0.03); z = rng.standard_normal(m) * np.exp(-np.linspace(0, 8, m)); _put(x, z, at, g)
-
-
-def kick(dur):
-    n = _T(dur); t = np.arange(n) / SR
-    f = 110 * np.exp(-t * 28) + 45
-    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 9)
-
-
-def snare(dur, rng):
-    n = _T(dur); t = np.arange(n) / SR
-    return (rng.standard_normal(n) * .8 + np.sin(2 * np.pi * 185 * t) * .3) * np.exp(-t * 22)
-
-
-def whoosh(rng, dur, g, fc=2200, bw=1500, pw=2):
-    """대역 잡음 휙 — fc 중심 주파수 · bw 대역 폭 · pw 모양 (2 = 짧게 솟음 · 1.5 = 부드럽게)"""
-    m = _T(dur); z = rng.standard_normal(m)
-    Z_ = np.fft.rfft(z); fr = np.fft.rfftfreq(m, 1 / SR); Z_ *= np.exp(-((fr - fc) / bw) ** 2)
-    z = np.fft.irfft(Z_, m); z /= np.abs(z).max() + 1e-9; return z * np.sin(np.linspace(0, np.pi, m)) ** pw * g
-
-
-def chime(x, at, base=1046.5, g=0.25, ratios=(1, 1.25, 1.5), step=0.06, dur=0.8):
-    """차임 — 화음 세 음이 살짝 어긋나 울린다 (반짝 · 완성)"""
-    for j, r in enumerate(ratios): _put(x, mallet(_f(12, base * r), dur), at + j * step, g)
-
-
-def hit(x, rng, at, g=0.8):
-    """쿵 — 킥 + 스네어 살짝"""
-    _put(x, kick(0.8), at, g); _put(x, snare(0.4, rng), at, g * 0.35)
-
-
-# 전환 이름 → 휙 소리 (길이 · 크기 · 중심 주파수 · 경계보다 몇 초 앞)
-TRANSITION_SFX = {'whip': (0.4, 0.55, 2600, 0.2), 'bubble': (0.6, 0.5, 1800, 0.05), '*': (0.5, 0.2, 2200, 0.25), 'cut': None}
-
-
-# ── 사운드폰트 배경음 (bgm_sf.py 에서) ───────────────────
-EP, PIANO, GLOCK, MARIMBA, VIB, BASS, SBASS, PIZZ, STR, BRASS, PAD = 4, 0, 9, 12, 11, 33, 38, 45, 48, 61, 89
-KICK, SNARE, CLAP, HAT, OHAT, CRASH, TOM_L, TOM_H, SHAKER, RIDE = 36, 38, 39, 42, 46, 49, 45, 50, 70, 51
-PROG = {
-    'bright': [(60, 'M'), (67, 'M'), (69, 'm'), (65, 'M')],          # I V vi IV
-    'bright2': [(65, 'M'), (67, 'M'), (64, 'm'), (69, 'm')],         # IV V iii vi
-    'tense': [(57, 'm'), (53, 'M'), (55, 'M'), (52, 'M')],           # i VI VII V
-    'calm': [(65, 'M7'), (64, 'm7'), (62, 'm7'), (60, 'M7')],        # IVM7 iii7 ii7 IM7
-}
-Q = {'M': [0, 4, 7], 'm': [0, 3, 7], 'M7': [0, 4, 7, 11], 'm7': [0, 3, 7, 10]}
-PROGS = {0: EP, 1: BASS, 2: STR, 3: BRASS, 4: PAD, 5: PIANO, 6: PIZZ, 7: MARIMBA, 8: GLOCK}
-PALETTES = {   # 채널 → GM 악기
-    'pop': PROGS,
-    'cinema': {0: 24, 1: 32, 2: 49, 3: 60, 4: 89, 5: 0, 6: 45, 7: 46, 8: 73},   # 나일론 기타 · 하프 · 플루트 · 호른
-    'study': {0: 4, 1: 32, 2: 48, 3: 71, 4: 89, 5: 4, 6: 45, 7: 11, 8: 11},     # 일렉 피아노 · 클라리넷 · 비브라폰
-    'tale': {0: 46, 1: 32, 2: 49, 3: 73, 4: 89, 5: 8, 6: 45, 7: 10, 8: 10},     # 하프 · 첼레스타 · 오르골
-}
-
-
-class Score:
-    def __init__(self, seed=3, bpm=112):
-        self.ev = {'mus': [], 'drm': []}; self.rng = random.Random(seed)
-        self.B = 60 / bpm; self.BAR = 4 * self.B
-
-    def n(self, stem, t, ch, key, vel, dur):
-        r = self.rng
-        t = max(0.0, t + r.uniform(-0.012, 0.012)); vel = int(max(1, min(127, vel + r.randint(-10, 10))))
-        self.ev[stem].append((t, 1, ch, key, vel)); self.ev[stem].append((t + dur, 0, ch, key, 0))
-
-    def d(self, t, key, vel): self.n('drm', t, 9, key, vel, 0.1)
-
-
-def chord(root, kind, inv=0):
-    ns = [root + i for i in Q[kind]]
-    for _ in range(inv): ns = ns[1:] + [ns[0] + 12]
-    return ns
-
-
-def section(S, t0, t1, mood, o):
-    r = S.rng; B, BAR = S.B, S.BAR
-    pk = {'tense': 'tense', 'calm': 'calm', 'intro': 'calm'}.get(mood, 'bright2' if o.get('alt') else 'bright')
-    prog = PROG[pk]; nb = max(1, int(round((t1 - t0) / BAR)))
-    motif = [r.choice([0, 1, 2, 2, 3]) for _ in range(6)]
-    for b in range(nb + 1):
-        bt = t0 + b * BAR
-        if bt >= t1 - 0.05: break
-        root, kind = prog[b % 4]; ch = chord(root, kind, inv=(b // 4) % 2)
-        fill = (b % 4 == 3) or (bt + BAR >= t1 - 0.05)
-        last = bt + BAR >= t1 - 0.05
-        step = lambda i, div: bt + i * BAR / div
-        if mood == 'sting':
-            S.d(t0, CRASH, 120); S.d(t0, KICK, 127)
-            for k in chord(60, 'M'): S.n('mus', t0, 2, k, 110, 1.2); S.n('mus', t0, 3, k - 12, 100, 1.2)
-            S.n('mus', t0, 1, 36, 120, 1.2); break
-        if mood in ('intro', 'calm'):
-            for k in ch: S.n('mus', bt, 4, k, 55, BAR * 0.98)
-            for i in range(8):
-                if mood == 'calm' and i % 2: continue
-                S.n('mus', step(i, 8), 0, ch[[0, 1, 2, 1, 2, 3 % len(ch), 2, 1][i] % len(ch)] + 12, 62, B * 0.9)
-            if mood == 'calm' or b >= 1:
-                for i in range(8): S.d(step(i, 8), SHAKER if mood == 'calm' else HAT, 38 + 14 * (i % 2 == 0))
-            if mood == 'calm' and b % 2 == 1:
-                for j, m in enumerate(motif[:4]): S.n('mus', step(j * 2 + 1, 8), 5, ch[m % len(ch)] + 12, 70, B * 1.5)
-        if mood in ('groove', 'bouncy', 'drop', 'main', 'build'):
-            dense = mood in ('drop', 'main')
-            if mood == 'build':
-                k = (b + 1) / nb
-                for i in range(int(4 + 12 * k)): S.d(bt + i * BAR / int(4 + 12 * k), SNARE, int(50 + 60 * k * i / 16))
-                S.d(bt, KICK, 100); S.d(bt + 2 * B, KICK, 90)
-            else:
-                for i in range(4): S.d(step(i, 4), KICK, 110 if i % 2 == 0 else 96)
-                S.d(step(1, 4), CLAP if mood == 'bouncy' else SNARE, 100); S.d(step(3, 4), CLAP if mood == 'bouncy' else SNARE, 104)
-                for i in range(16 if dense else 8):
-                    S.d(step(i, 16 if dense else 8), OHAT if (not dense and i % 2) else HAT, 70 if i % 2 == 0 else 45)
-                if fill and not last:
-                    for i in range(4): S.d(bt + 3 * B + i * B / 4, [TOM_H, TOM_H, TOM_L, TOM_L][i], 90)
-                if b % 4 == 0 and b > 0: S.d(bt, CRASH, 90)
-            pat = [0, 0, 12, 0, 0, 7, 12, 0] if dense else [0, None, 0, None, 0, None, 7, None]
-            for i, iv in enumerate(pat):
-                if iv is not None: S.n('mus', step(i, 8), 1, ch[0] - 24 + iv, 100, B * 0.45)
-            if mood == 'bouncy':
-                for i in range(8): S.n('mus', step(i, 8), 6, ch[i % len(ch)] + (12 if i >= 4 else 0), 80, B * 0.3)
-                for i in (1, 3, 5, 7): S.n('mus', step(i, 8), 7, ch[(i // 2) % len(ch)] + 24, 70, B * 0.3)
-            else:
-                for i in (0, 3, 6) if dense else (0, 4):
-                    for k in ch: S.n('mus', step(i, 8), 5, k, 78 if dense else 68, B * 1.2)
-                if mood == 'build':
-                    S.n('mus', bt, 2, ch[0] + 12 + b * 2, 60 + b * 10, BAR)
-            if dense:
-                for k in ch: S.n('mus', bt, 2, k + 12, 60, BAR * 0.98)
-                if b % 2 == 0:
-                    for k in ch: S.n('mus', bt, 3, k, 92, B * 0.5)
-                mot = motif[:] if b % 4 != 3 else motif[:-1] + [r.choice([0, 2])]
-                rhythm = [0, 2, 3, 5, 6, 7] if b % 2 == 0 else [0, 1, 3, 4, 6]
-                for j, pos in enumerate(rhythm):
-                    S.n('mus', step(pos, 8), 8, ch[mot[j % len(mot)] % len(ch)] + 24, 82, B * 0.7)
-        if mood == 'tense':
-            for i in range(8): S.n('mus', step(i, 8), 2, ch[0] - 12, 70 + 20 * (i == 0), B * 0.4)
-            for k in ch: S.n('mus', bt, 4, k, 50, BAR * 0.98)
-            S.d(bt, KICK, 110); S.d(bt + 2 * B, SNARE, 90); S.d(bt + 3.5 * B, KICK, 80)
-            for i in range(4): S.d(step(i, 4), RIDE, 50)
-            if fill:
-                for i in range(6): S.d(bt + 2.5 * B + i * B / 4, TOM_L if i < 3 else TOM_H, 85 + i * 5)
-            S.n('mus', bt, 1, ch[0] - 24, 105, BAR * 0.9)
-        if mood == 'outro':
-            for k in chord(60, 'M'): S.n('mus', bt, 4, k, 55, BAR)
-            S.n('mus', bt, 0, 72, 60, B); S.n('mus', bt + B, 0, 76, 60, B)
-            h = o.get('hit')
-            if h:
-                S.d(h, CRASH, 120); S.d(h, KICK, 127)
-                for k in chord(60, 'M'): S.n('mus', h, 2, k + 12, 105, 2.5); S.n('mus', h, 3, k, 105, 1.0)
-                S.n('mus', h, 1, 36, 120, 2.0); S.n('mus', h, 8, 84, 90, 2.0)
-            break
-    for at in o.get('hits', []):
-        S.d(at, CRASH, 115); S.d(at, KICK, 127); S.n('mus', at, 3, 48, 110, 0.5)
-
-
-def synth_stem(events, dur, programs):
-    import tinysoundfont as tsf
-    s = tsf.Synth(samplerate=SR, gain=-3); sid = s.sfload(paths.need_sf2())
-    for ch, pg in programs.items(): s.program_select(ch, sid, 0, pg, is_drums=(ch == 9))
-    ev = sorted(events, key=lambda e: (e[0], e[1])); out = []; cur = 0
-    total = int((dur + 2.5) * SR)
-    for t, on, ch, key, vel in ev:
-        at = min(total, int(t * SR))
-        if at > cur: out.append(np.frombuffer(s.generate(at - cur), dtype=np.float32)); cur = at
-        (s.noteon(ch, key, vel) if on else s.noteoff(ch, key))
-    if cur < total: out.append(np.frombuffer(s.generate(total - cur), dtype=np.float32))
-    return np.concatenate(out).reshape(-1, 2)
-
-
+# ── 배경음 ─────────────────────────────────────────
 MOODS = ('sting', 'intro', 'calm', 'groove', 'bouncy', 'build', 'drop', 'main', 'tense', 'outro')
+MOOD_E = {'sting': 3, 'intro': 0, 'calm': 1, 'groove': 2, 'bouncy': 2, 'build': 2, 'drop': 3, 'main': 3, 'tense': 2, 'outro': 1, 'hush': -1}
+PALETTE_STYLE = {'pop': '경쾌 팝', 'cinema': '시네마틱', 'study': '밝은 설명', 'tale': '동화'}
 
 
-def bgm(sections, dur, seed=3, bpm=112, palette='pop', transpose=0, drum_gain=0.8):
-    """sections = [(시작초, 끝초, 무드, {옵션}), …] → mono float32"""
-    from pedalboard import Pedalboard, Reverb, Compressor, Limiter, HighpassFilter
-    S = Score(seed, bpm or 112)
-    for t0, t1, mood, o in sections:
-        if mood not in MOODS:   # ⛔되돌리지 말 것 — 모르는 이름은 오류 없이 거의 무음이 된다
-            print(f'⚠️ 배경음 무드 «{mood}» 는 없다 → groove 로 ({t0:.1f}~{t1:.1f}초) · 쓸 수 있는 것: {" · ".join(MOODS)}'); mood = 'groove'
-        section(S, t0, t1, mood, o)
-    if transpose: S.ev['mus'] = [(t, on, ch, k + transpose, v) for t, on, ch, k, v in S.ev['mus']]
-    mus = synth_stem(S.ev['mus'], dur, PALETTES[palette or 'pop']); drm = synth_stem(S.ev['drm'], dur, {9: 0})
-    env = np.ones(len(mus))   # 펌핑 — 킥 자리에서 음악 층을 살짝 눌렀다 놓는다
-    for t, on, ch, key, vel in S.ev['drm']:
-        if on and key == KICK:
-            a = int(t * SR); m = min(len(env) - a, int(0.22 * SR))
-            if m > 0: env[a:a + m] = np.minimum(env[a:a + m], 0.55 + 0.45 * np.linspace(0, 1, m) ** 0.6)
-    mus = mus * env[:, None]
-    mus = Pedalboard([HighpassFilter(90), Reverb(room_size=0.45, wet_level=0.22, dry_level=0.85)])(mus.T.copy(), SR).T
-    mx = mus * 0.9 + drm * drum_gain
-    mx = Pedalboard([Compressor(threshold_db=-14, ratio=3, attack_ms=8, release_ms=120), Limiter(threshold_db=-1.5)])(mx.T.copy(), SR).T
-    x = mx.mean(axis=1)[:int(dur * SR)]
-    return (x / (np.abs(x).max() + 1e-9) * 0.9).astype(np.float32)
+def bgm(sections, dur, seed=3, bpm=None, palette='pop', transpose=0, drum_gain=None, style=None):
+    """배경음 — music.song 으로 작곡. style(장르)이 없으면 palette 로 고른다. 장르 목록 = music.STYLES
+    --rebgm 으로 부르면 MOTION_BGM_STYLE · MOTION_BGM_SEED 가 덮어쓴다"""
+    from . import music
+    style = os.environ.get('MOTION_BGM_STYLE') or style or PALETTE_STYLE.get(palette or 'pop', palette or '경쾌 팝')   # 키트 K.music(장르 이름)을 palette 로 넘겨도 된다
+    try: style = music.find_style(style)
+    except SystemExit as ex: print('⚠️', ex, '→ 경쾌 팝'); style = '경쾌 팝'
+    if os.environ.get('MOTION_BGM_SEED'): seed = int(os.environ['MOTION_BGM_SEED'])
+    lo, hi = music.STYLES[style]['bpm']
+    if bpm and not (lo * 0.85 <= bpm <= hi * 1.15) or os.environ.get('MOTION_BGM_STYLE'): bpm = None   # 장르에 안 맞는 빠르기는 장르에 맡긴다
+    secs, hits = [], []
+    for sec in sections:
+        t0, t1, m = sec[0], sec[1], sec[2]; o = sec[3] if len(sec) > 3 else {}
+        if isinstance(m, str):
+            if m not in MOOD_E: print(f'⚠️ 배경음 무드 «{m}» 는 없다 → groove ({t0:.1f}~{t1:.1f}초) · 쓸 수 있는 것: {" · ".join(MOODS)}'); m = 'groove'
+            if m == 'sting': hits.append(t0)
+            e = MOOD_E[m]
+        else: e = int(m)
+        hits += list(o.get('hits', [])) + ([o['hit']] if o.get('hit') else [])
+        secs.append((t0, t1, e))
+    y, info = music.song(dur, style, secs, seed=seed, bpm=bpm, hits=hits)
+    global LAST_SCORE; LAST_SCORE = info['score']
+    print(f"🎵 배경음: {info['style']} · {info['bpm']} bpm · seed {seed}")
+    return y
+
+
+# ── 소리 지도 (작곡된 음표 · 놓은 효과음 · 대사 — 화면에 «진짜 소리»를 그릴 때) ──
+LAST_SCORE = None
+_VOICES = []
+_PENDING = []   # whoosh 처럼 신호만 돌려주는 옛 이름 — 시각은 _put 이 채운다
+
+
+def save_map(path, dur=None):
+    """out/소리지도.json — bgm(악보) · sfx(시각 · 이름 · 자리 · 갈래 · 설명) · voices(시각 · 파일 · 길이). bake 가 굽기 때 자동으로 부른다"""
+    import json
+    fx = []
+    for t, nm, g, role in sorted(sfx.LOG, key=lambda x: x[0]):
+        fx.append(dict(t=t, name=nm, role=role, gain=g, group=sfx.LIB.get(nm, ('',))[0], desc=sfx.LIB.get(nm, ('', ''))[1]))
+    m = dict(version=1, dur=dur, bgm=LAST_SCORE, sfx=fx, voices=_VOICES)
+    json.dump(m, open(path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    return path
 
 
 # ── 믹스 ─────────────────────────────────────────
@@ -291,10 +176,13 @@ def mixdown(dur, path, bgm_track=None, sfx=None, voices=(), bgm_gain=0.33, sfx_g
     v = np.zeros(n); dk = np.ones(n)
     for at, p in voices:
         s = read_wav(p); s = s / (np.abs(s).max() + 1e-9)
+        _VOICES.append(dict(t=round(float(at), 3), file=os.path.basename(p), dur=round(len(s) / SR, 3)))
         a = _T(at); b = min(n, a + len(s)); v[a:b] += s[:b - a]
         r = _T(ramp); lo, hi = max(0, a - r), min(n, b + r)
         env = np.ones(hi - lo); env[:a - lo] = np.linspace(1, duck, a - lo); env[a - lo:b - lo] = duck; env[b - lo:] = np.linspace(duck, 1, hi - b)
         dk[lo:hi] = np.minimum(dk[lo:hi], env)
+    if not np.isfinite(xb).all(): print('⚠️ 배경음에 깨진 값(NaN) — 그 자리를 0 으로'); xb = np.nan_to_num(xb, nan=0.0, posinf=0.0, neginf=0.0)
+    if not np.isfinite(x).all(): print('⚠️ 효과음에 깨진 값(NaN) — 그 자리를 0 으로'); x = np.nan_to_num(x, nan=0.0, posinf=0.0, neginf=0.0)
     y = xb * dk + sfx_gain * x
     y = y * (peak / (np.abs(y).max() + 1e-9)) if np.abs(y).max() > 0 else y
     y = y + voice_gain * v
@@ -305,6 +193,17 @@ def mixdown(dur, path, bgm_track=None, sfx=None, voices=(), bgm_gain=0.33, sfx_g
     return path
 
 
+def bgm_gap(track, spans, fade=0.3):
+    """배경음을 구간마다 비운다 — spans = [(시작초, 끝초)] · 앞뒤 fade 초 동안 서서히 (완성 영상을 통째로 틀며 그 영상 소리만 낼 때)"""
+    if track is None: return None
+    x = np.asarray(track, np.float64).copy(); t = np.arange(len(x)) / SR; g = np.ones(len(x))
+    for a, b in spans:
+        g = np.minimum(g, np.clip(np.maximum((a - t) / fade, (t - b) / fade), 0, 1))
+    return x * g
+
+
 def new_track(dur):
-    """효과음을 쌓을 빈 트랙 (dur + 0.5초)"""
+    """효과음을 쌓을 빈 트랙 (dur + 0.5초) · 소리 지도 기록도 여기서 새로 시작"""
+    global LAST_SCORE
+    sfx.LOG.clear(); _VOICES.clear(); _PENDING.clear(); LAST_SCORE = None
     return np.zeros(_T(dur + 0.5))

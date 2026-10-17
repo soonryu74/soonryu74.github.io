@@ -104,7 +104,8 @@ PLAN = [
     {'level': 2, 'camera': ['손에 든 카메라'], 'enter': ['fade'], 'emph': ['callout'], 'kick': None, 'borrow': '그림 공개는 다큐 키트의 손에 든 카메라 · 콜아웃'},
 ]
 # 장면 경계 편집 = 들어오는 장면의 세기로 키트가 고른다 → {경계: (이름, 길이, 옵션)}
-EDIT = K.cuts([p['level'] for p in PLAN[1:]])
+NAMES = ['훅', '흐름', '결과']                                   # 장면 이름 — 경계 편집을 이름으로 고른다(피드백으로 장면을 빼도 다른 경계는 그대로)
+EDIT = K.cuts([p['level'] for p in PLAN[1:]], names=NAMES)
 # 메모로 정한 편집이 있으면 그 칸만 바꾼다 — 예: EDIT[2] = ('zoom_cut', 0.5, {})  (키트 밖이면 PLAN 에 borrow)
 
 
@@ -126,18 +127,19 @@ def frame(t):
 
 
 def build_audio(path):
-    """배경음(액션 분위기 → palette) + 편집 순간 효과음 + 대사 — 소리도 장면마다 다르게 (예시)"""
-    import numpy as np
-    rng = np.random.default_rng(7); sfx = audio.new_track(DUR)
-    for j, (name, xf, _) in EDIT.items():                                    # 경계 편집 소리 — 키트의 sfx 짝 (impact 만 hit)
-        if name == 'impact': audio.hit(sfx, rng, STARTS[j], 0.8)
-        elif name != 'cut' and K.sfx.get('cut') == 'whoosh': audio._put(sfx, audio.whoosh(rng, max(0.3, xf), 0.45, 2400), STARTS[j] - xf / 2)
+    """배경음(장르) + 편집 순간 효과음(묶음 하나) + 대사 — reference/sound.md (예시)"""
+    from core import sfx as SFX
+    S = SFX.Kit(K.sounds); trk = audio.new_track(DUR)              # 이 영상의 효과음 묶음 = 키트 출발점 (내용에 더 맞는 묶음이 있으면 그것)
+    for j, (name, xf, _) in EDIT.items():                           # 경계 편집 소리 — 센 편집은 착지 · 나머지는 휙 · 그냥 컷은 소리 없이
+        if name == 'impact': S.put(trk, 'impact', STARTS[j], 0.7)
+        elif name != 'cut': S.put(trk, 'cut', STARTS[j] - min(0.3, xf / 2), 0.45)
+    S.put(trk, 'done', DUR - 1.0, 0.55)                              # 마지막 한 마디
     try:
-        bg = audio.bgm([(0, 1.2, 'sting', {}), (1.2, DUR - 1.5, 'bouncy', {}), (DUR - 1.5, DUR, 'outro', {'hit': DUR - 1.0})], DUR, palette=K.music)
+        bg = audio.bgm([(0, 1.2, 'sting', {}), (1.2, DUR - 1.5, 2, {}), (DUR - 1.5, DUR, 'outro', {'hit': DUR - 1.0})], DUR, style=K.music)
     except SystemExit as e:   # 사운드폰트가 없으면 배경음 없이 (안내는 check.py)
         print(e); bg = None
     voices = [(STARTS[i] + VOFF, p) for i, p in VOICE.items() if os.path.exists(p)]
-    return audio.mixdown(DUR, path, bg, sfx, voices)
+    return audio.mixdown(DUR, path, bg, trk, voices)
 
 
 if __name__ == '__main__':

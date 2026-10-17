@@ -17,6 +17,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageChops
 from .ease import cl, seg, eo, eio, back, mix
 from .layout import F, fit
 from .text import ktext, pill
+from . import label
 
 
 # ── 공용 ─────────────────────────────────────────
@@ -427,10 +428,7 @@ def arrow_draw(d, t, p0, p1, p2, col, label, label_xy, line=(0.5, 1.3), head=(1.
 
 def spotlight(img, t, box, rect, pal):
     """24 주변 어둡게 — 한 영역(rect)만 남기고 어둡게 → 노란 테두리"""
-    W, H = img.size; k = eio(seg(t, 0.5, 1.1))
-    if k > 0:
-        m = Image.new('L', (W, H), int(175 * k)); ImageDraw.Draw(m).rounded_rectangle(rect, 30, fill=0)
-        img.paste(Image.new('RGB', (W, H), (0, 0, 0)), (0, 0), m)
+    k = eio(seg(t, 0.5, 1.1)); label.spot(img, rect, k, dark=175 / 255, pad=0, grow=0, radius=30)   # 영상에 쓸 땐 label.spot
     d = ImageDraw.Draw(img); frame_box(d, box, pal['white'])
     if k >= 1: d.rounded_rectangle(rect, 30, outline=pal['accent'], width=6)
     return img
@@ -516,12 +514,7 @@ def magnifier(img, t, box, pic, pal, r=190, zoom=2.2):
     bx, by, bw, bh = box
     put(img, box, pic); frame_box(ImageDraw.Draw(img), box, pal['white'])
     k = eio(seg(t, 0.4, 2.6)); cx = bx + 200 + 520 * k; cy = by + 300 + 500 * math.sin(k * math.pi)
-    z = crop_zoom(pic, zoom, cx - bx, cy - by).resize((bw, bh))
-    lens = z.crop((int(bw / 2 - r), int(bh / 2 - r), int(bw / 2 + r), int(bh / 2 + r)))
-    m = Image.new('L', (2 * r, 2 * r), 0); ImageDraw.Draw(m).ellipse([0, 0, 2 * r, 2 * r], fill=255)
-    img.paste(lens, (int(cx - r), int(cy - r)), m); d = ImageDraw.Draw(img)
-    d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=pal['white'], width=10)
-    d.line([cx + r * 0.7, cy + r * 0.7, cx + r * 1.25, cy + r * 1.25], fill=pal['white'], width=24)
+    label.lens(img, pic, box, (cx, cy), 1, r=r, zoom=zoom, ring=pal['white'], handle=pal['white'], shadow=False, ring_w=10)   # 영상에 쓸 땐 label.lens
     return img
 
 
@@ -554,6 +547,108 @@ def page_flip_box(img, t, box, a, b, pal):
         d = ImageDraw.Draw(img); d.line([bx, by, bx, by + bh], fill=(60, 60, 60), width=6)
     frame_box(ImageDraw.Draw(img), box, pal['white'])
     return img
+
+
+# ── 사진 (사진 쇼츠 · reference/photo-shorts.md) — 사전 번호 없이 바로 쓰는 부품 ─────────
+# 사진 = 흰 테두리 · 검은 선 · 그림자 스티커 카드. 자리(x, y, w, h)는 캔버스 <img> 그대로(카드 테두리는 그 밖으로).
+
+def photo_cover(pic, w, h, pos=(0.5, 0.5), z=1.0, focus=None):
+    """object-fit: cover + object-position · z>1 = focus(0~1) 쪽으로 다가감 (원본에서 바로 떠서 선명)"""
+    iw, ih = pic.size; s0 = max(w / iw, h / ih); s = s0 * z; cw, ch = min(w / s, iw), min(h / s, ih)
+    bw, bh = w / s0, h / s0; x0 = (iw - bw) * pos[0]; y0 = (ih - bh) * pos[1]
+    fx_, fy_ = focus or pos; cx, cy = x0 + bw * fx_, y0 + bh * fy_
+    x0 = max(0.0, min(cx - cw / 2, iw - cw)); y0 = max(0.0, min(cy - ch / 2, ih - ch))
+    return pic.resize((int(w), int(h)), Image.LANCZOS, box=(x0, y0, x0 + cw, y0 + ch))
+
+
+def sticker(pic, rot=0, border=10, line=6, shadow=18, ink=(20, 20, 20), paper=(255, 255, 255)):
+    """사진 → 스티커 카드(RGBA · 회전) — 흰 테두리 · 검은 선 · 오른아래 그림자"""
+    w, h = pic.size; b, o, sh = border, line, shadow
+    W2, H2 = w + 2 * (b + o) + sh, h + 2 * (b + o) + sh
+    c = Image.new('RGBA', (W2, H2), (0, 0, 0, 0)); d = ImageDraw.Draw(c)
+    if sh: d.rectangle([sh, sh, W2 - 1, H2 - 1], fill=tuple(ink) + (255,))
+    d.rectangle([0, 0, W2 - sh - 1, H2 - sh - 1], fill=tuple(ink) + (255,))
+    d.rectangle([o, o, W2 - sh - 1 - o, H2 - sh - 1 - o], fill=tuple(paper) + (255,))
+    c.paste(pic.convert('RGB'), (o + b, o + b))
+    return c.rotate(-rot, resample=Image.BICUBIC, expand=True) if rot else c
+
+
+def put_center(base, layer, cx, cy, a=1.0, sc=1.0):
+    """RGBA 조각을 가운데 (cx, cy) 에 · a = 보임 · sc = 배율"""
+    if a <= 0: return base
+    if sc != 1.0: layer = layer.resize((max(1, int(layer.width * sc)), max(1, int(layer.height * sc))), Image.BICUBIC)
+    if a < 1: layer = layer.copy(); layer.putalpha(layer.getchannel('A').point(lambda v: int(v * a)))
+    if base.mode == 'RGBA': base.alpha_composite(layer, (int(cx - layer.width / 2), int(cy - layer.height / 2)))
+    else: base.paste(layer, (int(cx - layer.width / 2), int(cy - layer.height / 2)), layer)
+    return base
+
+
+def photo_card(base, pic, box, rot=0, pos=(0.5, 0.5), z=1.0, focus=None, dy=0, a=1.0, sc=1.0, shake=(0, 0), **st):
+    """캔버스 카드 자리(box = img 의 x, y, w, h)에 사진 스티커 — dy = 위로 떠 있는 거리(떨어지기) · z = 다가가기"""
+    x, y, w, h = box
+    if a <= 0: return base
+    c = sticker(photo_cover(pic, w, h, pos, z, focus), rot, **st)
+    sh = st.get('shadow', 18) / 2
+    return put_center(base, c, x + w / 2 + sh + shake[0], y + h / 2 + sh - dy + shake[1], min(1.0, a), sc)
+
+
+def drop(lt, t0, dur=0.42, height=900, amp=10):
+    """툭 떨어지기 — (보임, 남은 높이 dy, 흔들림 (x, y)) · 떨어진 순간 살짝 튕기고 화면이 흔들린다 → photo_card(dy=, shake=)"""
+    k = cl((lt - t0) / dur)
+    if lt < t0: return 0.0, 0.0, (0.0, 0.0)
+    fall = 1 - (k / 0.7) ** 2 if k < 0.7 else -0.06 * math.sin((k - 0.7) / 0.3 * math.pi)
+    land = lt - t0 - dur * 0.7; sh = (0.0, 0.0)
+    if 0 <= land < 0.14: am = amp * (1 - land / 0.14); sh = (am * math.sin(land * 90), am * math.cos(land * 70))
+    return min(1.0, k * 4), height * fall, sh
+
+
+def flip_index(lt, n, per=0.25, t0=0.0):
+    """박자 넘기기 · 몽타주 — (지금 몇 번째 장, 그 장이 나온 지 0~1) · n 장을 다 넘기면 마지막 장에 멈춤"""
+    if lt < t0: return -1, 0.0
+    i = min(n - 1, int((lt - t0) // per)); return i, cl((lt - t0 - i * per) / per)
+
+
+def flip_times(n, per=0.25, t0=0.0):
+    """넘길 때마다 소리(tick) 넣을 시각들"""
+    return [t0 + i * per for i in range(n)]
+
+
+def photo_flip(base, pics, lt, box, per=0.25, t0=0.0, rots=(-2, 2), pop=0.06, dots=None, ink=(20, 20, 20), on=(255, 210, 63), **st):
+    """한 카드 자리에서 사진 여러 장을 박자마다 넘긴다(몽타주) — 바뀔 때 살짝 «툭» 커졌다 돌아오고 기울기가 번갈아
+    dots = 아래 점 줄 y (None 이면 없음) — 몇 장째인지 · 반환 = 지금 장 번호"""
+    i, u = flip_index(lt, len(pics), per, t0)
+    if i < 0: return i
+    sc = 1 + pop * (1 - eo(cl(u * 3)))
+    photo_card(base, pics[i], box, rots[i % len(rots)], sc=sc, **st)
+    if dots is not None:
+        d = ImageDraw.Draw(base); n = len(pics); r, gap = 11, 40; x0 = box[0] + box[2] / 2 - (n - 1) * gap / 2
+        for j in range(n):
+            cx = x0 + j * gap; f = tuple(on) if j <= i else (255, 255, 255)
+            d.ellipse([cx - r, dots - r, cx + r, dots + r], fill=f + ((255,) if base.mode == 'RGBA' else ()), outline=tuple(ink), width=4)
+    return i
+
+
+def photo_gather(base, pics, lt, box, t0=0.0, per=0.12, dur=0.5, cols=None, gap=24, seed=3, rot=4, **st):
+    """사진 모아 마무리 — 흩어진 자리(화면 밖 · 기울어짐)에서 한 장씩 날아와 box 안 격자로 모인다
+    cols = 열 수(None = 장 수에 맞춤) · per = 장 사이 간격 · dur = 한 장 나는 시간 · 마지막 장이 닿으면 다 모임"""
+    import random
+    n = len(pics); rnd = random.Random(seed)
+    cols = cols or max(2, round(math.sqrt(n * box[2] / max(1, box[3]))))
+    rows = math.ceil(n / cols); bx, by, bw, bh = box
+    cw = (bw - gap * (cols - 1)) / cols; ch = (bh - gap * (rows - 1)) / rows
+    W, H = base.size
+    for i, pic in enumerate(pics):
+        k = eo(cl((lt - t0 - i * per) / dur))
+        if k <= 0: continue
+        r_, c_ = divmod(i, cols); last = n - r_ * cols if r_ == rows - 1 else cols
+        ox = (cols - last) * (cw + gap) / 2                                   # 마지막 줄 가운데 맞춤
+        tx, ty = bx + ox + c_ * (cw + gap), by + r_ * (ch + gap)
+        ang0 = rnd.uniform(-1, 1) * 160; a_ = rnd.uniform(0, 2 * math.pi)
+        sx, sy = W / 2 + math.cos(a_) * W, H / 2 + math.sin(a_) * H           # 화면 밖에서
+        rr = rnd.uniform(-rot, rot)
+        x = sx + (tx - sx) * k; y = sy + (ty - sy) * k
+        photo_card(base, pic, (x, y, cw, ch), rr + (ang0 - rr) * (1 - k), **st)
+    return base
 
 
 # ── 사전 표 (번호 · 이름 · 함수 · 종류) ─────────
