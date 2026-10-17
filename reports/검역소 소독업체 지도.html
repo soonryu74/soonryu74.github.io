@@ -235,6 +235,8 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
   const gProv=el('g'),gMuni=el('g'),gMl=el('g'),gRing=el('g'),gLink=el('g'),gCo=el('g'),gSt=el('g');
   svg.append(gProv,gMuni,gMl,gRing,gLink,gCo,gSt);
   for(const f of DATA.prov)gProv.appendChild(el('path',{d:pathD(f),class:'prov'}));
+  const LB=(()=>{let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const f of DATA.prov)for(const poly of f.polys)for(const pt of poly[0]){const [x,y]=P(pt[0],pt[1]);if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
+    return {x0,y0,x1,y1,w:x1-x0,h:y1-y0,cx:(x0+x1)/2,cy:(y0+y1)/2};})();
   // municipalities: path + bbox + centroid
   const munis=[];
   for(const f of DATA.muni){const p=el('path',{d:pathD(f),class:'muni','data-code':f.code});
@@ -286,7 +288,12 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
 
   // ---- viewBox zoom/pan ----
   function applyView(){view.w=Math.min(view.w,W*1.2);view.h=view.w*H/W;k=W/view.w;
-    const mx0=W*0.1,my0=H*0.1;view.x=Math.max(-view.w*0.5-mx0,Math.min(W-view.w*0.5+mx0,view.x));view.y=Math.max(-view.h*0.5-my0,Math.min(H-view.h*0.5+my0,view.y));
+    // keep the visible area (after letterboxing) over the land bbox
+    const er=svg.getBoundingClientRect();if(er.width&&er.height){const sc=Math.min(er.width/view.w,er.height/view.h);const visW=er.width/sc,visH=er.height/sc;
+      let cx=view.x+view.w/2,cy=view.y+view.h/2;const sl=0.3;
+      if(visW>=LB.w)cx=LB.cx;else cx=Math.max(LB.x0+visW*(0.5-sl),Math.min(LB.x1-visW*(0.5-sl),cx));
+      if(visH>=LB.h)cy=LB.cy;else cy=Math.max(LB.y0+visH*(0.5-sl),Math.min(LB.y1-visH*(0.5-sl),cy));
+      view.x=cx-view.w/2;view.y=cy-view.h/2;}
     svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);
     const inv=1/k;
     for(const c of DATA.companies)coEls[c.id].setAttribute('transform',`translate(${c.px.toFixed(1)} ${c.py.toFixed(1)}) scale(${inv})`);
@@ -431,6 +438,6 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     d.classList.add('show');$('#zoomCo').addEventListener('click',()=>{const ru=kmToUnits(2,c.lat);zoomBox([c.px-ru,c.py-ru,c.px+ru,c.py+ru],0.2);});d.scrollIntoView({block:'nearest'});}
   const lv=[1,2,3].map(l=>DATA.companies.filter(c=>c.lv===l).length);
   $('#stats').innerHTML=`<span>검역소 <b>13</b></span><span>지소 <b>12</b></span><span>업체 <b>${DATA.companies.length}</b> (1단계 ${lv[0]} · 2단계 ${lv[1]} · 3단계 ${lv[2]})</span><span>기준일 <b>${DATA.generated}</b></span>`;
-  applyView();render(false);
+  applyView();render(false);window.addEventListener('resize',()=>applyView());
 })();
 </script>
