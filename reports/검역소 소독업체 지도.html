@@ -35,6 +35,15 @@ header p{margin:3px 0 0;color:var(--muted);max-width:70ch;font-size:.9rem}
 @media (max-width:900px){.grid{grid-template-columns:1fr}}
 .mapbox{background:var(--sea);border:1px solid var(--line);border-radius:6px;position:relative;overflow:hidden;min-width:0;height:min(78vh,760px);touch-action:pan-y;user-select:none}
 .mapbox.lock{touch-action:none}
+.popup{position:absolute;z-index:4;background:var(--panel);color:var(--fg);border:1px solid var(--accent);border-radius:6px;padding:8px 10px;font-size:.78rem;min-width:180px;max-width:260px;box-shadow:0 3px 12px rgba(0,0,0,.22);transform:translate(-50%,calc(-100% - 14px));display:none}
+.popup.show{display:block}
+.popup::after{content:"";position:absolute;left:50%;bottom:-7px;width:12px;height:12px;background:var(--panel);border-right:1px solid var(--accent);border-bottom:1px solid var(--accent);transform:translateX(-50%) rotate(45deg)}
+.popup b{font-size:.86rem}
+.popup .x{position:absolute;right:4px;top:2px;border:0;background:none;color:var(--muted);font-size:1rem;cursor:pointer;line-height:1}
+.popup .row2{color:var(--muted);margin-top:2px}
+.popup .mono{font-family:var(--font-mono)}
+.co.focus circle{stroke:var(--fg);stroke-width:3;r:9}
+.item.cur{background:var(--accent-soft);border-left:3px solid var(--accent)}
 .modebadge{display:none;position:absolute;left:10px;top:46px;background:var(--accent);color:var(--panel);border-radius:4px;padding:3px 8px;font-size:.7rem;z-index:2}
 .mapbox.active{box-shadow:inset 0 0 0 2px var(--accent)}
 @media (pointer:coarse){.mapbox.active .modebadge{display:block}}
@@ -160,6 +169,7 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);ou
     </div>
     <div class="tip" id="tip"></div>
     <div class="modebadge">지도 조작 중 · 지도 밖을 누르면 해제</div>
+    <div class="popup" id="popup"></div>
     <div class="legend">
       <span><i class="sw d"></i>국립검역소 13</span>
       <span><i class="sw d o"></i>검역지소 12</span>
@@ -307,6 +317,7 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     gMl.style.display=k>=4?'block':'none';
     for(const m of munis){m.label.style.fontSize=(15/k).toFixed(2)+'px';}
     svg.classList.toggle('z2',k>=9);
+    if(typeof placePopup==='function')placePopup();
     gRing.querySelectorAll('.rlabel').forEach(t=>t.style.fontSize=(14/k).toFixed(2)+'px');
     gMuni.classList.toggle('far',k<1.6);
   }
@@ -333,7 +344,7 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
   function tap(e,target){const [x,y]=pt(e.clientX,e.clientY);if(e.pointerType==='touch'&&!lock)setActive(true);
     if(state.pick){setMe(latOf(y),lngOf(x));return;}
     const stG=target.closest&&target.closest('.st');if(stG){select(stG.dataset.id,true);return;}
-    const coG=target.closest&&target.closest('.co');if(coG){const c=DATA.companies.find(c=>c.id===coG.dataset.id);if(c){showDetail(c);const ru=kmToUnits(2,c.lat);zoomBox([c.px-ru,c.py-ru,c.px+ru,c.py+ru],0.2);}return;}
+    const coG=target.closest&&target.closest('.co');if(coG){const c=DATA.companies.find(c=>c.id===coG.dataset.id);if(c)focusCompany(c,true);return;}
     const o={lng:lngOf(x),lat:latOf(y)};const m=munis.find(mm=>inFeat(mm,o.lng,o.lat));
     if(m&&state.muni!==m){selectMuni(m);return;}
     zoomTo(x,y,view.w*0.45);}
@@ -398,7 +409,7 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     $('#cAll').addEventListener('click',()=>{view={...full};applyView();clearMuni();});}
 
   function render(zoom){
-    const st=origin();
+    const st=origin();popupCo=null;
     Object.values(stEls).forEach(g=>g.classList.remove('sel'));if(stEls[st.id])stEls[st.id].classList.add('sel');
     const srcNote=st.src==='geocode'?'정확 좌표':'근사 좌표';
     const nearSt=st.id==='me'?DATA.stations.map(s=>({s,d:hav(st,s)})).sort((a,b)=>a.d-b.d)[0]:null;
@@ -424,7 +435,7 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
       div.innerHTML=`<div class="km">${r.d<10?r.d.toFixed(1):Math.round(r.d)}<small>km${c.src==='geocode'?'':' ≈'}</small></div>
         <div><div class="nm">${c.name}<span class="tag lv${c.lv}">${LV[c.lv]}</span><span class="tag ty">${TY[c.typ]}</span></div>
         <div class="sub1">${c.address||c.region||''}${c.phone?' · <span class="mono">'+c.phone+'</span>':''}</div></div>`;
-      div.addEventListener('click',()=>showDetail(c));
+      div.addEventListener('click',()=>focusCompany(c,false));
       div.addEventListener('mouseenter',()=>coEls[c.id].classList.add('focus'));
       div.addEventListener('mouseleave',()=>coEls[c.id].classList.remove('focus'));
       list.appendChild(div);}
@@ -443,7 +454,25 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
       <div class="capgrid"><span class="cap">병원체별 소독제 보유: 공개 자료 없음 (등록부 입력 항목)</span><span class="cap">유해화학물질관리자: 미확인</span></div>
       ${c.note?`<p style="margin:6px 0 0;color:var(--muted)">${c.note}</p>`:''}
       <p style="margin:6px 0 0"><button class="lnk" id="zoomCo">지도에서 보기</button></p>`;
-    d.classList.add('show');$('#zoomCo').addEventListener('click',()=>{const ru=kmToUnits(2,c.lat);zoomBox([c.px-ru,c.py-ru,c.px+ru,c.py+ru],0.2);});d.scrollIntoView({block:'nearest'});}
+    d.classList.add('show');$('#zoomCo').addEventListener('click',()=>focusCompany(c,true));}
+  let popupCo=null;
+  function placePopup(){const pop=$('#popup');if(!popupCo){pop.classList.remove('show');return;}
+    const r=svg.getBoundingClientRect(),br=mapbox.getBoundingClientRect();const sc=Math.min(r.width/view.w,r.height/view.h);
+    const ox2=(r.width-view.w*sc)/2,oy2=(r.height-view.h*sc)/2;
+    const x=(popupCo.px-view.x)*sc+ox2+(r.left-br.left),y=(popupCo.py-view.y)*sc+oy2+(r.top-br.top);
+    pop.style.left=x+'px';pop.style.top=y+'px';pop.classList.toggle('show',x>-40&&x<br.width+40&&y>-20&&y<br.height+40);}
+  function focusCompany(c,forceZoom){const st=origin();const km=hav(st,c);
+    document.querySelectorAll('.item').forEach(i=>i.classList.toggle('cur',i.dataset.id===c.id));
+    // bring into view: zoom to ~3 km when zoomed out or off-screen, otherwise just pan
+    const r=svg.getBoundingClientRect();const sc=Math.min(r.width/view.w,r.height/view.h);const visW=r.width/sc,visH=r.height/sc;
+    const cx=view.x+view.w/2,cy=view.y+view.h/2;const inView=Math.abs(c.px-cx)<visW*0.4&&Math.abs(c.py-cy)<visH*0.35;
+    if(forceZoom||k<6){const ru=kmToUnits(3,c.lat);zoomBox([c.px-ru,c.py-ru,c.px+ru,c.py+ru],0.3);}
+    else if(!inView){zoomTo(c.px,c.py,view.w);}
+    popupCo=c;const pop=$('#popup');
+    pop.innerHTML=`<button class="x" aria-label="닫기">×</button><b>${c.name}</b> <span class="tag lv${c.lv}">${LV[c.lv]}</span><div class="row2">${TY[c.typ]} · ${st.name}에서 ${km<10?km.toFixed(1):Math.round(km)} km${c.src==='geocode'?'':' (근사)'}</div><div class="row2">${c.address||c.region||''}</div>${c.phone?`<div class="row2 mono">${c.phone}</div>`:''}`;
+    pop.querySelector('.x').addEventListener('click',e=>{e.stopPropagation();popupCo=null;placePopup();});
+    placePopup();showDetail(c);
+    if(window.innerWidth<=900)mapbox.scrollIntoView({block:'start',behavior:'smooth'});}
   const lv=[1,2,3].map(l=>DATA.companies.filter(c=>c.lv===l).length);
   $('#stats').innerHTML=`<span>검역소 <b>13</b></span><span>지소 <b>12</b></span><span>업체 <b>${DATA.companies.length}</b> (1단계 ${lv[0]} · 2단계 ${lv[1]} · 3단계 ${lv[2]})</span><span>기준일 <b>${DATA.generated}</b></span>`;
   applyView();render(false);window.addEventListener('resize',()=>applyView());
