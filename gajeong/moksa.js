@@ -213,8 +213,10 @@
     var r = await sb.from('church_mokwon').select('*').order('sort_order').order('created_at');
     if (r.error) return C.say($('#msg-people'), r.error.message, 'err');
     people = r.data || [];
+    if (C.has('member_photos')) peoplePhoto = await C.photoUrls(people);   // 성도 사진을 켠 교회만
     renderPeople();
   }
+  var peoplePhoto = {};
   function renderPeople() {
     var f = PEOPLE_FILTER[$('#pp-filter').value], all = people.filter(function (m) { return m.active; });
     $('#pp-stat').innerHTML =
@@ -226,7 +228,8 @@
       var list = people.filter(function (m) { return m.mokjang_id === mj.id && (!f || f(m)); });
       if (!list.length) return '';
       return '<div class="people-mj"><h3>' + esc(mj.name) + '</h3>' + list.map(function (m) {
-        return '<div class="list-item" data-id="' + esc(m.id) + '"><div class="grow"><div class="t">' + esc(m.name) +
+        return '<div class="list-item" data-id="' + esc(m.id) + '">' + (C.has('member_photos') ? C.avatar(m, peoplePhoto[m.id]) : '') +
+          '<div class="grow"><div class="t">' + esc(m.name) +
           (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
           (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
           '<div class="s">' + (esc(C.memberDatesLine(m)) || T('날짜 없음')) + '</div></div>' +

@@ -68,21 +68,27 @@
       .eq('mokjang_id', mokjang.id).order('sort_order').order('created_at');
     if (r.error) return fail(r.error.message);
     mokwon = r.data || [];
+    if (C.has('member_photos')) photoUrl = await C.photoUrls(mokwon);
     renderMemberList();
   }
+  var photoUrl = {};   // 목원 id → 사진 주소 (성도 사진을 켠 교회만)
 
   function renderMemberList() {
     var box = $('#member-list');
     if (!mokwon.length) { box.innerHTML = T('<p class="empty">아직 목원이 없습니다. 위에 이름을 넣어 주세요.</p>'); return; }
     var dates = C.has('member_dates');   // 성도 날짜(교회 등록·생명의 삶·침례)는 켠 교회만
+    var photos = C.has('member_photos');
     box.innerHTML = mokwon.map(function (m) {
       return '<div class="list-item" data-id="' + m.id + '">' +
+        (photos ? C.avatar(m, photoUrl[m.id]) : '') +
         '<div class="grow"><div class="t">' + esc(m.name) +
         (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
         (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
         (dates ? '<div class="s">' + esc(C.memberDatesLine(m)) + '</div>' : '') + '</div>' +
         T('<button class="small act-edit">이름 고치기</button>') +
         (dates ? T('<button class="small act-dates">날짜</button>') : '') +
+        (photos ? T('<button class="small act-photo">사진</button>') : '') +
+        (photos && m.photo_path ? T('<button class="small act-photo-del">사진 지우기</button>') : '') +
         '<button class="small act-toggle">' + (m.active ? T('잠시 쉼으로') : T('다시 참여')) + '</button>' +
         T('<button class="small danger act-del">삭제</button></div>');
     }).join('');
@@ -113,6 +119,16 @@
       C.say($('#msg-members'), T('날짜를 저장했습니다.'), 'ok');
     });
 
+    var photoFor = null;
+    if (C.has('member_photos')) $('#photo-hint').hidden = false;
+    $('#photo-file').addEventListener('change', async function () {
+      var f = this.files && this.files[0], m = photoFor; photoFor = null;
+      if (!f || !m) return;
+      C.say($('#msg-members'), T('사진을 올리는 중…'), 'ok');
+      try { await C.photoSave(m, f); await loadMokwon(); C.say($('#msg-members'), T('{0} 님 사진을 넣었습니다.', m.name), 'ok'); }
+      catch (err) { C.say($('#msg-members'), err.message, 'err'); }
+    });
+
     $('#member-list').addEventListener('click', async function (e) {
       var btn = e.target.closest('button'); if (!btn) return;
       var id = e.target.closest('.list-item').dataset.id;
@@ -131,8 +147,15 @@
         await sb.from('church_mokwon').update({ name: nm.trim(), tag: (tg || '').trim() }).eq('id', id);
       } else if (btn.classList.contains('act-toggle')) {
         await sb.from('church_mokwon').update({ active: !m.active }).eq('id', id);
+      } else if (btn.classList.contains('act-photo')) {   // 성도 사진: 고르면 400px로 줄여 올린다
+        photoFor = m; $('#photo-file').value = ''; $('#photo-file').click();
+        return;
+      } else if (btn.classList.contains('act-photo-del')) {
+        if (!confirm(T('{0} 님 사진을 지울까요?', m.name))) return;
+        await C.photoRemove(m);
       } else if (btn.classList.contains('act-del')) {
         if (!confirm(T('{0} 님을 명단에서 지울까요?\n지난 주 기록에 적힌 기도제목은 그대로 남습니다.', m.name))) return;
+        await C.photoRemove(m);
         await sb.from('church_mokwon').delete().eq('id', id);
       }
       await loadMokwon(); renderMembers();
