@@ -189,31 +189,45 @@
       if (!want || want.replace(/-/g, '') !== String(b.code || '').toUpperCase().replace(/[^A-Z0-9]/g, '')) reply = { error: '아이디나 복구 코드가 맞지 않습니다' };
       else { DB.__newpw = DB.__newpw || {}; DB.__newpw[pf.id] = b.password; }
     }
+    function keyless(name, church) {   // 비밀번호 없는 목자 계정 + 열쇠 코드
+      var uid = 'u' + (++nid), lid = 'k_test' + nid, pw = 'pw' + nid, key = 'KEYS-' + String(1000 + nid) + '-ABCD';
+      DB.church_profile.push({ id: uid, login_id: lid, name: name, role: 'mokja', church_id: church });
+      DB.__newpw = DB.__newpw || {}; DB.__newpw[uid] = pw;
+      DB.__keys = DB.__keys || {}; Object.keys(DB.__keys).forEach(function (k) { if (DB.__keys[k] === uid) delete DB.__keys[k]; });
+      DB.__keys[key.replace(/-/g, '')] = uid;
+      return { uid: uid, login_id: lid, password: pw, key: key };
+    }
     if (u.indexOf('darak-admin') >= 0 && b.action === 'join_mokja') {
       var jc = (DB.__join || {})[String(b.join_code || '').toUpperCase().replace(/[^A-Z0-9]/g, '')];
       if (!jc) reply = { error: '가입 코드가 맞지 않습니다. 목사님께 다시 물어봐 주세요' };
-      else if (DB.church_profile.some(function (x) { return x.login_id === b.login_id; })) reply = { error: '이미 쓰고 있는 아이디입니다. 다른 아이디를 골라 주세요' };
       else {
-        var ju = 'u' + (++nid), jch = DB.church_church.find(function (x) { return x.id === jc; });
-        var unit = (jch.terms && jch.terms.unit) || '다락방';
-        DB.church_profile.push({ id: ju, login_id: b.login_id, name: b.name, role: 'mokja', church_id: jc });
-        DB.__newpw = DB.__newpw || {}; DB.__newpw[ju] = b.password;
-        DB.church_mokjang.push({ id: 'mj' + (++nid), name: (b.mokjang_name || '').trim() || b.name + ' ' + unit, mokja_id: ju, mokja_name: b.name,
+        var jch = DB.church_church.find(function (x) { return x.id === jc; }), unit = (jch.terms && jch.terms.unit) || '다락방';
+        var ja = keyless(b.name, jc);
+        DB.church_mokjang.push({ id: 'mj' + (++nid), name: (b.mokjang_name || '').trim() || b.name + ' ' + unit, mokja_id: ja.uid, mokja_name: b.name,
           church_id: jc, sort_order: 0, active: true, created_at: '2026-10-16' });
-        reply = { ok: true, slug: jch.slug };
+        reply = { ok: true, slug: jch.slug, login_id: ja.login_id, password: ja.password, key: ja.key };
       }
     }
     if (u.indexOf('darak-admin') >= 0 && b.action === 'start_solo') {
-      if (DB.church_profile.some(function (x) { return x.login_id === b.login_id; })) reply = { error: '이미 쓰고 있는 아이디입니다. 다른 아이디를 골라 주세요' };
-      else {
-        var sc = 'c' + (++nid), su = 'u' + (++nid), sname = (b.mokjang_name || '').trim() || b.name + ' 다락방';
-        DB.church_church.push({ id: sc, slug: 'solo' + nid, name: sname, timezone: b.timezone || 'Australia/Melbourne', logo_url: '',
-          terms: { unit: '다락방', leader: '순장', member: '순원' }, features: { solo: true } });
-        DB.church_profile.push({ id: su, login_id: b.login_id, name: b.name, role: 'mokja', church_id: sc });
-        DB.__newpw = DB.__newpw || {}; DB.__newpw[su] = b.password;
-        DB.church_mokjang.push({ id: 'mj' + (++nid), name: sname, mokja_id: su, mokja_name: b.name, church_id: sc, sort_order: 0, active: true, created_at: '2026-10-16' });
-        reply = { ok: true, slug: 'solo' + nid, recovery_code: 'SOLO-CODE-1234' };
-      }
+      var sc = 'c' + (++nid), sname = (b.mokjang_name || '').trim() || b.name + ' 다락방';
+      DB.church_church.push({ id: sc, slug: 'solo' + nid, name: sname, timezone: b.timezone || 'Australia/Melbourne', logo_url: '',
+        terms: { unit: '다락방', leader: '순장', member: '순원' }, features: { solo: true } });
+      var sa = keyless(b.name, sc);
+      DB.church_mokjang.push({ id: 'mj' + (++nid), name: sname, mokja_id: sa.uid, mokja_name: b.name, church_id: sc, sort_order: 0, active: true, created_at: '2026-10-16' });
+      reply = { ok: true, slug: 'solo' + nid, login_id: sa.login_id, password: sa.password, key: sa.key };
+    }
+    if (u.indexOf('darak-admin') >= 0 && b.action === 'key_login') {
+      var kuid = (DB.__keys || {})[String(b.key || '').toUpperCase().replace(/[^A-Z0-9]/g, '')];
+      var kp = kuid && DB.church_profile.find(function (x) { return x.id === kuid; });
+      if (!kp) reply = { error: '열쇠 코드가 맞지 않습니다' };
+      else { DB.__newpw[kuid] = 'pw' + (++nid); reply = { ok: true, login_id: kp.login_id, password: DB.__newpw[kuid] }; }
+    }
+    if (u.indexOf('darak-admin') >= 0 && (b.action === 'new_key' || b.action === 'leader_new_key')) {
+      var target = b.action === 'new_key' ? me() : DB.church_profile.find(function (x) { return x.id === b.user_id; });
+      var nk = 'NEWK-' + String(1000 + (++nid)) + '-WXYZ';
+      Object.keys(DB.__keys || {}).forEach(function (k) { if (DB.__keys[k] === target.id) delete DB.__keys[k]; });
+      DB.__keys = DB.__keys || {}; DB.__keys[nk.replace(/-/g, '')] = target.id;
+      reply = { ok: true, key: nk };
     }
     if (u.indexOf('darak-admin') >= 0 && (b.action === 'link_church' || b.action === 'delete_solo')) {
       var ms = me(), mch = DB.church_church.find(function (x) { return x.id === ms.church_id; });

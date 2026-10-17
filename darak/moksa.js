@@ -612,9 +612,10 @@
       return '<div class="list-item" data-mj="' + m.id + '" data-uid="' + (m.mokja_id || '') + '">' +
         '<div class="grow"><div class="t">' + esc(m.name) + (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
         '<div class="s">' + esc(m.mokja_name || T('담당 목자 없음')) +
-        (p ? T(' · 아이디 ') + esc(p.login_id) : '') +
+        (p ? (C.isKeyless(p) ? T(' · 열쇠 코드로 들어옴') : T(' · 아이디 ') + esc(p.login_id)) : '') +
         (m.meet_day ? ' · ' + esc(m.meet_day) : '') + '</div></div>' +
-        (m.mokja_id ? T('<button class="small act-pw">비밀번호 새로</button>') : '') +
+        (m.mokja_id ? (C.isKeyless(p) ? T('<button class="small act-key">열쇠 코드 새로</button>')
+                                      : T('<button class="small act-pw">비밀번호 새로</button>')) : '') +
         T('<button class="small act-rename">이름 고치기</button>') +
         '<button class="small act-hide">' + (m.active ? T('잠시 쉼으로') : T('다시 활동')) + '</button>' +
         (m.mokja_id ? T('<button class="small danger act-del">계정 삭제</button>') : '') +
@@ -630,6 +631,12 @@
     var m = mokjangs.find(function (x) { return x.id === mjId; });
 
     try {
+      if (btn.classList.contains('act-key')) {   // 비밀번호 없이 쓰는 목자 — 기기를 잃었을 때 새 열쇠 코드
+        if (!confirm(T('{0} 목자의 열쇠 코드를 새로 만들까요? 예전 코드는 쓸 수 없게 됩니다.', m.mokja_name))) return;
+        var kr = await C.callAdmin({ action: 'leader_new_key', user_id: uid });
+        C.say($('#msg-manage'), T('{0} 목자의 새 열쇠 코드는 {1} 입니다. 알려 주세요.', m.mokja_name, kr.key), 'ok', true);
+        return;
+      }
       if (btn.classList.contains('act-pw')) {
         var np = prompt(T('새 비밀번호를 정해 주세요 (8자 이상).\n정하신 뒤 목자에게 알려 주세요.'));
         if (np === null) return;
