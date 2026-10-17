@@ -140,7 +140,7 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);ou
 <header>
   <div>
     <h1>검역소 소독업체 지도</h1>
-    <p>지도의 시·군·구를 누르면 확대되어 그 지역 정보가 나오고, 검역소나 내 위치를 기준으로 반경 1·2·5 km 안의 소독업체가 거리순으로 나옵니다. 업체 색은 자격 확인 수준입니다.</p>
+    <p>지도를 누르면 그 자리가 확대되고 시·군·구 정보가 나오며, 검역소나 내 위치를 기준으로 반경 1·2·5 km 안의 소독업체가 거리순으로 나옵니다. 업체 색은 자격 확인 수준입니다.</p>
   </div>
   <div class="stats" id="stats"></div>
 </header>
@@ -188,7 +188,7 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);ou
         <button id="mePick" type="button" aria-pressed="false">지도에서 지정</button>
         <button id="meClear" type="button" hidden>해제</button>
       </div>
-      <div class="hint" id="meHint">GPS가 안 되면 "지도에서 지정"을 누른 뒤 지도를 한 번 누르세요. 지도를 더블클릭해도 됩니다.</div>
+      <div class="hint" id="meHint">GPS가 안 되면 "지도에서 지정"을 누른 뒤 지도를 한 번 누르세요.</div>
     </div>
     <div>
       <label class="lb">검색 반경</label>
@@ -242,8 +242,7 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     for(const poly of f.polys)for(const pt of poly[0]){const [x,y]=P(pt[0],pt[1]);minx=Math.min(minx,x);maxx=Math.max(maxx,x);miny=Math.min(miny,y);maxy=Math.max(maxy,y);sx+=x;sy+=y;n++;}
     const m={code:f.code,name:f.name,polys:f.polys,el:p,bbox:[minx,miny,maxx,maxy],cx:sx/n,cy:sy/n};
     const t=el('text',{x:m.cx.toFixed(1),y:m.cy.toFixed(1),class:'mlabel'});t.textContent=f.name;m.label=t;gMl.appendChild(t);
-    p.addEventListener('click',e=>{if(moved)return;selectMuni(m);});
-    p.addEventListener('mousemove',e=>showTip(e,`<b>${f.name}</b><br>누르면 확대`));p.addEventListener('mouseleave',hideTip);
+    p.addEventListener('mousemove',e=>{if(e.pointerType==='touch')return;showTip(e,`<b>${f.name}</b><br>누르면 확대`);});p.addEventListener('mouseleave',hideTip);
     gMuni.appendChild(p);munis.push(m);}
   const prov=DATA.prov.map(f=>({name:f.name,polys:f.polys}));
   function inRing(ring,lng,lat){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];
@@ -267,7 +266,7 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     const t=el('text',{x:10,y:4.5});t.textContent=c.name;g.appendChild(t);
     g.addEventListener('mousemove',e=>showTip(e,`<b>${c.name}</b><br>${LV[c.lv]} · ${TY[c.typ]}<br>${c.address||c.region||''}`));
     g.addEventListener('mouseleave',hideTip);
-    g.addEventListener('click',()=>{if(moved)return;showDetail(c);});
+
     gCo.appendChild(g);coEls[c.id]=g;}
   // stations
   const stEls={};
@@ -277,16 +276,17 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     const t=el('text',{x:r+3,y:5});t.textContent=sub?st.name.replace(/^국립\S+검역소\s*/,''):st.name.replace('국립','').replace('검역소','');g.appendChild(t);
     g.addEventListener('mousemove',e=>showTip(e,`<b>${st.name}</b><br>${st.address}<br>누르면 반경 안 업체 표시`));
     g.addEventListener('mouseleave',hideTip);
-    g.addEventListener('click',()=>{if(moved)return;select(st.id,true);});
+
     g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(st.id,true);}});
     gSt.appendChild(g);stEls[st.id]=g;}
 
-  function showTip(e,html){tip.innerHTML=html;tip.style.display='block';const r=mapbox.getBoundingClientRect();
+  function showTip(e,html){if(e.pointerType==='touch'||lastTouch)return;tip.innerHTML=html;tip.style.display='block';const r=mapbox.getBoundingClientRect();
     let x=e.clientX-r.left+12,y=e.clientY-r.top+12;if(x+250>r.width)x=Math.max(0,e.clientX-r.left-250);if(y+80>r.height)y=e.clientY-r.top-80;tip.style.left=x+'px';tip.style.top=y+'px';}
   function hideTip(){tip.style.display='none';}
 
   // ---- viewBox zoom/pan ----
   function applyView(){view.w=Math.min(view.w,W*1.2);view.h=view.w*H/W;k=W/view.w;
+    const mx0=W*0.1,my0=H*0.1;view.x=Math.max(-view.w*0.5-mx0,Math.min(W-view.w*0.5+mx0,view.x));view.y=Math.max(-view.h*0.5-my0,Math.min(H-view.h*0.5+my0,view.y));
     svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);
     const inv=1/k;
     for(const c of DATA.companies)coEls[c.id].setAttribute('transform',`translate(${c.px.toFixed(1)} ${c.py.toFixed(1)}) scale(${inv})`);
@@ -303,19 +303,28 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
   const pt=(cx,cy)=>{const r=svg.getBoundingClientRect();return [view.x+(cx-r.left)/r.width*view.w, view.y+(cy-r.top)/r.height*view.h];};
   svg.addEventListener('wheel',e=>{e.preventDefault();const [mx,my2]=pt(e.clientX,e.clientY);const f=e.deltaY<0?0.8:1.25;const nw=Math.max(W/400,Math.min(W*1.2,view.w*f));
     const rx=(mx-view.x)/view.w, ry=(my2-view.y)/view.h;view={x:mx-rx*nw,y:my2-ry*nw*H/W,w:nw,h:nw*H/W};applyView();},{passive:false});
-  let drag=null, moved=false, pinch=null;
-  svg.addEventListener('pointerdown',e=>{if(e.button&&e.button!==0)return;
+  let drag=null, moved=false, pinch=null, lastTouch=false;
+  svg.addEventListener('pointerdown',e=>{if(e.button&&e.button!==0)return;lastTouch=e.pointerType==='touch';if(lastTouch)hideTip();
     if(pinch||drag){pinch={a:drag||pinch.a,b:{id:e.pointerId,x:e.clientX,y:e.clientY},w:view.w};drag=null;return;}
-    drag={id:e.pointerId,x:e.clientX,y:e.clientY,vx:view.x,vy:view.y};moved=false;});
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,vx:view.x,vy:view.y,t:Date.now(),target:e.target};moved=false;});
   svg.addEventListener('pointermove',e=>{const r=svg.getBoundingClientRect();
     if(pinch){const p=pinch;if(e.pointerId===p.a.id){p.a.x=e.clientX;p.a.y=e.clientY;}else if(e.pointerId===p.b.id){p.b.x=e.clientX;p.b.y=e.clientY;}
       if(!p.d0){p.d0=Math.hypot(p.a.x-p.b.x,p.a.y-p.b.y);p.c0=pt((p.a.x+p.b.x)/2,(p.a.y+p.b.y)/2);return;}
       const d=Math.hypot(p.a.x-p.b.x,p.a.y-p.b.y);const nw=Math.max(W/400,Math.min(W*1.2,p.w*p.d0/d));
       zoomTo(p.c0[0],p.c0[1],nw);moved=true;return;}
     if(!drag||e.pointerId!==drag.id)return;const dx=(e.clientX-drag.x)/r.width*view.w,dy=(e.clientY-drag.y)/r.height*view.h;
-    if(Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y)>4){if(!moved){try{svg.setPointerCapture(e.pointerId);}catch(x){}}moved=true;svg.classList.add('drag');}
+    if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>(e.pointerType==='touch'?12:5)){if(!moved){try{svg.setPointerCapture(e.pointerId);}catch(x){}}moved=true;svg.classList.add('drag');}
+    if(!moved)return;
     view.x=drag.vx-dx;view.y=drag.vy-dy;applyView();});
-  const up=e=>{if(pinch){pinch=null;drag=null;setTimeout(()=>{moved=false;},50);return;}if(drag&&e.pointerId===drag.id){drag=null;svg.classList.remove('drag');setTimeout(()=>{moved=false;},50);}};
+  const up=e=>{if(pinch){pinch=null;drag=null;setTimeout(()=>{moved=false;},50);return;}
+    if(drag&&e.pointerId===drag.id){const d=drag;drag=null;svg.classList.remove('drag');const isTap=!moved&&Date.now()-d.t<600;setTimeout(()=>{moved=false;},50);if(isTap)tap(e,d.target);}};
+  function tap(e,target){const [x,y]=pt(e.clientX,e.clientY);
+    if(state.pick){setMe(latOf(y),lngOf(x));return;}
+    const stG=target.closest&&target.closest('.st');if(stG){select(stG.dataset.id,true);return;}
+    const coG=target.closest&&target.closest('.co');if(coG){const c=DATA.companies.find(c=>c.id===coG.dataset.id);if(c){showDetail(c);const ru=kmToUnits(2,c.lat);zoomBox([c.px-ru,c.py-ru,c.px+ru,c.py+ru],0.2);}return;}
+    const o={lng:lngOf(x),lat:latOf(y)};const m=munis.find(mm=>inFeat(mm,o.lng,o.lat));
+    if(m&&state.muni!==m){selectMuni(m);return;}
+    zoomTo(x,y,view.w*0.45);}
   svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
   $('#zin').addEventListener('click',()=>zoomTo(view.x+view.w/2,view.y+view.h/2,view.w*0.6));
   $('#zout').addEventListener('click',()=>zoomTo(view.x+view.w/2,view.y+view.h/2,view.w/0.6));
@@ -344,9 +353,8 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     navigator.geolocation.getCurrentPosition(pos=>{setMe(pos.coords.latitude,pos.coords.longitude);h.textContent=`현재 위치 기준 (오차 약 ${Math.round(pos.coords.accuracy)} m)`;},err=>{h.textContent='GPS 위치를 받지 못했습니다('+(err.code===1?'권한 거부':'신호 없음')+'). "지도에서 지정"을 누른 뒤 지도를 한 번 누르세요.';},{enableHighAccuracy:true,timeout:8000,maximumAge:60000});});
   $('#mePick').addEventListener('click',()=>{state.pick=!state.pick;$('#mePick').setAttribute('aria-pressed',state.pick);svg.classList.toggle('pick',state.pick);$('#meHint').textContent=state.pick?'지도에서 위치를 한 번 누르세요.':'GPS가 안 되면 "지도에서 지정"을 누른 뒤 지도를 한 번 누르세요.';});
   $('#meClear').addEventListener('click',()=>{state.me=null;gMe.innerHTML='';meOpt.hidden=true;$('#meClear').hidden=true;select(DATA.stations[0].id,true);});
-  svg.addEventListener('click',e=>{if(!state.pick||moved)return;const [x,y]=pt(e.clientX,e.clientY);setMe(latOf(y),lngOf(x));e.stopPropagation();},true);
-  svg.addEventListener('dblclick',e=>{e.preventDefault();const [x,y]=pt(e.clientX,e.clientY);setMe(latOf(y),lngOf(x));});
-  document.querySelectorAll('#radios button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#radios button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');state.rad=+b.dataset.r;render(true);}));
+  svg.addEventListener('dblclick',e=>e.preventDefault());
+  document.querySelectorAll('#radios button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#radios button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');state.rad=+b.dataset.r;render(false);}));
   $('#q').addEventListener('input',e=>{state.q=e.target.value.trim().toLowerCase();render(false);});
   document.querySelectorAll('#chips .chip').forEach(b=>b.addEventListener('click',()=>{const c=b.dataset.ty;
     if(state.ty.has(c))state.ty.delete(c);else state.ty.add(c);b.setAttribute('aria-pressed',state.ty.has(c));render(false);}));
