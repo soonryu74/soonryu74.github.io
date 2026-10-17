@@ -35,8 +35,13 @@ header p{margin:3px 0 0;color:var(--muted);max-width:70ch;font-size:.9rem}
 .stats b{color:var(--fg);font-weight:500}
 .grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.9fr);gap:12px;align-items:start}
 @media (max-width:900px){.grid{grid-template-columns:1fr}}
-.mapbox{background:var(--sea);border:1px solid var(--line);border-radius:6px;position:relative;overflow:hidden;min-width:0;height:min(78vh,760px);touch-action:none;user-select:none}
-@media (max-width:900px){.mapbox{height:min(70vh,560px)}
+.mapbox{background:var(--sea);border:1px solid var(--line);border-radius:6px;position:relative;overflow:hidden;min-width:0;height:min(78vh,760px);touch-action:pan-y;user-select:none}
+.mapbox.lock{touch-action:none}
+.touchhint{display:none;position:absolute;right:10px;bottom:10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:4px 8px;font-size:.7rem;color:var(--muted);max-width:46%;z-index:2}
+#lockBtn{display:none}
+@media (pointer:coarse){.touchhint{display:block}#lockBtn{display:block}}
+.ctl button[aria-pressed="true"]{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+@media (max-width:900px){.mapbox{height:min(58vh,520px)}
   .legend{position:static;max-width:none;grid-template-columns:1fr 1fr;border-radius:0 0 6px 6px;border-width:1px 0 0;padding:6px 10px}
   .legend .h{grid-column:1/-1}
   .mapbox{display:flex;flex-direction:column}
@@ -155,8 +160,10 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);ou
       <button id="zin" title="확대" aria-label="확대">+</button>
       <button id="zout" title="축소" aria-label="축소">−</button>
       <button id="zall" class="wide" title="전국 보기">전국</button>
+      <button id="lockBtn" class="wide" title="한 손가락으로 지도 이동" aria-pressed="false">✋ 지도 고정</button>
     </div>
     <div class="tip" id="tip"></div>
+    <div class="touchhint" id="touchhint">한 손가락: 화면 스크롤 · 두 손가락: 지도 이동·확대 · 탭: 그 자리 확대</div>
     <div class="legend">
       <span><i class="sw d"></i>국립검역소 13</span>
       <span><i class="sw d o"></i>검역지소 12</span>
@@ -319,9 +326,9 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
   svg.addEventListener('pointermove',e=>{const r=svg.getBoundingClientRect();
     if(pinch){const p=pinch;if(e.pointerId===p.a.id){p.a.x=e.clientX;p.a.y=e.clientY;}else if(e.pointerId===p.b.id){p.b.x=e.clientX;p.b.y=e.clientY;}
       if(!p.d0){p.d0=Math.hypot(p.a.x-p.b.x,p.a.y-p.b.y);p.c0=pt((p.a.x+p.b.x)/2,(p.a.y+p.b.y)/2);return;}
-      const d=Math.hypot(p.a.x-p.b.x,p.a.y-p.b.y);const nw=Math.max(W/400,Math.min(W*1.2,p.w*p.d0/d));
-      zoomTo(p.c0[0],p.c0[1],nw);moved=true;return;}
-    if(!drag||e.pointerId!==drag.id)return;const dx=(e.clientX-drag.x)/r.width*view.w,dy=(e.clientY-drag.y)/r.height*view.h;
+      const d=Math.hypot(p.a.x-p.b.x,p.a.y-p.b.y);const nw=Math.max(W/400,Math.min(W*1.2,p.w*p.d0/d));const nh=nw*H/W;
+      const sx=(p.a.x+p.b.x)/2,sy=(p.a.y+p.b.y)/2;view={x:p.c0[0]-(sx-r.left)/r.width*nw,y:p.c0[1]-(sy-r.top)/r.height*nh,w:nw,h:nh};applyView();moved=true;return;}
+    if(!drag||e.pointerId!==drag.id)return;if(e.pointerType==='touch'&&!lock){if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>12)moved=true;return;}const dx=(e.clientX-drag.x)/r.width*view.w,dy=(e.clientY-drag.y)/r.height*view.h;
     if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>(e.pointerType==='touch'?12:5)){if(!moved){try{svg.setPointerCapture(e.pointerId);}catch(x){}}moved=true;svg.classList.add('drag');}
     if(!moved)return;
     view.x=drag.vx-dx;view.y=drag.vy-dy;applyView();});
@@ -334,10 +341,12 @@ const DATA = {"prov":[{"code":"39","name":"제주특별자치도","polys":[[[[12
     const o={lng:lngOf(x),lat:latOf(y)};const m=munis.find(mm=>inFeat(mm,o.lng,o.lat));
     if(m&&state.muni!==m){selectMuni(m);return;}
     zoomTo(x,y,view.w*0.45);}
-  svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',e=>{moved=true;up(e);});
+  const twoF=e=>{if(e.touches.length>=2)e.preventDefault();};svg.addEventListener('touchstart',twoF,{passive:false});svg.addEventListener('touchmove',twoF,{passive:false});
   $('#zin').addEventListener('click',()=>zoomTo(view.x+view.w/2,view.y+view.h/2,view.w*0.6));
   $('#zout').addEventListener('click',()=>zoomTo(view.x+view.w/2,view.y+view.h/2,view.w/0.6));
   $('#zall').addEventListener('click',()=>{view={...full};applyView();clearMuni();});
+  let lock=false;$('#lockBtn').addEventListener('click',()=>{lock=!lock;mapbox.classList.toggle('lock',lock);$('#lockBtn').setAttribute('aria-pressed',lock);$('#touchhint').textContent=lock?'지도 고정됨: 한 손가락으로 지도 이동 · 다시 누르면 해제':'한 손가락: 화면 스크롤 · 두 손가락: 지도 이동·확대 · 탭: 그 자리 확대';});
 
   // ---- state & UI ----
   const stSel=$('#stSel');
