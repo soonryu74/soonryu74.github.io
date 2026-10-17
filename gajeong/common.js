@@ -462,6 +462,52 @@ window.CHURCH = (function () {
   }
   // 교회마다 켠 기능 (church_church.features) — 예: member_dates(성도 날짜)는 방주교회부터
   function has(feature) { return !!(church && church.features && church.features[feature]); }
+  /* ── 성도 사진 (켠 교회만: features.member_photos) ──────────
+     휴대폰에서 가로세로 400px JPEG(약 40KB)로 줄여 올린다. 저장소는 비공개 — 그 교회 목사님과 담당 목자만 본다.
+     경로 = <교회 id>/<목원 id>.jpg, 보여 줄 때는 1시간짜리 서명 주소를 받아 쓴다. */
+  var PHOTO_BUCKET = 'church-member-photo';
+  function squareJpeg(file, size) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var s = Math.min(img.naturalWidth, img.naturalHeight), cv = document.createElement('canvas');
+        cv.width = cv.height = size;
+        cv.getContext('2d').drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, size, size);
+        URL.revokeObjectURL(url);
+        cv.toBlob(function (b) { b ? resolve(b) : reject(new Error(t('사진을 줄이지 못했습니다.'))); }, 'image/jpeg', 0.82);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error(t('이 사진은 열 수 없습니다. JPG나 PNG 사진을 골라 주세요.'))); };
+      img.src = url;
+    });
+  }
+  async function photoSave(m, file) {
+    var blob = await squareJpeg(file, 400);
+    var path = church.id + '/' + m.id + '.jpg';
+    var up = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { upsert: true, contentType: 'image/jpeg', cacheControl: '60' });
+    if (up.error) throw new Error(up.error.message);
+    var r = await sb.from('church_mokwon').update({ photo_path: path }).eq('id', m.id);
+    if (r.error) throw new Error(r.error.message);
+  }
+  async function photoRemove(m) {
+    if (!m.photo_path) return;
+    await sb.storage.from(PHOTO_BUCKET).remove([m.photo_path]);
+    await sb.from('church_mokwon').update({ photo_path: null }).eq('id', m.id);
+  }
+  // 목원 목록 → { 목원 id: 서명 주소 }
+  async function photoUrls(list) {
+    var withPhoto = list.filter(function (m) { return m.photo_path; }), out = {};
+    if (!withPhoto.length) return out;
+    var r = await sb.storage.from(PHOTO_BUCKET).createSignedUrls(withPhoto.map(function (m) { return m.photo_path; }), 3600);
+    var byPath = {};
+    (r.data || []).forEach(function (x) { if (x.signedUrl) byPath[x.path] = x.signedUrl; });
+    withPhoto.forEach(function (m) { if (byPath[m.photo_path]) out[m.id] = byPath[m.photo_path]; });
+    return out;
+  }
+  function avatar(m, url) {
+    return url ? '<img class="avatar" src="' + esc(url) + '" alt="">'
+               : '<span class="avatar" aria-hidden="true">' + esc((m.name || '?').trim().charAt(0)) + '</span>';
+  }
+
   function memberDatesForm(m) {
     return '<form class="dates-form" data-id="' + esc(m.id) + '"><div class="dates-grid">' +
       DATE_FIELDS.map(function (f) {
@@ -492,7 +538,7 @@ window.CHURCH = (function () {
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave,
-    has: has, DATE_FIELDS: DATE_FIELDS, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
+    has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();
