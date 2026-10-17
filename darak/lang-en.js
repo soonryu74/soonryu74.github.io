@@ -4,6 +4,30 @@
    translate the values, and add { id: '<code>', name: '<language name>' } to LANGS in common.js. */
 window.I18N = window.I18N || {};
 window.I18N.en = {
+  // ── 비밀번호 없이 (열쇠 코드) ─────
+  "이름만 넣으면 됩니다. 가입하면 바로 목원을 넣고 일기를 쓸 수 있습니다.": "Just enter your name. Then you can add members and write journals right away.",
+  "아이디·비밀번호는 없습니다. 가입하면 이 휴대폰에서는 다음부터 바로 열립니다.": "No ID or password needed. After signing up, this phone opens straight in next time.",
+  "열쇠 코드로 들어가기": "Sign in with key code",
+  "목자님 — 열쇠 코드로 들어가기": "Leaders — sign in with your key code",
+  "가입할 때 받은 열쇠 코드를 넣어 주세요. 다른 휴대폰이나 컴퓨터에서도 이 코드로 들어옵니다.": "Enter the key code you got when you signed up. Use it on any other phone or computer too.",
+  "열쇠 코드": "Key code",
+  "열쇠 코드를 잃어버리셨으면 목사님께 새로 만들어 달라고 하세요.": "Lost your key code? Ask your pastor to make a new one.",
+  "혼자 쓰시는 목자님은 처음 가입한 휴대폰의 [내 계정]에서 새로 받을 수 있습니다.": "If you use it on your own, get a new one under [My account] on the phone you signed up with.",
+  "열쇠 코드를 사진으로 찍어 두세요": "Take a photo of your key code",
+  "이 휴대폰에서는 다음부터 주소만 누르면 바로 열립니다.": "On this phone, just open the link next time and you're in.",
+  "다른 휴대폰이나 컴퓨터에서 들어갈 때, 또는 로그아웃한 뒤에는 이 열쇠 코드를 넣습니다.": "On another phone or computer, or after signing out, enter this key code.",
+  "찍어 두었어요 — 시작하기": "Saved it — let's start",
+  "목사님은 교회를 등록할 때 정한 아이디로 들어오세요. 목자님은 아래 [열쇠 코드로 들어가기]를 눌러 주세요.": "Pastors: sign in with the ID you chose. Leaders: tap [Sign in with key code] below.",
+  "은 비밀번호 없이 열쇠 코드로 들어오시면 됩니다. 로그인 화면의 [열쇠 코드로 들어가기]를 눌러 주세요.": " don't need a password — tap [Sign in with key code] on the sign-in screen.",
+  "로그아웃하면 다시 들어올 때 열쇠 코드가 필요합니다. 로그아웃할까요?": "You'll need your key code to come back in. Sign out?",
+  "다른 휴대폰이나 컴퓨터에서 들어갈 때, 또는 로그아웃한 뒤에 쓰는 코드입니다. 잃어버렸으면 여기서 새로 받으세요. 새로 받으면 예전 코드는 쓸 수 없습니다.": "Use this code on another phone or computer, or after signing out. Lost it? Get a new one here — the old one stops working.",
+  "새 열쇠 코드 받기": "Get a new key code",
+  "새 열쇠 코드를 받으면 예전 코드는 쓸 수 없습니다. 새로 받을까요?": "The old key code will stop working. Get a new one?",
+  "새 열쇠 코드입니다. 사진으로 찍어 두세요.": "Here's your new key code. Take a photo of it.",
+  " · 열쇠 코드로 들어옴": " · signs in with key code",
+  "<button class=\"small act-key\">열쇠 코드 새로</button>": "<button class=\"small act-key\">New key code</button>",
+  "{0} 목자의 열쇠 코드를 새로 만들까요? 예전 코드는 쓸 수 없게 됩니다.": "Make a new key code for {0}? The old one will stop working.",
+  "{0} 목자의 새 열쇠 코드는 {1} 입니다. 알려 주세요.": "{0}'s new key code is {1}. Please pass it on.",
   // ── 혼자 시작 · 교회 연결 ─────
   "목자로 시작하기 — 가입 코드가 없어도 됩니다": "Start as a leader — no sign-up code needed",
   "목자로 시작하기": "Start as a leader",

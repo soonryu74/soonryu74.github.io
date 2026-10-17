@@ -25,6 +25,10 @@
     }
     C.header(me, mokjang.name);
     solo = C.has('solo');
+    if (C.isKeyless(me)) {   // 비밀번호 없이 쓰는 목자: 비밀번호 칸 대신 열쇠 코드
+      $('#pw-card').hidden = true; $('#key-card').hidden = false;
+      $('#leave-pw-box').hidden = true; $('#leave-pw').required = false;
+    }
     if (solo) {   // 제출할 목사님이 없으니 '저장'만, 대신 [내 계정]에 '우리 교회에 연결하기'
       $('#btn-submit').hidden = true;
       $('#btn-save').textContent = T('저장'); $('#btn-save').classList.add('primary');
@@ -440,6 +444,16 @@
       C.say($('#msg-pw'), T('비밀번호를 바꿨습니다.'), 'ok');
     });
 
+    // 열쇠 코드 새로 받기 (비밀번호 없이 쓰는 목자)
+    $('#btn-new-key').addEventListener('click', async function () {
+      if (!confirm(T('새 열쇠 코드를 받으면 예전 코드는 쓸 수 없습니다. 새로 받을까요?'))) return;
+      try {
+        var r = await C.callAdmin({ action: 'new_key' });
+        $('#my-key').textContent = r.key; $('#my-key').hidden = false;
+        C.say($('#msg-key'), T('새 열쇠 코드입니다. 사진으로 찍어 두세요.'), 'ok');
+      } catch (err) { C.say($('#msg-key'), err.message, 'err'); }
+    });
+
     // 혼자 쓰던 목장을 교회에 연결 — 명단·일기가 그대로 교회로 옮겨진다
     $('#form-link').addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -456,7 +470,7 @@
       if (!confirm(T('정말 탈퇴할까요? 되돌릴 수 없습니다.'))) return;
       var b = $('#btn-leave'); b.disabled = true;
       try {
-        await C.checkPassword(me.login_id, $('#leave-pw').value);
+        if (!C.isKeyless(me)) await C.checkPassword(me.login_id, $('#leave-pw').value);
         await C.callAdmin({ action: solo ? 'delete_solo' : 'delete_me' });
         await C.afterLeave();
       } catch (err) { C.say($('#msg-leave'), err.message, 'err'); b.disabled = false; }

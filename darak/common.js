@@ -304,7 +304,11 @@ window.CHURCH = (function () {
     return r.data;
   }
 
+  // 비밀번호 없이 쓰는 목자(순장) 계정 — 서버(darak-admin)가 k_로 시작하는 아이디로 만든다
+  function isKeyless(p) { return !!(p && /^k_/.test(p.login_id || '')); }
+  var lastMe = null;
   async function signOut() {
+    if (isKeyless(lastMe) && !confirm(t('로그아웃하면 다시 들어올 때 열쇠 코드가 필요합니다. 로그아웃할까요?'))) return;
     await sb.auth.signOut();
     try { localStorage.removeItem(LS_MINE); } catch (e) {}
     location.href = 'index.html';
@@ -316,6 +320,7 @@ window.CHURCH = (function () {
     var uid = s.data.session.user.id;
     var r = await sb.from('church_profile').select('id, login_id, name, role, church_id').eq('id', uid).maybeSingle();
     if (r.error || !r.data) return null;
+    lastMe = r.data;
     return r.data;
   }
 
@@ -357,7 +362,7 @@ window.CHURCH = (function () {
     return out;
   }
   // 순장 스스로 가입(join_…)은 다락방 앱 전용 함수로, 나머지는 목장 나눔터와 같은 함수로
-  function callAdmin(payload) { return callFn(/^(join_|start_solo|link_church|delete_solo)/.test(payload.action) ? 'darak-admin' : 'church-admin', payload); }
+  function callAdmin(payload) { return callFn(/^(join_|start_solo|link_church|delete_solo|key_login|new_key|leader_new_key)/.test(payload.action) ? 'darak-admin' : 'church-admin', payload); }
   function notify(payload) { return callFn('church-notify', payload); }
 
   /* ── 휴대전화 알림 (웹 푸시) ──────────────────────────────
@@ -495,7 +500,7 @@ window.CHURCH = (function () {
     isIOS: isIOS, standalone: standalone,
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
-    checkPassword: checkPassword, afterLeave: afterLeave,
+    checkPassword: checkPassword, afterLeave: afterLeave, isKeyless: isKeyless,
     has: has, DATE_FIELDS: DATE_FIELDS, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };

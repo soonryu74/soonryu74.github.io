@@ -2,9 +2,13 @@
 // 목장 나눔터(church-admin)와 따로 둔 함수. 같은 데이터베이스(교회·계정·다락방)를 쓴다.
 //  · join_mokja    : (로그인 전) 교회 가입 코드로 순장이 스스로 계정 + 다락방을 만든다
 //  · join_code_get / join_code_new / join_code_off : 목사가 가입 코드를 보기 / 새로 만들기 / 끄기
-//  · start_solo    : (로그인 전) 코드 없이 순장 혼자 시작 — 목사님 없는 '나만의 다락방'(features.solo)을 만든다. 복구 코드를 준다
+//  · start_solo    : (로그인 전) 코드 없이 순장 혼자 시작 — 목사님 없는 '나만의 다락방'(features.solo)을 만든다
 //  · link_church   : 혼자 쓰던 순장이 교회 가입 코드로 그 교회에 연결 — 다락방·순원·일기를 그대로 옮긴다
 //  · delete_solo   : 혼자 쓰던 순장 탈퇴 — 계정과 나만의 다락방 기록을 함께 지운다
+//  순장은 아이디·비밀번호 없이 쓴다: 가입하면 그 기기에서는 계속 열리고, 다른 기기·로그아웃 뒤에는 '열쇠 코드'로 들어온다
+//  · key_login     : (로그인 전) 열쇠 코드로 들어가기 — 그때마다 새 임시 비밀번호를 정해 화면이 바로 로그인한다
+//  · new_key       : 순장이 자기 열쇠 코드를 새로 받는다 (예전 코드는 못 쓰게 된다)
+//  · leader_new_key: 목사가 우리 교회 순장의 열쇠 코드를 새로 만들어 준다 (기기를 잃었을 때)
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
@@ -20,7 +24,6 @@ const json = (body: unknown, status = 200) =>
   })
 
 const DOMAIN = 'gajeong.local'
-const ID_RE = /^[a-z0-9_]{3,30}$/
 const emailOf = (id: string) => `${id}@${DOMAIN}`
 
 const admin = createClient(
@@ -52,33 +55,45 @@ function randomSlug() {
   for (const b of crypto.getRandomValues(new Uint8Array(6))) s += a[b % a.length]
   return s
 }
-// 복구 코드 (목장 나눔터 church-admin 의 recover 로 새 비밀번호를 정한다 — 같은 방식으로 해시만 저장)
 async function sha(text: string) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
   return Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('')
 }
-async function issueRecovery(userId: string) {
+// 열쇠 코드: 12자 (XXXX-XXXX-XXXX). 해시만 저장하고, 코드만으로 사람을 찾는다 (31^12 가지라 맞혀 볼 수 없다)
+async function issueKey(userId: string) {
   const a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
-  let raw = ''
-  for (const b of crypto.getRandomValues(new Uint8Array(12))) raw += a[b % a.length]
-  const { error } = await admin.from('church_recovery').upsert({
-    user_id: userId, code_hash: await sha(userId + ':' + raw), created_at: new Date().toISOString(), fails: 0, locked_until: null,
-  })
-  if (error) throw new Error(error.message)
-  return `${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8)}`
+  for (let i = 0; i < 5; i++) {
+    let raw = ''
+    for (const b of crypto.getRandomValues(new Uint8Array(12))) raw += a[b % a.length]
+    const { error } = await admin.from('church_key')
+      .upsert({ user_id: userId, code_hash: await sha('key:' + raw), created_at: new Date().toISOString() })
+    if (!error) return `${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8)}`
+  }
+  throw new Error('열쇠 코드를 만들지 못했습니다')
 }
+function randomText(n: number, a = 'abcdefghijkmnpqrstuvwxyz23456789') {
+  let s = ''
+  for (const b of crypto.getRandomValues(new Uint8Array(n))) s += a[b % a.length]
+  return s
+}
+// 비밀번호 없는 순장 계정 — 아이디는 k_로 시작하는 임의 글자, 비밀번호도 임의 (화면이 바로 로그인하는 데만 쓴다)
+async function makeKeyless(name: string) {
+  for (let i = 0; i < 5; i++) {
+    const login_id = 'k_' + randomText(10), password = randomText(32)
+    const { data, error } = await admin.auth.admin.createUser({
+      email: emailOf(login_id), password, email_confirm: true, user_metadata: { login_id, name, keyless: true },
+    })
+    if (!error) return { user_id: data.user.id as string, login_id, password }
+    if (!/already|registered|exists/i.test(error.message)) throw new Error(error.message)
+  }
+  throw new Error('계정을 만들지 못했습니다')
+}
+
 async function churchByCode(code: string) {
   const raw = normCode(code)
   if (raw.length !== 8) return null
   const { data } = await admin.from('church_join').select('church_id').eq('code', raw).maybeSingle()
   return (data?.church_id as string | undefined) ?? null
-}
-
-function checkAccount(login_id: string, password: string, name: string): string | null {
-  if (!ID_RE.test(login_id)) return '아이디는 영문 소문자·숫자 3~30자입니다'
-  if (password.length < 8) return '비밀번호는 8자 이상으로 정해 주세요'
-  if (!name) return '이름을 적어 주세요'
-  return null
 }
 
 // 가입 코드: 헷갈리는 글자(0/O, 1/I/L)를 뺀 8자 (XXXX-XXXX). 맞춰 볼 때는 글자만 비교한다
@@ -106,39 +121,46 @@ Deno.serve(async (req) => {
   try { body = await req.json() } catch { return json({ error: '요청을 읽지 못했습니다' }, 400) }
 
   const action = String(body.action ?? '')
-  const login_id = String(body.login_id ?? '').trim().toLowerCase()
-  const password = String(body.password ?? '')
   const name = String(body.name ?? '').trim()
 
   try {
     // ── 순장 스스로 가입 (로그인 전) — 목사님이 알려 준 가입 코드가 있어야 한다 ──
     if (action === 'join_mokja') {
-      const bad = checkAccount(login_id, password, name)
-      if (bad) return json({ error: bad }, 400)
+      if (!name) return json({ error: '이름을 적어 주세요' }, 400)
       const cid = await churchByCode(String(body.join_code ?? ''))
-      const jc = cid ? { church_id: cid } : null
-      if (!jc) return json({ error: '가입 코드가 맞지 않습니다. 목사님께 다시 물어봐 주세요' }, 403)
+      if (!cid) return json({ error: '가입 코드가 맞지 않습니다. 목사님께 다시 물어봐 주세요' }, 403)
+      const acc = await makeKeyless(name)
+      try {
+        const { error: pe } = await admin.from('church_profile')
+          .insert({ id: acc.user_id, login_id: acc.login_id, name, role: 'mokja', church_id: cid })
+        if (pe) throw new Error(pe.message)
+        const { error: mje } = await admin.from('church_mokjang').insert({
+          name: String(body.mokjang_name ?? '').trim() || `${name} ${await unitOf(cid)}`,
+          mokja_id: acc.user_id, mokja_name: name, church_id: cid,
+        })
+        if (mje) throw new Error(mje.message)
+      } catch (e) { await admin.auth.admin.deleteUser(acc.user_id); throw e }
+      const { data: ch } = await admin.from('church_church').select('slug').eq('id', cid).single()
+      return json({ ok: true, slug: ch?.slug, login_id: acc.login_id, password: acc.password, key: await issueKey(acc.user_id) })
+    }
 
-      const { data: u, error: ue } = await admin.auth.admin.createUser({
-        email: emailOf(login_id), password, email_confirm: true, user_metadata: { login_id, name },
-      })
-      if (ue) throw new Error(ue.message)
-      const { error: pe } = await admin.from('church_profile')
-        .insert({ id: u.user.id, login_id, name, role: 'mokja', church_id: jc.church_id })
-      if (pe) { await admin.auth.admin.deleteUser(u.user.id); throw new Error(pe.message) }
-      const { error: mje } = await admin.from('church_mokjang').insert({
-        name: String(body.mokjang_name ?? '').trim() || `${name} ${await unitOf(jc.church_id)}`,
-        mokja_id: u.user.id, mokja_name: name, church_id: jc.church_id,
-      })
-      if (mje) throw new Error(mje.message)
-      const { data: ch } = await admin.from('church_church').select('slug').eq('id', jc.church_id).single()
-      return json({ ok: true, slug: ch?.slug })
+    // ── 열쇠 코드로 들어가기 (로그인 전) ──
+    if (action === 'key_login') {
+      const raw = normCode(String(body.key ?? ''))
+      const { data: k } = raw.length === 12
+        ? await admin.from('church_key').select('user_id').eq('code_hash', await sha('key:' + raw)).maybeSingle() : { data: null }
+      if (!k) return json({ error: '열쇠 코드가 맞지 않습니다' }, 403)
+      const { data: pf } = await admin.from('church_profile').select('login_id').eq('id', k.user_id).maybeSingle()
+      if (!pf) return json({ error: '계정을 찾지 못했습니다' }, 404)
+      const pw = randomText(32)
+      const { error } = await admin.auth.admin.updateUserById(k.user_id, { password: pw })
+      if (error) throw new Error(error.message)
+      return json({ ok: true, login_id: pf.login_id, password: pw })
     }
 
     // ── 코드 없이 순장 혼자 시작 (로그인 전) ──
     if (action === 'start_solo') {
-      const bad = checkAccount(login_id, password, name)
-      if (bad) return json({ error: bad }, 400)
+      if (!name) return json({ error: '이름을 적어 주세요' }, 400)
       const tz = String(body.timezone ?? '').trim() || 'Australia/Melbourne'
       const mjName = String(body.mokjang_name ?? '').trim() || `${name} 다락방`
       let church: { id: string; slug: string } | null = null
@@ -150,15 +172,12 @@ Deno.serve(async (req) => {
         if (!error) church = data
       }
       if (!church) throw new Error('다락방을 만들지 못했습니다')
-      let userId = ''
+      let userId = '', acc = { user_id: '', login_id: '', password: '' }
       try {
-        const { data: u, error: ue } = await admin.auth.admin.createUser({
-          email: emailOf(login_id), password, email_confirm: true, user_metadata: { login_id, name },
-        })
-        if (ue) throw new Error(ue.message)
-        userId = u.user.id
+        acc = await makeKeyless(name)
+        userId = acc.user_id
         const { error: pe } = await admin.from('church_profile')
-          .insert({ id: userId, login_id, name, role: 'mokja', church_id: church.id })
+          .insert({ id: userId, login_id: acc.login_id, name, role: 'mokja', church_id: church.id })
         if (pe) throw new Error(pe.message)
         const { error: mje } = await admin.from('church_mokjang')
           .insert({ name: mjName, mokja_id: userId, mokja_name: name, church_id: church.id })
@@ -168,11 +187,17 @@ Deno.serve(async (req) => {
         await admin.from('church_church').delete().eq('id', church.id)
         throw e
       }
-      return json({ ok: true, slug: church.slug, recovery_code: await issueRecovery(userId) })
+      return json({ ok: true, slug: church.slug, login_id: acc.login_id, password: acc.password, key: await issueKey(userId) })
     }
 
     const me = await callerProfile(req)
     if (!me) return json({ error: '로그인이 필요합니다' }, 401)
+
+    // ── 내 열쇠 코드 새로 받기 (비밀번호 없이 쓰는 순장) ──
+    if (action === 'new_key') {
+      if (me.role !== 'mokja') return json({ error: '순장 계정만 쓸 수 있습니다' }, 400)
+      return json({ ok: true, key: await issueKey(me.id) })
+    }
 
     // ── 혼자 쓰던 순장 → 교회에 연결 (다락방·순원·일기를 그대로 옮긴다) ──
     if (action === 'link_church') {
@@ -200,6 +225,14 @@ Deno.serve(async (req) => {
 
     // ── 아래부터는 로그인한 목사만 ──
     if (me.role !== 'pastor' || !me.church_id) return json({ error: '목사 계정만 쓸 수 있습니다' }, 403)
+
+    // ── 목사가 우리 교회 순장의 열쇠 코드를 새로 만들어 준다 ──
+    if (action === 'leader_new_key') {
+      const uid = String(body.user_id ?? '')
+      const { data: t } = await admin.from('church_profile').select('id, role, church_id').eq('id', uid).maybeSingle()
+      if (!t || t.church_id !== me.church_id || t.role !== 'mokja') return json({ error: '우리 교회 순장이 아닙니다' }, 403)
+      return json({ ok: true, key: await issueKey(uid) })
+    }
 
     if (action === 'join_code_get') {
       const { data } = await admin.from('church_join').select('code').eq('church_id', me.church_id).maybeSingle()
