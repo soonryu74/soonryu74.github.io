@@ -4,6 +4,15 @@
    translate the values, and add { id: '<code>', name: '<language name>' } to LANGS in common.js. */
 window.I18N = window.I18N || {};
 window.I18N.en = {
+  // ── 성도 사진 ─────
+  "사진은 본인 동의를 받은 뒤 넣어 주세요. 목사님과 담당 목자만 볼 수 있습니다.": "Please get each person's permission before adding a photo. Only your pastor and the group leader can see it.",
+  "<button class=\"small act-photo\">사진</button>": "<button class=\"small act-photo\">Photo</button>",
+  "<button class=\"small act-photo-del\">사진 지우기</button>": "<button class=\"small act-photo-del\">Remove photo</button>",
+  "사진을 올리는 중…": "Uploading photo…",
+  "{0} 님 사진을 넣었습니다.": "Added a photo for {0}.",
+  "{0} 님 사진을 지울까요?": "Remove {0}'s photo?",
+  "사진을 줄이지 못했습니다.": "Couldn't resize the photo.",
+  "이 사진은 열 수 없습니다. JPG나 PNG 사진을 골라 주세요.": "This photo can't be opened. Please choose a JPG or PNG photo.",
   // ── 성도 날짜 (교회 등록·생명의 삶·침례) ─────
   "교회 등록": "Joined church",
   "생명의 삶": "Life Study",

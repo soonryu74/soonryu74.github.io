@@ -8,7 +8,7 @@ const NOW = new Date('2026-10-19T02:00:00Z'); // 멜번 월 13시(→10/19 주) 
 
 const SEED = { db: {
   church_church: [
-    { id: 'cb', slug: 'bangjoo', name: '멜번방주교회 & ALF', timezone: 'Australia/Melbourne', logo_url: 'assets/logo.png', theme: 'sky', features: { member_dates: true } },
+    { id: 'cb', slug: 'bangjoo', name: '멜번방주교회 & ALF', timezone: 'Australia/Melbourne', logo_url: 'assets/logo.png', theme: 'sky', features: { member_dates: true, member_photos: true } },
     { id: 'cl', slug: 'lach01', name: 'LA 새소망교회', timezone: 'America/Los_Angeles', logo_url: '', theme: 'night',
       terms: { unit: '다락방', leader: '순장', member: '순원' } } ],
   church_profile: [
@@ -384,6 +384,37 @@ const db = p => p.evaluate(() => window.__DB());
     await login(p, 'mokjala');
     await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
     ok('다른 교회(기능 안 켬): 목원 날짜 단추 없음', (await p.$$('#member-list .act-dates')).length === 0);
+    await c.close(); }
+
+  console.log('\n[성도 사진] 방주교회만 · 줄여서 · 비공개');
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    ok('사진 없으면 이름 첫 글자', (await p.textContent('#member-list .list-item[data-id="w1"] .avatar')).trim() === '정');
+    ok('동의 안내가 보임', await p.isVisible('#photo-hint'));
+    const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.click('#member-list .list-item[data-id="w1"] .act-photo')]);
+    await fc.setFiles(path.join(__dirname, '..', 'assets', 'og.png')); await p.waitForTimeout(800);
+    let d = await db(p);
+    const ph = (d.__photos || {})['cb/w1.jpg'];
+    ok('사진은 JPEG로 줄여서 올라감', ph && ph.type === 'image/jpeg' && ph.size > 0 && ph.size < 80000, JSON.stringify(ph));
+    ok('목원에 사진 경로 저장', d.church_mokwon.find(w => w.id === 'w1').photo_path === 'cb/w1.jpg');
+    ok('명단에 사진이 보임', await p.$eval('#member-list .list-item[data-id="w1"] .avatar', e => e.tagName) === 'IMG');
+    p.once('dialog', dl => dl.accept());
+    await p.click('#member-list .list-item[data-id="w1"] .act-photo-del'); await p.waitForTimeout(500);
+    d = await db(p);
+    ok('사진 지우기', !(d.__photos || {})['cb/w1.jpg'] && !d.church_mokwon.find(w => w.id === 'w1').photo_path);
+    const [fc2] = await Promise.all([p.waitForEvent('filechooser'), p.click('#member-list .list-item[data-id="w2"] .act-photo')]);
+    await fc2.setFiles(path.join(__dirname, '..', 'assets', 'og.png')); await p.waitForTimeout(800);
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await p.evaluate(() => CHURCH.signOut());
+    await login(p, 'pastor1');
+    await p.click('.tabs button[data-pane="people"]'); await p.waitForTimeout(500);
+    ok('목사 성도 명단에 사진', await p.$eval('#people-list .list-item[data-id="w2"] .avatar', e => e.tagName) === 'IMG');
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokjala');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    ok('다른 교회(기능 안 켬): 사진 단추·자리 없음', (await p.$$('#member-list .act-photo, #member-list .avatar')).length === 0 && !(await p.isVisible('#photo-hint')));
     await c.close(); }
 
   await b.close();
