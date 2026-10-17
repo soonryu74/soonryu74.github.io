@@ -203,6 +203,36 @@
         reply = { ok: true, slug: jch.slug };
       }
     }
+    if (u.indexOf('darak-admin') >= 0 && b.action === 'start_solo') {
+      if (DB.church_profile.some(function (x) { return x.login_id === b.login_id; })) reply = { error: '이미 쓰고 있는 아이디입니다. 다른 아이디를 골라 주세요' };
+      else {
+        var sc = 'c' + (++nid), su = 'u' + (++nid), sname = (b.mokjang_name || '').trim() || b.name + ' 다락방';
+        DB.church_church.push({ id: sc, slug: 'solo' + nid, name: sname, timezone: b.timezone || 'Australia/Melbourne', logo_url: '',
+          terms: { unit: '다락방', leader: '순장', member: '순원' }, features: { solo: true } });
+        DB.church_profile.push({ id: su, login_id: b.login_id, name: b.name, role: 'mokja', church_id: sc });
+        DB.__newpw = DB.__newpw || {}; DB.__newpw[su] = b.password;
+        DB.church_mokjang.push({ id: 'mj' + (++nid), name: sname, mokja_id: su, mokja_name: b.name, church_id: sc, sort_order: 0, active: true, created_at: '2026-10-16' });
+        reply = { ok: true, slug: 'solo' + nid, recovery_code: 'SOLO-CODE-1234' };
+      }
+    }
+    if (u.indexOf('darak-admin') >= 0 && (b.action === 'link_church' || b.action === 'delete_solo')) {
+      var ms = me(), mch = DB.church_church.find(function (x) { return x.id === ms.church_id; });
+      if (!(mch && mch.features && mch.features.solo)) reply = { error: '혼자 쓰는 순장 계정이 아닙니다' };
+      else if (b.action === 'delete_solo') {
+        DB.church_profile = DB.church_profile.filter(function (x) { return x.id !== ms.id; });
+        DB.church_mokjang = DB.church_mokjang.filter(function (m) { return m.church_id !== mch.id; });
+        DB.church_church = DB.church_church.filter(function (x) { return x.id !== mch.id; });
+      } else {
+        var tgt = (DB.__join || {})[String(b.join_code || '').toUpperCase().replace(/[^A-Z0-9]/g, '')];
+        if (!tgt) reply = { error: '가입 코드가 맞지 않습니다. 목사님께 다시 물어봐 주세요' };
+        else {
+          DB.church_mokjang.forEach(function (m) { if (m.church_id === mch.id) m.church_id = tgt; });
+          ms.church_id = tgt;
+          DB.church_church = DB.church_church.filter(function (x) { return x.id !== mch.id; });
+          reply = { ok: true, name: DB.church_church.find(function (x) { return x.id === tgt; }).name };
+        }
+      }
+    }
     if (u.indexOf('darak-admin') >= 0 && /^join_code_/.test(b.action)) {
       var mej = me(); DB.__join = DB.__join || {};
       var cur = Object.keys(DB.__join).find(function (k) { return DB.__join[k] === mej.church_id; });

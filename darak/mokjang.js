@@ -3,6 +3,7 @@
   var C = window.CHURCH, sb = C.sb, $ = C.$, $$ = C.$$, esc = C.esc, T = C.t;
   var me = null, mokjang = null, mokwon = [], week = C.mondayOf(), journal = null, prayers = [], dirty = false;
   var rendered = null;  // 지금 화면에 그려져 있는 기도제목 줄
+  var solo = false;     // 목사님 없이 나 혼자 쓰는 목장 (다락방 앱에서 코드 없이 시작한 경우)
 
   /* ── 시작 ──────────────────────────────────────── */
   (async function start() {
@@ -23,6 +24,13 @@
       return;
     }
     C.header(me, mokjang.name);
+    solo = C.has('solo');
+    if (solo) {   // 제출할 목사님이 없으니 '저장'만, 대신 [내 계정]에 '우리 교회에 연결하기'
+      $('#btn-submit').hidden = true;
+      $('#btn-save').textContent = T('저장'); $('#btn-save').classList.add('primary');
+      $('#link-card').hidden = false;
+      $('#leave-desc').textContent = T('내 계정과 목장, 목원 명단, 지금까지 쓴 일기가 모두 지워집니다. 되돌릴 수 없습니다.');
+    }
     $('#mj-name').value = mokjang.name;
     $('#mj-day').value = mokjang.meet_day || '';
 
@@ -162,7 +170,7 @@
     $('#mprayer').value = (journal && journal.mokjang_prayer) || '';
 
     var submitted = journal && journal.status === 'submitted';
-    $('#wk-state').textContent = submitted ? T('제출함') : (journal ? T('임시 저장됨') : T('아직 안 썼습니다'));
+    $('#wk-state').textContent = submitted ? T('제출함') : (journal ? (solo ? T('저장됨') : T('임시 저장됨')) : T('아직 안 썼습니다'));
     $('#wk-state').className = 'badge ' + (submitted ? 'done' : 'todo');
     $('#save-state').textContent = journal && journal.updated_at ? (T('마지막 저장 ') + C.whenText(journal.updated_at)) : '';
     dirty = false;
@@ -310,12 +318,12 @@
       dirty = false;
       // 제출이면 목사님 휴대전화로 알림 (실패해도 제출은 이미 끝났다)
       if (status === 'submitted') C.notify({ action: 'submitted', journal_id: journal.id }).catch(function () {});
-      $('#wk-state').textContent = status === 'submitted' ? T('제출함') : T('임시 저장됨');
+      $('#wk-state').textContent = status === 'submitted' ? T('제출함') : (solo ? T('저장됨') : T('임시 저장됨'));
       $('#wk-state').className = 'badge ' + (status === 'submitted' ? 'done' : 'todo');
       $('#save-state').textContent = T('마지막 저장 ') + C.whenText(journal.updated_at);
       C.say($('#msg-write'), status === 'submitted'
         ? T('목사님께 전달했습니다. 제출한 뒤에도 고치실 수 있습니다.')
-        : T('저장했습니다. 나중에 이어서 쓰셔도 됩니다.'), 'ok');
+        : (solo ? T('저장했습니다.') : T('저장했습니다. 나중에 이어서 쓰셔도 됩니다.')), 'ok');
     } catch (err) {
       C.say($('#msg-write'), T('저장하지 못했습니다: ') + err.message, 'err');
     }
@@ -351,7 +359,7 @@
       return '<details data-id="' + j.id + '" style="border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin:10px 0; background:#fff">' +
         '<summary style="cursor:pointer; font-weight:700">' + esc(C.weekLabel(j.week_start)) +
         ' <span class="badge ' + (j.status === 'submitted' ? 'done' : 'todo') + '">' +
-        (j.status === 'submitted' ? T('제출함') : T('임시')) + '</span></summary>' +
+        (j.status === 'submitted' ? T('제출함') : solo ? T('저장됨') : T('임시')) + '</span></summary>' +
         T('<div class="detail quiet" style="margin-top:10px">펼치는 중…</div></details>');
     }).join('');
     $$('#past-list details').forEach(function (d) {
@@ -432,13 +440,24 @@
       C.say($('#msg-pw'), T('비밀번호를 바꿨습니다.'), 'ok');
     });
 
+    // 혼자 쓰던 목장을 교회에 연결 — 명단·일기가 그대로 교회로 옮겨진다
+    $('#form-link').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var b = $('#btn-link'); b.disabled = true;
+      try {
+        var r = await C.callAdmin({ action: 'link_church', join_code: $('#link-code').value });
+        C.say($('#msg-link'), T('{0}에 연결했습니다. 이제 일기를 목사님께 제출할 수 있습니다.', r.name || ''), 'ok', true);
+        setTimeout(function () { location.reload(); }, 1800);
+      } catch (err) { C.say($('#msg-link'), err.message, 'err'); b.disabled = false; }
+    });
+
     $('#form-leave').addEventListener('submit', async function (e) {
       e.preventDefault();
       if (!confirm(T('정말 탈퇴할까요? 되돌릴 수 없습니다.'))) return;
       var b = $('#btn-leave'); b.disabled = true;
       try {
         await C.checkPassword(me.login_id, $('#leave-pw').value);
-        await C.callAdmin({ action: 'delete_me' });
+        await C.callAdmin({ action: solo ? 'delete_solo' : 'delete_me' });
         await C.afterLeave();
       } catch (err) { C.say($('#msg-leave'), err.message, 'err'); b.disabled = false; }
     });
