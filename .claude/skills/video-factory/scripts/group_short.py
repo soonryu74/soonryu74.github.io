@@ -71,14 +71,8 @@ class Theme:
 
     def background(self):
         if self.mode == "dark":
-            return navy_bg((W, H), grid=60)
-        img = Image.new("RGBA", (W, H), self.base + (255,))
-        d = ImageDraw.Draw(img)
-        for x in range(0, W, 60):
-            d.line([(x, 0), (x, H)], fill=self.grid)
-        for y in range(0, H, 60):
-            d.line([(0, y), (W, y)], fill=self.grid)
-        return img
+            return navy_bg((W, H), grid=0)
+        return Image.new("RGBA", (W, H), self.base + (255,))     # 격자 없음 (2026-10-18)
 
 
 TH = Theme("dark", (59, 130, 246))         # 지금 그리는 장면의 테마(장면마다 바꿔 낀다)
