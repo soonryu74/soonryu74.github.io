@@ -311,7 +311,7 @@ window.CHURCH = (function () {
     var s = await sb.auth.getSession();
     if (!s.data.session) return null;
     var uid = s.data.session.user.id;
-    var r = await sb.from('church_profile').select('id, login_id, name, role, church_id').eq('id', uid).maybeSingle();
+    var r = await sb.from('church_profile').select('id, login_id, name, role, church_id, photo_path').eq('id', uid).maybeSingle();
     if (r.error || !r.data) return null;
     return r.data;
   }
@@ -480,18 +480,44 @@ window.CHURCH = (function () {
       img.src = url;
     });
   }
-  async function photoSave(m, file) {
+  // table: church_mokwon(목원) 또는 church_profile(목자·목사 본인 — 파일 이름 앞에 p_)
+  async function photoSave(m, file, table) {
+    table = table || 'church_mokwon';
     var blob = await squareJpeg(file, 400);
-    var path = church.id + '/' + m.id + '.jpg';
+    var path = church.id + '/' + (table === 'church_profile' ? 'p_' : '') + m.id + '.jpg';
     var up = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { upsert: true, contentType: 'image/jpeg', cacheControl: '60' });
     if (up.error) throw new Error(up.error.message);
-    var r = await sb.from('church_mokwon').update({ photo_path: path }).eq('id', m.id);
+    var r = await sb.from(table).update({ photo_path: path }).eq('id', m.id);
     if (r.error) throw new Error(r.error.message);
+    m.photo_path = path;
   }
-  async function photoRemove(m) {
+  async function photoRemove(m, table) {
     if (!m.photo_path) return;
     await sb.storage.from(PHOTO_BUCKET).remove([m.photo_path]);
-    await sb.from('church_mokwon').update({ photo_path: null }).eq('id', m.id);
+    await sb.from(table || 'church_mokwon').update({ photo_path: null }).eq('id', m.id);
+    m.photo_path = null;
+  }
+  // [내 계정]의 '내 사진' 칸 (목자·목사 공통) — 목사님이 목자 얼굴을 알아볼 수 있게
+  function bindMyPhoto(p) {
+    var card = $('#my-photo-card'); if (!card || !has('member_photos')) return;
+    card.hidden = false;
+    async function show() {
+      var u = (await photoUrls([p]))[p.id];
+      $('#my-photo').innerHTML = avatar(p, u);
+      $('#my-photo-del').hidden = !p.photo_path;
+    }
+    $('#my-photo-pick').addEventListener('click', function () { $('#my-photo-file').value = ''; $('#my-photo-file').click(); });
+    $('#my-photo-file').addEventListener('change', async function () {
+      var f = this.files && this.files[0]; if (!f) return;
+      say($('#msg-my-photo'), t('사진을 올리는 중…'), 'ok');
+      try { await photoSave(p, f, 'church_profile'); await show(); say($('#msg-my-photo'), t('내 사진을 넣었습니다.'), 'ok'); }
+      catch (e) { say($('#msg-my-photo'), e.message, 'err'); }
+    });
+    $('#my-photo-del').addEventListener('click', async function () {
+      if (!confirm(t('내 사진을 지울까요?'))) return;
+      await photoRemove(p, 'church_profile'); await show(); say($('#msg-my-photo'), t('사진을 지웠습니다.'), 'ok');
+    });
+    show();
   }
   // 목원 목록 → { 목원 id: 서명 주소 }
   async function photoUrls(list) {
@@ -538,7 +564,7 @@ window.CHURCH = (function () {
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave,
-    has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
+    has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();
