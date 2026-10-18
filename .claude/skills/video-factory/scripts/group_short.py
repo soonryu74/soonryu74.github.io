@@ -94,6 +94,20 @@ def draw_line(img: Image.Image, s: str, font, x, y, acc, alpha=1.0, scale=1.0, c
     img.alpha_composite(lay, (int(x), y))
 
 
+PANEL_B = (22, 34, 64)
+
+
+def wrap_plain(text, font, maxw):
+    out, cur = [], ""
+    for w in text.split(" "):
+        tt = (cur + " " + w).strip()
+        if cur and font.getlength(tt) > maxw:
+            out.append(cur); cur = w
+        else:
+            cur = tt
+    return out + ([cur] if cur else [])
+
+
 def top_bar(img, sp, acc, alpha=1.0):
     d = ImageDraw.Draw(img)
     a = int(255 * alpha)
@@ -109,9 +123,23 @@ class Scene:
         self.acc = rgb(sc.get("accent", sp["accent"]))
         self.dur = float(sc["dur"])
         self.voice = None
+        self.voices = []                                  # [(장면 안 시각, 파일)]
+        lead = sp.get("voice_lead", 0.3)
         if sc.get("voice"):
             self.voice = str((root / sc["voice"]).resolve())
-            self.dur = max(self.dur, probe(self.voice)["duration"] + sp.get("voice_lead", 0.3) + 0.45)
+            vlen = probe(self.voice)["duration"]
+            self.voices.append((lead, self.voice))
+            self.dur = max(self.dur, vlen + lead + 0.45)
+            if sc["type"] == "quiz":                      # 질문 → 생각할 틈 → 정답 공개 → 정답 목소리
+                self.reveal = lead + vlen + sc.get("think", 1.1)
+                if sc.get("voice_answer"):
+                    va = str((root / sc["voice_answer"]).resolve())
+                    self.voices.append((self.reveal + 0.15, va))
+                    self.dur = max(self.dur, self.reveal + 0.15 + probe(va)["duration"] + 0.8)
+                else:
+                    self.dur = max(self.dur, self.reveal + 2.2)
+        if sc["type"] == "quiz" and not sc.get("voice"):
+            self.reveal = sc.get("reveal", 2.2)
         self.bg = navy_bg((W, H), grid=60)
         if sc["type"] == "cover":
             im = Image.open(root / sc["src"]).convert("RGB")
@@ -129,6 +157,11 @@ class Scene:
                 g.putpixel((0, yy), int(max(top, bot)))
             bg = Image.composite(Image.new("RGBA", (W, H), NAVY + (255,)), bg, g.resize((W, H)))
             self.bg = bg
+        if sc["type"] in ("split", "unbox", "quiz"):
+            self.panels = {}
+            for key, src in (("a", sc.get("a", {}).get("photo")), ("b", sc.get("b", {}).get("photo")), ("src", sc.get("src"))):
+                if src:
+                    self.panels[key] = Image.open(root / src).convert("RGB")
         if sc["type"] == "photo":
             im = Image.open(root / sc["src"]).convert("RGB")
             blur = fit_cover(im, (W // 4, H // 4)).filter(ImageFilter.GaussianBlur(6)).resize((W, H), Image.LANCZOS)
@@ -256,8 +289,144 @@ class Scene:
             d.text((bx + 104, by + 130), "QR", font=F("black", 72), fill=acc + (int(255 * k),))
             d.multiline_text((bx + bs + 40, by + 40), sc.get("note", ""), font=F("bold", 46), spacing=18,
                              fill=(235, 238, 245, int(255 * k)))
+        elif typ == "split":
+            self._split(img, ov, t)
+        elif typ == "unbox":
+            self._unbox(img, ov, t)
+        elif typ == "quiz":
+            self._quiz(img, ov, t)
         img.alpha_composite(ov)
         return img.convert("RGB")
+
+    # ── 형식: 비포 · 애프터 ──
+    def _panel(self, im, w, h, focus=(0.5, 0.5), dark=0.45, radius=30):
+        fx, fy = focus
+        r = max(w / im.width, h / im.height)
+        big = im.resize((int(im.width * r + 1), int(im.height * r + 1)), Image.LANCZOS)
+        x = int(clamp(fx * big.width - w / 2, 0, big.width - w)); y = int(clamp(fy * big.height - h / 2, 0, big.height - h))
+        ph = Image.blend(big.crop((x, y, x + w, y + h)), Image.new("RGB", (w, h), NAVY), dark).convert("RGBA")
+        m = Image.new("L", (w, h), 0); ImageDraw.Draw(m).rounded_rectangle((0, 0, w, h), radius, fill=255)
+        ph.putalpha(m)
+        return ph
+
+    def _split(self, img, ov, t):
+        sc, acc = self.sc, self.acc
+        sw = sc.get("swap_at", 1.7)
+        boxes = {"a": (60, 330, 1020, 870), "b": (60, 910, 1020, 1450)}
+        for key in ("a", "b"):
+            p = sc[key]; x0, y0, x1, y1 = boxes[key]; w, h = x1 - x0, y1 - y0
+            k = ease_out((t - (0.05 if key == "a" else sw)) / 0.45)
+            if k <= 0:
+                continue
+            dx = int((1 - k) * (-160 if key == "a" else 160))
+            lay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+            if key in self.panels:
+                lay.alpha_composite(self._panel(self.panels[key], w, h, p.get("focus", (0.5, 0.5)), dark=0.5 if key == "b" else 0.7))
+            else:
+                ImageDraw.Draw(lay).rounded_rectangle((0, 0, w, h), 30, fill=(34, 40, 56, 255) if key == "a" else PANEL_B + (255,))
+            d = ImageDraw.Draw(lay)
+            if key == "b":
+                d.rounded_rectangle((0, 0, w - 1, h - 1), 30, outline=acc + (255,), width=7)
+            tag = p.get("label", "BEFORE" if key == "a" else "AFTER")
+            ft = F("black", 44); tw = ft.getlength(tag)
+            d.rounded_rectangle((36, 34, 36 + tw + 48, 34 + 72), 36, fill=((120, 128, 146) if key == "a" else acc) + (255,))
+            d.text((60, 42), tag, font=ft, fill=NAVY)
+            draw_line(lay, p["text"], F("black", 104 if len(p["text"]) <= 10 else 88), 40, h // 2 - 70,
+                      (150, 158, 176) if key == "a" else acc)
+            if p.get("sub"):
+                d.text((44, h // 2 + 70), p["sub"], font=F("bold", 48), fill=(225, 230, 240))
+            if key == "a" and t > sw:                      # 애프터가 오면 비포는 어두워지고 줄이 그어진다
+                kd = ease_out((t - sw) / 0.5)
+                dim = Image.new("RGBA", (w, h), (11, 18, 36, int(120 * kd))); dm = Image.new("L", (w, h), 0)
+                ImageDraw.Draw(dm).rounded_rectangle((0, 0, w, h), 30, fill=int(120 * kd)); dim.putalpha(dm)
+                lay.alpha_composite(dim)
+                ImageDraw.Draw(lay).line((36, h // 2 - 10, 36 + int((w - 120) * kd), h // 2 - 22), fill=(240, 98, 120, 255), width=12)
+            if k < 1:
+                lay.putalpha(lay.getchannel("A").point(lambda v: int(v * k)))
+            img.alpha_composite(lay, (x0 + dx, y0))
+
+    # ── 형식: 언박싱 ──
+    def _unbox(self, img, ov, t):
+        sc, acc = self.sc, self.acc
+        d = ImageDraw.Draw(ov)
+        if sc.get("no"):
+            k = clamp(t / 0.3)
+            d.text((X0, 318), sc["no"], font=F("black", 60), fill=acc + (int(255 * k),))
+        bx0, bx1, top, bot = 270, 810, 1010, 1300
+        drop = int((1 - back(t / 0.35)) * -260) if t < 0.35 else 0
+        top += drop; bot += drop
+        kraft, side, dark = (201, 154, 102), (176, 132, 84), (120, 86, 52)
+        kf = ease_out((t - 0.35) / 0.5)                    # 뚜껑 열림
+        # 사진 카드: 상자 안에서 위로 솟음
+        kc = ease_out((t - 0.75) / 0.8)
+        if "src" in self.panels and kc > 0:
+            cw, ch = 860, 600
+            sc_ = 0.35 + 0.65 * kc
+            w2, h2 = int(cw * sc_), int(ch * sc_)
+            card = self._panel(self.panels["src"], cw, ch, sc.get("focus", (0.5, 0.5)), dark=0.0, radius=34).resize((w2, h2), Image.LANCZOS)
+            cy = int(top + 40 - (top + 40 - 410) * kc)
+            img.alpha_composite(card, ((W - w2) // 2, cy))
+        g = ImageDraw.Draw(img)
+        g.polygon([(bx0, top), (bx1, top), (bx1, bot), (bx0, bot)], fill=kraft)               # 앞면
+        g.polygon([(bx0, top), (bx0 + 60, top - 70), (bx1 + 60, top - 70), (bx1, top)], fill=dark) # 입구
+        g.rectangle((bx0, top + 40, bx1, top + 92), fill=acc)                                  # 그룹색 띠
+        fl = int(150 * kf)                                                                     # 날개
+        g.polygon([(bx0, top), (bx0 + 60, top - 70), (bx0 + 60 - 120 - fl, top - 70 - 90 * kf), (bx0 - 120 * kf - fl // 2, top - 40 * kf)], fill=side)
+        g.polygon([(bx1, top), (bx1 + 60, top - 70), (bx1 + 60 + 40 + fl, top - 70 - 90 * kf), (bx1 + 40 + fl // 2, top - 30 * kf)], fill=side)
+        if kc > 0.6:                                                                          # 반짝이
+            ks = clamp((kc - 0.6) / 0.4)
+            for (sx, sy, r) in ((170, 420, 30), (930, 380, 24), (900, 860, 34), (150, 820, 22)):
+                rr = int(r * ks)
+                d.polygon([(sx, sy - rr), (sx + rr // 4, sy - rr // 4), (sx + rr, sy), (sx + rr // 4, sy + rr // 4),
+                           (sx, sy + rr), (sx - rr // 4, sy + rr // 4), (sx - rr, sy), (sx - rr // 4, sy - rr // 4)], fill=acc + (int(255 * ks),))
+        y = bot + 40
+        for i, line in enumerate(sc.get("lines", [])):
+            kk = (t - 1.4 - i * 0.35) / 0.35
+            draw_line(img, line, F("black", 72), X0, y, acc, alpha=clamp(kk * 1.5))
+            y += 100
+
+    # ── 형식: 퀴즈 ──
+    def _quiz(self, img, ov, t):
+        sc, acc = self.sc, self.acc
+        d = ImageDraw.Draw(ov)
+        rv = self.reveal
+        kq = clamp(t / 0.35)
+        d.rounded_rectangle((X0, 320, X0 + 110, 430), 26, fill=acc + (int(255 * kq),))
+        d.text((X0 + 30, 330), "Q", font=F("black", 80), fill=NAVY + (int(255 * kq),))
+        fq = F("black", 66)
+        lines = wrap_plain(sc["q"], fq, 760)
+        for i, ln in enumerate(lines):
+            d.text((X0 + 140, 326 + i * 86), ln, font=fq, fill=(255, 255, 255, int(255 * kq)))
+        qb = 326 + len(lines) * 86 + 20
+        if t < rv:                                                   # 생각할 시간 막대
+            think = sc.get("think", 1.1)
+            k = clamp((rv - t) / think) if t > rv - think else 1.0
+            d.rounded_rectangle((X0, qb, X0 + int(912 * k), qb + 14), 7, fill=acc + (220,))
+        kp = ease_out((t - rv - 0.7) / 0.5)                          # 사진 카드가 보기를 덮는다
+        y0 = qb + 60
+        for i, ch in enumerate(sc["choices"]):
+            kc = ease_out((t - 0.3 - i * 0.2) / 0.35)
+            if kc <= 0 or kp >= 1:
+                continue
+            yy = y0 + i * 170
+            right = i == sc["answer"] and t >= rv
+            wrong = i != sc["answer"] and t >= rv
+            a = int(255 * kc * (1 - kp))
+            fill = (acc + (a,)) if right else ((30, 38, 58, a) if not wrong else (24, 30, 46, int(a * 0.6)))
+            d.rounded_rectangle((X0 - int((1 - kc) * 80), yy, 1000, yy + 140), 28, fill=fill,
+                                outline=(acc + (a,)) if not right else None, width=4)
+            col = NAVY + (a,) if right else ((255, 255, 255, a) if not wrong else (150, 158, 176, int(a * 0.6)))
+            d.text((X0 + 34, yy + 34), "ABC"[i], font=F("black", 64), fill=col)
+            d.text((X0 + 110, yy + 40), ch, font=F("bold", 54), fill=col)
+            if right:
+                d.text((1000 - 150, yy + 44), "정답", font=F("black", 50), fill=NAVY + (a,))
+        if kp > 0 and "src" in self.panels:
+            cw, ch = 960, 600
+            card = self._panel(self.panels["src"], cw, ch, sc.get("focus", (0.5, 0.5)), dark=0.0, radius=34)
+            card.putalpha(card.getchannel("A").point(lambda v: int(v * kp)))
+            img.alpha_composite(card, (60, y0 + int((1 - kp) * 120)))
+            if sc.get("reveal_text"):
+                draw_line(img, sc["reveal_text"], F("black", 72), X0, y0 + ch + 40, acc, alpha=clamp((t - rv - 1.0) / 0.4))
 
 
 def main(spec_path: str) -> Path:
@@ -290,7 +459,7 @@ def main(spec_path: str) -> Path:
         pr.stdin.write(fr.tobytes())
     pr.stdin.close(); pr.wait()
     lead = sp.get("voice_lead", 0.3)
-    vs = [(starts[k] + lead, s.voice) for k, s in enumerate(scenes) if s.voice]
+    vs = [(starts[k] + off, v) for k, s in enumerate(scenes) for off, v in s.voices]
     if sp.get("bgm") or vs:
         ins, fil, labs = ["-i", str(silent)], "", []
         for j, (at, v) in enumerate(vs):

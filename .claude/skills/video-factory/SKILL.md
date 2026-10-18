@@ -19,7 +19,7 @@ description: 영상 자동화 공장 — 이미 찍은 영상(강의·설교·�
 | `typo.py` | 키네틱 타이포 쇼츠/가로 (모션 메뉴 19가지) | `script.json` → mp4 |
 | `menu.py` | 모션 메뉴 미리보기 영상 + `menu.json` | → 360×640 mp4 · jpg |
 | `oneline.py` | 코스 C01 «한 줄의 선» — 크림 종이에 파란 펜 한 줄이 끊기지 않고 아이콘·손글씨를 그리며 내려감(9:16) | `spec.json` → mp4 |
-| `group_short.py` | 그룹·모임 홍보 쇼츠 9:16 — 훅 · 사진 카드(흐린 배경 + 천천히 다가가기) · 숫자 세기 · 한 마디 · QR 자리. 작은 사진도 깨지지 않음. 장면마다 `voice` 를 주면 길이를 목소리에 맞추고 배경음을 자동으로 낮춤. 맨 앞 `cover` 장면 = 쇼츠 표지(0.6초 + `_표지.jpg`) | `spec.json` → mp4 |
+| `group_short.py` | 그룹·모임 홍보 쇼츠 9:16 — 훅 · 사진 카드(흐린 배경 + 천천히 다가가기) · 숫자 세기 · 한 마디 · QR 자리. 작은 사진도 깨지지 않음. 장면마다 `voice` 를 주면 길이를 목소리에 맞추고 배경음을 자동으로 낮춤. 맨 앞 `cover` 장면 = 쇼츠 표지(0.6초 + `_표지.jpg`). 본문 형식: photo · stats · motto · split(비포·애프터) · unbox(언박싱) · quiz(퀴즈, 질문·정답 목소리 따로) — 그룹마다 다른 형식으로 | `spec.json` → mp4 |
 | `tts_lines.py` | 문장마다 Gemini TTS 녹음(대괄호 태그 · 테이크 2개 · 지시문 읽은 테이크 다시). GEMINI_API_KEY 있는 자식 세션에서 | `narration.json` → wav |
 | `cover.py` | 쇼츠 표지(1080×1920) · 썸네일(1280×720) + 레이어 PSD | `cover.json` → jpg + psd |
 | `upscale.py` | 4K/8K, 조각 굽기(끊겨도 이어서), 100MB 넘으면 crf 올려 다시 | mp4 → mp4 |
