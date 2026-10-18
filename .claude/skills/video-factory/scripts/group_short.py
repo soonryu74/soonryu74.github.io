@@ -349,6 +349,10 @@ class Scene:
             self._unbox(img, ov, t)
         elif typ == "quiz":
             self._quiz(img, ov, t)
+        elif typ == "chat":
+            self._chat(img, ov, t)
+        elif typ == "checklist":
+            self._checklist(img, ov, t)
         img.alpha_composite(ov)
         return img.convert("RGB")
 
@@ -446,6 +450,78 @@ class Scene:
             kk = (t - 1.4 - i * 0.35) / 0.35
             draw_line(img, line, F("black", 72), X0, y, acc, alpha=clamp(kk * 1.5))
             y += 100
+
+    # ── 형식: 메신저 대화 ──
+    def _chat(self, img, ov, t):
+        sc, T = self.sc, self.th
+        msgs = sc["messages"]                                   # [["me"|"you", "글"], …]
+        x0, y0, x1, y1 = 60, 330, 1020, 1330
+        k = ease_out(t / 0.4)
+        lay = Image.new("RGBA", (x1 - x0, y1 - y0), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
+        w, h = lay.size
+        d.rounded_rectangle((0, 0, w, h), 44, fill=(255, 255, 255, 255))
+        d.rounded_rectangle((0, 0, w, 120), 44, fill=(246, 247, 250, 255)); d.rectangle((0, 70, w, 120), fill=(246, 247, 250, 255))
+        d.ellipse((34, 26, 102, 94), fill=T.chip_bg + (255,))
+        d.text((122, 34), sc.get("title", "멘토님"), font=F("bold", 44), fill=(20, 26, 43))
+        step = sc.get("step", max(0.9, (self.dur - 1.4) / max(1, len(msgs))))
+        y = 160
+        fm = F("semi", 52)
+        for i, (who, text) in enumerate(msgs):
+            at = 0.5 + i * step
+            if t < at - (0.45 if who == "you" else 0):
+                if who == "you" and t >= at - 0.45:              # 상대가 입력 중 …
+                    pass
+                break
+            if who == "you" and t < at:
+                d.rounded_rectangle((34, y, 170, y + 70), 35, fill=(236, 238, 242, 255))
+                for j in range(3):
+                    ph = (t * 6 + j) % 3
+                    d.ellipse((62 + j * 34, y + 26 + (4 if ph < 1 else 0), 80 + j * 34, y + 44 + (4 if ph < 1 else 0)), fill=(150, 156, 170, 255))
+                break
+            kk = ease_out((t - at) / 0.25)
+            lines = wrap_plain(text, fm, 660)
+            bw = max(fm.getlength(l) for l in lines) + 60; bh = len(lines) * 66 + 40
+            bx = 34 if who == "you" else w - 34 - bw
+            col = (236, 238, 242) if who == "you" else T.chip_bg if T.mode != "vivid" else tuple(int(c) for c in self.acc)
+            txt = (20, 26, 43) if who == "you" else (T.chip_fg if T.mode != "vivid" else T.ink)
+            dy = int((1 - kk) * 30)
+            d.rounded_rectangle((bx, y + dy, bx + bw, y + bh + dy), 30, fill=col + (int(255 * kk),))
+            for j, l in enumerate(lines):
+                d.text((bx + 30, y + 18 + j * 66 + dy), l, font=fm, fill=txt + (int(255 * kk),))
+            y += bh + 26
+        if k < 1:
+            lay.putalpha(lay.getchannel("A").point(lambda v: int(v * k)))
+        img.alpha_composite(lay, (x0, y0 + int((1 - k) * 60)))
+        if sc.get("tag"):
+            ImageDraw.Draw(ov).text((x0 + 10, y1 + 20), sc["tag"], font=F("semi", 36), fill=T.sub + (int(255 * k),))
+
+    # ── 형식: 체크리스트 ──
+    def _checklist(self, img, ov, t):
+        sc, T = self.sc, self.th
+        d = ImageDraw.Draw(ov)
+        k0 = clamp(t / 0.35)
+        d.text((X0, 330), sc.get("title", ""), font=F("black", 72), fill=T.ink + (int(255 * k0),))
+        items = sc["items"]
+        step = sc.get("step", max(0.7, (self.dur - 1.2) / max(1, len(items))))
+        y = 470
+        for i, it in enumerate(items):
+            at = 0.4 + i * step
+            ki = ease_out((t - at) / 0.3)
+            if ki <= 0:
+                break
+            a = int(255 * ki)
+            d.rounded_rectangle((X0, y, X0 + 96, y + 96), 22, outline=T.ink + (a,), width=7)
+            kc = clamp((t - at - 0.25) / 0.3)                     # 체크 표시가 그어진다
+            if kc > 0:
+                p1, p2, p3 = (X0 + 20, y + 50), (X0 + 42, y + 74), (X0 + 80, y + 22)
+                if kc < 0.5:
+                    e = (p1[0] + (p2[0] - p1[0]) * kc * 2, p1[1] + (p2[1] - p1[1]) * kc * 2); d.line([p1, e], fill=T.ink + (255,), width=12)
+                else:
+                    e = (p2[0] + (p3[0] - p2[0]) * (kc - 0.5) * 2, p2[1] + (p3[1] - p2[1]) * (kc - 0.5) * 2); d.line([p1, p2, e], fill=T.ink + (255,), width=12, joint="curve")
+            draw_line(img, it, F("bold", 60 if len(it) <= 14 else 52), X0 + 130, y + 6 + int((1 - ki) * 20), self.acc, alpha=ki)
+            y += 150
+        if sc.get("note"):
+            d.text((X0, y + 20), sc["note"], font=F("semi", 38), fill=T.sub + (int(255 * clamp((t - 1.0) / 0.4)),))
 
     # ── 형식: 퀴즈 ──
     def _quiz(self, img, ov, t):
