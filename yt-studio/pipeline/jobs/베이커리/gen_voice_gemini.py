@@ -12,7 +12,8 @@ STYLE = os.environ.get("TTS_STYLE", "[bright, friendly] ")   # 3.8 TTS 는 문�
 SUFFIX = os.environ.get("TTS_SUFFIX", "")   # 후보 꼬리표(_v2 등)
 MODEL = os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts")   # 일일 한도 초과 시 gemini-3.8-flash-lite-tts
 FALLBACK = os.environ.get("TTS_FALLBACK", "gemini-3.8-flash-lite-tts")   # 모델 없음·미지원(404/400)이면 한 번 전환
-URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key=" + KEY
+URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent"   # 키는 주소에 넣지 않는다(오류 메시지에 찍히지 않게)
+HDR = {"x-goog-api-key": KEY, "Content-Type": "application/json"}
 def tts(text, out, tries=3):
     """길이가 글자 수에 비해 너무 길면(지시문까지 읽음) 다시 만든다"""
     best = None
@@ -31,12 +32,13 @@ def _tts(text, out):
             "generationConfig": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": VOICE}}}}}
     global MODEL
     for i in range(4):
-        r = requests.post(URL.format(MODEL), json=body, timeout=120)
+        r = requests.post(URL.format(MODEL), json=body, headers=HDR, timeout=120)
         if r.status_code == 200: break
         if MODEL != FALLBACK and (r.status_code == 404 or r.status_code == 400 and "model" in r.text.lower()):
             print("  모델 전환", MODEL, "→", FALLBACK, r.status_code); MODEL = FALLBACK; continue
         print("  재시도", r.status_code, r.text[:200]); time.sleep(5 * (i + 1))
-    r.raise_for_status()
+    if r.status_code != 200:                         # raise_for_status 는 주소를 찍는다
+        raise SystemExit(f"TTS 실패 {r.status_code} ({MODEL}): {r.text[:300]}")
     part = r.json()["candidates"][0]["content"]["parts"][0]["inlineData"]
     pcm = base64.b64decode(part["data"]); mime = part.get("mimeType", "audio/L16;rate=24000")
     rate = int(mime.split("rate=")[1].split(";")[0]) if "rate=" in mime else 24000

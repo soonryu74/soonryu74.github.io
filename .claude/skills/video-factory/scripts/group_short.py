@@ -215,6 +215,9 @@ class Scene:
                     self.panels[key] = Image.open(root / src).convert("RGB")
         if sc["type"] == "photo":
             im = Image.open(root / sc["src"]).convert("RGB")
+            if sc.get("warm"):                                  # 따뜻한 필터: 주황빛 살짝 + 채도 조금 낮게
+                from PIL import ImageEnhance
+                im = Image.blend(ImageEnhance.Color(im).enhance(0.85), Image.new("RGB", im.size, (255, 176, 110)), 0.12)
             blur = fit_cover(im, (W // 4, H // 4)).filter(ImageFilter.GaussianBlur(6)).resize((W, H), Image.LANCZOS)
             dark = Image.new("RGB", (W, H), BASE)
             self.bg = Image.blend(blur, dark, 0.55 if self.th.mode == "dark" else 0.72).convert("RGBA")
@@ -234,7 +237,7 @@ class Scene:
         img = self.bg.copy()
         ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))   # 투명도 있는 글자 · 선은 이 층에 그려 마지막에 섞는다
         typ = sc["type"]
-        if typ not in ("hook", "intro"):
+        if typ not in ("hook", "intro", "diary"):
             top_bar(img, self.sp, acc)
         if typ == "cover":
             l1, l2 = sc["lines"][0], sc["lines"][1]
@@ -353,6 +356,10 @@ class Scene:
             self._chat(img, ov, t)
         elif typ == "checklist":
             self._checklist(img, ov, t)
+        elif typ == "diary":
+            self._diary(img, ov, t)
+        elif typ == "invite":
+            self._invite(img, ov, t)
         img.alpha_composite(ov)
         return img.convert("RGB")
 
@@ -523,6 +530,77 @@ class Scene:
         if sc.get("note"):
             d.text((X0, y + 20), sc["note"], font=F("semi", 38), fill=T.sub + (int(255 * clamp((t - 1.0) / 0.4)),))
 
+    # ── 형식: 손글씨 일기 ──
+    def _diary(self, img, ov, t):
+        sc, T = self.sc, self.th
+        from PIL import ImageFont
+        pen = ImageFont.truetype(str(Path(__file__).resolve().parent.parent / "assets" / "fonts" / "NanumPenScript-Regular.ttf"), sc.get("size", 96))
+        x0, y0, x1, y1 = 80, 300, 1000, 1360
+        k = ease_out(t / 0.4)
+        w, h = x1 - x0, y1 - y0
+        lay = Image.new("RGBA", (w, h), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
+        d.rounded_rectangle((0, 0, w, h), 26, fill=(252, 246, 232, 255))
+        for yy in range(230, h - 40, 130):
+            d.line((40, yy, w - 40, yy), fill=(170, 196, 226, 255), width=3)
+        d.line((110, 0, 110, h), fill=(236, 140, 140, 255), width=3)
+        if sc.get("date"):
+            d.text((140, 70), sc["date"], font=pen.font_variant(size=70), fill=(120, 120, 130, 255))
+        ink = (34, 54, 110)
+        step = sc.get("step", max(1.0, (self.dur - 1.0) / max(1, len(sc["lines"]))))
+        for i, ln in enumerate(sc["lines"]):
+            kk = clamp((t - 0.5 - i * step) / (step * 0.75))      # 왼쪽부터 써지듯
+            if kk <= 0:
+                break
+            yy = 230 + (i + 1) * 130 - 104
+            tw = pen.getlength(ln)
+            line = Image.new("RGBA", (int(tw) + 20, 130), (0, 0, 0, 0))
+            ImageDraw.Draw(line).text((0, 0), ln, font=pen, fill=ink + (255,))
+            m = Image.new("L", line.size, 0); ImageDraw.Draw(m).rectangle((0, 0, int(line.width * kk), line.height), fill=255)
+            line.putalpha(Image.composite(line.getchannel("A"), Image.new("L", line.size, 0), m))
+            lay.alpha_composite(line, (140, yy))
+        if k < 1:
+            lay.putalpha(lay.getchannel("A").point(lambda v: int(v * k)))
+        img.alpha_composite(lay, (x0, y0 + int((1 - k) * 50)))
+        if sc.get("tag"):
+            ImageDraw.Draw(ov).text((x0 + 10, y1 + 24), sc["tag"], font=F("semi", 36), fill=T.sub + (int(255 * k),))
+
+    # ── 형식: 초대장 ──
+    def _invite(self, img, ov, t):
+        sc, T = self.sc, self.th
+        from PIL import ImageFont
+        pen = ImageFont.truetype(str(Path(__file__).resolve().parent.parent / "assets" / "fonts" / "NanumPenScript-Regular.ttf"), 92)
+        ex0, ex1, etop, ebot = 140, 940, 1060, 1460
+        env = tuple(int(c * 0.82) for c in self.acc)
+        kf = ease_out((t - 0.3) / 0.5)                         # 뚜껑 열림
+        kc = ease_out((t - 0.7) / 0.9)                         # 카드가 올라옴
+        cw, ch = 760, 740
+        cx = (W - cw) // 2
+        cy = int(etop + 40 - (etop + 40 - 300) * kc)
+        g = ImageDraw.Draw(img)
+        g.rectangle((ex0, etop, ex1, ebot), fill=tuple(int(c * 0.7) for c in self.acc))     # 봉투 안쪽
+        tip = etop + 220 - int(440 * kf)                                                     # 뚜껑: 아래 → 위로 젖혀짐
+        flap = [(ex0, etop), ((ex0 + ex1) // 2, tip), (ex1, etop)]
+        if kf >= 0.5:                                                                         # 열린 뚜껑은 카드 뒤
+            g.polygon(flap, fill=tuple(min(255, int(c * 1.05)) for c in env))
+        if kc > 0:
+            card = Image.new("RGBA", (cw, ch), (0, 0, 0, 0)); d = ImageDraw.Draw(card)
+            d.rounded_rectangle((0, 0, cw, ch), 24, fill=(255, 252, 245, 255), outline=env + (255,), width=6)
+            yy = 60
+            for kind, text in sc["card"]:                      # [["pen","초대합니다"],["title","…"],["big","…"],["small","…"]]
+                f = {"pen": pen, "title": F("black", 64), "big": F("black", 84), "small": F("bold", 42)}[kind]
+                col = {"pen": env, "title": (20, 26, 43), "big": env, "small": (70, 76, 92)}[kind]
+                for ln in text.split("\n"):
+                    tw = f.getlength(ln)
+                    d.text(((cw - tw) / 2, yy), ln, font=f, fill=col + (255,))
+                    yy += int(f.size * 1.25)
+                yy += 22
+            img.alpha_composite(card, (cx, cy))
+        g = ImageDraw.Draw(img)
+        g.polygon([(ex0, etop), (ex1, etop), (ex1, ebot), (ex0, ebot)], fill=env)                  # 봉투 앞면
+        g.polygon([(ex0, etop), ((ex0 + ex1) // 2, etop + 200), (ex1, etop)], fill=tuple(int(c * 0.92) for c in env))
+        if kf < 0.5:
+            g.polygon(flap, fill=tuple(min(255, int(c * 1.05)) for c in env))
+
     # ── 형식: 퀴즈 ──
     def _quiz(self, img, ov, t):
         sc, acc = self.sc, self.acc
@@ -590,9 +668,10 @@ def main(spec_path: str) -> Path:
         i = max(k for k in range(len(scenes)) if starts[k] <= t + 1e-9)
         lt = t - starts[i]
         fr = scenes[i].frame(lt)
-        if i > 0 and lt < XF:                            # 앞 장면과 짧게 겹치기
+        xf = float(scenes[i].sc.get("fade", sp.get("fade", XF)))
+        if i > 0 and lt < xf:                            # 앞 장면과 겹치기 (느린 컷은 "fade": 0.6)
             prev = scenes[i - 1].frame(scenes[i - 1].dur - 1e-3)
-            fr = Image.blend(prev, fr, lt / XF)
+            fr = Image.blend(prev, fr, lt / xf)
         if t > total - 0.5:                              # 끝 0.5초 어둡게
             fr = Image.blend(fr, Image.new("RGB", (W, H), scenes[-1].th.base), (t - (total - 0.5)) / 0.5 * 0.85)
         pr.stdin.write(fr.tobytes())

@@ -22,7 +22,8 @@ TAKES = int(sys.argv[3]) if len(sys.argv) > 3 else 2
 TAG = J.get("tag", "[warm, calm]") + " "
 MODEL = os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts")
 FALLBACK = os.environ.get("TTS_FALLBACK", "gemini-3.8-flash-lite-tts")
-URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key=" + KEY
+URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent"   # 키는 주소에 넣지 않는다(오류 메시지에 찍히지 않게)
+HDR = {"x-goog-api-key": KEY, "Content-Type": "application/json"}
 
 
 def _tts(text: str, out: Path) -> float:
@@ -31,14 +32,15 @@ def _tts(text: str, out: Path) -> float:
             "generationConfig": {"responseModalities": ["AUDIO"],
                                  "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": J.get("voice", "Kore")}}}}}
     for i in range(4):
-        r = requests.post(URL.format(MODEL), json=body, timeout=120)
+        r = requests.post(URL.format(MODEL), json=body, headers=HDR, timeout=120)
         if r.status_code == 200:
             break
         if MODEL != FALLBACK and (r.status_code == 404 or r.status_code == 400 and "model" in r.text.lower()):
             print("  모델 전환", MODEL, "→", FALLBACK, r.status_code, flush=True); MODEL = FALLBACK
             continue
         print("  재시도", r.status_code, r.text[:200], flush=True); time.sleep(5 * (i + 1))
-    r.raise_for_status()
+    if r.status_code != 200:                         # raise_for_status 대신 — 주소·키를 찍지 않는다
+        sys.exit(f"TTS 실패 {r.status_code} ({MODEL}): {r.text[:300]}")
     part = r.json()["candidates"][0]["content"]["parts"][0]["inlineData"]
     pcm = base64.b64decode(part["data"]); mime = part.get("mimeType", "audio/L16;rate=24000")
     rate = int(mime.split("rate=")[1].split(";")[0]) if "rate=" in mime else 24000
