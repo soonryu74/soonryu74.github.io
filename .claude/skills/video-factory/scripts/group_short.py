@@ -26,6 +26,7 @@ spec.json:
 화면 아래 22% 와 오른쪽 끝은 쇼츠 버튼 자리라 글자를 두지 않는다."""
 from __future__ import annotations
 
+import math
 import re
 import subprocess
 import sys
@@ -177,7 +178,7 @@ class Scene:
             vlen = probe(self.voice)["duration"]
             self.voices.append((lead, self.voice))
             self.dur = max(self.dur, vlen + lead + 0.45)
-            if sc["type"] == "quiz":                      # 질문 → 생각할 틈 → 정답 공개 → 정답 목소리
+            if sc["type"] in ("quiz", "qcard"):           # 질문 → 생각할 틈 → 정답 공개 → 정답 목소리
                 self.reveal = lead + vlen + sc.get("think", 1.1)
                 if sc.get("voice_answer"):
                     va = str((root / sc["voice_answer"]).resolve())
@@ -185,10 +186,10 @@ class Scene:
                     self.dur = max(self.dur, self.reveal + 0.15 + probe(va)["duration"] + 0.8)
                 else:
                     self.dur = max(self.dur, self.reveal + 2.2)
-        if sc["type"] == "quiz" and not sc.get("voice"):
+        if sc["type"] in ("quiz", "qcard") and not sc.get("voice"):
             self.reveal = sc.get("reveal", 2.2)
         self.bg = self.th.background()
-        if sc["type"] == "cover":
+        if sc["type"] == "cover" and sc.get("src"):
             im = Image.open(root / sc["src"]).convert("RGB")
             ph_h = int(H * 0.60)
             fx, fy = sc.get("focus", [0.5, 0.5])
@@ -364,6 +365,8 @@ class Scene:
             self._invite(img, ov, t)
         elif typ == "vlog":
             self._vlog(img, ov, t)
+        elif typ in ("alarm", "qcard", "passport", "recipe", "feed", "walkmap"):
+            getattr(self, "_" + typ)(img, ov, t)
         img.alpha_composite(ov)
         return img.convert("RGB")
 
@@ -635,6 +638,265 @@ class Scene:
                 d.ellipse((cx - rr, gy - rr, cx + rr, gy + rr), fill=(T.ink if on else T.dim) + (255,))
                 if j + 1 == m:
                     lab = f"{m}월"; d.text((cx - fm.getlength(lab) / 2, gy + 24), lab, font=fm, fill=T.ink + (255,))
+
+    # ── 형식: 알람 (06:30 카운트다운) ──
+    def _alarm(self, img, ov, t):
+        sc, T = self.sc, self.th
+        d = ImageDraw.Draw(ov)
+        tgt = sc["time"]; frm = sc.get("from")
+        shown = tgt
+        if frm and ":" in frm:                                  # 분이 째깍째깍 넘어간다
+            h0, m0 = map(int, frm.split(":")); h1, m1 = map(int, tgt.split(":"))
+            a, b = h0 * 60 + m0, h1 * 60 + m1
+            cur = a + int((b - a) * clamp((t - 0.2) / 1.0) + 1e-6)
+            shown = f"{cur // 60:02d}:{cur % 60:02d}"
+        ring = shown == tgt
+        rt = t - (1.2 if frm else 0.3)
+        shake = int(14 * math.sin(rt * 60) * clamp(1 - rt / 0.7)) if ring and 0 < rt < 0.7 else 0
+        k = ease_out(t / 0.35)
+        x0, y0, x1, y1 = 60 + shake, 360, 1020 + shake, 960
+        a = int(255 * k)
+        d.rounded_rectangle((x0, y0 + int((1 - k) * 40), x1, y1 + int((1 - k) * 40)), 48, fill=T.ink + (a,))
+        fa = F("bold", 56)
+        if sc.get("ampm"):
+            d.text((x0 + 70, y0 + 60), sc["ampm"], font=fa, fill=T.base + (a,))
+        if sc.get("day"):
+            dw = fa.getlength(sc["day"]); d.text((x1 - 70 - dw, y0 + 60), sc["day"], font=fa, fill=T.base + (a,))
+        ft = F("black", 250 if len(shown) <= 5 else 200)
+        tw = ft.getlength(shown)
+        d.text(((x0 + x1 - tw) / 2, y0 + 150), shown, font=ft, fill=T.num + (a,))
+        if ring and rt > 0:                                     # 울리는 물결
+            for j in range(3):
+                kk = clamp((rt - j * 0.18) / 0.6)
+                if 0 < kk < 1:
+                    rr = 40 + 120 * kk; al = int(200 * (1 - kk))
+                    for cx in (x0 + 10, x1 - 10):
+                        d.arc((cx - rr, (y0 + y1) / 2 - rr, cx + rr, (y0 + y1) / 2 + rr), 0, 360, fill=T.num + (al,), width=10)
+        if sc.get("label"):
+            kl = clamp((t - 0.5) / 0.35); fl = F("bold", 50); lw = fl.getlength(sc["label"])
+            d.text((x0 + (x1 - x0 - lw) / 2, y1 - 112), sc["label"], font=fl, fill=T.base + (int(a * kl),))
+        y = 1030
+        for i, ln in enumerate(sc.get("lines", [])):
+            kk = (t - 0.7 - i * 0.4) / 0.3
+            draw_line(img, ln, F("black", 76), X0, y + int((1 - ease_out(kk)) * 24), self.acc, alpha=clamp(kk * 1.6))
+            y += 112
+
+    # ── 형식: 선배에게 묻다 (Q 카드 → A 카드) ──
+    def _qcard(self, img, ov, t):
+        sc, T = self.sc, self.th
+        d = ImageDraw.Draw(ov)
+        rv = self.reveal
+        kq = ease_out(t / 0.35)
+        if sc.get("no"):
+            d.text((X0, 330), sc["no"], font=F("bold", 46), fill=T.sub + (int(255 * kq),))
+        d.text((X0 - 6, 380 - int((1 - kq) * 30)), "Q.", font=F("black", 130), fill=T.ink + (int(255 * kq),))
+        fq = F("black", 74)
+        y = 530
+        for i, ln in enumerate(wrap_plain(sc["q"], fq, 900)):
+            d.text((X0, y), ln, font=fq, fill=T.ink + (int(255 * kq),)); y += 98
+        ka = ease_out((t - rv) / 0.45)
+        if ka > 0:
+            cy = y + 36 + int((1 - ka) * 90)
+            n = len(sc["a"])
+            ch = 150 + n * 96 + (60 if sc.get("tag") else 0)
+            d.rounded_rectangle((60, cy, 1020, cy + ch), 40, fill=T.panel_b + (int(255 * ka),))
+            d.text((110, cy + 30), "A.", font=F("black", 96), fill=self.acc + (int(255 * ka),))
+            fa = F("black", 66)
+            for i, ln in enumerate(sc["a"]):
+                kk = clamp((t - rv - 0.2 - i * 0.3) / 0.3)
+                d.text((250, cy + 46 + i * 96), ln, font=fa, fill=(20, 26, 43, int(255 * kk * ka)))
+            if sc.get("tag"):
+                d.text((250, cy + 60 + n * 96), sc["tag"], font=F("semi", 42), fill=(90, 96, 112, int(255 * ka)))
+            if sc.get("src"):                                   # 증거 사진
+                py = cy + ch + 30; hh = min(sc.get("photo_h", 330), 1490 - py)
+                if hh > 120:
+                    if not hasattr(self, "qph"):
+                        self.qph = Image.open(self.root / sc["src"]).convert("RGB")
+                    card = self._panel(self.qph, 960, hh, sc.get("focus", (0.5, 0.5)), dark=0.0, radius=30)
+                    kk = ease_out((t - rv - 0.5) / 0.4)
+                    card.putalpha(card.getchannel("A").point(lambda v: int(v * kk)))
+                    img.alpha_composite(card, (60, py + int((1 - kk) * 40)))
+
+    # ── 형식: 여권 도장 ──
+    def _passport(self, img, ov, t):
+        sc, T = self.sc, self.th
+        k = ease_out(t / 0.35)
+        x0, y0, x1, y1 = 80, 330, 1000, 1200
+        page = Image.new("RGBA", (x1 - x0, y1 - y0), (0, 0, 0, 0)); pd = ImageDraw.Draw(page)
+        pd.rounded_rectangle((0, 0, x1 - x0, y1 - y0), 30, fill=(250, 247, 238, 255))
+        pd.text((50, 40), "PASSPORT  ·  여권", font=F("bold", 40), fill=(120, 116, 104, 255))
+        pd.text((x1 - x0 - 230, 40), sc.get("page", "VISAS"), font=F("bold", 40), fill=(120, 116, 104, 255))
+        for yy in range(130, y1 - y0 - 30, 90):
+            pd.line((50, yy, x1 - x0 - 50, yy), fill=(228, 222, 206, 255), width=2)
+        new = sc.get("new", 0)
+        for j, st in enumerate(sc["stamps"]):
+            ks = 1.0 if j < new else (t - 0.3 - (j - new) * 0.55) / 0.3
+            if ks <= 0:
+                continue
+            col = rgb(st.get("color", "#1F4FB8"))
+            f1, f2 = F("black", 64), F("bold", 40)
+            w = int(max(f1.getlength(st["text"]), f2.getlength(st.get("sub", ""))) + 90); h = 200
+            lay = Image.new("RGBA", (w + 20, h + 20), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay)
+            ld.rounded_rectangle((10, 10, w + 10, h + 10), 26, outline=col + (235,), width=8)
+            ld.rounded_rectangle((24, 24, w - 4, h - 4), 18, outline=col + (200,), width=3)
+            ld.text((45, 40), st["text"], font=f1, fill=col + (235,))
+            ld.text((47, 122), st.get("sub", ""), font=f2, fill=col + (220,))
+            lay = lay.rotate(st.get("rot", -6), expand=True, resample=Image.BICUBIC)
+            sc_ = 1.0 if j < new else 1.7 - 0.7 * ease_out(clamp(ks))
+            if sc_ != 1.0:
+                lay = lay.resize((int(lay.width * sc_), int(lay.height * sc_)), Image.LANCZOS)
+            if j >= new:
+                lay.putalpha(lay.getchannel("A").point(lambda v: int(v * clamp(ks * 1.5))))
+            px, py = st["pos"]
+            cx, cy = int(px * (x1 - x0)), int(py * (y1 - y0))
+            page.alpha_composite(lay, (max(0, cx - lay.width // 2), max(0, cy - lay.height // 2)))
+        if k < 1:
+            page.putalpha(page.getchannel("A").point(lambda v: int(v * k)))
+        img.alpha_composite(page, (x0, y0 + int((1 - k) * 40)))
+        y = y1 + 50
+        for i, ln in enumerate(sc.get("lines", [])):
+            kk = (t - 0.6 - i * 0.4) / 0.3
+            draw_line(img, ln, F("black", 72), X0, y + int((1 - ease_out(kk)) * 24), self.acc, alpha=clamp(kk * 1.6))
+            y += 106
+
+    # ── 형식: 레시피 카드 ──
+    def _recipe(self, img, ov, t):
+        sc, T = self.sc, self.th
+        from PIL import ImageFont
+        pen = ImageFont.truetype(str(Path(__file__).resolve().parent.parent / "assets" / "fonts" / "NanumPenScript-Regular.ttf"), 110)
+        k = ease_out(t / 0.35)
+        x0, y0, x1 = 70, 330, 1010
+        items = sc["items"]; hl = sc.get("hl")
+        y1 = y0 + 230 + len(items) * 170 + (110 if sc.get("result") else 0)
+        card = Image.new("RGBA", (x1 - x0, y1 - y0), (0, 0, 0, 0)); cd = ImageDraw.Draw(card)
+        cd.rounded_rectangle((0, 0, x1 - x0, y1 - y0), 34, fill=(253, 248, 238, 255))
+        cd.text((60, 40), sc.get("title", "레시피"), font=pen, fill=(92, 58, 30, 255))
+        cd.line((60, 175, x1 - x0 - 60, 175), fill=(214, 196, 170, 255), width=3)
+        for i, (name, meas) in enumerate(items):
+            ki = 1.0 if hl is not None else clamp((t - 0.4 - i * 0.45) / 0.3)
+            if ki <= 0:
+                continue
+            yy = 215 + i * 170
+            on = hl is None or hl == i
+            if hl == i:
+                kh = ease_out((t - 0.2) / 0.35)
+                cd.rounded_rectangle((36, yy - 18, int(36 + (x1 - x0 - 72) * kh), yy + 140), 24, fill=self.acc + (255,))
+            col = (40, 26, 14, int(255 * ki)) if on else (170, 156, 140, 255)
+            cd.ellipse((60, yy + 20, 140, yy + 100), fill=((92, 58, 30) if on else (206, 192, 176)) + (int(255 * ki),))
+            cd.text((84, yy + 24), str(i + 1), font=F("black", 56), fill=(253, 248, 238, int(255 * ki)))
+            cd.text((170, yy + 10), name, font=F("black", 66), fill=col)
+            cd.text((172, yy + 92), meas, font=F("bold", 40), fill=((92, 58, 30, int(255 * ki)) if on else (180, 166, 150, 255)))
+        if sc.get("result"):
+            kr = clamp((t - 0.4 - len(items) * 0.45) / 0.4) if hl is None else 1.0
+            cd.text((60, y1 - y0 - 120), sc["result"], font=pen.font_variant(size=84), fill=(92, 58, 30, int(255 * kr)))
+        if k < 1:
+            card.putalpha(card.getchannel("A").point(lambda v: int(v * k)))
+        img.alpha_composite(card, (x0, y0 + int((1 - k) * 40)))
+
+    # ── 형식: 세로 피드 화면 ──
+    def _feed(self, img, ov, t):
+        sc, T = self.sc, self.th
+        k = ease_out(t / 0.35)
+        px0, py0, pw, phh = 200, 320, 680, 1150
+        ph = Image.new("RGBA", (pw, phh), (0, 0, 0, 0)); pd = ImageDraw.Draw(ph)
+        pd.rounded_rectangle((0, 0, pw, phh), 70, fill=(20, 26, 43, 255))
+        sx0, sy0, sw, sh = 22, 22, pw - 44, phh - 44
+        scr = Image.new("RGBA", (sw, sh), (255, 255, 255, 255)); sd = ImageDraw.Draw(scr)
+        off = int(sc.get("scroll", 0) * ease_out((t - 0.3) / max(0.5, self.dur - 1.2)))
+        y = 110 - off
+        for j, po in enumerate(sc["posts"]):
+            hh = 380
+            if y > sh or y + hh < 0:
+                y += hh + 30; continue
+            clear = po.get("kind") == "clear"
+            sd.ellipse((30, y, 86, y + 56), fill=self.acc if clear else (196, 198, 204))
+            sd.text((100, y + 8), po.get("user", "@on_site0" if clear else "user"), font=F("bold", 34), fill=(30, 30, 40) if clear else (150, 152, 160))
+            box = (30, y + 76, sw - 30, y + hh - 50)
+            if clear:
+                sd.rounded_rectangle(box, 24, fill=self.acc)
+                ft = F("black", 50)
+                for i, ln in enumerate(po["title"].split("\n")):
+                    sd.text((60, y + 110 + i * 66), ln, font=ft, fill=(255, 255, 255))
+            else:
+                sd.rounded_rectangle(box, 24, fill=(214, 216, 222))
+                sd.text((60, y + 120), po.get("title", "!!!"), font=F("black", 54), fill=(160, 162, 170))
+            sd.text((34, y + hh - 44), "♡" if not clear else "♥", font=F("bold", 38), fill=self.acc if clear else (170, 172, 180))
+            y += hh + 30
+        sd.rectangle((0, 0, sw, 90), fill=(255, 255, 255)); sd.text((30, 24), sc.get("app", "피드"), font=F("black", 44), fill=(20, 26, 43))
+        ph.alpha_composite(Image.new("RGBA", (sw, sh), (0, 0, 0, 0)), (sx0, sy0))
+        m = Image.new("L", (sw, sh), 0); ImageDraw.Draw(m).rounded_rectangle((0, 0, sw, sh), 52, fill=255)
+        scr.putalpha(m); ph.alpha_composite(scr, (sx0, sy0))
+        if k < 1:
+            ph.putalpha(ph.getchannel("A").point(lambda v: int(v * k)))
+        img.alpha_composite(ph, (px0, py0 + int((1 - k) * 50)))
+        d = ImageDraw.Draw(ov)
+        if sc.get("notify"):                                    # 위에서 내려오는 알림
+            kn = ease_out((t - 0.7) / 0.35)
+            if kn > 0:
+                ny = py0 + 40 - int((1 - kn) * 120)
+                d.rounded_rectangle((px0 - 60, ny, px0 + pw + 60, ny + 130), 34, fill=(255, 255, 255, int(245 * kn)), outline=(20, 26, 43, int(60 * kn)), width=2)
+                d.ellipse((px0 - 30, ny + 33, px0 + 34, ny + 97), fill=self.acc + (int(255 * kn),))
+                d.text((px0 + 56, ny + 18), sc["notify"][0], font=F("black", 40), fill=(20, 26, 43, int(255 * kn)))
+                d.text((px0 + 56, ny + 72), sc["notify"][1], font=F("semi", 34), fill=(90, 96, 112, int(255 * kn)))
+        if sc.get("comment"):                                   # 아래에서 올라오는 댓글
+            kc = ease_out((t - 0.9) / 0.35)
+            if kc > 0:
+                cy = py0 + phh - 260 + int((1 - kc) * 80)
+                d.rounded_rectangle((px0 - 40, cy, px0 + pw + 40, cy + 170), 34, fill=(255, 255, 255, int(250 * kc)), outline=self.acc + (int(255 * kc),), width=5)
+                d.text((px0, cy + 22), sc["comment"][0], font=F("bold", 34), fill=(120, 124, 136, int(255 * kc)))
+                d.text((px0, cy + 76), sc["comment"][1], font=F("black", 50), fill=(20, 26, 43, int(255 * kc)))
+        for j in range(sc.get("hearts", 0)):                     # 하트가 떠오른다
+            kh = (t - 0.8 - j * 0.25) / 1.2
+            if 0 < kh < 1:
+                hx = px0 + pw - 40 + int(30 * math.sin(kh * 6 + j)); hy = py0 + phh - 120 - int(kh * 520)
+                d.text((hx, hy), "♥", font=F("black", 70 + j * 6), fill=self.acc + (int(255 * (1 - kh)),))
+
+    # ── 형식: 산책 지도 ──
+    def _walkmap(self, img, ov, t):
+        sc, T = self.sc, self.th
+        k = ease_out(t / 0.35)
+        x0, y0, x1, y1 = 60, 330, 1020, 1130
+        mw, mh = x1 - x0, y1 - y0
+        mp = Image.new("RGBA", (mw, mh), (0, 0, 0, 0)); md = ImageDraw.Draw(mp)
+        md.rounded_rectangle((0, 0, mw, mh), 36, fill=(252, 249, 236, 255))
+        for (a, b, c, e, wd) in ((0, 0.30, 1, 0.24, 26), (0, 0.72, 1, 0.80, 30), (0.28, 0, 0.36, 1, 24), (0.70, 0, 0.62, 1, 22), (0, 0.50, 1, 0.55, 14)):
+            md.line((a * mw, b * mh, c * mw, e * mh), fill=(234, 228, 206, 255), width=wd)
+        md.ellipse((0.74 * mw, 0.08 * mh, 0.96 * mw, 0.30 * mh), fill=(222, 236, 206, 255))   # 공원
+        pins = sc["pins"]; upto = sc.get("upto", len(pins)); frm = sc.get("from", upto - 1)
+        pts = [(p[1] * mw, p[2] * mh) for p in pins]
+        for j in range(1, upto):                                 # 점선 길이 이어진다
+            kk = 1.0 if j < frm + 1 and j <= frm else ease_out((t - 0.3 - (j - frm - 1) * 0.6) / 0.6)
+            if j <= frm:
+                kk = 1.0
+            (ax, ay), (bx, by) = pts[j - 1], pts[j]
+            n = int(math.hypot(bx - ax, by - ay) / 26)
+            for q in range(int(n * kk)):
+                if q % 2 == 0:
+                    u0, u1 = q / n, min(1, (q + 1) / n)
+                    md.line((ax + (bx - ax) * u0, ay + (by - ay) * u0, ax + (bx - ax) * u1, ay + (by - ay) * u1), fill=(60, 52, 40, 255), width=9)
+        for j in range(upto):
+            kp = 1.0 if j < frm else back((t - 0.3 - max(0, j - frm) * 0.6 - 0.4) / 0.4)
+            if kp <= 0:
+                continue
+            cx, cy = pts[j]; cur = j >= frm
+            rr = (34 if cur else 24) * max(0.01, kp)
+            md.ellipse((cx - rr, cy - rr, cx + rr, cy + rr), fill=(self.acc if cur else (60, 52, 40)) + (255,), outline=(60, 52, 40, 255), width=6)
+            fl = F("black" if cur else "bold", 46 if cur else 36); lab = pins[j][0]
+            lw = fl.getlength(lab); lx = clamp(cx - lw / 2, 20, mw - lw - 20)
+            ly = cy + rr + 12 if pins[j][2] < 0.8 else cy - rr - 66
+            if cur:
+                md.rounded_rectangle((lx - 16, ly - 6, lx + lw + 16, ly + 60), 18, fill=(60, 52, 40, int(255 * min(1, kp))))
+                md.text((lx, ly), lab, font=fl, fill=self.acc + (int(255 * min(1, kp)),))
+            else:
+                md.text((lx, ly), lab, font=fl, fill=(60, 52, 40, 255))
+        if k < 1:
+            mp.putalpha(mp.getchannel("A").point(lambda v: int(v * k)))
+        img.alpha_composite(mp, (x0, y0 + int((1 - k) * 40)))
+        y = y1 + 50
+        for i, ln in enumerate(sc.get("lines", [])):
+            kk = (t - 0.6 - i * 0.4) / 0.3
+            draw_line(img, ln, F("black", 70), X0, y + int((1 - ease_out(kk)) * 24), self.acc, alpha=clamp(kk * 1.6))
+            y += 104
 
     # ── 형식: 초대장 ──
     def _invite(self, img, ov, t):
