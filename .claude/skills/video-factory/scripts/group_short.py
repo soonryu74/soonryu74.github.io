@@ -18,6 +18,7 @@ spec.json:
 }
 "intro" 는 시리즈 공통 인트로(3초) — «SaGA 졸업생 공동체 / SCIC / 그룹을 소개합니다 / 01 AI미션그룹».
   {"type": "intro", "dur": 3.0, "eyebrow": "SaGA 졸업생 공동체", "title": "SCIC", "sub": "그룹을 소개합니다", "no": "01"}
+"palette": {"base": 배경, "ink": 글자, "sub": 보조 글자, "hl_bg"/"hl_fg": 강조 상자, "chip_bg"/"chip_fg": 칩, "num": 숫자 · 포인트} — 그룹 지정 색이 있을 때 덮어쓴다.
 "theme": "dark"(남색 배경, 기본) | "tint"(연한 그룹색 배경) | "vivid"(진한 그룹색 배경) — spec 전체 또는 장면마다.
 "cover" 는 쇼츠 표지 — 맨 앞 0.6초에 두면 업로드 때 첫 장면을 표지로 고를 수 있고, <out>_표지.jpg 로도 저장된다.
 장면에 "voice" 가 있으면 장면 길이 = max(dur, 목소리 길이 + 0.75초) 로 늘어난다.
@@ -168,6 +169,8 @@ class Scene:
         self.sc, self.sp, self.root = sc, sp, root
         self.acc = rgb(sc.get("accent", sp["accent"]))
         self.th = Theme(sc.get("theme", sp.get("theme", "dark")), self.acc)
+        for k, v in (sp.get("palette") or {}).items():     # 그룹이 직접 정한 색: {"base": "#FFF8E7", "ink": "#000000", "num": "#FFC700", …}
+            setattr(self.th, k, rgb(v) if isinstance(v, str) else tuple(v))
         global TH
         TH = self.th
         BASE = self.th.base
