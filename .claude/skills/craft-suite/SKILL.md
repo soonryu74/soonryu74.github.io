@@ -80,14 +80,23 @@ description: >
 | `photocraft_썸네일.json` | PhotoCraft 동작 세트 2개: `썸네일_보정`(살짝 S 곡선 · 활기 +20 · 선명 효과) · `유튜브_1280`(같은 보정 + 1280×720) | `& "C:\Program Files\PhotoCraft\photocraft-cli.exe" batch --actions photocraft_썸네일.json --action 유튜브_1280 --in .\원본 --out .\완성 --format jpg --quality 92` | `~/craft-cli/photocraft-cli batch --actions photocraft_썸네일.json --action 유튜브_1280 --in ./원본 --out ./완성 --format jpg --quality 92` |
 | `autosam_intro.jsx` | 오토샘 로고 인트로 3.5초(남색 바탕 · 금색 선 · «오토샘» 튀어 오름 · «영상 자동화 공장»). 애프터 이펙트 스크립트라 **진짜 애프터 이펙트에서도** 돈다. 세로는 파일 안 `VERTICAL = true` | ① `& "C:\Program Files\EffectCraft\effectcraft-cli.exe" script autosam_intro.jsx --save-as 오토샘_인트로.ecproj` ② `… render 오토샘_인트로.ecproj --comp 오토샘인트로 --out 오토샘_인트로.mp4` ③ `… exec file.exportLottie '{"comp":"오토샘인트로","path":"오토샘_인트로.json"}' 오토샘_인트로.ecproj` | 같은 명령, 실행 파일만 `~/craft-cli/effectcraft-cli` |
 
-- 동작 세트는 PhotoCraft 소스(v0.9.0)의 명령 이름 · 값 범위로 맞췄다: `image.adjustments.curves{points}` · `image.adjustments.vibrance{vibrance,saturation}` · `filter.sharpen.smartSharpen{amount 1–500, radius 0.1–64, reduceNoise 0–100}` · `image.imageSize{width,height,resample}`.
+- 동작 세트의 단계는 `["명령", {값}]` 짝으로 쓴다(`{"command":…}` 꼴은 «Actions set: invalid type: map» 오류). **첫 단계는 `layer.flattenImage`** — 빼면 PSD 에서 보정이 맨 위 레이어 하나에만 걸린다. 명령 이름 · 값 범위는 PhotoCraft 소스(v0.9.0) 기준: `image.adjustments.curves{points}` · `image.adjustments.vibrance{vibrance,saturation}` · `filter.sharpen.smartSharpen{amount 1–500, radius 0.1–64, reduceNoise 0–100}` · `image.imageSize{width,height,resample}`.
 - `batch` 는 `--out` 이 `--in` 과 같은 폴더면 거절한다(원본 보호). PSD 를 jpg 로 내보낼 때 레이어는 합쳐진다 — PSD 원본은 그대로 남는다.
-- Lottie 로 내보낼 때 글꼴은 그대로 안 실린다(경고 목록에 나온다) — 웹페이지에서 Pretendard 를 같이 불러 쓴다.
-- ⚠️ 이 세 파일은 이 서버에서 실제로 돌려 보지 못했다(외부 프로그램 실행 막힘). 처음 돌릴 때 오류가 나면 그 메시지를 붙여 주면 고친다. `timeline.py` 의 xml · otio 는 OpenTimelineIO 공식 라이브러리(+ FCP XML 어댑터)로 열리는 것까지 확인했다.
+- **글꼴**: EffectCraft 는 컴퓨터에 설치된 글꼴만 쓴다. Pretendard 가 없으면 기본 글꼴로 바뀐다 → 먼저 설치(Windows: 글꼴 파일 우클릭 ▸ «모든 사용자용으로 설치» · Mac: 더블클릭 ▸ «서체 설치»). 파일은 `video-factory/assets/fonts/Pretendard-*.otf`.
+- 스크립트는 `layer.text.sourceText` · `layer.transform.scale` 같은 짧은 이름으로 쓴다 — `layer.property("Source Text")` 꼴은 EffectCraft 에서 null 이 된다(애프터 이펙트는 둘 다 된다).
+- Lottie 는 글자 레이어가 글자로 남는다(3KB) — 웹페이지에서 Pretendard 를 같이 불러 쓴다.
+### 4-C. 실제 테스트 결과 (2026-10-18, 공식 Linux 배포판 · SHA256 확인)
+| 시험 | 결과 |
+|---|---|
+| PhotoCraft 0.9.0 `batch` — talk-studio 썸네일 jpg + 9레이어 PSD | ✅ 2개 성공 · PSD 합성이 원본 jpg 와 같게 열림 · 보정 반영(대비 ↑) · 1280×720 |
+| EffectCraft 0.9.2 `script` → `render` → `file.exportLottie` | ✅ 3.5초 1920×1080 · 세로 1080×1920 · Lottie(글자 레이어 2 + 단색 3, 경고 0) · 굽기 약 7초 |
+| FilmCraft 0.9.0 `file.import` — `_컷.xml` · `_컷.otio` | ✅ 둘 다 컷 3개 · 이름 · 원본 시각 그대로, 빠진 미디어 0 · `export` 결과가 highlight.py 결과와 장면 일치(SSIM 0.994, 길이 차 0.03초) |
+| MCP 연결(초기화 + 도구 목록) | ✅ PhotoCraft 도구 25 · FilmCraft 17 · EffectCraft 27 (폴더 묶기 옵션 포함) |
+처음 돌렸을 때 나온 버그 2개(동작 세트 형식 · 스크립트 속성 이름)와 함정 2개(PSD 합치기 · 글꼴 설치)는 위에 고쳐 적었다. Windows · Mac 설치 경로는 공식 문서 기준이고 실기기에서는 아직 안 돌렸다.
 
 ## 5. 한계 — 정직하게
 - 셋 다 알파: 실제 폰 · 카메라 영상은 덜 시험됨, Windows · Linux 는 Mac 보다 버그가 많다. 큰 영상은 느리다(색보정 · 내보내기 일부가 CPU).
 - FilmCraft 내보내기: 소프트웨어로는 H.264 만, H.265 는 그래픽카드(NVIDIA · Mac) 인코더로만, AV1 없음. 플러그인(VST · OpenFX) 없음.
 - `.prproj`(프리미어) · `.aep`(애프터이펙트) 원본 파일은 못 연다 → XML · OTIO 로 옮긴다.
-- **이 클라우드 서버에서는** 외부 프로그램 빌드 · 실행이 권한상 막혀 직접 돌리지 않는다. 대표님 컴퓨터(Claude Code · Desktop + MCP)에서 쓴다. 여기서는 PSD · mp4 · 설정 파일을 만들어 넘긴다.
+- **이 클라우드 서버에서도** 공식 Linux 배포판(.deb 를 풀어 `usr/bin/*-cli`)으로 세 CLI 가 돈다 — 대표님이 «테스트 해봐»처럼 허락하면 받아서 쓴다(받은 뒤 `SHA256SUMS.txt` 로 확인). 화면 있는 앱은 대표님 컴퓨터에서.
 - 강의 · 영상에서 소개할 때: «무료 · 알파 · 아직 어도비 완전 대체는 아님»을 같이 말한다(신뢰 톤).

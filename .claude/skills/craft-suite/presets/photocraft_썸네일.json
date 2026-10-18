@@ -3,18 +3,103 @@
     {
       "name": "썸네일_보정",
       "steps": [
-        {"command": "image.adjustments.curves", "params": {"points": [[0, 0], [64, 56], [192, 206], [255, 255]]}},
-        {"command": "image.adjustments.vibrance", "params": {"vibrance": 20, "saturation": 0}},
-        {"command": "filter.sharpen.smartSharpen", "params": {"amount": 60, "radius": 1.0, "reduceNoise": 10}}
+        [
+          "layer.flattenImage",
+          {}
+        ],
+        [
+          "image.adjustments.curves",
+          {
+            "points": [
+              [
+                0,
+                0
+              ],
+              [
+                64,
+                56
+              ],
+              [
+                192,
+                206
+              ],
+              [
+                255,
+                255
+              ]
+            ]
+          }
+        ],
+        [
+          "image.adjustments.vibrance",
+          {
+            "vibrance": 20,
+            "saturation": 0
+          }
+        ],
+        [
+          "filter.sharpen.smartSharpen",
+          {
+            "amount": 60,
+            "radius": 1.0,
+            "reduceNoise": 10
+          }
+        ]
       ]
     },
     {
       "name": "유튜브_1280",
       "steps": [
-        {"command": "image.adjustments.curves", "params": {"points": [[0, 0], [64, 56], [192, 206], [255, 255]]}},
-        {"command": "image.adjustments.vibrance", "params": {"vibrance": 20, "saturation": 0}},
-        {"command": "image.imageSize", "params": {"width": 1280, "height": 720, "resample": "bicubicSharper"}},
-        {"command": "filter.sharpen.smartSharpen", "params": {"amount": 50, "radius": 0.8, "reduceNoise": 10}}
+        [
+          "layer.flattenImage",
+          {}
+        ],
+        [
+          "image.adjustments.curves",
+          {
+            "points": [
+              [
+                0,
+                0
+              ],
+              [
+                64,
+                56
+              ],
+              [
+                192,
+                206
+              ],
+              [
+                255,
+                255
+              ]
+            ]
+          }
+        ],
+        [
+          "image.adjustments.vibrance",
+          {
+            "vibrance": 20,
+            "saturation": 0
+          }
+        ],
+        [
+          "image.imageSize",
+          {
+            "width": 1280,
+            "height": 720,
+            "resample": "bicubicSharper"
+          }
+        ],
+        [
+          "filter.sharpen.smartSharpen",
+          {
+            "amount": 50,
+            "radius": 0.8,
+            "reduceNoise": 10
+          }
+        ]
       ]
     }
   ]
