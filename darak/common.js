@@ -70,12 +70,18 @@ window.CHURCH = (function () {
     }).format(new Date());
   }
   function ymd(d) { return d.toISOString().slice(0, 10); }
+  // 한 주는 주일(일요일)부터 토요일까지 — 주일이 되면 새 주가 시작된다 (예전 이름 mondayOf를 그대로 쓴다)
   function mondayOf(dateStr) {
     var d = new Date((dateStr || today()) + 'T00:00:00Z');
-    var back = (d.getUTCDay() + 6) % 7;  // 월요일까지 되돌아갈 날 수
-    d.setUTCDate(d.getUTCDate() - back);
+    d.setUTCDate(d.getUTCDate() - d.getUTCDay());   // 주일까지 되돌아간다
     return ymd(d);
   }
+  // 예전(월요일 시작)에 저장된 일기도 함께 찾도록: [주일, 그다음 월요일]
+  function weekKeys(weekStart) {
+    var d = new Date(weekStart + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 1);
+    return [weekStart, ymd(d)];
+  }
+  function dayOfWeek(dateStr) { return new Date((dateStr || today()) + 'T00:00:00Z').getUTCDay(); }
   function addWeeks(weekStart, n) {
     var d = new Date(weekStart + 'T00:00:00Z');
     d.setUTCDate(d.getUTCDate() + n * 7);
@@ -490,7 +496,7 @@ window.CHURCH = (function () {
 
   return {
     sb: sb, $: $, $$: $$, esc: esc, say: say,
-    mondayOf: mondayOf, addWeeks: addWeeks, weekLabel: weekLabel, weekShort: weekShort,
+    mondayOf: mondayOf, weekKeys: weekKeys, dayOfWeek: dayOfWeek, addWeeks: addWeeks, weekLabel: weekLabel, weekShort: weekShort,
     ymd: ymd, today: today, whenText: whenText, setTimezone: setTimezone, timezone: timezone,
     signIn: signIn, signOut: signOut, me: me, guard: guard, callAdmin: callAdmin, notify: notify,
     header: header, title2: title2,

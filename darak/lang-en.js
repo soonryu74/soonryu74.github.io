@@ -4,6 +4,7 @@
    translate the values, and add { id: '<code>', name: '<language name>' } to LANGS in common.js. */
 window.I18N = window.I18N || {};
 window.I18N.en = {
+  "지난주 일기가 아직 제출 전이라 지난주를 먼저 열었습니다. 이번 주는 [다음주 ›]를 누르세요.": "Last week's journal isn't submitted yet, so it's opened first. For this week, tap [Next ›].",
   // ── 비밀번호 없이 (열쇠 코드) ─────
   "이름만 넣으면 됩니다. 가입하면 바로 목원을 넣고 일기를 쓸 수 있습니다.": "Just enter your name. Then you can add members and write journals right away.",
   "아이디·비밀번호는 없습니다. 가입하면 이 휴대폰에서는 다음부터 바로 열립니다.": "No ID or password needed. After signing up, this phone opens straight in next time.",
