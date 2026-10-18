@@ -28,13 +28,38 @@
 
     bindTabs(); bindWeek(); bindWrite(); bindMembers(); bindMine();
     await loadMokwon();
+    await pickStartWeek();
     await loadWeek();
+    watchNewWeek();
     window.addEventListener('beforeunload', function (e) {
       if (dirty) { e.preventDefault(); e.returnValue = ''; }
     });
   })();
 
   function fail(m) { alert(T('불러오지 못했습니다: ') + m); }
+
+  // 주일·월요일에는 지난주 모임 일기를 마저 쓰는 일이 많다 —
+  // 이번 주 일기가 아직 없고 지난주 일기가 제출 전이면 지난주를 먼저 연다
+  var startWeek = null;
+  async function pickStartWeek() {
+    startWeek = week;
+    if (C.dayOfWeek() > 1) return;
+    var now = await findJournal(week, 'id');
+    if (now.data) return;
+    var last = await findJournal(C.addWeeks(week, -1), 'id, status');
+    if (last.data && last.data.status !== 'submitted') {
+      week = C.addWeeks(week, -1);
+      C.say($('#msg-write'), T('지난주 일기가 아직 제출 전이라 지난주를 먼저 열었습니다. 이번 주는 [다음주 ›]를 누르세요.'), 'ok');
+    }
+  }
+  // 앱을 켜 둔 채 주일이 지나면, 다시 볼 때 새 주로 넘어간다
+  function watchNewWeek() {
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible' || dirty) return;
+      var now = C.mondayOf();
+      if (now !== startWeek) { startWeek = now; week = now; loadWeek(); }
+    });
+  }
   function markDirty() { dirty = true; $('#save-state').textContent = T('아직 저장되지 않았습니다'); }
 
   /* ── 탭 ────────────────────────────────────────── */
@@ -168,8 +193,7 @@
     $('#wk-state').textContent = T('불러오는 중');
     $('#wk-state').className = 'badge';
 
-    var r = await sb.from('church_journal').select('*')
-      .eq('mokjang_id', mokjang.id).eq('week_start', week).maybeSingle();
+    var r = await findJournal(week, '*');
     if (r.error) return fail(r.error.message);
     journal = r.data || null;
 
@@ -194,9 +218,20 @@
   }
 
   function defaultMetOn() {
-    // 그 주 금요일을 기본값으로 (가정교회 목장 모임이 대개 주중 저녁)
-    var d = new Date(week + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 4);
+    // 그 주 금요일을 기본값으로 (주일부터 세어 5일째 — 가정교회 목장 모임이 대개 주말 저녁)
+    var d = new Date(week + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 5);
     return C.ymd(d);
+  }
+  // 그 주 일기 — 예전(월요일 시작)에 저장된 것도 찾아서 주일 기준으로 옮겨 둔다
+  async function findJournal(w, cols) {
+    var r = await sb.from('church_journal').select(cols).eq('mokjang_id', mokjang.id).in('week_start', C.weekKeys(w));
+    if (r.error) return r;
+    var rows = r.data || [], j = rows.find(function (x) { return x.week_start === w; }) || rows[0] || null;
+    if (j && j.week_start !== w) {
+      await sb.from('church_journal').update({ week_start: w }).eq('id', j.id);
+      j.week_start = w;
+    }
+    return { data: j, error: null };
   }
 
   /* 저장된 기도제목 + 현재 명단을 합쳐서 줄을 만든다 */
@@ -347,8 +382,7 @@
 
   async function copyLast() {
     var prev = C.addWeeks(week, -1);
-    var j = await sb.from('church_journal').select('id')
-      .eq('mokjang_id', mokjang.id).eq('week_start', prev).maybeSingle();
+    var j = await findJournal(prev, 'id, week_start');
     if (!j.data) return C.say($('#msg-write'), T('지난주에 쓰신 일기가 없습니다.'), 'err');
     var pr = await sb.from('church_prayer').select('*').eq('journal_id', j.data.id);
     var by = {}; (pr.data || []).forEach(function (p) { if (p.mokwon_id) by[p.mokwon_id] = p.content; });

@@ -16,7 +16,7 @@
 <!-- 자동으로 만든 교회 주소 (deploy/church_pages.py): 첫 화면 그대로, 미리보기 글·그림만 교회 것.
      주소창이 /bangjoo/ 에 남으니 브라우저에서 바로 카톡 공유해도 교회 로고가 뜬다 -->
 <script>
-try { localStorage.setItem('gajeong-church', "{\"slug\": \"bangjoo\", \"name\": \"멜번방주교회\", \"logo_url\": \"assets/logo.png\", \"theme\": \"sky\", \"terms\": {\"unit\": \"목장\", \"leader\": \"목자\", \"member\": \"목원\"}}"); } catch (e) {}
+try { localStorage.setItem('gajeong-church', "{\"slug\": \"bangjoo\", \"name\": \"멜번방주교회\", \"logo_url\": \"assets/logo.png\", \"theme\": \"note\", \"terms\": {\"unit\": \"목장\", \"leader\": \"목자\", \"member\": \"목원\"}}"); } catch (e) {}
 (function (q) { if (q.get('c') !== 'bangjoo') { q.set('c', 'bangjoo'); history.replaceState(null, '', location.pathname + '?' + q + location.hash); } })(new URLSearchParams(location.search));
 </script>
 <script>/* 예전 주소로 들어오면 새 주소로 옮긴다 (주소 뒤 ?c=·#j= 그대로) */
@@ -37,7 +37,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="bangjoo/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="멜번방주교회">
-<link rel="stylesheet" href="style.css?v=202610181000">
+<link rel="stylesheet" href="style.css?v=202610181100">
 <style>
   .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
   .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
@@ -191,8 +191,8 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610181000"></script>
-<script src="common.js?v=202610181000"></script>
+<script src="lang-en.js?v=202610181100"></script>
+<script src="common.js?v=202610181100"></script>
 <script>
 (function () {
   var C = window.CHURCH, $ = C.$;
