@@ -4,15 +4,17 @@ spec.json:
 {
  "out": "AI미션그룹_쇼츠.mp4",
  "group": "AI미션그룹", "series": "SCIC 그룹탐방 01/12", "accent": "#3B82F6",
- "bgm": "음악.mp3", "bgm_volume": 0.5,                      // 선택
+ "bgm": "음악.mp3", "bgm_volume": 0.5,                      // 선택. 목소리 나올 때 자동으로 낮춤
+ "voice_lead": 0.3,                                          // 장면 시작 뒤 목소리 들어가는 시각(초)
  "scenes": [
-  {"type": "hook",  "dur": 3.2, "lines": ["AI 공부,", "혼자 하다", "[사흘 만에] 포기했죠?"]},
+  {"type": "hook",  "dur": 3.2, "lines": ["AI 공부,", "혼자 하다", "[사흘 만에] 포기했죠?"], "voice": "voice/N00.wav"},
   {"type": "photo", "dur": 5, "src": "강의장.jpg", "lines": ["그런데 이 사람들은", "배운 걸 [남에게] 가르쳐요"], "focus": [0.5, 0.5]},
   {"type": "stats", "dur": 6, "title": "2025 ~ 2026.8", "items": [["34", "회 강의"], ["1,380", "명"]]},
   {"type": "motto", "dur": 4.5, "lines": ["배워서 [남 주자]"], "sub": "가르치는 순간, 내 실력이 됩니다"},
   {"type": "cta",   "dur": 6, "lines": ["한 번 와 보세요"], "note": "다음 강의 일정 · 신청 링크"}
  ]
 }
+장면에 "voice" 가 있으면 장면 길이 = max(dur, 목소리 길이 + 0.75초) 로 늘어난다.
 [ ] 안은 그룹색 상자. 사진은 흐린 같은 사진 위에 둥근 카드로 얹는다(작은 사진도 깨져 보이지 않게).
 화면 아래 22% 와 오른쪽 끝은 쇼츠 버튼 자리라 글자를 두지 않는다."""
 from __future__ import annotations
@@ -24,7 +26,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter
 
-from common import F, FPS, NAVY, WHITE, fit_cover, load, navy_bg
+from common import F, FPS, NAVY, WHITE, fit_cover, load, navy_bg, probe
 
 W, H = 1080, 1920
 X0 = 84                       # 왼쪽 여백
@@ -102,6 +104,10 @@ class Scene:
         self.sc, self.sp, self.root = sc, sp, root
         self.acc = rgb(sc.get("accent", sp["accent"]))
         self.dur = float(sc["dur"])
+        self.voice = None
+        if sc.get("voice"):
+            self.voice = str((root / sc["voice"]).resolve())
+            self.dur = max(self.dur, probe(self.voice)["duration"] + sp.get("voice_lead", 0.3) + 0.45)
         self.bg = navy_bg((W, H), grid=60)
         if sc["type"] == "photo":
             im = Image.open(root / sc["src"]).convert("RGB")
@@ -226,11 +232,30 @@ def main(spec_path: str) -> Path:
             fr = Image.blend(fr, Image.new("RGB", (W, H), NAVY), (t - (total - 0.5)) / 0.5 * 0.85)
         pr.stdin.write(fr.tobytes())
     pr.stdin.close(); pr.wait()
-    if sp.get("bgm"):
-        vol = sp.get("bgm_volume", 0.5)
-        subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(silent), "-i", P(sp["bgm"]),
-                        "-filter_complex", f"[1:a]volume={vol},afade=t=in:d=0.6,afade=t=out:st={total - 1.6:.2f}:d=1.6,atrim=0:{total:.2f}[a]",
-                        "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest",
+    lead = sp.get("voice_lead", 0.3)
+    vs = [(starts[k] + lead, s.voice) for k, s in enumerate(scenes) if s.voice]
+    if sp.get("bgm") or vs:
+        ins, fil, labs = ["-i", str(silent)], "", []
+        for j, (at, v) in enumerate(vs):
+            ins += ["-i", v]
+            fil += f"[{j + 1}:a]aresample=48000,aformat=channel_layouts=stereo,adelay={int(at * 1000)}|{int(at * 1000)},apad[v{j}];"
+            labs.append(f"[v{j}]")
+        if vs:
+            fil += "".join(labs) + f"amix=inputs={len(vs)}:normalize=0,atrim=0:{total:.2f},asplit=2[vo][sc];"
+        if sp.get("bgm"):
+            bi = len(vs) + 1
+            ins += ["-stream_loop", "-1", "-i", P(sp["bgm"])]
+            vol = sp.get("bgm_volume", 0.5)
+            fil += (f"[{bi}:a]aresample=48000,aformat=channel_layouts=stereo,volume={vol},atrim=0:{total:.2f},"
+                    f"afade=t=in:d=0.6,afade=t=out:st={total - 1.6:.2f}:d=1.6[bg0];")
+            if vs:
+                fil += "[bg0][sc]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=400[bg];[vo][bg]amix=inputs=2:normalize=0[a]"
+            else:
+                fil += "[bg0]anull[a]"
+        else:
+            fil += "[vo]anull[a]"
+        subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *ins, "-filter_complex", fil,
+                        "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.2f}",
                         "-movflags", "+faststart", str(out)], check=True)
         silent.unlink()
     else:
