@@ -4,6 +4,17 @@
    translate the values, and add { id: '<code>', name: '<language name>' } to LANGS in common.js. */
 window.I18N = window.I18N || {};
 window.I18N.en = {
+  // ── 계정 사진 ─────
+  "내 사진": "My photo",
+  "목사님이 목자 얼굴을 알아보실 수 있게 내 사진을 넣어 주세요. 목사님만 볼 수 있습니다.": "Add your photo so your pastor can recognize you. Only your pastor can see it.",
+  "내 사진을 넣어 둘 수 있습니다. 목자 사진은 아래 목장 목록의 [사진]으로 대신 넣어 줄 수도 있습니다.": "You can add your own photo. You can also add a leader's photo with [Photo] in the group list below.",
+  "사진 넣기": "Add photo",
+  "<button class=\"small act-mphoto\">사진</button>": "<button class=\"small act-mphoto\">Photo</button>",
+  "사진 지우기": "Remove photo",
+  "내 사진을 넣었습니다.": "Your photo was added.",
+  "내 사진을 지울까요?": "Remove your photo?",
+  "사진을 지웠습니다.": "Photo removed.",
+  "{0} 목자 사진을 넣었습니다.": "Added a photo for {0}.",
   // ── 성도 사진 ─────
   "사진은 본인 동의를 받은 뒤 넣어 주세요. 목사님과 담당 목자만 볼 수 있습니다.": "Please get each person's permission before adding a photo. Only your pastor and the group leader can see it.",
   "<button class=\"small act-photo\">사진</button>": "<button class=\"small act-photo\">Photo</button>",

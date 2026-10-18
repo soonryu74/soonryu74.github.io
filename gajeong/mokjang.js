@@ -431,6 +431,7 @@
     });
 
 
+    C.bindMyPhoto(me);   // 내 사진 (성도 사진을 켠 교회만)
     $('#my-name').value = me.name || '';
     $('#form-myname').addEventListener('submit', async function (e) {
       e.preventDefault();
