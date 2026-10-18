@@ -4,6 +4,9 @@
    translate the values, and add { id: '<code>', name: '<language name>' } to LANGS in common.js. */
 window.I18N = window.I18N || {};
 window.I18N.en = {
+  "</b><span>전체 목장</span></div>": "</b><span>All groups</span></div>",
+  "</b><span>아직 안 씀</span></div>": "</b><span>Not started</span></div>",
+  "이 주 일기: 목장 {0}곳 중 {1}곳이 썼고, 그중 {2}곳이 제출했습니다.": "This week: {1} of {0} groups have written, and {2} submitted.",
   "지난주 일기가 아직 제출 전이라 지난주를 먼저 열었습니다. 이번 주는 [다음주 ›]를 누르세요.": "Last week's journal isn't submitted yet, so it's opened first. For this week, tap [Next ›].",
   // ── 계정 사진 ─────
   "내 사진": "My photo",
