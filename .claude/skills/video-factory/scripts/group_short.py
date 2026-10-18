@@ -15,6 +15,8 @@ spec.json:
   {"type": "cta",   "dur": 6, "lines": ["한 번 와 보세요"], "note": "다음 강의 일정 · 신청 링크"}
  ]
 }
+"intro" 는 시리즈 공통 인트로(3초) — «SaGA 졸업생 공동체 / SCIC / 그룹을 소개합니다 / 01 AI미션그룹».
+  {"type": "intro", "dur": 3.0, "eyebrow": "SaGA 졸업생 공동체", "title": "SCIC", "sub": "그룹을 소개합니다", "no": "01"}
 "cover" 는 쇼츠 표지 — 맨 앞 0.6초에 두면 업로드 때 첫 장면을 표지로 고를 수 있고, <out>_표지.jpg 로도 저장된다.
 장면에 "voice" 가 있으면 장면 길이 = max(dur, 목소리 길이 + 0.75초) 로 늘어난다.
 [ ] 안은 그룹색 상자. 사진은 흐린 같은 사진 위에 둥근 카드로 얹는다(작은 사진도 깨져 보이지 않게).
@@ -143,8 +145,9 @@ class Scene:
     def frame(self, t: float) -> Image.Image:
         sc, acc = self.sc, self.acc
         img = self.bg.copy()
+        ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))   # 투명도 있는 글자 · 선은 이 층에 그려 마지막에 섞는다
         typ = sc["type"]
-        if typ != "hook":
+        if typ not in ("hook", "intro"):
             top_bar(img, self.sp, acc)
         if typ == "cover":
             l1, l2 = sc["lines"][0], sc["lines"][1]
@@ -154,8 +157,31 @@ class Scene:
             f2 = F("black", 124 if n2 <= 7 else (108 if n2 <= 9 else 92))
             draw_line(img, l2, f2, X0 - 6, 1190, acc)
             if sc.get("proof"):
-                ImageDraw.Draw(img).text((X0, 1400), sc["proof"], font=F("semi", 46), fill=(225, 230, 240))
-            ImageDraw.Draw(img).rectangle((0, H - 16, W, H), fill=acc)
+                ImageDraw.Draw(ov).text((X0, 1400), sc["proof"], font=F("semi", 46), fill=(225, 230, 240))
+            ImageDraw.Draw(ov).rectangle((0, H - 16, W, H), fill=acc)
+        elif typ == "intro":
+            d = ImageDraw.Draw(ov)
+            k0 = clamp(t / 0.4)
+            fe = F("semi", 44); e = sc.get("eyebrow", "SaGA 졸업생 공동체")
+            d.text(((W - fe.getlength(e)) / 2, 560 - (1 - ease_out(k0)) * 20), e, font=fe, fill=(200, 208, 226, int(255 * k0)))
+            k1 = (t - 0.2) / 0.45
+            draw_line(img, sc.get("title", "SCIC"), F("black", 230), 0, 640, acc, alpha=clamp(k1 * 1.6),
+                      scale=0.7 + 0.3 * back(k1), center=True)
+            k2 = clamp((t - 0.8) / 0.45)
+            fs = F("bold", 76); sub = sc.get("sub", "그룹을 소개합니다")
+            d.text(((W - fs.getlength(sub)) / 2, 960 + (1 - ease_out(k2)) * 40), sub, font=fs, fill=(255, 255, 255, int(255 * k2)))
+            lw = int(560 * ease_out((t - 0.5) / 0.6))                       # 그룹색 선이 양옆으로
+            if lw > 0:
+                d.rounded_rectangle((W // 2 - lw // 2, 1080, W // 2 + lw // 2, 1088), 4, fill=acc)
+            k3 = (t - 1.35) / 0.4
+            if k3 > 0:
+                chip = f"{sc.get('no', '')}  {self.sp['group']}".strip()
+                fc = F("black", 64); cw = fc.getlength(chip) + 72
+                lay = Image.new("RGBA", (int(cw), 112), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay)
+                ld.rounded_rectangle((0, 0, cw, 112), 56, fill=acc + (255,)); ld.text((36, 14), chip, font=fc, fill=NAVY)
+                sc_ = 0.7 + 0.3 * back(k3); lay = lay.resize((max(1, int(lay.width * sc_)), max(1, int(112 * sc_))), Image.LANCZOS)
+                lay.putalpha(lay.getchannel("A").point(lambda v: int(v * clamp(k3 * 1.6))))
+                img.alpha_composite(lay, ((W - lay.width) // 2, 1150 + (112 - lay.height) // 2))
         elif typ == "hook":
             f = F("black", 104)
             y = 560
@@ -185,9 +211,9 @@ class Scene:
                 y += 112
             if sc.get("caption"):
                 kk = clamp((t - 0.5) / 0.4)
-                ImageDraw.Draw(img).text((X0, y + 10), sc["caption"], font=F("semi", 44), fill=(225, 230, 240, int(255 * kk)))
+                ImageDraw.Draw(ov).text((X0, y + 10), sc["caption"], font=F("semi", 44), fill=(225, 230, 240, int(255 * kk)))
         elif typ == "stats":
-            d = ImageDraw.Draw(img)
+            d = ImageDraw.Draw(ov)
             d.text((X0, 360), sc.get("title", ""), font=F("semi", 44), fill=(200, 208, 226))
             y = 470
             for i, (num, lab) in enumerate(sc["items"]):
@@ -214,7 +240,7 @@ class Scene:
             if sc.get("sub"):
                 kk = clamp((t - 1.2) / 0.5)
                 fs = F("bold", 56); tw = fs.getlength(sc["sub"])
-                ImageDraw.Draw(img).text(((W - tw) / 2, 1000 + 180 * (len(sc["lines"]) - 1)), sc["sub"], font=fs,
+                ImageDraw.Draw(ov).text(((W - tw) / 2, 1000 + 180 * (len(sc["lines"]) - 1)), sc["sub"], font=fs,
                                          fill=(230, 235, 245, int(255 * kk)))
         elif typ == "cta":
             f = F("black", 112)
@@ -224,12 +250,13 @@ class Scene:
                 draw_line(img, s, f, X0, y, acc, alpha=clamp(k * 1.5), scale=0.75 + 0.25 * back(k))
                 y += 160
             k = clamp((t - 0.9) / 0.5)
-            d = ImageDraw.Draw(img)
+            d = ImageDraw.Draw(ov)
             bx, by, bs = X0, y + 50, 330                        # QR 자리
             d.rounded_rectangle((bx, by, bx + bs, by + bs), 28, outline=acc + (int(255 * k),), width=6)
             d.text((bx + 104, by + 130), "QR", font=F("black", 72), fill=acc + (int(255 * k),))
             d.multiline_text((bx + bs + 40, by + 40), sc.get("note", ""), font=F("bold", 46), spacing=18,
                              fill=(235, 238, 245, int(255 * k)))
+        img.alpha_composite(ov)
         return img.convert("RGB")
 
 
