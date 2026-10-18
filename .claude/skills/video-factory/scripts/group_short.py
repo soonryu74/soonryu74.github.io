@@ -208,6 +208,8 @@ class Scene:
             im = Image.open(root / sc["src"]).convert("RGB")
             ph = fit_cover(im, (W, H))
             self.bg = Image.blend(ph, Image.new("RGB", (W, H), BASE), 0.62 if self.th.mode == "dark" else 0.78).convert("RGBA")
+        if sc["type"] == "vlog":                            # 브이로그: 사진은 가로 꽉 차게, 줌 펀치로 들어간다
+            self.vph = Image.open(root / sc["src"]).convert("RGB")
         if sc["type"] in ("split", "unbox", "quiz"):
             self.panels = {}
             for key, src in (("a", sc.get("a", {}).get("photo")), ("b", sc.get("b", {}).get("photo")), ("src", sc.get("src"))):
@@ -360,6 +362,8 @@ class Scene:
             self._diary(img, ov, t)
         elif typ == "invite":
             self._invite(img, ov, t)
+        elif typ == "vlog":
+            self._vlog(img, ov, t)
         img.alpha_composite(ov)
         return img.convert("RGB")
 
@@ -563,6 +567,74 @@ class Scene:
         img.alpha_composite(lay, (x0, y0 + int((1 - k) * 50)))
         if sc.get("tag"):
             ImageDraw.Draw(ov).text((x0 + 10, y1 + 24), sc["tag"], font=F("semi", 36), fill=T.sub + (int(255 * k),))
+
+    # ── 형식: 하루 브이로그 (REC · 날짜 도장 · 1년 시계) ──
+    def _vlog(self, img, ov, t):
+        sc, T = self.sc, self.th
+        y0, ph = 300, sc.get("photo_h", 640)
+        kp = ease_out(t / 0.28)
+        z = 1.22 - 0.22 * kp + 0.05 * (t / self.dur)          # 줌 펀치 → 천천히 다가가기
+        im = self.vph; fx, fy = sc.get("focus", [0.5, 0.5])
+        r = max(W / im.width, ph / im.height) * z
+        big = im.resize((int(im.width * r + 1), int(im.height * r + 1)), Image.LANCZOS)
+        x = int(clamp(fx * big.width - W / 2, 0, big.width - W)); y = int(clamp(fy * big.height - ph / 2, 0, big.height - ph))
+        img.paste(big.crop((x, y, x + W, y + ph)), (0, y0))
+        band = Image.new("L", (1, ph))                          # 위 · 아래 어둡게 (흰 글자 읽히게)
+        for yy in range(ph):
+            band.putpixel((0, yy), int(150 * max(clamp(1 - yy / 170), clamp((yy - ph + 200) / 200))))
+        img.alpha_composite(Image.merge("RGBA", [Image.new("L", (W, ph), 0)] * 3 + [band.resize((W, ph))]), (0, y0))
+        d = ImageDraw.Draw(ov)
+        if t < 0.14:                                            # 컷 들어갈 때 번쩍
+            d.rectangle((0, y0, W, y0 + ph), fill=(255, 255, 255, int(200 * (1 - t / 0.14))))
+        for cx, cy, sx, sy in ((40, y0 + 34, 1, 1), (W - 40, y0 + 34, -1, 1), (40, y0 + ph - 34, 1, -1), (W - 40, y0 + ph - 34, -1, -1)):
+            d.line((cx, cy, cx + 70 * sx, cy), fill=(255, 255, 255, 230), width=6)   # 뷰파인더 모서리
+            d.line((cx, cy, cx, cy + 70 * sy), fill=(255, 255, 255, 230), width=6)
+        if int(t * 2) % 2 == 0:
+            d.ellipse((76, y0 + 66, 110, y0 + 100), fill=(255, 40, 40, 255))
+        fr = F("bold", 40)
+        d.text((124, y0 + 60), "REC", font=fr, fill=(255, 255, 255, 240))
+        if sc.get("osd"):
+            fo = F("bold", 38); ow = fo.getlength(sc["osd"])
+            d.text((W - 76 - ow + 2, y0 + 64), sc["osd"], font=fo, fill=(0, 0, 0, 120))
+            d.text((W - 76 - ow, y0 + 62), sc["osd"], font=fo, fill=(255, 255, 255, 240))
+        if sc.get("place"):                                     # 장소는 사진 왼쪽 아래
+            kk = clamp((t - 0.45) / 0.35); fp = F("black", 56)
+            d.text((80, y0 + ph - 116), sc["place"], font=fp, fill=(0, 0, 0, int(150 * kk)))
+            d.text((76, y0 + ph - 120), sc["place"], font=fp, fill=(255, 255, 255, int(255 * kk)))
+        ks = (t - 0.2) / 0.35                                    # 날짜 도장
+        yy = y0 + ph + 140
+        if ks > 0:
+            fs = F("black", 150); stamp = sc.get("stamp", "")
+            sw = fs.getlength(stamp)
+            lay = Image.new("RGBA", (int(sw) + 40, 190), (0, 0, 0, 0))
+            ImageDraw.Draw(lay).text((0, 0), stamp, font=fs, fill=T.ink + (255,))
+            s_ = 1.25 - 0.25 * back(ks)
+            lay = lay.resize((max(1, int(lay.width * s_)), max(1, int(lay.height * s_))), Image.LANCZOS)
+            lay.putalpha(lay.getchannel("A").point(lambda v: int(v * clamp(ks * 2))))
+            img.alpha_composite(lay, (X0, yy - int((lay.height - 190) / 2)))
+            if sc.get("day"):
+                fd = F("bold", 52); dw = fd.getlength(sc["day"])
+                dx = X0 + int(sw) + 34
+                d.rounded_rectangle((dx, yy + 52, dx + dw + 44, yy + 132), 40, fill=T.chip_bg + (int(255 * clamp(ks * 2)),))
+                d.text((dx + 22, yy + 60), sc["day"], font=fd, fill=T.chip_fg + (int(255 * clamp(ks * 2)),))
+        y = yy + 210
+        for i, s in enumerate(sc.get("lines", [])):
+            kk = (t - 0.6 - i * 0.4) / 0.3
+            draw_line(img, s, F("black", 70), X0, y + int((1 - ease_out(kk)) * 24), self.acc, alpha=clamp(kk * 1.6))
+            y += 104
+        if sc.get("month"):                                     # 1년 시계: 1~12월 점, 이번 달까지 채운다
+            m = int(sc["month"]); gy = y0 + ph + 60; gx0, gx1 = X0 + 10, W - X0 - 10
+            step = (gx1 - gx0) / 11
+            fill_k = ease_out((t - 0.3) / 0.8)
+            d.line((gx0, gy, gx1, gy), fill=T.dim + (255,), width=4)
+            d.line((gx0, gy, gx0 + (m - 1) * step * fill_k, gy), fill=T.ink + (255,), width=8)
+            fm = F("semi", 30)
+            for j in range(12):
+                cx = gx0 + j * step; on = j + 1 <= 1 + (m - 1) * fill_k
+                rr = 16 if j + 1 == m else 9
+                d.ellipse((cx - rr, gy - rr, cx + rr, gy + rr), fill=(T.ink if on else T.dim) + (255,))
+                if j + 1 == m:
+                    lab = f"{m}월"; d.text((cx - fm.getlength(lab) / 2, gy + 24), lab, font=fm, fill=T.ink + (255,))
 
     # ── 형식: 초대장 ──
     def _invite(self, img, ov, t):
