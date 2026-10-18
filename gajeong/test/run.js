@@ -471,6 +471,24 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[주간 현황 숫자] 네 칸의 합 = 전체 목장');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    await p.evaluate(() => { const D = window.__DB();
+      D.church_mokjang.push({ id: 'mj3', name: '세 목장', mokja_id: null, mokja_name: '', church_id: 'cb', sort_order: 3, active: true, created_at: '2026-01-03' },
+                            { id: 'mj4', name: '네 목장', mokja_id: null, mokja_name: '', church_id: 'cb', sort_order: 4, active: true, created_at: '2026-01-04' },
+                            { id: 'mj5', name: '쉬는 목장', mokja_id: null, mokja_name: '', church_id: 'cb', sort_order: 5, active: false, created_at: '2026-01-05' });
+      D.church_journal.push({ id: 'j3', mokjang_id: 'mj3', week_start: '2026-10-11', status: 'draft', body: '', created_at: '2026-10-13', updated_at: '2026-10-13' });
+      sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(400);
+    await p.click('#wk-prev'); await p.waitForTimeout(500);
+    const st = (await p.textContent('#stat')).replace(/\s/g, '');
+    ok('지난주: 전체 3 = 제출 1 + 쓰는 중 1 + 아직 1 (쉬는 목장 빼고)', st === '3전체목장1제출함1쓰는중1아직안씀', st);
+    ok('설명 줄', (await p.textContent('#stat-line')).includes('목장 3곳 중 2곳이 썼고, 그중 1곳이 제출'));
+    await p.click('#wk-this'); await p.waitForTimeout(500);
+    ok('이번 주(빈 주): 전체 3 · 아직 3', (await p.textContent('#stat')).replace(/\s/g, '') === '3전체목장0제출함0쓰는중3아직안씀');
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
