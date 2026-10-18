@@ -5,6 +5,7 @@ spec.json:
  "out": "AI미션그룹_쇼츠.mp4",
  "group": "AI미션그룹", "series": "SCIC 그룹탐방 01/12", "accent": "#3B82F6",
  "bgm": "음악.mp3", "bgm_volume": 0.5,                      // 선택. 목소리 나올 때 자동으로 낮춤
+ "bgm_start": 14,                                            // 선택. 배경음을 몇 초부터 쓸지
  "voice_lead": 0.3,                                          // 장면 시작 뒤 목소리 들어가는 시각(초)
  "scenes": [
   {"type": "cover", "dur": 0.6, "src": "강의장.jpg", "lines": ["AI 독학 포기했다면", "[가르치며] 배우기"], "proof": "34회 강의 · 약 1,380명"},
@@ -535,7 +536,7 @@ def main(spec_path: str) -> Path:
             fil += "".join(labs) + f"amix=inputs={len(vs)}:normalize=0,atrim=0:{total:.2f},asplit=2[vo][sc];"
         if sp.get("bgm"):
             bi = len(vs) + 1
-            ins += ["-stream_loop", "-1", "-i", P(sp["bgm"])]
+            ins += ["-stream_loop", "-1", "-ss", f'{float(sp.get("bgm_start", 0)):.2f}', "-i", P(sp["bgm"])]
             vol = sp.get("bgm_volume", 0.5)
             fil += (f"[{bi}:a]aresample=48000,aformat=channel_layouts=stereo,volume={vol},atrim=0:{total:.2f},"
                     f"afade=t=in:d=0.6,afade=t=out:st={total - 1.6:.2f}:d=1.6[bg0];")
