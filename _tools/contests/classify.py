@@ -96,6 +96,7 @@ def main():
         c = classify(r)
         k1 = (r.get('중복체크ID') or '').strip()
         k2 = norm(c['name']) + '|' + c['due']
+        if c['due'] and c['due'] < str(TODAY): continue          # 지난 공모전은 싣지 않음(색인에도 넣지 않음)
         hit = keys.get(k1) if k1 else None
         hit = hit if hit is not None else keys.get(k2)
         if hit is not None:                                  # 같은 공모전: 정보가 더 많은 쪽을 남김
@@ -105,7 +106,6 @@ def main():
             continue
         if k1: keys[k1] = len(items)
         keys[k2] = len(items)
-        if c['due'] and c['due'] < str(TODAY): continue          # 지난 공모전은 싣지 않음
         # 처음 본 날: 이전 피드에 있으면 그 날짜, 없으면 노션 등록일(없으면 오늘)
         c['firstSeen'] = prev.get(c['id'], {}).get('firstSeen') or min(c['reg'] or str(TODAY), str(TODAY))
         items.append(c)
