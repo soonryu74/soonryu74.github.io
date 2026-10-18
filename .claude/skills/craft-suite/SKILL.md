@@ -49,7 +49,7 @@ description: >
 ## 3. Claude 에 연결 (MCP) — Windows · Mac 비교
 | 쓰는 곳 | Windows | Mac |
 |---|---|---|
-| Claude Code | `claude mcp add photocraft -- "<설치폴더>\photocraft-cli.exe" mcp` | `claude mcp add photocraft -- /Applications/<폴더>/photocraft-cli mcp` |
+| Claude Code | `claude mcp add photocraft -- "C:\Program Files\PhotoCraft\photocraft-cli.exe" mcp` (EffectCraft 공식 문서의 기본 설치 폴더 규칙 기준 — 다르면 바꾸기) | `claude mcp add photocraft -- ~/craft-cli/photocraft-cli mcp` (CLI zip 을 푼 곳) |
 | Claude Desktop 설정 파일 | `%APPDATA%\Claude\claude_desktop_config.json` | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 
 ```json
@@ -59,6 +59,7 @@ description: >
   "effectcraft": { "command": "<CLI 경로>/effectcraft-cli", "args": ["mcp", "--bridge", "9877"] }
 } }
 ```
+- EffectCraft 는 `mcp --autosave` 로 켜야 서버가 다시 켜져도 작업이 남는다. FilmCraft 는 폴더 묶기 옵션이 아직 없다.
 - `mcp` 만 쓰면 화면 없이(headless) 돈다. 켜 둔 앱을 같이 보며 시키려면 앱을 `--control 9877` 로 켜고 MCP 에 `--bridge 9877`.
 - **안전**: PhotoCraft · EffectCraft 는 `--automation-read-root` / `--automation-write-root` 로 Claude 가 읽고 쓸 폴더를 묶는다. 묶으면 스크립트 실행 · 화면 클릭 도구는 막힌다. 처음엔 꼭 묶어서 쓴다.
 
@@ -67,9 +68,22 @@ description: >
 |---|---|---|
 | `cover.py` · `talk.py thumb` 의 `_레이어.psd` | PhotoCraft | 글자 · 얼굴 위치 · 색 상자 — 레이어 이름 그대로 열린다(talk-studio §7) |
 | 썸네일 여러 장 일괄 보정 | `photocraft-cli batch` | 같은 곡선 · 선명도를 폴더 통째로 |
-| `highlight.py` · motion-studio 로 구운 mp4 | FilmCraft | 컷 미세 조정 · 색보정 · 음량(라우드니스 미터) · 자막 트랙 |
+| `highlight.py` 가 같이 쓰는 `_컷.xml`(FCP7) · `_컷.otio` | FilmCraft · 프리미어 · 다빈치 | 원본 크기 러프 컷을 열어 컷 미세 조정 · 색보정 · 음량(라우드니스 미터) · 자막 트랙 |
+| motion-studio · typo.py 로 구운 mp4 | FilmCraft | 앞뒤 붙이기 · 색 · 음량 |
 | 다른 편집기(프리미어 · 다빈치) 작업 | FilmCraft ⇄ FCP7 XML · OTIO · EDL · AAF | 프로젝트 오가기 |
 | 로고 애니메이션 · 자막 바 · 인트로 | EffectCraft → Lottie JSON / mp4 | 웹페이지(판매 페이지 등)에 가벼운 애니메이션으로 |
+
+## 4-B. 바로 쓰는 세트 (`presets/`)
+| 파일 | 무엇 | Windows (PowerShell) | Mac (터미널) |
+|---|---|---|---|
+| `mcp_windows.json` · `mcp_mac.json` | Claude Desktop 연결 설정 — 세 프로그램 한 번에. `내이름` · 작업 폴더만 바꿔 설정 파일(§3)에 붙여 넣기 | 기본 설치 폴더 `C:\Program Files\<이름>\` 기준 | CLI zip 을 `~/craft-cli/` 에 푼 기준 |
+| `photocraft_썸네일.json` | PhotoCraft 동작 세트 2개: `썸네일_보정`(살짝 S 곡선 · 활기 +20 · 선명 효과) · `유튜브_1280`(같은 보정 + 1280×720) | `& "C:\Program Files\PhotoCraft\photocraft-cli.exe" batch --actions photocraft_썸네일.json --action 유튜브_1280 --in .\원본 --out .\완성 --format jpg --quality 92` | `~/craft-cli/photocraft-cli batch --actions photocraft_썸네일.json --action 유튜브_1280 --in ./원본 --out ./완성 --format jpg --quality 92` |
+| `autosam_intro.jsx` | 오토샘 로고 인트로 3.5초(남색 바탕 · 금색 선 · «오토샘» 튀어 오름 · «영상 자동화 공장»). 애프터 이펙트 스크립트라 **진짜 애프터 이펙트에서도** 돈다. 세로는 파일 안 `VERTICAL = true` | ① `& "C:\Program Files\EffectCraft\effectcraft-cli.exe" script autosam_intro.jsx --save-as 오토샘_인트로.ecproj` ② `… render 오토샘_인트로.ecproj --comp 오토샘인트로 --out 오토샘_인트로.mp4` ③ `… exec file.exportLottie '{"comp":"오토샘인트로","path":"오토샘_인트로.json"}' 오토샘_인트로.ecproj` | 같은 명령, 실행 파일만 `~/craft-cli/effectcraft-cli` |
+
+- 동작 세트는 PhotoCraft 소스(v0.9.0)의 명령 이름 · 값 범위로 맞췄다: `image.adjustments.curves{points}` · `image.adjustments.vibrance{vibrance,saturation}` · `filter.sharpen.smartSharpen{amount 1–500, radius 0.1–64, reduceNoise 0–100}` · `image.imageSize{width,height,resample}`.
+- `batch` 는 `--out` 이 `--in` 과 같은 폴더면 거절한다(원본 보호). PSD 를 jpg 로 내보낼 때 레이어는 합쳐진다 — PSD 원본은 그대로 남는다.
+- Lottie 로 내보낼 때 글꼴은 그대로 안 실린다(경고 목록에 나온다) — 웹페이지에서 Pretendard 를 같이 불러 쓴다.
+- ⚠️ 이 세 파일은 이 서버에서 실제로 돌려 보지 못했다(외부 프로그램 실행 막힘). 처음 돌릴 때 오류가 나면 그 메시지를 붙여 주면 고친다. `timeline.py` 의 xml · otio 는 OpenTimelineIO 공식 라이브러리(+ FCP XML 어댑터)로 열리는 것까지 확인했다.
 
 ## 5. 한계 — 정직하게
 - 셋 다 알파: 실제 폰 · 카메라 영상은 덜 시험됨, Windows · Linux 는 Mac 보다 버그가 많다. 큰 영상은 느리다(색보정 · 내보내기 일부가 CPU).

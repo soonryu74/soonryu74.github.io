@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "photocraft": {
+      "command": "/Users/내이름/craft-cli/photocraft-cli",
+      "args": ["mcp", "--automation-read-root", "/Users/내이름/Movies/오토샘", "--automation-write-root", "/Users/내이름/Movies/오토샘/완성"]
+    },
+    "filmcraft": {
+      "command": "/Users/내이름/craft-cli/filmcraft-cli",
+      "args": ["mcp"]
+    },
+    "effectcraft": {
+      "command": "/Users/내이름/craft-cli/effectcraft-cli",
+      "args": ["mcp", "--autosave", "--automation-read-root", "/Users/내이름/Movies/오토샘", "--automation-write-root", "/Users/내이름/Movies/오토샘/완성"]
+    }
+  }
+}

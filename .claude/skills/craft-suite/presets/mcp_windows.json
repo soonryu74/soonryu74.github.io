@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "photocraft": {
+      "command": "C:\\Program Files\\PhotoCraft\\photocraft-cli.exe",
+      "args": ["mcp", "--automation-read-root", "C:\\Users\\내이름\\Videos\\오토샘", "--automation-write-root", "C:\\Users\\내이름\\Videos\\오토샘\\완성"]
+    },
+    "filmcraft": {
+      "command": "C:\\Program Files\\FilmCraft\\filmcraft-cli.exe",
+      "args": ["mcp"]
+    },
+    "effectcraft": {
+      "command": "C:\\Program Files\\EffectCraft\\effectcraft-cli.exe",
+      "args": ["mcp", "--autosave", "--automation-read-root", "C:\\Users\\내이름\\Videos\\오토샘", "--automation-write-root", "C:\\Users\\내이름\\Videos\\오토샘\\완성"]
+    }
+  }
+}

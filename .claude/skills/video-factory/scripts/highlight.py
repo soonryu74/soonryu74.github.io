@@ -9,7 +9,8 @@ plan.json:
  "crops": {"top": [x,y,w,h], "bottom": [x,y,w,h], "center": [x,y,w,h]},   // 원본 픽셀. stack 은 top·bottom, center 는 center
  "top_ratio": 0.3167,                // stack 에서 위 칸 높이 비율(기본 608/1920)
  "snap": true,                       // 구간 끝을 가까운 쉼(무음)에 맞춤 — 말 중간에 잘리는 것 방지
- "cuts": [[시작초, 끝초, "메모"], …]
+ "cuts": [[시작초, 끝초, "메모"], …],
+ "timeline": true                    // 기본 true — out 옆에 <이름>_컷.xml(FCP7) · _컷.otio 도 씀 (FilmCraft · 프리미어 · 다빈치에서 다듬기)
 }
 결과: out (crf18) — 구간마다 0.08초 소리 페이드."""
 from __future__ import annotations
@@ -69,12 +70,13 @@ def main(plan_path: str) -> Path:
     has_audio = probe(src)["audio"]
     work = out.parent / (out.stem + "_parts"); work.mkdir(parents=True, exist_ok=True)
     vf = vfilter(pl, W, H)
-    parts, total = [], 0.0
+    parts, total, used = [], 0.0, []
     for i, c in enumerate(pl["cuts"]):
         s, e = float(c[0]), float(c[1])
         if pl.get("snap", True) and has_audio:
             s, e = snap(src, s, e)
         d = e - s; total += d
+        used.append((s, e, c[2] if len(c) > 2 else ""))
         p = work / f"p{i:02d}.mp4"
         fil = vf + (f";[0:a]aresample=48000,afade=t=in:d=0.08,afade=t=out:st={d - 0.1:.2f}:d=0.1[a]" if has_audio else "")
         maps = ["-map", "[v]"] + (["-map", "[a]"] if has_audio else [])
@@ -85,6 +87,10 @@ def main(plan_path: str) -> Path:
     lst = work / "list.txt"; lst.write_text("".join(f"file '{p}'\n" for p in parts))
     ff(["-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", "-movflags", "+faststart", str(out)])
     print("DONE", out, f"{total:.1f}s", flush=True)
+    if pl.get("timeline", True):
+        import timeline
+        for p in timeline.write(src, out, used):
+            print("TIMELINE", p, flush=True)
     return out
 
 

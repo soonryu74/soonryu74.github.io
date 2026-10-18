@@ -8,11 +8,12 @@ description: 영상 자동화 공장 — 이미 찍은 영상(강의·설교·�
 > **편집은 기술이 아니라 반복이다. 반복은 스크립트에게, 사람은 고르고 OK 만.**
 > 코드는 전부 이 저장소에서 새로 짠 것(MIT 아님 · 오토샘 소유). 글꼴 Pretendard 는 OFL(`assets/fonts/OFL-Pretendard.txt`).
 
-## 0. 도구 7개 (`scripts/`)
+## 0. 도구 (`scripts/`)
 | 파일 | 하는 일 | 입력 → 출력 |
 |---|---|---|
 | `transcribe.py` | 받아쓰기(+단어 시각) | 영상/음성 → `segs.json` |
-| `highlight.py` | 구간 이어 붙이기 · 세로/가로 화면 짜기 · 쉼에 맞춰 자르기 | `plan.json` → mp4 |
+| `highlight.py` | 구간 이어 붙이기 · 세로/가로 화면 짜기 · 쉼에 맞춰 자르기 | `plan.json` → mp4 + `_컷.xml` · `_컷.otio` |
+| `timeline.py` | 컷 목록을 편집 프로그램 파일로(FCP7 XML · OTIO) — FilmCraft · 프리미어 · 다빈치에서 손으로 다듬기. highlight.py 가 자동으로 부른다(`"timeline": false` 로 끔) | `plan.json` → xml · otio |
 | `subs.py draft` | 자막 초안(두 줄 균형, 쉼·문장 끝에서 끊기) | 단어 JSON → `subs.json` |
 | `subs.py burn` | 자막 굽기(*강조* 금색, 반투명 상자) | mp4 + `subs.json` → mp4 |
 | `typo.py` | 키네틱 타이포 쇼츠/가로 (모션 메뉴 19가지) | `script.json` → mp4 |
@@ -36,6 +37,7 @@ description: 영상 자동화 공장 — 이미 찍은 영상(강의·설교·�
 2. Claude 가 받아쓰기를 읽고 **명장면 6~10개**를 고른다: 한 문장으로 완결되는 말 · 숫자·비유·결론 · 처음과 끝 인사. 합계 2분 50초~3분 10초.
 3. 프레임 몇 장을 뽑아 보고 `crops` 를 정한다(슬라이드 화면 · 사람). `plan.json` → `python highlight.py plan.json`
 4. 초안 전송 → OK → ② 자막 → ⑤ 표지.
+5. 손으로 더 다듬고 싶으면 같이 생긴 `_컷.xml` 을 FilmCraft(파일 ▸ 가져오기)·프리미어·다빈치로 연다 — 원본 크기 그대로 컷만 이어 놓은 러프 컷. 원본 영상 위치가 다르면 프로그램이 «미디어 다시 연결»을 묻는다(`craft-suite` 스킬).
 
 ### ② 자막
 1. `python transcribe.py 완성본.mp4 words.json --words` → `python subs.py draft words.json subs.json`
