@@ -4,6 +4,7 @@
    translate the values, and add { id: '<code>', name: '<language name>' } to LANGS in common.js. */
 window.I18N = window.I18N || {};
 window.I18N.en = {
+  "지난주 일기가 아직 제출 전이라 지난주를 먼저 열었습니다. 이번 주는 [다음주 ›]를 누르세요.": "Last week's journal isn't submitted yet, so it's opened first. For this week, tap [Next ›].",
   // ── 계정 사진 ─────
   "내 사진": "My photo",
   "목사님이 목자 얼굴을 알아보실 수 있게 내 사진을 넣어 주세요. 목사님만 볼 수 있습니다.": "Add your photo so your pastor can recognize you. Only your pastor can see it.",

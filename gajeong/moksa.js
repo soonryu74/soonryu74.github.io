@@ -12,6 +12,13 @@
     bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch(); bindPeople();
     await loadMokjangs();
     await openFromLink() || await loadWeek();
+    // 앱을 켜 둔 채 주일이 지나면, 다시 볼 때 새 주로 넘어간다
+    var startWeek = week;
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') return;
+      var now = C.mondayOf();
+      if (now !== startWeek) { if (week === startWeek) { week = now; loadWeek(); } startWeek = now; }
+    });
     // 화면이 열려 있는 채로 알림을 누르면 주소 끝(#j=…)만 바뀐다 — 그때도 그 일기로 간다
     window.addEventListener('hashchange', function () { openFromLink(); });
   })();
@@ -22,7 +29,7 @@
     if (!m) return false;
     var r = await sb.from('church_journal').select('id, mokjang_id, week_start').eq('id', m[1]).maybeSingle();
     if (!r.data) return false;
-    week = r.data.week_start;
+    week = C.mondayOf(r.data.week_start);   // 예전(월요일 시작) 일기도 그 주일로
     // 다른 탭을 보고 있었으면 주간 현황으로 (알림을 눌렀는데 안 보이는 일이 없게)
     var tb = $('.tabs button[data-pane="week"]');
     if (tb && !tb.classList.contains('on')) tb.click();
@@ -293,7 +300,11 @@
 
   /* 한 주 자료를 통째로 가져온다 */
   async function fetchWeek() {
-    var js = (await sb.from('church_journal').select('*').eq('week_start', week)).data || [];
+    // 예전(월요일 시작)에 저장된 일기도 함께 — 목장마다 하나만 (주일 기준 것을 먼저)
+    var all = (await sb.from('church_journal').select('*').in('week_start', C.weekKeys(week))).data || [];
+    var seen = {}, js = [];
+    all.sort(function (a, b) { return a.week_start === week ? -1 : b.week_start === week ? 1 : 0; })
+      .forEach(function (j) { if (!seen[j.mokjang_id]) { seen[j.mokjang_id] = 1; js.push(j); } });
     var ids = js.map(function (j) { return j.id; });
     var ps = [], cs = [];
     if (ids.length) {
