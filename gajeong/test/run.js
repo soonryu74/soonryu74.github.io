@@ -4,7 +4,7 @@ const { chromium, devices } = require('playwright');
 const fs = require('fs'), path = require('path');
 const BASE = (process.env.BASE || 'http://127.0.0.1:8899') + '/gajeong/';
 const MOCK = fs.readFileSync(path.join(__dirname, 'mock.js'), 'utf8');
-const NOW = new Date('2026-10-19T02:00:00Z'); // 멜번 월 13시(→10/19 주) · LA 일 19시(→10/12 주)
+const NOW = new Date('2026-10-18T02:00:00Z'); // 멜번 주일 13시(→10/18 주) · LA 토 19시(→10/11 주) — 한 주는 주일부터
 
 const SEED = { db: {
   church_church: [
@@ -88,7 +88,7 @@ const db = p => p.evaluate(() => window.__DB());
   { const { c, p } = await ctx(b);
     await login(p, 'pastor1');
     ok('머리말에 교회 이름', (await p.textContent('.top .church')) === '멜번방주교회 & ALF');
-    ok('멜번 기준 이번 주 = 10월 19일 주', (await p.textContent('#wk-label')).startsWith('2026년 10월 19일'), await p.textContent('#wk-label'));
+    ok('멜번 기준 이번 주 = 10월 18일(주일)부터', (await p.textContent('#wk-label')).startsWith('2026년 10월 18일'), await p.textContent('#wk-label'));
     await p.click('#wk-prev'); await p.waitForTimeout(300);
     const list = await p.textContent('#week-list');
     ok('우리 교회 목장만 보임', list.includes('김 목장') && !list.includes('LA 목장'));
@@ -98,7 +98,7 @@ const db = p => p.evaluate(() => window.__DB());
     await c.close(); }
   { const { c, p } = await ctx(b);
     await login(p, 'pastorla');
-    ok('LA 기준 이번 주 = 10월 12일 주', (await p.textContent('#wk-label')).startsWith('2026년 10월 12일'), await p.textContent('#wk-label'));
+    ok('LA 기준 이번 주 = 10월 11일(주일)부터', (await p.textContent('#wk-label')).startsWith('2026년 10월 11일'), await p.textContent('#wk-label'));
     const list = await p.textContent('#week-list');
     ok('LA 목사는 LA 목장만', list.includes('LA 목장') && !list.includes('김 목장'));
     ok('공용 아이콘(로고 없는 교회)', /icon-192\.png$/.test(await p.getAttribute('.top img.mark', 'src')));
@@ -156,7 +156,7 @@ const db = p => p.evaluate(() => window.__DB());
     await p.click('#btn-save'); await p.waitForTimeout(400);
     await p.click('#btn-submit'); await p.waitForTimeout(500);
     const d = await db(p);
-    const j = d.church_journal.find(x => x.mokjang_id === 'mj1' && x.week_start === '2026-10-19');
+    const j = d.church_journal.find(x => x.mokjang_id === 'mj1' && x.week_start === '2026-10-18');
     const rows = d.church_prayer.filter(x => x.journal_id === j.id);
     ok('세 번 저장해도 목원 수만큼만(2줄)', rows.length === 2, rows.length);
     ok('마지막 내용으로 저장', rows.some(x => x.content === '고친 기도제목'));
@@ -202,7 +202,7 @@ const db = p => p.evaluate(() => window.__DB());
     // 화면이 열려 있을 때 — 주소 끝만 바뀐다
     await p.evaluate(() => { location.hash = 'j=11111111-1111-4111-8111-111111111111'; });
     await p.waitForTimeout(600);
-    ok('열린 화면: 그 일기의 주로 이동', (await p.textContent('#wk-label')).startsWith('2026년 10월 12일'), await p.textContent('#wk-label'));
+    ok('열린 화면: 그 일기의 주로 이동', (await p.textContent('#wk-label')).startsWith('2026년 10월 11일'), await p.textContent('#wk-label'));
     ok('열린 화면: 그 목장이 펼쳐짐', await p.evaluate(() => !!document.querySelector('#week-list .mj[data-mj="mj1"]')?.open));
     await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
     await p.evaluate(() => { location.hash = 'j=11111111-1111-4111-8111-111111111111'; });
@@ -212,7 +212,7 @@ const db = p => p.evaluate(() => window.__DB());
     await p.goto(BASE + 'index.html'); await p.waitForTimeout(300);
     await p.goto(BASE + 'moksa.html#j=11111111-1111-4111-8111-111111111111');
     await p.waitForSelector('#week-list .mj'); await p.waitForTimeout(600);
-    ok('새 창: 그 일기의 주로 이동', (await p.textContent('#wk-label')).startsWith('2026년 10월 12일'), await p.textContent('#wk-label'));
+    ok('새 창: 그 일기의 주로 이동', (await p.textContent('#wk-label')).startsWith('2026년 10월 11일'), await p.textContent('#wk-label'));
     ok('새 창: 그 목장이 펼쳐짐', await p.evaluate(() => !!document.querySelector('#week-list .mj[data-mj="mj1"]')?.open));
     await c.close(); }
 
@@ -307,7 +307,7 @@ const db = p => p.evaluate(() => window.__DB());
     ok('오류 글도 영어', (await p.textContent('#msg-login')).includes('incorrect'));
     await login(p, 'pastor1');
     ok('목사 화면 탭 영어', (await p.textContent('.tabs')).includes('Groups & leaders') && (await p.textContent('.tabs')).includes('Prayer overview'));
-    ok('주 표시 영어', /^Oct 19 – Oct 25, 2026/.test(await p.textContent('#wk-label')), await p.textContent('#wk-label'));
+    ok('주 표시 영어', /^Oct 18 – Oct 24, 2026/.test(await p.textContent('#wk-label')), await p.textContent('#wk-label'));
     ok('직함 영어', (await p.textContent('.top .who')).includes('Pastor 담임'), await p.textContent('.top .who'));
     await p.click('#wk-prev'); await p.waitForTimeout(300);
     ok('목장 상태 뱃지 영어', (await p.textContent('#week-list')).includes('Submitted'));
@@ -445,6 +445,30 @@ const db = p => p.evaluate(() => window.__DB());
     await login(p, 'mokjala');
     await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
     ok('다른 교회: 내 사진 칸 없음', !(await p.isVisible('#my-photo-card')));
+    await c.close(); }
+
+  console.log('\n[주일부터 새 주] 지난주 말씀은 지난주에 · 이번 주는 빈 화면');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    await p.evaluate(() => { const D = window.__DB(); D.church_comment.push({ id: 'cm9', journal_id: '11111111-1111-4111-8111-111111111111', author_id: 'p1', author_name: '담임목사', body: '지난주 말씀', created_at: '2026-10-13T00:00:00Z' }); sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(500);
+    ok('주일: 이번 주는 비어 있음(지난주 말씀 안 보임)', (await p.textContent('#wk-label')).startsWith('2026년 10월 18일') && !(await p.textContent('#week-list')).includes('지난주 말씀'));
+    await p.click('#wk-prev'); await p.waitForTimeout(500);
+    await p.click('#week-list .mj[data-mj="mj1"] summary'); await p.waitForTimeout(200);
+    ok('지난주로 가면 지난주 일기·말씀 (예전 월요일 기준 일기도 찾음)', (await p.textContent('#week-list')).includes('지난주 말씀') && (await p.textContent('#week-list')).includes('지난주 이야기'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1');
+    await p.evaluate(() => { const D = window.__DB(); const j = D.church_journal.find(x => x.id === '11111111-1111-4111-8111-111111111111'); j.status = 'draft'; j.week_start = '2026-10-12';
+      D.church_journal = D.church_journal.filter(x => !(x.mokjang_id === 'mj1' && x.week_start === '2026-10-18')); sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(600);
+    ok('주일에 지난주 일기가 제출 전이면 지난주를 먼저 엶', (await p.textContent('#wk-label')).startsWith('2026년 10월 11일') && (await p.textContent('#msg-write')).includes('지난주를 먼저'), await p.textContent('#wk-label'));
+    ok('예전(월요일) 일기를 주일 기준으로 옮겨 둠', (await db(p)).church_journal.find(x => x.id === '11111111-1111-4111-8111-111111111111').week_start === '2026-10-11');
+    await p.click('#wk-next'); await p.waitForTimeout(400);
+    ok('[다음주]로 이번 주', (await p.textContent('#wk-label')).startsWith('2026년 10월 18일'));
+    ok('이번 주 모인 날 기본값 = 그 주 금요일', (await p.inputValue('#met-on')) === '2026-10-23', await p.inputValue('#met-on'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
   await b.close();
