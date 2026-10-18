@@ -325,11 +325,13 @@
     var done = live.filter(function (m) { return data[m.id] && data[m.id].j.status === 'submitted'; }).length;
     var wrote = live.filter(function (m) { return data[m.id]; }).length;
 
+    // 네 칸의 합이 맞게: 전체 목장 = 제출함 + 쓰는 중 + 아직 안 씀 (예전엔 '아직'에 쓰는 중이 겹쳐 셌다)
     $('#stat').innerHTML =
-      '<div><b>' + live.length + T('</b><span>목장</span></div>') +
+      '<div><b>' + live.length + T('</b><span>전체 목장</span></div>') +
       '<div><b>' + done + T('</b><span>제출함</span></div>') +
-      '<div><b>' + (live.length - done) + T('</b><span>아직</span></div>') +
-      '<div><b>' + (wrote - done) + T('</b><span>쓰는 중</span></div>');
+      '<div><b>' + (wrote - done) + T('</b><span>쓰는 중</span></div>') +
+      '<div><b>' + (live.length - wrote) + T('</b><span>아직 안 씀</span></div>');
+    $('#stat-line').textContent = T('이 주 일기: 목장 {0}곳 중 {1}곳이 썼고, 그중 {2}곳이 제출했습니다.', live.length, wrote, done);
 
     if (!live.length) {
       $('#week-list').innerHTML = T('<div class="card"><p class="empty">아직 목장이 없습니다. <b>목장·목자 관리</b>에서 목자 계정을 만들어 주세요.</p></div>');
