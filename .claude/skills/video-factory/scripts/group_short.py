@@ -7,6 +7,7 @@ spec.json:
  "bgm": "음악.mp3", "bgm_volume": 0.5,                      // 선택. 목소리 나올 때 자동으로 낮춤
  "voice_lead": 0.3,                                          // 장면 시작 뒤 목소리 들어가는 시각(초)
  "scenes": [
+  {"type": "cover", "dur": 0.6, "src": "강의장.jpg", "lines": ["AI 독학 포기했다면", "[가르치며] 배우기"], "proof": "34회 강의 · 약 1,380명"},
   {"type": "hook",  "dur": 3.2, "lines": ["AI 공부,", "혼자 하다", "[사흘 만에] 포기했죠?"], "voice": "voice/N00.wav"},
   {"type": "photo", "dur": 5, "src": "강의장.jpg", "lines": ["그런데 이 사람들은", "배운 걸 [남에게] 가르쳐요"], "focus": [0.5, 0.5]},
   {"type": "stats", "dur": 6, "title": "2025 ~ 2026.8", "items": [["34", "회 강의"], ["1,380", "명"]]},
@@ -14,6 +15,7 @@ spec.json:
   {"type": "cta",   "dur": 6, "lines": ["한 번 와 보세요"], "note": "다음 강의 일정 · 신청 링크"}
  ]
 }
+"cover" 는 쇼츠 표지 — 맨 앞 0.6초에 두면 업로드 때 첫 장면을 표지로 고를 수 있고, <out>_표지.jpg 로도 저장된다.
 장면에 "voice" 가 있으면 장면 길이 = max(dur, 목소리 길이 + 0.75초) 로 늘어난다.
 [ ] 안은 그룹색 상자. 사진은 흐린 같은 사진 위에 둥근 카드로 얹는다(작은 사진도 깨져 보이지 않게).
 화면 아래 22% 와 오른쪽 끝은 쇼츠 버튼 자리라 글자를 두지 않는다."""
@@ -109,6 +111,22 @@ class Scene:
             self.voice = str((root / sc["voice"]).resolve())
             self.dur = max(self.dur, probe(self.voice)["duration"] + sp.get("voice_lead", 0.3) + 0.45)
         self.bg = navy_bg((W, H), grid=60)
+        if sc["type"] == "cover":
+            im = Image.open(root / sc["src"]).convert("RGB")
+            ph_h = int(H * 0.60)
+            fx, fy = sc.get("focus", [0.5, 0.5])
+            r = max(W / im.width, ph_h / im.height)
+            big = im.resize((int(im.width * r + 1), int(im.height * r + 1)), Image.LANCZOS)
+            x = int(clamp(fx * big.width - W / 2, 0, big.width - W)); y = int(clamp(fy * big.height - ph_h / 2, 0, big.height - ph_h))
+            bg = Image.new("RGBA", (W, H), NAVY + (255,))
+            bg.paste(big.crop((x, y, x + W, y + ph_h)), (0, 0))
+            g = Image.new("L", (1, H))
+            for yy in range(H):
+                top = clamp(1 - yy / 330) * 170                                  # 위 글자 읽히게
+                bot = clamp((yy - ph_h * 0.55) / (ph_h * 0.45)) * 255           # 사진 → 남색
+                g.putpixel((0, yy), int(max(top, bot)))
+            bg = Image.composite(Image.new("RGBA", (W, H), NAVY + (255,)), bg, g.resize((W, H)))
+            self.bg = bg
         if sc["type"] == "photo":
             im = Image.open(root / sc["src"]).convert("RGB")
             blur = fit_cover(im, (W // 4, H // 4)).filter(ImageFilter.GaussianBlur(6)).resize((W, H), Image.LANCZOS)
@@ -128,7 +146,17 @@ class Scene:
         typ = sc["type"]
         if typ != "hook":
             top_bar(img, self.sp, acc)
-        if typ == "hook":
+        if typ == "cover":
+            l1, l2 = sc["lines"][0], sc["lines"][1]
+            f1 = F("bold", 78 if len(l1) <= 11 else 66)
+            draw_line(img, l1, f1, X0 - 6, 1080, acc)
+            n2 = len(re.sub(r"[\[\]]", "", l2))
+            f2 = F("black", 124 if n2 <= 7 else (108 if n2 <= 9 else 92))
+            draw_line(img, l2, f2, X0 - 6, 1190, acc)
+            if sc.get("proof"):
+                ImageDraw.Draw(img).text((X0, 1400), sc["proof"], font=F("semi", 46), fill=(225, 230, 240))
+            ImageDraw.Draw(img).rectangle((0, H - 16, W, H), fill=acc)
+        elif typ == "hook":
             f = F("black", 104)
             y = 560
             for i, s in enumerate(sc["lines"]):
@@ -215,6 +243,8 @@ def main(spec_path: str) -> Path:
         starts.append(t0); t0 += s.dur
     total = t0
     out = Path(P(sp["out"])); out.parent.mkdir(parents=True, exist_ok=True)
+    if scenes[0].sc["type"] == "cover":
+        scenes[0].frame(0).save(out.with_name(out.stem + "_표지.jpg"), quality=92)
     silent = out.with_name(out.stem + "_무음.mp4")
     pr = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
                            "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-c:v", "libx264", "-crf", "18", "-preset", "medium",
