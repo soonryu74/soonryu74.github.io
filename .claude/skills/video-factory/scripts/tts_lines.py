@@ -15,7 +15,7 @@ from pathlib import Path
 
 import requests
 
-KEY = os.environ.get("GEMINI_API_KEY") or sys.exit("GEMINI_API_KEY 없음")
+KEY = os.environ.get("GEMINI_API_KEY", "")   # 비어 있으면 환경의 Network secret 이 헤더를 붙여 준다
 J = json.load(open(sys.argv[1], encoding="utf-8"))
 OUT = Path(sys.argv[2]); OUT.mkdir(parents=True, exist_ok=True)
 TAKES = int(sys.argv[3]) if len(sys.argv) > 3 else 2
@@ -23,7 +23,7 @@ TAG = J.get("tag", "[warm, calm]") + " "
 MODEL = os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts")
 FALLBACK = os.environ.get("TTS_FALLBACK", "gemini-3.8-flash-lite-tts")
 URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent"   # 키는 주소에 넣지 않는다(오류 메시지에 찍히지 않게)
-HDR = {"x-goog-api-key": KEY, "Content-Type": "application/json"}
+HDR = {"Content-Type": "application/json", **({"x-goog-api-key": KEY} if KEY else {})}
 
 
 def _tts(text: str, out: Path) -> float:
