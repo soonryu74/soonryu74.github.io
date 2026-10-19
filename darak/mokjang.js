@@ -38,17 +38,90 @@
     $('#mj-name').value = mokjang.name;
     $('#mj-day').value = mokjang.meet_day || '';
 
-    bindTabs(); bindWeek(); bindWrite(); bindMembers(); bindMine();
+    bindTabs(); bindWeek(); bindWrite(); bindMembers(); bindMine(); bindNotify();
     await loadMokwon();
     await pickStartWeek();
     await loadWeek();
     watchNewWeek();
+    openFromLink();
+    // 화면이 열려 있는 채로 알림을 누르면 주소 끝(#j=…)만 바뀐다 — 그때도 그 일기로 간다
+    window.addEventListener('hashchange', openFromLink);
     window.addEventListener('beforeunload', function (e) {
       if (dirty) { e.preventDefault(); e.returnValue = ''; }
     });
   })();
 
   function fail(m) { alert(T('불러오지 못했습니다: ') + m); }
+
+  /* 말씀 알림을 눌러 들어오면(mokjang.html#j=일기) [지난 일기]에서 그 주를 펼친다 */
+  async function openFromLink() {
+    var m = /[#&]j=([0-9a-f-]{36})/.exec(location.hash);
+    if (!m) return;
+    history.replaceState(null, '', location.pathname);
+    // 탭 단추를 누르면 목록을 한 번 더 불러 펼친 것이 덮이므로, 탭만 직접 바꾼다
+    $$('.tabs button').forEach(function (x) { x.classList.toggle('on', x.dataset.pane === 'past'); });
+    $$('.pane').forEach(function (x) { x.classList.toggle('on', x.id === 'pane-past'); });
+    await loadPast();
+    var d = $('#past-list details[data-id="' + m[1] + '"]');
+    if (d) { d.open = true; d.scrollIntoView({ block: 'start' }); }
+  }
+
+  /* ── 휴대전화 알림 (목사님 말씀) ───────────────── */
+  var ASK_LATER = 'darak-notify-later-mokja';
+  function bindNotify() {
+    if (solo) { $('#notify-card').hidden = true; return; }   // 혼자 쓰는 다락방은 말씀 남길 목사님이 없다
+    $('#notify-on').addEventListener('click', function () { turnOn($('#msg-notify')); });
+    $('#notify-ask-on').addEventListener('click', function () { turnOn($('#msg-notify-ask')); });
+    $('#notify-ask-later').addEventListener('click', function () {
+      try { localStorage.setItem(ASK_LATER, String(Date.now())); } catch (e) {}
+      $('#notify-ask').hidden = true;
+    });
+    $('#notify-off').addEventListener('click', async function () {
+      try { await C.pushDisable(); C.say($('#msg-notify'), T('이 기기 알림을 껐습니다.'), 'ok'); }
+      catch (e) { C.say($('#msg-notify'), e.message, 'err'); }
+      showNotify();
+    });
+    $('#notify-test').addEventListener('click', async function () {
+      var b = $('#notify-test'); b.disabled = true;
+      try {
+        var r = await C.notify({ action: 'test' });
+        C.say($('#msg-notify'), r.sent ? T('시험 알림을 보냈습니다. 몇 초 안에 와야 합니다.')
+          : T('알림을 받을 기기가 없습니다. 먼저 [이 기기에서 알림 받기]를 눌러 주세요.'), r.sent ? 'ok' : 'err', true);
+      } catch (e) { C.say($('#msg-notify'), e.message, 'err'); }
+      b.disabled = false;
+    });
+    showNotify();
+  }
+  async function turnOn(msgEl) {
+    try {
+      await C.pushEnable();
+      C.say(msgEl, T('알림을 켰습니다. 목사님이 말씀을 남기시면 이 기기로 알려 드립니다.'), 'ok', true);
+    } catch (e) { C.say(msgEl, e.message, 'err'); }
+    showNotify();
+  }
+  async function showNotify() {
+    var st = 'unsupported';
+    try { st = await C.pushState(); } catch (e) {}
+    var label = { on: T('이 기기에서 받는 중'), off: T('꺼져 있음'), denied: T('브라우저에서 막혀 있음'),
+                  'ios-home': T('홈 화면에 추가해야 함'), unsupported: T('이 브라우저는 알림을 못 받음') }[st];
+    var help = {
+      on: T('다른 휴대전화나 컴퓨터에서도 받으시려면 그 기기에서 한 번 더 켜 주세요.'),
+      off: '',
+      denied: T('주소창 왼쪽 자물쇠(또는 설정 → 사이트 설정 → 알림)에서 이 사이트 알림을 허용으로 바꿔 주세요.'),
+      'ios-home': T('아이폰은 사파리 아래쪽 공유 단추 → [홈 화면에 추가]를 하신 뒤, 홈 화면의 아이콘으로 열어서 켜 주세요.'),
+      unsupported: T('안드로이드는 크롬, 아이폰은 사파리(홈 화면에 추가)에서 받을 수 있습니다.')
+    }[st];
+    $('#notify-state').textContent = label;
+    $('#notify-state').className = 'badge ' + (st === 'on' ? 'done' : 'todo');
+    $('#notify-help').textContent = help;
+    $('#notify-on').hidden = st === 'on' || st === 'unsupported' || st === 'ios-home';
+    $('#notify-off').hidden = st !== 'on';
+    $('#notify-test').hidden = st !== 'on';
+    // 일기 쓰기 맨 위 안내: 아직 안 켰고, '나중에'를 누른 지 7일이 지났을 때만
+    var later = 0; try { later = +localStorage.getItem(ASK_LATER) || 0; } catch (e) {}
+    $('#notify-ask').hidden = !((st === 'off' || st === 'ios-home') && Date.now() - later > 7 * 864e5);
+    if (st === 'ios-home') { $('#notify-ask-desc').textContent = help; $('#notify-ask-on').hidden = true; }
+  }
 
   // 주일·월요일에는 지난주 모임 일기를 마저 쓰는 일이 많다 —
   // 이번 주 일기가 아직 없고 지난주 일기가 제출 전이면 지난주를 먼저 연다 (혼자 쓰는 다락방은 '저장' 전이면)

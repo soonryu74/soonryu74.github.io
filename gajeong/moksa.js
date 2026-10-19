@@ -311,6 +311,7 @@
       ps = (await sb.from('church_prayer').select('*').in('journal_id', ids).order('sort_order')).data || [];
       cs = (await sb.from('church_comment').select('*').in('journal_id', ids).order('created_at')).data || [];
     }
+    cmtPhoto = await C.authorPhotos(cs);
     var byMj = {};
     js.forEach(function (j) {
       byMj[j.mokjang_id] = { j: j, ps: ps.filter(function (p) { return p.journal_id === j.id; }),
@@ -318,6 +319,8 @@
     });
     return byMj;
   }
+
+  var cmtPhoto = null;   // 말씀 남긴 분 사진 (성도 사진을 켠 교회만)
 
   /* ── 주간 현황 ─────────────────────────────────── */
   async function loadWeek() {
@@ -388,8 +391,7 @@
     h += T('<div class="section-title">목사님 말씀</div>');
     h += d.cs.map(function (c) {
       return '<div class="member" style="background:var(--brand-soft); border-color:#cfe0d5">' +
-        '<div class="head"><span class="name">' + esc(c.author_name) + '</span>' +
-        '<span class="quiet" style="font-size:13px">' + C.whenText(c.created_at) + '</span>' +
+        C.commentHead(c, cmtPhoto) +
         (c.author_id === me.id ? '<span class="spacer"></span><button class="small danger del-cmt" data-id="' + c.id + T('">지우기</button>') : '') +
         '</div><div class="prose">' + esc(c.body) + '</div></div>';
     }).join('');
@@ -407,9 +409,10 @@
     form.querySelector('button').disabled = true;
     var r = await sb.from('church_comment').insert({
       journal_id: jid, author_id: me.id, author_name: me.name, body: body
-    });
+    }).select('id').single();
     form.querySelector('button').disabled = false;
     if (r.error) return alert(T('남기지 못했습니다: ') + r.error.message);
+    C.notify({ action: 'commented', comment_id: r.data.id }).catch(function () {});   // 목자 휴대전화로 알림
     form.b.value = '';
     var open = $$('#week-list .mj').filter(function (d) { return d.open; }).map(function (d) { return d.dataset.mj; });
     await loadWeek();
