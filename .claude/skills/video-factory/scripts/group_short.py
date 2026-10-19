@@ -164,7 +164,7 @@ class Scene:
         self.sc, self.sp, self.root = sc, sp, root
         self.acc = rgb(sc.get("accent", sp["accent"]))
         self.th = Theme(sc.get("theme", sp.get("theme", "dark")), self.acc)
-        for k, v in (sp.get("palette") or {}).items():     # 그룹이 직접 정한 색: {"base": "#FFF8E7", "ink": "#000000", "num": "#FFC700", …}
+        for k, v in {**(sp.get("palette") or {}), **(sc.get("palette") or {})}.items():   # 그룹이 정한 색 · 장면마다 덮어쓰기 가능
             setattr(self.th, k, rgb(v) if isinstance(v, str) else tuple(v))
         global TH
         TH = self.th
