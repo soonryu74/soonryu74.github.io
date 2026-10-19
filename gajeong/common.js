@@ -540,6 +540,20 @@ window.CHURCH = (function () {
                : '<span class="avatar" aria-hidden="true">' + esc((m.name || '?').trim().charAt(0)) + '</span>';
   }
 
+  // 말씀(댓글) 남긴 분 사진 → { author_id: 서명 주소 }. 경로가 정해져 있어 프로필을 따로 읽지 않는다
+  async function authorPhotos(cs) {
+    if (!has('member_photos') || !cs.length) return null;
+    var seen = {}, list = [];
+    cs.forEach(function (c) { if (c.author_id && !seen[c.author_id]) { seen[c.author_id] = 1; list.push({ id: c.author_id, photo_path: church.id + '/p_' + c.author_id + '.jpg' }); } });
+    try { return await photoUrls(list); } catch (e) { return {}; }
+  }
+  // 말씀 머리줄: [사진] 이름 · 언제 (닫는 </div>는 부르는 쪽에서)
+  function commentHead(c, urls) {
+    return '<div class="head cmt-head">' + (urls ? avatar({ name: c.author_name }, urls[c.author_id]) : '') +
+      '<span class="name">' + esc(c.author_name) + '</span>' +
+      '<span class="quiet" style="font-size:13px">' + whenText(c.created_at) + '</span>';
+  }
+
   function memberDatesForm(m) {
     return '<form class="dates-form" data-id="' + esc(m.id) + '"><div class="dates-grid">' +
       DATE_FIELDS.map(function (f) {
@@ -570,7 +584,7 @@ window.CHURCH = (function () {
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave,
-    has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
+    has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, authorPhotos: authorPhotos, commentHead: commentHead, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();

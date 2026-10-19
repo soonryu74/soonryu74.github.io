@@ -400,9 +400,10 @@
     form.querySelector('button').disabled = true;
     var r = await sb.from('church_comment').insert({
       journal_id: jid, author_id: me.id, author_name: me.name, body: body
-    });
+    }).select('id').single();
     form.querySelector('button').disabled = false;
     if (r.error) return alert(T('남기지 못했습니다: ') + r.error.message);
+    C.notify({ action: 'commented', comment_id: r.data.id }).catch(function () {});   // 순장 휴대전화로 알림
     form.b.value = '';
     var open = $$('#week-list .mj').filter(function (d) { return d.open; }).map(function (d) { return d.dataset.mj; });
     await loadWeek();

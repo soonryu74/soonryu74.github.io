@@ -1,5 +1,6 @@
 // 목장 나눔터 — 목사님 휴대전화 알림 (Supabase Edge Function: church-notify, verify_jwt=false)
 //  · submitted : 목자가 일기를 제출하면 같은 교회 목사들의 기기로 웹 푸시를 보낸다
+//  · commented : 목사가 일기에 말씀을 남기면 그 목장 목자의 기기로 웹 푸시를 보낸다
 //  · test      : 지금 로그인한 사람의 기기로 시험 알림을 보낸다
 // 비밀값: VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY (선택: VAPID_SUBJECT)
 //   함수 비밀값이 없으면 church_secret 표(서버 전용, RLS 정책 없음)에서 읽고,
@@ -115,11 +116,14 @@ Deno.serve(async (req) => {
 
   try {
     if (body.action === 'test') {
-      const { data: pf } = await admin.from('church_profile').select('church_id').eq('id', uid).maybeSingle()
+      const { data: pf } = await admin.from('church_profile').select('church_id, role').eq('id', uid).maybeSingle()
       const tm = pf?.church_id ? await churchTerms(pf.church_id) : { unit: '목장', leader: '목자' }
+      const pastor = pf?.role === 'pastor'
       const r = await sendTo([uid], (lang) => lang === 'en'
-        ? { title: 'Mokjang Sharing', body: "Alerts are working. You'll be notified like this when a leader submits a journal.", url: 'moksa.html', tag: 'test' }
-        : { title: `${tm.unit} 나눔터`, body: `알림이 잘 옵니다. ${tm.leader}님이 일기를 올리면 이렇게 알려 드립니다.`, url: 'moksa.html', tag: 'test' })
+        ? { title: 'Mokjang Sharing', body: pastor ? "Alerts are working. You'll be notified like this when a leader submits a journal."
+            : "Alerts are working. You'll be notified like this when your pastor leaves a note.", url: pastor ? 'moksa.html' : 'mokjang.html', tag: 'test' }
+        : { title: `${tm.unit} 나눔터`, body: pastor ? `알림이 잘 옵니다. ${tm.leader}님이 일기를 올리면 이렇게 알려 드립니다.`
+            : '알림이 잘 옵니다. 목사님이 말씀을 남기시면 이렇게 알려 드립니다.', url: pastor ? 'moksa.html' : 'mokjang.html', tag: 'test' })
       return json({ ok: true, ...r })
     }
 
@@ -145,6 +149,27 @@ Deno.serve(async (req) => {
         body: lang === 'en' ? `${mj.mokja_name} · ${weekLabel(j.week_start, 'en')}` : `${mj.mokja_name} ${tm.leader} · ${weekLabel(j.week_start)}`,
         url: `moksa.html#j=${j.id}`,
         tag: `j-${j.id}`,
+      }))
+      return json({ ok: true, ...r })
+    }
+
+    if (body.action === 'commented') {
+      const { data: c } = await admin.from('church_comment')
+        .select('id, journal_id, author_id, author_name, body').eq('id', String(body.comment_id ?? '')).maybeSingle()
+      if (!c) return json({ error: '말씀을 찾지 못했습니다' }, 404)
+      if (c.author_id !== uid) return json({ error: '내가 남긴 말씀이 아닙니다' }, 403)   // 남긴 사람만 알림을 보낼 수 있다
+      const { data: j } = await admin.from('church_journal').select('id, mokjang_id, week_start').eq('id', c.journal_id).maybeSingle()
+      const { data: mj } = j ? await admin.from('church_mokjang').select('id, name, mokja_id, church_id').eq('id', j.mokjang_id).maybeSingle() : { data: null }
+      const { data: me } = await admin.from('church_profile').select('church_id, role').eq('id', uid).maybeSingle()
+      if (!j || !mj || !me || me.role !== 'pastor' || me.church_id !== mj.church_id) return json({ error: '우리 교회 일기가 아닙니다' }, 403)
+      if (!mj.mokja_id) return json({ ok: true, sent: 0, devices: 0 })
+      const text = String(c.body ?? '').replace(/\s+/g, ' ').trim()
+      const short = text.length > 60 ? text.slice(0, 60) + '…' : text
+      const r = await sendTo([mj.mokja_id], (lang) => ({
+        title: lang === 'en' ? `A note from ${c.author_name}` : `${c.author_name}님이 말씀을 남기셨습니다`,
+        body: lang === 'en' ? `${weekLabel(j.week_start, 'en')} · ${short}` : `${weekLabel(j.week_start)} · ${short}`,
+        url: `mokjang.html#j=${j.id}`,
+        tag: `c-${c.id}`,
       }))
       return json({ ok: true, ...r })
     }
