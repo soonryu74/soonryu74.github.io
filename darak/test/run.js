@@ -477,6 +477,7 @@ const db = p => p.evaluate(() => window.__DB());
     await p.fill('#new-name', '혼자순원'); await p.click('#form-add button[type=submit]'); await p.waitForTimeout(300);
     await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
     ok('[내 계정]에 교회 연결 칸', await p.isVisible('#form-link'));
+    ok('혼자 쓰면 말씀 알림 칸·안내 없음', !(await p.isVisible('#notify-card')) && !(await p.isVisible('#notify-ask')));
     await p.fill('#link-code', 'NOPE-NOPE'); await p.click('#btn-link'); await p.waitForTimeout(300);
     ok('틀린 코드로는 연결 안 됨', (await p.textContent('#msg-link')).includes('가입 코드가 맞지 않습니다'));
     await p.fill('#link-code', code); await p.click('#btn-link'); await p.waitForTimeout(300);
@@ -490,6 +491,7 @@ const db = p => p.evaluate(() => window.__DB());
     ok('연결 뒤에는 목사님께 제출 단추', await p.isVisible('#btn-submit'));
     await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
     ok('연결 뒤에는 연결 칸이 사라짐', !(await p.isVisible('#form-link')));
+    ok('연결 뒤에는 말씀 알림 칸', await p.isVisible('#notify-card'));
     await p.evaluate(() => CHURCH.sb.auth.signOut());
     await login(p, 'pastor1');
     ok('목사님 화면에 옮겨 온 다락방이 보임', (await p.textContent('#week-list')).includes('혼자순장 다락방'));
@@ -509,6 +511,27 @@ const db = p => p.evaluate(() => window.__DB());
     await p.click('#btn-leave'); await p.waitForURL(/left=1/); await p.waitForTimeout(400);
     const d = await db(p);
     ok('탈퇴하면 계정과 나만의 다락방이 함께 지워짐', !d.church_profile.some(x => x.id === lp.id) && !d.church_church.some(x => x.id === cid) && !d.church_mokjang.some(m => m.church_id === cid));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
+  console.log('\n[목사님 말씀] 순장에게 알림');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    await p.click('#wk-prev'); await p.waitForTimeout(500);
+    await p.click('#week-list .mj[data-mj="mj1"] summary');
+    await p.fill('#week-list .mj[data-mj="mj1"] .cmt textarea', '수고 많으셨습니다');
+    await p.click('#week-list .mj[data-mj="mj1"] .cmt button'); await p.waitForTimeout(600);
+    const cm = (await db(p)).church_comment.find(x => x.body === '수고 많으셨습니다');
+    const n = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'commented');
+    ok('말씀을 남기면 순장 알림 요청', cm && n.length === 1 && n[0].body.comment_id === cm.id, JSON.stringify(n));
+    await p.evaluate(() => CHURCH.sb.auth.signOut());
+    await login(p, 'mokja1');
+    ok('순장: 알림이 꺼져 있으면 일기 쓰기 맨 위에 안내', await p.isVisible('#notify-ask'));
+    await p.click('#notify-ask-on'); await p.waitForTimeout(400);
+    ok('순장: 알림 켜짐', !(await p.isVisible('#notify-ask')) && (await db(p)).church_push.length > 0);
+    await p.goto(BASE + 'mokjang.html#j=11111111-1111-4111-8111-111111111111'); await p.waitForSelector('.top h1'); await p.waitForTimeout(900);
+    ok('알림을 누르면 [지난 일기]에서 그 주가 펼쳐짐', await p.isVisible('#pane-past') && await p.$eval('#past-list details[data-id="11111111-1111-4111-8111-111111111111"]', e => e.open)
+      && (await p.textContent('#past-list')).includes('수고 많으셨습니다'));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
