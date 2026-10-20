@@ -303,3 +303,12 @@ html[data-theme="night"] input[type=date]{color-scheme:dark}
 .slug-row{display:flex; align-items:center; gap:6px}
 .slug-row .slug-pre{color:var(--muted); font-size:15px; white-space:nowrap}
 .slug-row input{flex:1; min-width:0}
+
+/* 첫 화면: 자주 묻는 질문 */
+.faq details{border-top:1px solid var(--line); padding:12px 0}
+.faq details:first-of-type{border-top:0}
+.faq summary{cursor:pointer; font-weight:600; line-height:1.5; list-style:none; position:relative; padding-right:22px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+'; position:absolute; right:2px; top:0; color:var(--muted); font-weight:400}
+.faq details[open] summary::after{content:'−'}
+.faq details p{margin:8px 0 0; color:var(--ink2, inherit); line-height:1.65; font-size:15px}

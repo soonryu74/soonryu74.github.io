@@ -625,6 +625,18 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[자주 묻는 질문] 첫 화면 · 영어');
+  { const { c, p } = await ctx(b);
+    await p.goto(BASE + 'index.html'); await p.waitForTimeout(400);
+    ok('자주 묻는 질문 9개', (await p.$$('#faq details')).length === 9);
+    await p.click('#faq details:first-of-type summary');
+    ok('누르면 답이 펼쳐짐', (await p.textContent('#faq details[open]')).includes('수파베이스'));
+    await p.click('.lang-btn'); await p.waitForTimeout(500);
+    const left = await p.evaluate(() => [...document.querySelectorAll('#faq summary, #faq p')].map(e => e.textContent).filter(t => /[가-힣]/.test(t)));
+    ok('영어로 바꾸면 질문·답 모두 영어', left.length === 0, JSON.stringify(left));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
