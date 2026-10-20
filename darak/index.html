@@ -21,7 +21,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="다락방나눔터">
-<link rel="stylesheet" href="style.css?v=202610201000">
+<link rel="stylesheet" href="style.css?v=202610211000">
 <style>
   .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
   .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
@@ -191,6 +191,9 @@ try { (function (m, q) { var s = q.get('c');
       <input id="scode" type="text" autocapitalize="characters" autocomplete="off" placeholder="안내받은 코드" required>
       <label for="schurch">교회 이름</label>
       <input id="schurch" type="text" placeholder="예: 새소망교회" required>
+      <label for="sslug">우리 교회 주소 <span class="quiet" style="font-weight:400">(정하지 않아도 됩니다)</span></label>
+      <div class="slug-row"><span class="slug-pre" data-noterm>mokjang.app/darak/?c=</span><input id="sslug" type="text" inputmode="latin" autocapitalize="none" autocorrect="off" autocomplete="off" maxlength="20" placeholder="예: hanul"></div>
+      <p class="hint" id="slug-hint">영어 소문자와 숫자로 2~20자. 비워 두면 자동으로 정해 드립니다. 한 번 정하면 바뀌지 않습니다.</p>
       <label for="stz">교회가 있는 곳</label>
       <select id="stz"></select>
       <p class="hint">'이번 주'를 이 시간대로 셉니다. 나중에 바꿀 수 있습니다.</p>
@@ -224,8 +227,8 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610201000"></script>
-<script src="common.js?v=202610201000"></script>
+<script src="lang-en.js?v=202610211000"></script>
+<script src="common.js?v=202610211000"></script>
 <script>
 (function () {
   var C = window.CHURCH, $ = C.$;
@@ -301,6 +304,24 @@ try { (function (m, q) { var s = q.get('c');
     }
   });
 
+  // 교회 주소: 치는 대로 소문자로 바꾸고, 잠깐 멈추면 쓸 수 있는지 서버에 물어본다
+  var slugTimer = null, SLUG_HINT = $('#slug-hint').textContent;
+  $('#sslug').addEventListener('input', function () {
+    var el = this, v = el.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (v !== el.value) el.value = v;
+    clearTimeout(slugTimer);
+    var hint = $('#slug-hint'); hint.style.color = '';
+    if (!v) { hint.textContent = SLUG_HINT; return; }
+    slugTimer = setTimeout(async function () {
+      try {
+        var r = await C.callAdmin({ action: 'check_slug', slug: v });
+        if (el.value !== v) return;
+        hint.textContent = r.available ? C.t('쓸 수 있는 주소입니다.') : r.problem;
+        hint.style.color = r.available ? 'var(--brand)' : '#a33';
+      } catch (e) {}
+    }, 500);
+  });
+
   $('#form-setup').addEventListener('submit', async function (e) {
     e.preventDefault();
     var b = $('#btn-setup'); b.disabled = true; b.textContent = C.t('만드는 중…');
@@ -310,6 +331,7 @@ try { (function (m, q) { var s = q.get('c');
         invite_code: $('#scode').value,
         church_name: $('#schurch').value,
         timezone: $('#stz').value,
+        slug: $('#sslug').value.trim().toLowerCase(),
         login_id: $('#slid').value,
         password: $('#spw').value,
         name: $('#sname').value
