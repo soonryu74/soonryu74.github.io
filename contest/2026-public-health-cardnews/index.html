@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>돌봄의 빈칸을 보이게 하는 제안 — 2026 대국민 공공의료 공모전 카드뉴스 시안</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --paper:#f7f4ee; --ink:#1c2a3a; --navy:#16365f; --teal:#1f7a6d; --coral:#d9533a;
+    --muted:#5c6b7a; --line:#d8d2c6; --fill:#1f7a6d; --gap:#f1ece3; --night:#ddd5c5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9e5dd;font-family:'Pretendard Variable',Pretendard,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+  .toolbar{max-width:1120px;margin:0 auto;padding:18px 20px 6px;font-size:14px;color:#44515f;line-height:1.6}
+  .toolbar b{color:var(--navy)}
+  .deck{display:flex;flex-direction:column;gap:28px;align-items:center;padding:14px 0 60px}
+  .card{width:1080px;height:1080px;background:var(--paper);position:relative;overflow:hidden;padding:84px 88px;display:flex;flex-direction:column;word-break:keep-all;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+  .card .kicker{display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:600;color:var(--muted);letter-spacing:-.01em}
+  .card .kicker .pg{font-variant-numeric:tabular-nums}
+  .card .label{display:inline-block;align-self:flex-start;margin-top:52px;background:var(--navy);color:#fff;font-weight:700;font-size:24px;padding:8px 18px;border-radius:8px}
+  .card .label.teal{background:var(--teal)}
+  .card .label.coral{background:var(--coral)}
+  .card h1{margin:22px 0 0;font-size:66px;line-height:1.24;font-weight:800;letter-spacing:-.03em;color:var(--navy)}
+  .card h1 em{font-style:normal;color:var(--coral)}
+  .card h1 u{text-decoration:none;color:var(--teal)}
+  .card .sub{margin:22px 0 0;font-size:31px;line-height:1.55;color:#34414f;font-weight:500}
+  .card .sub b{font-weight:700;color:var(--ink)}
+  .card .grow{flex:1}
+  .card .foot{font-size:19px;line-height:1.5;color:var(--muted)}
+  .card .foot b{color:#44515f;font-weight:600}
+
+  /* 7x24 week grid */
+  .week{display:grid;grid-template-columns:62px repeat(24,1fr);gap:4px;align-items:center}
+  .week .d{font-size:21px;font-weight:700;color:var(--muted)}
+  .week .h{height:34px;border-radius:5px;background:var(--gap)}
+  .week .h.n{background:var(--night)}
+  .week .h.on{background:var(--fill)}
+  .week .h.fam{background:#8fb3a8}
+  .week-axis{display:grid;grid-template-columns:62px repeat(24,1fr);gap:4px;font-size:16px;color:var(--muted);margin-bottom:6px}
+  .week-axis span:nth-child(1){grid-column:1}
+  .legend{display:flex;gap:26px;margin-top:16px;font-size:21px;color:#44515f;align-items:center}
+  .legend i{display:inline-block;width:26px;height:26px;border-radius:6px;vertical-align:-5px;margin-right:9px}
+
+  /* 168 cells */
+  .cells{display:grid;grid-template-columns:repeat(24,1fr);gap:7px}
+  .cells i{display:block;aspect-ratio:1/1;border-radius:6px;background:var(--gap);border:1.5px solid #e2dbce}
+  .cells i.on{background:var(--fill);border-color:var(--fill)}
+
+  /* stat tiles */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+  .stat{background:#fff;border:2px solid var(--line);border-radius:18px;padding:30px 26px 26px}
+  .stat .n{font-size:72px;font-weight:800;letter-spacing:-.04em;color:var(--navy);line-height:1}
+  .stat .n small{font-size:36px;font-weight:700}
+  .stat .t{margin-top:14px;font-size:23px;line-height:1.45;color:#34414f;font-weight:500}
+  .stat.hi .n{color:var(--teal)}
+  .stat.warn .n{color:var(--coral)}
+
+  /* steps */
+  .steps{display:flex;flex-direction:column;gap:18px;margin-top:38px}
+  .step{display:flex;gap:22px;align-items:flex-start;background:#fff;border:2px solid var(--line);border-radius:18px;padding:24px 28px}
+  .step .no{flex:0 0 58px;height:58px;border-radius:50%;background:var(--teal);color:#fff;font-weight:800;font-size:30px;display:flex;align-items:center;justify-content:center}
+  .step .tx{font-size:30px;line-height:1.4;font-weight:700;color:var(--ink)}
+  .step .tx small{display:block;margin-top:6px;font-size:22px;font-weight:500;color:var(--muted);line-height:1.45}
+
+  /* flow */
+  .flow{display:grid;grid-template-columns:1fr 54px 1fr 54px 1fr;align-items:center;gap:8px;margin-top:40px}
+  .flow .box{flex-direction:column;background:#fff;border:2px solid var(--line);border-radius:18px;padding:26px 18px;text-align:center;font-size:26px;font-weight:700;line-height:1.35;min-height:150px;display:flex;align-items:center;justify-content:center}
+  .flow .box.key{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .flow .box small{display:block;font-size:19px;font-weight:500;color:var(--muted);margin-top:8px}
+  .flow .box.key small{color:#c9d6e6}
+  .flow .arr{font-size:40px;color:var(--teal);text-align:center;font-weight:800}
+  .pills{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .pill{border:2px solid var(--teal);color:var(--teal);font-weight:700;font-size:24px;padding:10px 20px;border-radius:999px;background:#fff}
+
+  .srcbox{background:#fff;border:2px solid var(--line);border-radius:18px;padding:24px 28px;font-size:21px;line-height:1.55;color:#44515f}
+  .srcbox b{color:var(--navy)}
+  .aibox{margin-top:16px;border-left:6px solid var(--navy);padding:4px 0 4px 20px;font-size:20px;line-height:1.55;color:#44515f}
+  .aibox b{color:var(--navy)}
+
+  #c6 .sub{font-size:27px;margin-top:18px}
+  #c6 .week .h{height:24px}
+  #c6 .week{gap:3px}
+  #c6 .legend{font-size:19px;margin-top:10px}
+  #c6 .srcbox{padding:16px 22px;font-size:19px;line-height:1.5}
+  #c6 .aibox{margin-top:12px;font-size:19px;line-height:1.5}
+  @media (max-width:1140px){ .deck{transform-origin:top center;} }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <b>2026 대국민 공공의료 공모전 · 카드뉴스 시안</b> (세부주제 4: 우리가 꿈꾸는 공공의료의 미래 — 제안)<br>
+  규격: 6컷 · 1080×1080px · PNG. 내보내기: <code>python3 export.py</code> → <code>out/card-1.png … card-6.png</code>
+</div>
+
+<div class="deck">
+
+<!-- ===== 1 표지 ===== -->
+<section class="card" id="c1">
+  <div class="kicker"><span>공공의료, 우리 곁의 이야기 · 우리가 꿈꾸는 공공의료의 미래</span><span class="pg">1 / 6</span></div>
+  <span class="label">제안</span>
+  <h1>엄마가 혼자인 시간,<br>일주일에 <em>몇 시간</em>일까요?</h1>
+  <p class="sub">돌봄의 빈칸을 <b>‘보이게’</b> 하는 작은 제안</p>
+  <div class="grow"></div>
+  <div class="foot" style="margin-bottom:18px"><b>예시</b> 82세, 혼자 사시는 어머니 · 주 3회 방문요양 3시간씩</div>
+  <div class="week-axis"><span></span><span>0시</span><span></span><span></span><span></span><span></span><span></span><span>6시</span><span></span><span></span><span></span><span></span><span></span><span>12시</span><span></span><span></span><span></span><span></span><span></span><span>18시</span><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="week" id="week1"></div>
+  <div class="legend"><span><i style="background:var(--fill)"></i>방문요양(주 3회, 3시간)</span><span><i style="background:var(--night)"></i>밤 시간</span><span><i style="background:var(--gap)"></i>혼자 있는 시간</span></div>
+</section>
+
+<!-- ===== 2 현실 ===== -->
+<section class="card" id="c2">
+  <div class="kicker"><span>공공의료, 우리 곁의 이야기</span><span class="pg">2 / 6</span></div>
+  <span class="label teal">지금</span>
+  <h1>돌봄은 이제<br><u>집에서</u> 시작됩니다</h1>
+  <div class="stats">
+    <div class="stat"><div class="n">80<small>%</small></div><div class="t">장기요양 수급자 10명 중 8명은 시설이 아닌 <b>집에서</b> 돌봄을 받습니다</div></div>
+    <div class="stat hi"><div class="n">69.4<small>%</small></div><div class="t">재가 수급자 “건강이 나빠져도 <b>지금 집에서</b> 계속 살고 싶다”</div></div>
+    <div class="stat warn"><div class="n">51.6<small>%</small></div><div class="t">수급자 가족 절반 이상 “돌봄이 <b>부담</b>된다”</div></div>
+  </div>
+  <p class="sub" style="margin-top:44px">집에서 돌보는 시대.<br>그런데 집은 하루 <b>24시간</b>, 일주일 <b>168시간</b>입니다.</p>
+  <div class="grow"></div>
+  <div class="foot"><b>출처</b> 보건복지부, 「2025년 장기요양실태조사」 결과(2026.8.6 발표)</div>
+</section>
+
+<!-- ===== 3 문제 ===== -->
+<section class="card" id="c3">
+  <div class="kicker"><span>공공의료, 우리 곁의 이야기</span><span class="pg">3 / 6</span></div>
+  <span class="label coral">빈칸</span>
+  <h1>주 3회 방문요양 9시간.<br>나머지 <em>159시간</em>은 누가 볼까요?</h1>
+  <div class="cells" id="cells3" style="margin-top:40px"></div>
+  <p class="sub" style="margin-top:36px">식사는 챙겨졌는지, 약은 드셨는지, 밤에 넘어지면 누가 알 수 있는지.<br>가족도, 상담 창구도 <b>‘비어 있는 자리’를 한눈에 보지 못합니다.</b></p>
+  <div class="grow"></div>
+  <div class="foot">일주일 168칸 중 <b>초록 9칸</b>이 서비스 시간. 예시 가정(주 3회 × 3시간)이며 급여 계획에 따라 다릅니다.</div>
+</section>
+
+<!-- ===== 4 제안 ===== -->
+<section class="card" id="c4">
+  <div class="kicker"><span>공공의료, 우리 곁의 이야기</span><span class="pg">4 / 6</span></div>
+  <span class="label">제안</span>
+  <h1>‘돌봄 공백 지도’<br>한 장이면 됩니다</h1>
+  <div class="steps">
+    <div class="step"><div class="no">1</div><div class="tx">가족이 일주일 돌봄 일정을 적습니다<small>요양보호사 방문 · 주간보호 · 가족이 가는 날과 시간</small></div></div>
+    <div class="step"><div class="no">2</div><div class="tx">비어 있는 시간과 빠진 돌봄이 표시됩니다<small>식사 · 복약 · 야간 안전 · 외출 · 말벗 등 영역별로</small></div></div>
+    <div class="step"><div class="no">3</div><div class="tx">그 빈칸에 맞는 공공 서비스로 안내합니다<small>응급안전안심서비스 · 노인맞춤돌봄 · 치매안심센터 · 통합돌봄</small></div></div>
+  </div>
+  <div class="grow"></div>
+  <div class="foot">판정은 <b>공개된 규칙</b>으로 하고, 결과마다 <b>“왜 이렇게 나왔는지”</b>를 함께 보여줍니다. 진단이나 예측이 아닌, 정리 도구입니다.</div>
+</section>
+
+<!-- ===== 5 어디서 ===== -->
+<section class="card" id="c5">
+  <div class="kicker"><span>공공의료, 우리 곁의 이야기</span><span class="pg">5 / 6</span></div>
+  <span class="label teal">어디서</span>
+  <h1>신청 <em>‘후’</em> 조사하는 제도에,<br>신청 <u>‘전’</u> 한 장을 더하자</h1>
+  <p class="sub">2026년 3월 27일, 통합돌봄이 전국에서 시작됐습니다.<br>공공병원 <b>퇴원 전 상담실</b>, 읍면동 <b>통합돌봄 창구</b>, <b>보건소</b>에서<br>가족과 함께 ‘돌봄 공백 지도’를 작성해 신청 서류와 함께 넘기면 어떨까요.</p>
+  <div class="flow">
+    <div class="box">퇴원 전 상담실<small>공공병원</small></div><div class="arr">→</div>
+    <div class="box key">돌봄 공백 지도<small>가족과 함께 작성</small></div><div class="arr">→</div>
+    <div class="box">통합돌봄 창구<small>읍면동 · 보건소</small></div>
+  </div>
+  <div class="pills"><span class="pill">진단·예측 아님</span><span class="pill">규칙과 근거 공개</span><span class="pill">개인정보 저장 없음</span><span class="pill">종이 한 장으로도 가능</span></div>
+  <div class="grow"></div>
+  <div class="foot"><b>근거</b> 「의료·요양 등 지역 돌봄의 통합지원에 관한 법률」 2026.3.27 시행</div>
+</section>
+
+<!-- ===== 6 마무리 ===== -->
+<section class="card" id="c6">
+  <div class="kicker"><span>공공의료, 우리 곁의 이야기</span><span class="pg">6 / 6</span></div>
+  <span class="label">시작</span>
+  <h1>빈칸이 보이면,<br>공공의료가 <u>먼저</u> 찾아갈 수 있습니다</h1>
+  <p class="sub">지역 공공병원 한 곳, 퇴원 환자 가족부터.<br>작게 시작해서 <b>발견된 공백 수</b>와 <b>서비스 연결 수</b>를 재어 보면 됩니다.<br>효과는 아직 입증 전이라, 그래서 시범이 필요합니다.</p>
+  <div class="grow"></div>
+  <div class="foot" style="margin-bottom:14px"><b>빈칸이 채워진 모습(예시)</b> 같은 일주일, 공백마다 맞는 서비스가 들어간 뒤</div>
+  <div class="week" id="week6"></div>
+  <div class="legend" style="margin-bottom:24px"><span><i style="background:var(--fill)"></i>방문요양</span><span><i style="background:#8fb3a8"></i>노인맞춤돌봄 안부·방문</span><span><i style="background:#5b7fae"></i>응급안전안심(야간 감지)</span><span><i style="background:#e3b55a"></i>가족</span></div>
+  <div class="srcbox">
+    <b>출처</b> 보건복지부 「2025년 장기요양실태조사」(2026.8.6) · 「의료·요양 등 지역 돌봄의 통합지원에 관한 법률」(2026.3.27 시행) · 방문요양 9시간/168시간은 예시 가정
+  </div>
+  <div class="aibox">
+    <b>생성형 AI 활용 표시</b> 문구 초안과 화면 구성 코드 작성에 AI(Claude)를 사용했습니다. 아이디어·사실 확인·최종 편집은 응모자가 직접 했습니다. 사진·AI 생성 이미지는 사용하지 않았습니다.
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  // 카드1: 요일×24시간. 월·수·금 9~12시 방문요양, 18~09시 밤
+  var days=['월','화','수','목','금','토','일'];
+  var w=document.getElementById('week1'); var html='';
+  for(var d=0;d<7;d++){
+    html+='<div class="d">'+days[d]+'</div>';
+    for(var h=0;h<24;h++){
+      var cls='h';
+      if(h<9||h>=18) cls+=' n';
+      if((d===0||d===2||d===4)&&h>=9&&h<12) cls=' h on';
+      html+='<div class="'+cls+'"></div>';
+    }
+  }
+  w.innerHTML=html;
+  // 카드3: 168칸, 9칸 on
+  var c=document.getElementById('cells3'); var s='';
+  for(var i=0;i<168;i++){
+    var dd=Math.floor(i/24), hh=i%24;
+    var on=(dd===0||dd===2||dd===4)&&hh>=9&&hh<12;
+    s+='<i'+(on?' class="on"':'')+'></i>';
+  }
+  c.innerHTML=s;
+  // 카드6: 공백이 채워진 일주일(예시)
+  var w6=document.getElementById('week6'); var h6='';
+  for(var d=0;d<7;d++){
+    h6+='<div class="d">'+days[d]+'</div>';
+    for(var h=0;h<24;h++){
+      var bg='';
+      if(h<9||h>=18) bg='#5b7fae';                               // 응급안전안심(야간)
+      if((d===0||d===2||d===4)&&h>=9&&h<12) bg='var(--fill)';   // 방문요양
+      if((d===1||d===3)&&h>=10&&h<11) bg='#8fb3a8';             // 노인맞춤돌봄 안부
+      if(d===5&&h>=11&&h<17) bg='#e3b55a';                      // 가족(토)
+      if(d===6&&h>=12&&h<15) bg='#e3b55a';                      // 가족(일)
+      h6+='<div class="h"'+(bg?' style="background:'+bg+'"':'')+'></div>';
+    }
+  }
+  w6.innerHTML=h6;
+})();
+</script>
+</body>
+</html>
