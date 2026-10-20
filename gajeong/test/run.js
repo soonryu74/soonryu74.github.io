@@ -135,14 +135,19 @@ const db = p => p.evaluate(() => window.__DB());
     await p.fill('#sname', '홍길동'); await p.fill('#slid', 'newpastor'); await p.fill('#spw', 'pass1234');
     await p.click('#btn-setup'); await p.waitForTimeout(300);
     ok('틀린 초대 코드 → 안내', /초대 코드가 맞지 않습니다/.test(await p.textContent('#msg-setup')));
+    await p.fill('#sslug', 'bangjoo'); await p.waitForTimeout(800);
+    ok('교회 주소: 이미 쓰는 주소면 바로 안내', /이미 다른 교회가 쓰는 주소/.test(await p.textContent('#slug-hint')));
+    await p.fill('#sslug', ''); await p.type('#sslug', 'Ha Nul!'); await p.waitForTimeout(800);
+    ok('교회 주소: 대문자·빈칸·기호는 빼고 소문자로', (await p.inputValue('#sslug')) === 'hanul' && /쓸 수 있는 주소/.test(await p.textContent('#slug-hint')), await p.inputValue('#sslug'));
     await p.fill('#scode', 'GOOD-CODE'); await p.click('#btn-setup');
     await p.waitForSelector('#got-code:not([hidden])'); 
     ok('등록하면 복구 코드를 보여 줌', (await p.textContent('#code-box')) === 'ABCD-EFGH-JKMN');
     await p.click('#code-done');
     await p.waitForURL(/moksa\.html/); await p.waitForSelector('.top h1'); await p.waitForTimeout(300);
     ok('등록 뒤 새 교회 목사 화면', (await p.textContent('.top .church')) === '새소망교회');
-    const reg = (await calls(p)).find(x => x.body && x.body.action === 'register_church');
+    const reg = (await calls(p)).filter(x => x.body && x.body.action === 'register_church').pop();
     ok('시간대·이름·코드가 서버로 감', reg && reg.body.timezone === 'Asia/Seoul' && reg.body.church_name === '새소망교회');
+    ok('고른 교회 주소로 등록', reg.body.slug === 'hanul' && (await db(p)).church_church.some(x => x.slug === 'hanul'), JSON.stringify(reg.body.slug) + JSON.stringify((await db(p)).church_church.map(x => x.slug)));
     ok('새 교회는 목장이 비어 있음', /아직 목장이 없습니다/.test(await p.textContent('#week-list')));
     await c.close(); }
 
