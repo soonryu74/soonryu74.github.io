@@ -9,7 +9,7 @@ const NOW = new Date('2026-10-18T02:00:00Z'); // 멜번 주일 13시(→10/18 �
 const SEED = { db: {
   church_church: [
     { id: 'cb', slug: 'bangjoo', name: '멜번방주교회 & ALF', timezone: 'Australia/Melbourne', logo_url: 'assets/logo.png', theme: 'sky', features: { member_dates: true, member_photos: true } },
-    { id: 'cl', slug: 'lach01', name: 'LA 새소망교회', timezone: 'America/Los_Angeles', logo_url: '', theme: 'night',
+    { id: 'cl', slug: 'lach01', name: 'LA 새소망교회', timezone: 'America/Los_Angeles', logo_url: '', theme: 'night', features: { member_photos: false },
       terms: { unit: '다락방', leader: '순장', member: '순원' } } ],
   church_profile: [
     { id: 'p1', login_id: 'pastor1', name: '담임목사', role: 'pastor', church_id: 'cb' },
@@ -414,7 +414,7 @@ const db = p => p.evaluate(() => window.__DB());
   { const { c, p } = await ctx(b);
     await login(p, 'mokjala');
     await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
-    ok('다른 교회(기능 안 켬): 사진 단추·자리 없음', (await p.$$('#member-list .act-photo, #member-list .avatar')).length === 0 && !(await p.isVisible('#photo-hint')));
+    ok('사진을 끈 교회: 사진 단추·자리 없음', (await p.$$('#member-list .act-photo, #member-list .avatar')).length === 0 && !(await p.isVisible('#photo-hint')));
     await c.close(); }
 
   console.log('\n[계정 사진] 목자 본인 사진 → 목사님이 봄');
@@ -444,7 +444,7 @@ const db = p => p.evaluate(() => window.__DB());
   { const { c, p } = await ctx(b);
     await login(p, 'mokjala');
     await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
-    ok('다른 교회: 내 사진 칸 없음', !(await p.isVisible('#my-photo-card')));
+    ok('사진을 끈 교회: 내 사진 칸 없음', !(await p.isVisible('#my-photo-card')));
     await c.close(); }
 
   console.log('\n[주일부터 새 주] 지난주 말씀은 지난주에 · 이번 주는 빈 화면');
@@ -519,7 +519,19 @@ const db = p => p.evaluate(() => window.__DB());
     await p.click('#week-list .mj[data-mj="mj2"] summary');
     await p.fill('#week-list .mj[data-mj="mj2"] .cmt textarea', '감사합니다');
     await p.click('#week-list .mj[data-mj="mj2"] .cmt button'); await p.waitForTimeout(600);
-    ok('다른 교회: 말씀은 보이고 사진 자리 없음', (await p.textContent('#week-list')).includes('감사합니다') && (await p.$$('#week-list .cmt-head .avatar')).length === 0);
+    ok('사진을 끈 교회: 말씀은 보이고 사진 자리 없음', (await p.textContent('#week-list')).includes('감사합니다') && (await p.$$('#week-list .cmt-head .avatar')).length === 0);
+    await c.close(); }
+
+  console.log('\n[사진 기본] 교회 설정에 없으면 사진 기능이 켜짐');
+  { const { c, p } = await ctx(b);
+    await p.goto(BASE + 'index.html'); await p.waitForTimeout(200);
+    await p.evaluate(() => { const D = window.__DB(); delete D.church_church.find(x => x.id === 'cl').features; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await login(p, 'mokjala');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    ok('설정 없는 교회: 사진 안내가 보임', await p.isVisible('#photo-hint'));
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
+    ok('설정 없는 교회: 내 사진 칸', await p.isVisible('#my-photo-card'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
   await b.close();

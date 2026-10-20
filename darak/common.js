@@ -324,7 +324,7 @@ window.CHURCH = (function () {
     var s = await sb.auth.getSession();
     if (!s.data.session) return null;
     var uid = s.data.session.user.id;
-    var r = await sb.from('church_profile').select('id, login_id, name, role, church_id').eq('id', uid).maybeSingle();
+    var r = await sb.from('church_profile').select('id, login_id, name, role, church_id, photo_path').eq('id', uid).maybeSingle();
     if (r.error || !r.data) return null;
     lastMe = r.data;
     return r.data;
@@ -476,7 +476,97 @@ window.CHURCH = (function () {
     return out.map(function (x) { return x.replace(/ /g, '\u00a0'); }).join(' · ');   // 날짜 하나가 두 줄로 갈라지지 않게
   }
   // 교회마다 켠 기능 (church_church.features) — 예: member_dates(성도 날짜)는 방주교회부터
-  function has(feature) { return !!(church && church.features && church.features[feature]); }
+  var DEFAULT_ON = { member_photos: true };   // 모든 교회 기본으로 켜는 기능 (교회 설정에 false면 끔)
+  function has(feature) {
+    var f = church && church.features || {};
+    return feature in f ? !!f[feature] : !!(church && DEFAULT_ON[feature]);
+  }
+  /* ── 성도 사진 (켠 교회만: features.member_photos) ──────────
+     휴대폰에서 가로세로 400px JPEG(약 40KB)로 줄여 올린다. 저장소는 비공개 — 그 교회 목사님과 담당 목자만 본다.
+     경로 = <교회 id>/<목원 id>.jpg, 보여 줄 때는 1시간짜리 서명 주소를 받아 쓴다. */
+  var PHOTO_BUCKET = 'church-member-photo';
+  function squareJpeg(file, size) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var s = Math.min(img.naturalWidth, img.naturalHeight), cv = document.createElement('canvas');
+        cv.width = cv.height = size;
+        cv.getContext('2d').drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, size, size);
+        URL.revokeObjectURL(url);
+        cv.toBlob(function (b) { b ? resolve(b) : reject(new Error(t('사진을 줄이지 못했습니다.'))); }, 'image/jpeg', 0.82);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error(t('이 사진은 열 수 없습니다. JPG나 PNG 사진을 골라 주세요.'))); };
+      img.src = url;
+    });
+  }
+  // table: church_mokwon(목원) 또는 church_profile(목자·목사 본인 — 파일 이름 앞에 p_)
+  async function photoSave(m, file, table) {
+    table = table || 'church_mokwon';
+    var blob = await squareJpeg(file, 400);
+    var path = church.id + '/' + (table === 'church_profile' ? 'p_' : '') + m.id + '.jpg';
+    var up = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { upsert: true, contentType: 'image/jpeg', cacheControl: '60' });
+    if (up.error) throw new Error(up.error.message);
+    var r = await sb.from(table).update({ photo_path: path }).eq('id', m.id);
+    if (r.error) throw new Error(r.error.message);
+    m.photo_path = path;
+  }
+  async function photoRemove(m, table) {
+    if (!m.photo_path) return;
+    await sb.storage.from(PHOTO_BUCKET).remove([m.photo_path]);
+    await sb.from(table || 'church_mokwon').update({ photo_path: null }).eq('id', m.id);
+    m.photo_path = null;
+  }
+  // [내 계정]의 '내 사진' 칸 (목자·목사 공통) — 목사님이 목자 얼굴을 알아볼 수 있게
+  function bindMyPhoto(p) {
+    var card = $('#my-photo-card'); if (!card || !has('member_photos')) return;
+    card.hidden = false;
+    async function show() {
+      var u = (await photoUrls([p]))[p.id];
+      $('#my-photo').innerHTML = avatar(p, u);
+      $('#my-photo-del').hidden = !p.photo_path;
+    }
+    $('#my-photo-pick').addEventListener('click', function () { $('#my-photo-file').value = ''; $('#my-photo-file').click(); });
+    $('#my-photo-file').addEventListener('change', async function () {
+      var f = this.files && this.files[0]; if (!f) return;
+      say($('#msg-my-photo'), t('사진을 올리는 중…'), 'ok');
+      try { await photoSave(p, f, 'church_profile'); await show(); say($('#msg-my-photo'), t('내 사진을 넣었습니다.'), 'ok'); }
+      catch (e) { say($('#msg-my-photo'), e.message, 'err'); }
+    });
+    $('#my-photo-del').addEventListener('click', async function () {
+      if (!confirm(t('내 사진을 지울까요?'))) return;
+      await photoRemove(p, 'church_profile'); await show(); say($('#msg-my-photo'), t('사진을 지웠습니다.'), 'ok');
+    });
+    show();
+  }
+  // 목원 목록 → { 목원 id: 서명 주소 }
+  async function photoUrls(list) {
+    var withPhoto = list.filter(function (m) { return m.photo_path; }), out = {};
+    if (!withPhoto.length) return out;
+    var r = await sb.storage.from(PHOTO_BUCKET).createSignedUrls(withPhoto.map(function (m) { return m.photo_path; }), 3600);
+    var byPath = {};
+    (r.data || []).forEach(function (x) { if (x.signedUrl) byPath[x.path] = x.signedUrl; });
+    withPhoto.forEach(function (m) { if (byPath[m.photo_path]) out[m.id] = byPath[m.photo_path]; });
+    return out;
+  }
+  function avatar(m, url) {
+    return url ? '<img class="avatar" src="' + esc(url) + '" alt="">'
+               : '<span class="avatar" aria-hidden="true">' + esc((m.name || '?').trim().charAt(0)) + '</span>';
+  }
+
+  // 말씀(댓글) 남긴 분 사진 → { author_id: 서명 주소 }. 경로가 정해져 있어 프로필을 따로 읽지 않는다
+  async function authorPhotos(cs) {
+    if (!has('member_photos') || !cs.length) return null;
+    var seen = {}, list = [];
+    cs.forEach(function (c) { if (c.author_id && !seen[c.author_id]) { seen[c.author_id] = 1; list.push({ id: c.author_id, photo_path: church.id + '/p_' + c.author_id + '.jpg' }); } });
+    try { return await photoUrls(list); } catch (e) { return {}; }
+  }
+  // 말씀 머리줄: [사진] 이름 · 언제 (닫는 </div>는 부르는 쪽에서)
+  function commentHead(c, urls) {
+    return '<div class="head cmt-head">' + (urls ? avatar({ name: c.author_name }, urls[c.author_id]) : '') +
+      '<span class="name">' + esc(c.author_name) + '</span>' +
+      '<span class="quiet" style="font-size:13px">' + whenText(c.created_at) + '</span>';
+  }
+
   function memberDatesForm(m) {
     return '<form class="dates-form" data-id="' + esc(m.id) + '"><div class="dates-grid">' +
       DATE_FIELDS.map(function (f) {
@@ -507,7 +597,7 @@ window.CHURCH = (function () {
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave, isKeyless: isKeyless,
-    has: has, DATE_FIELDS: DATE_FIELDS, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
+    has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, authorPhotos: authorPhotos, commentHead: commentHead, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();

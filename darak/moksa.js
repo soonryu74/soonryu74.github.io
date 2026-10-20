@@ -220,8 +220,10 @@
     var r = await sb.from('church_mokwon').select('*').order('sort_order').order('created_at');
     if (r.error) return C.say($('#msg-people'), r.error.message, 'err');
     people = r.data || [];
+    if (C.has('member_photos')) peoplePhoto = await C.photoUrls(people);   // 성도 사진을 켠 교회만
     renderPeople();
   }
+  var peoplePhoto = {};
   function renderPeople() {
     var f = PEOPLE_FILTER[$('#pp-filter').value], all = people.filter(function (m) { return m.active; });
     $('#pp-stat').innerHTML =
@@ -233,7 +235,8 @@
       var list = people.filter(function (m) { return m.mokjang_id === mj.id && (!f || f(m)); });
       if (!list.length) return '';
       return '<div class="people-mj"><h3>' + esc(mj.name) + '</h3>' + list.map(function (m) {
-        return '<div class="list-item" data-id="' + esc(m.id) + '"><div class="grow"><div class="t">' + esc(m.name) +
+        return '<div class="list-item" data-id="' + esc(m.id) + '">' + (C.has('member_photos') ? C.avatar(m, peoplePhoto[m.id]) : '') +
+          '<div class="grow"><div class="t">' + esc(m.name) +
           (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
           (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
           '<div class="s">' + (esc(C.memberDatesLine(m)) || T('날짜 없음')) + '</div></div>' +
@@ -308,6 +311,7 @@
       ps = (await sb.from('church_prayer').select('*').in('journal_id', ids).order('sort_order')).data || [];
       cs = (await sb.from('church_comment').select('*').in('journal_id', ids).order('created_at')).data || [];
     }
+    cmtPhoto = await C.authorPhotos(cs);
     var byMj = {};
     js.forEach(function (j) {
       byMj[j.mokjang_id] = { j: j, ps: ps.filter(function (p) { return p.journal_id === j.id; }),
@@ -315,6 +319,8 @@
     });
     return byMj;
   }
+
+  var cmtPhoto = null;   // 말씀 남긴 분 사진 (성도 사진을 켠 교회만)
 
   /* ── 주간 현황 ─────────────────────────────────── */
   async function loadWeek() {
@@ -338,6 +344,10 @@
       return;
     }
 
+    if (C.has('member_photos') && !leaderPhoto) {   // 목자 사진 (한 번만 불러 둔다)
+      var lp = (await sb.from('church_profile').select('id, name, photo_path').eq('role', 'mokja')).data || [];
+      var lu = await C.photoUrls(lp); leaderPhoto = {}; lp.forEach(function (p) { leaderPhoto[p.id] = lu[p.id]; });
+    }
     $('#week-list').innerHTML = live.map(function (m) {
       var d = data[m.id];
       var state = !d ? T('<span class="badge todo">아직 안 씀</span>')
@@ -345,7 +355,7 @@
         : T('<span class="badge">쓰는 중</span>');
       var reply = d && d.cs.length ? '<span class="badge gold">' + T('답글 {0}', d.cs.length) + '</span>' : '';
       return '<details class="mj" data-mj="' + m.id + '"' + (d ? '' : ' data-empty="1"') + '>' +
-        '<summary>' + esc(m.name) + ' ' + state + ' ' + reply +
+        '<summary>' + (leaderPhoto ? C.avatar({ name: m.mokja_name || m.name }, leaderPhoto[m.mokja_id]) : '') + esc(m.name) + ' ' + state + ' ' + reply +
         '<span class="spacer"></span><span class="quiet" style="font-weight:400; font-size:14px">' +
         esc(m.mokja_name || '') + '</span></summary>' +
         '<div>' + (d ? detailHtml(m, d) : T('<p class="quiet">이번 주 일기가 아직 없습니다.</p>')) + '</div>' +
@@ -381,8 +391,7 @@
     h += T('<div class="section-title">목사님 말씀</div>');
     h += d.cs.map(function (c) {
       return '<div class="member" style="background:var(--brand-soft); border-color:#cfe0d5">' +
-        '<div class="head"><span class="name">' + esc(c.author_name) + '</span>' +
-        '<span class="quiet" style="font-size:13px">' + C.whenText(c.created_at) + '</span>' +
+        C.commentHead(c, cmtPhoto) +
         (c.author_id === me.id ? '<span class="spacer"></span><button class="small danger del-cmt" data-id="' + c.id + T('">지우기</button>') : '') +
         '</div><div class="prose">' + esc(c.body) + '</div></div>';
     }).join('');
@@ -506,6 +515,7 @@
     });
 
 
+    C.bindMyPhoto(me);   // 내 사진 (성도 사진을 켠 교회만)
     $('#my-name').value = me.name || '';
     $('#form-myname').addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -604,8 +614,10 @@
   }
 
   async function renderManage() {
-    var profs = (await sb.from('church_profile').select('id, login_id, name, role')).data || [];
+    var profs = (await sb.from('church_profile').select('id, login_id, name, role, photo_path')).data || [];
     var byId = {}; profs.forEach(function (p) { byId[p.id] = p; });
+    var photos = C.has('member_photos'), pUrl = photos ? await C.photoUrls(profs) : {};
+    manageProfs = byId;
 
     var pastors = profs.filter(function (p) { return p.role === 'pastor'; });
     $('#pastor-list').innerHTML = pastors.map(function (p) {
@@ -624,12 +636,14 @@
     box.innerHTML = mokjangs.map(function (m) {
       var p = m.mokja_id ? byId[m.mokja_id] : null;
       return '<div class="list-item" data-mj="' + m.id + '" data-uid="' + (m.mokja_id || '') + '">' +
+        (photos ? C.avatar({ name: m.mokja_name || m.name }, p && pUrl[p.id]) : '') +
         '<div class="grow"><div class="t">' + esc(m.name) + (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
         '<div class="s">' + esc(m.mokja_name || T('담당 목자 없음')) +
         (p ? (C.isKeyless(p) ? T(' · 열쇠 코드로 들어옴') : T(' · 아이디 ') + esc(p.login_id)) : '') +
         (m.meet_day ? ' · ' + esc(m.meet_day) : '') + '</div></div>' +
         (m.mokja_id ? (C.isKeyless(p) ? T('<button class="small act-key">열쇠 코드 새로</button>')
                                       : T('<button class="small act-pw">비밀번호 새로</button>')) : '') +
+        (photos && p ? T('<button class="small act-mphoto">사진</button>') : '') +
         T('<button class="small act-rename">이름 고치기</button>') +
         '<button class="small act-hide">' + (m.active ? T('잠시 쉼으로') : T('다시 활동')) + '</button>' +
         (m.mokja_id ? T('<button class="small danger act-del">계정 삭제</button>') : '') +
@@ -638,11 +652,24 @@
     }).join('');
   }
 
+  var manageProfs = {}, leaderPhoto = null;   // 목자 id → 사진 주소
   async function onManageClick(e) {
     var btn = e.target.closest('button'); if (!btn) return;
     var item = e.target.closest('.list-item');
     var mjId = item.dataset.mj, uid = item.dataset.uid;
     var m = mokjangs.find(function (x) { return x.id === mjId; });
+    if (btn.classList.contains('act-mphoto')) {   // 목자 사진을 목사님이 대신 넣는다
+      var fi = $('#mokja-photo-file'), who = manageProfs[uid];
+      fi.value = '';
+      fi.onchange = async function () {
+        var f = fi.files && fi.files[0]; if (!f || !who) return;
+        try { await C.photoSave(who, f, 'church_profile'); leaderPhoto = null; await renderManage();
+              C.say($('#msg-manage'), T('{0} 목자 사진을 넣었습니다.', m.mokja_name), 'ok'); }
+        catch (err) { C.say($('#msg-manage'), err.message, 'err'); }
+      };
+      fi.click();
+      return;
+    }
 
     try {
       if (btn.classList.contains('act-key')) {   // 비밀번호 없이 쓰는 목자 — 기기를 잃었을 때 새 열쇠 코드
