@@ -26,6 +26,22 @@ Only headlamps light the scene. Everything outside the beams is pure black; do n
 ## 생성 요청 길이 가정
 - Dreamina 길이 옵션을 5초/10초로 가정(제작 당일 UI 확인). ≤5초 샷은 5초, 6~7초 샷은 10초로 요청 후 편집에서 트리밍.
 
+## Seedance 사양 검증 (Dreamina 공식 페이지, 2026-10-20)
+
+| 항목 | 2.0 | 2.5 | 판정 |
+|---|---|---|---|
+| 참조 입력 | 12개(이미지 9·영상 3·오디오 3, 각 ≤15초) | 최대 50개(텍스트·이미지·영상·오디오 혼합) | 확인됨(공식) |
+| 모드 | Single-frame(첫·끝 프레임) / Multiframes | Omni reference | 확인됨(공식) |
+| 1회 출력 길이 | 공식 페이지 미표기(요금 환산은 10초 기준) | 최대 30초, 확장 5~180초(베타) | 일부 확인 — **길이 옵션(5/10초)은 가정** |
+| 해상도 | 1080p 다운로드 명시, 4K 마케팅 문구 | 동일 | 일부 확인 |
+| 오디오 | 네이티브 오디오·립싱크(유료) | 동일 | 확인됨(공식) — 본 작품은 후반 사운드로 대체 |
+| 후처리 | 업스케일·보간(24→30/60fps)·사운드트랙 생성 | 동일 | 확인됨(공식) |
+| 워터마크 | 유료 플랜만 제거 | 동일 | 확인됨(공식) |
+| 요금 | Basic $15/1,575cr · Standard $36/3,885cr · Advanced 17,600cr(가격 미표기) | — | 일부 확인 — 샷당 크레딧 단가 미공개 |
+| @ 태그 문법 | @AssetName | @Image1 … | 확인됨(공식 가이드) — UI 표기 당일 확인 |
+
+출처: dreamina.capcut.com/ko-kr/tools/seedance-2-0 · dreamina.capcut.com/resource/how-to-use-seedance-2-0 · dreamina.capcut.com/seedance/how-to-use-seedance-2-5 (2026-06-29)
+
 ## 우선순위
 - **P0** 먼저 시험: 영화의 성패를 가르는 손·물고기·라벨 컷. 각 10회 이상.
 - P1 인물·관계 컷. P2 환경·전환 컷(실패해도 편집으로 대체 가능).
