@@ -4,7 +4,7 @@
 첫 화면(index.html)을 그대로 복사하고 <base href="../"> 와 교회 미리보기 줄만 바꾼다.
 (예전처럼 첫 화면으로 넘기면 주소창이 공통 주소로 바뀌어, 거기서 공유하면 공통 로고가 떴다)
 
-mokjang.github.io 저장소의 GitHub Actions가 15분마다 돌린다.
+mokjang.github.io 저장소(주소 mokjang.app)의 GitHub Actions가 15분마다 돌린다.
 서버에서 교회 이름·로고만 읽고(공개 함수 church_public_churches), 바뀐 것이 있으면 커밋한다.
 이 스크립트가 만든 폴더에는 .church-page 표시 파일을 둔다. 교회가 없어지면 그 폴더만 지운다.
 """
@@ -12,7 +12,7 @@ import html, io, json, os, re, shutil, sys, urllib.request
 
 from PIL import Image   # 홈 화면 아이콘 만들기 (pip install pillow)
 
-SITE = 'https://mokjang.github.io/'
+SITE = 'https://mokjang.app/'
 SB_URL = 'https://dxhmprqfgigljgbstqrg.supabase.co'
 SB_KEY = 'sb_publishable__FXGut04uxuz44s2443_8g_AByEuL-n'   # 화면(common.js)에 이미 공개된 키
 MARK = '.church-page'

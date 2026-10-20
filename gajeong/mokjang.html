@@ -6,9 +6,9 @@
 (function (h) {
   if (h !== 'soonryu74.github.io' && h !== 'bangjoo-church.github.io') return;
   var page = location.pathname.replace(/^\/(gajeong\/)?/, ''), q = location.search;
-  if (!page || page === 'index.html') return location.replace('https://mokjang.github.io/bangjoo/' + location.hash);
+  if (!page || page === 'index.html') return location.replace('https://mokjang.app/bangjoo/' + location.hash);
   if (!/[?&]c=/.test(q)) q = (q ? q + '&' : '?') + 'c=bangjoo';
-  location.replace('https://mokjang.github.io/' + page + q + location.hash);
+  location.replace('https://mokjang.app/' + page + q + location.hash);
 })(location.hostname);</script>
 <script>/* 기억한 교회 디자인을 그리기 전에 입힌다 (깜빡임 방지) */
 try { (function (m, q) { var s = q.get('c');

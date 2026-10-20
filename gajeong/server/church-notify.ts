@@ -28,7 +28,7 @@ const admin = createClient(
 )
 
 const VAPID = {
-  subject: Deno.env.get('VAPID_SUBJECT') ?? 'https://mokjang.github.io/',
+  subject: Deno.env.get('VAPID_SUBJECT') ?? 'https://mokjang.app/',
   publicKey: Deno.env.get('VAPID_PUBLIC_KEY') ?? '',
   privateKey: Deno.env.get('VAPID_PRIVATE_KEY') ?? '',
 }
