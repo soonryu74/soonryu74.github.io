@@ -112,7 +112,7 @@ add("6-1","S6",7,"I2V","R-LAKE","보트. 빛이 두 번","slow tracking side",
 add("6-2","S6",5,"T2V","R-HAZE","물속 경계층 아지랑이","slow push-in",
     "A headlamp beam shines down into clear black water. A shimmering, wavering refraction layer where fresh water meets denser salt water, like heat haze underwater. Slow push-in.",
     "","층이 안개","'sharp refraction layer, not fog'","P2",cave=True,notes="해수 영향은 확인, '층'의 시각화는 창작적 표현")
-add("6-3","S6",9,"I2V","R-FISH","눈이 퇴화한 물고기","slow tracking with fish",
+add("6-3","S6",9,"I2V","R-FISH;R-LAKE","눈이 퇴화한 물고기","slow tracking with fish",
     "Macro shot. A single small pale-pink translucent cave goby, 3.5 cm long, with an unusually large head and eyes reduced to two tiny dark dots buried beneath the skin with no visible eyeball, drifts slowly through a single warm headlamp beam in black water beside a gray rubber boat edge. One fish only, calm, unafraid of the light. Slow tracking with the fish.",
     "","눈알 생김 / 물고기 둘","'no visible eyeball', 'one fish only' 2회 반복","P0",cave=True,notes="v4.2 +2s. 크기 3.44cm(2014 측정) 반영")
 add("6-4","S6",5,"REF","R-DS25","동수가 들여다본다. 빛이 없어서 눈이 없어진 거냐","fixed close",
@@ -173,7 +173,7 @@ add("9-2","S9",4,"REF","R-HI;R-DS25","랜턴 두 개가 꺼진다 → 검정","f
     "Close two-shot in a boat: both people reach up and switch off their headlamps one after the other, the man first. Light disappears; the frame goes to pure black. Fixed camera.",
     "","프레임이 회색","마지막 1초 편집 검정","P1",cave=True)
 add("BLACK","S9",10,"NONE","","암전 (기본 10초, 8/15초 대안)","","","물방울·숨·먼 파도. 동수: …보인다. / 해인: 뭐가요. / 동수: 아무것도. | SUB: …I can see. / See what? / Nothing.","","","-",notes="SOUND_TIMELINE 초 단위. 자막은 검정 위 흰 글자")
-add("9-3","S9",8,"REF","R-HI-hand;R-DS25-hand","랜턴이 켜진다. 이미 포개진 두 손","fixed macro",
+add("9-3","S9",8,"REF","R-HI-hand;R-DS25-hand;R-LAKE","랜턴이 켜진다. 이미 포개진 두 손","fixed macro",
     "Pure black. A single warm headlamp switches on. In the small circle of light, resting on the gray rubber boat edge: a young woman's slender five-fingered hand lying still on top of an older man's thick, scarred, calloused five-fingered hand. Neither hand moves. Extreme macro close-up, pure black water beyond.",
     "숨소리, 점등 후 무음 3초","손가락 수 / 손 위치","손 레퍼런스 2쌍 고정. 파일럿 3회 → 통과 후 확대. 채택 컷의 손 위치를 9-4 프롬프트에 기술","P0",cave=True,notes="v4.2 +2s. 영화의 성패")
 add("9-4","S9",5,"REF","R-HI;R-DS25","둘 다 손을 쳐다보지 않는다","fixed two-shot",
@@ -201,7 +201,7 @@ add("10-5","S10",7,"REF","R-HI-hand;R-BAG","해인이 봉투 라벨의 빈 칸�
 add("10-6","S10",5,"REF","R-LEADER;R-TEAM","팀장이 읽고 아래에 서명한다. 사람들이 조용히 본다","fixed medium",
     f"The {LEADER} reads the label, nods once, and signs below it. Around him a {TEAM} watches in silence; no one bows, no one speaks, heads level. Fixed medium, dusk.",
     "","집단이 고개 숙임","'no bowing, heads level'","P1")
-add("10-7","S10",4,"REF","R-HI-hand;R-BAG","해인의 손이 봉투를 저녁빛 속으로 들어 올린다 (1-5 대칭)","slow tilt up",
+add("10-7","S10",4,"REF","R-BAG;R-GLOVE;R-GATE-dusk;R-HI-hand","해인의 손이 봉투를 저녁빛 속으로 들어 올린다 (1-5 대칭)","slow tilt up",
     "Low angle. A young woman's hand grips the top of a clear specimen bag holding a white-crusted yellow glove and lifts it upward into the last blue-orange dusk light above a dark field; the bag is held firmly by the hand the whole time and never floats. Slow tilt up following the hand and bag. Sky behind.",
     "바람","장갑이 스스로 떠오름 / 손 없음","'held firmly by the hand, never floats' 반복","P0",notes="파일럿 2번 컷")
 add("10-8","S10",5,"T2V","R-GATE-dusk","철문이 닫힌다. 자물쇠. 봉인지","fixed close",

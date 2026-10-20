@@ -350,7 +350,7 @@ A headlamp beam shines down into clear black water. A shimmering, wavering refra
 
 ### 6-3 · 2:58–3:07 · 사용 9s / 요청 10s · I2V · CAVE_LIGHT · P0
 - 기능: 눈이 퇴화한 물고기
-- 레퍼런스: R-FISH · 카메라: slow tracking with fish
+- 레퍼런스: R-FISH;R-LAKE · 카메라: slow tracking with fish
 - 음향/대사/자막: 없음
 - 편집 합성·비고: v4.2 +2s. 크기 3.44cm(2014 측정) 반영
 - 예상 실패: 눈알 생김 / 물고기 둘 → 재생성: 'no visible eyeball', 'one fish only' 2회 반복
@@ -551,7 +551,7 @@ Close two-shot in a boat: both people reach up and switch off their headlamps on
 
 ### 9-3 · 4:47–4:55 · 사용 8s / 요청 10s · REF · CAVE_LIGHT · P0
 - 기능: 랜턴이 켜진다. 이미 포개진 두 손
-- 레퍼런스: R-HI-hand;R-DS25-hand · 카메라: fixed macro
+- 레퍼런스: R-HI-hand;R-DS25-hand;R-LAKE · 카메라: fixed macro
 - 음향/대사/자막: 숨소리, 점등 후 무음 3초
 - 편집 합성·비고: v4.2 +2s. 영화의 성패
 - 예상 실패: 손가락 수 / 손 위치 → 재생성: 손 레퍼런스 2쌍 고정. 파일럿 3회 → 통과 후 확대. 채택 컷의 손 위치를 9-4 프롬프트에 기술
@@ -643,7 +643,7 @@ The gray-haired Korean man in his 50s, gray field jacket reads the label, nods o
 
 ### 10-7 · 5:38–5:42 · 사용 4s / 요청 5s · REF · STYLE_BASE만 · P0
 - 기능: 해인의 손이 봉투를 저녁빛 속으로 들어 올린다 (1-5 대칭)
-- 레퍼런스: R-HI-hand;R-BAG · 카메라: slow tilt up
+- 레퍼런스: R-BAG;R-GLOVE;R-GATE-dusk;R-HI-hand · 카메라: slow tilt up
 - 음향/대사/자막: 바람
 - 편집 합성·비고: 파일럿 2번 컷
 - 예상 실패: 장갑이 스스로 떠오름 / 손 없음 → 재생성: 'held firmly by the hand, never floats' 반복

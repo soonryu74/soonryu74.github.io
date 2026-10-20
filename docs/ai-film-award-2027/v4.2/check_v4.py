@@ -28,7 +28,10 @@ pr=collections.Counter(r["우선순위"] for r in ai); chk("구조", pr["P0"]+pr
 DSC="faded orange safety vest over gray shirt, old scratched white hard hat"; DSH="worn gray long-sleeve shirt, bareheaded"
 hat=[r["샷ID"] for r in ai if "no hat" in r["프롬프트"] or (DSC in r["프롬프트"] and DSH in r["프롬프트"])]; chk("구조", not hat, f"같은 인물에 hard hat ↔ no hat/bareheaded 상충 {hat}")
 indoor=[r["샷ID"] for r in ai if r["장면"] in ("S2","S3") and "headlamp strap" in r["프롬프트"]]; chk("구조", not indoor, f"실내(S2·S3) 헤드랜턴 상수 {indoor}")
-kor=[r["샷ID"] for r in ai if re.search(r"[가-힣（）]", r["프롬프트"])]; chk("구조", not kor, f"프롬프트 내 한글/전각 메모 {kor}")
+kor=[r["샷ID"] for r in ai if re.search(r"[가-힣一-龥（）]", r["프롬프트"])]; chk("구조", not kor, f"프롬프트 내 한글·한자·전각 메모 {kor}")
+pp=open("PILOT_PROMPTS_READY.md",encoding="utf-8").read(); pil={}
+for m in re.finditer(r"### ([0-9-]+) · .*?\n- 업로드 순서: (.*?)\n", pp): pil[m.group(1)]=set(x.strip().replace(".png","") for x in m.group(2).split("→"))
+bad=[k for k,v in pil.items() if not v<=set(next(r for r in rows if r["샷ID"]==k)["레퍼런스ID"].split(";"))]; chk("구조", pil and not bad, f"파일럿 문서 레퍼런스 ⊆ CSV 레퍼런스 (불일치 {bad})")
 gram=[r["샷ID"] for r in ai if "forehead's" in r["프롬프트"]]; chk("구조", not gram, f"비문('forehead's hand') {gram}")
 comp=[r["샷ID"] for r in ai if re.search(r"\b(then|Then) a (cool|white|headlamp)", r["프롬프트"]) and "fades in" in r["프롬프트"]]; chk("구조", not comp, f"한 프롬프트 두 국면(매치컷 내장) {comp}")
 r107=next(r for r in rows if r["샷ID"]=="10-7"); chk("구조", "hand" in r107["프롬프트"] and "never floats" in r107["프롬프트"], "10-7 봉투는 손이 들어 올림·떠오르지 않음 명시")

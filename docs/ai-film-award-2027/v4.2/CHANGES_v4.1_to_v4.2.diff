@@ -1,11 +1,12 @@
 Only in v4.1: 01_입구_시나리오_v4.1.md
 Only in v4.1: 01_입구_시나리오_v4.1.pdf
 Only in v4.2: 01_입구_시나리오_v4.2.md
+Only in v4.2: 01_입구_시나리오_v4.2.pdf
 Only in v4.1: 02_입구_샷리스트_v4.1.csv
 Only in v4.2: 02_입구_샷리스트_v4.2.csv
 diff -ru v4.1/02b_shotlist_template_schema.csv v4.2/02b_shotlist_template_schema.csv
 --- v4.1/02b_shotlist_template_schema.csv	2026-10-20 06:57:40.623893558 +0000
-+++ v4.2/02b_shotlist_template_schema.csv	2026-10-20 07:36:21.933552393 +0000
++++ v4.2/02b_shotlist_template_schema.csv	2026-10-20 10:02:42.063959308 +0000
 @@ -2,63 +2,65 @@
  INTRO,S0,0,20,20,0,official_intro,,,,,,주최 제공 영상 그대로,-,,planned
  1-1,S1,20,25,5,5,seedance,Seedance 2.5 (fallback 2.0),R-2005,P-1-1,,,"빗소리, 굴착기",P2,,planned
@@ -97,7 +98,7 @@ diff -ru v4.1/02b_shotlist_template_schema.csv v4.2/02b_shotlist_template_schema
 +5-4,S5,160,166,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-5-4,,,,P1,,planned
 +6-1,S6,166,173,7,10,seedance,Seedance 2.5 (fallback 2.0),R-LAKE,P-6-1,,,노 젓는 물소리,P1,,planned
 +6-2,S6,173,178,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HAZE,P-6-2,,,,P2,,planned
-+6-3,S6,178,187,9,10,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-6-3,,,,P0,,planned
++6-3,S6,178,187,9,10,seedance,Seedance 2.5 (fallback 2.0),R-FISH;R-LAKE,P-6-3,,,,P0,,planned
 +6-4,S6,187,192,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-6-4,동수: 빛이 없어서 눈이 없어진 거냐.,Did they lose their eyes because there's no light?,,P1,,planned
 +6-5,S6,192,197,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-6-5,해인: …안 써도 살 수 있었나 봐요.,…Maybe they could live without using them.,,P1,,planned
 +6-6,S6,197,203,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-DS25-hand,P-6-6,동수: 그럼 뭘 보고 사냐. / 해인(화면 밖): 안 봐요. 느껴요.,Then what do they see by? / They don't see. They feel.,,P0,,planned
@@ -117,7 +118,7 @@ diff -ru v4.1/02b_shotlist_template_schema.csv v4.2/02b_shotlist_template_schema
 +9-1,S9,268,273,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25;R-LAKE,P-9-1,해인: 끄죠.,Let's turn them off.,,P1,,planned
 +9-2,S9,273,277,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-2,,,,P1,,planned
 +BLACK,S9,277,287,10,0,edit_only,,,,물방울·숨·먼 파도. 동수: …보인다. / 해인: 뭐가요. / 동수: 아무것도.,…I can see. / See what? / Nothing.,,-,,planned
-+9-3,S9,287,295,8,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-DS25-hand,P-9-3,,,"숨소리, 점등 후 무음 3초",P0,,planned
++9-3,S9,287,295,8,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-DS25-hand;R-LAKE,P-9-3,,,"숨소리, 점등 후 무음 3초",P0,,planned
 +9-4,S9,295,300,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-4,,,,P0,,planned
 +9-5,S9,300,305,5,5,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-9-5,,,,P2,,planned
 +10-1,S10,305,310,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk;R-TEAM,P-10-1,,,바람,P1,,planned
@@ -126,7 +127,7 @@ diff -ru v4.1/02b_shotlist_template_schema.csv v4.2/02b_shotlist_template_schema
 +10-4,S10,320,326,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER;R-BAG,P-10-4,팀장: 보고서에 올리겠습니다. / 동수: …동굴이나 잘 닫으쇼.,I'll put it in the report. / …Just seal the cave tight.,,P1,,planned
 +10-5,S10,326,333,7,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-BAG,P-10-5,펜 소리,,,P0,,planned
 +10-6,S10,333,338,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LEADER;R-TEAM,P-10-6,,,,P1,,planned
-+10-7,S10,338,342,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-BAG,P-10-7,,,바람,P0,,planned
++10-7,S10,338,342,4,5,seedance,Seedance 2.5 (fallback 2.0),R-BAG;R-GLOVE;R-GATE-dusk;R-HI-hand,P-10-7,,,바람,P0,,planned
 +10-8,S10,342,347,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk,P-10-8,,,자물쇠 소리,P2,,planned
 +11-1,S11,347,352,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-GATE,P-11-1,,,전선 윙 소리,P1,,planned
 +11-2,S11,352,359,7,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-11-2,,,,P0,,planned
@@ -217,8 +218,8 @@ diff -ru "v4.1/08_\354\266\234\355\222\210\352\267\234\354\240\225_\354\262\264\
 +**v4.2 출처 등록부**: `RULES_SOURCE_REGISTER.md` · 문의 초안: `ORGANIZER_QUESTIONS_KO_EN.md`(미발송)
 diff -ru "v4.1/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\352\263\274.md" "v4.2/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\352\263\274.md"
 --- "v4.1/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\352\263\274.md"	2026-10-20 07:00:45.201389164 +0000
-+++ "v4.2/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\352\263\274.md"	2026-10-20 07:43:45.876596990 +0000
-@@ -1,49 +1,84 @@
++++ "v4.2/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\352\263\274.md"	2026-10-20 10:02:42.119044007 +0000
+@@ -1,49 +1,85 @@
 -# v4.1 자동검증 결과
 +# v4.2 자동검증 결과 (`check_v4.py`)
  
@@ -268,7 +269,8 @@ diff -ru "v4.1/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\
 +- ✅ 우선순위 합계 P0 11 + P1 31 + P2 19 = 61
 +- ✅ 같은 인물에 hard hat ↔ no hat/bareheaded 상충 []
 +- ✅ 실내(S2·S3) 헤드랜턴 상수 []
-+- ✅ 프롬프트 내 한글/전각 메모 []
++- ✅ 프롬프트 내 한글·한자·전각 메모 []
++- ✅ 파일럿 문서 레퍼런스 ⊆ CSV 레퍼런스 (불일치 [])
 +- ✅ 비문('forehead's hand') []
 +- ✅ 한 프롬프트 두 국면(매치컷 내장) []
 +- ✅ 10-7 봉투는 손이 들어 올림·떠오르지 않음 명시
@@ -284,7 +286,7 @@ diff -ru "v4.1/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\
 +
 +## 사실
 +
-+- ✅ FACT_CLAIMS 25건 ({'공식확인': 7, '창작': 5, '일부확인': 7, '공식확인(기관 발표 보도)': 1, '학술확인(일반)': 1, '확인불가': 1, '확인불가(논쟁)': 1, '창작적 표현(일반 관행 참고)': 1, '참고(미확인)': 1})
++- ✅ FACT_CLAIMS 25건 ({'공식확인': 8, '창작': 5, '일부확인': 7, '학술확인(일반)': 1, '확인불가': 1, '확인불가(논쟁)': 1, '창작적 표현(일반 관행 참고)': 1, '참고(미확인)': 1})
 +- ✅ '확인' 판정에 URL []
 +- ✅ 공식확인인데 원문 지지 아님 []
 +- ⏳ PENDING 1차 원문 접속불가(대체 출처로 판정): #4, #12, #16
@@ -347,18 +349,22 @@ diff -ru "v4.1/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\
 +| S11 | 5:47 | 6:04 | 17s |
 +| S12 | 6:04 | 6:24 | 20s |
 \ No newline at end of file
-Only in v4.1: 10_자동검증_결과.pdf
+Binary files v4.1/10_자동검증_결과.pdf and v4.2/10_자동검증_결과.pdf differ
 Only in v4.1: 11_v4_v4.1_변경내역.pdf
+Only in v4.2: 12_v4.1_v4.2_변경내역.md
+Only in v4.2: 12_v4.1_v4.2_변경내역.pdf
 Only in v4.2: CHANGES_v4.1_to_v4.2.diff
 Only in v4.2: DISCLOSURE_STEP3_draft.md
 Only in v4.1: FACT_CLAIMS.csv
 Only in v4.2: FACT_CLAIMS_v4.2.csv
 Only in v4.2: FACT_REVIEW_25.md
+Only in v4.2: FACT_REVIEW_25.pdf
 Only in v4.2: FINAL_QA_CHECKLIST.md
 Only in v4.2: ORGANIZER_QUESTIONS_KO_EN.md
 Only in v4.1: PILOT_PLAN_3컷.md
 Only in v4.2: PILOT_PLAN_3컷_v4.2.md
 Only in v4.2: PILOT_PROMPTS_READY.md
+Only in v4.2: PILOT_PROMPTS_READY.pdf
 Only in v4.2: PILOT_SCORECARD.csv
 diff -ru v4.1/PROP_CONTINUITY.md v4.2/PROP_CONTINUITY.md
 --- v4.1/PROP_CONTINUITY.md	2026-10-20 06:59:31.469533305 +0000
@@ -390,6 +396,7 @@ diff -ru v4.1/PROP_CONTINUITY.md v4.2/PROP_CONTINUITY.md
  ## 안전모 / 헤드랜턴
 Only in v4.1: PROP_CONTINUITY.pdf
 Only in v4.2: RULES_SOURCE_REGISTER.md
+Only in v4.2: SHA256SUMS.txt
 diff -ru v4.1/SOUND_TIMELINE.md v4.2/SOUND_TIMELINE.md
 --- v4.1/SOUND_TIMELINE.md	2026-10-20 06:59:31.474284681 +0000
 +++ v4.2/SOUND_TIMELINE.md	2026-10-20 07:42:51.666398378 +0000
@@ -492,8 +499,8 @@ diff -ru v4.1/SUBMISSION_EVIDENCE.md v4.2/SUBMISSION_EVIDENCE.md
 +| 공식 인트로 원본 | 파일 + 길이 | 미완료 |
 diff -ru v4.1/check_v4.py v4.2/check_v4.py
 --- v4.1/check_v4.py	2026-10-20 07:00:24.505468143 +0000
-+++ v4.2/check_v4.py	2026-10-20 07:43:45.840454690 +0000
-@@ -1,55 +1,75 @@
++++ v4.2/check_v4.py	2026-10-20 10:02:42.025374414 +0000
+@@ -1,55 +1,78 @@
  # -*- coding: utf-8 -*-
 -"""v4.1 자동검증: 타임라인·AI 비율·장면 대조·프롬프트·레퍼런스 정의·방식·중복·나이/연도·사실주장 URL. 결과 → 10_자동검증_결과.md"""
 -import csv, re, collections, pathlib
@@ -575,7 +582,10 @@ diff -ru v4.1/check_v4.py v4.2/check_v4.py
 +DSC="faded orange safety vest over gray shirt, old scratched white hard hat"; DSH="worn gray long-sleeve shirt, bareheaded"
 +hat=[r["샷ID"] for r in ai if "no hat" in r["프롬프트"] or (DSC in r["프롬프트"] and DSH in r["프롬프트"])]; chk("구조", not hat, f"같은 인물에 hard hat ↔ no hat/bareheaded 상충 {hat}")
 +indoor=[r["샷ID"] for r in ai if r["장면"] in ("S2","S3") and "headlamp strap" in r["프롬프트"]]; chk("구조", not indoor, f"실내(S2·S3) 헤드랜턴 상수 {indoor}")
-+kor=[r["샷ID"] for r in ai if re.search(r"[가-힣（）]", r["프롬프트"])]; chk("구조", not kor, f"프롬프트 내 한글/전각 메모 {kor}")
++kor=[r["샷ID"] for r in ai if re.search(r"[가-힣一-龥（）]", r["프롬프트"])]; chk("구조", not kor, f"프롬프트 내 한글·한자·전각 메모 {kor}")
++pp=open("PILOT_PROMPTS_READY.md",encoding="utf-8").read(); pil={}
++for m in re.finditer(r"### ([0-9-]+) · .*?\n- 업로드 순서: (.*?)\n", pp): pil[m.group(1)]=set(x.strip().replace(".png","") for x in m.group(2).split("→"))
++bad=[k for k,v in pil.items() if not v<=set(next(r for r in rows if r["샷ID"]==k)["레퍼런스ID"].split(";"))]; chk("구조", pil and not bad, f"파일럿 문서 레퍼런스 ⊆ CSV 레퍼런스 (불일치 {bad})")
 +gram=[r["샷ID"] for r in ai if "forehead's" in r["프롬프트"]]; chk("구조", not gram, f"비문('forehead's hand') {gram}")
 +comp=[r["샷ID"] for r in ai if re.search(r"\b(then|Then) a (cool|white|headlamp)", r["프롬프트"]) and "fades in" in r["프롬프트"]]; chk("구조", not comp, f"한 프롬프트 두 국면(매치컷 내장) {comp}")
 +r107=next(r for r in rows if r["샷ID"]=="10-7"); chk("구조", "hand" in r107["프롬프트"] and "never floats" in r107["프롬프트"], "10-7 봉투는 손이 들어 올림·떠오르지 않음 명시")
@@ -622,7 +632,7 @@ diff -ru v4.1/check_v4.py v4.2/check_v4.py
 +print("\n".join(x for v in R.values() for x in v if x.startswith(("❌","✅ 러닝","ℹ️")))); print("STRUCT", "PASS" if status.get("구조") else "FAIL")
 diff -ru v4.1/gen_v4.py v4.2/gen_v4.py
 --- v4.1/gen_v4.py	2026-10-20 06:57:40.592923868 +0000
-+++ v4.2/gen_v4.py	2026-10-20 07:36:21.877892245 +0000
++++ v4.2/gen_v4.py	2026-10-20 10:02:42.024081625 +0000
 @@ -1,269 +1,280 @@
  # -*- coding: utf-8 -*-
 -"""「입구」 v4 샷리스트 CSV + Seedance 프롬프트 MD 생성기. 타임라인의 단일 진실 소스."""
@@ -829,7 +839,7 @@ diff -ru v4.1/gen_v4.py v4.2/gen_v4.py
 +add("6-2","S6",5,"T2V","R-HAZE","물속 경계층 아지랑이","slow push-in",
 +    "A headlamp beam shines down into clear black water. A shimmering, wavering refraction layer where fresh water meets denser salt water, like heat haze underwater. Slow push-in.",
 +    "","층이 안개","'sharp refraction layer, not fog'","P2",cave=True,notes="해수 영향은 확인, '층'의 시각화는 창작적 표현")
-+add("6-3","S6",9,"I2V","R-FISH","눈이 퇴화한 물고기","slow tracking with fish",
++add("6-3","S6",9,"I2V","R-FISH;R-LAKE","눈이 퇴화한 물고기","slow tracking with fish",
 +    "Macro shot. A single small pale-pink translucent cave goby, 3.5 cm long, with an unusually large head and eyes reduced to two tiny dark dots buried beneath the skin with no visible eyeball, drifts slowly through a single warm headlamp beam in black water beside a gray rubber boat edge. One fish only, calm, unafraid of the light. Slow tracking with the fish.",
 +    "","눈알 생김 / 물고기 둘","'no visible eyeball', 'one fish only' 2회 반복","P0",cave=True,notes="v4.2 +2s. 크기 3.44cm(2014 측정) 반영")
  add("6-4","S6",5,"REF","R-DS25","동수가 들여다본다. 빛이 없어서 눈이 없어진 거냐","fixed close",
@@ -937,7 +947,7 @@ diff -ru v4.1/gen_v4.py v4.2/gen_v4.py
 +    "Close two-shot in a boat: both people reach up and switch off their headlamps one after the other, the man first. Light disappears; the frame goes to pure black. Fixed camera.",
 +    "","프레임이 회색","마지막 1초 편집 검정","P1",cave=True)
 +add("BLACK","S9",10,"NONE","","암전 (기본 10초, 8/15초 대안)","","","물방울·숨·먼 파도. 동수: …보인다. / 해인: 뭐가요. / 동수: 아무것도. | SUB: …I can see. / See what? / Nothing.","","","-",notes="SOUND_TIMELINE 초 단위. 자막은 검정 위 흰 글자")
-+add("9-3","S9",8,"REF","R-HI-hand;R-DS25-hand","랜턴이 켜진다. 이미 포개진 두 손","fixed macro",
++add("9-3","S9",8,"REF","R-HI-hand;R-DS25-hand;R-LAKE","랜턴이 켜진다. 이미 포개진 두 손","fixed macro",
 +    "Pure black. A single warm headlamp switches on. In the small circle of light, resting on the gray rubber boat edge: a young woman's slender five-fingered hand lying still on top of an older man's thick, scarred, calloused five-fingered hand. Neither hand moves. Extreme macro close-up, pure black water beyond.",
 +    "숨소리, 점등 후 무음 3초","손가락 수 / 손 위치","손 레퍼런스 2쌍 고정. 파일럿 3회 → 통과 후 확대. 채택 컷의 손 위치를 9-4 프롬프트에 기술","P0",cave=True,notes="v4.2 +2s. 영화의 성패")
  add("9-4","S9",5,"REF","R-HI;R-DS25","둘 다 손을 쳐다보지 않는다","fixed two-shot",
@@ -988,7 +998,7 @@ diff -ru v4.1/gen_v4.py v4.2/gen_v4.py
 -    "바람","","","P0")
 +    f"The {LEADER} reads the label, nods once, and signs below it. Around him a {TEAM} watches in silence; no one bows, no one speaks, heads level. Fixed medium, dusk.",
 +    "","집단이 고개 숙임","'no bowing, heads level'","P1")
-+add("10-7","S10",4,"REF","R-HI-hand;R-BAG","해인의 손이 봉투를 저녁빛 속으로 들어 올린다 (1-5 대칭)","slow tilt up",
++add("10-7","S10",4,"REF","R-BAG;R-GLOVE;R-GATE-dusk;R-HI-hand","해인의 손이 봉투를 저녁빛 속으로 들어 올린다 (1-5 대칭)","slow tilt up",
 +    "Low angle. A young woman's hand grips the top of a clear specimen bag holding a white-crusted yellow glove and lifts it upward into the last blue-orange dusk light above a dark field; the bag is held firmly by the hand the whole time and never floats. Slow tilt up following the hand and bag. Sky behind.",
 +    "바람","장갑이 스스로 떠오름 / 손 없음","'held firmly by the hand, never floats' 반복","P0",notes="파일럿 2번 컷")
  add("10-8","S10",5,"T2V","R-GATE-dusk","철문이 닫힌다. 자물쇠. 봉인지","fixed close",

@@ -29,7 +29,7 @@ TITLE,S1,47,50,3,0,edit_only,,,,,,무음,-,,planned
 5-4,S5,160,166,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-5-4,,,,P1,,planned
 6-1,S6,166,173,7,10,seedance,Seedance 2.5 (fallback 2.0),R-LAKE,P-6-1,,,노 젓는 물소리,P1,,planned
 6-2,S6,173,178,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HAZE,P-6-2,,,,P2,,planned
-6-3,S6,178,187,9,10,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-6-3,,,,P0,,planned
+6-3,S6,178,187,9,10,seedance,Seedance 2.5 (fallback 2.0),R-FISH;R-LAKE,P-6-3,,,,P0,,planned
 6-4,S6,187,192,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-6-4,동수: 빛이 없어서 눈이 없어진 거냐.,Did they lose their eyes because there's no light?,,P1,,planned
 6-5,S6,192,197,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-6-5,해인: …안 써도 살 수 있었나 봐요.,…Maybe they could live without using them.,,P1,,planned
 6-6,S6,197,203,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-DS25-hand,P-6-6,동수: 그럼 뭘 보고 사냐. / 해인(화면 밖): 안 봐요. 느껴요.,Then what do they see by? / They don't see. They feel.,,P0,,planned
@@ -49,7 +49,7 @@ TITLE,S1,47,50,3,0,edit_only,,,,,,무음,-,,planned
 9-1,S9,268,273,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25;R-LAKE,P-9-1,해인: 끄죠.,Let's turn them off.,,P1,,planned
 9-2,S9,273,277,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-2,,,,P1,,planned
 BLACK,S9,277,287,10,0,edit_only,,,,물방울·숨·먼 파도. 동수: …보인다. / 해인: 뭐가요. / 동수: 아무것도.,…I can see. / See what? / Nothing.,,-,,planned
-9-3,S9,287,295,8,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-DS25-hand,P-9-3,,,"숨소리, 점등 후 무음 3초",P0,,planned
+9-3,S9,287,295,8,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-DS25-hand;R-LAKE,P-9-3,,,"숨소리, 점등 후 무음 3초",P0,,planned
 9-4,S9,295,300,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-4,,,,P0,,planned
 9-5,S9,300,305,5,5,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-9-5,,,,P2,,planned
 10-1,S10,305,310,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk;R-TEAM,P-10-1,,,바람,P1,,planned
@@ -58,7 +58,7 @@ BLACK,S9,277,287,10,0,edit_only,,,,물방울·숨·먼 파도. 동수: …보인
 10-4,S10,320,326,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER;R-BAG,P-10-4,팀장: 보고서에 올리겠습니다. / 동수: …동굴이나 잘 닫으쇼.,I'll put it in the report. / …Just seal the cave tight.,,P1,,planned
 10-5,S10,326,333,7,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-BAG,P-10-5,펜 소리,,,P0,,planned
 10-6,S10,333,338,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LEADER;R-TEAM,P-10-6,,,,P1,,planned
-10-7,S10,338,342,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-BAG,P-10-7,,,바람,P0,,planned
+10-7,S10,338,342,4,5,seedance,Seedance 2.5 (fallback 2.0),R-BAG;R-GLOVE;R-GATE-dusk;R-HI-hand,P-10-7,,,바람,P0,,planned
 10-8,S10,342,347,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk,P-10-8,,,자물쇠 소리,P2,,planned
 11-1,S11,347,352,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-GATE,P-11-1,,,전선 윙 소리,P1,,planned
 11-2,S11,352,359,7,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-11-2,,,,P0,,planned
