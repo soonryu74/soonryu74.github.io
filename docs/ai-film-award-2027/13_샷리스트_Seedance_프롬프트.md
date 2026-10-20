@@ -1,6 +1,6 @@
 # 「입구」 v2 — 샷리스트 + Seedance 프롬프트
 
-**기준** 시나리오 v2 (12_시나리오_입구_v2.md) · 총 49샷 · 생성 분량 약 305초/360초 (85%)
+**기준** 시나리오 v2.1 (고증 반영: 월정리·종유관·물고기 눈·항아리·火川) (12_시나리오_입구_v2.md) · 총 49샷 · 생성 분량 약 305초/360초 (85%)
 **툴** Dreamina Seedance (2.0/2.5). 프로젝트당 레퍼런스 이미지 최대 9장, 클립 최대 15초. UI 사양은 제작 당일 확인.
 
 ---
@@ -24,7 +24,7 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 ```
 
 **인물 고정 문구** (레퍼런스와 함께 매번 반복)
-- 동수 2025: `Korean man, 64, short white hair, weathered face, thick hands, faded orange KEPCO safety vest, old scratched white hard hat`
+- 동수 2025: `Korean man, 64, short white hair, weathered face, thick hands, faded orange safety vest, old scratched white hard hat`
 - 동수 2005: `Korean man, 43, short black hair, orange safety vest, white hard hat, wet from rain`
 - 해인: `Korean woman, 34, black ponytail, black technical work jacket, headlamp on forehead, waterproof tablet`
 - 연구원: `cave survey team in matching black work jackets and headlamps, faces in shadow`
@@ -40,13 +40,13 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 | R-HI | 해인 | Portrait of a Korean woman, 34, black ponytail, black technical work jacket, headlamp strapped on forehead (off), holding a rugged tablet, calm focused expression, warm single light, black background, photorealistic |
 | R-TEAM | 연구원 군상 | Six people in matching black work jackets and headlamps standing in a line, faces in shadow, evening field, shot from behind and side |
 | R-WALL | 흰 탄산염 벽 | Interior of a black basalt lava tube, bone-white calcite deposits flowing down the dark wall like frozen snow, one headlamp beam illuminating a circle, everything else pure black, photorealistic cave photography |
-| R-ROOT | 뿌리 종유석 | Cave ceiling with pale root-shaped stalactites hanging like tree roots, a single water drop at a tip, headlamp beam from below, black surroundings |
+| R-ROOT | 뿌리 종유석 | Black basalt cave ceiling with thin bone-white soda-straw stalactites grown along tree roots, roots visible inside some tubes, a single water drop at a tip, headlamp beam from below, black surroundings |
 | R-LAKE | 호수 | Underground lake, perfectly still black water, headlamp beam reflecting off the surface onto a low basalt ceiling creating a second light, rubber boat edge in foreground, pure black beyond |
-| R-FISH | 눈 없는 물고기 | Small translucent cave fish, finger length, smooth skin where eyes should be, pale pink-white body, drifting in black water lit by a single warm beam, macro photography |
-| R-SAND | 모래 둑 | Sand bank at the end of an underground lake, rusted iron sword standing in sand, boar skeleton beside it, headlamp beam, black beyond |
+| R-FISH | 눈 없는 물고기 | Small translucent cave fish, finger length, eyes reduced to two tiny dark dots beneath the skin, pale pink-white body, drifting in black water lit by a single warm beam, macro photography |
+| R-SAND | 모래 둑 | Sand bank at the end of an underground lake, several round Unified-Silla stoneware jars half-buried in dark sand, abalone shells, headlamp beam, black beyond |
 | R-GLOVE | 장갑 | Yellow rubber work glove wedged in a basalt crevice, coated in white calcite crust, headlamp beam, macro |
 | R-HOME | 동수의 집 | Small Korean rural house interior at night, single incandescent bulb, low table with one bowl and one spoon, old TV glow, faded framed photo and scratched white hard hat on the wall |
-| R-GATE | 입구 철문 | Flat farmland in Jeju with black stone walls, a single concrete utility pole, next to it a rusted steel hatch door in a concrete frame, overcast sky |
+| R-GATE | 입구 철문 | Flat farmland in Woljeong, Jeju with black stone walls, a single concrete utility pole, next to it a rusted steel hatch door in a concrete frame, overcast sky |
 
 ---
 
@@ -109,19 +109,19 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 |---|---|---|---|---|
 | 6-1 | 7 | 보트, 빛이 두 번 | I2V(R-LAKE) | A small rubber boat glides on perfectly still black underground water. A woman at the back rows, a man sits at the front. Their headlamps reflect off the water onto a low basalt ceiling, two circles of light. Slow tracking from the side. Pure black beyond. + STYLE + 동굴 제약 |
 | 6-2 | 6 | 담수·염수 아지랑이 | T2V + R-LAKE | Headlamp beam shining down into clear black water. A shimmering wavering layer where fresh water meets salt water, like heat haze underwater. Slow push-in. Black beyond the beam. + STYLE + 동굴 제약 |
-| 6-3 | 8 | 반투명 물고기가 보트 옆을 지난다 | I2V(R-FISH) | A small translucent cave fish with no eyes drifts slowly through a warm headlamp beam in black water beside a rubber boat edge. It does not flee the light. Macro, slow tracking with the fish. + STYLE + 동굴 제약 |
+| 6-3 | 8 | 반투명 물고기가 보트 옆을 지난다 | I2V(R-FISH) | A small pale-pink translucent cave goby with a large head and eyes sunken beneath the skin drifts slowly through a warm headlamp beam in black water beside a rubber boat edge. It does not flee the light. Macro, slow tracking with the fish. + STYLE + 동굴 제약 |
 | 6-4 | 6 | 동수가 들여다본다 | REF(R-DS25) | Korean man, 64, old hard hat, leans over the edge of a rubber boat and looks down into black water lit by his headlamp. His face reflected faintly. Fixed close shot. + STYLE + 동굴 제약 |
 | 6-5 | 6 | 해인 "안 봐요. 느껴요." | REF(R-HI) | Korean woman, 34, headlamp, holds the oars still and looks at the man across the boat, calm. She speaks a short line. Fixed medium shot, black water, her beam low. + STYLE + 동굴 제약 |
-| 6-6 | 7 | 물고기가 빛을 가로지른다, 동수의 눈 | I2V(R-FISH) | The eyeless translucent fish crosses the full width of a headlamp beam in black water and disappears at the edge of the light. Fixed macro. Then rack focus up to the watching man's eyes. + STYLE + 동굴 제약 |
+| 6-6 | 7 | 물고기가 빛을 가로지른다, 동수의 눈 | I2V(R-FISH) | The pale-pink translucent goby, eyes buried beneath its skin, crosses the full width of a headlamp beam in black water and disappears at the edge of the light. Fixed macro. Then rack focus up to the watching man's eyes. + STYLE + 동굴 제약 |
 
 ### S7. 호수 끝 — 모래 둑 (3:20–3:45)
 
 | # | 초 | 샷 | 모드 | 프롬프트 |
 |---|---|---|---|---|
 | 7-1 | 5 | 보트가 모래에 닿는다 | I2V(R-SAND) | Rubber boat nose slides onto a dark sand bank at the end of black underground water. Headlamp beam ahead reveals sand rising into darkness. Fixed low camera from the boat. + STYLE + 동굴 제약 |
-| 7-2 | 5 | 칼과 멧돼지 뼈 | I2V(R-SAND) | Headlamp beam settles on a rusted iron sword standing upright in dark sand, and beside it a complete boar skeleton undisturbed. Slow pan from sword to bones. Black beyond. + STYLE + 동굴 제약 |
-| 7-3 | 8 | 회상: 횃불, 칼을 꽂는다 | T2V | Same sand bank 1,200 years ago. Four figures in rough hemp clothing hold torches, faces outside the firelight. One kneels and drives an iron sword into the wet sand at the water's edge, lays down a boar carcass. Fixed wide, torchlight only, warm orange, black beyond. + STYLE + 동굴 제약 |
-| 7-4 | 7 | 회상: 횃불이 돌아선다 → 현재 칼 | T2V | The torches turn and walk away up the sand into darkness until the last flame disappears. Hold on black. Then a cool white headlamp beam fades in on the same rusted sword, now 1,200 years old. Fixed camera, same framing. + STYLE + 동굴 제약 |
+| 7-2 | 5 | 항아리들과 火川 | I2V(R-SAND) | Headlamp beam settles on round stoneware jars half-buried in dark sand, one tipped over, abalone shells. The beam lifts to a black basalt wall where two carved characters are half-covered by white calcite crust. Slow pan from jars to wall. Black beyond. (글자는 편집 합성) + STYLE + 동굴 제약 |
+| 7-3 | 8 | 회상: 횃불, 항아리를 두고 글자를 새긴다 | T2V | Same sand bank 1,200 years ago. Four figures in rough hemp clothing hold torches, faces outside the firelight. One kneels and sets a round stoneware jar on the wet sand at the water's edge; another scratches two characters into the black wall with an iron point. Fixed wide, torchlight only, warm orange, black beyond. + STYLE + 동굴 제약 |
+| 7-4 | 7 | 회상: 횃불이 돌아선다 → 현재 항아리 | T2V | The torches turn and walk away up the sand into darkness until the last flame disappears. Hold on black. Then a cool white headlamp beam fades in on the same jar, now half-buried and 1,200 years old. Fixed camera, same framing. + STYLE + 동굴 제약 |
 
 ### S8. 바위 틈 — 장갑 (3:45–4:15)
 
@@ -141,7 +141,7 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 | 9-2 | 5 | 랜턴 두 개가 꺼진다 | REF(R-HI, R-DS25) | Close two-shot in a boat. Both people reach up and switch off their headlamps one after the other. Light disappears. Frame goes to pure black. Fixed camera. + STYLE + 동굴 제약 |
 | 암전 | 15 | 검정 + 사운드 | 편집 | 생성 없음. 물방울·숨·먼 파도. 대사 3줄 |
 | 9-3 | 6 | 랜턴이 켜진다, 잡힌 두 손 | REF(R-HI, R-DS25) | Pure black. A single headlamp switches on. In the new circle of light, resting on a rubber boat edge: a young woman's hand lying on top of an older man's thick weathered hand. Neither hand moves. Fixed macro, nothing else visible. **(가장 중요한 컷. 생성 횟수 최다 배정)** + STYLE + 동굴 제약 |
-| 9-4 | 6 | 물고기가 보트 옆을 지난다 | I2V(R-FISH) | The eyeless translucent fish drifts past a rubber boat edge at the bottom of a single headlamp beam and slips into black water. Fixed macro. + STYLE + 동굴 제약 |
+| 9-4 | 6 | 물고기가 보트 옆을 지난다 | I2V(R-FISH) | The pale-pink translucent goby, eyes buried beneath its skin, drifts past a rubber boat edge at the bottom of a single headlamp beam and slips into black water. Fixed macro. + STYLE + 동굴 제약 |
 
 ### S10. 지상 — 철문 (4:50–5:25)
 
