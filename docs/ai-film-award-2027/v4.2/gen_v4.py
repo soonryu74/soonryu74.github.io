@@ -6,7 +6,7 @@ import csv, json
 STYLE_BASE = ("Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. "
               "Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.")
 CAVE_LIGHT = ("Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. "
-              "Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light.")
+              "Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light.")
 DS      = "Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat"
 DS_HOME = "Korean man, 64, short white hair, deeply weathered face, thick calloused hands, worn gray long-sleeve shirt, bareheaded"
 DS05    = "Korean man, 44, short black hair wet with rain, orange safety vest, white hard hat"
@@ -21,14 +21,14 @@ def add(sid,scene,sec,mode,refs,func,cam,prompt,audio,fail,retry,prio,cave=False
 
 add("INTRO","S0",20,"NONE","","공식 인트로(주최 제공)","","","주최 제공 영상 그대로","","","-",notes="주최 드라이브 원본. 길이 20초는 가정(파일 확인 전)")
 # S1
-add("1-1","S1",5,"T2V","R-2005","2005 발견. 비 오는 밭, 공사","fixed wide",
-    f"Wide shot. Gray rain over flat Jeju farmland with black stone walls. An excavator digs a hole beside a new concrete utility pole; a worker ({DS05}) shovels at the edge. Fixed camera, overcast, desaturated documentary feel.",
+add("1-1","S1",5,"T2V","R-2005","2005 발견. 비 오는 밭, 전신주를 세운다","fixed wide",
+    f"Wide shot. Gray rain over flat Jeju farmland with black stone walls. A crane truck lowers a new concrete utility pole upright into a freshly dug hole; a worker ({DS05}) steadies it at the base. Fixed camera, overcast, desaturated documentary feel.",
     "빗소리, 굴착기","비가 안개처럼 / 전신주가 나무","'concrete utility pole with wires', 'rain as thin streaks' 추가","P2")
-add("1-2","S1",4,"T2V","R-2005","삽이 헛돌고 흙이 꺼진다","fixed low",
-    "Close on muddy boots and a shovel blade. The shovel sinks and the wet soil suddenly gives way, mud collapsing into a dry black opening. Fixed low camera, rain.",
-    "흙 무너지는 소리","구멍이 물웅덩이","'dry black void, no water' 추가","P2")
+add("1-2","S1",4,"T2V","R-2005","땅이 꺼지고 전신주가 지하로 빨려 들어간다","fixed low",
+    "Low angle in the rain. The ground at the base of a concrete utility pole suddenly gives way; the pole lurches and sinks several meters straight down into a dry black opening, mud sliding in after it, and stops tilted. Fixed low camera.",
+    "흙 무너지는 굉음, 전신주 둔탁음","구멍이 물웅덩이 / 전신주가 쓰러짐","'sinks straight down, stays upright', 'dry black void' 추가","P1",notes="사실 근거: 국가유산청 소식지 2017 '전신주가 지하로 쑥 빨려 들어가는 바람에 발견'")
 add("1-3","S1",5,"I2V","R-DS05","차가운 바람이 올라온다 (4-3 매치)","slow push-in",
-    f"{DS05} leans over a dark hole in wet ground. A cold wind rises from below and visibly lifts his hair; he freezes. Slow push-in on his face. Rain on skin.",
+    f"{DS05} leans over the dark gap beside a tilted, half-sunken utility pole in wet ground. A cold wind rises from below and visibly lifts his hair; he freezes. Slow push-in on his face. Rain on skin.",
     "바람 소리(저음)","머리카락이 안 움직임","'hair visibly blown upward' 반복, 10초 요청","P1")
 add("1-4","S1",8,"T2V","R-WALL;R-ROOT","손전등 원 안의 흰 벽 — 첫 빛 (훅)","slow pan",
     "POV flashlight beam shining straight down into a pitch-black volcanic shaft. As the circle of light reaches the inner wall, bone-white soda-straw stalactites and glistening calcite flowstone emerge over black basalt. Slow pan across the untouched white formations. Pure black outside the beam.",
@@ -89,15 +89,15 @@ add("4-2","S4",5,"REF","R-DS25;R-HI","헤드랜턴을 씌운다. 손이 이마�
 add("4-3","S4",5,"REF","R-DS25","철문이 열리고 바람이 올라온다 (1-3 매치)","slow push-in",
     f"A steel hatch door swings open. Cold air rises from the dark and lifts the loose white hair at the temples of {DS} standing at the edge, hard hat on. Slow push-in. Overcast.",
     "바람 소리(1-3 동일 음원)","안전모 쓴 채 머리 전체가 날림","'only the hair below the hard hat moves'","P1",notes="안전모 착용 상태에서 관자놀이 머리카락만")
-add("4-4","S4",5,"T2V","","위에서 본 구멍, 작아지는 빛","fixed top-down",
-    "Looking straight down a dark vertical shaft. Headlamp circles descend one by one, growing smaller, until the last one moves out of view. Fixed top-down camera. Pure black.",
+add("4-4","S4",5,"T2V","","위에서 본 구멍, 사다리, 작아지는 빛","fixed top-down",
+    "Looking straight down a dark vertical shaft with a steel ladder fixed to one side. Headlamp circles descend the ladder one by one, growing smaller, until the last one moves out of view. Fixed top-down camera. Pure black.",
     "","","","P2",cave=True)
 # S5
 add("5-1","S5",7,"I2V","R-ROLL","용암두루마리 벽을 훑는 랜턴 원 여섯 개","slow tracking",
-    "Six small headlamp circles sweep across a black basalt wall carrying long horizontal rolled ridges like a scroll, with bone-white calcite flows over it. Beams cross and separate. Slow tracking along the wall.",
+    "Six small headlamp circles sweep along a lava tube: rope-like lava rolls run along the black floor, a frozen lava fall steps down one wall, and calcite flows in bone-white, pale yellow and rust-red cover the rock. Beams cross and separate. Slow tracking along the passage.",
     "발소리, 물방울","벽 전체가 밝아짐","CAVE_LIGHT 반복, 'beams are small circles'","P1",cave=True)
 add("5-2","S5",5,"I2V","R-ROOT","뿌리를 따라 자란 흰 종유관, 물방울","slow tilt up",
-    "A headlamp beam tilts up to a black basalt ceiling where thin bone-white soda-straw stalactites hang along the paths of tree roots. A single water drop swells at a tip and falls. Slow tilt up then hold.",
+    "A headlamp beam tilts up to a black basalt ceiling where thin bone-white soda-straw stalactites hang like pipe-organ tubes, and calcite has grown along old tree roots into slender pale pillars from ceiling to floor. A single water drop swells at a tip and falls. Slow tilt up then hold.",
     "물방울 1회","종유관이 굵은 고드름","'pencil-thin straws'","P1",cave=True)
 add("5-3","S5",9,"REF","R-DS25;R-DS25-hand;R-WALL","흰 벽 앞에서 손이 멈춘다","fixed side profile",
     f"{DS} with lit headlamp stands before a bone-white calcite wall. He slowly reaches out his thick five-fingered hand toward the white surface, then stops a full hand's width away without touching it, trembling slightly, and holds. Fixed side profile; his own headlamp is the only light.",
@@ -132,10 +132,10 @@ add("7-1","S7",5,"I2V","R-SAND","보트가 모래에 닿는다. 파도 소리","
     "The nose of a gray rubber boat slides onto a dark sand bank at the end of black underground water. A headlamp beam ahead reveals sand rising into darkness. Fixed low camera from the boat.",
     "먼 파도 소리","","","P2",cave=True)
 add("7-2","S7",5,"I2V","R-SAND;R-INSCRIPTION","항아리들, 벽의 두 자국","slow pan",
-    "A headlamp beam settles on gray stoneware bottles and jars half-buried in dark wet sand, one tipped over, abalone shells nearby. The beam tilts up to a black basalt wall where two shallow scratched marks are half-covered by white calcite crust, illegible. Slow pan from the jars to the wall.",
+    "A headlamp beam settles on gray stoneware bottles and jars half-buried in dark wet sand, one tipped over, broken sherds, abalone and limpet shells and a dark smear of old charcoal nearby. The beam tilts up to a black basalt wall where two shallow scratched marks are half-covered by white calcite crust, illegible. Slow pan from the jars to the wall.",
     "","각자가 문자처럼 생성","'two shallow illegible marks'","P1",cave=True,notes="기종명(장동병 등)은 미검증이라 쓰지 않음. 각자 글자는 합성하지 않고 '두 자국'으로만")
 add("7-3","S7",6,"T2V","R-SILLA","창작 재현: 횃불, 항아리를 두고 벽에 자국을 긋는다","fixed wide",
-    "Long ago on the same sand bank. Four silhouetted figures in rough undyed hemp clothing hold pine torches, faces entirely outside the firelight. One kneels and sets a gray stoneware jar on the wet sand; another scratches two marks into the black wall with an iron point. Only torchlight, deep orange, black beyond. Dreamlike silhouettes.",
+    "Long ago on the same sand bank. Four silhouetted figures in rough undyed hemp clothing hold pine torches, faces entirely outside the firelight; a small fire of embers glows on the sand. One kneels and sets a gray stoneware jar on the wet sand; another scratches two marks into the black wall with an iron point. Only torchlight, deep orange, black beyond. Dreamlike silhouettes.",
     "횃불 소리 | 화면 하단 자막(6초 내내): 창작 재현 — 유물은 실제, 장면은 상상 / Dramatization — artifacts are real, the scene is imagined","얼굴이 보임","'faces never lit'","P2",cave=True)
 add("7-4a","S7",5,"T2V","R-SILLA","횃불이 돌아선다, 마지막 불이 사라진다","fixed",
     "Four silhouetted figures holding pine torches turn away from a gray stoneware jar resting on dark sand and walk up into the pitch-black cave until the last orange flame disappears into pure black. Fixed camera.",
@@ -206,7 +206,7 @@ add("10-7","S10",4,"REF","R-BAG;R-GLOVE;R-GATE-dusk;R-HI-hand","해인의 손이
     "바람","장갑이 스스로 떠오름 / 손 없음","'held firmly by the hand, never floats' 반복","P0",notes="파일럿 2번 컷")
 add("10-8","S10",5,"T2V","R-GATE-dusk","철문이 닫힌다. 자물쇠. 봉인지","fixed close",
     "A steel hatch door closes over a concrete frame in a dark field. Hands fasten a heavy padlock and press a blank white paper strip across the seam. Fixed close on the seam, dusk to night.",
-    "자물쇠 소리","봉인지에 글자","'blank white paper strip'","P2",notes="'봉인'은 창작 설정")
+    "자물쇠 소리","봉인지에 글자","'blank white paper strip'","P2",notes="입구 밀폐는 실제 관행(국가유산청 2017: 조사 외 완전 밀폐). '최종 조사 후 영구'만 창작")
 # S11
 add("11-1","S11",5,"REF","R-DS25;R-GATE","동수가 전신주에 손을 댄다","slow push-in",
     f"Night wind over a Jeju field. A concrete utility pole, wires humming, a sealed hatch below it with a small blank sign. {DS} places his hand flat on the pole. Slow push-in on the hand.",

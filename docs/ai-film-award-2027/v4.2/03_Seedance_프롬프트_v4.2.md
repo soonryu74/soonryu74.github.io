@@ -10,7 +10,7 @@ Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film 
 ```
 **CAVE_LIGHT — 동굴 샷에만 (광원블록 열 = CAVE_LIGHT)**
 ```
-Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light.
+Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light.
 ```
 **인물 상수**
 ```
@@ -54,23 +54,23 @@ TEAM: cave survey team in identical black work jackets and headlamps, faces in s
 ## S1. 2005 비 오는 밭
 
 ### 1-1 · 0:20–0:25 · 사용 5s / 요청 5s · T2V · STYLE_BASE만 · P2
-- 기능: 2005 발견. 비 오는 밭, 공사
+- 기능: 2005 발견. 비 오는 밭, 전신주를 세운다
 - 레퍼런스: R-2005 · 카메라: fixed wide
 - 음향/대사/자막: 빗소리, 굴착기
 - 편집 합성·비고: —
 - 예상 실패: 비가 안개처럼 / 전신주가 나무 → 재생성: 'concrete utility pole with wires', 'rain as thin streaks' 추가
 ```
-Wide shot. Gray rain over flat Jeju farmland with black stone walls. An excavator digs a hole beside a new concrete utility pole; a worker (Korean man, 44, short black hair wet with rain, orange safety vest, white hard hat) shovels at the edge. Fixed camera, overcast, desaturated documentary feel. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Wide shot. Gray rain over flat Jeju farmland with black stone walls. A crane truck lowers a new concrete utility pole upright into a freshly dug hole; a worker (Korean man, 44, short black hair wet with rain, orange safety vest, white hard hat) steadies it at the base. Fixed camera, overcast, desaturated documentary feel. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
-### 1-2 · 0:25–0:29 · 사용 4s / 요청 5s · T2V · STYLE_BASE만 · P2
-- 기능: 삽이 헛돌고 흙이 꺼진다
+### 1-2 · 0:25–0:29 · 사용 4s / 요청 5s · T2V · STYLE_BASE만 · P1
+- 기능: 땅이 꺼지고 전신주가 지하로 빨려 들어간다
 - 레퍼런스: R-2005 · 카메라: fixed low
-- 음향/대사/자막: 흙 무너지는 소리
-- 편집 합성·비고: —
-- 예상 실패: 구멍이 물웅덩이 → 재생성: 'dry black void, no water' 추가
+- 음향/대사/자막: 흙 무너지는 굉음, 전신주 둔탁음
+- 편집 합성·비고: 사실 근거: 국가유산청 소식지 2017 '전신주가 지하로 쑥 빨려 들어가는 바람에 발견'
+- 예상 실패: 구멍이 물웅덩이 / 전신주가 쓰러짐 → 재생성: 'sinks straight down, stays upright', 'dry black void' 추가
 ```
-Close on muddy boots and a shovel blade. The shovel sinks and the wet soil suddenly gives way, mud collapsing into a dry black opening. Fixed low camera, rain. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Low angle in the rain. The ground at the base of a concrete utility pole suddenly gives way; the pole lurches and sinks several meters straight down into a dry black opening, mud sliding in after it, and stops tilted. Fixed low camera. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 1-3 · 0:29–0:34 · 사용 5s / 요청 5s · I2V · STYLE_BASE만 · P1
@@ -80,7 +80,7 @@ Close on muddy boots and a shovel blade. The shovel sinks and the wet soil sudde
 - 편집 합성·비고: —
 - 예상 실패: 머리카락이 안 움직임 → 재생성: 'hair visibly blown upward' 반복, 10초 요청
 ```
-Korean man, 44, short black hair wet with rain, orange safety vest, white hard hat leans over a dark hole in wet ground. A cold wind rises from below and visibly lifts his hair; he freezes. Slow push-in on his face. Rain on skin. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Korean man, 44, short black hair wet with rain, orange safety vest, white hard hat leans over the dark gap beside a tilted, half-sunken utility pole in wet ground. A cold wind rises from below and visibly lifts his hair; he freezes. Slow push-in on his face. Rain on skin. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 1-4 · 0:34–0:42 · 사용 8s / 요청 10s · T2V · CAVE_LIGHT · P0
@@ -90,7 +90,7 @@ Korean man, 44, short black hair wet with rain, orange safety vest, white hard h
 - 편집 합성·비고: v4.2 +2s, P0 격상(첫 30초 훅)
 - 예상 실패: 원 밖이 회색 / 석회동굴처럼 밝음 → 재생성: CAVE_LIGHT 반복, 'small circle of light'
 ```
-POV flashlight beam shining straight down into a pitch-black volcanic shaft. As the circle of light reaches the inner wall, bone-white soda-straw stalactites and glistening calcite flowstone emerge over black basalt. Slow pan across the untouched white formations. Pure black outside the beam. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+POV flashlight beam shining straight down into a pitch-black volcanic shaft. As the circle of light reaches the inner wall, bone-white soda-straw stalactites and glistening calcite flowstone emerge over black basalt. Slow pan across the untouched white formations. Pure black outside the beam. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 1-5 · 0:42–0:47 · 사용 5s / 요청 5s · T2V · CAVE_LIGHT · P1
@@ -100,7 +100,7 @@ POV flashlight beam shining straight down into a pitch-black volcanic shaft. As 
 - 편집 합성·비고: —
 - 예상 실패: 장갑 둘 / 손 잔류 → 재생성: 'one glove only' 반복
 ```
-Looking straight down a black shaft. One yellow rubber work glove slips from a hand at the top of frame; the hand exits frame immediately and the glove falls away from camera, caught briefly in a flashlight beam, then swallowed by darkness. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Looking straight down a black shaft. One yellow rubber work glove slips from a hand at the top of frame; the hand exits frame immediately and the glove falls away from camera, caught briefly in a flashlight beam, then swallowed by darkness. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### TITLE · 0:47–0:50 (3s) · 생성 없음
@@ -275,13 +275,13 @@ A steel hatch door swings open. Cold air rises from the dark and lifts the loose
 ```
 
 ### 4-4 · 2:14–2:19 · 사용 5s / 요청 5s · T2V · CAVE_LIGHT · P2
-- 기능: 위에서 본 구멍, 작아지는 빛
+- 기능: 위에서 본 구멍, 사다리, 작아지는 빛
 - 레퍼런스: 없음 · 카메라: fixed top-down
 - 음향/대사/자막: 없음
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-Looking straight down a dark vertical shaft. Headlamp circles descend one by one, growing smaller, until the last one moves out of view. Fixed top-down camera. Pure black. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Looking straight down a dark vertical shaft with a steel ladder fixed to one side. Headlamp circles descend the ladder one by one, growing smaller, until the last one moves out of view. Fixed top-down camera. Pure black. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ## S5. 동굴 상류 흰 벽
@@ -293,7 +293,7 @@ Looking straight down a dark vertical shaft. Headlamp circles descend one by one
 - 편집 합성·비고: —
 - 예상 실패: 벽 전체가 밝아짐 → 재생성: CAVE_LIGHT 반복, 'beams are small circles'
 ```
-Six small headlamp circles sweep across a black basalt wall carrying long horizontal rolled ridges like a scroll, with bone-white calcite flows over it. Beams cross and separate. Slow tracking along the wall. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Six small headlamp circles sweep along a lava tube: rope-like lava rolls run along the black floor, a frozen lava fall steps down one wall, and calcite flows in bone-white, pale yellow and rust-red cover the rock. Beams cross and separate. Slow tracking along the passage. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 5-2 · 2:26–2:31 · 사용 5s / 요청 5s · I2V · CAVE_LIGHT · P1
@@ -303,7 +303,7 @@ Six small headlamp circles sweep across a black basalt wall carrying long horizo
 - 편집 합성·비고: —
 - 예상 실패: 종유관이 굵은 고드름 → 재생성: 'pencil-thin straws'
 ```
-A headlamp beam tilts up to a black basalt ceiling where thin bone-white soda-straw stalactites hang along the paths of tree roots. A single water drop swells at a tip and falls. Slow tilt up then hold. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+A headlamp beam tilts up to a black basalt ceiling where thin bone-white soda-straw stalactites hang like pipe-organ tubes, and calcite has grown along old tree roots into slender pale pillars from ceiling to floor. A single water drop swells at a tip and falls. Slow tilt up then hold. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 5-3 · 2:31–2:40 · 사용 9s / 요청 10s · REF · CAVE_LIGHT · P0
@@ -313,7 +313,7 @@ A headlamp beam tilts up to a black basalt ceiling where thin bone-white soda-st
 - 편집 합성·비고: v4.2 +2s
 - 예상 실패: 손이 벽에 닿음 → 재생성: 'never touches, visible gap' 반복
 ```
-Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat with lit headlamp stands before a bone-white calcite wall. He slowly reaches out his thick five-fingered hand toward the white surface, then stops a full hand's width away without touching it, trembling slightly, and holds. Fixed side profile; his own headlamp is the only light. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat with lit headlamp stands before a bone-white calcite wall. He slowly reaches out his thick five-fingered hand toward the white surface, then stops a full hand's width away without touching it, trembling slightly, and holds. Fixed side profile; his own headlamp is the only light. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 5-4 · 2:40–2:46 · 사용 6s / 요청 10s · REF · CAVE_LIGHT · P1
@@ -323,7 +323,7 @@ Korean man, 64, short white hair, deeply weathered face, thick calloused hands, 
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-Close on a weathered hand frozen a hand's width from a white calcite wall. Rack focus to Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead in the background watching the hand, her headlamp beam low. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Close on a weathered hand frozen a hand's width from a white calcite wall. Rack focus to Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead in the background watching the hand, her headlamp beam low. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ## S6. 호수
@@ -335,7 +335,7 @@ Close on a weathered hand frozen a hand's width from a white calcite wall. Rack 
 - 편집 합성·비고: —
 - 예상 실패: 모터/셋째 인물 → 재생성: 'two people only, no motor'
 ```
-A small gray rubber boat glides on perfectly still black underground water; Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead rows at the back, Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat sits at the front, two people only, no motor. Their headlamps reflect off the water onto a low basalt ceiling as two circles of light. Slow tracking from the side. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+A small gray rubber boat glides on perfectly still black underground water; Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead rows at the back, Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat sits at the front, two people only, no motor. Their headlamps reflect off the water onto a low basalt ceiling as two circles of light. Slow tracking from the side. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 6-2 · 2:53–2:58 · 사용 5s / 요청 5s · T2V · CAVE_LIGHT · P2
@@ -345,7 +345,7 @@ A small gray rubber boat glides on perfectly still black underground water; Kore
 - 편집 합성·비고: 해수 영향은 확인, '층'의 시각화는 창작적 표현
 - 예상 실패: 층이 안개 → 재생성: 'sharp refraction layer, not fog'
 ```
-A headlamp beam shines down into clear black water. A shimmering, wavering refraction layer where fresh water meets denser salt water, like heat haze underwater. Slow push-in. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+A headlamp beam shines down into clear black water. A shimmering, wavering refraction layer where fresh water meets denser salt water, like heat haze underwater. Slow push-in. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 6-3 · 2:58–3:07 · 사용 9s / 요청 10s · I2V · CAVE_LIGHT · P0
@@ -355,7 +355,7 @@ A headlamp beam shines down into clear black water. A shimmering, wavering refra
 - 편집 합성·비고: v4.2 +2s. 크기 3.44cm(2014 측정) 반영
 - 예상 실패: 눈알 생김 / 물고기 둘 → 재생성: 'no visible eyeball', 'one fish only' 2회 반복
 ```
-Macro shot. A single small pale-pink translucent cave goby, 3.5 cm long, with an unusually large head and eyes reduced to two tiny dark dots buried beneath the skin with no visible eyeball, drifts slowly through a single warm headlamp beam in black water beside a gray rubber boat edge. One fish only, calm, unafraid of the light. Slow tracking with the fish. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Macro shot. A single small pale-pink translucent cave goby, 3.5 cm long, with an unusually large head and eyes reduced to two tiny dark dots buried beneath the skin with no visible eyeball, drifts slowly through a single warm headlamp beam in black water beside a gray rubber boat edge. One fish only, calm, unafraid of the light. Slow tracking with the fish. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 6-4 · 3:07–3:12 · 사용 5s / 요청 5s · REF · CAVE_LIGHT · P1
@@ -365,7 +365,7 @@ Macro shot. A single small pale-pink translucent cave goby, 3.5 cm long, with an
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat leans over the edge of a rubber boat and looks down into black water lit by his headlamp, his face faintly reflected. Fixed close shot. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat leans over the edge of a rubber boat and looks down into black water lit by his headlamp, his face faintly reflected. Fixed close shot. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 6-5 · 3:12–3:17 · 사용 5s / 요청 5s · REF · CAVE_LIGHT · P1
@@ -375,7 +375,7 @@ Korean man, 64, short white hair, deeply weathered face, thick calloused hands, 
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead holds the oars still and looks at the man across the boat, calm, and speaks one short line. Fixed medium shot, black water, her beam low. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead holds the oars still and looks at the man across the boat, calm, and speaks one short line. Fixed medium shot, black water, her beam low. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 6-6 · 3:17–3:23 · 사용 6s / 요청 10s · REF · CAVE_LIGHT · P0
@@ -385,7 +385,7 @@ Korean woman, 34, black low ponytail, small mole under left eye, black technical
 - 편집 합성·비고: —
 - 예상 실패: 손가락 수 → 재생성: 손 레퍼런스, 'five fingers each'
 ```
-Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat in a rubber boat slowly turns his thick five-fingered hands palm-up in his own headlamp light and looks at them. Fixed close shot, black water beyond. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat in a rubber boat slowly turns his thick five-fingered hands palm-up in his own headlamp light and looks at them. Fixed close shot, black water beyond. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 6-7 · 3:23–3:28 · 사용 5s / 요청 5s · I2V · CAVE_LIGHT · P1
@@ -395,7 +395,7 @@ Korean man, 64, short white hair, deeply weathered face, thick calloused hands, 
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-The pale-pink translucent goby, eyes buried beneath its skin, crosses the full width of a headlamp beam in black water and disappears at the edge of the light. Fixed macro. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+The pale-pink translucent goby, eyes buried beneath its skin, crosses the full width of a headlamp beam in black water and disappears at the edge of the light. Fixed macro. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ## S7. 호수 끝 모래 둑
@@ -407,7 +407,7 @@ The pale-pink translucent goby, eyes buried beneath its skin, crosses the full w
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-The nose of a gray rubber boat slides onto a dark sand bank at the end of black underground water. A headlamp beam ahead reveals sand rising into darkness. Fixed low camera from the boat. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+The nose of a gray rubber boat slides onto a dark sand bank at the end of black underground water. A headlamp beam ahead reveals sand rising into darkness. Fixed low camera from the boat. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 7-2 · 3:33–3:38 · 사용 5s / 요청 5s · I2V · CAVE_LIGHT · P1
@@ -417,7 +417,7 @@ The nose of a gray rubber boat slides onto a dark sand bank at the end of black 
 - 편집 합성·비고: 기종명(장동병 등)은 미검증이라 쓰지 않음. 각자 글자는 합성하지 않고 '두 자국'으로만
 - 예상 실패: 각자가 문자처럼 생성 → 재생성: 'two shallow illegible marks'
 ```
-A headlamp beam settles on gray stoneware bottles and jars half-buried in dark wet sand, one tipped over, abalone shells nearby. The beam tilts up to a black basalt wall where two shallow scratched marks are half-covered by white calcite crust, illegible. Slow pan from the jars to the wall. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+A headlamp beam settles on gray stoneware bottles and jars half-buried in dark wet sand, one tipped over, broken sherds, abalone and limpet shells and a dark smear of old charcoal nearby. The beam tilts up to a black basalt wall where two shallow scratched marks are half-covered by white calcite crust, illegible. Slow pan from the jars to the wall. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 7-3 · 3:38–3:44 · 사용 6s / 요청 10s · T2V · CAVE_LIGHT · P2
@@ -427,7 +427,7 @@ A headlamp beam settles on gray stoneware bottles and jars half-buried in dark w
 - 편집 합성·비고: —
 - 예상 실패: 얼굴이 보임 → 재생성: 'faces never lit'
 ```
-Long ago on the same sand bank. Four silhouetted figures in rough undyed hemp clothing hold pine torches, faces entirely outside the firelight. One kneels and sets a gray stoneware jar on the wet sand; another scratches two marks into the black wall with an iron point. Only torchlight, deep orange, black beyond. Dreamlike silhouettes. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Long ago on the same sand bank. Four silhouetted figures in rough undyed hemp clothing hold pine torches, faces entirely outside the firelight; a small fire of embers glows on the sand. One kneels and sets a gray stoneware jar on the wet sand; another scratches two marks into the black wall with an iron point. Only torchlight, deep orange, black beyond. Dreamlike silhouettes. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 7-4a · 3:44–3:49 · 사용 5s / 요청 5s · T2V · CAVE_LIGHT · P2
@@ -437,7 +437,7 @@ Long ago on the same sand bank. Four silhouetted figures in rough undyed hemp cl
 - 편집 합성·비고: v4.2 분할(구 7-4 전반)
 - 예상 실패: — → 재생성: —
 ```
-Four silhouetted figures holding pine torches turn away from a gray stoneware jar resting on dark sand and walk up into the pitch-black cave until the last orange flame disappears into pure black. Fixed camera. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Four silhouetted figures holding pine torches turn away from a gray stoneware jar resting on dark sand and walk up into the pitch-black cave until the last orange flame disappears into pure black. Fixed camera. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 7-4b · 3:49–3:54 · 사용 5s / 요청 5s · I2V · CAVE_LIGHT · P2
@@ -447,7 +447,7 @@ Four silhouetted figures holding pine torches turn away from a gray stoneware ja
 - 편집 합성·비고: v4.2 분할(구 7-4 후반). 7-4a 마지막 프레임을 첫 프레임 참조로
 - 예상 실패: — → 재생성: —
 ```
-Pure black frame. A single cool-white headlamp beam sweeps in and illuminates the same gray stoneware jar, now weathered, crusted with white calcite and half-buried in dark sand. Fixed camera, identical framing to the previous shot. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Pure black frame. A single cool-white headlamp beam sweeps in and illuminates the same gray stoneware jar, now weathered, crusted with white calcite and half-buried in dark sand. Fixed camera, identical framing to the previous shot. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ## S8. 바위 틈 장갑
@@ -459,7 +459,7 @@ Pure black frame. A single cool-white headlamp beam sweeps in and illuminates th
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-A headlamp beam sweeps along a black basalt crevice at the edge of a sand bank, then stops. In the beam: a yellow rubber work glove crusted in white calcite. Slow pan then hold. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+A headlamp beam sweeps along a black basalt crevice at the edge of a sand bank, then stops. In the beam: a yellow rubber work glove crusted in white calcite. Slow pan then hold. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 8-2 · 3:59–4:04 · 사용 5s / 요청 5s · REF · CAVE_LIGHT · P1
@@ -469,7 +469,7 @@ A headlamp beam sweeps along a black basalt crevice at the edge of a sand bank, 
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat with headlamp stares at something low in a rock crevice. His body goes completely still; his beam trembles slightly. Slow push-in on his face. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat with headlamp stares at something low in a rock crevice. His body goes completely still; his beam trembles slightly. Slow push-in on his face. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 8-3a · 4:04–4:09 · 사용 5s / 요청 5s · REF · CAVE_LIGHT · P1
@@ -479,7 +479,7 @@ Korean man, 64, short white hair, deeply weathered face, thick calloused hands, 
 - 편집 합성·비고: v4.2 분할(구 8-3 전반)
 - 예상 실패: 플래시가 동굴을 밝힘 → 재생성: 'brief small flash, cave stays black'
 ```
-Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead approaches the rock crevice, sees the calcite-crusted yellow glove, pauses, and photographs it once with a rugged tablet camera; a brief small flash lights only the crevice while the cave stays black. Fixed medium shot. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead approaches the rock crevice, sees the calcite-crusted yellow glove, pauses, and photographs it once with a rugged tablet camera; a brief small flash lights only the crevice while the cave stays black. Fixed medium shot. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 8-3b · 4:09–4:13 · 사용 4s / 요청 5s · REF · CAVE_LIGHT · P2
@@ -489,7 +489,7 @@ Korean woman, 34, black low ponytail, small mole under left eye, black technical
 - 편집 합성·비고: v4.2 분할(구 8-3 후반). 극중 절차(실제 규정 아님)
 - 예상 실패: — → 재생성: —
 ```
-The same woman lowers the tablet, makes a brief note on a field clipboard under her headlamp light, and picks up steel specimen tweezers and a clear polyethylene bag. Fixed medium-close shot. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+The same woman lowers the tablet, makes a brief note on a field clipboard under her headlamp light, and picks up steel specimen tweezers and a clear polyethylene bag. Fixed medium-close shot. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 8-4 · 4:13–4:18 · 사용 5s / 요청 5s · REF · CAVE_LIGHT · P0
@@ -499,7 +499,7 @@ The same woman lowers the tablet, makes a brief note on a field clipboard under 
 - 편집 합성·비고: 편집 합성: 라벨 '유입 경위: ______'
 - 예상 실패: 라벨에 가짜 글자 → 재생성: 'blank white label strip' 반복
 ```
-Macro close-up on gloved hands using steel tweezers to gently lift the white calcite-crusted yellow work glove from the basalt crevice and slide it into a clear specimen bag with a blank white label strip. Fine white calcite dust falls. A pen tip hovers above the blank label and stops without writing. Fixed macro. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Macro close-up on gloved hands using steel tweezers to gently lift the white calcite-crusted yellow work glove from the basalt crevice and slide it into a clear specimen bag with a blank white label strip. Fine white calcite dust falls. A pen tip hovers above the blank label and stops without writing. Fixed macro. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 8-5 · 4:18–4:24 · 사용 6s / 요청 10s · REF · CAVE_LIGHT · P0
@@ -509,7 +509,7 @@ Macro close-up on gloved hands using steel tweezers to gently lift the white cal
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-Close on hands. A young woman's slender five-fingered hand places a clear specimen bag holding a white-crusted yellow glove into an older man's thick, scarred, open left palm. His fingers close on it. Fixed macro, warm headlamp light. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Close on hands. A young woman's slender five-fingered hand places a clear specimen bag holding a white-crusted yellow glove into an older man's thick, scarred, open left palm. His fingers close on it. Fixed macro, warm headlamp light. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 8-6 · 4:24–4:28 · 사용 4s / 요청 5s · REF · CAVE_LIGHT · P2
@@ -519,7 +519,7 @@ Close on hands. A young woman's slender five-fingered hand places a clear specim
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead turns away and walks back across dark sand toward a rubber boat, her headlamp beam leading. Behind her the man stands alone holding a small clear bag. Fixed wide from behind her. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead turns away and walks back across dark sand toward a rubber boat, her headlamp beam leading. Behind her the man stands alone holding a small clear bag. Fixed wide from behind her. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ## S9. 호수 가운데 어둠
@@ -531,7 +531,7 @@ Korean woman, 34, black low ponytail, small mole under left eye, black technical
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-Rubber boat in the middle of a black underground lake. Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead at the back stops rowing; Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat at the front. Two headlamp circles on water and ceiling. Fixed wide from the side. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Rubber boat in the middle of a black underground lake. Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead at the back stops rowing; Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat at the front. Two headlamp circles on water and ceiling. Fixed wide from the side. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 9-2 · 4:33–4:37 · 사용 4s / 요청 5s · REF · CAVE_LIGHT · P1
@@ -541,7 +541,7 @@ Rubber boat in the middle of a black underground lake. Korean woman, 34, black l
 - 편집 합성·비고: —
 - 예상 실패: 프레임이 회색 → 재생성: 마지막 1초 편집 검정
 ```
-Close two-shot in a boat: both people reach up and switch off their headlamps one after the other, the man first. Light disappears; the frame goes to pure black. Fixed camera. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Close two-shot in a boat: both people reach up and switch off their headlamps one after the other, the man first. Light disappears; the frame goes to pure black. Fixed camera. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### BLACK · 4:37–4:47 (10s) · 생성 없음
@@ -556,7 +556,7 @@ Close two-shot in a boat: both people reach up and switch off their headlamps on
 - 편집 합성·비고: v4.2 +2s. 영화의 성패
 - 예상 실패: 손가락 수 / 손 위치 → 재생성: 손 레퍼런스 2쌍 고정. 파일럿 3회 → 통과 후 확대. 채택 컷의 손 위치를 9-4 프롬프트에 기술
 ```
-Pure black. A single warm headlamp switches on. In the small circle of light, resting on the gray rubber boat edge: a young woman's slender five-fingered hand lying still on top of an older man's thick, scarred, calloused five-fingered hand. Neither hand moves. Extreme macro close-up, pure black water beyond. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Pure black. A single warm headlamp switches on. In the small circle of light, resting on the gray rubber boat edge: a young woman's slender five-fingered hand lying still on top of an older man's thick, scarred, calloused five-fingered hand. Neither hand moves. Extreme macro close-up, pure black water beyond. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 9-4 · 4:55–5:00 · 사용 5s / 요청 5s · REF · CAVE_LIGHT · P0
@@ -566,7 +566,7 @@ Pure black. A single warm headlamp switches on. In the small circle of light, re
 - 편집 합성·비고: —
 - 예상 실패: 손이 떨어져 있음 → 재생성: 'hands stay joined, same position as previous shot'
 ```
-Two-shot in a rubber boat under one headlamp: Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat looks down at the water, Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead looks up at the ceiling, their joined hands resting on the boat edge between them, out of focus, the woman's hand on top. Neither looks at the hands. Fixed. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+Two-shot in a rubber boat under one headlamp: Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat looks down at the water, Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead looks up at the ceiling, their joined hands resting on the boat edge between them, out of focus, the woman's hand on top. Neither looks at the hands. Fixed. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ### 9-5 · 5:00–5:05 · 사용 5s / 요청 5s · I2V · CAVE_LIGHT · P2
@@ -576,7 +576,7 @@ Two-shot in a rubber boat under one headlamp: Korean man, 64, short white hair, 
 - 편집 합성·비고: —
 - 예상 실패: — → 재생성: —
 ```
-The pale-pink translucent goby, eyes buried beneath its skin, drifts past a gray rubber boat edge at the bottom of a single headlamp beam and slips into black water. Fixed macro. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
+The pale-pink translucent goby, eyes buried beneath its skin, drifts past a gray rubber boat edge at the bottom of a single headlamp beam and slips into black water. Fixed macro. Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. Black basalt walls streaked with calcite in bone-white, pale yellow and rust-red tints. Not a limestone cave: never brighten the whole cave, zero ambient light. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
 ```
 
 ## S10. 지상 철문
@@ -655,7 +655,7 @@ Low angle. A young woman's hand grips the top of a clear specimen bag holding a 
 - 기능: 철문이 닫힌다. 자물쇠. 봉인지
 - 레퍼런스: R-GATE-dusk · 카메라: fixed close
 - 음향/대사/자막: 자물쇠 소리
-- 편집 합성·비고: '봉인'은 창작 설정
+- 편집 합성·비고: 입구 밀폐는 실제 관행(국가유산청 2017: 조사 외 완전 밀폐). '최종 조사 후 영구'만 창작
 - 예상 실패: 봉인지에 글자 → 재생성: 'blank white paper strip'
 ```
 A steel hatch door closes over a concrete frame in a dark field. Hands fasten a heavy padlock and press a blank white paper strip across the seam. Fixed close on the seam, dusk to night. Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.
