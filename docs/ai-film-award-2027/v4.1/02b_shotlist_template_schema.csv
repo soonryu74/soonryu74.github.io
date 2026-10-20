@@ -1,0 +1,64 @@
+shot_id,scene_id,edit_start_sec,edit_end_sec,edit_duration_sec,generation_requested_sec,source_type,model,reference_ids,prompt_id,dialogue,subtitle,sfx,priority,proof_path,status
+INTRO,S0,0,20,20,0,official_intro,,,,,,주최 제공 영상 그대로,-,,planned
+1-1,S1,20,25,5,5,seedance,Seedance 2.5 (fallback 2.0),R-2005,P-1-1,,,"빗소리, 굴착기",P2,,planned
+1-2,S1,25,29,4,5,seedance,Seedance 2.5 (fallback 2.0),R-2005,P-1-2,,,흙 무너지는 소리,P2,,planned
+1-3,S1,29,34,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS05,P-1-3,,,바람 소리 (저음),P1,,planned
+1-4,S1,34,40,6,10,seedance,Seedance 2.5 (fallback 2.0),R-WALL,P-1-4,,,물방울 1회,P1,,planned
+1-5,S1,40,45,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GLOVE,P-1-5,,,낙하음 지연 1.5초,P1,,planned
+TITLE,S1,45,48,3,0,edit_only,,,,,,무음,-,,planned
+2-1,S2,48,54,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-2-1,,,종이 소리. 자막 합성: Discovered by: construction worker (name unknown),P1,,planned
+2-2,S2,54,58,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-2-2,,,,P2,,planned
+2-3,S2,58,65,7,10,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-LEADER,P-2-3,팀장: 기록은 못 고쳐. 20년 전 거야. / 해인: 압니다. 이번 조사 명단에만.,The record can't be changed. It's twenty years old. / I know. Just this survey's roster.,,P1,,planned
+2-4,S2,65,70,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LEADER,P-2-4,,,,P2,,planned
+3-1,S3,70,76,6,10,seedance,Seedance 2.5 (fallback 2.0),R-GATE;R-HI,P-3-1,,,바람. 팻말 1개 문구 편집 합성(일반 법령 수준): 천연기념물 제466호 보호구역 · 현상변경 허가 필요,P2,,planned
+3-2,S3,76,80,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-3-2,,,,P2,,planned
+3-3,S3,80,85,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HOME,P-3-3,,,TV 소리 낮게,P1,,planned
+3-4,S3,85,90,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-3-4,,,,P1,,planned
+3-5,S3,90,95,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HOME,P-3-5,,,,P2,,planned
+3-6,S3,95,100,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-3-6,동수: …몇 년 만이냐. / 해인: 3년.,…How many years has it been. / Three.,,P1,,planned
+3-7,S3,100,106,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-3-7,동수: 20년 동안 나보고 뚫은 놈이라 그랬다. 니도. / 해인: …맞잖아요.,For twenty years they called me the man who broke it. You did too. / …You did.,,P1,,planned
+3-8,S3,106,111,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-3-8,,,먼지 터는 소리,P1,,planned
+3-9,S3,111,115,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-3-9,,,,P2,,planned
+4-1,S4,115,120,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE;R-TEAM,P-4-1,,,,P2,,planned
+4-2,S4,120,125,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-4-2,,,,P1,,planned
+4-3,S4,125,130,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-4-3,,,바람 소리 (S1-3과 동일 음원),P1,,planned
+4-4,S4,130,135,5,5,seedance,Seedance 2.5 (fallback 2.0),,P-4-4,,,,P2,,planned
+5-1,S5,135,142,7,10,seedance,Seedance 2.5 (fallback 2.0),R-ROLL,P-5-1,,,"발소리, 물방울",P1,,planned
+5-2,S5,142,147,5,5,seedance,Seedance 2.5 (fallback 2.0),R-ROOT,P-5-2,,,물방울 1회,P1,,planned
+5-3,S5,147,154,7,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-WALL,P-5-3,해인(화면 밖): 만지면 안 돼요.,Don't touch.,,P0,,planned
+5-4,S5,154,160,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-5-4,,,,P1,,planned
+6-1,S6,160,167,7,10,seedance,Seedance 2.5 (fallback 2.0),R-LAKE,P-6-1,,,노 젓는 물소리,P1,,planned
+6-2,S6,167,172,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LAKE,P-6-2,,,,P2,,planned
+6-3,S6,172,179,7,10,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-6-3,,,,P0,,planned
+6-4,S6,179,184,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-6-4,동수: 빛이 없어서 눈이 없어진 거냐.,Did they lose their eyes because there's no light?,,P1,,planned
+6-5,S6,184,189,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-6-5,해인: …안 써도 살 수 있었나 봐요.,…Maybe they could live without using them.,,P1,,planned
+6-6,S6,189,195,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-6-6,동수: 그럼 뭘 보고 사냐. / 해인(화면 밖): 안 봐요. 느껴요.,Then what do they see by? / They don't see. They feel.,,P0,,planned
+6-7,S6,195,200,5,5,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-6-7,,,,P1,,planned
+7-1,S7,200,205,5,5,seedance,Seedance 2.5 (fallback 2.0),R-SAND,P-7-1,,,먼 파도 소리,P2,,planned
+7-2,S7,205,210,5,5,seedance,Seedance 2.5 (fallback 2.0),R-SAND;R-INSCRIPTION,P-7-2,,,,P1,,planned
+7-3,S7,210,216,6,10,seedance,Seedance 2.5 (fallback 2.0),R-SILLA,P-7-3,,,"횃불 소리. 화면 하단 자막(본편 6초 내내): 창작 재현 — 유물은 실제, 장면은 상상 / Dramatization — artifacts are real, the scene is imagined",P2,,planned
+7-4,S7,216,220,4,5,seedance,Seedance 2.5 (fallback 2.0),R-SAND,P-7-4,,,,P2,,planned
+8-1,S8,220,225,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GLOVE,P-8-1,,,,P1,,planned
+8-2,S8,225,230,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-8-2,,,,P1,,planned
+8-3,S8,230,235,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-8-3,,,셔터음,P1,,planned
+8-4,S8,235,240,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-GLOVE,P-8-4,,,,P0,,planned
+8-5,S8,240,246,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25;R-GLOVE,P-8-5,,,,P0,,planned
+8-6,S8,246,250,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-8-6,,,,P2,,planned
+9-1,S9,250,255,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25;R-LAKE,P-9-1,해인: 끄죠.,Let's turn them off.,,P1,,planned
+9-2,S9,255,259,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-2,,,,P1,,planned
+BLACK,S9,259,269,10,0,edit_only,,,,"물방울, 두 사람의 숨, 먼 파도. 동수: …보인다. / 해인: 뭐가요. / 동수: 아무것도.",…I can see. / See what. / Nothing.,,-,,planned
+9-3,S9,269,275,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-DS25-hand,P-9-3,,,숨소리,P0,,planned
+9-4,S9,275,280,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-4,,,,P0,,planned
+9-5,S9,280,285,5,5,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-9-5,,,,P2,,planned
+10-1,S10,285,290,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk;R-TEAM,P-10-1,,,바람,P1,,planned
+10-2,S10,290,295,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER,P-10-2,,,,P1,,planned
+10-3,S10,295,300,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER,P-10-3,,,,P1,,planned
+10-4,S10,300,306,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER;R-BAG,P-10-4,팀장: 보고서에 올리겠습니다. / 동수: …동굴이나 잘 닫으쇼.,I'll put it in the report. / …Just close the cave properly.,,P1,,planned
+10-5,S10,306,311,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-GLOVE,P-10-5,,,"펜 소리. 자막 합성: Origin: dropped during construction, 2005 — Kim Dong-su",P0,,planned
+10-6,S10,311,316,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LEADER;R-TEAM,P-10-6,,,,P1,,planned
+10-7,S10,316,320,4,5,seedance,Seedance 2.5 (fallback 2.0),R-GLOVE,P-10-7,,,바람,P0,,planned
+10-8,S10,320,325,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk,P-10-8,,,자물쇠 소리,P2,,planned
+11-1,S11,325,330,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-GATE,P-11-1,,,전선 윙 소리,P1,,planned
+11-2,S11,330,335,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-11-2,,,,P0,,planned
+11-3,S11,335,340,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-11-3,,,,P1,,planned
+CREDITS,S12,340,360,20,0,edit_only,,,,,,무음→전선 소리,-,,planned
