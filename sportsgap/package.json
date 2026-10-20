@@ -1,0 +1,17 @@
+{
+  "name": "sportsgap-ai",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "SportsGap AI — 경기도 공공체육시설 접근 격차 진단 (정적 사이트, 빌드 불필요)",
+  "scripts": {
+    "data": "python3 scripts/build_sportsgap.py",
+    "test": "node --test tests/score.test.mjs",
+    "serve": "python3 -m http.server 4180 --bind 127.0.0.1 --directory ..",
+    "test:e2e": "playwright test",
+    "check": "npm test && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

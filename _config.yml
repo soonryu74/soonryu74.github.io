@@ -11,3 +11,8 @@ exclude:
   - gajeong/test
   - gajeong/server
   - gajeong/deploy
+  # SportsGap AI: 테스트·의존성은 사이트에 올리지 않는다(raw/ 원자료와 evidence/ 는 재현·증빙용으로 제공)
+  - sportsgap/tests
+  - sportsgap/node_modules
+  - sportsgap/test-results
+  - sportsgap/playwright-report
