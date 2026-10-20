@@ -154,14 +154,24 @@
     var b = {}; try { b = JSON.parse(opt.body); } catch (e) {}
     record({ fn: u.split('/functions/v1/')[1], body: b });
     var reply = { ok: true };
+    if (u.indexOf('church-admin') >= 0 && b.action === 'check_slug') {   // 서버 slugProblem 흉내
+      var taken = DB.church_church.some(function (x) { return x.slug === b.slug; });
+      var bad = !/^[a-z][a-z0-9-]{0,18}[a-z0-9]$/.test(b.slug || '') ? '교회 주소는 영어 소문자와 숫자로 2~20자로 적어 주세요 (예: hanul)'
+        : ['assets', 'darak', 'video', 'admin'].indexOf(b.slug) >= 0 ? '이 주소는 쓸 수 없습니다. 다른 이름을 골라 주세요'
+        : taken ? '이미 다른 교회가 쓰는 주소입니다. 다른 이름을 골라 주세요' : null;
+      reply = { ok: true, available: !bad, problem: bad };
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'register_church' && b.slug && DB.church_church.some(function (x) { return x.slug === b.slug; })) {
+      reply = { error: '이미 다른 교회가 쓰는 주소입니다. 다른 이름을 골라 주세요' };
+    } else
     if (u.indexOf('church-admin') >= 0 && b.action === 'register_church') {
       if (b.invite_code !== 'GOOD-CODE') reply = { error: '초대 코드가 맞지 않습니다' };
       else {
         var cid = 'c' + (++nid), uid = 'u' + (++nid);
-        DB.church_church.push({ id: cid, slug: 'newch1', name: b.church_name, timezone: b.timezone, logo_url: '' });
+        DB.church_church.push({ id: cid, slug: b.slug || 'newch1', name: b.church_name, timezone: b.timezone, logo_url: '' });
         DB.church_profile.push({ id: uid, login_id: b.login_id, name: b.name, role: 'pastor', church_id: cid });
         DB.__recovery = DB.__recovery || {}; DB.__recovery[uid] = 'ABCD-EFGH-JKMN';
-        reply = { ok: true, slug: 'newch1', recovery_code: 'ABCD-EFGH-JKMN' };
+        reply = { ok: true, slug: b.slug || 'newch1', recovery_code: 'ABCD-EFGH-JKMN' };
       }
     }
     if (u.indexOf('church-admin') >= 0 && b.action === 'set_logo') {

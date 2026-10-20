@@ -298,3 +298,8 @@ html[data-theme="night"] input[type=date]{color-scheme:dark}
   .stat b{font-size:24px}
 }
 @media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important} }
+
+/* 새 교회 등록: 교회 주소 칸 (앞에 사이트 주소를 붙여 보여 준다) */
+.slug-row{display:flex; align-items:center; gap:6px}
+.slug-row .slug-pre{color:var(--muted); font-size:15px; white-space:nowrap}
+.slug-row input{flex:1; min-width:0}
