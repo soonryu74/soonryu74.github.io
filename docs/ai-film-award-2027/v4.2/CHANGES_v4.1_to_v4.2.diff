@@ -1,0 +1,1127 @@
+Only in v4.1: 01_입구_시나리오_v4.1.md
+Only in v4.1: 01_입구_시나리오_v4.1.pdf
+Only in v4.2: 01_입구_시나리오_v4.2.md
+Only in v4.1: 02_입구_샷리스트_v4.1.csv
+Only in v4.2: 02_입구_샷리스트_v4.2.csv
+diff -ru v4.1/02b_shotlist_template_schema.csv v4.2/02b_shotlist_template_schema.csv
+--- v4.1/02b_shotlist_template_schema.csv	2026-10-20 06:57:40.623893558 +0000
++++ v4.2/02b_shotlist_template_schema.csv	2026-10-20 07:36:21.933552393 +0000
+@@ -2,63 +2,65 @@
+ INTRO,S0,0,20,20,0,official_intro,,,,,,주최 제공 영상 그대로,-,,planned
+ 1-1,S1,20,25,5,5,seedance,Seedance 2.5 (fallback 2.0),R-2005,P-1-1,,,"빗소리, 굴착기",P2,,planned
+ 1-2,S1,25,29,4,5,seedance,Seedance 2.5 (fallback 2.0),R-2005,P-1-2,,,흙 무너지는 소리,P2,,planned
+-1-3,S1,29,34,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS05,P-1-3,,,바람 소리 (저음),P1,,planned
+-1-4,S1,34,40,6,10,seedance,Seedance 2.5 (fallback 2.0),R-WALL,P-1-4,,,물방울 1회,P1,,planned
+-1-5,S1,40,45,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GLOVE,P-1-5,,,낙하음 지연 1.5초,P1,,planned
+-TITLE,S1,45,48,3,0,edit_only,,,,,,무음,-,,planned
+-2-1,S2,48,54,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-2-1,,,종이 소리. 자막 합성: Discovered by: construction worker (name unknown),P1,,planned
+-2-2,S2,54,58,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-2-2,,,,P2,,planned
+-2-3,S2,58,65,7,10,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-LEADER,P-2-3,팀장: 기록은 못 고쳐. 20년 전 거야. / 해인: 압니다. 이번 조사 명단에만.,The record can't be changed. It's twenty years old. / I know. Just this survey's roster.,,P1,,planned
+-2-4,S2,65,70,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LEADER,P-2-4,,,,P2,,planned
+-3-1,S3,70,76,6,10,seedance,Seedance 2.5 (fallback 2.0),R-GATE;R-HI,P-3-1,,,바람. 팻말 1개 문구 편집 합성(일반 법령 수준): 천연기념물 제466호 보호구역 · 현상변경 허가 필요,P2,,planned
+-3-2,S3,76,80,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-3-2,,,,P2,,planned
+-3-3,S3,80,85,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HOME,P-3-3,,,TV 소리 낮게,P1,,planned
+-3-4,S3,85,90,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-3-4,,,,P1,,planned
+-3-5,S3,90,95,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HOME,P-3-5,,,,P2,,planned
+-3-6,S3,95,100,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-3-6,동수: …몇 년 만이냐. / 해인: 3년.,…How many years has it been. / Three.,,P1,,planned
+-3-7,S3,100,106,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-3-7,동수: 20년 동안 나보고 뚫은 놈이라 그랬다. 니도. / 해인: …맞잖아요.,For twenty years they called me the man who broke it. You did too. / …You did.,,P1,,planned
+-3-8,S3,106,111,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-3-8,,,먼지 터는 소리,P1,,planned
+-3-9,S3,111,115,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-3-9,,,,P2,,planned
+-4-1,S4,115,120,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE;R-TEAM,P-4-1,,,,P2,,planned
+-4-2,S4,120,125,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-4-2,,,,P1,,planned
+-4-3,S4,125,130,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-4-3,,,바람 소리 (S1-3과 동일 음원),P1,,planned
+-4-4,S4,130,135,5,5,seedance,Seedance 2.5 (fallback 2.0),,P-4-4,,,,P2,,planned
+-5-1,S5,135,142,7,10,seedance,Seedance 2.5 (fallback 2.0),R-ROLL,P-5-1,,,"발소리, 물방울",P1,,planned
+-5-2,S5,142,147,5,5,seedance,Seedance 2.5 (fallback 2.0),R-ROOT,P-5-2,,,물방울 1회,P1,,planned
+-5-3,S5,147,154,7,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-WALL,P-5-3,해인(화면 밖): 만지면 안 돼요.,Don't touch.,,P0,,planned
+-5-4,S5,154,160,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-5-4,,,,P1,,planned
+-6-1,S6,160,167,7,10,seedance,Seedance 2.5 (fallback 2.0),R-LAKE,P-6-1,,,노 젓는 물소리,P1,,planned
+-6-2,S6,167,172,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LAKE,P-6-2,,,,P2,,planned
+-6-3,S6,172,179,7,10,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-6-3,,,,P0,,planned
+-6-4,S6,179,184,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-6-4,동수: 빛이 없어서 눈이 없어진 거냐.,Did they lose their eyes because there's no light?,,P1,,planned
+-6-5,S6,184,189,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-6-5,해인: …안 써도 살 수 있었나 봐요.,…Maybe they could live without using them.,,P1,,planned
+-6-6,S6,189,195,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-6-6,동수: 그럼 뭘 보고 사냐. / 해인(화면 밖): 안 봐요. 느껴요.,Then what do they see by? / They don't see. They feel.,,P0,,planned
+-6-7,S6,195,200,5,5,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-6-7,,,,P1,,planned
+-7-1,S7,200,205,5,5,seedance,Seedance 2.5 (fallback 2.0),R-SAND,P-7-1,,,먼 파도 소리,P2,,planned
+-7-2,S7,205,210,5,5,seedance,Seedance 2.5 (fallback 2.0),R-SAND;R-INSCRIPTION,P-7-2,,,,P1,,planned
+-7-3,S7,210,216,6,10,seedance,Seedance 2.5 (fallback 2.0),R-SILLA,P-7-3,,,"횃불 소리. 화면 하단 자막(본편 6초 내내): 창작 재현 — 유물은 실제, 장면은 상상 / Dramatization — artifacts are real, the scene is imagined",P2,,planned
+-7-4,S7,216,220,4,5,seedance,Seedance 2.5 (fallback 2.0),R-SAND,P-7-4,,,,P2,,planned
+-8-1,S8,220,225,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GLOVE,P-8-1,,,,P1,,planned
+-8-2,S8,225,230,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-8-2,,,,P1,,planned
+-8-3,S8,230,235,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-8-3,,,셔터음,P1,,planned
+-8-4,S8,235,240,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-GLOVE,P-8-4,,,,P0,,planned
+-8-5,S8,240,246,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25;R-GLOVE,P-8-5,,,,P0,,planned
+-8-6,S8,246,250,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-8-6,,,,P2,,planned
+-9-1,S9,250,255,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25;R-LAKE,P-9-1,해인: 끄죠.,Let's turn them off.,,P1,,planned
+-9-2,S9,255,259,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-2,,,,P1,,planned
+-BLACK,S9,259,269,10,0,edit_only,,,,"물방울, 두 사람의 숨, 먼 파도. 동수: …보인다. / 해인: 뭐가요. / 동수: 아무것도.",…I can see. / See what. / Nothing.,,-,,planned
+-9-3,S9,269,275,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-DS25-hand,P-9-3,,,숨소리,P0,,planned
+-9-4,S9,275,280,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-4,,,,P0,,planned
+-9-5,S9,280,285,5,5,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-9-5,,,,P2,,planned
+-10-1,S10,285,290,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk;R-TEAM,P-10-1,,,바람,P1,,planned
+-10-2,S10,290,295,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER,P-10-2,,,,P1,,planned
+-10-3,S10,295,300,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER,P-10-3,,,,P1,,planned
+-10-4,S10,300,306,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER;R-BAG,P-10-4,팀장: 보고서에 올리겠습니다. / 동수: …동굴이나 잘 닫으쇼.,I'll put it in the report. / …Just close the cave properly.,,P1,,planned
+-10-5,S10,306,311,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-GLOVE,P-10-5,,,"펜 소리. 자막 합성: Origin: dropped during construction, 2005 — Kim Dong-su",P0,,planned
+-10-6,S10,311,316,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LEADER;R-TEAM,P-10-6,,,,P1,,planned
+-10-7,S10,316,320,4,5,seedance,Seedance 2.5 (fallback 2.0),R-GLOVE,P-10-7,,,바람,P0,,planned
+-10-8,S10,320,325,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk,P-10-8,,,자물쇠 소리,P2,,planned
+-11-1,S11,325,330,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-GATE,P-11-1,,,전선 윙 소리,P1,,planned
+-11-2,S11,330,335,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-11-2,,,,P0,,planned
+-11-3,S11,335,340,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-11-3,,,,P1,,planned
+-CREDITS,S12,340,360,20,0,edit_only,,,,,,무음→전선 소리,-,,planned
++1-3,S1,29,34,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS05,P-1-3,,,바람 소리(저음),P1,,planned
++1-4,S1,34,42,8,10,seedance,Seedance 2.5 (fallback 2.0),R-WALL;R-ROOT,P-1-4,,,물방울 1회,P0,,planned
++1-5,S1,42,47,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GLOVE,P-1-5,,,낙하음 1.5초 지연,P1,,planned
++TITLE,S1,47,50,3,0,edit_only,,,,,,무음,-,,planned
++2-1,S2,50,56,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DOC,P-2-1,종이 소리,,,P1,,planned
++2-2,S2,56,60,4,5,seedance,Seedance 2.5 (fallback 2.0),R-DOC,P-2-2,,,,P2,,planned
++2-3,S2,60,67,7,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-civil;R-LEADER,P-2-3,팀장: 기록은 못 고쳐. 20년 전 거야. / 해인: 압니다. 이번 조사 명단에만.,The official record can't be changed. It's twenty years old. / I know. Just on this survey's roster.,,P1,,planned
++2-4,S2,67,72,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LEADER,P-2-4,,,,P2,,planned
++3-1,S3,72,78,6,10,seedance,Seedance 2.5 (fallback 2.0),R-GATE;R-HI-civil;R-SIGN,P-3-1,바람,,,P2,,planned
++3-2,S3,78,82,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI-civil,P-3-2,,,,P2,,planned
++3-3,S3,82,87,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HOME,P-3-3,,,TV 소리 낮게,P1,,planned
++3-4,S3,87,92,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25-home,P-3-4,,,,P1,,planned
++3-5,S3,92,97,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HOME;R-PHOTO,P-3-5,,,,P2,,planned
++3-6,S3,97,104,7,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25-home;R-HI-civil,P-3-6,동수: …몇 년 만이냐. / 해인: 3년.,…How many years has it been? / Three.,,P1,,planned
++3-7,S3,104,110,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25-home;R-HI-civil,P-3-7,동수: 20년 동안 나보고 뚫은 놈이라 그랬다. 니도. / 해인: …맞잖아요.,For twenty years they blamed me for breaking it open. Even you. / …You did.,,P1,,planned
++3-8,S3,110,115,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25-hand,P-3-8,,,먼지 터는 소리,P1,,planned
++3-9,S3,115,119,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI-civil,P-3-9,,,,P2,,planned
++4-1,S4,119,124,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE;R-TEAM,P-4-1,,,,P2,,planned
++4-2,S4,124,129,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-4-2,,,,P1,,planned
++4-3,S4,129,134,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-4-3,,,바람 소리(1-3 동일 음원),P1,,planned
++4-4,S4,134,139,5,5,seedance,Seedance 2.5 (fallback 2.0),,P-4-4,,,,P2,,planned
++5-1,S5,139,146,7,10,seedance,Seedance 2.5 (fallback 2.0),R-ROLL,P-5-1,,,"발소리, 물방울",P1,,planned
++5-2,S5,146,151,5,5,seedance,Seedance 2.5 (fallback 2.0),R-ROOT,P-5-2,,,물방울 1회,P1,,planned
++5-3,S5,151,160,9,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-DS25-hand;R-WALL,P-5-3,해인(화면 밖): 만지면 안 돼요.,Don't touch it.,,P0,,planned
++5-4,S5,160,166,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-5-4,,,,P1,,planned
++6-1,S6,166,173,7,10,seedance,Seedance 2.5 (fallback 2.0),R-LAKE,P-6-1,,,노 젓는 물소리,P1,,planned
++6-2,S6,173,178,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HAZE,P-6-2,,,,P2,,planned
++6-3,S6,178,187,9,10,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-6-3,,,,P0,,planned
++6-4,S6,187,192,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-6-4,동수: 빛이 없어서 눈이 없어진 거냐.,Did they lose their eyes because there's no light?,,P1,,planned
++6-5,S6,192,197,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-6-5,해인: …안 써도 살 수 있었나 봐요.,…Maybe they could live without using them.,,P1,,planned
++6-6,S6,197,203,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-DS25-hand,P-6-6,동수: 그럼 뭘 보고 사냐. / 해인(화면 밖): 안 봐요. 느껴요.,Then what do they see by? / They don't see. They feel.,,P0,,planned
++6-7,S6,203,208,5,5,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-6-7,,,,P1,,planned
++7-1,S7,208,213,5,5,seedance,Seedance 2.5 (fallback 2.0),R-SAND,P-7-1,,,먼 파도 소리,P2,,planned
++7-2,S7,213,218,5,5,seedance,Seedance 2.5 (fallback 2.0),R-SAND;R-INSCRIPTION,P-7-2,,,,P1,,planned
++7-3,S7,218,224,6,10,seedance,Seedance 2.5 (fallback 2.0),R-SILLA,P-7-3,횃불 소리,,,P2,,planned
++7-4a,S7,224,229,5,5,seedance,Seedance 2.5 (fallback 2.0),R-SILLA,P-7-4a,,,횃불 멀어짐,P2,,planned
++7-4b,S7,229,234,5,5,seedance,Seedance 2.5 (fallback 2.0),R-SAND,P-7-4b,,,물방울,P2,,planned
++8-1,S8,234,239,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GLOVE,P-8-1,,,,P1,,planned
++8-2,S8,239,244,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25,P-8-2,,,,P1,,planned
++8-3a,S8,244,249,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-8-3a,,,셔터음,P1,,planned
++8-3b,S8,249,253,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-8-3b,,,,P2,,planned
++8-4,S8,253,258,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-GLOVE;R-BAG,P-8-4,,,,P0,,planned
++8-5,S8,258,264,6,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-DS25-hand;R-BAG,P-8-5,,,,P0,,planned
++8-6,S8,264,268,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI,P-8-6,,,,P2,,planned
++9-1,S9,268,273,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25;R-LAKE,P-9-1,해인: 끄죠.,Let's turn them off.,,P1,,planned
++9-2,S9,273,277,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-2,,,,P1,,planned
++BLACK,S9,277,287,10,0,edit_only,,,,물방울·숨·먼 파도. 동수: …보인다. / 해인: 뭐가요. / 동수: 아무것도.,…I can see. / See what? / Nothing.,,-,,planned
++9-3,S9,287,295,8,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-DS25-hand,P-9-3,,,"숨소리, 점등 후 무음 3초",P0,,planned
++9-4,S9,295,300,5,5,seedance,Seedance 2.5 (fallback 2.0),R-HI;R-DS25,P-9-4,,,,P0,,planned
++9-5,S9,300,305,5,5,seedance,Seedance 2.5 (fallback 2.0),R-FISH,P-9-5,,,,P2,,planned
++10-1,S10,305,310,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk;R-TEAM,P-10-1,,,바람,P1,,planned
++10-2,S10,310,315,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER;R-BAG,P-10-2,,,,P1,,planned
++10-3,S10,315,320,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER;R-BAG,P-10-3,,,,P1,,planned
++10-4,S10,320,326,6,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-LEADER;R-BAG,P-10-4,팀장: 보고서에 올리겠습니다. / 동수: …동굴이나 잘 닫으쇼.,I'll put it in the report. / …Just seal the cave tight.,,P1,,planned
++10-5,S10,326,333,7,10,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-BAG,P-10-5,펜 소리,,,P0,,planned
++10-6,S10,333,338,5,5,seedance,Seedance 2.5 (fallback 2.0),R-LEADER;R-TEAM,P-10-6,,,,P1,,planned
++10-7,S10,338,342,4,5,seedance,Seedance 2.5 (fallback 2.0),R-HI-hand;R-BAG,P-10-7,,,바람,P0,,planned
++10-8,S10,342,347,5,5,seedance,Seedance 2.5 (fallback 2.0),R-GATE-dusk,P-10-8,,,자물쇠 소리,P2,,planned
++11-1,S11,347,352,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-GATE,P-11-1,,,전선 윙 소리,P1,,planned
++11-2,S11,352,359,7,10,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-11-2,,,,P0,,planned
++11-3,S11,359,364,5,5,seedance,Seedance 2.5 (fallback 2.0),R-DS25;R-HI,P-11-3,,,,P1,,planned
++CREDITS,S12,364,384,20,0,edit_only,,,,,,무음→전선 소리,-,,planned
+Only in v4.1: 03_Seedance_프롬프트_v4.1.md
+Only in v4.1: 03_Seedance_프롬프트_v4.1.pdf
+Only in v4.2: 03_Seedance_프롬프트_v4.2.md
+Only in v4.1: 04_레퍼런스_이미지_가이드_v4.1.md
+Only in v4.2: 04_레퍼런스_이미지_가이드_v4.2.md
+diff -ru "v4.1/05_\354\232\251\354\262\234\353\217\231\352\265\264_\354\202\254\354\213\244\352\262\200\354\246\235.md" "v4.2/05_\354\232\251\354\262\234\353\217\231\352\265\264_\354\202\254\354\213\244\352\262\200\354\246\235.md"
+--- "v4.1/05_\354\232\251\354\262\234\353\217\231\352\265\264_\354\202\254\354\213\244\352\262\200\354\246\235.md"	2026-10-20 07:00:24.498788647 +0000
++++ "v4.2/05_\354\232\251\354\262\234\353\217\231\352\265\264_\354\202\254\354\213\244\352\262\200\354\246\235.md"	2026-10-20 07:41:55.669078231 +0000
+@@ -1,4 +1,6 @@
+-# 용천동굴 사실검증 v4.1 — 주장별 판정과 출처
++# 용천동굴 사실검증 — v4.2에서는 `FACT_REVIEW_25.md` / `FACT_CLAIMS_v4.2.csv`가 기준
++
++이 문서는 v4.1 판정표(참고용). v4.2 전수 원문 대조 결과와 다를 수 있는 항목: #4(UNESCO 원문 접속불가→국가유산청 페이지로 확인), #12(일부확인), #13(기관 발표 보도로 승격), #18(단일 보도→화면 표현 축소), #22(자연유산법 제17조), #25(참고로 강등).
+ 
+ **v4.1 추가 1차 출처**: [국가유산포털 상세](https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1363904660000&pageNo=1_1_2_0) (2006-02-07 지정, 월정리 1837-2 외, 743,185㎡) · [한국민족문화대백과](https://encykorea.aks.ac.kr/Article/E0074963) (2005.5 전신주 교체 공사 중 발견, 3.4km=주·지굴 2.6km+호수 0.8km, 140m 용암두루마리, 명칭 유래) · [국립제주박물관 학술발굴조사보고서 PDF](https://jeju.museum.go.kr/_prog/download.php?filedir=%2FUpl%2Fkr%2Fbook%2Ffile%2F&filename=book_file_0_1652847808.pdf) (호수·유물). 기계적 대조 결과는 `FACT_CLAIMS.csv`.
+ 
+Only in v4.1: 06_대상_수상전략_v4.1.md
+Only in v4.2: 06_대상_수상전략_v4.2.md
+diff -ru "v4.1/07_\354\240\234\354\236\221\353\271\204_\354\235\274\354\240\225_\353\246\254\354\212\244\355\201\254.md" "v4.2/07_\354\240\234\354\236\221\353\271\204_\354\235\274\354\240\225_\353\246\254\354\212\244\355\201\254.md"
+--- "v4.1/07_\354\240\234\354\236\221\353\271\204_\354\235\274\354\240\225_\353\246\254\354\212\244\355\201\254.md"	2026-10-20 06:57:40.593857987 +0000
++++ "v4.2/07_\354\240\234\354\236\221\353\271\204_\354\235\274\354\240\225_\353\246\254\354\212\244\355\201\254.md"	2026-10-20 07:41:55.670107783 +0000
+@@ -1,4 +1,4 @@
+-# 제작비 · 일정 · 리스크 v4
++# 제작비 · 일정 · 리스크 v4.2
+ 
+ ## 1. 제작비 (Dreamina 공식 요금제, 2026-10-20 확인)
+ 
+@@ -49,3 +49,23 @@
+ | 드리미나 약관 vs 대회 라이선스 | 저 | 고 | 약관 상업·2차 이용 조항 확인 10/21 |
+ | 월정리 주민 정서 | 저 | 중 | 크레딧 창작 고지, 실명·실제 지번 사용 안 함 |
+ | 암전 길이 | 저 | 저 | 시사 후 결정 |
++
++
++## v4.2 — 시나리오별 비용 (실측 입력 전엔 전부 **추정**)
++
++**입력 셀(파일럿 후 기입)**: 1회 단가 10초/1080p = `____ cr` · 5초 = `____ cr` · 이미지 1장 = `____ cr` · 업스케일 1컷 = `____ cr`
++
++| 변수 | 최소 | 기준 | 악화 |
++|---|---|---|---|
++| 합격률 | 60% | 40% | 25% |
++| 평균 시도/컷 (61 AI컷, 요청 합계 CSV 기준) | 1.7 | 2.5 | 4 |
++| 생성 횟수 | ≈104 | ≈153 | ≈244 |
++| 크레딧(단가 83cr/편 가정) | ≈8,600 | ≈12,700 | ≈20,300 |
++| 업스케일·보간(채택 61컷) | ≈1,500 | ≈2,500 | ≈3,000 |
++| 레퍼런스 이미지(40장×4) | ≈500 | ≈800 | ≈1,200 |
++| **합계(추정)** | **≈10,600** | **≈16,000** | **≈24,500** |
++| 해당 플랜 | Standard×3 또는 Advanced×1 | Advanced×1 | Advanced×1 + 추가 |
++
++- **P0 성공 전 전체 생성 금지.** 일일 크레딧 상한: 기준 시나리오 ÷ 12일 ≈ 1,300cr/일.
++- **중단/대체**: 9-3 실패 → 보류. 어느 컷이든 4회 실패 → 대체 컷(환경 롱샷·인서트)으로 교체 후 진행.
++- **내부 마감(보수적)**: 주최 시간대 확인 전까지 **11/18 12:00 KST** 제출 완료 목표(두바이 UTC+4 자정 기준 하루 여유).
+diff -ru "v4.1/08_\354\266\234\355\222\210\352\267\234\354\240\225_\354\262\264\355\201\254\353\246\254\354\212\244\355\212\270.md" "v4.2/08_\354\266\234\355\222\210\352\267\234\354\240\225_\354\262\264\355\201\254\353\246\254\354\212\244\355\212\270.md"
+--- "v4.1/08_\354\266\234\355\222\210\352\267\234\354\240\225_\354\262\264\355\201\254\353\246\254\354\212\244\355\212\270.md"	2026-10-20 06:57:40.594066109 +0000
++++ "v4.2/08_\354\266\234\355\222\210\352\267\234\354\240\225_\354\262\264\355\201\254\353\246\254\354\212\244\355\212\270.md"	2026-10-20 07:41:55.670429641 +0000
+@@ -4,18 +4,18 @@
+ |---|---|---|---|---|
+ | 1 | 만 18세 이상 | 공식 | 충족 | |
+ | 2 | 대회용 신작, 하나의 완결된 이야기 | 공식 | 충족 | |
+-| 3 | 5~7분 ("up to 7 minutes in total duration") | 공식 | 충족(6:00) | 인트로 포함 여부 **미확인** → 인트로 포함 6:00, 제외 5:40 모두 범위 내 |
++| 3 | 5~7분 ("up to 7 minutes in total duration") | 공식 | 충족(6:24) | 인트로 포함 여부 **미확인** → 인트로 포함 6:00, 제외 5:40 모두 범위 내 |
+ | 4 | 공식 인트로를 본편 앞에 삽입(드라이브 링크) | 공식 | 할 일 | 11/15 결합 |
+ | 5 | 16:9 · 1080p · MOV/MP4 | 공식 | 할 일 | |
+ | 6 | 영어 자막 포함 | 공식 | 할 일 | SRT 번인 |
+-| 7 | 최종 영상의 70% 이상 Seedance 생성 | 공식 | 충족(85~90%) | 분모 정의 **미확인** → 세 기준 모두 산출해 폼에 기재 |
++| 7 | 최종 영상의 70% 이상 Seedance 생성 | 공식 | 계획상 충족(86.2% / 90.9%) — 완성 영상 기준 재산출 PENDING | 분모 정의 **미확인** → 세 기준 모두 산출해 폼에 기재 |
+ | 8 | 타 AI·후반 툴은 보조 | 공식 | 충족 | 글자 합성·사운드만 |
+ | 9 | 실사 보조 허용 | 공식 | 미사용 | 필요 시 ≤30% |
+ | 10 | 책임 있는 AI 사용(필수, 비채점) | 공식 | 할 일 | 실존 인물 미사용, 창작 고지, 유산 자료 참고 고지 |
+ | 11 | 주제 택1 | 공식 | ⑤ Human Relationships | |
+ | 12 | 제출: 비공개/미등록 링크 + 4단계 폼 + AI 툴 공개 | 공식 | 할 일 | 유튜브 unlisted, 로그.csv 기반 |
+ | 13 | 복수 출품 가능 | 공식 | 해당 없음 | |
+-| 14 | 저작권 보유, 주최에 비독점 상영·홍보 라이선스 | 공식 | 확인 | 드리미나 약관과 충돌 여부 **확인 필요** |
++| 14 | 저작권 보유, 주최에 **비독점·영구·취소불가·전세계·무상** 라이선스(심사·상영·아카이브·마케팅) | T&C(2026 표기) | 확인 | 2027 약관 동일 여부·드리미나 약관 충돌 **PENDING** |
+ | 15 | 심사: AI 30·스토리 30·창의 20·기술 20 | 공식 | | |
+ | 16 | 일정: 11/20 마감 → 12/15 Top10·투표 → 12/25 Top5 → 1/8–10 두바이 | 공식 | | 마감 시간대 **미확인** → 11/18 제출 |
+ | 17 | Top5 현장 참석 의무·여비 | 공식 미기재 | **미확인** | 주최 문의 |
+@@ -24,3 +24,6 @@
+ 
+ **주최 문의 메일 (10/21 발송)**: ① 인트로 러닝타임 포함 여부 ② 70% 분모 ③ Top5 참석·여비 ④ 마감 시간대 ⑤ 팀 크레딧.
+ **권리 증빙 보관**: `SUBMISSION_EVIDENCE.md`의 폴더 구조대로 한 폴더에: 공식 인트로 원본, `GENERATION_LEDGER.csv`(생성 로그), Seedance 사용 컷 타임코드, 레퍼런스 원본, 참고 공개 자료 목록, 사운드·이미지 사용권, 영어 자막 SRT, 제출 링크.
++
++
++**v4.2 출처 등록부**: `RULES_SOURCE_REGISTER.md` · 문의 초안: `ORGANIZER_QUESTIONS_KO_EN.md`(미발송)
+diff -ru "v4.1/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\352\263\274.md" "v4.2/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\352\263\274.md"
+--- "v4.1/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\352\263\274.md"	2026-10-20 07:00:45.201389164 +0000
++++ "v4.2/10_\354\236\220\353\217\231\352\262\200\354\246\235_\352\262\260\352\263\274.md"	2026-10-20 07:43:45.876596990 +0000
+@@ -1,49 +1,84 @@
+-# v4.1 자동검증 결과
++# v4.2 자동검증 결과 (`check_v4.py`)
+ 
+-`check_v4.py` · 대상 01/02/03/04/FACT_CLAIMS · 결과: **전부 통과**
++| 영역 | 상태 |
++|---|---|
++| ① 계획 구조 | PASS |
++| ② 사실 출처 | PASS(일부)/PENDING |
++| ③ 파일럿 | PENDING |
++| ④ 규정 | PENDING(확인 항목은 기록됨) |
++| ⑤ 최종 영상 | PENDING |
+ 
+-- ✅ 최종 사용 길이 합계 = 360s (목표 360s)
+-- ✅ 연속성: 공백/중복 [], 마지막 종료 360s
+-- ✅ 행별 종료-시작=길이 (불일치 [])
+-- ✅ 샷ID 중복 []
+-- ℹ️ AI 샷 59 / 비생성 블록 4 (INTRO, TITLE, BLACK, CREDITS) · AI 307s · 비생성 53s
+-- ℹ️ Seedance 비율(잠정, 분모 미확인): 전체 360s **85.28%** · 인트로 제외 340s **90.29%**
+-- ✅ 70% 요건: 가장 보수적 분모로도 충족 (계획 수치. 완성 영상 기준 재검증 필요)
+-- ✅ 생성 방식 집합 ['I2V', 'NONE', 'REF', 'T2V']
+-- ✅ AI 샷 프롬프트 존재 (누락 [])
+-- ✅ 샷당 카메라 이동 하나 (복수 [])
+-- ℹ️ 생성 요청 합계 370s (5/10초 옵션 가정)
+-- ℹ️ 우선순위 P0 10 · P1 32 · P2 17
+-- ✅ P0 샷ID 중복 없음
+-- ✅ CSV 레퍼런스 ID가 04에 정의됨 (미정의 [])
+-- ✅ 시나리오 장면 시각 = CSV (13개, 불일치 [])
+-- ✅ 03 샷 수 63 = CSV 63
+-- ✅ 나이·연도 일관성 (동수 44→64, 해인 34, 사진 1996) []
+-- ✅ FACT_CLAIMS 25건: '확인' 판정에 URL 존재 (누락 [])
+-- ℹ️ 분류: 공식확인 11, 창작 5, 일부확인 6, 학술확인(일반) 1, 확인불가 2
+-- ✅ 화면 고지(S2) + 크레딧 첫 화면 창작 고지 존재
+-- ℹ️ 대사 17줄
++## 구조
+ 
+-## 장면 범위
++- ✅ 러닝타임 384s (6:24) — 규정 5~7분 범위(인트로 포함 여부 PENDING이어도 범위 내)
++- ✅ 연속성 공백/중복 []
++- ✅ 행별 길이 검산 불일치 []
++- ✅ 샷ID 중복 없음
++- ℹ️ 65행 = AI 61컷 331s + 비생성 4블록 53s (INTRO, TITLE, BLACK, CREDITS)
++- ℹ️ Seedance 비율(계획·잠정): 전체 86.20% · 인트로 제외 90.93%
++- ✅ 70%: 보수적 분모로도 충족(계획 수치)
++- ✅ 생성 방식 집합
++- ✅ AI 샷 프롬프트 존재
++- ✅ 샷당 카메라 이동 하나 []
++- ✅ 우선순위 합계 P0 11 + P1 31 + P2 19 = 61
++- ✅ 같은 인물에 hard hat ↔ no hat/bareheaded 상충 []
++- ✅ 실내(S2·S3) 헤드랜턴 상수 []
++- ✅ 프롬프트 내 한글/전각 메모 []
++- ✅ 비문('forehead's hand') []
++- ✅ 한 프롬프트 두 국면(매치컷 내장) []
++- ✅ 10-7 봉투는 손이 들어 올림·떠오르지 않음 명시
++- ✅ CAVE_LIGHT 블록 누락 []
++- ✅ STYLE_BASE 누락 []
++- ✅ 레퍼런스 ID 정의 []
++- ✅ 시나리오 장면 시각 = CSV (13개) []
++- ✅ 03 샷 수 65 = CSV 65
++- ✅ 나이·연도 일관성 []
++- ✅ S2 화면 고지 + 크레딧 창작 고지
++- ✅ 암전 10s 안에 대사 3줄(2.5s/줄) 수용
++- ℹ️ 대사 17줄 · 생성 요청 합계 395s(5/10초 옵션 가정)
++
++## 사실
++
++- ✅ FACT_CLAIMS 25건 ({'공식확인': 7, '창작': 5, '일부확인': 7, '공식확인(기관 발표 보도)': 1, '학술확인(일반)': 1, '확인불가': 1, '확인불가(논쟁)': 1, '창작적 표현(일반 관행 참고)': 1, '참고(미확인)': 1})
++- ✅ '확인' 판정에 URL []
++- ✅ 공식확인인데 원문 지지 아님 []
++- ⏳ PENDING 1차 원문 접속불가(대체 출처로 판정): #4, #12, #16
++- ⏳ PENDING 법령 원문(law.go.kr)·고시 관보·박재현 논문 PDF 미열람
++
++## 파일럿
++
++- ⏳ PENDING 파일럿 3컷 미실행 — 영상·단가 없음. 품질 검증 불가
++- ✅ GENERATION_LEDGER 실측값 없음(템플릿 상태)
++
++## 규정
++
++- ⏳ PENDING 인트로·크레딧의 5~7분 포함 여부
++- ⏳ PENDING 70% 분모·입증법
++- ⏳ PENDING 공식 인트로 실제 길이(20초는 가정)
++- ⏳ PENDING 마감 시각·시간대
++- ⏳ PENDING 코덱·프레임·자막 번인
++- ⏳ PENDING 팀/개인·Top5 참석·여비
++- ⏳ PENDING 2027 약관(라이선스) 원문
++- ✅ 확인된 규정(5~7분, 1080p 16:9 MP4/MOV, 영어 자막, Seedance ≥70%, 11/20 마감, 심사 비중)은 RULES_SOURCE_REGISTER에 URL과 인용 기록
++
++## 최종영상
++
++- ⏳ PENDING 완성 영상 없음. FINAL_QA_CHECKLIST 15항목 전부 미완료. 제출 준비 미완료
++
++## 장면 범위 (CSV)
+ 
+ | 장면 | 시작 | 종료 | 길이 |
+ |---|---|---|---|
+ | S0 | 0:00 | 0:20 | 20s |
+-| S1 | 0:20 | 0:48 | 28s |
+-| S2 | 0:48 | 1:10 | 22s |
+-| S3 | 1:10 | 1:55 | 45s |
+-| S4 | 1:55 | 2:15 | 20s |
+-| S5 | 2:15 | 2:40 | 25s |
+-| S6 | 2:40 | 3:20 | 40s |
+-| S7 | 3:20 | 3:40 | 20s |
+-| S8 | 3:40 | 4:10 | 30s |
+-| S9 | 4:10 | 4:45 | 35s |
+-| S10 | 4:45 | 5:25 | 40s |
+-| S11 | 5:25 | 5:40 | 15s |
+-| S12 | 5:40 | 6:00 | 20s |
+-
+-## 미확인·가정
+-- 70% 분모·인트로 포함 여부: 공식 정의 없음 → 잠정 비율.
+-- 위 비율은 계획표 산술. 완성 영상의 Seedance 출처는 GENERATION_LEDGER.csv와 타임코드로 재검증.
+-- 생성 길이 옵션 5/10초 가정. 파일럿 후 gen_v4.py req_len 수정.
+-- 파일럿 3컷 미실행(Dreamina 계정 필요).
+\ No newline at end of file
++| S1 | 0:20 | 0:50 | 30s |
++| S2 | 0:50 | 1:12 | 22s |
++| S3 | 1:12 | 1:59 | 47s |
++| S4 | 1:59 | 2:19 | 20s |
++| S5 | 2:19 | 2:46 | 27s |
++| S6 | 2:46 | 3:28 | 42s |
++| S7 | 3:28 | 3:54 | 26s |
++| S8 | 3:54 | 4:28 | 34s |
++| S9 | 4:28 | 5:05 | 37s |
++| S10 | 5:05 | 5:47 | 42s |
++| S11 | 5:47 | 6:04 | 17s |
++| S12 | 6:04 | 6:24 | 20s |
+\ No newline at end of file
+Only in v4.1: 10_자동검증_결과.pdf
+Only in v4.1: 11_v4_v4.1_변경내역.pdf
+Only in v4.2: CHANGES_v4.1_to_v4.2.diff
+Only in v4.2: DISCLOSURE_STEP3_draft.md
+Only in v4.1: FACT_CLAIMS.csv
+Only in v4.2: FACT_CLAIMS_v4.2.csv
+Only in v4.2: FACT_REVIEW_25.md
+Only in v4.2: FINAL_QA_CHECKLIST.md
+Only in v4.2: ORGANIZER_QUESTIONS_KO_EN.md
+Only in v4.1: PILOT_PLAN_3컷.md
+Only in v4.2: PILOT_PLAN_3컷_v4.2.md
+Only in v4.2: PILOT_PROMPTS_READY.md
+Only in v4.2: PILOT_SCORECARD.csv
+diff -ru v4.1/PROP_CONTINUITY.md v4.2/PROP_CONTINUITY.md
+--- v4.1/PROP_CONTINUITY.md	2026-10-20 06:59:31.469533305 +0000
++++ v4.2/PROP_CONTINUITY.md	2026-10-20 07:41:55.671443755 +0000
+@@ -1,4 +1,4 @@
+-# 소품·동선 연속성표 v4.1
++# 소품·동선 연속성표 v4.2 (타임라인 384s 기준)
+ 
+ **규칙** 창작 상황 고지: 동굴 내 현대 유입물(장갑)의 수거·반출·라벨 기입은 극중 절차이며 실제 규정을 묘사한 것이 아니다. 어떤 컷에서도 탄산염·벽·종유관에 손이 닿지 않는다.
+ 
+@@ -8,7 +8,8 @@
+ |---|---|---|---|---|
+ | 1-5 | 깨끗한 노란 고무장갑, 낙하 | 없음 | 동수(2005) 오른손에서 미끄러짐 | 한 짝만 |
+ | 8-1 | 흰 탄산염 껍질, 바위 틈 | 없음 | — | 20년 경과 |
+-| 8-3 | 틈 안 그대로 | 없음 | 해인 사진·기록 | 플래시 소형 |
++| 8-3a | 틈 안 그대로 | 없음 | 해인 사진 1장 | 플래시 소형 |
++| 8-3b | 틈 안 그대로 | 봉투·집게 꺼냄 | 해인 | 극중 절차 |
+ | 8-4 | 집게로 들려 봉투에 들어감 | 투명 봉투, 흰 라벨, '유입 경위' 칸 **비어 있음** | 해인 오른손 집게, 왼손 봉투 | 흰 가루 낙하 |
+ | 8-5 | 봉투 안 | 봉투 | 해인 오른손 → 동수 **왼손** 손바닥 | 동수 오른손은 랜턴 쪽 |
+ | 8-6 | 봉투 안 | 봉투 | 동수 왼손에 쥔 채 서 있음 | |
+@@ -19,7 +20,7 @@
+ | 10-4 | | 봉투 | 동수 **오른손으로 옮겨** 팀장 오른손에 놓음 | 클로즈업. 선택의 순간 |
+ | 10-5 | | 봉투 (클립보드 위) | 해인 오른손 펜, 팀장이 건넨 봉투 | 라벨에 쓰기 |
+ | 10-6 | | 봉투 | 팀장 서명 | |
+-| 10-7 | | 봉투 | 해인 오른손으로 들어 올림 | 저녁빛. S1-5 대칭(낙하↔상승) |
++| 10-7 | | 봉투 | 해인 오른손이 봉투 윗부분을 쥐고 들어 올림. **손이 처음부터 끝까지 프레임 안** | 저녁빛. S1-5 대칭. 장갑은 떠오르지 않음 |
+ | 10-8 ~ 11-3 | 봉투는 팀장 장비함 (프레임 밖) | | | 이후 등장 없음 |
+ 
+ ## 안전모 / 헤드랜턴
+Only in v4.1: PROP_CONTINUITY.pdf
+Only in v4.2: RULES_SOURCE_REGISTER.md
+diff -ru v4.1/SOUND_TIMELINE.md v4.2/SOUND_TIMELINE.md
+--- v4.1/SOUND_TIMELINE.md	2026-10-20 06:59:31.474284681 +0000
++++ v4.2/SOUND_TIMELINE.md	2026-10-20 07:42:51.666398378 +0000
+@@ -1,4 +1,4 @@
+-# 사운드 타임라인 v4.1
++# 사운드 타임라인 v4.2 (384s)
+ 
+ **원칙** 내레이션 없음. 음악은 S9 이후 금지(손 컷은 무음+환경음). 영어 자막은 번인.
+ 
+@@ -7,39 +7,39 @@
+ | 구간 | 환경음 | 특수 | 대사 |
+ |---|---|---|---|
+ | S0 0:00–0:20 | 주최 인트로 원본 | | |
+-| S1 0:20–0:48 | 빗소리, 굴착기 | 1-3 저음 바람(=4-3 동일 음원), 1-5 낙하음 1.5초 지연 | |
+-| S2 0:48–1:10 | 형광등 험, 종이 | | 팀장·해인 2줄 |
+-| S3 1:10–1:55 | 바람, TV 낮게, 숟가락 | 문 두드림 | 동수·해인 4줄 |
+-| S4 1:55–2:15 | 바람, 장비 | 4-3 바람(1-3 동일) | |
+-| S5 2:15–2:40 | 발소리 반향, 물방울 | | 해인 1줄(화면 밖) |
+-| S6 2:40–3:20 | 노 젓는 물소리, 물방울 | | 4줄 |
+-| S7 3:20–3:40 | 먼 파도(둑 너머) | 7-3 횃불 소리(창작 재현 자막과 동시) | |
+-| S8 3:40–4:10 | 물방울, 셔터 1회, 봉투 비닐 | | |
+-| S9 4:10–4:45 | 아래 초 단위 | | 4줄 |
+-| S10 4:45–5:25 | 바람, 자물쇠 | | 2줄 |
+-| S11 5:25–5:40 | 바람, 전선 윙 | | |
+-| S12 5:40–6:00 | 전선 윙 → 무음 | | |
++| S1 0:20–0:50 | 빗소리, 굴착기 | 1-3 저음 바람(=4-3 동일 음원), 1-5 낙하음 1.5초 지연 | |
++| S2 0:50–1:12 | 형광등 험, 종이 | | 팀장·해인 2줄 |
++| S3 1:12–1:59 | 바람, TV 낮게, 숟가락 | 문 두드림 | 동수·해인 4줄 |
++| S4 1:59–2:19 | 바람, 장비 | 4-3 바람(1-3 동일) | |
++| S5 2:19–2:46 | 발소리 반향, 물방울 | | 해인 1줄(화면 밖) |
++| S6 2:46–3:28 | 노 젓는 물소리, 물방울 | | 4줄 |
++| S7 3:28–3:54 | 먼 파도(둑 너머) | 7-3 횃불 소리(창작 재현 자막과 동시) | |
++| S8 3:54–4:28 | 물방울, 셔터 1회, 봉투 비닐 | | |
++| S9 4:28–5:05 | 아래 초 단위 | | 4줄 |
++| S10 5:05–5:47 | 바람, 자물쇠 | | 2줄 |
++| S11 5:47–6:04 | 바람, 전선 윙 | | |
++| S12 6:04–6:24 | 전선 윙 → 무음 | | |
+ 
+-## S9 초 단위 (4:10–4:45)
++## S9 초 단위 (4:28–5:05)
+ 
+ | 시각 | 화면 | 소리 | 자막 |
+ |---|---|---|---|
+-| 4:10–4:15 (9-1) | 보트 가운데, 노 멈춤 | 노 물소리 멈춤, 물방울 | 해인 "끄죠" / Let's turn them off. |
+-| 4:15–4:19 (9-2) | 랜턴 두 개 꺼짐 → 검정 | 스위치 클릭 2회 | |
+-| 4:19–4:20 | **검정** | 물방울 1회 | |
+-| 4:20–4:22 | 검정 | 두 사람 숨 (동수 거칠게, 해인 고르게) | |
+-| 4:22–4:23 | 검정 | 먼 파도 1회 | |
+-| 4:23–4:24 | 검정 | 동수 | "…보인다" / …I can see. |
+-| 4:24–4:25 | 검정 | 보트 삐걱 아주 작게 | |
+-| 4:25–4:26 | 검정 | 해인 | "뭐가요" / See what. |
+-| 4:26–4:27 | 검정 | 물방울 1회 | |
+-| 4:27–4:28 | 검정 | 동수 | "아무것도" / Nothing. |
+-| 4:28–4:29 | 검정 | 숨 (두 사람 박자 맞음) | |
+-| 4:29–4:35 (9-3) | 랜턴 켜짐, 두 손 | 스위치 클릭 1회, 그 뒤 **완전 무음 3초**, 물방울 | |
+-| 4:35–4:40 (9-4) | 둘 다 손을 안 봄 | 물방울, 먼 파도 | |
+-| 4:40–4:45 (9-5) | 물고기 | 아주 작은 물결 | |
++| 4:28–4:33 (9-1) | 보트 가운데, 노 멈춤 | 노 물소리 멈춤, 물방울 | 해인 "끄죠" / Let's turn them off. |
++| 4:33–4:37 (9-2) | 랜턴 두 개 꺼짐 → 검정 | 스위치 클릭 2회 | |
++| 4:37–4:38 | **검정** | 물방울 1회 | |
++| 4:38–4:40 | 검정 | 두 사람 숨 (동수 거칠게, 해인 고르게) | |
++| 4:40–4:41 | 검정 | 먼 파도 1회 | |
++| 4:41–4:42 | 검정 | 동수 | "…보인다" / …I can see. |
++| 4:42–4:43 | 검정 | 보트 삐걱 아주 작게 | |
++| 4:43–4:44 | 검정 | 해인 | "뭐가요" / See what. |
++| 4:44–4:45 | 검정 | 물방울 1회 | |
++| 4:45–4:46 | 검정 | 동수 | "아무것도" / Nothing. |
++| 4:46–4:47 | 검정 | 숨 (두 사람 박자 맞음) | |
++| 4:47–4:55 (9-3, 8s) | 랜턴 켜짐, 두 손 | 스위치 클릭 1회, 그 뒤 **완전 무음 3초**, 물방울 | |
++| 4:55–5:00 (9-4) | 둘 다 손을 안 봄 | 물방울, 먼 파도 | |
++| 5:00–5:05 (9-5) | 물고기 | 아주 작은 물결 | |
+ 
+-**플랫폼 오인 방지**: 검정 10초 동안 소리가 완전히 비는 구간은 없다(최대 무음 1초). 8초 대안은 4:21–4:22 숨, 4:26–4:27 물방울을 제거해 4:27에 랜턴 점등. 15초 대안은 4:28 뒤 숨 5초 추가.
++**플랫폼 오인 방지**: 검정 10초 동안 소리가 완전히 비는 구간은 없다(최대 무음 1초). 8초 대안은 4:39–4:40 숨, 4:44–4:45 물방울을 제거해 4:45에 랜턴 점등. 15초 대안은 4:46 뒤 숨 5초 추가. 기본은 10초 유지.
+ 
+ ## 음원 출처 (SUBMISSION_EVIDENCE에 기록)
+ 빗소리·바람·물방울·파도·전선: 자체 녹음 또는 CC0 라이브러리. 숨비소리 없음. 음악 없음.
+Only in v4.1: SOUND_TIMELINE.pdf
+Only in v4.2: STORY_RISK_REVIEW.md
+diff -ru v4.1/SUBMISSION_EVIDENCE.md v4.2/SUBMISSION_EVIDENCE.md
+--- v4.1/SUBMISSION_EVIDENCE.md	2026-10-20 06:59:31.478630631 +0000
++++ v4.2/SUBMISSION_EVIDENCE.md	2026-10-20 07:41:55.670958770 +0000
+@@ -19,3 +19,17 @@
+ 
+ ## 미확인 유지 항목
+ 70% 분모 · 인트로의 러닝타임 포함 · Top5 참석/여비 · 마감 시간대 · 팀 크레딧 — 주최 회신 전까지 '미확인'.
++
++
++## v4.2 증빙 체크리스트 (완성 전 전부 미완료)
++
++| 항목 | 증빙 | 상태 |
++|---|---|---|
++| 생성 원본 | 샷별 mp4 원본 + Dreamina 결과 ID | 미완료 |
++| 레퍼런스 라이선스 | R-*.png 생성 프롬프트·생성일(자체 생성) | 미완료 |
++| 샷별 모델·프롬프트·생성일·파일명 | GENERATION_LEDGER.csv | 미완료 |
++| 최종 편집 타임코드 | EDL/XML + 02 CSV 대조표 | 미완료 |
++| 음원 권리 | 출처·라이선스 표 | 미완료 |
++| 최종본 해시 | SHA-256 | 미완료 |
++| 자막본 | 입구_EN.srt + 번인 확인 | 미완료 |
++| 공식 인트로 원본 | 파일 + 길이 | 미완료 |
+diff -ru v4.1/check_v4.py v4.2/check_v4.py
+--- v4.1/check_v4.py	2026-10-20 07:00:24.505468143 +0000
++++ v4.2/check_v4.py	2026-10-20 07:43:45.840454690 +0000
+@@ -1,55 +1,75 @@
+ # -*- coding: utf-8 -*-
+-"""v4.1 자동검증: 타임라인·AI 비율·장면 대조·프롬프트·레퍼런스 정의·방식·중복·나이/연도·사실주장 URL. 결과 → 10_자동검증_결과.md"""
+-import csv, re, collections, pathlib
+-CSV="02_입구_샷리스트_v4.1.csv"; MD="01_입구_시나리오_v4.1.md"; PM="03_Seedance_프롬프트_v4.1.md"; RG="04_레퍼런스_이미지_가이드_v4.1.md"
+-rows=list(csv.DictReader(open(CSV,encoding="utf-8-sig")))
+-def sec(s): m,s2=s.split(":"); return int(m)*60+int(s2)
+-out=[]; ok=True
+-def chk(c,msg):
+-    global ok; out.append(("✅ " if c else "❌ ")+msg); ok=ok and c
+-total=sum(int(r["최종사용길이초"]) for r in rows); chk(total==360, f"최종 사용 길이 합계 = {total}s (목표 360s)")
+-prev=0; gaps=[]; badlen=[]
++"""v4.2 자동검증. 결과를 ① 계획 구조 ② 사실출처 ③ 파일럿 ④ 규정 ⑤ 최종영상 으로 분리해 10_자동검증_결과.md에 기록."""
++import csv, re, collections, pathlib, json
++CSV="02_입구_샷리스트_v4.2.csv"; MD="01_입구_시나리오_v4.2.md"; PM="03_Seedance_프롬프트_v4.2.md"; RG="04_레퍼런스_이미지_가이드_v4.2.md"; FC="FACT_CLAIMS_v4.2.csv"
++rows=list(csv.DictReader(open(CSV,encoding="utf-8-sig"))); sec=lambda s:int(s.split(":")[0])*60+int(s.split(":")[1])
++R={"구조":[], "사실":[], "파일럿":[], "규정":[], "최종영상":[]}; status={}
++def chk(sec_, c, msg): R[sec_].append(("✅ " if c else "❌ ")+msg); status[sec_]=status.get(sec_,True) and c
++def info(sec_, msg): R[sec_].append("ℹ️ "+msg)
++def pend(sec_, msg): R[sec_].append("⏳ PENDING "+msg); status[sec_]=False
++# ---- ① 계획 구조 ----
++total=sum(int(r["최종사용길이초"]) for r in rows); chk("구조", 300<=total<=420, f"러닝타임 {total}s ({total//60}:{total%60:02d}) — 규정 5~7분 범위(인트로 포함 여부 PENDING이어도 범위 내)")
++prev=0; gaps=[]; bad=[]
+ for r in rows:
+     if int(r["시작초"])!=prev: gaps.append(r["샷ID"])
+-    if int(r["종료초"])-int(r["시작초"])!=int(r["최종사용길이초"]): badlen.append(r["샷ID"])
++    if int(r["종료초"])-int(r["시작초"])!=int(r["최종사용길이초"]): bad.append(r["샷ID"])
+     prev=int(r["종료초"])
+-chk(not gaps and prev==360, f"연속성: 공백/중복 {gaps}, 마지막 종료 {prev}s"); chk(not badlen, f"행별 종료-시작=길이 (불일치 {badlen})")
+-ids=[r["샷ID"] for r in rows]; dup=[i for i,c in collections.Counter(ids).items() if c>1]; chk(not dup, f"샷ID 중복 {dup}")
+-ai=[r for r in rows if r["방식"]!="NONE"]; non=[r for r in rows if r["방식"]=="NONE"]
+-ai_sec=sum(int(r["최종사용길이초"]) for r in ai); non_sec=360-ai_sec; intro=sum(int(r["최종사용길이초"]) for r in non if r["샷ID"]=="INTRO")
+-out.append(f"ℹ️ AI 샷 {len(ai)} / 비생성 블록 {len(non)} ({', '.join(r['샷ID'] for r in non)}) · AI {ai_sec}s · 비생성 {non_sec}s")
+-out.append(f"ℹ️ Seedance 비율(잠정, 분모 미확인): 전체 360s **{ai_sec/360:.2%}** · 인트로 제외 340s **{ai_sec/(360-intro):.2%}**")
+-chk(ai_sec/360>=0.70, "70% 요건: 가장 보수적 분모로도 충족 (계획 수치. 완성 영상 기준 재검증 필요)")
+-chk(set(r["방식"] for r in rows)<= {"T2V","I2V","REF","NONE"}, f"생성 방식 집합 {sorted(set(r['방식'] for r in rows))}")
+-miss=[r["샷ID"] for r in ai if len(r["프롬프트"].strip())<60]; chk(not miss, f"AI 샷 프롬프트 존재 (누락 {miss})")
+-multi=[r["샷ID"] for r in ai if len([k for k in ["push","pull","pan","tilt","track","orbit","handheld"] if k in r["카메라"]])>1 and "then" not in r["카메라"]]; chk(not multi, f"샷당 카메라 이동 하나 (복수 {multi})")
+-req=sum(int(r["생성요청길이초"]) for r in ai); out.append(f"ℹ️ 생성 요청 합계 {req}s (5/10초 옵션 가정)")
+-pr=collections.Counter(r["우선순위"] for r in ai); out.append(f"ℹ️ 우선순위 P0 {pr['P0']} · P1 {pr['P1']} · P2 {pr['P2']}")
+-p0=[r["샷ID"] for r in ai if r["우선순위"]=="P0"]; chk(len(p0)==len(set(p0)), "P0 샷ID 중복 없음")
+-# 레퍼런스 ID 정의 여부
+-rg=open(RG,encoding="utf-8").read(); defined=set(re.findall(r"\| (R-[A-Za-z0-9-]+) \|", rg))|{"R-DS25-hand","R-HI-hand"}
+-used=set(x for r in ai for x in r["레퍼런스ID"].split(";") if x); undef=sorted(used-defined); chk(not undef, f"CSV 레퍼런스 ID가 04에 정의됨 (미정의 {undef})")
+-# 장면 대조
+-sc=collections.OrderedDict()
+-for r in rows: sc.setdefault(r["장면"],[int(r["시작초"]),int(r["종료초"])]); sc[r["장면"]][1]=int(r["종료초"])
+-md=open(MD,encoding="utf-8").read(); hdr=re.findall(r"### (S\d+)\..*?\((\d+:\d\d)[–-](\d+:\d\d)\)", md)
+-mism=[f"{s}: {a}-{b} vs {sc.get(s)}" for s,a,b in hdr if s not in sc or sc[s]!=[sec(a),sec(b)]]; chk(hdr and not mism, f"시나리오 장면 시각 = CSV ({len(hdr)}개, 불일치 {mism})")
+-pm=open(PM,encoding="utf-8").read(); cnt=len(re.findall(r"^### [\w-]+ · ", pm, re.M)); chk(cnt==len(rows), f"03 샷 수 {cnt} = CSV {len(rows)}")
+-# 나이·연도 일관성
+-age_err=[]
+-if "동수**(44)" not in md: age_err.append("01: 2005년 동수 44 미표기")
+-if "Korean man, 44" not in pm or "Korean man, 43" in pm: age_err.append("03: 2005 동수 44 아님")
+-if "Korean man, 64" not in pm: age_err.append("03: 2025 동수 64 없음")
+-if "Korean woman, 34" not in pm: age_err.append("03: 해인 34 없음")
+-if "Same man at 44" not in rg: age_err.append("04: R-DS05 44 아님")
+-if "'96" not in md or "'96" not in rg or "1996" not in pm: age_err.append("사진 연도 1996 미동기화")
+-if re.search(r"5-year-old|5살|다섯 살", md+rg) and "1996" not in rg: age_err.append("5세 사진 연도 불명")
+-chk(not age_err, f"나이·연도 일관성 (동수 44→64, 해인 34, 사진 1996) {age_err}")
+-# 사실주장: 확인 판정에 URL 필수
+-fc=list(csv.DictReader(open("FACT_CLAIMS.csv",encoding="utf-8-sig"))); nourl=[r["id"] for r in fc if r["category"] in ("공식확인","학술확인(일반)") and not r["url"]]
+-chk(not nourl, f"FACT_CLAIMS {len(fc)}건: '확인' 판정에 URL 존재 (누락 {nourl})"); out.append("ℹ️ 분류: "+", ".join(f"{k} {v}" for k,v in collections.Counter(r['category'] for r in fc).items()))
+-chk("극중 재구성된 기록" in md and "창작" in md.split("### S12")[1][:400], "화면 고지(S2) + 크레딧 첫 화면 창작 고지 존재")
+-dial=len(re.findall(r"^\*\*(동수|해인|팀장)\*\*:", md, re.M)); out.append(f"ℹ️ 대사 {dial}줄")
+-res=["# v4.1 자동검증 결과","",f"`check_v4.py` · 대상 01/02/03/04/FACT_CLAIMS · 결과: **{'전부 통과' if ok else '실패 항목 있음'}**",""]+["- "+l for l in out]+["","## 장면 범위","","| 장면 | 시작 | 종료 | 길이 |","|---|---|---|---|"]+[f"| {s} | {a//60}:{a%60:02d} | {b//60}:{b%60:02d} | {b-a}s |" for s,(a,b) in sc.items()]
+-res+=["","## 미확인·가정","- 70% 분모·인트로 포함 여부: 공식 정의 없음 → 잠정 비율.","- 위 비율은 계획표 산술. 완성 영상의 Seedance 출처는 GENERATION_LEDGER.csv와 타임코드로 재검증.","- 생성 길이 옵션 5/10초 가정. 파일럿 후 gen_v4.py req_len 수정.","- 파일럿 3컷 미실행(Dreamina 계정 필요)."]
+-pathlib.Path("10_자동검증_결과.md").write_text("\n".join(res),encoding="utf-8"); print("\n".join(out)); print("OK" if ok else "FAIL")
++chk("구조", not gaps and prev==total, f"연속성 공백/중복 {gaps}"); chk("구조", not bad, f"행별 길이 검산 불일치 {bad}")
++ids=[r["샷ID"] for r in rows]; chk("구조", len(ids)==len(set(ids)), "샷ID 중복 없음")
++ai=[r for r in rows if r["방식"]!="NONE"]; non=[r for r in rows if r["방식"]=="NONE"]; ai_sec=sum(int(r["최종사용길이초"]) for r in ai); intro=sum(int(r["최종사용길이초"]) for r in non if r["샷ID"]=="INTRO")
++info("구조", f"{len(rows)}행 = AI {len(ai)}컷 {ai_sec}s + 비생성 {len(non)}블록 {total-ai_sec}s ({', '.join(r['샷ID'] for r in non)})")
++info("구조", f"Seedance 비율(계획·잠정): 전체 {ai_sec/total:.2%} · 인트로 제외 {ai_sec/(total-intro):.2%}")
++chk("구조", ai_sec/total>=0.70, "70%: 보수적 분모로도 충족(계획 수치)")
++chk("구조", set(r["방식"] for r in rows)<={"T2V","I2V","REF","NONE"}, "생성 방식 집합")
++chk("구조", not [r["샷ID"] for r in ai if len(r["프롬프트"].strip())<60], "AI 샷 프롬프트 존재")
++multi=[r["샷ID"] for r in ai if len([k for k in ["push","pull","pan","tilt","track","orbit","handheld"] if k in r["카메라"]])>1 and "then" not in r["카메라"]]; chk("구조", not multi, f"샷당 카메라 이동 하나 {multi}")
++pr=collections.Counter(r["우선순위"] for r in ai); chk("구조", pr["P0"]+pr["P1"]+pr["P2"]==len(ai), f"우선순위 합계 P0 {pr['P0']} + P1 {pr['P1']} + P2 {pr['P2']} = {len(ai)}")
++# 상충 지시
++DSC="faded orange safety vest over gray shirt, old scratched white hard hat"; DSH="worn gray long-sleeve shirt, bareheaded"
++hat=[r["샷ID"] for r in ai if "no hat" in r["프롬프트"] or (DSC in r["프롬프트"] and DSH in r["프롬프트"])]; chk("구조", not hat, f"같은 인물에 hard hat ↔ no hat/bareheaded 상충 {hat}")
++indoor=[r["샷ID"] for r in ai if r["장면"] in ("S2","S3") and "headlamp strap" in r["프롬프트"]]; chk("구조", not indoor, f"실내(S2·S3) 헤드랜턴 상수 {indoor}")
++kor=[r["샷ID"] for r in ai if re.search(r"[가-힣（）]", r["프롬프트"])]; chk("구조", not kor, f"프롬프트 내 한글/전각 메모 {kor}")
++gram=[r["샷ID"] for r in ai if "forehead's" in r["프롬프트"]]; chk("구조", not gram, f"비문('forehead's hand') {gram}")
++comp=[r["샷ID"] for r in ai if re.search(r"\b(then|Then) a (cool|white|headlamp)", r["프롬프트"]) and "fades in" in r["프롬프트"]]; chk("구조", not comp, f"한 프롬프트 두 국면(매치컷 내장) {comp}")
++r107=next(r for r in rows if r["샷ID"]=="10-7"); chk("구조", "hand" in r107["프롬프트"] and "never floats" in r107["프롬프트"], "10-7 봉투는 손이 들어 올림·떠오르지 않음 명시")
++cave=[r["샷ID"] for r in ai if r["광원블록"]=="CAVE_LIGHT" and "Pitch-black lava cave" not in r["프롬프트"]]; chk("구조", not cave, f"CAVE_LIGHT 블록 누락 {cave}")
++base=[r["샷ID"] for r in ai if "Cinematic live-action realism" not in r["프롬프트"]]; chk("구조", not base, f"STYLE_BASE 누락 {base}")
++rg=open(RG,encoding="utf-8").read(); defined=set(re.findall(r"\| (R-[A-Za-z0-9-]+) \|", rg))|{"R-DS25-hand","R-HI-hand","R-HI-civil","R-DS25-home"}
++used=set(x for r in ai for x in r["레퍼런스ID"].split(";") if x); chk("구조", not (used-defined), f"레퍼런스 ID 정의 {sorted(used-defined)}")
++sc=json.load(open("scene_ranges.json")); md=open(MD,encoding="utf-8").read(); hdr=re.findall(r"### (S\d+)\..*?\((\d+:\d\d)[–-](\d+:\d\d)\)", md)
++mism=[f"{s}:{a}-{b}" for s,a,b in hdr if s not in sc or sc[s]!=[sec(a),sec(b)]]; chk("구조", hdr and not mism, f"시나리오 장면 시각 = CSV ({len(hdr)}개) {mism}")
++pm=open(PM,encoding="utf-8").read(); cnt=len(re.findall(r"^### [\w-]+ · ", pm, re.M)); chk("구조", cnt==len(rows), f"03 샷 수 {cnt} = CSV {len(rows)}")
++age=[]
++if "동수**(44)" not in md: age.append("01 2005 동수 44")
++if "Korean man, 44" not in pm or "Korean man, 43" in pm: age.append("03 DS05 44")
++if "Same man at 44" not in rg: age.append("04 R-DS05 44")
++if "'96" not in md or "1996" not in rg: age.append("사진 1996")
++chk("구조", not age, f"나이·연도 일관성 {age}")
++chk("구조", "극중 재구성된 기록" in md and "창작" in md.split("### S12")[1][:500], "S2 화면 고지 + 크레딧 창작 고지")
++# 자막 타임코드: BLACK 블록 대사 3줄이 10초에 들어가는지
++blk=next(r for r in rows if r["샷ID"]=="BLACK"); nd=blk["음향_대사_자막"].split("|")[0].count("/")+1; chk("구조", int(blk["최종사용길이초"])>=nd*2.5, f"암전 {blk['최종사용길이초']}s 안에 대사 {nd}줄(2.5s/줄) 수용")
++info("구조", f"대사 {len(re.findall(r'^\*\*(동수|해인|팀장)\*\*:', md, re.M))}줄 · 생성 요청 합계 {sum(int(r['생성요청길이초']) for r in ai)}s(5/10초 옵션 가정)")
++# ---- ② 사실 출처 ----
++fc=list(csv.DictReader(open(FC,encoding="utf-8-sig"))); cat=collections.Counter(r["category"] for r in fc)
++chk("사실", len(fc)==25, f"FACT_CLAIMS 25건 ({dict(cat)})")
++conf=[r["id"] for r in fc if r["category"].startswith(("공식확인","학술확인")) and not r["url"]]; chk("사실", not conf, f"'확인' 판정에 URL {conf}")
++nosup=[r["id"] for r in fc if r["category"].startswith("공식확인") and not r["support_level"].startswith("지지")]; chk("사실", not nosup, f"공식확인인데 원문 지지 아님 {nosup}")
++blocked=[r["id"] for r in fc if "접속실패" in r["access_status"] or "403" in r["access_status"] or "503" in r["access_status"]]
++if blocked: pend("사실", f"1차 원문 접속불가(대체 출처로 판정): #{', #'.join(blocked)}")
++pend("사실", "법령 원문(law.go.kr)·고시 관보·박재현 논문 PDF 미열람")
++# ---- ③ 파일럿 ----
++sc_=list(csv.DictReader(open("PILOT_SCORECARD.csv",encoding="utf-8"))); filled=[r for r in sc_ if r["passed"]]
++if not filled: pend("파일럿", "파일럿 3컷 미실행 — 영상·단가 없음. 품질 검증 불가")
++led=list(csv.DictReader(open("GENERATION_LEDGER.csv",encoding="utf-8"))); chk("파일럿", all(not r["credits_charged"] for r in led), "GENERATION_LEDGER 실측값 없음(템플릿 상태)")
++# ---- ④ 규정 ----
++for m in ["인트로·크레딧의 5~7분 포함 여부","70% 분모·입증법","공식 인트로 실제 길이(20초는 가정)","마감 시각·시간대","코덱·프레임·자막 번인","팀/개인·Top5 참석·여비","2027 약관(라이선스) 원문"]: pend("규정", m)
++chk("규정", True, "확인된 규정(5~7분, 1080p 16:9 MP4/MOV, 영어 자막, Seedance ≥70%, 11/20 마감, 심사 비중)은 RULES_SOURCE_REGISTER에 URL과 인용 기록")
++# ---- ⑤ 최종영상 ----
++pend("최종영상", "완성 영상 없음. FINAL_QA_CHECKLIST 15항목 전부 미완료. 제출 준비 미완료")
++# ---- 출력 ----
++out=["# v4.2 자동검증 결과 (`check_v4.py`)","",
++     f"| 영역 | 상태 |","|---|---|"]+[f"| ① 계획 구조 | {'PASS' if status.get('구조') else 'FAIL'} |", f"| ② 사실 출처 | {'PASS' if status.get('사실') else 'PASS(일부)/PENDING'} |", "| ③ 파일럿 | PENDING |", "| ④ 규정 | PENDING(확인 항목은 기록됨) |", "| ⑤ 최종 영상 | PENDING |"]+[""]
++for k,v in R.items(): out+=[f"## {k}",""]+["- "+x for x in v]+[""]
++out+=["## 장면 범위 (CSV)","","| 장면 | 시작 | 종료 | 길이 |","|---|---|---|---|"]+[f"| {s} | {a//60}:{a%60:02d} | {b//60}:{b%60:02d} | {b-a}s |" for s,(a,b) in sc.items()]
++pathlib.Path("10_자동검증_결과.md").write_text("\n".join(out),encoding="utf-8")
++print("\n".join(x for v in R.values() for x in v if x.startswith(("❌","✅ 러닝","ℹ️")))); print("STRUCT", "PASS" if status.get("구조") else "FAIL")
+diff -ru v4.1/gen_v4.py v4.2/gen_v4.py
+--- v4.1/gen_v4.py	2026-10-20 06:57:40.592923868 +0000
++++ v4.2/gen_v4.py	2026-10-20 07:36:21.877892245 +0000
+@@ -1,269 +1,280 @@
+ # -*- coding: utf-8 -*-
+-"""「입구」 v4 샷리스트 CSV + Seedance 프롬프트 MD 생성기. 타임라인의 단일 진실 소스."""
+-import csv, math
++"""「입구」 v4.2 생성기 — 단일 진실 소스. 출력: 02 CSV, 02b 템플릿 CSV, 03 프롬프트 MD, DISCLOSURE_STEP3_draft.md, scene_ranges.json
++v4.2: STYLE_BASE/CAVE_LIGHT 분리, 실내 인물 상수(DS_HOME/HI_CIVIL), 프롬프트 내 한글 메모 제거(notes 열), 7-4·8-3 분할, 감정 컷 +2s, 10-7 동작 명시."""
++import csv, json
+ 
+-STYLE = ("Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. "
+-         "Palette: pure black shadows, warm orange headlamp light, bone-white carbonate deposits. "
+-         "No text, no logos, no subtitles, no lens flare.")
+-CAVE = ("Only headlamps light the scene. Everything outside the beams is pure black; do not reveal cave walls beyond the light. "
+-        "Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave.")
+-DS = "Korean man, 64, short white hair, weathered face, thick calloused hands, faded orange safety vest, old scratched white hard hat"
+-DS05 = "Korean man, 44, short black hair wet with rain, orange safety vest, white hard hat"
+-HI = "Korean woman, 34, black low ponytail, black technical work jacket, headlamp strap on forehead"
+-TEAM = "cave survey team in identical black work jackets and headlamps, faces in shadow"
++STYLE_BASE = ("Cinematic live-action realism, 16:9, 24fps, shallow depth of field, subtle film grain. "
++              "Muted palette of black, warm orange practical light and bone-white. No text, no logos, no subtitles, no lens flare.")
++CAVE_LIGHT = ("Pitch-black lava cave. Headlamp beams are the only light; everything outside the beams is pure black. "
++              "Black basalt walls streaked with bone-white calcite. Not a limestone cave: never brighten the whole cave, zero ambient light.")
++DS      = "Korean man, 64, short white hair, deeply weathered face, thick calloused hands, faded orange safety vest over gray shirt, old scratched white hard hat"
++DS_HOME = "Korean man, 64, short white hair, deeply weathered face, thick calloused hands, worn gray long-sleeve shirt, bareheaded"
++DS05    = "Korean man, 44, short black hair wet with rain, orange safety vest, white hard hat"
++HI      = "Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, headlamp strap on forehead"
++HI_CIVIL= "Korean woman, 34, black low ponytail, small mole under left eye, black technical work jacket, bareheaded"
++LEADER  = "gray-haired Korean man in his 50s, gray field jacket"
++TEAM    = "cave survey team in identical black work jackets and headlamps, faces in shadow"
+ 
+-# (id, scene, seconds_used, mode, refs, function, camera, prompt, audio/subs, fail, retry, priority)
+-# non-AI blocks: mode 'NONE'
+-S = []
+-def add(*a): S.append(a)
++S=[]
++def add(sid,scene,sec,mode,refs,func,cam,prompt,audio,fail,retry,prio,cave=False,notes=""):
++    S.append(dict(sid=sid,scene=scene,sec=sec,mode=mode,refs=refs,func=func,cam=cam,prompt=prompt,audio=audio,fail=fail,retry=retry,prio=prio,cave=cave,notes=notes))
+ 
+-add("INTRO","S0",20,"NONE","","공식 인트로(주최 제공)","","","주최 제공 영상 그대로","","","-")
+-# S1 0:20–0:48
++add("INTRO","S0",20,"NONE","","공식 인트로(주최 제공)","","","주최 제공 영상 그대로","","","-",notes="주최 드라이브 원본. 길이 20초는 가정(파일 확인 전)")
++# S1
+ add("1-1","S1",5,"T2V","R-2005","2005 발견. 비 오는 밭, 공사","fixed wide",
+-    f"Wide shot. Gray rain over flat Jeju farmland with black stone walls. An excavator digs a hole beside a new concrete utility pole; a worker ({DS05}) shovels at the edge. Fixed camera, overcast, desaturated 2005 documentary feel.",
+-    "빗소리, 굴착기","비가 안개처럼 뭉개짐 / 전신주가 나무로 생성","'concrete utility pole with wires' 명시, 'rain as thin streaks' 추가","P2")
++    f"Wide shot. Gray rain over flat Jeju farmland with black stone walls. An excavator digs a hole beside a new concrete utility pole; a worker ({DS05}) shovels at the edge. Fixed camera, overcast, desaturated documentary feel.",
++    "빗소리, 굴착기","비가 안개처럼 / 전신주가 나무","'concrete utility pole with wires', 'rain as thin streaks' 추가","P2")
+ add("1-2","S1",4,"T2V","R-2005","삽이 헛돌고 흙이 꺼진다","fixed low",
+-    "Close on muddy boots and a shovel blade. The shovel sinks and the wet soil suddenly gives way, mud collapsing into a black opening. Fixed low camera, rain.",
+-    "흙 무너지는 소리","구멍이 물웅덩이로 보임","'dry black void, no water' 추가","P2")
+-add("1-3","S1",5,"I2V","R-DS05","차가운 바람이 올라온다 (S4 매치)","slow push-in",
+-    f"{DS05} leans over a dark hole in wet ground. A cold wind rises from below and lifts his hair; he freezes. Slow push-in on his face. Rain on skin.",
+-    "바람 소리 (저음)","머리카락이 안 움직임","'hair visibly blown upward' 반복, 생성 길이 10초로","P1")
+-add("1-4","S1",6,"T2V","R-WALL","손전등 원 안의 흰 벽","slow pan",
+-    "POV flashlight beam from above into a dark shaft. The circle of light finds a black basalt wall streaked with bone-white calcite deposits. Slow pan across the white. Pure black outside the beam.",
+-    "물방울 1회","원 밖이 회색","'pure black, zero ambient light' 2회 반복","P1")
+-add("1-5","S1",5,"T2V","R-GLOVE","노란 장갑이 떨어진다 (S10-7 대칭)","fixed top-down",
+-    "Looking straight down a black shaft. A yellow rubber work glove slips from a hand at the top of frame and falls away from camera, caught briefly in a flashlight beam, then swallowed by darkness.",
+-    "낙하음 지연 1.5초","장갑이 둘로 보임 / 손이 프레임에 남음","'one glove only', 'the hand exits frame immediately'","P1")
++    "Close on muddy boots and a shovel blade. The shovel sinks and the wet soil suddenly gives way, mud collapsing into a dry black opening. Fixed low camera, rain.",
++    "흙 무너지는 소리","구멍이 물웅덩이","'dry black void, no water' 추가","P2")
++add("1-3","S1",5,"I2V","R-DS05","차가운 바람이 올라온다 (4-3 매치)","slow push-in",
++    f"{DS05} leans over a dark hole in wet ground. A cold wind rises from below and visibly lifts his hair; he freezes. Slow push-in on his face. Rain on skin.",
++    "바람 소리(저음)","머리카락이 안 움직임","'hair visibly blown upward' 반복, 10초 요청","P1")
++add("1-4","S1",8,"T2V","R-WALL;R-ROOT","손전등 원 안의 흰 벽 — 첫 빛 (훅)","slow pan",
++    "POV flashlight beam shining straight down into a pitch-black volcanic shaft. As the circle of light reaches the inner wall, bone-white soda-straw stalactites and glistening calcite flowstone emerge over black basalt. Slow pan across the untouched white formations. Pure black outside the beam.",
++    "물방울 1회","원 밖이 회색 / 석회동굴처럼 밝음","CAVE_LIGHT 반복, 'small circle of light'","P0",cave=True,notes="v4.2 +2s, P0 격상(첫 30초 훅)")
++add("1-5","S1",5,"T2V","R-GLOVE","노란 장갑이 떨어진다 (10-7 대칭)","fixed top-down",
++    "Looking straight down a black shaft. One yellow rubber work glove slips from a hand at the top of frame; the hand exits frame immediately and the glove falls away from camera, caught briefly in a flashlight beam, then swallowed by darkness.",
++    "낙하음 1.5초 지연","장갑 둘 / 손 잔류","'one glove only' 반복","P1",cave=True)
+ add("TITLE","S1",3,"NONE","","타이틀 '입구 / The Opening'","","","무음","","","-")
+-# S2 0:48–1:10
+-add("2-1","S2",6,"I2V","R-HI","2005 보고서를 넘기다 한 줄에서 멈춘다","slow push-in",
+-    "Close on a woman's hand turning pages of a bound cave survey report with photos and diagrams under fluorescent light. The hand stops on a line of text. Slow push-in on the page. (Fictional in-film document. Line '발견자: 공사 인부(성명 미상)' and a small corner notice '극중 재구성된 기록 / dramatized record' composited in editing.)",
+-    "종이 소리. 자막 합성: Discovered by: construction worker (name unknown)","페이지에 가짜 글자 생성","'blank text lines, no legible letters' 명시 후 편집 합성","P1")
+-add("2-2","S2",4,"I2V","R-HI","보고서를 덮고 명단 양식을 당긴다","fixed",
+-    "The same hand closes the report firmly and pulls a blank form forward whose header area is empty. Fixed camera, fluorescent light. (Header '2025년 학술조사 참가자 명단' composited; fictional document.)",
+-    "","","","P2")
+-add("2-3","S2",7,"REF","R-HI;R-LEADER","이름을 쓴다. 팀장: 기록은 못 고쳐","fixed two-shot",
+-    f"{HI} writes a name on a form with a pen. Across the desk a gray-haired middle-aged man in a gray jacket watches and speaks briefly. Fixed two-shot, office, fluorescent light.",
+-    "팀장: 기록은 못 고쳐. 20년 전 거야. / 해인: 압니다. 이번 조사 명단에만. | SUB: The record can't be changed. It's twenty years old. / I know. Just this survey's roster.","입 모양 불일치","대사는 후반 더빙. 입은 'speaks briefly'만","P1")
++# S2
++add("2-1","S2",6,"I2V","R-DOC","보고서를 넘기다 한 줄에서 멈춘다","slow push-in",
++    "Close on a woman's slender hand turning pages of a bound cave survey report with photographs and diagrams under cool fluorescent office light. Her index finger stops on a single unprinted blank line in a table. Slow push-in on the blank line, shallow focus, no legible letters anywhere on the page.",
++    "종이 소리 | SUB(합성): Discovered by: construction worker (name unknown)","페이지에 가짜 글자","'no legible letters' 2회","P1",
++    notes="편집 합성: '발견자: 공사 인부(성명 미상)' + 구석 고지 '극중 재구성된 기록 / dramatized record'. 극중 가상 문서")
++add("2-2","S2",4,"I2V","R-DOC","보고서를 덮고 명단 양식을 당긴다","fixed",
++    "The same hand closes the report firmly and pulls forward a blank form with an empty header area. Fixed camera, cool fluorescent light, no legible letters.",
++    "","","","P2",notes="편집 합성: 헤더 '2025년 학술조사 참가자 명단'. 극중 가상 문서")
++add("2-3","S2",7,"REF","R-HI-civil;R-LEADER","이름을 쓴다. 팀장: 기록은 못 고쳐","fixed two-shot",
++    f"{HI_CIVIL} writes a name on a roster form with a pen. Across the desk a {LEADER} watches and speaks briefly. Fixed two-shot, office interior, cool fluorescent light.",
++    "팀장: 기록은 못 고쳐. 20년 전 거야. / 해인: 압니다. 이번 조사 명단에만. | SUB: The official record can't be changed. It's twenty years old. / I know. Just on this survey's roster.","입 모양 불일치","대사는 후반 더빙, 'speaks briefly'만","P1")
+ add("2-4","S2",5,"T2V","R-LEADER","팀장이 서명한다","fixed",
+-    "Close on a man's hand holding a pen above a signature box, hesitating, then signing. Fixed camera, fluorescent light, desk.",
++    "Close on a man's hand holding a pen above a signature box, hesitating, then signing. Fixed camera, fluorescent light, desk, no legible letters.",
+     "","","","P2")
+-# S3 1:10–1:55
+-add("3-1","S3",6,"T2V","R-GATE;R-HI","돌담길, 밭마다 팻말","slow tracking",
+-    f"Evening. {HI} walks along a Jeju black-stone-wall lane past quiet fields. On one field gate a single weathered official notice board on a post. Slow tracking beside her.",
+-    "바람. 팻말 1개 문구 편집 합성(일반 법령 수준): 천연기념물 제466호 보호구역 · 현상변경 허가 필요","팻말에 가짜 글자","'blank sign' 명시 후 합성","P2")
+-add("3-2","S3",4,"REF","R-HI","이웃이 고개를 돌린다","fixed medium",
+-    f"An elderly Jeju farmer walking toward {HI} on the lane sees her, turns his head away and passes without greeting. Fixed medium shot, dusk.",
++# S3
++add("3-1","S3",6,"T2V","R-GATE;R-HI-civil;R-SIGN","돌담길, 팻말 하나","slow tracking",
++    f"Evening dusk. {HI_CIVIL} walks along a Jeju black-stone-wall lane past quiet fields. Beside one field gate stands a weathered metal notice board with a blank flat face, no letters. Slow tracking beside her, cool blue dusk light.",
++    "바람 | 팻말 합성(극중 소품, 실존 표지판 아님): 천연기념물 보호구역 · 허가 없이 현상을 변경할 수 없습니다 / Natural Monument Protected Zone — No alteration without permit","팻말 글자","'blank flat face' 반복","P2",notes="팻말 1개, 글자 편집 합성")
++add("3-2","S3",4,"REF","R-HI-civil","노인 한 사람이 고개를 돌린다","fixed medium",
++    f"An elderly Jeju farmer walking toward {HI_CIVIL} on a stone-wall lane sees her, closes his expression, turns his head away and passes without greeting. Fixed medium shot, cool dusk light.",
+     "","노인이 웃음","'expression closed, avoids eye contact'","P2")
+ add("3-3","S3",5,"I2V","R-HOME","밥상 위 그릇 하나","slow push-in",
+-    "Small rural Korean room at night, one bare incandescent bulb. Low table with one bowl of rice and one spoon. Old TV glow flickers on the wall. Slow push-in on the single bowl.",
++    "Small rural Korean room at night, one bare incandescent bulb. Low table with exactly one bowl of rice and one spoon. Old TV glow flickers on the wall. Slow push-in on the single bowl.",
+     "TV 소리 낮게","그릇이 둘","'exactly one bowl, one spoon'","P1")
+-add("3-4","S3",5,"I2V","R-DS25","보지 않고 먹는다. 숟가락을 더듬는다","fixed medium",
+-    f"{DS}, gray shirt, no hat, eats alone at a low table with his eyes lowered, never looking at the glowing TV, his hand feeling for the spoon by touch. Fixed medium shot, warm bulb light.",
++add("3-4","S3",5,"I2V","R-DS25-home","보지 않고 먹는다. 숟가락을 더듬는다","fixed medium",
++    f"{DS_HOME} eats alone at a low table with his eyes lowered, never looking at the flickering TV, his right hand feeling for the spoon on the table by touch. Fixed medium shot, warm incandescent bulb light.",
+     "","TV를 쳐다봄","'eyes stay down the whole time'","P1")
+-add("3-5","S3",5,"T2V","R-HOME","벽의 안전모와 액자","slow pan",
+-    "Slow pan across a wall under warm bulb light: a scratched white hard hat on a nail, then a faded framed snapshot (1996 date stamp in the corner) of a young man carrying a small girl on his shoulders in front of a concrete utility pole.",
+-    "","액자 속 인물 얼굴 왜곡","액자 이미지는 R-PHOTO로 별도 생성 후 합성","P2")
+-add("3-6","S3",5,"REF","R-DS25;R-HI","문을 연다. 딸을 보지 않고 문고리를 만진다","fixed",
+-    f"{DS}, no hat, opens a wooden door. Outside in the dark stands {HI}. He does not meet her eyes; his hand stays on the door handle, thumb moving over the metal. Fixed shot from inside the house.",
+-    "동수: …몇 년 만이냐. / 해인: 3년. | SUB: …How many years has it been. / Three.","눈을 마주침","'he looks at the door frame, not at her'","P1")
+-add("3-7","S3",6,"REF","R-DS25;R-HI","허가서. 뚫은 놈. 니도.","fixed two-shot",
+-    f"Inside the room, {HI} holds out a folded document. {DS}, no hat, does not take it; he looks at the hard hat on the wall. Fixed two-shot, warm bulb light, long pause.",
+-    "동수: 20년 동안 나보고 뚫은 놈이라 그랬다. 니도. / 해인: …맞잖아요. | SUB: For twenty years they called me the man who broke it. You did too. / …You did.","","","P1")
+-add("3-8","S3",5,"I2V","R-DS25","안전모를 내려 먼지를 턴다","fixed macro",
+-    "Close on thick weathered hands lifting an old white hard hat from a nail and brushing dust off it with a palm. Warm light. Fixed camera.",
+-    "먼지 터는 소리","손가락 6개","'five fingers' 명시, 손 레퍼런스 R-DS25-hand 첨부","P1")
+-add("3-9","S3",4,"I2V","R-HI","해인이 그릇 하나를 본다","slow push-in",
+-    f"{HI}, indoors, glances down at a low table with one bowl and one spoon and says nothing. Slow push-in on her face. Warm bulb light.",
++add("3-5","S3",5,"T2V","R-HOME;R-PHOTO","벽의 안전모와 액자","slow pan",
++    "Slow pan across a wall under warm bulb light: a scratched white hard hat hanging on a nail, then a faded framed film snapshot of a young man carrying a small girl on his shoulders in front of a concrete utility pole.",
++    "","액자 속 얼굴 왜곡","액자는 R-PHOTO 별도 생성 후 합성","P2",notes="액자 사진 1996년 설정('96 날짜 도장은 합성)")
++add("3-6","S3",7,"REF","R-DS25-home;R-HI-civil","문을 연다. 딸을 보지 않고 문고리를 만진다","fixed",
++    f"{DS_HOME} opens a wooden door. Outside in the dark stands {HI_CIVIL}. He does not meet her eyes; he looks at the door frame while his thumb slowly rubs the metal door handle. Fixed shot from inside, warm bulb light against night darkness.",
++    "동수: …몇 년 만이냐. / 해인: 3년. | SUB: …How many years has it been? / Three.","눈을 마주침","'he looks at the door frame, not at her'","P1",notes="v4.2 +2s")
++add("3-7","S3",6,"REF","R-DS25-home;R-HI-civil","허가서. 뚫은 놈. 니도.","fixed two-shot",
++    f"Inside the small room, {HI_CIVIL} holds out a folded document. {DS_HOME} does not take it; he turns his gaze toward the old white hard hat hanging on the wall nail. Fixed two-shot, warm incandescent bulb light.",
++    "동수: 20년 동안 나보고 뚫은 놈이라 그랬다. 니도. / 해인: …맞잖아요. | SUB: For twenty years they blamed me for breaking it open. Even you. / …You did.","","","P1")
++add("3-8","S3",5,"I2V","R-DS25-hand","안전모를 내려 먼지를 턴다","fixed macro",
++    "Close on thick weathered five-fingered hands lifting an old white hard hat from a wall nail and brushing dust off it with a palm. Warm bulb light. Fixed camera.",
++    "먼지 터는 소리","손가락 6개","손 레퍼런스 첨부, 'five fingers' 반복","P1")
++add("3-9","S3",4,"I2V","R-HI-civil","해인이 그릇 하나를 본다","slow push-in",
++    f"{HI_CIVIL} stands indoors, glances down at the low table with one single bowl and one spoon, and remains silent. Slow push-in on her face, warm bulb light.",
+     "","","","P2")
+-# S4 1:55–2:15
++# S4
+ add("4-1","S4",5,"I2V","R-GATE;R-TEAM","전신주, 철문, 조사팀","slow aerial pull-out",
+-    f"Overcast morning. Flat Jeju field with black stone walls, a concrete utility pole, a rusted steel hatch in a concrete frame beside it. A {TEAM} unloads equipment from a white van. Slow aerial pull-out.",
+-    "","철문이 지하실 문처럼 큼","'small hatch, about one meter square'","P2")
++    f"Overcast morning. Flat Jeju field with black stone walls, a concrete utility pole, a rusted steel hatch about one meter square in a concrete frame beside it. A {TEAM} unloads equipment from a white van. Slow aerial pull-out.",
++    "","철문이 지하실 문처럼 큼","'about one meter square'","P2")
+ add("4-2","S4",5,"REF","R-DS25;R-HI","헤드랜턴을 씌운다. 손이 이마에 닿는다","fixed close two-shot",
+-    f"{HI} fastens a headlamp over an old white hard hat worn by {DS}. Her fingers touch his forehead for a moment; both go still. Close two-shot, fixed, overcast light.",
++    f"{HI} fastens a headlamp over the old white hard hat worn by {DS}. Her fingers touch his forehead for a moment; both go still. Close two-shot, fixed, overcast light.",
+     "","","","P1")
+-add("4-3","S4",5,"REF","R-DS25","철문이 열리고 바람이 올라온다 (S1-3 매치)","slow push-in",
+-    f"A steel hatch door swings open. Cold air rises from the dark and lifts the white hair of {DS} standing at the edge. Slow push-in. Overcast.",
+-    "바람 소리 (S1-3과 동일 음원)","","","P1")
++add("4-3","S4",5,"REF","R-DS25","철문이 열리고 바람이 올라온다 (1-3 매치)","slow push-in",
++    f"A steel hatch door swings open. Cold air rises from the dark and lifts the loose white hair at the temples of {DS} standing at the edge, hard hat on. Slow push-in. Overcast.",
++    "바람 소리(1-3 동일 음원)","안전모 쓴 채 머리 전체가 날림","'only the hair below the hard hat moves'","P1",notes="안전모 착용 상태에서 관자놀이 머리카락만")
+ add("4-4","S4",5,"T2V","","위에서 본 구멍, 작아지는 빛","fixed top-down",
+     "Looking straight down a dark vertical shaft. Headlamp circles descend one by one, growing smaller, until the last one moves out of view. Fixed top-down camera. Pure black.",
+-    "","","","P2")
+-# S5 2:15–2:40
++    "","","","P2",cave=True)
++# S5
+ add("5-1","S5",7,"I2V","R-ROLL","용암두루마리 벽을 훑는 랜턴 원 여섯 개","slow tracking",
+-    f"Pitch-black lava tube. Six headlamp beams sweep across a black basalt wall carrying long horizontal rolled ridges like a scroll, with bone-white calcite flows over it. Beams cross and separate. Slow tracking along the wall. {CAVE}",
+-    "발소리, 물방울","벽 전체가 밝아짐","CAVE 문구 반복, 'beams are small circles'","P1")
++    "Six small headlamp circles sweep across a black basalt wall carrying long horizontal rolled ridges like a scroll, with bone-white calcite flows over it. Beams cross and separate. Slow tracking along the wall.",
++    "발소리, 물방울","벽 전체가 밝아짐","CAVE_LIGHT 반복, 'beams are small circles'","P1",cave=True)
+ add("5-2","S5",5,"I2V","R-ROOT","뿌리를 따라 자란 흰 종유관, 물방울","slow tilt up",
+-    f"A headlamp beam tilts up to a black basalt ceiling where thin bone-white soda-straw stalactites hang along the paths of tree roots. A single water drop swells at a tip and falls. Slow tilt up then hold. {CAVE}",
+-    "물방울 1회","종유관이 굵은 고드름","'thin straws, pencil-thin'","P1")
+-add("5-3","S5",7,"REF","R-DS25;R-WALL","흰 벽 앞에서 손이 멈춘다","fixed side profile",
+-    f"{DS} with headlamp stands before a white calcite wall in a black cave. He slowly reaches out his thick hand toward the white, then stops a hand's width away and holds. Fixed side profile; his own headlamp is the only light. {CAVE}",
+-    "해인(화면 밖): 만지면 안 돼요. | SUB: Don't touch.","손이 벽에 닿음","'the hand never touches the wall, stops with a visible gap'","P0")
++    "A headlamp beam tilts up to a black basalt ceiling where thin bone-white soda-straw stalactites hang along the paths of tree roots. A single water drop swells at a tip and falls. Slow tilt up then hold.",
++    "물방울 1회","종유관이 굵은 고드름","'pencil-thin straws'","P1",cave=True)
++add("5-3","S5",9,"REF","R-DS25;R-DS25-hand;R-WALL","흰 벽 앞에서 손이 멈춘다","fixed side profile",
++    f"{DS} with lit headlamp stands before a bone-white calcite wall. He slowly reaches out his thick five-fingered hand toward the white surface, then stops a full hand's width away without touching it, trembling slightly, and holds. Fixed side profile; his own headlamp is the only light.",
++    "해인(화면 밖): 만지면 안 돼요. | SUB: Don't touch it.","손이 벽에 닿음","'never touches, visible gap' 반복","P0",cave=True,notes="v4.2 +2s")
+ add("5-4","S5",6,"REF","R-HI","멈춘 손 → 해인의 시선","rack focus",
+-    f"Close on a weathered hand frozen a hand's width from a white calcite wall. Rack focus to {HI} in the background watching the hand, her headlamp beam low. {CAVE}",
+-    "","","","P1")
+-# S6 2:40–3:20
++    f"Close on a weathered hand frozen a hand's width from a white calcite wall. Rack focus to {HI} in the background watching the hand, her headlamp beam low.",
++    "","","","P1",cave=True)
++# S6
+ add("6-1","S6",7,"I2V","R-LAKE","보트. 빛이 두 번","slow tracking side",
+-    f"A small gray rubber boat glides on perfectly still black underground water; {HI} rows at the back, {DS} sits at the front. Their headlamps reflect off the water onto a low basalt ceiling as two circles of light. Slow tracking from the side. {CAVE}",
+-    "노 젓는 물소리","보트에 모터/셋째 인물","'two people only, no motor'","P1")
+-add("6-2","S6",5,"T2V","R-LAKE","담수·염수 경계 아지랑이","slow push-in",
+-    f"A headlamp beam shines down into clear black water. A shimmering, wavering layer where fresh water meets denser salt water, like heat haze underwater. Slow push-in. {CAVE}",
+-    "","층이 안개로 보임","'sharp refraction layer, not fog'","P2")
+-add("6-3","S6",7,"I2V","R-FISH","눈이 퇴화한 물고기","slow tracking with fish",
+-    f"A small pale-pink translucent cave goby, 4 cm, with an unusually large head and eyes reduced to two tiny dark dots beneath the skin, drifts slowly through a warm headlamp beam in black water beside a rubber boat edge. It does not flee the light. Macro, slow tracking. {CAVE}",
+-    "","눈이 생김 / 물고기가 둘","'no visible eyeball', 'one fish only' 2회 반복","P0")
++    f"A small gray rubber boat glides on perfectly still black underground water; {HI} rows at the back, {DS} sits at the front, two people only, no motor. Their headlamps reflect off the water onto a low basalt ceiling as two circles of light. Slow tracking from the side.",
++    "노 젓는 물소리","모터/셋째 인물","'two people only, no motor'","P1",cave=True)
++add("6-2","S6",5,"T2V","R-HAZE","물속 경계층 아지랑이","slow push-in",
++    "A headlamp beam shines down into clear black water. A shimmering, wavering refraction layer where fresh water meets denser salt water, like heat haze underwater. Slow push-in.",
++    "","층이 안개","'sharp refraction layer, not fog'","P2",cave=True,notes="해수 영향은 확인, '층'의 시각화는 창작적 표현")
++add("6-3","S6",9,"I2V","R-FISH","눈이 퇴화한 물고기","slow tracking with fish",
++    "Macro shot. A single small pale-pink translucent cave goby, 3.5 cm long, with an unusually large head and eyes reduced to two tiny dark dots buried beneath the skin with no visible eyeball, drifts slowly through a single warm headlamp beam in black water beside a gray rubber boat edge. One fish only, calm, unafraid of the light. Slow tracking with the fish.",
++    "","눈알 생김 / 물고기 둘","'no visible eyeball', 'one fish only' 2회 반복","P0",cave=True,notes="v4.2 +2s. 크기 3.44cm(2014 측정) 반영")
+ add("6-4","S6",5,"REF","R-DS25","동수가 들여다본다. 빛이 없어서 눈이 없어진 거냐","fixed close",
+-    f"{DS} leans over the edge of a rubber boat and looks down into black water lit by his headlamp, his face faintly reflected. Fixed close shot. {CAVE}",
+-    "동수: 빛이 없어서 눈이 없어진 거냐. | SUB: Did they lose their eyes because there's no light?","","","P1")
+-add("6-5","S6",5,"REF","R-HI","해인: 안 써도 살 수 있어서요","fixed medium",
+-    f"{HI} holds the oars still and looks at the man across the boat, calm, and speaks one short line. Fixed medium shot, black water, her beam low. {CAVE}",
+-    "해인: …안 써도 살 수 있었나 봐요. | SUB: …Maybe they could live without using them.","","","P1")
+-add("6-6","S6",6,"REF","R-DS25","동수가 자기 손을 내려다본다. 그럼 뭘 보고 사냐","fixed close",
+-    f"{DS} in a rubber boat slowly turns his thick weathered hands palm-up in his own headlamp light and looks at them. Fixed close shot, black water beyond. {CAVE}",
+-    "동수: 그럼 뭘 보고 사냐. / 해인(화면 밖): 안 봐요. 느껴요. | SUB: Then what do they see by? / They don't see. They feel.","손가락 수","손 레퍼런스 첨부, 'five fingers each'","P0")
++    f"{DS} leans over the edge of a rubber boat and looks down into black water lit by his headlamp, his face faintly reflected. Fixed close shot.",
++    "동수: 빛이 없어서 눈이 없어진 거냐. | SUB: Did they lose their eyes because there's no light?","","","P1",cave=True)
++add("6-5","S6",5,"REF","R-HI","해인: 안 써도 살 수 있었나 봐요","fixed medium",
++    f"{HI} holds the oars still and looks at the man across the boat, calm, and speaks one short line. Fixed medium shot, black water, her beam low.",
++    "해인: …안 써도 살 수 있었나 봐요. | SUB: …Maybe they could live without using them.","","","P1",cave=True)
++add("6-6","S6",6,"REF","R-DS25;R-DS25-hand","동수가 자기 손을 내려다본다. 그럼 뭘 보고 사냐","fixed close",
++    f"{DS} in a rubber boat slowly turns his thick five-fingered hands palm-up in his own headlamp light and looks at them. Fixed close shot, black water beyond.",
++    "동수: 그럼 뭘 보고 사냐. / 해인(화면 밖): 안 봐요. 느껴요. | SUB: Then what do they see by? / They don't see. They feel.","손가락 수","손 레퍼런스, 'five fingers each'","P0",cave=True)
+ add("6-7","S6",5,"I2V","R-FISH","물고기가 빛을 가로질러 사라진다","fixed macro",
+-    f"The pale-pink translucent goby, eyes buried beneath its skin, crosses the full width of a headlamp beam in black water and disappears at the edge of the light. Fixed macro. {CAVE}",
+-    "","","","P1")
+-# S7 3:20–3:40
++    "The pale-pink translucent goby, eyes buried beneath its skin, crosses the full width of a headlamp beam in black water and disappears at the edge of the light. Fixed macro.",
++    "","","","P1",cave=True)
++# S7
+ add("7-1","S7",5,"I2V","R-SAND","보트가 모래에 닿는다. 파도 소리","fixed low from boat",
+-    f"The nose of a rubber boat slides onto a dark sand bank at the end of black underground water. A headlamp beam ahead reveals sand rising into darkness. Fixed low camera from the boat. {CAVE}",
+-    "먼 파도 소리","","","P2")
+-add("7-2","S7",5,"I2V","R-SAND;R-INSCRIPTION","항아리들, 벽의 두 글자","slow pan",
+-    f"A headlamp beam settles on round stoneware jars half-buried in dark sand, one tipped over, abalone shells scattered. The beam lifts to a black basalt wall where two carved characters are half-covered by white calcite crust. Slow pan from jars to wall. (Characters 火川 composited in editing.) {CAVE}",
+-    "","글자가 엉뚱한 문자","'two scratched marks, illegible' 후 합성","P1")
+-add("7-3","S7",6,"T2V","R-SILLA","회상(창작 재현): 횃불, 항아리를 두고 글자를 긋는다","fixed wide",
+-    "Same sand bank long ago. Four figures in rough undyed hemp clothing hold pine torches, faces entirely outside the firelight. One kneels and sets a round stoneware jar on the wet sand; another scratches marks into the black wall with an iron point. Only torchlight, deep orange, black beyond. Silhouettes, dreamlike.",
+-    "횃불 소리. 화면 하단 자막(본편 6초 내내): 창작 재현 — 유물은 실제, 장면은 상상 / Dramatization — artifacts are real, the scene is imagined","얼굴이 보임","'faces never lit'","P2")
+-add("7-4","S7",4,"T2V","R-SAND","횃불이 돌아선다 → 현재 항아리","fixed same framing",
+-    "The torches turn and walk away up the sand into darkness until the last flame disappears. Hold on black. Then a cool white headlamp beam fades in on the same jar, now half-buried and 1,200 years old. Fixed camera, same framing.",
+-    "","","","P2")
+-# S8 3:40–4:10
++    "The nose of a gray rubber boat slides onto a dark sand bank at the end of black underground water. A headlamp beam ahead reveals sand rising into darkness. Fixed low camera from the boat.",
++    "먼 파도 소리","","","P2",cave=True)
++add("7-2","S7",5,"I2V","R-SAND;R-INSCRIPTION","항아리들, 벽의 두 자국","slow pan",
++    "A headlamp beam settles on gray stoneware bottles and jars half-buried in dark wet sand, one tipped over, abalone shells nearby. The beam tilts up to a black basalt wall where two shallow scratched marks are half-covered by white calcite crust, illegible. Slow pan from the jars to the wall.",
++    "","각자가 문자처럼 생성","'two shallow illegible marks'","P1",cave=True,notes="기종명(장동병 등)은 미검증이라 쓰지 않음. 각자 글자는 합성하지 않고 '두 자국'으로만")
++add("7-3","S7",6,"T2V","R-SILLA","창작 재현: 횃불, 항아리를 두고 벽에 자국을 긋는다","fixed wide",
++    "Long ago on the same sand bank. Four silhouetted figures in rough undyed hemp clothing hold pine torches, faces entirely outside the firelight. One kneels and sets a gray stoneware jar on the wet sand; another scratches two marks into the black wall with an iron point. Only torchlight, deep orange, black beyond. Dreamlike silhouettes.",
++    "횃불 소리 | 화면 하단 자막(6초 내내): 창작 재현 — 유물은 실제, 장면은 상상 / Dramatization — artifacts are real, the scene is imagined","얼굴이 보임","'faces never lit'","P2",cave=True)
++add("7-4a","S7",5,"T2V","R-SILLA","횃불이 돌아선다, 마지막 불이 사라진다","fixed",
++    "Four silhouetted figures holding pine torches turn away from a gray stoneware jar resting on dark sand and walk up into the pitch-black cave until the last orange flame disappears into pure black. Fixed camera.",
++    "횃불 멀어짐","","","P2",cave=True,notes="v4.2 분할(구 7-4 전반)")
++add("7-4b","S7",5,"I2V","R-SAND","현재: 같은 항아리에 랜턴이 켜진다 (매치컷)","fixed same framing",
++    "Pure black frame. A single cool-white headlamp beam sweeps in and illuminates the same gray stoneware jar, now weathered, crusted with white calcite and half-buried in dark sand. Fixed camera, identical framing to the previous shot.",
++    "물방울","","","P2",cave=True,notes="v4.2 분할(구 7-4 후반). 7-4a 마지막 프레임을 첫 프레임 참조로")
++# S8
+ add("8-1","S8",5,"T2V","R-GLOVE","랜턴이 바위 틈에서 멈춘다. 장갑","slow pan then hold",
+-    f"A headlamp beam sweeps along a black basalt crevice at the edge of a sand bank, then stops. In the beam: a yellow rubber work glove crusted in white calcite. Slow pan then hold. {CAVE}",
+-    "","","","P1")
++    "A headlamp beam sweeps along a black basalt crevice at the edge of a sand bank, then stops. In the beam: a yellow rubber work glove crusted in white calcite. Slow pan then hold.",
++    "","","","P1",cave=True)
+ add("8-2","S8",5,"REF","R-DS25","동수가 얼어붙는다","slow push-in",
+-    f"{DS} with headlamp stares at something low in a rock crevice. His body goes completely still; his beam trembles slightly. Slow push-in on his face. {CAVE}",
+-    "","","","P1")
+-add("8-3","S8",5,"REF","R-HI","해인이 본다. 사진을 찍고 기록한다 (보존 절차)","fixed medium",
+-    f"{HI} approaches, sees the yellow glove in the crevice, pauses, then raises a rugged camera-tablet and photographs it with a small flash, and writes on a clipboard. Fixed medium shot, headlamp light. {CAVE}",
+-    "셔터음","플래시가 동굴 전체를 밝힘","'brief small flash, cave stays black'","P1")
+-add("8-4","S8",5,"REF","R-HI;R-GLOVE","장갑을 표본 봉투에 넣는다. 라벨 한 칸은 비어 있다","fixed macro",
+-    f"Close on gloved hands lifting the calcite-crusted yellow glove from the crevice with tweezers-like care and sliding it into a clear specimen bag with a white label. White dust falls. The pen hovers over one blank line on the label and does not write. Fixed macro, headlamp light. {CAVE}",
+-    "","라벨에 가짜 글자","'blank label' 후 합성: 유입 경위: ______","P0")
+-add("8-5","S8",6,"REF","R-HI;R-DS25;R-GLOVE","봉투를 아버지 손에 쥐어준다","fixed macro",
+-    f"Close on hands. A young woman's hand places a clear specimen bag holding a white-crusted yellow glove into an older man's thick open palm. His fingers close on it. Fixed macro, warm headlamp light. {CAVE}",
+-    "","","","P0")
++    f"{DS} with headlamp stares at something low in a rock crevice. His body goes completely still; his beam trembles slightly. Slow push-in on his face.",
++    "","","","P1",cave=True)
++add("8-3a","S8",5,"REF","R-HI","해인이 본다. 사진 한 장","fixed medium",
++    f"{HI} approaches the rock crevice, sees the calcite-crusted yellow glove, pauses, and photographs it once with a rugged tablet camera; a brief small flash lights only the crevice while the cave stays black. Fixed medium shot.",
++    "셔터음","플래시가 동굴을 밝힘","'brief small flash, cave stays black'","P1",cave=True,notes="v4.2 분할(구 8-3 전반)")
++add("8-3b","S8",4,"REF","R-HI","기록, 집게와 봉투를 꺼낸다","fixed medium-close",
++    "The same woman lowers the tablet, makes a brief note on a field clipboard under her headlamp light, and picks up steel specimen tweezers and a clear polyethylene bag. Fixed medium-close shot.",
++    "","","","P2",cave=True,notes="v4.2 분할(구 8-3 후반). 극중 절차(실제 규정 아님)")
++add("8-4","S8",5,"REF","R-HI-hand;R-GLOVE;R-BAG","장갑을 표본 봉투에. 라벨 한 칸은 비어 있다","fixed macro",
++    "Macro close-up on gloved hands using steel tweezers to gently lift the white calcite-crusted yellow work glove from the basalt crevice and slide it into a clear specimen bag with a blank white label strip. Fine white calcite dust falls. A pen tip hovers above the blank label and stops without writing. Fixed macro.",
++    "","라벨에 가짜 글자","'blank white label strip' 반복","P0",cave=True,notes="편집 합성: 라벨 '유입 경위: ______'")
++add("8-5","S8",6,"REF","R-HI-hand;R-DS25-hand;R-BAG","봉투를 아버지 손에 쥐어준다","fixed macro",
++    "Close on hands. A young woman's slender five-fingered hand places a clear specimen bag holding a white-crusted yellow glove into an older man's thick, scarred, open left palm. His fingers close on it. Fixed macro, warm headlamp light.",
++    "","","","P0",cave=True)
+ add("8-6","S8",4,"REF","R-HI","해인이 돌아서 보트로 간다","fixed wide from behind",
+-    f"{HI} turns away and walks back across dark sand toward a rubber boat, her headlamp beam leading. Behind her the man stands alone holding a small bag. Fixed wide from behind her. {CAVE}",
+-    "","","","P2")
+-# S9 4:10–4:45
++    f"{HI} turns away and walks back across dark sand toward a rubber boat, her headlamp beam leading. Behind her the man stands alone holding a small clear bag. Fixed wide from behind her.",
++    "","","","P2",cave=True)
++# S9
+ add("9-1","S9",5,"REF","R-HI;R-DS25;R-LAKE","보트가 호수 가운데. 노를 멈춘다. 끄죠","fixed wide side",
+-    f"Rubber boat in the middle of a black underground lake. {HI} at the back stops rowing; {DS} at the front. Two headlamp circles on water and ceiling. Fixed wide from the side. {CAVE}",
+-    "해인: 끄죠. | SUB: Let's turn them off.","","","P1")
++    f"Rubber boat in the middle of a black underground lake. {HI} at the back stops rowing; {DS} at the front. Two headlamp circles on water and ceiling. Fixed wide from the side.",
++    "해인: 끄죠. | SUB: Let's turn them off.","","","P1",cave=True)
+ add("9-2","S9",4,"REF","R-HI;R-DS25","랜턴 두 개가 꺼진다 → 검정","fixed close two-shot",
+-    f"Close two-shot in a boat: both people reach up and switch off their headlamps one after the other. Light disappears; the frame goes to pure black. Fixed camera. {CAVE}",
+-    "","프레임이 회색으로 남음","마지막 1초는 편집에서 검정 처리","P1")
+-add("BLACK","S9",10,"NONE","","암전 (기본 10초, 8/15초 대안)","","","물방울, 두 사람의 숨, 먼 파도. 동수: …보인다. / 해인: 뭐가요. / 동수: 아무것도. | SUB: …I can see. / See what. / Nothing.","","","-")
+-add("9-3","S9",6,"REF","R-HI-hand;R-DS25-hand","랜턴이 켜진다. 이미 잡혀 있는 두 손","fixed macro",
+-    f"Pure black. A single headlamp switches on. In the new circle of light, resting on a rubber boat edge: a young woman's slender hand lying on top of an older man's thick weathered hand. Neither hand moves. Fixed macro, nothing else visible. {CAVE}",
+-    "숨소리","손가락 수 / 손 위치가 9-4와 다름","손 레퍼런스 2쌍 고정. 10회 이상 생성. 채택 컷의 손 위치를 9-4 프롬프트에 기술","P0")
++    "Close two-shot in a boat: both people reach up and switch off their headlamps one after the other, the man first. Light disappears; the frame goes to pure black. Fixed camera.",
++    "","프레임이 회색","마지막 1초 편집 검정","P1",cave=True)
++add("BLACK","S9",10,"NONE","","암전 (기본 10초, 8/15초 대안)","","","물방울·숨·먼 파도. 동수: …보인다. / 해인: 뭐가요. / 동수: 아무것도. | SUB: …I can see. / See what? / Nothing.","","","-",notes="SOUND_TIMELINE 초 단위. 자막은 검정 위 흰 글자")
++add("9-3","S9",8,"REF","R-HI-hand;R-DS25-hand","랜턴이 켜진다. 이미 포개진 두 손","fixed macro",
++    "Pure black. A single warm headlamp switches on. In the small circle of light, resting on the gray rubber boat edge: a young woman's slender five-fingered hand lying still on top of an older man's thick, scarred, calloused five-fingered hand. Neither hand moves. Extreme macro close-up, pure black water beyond.",
++    "숨소리, 점등 후 무음 3초","손가락 수 / 손 위치","손 레퍼런스 2쌍 고정. 파일럿 3회 → 통과 후 확대. 채택 컷의 손 위치를 9-4 프롬프트에 기술","P0",cave=True,notes="v4.2 +2s. 영화의 성패")
+ add("9-4","S9",5,"REF","R-HI;R-DS25","둘 다 손을 쳐다보지 않는다","fixed two-shot",
+-    f"Two-shot in a rubber boat under one headlamp: {DS} looks down at the water, {HI} looks up at the ceiling, their joined hands resting on the boat edge between them, out of focus, woman's hand on top. Neither looks at the hands. Fixed. {CAVE}",
+-    "","손이 떨어져 있음","'hands stay joined, same position as previous shot'","P0")
++    f"Two-shot in a rubber boat under one headlamp: {DS} looks down at the water, {HI} looks up at the ceiling, their joined hands resting on the boat edge between them, out of focus, the woman's hand on top. Neither looks at the hands. Fixed.",
++    "","손이 떨어져 있음","'hands stay joined, same position as previous shot'","P0",cave=True)
+ add("9-5","S9",5,"I2V","R-FISH","물고기가 보트 옆을 지난다","fixed macro",
+-    f"The pale-pink translucent goby, eyes buried beneath its skin, drifts past a rubber boat edge at the bottom of a single headlamp beam and slips into black water. Fixed macro. {CAVE}",
+-    "","","","P2")
+-# S10 4:45–5:25
+-add("10-1","S10",5,"I2V","R-GATE-dusk;R-TEAM","저녁. 철문 앞 조사팀, 장비 내려놓음. 한 명이 비켜선다","slow push-in",
+-    f"Evening, flat Jeju field, blue dusk. A {TEAM} waits around an open steel hatch, equipment set down. One researcher steps back from the hatch edge to make room. Slow push-in.",
+-    "바람","군중이 도열한 것처럼 보임","'loosely gathered, not in lines'","P1")
+-add("10-2","S10",5,"REF","R-DS25;R-LEADER","동수가 봉투를 들고 올라온다. 팀장이 안전모를 벗는다","fixed low",
+-    f"{DS} climbs up out of a steel hatch in the ground holding a small clear specimen bag. Nearby a gray-haired team leader quietly takes off his own hard hat. Fixed low camera at ground level. Dusk.",
++    "The pale-pink translucent goby, eyes buried beneath its skin, drifts past a gray rubber boat edge at the bottom of a single headlamp beam and slips into black water. Fixed macro.",
++    "","","","P2",cave=True)
++# S10
++add("10-1","S10",5,"I2V","R-GATE-dusk;R-TEAM","저녁. 철문 앞 조사팀. 한 명이 비켜선다","slow push-in",
++    f"Evening, flat Jeju field, blue dusk. A {TEAM} waits loosely gathered around an open steel hatch, equipment set down, not in lines. One researcher steps back from the hatch edge to make room. Slow push-in.",
++    "바람","도열처럼 보임","'loosely gathered, not in lines'","P1")
++add("10-2","S10",5,"REF","R-DS25;R-LEADER;R-BAG","동수가 봉투를 들고 올라온다. 팀장이 안전모를 벗는다","fixed low",
++    f"{DS} climbs up out of a steel hatch in the ground holding a small clear specimen bag in his left hand. Nearby a {LEADER} quietly takes off his own hard hat. Fixed low camera at ground level. Dusk.",
+     "","","","P1")
+-add("10-3","S10",5,"REF","R-DS25;R-LEADER","팀장이 봉투를 받으려 손을 내민다. 동수가 봉투를 본다","fixed medium",
+-    f"The team leader holds out an open hand toward {DS}, who looks down at the specimen bag in his own hand for a long moment. Fixed medium two-shot, dusk.",
++add("10-3","S10",5,"REF","R-DS25;R-LEADER;R-BAG","팀장이 손을 내민다. 동수가 봉투를 본다","fixed medium",
++    f"The {LEADER} holds out an open hand toward {DS}, who looks down at the specimen bag in his own hand for a long moment. Fixed medium two-shot, dusk.",
+     "","","","P1")
+-add("10-4","S10",6,"REF","R-DS25;R-LEADER;R-BAG","동수가 봉투를 건넨다(클로즈업). 동굴이나 잘 닫으쇼","fixed close",
+-    f"Close on hands and faces: {DS} places the clear specimen bag into the team leader's open hand with his right hand and lets go slowly. The leader says something; the old man answers in a few words and looks away toward the field. Fixed close two-shot, dusk.",
+-    "팀장: 보고서에 올리겠습니다. / 동수: …동굴이나 잘 닫으쇼. | SUB: I'll put it in the report. / …Just close the cave properly.","","","P1")
+-add("10-5","S10",5,"REF","R-HI;R-GLOVE","해인이 봉투 라벨의 빈 칸에 쓴다","fixed macro",
+-    f"Close on {HI}'s hand writing with a pen on the white label of a clear specimen bag that holds a calcite-crusted yellow glove, held flat on a clipboard. Fixed macro, dusk light. (Text '유입 경위: 2005년 공사 중 낙하 — 김동수' composited.)",
+-    "펜 소리. 자막 합성: Origin: dropped during construction, 2005 — Kim Dong-su","가짜 글자","'blank label' 후 합성","P0")
++add("10-4","S10",6,"REF","R-DS25;R-LEADER;R-BAG","동수가 봉투를 건넨다 (클로즈업). 동굴이나 잘 닫으쇼","fixed close",
++    f"Close on hands and faces: {DS} moves the clear specimen bag to his right hand, places it into the {LEADER}'s open hand and lets go slowly. The leader says something; the old man answers in a few words and looks away toward the field. Fixed close two-shot, dusk.",
++    "팀장: 보고서에 올리겠습니다. / 동수: …동굴이나 잘 닫으쇼. | SUB: I'll put it in the report. / …Just seal the cave tight.","","","P1",notes="자막에 '이름'을 넣지 않는다(공식 기록 정정 오인 방지)")
++add("10-5","S10",7,"REF","R-HI-hand;R-BAG","해인이 봉투 라벨의 빈 칸에 쓴다","fixed macro",
++    "Extreme macro close-up on a young woman's slender five-fingered hand in a black jacket sleeve holding a black pen, writing steadily across a blank white label strip on a clear specimen bag that contains a calcite-crusted yellow work glove, resting flat on a clipboard. Cool blue dusk light, no legible text.",
++    "펜 소리 | SUB(합성): Origin: dropped during utility-pole work, 2005 — Kim Dong-su","가짜 글자","'no legible text' 반복","P0",notes="v4.2 +2s. 편집 합성: '유입 경위: 2005년 공사 중 낙하 — 김동수'. 표본 라벨은 공식 문서가 아님")
+ add("10-6","S10",5,"REF","R-LEADER;R-TEAM","팀장이 읽고 아래에 서명한다. 사람들이 조용히 본다","fixed medium",
+-    f"The gray-haired team leader reads the label, nods once, and signs below it. Around him {TEAM} watches in silence; no one bows, no one speaks. Fixed medium, dusk.",
+-    "","집단이 고개를 숙임","'no bowing, heads level'","P1")
+-add("10-7","S10",4,"REF","R-GLOVE","봉투 속 장갑이 저녁빛 속으로 올라온다 (S1-5 대칭)","fixed low, tilt up",
+-    "Low angle. A clear specimen bag holding a white-crusted yellow glove is lifted up into the last blue-orange dusk light above a dark field, held by a woman's hand. Slow tilt up with the bag. Sky behind.",
+-    "바람","","","P0")
++    f"The {LEADER} reads the label, nods once, and signs below it. Around him a {TEAM} watches in silence; no one bows, no one speaks, heads level. Fixed medium, dusk.",
++    "","집단이 고개 숙임","'no bowing, heads level'","P1")
++add("10-7","S10",4,"REF","R-HI-hand;R-BAG","해인의 손이 봉투를 저녁빛 속으로 들어 올린다 (1-5 대칭)","slow tilt up",
++    "Low angle. A young woman's hand grips the top of a clear specimen bag holding a white-crusted yellow glove and lifts it upward into the last blue-orange dusk light above a dark field; the bag is held firmly by the hand the whole time and never floats. Slow tilt up following the hand and bag. Sky behind.",
++    "바람","장갑이 스스로 떠오름 / 손 없음","'held firmly by the hand, never floats' 반복","P0",notes="파일럿 2번 컷")
+ add("10-8","S10",5,"T2V","R-GATE-dusk","철문이 닫힌다. 자물쇠. 봉인지","fixed close",
+-    "A steel hatch door closes over a concrete frame in a dark field. Hands fasten a heavy padlock and press an official paper seal across the seam. Fixed close on the seam, dusk to night.",
+-    "자물쇠 소리","봉인지에 글자","'blank white paper strip'","P2")
+-# S11 5:25–5:40
++    "A steel hatch door closes over a concrete frame in a dark field. Hands fasten a heavy padlock and press a blank white paper strip across the seam. Fixed close on the seam, dusk to night.",
++    "자물쇠 소리","봉인지에 글자","'blank white paper strip'","P2",notes="'봉인'은 창작 설정")
++# S11
+ add("11-1","S11",5,"REF","R-DS25;R-GATE","동수가 전신주에 손을 댄다","slow push-in",
+-    f"Night wind over a Jeju field. A concrete utility pole, wires humming, a sealed hatch below it with a small sign. {DS} places his hand flat on the pole. Slow push-in on the hand.",
++    f"Night wind over a Jeju field. A concrete utility pole, wires humming, a sealed hatch below it with a small blank sign. {DS} places his hand flat on the pole. Slow push-in on the hand.",
+     "전선 윙 소리","","","P1")
+-add("11-2","S11",5,"REF","R-DS25;R-HI","동수가 처음으로 딸을 본다","fixed close two-shot",
+-    f"{DS} turns his head and looks directly at {HI} standing beside him, for the first time holding her gaze. She looks back. Night, wind, pole behind. Fixed close two-shot.",
+-    "","눈을 피함","'direct eye contact, held'","P0")
++add("11-2","S11",7,"REF","R-DS25;R-HI","동수가 처음으로 딸을 본다","fixed close two-shot",
++    f"Night wind over a dark Jeju field, concrete utility pole behind. {DS} slowly turns his head and looks directly into the eyes of {HI_CIVIL} standing beside him, holding her gaze for the first time. She looks straight back at him. Fixed close two-shot.",
++    "","눈을 피함","'direct eye contact, held'","P0",notes="v4.2 +2s. 해인은 랜턴 벗은 상태")
+ add("11-3","S11",5,"REF","R-DS25;R-HI","동수가 딸의 손을 잡는다. 둘이 앞을 본다","slow pull-out",
+-    f"Wide from behind: {DS} and {HI} stand side by side before a utility pole in a dark field. His thick hand reaches sideways and takes hers. Both turn to face forward. Slow pull-out, wind in their hair.",
++    f"Wide from behind: {DS} and {HI_CIVIL} stand side by side before a utility pole in a dark field. His thick hand reaches sideways and takes hers. Both turn to face forward. Slow pull-out, wind in their hair.",
+     "","","","P1")
+ add("CREDITS","S12",20,"NONE","","엔딩 크레딧","","","무음→전선 소리","","","-")
+ 
+-SCENE_LABEL = {"S0":"공식 인트로","S1":"2005 비 오는 밭","S2":"2025 세계자연유산본부","S3":"월정리 동수의 집","S4":"입구","S5":"동굴 상류 흰 벽","S6":"호수","S7":"호수 끝 모래 둑","S8":"바위 틈 장갑","S9":"호수 가운데 어둠","S10":"지상 철문","S11":"전신주","S12":"크레딧"}
+-
+-def req_len(sec, mode):
+-    if mode=="NONE": return 0
+-    return 5 if sec<=5 else 10   # 가정: Dreamina 길이 옵션 5/10초. UI에서 확인 필요
+-
++SCENE_LABEL={"S0":"공식 인트로","S1":"2005 비 오는 밭","S2":"2025 조사기관 사무실(극중)","S3":"월정리 동수의 집","S4":"입구","S5":"동굴 상류 흰 벽","S6":"호수","S7":"호수 끝 모래 둑","S8":"바위 틈 장갑","S9":"호수 가운데 어둠","S10":"지상 철문","S11":"전신주","S12":"크레딧"}
++def req_len(sec,mode): return 0 if mode=="NONE" else (5 if sec<=5 else 10)   # 가정: 5/10초 옵션
+ def mmss(t): return f"{t//60}:{t%60:02d}"
+-
+ rows=[]; t=0
+-for (sid,scene,sec,mode,refs,func,cam,prompt,audio,fail,retry,prio) in S:
+-    start=t; end=t+sec; t=end
+-    rows.append(dict(샷ID=sid, 장면=scene, 장면명=SCENE_LABEL[scene], 이야기기능=func, 시작=mmss(start), 종료=mmss(end), 시작초=start, 종료초=end,
+-        최종사용길이초=sec, 생성요청길이초=req_len(sec,mode), 방식=mode, 레퍼런스ID=refs, 카메라=cam,
+-        프롬프트=(prompt+" "+STYLE if mode!="NONE" else ""), 음향_대사_자막=audio, 예상실패=fail, 재생성지시=retry, 우선순위=prio))
+-with open("02_입구_샷리스트_v4.1.csv","w",newline="",encoding="utf-8-sig") as f:
+-    w=csv.DictWriter(f, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
+-
++for s in S:
++    a=t; b=t+s["sec"]; t=b
++    full = "" if s["mode"]=="NONE" else (s["prompt"]+" "+(CAVE_LIGHT+" " if s["cave"] else "")+STYLE_BASE)
++    rows.append(dict(샷ID=s["sid"],장면=s["scene"],장면명=SCENE_LABEL[s["scene"]],이야기기능=s["func"],시작=mmss(a),종료=mmss(b),시작초=a,종료초=b,
++        최종사용길이초=s["sec"],생성요청길이초=req_len(s["sec"],s["mode"]),방식=s["mode"],레퍼런스ID=s["refs"],카메라=s["cam"],
++        광원블록=("CAVE_LIGHT" if s["cave"] else ("없음" if s["mode"]=="NONE" else "STYLE_BASE만")),프롬프트=full,음향_대사_자막=s["audio"],
++        편집합성_비고=s["notes"],예상실패=s["fail"],재생성지시=s["retry"],우선순위=s["prio"]))
++with open("02_입구_샷리스트_v4.2.csv","w",newline="",encoding="utf-8-sig") as f:
++    w=csv.DictWriter(f,fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
++with open("02b_shotlist_template_schema.csv","w",newline="",encoding="utf-8") as f:
++    w=csv.writer(f); w.writerow("shot_id,scene_id,edit_start_sec,edit_end_sec,edit_duration_sec,generation_requested_sec,source_type,model,reference_ids,prompt_id,dialogue,subtitle,sfx,priority,proof_path,status".split(","))
++    for r in rows:
++        src="official_intro" if r["샷ID"]=="INTRO" else ("edit_only" if r["방식"]=="NONE" else "seedance"); d=r["음향_대사_자막"]
++        w.writerow([r["샷ID"],r["장면"],r["시작초"],r["종료초"],r["최종사용길이초"],r["생성요청길이초"],src,("Seedance 2.5 (fallback 2.0)" if src=="seedance" else ""),r["레퍼런스ID"],("P-"+r["샷ID"] if src=="seedance" else ""),d.split("|")[0].strip() if "|" in d else "",d.split("SUB:")[1].strip() if "SUB:" in d else "",d if "|" not in d else "",r["우선순위"],"","planned"])
++# 장면 범위 JSON (시나리오 헤더 동기화용)
++sc={}
++for r in rows: sc.setdefault(r["장면"],[r["시작초"],r["종료초"]]); sc[r["장면"]][1]=r["종료초"]
++json.dump(sc,open("scene_ranges.json","w"),ensure_ascii=False,indent=1)
+ # 03 프롬프트 MD
+-L=["# 「입구」 v4.1 — Seedance 프롬프트 (샷별)","",
+-   "**단일 진실 소스**: `02_입구_샷리스트_v4.1.csv` (이 문서는 `gen_v4.py`가 CSV와 함께 생성). 수정은 gen_v4.py에서.","",
+-   "## 공통 블록","","**STYLE (모든 샷 끝에 자동 부착)**","```",STYLE,"```","**CAVE (동굴 샷에 포함)**","```",CAVE,"```",
+-   "**인물 고정 문구**","```",f"동수 2025: {DS}",f"동수 2005: {DS05}",f"해인: {HI}",f"연구원: {TEAM}","```","",
+-   "## 광원 규칙 (현실 정합)","- '광원 하나'는 **샷 안의 주광원이 하나**라는 뜻. 헤드랜턴 여러 개가 보이는 샷(5-1, 6-1, 9-1)은 각 랜턴이 작은 원을 만들고 그 사이는 검정. 수면 반사(6-1)는 같은 랜턴의 2차 반사. 지상 샷(S1·S3·S4·S10·S11)은 자연광·백열등이 주광원이며 CAVE 블록을 붙이지 않는다.","",
+-   "## 생성 요청 길이 가정","- Dreamina 길이 옵션을 5초/10초로 가정(제작 당일 UI 확인). ≤5초 샷은 5초, 6~7초 샷은 10초로 요청 후 편집에서 트리밍.","",
+-   "## Seedance 사양 검증 (Dreamina 공식 페이지, 2026-10-20)","",
+-   "| 항목 | 2.0 | 2.5 | 판정 |","|---|---|---|---|",
+-   "| 참조 입력 | 12개(이미지 9·영상 3·오디오 3, 각 ≤15초) | 최대 50개(텍스트·이미지·영상·오디오 혼합) | 확인됨(공식) |",
+-   "| 모드 | Single-frame(첫·끝 프레임) / Multiframes | Omni reference | 확인됨(공식) |",
+-   "| 1회 출력 길이 | 공식 페이지 미표기(요금 환산은 10초 기준) | 최대 30초, 확장 5~180초(베타) | 일부 확인 — **길이 옵션(5/10초)은 가정** |",
+-   "| 해상도 | 1080p 다운로드 명시, 4K 마케팅 문구 | 동일 | 일부 확인 |",
+-   "| 오디오 | 네이티브 오디오·립싱크(유료) | 동일 | 확인됨(공식) — 본 작품은 후반 사운드로 대체 |",
+-   "| 후처리 | 업스케일·보간(24→30/60fps)·사운드트랙 생성 | 동일 | 확인됨(공식) |",
+-   "| 워터마크 | 유료 플랜만 제거 | 동일 | 확인됨(공식) |",
+-   "| 요금 | Basic $15/1,575cr · Standard $36/3,885cr · Advanced 17,600cr(가격 미표기) | — | 일부 확인 — 샷당 크레딧 단가 미공개 |",
+-   "| @ 태그 문법 | @AssetName | @Image1 … | 확인됨(공식 가이드) — UI 표기 당일 확인 |",
+-   "","출처: dreamina.capcut.com/ko-kr/tools/seedance-2-0 · dreamina.capcut.com/resource/how-to-use-seedance-2-0 · dreamina.capcut.com/seedance/how-to-use-seedance-2-5 (2026-06-29)","",
+-   "## 우선순위","- **P0** 먼저 시험: 영화의 성패를 가르는 손·물고기·라벨 컷. 각 10회 이상.","- P1 인물·관계 컷. P2 환경·전환 컷(실패해도 편집으로 대체 가능).",""]
++ai=[r for r in rows if r["방식"]!="NONE"]; ai_sec=sum(r["최종사용길이초"] for r in ai); intro=20
++L=["# 「입구」 v4.2 — Seedance 프롬프트 (샷별)","",f"**단일 진실 소스** `02_입구_샷리스트_v4.2.csv` (gen_v4.py 생성). 총 {len(rows)}행, AI {len(ai)}컷 {ai_sec}s / 전체 {t}s.","",
++   "## 공통 블록 (v4.2 분리)","","**STYLE_BASE — 모든 AI 샷 끝에 부착 (지상·실내 포함)**","```",STYLE_BASE,"```","**CAVE_LIGHT — 동굴 샷에만 (광원블록 열 = CAVE_LIGHT)**","```",CAVE_LIGHT,"```",
++   "**인물 상수**","```",f"DS (동굴·지상 장비): {DS}",f"DS_HOME (실내, 안전모 없음): {DS_HOME}",f"DS05 (2005): {DS05}",f"HI (동굴, 랜턴): {HI}",f"HI_CIVIL (사무실·돌담길·마지막): {HI_CIVIL}",f"LEADER: {LEADER}",f"TEAM: {TEAM}","```","",
++   "## 광원 규칙 (현실 정합)","- '광원 하나'는 샷 안의 **주광원이 하나**라는 뜻. 랜턴 여러 개가 보이는 샷(5-1, 6-1, 9-1)은 각 랜턴이 작은 원을 만들고 그 사이는 검정. 수면 반사(6-1)는 같은 랜턴의 2차 반사. 지상·실내 샷은 자연광·백열등·저녁빛이 주광원이며 CAVE_LIGHT를 붙이지 않는다. 용접 불꽃은 v4에서 삭제됨(자물쇠·봉인지).","",
++   "## 프롬프트 위생 규칙","- 프롬프트 본문에 한글·괄호 메모·합성 지시를 넣지 않는다(→ `편집합성_비고` 열). 글자가 필요한 모든 면은 'blank / no legible letters'로 생성 후 편집 합성.","- 샷당 카메라 이동 하나. 한 프롬프트에 두 국면(시간 점프·매치컷)을 넣지 않는다(7-4a/7-4b, 8-3a/8-3b로 분할).","",
++   "## Seedance 사양 검증 (Dreamina 공식 페이지, 2026-10-20)","","| 항목 | 2.0 | 2.5 | 판정 |","|---|---|---|---|",
++   "| 참조 입력 | 12개(이미지 9·영상 3·오디오 3, 각 ≤15초) | 최대 50개 | 확인됨(공식) |","| 모드 | Single-frame / Multiframes | Omni reference | 확인됨(공식) |",
++   "| 1회 출력 길이 | 미표기(요금 환산 10초 기준) | 30초, 확장 5~180초 베타 | 일부 확인 — **5/10초 옵션은 가정** |","| 해상도 | 1080p 다운로드 | 동일 | 일부 확인 |",
++   "| 요금 | Basic $15/1,575cr · Standard $36/3,885cr · Advanced 17,600cr(가격 미표기) | — | 일부 확인 — 샷당 단가 미공개 → PENDING |","| @ 태그 | @AssetName | @Image1… | 공식 가이드. UI 당일 확인 |","",
++   "## 우선순위","- **P0** 파일럿 3컷(9-3, 10-7, 6-3) 각 3회 → 통과 후 나머지 P0·P1 확대. 'P0 각 10회' 표현은 v4.2에서 폐기.",""]
+ cur=None
+ for r in rows:
+-    if r["장면"]!=cur:
+-        cur=r["장면"]; L+= [f"## {cur}. {r['장면명']}",""]
++    if r["장면"]!=cur: cur=r["장면"]; L+=[f"## {cur}. {r['장면명']}",""]
+     if r["방식"]=="NONE":
+-        L+= [f"### {r['샷ID']} · {r['시작']}–{r['종료']} ({r['최종사용길이초']}s) · 생성 없음",f"- {r['이야기기능']}",f"- 음향/대사: {r['음향_대사_자막']}",""]; continue
+-    L+= [f"### {r['샷ID']} · {r['시작']}–{r['종료']} · 사용 {r['최종사용길이초']}s / 요청 {r['생성요청길이초']}s · {r['방식']} · {r['우선순위']}",
+-         f"- 기능: {r['이야기기능']}", f"- 레퍼런스: {r['레퍼런스ID'] or '없음'} · 카메라: {r['카메라']}",
+-         f"- 음향/대사/자막: {r['음향_대사_자막'] or '없음'}",
+-         f"- 예상 실패: {r['예상실패'] or '—'} → 재생성: {r['재생성지시'] or '—'}",
+-         "```", r["프롬프트"], "```",""]
+-open("03_Seedance_프롬프트_v4.1.md","w",encoding="utf-8").write("\n".join(L))
+-# 검증 템플릿 스키마(영문 열) 병행 출력
+-with open("02b_shotlist_template_schema.csv","w",newline="",encoding="utf-8") as f:
+-    w=csv.writer(f); w.writerow("shot_id,scene_id,edit_start_sec,edit_end_sec,edit_duration_sec,generation_requested_sec,source_type,model,reference_ids,prompt_id,dialogue,subtitle,sfx,priority,proof_path,status".split(","))
+-    for r in rows:
+-        src = "official_intro" if r["샷ID"]=="INTRO" else ("edit_only" if r["방식"]=="NONE" else "seedance")
+-        dial = r["음향_대사_자막"]
+-        w.writerow([r["샷ID"],r["장면"],r["시작초"],r["종료초"],r["최종사용길이초"],r["생성요청길이초"],src,("Seedance 2.5 (fallback 2.0)" if src=="seedance" else ""),r["레퍼런스ID"],("P-"+r["샷ID"] if src=="seedance" else ""),dial.split("|")[0].strip() if "|" in dial else "",dial.split("SUB:")[1].strip() if "SUB:" in dial else "",dial if "|" not in dial else "",r["우선순위"],"","planned"])
+-print("rows", len(rows), "total", t)
++        L+=[f"### {r['샷ID']} · {r['시작']}–{r['종료']} ({r['최종사용길이초']}s) · 생성 없음",f"- {r['이야기기능']}",f"- 음향/대사: {r['음향_대사_자막']}",f"- 비고: {r['편집합성_비고'] or '—'}",""]; continue
++    L+=[f"### {r['샷ID']} · {r['시작']}–{r['종료']} · 사용 {r['최종사용길이초']}s / 요청 {r['생성요청길이초']}s · {r['방식']} · {r['광원블록']} · {r['우선순위']}",
++        f"- 기능: {r['이야기기능']}",f"- 레퍼런스: {r['레퍼런스ID'] or '없음'} · 카메라: {r['카메라']}",f"- 음향/대사/자막: {r['음향_대사_자막'] or '없음'}",
++        f"- 편집 합성·비고: {r['편집합성_비고'] or '—'}",f"- 예상 실패: {r['예상실패'] or '—'} → 재생성: {r['재생성지시'] or '—'}","```",r["프롬프트"],"```",""]
++open("03_Seedance_프롬프트_v4.2.md","w",encoding="utf-8").write("\n".join(L))
++# 제출문 초안(수치 자동)
++refs=sorted(set(x for r in ai for x in r["레퍼런스ID"].split(";") if x))
++D=f"""# 제출 폼 Step 3 초안 — AI & Rights Disclosure (v4.2, 수치는 생성기 산출. 완성 영상 후 재산출 필요)
++
++**Why generative AI was necessary.** *The Opening* is set in Yongcheon Cave, Jeju — a lava tube within the Geomunoreum Lava Tube System inscribed as UNESCO World Natural Heritage in 2007 (Jeju Volcanic Island and Lava Tubes). Designated Natural Monument in February 2006, the cave is not open to the public and entry requires permission from the Korea Heritage Service; filming inside is restricted to authorized surveys. The film does not depict the actual cave; it depicts a fictional cave inspired by published descriptions (white carbonate speleothems over black basalt, an underground lake, a cave goby with regressed eyes, Unified Silla pottery). Generative video was the only way to stage a fictional human story in such a place without entering it.
++
++**What is fictional.** All characters, the discovery report and its 'name unknown' line, the survey roster, the civilian's participation, the 'final survey and sealing', the specimen-bag procedure and the village's blame are invented, and the film says so on screen (S2 corner notice; first credit card).
++
++**Seedance ratio (planned).** Total runtime {t}s including the official intro ({intro}s). Seedance-generated footage: {ai_sec}s across {len(ai)} shots = {ai_sec/t:.1%} of the full file, {ai_sec/(t-intro):.1%} excluding the intro. Non-generated: official intro, title card (3s), an intentional 10s blackout, end credits (20s). No live-action footage. Per-shot timecodes attached. (PENDING: final numbers to be recomputed from the finished edit and generation ledger.)
++
++**Consistency method.** One light-source rule per shot (CAVE_LIGHT block), pure-black boundaries outside headlamp beams, {len(refs)} fixed reference assets ({', '.join(refs)}), separate indoor (bareheaded) and underground (hard hat/headlamp) character sheets, dedicated macro hand references for every hand shot.
++
++**Supporting tools (post only).** On-screen Korean text (report line, roster header, sign, specimen label) and English subtitles were composited in editing onto AI-generated blank surfaces. Sound design from recorded/CC0 sources; no music after the blackout. Generation logs, prompts and reference sheets archived.
++"""
++open("DISCLOSURE_STEP3_draft.md","w",encoding="utf-8").write(D)
++print("rows",len(rows),"total",t,"ai",ai_sec,"ratio",round(ai_sec/t,4),round(ai_sec/(t-intro),4))
+Only in v4.2: scene_ranges.json
