@@ -1,6 +1,6 @@
-# 「입구」 v2 — 샷리스트 + Seedance 프롬프트
+# 「입구」 v3 — 샷리스트 + Seedance 프롬프트
 
-**기준** 시나리오 v2.1 (고증 반영: 월정리·종유관·물고기 눈·항아리·火川) (12_시나리오_입구_v2.md) · 총 49샷 · 생성 분량 약 305초/360초 (85%)
+**기준** 시나리오 v3 (17_시나리오_입구_v3.md) · 총 54샷 (12_시나리오_입구_v2.md) · 총 49샷 · 생성 분량 약 305초/360초 (85%)
 **툴** Dreamina Seedance (2.0/2.5). 프로젝트당 레퍼런스 이미지 최대 9장, 클립 최대 15초. UI 사양은 제작 당일 확인.
 
 ---
@@ -69,7 +69,8 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 
 | # | 초 | 샷 | 모드 | 프롬프트 |
 |---|---|---|---|---|
-| 2-1 | 5 | 공문 클로즈업 | T2V | Close on a printed Korean government document on a desk under fluorescent light, a woman's hand sliding it aside. Fixed camera. Cool neutral office light. (문서 글자는 편집에서 합성) + STYLE |
+| 2-1 | 6 | 보고서를 넘기는 손, 한 줄에서 멈춤 | I2V(R-HI) | Close on a woman's hand turning pages of a bound 2005 survey report with photos and diagrams under fluorescent light. The hand stops on a line of text. Slow push-in on the page. (문구 '성명 미상'은 편집 합성) + STYLE |
+| 2-1b | 4 | 보고서를 덮는다 | I2V(R-HI) | The same hand closes the report firmly and pulls a blank form forward. Fixed camera, fluorescent light. + STYLE |
 | 2-2 | 7 | 해인이 명단에 쓴다 | I2V(R-HI) | Korean woman, 34, black ponytail, black work jacket, writes a name on a form with a pen. Across the desk a middle-aged man in a gray jacket watches. Fixed two-shot, office, fluorescent light. + STYLE |
 | 2-3 | 6 | 팀장 서명 | T2V | Close on a man's hand holding a pen above a signature box, hesitating, then signing. Fixed camera, fluorescent light, desk. + STYLE |
 
@@ -77,10 +78,12 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 
 | # | 초 | 샷 | 모드 | 프롬프트 |
 |---|---|---|---|---|
+| 3-0a | 6 | 묵은 밭과 팻말 | T2V + R-GATE | Evening. A young woman in a black jacket walks along a Jeju black-stone-wall lane past overgrown unworked fields. On each field gate a weathered official sign on a post. Slow tracking beside her. (팻말 문구 편집 합성) + STYLE |
+| 3-0b | 5 | 이웃이 고개를 돌린다 | REF(R-HI) | An elderly Jeju farmer walking toward the woman on the lane sees her, turns his head away and passes without greeting. Fixed medium shot, dusk. + STYLE |
 | 3-1 | 6 | 밥상 위 그릇 하나 | I2V(R-HOME) | Small rural Korean room at night, one incandescent bulb. Low table with one bowl of rice, one spoon. Old TV glow flickers on the wall. Slow push-in on the single bowl. + STYLE |
-| 3-2 | 5 | 동수가 혼자 먹는다 | I2V(R-DS25) | Korean man, 64, white hair, gray shirt, eats alone at a low table, not looking at the TV. Fixed medium shot, warm bulb light, quiet. + STYLE |
+| 3-2 | 5 | 동수가 혼자 먹는다, 보지 않고 | I2V(R-DS25) | Korean man, 64, white hair, gray shirt, eats alone at a low table with his eyes lowered, never looking at the glowing TV, his hand feeling for the spoon by touch. Fixed medium shot, warm bulb light. + STYLE |
 | 3-3 | 5 | 벽의 안전모와 액자 | T2V + R-HOME | Slow pan across a wall: a scratched white hard hat on a nail, then a faded framed photo of a young man carrying a small girl on his shoulders in front of a utility pole. Warm bulb light. + STYLE |
-| 3-4 | 5 | 문 여는 동수, 해인 | REF(R-DS25, R-HI) | Korean man, 64, opens a wooden door. Outside in the dark stands a Korean woman, 34, black ponytail, black jacket. He stops and looks at her for a long moment. Fixed shot from inside the house. + STYLE |
+| 3-4 | 5 | 문 여는 동수, 보지 않고 문고리를 만진다 | REF(R-DS25, R-HI) | Korean man, 64, opens a wooden door. Outside in the dark stands a Korean woman, 34, black ponytail, black jacket. He does not meet her eyes; his hand stays on the door handle, thumb moving over the metal. Fixed shot from inside the house. + STYLE |
 | 3-5 | 7 | 두 사람, 허가서 | REF(R-DS25, R-HI) | Inside the room, the woman holds out a folded document. The man does not take it. He looks at the hard hat on the wall. Fixed two-shot, warm bulb light, long pause. + STYLE |
 | 3-6 | 6 | 안전모 먼지 털기 | I2V(R-DS25) | Close on thick weathered hands lifting an old white hard hat from a nail and brushing dust off it with a palm. Warm light. Fixed camera. + STYLE |
 | 3-7 | 6 | 해인이 그릇 하나를 본다 | I2V(R-HI) | Korean woman, 34, glances down at a low table with one bowl and one spoon, says nothing. Slow push-in on her face. Warm bulb light. + STYLE |
@@ -111,6 +114,7 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 | 6-2 | 6 | 담수·염수 아지랑이 | T2V + R-LAKE | Headlamp beam shining down into clear black water. A shimmering wavering layer where fresh water meets salt water, like heat haze underwater. Slow push-in. Black beyond the beam. + STYLE + 동굴 제약 |
 | 6-3 | 8 | 반투명 물고기가 보트 옆을 지난다 | I2V(R-FISH) | A small pale-pink translucent cave goby with a large head and eyes sunken beneath the skin drifts slowly through a warm headlamp beam in black water beside a rubber boat edge. It does not flee the light. Macro, slow tracking with the fish. + STYLE + 동굴 제약 |
 | 6-4 | 6 | 동수가 들여다본다 | REF(R-DS25) | Korean man, 64, old hard hat, leans over the edge of a rubber boat and looks down into black water lit by his headlamp. His face reflected faintly. Fixed close shot. + STYLE + 동굴 제약 |
+| 6-4b | 6 | 동수가 자기 손을 내려다본다 | REF(R-DS25) | Korean man, 64, in a rubber boat, slowly turns his thick weathered hands palm-up in his own headlamp light and looks at them. Fixed close shot, black water beyond. + STYLE + 동굴 제약 |
 | 6-5 | 6 | 해인 "안 봐요. 느껴요." | REF(R-HI) | Korean woman, 34, headlamp, holds the oars still and looks at the man across the boat, calm. She speaks a short line. Fixed medium shot, black water, her beam low. + STYLE + 동굴 제약 |
 | 6-6 | 7 | 물고기가 빛을 가로지른다, 동수의 눈 | I2V(R-FISH) | The pale-pink translucent goby, eyes buried beneath its skin, crosses the full width of a headlamp beam in black water and disappears at the edge of the light. Fixed macro. Then rack focus up to the watching man's eyes. + STYLE + 동굴 제약 |
 
@@ -141,6 +145,7 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 | 9-2 | 5 | 랜턴 두 개가 꺼진다 | REF(R-HI, R-DS25) | Close two-shot in a boat. Both people reach up and switch off their headlamps one after the other. Light disappears. Frame goes to pure black. Fixed camera. + STYLE + 동굴 제약 |
 | 암전 | 15 | 검정 + 사운드 | 편집 | 생성 없음. 물방울·숨·먼 파도. 대사 3줄 |
 | 9-3 | 6 | 랜턴이 켜진다, 잡힌 두 손 | REF(R-HI, R-DS25) | Pure black. A single headlamp switches on. In the new circle of light, resting on a rubber boat edge: a young woman's hand lying on top of an older man's thick weathered hand. Neither hand moves. Fixed macro, nothing else visible. **(가장 중요한 컷. 생성 횟수 최다 배정)** + STYLE + 동굴 제약 |
+| 9-3b | 5 | 둘 다 손을 쳐다보지 않는다 | REF(R-HI, R-DS25) | Two-shot in a rubber boat under one headlamp: the old man looks down at the water, the young woman looks up at the ceiling, their joined hands resting between them out of focus. Neither looks at the hands. Fixed.  + STYLE + 동굴 제약 |
 | 9-4 | 6 | 물고기가 보트 옆을 지난다 | I2V(R-FISH) | The pale-pink translucent goby, eyes buried beneath its skin, drifts past a rubber boat edge at the bottom of a single headlamp beam and slips into black water. Fixed macro. + STYLE + 동굴 제약 |
 
 ### S10. 지상 — 철문 (4:50–5:25)
@@ -151,14 +156,18 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 | 10-2 | 6 | 동수가 올라온다 | REF(R-DS25) | Korean man, 64, old white hard hat, climbs up out of a steel hatch in the ground holding a dust-white yellow glove, and stops when he sees the two lines of people. Fixed low camera at ground level. Dusk. + STYLE |
 | 10-3 | 7 | 해인이 줄 끝에 선다 | REF(R-HI, R-TEAM) | Korean woman, 34, climbs out after him, walks past her father without stopping, and takes her place at the end of one line of people. Slow tracking following her. Dusk. + STYLE |
 | 10-4 | 8 | 고개 숙임, 하나씩, 마지막에 해인 | REF(R-DS25, R-HI, R-TEAM) | A gray-haired team leader bows his head to the old man in the orange vest. Then each person in the lines bows in turn. Last, the young woman at the end of the line bows. The old man takes off his hard hat. Fixed wide, dusk. + STYLE |
-| 10-5 | 7 | 철문이 닫히고 용접 불꽃 | T2V + R-GATE | A steel hatch door closes over a concrete frame in a dark field. A welder's torch sparks along the seam, bright orange, then stops. Fixed close on the seam, dusk to night. + STYLE |
+| 10-5 | 5 | 동수가 손을 든다, 용접이 멈춘다 | REF(R-DS25) | A welder lifts a torch toward a steel hatch. An old man in an orange vest raises one hand. The welder stops. Fixed medium, dusk. + STYLE |
+| 10-6 | 7 | 구멍을 내려다본다, 장갑을 떨어뜨린다 | REF(R-DS25, R-GLOVE) | Korean man, 64, stands at the edge of an open steel hatch and looks down into the black shaft. He opens his hand and lets a calcite-white yellow rubber glove fall into the dark. Fixed close from his side, dusk. + STYLE |
+| 10-7 | 4 | 구멍 속으로 떨어지는 장갑 | T2V | Looking straight down a black shaft: a white-crusted yellow glove tumbles away from camera into darkness until it disappears. Fixed top-down. (S1 1-5 매치) + STYLE |
+| 10-8 | 6 | 철문이 닫히고 용접 불꽃 | T2V + R-GATE | A steel hatch door closes over a concrete frame in a dark field. A welder's torch sparks along the seam, bright orange, then stops. Fixed close on the seam, dusk to night. + STYLE |
 
 ### S11. 전신주 (5:25–5:40)
 
 | # | 초 | 샷 | 모드 | 프롬프트 |
 |---|---|---|---|---|
 | 11-1 | 7 | 전신주, 표지판, 손 | REF(R-DS25, R-GATE) | Night wind over a Jeju field. A single utility pole, wires humming. A sealed steel hatch below it with a small sign. A Korean man, 64, places his hand flat on the pole. Slow push-in on the hand. + STYLE |
-| 11-2 | 8 | 둘이 나란히 | REF(R-DS25, R-HI) | Wide shot from behind: an old man in an orange vest and a young woman in a black jacket stand side by side before a utility pole in a dark field, not speaking, wind in their hair. Slow pull-out. + STYLE |
+| 11-2 | 5 | 보지 않고 손을 잡는다 | REF(R-DS25, R-HI) | Close from the side at waist height: a young woman's hand reaches sideways without her looking and takes an old man's thick hand. Both faces stay turned forward. Night wind, utility pole behind. Fixed. + STYLE |
+| 11-3 | 6 | 둘이 나란히 | REF(R-DS25, R-HI) | Wide shot from behind: an old man in an orange vest and a young woman in a black jacket stand side by side before a utility pole in a dark field, hands joined, not speaking, wind in their hair. Slow pull-out. + STYLE |
 
 ---
 
@@ -169,7 +178,7 @@ Everything outside the headlamp circle is pure black. Do not reveal cave walls b
 | 전체 | 360 |
 | 공식 인트로(주최 제공) | 20 |
 | 타이틀·암전·크레딧(생성 없음) | 5 + 15 + 20 = 40 |
-| **Seedance 생성 목표** | **약 300** |
+| **Seedance 생성 목표** | **약 300** (v3: 54샷, 생성 초 합계는 편집에서 6:00에 맞춰 트리밍) |
 | 실사 보조 허용 한도 | ≤108 (쓰지 않아도 됨) |
 
 300/360 = 83%. 인트로·암전을 분모에서 빼면 더 높음. 규정 해석(인트로 포함 여부)은 제출 전 주최 FAQ 확인.
