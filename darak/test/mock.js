@@ -130,6 +130,20 @@
       return Promise.resolve({ data: null, error: { message: 'unknown rpc' } });
     }
   };
+  // 사진 저장소 흉내 (비공개 — 그 목원을 볼 수 있는 사람만 올리고 지운다)
+  var PIX = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+  client.storage = { from: function () { return {
+    upload: function (path, blob, opts) {
+      var p = me(), wid = String(path).split('/').pop().replace(/\.jpg$/, ''), w = DB.church_mokwon.find(function (x) { return x.id === wid; });
+      var pf = /^p_/.test(wid) && DB.church_profile.find(function (x) { return x.id === wid.slice(2); });
+      var okProfile = pf && p && (pf.id === p.id || (p.role === 'pastor' && p.church_id === pf.church_id));
+      if (!okProfile && (!p || !w || !canSeeMj(p, w.mokjang_id))) return Promise.resolve({ data: null, error: { message: 'new row violates row-level security policy' } });
+      DB.__photos = DB.__photos || {}; DB.__photos[path] = { type: opts && opts.contentType, size: blob && blob.size }; persist();
+      return Promise.resolve({ data: { path: path }, error: null });
+    },
+    remove: function (paths) { (paths || []).forEach(function (x) { if (DB.__photos) delete DB.__photos[x]; }); persist(); return Promise.resolve({ data: [], error: null }); },
+    createSignedUrls: function (paths) { return Promise.resolve({ data: paths.map(function (x) { return { path: x, signedUrl: (DB.__photos && DB.__photos[x]) ? PIX : null }; }), error: null }); }
+  }; } };
   window.supabase = { createClient: function () { return client; } };
 
   // 서버 함수 흉내
