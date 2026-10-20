@@ -467,7 +467,11 @@ window.CHURCH = (function () {
     return out.map(function (x) { return x.replace(/ /g, '\u00a0'); }).join(' · ');   // 날짜 하나가 두 줄로 갈라지지 않게
   }
   // 교회마다 켠 기능 (church_church.features) — 예: member_dates(성도 날짜)는 방주교회부터
-  function has(feature) { return !!(church && church.features && church.features[feature]); }
+  var DEFAULT_ON = { member_photos: true };   // 모든 교회 기본으로 켜는 기능 (교회 설정에 false면 끔)
+  function has(feature) {
+    var f = church && church.features || {};
+    return feature in f ? !!f[feature] : !!(church && DEFAULT_ON[feature]);
+  }
   /* ── 성도 사진 (켠 교회만: features.member_photos) ──────────
      휴대폰에서 가로세로 400px JPEG(약 40KB)로 줄여 올린다. 저장소는 비공개 — 그 교회 목사님과 담당 목자만 본다.
      경로 = <교회 id>/<목원 id>.jpg, 보여 줄 때는 1시간짜리 서명 주소를 받아 쓴다. */

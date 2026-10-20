@@ -9,7 +9,7 @@ const NOW = new Date('2026-10-18T02:00:00Z'); // 멜번 주일 13시(→10/18 �
 const SEED = { db: {
   church_church: [
     { id: 'cb', slug: 'bangjoo', name: '멜번방주교회 & ALF', timezone: 'Australia/Melbourne', logo_url: 'assets/logo.png', theme: 'sky', features: { member_dates: true } },
-    { id: 'cl', slug: 'lach01', name: 'LA 새소망교회', timezone: 'America/Los_Angeles', logo_url: '', theme: 'night',
+    { id: 'cl', slug: 'lach01', name: 'LA 새소망교회', timezone: 'America/Los_Angeles', logo_url: '', theme: 'night', features: { member_photos: false },
       terms: { unit: '다락방', leader: '순장', member: '순원' } } ],
   church_profile: [
     { id: 'p1', login_id: 'pastor1', name: '담임목사', role: 'pastor', church_id: 'cb' },
@@ -306,9 +306,9 @@ const db = p => p.evaluate(() => window.__DB());
     ok('관리 화면 영어', (await p.textContent('#pane-manage')).includes('Create a leader account'));
     ok('한국어 글자가 거의 안 남음', await p.evaluate(() => {
       const w = document.createTreeWalker(document.querySelector('#pane-manage'), NodeFilter.SHOW_TEXT); let n, left = [];
-      while ((n = w.nextNode())) if (/[가-힣]/.test(n.nodeValue) && n.parentNode.offsetParent && !n.parentNode.closest('#ch-terms,#manage-list,#pastor-list,input')) left.push(n.nodeValue.trim());
+      while ((n = w.nextNode())) if (/[가-힣]/.test(n.nodeValue) && n.parentNode.offsetParent && !n.parentNode.closest('#ch-terms,#manage-list,#pastor-list,input,.avatar')) left.push(n.nodeValue.trim());
       return left.filter(x => !/^(멜번방주교회|담임목사|목장|목자|목원|다락방|순장|순원|구역|구역장|구역원|셀|리더|셀원|순)/.test(x)).length === 0 || left;
-    }) === true);
+    }).then(r => (r === true || console.log(r), r === true)));
     await p.click('.top .lang-btn'); await p.waitForTimeout(600);
     ok('머리말 단추로 한국어로 돌아옴', (await p.textContent('.tabs')).includes('다락방·순장 관리'));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
@@ -514,24 +514,109 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
-  console.log('\n[목사님 말씀] 순장에게 알림');
+  console.log('\n[성도 사진] 방주교회만 · 줄여서 · 비공개');
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    ok('사진 없으면 이름 첫 글자', (await p.textContent('#member-list .list-item[data-id="w1"] .avatar')).trim() === '정');
+    ok('동의 안내가 보임', await p.isVisible('#photo-hint'));
+    const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.click('#member-list .list-item[data-id="w1"] .act-photo')]);
+    await fc.setFiles(path.join(__dirname, '..', 'assets', 'og.png')); await p.waitForTimeout(800);
+    let d = await db(p);
+    const ph = (d.__photos || {})['cb/w1.jpg'];
+    ok('사진은 JPEG로 줄여서 올라감', ph && ph.type === 'image/jpeg' && ph.size > 0 && ph.size < 80000, JSON.stringify(ph));
+    ok('목원에 사진 경로 저장', d.church_mokwon.find(w => w.id === 'w1').photo_path === 'cb/w1.jpg');
+    ok('명단에 사진이 보임', await p.$eval('#member-list .list-item[data-id="w1"] .avatar', e => e.tagName) === 'IMG');
+    p.once('dialog', dl => dl.accept());
+    await p.click('#member-list .list-item[data-id="w1"] .act-photo-del'); await p.waitForTimeout(500);
+    d = await db(p);
+    ok('사진 지우기', !(d.__photos || {})['cb/w1.jpg'] && !d.church_mokwon.find(w => w.id === 'w1').photo_path);
+    const [fc2] = await Promise.all([p.waitForEvent('filechooser'), p.click('#member-list .list-item[data-id="w2"] .act-photo')]);
+    await fc2.setFiles(path.join(__dirname, '..', 'assets', 'og.png')); await p.waitForTimeout(800);
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await p.evaluate(() => CHURCH.signOut());
+    await login(p, 'pastor1');
+    await p.click('.tabs button[data-pane="people"]'); await p.waitForTimeout(500);
+    ok('목사 성도 명단에 사진', await p.$eval('#people-list .list-item[data-id="w2"] .avatar', e => e.tagName) === 'IMG');
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokjala');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    ok('사진을 끈 교회: 사진 단추·자리 없음', (await p.$$('#member-list .act-photo, #member-list .avatar')).length === 0 && !(await p.isVisible('#photo-hint')));
+    await c.close(); }
+
+  console.log('\n[계정 사진] 목자 본인 사진 → 목사님이 봄');
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1');
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
+    ok('목자 [내 계정]에 내 사진 칸', await p.isVisible('#my-photo-card') && (await p.textContent('#my-photo .avatar')).trim() === '김');
+    const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.click('#my-photo-pick')]);
+    await fc.setFiles(path.join(__dirname, '..', 'assets', 'og.png')); await p.waitForTimeout(800);
+    let d = await db(p);
+    ok('목자 본인 사진 올라감', (d.__photos || {})['cb/p_m1.jpg'] && d.church_profile.find(x => x.id === 'm1').photo_path === 'cb/p_m1.jpg');
+    ok('내 사진이 보임', await p.$eval('#my-photo .avatar', e => e.tagName) === 'IMG' && await p.isVisible('#my-photo-del'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await p.evaluate(() => CHURCH.signOut());
+    await login(p, 'pastor1');
+    ok('목사 주간 현황에 목자 사진', await p.$eval('#week-list .mj[data-mj="mj1"] summary .avatar', e => e.tagName) === 'IMG');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(500);
+    ok('목장 목록에 목자 사진', await p.$eval('#manage-list .list-item[data-mj="mj1"] .avatar', e => e.tagName) === 'IMG');
+    ok('목사 [내 사진] 칸', await p.isVisible('#my-photo-card'));
+    await p.evaluate(() => { const D = window.__DB(); D.church_profile.find(x => x.id === 'm1').photo_path = null; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.click('.tabs button[data-pane="week"]'); await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(500);
+    const [fc2] = await Promise.all([p.waitForEvent('filechooser'), p.click('#manage-list .list-item[data-mj="mj1"] .act-mphoto')]);
+    await fc2.setFiles(path.join(__dirname, '..', 'assets', 'og.png')); await p.waitForTimeout(800);
+    ok('목사님이 목자 사진을 대신 넣음', (await db(p)).church_profile.find(x => x.id === 'm1').photo_path === 'cb/p_m1.jpg' && (await p.textContent('#msg-manage')).includes('사진을 넣었습니다'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokjala');
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
+    ok('사진을 끈 교회: 내 사진 칸 없음', !(await p.isVisible('#my-photo-card')));
+    await c.close(); }
+
+  console.log('\n[목사님 말씀] 순장에게 알림 · 말씀 앞에 목사님 사진');
   { const { c, p } = await ctx(b);
     await login(p, 'pastor1');
+    await p.evaluate(() => { const D = window.__DB(); D.church_profile.find(x => x.id === 'p1').photo_path = 'cb/p_p1.jpg';
+      D.__photos = { 'cb/p_p1.jpg': { type: 'image/jpeg', size: 1000 } }; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(400);
     await p.click('#wk-prev'); await p.waitForTimeout(500);
     await p.click('#week-list .mj[data-mj="mj1"] summary');
     await p.fill('#week-list .mj[data-mj="mj1"] .cmt textarea', '수고 많으셨습니다');
     await p.click('#week-list .mj[data-mj="mj1"] .cmt button'); await p.waitForTimeout(600);
     const cm = (await db(p)).church_comment.find(x => x.body === '수고 많으셨습니다');
     const n = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'commented');
-    ok('말씀을 남기면 순장 알림 요청', cm && n.length === 1 && n[0].body.comment_id === cm.id, JSON.stringify(n));
-    await p.evaluate(() => CHURCH.sb.auth.signOut());
+    ok('말씀을 남기면 목자 알림 요청', cm && n.length === 1 && n[0].body.comment_id === cm.id, JSON.stringify(n));
+    ok('목사 화면: 말씀 앞에 목사님 사진', await p.$eval('#week-list .mj[data-mj="mj1"] .cmt-head .avatar', e => e.tagName) === 'IMG');
+    await p.click('.top #btn-signout').catch(() => {}); await p.waitForTimeout(600);
     await login(p, 'mokja1');
-    ok('순장: 알림이 꺼져 있으면 일기 쓰기 맨 위에 안내', await p.isVisible('#notify-ask'));
+    ok('목자: 알림이 꺼져 있으면 일기 쓰기 맨 위에 안내', await p.isVisible('#notify-ask') && (await p.textContent('#notify-ask')).includes('목사님이 말씀을'));
     await p.click('#notify-ask-on'); await p.waitForTimeout(400);
-    ok('순장: 알림 켜짐', !(await p.isVisible('#notify-ask')) && (await db(p)).church_push.length > 0);
+    ok('목자: 알림 켜짐', !(await p.isVisible('#notify-ask')) && (await db(p)).church_push.length > 0);
     await p.goto(BASE + 'mokjang.html#j=11111111-1111-4111-8111-111111111111'); await p.waitForSelector('.top h1'); await p.waitForTimeout(900);
-    ok('알림을 누르면 [지난 일기]에서 그 주가 펼쳐짐', await p.isVisible('#pane-past') && await p.$eval('#past-list details[data-id="11111111-1111-4111-8111-111111111111"]', e => e.open)
-      && (await p.textContent('#past-list')).includes('수고 많으셨습니다'));
+    ok('알림을 누르면 [지난 일기]에서 그 주가 펼쳐짐', await p.isVisible('#pane-past') && await p.$eval('#past-list details[data-id="11111111-1111-4111-8111-111111111111"]', e => e.open));
+    ok('목자 화면: 말씀과 목사님 사진', (await p.textContent('#past-list')).includes('수고 많으셨습니다') && await p.$eval('#past-list .cmt-head .avatar', e => e.tagName) === 'IMG');
+    ok('주소 끝 #j= 지움', !(await p.evaluate(() => location.hash)));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);   // 사진 기능 안 켠 교회: 말씀 앞 사진 자리 없음
+    await login(p, 'pastorla');   // LA는 아직 토요일 → 이번 주에 일기가 있다
+    await p.click('#week-list .mj[data-mj="mj2"] summary');
+    await p.fill('#week-list .mj[data-mj="mj2"] .cmt textarea', '감사합니다');
+    await p.click('#week-list .mj[data-mj="mj2"] .cmt button'); await p.waitForTimeout(600);
+    ok('사진을 끈 교회: 말씀은 보이고 사진 자리 없음', (await p.textContent('#week-list')).includes('감사합니다') && (await p.$$('#week-list .cmt-head .avatar')).length === 0);
+    await c.close(); }
+
+  console.log('\n[사진 기본] 교회 설정에 없으면 사진 기능이 켜짐');
+  { const { c, p } = await ctx(b);
+    await p.goto(BASE + 'index.html'); await p.waitForTimeout(200);
+    await p.evaluate(() => { const D = window.__DB(); delete D.church_church.find(x => x.id === 'cl').features; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await login(p, 'mokjala');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    ok('설정 없는 교회: 사진 안내가 보임', await p.isVisible('#photo-hint'));
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(300);
+    ok('설정 없는 교회: 내 사진 칸', await p.isVisible('#my-photo-card'));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
