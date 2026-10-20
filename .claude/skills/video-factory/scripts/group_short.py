@@ -139,6 +139,18 @@ def draw_line(img: Image.Image, s: str, font, x, y, acc, alpha=1.0, scale=1.0, c
     img.alpha_composite(lay, (int(x), y))
 
 
+def emoji_img(ch, size):
+    """컬러 이모지(Noto Color Emoji 는 109px 고정) → 원하는 크기로"""
+    from PIL import ImageFont
+    f = ImageFont.truetype("/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf", 109)
+    lay = Image.new("RGBA", (160, 160), (0, 0, 0, 0))
+    ImageDraw.Draw(lay).text((8, 8), ch, font=f, embedded_color=True)
+    bb = lay.getbbox() or (0, 0, 160, 160)
+    lay = lay.crop(bb)
+    r = size / max(lay.size)
+    return lay.resize((int(lay.width * r), int(lay.height * r)), Image.LANCZOS)
+
+
 def wrap_plain(text, font, maxw):
     out, cur = [], ""
     for w in text.split(" "):
@@ -242,7 +254,14 @@ class Scene:
         typ = sc["type"]
         if typ not in ("hook", "intro", "diary"):
             top_bar(img, self.sp, acc)
-        if typ == "cover":
+        if typ == "cover" and sc.get("emoji"):              # 카드형 표지: 그룹색 바탕 · 이모지 · 두 줄 (2026-10-20 시안)
+            d = ImageDraw.Draw(ov)
+            em = emoji_img(sc["emoji"], 220)
+            img.alpha_composite(em, (X0 - 10, 720))
+            y = 990
+            for ln in sc["lines"]:
+                d.text((X0, y), ln, font=F("black", 112 if len(ln) <= 8 else 96), fill=T.ink + (255,)); y += 140
+        elif typ == "cover":
             l1, l2 = sc["lines"][0], sc["lines"][1]
             f1 = F("bold", 78 if len(l1) <= 11 else 66)
             draw_line(img, l1, f1, X0 - 6, 1080, acc)
@@ -344,11 +363,14 @@ class Scene:
                 y += 160
             k = clamp((t - 0.9) / 0.5)
             d = ImageDraw.Draw(ov)
-            bx, by, bs = X0, y + 50, 330                        # QR 자리
-            d.rounded_rectangle((bx, by, bx + bs, by + bs), 28, outline=T.num + (int(255 * k),), width=6)
-            d.text((bx + 104, by + 130), "QR", font=F("black", 72), fill=T.num + (int(255 * k),))
-            d.multiline_text((bx + bs + 40, by + 40), sc.get("note", ""), font=F("bold", 46), spacing=18,
-                             fill=T.ink + (int(255 * k),))
+            if sc.get("qr"):                                     # QR 자리 — "qr": true 일 때만 (2026-10-20 기본은 뺌)
+                bx, by, bs = X0, y + 50, 330
+                d.rounded_rectangle((bx, by, bx + bs, by + bs), 28, outline=T.num + (int(255 * k),), width=6)
+                d.text((bx + 104, by + 130), "QR", font=F("black", 72), fill=T.num + (int(255 * k),))
+                d.multiline_text((bx + bs + 40, by + 40), sc.get("note", ""), font=F("bold", 46), spacing=18,
+                                 fill=T.ink + (int(255 * k),))
+            elif sc.get("note"):
+                d.multiline_text((X0, y + 40), sc["note"], font=F("bold", 48), spacing=18, fill=T.sub + (int(255 * k),))
         elif typ == "split":
             self._split(img, ov, t)
         elif typ == "unbox":
