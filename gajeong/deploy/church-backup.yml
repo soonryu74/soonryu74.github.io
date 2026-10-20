@@ -1,0 +1,19 @@
+# 목장 나눔터 자료를 매일 자동 백업한다 — 서버 함수(church-backup)가 비공개 저장소에 그날 치를 떠 둔다 (30일 보관)
+# 하루 두 번 부르지만, 그날 백업이 이미 있으면 다시 만들지 않는다. 실패하면 이 작업이 빨간색이 되고 GitHub이 메일로 알린다.
+name: church-backup
+on:
+  schedule:
+    - cron: '17 15 * * *'   # 멜번 새벽 2시 무렵
+    - cron: '17 3 * * *'    # 한 번 더 (앞의 것이 실패했을 때)
+  workflow_dispatch:
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 백업 만들기
+        run: |
+          for i in 1 2 3; do
+            out=$(curl -sS -X POST https://dxhmprqfgigljgbstqrg.supabase.co/functions/v1/church-backup -H 'Content-Type: application/json' -d '{}') && echo "$out" | grep -q '"ok":true' && { echo "$out"; exit 0; }
+            echo "다시 시도 $i: $out"; sleep $((i * 20))
+          done
+          exit 1
