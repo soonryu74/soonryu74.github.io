@@ -9,7 +9,7 @@
     week = C.mondayOf();                 // 교회 시간대가 정해진 뒤 다시 센다
     C.header(me, T('목장 나눔터'));
     if (C.has('member_dates')) $('.tabs button[data-pane="people"]').hidden = false;   // 성도 날짜는 켠 교회만
-    bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch(); bindPeople();
+    bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch(); bindPeople(); bindStats();
     await loadMokjangs();
     await openFromLink() || await loadWeek();
     // 앱을 켜 둔 채 주일이 지나면, 다시 볼 때 새 주로 넘어간다
@@ -277,9 +277,99 @@
         if (b.dataset.pane === 'gather') loadGather();
         if (b.dataset.pane === 'manage') renderManage();
         if (b.dataset.pane === 'people') loadPeople();
+        if (b.dataset.pane === 'stats') loadStats();
         window.scrollTo(0, 0);
       });
     });
+  }
+
+  /* ── 월별 출석률 ─────────────────────────────────
+     제출한 일기의 목원별 참석 체크(church_prayer.attended)로 센다. 한 주는 주일부터라 그 주일이 속한 달로 묶는다. */
+  var stats = null, statMonth = null;
+  var MONTHS = 6;
+  function monthKey(ymd) { return ymd.slice(0, 7); }
+  function monthLabel(k, short) {
+    var y = +k.slice(0, 4), m = +k.slice(5, 7);
+    if (C.lang() === 'en') return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m - 1] + (short ? '' : ' ' + y);
+    return short ? m + '월' : y + '년 ' + m + '월';
+  }
+  function pct(a, b) { return b ? Math.round(a * 100 / b) : null; }
+
+  async function loadStats() {
+    $('#st-table').innerHTML = T('<p class="empty">불러오는 중…</p>');
+    var now = C.mondayOf(), keys = [];
+    var d = new Date(now + 'T00:00:00Z'); d.setUTCDate(1);
+    for (var i = MONTHS - 1; i >= 0; i--) {
+      var x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - i, 1));
+      keys.push(x.toISOString().slice(0, 7));
+    }
+    var from = C.addWeeks(keys[0] + '-01', -1);   // 그달 첫 주일이 1일 앞일 수 있어 한 주 앞부터
+    var js = (await sb.from('church_journal').select('id, mokjang_id, week_start, present_count, status')
+      .gte('week_start', from).eq('status', 'submitted').limit(5000)).data || [];
+    var ps = [];
+    for (var k = 0; k < js.length; k += 150) {
+      var ids = js.slice(k, k + 150).map(function (j) { return j.id; });
+      ps = ps.concat((await sb.from('church_prayer').select('journal_id, attended').in('journal_id', ids)).data || []);
+    }
+    var byJ = {};
+    ps.forEach(function (p) { var o = byJ[p.journal_id] || (byJ[p.journal_id] = { n: 0, a: 0 }); o.n++; if (p.attended) o.a++; });
+    var m = {};
+    keys.forEach(function (k) { m[k] = { n: 0, a: 0, meets: 0, people: 0, counted: 0, groups: {} }; });
+    js.forEach(function (j) {
+      var k = monthKey(C.mondayOf(j.week_start)); if (!m[k]) return;
+      var o = m[k], r = byJ[j.id], g = o.groups[j.mokjang_id] || (o.groups[j.mokjang_id] = { n: 0, a: 0, meets: 0 });
+      o.meets++; g.meets++;
+      if (r) { o.n += r.n; o.a += r.a; g.n += r.n; g.a += r.a; }
+      if (j.present_count != null) { o.people += j.present_count; o.counted++; }
+    });
+    stats = { keys: keys, m: m };
+    if (!statMonth || !m[statMonth]) statMonth = keys[keys.length - 1];
+    renderStats();
+  }
+
+  function renderStats() {
+    var keys = stats.keys, m = stats.m, cur = m[statMonth];
+    var r = pct(cur.a, cur.n);
+    $('#st-tiles').innerHTML =
+      '<div><b>' + (r == null ? '–' : r + '%') + T('</b><span>출석률</span></div>') +
+      '<div><b>' + cur.a + '/' + cur.n + T('</b><span>참석 / 목원</span></div>') +
+      '<div><b>' + cur.meets + T('</b><span>모임 횟수</span></div>') +
+      '<div><b>' + (cur.counted ? Math.round(cur.people / cur.counted * 10) / 10 : '–') + T('</b><span>평균 인원</span></div>');
+    $('#st-bars').innerHTML = keys.map(function (k) {
+      var o = m[k], v = pct(o.a, o.n), on = k === statMonth;
+      return '<button type="button" role="listitem" class="bar' + (on ? ' on' : '') + '" data-k="' + k + '" aria-label="' +
+        esc(monthLabel(k) + ' ' + (v == null ? T('기록 없음') : v + '%')) + '">' +
+        '<span class="bar-val">' + (on && v != null ? v + '%' : '') + '</span>' +
+        '<span class="bar-col"><span class="bar-fill" style="height:' + (v || 0) + '%"></span></span>' +
+        '<span class="bar-x">' + esc(monthLabel(k, true)) + '</span></button>';
+    }).join('');
+    $('#st-bars').insertAdjacentHTML('afterbegin', '<span class="tick" style="top:14px">100%</span><span class="tick" style="top:99px">50%</span><span class="tick" style="bottom:-6px">0</span>');
+    $('#st-month-title').textContent = T('{0} 목장별 출석', monthLabel(statMonth));
+    var live = mokjangs.filter(function (x) { return x.active || cur.groups[x.id]; });
+    $('#st-table').innerHTML = !cur.meets ? T('<p class="empty">이 달에 제출한 일기가 없습니다.</p>') :
+      '<table class="st-table"><thead><tr>' + T('<th>목장</th><th>모임</th><th>출석률</th>') + '</tr></thead><tbody>' +
+      live.map(function (x) {
+        var g = cur.groups[x.id], v = g ? pct(g.a, g.n) : null;
+        return '<tr><td>' + esc(x.name) + '</td><td>' + (g ? g.meets : 0) + '</td><td>' + (v == null ? '–' : v + '%') + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  function bindStats() {
+    var tip = $('#st-tip');
+    $('#st-bars').addEventListener('click', function (e) {
+      var b = e.target.closest('.bar'); if (!b) return;
+      statMonth = b.dataset.k; renderStats();
+    });
+    // 막대 위에 올리면(휴대폰은 누르고 있으면) 그 달 숫자를 보여 준다
+    $('#st-bars').addEventListener('pointerover', function (e) {
+      var b = e.target.closest('.bar'); if (!b || !stats) return;
+      var o = stats.m[b.dataset.k], v = pct(o.a, o.n);
+      tip.textContent = monthLabel(b.dataset.k) + ' · ' + (v == null ? T('기록 없음') : T('출석률 {0}% (참석 {1} / 목원 {2}) · 모임 {3}번', v, o.a, o.n, o.meets));
+      tip.hidden = false;
+      var box = $('#st-bars').getBoundingClientRect(), bb = b.getBoundingClientRect();
+      tip.style.left = Math.max(0, Math.min(box.width - tip.offsetWidth, bb.left - box.left + bb.width / 2 - tip.offsetWidth / 2)) + 'px';
+    });
+    $('#st-bars').addEventListener('pointerleave', function () { tip.hidden = true; });
   }
 
   function bindWeek() {

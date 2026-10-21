@@ -551,6 +551,28 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[출석 통계] 월별 출석률');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    await p.evaluate(() => { const D = window.__DB();
+      D.church_journal.push({ id: 'js1', mokjang_id: 'mj1', week_start: '2026-09-06', status: 'submitted', present_count: 3, created_at: '2026-09-07', updated_at: '2026-09-07' },
+                            { id: 'js2', mokjang_id: 'mj1', week_start: '2026-09-13', status: 'draft', present_count: 1, created_at: '2026-09-14', updated_at: '2026-09-14' });
+      D.church_prayer.push({ id: 'q1', journal_id: 'js1', name: 'a', attended: true, sort_order: 0 }, { id: 'q2', journal_id: 'js1', name: 'b', attended: true, sort_order: 1 },
+                           { id: 'q3', journal_id: 'js1', name: 'c', attended: false, sort_order: 2 }, { id: 'q4', journal_id: 'js1', name: 'd', attended: true, sort_order: 3 },
+                           { id: 'q5', journal_id: 'js2', name: 'a', attended: false, sort_order: 0 });
+      sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1');
+    await p.click('.tabs button[data-pane="stats"]'); await p.waitForTimeout(700);
+    ok('막대 6개(최근 6달)', (await p.$$('#st-bars .bar')).length === 6);
+    await p.click('#st-bars .bar[data-k="2026-09"]'); await p.waitForTimeout(300);
+    const t = (await p.textContent('#st-tiles')).replace(/\s/g, '');
+    ok('9월: 제출한 일기만 — 출석률 75% (3/4), 모임 1번', t.startsWith('75%') && t.includes('3/4') && t.includes('1모임'), t);
+    ok('9월 목장별 표', (await p.textContent('#st-table')).includes('김 목장') && (await p.textContent('#st-table')).includes('75%'));
+    await p.hover('#st-bars .bar[data-k="2026-09"]'); await p.waitForTimeout(200);
+    ok('막대에 올리면 숫자 안내', /출석률 75%/.test(await p.textContent('#st-tip')));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
