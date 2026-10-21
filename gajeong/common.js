@@ -275,13 +275,10 @@ window.CHURCH = (function () {
     applyLook(church);
     return church;
   }
-  // 로그인 전: 주소의 ?c=… 또는 이 기기가 기억하는 교회의 이름·로고
+  // 로그인 전: 주소의 ?c=… 교회의 이름·로고
   async function publicChurch() {
     var slug = new URLSearchParams(location.search).get('c');
-    if (!slug) {
-      var mem = rememberedChurch();
-      return mem && mem.slug ? mem : null;
-    }
+    if (!slug) return null;   // 공용 첫 화면은 어느 교회 것도 아니다 (교회 화면은 /코드/ 주소로)
     var r = await sb.rpc('church_public_church', { p_slug: slug });
     var row = r.data && r.data[0];
     if (!row) return null;
@@ -310,7 +307,8 @@ window.CHURCH = (function () {
   async function signOut() {
     await sb.auth.signOut();
     try { localStorage.removeItem(LS_MINE); } catch (e) {}
-    location.href = 'index.html';
+    var c = church || rememberedChurch();   // 로그아웃하면 우리 교회 로그인 화면으로
+    location.href = 'index.html' + (c && c.slug ? '?c=' + encodeURIComponent(c.slug) : '');
   }
 
   async function me() {

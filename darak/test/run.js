@@ -68,6 +68,9 @@ const db = p => p.evaluate(() => window.__DB());
     await p.goto(BASE + 'index.html?c=bangjoo'); await p.waitForTimeout(300);
     ok('다시 방주 → 파란 디자인으로 돌아옴(섞이지 않음) · 따로 안 정한 교회는 다락방', (await p.textContent('.hero h1')) === '다락방 나눔터' && (await p.getAttribute('html', 'data-theme')) === 'sky');
     ok('교회 화면에는 새 교회 등록 링크 없음', !(await p.isVisible('#to-setup')));
+    await p.goto(BASE + 'index.html'); await p.waitForTimeout(400);
+    ok('교회를 본 뒤에도 공용 첫 화면은 공용 (교회 이름·로고·색 없음)', (await p.textContent('#hero-church')).trim() === '' && /icon-192\.png$/.test(await p.getAttribute('#hero-logo', 'src'))
+      && (await p.getAttribute('html', 'data-theme')) !== 'sky' && await p.isVisible('#to-setup'));
     await p.goto(BASE + 'index.html?new'); await p.waitForTimeout(300);
     ok('?new → 기억한 교회가 있어도 등록 화면 바로', await p.isVisible('#setup') && (await p.textContent('#hero-church')).trim() === '');
     await p.goto(BASE + 'index.html?new=BJ-V3DEXG'); await p.waitForTimeout(300);
