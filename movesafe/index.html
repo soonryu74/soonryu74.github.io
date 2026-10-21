@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MoveSafe AI — 부상 예방 폼 코치</title>
+<meta name="description" content="웹캠만으로 스쿼트·런지·점프 착지 자세를 브라우저 안에서 분석해 무릎 안쪽 쏠림, 딱딱한 착지, 좌우 비대칭을 바로 알려주고 예방 루틴을 추천합니다. 영상은 어디에도 전송되지 않습니다.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top">
+  <div class="wrap">
+    <h1>MoveSafe AI <small>부상 예방 폼 코치 · 스포츠 영양</small></h1>
+    <nav aria-label="페이지"><a href="index.html" aria-current="page">폼 코치</a><a href="nutrition.html">영양·수분·보충제</a><a href="about.html">근거·한계·개인정보</a></nav>
+  </div>
+</header>
+<main id="main">
+  <p class="muted" style="margin:0 0 10px">
+    <span class="badge">영상 전송 없음 · 브라우저 안에서만 분석</span>
+    <span class="badge">MediaPipe Pose (구글, 오픈소스)</span>
+    <span class="badge">규칙 기반 피드백 · 의료 진단 아님</span>
+  </p>
+  <div id="status" class="state" hidden></div>
+  <div class="grid">
+    <section class="card" aria-label="분석 화면">
+      <div class="row" style="justify-content:space-between;margin-bottom:8px">
+        <h2 style="margin:0">자세 분석 <span id="modeBadge" class="badge na">대기</span></h2>
+        <div class="row">
+          <label for="exercise" class="sr-only">운동</label>
+          <select id="exercise" style="width:auto">
+            <option value="squat">스쿼트 (정면)</option>
+            <option value="lunge">런지 (정면)</option>
+            <option value="landing">점프 착지 (정면)</option>
+          </select>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <video id="video" playsinline muted></video>
+        <canvas id="canvas"></canvas>
+        <div class="hud" id="hud" hidden><span>반복 <b id="hudReps">0</b></span><span>무릎 <b id="hudKnee">—</b>°</span><span>무릎/발목 <b id="hudKasr">—</b></span></div>
+        <div class="cue" id="cue" hidden></div>
+        <div class="overlay-msg" id="overlay">카메라를 켜거나 샘플 동작을 재생하세요.<br><span class="muted" style="color:#cbd5e1">정면에서 전신(머리~발)이 보이게 2~3 m 떨어져 세워 두세요.</span></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" id="btnCam">카메라 켜기</button>
+        <button class="btn secondary" id="btnFile">영상 파일 분석</button>
+        <input type="file" id="fileInput" accept="video/*" hidden>
+        <select id="demoSel" style="width:auto" aria-label="샘플 동작 선택"><option value="">샘플 동작(DEMO)…</option></select>
+        <button class="btn secondary" id="btnDemo">샘플 재생</button>
+        <button class="btn danger" id="btnStop" disabled>정지</button>
+        <label style="font-weight:400;margin:0 4px"><input type="checkbox" id="mirror" checked> 거울 모드</label>
+      </div>
+      <p class="muted" style="margin:8px 0 0">샘플 동작은 사람 데이터가 아닌 <b>합성 골격(DEMO)</b>입니다. 분석 규칙을 체험·검증하는 용도이며 실제 카메라 결과와 같지 않습니다.</p>
+    </section>
+
+    <aside class="card" aria-label="실시간 결과">
+      <h2>이번 세션</h2>
+      <div class="row" style="align-items:flex-end;gap:16px">
+        <div><div class="muted">평균 폼 점수</div><div class="score" id="avgScore">—</div></div>
+        <div><div class="muted">반복 수</div><div style="font-size:1.6rem;font-weight:700" id="repCount">0</div></div>
+      </div>
+      <h3>마지막 반복</h3>
+      <div id="lastRep" class="muted">아직 없음</div>
+      <h3>지표 (마지막 반복 최저점)</h3>
+      <div class="metrics" id="metrics">
+        <div class="metric"><div class="v" id="mDepth">—</div><div class="k">무릎 최소각 °</div></div>
+        <div class="metric"><div class="v" id="mKasr">—</div><div class="k">무릎/발목 간격비</div></div>
+        <div class="metric"><div class="v" id="mLean">—</div><div class="k">몸통 기울기 °</div></div>
+        <div class="metric"><div class="v" id="mAsym">—</div><div class="k">좌우 무릎각 차 °</div></div>
+      </div>
+      <p class="muted" style="margin-top:8px">기준: 무릎/발목 간격비 0.80 미만 또는 무릎 안쪽 변위 골반 폭 15% 이상 = 안쪽 쏠림 · 몸통 10° · 좌우 15° · 착지 최소 무릎각 140° 초과 = 딱딱한 착지. <a href="about.html#method">근거</a></p>
+      <div class="row" style="margin-top:10px"><button class="btn secondary" id="btnReport">세션 리포트 보기</button><button class="btn secondary" id="btnReset">세션 초기화</button></div>
+    </aside>
+  </div>
+
+  <section class="card" id="report" style="margin-top:14px" hidden aria-labelledby="repH">
+    <h2 id="repH">세션 리포트 <span class="badge" id="repBadge"></span></h2>
+    <div id="reportBody"></div>
+    <h3>추천 루틴</h3>
+    <p class="muted" style="margin-top:0">이번 세션에서 반복된 문제에 맞춘 예방·보완 운동입니다. 통증·부종·불안정감이 있으면 멈추고 의료진과 상담하세요. 재활 처방이 아닙니다.</p>
+    <div id="routines"></div>
+    <div class="row" style="margin-top:10px"><button class="btn secondary" id="btnPrint">인쇄 / PDF 저장</button></div>
+  </section>
+</main>
+<footer>
+  <p>MoveSafe AI · 자세 추정: MediaPipe Pose Landmarker(Apache-2.0) · 규칙 근거: FIFA 11+, JOSPT 2018 무릎 인대 손상 지침, 착지 과제 KASR 스크리닝 문헌 · 영상·좌표는 서버로 보내지 않으며 저장하지 않습니다. 이 도구는 선별·교육용이며 의료 진단·치료를 대신하지 않습니다. <a href="about.html">자세히</a></p>
+</footer>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

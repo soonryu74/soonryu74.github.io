@@ -1,0 +1,12 @@
+{
+  "basis": "AIS(호주스포츠연구소) Sports Supplement Framework A군(근거가 특정 상황에서 사용을 지지)과 IOC consensus statement on dietary supplements and the high-performance athlete(Maughan et al., Br J Sports Med 2018)에서 수행 향상 근거가 가장 강한 5가지. 효과는 종목·개인차가 크고, 훈련에서 먼저 시험한 뒤 경기에 쓴다. 보충제는 식사·수면·훈련을 대체하지 않는다.",
+  "contamination": "해외 직구·온라인 '근육·다이어트' 보충제의 금지약물 오염 사례가 반복 보고됨. 제3자 검사(Informed Sport, NSF Certified for Sport 등) 제품만, 선수는 KADA 안내를 따를 것.",
+  "items": [
+    { "id": "caffeine", "name": "카페인", "evidence": "A", "who": "지구력·간헐적 고강도·근력 종목 전반", "dose": "3~6 mg/kg, 운동 약 60분 전", "effect": "지구력 수행 2~4% 범위 개선이 반복 보고. 9 mg/kg 이상은 부작용만 증가", "caution": "불안·심박 증가·수면 장애. 임신·심장질환·청소년 주의. 모니터링 물질(금지 아님)", "ref": "Guest 2021 ISSN position stand; AIS A군" },
+    { "id": "creatine", "name": "크레아틴 모노하이드레이트", "evidence": "A", "who": "근력·파워·반복 스프린트, 근육 증가 훈련", "dose": "3~5 g/일 매일(로딩 20 g/일 5~7일 선택)", "effect": "고강도 반복 운동 능력·근력 훈련 적응 향상. 가장 연구가 많은 보충제", "caution": "체중 1~2 kg 증가(수분). 신장질환자는 의사 상의. 모노하이드레이트 외 형태는 근거 부족", "ref": "Kreider 2017 ISSN; AIS A군", "link": "../yeongyangje/seongbun.html#creatine" },
+    { "id": "beta_alanine", "name": "베타알라닌", "evidence": "A", "who": "0.5~10분 지속 고강도 종목(중거리 달리기·조정·수영 200~400 m 등)", "dose": "3.2~6.4 g/일, 0.8~1.6 g씩 나눠 4주 이상", "effect": "근육 카르노신↑ → 고강도 지속 능력 소폭 개선(효과크기 작음)", "caution": "저림(감각이상) 흔함. 서방형·분할로 완화", "ref": "Saunders 2017 메타분석; AIS A군", "link": "../yeongyangje/seongbun.html#beta_alanine" },
+    { "id": "nitrate", "name": "질산염(비트 주스)", "evidence": "A", "who": "지구력·간헐적 고강도(특히 비엘리트)", "dose": "6~8 mmol(농축 비트 주스 약 140 mL 또는 일반 500 mL), 운동 2~3시간 전. 며칠 연속 섭취 시 효과↑", "effect": "운동 경제성(산소 소비) 개선, 탈진까지 시간 연장. 엘리트 선수는 효과 작음", "caution": "구강 세정제·껌이 효과를 없앰(구강 세균이 질산염→아질산염 전환). 소변·대변 붉어짐 정상", "ref": "Jones 2018; AIS A군" },
+    { "id": "bicarbonate", "name": "중탄산나트륨", "evidence": "A", "who": "1~7분 고강도 종목, 반복 스프린트", "dose": "0.2~0.3 g/kg, 운동 60~180분 전, 물·탄수화물 식사와 함께", "effect": "혈액 완충 능력↑ → 고강도 수행 소폭 개선", "caution": "위장 장애(구토·설사) 흔함 → 훈련에서 반드시 시험. 나트륨 부하", "ref": "Grgic 2021 ISSN; AIS A군" },
+    { "id": "protein", "name": "단백질 파우더(유청·식물성)", "evidence": "식품 보충", "who": "식사로 하루 목표 단백질을 못 채우는 경우", "dose": "1회 0.3~0.4 g/kg(20~40 g), 3~4시간 간격", "effect": "근력운동과 함께 제지방·근력 증가. 총 섭취 약 1.6 g/kg/일 초과 시 추가 이득 제한적", "caution": "신장질환자 상의. 식물성 파우더 중금속 검사 결과 확인", "ref": "Morton 2018 메타분석", "link": "../yeongyangje/seongbun.html#protein" }
+  ]
+}
