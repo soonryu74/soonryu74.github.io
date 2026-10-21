@@ -283,6 +283,12 @@
       }
     }
     if (u.indexOf('church-notify') >= 0) reply = b.action === 'key' ? { publicKey: 'BEd3W7naVVZVjZKZZYJiVVxsVFqwxfQM4oNwgxuRb88ja3SPrlpHK0WKduDOHUVXfRhz3I6ZlC-iNnyB4Ob64p4' } : { ok: true, sent: b.action === 'test' ? DB.church_push.length : 1, devices: 1 };
+    if (u.indexOf('church-notify') >= 0 && b.action === 'remind') reply = { ok: true, leaders: 1, reached: DB.church_push.length ? 1 : 0, sent: 1, devices: 1, noDevice: DB.church_push.length ? [] : ['김목자'] };
+    if (u.indexOf('church-notify') >= 0 && b.action === 'set_deadline') {
+      var chd = DB.church_church.find(function (x) { return x.id === me().church_id; });
+      chd.features = Object.assign({}, chd.features, { deadline: b.dow === -1 ? false : { dow: b.dow, hour: b.hour } });
+      reply = { ok: true, deadline: chd.features.deadline };
+    }
     persist();
     var status = reply.error ? 403 : 200;
     return Promise.resolve(new Response(JSON.stringify(reply), { status: status, headers: { 'Content-Type': 'application/json' } }));

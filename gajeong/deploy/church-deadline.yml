@@ -1,0 +1,16 @@
+# 마감 알림: 30분마다 서버(church-notify)에 묻는다. 서버가 교회마다 그 교회 시간으로 마감이 지났는지 보고,
+# 그 주에 아직 안 보냈으면 일기를 제출하지 않은 목자에게 한 번만 보낸다 (여러 번 불러도 한 주에 한 번).
+name: church-deadline
+on:
+  schedule:
+    - cron: '3,33 * * * *'
+  workflow_dispatch:
+concurrency: church-deadline
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 마감 알림 확인
+        run: |
+          out=$(curl -sS -m 60 -X POST https://dxhmprqfgigljgbstqrg.supabase.co/functions/v1/church-notify -H 'Content-Type: application/json' -d '{"action":"deadline_tick"}')
+          echo "$out"; echo "$out" | grep -q '"ok":true'

@@ -573,6 +573,28 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[알림] 제출 안 한 목장에 알림 · 마감 알림');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    p.on('dialog', d => d.accept());
+    ok('이번 주: 제출 안 한 목장 알림 단추 (1곳)', await p.isVisible('#btn-remind') && /\(1/.test(await p.textContent('#btn-remind')));
+    await p.click('#btn-remind'); await p.waitForTimeout(400);
+    const r = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'remind');
+    ok('그 주로 알림 요청', r.length === 1 && /^\d{4}-\d{2}-\d{2}$/.test(r[0].body.week), JSON.stringify(r));
+    ok('알림 안 켠 목자 이름 안내', /알림을 켜지 않은 목자: 김목자/.test(await p.textContent('#msg-remind')));
+    await p.click('#wk-prev'); await p.waitForTimeout(500);
+    ok('모두 제출한 주에는 단추 없음', !(await p.isVisible('#btn-remind')));
+    await p.click('#wk-next'); await p.click('#wk-next'); await p.waitForTimeout(500);
+    ok('다가올 주에는 단추 없음', !(await p.isVisible('#btn-remind')));
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    ok('마감 알림 기본: 토요일 오후 8시', (await p.inputValue('#dl-dow')) === '6' && (await p.inputValue('#dl-hour')) === '20');
+    await p.selectOption('#dl-dow', '5'); await p.selectOption('#dl-hour', '21'); await p.click('#dl-save'); await p.waitForTimeout(300);
+    ok('마감 알림 저장', /매주 금요일 오후 9시/.test(await p.textContent('#msg-deadline')) && (await db(p)).church_church.find(x => x.id === 'cb').features.deadline.dow === 5);
+    await p.selectOption('#dl-dow', '-1'); await p.click('#dl-save'); await p.waitForTimeout(300);
+    ok('마감 알림 끄기', (await db(p)).church_church.find(x => x.id === 'cb').features.deadline === false && await p.isDisabled('#dl-hour'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
