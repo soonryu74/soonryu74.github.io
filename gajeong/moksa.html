@@ -23,7 +23,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610211200">
+<link rel="stylesheet" href="style.css?v=202610211500">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -31,6 +31,7 @@ try { (function (m, q) { var s = q.get('c');
     <button data-pane="week" class="on">주간 현황</button>
     <button data-pane="gather">기도제목 모아보기</button>
     <button data-pane="people" hidden>성도 명단</button>
+    <button data-pane="stats">출석 통계</button>
     <button data-pane="manage">목장·목자 관리</button>
   </div>
 
@@ -75,6 +76,19 @@ try { (function (m, q) { var s = q.get('c');
     </div>
     <div class="print-head" id="g-print-head"></div>
     <div id="gather-list"></div>
+  </section>
+
+  <!-- ── 출석 통계 (월별) ───────────────────────── -->
+  <section class="pane" id="pane-stats">
+    <div class="card">
+      <h2>월별 출석률</h2>
+      <p class="desc">제출한 일기의 목원 참석 체크로 셉니다. 막대를 누르면 그 달 목장별 출석을 봅니다.</p>
+      <div class="stat" id="st-tiles"></div>
+      <div class="bars" id="st-bars" role="list" aria-label="월별 출석률"></div>
+      <div class="bar-tip" id="st-tip" hidden></div>
+      <div class="section-title" id="st-month-title"></div>
+      <div id="st-table"><p class="empty">불러오는 중…</p></div>
+    </div>
   </section>
 
   <!-- ── 관리 ────────────────────────────────────── -->
@@ -251,9 +265,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610211200"></script>
-<script src="common.js?v=202610211200"></script>
-<script src="moksa.js?v=202610211200"></script>
+<script src="lang-en.js?v=202610211500"></script>
+<script src="common.js?v=202610211500"></script>
+<script src="moksa.js?v=202610211500"></script>
 
 </body>
 </html>
