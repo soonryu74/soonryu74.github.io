@@ -174,6 +174,21 @@ class Promo:
                 d.ellipse((cx + 180 * math.cos(ang) - 12, cy + 180 * math.sin(ang) - 12, cx + 180 * math.cos(ang) + 12,
                            cy + 180 * math.sin(ang) + 12), fill=(P if i % 3 == 0 else L) + (a(ki),))
             d.ellipse((cx - 110, cy - 110, cx + 110, cy + 110), outline=L + (a(k * 0.5),), width=4)
+        elif kind == "clock":                                      # 알람시계: 바늘이 06:30 으로 돌아가고 흔들린다
+            sh = int(8 * math.sin(t * 40)) if 1.4 < t < 2.0 else 0
+            x = cx + sh
+            d.ellipse((x - 150, cy - 150, x + 150, cy + 150), outline=L + (a(k),), width=10)
+            for sx in (-1, 1):
+                d.pieslice((x + sx * 120 - 50, cy - 200, x + sx * 120 + 50, cy - 100), 180, 360, fill=P + (a(k),))
+            for i in range(12):
+                ang = i / 12 * 2 * math.pi
+                d.line((x + 120 * math.cos(ang), cy + 120 * math.sin(ang), x + 135 * math.cos(ang), cy + 135 * math.sin(ang)), fill=L + (a(k * 0.7),), width=5)
+            kk = ease(t / 1.4)
+            mins = 330 * kk                                          # 0:00 → 6:30 (분)
+            am = math.radians(mins % 60 * 6 - 90); ah = math.radians(mins / 60 * 30 - 90)
+            d.line((x, cy, x + 75 * math.cos(ah), cy + 75 * math.sin(ah)), fill=L + (a(k),), width=12)
+            d.line((x, cy, x + 115 * math.cos(am), cy + 115 * math.sin(am)), fill=P + (a(k),), width=8)
+            d.ellipse((x - 14, cy - 14, x + 14, cy + 14), fill=(255, 255, 255, a(k)))
         elif kind == "phone":                                      # 휴대폰 + 올라가는 피드
             d.rounded_rectangle((cx - 110, cy - 190, cx + 110, cy + 190), 30, outline=L + (a(k),), width=9)
             off = (t * 60) % 90
