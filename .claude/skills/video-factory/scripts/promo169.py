@@ -141,7 +141,7 @@ class Promo:
         elif kind == "glow":
             r = 60 + 10 * math.sin(t * 3)
             for i in range(6, 0, -1):
-                d.ellipse((cx - r * i * 0.5, cy - r * i * 0.5, cx + r * i * 0.5, cy + r * i * 0.5), fill=P + (int(30 * k),))
+                d.ellipse((cx - r * i * 0.5, cy - r * i * 0.5, cx + r * i * 0.5, cy + r * i * 0.5), fill=P + (int(14 * k),))
             d.ellipse((cx - r * 0.6, cy - r * 0.6, cx + r * 0.6, cy + r * 0.6), fill=(255, 255, 255, a(k)))
             for i in range(12):
                 ang = i / 12 * 2 * math.pi + t * 0.3
