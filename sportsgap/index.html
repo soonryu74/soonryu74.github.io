@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SportsGap AI — 경기도 공공체육시설 접근 격차 진단</title>
+<meta name="description" content="경기도 31개 시군의 공공체육시설 공급량·접근거리·취약인구·대중교통을 공공데이터로 비교하고, 예산 시나리오로 우선 검토 지역을 찾는 정책 지원 도구.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top">
+  <div class="wrap">
+    <h1>SportsGap AI <small>경기도 공공체육시설 접근 격차 진단 · 정책 시뮬레이터</small></h1>
+    <nav aria-label="페이지">
+      <a href="#rank">순위표</a><a href="#scenario">예산 시나리오</a><a href="#proposals-sec">정책 제안</a><a href="about.html">데이터·방법론</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <p class="muted" style="margin:0 0 10px">
+    <span class="badge date" id="dateFac">시설 기준일</span>
+    <span class="badge date" id="datePop">인구 기준월</span>
+    <span class="badge date" id="dateBus">정류장 기준일</span>
+    <span class="badge">실제 공공데이터 · 규칙 기반 제안(LLM 미사용)</span>
+    <span class="badge">경기도 31개 시군</span>
+  </p>
+  <div id="status" class="state" hidden></div>
+  <div class="grid">
+    <aside class="card" aria-label="분석 조건">
+      <h2>분석 조건</h2>
+      <label for="group">대상 집단</label>
+      <select id="group"></select>
+      <label style="font-weight:400;margin-top:4px"><input type="checkbox" id="scopeFollow" checked> 집단을 바꾸면 시설 범위도 맞춰 바꾸기</label>
+      <label for="scope">시설 범위</label>
+      <select id="scope"></select>
+      <h3>지표 가중치 <button class="btn secondary" id="resetWeights" style="padding:2px 8px;font-size:.8rem;float:right">기본값</button></h3>
+      <div class="weights" id="weights"></div>
+      <div id="wsum" class="wsum"></div>
+      <p class="muted" id="formula" style="margin-top:8px"></p>
+      <h3>비교 지역</h3>
+      <select id="compareSel" aria-label="비교 지역 추가"><option value="">지역 추가…</option></select>
+      <div class="row" style="margin-top:6px"><button class="btn secondary" id="clearSel">비교 지역 모두 해제</button></div>
+      <p class="muted">지도 폴리곤 클릭, 표 행 클릭(키보드: Tab 이동 후 Enter), 또는 위 목록으로 추가. 최대 4곳.</p>
+    </aside>
+
+    <section class="card" aria-label="지도">
+      <h2>격차 지도 <span class="muted" style="font-weight:400;font-size:.85rem">색이 진할수록 격차 점수 높음(우선 검토)</span></h2>
+      <div class="notice" id="tileNote" hidden>배경 지도 타일을 불러오지 못해 경계만 표시합니다. 분석 결과는 영향받지 않습니다.</div>
+      <div class="map-wrap">
+        <div id="map" role="img" aria-label="경기도 시군별 격차 점수 지도. 같은 내용은 아래 순위표에 있습니다."></div>
+        <div class="legend" id="legend" aria-hidden="true">
+          <div><i style="background:#fee5d9"></i>0–19</div><div><i style="background:#fcae91"></i>20–39</div><div><i style="background:#fb6a4a"></i>40–59</div><div><i style="background:#de2d26"></i>60–79</div><div><i style="background:#a50f15"></i>80–100</div><div><i style="background:#d9dde2"></i>평가불가</div>
+        </div>
+      </div>
+      <h3>나란히 비교</h3>
+      <div class="compare" id="compare"></div>
+    </section>
+  </div>
+
+  <section class="card" id="rank" style="margin-top:14px" aria-labelledby="rankH">
+    <h2 id="rankH">우선 검토 순위 <span class="muted" style="font-weight:400;font-size:.85rem" id="tblCaption"></span></h2>
+    <div class="tbl-wrap">
+      <table id="rankTable">
+        <thead><tr><th scope="col">시군</th><th scope="col">순위</th><th scope="col">격차 점수</th><th scope="col">시설/1만 명</th><th scope="col">추정거리 km</th><th scope="col" id="vulnHead">65세+ %</th><th scope="col">정류장/㎢</th><th scope="col">시설 수</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="muted">추정거리 = 0.5×√(면적÷시설 수). 시설이 고르게 퍼져 있다고 가정한 평균 최근접 <b>직선</b>거리이며 도로·이동시간이 아닙니다. 시설 수는 개소 기준이라 규모 차이를 반영하지 않습니다. <a href="about.html#method">산식·한계 자세히</a></p>
+  </section>
+
+  <section class="card" id="scenario" style="margin-top:14px" aria-labelledby="scenH">
+    <h2 id="scenH">예산 시나리오 — 어디에 먼저 지으면 격차가 가장 줄어드나</h2>
+    <div class="row" style="align-items:end">
+      <div style="min-width:140px"><label for="budget">예산(억 원)</label><input type="number" id="budget" value="300" min="1" step="10"></div>
+      <div style="min-width:160px"><label for="unitcost">시설 단가(억 원/개소, 가정)</label><input type="number" id="unitcost" value="50" min="1" step="5"></div>
+      <div style="min-width:220px"><label for="objective">배분 기준</label><select id="objective"><option value="people">점수 감소폭 × 인구(수혜 규모)</option><option value="score">점수 감소폭만</option></select></div>
+      <label style="font-weight:400;margin:0 6px 8px"><input type="checkbox" id="simOnlySel"> 비교 지역만 후보로</label>
+      <button class="btn" id="runSim">시나리오 실행</button>
+      <button class="btn secondary" id="clearSim">초기화</button>
+    </div>
+    <div class="sim-result" id="simResult"></div>
+  </section>
+
+  <section class="card" id="proposals-sec" style="margin-top:14px" aria-labelledby="propH">
+    <h2 id="propH">정책 제안 (규칙 기반)</h2>
+    <p class="muted" style="margin-top:0">상위 지역의 지표를 템플릿 규칙에 넣어 만든 문장입니다. 생성형 AI 추론이 아니며, 현장 수요조사·시설 노후도·운영 데이터를 더해 검토해야 합니다.</p>
+    <div id="proposals"></div>
+  </section>
+</main>
+<footer>
+  <p>출처: 문화체육관광부 「2025년 전국 공공체육시설 현황(2024.12.31. 기준)」(공공누리 2유형) · 행정안전부 주민등록 인구통계(2026.09) · 국토교통부 전국 버스정류장 위치정보(2025.10.31) · 통계청 센서스 행정구역경계 2018(southkorea-maps) · 지도 타일 © OpenStreetMap 기여자. 데이터 생성 <span id="builtAt"></span>.
+  개인정보를 수집·전송하지 않으며 공개 집계 통계만 사용합니다. 서버 없이 브라우저에서만 계산합니다. <a href="about.html">데이터·방법론·개인정보</a></p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
