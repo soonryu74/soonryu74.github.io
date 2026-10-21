@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>IMPLEMENTATION_PLAN — SportsGap AI MVP (2026-10-20) | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="IMPLEMENTATION_PLAN — SportsGap AI MVP (2026-10-20)" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="IMPLEMENTATION_PLAN — SportsGap AI MVP (2026-10-20)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"IMPLEMENTATION_PLAN — SportsGap AI MVP (2026-10-20)","url":"/sportsgap/docs/IMPLEMENTATION_PLAN.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=1b7cd1813374838800bb8ba25404101c2a453431">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="implementation_plan--sportsgap-ai-mvp-2026-10-20">IMPLEMENTATION_PLAN — SportsGap AI MVP (2026-10-20)</h1>
+
+<p>목표: 2026 경기스포츠산업 공모전(접수 2026-10-30 18:00) 출품용, <strong>실제 공공데이터로 동작하는</strong> 경기도 공공체육시설 접근 격차 진단·시나리오 도구. 공모 분야는 “친환경·편의 기술 — 장애인 및 고령자 편의 서비스” 또는 “안전·시설 관리 기술 — 시설 모니터링”에 해당.</p>
+
+<h2 id="범위-결정">범위 결정</h2>
+<p>| 결정 | 이유 |
+|—|—|
+| 지역 해상도 = 경기도 31개 시군 | 확보한 시설 데이터(문체부 현황)가 시군구 단위이고 좌표가 없음. 읍면동 해상도는 근거 없이 만들 수 없음. |
+| 거리 = 면적 기반 추정 직선거리 | 시설 좌표·경로 데이터 미확보. 균등분포 가정 평균 최근접거리 0.5√(A/n) 를 “추정”으로 명시. |
+| 취약집단 = 고령자(65+), 아동(0~14) | 주민등록 연령별 통계로 가능. 장애인은 시군별 등록 현황·무장애 시설 데이터 미확보 → <strong>평가불가</strong> 로 표시(가짜 지원 금지). |
+| 대중교통 = 버스정류장 밀도 | 국토부 전국 정류장 파일에 경기 31개 시군 전부 존재. 운행 빈도는 없음 → 대리지표로 명시. |
+| LLM 미사용 | 제안은 지표 템플릿 규칙. 화면·문서에 “규칙 기반(LLM 미사용)” 표기. |
+| 정적 사이트 | 기존 저장소 배포 방식 그대로. API 키·서버 없음. |</p>
+
+<h2 id="체크리스트-상태-done--blocked--open">체크리스트 (상태: DONE / BLOCKED / OPEN)</h2>
+<h3 id="실사데이터">실사·데이터</h3>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />DONE 저장소 실사 → <code class="language-plaintext highlighter-rouge">docs/BASELINE_AUDIT.md</code></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />DONE 공식 요강 원문 확인(ggsports.spectory.net) → 분야·일정·제출물 반영</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />DONE 시설 원자료 확보·검증(문체부 2024.12.31, 시군별 2,463개소, 시트 소계와 100% 일치)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />DONE 인구 원자료 확보(행안부 2026.09, 5세 구간, 31개 시군)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />DONE 경계 확보(통계청 2018, 42개 폴리곤 → 31개 시군 합산, 면적 합계 오차 +0.8%)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />DONE 정류장 확보(국토부 2025.10.31, 경기 38,089개)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />DONE <code class="language-plaintext highlighter-rouge">docs/DATA_CATALOG.csv</code></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />BLOCKED 경기데이터드림·브이월드(세션 네트워크 차단) → 시설 좌표·경로 기반 거리 미구현</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />OPEN 시군별 등록장애인·무장애 시설 데이터 → 장애인 접근성 평가</li>
+</ul>
+
+<h3 id="mvp-기능-요구-ah">MVP 기능 (요구 A~H)</h3>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />A 지역 선택 + 지도(Leaflet) + 지도 불가 시 표 대체</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />B 3개 지표(공급량·추정거리·취약인구) + 대중교통 밀도</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />C 취약집단: 고령자·아동 지원, 장애인 평가불가 표시</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />D 우선순위 + 근거 있는 제안 3건 이상(점수 산식·가중치·기준일 표시)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />E 시나리오 모드(예산·시설 유형·대상 집단 → 순위 변화, 탐욕 배분)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />F 출처·한계·방법론·개인정보 페이지(<code class="language-plaintext highlighter-rouge">about.html</code>)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />G 반응형(390/1440), 키보드 조작(표 행 Enter/Space), 로딩/오류/평가불가/지도 불가 상태</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />H 배포 주소 — BLOCKED: <code class="language-plaintext highlighter-rouge">main</code> 병합은 사용자 승인 필요. 병합 후 <code class="language-plaintext highlighter-rouge">https://soonryu74.github.io/sportsgap/</code></li>
+</ul>
+
+<h3 id="품질-게이트">품질 게이트</h3>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><code class="language-plaintext highlighter-rouge">node --check</code> 전 JS, <code class="language-plaintext highlighter-rouge">py_compile</code> 스크립트</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />단위 테스트 10건 통과(<code class="language-plaintext highlighter-rouge">node --test</code>)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />E2E 16건 통과(390px·1440px, Playwright) + 스크린샷 10장 <code class="language-plaintext highlighter-rouge">evidence/</code></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />링크·버튼·출처 페이지 확인(E2E 에 포함)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />OPEN GitHub Pages 실제 빌드 확인(병합 후)</li>
+</ul>
+
+<h3 id="산출물">산출물</h3>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><code class="language-plaintext highlighter-rouge">docs/METHODOLOGY.md</code>, <code class="language-plaintext highlighter-rouge">docs/VALIDATION_REPORT.md</code></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><code class="language-plaintext highlighter-rouge">submission/7MIN_PITCH.md</code>, <code class="language-plaintext highlighter-rouge">DEMO_SCRIPT.md</code>, <code class="language-plaintext highlighter-rouge">ONE_PAGE_SUMMARY.md</code>, <code class="language-plaintext highlighter-rouge">ELIGIBILITY_CHECK.md</code>, <code class="language-plaintext highlighter-rouge">FINAL_SUBMISSION_CHECKLIST.md</code></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />OPEN 데모 영상 녹화(사용자), 발표 슬라이드 파일화(사용자)</li>
+</ul>
+
+<h2 id="파일-구조">파일 구조</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sportsgap/
+├─ index.html, about.html        화면
+├─ css/app.css · js/app.js       화면 로직 (Leaflet 지도·표·비교·시나리오)
+├─ js/score.js                   점수 엔진 (순수 함수, Node 테스트 공용)
+├─ data/regions.json             31개 시군 원값 + 메타(출처·기준일)
+├─ data/gg-sigun.geojson         경계
+├─ data/facilities_gg.csv        시설 2,463건 목록(검증용)
+├─ raw/                          원자료 그대로 (xlsx, csv, topojson)
+├─ scripts/build_sportsgap.py    raw → data
+├─ tests/score.test.mjs          단위 테스트 · tests/e2e.spec.mjs E2E
+├─ evidence/                     스크린샷
+├─ docs/ · submission/           문서 · 제출물
+└─ package.json, playwright.config.mjs, .env.example
+</code></pre></div></div>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

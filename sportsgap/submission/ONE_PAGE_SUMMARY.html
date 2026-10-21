@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>SportsGap AI — 한 장 요약 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="SportsGap AI — 한 장 요약" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="SportsGap AI — 한 장 요약" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"SportsGap AI — 한 장 요약","url":"/sportsgap/submission/ONE_PAGE_SUMMARY.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=1b7cd1813374838800bb8ba25404101c2a453431">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="sportsgap-ai--한-장-요약">SportsGap AI — 한 장 요약</h1>
+
+<p><strong>분야</strong>: 친환경·편의 기술(장애인 및 고령자 편의 서비스) / 안전·시설 관리 기술(시설 모니터링) 중 택1 — 접수 시 확정
+<strong>형태</strong>: 웹 서비스(정적, 서버·로그인 없음) · 출시 전 MVP · 수상·도입 실적 없음</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>항목</th>
+      <th>내용</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>문제</td>
+      <td>인구 규모가 비슷해도 공공체육시설에 닿을 기회는 시군마다 다르지만, 시설(문체부)·인구(행안부)·교통(국토부) 자료가 흩어져 있어 “어디부터 검토할지”를 근거 숫자로 설명하기 어렵다.</td>
+    </tr>
+    <tr>
+      <td>사용자</td>
+      <td>시군 체육정책 담당자, 공공체육시설 운영자, 의회·주민자치 위원. 예산 편성·후보지 1차 스크리닝·설명 자료 작성 장면.</td>
+    </tr>
+    <tr>
+      <td>기술</td>
+      <td>공개 통계 4종을 변환 스크립트(Python)로 31개 시군 지표화 → 브라우저 점수 엔진(JS)이 P5~P95 정규화·가중 합성·순위 → Leaflet 지도·비교표·예산 시나리오(탐욕 배분)·규칙 기반 제안. 단위 테스트 10건, E2E 16건(390/1440px).</td>
+    </tr>
+    <tr>
+      <td>차별성</td>
+      <td>① 출처·산식·한계·기준일이 화면 안에 있고 원자료·스크립트로 재현 가능 ② 예산·단가·대상 집단·가중치를 바꾸며 순위 변화를 즉시 비교 ③ 없는 데이터는 ‘평가불가’로 표시(장애인 접근성), 추정은 ‘추정’으로 표기 — 과장 없음 ④ 개인정보·API 키·서버 없음.</td>
+    </tr>
+    <tr>
+      <td>실현성</td>
+      <td>이미 동작하는 정적 웹. 지자체 내부망에 그대로 올릴 수 있음. 시군이 가진 시설 좌표·이용 실적을 붙이면 거리 지표를 실제 거리로 교체(엔진 분리 설계). 유지비 ≈ 0.</td>
+    </tr>
+    <tr>
+      <td>효과(기대)</td>
+      <td>담당자가 10분 안에 “우선 검토 지역과 이유”를 숫자로 설명. 신축 vs 운영 개선 vs 접근수단(셔틀·학교개방) 선택지를 같은 표에서 비교. 측정된 효과는 아직 없음(도입 전).</td>
+    </tr>
+    <tr>
+      <td>데이터</td>
+      <td>문체부 공공체육시설 현황(2024.12.31, 경기 2,463개소) · 행안부 주민등록 인구(2026.09) · 국토부 버스정류장(2025.10.31, 경기 38,089개) · 통계청 경계(2018). 라이선스·한계는 <code class="language-plaintext highlighter-rouge">docs/DATA_CATALOG.csv</code>.</td>
+    </tr>
+    <tr>
+      <td>한계</td>
+      <td>시설 좌표 없음(면적 기반 추정거리) · 개소 수 기준(규모 미반영) · 장애인 접근성 미평가 · 기준 시점 상이 · 시설 데이터 공공누리 2유형(상용화 시 허락 필요).</td>
+    </tr>
+    <tr>
+      <td>증빙</td>
+      <td>실행 주소(병합 후) <code class="language-plaintext highlighter-rouge">https://soonryu74.github.io/sportsgap/</code> · 스크린샷 <code class="language-plaintext highlighter-rouge">evidence/</code> · 소스·데이터·테스트 저장소 공개</td>
+    </tr>
+    <tr>
+      <td>팀</td>
+      <td>1인(서순려).</td>
+    </tr>
+  </tbody>
+</table>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

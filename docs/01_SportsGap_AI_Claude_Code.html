@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>SportsGap AI — Claude Code 개발·출품 실행 명세서 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="SportsGap AI — Claude Code 개발·출품 실행 명세서" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="SportsGap AI — Claude Code 개발·출품 실행 명세서" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"SportsGap AI — Claude Code 개발·출품 실행 명세서","url":"/docs/01_SportsGap_AI_Claude_Code.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=1b7cd1813374838800bb8ba25404101c2a453431">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="sportsgap-ai--claude-code-개발출품-실행-명세서">SportsGap AI — Claude Code 개발·출품 실행 명세서</h1>
+<p>작성: 2026-10-20 | 목표: 2026 경기스포츠산업 공모전 | 상태: 개발 지시서(구현·제출 완료를 뜻하지 않음)</p>
+
+<h2 id="0-공식-요강과-절대-준수사항">0. 공식 요강과 절대 준수사항</h2>
+<ul>
+  <li>공식 공고: https://ggsports.spectory.net/innovation/contest?bno=60730</li>
+  <li>접수: 2026-10-30 18:00 KST / 대한민국 국민 누구나 / 앱·웹 서비스 등 혁신 스포츠산업 기술·제품</li>
+  <li>대상 1,000만원(총상금 3,000만원). 7분 시연 포함 발표자료 및 기술·제품 증빙(서비스 링크, 영상 등) 필요.</li>
+  <li>1차 11/13, 2차 발표심사 11/20(합격자 참석 필수), 결과 11/27. 변경 가능.</li>
+  <li><strong>주의</strong>: 단순 ‘건강격차 연구’가 아닌 ‘스포츠 시설 이용·운영·접근성 개선 제품’으로 보여줘야 함.</li>
+  <li>수상·사용자·시범사업·데이터 검증 실적을 꾸며내지 말 것.</li>
+</ul>
+
+<h2 id="1-claude-code에-붙여-넣을-마스터-프롬프트">1. Claude Code에 붙여 넣을 마스터 프롬프트</h2>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>너는 시니어 풀스택 개발자 + 스포츠시설 운영 분석가 + 데이터 품질감사관이다.
+목표는 2026 경기스포츠산업 공모전 출품용 SportsGap AI MVP를 실제로 동작하게 만들고 증빙까지 준비하는 것이다.
+공식 요강 https://ggsports.spectory.net/innovation/contest?bno=60730 을 확인하라.
+
+[최초 작업: 절대 생략 금지]
+1. 현재 저장소의 README, package.json, 소스 트리, Git 상태, 배포 설정, 테스트, 데이터 파일, 라이선스를 확인하고 docs/BASELINE_AUDIT.md에 '실제 존재하는 것/없는 것/오류'를 구분해 기록하라.
+2. 기존 구현을 파괴하지 말고 현재 UI/데이터/기능을 최대한 재사용하라. 원격 저장소를 임의로 덮어쓰거나 force push 하지 마라.
+3. 공개 데이터의 실제 다운로드 URL, 날짜, 단위, 지역코드, 사용허락, 결측을 검증하라. 검증되지 않은 데이터는 데모 샘플로 명확히 표시하고 공식 통계인 양 제시하지 마라.
+4. 먼저 docs/IMPLEMENTATION_PLAN.md와 체크리스트를 작성한 뒤 즉시 MVP 구현까지 진행하라. 계획만 제시하고 멈추지 마라.
+
+[필수 MVP]
+A. 지역 선택(시군구/동 등 실제 확보된 데이터 해상도에 맞게) + 지도 또는 대체 접근성 있는 지역별 시각화
+B. 스포츠 시설 분포·인구 대비 공급량·거리/이동시간(경로데이터가 없으면 직선거리로 정확히 표기) 3개 지표
+C. 고령자·장애인·아동 등 취약집단을 분석할 경우 실제 집단별 데이터가 있는 범위만 지원
+D. 후보지역 우선순위 및 근거가 보이는 정책 제안 3건 이상. 점수 산식, 가중치, 데이터 최신일 표시
+E. 관리자가 '예산·시설 유형·대상 집단'을 변경해 우선순위를 비교하는 시나리오 모드
+F. 데이터 출처·한계·방법론·개인정보 처리 설명 페이지
+G. 모바일 반응형, 키보드 조작, 로딩/오류/데이터 없음 상태, 지도 불가 시 표 대체
+H. 실제로 동작하는 배포 주소와 데모 영상용 화면 흐름
+
+[추천 점수: 출발점일 뿐 실제 데이터 검증 후 수정]
+- 시설부족도(인구 1만 명당 시설 수 역정규화) 35%
+- 접근거리 불리함(중앙값 등) 30%
+- 취약인구 비율 20%
+- 대중교통 접근성 또는 서비스 공백 15%
+- 지표가 없으면 자동 재가중치하지 말고 '평가불가' 또는 명시적인 축소모형을 선택하라.
+- 점수 0~100 정규화 기준과 분모·분자, 이상치 처리, 데이터 기준연도를 명시하라.
+- AI 제안은 근거 지표를 입력받는 템플릿/규칙기반으로도 구현 가능하다. 실제 LLM을 사용하지 않았다면 'AI 분석'이라 과장하지 마라.
+
+[기술 구현]
+- 기존 프레임워크 우선. 신규 프로젝트라면 Next.js + TypeScript + Tailwind + Recharts/Leaflet 중 가볍고 배포 가능한 조합 선택.
+- API 키가 없어도 실행되는 샘플 데모 모드, .env.example, 실행 방법, 데이터 로더/검증 스크립트, 타입·단위 테스트를 제공하라.
+- 외부 지도 타일·지도 데이터 라이선스와 출처 표시.
+- 예시 데이터는 DEMO 배지와 별도 파일로 격리. 실제 수치와 혼용 금지.
+- 개인정보·민감정보는 수집하지 않으며 공개 집계 데이터만 사용.
+
+[산출물 — 실제 파일을 생성]
+1. 실행되는 앱 및 배포 가이드
+2. docs/DATA_CATALOG.csv (source_name, url, license, date, region_level, columns, verified, limitations)
+3. docs/METHODOLOGY.md (산식·한계·불확실성)
+4. docs/VALIDATION_REPORT.md (실행 테스트 결과, 스크린샷 경로, 미해결 오류)
+5. submission/7MIN_PITCH.md (발표 슬라이드 8~10장, 화면별 대본, 총 7분)
+6. submission/DEMO_SCRIPT.md (90초 시연, 클릭 순서, 예상 화면)
+7. submission/ONE_PAGE_SUMMARY.md (문제/사용자/기술/차별성/실현성/효과)
+8. submission/ELIGIBILITY_CHECK.md (제출 형식, 출품자, 중복 수상, 저작권, 발표 참석 가능 여부)
+9. submission/FINAL_SUBMISSION_CHECKLIST.md (파일명, 접수 사이트, 접수증 캡처 항목)
+
+[품질 게이트]
+- npm install, lint, typecheck, test, build 명령 실행 후 실제 결과 기록
+- 1440px/390px 화면 확인, 링크/버튼 작동 확인, 데이터 출처 페이지 확인
+- 7분 발표에 필요한 모든 화면 실제 캡처; 가짜 사용자 반응/수상 이력 금지
+- 미완성은 숨기지 말고 BLOCKED/OPEN 표기
+- 사용자 승인 없이 공모전 최종 제출, 유료 결제, 외부 공개, GitHub push 금지
+- 완료 시 변경 파일 목록, 실행 URL(있는 경우), 테스트 결과, 제출 남은 작업 3개를 한국어로 보고하라.
+</code></pre></div></div>
+
+<h2 id="2-제품-설계-심사위원에게-보여줄-90초-시연">2. 제품 설계: 심사위원에게 보여줄 90초 시연</h2>
+<ol>
+  <li><strong>문제(10초)</strong>: 같은 인구 규모라도 체육시설 접근 기회는 다르다. 대상은 지자체 체육정책 담당자와 시설 운영자.</li>
+  <li><strong>지역 선택(15초)</strong>: 지도에서 비교 가능한 지역을 선택, 데이터 기준연도와 시설 범위 표시.</li>
+  <li><strong>격차 진단(20초)</strong>: 시설 공급량, 접근거리, 고령자 비중 등 검증된 지표 비교.</li>
+  <li><strong>예산 시뮬레이션(20초)</strong>: 예산·시설유형 선택 → 우선 후보지역 순위 변화와 계산 근거.</li>
+  <li><strong>의사결정(15초)</strong>: 추천 위치가 아니라 우선 검토 지역 및 사업유형 3건, 데이터 불확실성 표시.</li>
+  <li><strong>마무리(10초)</strong>: 도입 대상, 향후 시설 운영 데이터와 연계 계획(실제 도입 실적 아님).</li>
+</ol>
+
+<h2 id="3-데이터-검증-및-제한">3. 데이터 검증 및 제한</h2>
+<ul>
+  <li>후보 출처: 공공데이터포털(data.go.kr), 문화체육관광부/국민체육진흥공단 공공체육시설 현황, KOSIS 인구, 지자체 개방데이터, 국토정보플랫폼 경계. <strong>실제 존재하는 데이터셋의 URL·라이선스·컬럼을 개발 시 직접 검증</strong>.</li>
+  <li>스포츠시설 종류(공공/민간), 폐업/중복, 좌표계, 지역코드·연도 불일치, 인구 분모 오류 확인.</li>
+  <li>‘운동참여율’은 별도 설문 근거가 없으면 추정하지 말 것.</li>
+  <li>장애인 접근성은 단순 시설거리만으로 평가할 수 없음. 무장애 시설 정보가 없다면 접근성 주장 제한.</li>
+  <li>GIS 경로 기반 이동시간 데이터가 없다면 거리 기반 대리지표라고 명시.</li>
+</ul>
+
+<h2 id="4-출품-전-수동-확인">4. 출품 전 수동 확인</h2>
+<ul>
+  <li>실제 배포주소/스크린샷/7분 발표자료/서비스 증빙 제출</li>
+  <li>기존 수상작과 중복 출품 관련 공고 규정 확인</li>
+  <li>개인/팀/기업 접수유형 선택, 공무원 겸직·상금 수령 관련 내부 규정 확인</li>
+  <li>11월 20일 발표 참석 가능 여부 확인</li>
+  <li>접수증 저장. 접수 완료 전 ‘제출 완료’ 표기 금지.</li>
+</ul>
+
+<h2 id="5-완료-기준">5. 완료 기준</h2>
+<ul>
+  <li>심사위원이 별도 설명 없이 90초 내 ‘누가 무엇을 개선하는지’ 이해</li>
+  <li>지표 출처·산식 재현 가능</li>
+  <li>최소 2개 지역 비교 및 시나리오 조작 동작</li>
+  <li>7분 발표 원고·스크린샷·실제 실행 URL 준비</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
