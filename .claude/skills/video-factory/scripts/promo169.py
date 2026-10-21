@@ -100,6 +100,10 @@ class Promo:
         if cv.get("emoji"):
             em = emoji(cv["emoji"], 300); em.putalpha(em.getchannel("A").point(lambda v: int(v * k)))
             im.alpha_composite(em, (250, 380 + int((1 - k) * 40)))
+        elif cv.get("icon") == "cross":                            # 굵은 십자(메디컬 시안)
+            cx, cy, r, w_ = 400, 540 + int((1 - k) * 40), 130, 46
+            d.rectangle((cx - w_, cy - r, cx + w_, cy + r), fill=self.on_dark + (int(255 * k),))
+            d.rectangle((cx - r, cy - w_, cx + r, cy + w_), fill=self.on_dark + (int(255 * k),))
         else:                                                      # 선 하트(SNS 시안)
             cx, cy, s_ = 400, 540 + int((1 - k) * 40), 9.5
             pts = [(cx + s_ * 16 * math.sin(u) ** 3, cy - s_ * (13 * math.cos(u) - 5 * math.cos(2 * u) - 2 * math.cos(3 * u) - math.cos(4 * u)))
