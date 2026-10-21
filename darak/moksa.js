@@ -9,7 +9,7 @@
     week = C.mondayOf();                 // 교회 시간대가 정해진 뒤 다시 센다
     C.header(me, T('목장 나눔터'));
     if (C.has('member_dates')) $('.tabs button[data-pane="people"]').hidden = false;   // 성도 날짜는 켠 교회만
-    bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch(); bindPeople(); bindStats();
+    bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch(); bindPeople(); bindStats(); bindRemind();
     await loadMokjangs();
     await openFromLink() || await loadWeek();
     // 앱을 켜 둔 채 주일이 지나면, 다시 볼 때 새 주로 넘어간다
@@ -372,6 +372,50 @@
     $('#st-bars').addEventListener('pointerleave', function () { tip.hidden = true; });
   }
 
+  /* ── 제출 안 한 목장에 알림 · 마감 알림 ───────────── */
+  function showRemind(live, data) {
+    var left = live.filter(function (m) { return m.mokja_id && !(data[m.id] && data[m.id].j.status === 'submitted'); });
+    var can = left.length && week <= C.mondayOf();   // 다가올 주에는 보내지 않는다
+    $('#remind-row').hidden = !can;
+    if (can) $('#btn-remind').textContent = T('제출 안 한 목장에 알림 보내기 ({0}곳)', left.length);
+    $('#btn-remind').dataset.n = left.length;
+  }
+  function bindRemind() {
+    $('#btn-remind').addEventListener('click', async function () {
+      var b = this;
+      if (!confirm(T('{0} 일기를 제출하지 않은 목장 {1}곳의 목자에게 알림을 보낼까요?', C.weekLabel(week), b.dataset.n))) return;
+      b.disabled = true;
+      try {
+        var r = await C.notify({ action: 'remind', week: week });
+        var msg = T('목자 {0}명에게 알림을 보냈습니다.', r.reached);
+        if (r.noDevice && r.noDevice.length) msg += ' ' + T('알림을 켜지 않은 목자: {0} — 카카오톡으로 따로 알려 주세요.', r.noDevice.join(', '));
+        C.say($('#msg-remind'), msg, r.reached ? 'ok' : 'err', true);
+      } catch (e) { C.say($('#msg-remind'), e.message, 'err'); }
+      b.disabled = false;
+    });
+
+    var DOWS = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+    var c = C.getChurch() || {}, f = c.features || {};
+    var dl = f.deadline === false ? null : (f.deadline || { dow: 6, hour: 20 });
+    $('#dl-dow').innerHTML = '<option value="-1">' + esc(T('끄기')) + '</option>' +
+      DOWS.map(function (d, i) { return '<option value="' + i + '">' + esc(T(d)) + '</option>'; }).join('');
+    $('#dl-hour').innerHTML = Array.apply(null, Array(24)).map(function (_, h) {
+      var label = C.lang() === 'en' ? ((h % 12) || 12) + (h < 12 ? ' AM' : ' PM') : (h < 12 ? '오전 ' : '오후 ') + ((h % 12) || 12) + '시';
+      return '<option value="' + h + '">' + label + '</option>';
+    }).join('');
+    $('#dl-dow').value = dl ? dl.dow : -1; $('#dl-hour').value = dl ? dl.hour : 20;
+    $('#dl-hour').disabled = !dl;
+    $('#dl-dow').addEventListener('change', function () { $('#dl-hour').disabled = this.value === '-1'; });
+    $('#dl-save').addEventListener('click', async function () {
+      try {
+        var r = await C.notify({ action: 'set_deadline', dow: +$('#dl-dow').value, hour: +$('#dl-hour').value });
+        f.deadline = r.deadline; c.features = f;
+        C.say($('#msg-deadline'), r.deadline ? T('저장했습니다. 매주 {0} {1}에 제출 안 한 목자에게 알림이 갑니다.', T(DOWS[r.deadline.dow]), $('#dl-hour').selectedOptions[0].textContent)
+          : T('마감 알림을 껐습니다.'), 'ok');
+      } catch (e) { C.say($('#msg-deadline'), e.message, 'err'); }
+    });
+  }
+
   function bindWeek() {
     $('#wk-prev').addEventListener('click', function () { week = C.addWeeks(week, -1); loadWeek(); });
     $('#wk-next').addEventListener('click', function () { week = C.addWeeks(week, 1); loadWeek(); });
@@ -428,6 +472,7 @@
       '<div><b>' + (wrote - done) + T('</b><span>쓰는 중</span></div>') +
       '<div><b>' + (live.length - wrote) + T('</b><span>아직 안 씀</span></div>');
     $('#stat-line').textContent = T('이 주 일기: 목장 {0}곳 중 {1}곳이 썼고, 그중 {2}곳이 제출했습니다.', live.length, wrote, done);
+    showRemind(live, data);
 
     if (!live.length) {
       $('#week-list').innerHTML = T('<div class="card"><p class="empty">아직 목장이 없습니다. <b>목장·목자 관리</b>에서 목자 계정을 만들어 주세요.</p></div>');
