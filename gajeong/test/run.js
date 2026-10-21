@@ -134,6 +134,7 @@ const db = p => p.evaluate(() => window.__DB());
     await p.goto(BASE + 'index.html'); await p.waitForTimeout(250);
     await p.click('#to-setup');
     ok('시간대 목록이 채워짐', (await p.$$('#stz option')).length >= 10);
+    ok('처음 오는 교회도 초대 코드가 미리 들어 있음', (await p.inputValue('#scode')) === 'BJ-V3DEXG');
     await p.fill('#scode', 'WRONG'); await p.fill('#schurch', '새소망교회'); await p.selectOption('#stz', 'Asia/Seoul');
     await p.fill('#sname', '홍길동'); await p.fill('#slid', 'newpastor'); await p.fill('#spw', 'pass1234');
     await p.click('#btn-setup'); await p.waitForTimeout(300);
