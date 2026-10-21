@@ -23,7 +23,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610211500">
+<link rel="stylesheet" href="style.css?v=202610211800">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -56,6 +56,10 @@ try { (function (m, q) { var s = q.get('c');
       </div>
       <div class="stat" id="stat"></div>
       <p class="hint" id="stat-line" style="margin:-6px 0 10px"></p>
+      <div class="row noprint" id="remind-row" hidden style="margin:0 0 12px">
+        <button type="button" class="small" id="btn-remind"></button>
+      </div>
+      <div class="msg" id="msg-remind"></div>
       <p class="desc" style="margin:0">목장 이름을 누르면 그 주 일기와 기도제목이 펼쳐집니다. 아래에 말씀을 남기시면 목자에게 보입니다.</p>
     </div>
     <div id="week-list"></div>
@@ -113,6 +117,17 @@ try { (function (m, q) { var s = q.get('c');
   </section>
 
   <section class="pane" id="pane-manage">
+    <div class="card" id="deadline-card">
+      <h2>마감 알림</h2>
+      <p class="desc">정한 때까지 일기를 제출하지 않은 목자에게 휴대전화 알림을 한 번 보냅니다. 알림을 켠 목자에게만 갑니다.</p>
+      <div class="row" style="align-items:center; gap:8px">
+        <select id="dl-dow" aria-label="요일"></select>
+        <select id="dl-hour" aria-label="시각"></select>
+        <button type="button" class="primary small" id="dl-save">저장</button>
+      </div>
+      <p class="hint">교회 시간대 기준입니다. 일요일·월요일로 정하면 지난주 일기를 챙깁니다.</p>
+      <div class="msg" id="msg-deadline"></div>
+    </div>
     <div class="card">
       <h2>휴대전화 알림</h2>
       <p class="desc">목자가 일기를 제출하면 이 기기로 알려 드립니다. 휴대전화·컴퓨터마다 따로 켭니다.</p>
@@ -265,9 +280,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610211500"></script>
-<script src="common.js?v=202610211500"></script>
-<script src="moksa.js?v=202610211500"></script>
+<script src="lang-en.js?v=202610211800"></script>
+<script src="common.js?v=202610211800"></script>
+<script src="moksa.js?v=202610211800"></script>
 
 </body>
 </html>
