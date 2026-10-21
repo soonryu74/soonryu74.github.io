@@ -262,7 +262,7 @@ try { (function (m, q) { var s = q.get('c');
   function showGuide(who) {
     var base = 'video/guide-' + who + '-' + (C.lang() === 'en' ? 'en' : 'ko');
     var v = $('#guide-video');
-    var VID = '?v=20261021';   // 영상을 새로 만들면 바꾼다 (예전 영상이 남아 보이지 않게)
+    var VID = '?v=20261022';   // 영상을 새로 만들면 바꾼다 (예전 영상이 남아 보이지 않게)
     if (v.dataset.src !== base) { v.dataset.src = base; v.poster = base + '.jpg' + VID; v.src = base + '.mp4' + VID; }
     $('#guide-dl').href = base + '.mp4' + VID;
     C.$$('.guide-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.who === who); });
