@@ -29,7 +29,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610221100">
+<link rel="stylesheet" href="style.css?v=202610221900">
 <style>
   .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
   .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
@@ -230,8 +230,8 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610221100"></script>
-<script src="common.js?v=202610221100"></script>
+<script src="lang-en.js?v=202610221900"></script>
+<script src="common.js?v=202610221900"></script>
 <script>
 (function () {
   var C = window.CHURCH, $ = C.$;
@@ -273,7 +273,9 @@ try { (function (m, q) { var s = q.get('c');
   if (window.__EARLY_CHURCH) C.applyLook(window.__EARLY_CHURCH);
   // 등록 주소에 코드가 붙어 오면(?new=코드) 미리 채워 둔다
   var codeInLink = new URLSearchParams(location.search).get('new');
-  if (codeInLink) $('#scode').value = codeInLink;
+  // 공용 초대 코드: 처음 오는 교회도 바로 등록할 수 있게 미리 넣어 둔다 (등록 주소의 ?new=코드가 있으면 그것을 쓴다)
+  var DEFAULT_INVITE = 'BJ-V3DEXG';
+  $('#scode').value = codeInLink || DEFAULT_INVITE;
 
   // 주소의 ?c=… 또는 이 기기가 기억하는 교회 이름·로고를 보여 준다
   (wantNew ? Promise.resolve(null) : C.publicChurch()).then(function (c) {
