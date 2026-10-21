@@ -62,6 +62,7 @@ class Promo:
         lum = (0.299 * self.dark[0] + 0.587 * self.dark[1] + 0.114 * self.dark[2]) / 255
         self.on_dark = self.ink if lum > 0.6 else (255, 255, 255)        # 진한 바탕 위 글자색
         self.sub = mix(self.ink, self.tint, 0.35)
+        self.card_col = rgb(c.get("card", c["dark"]))          # 오른쪽 카드 색(밝은 그룹은 글자색으로)
         self.card = self._card_bg()
         self.photos = {}
 
@@ -69,7 +70,7 @@ class Promo:
     def _card_bg(self):
         w, h = 968, 760
         g = Image.new("RGB", (w, h)); px = g.load()
-        c0 = mix(self.dark, (255, 255, 255), 0.10); c1 = mix(self.dark, (0, 0, 0), 0.35)
+        c0 = mix(self.card_col, (255, 255, 255), 0.10); c1 = mix(self.card_col, (0, 0, 0), 0.35)
         for y in range(0, h, 4):
             for x in range(0, w, 4):
                 k = clamp(math.hypot((x - w * 0.42) / w, (y - h * 0.38) / h) * 1.6)
@@ -84,10 +85,10 @@ class Promo:
         return g
 
     def head(self, d, on_dark, a=255):
-        col = (255, 255, 255) if on_dark else self.ink
+        col = self.on_dark if on_dark else self.ink
         d.text((96, 70), self.sp["series"], font=F("SemiBold", 34), fill=col + (a,))
         f = F("Bold", 38); tw = f.getlength(self.sp["group"])
-        bg, fg = ((255, 255, 255), self.dark) if on_dark else (self.ink, (255, 255, 255))
+        bg, fg = (self.on_dark, self.dark) if on_dark else (self.ink, (255, 255, 255))
         d.rounded_rectangle((96, 122, 96 + tw + 56, 194), 36, fill=bg + (a,))
         d.text((124, 132), self.sp["group"], font=f, fill=fg + (a,))
 
@@ -96,8 +97,14 @@ class Promo:
         im = Image.new("RGBA", (W, H), self.dark + (255,)); d = ImageDraw.Draw(im)
         self.head(d, True)
         cv = self.sp["cover"]; k = ease(t / 0.7)
-        em = emoji(cv["emoji"], 300); em.putalpha(em.getchannel("A").point(lambda v: int(v * k)))
-        im.alpha_composite(em, (250, 380 + int((1 - k) * 40)))
+        if cv.get("emoji"):
+            em = emoji(cv["emoji"], 300); em.putalpha(em.getchannel("A").point(lambda v: int(v * k)))
+            im.alpha_composite(em, (250, 380 + int((1 - k) * 40)))
+        else:                                                      # 선 하트(SNS 시안)
+            cx, cy, s_ = 400, 540 + int((1 - k) * 40), 9.5
+            pts = [(cx + s_ * 16 * math.sin(u) ** 3, cy - s_ * (13 * math.cos(u) - 5 * math.cos(2 * u) - 2 * math.cos(3 * u) - math.cos(4 * u)))
+                   for u in [i / 120 * 2 * math.pi for i in range(121)]]
+            d.line(pts, fill=self.on_dark + (int(255 * k),), width=16, joint="curve")
         f = F("Black", 150)
         for i, ln in enumerate(cv["lines"]):
             ki = ease((t - 0.25 - i * 0.25) / 0.6)
@@ -167,6 +174,21 @@ class Promo:
                 d.ellipse((cx + 180 * math.cos(ang) - 12, cy + 180 * math.sin(ang) - 12, cx + 180 * math.cos(ang) + 12,
                            cy + 180 * math.sin(ang) + 12), fill=(P if i % 3 == 0 else L) + (a(ki),))
             d.ellipse((cx - 110, cy - 110, cx + 110, cy + 110), outline=L + (a(k * 0.5),), width=4)
+        elif kind == "phone":                                      # 휴대폰 + 올라가는 피드
+            d.rounded_rectangle((cx - 110, cy - 190, cx + 110, cy + 190), 30, outline=L + (a(k),), width=9)
+            off = (t * 60) % 90
+            for i in range(5):
+                y = cy - 150 + i * 90 - off
+                if cy - 160 < y < cy + 130:
+                    d.rounded_rectangle((cx - 80, y, cx + 80, y + 60), 10, fill=(P if i % 2 else L) + (a(k * 0.75),))
+        elif kind == "bubble":                                     # 말풍선이 차례로
+            for i, (x, y, w_) in enumerate(((cx - 230, cy - 150, 300), (cx - 40, cy - 30, 270), (cx - 230, cy + 90, 220))):
+                ki = ease((t - 0.2 - i * 0.5) / 0.4)
+                if ki > 0:
+                    col = (P if i == 1 else L)
+                    d.rounded_rectangle((x, y + (1 - ki) * 20, x + w_, y + 80 + (1 - ki) * 20), 36, outline=col + (a(ki),), width=7)
+                    for j in range(3):
+                        d.ellipse((x + 40 + j * 40, y + 32, x + 56 + j * 40, y + 48), fill=col + (a(ki),))
         elif kind == "chip":
             d.rounded_rectangle((cx - 90, cy - 90, cx + 90, cy + 90), 24, outline=L + (a(k),), width=8)
             d.rounded_rectangle((cx - 40, cy - 40, cx + 40, cy + 40), 10, fill=(255, 255, 255, a(k)))
