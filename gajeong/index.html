@@ -12,7 +12,7 @@
 })(location.hostname);</script>
 <script>/* 기억한 교회 디자인을 그리기 전에 입힌다 (깜빡임 방지) */
 try { (function (m, q) { var s = q.get('c');
-  if (m && m.theme && !q.has('new') && (!s || s === m.slug)) document.documentElement.setAttribute('data-theme', m.theme);
+  if (m && m.theme && !q.has('new') && s && s === m.slug) document.documentElement.setAttribute('data-theme', m.theme);   // 교회 주소로 왔을 때만 (공용 첫 화면은 늘 공용)
 })(JSON.parse(localStorage.getItem('gajeong-church') || 'null'), new URLSearchParams(location.search)); } catch (e) {}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>목장 나눔터 — 들어가기</title>
@@ -29,7 +29,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610211800">
+<link rel="stylesheet" href="style.css?v=202610221100">
 <style>
   .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
   .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
@@ -62,13 +62,13 @@ try { (function (m, q) { var s = q.get('c');
   <div class="hero">
     <img class="logo" id="hero-logo" alt="" width="104" height="104">
     <div class="church" id="hero-church"></div>
-    <script>/* 서버에 묻기 전에, 이 기기가 기억하는 교회면 로고·이름을 바로 그린다 (깜빡임 방지).
+    <script>/* 서버에 묻기 전에, 교회 주소(?c=)로 왔고 이 기기가 그 교회를 기억하면 로고·이름을 바로 그린다 (깜빡임 방지).
        교회 주소(/코드/)로 들어오면 그 페이지가 미리 기억시켜 둔다. 다른 교회 것은 쓰지 않는다. */
     (function () {
       var q = new URLSearchParams(location.search), slug = q.get('c'), mem = null, c = null;
       if (q.has('new')) return void (document.getElementById('hero-logo').src = 'assets/icon-192.png');
       try { mem = JSON.parse(localStorage.getItem('gajeong-church') || 'null'); } catch (e) {}
-      c = slug ? (mem && mem.slug === slug ? mem : null) : mem;
+      c = slug && mem && mem.slug === slug ? mem : null;   // 공용 첫 화면(mokjang.app)에는 전에 본 교회를 띄우지 않는다
       if (c && c.name) {
         document.documentElement.classList.add('branded');
         window.__EARLY_CHURCH = c;
@@ -230,8 +230,8 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610211800"></script>
-<script src="common.js?v=202610211800"></script>
+<script src="lang-en.js?v=202610221100"></script>
+<script src="common.js?v=202610221100"></script>
 <script>
 (function () {
   var C = window.CHURCH, $ = C.$;
