@@ -16,3 +16,8 @@ exclude:
   - sportsgap/node_modules
   - sportsgap/test-results
   - sportsgap/playwright-report
+  # MoveSafe AI: 테스트·의존성 제외
+  - movesafe/tests
+  - movesafe/node_modules
+  - movesafe/test-results
+  - movesafe/playwright-report

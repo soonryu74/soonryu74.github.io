@@ -1,0 +1,15 @@
+{
+  "name": "movesafe-ai",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MoveSafe AI — 부상 예방 폼 코치 · 스포츠 영양 (정적 사이트, 빌드 불필요)",
+  "scripts": {
+    "test": "node --test tests/engine.test.mjs",
+    "test:e2e": "playwright test",
+    "check": "npm test && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}
