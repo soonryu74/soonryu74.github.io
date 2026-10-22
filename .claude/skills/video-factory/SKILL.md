@@ -22,6 +22,9 @@ description: 영상 자동화 공장 — 이미 찍은 영상(강의·설교·�
 | `group_short.py` | 그룹·모임 홍보 쇼츠 9:16 — 훅 · 사진 카드(흐린 배경 + 천천히 다가가기) · 숫자 세기 · 한 마디 · QR 자리. 작은 사진도 깨지지 않음. 장면마다 `voice` 를 주면 길이를 목소리에 맞추고 배경음을 자동으로 낮춤. 맨 앞 `cover` 장면 = 쇼츠 표지(0.6초 + `_표지.jpg`). 본문 형식: photo · stats · motto · split(비포·애프터) · unbox(언박싱) · quiz(퀴즈, 질문·정답 목소리 따로) · chat(메신저 대화) · checklist(체크리스트) · vlog(REC·날짜 도장) · alarm(알람 카운트다운) · qcard(Q&A 카드) · passport(여권 도장) · recipe(레시피 카드) · feed(세로 피드) · walkmap(산책 지도) — 그룹마다 다른 형식으로 | `spec.json` → mp4 |
 | `char_explainer.py` | 캐릭터 해설 쇼츠 9:16 — 코드로 그린 «냥이 선생»(안경 · 나비넥타이 · 지시봉)이 칠판 앞에서 말한다. 입은 목소리 크기에 맞춰 벌어지고, 눈 깜빡임 · 꼬리 · 몸 흔들기는 자동. 칠판 = 큰 글자(연도·숫자) + 아이콘(grid · window · gear · search · chat · star · hello) + 금색 캡션, 말풍선 = 대사. 조남경 «바이브 모션 4편» 형식 | `spec.json` → mp4 |
 | `tts_lines.py` | 문장마다 Gemini TTS 녹음(대괄호 태그 · 테이크 2개 · 지시문 읽은 테이크 다시). GEMINI_API_KEY 있는 자식 세션에서 | `narration.json` → wav |
+| `promo169.py` | 그룹 홍보 16:9 — 표지(이모지) → 장면(왼쪽 글 · 오른쪽 아이콘 카드/REC 사진) → 모토 → 마무리. `"voice": {"dir": "voice"}` 를 주면 N00(표지)·N01…(장면)·모토·마무리 순서의 wav 를 깔고, 장면 길이를 목소리에 맞추고, 배경음을 눌러 준다 | `spec.json` → mp4 |
+| `tts_dialog.py` | 두 사람(남·여) 대화 나레이션을 Gemini 다중 화자로 덩어리째 녹음(9문장씩 · 테이크 2개). 다중 화자가 막히면 문장별로 | `dialog.json` → C0_t1.wav … |
+| `split_dialog.py` | 대화 통녹음을 문장별 N00.wav … 로 자른다 — faster-whisper 단어 시각 + 원고 글자 맞추기, 문장마다 더 정확한 테이크 선택, 보고서 `split_report.json` | C*_t*.wav → N*.wav |
 | `cover.py` | 쇼츠 표지(1080×1920) · 썸네일(1280×720) + 레이어 PSD | `cover.json` → jpg + psd |
 | `upscale.py` | 4K/8K, 조각 굽기(끊겨도 이어서), 100MB 넘으면 crf 올려 다시 | mp4 → mp4 |
 | `archive.py` | 비공개 저장소 `<작업명>/<편키>/` 복사 · README · 커밋 · 푸시 | 파일들 → 커밋 |

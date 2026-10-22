@@ -12,7 +12,10 @@ spec.json:
  "motto": {"label": "커피선교그룹의 모토", "l1": "…", "l2": "…", "sub": "…\n…"},
  "chapters": 4
 }
-아이콘: cup · heart · rings · glow · stairs · path · orbit · dots · chip"""
+아이콘: cup · heart · rings · glow · stairs · path · orbit · dots · chip
+나레이션(선택): "voice": {"dir": "voice", "lead": 0.4, "tail": 0.55, "bgm_duck": true}
+  → 장면 순서대로 dir/N00.wav(표지) · N01…(장면) · 모토 · 마무리. 파일이 있는 장면은 길이를 목소리에 맞춰 늘리고,
+    목소리가 나올 땐 배경음을 눌러 준다(sidechaincompress)."""
 from __future__ import annotations
 
 import json
@@ -65,6 +68,7 @@ class Promo:
         self.card_col = rgb(c.get("card", c["dark"]))          # 오른쪽 카드 색(밝은 그룹은 글자색으로)
         self.card = self._card_bg()
         self.photos = {}
+        self.dur = SCENE                                        # 지금 그리는 장면 길이(목소리로 늘어날 수 있음)
 
     # ── 오른쪽 카드 바탕: 그룹색 원형 그라데이션 ──
     def _card_bg(self):
@@ -229,14 +233,16 @@ class Promo:
             if c < sc["ch"]:
                 fillw = seg
             elif c == sc["ch"]:
-                fillw = seg * (idx_in_ch + ease(t / SCENE)) / n_in_ch
+                fillw = seg * (idx_in_ch + ease(t / self.dur)) / n_in_ch
             else:
                 fillw = 0
             if fillw > 0:
                 d.rounded_rectangle((x0, 240, x0 + fillw, 246), 3, fill=self.ink)
         k1 = ease((t - 0.15) / 0.5); k2 = ease((t - 0.4) / 0.5); k3 = ease((t - 0.7) / 0.5)
-        f1 = F("Black", 92)
-        d.text((96, 380 + int((1 - k1) * 30)), sc["l1"], font=f1, fill=self.ink + (int(255 * k1),))
+        fit = lambda txt, size, maxw: F("Black", size) if F("Black", size).getlength(txt) <= maxw else F("Black", int(size * maxw / F("Black", size).getlength(txt)))  # noqa: E731
+        f0 = fit(sc["l1"], 92, 740)
+        d.text((96, 380 + int((1 - k1) * 30) + (92 - f0.size) // 2), sc["l1"], font=f0, fill=self.ink + (int(255 * k1),))
+        f1 = fit(sc["l2"], 92, 720)
         tw = f1.getlength(sc["l2"])
         y2 = 500 + int((1 - k2) * 30)
         d.rounded_rectangle((90, y2 + 6, 90 + tw + 40, y2 + 124), 14, fill=self.ink + (int(255 * k2),))
@@ -250,7 +256,7 @@ class Promo:
             if sc["photo"] not in self.photos:
                 self.photos[sc["photo"]] = Image.open(self.root / sc["photo"]).convert("RGB")
             ph = self.photos[sc["photo"]]
-            z = 1.0 + 0.06 * t / SCENE
+            z = 1.0 + 0.06 * t / self.dur
             w, h = 968, 760; fx, fy = sc.get("focus", [0.5, 0.5])
             r = max(w / ph.width, h / ph.height) * z
             big = ph.resize((int(ph.width * r) + 1, int(ph.height * r) + 1), Image.LANCZOS)
@@ -335,6 +341,19 @@ def main(path):
         lst = chs[sc["ch"]]
         parts.append(("scene", SCENE, (sc, lst.index(sc), len(lst))))
     parts += [("motto", MOTTO, None), ("close", CLOSE, None)]
+    vo = sp.get("voice") or {}
+    voices = []                                                    # (시작 초, wav)
+    if vo:
+        lead, tail = vo.get("lead", 0.4), vo.get("tail", 0.55)
+        vdir = root / vo.get("dir", "voice"); at = 0.0
+        for i, (kind, dur, arg) in enumerate(parts):
+            w = vdir / f"N{i:02d}.wav"
+            if w.exists():
+                vlen = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(w)],
+                                            capture_output=True, text=True).stdout)
+                dur = max(dur, lead + vlen + tail + (0.8 if kind == "close" else 0))
+                parts[i] = (kind, dur, arg); voices.append((at + lead, w))
+            at += dur
     total = sum(p[1] for p in parts)
 
     def render(kind, t, arg):
@@ -349,7 +368,7 @@ def main(path):
                             "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p", str(silent)], stdin=subprocess.PIPE)
     prev_last = None
     for pi, (kind, dur, arg) in enumerate(parts):
-        n = int(dur * FPS)
+        n = int(dur * FPS); pr.dur = dur
         for fi in range(n):
             t = fi / FPS
             fr = render(kind, t, arg).convert("RGB")
@@ -362,7 +381,26 @@ def main(path):
                 fr.save(out.with_name(out.stem + "_표지.jpg"), quality=92)
         prev_last = render(kind, dur - 1 / FPS, arg).convert("RGB")
     enc.stdin.close(); enc.wait()
-    if sp.get("bgm"):
+    if voices:
+        bv = vo.get("bgm_volume", sp.get("bgm_volume", 0.8) * 0.55)
+        ins = ["-i", str(silent)]; fil = ""
+        for j, (st, w) in enumerate(voices):
+            ins += ["-i", str(w)]
+            fil += f"[{j + 1}:a]aresample=48000,aformat=channel_layouts=stereo,volume={vo.get('volume', 1.0)},adelay={int(st * 1000)}|{int(st * 1000)},apad[v{j}];"
+        fil += "".join(f"[v{j}]" for j in range(len(voices))) + f"amix=inputs={len(voices)}:normalize=0,atrim=0:{total:.2f},asplit=2[vo][sc];"
+        if sp.get("bgm"):
+            ins += ["-ss", str(sp.get("bgm_start", 0)), "-i", str(root / sp["bgm"])]
+            b = len(voices) + 1
+            fil += (f"[{b}:a]aresample=48000,aformat=channel_layouts=stereo,atrim=0:{total:.2f},volume={bv},afade=t=in:d=0.5,"
+                    f"afade=t=out:st={total - 2.5}:d=2.5[bg0];")
+            fil += ("[bg0][sc]sidechaincompress=threshold=0.03:ratio=6:attack=20:release=450[bg];[vo][bg]amix=inputs=2:normalize=0,alimiter=limit=0.95[a]"
+                    if vo.get("bgm_duck", True) else "[vo][bg0]amix=inputs=2:normalize=0,alimiter=limit=0.95[a]")
+        else:
+            fil += "[sc]anullsink;[vo]anull[a]"
+        subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", fil, "-map", "0:v", "-map", "[a]", "-c:v", "copy",
+                        "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.2f}", str(out)], check=True)
+        silent.unlink()
+    elif sp.get("bgm"):
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(silent), "-ss", str(sp.get("bgm_start", 0)), "-i", str(root / sp["bgm"]),
                         "-filter_complex", f"[1:a]atrim=0:{total},volume={sp.get('bgm_volume', 0.8)},afade=t=in:d=0.5,"
                         f"afade=t=out:st={total - 2.5}:d=2.5[a]", "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac",
