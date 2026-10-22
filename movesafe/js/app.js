@@ -145,7 +145,7 @@ function loopDemo() {
   while (state.demoIdx < state.demoFrames.length && state.demoFrames[state.demoIdx].t <= elapsed) state.demoIdx++;
   const fr = state.demoFrames[Math.max(0, state.demoIdx - 1)];
   ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#94a3b8'; ctx.font = '14px sans-serif'; ctx.fillText('DEMO 합성 골격 — 실제 사람 아님', 12, 22);
+  ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'right'; ctx.fillText('DEMO 합성 골격 — 실제 사람 아님', canvas.width - 12, 24); ctx.textAlign = 'left';
   drawSkeleton(fr.lm2d);
   if (state.demoIdx > state.lastProcessed || state.lastProcessed == null) { processFrame(fr.lm2d, fr.lm3d, fr.t); state.lastProcessed = state.demoIdx; }
   if (state.demoIdx >= state.demoFrames.length) { state.lastProcessed = null; stop(); overlay('샘플 재생 끝 — 아래 리포트를 확인하거나 다른 샘플·카메라를 선택하세요.'); setStatus('샘플 재생이 끝났습니다. 오른쪽 결과와 "세션 리포트 보기"를 확인하세요.'); renderReport(); $('#report').hidden = false; return; }

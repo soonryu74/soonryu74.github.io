@@ -11,9 +11,9 @@
 ## B. 제출 파일
 | 파일 | 권장 파일명 | 출처 | 상태 |
 |---|---|---|---|
-| 발표자료(7분, 시연 포함) PDF | `MoveSafeAI_발표자료_서순려.pdf` | `submission/7MIN_PITCH.md` 9장 + `evidence/*.png` | 미제작 |
-| 소개서(선택) | `MoveSafeAI_소개서_서순려.pdf` | `submission/ONE_PAGE_SUMMARY.md` + `about.html` 요약 | 미제작 |
-| 서비스 링크 | — | 병합 후 주소 | 대기 |
+| 발표자료(7분, 시연 포함) pptx | `submission/MoveSafeAI_발표자료_서순려.pptx` | 9장, 발표자 노트 포함. 재생성: `cd submission/build && npm install && NODE_PATH=$PWD/node_modules node deck.cjs` | ✔ 제작(2026-10-22) |
+| 기술 및 제품 자료 PDF | `submission/MoveSafeAI_기술제품자료_서순려.pdf` | 서비스 링크·QR·화면 8장·기술 사양·검증·한계 (6쪽). 재생성: `node build/techdoc.mjs` | ✔ 제작(2026-10-22) |
+| 서비스 링크 | — | https://soonryu74.github.io/movesafe/ (배포 완료, 라이브 E2E 18/18) | ✔ |
 | 시연 영상(권장) | `MoveSafeAI_시연_90초.mp4` | `submission/DEMO_SCRIPT.md` 대로 실제 카메라 화면 녹화 | 미녹화 |
 | 화면 캡처 | `evidence/01~07-*.png` | 생성 완료 | ✔ |
 
@@ -31,6 +31,6 @@
 - [ ] 11-13 1차 결과 → 11-20 발표 리허설(실제 카메라 + 샘플 백업)
 
 ## E. 남은 작업 우선순위 3
-1. main 병합·배포 후 실제 카메라로 3개 운동 검증(임계값 체감 조정 필요 시 `js/exercise-rules.js` THR)
-2. 발표 슬라이드 PDF
-3. 90초 시연 영상
+1. 실제 카메라로 3개 운동 검증(임계값 체감 조정 필요 시 `js/exercise-rules.js` THR)
+2. 접수 화면 입력: 분야 '경기력 향상 기술', 작품 소개(1000자 문안은 채팅 기록), 첨부 2개 업로드
+3. 90초 시연 영상(선택) — 녹화 후 '기타' 또는 '기술 및 제품 자료'에 추가
