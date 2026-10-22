@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>영양·수분·보충제 — MoveSafe AI</title>
+<meta name="description" content="체중·활동량·목표를 넣으면 운동 영양 지침(ACSM·AND·DC 2016)의 탄수화물·단백질·수분 범위와 근거 있는 보충제 5종의 용량, 복용 중인 약·보충제의 도핑 주의 성분을 알려줍니다.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top">
+  <div class="wrap">
+    <h1>MoveSafe AI <small>부상 예방 폼 코치 · 스포츠 영양</small></h1>
+    <nav aria-label="페이지"><a href="index.html">폼 코치</a><a href="nutrition.html" aria-current="page">영양·수분·보충제</a><a href="about.html">근거·한계·개인정보</a></nav>
+  </div>
+</header>
+<main id="main">
+  <p class="muted" style="margin:0 0 10px"><span class="badge">입력값은 저장·전송하지 않음</span> <span class="badge">근거: ACSM·AND·DC 2016 공동 성명 · ACSM 2007 수분 · AIS/IOC 2018 보충제 · WADA 2026</span></p>
+  <div class="grid">
+    <section class="card" aria-label="입력">
+      <h2>하루 목표 계산</h2>
+      <div class="row">
+        <div style="flex:1;min-width:120px"><label for="weight">체중(kg)</label><input type="number" id="weight" value="70" min="20" max="250" step="0.5"></div>
+        <div style="flex:1;min-width:120px"><label for="age">나이</label><input type="number" id="age" value="35" min="10" max="100"></div>
+      </div>
+      <label for="activity">훈련량</label><select id="activity"></select>
+      <label for="goal">목표</label><select id="goal"></select>
+      <div class="row" style="margin-top:10px"><button class="btn" id="btnCalc">계산</button></div>
+      <h3>땀 손실량 (선택)</h3>
+      <div class="row">
+        <div style="flex:1;min-width:110px"><label for="preKg">운동 전 체중</label><input type="number" id="preKg" step="0.1" placeholder="70.0"></div>
+        <div style="flex:1;min-width:110px"><label for="postKg">운동 후 체중</label><input type="number" id="postKg" step="0.1" placeholder="68.8"></div>
+        <div style="flex:1;min-width:110px"><label for="fluidMl">마신 양(mL)</label><input type="number" id="fluidMl" step="50" value="0"></div>
+        <div style="flex:1;min-width:110px"><label for="durMin">시간(분)</label><input type="number" id="durMin" step="5" placeholder="90"></div>
+      </div>
+      <div class="row" style="margin-top:10px"><button class="btn secondary" id="btnSweat">땀 손실 계산</button></div>
+      <div id="sweatOut" style="margin-top:8px"></div>
+    </section>
+    <section class="card" aria-label="결과">
+      <h2>결과 <span class="badge" id="resBadge" hidden></span></h2>
+      <div id="targets"><p class="muted">체중·훈련량·목표를 넣고 "계산"을 누르세요.</p></div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:14px" aria-labelledby="supH">
+    <h2 id="supH">근거가 있는 수행 보충제 5종 + 단백질 <span class="muted" style="font-weight:400;font-size:.85rem">체중에 맞춘 용량 범위</span></h2>
+    <p class="muted" style="margin-top:0" id="supBasis"></p>
+    <div class="sups" id="sups"></div>
+    <div class="notice" id="contam"></div>
+  </section>
+
+  <section class="card" style="margin-top:14px" aria-labelledby="dopH">
+    <h2 id="dopH">도핑 주의 성분 확인</h2>
+    <p class="muted" style="margin-top:0">복용 중인 약·보충제·한약의 성분명이나 제품명을 붙여 넣으세요. 자주 문제되는 성분만 골라 2026 WADA 금지목록 분류로 표시합니다. <b>전체 목록이 아니며, 최종 확인은 <a href="https://www.kada-ad.or.kr" target="_blank" rel="noopener">KADA 금지약물 검색</a>과 팀 닥터에게.</b></p>
+    <label for="dopText" class="sr-only">성분 입력</label>
+    <textarea id="dopText" placeholder="예: 종합감기약(슈도에페드린), 프리워크아웃(히게나민), 벤토린 흡입기, 커피"></textarea>
+    <div class="row" style="margin-top:8px"><button class="btn" id="btnDop">확인</button><span class="muted" id="dopMeta"></span></div>
+    <div id="dopOut" style="margin-top:8px"></div>
+  </section>
+  <div class="notice" style="margin-top:14px">이 페이지의 수치는 일반 성인 운동인을 위한 지침 범위이며 개인 처방이 아닙니다. 질환·임신·수유·청소년·섭식 문제·체중 감량 중이면 스포츠영양사·의사와 상담하세요.</div>
+</main>
+<footer><p>MoveSafe AI · 계산식과 출처는 <a href="about.html#nutrition">근거 페이지</a>에 전부 적혀 있습니다. 입력값은 브라우저를 떠나지 않습니다.</p></footer>
+<script type="module" src="js/nutrition-app.js"></script>
+</body>
+</html>

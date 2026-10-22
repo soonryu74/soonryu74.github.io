@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>MoveSafe AI — 한 장 요약 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="MoveSafe AI — 한 장 요약" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="MoveSafe AI — 한 장 요약" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"MoveSafe AI — 한 장 요약","url":"/movesafe/submission/ONE_PAGE_SUMMARY.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=0317cd4f09092dddd0c180da7b4e2b3699f64bae">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="movesafe-ai--한-장-요약">MoveSafe AI — 한 장 요약</h1>
+
+<p><strong>분야</strong>: 경기력 향상 기술 — 스마트 트레이닝 · 부상 예방 · 재활 · 뉴트리션
+<strong>형태</strong>: 웹 서비스(설치·가입 없음, 서버 없음) · 출시 전 MVP · 수상·도입 실적 없음</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>항목</th>
+      <th>내용</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>문제</td>
+      <td>무릎이 안으로 모이는 스쿼트·착지, 뻣뻣한 착지, 한쪽으로 쏠린 런지는 하지 부상의 잘 알려진 위험 동작이지만 본인은 알아차리기 어렵고, 코치는 늘 옆에 없다.</td>
+    </tr>
+    <tr>
+      <td>사용자</td>
+      <td>생활체육인, 학생 선수, 동호회·학교 지도자, 수술·부상 후 운동 복귀자</td>
+    </tr>
+    <tr>
+      <td>제품</td>
+      <td>① 폼 코치: 웹캠(또는 영상 파일)에서 관절을 추정해 무릎각·무릎/발목 간격비·몸통 기울기·좌우차·착지 무릎 굴곡을 실시간 계산, 반복마다 점수·단서, 세션 리포트와 문제별 예방 루틴(FIFA 11+·JOSPT·PEP 기반). ② 영양: 체중·훈련량·목표 → 탄수화물·단백질·수분 범위(ACSM·AND·DC 2016, ACSM 2007), 보충제 5종 체중별 용량(AIS A군·IOC 2018), 도핑 주의 성분 확인(WADA 2026 분류, KADA 연결).</td>
+    </tr>
+    <tr>
+      <td>기술</td>
+      <td>Google MediaPipe Pose Landmarker(브라우저 WASM/GPU, Apache-2.0) + 순수 JS 규칙 엔진. 정적 파일만으로 동작. 단위 테스트 14건, E2E 18건(390·1440px), 가짜 카메라 스모크.</td>
+    </tr>
+    <tr>
+      <td>차별성</td>
+      <td>영상이 기기를 떠나지 않는 구조(학교·클럽 도입 장벽↓) · 임계값·출처·한계가 화면 안에 있고 코드 공개 · 판정이 규칙이라 지도자가 임계값을 조정 가능 · 운영비 ≈ 0</td>
+    </tr>
+    <tr>
+      <td>실현성</td>
+      <td>이미 동작하는 MVP. 어떤 클럽도 폴더 복사로 자체 호스팅. 다음 단계: 실제 사용자 촬영으로 임계값 보정, 측면 뷰, 지도자용 다인 리포트.</td>
+    </tr>
+    <tr>
+      <td>효과(기대)</td>
+      <td>혼자 운동하는 시간에도 위험 동작을 즉시 교정. 신경근 예방 프로그램(FIFA 11+)은 주 2회 이상 시 하지 부상 약 1/3 감소 보고 — 본 도구는 그 프로그램을 ‘언제 왜 해야 하는지’와 연결. 측정된 효과는 아직 없음.</td>
+    </tr>
+    <tr>
+      <td>한계</td>
+      <td>2D 정면 추정의 각도 민감성 · 임계값은 선별용(임상 기준 아님) · 샘플 동작은 합성 골격 · 실제 사용자 검증 전 · 의료 진단 아님</td>
+    </tr>
+    <tr>
+      <td>증빙</td>
+      <td>실행 주소(병합 후) <code class="language-plaintext highlighter-rouge">https://soonryu74.github.io/movesafe/</code> · 스크린샷 <code class="language-plaintext highlighter-rouge">evidence/</code> · 소스·테스트 공개 저장소</td>
+    </tr>
+    <tr>
+      <td>팀</td>
+      <td>1인(서순려, 보건학 전공)</td>
+    </tr>
+  </tbody>
+</table>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
