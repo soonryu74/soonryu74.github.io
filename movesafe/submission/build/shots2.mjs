@@ -1,0 +1,13 @@
+import { chromium } from '/home/user/soonryu74.github.io/movesafe/node_modules/@playwright/test/index.mjs';
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, locale: 'ko-KR' });
+const p = await ctx.newPage();
+const base = 'http://127.0.0.1:4181/movesafe/';
+await p.goto(base + '#demo=squat_valgus&speed=1'); await p.waitForTimeout(1750);
+await p.locator('#stage').screenshot({ path: 'live-valgus-stage.png' });
+await p.waitForTimeout(2200); await p.locator('aside.card').screenshot({ path: 'live-valgus-panel.png' });
+await p.goto(base + '#demo=squat_good&speed=1'); await p.waitForTimeout(1750);
+await p.locator('#stage').screenshot({ path: 'live-good-stage.png' });
+await p.goto(base + '#speed=1'); await p.selectOption('#demoSel', 'landing_stiff'); await p.waitForTimeout(1700);
+await p.locator('#stage').screenshot({ path: 'live-landing-stage.png' });
+await b.close(); console.log('done');

@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"FINAL_SUBMISSION_CHECKLIST — MoveSafe AI","url":"/movesafe/submission/FINAL_SUBMISSION_CHECKLIST.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=0317cd4f09092dddd0c180da7b4e2b3699f64bae">
+    <link rel="stylesheet" href="/assets/css/style.css?v=b0afe40230dec4f35b4278e44fe507f7017c165c">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -52,9 +52,9 @@
 <h2 id="b-제출-파일">B. 제출 파일</h2>
 <p>| 파일 | 권장 파일명 | 출처 | 상태 |
 |—|—|—|—|
-| 발표자료(7분, 시연 포함) PDF | <code class="language-plaintext highlighter-rouge">MoveSafeAI_발표자료_서순려.pdf</code> | <code class="language-plaintext highlighter-rouge">submission/7MIN_PITCH.md</code> 9장 + <code class="language-plaintext highlighter-rouge">evidence/*.png</code> | 미제작 |
-| 소개서(선택) | <code class="language-plaintext highlighter-rouge">MoveSafeAI_소개서_서순려.pdf</code> | <code class="language-plaintext highlighter-rouge">submission/ONE_PAGE_SUMMARY.md</code> + <code class="language-plaintext highlighter-rouge">about.html</code> 요약 | 미제작 |
-| 서비스 링크 | — | 병합 후 주소 | 대기 |
+| 발표자료(7분, 시연 포함) pptx | <code class="language-plaintext highlighter-rouge">submission/MoveSafeAI_발표자료_서순려.pptx</code> | 9장, 발표자 노트 포함. 재생성: <code class="language-plaintext highlighter-rouge">cd submission/build &amp;&amp; npm install &amp;&amp; NODE_PATH=$PWD/node_modules node deck.cjs</code> | ✔ 제작(2026-10-22) |
+| 기술 및 제품 자료 PDF | <code class="language-plaintext highlighter-rouge">submission/MoveSafeAI_기술제품자료_서순려.pdf</code> | 서비스 링크·QR·화면 8장·기술 사양·검증·한계 (6쪽). 재생성: <code class="language-plaintext highlighter-rouge">node build/techdoc.mjs</code> | ✔ 제작(2026-10-22) |
+| 서비스 링크 | — | https://soonryu74.github.io/movesafe/ (배포 완료, 라이브 E2E 18/18) | ✔ |
 | 시연 영상(권장) | <code class="language-plaintext highlighter-rouge">MoveSafeAI_시연_90초.mp4</code> | <code class="language-plaintext highlighter-rouge">submission/DEMO_SCRIPT.md</code> 대로 실제 카메라 화면 녹화 | 미녹화 |
 | 화면 캡처 | <code class="language-plaintext highlighter-rouge">evidence/01~07-*.png</code> | 생성 완료 | ✔ |</p>
 
@@ -77,9 +77,9 @@
 
 <h2 id="e-남은-작업-우선순위-3">E. 남은 작업 우선순위 3</h2>
 <ol>
-  <li>main 병합·배포 후 실제 카메라로 3개 운동 검증(임계값 체감 조정 필요 시 <code class="language-plaintext highlighter-rouge">js/exercise-rules.js</code> THR)</li>
-  <li>발표 슬라이드 PDF</li>
-  <li>90초 시연 영상</li>
+  <li>실제 카메라로 3개 운동 검증(임계값 체감 조정 필요 시 <code class="language-plaintext highlighter-rouge">js/exercise-rules.js</code> THR)</li>
+  <li>접수 화면 입력: 분야 ‘경기력 향상 기술’, 작품 소개(1000자 문안은 채팅 기록), 첨부 2개 업로드</li>
+  <li>90초 시연 영상(선택) — 녹화 후 ‘기타’ 또는 ‘기술 및 제품 자료’에 추가</li>
 </ol>
 
 
