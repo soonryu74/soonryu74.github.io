@@ -404,9 +404,11 @@
     var left = live.filter(function (m) { return m.mokja_id && !(data[m.id] && data[m.id].j.status === 'submitted'); });
     var can = left.length && week <= C.mondayOf();   // 다가올 주에는 보내지 않는다
     $('#remind-row').hidden = !can;
-    if (can) $('#btn-remind').textContent = T('제출 안 한 목장에 알림 보내기 ({0}곳)', left.length);
+    if (can) $('#btn-remind').textContent = T('안 낸 목장에 앱 알림 ({0}곳)', left.length);
     $('#btn-remind').dataset.n = left.length;
+    remindLeft = left;
   }
+  var remindLeft = [];
   function bindRemind() {
     $('#btn-remind').addEventListener('click', async function () {
       var b = this;
@@ -419,6 +421,21 @@
         C.say($('#msg-remind'), msg, r.reached ? 'ok' : 'err', true);
       } catch (e) { C.say($('#msg-remind'), e.message, 'err'); }
       b.disabled = false;
+    });
+
+    // 카카오톡: 안 낸 목장 목록 + 바로 쓰는 주소를 글로 만들어 목자 단톡방에 보낸다 (휴대폰 '공유' → 카카오톡)
+    $('#btn-remind-kakao').addEventListener('click', async function () {
+      var c = C.getChurch() || {};
+      var text = T('[{0}] {1} 목장 일기를 아직 제출하지 않은 목장입니다.', c.name || '', C.weekLabel(week)) + '\n' +
+        remindLeft.map(function (m) { return '· ' + m.name + (m.mokja_name ? ' (' + T('{0} 목자님', m.mokja_name) + ')' : ''); }).join('\n') + '\n\n' +
+        T('모임 이야기와 기도제목을 올려 주세요. 여기서 바로 쓰실 수 있습니다:') + '\n' + C.churchLink(c);
+      if (navigator.share && !C.inApp()) {
+        try { await navigator.share({ text: text }); C.say($('#msg-remind'), T('공유 창에서 카카오톡 → 목자 단톡방을 고르시면 됩니다.'), 'ok'); return; }
+        catch (e) { if (e && e.name === 'AbortError') return; }
+      }
+      var copied = false; try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+      C.say($('#msg-remind'), (copied ? T('알림 글을 복사했습니다. 카카오톡 목자 단톡방에 붙여 넣어 보내 주세요.')
+        : T('아래 글을 길게 눌러 복사해서 카카오톡 목자 단톡방에 보내 주세요.')) + '\n\n' + text, 'ok', true);
     });
 
     var DOWS = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
