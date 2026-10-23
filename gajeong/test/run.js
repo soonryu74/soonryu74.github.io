@@ -599,6 +599,37 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[입장 링크] 목사님이 만든 링크로 목자가 비밀번호 없이 들어감');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    p.on('dialog', d => d.accept());
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    await p.click('#entry-make'); await p.waitForTimeout(500);
+    const items = await p.$$('#entry-list .list-item');
+    ok('목자마다 입장 링크', items.length === 1 && (await p.textContent('#entry-list')).includes('김목자') && /#key=ENTR-/.test(await p.textContent('#entry-list')));
+    ok('새 주소로 아직 안 들어온 목자 표시', (await p.textContent('#entry-list')).includes('아직 안 들어옴'));
+    const link = (await p.textContent('#entry-list .list-item .s')).trim().replace('/bangjoo/', '/index.html?c=bangjoo');   // 교회 주소 폴더는 배포 때 index.html로 다시 만들어진다
+    await p.evaluate(() => CHURCH.sb.auth.signOut());
+    await p.goto(link); await p.waitForURL(/mokjang\.html/, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(600);
+    ok('링크를 누르면 비밀번호 없이 목자 화면', /mokjang\.html/.test(p.url()) && (await p.textContent('.top')).includes('김목자'), p.url());
+    await p.evaluate(() => CHURCH.sb.auth.signOut());
+    await p.goto(link.replace(/#key=.*/, '#key=ABCD-EFGH-JKMN')); await p.waitForTimeout(800);
+    ok('틀린 링크는 안내', /입장 링크가 맞지 않습니다/.test(await p.textContent('#msg-login')));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
+  console.log('\n[카톡 안 화면] 알림 대신 크롬·사파리로 열기 안내 · 머리말 내 사진');
+  { const { c, p } = await ctx(b, { device: { userAgent: 'Mozilla/5.0 (Linux; Android 14; SM-S918N; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/128.0 Mobile Safari/537.36 KAKAOTALK 10.8.0' } });
+    await login(p, 'pastor1');
+    ok('카톡 안: 위 안내 띠에 크롬·사파리로 열기', await p.isVisible('#notify-ask') && (await p.textContent('#notify-ask-on')).includes('크롬'));
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    ok('카톡 안: 상태와 열기 단추', (await p.textContent('#notify-state')).includes('카카오톡') && await p.isVisible('#notify-help .open-ext') && !(await p.isVisible('#notify-on')));
+    await p.evaluate(() => { const D = window.__DB(); D.church_profile.find(x => x.id === 'p1').photo_path = 'cb/p_p1.jpg'; D.__photos = { 'cb/p_p1.jpg': { type: 'image/jpeg', size: 100 } }; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(500);
+    ok('머리말 이름 옆에 내 사진', (await p.$$('.top .who-avatar img')).length === 1);
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);

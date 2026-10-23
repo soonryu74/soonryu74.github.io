@@ -155,6 +155,22 @@
     var b = {}; try { b = JSON.parse(opt.body); } catch (e) {}
     record({ fn: u.split('/functions/v1/')[1], body: b });
     var reply = { ok: true };
+    if (u.indexOf('church-admin') >= 0 && b.action === 'entry_links') {
+      var mine = me();
+      DB.__keys = DB.__keys || {};
+      reply = { ok: true, links: DB.church_profile.filter(function (x) { return x.church_id === mine.church_id && x.role === 'mokja'; }).map(function (x, i) {
+        var k = 'ENTR-' + String(1000 + i) + '-' + x.id.toUpperCase().replace(/[^A-Z0-9]/g, '').padEnd(4, 'X').slice(0, 4);
+        Object.keys(DB.__keys).forEach(function (old) { if (DB.__keys[old] === x.id) delete DB.__keys[old]; });
+        DB.__keys[k.replace(/-/g, '')] = x.id;
+        return { user_id: x.id, name: x.name, login_id: x.login_id, key: k, since_move: false };
+      }) };
+    }
+    if (u.indexOf('church-admin') >= 0 && b.action === 'key_login') {
+      var kid = (DB.__keys || {})[String(b.key || '').toUpperCase().replace(/[^A-Z0-9]/g, '')];
+      var kp = kid && DB.church_profile.find(function (x) { return x.id === kid; });
+      if (!kp) { reply = { error: '입장 링크가 맞지 않습니다. 목사님께 새 링크를 받아 주세요' }; }
+      else { DB.__newpw = DB.__newpw || {}; DB.__newpw[kp.id] = 'keypw-' + kp.id; reply = { ok: true, login_id: kp.login_id, password: 'keypw-' + kp.id }; }
+    }
     if (u.indexOf('church-admin') >= 0 && b.action === 'check_slug') {   // 서버 slugProblem 흉내
       var taken = DB.church_church.some(function (x) { return x.slug === b.slug; });
       var bad = !/^[a-z][a-z0-9-]{0,18}[a-z0-9]$/.test(b.slug || '') ? '교회 주소는 영어 소문자와 숫자로 2~20자로 적어 주세요 (예: hanul)'
@@ -245,7 +261,7 @@
       var kuid = (DB.__keys || {})[String(b.key || '').toUpperCase().replace(/[^A-Z0-9]/g, '')];
       var kp = kuid && DB.church_profile.find(function (x) { return x.id === kuid; });
       if (!kp) reply = { error: '열쇠 코드가 맞지 않습니다' };
-      else { DB.__newpw[kuid] = 'pw' + (++nid); reply = { ok: true, login_id: kp.login_id, password: DB.__newpw[kuid] }; }
+      else { DB.__newpw = DB.__newpw || {}; DB.__newpw[kuid] = 'pw' + (++nid); reply = { ok: true, login_id: kp.login_id, password: DB.__newpw[kuid] }; }
     }
     if (u.indexOf('darak-admin') >= 0 && (b.action === 'new_key' || b.action === 'leader_new_key')) {
       var target = b.action === 'new_key' ? me() : DB.church_profile.find(function (x) { return x.id === b.user_id; });

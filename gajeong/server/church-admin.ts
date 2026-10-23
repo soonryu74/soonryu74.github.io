@@ -10,6 +10,8 @@
 //  · delete_church   : 교회 전체 지우기 — 교회 이름을 그대로 적어야 한다. 모든 계정·목장·일기·로고가 사라진다
 //  · new_recovery_code : 목사 복구 코드를 새로 받는다 (예전 코드는 못 쓰게 된다)
 //  · recover         : (로그인 전) 아이디 + 복구 코드로 새 비밀번호를 정한다. 다섯 번 틀리면 한 시간 잠근다
+//  · entry_links     : 목사가 목자들의 '개인 입장 링크'를 만든다 (누르면 비밀번호 없이 바로 그 목자로 들어감, 다시 만들면 예전 링크는 못 씀)
+//  · key_login       : (로그인 전) 입장 링크·열쇠 코드로 들어가기 — 그때마다 새 임시 비밀번호를 정해 화면이 바로 로그인한다
 //  · set_logo        : 우리 교회 로고(PNG, 화면에서 512px 이하로 줄여 보냄)를 올린다 / remove_logo : 지운다
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
@@ -86,6 +88,25 @@ async function slugProblem(slug: string): Promise<string | null> {
   if (RESERVED.has(slug)) return '이 주소는 쓸 수 없습니다. 다른 이름을 골라 주세요'
   const { data } = await admin.from('church_church').select('id').eq('slug', slug).maybeSingle()
   return data ? '이미 다른 교회가 쓰는 주소입니다. 다른 이름을 골라 주세요' : null
+}
+
+// 입장 링크·열쇠 코드: 12자. 해시만 저장하고 코드만으로 사람을 찾는다 (31^12 가지라 맞혀 볼 수 없다). 다락방 앱과 같은 표를 쓴다
+const MOVED_AT = '2026-10-20T21:20:00Z'   // mokjang.app으로 주소를 옮긴 때 — 그 뒤로 다시 들어왔는지 보여 준다
+async function issueKey(userId: string) {
+  const a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+  for (let i = 0; i < 5; i++) {
+    let raw = ''
+    for (const b of crypto.getRandomValues(new Uint8Array(12))) raw += a[b % a.length]
+    const { error } = await admin.from('church_key')
+      .upsert({ user_id: userId, code_hash: await sha('key:' + raw), created_at: new Date().toISOString() })
+    if (!error) return `${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8)}`
+  }
+  throw new Error('입장 링크를 만들지 못했습니다')
+}
+function randomText(n: number, a = 'abcdefghijkmnpqrstuvwxyz23456789') {
+  let s = ''
+  for (const b of crypto.getRandomValues(new Uint8Array(n))) s += a[b % a.length]
+  return s
 }
 
 // 복구 코드: 헷갈리는 글자(0/O, 1/I/L)를 뺀 12자. 해시만 저장한다
@@ -197,6 +218,20 @@ Deno.serve(async (req) => {
       return json({ ok: true })
     }
 
+    // ── 입장 링크·열쇠 코드로 들어가기 (로그인 전) ──
+    if (action === 'key_login') {
+      const raw = normCode(String(body.key ?? ''))
+      const { data: k } = raw.length === 12
+        ? await admin.from('church_key').select('user_id').eq('code_hash', await sha('key:' + raw)).maybeSingle() : { data: null }
+      if (!k) return json({ error: '입장 링크가 맞지 않습니다. 목사님께 새 링크를 받아 주세요' }, 403)
+      const { data: pf } = await admin.from('church_profile').select('login_id').eq('id', k.user_id).maybeSingle()
+      if (!pf) return json({ error: '계정을 찾지 못했습니다' }, 404)
+      const pw = randomText(32)
+      const { error } = await admin.auth.admin.updateUserById(k.user_id, { password: pw })
+      if (error) throw new Error(error.message)
+      return json({ ok: true, login_id: pf.login_id, password: pw })
+    }
+
     // ── 아래부터는 로그인한 목사만 ──────────────────────────────
     const me = await callerProfile(req)
     if (!me) return json({ error: '로그인이 필요합니다' }, 401)
@@ -215,6 +250,23 @@ Deno.serve(async (req) => {
 
     if (me.role !== 'pastor') return json({ error: '목사 계정만 쓸 수 있습니다' }, 403)
     if (!me.church_id) return json({ error: '교회 정보가 없는 계정입니다' }, 403)
+
+    // 목자 개인 입장 링크 — user_id를 주면 그 사람만, 없으면 우리 교회 목자 모두
+    if (action === 'entry_links') {
+      const only = String(body.user_id ?? '')
+      const { data: people } = await admin.from('church_profile').select('id, name, login_id, role')
+        .eq('church_id', me.church_id).eq('role', 'mokja')
+      const list = (people ?? []).filter((p) => !only || p.id === only)
+      if (only && !list.length) return json({ error: '우리 교회 계정이 아닙니다' }, 403)
+      const out = []
+      for (const p of list) {
+        const { data: u } = await admin.auth.admin.getUserById(p.id)
+        const last = u?.user?.last_sign_in_at ?? null
+        out.push({ user_id: p.id, name: p.name, login_id: p.login_id, key: await issueKey(p.id),
+          since_move: !!last && last >= MOVED_AT })
+      }
+      return json({ ok: true, links: out })
+    }
 
     if (action === 'new_recovery_code') {
       return json({ ok: true, recovery_code: await issueRecovery(me.id) })

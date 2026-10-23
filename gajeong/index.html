@@ -29,7 +29,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610221900">
+<link rel="stylesheet" href="style.css?v=202610232200">
 <style>
   .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
   .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
@@ -230,8 +230,8 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610221900"></script>
-<script src="common.js?v=202610221900"></script>
+<script src="lang-en.js?v=202610232200"></script>
+<script src="common.js?v=202610232200"></script>
 <script>
 (function () {
   var C = window.CHURCH, $ = C.$;
@@ -293,6 +293,22 @@ try { (function (m, q) { var s = q.get('c');
   $('#to-login').addEventListener('click', function () {
     $('#setup').style.display = 'none'; $('#login').style.display = 'block';
   });
+
+  // 목사님이 보낸 입장 링크(#key=…)로 오면 비밀번호 없이 바로 들어간다
+  (function () {
+    var m = /[#&?]key=([A-Za-z0-9-]{12,20})/.exec(location.hash + '&' + location.search);
+    if (!m) return;
+    history.replaceState(null, '', location.pathname + location.search.replace(/([?&])key=[^&]*&?/, '$1').replace(/[?&]$/, ''));
+    C.say($('#msg-login'), C.t('들어가는 중…'), 'ok');
+    (async function () {
+      try {
+        var r = await C.callAdmin({ action: 'key_login', key: m[1] });
+        await C.signIn(r.login_id, r.password);
+        var p = await C.me();
+        location.replace(p && p.role === 'pastor' ? 'moksa.html' : 'mokjang.html');
+      } catch (err) { C.say($('#msg-login'), err.message, 'err'); }
+    })();
+  })();
 
   $('#form-login').addEventListener('submit', async function (e) {
     e.preventDefault();
