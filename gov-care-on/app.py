@@ -558,7 +558,7 @@ st.markdown(
 <div class="gc-hero">
   <span class="tag">2026 공공 AI 대전환 챌린지 · 세션 1</span>
   <h1>🏛️ 국민 곁에 ON <span style="font-weight:400;font-size:18px;color:#cbd5e1;">Gov-Care Navigator</span></h1>
-  <p>보건복지부·질병관리청 지침 원문을 한 번에 대조해, 위기 가구가 받을 수 있는 지원을 조문 근거와 함께 찾아내고 서류까지 준비합니다.</p>
+  <p>{"·".join(ministries)} 지침 원문을 한 번에 대조해, 위기 가구가 받을 수 있는 지원을 조문 근거와 함께 찾아내고 서류까지 준비합니다.</p>
   <div class="meta">📚 투입 원문: {doc_meta} &nbsp;|&nbsp; 🏢 참여 기관 {len(ministries)}곳 · 제도 {len(programs)}종 &nbsp;|&nbsp; 🔒 읽기 전용 · 규칙 SHA-256 <code>{rules_sha}</code></div>
 </div>
 """,
