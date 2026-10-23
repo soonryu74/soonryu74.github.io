@@ -25,14 +25,14 @@ export default function Home() {
       </section>
       <section className="stats" aria-label="한눈에 보기">
         <div className="stat"><b>{DATA.facilities.length.toLocaleString()}</b><span>공공체육시설</span></div>
-        <div className="stat"><b>{DATA.facilities.filter((f) => f.barrierFree).length.toLocaleString()}</b><span>무장애 시설</span></div>
+        <div className="stat"><b>{DATA.facilities.filter((f) => f.barrierFree).length.toLocaleString()}</b><span>장애인 체육시설</span></div>
         <div className="stat"><b>{Math.round(target / 10000).toLocaleString()}만 명</b><span>65세 이상 + 등록장애인</span></div>
         <div className="stat warn"><b>{low.map((l) => l.name).join(' · ')}</b><span>접근성 지수 하위 3곳</span></div>
       </section>
       <section className="two">
         <a className="card link-card" href="#/find">
           <h2>시민용 · 운동할 곳 찾기</h2>
-          <p>“80세 엄마가 휠체어를 쓰셔요, 비 와도 갈 수 있는 곳” 처럼 말로 적으면 무장애·실내·어르신 프로그램 조건을 알아듣고 가까운 순으로 보여 줍니다.</p>
+          <p>“80세 엄마가 휠체어를 쓰셔요, 비 와도 갈 수 있는 곳” 처럼 말로 적으면 무장애·실내·장애인 강좌·어르신 친화 종목 조건을 알아듣고 가까운 순으로 보여 줍니다.</p>
         </a>
         <a className="card link-card" href="#/map">
           <h2>행정용 · 격차 지도</h2>

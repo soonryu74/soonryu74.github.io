@@ -42,12 +42,12 @@ export default function GapMapPage({ region }: { region?: string }) {
               <dl className="kv">
                 <dt>65세 이상</dt><dd>{stat.age65.toLocaleString()}명</dd>
                 <dt>등록장애인</dt><dd>{stat.disabled.toLocaleString()}명</dd>
-                <dt>공공체육시설</dt><dd>{selBase.facilities}곳 (무장애 {selBase.barrierFree}곳)</dd>
+                <dt>공공체육시설</dt><dd>{selBase.facilities}곳 (장애인 체육시설 {selBase.barrierFree}곳)</dd>
                 <dt>대상 1만 명당 점수</dt><dd>{selBase.density.toFixed(1)}점 (경기도 {avg.toFixed(1)}점)</dd>
               </dl>
               <div className="sim">
                 <h3>우선 투자 시뮬레이션</h3>
-                <p className="small muted">무장애 + 어르신·장애인 프로그램을 갖춘 시설 1곳 = {W.base + W.barrierFree + W.senior + W.disabledProg}점</p>
+                <p className="small muted">장애인 체육시설(무장애) + 장애인 강좌 + 어르신 친화 종목을 갖춘 시설 1곳 = {W.base + W.barrierFree + W.senior + W.disabledProg}점</p>
                 <label className="sim-row">
                   <span>새 시설</span>
                   <input type="range" min={0} max={20} value={add} onChange={(e) => setSim({ ...sim, [sel.name]: Number(e.target.value) })} aria-label="추가할 시설 수" />

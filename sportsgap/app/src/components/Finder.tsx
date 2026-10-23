@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { DATA, REGION_NAMES } from '../data';
 import { EMPTY_NEEDS, matchFacilities, parseNeeds, type Needs } from '../engine/match';
 
-const TYPES = ['체육관', '수영장', '생활체육공원', '걷기길', '파크골프장', '게이트볼장', '다목적구장', '장애인체육관'];
+const TYPES = ['체육관', '수영장', '장애인 체육시설', '파크골프장', '게이트볼장', '육상경기장', '테니스장', '풋살장', '구기장(축구·야구 등)'];
 const EXAMPLES = [
   '80세 엄마가 휠체어를 쓰셔요. 비 와도 갈 수 있는 곳',
   '무릎이 안 좋은 70대 아버지가 운동할 곳',
@@ -63,8 +63,8 @@ export default function Finder() {
             <legend>필요한 조건</legend>
             <div className="chips">
               <button className="chip" aria-pressed={needs.wheelchair} onClick={() => toggle('wheelchair')}>♿ 무장애(휠체어)</button>
-              <button className="chip" aria-pressed={needs.senior} onClick={() => toggle('senior')}>어르신 프로그램</button>
-              <button className="chip" aria-pressed={needs.disabled} onClick={() => toggle('disabled')}>장애인 프로그램</button>
+              <button className="chip" aria-pressed={needs.senior} onClick={() => toggle('senior')}>어르신 친화 종목</button>
+              <button className="chip" aria-pressed={needs.disabled} onClick={() => toggle('disabled')}>장애인 강좌</button>
               <button className="chip" aria-pressed={needs.indoor} onClick={() => toggle('indoor')}>실내</button>
             </div>
           </fieldset>
@@ -91,8 +91,8 @@ export default function Finder() {
                 </div>
                 <ul className="tags">
                   {f.barrierFree && <li className="t ok">♿ 무장애</li>}
-                  {f.senior && <li className="t">어르신 프로그램</li>}
-                  {f.disabledProg && <li className="t">장애인 프로그램</li>}
+                  {f.senior && <li className="t">어르신 친화 종목</li>}
+                  {f.disabledProg && <li className="t">장애인 강좌</li>}
                 </ul>
                 {reasons.length > 0 && <p className="small">✓ 맞는 조건: {reasons.join(', ')}</p>}
                 {missing.length > 0 && <p className="small warn-text">! 다른 점: {missing.join(', ')}</p>}
