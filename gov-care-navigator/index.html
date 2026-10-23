@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>🏛️ 국민 곁에 ON (Gov-Care Navigator) | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="🏛️ 국민 곁에 ON (Gov-Care Navigator)" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="🏛️ 국민 곁에 ON (Gov-Care Navigator)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"🏛️ 국민 곁에 ON (Gov-Care Navigator)","url":"/gov-care-navigator/"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=0bc44ec18e757773eaf78b698423801b2ac30035">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="️-국민-곁에-on-gov-care-navigator">🏛️ 국민 곁에 ON (Gov-Care Navigator)</h1>
+<blockquote>
+  <p><strong>2026년 공공 AI 대전환 챌린지 [세션 1: AI 정부 실험실 챔피언십] 출품작</strong></p>
+</blockquote>
+
+<h2 id="1-주요-기능">1. 주요 기능</h2>
+<ul>
+  <li><strong>신청주의 타파 &amp; 부처 칸막이 해체</strong>: 질병청·복지부·지자체 지침 동시 탐색.</li>
+  <li><strong>수리적 규칙 엔진 + 멀티 LLM 하이브리드</strong>: 파이썬 수식 검증으로 환각(Hallucination) 방지.</li>
+  <li><strong>행안부 공통기반 4대 모델 실시간 교체</strong>: Gemma, EXAONE, HyperCLOVA X, Solar 어댑터 지원.</li>
+  <li><strong>원본 절대 보호(Read-Only)</strong>: <code class="language-plaintext highlighter-rouge">input_readonly/</code> 읽기 전용 보호 및 <code class="language-plaintext highlighter-rouge">output_generated/</code> 격리 저장.</li>
+</ul>
+
+<h2 id="2-폴더-구성">2. 폴더 구성</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gov-care-navigator/
+├─ app.py              # Streamlit 앱 본체
+├─ requirements.txt    # 필요 패키지 (streamlit, pandas)
+├─ run.bat             # Windows 더블클릭 실행
+├─ run.sh              # Mac / Linux 실행
+├─ input_readonly/     # 실행 시 자동 생성 (원본 지침, 읽기 전용)
+└─ output_generated/   # 실행 시 자동 생성 (산출물 격리 저장)
+</code></pre></div></div>
+
+<h2 id="3-구동-방법">3. 구동 방법</h2>
+
+<h3 id="사전-준비">사전 준비</h3>
+<p>Python 3.10 이상이 설치되어 있어야 합니다. 터미널에서 확인하세요.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left"> </th>
+      <th style="text-align: left">Windows (PowerShell / CMD)</th>
+      <th style="text-align: left">Mac (터미널)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">버전 확인</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">python --version</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">python3 --version</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">설치 안 됐을 때</td>
+      <td style="text-align: left">https://www.python.org/downloads/ 에서 설치 (설치 시 <strong>Add python.exe to PATH</strong> 체크)</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">brew install python</code> 또는 python.org에서 설치</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="방법-a-스크립트로-한-번에-실행">방법 A. 스크립트로 한 번에 실행</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Windows</th>
+      <th style="text-align: left">Mac</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">run.bat</code> 더블클릭</td>
+      <td style="text-align: left">터미널에서 아래 두 줄 실행</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">chmod +x run.sh</code> (최초 1회)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">./run.sh</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="방법-b-직접-명령어-입력">방법 B. 직접 명령어 입력</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">단계</th>
+      <th style="text-align: left">Windows (PowerShell / CMD)</th>
+      <th style="text-align: left">Mac (터미널)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">1. 폴더 이동</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">cd 경로\gov-care-navigator</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">cd 경로/gov-care-navigator</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">2. 가상환경 생성 (권장, 최초 1회)</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">python -m venv .venv</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">python3 -m venv .venv</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">3. 가상환경 활성화</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">.venv\Scripts\activate</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">source .venv/bin/activate</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">4. 패키지 설치</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">pip install -r requirements.txt</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">pip install -r requirements.txt</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">5. 앱 실행</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">streamlit run app.py</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">streamlit run app.py</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>PowerShell에서 3단계가 “스크립트 실행이 비활성화” 오류로 막히면 아래를 한 번 실행한 뒤 다시 시도하세요.
+<code class="language-plaintext highlighter-rouge">Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code></p>
+</blockquote>
+
+<h3 id="접속">접속</h3>
+<p>브라우저에서 <code class="language-plaintext highlighter-rouge">http://localhost:8501</code> 접속 후 시나리오 원클릭 테스트.
+종료는 터미널에서 <code class="language-plaintext highlighter-rouge">Ctrl + C</code> (Windows / Mac 동일).</p>
+
+<h2 id="4-자주-생기는-문제">4. 자주 생기는 문제</h2>
+<p>| 증상 | 원인 / 해결 |
+| :— | :— |
+| <code class="language-plaintext highlighter-rouge">streamlit: command not found</code> | 가상환경이 활성화되지 않음. 3단계를 다시 실행하거나 <code class="language-plaintext highlighter-rouge">python -m streamlit run app.py</code> 로 실행 |
+| 포트 8501 사용 중 | <code class="language-plaintext highlighter-rouge">streamlit run app.py --server.port 8502</code> 처럼 다른 포트 지정 |
+| 한글 깨짐 (Windows CMD) | <code class="language-plaintext highlighter-rouge">chcp 65001</code> 입력 후 실행 (run.bat에는 포함됨) |</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
