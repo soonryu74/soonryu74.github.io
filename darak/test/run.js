@@ -716,6 +716,28 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[목장 목록] 단추 설명 · 줄마다 입장 링크 · 목장 지우기는 이름을 적어야');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    let typeName = '', keepAccount = true;
+    p.on('dialog', d => d.type() === 'prompt' ? d.accept(typeName) : (d.message().includes('계정도') && keepAccount ? d.dismiss() : d.accept()));
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    ok('단추 설명이 목록 위에', await p.isVisible('#manage-list') && (await p.textContent('.btn-guide summary')).includes('단추 설명'));
+    await p.click('#manage-list .list-item[data-mj="mj1"] .act-link'); await p.waitForTimeout(500);
+    ok('줄마다 입장 링크 → 링크 안내', /#key=ENTR-/.test(await p.textContent('#msg-manage')));
+    typeName = '다른 이름';
+    await p.click('#manage-list .list-item[data-mj="mj1"] .act-drop'); await p.waitForTimeout(400);
+    ok('목장 이름을 틀리면 지우지 않음', (await db(p)).church_mokjang.some(x => x.id === 'mj1') && /맞지 않아 지우지 않았습니다/.test(await p.textContent('#msg-manage')));
+    typeName = '';
+    await p.click('#manage-list .list-item[data-mj="mj1"] .act-drop'); await p.waitForTimeout(400);
+    ok('[취소]·빈칸이면 지우지 않음', (await db(p)).church_mokjang.some(x => x.id === 'mj1'));
+    typeName = (await db(p)).church_mokjang.find(x => x.id === 'mj1').name;
+    await p.click('#manage-list .list-item[data-mj="mj1"] .act-drop'); await p.waitForTimeout(600);
+    const d = await db(p);
+    ok('이름을 맞게 적으면 목장만 지우고 계정은 남김', !d.church_mokjang.some(x => x.id === 'mj1') && d.church_profile.some(x => x.id === 'm1'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);

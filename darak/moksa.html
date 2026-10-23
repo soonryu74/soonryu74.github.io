@@ -15,7 +15,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="다락방나눔터">
-<link rel="stylesheet" href="style.css?v=202610232200">
+<link rel="stylesheet" href="style.css?v=202610232330">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -239,6 +239,20 @@ try { (function (m, q) { var s = q.get('c');
     <div class="card">
       <h2>목장 목록</h2>
       <p class="desc">비밀번호를 잊은 목자는 여기서 새 비밀번호를 정해 주시면 됩니다.</p>
+      <details class="btn-guide">
+        <summary>단추 설명 — 누르기 전에 확인하세요</summary>
+        <ul>
+          <li>[입장 링크] 그 목자가 누르기만 하면 비밀번호 없이 바로 들어가는 링크를 만들어 복사합니다. 못 들어오는 목자에게 카카오톡으로 보내 주세요.</li>
+          <li>[비밀번호 새로] 목자 비밀번호를 새로 정합니다. 목장 자료는 그대로입니다.</li>
+          <li>[열쇠 코드 새로] 비밀번호 없이 쓰는 순장이 열쇠 코드를 잃어버렸을 때 새 코드를 만듭니다. 예전 코드는 쓸 수 없게 됩니다.</li>
+          <li>[사진] 목자 얼굴 사진을 대신 넣습니다.</li>
+          <li>[이름 고치기] 목장 이름이나 목자 이름을 고칩니다.</li>
+          <li>[잠시 쉼으로] 모임을 쉬는 목장을 주간 현황·통계에서 잠시 뺍니다. 자료는 그대로이고 [다시 활동]으로 되돌립니다.</li>
+          <li class="warn">[계정 삭제] 그 목자의 계정만 지웁니다. 목장·목원·일기·기도제목은 남습니다. 목자가 바뀔 때 씁니다.</li>
+          <li class="warn">[목장 지우기] 목장을 통째로 지웁니다. 목원 명단과 지금까지의 일기·기도제목이 모두 사라집니다. 시험으로 만든 목장을 치울 때만 쓰세요. 지울 때 목장 이름을 그대로 적어야 지워집니다.</li>
+        </ul>
+        <p class="hint">계정 삭제와 목장 지우기는 목사님만 할 수 있습니다. 잘못 지웠다면 바로 운영자에게 알려 주세요. 매일 백업해 두어 30일 안의 자료는 되살릴 수 있습니다.</p>
+      </details>
       <input id="mokja-photo-file" type="file" accept="image/*" hidden>
       <div class="msg" id="msg-manage"></div>
       <div id="manage-list"></div>
@@ -300,9 +314,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610232200"></script>
-<script src="common.js?v=202610232200"></script>
-<script src="moksa.js?v=202610232200"></script>
+<script src="lang-en.js?v=202610232330"></script>
+<script src="common.js?v=202610232330"></script>
+<script src="moksa.js?v=202610232330"></script>
 
 </body>
 </html>
