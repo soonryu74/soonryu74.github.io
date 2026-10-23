@@ -380,27 +380,31 @@ def build_context(case: dict, results: list[dict], cross_notes: list[dict], pass
 
 
 def generate_documents(provider: str, url: str, model: str, api_key: str, context: str) -> tuple[dict, str, list[str]]:
-    outputs, warnings = {}, []
-    engine_label = "내장 템플릿 엔진 (LLM 미사용)"
+    """3종 문서를 병렬로 호출. 하나라도 실패하면 전부 템플릿으로 대체."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    warnings = []
     cfg = PROVIDERS.get(provider)
-    if cfg is not None and url.strip().startswith("http") and model.strip():
-        ok_all = True
-        for key, (title, instr) in DOC_SPECS.items():
-            try:
-                outputs[key] = chat_complete(url.strip(), model.strip(), api_key, SYSTEM_PROMPT, f"{instr}\n\n{context}")
-            except urllib.error.HTTPError as e:
-                warnings.append(f"{title}: HTTP {e.code} ({e.reason})")
-                ok_all = False
-                break
-            except Exception as e:  # noqa: BLE001
-                warnings.append(f"{title}: {type(e).__name__} - {e}")
-                ok_all = False
-                break
-        if ok_all and len(outputs) == 3:
-            return outputs, f"LLM 생성 · {model} @ {url.split('/')[2]}", warnings
-        outputs = {}
-        warnings.append("LLM 호출에 실패하여 내장 템플릿으로 대체했습니다.")
-    return outputs, engine_label, warnings
+    if cfg is None or not url.strip().startswith("http") or not model.strip():
+        return {}, "내장 템플릿 엔진 (LLM 미사용)", warnings
+
+    def _one(item):
+        key, (title, instr) = item
+        try:
+            return key, chat_complete(url.strip(), model.strip(), api_key, SYSTEM_PROMPT, f"{instr}\n\n{context}"), None
+        except urllib.error.HTTPError as e:
+            return key, None, f"{title}: HTTP {e.code} ({e.reason})"
+        except Exception as e:  # noqa: BLE001
+            return key, None, f"{title}: {type(e).__name__} - {e}"
+
+    with ThreadPoolExecutor(max_workers=3) as ex:
+        results = list(ex.map(_one, DOC_SPECS.items()))
+    outputs = {k: v for k, v, err in results if v}
+    warnings.extend(err for _, _, err in results if err)
+    if len(outputs) == 3:
+        return outputs, f"LLM 생성 · {model} @ {url.split('/')[2]} (3종 병렬)", warnings
+    warnings.append("LLM 호출에 실패하여 내장 템플릿으로 대체했습니다.")
+    return {}, "내장 템플릿 엔진 (LLM 미사용)", warnings
 
 
 # ──────────────────────────────────────────────────────────────
