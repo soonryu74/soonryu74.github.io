@@ -23,7 +23,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610221900">
+<link rel="stylesheet" href="style.css?v=202610232200">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -117,6 +117,15 @@ try { (function (m, q) { var s = q.get('c');
   </section>
 
   <section class="pane" id="pane-manage">
+    <div class="card" id="entry-card">
+      <h2>목자 입장 링크</h2>
+      <p class="desc">목자가 누르기만 하면 아이디·비밀번호 없이 바로 들어가는 개인 링크입니다. 들어가지 못하는 목자에게 카카오톡으로 보내 주세요.</p>
+      <div class="row"><button type="button" class="primary" id="entry-make">입장 링크 만들기</button>
+        <button type="button" id="entry-copy-all" hidden>모두 복사</button></div>
+      <div id="entry-list"></div>
+      <p class="hint">링크를 받은 사람은 그 목자로 들어갈 수 있으니 본인에게만 보내 주세요. 다시 만들면 예전 링크는 쓸 수 없습니다.</p>
+      <div class="msg" id="msg-entry"></div>
+    </div>
     <div class="card" id="deadline-card">
       <h2>마감 알림</h2>
       <p class="desc">정한 때까지 일기를 제출하지 않은 목자에게 휴대전화 알림을 한 번 보냅니다. 알림을 켠 목자에게만 갑니다.</p>
@@ -280,9 +289,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610221900"></script>
-<script src="common.js?v=202610221900"></script>
-<script src="moksa.js?v=202610221900"></script>
+<script src="lang-en.js?v=202610232200"></script>
+<script src="common.js?v=202610232200"></script>
+<script src="moksa.js?v=202610232200"></script>
 
 </body>
 </html>

@@ -384,7 +384,17 @@ window.CHURCH = (function () {
   async function pushRegistration() {
     return navigator.serviceWorker.register('sw.js', { scope: './' });
   }
+  // 카카오톡·네이버·인스타그램 같은 앱 안에서 열린 화면 (휴대폰 알림을 못 받는다)
+  function inApp() { return /KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|; wv\)/i.test(navigator.userAgent); }
+  // 지금 화면을 크롬(안드로이드)·사파리(아이폰)로 다시 연다
+  function openExternal() {
+    var url = location.href.replace(/#.*$/, '');
+    if (/KAKAOTALK/i.test(navigator.userAgent)) { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url); return; }
+    if (/android/i.test(navigator.userAgent)) { location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end'; return; }
+    alert(t('오른쪽 위(또는 아래) 메뉴에서 [Safari로 열기]를 눌러 주세요.'));
+  }
   async function pushState() {
+    if (inApp()) return 'inapp';
     if (!pushSupported()) return isIOS() && !standalone() ? 'ios-home' : 'unsupported';
     if (Notification.permission === 'denied') return 'denied';
     var reg = await navigator.serviceWorker.getRegistration('./');
@@ -433,13 +443,14 @@ window.CHURCH = (function () {
       '<div class="titles"><h1>' + esc(title) + '</h1>' +
       '<span class="church">' + esc(c.name || t('목장 나눔터')) + '</span></div>' +
       (extraHtml || '') +
-      '<div class="who"><span>' + esc(title2(profile)) + '</span>' +
+      '<div class="who"><span class="who-avatar"></span><span>' + esc(title2(profile)) + '</span>' +
       langButton() +
       '<button class="small" id="btn-signout">' + esc(t('로그아웃')) + '</button></div></div>';
     document.body.insertBefore(el, document.body.firstChild);
     el.querySelector('#btn-signout').addEventListener('click', signOut);
     bindLangButton(el);
     if (c.logo_url) { var fav = document.querySelector('link[rel="icon"]'); if (fav) fav.href = c.logo_url; }
+    topAvatar(profile);
     return el;
   }
 
@@ -514,6 +525,12 @@ window.CHURCH = (function () {
     await sb.from(table || 'church_mokwon').update({ photo_path: null }).eq('id', m.id);
     m.photo_path = null;
   }
+  // 머리말 이름 옆에 내 사진 (카톡 프로필처럼) — 사진이 없으면 비워 둔다
+  async function topAvatar(p) {
+    var slot = document.querySelector('.top .who-avatar'); if (!slot) return;
+    if (!has('member_photos') || !p.photo_path) { slot.innerHTML = ''; return; }
+    try { var u = (await photoUrls([p]))[p.id]; slot.innerHTML = u ? '<img class="avatar" src="' + esc(u) + '" alt="">' : ''; } catch (e) {}
+  }
   // [내 계정]의 '내 사진' 칸 (목자·목사 공통) — 목사님이 목자 얼굴을 알아볼 수 있게
   function bindMyPhoto(p) {
     var card = $('#my-photo-card'); if (!card || !has('member_photos')) return;
@@ -522,6 +539,7 @@ window.CHURCH = (function () {
       var u = (await photoUrls([p]))[p.id];
       $('#my-photo').innerHTML = avatar(p, u);
       $('#my-photo-del').hidden = !p.photo_path;
+      topAvatar(p);
     }
     $('#my-photo-pick').addEventListener('click', function () { $('#my-photo-file').value = ''; $('#my-photo-file').click(); });
     $('#my-photo-file').addEventListener('change', async function () {
@@ -590,7 +608,7 @@ window.CHURCH = (function () {
     header: header, title2: title2,
     loadChurch: loadChurch, publicChurch: publicChurch, rememberChurch: rememberChurch,
     churchLink: churchLink, logoOf: logoOf, getChurch: function () { return church; }, fillTimezones: fillTimezones,
-    pushSupported: pushSupported, pushState: pushState, pushEnable: pushEnable, pushDisable: pushDisable,
+    pushSupported: pushSupported, pushState: pushState, inApp: inApp, openExternal: openExternal, pushEnable: pushEnable, pushDisable: pushDisable,
     isIOS: isIOS, standalone: standalone,
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,

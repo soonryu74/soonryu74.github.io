@@ -71,7 +71,8 @@
   function bindNotify() {
     if (solo) { $('#notify-card').hidden = true; return; }   // 혼자 쓰는 다락방은 말씀 남길 목사님이 없다
     $('#notify-on').addEventListener('click', function () { turnOn($('#msg-notify')); });
-    $('#notify-ask-on').addEventListener('click', function () { turnOn($('#msg-notify-ask')); });
+    $('#notify-ask-on').addEventListener('click', function () { if (C.inApp()) return C.openExternal(); turnOn($('#msg-notify-ask')); });
+    document.addEventListener('click', function (e) { if (e.target.closest('.open-ext')) C.openExternal(); });
     $('#notify-ask-later').addEventListener('click', function () {
       try { localStorage.setItem(ASK_LATER, String(Date.now())); } catch (e) {}
       $('#notify-ask').hidden = true;
@@ -103,23 +104,27 @@
     var st = 'unsupported';
     try { st = await C.pushState(); } catch (e) {}
     var label = { on: T('이 기기에서 받는 중'), off: T('꺼져 있음'), denied: T('브라우저에서 막혀 있음'),
-                  'ios-home': T('홈 화면에 추가해야 함'), unsupported: T('이 브라우저는 알림을 못 받음') }[st];
+                  'ios-home': T('홈 화면에 추가해야 함'), unsupported: T('이 브라우저는 알림을 못 받음'),
+                  inapp: T('카카오톡 안에서는 알림을 못 받음') }[st];
     var help = {
       on: T('다른 휴대전화나 컴퓨터에서도 받으시려면 그 기기에서 한 번 더 켜 주세요.'),
       off: '',
       denied: T('주소창 왼쪽 자물쇠(또는 설정 → 사이트 설정 → 알림)에서 이 사이트 알림을 허용으로 바꿔 주세요.'),
       'ios-home': T('아이폰은 사파리 아래쪽 공유 단추 → [홈 화면에 추가]를 하신 뒤, 홈 화면의 아이콘으로 열어서 켜 주세요.'),
-      unsupported: T('안드로이드는 크롬, 아이폰은 사파리(홈 화면에 추가)에서 받을 수 있습니다.')
+      unsupported: T('안드로이드는 크롬, 아이폰은 사파리(홈 화면에 추가)에서 받을 수 있습니다.'),
+      inapp: T('카카오톡·네이버 앱 안에서 연 화면은 알림을 받을 수 없습니다. 크롬(아이폰은 사파리)으로 열어서 켜 주세요.')
     }[st];
     $('#notify-state').textContent = label;
     $('#notify-state').className = 'badge ' + (st === 'on' ? 'done' : 'todo');
     $('#notify-help').textContent = help;
-    $('#notify-on').hidden = st === 'on' || st === 'unsupported' || st === 'ios-home';
+    if (st === 'inapp') $('#notify-help').insertAdjacentHTML('beforeend', ' <button type="button" class="small primary open-ext">' + esc(T('크롬·사파리로 열기')) + '</button>');
+    $('#notify-on').hidden = st === 'on' || st === 'unsupported' || st === 'ios-home' || st === 'inapp';
     $('#notify-off').hidden = st !== 'on';
     $('#notify-test').hidden = st !== 'on';
     // 일기 쓰기 맨 위 안내: 아직 안 켰고, '나중에'를 누른 지 7일이 지났을 때만
     var later = 0; try { later = +localStorage.getItem(ASK_LATER) || 0; } catch (e) {}
-    $('#notify-ask').hidden = !((st === 'off' || st === 'ios-home') && Date.now() - later > 7 * 864e5);
+    $('#notify-ask').hidden = !((st === 'off' || st === 'ios-home' || st === 'inapp') && Date.now() - later > 7 * 864e5);
+    if (st === 'inapp') { $('#notify-ask-desc').textContent = help; $('#notify-ask-on').textContent = T('크롬·사파리로 열기'); }
     if (st === 'ios-home') { $('#notify-ask-desc').textContent = help; $('#notify-ask-on').hidden = true; }
   }
 

@@ -332,3 +332,7 @@ html[data-theme="night"] input[type=date]{color-scheme:dark}
 .st-table th{text-align:left; color:var(--muted); font-weight:500; font-size:13px; padding:6px 8px; border-bottom:1px solid var(--line-2)}
 .st-table td{padding:9px 8px; border-bottom:1px solid var(--line)}
 .st-table th:not(:first-child), .st-table td:not(:first-child){text-align:right; width:70px}
+
+/* 머리말 이름 옆 내 사진 */
+.top .who-avatar:empty{display:none}
+.top .who-avatar .avatar{width:30px; height:30px; border:2px solid rgba(255,255,255,.55); display:block}
