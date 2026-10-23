@@ -72,9 +72,11 @@
     $('#notify-test').addEventListener('click', async function () {
       var b = $('#notify-test'); b.disabled = true;
       try {
-        var r = await C.notify({ action: 'test' });
-        C.say($('#msg-notify'), r.sent ? T('시험 알림을 보냈습니다. 몇 초 안에 와야 합니다.')
-          : T('알림을 받을 기기가 없습니다. 먼저 [이 기기에서 알림 받기]를 눌러 주세요.'), r.sent ? 'ok' : 'err', true);
+        var r = await C.pushTest();
+        C.say($('#msg-notify'), r.sent
+          ? T('시험 알림 두 개를 보냈습니다. ① 이 휴대폰 알림, ② 서버 알림이 몇 초 안에 와야 합니다. 둘 다 안 보이면 휴대폰 설정 → 애플리케이션 → Chrome → 알림을 켜 주세요. ①만 오고 ②가 안 오면 운영자에게 알려 주세요.')
+          : r.devices ? T('서버 알림이 이 휴대폰으로 가지 못했습니다 (코드 {0}). [이 기기 알림 끄기]를 누른 뒤 다시 켜 주세요.', r.code)
+          : T('이 휴대폰이 알림 받기에 등록되어 있지 않습니다. [이 기기 알림 끄기]를 누른 뒤 다시 켜 주세요.'), r.sent ? 'ok' : 'err', true);
       } catch (e) { C.say($('#msg-notify'), e.message, 'err'); }
       b.disabled = false;
     });
@@ -188,7 +190,7 @@
         (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
         (dates ? '<div class="s">' + esc(C.memberDatesLine(m)) + '</div>' : '') + '</div>' +
         T('<button class="small act-edit">이름 고치기</button>') +
-        (dates ? T('<button class="small act-dates">날짜</button>') : '') +
+        (dates ? T('<button class="small act-dates">등록 정보</button>') : '') +
         (photos ? T('<button class="small act-photo">사진</button>') : '') +
         (photos && m.photo_path ? T('<button class="small act-photo-del">사진 지우기</button>') : '') +
         '<button class="small act-toggle">' + (m.active ? T('잠시 쉼으로') : T('다시 참여')) + '</button>' +
@@ -509,20 +511,15 @@
       (j.present_count != null ? ' · ' + T('{0}명', j.present_count) : '') + '</p>';
     if (ps.length) {
       h += T('<div class="section-title">목원별 기도제목</div>');
-      h += ps.map(function (p) {
-        return '<div class="member"><div class="head"><span class="name">' + esc(p.name) + '</span>' +
-          (p.attended ? '' : T('<span class="badge">결석</span>')) +
-          (p.answered ? T('<span class="badge done">응답됨</span>') : '') + '</div>' +
-          '<div class="prose">' + (p.content ? esc(p.content) : T('<span class="quiet">(적지 않음)</span>')) + '</div></div>';
-      }).join('');
+      h += C.prayerList(ps);
     }
-    if (j.body) h += T('<div class="section-title">목장 이야기</div><div class="prose">') + esc(j.body) + '</div>';
-    if (j.mokjang_prayer) h += T('<div class="section-title">목장 전체 기도제목</div><div class="prose">') + esc(j.mokjang_prayer) + '</div>';
+    if (j.body) h += T('<div class="section-title">목장 이야기</div><div class="prose">') + C.proseHtml(j.body) + '</div>';
+    if (j.mokjang_prayer) h += T('<div class="section-title">목장 전체 기도제목</div><div class="prose">') + C.proseHtml(j.mokjang_prayer) + '</div>';
     h += T('<div class="section-title">목사님 말씀</div>');
     h += cs.length ? cs.map(function (c) {
       return '<div class="member" style="background:var(--brand-soft); border-color:#cfe0d5">' +
         C.commentHead(c, urls) + '</div>' +
-        '<div class="prose">' + esc(c.body) + '</div></div>';
+        '<div class="prose">' + C.proseHtml(c.body) + '</div></div>';
     }).join('') : T('<p class="quiet">아직 없습니다.</p>');
     return h;
   }

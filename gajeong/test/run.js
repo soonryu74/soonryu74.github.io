@@ -186,8 +186,8 @@ const db = p => p.evaluate(() => window.__DB());
     await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
     ok('관리 탭 상태: 받는 중', (await p.textContent('#notify-state')) === '이 기기에서 받는 중');
     await p.click('#notify-test'); await p.waitForTimeout(300);
-    ok('시험 알림 요청', (await calls(p)).some(x => x.fn === 'church-notify' && x.body.action === 'test'));
-    ok('시험 알림 안내 문구', /시험 알림을 보냈습니다/.test(await p.textContent('#msg-notify')));
+    ok('시험 알림: 이 기기로만 서버 알림 + 휴대폰에서 직접 알림', (await calls(p)).some(x => x.fn === 'church-notify' && x.body.action === 'test' && /^https:\/\/push\.example/.test(x.body.endpoint)) && (await calls(p)).some(x => x.localNotification));
+    ok('시험 알림 안내 문구 (기기 알림 + 이 기기로 서버 알림)', /시험 알림 두 개를 보냈습니다/.test(await p.textContent('#msg-notify')));
     await p.click('#notify-off'); await p.waitForTimeout(300);
     ok('끄면 상태: 꺼져 있음', (await p.textContent('#notify-state')) === '꺼져 있음');
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
@@ -440,6 +440,7 @@ const db = p => p.evaluate(() => window.__DB());
     await p.evaluate(() => CHURCH.signOut());
     await login(p, 'pastor1');
     ok('목사 주간 현황에 목자 사진', await p.$eval('#week-list .mj[data-mj="mj1"] summary .avatar', e => e.tagName) === 'IMG');
+    ok('주간 현황 줄: 이름 아래 목자·상태', await p.isVisible('#week-list .mj[data-mj="mj1"] summary .mj-name') && await p.isVisible('#week-list .mj[data-mj="mj1"] summary .mj-sub .badge'));
     await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(500);
     ok('목장 목록에 목자 사진', await p.$eval('#manage-list .list-item[data-mj="mj1"] .avatar', e => e.tagName) === 'IMG');
     ok('목사 [내 사진] 칸', await p.isVisible('#my-photo-card'));
@@ -448,6 +449,11 @@ const db = p => p.evaluate(() => window.__DB());
     const [fc2] = await Promise.all([p.waitForEvent('filechooser'), p.click('#manage-list .list-item[data-mj="mj1"] .act-mphoto')]);
     await fc2.setFiles(path.join(__dirname, '..', 'assets', 'og.png')); await p.waitForTimeout(800);
     ok('목사님이 목자 사진을 대신 넣음', (await db(p)).church_profile.find(x => x.id === 'm1').photo_path === 'cb/p_m1.jpg' && (await p.textContent('#msg-manage')).includes('사진을 넣었습니다'));
+    ok('사진이 있으면 [사진 바꾸기]·[사진 지우기]', (await p.textContent('#manage-list .list-item[data-mj="mj1"] .act-mphoto')).includes('바꾸기') && await p.isVisible('#manage-list .list-item[data-mj="mj1"] .act-mphoto-del'));
+    ok('지우는 단추는 아래 따로', await p.$$eval('#manage-list .list-item[data-mj="mj1"] .acts-danger button', b => b.length) >= 1 && await p.$$eval('#manage-list .list-item[data-mj="mj1"] .acts .danger', b => b.length) === 0);
+    p.once('dialog', d => d.accept());
+    await p.click('#manage-list .list-item[data-mj="mj1"] .act-mphoto-del'); await p.waitForTimeout(600);
+    ok('목사님이 목자 사진을 지움', (await db(p)).church_profile.find(x => x.id === 'm1').photo_path == null && (await p.textContent('#msg-manage')).includes('사진을 지웠습니다'));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
   { const { c, p } = await ctx(b);
@@ -555,25 +561,26 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
-  console.log('\n[출석 통계] 월별 출석률');
+  console.log('\n[출석 통계] 모인 목장 · 목원 참석(한 주 평균) · 교회 시작 달부터');
   { const { c, p } = await ctx(b);
     await login(p, 'pastor1');
     await p.evaluate(() => { const D = window.__DB();
       D.church_journal.push({ id: 'js1', mokjang_id: 'mj1', week_start: '2026-09-06', status: 'submitted', present_count: 3, created_at: '2026-09-07', updated_at: '2026-09-07' },
                             { id: 'js2', mokjang_id: 'mj1', week_start: '2026-09-13', status: 'draft', present_count: 1, created_at: '2026-09-14', updated_at: '2026-09-14' });
-      D.church_prayer.push({ id: 'q1', journal_id: 'js1', name: 'a', attended: true, sort_order: 0 }, { id: 'q2', journal_id: 'js1', name: 'b', attended: true, sort_order: 1 },
-                           { id: 'q3', journal_id: 'js1', name: 'c', attended: false, sort_order: 2 }, { id: 'q4', journal_id: 'js1', name: 'd', attended: true, sort_order: 3 },
-                           { id: 'q5', journal_id: 'js2', name: 'a', attended: false, sort_order: 0 });
+      D.church_prayer.push({ id: 'q1', journal_id: 'js1', name: '정하늘', attended: true, sort_order: 0 }, { id: 'q2', journal_id: 'js1', name: '최민수', attended: false, sort_order: 1 },
+                           { id: 'q5', journal_id: 'js2', name: '정하늘', attended: true, sort_order: 0 });
       sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
     await p.reload(); await p.waitForSelector('.top h1');
     await p.click('.tabs button[data-pane="stats"]'); await p.waitForTimeout(700);
-    ok('막대 6개(최근 6달)', (await p.$$('#st-bars .bar')).length === 6);
+    ok('교회 첫 일기 달(9월)부터만 막대', (await p.$$('#st-bars .bar')).length === 2 && (await p.textContent('#st-since')).includes('2026년 9월부터'));
     await p.click('#st-bars .bar[data-k="2026-09"]'); await p.waitForTimeout(300);
     const t = (await p.textContent('#st-tiles')).replace(/\s/g, '');
-    ok('9월: 제출한 일기만 — 출석률 75% (3/4), 모임 1번', t.startsWith('75%') && t.includes('3/4') && t.includes('1모임'), t);
-    ok('9월 목장별 표', (await p.textContent('#st-table')).includes('김 목장') && (await p.textContent('#st-table')).includes('75%'));
+    ok('9월: 모인 목장 1/1 · 목원 한 주 평균 1/2 (임시 저장 일기는 빼고)', t.startsWith('1/1') && t.includes('1/2') && t.includes('50%'), t);
+    ok('9월 설명 줄', (await p.textContent('#st-line')).includes('목원 2명 중 한 주 평균 1명(50%)'));
+    const tb = (await p.textContent('#st-table')).replace(/\s/g, '');
+    ok('9월 목장별: 목자 이름 · 모임 1 · 참석 1/2 · 50%', tb.includes('김목자') && tb.includes('11/250%'), tb);
     await p.hover('#st-bars .bar[data-k="2026-09"]'); await p.waitForTimeout(200);
-    ok('막대에 올리면 숫자 안내', /출석률 75%/.test(await p.textContent('#st-tip')));
+    ok('막대에 올리면 숫자 안내', /모인 목장 1\/1/.test(await p.textContent('#st-tip')));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
@@ -627,6 +634,11 @@ const db = p => p.evaluate(() => window.__DB());
     await p.evaluate(() => { const D = window.__DB(); D.church_profile.find(x => x.id === 'p1').photo_path = 'cb/p_p1.jpg'; D.__photos = { 'cb/p_p1.jpg': { type: 'image/jpeg', size: 100 } }; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
     await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(500);
     ok('머리말 이름 옆에 내 사진', (await p.$$('.top .who-avatar img')).length === 1);
+    let asked = '';
+    p.once('dialog', d => { asked = d.message(); d.dismiss(); });
+    await p.click('.tabs button[data-pane="gather"]'); await p.waitForTimeout(300);
+    await p.click('#g-print'); await p.waitForTimeout(300);
+    ok('카톡 안에서 인쇄 → 크롬으로 열기 안내', asked.includes('인쇄·PDF 저장이 되지 않습니다'), asked);
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
