@@ -9,7 +9,7 @@
     week = C.mondayOf();                 // 교회 시간대가 정해진 뒤 다시 센다
     C.header(me, T('목장 나눔터'));
     if (C.has('member_dates')) $('.tabs button[data-pane="people"]').hidden = false;   // 성도 날짜는 켠 교회만
-    bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch(); bindPeople(); bindStats(); bindRemind();
+    bindTabs(); bindWeek(); bindManage(); bindNotify(); bindChurch(); bindPeople(); bindStats(); bindRemind(); bindEntry();
     await loadMokjangs();
     await openFromLink() || await loadWeek();
     // 앱을 켜 둔 채 주일이 지나면, 다시 볼 때 새 주로 넘어간다
@@ -44,7 +44,8 @@
   var ASK_LATER = 'darak-notify-later';
   async function bindNotify() {
     $('#notify-on').addEventListener('click', function () { turnOn($('#msg-notify')); });
-    $('#notify-ask-on').addEventListener('click', function () { turnOn($('#msg-notify-ask')); });
+    $('#notify-ask-on').addEventListener('click', function () { if (C.inApp()) return C.openExternal(); turnOn($('#msg-notify-ask')); });
+    document.addEventListener('click', function (e) { if (e.target.closest('.open-ext')) C.openExternal(); });
     $('#notify-ask-later').addEventListener('click', function () {
       try { localStorage.setItem(ASK_LATER, String(Date.now())); } catch (e) {}
       $('#notify-ask').hidden = true;
@@ -78,25 +79,29 @@
     var st = 'unsupported';
     try { st = await C.pushState(); } catch (e) {}
     var label = { on: T('이 기기에서 받는 중'), off: T('꺼져 있음'), denied: T('브라우저에서 막혀 있음'),
-                  'ios-home': T('홈 화면에 추가해야 함'), unsupported: T('이 브라우저는 알림을 못 받음') }[st];
+                  'ios-home': T('홈 화면에 추가해야 함'), unsupported: T('이 브라우저는 알림을 못 받음'),
+                  inapp: T('카카오톡 안에서는 알림을 못 받음') }[st];
     var help = {
       on: T('다른 휴대전화나 컴퓨터에서도 받으시려면 그 기기에서 한 번 더 켜 주세요.'),
       off: '',
       denied: T('주소창 왼쪽 자물쇠(또는 설정 → 사이트 설정 → 알림)에서 이 사이트 알림을 허용으로 바꿔 주세요.'),
       'ios-home': T('아이폰은 사파리 아래쪽 공유 단추 → [홈 화면에 추가]를 하신 뒤, 홈 화면의 아이콘으로 열어서 켜 주세요.'),
-      unsupported: T('안드로이드는 크롬, 아이폰은 사파리(홈 화면에 추가)에서 받을 수 있습니다.')
+      unsupported: T('안드로이드는 크롬, 아이폰은 사파리(홈 화면에 추가)에서 받을 수 있습니다.'),
+      inapp: T('카카오톡·네이버 앱 안에서 연 화면은 알림을 받을 수 없습니다. 크롬(아이폰은 사파리)으로 열어서 켜 주세요.')
     }[st];
     $('#notify-state').textContent = label;
     $('#notify-state').className = 'badge ' + (st === 'on' ? 'done' : 'todo');
     $('#notify-help').textContent = help;
-    $('#notify-on').hidden = st === 'on' || st === 'unsupported' || st === 'ios-home';
+    if (st === 'inapp') $('#notify-help').insertAdjacentHTML('beforeend', ' <button type="button" class="small primary open-ext">' + esc(T('크롬·사파리로 열기')) + '</button>');
+    $('#notify-on').hidden = st === 'on' || st === 'unsupported' || st === 'ios-home' || st === 'inapp';
     $('#notify-off').hidden = st !== 'on';
     $('#notify-test').hidden = st !== 'on';
 
     // 주간 현황 맨 위 안내: 아직 안 켰고, '나중에'를 누른 지 7일이 지났을 때만
     var later = 0; try { later = +localStorage.getItem(ASK_LATER) || 0; } catch (e) {}
-    var ask = (st === 'off' || st === 'ios-home') && Date.now() - later > 7 * 864e5;
+    var ask = (st === 'off' || st === 'ios-home' || st === 'inapp') && Date.now() - later > 7 * 864e5;
     $('#notify-ask').hidden = !ask;
+    if (st === 'inapp') { $('#notify-ask-desc').textContent = help; $('#notify-ask-on').textContent = T('크롬·사파리로 열기'); }
     if (st === 'ios-home') {
       $('#notify-ask-desc').textContent = help;
       $('#notify-ask-on').hidden = true;
@@ -413,6 +418,41 @@
         C.say($('#msg-deadline'), r.deadline ? T('저장했습니다. 매주 {0} {1}에 제출 안 한 목자에게 알림이 갑니다.', T(DOWS[r.deadline.dow]), $('#dl-hour').selectedOptions[0].textContent)
           : T('마감 알림을 껐습니다.'), 'ok');
       } catch (e) { C.say($('#msg-deadline'), e.message, 'err'); }
+    });
+  }
+
+  /* ── 목자 입장 링크 (누르면 비밀번호 없이 바로 들어감) ── */
+  function bindEntry() {
+    var links = [];
+    function linkOf(x) { return C.churchLink(C.getChurch() || {}) + '#key=' + x.key; }
+    async function copy(text, okMsg) {
+      try { await navigator.clipboard.writeText(text); C.say($('#msg-entry'), okMsg, 'ok'); }
+      catch (e) { C.say($('#msg-entry'), T('복사하지 못했습니다. 링크를 길게 눌러 복사해 주세요.'), 'err'); }
+    }
+    $('#entry-make').addEventListener('click', async function () {
+      if (!confirm(T('목자들의 입장 링크를 새로 만들까요? 전에 만든 링크는 쓸 수 없게 됩니다.'))) return;
+      var b = this; b.disabled = true;
+      try {
+        links = (await C.callAdmin({ action: 'entry_links' })).links || [];
+        links.sort(function (a, b2) { return (a.since_move ? 1 : 0) - (b2.since_move ? 1 : 0) || a.name.localeCompare(b2.name); });
+        $('#entry-list').innerHTML = links.map(function (x, i) {
+          return '<div class="list-item" data-i="' + i + '"><div class="grow"><div class="t">' + esc(x.name) +
+            (x.since_move ? '' : ' <span class="badge todo">' + esc(T('새 주소로 아직 안 들어옴')) + '</span>') + '</div>' +
+            '<div class="s" style="word-break:break-all">' + esc(linkOf(x)) + '</div></div>' +
+            '<button type="button" class="small entry-copy">' + esc(T('복사')) + '</button></div>';
+        }).join('') || T('<p class="empty">아직 목자가 없습니다.</p>');
+        $('#entry-copy-all').hidden = !links.length;
+        C.say($('#msg-entry'), T('입장 링크 {0}개를 만들었습니다. 목자마다 [복사]해서 카카오톡으로 보내 주세요.', links.length), 'ok');
+      } catch (e) { C.say($('#msg-entry'), e.message, 'err'); }
+      b.disabled = false;
+    });
+    $('#entry-list').addEventListener('click', function (e) {
+      var b = e.target.closest('.entry-copy'); if (!b) return;
+      var x = links[+b.closest('.list-item').dataset.i];
+      copy(T('{0}님, 목장 나눔터 입장 링크입니다. 누르시면 바로 들어가집니다.', x.name) + '\n' + linkOf(x), T('{0}님 링크를 복사했습니다.', x.name));
+    });
+    $('#entry-copy-all').addEventListener('click', function () {
+      copy(links.map(function (x) { return x.name + '\n' + linkOf(x); }).join('\n\n'), T('모든 링크를 복사했습니다.'));
     });
   }
 
