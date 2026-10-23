@@ -1,5 +1,5 @@
 output_generated/*
 !output_generated/.gitkeep
-input_readonly/*
-!input_readonly/2026_범부처_보건복지_통합지침_모의데이터.json
 __pycache__/
+.venv/
+.streamlit/secrets.toml
