@@ -58,7 +58,9 @@ export function matchFacilities(fs: Facility[], needs: Needs, here?: { lat: numb
     check(needs.disabled, f.disabledProg, '장애인 강좌', 2, '장애인 강좌 정보 없음');
     check(needs.indoor, f.indoor, '실내', 1, '실외 시설');
     if (needs.types.length) {
-      if (needs.types.includes(f.type)) { score += 2; reasons.push(f.type); } else missing.push(`${needs.types.join('·')} 아님`);
+      // 장애인 체육시설(복지관 체육관·재활체육센터)은 '체육관'을 찾을 때도 맞는 곳으로 본다
+      const typeOk = needs.types.includes(f.type) || (f.type === '장애인 체육시설' && needs.types.includes('체육관'));
+      if (typeOk) { score += 2; reasons.push(f.type); } else missing.push(`${needs.types.join('·')} 아님`);
     }
     const km = here ? haversineKm(here, f) : undefined;
     if (km !== undefined) score -= km / 5;
