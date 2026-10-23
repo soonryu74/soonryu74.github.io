@@ -528,6 +528,8 @@ window.I18N.en = {
   "저장했습니다.": "Saved.",
 
   // ── 공통 ───────────────────────────────────
+  "기도제목 적은 사람": "Prayer requests written",
+  "메뉴": "Menu",
   "로그아웃": "Sign out",
   "처리하지 못했습니다 ({0})": "Something went wrong ({0})",
   "목자": "leader",

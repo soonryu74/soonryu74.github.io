@@ -58,6 +58,23 @@ a{color:var(--brand)}
 .top .who{margin-left:auto; font-size:14px; color:var(--top-who); display:flex; align-items:center; gap:10px}
 .top .who button{background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.25); border-radius:999px}
 .top .who button:hover{background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.4)}
+.top .who-toggle, .top .who-menu-name{display:none}
+.top .who-menu{display:flex; align-items:center; gap:10px}
+@media (max-width:560px){
+  .top-in{flex-wrap:nowrap; padding:10px 14px; gap:10px}
+  .top .mark{height:32px; width:32px}
+  .top .titles{flex:1; min-width:0}
+  .top h1, .top .church{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .top .who{gap:8px; position:relative; flex:none}
+  .top .who-name{display:none}
+  .top .who-toggle{display:inline-flex; padding:7px 12px}
+  .top .who-menu{display:none; position:absolute; right:0; top:calc(100% + 10px); z-index:30; flex-direction:column; align-items:stretch;
+    min-width:180px; padding:12px; gap:8px; background:var(--sheet); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+  .top.menu-open .who-menu{display:flex}
+  .top .who-menu-name{display:block; color:var(--ink); font-weight:700; font-size:15px; padding:2px 4px 6px; border-bottom:1px solid var(--line)}
+  .top .who-menu button{background:var(--sheet-2); color:var(--ink); border-color:var(--line-2); border-radius:10px; padding:11px 14px; font-size:15px}
+  .top .who-menu button:hover{background:var(--paper-2); border-color:var(--hover-line)}
+}
 
 /* ── 탭: 알약 대신 밑줄이 미끄러지는 목차 ───────────────── */
 .tabs{display:flex; gap:2px; margin:18px 0 6px; overflow-x:auto; -webkit-overflow-scrolling:touch;
@@ -150,6 +167,16 @@ button:disabled{opacity:.45; cursor:not-allowed; transform:none}
 .member .head{display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap}
 .member .name{font-family:var(--serif); font-weight:700; font-size:18px}
 .member textarea{min-height:76px}
+/* 목원 이름 줄 (안 적은 사람은 점) */
+#members-chips:empty{display:none}
+#members-chips{margin:4px 0 12px; padding:12px 14px; border:1px solid var(--line); border-radius:var(--r-sm); background:var(--sheet-2)}
+.chips-head{font-size:13.5px; color:var(--muted); margin-bottom:8px}
+.chips-head b{color:var(--brand); font-size:14.5px}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{padding:6px 12px; font-size:14px; border-radius:999px; background:var(--sheet); border:1px solid var(--line-2); color:var(--ink-2); font-weight:600; position:relative}
+.chip:not(.done)::after{content:''; position:absolute; top:-2px; right:-2px; width:9px; height:9px; border-radius:50%; background:var(--gold); border:2px solid var(--sheet)}
+.chip.done{background:var(--brand-soft); border-color:transparent; color:var(--brand)}
+.chip.done::before{content:'✓ '}
 .check{display:inline-flex; align-items:center; gap:7px; font-size:14.5px; color:var(--ink-2); font-weight:600; cursor:pointer; user-select:none}
 .check input{width:21px; height:21px; accent-color:var(--brand); margin:0}
 
@@ -225,7 +252,17 @@ button:disabled{opacity:.45; cursor:not-allowed; transform:none}
 
 /* ── 알림 권유 띠 ─────────────────────────────────── */
 .notify-ask{border-color:var(--gold-line); background:linear-gradient(180deg, var(--notify-bg), var(--sheet))}
-.notify-ask h2::after{background:var(--gold)}
+.notify-ask{display:grid; grid-template-columns:1fr auto; gap:2px 14px; align-items:center; padding:14px 18px}
+.notify-ask h2{font-size:16.5px; margin:0}
+.notify-ask h2::after{display:none}
+.notify-ask .desc{font-size:13.5px; margin:0; line-height:1.5}
+.notify-ask .row{grid-column:2; grid-row:1 / span 2; flex-wrap:nowrap; gap:4px}
+.notify-ask .row button{padding:9px 14px; font-size:14.5px}
+.notify-ask .msg{grid-column:1 / -1}
+@media (max-width:560px){
+  .notify-ask{grid-template-columns:1fr; padding:12px 14px}
+  .notify-ask .row{grid-column:1; grid-row:auto; margin-top:8px}
+}
 
 /* ── 저장 띠 (목자) ──────────────────────────────── */
 .savebar{position:sticky; bottom:12px; z-index:5; margin:18px -6px 0; padding:12px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
@@ -355,6 +392,8 @@ html[data-theme="night"] input[type=date]{color-scheme:dark}
 /* 머리말 이름 옆 내 사진 */
 .top .who-avatar:empty{display:none}
 .top .who-avatar .avatar{width:30px; height:30px; border:2px solid rgba(255,255,255,.55); display:block}
+.top .who-avatar{cursor:pointer}
+.top .who-avatar .avatar:not(img){font-size:14px; background:rgba(255,255,255,.92)}
 
 /* 목장 목록 위 '단추 설명' */
 .btn-guide{border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin:4px 0 12px; background:var(--sheet-2)}

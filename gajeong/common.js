@@ -444,11 +444,16 @@ window.CHURCH = (function () {
       '<div class="titles"><h1>' + esc(title) + '</h1>' +
       '<span class="church">' + esc(c.name || t('목장 나눔터')) + '</span></div>' +
       (extraHtml || '') +
-      '<div class="who"><span class="who-avatar"></span><span>' + esc(title2(profile)) + '</span>' +
-      langButton() +
-      '<button class="small" id="btn-signout">' + esc(t('로그아웃')) + '</button></div></div>';
+      '<div class="who"><span class="who-avatar"></span><span class="who-name">' + esc(title2(profile)) + '</span>' +
+      '<button class="small who-toggle" type="button" aria-expanded="false">' + esc(t('메뉴')) + '</button>' +
+      '<div class="who-menu"><span class="who-menu-name">' + esc(title2(profile)) + '</span>' + langButton() +
+      '<button class="small" id="btn-signout">' + esc(t('로그아웃')) + '</button></div></div></div>';
     document.body.insertBefore(el, document.body.firstChild);
     el.querySelector('#btn-signout').addEventListener('click', signOut);
+    // 휴대폰에서는 머리말을 한 줄로: English·로그아웃은 [메뉴] 안에
+    var tg = el.querySelector('.who-toggle');
+    tg.addEventListener('click', function (e) { e.stopPropagation(); var o = el.classList.toggle('menu-open'); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); });
+    document.addEventListener('click', function (e) { if (!e.target.closest('.who-menu')) { el.classList.remove('menu-open'); tg.setAttribute('aria-expanded', 'false'); } });
     bindLangButton(el);
     if (c.logo_url) { var fav = document.querySelector('link[rel="icon"]'); if (fav) fav.href = c.logo_url; }
     topAvatar(profile);
@@ -529,8 +534,19 @@ window.CHURCH = (function () {
   // 머리말 이름 옆에 내 사진 (카톡 프로필처럼) — 사진이 없으면 비워 둔다
   async function topAvatar(p) {
     var slot = document.querySelector('.top .who-avatar'); if (!slot) return;
-    if (!has('member_photos') || !p.photo_path) { slot.innerHTML = ''; return; }
-    try { var u = (await photoUrls([p]))[p.id]; slot.innerHTML = u ? '<img class="avatar" src="' + esc(u) + '" alt="">' : ''; } catch (e) {}
+    if (!has('member_photos')) { slot.innerHTML = ''; return; }
+    var u = '';
+    if (p.photo_path) { try { u = (await photoUrls([p]))[p.id] || ''; } catch (e) {} }
+    slot.innerHTML = avatar(p, u);   // 사진이 없으면 이름 첫 글자
+    slot.title = t('내 사진');
+    if (!slot.dataset.bound) {   // 누르면 [내 사진] 칸으로
+      slot.dataset.bound = '1';
+      slot.addEventListener('click', function () {
+        var card = document.getElementById('my-photo-card'), pane = card && card.closest('.pane'); if (!pane) return;
+        var tab = document.querySelector('.tabs button[data-pane="' + pane.id.replace(/^pane-/, '') + '"]'); if (tab) tab.click();
+        setTimeout(function () { card.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 50);
+      });
+    }
   }
   // [내 계정]의 '내 사진' 칸 (목자·목사 공통) — 목사님이 목자 얼굴을 알아볼 수 있게
   function bindMyPhoto(p) {

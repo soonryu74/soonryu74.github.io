@@ -2,6 +2,7 @@
 //  · submitted : 목자가 일기를 제출하면 같은 교회 목사들의 기기로 웹 푸시를 보낸다
 //  · commented : 목사가 일기에 말씀을 남기면 그 목장 목자의 기기로 웹 푸시를 보낸다
 //  · test      : 지금 로그인한 사람의 기기로 시험 알림을 보낸다
+//  · 알림마다 보낸 사람 사진(icon)을 함께 보낸다 (7일짜리 주소)
 //  · remind    : 목사가 [제출 안 한 목장에 알림 보내기]를 누르면, 그 주 일기를 제출하지 않은 목자에게 보낸다
 //  · set_deadline : 목사가 마감 알림 요일·시각을 정한다 (features.deadline = { dow, hour } 또는 false)
 //  · deadline_tick: (로그인 없이, GitHub Actions가 30분마다) 교회마다 마감 시각이 지났으면 제출 안 한 목자에게 한 번 보낸다
@@ -60,7 +61,7 @@ async function loadVapid() {
 }
 const RESEND_AFTER_MIN = 60 // 같은 일기를 다시 제출해도 이 시간 안에는 한 번만 알린다
 
-type Payload = { title: string; body: string; url: string; tag?: string }
+type Payload = { title: string; body: string; url: string; tag?: string; icon?: string }
 type Sub = { id: string; endpoint: string; p256dh: string; auth: string }
 
 // 암호화·서명은 라이브러리에 맡기고, 보내기는 fetch로 직접 한다
@@ -88,6 +89,14 @@ async function sendTo(userIds: string[], payload: (lang: string) => Payload, end
   results.forEach((r) => { if (r.status === 'rejected') console.error('push', String(r.reason).slice(0, 200)) })
   const codes = results.map((r) => r.status === 'fulfilled' ? r.value : 0)
   return { sent, devices: subs?.length ?? 0, codes }
+}
+
+// 보낸 사람 사진 (알림 옆에 얼굴이 보이게) — 사진이 없으면 빈칸 → 화면은 앱 아이콘을 쓴다
+async function photoIcon(userId: string) {
+  const { data: p } = await admin.from('church_profile').select('photo_path').eq('id', userId).maybeSingle()
+  if (!p?.photo_path) return ''
+  const { data } = await admin.storage.from('church-member-photo').createSignedUrl(p.photo_path, 60 * 60 * 24 * 7)
+  return data?.signedUrl ?? ''
 }
 
 // 교회마다 부르는 말 (목장·목자 → 다락방·순장 …)
@@ -130,7 +139,7 @@ async function notSubmitted(churchId: string, week: string) {
   const done = new Set((js ?? []).map((j) => j.mokjang_id))
   return mjs.filter((m) => !done.has(m.id))
 }
-async function remindWeek(churchId: string, week: string, fromPastor: boolean) {
+async function remindWeek(churchId: string, week: string, fromPastor: boolean, icon = '') {
   const left = await notSubmitted(churchId, week)
   const ids = [...new Set(left.map((m) => m.mokja_id as string))]
   if (!ids.length) return { leaders: 0, reached: 0, sent: 0, devices: 0, noDevice: [] as string[] }
@@ -140,10 +149,10 @@ async function remindWeek(churchId: string, week: string, fromPastor: boolean) {
   const r = await sendTo(ids, (lang) => lang === 'en'
     ? { title: fromPastor ? 'Your pastor is waiting for your journal' : 'Journal reminder',
         body: `${weekLabel(week, 'en')} · Your journal hasn't been submitted yet. Please share your gathering and prayer requests.`,
-        url: 'mokjang.html', tag: `remind-${week}` }
+        url: 'mokjang.html', tag: `remind-${week}`, icon }
     : { title: fromPastor ? `목사님이 ${tm.unit} 일기를 기다리십니다` : `${tm.unit} 일기 마감 알림`,
         body: `${weekLabel(week)} 일기를 아직 제출하지 않으셨어요. 모임 이야기와 기도제목을 올려 주세요.`,
-        url: 'mokjang.html', tag: `remind-${week}` })
+        url: 'mokjang.html', tag: `remind-${week}`, icon })
   return { leaders: ids.length, reached: ids.filter((i) => has.has(i)).length, ...r,
     noDevice: left.filter((m) => !has.has(m.mokja_id)).map((m) => m.mokja_name || m.name) }
 }
@@ -200,11 +209,12 @@ Deno.serve(async (req) => {
       const { data: pf } = await admin.from('church_profile').select('church_id, role').eq('id', uid).maybeSingle()
       const tm = pf?.church_id ? await churchTerms(pf.church_id) : { unit: '목장', leader: '목자' }
       const pastor = pf?.role === 'pastor'
+      const icon = await photoIcon(uid)
       const r = await sendTo([uid], (lang) => lang === 'en'
         ? { title: 'Mokjang Sharing', body: pastor ? "Alerts are working. You'll be notified like this when a leader submits a journal."
-            : "Alerts are working. You'll be notified like this when your pastor leaves a note.", url: pastor ? 'moksa.html' : 'mokjang.html', tag: 'test' }
+            : "Alerts are working. You'll be notified like this when your pastor leaves a note.", url: pastor ? 'moksa.html' : 'mokjang.html', tag: 'test', icon }
         : { title: `${tm.unit} 나눔터`, body: pastor ? `알림이 잘 옵니다. ${tm.leader}님이 일기를 올리면 이렇게 알려 드립니다.`
-            : '알림이 잘 옵니다. 목사님이 말씀을 남기시면 이렇게 알려 드립니다.', url: pastor ? 'moksa.html' : 'mokjang.html', tag: 'test' },
+            : '알림이 잘 옵니다. 목사님이 말씀을 남기시면 이렇게 알려 드립니다.', url: pastor ? 'moksa.html' : 'mokjang.html', tag: 'test', icon },
         String(body.endpoint ?? ''))
       return json({ ok: true, ...r })
     }
@@ -226,11 +236,13 @@ Deno.serve(async (req) => {
       const { data: pastors } = await admin.from('church_profile')
         .select('id').eq('church_id', mj.church_id).eq('role', 'pastor')
       const tm = await churchTerms(mj.church_id)
+      const icon = await photoIcon(uid)
       const r = await sendTo((pastors ?? []).map((p) => p.id), (lang) => ({
         title: lang === 'en' ? `New journal: ${mj.name}` : `${mj.name} 일기가 올라왔습니다`,
         body: lang === 'en' ? `${mj.mokja_name} · ${weekLabel(j.week_start, 'en')}` : `${mj.mokja_name} ${tm.leader} · ${weekLabel(j.week_start)}`,
         url: `moksa.html#j=${j.id}`,
         tag: `j-${j.id}`,
+        icon,
       }))
       return json({ ok: true, ...r })
     }
@@ -241,7 +253,7 @@ Deno.serve(async (req) => {
       if (body.action === 'remind') {
         const week = String(body.week ?? '')
         if (!YMD_RE.test(week)) return json({ error: '주를 다시 골라 주세요' }, 400)
-        return json({ ok: true, ...(await remindWeek(me.church_id, week, true)) })
+        return json({ ok: true, ...(await remindWeek(me.church_id, week, true, await photoIcon(uid))) })
       }
       const dow = Number(body.dow), hour = Number(body.hour)
       const { data: ch } = await admin.from('church_church').select('features').eq('id', me.church_id).maybeSingle()
@@ -266,11 +278,13 @@ Deno.serve(async (req) => {
       if (!mj.mokja_id) return json({ ok: true, sent: 0, devices: 0 })
       const text = String(c.body ?? '').replace(/\s+/g, ' ').trim()
       const short = text.length > 60 ? text.slice(0, 60) + '…' : text
+      const icon = await photoIcon(uid)
       const r = await sendTo([mj.mokja_id], (lang) => ({
         title: lang === 'en' ? `A note from ${c.author_name}` : `${c.author_name}님이 말씀을 남기셨습니다`,
         body: lang === 'en' ? `${weekLabel(j.week_start, 'en')} · ${short}` : `${weekLabel(j.week_start)} · ${short}`,
         url: `mokjang.html#j=${j.id}`,
         tag: `c-${c.id}`,
+        icon,
       }))
       return json({ ok: true, ...r })
     }
