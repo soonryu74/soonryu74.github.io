@@ -336,3 +336,10 @@ html[data-theme="night"] input[type=date]{color-scheme:dark}
 /* 머리말 이름 옆 내 사진 */
 .top .who-avatar:empty{display:none}
 .top .who-avatar .avatar{width:30px; height:30px; border:2px solid rgba(255,255,255,.55); display:block}
+
+/* 목장 목록 위 '단추 설명' */
+.btn-guide{border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin:4px 0 12px; background:var(--sheet-2)}
+.btn-guide summary{cursor:pointer; font-weight:600}
+.btn-guide ul{margin:10px 0 4px; padding-left:18px; line-height:1.6}
+.btn-guide li{margin:4px 0}
+.btn-guide li.warn{color:var(--warn-ink)}

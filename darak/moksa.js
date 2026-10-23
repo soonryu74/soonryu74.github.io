@@ -816,6 +816,7 @@
         '<div class="s">' + esc(m.mokja_name || T('담당 목자 없음')) +
         (p ? (C.isKeyless(p) ? T(' · 열쇠 코드로 들어옴') : T(' · 아이디 ') + esc(p.login_id)) : '') +
         (m.meet_day ? ' · ' + esc(m.meet_day) : '') + '</div></div>' +
+        (m.mokja_id && !(p && C.isKeyless && C.isKeyless(p)) ? T('<button class="small act-link">입장 링크</button>') : '') +
         (m.mokja_id ? (C.isKeyless(p) ? T('<button class="small act-key">열쇠 코드 새로</button>')
                                       : T('<button class="small act-pw">비밀번호 새로</button>')) : '') +
         (photos && p ? T('<button class="small act-mphoto">사진</button>') : '') +
@@ -853,6 +854,17 @@
         C.say($('#msg-manage'), T('{0} 목자의 새 열쇠 코드는 {1} 입니다. 알려 주세요.', m.mokja_name, kr.key), 'ok', true);
         return;
       }
+      if (btn.classList.contains('act-link')) {   // 이 목자 한 사람의 입장 링크 (누르면 비밀번호 없이 들어감)
+        if (!confirm(T('{0} 목자의 입장 링크를 만들까요? 전에 보낸 링크는 쓸 수 없게 됩니다.', m.mokja_name))) return;
+        var lk = ((await C.callAdmin({ action: 'entry_links', user_id: uid })).links || [])[0];
+        var url = C.churchLink(C.getChurch() || {}) + '#key=' + lk.key;
+        var text = T('{0}님, 목장 나눔터 입장 링크입니다. 누르시면 바로 들어가집니다.', m.mokja_name) + '\n' + url;
+        var copied = false; try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+        C.say($('#msg-manage'), (copied ? T('{0} 목자 입장 링크를 복사했습니다. 카카오톡에 붙여 넣어 그 목자에게만 보내 주세요.', m.mokja_name)
+          : T('{0} 목자 입장 링크입니다. 길게 눌러 복사해서 그 목자에게만 보내 주세요.', m.mokja_name)) + '\n' + url, 'ok', true);
+        $('#msg-manage').scrollIntoView({ block: 'center' });
+        return;
+      }
       if (btn.classList.contains('act-pw')) {
         var np = prompt(T('새 비밀번호를 정해 주세요 (8자 이상).\n정하신 뒤 목자에게 알려 주세요.'));
         if (np === null) return;
@@ -867,16 +879,16 @@
       } else if (btn.classList.contains('act-hide')) {
         await sb.from('church_mokjang').update({ active: !m.active }).eq('id', mjId);
       } else if (btn.classList.contains('act-del')) {
-        if (!confirm(T('{0} 목자의 계정을 지울까요?\n지금까지 쓴 일기와 기도제목은 그대로 남습니다.', m.mokja_name))) return;
+        if (!confirm(T('{0} 목자의 계정을 지울까요?\n목장과 지금까지 쓴 일기·기도제목은 그대로 남고, 이 목자는 더 이상 들어올 수 없습니다.\n(목자가 바뀔 때 쓰세요)', m.mokja_name))) return;
         await C.callAdmin({ action: 'delete_user', user_id: uid });
         await sb.from('church_mokjang').update({ mokja_name: m.mokja_name + T(' (지난 목자)') }).eq('id', mjId);
       } else if (btn.classList.contains('act-drop')) {
-        if (!confirm(T('{0} 을(를) 통째로 지울까요?\n\n이 목장의 목원 명단과 지금까지의 일기·기도제목이 모두 함께 사라지고, 되돌릴 수 없습니다.\n(시험 삼아 만든 목장을 치울 때 쓰세요.)', m.name))) return;
-        if (uid && !confirm(T('담당 목자 {0} 의 계정도 함께 지울까요?\n[확인]을 누르면 계정까지 지웁니다. [취소]를 누르면 목장만 지웁니다.', m.mokja_name))) {
-          await sb.from('church_mokjang').delete().eq('id', mjId);
-        } else {
-          await sb.from('church_mokjang').delete().eq('id', mjId);
-          if (uid) await C.callAdmin({ action: 'delete_user', user_id: uid });
+        var typed = prompt(T('{0} 을(를) 통째로 지웁니다.\n목원 명단과 지금까지의 일기·기도제목이 모두 사라지고 되돌릴 수 없습니다.\n(잠깐 모이지 않는 목장은 [잠시 쉼으로]를 쓰세요)\n\n정말 지우시려면 목장 이름을 그대로 적어 주세요.', m.name));
+        if (typed === null) return;
+        if (typed.trim() !== String(m.name).trim()) { C.say($('#msg-manage'), T('목장 이름이 맞지 않아 지우지 않았습니다.'), 'err'); $('#msg-manage').scrollIntoView({ block: 'center' }); return; }
+        await sb.from('church_mokjang').delete().eq('id', mjId);
+        if (uid && confirm(T('목장을 지웠습니다.\n담당 목자 {0} 의 계정도 지울까요? ([취소]를 누르면 계정은 남겨 둡니다)', m.mokja_name))) {
+          await C.callAdmin({ action: 'delete_user', user_id: uid });
         }
       }
       await loadMokjangs(); renderManage(); loadWeek();
