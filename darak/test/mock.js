@@ -318,7 +318,7 @@
       return state.sub && { endpoint: state.sub, toJSON: function () { return { endpoint: state.sub, keys: { p256dh: 'P256', auth: 'AUTH' } }; },
         unsubscribe: function () { state.sub = null; keep(); return Promise.resolve(true); } };
     }
-    var reg = { pushManager: {
+    var reg = { showNotification: function (title) { record({ localNotification: title }); return Promise.resolve(); }, pushManager: {
       getSubscription: function () { return Promise.resolve(subObj()); },
       subscribe: function () { state.sub = 'https://push.example/dev-' + Date.now(); keep(); return Promise.resolve(subObj()); }
     } };

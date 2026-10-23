@@ -15,7 +15,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="다락방나눔터">
-<link rel="stylesheet" href="style.css?v=202610232330">
+<link rel="stylesheet" href="style.css?v=202610240130">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -77,9 +77,11 @@ try { (function (m, q) { var s = q.get('c');
   <!-- ── 출석 통계 (월별) ───────────────────────── -->
   <section class="pane" id="pane-stats">
     <div class="card">
-      <h2>월별 출석률</h2>
-      <p class="desc">제출한 일기의 목원 참석 체크로 셉니다. 막대를 누르면 그 달 목장별 출석을 봅니다.</p>
-      <div class="stat" id="st-tiles"></div>
+      <h2>월별 출석</h2>
+      <p class="desc">제출한 일기의 참석 체크로 셉니다. 막대를 누르면 그 달 목장별 출석을 봅니다.</p>
+      <div class="stat stat3" id="st-tiles"></div>
+      <p class="hint" id="st-line" style="margin:-6px 0 10px"></p>
+      <p class="hint" id="st-since" style="margin:0 0 4px"></p>
       <div class="bars" id="st-bars" role="list" aria-label="월별 출석률"></div>
       <div class="bar-tip" id="st-tip" hidden></div>
       <div class="section-title" id="st-month-title"></div>
@@ -99,7 +101,7 @@ try { (function (m, q) { var s = q.get('c');
           <option value="nobap">침례 아직</option>
           <option value="nolife">생명의 삶 아직</option>
           <option value="life">생명의 삶 하는 중</option>
-          <option value="nodate">날짜를 하나도 안 넣은 분</option>
+          <option value="nodate">등록 정보를 안 넣은 분</option>
         </select>
       </div>
       <div class="stat" id="pp-stat"></div>
@@ -314,9 +316,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610232330"></script>
-<script src="common.js?v=202610232330"></script>
-<script src="moksa.js?v=202610232330"></script>
+<script src="lang-en.js?v=202610240130"></script>
+<script src="common.js?v=202610240130"></script>
+<script src="moksa.js?v=202610240130"></script>
 
 </body>
 </html>
