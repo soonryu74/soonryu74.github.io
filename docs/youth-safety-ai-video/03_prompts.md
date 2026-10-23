@@ -77,6 +77,6 @@ cut09  [S] [H] 따뜻한 미소, 정면 클로즈업, 연한 하늘색 단색 �
 
 ## 진행 상태 (2026-10-21)
 
-- [x] 하늘 시트 확정 → `characters/haneul.jpg` (Canva 미디어 ID: MAHYpJkgu0E, 링크: https://www.canva.com/M/MAHYpJkgu0E)
-- [ ] 엄마 시트 — 캔바 AI 크레딧 소진으로 미생성. 위 '캐릭터 시트' 두 번째 프롬프트를 나노바나나/GPT 이미지에 넣어 생성 후 `characters/mom.jpg` 저장
+- [x] 하늘 시트 확정 → `characters/haneul.jpg` (원본 1086×1448)
+- [x] 엄마 시트 확정 → `characters/mom.jpg` (ChatGPT 생성)
 - [ ] cut01~09 — 하늘 시트를 레퍼런스로 첨부해 생성
