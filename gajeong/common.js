@@ -407,6 +407,16 @@ window.CHURCH = (function () {
     });
     if (r.error) throw new Error(r.error.message);
   }
+  // 시험 알림: ① 이 휴대폰이 직접 띄우는 알림(휴대폰·크롬 설정 확인) ② 서버에서 '이 기기로만' 보내는 알림(보내는 길 확인)
+  async function pushTest() {
+    var reg = await navigator.serviceWorker.getRegistration('./');
+    var sub = reg && await reg.pushManager.getSubscription();
+    var local = false;
+    try { if (reg) { await reg.showNotification(t('① 이 휴대폰 알림'), { body: t('이 알림이 보이면 휴대폰 설정은 괜찮습니다.'), icon: 'assets/icon-192.png', tag: 'local-test' }); local = true; } } catch (e) {}
+    var r = await notify({ action: 'test', endpoint: sub ? sub.endpoint : '' });
+    if (sub && !r.devices) { await pushEnable(); r = await notify({ action: 'test', endpoint: sub.endpoint }); }   // 서버에 이 기기 등록이 없으면 다시 등록
+    return { local: local, sent: r.sent || 0, devices: r.devices || 0, code: (r.codes || [])[0] || 0 };
+  }
   async function pushDisable() {
     var reg = await navigator.serviceWorker.getRegistration('./');
     var sub = reg && await reg.pushManager.getSubscription();
@@ -560,6 +570,29 @@ window.CHURCH = (function () {
                : '<span class="avatar" aria-hidden="true">' + esc((m.name || '?').trim().charAt(0)) + '</span>';
   }
 
+  // 긴 글을 읽기 쉽게: '-'·'•'·'1.'로 시작하는 줄은 목록으로, 나머지 줄은 문단으로 (사람이 쓴 글은 그대로 두고 모양만)
+  function proseHtml(text) {
+    var out = [], list = [];
+    function flush() { if (list.length) { out.push('<ul class="prose-list">' + list.join('') + '</ul>'); list = []; } }
+    String(text || '').replace(/\r/g, '').split('\n').forEach(function (ln) {
+      var x = ln.trim(); if (!x) { flush(); return; }
+      var m = /^(?:[-–•·*▪]|\d{1,2}[.)])\s*(.+)$/.exec(x);
+      if (m) list.push('<li>' + esc(m[1]) + '</li>'); else { flush(); out.push('<p>' + esc(x) + '</p>'); }
+    });
+    flush();
+    return out.join('');
+  }
+  // 목원별 기도제목: 굵은 이름 — 내용 (기도제목 모아보기와 같은 모양), 결석·응답됨은 이름 옆에
+  function prayerList(ps, opts) {
+    opts = opts || {};
+    return '<ul class="pr-list">' + ps.map(function (p) {
+      var text = p.content ? proseHtml(p.content) : (opts.hideEmpty ? '' : '<p class="quiet">' + esc(t('(적지 않음)')) + '</p>');
+      return '<li><span class="pr-name">' + esc(p.name) + '</span>' +
+        (p.attended === false && !opts.noAbsent ? ' <span class="badge">' + esc(t('결석')) + '</span>' : '') +
+        (p.answered ? ' <span class="badge done">' + esc(t('응답됨')) + '</span>' : '') +
+        '<div class="pr-text">' + text + '</div></li>';
+    }).join('') + '</ul>';
+  }
   // 말씀(댓글) 남긴 분 사진 → { author_id: 서명 주소 }. 경로가 정해져 있어 프로필을 따로 읽지 않는다
   async function authorPhotos(cs) {
     if (!has('member_photos') || !cs.length) return null;
@@ -599,12 +632,12 @@ window.CHURCH = (function () {
     header: header, title2: title2,
     loadChurch: loadChurch, publicChurch: publicChurch, rememberChurch: rememberChurch,
     churchLink: churchLink, logoOf: logoOf, getChurch: function () { return church; }, fillTimezones: fillTimezones,
-    pushSupported: pushSupported, pushState: pushState, inApp: inApp, openExternal: openExternal, pushEnable: pushEnable, pushDisable: pushDisable,
+    pushSupported: pushSupported, pushState: pushState, pushTest: pushTest, inApp: inApp, openExternal: openExternal, pushEnable: pushEnable, pushDisable: pushDisable,
     isIOS: isIOS, standalone: standalone,
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave,
-    has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, authorPhotos: authorPhotos, commentHead: commentHead, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
+    has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, authorPhotos: authorPhotos, commentHead: commentHead, proseHtml: proseHtml, prayerList: prayerList, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();

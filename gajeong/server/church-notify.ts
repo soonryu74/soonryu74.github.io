@@ -77,14 +77,17 @@ async function push(sub: Sub, payload: Payload) {
 }
 
 // 기기마다 고른 화면 언어로 보낸다 (payload: 언어 → 알림 글)
-async function sendTo(userIds: string[], payload: (lang: string) => Payload) {
+// endpoint를 주면 그 기기 하나에만 (시험 알림이 '지금 이 휴대폰'으로 가는지 확인할 때)
+async function sendTo(userIds: string[], payload: (lang: string) => Payload, endpoint = '') {
   if (!userIds.length) return { sent: 0, devices: 0 }
-  const { data: subs } = await admin.from('church_push')
-    .select('id, endpoint, p256dh, auth, lang').in('user_id', userIds)
+  let q = admin.from('church_push').select('id, endpoint, p256dh, auth, lang').in('user_id', userIds)
+  if (endpoint) q = q.eq('endpoint', endpoint)
+  const { data: subs } = await q
   const results = await Promise.allSettled((subs ?? []).map((s) => push(s as Sub, payload((s as { lang?: string }).lang ?? 'ko'))))
   const sent = results.filter((r) => r.status === 'fulfilled' && r.value >= 200 && r.value < 300).length
   results.forEach((r) => { if (r.status === 'rejected') console.error('push', String(r.reason).slice(0, 200)) })
-  return { sent, devices: subs?.length ?? 0 }
+  const codes = results.map((r) => r.status === 'fulfilled' ? r.value : 0)
+  return { sent, devices: subs?.length ?? 0, codes }
 }
 
 // 교회마다 부르는 말 (목장·목자 → 다락방·순장 …)
@@ -201,7 +204,8 @@ Deno.serve(async (req) => {
         ? { title: 'Mokjang Sharing', body: pastor ? "Alerts are working. You'll be notified like this when a leader submits a journal."
             : "Alerts are working. You'll be notified like this when your pastor leaves a note.", url: pastor ? 'moksa.html' : 'mokjang.html', tag: 'test' }
         : { title: `${tm.unit} 나눔터`, body: pastor ? `알림이 잘 옵니다. ${tm.leader}님이 일기를 올리면 이렇게 알려 드립니다.`
-            : '알림이 잘 옵니다. 목사님이 말씀을 남기시면 이렇게 알려 드립니다.', url: pastor ? 'moksa.html' : 'mokjang.html', tag: 'test' })
+            : '알림이 잘 옵니다. 목사님이 말씀을 남기시면 이렇게 알려 드립니다.', url: pastor ? 'moksa.html' : 'mokjang.html', tag: 'test' },
+        String(body.endpoint ?? ''))
       return json({ ok: true, ...r })
     }
 

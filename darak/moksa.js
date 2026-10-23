@@ -58,9 +58,11 @@
     $('#notify-test').addEventListener('click', async function () {
       var b = $('#notify-test'); b.disabled = true;
       try {
-        var r = await C.notify({ action: 'test' });
-        C.say($('#msg-notify'), r.sent ? T('시험 알림을 보냈습니다. 몇 초 안에 와야 합니다.')
-          : T('알림을 받을 기기가 없습니다. 먼저 [이 기기에서 알림 받기]를 눌러 주세요.'), r.sent ? 'ok' : 'err', true);
+        var r = await C.pushTest();
+        C.say($('#msg-notify'), r.sent
+          ? T('시험 알림 두 개를 보냈습니다. ① 이 휴대폰 알림, ② 서버 알림이 몇 초 안에 와야 합니다. 둘 다 안 보이면 휴대폰 설정 → 애플리케이션 → Chrome → 알림을 켜 주세요. ①만 오고 ②가 안 오면 운영자에게 알려 주세요.')
+          : r.devices ? T('서버 알림이 이 휴대폰으로 가지 못했습니다 (코드 {0}). [이 기기 알림 끄기]를 누른 뒤 다시 켜 주세요.', r.code)
+          : T('이 휴대폰이 알림 받기에 등록되어 있지 않습니다. [이 기기 알림 끄기]를 누른 뒤 다시 켜 주세요.'), r.sent ? 'ok' : 'err', true);
       } catch (e) { C.say($('#msg-notify'), e.message, 'err'); }
       b.disabled = false;
     });
@@ -244,8 +246,8 @@
           '<div class="grow"><div class="t">' + esc(m.name) +
           (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
           (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
-          '<div class="s">' + (esc(C.memberDatesLine(m)) || T('날짜 없음')) + '</div></div>' +
-          T('<button class="small act-dates">날짜</button>') + '</div>';
+          '<div class="s">' + (esc(C.memberDatesLine(m)) || T('등록 정보 없음')) + '</div></div>' +
+          T('<button class="small act-dates">등록 정보</button>') + '</div>';
       }).join('') + '</div>';
     }).join('');
     $('#people-list').innerHTML = html || T('<p class="empty">해당하는 분이 없습니다.</p>');
@@ -288,60 +290,79 @@
     });
   }
 
-  /* ── 월별 출석률 ─────────────────────────────────
-     제출한 일기의 목원별 참석 체크(church_prayer.attended)로 센다. 한 주는 주일부터라 그 주일이 속한 달로 묶는다. */
+  /* ── 월별 출석 ───────────────────────────────────
+     제출한 일기로 센다. 한 주는 주일부터라 그 주일이 속한 달로 묶는다.
+     · 모임한 목장 = 그달에 일기를 한 번이라도 제출한 목장 / 지금 활동 중인 목장
+     · 목원 참석   = 주마다 참석 체크된 목원 수의 평균 / 지금 목원 수
+     달은 우리 교회 첫 일기가 있는 달부터 보여 준다 (그 전 달은 의미가 없어서) */
   var stats = null, statMonth = null;
-  var MONTHS = 6;
+  var MAX_MONTHS = 12;
   function monthKey(ymd) { return ymd.slice(0, 7); }
   function monthLabel(k, short) {
     var y = +k.slice(0, 4), m = +k.slice(5, 7);
     if (C.lang() === 'en') return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m - 1] + (short ? '' : ' ' + y);
     return short ? m + '월' : y + '년 ' + m + '월';
   }
-  function pct(a, b) { return b ? Math.round(a * 100 / b) : null; }
+  function pct(a, b) { return b ? Math.min(100, Math.round(a * 100 / b)) : null; }
+  function round1(x) { return Math.round(x * 10) / 10; }
 
   async function loadStats() {
     $('#st-table').innerHTML = T('<p class="empty">불러오는 중…</p>');
-    var now = C.mondayOf(), keys = [];
-    var d = new Date(now + 'T00:00:00Z'); d.setUTCDate(1);
-    for (var i = MONTHS - 1; i >= 0; i--) {
-      var x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - i, 1));
-      keys.push(x.toISOString().slice(0, 7));
+    var nowWeek = C.mondayOf(), nowKey = monthKey(nowWeek);
+    var first = (await sb.from('church_journal').select('week_start').eq('status', 'submitted').order('week_start').limit(1)).data || [];
+    var startKey = first.length ? monthKey(C.mondayOf(first[0].week_start)) : nowKey;
+    var keys = [], d = new Date(nowKey + '-01T00:00:00Z');
+    for (var i = 0; i < MAX_MONTHS; i++) {
+      var k = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - i, 1)).toISOString().slice(0, 7);
+      if (k < startKey) break;
+      keys.unshift(k);
     }
     var from = C.addWeeks(keys[0] + '-01', -1);   // 그달 첫 주일이 1일 앞일 수 있어 한 주 앞부터
-    var js = (await sb.from('church_journal').select('id, mokjang_id, week_start, present_count, status')
+    var js = (await sb.from('church_journal').select('id, mokjang_id, week_start, status')
       .gte('week_start', from).eq('status', 'submitted').limit(5000)).data || [];
     var ps = [];
-    for (var k = 0; k < js.length; k += 150) {
-      var ids = js.slice(k, k + 150).map(function (j) { return j.id; });
+    for (var j0 = 0; j0 < js.length; j0 += 150) {
+      var ids = js.slice(j0, j0 + 150).map(function (j) { return j.id; });
       ps = ps.concat((await sb.from('church_prayer').select('journal_id, attended').in('journal_id', ids)).data || []);
     }
-    var byJ = {};
-    ps.forEach(function (p) { var o = byJ[p.journal_id] || (byJ[p.journal_id] = { n: 0, a: 0 }); o.n++; if (p.attended) o.a++; });
+    var att = {};
+    ps.forEach(function (p) { if (p.attended) att[p.journal_id] = (att[p.journal_id] || 0) + 1; });
+    var live = mokjangs.filter(function (x) { return x.active; }), liveIds = {};
+    live.forEach(function (x) { liveIds[x.id] = 1; });
+    var mw = (await sb.from('church_mokwon').select('mokjang_id, active')).data || [];
+    var members = {}, memberTotal = 0;
+    mw.forEach(function (w) { if (w.active !== false && liveIds[w.mokjang_id]) { members[w.mokjang_id] = (members[w.mokjang_id] || 0) + 1; memberTotal++; } });
     var m = {};
-    keys.forEach(function (k) { m[k] = { n: 0, a: 0, meets: 0, people: 0, counted: 0, groups: {} }; });
+    keys.forEach(function (k) { m[k] = { weeks: {}, groups: {}, meets: 0 }; });
     js.forEach(function (j) {
-      var k = monthKey(C.mondayOf(j.week_start)); if (!m[k]) return;
-      var o = m[k], r = byJ[j.id], g = o.groups[j.mokjang_id] || (o.groups[j.mokjang_id] = { n: 0, a: 0, meets: 0 });
-      o.meets++; g.meets++;
-      if (r) { o.n += r.n; o.a += r.a; g.n += r.n; g.a += r.a; }
-      if (j.present_count != null) { o.people += j.present_count; o.counted++; }
+      var wk = C.mondayOf(j.week_start), k = monthKey(wk); if (!m[k]) return;
+      var o = m[k], a = att[j.id] || 0, g = o.groups[j.mokjang_id] || (o.groups[j.mokjang_id] = { meets: 0, a: 0 });
+      o.meets++; g.meets++; g.a += a;
+      o.weeks[wk] = (o.weeks[wk] || 0) + a;
     });
-    stats = { keys: keys, m: m };
+    keys.forEach(function (k) {
+      var o = m[k], ws = Object.keys(o.weeks);
+      o.met = Object.keys(o.groups).filter(function (id) { return liveIds[id]; }).length;
+      o.avg = ws.length ? round1(ws.reduce(function (t, w) { return t + o.weeks[w]; }, 0) / ws.length) : null;
+      o.rate = o.avg == null ? null : pct(o.avg, memberTotal);
+    });
+    stats = { keys: keys, m: m, live: live, members: members, memberTotal: memberTotal, startKey: startKey };
     if (!statMonth || !m[statMonth]) statMonth = keys[keys.length - 1];
     renderStats();
   }
 
   function renderStats() {
-    var keys = stats.keys, m = stats.m, cur = m[statMonth];
-    var r = pct(cur.a, cur.n);
+    var keys = stats.keys, m = stats.m, cur = m[statMonth], live = stats.live, total = stats.memberTotal;
     $('#st-tiles').innerHTML =
-      '<div><b>' + (r == null ? '–' : r + '%') + T('</b><span>출석률</span></div>') +
-      '<div><b>' + cur.a + '/' + cur.n + T('</b><span>참석 / 목원</span></div>') +
-      '<div><b>' + cur.meets + T('</b><span>모임 횟수</span></div>') +
-      '<div><b>' + (cur.counted ? Math.round(cur.people / cur.counted * 10) / 10 : '–') + T('</b><span>평균 인원</span></div>');
+      '<div><b>' + cur.met + '/' + live.length + '</b><span>' + esc(T('모임한 목장')) + (live.length ? ' ' + pct(cur.met, live.length) + '%' : '') + '</span></div>' +
+      '<div><b>' + (cur.avg == null ? '–' : cur.avg) + '/' + total + '</b><span>' + esc(T('목원 참석 (한 주 평균)')) + (cur.rate == null ? '' : ' ' + cur.rate + '%') + '</span></div>' +
+      '<div><b>' + cur.meets + '</b><span>' + esc(T('제출된 모임')) + '</span></div>';
+    $('#st-line').textContent = cur.meets
+      ? T('{0}: 목장 {1}곳 중 {2}곳이 모였고, 목원 {3}명 중 한 주 평균 {4}명({5}%)이 참석했습니다.', monthLabel(statMonth), live.length, cur.met, total, cur.avg, cur.rate)
+      : T('{0}: 아직 제출된 일기가 없습니다.', monthLabel(statMonth));
+    $('#st-since').textContent = T('{0}부터 (우리 교회 첫 일기)', monthLabel(stats.startKey));
     $('#st-bars').innerHTML = keys.map(function (k) {
-      var o = m[k], v = pct(o.a, o.n), on = k === statMonth;
+      var o = m[k], v = o.rate, on = k === statMonth;
       return '<button type="button" role="listitem" class="bar' + (on ? ' on' : '') + '" data-k="' + k + '" aria-label="' +
         esc(monthLabel(k) + ' ' + (v == null ? T('기록 없음') : v + '%')) + '">' +
         '<span class="bar-val">' + (on && v != null ? v + '%' : '') + '</span>' +
@@ -350,12 +371,12 @@
     }).join('');
     $('#st-bars').insertAdjacentHTML('afterbegin', '<span class="tick" style="top:14px">100%</span><span class="tick" style="top:99px">50%</span><span class="tick" style="bottom:-6px">0</span>');
     $('#st-month-title').textContent = T('{0} 목장별 출석', monthLabel(statMonth));
-    var live = mokjangs.filter(function (x) { return x.active || cur.groups[x.id]; });
-    $('#st-table').innerHTML = !cur.meets ? T('<p class="empty">이 달에 제출한 일기가 없습니다.</p>') :
-      '<table class="st-table"><thead><tr>' + T('<th>목장</th><th>모임</th><th>출석률</th>') + '</tr></thead><tbody>' +
+    $('#st-table').innerHTML = '<table class="st-table"><thead><tr>' + T('<th>목장</th><th>모임</th><th>참석 (평균)</th><th>참석률</th>') + '</tr></thead><tbody>' +
       live.map(function (x) {
-        var g = cur.groups[x.id], v = g ? pct(g.a, g.n) : null;
-        return '<tr><td>' + esc(x.name) + '</td><td>' + (g ? g.meets : 0) + '</td><td>' + (v == null ? '–' : v + '%') + '</td></tr>';
+        var g = cur.groups[x.id], n = stats.members[x.id] || 0, avg = g && g.meets ? round1(g.a / g.meets) : null;
+        return '<tr><td>' + esc(x.name) + (x.mokja_name ? '<span class="st-who">' + esc(x.mokja_name) + '</span>' : '') + '</td>' +
+          '<td>' + (g ? g.meets : 0) + '</td><td>' + (avg == null ? '–' : avg + '/' + n) + '</td>' +
+          '<td>' + (avg == null || !n ? '–' : pct(avg, n) + '%') + '</td></tr>';
       }).join('') + '</tbody></table>';
   }
 
@@ -368,8 +389,9 @@
     // 막대 위에 올리면(휴대폰은 누르고 있으면) 그 달 숫자를 보여 준다
     $('#st-bars').addEventListener('pointerover', function (e) {
       var b = e.target.closest('.bar'); if (!b || !stats) return;
-      var o = stats.m[b.dataset.k], v = pct(o.a, o.n);
-      tip.textContent = monthLabel(b.dataset.k) + ' · ' + (v == null ? T('기록 없음') : T('출석률 {0}% (참석 {1} / 목원 {2}) · 모임 {3}번', v, o.a, o.n, o.meets));
+      var o = stats.m[b.dataset.k];
+      tip.textContent = monthLabel(b.dataset.k) + ' · ' + (o.rate == null ? T('기록 없음')
+        : T('모인 목장 {0}/{1} · 목원 한 주 평균 {2}/{3}명 ({4}%)', o.met, stats.live.length, o.avg, stats.memberTotal, o.rate));
       tip.hidden = false;
       var box = $('#st-bars').getBoundingClientRect(), bb = b.getBoundingClientRect();
       tip.style.left = Math.max(0, Math.min(box.width - tip.offsetWidth, bb.left - box.left + bb.width / 2 - tip.offsetWidth / 2)) + 'px';
@@ -463,7 +485,11 @@
     $('#g-prev').addEventListener('click', function () { week = C.addWeeks(week, -1); loadGather(); });
     $('#g-next').addEventListener('click', function () { week = C.addWeeks(week, 1); loadGather(); });
     $('#g-only').addEventListener('change', loadGather);
-    $('#g-print').addEventListener('click', function () { window.print(); });
+    $('#g-print').addEventListener('click', function () {
+      // 카카오톡 같은 앱 안 화면은 인쇄 창이 열리지 않는다 → 크롬·사파리로 옮겨서
+      if (C.inApp()) { if (confirm(T('카카오톡 안에서는 인쇄·PDF 저장이 되지 않습니다. 크롬(아이폰은 사파리)으로 열까요?'))) C.openExternal(); return; }
+      window.print();
+    });
   }
 
   async function loadMokjangs() {
@@ -530,9 +556,10 @@
         : T('<span class="badge">쓰는 중</span>');
       var reply = d && d.cs.length ? '<span class="badge gold">' + T('답글 {0}', d.cs.length) + '</span>' : '';
       return '<details class="mj" data-mj="' + m.id + '"' + (d ? '' : ' data-empty="1"') + '>' +
-        '<summary>' + (leaderPhoto ? C.avatar({ name: m.mokja_name || m.name }, leaderPhoto[m.mokja_id]) : '') + esc(m.name) + ' ' + state + ' ' + reply +
-        '<span class="spacer"></span><span class="quiet" style="font-weight:400; font-size:14px">' +
-        esc(m.mokja_name || '') + '</span></summary>' +
+        '<summary>' + (leaderPhoto ? C.avatar({ name: m.mokja_name || m.name }, leaderPhoto[m.mokja_id]) : '') +
+        '<span class="mj-main"><span class="mj-name">' + esc(m.name) + '</span>' +
+        '<span class="mj-sub">' + (m.mokja_name ? '<span class="quiet">' + esc(m.mokja_name) + '</span>' : '') + state + ' ' + reply + '</span></span>' +
+        '</summary>' +
         '<div>' + (d ? detailHtml(m, d) : T('<p class="quiet">이번 주 일기가 아직 없습니다.</p>')) + '</div>' +
         '</details>';
     }).join('');
@@ -553,22 +580,17 @@
 
     if (d.ps.length) {
       h += T('<div class="section-title">목원별 기도제목</div>');
-      h += d.ps.map(function (p) {
-        return '<div class="member"><div class="head"><span class="name">' + esc(p.name) + '</span>' +
-          (p.attended ? '' : T('<span class="badge">결석</span>')) +
-          (p.answered ? T('<span class="badge done">응답됨</span>') : '') + '</div>' +
-          '<div class="prose">' + (p.content ? esc(p.content) : T('<span class="quiet">(적지 않음)</span>')) + '</div></div>';
-      }).join('');
+      h += C.prayerList(d.ps);
     }
-    if (j.body) h += T('<div class="section-title">목장 이야기</div><div class="prose">') + esc(j.body) + '</div>';
-    if (j.mokjang_prayer) h += T('<div class="section-title">목장 전체 기도제목</div><div class="prose">') + esc(j.mokjang_prayer) + '</div>';
+    if (j.body) h += T('<div class="section-title">목장 이야기</div><div class="prose">') + C.proseHtml(j.body) + '</div>';
+    if (j.mokjang_prayer) h += T('<div class="section-title">목장 전체 기도제목</div><div class="prose">') + C.proseHtml(j.mokjang_prayer) + '</div>';
 
     h += T('<div class="section-title">목사님 말씀</div>');
     h += d.cs.map(function (c) {
       return '<div class="member" style="background:var(--brand-soft); border-color:#cfe0d5">' +
         C.commentHead(c, cmtPhoto) +
         (c.author_id === me.id ? '<span class="spacer"></span><button class="small danger del-cmt" data-id="' + c.id + T('">지우기</button>') : '') +
-        '</div><div class="prose">' + esc(c.body) + '</div></div>';
+        '</div><div class="prose">' + C.proseHtml(c.body) + '</div></div>';
     }).join('');
 
     h += '<form class="cmt noprint" data-j="' + j.id + '" style="margin-top:10px">' +
@@ -621,19 +643,16 @@
         (j.present_count != null ? ' · ' + T('{0}명 참석', j.present_count) : '') + '</p>';
       var withText = d.ps.filter(function (p) { return p.content; });
       if (withText.length) {
-        h += '<ul style="margin:0 0 12px; padding-left:20px">' + withText.map(function (p) {
-          return '<li style="margin:6px 0"><b>' + esc(p.name) + '</b> — ' + esc(p.content) +
-            (p.answered ? T(' <span class="badge done">응답됨</span>') : '') + '</li>';
-        }).join('') + '</ul>';
+        h += C.prayerList(withText, { noAbsent: true });
       } else {
         h += T('<p class="quiet">적힌 목원 기도제목이 없습니다.</p>');
       }
       if (j.mokjang_prayer) {
         h += T('<div class="section-title" style="margin-top:8px">목장 전체</div>') +
-          '<div class="prose">' + esc(j.mokjang_prayer) + '</div>';
+          '<div class="prose">' + C.proseHtml(j.mokjang_prayer) + '</div>';
       }
       if (!only && j.body) {
-        h += T('<div class="section-title">목장 이야기</div><div class="prose">') + esc(j.body) + '</div>';
+        h += T('<div class="section-title">목장 이야기</div><div class="prose">') + C.proseHtml(j.body) + '</div>';
       }
       return h + '</div>';
     }).join('');
@@ -810,21 +829,23 @@
     if (!mokjangs.length) { box.innerHTML = T('<p class="empty">아직 목장이 없습니다.</p>'); return; }
     box.innerHTML = mokjangs.map(function (m) {
       var p = m.mokja_id ? byId[m.mokja_id] : null;
-      return '<div class="list-item" data-mj="' + m.id + '" data-uid="' + (m.mokja_id || '') + '">' +
+      return '<div class="list-item mg-item" data-mj="' + m.id + '" data-uid="' + (m.mokja_id || '') + '"><div class="mg-head">' +
         (photos ? C.avatar({ name: m.mokja_name || m.name }, p && pUrl[p.id]) : '') +
         '<div class="grow"><div class="t">' + esc(m.name) + (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
         '<div class="s">' + esc(m.mokja_name || T('담당 목자 없음')) +
         (p ? (C.isKeyless(p) ? T(' · 열쇠 코드로 들어옴') : T(' · 아이디 ') + esc(p.login_id)) : '') +
-        (m.meet_day ? ' · ' + esc(m.meet_day) : '') + '</div></div>' +
+        (m.meet_day ? ' · ' + esc(m.meet_day) : '') + '</div></div></div><div class="acts">' +
         (m.mokja_id && !(p && C.isKeyless && C.isKeyless(p)) ? T('<button class="small act-link">입장 링크</button>') : '') +
         (m.mokja_id ? (C.isKeyless(p) ? T('<button class="small act-key">열쇠 코드 새로</button>')
                                       : T('<button class="small act-pw">비밀번호 새로</button>')) : '') +
-        (photos && p ? T('<button class="small act-mphoto">사진</button>') : '') +
+        (photos && p ? (pUrl[p.id] ? T('<button class="small act-mphoto">사진 바꾸기</button>') : T('<button class="small act-mphoto">사진</button>')) : '') +
+        (photos && p && pUrl[p.id] ? T('<button class="small act-mphoto-del">사진 지우기</button>') : '') +
         T('<button class="small act-rename">이름 고치기</button>') +
         '<button class="small act-hide">' + (m.active ? T('잠시 쉼으로') : T('다시 활동')) + '</button>' +
+        '</div><div class="acts-danger">' +
         (m.mokja_id ? T('<button class="small danger act-del">계정 삭제</button>') : '') +
         T('<button class="small danger act-drop">목장 지우기</button>') +
-        '</div>';
+        '</div></div>';
     }).join('');
   }
 
@@ -834,6 +855,14 @@
     var item = e.target.closest('.list-item');
     var mjId = item.dataset.mj, uid = item.dataset.uid;
     var m = mokjangs.find(function (x) { return x.id === mjId; });
+    if (btn.classList.contains('act-mphoto-del')) {   // 목자 사진 지우기
+      var wp = manageProfs[uid]; if (!wp) return;
+      if (!confirm(T('{0} 목자 사진을 지울까요?', m.mokja_name))) return;
+      try { await C.photoRemove(wp, 'church_profile'); leaderPhoto = null; await renderManage();
+            C.say($('#msg-manage'), T('{0} 목자 사진을 지웠습니다.', m.mokja_name), 'ok'); }
+      catch (err) { C.say($('#msg-manage'), err.message, 'err'); }
+      return;
+    }
     if (btn.classList.contains('act-mphoto')) {   // 목자 사진을 목사님이 대신 넣는다
       var fi = $('#mokja-photo-file'), who = manageProfs[uid];
       fi.value = '';
