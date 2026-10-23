@@ -377,6 +377,37 @@
         '</div>';
     }).join('');
     $$('#members-box textarea').forEach(grow);
+    renderChips();
+  }
+
+  // 목원 이름 줄: 누가 아직 기도제목을 안 적었는지 한눈에 (누르면 그 칸으로)
+  function renderChips() {
+    var box = $('#members-chips'); if (!box) return;
+    var els = $$('#members-box .member');
+    if (!els.length) { box.innerHTML = ''; return; }
+    var done = 0;
+    box.innerHTML = '<div class="chips-head">' + T('기도제목 적은 사람') + ' <b class="chips-count"></b></div><div class="chips">' +
+      els.map(function (el, i) {
+        var ok = !!$('.f-con', el).value.trim(); if (ok) done++;
+        return '<button type="button" class="chip' + (ok ? ' done' : '') + '" data-i="' + i + '">' + esc($('.name', el).textContent) + '</button>';
+      }).join('') + '</div>';
+    $('.chips-count', box).textContent = done + ' / ' + els.length;
+  }
+  function bindChips() {
+    var box = $('#members-chips'); if (!box) return;
+    box.addEventListener('click', function (e) {
+      var c = e.target.closest('.chip'); if (!c) return;
+      var el = $$('#members-box .member')[+c.dataset.i]; if (!el) return;
+      el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      setTimeout(function () { $('.f-con', el).focus({ preventScroll: true }); }, 300);
+    });
+    $('#members-box').addEventListener('input', function (e) {
+      if (!e.target.classList.contains('f-con')) return;
+      var el = e.target.closest('.member'), i = $$('#members-box .member').indexOf(el);
+      var c = $('#members-chips .chip[data-i="' + i + '"]'); if (!c) return renderChips();
+      var was = c.classList.contains('done'), now = !!e.target.value.trim();
+      if (was !== now) renderChips();
+    });
   }
 
   function grow(t) {
@@ -405,6 +436,7 @@
       $$('#members-box .f-att').forEach(function (c) { c.checked = true; }); markDirty();
     });
     $('#btn-copy-last').addEventListener('click', copyLast);
+    bindChips();
     grow($('#body')); grow($('#mprayer'));
   }
 

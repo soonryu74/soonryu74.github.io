@@ -7,7 +7,7 @@ self.addEventListener('push', function (e) {
   try { d = e.data ? e.data.json() : {}; } catch (_) { d = { body: e.data ? e.data.text() : '' }; }
   e.waitUntil(self.registration.showNotification(d.title || '목장 나눔터', {
     body: d.body || '',
-    icon: 'assets/icon-192.png',
+    icon: d.icon || 'assets/icon-192.png',   // 보낸 사람 사진 (없으면 앱 아이콘)
     badge: 'assets/badge-96.png',
     tag: d.tag || undefined,
     renotify: !!d.tag,
