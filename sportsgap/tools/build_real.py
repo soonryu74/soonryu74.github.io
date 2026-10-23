@@ -33,7 +33,7 @@ for i, o in enumerate(json.load(open(fac_geo))):
     t = TYPE.get(o['sheet'], '생활체육시설(기타)')
     name = re.sub(r'\s+', ' ', o['name'])
     facs.append({'id': f'f{i}', 'name': name, 'region': reg, 'type': t, 'lat': round(g['lat'], 5), 'lng': round(g['lng'], 5),
-                 'indoor': t in INDOOR, 'barrierFree': False, 'senior': t in SENIOR, 'disabledProg': vmatch(reg, name),
+                 'indoor': t in INDOOR, 'barrierFree': False, 'senior': t in SENIOR, 'disabledProg': (t in INDOOR or t == '생활체육시설(기타)') and vmatch(reg, name),
                  'address': re.sub(r'\s+', ' ', o['addr']) or None, 'geoLevel': g['level']})
 for j, o in enumerate(json.load(open(dis_only_geo))):
     g = o.get('geo'); reg = region_of(o['sgg'], o.get('addr', ''))
@@ -59,7 +59,7 @@ json.dump({'source': 'public', 'asOf': '공공체육시설 2024.12.31. 기준 ·
                {'name': '장애인스포츠강좌이용권 가맹점 현황(2023)', 'org': '대한장애인체육회', 'url': 'https://www.data.go.kr/data/15110791/fileData.do'},
                {'name': '시군별 주민등록 인구·65세 이상(2024 연앙)', 'org': '행정안전부·통계청(KOSIS)', 'url': 'https://kosis.kr'},
                {'name': '시군별 등록장애인(2018)', 'org': '보건복지부', 'url': 'https://kosis.kr'},
-               {'name': '좌표: 주소 → 위도·경도 변환(동·리 단위 근사 포함)', 'org': 'OpenStreetMap Nominatim', 'url': 'https://nominatim.openstreetmap.org'}]},
+               {'name': '좌표: 도로명 주소 검색(OpenStreetMap·Photon), 지번 주소는 읍면동 중심점(행정동 경계 2025.4.)', 'org': 'OpenStreetMap · vuski/admdongkor', 'url': 'https://github.com/vuski/admdongkor'}]},
           open(out, 'w'), ensure_ascii=False)
 c = collections.Counter(f['type'] for f in facs)
 print(len(facs), dict(skipped), c.most_common(), sum(f['disabledProg'] for f in facs), sum(f['barrierFree'] for f in facs),

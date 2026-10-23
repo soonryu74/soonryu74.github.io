@@ -49,7 +49,8 @@ export function matchFacilities(fs: Facility[], needs: Needs, here?: { lat: numb
       if (has) { score += w; reasons.push(label); } else { score -= w; missing.push(miss); }
     };
     check(needs.wheelchair, f.barrierFree, '무장애 시설', 3, '무장애 정보 없음');
-    check(needs.senior, f.senior, '어르신 친화 종목', 2, '어르신 친화 종목 아님');
+    // 어르신 친화 종목은 '있으면 좋은' 조건: 맞으면 가점만, 아니어도 감점하지 않는다
+    if (needs.senior && f.senior) { score += 1; reasons.push('어르신 친화 종목'); }
     check(needs.disabled, f.disabledProg, '장애인 강좌', 2, '장애인 강좌 정보 없음');
     check(needs.indoor, f.indoor, '실내', 1, '실외 시설');
     if (needs.types.length) {
@@ -59,5 +60,7 @@ export function matchFacilities(fs: Facility[], needs: Needs, here?: { lat: numb
     if (km !== undefined) score -= km / 5;
     return { f, score, reasons, missing, km };
   });
-  return out.sort((a, b) => b.score - a.score || (a.km ?? 0) - (b.km ?? 0));
+  // 점수가 같으면 어르신·장애인이 쓰기 쉬운 시설(장애인 체육시설 > 장애인 강좌 > 실내 > 어르신 친화)을 먼저
+  const ease = (f: Facility) => (f.barrierFree ? 8 : 0) + (f.disabledProg ? 4 : 0) + (f.indoor ? 2 : 0) + (f.senior ? 1 : 0);
+  return out.sort((a, b) => b.score - a.score || (a.km ?? 0) - (b.km ?? 0) || ease(b.f) - ease(a.f));
 }
