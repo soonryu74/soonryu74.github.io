@@ -605,6 +605,9 @@ const db = p => p.evaluate(() => window.__DB());
     const r = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'remind');
     ok('그 주로 알림 요청', r.length === 1 && /^\d{4}-\d{2}-\d{2}$/.test(r[0].body.week), JSON.stringify(r));
     ok('알림 안 켠 목자 이름 안내', /알림을 켜지 않은 목자: 김목자/.test(await p.textContent('#msg-remind')));
+    await p.evaluate(() => { try { delete Navigator.prototype.share; } catch (e) {} });
+    await p.click('#btn-remind-kakao'); await p.waitForTimeout(300);
+    { const t = await p.textContent('#msg-remind'); ok('카톡으로 보내기: 안 낸 목장 목록 + 교회 주소 글', /김 목장/.test(t) && /bangjoo\//.test(t) && /단톡방/.test(t), t); }
     await p.click('#wk-prev'); await p.waitForTimeout(500);
     ok('모두 제출한 주에는 단추 없음', !(await p.isVisible('#btn-remind')));
     await p.click('#wk-next'); await p.click('#wk-next'); await p.waitForTimeout(500);

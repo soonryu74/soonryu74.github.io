@@ -155,7 +155,7 @@ window.I18N.en = {
   "<th>목장</th><th>모임</th><th>출석률</th>": "<th>Group</th><th>Meetings</th><th>Rate</th>",
   "출석률 {0}% (참석 {1} / 목원 {2}) · 모임 {3}번": "{0}% attendance ({1} of {2}) · {3} gatherings",
   // ── 마감 알림 · 제출 안 한 목장 알림 ─────
-  "제출 안 한 목장에 알림 보내기 ({0}곳)": "Remind groups that haven't submitted ({0})",
+  "안 낸 목장에 앱 알림 ({0}곳)": "App reminder to groups not yet submitted ({0})",
   "{0} 일기를 제출하지 않은 목장 {1}곳의 목자에게 알림을 보낼까요?": "Send a reminder to the leaders of {1} groups that haven't submitted for {0}?",
   "목자 {0}명에게 알림을 보냈습니다.": "Reminder sent to {0} leaders.",
   "알림을 켜지 않은 목자: {0} — 카카오톡으로 따로 알려 주세요.": "Leaders without alerts turned on: {0} — please message them separately.",
@@ -462,6 +462,13 @@ window.I18N.en = {
 
   // ── 공통 ───────────────────────────────────
   "기도제목 적은 사람": "Prayer requests written",
+  "카톡으로 보내기": "Send via KakaoTalk",
+  "[{0}] {1} 목장 일기를 아직 제출하지 않은 목장입니다.": "[{0}] These groups haven't submitted their journal for {1} yet.",
+  "{0} 목자님": "Leader {0}",
+  "모임 이야기와 기도제목을 올려 주세요. 여기서 바로 쓰실 수 있습니다:": "Please share your gathering and prayer requests here:",
+  "공유 창에서 카카오톡 → 목자 단톡방을 고르시면 됩니다.": "Choose KakaoTalk → your leaders' group chat in the share sheet.",
+  "알림 글을 복사했습니다. 카카오톡 목자 단톡방에 붙여 넣어 보내 주세요.": "Copied. Paste it into your leaders' KakaoTalk group chat.",
+  "아래 글을 길게 눌러 복사해서 카카오톡 목자 단톡방에 보내 주세요.": "Press and hold to copy the text below, then send it to your leaders' KakaoTalk group chat.",
   "메뉴": "Menu",
   "로그아웃": "Sign out",
   "처리하지 못했습니다 ({0})": "Something went wrong ({0})",

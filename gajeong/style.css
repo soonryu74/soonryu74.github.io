@@ -420,3 +420,7 @@ html[data-theme="night"] input[type=date]{color-scheme:dark}
 .pr-list .pr-text p{margin:0 0 .6em}
 .pr-list .pr-text p:last-child{margin-bottom:0}
 @media print{ .pr-list > li{background:none; border-left-color:#ccc} }
+
+/* 카카오톡으로 보내기 (카카오 노란색) */
+button.kakao{background:#fee500; border-color:#f2d900; color:#191919}
+button.kakao:hover{background:#fada0a; border-color:#e6cd00}
