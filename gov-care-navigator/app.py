@@ -90,7 +90,7 @@ class MultiLLMRouter:
                         return text, f"✅ 실시간 API/로컬 엔진 구동 완료 ({model_label})"
             except Exception:
                 pass
-        return MultiLLMRouter._build_structured_output(model_label, fallback_data), f"⚡ 무결점 내장 추론 엔진 구동 완료 ({model_label} 어댑터 호환 검증)"
+        return MultiLLMRouter._build_structured_output(model_label, fallback_data), f"⚡ 내장 규칙 엔진(오프라인) 구동 완료 ({model_label} 어댑터 호환)"
 
     @staticmethod
     def _build_structured_output(model_label: str, data: dict) -> str:
@@ -169,18 +169,13 @@ all_guidelines = guidelines + st.session_state["extra_guidelines"]
 file_hash = get_file_sha256(SAMPLE_GUIDELINE_PATH)
 
 st.markdown(f"""
-<div style="background-color:#0f172a; color:white; padding:16px 22px; border-radius:10px; margin-bottom:16px;">
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-    <div>
-      <span style="background-color:#2563eb; padding:4px 10px; border-radius:6px; font-weight:bold; font-size:13px;">2026 공공 AI 대전환 챌린지 (세션 1)</span>
-      <span style="font-size:22px; font-weight:800; margin-left:10px;">🏛️ 국민 곁에 ON (Gov-Care Navigator)</span>
-    </div>
-    <div style="font-size:13px; color:#86efac;">
-      🔒 <b>원본 절대 보호(Read-Only) 작동 중</b> | 원본 SHA-256: <code>{file_hash}</code> | 산출물 격리 경로: <code>/output_generated</code>
-    </div>
-  </div>
+<div style="background-color:#0f172a; color:white; padding:18px 24px; border-radius:12px; margin-bottom:6px;">
+  <span style="background-color:#2563eb; padding:4px 10px; border-radius:6px; font-weight:600; font-size:12px; letter-spacing:0.3px;">2026 공공 AI 대전환 챌린지 · 세션 1</span>
+  <div style="font-size:26px; font-weight:800; margin-top:8px;">🏛️ 국민 곁에 ON <span style="font-weight:500; font-size:16px; color:#cbd5e1;">Gov-Care Navigator</span></div>
+  <div style="font-size:14px; color:#cbd5e1; margin-top:4px;">질병청·복지부·지자체 지침을 한 번에 대조해 위기 가구의 지원 자격을 찾아드립니다.</div>
 </div>
 """, unsafe_allow_html=True)
+st.caption(f"🔒 원본 지침 읽기 전용(Read-Only) · SHA-256 `{file_hash}` · 산출물 저장 경로 `output_generated/`")
 
 with st.sidebar:
     st.header("⚙️ 1. 범정부 AI 공통기반 모델 설정")
@@ -223,7 +218,7 @@ SCENARIOS = {
     }
 }
 
-st.subheader("⚡ Step 1. 심사위원 원클릭 시연 시나리오 선택")
+st.subheader("⚡ Step 1. 시연 시나리오 선택")
 selected_scenario_key = st.radio("대표 위기 가구 시나리오 선택", list(SCENARIOS.keys()))
 current_case = SCENARIOS[selected_scenario_key]
 
@@ -250,22 +245,22 @@ for g in all_guidelines:
         "법령·사업지침명": g["title"],
         "근거 쪽수": g["page"],
         "소득 커트라인": f"중위소득 {g['criteria']['max_income_pct']}% 이하 (현재 {c_income}%)",
-        "수리적 판정 결과": "✅ 적격 (즉시 지원)" if is_eligible else "❌ 기준 미충족"
+        "판정 결과": "✅ 적격" if is_eligible else "❌ 기준 미충족"
     })
 
 st.divider()
-st.subheader("🔍 Step 2. 부처 칸막이 초월 무결점 판정표")
-st.dataframe(pd.DataFrame(audit_rows), use_container_width=True, hide_index=True)
+st.subheader("🔍 Step 2. 지침별 적격 판정표")
+st.dataframe(pd.DataFrame(audit_rows), width="stretch", hide_index=True)
 
 st.subheader("🚀 Step 3. 행정 산출물 3종 원클릭 생성 및 저장")
-if st.button("✨ 선택된 AI 모델로 [기안문 + 사전기입 신청서 + 쉬운말/다국어 안내장] 일괄 생성", type="primary", use_container_width=True):
+if st.button("✨ 선택된 AI 모델로 [기안문 + 사전기입 신청서 + 쉬운말/다국어 안내장] 일괄 생성", type="primary", width="stretch"):
     case_payload = {"name": c_name, "age": c_age, "region": c_region, "household": current_case["household"], "income_pct": c_income, "situation": c_situation}
 
     tab1, tab2, tab3, tab4 = st.tabs([
         "📄 ① 통합 검토보고서(기안문)",
         "✍️ ② 사전기입 통합 신청서",
         "🌏 ③ 큰글씨 & 다국어 안내장",
-        "🔄 ④ 모델 호환성 & SHA-256 감사 로그"
+        "🔄 ④ 실행 기록 (모델·SHA-256)"
     ])
 
     outputs_to_save = {}
@@ -292,7 +287,7 @@ if st.button("✨ 선택된 AI 모델로 [기안문 + 사전기입 신청서 + �
         zf.writestr(f"03_큰글씨_다국어_안내장_{c_name}.md", outputs_to_save["easy_guide"])
 
     with tab4:
-        st.success("✅ 원본 보호(Read-Only) 및 모델 비종속성 검증 통과")
+        st.success("✅ 원본 보호(Read-Only) 유지 · 모델 어댑터 호환 확인")
         st.json({
             "active_llm_adapter": selected_model,
             "input_readonly_sha256": file_hash,
@@ -305,5 +300,5 @@ if st.button("✨ 선택된 AI 모델로 [기안문 + 사전기입 신청서 + �
         data=zip_buffer.getvalue(),
         file_name=f"[국민곁에ON]_산출물패키지_{c_name}_{timestamp}.zip",
         mime="application/zip",
-        use_container_width=True
+        width="stretch"
     )
