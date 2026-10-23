@@ -597,7 +597,7 @@ with st.sidebar:
             else:
                 st.markdown(f"**{d.get('title', did)}**  \n{d.get('ministry', '')} · 등록 {d.get('registered_at', '-')} · 승인 {d.get('approver', '-')}  \n원본 PDF SHA-256 `{d.get('source_sha256', '')[:16]}…`")
 
-mode = st.radio("작업 선택", ["🧭 상담 판정 · 문서 생성", "📂 지침 등록 (전 부처 공용)"], horizontal=True, label_visibility="collapsed")
+mode = st.radio("작업 선택", ["🧭 상담 판정 · 문서 생성", "📂 지침 등록 (전 부처 공용)", "✅ 규칙 검증 (원문 대조)"], horizontal=True, label_visibility="collapsed")
 
 # ══════════════════════════════════════════════════════════════
 # 지침 등록 페이지
@@ -808,8 +808,48 @@ def render_registry_page() -> None:
         st.caption("등록된 규칙은 registry/ 폴더에 JSON으로 저장되며, 다운로드해 저장소에 커밋하면 영구 보존됩니다. (Streamlit Cloud는 재배포 시 초기화)")
 
 
+def render_verify_page() -> None:
+    import verify_rules
+
+    st.markdown('<p class="gc-step">규칙 검증</p>', unsafe_allow_html=True)
+    st.subheader("규칙에 적힌 숫자·쪽수가 지침 원문에 실제로 있는지 자동 대조합니다")
+    st.caption("판정 규칙(rules.json)과 등록 지침의 소득 기준 %, 가구원별 상한액, 지원 금액, 서식 번호, 제외 사유, 확인 항목, 제도 간 규칙을 각각 '인용한 쪽'의 원문 텍스트에서 찾습니다. 하나라도 못 찾으면 ❌로 표시됩니다.")
+    res = verify_rules.run()
+    m1, m2, m3 = st.columns(3)
+    m1.metric("검증 항목", f"{res['total']}건")
+    m2.metric("원문에서 확인됨", f"{res['passed']}건")
+    m3.metric("확인 실패", f"{res['failed']}건")
+    if res["failed"] == 0:
+        st.success("모든 인용이 원문 해당 쪽에서 확인되었습니다.")
+    else:
+        st.error(f"{res['failed']}건은 인용 쪽에서 해당 표현을 찾지 못했습니다. 규칙 문구 또는 쪽수를 수정하세요.")
+    only_fail = st.toggle("실패 항목만 보기", value=res["failed"] > 0)
+    rows = [r for r in res["rows"] if (not only_fail or not r["ok"])]
+    df = pd.DataFrame([{
+        "결과": "✅" if r["ok"] else "❌", "소관": r["ministry"], "제도": r["program"], "항목": r["kind"], "내용": r["what"],
+        "지침": doc_title(corpus, r["doc"]) if r["doc"] in corpus["docs"] else r["doc"], "인쇄 쪽": str(r["print_page"]), "PDF 쪽": r["pdf_page"], "비고": r["found"],
+    } for r in rows])
+    st.dataframe(df, width="stretch", hide_index=True, height=min(60 + 36 * len(df), 700))
+
+    st.markdown("**원문 쪽 직접 보기**")
+    c1, c2 = st.columns([1.5, 1])
+    doc_opts = {doc_title(corpus, d): d for d in corpus["docs"]}
+    sel_doc = c1.selectbox("지침", list(doc_opts.keys()))
+    did = doc_opts[sel_doc]
+    pages_avail = [pg["pdf_page"] for pg in corpus["docs"][did]["pages"]]
+    sel_pg = c2.number_input("PDF 쪽", min_value=min(pages_avail), max_value=max(pages_avail), value=pages_avail[0])
+    txt = page_text(corpus, did, int(sel_pg))
+    offset = corpus["docs"][did].get("page_offset", 0)
+    st.caption(f"인쇄 쪽수 {int(sel_pg) - offset}쪽 · 원본 PDF를 열어 같은 쪽을 비교하면 사람이 직접 검증할 수 있습니다.")
+    st.markdown(f"<div class='gc-quote'>{txt[:6000] if txt else '(이 쪽은 텍스트가 없습니다)'}</div>", unsafe_allow_html=True)
+    st.download_button("검증 결과 JSON 다운로드", data=json.dumps(res, ensure_ascii=False, indent=1), file_name="rule_verification.json", mime="application/json")
+
+
 if mode.startswith("📂"):
     render_registry_page()
+    st.stop()
+if mode.startswith("✅"):
+    render_verify_page()
     st.stop()
 
 # ── Step 1
