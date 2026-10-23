@@ -21,3 +21,5 @@ exclude:
   - movesafe/node_modules
   - movesafe/test-results
   - movesafe/playwright-report
+  # 국민 곁에 ON: Streamlit 앱이라 Jekyll 사이트에서는 제외(Streamlit Cloud에서 별도 실행)
+  - gov-care-on
