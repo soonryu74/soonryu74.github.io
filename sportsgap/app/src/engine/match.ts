@@ -21,6 +21,10 @@ const RULES: { re: RegExp; apply: (n: Needs) => void; label: string }[] = [
   { re: /걷기|산책|걸으|달리기|트랙/, apply: (n) => n.types.push('육상경기장'), label: '육상 트랙' },
   { re: /파크골프/, apply: (n) => n.types.push('파크골프장'), label: '파크골프장' },
   { re: /게이트볼/, apply: (n) => n.types.push('게이트볼장'), label: '게이트볼장' },
+  { re: /체육관|배드민턴|탁구|농구|배구/, apply: (n) => n.types.push('체육관'), label: '체육관' },
+  { re: /테니스/, apply: (n) => n.types.push('테니스장'), label: '테니스장' },
+  { re: /풋살/, apply: (n) => n.types.push('풋살장'), label: '풋살장' },
+  { re: /축구|야구/, apply: (n) => n.types.push('구기장(축구·야구 등)'), label: '구기장' },
 ];
 
 export function parseNeeds(text: string): { needs: Needs; understood: string[] } {

@@ -48,6 +48,11 @@ describe('말로 찾기', () => {
     expect(needs.types).toContain('수영장');
     expect(understood).toContain('무장애 시설');
   });
+  it('운동 종류 낱말을 알아듣는다', () => {
+    const { needs } = parseNeeds('발달장애가 있는 아이와 함께 갈 수 있는 체육관');
+    expect(needs.disabled).toBe(true);
+    expect(needs.types).toContain('체육관');
+  });
   it('조건을 갖춘 시설이 먼저 나온다', () => {
     const m = matchFacilities([f('x', 'A시'), f('y', 'A시', { barrierFree: true })], { wheelchair: true, senior: false, disabled: false, indoor: false, types: [] });
     expect(m[0].f.id).toBe('y');
