@@ -3,3 +3,5 @@ output_generated/*
 __pycache__/
 .venv/
 .streamlit/secrets.toml
+registry/
+!registry/.gitkeep

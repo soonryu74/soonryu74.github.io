@@ -35,6 +35,27 @@ CORPUS_DIR = INPUT_DIR / "corpus"
 RULES_PATH = INPUT_DIR / "rules.json"
 OUTPUT_DIR = BASE_DIR / "output_generated"
 OUTPUT_DIR.mkdir(exist_ok=True)
+REGISTRY_DIR = BASE_DIR / "registry"          # 부처별로 등록·승인한 지침(규칙+원문)
+REG_RULES_DIR = REGISTRY_DIR / "rules"
+REG_CORPUS_DIR = REGISTRY_DIR / "corpus"
+REG_INDEX = REGISTRY_DIR / "index.json"
+for _d in (REG_RULES_DIR, REG_CORPUS_DIR):
+    _d.mkdir(parents=True, exist_ok=True)
+
+from rule_extractor import find_candidate_pages, heuristic_draft, llm_draft  # noqa: E402
+
+
+def load_registry_index() -> list[dict]:
+    if REG_INDEX.exists():
+        try:
+            return json.loads(REG_INDEX.read_text(encoding="utf-8"))
+        except Exception:
+            return []
+    return []
+
+
+def save_registry_index(items: list[dict]) -> None:
+    REG_INDEX.write_text(json.dumps(items, ensure_ascii=False, indent=2), encoding="utf-8")
 
 DOC_SOURCES = {
     "MOHW_EMG_2026": {
@@ -47,6 +68,12 @@ DOC_SOURCES = {
         "title": "2026 국가결핵관리지침",
         "org": "질병관리청 결핵정책과",
         "url": "https://tbzero.kdca.go.kr/tbzero/board/boardView.do?leftMenuId=8&paramMenuId=82&boardSeq=9206",
+        "retrieved": "2026-10-23",
+    },
+    "MOLIT_HOUSING_2026": {
+        "title": "2026년 주거급여 사업안내",
+        "org": "국토교통부 주거복지지원과 (인천광역시 게시본)",
+        "url": "https://www.incheon.go.kr/housing/hou050300/3064961",
         "retrieved": "2026-10-23",
     },
 }
@@ -91,9 +118,11 @@ def chunk_page(text: str, size: int = 450) -> list[str]:
 
 
 @st.cache_resource(show_spinner="지침 원문 색인 구축 중…")
-def load_corpus() -> dict:
+def load_corpus(_version: str) -> dict:
     docs, chunks = {}, []
-    for path in sorted(CORPUS_DIR.glob("*.json")):
+    active_reg = {it["doc_id"] for it in load_registry_index() if it.get("active", True)}
+    paths = sorted(CORPUS_DIR.glob("*.json")) + [p for p in sorted(REG_CORPUS_DIR.glob("*.json")) if p.stem in active_reg]
+    for path in paths:
         d = json.loads(path.read_text(encoding="utf-8"))
         d["file_sha16"] = sha16(path)
         docs[d["doc_id"]] = d
@@ -151,7 +180,10 @@ def page_text(corpus: dict, doc_id: str, pdf_page: int) -> str:
 
 
 def doc_title(corpus: dict, doc_id: str) -> str:
-    return DOC_SOURCES.get(doc_id, {}).get("title") or corpus["docs"].get(doc_id, {}).get("source_file", doc_id)
+    if doc_id in DOC_SOURCES:
+        return DOC_SOURCES[doc_id]["title"]
+    d = corpus["docs"].get(doc_id, {})
+    return d.get("title") or d.get("source_file", doc_id)
 
 
 def cite_label(corpus: dict, cite: dict, default_doc: str) -> str:
@@ -399,7 +431,7 @@ def template_documents(case: dict, results: list[dict], cross_notes: list[dict],
 * **문서번호**: 보건복지-{today.year}-○○○○호
 * **검토 대상**: {case['name']} (만 {case['age']}세, {case['region']}, {case['household']} / 가구원 {case['household_size']}인 / 기준중위소득 {case['income_pct']}%)
 * **상담 요지**: {case['situation']}
-* **대조 지침**: 보건복지부 「2026년 긴급복지지원사업 안내」, 질병관리청 「2026 국가결핵관리지침」 (원문 읽기 전용 투입)
+* **대조 지침**: {", ".join(sorted({f"{r['program']['ministry']} 「{r['program']['doc_title']}」" for r in results}))} (원문 읽기 전용 투입)
 
 ---
 ### 1. 제도별 1차 스크리닝 결과
@@ -498,25 +530,32 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-corpus = load_corpus()
+registry = load_registry_index()
+reg_version = hashlib.sha256(json.dumps(registry, sort_keys=True).encode()).hexdigest()[:12]
+corpus = load_corpus(reg_version)
 rules = json.loads(RULES_PATH.read_text(encoding="utf-8"))
 rules_sha = sha16(RULES_PATH)
-programs = rules["programs"]
 median = rules["median_income_2026"]
-
-if "extra_chunks" not in st.session_state:
-    st.session_state["extra_chunks"] = []
-    st.session_state["extra_bm25"] = None
-    st.session_state["extra_names"] = []
+programs = list(rules["programs"])
+for it in registry:
+    if not it.get("active", True):
+        continue
+    rp = REG_RULES_DIR / f"{it['doc_id']}.json"
+    if rp.exists():
+        try:
+            programs.extend(json.loads(rp.read_text(encoding="utf-8")))
+        except Exception:
+            pass
 
 doc_meta = " · ".join(f"{doc_title(corpus, d)} {len(corpus['docs'][d]['pages'])}쪽" for d in corpus["docs"])
+ministries = sorted({p["ministry"].split("·")[0] for p in programs})
 st.markdown(
     f"""
 <div class="gc-hero">
   <span class="tag">2026 공공 AI 대전환 챌린지 · 세션 1</span>
   <h1>🏛️ 국민 곁에 ON <span style="font-weight:400;font-size:18px;color:#cbd5e1;">Gov-Care Navigator</span></h1>
   <p>보건복지부·질병관리청 지침 원문을 한 번에 대조해, 위기 가구가 받을 수 있는 지원을 조문 근거와 함께 찾아내고 서류까지 준비합니다.</p>
-  <div class="meta">📚 투입 원문: {doc_meta} &nbsp;|&nbsp; 🔒 읽기 전용 · 규칙 SHA-256 <code>{rules_sha}</code> &nbsp;|&nbsp; 산출물 격리 <code>output_generated/</code></div>
+  <div class="meta">📚 투입 원문: {doc_meta} &nbsp;|&nbsp; 🏢 참여 기관 {len(ministries)}곳 · 제도 {len(programs)}종 &nbsp;|&nbsp; 🔒 읽기 전용 · 규칙 SHA-256 <code>{rules_sha}</code></div>
 </div>
 """,
     unsafe_allow_html=True,
@@ -540,42 +579,240 @@ with st.sidebar:
             st.warning("API 키가 없으면 호출이 실패하고 내장 템플릿으로 대체됩니다.")
 
     st.divider()
-    st.header("📂 지침 추가 투입")
-    up = st.file_uploader("PDF·TXT·MD 파일", type=["pdf", "txt", "md"], help="업로드 문서는 '원문 근거 검색' 대상에만 추가됩니다. 판정 규칙은 rules.json에 담당자가 검토 후 등록합니다.")
-    if up is not None and up.name not in st.session_state["extra_names"]:
-        pages = []
-        if up.name.lower().endswith(".pdf"):
-            try:
-                from pypdf import PdfReader
-                reader = PdfReader(io.BytesIO(up.getvalue()))
-                for i, pg in enumerate(reader.pages, start=1):
-                    t = pg.extract_text() or ""
-                    if t.strip():
-                        pages.append((i, t))
-            except Exception as e:  # noqa: BLE001
-                st.error(f"PDF 읽기 실패: {e}")
-        else:
-            pages = [(1, up.getvalue().decode("utf-8", errors="ignore"))]
-        for i, t in pages:
-            for c in chunk_page(t):
-                st.session_state["extra_chunks"].append({"doc_id": f"UPLOAD::{up.name}", "pdf_page": i, "print_page": i, "text": c})
-        st.session_state["extra_bm25"] = build_extra_index(st.session_state["extra_chunks"])
-        st.session_state["extra_names"].append(up.name)
-        st.toast(f"{up.name} 검색 대상에 추가 ({len(pages)}쪽)")
-    if st.session_state["extra_names"]:
-        st.caption("추가 문서: " + ", ".join(st.session_state["extra_names"]))
+    st.header("📂 지침 등록")
+    st.caption("어느 부처·지자체든 지침 PDF를 올리면 규칙 초안을 추출하고, 담당자 승인 후 판정에 포함됩니다. 상단 '지침 등록' 탭에서 진행하세요.")
+    if registry:
+        st.caption("등록 지침: " + ", ".join(f"{it['ministry']} {it['title']}" + ("" if it.get("active", True) else " (비활성)") for it in registry))
 
     st.divider()
     with st.expander("📑 투입 원문 출처"):
         for did, d in corpus["docs"].items():
-            src = DOC_SOURCES.get(did, {})
-            st.markdown(f"**{src.get('title', did)}**  \n{src.get('org', '')}  \n[원문 게시물]({src.get('url', '#')}) · 수집 {src.get('retrieved', '-')}  \n원본 PDF SHA-256 `{d['source_sha256'][:16]}…`")
+            src = DOC_SOURCES.get(did)
+            if src:
+                st.markdown(f"**{src['title']}**  \n{src['org']}  \n[원문 게시물]({src['url']}) · 수집 {src['retrieved']}  \n원본 PDF SHA-256 `{d['source_sha256'][:16]}…`")
+            else:
+                st.markdown(f"**{d.get('title', did)}**  \n{d.get('ministry', '')} · 등록 {d.get('registered_at', '-')} · 승인 {d.get('approver', '-')}  \n원본 PDF SHA-256 `{d.get('source_sha256', '')[:16]}…`")
+
+mode = st.radio("작업 선택", ["🧭 상담 판정 · 문서 생성", "📂 지침 등록 (전 부처 공용)"], horizontal=True, label_visibility="collapsed")
+
+# ══════════════════════════════════════════════════════════════
+# 지침 등록 페이지
+# ══════════════════════════════════════════════════════════════
+def _parse_lines(txt: str, n_fields: int, offset: int) -> list[dict]:
+    out = []
+    for line in (txt or "").splitlines():
+        if not line.strip():
+            continue
+        parts = [x.strip() for x in line.split("|")]
+        while len(parts) < n_fields:
+            parts.append("")
+        pg = int(re.sub(r"\D", "", parts[n_fields - 1]) or 1)
+        out.append({"fields": parts[: n_fields - 1], "cite": {"pdf_page": pg, "print_page": pg - offset}})
+    return out
+
+
+def _fmt_lines(items: list[dict], keys: list[str]) -> str:
+    rows = []
+    for it in items:
+        vals = []
+        for k in keys:
+            v = it.get(k, "")
+            vals.append(",".join(v) if isinstance(v, list) else str(v or ""))
+        rows.append(" | ".join(vals + [str(it["cite"]["pdf_page"])]))
+    return "\n".join(rows)
+
+
+def render_registry_page() -> None:
+    st.markdown('<p class="gc-step">지침 등록</p>', unsafe_allow_html=True)
+    st.subheader("어느 기관이든 지침을 올리면 판정 규칙이 됩니다")
+    st.caption("흐름: ① PDF 업로드 → ② 지원대상·소득기준·금액·서식이 적힌 쪽을 골라 LLM이 규칙 초안 추출(쪽수 인용) → ③ 담당자가 원문과 대조해 수정·승인 → ④ 상담 판정에 즉시 포함")
+
+    # 등록 현황
+    if registry:
+        st.markdown("**등록된 지침**")
+        for it in registry:
+            c1, c2, c3, c4 = st.columns([3.2, 1.6, 1, 1])
+            c1.markdown(f"**{it['ministry']}** · {it['title']}  \n<span style='color:#64748b;font-size:12px'>제도 {it['n_programs']}종 · {it['pages']}쪽 · 등록 {it['registered_at']} · 승인 {it['approver']} · 추출 {it['engine']}</span>", unsafe_allow_html=True)
+            active = c2.toggle("판정에 포함", value=it.get("active", True), key=f"act_{it['doc_id']}")
+            if active != it.get("active", True):
+                it["active"] = active
+                save_registry_index(registry)
+                st.cache_resource.clear()
+                st.rerun()
+            rp = REG_RULES_DIR / f"{it['doc_id']}.json"
+            if rp.exists():
+                c3.download_button("규칙 JSON", data=rp.read_bytes(), file_name=rp.name, mime="application/json", key=f"dl_{it['doc_id']}")
+            if c4.button("삭제", key=f"del_{it['doc_id']}"):
+                for pth in (rp, REG_CORPUS_DIR / f"{it['doc_id']}.json"):
+                    pth.unlink(missing_ok=True)
+                registry.remove(it)
+                save_registry_index(registry)
+                st.cache_resource.clear()
+                st.rerun()
+        st.divider()
+
+    # 업로드
+    st.markdown("**① 새 지침 업로드**")
+    u1, u2, u3 = st.columns([1.2, 2, 0.8])
+    ministry_in = u1.text_input("소관 기관", placeholder="예: 국토교통부 / 고용노동부 / ○○시 복지과")
+    title_in = u2.text_input("지침 제목", placeholder="예: 2026년 주거급여 사업안내")
+    offset_in = u3.number_input("쪽수 오프셋", value=0, min_value=-50, max_value=200, help="PDF 쪽수 − 책자 인쇄 쪽수. 모르면 0")
+    up = st.file_uploader("지침 PDF (텍스트 추출 가능한 PDF)", type=["pdf", "txt", "md"])
+
+    llm_ready = PROVIDERS.get(provider) is not None and llm_url.strip().startswith("http") and bool(llm_model.strip())
+    engine_note = f"LLM 추출 ({llm_model})" if llm_ready else "정규식 초안 (사이드바에서 LLM을 연결하면 정확도가 크게 올라갑니다)"
+    if st.button(f"② 규칙 초안 추출 — {engine_note}", type="primary", disabled=up is None, width="stretch"):
+        if not ministry_in.strip() or not title_in.strip():
+            st.error("소관 기관과 지침 제목을 입력하세요.")
+        else:
+            pages = []
+            if up.name.lower().endswith(".pdf"):
+                from pypdf import PdfReader
+                reader = PdfReader(io.BytesIO(up.getvalue()))
+                for i, pg in enumerate(reader.pages, start=1):
+                    try:
+                        t = (pg.extract_text() or "").strip()
+                    except Exception:
+                        t = ""
+                    if len(t) >= 40:
+                        pages.append({"pdf_page": i, "print_page": i - int(offset_in), "text": t})
+            else:
+                pages = [{"pdf_page": 1, "print_page": 1, "text": up.getvalue().decode("utf-8", errors="ignore")}]
+            if not pages:
+                st.error("텍스트를 추출하지 못했습니다. 스캔본 PDF는 OCR 후 올려 주세요.")
+            else:
+                doc_id = "REG_" + re.sub(r"[^0-9A-Za-z가-힣]+", "_", f"{ministry_in}_{title_in}").strip("_")[:60]
+                cands = find_candidate_pages(pages)
+                engine, err, progs = "regex", None, []
+                if llm_ready:
+                    with st.spinner("LLM이 지원 기준을 추출하는 중…"):
+                        progs, err = llm_draft(lambda sy, us: chat_complete(llm_url.strip(), llm_model.strip(), llm_key, sy, us, timeout=120),
+                                               doc_id, title_in.strip(), ministry_in.strip(), cands, int(offset_in))
+                    engine = llm_model if progs else "regex"
+                if not progs:
+                    progs = heuristic_draft(doc_id, title_in.strip(), ministry_in.strip(), pages, int(offset_in))
+                st.session_state["draft"] = {
+                    "doc_id": doc_id, "title": title_in.strip(), "ministry": ministry_in.strip(), "offset": int(offset_in),
+                    "pages": pages, "cands": cands, "programs": progs, "engine": engine, "error": err,
+                    "sha256": hashlib.sha256(up.getvalue()).hexdigest(), "source_file": up.name,
+                }
+
+    draft = st.session_state.get("draft")
+    if not draft:
+        return
+
+    st.divider()
+    st.markdown(f"**③ 초안 검토 — {draft['ministry']} 「{draft['title']}」** · {len(draft['pages'])}쪽 · 추출 엔진 `{draft['engine']}`")
+    if draft["error"]:
+        st.warning(f"LLM 추출 실패로 정규식 초안을 표시합니다: {draft['error']}")
+    if draft["engine"] == "regex":
+        st.info("정규식 초안은 소득 기준·서식 후보만 잡습니다. 아래 원문 쪽을 보며 지원대상·금액을 직접 채워 주세요.")
+
+    left, right = st.columns([1.5, 1])
+    offset = draft["offset"]
+    with right:
+        st.markdown("**원문 대조 (후보 쪽)**")
+        opts = [f"PDF {c['pdf_page']}쪽 (인쇄 {c['print_page']}쪽)" for c in draft["cands"]] or ["후보 없음"]
+        sel = st.selectbox("쪽 선택", opts, label_visibility="collapsed")
+        if draft["cands"]:
+            c = draft["cands"][opts.index(sel)]
+            full = next((p["text"] for p in draft["pages"] if p["pdf_page"] == c["pdf_page"]), c["text"])
+            st.markdown(f"<div class='gc-quote'>{full[:3500]}</div>", unsafe_allow_html=True)
+        any_page = st.number_input("다른 쪽 보기 (PDF 쪽)", min_value=1, max_value=max(p["pdf_page"] for p in draft["pages"]), value=draft["cands"][0]["pdf_page"] if draft["cands"] else 1)
+        t = next((p["text"] for p in draft["pages"] if p["pdf_page"] == any_page), "")
+        if t:
+            with st.expander(f"PDF {any_page}쪽 전문"):
+                st.markdown(f"<div class='gc-quote'>{t[:4000]}</div>", unsafe_allow_html=True)
+
+    edited = []
+    with left:
+        for i, p in enumerate(draft["programs"]):
+            with st.expander(f"제도 {i + 1}: {p['program']}", expanded=True):
+                keep = st.checkbox("이 제도를 등록", value=True, key=f"keep_{i}")
+                name = st.text_input("제도명", value=p["program"], key=f"pn_{i}")
+                basis = st.text_input("근거 법령·조항", value=p["legal_basis"], key=f"pb_{i}")
+                kws = st.text_input("지원 사유 키워드 (쉼표 구분, 상담 내용에 하나라도 있으면 검토 대상)", value=", ".join(p["trigger_groups"][0]) if p["trigger_groups"] else "", key=f"pk_{i}")
+                i1, i2, i3 = st.columns([1, 1, 1])
+                inc = p.get("income") or {}
+                pct = i1.number_input("소득 기준 중위소득 % (0=기준 없음)", value=int(inc.get("pct") or 0), min_value=0, max_value=300, key=f"pi_{i}")
+                op = i2.selectbox("비교", ["이하", "미만"], index=1 if inc.get("op") == "<" else 0, key=f"po_{i}")
+                ipg = i3.number_input("소득 기준 쪽(PDF)", value=int(inc.get("cite", {}).get("pdf_page") or 1), min_value=1, key=f"ipg_{i}")
+                itable = st.text_input("가구원 수별 월 소득 상한(원) — 예: 1:1923179, 2:3149469 (없으면 비움)", value=", ".join(f"{k}:{v}" for k, v in (inc.get("table") or {}).items()), key=f"pit_{i}")
+                a1, a2, a3 = st.columns([1.4, 1, 1])
+                am = p.get("amount") or {}
+                alabel = a1.text_input("지원금액 설명", value=am.get("label", ""), key=f"pal_{i}")
+                aflat = a2.number_input("정액 한도(원, 0=없음)", value=int(am.get("flat") or 0), min_value=0, step=10000, key=f"paf_{i}")
+                apg = a3.number_input("금액 쪽(PDF)", value=int(am.get("cite", {}).get("pdf_page") or 1), min_value=1, key=f"pap_{i}")
+                atable = st.text_input("가구원 수별 월 지원액(원) — 예: 1:783000, 2:1286600", value=", ".join(f"{k}:{v}" for k, v in (am.get("table") or {}).items()), key=f"pat_{i}")
+                ben = st.text_area("지원 내용 — 한 줄에 하나: 항목 | 내용 | 쪽", value=_fmt_lines(p["benefits"], ["item", "detail"]), key=f"pbn_{i}", height=90)
+                exc = st.text_area("제외 사유 — 키워드1,키워드2 | 사유 | 쪽", value=_fmt_lines(p["exclusions"], ["keywords", "note"]), key=f"pex_{i}", height=70)
+                ver = st.text_area("담당자 확인 항목 — 항목 | 쪽", value=_fmt_lines(p["verify_always"], ["item"]), key=f"pvr_{i}", height=70)
+                frm = st.text_area("구비 서식 — 서식명 | 쪽", value=_fmt_lines(p["forms"], ["name"]), key=f"pfm_{i}", height=70)
+
+                def _tbl(txt):
+                    d = {}
+                    for part in txt.split(","):
+                        if ":" in part:
+                            k, v = part.split(":", 1)
+                            k, v = re.sub(r"\D", "", k), re.sub(r"\D", "", v)
+                            if k and v:
+                                d[k] = int(v)
+                    return d
+
+                income = None
+                if pct > 0:
+                    income = {"pct": int(pct), "op": "<" if op == "미만" else "<=", "label": f"기준 중위소득 {int(pct)}% {op}", "table": _tbl(itable), "cite": {"pdf_page": int(ipg), "print_page": int(ipg) - offset}}
+                amount = None
+                if _tbl(atable):
+                    amount = {"label": alabel or "지원금액", "table": _tbl(atable), "cite": {"pdf_page": int(apg), "print_page": int(apg) - offset}}
+                elif aflat > 0:
+                    amount = {"label": alabel or "지원금액", "flat": int(aflat), "cite": {"pdf_page": int(apg), "print_page": int(apg) - offset}}
+                kw_list = [k.strip() for k in kws.split(",") if k.strip()]
+                prog = {
+                    "id": p["id"], "ministry": draft["ministry"], "program": name.strip() or p["program"], "doc_id": draft["doc_id"], "doc_title": draft["title"],
+                    "legal_basis": basis.strip() or draft["title"], "trigger_groups": [kw_list] if kw_list else [["지원"]],
+                    "income": income, "amount": amount,
+                    "exclusions": [{"keywords": [k.strip() for k in e["fields"][0].split(",") if k.strip()], "note": e["fields"][1], "cite": e["cite"]} for e in _parse_lines(exc, 3, offset) if e["fields"][0]],
+                    "verify_if": [],
+                    "verify_always": [{"item": e["fields"][0], "cite": e["cite"]} for e in _parse_lines(ver, 2, offset) if e["fields"][0]],
+                    "cross_rules": [],
+                    "benefits": [{"item": e["fields"][0], "detail": e["fields"][1], "cite": e["cite"]} for e in _parse_lines(ben, 3, offset) if e["fields"][0]],
+                    "forms": [{"name": e["fields"][0], "cite": e["cite"]} for e in _parse_lines(frm, 2, offset) if e["fields"][0]],
+                    "retrieval_query": p.get("retrieval_query") or " ".join(kw_list[:10]),
+                }
+                if keep:
+                    edited.append(prog)
+
+        st.markdown("**④ 승인 · 등록**")
+        ap1, ap2 = st.columns([1.3, 1])
+        approver = ap1.text_input("검토·승인자 (소속/성명)", placeholder="예: ○○시 복지정책과 홍길동")
+        if ap2.button(f"검토 완료 · {len(edited)}개 제도 등록", type="primary", disabled=not edited or not approver.strip(), width="stretch"):
+            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+            (REG_RULES_DIR / f"{draft['doc_id']}.json").write_text(json.dumps(edited, ensure_ascii=False, indent=2), encoding="utf-8")
+            (REG_CORPUS_DIR / f"{draft['doc_id']}.json").write_text(json.dumps({
+                "doc_id": draft["doc_id"], "title": draft["title"], "ministry": draft["ministry"], "source_file": draft["source_file"],
+                "source_sha256": draft["sha256"], "page_offset": offset, "registered_at": now, "approver": approver.strip(), "pages": draft["pages"],
+            }, ensure_ascii=False), encoding="utf-8")
+            reg = [it for it in load_registry_index() if it["doc_id"] != draft["doc_id"]]
+            reg.append({"doc_id": draft["doc_id"], "title": draft["title"], "ministry": draft["ministry"], "n_programs": len(edited), "pages": len(draft["pages"]),
+                        "registered_at": now, "approver": approver.strip(), "engine": draft["engine"], "sha256": draft["sha256"], "active": True})
+            save_registry_index(reg)
+            st.session_state.pop("draft", None)
+            st.cache_resource.clear()
+            st.success(f"「{draft['title']}」 {len(edited)}개 제도를 등록했습니다. 상담 판정에 즉시 반영됩니다.")
+            st.rerun()
+        st.caption("등록된 규칙은 registry/ 폴더에 JSON으로 저장되며, 다운로드해 저장소에 커밋하면 영구 보존됩니다. (Streamlit Cloud는 재배포 시 초기화)")
+
+
+if mode.startswith("📂"):
+    render_registry_page()
+    st.stop()
 
 # ── Step 1
 SCENARIOS = {
     "시나리오 ① 위기 독거노인 — 다제내성 결핵 + 당뇨 합병증, 중위소득 60%": {
         "name": "김복동", "age": 74, "region": "서울특별시 중구", "household": "독거노인 1인 가구", "household_size": 1, "income_pct": 60,
-        "situation": "74세 독거 어르신으로 최근 다제내성 결핵 확진을 받아 격리 입원이 시급하나, 중증 당뇨 합병증과 생계 곤란(기준중위소득 60%)으로 치료를 포기하려 함. 혼자 거주하며 돌봐줄 가족이 없음.",
+        "situation": "74세 독거 어르신으로 최근 다제내성 결핵 확진을 받아 격리 입원이 시급하나, 중증 당뇨 합병증과 생계 곤란(기준중위소득 60%)으로 치료를 포기하려 함. 월세 원룸에 혼자 거주하며 돌봐줄 가족이 없음.",
     },
     "시나리오 ② 외국인 일용직 근로자 — 골절 + 결핵 의심, 중위소득 70%": {
         "name": "응우옌 반", "age": 42, "region": "경기도 안산시", "household": "다문화 3인 가구", "household_size": 3, "income_pct": 70,
@@ -606,8 +843,7 @@ case = {"name": c_name, "age": int(c_age), "region": c_region, "household": sc["
 # ── Step 2
 results = [evaluate(p, case, corpus) for p in programs]
 cross_notes = apply_cross_rules(results, corpus)
-extra = (st.session_state["extra_bm25"], st.session_state["extra_chunks"])
-passages = {r["program"]["id"]: search(corpus, f"{r['program']['retrieval_query']} {c_situation}", r["program"]["doc_id"], k=3, extra=extra) for r in results}
+passages = {r["program"]["id"]: search(corpus, f"{r['program']['retrieval_query']} {c_situation}", r["program"]["doc_id"], k=3) for r in results}
 
 st.divider()
 st.markdown('<p class="gc-step">STEP 2</p>', unsafe_allow_html=True)
@@ -655,7 +891,7 @@ for r in results:
                 txt = h["text"][:650]
                 for k in kws:
                     txt = txt.replace(k, f"〔{k}〕")
-                label = f"{doc_title(corpus, h['doc_id']) if not h['doc_id'].startswith('UPLOAD::') else h['doc_id'][8:]} · {h['print_page']}쪽"
+                label = f"{doc_title(corpus, h['doc_id'])} · {h['print_page']}쪽"
                 st.markdown(f"<div class='gc-quote'><b>{label}</b>\n{txt}</div>", unsafe_allow_html=True)
             if not passages[p["id"]]:
                 st.caption("검색된 구절이 없습니다.")
@@ -711,6 +947,6 @@ if st.button("기안문 · 사전기입 신청서 · 쉬운말/다국어 안내�
     st.download_button("📦 산출물 3종 + 생성근거 ZIP 다운로드", data=zbuf.getvalue(), file_name=f"국민곁에ON_{safe_name}_{ts}.zip", mime="application/zip", width="stretch")
 
 st.markdown(
-    '<p class="gc-foot">※ 투입 지침은 보건복지부·질병관리청이 공개한 2026년 원문이며, 판정은 1차 스크리닝입니다. 실제 지원 여부는 소관 기관의 조사·심의로 확정됩니다.</p>',
+    '<p class="gc-foot">※ 기본 투입 지침은 보건복지부·질병관리청 2026년 공개 원문이며, 다른 기관 지침은 「지침 등록」에서 승인 후 포함됩니다. 판정은 1차 스크리닝이며 최종 결정은 소관 기관의 조사·심의로 확정됩니다.</p>',
     unsafe_allow_html=True,
 )
