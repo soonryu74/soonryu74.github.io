@@ -306,7 +306,8 @@ window.CHURCH = (function () {
   }
 
   async function signOut() {
-    await sb.auth.signOut();
+    // 이 기기만 로그아웃 (기본값 'global'은 같은 계정으로 들어가 있는 다른 휴대폰까지 모두 로그아웃시킨다)
+    try { await sb.auth.signOut({ scope: 'local' }); } catch (e) {}
     try { localStorage.removeItem(LS_MINE); } catch (e) {}
     var c = church || rememberedChurch();   // 로그아웃하면 우리 교회 로그인 화면으로
     location.href = 'index.html' + (c && c.slug ? '?c=' + encodeURIComponent(c.slug) : '');

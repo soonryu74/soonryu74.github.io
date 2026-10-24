@@ -634,5 +634,11 @@ window.I18N.en = {
   "알림을 보내지 못했습니다": "Couldn't send the alert",
   "처음이시면 2분만 보세요": "New here? Just watch for 2 minutes",
   "이 기기에서 나가기": "Sign out of this device",
-  "다른 사람 계정으로 들어가려면 먼저 로그아웃하세요.": "To use a different account, sign out first."
+  "다른 사람 계정으로 들어가려면 먼저 로그아웃하세요.": "To use a different account, sign out first.",
+  "저장하지 못하고 남아 있던 글을 되살렸습니다. 확인하시고 [저장]이나 [제출]을 눌러 주세요.": "We restored text that hadn't been saved. Please check it and tap Save or Submit.",
+  "로그인이 풀려서 저장하지 못했습니다. 쓰신 글은 이 기기에 보관해 두었습니다.": "You were signed out, so it couldn't be saved. Your text is kept on this device.",
+  "쓰신 글은 그대로 있어요": "Your text is safe",
+  "다시 로그인해 주세요": "Please sign in again",
+  "오래 열어 두었거나 다른 기기에서 로그아웃하면 로그인이 풀릴 수 있습니다. 다시 로그인하시면 쓰던 글이 그대로 돌아오고, 그때 저장하시면 됩니다.": "Sign-in can expire if the app was open a long time or you signed out on another device. Sign in again and your text will be back, ready to save.",
+  "다시 로그인": "Sign in again"
 };
