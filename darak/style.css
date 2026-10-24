@@ -424,3 +424,5 @@ html[data-theme="night"] input[type=date]{color-scheme:dark}
 /* 카카오톡으로 보내기 (카카오 노란색) */
 button.kakao{background:#fee500; border-color:#f2d900; color:#191919}
 button.kakao:hover{background:#fada0a; border-color:#e6cd00}
+.st-note{display:block; font-size:12px; color:var(--warn); font-weight:600}
+.top .home-link{cursor:pointer}
