@@ -13,6 +13,8 @@ spec.json:
  "chapters": 4
 }
 아이콘: cup · heart · rings · glow · stairs · path · orbit · dots · chip
+사진 여러 장: "photos": [{"src": "a.jpg", "tag": "…", "focus": [.5,.5], "ai": true, "credit": "출처: …", "fit": true}, …] → 장면 시간을 나눠 차례로(부드럽게 넘김)
+  ai=true 면 «AI 생성 이미지» 표시, credit 은 오른쪽 아래 출처, fit=true 는 포스터처럼 자르지 않고 통째로
 나레이션(선택): "voice": {"dir": "voice", "lead": 0.4, "tail": 0.55, "bgm_duck": true}
   → 장면 순서대로 dir/N00.wav(표지) · N01…(장면) · 모토 · 마무리. 파일이 있는 장면은 길이를 목소리에 맞춰 늘리고,
     목소리가 나올 땐 배경음을 눌러 준다(sidechaincompress)."""
@@ -221,6 +223,44 @@ class Promo:
                                          (cx - 90, cy + o, cx - 120, cy + o), (cx + 90, cy + o, cx + 120, cy + o)):
                     d.line((x0, y0, x1, y1), fill=P + (a(k),), width=5)
 
+    # ── 사진 카드 한 장 (REC 테두리 · 태그 · AI 생성 표시 · 출처) ──
+    def photo_card(self, shot, tl, span, t):
+        if shot["src"] not in self.photos:
+            self.photos[shot["src"]] = Image.open(self.root / shot["src"]).convert("RGB")
+        ph = self.photos[shot["src"]]
+        z = 1.0 + 0.06 * tl / max(span, 0.1)
+        w, h = 968, 760; fx, fy = shot.get("focus") or [0.5, 0.5]
+        if shot.get("fit"):                                       # 포스터 · 캡처: 자르지 않고 흐린 바탕 위에 통째로
+            bg = ph.resize((w, h), Image.LANCZOS).filter(ImageFilter.GaussianBlur(28))
+            r = min(w / ph.width, h / ph.height) * 0.92 * (1 + 0.03 * tl / max(span, 0.1))
+            fg = ph.resize((int(ph.width * r), int(ph.height * r)), Image.LANCZOS)
+            bg.paste(fg, ((w - fg.width) // 2, (h - fg.height) // 2)); card = bg.convert("RGBA")
+        else:
+            r = max(w / ph.width, h / ph.height) * z
+            big = ph.resize((int(ph.width * r) + 1, int(ph.height * r) + 1), Image.LANCZOS)
+            x = int(clamp(fx * big.width - w / 2, 0, big.width - w)); y = int(clamp(fy * big.height - h / 2, 0, big.height - h))
+            card = big.crop((x, y, x + w, y + h)).convert("RGBA")
+        cd = ImageDraw.Draw(card)
+        for (ax, ay, sx, sy) in ((30, 30, 1, 1), (w - 30, 30, -1, 1), (30, h - 30, 1, -1), (w - 30, h - 30, -1, -1)):
+            cd.line((ax, ay, ax + 46 * sx, ay), fill=(255, 255, 255, 235), width=5)
+            cd.line((ax, ay, ax, ay + 46 * sy), fill=(255, 255, 255, 235), width=5)
+        if int(t * 2) % 2 == 0:
+            cd.ellipse((52, 50, 70, 68), fill=(235, 50, 50, 255))
+        cd.text((80, 44), "REC", font=F("Bold", 26), fill=(255, 255, 255, 240))
+        if shot.get("ai"):                                        # 실제 사진이 아님을 밝힘
+            fa = F("Bold", 26); tx = "AI 생성 이미지"; tw = fa.getlength(tx)
+            cd.rounded_rectangle((w - 60 - tw - 32, 40, w - 60, 86), 23, fill=(20, 20, 20, 200))
+            cd.text((w - 60 - tw - 16, 47), tx, font=fa, fill=(255, 255, 255, 245))
+        if shot.get("tag"):
+            ft = F("Bold", 32); tw2 = ft.getlength(shot["tag"])
+            cd.rounded_rectangle((40, h - 96, 40 + tw2 + 44, h - 40), 28, fill=(255, 255, 255, 240))
+            cd.text((62, h - 90), shot["tag"], font=ft, fill=self.ink + (255,))
+        if shot.get("credit"):
+            fc = F("SemiBold", 22); tw3 = fc.getlength(shot["credit"])
+            cd.rounded_rectangle((w - 50 - tw3 - 24, h - 82, w - 50, h - 44), 19, fill=(0, 0, 0, 150))
+            cd.text((w - 50 - tw3 - 12, h - 78), shot["credit"], font=fc, fill=(255, 255, 255, 235))
+        return card
+
     # ── 본문 장면 ──
     def scene(self, sc, t, idx_in_ch, n_in_ch):
         im = Image.new("RGBA", (W, H), self.tint + (255,)); d = ImageDraw.Draw(im)
@@ -252,28 +292,15 @@ class Promo:
         # 오른쪽 카드
         kc = ease(t / 0.5)
         cx0, cy0 = 880, 150 + int((1 - kc) * 30)
-        if sc.get("photo"):
-            if sc["photo"] not in self.photos:
-                self.photos[sc["photo"]] = Image.open(self.root / sc["photo"]).convert("RGB")
-            ph = self.photos[sc["photo"]]
-            z = 1.0 + 0.06 * t / self.dur
-            w, h = 968, 760; fx, fy = sc.get("focus", [0.5, 0.5])
-            r = max(w / ph.width, h / ph.height) * z
-            big = ph.resize((int(ph.width * r) + 1, int(ph.height * r) + 1), Image.LANCZOS)
-            x = int(clamp(fx * big.width - w / 2, 0, big.width - w)); y = int(clamp(fy * big.height - h / 2, 0, big.height - h))
-            card = big.crop((x, y, x + w, y + h)).convert("RGBA")
-            cd = ImageDraw.Draw(card)
-            for (ax, ay, sx, sy) in ((30, 30, 1, 1), (w - 30, 30, -1, 1), (30, h - 30, 1, -1), (w - 30, h - 30, -1, -1)):
-                cd.line((ax, ay, ax + 46 * sx, ay), fill=(255, 255, 255, 235), width=5)
-                cd.line((ax, ay, ax, ay + 46 * sy), fill=(255, 255, 255, 235), width=5)
-            if int(t * 2) % 2 == 0:
-                cd.ellipse((52, 50, 70, 68), fill=(235, 50, 50, 255))
-            cd.text((80, 44), "REC", font=F("Bold", 26), fill=(255, 255, 255, 240))
-            if sc.get("tag"):
-                ft = F("Bold", 32); tw2 = ft.getlength(sc["tag"])
-                cd.rounded_rectangle((40, h - 96, 40 + tw2 + 44, h - 40), 28, fill=(255, 255, 255, 240))
-                cd.text((62, h - 90), sc["tag"], font=ft, fill=self.ink + (255,))
-            m = Image.new("L", (w, h), 0); ImageDraw.Draw(m).rounded_rectangle((0, 0, w, h), 44, fill=255)
+        shots = sc.get("photos") or ([{"src": sc["photo"], "tag": sc.get("tag"), "focus": sc.get("focus", [0.5, 0.5]),
+                                        "ai": sc.get("ai"), "credit": sc.get("credit")}] if sc.get("photo") else [])
+        if shots:
+            n = len(shots); span = self.dur / n; j = min(n - 1, int(t / span)); tl = t - j * span
+            card = self.photo_card(shots[j], tl, span, t)
+            if j > 0 and tl < 0.45:                                 # 사진 사이 부드럽게 넘기기
+                prev = self.photo_card(shots[j - 1], span, span, t)
+                card = Image.blend(prev, card, ease(tl / 0.45))
+            m = Image.new("L", (968, 760), 0); ImageDraw.Draw(m).rounded_rectangle((0, 0, 968, 760), 44, fill=255)
             card.putalpha(m.point(lambda v: int(v * kc)))
         else:
             card = self.card.copy(); cd = ImageDraw.Draw(card)
@@ -339,7 +366,8 @@ def main(path):
         chs.setdefault(sc["ch"], []).append(sc)
     for sc in sp["scenes"]:
         lst = chs[sc["ch"]]
-        parts.append(("scene", SCENE, (sc, lst.index(sc), len(lst))))
+        n_ph = len(sc.get("photos") or [])
+        parts.append(("scene", sc.get("dur") or (2.9 * n_ph if n_ph > 1 else SCENE), (sc, lst.index(sc), len(lst))))
     parts += [("motto", MOTTO, None), ("close", CLOSE, None)]
     vo = sp.get("voice") or {}
     voices = []                                                    # (시작 초, wav)
