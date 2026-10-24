@@ -736,6 +736,16 @@ const db = p => p.evaluate(() => window.__DB());
     ok('기간 지난 공지는 안 뜨고 띠도 없음', !(await p.isVisible('.sheet-bg')) && !(await p.isVisible('#notice-bar')));
     await p.check('#members-box .member[data-i="0"] .f-ans'); await p.waitForTimeout(200);
     ok('응답됨에 체크하면 하트가 떨어짐', (await p.$$('.hearts span')).length > 10 && (await p.textContent('.hearts-label')).includes('감사'));
+    await p.fill('#members-box .member[data-i="0"] .f-con', '로그인이 풀려도 남는 기도'); await p.waitForTimeout(900);
+    await p.evaluate(() => window.__dropSession());
+    await p.click('#btn-save'); await p.waitForTimeout(600);
+    ok('로그인이 풀린 채 저장 → 다시 로그인 창 (글은 기기에 보관)', await p.isVisible('.sheet-bg.open') && (await p.textContent('.sheet-title')).includes('다시 로그인') &&
+      await p.evaluate(() => Object.keys(localStorage).some(k => k.startsWith('draft:') && localStorage.getItem(k).includes('로그인이 풀려도 남는 기도'))));
+    await p.click('.sheet-foot button:last-child'); await p.waitForURL(/index/); await p.waitForTimeout(300);
+    await login(p, 'mokja1'); await p.waitForTimeout(600);
+    ok('다시 로그인하면 쓰던 글이 돌아옴', (await p.inputValue('#members-box .member[data-i="0"] .f-con')) === '로그인이 풀려도 남는 기도' && (await p.textContent('#msg-write')).includes('되살렸'));
+    await p.click('#btn-save'); await p.waitForTimeout(600);
+    ok('저장하면 보관본은 지워짐', await p.evaluate(() => !Object.keys(localStorage).some(k => k.startsWith('draft:'))) && (await p.textContent('#msg-write')).includes('저장했습니다'));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
