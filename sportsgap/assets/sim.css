@@ -1,0 +1,60 @@
+/* SportsGap · 예산 배분 실시간 시뮬레이터 (격차 지도 화면 아래에 붙는 섹션) */
+.sg-sim{max-width:1160px;margin:0 auto;padding:0 16px 56px}
+.sg-sim[hidden]{display:none}
+.sg-sim-head{padding:8px 0 18px;border-top:1px solid var(--line);margin-top:8px}
+.sg-sim-head h2{font-size:1.45rem;margin-top:14px}
+.sg-sim-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start}
+.sg-sim-left{position:sticky;top:92px}
+.sg-sim-right{display:grid;gap:14px}
+.sg-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sg-row h3{margin:0}
+.sg-live{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.04em;color:var(--green);background:var(--green-soft);border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.sg-live.busy{color:#6b4a07;background:#fff6e0}
+.sg-meta{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+#sg-map{width:100%;height:auto;display:block;margin-top:8px}
+#sg-map .rg path{stroke:#fff;stroke-width:1.4;fill:var(--lv3);transition:fill .25s}
+#sg-map .rg.lv1 path{fill:var(--lv1)}#sg-map .rg.lv2 path{fill:var(--lv2)}#sg-map .rg.lv3 path{fill:var(--lv3)}#sg-map .rg.lv4 path{fill:var(--lv4)}#sg-map .rg.lv5 path{fill:var(--lv5)}
+#sg-map .rg.hit path{stroke:var(--gold);stroke-width:5}
+#sg-map .lbl text{font-size:19px;font-weight:700;text-anchor:middle;fill:var(--ink);paint-order:stroke;stroke:#ffffffd9;stroke-width:3px;pointer-events:none}
+#sg-map .lbl text.num{font-size:17px;font-weight:800}
+#sg-map .lbl text.add{font-size:15px;fill:var(--green-2)}
+.sg-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sg-controls .btn{min-height:42px;padding:0 14px;font-size:.92rem}
+.sg-progress{display:flex;align-items:center;gap:10px;flex:1;min-width:200px;font-size:.88rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.sg-progress progress{flex:1;height:8px;accent-color:var(--green)}
+.sg-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.sg-stats div{background:var(--surface-2);border-radius:10px;padding:8px 10px;font-size:.8rem;color:var(--muted);line-height:1.3}
+.sg-stats b{display:block;font-size:1.05rem;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:2px}
+.sg-stats b.warn{color:var(--warn)}
+.sg-scrub{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:.88rem;color:var(--muted)}
+.sg-scrub input{flex:1;accent-color:var(--green)}
+.sg-panel h3{margin-bottom:4px}
+.sg-panel .sg-sec{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.sg-panel .sg-sec:first-of-type{margin-top:4px;padding-top:0;border-top:0}
+.sg-field{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;margin:10px 0}
+.sg-field label{font-size:.92rem;font-weight:600;color:var(--ink-2)}
+.sg-field .sg-unit{font-size:.8rem;color:var(--muted);text-align:right}
+.sg-field input[type=range]{grid-column:1;width:100%;accent-color:var(--green);min-height:32px}
+.sg-field output{grid-column:2;grid-row:2;min-width:84px;text-align:right;background:var(--surface-2);border-radius:8px;padding:5px 10px;font-weight:700;font-variant-numeric:tabular-nums}
+.sg-field select{grid-column:1 / -1;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);min-height:42px}
+.sg-field .sg-help{grid-column:1 / -1;font-size:.8rem;color:var(--muted);margin:0}
+.sg-radio{display:flex;gap:6px;flex-wrap:wrap;grid-column:1 / -1}
+.sg-radio label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.88rem;cursor:pointer;min-height:40px}
+.sg-radio input{accent-color:var(--green)}
+.sg-radio label:has(input:checked){border-color:var(--green);background:var(--green-soft);color:var(--green-2);font-weight:700}
+.sg-chart{width:100%;height:260px;display:block;cursor:crosshair;touch-action:pan-y}
+.sg-bars{width:100%;height:470px;display:block}
+.sg-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.sg-chip{font-size:.8rem;background:var(--surface-2);border-radius:8px;padding:4px 9px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.sg-chip b{color:var(--ink)}
+.sg-note{font-size:.82rem;color:var(--muted);margin:8px 0 0}
+@media (max-width:860px){
+  .sg-sim-grid{grid-template-columns:1fr}
+  .sg-sim-left{position:static}
+  .sg-stats{grid-template-columns:repeat(2,1fr)}
+  .sg-bars{height:430px}
+  #sg-map .lbl text{font-size:24px}
+  #sg-map .lbl text.num{font-size:22px}
+  #sg-map .lbl text.add{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){#sg-map .rg path{transition:none}}

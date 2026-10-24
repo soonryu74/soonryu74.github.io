@@ -11,9 +11,117 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <script type="module" crossorigin src="./assets/index-CuDygjOk.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-UC28riN9.css">
+    <link rel="stylesheet" href="./assets/sim.css">
   </head>
   <body>
     <div id="root"></div>
+    <section id="sg-sim" class="sg-sim" hidden aria-labelledby="sg-sim-h">
+      <header class="sg-sim-head">
+        <p class="eyebrow">실시간 시뮬레이션</p>
+        <h2 id="sg-sim-h">예산을 움직이면 지도가 바로 바뀝니다</h2>
+        <p class="muted">총 예산·시설 1곳 비용·배분 방식을 바꾸면 백그라운드에서 다시 계산해, 시설을 한 곳씩 투입할 때 31개 시군 접근성 지수가 어떻게 달라지는지 단계별로 보여 줍니다. 지수는 본 지도와 같은 정의(대상 1만 명당 공급 점수, 경기도 평균 = 100)입니다. 인구·시설 수는 공개 통계이고, 비용과 배분 규칙은 가정이므로 방향을 비교하는 용도로만 보세요.</p>
+      </header>
+      <div class="sg-sim-grid">
+        <div class="sg-sim-left">
+          <div class="card">
+            <div class="sg-row">
+              <h3>접근성 지수 지도 <span id="sg-live" class="sg-live" aria-live="polite">실시간</span></h3>
+              <span id="sg-meta" class="sg-meta"></span>
+            </div>
+            <svg id="sg-map" viewBox="-6 -6 812 1070" role="img" aria-label="경기도 31개 시군 접근성 지수 지도. 시설이 투입될 때마다 색이 바뀝니다."></svg>
+            <ul class="legend" aria-label="범례">
+              <li><span class="sw lv1"></span>매우 부족 (&lt;60)</li>
+              <li><span class="sw lv2"></span>부족 (60–84)</li>
+              <li><span class="sw lv3"></span>보통 (85–114)</li>
+              <li><span class="sw lv4"></span>양호 (115–149)</li>
+              <li><span class="sw lv5"></span>충분 (150+)</li>
+            </ul>
+            <div class="sg-controls">
+              <button id="sg-play" class="btn btn-primary" type="button" aria-pressed="false">▶ 재생</button>
+              <button id="sg-step" class="btn" type="button">⏭ 한 단계</button>
+              <button id="sg-reset" class="btn" type="button">↻ 재시작</button>
+              <span class="sg-progress"><span>투입 단계 <b id="sg-stepn">0</b> / <b id="sg-stepmax">0</b></span><progress id="sg-prog" max="1" value="0"></progress></span>
+            </div>
+            <div id="sg-stats" class="sg-stats" aria-live="off"></div>
+            <label class="sg-scrub"><span>기록 재생</span><input type="range" id="sg-scrub" min="0" max="0" value="0" aria-label="투입 단계로 이동"></label>
+          </div>
+        </div>
+        <aside class="sg-sim-right">
+          <div class="card sg-panel">
+            <div class="sg-sec">
+              <h3>예산</h3>
+              <div class="sg-field">
+                <label for="sg-budget">총 예산</label><span class="sg-unit">억원</span>
+                <input type="range" id="sg-budget" min="0" max="5000" step="50" value="1500"><output></output>
+              </div>
+              <div class="sg-field">
+                <label for="sg-cost">시설 1곳 비용</label><span class="sg-unit">억원</span>
+                <input type="range" id="sg-cost" min="5" max="300" step="5" value="30"><output></output>
+                <p class="sg-help">투입 가능한 시설 수 = 총 예산 ÷ 1곳 비용</p>
+              </div>
+              <div class="sg-field">
+                <label>시설 1곳의 점수</label><span></span>
+                <div class="sg-radio" role="radiogroup" aria-label="시설 1곳의 점수">
+                  <label><input type="radio" name="sg-unit" value="2" checked>무장애 + 장애인 강좌 + 어르신 종목 (2점)</label>
+                  <label><input type="radio" name="sg-unit" value="1">기본 시설만 (1점)</label>
+                </div>
+              </div>
+            </div>
+            <div class="sg-sec">
+              <h3>배분 방식</h3>
+              <div class="sg-field">
+                <label for="sg-strategy">새 시설을 어디에 먼저 두나</label><span></span>
+                <select id="sg-strategy">
+                  <option value="lowest">그때그때 지수가 가장 낮은 시군</option>
+                  <option value="pop">대상 인구에 비례해 나눔</option>
+                  <option value="equal">31개 시군에 균등하게</option>
+                </select>
+              </div>
+            </div>
+            <div class="sg-sec">
+              <h3>대상 집단 가중치</h3>
+              <div class="sg-field">
+                <label for="sg-wa">65세 이상</label><span class="sg-unit">배</span>
+                <input type="range" id="sg-wa" min="0" max="3" step="0.25" value="1"><output></output>
+              </div>
+              <div class="sg-field">
+                <label for="sg-wd">등록장애인</label><span class="sg-unit">배</span>
+                <input type="range" id="sg-wd" min="0" max="3" step="0.25" value="1"><output></output>
+                <p class="sg-help">가중치를 올리면 그 집단이 많은 시군의 지수가 낮아져 우선순위가 앞당겨집니다.</p>
+              </div>
+            </div>
+            <div class="sg-sec">
+              <h3>검증 · 재생</h3>
+              <div class="sg-field">
+                <label for="sg-mc">인구를 흔들어 다시 계산</label><span class="sg-unit">회</span>
+                <input type="range" id="sg-mc" min="0" max="500" step="50" value="200"><output></output>
+              </div>
+              <div class="sg-field">
+                <label for="sg-jitter">흔드는 폭</label><span class="sg-unit">%</span>
+                <input type="range" id="sg-jitter" min="0" max="30" step="5" value="10"><output></output>
+                <p class="sg-help">대상 인구가 통계와 조금 달라도 결론이 유지되는지 보는 띠(그래프의 옅은 파랑)입니다.</p>
+              </div>
+              <div class="sg-field">
+                <label for="sg-speed">재생 속도</label><span class="sg-unit">단계/초</span>
+                <input type="range" id="sg-speed" min="5" max="120" step="5" value="30"><output></output>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>단계별 지수 변화</h3>
+            <canvas id="sg-chart" class="sg-chart" aria-label="투입 시설 수에 따른 최하위 시군 지수와 평균 지수 그래프"></canvas>
+            <div id="sg-chips" class="sg-chips"></div>
+            <p class="sg-note">그래프를 누르거나 끌면 그 단계의 지도를 위에서 볼 수 있습니다.</p>
+          </div>
+          <div class="card">
+            <h3>시군별 지수 (현재 단계)</h3>
+            <canvas id="sg-bars" class="sg-bars" aria-label="현재 단계의 시군별 접근성 지수 막대 그래프"></canvas>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <script src="./assets/sim-data.js"></script>
+    <script src="./assets/sim.js" defer></script>
     <noscript>이 서비스는 자바스크립트가 필요합니다.</noscript>
   </body>
 </html>
