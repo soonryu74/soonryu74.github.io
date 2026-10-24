@@ -705,7 +705,7 @@ const db = p => p.evaluate(() => window.__DB());
   console.log('\n[새 모양] 인사 띠 · 목사님 공지 (아래에서 올라오는 창)');
   { const { c, p } = await ctx(b);
     await login(p, 'pastor1');
-    ok('인사 띠와 알약 단추', await p.isVisible('.hero') && (await p.textContent('.hero-title')).startsWith('담임목사님,') && (await p.$$('.hero-chip')).length === 4);
+    ok('인사 띠와 알약 단추', await p.isVisible('.hero') && (await p.textContent('.hero-title')).startsWith('담임목사님,') && (await p.$$('.hero-chip')).length === 5 && await p.isVisible('.hero-chip.guide-chip'));
     await p.click('.hero-chip:has-text("공지 보내기")'); await p.waitForTimeout(400);
     ok('공지 쓰는 창이 아래에서 올라옴', await p.isVisible('.sheet-bg.open #nt-title'));
     await p.click('.sheet-foot button:has-text("공지 올리기")'); await p.waitForTimeout(300);
