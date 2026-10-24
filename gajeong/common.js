@@ -448,9 +448,12 @@ window.CHURCH = (function () {
       '<div class="who"><span class="who-avatar"></span><span class="who-name">' + esc(title2(profile)) + '</span>' +
       '<button class="small who-toggle" type="button" aria-expanded="false">' + esc(t('메뉴')) + '</button>' +
       '<div class="who-menu"><span class="who-menu-name">' + esc(title2(profile)) + '</span>' + langButton() +
+      '<button class="small" id="btn-guide">' + esc(t('사용법 영상')) + '</button>' +
       '<button class="small" id="btn-signout">' + esc(t('로그아웃')) + '</button></div></div></div>';
     document.body.insertBefore(el, document.body.firstChild);
     el.querySelector('#btn-signout').addEventListener('click', signOut);
+    el.querySelector('#btn-guide').addEventListener('click', function () { el.classList.remove('menu-open'); guideSheet(profile); });
+    signOutCard();
     // 왼쪽 위 로고·교회 이름을 누르면 첫 화면(첫 탭, 맨 위)으로
     var goHome = function () {
       var first = document.querySelector('.tabs button'); if (first && !first.classList.contains('on')) first.click();
@@ -463,6 +466,7 @@ window.CHURCH = (function () {
     document.addEventListener('click', function (e) { if (!e.target.closest('.who-menu')) { el.classList.remove('menu-open'); tg.setAttribute('aria-expanded', 'false'); } });
     bindLangButton(el);
     if (c.logo_url) { var fav = document.querySelector('link[rel="icon"]'); if (fav) fav.href = c.logo_url; }
+    guideWho = profile;
     topAvatar(profile);
     hero(profile);
     bgm(el);
@@ -523,6 +527,7 @@ window.CHURCH = (function () {
   // 인사 띠 아래 알약 단추: [{ label, value, go(탭 이름) 또는 fn, dot }]
   function heroChips(list) {
     var box = document.querySelector('.hero-chips'); if (!box) return;
+    list = list.concat([{ label: t('사용법 영상'), fn: function () { guideSheet(guideWho); }, cls: 'guide-chip' }]);
     box._list = list;
     box.innerHTML = list.map(function (c, i) {
       return '<button type="button" class="hero-chip' + (c.dot ? ' dot' : '') + (c.cls ? ' ' + c.cls : '') + '" data-i="' + i + '"><span>' + esc(c.label) + '</span>' +
@@ -535,6 +540,35 @@ window.CHURCH = (function () {
       if (c.go) { var tb = document.querySelector('.tabs button[data-pane="' + c.go + '"]'); if (tb) tb.click(); }
       if (c.fn) c.fn();
     });
+  }
+
+  // 사용법 영상 (로그인 첫 화면과 같은 영상) — 목사님은 두 가지, 목자님은 목자용만
+  var guideWho = null;
+  var GUIDE_V = '?v=20261024';   // 영상을 새로 만들면 바꾼다 (index.html도 이 값을 쓴다)
+  function guideSheet(p) {
+    var pastor = p && p.role === 'pastor', lang = LANG === 'en' ? 'en' : 'ko';
+    sheet({ kicker: t('처음이시면 2분만 보세요'), title: t('사용법 영상'), cls: 'guide-sheet',
+      html: (pastor ? '<div class="guide-tabs"><button type="button" class="small on" data-who="pastor">' + esc(t('목사님용')) + '</button>' +
+        '<button type="button" class="small" data-who="leader">' + esc(t('목자용')) + '</button></div>' : '') +
+        '<video class="guide-video" controls playsinline preload="metadata"></video>' });
+    var box = document.querySelector('.guide-sheet:last-of-type'), v = box.querySelector('video');
+    function show(who) {
+      var base = 'video/guide-' + who + '-' + lang;
+      v.poster = base + '.jpg' + GUIDE_V; v.src = base + '.mp4' + GUIDE_V;
+      box.querySelectorAll('.guide-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.who === who); });
+    }
+    box.addEventListener('click', function (e) { var b = e.target.closest('.guide-tabs button'); if (b) show(b.dataset.who); });
+    show(pastor ? 'pastor' : 'leader');
+  }
+  // [내 계정]·[관리] 맨 아래에도 로그아웃 (머리말 [메뉴] 안에만 있으면 찾기 어렵다)
+  function signOutCard() {
+    var card = document.getElementById('my-photo-card'), pane = card && card.closest('.pane');
+    if (!pane || pane.querySelector('.signout-card')) return;
+    var x = document.createElement('div'); x.className = 'card signout-card';
+    x.innerHTML = '<h2>' + esc(t('이 기기에서 나가기')) + '</h2><p class="desc">' + esc(t('다른 사람 계정으로 들어가려면 먼저 로그아웃하세요.')) + '</p>' +
+      '<button type="button">' + esc(t('로그아웃')) + '</button>';
+    x.querySelector('button').addEventListener('click', signOut);
+    pane.appendChild(x);
   }
 
   // 아래에서 올라오는 창: { kicker, title, html, cls, foot: [{ label, fn }] } — fn이 true를 돌려주면 닫지 않는다
@@ -730,7 +764,7 @@ window.CHURCH = (function () {
     if (!has('member_photos')) { slot.innerHTML = ''; return; }
     var u = '';
     if (p.photo_path) { try { u = (await photoUrls([p]))[p.id] || ''; } catch (e) {} }
-    slot.innerHTML = avatar(p, u);   // 사진이 없으면 이름 첫 글자
+    slot.innerHTML = avatar(p, u);   // 사진이 없으면 기본 얼굴 (목자 빨강 · 목사 교회 색)
     slot.title = t('내 사진');
     if (!slot.dataset.bound) {   // 누르면 [내 사진] 칸으로
       slot.dataset.bound = '1';
@@ -847,7 +881,7 @@ window.CHURCH = (function () {
     sb: sb, $: $, $$: $$, esc: esc, say: say,
     mondayOf: mondayOf, weekKeys: weekKeys, dayOfWeek: dayOfWeek, addWeeks: addWeeks, addDays: addDays, weekLabel: weekLabel, weekShort: weekShort,
     ymd: ymd, today: today, whenText: whenText, setTimezone: setTimezone, timezone: timezone,
-    signIn: signIn, signOut: signOut, me: me, guard: guard, callAdmin: callAdmin, notify: notify,
+    signIn: signIn, signOut: signOut, guideSheet: guideSheet, GUIDE_V: GUIDE_V, me: me, guard: guard, callAdmin: callAdmin, notify: notify,
     header: header, title2: title2,
     loadChurch: loadChurch, publicChurch: publicChurch, rememberChurch: rememberChurch,
     churchLink: churchLink, logoOf: logoOf, getChurch: function () { return church; }, fillTimezones: fillTimezones,
