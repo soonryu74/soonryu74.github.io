@@ -43,7 +43,9 @@ async function ctx(browser, opts = {}) {
   return { c, p };
 }
 async function login(p, id) {
-  await p.goto(BASE + 'index.html'); await p.waitForTimeout(250);
+  // 바로 앞의 로그아웃이 화면을 옮기는 중이면 열기가 끊길 수 있어 한 번 더 연다
+  for (let i = 0; i < 3; i++) { try { await p.goto(BASE + 'index.html'); break; } catch (e) { if (i === 2) throw e; await p.waitForTimeout(500); } }
+  await p.waitForTimeout(250);
   await p.fill('#lid', id); await p.fill('#pw', 'pass1234'); await p.click('#btn-login');
   await p.waitForURL(/moksa|mokjang/); await p.waitForSelector('.top h1'); await p.waitForTimeout(400);
 }
@@ -703,6 +705,9 @@ const db = p => p.evaluate(() => window.__DB());
     ok('공지 쓰는 창이 아래에서 올라옴', await p.isVisible('.sheet-bg.open #nt-title'));
     await p.click('.sheet-foot button:has-text("공지 올리기")'); await p.waitForTimeout(300);
     ok('빈칸이면 안 올림', await p.isVisible('#nt-title') && /제목과 내용/.test(await p.textContent('#msg-nt')));
+    await p.selectOption('#nt-days', 'date'); await p.waitForTimeout(100);
+    ok('[날짜 고르기] → 날짜 칸', await p.isVisible('#nt-until'));
+    await p.selectOption('#nt-days', '7');
     await p.fill('#nt-title', '연합 모임 안내'); await p.fill('#nt-body', '다음 주는 함께 모입니다.\n- 간식 준비');
     await p.click('.sheet-foot button:has-text("공지 올리기")'); await p.waitForTimeout(700);
     const nc = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'notice');
