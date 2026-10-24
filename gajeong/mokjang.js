@@ -31,6 +31,7 @@
     await pickStartWeek();
     await loadWeek();
     watchNewWeek();
+    showNoticeBar();
     openFromLink();
     // 화면이 열려 있는 채로 알림을 누르면 주소 끝(#j=…)만 바뀐다 — 그때도 그 일기로 간다
     window.addEventListener('hashchange', openFromLink);
@@ -294,6 +295,27 @@
     dirty = false;
     rendered = null;
     renderMembers();
+    mokjaChips(submitted);
+  }
+
+  // 첫 화면 알약 단추 · 목사님 공지
+  function mokjaChips(submitted) {
+    var n = ((me.church || {}).features || {}).notice;
+    C.heroChips([
+      { label: week === C.mondayOf() ? T('이번 주 일기') : T('이 주 일기'), value: submitted ? T('제출함') : (journal ? T('쓰는 중') : T('아직')), go: 'write', dot: !submitted },
+      { label: T('목원'), value: T('{0}명', mokwon.filter(function (w) { return w.active !== false; }).length), go: 'members' },
+      { label: T('지난 일기'), go: 'past' }
+    ].concat(n ? [{ label: T('목사님 공지'), fn: function () { C.showNotice(n, true); }, dot: true }] : []));
+  }
+  function showNoticeBar() {
+    var n = ((me.church || {}).features || {}).notice, pane = $('#pane-write'); if (!pane) return;
+    var old = $('#notice-bar'); if (old) old.remove();
+    if (!n || !n.id) return;
+    var b = document.createElement('button'); b.type = 'button'; b.id = 'notice-bar'; b.className = 'notice-bar noprint';
+    b.innerHTML = '<b>' + esc(T('공지')) + '</b><span>' + esc(n.title || '') + '</span>';
+    b.addEventListener('click', function () { C.showNotice(n, true); });
+    pane.insertBefore(b, pane.firstChild);
+    C.showNotice(n);
   }
 
   function defaultMetOn() {
@@ -417,6 +439,9 @@
     });
     $('#members-box').addEventListener('input', markDirty);
     $('#members-box').addEventListener('change', markDirty);
+    $('#members-box').addEventListener('change', function (e) {   // 응답됨에 체크하면 하트가 떨어진다
+      if (e.target.classList.contains('f-ans') && e.target.checked) C.hearts(T('기도 응답, 함께 감사해요'));
+    });
     $('#btn-save').addEventListener('click', function () { save('draft'); });
     $('#btn-submit').addEventListener('click', function () { save('submitted'); });
     $('#btn-all-present').addEventListener('click', function () {

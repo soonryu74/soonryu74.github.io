@@ -772,6 +772,35 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[새 모양] 인사 띠 · 목사님 공지 (아래에서 올라오는 창)');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1');
+    ok('인사 띠와 알약 단추', await p.isVisible('.hero') && (await p.textContent('.hero-title')).includes('담임목사') && (await p.$$('.hero-chip')).length === 4);
+    await p.click('.hero-chip:has-text("공지 보내기")'); await p.waitForTimeout(400);
+    ok('공지 쓰는 창이 아래에서 올라옴', await p.isVisible('.sheet-bg.open #nt-title'));
+    await p.click('.sheet-foot button:has-text("공지 올리기")'); await p.waitForTimeout(300);
+    ok('빈칸이면 안 올림', await p.isVisible('#nt-title') && /제목과 내용/.test(await p.textContent('#msg-nt')));
+    await p.fill('#nt-title', '연합 모임 안내'); await p.fill('#nt-body', '다음 주는 함께 모입니다.\n- 간식 준비');
+    await p.click('.sheet-foot button:has-text("공지 올리기")'); await p.waitForTimeout(700);
+    const nc = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'notice');
+    ok('공지 올리기 → 서버에 저장 요청', nc.length === 1 && nc[0].body.title === '연합 모임 안내' && !(await p.isVisible('.sheet-bg')));
+    ok('올린 뒤 단추가 [공지 바꾸기]', (await p.textContent('.hero-chips')).includes('공지 바꾸기'));
+    await p.evaluate(() => CHURCH.signOut()); await p.waitForTimeout(300);
+    await login(p, 'mokja1'); await p.waitForTimeout(500);
+    ok('목자: 앱을 열면 공지가 아래에서 올라옴', await p.isVisible('.sheet-bg.open') && (await p.textContent('.sheet-title')) === '연합 모임 안내' && (await p.textContent('.sheet-body')).includes('간식 준비'));
+    await p.click('.sheet-foot button:has-text("오늘 하루 보지 않기")'); await p.waitForTimeout(400);
+    ok('목자: 일기 화면 위에 공지 띠', await p.isVisible('#notice-bar') && (await p.textContent('#notice-bar')).includes('연합 모임 안내'));
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(800);
+    ok('오늘 하루 보지 않기 → 다시 열어도 안 뜸', !(await p.isVisible('.sheet-bg')));
+    await p.click('#notice-bar'); await p.waitForTimeout(400);
+    ok('공지 띠를 누르면 다시 보임', await p.isVisible('.sheet-bg.open'));
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
+    ok('Esc로 닫힘', !(await p.isVisible('.sheet-bg')));
+    await p.check('#members-box .member[data-i="0"] .f-ans'); await p.waitForTimeout(200);
+    ok('응답됨에 체크하면 하트가 떨어짐', (await p.$$('.hearts span')).length > 10 && (await p.textContent('.hearts-label')).includes('감사'));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
