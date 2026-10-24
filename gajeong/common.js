@@ -776,9 +776,17 @@ window.CHURCH = (function () {
   }
   // 사진이 없을 때 이름 첫 글자 동그라미: 이름마다 네 가지 색 중 하나 (카페 앱 메뉴처럼)
   function avTone(name) { var h = 0, x = String(name || ''); for (var i = 0; i < x.length; i++) h = (h * 31 + x.charCodeAt(i)) >>> 0; return h % 4; }
+  // 누구인지에 따라 색: 목자 빨강 · 목원 초록 · VIP 미색 · 목사 교회 색 (m.kind로 직접 줄 수도 있다)
+  function avKind(m) {
+    if (m.kind) return m.kind;
+    if (m.role === 'mokja') return 'leader';
+    if (m.role === 'pastor') return 'pastor';
+    if ('mokjang_id' in m) return /vip/i.test(m.tag || '') ? 'vip' : 'member';
+    return 'tone' + avTone(m.name);
+  }
   function avatar(m, url) {
     return url ? '<img class="avatar" src="' + esc(url) + '" alt="">'
-               : '<span class="avatar av' + avTone(m.name) + '" aria-hidden="true">' + esc((m.name || '?').trim().charAt(0)) + '</span>';
+               : '<span class="avatar av-' + avKind(m) + '" aria-hidden="true">' + esc((m.name || '?').trim().charAt(0)) + '</span>';
   }
 
   // 긴 글을 읽기 쉽게: '-'·'•'·'1.'로 시작하는 줄은 목록으로, 나머지 줄은 문단으로 (사람이 쓴 글은 그대로 두고 모양만)
@@ -813,7 +821,7 @@ window.CHURCH = (function () {
   }
   // 말씀 머리줄: [사진] 이름 · 언제 (닫는 </div>는 부르는 쪽에서)
   function commentHead(c, urls) {
-    return '<div class="head cmt-head">' + (urls ? avatar({ name: c.author_name }, urls[c.author_id]) : '') +
+    return '<div class="head cmt-head">' + (urls ? avatar({ name: c.author_name, kind: 'pastor' }, urls[c.author_id]) : '') +
       '<span class="name">' + esc(c.author_name) + '</span>' +
       '<span class="quiet" style="font-size:13px">' + whenText(c.created_at) + '</span>';
   }
