@@ -4,7 +4,7 @@ Structured after Gebru et al., "Datasheets for Datasets" (Commun. ACM, 2021).
 ## 1. Motivation
 - **Purpose.** AgeTech and healthy-longevity AI needs data that describe *where* older adults age in poor health and *why*. Openly accessible, English-documented, long-run small-area panels from rapidly ageing Asian countries are scarce. K-HALO turns 18 years of official Korean small-area health statistics into a consistent, machine-learning-ready panel with benchmark tasks.
 - **Problem addressed.** South Korea passed 20 % aged 65+ in December 2024. Healthy life expectancy (HLE) in K-HALO ranges from 63.9 to 78.6 years across districts, and correlates with area deprivation (r = −0.32, 2023). Planners need tools that forecast ageing-related risks and explain HLE gaps fairly across deprived and affluent areas.
-- **Creator and funding.** Compiled by an independent researcher (Soonryeo Seo). No external funding.
+- **Creator and funding.** Compiled by an independent researcher (Soonryu Seo). No external funding.
 
 ## 2. Composition
 - **Instances.** Area-level records. Core instance = (unit, year, indicator). 281 units (235 districts, 46 sub-districts), 2008–2025, 41 indicators → 154,691 values with crude and age-standardised rates. Wide view: 4,878 unit-years.
