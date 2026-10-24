@@ -450,6 +450,12 @@ window.CHURCH = (function () {
       '<button class="small" id="btn-signout">' + esc(t('로그아웃')) + '</button></div></div></div>';
     document.body.insertBefore(el, document.body.firstChild);
     el.querySelector('#btn-signout').addEventListener('click', signOut);
+    // 왼쪽 위 로고·교회 이름을 누르면 첫 화면(첫 탭, 맨 위)으로
+    var goHome = function () {
+      var first = document.querySelector('.tabs button'); if (first && !first.classList.contains('on')) first.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    ['.mark', '.titles'].forEach(function (s) { var x = el.querySelector(s); x.classList.add('home-link'); x.title = t('처음 화면으로'); x.addEventListener('click', goHome); });
     // 휴대폰에서는 머리말을 한 줄로: English·로그아웃은 [메뉴] 안에
     var tg = el.querySelector('.who-toggle');
     tg.addEventListener('click', function (e) { e.stopPropagation(); var o = el.classList.toggle('menu-open'); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); });
