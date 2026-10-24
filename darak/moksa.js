@@ -453,16 +453,29 @@
         done(r, T('공지를 올렸습니다. 목자가 앱을 열면 아래에서 올라옵니다. (알림 받은 목자 {0}명)', r.reached || 0));
       } catch (e) { C.say($('#msg-nt'), e.message, 'err'); return true; }
     } });
-    setTimeout(function () { var sel = $('#nt-days'); if (sel) sel.addEventListener('change', function () { $('#nt-until-row').hidden = sel.value !== 'date'; }); }, 0);
-    C.sheet({ kicker: T('공지'), title: T('목자들에게 공지 보내기'), cls: 'notice-edit', foot: foot,
-      html: (n ? '<p class="sheet-meta" style="margin:0 0 14px">' + esc(T('지금 공지: {0}', n.title) + (n.until ? ' (' + C.untilText(n) + ')' : '')) + '</p>' : '') +
+    if (n) foot[foot.length - 1].label = T('고쳐서 올리기');
+    setTimeout(function () {
+      var sel = $('#nt-days'); if (!sel) return;
+      sel.addEventListener('change', function () { $('#nt-until-row').hidden = sel.value !== 'date'; });
+      // 지금 걸린 공지를 그대로 불러와 고칠 수 있게 (기간도 그대로)
+      if (n) { $('#nt-title').value = n.title || ''; $('#nt-body').value = n.body || ''; if (n.until && n.until >= C.today()) { sel.value = 'date'; $('#nt-until').value = n.until; $('#nt-until-row').hidden = false; } }
+      var fresh = $('#nt-fresh'); if (fresh) fresh.addEventListener('click', function () {   // [새로 작성하기] → 빈칸에서 새 공지
+        $('#nt-title').value = ''; $('#nt-body').value = ''; sel.value = '7'; $('#nt-until-row').hidden = true;
+        var st = fresh.closest('.sheet').querySelector('.sheet-title'); if (st) st.textContent = T('목자들에게 공지 보내기');
+        var ok = Array.prototype.slice.call(fresh.closest('.sheet').querySelectorAll('.sheet-foot button')).pop(); if (ok) ok.textContent = T('공지 올리기');
+        fresh.hidden = true; $('#nt-title').focus();
+      });
+    }, 0);
+    C.sheet({ kicker: T('공지'), title: n ? T('공지 바꾸기') : T('목자들에게 공지 보내기'), cls: 'notice-edit', foot: foot,
+      html: (n ? '<p class="sheet-meta" style="margin:0 0 14px">' + esc(T('지금 걸린 공지입니다. 고쳐서 다시 올리거나, 아래 [새로 작성하기]로 새 공지를 쓰세요.') + (n.until ? ' (' + C.untilText(n) + ')' : '')) + '</p>' : '') +
         '<label>' + esc(T('제목')) + '<input type="text" id="nt-title" maxlength="60" placeholder="' + esc(T('예: 다음 주는 연합 목장 모임입니다')) + '"></label>' +
         '<label>' + esc(T('내용')) + '<textarea id="nt-body" maxlength="1000"></textarea></label>' +
         '<label>' + esc(T('띄우는 기간')) + '<select id="nt-days">' + [[1, '오늘 하루'], [3, '3일'], [7, '1주일'], [14, '2주일'], [30, '한 달']].map(function (o) {
           return '<option value="' + o[0] + '"' + (o[0] === 7 ? ' selected' : '') + '>' + esc(T(o[1])) + '</option>'; }).join('') +
           '<option value="date">' + esc(T('날짜 고르기')) + '</option></select></label>' +
         '<label id="nt-until-row" hidden>' + esc(T('이날까지 띄우기')) + '<input type="date" id="nt-until" min="' + C.today() + '" max="' + C.addDays(C.today(), 90) + '" value="' + C.addDays(C.today(), 6) + '"></label>' +
-        '<p class="sheet-meta" style="margin-top:6px">' + esc(T('기간 동안 목자가 앱을 열면 아래에서 올라오고, 알림도 함께 갑니다. 기간이 지나면 저절로 내려갑니다.')) + '</p><div class="msg" id="msg-nt"></div>' });
+        '<p class="sheet-meta" style="margin-top:6px">' + esc(T('기간 동안 목자가 앱을 열면 아래에서 올라오고, 알림도 함께 갑니다. 기간이 지나면 저절로 내려갑니다.')) + '</p><div class="msg" id="msg-nt"></div>' +
+        (n ? '<button type="button" class="nt-fresh" id="nt-fresh">' + esc(T('＋ 새로 작성하기')) + '</button>' : '') });
   }
 
   /* ── 제출 안 한 목장에 알림 · 마감 알림 ───────────── */
