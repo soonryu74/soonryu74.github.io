@@ -61,7 +61,7 @@ para(AUTHOR, bold=True, size=12, align=WD_ALIGN_PARAGRAPH.CENTER, after=2)
 para('Independent researcher, Seoul, Republic of Korea', size=11, align=WD_ALIGN_PARAGRAPH.CENTER, after=2)
 para(f'Contact: {EMAIL}', size=11, align=WD_ALIGN_PARAGRAPH.CENTER, after=30)
 para('IEEE AgeTech Global Dataset Competition 2026 — Theme 1: Health & Well-Being (chronic disease management; preventive healthcare and wellness)', size=10.5, align=WD_ALIGN_PARAGRAPH.CENTER, after=4)
-para('Dataset version 1.0 · Licence CC BY 4.0 · Formats CSV, SQLite, Croissant JSON-LD', size=10.5, align=WD_ALIGN_PARAGRAPH.CENTER)
+para('Dataset version 1.0 · Licence CC BY-NC 4.0 · Formats CSV, SQLite, Croissant JSON-LD', size=10.5, align=WD_ALIGN_PARAGRAPH.CENTER)
 doc.add_page_break()
 
 # ---------------- 1 Abstract ----------------
@@ -130,7 +130,7 @@ doc.add_heading('6. Ethical Considerations', 1)
 bullet(' K-HALO contains only area-level aggregates already published by government agencies; no individual, household or facility records. Each estimate summarises roughly 900 survey respondents, so re-identification is not possible.', 'Privacy protection.')
 bullet(' Not applicable to K-HALO. The CHS is a statutory survey under the Regional Public Health Act, conducted by trained interviewers with respondents\' agreement; only its published area-level estimates are used. No human-subject contact occurred in compiling K-HALO, so no additional ethics review was required.', 'Consent.')
 bullet(' Aggregation is the anonymisation step; no small-cell values below the producers\' publication thresholds are introduced. Life-table estimates are suppressed for areas with fewer than 150 deaths in three years.', 'Anonymisation.')
-bullet(' Source data are open under the Korea Open Government Licence Type 1 (attribution); K-HALO is released under CC BY 4.0 with full attribution. Derived HLE and deprivation values are labelled as research estimates, not official statistics.', 'Regulatory compliance and licensing.')
+bullet(' Source data are open under the Korea Open Government Licence Type 1 (attribution); K-HALO is released under CC BY-NC 4.0 (free for research and non-commercial use; commercial use by permission), while the underlying official statistics remain openly available from KOSIS. Derived HLE and deprivation values are labelled as research estimates, not official statistics.', 'Regulatory compliance and licensing.')
 bullet(' Survey measures are self-reported; HLE is driven mainly by self-rated health; rural and deprived areas show larger forecast errors (Section 7). The equity audit (T3) is part of the benchmark so that model developers must report subgroup performance. K-HALO must not be used to stigmatise communities; the datasheet lists intended and out-of-scope uses.', 'Bias awareness.')
 
 # ---------------- 7 Applications & benchmarks ----------------

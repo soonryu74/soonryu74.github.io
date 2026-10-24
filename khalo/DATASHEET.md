@@ -31,6 +31,6 @@ Structured after Gebru et al., "Datasheets for Datasets" (Commun. ACM, 2021).
 - **Known limitations.** Self-reported measures; survey sampling error of about ±1.5 pp per area; HLE driven mainly by self-rated health (r ≈ 0.89); sub-districts share their parent city's census covariates; COVID-19 disruption in 2020–2021; deprivation and population tables are cross-sectional.
 
 ## 6. Distribution and maintenance
-- **Licence.** CC BY 4.0. Source statistics: Korea Open Government Licence Type 1 (attribution).
+- **Licence.** CC BY-NC 4.0 (free for research, education and non-commercial use; commercial use by permission of the author). Source statistics: Korea Open Government Licence Type 1 (attribution).
 - **Format.** CSV (UTF-8), SQLite, Croissant JSON-LD metadata, data dictionary.
 - **Maintenance.** Annual update after each CHS release (scripts in `tools/`). Version history in `CHANGELOG`. Contact via IEEE DataPort.

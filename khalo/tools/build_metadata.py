@@ -74,7 +74,7 @@ cro = {
  '@type': 'sc:Dataset', 'conformsTo': 'http://mlcommons.org/croissant/1.0',
  'name': 'K-HALO', 'alternateName': 'Korea Healthy Ageing and Longevity district panel, 2008-2025',
  'description': 'An AI-ready, fully documented longitudinal panel of 41 health-behaviour, chronic-disease and preventive-care indicators for all 281 Community Health Survey areas of South Korea (2008-2025), linked to district life expectancy, healthy life expectancy, area deprivation and older-adult population, with three benchmark tasks (forecasting, HLE regression, equity audit) and baseline results.',
- 'license': 'https://creativecommons.org/licenses/by/4.0/', 'version': '1.0.0', 'datePublished': '2026-10-30',
+ 'license': 'https://creativecommons.org/licenses/by-nc/4.0/', 'version': '1.0.0', 'datePublished': '2026-10-30',
  'creator': {'@type': 'sc:Person', 'name': 'Soonryu Seo', 'description': 'Independent researcher'},
  'keywords': ['healthy ageing', 'healthy life expectancy', 'AgeTech', 'panel data', 'small-area health', 'health equity', 'forecasting', 'South Korea'],
  'citeAs': 'Seo S. K-HALO: Korea Healthy Ageing and Longevity district panel, 2008-2025 (v1.0). IEEE DataPort, 2026.',

@@ -1,5 +1,6 @@
-K-HALO v1.0 is licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0).
-https://creativecommons.org/licenses/by/4.0/
+K-HALO v1.0 is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+https://creativecommons.org/licenses/by-nc/4.0/
+Commercial use of the K-HALO compilation and derived estimates requires written permission from the author (soonryu74@gmail.com).
 
 Source statistics are official open data distributed on KOSIS (https://kosis.kr) under the
 Korea Open Government Licence (KOGL) Type 1 — free reuse with attribution. Producers:

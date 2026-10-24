@@ -45,7 +45,7 @@ Reproduce the baselines: `pip install pandas scikit-learn && python benchmarks/r
 | T3 Equity audit | Error of T1/T2 models by deprivation quintile | Gradient boosting T1 error is 27 % higher in the most deprived quintile |
 
 ## Licence and attribution
-Released under **CC BY 4.0**. Source statistics are official open data distributed on KOSIS (kosis.kr) under the Korea Open Government Licence Type 1 (attribution). Please cite K-HALO and the original producers: Korea Disease Control and Prevention Agency (Community Health Survey) and Statistics Korea (vital statistics, resident registration population, Population and Housing Census). Healthy life expectancy and the deprivation index are derived research estimates, not official statistics.
+Released under **CC BY-NC 4.0**: free for research, education and other non-commercial use with attribution; contact the author for commercial licensing. The underlying official statistics remain freely available from KOSIS. Source statistics are official open data distributed on KOSIS (kosis.kr) under the Korea Open Government Licence Type 1 (attribution). Please cite K-HALO and the original producers: Korea Disease Control and Prevention Agency (Community Health Survey) and Statistics Korea (vital statistics, resident registration population, Population and Housing Census). Healthy life expectancy and the deprivation index are derived research estimates, not official statistics.
 
 ## Citation
 Seo S. *K-HALO: Korea Healthy Ageing and Longevity district panel, 2008–2025* (v1.0). IEEE DataPort, 2026.
