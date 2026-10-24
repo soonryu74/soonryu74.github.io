@@ -644,5 +644,8 @@ window.I18N.en = {
   "지금 공지 보기": "View notice",
   "목사님 말씀": "Pastor's note",
   "{0} 일기에 말씀을 남기셨어요": "Left a note on your journal ({0})",
-  "일기에 말씀을 남기셨어요": "Left a note on your journal"
+  "일기에 말씀을 남기셨어요": "Left a note on your journal",
+  "고쳐서 올리기": "Update notice",
+  "지금 걸린 공지입니다. 고쳐서 다시 올리거나, 아래 [새로 작성하기]로 새 공지를 쓰세요.": "This is the current notice. Edit and re-post it, or tap [New notice] below to start over.",
+  "＋ 새로 작성하기": "＋ New notice"
 };
