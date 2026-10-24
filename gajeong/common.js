@@ -231,7 +231,7 @@ window.CHURCH = (function () {
     { id: 'sky', name: '맑은 하늘', desc: '흰 바탕 · 파랑 · 또렷한 글씨', colors: ['#eef3f8', '#0b57a4', '#c9650f'] },
     { id: 'night', name: '밤 기도', desc: '어두운 화면 · 금빛', colors: ['#121517', '#1a1e21', '#d6b36e'] }
   ];
-  var THEME_COLOR = { note: '#1f4d3b', sky: '#0b57a4', night: '#15191b' };
+  var THEME_COLOR = { note: '#ffffff', sky: '#ffffff', night: '#1a1e21' };   // 머리말 색과 같게
   function setTheme(id) {
     if (!THEME_COLOR[id]) id = 'note';
     document.documentElement.setAttribute('data-theme', id);
@@ -463,7 +463,111 @@ window.CHURCH = (function () {
     bindLangButton(el);
     if (c.logo_url) { var fav = document.querySelector('link[rel="icon"]'); if (fav) fav.href = c.logo_url; }
     topAvatar(profile);
+    hero(profile);
     return el;
+  }
+
+  /* ── 첫 화면 인사 띠 (카페 앱처럼) · 성탄 절기 ─────────── */
+  // 11월 22일 ~ 12월 31일에는 성탄 모양 (교회가 features.season = false 로 끌 수 있다)
+  function season() {
+    if (church && church.features && church.features.season === false) return '';
+    var md = today().slice(5);
+    return md >= '11-22' && md <= '12-31' ? 'xmas' : '';
+  }
+  function heroText(profile) {
+    var h = +new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: '2-digit', hourCycle: 'h23' }).format(new Date()) % 24;
+    var days = ['주일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+    var part = h < 5 ? '밤' : h < 12 ? '아침' : h < 18 ? '오후' : '저녁', md = today().slice(5), s = season();
+    var kicker = s === 'xmas' ? (md === '12-24' || md === '12-25' ? t('메리 크리스마스') : t('성탄을 기다리며')) : t('이번 주도 함께');
+    return { kicker: kicker, title: title2(profile) + ',', sub: t('평안한 {0} {1}이에요', t(days[dayOfWeek()]), t(part)) };
+  }
+  function hero(profile) {
+    var wrap = document.querySelector('.wrap'), tabs = wrap && wrap.querySelector('.tabs');
+    if (!tabs || wrap.querySelector('.hero')) return;
+    var x = heroText(profile), s = season();
+    if (s) document.documentElement.setAttribute('data-season', s);
+    var el = document.createElement('section'); el.className = 'hero noprint';
+    el.innerHTML = '<div class="hero-in"><span class="hero-kicker">' + esc(x.kicker) + '</span>' +
+      '<p class="hero-title">' + esc(x.title) + '<br>' + esc(x.sub) + '</p></div><div class="hero-chips"></div>';
+    wrap.insertBefore(el, tabs);
+  }
+  // 인사 띠 아래 알약 단추: [{ label, value, go(탭 이름) 또는 fn, dot }]
+  function heroChips(list) {
+    var box = document.querySelector('.hero-chips'); if (!box) return;
+    box._list = list;
+    box.innerHTML = list.map(function (c, i) {
+      return '<button type="button" class="hero-chip' + (c.dot ? ' dot' : '') + '" data-i="' + i + '"><span>' + esc(c.label) + '</span>' +
+        (c.value != null && c.value !== '' ? '<b>' + esc(String(c.value)) + '</b>' : '') + '</button>';
+    }).join('');
+    if (box.dataset.bound) return;
+    box.dataset.bound = '1';
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('.hero-chip'), c = b && box._list[+b.dataset.i]; if (!c) return;
+      if (c.go) { var tb = document.querySelector('.tabs button[data-pane="' + c.go + '"]'); if (tb) tb.click(); }
+      if (c.fn) c.fn();
+    });
+  }
+
+  // 아래에서 올라오는 창: { kicker, title, html, cls, foot: [{ label, fn }] } — fn이 true를 돌려주면 닫지 않는다
+  function sheet(o) {
+    var foot = o.foot || [{ label: t('닫기') }];
+    var bg = document.createElement('div'); bg.className = 'sheet-bg ' + (o.cls || '');
+    bg.innerHTML = '<div class="sheet" role="dialog" aria-modal="true"><div class="sheet-body">' +
+      (o.kicker ? '<span class="sheet-kicker">' + esc(o.kicker) + '</span>' : '') +
+      (o.title ? '<h2 class="sheet-title">' + esc(o.title) + '</h2>' : '') + (o.html || '') + '</div>' +
+      '<div class="sheet-foot">' + foot.map(function (f, i) { return '<button type="button" class="ghost" data-i="' + i + '">' + esc(f.label) + '</button>'; }).join('') + '</div></div>';
+    document.body.appendChild(bg);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { bg.classList.add('open'); }); });
+    function close() { document.removeEventListener('keydown', onKey); bg.classList.remove('open'); setTimeout(function () { bg.remove(); }, 260); }
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    document.addEventListener('keydown', onKey);
+    bg.addEventListener('click', async function (e) {
+      if (e.target === bg) return close();
+      var b = e.target.closest('.sheet-foot button'); if (!b) return;
+      var f = foot[+b.dataset.i] || {};
+      if (f.fn && (await f.fn(bg)) === true) return;
+      close();
+    });
+    return close;
+  }
+
+  // 목사님 공지 (features.notice = { id, title, body, at, by }) — 앱을 열면 아래에서 올라온다
+  function noticeHtml(n) {
+    var d = n.at ? new Date(n.at) : null;
+    var when = d ? new Intl.DateTimeFormat(LANG === 'en' ? 'en-US' : 'ko-KR', { timeZone: TZ, month: 'long', day: 'numeric' }).format(d) : '';
+    return '<div class="prose sheet-text">' + proseHtml(n.body || '') + '</div>' +
+      '<p class="sheet-meta">' + esc([when, n.by].filter(Boolean).join(' · ')) + '</p>';
+  }
+  function showNotice(n, force) {
+    if (!n || !n.id) return;
+    var key = 'notice-hide-' + n.id, hid = '';
+    try { hid = localStorage.getItem(key) || sessionStorage.getItem(key) || ''; } catch (e) {}
+    if (!force && (hid === today() || hid === 'session')) return;
+    if (!force && n.at && Date.now() - new Date(n.at).getTime() > 14 * 864e5) return;   // 2주 지난 공지는 저절로 띄우지 않는다
+    sheet({ kicker: t('공지'), title: n.title || t('목사님 공지'), html: noticeHtml(n), cls: 'notice-sheet', foot: [
+      { label: t('오늘 하루 보지 않기'), fn: function () { try { localStorage.setItem(key, today()); } catch (e) {} } },
+      { label: t('닫기'), fn: function () { try { sessionStorage.setItem(key, 'session'); } catch (e) {} } }
+    ] });
+  }
+
+  // 기도 응답 축하: 작은 하트가 위에서 떨어지고 가운데 짧은 글 (움직임 줄이기 설정이면 건너뛴다)
+  function hearts(label) {
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var box = document.createElement('div'); box.className = 'hearts noprint'; box.setAttribute('aria-hidden', 'true');
+    var colors = ['#e5484d', '#f76b8a', '#f5a524', '#ff8fab', '#d6336c'];
+    for (var i = 0; i < 26; i++) {
+      var h = document.createElement('span'); h.textContent = '♥';
+      h.style.left = (Math.random() * 96) + 'vw';
+      h.style.fontSize = (14 + Math.random() * 20) + 'px';
+      h.style.color = colors[i % colors.length];
+      h.style.animationDelay = (Math.random() * .7).toFixed(2) + 's';
+      h.style.animationDuration = (1.9 + Math.random() * 1.5).toFixed(2) + 's';
+      h.style.setProperty('--dx', Math.round(Math.random() * 90 - 45) + 'px');
+      box.appendChild(h);
+    }
+    if (label) { var m = document.createElement('b'); m.className = 'hearts-label'; m.textContent = label; box.appendChild(m); }
+    document.body.appendChild(box);
+    setTimeout(function () { box.remove(); }, 4000);
   }
 
   // 언어 단추: 지금 언어가 아닌 쪽 이름을 보여 주고, 누르면 바꾼다 (언어가 셋 이상이면 차례로 돈다)
@@ -659,6 +763,7 @@ window.CHURCH = (function () {
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave,
+    hearts: hearts, hero: hero, heroChips: heroChips, sheet: sheet, showNotice: showNotice, noticeHtml: noticeHtml, season: season,
     has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, authorPhotos: authorPhotos, commentHead: commentHead, proseHtml: proseHtml, prayerList: prayerList, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };

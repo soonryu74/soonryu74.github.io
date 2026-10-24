@@ -3,6 +3,7 @@
 //  · commented : 목사가 일기에 말씀을 남기면 그 목장 목자의 기기로 웹 푸시를 보낸다
 //  · test      : 지금 로그인한 사람의 기기로 시험 알림을 보낸다
 //  · 알림마다 보낸 사람 사진(icon)을 함께 보낸다 (7일짜리 주소)
+//  · notice    : 목사님 공지를 올리거나(제목·내용) 내리고(clear), 목자들에게 알림을 보낸다
 //  · remind    : 목사가 [제출 안 한 목장에 알림 보내기]를 누르면, 그 주 일기를 제출하지 않은 목자에게 보낸다
 //  · set_deadline : 목사가 마감 알림 요일·시각을 정한다 (features.deadline = { dow, hour } 또는 false)
 //  · deadline_tick: (로그인 없이, GitHub Actions가 30분마다) 교회마다 마감 시각이 지났으면 제출 안 한 목자에게 한 번 보낸다
@@ -264,6 +265,33 @@ Deno.serve(async (req) => {
       const { error } = await admin.from('church_church').update({ features: { ...f, deadline } }).eq('id', me.church_id)
       if (error) throw new Error(error.message)
       return json({ ok: true, deadline })
+    }
+
+    // 목사님 공지: 교회 features.notice 에 두고(목자가 앱을 열면 아래에서 올라온다) 목자들에게 알림도 보낸다
+    if (body.action === 'notice') {
+      const { data: me } = await admin.from('church_profile').select('church_id, role, name').eq('id', uid).maybeSingle()
+      if (!me || me.role !== 'pastor' || !me.church_id) return json({ error: '목사 계정만 쓸 수 있습니다' }, 403)
+      const { data: ch } = await admin.from('church_church').select('features').eq('id', me.church_id).maybeSingle()
+      const f = (ch?.features ?? {}) as Record<string, unknown>
+      if (body.clear) {
+        const { error } = await admin.from('church_church').update({ features: { ...f, notice: null } }).eq('id', me.church_id)
+        if (error) throw new Error(error.message)
+        return json({ ok: true, notice: null })
+      }
+      const title = String(body.title ?? '').trim().slice(0, 60), text = String(body.body ?? '').trim().slice(0, 1000)
+      if (!title || !text) return json({ error: '제목과 내용을 적어 주세요' }, 400)
+      const nm = String(me.name ?? '').trim()
+      const notice = { id: crypto.randomUUID(), title, body: text, at: new Date().toISOString(), by: /목사/.test(nm) ? nm : nm ? `${nm} 목사` : '' }
+      const { error } = await admin.from('church_church').update({ features: { ...f, notice } }).eq('id', me.church_id)
+      if (error) throw new Error(error.message)
+      const { data: leaders } = await admin.from('church_profile').select('id').eq('church_id', me.church_id).eq('role', 'mokja')
+      const ids = (leaders ?? []).map((p) => p.id)
+      const { data: subs } = ids.length ? await admin.from('church_push').select('user_id').in('user_id', ids) : { data: [] }
+      const reached = new Set((subs ?? []).map((x) => x.user_id)).size
+      const icon = await photoIcon(uid)
+      const short = text.replace(/\s+/g, ' ').slice(0, 80)
+      const r = await sendTo(ids, (lang) => ({ title: lang === 'en' ? `Notice: ${title}` : `공지: ${title}`, body: short, url: 'mokjang.html', tag: `notice-${notice.id}`, icon }))
+      return json({ ok: true, notice, reached, ...r })
     }
 
     if (body.action === 'commented') {
