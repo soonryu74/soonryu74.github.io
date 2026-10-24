@@ -325,7 +325,7 @@ window.CHURCH = (function () {
   // 로그인 안 했으면 로그인 화면으로, 역할이 다르면 제 화면으로 돌려보낸다. 교회 시간대도 여기서 맞춘다.
   async function guard(needRole) {
     var p = await me();
-    if (!p) { location.replace('index.html' + location.search); return null; }
+    if (!p) { location.replace('index.html' + location.search + location.hash); return null; }
     if (needRole && p.role !== needRole) {
       location.replace(p.role === 'pastor' ? 'moksa.html' : 'mokjang.html');
       return null;
@@ -616,12 +616,12 @@ window.CHURCH = (function () {
   function showNotice(n, force) {
     if (!n || !n.id) return;
     var key = 'notice-hide-' + n.id, hid = '';
-    try { hid = localStorage.getItem(key) || sessionStorage.getItem(key) || ''; } catch (e) {}
+    try { hid = localStorage.getItem(key) || ''; } catch (e) {}   // [닫기]는 이번에만 — 다음에 들어오면 또 뜬다
     if (!noticeLive(n)) return;   // 기간이 지난 공지는 띄우지 않는다
-    if (!force && (hid === today() || hid === 'session')) return;
+    if (!force && hid === today()) return;
     sheet({ kicker: t('공지'), title: n.title || t('목사님 공지'), html: noticeHtml(n), cls: 'notice-sheet', foot: [
       { label: t('오늘 하루 보지 않기'), fn: function () { try { localStorage.setItem(key, today()); } catch (e) {} } },
-      { label: t('닫기'), fn: function () { try { sessionStorage.setItem(key, 'session'); } catch (e) {} } }
+      { label: t('닫기') }
     ] });
   }
 
@@ -649,6 +649,12 @@ window.CHURCH = (function () {
      휴대폰은 한 번 눌러야 소리를 낼 수 있어서, 처음 화면을 누를 때 작게 시작한다.
      머리말 ♪ 단추로 끄고 켠다 (기기마다 기억). 음악 파일이 없으면 단추도 없다. 성탄 절기엔 성탄 곡이 있으면 그것으로 */
   var BGM_VOL = 0.22;
+  if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', function (e) {
+    var d = e.data || {}; if (d.type !== 'open-url' || !d.url) return;
+    var u = new URL(d.url, location.href);
+    if (u.pathname !== location.pathname) { location.href = u.href; return; }
+    if (u.hash) { if (location.hash === u.hash) window.dispatchEvent(new HashChangeEvent('hashchange')); else location.hash = u.hash; }
+  });
   async function bgm(top) {
     var xmas = season() === 'xmas' || season() === 'snowman';   // 겨울(성탄·눈사람)엔 성탄 곡
     var on = true; try { on = localStorage.getItem('bgm') !== 'off'; } catch (e) {}

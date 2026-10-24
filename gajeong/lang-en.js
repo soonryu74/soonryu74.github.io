@@ -641,5 +641,8 @@ window.I18N.en = {
   "다시 로그인해 주세요": "Please sign in again",
   "오래 열어 두었거나 다른 기기에서 로그아웃하면 로그인이 풀릴 수 있습니다. 다시 로그인하시면 쓰던 글이 그대로 돌아오고, 그때 저장하시면 됩니다.": "Sign-in can expire if the app was open a long time or you signed out on another device. Sign in again and your text will be back, ready to save.",
   "다시 로그인": "Sign in again",
-  "지금 공지 보기": "View notice"
+  "지금 공지 보기": "View notice",
+  "목사님 말씀": "Pastor's note",
+  "{0} 일기에 말씀을 남기셨어요": "Left a note on your journal ({0})",
+  "일기에 말씀을 남기셨어요": "Left a note on your journal"
 };

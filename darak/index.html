@@ -21,7 +21,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="다락방나눔터">
-<link rel="stylesheet" href="style.css?v=202610250600">
+<link rel="stylesheet" href="style.css?v=202610250700">
 <style>
   .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
   .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
@@ -271,8 +271,8 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610250600"></script>
-<script src="common.js?v=202610250600"></script>
+<script src="lang-en.js?v=202610250700"></script>
+<script src="common.js?v=202610250700"></script>
 <script>
 (function () {
   var C = window.CHURCH, $ = C.$;
@@ -284,7 +284,7 @@ try { (function (m, q) { var s = q.get('c');
     if (!p) return;
     var home = p.role === 'pastor' ? 'moksa.html' : 'mokjang.html';
     var mine = urlSlug || wantNew ? ((await C.sb.from('church_church').select('slug, name').maybeSingle()).data || {}) : null;
-    if (!mine || (!wantNew && mine.slug === urlSlug)) return location.replace(home);
+    if (!mine || (!wantNew && mine.slug === urlSlug)) return location.replace(home + location.hash);
     $('#signed-in-text').textContent = C.t('이 기기는 지금 {0}({1}) 계정으로 들어가 있습니다.', mine.name || C.t('다른 교회'), C.title2(p)) + ' ' +
       C.t(wantNew ? C.t('새 교회를 등록하면 이 기기는 새 교회로 바뀝니다.') : C.t('이 교회로 들어가려면 아래에서 로그인하세요.'));
     $('#go-mine').textContent = C.t('{0}로 가기', mine.name || C.t('내 교회'));

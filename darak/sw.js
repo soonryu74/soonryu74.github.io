@@ -24,7 +24,9 @@ self.addEventListener('notificationclick', function (e) {
     for (var i = 0; i < list.length; i++) {
       var c = list[i];
       if (c.url.indexOf(self.registration.scope) === 0 && 'focus' in c) {
-        return c.focus().then(function (w) { return w.navigate ? w.navigate(url) : null; });
+        // 열려 있는 화면에 알려서 그 화면이 직접 옮겨 가게 한다 (같은 화면에 #j=만 붙는 경우 navigate가 안 먹는 휴대폰이 있다)
+        try { c.postMessage({ type: 'open-url', url: url }); } catch (err) {}
+        return c.focus().catch(function () {});
       }
     }
     return self.clients.openWindow(url);
