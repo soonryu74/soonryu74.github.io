@@ -510,13 +510,22 @@ window.CHURCH = (function () {
     el.innerHTML = '<div class="hero-in"><span class="hero-kicker">' + esc(x.kicker) + '</span>' +
       '<p class="hero-title">' + esc(x.title) + '<br>' + esc(x.sub) + '</p></div><div class="hero-chips"></div>';
     wrap.insertBefore(el, tabs);
+    // 휴대폰 위 상태 표시줄 색도 첫 화면에서는 인사 띠 색으로
+    var meta = document.querySelector('meta[name="theme-color"]'), plain = meta && meta.getAttribute('content');
+    var TOP = { xmas: '#a3242b', aurora: '#0c1a3a', snowman: '#cfe6f7' };
+    function tint() {
+      if (!meta) return;
+      var home = tabs.querySelector('button') && tabs.querySelector('button').classList.contains('on');
+      meta.setAttribute('content', home && TOP[document.documentElement.getAttribute('data-season')] || plain);
+    }
+    tint(); tabs.addEventListener('click', function () { setTimeout(tint, 0); });
   }
   // 인사 띠 아래 알약 단추: [{ label, value, go(탭 이름) 또는 fn, dot }]
   function heroChips(list) {
     var box = document.querySelector('.hero-chips'); if (!box) return;
     box._list = list;
     box.innerHTML = list.map(function (c, i) {
-      return '<button type="button" class="hero-chip' + (c.dot ? ' dot' : '') + '" data-i="' + i + '"><span>' + esc(c.label) + '</span>' +
+      return '<button type="button" class="hero-chip' + (c.dot ? ' dot' : '') + (c.cls ? ' ' + c.cls : '') + '" data-i="' + i + '"><span>' + esc(c.label) + '</span>' +
         (c.value != null && c.value !== '' ? '<b>' + esc(String(c.value)) + '</b>' : '') + '</button>';
     }).join('');
     if (box.dataset.bound) return;
@@ -765,9 +774,11 @@ window.CHURCH = (function () {
     withPhoto.forEach(function (m) { if (byPath[m.photo_path]) out[m.id] = byPath[m.photo_path]; });
     return out;
   }
+  // 사진이 없을 때 이름 첫 글자 동그라미: 이름마다 네 가지 색 중 하나 (카페 앱 메뉴처럼)
+  function avTone(name) { var h = 0, x = String(name || ''); for (var i = 0; i < x.length; i++) h = (h * 31 + x.charCodeAt(i)) >>> 0; return h % 4; }
   function avatar(m, url) {
     return url ? '<img class="avatar" src="' + esc(url) + '" alt="">'
-               : '<span class="avatar" aria-hidden="true">' + esc((m.name || '?').trim().charAt(0)) + '</span>';
+               : '<span class="avatar av' + avTone(m.name) + '" aria-hidden="true">' + esc((m.name || '?').trim().charAt(0)) + '</span>';
   }
 
   // 긴 글을 읽기 쉽게: '-'·'•'·'1.'로 시작하는 줄은 목록으로, 나머지 줄은 문단으로 (사람이 쓴 글은 그대로 두고 모양만)

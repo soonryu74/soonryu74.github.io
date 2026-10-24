@@ -613,3 +613,66 @@ html[data-season="snowman"] .hero-chips{position:relative; z-index:1}
           mask-image:linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 22px), transparent)}
 .hero-chips::after{content:''; flex:0 0 2px}
 @media (max-width:560px){ .hero{--hp:18px} }
+
+/* ── 휴대폰 첫 화면: 인사 띠가 화면 끝까지, 머리말과 한 몸처럼 (스타벅스처럼 위를 가리지 않게) ── */
+@media (max-width:560px){
+  body:has(.wrap .tabs > button:first-child.on) .top{position:relative; box-shadow:none; background:var(--hero-top, var(--sheet))}
+  .hero{margin:0 -14px 8px; border-radius:0 0 28px 28px; padding-top:10px}
+  .hero{background:linear-gradient(180deg, var(--sheet), var(--brand-soft))}
+  html[data-season="xmas"]{--hero-top:#a3242b}
+  html[data-season="xmas"] .hero{background:radial-gradient(circle at 12% 30%, rgba(255,255,255,.55) 0 2px, transparent 3px), radial-gradient(circle at 38% 72%, rgba(255,255,255,.4) 0 1.5px, transparent 2.5px), radial-gradient(circle at 66% 22%, rgba(255,255,255,.5) 0 2px, transparent 3px), radial-gradient(circle at 84% 64%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), radial-gradient(circle at 92% 18%, rgba(255,255,255,.45) 0 1.5px, transparent 2.5px), radial-gradient(circle at 24% 88%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), linear-gradient(180deg, #a3242b, #6e1218)}
+  html[data-season="aurora"]{--hero-top:#0c1a3a}
+  html[data-season="snowman"]{--hero-top:#cfe6f7}
+  html[data-season="snowman"] .hero{background:radial-gradient(circle at 12% 30%, rgba(255,255,255,.55) 0 2px, transparent 3px), radial-gradient(circle at 38% 72%, rgba(255,255,255,.4) 0 1.5px, transparent 2.5px), radial-gradient(circle at 66% 22%, rgba(255,255,255,.5) 0 2px, transparent 3px), radial-gradient(circle at 84% 64%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), radial-gradient(circle at 92% 18%, rgba(255,255,255,.45) 0 1.5px, transparent 2.5px), radial-gradient(circle at 24% 88%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), linear-gradient(180deg, #cfe6f7, #eef6fc)}
+  html[data-season="xmas"] body:has(.wrap .tabs > button:first-child.on) .top,
+  html[data-season="aurora"] body:has(.wrap .tabs > button:first-child.on) .top{color:#fff}
+  html[data-season="xmas"] body:has(.wrap .tabs > button:first-child.on) .top h1,
+  html[data-season="aurora"] body:has(.wrap .tabs > button:first-child.on) .top h1{color:#fff}
+  html[data-season="xmas"] body:has(.wrap .tabs > button:first-child.on) .top .church,
+  html[data-season="aurora"] body:has(.wrap .tabs > button:first-child.on) .top .church{color:rgba(255,255,255,.75)}
+  html[data-season="xmas"] body:has(.wrap .tabs > button:first-child.on) .top .who > button,
+  html[data-season="aurora"] body:has(.wrap .tabs > button:first-child.on) .top .who > button{background:rgba(255,255,255,.14); color:#fff; border-color:rgba(255,255,255,.35)}
+  html[data-season] body:has(.wrap .tabs > button:first-child.on) .top .mark{box-shadow:none}
+}
+
+/* ── 목록을 카페 앱처럼: 상자 대신 가는 줄로 나눈 한 줄 목록 ── */
+#people-list .list-item{border:0; border-bottom:1px solid var(--line); border-radius:0; margin:0; padding:14px 2px; background:none; box-shadow:none; flex-wrap:nowrap; gap:14px}
+#people-list .list-item:last-child{border-bottom:0}
+#people-list .list-item:has(.dates-form){flex-wrap:wrap}
+#people-list .list-item .grow{min-width:0}
+#people-list .list-item .avatar{width:46px; height:46px; font-size:18px}
+#people-list .list-item .t{font-size:16.5px; font-weight:800; letter-spacing:-.02em}
+#people-list .list-item .s{font-size:13.5px; margin-top:1px}
+#people-list .act-dates{flex:none; padding:8px 14px; font-size:13.5px; background:var(--paper); border-color:transparent; color:var(--ink-2)}
+.people-mj{margin-top:18px}
+.people-mj h3{font-family:var(--sans); font-weight:800; font-size:15px; color:var(--brand); letter-spacing:-.01em; margin:0 0 2px; padding-bottom:8px; border-bottom:2px solid var(--ink)}
+
+/* 기도제목: 테두리 없이 연한 색의 둥근 카드, 이름은 교회 색으로 */
+.pr-list > li{border-left:0; border-radius:16px; padding:14px 16px; margin:0 0 10px; background:color-mix(in srgb, var(--brand-soft) 60%, var(--sheet))}
+.pr-list .pr-name{color:var(--brand); font-weight:800; letter-spacing:-.02em}
+.pr-list .pr-text{color:var(--ink)}
+html[data-season="xmas"] .pr-list > li{background:#fbeef0}
+html[data-season="xmas"] .pr-list .pr-name{color:#a3242b}
+html[data-season="aurora"] .pr-list > li{background:#eef1fb}
+html[data-season="aurora"] .pr-list .pr-name{color:#2c4a8a}
+html[data-season="snowman"] .pr-list > li{background:#eaf4fb}
+html[data-season="snowman"] .pr-list .pr-name{color:#2a6fb0}
+html[data-theme="night"] .pr-list > li{background:rgba(255,255,255,.05)}
+@media print{ .pr-list > li{background:none !important; border:1px solid #ddd; border-radius:8px} .pr-list .pr-name{color:#000 !important} }
+.hero-chip.primary{background:var(--brand); color:var(--on-brand); border-color:var(--brand)}
+html[data-season="xmas"] .hero-chip.primary{background:#1f5c3a; color:#fff}
+html[data-season="aurora"] .hero-chip.primary{background:#2fbf8f; color:#06231a}
+html[data-season="snowman"] .hero-chip.primary{background:#2a6fb0; color:#fff}
+.hero-chip.primary::before{content:'＋'; font-weight:800; margin-right:-2px}
+
+/* 이름 첫 글자 동그라미 색 (평소: 부드러운 네 빛깔 / 성탄: 빨강·초록·크림) */
+.avatar.av0{background:#e5efe8; color:#1f4d3b}
+.avatar.av1{background:#fbe7e8; color:#b3262f}
+.avatar.av2{background:#f5ecda; color:#8a6420}
+.avatar.av3{background:#e5ecf7; color:#2a5a9c}
+html[data-season="xmas"] .avatar.av0, html[data-season="xmas"] .avatar.av2{background:#1f4d3b; color:#fff}
+html[data-season="xmas"] .avatar.av1, html[data-season="xmas"] .avatar.av3{background:#c8242f; color:#fff}
+html[data-season="xmas"] .avatar.av2{background:#f3ece0; color:#6e1218}
+html[data-theme="night"] .avatar[class*="av"]{background:rgba(214,179,110,.16); color:#e2c385}
+.top .who-avatar .avatar:not(img){border:0}
+.top .who-avatar .avatar:not(img){display:flex; align-items:center; justify-content:center; width:32px; height:32px; font-size:14px; line-height:1; padding:0}
