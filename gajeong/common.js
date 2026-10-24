@@ -81,6 +81,7 @@ window.CHURCH = (function () {
     return [weekStart, ymd(d)];
   }
   function dayOfWeek(dateStr) { return new Date((dateStr || today()) + 'T00:00:00Z').getUTCDay(); }
+  function addDays(day, n) { var d = new Date(day + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return ymd(d); }
   function addWeeks(weekStart, n) {
     var d = new Date(weekStart + 'T00:00:00Z');
     d.setUTCDate(d.getUTCDate() + n * 7);
@@ -464,22 +465,26 @@ window.CHURCH = (function () {
     if (c.logo_url) { var fav = document.querySelector('link[rel="icon"]'); if (fav) fav.href = c.logo_url; }
     topAvatar(profile);
     hero(profile);
+    bgm(el);
     return el;
   }
 
   /* ── 첫 화면 인사 띠 (카페 앱처럼) · 성탄 절기 ─────────── */
-  // 11월 22일 ~ 12월 31일에는 성탄 모양 (교회가 features.season = false 로 끌 수 있다)
+  // 성탄 모양: 10월 24일 ~ 12월 31일 (교회가 features.season = false 로 끌 수 있다)
+  var XMAS_FROM = '10-24', XMAS_TO = '12-31';
   function season() {
     if (church && church.features && church.features.season === false) return '';
     var md = today().slice(5);
-    return md >= '11-22' && md <= '12-31' ? 'xmas' : '';
+    return md >= XMAS_FROM && md <= XMAS_TO ? 'xmas' : '';
   }
+  // 인사는 보는 사람이 있는 곳의 시간으로 (한국은 아침, 미국은 저녁 …) — 휴대폰 시계를 따른다
   function heroText(profile) {
-    var h = +new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: '2-digit', hourCycle: 'h23' }).format(new Date()) % 24;
+    var now = new Date(), h = now.getHours();
     var days = ['주일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
     var part = h < 5 ? '밤' : h < 12 ? '아침' : h < 18 ? '오후' : '저녁', md = today().slice(5), s = season();
     var kicker = s === 'xmas' ? (md === '12-24' || md === '12-25' ? t('메리 크리스마스') : t('성탄을 기다리며')) : t('이번 주도 함께');
-    return { kicker: kicker, title: title2(profile) + ',', sub: t('평안한 {0} {1}이에요', t(days[dayOfWeek()]), t(part)) };
+    var who = profile.role === 'pastor' ? t('목사님') : LANG === 'en' ? 'Leader' : t('목자') + '님';
+    return { kicker: kicker, title: who + ',', sub: t('평안한 {0} {1}', t(days[now.getDay()]), t(part + (part === '오후' ? '예요' : '이에요'))) };   // 오후예요 · 아침이에요
   }
   function hero(profile) {
     var wrap = document.querySelector('.wrap'), tabs = wrap && wrap.querySelector('.tabs');
@@ -536,14 +541,25 @@ window.CHURCH = (function () {
     var d = n.at ? new Date(n.at) : null;
     var when = d ? new Intl.DateTimeFormat(LANG === 'en' ? 'en-US' : 'ko-KR', { timeZone: TZ, month: 'long', day: 'numeric' }).format(d) : '';
     return '<div class="prose sheet-text">' + proseHtml(n.body || '') + '</div>' +
-      '<p class="sheet-meta">' + esc([when, n.by].filter(Boolean).join(' · ')) + '</p>';
+      '<p class="sheet-meta">' + esc([when, n.by, untilText(n)].filter(Boolean).join(' · ')) + '</p>';
+  }
+  function untilText(n) {
+    if (!n || !n.until) return '';
+    var d = new Date(n.until + 'T00:00:00Z');
+    return t('{0}까지', new Intl.DateTimeFormat(LANG === 'en' ? 'en-US' : 'ko-KR', { timeZone: 'UTC', month: 'long', day: 'numeric' }).format(d));
+  }
+  // 공지가 아직 기간 안인지 (기간이 없던 예전 공지는 2주)
+  function noticeLive(n) {
+    if (!n || !n.id) return false;
+    if (n.until) return today() <= n.until;
+    return !n.at || Date.now() - new Date(n.at).getTime() <= 14 * 864e5;
   }
   function showNotice(n, force) {
     if (!n || !n.id) return;
     var key = 'notice-hide-' + n.id, hid = '';
     try { hid = localStorage.getItem(key) || sessionStorage.getItem(key) || ''; } catch (e) {}
+    if (!noticeLive(n)) return;   // 기간이 지난 공지는 띄우지 않는다
     if (!force && (hid === today() || hid === 'session')) return;
-    if (!force && n.at && Date.now() - new Date(n.at).getTime() > 14 * 864e5) return;   // 2주 지난 공지는 저절로 띄우지 않는다
     sheet({ kicker: t('공지'), title: n.title || t('목사님 공지'), html: noticeHtml(n), cls: 'notice-sheet', foot: [
       { label: t('오늘 하루 보지 않기'), fn: function () { try { localStorage.setItem(key, today()); } catch (e) {} } },
       { label: t('닫기'), fn: function () { try { sessionStorage.setItem(key, 'session'); } catch (e) {} } }
@@ -568,6 +584,49 @@ window.CHURCH = (function () {
     if (label) { var m = document.createElement('b'); m.className = 'hearts-label'; m.textContent = label; box.appendChild(m); }
     document.body.appendChild(box);
     setTimeout(function () { box.remove(); }, 4000);
+  }
+
+  /* ── 배경 음악 (조용한 첼로) ─────────────────────────────
+     휴대폰은 한 번 눌러야 소리를 낼 수 있어서, 처음 화면을 누를 때 작게 시작한다.
+     머리말 ♪ 단추로 끄고 켠다 (기기마다 기억). 음악 파일이 없으면 단추도 없다. 성탄 절기엔 성탄 곡이 있으면 그것으로 */
+  var BGM_VOL = 0.22;
+  async function bgm(top) {
+    var src = 'assets/bgm.mp3', xmas = 'assets/bgm-xmas.mp3';
+    var have = async function (u) { try { return (await fetch(u, { method: 'HEAD', cache: 'no-store' })).ok; } catch (e) { return false; } };
+    if (season() === 'xmas' && await have(xmas)) src = xmas;
+    else if (!(await have(src))) return;
+    var on = true; try { on = localStorage.getItem('bgm') !== 'off'; } catch (e) {}
+    var a = new Audio(src); a.loop = true; a.volume = 0; a.preload = 'none';
+    var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'small bgm-btn';
+    var who = top.querySelector('.who'); who.insertBefore(btn, top.querySelector('.who-toggle'));
+    var timer = null, started = false;
+    function fade(to, then) {
+      clearInterval(timer);
+      timer = setInterval(function () {
+        var v = a.volume + (to > a.volume ? 0.02 : -0.03);
+        if ((to > a.volume && v >= to) || (to <= a.volume && v <= to)) { a.volume = Math.max(0, Math.min(1, to)); clearInterval(timer); if (then) then(); return; }
+        a.volume = Math.max(0, Math.min(1, v));
+      }, 80);
+    }
+    function play() { started = true; var p = a.play(); if (p && p.then) p.then(function () { fade(BGM_VOL); }).catch(function () {}); else fade(BGM_VOL); }
+    function stop() { fade(0, function () { a.pause(); }); }
+    function show() { btn.classList.toggle('off', !on); btn.textContent = '♪'; btn.title = on ? t('배경 음악 끄기') : t('배경 음악 켜기'); btn.setAttribute('aria-label', btn.title); }
+    show();
+    function first(e) {
+      if (e.target.closest && e.target.closest('.bgm-btn')) return;
+      document.removeEventListener('pointerdown', first, true);
+      if (on) play();
+    }
+    document.addEventListener('pointerdown', first, true);
+    btn.addEventListener('click', function () {
+      on = !on; try { localStorage.setItem('bgm', on ? 'on' : 'off'); } catch (e) {}
+      document.removeEventListener('pointerdown', first, true);
+      if (on) play(); else stop();
+      show();
+    });
+    document.addEventListener('visibilitychange', function () {   // 다른 앱으로 가면 멈추고, 돌아오면 다시
+      if (document.hidden) { if (!a.paused) a.pause(); } else if (on && started) play();
+    });
   }
 
   // 언어 단추: 지금 언어가 아닌 쪽 이름을 보여 주고, 누르면 바꾼다 (언어가 셋 이상이면 차례로 돈다)
@@ -752,7 +811,7 @@ window.CHURCH = (function () {
 
   return {
     sb: sb, $: $, $$: $$, esc: esc, say: say,
-    mondayOf: mondayOf, weekKeys: weekKeys, dayOfWeek: dayOfWeek, addWeeks: addWeeks, weekLabel: weekLabel, weekShort: weekShort,
+    mondayOf: mondayOf, weekKeys: weekKeys, dayOfWeek: dayOfWeek, addWeeks: addWeeks, addDays: addDays, weekLabel: weekLabel, weekShort: weekShort,
     ymd: ymd, today: today, whenText: whenText, setTimezone: setTimezone, timezone: timezone,
     signIn: signIn, signOut: signOut, me: me, guard: guard, callAdmin: callAdmin, notify: notify,
     header: header, title2: title2,
@@ -763,7 +822,7 @@ window.CHURCH = (function () {
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave,
-    hearts: hearts, hero: hero, heroChips: heroChips, sheet: sheet, showNotice: showNotice, noticeHtml: noticeHtml, season: season,
+    noticeLive: noticeLive, untilText: untilText, hearts: hearts, hero: hero, heroChips: heroChips, sheet: sheet, showNotice: showNotice, noticeHtml: noticeHtml, season: season,
     has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, authorPhotos: authorPhotos, commentHead: commentHead, proseHtml: proseHtml, prayerList: prayerList, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
