@@ -425,11 +425,11 @@
   /* ── 첫 화면 알약 단추 · 목자에게 공지 ─────────────── */
   function pastorChips(total, done) {
     var n = ((C.getChurch() || {}).features || {}).notice; if (!C.noticeLive(n)) n = null;
-    C.heroChips([
+    C.heroChips([   // 공지 쓰기를 맨 앞에 (찾기 쉽게)
+      { label: n ? T('공지 바꾸기') : T('공지 보내기'), fn: openNotice, dot: !!n, cls: 'primary' },
       { label: week === C.mondayOf() ? T('이번 주 제출') : T('이 주 제출'), value: done + '/' + total, go: 'week' },
       { label: T('기도제목 모아보기'), go: 'gather' },
-      { label: T('출석 통계'), go: 'stats' },
-      { label: n ? T('공지 바꾸기') : T('공지 보내기'), fn: openNotice, dot: !!n }
+      { label: T('출석 통계'), go: 'stats' }
     ]);
   }
   function openNotice() {
@@ -444,16 +444,21 @@
       var title = $('#nt-title').value.trim(), body = $('#nt-body').value.trim();
       if (!title || !body) { C.say($('#msg-nt'), T('제목과 내용을 적어 주세요.'), 'err'); return true; }
       try {
-        var r = await C.notify({ action: 'notice', title: title, body: body, until: C.addDays(C.today(), +$('#nt-days').value - 1) });
+        var d = $('#nt-days').value, until = d === 'date' ? $('#nt-until').value : C.addDays(C.today(), +d - 1);
+        if (!until || until < C.today()) { C.say($('#msg-nt'), T('오늘이나 그 뒤 날짜를 골라 주세요.'), 'err'); return true; }
+        var r = await C.notify({ action: 'notice', title: title, body: body, until: until });
         done(r, T('공지를 올렸습니다. 목자가 앱을 열면 아래에서 올라옵니다. (알림 받은 목자 {0}명)', r.reached || 0));
       } catch (e) { C.say($('#msg-nt'), e.message, 'err'); return true; }
     } });
+    setTimeout(function () { var sel = $('#nt-days'); if (sel) sel.addEventListener('change', function () { $('#nt-until-row').hidden = sel.value !== 'date'; }); }, 0);
     C.sheet({ kicker: T('공지'), title: T('목자들에게 공지 보내기'), cls: 'notice-edit', foot: foot,
       html: (n ? '<p class="sheet-meta" style="margin:0 0 14px">' + esc(T('지금 공지: {0}', n.title) + (n.until ? ' (' + C.untilText(n) + ')' : '')) + '</p>' : '') +
         '<label>' + esc(T('제목')) + '<input type="text" id="nt-title" maxlength="60" placeholder="' + esc(T('예: 다음 주는 연합 목장 모임입니다')) + '"></label>' +
         '<label>' + esc(T('내용')) + '<textarea id="nt-body" maxlength="1000"></textarea></label>' +
         '<label>' + esc(T('띄우는 기간')) + '<select id="nt-days">' + [[1, '오늘 하루'], [3, '3일'], [7, '1주일'], [14, '2주일'], [30, '한 달']].map(function (o) {
-          return '<option value="' + o[0] + '"' + (o[0] === 7 ? ' selected' : '') + '>' + esc(T(o[1])) + '</option>'; }).join('') + '</select></label>' +
+          return '<option value="' + o[0] + '"' + (o[0] === 7 ? ' selected' : '') + '>' + esc(T(o[1])) + '</option>'; }).join('') +
+          '<option value="date">' + esc(T('날짜 고르기')) + '</option></select></label>' +
+        '<label id="nt-until-row" hidden>' + esc(T('이날까지 띄우기')) + '<input type="date" id="nt-until" min="' + C.today() + '" max="' + C.addDays(C.today(), 90) + '" value="' + C.addDays(C.today(), 6) + '"></label>' +
         '<p class="sheet-meta" style="margin-top:6px">' + esc(T('기간 동안 목자가 앱을 열면 아래에서 올라오고, 알림도 함께 갑니다. 기간이 지나면 저절로 내려갑니다.')) + '</p><div class="msg" id="msg-nt"></div>' });
   }
 
