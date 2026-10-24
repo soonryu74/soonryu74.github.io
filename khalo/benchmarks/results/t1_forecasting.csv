@@ -1,0 +1,41 @@
+task,target,model,test_years,n_test,MAE_pp,RMSE_pp,skill_vs_persistence
+T1,DT_H_OR_INCONV,persistence (last value),2024-2025,490,4.088,5.174,0.0
+T1,DT_H_OR_INCONV,mean of last 3 years,2024-2025,490,4.563,5.576,-0.116
+T1,DT_H_OR_INCONV,ridge (lags of all 41 indicators),2024-2025,490,3.327,4.145,0.186
+T1,DT_H_OR_INCONV,gradient boosting (lags of all 41 indicators),2024-2025,490,3.885,4.819,0.05
+T1,DT_HYPER_DOCTOR,persistence (last value),2024-2025,490,1.839,2.323,0.0
+T1,DT_HYPER_DOCTOR,mean of last 3 years,2024-2025,490,1.654,2.147,0.1
+T1,DT_HYPER_DOCTOR,ridge (lags of all 41 indicators),2024-2025,490,1.523,1.956,0.172
+T1,DT_HYPER_DOCTOR,gradient boosting (lags of all 41 indicators),2024-2025,490,1.564,2.026,0.15
+T1,DT_DIA_DOCTOR,persistence (last value),2024-2025,490,1.388,1.754,0.0
+T1,DT_DIA_DOCTOR,mean of last 3 years,2024-2025,490,1.184,1.508,0.147
+T1,DT_DIA_DOCTOR,ridge (lags of all 41 indicators),2024-2025,490,1.061,1.359,0.236
+T1,DT_DIA_DOCTOR,gradient boosting (lags of all 41 indicators),2024-2025,490,1.145,1.451,0.175
+T1,DT_H_MENTAL_DEPRESS,persistence (last value),2024-2025,490,1.864,2.363,0.0
+T1,DT_H_MENTAL_DEPRESS,mean of last 3 years,2024-2025,490,1.692,2.107,0.092
+T1,DT_H_MENTAL_DEPRESS,ridge (lags of all 41 indicators),2024-2025,490,1.673,2.058,0.103
+T1,DT_H_MENTAL_DEPRESS,gradient boosting (lags of all 41 indicators),2024-2025,490,1.759,2.178,0.057
+T1,DT_H_EX_WALK,persistence (last value),2024-2025,490,6.017,7.738,0.0
+T1,DT_H_EX_WALK,mean of last 3 years,2024-2025,490,6.365,8.068,-0.058
+T1,DT_H_EX_WALK,ridge (lags of all 41 indicators),2024-2025,490,5.453,6.887,0.094
+T1,DT_H_EX_WALK,gradient boosting (lags of all 41 indicators),2024-2025,490,5.66,7.172,0.059
+T1,DT_H_OBE_OBE,persistence (last value),2024-2025,490,2.945,3.733,0.0
+T1,DT_H_OBE_OBE,mean of last 3 years,2024-2025,490,2.578,3.275,0.125
+T1,DT_H_OBE_OBE,ridge (lags of all 41 indicators),2024-2025,490,2.3,2.952,0.219
+T1,DT_H_OBE_OBE,gradient boosting (lags of all 41 indicators),2024-2025,490,2.35,3.077,0.202
+T1,DT_HEALTH_RECOG,persistence (last value),2024-2025,490,4.468,5.799,0.0
+T1,DT_HEALTH_RECOG,mean of last 3 years,2024-2025,490,4.106,5.369,0.081
+T1,DT_HEALTH_RECOG,ridge (lags of all 41 indicators),2024-2025,490,4.296,5.687,0.039
+T1,DT_HEALTH_RECOG,gradient boosting (lags of all 41 indicators),2024-2025,490,4.026,5.265,0.099
+T1,DT_INFLUENZA,persistence (last value),2024-2025,490,3.612,4.579,0.0
+T1,DT_INFLUENZA,mean of last 3 years,2024-2025,490,3.272,4.201,0.094
+T1,DT_INFLUENZA,ridge (lags of all 41 indicators),2024-2025,490,3.613,4.553,-0.0
+T1,DT_INFLUENZA,gradient boosting (lags of all 41 indicators),2024-2025,490,3.672,4.649,-0.017
+T1,DT_HYPER_DOCTOR_DRUG,persistence (last value),2024-2025,490,3.058,4.077,0.0
+T1,DT_HYPER_DOCTOR_DRUG,mean of last 3 years,2024-2025,490,2.523,3.338,0.175
+T1,DT_HYPER_DOCTOR_DRUG,ridge (lags of all 41 indicators),2024-2025,490,2.45,3.292,0.199
+T1,DT_HYPER_DOCTOR_DRUG,gradient boosting (lags of all 41 indicators),2024-2025,490,2.469,3.217,0.193
+T1,DT_DIA_TREAT,persistence (last value),2024-2025,490,4.724,6.621,0.0
+T1,DT_DIA_TREAT,mean of last 3 years,2024-2025,490,4.312,5.852,0.087
+T1,DT_DIA_TREAT,ridge (lags of all 41 indicators),2024-2025,490,3.881,5.689,0.178
+T1,DT_DIA_TREAT,gradient boosting (lags of all 41 indicators),2024-2025,490,4.298,5.77,0.09

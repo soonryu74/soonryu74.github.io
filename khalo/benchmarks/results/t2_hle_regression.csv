@@ -1,0 +1,4 @@
+task,target,model,cv,n,MAE_years,R2
+T2,healthy_life_expectancy_2023,mean (province-agnostic),leave-one-province-out (17 folds),228,1.435,-0.078
+T2,healthy_life_expectancy_2023,ridge,leave-one-province-out (17 folds),228,1.0,0.512
+T2,healthy_life_expectancy_2023,gradient boosting,leave-one-province-out (17 folds),228,1.026,0.457

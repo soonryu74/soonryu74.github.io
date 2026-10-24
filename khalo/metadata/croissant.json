@@ -1,0 +1,1846 @@
+{
+ "@context": {
+  "@language": "en",
+  "@vocab": "https://schema.org/",
+  "sc": "https://schema.org/",
+  "cr": "http://mlcommons.org/croissant/",
+  "rai": "http://mlcommons.org/croissant/RAI/",
+  "dct": "http://purl.org/dc/terms/",
+  "citeAs": "cr:citeAs",
+  "column": "cr:column",
+  "conformsTo": "dct:conformsTo",
+  "data": {
+   "@id": "cr:data",
+   "@type": "@json"
+  },
+  "dataType": {
+   "@id": "cr:dataType",
+   "@type": "@vocab"
+  },
+  "extract": "cr:extract",
+  "field": "cr:field",
+  "fileObject": "cr:fileObject",
+  "recordSet": "cr:recordSet",
+  "source": "cr:source",
+  "contentUrl": "sc:contentUrl",
+  "sha256": "sc:sha256",
+  "encodingFormat": "sc:encodingFormat"
+ },
+ "@type": "sc:Dataset",
+ "conformsTo": "http://mlcommons.org/croissant/1.0",
+ "name": "K-HALO",
+ "alternateName": "Korea Healthy Ageing and Longevity district panel, 2008-2025",
+ "description": "An AI-ready, fully documented longitudinal panel of 41 health-behaviour, chronic-disease and preventive-care indicators for all 281 Community Health Survey areas of South Korea (2008-2025), linked to district life expectancy, healthy life expectancy, area deprivation and older-adult population, with three benchmark tasks (forecasting, HLE regression, equity audit) and baseline results.",
+ "license": "https://creativecommons.org/licenses/by/4.0/",
+ "version": "1.0.0",
+ "datePublished": "2026-10-30",
+ "creator": {
+  "@type": "sc:Person",
+  "name": "Soonryeo Seo",
+  "description": "Independent researcher"
+ },
+ "keywords": [
+  "healthy ageing",
+  "healthy life expectancy",
+  "AgeTech",
+  "panel data",
+  "small-area health",
+  "health equity",
+  "forecasting",
+  "South Korea"
+ ],
+ "citeAs": "Seo S. K-HALO: Korea Healthy Ageing and Longevity district panel, 2008-2025 (v1.0). IEEE DataPort, 2026.",
+ "isAccessibleForFree": true,
+ "inLanguage": [
+  "en",
+  "ko"
+ ],
+ "spatialCoverage": "Republic of Korea (281 health-centre areas)",
+ "temporalCoverage": "2008/2025",
+ "rai:dataCollection": "Secondary compilation of official aggregate statistics published on KOSIS (Korea Disease Control and Prevention Agency Community Health Survey; Statistics Korea vital statistics, resident registration and census). No new data were collected from people.",
+ "rai:personalSensitiveInformation": "None. Only area-level aggregate statistics; no individual records.",
+ "rai:dataBiases": "Self-reported survey measures; healthy life expectancy is a research estimate driven mainly by self-rated health; sub-district units inherit census covariates from their parent city; 2020-2021 values affected by COVID-19.",
+ "rai:dataUseCases": "Small-area forecasting of ageing-related health indicators; explaining and predicting healthy life expectancy; auditing AI fairness across deprivation levels; prioritising AgeTech and preventive services.",
+ "distribution": [
+  {
+   "@type": "cr:FileObject",
+   "@id": "units",
+   "name": "units.csv",
+   "contentUrl": "data/units.csv",
+   "encodingFormat": "text/csv",
+   "sha256": "1dd38bec2bd04c5b814c2f0293424bc646ef8d6c538e52a96863d58c5a4b1a04",
+   "description": "Spatial units: 281 Community Health Survey (CHS) health-centre areas (districts and sub-districts)"
+  },
+  {
+   "@type": "cr:FileObject",
+   "@id": "indicators",
+   "name": "indicators.csv",
+   "contentUrl": "data/indicators.csv",
+   "encodingFormat": "text/csv",
+   "sha256": "559c37d16fa0a69f913ee699ff0823346e522afe8b26b779b2de5fd3fec853f4",
+   "description": "Data dictionary of the 41 CHS indicators"
+  },
+  {
+   "@type": "cr:FileObject",
+   "@id": "chs_panel_long",
+   "name": "chs_panel_long.csv",
+   "contentUrl": "data/chs_panel_long.csv",
+   "encodingFormat": "text/csv",
+   "sha256": "0d34bfebe004f526e6937b42d254e2c111a5a3f6d967e521ceb491049b5c9698",
+   "description": "Long panel: one row per unit x year x indicator (2008-2025)"
+  },
+  {
+   "@type": "cr:FileObject",
+   "@id": "chs_panel_wide_std",
+   "name": "chs_panel_wide_std.csv",
+   "contentUrl": "data/chs_panel_wide_std.csv",
+   "encodingFormat": "text/csv",
+   "sha256": "d9a453044ef9a1702a6dde0841bf9f3930ae2bebbd976b22af09867eacb8ecc0",
+   "description": "Wide panel of age-standardised rates: one row per unit x year, 41 indicator columns"
+  },
+  {
+   "@type": "cr:FileObject",
+   "@id": "hle",
+   "name": "hle.csv",
+   "contentUrl": "data/hle.csv",
+   "encodingFormat": "text/csv",
+   "sha256": "04a3f7fe77587d5238dc468bb15e8c0be498514dbe142dc9848f21066a818851",
+   "description": "Life expectancy and healthy life expectancy (HLE) at birth, 3-year pooled, research estimates"
+  },
+  {
+   "@type": "cr:FileObject",
+   "@id": "deprivation",
+   "name": "deprivation.csv",
+   "contentUrl": "data/deprivation.csv",
+   "encodingFormat": "text/csv",
+   "sha256": "be48fc3bd0f814c35f14dbd0274e32a236dd69d9b776b3f3820a7761b0602314",
+   "description": "Area deprivation index (2020), reproduction of Kim et al. (2013) from census aggregates"
+  },
+  {
+   "@type": "cr:FileObject",
+   "@id": "population_age",
+   "name": "population_age.csv",
+   "contentUrl": "data/population_age.csv",
+   "encodingFormat": "text/csv",
+   "sha256": "defcdb12be723ba86079500afc8ebb628cb53798d0a1ea55c8a6695092dab169",
+   "description": "Mid-year resident population and older-adult counts, 2024"
+  },
+  {
+   "@type": "cr:FileObject",
+   "@id": "khalo_sqlite",
+   "name": "khalo.sqlite",
+   "contentUrl": "data/khalo.sqlite",
+   "encodingFormat": "application/vnd.sqlite3",
+   "sha256": "d158f218fa413c3d97ea53b5fe66f69060517f54194c0ebfd56bef391d8b33f7",
+   "description": "All tables in one SQLite database"
+  }
+ ],
+ "recordSet": [
+  {
+   "@type": "cr:RecordSet",
+   "@id": "units_records",
+   "name": "units",
+   "description": "Spatial units: 281 Community Health Survey (CHS) health-centre areas (districts and sub-districts)",
+   "field": [
+    {
+     "@type": "cr:Field",
+     "@id": "units/unit_id",
+     "name": "unit_id",
+     "description": "K-HALO unit identifier (stable across tables)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "unit_id"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/name_ko",
+     "name": "name_ko",
+     "description": "Official Korean name",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "name_ko"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/name_en",
+     "name": "name_en",
+     "description": "Romanised name (Revised Romanization, official spellings where assimilation applies)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "name_en"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/province_ko",
+     "name": "province_ko",
+     "description": "Province/metropolitan city (Korean)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "province_ko"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/province_en",
+     "name": "province_en",
+     "description": "Province/metropolitan city (English)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "province_en"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/level",
+     "name": "level",
+     "description": "'district' (si/gun/gu) or 'sub-district' (health-centre area inside a city)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "level"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/parent_unit_id",
+     "name": "parent_unit_id",
+     "description": "Parent district for sub-districts; empty for districts",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "parent_unit_id"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/admin_type",
+     "name": "admin_type",
+     "description": "gu (urban ward), si (city), gun (county, mostly rural), or health-centre area",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "admin_type"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/area_type",
+     "name": "area_type",
+     "description": "metropolitan / urban / rural / mixed (derived from admin_type and province)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "area_type"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/kostat_sgg_code_2018",
+     "name": "kostat_sgg_code_2018",
+     "description": "Statistics Korea 5-digit sigungu code(s), 2018 boundaries; \";\"-separated when several map to one unit",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "kostat_sgg_code_2018"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/first_year",
+     "name": "first_year",
+     "description": "First survey year with data",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "first_year"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/last_year",
+     "name": "last_year",
+     "description": "Last survey year with data",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "last_year"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/status",
+     "name": "status",
+     "description": "active / started_later / ended / no_data (administrative changes)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "status"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/has_subunits",
+     "name": "has_subunits",
+     "description": "1 if the district is surveyed through sub-district health centres",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "has_subunits"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "units/benchmark_unit",
+     "name": "benchmark_unit",
+     "description": "1 = included in the non-overlapping benchmark set (245 units)",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "units"
+      },
+      "extract": {
+       "column": "benchmark_unit"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "@type": "cr:RecordSet",
+   "@id": "indicators_records",
+   "name": "indicators",
+   "description": "Data dictionary of the 41 CHS indicators",
+   "field": [
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/indicator_id",
+     "name": "indicator_id",
+     "description": "KOSIS statistical table id (also the column name in the wide file)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "indicator_id"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/name_en",
+     "name": "name_en",
+     "description": "Indicator name (English)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "name_en"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/name_ko",
+     "name": "name_ko",
+     "description": "Indicator name (Korean, official)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "name_ko"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/domain_en",
+     "name": "domain_en",
+     "description": "Domain (English)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "domain_en"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/domain_ko",
+     "name": "domain_ko",
+     "description": "Domain (Korean)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "domain_ko"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/population",
+     "name": "population",
+     "description": "Denominator population",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "population"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/unit",
+     "name": "unit",
+     "description": "Always percent",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "unit"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/higher_is_worse",
+     "name": "higher_is_worse",
+     "description": "1 = higher value is unfavourable, 0 = favourable, empty = neutral",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "higher_is_worse"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/first_year",
+     "name": "first_year",
+     "description": "First year published",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "first_year"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/last_year",
+     "name": "last_year",
+     "description": "Last year published",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "last_year"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/n_years",
+     "name": "n_years",
+     "description": "Number of survey years",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "n_years"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/source_table_ko",
+     "name": "source_table_ko",
+     "description": "Official KOSIS table title",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "source_table_ko"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "indicators/source",
+     "name": "source",
+     "description": "Producer and distributor",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "indicators"
+      },
+      "extract": {
+       "column": "source"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "@type": "cr:RecordSet",
+   "@id": "chs_panel_long_records",
+   "name": "chs_panel_long",
+   "description": "Long panel: one row per unit x year x indicator (2008-2025)",
+   "field": [
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_long/unit_id",
+     "name": "unit_id",
+     "description": "FK to units.csv",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_long"
+      },
+      "extract": {
+       "column": "unit_id"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_long/year",
+     "name": "year",
+     "description": "Survey year",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_long"
+      },
+      "extract": {
+       "column": "year"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_long/indicator_id",
+     "name": "indicator_id",
+     "description": "FK to indicators.csv",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_long"
+      },
+      "extract": {
+       "column": "indicator_id"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_long/crude_rate",
+     "name": "crude_rate",
+     "description": "Crude (survey-weighted) prevalence, %",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_long"
+      },
+      "extract": {
+       "column": "crude_rate"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_long/age_std_rate",
+     "name": "age_std_rate",
+     "description": "Age-standardised prevalence, % (KDCA standard population)",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_long"
+      },
+      "extract": {
+       "column": "age_std_rate"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "@type": "cr:RecordSet",
+   "@id": "chs_panel_wide_std_records",
+   "name": "chs_panel_wide_std",
+   "description": "Wide panel of age-standardised rates: one row per unit x year, 41 indicator columns",
+   "field": [
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/unit_id",
+     "name": "unit_id",
+     "description": "FK to units.csv",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "unit_id"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/year",
+     "name": "year",
+     "description": "Survey year",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "year"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_SM",
+     "name": "DT_H_SM",
+     "description": "Age-standardised rate (%) of DT_H_SM",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_SM"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_SM_MALE",
+     "name": "DT_H_SM_MALE",
+     "description": "Age-standardised rate (%) of DT_H_SM_MALE",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_SM_MALE"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_TOBACCO_PRODUCT",
+     "name": "DT_TOBACCO_PRODUCT",
+     "description": "Age-standardised rate (%) of DT_TOBACCO_PRODUCT",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_TOBACCO_PRODUCT"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_SM_TRY_V2",
+     "name": "DT_SM_TRY_V2",
+     "description": "Age-standardised rate (%) of DT_SM_TRY_V2",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_SM_TRY_V2"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_SM_IND_WORK_V2",
+     "name": "DT_117075_SM_IND_WORK_V2",
+     "description": "Age-standardised rate (%) of DT_117075_SM_IND_WORK_V2",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_SM_IND_WORK_V2"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_DR_MONTH",
+     "name": "DT_H_DR_MONTH",
+     "description": "Age-standardised rate (%) of DT_H_DR_MONTH",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_DR_MONTH"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_H_DR_HIGH_WH",
+     "name": "DT_117075_H_DR_HIGH_WH",
+     "description": "Age-standardised rate (%) of DT_117075_H_DR_HIGH_WH",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_H_DR_HIGH_WH"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_DR_HIGH",
+     "name": "DT_H_DR_HIGH",
+     "description": "Age-standardised rate (%) of DT_H_DR_HIGH",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_DR_HIGH"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_H_DR_DRIV",
+     "name": "DT_117075_H_DR_DRIV",
+     "description": "Age-standardised rate (%) of DT_117075_H_DR_DRIV",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_H_DR_DRIV"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_EX_WALK",
+     "name": "DT_H_EX_WALK",
+     "description": "Age-standardised rate (%) of DT_H_EX_WALK",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_EX_WALK"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_EX_PHY",
+     "name": "DT_H_EX_PHY",
+     "description": "Age-standardised rate (%) of DT_H_EX_PHY",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_EX_PHY"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_H_HEALTHY",
+     "name": "DT_117075_H_HEALTHY",
+     "description": "Age-standardised rate (%) of DT_117075_H_HEALTHY",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_H_HEALTHY"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_OBE_OBE",
+     "name": "DT_H_OBE_OBE",
+     "description": "Age-standardised rate (%) of DT_H_OBE_OBE",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_OBE_OBE"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_OBE_CONTROL",
+     "name": "DT_H_OBE_CONTROL",
+     "description": "Age-standardised rate (%) of DT_H_OBE_CONTROL",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_OBE_CONTROL"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_DIE_BF02",
+     "name": "DT_117075_DIE_BF02",
+     "description": "Age-standardised rate (%) of DT_117075_DIE_BF02",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_DIE_BF02"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_11775_NUT_LABEL_UTIL",
+     "name": "DT_11775_NUT_LABEL_UTIL",
+     "description": "Age-standardised rate (%) of DT_11775_NUT_LABEL_UTIL",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_11775_NUT_LABEL_UTIL"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_MENTAL_STRESS",
+     "name": "DT_H_MENTAL_STRESS",
+     "description": "Age-standardised rate (%) of DT_H_MENTAL_STRESS",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_MENTAL_STRESS"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_MENTAL_DEPRESS",
+     "name": "DT_H_MENTAL_DEPRESS",
+     "description": "Age-standardised rate (%) of DT_H_MENTAL_DEPRESS",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_MENTAL_DEPRESS"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_H_MENTAL_DEPRESS_SYM",
+     "name": "DT_117075_H_MENTAL_DEPRESS_SYM",
+     "description": "Age-standardised rate (%) of DT_117075_H_MENTAL_DEPRESS_SYM",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_H_MENTAL_DEPRESS_SYM"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_OR_BRUSH",
+     "name": "DT_H_OR_BRUSH",
+     "description": "Age-standardised rate (%) of DT_H_OR_BRUSH",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_OR_BRUSH"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_OR_INCONV",
+     "name": "DT_H_OR_INCONV",
+     "description": "Age-standardised rate (%) of DT_H_OR_INCONV",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_OR_INCONV"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_HYPER_DOCTOR",
+     "name": "DT_HYPER_DOCTOR",
+     "description": "Age-standardised rate (%) of DT_HYPER_DOCTOR",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_HYPER_DOCTOR"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_HYPER_DOCTOR_DRUG",
+     "name": "DT_HYPER_DOCTOR_DRUG",
+     "description": "Age-standardised rate (%) of DT_HYPER_DOCTOR_DRUG",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_HYPER_DOCTOR_DRUG"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_DIA_DOCTOR",
+     "name": "DT_DIA_DOCTOR",
+     "description": "Age-standardised rate (%) of DT_DIA_DOCTOR",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_DIA_DOCTOR"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_DIA_TREAT",
+     "name": "DT_DIA_TREAT",
+     "description": "Age-standardised rate (%) of DT_DIA_TREAT",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_DIA_TREAT"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_DIA_EYE",
+     "name": "DT_DIA_EYE",
+     "description": "Age-standardised rate (%) of DT_DIA_EYE",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_DIA_EYE"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_DIA_KIDNEY",
+     "name": "DT_DIA_KIDNEY",
+     "description": "Age-standardised rate (%) of DT_DIA_KIDNEY",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_DIA_KIDNEY"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_HYPER_AWAR",
+     "name": "DT_117075_HYPER_AWAR",
+     "description": "Age-standardised rate (%) of DT_117075_HYPER_AWAR",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_HYPER_AWAR"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_DIA_AWAR",
+     "name": "DT_117075_DIA_AWAR",
+     "description": "Age-standardised rate (%) of DT_117075_DIA_AWAR",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_DIA_AWAR"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_STR_EARLY_SYM",
+     "name": "DT_117075_STR_EARLY_SYM",
+     "description": "Age-standardised rate (%) of DT_117075_STR_EARLY_SYM",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_STR_EARLY_SYM"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_MYO_EARLY_SYM",
+     "name": "DT_117075_MYO_EARLY_SYM",
+     "description": "Age-standardised rate (%) of DT_117075_MYO_EARLY_SYM",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_MYO_EARLY_SYM"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_INFLUENZA",
+     "name": "DT_INFLUENZA",
+     "description": "Age-standardised rate (%) of DT_INFLUENZA",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_INFLUENZA"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_CPR_EDU",
+     "name": "DT_CPR_EDU",
+     "description": "Age-standardised rate (%) of DT_CPR_EDU",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_CPR_EDU"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_CPR_AWAR",
+     "name": "DT_CPR_AWAR",
+     "description": "Age-standardised rate (%) of DT_CPR_AWAR",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_CPR_AWAR"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_BELT",
+     "name": "DT_H_BELT",
+     "description": "Age-standardised rate (%) of DT_H_BELT",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_BELT"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_H_BELT_BACK",
+     "name": "DT_117075_H_BELT_BACK",
+     "description": "Age-standardised rate (%) of DT_117075_H_BELT_BACK",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_H_BELT_BACK"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_HAND_WASH",
+     "name": "DT_H_HAND_WASH",
+     "description": "Age-standardised rate (%) of DT_H_HAND_WASH",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_HAND_WASH"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_H_SOAP_USE",
+     "name": "DT_H_SOAP_USE",
+     "description": "Age-standardised rate (%) of DT_H_SOAP_USE",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_H_SOAP_USE"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_117075_NECE_NTR02",
+     "name": "DT_117075_NECE_NTR02",
+     "description": "Age-standardised rate (%) of DT_117075_NECE_NTR02",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_117075_NECE_NTR02"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_NECE_CLINIC",
+     "name": "DT_NECE_CLINIC",
+     "description": "Age-standardised rate (%) of DT_NECE_CLINIC",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_NECE_CLINIC"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "chs_panel_wide_std/DT_HEALTH_RECOG",
+     "name": "DT_HEALTH_RECOG",
+     "description": "Age-standardised rate (%) of DT_HEALTH_RECOG",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "chs_panel_wide_std"
+      },
+      "extract": {
+       "column": "DT_HEALTH_RECOG"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "@type": "cr:RecordSet",
+   "@id": "hle_records",
+   "name": "hle",
+   "description": "Life expectancy and healthy life expectancy (HLE) at birth, 3-year pooled, research estimates",
+   "field": [
+    {
+     "@type": "cr:Field",
+     "@id": "hle/unit_id",
+     "name": "unit_id",
+     "description": "FK to units.csv",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "hle"
+      },
+      "extract": {
+       "column": "unit_id"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "hle/year",
+     "name": "year",
+     "description": "Centre year of the 3-year window",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "hle"
+      },
+      "extract": {
+       "column": "year"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "hle/life_expectancy",
+     "name": "life_expectancy",
+     "description": "Life expectancy at birth (years), Chiang abridged life table from deaths and mid-year population",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "hle"
+      },
+      "extract": {
+       "column": "life_expectancy"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "hle/healthy_life_expectancy",
+     "name": "healthy_life_expectancy",
+     "description": "HLE at birth (years), Sullivan method, unhealthy share calibrated to Statistics Korea national subjective-health HLE",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "hle"
+      },
+      "extract": {
+       "column": "healthy_life_expectancy"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "hle/unhealthy_years",
+     "name": "unhealthy_years",
+     "description": "life_expectancy - healthy_life_expectancy",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "hle"
+      },
+      "extract": {
+       "column": "unhealthy_years"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "hle/good_self_rated_health_3yr",
+     "name": "good_self_rated_health_3yr",
+     "description": "3-year mean age-standardised good self-rated health (%), the regional input to HLE",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "hle"
+      },
+      "extract": {
+       "column": "good_self_rated_health_3yr"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "hle/unhealthy_odds_ratio",
+     "name": "unhealthy_odds_ratio",
+     "description": "Odds ratio of unhealthy state vs national, applied to the national age curve",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "hle"
+      },
+      "extract": {
+       "column": "unhealthy_odds_ratio"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "hle/deaths_3yr",
+     "name": "deaths_3yr",
+     "description": "Deaths in the 3-year window (units with <150 deaths are not estimated)",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "hle"
+      },
+      "extract": {
+       "column": "deaths_3yr"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "@type": "cr:RecordSet",
+   "@id": "deprivation_records",
+   "name": "deprivation",
+   "description": "Area deprivation index (2020), reproduction of Kim et al. (2013) from census aggregates",
+   "field": [
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/unit_id",
+     "name": "unit_id",
+     "description": "FK to units.csv (district level)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "unit_id"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/year",
+     "name": "year",
+     "description": "Census year",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "year"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/deprivation_index",
+     "name": "deprivation_index",
+     "description": "Sum of z-scores of 7 census variables (higher = more deprived)",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "deprivation_index"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/deprivation_quintile",
+     "name": "deprivation_quintile",
+     "description": "1 = least, 5 = most deprived",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "deprivation_quintile"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/rank",
+     "name": "rank",
+     "description": "1 = most deprived",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "rank"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/pct_edu",
+     "name": "pct_edu",
+     "description": "% of ages 30-64 with less than high school",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "pct_edu"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/pct_aged",
+     "name": "pct_aged",
+     "description": "% aged 65+",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "pct_aged"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/pct_cls",
+     "name": "pct_cls",
+     "description": "% of workers in low-skill occupations",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "pct_cls"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/pct_one",
+     "name": "pct_one",
+     "description": "% one-person households",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "pct_one"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/pct_apt",
+     "name": "pct_apt",
+     "description": "% not living in apartments",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "pct_apt"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/pct_fem",
+     "name": "pct_fem",
+     "description": "% female-headed households",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "pct_fem"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/pct_div",
+     "name": "pct_div",
+     "description": "% divorced or widowed",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "pct_div"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/z_edu",
+     "name": "z_edu",
+     "description": "z-score of each component",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "z_edu"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/z_aged",
+     "name": "z_aged",
+     "description": "z-score of each component",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "z_aged"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/z_cls",
+     "name": "z_cls",
+     "description": "z-score of each component",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "z_cls"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/z_one",
+     "name": "z_one",
+     "description": "z-score of each component",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "z_one"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/z_apt",
+     "name": "z_apt",
+     "description": "z-score of each component",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "z_apt"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/z_fem",
+     "name": "z_fem",
+     "description": "z-score of each component",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "z_fem"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "deprivation/z_div",
+     "name": "z_div",
+     "description": "z-score of each component",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "deprivation"
+      },
+      "extract": {
+       "column": "z_div"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "@type": "cr:RecordSet",
+   "@id": "population_age_records",
+   "name": "population_age",
+   "description": "Mid-year resident population and older-adult counts, 2024",
+   "field": [
+    {
+     "@type": "cr:Field",
+     "@id": "population_age/unit_id",
+     "name": "unit_id",
+     "description": "FK to units.csv (district level)",
+     "dataType": "sc:Text",
+     "source": {
+      "fileObject": {
+       "@id": "population_age"
+      },
+      "extract": {
+       "column": "unit_id"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "population_age/year",
+     "name": "year",
+     "description": "Reference year",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "population_age"
+      },
+      "extract": {
+       "column": "year"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "population_age/population",
+     "name": "population",
+     "description": "Total mid-year resident population",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "population_age"
+      },
+      "extract": {
+       "column": "population"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "population_age/age65_plus",
+     "name": "age65_plus",
+     "description": "Residents aged 65+",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "population_age"
+      },
+      "extract": {
+       "column": "age65_plus"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "population_age/age75_plus",
+     "name": "age75_plus",
+     "description": "Residents aged 75+",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "population_age"
+      },
+      "extract": {
+       "column": "age75_plus"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "population_age/age85_plus",
+     "name": "age85_plus",
+     "description": "Residents aged 85+",
+     "dataType": "sc:Integer",
+     "source": {
+      "fileObject": {
+       "@id": "population_age"
+      },
+      "extract": {
+       "column": "age85_plus"
+      }
+     }
+    },
+    {
+     "@type": "cr:Field",
+     "@id": "population_age/pct_age65_plus",
+     "name": "pct_age65_plus",
+     "description": "Share aged 65+ (%)",
+     "dataType": "sc:Float",
+     "source": {
+      "fileObject": {
+       "@id": "population_age"
+      },
+      "extract": {
+       "column": "pct_age65_plus"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

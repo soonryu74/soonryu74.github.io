@@ -1,0 +1,18 @@
+{
+ "rate_out_of_0_100": 0,
+ "completeness_benchmark_units_pct": 99.97,
+ "crude_vs_std_pearson_r": 0.9869,
+ "crude_vs_std_median_abs_diff_pp": 1.4,
+ "yoy_jumps_over_4sd": 281,
+ "yoy_pairs": 143296,
+ "yoy_jumps_over_4sd_pct": 0.196,
+ "hle_le_violations": 0,
+ "hle_range": [
+  63.87,
+  78.61
+ ],
+ "le_range": [
+  79.61,
+  87.55
+ ]
+}
