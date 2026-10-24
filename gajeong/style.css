@@ -558,3 +558,7 @@ html[data-season="xmas"] .sheet-body{background:radial-gradient(circle at 12% 30
 .hearts-label{position:absolute; left:50%; top:42%; transform:translate(-50%,-50%); padding:12px 22px; border-radius:999px; font-size:18px; font-weight:800;
   background:var(--sheet); color:#d6336c; box-shadow:0 10px 30px -10px rgba(0,0,0,.35); animation:heart-label 2.6s ease forwards; white-space:nowrap}
 @keyframes heart-label{0%{opacity:0; transform:translate(-50%,-40%) scale(.9)} 15%,75%{opacity:1; transform:translate(-50%,-50%) scale(1)} 100%{opacity:0; transform:translate(-50%,-60%)}}
+
+/* 배경 음악 단추 */
+.top .bgm-btn{min-width:38px; padding:7px 10px; font-size:16px; line-height:1}
+.top .bgm-btn.off{opacity:.45; text-decoration:line-through}

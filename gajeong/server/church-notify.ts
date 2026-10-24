@@ -3,7 +3,7 @@
 //  · commented : 목사가 일기에 말씀을 남기면 그 목장 목자의 기기로 웹 푸시를 보낸다
 //  · test      : 지금 로그인한 사람의 기기로 시험 알림을 보낸다
 //  · 알림마다 보낸 사람 사진(icon)을 함께 보낸다 (7일짜리 주소)
-//  · notice    : 목사님 공지를 올리거나(제목·내용) 내리고(clear), 목자들에게 알림을 보낸다
+//  · notice    : 목사님 공지를 올리거나(제목·내용·기간 until) 내리고(clear), 목자들에게 알림을 보낸다
 //  · remind    : 목사가 [제출 안 한 목장에 알림 보내기]를 누르면, 그 주 일기를 제출하지 않은 목자에게 보낸다
 //  · set_deadline : 목사가 마감 알림 요일·시각을 정한다 (features.deadline = { dow, hour } 또는 false)
 //  · deadline_tick: (로그인 없이, GitHub Actions가 30분마다) 교회마다 마감 시각이 지났으면 제출 안 한 목자에게 한 번 보낸다
@@ -281,7 +281,10 @@ Deno.serve(async (req) => {
       const title = String(body.title ?? '').trim().slice(0, 60), text = String(body.body ?? '').trim().slice(0, 1000)
       if (!title || !text) return json({ error: '제목과 내용을 적어 주세요' }, 400)
       const nm = String(me.name ?? '').trim()
-      const notice = { id: crypto.randomUUID(), title, body: text, at: new Date().toISOString(), by: /목사/.test(nm) ? nm : nm ? `${nm} 목사` : '' }
+      // 띄우는 기간: 그날(교회 날짜)까지. 없거나 이상하면 1주일, 길어도 90일
+      const day0 = new Date().toISOString().slice(0, 10), want = String(body.until ?? '')
+      const until = YMD_RE.test(want) && want >= day0 ? (want > addDays(day0, 90) ? addDays(day0, 90) : want) : addDays(day0, 6)
+      const notice = { id: crypto.randomUUID(), title, body: text, at: new Date().toISOString(), until, by: /목사/.test(nm) ? nm : nm ? `${nm} 목사` : '' }
       const { error } = await admin.from('church_church').update({ features: { ...f, notice } }).eq('id', me.church_id)
       if (error) throw new Error(error.message)
       const { data: leaders } = await admin.from('church_profile').select('id').eq('church_id', me.church_id).eq('role', 'mokja')

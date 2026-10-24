@@ -406,7 +406,7 @@
 
   /* ── 첫 화면 알약 단추 · 목자에게 공지 ─────────────── */
   function pastorChips(total, done) {
-    var n = ((C.getChurch() || {}).features || {}).notice;
+    var n = ((C.getChurch() || {}).features || {}).notice; if (!C.noticeLive(n)) n = null;
     C.heroChips([
       { label: week === C.mondayOf() ? T('이번 주 제출') : T('이 주 제출'), value: done + '/' + total, go: 'week' },
       { label: T('기도제목 모아보기'), go: 'gather' },
@@ -415,7 +415,7 @@
     ]);
   }
   function openNotice() {
-    var c = C.getChurch() || {}, n = (c.features || {}).notice;
+    var c = C.getChurch() || {}, n = (c.features || {}).notice; if (!C.noticeLive(n)) n = null;
     var done = function (r, text) { c.features = Object.assign({}, c.features, { notice: r.notice || null }); loadWeek(); C.say($('#msg-remind'), text, 'ok', true); };
     var foot = [{ label: T('취소') }];
     if (n) foot.unshift({ label: T('공지 내리기'), fn: async function () {
@@ -426,15 +426,17 @@
       var title = $('#nt-title').value.trim(), body = $('#nt-body').value.trim();
       if (!title || !body) { C.say($('#msg-nt'), T('제목과 내용을 적어 주세요.'), 'err'); return true; }
       try {
-        var r = await C.notify({ action: 'notice', title: title, body: body });
+        var r = await C.notify({ action: 'notice', title: title, body: body, until: C.addDays(C.today(), +$('#nt-days').value - 1) });
         done(r, T('공지를 올렸습니다. 목자가 앱을 열면 아래에서 올라옵니다. (알림 받은 목자 {0}명)', r.reached || 0));
       } catch (e) { C.say($('#msg-nt'), e.message, 'err'); return true; }
     } });
     C.sheet({ kicker: T('공지'), title: T('목자들에게 공지 보내기'), cls: 'notice-edit', foot: foot,
-      html: (n ? '<p class="sheet-meta" style="margin:0 0 14px">' + esc(T('지금 공지: {0}', n.title)) + '</p>' : '') +
+      html: (n ? '<p class="sheet-meta" style="margin:0 0 14px">' + esc(T('지금 공지: {0}', n.title) + (n.until ? ' (' + C.untilText(n) + ')' : '')) + '</p>' : '') +
         '<label>' + esc(T('제목')) + '<input type="text" id="nt-title" maxlength="60" placeholder="' + esc(T('예: 다음 주는 연합 목장 모임입니다')) + '"></label>' +
         '<label>' + esc(T('내용')) + '<textarea id="nt-body" maxlength="1000"></textarea></label>' +
-        '<p class="sheet-meta" style="margin-top:6px">' + esc(T('목자가 앱을 열면 아래에서 올라오고, 알림도 함께 갑니다.')) + '</p><div class="msg" id="msg-nt"></div>' });
+        '<label>' + esc(T('띄우는 기간')) + '<select id="nt-days">' + [[1, '오늘 하루'], [3, '3일'], [7, '1주일'], [14, '2주일'], [30, '한 달']].map(function (o) {
+          return '<option value="' + o[0] + '"' + (o[0] === 7 ? ' selected' : '') + '>' + esc(T(o[1])) + '</option>'; }).join('') + '</select></label>' +
+        '<p class="sheet-meta" style="margin-top:6px">' + esc(T('기간 동안 목자가 앱을 열면 아래에서 올라오고, 알림도 함께 갑니다. 기간이 지나면 저절로 내려갑니다.')) + '</p><div class="msg" id="msg-nt"></div>' });
   }
 
   /* ── 제출 안 한 목장에 알림 · 마감 알림 ───────────── */

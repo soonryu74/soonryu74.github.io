@@ -302,7 +302,7 @@
     if (u.indexOf('church-notify') >= 0 && b.action === 'remind') reply = { ok: true, leaders: 1, reached: DB.church_push.length ? 1 : 0, sent: 1, devices: 1, noDevice: DB.church_push.length ? [] : ['김목자'] };
     if (u.indexOf('church-notify') >= 0 && b.action === 'notice') {
       var chn = DB.church_church.find(function (x) { return x.id === me().church_id; });
-      var nt = b.clear ? null : { id: 'nt-' + Date.now(), title: b.title, body: b.body, at: new Date().toISOString(), by: '담임목사' };
+      var nt = b.clear ? null : { id: 'nt-' + Date.now(), title: b.title, body: b.body, at: new Date().toISOString(), by: '담임목사', until: b.until };
       chn.features = Object.assign({}, chn.features, { notice: nt });
       reply = { ok: true, notice: nt, reached: DB.church_push.length ? 1 : 0, sent: 1, devices: 1 };
     }
