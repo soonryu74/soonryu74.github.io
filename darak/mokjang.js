@@ -313,7 +313,7 @@
 
   // 첫 화면 알약 단추 · 목사님 공지
   function mokjaChips(submitted) {
-    var n = ((me.church || {}).features || {}).notice;
+    var n = ((me.church || {}).features || {}).notice; if (!C.noticeLive(n)) n = null;
     C.heroChips([
       { label: week === C.mondayOf() ? T('이번 주 일기') : T('이 주 일기'), value: submitted ? T('제출함') : (journal ? T('쓰는 중') : T('아직')), go: 'write', dot: !submitted },
       { label: T('목원'), value: T('{0}명', mokwon.filter(function (w) { return w.active !== false; }).length), go: 'members' },
@@ -323,7 +323,7 @@
   function showNoticeBar() {
     var n = ((me.church || {}).features || {}).notice, pane = $('#pane-write'); if (!pane) return;
     var old = $('#notice-bar'); if (old) old.remove();
-    if (!n || !n.id) return;
+    if (!C.noticeLive(n)) return;
     var b = document.createElement('button'); b.type = 'button'; b.id = 'notice-bar'; b.className = 'notice-bar noprint';
     b.innerHTML = '<b>' + esc(T('공지')) + '</b><span>' + esc(n.title || '') + '</span>';
     b.addEventListener('click', function () { C.showNotice(n, true); });
