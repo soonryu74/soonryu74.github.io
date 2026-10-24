@@ -32,6 +32,7 @@
     await loadWeek();
     watchNewWeek();
     showNoticeBar();
+    showCommentBar();
     openFromLink();
     // 화면이 열려 있는 채로 알림을 누르면 주소 끝(#j=…)만 바뀐다 — 그때도 그 일기로 간다
     window.addEventListener('hashchange', openFromLink);
@@ -53,6 +54,7 @@
     await loadPast();
     var d = $('#past-list details[data-id="' + m[1] + '"]');
     if (d) { d.open = true; d.scrollIntoView({ block: 'start' }); }
+    commentSeen(m[1]);
   }
 
   /* ── 휴대전화 알림 (목사님 말씀) ───────────────── */
@@ -349,6 +351,29 @@
       { label: T('목원'), value: T('{0}명', mokwon.filter(function (w) { return w.active !== false; }).length), go: 'members' },
       { label: T('지난 일기'), go: 'past' }
     ].concat(n ? [{ label: T('목사님 공지'), fn: function () { C.showNotice(n, true); }, dot: true }] : []));
+  }
+  // 목사님이 새 말씀을 남기셨으면 일기 쓰는 화면 맨 위에 띠 — 누르면 그 주 일기가 펼쳐진다
+  var CMT_SEEN = 'gajeong-cmt-seen-';
+  async function showCommentBar() {
+    var pane = $('#pane-write'); if (!pane) return;
+    var old = $('#cmt-bar'); if (old) old.remove();
+    var js = (await sb.from('church_journal').select('id, week_start').eq('mokjang_id', mokjang.id).order('week_start', { ascending: false }).limit(8)).data || [];
+    if (!js.length) return;
+    var cs = (await sb.from('church_comment').select('id, journal_id, created_at').in('journal_id', js.map(function (j) { return j.id; })).order('created_at', { ascending: false }).limit(1)).data || [];
+    var c = cs[0]; if (!c) return;
+    var seen = ''; try { seen = localStorage.getItem(CMT_SEEN + mokjang.id) || ''; } catch (e) {}
+    if (seen && seen >= c.created_at) return;
+    var wk = (js.filter(function (j) { return j.id === c.journal_id; })[0] || {}).week_start;
+    var b = document.createElement('button'); b.type = 'button'; b.id = 'cmt-bar'; b.className = 'notice-bar cmt-bar noprint';
+    b.dataset.j = c.journal_id; b.dataset.at = c.created_at;
+    b.innerHTML = '<b>' + esc(T('목사님 말씀')) + '</b><span>' + esc(wk ? T('{0} 일기에 말씀을 남기셨어요', C.weekLabel(wk)) : T('일기에 말씀을 남기셨어요')) + '</span>';
+    b.addEventListener('click', function () { location.hash = 'j=' + c.journal_id; });
+    var nb = $('#notice-bar'); pane.insertBefore(b, nb ? nb.nextSibling : pane.firstChild);
+  }
+  function commentSeen(jid) {
+    var b = $('#cmt-bar'); if (!b || b.dataset.j !== jid) return;
+    try { localStorage.setItem(CMT_SEEN + mokjang.id, b.dataset.at); } catch (e) {}
+    b.remove();
   }
   function showNoticeBar() {
     var n = ((me.church || {}).features || {}).notice, pane = $('#pane-write'); if (!pane) return;

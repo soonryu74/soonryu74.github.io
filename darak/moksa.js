@@ -427,10 +427,13 @@
     var n = ((C.getChurch() || {}).features || {}).notice; if (!C.noticeLive(n)) n = null;
     C.heroChips([   // 공지 쓰기를 맨 앞에 (찾기 쉽게)
       { label: n ? T('공지 바꾸기') : T('공지 보내기'), fn: openNotice, dot: !!n, cls: 'primary' },
+    ].concat(n ? [{ label: T('지금 공지 보기'), fn: function () { C.showNotice(n, true); } }] : []).concat([
       { label: week === C.mondayOf() ? T('이번 주 제출') : T('이 주 제출'), value: done + '/' + total, go: 'week' },
       { label: T('기도제목 모아보기'), go: 'gather' },
       { label: T('출석 통계'), go: 'stats' }
-    ]);
+    ]));
+    // 목사님도 들어오실 때마다 지금 걸린 공지를 한 번 보여 드린다 ([오늘 하루 보지 않기]를 누르셨으면 그날은 안 뜬다)
+    if (!pastorChips.shown) { pastorChips.shown = true; if (n) C.showNotice(n); }
   }
   function openNotice() {
     var c = C.getChurch() || {}, n = (c.features || {}).notice; if (!C.noticeLive(n)) n = null;

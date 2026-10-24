@@ -325,7 +325,7 @@ window.CHURCH = (function () {
   // 로그인 안 했으면 로그인 화면으로, 역할이 다르면 제 화면으로 돌려보낸다. 교회 시간대도 여기서 맞춘다.
   async function guard(needRole) {
     var p = await me();
-    if (!p) { location.replace('index.html' + location.search); return null; }
+    if (!p) { location.replace('index.html' + location.search + location.hash); return null; }
     if (needRole && p.role !== needRole) {
       location.replace(p.role === 'pastor' ? 'moksa.html' : 'mokjang.html');
       return null;
@@ -616,12 +616,12 @@ window.CHURCH = (function () {
   function showNotice(n, force) {
     if (!n || !n.id) return;
     var key = 'notice-hide-' + n.id, hid = '';
-    try { hid = localStorage.getItem(key) || sessionStorage.getItem(key) || ''; } catch (e) {}
+    try { hid = localStorage.getItem(key) || ''; } catch (e) {}   // [닫기]는 이번에만 — 다음에 들어오면 또 뜬다
     if (!noticeLive(n)) return;   // 기간이 지난 공지는 띄우지 않는다
-    if (!force && (hid === today() || hid === 'session')) return;
+    if (!force && hid === today()) return;
     sheet({ kicker: t('공지'), title: n.title || t('목사님 공지'), html: noticeHtml(n), cls: 'notice-sheet', foot: [
       { label: t('오늘 하루 보지 않기'), fn: function () { try { localStorage.setItem(key, today()); } catch (e) {} } },
-      { label: t('닫기'), fn: function () { try { sessionStorage.setItem(key, 'session'); } catch (e) {} } }
+      { label: t('닫기') }
     ] });
   }
 
@@ -649,69 +649,63 @@ window.CHURCH = (function () {
      휴대폰은 한 번 눌러야 소리를 낼 수 있어서, 처음 화면을 누를 때 작게 시작한다.
      머리말 ♪ 단추로 끄고 켠다 (기기마다 기억). 음악 파일이 없으면 단추도 없다. 성탄 절기엔 성탄 곡이 있으면 그것으로 */
   var BGM_VOL = 0.22;
+  if (navigator.serviceWorker && typeof navigator.serviceWorker.addEventListener === 'function') navigator.serviceWorker.addEventListener('message', function (e) {
+    var d = e.data || {}; if (d.type !== 'open-url' || !d.url) return;
+    var u = new URL(d.url, location.href);
+    if (u.pathname !== location.pathname) { location.href = u.href; return; }
+    if (u.hash) { if (location.hash === u.hash) window.dispatchEvent(new HashChangeEvent('hashchange')); else location.hash = u.hash; }
+  });
   async function bgm(top) {
     var xmas = season() === 'xmas' || season() === 'snowman';   // 겨울(성탄·눈사람)엔 성탄 곡
-    var src = xmas ? 'assets/bgm-xmas.mp3?v=2' : 'assets/bgm.mp3';
     var on = true; try { on = localStorage.getItem('bgm') !== 'off'; } catch (e) {}
-    // 화면이 열리자마자 곡을 받아 두어, 누르는 순간 바로 소리가 나게 한다
-    var a = new Audio(); a.loop = true; a.preload = 'auto'; a.src = src;
+    var a = new Audio(); a.loop = true; a.preload = 'auto';
+    // 아이폰은 소리 크기(volume)를 못 바꿔 늘 최대로 나온다 → 미리 작게 만든 곡(-soft)을 쓴다 (무음 모드에서도 나오게 <audio> 그대로)
+    var fixedVol = (function () { try { a.volume = 0.5; var r = a.volume !== 0.5; a.volume = 1; return r; } catch (e) { return true; } })();
+    a.src = (xmas ? 'assets/bgm-xmas' : 'assets/bgm') + (fixedVol ? '-soft' : '') + '.mp3?v=3';   // 화면이 열리자마자 받아 둔다
     var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'small bgm-btn';
     var who = top.querySelector('.who'); who.insertBefore(btn, top.querySelector('.who-toggle'));
     a.addEventListener('error', function () { btn.remove(); off(); });   // 곡 파일이 없으면 단추도 없앤다
-    // 아이폰은 소리 크기(volume)를 못 바꿔 늘 최대로 나온다 → Web Audio로 줄인다
-    var fixedVol = (function () { try { a.volume = 0.5; var r = a.volume !== 0.5; a.volume = 1; return r; } catch (e) { return true; } })();
-    var gain = null, ctx = null;
-    function setVol(v) { v = Math.max(0, Math.min(1, v)); if (gain) gain.gain.value = v; else a.volume = v; }
-    function getVol() { return gain ? gain.gain.value : a.volume; }
-    function wire() {   // 반드시 사용자가 누른 순간에 불러야 한다
-      if (gain || !fixedVol) return;
-      try {
-        var AC = window.AudioContext || window.webkitAudioContext; ctx = new AC();
-        gain = ctx.createGain(); gain.gain.value = 0;
-        ctx.createMediaElementSource(a).connect(gain); gain.connect(ctx.destination);
-      } catch (e) { gain = null; }
-    }
+    function setVol(v) { if (!fixedVol) a.volume = Math.max(0, Math.min(1, v)); }
     setVol(0);
     var timer = null, started = false;
     function fade(to, step, then) {
       clearInterval(timer);
+      if (fixedVol) { if (then) then(); return; }
       timer = setInterval(function () {
-        var now = getVol(), v = now + (to > now ? step : -step);
+        var now = a.volume, v = now + (to > now ? step : -step);
         if ((to > now && v >= to) || (to <= now && v <= to)) { setVol(to); clearInterval(timer); if (then) then(); return; }
         setVol(v);
       }, 60);
     }
-    function play(gesture) {
-      if (gesture) wire();
-      if (ctx && ctx.state === 'suspended') ctx.resume();
-      var p = a.play();
-      return Promise.resolve(p).then(function () { started = true; fade(BGM_VOL, 0.05); return true; }, function () { return false; });
+    function play() {
+      return Promise.resolve(a.play()).then(function () { started = true; btn.classList.remove('wait'); fade(BGM_VOL, 0.05); return true; }, function () { return false; });
     }
     function stop() { fade(0, 0.04, function () { a.pause(); }); }
     function show() { btn.classList.toggle('off', !on); btn.textContent = '♪'; btn.title = on ? t('배경 음악 끄기') : t('배경 음악 켜기'); btn.setAttribute('aria-label', btn.title); }
     show();
-    // 브라우저는 소리 나는 자동 재생을 막는 경우가 많다: 먼저 바로 틀어 보고, 막히면 화면을 처음 누르는 순간 튼다
+    // 브라우저는 소리 나는 자동 재생을 막는 경우가 많다: 먼저 바로 틀어 보고, 막히면 화면을 처음 누르는 순간 튼다 (그동안 ♪가 깜빡인다)
     var EV = ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown'];
     function off() { EV.forEach(function (n) { document.removeEventListener(n, first, true); }); }
     function first(e) {
       if (e.target.closest && e.target.closest('.bgm-btn')) return;
       if (!on || started) return off();
-      play(true).then(function (ok) { if (ok) off(); });   // 막히면 다음 누름에서 다시
+      play().then(function (ok) { if (ok) off(); });   // 막히면 다음 누름에서 다시
     }
     if (on) {
       EV.forEach(function (n) { document.addEventListener(n, first, true); });
-      if (!fixedVol) play(false).then(function (ok) { if (ok) off(); });
+      play().then(function (ok) { if (ok) off(); else if (on && !started) btn.classList.add('wait'); });
     }
     btn.addEventListener('click', function () {
       on = !on; try { localStorage.setItem('bgm', on ? 'on' : 'off'); } catch (e) {}
-      off();
-      if (on) play(true); else stop();
+      off(); btn.classList.remove('wait');
+      if (on) play(); else stop();
       show();
     });
     document.addEventListener('visibilitychange', function () {   // 다른 앱으로 가면 멈추고, 돌아오면 다시
-      if (document.hidden) { if (!a.paused) a.pause(); } else if (on && started) play(false);
+      if (document.hidden) { if (!a.paused) a.pause(); } else if (on && started) play();
     });
   }
+
 
 
   // 언어 단추: 지금 언어가 아닌 쪽 이름을 보여 주고, 누르면 바꾼다 (언어가 셋 이상이면 차례로 돈다)
