@@ -640,5 +640,6 @@ window.I18N.en = {
   "쓰신 글은 그대로 있어요": "Your text is safe",
   "다시 로그인해 주세요": "Please sign in again",
   "오래 열어 두었거나 다른 기기에서 로그아웃하면 로그인이 풀릴 수 있습니다. 다시 로그인하시면 쓰던 글이 그대로 돌아오고, 그때 저장하시면 됩니다.": "Sign-in can expire if the app was open a long time or you signed out on another device. Sign in again and your text will be back, ready to save.",
-  "다시 로그인": "Sign in again"
+  "다시 로그인": "Sign in again",
+  "지금 공지 보기": "View notice"
 };
