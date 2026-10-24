@@ -814,6 +814,7 @@ const db = p => p.evaluate(() => window.__DB());
     ok('오늘 하루 보지 않기 → 다시 열어도 안 뜸', !(await p.isVisible('.sheet-bg')));
     await p.click('#notice-bar'); await p.waitForTimeout(400);
     ok('공지 띠를 누르면 다시 보임', await p.isVisible('.sheet-bg.open'));
+    ok('다시 열면 [오늘 하루 보지 않기]가 풀림', await p.evaluate(() => !Object.keys(localStorage).some(k => k.startsWith('notice-hide-'))));
     await p.keyboard.press('Escape'); await p.waitForTimeout(400);
     ok('Esc로 닫힘', !(await p.isVisible('.sheet-bg')));
     await p.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('notice-hide-')).forEach(k => localStorage.removeItem(k)));

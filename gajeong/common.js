@@ -619,6 +619,7 @@ window.CHURCH = (function () {
     try { hid = localStorage.getItem(key) || ''; } catch (e) {}   // [닫기]는 이번에만 — 다음에 들어오면 또 뜬다
     if (!noticeLive(n)) return;   // 기간이 지난 공지는 띄우지 않는다
     if (!force && hid === today()) return;
+    if (force && hid) { try { localStorage.removeItem(key); } catch (e) {} }   // 직접 다시 열면 '오늘 하루 보지 않기'를 풀어 다음에 들어올 때도 다시 뜬다
     sheet({ kicker: t('공지'), title: n.title || t('목사님 공지'), html: noticeHtml(n), cls: 'notice-sheet', foot: [
       { label: t('오늘 하루 보지 않기'), fn: function () { try { localStorage.setItem(key, today()); } catch (e) {} } },
       { label: t('닫기') }
