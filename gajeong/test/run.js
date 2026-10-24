@@ -698,7 +698,7 @@ const db = p => p.evaluate(() => window.__DB());
   console.log('\n[새 모양] 인사 띠 · 목사님 공지 (아래에서 올라오는 창)');
   { const { c, p } = await ctx(b);
     await login(p, 'pastor1');
-    ok('인사 띠와 알약 단추', await p.isVisible('.hero') && (await p.textContent('.hero-title')).startsWith('목사님,') && (await p.$$('.hero-chip')).length === 4);
+    ok('인사 띠와 알약 단추', await p.isVisible('.hero') && (await p.textContent('.hero-title')).startsWith('담임목사님,') && (await p.$$('.hero-chip')).length === 4);
     await p.click('.hero-chip:has-text("공지 보내기")'); await p.waitForTimeout(400);
     ok('공지 쓰는 창이 아래에서 올라옴', await p.isVisible('.sheet-bg.open #nt-title'));
     await p.click('.sheet-foot button:has-text("공지 올리기")'); await p.waitForTimeout(300);
@@ -719,7 +719,7 @@ const db = p => p.evaluate(() => window.__DB());
     ok('공지 띠를 누르면 다시 보임', await p.isVisible('.sheet-bg.open'));
     await p.keyboard.press('Escape'); await p.waitForTimeout(400);
     ok('Esc로 닫힘', !(await p.isVisible('.sheet-bg')));
-    ok('목자 인사: 목자님,', /^(목자|순장)님,/.test(await p.textContent('.hero-title')));
+    ok('목자 인사: 이름+님', /^김목자님,/.test(await p.textContent('.hero-title')));
     { const nc2 = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'notice'); }
     await p.evaluate(() => { const D = window.__DB(); D.church_church.find(x => x.id === 'cb').features.notice.until = '2026-10-01'; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
     await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(800);

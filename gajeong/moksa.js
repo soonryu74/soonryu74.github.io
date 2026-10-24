@@ -150,6 +150,23 @@
       b.addEventListener('click', function () { theme = b.dataset.themeId; C.setTheme(theme); markTheme(); });
     });
 
+    // 계절 꾸미기: 누르면 바로 미리 보기
+    var SEASON_OPTS = [['auto', '자동', 'linear-gradient(90deg,#a3242b 50%,#132b52 50%)'], ['xmas', '성탄', 'linear-gradient(135deg,#a3242b,#6e1218)'],
+      ['snowman', '눈사람', 'linear-gradient(160deg,#cfe6f7,#eef6fc)'], ['aurora', '오로라', 'linear-gradient(120deg,#0c1a3a,#2fbf8f 60%,#6e6cff)'], ['off', '끄기', 'var(--paper-2)']];
+    var seasonPick = (c.features || {}).season === false ? 'off' : ((c.features || {}).season || 'auto');
+    $('#ch-season').innerHTML = SEASON_OPTS.map(function (o) {
+      return '<button type="button" data-season-id="' + o[0] + '"><span class="sw" style="background:' + o[2] + '"></span>' + esc(T(o[1])) + '</button>';
+    }).join('');
+    function markSeason() { $$('#ch-season button').forEach(function (b) { b.classList.toggle('on', b.dataset.seasonId === seasonPick); }); }
+    markSeason();
+    $$('#ch-season button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        seasonPick = b.dataset.seasonId; markSeason();
+        var keep = (c.features || {}).season; c.features = Object.assign({}, c.features, { season: seasonPick });
+        C.setSeason(C.season()); c.features.season = keep;
+      });
+    });
+
     $('#ch-copy').addEventListener('click', async function () {
       var v = $('#ch-link').value;
       try { await navigator.clipboard.writeText(v); C.say($('#msg-church'), T('주소를 복사했습니다.'), 'ok'); }
@@ -158,7 +175,8 @@
     $('#form-church').addEventListener('submit', async function (e) {
       e.preventDefault();
       var r = await sb.from('church_church')
-        .update({ name: $('#ch-name').value.trim(), timezone: $('#ch-tz').value, theme: theme, terms: pickedTerms() })
+        .update({ name: $('#ch-name').value.trim(), timezone: $('#ch-tz').value, theme: theme, terms: pickedTerms(),
+                  features: Object.assign({}, c.features, { season: seasonPick }) })
         .eq('id', c.id).select().single();
       if (r.error) return C.say($('#msg-church'), r.error.message, 'err');
       var keepId = c.id; Object.assign(c, r.data); c.id = keepId;
