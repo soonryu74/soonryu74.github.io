@@ -479,20 +479,35 @@ window.CHURCH = (function () {
   }
 
   /* ── 첫 화면 인사 띠 (카페 앱처럼) · 성탄 절기 ─────────── */
-  // 성탄 모양: 10월 24일 ~ 12월 31일 (교회가 features.season = false 로 끌 수 있다)
+  // 성탄 모양: 10월 24일 ~ 12월 31일, 새해(1~2월)는 오로라
   var XMAS_FROM = '10-24', XMAS_TO = '12-31';
+  // 목사님이 [계절 꾸미기]에서 고를 수 있다: 자동(성탄 → 새해 오로라) · 성탄 · 눈사람 · 오로라 · 끄기
+  var SEASONS = ['xmas', 'snowman', 'aurora'];
   function season() {
-    if (church && church.features && church.features.season === false) return '';
+    var v = ((church && church.features) || {}).season;
+    if (v === false || v === 'off') return '';
+    if (SEASONS.indexOf(v) >= 0) return v;
     var md = today().slice(5);
-    return md >= XMAS_FROM && md <= XMAS_TO ? 'xmas' : '';
+    if (md >= XMAS_FROM && md <= XMAS_TO) return 'xmas';
+    if (md >= '01-01' && md <= '02-29') return 'aurora';   // 새해: 오로라
+    return '';
+  }
+  function setSeason(v) {   // 미리 보기용
+    if (v) document.documentElement.setAttribute('data-season', v); else document.documentElement.removeAttribute('data-season');
   }
   // 인사는 보는 사람이 있는 곳의 시간으로 (한국은 아침, 미국은 저녁 …) — 휴대폰 시계를 따른다
   function heroText(profile) {
     var now = new Date(), h = now.getHours();
     var days = ['주일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
     var part = h < 5 ? '밤' : h < 12 ? '아침' : h < 18 ? '오후' : '저녁', md = today().slice(5), s = season();
-    var kicker = s === 'xmas' ? (md === '12-24' || md === '12-25' ? t('메리 크리스마스') : t('성탄을 기다리며')) : t('이번 주도 함께');
-    var who = profile.role === 'pastor' ? t('목사님') : LANG === 'en' ? 'Leader' : t('목자') + '님';
+    var kicker = s === 'xmas' ? (md === '12-24' || md === '12-25' ? t('메리 크리스마스') : t('성탄을 기다리며'))
+      : s === 'aurora' ? (md <= '01-03' ? t('새해 복 많이 받으세요') : t('새해에도 함께'))
+      : s === 'snowman' ? t('포근한 겨울 보내세요') : t('이번 주도 함께');
+    // 이름 + 님: '이호석님', '허민 목사님'
+    var nm = String(profile.name || '').trim().replace(/님$/, ''), who;
+    if (LANG === 'en') who = profile.role === 'pastor' ? 'Pastor ' + nm.replace(/\s*목사$/, '') : nm;
+    else if (profile.role === 'pastor') who = /목사$/.test(nm) ? nm + '님' : (nm ? nm + ' ' : '') + '목사님';
+    else who = nm ? nm + '님' : t('목자') + '님';
     return { kicker: kicker, title: who + ',', sub: t('평안한 {0} {1}', t(days[now.getDay()]), t(part + (part === '오후' ? '예요' : '이에요'))) };   // 오후예요 · 아침이에요
   }
   function hero(profile) {
@@ -831,7 +846,7 @@ window.CHURCH = (function () {
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave, isKeyless: isKeyless,
-    noticeLive: noticeLive, untilText: untilText, hearts: hearts, hero: hero, heroChips: heroChips, sheet: sheet, showNotice: showNotice, noticeHtml: noticeHtml, season: season,
+    setSeason: setSeason, noticeLive: noticeLive, untilText: untilText, hearts: hearts, hero: hero, heroChips: heroChips, sheet: sheet, showNotice: showNotice, noticeHtml: noticeHtml, season: season,
     has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, authorPhotos: authorPhotos, commentHead: commentHead, proseHtml: proseHtml, prayerList: prayerList, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };

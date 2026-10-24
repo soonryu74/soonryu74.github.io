@@ -562,3 +562,45 @@ html[data-season="xmas"] .sheet-body{background:radial-gradient(circle at 12% 30
 /* 배경 음악 단추 */
 .top .bgm-btn{min-width:38px; padding:7px 10px; font-size:16px; line-height:1}
 .top .bgm-btn.off{opacity:.45; text-decoration:line-through}
+
+/* ── 새해: 오로라 ── */
+html[data-season="aurora"] .hero{color:#fff; background:
+  radial-gradient(60% 80% at 15% 10%, rgba(64,224,170,.55), transparent 70%),
+  radial-gradient(50% 70% at 70% 0%, rgba(120,110,255,.5), transparent 70%),
+  radial-gradient(40% 60% at 95% 40%, rgba(236,120,220,.35), transparent 70%),
+  radial-gradient(circle at 12% 30%, rgba(255,255,255,.55) 0 2px, transparent 3px), radial-gradient(circle at 38% 72%, rgba(255,255,255,.4) 0 1.5px, transparent 2.5px), radial-gradient(circle at 66% 22%, rgba(255,255,255,.5) 0 2px, transparent 3px), radial-gradient(circle at 84% 64%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), radial-gradient(circle at 92% 18%, rgba(255,255,255,.45) 0 1.5px, transparent 2.5px), radial-gradient(circle at 24% 88%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), linear-gradient(180deg, #0c1a3a, #132b52)}
+html[data-season="aurora"] .hero::before{content:''; position:absolute; inset:-30% -10% auto -10%; height:120%; pointer-events:none; opacity:.55; filter:blur(18px);
+  background:linear-gradient(100deg, transparent 20%, rgba(80,255,190,.45) 35%, rgba(110,140,255,.4) 50%, transparent 65%); animation:aurora 9s ease-in-out infinite alternate}
+@keyframes aurora{from{transform:translateX(-12%) skewY(-4deg)} to{transform:translateX(12%) skewY(3deg)}}
+html[data-season="aurora"] .hero-in, html[data-season="aurora"] .hero-chips{position:relative; z-index:1}
+html[data-season="aurora"] .hero-kicker{color:#9ff3d4}
+html[data-season="aurora"] .hero-title{color:#fff}
+html[data-season="aurora"] .hero-chip{background:rgba(255,255,255,.96); border-color:transparent}
+html[data-season="aurora"] .hero-chip b{color:#1e5fb3}
+html[data-season="aurora"] .sheet-body{background:
+  radial-gradient(70% 60% at 10% 0%, rgba(64,224,170,.45), transparent 70%), radial-gradient(60% 50% at 90% 10%, rgba(120,110,255,.45), transparent 70%),
+  radial-gradient(circle at 12% 30%, rgba(255,255,255,.55) 0 2px, transparent 3px), radial-gradient(circle at 38% 72%, rgba(255,255,255,.4) 0 1.5px, transparent 2.5px), radial-gradient(circle at 66% 22%, rgba(255,255,255,.5) 0 2px, transparent 3px), radial-gradient(circle at 84% 64%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), radial-gradient(circle at 92% 18%, rgba(255,255,255,.45) 0 1.5px, transparent 2.5px), radial-gradient(circle at 24% 88%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), linear-gradient(170deg, #0c1a3a, #17335f)}
+html[data-season="aurora"] .sheet-kicker{color:#9ff3d4}
+
+/* ── 눈사람 ── */
+html[data-season="snowman"] .hero{background:radial-gradient(circle at 12% 30%, rgba(255,255,255,.55) 0 2px, transparent 3px), radial-gradient(circle at 38% 72%, rgba(255,255,255,.4) 0 1.5px, transparent 2.5px), radial-gradient(circle at 66% 22%, rgba(255,255,255,.5) 0 2px, transparent 3px), radial-gradient(circle at 84% 64%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), radial-gradient(circle at 92% 18%, rgba(255,255,255,.45) 0 1.5px, transparent 2.5px), radial-gradient(circle at 24% 88%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), linear-gradient(160deg, #cfe6f7, #eef6fc 70%); padding-right:110px}
+html[data-season="snowman"] .hero::after{content:''; position:absolute; right:18px; bottom:8px; width:84px; height:118px; pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 20%, #1d2a3a 0 2.2px, transparent 2.8px) 37px 30px/10px 10px no-repeat,
+    radial-gradient(circle at 50% 20%, #1d2a3a 0 2.2px, transparent 2.8px) 47px 30px/10px 10px no-repeat,
+    linear-gradient(100deg, transparent 40%, #f08a24 40% 100%) 48px 40px/16px 6px no-repeat,
+    linear-gradient(#d33b44, #d33b44) 24px 58px/44px 9px no-repeat,
+    radial-gradient(circle at 50% 50%, #fff 0 22px, #dcebf6 23px, transparent 24px) 20px 18px/52px 52px no-repeat,
+    radial-gradient(circle at 50% 50%, #fff 0 32px, #dcebf6 33px, transparent 34px) 10px 52px/72px 72px no-repeat;
+  filter:drop-shadow(0 6px 10px rgba(40,80,120,.18))}
+html[data-season="snowman"] .hero-kicker{color:#2a6fb0}
+html[data-season="snowman"] .hero-chip b{color:#2a6fb0}
+html[data-season="snowman"] .sheet-body{background:radial-gradient(circle at 12% 30%, rgba(255,255,255,.55) 0 2px, transparent 3px), radial-gradient(circle at 38% 72%, rgba(255,255,255,.4) 0 1.5px, transparent 2.5px), radial-gradient(circle at 66% 22%, rgba(255,255,255,.5) 0 2px, transparent 3px), radial-gradient(circle at 84% 64%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), radial-gradient(circle at 92% 18%, rgba(255,255,255,.45) 0 1.5px, transparent 2.5px), radial-gradient(circle at 24% 88%, rgba(255,255,255,.35) 0 1.5px, transparent 2.5px), linear-gradient(165deg, #3c7fbf, #1f4f86)}
+html[data-season="snowman"] .sheet-kicker{color:#cfe8ff}
+@media (max-width:560px){ html[data-season="snowman"] .hero{padding-right:96px} html[data-season="snowman"] .hero::after{transform:scale(.85); transform-origin:bottom right; right:8px} }
+
+/* 계절 꾸미기 고르기 */
+.season-pick{display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:8px; margin-bottom:8px}
+.season-pick button{border-radius:14px; padding:12px 10px; font-weight:700; text-align:center; background:var(--sheet-2)}
+.season-pick button.on{border-color:var(--brand); box-shadow:0 0 0 3px var(--focus); color:var(--brand)}
+.season-pick .sw{display:block; height:28px; border-radius:8px; margin-bottom:6px}
