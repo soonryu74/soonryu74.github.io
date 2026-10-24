@@ -446,7 +446,6 @@ body::before{display:none}
 .top .who button, html[data-theme="night"] .top .who button{background:var(--sheet); color:var(--ink); border:1px solid var(--line-2)}
 .top .who button:hover{background:var(--paper); border-color:var(--hover-line)}
 .top .who-avatar .avatar{border-color:var(--line)}
-.top .who-avatar .avatar:not(img){background:var(--brand-soft); color:var(--brand)}
 
 /* 인사 띠 */
 .hero{margin:18px 0 6px; padding:22px 22px 18px; border-radius:var(--r); position:relative; overflow:hidden;
@@ -666,13 +665,17 @@ html[data-season="snowman"] .hero-chip.primary{background:#2a6fb0; color:#fff}
 .hero-chip.primary::before{content:'＋'; font-weight:800; margin-right:-2px}
 
 /* 이름 첫 글자 동그라미 색 (평소: 부드러운 네 빛깔 / 성탄: 빨강·초록·크림) */
-.avatar.av0{background:#e5efe8; color:#1f4d3b}
-.avatar.av1{background:#fbe7e8; color:#b3262f}
-.avatar.av2{background:#f5ecda; color:#8a6420}
-.avatar.av3{background:#e5ecf7; color:#2a5a9c}
-html[data-season="xmas"] .avatar.av0, html[data-season="xmas"] .avatar.av2{background:#1f4d3b; color:#fff}
-html[data-season="xmas"] .avatar.av1, html[data-season="xmas"] .avatar.av3{background:#c8242f; color:#fff}
-html[data-season="xmas"] .avatar.av2{background:#f3ece0; color:#6e1218}
-html[data-theme="night"] .avatar[class*="av"]{background:rgba(214,179,110,.16); color:#e2c385}
+.avatar.av-tone0{background:#e5efe8; color:#1f4d3b}
+.avatar.av-tone1{background:#fbe7e8; color:#b3262f}
+.avatar.av-tone2{background:#f5ecda; color:#8a6420}
+.avatar.av-tone3{background:#e5ecf7; color:#2a5a9c}
 .top .who-avatar .avatar:not(img){border:0}
 .top .who-avatar .avatar:not(img){display:flex; align-items:center; justify-content:center; width:32px; height:32px; font-size:14px; line-height:1; padding:0}
+/* 이름 동그라미: 목자 빨강 · 목원 초록 · VIP 미색 · 목사 교회 색 */
+.avatar.av-leader{background:#c8242f; color:#fff; border-color:#c8242f}
+.avatar.av-member{background:#1f6b45; color:#fff; border-color:#1f6b45}
+.avatar.av-vip{background:#f4ead2; color:#7a5418; border-color:#e3d1a6}
+.avatar.av-pastor{background:var(--brand); color:var(--on-brand); border-color:var(--brand)}
+.av-legend{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:13.5px; color:var(--muted); margin:10px 0 0}
+.av-legend .avatar{width:14px; height:14px; border-width:1px; margin-left:8px}
+.av-legend .avatar:first-child{margin-left:0}

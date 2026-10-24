@@ -637,7 +637,7 @@
         : T('<span class="badge">쓰는 중</span>');
       var reply = d && d.cs.length ? '<span class="badge gold">' + T('답글 {0}', d.cs.length) + '</span>' : '';
       return '<details class="mj" data-mj="' + m.id + '"' + (d ? '' : ' data-empty="1"') + '>' +
-        '<summary>' + (leaderPhoto ? C.avatar({ name: m.mokja_name || m.name }, leaderPhoto[m.mokja_id]) : '') +
+        '<summary>' + (leaderPhoto ? C.avatar({ name: m.mokja_name || m.name, kind: 'leader' }, leaderPhoto[m.mokja_id]) : '') +
         '<span class="mj-main"><span class="mj-name">' + esc(m.name) + '</span>' +
         '<span class="mj-sub">' + (m.mokja_name ? '<span class="quiet">' + esc(m.mokja_name) + '</span>' : '') + state + ' ' + reply + '</span></span>' +
         '</summary>' +
@@ -883,7 +883,7 @@
     box.innerHTML = mokjangs.map(function (m) {
       var p = m.mokja_id ? byId[m.mokja_id] : null;
       return '<div class="list-item mg-item" data-mj="' + m.id + '" data-uid="' + (m.mokja_id || '') + '"><div class="mg-head">' +
-        (photos ? C.avatar({ name: m.mokja_name || m.name }, p && pUrl[p.id]) : '') +
+        (photos ? C.avatar({ name: m.mokja_name || m.name, kind: 'leader' }, p && pUrl[p.id]) : '') +
         '<div class="grow"><div class="t">' + esc(m.name) + (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
         '<div class="s">' + esc(m.mokja_name || T('담당 목자 없음')) +
         (p ? T(' · 아이디 ') + esc(p.login_id) : '') +
