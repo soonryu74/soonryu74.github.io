@@ -680,3 +680,24 @@ html[data-season="snowman"] .hero-chip.primary{background:#2a6fb0; color:#fff}
 .av-legend .avatar{width:14px; height:14px; border-width:1px; margin-left:8px}
 .av-legend .avatar:first-child{margin-left:0}
 .msg{white-space:pre-line}   /* 안내 글의 줄바꿈을 그대로 */
+
+/* 사진이 없을 때 기본 얼굴 그림 (목자 빨강 · 목원 초록 · VIP 미색 · 목사 교회 색) */
+.avatar:not(img){position:relative; overflow:hidden; font-size:0 !important; color:transparent}
+.avatar:not(img)::before{content:''; position:absolute; inset:0; background:var(--av-fg, #fff);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='9.2' r='4.6'/%3E%3Cpath d='M2.6 24c.4-5.6 4.4-9.2 9.4-9.2s9 3.6 9.4 9.2z'/%3E%3C/svg%3E") center 62%/78% no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='9.2' r='4.6'/%3E%3Cpath d='M2.6 24c.4-5.6 4.4-9.2 9.4-9.2s9 3.6 9.4 9.2z'/%3E%3C/svg%3E") center 62%/78% no-repeat}
+.avatar.av-leader{--av-fg:#fff}
+.avatar.av-member{--av-fg:#fff}
+.avatar.av-vip{--av-fg:#b08a45}
+.avatar.av-pastor{--av-fg:var(--on-brand)}
+.avatar.av-tone0{--av-fg:#1f4d3b} .avatar.av-tone1{--av-fg:#b3262f} .avatar.av-tone2{--av-fg:#8a6420} .avatar.av-tone3{--av-fg:#2a5a9c}
+.av-legend .avatar::before{display:none}
+.top .who-avatar .avatar.av-leader, .top .who-avatar .avatar.av-pastor{background:#c8242f; border:2px solid #fff}
+.top .who-avatar .avatar.av-pastor{background:var(--brand)}
+.top .who-avatar .avatar:not(img){box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+/* 사용법 영상 창 */
+.guide-sheet .guide-tabs{display:flex; gap:8px; margin:4px 0 12px}
+.guide-sheet .guide-tabs button.on{background:var(--brand); color:var(--on-brand); border-color:var(--brand)}
+.guide-sheet .guide-video{display:block; width:100%; max-height:62vh; aspect-ratio:9/16; object-fit:contain; background:#111; border-radius:14px}
+.hero-chip.guide-chip::before{content:'▶'; font-size:.8em; margin-right:2px; opacity:.8}
+.signout-card button{margin-top:6px}

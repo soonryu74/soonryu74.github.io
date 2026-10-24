@@ -698,5 +698,8 @@ window.I18N.en = {
   "알림 키가 설정되지 않았습니다": "Alerts are not set up yet",
   "일기를 찾지 못했습니다": "Journal not found",
   "내 목장 일기가 아닙니다": "That's not your group's journal",
-  "알림을 보내지 못했습니다": "Couldn't send the alert"
+  "알림을 보내지 못했습니다": "Couldn't send the alert",
+  "처음이시면 2분만 보세요": "New here? Just watch for 2 minutes",
+  "이 기기에서 나가기": "Sign out of this device",
+  "다른 사람 계정으로 들어가려면 먼저 로그아웃하세요.": "To use a different account, sign out first."
 };
