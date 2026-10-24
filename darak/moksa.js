@@ -404,6 +404,39 @@
     $('#st-bars').addEventListener('pointerleave', function () { tip.hidden = true; });
   }
 
+  /* ── 첫 화면 알약 단추 · 목자에게 공지 ─────────────── */
+  function pastorChips(total, done) {
+    var n = ((C.getChurch() || {}).features || {}).notice;
+    C.heroChips([
+      { label: week === C.mondayOf() ? T('이번 주 제출') : T('이 주 제출'), value: done + '/' + total, go: 'week' },
+      { label: T('기도제목 모아보기'), go: 'gather' },
+      { label: T('출석 통계'), go: 'stats' },
+      { label: n ? T('공지 바꾸기') : T('공지 보내기'), fn: openNotice, dot: !!n }
+    ]);
+  }
+  function openNotice() {
+    var c = C.getChurch() || {}, n = (c.features || {}).notice;
+    var done = function (r, text) { c.features = Object.assign({}, c.features, { notice: r.notice || null }); loadWeek(); C.say($('#msg-remind'), text, 'ok', true); };
+    var foot = [{ label: T('취소') }];
+    if (n) foot.unshift({ label: T('공지 내리기'), fn: async function () {
+      if (!confirm(T('지금 공지를 내릴까요?'))) return true;
+      try { done(await C.notify({ action: 'notice', clear: true }), T('공지를 내렸습니다.')); } catch (e) { C.say($('#msg-nt'), e.message, 'err'); return true; }
+    } });
+    foot.push({ label: T('공지 올리기'), fn: async function () {
+      var title = $('#nt-title').value.trim(), body = $('#nt-body').value.trim();
+      if (!title || !body) { C.say($('#msg-nt'), T('제목과 내용을 적어 주세요.'), 'err'); return true; }
+      try {
+        var r = await C.notify({ action: 'notice', title: title, body: body });
+        done(r, T('공지를 올렸습니다. 목자가 앱을 열면 아래에서 올라옵니다. (알림 받은 목자 {0}명)', r.reached || 0));
+      } catch (e) { C.say($('#msg-nt'), e.message, 'err'); return true; }
+    } });
+    C.sheet({ kicker: T('공지'), title: T('목자들에게 공지 보내기'), cls: 'notice-edit', foot: foot,
+      html: (n ? '<p class="sheet-meta" style="margin:0 0 14px">' + esc(T('지금 공지: {0}', n.title)) + '</p>' : '') +
+        '<label>' + esc(T('제목')) + '<input type="text" id="nt-title" maxlength="60" placeholder="' + esc(T('예: 다음 주는 연합 목장 모임입니다')) + '"></label>' +
+        '<label>' + esc(T('내용')) + '<textarea id="nt-body" maxlength="1000"></textarea></label>' +
+        '<p class="sheet-meta" style="margin-top:6px">' + esc(T('목자가 앱을 열면 아래에서 올라오고, 알림도 함께 갑니다.')) + '</p><div class="msg" id="msg-nt"></div>' });
+  }
+
   /* ── 제출 안 한 목장에 알림 · 마감 알림 ───────────── */
   function showRemind(live, data) {
     var left = live.filter(function (m) { return m.mokja_id && !(data[m.id] && data[m.id].j.status === 'submitted'); });
@@ -561,6 +594,7 @@
       '<div><b>' + (live.length - wrote) + T('</b><span>아직 안 씀</span></div>');
     $('#stat-line').textContent = T('이 주 일기: 목장 {0}곳 중 {1}곳이 썼고, 그중 {2}곳이 제출했습니다.', live.length, wrote, done);
     showRemind(live, data);
+    pastorChips(live.length, done);
 
     if (!live.length) {
       $('#week-list').innerHTML = T('<div class="card"><p class="empty">아직 목장이 없습니다. <b>목장·목자 관리</b>에서 목자 계정을 만들어 주세요.</p></div>');
