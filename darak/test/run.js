@@ -620,6 +620,9 @@ const db = p => p.evaluate(() => window.__DB());
     ok('[메뉴]를 누르면 English·로그아웃', await p.isVisible('#btn-signout') && await p.isVisible('.top .lang-btn'));
     await p.mouse.click(8, 600); await p.waitForTimeout(150);
     ok('바깥을 누르면 메뉴 닫힘', !(await p.isVisible('#btn-signout')));
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(200);
+    await p.click('.top .titles'); await p.waitForTimeout(300);
+    ok('교회 이름을 누르면 첫 탭으로', await p.$eval('.tabs button', b => b.classList.contains('on')));
     await p.setViewportSize({ width: 900, height: 1000 }); await p.waitForTimeout(150);
     await p.goto(BASE + 'mokjang.html#j=11111111-1111-4111-8111-111111111111'); await p.waitForSelector('.top h1'); await p.waitForTimeout(900);
     ok('알림을 누르면 [지난 일기]에서 그 주가 펼쳐짐', await p.isVisible('#pane-past') && await p.$eval('#past-list details[data-id="11111111-1111-4111-8111-111111111111"]', e => e.open));
@@ -740,6 +743,10 @@ const db = p => p.evaluate(() => window.__DB());
     await p.click('.tabs button[data-pane="gather"]'); await p.waitForTimeout(300);
     await p.click('#g-print'); await p.waitForTimeout(300);
     ok('카톡 안에서 인쇄 → 크롬으로 열기 안내', asked.includes('인쇄·PDF 저장이 되지 않습니다'), asked);
+    await p.click('#g-prev'); await p.waitForTimeout(500);
+    ok('기도제목 모아보기: 기본은 목장 이야기 없이', !(await p.textContent('#gather-list')).includes('지난주 이야기'));
+    await p.check('#g-story'); await p.waitForTimeout(500);
+    ok('[목장 이야기도 보기] → 카드 맨 위에 목장 이야기', (await p.textContent('#gather-list .card')).includes('지난주 이야기'));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 

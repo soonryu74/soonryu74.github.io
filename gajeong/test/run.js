@@ -534,6 +534,9 @@ const db = p => p.evaluate(() => window.__DB());
     ok('[메뉴]를 누르면 English·로그아웃', await p.isVisible('#btn-signout') && await p.isVisible('.top .lang-btn'));
     await p.mouse.click(8, 600); await p.waitForTimeout(150);
     ok('바깥을 누르면 메뉴 닫힘', !(await p.isVisible('#btn-signout')));
+    await p.click('.tabs button[data-pane="mine"]'); await p.waitForTimeout(200);
+    await p.click('.top .titles'); await p.waitForTimeout(300);
+    ok('교회 이름을 누르면 첫 탭으로', await p.$eval('.tabs button', b => b.classList.contains('on')));
     await p.setViewportSize({ width: 900, height: 1000 }); await p.waitForTimeout(150);
     await p.goto(BASE + 'mokjang.html#j=11111111-1111-4111-8111-111111111111'); await p.waitForSelector('.top h1'); await p.waitForTimeout(900);
     ok('알림을 누르면 [지난 일기]에서 그 주가 펼쳐짐', await p.isVisible('#pane-past') && await p.$eval('#past-list details[data-id="11111111-1111-4111-8111-111111111111"]', e => e.open));
@@ -593,6 +596,15 @@ const db = p => p.evaluate(() => window.__DB());
     ok('9월 목장별: 목자 이름 · 모임 1 · 참석 1/2 · 50%', tb.includes('김목자') && tb.includes('11/250%'), tb);
     await p.hover('#st-bars .bar[data-k="2026-09"]'); await p.waitForTimeout(200);
     ok('막대에 올리면 숫자 안내', /모인 목장 1\/1/.test(await p.textContent('#st-tip')));
+    await p.evaluate(() => { const D = window.__DB();
+      D.church_mokjang.push({ id: 'mj9', name: '명단 없는 목장', mokja_id: null, mokja_name: '송목자', church_id: 'cb', sort_order: 5, active: true, created_at: '2026-01-01' });
+      D.church_journal.push({ id: 'js9', mokjang_id: 'mj9', week_start: '2026-09-20', status: 'submitted', present_count: 15, created_at: '2026-09-21', updated_at: '2026-09-21' });
+      sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1');
+    await p.click('.tabs button[data-pane="stats"]'); await p.waitForTimeout(700);
+    await p.click('#st-bars .bar[data-k="2026-09"]'); await p.waitForTimeout(300);
+    { const tb2 = await p.textContent('#st-table');
+      ok('목원 명단 없는 목장: 0/0 대신 모인 사람 수 + 안내', !/0\/0/.test(tb2) && /15명/.test(tb2) && /목원 명단 없음/.test(tb2) && /참석률 계산에서는 뺍니다/.test(tb2), tb2); }
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
@@ -654,6 +666,10 @@ const db = p => p.evaluate(() => window.__DB());
     await p.click('.tabs button[data-pane="gather"]'); await p.waitForTimeout(300);
     await p.click('#g-print'); await p.waitForTimeout(300);
     ok('카톡 안에서 인쇄 → 크롬으로 열기 안내', asked.includes('인쇄·PDF 저장이 되지 않습니다'), asked);
+    await p.click('#g-prev'); await p.waitForTimeout(500);
+    ok('기도제목 모아보기: 기본은 목장 이야기 없이', !(await p.textContent('#gather-list')).includes('지난주 이야기'));
+    await p.check('#g-story'); await p.waitForTimeout(500);
+    ok('[목장 이야기도 보기] → 카드 맨 위에 목장 이야기', (await p.textContent('#gather-list .card')).includes('지난주 이야기'));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
