@@ -705,3 +705,6 @@ html[data-season="snowman"] .hero-chip.primary{background:#2a6fb0; color:#fff}
 @keyframes bgmWait{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.0)}50%{box-shadow:0 0 0 6px rgba(245,165,36,.45)}}
 .bgm-btn.wait{animation:bgmWait 1.6s ease-in-out infinite}
 @media (prefers-reduced-motion: reduce){ .bgm-btn.wait{animation:none; outline:2px solid #f5a524} }
+/* 한글은 낱말 중간에서 줄을 바꾸지 않는다 ('총목자 → 총 / 목자 같은 끊김 방지), 제목은 줄 길이를 고르게 */
+body{word-break:keep-all; overflow-wrap:break-word}
+h1, h2, h3, .sheet-title, .hero-title, .notice-bar span{text-wrap:balance}
