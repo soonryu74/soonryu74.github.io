@@ -626,7 +626,7 @@ window.CHURCH = (function () {
   async function bgm(top) {
     var src = 'assets/bgm.mp3', xmas = 'assets/bgm-xmas.mp3';
     var have = async function (u) { try { return (await fetch(u, { method: 'HEAD', cache: 'no-store' })).ok; } catch (e) { return false; } };
-    if (season() === 'xmas' && await have(xmas)) src = xmas;
+    if ((season() === 'xmas' || season() === 'snowman') && await have(xmas)) src = xmas;   // 겨울(성탄·눈사람)엔 성탄 곡
     else if (!(await have(src))) return;
     var on = true; try { on = localStorage.getItem('bgm') !== 'off'; } catch (e) {}
     var a = new Audio(src); a.loop = true; a.volume = 0; a.preload = 'none';
