@@ -140,7 +140,48 @@
       if (now !== startWeek) { startWeek = now; week = now; loadWeek(); }
     });
   }
-  function markDirty() { dirty = true; $('#save-state').textContent = T('아직 저장되지 않았습니다'); }
+  function markDirty() { dirty = true; $('#save-state').textContent = T('아직 저장되지 않았습니다'); clearTimeout(markDirty.t); markDirty.t = setTimeout(keepDraft, 700); }
+
+  // 쓰던 글을 이 기기에도 적어 둔다 — 로그인이 풀려 저장이 안 돼도 글이 사라지지 않게
+  function draftKey() { return 'draft:' + mokjang.id + ':' + week; }
+  function keepDraft() {
+    if (!mokjang || !rendered) return;
+    try {
+      var rows = {};
+      collect().forEach(function (p) { rows[p.mokwon_id || ('n:' + p.name)] = { c: p.content, a: p.attended, r: p.answered }; });
+      localStorage.setItem(draftKey(), JSON.stringify({ at: Date.now(), met_on: $('#met-on').value, present: $('#present').value,
+        body: $('#body').value, mprayer: $('#mprayer').value, rows: rows }));
+    } catch (e) {}
+  }
+  function dropDraft() { clearTimeout(markDirty.t); try { localStorage.removeItem(draftKey()); } catch (e) {} }
+  // 서버에 저장된 것보다 나중에 쓴 글이 이 기기에 남아 있으면 되살린다
+  function restoreDraft() {
+    var d = null; try { d = JSON.parse(localStorage.getItem(draftKey()) || 'null'); } catch (e) {}
+    if (!d) return;
+    if (journal && journal.updated_at && new Date(journal.updated_at).getTime() >= d.at) return dropDraft();
+    $('#met-on').value = d.met_on || $('#met-on').value; $('#present').value = d.present || '';
+    $('#body').value = d.body || ''; $('#mprayer').value = d.mprayer || '';
+    $$('#members-box .member').forEach(function (el) {
+      var row = (rendered || [])[+el.dataset.i]; if (!row) return;
+      var x = (d.rows || {})[row.mokwon_id || ('n:' + row.name)]; if (!x) return;
+      $('.f-con', el).value = x.c || ''; $('.f-att', el).checked = !!x.a; $('.f-ans', el).checked = !!x.r;
+      $('.f-con', el).dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    markDirty();
+    C.say($('#msg-write'), T('저장하지 못하고 남아 있던 글을 되살렸습니다. 확인하시고 [저장]이나 [제출]을 눌러 주세요.'), 'ok', true);
+  }
+  // 로그인이 풀린 채로 저장하면 서버가 막는다 (row-level security) — 글은 보관하고 다시 로그인하게 한다
+  async function lostLogin(err) {
+    if (/row-level security|JWT|401|not authenticated/i.test(String(err && err.message))) return true;
+    try { return !(await sb.auth.getSession()).data.session; } catch (e) { return false; }
+  }
+  function askRelogin() {
+    keepDraft();
+    C.say($('#msg-write'), T('로그인이 풀려서 저장하지 못했습니다. 쓰신 글은 이 기기에 보관해 두었습니다.'), 'err');
+    C.sheet({ kicker: T('쓰신 글은 그대로 있어요'), title: T('다시 로그인해 주세요'),
+      html: '<p class="desc">' + esc(T('오래 열어 두었거나 다른 기기에서 로그아웃하면 로그인이 풀릴 수 있습니다. 다시 로그인하시면 쓰던 글이 그대로 돌아오고, 그때 저장하시면 됩니다.')) + '</p>',
+      foot: [{ label: T('나중에') }, { label: T('다시 로그인'), fn: function () { dirty = false; C.signOut(); } }] });
+  }
 
   /* ── 탭 ────────────────────────────────────────── */
   function bindTabs() {
@@ -164,6 +205,7 @@
   }
   async function go(w) {
     if (dirty && !confirm(T('저장하지 않은 내용이 있습니다. 그래도 옮기시겠습니까?'))) return;
+    if (dirty) dropDraft();   // 옮기기로 했으면 쓰던 글은 버린다
     week = w; dirty = false; await loadWeek();
   }
 
@@ -295,6 +337,7 @@
     dirty = false;
     rendered = null;
     renderMembers();
+    restoreDraft();
     mokjaChips(submitted);
   }
 
@@ -501,7 +544,7 @@
       var idOf = {};
       prayers.forEach(function (p) { if (p.mokwon_id) idOf[p.mokwon_id] = p.id; });
       (rendered || []).forEach(function (row) { if (!row.id && row.mokwon_id && idOf[row.mokwon_id]) row.id = idOf[row.mokwon_id]; });
-      dirty = false;
+      dirty = false; dropDraft();
       // 제출이면 목사님 휴대전화로 알림 (실패해도 제출은 이미 끝났다)
       if (status === 'submitted') C.notify({ action: 'submitted', journal_id: journal.id }).catch(function () {});
       $('#wk-state').textContent = status === 'submitted' ? T('제출함') : T('임시 저장됨');
@@ -511,7 +554,8 @@
         ? T('목사님께 전달했습니다. 제출한 뒤에도 고치실 수 있습니다.')
         : T('저장했습니다. 나중에 이어서 쓰셔도 됩니다.'), 'ok');
     } catch (err) {
-      C.say($('#msg-write'), T('저장하지 못했습니다: ') + err.message, 'err');
+      if (await lostLogin(err)) askRelogin();
+      else C.say($('#msg-write'), T('저장하지 못했습니다: ') + err.message, 'err');
     }
     bs.disabled = bu.disabled = false;
   }

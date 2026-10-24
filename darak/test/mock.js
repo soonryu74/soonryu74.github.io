@@ -18,6 +18,7 @@
   function record(c) { window.__calls.push(c); sessionStorage.setItem('__mock_calls', JSON.stringify(window.__calls)); }
 
   var session = load();
+  window.__dropSession = function () { session = null; };   // 서버에서 로그인이 취소된 것처럼
   function me() { return session ? DB.church_profile.filter(function (p) { return p.id === session.user.id; })[0] : null; }
   function mjOf(id) { return DB.church_mokjang.filter(function (m) { return m.id === id; })[0]; }
   function jOf(id) { return DB.church_journal.filter(function (j) { return j.id === id; })[0]; }
@@ -74,6 +75,8 @@
     return { data: rows, error: null };
   }
   function run(table, st) {
+    // 로그인이 풀린 채로 쓰기 → 진짜 서버처럼 막는다
+    if (st.op !== 'select' && !session) return { data: null, error: { message: 'new row violates row-level security policy for table "' + table + '"' } };
     var all = DB[table];
     var out;
     if (st.op === 'select') {
