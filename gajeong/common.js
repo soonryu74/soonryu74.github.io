@@ -649,7 +649,7 @@ window.CHURCH = (function () {
      휴대폰은 한 번 눌러야 소리를 낼 수 있어서, 처음 화면을 누를 때 작게 시작한다.
      머리말 ♪ 단추로 끄고 켠다 (기기마다 기억). 음악 파일이 없으면 단추도 없다. 성탄 절기엔 성탄 곡이 있으면 그것으로 */
   var BGM_VOL = 0.22;
-  if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', function (e) {
+  if (navigator.serviceWorker && typeof navigator.serviceWorker.addEventListener === 'function') navigator.serviceWorker.addEventListener('message', function (e) {
     var d = e.data || {}; if (d.type !== 'open-url' || !d.url) return;
     var u = new URL(d.url, location.href);
     if (u.pathname !== location.pathname) { location.href = u.href; return; }
