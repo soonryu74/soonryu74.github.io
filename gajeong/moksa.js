@@ -365,19 +365,23 @@
       o.avg = ws.length ? round1(ws.reduce(function (t, w) { return t + o.weeks[w]; }, 0) / ws.length) : null;
       o.rate = o.avg == null ? null : pct(o.avg, memberTotal);
     });
-    stats = { keys: keys, m: m, live: live, members: members, memberTotal: memberTotal, startKey: startKey };
+    var ans = (await sb.from('church_prayer').select('id, journal_id, name, content').eq('answered', true).limit(5000)).data || [];
+    stats = { keys: keys, m: m, live: live, members: members, memberTotal: memberTotal, startKey: startKey, answered: ans };
     if (!statMonth || !m[statMonth]) statMonth = keys[keys.length - 1];
     renderStats();
   }
 
   function renderStats() {
     var keys = stats.keys, m = stats.m, cur = m[statMonth], live = stats.live, total = stats.memberTotal;
+    var unmet = live.filter(function (x) { return !cur.groups[x.id]; });
+    stats.unmet = unmet;
+    // 첫 칸: 이 달 한 번도 안 모인 목장 (누르면 목록 + 격려 보내기) · 셋째 칸: 처음부터 쌓인 기도 응답 (누르면 목록)
     $('#st-tiles').innerHTML =
-      '<div><b>' + cur.met + '/' + live.length + '</b><span>' + esc(T('모임한 목장')) + (live.length ? ' ' + pct(cur.met, live.length) + '%' : '') + '</span></div>' +
+      '<button type="button" class="st-tap' + (unmet.length ? ' warn' : '') + '" id="st-unmet"><b>' + T('{0}곳', unmet.length) + '</b><span>' + esc(T('{0} 한 번도 안 모인 목장', monthLabel(statMonth, true))) + '</span><i>' + esc(T('누르면 목록 ›')) + '</i></button>' +
       '<div><b>' + (cur.avg == null ? '–' : cur.avg) + '/' + total + '</b><span>' + esc(T('목원 참석 (한 주 평균)')) + (cur.rate == null ? '' : ' ' + cur.rate + '%') + '</span></div>' +
-      '<div><b>' + cur.meets + '</b><span>' + esc(T('제출된 모임')) + '</span></div>';
+      '<button type="button" class="st-tap" id="st-answered"><b>' + T('{0}건', stats.answered.length) + '</b><span>' + esc(T('누적 기도 응답')) + '</span><i>' + esc(T('누르면 목록 ›')) + '</i></button>';
     $('#st-line').textContent = cur.meets
-      ? T('{0}: 목장 {1}곳 중 {2}곳이 모였고, 목원 {3}명 중 한 주 평균 {4}명({5}%)이 참석했습니다.', monthLabel(statMonth), live.length, cur.met, total, cur.avg, cur.rate)
+      ? T('{0}: 목장 {1}곳 중 {2}곳이 한 번 이상 모였고({3}곳은 아직 한 번도 안 모임), 목원 {4}명 중 한 주 평균 {5}명({6}%)이 참석했습니다. 모임은 모두 {7}번 제출되었습니다.', monthLabel(statMonth), live.length, cur.met, unmet.length, total, cur.avg, cur.rate, cur.meets)
       : T('{0}: 아직 제출된 일기가 없습니다.', monthLabel(statMonth));
     $('#st-since').textContent = T('{0}부터 (우리 교회 첫 일기)', monthLabel(stats.startKey));
     $('#st-bars').innerHTML = keys.map(function (k) {
@@ -403,8 +407,70 @@
       (noList ? '<p class="hint">' + esc(T('목원 명단이 없는 목장은 일기에 적은 \'모인 사람 수\'를 보여 드리고, 참석률 계산에서는 뺍니다. 그 목자님께 [목원 명단]에 이름을 넣어 달라고 해 주세요.')) + '</p>' : '');
   }
 
+  // 이 달 한 번도 안 모인 목장 → 목록 + 목사님 격려 (앱 알림 · 카톡)
+  function openUnmet() {
+    var list = stats.unmet || [], c = C.getChurch() || {};
+    var def = T('목자님, 요즘 모임 준비하시느라 애쓰시지요. 늘 기도로 함께합니다. 이번 주에는 한 번 모여 서로의 이야기와 기도제목을 나눠 보면 좋겠습니다. 힘내세요!');
+    var html = list.length
+      ? '<ul class="unmet-list">' + list.map(function (x) {
+          return '<li><label class="check"><input type="checkbox" class="um-pick" value="' + esc(x.id) + '" checked' + (x.mokja_id ? '' : ' disabled') + '> <b>' + esc(x.name) + '</b>' +
+            (x.mokja_name ? ' <span class="quiet">' + esc(T('{0} 목자님', x.mokja_name)) + '</span>' : '') + (x.mokja_id ? '' : ' <span class="quiet">' + esc(T('(목자 없음)')) + '</span>') + '</label></li>';
+        }).join('') + '</ul>' +
+        '<label>' + esc(T('격려 메시지')) + '<textarea id="um-body" maxlength="500">' + esc(def) + '</textarea></label>' +
+        '<p class="sheet-meta">' + esc(T('고른 목자에게 앱 알림으로 보내거나, 카카오톡으로 따로 보낼 수 있습니다.')) + '</p><div class="msg" id="msg-um"></div>'
+      : '<p class="desc">' + esc(T('이 달에는 모든 목장이 한 번 이상 모였습니다. 감사합니다!')) + '</p>';
+    var picked = function () { return Array.prototype.map.call(document.querySelectorAll('.um-pick:checked'), function (i) { return i.value; }); };
+    var foot = [{ label: T('닫기') }];
+    if (list.length) foot = [{ label: T('닫기') },
+      { label: T('카톡으로 보내기'), fn: async function () {
+        var ids = picked(), body = $('#um-body').value.trim(); if (!body) { C.say($('#msg-um'), T('보낼 글을 적어 주세요.'), 'err'); return true; }
+        var names = list.filter(function (x) { return ids.indexOf(x.id) >= 0; }).map(function (x) { return x.mokja_name || x.name; });
+        var text = (names.length ? names.map(function (n) { return T('{0} 목자님', n); }).join(', ') + '\n\n' : '') + body + '\n\n' + C.churchLink(c);
+        if (navigator.share && !C.inApp()) { try { await navigator.share({ text: text }); return true; } catch (e) { if (e && e.name === 'AbortError') return true; } }
+        var copied = false; try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+        C.say($('#msg-um'), copied ? T('글을 복사했습니다. 카카오톡에 붙여 넣어 보내 주세요.') : T('아래 글을 길게 눌러 복사해서 카카오톡으로 보내 주세요.') + '\n\n' + text, 'ok', true);
+        return true;
+      } },
+      { label: T('앱 알림으로 보내기'), fn: async function () {
+        var ids = picked(), body = $('#um-body').value.trim();
+        if (!ids.length) { C.say($('#msg-um'), T('보낼 목장을 골라 주세요.'), 'err'); return true; }
+        if (!body) { C.say($('#msg-um'), T('보낼 글을 적어 주세요.'), 'err'); return true; }
+        try {
+          var r = await C.notify({ action: 'encourage', mokjang_ids: ids, body: body });
+          var msg = T('목자 {0}명에게 격려 알림을 보냈습니다.', r.reached || 0);
+          if (r.noDevice && r.noDevice.length) msg += ' ' + T('알림을 켜지 않은 목자: {0} — [카톡으로 보내기]로 따로 보내 주세요.', r.noDevice.join(', '));
+          C.say($('#msg-um'), msg, r.reached ? 'ok' : 'err', true);
+        } catch (e) { C.say($('#msg-um'), e.message, 'err'); }
+        return true;
+      } }];
+    C.sheet({ kicker: monthLabel(statMonth), title: T('한 번도 안 모인 목장 {0}곳', list.length), cls: 'unmet-sheet', html: html, foot: foot });
+  }
+  // 처음부터 쌓인 기도 응답 목록 (새것부터)
+  async function openAnswered() {
+    var ans = stats.answered || [];
+    var close = C.sheet({ kicker: T('누적 기도 응답'), title: T('기도 응답 {0}건', ans.length), cls: 'answered-sheet',
+      html: '<div id="ans-list"><p class="empty">' + esc(T('불러오는 중…')) + '</p></div>' });
+    if (!ans.length) { $('#ans-list').innerHTML = '<p class="desc">' + esc(T('아직 응답됨으로 표시된 기도제목이 없습니다. 목자가 일기에서 [응답됨]에 체크하면 여기에 쌓입니다.')) + '</p>'; return; }
+    var jids = [], seen = {}; ans.forEach(function (a) { if (!seen[a.journal_id]) { seen[a.journal_id] = 1; jids.push(a.journal_id); } });
+    var js = [];
+    for (var i = 0; i < jids.length; i += 100) js = js.concat((await sb.from('church_journal').select('id, mokjang_id, week_start').in('id', jids.slice(i, i + 100))).data || []);
+    var jb = {}; js.forEach(function (j) { jb[j.id] = j; });
+    var mb = {}; mokjangs.forEach(function (x) { mb[x.id] = x; });
+    var rows = ans.map(function (a) { var j = jb[a.journal_id] || {}; return { a: a, wk: j.week_start ? C.mondayOf(j.week_start) : '', mj: mb[j.mokjang_id] }; })
+      .sort(function (x, y) { return x.wk < y.wk ? 1 : x.wk > y.wk ? -1 : 0; });
+    var box = $('#ans-list'); if (!box) return;
+    box.innerHTML = '<ul class="pr-list ans-list">' + rows.map(function (r) {
+      return '<li><span class="pr-name">' + esc(r.a.name || '') + '</span><span class="pr-text">' + esc(r.a.content || '') + '</span>' +
+        '<span class="sheet-meta">' + esc([r.mj && r.mj.name, r.wk && C.weekShort(r.wk)].filter(Boolean).join(' · ')) + '</span></li>';
+    }).join('') + '</ul>';
+  }
+
   function bindStats() {
     var tip = $('#st-tip');
+    $('#st-tiles').addEventListener('click', function (e) {
+      if (e.target.closest('#st-unmet')) openUnmet();
+      if (e.target.closest('#st-answered')) openAnswered();
+    });
     $('#st-bars').addEventListener('click', function (e) {
       var b = e.target.closest('.bar'); if (!b) return;
       statMonth = b.dataset.k; renderStats();
