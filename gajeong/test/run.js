@@ -818,7 +818,7 @@ const db = p => p.evaluate(() => window.__DB());
       D.church_mokwon.find(x => x.id === 'w1').birthday = '10-20';
       D.church_mokwon.find(x => x.id === 'w2').tag = 'VIP';
       ['2026-09-20', '2026-09-27', '2026-10-04'].forEach((w, i) => {
-        D.church_journal.push({ id: 'ab' + i, mokjang_id: 'mj1', week_start: w, status: 'submitted', present_count: 13, created_at: w, updated_at: w });
+        D.church_journal.push({ id: 'ab' + i, mokjang_id: 'mj1', week_start: w, status: 'submitted', present_count: 16, created_at: w, updated_at: w });
         D.church_prayer.push({ id: 'ap' + i + 'a', journal_id: 'ab' + i, mokwon_id: 'w1', name: '정하늘', attended: true, sort_order: 0 },
                              { id: 'ap' + i + 'b', journal_id: 'ab' + i, mokwon_id: 'w2', name: '최민수', attended: false, sort_order: 1 });
       });

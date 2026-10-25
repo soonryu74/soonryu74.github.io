@@ -232,7 +232,7 @@
     var js = (await sb.from('church_journal').select('id, week_start').eq('mokjang_id', mokjang.id).eq('status', 'submitted').order('week_start', { ascending: false }).limit(6)).data || [];
     var ps = js.length ? (await sb.from('church_prayer').select('journal_id, mokwon_id, attended').in('journal_id', js.map(function (j) { return j.id; }))).data || [] : [];
     streak = C.absentStreaks(js, ps);
-    renderCare();
+    renderMemberList(); renderCare();
   }
   // [목원 명단] 맨 위: 이번 주 생일·기념일 + 연달아 못 오신 분
   function renderCare() {
