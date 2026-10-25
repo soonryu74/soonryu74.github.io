@@ -1,7 +1,18 @@
--- 중보기도 나눔터 — 데이터베이스 (Supabase 프로젝트 korea-now, 다락방 나눔터와 같은 프로젝트)
+-- 중보기도 나눔터 — 데이터베이스 (Supabase 프로젝트 jungbo-prayer, 서울)
 -- 로그인(Supabase Auth)을 쓰지 않는다. 가입하면 받는 '열쇠 코드'(12자)가 곧 신분이고,
 -- 모든 읽기·쓰기는 열쇠 코드를 받는 RPC 함수(security definer)로만 한다. 표에는 직접 손대지 못한다(RLS, 정책 없음).
 -- 열쇠 코드는 해시만 저장한다.
+
+create extension if not exists pgcrypto with schema extensions;
+
+-- 서버 전용 비밀값 (웹 푸시 VAPID 키) — 정책 없음, Edge Function(service role)만 읽는다
+create table if not exists pray_secret (
+  name text primary key,
+  value text not null,
+  updated_at timestamptz not null default now()
+);
+alter table pray_secret enable row level security;
+revoke all on pray_secret from anon, authenticated;
 
 create table if not exists pray_group (
   id uuid primary key default gen_random_uuid(),

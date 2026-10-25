@@ -3,8 +3,8 @@
    휴대폰 알림은 Edge Function(pray-notify)이 웹 푸시로 보낸다. 카카오톡 단톡방 알림은 공유 창(또는 복사)으로 사람이 한 번 누른다. */
 (function () {
   'use strict';
-  var SB_URL = 'https://dxhmprqfgigljgbstqrg.supabase.co';
-  var SB_KEY = 'sb_publishable__FXGut04uxuz44s2443_8g_AByEuL-n';   // 공개 키 — 실제 보호는 서버 함수(열쇠 코드 확인)가 한다
+  var SB_URL = 'https://kagqgfcpvpcyosexdhsz.supabase.co';   // Supabase 프로젝트 jungbo-prayer (서울)
+  var SB_KEY = 'sb_publishable_dONt_Z2TIOHwV210v9Yw4A_irx8sSzN';   // 공개 키 — 실제 보호는 서버 함수(열쇠 코드 확인)가 한다
   var FN = SB_URL + '/functions/v1/pray-notify';
   var EMOJI = ['🙏', '❤️', '😢', '🙌', '💪'];   // 서버(pray_react)와 같은 목록
   var LS_ACC = 'jungbo-accounts', LS_ACTIVE = 'jungbo-active', LS_NUDGE = 'jungbo-push-nudge';

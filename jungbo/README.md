@@ -13,11 +13,11 @@
 | `index.html` `app.js` `style.css` | 화면 전체 (한 페이지). 로그인 없이 **열쇠 코드**(12자)로 사람을 알아본다 |
 | `sw.js` `manifest.webmanifest` | 웹 푸시 수신 · 홈 화면 추가 |
 | `server/schema.sql` | Supabase 표(`pray_*`)와 RPC 함수. 표는 RLS로 잠그고 RPC(security definer)만 연다 |
-| `server/pray-notify.ts` | Edge Function `pray-notify` (verify_jwt=false): 올림·댓글·기도했어요·응답 알림. VAPID 키는 `church_secret`(다락방 나눔터와 공유) |
+| `server/pray-notify.ts` | Edge Function `pray-notify` (verify_jwt=false): 올림·댓글·기도했어요·응답 알림. VAPID 키는 `pray_secret`(처음 한 번 자동 생성) |
 | `test/run.js` | Playwright 흐름 검사 (실제 서버에 시험 모임을 만들고 끝나면 지운다) |
 | `안내.txt` | 단톡방에 올리는 안내문 |
 
-Supabase 프로젝트: `korea-now` (dxhmprqfgigljgbstqrg), 다락방 나눔터와 같은 프로젝트·같은 공개 키.
+Supabase 프로젝트: `jungbo-prayer` (kagqgfcpvpcyosexdhsz, 서울) — 다락방 나눔터(korea-now)와 별도.
 
 ## 배포
 - 화면: 이 저장소(GitHub Pages) → `https://mokjang.app/jungbo/`

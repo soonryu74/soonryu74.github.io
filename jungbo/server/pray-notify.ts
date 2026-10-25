@@ -1,6 +1,6 @@
 // 중보기도 나눔터 — 휴대전화 알림 (Supabase Edge Function: pray-notify, verify_jwt=false)
 // 로그인(JWT) 대신 열쇠 코드(token)로 사람을 찾는다. 열쇠 코드는 해시만 저장되어 있다 (schema.sql의 pray__hash와 같은 방식).
-//  · key       : 화면이 구독할 때 쓰는 VAPID 공개키 (다락방 나눔터와 같은 키, church_secret 표)
+//  · key       : 화면이 구독할 때 쓰는 VAPID 공개키 (pray_secret 표 — 없으면 처음 한 번 서버에서 만들어 둔다)
 //  · posted    : 기도제목을 올리면 같은 모임의 다른 분들에게 — 긴급이면 '🚨 긴급기도가 올라왔습니다', urgency high
 //  · commented : 댓글을 남기면 글쓴이와 앞서 댓글 단 분들에게 (남긴 사람 제외)
 //  · prayed    : [기도했어요]를 누르면 글쓴이에게 (같은 글은 알림 하나로 겹친다)
@@ -29,13 +29,25 @@ const VAPID = {
   publicKey: Deno.env.get('VAPID_PUBLIC_KEY') ?? '',
   privateKey: Deno.env.get('VAPID_PRIVATE_KEY') ?? '',
 }
-async function loadVapid() {
-  if (VAPID.publicKey && VAPID.privateKey) return
-  const { data } = await admin.from('church_secret').select('name, value').in('name', ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'])
+async function readVapid() {
+  const { data } = await admin.from('pray_secret').select('name, value').in('name', ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'])
   for (const r of data ?? []) {
     if (r.name === 'VAPID_PUBLIC_KEY') VAPID.publicKey = r.value
     if (r.name === 'VAPID_PRIVATE_KEY') VAPID.privateKey = r.value
   }
+}
+async function loadVapid() {
+  if (VAPID.publicKey && VAPID.privateKey) return
+  await readVapid()
+  if (VAPID.publicKey && VAPID.privateKey) return
+  // 처음 한 번: 키를 만들어 둔다 (동시에 두 번 만들어도 먼저 들어간 짝만 남는다). 비밀키는 서버 밖으로 나가지 않는다
+  const k = webpush.generateVAPIDKeys()
+  await admin.from('pray_secret').upsert([
+    { name: 'VAPID_PUBLIC_KEY', value: k.publicKey },
+    { name: 'VAPID_PRIVATE_KEY', value: k.privateKey },
+  ], { onConflict: 'name', ignoreDuplicates: true })
+  VAPID.publicKey = ''; VAPID.privateKey = ''
+  await readVapid()
 }
 
 // 열쇠 코드 → 해시 (대문자, 영문·숫자만 남기고 'pray:'를 앞에 붙여 SHA-256)

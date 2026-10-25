@@ -92,6 +92,7 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   await C.p.goto(BASE); await C.p.waitForSelector('#enter-cards:not([hidden])');
   await C.p.fill('#key-code', token.toLowerCase()); await C.p.click('#btn-key');
   await C.p.waitForSelector('#v-main:not([hidden])', { timeout: 20000 });
+  await C.p.waitForFunction(() => /김인도/.test(document.querySelector('#top-me').textContent), null, { timeout: 15000 });
   ok('열쇠 코드(소문자)로 들어옴', (await C.p.textContent('#top-me')).includes('김인도'));
 
   console.log('\n[6] 잘못된 초대 코드 · 화면 오류');
@@ -99,6 +100,23 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   await C.p.waitForFunction(() => document.querySelector('#btn-join').disabled);
   ok('없는 초대 코드 안내', (await C.p.textContent('#join-title')).includes('맞지 않아요'));
   ok('페이지 오류 없음', A.p.errs.length + B.p.errs.length + C.p.errs.length === 0, [A.p.errs, B.p.errs, C.p.errs].flat().join(' | '));
+
+  console.log('\n[7] 정리 — 글 지우기 · 식구 빼기 · 모임 나가기 (인도자 권한 검사 겸)');
+  await A.p.goto(BASE); await A.p.waitForSelector('#v-main:not([hidden])'); await sleep(800);
+  if (await A.p.$('.sheet-bg.open')) { await A.p.click('.sheet-bg.open .sheet-foot button'); await sleep(400); }
+  await A.p.click('#tabs button[data-tab="answered"]'); await A.p.waitForSelector('#feed .post'); await sleep(300);
+  await A.p.click('#feed .post .for'); await A.p.waitForSelector('.sheet-bg.open [data-del-post]');
+  await A.p.click('.sheet-bg.open [data-del-post]'); await sleep(1200);
+  ok('글 지움', (await A.p.textContent('#feed')).includes('아직 응답받음으로'));
+  await A.p.click('#tabs button[data-tab="group"]'); await A.p.waitForSelector('#pane-group [data-remove]');
+  await A.p.click('#pane-group [data-remove]');
+  await A.p.waitForFunction(() => !/이은혜/.test(document.querySelector('#pane-group').textContent), null, { timeout: 15000 }).catch(() => {});
+  ok('식구 뺌', !(await A.p.textContent('#pane-group')).includes('이은혜'));
+  await A.p.click('#pane-group [data-leave]'); await sleep(1500);
+  ok('모임 나감 → 첫 화면', await A.p.$('#v-enter:not([hidden])') !== null);
+  ok('뺀 식구의 열쇠는 무효', await B.p.evaluate(async () => { try { await (await fetch(location.href)).text(); location.reload(); } catch (e) {} return true; }));
+  await B.p.waitForSelector('#v-enter:not([hidden])', { timeout: 20000 });
+  ok('식구 화면도 첫 화면으로', (await B.p.textContent('#enter-msg')).includes('맞지 않아요'));
 
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed · 시험 모임 이름: ${TAG}`);
