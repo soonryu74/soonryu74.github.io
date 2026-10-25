@@ -705,6 +705,18 @@ const db = p => p.evaluate(() => window.__DB());
     ok('기간 밖이면 일기 없음', (await p.textContent('#gather-list')).includes('이 기간에 올라온 일기가 없습니다'));
     await p.selectOption('#g-range', 'week'); await p.waitForTimeout(600);
     ok('다시 [한 주] → 지난주·다음주 단추', await p.isVisible('#g-prev') && !(await p.isVisible('#g-from')));
+    ok('함께 기도해요: 비어 있으면 인쇄에서 빠짐', await p.$eval('#shared-card', e => e.classList.contains('noprint')));
+    await p.click('#sp-add'); await p.waitForTimeout(400);
+    await p.selectOption('#sp-kind', 'missionary'); await p.fill('#sp-who', '캄보디아 김선교사님 가정'); await p.fill('#sp-text', '현지 교회 개척이 잘 되도록');
+    await p.click('.sheet-foot button:has-text("저장")'); await p.waitForTimeout(500);
+    ok('함께 기도해요: 넣으면 맨 위에 보이고 교회 설정에 저장', (await p.textContent('#sp-list')).includes('김선교사님') && (await p.textContent('#sp-list')).includes('선교사님') &&
+      (await db(p)).church_church.find(x => x.id === 'cb').features.shared_prayers.length === 1 && !(await p.$eval('#shared-card', e => e.classList.contains('noprint'))));
+    await p.click('[data-sp-edit="0"]'); await p.waitForTimeout(400);
+    ok('고치기 → 내용이 들어 있음', (await p.inputValue('#sp-text')) === '현지 교회 개척이 잘 되도록');
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
+    p.once('dialog', d => d.accept());
+    await p.click('[data-sp-del="0"]'); await p.waitForTimeout(500);
+    ok('지우기', (await db(p)).church_church.find(x => x.id === 'cb').features.shared_prayers.length === 0 && (await p.textContent('#sp-list')).includes('아직 없습니다'));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
@@ -774,6 +786,12 @@ const db = p => p.evaluate(() => window.__DB());
     ok('[닫기]는 이번에만: 다시 들어오면 공지가 또 뜸', await p.isVisible('.sheet-bg.open'));
     await p.click('.sheet-foot button:has-text("오늘 하루 보지 않기")'); await p.waitForTimeout(400);
     ok('목자 인사: 이름+님', /^김목자님,/.test(await p.textContent('.hero-title')));
+    await p.evaluate(() => { const D = window.__DB(); D.church_church.find(x => x.id === 'cb').features.shared_prayers = [{ id: 'sp1', kind: 'missionary', who: '캄보디아 김선교사님', text: '개척 교회가 든든히 서도록' }]; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(900);
+    ok('목자 화면: 함께 기도해요 (접힌 칸 + 첫 화면 단추)', await p.isVisible('#sp-card') && (await p.textContent('#sp-card summary')).includes('1가지') && (await p.textContent('.hero-chips')).includes('함께 기도해요'));
+    await p.click('.hero-chip:has-text("함께 기도해요")'); await p.waitForTimeout(400);
+    ok('단추를 누르면 함께 기도할 제목 창', (await p.textContent('.sp-view')).includes('김선교사님'));
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
     { const nc2 = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'notice'); }
     await p.evaluate(() => { const D = window.__DB(); D.church_church.find(x => x.id === 'cb').features.notice.until = '2026-10-01'; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
     await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(800);

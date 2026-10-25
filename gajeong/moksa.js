@@ -854,7 +854,61 @@
     return null;
   }
 
+  /* ── 함께 기도해요 (선교사님 · 협력 교회 · 지역·협회) — 교회 features.shared_prayers ── */
+  var SP_KINDS = [['missionary', '선교사님'], ['church', '협력 교회'], ['region', '지역·협회'], ['etc', '기타']];
+  function spKind(k) { var x = SP_KINDS.filter(function (o) { return o[0] === k; })[0]; return T(x ? x[1] : '기타'); }
+  function sharedList() { var l = ((C.getChurch() || {}).features || {}).shared_prayers; return Array.isArray(l) ? l : []; }
+  async function saveShared(list) {
+    var c = C.getChurch() || {};
+    var cur = (await sb.from('church_church').select('features').eq('id', c.id).maybeSingle()).data;   // 그사이 바뀐 다른 설정(공지 등)을 지우지 않게 새로 읽어서 합친다
+    var f = Object.assign({}, (cur && cur.features) || c.features || {}, { shared_prayers: list });
+    var r = await sb.from('church_church').update({ features: f }).eq('id', c.id);
+    if (r.error) throw new Error(r.error.message);
+    c.features = f;
+  }
+  function renderShared() {
+    var list = sharedList(), box = $('#sp-list'); if (!box) return;
+    $('#shared-card').classList.toggle('noprint', !list.length);   // 비어 있으면 인쇄에서 뺀다
+    box.innerHTML = list.length
+      ? '<ul class="pr-list sp-list">' + list.map(function (x, i) {
+          return '<li><span class="pr-name">' + esc(spKind(x.kind)) + (x.who ? ' · ' + esc(x.who) : '') + '</span>' +
+            '<div class="pr-text">' + C.proseHtml(x.text || '') + '</div>' +
+            '<span class="sp-acts noprint"><button type="button" class="small ghost" data-sp-edit="' + i + '">' + esc(T('고치기')) + '</button>' +
+            '<button type="button" class="small ghost" data-sp-del="' + i + '">' + esc(T('지우기')) + '</button></span></li>';
+        }).join('') + '</ul>'
+      : '<p class="quiet noprint">' + esc(T('아직 없습니다. [＋ 기도제목 넣기]로 선교사님이나 협력 교회 기도제목을 넣어 보세요.')) + '</p>';
+    if (box.dataset.bound) return;
+    box.dataset.bound = '1';
+    $('#sp-add').addEventListener('click', function () { editShared(-1); });
+    box.addEventListener('click', async function (e) {
+      var ed = e.target.closest('[data-sp-edit]'), del = e.target.closest('[data-sp-del]');
+      if (ed) editShared(+ed.dataset.spEdit);
+      if (del) {
+        var l = sharedList().slice(), x = l[+del.dataset.spDel]; if (!x) return;
+        if (!confirm(T('이 기도제목을 지울까요?'))) return;
+        l.splice(+del.dataset.spDel, 1);
+        try { await saveShared(l); renderShared(); } catch (err) { alert(err.message); }
+      }
+    });
+  }
+  function editShared(i) {
+    var l = sharedList(), x = i >= 0 ? l[i] : null;
+    C.sheet({ kicker: T('함께 기도해요'), title: x ? T('기도제목 고치기') : T('기도제목 넣기'), cls: 'sp-sheet',
+      html: '<label>' + esc(T('구분')) + '<select id="sp-kind">' + SP_KINDS.map(function (o) {
+          return '<option value="' + o[0] + '"' + ((x ? x.kind : 'missionary') === o[0] ? ' selected' : '') + '>' + esc(T(o[1])) + '</option>'; }).join('') + '</select></label>' +
+        '<label>' + esc(T('누구를 위해')) + '<input type="text" id="sp-who" maxlength="60" placeholder="' + esc(T('예: 캄보디아 김OO 선교사님 가정')) + '" value="' + esc(x ? x.who || '' : '') + '"></label>' +
+        '<label>' + esc(T('기도제목')) + '<textarea id="sp-text" maxlength="1000">' + esc(x ? x.text || '' : '') + '</textarea></label><div class="msg" id="msg-sp"></div>',
+      foot: [{ label: T('취소') }, { label: T('저장'), fn: async function () {
+        var who = $('#sp-who').value.trim(), text = $('#sp-text').value.trim();
+        if (!text) { C.say($('#msg-sp'), T('기도제목을 적어 주세요.'), 'err'); return true; }
+        var item = { id: x ? x.id : 'sp' + Date.now().toString(36), kind: $('#sp-kind').value, who: who, text: text, at: new Date().toISOString() };
+        var nl = sharedList().slice(); if (x) nl[i] = item; else nl.push(item);
+        try { await saveShared(nl.slice(0, 50)); renderShared(); } catch (err) { C.say($('#msg-sp'), err.message, 'err'); return true; }
+      } }] });
+  }
+
   async function loadGather() {
+    renderShared();
     var range = $('#g-range').value, story = $('#g-story').checked;   // 기본은 기도제목만 (주일 중보기도용), 켜면 목장 이야기를 맨 위에
     var one = range === 'week';
     ['#g-prev', '#g-label', '#g-next'].forEach(function (s) { $(s).hidden = !one; });
