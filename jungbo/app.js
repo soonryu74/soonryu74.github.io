@@ -46,19 +46,58 @@
     return VERSES[n % VERSES.length];
   }
   /* ── 하늘빛 (시간에 따라: 새벽·낮·노을·밤) — 메뉴에서 밤 모드로 고정할 수 있다 ── */
-  var LS_SKY = 'jungbo-sky';
-  // 기본은 촛불 켜진 어두운 방. 글이 잘 안 보이는 분은 메뉴에서 '밝은 모드'로
+  var LS_SKY = 'jungbo-sky', LS_SCENE = 'jungbo-scene';
+  var SCENES = [['candles', '촛불 탁자', '어두운 탁자 위 티라이트'], ['grotto', '기도굴', '바위 틈 벽감의 촛불'], ['temple', '성전', '스테인드글라스와 제단 초'], ['day', '밝은 모드', '글이 잘 보이는 미색 종이']];
+  function sceneNow() { var m = '', sc = ''; try { m = localStorage.getItem(LS_SKY) || ''; sc = localStorage.getItem(LS_SCENE) || ''; } catch (e) {} return m === 'day' ? 'day' : (sc === 'grotto' || sc === 'temple' ? sc : 'candles'); }
   function applySky() {
-    var m = ''; try { m = localStorage.getItem(LS_SKY) || ''; } catch (e) {}
-    var s = m === 'day' ? 'day' : 'night';
-    document.documentElement.setAttribute('data-sky', s);
-    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', s === 'night' ? '#07100d' : '#1f4d3b');
-    var mb = $('#menu-sky'); if (mb) mb.textContent = s === 'day' ? '촛불 모드로' : '밝은 모드로';
+    var sc = sceneNow(), dark = sc !== 'day';
+    document.documentElement.setAttribute('data-sky', dark ? 'night' : 'day');
+    document.documentElement.setAttribute('data-scene', dark ? sc : (localStorage.getItem(LS_SCENE) || 'candles'));
+    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', dark ? (sc === 'temple' ? '#070a14' : '#07100d') : '#1f4d3b');
   }
-  function toggleSky() {
-    var m = ''; try { m = localStorage.getItem(LS_SKY) || ''; } catch (e) {}
-    try { if (m === 'day') localStorage.removeItem(LS_SKY); else localStorage.setItem(LS_SKY, 'day'); } catch (e) {}
+  function setScene(sc) {
+    try { if (sc === 'day') localStorage.setItem(LS_SKY, 'day'); else { localStorage.removeItem(LS_SKY); localStorage.setItem(LS_SCENE, sc); } } catch (e) {}
     applySky();
+  }
+  function sceneSheet() {
+    var cur = sceneNow();
+    var s = sheet({ html: '<h2 class="title">배경 · 분위기</h2><p class="desc">기도할 때 머무를 자리를 고르세요. 이 휴대폰에서 기억합니다.</p><div class="scenes">' +
+      SCENES.map(function (x) { return '<button type="button" class="scene-tile' + (cur === x[0] ? ' on' : '') + '" data-scene="' + x[0] + '"><div class="pv ' + x[0] + '"></div><b>' + x[1] + '<br><span style="font-weight:400;font-size:12.5px;color:var(--muted)">' + x[2] + '</span></b></button>'; }).join('') + '</div>',
+      foot: '<button type="button" class="ghost" data-c>닫기</button>' });
+    s.addEventListener('click', function (e) {
+      if (e.target.closest('[data-c]')) return s.close();
+      var b = e.target.closest('[data-scene]'); if (!b) return;
+      setScene(b.dataset.scene); $$('.scene-tile', s).forEach(function (x) { x.classList.toggle('on', x === b); });
+      if (typeof renderHero === 'function' && me) renderHero();
+    });
+  }
+  function toggleSky() { sceneSheet(); }
+
+  /* ── 주기도문방: 한지 위 붓글씨, 세로로 위에서 아래, 오른쪽에서 왼쪽으로 읽는다 ── */
+  var LORDS = {
+    old: { name: '전통', text: '하늘에 계신 우리 아버지여\n이름이 거룩히 여김을 받으시오며\n나라가 임하시오며\n뜻이 하늘에서 이루어진 것 같이\n땅에서도 이루어지이다\n오늘 우리에게 일용할 양식을 주시옵고\n우리가 우리에게 죄 지은 자를 사하여 준 것 같이\n우리 죄를 사하여 주시옵고\n우리를 시험에 들게 하지 마시옵고\n다만 악에서 구하시옵소서\n나라와 권세와 영광이\n아버지께 영원히 있사옵나이다\n아멘', ref: '마태복음 6:9-13' },
+    neo: { name: '새번역', text: '하늘에 계신 우리 아버지,\n아버지의 이름을 거룩하게 하시며\n아버지의 나라가 오게 하시며,\n아버지의 뜻이 하늘에서와 같이\n땅에서도 이루어지게 하소서.\n오늘 우리에게 일용할 양식을 주시고,\n우리가 우리에게 잘못한 사람을 용서하여 준 것같이\n우리 죄를 용서하여 주시고,\n우리를 시험에 빠지지 않게 하시고\n악에서 구하소서.\n나라와 권능과 영광이\n영원히 아버지의 것입니다.\n아멘.', ref: '새번역 주기도문 (2004)' }
+  };
+  var LS_LP = 'jungbo-lp';
+  function lordsPrayerSheet() {
+    var ver = 'old'; try { ver = localStorage.getItem(LS_LP) === 'neo' ? 'neo' : 'old'; } catch (e) {}
+    var bg = document.createElement('div'); bg.className = 'lp-bg';
+    function render() {
+      var L = LORDS[ver];
+      bg.innerHTML = '<div class="lp" role="dialog" aria-modal="true" aria-label="주기도문"><div class="lp-scroll"><div class="lp-text"><span class="lp-title">주기도문</span>' + esc(L.text) + '<span class="lp-ref">' + esc(L.ref) + '</span></div></div>' +
+        '<div class="lp-seal">아멘</div>' +
+        '<div class="lp-foot"><span class="ver">오른쪽부터 아래로 읽으세요</span><button type="button" class="small" data-ver>' + (ver === 'old' ? '새번역으로' : '전통으로') + '</button><button type="button" class="primary" data-amen>아멘 🙏</button><button type="button" class="ghost" data-c>닫기</button></div></div>';
+      var sc = $('.lp-scroll', bg); sc.scrollLeft = sc.scrollWidth;   // 오른쪽 끝(첫 줄)부터
+    }
+    render();
+    document.body.appendChild(bg); document.body.style.overflow = 'hidden';
+    requestAnimationFrame(function () { requestAnimationFrame(function () { bg.classList.add('open'); }); });
+    function close() { bg.classList.remove('open'); document.body.style.overflow = ''; setTimeout(function () { bg.remove(); }, 360); }
+    bg.addEventListener('click', function (e) {
+      if (e.target === bg || e.target.closest('[data-c]')) return close();
+      if (e.target.closest('[data-ver]')) { ver = ver === 'old' ? 'neo' : 'old'; try { localStorage.setItem(LS_LP, ver); } catch (e2) {} render(); return; }
+      if (e.target.closest('[data-amen]')) { close(); toast('아멘. 주님이 가르치신 기도로 함께 기도했어요 🙏'); try { if (navigator.vibrate) navigator.vibrate(30); } catch (e3) {} }
+    });
   }
   applySky();
   /* 촛불 그림 */
@@ -298,6 +337,7 @@
     renderRoomTabs(); loadFeed();
     window.scrollTo({ top: 0 });
   });
+  document.addEventListener('click', function (e) { if (e.target.closest('#chip-lord')) lordsPrayerSheet(); });
   function renderTop() {
     $('#top-group').textContent = group.name;
     $('#top-me').textContent = me.name + (me.role === 'leader' ? ' · 인도자' : '') + ' · ' + group.member_count + '명';
@@ -318,7 +358,8 @@
       (urgent ? '<span class="chip urgent">긴급 <b>' + urgent + '</b></span>' : '') +
       '<span class="chip">기도 중 <b>' + open + '</b></span>' +
       '<span class="chip lights">켜진 불빛 <b>' + lights + '</b></span>' +
-      '<span class="chip">함께 <b>' + group.member_count + '</b>명</span>';
+      '<span class="chip">함께 <b>' + group.member_count + '</b>명</span>' +
+      '<button type="button" class="chip" id="chip-lord" style="cursor:pointer">✝ 주기도문</button>';
     $('#n-open').textContent = open ? open : ''; $('#n-urgent').textContent = urgent ? urgent : '';
   }
 
@@ -861,7 +902,8 @@
     if (b.dataset.act === 'refresh') { loadFeed(); toast('새로 고쳤어요.'); }
     if (b.dataset.act === 'group') $('#tabs button[data-tab="group"]').click();
     if (b.dataset.act === 'print') printSheet();
-    if (b.dataset.act === 'sky') { toggleSky(); renderHero(); }
+    if (b.dataset.act === 'scene') sceneSheet();
+    if (b.dataset.act === 'lord') lordsPrayerSheet();
     if (b.dataset.act === 'switch') switchSheet();
   });
   function switchSheet() {
