@@ -25,6 +25,11 @@
 
   /* 알림을 눌러 들어오면(moksa.html#j=일기) 그 주로 가서 그 목장을 펼친다 */
   async function openFromLink() {
+    if (/^#gather\b/.test(location.hash)) {   // 토요일 밤 '기도제목이 모였습니다' 알림 → 기도제목 모아보기
+      history.replaceState(null, '', location.pathname);
+      var gb = $('.tabs button[data-pane="gather"]'); if (gb) setTimeout(function () { gb.click(); }, 0);
+      return false;
+    }
     var m = /[#&]j=([0-9a-f-]{36})/.exec(location.hash);
     if (!m) return false;
     var r = await sb.from('church_journal').select('id, mokjang_id, week_start').eq('id', m[1]).maybeSingle();
@@ -341,13 +346,13 @@
     var ps = [];
     for (var j0 = 0; j0 < js.length; j0 += 150) {
       var ids = js.slice(j0, j0 + 150).map(function (j) { return j.id; });
-      ps = ps.concat((await sb.from('church_prayer').select('journal_id, attended').in('journal_id', ids)).data || []);
+      ps = ps.concat((await sb.from('church_prayer').select('journal_id, mokwon_id, attended').in('journal_id', ids)).data || []);
     }
     var att = {};
     ps.forEach(function (p) { if (p.attended) att[p.journal_id] = (att[p.journal_id] || 0) + 1; });
     var live = mokjangs.filter(function (x) { return x.active; }), liveIds = {};
     live.forEach(function (x) { liveIds[x.id] = 1; });
-    var mw = (await sb.from('church_mokwon').select('mokjang_id, active')).data || [];
+    var mw = (await sb.from('church_mokwon').select('*')).data || [];
     var members = {}, memberTotal = 0;
     mw.forEach(function (w) { if (w.active !== false && liveIds[w.mokjang_id]) { members[w.mokjang_id] = (members[w.mokjang_id] || 0) + 1; memberTotal++; } });
     var m = {};
@@ -365,10 +370,88 @@
       o.avg = ws.length ? round1(ws.reduce(function (t, w) { return t + o.weeks[w]; }, 0) / ws.length) : null;
       o.rate = o.avg == null ? null : pct(o.avg, memberTotal);
     });
-    var ans = (await sb.from('church_prayer').select('id, journal_id, name, content').eq('answered', true).limit(5000)).data || [];
+    var ans = (await sb.from('church_prayer').select('id, journal_id, name, content, answer_note').eq('answered', true).limit(5000)).data || [];
     stats = { keys: keys, m: m, live: live, members: members, memberTotal: memberTotal, startKey: startKey, answered: ans };
+    stats.care = careData(live, js, ps, att, mw);
+    renderCareOverview();
     if (!statMonth || !m[statMonth]) statMonth = keys[keys.length - 1];
     renderStats();
+  }
+
+  /* ── 목양 한눈에: 돌보면 좋을 분 · 생일·기념일 · 영혼 구원 · 분가 · 삶공부 ── */
+  var SPLIT_AT = 12;   // 최근 8주 평균 이만큼 모이면 분가를 준비할 때
+  function careData(live, js, ps, att, mw) {
+    var liveIds = {}; live.forEach(function (x) { liveIds[x.id] = x; });
+    var members = mw.filter(function (w) { return w.active !== false && liveIds[w.mokjang_id]; });
+    var byMj = {};
+    js.forEach(function (j) { (byMj[j.mokjang_id] = byMj[j.mokjang_id] || []).push(j); });
+    var away = [], split = [];
+    live.forEach(function (x) {
+      var list = (byMj[x.id] || []).slice().sort(function (a, b) { return a.week_start < b.week_start ? 1 : -1; });
+      var st = C.absentStreaks(list.slice(0, 6), ps);
+      members.forEach(function (w) { if (w.mokjang_id === x.id && st[w.id] >= C.ABSENT_WEEKS) away.push({ m: w, mj: x, n: st[w.id] }); });
+      var last = list.slice(0, 8), sum = 0, cnt = 0;
+      last.forEach(function (j) { var v = j.present_count != null ? j.present_count : att[j.id]; if (v != null) { sum += v; cnt++; } });
+      if (cnt >= 4 && sum / cnt >= SPLIT_AT) split.push({ mj: x, avg: round1(sum / cnt) });
+    });
+    var dates = C.has('member_dates'), y = C.today().slice(0, 4);
+    return {
+      away: away.sort(function (a, b) { return b.n - a.n; }), split: split,
+      ev: dates ? C.careThisWeek(members, C.mondayOf()) : [],
+      vip: members.filter(function (w) { return /vip/i.test(w.tag || ''); }),
+      reg: dates ? members.filter(function (w) { return (w.registered_on || '').slice(0, 4) === y; }) : [],
+      bap: dates ? members.filter(function (w) { return (w.baptized_on || '').slice(0, 4) === y; }) : [],
+      members: members, dates: dates, year: y
+    };
+  }
+  function mjName(w) { var x = mokjangs.filter(function (m) { return m.id === w.mokjang_id; })[0]; return x ? x.name : ''; }
+  function renderCareOverview() {
+    var c = stats.care, box = $('#care-rows'); if (!box || !c) return;
+    var row = function (id, label, value, sub) {
+      return '<button type="button" class="care-row" data-care="' + id + '"><span class="care-l">' + esc(label) + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span><b>' + esc(value) + '</b><i>›</i></button>';
+    };
+    var lifeDone = c.members.filter(function (w) { return w.life_end; }).length;
+    box.innerHTML =
+      row('away', T('돌보면 좋을 분'), T('{0}명', c.away.length), T('{0}주 이상 연달아 못 오신 목원', C.ABSENT_WEEKS)) +
+      (c.dates ? row('ev', T('이번 주 생일·기념일'), T('{0}명', c.ev.length), T('생일·결혼기념일·침례·등록 기념일')) : '') +
+      row('soul', T('영혼 구원'), c.dates ? T('VIP {0} · 등록 {1} · 침례 {2}', c.vip.length, c.reg.length, c.bap.length) : T('VIP {0}명', c.vip.length), c.dates ? T('{0}년 교회 등록·침례', c.year) : T('VIP 표시를 한 목원')) +
+      row('split', T('분가를 준비할 목장'), T('{0}곳', c.split.length), T('최근 8주 평균 {0}명 이상 모이는 목장', SPLIT_AT)) +
+      (c.dates ? row('course', T('삶공부'), T('생명의 삶 {0}명', lifeDone), T('누가 어떤 삶공부를 마쳤는지')) : '');
+  }
+  function careSheet(kind) {
+    var c = stats.care; if (!c) return;
+    var li = function (name, rest) { return '<li><b>' + esc(name) + '</b> <span class="quiet">' + esc(rest) + '</span></li>'; };
+    var ul = function (items, empty) { return items.length ? '<ul class="care-list">' + items.join('') + '</ul>' : '<p class="desc">' + esc(empty) + '</p>'; };
+    var title = '', html = '';
+    if (kind === 'away') {
+      title = T('돌보면 좋을 분');
+      html = '<p class="desc">' + esc(T('제출된 일기에서 {0}주 이상 연달아 [참석]이 빠진 목원입니다. 목자님께 안부를 여쭤 보시거나 심방을 권해 주세요.', C.ABSENT_WEEKS)) + '</p>' +
+        ul(c.away.map(function (x) { return li(x.m.name, x.mj.name + ' · ' + T('{0}주째', x.n)); }), T('지금은 없습니다. 감사합니다!'));
+    } else if (kind === 'ev') {
+      title = T('이번 주 생일·기념일');
+      html = ul(c.ev.map(function (x) { return li(x.m.name, mjName(x.m) + ' · ' + x.label + ' ' + C.mdText(x.md)); }), T('이번 주에는 없습니다. [성도 명단]의 [등록 정보]에서 생일·결혼기념일을 넣을 수 있습니다.'));
+    } else if (kind === 'soul') {
+      title = T('영혼 구원');
+      html = '<div class="section-title">' + esc(T('지금 VIP {0}명', c.vip.length)) + '</div>' + ul(c.vip.map(function (w) { return li(w.name, mjName(w)); }), T('VIP로 표시된 목원이 없습니다.')) +
+        (c.dates ? '<div class="section-title">' + esc(T('{0}년 교회 등록 {1}명', c.year, c.reg.length)) + '</div>' + ul(c.reg.map(function (w) { return li(w.name, mjName(w) + ' · ' + C.dayText(w.registered_on)); }), T('없습니다.')) +
+          '<div class="section-title">' + esc(T('{0}년 침례 {1}명', c.year, c.bap.length)) + '</div>' + ul(c.bap.map(function (w) { return li(w.name, mjName(w) + ' · ' + C.dayText(w.baptized_on)); }), T('없습니다.')) : '');
+    } else if (kind === 'split') {
+      title = T('분가를 준비할 목장');
+      html = '<p class="desc">' + esc(T('최근 제출된 일기 8주(4주 이상 있을 때) 평균 {0}명 이상 모이는 목장입니다.', SPLIT_AT)) + '</p>' +
+        ul(c.split.map(function (x) { return li(x.mj.name, (x.mj.mokja_name ? x.mj.mokja_name + ' · ' : '') + T('평균 {0}명', x.avg)); }), T('지금은 없습니다.'));
+    } else if (kind === 'course') {
+      title = T('삶공부');
+      var lifeDone = c.members.filter(function (w) { return w.life_end; }), lifeNow = c.members.filter(function (w) { return w.life_start && !w.life_end; });
+      var notYet = c.members.filter(function (w) { return !w.life_start && !w.life_end && !/vip/i.test(w.tag || ''); });
+      html = '<div class="section-title">' + esc(T('생명의 삶 마침 {0}명', lifeDone.length)) + '</div>' + ul(lifeDone.map(function (w) { return li(w.name, mjName(w)); }), T('없습니다.')) +
+        (lifeNow.length ? '<div class="section-title">' + esc(T('생명의 삶 하는 중 {0}명', lifeNow.length)) + '</div>' + ul(lifeNow.map(function (w) { return li(w.name, mjName(w)); }), '') : '') +
+        C.COURSES.map(function (k) {
+          var who = c.members.filter(function (w) { return (w.courses || {})[k]; });
+          return who.length ? '<div class="section-title">' + esc(T('{0} 마침 {1}명', T(k), who.length)) + '</div>' + ul(who.map(function (w) { return li(w.name, mjName(w)); }), '') : '';
+        }).join('') +
+        '<div class="section-title">' + esc(T('생명의 삶을 권해 드릴 분 {0}명', notYet.length)) + '</div>' + ul(notYet.map(function (w) { return li(w.name, mjName(w)); }), T('없습니다.'));
+    }
+    C.sheet({ kicker: T('목양 한눈에'), title: title, cls: 'care-sheet', html: html });
   }
 
   function renderStats() {
@@ -461,11 +544,13 @@
     var box = $('#ans-list'); if (!box) return;
     box.innerHTML = '<ul class="pr-list ans-list">' + rows.map(function (r) {
       return '<li><span class="pr-name">' + esc(r.a.name || '') + '</span><span class="pr-text">' + esc(r.a.content || '') + '</span>' +
+        (r.a.answer_note ? '<p class="ans-note">' + esc(T('응답')) + ' · ' + esc(r.a.answer_note) + '</p>' : '') +
         '<span class="sheet-meta">' + esc([r.mj && r.mj.name, r.wk && C.weekShort(r.wk)].filter(Boolean).join(' · ')) + '</span></li>';
     }).join('') + '</ul>';
   }
 
   function bindStats() {
+    $('#care-rows').addEventListener('click', function (e) { var b = e.target.closest('.care-row'); if (b) careSheet(b.dataset.care); });
     var tip = $('#st-tip');
     $('#st-tiles').addEventListener('click', function (e) {
       if (e.target.closest('#st-unmet')) openUnmet();
@@ -595,6 +680,18 @@
     $('#dl-dow').value = dl ? dl.dow : -1; $('#dl-hour').value = dl ? dl.hour : 20;
     $('#dl-hour').disabled = !dl;
     $('#dl-dow').addEventListener('change', function () { $('#dl-hour').disabled = this.value === '-1'; });
+    $('#dg-on').checked = f.digest !== false;
+    $('#dg-on').addEventListener('change', async function () {
+      var on = this.checked;
+      try {
+        var cur = (await sb.from('church_church').select('features').eq('id', c.id).maybeSingle()).data;
+        var nf = Object.assign({}, (cur && cur.features) || f, { digest: on });
+        var r = await sb.from('church_church').update({ features: nf }).eq('id', c.id);
+        if (r.error) throw new Error(r.error.message);
+        f = nf; c.features = nf;
+        C.say($('#msg-deadline'), on ? T('매주 토요일 밤 9시에 이번 주 기도제목이 모였다고 알려 드립니다.') : T('토요일 밤 기도제목 알림을 껐습니다.'), 'ok');
+      } catch (e) { this.checked = !on; C.say($('#msg-deadline'), e.message, 'err'); }
+    });
     $('#dl-save').addEventListener('click', async function () {
       try {
         var r = await C.notify({ action: 'set_deadline', dow: +$('#dl-dow').value, hour: +$('#dl-hour').value });
@@ -855,7 +952,7 @@
   }
 
   /* ── 함께 기도해요 (선교사님 · 협력 교회 · 지역·협회) — 교회 features.shared_prayers ── */
-  var SP_KINDS = [['missionary', '선교사님'], ['church', '협력 교회'], ['region', '지역·협회'], ['etc', '기타']];
+  var SP_KINDS = [['ours', '우리 교회'], ['missionary', '선교사님'], ['church', '협력 교회'], ['region', '지역·협회'], ['etc', '기타']];
   function spKind(k) { var x = SP_KINDS.filter(function (o) { return o[0] === k; })[0]; return T(x ? x[1] : '기타'); }
   function sharedList() { var l = ((C.getChurch() || {}).features || {}).shared_prayers; return Array.isArray(l) ? l : []; }
   async function saveShared(list) {
@@ -895,7 +992,7 @@
     var l = sharedList(), x = i >= 0 ? l[i] : null;
     C.sheet({ kicker: T('함께 기도해요'), title: x ? T('기도제목 고치기') : T('기도제목 넣기'), cls: 'sp-sheet',
       html: '<label>' + esc(T('구분')) + '<select id="sp-kind">' + SP_KINDS.map(function (o) {
-          return '<option value="' + o[0] + '"' + ((x ? x.kind : 'missionary') === o[0] ? ' selected' : '') + '>' + esc(T(o[1])) + '</option>'; }).join('') + '</select></label>' +
+          return '<option value="' + o[0] + '"' + ((x ? x.kind : 'ours') === o[0] ? ' selected' : '') + '>' + esc(T(o[1])) + '</option>'; }).join('') + '</select></label>' +
         '<label>' + esc(T('누구를 위해')) + '<input type="text" id="sp-who" maxlength="60" placeholder="' + esc(T('예: 캄보디아 김OO 선교사님 가정')) + '" value="' + esc(x ? x.who || '' : '') + '"></label>' +
         '<label>' + esc(T('기도제목')) + '<textarea id="sp-text" maxlength="1000">' + esc(x ? x.text || '' : '') + '</textarea></label><div class="msg" id="msg-sp"></div>',
       foot: [{ label: T('취소') }, { label: T('저장'), fn: async function () {

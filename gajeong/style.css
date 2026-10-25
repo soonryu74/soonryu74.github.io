@@ -747,3 +747,24 @@ html:not([data-season]) .notice-edit .nt-fresh{border-color:var(--line-2); backg
 .sp-card > summary::after{content:'›'; margin-left:auto; transform:rotate(90deg); transition:transform .2s; color:var(--muted)}
 .sp-card[open] > summary::after{transform:rotate(-90deg)}
 .sp-card[open] > summary{margin-bottom:8px}
+/* 목양 한눈에 · 이번 주 챙길 분 · 응답 간증 · 삶공부 */
+.care-rows{display:flex; flex-direction:column; gap:0; margin-top:6px; border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden}
+.care-row{all:unset; box-sizing:border-box; display:flex; align-items:center; gap:10px; padding:14px 14px; cursor:pointer; border-top:1px solid var(--line); background:var(--sheet)}
+.care-row:first-child{border-top:0}
+.care-row:hover, .care-row:focus-visible{background:var(--paper)}
+.care-row .care-l{flex:1; min-width:0; font-weight:700}
+.care-row .care-l small{display:block; font-weight:400; color:var(--muted); font-size:13px; margin-top:2px}
+.care-row b{font-size:17px; color:var(--brand); white-space:nowrap}
+.care-row i{font-style:normal; color:var(--muted)}
+.care-list{list-style:none; margin:0 0 12px; padding:0}
+.care-list li{padding:9px 0; border-bottom:1px solid rgba(127,127,127,.18)}
+.care-card h2{margin-bottom:4px}
+.care-note{margin:4px 0 6px; font-size:13.5px; color:#b3262f; font-weight:600}
+.badge.warn{background:#fbe7e8; color:#b3262f; border-color:#f3c9cc}
+.f-note{margin-top:6px; font-size:15px}
+.ans-note{margin:6px 0 0; font-size:14px; color:var(--brand); font-weight:600}
+.md-pick{display:flex; gap:6px; margin-top:4px}
+.md-pick select{flex:1; min-width:0; margin:0}
+fieldset.courses{border:1px solid var(--line); border-radius:var(--r-sm); padding:8px 12px 10px; margin:0 0 10px; display:flex; flex-wrap:wrap; gap:4px 14px}
+fieldset.courses legend{font-size:14px; padding:0 4px; color:var(--muted)}
+fieldset.courses .check{margin:0; font-size:14px}

@@ -40,6 +40,7 @@
 
     bindTabs(); bindWeek(); bindWrite(); bindMembers(); bindMine(); bindNotify();
     await loadMokwon();
+    await loadCare();
     await pickStartWeek();
     await loadWeek();
     watchNewWeek();
@@ -164,7 +165,7 @@
     if (!mokjang || !rendered) return;
     try {
       var rows = {};
-      collect().forEach(function (p) { rows[p.mokwon_id || ('n:' + p.name)] = { c: p.content, a: p.attended, r: p.answered }; });
+      collect().forEach(function (p) { rows[p.mokwon_id || ('n:' + p.name)] = { c: p.content, a: p.attended, r: p.answered, n: p.answer_note }; });
       localStorage.setItem(draftKey(), JSON.stringify({ at: Date.now(), met_on: $('#met-on').value, present: $('#present').value,
         body: $('#body').value, mprayer: $('#mprayer').value, rows: rows }));
     } catch (e) {}
@@ -181,6 +182,7 @@
       var row = (rendered || [])[+el.dataset.i]; if (!row) return;
       var x = (d.rows || {})[row.mokwon_id || ('n:' + row.name)]; if (!x) return;
       $('.f-con', el).value = x.c || ''; $('.f-att', el).checked = !!x.a; $('.f-ans', el).checked = !!x.r;
+      $('.f-note', el).value = x.n || ''; $('.f-note', el).hidden = !x.r;
       $('.f-con', el).dispatchEvent(new Event('input', { bubbles: true }));
     });
     markDirty();
@@ -233,8 +235,34 @@
     mokwon = r.data || [];
     if (C.has('member_photos')) photoUrl = await C.photoUrls(mokwon);
     renderMemberList();
+    renderCare();
   }
   var photoUrl = {};   // 목원 id → 사진 주소 (성도 사진을 켠 교회만)
+
+  // 최근 제출 일기 6주로 목원마다 연달아 빠진 주 수를 센다
+  var streak = {};
+  async function loadCare() {
+    var js = (await sb.from('church_journal').select('id, week_start').eq('mokjang_id', mokjang.id).eq('status', 'submitted').order('week_start', { ascending: false }).limit(6)).data || [];
+    var ps = js.length ? (await sb.from('church_prayer').select('journal_id, mokwon_id, attended').in('journal_id', js.map(function (j) { return j.id; }))).data || [] : [];
+    streak = C.absentStreaks(js, ps);
+    renderMemberList(); renderCare();
+  }
+  // [목원 명단] 맨 위: 이번 주 생일·기념일 + 연달아 못 오신 분
+  function renderCare() {
+    var box = $('#care-card'); if (!box) return;
+    var ev = C.has('member_dates') ? C.careThisWeek(mokwon, C.mondayOf()) : [];
+    var away = mokwon.filter(function (m) { return m.active && streak[m.id] >= C.ABSENT_WEEKS; });
+    box.hidden = !ev.length && !away.length;
+    box.innerHTML = '<h2>' + esc(T('이번 주 챙길 분')) + '</h2>' +
+      (ev.length ? '<div class="section-title">' + esc(T('생일·기념일')) + '</div><ul class="care-list">' + ev.map(function (x) {
+        return '<li><b>' + esc(x.m.name) + '</b> ' + esc(x.label) + ' <span class="quiet">' + esc(C.mdText(x.md)) + '</span></li>'; }).join('') + '</ul>' : '') +
+      (away.length ? '<div class="section-title">' + esc(T('연달아 못 오신 분')) + '</div><ul class="care-list">' + away.map(function (m) {
+        return '<li><b>' + esc(m.name) + '</b> ' + esc(T('{0}주째', streak[m.id])) + ' <span class="quiet">' + esc(T('안부 전화나 심방을 권해요')) + '</span></li>'; }).join('') + '</ul>' : '');
+    mokjaChipsCare(ev.length + away.length);
+  }
+  var careCount = 0;
+  function mokjaChipsCare(n) { careCount = n; if (journalLoaded) mokjaChips(lastSubmitted); }
+  var journalLoaded = false, lastSubmitted = false;
 
   function renderMemberList() {
     var box = $('#member-list');
@@ -246,7 +274,8 @@
         (photos ? C.avatar(m, photoUrl[m.id]) : '') +
         '<div class="grow"><div class="t">' + esc(m.name) +
         (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
-        (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
+        (m.active ? '' : T(' <span class="badge">쉼</span>')) +
+        (m.active && streak[m.id] >= C.ABSENT_WEEKS ? ' <span class="badge warn">' + esc(T('{0}주째 못 오심', streak[m.id])) + '</span>' : '') + '</div>' +
         (dates ? '<div class="s">' + esc(C.memberDatesLine(m)) + '</div>' : '') + '</div>' +
         T('<button class="small act-edit">이름 고치기</button>') +
         (dates ? T('<button class="small act-dates">등록 정보</button>') : '') +
@@ -359,16 +388,17 @@
 
   // 첫 화면 알약 단추 · 목사님 공지
   function mokjaChips(submitted) {
+    journalLoaded = true; lastSubmitted = submitted;
     var n = ((me.church || {}).features || {}).notice; if (!C.noticeLive(n)) n = null;
     C.heroChips([
       { label: week === C.mondayOf() ? T('이번 주 일기') : T('이 주 일기'), value: submitted ? T('제출함') : (journal ? T('쓰는 중') : T('아직')), go: 'write', dot: !submitted },
       { label: T('목원'), value: T('{0}명', mokwon.filter(function (w) { return w.active !== false; }).length), go: 'members' },
       { label: T('지난 일기'), go: 'past' }
-    ].concat(n ? [{ label: T('목사님 공지'), fn: function () { C.showNotice(n, true); }, dot: true }] : [])
+    ].concat(careCount ? [{ label: T('챙길 분'), value: T('{0}명', careCount), go: 'members', dot: true }] : []).concat(n ? [{ label: T('목사님 공지'), fn: function () { C.showNotice(n, true); }, dot: true }] : [])
      .concat(sharedPrayers().length ? [{ label: T('함께 기도해요'), value: sharedPrayers().length, fn: openShared }] : []));
   }
   // 목사님이 넣으신 '함께 기도해요' (선교사님 · 협력 교회 · 지역·협회) — 일기 쓰는 화면 위에 접어서, 첫 화면 단추로도
-  var SP_KIND = { missionary: '선교사님', church: '협력 교회', region: '지역·협회', etc: '기타' };
+  var SP_KIND = { ours: '우리 교회', missionary: '선교사님', church: '협력 교회', region: '지역·협회', etc: '기타' };
   function sharedPrayers() { var l = ((me.church || {}).features || {}).shared_prayers; return Array.isArray(l) ? l : []; }
   function sharedHtml(list) {
     return '<ul class="pr-list sp-list">' + list.map(function (x) {
@@ -445,11 +475,11 @@
   function rows() {
     var out = [], seen = {};
     prayers.forEach(function (p) {
-      out.push({ id: p.id, mokwon_id: p.mokwon_id, name: p.name, attended: p.attended, content: p.content, answered: p.answered });
+      out.push({ id: p.id, mokwon_id: p.mokwon_id, name: p.name, attended: p.attended, content: p.content, answered: p.answered, answer_note: p.answer_note || '' });
       if (p.mokwon_id) seen[p.mokwon_id] = true;
     });
     mokwon.filter(function (m) { return m.active && !seen[m.id]; }).forEach(function (m) {
-      out.push({ id: null, mokwon_id: m.id, name: m.name, attended: true, content: '', answered: false });
+      out.push({ id: null, mokwon_id: m.id, name: m.name, attended: true, content: '', answered: false, answer_note: '' });
     });
     return out;
   }
@@ -462,6 +492,7 @@
       rendered[i].attended = $('.f-att', el).checked;
       rendered[i].answered = $('.f-ans', el).checked;
       rendered[i].content = $('.f-con', el).value;
+      rendered[i].answer_note = $('.f-note', el).value;
     });
   }
 
@@ -475,6 +506,7 @@
       if (!q) return;
       p.attended = q.attended; p.answered = q.answered;
       if (q.content) p.content = q.content;
+      if (q.answer_note) p.answer_note = q.answer_note;
     });
     rendered = list;
     var box = $('#members-box');
@@ -488,7 +520,9 @@
         '<label class="check"><input type="checkbox" class="f-att"' + (p.attended ? ' checked' : '') + T('> 참석</label>') +
         '<label class="check"><input type="checkbox" class="f-ans"' + (p.answered ? ' checked' : '') + T('> 응답됨</label>') +
         '</div>' +
+        (streak[p.mokwon_id] >= C.ABSENT_WEEKS ? '<p class="care-note">' + esc(T('{0}주째 못 오셨어요 — 안부를 여쭤 보세요', streak[p.mokwon_id])) + '</p>' : '') +
         '<textarea class="f-con" placeholder="' + esc(T('{0} 님의 기도제목', p.name)) + '">' + esc(p.content) + '</textarea>' +
+        '<input type="text" class="f-note" maxlength="300"' + (p.answered ? '' : ' hidden') + ' placeholder="' + esc(T('어떻게 응답되었나요? 한 줄 간증 (안 써도 됩니다)')) + '" value="' + esc(p.answer_note || '') + '">' +
         '</div>';
     }).join('');
     $$('#members-box textarea').forEach(grow);
@@ -534,7 +568,7 @@
     syncFromDom();
     return (rendered || []).map(function (p) {
       return { id: p.id, mokwon_id: p.mokwon_id, name: p.name,
-               attended: p.attended, answered: p.answered, content: (p.content || '').trim() };
+               attended: p.attended, answered: p.answered, content: (p.content || '').trim(), answer_note: (p.answer_note || '').trim() };
     });
   }
 
@@ -546,6 +580,7 @@
     $('#members-box').addEventListener('input', markDirty);
     $('#members-box').addEventListener('change', markDirty);
     $('#members-box').addEventListener('change', function (e) {   // 응답됨에 체크하면 하트가 떨어진다
+      if (e.target.classList.contains('f-ans')) { var nt = $('.f-note', e.target.closest('.member')); if (nt) { nt.hidden = !e.target.checked; if (e.target.checked) setTimeout(function () { nt.focus({ preventScroll: true }); }, 900); } }
       if (e.target.classList.contains('f-ans') && e.target.checked) C.hearts(T('기도 응답, 함께 감사해요'));
     });
     $('#btn-save').addEventListener('click', function () { save('draft'); });
@@ -586,7 +621,7 @@
 
       var adds = [], ups = [];
       list.forEach(function (p, i) {
-        var base = { mokwon_id: p.mokwon_id, name: p.name, attended: p.attended, content: p.content, answered: p.answered, sort_order: i };
+        var base = { mokwon_id: p.mokwon_id, name: p.name, attended: p.attended, content: p.content, answered: p.answered, answer_note: p.answered && p.answer_note ? p.answer_note.trim().slice(0, 300) : null, sort_order: i };
         if (p.id) ups.push(Object.assign({ id: p.id, journal_id: journal.id }, base));
         else adds.push(Object.assign({ journal_id: journal.id }, base));
       });

@@ -731,12 +731,67 @@ window.CHURCH = (function () {
     if (LANG === 'en') return MON[p[1] - 1] + ' ' + p[2] + ', ' + p[0];
     return p[0] + '. ' + p[1] + '. ' + p[2] + '.';
   }
+  // 생명의 삶 다음에 이어지는 삶공부 (생명의 삶은 위 날짜 칸으로 따로 적는다)
+  var COURSES = ['새로운 삶', '경건의 삶', '하나님을 경험하는 삶', '부부의 삶', '말씀의 삶', '확신의 삶'];
+  function coursesOf(m) { var c = (m && m.courses) || {}; return COURSES.filter(function (k) { return c[k]; }); }
+  function mdText(md) {
+    if (!md) return '';
+    var p = md.split('-').map(Number);
+    return LANG === 'en' ? MON[p[0] - 1] + ' ' + p[1] : p[0] + '월 ' + p[1] + '일';
+  }
+  function mdPicker(name, label, v) {
+    var mm = v ? +v.slice(0, 2) : 0, dd = v ? +v.slice(3, 5) : 0, i, h = '';
+    h += '<label>' + esc(t(label)) + '<span class="md-pick"><select name="' + name + '_m" aria-label="' + esc(t('월')) + '"><option value="">' + esc(t('월')) + '</option>';
+    for (i = 1; i <= 12; i++) h += '<option value="' + i + '"' + (i === mm ? ' selected' : '') + '>' + (LANG === 'en' ? MON[i - 1] : i + '월') + '</option>';
+    h += '</select><select name="' + name + '_d" aria-label="' + esc(t('일')) + '"><option value="">' + esc(t('일')) + '</option>';
+    for (i = 1; i <= 31; i++) h += '<option value="' + i + '"' + (i === dd ? ' selected' : '') + '>' + (LANG === 'en' ? i : i + '일') + '</option>';
+    return h + '</select></span></label>';
+  }
+  function readMd(form, name) {
+    var m = +form.elements[name + '_m'].value, d = +form.elements[name + '_d'].value;
+    if (!m && !d) return { v: null };
+    if (!m || !d) return { error: true };
+    return { v: (m < 10 ? '0' : '') + m + '-' + (d < 10 ? '0' : '') + d };
+  }
+  // 이번 주(주일~토요일)에 생일·결혼기념일·침례·교회 등록 기념일이 있는 분 → [{ m, label, md }]
+  function careThisWeek(list, weekStart) {
+    var days = [], i; for (i = 0; i < 7; i++) days.push(addDays(weekStart, i).slice(5));
+    var y = +addDays(weekStart, 6).slice(0, 4), out = [];
+    (list || []).forEach(function (m) {
+      if (m.active === false) return;
+      [['birthday', '생일'], ['anniversary', '결혼기념일']].forEach(function (f) {
+        if (m[f[0]] && days.indexOf(m[f[0]]) >= 0) out.push({ m: m, label: t(f[1]), md: m[f[0]] });
+      });
+      [['baptized_on', '침례'], ['registered_on', '교회 등록']].forEach(function (f) {
+        var v = m[f[0]]; if (!v || days.indexOf(v.slice(5)) < 0) return;
+        var n = y - +v.slice(0, 4); if (n >= 1) out.push({ m: m, label: t('{0} {1}주년', t(f[1]), n), md: v.slice(5) });
+      });
+    });
+    return out.sort(function (a, b) { return days.indexOf(a.md) - days.indexOf(b.md); });
+  }
+  // 목원마다 최근 제출 일기에서 연달아 빠진 주 수 (journals: 새 주부터 차례로, prayers: 그 일기들의 줄)
+  function absentStreaks(journals, prayers) {
+    var byJ = {}, streak = {}, stop = {};
+    (prayers || []).forEach(function (p) { if (p.mokwon_id) (byJ[p.journal_id] = byJ[p.journal_id] || {})[p.mokwon_id] = p.attended; });
+    (journals || []).forEach(function (j) {
+      var row = byJ[j.id] || {};
+      Object.keys(row).forEach(function (id) {
+        if (stop[id]) return;
+        if (row[id] === false) streak[id] = (streak[id] || 0) + 1; else stop[id] = true;
+      });
+    });
+    return streak;
+  }
+  var ABSENT_WEEKS = 3;   // 이만큼 연달아 빠지면 '돌보면 좋을 분'
   function memberDatesLine(m) {
     var out = [];
     if (m.registered_on) out.push(t('교회 등록') + ' ' + dayText(m.registered_on));
     if (m.life_start || m.life_end)
       out.push(t('생명의 삶') + ' ' + (dayText(m.life_start) || '?') + ' ~ ' + (m.life_end ? dayText(m.life_end) : (m.life_start ? t('하는 중') : '?')));
     if (m.baptized_on) out.push(t('침례') + ' ' + dayText(m.baptized_on));
+    if (m.birthday) out.push(t('생일') + ' ' + mdText(m.birthday));
+    if (m.anniversary) out.push(t('결혼기념일') + ' ' + mdText(m.anniversary));
+    var cs = coursesOf(m); if (cs.length) out.push(t('삶공부') + ' ' + cs.map(t).join(', '));
     return out.map(function (x) { return x.replace(/ /g, '\u00a0'); }).join(' · ');   // 날짜 하나가 두 줄로 갈라지지 않게
   }
   // 교회마다 켠 기능 (church_church.features) — 예: member_dates(성도 날짜)는 방주교회부터
@@ -865,7 +920,8 @@ window.CHURCH = (function () {
       return '<li><span class="pr-name">' + esc(p.name) + '</span>' +
         (p.attended === false && !opts.noAbsent ? ' <span class="badge">' + esc(t('결석')) + '</span>' : '') +
         (p.answered ? ' <span class="badge done">' + esc(t('응답됨')) + '</span>' : '') +
-        '<div class="pr-text">' + text + '</div></li>';
+        '<div class="pr-text">' + text + '</div>' +
+        (p.answered && p.answer_note ? '<p class="ans-note">' + esc(t('응답')) + ' · ' + esc(p.answer_note) + '</p>' : '') + '</li>';
     }).join('') + '</ul>';
   }
   // 말씀(댓글) 남긴 분 사진 → { author_id: 서명 주소 }. 경로가 정해져 있어 프로필을 따로 읽지 않는다
@@ -886,7 +942,10 @@ window.CHURCH = (function () {
     return '<form class="dates-form" data-id="' + esc(m.id) + '"><div class="dates-grid">' +
       DATE_FIELDS.map(function (f) {
         return '<label>' + esc(t(f.label)) + '<input type="date" name="' + f.key + '" value="' + esc(m[f.key] || '') + '"></label>';
-      }).join('') + '</div><div class="row">' +
+      }).join('') + mdPicker('birthday', '생일', m.birthday) + mdPicker('anniversary', '결혼기념일', m.anniversary) + '</div>' +
+      '<fieldset class="courses"><legend>' + esc(t('마친 삶공부')) + '</legend>' + COURSES.map(function (c) {
+        return '<label class="check"><input type="checkbox" name="course" value="' + esc(c) + '"' + (((m.courses || {})[c]) ? ' checked' : '') + '> ' + esc(t(c)) + '</label>';
+      }).join('') + '</fieldset><div class="row">' +
       '<button class="primary small" type="submit">' + esc(t('날짜 저장')) + '</button>' +
       '<button class="small act-close" type="button">' + esc(t('닫기')) + '</button></div>' +
       '<p class="hint">' + esc(t('모르는 날짜는 비워 두셔도 됩니다.')) + '</p></form>';
@@ -896,6 +955,11 @@ window.CHURCH = (function () {
     var v = {};
     DATE_FIELDS.forEach(function (f) { v[f.key] = form.elements[f.key].value || null; });
     if (v.life_start && v.life_end && v.life_end < v.life_start) return { error: t('생명의 삶 끝난 날이 시작한 날보다 앞입니다.') };
+    var b = readMd(form, 'birthday'), a = readMd(form, 'anniversary');
+    if (b.error || a.error) return { error: t('생일·결혼기념일은 월과 일을 함께 골라 주세요.') };
+    v.birthday = b.v; v.anniversary = a.v;
+    var cs = {}; Array.prototype.forEach.call(form.querySelectorAll('input[name="course"]:checked'), function (x) { cs[x.value] = true; });
+    v.courses = cs;
     return { values: v };
   }
 
@@ -913,7 +977,7 @@ window.CHURCH = (function () {
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
     checkPassword: checkPassword, afterLeave: afterLeave,
     setSeason: setSeason, noticeLive: noticeLive, untilText: untilText, hearts: hearts, hero: hero, heroChips: heroChips, sheet: sheet, showNotice: showNotice, noticeHtml: noticeHtml, season: season,
-    has: has, DATE_FIELDS: DATE_FIELDS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, authorPhotos: authorPhotos, commentHead: commentHead, proseHtml: proseHtml, prayerList: prayerList, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
+    has: has, DATE_FIELDS: DATE_FIELDS, COURSES: COURSES, coursesOf: coursesOf, mdText: mdText, careThisWeek: careThisWeek, absentStreaks: absentStreaks, ABSENT_WEEKS: ABSENT_WEEKS, photoSave: photoSave, photoRemove: photoRemove, photoUrls: photoUrls, avatar: avatar, authorPhotos: authorPhotos, commentHead: commentHead, proseHtml: proseHtml, prayerList: prayerList, bindMyPhoto: bindMyPhoto, dayText: dayText, memberDatesLine: memberDatesLine, memberDatesForm: memberDatesForm, readDatesForm: readDatesForm,
     lang: function () { return LANG; }, LANGS: LANGS, setLang: setLang, langButton: langButton, bindLangButton: bindLangButton
   };
 })();

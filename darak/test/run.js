@@ -883,6 +883,62 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[목양] 결석 누적 · 생일·기념일 · 응답 간증 · 목양 한눈에 · 삶공부 · 토요일 기도 알림');
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1');
+    await p.evaluate(() => { const D = window.__DB();
+      D.church_mokwon.find(x => x.id === 'w1').birthday = '10-20';
+      D.church_mokwon.find(x => x.id === 'w2').tag = 'VIP';
+      ['2026-09-20', '2026-09-27', '2026-10-04'].forEach((w, i) => {
+        D.church_journal.push({ id: 'ab' + i, mokjang_id: 'mj1', week_start: w, status: 'submitted', present_count: 16, created_at: w, updated_at: w });
+        D.church_prayer.push({ id: 'ap' + i + 'a', journal_id: 'ab' + i, mokwon_id: 'w1', name: '정하늘', attended: true, sort_order: 0 },
+                             { id: 'ap' + i + 'b', journal_id: 'ab' + i, mokwon_id: 'w2', name: '최민수', attended: false, sort_order: 1 });
+      });
+      D.church_prayer.push({ id: 'ap9', journal_id: '11111111-1111-4111-8111-111111111111', mokwon_id: 'w2', name: '최민수', attended: false, sort_order: 1 });
+      sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(900);
+    ok('목자 첫 화면: [챙길 분] 단추', (await p.textContent('.hero-chips')).includes('챙길 분'));
+    ok('일기 칸: 4주째 못 오셨어요 안내', (await p.textContent('#members-box')).includes('4주째 못 오셨어요'));
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(400);
+    const care = await p.textContent('#care-card');
+    ok('목원 명단 위 [이번 주 챙길 분]: 생일 + 연달아 못 오신 분', await p.isVisible('#care-card') && care.includes('정하늘') && care.includes('생일') && care.includes('최민수') && care.includes('4주째'), care);
+    ok('명단 줄에 [4주째 못 오심] 표시', (await p.textContent('#member-list')).includes('4주째 못 오심'));
+    await p.click('#member-list .list-item[data-id="w1"] .act-dates'); await p.waitForTimeout(200);
+    await p.selectOption('#member-list .dates-form select[name="anniversary_m"]', '5'); await p.selectOption('#member-list .dates-form select[name="anniversary_d"]', '9');
+    await p.check('#member-list .dates-form input[name="course"][value="새로운 삶"]');
+    await p.click('#member-list .dates-form button[type="submit"]'); await p.waitForTimeout(500);
+    { const w1 = (await db(p)).church_mokwon.find(x => x.id === 'w1');
+      ok('등록 정보: 결혼기념일 · 마친 삶공부 저장 (생일 그대로)', w1.anniversary === '05-09' && w1.birthday === '10-20' && w1.courses['새로운 삶'] === true, JSON.stringify(w1)); }
+    await p.click('.tabs button[data-pane="write"]'); await p.waitForTimeout(300);
+    await p.check('#members-box .member[data-i="0"] .f-ans'); await p.waitForTimeout(300);
+    ok('[응답됨] 체크 → 한 줄 간증 칸', await p.isVisible('#members-box .member[data-i="0"] .f-note'));
+    await p.fill('#members-box .member[data-i="0"] .f-con', '취업'); await p.fill('#members-box .member[data-i="0"] .f-note', '좋은 회사에 합격했어요');
+    await p.click('#btn-save'); await p.waitForTimeout(700);
+    ok('간증 저장', (await db(p)).church_prayer.some(x => x.answer_note === '좋은 회사에 합격했어요' && x.answered));
+    await p.evaluate(() => CHURCH.signOut()); await p.waitForURL(/index/); await p.waitForTimeout(300);
+    await login(p, 'pastor1'); await p.keyboard.press('Escape');
+    await p.click('.tabs button[data-pane="stats"]'); await p.waitForTimeout(900);
+    const rows = (await p.textContent('#care-rows')).replace(/\s/g, '');
+    ok('목양 한눈에: 돌보면 좋을 분 1 · 생일 1 · VIP 1 · 분가 1', rows.includes('돌보면좋을분') && /(목원|순원)1명/.test(rows) && rows.includes('VIP1') && /분가를준비할(목장|다락방).*1곳/.test(rows), rows);
+    await p.click('.care-row[data-care="away"]'); await p.waitForTimeout(400);
+    ok('돌보면 좋을 분 → 최민수 · 김 목장 · 4주째', (await p.textContent('.care-sheet')).includes('최민수') && (await p.textContent('.care-sheet')).includes('4주째'));
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
+    await p.click('.care-row[data-care="course"]'); await p.waitForTimeout(400);
+    ok('삶공부 → 새로운 삶 마침 정하늘', (await p.textContent('.care-sheet')).includes('새로운 삶 마침 1명') && (await p.textContent('.care-sheet')).includes('정하늘'));
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
+    await p.click('#st-answered'); await p.waitForTimeout(600);
+    ok('누적 기도 응답에 간증 한 줄', (await p.textContent('.answered-sheet')).includes('좋은 회사에 합격했어요'));
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
+    await p.goto(BASE + 'moksa.html#gather'); await p.waitForSelector('.top h1'); await p.waitForTimeout(900);
+    ok('알림 주소 #gather → 기도제목 모아보기', await p.isVisible('#pane-gather'));
+    await p.keyboard.press('Escape');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    ok('토요일 밤 기도 알림: 기본 켜짐', await p.isChecked('#dg-on'));
+    await p.uncheck('#dg-on'); await p.waitForTimeout(500);
+    ok('끄면 교회 설정에 digest=false', (await db(p)).church_church.find(x => x.id === 'cb').features.digest === false);
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
