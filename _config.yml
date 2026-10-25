@@ -11,6 +11,9 @@ exclude:
   - gajeong/test
   - gajeong/server
   - gajeong/deploy
+  # 중보기도 나눔터: 테스트·서버 코드는 사이트에 올리지 않는다(서버 코드는 Supabase에 따로 배포)
+  - jungbo/test
+  - jungbo/server
   # SportsGap AI: 테스트·의존성은 사이트에 올리지 않는다(raw/ 원자료와 evidence/ 는 재현·증빙용으로 제공)
   - sportsgap/tests
   - sportsgap/node_modules

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>중보기도 나눔터</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="모임 식구들의 기도제목을 함께 나누고, 긴급기도는 바로 알리는 곳입니다.">
+<meta name="theme-color" content="#07100d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="중보기도 나눔터 — 함께 기도해요">
+<meta property="og:description" content="주소를 누르면 기도방이 열립니다. 기도했어요·댓글·이모지로 마음을 전해 주세요.">
+<meta property="og:image" content="https://mokjang.app/jungbo/assets/og.png">
+<meta property="og:url" content="https://mokjang.app/jungbo/">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="중보기도">
+<link rel="stylesheet" href="style.css?v=20261025i">
+<script>/* 시간에 맞는 하늘빛을 그리기 전에 입힌다 (깜빡임 방지) */
+try { (function () { var m = localStorage.getItem('jungbo-sky');
+  document.documentElement.setAttribute('data-sky', m === 'day' ? 'day' : 'night'); })(); } catch (e) { document.documentElement.setAttribute('data-sky', 'night'); }</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<canvas id="candles" aria-hidden="true"></canvas>
+<div class="sky" id="sky" aria-hidden="true"></div>
+
+<header class="top noprint" id="top" hidden>
+  <div class="top-in">
+    <img class="mark" src="assets/icon-192.png" alt="">
+    <div class="titles"><h1 id="top-group">중보기도 나눔터</h1><span class="sub" id="top-me"></span></div>
+    <button class="menu-btn" id="btn-menu" type="button" aria-expanded="false">메뉴</button>
+    <div class="menu-pop" id="menu-pop" hidden>
+      <b id="menu-name"></b>
+      <button type="button" data-act="refresh">새로 고침</button>
+      <button type="button" data-act="group">모임 · 알림 설정</button>
+      <button type="button" data-act="print">주보용 인쇄 · PDF</button>
+      <button type="button" data-act="sky" id="menu-sky">밤 기도 모드</button>
+      <button type="button" data-act="switch">다른 모임</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 들어가기 -->
+  <section id="v-enter" hidden>
+    <div class="enter-hero">
+      <div id="enter-candle"></div>
+      <h1>중보기도 나눔터</h1>
+      <p>조용히 들어와, 함께 기도해요.<br>서로의 기도제목이 작은 불빛으로 켜지는 곳.</p>
+      <p class="enter-verse" id="enter-verse"></p>
+      <div class="ornament">✝</div>
+    </div>
+    <div class="msg" id="enter-msg"></div>
+
+    <!-- 초대 주소로 왔을 때 -->
+    <div class="card" id="join-card" hidden>
+      <h2 id="join-title">모임에 들어가기</h2>
+      <p class="desc" id="join-desc">이름만 넣으면 바로 들어와요. 아이디·비밀번호는 없어요.</p>
+      <div class="msg warn" id="join-inapp" hidden>
+        카카오톡 안에서 열렸어요. 이렇게 써도 되지만, <b>휴대폰 알림</b>을 받으려면 크롬(아이폰은 사파리)으로 여는 게 좋아요.
+        <div class="row" style="margin-top:8px"><button type="button" class="small" id="btn-open-ext">크롬·사파리로 열기</button></div>
+      </div>
+      <label for="join-name">내 이름</label>
+      <input type="text" id="join-name" placeholder="예) 김은혜" maxlength="20" autocomplete="name">
+      <p class="hint">모임 식구들이 알아볼 수 있는 이름으로 적어 주세요.</p>
+      <div class="row end" style="margin-top:14px"><button type="button" class="primary wide" id="btn-join">들어가기</button></div>
+      <p class="foot">휴대폰을 바꾸셨나요? <a href="#" id="link-key-from-join">열쇠 코드로 이어가기</a></p>
+    </div>
+
+    <!-- 처음 화면 -->
+    <div id="enter-cards">
+      <div class="card">
+        <h2>초대 받으셨나요?</h2>
+        <p class="desc">인도자가 보낸 <b>주소를 누르면 코드 없이</b> 바로 들어와요. 주소가 없으면 초대 코드(8자)를 넣어 주세요.</p>
+        <label for="in-code">초대 코드</label>
+        <input type="text" id="in-code" placeholder="예) AB12-CD34" maxlength="12" autocapitalize="characters" autocomplete="off">
+        <label for="in-name">내 이름</label>
+        <input type="text" id="in-name" placeholder="예) 김은혜" maxlength="20" autocomplete="name">
+        <div class="row end" style="margin-top:14px"><button type="button" class="primary wide" id="btn-join-code">들어가기</button></div>
+      </div>
+      <div class="card">
+        <h2>새 모임 만들기</h2>
+        <p class="desc">만든 분이 인도자가 됩니다. 만든 뒤 초대 주소를 단톡방에 올리면 식구들이 들어와요.</p>
+        <label for="new-group">모임 이름</label>
+        <input type="text" id="new-group" placeholder="예) 은혜 목장 · 수요 중보기도팀" maxlength="40">
+        <label for="new-name">내 이름</label>
+        <input type="text" id="new-name" placeholder="예) 김은혜" maxlength="20" autocomplete="name">
+        <div class="row end" style="margin-top:14px"><button type="button" class="primary wide" id="btn-create">모임 만들기</button></div>
+      </div>
+      <div class="card">
+        <h2>휴대폰을 바꾸셨나요?</h2>
+        <p class="desc">예전 휴대폰의 [모임] 탭 → 내 정보에 있는 열쇠 코드를 넣으면 그대로 이어집니다.</p>
+        <label for="key-code">열쇠 코드</label>
+        <input type="text" id="key-code" placeholder="XXXX-XXXX-XXXX" maxlength="16" autocapitalize="characters" autocomplete="off">
+        <div class="row end" style="margin-top:14px"><button type="button" class="wide" id="btn-key">들어가기</button></div>
+      </div>
+      <p class="foot">누구나 무료로 씁니다 · 올린 글은 같은 모임 식구들만 봅니다</p>
+    </div>
+  </section>
+
+  <!-- 본 화면 -->
+  <section id="v-main" hidden>
+    <div class="hero noprint">
+      <span class="hero-kicker" id="hero-kicker">함께 기도해요</span>
+      <p class="hero-verse" id="hero-verse"></p>
+      <div class="hero-ref" id="hero-ref"></div>
+      <p class="hero-name" id="hero-title"></p>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="msg" id="main-msg"></div>
+    <div class="msg warn noprint" id="push-nudge" hidden></div>
+    <div class="tabs noprint" id="tabs">
+      <button type="button" class="on" data-tab="open">기도 중<span class="n" id="n-open"></span></button>
+      <button type="button" data-tab="urgent">🚨 긴급<span class="n" id="n-urgent"></span></button>
+      <button type="button" data-tab="answered">응답받음</button>
+      <button type="button" data-tab="group">모임</button>
+    </div>
+    <div id="feed"></div>
+    <div id="pane-group" hidden></div>
+    <div class="print-only" id="print-area"></div>
+  </section>
+
+</main>
+
+<button type="button" class="fab noprint" id="fab" hidden>🙏 기도제목 올리기</button>
+<button type="button" class="bgm-btn noprint" id="bgm-btn" aria-pressed="true" title="찬양 켜기/끄기">♪</button>
+<audio id="bgm" src="assets/bgm.mp3" loop preload="auto"></audio>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="candles.js?v=20261025g"></script>
+<script src="app.js?v=20261025i"></script>
+</body>
+</html>
