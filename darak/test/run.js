@@ -919,7 +919,7 @@ const db = p => p.evaluate(() => window.__DB());
     await login(p, 'pastor1'); await p.keyboard.press('Escape');
     await p.click('.tabs button[data-pane="stats"]'); await p.waitForTimeout(900);
     const rows = (await p.textContent('#care-rows')).replace(/\s/g, '');
-    ok('목양 한눈에: 돌보면 좋을 분 1 · 생일 1 · VIP 1 · 분가 1', rows.includes('돌보면좋을분') && /목원1명/.test(rows) && rows.includes('VIP1') && /분가를준비할목장.*1곳/.test(rows), rows);
+    ok('목양 한눈에: 돌보면 좋을 분 1 · 생일 1 · VIP 1 · 분가 1', rows.includes('돌보면좋을분') && /(목원|순원)1명/.test(rows) && rows.includes('VIP1') && /분가를준비할(목장|다락방).*1곳/.test(rows), rows);
     await p.click('.care-row[data-care="away"]'); await p.waitForTimeout(400);
     ok('돌보면 좋을 분 → 최민수 · 김 목장 · 4주째', (await p.textContent('.care-sheet')).includes('최민수') && (await p.textContent('.care-sheet')).includes('4주째'));
     await p.keyboard.press('Escape'); await p.waitForTimeout(400);
