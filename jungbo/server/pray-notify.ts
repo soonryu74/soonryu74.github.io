@@ -96,6 +96,17 @@ async function others(groupId: string, exceptId: string) {
   const { data } = await admin.from('pray_member').select('id').eq('group_id', groupId).eq('active', true).neq('id', exceptId)
   return (data ?? []).map((m) => m.id as string)
 }
+// 알림마다 짧은 말씀 한 절 (날마다 바뀐다)
+const VERSES = [
+  '너희 짐을 서로 지라 (갈 6:2)', '쉬지 말고 기도하라 (살전 5:17)', '아무 것도 염려하지 말고 기도와 간구로 아뢰라 (빌 4:6)',
+  '두세 사람이 내 이름으로 모인 곳에는 나도 그들 중에 있느니라 (마 18:20)', '내가 너희를 쉬게 하리라 (마 11:28)',
+  '여호와는 마음이 상한 자를 가까이 하시고 (시 34:18)', '너희 염려를 다 주께 맡기라 (벧전 5:7)', '주의 말씀은 내 발에 등이요 (시 119:105)',
+  '의인의 간구는 역사하는 힘이 큼이니라 (약 5:16)', '우는 자들과 함께 울라 (롬 12:15)', '나의 평안을 너희에게 주노라 (요 14:27)',
+  '나의 도움은 천지를 지으신 여호와에게서로다 (시 121:2)', '그 중의 제일은 사랑이라 (고전 13:13)', '강하고 담대하라 (수 1:9)',
+  '내게 부르짖으라 내가 네게 응답하겠고 (렘 33:3)', '여호와는 나의 목자시니 (시 23:1)',
+]
+function verse() { const d = new Date(); const n = Math.floor((d.getTime() - Date.UTC(d.getUTCFullYear(), 0, 0)) / 864e5); return VERSES[n % VERSES.length] }
+const withVerse = (s: string) => `${s}\n✦ ${verse()}`
 const short = (s: string, n = 90) => { const t = String(s ?? '').replace(/\s+/g, ' ').trim(); return t.length > n ? t.slice(0, n) + '…' : t }
 
 type Post = { id: string; group_id: string; author_id: string; author_name: string; kind: string; for_whom: string; body: string; status: string; answer_note: string; notified_at: string | null }
@@ -126,7 +137,7 @@ Deno.serve(async (req) => {
 
   try {
     if (body.action === 'test') {
-      const r = await sendTo([me.id], { title: '중보기도 나눔터', body: '알림이 잘 옵니다. 긴급기도가 올라오면 이렇게 바로 알려 드립니다.', url: 'index.html', tag: 'test' },
+      const r = await sendTo([me.id], { title: '중보기도 나눔터', body: withVerse('알림이 잘 옵니다. 긴급기도가 올라오면 이렇게 바로 알려 드립니다.'), url: 'index.html', tag: 'test' },
         String(body.endpoint ?? ''))
       return json({ ok: true, ...r })
     }
@@ -143,7 +154,7 @@ Deno.serve(async (req) => {
       const head = p.for_whom ? `${p.for_whom} · ` : ''
       const r = await sendTo(await others(p.group_id, p.author_id), {
         title: urgent ? '🚨 긴급기도가 올라왔습니다' : `${p.author_name}님의 기도제목`,
-        body: urgent ? `${head}${short(p.body)} — 지금 함께 기도해 주세요` : `${head}${short(p.body)}`,
+        body: withVerse(urgent ? `${head}${short(p.body, 70)} — 지금 함께 기도해 주세요` : `${head}${short(p.body, 70)}`),
         url: postUrl(code, p.id), tag: `p-${p.id}`, urgent,
       })
       return json({ ok: true, ...r })
@@ -157,7 +168,7 @@ Deno.serve(async (req) => {
       const code = await groupCode(p.group_id)
       const r = await sendTo(await others(p.group_id, me.id), {
         title: `🙌 기도 응답 — ${p.author_name}님`,
-        body: short(p.answer_note || p.body),
+        body: withVerse(short(p.answer_note || p.body, 70)),
         url: postUrl(code, p.id), tag: `a-${p.id}`,
       })
       return json({ ok: true, ...r })
@@ -172,7 +183,7 @@ Deno.serve(async (req) => {
       const code = await groupCode(p.group_id)
       const r = await sendTo([p.author_id], {
         title: `${me.name}님이 기도했어요 🙏`,
-        body: short(p.for_whom ? `${p.for_whom} · ${p.body}` : p.body, 70),
+        body: withVerse(short(p.for_whom ? `${p.for_whom} · ${p.body}` : p.body, 60)),
         url: postUrl(code, p.id), tag: `pr-${p.id}`,
       })
       return json({ ok: true, ...r })
@@ -188,7 +199,7 @@ Deno.serve(async (req) => {
       const code = await groupCode(p.group_id)
       const r = await sendTo(ids, {
         title: `${me.name}님의 댓글`,
-        body: `${p.for_whom ? p.for_whom + ' · ' : ''}${short(c.body, 80)}`,
+        body: withVerse(`${p.for_whom ? p.for_whom + ' · ' : ''}${short(c.body, 70)}`),
         url: postUrl(code, p.id), tag: `c-${p.id}`,
       })
       return json({ ok: true, ...r })

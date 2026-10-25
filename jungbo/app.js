@@ -192,7 +192,6 @@
       var d = await rpc('pray_join', { p_invite: norm(code), p_name: name });
       await afterEnter(d, d.token);
       toast('반갑습니다, ' + d.me.name + '님. 함께 기도해요.');
-      setTimeout(function () { showKeyOnce(d.token); }, 600);
     } catch (e) { say($('#enter-msg'), e.message, 'err'); }
     busy(btn, false);
   }
@@ -523,28 +522,27 @@
     if ($('.angels')) return;
     var box = document.createElement('div'); box.className = 'angels'; box.setAttribute('aria-hidden', 'true');
     box.innerHTML = '<div class="light"></div>' + (label ? '<div class="label">' + esc(label) + '</div>' : '');
-    var n = 7;
+    var n = 26;   // 하트 날리듯 작은 천사들
     for (var i = 0; i < n; i++) {
       var an = document.createElement('div'); an.className = 'angel'; an.innerHTML = angelSvg();
-      var size = 70 + Math.random() * 70;
+      var size = 22 + Math.random() * 22;
       an.style.width = an.style.height = size + 'px';
-      an.style.left = (6 + (i / n) * 84 + Math.random() * 6) + 'vw';
-      an.style.setProperty('--dx', Math.round(Math.random() * 120 - 60) + 'px');
-      an.style.setProperty('--dur', (6 + Math.random() * 3).toFixed(1) + 's');
-      an.style.animationDelay = (Math.random() * 1.6).toFixed(2) + 's';
-      an.style.opacity = '0';
+      an.style.left = (Math.random() * 96) + 'vw';
+      an.style.setProperty('--dx', Math.round(Math.random() * 90 - 45) + 'px');
+      an.style.setProperty('--dur', (2.2 + Math.random() * 1.8).toFixed(2) + 's');
+      an.style.animationDelay = (Math.random() * 1.2).toFixed(2) + 's';
       box.appendChild(an);
     }
-    for (var j = 0; j < 40; j++) {
+    for (var j = 0; j < 30; j++) {
       var sp = document.createElement('i'); sp.className = 'spark';
       sp.style.left = (Math.random() * 100) + 'vw'; sp.style.top = (60 + Math.random() * 50) + 'vh';
-      sp.style.setProperty('--dur', (3 + Math.random() * 4).toFixed(1) + 's'); sp.style.animationDelay = (Math.random() * 2.5).toFixed(2) + 's';
-      sp.style.width = sp.style.height = (3 + Math.random() * 6).toFixed(0) + 'px';
+      sp.style.setProperty('--dur', (2 + Math.random() * 2.5).toFixed(1) + 's'); sp.style.animationDelay = (Math.random() * 1.5).toFixed(2) + 's';
+      sp.style.width = sp.style.height = (3 + Math.random() * 4).toFixed(0) + 'px';
       box.appendChild(sp);
     }
     document.body.appendChild(box);
     try { if (navigator.vibrate) navigator.vibrate([40, 60, 40]); } catch (e) {}
-    setTimeout(function () { box.remove(); }, 10500);
+    setTimeout(function () { box.remove(); }, 5500);
   }
   // 식구가 응답된 기도를 처음 열 때도 천사가 난다 (한 글에 한 번)
   var LS_SEEN = 'jungbo-seen-answered';
@@ -647,7 +645,7 @@
       '<div class="code">' + esc(fmtCode(group.invite_code)) + '</div><div class="linkbox">' + esc(groupLink()) + '</div>' +
       '<div class="row" style="margin-top:12px"><button type="button" class="primary grow" data-kakao>💬 카카오톡으로 초대장 보내기</button><button type="button" data-copy>복사</button></div>' +
       '<div id="share-fallback" hidden><textarea readonly style="min-height:160px;font-size:15px;margin-top:10px">' + esc(inviteText()) + '</textarea></div><div class="msg" id="share-msg"></div>' +
-      (first ? '<div class="section-title">내 열쇠 코드</div><p class="hint">휴대폰을 바꾸거나 다른 기기에서 들어올 때 씁니다. 사진으로 찍어 두세요.</p><div class="code">' + esc(acct.token) + '</div>' : ''),
+      (first ? '<p class="hint" style="margin-top:14px">식구들에게는 이 주소 하나만 보내면 됩니다. 주소를 누르고 이름만 넣으면 들어와요.</p>' : ''),
       foot: '<button type="button" class="ghost" data-c>닫기</button>' });
     s.addEventListener('click', async function (e) {
       if (e.target.closest('[data-c]')) return s.close();
@@ -659,8 +657,8 @@
     });
   }
   function showKeyOnce(token) {
-    sheet({ html: '<h2 class="title">내 열쇠 코드를 챙겨 두세요</h2><p class="desc">이 휴대폰에서는 다음부터 주소만 누르면 바로 열려요. 휴대폰을 바꾸거나 카카오톡이 아닌 크롬에서 열 때는 이 코드로 들어옵니다. 사진으로 찍어 두세요.</p>' +
-      '<div class="code">' + esc(token) + '</div><p class="hint">[모임] 탭 → 내 정보에서 언제든 다시 볼 수 있어요.</p>',
+    sheet({ html: '<h2 class="title">휴대폰을 바꿀 때 쓰는 열쇠 코드</h2><p class="desc">이 휴대폰에서는 주소만 누르면 바로 열려요. 휴대폰을 바꾸면 첫 화면 [휴대폰을 바꾸셨나요?]에 이 코드를 넣습니다. 사진으로 찍어 두세요.</p>' +
+      '<div class="code">' + esc(token) + '</div>',
       foot: '<button type="button" class="primary" onclick="this.closest(\'.sheet-bg\').close()">네, 챙겼어요</button>' });
   }
 
@@ -688,7 +686,7 @@
           (leader && m.id !== me.id ? '<button type="button" class="ghost small" data-role="' + m.id + '" data-to="' + (m.role === 'leader' ? 'member' : 'leader') + '">' + (m.role === 'leader' ? '인도자 해제' : '인도자로') + '</button><button type="button" class="ghost small danger" data-remove="' + m.id + '" data-nm="' + esc(m.name) + '">빼기</button>' : '') + '</div>';
       }).join('') + '<p class="hint">초록 점 = 휴대폰 알림을 켠 분. 안 켠 분께는 긴급기도를 카카오톡으로 따로 알려 주세요.</p></div>' +
       '<div class="card"><h2>내 정보</h2><div class="row"><span class="grow">이름: <b>' + esc(me.name) + '</b></span><button type="button" class="small" data-rename>이름 바꾸기</button></div>' +
-      '<div class="row" style="margin-top:10px"><span class="grow">열쇠 코드 (다른 기기에서 들어올 때)</span><button type="button" class="small" data-show-key>보기</button><button type="button" class="ghost small" data-new-key>새로 받기</button></div>' +
+      '<div class="row" style="margin-top:10px"><span class="grow">휴대폰을 바꿀 때 쓰는 열쇠 코드</span><button type="button" class="small" data-show-key>보기</button><button type="button" class="ghost small" data-new-key>새로 받기</button></div>' +
       '<div class="row" style="margin-top:10px"><span class="grow">여러 모임에 들어가 있나요?</span><button type="button" class="small" data-switch>다른 모임</button></div></div>' +
       (leader ? '<div class="card"><h2>인도자 설정</h2><label for="g-name">모임 이름</label><div class="row"><input type="text" id="g-name" class="grow" style="width:auto" maxlength="40" value="' + esc(group.name) + '"><button type="button" class="small" data-gname>저장</button></div>' +
         '<label class="toggle" style="margin-top:14px"><input type="checkbox" data-join-open' + (group.settings && group.settings.join_open === false ? '' : ' checked') + '> 초대 주소로 새 식구 받기</label><p class="hint">식구가 다 들어온 뒤 끄면, 주소가 퍼져도 모르는 사람이 못 들어와요.</p>' +

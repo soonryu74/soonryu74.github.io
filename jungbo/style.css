@@ -266,23 +266,24 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .enter-verse small{display:block; font-family:var(--sans); font-size:13px; color:var(--muted); margin-top:4px; letter-spacing:.04em}
 .foot{text-align:center; color:var(--muted); font-size:14px; margin-top:22px; line-height:1.7}
 
-/* ── 기도 응답: 천사들이 날아다닌다 ─────────────────────── */
+/* ── 기도 응답: 작은 천사들이 하트처럼 날아오른다 ─────────── */
 .angels{position:fixed; inset:0; z-index:70; pointer-events:none; overflow:hidden}
-.angels .light{position:absolute; inset:0; width:auto; height:auto; border-radius:0; box-shadow:none; animation:none;
-  background:radial-gradient(60% 50% at 50% 30%,rgba(255,236,170,.55),transparent 70%); opacity:0; animation:holy 6s ease-in-out forwards}
-@keyframes holy{0%{opacity:0} 20%{opacity:1} 80%{opacity:.8} 100%{opacity:0}}
-.angel{position:absolute; bottom:-140px; width:110px; height:110px; animation:fly var(--dur,7s) ease-in-out forwards; filter:drop-shadow(0 0 14px rgba(255,220,130,.9))}
+.angels .light{position:absolute; inset:0; width:auto; height:auto; border-radius:0; box-shadow:none;
+  background:radial-gradient(60% 50% at 50% 40%,rgba(255,236,170,.35),transparent 70%); opacity:0; animation:holy 4s ease-in-out forwards}
+@keyframes holy{0%{opacity:0} 25%{opacity:1} 80%{opacity:.7} 100%{opacity:0}}
+.angel{position:absolute; bottom:-60px; width:34px; height:34px; animation:fly var(--dur,3s) ease-out forwards; filter:drop-shadow(0 0 6px rgba(255,220,130,.9)); opacity:0}
 .angel svg{width:100%; height:100%; overflow:visible}
-.angel .wl,.angel .wr{transform-origin:50% 55%; animation:flap 1.1s ease-in-out infinite}
+.angel .wl,.angel .wr{transform-origin:50% 55%; animation:flap .7s ease-in-out infinite}
 .angel .wr{animation-direction:alternate-reverse}
-@keyframes flap{0%,100%{transform:rotate(-10deg) scaleX(1)} 50%{transform:rotate(8deg) scaleX(.86)}}
-@keyframes fly{0%{transform:translate(0,0) rotate(-4deg); opacity:0} 10%{opacity:1} 50%{transform:translate(var(--dx,40px),-55vh) rotate(4deg)} 90%{opacity:1} 100%{transform:translate(calc(var(--dx,40px) * 1.6),-120vh) rotate(-3deg); opacity:0}}
-.angels .spark{position:absolute; width:6px; height:6px; border-radius:50%; background:radial-gradient(circle,#fff,var(--flame) 60%,transparent 70%); animation:spark var(--dur,4s) ease-out forwards; opacity:0}
-@keyframes spark{0%{transform:translateY(0) scale(.4); opacity:0} 20%{opacity:1} 100%{transform:translateY(-70vh) scale(1.2); opacity:0}}
-.angels .label{position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); font-family:var(--serif); font-size:30px; font-weight:700; color:#5a3f0b;
-  text-shadow:0 2px 20px rgba(255,236,170,1), 0 0 2px #fff; animation:labelin 6s ease-in-out forwards; text-align:center; letter-spacing:-.02em; padding:0 20px}
-[data-sky="night"] .angels .label{color:#fff3c4; text-shadow:0 2px 24px rgba(226,178,83,.9)}
-@keyframes labelin{0%{opacity:0; transform:translate(-50%,-40%)} 15%{opacity:1; transform:translate(-50%,-50%)} 75%{opacity:1} 100%{opacity:0; transform:translate(-50%,-60%)}}
+@keyframes flap{0%,100%{transform:rotate(-12deg) scaleX(1)} 50%{transform:rotate(10deg) scaleX(.8)}}
+@keyframes fly{0%{transform:translate(0,0) rotate(-6deg); opacity:0} 12%{opacity:1} 60%{transform:translate(var(--dx,30px),-60vh) rotate(6deg); opacity:1} 100%{transform:translate(calc(var(--dx,30px) * 1.5),-110vh) rotate(-4deg); opacity:0}}
+.angels .spark{position:absolute; width:5px; height:5px; border-radius:50%; background:radial-gradient(circle,#fff,var(--flame) 60%,transparent 70%); animation:spark var(--dur,3s) ease-out forwards; opacity:0}
+@keyframes spark{0%{transform:translateY(0) scale(.4); opacity:0} 20%{opacity:1} 100%{transform:translateY(-70vh) scale(1.1); opacity:0}}
+.angels .label{position:absolute; left:50%; top:30%; transform:translate(-50%,-50%); font-family:var(--serif); font-size:19px; font-weight:700; color:#5a3f0b;
+  background:rgba(255,248,225,.92); padding:10px 18px; border-radius:999px; box-shadow:0 10px 30px rgba(0,0,0,.25);
+  animation:labelin 4s ease-in-out forwards; text-align:center; letter-spacing:-.02em; white-space:nowrap; max-width:92vw; overflow:hidden; text-overflow:ellipsis}
+[data-sky="night"] .angels .label{color:#fff3c4; background:rgba(40,36,20,.9)}
+@keyframes labelin{0%{opacity:0; transform:translate(-50%,-30%)} 15%{opacity:1; transform:translate(-50%,-50%)} 80%{opacity:1} 100%{opacity:0; transform:translate(-50%,-70%)}}
 
 /* ── 토스트 ──────────────────────────────────────── */
 #toast{position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px); opacity:0; z-index:80;

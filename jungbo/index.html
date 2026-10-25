@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="중보기도">
-<link rel="stylesheet" href="style.css?v=20261025c">
+<link rel="stylesheet" href="style.css?v=20261025d">
 <script>/* 시간에 맞는 하늘빛을 그리기 전에 입힌다 (깜빡임 방지) */
 try { (function () { var m = localStorage.getItem('jungbo-sky');
   document.documentElement.setAttribute('data-sky', m === 'day' ? 'day' : 'night'); })(); } catch (e) { document.documentElement.setAttribute('data-sky', 'night'); }</script>
@@ -69,14 +69,14 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
       <input type="text" id="join-name" placeholder="예) 김은혜" maxlength="20" autocomplete="name">
       <p class="hint">모임 식구들이 알아볼 수 있는 이름으로 적어 주세요.</p>
       <div class="row end" style="margin-top:14px"><button type="button" class="primary wide" id="btn-join">들어가기</button></div>
-      <p class="foot">이미 들어온 적이 있나요? <a href="#" id="link-key-from-join">열쇠 코드로 들어가기</a></p>
+      <p class="foot">휴대폰을 바꾸셨나요? <a href="#" id="link-key-from-join">열쇠 코드로 이어가기</a></p>
     </div>
 
     <!-- 처음 화면 -->
     <div id="enter-cards">
       <div class="card">
         <h2>초대 받으셨나요?</h2>
-        <p class="desc">인도자가 보내 준 초대 코드(8자)와 내 이름을 넣어 주세요.</p>
+        <p class="desc">인도자가 보낸 <b>주소를 누르면 코드 없이</b> 바로 들어와요. 주소가 없으면 초대 코드(8자)를 넣어 주세요.</p>
         <label for="in-code">초대 코드</label>
         <input type="text" id="in-code" placeholder="예) AB12-CD34" maxlength="12" autocapitalize="characters" autocomplete="off">
         <label for="in-name">내 이름</label>
@@ -93,8 +93,8 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
         <div class="row end" style="margin-top:14px"><button type="button" class="primary wide" id="btn-create">모임 만들기</button></div>
       </div>
       <div class="card">
-        <h2>열쇠 코드로 들어가기</h2>
-        <p class="desc">다른 휴대폰에서 쓰던 분은 그때 받은 열쇠 코드(12자)를 넣어 주세요.</p>
+        <h2>휴대폰을 바꾸셨나요?</h2>
+        <p class="desc">예전 휴대폰의 [모임] 탭 → 내 정보에 있는 열쇠 코드를 넣으면 그대로 이어집니다.</p>
         <label for="key-code">열쇠 코드</label>
         <input type="text" id="key-code" placeholder="XXXX-XXXX-XXXX" maxlength="16" autocapitalize="characters" autocomplete="off">
         <div class="row end" style="margin-top:14px"><button type="button" class="wide" id="btn-key">들어가기</button></div>
@@ -131,6 +131,6 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="candles.js?v=20261025c"></script>
-<script src="app.js?v=20261025c"></script>
+<script src="app.js?v=20261025d"></script>
 </body>
 </html>
