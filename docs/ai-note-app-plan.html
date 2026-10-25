@@ -6,19 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Paperling(페이퍼링) 사업기획안 v0.2 | soonryu74.github.io</title>
+<title>Paperling(페이퍼링) 사업기획안 v0.3 | soonryu74.github.io</title>
 <meta name="generator" content="Jekyll v3.10.0" />
-<meta property="og:title" content="Paperling(페이퍼링) 사업기획안 v0.2" />
+<meta property="og:title" content="Paperling(페이퍼링) 사업기획안 v0.3" />
 <meta property="og:locale" content="en_US" />
 <meta property="og:site_name" content="soonryu74.github.io" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Paperling(페이퍼링) 사업기획안 v0.2" />
+<meta property="twitter:title" content="Paperling(페이퍼링) 사업기획안 v0.3" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","headline":"Paperling(페이퍼링) 사업기획안 v0.2","url":"/docs/ai-note-app-plan.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","headline":"Paperling(페이퍼링) 사업기획안 v0.3","url":"/docs/ai-note-app-plan.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=dcbeb2e3a67f46824850fad1a0e67be0e26b459e">
+    <link rel="stylesheet" href="/assets/css/style.css?v=7f460d8dd739ade53f5a498cc72108b719417b75">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -37,7 +37,7 @@
       <h1><a href="/">soonryu74.github.io</a></h1>
       
 
-      <h1 id="paperling페이퍼링-사업기획안-v02">Paperling(페이퍼링) 사업기획안 v0.2</h1>
+      <h1 id="paperling페이퍼링-사업기획안-v03">Paperling(페이퍼링) 사업기획안 v0.3</h1>
 
 <blockquote>
   <p>작성 서순려 · 2026-10-25 (v0.2 결정 반영) · 브랜치 <code class="language-plaintext highlighter-rouge">claude/ai-note-app-planning-l3fx39</code>
@@ -49,6 +49,48 @@
 <p>다이어리 좋아하는 사람은 종이를 버리지 않는다. 그래서 종이를 대체하지 않고, 종이 <strong>뒤에 붙는
 디지털 서랍</strong>을 만든다. 서비스명은 <strong>Paperling(페이퍼링)</strong>: paper + -ling, 종이를 아끼는 사람의 작은 종이 친구. “서랍”은 앱 안 분류 기능의 이름으로 남긴다. 손글씨를 찍어 올리면 AI가 읽고, 다듬고, 서랍(일기·할 일·일정·아이디어)에
 자동 분류해 넣는다. 서랍의 생김새(디자인·폰트)는 내 취향대로 고른다.</p>
+
+<h2 id="0-네-가지-약속-모든-화면기능의-합격-기준">0. 네 가지 약속 (모든 화면·기능의 합격 기준)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>약속</th>
+      <th>뜻</th>
+      <th>측정</th>
+      <th>어기면</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>예쁘다</strong></td>
+      <td>열 때마다 기분이 좋아야 한다. 종이 다이어리만큼</td>
+      <td>테마·폰트 변경률, 공유 카드 생성률, 첫인상 설문 “예쁘다” 80% 이상</td>
+      <td>디자이너 리뷰 없이 화면 출시 금지</td>
+    </tr>
+    <tr>
+      <td><strong>편리하다</strong></td>
+      <td>사진 올리고 3번 이내 탭으로 끝</td>
+      <td>업로드→저장 완료 20초 이내, 탭 수 3 이하</td>
+      <td>탭이 4개 넘으면 화면 다시 설계</td>
+    </tr>
+    <tr>
+      <td><strong>쉽다</strong></td>
+      <td>50대도 설명 없이 쓴다</td>
+      <td>첫 사용 성공률 90% (도움말 없이), 큰 글씨 모드</td>
+      <td>설명 문구가 필요하면 화면이 틀린 것</td>
+    </tr>
+    <tr>
+      <td><strong>연동된다</strong></td>
+      <td>쓰던 앱을 버리게 하지 않는다</td>
+      <td>연동 설정 1분 이내, 2곳 이상 연동 사용자 30%</td>
+      <td>앱 안에 가두는 기능은 넣지 않는다</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>네 가지가 충돌하면 순서는 <strong>쉽다 → 편리하다 → 예쁘다 → 연동된다</strong>. 예쁨을 위해 어렵게 만들지 않고,
+연동을 위해 복잡하게 만들지 않는다.</p>
 
 <h2 id="1-요약">1. 요약</h2>
 
