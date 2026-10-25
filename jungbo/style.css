@@ -269,7 +269,8 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .enter-hero .candle{width:48px; height:72px; margin:0 auto 10px}
 .enter-hero h1{font-family:var(--serif); font-size:32px; margin:10px 0 6px; letter-spacing:-.03em}
 .enter-hero p{color:var(--muted); margin:0; font-size:15.5px; line-height:1.7}
-.enter-verse{font-family:var(--serif); font-size:17px; color:var(--ink-2); margin:18px auto 0; max-width:30ch; line-height:1.7; word-break:keep-all}
+.enter-hero .enter-verse{font-family:var(--serif); font-size:17px; color:var(--ink-2); margin:18px auto 0; max-width:30ch; line-height:1.7; word-break:keep-all; text-align:center}   /* .enter-hero p{margin:0} 보다 우선 — 가운데 정렬 */
+.hero .hero-verse{text-align:center}
 .enter-verse small{display:block; font-family:var(--sans); font-size:13px; color:var(--muted); margin-top:4px; letter-spacing:.04em}
 .foot{text-align:center; color:var(--muted); font-size:14px; margin-top:22px; line-height:1.7}
 
