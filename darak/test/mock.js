@@ -46,6 +46,7 @@
       select: function () { if (st.op !== 'select') st.ret = true; return api; },
       eq: function (c, v) { st.filters.push(function (r) { return String(r[c]) === String(v); }); return api; },
       gte: function (c, v) { st.filters.push(function (r) { return r[c] != null && String(r[c]) >= String(v); }); return api; },
+      lte: function (c, v) { st.filters.push(function (r) { return r[c] != null && String(r[c]) <= String(v); }); return api; },
       in: function (c, arr) { var a = (arr || []).map(String); st.filters.push(function (r) { return a.indexOf(String(r[c])) >= 0; }); return api; },
       order: function (c, o) { st.orders.push([c, !o || o.ascending !== false]); return api; },
       limit: function (n) { st.limit = n; return api; },

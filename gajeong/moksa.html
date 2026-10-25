@@ -23,7 +23,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610250900">
+<link rel="stylesheet" href="style.css?v=202610251000">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -69,6 +69,18 @@ try { (function (m, q) { var s = q.get('c');
   <!-- ── 기도제목 모아보기 ───────────────────────── -->
   <section class="pane" id="pane-gather">
     <div class="card noprint">
+      <div class="g-range-row">
+        <label for="g-range">모아 볼 기간</label>
+        <select id="g-range">
+          <option value="week">한 주</option>
+          <option value="month">최근 한 달 (4주)</option>
+          <option value="all">전체 기간</option>
+          <option value="custom">기간 정하기</option>
+        </select>
+      </div>
+      <div class="g-custom" id="g-custom" hidden>
+        <input type="date" id="g-from" aria-label="시작 날짜"><span>~</span><input type="date" id="g-to" aria-label="끝 날짜">
+      </div>
       <div class="weekbar">
         <button class="small" id="g-prev">‹ 지난주</button>
         <span class="label" id="g-label">…</span>
@@ -77,7 +89,7 @@ try { (function (m, q) { var s = q.get('c');
         <label class="check"><input type="checkbox" id="g-story"> 목장 이야기도 보기</label>
         <button class="small primary" id="g-print">인쇄 · PDF로 저장</button>
       </div>
-      <p class="desc" style="margin:8px 0 0">주일 중보기도 시간에 쓰실 수 있게 한 주 전체를 한 장으로 모았습니다.</p>
+      <p class="desc" style="margin:8px 0 0" id="g-desc">주일 중보기도 시간에 쓰실 수 있게 한 주 전체를 한 장으로 모았습니다. 위에서 한 달·전체·원하는 기간으로 바꾸면 그 기간을 한 번에 인쇄·PDF로 저장합니다.</p>
     </div>
     <div class="print-head" id="g-print-head"></div>
     <div id="gather-list"></div>
@@ -309,9 +321,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610250900"></script>
-<script src="common.js?v=202610250900"></script>
-<script src="moksa.js?v=202610250900"></script>
+<script src="lang-en.js?v=202610251000"></script>
+<script src="common.js?v=202610251000"></script>
+<script src="moksa.js?v=202610251000"></script>
 
 </body>
 </html>
