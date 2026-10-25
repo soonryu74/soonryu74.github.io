@@ -220,7 +220,7 @@
     catch (e) { say($('#enter-msg'), e.message, 'err'); }
     busy(this, false);
   });
-  $('#link-key-from-join').addEventListener('click', function (e) { e.preventDefault(); $('#join-card').hidden = true; $('#enter-cards').hidden = false; $('#key-code').focus(); });
+  $('#link-key-from-join').addEventListener('click', function (e) { e.preventDefault(); $('#join-card').hidden = true; $('#enter-cards').hidden = false; $('#key-code').closest('details').open = true; $('#key-code').focus(); });
   $('#btn-open-ext').addEventListener('click', openExternal);
 
   /* ── 본 화면 ──────────────────────────────────────── */
@@ -633,7 +633,7 @@
   }
   function inviteSheet(first) {
     var s = sheet({ html: '<h2 class="title">' + (first ? '모임을 만들었어요 🎉' : '식구 초대하기') + '</h2>' +
-      (first ? '<p class="desc">이제 초대 주소를 단톡방에 올려 주세요. 식구들은 주소를 누르고 이름만 넣으면 들어와요.</p>' : '<p class="desc">주소를 누르고 이름만 넣으면 들어와요. 초대 코드를 불러 줘도 됩니다.</p>') +
+      (first ? '<p class="desc">초대 코드와 주소가 자동으로 만들어졌어요. 초대 주소를 단톡방에 올려 주세요. 식구들은 주소를 누르고 이름만 넣으면 들어와요.</p>' : '<p class="desc">주소를 누르고 이름만 넣으면 들어와요. 초대 코드를 불러 줘도 됩니다.</p>') +
       '<div class="code">' + esc(fmtCode(group.invite_code)) + '</div><div class="linkbox">' + esc(groupLink()) + '</div>' +
       '<div class="row" style="margin-top:12px"><button type="button" class="primary grow" data-kakao>💬 카카오톡으로 초대장 보내기</button><button type="button" data-copy>복사</button></div>' +
       '<div id="share-fallback" hidden><textarea readonly style="min-height:160px;font-size:15px;margin-top:10px">' + esc(inviteText()) + '</textarea></div><div class="msg" id="share-msg"></div>' +
