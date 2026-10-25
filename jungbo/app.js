@@ -407,6 +407,7 @@
   function renderDetail(p) {
     if (!detailSheet) return;
     detailPost = p; mergePost(p);
+    celebrateOnce(p);
     var urgent = p.kind === 'urgent' && p.status === 'open', ans = p.status === 'answered';
     var draft = $('textarea[data-cmt]', detailSheet); var keep = draft ? draft.value : '';
     detailSheet.body.innerHTML =
@@ -504,14 +505,61 @@
       e.target.disabled = true;
       try {
         var r = await rpc('pray_post_status', { p_token: acct.token, p_id: p.id, p_status: 'answered', p_note: $('#ans-note', s).value });
-        s.close(); renderDetail(r); hearts('응답받았어요 🙌'); await loadFeed(true);
+        s.close(); var sn = seenAnswered(); sn.push(p.id); try { localStorage.setItem(LS_SEEN, JSON.stringify(sn)); } catch (e2) {} renderDetail(r); angels('기도가 응답되었어요 🙌'); await loadFeed(true);
         notifyQuiet({ action: 'answered', post_id: p.id });
       } catch (err) { say($('#ans-msg', s), err.message, 'err'); e.target.disabled = false; }
     });
   }
-  function hearts(label) {
-    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return toast(label);
+  // 기도 응답 — 천사들이 날아오르고 금빛이 번진다 (움직임 줄이기 설정이면 글만)
+  function angelSvg() {
+    return '<svg viewBox="0 0 120 120" aria-hidden="true">' +
+      '<g class="wl"><path d="M50 50 C 22 28, 2 44, 12 76 C 24 64, 40 62, 50 66 Z" fill="rgba(255,255,255,.95)" stroke="#e2b253" stroke-width="1.5"/>' +
+      '<path d="M48 54 C 30 44, 16 52, 18 70" fill="none" stroke="#f2cc74" stroke-width="1"/></g>' +
+      '<g class="wr"><path d="M70 50 C 98 28, 118 44, 108 76 C 96 64, 80 62, 70 66 Z" fill="rgba(255,255,255,.95)" stroke="#e2b253" stroke-width="1.5"/>' +
+      '<path d="M72 54 C 90 44, 104 52, 102 70" fill="none" stroke="#f2cc74" stroke-width="1"/></g>' +
+      '<ellipse cx="60" cy="16" rx="13" ry="4.5" fill="none" stroke="#f2cc74" stroke-width="2.5"/>' +
+      '<circle cx="60" cy="29" r="9" fill="#fff3d6" stroke="#e2b253" stroke-width="1"/>' +
+      '<path d="M60 38 C 50 44, 44 70, 40 100 Q 60 110 80 100 C 76 70, 70 44, 60 38 Z" fill="#fffaf0" stroke="#e2b253" stroke-width="1.2"/>' +
+      '<path d="M52 62 Q 60 56 68 62" fill="none" stroke="#f2cc74" stroke-width="1.2"/></svg>';
+  }
+  function angels(label) {
     toast(label);
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if ($('.angels')) return;
+    var box = document.createElement('div'); box.className = 'angels'; box.setAttribute('aria-hidden', 'true');
+    box.innerHTML = '<div class="light"></div>' + (label ? '<div class="label">' + esc(label) + '</div>' : '');
+    var n = 7;
+    for (var i = 0; i < n; i++) {
+      var an = document.createElement('div'); an.className = 'angel'; an.innerHTML = angelSvg();
+      var size = 70 + Math.random() * 70;
+      an.style.width = an.style.height = size + 'px';
+      an.style.left = (6 + (i / n) * 84 + Math.random() * 6) + 'vw';
+      an.style.setProperty('--dx', Math.round(Math.random() * 120 - 60) + 'px');
+      an.style.setProperty('--dur', (6 + Math.random() * 3).toFixed(1) + 's');
+      an.style.animationDelay = (Math.random() * 1.6).toFixed(2) + 's';
+      an.style.opacity = '0';
+      box.appendChild(an);
+    }
+    for (var j = 0; j < 40; j++) {
+      var sp = document.createElement('i'); sp.className = 'spark';
+      sp.style.left = (Math.random() * 100) + 'vw'; sp.style.top = (60 + Math.random() * 50) + 'vh';
+      sp.style.setProperty('--dur', (3 + Math.random() * 4).toFixed(1) + 's'); sp.style.animationDelay = (Math.random() * 2.5).toFixed(2) + 's';
+      sp.style.width = sp.style.height = (3 + Math.random() * 6).toFixed(0) + 'px';
+      box.appendChild(sp);
+    }
+    document.body.appendChild(box);
+    try { if (navigator.vibrate) navigator.vibrate([40, 60, 40]); } catch (e) {}
+    setTimeout(function () { box.remove(); }, 10500);
+  }
+  // 식구가 응답된 기도를 처음 열 때도 천사가 난다 (한 글에 한 번)
+  var LS_SEEN = 'jungbo-seen-answered';
+  function seenAnswered() { try { return JSON.parse(localStorage.getItem(LS_SEEN) || '[]'); } catch (e) { return []; } }
+  function celebrateOnce(p) {
+    if (!p || p.status !== 'answered') return;
+    var seen = seenAnswered(); if (seen.indexOf(p.id) >= 0) return;
+    seen.push(p.id); if (seen.length > 300) seen = seen.slice(-300);
+    try { localStorage.setItem(LS_SEEN, JSON.stringify(seen)); } catch (e) {}
+    angels(p.author_name + '님의 기도가 응답되었어요 🙌');
   }
 
   /* ── 올리기 · 고치기 ───────────────────────────────── */
