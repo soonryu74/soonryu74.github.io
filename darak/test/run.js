@@ -858,6 +858,12 @@ const db = p => p.evaluate(() => window.__DB());
     ok('[닫기]는 이번에만: 다시 들어오면 공지가 또 뜸', await p.isVisible('.sheet-bg.open'));
     await p.click('.sheet-foot button:has-text("오늘 하루 보지 않기")'); await p.waitForTimeout(400);
     ok('목자 인사: 이름+님', /^김목자님,/.test(await p.textContent('.hero-title')));
+    await p.evaluate(() => { const D = window.__DB(); D.church_church.find(x => x.id === 'cb').features.shared_prayers = [{ id: 'sp1', kind: 'missionary', who: '캄보디아 김선교사님', text: '개척 교회가 든든히 서도록' }]; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(900);
+    ok('목자 화면: 함께 기도해요 (접힌 칸 + 첫 화면 단추)', await p.isVisible('#sp-card') && (await p.textContent('#sp-card summary')).includes('1가지') && (await p.textContent('.hero-chips')).includes('함께 기도해요'));
+    await p.click('.hero-chip:has-text("함께 기도해요")'); await p.waitForTimeout(400);
+    ok('단추를 누르면 함께 기도할 제목 창', (await p.textContent('.sp-view')).includes('김선교사님'));
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
     { const nc2 = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'notice'); }
     await p.evaluate(() => { const D = window.__DB(); D.church_church.find(x => x.id === 'cb').features.notice.until = '2026-10-01'; sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
     await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(800);

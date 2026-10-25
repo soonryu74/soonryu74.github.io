@@ -764,5 +764,8 @@ window.I18N.en = {
   "기도제목을 적어 주세요.": "Please write the prayer request.",
   "기타": "Other",
   "고치기": "Edit",
-  "기도제목": "Prayer request"
+  "기도제목": "Prayer request",
+  "{0}가지": "{0}",
+  "목사님이 올려 주신, 교회가 함께 기도할 제목입니다. 목장 모임 때 함께 기도해 주세요.": "Prayer requests your pastor shared for the whole church. Please pray for them together at your gathering.",
+  "목사님이 올려 주셨어요": "Shared by your pastor"
 };

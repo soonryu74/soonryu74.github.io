@@ -33,6 +33,7 @@
     watchNewWeek();
     showNoticeBar();
     showCommentBar();
+    showShared();
     openFromLink();
     // 화면이 열려 있는 채로 알림을 누르면 주소 끝(#j=…)만 바뀐다 — 그때도 그 일기로 간다
     window.addEventListener('hashchange', openFromLink);
@@ -350,8 +351,31 @@
       { label: week === C.mondayOf() ? T('이번 주 일기') : T('이 주 일기'), value: submitted ? T('제출함') : (journal ? T('쓰는 중') : T('아직')), go: 'write', dot: !submitted },
       { label: T('목원'), value: T('{0}명', mokwon.filter(function (w) { return w.active !== false; }).length), go: 'members' },
       { label: T('지난 일기'), go: 'past' }
-    ].concat(n ? [{ label: T('목사님 공지'), fn: function () { C.showNotice(n, true); }, dot: true }] : []));
+    ].concat(n ? [{ label: T('목사님 공지'), fn: function () { C.showNotice(n, true); }, dot: true }] : [])
+     .concat(sharedPrayers().length ? [{ label: T('함께 기도해요'), value: sharedPrayers().length, fn: openShared }] : []));
   }
+  // 목사님이 넣으신 '함께 기도해요' (선교사님 · 협력 교회 · 지역·협회) — 일기 쓰는 화면 위에 접어서, 첫 화면 단추로도
+  var SP_KIND = { missionary: '선교사님', church: '협력 교회', region: '지역·협회', etc: '기타' };
+  function sharedPrayers() { var l = ((me.church || {}).features || {}).shared_prayers; return Array.isArray(l) ? l : []; }
+  function sharedHtml(list) {
+    return '<ul class="pr-list sp-list">' + list.map(function (x) {
+      return '<li><span class="pr-name">' + esc(T(SP_KIND[x.kind] || '기타')) + (x.who ? ' · ' + esc(x.who) : '') + '</span><div class="pr-text">' + C.proseHtml(x.text || '') + '</div></li>';
+    }).join('') + '</ul>';
+  }
+  function showShared() {
+    var pane = $('#pane-write'), old = $('#sp-card'); if (old) old.remove();
+    var list = sharedPrayers(); if (!pane || !list.length) return;
+    var d = document.createElement('details'); d.id = 'sp-card'; d.className = 'card sp-card noprint';
+    d.innerHTML = '<summary><b>' + esc(T('함께 기도해요')) + '</b> <span class="quiet">' + esc(T('{0}가지', list.length)) + '</span></summary>' +
+      '<p class="desc">' + esc(T('목사님이 올려 주신, 교회가 함께 기도할 제목입니다. 목장 모임 때 함께 기도해 주세요.')) + '</p>' + sharedHtml(list);
+    var after = $('#cmt-bar') || $('#notice-bar');
+    pane.insertBefore(d, after ? after.nextSibling : pane.firstChild);
+  }
+  function openShared() {
+    var list = sharedPrayers(); if (!list.length) return;
+    C.sheet({ kicker: T('목사님이 올려 주셨어요'), title: T('함께 기도해요'), cls: 'sp-view', html: sharedHtml(list) });
+  }
+
   // 목사님이 새 말씀을 남기셨으면 일기 쓰는 화면 맨 위에 띠 — 누르면 그 주 일기가 펼쳐진다
   var CMT_SEEN = 'gajeong-cmt-seen-';
   async function showCommentBar() {
@@ -369,6 +393,7 @@
     b.innerHTML = '<b>' + esc(T('목사님 말씀')) + '</b><span>' + esc(wk ? T('{0} 일기에 말씀을 남기셨어요', C.weekLabel(wk)) : T('일기에 말씀을 남기셨어요')) + '</span>';
     b.addEventListener('click', function () { location.hash = 'j=' + c.journal_id; });
     var nb = $('#notice-bar'); pane.insertBefore(b, nb ? nb.nextSibling : pane.firstChild);
+    var sp = $('#sp-card'); if (sp) pane.insertBefore(sp, b.nextSibling);
   }
   function commentSeen(jid) {
     var b = $('#cmt-bar'); if (!b || b.dataset.j !== jid) return;

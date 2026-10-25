@@ -742,3 +742,8 @@ html:not([data-season]) .notice-edit .nt-fresh{border-color:var(--line-2); backg
 .sp-list li{position:relative}
 .sp-acts{display:flex; gap:6px; margin-top:8px}
 @media print{ .shared-card{break-after:avoid} }
+.sp-card > summary{cursor:pointer; list-style:none; display:flex; align-items:baseline; gap:8px; font-size:17px}
+.sp-card > summary::-webkit-details-marker{display:none}
+.sp-card > summary::after{content:'›'; margin-left:auto; transform:rotate(90deg); transition:transform .2s; color:var(--muted)}
+.sp-card[open] > summary::after{transform:rotate(-90deg)}
+.sp-card[open] > summary{margin-bottom:8px}
