@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>알림톡 2단계 계획 — 긴급기도를 카카오톡으로 “자동” 보내기 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="알림톡 2단계 계획 — 긴급기도를 카카오톡으로 “자동” 보내기" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="알림톡 2단계 계획 — 긴급기도를 카카오톡으로 “자동” 보내기" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"알림톡 2단계 계획 — 긴급기도를 카카오톡으로 “자동” 보내기","url":"/jungbo/%EC%95%8C%EB%A6%BC%ED%86%A1-2%EB%8B%A8%EA%B3%84-%EA%B3%84%ED%9A%8D.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=535adcc5dbf2dfc95e2c21f9d1a82bc2f0fd4291">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="알림톡-2단계-계획--긴급기도를-카카오톡으로-자동-보내기">알림톡 2단계 계획 — 긴급기도를 카카오톡으로 “자동” 보내기</h1>
+
+<p>지금(1단계)은 <strong>웹 푸시(자동) + 카카오 공유 창(한 번 누름)</strong> 입니다.
+알림톡을 붙이면 올린 사람이 아무것도 안 눌러도 식구들 <strong>카카오톡</strong>에 바로 갑니다. 단, 아래 조건과 비용이 있습니다.</p>
+
+<h2 id="1-전제-조건">1. 전제 조건</h2>
+<p>| 항목 | 내용 |
+|—|—|
+| 카카오톡 채널 | 모임(또는 교회) 이름으로 <strong>비즈니스 채널</strong> 개설 + 비즈니스 인증 (사업자등록증 또는 고유번호증 필요. 교회는 고유번호증으로 가능) |
+| 발송 대행사 | 알림톡은 카카오가 직접 API를 열지 않고 대행사를 통해 보냅니다. 솔라피(Solapi)·알리고·NHN Cloud 등. 가입 후 채널 연결 |
+| 템플릿 심사 | “긴급기도 요청이 올라왔습니다” 문구를 <strong>정보성 템플릿</strong>으로 등록 → 카카오 심사 1~3일. 광고성 문구는 반려 |
+| 받는 사람 전화번호 | 알림톡은 <strong>전화번호</strong>로 보냅니다. 식구가 앱에서 번호를 입력하고 “카카오톡 알림 받기”에 동의해야 함 |
+| 발송 시간 | 정보성이라도 <strong>20:50~08:00 야간 발송 제한</strong> (긴급기도의 한계. 야간엔 웹 푸시만 감) |</p>
+
+<h2 id="2-비용-2026년-10월-대행사-공개-요금-기준-vat-별도">2. 비용 (2026년 10월 대행사 공개 요금 기준, VAT 별도)</h2>
+<ul>
+  <li>알림톡 1건 약 <strong>8~13원</strong></li>
+  <li>예: 식구 30명 모임, 긴급기도 월 10건 → 300건 ≈ <strong>3,000~4,000원/월</strong></li>
+  <li>선불 충전식. 교회 재정이나 인도자가 부담</li>
+</ul>
+
+<h2 id="3-템플릿-예시-심사용">3. 템플릿 예시 (심사용)</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[#{모임이름}] 긴급기도 요청
+#{대상} 을(를) 위한 긴급기도가 올라왔습니다.
+#{내용요약}
+함께 기도해 주세요.
+</code></pre></div></div>
+<p>버튼: <strong>기도방 열기</strong> (웹링크 → <code class="language-plaintext highlighter-rouge">https://mokjang.app/jungbo/?g=#{모임코드}#p=#{글번호}</code>)</p>
+
+<ul>
+  <li>변수(#{…})는 심사 시 “서비스 이용자에게 보내는 정보”임을 설명</li>
+  <li>템플릿 하나 더: <code class="language-plaintext highlighter-rouge">[#{모임이름}] 기도 응답 소식</code> (응답받았어요 알림)</li>
+</ul>
+
+<h2 id="4-구현-코드-변경-범위">4. 구현 (코드 변경 범위)</h2>
+<ol>
+  <li><strong>DB</strong>: <code class="language-plaintext highlighter-rouge">pray_member</code>에 <code class="language-plaintext highlighter-rouge">phone text</code>, <code class="language-plaintext highlighter-rouge">alimtalk boolean</code> 추가. 전화번호는 암호화(pgcrypto) 저장</li>
+  <li><strong>화면</strong>: [모임] 탭 → “카카오톡 알림톡 받기” 칸 — 전화번호 입력 + 동의 체크 (선택 사항, 안 넣어도 앱은 그대로 씀)</li>
+  <li><strong>서버 함수 <code class="language-plaintext highlighter-rouge">pray-notify</code></strong> <code class="language-plaintext highlighter-rouge">posted</code>에서:
+    <ul>
+      <li>웹 푸시 보낸 뒤</li>
+      <li>긴급이면 <code class="language-plaintext highlighter-rouge">alimtalk = true</code> 식구들의 번호로 대행사 API 호출 (솔라피 기준 <code class="language-plaintext highlighter-rouge">POST /messages/v4/send-many/detail</code>)</li>
+      <li>비밀값: 대행사 API 키·채널 ID·템플릿 ID → Edge Function 비밀값(<code class="language-plaintext highlighter-rouge">supabase secrets set</code>)</li>
+      <li>야간이면 건너뛰고 응답에 <code class="language-plaintext highlighter-rouge">skipped: 'night'</code> 표시 → 화면에서 “지금은 카카오톡 발송 제한 시간이라 앱 알림만 갔어요. 단톡방에 직접 알려 주세요” 안내</li>
+    </ul>
+  </li>
+  <li><strong>인도자 설정</strong>: 모임별로 알림톡 켜기/끄기, 이번 달 발송 건수 표시</li>
+  <li><strong>검사</strong>: 대행사 테스트 모드(실제 발송 없이 응답만)로 Playwright 검사 1개 추가</li>
+</ol>
+
+<p>예상 작업량: 코드 반나절 + 채널 인증·템플릿 심사 대기 3~7일</p>
+
+<h2 id="5-판단-기준--언제-2단계로-가나">5. 판단 기준 — 언제 2단계로 가나</h2>
+<ul>
+  <li>식구 중 <strong>휴대폰 알림을 못 켜는 분</strong>(아이폰 홈 화면 추가가 어렵거나, 카카오톡 안에서만 여는 분)이 1/3 이상이면 알림톡 도입 가치 있음</li>
+  <li>모임 20명 이하이고 인도자가 [카카오톡으로 보내기] 한 번 누르는 게 부담 없으면 1단계로 충분</li>
+</ul>
+
+<h2 id="6-대안-알림톡-없이-자동화에-가까운-것">6. 대안 (알림톡 없이 자동화에 가까운 것)</h2>
+<ul>
+  <li><strong>오픈채팅 방장봇</strong>: 카카오 공식 기능이지만 외부 연동 불가 — 해당 없음</li>
+  <li><strong>카카오톡 채널 “친구톡”</strong>: 2025년 12월 종료 → “브랜드 메시지”로 대체(건당 50원 이상, 광고성) — 기도 알림에는 부적합</li>
+  <li><strong>문자(SMS)</strong>: 알림톡보다 비싸고(건당 약 20원) 카톡 창이 아님. 알림톡 실패 시 대체 발송용으로만</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
