@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"Paperling MVP 화면 설계 v0.1","url":"/docs/paperling-mvp-screens.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=7f460d8dd739ade53f5a498cc72108b719417b75">
+    <link rel="stylesheet" href="/assets/css/style.css?v=149f78d7bedb890553961cdfa38f668b734a998d">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -173,6 +173,16 @@
   <li>디자인: 화이트 노트 / 클래식 플래너 2종. 손글씨 폰트 3종. 미리보기 즉시 반영.</li>
   <li>사진 보관: 원본 보관(기본) / 처리 후 삭제. 저장 위치 안내(국내).</li>
   <li>계정: 이메일, 플랜, 이번 달 사용량, 데이터 전체 내보내기(마크다운+사진 zip), 탈퇴.</li>
+</ul>
+
+<h2 id="5-1-2단계-예고-추억-복원-모드">5-1. 2단계 예고: 추억 복원 모드</h2>
+
+<p>MVP에는 넣지 않는다. 다만 데이터 모델은 지금부터 대비한다.</p>
+<ul>
+  <li>note_images에 <code class="language-plaintext highlighter-rouge">restored_path</code>, <code class="language-plaintext highlighter-rouge">upscale_factor</code>, <code class="language-plaintext highlighter-rouge">restore_params</code> 컬럼 예약. 원본 <code class="language-plaintext highlighter-rouge">storage_path</code>는 불변.</li>
+  <li>notes에 <code class="language-plaintext highlighter-rouge">date_is_estimated bool</code>, <code class="language-plaintext highlighter-rouge">person_tags text[]</code>(첫째·둘째 등) 예약.</li>
+  <li>묶음 업로드(최대 50장)는 <code class="language-plaintext highlighter-rouge">batches</code> 테이블로 묶고 처리 상태를 알림.</li>
+  <li>화면은 S2 확인에 “원본 / 복원” 좌우 비교 슬라이더 하나가 추가되는 정도. 새 화면을 만들지 않는다.</li>
 </ul>
 
 <h2 id="6-데이터-모델-수파베이스">6. 데이터 모델 (수파베이스)</h2>

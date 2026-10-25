@@ -99,6 +99,18 @@ h2 .lab{font-family:var(--body);font-size:.68rem;font-weight:600;letter-spacing:
 .sample .chips span{display:inline-block;font-size:.74rem;border:1px solid var(--s-acc);color:var(--s-acc);border-radius:4px;padding:.02rem .45rem;margin:.1rem .25rem .1rem 0}
 .sample .line{border-top:1px dashed var(--s-line);margin:.6rem 0}
 .sample .sm{font-size:.78rem;color:var(--s-mute)}
+.restore{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:.8rem;margin:1.2rem 0;align-items:stretch}
+.rs-img{position:relative;min-width:0}
+.rs-img>span{position:absolute;left:.6rem;top:.5rem;font-size:.68rem;letter-spacing:.08em;background:rgba(0,0,0,.55);color:#fff;border-radius:4px;padding:.05rem .4rem;z-index:1}
+.rs-paper{height:100%;min-height:150px;border-radius:12px;padding:1.9rem .8rem .8rem;font-family:var(--hand);font-size:1.2rem;line-height:1.3;color:#3a3630;background:repeating-linear-gradient(0deg,#f8f3e6 0 14px,#d9cfb8 14px 15px);border:1px solid #d8cfbc}
+.rs-paper.old{filter:sepia(.55) contrast(.78) brightness(.9) blur(.6px);transform:rotate(-1.5deg)}
+.rs-text{background:var(--paper-2);border-radius:12px;padding:.9rem 1rem;min-width:0}
+.rs-text h4{font-family:var(--display);margin:0 0 .3rem;font-size:1.05rem}
+.rs-text h4 small{font-weight:400;color:var(--ink-soft);font-size:.78rem;margin-left:.3rem}
+.rs-hand{font-family:var(--hand);font-size:1.3rem;line-height:1.3;margin:0 0 .5rem;color:var(--ink)}
+.rs-chips span{display:inline-block;font-size:.72rem;border:1px solid var(--accent);color:var(--accent-2);border-radius:4px;padding:.02rem .45rem;margin:.1rem .25rem .1rem 0}
+.q2{font-size:.78rem;color:var(--ink-soft);margin-top:.5rem}
+@media (max-width:720px){.restore{grid-template-columns:1fr 1fr}.rs-text{grid-column:1/-1}}
 .honest{background:var(--accent-soft);border-left:3px solid var(--accent);padding:.8rem 1rem;border-radius:0 8px 8px 0;font-size:.95rem}
 
 ul.plain{padding-left:1.2rem;margin:0}
@@ -197,8 +209,25 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
   <p class="honest">정직하게 말씀드리면, MBTI는 과학적 진단 도구가 아니라 취향을 표현하는 언어입니다. 그래서 "진단"이 아니라 고르는 재미의 출발점으로만 씁니다. 아시면 입력하시고, 모르셔도 그림 6장만 고르면 됩니다.</p>
 </section>
 
+<section id="memory">
+  <h2><span class="lab">03</span>오래된 다이어리도 괜찮아요</h2>
+  <p>아이들 유치원 다닐 때 쓴 육아 일기, 신혼 때 가계부, 서랍 깊숙이 있는 편지. 꺼내서 사진만 찍으세요. <strong>사진은 사진대로 살리고, 글은 글대로 정리</strong>해 드립니다.</p>
+  <div class="restore">
+    <div class="rs-img before"><span>원본</span><div class="rs-paper old">2009. 5월 어느날<br>지우 첫 소풍.<br>김밥 다 흘리고 와서 웃음</div></div>
+    <div class="rs-img after"><span>복원</span><div class="rs-paper">2009. 5월 어느날<br>지우 첫 소풍.<br>김밥 다 흘리고 와서 웃음</div></div>
+    <div class="rs-text"><h4>2009년 5월 <small>추정 · 지우 6살</small></h4><p class="rs-hand">지우 첫 소풍. 김밥 다 흘리고 와서 웃음</p><div class="rs-chips"><span>추억 서랍</span><span>첫째 · 지우</span><span>유치원</span></div><div class="q2">못 읽은 글자는 못 읽었다고 표시합니다. 지어내지 않아요.</div></div>
+  </div>
+  <ul class="plain">
+    <li><strong>화질 복원</strong>: 2~4배 업스케일, 누렇게 바랜 색 보정, 기울기·그림자 제거. 원본은 절대 덮어쓰지 않고 나란히 보관합니다.</li>
+    <li><strong>날짜 찾기</strong>: 적힌 날짜가 없으면 문맥(행사·계절·아이 나이)으로 추정하고 "추정"이라고 표시합니다.</li>
+    <li><strong>엮기</strong>: 시간순 타임라인, 아이별 보기. 한꺼번에 50장까지 올리면 끝나고 알려드립니다.</li>
+    <li><strong>남기기</strong>: 복원 사진은 왼쪽, 정리한 글은 오른쪽. "그 시절 책"으로 인쇄할 수 있습니다.</li>
+  </ul>
+  <p class="note">추억 복원은 출시 후 2단계에 열립니다. 아래 사전등록에서 관심을 표시해 주시면 먼저 초대합니다.</p>
+</section>
+
 <section id="connect">
-  <h2><span class="lab">03</span>쓰던 앱을 버리지 않아도 됩니다</h2>
+  <h2><span class="lab">04</span>쓰던 앱을 버리지 않아도 됩니다</h2>
   <ul class="plain">
     <li><strong>노션, 구글 캘린더</strong>: 한 번 연결하면 끝. 서랍별 페이지와 일정이 자동으로 들어갑니다.</li>
     <li><strong>원노트, 에버노트, 구글 드라이브</strong>: 출시 후 순차 지원.</li>
@@ -209,7 +238,7 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
 </section>
 
 <section id="join">
-  <h2><span class="lab">04</span>사전등록</h2>
+  <h2><span class="lab">05</span>사전등록</h2>
   <p>이메일 하나면 됩니다. 아래 질문은 만드는 데 큰 도움이 되지만, 건너뛰셔도 괜찮아요.</p>
   <form id="wl" novalidate>
     <div>
@@ -225,6 +254,7 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
         <option>아이패드·갤럭시탭 필기</option>
         <option>폰 메모 앱</option>
         <option>거의 안 쓰지만 쓰고 싶음</option>
+        <option>옛날에 쓴 손 다이어리를 정리하고 싶음</option>
       </select>
     </div>
     <div>
@@ -238,6 +268,14 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
         <label><input type="checkbox" name="tools" value="애플 메모">애플 메모</label>
         <label><input type="checkbox" name="tools" value="삼성 노트">삼성 노트</label>
         <label><input type="checkbox" name="tools" value="앱 안에만">앱 안에만 두고 싶어요</label>
+      </div>
+    </div>
+    <div>
+      <label>오래된 다이어리·육아 일기 복원에 관심 있으세요?</label>
+      <div class="radios">
+        <label><input type="radio" name="restore_interest" value="꼭 필요">꼭 필요해요. 정리하고 싶은 기록이 있어요</label>
+        <label><input type="radio" name="restore_interest" value="있으면 좋음">있으면 좋을 것 같아요</label>
+        <label><input type="radio" name="restore_interest" value="관심 없음">별로 관심 없어요</label>
       </div>
     </div>
     <div>
@@ -265,7 +303,7 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
 </section>
 
 <section class="faq">
-  <h2><span class="lab">05</span>자주 묻는 질문</h2>
+  <h2><span class="lab">06</span>자주 묻는 질문</h2>
   <dl>
     <dt>제 글씨가 많이 흘려 쓴 글씨인데 읽을 수 있나요?</dt>
     <dd>최신 AI는 꽤 잘 읽지만 완벽하지는 않습니다. 그래서 "확인" 단계를 꼭 거치고, 원본 사진을 항상 함께 보관합니다. 틀린 글자를 고쳐 주시면 점점 나아집니다.</dd>
@@ -318,7 +356,7 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
     var pay=form.querySelector('input[name=pay_intent]:checked');
     var row={ email:email, diary_type:form.diary_type.value||null, tools:tools.length?tools:null,
       pay_intent:pay?pay.value:null, mbti:(form.mbti.value||'').trim().toUpperCase()||null,
-      note:form.note.value.trim()||null, source:location.search.slice(1)||document.referrer||null, ua:navigator.userAgent.slice(0,200) };
+      note:form.note.value.trim()||null, restore_interest:(form.querySelector('input[name=restore_interest]:checked')||{}).value||null, source:location.search.slice(1)||document.referrer||null, ua:navigator.userAgent.slice(0,200) };
     var old=btn.textContent; btn.disabled=true; btn.textContent='접수 중…';
     try{
       if(!sb) throw new Error('no-client');
