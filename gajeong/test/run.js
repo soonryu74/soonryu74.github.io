@@ -690,7 +690,7 @@ const db = p => p.evaluate(() => window.__DB());
     ok('기간 [전체 기간]', (await p.textContent('#gather-list')).includes('지난주 이야기') && (await p.textContent('#g-print-head')).includes('전체 기간'));
     await p.selectOption('#g-range', 'custom'); await p.waitForTimeout(600);
     ok('기간 [기간 정하기] → 날짜 칸 + 그 기간', await p.isVisible('#g-from') && await p.isVisible('#g-to') && (await p.textContent('#gather-list')).includes('지난주 이야기'));
-    await p.fill('#g-from', '2026-10-19'); await p.dispatchEvent('#g-from', 'change'); await p.waitForTimeout(600);
+    await p.fill('#g-from', '2026-10-19'); await p.fill('#g-to', '2026-10-24'); await p.dispatchEvent('#g-to', 'change'); await p.waitForTimeout(600);
     ok('기간 밖이면 일기 없음', (await p.textContent('#gather-list')).includes('이 기간에 올라온 일기가 없습니다'));
     await p.selectOption('#g-range', 'week'); await p.waitForTimeout(600);
     ok('다시 [한 주] → 지난주·다음주 단추', await p.isVisible('#g-prev') && !(await p.isVisible('#g-from')));
