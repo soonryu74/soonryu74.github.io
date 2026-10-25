@@ -505,17 +505,6 @@
     });
   }
   // 기도 응답 — 천사들이 날아오르고 금빛이 번진다 (움직임 줄이기 설정이면 글만)
-  function angelSvg() {
-    return '<svg viewBox="0 0 120 120" aria-hidden="true">' +
-      '<g class="wl"><path d="M50 50 C 22 28, 2 44, 12 76 C 24 64, 40 62, 50 66 Z" fill="rgba(255,255,255,.95)" stroke="#e2b253" stroke-width="1.5"/>' +
-      '<path d="M48 54 C 30 44, 16 52, 18 70" fill="none" stroke="#f2cc74" stroke-width="1"/></g>' +
-      '<g class="wr"><path d="M70 50 C 98 28, 118 44, 108 76 C 96 64, 80 62, 70 66 Z" fill="rgba(255,255,255,.95)" stroke="#e2b253" stroke-width="1.5"/>' +
-      '<path d="M72 54 C 90 44, 104 52, 102 70" fill="none" stroke="#f2cc74" stroke-width="1"/></g>' +
-      '<ellipse cx="60" cy="16" rx="13" ry="4.5" fill="none" stroke="#f2cc74" stroke-width="2.5"/>' +
-      '<circle cx="60" cy="29" r="9" fill="#fff3d6" stroke="#e2b253" stroke-width="1"/>' +
-      '<path d="M60 38 C 50 44, 44 70, 40 100 Q 60 110 80 100 C 76 70, 70 44, 60 38 Z" fill="#fffaf0" stroke="#e2b253" stroke-width="1.2"/>' +
-      '<path d="M52 62 Q 60 56 68 62" fill="none" stroke="#f2cc74" stroke-width="1.2"/></svg>';
-  }
   function angels(label) {
     toast(label);
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -524,9 +513,9 @@
     box.innerHTML = '<div class="light"></div>' + (label ? '<div class="label">' + esc(label) + '</div>' : '');
     var n = 26;   // 하트 날리듯 작은 천사들
     for (var i = 0; i < n; i++) {
-      var an = document.createElement('div'); an.className = 'angel'; an.innerHTML = angelSvg();
-      var size = 22 + Math.random() * 22;
-      an.style.width = an.style.height = size + 'px';
+      var an = document.createElement('div'); an.className = 'angel'; an.textContent = i % 5 === 4 ? '✨' : '👼';
+      var size = 24 + Math.random() * 20;
+      an.style.fontSize = size + 'px';
       an.style.left = (Math.random() * 96) + 'vw';
       an.style.setProperty('--dx', Math.round(Math.random() * 90 - 45) + 'px');
       an.style.setProperty('--dur', (2.2 + Math.random() * 1.8).toFixed(2) + 's');

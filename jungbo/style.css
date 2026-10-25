@@ -27,7 +27,7 @@
 [data-sky="dusk"]{ --sky-a:#f3d9b8; --sky-b:#f6f1e7; --sky-glow:rgba(255,196,120,.85) }
 /* 밤 (20~5시): 짙은 상록 어둠 위에 금빛 불빛 */
 [data-sky="night"]{
-  --paper:#07100d; --paper-2:#10201a; --sheet:rgba(18,32,26,.84); --field:#1a2c25;
+  --paper:#05090a; --paper-2:#0f1b16; --sheet:#0e1a15; --field:#15241e;
   --ink:#f1ead9; --ink-2:#d8d0bd; --muted:#9aa398; --line:#25382f; --line-2:#334a3f; --placeholder:#6f7d73;
   --brand:#8fc3a8; --brand-dk:#6fa98d; --brand-2:#a5d3bb; --brand-soft:#1d3a2f; --on-brand:#0f1c17; --focus:rgba(143,195,168,.25);
   --gold:#e2b253; --gold-2:#f2cc74; --gold-soft:#2b2a1a; --gold-line:#6b5a2e; --flame:#ffd36a; --flame-2:#fff6d6;
@@ -60,12 +60,18 @@ a{color:var(--brand)}
 [data-sky="night"] body{background:transparent}   /* 몸통 배경이 촛불 바탕을 가리지 않게 */
 [data-sky="night"] .sky{display:none}
 /* 밤에는 별 */
-[data-sky="night"] .card,[data-sky="night"] .post,[data-sky="night"] .chip,[data-sky="night"] .menu-pop{backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px)}
-[data-sky="night"] .sheet{background:rgba(14,26,21,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px)}
-[data-sky="night"] .sheet-foot{background:transparent}
-[data-sky="night"] .top{background:linear-gradient(180deg,rgba(7,16,13,.92),rgba(7,16,13,.75)); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px)}
-[data-sky="night"] .tabs{background:rgba(7,16,13,.4); border-radius:12px 12px 0 0}
-[data-sky="night"] .hero-verse{text-shadow:0 2px 24px rgba(0,0,0,.8)}
+/* 밤: 카드는 흐림 없이 짙은 유리판처럼 — 뒤의 촛불이 번지지 않는다 */
+[data-sky="night"] .card,[data-sky="night"] .post{background:rgba(12,22,18,.93); border-color:rgba(255,255,255,.08); box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 20px 50px -20px rgba(0,0,0,.9)}
+[data-sky="night"] .post.urgent{border-color:rgba(255,160,90,.35)}
+[data-sky="night"] .chip{background:rgba(12,22,18,.85); border-color:rgba(255,255,255,.1)}
+[data-sky="night"] .menu-pop{background:#0f1b16}
+[data-sky="night"] .sheet{background:#0e1a15}
+[data-sky="night"] .top{background:linear-gradient(180deg,rgba(5,9,10,.96),rgba(5,9,10,.85))}
+[data-sky="night"] .tabs{background:rgba(5,9,10,.55); border-radius:12px 12px 0 0}
+[data-sky="night"] .hero-verse{text-shadow:0 2px 26px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.8)}
+[data-sky="night"] .hero-name,[data-sky="night"] .hero-ref,[data-sky="night"] .hero-kicker{text-shadow:0 1px 14px rgba(0,0,0,.95)}
+[data-sky="night"] .enter-hero h1,[data-sky="night"] .enter-hero p{text-shadow:0 2px 20px rgba(0,0,0,.95)}
+[data-sky="night"] .fab{box-shadow:0 16px 34px -12px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.08)}
 [data-sky="night"] .sky .star{position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:0; animation:twinkle 4s ease-in-out infinite}
 @keyframes twinkle{0%,100%{opacity:.1} 50%{opacity:.9}}
 
@@ -271,12 +277,8 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .angels .light{position:absolute; inset:0; width:auto; height:auto; border-radius:0; box-shadow:none;
   background:radial-gradient(60% 50% at 50% 40%,rgba(255,236,170,.35),transparent 70%); opacity:0; animation:holy 4s ease-in-out forwards}
 @keyframes holy{0%{opacity:0} 25%{opacity:1} 80%{opacity:.7} 100%{opacity:0}}
-.angel{position:absolute; bottom:-60px; width:34px; height:34px; animation:fly var(--dur,3s) ease-out forwards; filter:drop-shadow(0 0 6px rgba(255,220,130,.9)); opacity:0}
-.angel svg{width:100%; height:100%; overflow:visible}
-.angel .wl,.angel .wr{transform-origin:50% 55%; animation:flap .7s ease-in-out infinite}
-.angel .wr{animation-direction:alternate-reverse}
-@keyframes flap{0%,100%{transform:rotate(-12deg) scaleX(1)} 50%{transform:rotate(10deg) scaleX(.8)}}
-@keyframes fly{0%{transform:translate(0,0) rotate(-6deg); opacity:0} 12%{opacity:1} 60%{transform:translate(var(--dx,30px),-60vh) rotate(6deg); opacity:1} 100%{transform:translate(calc(var(--dx,30px) * 1.5),-110vh) rotate(-4deg); opacity:0}}
+.angel{position:absolute; bottom:-60px; line-height:1; animation:fly var(--dur,3s) ease-out forwards; filter:drop-shadow(0 0 8px rgba(255,220,130,.8)); opacity:0; will-change:transform}
+@keyframes fly{0%{transform:translate(0,0) rotate(-8deg); opacity:0} 12%{opacity:1} 35%{transform:translate(calc(var(--dx,30px) * .5),-30vh) rotate(8deg)} 60%{transform:translate(var(--dx,30px),-60vh) rotate(-6deg); opacity:1} 100%{transform:translate(calc(var(--dx,30px) * 1.5),-110vh) rotate(6deg); opacity:0}}
 .angels .spark{position:absolute; width:5px; height:5px; border-radius:50%; background:radial-gradient(circle,#fff,var(--flame) 60%,transparent 70%); animation:spark var(--dur,3s) ease-out forwards; opacity:0}
 @keyframes spark{0%{transform:translateY(0) scale(.4); opacity:0} 20%{opacity:1} 100%{transform:translateY(-70vh) scale(1.1); opacity:0}}
 .angels .label{position:absolute; left:50%; top:30%; transform:translate(-50%,-50%); font-family:var(--serif); font-size:19px; font-weight:700; color:#5a3f0b;
