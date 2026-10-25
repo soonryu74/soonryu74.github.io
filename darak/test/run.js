@@ -445,7 +445,7 @@ const db = p => p.evaluate(() => window.__DB());
     ok('다락방 교회: 순장 말로 나옴', (await p.textContent('#join-card h2')).includes('순장'));
     await p.click('#join-make'); await p.waitForTimeout(300);
     const code = (await p.textContent('#join-code')).trim();
-    await p.evaluate(() => CHURCH.signOut());
+    await p.evaluate(() => CHURCH.signOut()); await p.waitForURL(/index/); await p.waitForTimeout(300);
     await p.goto(BASE + 'index.html?c=lach01'); await p.waitForTimeout(400);
     ok('로그인 화면에 순장 시작 링크', (await p.textContent('#to-join')).includes('순장으로 시작하기'), await p.textContent('#to-join'));
     await p.click('#to-join');
@@ -760,6 +760,17 @@ const db = p => p.evaluate(() => window.__DB());
     ok('기도제목 모아보기: 기본은 목장 이야기 없이', !(await p.textContent('#gather-list')).includes('지난주 이야기'));
     await p.check('#g-story'); await p.waitForTimeout(500);
     ok('[목장 이야기도 보기] → 카드 맨 위에 목장 이야기', (await p.textContent('#gather-list .card')).includes('지난주 이야기'));
+    await p.selectOption('#g-range', 'month'); await p.waitForTimeout(600);
+    ok('기간 [최근 한 달] → 주마다 묶여 나옴 (예전 월요일 일기도 그 주로)', (await p.$$('#gather-list .gather-week')).length === 1 && (await p.textContent('.gather-week-h')).includes('10월 11일') && (await p.textContent('#gather-list')).includes('지난주 이야기') && !(await p.isVisible('#g-prev')));
+    ok('인쇄 머리말에 기간', (await p.textContent('#g-print-head')).includes('~'));
+    await p.selectOption('#g-range', 'all'); await p.waitForTimeout(600);
+    ok('기간 [전체 기간]', (await p.textContent('#gather-list')).includes('지난주 이야기') && (await p.textContent('#g-print-head')).includes('전체 기간'));
+    await p.selectOption('#g-range', 'custom'); await p.waitForTimeout(600);
+    ok('기간 [기간 정하기] → 날짜 칸 + 그 기간', await p.isVisible('#g-from') && await p.isVisible('#g-to') && (await p.textContent('#gather-list')).includes('지난주 이야기'));
+    await p.fill('#g-from', '2026-10-19'); await p.fill('#g-to', '2026-10-24'); await p.dispatchEvent('#g-to', 'change'); await p.waitForTimeout(600);
+    ok('기간 밖이면 일기 없음', (await p.textContent('#gather-list')).includes('이 기간에 올라온 일기가 없습니다'));
+    await p.selectOption('#g-range', 'week'); await p.waitForTimeout(600);
+    ok('다시 [한 주] → 지난주·다음주 단추', await p.isVisible('#g-prev') && !(await p.isVisible('#g-from')));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 

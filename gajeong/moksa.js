@@ -581,6 +581,13 @@
     $('#g-prev').addEventListener('click', function () { week = C.addWeeks(week, -1); loadGather(); });
     $('#g-next').addEventListener('click', function () { week = C.addWeeks(week, 1); loadGather(); });
     $('#g-story').addEventListener('change', loadGather);
+    $('#g-range').addEventListener('change', function () {
+      var custom = this.value === 'custom';
+      $('#g-custom').hidden = !custom;
+      if (custom && !$('#g-from').value) { $('#g-from').value = C.addWeeks(week, -3); $('#g-to').value = C.addDays(week, 6); }
+      loadGather();
+    });
+    ['#g-from', '#g-to'].forEach(function (s) { $(s).addEventListener('change', loadGather); });
     $('#g-print').addEventListener('click', function () {
       // 카카오톡 같은 앱 안 화면은 인쇄 창이 열리지 않는다 → 크롬·사파리로 옮겨서
       if (C.inApp()) { if (confirm(T('카카오톡 안에서는 인쇄·PDF 저장이 되지 않습니다. 크롬(아이폰은 사파리)으로 열까요?'))) C.openExternal(); return; }
@@ -721,40 +728,98 @@
   });
 
   /* ── 기도제목 모아보기 ─────────────────────────── */
+  // 한 목장 일기 카드 (기도제목 모아보기)
+  function gatherCard(m, d, story) {
+    var j = d.j, h = '';
+    h += '<div class="card"><h2>' + esc(m.name) +
+      (j.status === 'submitted' ? '' : T(' <span class="badge todo">임시</span>')) + '</h2>' +
+      '<p class="desc">' + esc(m.mokja_name || '') +
+      (j.present_count != null ? ' · ' + T('{0}명 참석', j.present_count) : '') + '</p>';
+    if (story && j.body) {
+      h += T('<div class="section-title">목장 이야기</div><div class="prose">') + C.proseHtml(j.body) + '</div>' +
+        T('<div class="section-title">기도제목</div>');
+    }
+    var withText = d.ps.filter(function (p) { return p.content; });
+    if (withText.length) {
+      h += C.prayerList(withText, { noAbsent: true });
+    } else {
+      h += T('<p class="quiet">적힌 목원 기도제목이 없습니다.</p>');
+    }
+    if (j.mokjang_prayer) {
+      h += T('<div class="section-title" style="margin-top:8px">목장 전체</div>') +
+        '<div class="prose">' + C.proseHtml(j.mokjang_prayer) + '</div>';
+    }
+    return h + '</div>';
+  }
+  // 여러 주를 한 번에: { 주일 키: { 목장 id: { j, ps } } } — 예전(월요일 시작) 일기도 그 주로 묶는다
+  async function fetchRange(from, to) {
+    var q = sb.from('church_journal').select('*').gte('week_start', from).order('week_start');
+    if (to) q = q.lte('week_start', C.addDays(to, 1));
+    var all = (await q).data || [];
+    var out = {}, js = [];
+    all.forEach(function (j) {
+      var wk = C.mondayOf(j.week_start), w = out[wk] || (out[wk] = {});
+      if (to && wk > to) return;
+      var old = w[j.mokjang_id];
+      if (old && old.j.week_start === wk) return;   // 주일 기준 것을 먼저
+      w[j.mokjang_id] = { j: j, ps: [] };
+    });
+    Object.keys(out).forEach(function (wk) { Object.keys(out[wk]).forEach(function (k) { js.push(out[wk][k]); }); });
+    var byJ = {}; js.forEach(function (d) { byJ[d.j.id] = d; });
+    var ids = Object.keys(byJ);
+    for (var i = 0; i < ids.length; i += 100) {   // 주소가 너무 길어지지 않게 100개씩
+      var ps = (await sb.from('church_prayer').select('*').in('journal_id', ids.slice(i, i + 100)).order('sort_order')).data || [];
+      ps.forEach(function (p) { if (byJ[p.journal_id]) byJ[p.journal_id].ps.push(p); });
+    }
+    return out;
+  }
+  function dayText(d) { return new Intl.DateTimeFormat(C.lang() === 'en' ? 'en-US' : 'ko-KR', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(d + 'T00:00:00Z')); }
+  function spanText(fromWk, toWk) { return T('{0} ~ {1}', dayText(fromWk), dayText(C.addDays(toWk, 6))); }
+  function gatherRange() {
+    var r = $('#g-range').value;
+    if (r === 'month') return { from: C.addWeeks(week, -3), to: week, label: spanText(C.addWeeks(week, -3), week) };
+    if (r === 'all') return { from: '2000-01-01', to: null, label: T('전체 기간') };
+    if (r === 'custom') {
+      var f = $('#g-from').value, e = $('#g-to').value;
+      if (!f || !e) return null;
+      if (f > e) { var x = f; f = e; e = x; }
+      return { from: C.mondayOf(f), to: C.mondayOf(e), label: spanText(C.mondayOf(f), C.mondayOf(e)) };
+    }
+    return null;
+  }
+
   async function loadGather() {
-    $('#g-label').textContent = C.weekLabel(week);
-    $('#g-print-head').innerHTML = T('<h2 style="margin:0">목장 기도제목 — ') + esc(C.weekLabel(week)) + '</h2>';
+    var range = $('#g-range').value, story = $('#g-story').checked;   // 기본은 기도제목만 (주일 중보기도용), 켜면 목장 이야기를 맨 위에
+    var one = range === 'week';
+    ['#g-prev', '#g-label', '#g-next'].forEach(function (s) { $(s).hidden = !one; });
     $('#gather-list').innerHTML = T('<p class="empty">불러오는 중…</p>');
-    var data = await fetchWeek();
-    var story = $('#g-story').checked;   // 기본은 기도제목만 (주일 중보기도용), 켜면 목장 이야기를 맨 위에
-    var live = mokjangs.filter(function (m) { return m.active && data[m.id]; });
-    if (!live.length) {
-      $('#gather-list').innerHTML = T('<div class="card"><p class="empty">이 주에 올라온 일기가 없습니다.</p></div>');
+    if (one) {
+      $('#g-label').textContent = C.weekLabel(week);
+      $('#g-print-head').innerHTML = T('<h2 style="margin:0">목장 기도제목 — ') + esc(C.weekLabel(week)) + '</h2>';
+      var data = await fetchWeek();
+      var live = mokjangs.filter(function (m) { return m.active && data[m.id]; });
+      if (!live.length) {
+        $('#gather-list').innerHTML = T('<div class="card"><p class="empty">이 주에 올라온 일기가 없습니다.</p></div>');
+        return;
+      }
+      $('#gather-list').innerHTML = live.map(function (m) { return gatherCard(m, data[m.id], story); }).join('');
       return;
     }
-    $('#gather-list').innerHTML = live.map(function (m) {
-      var d = data[m.id], j = d.j, h = '';
-      h += '<div class="card"><h2>' + esc(m.name) +
-        (j.status === 'submitted' ? '' : T(' <span class="badge todo">임시</span>')) + '</h2>' +
-        '<p class="desc">' + esc(m.mokja_name || '') +
-        (j.present_count != null ? ' · ' + T('{0}명 참석', j.present_count) : '') + '</p>';
-      if (story && j.body) {
-        h += T('<div class="section-title">목장 이야기</div><div class="prose">') + C.proseHtml(j.body) + '</div>' +
-          T('<div class="section-title">기도제목</div>');
-      }
-      var withText = d.ps.filter(function (p) { return p.content; });
-      if (withText.length) {
-        h += C.prayerList(withText, { noAbsent: true });
-      } else {
-        h += T('<p class="quiet">적힌 목원 기도제목이 없습니다.</p>');
-      }
-      if (j.mokjang_prayer) {
-        h += T('<div class="section-title" style="margin-top:8px">목장 전체</div>') +
-          '<div class="prose">' + C.proseHtml(j.mokjang_prayer) + '</div>';
-      }
-      return h + '</div>';
+    var g = gatherRange();
+    if (!g) { $('#gather-list').innerHTML = T('<div class="card"><p class="empty">시작 날짜와 끝 날짜를 골라 주세요.</p></div>'); return; }
+    $('#g-print-head').innerHTML = T('<h2 style="margin:0">목장 기도제목 — ') + esc(g.label) + '</h2>';
+    var weeks = await fetchRange(g.from, g.to), keys = Object.keys(weeks).sort();   // 오래된 주부터 차례로 (책처럼)
+    var order = mokjangs.slice();   // 목장 순서는 주간 현황과 같게 (지금은 없어진 목장도 그때 일기는 보인다)
+    var html = keys.map(function (wk) {
+      var w = weeks[wk], list = order.filter(function (m) { return w[m.id]; });
+      if (!list.length) return '';
+      return '<section class="gather-week"><h2 class="gather-week-h">' + esc(C.weekLabel(wk)) +
+        ' <span class="quiet">' + esc(T('목장 {0}곳', list.length)) + '</span></h2>' +
+        list.map(function (m) { return gatherCard(m, w[m.id], story); }).join('') + '</section>';
     }).join('');
+    $('#gather-list').innerHTML = html || T('<div class="card"><p class="empty">이 기간에 올라온 일기가 없습니다.</p></div>');
   }
+
 
   /* ── 관리 ──────────────────────────────────────── */
   function bindManage() {
