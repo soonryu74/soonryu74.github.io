@@ -889,6 +889,18 @@
   });
   bgmUi();
 
+  /* ── 새 버전이 올라왔으면 한 번 새로 고친다 (카카오톡 안 브라우저가 예전 화면을 붙잡는 문제) ── */
+  (async function () {
+    try {
+      var r = await fetch('version.txt?t=' + Date.now(), { cache: 'no-store' });
+      var v = (await r.text()).trim();
+      if (v && window.APP_VER && v !== window.APP_VER && sessionStorage.getItem('jungbo-reloaded') !== v) {
+        sessionStorage.setItem('jungbo-reloaded', v);
+        location.reload();
+      }
+    } catch (e) {}
+  })();
+
   // 시작
   main();
 })();
