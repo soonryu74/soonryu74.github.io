@@ -51,15 +51,35 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   ok('목록 맨 위 긴급 카드', await A.p.$('.post.urgent') !== null);
   ok('긴급 알약', (await A.p.textContent('#chips')).includes('긴급'));
 
-  console.log('\n[3] 식구 들어오기 (초대 주소) → 기도했어요 · 이모지 · 댓글');
+  console.log('\n[2b] 방 만들기 (그룹 3개) · 내 방 들어가기 · 방 글 · 나만 보는 글');
+  await A.p.click('#tabs button[data-tab="group"]'); await A.p.waitForSelector('#rb-group');
+  await A.p.fill('#rb-group', '3'); await A.p.click('[data-rooms-bulk="group"]'); await A.p.waitForSelector('[data-room-open]'); await sleep(500);
+  ok('방 3개', (await A.p.$$('[data-room-open]')).length === 3);
+  await A.p.click('[data-myroom]'); await sleep(1200);   // 1그룹에 들어간다
+  await A.p.click('#tabs button[data-tab="open"]'); await sleep(800);
+  ok('방 알약(전체·공통·1그룹)', (await A.p.textContent('#roomtabs')).includes('1그룹'));
+  await A.p.click('#fab'); await A.p.waitForSelector('#w-room');
+  await A.p.selectOption('#w-room', { label: '1그룹' }); await A.p.fill('#w-body', '1그룹 식구들만 보는 기도입니다.');
+  await A.p.click('.sheet-bg.open [data-ok]'); await A.p.waitForSelector('.sheet-bg.open [data-kakao]'); await A.p.click('.sheet-bg.open [data-c]'); await sleep(600);
+  await A.p.click('#fab'); await A.p.waitForSelector('#w-vis');
+  await A.p.selectOption('#w-vis', 'private'); await A.p.fill('#w-body', '비밀 기도입니다. 나만 봅니다.');
+  await A.p.click('.sheet-bg.open [data-ok]'); await sleep(1200);
+  ok('방 글에 방 이름 표시', (await A.p.textContent('#feed')).includes('1그룹') && (await A.p.textContent('#feed')).includes('🔒 나만'));
+  await A.p.click('#roomtabs [data-scope="common"]'); await sleep(1200);
+  ok('공통만 보기에는 방 글 없음', !(await A.p.textContent('#feed')).includes('1그룹 식구들만'));
+  await A.p.click('#roomtabs [data-scope="mine"]'); await sleep(800);
+
+  console.log('\n[3] 식구 들어오기 (초대 주소, 1그룹 선택) → 기도했어요 · 이모지 · 댓글');
   const B = await ctx(b);
   await B.p.goto(inviteLink); await B.p.waitForSelector('#join-card:not([hidden])');
   await B.p.waitForFunction(() => document.querySelector('#join-title').textContent.includes('들어가기') && document.querySelector('#join-title').textContent.includes('「'));
+  await B.p.waitForSelector('#jr-group'); await B.p.selectOption('#jr-group', { label: '1그룹' });
   await B.p.fill('#join-name', '이은혜'); await B.p.click('#btn-join');
   await B.p.waitForSelector('#v-main:not([hidden])', { timeout: 20000 });
   await B.p.waitForSelector('.post.urgent');
   await sleep(700); if (await B.p.$('.sheet-bg.open')) { await B.p.click('.sheet-bg.open .sheet-foot button'); await sleep(400); }
   ok('식구 화면에 긴급 글', (await B.p.textContent('.post.urgent')).includes('박집사님'));
+  ok('식구는 1그룹 글은 보고 비밀 글은 못 봄', (await B.p.textContent('#feed')).includes('1그룹 식구들만') && !(await B.p.textContent('#feed')).includes('비밀 기도입니다'));
   await B.p.click('.post.urgent [data-pray]'); await sleep(1200);
   ok('기도했어요 1명', (await B.p.textContent('.post.urgent [data-pray] b')) === '1');
   await B.p.click('.post.urgent .for'); await B.p.waitForSelector('.sheet-bg.open .emoji-row');
@@ -86,6 +106,10 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   await A.p.click('#tabs button[data-tab="group"]'); await A.p.waitForSelector('#pane-group .member'); await sleep(500);
   const members = await A.p.textContent('#pane-group');
   ok('식구 2명 표시', members.includes('김인도') && members.includes('이은혜'));
+  ok('식구 목록에 방 이름', members.includes('1그룹'));
+  await A.p.click('[data-room-open]'); await A.p.waitForSelector('.sheet-bg.open [data-rs-member]'); await sleep(300);
+  ok('방 식구 창에 두 사람 체크', (await A.p.$$('.sheet-bg.open [data-rs-member]:checked')).length === 2);
+  await A.p.evaluate(() => document.querySelector('.sheet-bg.open [data-c]').click()); await sleep(600);
   ok('인도자 설정 카드', await A.p.$('#g-name') !== null);
   const token = await A.p.evaluate(() => JSON.parse(localStorage.getItem('jungbo-accounts'))[0].token);
   ok('열쇠 코드 꼴', /^[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(token), token);
@@ -110,6 +134,9 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   await A.p.click('#feed .post .for'); await A.p.waitForSelector('.sheet-bg.open [data-del-post]');
   await A.p.click('.sheet-bg.open [data-del-post]'); await sleep(1200);
   ok('글 지움', (await A.p.textContent('#feed')).includes('아직 응답받음으로'));
+  await A.p.click('#tabs button[data-tab="open"]'); await sleep(800);
+  for (let i = 0; i < 4 && await A.p.$('#feed .post'); i++) { await A.p.click('#feed .post'); await A.p.waitForSelector('.sheet-bg.open [data-del-post]'); await A.p.click('.sheet-bg.open [data-del-post]'); await sleep(900); }
+  ok('글 모두 지움', await A.p.$('#feed .post') === null);
   await A.p.click('#tabs button[data-tab="group"]'); await A.p.waitForSelector('#pane-group [data-remove]');
   await A.p.click('#pane-group [data-remove]');
   await A.p.waitForFunction(() => !/이은혜/.test(document.querySelector('#pane-group').textContent), null, { timeout: 15000 }).catch(() => {});

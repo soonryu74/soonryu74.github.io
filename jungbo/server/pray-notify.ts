@@ -96,6 +96,23 @@ async function others(groupId: string, exceptId: string) {
   const { data } = await admin.from('pray_member').select('id').eq('group_id', groupId).eq('active', true).neq('id', exceptId)
   return (data ?? []).map((m) => m.id as string)
 }
+// 이 글을 받아 볼 사람들: 공통(room_id 없음)이면 모임 전체, 방 글이면 그 방 식구. '인도자만'이면 전체 인도자 + 방 인도자. '나만'이면 아무도
+async function audience(p: Post, exceptId: string) {
+  if (p.visibility === 'private') return [] as string[]
+  const { data: leaders } = await admin.from('pray_member').select('id').eq('group_id', p.group_id).eq('active', true).eq('role', 'leader')
+  const leaderIds = (leaders ?? []).map((m) => m.id as string)
+  let ids: string[]
+  if (!p.room_id) ids = p.visibility === 'leaders' ? leaderIds : await others(p.group_id, '')
+  else {
+    const q = admin.from('pray_room_member').select('member_id, role').eq('room_id', p.room_id)
+    const { data: rm } = p.visibility === 'leaders' ? await q.eq('role', 'leader') : await q
+    const { data: active } = await admin.from('pray_member').select('id').eq('group_id', p.group_id).eq('active', true)
+    const ok = new Set((active ?? []).map((m) => m.id as string))
+    ids = (rm ?? []).map((x) => x.member_id as string).filter((id) => ok.has(id))
+    if (p.visibility === 'leaders') ids = ids.concat(leaderIds)
+  }
+  return [...new Set(ids)].filter((id) => id !== exceptId)
+}
 // 알림마다 짧은 말씀 한 절 (날마다 바뀐다)
 const VERSES = [
   '너희 짐을 서로 지라 (갈 6:2)', '쉬지 말고 기도하라 (살전 5:17)', '아무 것도 염려하지 말고 기도와 간구로 아뢰라 (빌 4:6)',
@@ -109,11 +126,16 @@ function verse() { const d = new Date(); const n = Math.floor((d.getTime() - Dat
 const withVerse = (s: string) => `${s}\n✦ ${verse()}`
 const short = (s: string, n = 90) => { const t = String(s ?? '').replace(/\s+/g, ' ').trim(); return t.length > n ? t.slice(0, n) + '…' : t }
 
-type Post = { id: string; group_id: string; author_id: string; author_name: string; kind: string; for_whom: string; body: string; status: string; answer_note: string; notified_at: string | null }
+type Post = { id: string; group_id: string; author_id: string; author_name: string; kind: string; for_whom: string; body: string; status: string; answer_note: string; notified_at: string | null; room_id: string | null; visibility: string }
 async function loadPost(id: string, groupId: string) {
-  const { data } = await admin.from('pray_post').select('id, group_id, author_id, author_name, kind, for_whom, body, status, answer_note, notified_at')
+  const { data } = await admin.from('pray_post').select('id, group_id, author_id, author_name, kind, for_whom, body, status, answer_note, notified_at, room_id, visibility')
     .eq('id', id).eq('group_id', groupId).maybeSingle()
   return (data as Post | null) ?? null
+}
+async function roomName(roomId: string | null) {
+  if (!roomId) return ''
+  const { data } = await admin.from('pray_room').select('name').eq('id', roomId).maybeSingle()
+  return data?.name ?? ''
 }
 async function groupCode(groupId: string) {
   const { data } = await admin.from('pray_group').select('invite_code').eq('id', groupId).maybeSingle()
@@ -152,8 +174,8 @@ Deno.serve(async (req) => {
       const urgent = p.kind === 'urgent'
       const code = await groupCode(p.group_id)
       const head = p.for_whom ? `${p.for_whom} · ` : ''
-      const r = await sendTo(await others(p.group_id, p.author_id), {
-        title: urgent ? '🚨 긴급기도가 올라왔습니다' : `${p.author_name}님의 기도제목`,
+      const r = await sendTo(await audience(p, p.author_id), {
+        title: (urgent ? '🚨 긴급기도가 올라왔습니다' : `${p.author_name}님의 기도제목`) + (p.room_id ? ` · ${await roomName(p.room_id)}` : ''),
         body: withVerse(urgent ? `${head}${short(p.body, 70)} — 지금 함께 기도해 주세요` : `${head}${short(p.body, 70)}`),
         url: postUrl(code, p.id), tag: `p-${p.id}`, urgent,
       })
@@ -166,7 +188,7 @@ Deno.serve(async (req) => {
       if (p.author_id !== me.id && me.role !== 'leader') return json({ error: '내가 올린 글이 아닙니다' }, 403)
       if (p.status !== 'answered') return json({ ok: true, skipped: 'not-answered', sent: 0 })
       const code = await groupCode(p.group_id)
-      const r = await sendTo(await others(p.group_id, me.id), {
+      const r = await sendTo(await audience(p, me.id), {
         title: `🙌 기도 응답 — ${p.author_name}님`,
         body: withVerse(short(p.answer_note || p.body, 70)),
         url: postUrl(code, p.id), tag: `a-${p.id}`,
@@ -195,7 +217,8 @@ Deno.serve(async (req) => {
       const p = await loadPost(c.post_id, me.group_id)
       if (!p) return json({ error: '글을 찾지 못했습니다' }, 404)
       const { data: cs } = await admin.from('pray_comment').select('author_id').eq('post_id', p.id)
-      const ids = [p.author_id, ...(cs ?? []).map((x) => x.author_id as string)].filter((id) => id !== me.id)
+      const aud = new Set([...(await audience(p, '')), p.author_id])
+      const ids = [p.author_id, ...(cs ?? []).map((x) => x.author_id as string)].filter((id) => id !== me.id && aud.has(id))
       const code = await groupCode(p.group_id)
       const r = await sendTo(ids, {
         title: `${me.name}님의 댓글`,
