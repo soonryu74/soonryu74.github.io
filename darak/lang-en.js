@@ -714,5 +714,17 @@ window.I18N.en = {
   "일기에 말씀을 남기셨어요": "Left a note on your journal",
   "고쳐서 올리기": "Update notice",
   "지금 걸린 공지입니다. 고쳐서 다시 올리거나, 아래 [새로 작성하기]로 새 공지를 쓰세요.": "This is the current notice. Edit and re-post it, or tap [New notice] below to start over.",
-  "＋ 새로 작성하기": "＋ New notice"
+  "＋ 새로 작성하기": "＋ New notice",
+  "모아 볼 기간": "Period",
+  "한 주": "One week",
+  "최근 한 달 (4주)": "Last month (4 weeks)",
+  "전체 기간": "All time",
+  "기간 정하기": "Choose dates",
+  "시작 날짜": "Start date",
+  "끝 날짜": "End date",
+  "주일 중보기도 시간에 쓰실 수 있게 한 주 전체를 한 장으로 모았습니다. 위에서 한 달·전체·원하는 기간으로 바꾸면 그 기간을 한 번에 인쇄·PDF로 저장합니다.": "All of one week's prayer requests on one page for Sunday intercession. Choose a month, all time or your own dates above to print or save that whole period as a PDF.",
+  "{0} ~ {1}": "{0} – {1}",
+  "목장 {0}곳": "{0} groups",
+  "<div class=\"card\"><p class=\"empty\">시작 날짜와 끝 날짜를 골라 주세요.</p></div>": "<div class=\"card\"><p class=\"empty\">Please choose a start and end date.</p></div>",
+  "<div class=\"card\"><p class=\"empty\">이 기간에 올라온 일기가 없습니다.</p></div>": "<div class=\"card\"><p class=\"empty\">No journals in this period.</p></div>"
 };

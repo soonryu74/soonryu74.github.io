@@ -710,3 +710,17 @@ body{word-break:keep-all; overflow-wrap:break-word}
 h1, h2, h3, .sheet-title, .hero-title, .notice-bar span{text-wrap:balance}
 .notice-edit .nt-fresh{display:block; width:100%; margin:14px 0 2px; padding:13px 16px; border-radius:999px; border:1.5px dashed rgba(255,255,255,.55); background:rgba(255,255,255,.08); color:inherit; font-weight:700; font-size:15px}
 html:not([data-season]) .notice-edit .nt-fresh{border-color:var(--line-2); background:var(--paper)}
+/* 기도제목 모아보기: 기간 고르기 · 여러 주 */
+.g-range-row{display:flex; align-items:center; gap:10px; margin:0 0 12px}
+.g-range-row label{margin:0; font-weight:700; white-space:nowrap}
+.g-range-row select{flex:1; margin:0}
+.g-custom{display:flex; align-items:center; gap:8px; margin:0 0 12px}
+.g-custom input{flex:1; min-width:0; margin:0}
+.g-custom[hidden]{display:none}
+.gather-week-h{font-size:19px; margin:26px 4px 6px; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap}
+.gather-week-h .quiet{font-size:14px; font-weight:500}
+.gather-week:first-child .gather-week-h{margin-top:6px}
+@media print{
+  .gather-week + .gather-week{break-before:page}
+  .gather-week-h{margin:0 0 8px; font-size:15pt}
+}
