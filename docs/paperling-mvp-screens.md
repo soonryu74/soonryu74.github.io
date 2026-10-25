@@ -2,6 +2,7 @@
 
 > 작성 서순려 · 2026-10-25 · 기획안: `docs/ai-note-app-plan.md` · 랜딩: `/paperling/`
 > 클릭 가능한 와이어프레임: https://claude.ai/artifact/K4TZB6pAQ1AcSLJGHF2Pok
+> 디자인 시안(4화면 × 4테마 × 4폰트, 라이브 전환): https://soonryu74.github.io/paperling/design.html
 
 MVP 범위: 사진 → AI 정리 → 서랍 분류 → 노션 저장 + 구글 캘린더 일정 생성. 웹앱(PWA). 디자인 2종.
 화면은 **3개 + 설정 1개**로 끝낸다. 화면이 늘어나면 범위가 늘어난 것이다.
