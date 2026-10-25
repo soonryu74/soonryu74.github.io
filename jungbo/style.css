@@ -27,7 +27,7 @@
 [data-sky="dusk"]{ --sky-a:#f3d9b8; --sky-b:#f6f1e7; --sky-glow:rgba(255,196,120,.85) }
 /* 밤 (20~5시): 짙은 상록 어둠 위에 금빛 불빛 */
 [data-sky="night"]{
-  --paper:#0f1c17; --paper-2:#152620; --sheet:#16261f; --field:#1d3029;
+  --paper:#07100d; --paper-2:#10201a; --sheet:rgba(18,32,26,.84); --field:#1a2c25;
   --ink:#f1ead9; --ink-2:#d8d0bd; --muted:#9aa398; --line:#25382f; --line-2:#334a3f; --placeholder:#6f7d73;
   --brand:#8fc3a8; --brand-dk:#6fa98d; --brand-2:#a5d3bb; --brand-soft:#1d3a2f; --on-brand:#0f1c17; --focus:rgba(143,195,168,.25);
   --gold:#e2b253; --gold-2:#f2cc74; --gold-soft:#2b2a1a; --gold-line:#6b5a2e; --flame:#ffd36a; --flame-2:#fff6d6;
@@ -56,7 +56,16 @@ a{color:var(--brand)}
   background:linear-gradient(180deg,var(--sky-a) 0%,var(--sky-b) 100%); transition:background 1.2s}
 .sky::before{content:''; position:absolute; inset:0; background:radial-gradient(120% 70% at 50% -10%,var(--sky-glow),transparent 70%)}
 .sky::after{content:''; position:absolute; inset:auto 0 0 0; height:120px; background:linear-gradient(180deg,transparent,var(--paper))}
+#candles{position:fixed; inset:0; z-index:-2; display:block; pointer-events:none}
+[data-sky="night"] body{background:transparent}   /* 몸통 배경이 촛불 바탕을 가리지 않게 */
+[data-sky="night"] .sky{display:none}
 /* 밤에는 별 */
+[data-sky="night"] .card,[data-sky="night"] .post,[data-sky="night"] .chip,[data-sky="night"] .menu-pop{backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px)}
+[data-sky="night"] .sheet{background:rgba(14,26,21,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px)}
+[data-sky="night"] .sheet-foot{background:transparent}
+[data-sky="night"] .top{background:linear-gradient(180deg,rgba(7,16,13,.92),rgba(7,16,13,.75)); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px)}
+[data-sky="night"] .tabs{background:rgba(7,16,13,.4); border-radius:12px 12px 0 0}
+[data-sky="night"] .hero-verse{text-shadow:0 2px 24px rgba(0,0,0,.8)}
 [data-sky="night"] .sky .star{position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:0; animation:twinkle 4s ease-in-out infinite}
 @keyframes twinkle{0%,100%{opacity:.1} 50%{opacity:.9}}
 
@@ -113,8 +122,10 @@ a{color:var(--brand)}
 .candle{width:34px; height:52px; display:block}
 .candle .flame{transform-origin:50% 100%; animation:flicker 2.6s ease-in-out infinite}
 .candle .glow{animation:glowpulse 2.6s ease-in-out infinite}
-@keyframes flicker{0%,100%{transform:scaleY(1) rotate(0)} 30%{transform:scaleY(1.08) rotate(-2deg)} 60%{transform:scaleY(.94) rotate(2deg)}}
-@keyframes glowpulse{0%,100%{opacity:.55} 50%{opacity:.9}}
+@keyframes flicker{0%,100%{transform:scaleY(1) rotate(0)} 18%{transform:scaleY(1.14) rotate(-4deg) scaleX(.92)} 37%{transform:scaleY(.9) rotate(3deg)} 55%{transform:scaleY(1.1) rotate(-2deg)} 72%{transform:scaleY(.95) rotate(4deg) scaleX(1.05)} 88%{transform:scaleY(1.06) rotate(-3deg)}}
+@keyframes glowpulse{0%,100%{opacity:.45} 40%{opacity:1} 70%{opacity:.6}}
+.candle .flame{animation-duration:1.7s} .candle .glow{animation-duration:1.7s}
+.enter-hero .candle{filter:drop-shadow(0 0 18px rgba(255,200,90,.9))}
 .lights{display:inline-flex; align-items:center; gap:4px; flex-wrap:wrap}
 .light{width:10px; height:10px; border-radius:50%; background:radial-gradient(circle at 50% 40%,var(--flame-2),var(--flame) 55%,transparent 72%);
   box-shadow:0 0 8px 2px rgba(246,196,83,.55); animation:glowpulse 3s ease-in-out infinite}

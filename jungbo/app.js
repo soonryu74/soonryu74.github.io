@@ -47,25 +47,20 @@
   }
   /* ── 하늘빛 (시간에 따라: 새벽·낮·노을·밤) — 메뉴에서 밤 모드로 고정할 수 있다 ── */
   var LS_SKY = 'jungbo-sky';
-  function skyNow() { var h = new Date().getHours(); return (h < 5 || h >= 20) ? 'night' : h < 10 ? 'dawn' : h < 17 ? 'day' : 'dusk'; }
+  // 기본은 촛불 켜진 어두운 방. 글이 잘 안 보이는 분은 메뉴에서 '밝은 모드'로
   function applySky() {
     var m = ''; try { m = localStorage.getItem(LS_SKY) || ''; } catch (e) {}
-    var s = m === 'night' || m === 'day' ? m : skyNow();
+    var s = m === 'day' ? 'day' : 'night';
     document.documentElement.setAttribute('data-sky', s);
-    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', s === 'night' ? '#0b1612' : '#1f4d3b');
-    var sky = $('#sky');
-    if (sky && s === 'night' && !sky.children.length) {
-      for (var i = 0; i < 40; i++) { var st = document.createElement('i'); st.className = 'star'; st.style.left = (Math.random() * 100) + '%'; st.style.top = (Math.random() * 70) + '%'; st.style.animationDelay = (-Math.random() * 4).toFixed(2) + 's'; st.style.width = st.style.height = (1 + Math.random() * 2).toFixed(1) + 'px'; sky.appendChild(st); }
-    }
-    var mb = $('#menu-sky'); if (mb) mb.textContent = m === 'night' ? '낮 모드로' : m === 'day' ? '시간 따라 자동' : '밤 기도 모드';
+    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', s === 'night' ? '#07100d' : '#1f4d3b');
+    var mb = $('#menu-sky'); if (mb) mb.textContent = s === 'day' ? '촛불 모드로' : '밝은 모드로';
   }
   function toggleSky() {
     var m = ''; try { m = localStorage.getItem(LS_SKY) || ''; } catch (e) {}
-    var next = m === 'night' ? 'day' : m === 'day' ? '' : 'night';   // 밤 고정 → 낮 고정 → 자동
-    try { if (next) localStorage.setItem(LS_SKY, next); else localStorage.removeItem(LS_SKY); } catch (e) {}
+    try { if (m === 'day') localStorage.removeItem(LS_SKY); else localStorage.setItem(LS_SKY, 'day'); } catch (e) {}
     applySky();
   }
-  applySky(); setInterval(applySky, 60000);
+  applySky();
   /* 촛불 그림 */
   function candleSvg(cls) {
     return '<svg class="candle ' + (cls || '') + '" viewBox="0 0 34 52" aria-hidden="true">' +
@@ -264,7 +259,7 @@
   }
   function renderHero() {
     var h = new Date().getHours(), sky = document.documentElement.getAttribute('data-sky');
-    var kick = sky === 'night' ? '밤에 드리는 기도' : h < 10 ? '새벽에 드리는 기도' : h < 17 ? '오늘도 함께' : '저녁에 드리는 기도';
+    var kick = h < 5 ? '밤에 드리는 기도' : h < 10 ? '새벽에 드리는 기도' : h < 17 ? '오늘도 함께' : h < 21 ? '저녁에 드리는 기도' : '밤에 드리는 기도';
     var v = todayVerse();
     $('#hero-kicker').textContent = kick;
     $('#hero-verse').textContent = '“' + v[0] + '”'; $('#hero-ref').textContent = v[1];
