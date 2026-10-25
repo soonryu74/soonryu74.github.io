@@ -91,6 +91,7 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   ok('열쇠 코드 꼴', /^[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(token), token);
   const C = await ctx(b);
   await C.p.goto(BASE); await C.p.waitForSelector('#enter-cards:not([hidden])');
+  await C.p.evaluate(() => { document.querySelector('#key-code').closest('details').open = true; });
   await C.p.fill('#key-code', token.toLowerCase()); await C.p.click('#btn-key');
   await C.p.waitForSelector('#v-main:not([hidden])', { timeout: 20000 });
   await C.p.waitForFunction(() => /김인도/.test(document.querySelector('#top-me').textContent), null, { timeout: 15000 });

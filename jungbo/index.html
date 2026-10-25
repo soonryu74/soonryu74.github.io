@@ -75,17 +75,8 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
     <!-- 처음 화면 -->
     <div id="enter-cards">
       <div class="card">
-        <h2>초대 받으셨나요?</h2>
-        <p class="desc">인도자가 보낸 <b>주소를 누르면 코드 없이</b> 바로 들어와요. 주소가 없으면 초대 코드(8자)를 넣어 주세요.</p>
-        <label for="in-code">초대 코드</label>
-        <input type="text" id="in-code" placeholder="예) AB12-CD34" maxlength="12" autocapitalize="characters" autocomplete="off">
-        <label for="in-name">내 이름</label>
-        <input type="text" id="in-name" placeholder="예) 김은혜" maxlength="20" autocomplete="name">
-        <div class="row end" style="margin-top:14px"><button type="button" class="primary wide" id="btn-join-code">들어가기</button></div>
-      </div>
-      <div class="card">
         <h2>새 모임 만들기</h2>
-        <p class="desc">만든 분이 인도자가 됩니다. 만든 뒤 초대 주소를 단톡방에 올리면 식구들이 들어와요.</p>
+        <p class="desc">모임 이름과 내 이름만 넣으면 끝. 초대 코드와 초대 주소는 자동으로 만들어져요. 식구들은 주소만 누르면 들어옵니다.</p>
         <label for="new-group">모임 이름</label>
         <input type="text" id="new-group" placeholder="예) 은혜 목장 · 수요 중보기도팀" maxlength="40">
         <label for="new-name">내 이름</label>
@@ -93,13 +84,27 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
         <div class="row end" style="margin-top:14px"><button type="button" class="primary wide" id="btn-create">모임 만들기</button></div>
       </div>
       <div class="card">
-        <h2>휴대폰을 바꾸셨나요?</h2>
-        <p class="desc">예전 휴대폰의 [모임] 탭 → 내 정보에 있는 열쇠 코드를 넣으면 그대로 이어집니다.</p>
-        <label for="key-code">열쇠 코드</label>
-        <input type="text" id="key-code" placeholder="XXXX-XXXX-XXXX" maxlength="16" autocapitalize="characters" autocomplete="off">
-        <div class="row end" style="margin-top:14px"><button type="button" class="wide" id="btn-key">들어가기</button></div>
+        <h2>초대 받으셨나요?</h2>
+        <p class="desc">인도자가 보낸 <b>주소를 누르면</b> 이름만 넣고 바로 들어와요. 주소 대신 코드만 받았다면 아래에 넣어 주세요.</p>
+        <details>
+          <summary style="cursor:pointer;color:var(--brand);font-weight:600">초대 코드로 들어가기</summary>
+          <label for="in-code">초대 코드 (8자)</label>
+          <input type="text" id="in-code" placeholder="예) AB12-CD34" maxlength="12" autocapitalize="characters" autocomplete="off">
+          <label for="in-name">내 이름</label>
+          <input type="text" id="in-name" placeholder="예) 김은혜" maxlength="20" autocomplete="name">
+          <div class="row end" style="margin-top:14px"><button type="button" class="primary wide" id="btn-join-code">들어가기</button></div>
+        </details>
       </div>
-      <p class="foot">누구나 무료로 씁니다 · 올린 글은 같은 모임 식구들만 봅니다<br><span id="ver" style="opacity:.55">v2026.10.25.12</span></p>
+      <div class="card">
+        <details>
+          <summary style="cursor:pointer;color:var(--muted);font-weight:600">휴대폰을 바꾸셨나요?</summary>
+          <p class="desc" style="margin-top:8px">예전 휴대폰의 [모임] 탭 → 내 정보에 있는 열쇠 코드를 넣으면 그대로 이어집니다.</p>
+          <label for="key-code">열쇠 코드</label>
+          <input type="text" id="key-code" placeholder="XXXX-XXXX-XXXX" maxlength="16" autocapitalize="characters" autocomplete="off">
+          <div class="row end" style="margin-top:14px"><button type="button" class="wide" id="btn-key">들어가기</button></div>
+        </details>
+      </div>
+      <p class="foot">누구나 무료로 씁니다 · 올린 글은 같은 모임 식구들만 봅니다<br><span id="ver" style="opacity:.55">v2026.10.25.13</span></p>
     </div>
   </section>
 
@@ -132,8 +137,8 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
 <audio id="bgm" src="assets/bgm.mp3" loop preload="auto"></audio>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script>window.APP_VER = "2026.10.25.12";</script>
+<script>window.APP_VER = "2026.10.25.13";</script>
 <script src="candles.js?v=20261025g"></script>
-<script src="app.js?v=20261025l"></script>
+<script src="app.js?v=20261025m"></script>
 </body>
 </html>
