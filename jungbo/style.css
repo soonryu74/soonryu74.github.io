@@ -1,7 +1,7 @@
 /* 중보기도 나눔터 — 스타일
    "조용한 예배당". 시간에 따라 하늘빛이 바뀌고(새벽·낮·노을·밤), 기도는 작은 불빛으로 켜진다.
    어르신도 읽기 쉽게 글자는 크게, 누를 곳은 넓게(44px 이상). 움직임은 느리고 부드럽게. */
-@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@400;600&family=Nanum+Brush+Script&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
 :root{
@@ -309,6 +309,37 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .bgm-btn.playing::after{content:''; position:absolute; inset:-4px; border-radius:50%; border:1px solid rgba(226,178,83,.5); animation:ring 2.4s ease-out infinite}
 @keyframes ring{0%{transform:scale(.9); opacity:.8} 100%{transform:scale(1.5); opacity:0}}
 [data-sky="day"] .bgm-btn{background:var(--sheet); color:var(--gold); border-color:var(--line-2)}
+
+/* ── 배경 고르기 ─────────────────────────────────── */
+.scenes{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:8px 0 4px}
+.scene-tile{border:2px solid var(--line-2); border-radius:14px; padding:0; overflow:hidden; background:var(--sheet); text-align:left; min-height:0}
+.scene-tile.on{border-color:var(--gold)}
+.scene-tile .pv{height:78px; position:relative}
+.scene-tile .pv.candles{background:radial-gradient(circle at 30% 70%, rgba(255,190,90,.9) 0, rgba(255,160,60,.3) 8%, transparent 14%), radial-gradient(circle at 70% 60%, rgba(255,190,90,.9) 0, rgba(255,160,60,.3) 8%, transparent 14%), radial-gradient(circle at 50% 35%, rgba(255,190,90,.5) 0, transparent 10%), #07100d}
+.scene-tile .pv.grotto{background:radial-gradient(ellipse at 50% 80%, rgba(255,170,80,.55), rgba(90,60,30,.4) 35%, #0b0806 70%), #060504}
+.scene-tile .pv.temple{background:linear-gradient(180deg, transparent 55%, rgba(255,200,120,.08)), radial-gradient(ellipse 22% 40% at 50% 30%, #c48a2a 0, #2b4c8c 40%, #8c2b3a 60%, transparent 62%), #0a0d16}
+.scene-tile .pv.day{background:linear-gradient(180deg,#fbe7d6,#f6f1e7)}
+.scene-tile b{display:block; padding:8px 10px 9px; font-size:14.5px; color:var(--ink)}
+
+/* ── 주기도문방: 한지 위 붓글씨, 세로쓰기(위→아래), 오른쪽→왼쪽 ─────── */
+.lp-bg{position:fixed; inset:0; z-index:65; background:rgba(5,9,10,.78); display:flex; align-items:center; justify-content:center; padding:14px; opacity:0; transition:opacity .35s}
+.lp-bg.open{opacity:1}
+.lp{position:relative; width:min(96vw,760px); height:min(92vh,92dvh); border-radius:8px; overflow:hidden; display:flex; flex-direction:column;
+  background:#f3e9d2; color:#1c1a16; box-shadow:0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.2) inset}
+.lp::before{content:''; position:absolute; inset:0; pointer-events:none; opacity:.55;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .25 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E")}
+.lp-scroll{flex:1; overflow-x:auto; overflow-y:hidden; padding:26px 22px 10px; direction:rtl}
+.lp-text{direction:ltr; writing-mode:vertical-rl; text-orientation:upright; height:100%; display:inline-block;
+  font-family:'Nanum Brush Script','Gowun Batang',serif; font-size:30px; line-height:1.95; letter-spacing:.02em; color:#24201a; white-space:pre-wrap; word-break:keep-all}
+.lp-text .lp-title{font-size:44px; line-height:1.4; margin-left:18px; color:#1a1612}
+.lp-text .lp-ref{font-size:17px; color:#6a5c44; line-height:2.2}
+.lp-seal{position:absolute; left:22px; bottom:calc(92px + env(safe-area-inset-bottom)); width:46px; height:46px; border-radius:4px; background:#b8302a; color:#fff3e3; font-family:'Gowun Batang',serif; font-weight:700; font-size:18px;
+  display:flex; align-items:center; justify-content:center; writing-mode:vertical-rl; text-orientation:upright; letter-spacing:.1em; box-shadow:0 1px 0 rgba(0,0,0,.2) inset; opacity:.92; transform:rotate(-3deg)}
+.lp-foot{display:flex; gap:8px; align-items:center; padding:10px 14px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid rgba(0,0,0,.08); background:rgba(255,255,255,.35)}
+.lp-foot button{background:rgba(255,255,255,.6); color:#1c1a16; border-color:rgba(0,0,0,.15)}
+.lp-foot button.primary{background:#1f4d3b; color:#fff; border-color:#143627; flex:1}
+.lp-foot .ver{font-size:13px; color:#6a5c44; margin-right:auto}
+@media (max-width:560px){ .lp-text{font-size:26px; line-height:1.85} .lp-text .lp-title{font-size:38px} .lp-scroll{padding:18px 14px 8px} .lp-foot .ver{display:none} }
 
 /* ── 토스트 ──────────────────────────────────────── */
 #toast{position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px); opacity:0; z-index:80;
