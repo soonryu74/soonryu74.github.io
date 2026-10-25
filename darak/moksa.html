@@ -15,7 +15,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="다락방나눔터">
-<link rel="stylesheet" href="style.css?v=202610251100">
+<link rel="stylesheet" href="style.css?v=202610251200">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -84,6 +84,11 @@ try { (function (m, q) { var s = q.get('c');
       <p class="desc" style="margin:8px 0 0" id="g-desc">주일 중보기도 시간에 쓰실 수 있게 한 주 전체를 한 장으로 모았습니다. 위에서 한 달·전체·원하는 기간으로 바꾸면 그 기간을 한 번에 인쇄·PDF로 저장합니다.</p>
     </div>
     <div class="print-head" id="g-print-head"></div>
+    <div class="card shared-card" id="shared-card">
+      <div class="shared-head"><h2>함께 기도해요</h2><button type="button" class="small noprint" id="sp-add">＋ 기도제목 넣기</button></div>
+      <p class="desc noprint">선교사님·협력 교회·지역과 협회처럼 교회가 함께 기도할 제목입니다. 인쇄·PDF에도 맨 앞에 들어갑니다.</p>
+      <div id="sp-list"></div>
+    </div>
     <div id="gather-list"></div>
   </section>
 
@@ -333,9 +338,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610251100"></script>
-<script src="common.js?v=202610251100"></script>
-<script src="moksa.js?v=202610251100"></script>
+<script src="lang-en.js?v=202610251200"></script>
+<script src="common.js?v=202610251200"></script>
+<script src="moksa.js?v=202610251200"></script>
 
 </body>
 </html>

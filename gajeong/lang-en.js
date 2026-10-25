@@ -680,5 +680,22 @@ window.I18N.en = {
   "알림을 켜지 않은 목자: {0} — [카톡으로 보내기]로 따로 보내 주세요.": "Leaders without alerts: {0} — please use [Send on KakaoTalk].",
   "한 번도 안 모인 목장 {0}곳": "{0} groups haven't met",
   "기도 응답 {0}건": "{0} answered prayers",
-  "아직 응답됨으로 표시된 기도제목이 없습니다. 목자가 일기에서 [응답됨]에 체크하면 여기에 쌓입니다.": "No prayers marked as answered yet. They appear here when leaders tick [Answered] in their journals."
+  "아직 응답됨으로 표시된 기도제목이 없습니다. 목자가 일기에서 [응답됨]에 체크하면 여기에 쌓입니다.": "No prayers marked as answered yet. They appear here when leaders tick [Answered] in their journals.",
+  "함께 기도해요": "Praying together",
+  "＋ 기도제목 넣기": "＋ Add prayer request",
+  "선교사님·협력 교회·지역과 협회처럼 교회가 함께 기도할 제목입니다. 인쇄·PDF에도 맨 앞에 들어갑니다.": "Prayer requests the whole church shares, such as missionaries, partner churches and regional networks. They also appear first when you print or save a PDF.",
+  "선교사님": "Missionary",
+  "협력 교회": "Partner church",
+  "지역·협회": "Region / network",
+  "아직 없습니다. [＋ 기도제목 넣기]로 선교사님이나 협력 교회 기도제목을 넣어 보세요.": "Nothing yet. Tap [＋ Add prayer request] to add one for a missionary or partner church.",
+  "이 기도제목을 지울까요?": "Delete this prayer request?",
+  "기도제목 고치기": "Edit prayer request",
+  "기도제목 넣기": "Add prayer request",
+  "구분": "Type",
+  "누구를 위해": "For whom",
+  "예: 캄보디아 김OO 선교사님 가정": "e.g. the Kim family, missionaries in Cambodia",
+  "기도제목을 적어 주세요.": "Please write the prayer request.",
+  "기타": "Other",
+  "고치기": "Edit",
+  "기도제목": "Prayer request"
 };

@@ -777,6 +777,18 @@ const db = p => p.evaluate(() => window.__DB());
     ok('기간 밖이면 일기 없음', (await p.textContent('#gather-list')).includes('이 기간에 올라온 일기가 없습니다'));
     await p.selectOption('#g-range', 'week'); await p.waitForTimeout(600);
     ok('다시 [한 주] → 지난주·다음주 단추', await p.isVisible('#g-prev') && !(await p.isVisible('#g-from')));
+    ok('함께 기도해요: 비어 있으면 인쇄에서 빠짐', await p.$eval('#shared-card', e => e.classList.contains('noprint')));
+    await p.click('#sp-add'); await p.waitForTimeout(400);
+    await p.selectOption('#sp-kind', 'missionary'); await p.fill('#sp-who', '캄보디아 김선교사님 가정'); await p.fill('#sp-text', '현지 교회 개척이 잘 되도록');
+    await p.click('.sheet-foot button:has-text("저장")'); await p.waitForTimeout(500);
+    ok('함께 기도해요: 넣으면 맨 위에 보이고 교회 설정에 저장', (await p.textContent('#sp-list')).includes('김선교사님') && (await p.textContent('#sp-list')).includes('선교사님') &&
+      (await db(p)).church_church.find(x => x.id === 'cb').features.shared_prayers.length === 1 && !(await p.$eval('#shared-card', e => e.classList.contains('noprint'))));
+    await p.click('[data-sp-edit="0"]'); await p.waitForTimeout(400);
+    ok('고치기 → 내용이 들어 있음', (await p.inputValue('#sp-text')) === '현지 교회 개척이 잘 되도록');
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
+    p.once('dialog', d => d.accept());
+    await p.click('[data-sp-del="0"]'); await p.waitForTimeout(500);
+    ok('지우기', (await db(p)).church_church.find(x => x.id === 'cb').features.shared_prayers.length === 0 && (await p.textContent('#sp-list')).includes('아직 없습니다'));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 

@@ -736,3 +736,9 @@ html:not([data-season]) .notice-edit .nt-fresh{border-color:var(--line-2); backg
 .answered-sheet .ans-list{max-height:none}
 .answered-sheet .pr-list li{display:block}
 .answered-sheet .pr-list .sheet-meta{display:block; margin-top:4px}
+/* 함께 기도해요 */
+.shared-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.shared-head h2{margin:0}
+.sp-list li{position:relative}
+.sp-acts{display:flex; gap:6px; margin-top:8px}
+@media print{ .shared-card{break-after:avoid} }
