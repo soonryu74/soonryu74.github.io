@@ -1,0 +1,16 @@
+{
+  "name": "중보기도 나눔터",
+  "short_name": "중보기도",
+  "description": "모임 식구들의 기도제목을 함께 나누고, 긴급기도는 바로 알리는 곳",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f1e8",
+  "theme_color": "#1f4d3b",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
