@@ -150,6 +150,8 @@
     ['v-enter', 'v-main'].forEach(function (id) { $('#' + id).hidden = id !== view; });
     $('#top').hidden = view !== 'v-main';
     $('#fab').hidden = view !== 'v-main' || tab === 'group';
+    // ♪ 단추: 본 화면에서는 머리말(메뉴 왼쪽)에, 첫 화면에서는 오른쪽 위에
+    var b = $('#bgm-btn'); if (b) { if (view === 'v-main') $('#btn-menu').before(b); else document.body.appendChild(b); }
   }
 
   /* ── 들어가기 화면 ─────────────────────────────────── */
@@ -866,7 +868,7 @@
     catch (e) { bgmUi(); return false; }   // 아직 누르기 전이라 막힘 → 첫 누름에 다시
   }
   // 휴대폰은 '손가락을 뗄 때'(터치 끝·클릭·키)만 소리를 허용한다 — pointerdown·touchstart는 안 쳐 준다
-  var ARM_EVENTS = ['touchend', 'pointerup', 'click', 'keydown'];
+  var ARM_EVENTS = ['touchend', 'pointerup', 'click'];
   function bgmArm() {
     var once = async function () { if (await bgmPlay()) ARM_EVENTS.forEach(function (ev) { document.removeEventListener(ev, once, true); }); };
     ARM_EVENTS.forEach(function (ev) { document.addEventListener(ev, once, true); });
