@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="중보기도">
-<link rel="stylesheet" href="style.css?v=20261025n">
+<link rel="stylesheet" href="style.css?v=20261026a">
 <script>/* 시간에 맞는 하늘빛을 그리기 전에 입힌다 (깜빡임 방지) */
 try { (function () { var m = localStorage.getItem('jungbo-sky');
   document.documentElement.setAttribute('data-sky', m === 'day' ? 'day' : 'night'); })(); } catch (e) { document.documentElement.setAttribute('data-sky', 'night'); }</script>
@@ -67,6 +67,7 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
       </div>
       <label for="join-name">내 이름</label>
       <input type="text" id="join-name" placeholder="예) 김은혜" maxlength="20" autocomplete="name">
+      <div id="join-rooms"></div>
       <p class="hint">모임 식구들이 알아볼 수 있는 이름으로 적어 주세요.</p>
       <div class="row end" style="margin-top:14px"><button type="button" class="primary wide" id="btn-join">들어가기</button></div>
       <p class="foot">휴대폰을 바꾸셨나요? <a href="#" id="link-key-from-join">열쇠 코드로 이어가기</a></p>
@@ -104,7 +105,7 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
           <div class="row end" style="margin-top:14px"><button type="button" class="wide" id="btn-key">들어가기</button></div>
         </details>
       </div>
-      <p class="foot">누구나 무료로 씁니다 · 올린 글은 같은 모임 식구들만 봅니다<br><span id="ver" style="opacity:.55">v2026.10.25.14</span></p>
+      <p class="foot">누구나 무료로 씁니다 · 올린 글은 같은 모임 식구들만 봅니다<br><span id="ver" style="opacity:.55">v2026.10.25.20</span></p>
     </div>
   </section>
 
@@ -125,6 +126,7 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
       <button type="button" data-tab="answered">응답받음</button>
       <button type="button" data-tab="group">모임</button>
     </div>
+    <div class="roomtabs noprint" id="roomtabs" hidden></div>
     <div id="feed"></div>
     <div id="pane-group" hidden></div>
     <div class="print-only" id="print-area"></div>
@@ -137,8 +139,8 @@ try { (function () { var m = localStorage.getItem('jungbo-sky');
 <audio id="bgm" src="assets/bgm.mp3" loop preload="auto"></audio>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script>window.APP_VER = "2026.10.25.14";</script>
+<script>window.APP_VER = "2026.10.25.20";</script>
 <script src="candles.js?v=20261025g"></script>
-<script src="app.js?v=20261025m"></script>
+<script src="app.js?v=20261026a"></script>
 </body>
 </html>

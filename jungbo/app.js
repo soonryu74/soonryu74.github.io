@@ -140,6 +140,13 @@
 
   /* ── 상태 ─────────────────────────────────────────── */
   var acct = null, me = null, group = null, tab = 'open', feed = [], openPostId = null, pollT = null, lastFeedAt = 0;
+  var rooms = [], roomFilter = { scope: 'mine', room: null };   // 방 목록 · 지금 보는 범위 (mine = 내 방 모두 + 공통)
+  var VIS_LABEL = { room: '방 식구 모두', leaders: '인도자만', private: '나만' };
+  function roomName(id) { if (!id) return '공통'; var r = rooms.filter(function (x) { return x.id === id; })[0]; return r ? r.name : '방'; }
+  function myRooms() { return me.role === 'leader' ? rooms : rooms.filter(function (r) { return r.mine; }); }
+  function isRoomLeader(id) { var r = rooms.filter(function (x) { return x.id === id; })[0]; return !!(r && r.my_role === 'leader'); }
+  function loadRoomFilter() { try { var v = JSON.parse(localStorage.getItem('jungbo-roomfilter-' + group.id) || 'null'); if (v && v.scope) roomFilter = v; } catch (e) {} }
+  function saveRoomFilter() { try { localStorage.setItem('jungbo-roomfilter-' + group.id, JSON.stringify(roomFilter)); } catch (e) {} }
   var q = new URLSearchParams(location.search);
   function hashPost() { var m = /#p=([0-9a-f-]{36})/i.exec(location.hash); return m ? m[1] : null; }
   function appUrl(extra) { return location.origin + location.pathname.replace(/[^/]*$/, '') + (extra || ''); }
@@ -172,6 +179,7 @@
         else {
           $('#join-title').textContent = '「' + g.name + '」에 들어가기';
           $('#join-desc').textContent = (g.member_count ? g.member_count + '명이 함께 기도하고 있어요. ' : '') + '이름만 넣으면 바로 들어와요. 아이디·비밀번호는 없어요.';
+          renderJoinRooms(g.rooms || []);
           if (g.join_open === false) { $('#join-desc').textContent = '이 모임은 지금 새 가입을 받지 않습니다. 인도자에게 말씀해 주세요.'; $('#btn-join').disabled = true; }
         }
       } catch (e) { say($('#enter-msg'), e.message, 'err', true); }
@@ -186,12 +194,24 @@
     await main();
   }
   function busy(btn, on) { btn.disabled = on; btn.dataset.label = btn.dataset.label || btn.textContent; btn.textContent = on ? '잠시만요…' : btn.dataset.label; }
+  // 초대 주소로 들어올 때: 그룹·기수가 있으면 고르게 한다 (고르지 않아도 들어올 수 있다)
+  function renderJoinRooms(list) {
+    var box = $('#join-rooms'); if (!box) return;
+    var kinds = [['group', '내 그룹'], ['cohort', '내 기수'], ['custom', '내 방']];
+    box.innerHTML = kinds.map(function (k) {
+      var opts = list.filter(function (r) { return r.kind === k[0]; });
+      if (!opts.length) return '';
+      return '<label for="jr-' + k[0] + '">' + k[1] + ' <span style="font-weight:400;color:var(--muted)">(선택)</span></label><select id="jr-' + k[0] + '" data-join-room><option value="">아직 모르겠어요 / 해당 없음</option>' +
+        opts.map(function (r) { return '<option value="' + r.id + '">' + esc(r.name) + '</option>'; }).join('') + '</select>';
+    }).join('');
+  }
   async function doJoin(code, name, btn) {
     if (!norm(code)) return say($('#enter-msg'), '초대 코드를 넣어 주세요.', 'err');
     if (!name.trim()) return say($('#enter-msg'), '이름을 넣어 주세요.', 'err');
     busy(btn, true);
     try {
-      var d = await rpc('pray_join', { p_invite: norm(code), p_name: name });
+      var picked = $$('[data-join-room]').map(function (s) { return s.value; }).filter(Boolean);
+      var d = await rpc('pray_join', { p_invite: norm(code), p_name: name, p_rooms: picked.length ? picked : null });
       await afterEnter(d, d.token);
       toast('반갑습니다, ' + d.me.name + '님. 함께 기도해요.');
     } catch (e) { say($('#enter-msg'), e.message, 'err'); }
@@ -247,11 +267,35 @@
       if (!group) return;
     }
     renderTop(); renderHero();
+    await loadRooms();
     await loadFeed();
     startPoll();
     var pid = hashPost(); if (pid) openPost(pid);
     pushNudge();
   }
+  async function loadRooms() {
+    try { rooms = await rpc('pray_rooms', { p_token: acct.token }); } catch (e) { rooms = []; }
+    loadRoomFilter();
+    // 보던 방이 없어졌거나 내 방이 아니면 전체로
+    if (roomFilter.scope === 'room' && !myRooms().some(function (r) { return r.id === roomFilter.room; })) roomFilter = { scope: 'mine', room: null };
+    renderRoomTabs();
+  }
+  function renderRoomTabs() {
+    var box = $('#roomtabs'); if (!box) return;
+    var mine = myRooms();
+    box.hidden = !rooms.length || tab === 'group';
+    if (box.hidden) return;
+    var on = function (sc, id) { return roomFilter.scope === sc && (sc !== 'room' || roomFilter.room === id) ? ' on' : ''; };
+    box.innerHTML = '<button type="button" class="' + on('mine') + '" data-scope="mine">' + (me.role === 'leader' ? '전체' : '내 방 모두') + '</button>' +
+      '<button type="button" class="' + on('common') + '" data-scope="common">공통</button>' +
+      mine.map(function (r) { return '<button type="button" class="' + on('room', r.id) + '" data-scope="room" data-room="' + r.id + '">' + esc(r.name) + (r.my_role === 'leader' ? ' <span class="n">인도</span>' : '') + '</button>'; }).join('');
+  }
+  $('#roomtabs').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    roomFilter = { scope: b.dataset.scope, room: b.dataset.room || null }; saveRoomFilter();
+    renderRoomTabs(); loadFeed();
+    window.scrollTo({ top: 0 });
+  });
   function renderTop() {
     $('#top-group').textContent = group.name;
     $('#top-me').textContent = me.name + (me.role === 'leader' ? ' · 인도자' : '') + ' · ' + group.member_count + '명';
@@ -281,7 +325,7 @@
     if (!acct) return;
     try {
       var filter = tab === 'answered' ? 'answered' : 'open';
-      var rows = await rpc('pray_feed', { p_token: acct.token, p_filter: filter, p_limit: 100 });
+      var rows = await rpc('pray_feed', { p_token: acct.token, p_filter: filter, p_limit: 150, p_scope: roomFilter.scope, p_room: roomFilter.room });
       if (filter === 'open') feed = rows; else answered = rows;
       lastFeedAt = Date.now();
       renderFeed(); if (filter === 'open') renderHero();
@@ -301,6 +345,10 @@
     }
     box.innerHTML = rows.map(postCard).join('');
   }
+  function roomTags(p) {
+    return (p.room_id ? '<span class="tag">' + esc(p.room_name || roomName(p.room_id)) + '</span>' : (rooms.length ? '<span class="tag">공통</span>' : '')) +
+      (p.visibility === 'leaders' ? '<span class="tag vis">🔒 인도자만</span>' : p.visibility === 'private' ? '<span class="tag vis">🔒 나만</span>' : '');
+  }
   function reactMini(p) {
     var keys = Object.keys(p.reactions || {}).filter(function (k) { return p.reactions[k] > 0; });
     if (!keys.length) return '';
@@ -310,6 +358,7 @@
     var urgent = p.kind === 'urgent' && p.status === 'open', ans = p.status === 'answered', fresh = freshLight === p.id; if (fresh) freshLight = null;
     return '<article class="post' + (urgent ? ' urgent' : '') + (ans ? ' answered' : '') + '" data-id="' + p.id + '">' +
       '<div class="post-head">' + (ans ? '<span class="badge answered">🙌 응답받음</span>' : urgent ? '<span class="badge urgent">🚨 긴급</span>' : '<span class="badge normal">기도제목</span>') +
+      roomTags(p) +
       '<span class="who">' + esc(p.author_name) + ' · ' + ago(ans ? p.answered_at : p.created_at) + '</span></div>' +
       (p.for_whom ? '<h3 class="for">' + esc(p.for_whom) + '</h3>' : '') +
       '<p class="body">' + esc(p.body) + '</p>' +
@@ -328,7 +377,7 @@
     var b = e.target.closest('button'); if (!b) return;
     $$('#tabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
     tab = b.dataset.tab;
-    $('#pane-group').hidden = tab !== 'group'; $('#feed').hidden = tab === 'group'; $('#fab').hidden = tab === 'group';
+    $('#pane-group').hidden = tab !== 'group'; $('#feed').hidden = tab === 'group'; $('#fab').hidden = tab === 'group'; renderRoomTabs();
     if (tab === 'group') renderGroupPane(); else { renderFeed(); loadFeed(true); }
     window.scrollTo({ top: 0 });
   });
@@ -407,7 +456,7 @@
     var urgent = p.kind === 'urgent' && p.status === 'open', ans = p.status === 'answered';
     var draft = $('textarea[data-cmt]', detailSheet); var keep = draft ? draft.value : '';
     detailSheet.body.innerHTML =
-      '<div class="post-head">' + (ans ? '<span class="badge answered">🙌 응답받음</span>' : urgent ? '<span class="badge urgent">🚨 긴급기도</span>' : '<span class="badge normal">기도제목</span>') + '</div>' +
+      '<div class="post-head">' + (ans ? '<span class="badge answered">🙌 응답받음</span>' : urgent ? '<span class="badge urgent">🚨 긴급기도</span>' : '<span class="badge normal">기도제목</span>') + roomTags(p) + '</div>' +
       (p.for_whom ? '<h2 class="title">' + esc(p.for_whom) + '</h2>' : '') +
       '<p class="byline">' + esc(p.author_name) + ' · ' + whenText(p.created_at) + (p.updated_at && p.updated_at !== p.created_at && !ans ? ' (고침)' : '') + '</p>' +
       '<div class="prose">' + esc(p.body) + '</div>' +
@@ -557,7 +606,10 @@
       '<p class="hint" id="kind-hint"></p>' +
       '<label for="w-for">누구를 위한 기도인가요? <span style="font-weight:400;color:var(--muted)">(선택)</span></label><input type="text" id="w-for" maxlength="60" placeholder="예) 김은혜 집사님 수술" value="' + esc(edit ? edit.for_whom : '') + '">' +
       '<label for="w-body">기도 내용</label><textarea id="w-body" maxlength="2000" placeholder="예) 내일 오전 9시 심장 수술이 있습니다. 수술이 잘 되고 회복이 빠르도록 기도 부탁드립니다.">' + esc(edit ? edit.body : '') + '</textarea>' +
-      '<p class="hint">같은 모임 식구들만 봅니다. 본인 허락이 필요한 민감한 내용은 이름 대신 "한 지체"처럼 적어도 좋아요.</p><div class="msg" id="w-msg"></div>',
+      (rooms.length ? '<label for="w-room">어느 방에 올릴까요?</label><select id="w-room"><option value="">공통 — 모임 모두</option>' +
+        myRooms().map(function (r) { return '<option value="' + r.id + '"' + ((edit ? edit.room_id : (roomFilter.scope === 'room' ? roomFilter.room : null)) === r.id ? ' selected' : '') + '>' + esc(r.name) + '</option>'; }).join('') + '</select>' : '') +
+      '<label for="w-vis">누가 볼까요?</label><select id="w-vis">' + ['room', 'leaders', 'private'].map(function (v) { return '<option value="' + v + '"' + ((edit ? edit.visibility : 'room') === v ? ' selected' : '') + '>' + VIS_LABEL[v] + (v === 'room' ? ' (방이 없으면 모임 모두)' : v === 'leaders' ? ' — 전체 인도자와 방 인도자만' : ' — 비밀 기도, 응답 기록용') + '</option>'; }).join('') + '</select>' +
+      '<p class="hint">본인 허락이 필요한 민감한 내용은 이름 대신 "한 지체"처럼 적어도 좋아요.</p><div class="msg" id="w-msg"></div>',
       foot: '<button type="button" class="ghost" data-c>취소</button><button type="button" class="primary" data-ok>' + (edit ? '고친 내용 저장' : '올리기') + '</button>' });
     function hint() {
       $('#kind-hint', s).textContent = kind === 'urgent' ? '올리면 알림을 켠 식구들 휴대폰에 바로 울립니다. 이어서 카카오톡 단톡방에도 알릴 수 있어요.' : '알림을 켠 식구들에게 조용히 알려 드립니다.';
@@ -572,11 +624,15 @@
       var body = $('#w-body', s).value.trim(); if (!body) { say($('#w-msg', s), '기도 내용을 적어 주세요.', 'err'); return $('#w-body', s).focus(); }
       e.target.disabled = true;
       try {
-        var r = await rpc('pray_post_save', { p_token: acct.token, p_id: edit ? edit.id : null, p_kind: kind, p_for: $('#w-for', s).value, p_body: body });
+        var roomSel = $('#w-room', s), vis = $('#w-vis', s).value;
+        var r = await rpc('pray_post_save', { p_token: acct.token, p_id: edit ? edit.id : null, p_kind: kind, p_for: $('#w-for', s).value, p_body: body,
+          p_room: roomSel && roomSel.value ? roomSel.value : null, p_visibility: vis });
         s.close();
         if (edit) { renderDetail(r); await loadFeed(true); toast('고쳤어요.'); return; }
         feed.unshift(r); renderFeed(); renderHero(); loadFeed(true);
+        if (vis === 'private') { toast('나만 보는 기도로 올렸어요 🔒'); return; }
         var n = await notifyQuiet({ action: 'posted', post_id: r.id });
+        if (vis === 'leaders') { toast('인도자들에게만 알렸어요.'); return; }
         shareSheet(r, n);
       } catch (err) { say($('#w-msg', s), err.message, 'err'); e.target.disabled = false; }
     });
@@ -590,7 +646,7 @@
   function shareText(p) {
     var urgent = p.kind === 'urgent' && p.status === 'open';
     var body = p.body.replace(/\s+/g, ' ').trim(); if (body.length > 160) body = body.slice(0, 160) + '…';
-    return (urgent ? '🚨 긴급기도가 올라왔습니다' : '🙏 새 기도제목이 올라왔습니다') + '\n[' + group.name + ']\n' +
+    return (urgent ? '🚨 긴급기도가 올라왔습니다' : '🙏 새 기도제목이 올라왔습니다') + '\n[' + group.name + (p.room_id ? ' · ' + roomName(p.room_id) : '') + ']\n' +
       (p.for_whom ? '▶ ' + p.for_whom + '\n' : '') + body + '\n\n' +
       (urgent ? '지금 함께 기도해 주세요 🙏\n' : '함께 기도해 주세요 🙏\n') +
       '아래 주소를 누르면 기도방이 열려요. [기도했어요]·댓글·이모지로 마음을 전해 주세요.\n' + postLink(p.id);
@@ -673,10 +729,19 @@
       '<div class="row"><button type="button" class="primary grow" data-invite>💬 초대장 보내기 · 주소 복사</button></div></div>' +
       '<div class="card"><h2>함께 기도하는 분들 <span style="font-size:15px;color:var(--muted)">' + members.length + '명</span></h2>' +
       members.map(function (m) {
-        return '<div class="member"><span class="dot' + (m.push ? ' on' : '') + '" title="' + (m.push ? '알림 켬' : '알림 안 켬') + '"></span><span class="nm">' + esc(m.name) + (m.id === me.id ? ' (나)' : '') + '</span>' +
-          (m.role === 'leader' ? '<span class="role">인도자</span>' : '') + '<span class="last">' + (m.last_seen_at ? ago(m.last_seen_at) : '') + '</span>' +
-          (leader && m.id !== me.id ? '<button type="button" class="ghost small" data-role="' + m.id + '" data-to="' + (m.role === 'leader' ? 'member' : 'leader') + '">' + (m.role === 'leader' ? '인도자 해제' : '인도자로') + '</button><button type="button" class="ghost small danger" data-remove="' + m.id + '" data-nm="' + esc(m.name) + '">빼기</button>' : '') + '</div>';
+        var rn = (m.rooms || []).map(function (r) { return r.name + (r.role === 'leader' ? '(인도)' : ''); }).join(' · ');
+        return '<div class="member"><span class="dot' + (m.push ? ' on' : '') + '" title="' + (m.push ? '알림 켬' : '알림 안 켬') + '"></span><span class="nm">' + esc(m.name) + (m.id === me.id ? ' (나)' : '') + (rn ? '<span class="rooms">' + esc(rn) + '</span>' : '') + '</span>' +
+          (m.role === 'leader' ? '<span class="role">전체 인도자</span>' : '') + '<span class="last">' + (m.last_seen_at ? ago(m.last_seen_at) : '') + '</span>' +
+          (leader && m.id !== me.id ? '<button type="button" class="ghost small" data-role="' + m.id + '" data-to="' + (m.role === 'leader' ? 'member' : 'leader') + '">' + (m.role === 'leader' ? '전체 인도자 해제' : '전체 인도자로') + '</button><button type="button" class="ghost small danger" data-remove="' + m.id + '" data-nm="' + esc(m.name) + '">빼기</button>' : '') + '</div>';
       }).join('') + '<p class="hint">초록 점 = 휴대폰 알림을 켠 분. 안 켠 분께는 긴급기도를 카카오톡으로 따로 알려 주세요.</p></div>' +
+      (rooms.length ? '<div class="card"><h2>내 방</h2><p class="desc">속한 방의 기도제목을 받아 봅니다. 그룹 하나, 기수 하나를 고르세요.</p>' +
+        rooms.map(function (r) { return '<label class="toggle"><input type="checkbox" data-myroom="' + r.id + '"' + (r.mine ? ' checked' : '') + '> ' + esc(r.name) + ' <span class="last">' + r.member_count + '명' + (r.my_role === 'leader' ? ' · 방 인도자' : '') + '</span></label>'; }).join('') + '</div>' : '') +
+      (leader ? '<div class="card roomlist"><h2>방 관리</h2><p class="desc">그룹·기수별 방을 만들면 식구들이 자기 방 기도제목을 받아 봅니다. 공통은 늘 있습니다.</p>' +
+        '<div class="row"><input type="number" id="rb-group" min="1" max="60" value="12" style="width:84px"><button type="button" class="small" data-rooms-bulk="group">그룹 방 만들기 (1그룹…)</button></div>' +
+        '<div class="row" style="margin-top:8px"><input type="number" id="rb-cohort" min="1" max="60" value="6" style="width:84px"><button type="button" class="small" data-rooms-bulk="cohort">기수 방 만들기 (1기…)</button></div>' +
+        '<div class="row" style="margin-top:8px"><input type="text" id="rb-name" placeholder="방 이름 (예: 찬양팀)" maxlength="30" class="grow" style="width:auto"><button type="button" class="small" data-room-new>방 하나 만들기</button></div>' +
+        (rooms.length ? rooms.map(function (r) { return '<div class="member"><span class="nm">' + esc(r.name) + '<small>' + r.member_count + '명</small></span><button type="button" class="small" data-room-open="' + r.id + '">식구·인도자</button><button type="button" class="ghost small danger" data-room-del="' + r.id + '" data-nm="' + esc(r.name) + '">지우기</button></div>'; }).join('') : '<p class="hint">아직 방이 없어요.</p>') +
+        '<div class="msg" id="room-msg"></div></div>' : '') +
       '<div class="card"><h2>내 정보</h2><div class="row"><span class="grow">이름: <b>' + esc(me.name) + '</b></span><button type="button" class="small" data-rename>이름 바꾸기</button></div>' +
       '<div class="row" style="margin-top:10px"><span class="grow">휴대폰을 바꿀 때 쓰는 열쇠 코드</span><button type="button" class="small" data-show-key>보기</button><button type="button" class="ghost small" data-new-key>새로 받기</button></div>' +
       '<div class="row" style="margin-top:10px"><span class="grow">여러 모임에 들어가 있나요?</span><button type="button" class="small" data-switch>다른 모임</button></div></div>' +
@@ -686,6 +751,26 @@
       '<div class="card"><h2>그 밖에</h2><div class="row"><button type="button" class="grow" data-print>🖨 주보용 인쇄 · PDF</button></div>' +
       '<div class="row" style="margin-top:10px"><button type="button" class="ghost danger grow" data-leave>이 모임 나가기</button></div></div>' +
       '<p class="foot">중보기도 나눔터 · 올린 글은 같은 모임 식구들만 봅니다</p>';
+  }
+  // 방 하나: 식구 넣고 빼기 · 방 인도자 세우기 · 이름 바꾸기
+  async function roomSheet(roomId) {
+    var r = rooms.filter(function (x) { return x.id === roomId; })[0]; if (!r) return;
+    var members = []; try { members = await rpc('pray_members', { p_token: acct.token }); } catch (e) {}
+    var inRoom = function (m) { return (m.rooms || []).filter(function (x) { return x.id === roomId; })[0]; };
+    var s = sheet({ html: '<h2 class="title">' + esc(r.name) + '</h2><div class="row"><input type="text" id="rs-name" class="grow" style="width:auto" maxlength="30" value="' + esc(r.name) + '"><button type="button" class="small" data-rs-rename>이름 저장</button></div>' +
+      '<div class="section-title">식구 ' + members.filter(inRoom).length + '명</div><p class="hint">체크하면 이 방 식구가 됩니다. [방 인도자]는 이 방 글을 관리하고 "인도자만" 글을 봅니다.</p>' +
+      members.map(function (m) { var x = inRoom(m); return '<div class="member"><label class="toggle" style="padding:4px 0;flex:1"><input type="checkbox" data-rs-member="' + m.id + '"' + (x ? ' checked' : '') + '> ' + esc(m.name) + '</label>' +
+        (x ? '<button type="button" class="ghost small" data-rs-lead="' + m.id + '" data-to="' + (x.role === 'leader' ? 'member' : 'leader') + '">' + (x.role === 'leader' ? '인도자 해제' : '방 인도자') + '</button>' : '') + '</div>'; }).join('') +
+      '<div class="msg" id="rs-msg"></div>', foot: '<button type="button" class="ghost" data-c>닫기</button>' });
+    s.addEventListener('click', async function (e) {
+      if (e.target.closest('[data-c]')) { s.close(); renderGroupPane(); return; }
+      var cb = e.target.closest('[data-rs-member]'), lb = e.target.closest('[data-rs-lead]');
+      try {
+        if (cb) { rooms = await rpc('pray_room_member_set', { p_token: acct.token, p_room: roomId, p_member: cb.dataset.rsMember, p_on: cb.checked, p_role: 'member' }); s.close(); roomSheet(roomId); }
+        else if (lb) { rooms = await rpc('pray_room_member_set', { p_token: acct.token, p_room: roomId, p_member: lb.dataset.rsLead, p_on: true, p_role: lb.dataset.to }); s.close(); roomSheet(roomId); }
+        else if (e.target.closest('[data-rs-rename]')) { rooms = await rpc('pray_room_save', { p_token: acct.token, p_id: roomId, p_name: $('#rs-name', s).value, p_kind: r.kind }); say($('#rs-msg', s), '이름을 바꿨어요.', 'ok'); }
+      } catch (err) { say($('#rs-msg', s), err.message, 'err'); }
+    });
   }
   $('#pane-group').addEventListener('click', async function (e) {
     var t = e.target, b, s = $('#pane-group');
@@ -704,6 +789,28 @@
       t.closest('button').disabled = false; return;
     }
     if (t.closest('[data-invite]')) return inviteSheet(false);
+    if ((b = t.closest('[data-myroom]'))) {
+      try { rooms = await rpc('pray_room_member_set', { p_token: acct.token, p_room: b.dataset.myroom, p_member: null, p_on: b.checked, p_role: 'member' }); await refreshMe(); renderRoomTabs(); loadFeed(true); toast(b.checked ? '방에 들어갔어요.' : '방에서 나왔어요.'); }
+      catch (err) { toast(err.message); b.checked = !b.checked; }
+      return;
+    }
+    if ((b = t.closest('[data-rooms-bulk]'))) {
+      var kind = b.dataset.roomsBulk, n = +($('#rb-' + kind, s).value || 0);
+      try { rooms = await rpc('pray_rooms_bulk', { p_token: acct.token, p_kind: kind, p_count: n, p_fmt: kind === 'group' ? '#그룹' : '#기' }); renderGroupPane(); renderRoomTabs(); toast('방을 만들었어요.'); }
+      catch (err) { say($('#room-msg', s), err.message, 'err'); }
+      return;
+    }
+    if (t.closest('[data-room-new]')) {
+      try { rooms = await rpc('pray_room_save', { p_token: acct.token, p_id: null, p_name: $('#rb-name', s).value, p_kind: 'custom' }); renderGroupPane(); renderRoomTabs(); }
+      catch (err) { say($('#room-msg', s), err.message, 'err'); }
+      return;
+    }
+    if ((b = t.closest('[data-room-open]'))) return roomSheet(b.dataset.roomOpen);
+    if ((b = t.closest('[data-room-del]'))) {
+      if (!confirm('「' + b.dataset.nm + '」 방을 지울까요? 그 방 글은 공통으로 옮겨집니다.')) return;
+      try { rooms = await rpc('pray_room_delete', { p_token: acct.token, p_id: b.dataset.roomDel }); renderGroupPane(); renderRoomTabs(); loadFeed(true); } catch (err) { toast(err.message); }
+      return;
+    }
     if ((b = t.closest('[data-remove]'))) {
       if (!confirm(b.dataset.nm + '님을 모임에서 뺄까요? 그분의 열쇠 코드는 더 이상 쓸 수 없게 됩니다.')) return;
       try { await rpc('pray_member_remove', { p_token: acct.token, p_member: b.dataset.remove }); await refreshMe(); renderGroupPane(); toast('뺐어요.'); } catch (err) { toast(err.message); }
@@ -772,8 +879,9 @@
   async function printSheet() {
     if (inApp()) { if (confirm('카카오톡 안에서는 인쇄·PDF 저장이 되지 않습니다. 크롬(아이폰은 사파리)으로 열까요?')) openExternal(); return; }
     var rows = feed.slice(), today = new Date();
-    $('#print-area').innerHTML = '<h1>' + esc(group.name) + ' 기도제목</h1><p class="m">' + today.getFullYear() + '년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 · ' + rows.length + '건</p>' +
-      rows.map(function (p) { return '<div class="pitem">' + (p.kind === 'urgent' ? '<span class="u">[긴급] </span>' : '') + (p.for_whom ? '<b>' + esc(p.for_whom) + '</b>' : '') + '<span>' + esc(p.body.replace(/\s+/g, ' ')) + '</span> <span class="m">— ' + esc(p.author_name) + ', ' + whenText(p.created_at) + '</span></div>'; }).join('');
+    var scopeName = roomFilter.scope === 'common' ? ' · 공통' : roomFilter.scope === 'room' ? ' · ' + roomName(roomFilter.room) : '';
+    $('#print-area').innerHTML = '<h1>' + esc(group.name + scopeName) + ' 기도제목</h1><p class="m">' + today.getFullYear() + '년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 · ' + rows.length + '건</p>' +
+      rows.map(function (p) { return '<div class="pitem">' + (p.kind === 'urgent' ? '<span class="u">[긴급] </span>' : '') + (p.room_id ? '<span class="m">[' + esc(p.room_name || '') + '] </span>' : '') + (p.for_whom ? '<b>' + esc(p.for_whom) + '</b>' : '') + '<span>' + esc(p.body.replace(/\s+/g, ' ')) + '</span> <span class="m">— ' + esc(p.author_name) + ', ' + whenText(p.created_at) + '</span></div>'; }).join('');
     setTimeout(function () { window.print(); }, 100);
   }
 
