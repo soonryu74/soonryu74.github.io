@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Paperling MVP 화면 설계 v0.1 | soonryu74.github.io</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Paperling MVP 화면 설계 v0.1" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="soonryu74.github.io" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Paperling MVP 화면 설계 v0.1" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Paperling MVP 화면 설계 v0.1","url":"/docs/paperling-mvp-screens.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=52cda586e6bddbb2903c3d8ec870eb60774062a0">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">soonryu74.github.io</a></h1>
+      
+
+      <h1 id="paperling-mvp-화면-설계-v01">Paperling MVP 화면 설계 v0.1</h1>
+
+<blockquote>
+  <p>작성 서순려 · 2026-10-25 · 기획안: <code class="language-plaintext highlighter-rouge">docs/ai-note-app-plan.md</code> · 랜딩: <code class="language-plaintext highlighter-rouge">/paperling/</code>
+클릭 가능한 와이어프레임: https://claude.ai/artifact/K4TZB6pAQ1AcSLJGHF2Pok</p>
+</blockquote>
+
+<p>MVP 범위: 사진 → AI 정리 → 서랍 분류 → 노션 저장 + 구글 캘린더 일정 생성. 웹앱(PWA). 디자인 2종.
+화면은 <strong>3개 + 설정 1개</strong>로 끝낸다. 화면이 늘어나면 범위가 늘어난 것이다.</p>
+
+<h2 id="1-화면-목록">1. 화면 목록</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>번호</th>
+      <th>화면</th>
+      <th>한 줄 목적</th>
+      <th>진입</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>S1</td>
+      <td>찍기</td>
+      <td>사진을 가장 빨리 올린다</td>
+      <td>앱 홈, 공유 시트</td>
+    </tr>
+    <tr>
+      <td>S2</td>
+      <td>확인</td>
+      <td>AI 결과를 보고 고치고 서랍을 정한다</td>
+      <td>S1 처리 후</td>
+    </tr>
+    <tr>
+      <td>S3</td>
+      <td>서랍장</td>
+      <td>저장된 것을 보고, 보낸 곳 상태를 본다</td>
+      <td>S2 저장 후, 하단 탭</td>
+    </tr>
+    <tr>
+      <td>S4</td>
+      <td>설정</td>
+      <td>연동·디자인·사진 보관 정책</td>
+      <td>상단 톱니</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="2-s1-찍기">2. S1 찍기</h2>
+
+<ul>
+  <li>큰 버튼 2개: <strong>카메라로 찍기</strong> / <strong>갤러리에서 고르기</strong>. 그 아래 “최근 3장” 썸네일.</li>
+  <li>여러 장 선택 가능(최대 10장). 한 묶음은 한 노트로 합칠지 따로 둘지 S2에서 결정.</li>
+  <li>업로드 직후 자동 처리: 기울기 보정, 여백 자르기, 밝기 보정. 실패해도 원본으로 진행.</li>
+  <li>처리 중 화면: 사진 위에 “읽는 중 → 정리하는 중 → 서랍 고르는 중” 3단계 문구. 보통 5~10초.</li>
+  <li>무료 잔여 장수 표시(“이번 달 20장 중 13장 남음”). 소진 시 프로 안내, 업로드 차단은 하지 않고 대기열.</li>
+  <li>PWA 공유 타깃 등록: 폰의 사진 공유 메뉴에서 Paperling 선택 → S1 생략하고 바로 처리.</li>
+</ul>
+
+<h2 id="3-s2-확인-핵심-화면">3. S2 확인 (핵심 화면)</h2>
+
+<p>좌우 분할(폰에서는 상하). 왼쪽 원본 사진, 오른쪽 정리 결과.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>영역</th>
+      <th>내용</th>
+      <th>동작</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>제목</td>
+      <td>AI 제안 제목</td>
+      <td>탭하면 수정</td>
+    </tr>
+    <tr>
+      <td>본문</td>
+      <td>텍스트화된 글. 문단·목록 유지</td>
+      <td>단어 탭 → 원본의 해당 부분 하이라이트 + 수정 입력</td>
+    </tr>
+    <tr>
+      <td>말투</td>
+      <td>그대로(기본) / 다듬기 / 요약</td>
+      <td>토글, 원문은 항상 보관</td>
+    </tr>
+    <tr>
+      <td>추출 칩</td>
+      <td>일정(“10/28 15:00 치과”), 할 일, 사람, 장소</td>
+      <td>칩 탭 → 수정·삭제. 일정 칩은 “캘린더에 넣기” 체크 기본 ON</td>
+    </tr>
+    <tr>
+      <td>서랍</td>
+      <td>일기 / 할 일 / 일정 / 아이디어 / 미분류</td>
+      <td>AI 추천이 선택된 상태. 탭으로 변경. 한 노트가 두 서랍에 들어갈 수 있음</td>
+    </tr>
+    <tr>
+      <td>보낼 곳</td>
+      <td>노션 ☑ 구글 캘린더 ☑</td>
+      <td>설정값 기본, 이번만 바꾸기 가능</td>
+    </tr>
+    <tr>
+      <td>저장</td>
+      <td>하단 고정 버튼</td>
+      <td>저장 → S3로 이동, 전송은 백그라운드</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>신뢰 장치: 오인식 의심 단어는 점선 밑줄. 사용자가 고친 단어는 다음 처리부터 사용자 사전에 반영.</li>
+  <li>묶음 처리: 여러 장이면 상단에 페이지 점(1/3). “한 노트로 합치기” 토글.</li>
+  <li>되돌리기: 저장 전 모든 수정은 되돌릴 수 있다.</li>
+</ul>
+
+<h2 id="4-s3-서랍장">4. S3 서랍장</h2>
+
+<ul>
+  <li>상단: 이번 주 요약 한 줄(“이번 주 사진 6장, 일정 3개 캘린더에 들어감”).</li>
+  <li>서랍 4개 그리드(일기·할 일·일정·아이디어) + 미분류 배지. 각 서랍은 최근 항목 2개 미리보기.</li>
+  <li>노트 카드: 제목, 날짜, 서랍 색 띠, 원본 썸네일, 전송 상태 아이콘(노션 ✓, 캘린더 ✓, 실패 ! → 탭하면 재시도).</li>
+  <li>검색: 텍스트 검색(손글씨 내용 포함). 날짜·서랍 필터.</li>
+  <li>노트 상세: S2와 같은 레이아웃, 읽기 모드. “노션에서 열기” 링크.</li>
+</ul>
+
+<h2 id="5-s4-설정">5. S4 설정</h2>
+
+<ul>
+  <li>연동: 체크박스 한 줄. 노션(연결/해제, 저장 위치 페이지 표시), 구글 캘린더(어느 캘린더에 넣을지).</li>
+  <li>서랍별 보낼 곳 매트릭스(2단계에서 확장. MVP는 전체 공통).</li>
+  <li>디자인: 화이트 노트 / 클래식 플래너 2종. 손글씨 폰트 3종. 미리보기 즉시 반영.</li>
+  <li>사진 보관: 원본 보관(기본) / 처리 후 삭제. 저장 위치 안내(국내).</li>
+  <li>계정: 이메일, 플랜, 이번 달 사용량, 데이터 전체 내보내기(마크다운+사진 zip), 탈퇴.</li>
+</ul>
+
+<h2 id="6-데이터-모델-수파베이스">6. 데이터 모델 (수파베이스)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>테이블</th>
+      <th>핵심 컬럼</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>notes</td>
+      <td>id, user_id, created_at, note_date, title, raw_text(그대로), clean_text(다듬기), summary, drawers text[], theme, font, status</td>
+    </tr>
+    <tr>
+      <td>note_images</td>
+      <td>id, note_id, storage_path, page_no, width, height, keep_original bool</td>
+    </tr>
+    <tr>
+      <td>entities</td>
+      <td>id, note_id, kind(event/todo/person/place), text, start_at, end_at, done bool</td>
+    </tr>
+    <tr>
+      <td>destinations</td>
+      <td>id, note_id, target(notion/gcal), external_id, status(pending/sent/failed), error, sent_at</td>
+    </tr>
+    <tr>
+      <td>connections</td>
+      <td>user_id, target, access_token(암호화), refresh_token, meta(노션 DB id, 캘린더 id)</td>
+    </tr>
+    <tr>
+      <td>user_dictionary</td>
+      <td>user_id, wrong, right, count</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>RLS: 모든 테이블 user_id = auth.uid(). 토큰은 서버(엣지 함수)에서만 읽는다.</p>
+
+<h2 id="7-ai-처리-계약">7. AI 처리 계약</h2>
+
+<p>입력: 사진 1~10장 + 사용자 사전 + 오늘 날짜 + 시간대.
+출력(JSON 고정):</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10월 28일 수요일"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"note_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-28"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"raw_text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"치과 3시!! ..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"blocks"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"type"</span><span class="p">:</span><span class="s2">"paragraph"</span><span class="p">,</span><span class="nl">"text"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">},{</span><span class="nl">"type"</span><span class="p">:</span><span class="s2">"list"</span><span class="p">,</span><span class="nl">"items"</span><span class="p">:[</span><span class="s2">"..."</span><span class="p">]}],</span><span class="w">
+  </span><span class="nl">"entities"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"kind"</span><span class="p">:</span><span class="s2">"event"</span><span class="p">,</span><span class="nl">"text"</span><span class="p">:</span><span class="s2">"치과"</span><span class="p">,</span><span class="nl">"start_at"</span><span class="p">:</span><span class="s2">"2026-10-28T15:00:00+09:00"</span><span class="p">,</span><span class="nl">"confidence"</span><span class="p">:</span><span class="mf">0.92</span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"kind"</span><span class="p">:</span><span class="s2">"todo"</span><span class="p">,</span><span class="nl">"text"</span><span class="p">:</span><span class="s2">"엄마 생신 선물 고르기"</span><span class="p">,</span><span class="nl">"confidence"</span><span class="p">:</span><span class="mf">0.88</span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"drawers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"일정"</span><span class="p">,</span><span class="s2">"할 일"</span><span class="p">,</span><span class="s2">"일기"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"mood"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"피곤"</span><span class="p">,</span><span class="s2">"평온"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"uncertain_spans"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"text"</span><span class="p">:</span><span class="s2">"스카프"</span><span class="p">,</span><span class="nl">"alternatives"</span><span class="p">:[</span><span class="s2">"스커트"</span><span class="p">]}]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>규칙: 원문을 바꾸지 않는다(raw_text). 날짜가 없으면 사진 촬영일. 확신 0.7 미만 일정은 캘린더 기본 OFF.
+모델은 멀티모달 1회 호출. 한글 손글씨 정확도는 2개 모델로 50장 비교 후 선택.</p>
+
+<h2 id="8-6주-일정">8. 6주 일정</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>주</th>
+      <th>할 일</th>
+      <th>끝나는 기준</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>수파베이스 스키마, 로그인(이메일 매직링크), S1 업로드·보정</td>
+      <td>사진이 스토리지에 들어간다</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>AI 처리 엣지 함수, JSON 계약, 모델 2종 비교</td>
+      <td>50장 테스트셋 정확도 표</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>S2 확인 화면, 오인식 수정, 사용자 사전</td>
+      <td>수정 후 저장이 된다</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>노션 OAuth, 서랍별 DB 자동 생성, 전송·재시도</td>
+      <td>노션에 노트가 생긴다</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>구글 캘린더 OAuth, 일정 생성 확인 흐름, S3 서랍장</td>
+      <td>캘린더에 일정이 생긴다</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>S4 설정, 디자인 2종·폰트 3종, PWA 설치·공유 타깃, 베타 초대</td>
+      <td>대기자 30명 초대</td>
+    </tr>
+  </tbody>
+</table>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

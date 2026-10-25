@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paperling 페이퍼링 · 손글씨를 찍으면 노션과 캘린더에</title>
+<meta name="description" content="종이 다이어리에 쓴 손글씨를 사진 한 장으로 찍으면 AI가 예쁘게 정리해 노션·구글 캘린더에 넣어주는 서비스. 사전등록(대기명단)을 받습니다.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Paperling 페이퍼링 · 종이에 쓰고, 사진 한 장이면 끝">
+<meta property="og:description" content="손글씨 사진 → AI 정리 → 내 노션·캘린더. 디자인은 내 취향대로. 사전등록 중.">
+<meta property="og:url" content="https://soonryu74.github.io/paperling/">
+<meta property="og:image" content="https://soonryu74.github.io/paperling/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Nanum+Pen+Script&display=swap">
+<style>
+/* Layout: a single notebook page. One 64ch column, ruled paper texture via repeating lines, brass-coloured labels. */
+:root{
+  --paper:#fbf8f1; --paper-2:#f3eee2; --ink:#2b2a27; --ink-soft:#5e5a52; --rule:#d9d1bf;
+  --accent:#3d6b5b; --accent-soft:#e4ede8; --marker:#c9a14a; --danger:#a8442f;
+  --display:"Gowun Batang","Noto Serif KR",serif; --body:"IBM Plex Sans KR","Pretendard","Apple SD Gothic Neo",sans-serif; --hand:"Nanum Pen Script",cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#1d1c1a; --paper-2:#262421; --ink:#ece7dc; --ink-soft:#b4ada0; --rule:#3d3a34; --accent:#8fc0ad; --accent-soft:#263630; --marker:#d6b465; --danger:#e08a73; color-scheme:dark; }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7;
+  padding-block:0 4rem;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+main{max-width:64ch;margin:0 auto}
+a{color:var(--accent)}
+.top{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 0;border-bottom:1px solid var(--rule);font-size:.9rem;color:var(--ink-soft)}
+.top b{font-family:var(--display);font-size:1.15rem;color:var(--ink);letter-spacing:.02em}
+.hero{padding:3rem 0 2.2rem}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--marker);font-weight:600}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,6.2vw,2.8rem);line-height:1.25;margin:.5rem 0 1rem;text-wrap:balance}
+.hand{font-family:var(--hand);font-size:1.7rem;line-height:1.3;color:var(--accent);margin:0 0 1rem}
+.lede{color:var(--ink-soft);margin:0 0 1.6rem;max-width:56ch}
+.btn{display:inline-block;background:var(--accent);color:var(--paper);font-weight:600;padding:.8rem 1.4rem;border-radius:6px;text-decoration:none;border:0;font-size:1rem;cursor:pointer;font-family:var(--body)}
+.btn:hover{filter:brightness(1.08)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--marker);outline-offset:2px}
+.note{font-size:.85rem;color:var(--ink-soft);margin-top:.6rem}
+section{padding:2.4rem 0;border-top:1px solid var(--rule)}
+h2{font-family:var(--display);font-size:1.4rem;font-weight:700;margin:0 0 1rem;text-wrap:balance}
+h2 .lab{font-family:var(--body);font-size:.7rem;font-weight:600;letter-spacing:.1em;color:var(--marker);border:1px solid var(--marker);border-radius:2px;padding:.1rem .45rem;margin-right:.6rem;vertical-align:middle}
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:1.2rem 0}
+.step{background:var(--paper-2);border:1px solid var(--rule);border-radius:6px;padding:1rem;min-width:0}
+.step b{display:block;font-family:var(--display);font-size:1.1rem;color:var(--accent);margin-bottom:.3rem}
+.step span{color:var(--ink-soft);font-size:.92rem;line-height:1.55;display:block}
+.demo{border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin:1.4rem 0;display:grid;grid-template-columns:1fr 1fr}
+.demo>div{padding:1rem 1.1rem;min-width:0}
+.demo .before{background:var(--paper-2);font-family:var(--hand);font-size:1.45rem;line-height:1.35;border-right:1px solid var(--rule)}
+.demo .after{font-size:.92rem}
+.demo .after h4{margin:0 0 .4rem;font-size:1rem;font-family:var(--display)}
+.demo .after ul{margin:.3rem 0 .6rem;padding-left:1.1rem}
+.demo .after li{margin:0}
+.demo .tag{display:inline-block;font-size:.75rem;background:var(--accent-soft);color:var(--accent);border-radius:3px;padding:.05rem .45rem;margin-right:.3rem}
+.demo .cap{grid-column:1/-1;font-size:.8rem;color:var(--ink-soft);padding:.5rem 1.1rem;border-top:1px solid var(--rule);background:var(--paper)}
+ul.plain{padding-left:1.2rem;margin:0}
+ul.plain li{margin-bottom:.4rem}
+ul.plain li::marker{color:var(--accent)}
+.pick{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin:1.2rem 0}
+.swatch{border:1px solid var(--rule);border-radius:6px;padding:.75rem .7rem;min-width:0}
+.swatch i{display:block;height:34px;border-radius:4px;margin-bottom:.5rem}
+.swatch b{display:block;font-size:.85rem}
+.swatch small{color:var(--ink-soft);font-size:.75rem;line-height:1.4;display:block}
+.honest{background:var(--accent-soft);border-left:3px solid var(--accent);padding:.8rem 1rem;border-radius:0 4px 4px 0;font-size:.95rem}
+form{display:grid;gap:1rem;margin-top:1.2rem}
+label{display:block;font-weight:600;font-size:.92rem;margin-bottom:.3rem}
+label small{font-weight:400;color:var(--ink-soft)}
+input[type=email],input[type=text],select,textarea{width:100%;padding:.7rem .8rem;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink);font:inherit;font-size:1rem}
+textarea{min-height:84px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chips label{display:inline-flex;align-items:center;gap:.35rem;border:1px solid var(--rule);border-radius:999px;padding:.35rem .8rem;font-weight:400;font-size:.9rem;cursor:pointer;margin:0;background:var(--paper)}
+.chips input{accent-color:var(--accent)}
+.chips label:has(input:checked){background:var(--accent-soft);border-color:var(--accent)}
+.radios{display:grid;gap:.4rem}
+.radios label{display:flex;gap:.5rem;align-items:flex-start;font-weight:400;cursor:pointer;margin:0}
+.radios input{margin-top:.35rem;accent-color:var(--accent)}
+.msg{display:none;padding:1rem 1.1rem;border-radius:6px;margin-top:1rem;line-height:1.6}
+.msg.ok{display:block;background:var(--accent-soft);border:1px solid var(--accent)}
+.msg.err{display:block;background:var(--paper-2);border:1px solid var(--danger)}
+.msg code{user-select:all;background:var(--paper);padding:.1rem .35rem;border-radius:3px}
+.faq dt{font-weight:600;margin-top:1rem}
+.faq dd{margin:0.2rem 0 0;color:var(--ink-soft)}
+footer{border-top:1px solid var(--rule);padding-top:1.2rem;margin-top:2rem;font-size:.85rem;color:var(--ink-soft)}
+@media (max-width:620px){.flow{grid-template-columns:1fr}.demo{grid-template-columns:1fr}.demo .before{border-right:0;border-bottom:1px solid var(--rule)}.pick{grid-template-columns:repeat(2,1fr)}}
+@media (prefers-reduced-motion:no-preference){.btn{transition:filter .15s}}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><b>Paperling</b><span>페이퍼링 · 사전등록 중</span></nav>
+
+<header class="hero">
+  <div class="eyebrow">손글씨 다이어리를 위한 AI 노트</div>
+  <h1>종이에 쓰고, 사진 한 장 찍으면, 내 노션과 캘린더에 들어갑니다.</h1>
+  <p class="hand">다이어리는 그대로 쓰세요. 정리는 저희가 할게요.</p>
+  <p class="lede">손글씨 메모를 찍어 올리면 AI가 읽어서 예쁘게 정리하고, 일기·할 일·일정·아이디어 서랍에 알아서 나눠 넣습니다. 그리고 이미 쓰고 계신 노션과 구글 캘린더로 보내드립니다. 글씨체와 디자인은 취향대로 고르실 수 있어요.</p>
+  <a class="btn" href="#join">사전등록하기 (무료)</a>
+  <p class="note">출시 전 등록하신 분께는 첫 3개월 프로 기능을 무료로 드립니다. 광고 메일은 보내지 않습니다.</p>
+</header>
+
+<section id="how">
+  <h2><span class="lab">01</span>딱 세 단계</h2>
+  <div class="flow">
+    <div class="step"><b>1. 찍기</b><span>다이어리 페이지, 메모지, 포스트잇. 여러 장도 한 번에.</span></div>
+    <div class="step"><b>2. 확인</b><span>AI가 읽은 글과 정리 결과를 보여드립니다. 틀린 글자는 한 번 탭으로 고치고, 원본 사진은 항상 옆에 둡니다.</span></div>
+    <div class="step"><b>3. 저장</b><span>서랍에 자동 분류되고, 노션과 구글 캘린더에 동시에 들어갑니다.</span></div>
+  </div>
+  <div class="demo" aria-label="정리 예시">
+    <div class="before">10/28 수<br>치과 3시!!<br>엄마 생신 선물 → 스카프?<br>이번주 책 2권 읽기<br>오늘 좀 지쳤다. 그래도 산책은 좋았음</div>
+    <div class="after">
+      <h4>10월 28일 수요일</h4>
+      <span class="tag">일정</span>치과 15:00 → 구글 캘린더에 추가
+      <ul><li><span class="tag">할 일</span>엄마 생신 선물 고르기 (스카프 후보)</li><li><span class="tag">할 일</span>이번 주 책 2권 읽기</li></ul>
+      <span class="tag">일기</span>오늘 좀 지쳤다. 그래도 산책은 좋았음. <small>감정: 피곤·평온</small>
+    </div>
+    <div class="cap">왼쪽이 손글씨 사진, 오른쪽이 정리 결과 예시입니다. 내 글은 "그대로" 두는 것이 기본값이고, 다듬기와 요약은 선택입니다.</div>
+  </div>
+</section>
+
+<section id="pick">
+  <h2><span class="lab">02</span>고르는 재미</h2>
+  <p>일반 디자인과 아티스트 디자인 두 라인, 한글 손글씨 폰트 12종. 처음엔 취향 퀴즈 60초로 3세트를 추천해 드리고, 언제든 바꾸실 수 있습니다. MBTI를 아시면 입력하셔도 되고, 모르셔도 그림 6장만 고르면 됩니다.</p>
+  <div class="pick">
+    <div class="swatch"><i style="background:linear-gradient(135deg,#ffffff,#e9e9e9);border:1px solid var(--rule)"></i><b>화이트 노트</b><small>일반 · 깔끔</small></div>
+    <div class="swatch"><i style="background:repeating-linear-gradient(0deg,#f6f1e4 0 7px,#d9cfb8 7px 8px)"></i><b>클래식 플래너</b><small>일반 · 주간계획형</small></div>
+    <div class="swatch"><i style="background:linear-gradient(135deg,#dbe9df,#f3d7c6,#cfd8ea)"></i><b>수채화 정원</b><small>아티스트 · 시즌</small></div>
+    <div class="swatch"><i style="background:linear-gradient(135deg,#2c2a26,#4a4640)"></i><b>다크 저널</b><small>일반 · 밤에 쓰는 분</small></div>
+  </div>
+  <p class="honest">정직하게 말씀드리면, MBTI는 과학적 진단 도구가 아니라 취향을 표현하는 언어입니다. 그래서 "진단"이 아니라 고르는 재미의 출발점으로만 씁니다.</p>
+</section>
+
+<section id="connect">
+  <h2><span class="lab">03</span>이미 쓰는 곳으로 보냅니다</h2>
+  <ul class="plain">
+    <li><strong>노션, 구글 캘린더</strong>: 한 번 연결하면 끝. 서랍별 페이지와 일정이 자동으로 들어갑니다.</li>
+    <li><strong>원노트, 에버노트, 구글 드라이브</strong>: 출시 후 순차 지원.</li>
+    <li><strong>옵시디언 등 마크다운 노트</strong>: 파일 내보내기로 지원.</li>
+    <li><strong>애플 메모, 삼성 노트, 굿노트</strong>: 공식 연동 통로가 없어 "보내기" 버튼(공유·복사)으로 대응합니다. 직접 연동이라고 말씀드리지 않겠습니다.</li>
+  </ul>
+  <p class="note">연동을 안 하셔도 Paperling 안의 서랍장만으로 다 됩니다. 연동은 선택이에요.</p>
+</section>
+
+<section id="join">
+  <h2><span class="lab">04</span>사전등록</h2>
+  <p>이메일 하나면 됩니다. 아래 질문은 만드는 데 큰 도움이 되지만, 건너뛰셔도 괜찮아요.</p>
+  <form id="wl" novalidate>
+    <div>
+      <label for="email">이메일 <small>(필수)</small></label>
+      <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com">
+    </div>
+    <div>
+      <label for="diary_type">지금 주로 어디에 쓰세요?</label>
+      <select id="diary_type" name="diary_type">
+        <option value="">선택 안 함</option>
+        <option>종이 다이어리·플래너</option>
+        <option>메모지·포스트잇·수첩</option>
+        <option>아이패드·갤럭시탭 필기</option>
+        <option>폰 메모 앱</option>
+        <option>거의 안 쓰지만 쓰고 싶음</option>
+      </select>
+    </div>
+    <div>
+      <label>정리한 내용을 어디로 보내드리면 좋을까요? <small>(여러 개 가능)</small></label>
+      <div class="chips">
+        <label><input type="checkbox" name="tools" value="노션">노션</label>
+        <label><input type="checkbox" name="tools" value="구글 캘린더">구글 캘린더</label>
+        <label><input type="checkbox" name="tools" value="원노트">원노트</label>
+        <label><input type="checkbox" name="tools" value="에버노트">에버노트</label>
+        <label><input type="checkbox" name="tools" value="옵시디언">옵시디언</label>
+        <label><input type="checkbox" name="tools" value="애플 메모">애플 메모</label>
+        <label><input type="checkbox" name="tools" value="삼성 노트">삼성 노트</label>
+        <label><input type="checkbox" name="tools" value="앱 안에만">앱 안에만 두고 싶어요</label>
+      </div>
+    </div>
+    <div>
+      <label>월 4,900원 정도라면?</label>
+      <div class="radios">
+        <label><input type="radio" name="pay_intent" value="낼 것 같다">낼 것 같아요</label>
+        <label><input type="radio" name="pay_intent" value="써보고 결정">무료로 써보고 결정할게요</label>
+        <label><input type="radio" name="pay_intent" value="무료만">무료만 쓸 것 같아요</label>
+      </div>
+    </div>
+    <div>
+      <label for="mbti">MBTI <small>(아시면, 재미로)</small></label>
+      <input type="text" id="mbti" name="mbti" maxlength="4" placeholder="예: INFP" style="max-width:10rem;text-transform:uppercase">
+    </div>
+    <div>
+      <label for="note">꼭 있었으면 하는 기능이나 디자인이 있다면</label>
+      <textarea id="note" name="note" maxlength="500" placeholder="자유롭게 적어주세요"></textarea>
+    </div>
+    <div>
+      <button class="btn" type="submit" id="submitBtn">사전등록 완료하기</button>
+      <p class="note">이메일은 출시 안내와 베타 초대에만 쓰고, 요청하시면 바로 삭제합니다.</p>
+    </div>
+    <div id="msg" class="msg" role="status" aria-live="polite"></div>
+  </form>
+</section>
+
+<section class="faq">
+  <h2><span class="lab">05</span>자주 묻는 질문</h2>
+  <dl>
+    <dt>제 글씨가 많이 흘려 쓴 글씨인데 읽을 수 있나요?</dt>
+    <dd>최신 AI는 꽤 잘 읽지만 완벽하지는 않습니다. 그래서 "확인" 단계를 꼭 거치고, 원본 사진을 항상 함께 보관합니다. 틀린 글자를 고쳐 주시면 점점 나아집니다.</dd>
+    <dt>사진은 어디에 저장되나요?</dt>
+    <dd>국내 서버에 저장하고, "처리 후 원본 삭제" 옵션을 켤 수 있습니다. 공유 카드를 만들 때는 다른 사람 정보가 보이지 않도록 가림을 안내합니다.</dd>
+    <dt>앱스토어에서 받는 건가요?</dt>
+    <dd>처음에는 웹앱으로 시작합니다. 설치 없이 브라우저에서 열고, 홈 화면에 추가하면 앱처럼 쓸 수 있습니다.</dd>
+    <dt>언제 나오나요?</dt>
+    <dd>사전등록 300명이 모이면 베타를 시작합니다. 등록하신 순서대로 초대합니다.</dd>
+  </dl>
+</section>
+
+<footer>Paperling(페이퍼링)은 준비 중인 서비스입니다. 문의: <code>soonryu74@gmail.com</code></footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var SB_URL='https://dxhmprqfgigljgbstqrg.supabase.co';
+  // 브라우저에 드러나도 되는 공개 키. 실제 보호는 데이터베이스 RLS가 한다(익명은 INSERT만 가능).
+  var SB_KEY='sb_publishable__FXGut04uxuz44s2443_8g_AByEuL-n';
+  var sb=null; try{ if(window.supabase) sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){}
+  var form=document.getElementById('wl'), msg=document.getElementById('msg'), btn=document.getElementById('submitBtn');
+  function show(cls,html){ msg.className='msg '+cls; msg.innerHTML=html; msg.scrollIntoView({block:'nearest',behavior:'smooth'}); }
+  function esc(s){ return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email=form.email.value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ show('err','이메일 주소를 다시 확인해 주세요.'); form.email.focus(); return; }
+    var tools=[].slice.call(form.querySelectorAll('input[name=tools]:checked')).map(function(i){return i.value;});
+    var pay=form.querySelector('input[name=pay_intent]:checked');
+    var row={ email:email, diary_type:form.diary_type.value||null, tools:tools.length?tools:null,
+      pay_intent:pay?pay.value:null, mbti:(form.mbti.value||'').trim().toUpperCase()||null,
+      note:form.note.value.trim()||null, source:location.search.slice(1)||document.referrer||null, ua:navigator.userAgent.slice(0,200) };
+    var old=btn.textContent; btn.disabled=true; btn.textContent='접수 중…';
+    try{
+      if(!sb) throw new Error('no-client');
+      var r=await sb.from('paperling_waitlist').insert(row);
+      if(r.error){
+        if(String(r.error.code)==='23505'){ show('ok','<strong>이미 등록된 이메일입니다.</strong> 출시 소식은 꼭 보내드릴게요.'); }
+        else throw r.error;
+      } else {
+        show('ok','<strong>등록되었습니다. 고맙습니다.</strong><br>베타가 열리면 등록 순서대로 초대 메일을 보내드립니다. 첫 3개월 프로 기능은 무료입니다.');
+        form.reset();
+      }
+    }catch(err){
+      show('err','지금은 자동 접수가 잠시 안 됩니다. 아래 주소로 이메일 한 통만 보내주시면 똑같이 등록해 드립니다.<br>받는 사람: <code>soonryu74@gmail.com</code> · 제목: <code>Paperling 사전등록</code><br>본문에 적어주신 내용: '+esc(email)+(tools.length?' / '+esc(tools.join(', ')):'')+(pay?' / '+esc(pay.value):''));
+    }
+    btn.disabled=false; btn.textContent=old;
+  });
+})();
+</script>
+<script src="/assets/credit.js" defer></script>
+</body>
+</html>
