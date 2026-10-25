@@ -1,23 +1,32 @@
-/* 중보기도 나눔터 — 촛불 테이블 (화면 뒤 바탕)
-   검은 유리 탁자 위에 유리컵 티라이트. 가까운 초는 또렷하게(불꽃 심 흰빛, 유리 반사, 탁자에 비친 반영),
-   먼 초는 사진 배경처럼 둥근 빛망울(보케)로 흐려진다. 초마다 제각기 흔들린다.
-   정지 요소(유리컵·탁자)는 한 번만 그리고 불꽃·빛만 매 장 다시 그린다. 화면이 안 보이면 멈춘다. */
+/* 중보기도 나눔터 — 화면 뒤 장면 (촛불 탁자 · 기도굴 · 성전)
+   html[data-scene] = candles | grotto | temple. 밝은 모드(data-sky=day)면 숨긴다.
+   정지 요소는 한 번만 그리고(still), 흔들리는 불빛만 매 장 다시 그린다. 화면이 안 보이면 멈춘다. */
 (function () {
   'use strict';
   var cv = document.getElementById('candles'); if (!cv) return;
   var ctx = cv.getContext('2d', { alpha: false });
   var still = document.createElement('canvas'), sctx = still.getContext('2d');
-  var W = 0, H = 0, DPR = 1, near = [], far = [], raf = 0, last = 0, on = false;
+  var layer = document.createElement('canvas'), lctx = layer.getContext('2d');   // 성전 창문처럼 밝기만 바꿔 겹치는 층
+  var W = 0, H = 0, DPR = 1, near = [], far = [], rays = [], raf = 0, last = 0, on = false, scene = 'candles', phone = false;
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var rnd = function (a, b) { return a + Math.random() * (b - a); };
+  function currentScene() { var s = document.documentElement.getAttribute('data-scene'); return s === 'grotto' || s === 'temple' ? s : 'candles'; }
 
   function layout() {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = window.innerWidth; H = window.innerHeight;
-    cv.width = still.width = Math.round(W * DPR); cv.height = still.height = Math.round(H * DPR);
+    W = window.innerWidth; H = window.innerHeight; scene = currentScene(); phone = W < 700;
+    [cv, still, layer].forEach(function (c) { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); });
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); sctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    var phone = W < 700;
+    [ctx, sctx, lctx].forEach(function (g) { g.setTransform(DPR, 0, 0, DPR, 0, 0); });
+    near = []; far = []; rays = [];
+    if (scene === 'grotto') layoutGrotto(); else if (scene === 'temple') layoutTemple(); else layoutCandles();
+    near.sort(function (a, b) { return a.y - b.y; });
+    drawStill();
+  }
+  function mkCandle(x, y, s) { return { x: x, y: y, s: s, ph: rnd(0, 6.28), sp: rnd(0.9, 1.5), ph2: rnd(0, 6.28), sp2: rnd(3, 5), gust: 0, sway: 0 }; }
+
+  /* ── 장면 1: 촛불 탁자 ─────────────────────────────── */
+  function layoutCandles() {
     // 먼 초(보케): 위쪽 띠에 넓게 — 말씀 뒤로 빛망울이 떠 있다
     far = [];
     var nf = phone ? 26 : 60;
@@ -42,13 +51,8 @@
       if (!ok) continue;
       near.push({ x: x, y: y, s: s, ph: rnd(0, 6.28), sp: rnd(0.9, 1.5), ph2: rnd(0, 6.28), sp2: rnd(3, 5), gust: 0, sway: 0 });
     }
-    near.sort(function (a, b) { return a.y - b.y; });
-    drawStill();
   }
-
-  /* 정지 층: 탁자 + 유리컵 + 초 */
-  function drawStill() {
-    var g = sctx;
+  function drawStillCandles(g) {
     var bg = g.createLinearGradient(0, 0, 0, H);
     bg.addColorStop(0, '#05090a'); bg.addColorStop(.5, '#070e0c'); bg.addColorStop(1, '#0a0906');
     g.fillStyle = bg; g.fillRect(0, 0, W, H);
@@ -65,7 +69,116 @@
     var v = g.createRadialGradient(W / 2, H * .5, Math.min(W, H) * .25, W / 2, H * .5, Math.max(W, H) * .8);
     v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.6)');
     g.fillStyle = v; g.fillRect(0, 0, W, H);
+    }
+
+  /* ── 장면 2: 기도굴 — 바위 틈 벽감에 놓인 초, 불빛이 바위에 일렁인다 ── */
+  function layoutGrotto() {
+    var n = phone ? 4 : 7;
+    for (var i = 0; i < n; i++) {
+      var x = phone ? (i % 2 ? rnd(W * .62, W - 30) : rnd(30, W * .38)) : (i < 3 ? rnd(40, W * .22) : i < 6 ? rnd(W * .78, W - 40) : W / 2);
+      var y = phone ? H * (0.22 + 0.7 * (i / n)) : H * rnd(0.35, 0.92);
+      near.push(mkCandle(x, y, phone ? rnd(0.7, 1.0) : rnd(0.9, 1.5)));
+    }
+    if (!phone) { near.push(mkCandle(W / 2 - 60, H * .9, 1.4)); near.push(mkCandle(W / 2 + 60, H * .92, 1.3)); }
   }
+  function drawStillGrotto(g) {
+    g.fillStyle = '#060504'; g.fillRect(0, 0, W, H);
+    // 바위: 겹겹의 어두운 덩어리 (갈색·회색), 가운데로 갈수록 트인다
+    var blobs = phone ? 260 : 520;
+    for (var i = 0; i < blobs; i++) {
+      var x = rnd(-40, W + 40), y = rnd(-40, H + 40);
+      var dx = (x - W / 2) / (W / 2), dy = (y - H * .62) / (H * .6);
+      var edge = Math.min(1, Math.sqrt(dx * dx + dy * dy));            // 0 = 가운데, 1 = 가장자리
+      if (Math.random() > 0.25 + edge * .75) continue;                 // 가운데는 비워 둔다
+      var r = rnd(18, 90) * (0.6 + edge), tone = rnd(0, 1);
+      var col = tone < .5 ? [62, 46, 32] : tone < .8 ? [48, 44, 40] : [78, 58, 36];
+      g.save(); g.translate(x, y); g.rotate(rnd(0, 3.14));
+      g.fillStyle = 'rgba(' + col.join(',') + ',' + (0.35 + edge * .4).toFixed(2) + ')';
+      g.beginPath(); g.ellipse(0, 0, r, r * rnd(.45, .8), 0, 0, Math.PI * 2); g.fill();
+      // 바위 윗면에 닿는 옅은 빛(위쪽 가장자리)
+      g.strokeStyle = 'rgba(140,105,60,' + (0.08 + edge * .08).toFixed(2) + ')'; g.lineWidth = 1.2;
+      g.beginPath(); g.ellipse(0, -2, r * .9, r * rnd(.4, .7), 0, Math.PI * 1.1, Math.PI * 1.9); g.stroke();
+      g.restore();
+    }
+    // 갈라진 틈
+    g.strokeStyle = 'rgba(0,0,0,.55)'; g.lineWidth = 1.5;
+    for (var k = 0; k < (phone ? 18 : 40); k++) {
+      var sx = rnd(0, W), sy = rnd(0, H); g.beginPath(); g.moveTo(sx, sy);
+      for (var m = 0; m < 5; m++) { sx += rnd(-40, 40); sy += rnd(10, 50); g.lineTo(sx, sy); } g.stroke();
+    }
+    // 벽감(초 놓인 자리): 초 뒤 어두운 반원
+    near.forEach(function (c) {
+      g.fillStyle = 'rgba(0,0,0,.55)'; g.beginPath(); g.ellipse(c.x, c.y - 10 * c.s, 30 * c.s, 34 * c.s, 0, Math.PI, Math.PI * 2); g.fill();
+      g.fillStyle = 'rgba(70,52,34,.9)'; g.fillRect(c.x - 30 * c.s, c.y, 60 * c.s, 4 * c.s);   // 선반
+      g.save(); g.translate(c.x, c.y); g.scale(1, -.5); g.globalAlpha = .18; drawGlass(g, 0, 0, c.s); g.restore();
+      drawGlass(g, c.x, c.y, c.s);
+    });
+    // 가장자리 깊은 어둠
+    var v = g.createRadialGradient(W / 2, H * .6, Math.min(W, H) * .2, W / 2, H * .6, Math.max(W, H) * .75);
+    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.75)');
+    g.fillStyle = v; g.fillRect(0, 0, W, H);
+  }
+
+  /* ── 장면 3: 성전 — 스테인드글라스 창에서 빛줄기가 내려오고 제단 초가 켜져 있다 ── */
+  var win = { x: 0, y: 0, w: 0, h: 0 };
+  function layoutTemple() {
+    win.w = phone ? W * .46 : Math.min(W * .3, 380); win.h = win.w * 1.7; win.x = W / 2 - win.w / 2; win.y = phone ? 24 : 30;
+    var n = phone ? 5 : 7, cx = W / 2, spread = phone ? W * .36 : 260;
+    for (var i = 0; i < n; i++) { var t = n === 1 ? 0 : (i / (n - 1)) * 2 - 1; near.push(mkCandle(cx + t * spread, H * (phone ? .93 : .9) - Math.abs(t) * 14, (phone ? .8 : 1.1) - Math.abs(t) * .2)); }
+    for (var r = 0; r < (phone ? 5 : 8); r++) rays.push({ x: win.x + rnd(0, win.w), ang: rnd(-.5, .5), w: rnd(30, 90), ph: rnd(0, 6.28), sp: rnd(.15, .4), a: rnd(.05, .12) });
+  }
+  var PANES = ['#2b4c8c', '#8c2b3a', '#c48a2a', '#2f7a4f', '#5a3b8c', '#2b6d8c', '#b4532a'];
+  function drawWindow(g, a) {
+    g.save(); g.globalAlpha = a; g.translate(win.x, win.y);
+    var w = win.w, h = win.h, r = w / 2;
+    // 창틀 모양: 위가 둥근 아치
+    g.beginPath(); g.moveTo(0, h); g.lineTo(0, r); g.arc(r, r, r, Math.PI, 0); g.lineTo(w, h); g.closePath(); g.clip();
+    // 유리: 격자 조각, 각 조각 안쪽이 밝다
+    var cols = 5, rows = 9, cw = w / cols, ch = h / rows;
+    for (var i = 0; i < cols; i++) for (var j = 0; j < rows; j++) {
+      var cross = (i === 2 && j >= 1 && j <= 6) || (j === 3 && i >= 1 && i <= 3);
+      var col = cross ? '#e2b253' : PANES[(i * 3 + j * 5) % PANES.length];
+      var gr = g.createRadialGradient(i * cw + cw / 2, j * ch + ch / 2, 0, i * cw + cw / 2, j * ch + ch / 2, cw);
+      gr.addColorStop(0, col); gr.addColorStop(1, cross ? '#8a5f1a' : '#111');
+      g.fillStyle = gr; g.fillRect(i * cw, j * ch, cw, ch);
+    }
+    // 납선
+    g.strokeStyle = 'rgba(0,0,0,.85)'; g.lineWidth = 2.5;
+    for (var ii = 1; ii < cols; ii++) { g.beginPath(); g.moveTo(ii * cw, 0); g.lineTo(ii * cw, h); g.stroke(); }
+    for (var jj = 1; jj < rows; jj++) { g.beginPath(); g.moveTo(0, jj * ch); g.lineTo(w, jj * ch); g.stroke(); }
+    g.restore();
+    // 돌 창틀
+    g.save(); g.translate(win.x, win.y); g.strokeStyle = 'rgba(190,170,130,.55)'; g.lineWidth = 6;
+    g.beginPath(); g.moveTo(0, h); g.lineTo(0, r); g.arc(r, r, r, Math.PI, 0); g.lineTo(w, h); g.stroke(); g.restore();
+  }
+  function drawStillTemple(g) {
+    var bg = g.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#070a14'); bg.addColorStop(.6, '#0a0d16'); bg.addColorStop(1, '#0d0b08');
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    // 기둥 (양옆)
+    [[W * .06, 1], [W * .94 - (phone ? 26 : 46), 1]].forEach(function (p) {
+      var pw = phone ? 26 : 46, px = p[0];
+      var pg = g.createLinearGradient(px, 0, px + pw, 0);
+      pg.addColorStop(0, 'rgba(60,55,45,.0)'); pg.addColorStop(.3, 'rgba(120,108,86,.35)'); pg.addColorStop(.6, 'rgba(70,62,50,.35)'); pg.addColorStop(1, 'rgba(40,36,30,0)');
+      g.fillStyle = pg; g.fillRect(px, 0, pw, H);
+    });
+    // 바닥(제단 앞 돌바닥)과 제단 선
+    var fl = g.createLinearGradient(0, H * .82, 0, H);
+    fl.addColorStop(0, 'rgba(60,50,38,0)'); fl.addColorStop(1, 'rgba(60,50,38,.35)');
+    g.fillStyle = fl; g.fillRect(0, H * .82, W, H * .18);
+    g.fillStyle = 'rgba(120,100,70,.35)'; g.fillRect(W * .15, near[0].y + 2, W * .7, 3);
+    near.forEach(function (c) { g.save(); g.translate(c.x, c.y); g.scale(1, -.6); g.globalAlpha = .15; drawGlass(g, 0, 0, c.s); g.restore(); drawGlass(g, c.x, c.y, c.s); });
+    // 창문은 따로 층에 그려 두고 매 장 밝기만 바꿔 얹는다
+    lctx.clearRect(0, 0, W, H); drawWindow(lctx, 1);
+    var v = g.createRadialGradient(W / 2, H * .5, Math.min(W, H) * .3, W / 2, H * .5, Math.max(W, H) * .8);
+    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.6)');
+    g.fillStyle = v; g.fillRect(0, 0, W, H);
+  }
+
+  function drawStill() {
+    if (scene === 'grotto') drawStillGrotto(sctx); else if (scene === 'temple') drawStillTemple(sctx); else drawStillCandles(sctx);
+  }
+
   // 유리컵 (낮은 원통) 안에 알루미늄 티라이트 — x,y 는 컵 바닥 가운데. 단위 = s 배율
   function drawGlass(g, x, y, s) {
     g.save(); g.translate(x, y); g.scale(s, s);
@@ -136,29 +249,9 @@
     g.globalAlpha = a0;
   }
 
-  function frame(now) {
-    raf = 0;
-    if (!on) return;
-    if (now - last < 33) { raf = requestAnimationFrame(frame); return; }   // 약 30fps
-    last = now;
-    var t = now / 1000;
-    ctx.drawImage(still, 0, 0, W, H);
-
-    // 먼 빛망울 (보케): 테두리가 또렷한 둥근 빛
+  function drawNearCandles(t, lightScale) {
+    var LS = lightScale || 1;
     ctx.globalCompositeOperation = 'lighter';
-    far.forEach(function (b) {
-      var k = .72 + .28 * Math.sin(t * b.sp + b.ph);
-      var a = b.a * k, r = b.r;
-      var gr = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, r);
-      var c1 = b.warm > .5 ? '255,205,120' : '255,185,95';
-      gr.addColorStop(0, 'rgba(' + c1 + ',' + (a * .55) + ')');
-      gr.addColorStop(.72, 'rgba(' + c1 + ',' + (a * .62) + ')');
-      gr.addColorStop(.93, 'rgba(255,170,80,' + (a * .95) + ')');   // 밝은 테두리
-      gr.addColorStop(1, 'rgba(255,170,80,0)');
-      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, Math.PI * 2); ctx.fill();
-    });
-
-    // 가까운 초: 빛 → 반영 → 불꽃
     near.forEach(function (c) {
       var breath = .5 + .5 * Math.sin(t * c.sp + c.ph);
       var q = Math.sin(t * c.sp2 * 2.1 + c.ph2) * Math.sin(t * c.sp2 * .7 + c.ph);
@@ -171,9 +264,9 @@
 
       // 큰 은은한 빛 + 불꽃 둘레 밝은 빛
       ctx.globalAlpha = .07 * k;
-      var g1 = ctx.createRadialGradient(fx, fy - h * .4, 0, fx, fy - h * .4, h * 4.2);
+      var g1 = ctx.createRadialGradient(fx, fy - h * .4, 0, fx, fy - h * .4, h * 4.2 * LS);
       g1.addColorStop(0, 'rgba(255,170,80,1)'); g1.addColorStop(1, 'rgba(255,150,60,0)');
-      ctx.fillStyle = g1; ctx.beginPath(); ctx.arc(fx, fy - h * .4, h * 4.2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = g1; ctx.beginPath(); ctx.arc(fx, fy - h * .4, h * 4.2 * LS, 0, Math.PI * 2); ctx.fill();
       ctx.globalAlpha = .34 * k;
       var g2 = ctx.createRadialGradient(fx, fy - h * .45, 0, fx, fy - h * .45, h * 1.25);
       g2.addColorStop(0, 'rgba(255,205,120,1)'); g2.addColorStop(.5, 'rgba(255,170,80,.5)'); g2.addColorStop(1, 'rgba(255,150,60,0)');
@@ -192,6 +285,52 @@
       ctx.save(); ctx.translate(fx, fy); ctx.rotate(c.sway);
       ctx.globalAlpha = 1; drawFlame(ctx, h, w); ctx.restore();
     });
+  }
+  function drawBokeh(t) {
+    // 먼 빛망울 (보케): 테두리가 또렷한 둥근 빛
+    ctx.globalCompositeOperation = 'lighter';
+    far.forEach(function (b) {
+      var k = .72 + .28 * Math.sin(t * b.sp + b.ph);
+      var a = b.a * k, r = b.r;
+      var gr = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, r);
+      var c1 = b.warm > .5 ? '255,205,120' : '255,185,95';
+      gr.addColorStop(0, 'rgba(' + c1 + ',' + (a * .55) + ')');
+      gr.addColorStop(.72, 'rgba(' + c1 + ',' + (a * .62) + ')');
+      gr.addColorStop(.93, 'rgba(255,170,80,' + (a * .95) + ')');   // 밝은 테두리
+      gr.addColorStop(1, 'rgba(255,170,80,0)');
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, Math.PI * 2); ctx.fill();
+    });
+
+  }
+
+  function frame(now) {
+    raf = 0;
+    if (!on) return;
+    if (now - last < 33) { raf = requestAnimationFrame(frame); return; }   // 약 30fps
+    last = now;
+    var t = now / 1000;
+    ctx.drawImage(still, 0, 0, W, H);
+    if (scene === 'temple') {
+      // 창문: 천천히 숨 쉬는 밝기 + 빛줄기
+      ctx.globalAlpha = (phone ? .55 : .82) + .15 * Math.sin(t * .5); ctx.drawImage(layer, 0, 0, W, H); ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'lighter';
+      var glow = ctx.createRadialGradient(W / 2, win.y + win.h * .5, 0, W / 2, win.y + win.h * .5, win.w * 1.4);
+      glow.addColorStop(0, 'rgba(226,178,83,' + (0.10 + 0.04 * Math.sin(t * .5)).toFixed(3) + ')'); glow.addColorStop(1, 'rgba(226,178,83,0)');
+      ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+      rays.forEach(function (r) {
+        var a = r.a * (0.6 + 0.4 * Math.sin(t * r.sp + r.ph));
+        var top = win.y + win.h * .3, bottom = H * 1.05, dx = Math.tan(r.ang) * (bottom - top);
+        var gr = ctx.createLinearGradient(0, top, 0, bottom);
+        gr.addColorStop(0, 'rgba(255,230,170,' + a.toFixed(3) + ')'); gr.addColorStop(1, 'rgba(255,230,170,0)');
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(r.x - r.w * .15, top); ctx.lineTo(r.x + r.w * .15, top); ctx.lineTo(r.x + dx + r.w, bottom); ctx.lineTo(r.x + dx - r.w, bottom); ctx.closePath(); ctx.fill();
+      });
+      drawNearCandles(t, 1);
+    } else if (scene === 'grotto') {
+      drawNearCandles(t, 2.2);   // 바위에 넓게 일렁이는 빛
+    } else {
+      drawBokeh(t);
+      drawNearCandles(t, 1);
+    }
     ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
     raf = requestAnimationFrame(frame);
   }
@@ -200,11 +339,13 @@
   function stop() { on = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
   function sync() {
     var dark = document.documentElement.getAttribute('data-sky') !== 'day';
+    if (currentScene() !== scene) layout();
     cv.hidden = !dark;
     if (dark && document.visibilityState === 'visible') start(); else stop();
+    if (reduced && dark) frame(1000);
   }
   var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (reduced) frame(1000); }, 150); });
   document.addEventListener('visibilitychange', sync);
-  new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-sky'] });
+  new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-sky', 'data-scene'] });
   layout(); sync();
 })();
