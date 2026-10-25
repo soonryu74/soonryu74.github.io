@@ -71,51 +71,102 @@
     g.fillStyle = v; g.fillRect(0, 0, W, H);
     }
 
-  /* ── 장면 2: 기도굴 — 바위 틈 벽감에 놓인 초, 불빛이 바위에 일렁인다 ── */
+  /* ── 장면 2: 기도굴 — 천장의 종유석, 안쪽으로 깊어지는 바위 터널, 촛불이 비추는 안쪽 벽과 바닥 ── */
+  var cave = { cx: 0, cy: 0, R: 0 };
   function layoutGrotto() {
-    var n = phone ? 4 : 7;
-    for (var i = 0; i < n; i++) {
-      var x = phone ? (i % 2 ? rnd(W * .62, W - 30) : rnd(30, W * .38)) : (i < 3 ? rnd(40, W * .22) : i < 6 ? rnd(W * .78, W - 40) : W / 2);
-      var y = phone ? H * (0.22 + 0.7 * (i / n)) : H * rnd(0.35, 0.92);
-      near.push(mkCandle(x, y, phone ? rnd(0.7, 1.0) : rnd(0.9, 1.5)));
+    cave.cx = W / 2; cave.cy = phone ? H * .40 : H * .52; cave.R = phone ? W * .42 : Math.min(W, H) * .30;
+    // 촛불: 안쪽 바닥 선반 위 (휴대폰은 글 카드 바로 위, 큰 화면은 가운데 글 기둥 양옆)
+    if (phone) {
+      near.push(mkCandle(W * .30, cave.cy + cave.R * .42, 0.85)); near.push(mkCandle(W * .50, cave.cy + cave.R * .50, 0.95)); near.push(mkCandle(W * .70, cave.cy + cave.R * .42, 0.85));
+      near.push(mkCandle(W * .12, cave.cy + cave.R * .95, 1.1)); near.push(mkCandle(W * .88, cave.cy + cave.R * .95, 1.1));
+    } else {
+      near.push(mkCandle(W / 2 - 90, cave.cy + cave.R * .55, 1.0)); near.push(mkCandle(W / 2, cave.cy + cave.R * .62, 1.1)); near.push(mkCandle(W / 2 + 90, cave.cy + cave.R * .55, 1.0));
+      near.push(mkCandle(W * .14, H * .86, 1.5)); near.push(mkCandle(W * .24, H * .93, 1.3)); near.push(mkCandle(W * .86, H * .86, 1.5)); near.push(mkCandle(W * .76, H * .93, 1.3));
     }
-    if (!phone) { near.push(mkCandle(W / 2 - 60, H * .9, 1.4)); near.push(mkCandle(W / 2 + 60, H * .92, 1.3)); }
+  }
+  // 울퉁불퉁한 고리 (바위 터널의 한 겹)
+  function ringPath(g, cx, cy, R, ph, yStretch) {
+    g.beginPath();
+    for (var i = 0; i <= 72; i++) {
+      var th = (i / 72) * Math.PI * 2;
+      var r = R * (1 + .09 * Math.sin(3 * th + ph) + .06 * Math.sin(7 * th + ph * 1.7) + .035 * Math.sin(13 * th + ph * .6));
+      var x = cx + Math.cos(th) * r, y = cy + Math.sin(th) * r * (yStretch || 1);
+      if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+    }
+    g.closePath();
+  }
+  function stalactite(g, x, top, len, w, lit) {
+    var tip = x + rnd(-w * .3, w * .3);
+    var gr = g.createLinearGradient(x - w / 2, 0, x + w / 2, 0);
+    gr.addColorStop(0, lit ? 'rgba(92,68,42,1)' : 'rgba(40,30,20,1)'); gr.addColorStop(.55, 'rgba(26,19,13,1)'); gr.addColorStop(1, 'rgba(10,7,5,1)');
+    g.fillStyle = gr;
+    g.beginPath(); g.moveTo(x - w / 2, top); g.quadraticCurveTo(x - w * .22, top + len * .55, tip, top + len); g.quadraticCurveTo(x + w * .22, top + len * .55, x + w / 2, top); g.closePath(); g.fill();
+    // 끝에 맺힌 물방울 반짝
+    if (Math.random() < .5) { g.fillStyle = 'rgba(200,190,170,.35)'; g.beginPath(); g.arc(tip, top + len + 2, 1.6, 0, Math.PI * 2); g.fill(); }
   }
   function drawStillGrotto(g) {
-    g.fillStyle = '#060504'; g.fillRect(0, 0, W, H);
-    // 바위: 겹겹의 어두운 덩어리 (갈색·회색), 가운데로 갈수록 트인다
-    var blobs = phone ? 260 : 520;
-    for (var i = 0; i < blobs; i++) {
-      var x = rnd(-40, W + 40), y = rnd(-40, H + 40);
-      var dx = (x - W / 2) / (W / 2), dy = (y - H * .62) / (H * .6);
-      var edge = Math.min(1, Math.sqrt(dx * dx + dy * dy));            // 0 = 가운데, 1 = 가장자리
-      if (Math.random() > 0.25 + edge * .75) continue;                 // 가운데는 비워 둔다
-      var r = rnd(18, 90) * (0.6 + edge), tone = rnd(0, 1);
-      var col = tone < .5 ? [62, 46, 32] : tone < .8 ? [48, 44, 40] : [78, 58, 36];
-      g.save(); g.translate(x, y); g.rotate(rnd(0, 3.14));
-      g.fillStyle = 'rgba(' + col.join(',') + ',' + (0.35 + edge * .4).toFixed(2) + ')';
-      g.beginPath(); g.ellipse(0, 0, r, r * rnd(.45, .8), 0, 0, Math.PI * 2); g.fill();
-      // 바위 윗면에 닿는 옅은 빛(위쪽 가장자리)
-      g.strokeStyle = 'rgba(140,105,60,' + (0.08 + edge * .08).toFixed(2) + ')'; g.lineWidth = 1.2;
-      g.beginPath(); g.ellipse(0, -2, r * .9, r * rnd(.4, .7), 0, Math.PI * 1.1, Math.PI * 1.9); g.stroke();
+    g.fillStyle = '#050403'; g.fillRect(0, 0, W, H);
+    var cx = cave.cx, cy = cave.cy, R = cave.R;
+    // 터널: 바깥 고리부터 안쪽으로, 안쪽일수록 밝다 (멀리 보이는 안쪽 벽)
+    var rings = 8, ph = rnd(0, 6.28);
+    for (var i = rings; i >= 1; i--) {
+      var k = i / rings;                                    // 1 = 바깥, 작을수록 안쪽
+      var rr = R * (0.35 + 1.9 * k * k);
+      var c = [Math.round(14 + 70 * (1 - k)), Math.round(10 + 52 * (1 - k)), Math.round(6 + 34 * (1 - k))];
+      g.fillStyle = 'rgb(' + c.join(',') + ')';
+      ringPath(g, cx, cy, rr, ph + i * .9, 1.05); g.fill();
+      // 고리 가장자리: 빛을 받는 윗면(위쪽은 밝게, 아래쪽은 그늘)
+      g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 2; g.stroke();
+      g.save(); g.clip();
+      var lit = g.createLinearGradient(0, cy - rr, 0, cy + rr);
+      lit.addColorStop(0, 'rgba(0,0,0,.35)'); lit.addColorStop(.5, 'rgba(120,85,45,.10)'); lit.addColorStop(1, 'rgba(0,0,0,.25)');
+      g.fillStyle = lit; g.fillRect(0, 0, W, H);
       g.restore();
     }
-    // 갈라진 틈
-    g.strokeStyle = 'rgba(0,0,0,.55)'; g.lineWidth = 1.5;
-    for (var k = 0; k < (phone ? 18 : 40); k++) {
-      var sx = rnd(0, W), sy = rnd(0, H); g.beginPath(); g.moveTo(sx, sy);
-      for (var m = 0; m < 5; m++) { sx += rnd(-40, 40); sy += rnd(10, 50); g.lineTo(sx, sy); } g.stroke();
+    // 바위 결: 고리를 따라 도는 짧은 줄무늬
+    g.lineWidth = 1;
+    for (var n = 0; n < (phone ? 500 : 1100); n++) {
+      var th = rnd(0, 6.28), rad = rnd(R * .4, R * 2.6);
+      var x = cx + Math.cos(th) * rad, y = cy + Math.sin(th) * rad * 1.05;
+      if (x < -20 || x > W + 20 || y < -20 || y > H + 20) continue;
+      var L = rnd(6, 26), dark = Math.random() < .6;
+      g.strokeStyle = dark ? 'rgba(0,0,0,' + rnd(.15, .45).toFixed(2) + ')' : 'rgba(170,130,80,' + rnd(.05, .14).toFixed(2) + ')';
+      g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(th + 1.57) * L, y + Math.sin(th + 1.57) * L * .6); g.stroke();
     }
-    // 벽감(초 놓인 자리): 초 뒤 어두운 반원
+    // 갈라진 틈
+    g.strokeStyle = 'rgba(0,0,0,.7)'; g.lineWidth = 1.6;
+    for (var k2 = 0; k2 < (phone ? 10 : 22); k2++) {
+      var sx = rnd(0, W), sy = rnd(0, H * .9); g.beginPath(); g.moveTo(sx, sy);
+      for (var m = 0; m < 6; m++) { sx += rnd(-30, 30); sy += rnd(8, 40); g.lineTo(sx, sy); } g.stroke();
+    }
+    // 천장 종유석 (가운데 쪽이 길고 밝은 면이 빛을 받는다)
+    var ns = phone ? 11 : 22;
+    for (var t = 0; t < ns; t++) {
+      var x2 = (t + rnd(.2, .8)) / ns * W, nearC = 1 - Math.min(1, Math.abs(x2 - cx) / (W * .5));
+      stalactite(g, x2, -4, rnd(30, 70) + nearC * rnd(40, 120), rnd(18, 46), x2 < cx);
+    }
+    for (var t2 = 0; t2 < ns; t2++) stalactite(g, rnd(0, W), -4, rnd(14, 40), rnd(8, 18), Math.random() < .5);
+    // 바닥: 촛불이 놓인 울퉁불퉁한 바위 바닥 (살짝 밝은 띠)
+    var floorY = phone ? cy + R * .55 : cy + R * .7;
+    var fg = g.createLinearGradient(0, floorY - 10, 0, floorY + 60);
+    fg.addColorStop(0, 'rgba(90,66,40,0)'); fg.addColorStop(.3, 'rgba(90,66,40,.45)'); fg.addColorStop(1, 'rgba(30,22,14,0)');
+    g.fillStyle = fg; g.fillRect(0, floorY - 10, W, 70);
+    // 석순 (바닥 양옆)
+    [[W * .06, 1], [W * .93, 0]].forEach(function (q) {
+      g.save(); g.translate(q[0], H + 6); g.scale(1, -1); stalactite(g, 0, 0, rnd(60, 130), rnd(30, 60), q[1] === 1); g.restore();
+    });
+    // 촛불 (선반 위)
     near.forEach(function (c) {
-      g.fillStyle = 'rgba(0,0,0,.55)'; g.beginPath(); g.ellipse(c.x, c.y - 10 * c.s, 30 * c.s, 34 * c.s, 0, Math.PI, Math.PI * 2); g.fill();
-      g.fillStyle = 'rgba(70,52,34,.9)'; g.fillRect(c.x - 30 * c.s, c.y, 60 * c.s, 4 * c.s);   // 선반
-      g.save(); g.translate(c.x, c.y); g.scale(1, -.5); g.globalAlpha = .18; drawGlass(g, 0, 0, c.s); g.restore();
+      g.fillStyle = 'rgba(70,52,34,.95)'; g.beginPath(); g.ellipse(c.x, c.y + 2 * c.s, 26 * c.s, 5 * c.s, 0, 0, Math.PI * 2); g.fill();
+      g.save(); g.translate(c.x, c.y); g.scale(1, -.45); g.globalAlpha = .16; drawGlass(g, 0, 0, c.s); g.restore();
       drawGlass(g, c.x, c.y, c.s);
     });
-    // 가장자리 깊은 어둠
-    var v = g.createRadialGradient(W / 2, H * .6, Math.min(W, H) * .2, W / 2, H * .6, Math.max(W, H) * .75);
-    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.75)');
+    // 가운데 안쪽 벽에 머무는 따뜻한 빛 (정지), 가장자리는 깊은 어둠
+    var warm = g.createRadialGradient(cx, cy + R * .3, 0, cx, cy + R * .3, R * 1.6);
+    warm.addColorStop(0, 'rgba(255,170,80,.22)'); warm.addColorStop(.5, 'rgba(255,150,60,.08)'); warm.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = warm; g.fillRect(0, 0, W, H);
+    var v = g.createRadialGradient(cx, cy, R * .6, cx, cy, Math.max(W, H) * .85);
+    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.85)');
     g.fillStyle = v; g.fillRect(0, 0, W, H);
   }
 
