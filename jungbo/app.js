@@ -142,6 +142,8 @@
   var acct = null, me = null, group = null, tab = 'open', feed = [], openPostId = null, pollT = null, lastFeedAt = 0;
   var rooms = [], roomFilter = { scope: 'mine', room: null };   // 방 목록 · 지금 보는 범위 (mine = 내 방 모두 + 공통)
   var VIS_LABEL = { room: '방 식구 모두', leaders: '인도자만', private: '나만' };
+  var KIND_ORDER = { group: 0, cohort: 1, custom: 2 };   // 그룹 → 기수 → 그 밖에
+  function sortRooms(list) { return (list || []).slice().sort(function (x, y) { return (KIND_ORDER[x.kind] - KIND_ORDER[y.kind]) || (x.sort - y.sort) || x.name.localeCompare(y.name, 'ko'); }); }
   function roomName(id) { if (!id) return '공통'; var r = rooms.filter(function (x) { return x.id === id; })[0]; return r ? r.name : '방'; }
   function myRooms() { return me.role === 'leader' ? rooms : rooms.filter(function (r) { return r.mine; }); }
   function isRoomLeader(id) { var r = rooms.filter(function (x) { return x.id === id; })[0]; return !!(r && r.my_role === 'leader'); }
@@ -274,7 +276,7 @@
     pushNudge();
   }
   async function loadRooms() {
-    try { rooms = await rpc('pray_rooms', { p_token: acct.token }); } catch (e) { rooms = []; }
+    try { rooms = sortRooms(await rpc('pray_rooms', { p_token: acct.token })); } catch (e) { rooms = []; }
     loadRoomFilter();
     // 보던 방이 없어졌거나 내 방이 아니면 전체로
     if (roomFilter.scope === 'room' && !myRooms().some(function (r) { return r.id === roomFilter.room; })) roomFilter = { scope: 'mine', room: null };
@@ -766,9 +768,9 @@
       if (e.target.closest('[data-c]')) { s.close(); renderGroupPane(); return; }
       var cb = e.target.closest('[data-rs-member]'), lb = e.target.closest('[data-rs-lead]');
       try {
-        if (cb) { rooms = await rpc('pray_room_member_set', { p_token: acct.token, p_room: roomId, p_member: cb.dataset.rsMember, p_on: cb.checked, p_role: 'member' }); s.close(); roomSheet(roomId); }
-        else if (lb) { rooms = await rpc('pray_room_member_set', { p_token: acct.token, p_room: roomId, p_member: lb.dataset.rsLead, p_on: true, p_role: lb.dataset.to }); s.close(); roomSheet(roomId); }
-        else if (e.target.closest('[data-rs-rename]')) { rooms = await rpc('pray_room_save', { p_token: acct.token, p_id: roomId, p_name: $('#rs-name', s).value, p_kind: r.kind }); say($('#rs-msg', s), '이름을 바꿨어요.', 'ok'); }
+        if (cb) { rooms = sortRooms(await rpc('pray_room_member_set', { p_token: acct.token, p_room: roomId, p_member: cb.dataset.rsMember, p_on: cb.checked, p_role: 'member' })); s.close(); roomSheet(roomId); }
+        else if (lb) { rooms = sortRooms(await rpc('pray_room_member_set', { p_token: acct.token, p_room: roomId, p_member: lb.dataset.rsLead, p_on: true, p_role: lb.dataset.to })); s.close(); roomSheet(roomId); }
+        else if (e.target.closest('[data-rs-rename]')) { rooms = sortRooms(await rpc('pray_room_save', { p_token: acct.token, p_id: roomId, p_name: $('#rs-name', s).value, p_kind: r.kind })); say($('#rs-msg', s), '이름을 바꿨어요.', 'ok'); }
       } catch (err) { say($('#rs-msg', s), err.message, 'err'); }
     });
   }
@@ -790,25 +792,25 @@
     }
     if (t.closest('[data-invite]')) return inviteSheet(false);
     if ((b = t.closest('[data-myroom]'))) {
-      try { rooms = await rpc('pray_room_member_set', { p_token: acct.token, p_room: b.dataset.myroom, p_member: null, p_on: b.checked, p_role: 'member' }); await refreshMe(); renderRoomTabs(); loadFeed(true); toast(b.checked ? '방에 들어갔어요.' : '방에서 나왔어요.'); }
+      try { rooms = sortRooms(await rpc('pray_room_member_set', { p_token: acct.token, p_room: b.dataset.myroom, p_member: null, p_on: b.checked, p_role: 'member' })); await refreshMe(); renderRoomTabs(); loadFeed(true); toast(b.checked ? '방에 들어갔어요.' : '방에서 나왔어요.'); }
       catch (err) { toast(err.message); b.checked = !b.checked; }
       return;
     }
     if ((b = t.closest('[data-rooms-bulk]'))) {
       var kind = b.dataset.roomsBulk, n = +($('#rb-' + kind, s).value || 0);
-      try { rooms = await rpc('pray_rooms_bulk', { p_token: acct.token, p_kind: kind, p_count: n, p_fmt: kind === 'group' ? '#그룹' : '#기' }); renderGroupPane(); renderRoomTabs(); toast('방을 만들었어요.'); }
+      try { rooms = sortRooms(await rpc('pray_rooms_bulk', { p_token: acct.token, p_kind: kind, p_count: n, p_fmt: kind === 'group' ? '#그룹' : '#기' })); renderGroupPane(); renderRoomTabs(); toast('방을 만들었어요.'); }
       catch (err) { say($('#room-msg', s), err.message, 'err'); }
       return;
     }
     if (t.closest('[data-room-new]')) {
-      try { rooms = await rpc('pray_room_save', { p_token: acct.token, p_id: null, p_name: $('#rb-name', s).value, p_kind: 'custom' }); renderGroupPane(); renderRoomTabs(); }
+      try { rooms = sortRooms(await rpc('pray_room_save', { p_token: acct.token, p_id: null, p_name: $('#rb-name', s).value, p_kind: 'custom' })); renderGroupPane(); renderRoomTabs(); }
       catch (err) { say($('#room-msg', s), err.message, 'err'); }
       return;
     }
     if ((b = t.closest('[data-room-open]'))) return roomSheet(b.dataset.roomOpen);
     if ((b = t.closest('[data-room-del]'))) {
       if (!confirm('「' + b.dataset.nm + '」 방을 지울까요? 그 방 글은 공통으로 옮겨집니다.')) return;
-      try { rooms = await rpc('pray_room_delete', { p_token: acct.token, p_id: b.dataset.roomDel }); renderGroupPane(); renderRoomTabs(); loadFeed(true); } catch (err) { toast(err.message); }
+      try { rooms = sortRooms(await rpc('pray_room_delete', { p_token: acct.token, p_id: b.dataset.roomDel })); renderGroupPane(); renderRoomTabs(); loadFeed(true); } catch (err) { toast(err.message); }
       return;
     }
     if ((b = t.closest('[data-remove]'))) {
