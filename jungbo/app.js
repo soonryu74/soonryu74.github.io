@@ -21,6 +21,71 @@
   var toastT;
   function toast(text) { var t = $('#toast'); t.textContent = text; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('show'); }, 2600); }
   function norm(code) { return String(code || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase(); }
+
+  /* ── 오늘의 말씀 (짧은 구절, 날마다 바뀐다) ─────────────── */
+  var VERSES = [
+    ['너희 짐을 서로 지라 그리하여 그리스도의 법을 성취하라', '갈라디아서 6:2'],
+    ['쉬지 말고 기도하라', '데살로니가전서 5:17'],
+    ['아무 것도 염려하지 말고 다만 모든 일에 기도와 간구로, 너희 구할 것을 감사함으로 하나님께 아뢰라', '빌립보서 4:6'],
+    ['두세 사람이 내 이름으로 모인 곳에는 나도 그들 중에 있느니라', '마태복음 18:20'],
+    ['수고하고 무거운 짐 진 자들아 다 내게로 오라 내가 너희를 쉬게 하리라', '마태복음 11:28'],
+    ['여호와는 마음이 상한 자를 가까이 하시고 충심으로 통회하는 자를 구원하시는도다', '시편 34:18'],
+    ['너희 염려를 다 주께 맡기라 이는 그가 너희를 돌보심이라', '베드로전서 5:7'],
+    ['주의 말씀은 내 발에 등이요 내 길에 빛이니이다', '시편 119:105'],
+    ['의인의 간구는 역사하는 힘이 큼이니라', '야고보서 5:16'],
+    ['기뻐하는 자들과 함께 기뻐하고 우는 자들과 함께 울라', '로마서 12:15'],
+    ['평안을 너희에게 끼치노니 곧 나의 평안을 너희에게 주노라', '요한복음 14:27'],
+    ['내가 산을 향하여 눈을 들리라 나의 도움이 어디서 올까', '시편 121:1'],
+    ['그런즉 믿음, 소망, 사랑, 이 세 가지는 항상 있을 것인데 그 중의 제일은 사랑이라', '고린도전서 13:13'],
+    ['강하고 담대하라 두려워하지 말며 놀라지 말라 네가 어디로 가든지 네 하나님 여호와가 너와 함께 하느니라', '여호수아 1:9'],
+    ['너는 내게 부르짖으라 내가 네게 응답하겠고 네가 알지 못하는 크고 은밀한 일을 네게 보이리라', '예레미야 33:3'],
+    ['여호와는 나의 목자시니 내게 부족함이 없으리로다', '시편 23:1']
+  ];
+  function todayVerse() {
+    var d = new Date(), n = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5);
+    return VERSES[n % VERSES.length];
+  }
+  /* ── 하늘빛 (시간에 따라: 새벽·낮·노을·밤) — 메뉴에서 밤 모드로 고정할 수 있다 ── */
+  var LS_SKY = 'jungbo-sky';
+  function skyNow() { var h = new Date().getHours(); return (h < 5 || h >= 20) ? 'night' : h < 10 ? 'dawn' : h < 17 ? 'day' : 'dusk'; }
+  function applySky() {
+    var m = ''; try { m = localStorage.getItem(LS_SKY) || ''; } catch (e) {}
+    var s = m === 'night' || m === 'day' ? m : skyNow();
+    document.documentElement.setAttribute('data-sky', s);
+    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', s === 'night' ? '#0b1612' : '#1f4d3b');
+    var sky = $('#sky');
+    if (sky && s === 'night' && !sky.children.length) {
+      for (var i = 0; i < 40; i++) { var st = document.createElement('i'); st.className = 'star'; st.style.left = (Math.random() * 100) + '%'; st.style.top = (Math.random() * 70) + '%'; st.style.animationDelay = (-Math.random() * 4).toFixed(2) + 's'; st.style.width = st.style.height = (1 + Math.random() * 2).toFixed(1) + 'px'; sky.appendChild(st); }
+    }
+    var mb = $('#menu-sky'); if (mb) mb.textContent = m === 'night' ? '낮 모드로' : m === 'day' ? '시간 따라 자동' : '밤 기도 모드';
+  }
+  function toggleSky() {
+    var m = ''; try { m = localStorage.getItem(LS_SKY) || ''; } catch (e) {}
+    var next = m === 'night' ? 'day' : m === 'day' ? '' : 'night';   // 밤 고정 → 낮 고정 → 자동
+    try { if (next) localStorage.setItem(LS_SKY, next); else localStorage.removeItem(LS_SKY); } catch (e) {}
+    applySky();
+  }
+  applySky(); setInterval(applySky, 60000);
+  /* 촛불 그림 */
+  function candleSvg(cls) {
+    return '<svg class="candle ' + (cls || '') + '" viewBox="0 0 34 52" aria-hidden="true">' +
+      '<ellipse class="glow" cx="17" cy="14" rx="12" ry="14" fill="rgba(246,196,83,.28)"/>' +
+      '<path class="flame" d="M17 4c3 5 7 8 7 13a7 7 0 0 1-14 0c0-5 4-8 7-13z" fill="#f6c453"/>' +
+      '<path class="flame" d="M17 11c1.5 2.5 3.5 4 3.5 6.5a3.5 3.5 0 0 1-7 0c0-2.5 2-4 3.5-6.5z" fill="#fff1c2"/>' +
+      '<rect x="12" y="26" width="10" height="22" rx="2" fill="#efe3c8"/><rect x="12" y="26" width="10" height="4" rx="2" fill="#dcc79c"/></svg>';
+  }
+  // 기도의 불빛: 사람 수만큼 작은 불 (최대 12개, 나머지는 +N)
+  function lightsHtml(n, fresh) {
+    n = +n || 0; if (!n) return '';
+    var k = Math.min(n, 12), s = '<span class="lights" aria-label="' + n + '명이 기도했어요">';
+    for (var i = 0; i < k; i++) s += '<i class="light' + (fresh && i === k - 1 ? ' new' : '') + '"></i>';
+    return s + (n > 12 ? '<span class="more">+' + (n - 12) + '</span>' : '') + '</span>';
+  }
+  function bloom(btn) {
+    if (!btn) return;
+    var b = document.createElement('i'); b.className = 'bloom'; btn.appendChild(b); setTimeout(function () { b.remove(); }, 1000);
+    try { if (navigator.vibrate) navigator.vibrate(25); } catch (e) {}
+  }
   function fmtCode(code) { var c = norm(code); return c.replace(/(.{4})(?=.)/g, '$1-'); }
 
   /* ── 시간 ─────────────────────────────────────────── */
@@ -96,6 +161,8 @@
   var pendingInvite = null;
   async function enterScreen(msg, kind) {
     stopPoll(); acct = null; show('v-enter');
+    var ec = $('#enter-candle'); if (ec && !ec.innerHTML) ec.innerHTML = candleSvg();
+    var ev = $('#enter-verse'), v = todayVerse(); if (ev) ev.innerHTML = '“' + esc(v[0]) + '”<small>' + esc(v[1]) + '</small>';
     if (msg) say($('#enter-msg'), msg, kind || 'err', true);
     var inv = q.get('g');
     if (inv && norm(inv).length >= 6) {
@@ -196,15 +263,20 @@
     document.title = group.name + ' — 중보기도 나눔터';
   }
   function renderHero() {
-    var h = new Date().getHours(), part = h < 5 ? '밤' : h < 12 ? '아침' : h < 18 ? '오후' : '저녁';
-    $('#hero-title').innerHTML = esc(me.name) + '님,<br>평안한 ' + part + (part === '오후' ? '예요' : '이에요') + '.';
+    var h = new Date().getHours(), sky = document.documentElement.getAttribute('data-sky');
+    var kick = sky === 'night' ? '밤에 드리는 기도' : h < 10 ? '새벽에 드리는 기도' : h < 17 ? '오늘도 함께' : '저녁에 드리는 기도';
+    var v = todayVerse();
+    $('#hero-kicker').textContent = kick;
+    $('#hero-verse').textContent = '“' + v[0] + '”'; $('#hero-ref').textContent = v[1];
+    $('#hero-title').innerHTML = '<b>' + esc(me.name) + '</b>님, 평안하세요.';
     var urgent = feed.filter(function (p) { return p.kind === 'urgent' && p.status === 'open'; }).length;
     var open = feed.filter(function (p) { return p.status === 'open'; }).length;
+    var lights = feed.reduce(function (s, p) { return s + (+p.prayed_total || 0); }, 0);
     $('#chips').innerHTML =
-      (urgent ? '<span class="chip urgent">🚨 긴급 <b>' + urgent + '</b></span>' : '') +
+      (urgent ? '<span class="chip urgent">긴급 <b>' + urgent + '</b></span>' : '') +
       '<span class="chip">기도 중 <b>' + open + '</b></span>' +
-      '<span class="chip">함께 <b>' + group.member_count + '</b>명</span>' +
-      '<span class="chip">알림 켠 분 <b>' + (group.push_count || 0) + '</b>명</span>';
+      '<span class="chip lights">켜진 불빛 <b>' + lights + '</b></span>' +
+      '<span class="chip">함께 <b>' + group.member_count + '</b>명</span>';
     $('#n-open').textContent = open ? open : ''; $('#n-urgent').textContent = urgent ? urgent : '';
   }
 
@@ -223,9 +295,10 @@
   function renderFeed() {
     var box = $('#feed');
     if (tab === 'group') return;
+    if (!box.dataset.drawn) { box.dataset.drawn = '1'; box.classList.add('first'); setTimeout(function () { box.classList.remove('first'); }, 1200); }
     var rows = tab === 'answered' ? answered : tab === 'urgent' ? feed.filter(function (p) { return p.kind === 'urgent'; }) : feed;
     if (!rows.length) {
-      box.innerHTML = '<div class="empty"><span class="big">' + (tab === 'urgent' ? '🕊️' : tab === 'answered' ? '🌱' : '🙏') + '</span>' +
+      box.innerHTML = '<div class="empty">' + candleSvg() +
         (tab === 'urgent' ? '지금 긴급기도는 없어요.<br>평안한 날이네요.' : tab === 'answered' ? '아직 응답받음으로 옮긴 기도가 없어요.<br>응답을 받으면 글에서 [응답받았어요]를 눌러 주세요.'
           : '아직 기도제목이 없어요.<br>아래 [기도제목 올리기]로 첫 기도를 올려 보세요.') + '</div>';
       return;
@@ -238,7 +311,7 @@
     return '<span class="react-mini">' + keys.map(function (k) { return '<span>' + k + ' ' + p.reactions[k] + '</span>'; }).join('') + '</span>';
   }
   function postCard(p) {
-    var urgent = p.kind === 'urgent' && p.status === 'open', ans = p.status === 'answered';
+    var urgent = p.kind === 'urgent' && p.status === 'open', ans = p.status === 'answered', fresh = freshLight === p.id; if (fresh) freshLight = null;
     return '<article class="post' + (urgent ? ' urgent' : '') + (ans ? ' answered' : '') + '" data-id="' + p.id + '">' +
       '<div class="post-head">' + (ans ? '<span class="badge answered">🙌 응답받음</span>' : urgent ? '<span class="badge urgent">🚨 긴급</span>' : '<span class="badge normal">기도제목</span>') +
       '<span class="who">' + esc(p.author_name) + ' · ' + ago(ans ? p.answered_at : p.created_at) + '</span></div>' +
@@ -247,7 +320,7 @@
       (ans && p.answer_note ? '<div class="answer">🙌 ' + esc(p.answer_note) + '</div>' : '') +
       '<div class="post-foot">' +
       '<button type="button" class="pray-btn' + (p.my_prayed ? ' on' : '') + '" data-pray="' + p.id + '">🙏 기도했어요 <b>' + p.prayed_people + '</b></button>' +
-      reactMini(p) +
+      lightsHtml(p.prayed_people, fresh) + reactMini(p) +
       '<span class="meta"><span>💬 ' + p.comment_count + '</span></span></div></article>';
   }
   $('#feed').addEventListener('click', function (e) {
@@ -276,11 +349,12 @@
   });
 
   /* ── 기도했어요 ───────────────────────────────────── */
+  var freshLight = null;   // 방금 켠 불빛을 반짝이게
   async function prayed(id, btn) {
-    if (btn) { btn.classList.add('on'); var b = btn.querySelector('b'); }
+    if (btn) { btn.classList.add('on'); var b = btn.querySelector('b'); bloom(btn); }
     try {
       var p = await rpc('pray_prayed', { p_token: acct.token, p_post: id });
-      mergePost(p);
+      freshLight = id; mergePost(p);
       if (btn && b) b.textContent = p.prayed_people;
       toast(p.my_prayed === 1 ? '기도했어요 🙏 글쓴이에게 전해 드릴게요.' : '또 기도하셨네요 🙏 (' + p.my_prayed + '번째)');
       if (p.my_prayed === 1) notifyQuiet({ action: 'prayed', post_id: id });
@@ -315,8 +389,9 @@
     openPostId = id;
     if (location.hash !== '#p=' + id) history.replaceState(null, '', location.pathname + location.search + '#p=' + id);
     detailSheet = sheet({ html: '<p class="empty">불러오는 중…</p>', foot: '<button type="button" class="ghost" data-close>닫기</button>',
-      onClose: function () { openPostId = null; detailSheet = null; detailPost = null; history.replaceState(null, '', location.pathname + location.search); } });
+      onClose: function () { openPostId = null; detailSheet = null; detailPost = null; leavePresence(); history.replaceState(null, '', location.pathname + location.search); } });
     detailSheet.addEventListener('click', onDetailClick);
+    joinPresence(id);
     try { renderDetail(await rpc('pray_post_get', { p_token: acct.token, p_id: id })); }
     catch (e) { detailSheet.body.innerHTML = '<div class="msg err show">' + esc(e.message) + '</div>'; }
   }
@@ -340,8 +415,9 @@
       '<p class="byline">' + esc(p.author_name) + ' · ' + whenText(p.created_at) + (p.updated_at && p.updated_at !== p.created_at && !ans ? ' (고침)' : '') + '</p>' +
       '<div class="prose">' + esc(p.body) + '</div>' +
       (ans ? '<div class="post answered" style="cursor:default"><b>🙌 응답받았어요</b> <span class="byline">' + whenText(p.answered_at) + '</span>' + (p.answer_note ? '<div class="prose" style="margin:6px 0 0; font-size:16px">' + esc(p.answer_note) + '</div>' : '') + '</div>' : '') +
+      '<div class="presence" id="presence" hidden></div>' +
       '<button type="button" class="big-pray' + (p.my_prayed ? ' on' : '') + '" data-pray="' + p.id + '">🙏 기도했어요' + (p.my_prayed ? ' <small>(' + p.my_prayed + '번)</small>' : '') + '</button>' +
-      '<p class="prayed-names">' + (p.prayed_people ? '<b>' + p.prayed_people + '명</b>이 ' + p.prayed_total + '번 기도했어요 — ' + esc(names(p.prayed_names, 8)) : '아직 아무도 누르지 않았어요. 첫 기도를 올려 주세요.') + '</p>' +
+      '<div class="prayed-box">' + lightsHtml(p.prayed_people) + '<span class="prayed-names">' + (p.prayed_people ? '<b>' + p.prayed_people + '명</b>이 ' + p.prayed_total + '번 기도했어요 — ' + esc(names(p.prayed_names, 8)) : '아직 불빛이 없어요. 첫 기도의 불을 켜 주세요.') + '</span></div>' +
       '<div class="emoji-row">' + EMOJI.map(function (e) {
         var n = (p.reactions || {})[e] || 0, on = (p.my_reactions || []).indexOf(e) >= 0, who = ((p.reaction_names || {})[e] || []).join(', ');
         return '<button type="button"' + (on ? ' class="on"' : '') + ' data-emoji="' + e + '" title="' + esc(who) + '">' + e + (n ? ' <b>' + n + '</b>' : '') + '</button>';
@@ -356,12 +432,13 @@
         (p.status === 'open' ? '<button type="button" class="small" data-answer>🙌 응답받았어요</button>' : '<button type="button" class="small" data-reopen>다시 기도 중으로</button>') +
         '<button type="button" class="small" data-share>' + (urgent ? '🚨 단톡방에 긴급 알리기' : '카톡으로 알리기') + '</button>' +
         '<button type="button" class="small" data-edit>고치기</button><button type="button" class="small danger" data-del-post>지우기</button></div>' : '');
+    renderPresence();
   }
   async function onDetailClick(e) {
     var t = e.target, p = detailPost; if (!p) return;
     if (t.closest('[data-close]')) return detailSheet.close();
     var b;
-    if ((b = t.closest('[data-pray]'))) return prayed(b.dataset.pray, null);
+    if ((b = t.closest('[data-pray]'))) { bloom(b); return prayed(b.dataset.pray, null); }
     if ((b = t.closest('[data-emoji]'))) {
       try { renderDetail(await rpc('pray_react', { p_token: acct.token, p_post: p.id, p_emoji: b.dataset.emoji })); } catch (err) { toast(err.message); }
       return;
@@ -393,6 +470,27 @@
       try { await rpc('pray_post_delete', { p_token: acct.token, p_id: p.id }); detailSheet.close(); feed = feed.filter(function (x) { return x.id !== p.id; }); answered = answered.filter(function (x) { return x.id !== p.id; }); renderFeed(); renderHero(); toast('지웠어요.'); }
       catch (err) { toast(err.message); }
     }
+  }
+
+  /* ── 지금 함께 기도하는 분 (실시간, 안 되면 조용히 넘긴다) ── */
+  var presCh = null, presN = 0;
+  function joinPresence(postId) {
+    leavePresence();
+    try {
+      presCh = sb.channel('pray-post-' + postId, { config: { presence: { key: me.id } } });
+      presCh.on('presence', { event: 'sync' }, function () {
+        try { presN = Object.keys(presCh.presenceState()).length; } catch (e) { presN = 0; }
+        renderPresence();
+      });
+      presCh.subscribe(function (status) { if (status === 'SUBSCRIBED') presCh.track({ name: me.name, at: Date.now() }); });
+    } catch (e) { presCh = null; }
+  }
+  function leavePresence() { if (presCh) { try { sb.removeChannel(presCh); } catch (e) {} presCh = null; presN = 0; } }
+  function renderPresence() {
+    var el = detailSheet && $('#presence', detailSheet); if (!el) return;
+    var others = Math.max(0, presN - 1);
+    el.hidden = !others;
+    el.textContent = others ? '지금 ' + others + '명이 이 기도 앞에 함께 있어요' : '';
   }
 
   /* ── 응답받았어요 ─────────────────────────────────── */
@@ -621,6 +719,7 @@
     if (b.dataset.act === 'refresh') { loadFeed(); toast('새로 고쳤어요.'); }
     if (b.dataset.act === 'group') $('#tabs button[data-tab="group"]').click();
     if (b.dataset.act === 'print') printSheet();
+    if (b.dataset.act === 'sky') { toggleSky(); renderHero(); }
     if (b.dataset.act === 'switch') switchSheet();
   });
   function switchSheet() {

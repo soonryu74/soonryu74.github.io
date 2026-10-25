@@ -18,10 +18,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="중보기도">
-<link rel="stylesheet" href="style.css?v=20261025">
+<link rel="stylesheet" href="style.css?v=20261025b">
+<script>/* 시간에 맞는 하늘빛을 그리기 전에 입힌다 (깜빡임 방지) */
+try { (function () { var m = localStorage.getItem('jungbo-sky'), h = new Date().getHours();
+  document.documentElement.setAttribute('data-sky', m === 'night' || m === 'day' ? m : (h < 5 || h >= 20) ? 'night' : h < 10 ? 'dawn' : h < 17 ? 'day' : 'dusk'); })(); } catch (e) {}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
+<div class="sky" id="sky" aria-hidden="true"></div>
 
 <header class="top noprint" id="top" hidden>
   <div class="top-in">
@@ -33,6 +37,7 @@
       <button type="button" data-act="refresh">새로 고침</button>
       <button type="button" data-act="group">모임 · 알림 설정</button>
       <button type="button" data-act="print">주보용 인쇄 · PDF</button>
+      <button type="button" data-act="sky" id="menu-sky">밤 기도 모드</button>
       <button type="button" data-act="switch">다른 모임</button>
     </div>
   </div>
@@ -43,10 +48,11 @@
   <!-- 들어가기 -->
   <section id="v-enter" hidden>
     <div class="enter-hero">
-      <img src="assets/icon-192.png" alt="">
+      <div id="enter-candle"></div>
       <h1>중보기도 나눔터</h1>
-      <div class="orn">✝</div>
-      <p>모임 식구들의 기도제목을 함께 나누는 곳</p>
+      <p>조용히 들어와, 함께 기도해요.<br>서로의 기도제목이 작은 불빛으로 켜지는 곳.</p>
+      <p class="enter-verse" id="enter-verse"></p>
+      <div class="ornament">✝</div>
     </div>
     <div class="msg" id="enter-msg"></div>
 
@@ -100,7 +106,9 @@
   <section id="v-main" hidden>
     <div class="hero noprint">
       <span class="hero-kicker" id="hero-kicker">함께 기도해요</span>
-      <p class="hero-title" id="hero-title"></p>
+      <p class="hero-verse" id="hero-verse"></p>
+      <div class="hero-ref" id="hero-ref"></div>
+      <p class="hero-name" id="hero-title"></p>
       <div class="chips" id="chips"></div>
     </div>
     <div class="msg" id="main-msg"></div>
@@ -121,6 +129,6 @@
 <button type="button" class="fab noprint" id="fab" hidden>🙏 기도제목 올리기</button>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="app.js?v=20261025"></script>
+<script src="app.js?v=20261025b"></script>
 </body>
 </html>

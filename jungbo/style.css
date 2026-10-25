@@ -1,72 +1,128 @@
 /* 중보기도 나눔터 — 스타일
-   방향: 다락방 나눔터와 같은 '묵상 노트' 결 — 미색 종이 + 짙은 상록 + 금빛 가는 선.
-   휴대폰 한 손 사용이 기본. 어르신도 읽기 쉽게 글자는 크게, 누를 곳은 넓게(최소 44px). */
-@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap');
+   "조용한 예배당". 시간에 따라 하늘빛이 바뀌고(새벽·낮·노을·밤), 기도는 작은 불빛으로 켜진다.
+   어르신도 읽기 쉽게 글자는 크게, 누를 곳은 넓게(44px 이상). 움직임은 느리고 부드럽게. */
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@400;600&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
 :root{
-  --paper:#f5f1e8; --paper-2:#efe9dc; --sheet:#fffdf8; --field:#fff;
-  --ink:#1d2621; --ink-2:#38423c; --muted:#6c7069; --line:#e3dccd; --line-2:#d5ccb9; --placeholder:#a6a395;
-  --brand:#1f4d3b; --brand-dk:#153829; --brand-2:#275e47; --brand-soft:#e7efe9; --on-brand:#fff; --focus:rgba(31,77,59,.14);
-  --gold:#a77a2a; --gold-soft:#f6eedc; --gold-line:#d9c49a;
-  --urgent:#b3261e; --urgent-soft:#fbe9e7; --urgent-line:#efc2bd; --urgent-ink:#7f1d17;
-  --answer:#3f7a3a; --answer-soft:#e9f2e5;
-  --serif:'Gowun Batang','Nanum Myeongjo','AppleMyungjo',serif;
+  /* 낮 (기본): 미색 종이 · 짙은 상록 · 금빛 */
+  --paper:#f6f1e7; --paper-2:#ede6d7; --sheet:#fffdf8; --field:#fff;
+  --ink:#1b2622; --ink-2:#39453f; --muted:#6f746d; --line:#e4dccb; --line-2:#d3c9b3; --placeholder:#a9a596;
+  --brand:#1f4d3b; --brand-dk:#143627; --brand-2:#2a6049; --brand-soft:#e6efe9; --on-brand:#fff; --focus:rgba(31,77,59,.16);
+  --gold:#b8862f; --gold-2:#e2b253; --gold-soft:#f7eed9; --gold-line:#dcc79c; --flame:#f6c453; --flame-2:#fff1c2;
+  --urgent:#a8432e; --urgent-soft:#fbeae4; --urgent-line:#efc9bb; --urgent-ink:#7c2b1b;
+  --answer:#3f7a3a; --answer-soft:#e8f2e3;
+  --sky-a:#f9f3e6; --sky-b:#f6f1e7; --sky-glow:rgba(255,236,190,.9);   /* 머리 하늘 */
+  --top-bg:linear-gradient(180deg,#234f3d,#1f4d3b); --top-ink:#fff; --top-sub:#cfe0d5;
+  --sheet-bg:rgba(14,22,18,.55);
+  --serif:'Gowun Batang','Noto Serif KR','Nanum Myeongjo','AppleMyungjo',serif;
   --sans:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
-  --r:16px; --r-sm:12px;
-  --shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 1px 2px rgba(45,38,20,.05), 0 10px 30px -12px rgba(45,38,20,.14);
+  --r:18px; --r-sm:13px;
+  --shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 2px 4px rgba(45,38,20,.04), 0 14px 34px -16px rgba(45,38,20,.18);
   --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* 새벽 (5~10시): 복숭아빛이 올라오는 하늘 */
+[data-sky="dawn"]{ --sky-a:#fbe7d6; --sky-b:#f6f1e7; --sky-glow:rgba(255,214,170,.9) }
+/* 노을 (17~20시): 호박색 */
+[data-sky="dusk"]{ --sky-a:#f3d9b8; --sky-b:#f6f1e7; --sky-glow:rgba(255,196,120,.85) }
+/* 밤 (20~5시): 짙은 상록 어둠 위에 금빛 불빛 */
+[data-sky="night"]{
+  --paper:#0f1c17; --paper-2:#152620; --sheet:#16261f; --field:#1d3029;
+  --ink:#f1ead9; --ink-2:#d8d0bd; --muted:#9aa398; --line:#25382f; --line-2:#334a3f; --placeholder:#6f7d73;
+  --brand:#8fc3a8; --brand-dk:#6fa98d; --brand-2:#a5d3bb; --brand-soft:#1d3a2f; --on-brand:#0f1c17; --focus:rgba(143,195,168,.25);
+  --gold:#e2b253; --gold-2:#f2cc74; --gold-soft:#2b2a1a; --gold-line:#6b5a2e; --flame:#ffd36a; --flame-2:#fff6d6;
+  --urgent:#ff9b7a; --urgent-soft:#3a1f18; --urgent-line:#6b3324; --urgent-ink:#ffd2c2;
+  --answer:#9fd49a; --answer-soft:#1e3320;
+  --sky-a:#0a1511; --sky-b:#0f1c17; --sky-glow:rgba(226,178,83,.22);
+  --top-bg:linear-gradient(180deg,#0b1612,#0f1c17); --top-ink:#f1ead9; --top-sub:#9aa398;
+  --sheet-bg:rgba(0,0,0,.6);
+  --shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 14px 34px -16px rgba(0,0,0,.6);
+  --grain:none;
 }
 *{box-sizing:border-box}
 [hidden]{display:none !important}
 html,body{margin:0}
+html{background:var(--paper)}
 body{background:var(--paper) var(--grain); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.65; letter-spacing:-.01em;
-  -webkit-text-size-adjust:100%; -webkit-font-smoothing:antialiased; min-height:100vh}
+  -webkit-text-size-adjust:100%; -webkit-font-smoothing:antialiased; min-height:100vh; transition:background .6s, color .6s}
 a{color:var(--brand)}
+::selection{background:var(--gold-soft)}
 .wrap{max-width:600px; margin:0 auto; padding:0 16px 120px}
 .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}
+
+/* ── 하늘 (화면 맨 위, 시간에 따라) ───────────────────── */
+.sky{position:fixed; inset:0 0 auto 0; height:360px; z-index:-1; pointer-events:none;
+  background:linear-gradient(180deg,var(--sky-a) 0%,var(--sky-b) 100%); transition:background 1.2s}
+.sky::before{content:''; position:absolute; inset:0; background:radial-gradient(120% 70% at 50% -10%,var(--sky-glow),transparent 70%)}
+.sky::after{content:''; position:absolute; inset:auto 0 0 0; height:120px; background:linear-gradient(180deg,transparent,var(--paper))}
+/* 밤에는 별 */
+[data-sky="night"] .sky .star{position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:0; animation:twinkle 4s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.1} 50%{opacity:.9}}
 
 /* ── 머리말 ─────────────────────────────────────────── */
-.top{position:sticky; top:0; z-index:20; background:linear-gradient(180deg,#23573f,#1f4d3b); color:#fff;
-  box-shadow:0 1px 0 var(--gold-line), 0 6px 18px -10px rgba(10,30,20,.5)}
-.top-in{max-width:600px; margin:0 auto; padding:10px 14px; display:flex; align-items:center; gap:10px}
-.top .mark{width:36px; height:36px; border-radius:10px; background:#fffdf8; padding:3px; flex:none}
+.top{position:sticky; top:0; z-index:20; background:var(--top-bg); color:var(--top-ink);
+  box-shadow:0 1px 0 var(--gold-line), 0 8px 22px -14px rgba(0,0,0,.5)}
+.top-in{max-width:600px; margin:0 auto; padding:10px 14px; display:flex; align-items:center; gap:10px; position:relative}
+.top .mark{width:36px; height:36px; border-radius:11px; flex:none}
 .top .titles{flex:1; min-width:0; line-height:1.25}
-.top h1{font-family:var(--serif); font-size:18px; margin:0; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.top .sub{font-size:12.5px; color:#cfe0d5}
-.top .menu-btn{background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.3); border-radius:999px; padding:8px 14px; font-size:14px}
+.top h1{font-family:var(--serif); font-size:18px; margin:0; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-.01em}
+.top .sub{font-size:12.5px; color:var(--top-sub)}
+.top .menu-btn{background:rgba(255,255,255,.08); color:var(--top-ink); border:1px solid rgba(255,255,255,.28); border-radius:999px; padding:8px 14px; font-size:14px}
 .menu-pop{position:absolute; right:12px; top:calc(100% + 8px); background:var(--sheet); color:var(--ink); border:1px solid var(--line); border-radius:14px;
-  box-shadow:0 18px 40px -18px rgba(0,0,0,.4); padding:10px; min-width:200px; display:flex; flex-direction:column; gap:6px; z-index:30}
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.5); padding:10px; min-width:210px; display:flex; flex-direction:column; gap:6px; z-index:30}
 .menu-pop b{display:block; padding:4px 6px 8px; border-bottom:1px solid var(--line); font-size:15px}
-.menu-pop button{text-align:left; background:var(--sheet); border-color:var(--line-2); padding:11px 14px; font-size:15px; border-radius:10px}
+.menu-pop button{text-align:left; background:var(--sheet); border-color:var(--line-2); padding:11px 14px; font-size:15px; border-radius:10px; color:var(--ink)}
 
-/* ── 인사 띠 + 알약 ─────────────────────────────────── */
-.hero{padding:20px 4px 4px}
-.hero-kicker{font-size:13px; font-weight:800; letter-spacing:.08em; color:var(--gold)}
-.hero-title{font-family:var(--serif); font-size:24px; line-height:1.4; margin:4px 0 12px; letter-spacing:-.02em}
-.chips{display:flex; gap:8px; flex-wrap:wrap}
+/* ── 들어서는 자리: 말씀 + 불빛 ───────────────────────── */
+.hero{padding:26px 6px 8px; text-align:center}
+.hero-kicker{font-size:12.5px; font-weight:800; letter-spacing:.14em; color:var(--gold); text-transform:uppercase}
+.hero-verse{font-family:var(--serif); font-size:22px; line-height:1.55; margin:10px auto 6px; letter-spacing:-.02em; max-width:30ch; color:var(--ink); word-break:keep-all}
+.hero-ref{font-size:13.5px; color:var(--muted); letter-spacing:.04em}
+.hero-name{font-size:15.5px; color:var(--ink-2); margin:14px 0 0}
+.hero-name b{color:var(--ink)}
+.chips{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:14px}
 .chip{display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:999px; background:var(--sheet); border:1px solid var(--line-2);
-  font-size:14.5px; font-weight:600; color:var(--ink-2)}
+  font-size:14.5px; font-weight:600; color:var(--ink-2); box-shadow:var(--shadow)}
 .chip b{color:var(--brand); font-size:16px}
 .chip.urgent b{color:var(--urgent)}
+.chip.lights b{color:var(--gold)}
+.ornament{display:flex; align-items:center; justify-content:center; gap:12px; color:var(--gold); margin:16px 0 0; font-size:12px}
+.ornament::before,.ornament::after{content:''; width:64px; height:1px; background:linear-gradient(90deg,transparent,var(--gold-line))}
+.ornament::after{transform:scaleX(-1)}
 
 /* ── 탭 ───────────────────────────────────────────── */
-.tabs{display:flex; gap:2px; margin:16px 0 4px; border-bottom:1px solid var(--line); overflow-x:auto}
+.tabs{display:flex; gap:2px; margin:14px 0 2px; border-bottom:1px solid var(--line); overflow-x:auto}
 .tabs button{flex:1; background:none; border:0; border-radius:0; padding:12px 6px; font-size:16px; font-weight:600; color:var(--muted); position:relative; white-space:nowrap; min-width:70px}
-.tabs button::after{content:''; position:absolute; left:10px; right:10px; bottom:-1px; height:3px; border-radius:3px 3px 0 0; background:var(--brand); transform:scaleX(0); transition:transform .2s}
-.tabs button.on{color:var(--brand)}
+.tabs button::after{content:''; position:absolute; left:12px; right:12px; bottom:-1px; height:2px; border-radius:2px; background:var(--gold); transform:scaleX(0); transition:transform .3s}
+.tabs button.on{color:var(--ink)}
 .tabs button.on::after{transform:scaleX(1)}
 .tabs button .n{font-size:12.5px; margin-left:3px; color:var(--gold)}
 
 /* ── 카드 ─────────────────────────────────────────── */
-.card{background:var(--sheet); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:20px 18px; margin:14px 0; position:relative}
+.card{background:var(--sheet); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:22px 20px; margin:14px 0; position:relative}
 .card h2{font-family:var(--serif); font-size:20px; margin:0 0 4px; letter-spacing:-.02em}
 .card h2::after{content:''; display:block; width:28px; height:2px; background:var(--gold-line); margin-top:8px; border-radius:2px}
 .card .desc{color:var(--muted); font-size:15px; margin:0 0 14px; line-height:1.6}
 .section-title{font-family:var(--serif); font-size:16px; font-weight:700; color:var(--brand); margin:22px 0 8px; display:flex; align-items:center; gap:10px}
 .section-title::after{content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--gold-line),transparent)}
-.empty{text-align:center; color:var(--muted); padding:40px 10px; font-size:16px; line-height:1.7}
-.empty .big{font-size:40px; display:block; margin-bottom:8px}
+.empty{text-align:center; color:var(--muted); padding:36px 10px; font-size:16px; line-height:1.75}
+.empty .candle{margin:0 auto 10px}
+
+/* ── 촛불 (기도의 불빛) ─────────────────────────────── */
+.candle{width:34px; height:52px; display:block}
+.candle .flame{transform-origin:50% 100%; animation:flicker 2.6s ease-in-out infinite}
+.candle .glow{animation:glowpulse 2.6s ease-in-out infinite}
+@keyframes flicker{0%,100%{transform:scaleY(1) rotate(0)} 30%{transform:scaleY(1.08) rotate(-2deg)} 60%{transform:scaleY(.94) rotate(2deg)}}
+@keyframes glowpulse{0%,100%{opacity:.55} 50%{opacity:.9}}
+.lights{display:inline-flex; align-items:center; gap:4px; flex-wrap:wrap}
+.light{width:10px; height:10px; border-radius:50%; background:radial-gradient(circle at 50% 40%,var(--flame-2),var(--flame) 55%,transparent 72%);
+  box-shadow:0 0 8px 2px rgba(246,196,83,.55); animation:glowpulse 3s ease-in-out infinite}
+.light:nth-child(2n){animation-delay:-1s}
+.light:nth-child(3n){animation-delay:-2s}
+.light.new{animation:lightin .9s ease-out both, glowpulse 3s ease-in-out 1s infinite}
+@keyframes lightin{0%{transform:scale(0); opacity:0} 60%{transform:scale(1.6); opacity:1} 100%{transform:scale(1)}}
+.lights .more{font-size:12.5px; color:var(--gold); font-weight:700; margin-left:2px}
 
 /* ── 입력 ─────────────────────────────────────────── */
 label{display:block; font-weight:600; font-size:15px; margin:14px 0 6px; color:var(--ink-2)}
@@ -82,10 +138,11 @@ textarea{min-height:130px; resize:vertical; line-height:1.7}
 
 /* ── 단추 ─────────────────────────────────────────── */
 button{font:inherit; font-size:16px; font-weight:600; padding:13px 18px; border-radius:var(--r-sm); border:1px solid var(--line-2); background:var(--sheet); color:var(--ink);
-  cursor:pointer; min-height:44px; transition:transform .08s, background .15s, border-color .15s}
+  cursor:pointer; min-height:44px; transition:transform .08s, background .2s, border-color .2s, box-shadow .2s}
 button:active{transform:translateY(1px)}
-button.primary{background:linear-gradient(180deg,var(--brand-2),var(--brand)); border-color:var(--brand-dk); color:#fff}
-button.urgentbtn{background:linear-gradient(180deg,#c4382f,var(--urgent)); border-color:#8f1d16; color:#fff}
+button.primary{background:linear-gradient(180deg,var(--brand-2),var(--brand)); border-color:var(--brand-dk); color:var(--on-brand)}
+button.urgentbtn{background:linear-gradient(180deg,#c9563f,var(--urgent)); border-color:#8a2f1e; color:#fff}
+[data-sky="night"] button.urgentbtn{background:linear-gradient(180deg,#d9664f,#b5452f); color:#fff}
 button.ghost{background:transparent; border-color:transparent; color:var(--muted)}
 button.danger{color:var(--urgent); border-color:var(--urgent-line)}
 button.small{padding:8px 13px; font-size:14px; border-radius:10px; min-height:36px}
@@ -97,54 +154,68 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .msg{padding:12px 15px; border-radius:var(--r-sm); font-size:15px; margin:12px 0; display:none; border-left:3px solid; line-height:1.55}
 .msg.show{display:block}
 .msg.err{background:var(--urgent-soft); color:var(--urgent-ink); border-color:var(--urgent)}
-.msg.ok{background:var(--brand-soft); color:var(--brand-dk); border-color:var(--brand)}
-.msg.warn{background:var(--gold-soft); color:#6b4a0f; border-color:var(--gold)}
+.msg.ok{background:var(--brand-soft); color:var(--brand); border-color:var(--brand)}
+.msg.warn{background:var(--gold-soft); color:var(--gold); border-color:var(--gold)}
+[data-sky="night"] .msg.ok{color:var(--brand-2)}
 
 /* 큰 '올리기' 단추 (화면 아래 고정) */
 .fab{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(18px + env(safe-area-inset-bottom)); z-index:15;
-  background:linear-gradient(180deg,var(--brand-2),var(--brand)); color:#fff; border:1px solid var(--brand-dk); border-radius:999px; padding:15px 26px; font-size:17px; font-weight:700;
-  box-shadow:0 14px 30px -10px rgba(21,56,41,.7); display:flex; align-items:center; gap:8px}
+  background:linear-gradient(180deg,var(--brand-2),var(--brand)); color:var(--on-brand); border:1px solid var(--brand-dk); border-radius:999px; padding:15px 26px; font-size:17px; font-weight:700;
+  box-shadow:0 16px 34px -12px rgba(0,0,0,.55); display:flex; align-items:center; gap:8px}
 .fab:active{transform:translateX(-50%) translateY(1px)}
 
 /* ── 기도제목 목록 ────────────────────────────────── */
-.post{background:var(--sheet); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:16px 16px 12px; margin:12px 0; cursor:pointer}
-.post.urgent{border-color:var(--urgent-line); background:linear-gradient(180deg,#fff7f6,var(--sheet) 60px)}
-.post.answered{border-color:#cfe2c9; background:linear-gradient(180deg,#f3f9f0,var(--sheet) 60px)}
+.post{background:var(--sheet); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:18px 18px 12px; margin:14px 0; cursor:pointer; position:relative; overflow:hidden}
+#feed.first .post{animation:rise .5s ease both}   /* 처음 그릴 때만 떠오른다 (새로 고침마다 깜빡이지 않게) */
+@keyframes rise{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+.post.urgent{border-color:var(--urgent-line)}
+.post.urgent::before{content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,var(--flame),var(--urgent)); animation:breathe 3.2s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.55} 50%{opacity:1}}
+.post.answered{border-color:var(--answer-soft)}
+.post.answered::before{content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--answer)}
 .post-head{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--muted); flex-wrap:wrap}
 .post-head .who{margin-left:auto}
-.badge{display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:999px; font-size:12.5px; font-weight:800; letter-spacing:.02em}
-.badge.urgent{background:var(--urgent); color:#fff; animation:pulse 2s ease-in-out infinite}
+.badge{display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:999px; font-size:12.5px; font-weight:800; letter-spacing:.02em}
+.badge.urgent{background:var(--urgent-soft); color:var(--urgent-ink); border:1px solid var(--urgent-line)}
+.badge.urgent::before{content:''; width:7px; height:7px; border-radius:50%; background:var(--flame); box-shadow:0 0 6px 2px rgba(246,196,83,.7); animation:glowpulse 2s ease-in-out infinite}
 .badge.normal{background:var(--brand-soft); color:var(--brand)}
-.badge.answered{background:var(--answer); color:#fff}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(179,38,30,.4)} 50%{box-shadow:0 0 0 6px rgba(179,38,30,0)}}
-@media (prefers-reduced-motion:reduce){.badge.urgent{animation:none}}
-.post .for{font-family:var(--serif); font-size:19px; font-weight:700; margin:8px 0 2px; letter-spacing:-.02em}
-.post .body{margin:4px 0 10px; white-space:pre-line; color:var(--ink-2); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden}
-.post .answer{margin:6px 0 10px; padding:10px 12px; background:var(--answer-soft); border-radius:10px; font-size:15px; color:#2d5a29; white-space:pre-line}
-.post-foot{display:flex; align-items:center; gap:8px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:10px}
-.pray-btn{display:inline-flex; align-items:center; gap:6px; padding:9px 14px; border-radius:999px; font-size:15px; min-height:40px}
-.pray-btn b{color:var(--brand)}
-.pray-btn.on{background:var(--brand-soft); border-color:var(--brand)}
-.post-foot .meta{margin-left:auto; color:var(--muted); font-size:14px; display:flex; gap:10px}
+.badge.answered{background:var(--answer-soft); color:var(--answer)}
+.post .for{font-family:var(--serif); font-size:20px; font-weight:700; margin:8px 0 2px; letter-spacing:-.02em}
+.post .body{margin:4px 0 10px; white-space:pre-line; color:var(--ink-2); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; line-height:1.7}
+.post .answer{margin:6px 0 10px; padding:10px 12px; background:var(--answer-soft); border-radius:10px; font-size:15px; color:var(--answer); white-space:pre-line}
+.post-foot{display:flex; align-items:center; gap:10px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:10px}
+.pray-btn{display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:999px; font-size:15px; min-height:40px; position:relative; overflow:visible}
+.pray-btn b{color:var(--gold)}
+.pray-btn.on{background:var(--gold-soft); border-color:var(--gold-line)}
+.post-foot .meta{margin-left:auto; color:var(--muted); font-size:14px; display:flex; gap:10px; align-items:center}
 .react-mini{display:inline-flex; gap:6px; font-size:14px; color:var(--ink-2)}
 .react-mini span{background:var(--paper-2); border-radius:999px; padding:3px 8px}
+/* 누르면 퍼지는 빛 */
+.bloom{position:absolute; left:50%; top:50%; width:12px; height:12px; margin:-6px 0 0 -6px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle,var(--flame-2),var(--flame) 40%,transparent 70%); animation:bloom .9s ease-out forwards}
+@keyframes bloom{0%{transform:scale(0); opacity:.95} 100%{transform:scale(22); opacity:0}}
 
 /* ── 글 보기 (아래에서 올라오는 창) ───────────────────── */
-.sheet-bg{position:fixed; inset:0; z-index:60; background:rgba(10,10,10,0); transition:background .25s}
-.sheet-bg.open{background:rgba(10,10,10,.55)}
-.sheet{position:absolute; left:0; right:0; bottom:0; max-width:640px; margin:0 auto; background:var(--sheet); border-radius:22px 22px 0 0;
-  transform:translateY(100%); transition:transform .28s cubic-bezier(.2,.8,.2,1); display:flex; flex-direction:column; max-height:94vh; max-height:94dvh}
+.sheet-bg{position:fixed; inset:0; z-index:60; background:rgba(10,10,10,0); transition:background .3s}
+.sheet-bg.open{background:var(--sheet-bg)}
+.sheet{position:absolute; left:0; right:0; bottom:0; max-width:640px; margin:0 auto; background:var(--sheet); color:var(--ink); border-radius:24px 24px 0 0;
+  transform:translateY(100%); transition:transform .32s cubic-bezier(.2,.8,.2,1); display:flex; flex-direction:column; max-height:94vh; max-height:94dvh;
+  box-shadow:0 -10px 40px rgba(0,0,0,.25)}
 .sheet-bg.open .sheet{transform:none}
 .sheet-grip{width:42px; height:5px; border-radius:3px; background:var(--line-2); margin:10px auto 0; flex:none}
 .sheet-body{padding:14px 20px 20px; overflow:auto; -webkit-overflow-scrolling:touch; flex:1}
 .sheet-foot{display:flex; gap:8px; padding:10px 14px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--line); background:var(--sheet); flex:none}
 .sheet-foot button{flex:1}
-.sheet h2.title{font-family:var(--serif); font-size:22px; margin:6px 0 2px; letter-spacing:-.02em}
-.prose{white-space:pre-line; line-height:1.8; font-size:17.5px; margin:8px 0 14px}
+.sheet h2.title{font-family:var(--serif); font-size:23px; margin:6px 0 2px; letter-spacing:-.02em; line-height:1.4}
+.prose{white-space:pre-line; line-height:1.85; font-size:17.5px; margin:8px 0 14px}
 .byline{color:var(--muted); font-size:14px}
-.big-pray{width:100%; padding:16px; font-size:19px; border-radius:14px; display:flex; align-items:center; justify-content:center; gap:10px; margin:12px 0 6px}
-.big-pray.on{background:var(--brand-soft); border-color:var(--brand)}
-.prayed-names{font-size:14px; color:var(--ink-2); margin:0 0 12px; line-height:1.6}
+.presence{display:inline-flex; align-items:center; gap:7px; font-size:13.5px; color:var(--gold); margin:6px 0 0; font-weight:600}
+.presence::before{content:''; width:8px; height:8px; border-radius:50%; background:var(--flame); box-shadow:0 0 6px 2px rgba(246,196,83,.6); animation:glowpulse 2s ease-in-out infinite}
+.big-pray{width:100%; padding:16px; font-size:19px; border-radius:16px; display:flex; align-items:center; justify-content:center; gap:10px; margin:12px 0 8px; position:relative; overflow:hidden;
+  background:linear-gradient(180deg,var(--sheet),var(--gold-soft)); border-color:var(--gold-line)}
+.big-pray.on{background:var(--gold-soft)}
+.big-pray small{font-size:14px; color:var(--muted); font-weight:500}
+.prayed-box{display:flex; align-items:center; gap:10px; margin:0 0 12px; font-size:14px; color:var(--ink-2); line-height:1.6; flex-wrap:wrap}
 .emoji-row{display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 14px}
 .emoji-row button{padding:8px 12px; border-radius:999px; font-size:16px; min-height:42px; display:inline-flex; align-items:center; gap:5px}
 .emoji-row button.on{background:var(--gold-soft); border-color:var(--gold)}
@@ -161,7 +232,7 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .seg{display:flex; gap:8px; margin:6px 0}
 .seg button{flex:1; padding:16px 10px; font-size:17px; border-radius:14px}
 .seg button.on.u{background:var(--urgent-soft); border-color:var(--urgent); color:var(--urgent-ink)}
-.seg button.on.n{background:var(--brand-soft); border-color:var(--brand); color:var(--brand-dk)}
+.seg button.on.n{background:var(--brand-soft); border-color:var(--brand); color:var(--brand)}
 .seg small{display:block; font-weight:400; font-size:13px; color:var(--muted); margin-top:2px}
 
 /* ── 모임 탭 ─────────────────────────────────────── */
@@ -169,32 +240,32 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .member:first-child{border-top:0}
 .member .nm{font-weight:600; flex:1}
 .member .role{font-size:12.5px; color:var(--gold); font-weight:800}
-.member .dot{width:9px; height:9px; border-radius:50%; background:#c9c2b2; flex:none}
-.member .dot.on{background:#3f7a3a}
+.member .dot{width:9px; height:9px; border-radius:50%; background:var(--line-2); flex:none}
+.member .dot.on{background:var(--flame); box-shadow:0 0 6px 1px rgba(246,196,83,.6)}
 .member .last{font-size:13px; color:var(--muted)}
 .toggle{display:flex; align-items:center; gap:10px; padding:10px 0}
 .toggle input{width:22px; height:22px}
 
 /* ── 들어가기 첫 화면 ────────────────────────────── */
-.enter-hero{text-align:center; padding:44px 10px 8px}
-.enter-hero img{width:96px; height:96px; border-radius:28px; box-shadow:0 18px 40px -18px rgba(45,38,20,.4)}
-.enter-hero h1{font-family:var(--serif); font-size:32px; margin:16px 0 4px; letter-spacing:-.03em}
-.enter-hero p{color:var(--muted); margin:0; font-size:15.5px}
-.orn{display:flex; align-items:center; justify-content:center; gap:12px; color:var(--gold); margin:6px 0 0}
-.orn::before,.orn::after{content:''; width:56px; height:1px; background:linear-gradient(90deg,transparent,var(--gold-line))}
-.orn::after{transform:scaleX(-1)}
+.enter-hero{text-align:center; padding:50px 10px 10px}
+.enter-hero .candle{width:48px; height:72px; margin:0 auto 10px}
+.enter-hero h1{font-family:var(--serif); font-size:32px; margin:10px 0 6px; letter-spacing:-.03em}
+.enter-hero p{color:var(--muted); margin:0; font-size:15.5px; line-height:1.7}
+.enter-verse{font-family:var(--serif); font-size:17px; color:var(--ink-2); margin:18px auto 0; max-width:30ch; line-height:1.7; word-break:keep-all}
+.enter-verse small{display:block; font-family:var(--sans); font-size:13px; color:var(--muted); margin-top:4px; letter-spacing:.04em}
 .foot{text-align:center; color:var(--muted); font-size:14px; margin-top:22px; line-height:1.7}
 
 /* ── 토스트 ──────────────────────────────────────── */
 #toast{position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px); opacity:0; z-index:80;
-  background:#1d2621; color:#fff; padding:12px 18px; border-radius:999px; font-size:15px; max-width:90vw; text-align:center; transition:all .25s; pointer-events:none}
+  background:#1b2622; color:#fff; padding:12px 18px; border-radius:999px; font-size:15px; max-width:90vw; text-align:center; transition:all .25s; pointer-events:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35)}
 #toast.show{opacity:1; transform:translateX(-50%)}
 
 /* ── 인쇄 (주보용) ───────────────────────────────── */
 .print-only{display:none}
 @media print{
-  body{background:#fff; font-size:13px}
-  .top,.hero,.tabs,.fab,#toast,.noprint,.sheet-bg{display:none !important}
+  body{background:#fff; color:#000; font-size:13px}
+  .sky,.top,.hero,.tabs,.fab,#toast,.noprint,.sheet-bg{display:none !important}
   .wrap{max-width:none; padding:0}
   .print-only{display:block}
   .print-only h1{font-family:var(--serif); font-size:20px; margin:0 0 4px}
