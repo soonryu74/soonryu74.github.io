@@ -27,7 +27,7 @@
 Supabase 프로젝트: `jungbo-prayer` (kagqgfcpvpcyosexdhsz, 서울) — 다락방 나눔터(korea-now)와 별도.
 
 ## 배포
-- 화면: 이 저장소(GitHub Pages) → `https://mokjang.app/jungbo/`
+- 화면: 이 저장소(GitHub Pages) → `https://soonryu74.github.io/jungbo/`
 - DB: `server/schema.sql`을 Supabase SQL 편집기(또는 MCP `apply_migration`)로 적용
 - 함수: `server/pray-notify.ts`를 `pray-notify` 이름, `verify_jwt=false`로 배포
 
