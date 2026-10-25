@@ -750,7 +750,7 @@ window.I18N.en = {
   "아직 응답됨으로 표시된 기도제목이 없습니다. 목자가 일기에서 [응답됨]에 체크하면 여기에 쌓입니다.": "No prayers marked as answered yet. They appear here when leaders tick [Answered] in their journals.",
   "함께 기도해요": "Praying together",
   "＋ 기도제목 넣기": "＋ Add prayer request",
-  "선교사님·협력 교회·지역과 협회처럼 교회가 함께 기도할 제목입니다. 인쇄·PDF에도 맨 앞에 들어갑니다.": "Prayer requests the whole church shares, such as missionaries, partner churches and regional networks. They also appear first when you print or save a PDF.",
+  "우리 교회·선교사님·협력 교회·지역과 협회처럼 교회가 함께 기도할 제목입니다. 인쇄·PDF에도 맨 앞에 들어갑니다.": "Prayer requests the whole church shares, such as our church, missionaries, partner churches and regional networks. They also appear first when you print or save a PDF.",
   "선교사님": "Missionary",
   "협력 교회": "Partner church",
   "지역·협회": "Region / network",
@@ -823,5 +823,6 @@ window.I18N.en = {
   "{0} 마침 {1}명": "Finished {0}: {1}",
   "생명의 삶을 권해 드릴 분 {0}명": "Suggest the Life course to: {0}",
   "매주 토요일 밤 9시에 이번 주 기도제목이 모였다고 알려 드립니다.": "We'll let you know every Saturday at 9 PM when this week's prayer requests are gathered.",
-  "토요일 밤 기도제목 알림을 껐습니다.": "Saturday prayer alert turned off."
+  "토요일 밤 기도제목 알림을 껐습니다.": "Saturday prayer alert turned off.",
+  "우리 교회": "Our church"
 };

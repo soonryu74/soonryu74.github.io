@@ -385,7 +385,7 @@
      .concat(sharedPrayers().length ? [{ label: T('함께 기도해요'), value: sharedPrayers().length, fn: openShared }] : []));
   }
   // 목사님이 넣으신 '함께 기도해요' (선교사님 · 협력 교회 · 지역·협회) — 일기 쓰는 화면 위에 접어서, 첫 화면 단추로도
-  var SP_KIND = { missionary: '선교사님', church: '협력 교회', region: '지역·협회', etc: '기타' };
+  var SP_KIND = { ours: '우리 교회', missionary: '선교사님', church: '협력 교회', region: '지역·협회', etc: '기타' };
   function sharedPrayers() { var l = ((me.church || {}).features || {}).shared_prayers; return Array.isArray(l) ? l : []; }
   function sharedHtml(list) {
     return '<ul class="pr-list sp-list">' + list.map(function (x) {
