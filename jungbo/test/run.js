@@ -13,6 +13,7 @@ async function ctx(browser) {
     try { delete window.navigator.__proto__.share; } catch (e) {}
     window.__shared = []; navigator.share = async (d) => { window.__shared.push(d); };
     window.confirm = () => true; window.prompt = () => '새이름';
+    try { localStorage.setItem('jungbo-bgm', 'off'); } catch (e) {}   // 검사 중에는 찬양을 끈다 (소리 재생이 자동 클릭 검사를 방해한다)
   });
   const p = await c.newPage();
   p.errs = []; p.on('pageerror', e => p.errs.push(String(e)));
