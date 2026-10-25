@@ -15,7 +15,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="다락방나눔터">
-<link rel="stylesheet" href="style.css?v=202610251300">
+<link rel="stylesheet" href="style.css?v=202610251400">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -94,6 +94,11 @@ try { (function (m, q) { var s = q.get('c');
 
   <!-- ── 출석 통계 (월별) ───────────────────────── -->
   <section class="pane" id="pane-stats">
+    <div class="card care-overview" id="care-overview">
+      <h2>목양 한눈에</h2>
+      <p class="desc">누르면 해당하는 분이 나옵니다.</p>
+      <div class="care-rows" id="care-rows"><p class="empty">불러오는 중…</p></div>
+    </div>
     <div class="card">
       <h2>월별 출석</h2>
       <p class="desc">제출한 일기의 참석 체크로 셉니다. 막대를 누르면 그 달 목장별 출석을 봅니다.</p>
@@ -148,6 +153,7 @@ try { (function (m, q) { var s = q.get('c');
         <button type="button" class="primary small" id="dl-save">저장</button>
       </div>
       <p class="hint">교회 시간대 기준입니다. 일요일·월요일로 정하면 지난주 일기를 챙깁니다.</p>
+      <label class="check" style="margin-top:12px"><input type="checkbox" id="dg-on" checked> 토요일 밤 9시에 '이번 주 기도제목이 모였습니다' 알림 받기 (누르면 바로 기도제목 모아보기·인쇄)</label>
       <div class="msg" id="msg-deadline"></div>
     </div>
     <div class="card">
@@ -338,9 +344,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610251300"></script>
-<script src="common.js?v=202610251300"></script>
-<script src="moksa.js?v=202610251300"></script>
+<script src="lang-en.js?v=202610251400"></script>
+<script src="common.js?v=202610251400"></script>
+<script src="moksa.js?v=202610251400"></script>
 
 </body>
 </html>

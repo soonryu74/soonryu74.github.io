@@ -159,6 +159,22 @@ async function remindWeek(churchId: string, week: string, fromPastor: boolean, i
     noDevice: left.filter((m) => !has.has(m.mokja_id)).map((m) => m.mokja_name || m.name) }
 }
 
+// 그 주에 제출된 일기가 있으면 목사님들께 '기도제목이 모였습니다' (누르면 기도제목 모아보기)
+async function prayerDigest(churchId: string, week: string) {
+  const { data: mjs } = await admin.from('church_mokjang').select('id').eq('church_id', churchId).eq('active', true)
+  if (!mjs?.length) return { groups: 0, sent: 0 }
+  const { data: js } = await admin.from('church_journal').select('mokjang_id')
+    .in('mokjang_id', mjs.map((m) => m.id)).in('week_start', [week, addDays(week, 1)]).eq('status', 'submitted')
+  const n = new Set((js ?? []).map((j) => j.mokjang_id)).size
+  if (!n) return { groups: 0, sent: 0 }
+  const { data: pastors } = await admin.from('church_profile').select('id').eq('church_id', churchId).eq('role', 'pastor')
+  const tm = await churchTerms(churchId)
+  const r = await sendTo((pastors ?? []).map((p) => p.id), (lang) => lang === 'en'
+    ? { title: "This week's prayer requests are in", body: `${n} groups submitted · Tap to view and print for Sunday`, url: 'moksa.html#gather', tag: `digest-${week}` }
+    : { title: '이번 주 기도제목이 모였습니다', body: `${tm.unit} ${n}곳이 제출했습니다 · 눌러서 모아 보고 주일 중보기도용으로 인쇄하세요`, url: 'moksa.html#gather', tag: `digest-${week}` })
+  return { groups: n, ...r }
+}
+
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 function weekLabel(weekStart: string, lang = 'ko') {
   const d = new Date(weekStart + 'T00:00:00Z')
@@ -184,8 +200,18 @@ Deno.serve(async (req) => {
       for (const ch of chs ?? []) {
         const f = (ch.features ?? {}) as Record<string, unknown>
         if (f.solo) continue
-        const dl = deadlineOf(f); if (!dl) continue
         let now: ReturnType<typeof localNow>; try { now = localNow(ch.timezone || 'Australia/Melbourne') } catch { continue }
+        // 토요일 밤 9시: 목사님께 '이번 주 기도제목이 모였습니다' (features.digest === false면 끔)
+        if (f.digest !== false && now.dow === 6 && now.hour >= 21) {
+          const wk = addDays(now.ymd, -6)
+          if (f.digest_sent !== wk) {
+            await admin.from('church_church').update({ features: { ...f, digest_sent: wk } }).eq('id', ch.id)
+            f.digest_sent = wk
+            const r = await prayerDigest(ch.id, wk)
+            done.push({ church: ch.id, digest: wk, ...r })
+          }
+        }
+        const dl = deadlineOf(f); if (!dl) continue
         if (now.dow !== dl.dow || now.hour < dl.hour) continue
         const sunday = addDays(now.ymd, -now.dow)
         const week = now.dow >= 2 ? sunday : addDays(sunday, -7)
