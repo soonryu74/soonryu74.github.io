@@ -595,7 +595,7 @@ const db = p => p.evaluate(() => window.__DB());
     await p.evaluate(() => { const D = window.__DB();
       D.church_journal.push({ id: 'js1', mokjang_id: 'mj1', week_start: '2026-09-06', status: 'submitted', present_count: 3, created_at: '2026-09-07', updated_at: '2026-09-07' },
                             { id: 'js2', mokjang_id: 'mj1', week_start: '2026-09-13', status: 'draft', present_count: 1, created_at: '2026-09-14', updated_at: '2026-09-14' });
-      D.church_prayer.push({ id: 'q1', journal_id: 'js1', name: '정하늘', attended: true, sort_order: 0 }, { id: 'q2', journal_id: 'js1', name: '최민수', attended: false, sort_order: 1 },
+      D.church_prayer.push({ id: 'q1', journal_id: 'js1', name: '정하늘', attended: true, sort_order: 0 }, { id: 'q2', journal_id: 'js1', name: '최민수', attended: false, answered: true, content: '취업 응답', sort_order: 1 },
                            { id: 'q5', journal_id: 'js2', name: '정하늘', attended: true, sort_order: 0 });
       sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
     await p.reload(); await p.waitForSelector('.top h1');
@@ -603,14 +603,17 @@ const db = p => p.evaluate(() => window.__DB());
     ok('교회 첫 일기 달(9월)부터만 막대', (await p.$$('#st-bars .bar')).length === 2 && (await p.textContent('#st-since')).includes('2026년 9월부터'));
     await p.click('#st-bars .bar[data-k="2026-09"]'); await p.waitForTimeout(300);
     const t = (await p.textContent('#st-tiles')).replace(/\s/g, '');
-    ok('9월: 모인 목장 1/1 · 목원 한 주 평균 1/2 (임시 저장 일기는 빼고)', t.startsWith('1/1') && t.includes('1/2') && t.includes('50%'), t);
+    ok('9월: 안 모인 목장 0곳 · 목원 한 주 평균 1/2 (임시 저장 일기는 빼고) · 누적 기도 응답 1건', t.startsWith('0곳') && t.includes('1/2') && t.includes('50%') && t.includes('1건누적기도응답'), t);
+    await p.click('#st-answered'); await p.waitForTimeout(600);
+    ok('[누적 기도 응답] → 응답된 기도제목 목록', (await p.textContent('.answered-sheet')).includes('취업 응답') && (await p.textContent('.answered-sheet')).includes('최민수'));
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
     ok('9월 설명 줄', (await p.textContent('#st-line')).includes('목원 2명 중 한 주 평균 1명(50%)'));
     const tb = (await p.textContent('#st-table')).replace(/\s/g, '');
     ok('9월 목장별: 목자 이름 · 모임 1 · 참석 1/2 · 50%', tb.includes('김목자') && tb.includes('11/250%'), tb);
     await p.hover('#st-bars .bar[data-k="2026-09"]'); await p.waitForTimeout(200);
     ok('막대에 올리면 숫자 안내', /모인 목장 1\/1/.test(await p.textContent('#st-tip')));
     await p.evaluate(() => { const D = window.__DB();
-      D.church_mokjang.push({ id: 'mj9', name: '명단 없는 목장', mokja_id: null, mokja_name: '송목자', church_id: 'cb', sort_order: 5, active: true, created_at: '2026-01-01' });
+      D.church_mokjang.push({ id: 'mj9', name: '명단 없는 목장', mokja_id: 'm9', mokja_name: '송목자', church_id: 'cb', sort_order: 5, active: true, created_at: '2026-01-01' });
       D.church_journal.push({ id: 'js9', mokjang_id: 'mj9', week_start: '2026-09-20', status: 'submitted', present_count: 15, created_at: '2026-09-21', updated_at: '2026-09-21' });
       sessionStorage.setItem('__mock_db', JSON.stringify(D)); });
     await p.reload(); await p.waitForSelector('.top h1');
@@ -618,6 +621,14 @@ const db = p => p.evaluate(() => window.__DB());
     await p.click('#st-bars .bar[data-k="2026-09"]'); await p.waitForTimeout(300);
     { const tb2 = await p.textContent('#st-table');
       ok('목원 명단 없는 목장: 0/0 대신 모인 사람 수 + 안내', !/0\/0/.test(tb2) && /15명/.test(tb2) && /목원 명단 없음/.test(tb2) && /참석률 계산에서는 뺍니다/.test(tb2), tb2); }
+    await p.click('#st-bars .bar[data-k="2026-10"]'); await p.waitForTimeout(300);
+    ok('10월: 한 번도 안 모인 목장 1곳', (await p.textContent('#st-unmet')).replace(/\s/g, '').startsWith('1곳'));
+    await p.click('#st-unmet'); await p.waitForTimeout(400);
+    ok('[안 모인 목장] → 목록 + 격려 글', (await p.textContent('.unmet-sheet')).includes('명단 없는 목장') && (await p.inputValue('#um-body')).length > 10);
+    await p.click('.sheet-foot button:has-text("앱 알림으로 보내기")'); await p.waitForTimeout(500);
+    { const ec = (await calls(p)).filter(x => x.fn === 'church-notify' && x.body.action === 'encourage');
+      ok('격려 앱 알림 → 고른 목장으로 요청 + 알림 안 켠 목자 안내', ec.length === 1 && ec[0].body.mokjang_ids.includes('mj9') && (await p.textContent('#msg-um')).includes('송목자'), JSON.stringify(ec)); }
+    await p.keyboard.press('Escape'); await p.waitForTimeout(400);
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 

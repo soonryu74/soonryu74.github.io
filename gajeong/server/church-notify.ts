@@ -5,6 +5,7 @@
 //  · 알림마다 보낸 사람 사진(icon)을 함께 보낸다 (7일짜리 주소)
 //  · notice    : 목사님 공지를 올리거나(제목·내용·기간 until) 내리고(clear), 목자들에게 알림을 보낸다
 //  · remind    : 목사가 [제출 안 한 목장에 알림 보내기]를 누르면, 그 주 일기를 제출하지 않은 목자에게 보낸다
+//  · encourage : 목사가 고른 목장(출석 통계 '안 모인 목장')의 목자에게 격려 글을 보낸다
 //  · set_deadline : 목사가 마감 알림 요일·시각을 정한다 (features.deadline = { dow, hour } 또는 false)
 //  · deadline_tick: (로그인 없이, GitHub Actions가 30분마다) 교회마다 마감 시각이 지났으면 제출 안 한 목자에게 한 번 보낸다
 // 비밀값: VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY (선택: VAPID_SUBJECT)
@@ -295,6 +296,28 @@ Deno.serve(async (req) => {
       const short = text.replace(/\s+/g, ' ').slice(0, 80)
       const r = await sendTo(ids, (lang) => ({ title: lang === 'en' ? `Notice: ${title}` : `공지: ${title}`, body: short, url: 'mokjang.html', tag: `notice-${notice.id}`, icon }))
       return json({ ok: true, notice, reached, ...r })
+    }
+
+    // 목사님 격려: 고른 목장의 목자에게 짧은 글을 알림으로 (출석 통계 '안 모인 목장'에서)
+    if (body.action === 'encourage') {
+      const { data: me } = await admin.from('church_profile').select('church_id, role, name').eq('id', uid).maybeSingle()
+      if (!me || me.role !== 'pastor' || !me.church_id) return json({ error: '목사 계정만 쓸 수 있습니다' }, 403)
+      const raw = (body as Record<string, unknown>).mokjang_ids
+      const want = Array.isArray(raw) ? raw.map(String).slice(0, 200) : []
+      const text = String(body.body ?? '').trim().slice(0, 500)
+      if (!want.length || !text) return json({ error: '보낼 곳과 글을 적어 주세요' }, 400)
+      const { data: mjs } = await admin.from('church_mokjang').select('id, name, mokja_id, mokja_name')
+        .eq('church_id', me.church_id).in('id', want).not('mokja_id', 'is', null)
+      const ids = [...new Set((mjs ?? []).map((m) => m.mokja_id as string))]
+      if (!ids.length) return json({ ok: true, leaders: 0, reached: 0, sent: 0, devices: 0, noDevice: [] })
+      const { data: subs } = await admin.from('church_push').select('user_id').in('user_id', ids)
+      const has = new Set((subs ?? []).map((s) => s.user_id))
+      const nm = String(me.name ?? '').trim(), by = /목사/.test(nm) ? nm : nm ? `${nm} 목사` : '목사'
+      const icon = await photoIcon(uid)
+      const short = text.replace(/\s+/g, ' ').slice(0, 120)
+      const r = await sendTo(ids, (lang) => ({ title: lang === 'en' ? 'A word of encouragement from your pastor' : `${by}님의 격려`, body: short, url: 'mokjang.html', tag: `cheer-${Date.now()}`, icon }))
+      return json({ ok: true, leaders: ids.length, reached: ids.filter((i) => has.has(i)).length, ...r,
+        noDevice: (mjs ?? []).filter((m) => !has.has(m.mokja_id)).map((m) => m.mokja_name || m.name) })
     }
 
     if (body.action === 'commented') {
