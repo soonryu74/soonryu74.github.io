@@ -865,13 +865,15 @@
     try { bgm.volume = 0; await bgm.play(); fadeTo(.45, 2500); bgmUi(); return true; }
     catch (e) { bgmUi(); return false; }   // 아직 누르기 전이라 막힘 → 첫 누름에 다시
   }
+  // 휴대폰은 '손가락을 뗄 때'(터치 끝·클릭·키)만 소리를 허용한다 — pointerdown·touchstart는 안 쳐 준다
+  var ARM_EVENTS = ['touchend', 'pointerup', 'click', 'keydown'];
   function bgmArm() {
-    var once = async function () { if (await bgmPlay()) { ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { document.removeEventListener(ev, once, true); }); } };
-    ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, once, true); });
+    var once = async function () { if (await bgmPlay()) ARM_EVENTS.forEach(function (ev) { document.removeEventListener(ev, once, true); }); };
+    ARM_EVENTS.forEach(function (ev) { document.addEventListener(ev, once, true); });
   }
   if (bgm) {
     bgm.addEventListener('play', bgmUi); bgm.addEventListener('pause', bgmUi);
-    bgmPlay().then(function (ok) { if (!ok && bgmWant) bgmArm(); });
+    bgmPlay().then(function (ok) { if (!ok && bgmWant) { bgmArm(); setTimeout(function () { if (bgm.paused && bgmWant) toast('화면을 한 번 누르면 찬양이 흐릅니다 ♪'); }, 1200); } });
     document.addEventListener('visibilitychange', function () {
       if (!bgmWant) return;
       if (document.visibilityState === 'hidden') { fadeTo(0, 600); setTimeout(function () { if (document.visibilityState === 'hidden') bgm.pause(); }, 700); }

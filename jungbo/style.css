@@ -128,9 +128,10 @@ a{color:var(--brand)}
 .candle{width:34px; height:52px; display:block}
 .candle .flame{transform-origin:50% 100%; animation:flicker 2.6s ease-in-out infinite}
 .candle .glow{animation:glowpulse 2.6s ease-in-out infinite}
-@keyframes flicker{0%,100%{transform:scaleY(1) rotate(0)} 18%{transform:scaleY(1.14) rotate(-4deg) scaleX(.92)} 37%{transform:scaleY(.9) rotate(3deg)} 55%{transform:scaleY(1.1) rotate(-2deg)} 72%{transform:scaleY(.95) rotate(4deg) scaleX(1.05)} 88%{transform:scaleY(1.06) rotate(-3deg)}}
-@keyframes glowpulse{0%,100%{opacity:.45} 40%{opacity:1} 70%{opacity:.6}}
-.candle .flame{animation-duration:1.7s} .candle .glow{animation-duration:1.7s}
+/* 바람에 살랑이는 정도로만: 키 ±3%, 기울기 ±1.5° */
+@keyframes flicker{0%,100%{transform:scaleY(1) rotate(0)} 22%{transform:scaleY(1.03) rotate(-1.2deg)} 45%{transform:scaleY(.985) rotate(.8deg)} 68%{transform:scaleY(1.02) rotate(-.6deg)} 85%{transform:scaleY(.99) rotate(1.4deg)}}
+@keyframes glowpulse{0%,100%{opacity:.6} 50%{opacity:.85}}
+.candle .flame{animation:flicker 2.8s ease-in-out infinite} .candle .glow{animation:glowpulse 2.8s ease-in-out infinite}
 .enter-hero .candle{filter:drop-shadow(0 0 18px rgba(255,200,90,.9))}
 .lights{display:inline-flex; align-items:center; gap:4px; flex-wrap:wrap}
 .light{width:10px; height:10px; border-radius:50%; background:radial-gradient(circle at 50% 40%,var(--flame-2),var(--flame) 55%,transparent 72%);
