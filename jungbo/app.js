@@ -844,6 +844,49 @@
     };
   }
 
+  /* ── 찬양 (첼로) — 들어오면 바로 흐른다 ─────────────────
+     휴대폰·크롬은 사용자가 한 번 누르기 전에는 소리를 못 내게 막는다. 먼저 바로 틀어 보고,
+     막히면 처음 화면을 누르는 순간 조용히 시작한다. ♪ 단추로 끄고 켜며, 기기마다 기억한다. */
+  var LS_BGM = 'jungbo-bgm', bgm = $('#bgm'), bgmBtn = $('#bgm-btn'), bgmWant = true, fadeT = null;
+  try { bgmWant = localStorage.getItem(LS_BGM) !== 'off'; } catch (e) {}
+  function bgmUi() {
+    if (!bgmBtn) return;
+    bgmBtn.classList.toggle('off', !bgmWant);
+    bgmBtn.classList.toggle('playing', bgmWant && bgm && !bgm.paused);
+    bgmBtn.setAttribute('aria-pressed', bgmWant ? 'true' : 'false');
+    bgmBtn.title = bgmWant ? '찬양 끄기' : '찬양 켜기';
+  }
+  function fadeTo(v, ms) {
+    clearInterval(fadeT); var step = (v - bgm.volume) / (ms / 50);
+    fadeT = setInterval(function () { var n = bgm.volume + step; if ((step > 0 && n >= v) || (step < 0 && n <= v)) { bgm.volume = v; clearInterval(fadeT); } else bgm.volume = Math.max(0, Math.min(1, n)); }, 50);
+  }
+  async function bgmPlay() {
+    if (!bgm || !bgmWant) return false;
+    try { bgm.volume = 0; await bgm.play(); fadeTo(.45, 2500); bgmUi(); return true; }
+    catch (e) { bgmUi(); return false; }   // 아직 누르기 전이라 막힘 → 첫 누름에 다시
+  }
+  function bgmArm() {
+    var once = async function () { if (await bgmPlay()) { ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { document.removeEventListener(ev, once, true); }); } };
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, once, true); });
+  }
+  if (bgm) {
+    bgm.addEventListener('play', bgmUi); bgm.addEventListener('pause', bgmUi);
+    bgmPlay().then(function (ok) { if (!ok && bgmWant) bgmArm(); });
+    document.addEventListener('visibilitychange', function () {
+      if (!bgmWant) return;
+      if (document.visibilityState === 'hidden') { fadeTo(0, 600); setTimeout(function () { if (document.visibilityState === 'hidden') bgm.pause(); }, 700); }
+      else bgmPlay();
+    });
+  }
+  if (bgmBtn) bgmBtn.addEventListener('click', async function () {
+    bgmWant = !bgmWant;
+    try { localStorage.setItem(LS_BGM, bgmWant ? 'on' : 'off'); } catch (e) {}
+    if (bgmWant) { if (!(await bgmPlay())) toast('화면을 한 번 누르면 찬양이 시작돼요.'); else toast('찬양을 켰어요 ♪'); }
+    else { fadeTo(0, 500); setTimeout(function () { bgm.pause(); bgmUi(); }, 600); toast('찬양을 껐어요.'); }
+    bgmUi();
+  });
+  bgmUi();
+
   // 시작
   main();
 })();

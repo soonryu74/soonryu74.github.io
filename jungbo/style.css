@@ -287,6 +287,14 @@ button:disabled{opacity:.45; cursor:not-allowed}
 [data-sky="night"] .angels .label{color:#fff3c4; background:rgba(40,36,20,.9)}
 @keyframes labelin{0%{opacity:0; transform:translate(-50%,-30%)} 15%{opacity:1; transform:translate(-50%,-50%)} 80%{opacity:1} 100%{opacity:0; transform:translate(-50%,-70%)}}
 
+/* ── 찬양 (첼로) 켜기/끄기 ───────────────────────────── */
+.bgm-btn{position:fixed; left:14px; bottom:calc(18px + env(safe-area-inset-bottom)); z-index:15; width:46px; height:46px; border-radius:50%; padding:0;
+  background:rgba(12,22,18,.85); color:var(--gold-2); border:1px solid rgba(255,255,255,.14); font-size:20px; line-height:1; box-shadow:0 10px 24px -10px rgba(0,0,0,.8)}
+.bgm-btn.off{color:var(--muted); text-decoration:line-through}
+.bgm-btn.playing::after{content:''; position:absolute; inset:-4px; border-radius:50%; border:1px solid rgba(226,178,83,.5); animation:ring 2.4s ease-out infinite}
+@keyframes ring{0%{transform:scale(.9); opacity:.8} 100%{transform:scale(1.5); opacity:0}}
+[data-sky="day"] .bgm-btn{background:var(--sheet); color:var(--gold); border-color:var(--line-2)}
+
 /* ── 토스트 ──────────────────────────────────────── */
 #toast{position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px); opacity:0; z-index:80;
   background:#1b2622; color:#fff; padding:12px 18px; border-radius:999px; font-size:15px; max-width:90vw; text-align:center; transition:all .25s; pointer-events:none;
