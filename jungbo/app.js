@@ -504,17 +504,18 @@
       } catch (err) { say($('#ans-msg', s), err.message, 'err'); e.target.disabled = false; }
     });
   }
-  // 기도 응답 — 천사들이 날아오르고 금빛이 번진다 (움직임 줄이기 설정이면 글만)
+  // 기도 응답 — 작은 하트들이 날아오르고 금빛이 번진다 (움직임 줄이기 설정이면 글만)
   function angels(label) {
     toast(label);
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if ($('.angels')) return;
     var box = document.createElement('div'); box.className = 'angels'; box.setAttribute('aria-hidden', 'true');
     box.innerHTML = '<div class="light"></div>' + (label ? '<div class="label">' + esc(label) + '</div>' : '');
-    var n = 26;   // 하트 날리듯 작은 천사들
+    var n = 30;   // 작은 하트들
     for (var i = 0; i < n; i++) {
-      var an = document.createElement('div'); an.className = 'angel'; an.textContent = i % 5 === 4 ? '✨' : '👼';
-      var size = 24 + Math.random() * 20;
+      var an = document.createElement('div'); an.className = 'angel'; an.textContent = '♥';
+      an.style.color = ['#e5484d', '#f76b8a', '#f5a524', '#ff8fab', '#d6336c', '#ffd166'][i % 6];
+      var size = 16 + Math.random() * 20;
       an.style.fontSize = size + 'px';
       an.style.left = (Math.random() * 96) + 'vw';
       an.style.setProperty('--dx', Math.round(Math.random() * 90 - 45) + 'px');
