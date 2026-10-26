@@ -341,6 +341,14 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .lp-foot .ver{font-size:13px; color:#6a5c44; margin-right:auto}
 @media (max-width:560px){ .lp-text{font-size:26px; line-height:1.85} .lp-text .lp-title{font-size:38px} .lp-scroll{padding:18px 14px 8px} .lp-foot .ver{display:none} }
 
+/* ── 사용법 영상 ─────────────────────────────────── */
+.guide-link{margin-top:16px; border-radius:999px; padding:10px 18px; font-size:14.5px; background:rgba(12,22,18,.7); color:var(--gold-2); border-color:rgba(226,178,83,.4)}
+[data-sky="day"] .guide-link{background:var(--sheet); color:var(--gold)}
+.guide-video{display:block; width:100%; max-height:68vh; max-height:68dvh; border-radius:14px; background:#000; object-fit:contain}
+.guide-steps{margin:12px 0 0; padding:0; list-style:none; font-size:14.5px; color:var(--ink-2); line-height:1.7}
+.guide-steps li{padding:3px 0; border-top:1px solid var(--line)}
+.guide-steps li:first-child{border-top:0}
+
 /* ── 토스트 ──────────────────────────────────────── */
 #toast{position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px); opacity:0; z-index:80;
   background:#1b2622; color:#fff; padding:12px 18px; border-radius:999px; font-size:15px; max-width:90vw; text-align:center; transition:all .25s; pointer-events:none;
