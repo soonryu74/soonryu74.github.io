@@ -40,6 +40,16 @@ export function unfavorablePercentile(v, poolValues, direction) {
   return { u: (better + tie / 2) / vals.length, rank: better + 1, n: vals.length };
 }
 
+/** 작은 집단(30곳 이하, 17개 시도 등)의 순위를 3등분 구간 글자로: 「17개 시도 중 17위」 옆에 「하위권」을 붙여
+ *  순위 기준 설명(1위 = 가장 양호)이 평가 결과로 읽히지 않게 한다(2026-10-26 소유자 지적 "17위인데 양호하다고 써 있다"). */
+export function rankBand(rank, n, en = false) {
+  if (!isNum(rank) || !isNum(n) || n < 1) return null;
+  const t = (rank - 0.5) / n;
+  if (t <= 1 / 3) return en ? "top third" : "상위권";
+  if (t >= 2 / 3) return en ? "bottom third" : "하위권";
+  return en ? "middle third" : "중위권";
+}
+
 /** 상대 위치를 구간으로만 말한다(표본오차 때문에 정확한 순위를 강조하지 않음). n ≤ 30 이면 순위 그대로 */
 export function positionBand(u) {
   if (!isNum(u)) return null;

@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-17 00:33 KST",
- "commit": "54c6d3f",
+ "generated": "2026-10-26 17:00 KST",
+ "commit": "78c6f11",
  "working_tree_clean": true,
  "global_v01_comparison": "run (tag pre-global-v0.2)",
  "all_ok": true,
@@ -9,7 +9,7 @@
    "id": "unit",
    "name": "Unit tests (priority engine, data, reports)",
    "ok": true,
-   "passed": 25,
+   "passed": 26,
    "failed": 0,
    "seconds": 2
   },
@@ -19,15 +19,15 @@
    "ok": true,
    "passed": 53,
    "failed": 0,
-   "seconds": 176
+   "seconds": 169
   },
   {
    "id": "solve_readiness",
    "name": "Judge flow at 390/430/768/1440 px, accessibility, links",
    "ok": true,
-   "passed": 128,
+   "passed": 129,
    "failed": 0,
-   "seconds": 85
+   "seconds": 79
   },
   {
    "id": "history",
@@ -35,7 +35,7 @@
    "ok": true,
    "passed": 32,
    "failed": 0,
-   "seconds": 32
+   "seconds": 29
   },
   {
    "id": "report_region",
@@ -43,7 +43,7 @@
    "ok": true,
    "passed": 28,
    "failed": 0,
-   "seconds": 44
+   "seconds": 41
   },
   {
    "id": "report_indicator",
@@ -51,7 +51,7 @@
    "ok": true,
    "passed": 44,
    "failed": 0,
-   "seconds": 70
+   "seconds": 68
   },
   {
    "id": "report_elder",
@@ -59,7 +59,7 @@
    "ok": true,
    "passed": 48,
    "failed": 0,
-   "seconds": 40
+   "seconds": 38
   },
   {
    "id": "global_e2e",
@@ -67,12 +67,12 @@
    "ok": true,
    "passed": 77,
    "failed": 0,
-   "seconds": 34
+   "seconds": 30
   }
  ],
  "totals": {
-  "unit_tests": 25,
+  "unit_tests": 26,
   "browser_suites": 7,
-  "browser_checks": 410
+  "browser_checks": 411
  }
 }

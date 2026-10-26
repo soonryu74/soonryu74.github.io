@@ -1,4 +1,4 @@
-import { isNum } from "./calculateGap.js";
+import { isNum, rankBand } from "./calculateGap.js";
 import { DIRECTION } from "./normalizeIndicator.js";
 
 /* 「왜 우선인가?」 문장 — 계산된 사실만 쓴다. 인과 표현 금지: 박탈과 지표는 「~지역이며 ~도」 병렬로만 서술. */
@@ -14,7 +14,7 @@ export function buildReasons(r) {
     out.push({ k: "gap", t: `전국 중앙값(${f(r.ref)}${r.unit})보다 ${f(Math.abs(r.gap.abs))}${du} ${word}${fav ? ` — ${fav}` : ""} (${r.direction === DIRECTION.LOWER ? "낮을수록" : "높을수록"} 좋은 지표)` });
   }
   if (r.pos) {
-    if (r.pos.n <= 30) out.push({ k: "rank", t: `${/곳|시도$/.test(r.poolName) ? r.poolName : `${r.poolName} ${r.pos.n}곳`} 중 ${r.pos.rank}위(양호한 순)` });
+    if (r.pos.n <= 30) out.push({ k: "rank", t: `${/곳|시도$/.test(r.poolName) ? r.poolName : `${r.poolName} ${r.pos.n}곳`} 중 ${r.pos.rank}위 · ${rankBand(r.pos.rank, r.pos.n)}(1위 = 가장 양호)` });
     else {
       const top = Math.max(1, Math.round((1 - r.pos.u) * 100));
       out.push({ k: "rank", t: r.pos.u >= 0.5 ? `${r.poolName} ${r.pos.n}곳 중 불리한 방향 상위 ${top}%` : `${r.poolName} ${r.pos.n}곳 중 양호한 방향 상위 ${Math.max(1, Math.round(r.pos.u * 100))}%` });
@@ -53,7 +53,7 @@ export function buildReasonsEn(r) {
     out.push({ k: "gap", t: `${f(Math.abs(r.gap.abs))}${du} ${word} than the national median (${f(r.ref)}${r.unit})${fav ? ` — ${fav}` : ""} (${r.direction === DIRECTION.LOWER ? "lower" : "higher"} is better)` });
   }
   if (r.pos) {
-    if (r.pos.n <= 30) out.push({ k: "rank", t: `Ranked ${ord(r.pos.rank)} of ${r.pos.n} ${/시도/.test(r.poolName) ? "provinces" : "areas"} (best first)` });
+    if (r.pos.n <= 30) out.push({ k: "rank", t: `Ranked ${ord(r.pos.rank)} of ${r.pos.n} ${/시도/.test(r.poolName) ? "provinces" : "areas"} — ${rankBand(r.pos.rank, r.pos.n, true)} (1st = best)` });
     else {
       const top = Math.max(1, Math.round((1 - r.pos.u) * 100));
       out.push({ k: "rank", t: r.pos.u >= 0.5 ? `Among the least favourable ${top}% of ${r.pos.n} ${pool}` : `Among the most favourable ${Math.max(1, Math.round(r.pos.u * 100))}% of ${r.pos.n} ${pool}` });
