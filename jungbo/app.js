@@ -73,6 +73,20 @@
   }
   function toggleSky() { sceneSheet(); }
 
+  /* ── 사용법 영상 (2분, 해설 포함) ───────────────────────── */
+  function guideSheet() {
+    var s = sheet({ html: '<h2 class="title">사용법 영상</h2><p class="desc">2분이면 충분해요. 소리를 켜고 보세요.</p>' +
+      '<video class="guide-video" controls playsinline preload="metadata" poster="assets/guide-poster.jpg" src="assets/guide.mp4"></video>' +
+      '<ul class="guide-steps"><li>① 모임 이름 + 내 이름 → [모임 만들기] (처음 한 번)</li><li>② [초대장 보내기] → 단톡방. 식구는 주소만 누르면 들어와요</li>' +
+      '<li>③ [기도제목 올리기] → 긴급/일반 → [올리기] → [카카오톡으로 보내기]</li><li>④ [🙏 기도했어요] · 이모지 · 댓글 · [응답받았어요]</li>' +
+      '<li>⑤ [모임] 탭 → [🔔 알림 켜기] (아이폰은 홈 화면에 추가 후)</li><li>⑥ 식구가 많으면 [방 관리]에서 그룹·기수 방 만들기</li></ul>',
+      foot: '<button type="button" class="ghost" data-c>닫기</button>', onClose: function () { if (bgmWant && bgm && bgm.paused) bgmPlay(); } });
+    var v = $('video', s);
+    v.addEventListener('play', function () { if (bgm && !bgm.paused) { fadeTo(0, 400); setTimeout(function () { bgm.pause(); }, 450); } });
+    s.addEventListener('click', function (e) { if (e.target.closest('[data-c]')) { v.pause(); s.close(); } });
+  }
+  document.addEventListener('click', function (e) { if (e.target.closest('#btn-guide-enter')) guideSheet(); });
+
   /* ── 주기도문방: 한지 위 붓글씨, 세로로 위에서 아래, 오른쪽에서 왼쪽으로 읽는다 ── */
   var LORDS = {
     old: { name: '전통', text: '하늘에 계신 우리 아버지여\n이름이 거룩히 여김을 받으시오며\n나라가 임하시오며\n뜻이 하늘에서 이루어진 것 같이\n땅에서도 이루어지이다\n오늘 우리에게 일용할 양식을 주시옵고\n우리가 우리에게 죄 지은 자를 사하여 준 것 같이\n우리 죄를 사하여 주시옵고\n우리를 시험에 들게 하지 마시옵고\n다만 악에서 구하시옵소서\n나라와 권세와 영광이\n아버지께 영원히 있사옵나이다\n아멘', ref: '마태복음 6:9-13' },
@@ -904,6 +918,7 @@
     if (b.dataset.act === 'print') printSheet();
     if (b.dataset.act === 'scene') sceneSheet();
     if (b.dataset.act === 'lord') lordsPrayerSheet();
+    if (b.dataset.act === 'guide') guideSheet();
     if (b.dataset.act === 'switch') switchSheet();
   });
   function switchSheet() {
