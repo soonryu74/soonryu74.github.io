@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { DIRECTION, directionOf, toUnfavorable } from "../src/lib/equity/normalizeIndicator.js";
-import { medianOf, gapOf, gapScore, unfavorablePercentile, ciIncludes } from "../src/lib/equity/calculateGap.js";
+import { medianOf, gapOf, gapScore, unfavorablePercentile, ciIncludes, rankBand } from "../src/lib/equity/calculateGap.js";
 import { recentTrend, trendClass } from "../src/lib/equity/calculateTrend.js";
 import { combine, depScore, tierOf, pickTop, scoreBreakdown, WEIGHTS } from "../src/lib/equity/calculatePriority.js";
 import { buildReasons, buildReasonsEn } from "../src/lib/equity/buildReasons.js";
@@ -208,4 +208,18 @@ test("박탈 경사: 완전 직선이면 SII = 기울기, RII = 끝값 비, 분�
   assert.ok(Math.abs(s.sii - 5) < 1e-9 && Math.abs(s.rii - 1.5) < 1e-9 && s.se < 1e-9);
   assert.equal(siiRii([{ x: 0.5, y: 1 }, { x: 0.5, y: 2 }, { x: 0.5, y: 3 }]), null);   // x 변화 없음
   assert.equal(siiRii([{ x: 0.1, y: 1 }, { x: 0.9, y: null }]), null);                  // 결측 제외 후 3곳 미만
+});
+
+test("순위 표기: 17개 시도 중 17위는 「하위권」, 문장에 「양호한 순」 없이 기준(1위 = 가장 양호)만", () => {
+  assert.equal(rankBand(17, 17), "하위권");
+  assert.equal(rankBand(1, 17), "상위권");
+  assert.equal(rankBand(9, 17), "중위권");
+  assert.equal(rankBand(17, 17, true), "bottom third");
+  assert.equal(rankBand(null, 17), null);
+  // 고혈압 치료율(높을수록 좋음) 서울 91.8 — 17개 시도 중 가장 낮음(2026-10-26 소유자 캡처 사례)
+  const row = { unit: "%", direction: H, gap: gapOf(91.8, 93.5, H), ref: 93.5, pos: { u: 0.97, rank: 17, n: 17 }, poolName: "17개 시도", trend: null, trendCls: null, depQ: null, ciIncludesRef: null };
+  const t = buildReasons(row).find((x) => x.k === "rank").t;
+  assert.ok(t.includes("17위 · 하위권") && t.includes("1위 = 가장 양호") && !t.includes("양호한 순"), t);
+  const te = buildReasonsEn(row).find((x) => x.k === "rank").t;
+  assert.ok(te.includes("bottom third") && !te.includes("best first"), te);
 });

@@ -41,7 +41,7 @@ export default function Kpis({ ind, item, year, sel }) {
         </div>
       </div>
       <div className="kpi">
-        <div className="k-label">{isSgg ? "전국 시군구 순위" : "전국 시도 순위"} (양호한 순)<Cite ind={ind} k={isSgg ? (survey ? "chs25" : "mois") : null} /></div>
+        <div className="k-label">{isSgg ? "전국 시군구 순위" : "전국 시도 순위"} (1위 = 가장 양호)<Cite ind={ind} k={isSgg ? (survey ? "chs25" : "mois") : null} /></div>
         <div className="k-value">{natRank || "–"}<small> / {nat_.length}</small></div>
         <div className="k-sub">
           {[cityUnits.length ? `보건소 ${cityUnits.length}곳으로 조사되어 시 전체 순위는 없음(순위 목록에서 보건소별로 확인)` : null,

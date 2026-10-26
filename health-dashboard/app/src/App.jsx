@@ -416,7 +416,7 @@ export default function App() {
               <div className="card">
                 <h3>순위<Cite ind={ind} /></h3>
                 <ExportButtons name={`${year}_${ind.name}_순위_${scopeLabel}`} kinds={["list"]} />
-                <div className="desc">{year}년 · 양호한 순 ({ind.bad == null ? "값 큰 순" : ind.bad ? "낮을수록 양호" : "높을수록 양호"})</div>
+                <div className="desc">{year}년 · 1위 = 가장 양호 ({ind.bad == null ? "값 큰 순" : ind.bad ? "낮을수록 양호" : "높을수록 양호"})</div>
                 <RankPanel ind={ind} item={item} year={year} sel={sel} scope={scope} onSelect={selectRegion} onYear={(y) => { setYearSel(y); setPlaying(false); }} />
               </div>
 
