@@ -102,6 +102,9 @@ a{color:var(--brand)}
 .chip b{color:var(--brand); font-size:16px}
 .chip.urgent b{color:var(--urgent)}
 .chip.lights b{color:var(--gold)}
+.chip.dim{opacity:.55}
+.chips-break{flex-basis:100%; height:0}
+.tabs button{font-variant-numeric:tabular-nums}
 .ornament{display:flex; align-items:center; justify-content:center; gap:12px; color:var(--gold); margin:16px 0 0; font-size:12px}
 .ornament::before,.ornament::after{content:''; width:64px; height:1px; background:linear-gradient(90deg,transparent,var(--gold-line))}
 .ornament::after{transform:scaleX(-1)}
@@ -186,6 +189,10 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .msg.ok{background:var(--brand-soft); color:var(--brand); border-color:var(--brand)}
 .msg.warn{background:var(--gold-soft); color:var(--gold); border-color:var(--gold)}
 [data-sky="night"] .msg.ok{color:var(--brand-2)}
+
+/* 알림 권유 띠: 흐름 밖(화면 아래, 올리기 단추 위)에 띄워 글이 밀리지 않게 */
+#push-nudge{position:fixed; left:14px; right:14px; bottom:calc(84px + env(safe-area-inset-bottom)); z-index:14; margin:0; box-shadow:0 14px 30px -12px rgba(0,0,0,.7)}
+#push-nudge.show{display:block}
 
 /* 큰 '올리기' 단추 (화면 아래 고정) */
 .fab{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(18px + env(safe-area-inset-bottom)); z-index:15;
