@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Paperling 디자인 시안 · 4화면 × 4테마</title>
+<title>Paperling 디자인 시안 · 4화면 × 9테마</title>
 <meta name="description" content="Paperling MVP 4개 화면(찍기·확인·서랍장·설정)을 4가지 테마와 손글씨 폰트로 바꿔 보는 디자인 시안.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Nanum+Pen+Script&family=Gaegu:wght@400;700&family=Hi+Melody&family=Nanum+Brush+Script&family=Noto+Serif+KR:wght@400;600&display=swap">
@@ -27,6 +27,7 @@ h1{font-family:var(--display);font-size:1.6rem;margin:0}
 .ctl button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
 .ctl button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
 .ctl .f button{font-size:1.05rem}
+.ctl .sep{width:1px;height:20px;background:var(--line);margin:0 .3rem}
 .wall{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem}
 .slot h3{font-size:.85rem;color:var(--muted);margin:0 0 .5rem;font-weight:500;letter-spacing:.04em}
 .slot h3 b{color:var(--fg);font-family:var(--display);font-size:1rem;margin-right:.3rem}
@@ -82,25 +83,42 @@ h1{font-family:var(--display);font-size:1.6rem;margin:0}
   --t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;--t-pattern:none}
 .phone[data-theme="planner"] .scr{--t-bg:#f8f2e2;--t-card:#fffaf0;--t-fg:#3a2f24;--t-mute:#8a7a63;--t-line:#d7cbb0;--t-acc:#8a3b2e;--t-acc-soft:#f2e1dc;--t-on-acc:#fff;
   --t-head:"Noto Serif KR",serif;--t-body:"IBM Plex Sans KR",sans-serif;--t-pattern:repeating-linear-gradient(0deg, transparent 0 27px, rgba(138,59,46,.12) 27px 28px)}
-.phone[data-theme="garden"] .scr{--t-bg:#f4f7f3;--t-card:rgba(255,255,255,.75);--t-fg:#2f3a33;--t-mute:#7a8a7f;--t-line:#cfe0d4;--t-acc:#5b8a6e;--t-acc-soft:#e1efe6;--t-on-acc:#fff;
-  --t-head:"Gaegu",cursive;--t-body:"IBM Plex Sans KR",sans-serif;
-  --t-pattern:radial-gradient(260px 200px at 100% 0%, rgba(243,215,198,.9), transparent 70%), radial-gradient(240px 200px at 0% 100%, rgba(207,216,234,.9), transparent 70%)}
 .phone[data-theme="dark"] .scr{--t-bg:#23211d;--t-card:#2c2925;--t-fg:#ebe3d2;--t-mute:#a89f8f;--t-line:#3f3a33;--t-acc:#d4b267;--t-acc-soft:#3a3324;--t-on-acc:#1b1915;
   --t-head:"Noto Serif KR",serif;--t-body:"IBM Plex Sans KR",sans-serif;--t-pattern:none}
 .phone[data-theme="dark"] .photo{filter:brightness(.92)}
+.phone[data-theme="wild"] .scr{--t-bg:#fbfaf4;--t-card:rgba(255,255,255,.78);--t-acc:#6b7f5e;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/meadow.webp);background-position:center bottom 44px;background-size:72% auto}
+.phone[data-theme="forest"] .scr{--t-bg:#f6f8f3;--t-card:rgba(255,255,255,.78);--t-acc:#2f5d47;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/greens.webp);background-position:left 10px bottom 48px;background-size:46% auto}
+.phone[data-theme="hydrangea"] .scr{--t-bg:#f9fafc;--t-card:rgba(255,255,255,.78);--t-acc:#5b78b4;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/hydrangea.webp);background-position:right 10px top 8px;background-size:40% auto}
+.phone[data-theme="lilac"] .scr{--t-bg:#faf8fb;--t-card:rgba(255,255,255,.78);--t-acc:#8a6fa6;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/lilac.webp);background-position:left 8px top 6px;background-size:44% auto}
+.phone[data-theme="blueprint"] .scr{--t-bg:#1f3a5f;--t-card:rgba(255,255,255,.07);--t-fg:#e8eef7;--t-mute:#9db3cf;--t-line:rgba(255,255,255,.22);--t-acc:#f2c14e;--t-acc-soft:rgba(242,193,78,.18);--t-on-acc:#1b2b45;
+  --t-head:"IBM Plex Sans KR",sans-serif;--t-body:"IBM Plex Sans KR",sans-serif;
+  --t-pattern:repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px 20px), repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 1px, transparent 1px 20px)}
+.phone[data-theme="blueprint"] .bar b,.phone[data-theme="blueprint"] .card h4,.phone[data-theme="blueprint"] .drawer b{letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.phone[data-theme="blueprint"] .photo{filter:saturate(.8)}
+.phone[data-theme="ledger"] .scr{--t-bg:#f4f1ea;--t-card:#fbf9f4;--t-fg:#1f2a33;--t-mute:#6f6a60;--t-line:#d3cbbb;--t-acc:#8b5e34;--t-acc-soft:#efe3d5;--t-on-acc:#fff;
+  --t-head:"Noto Serif KR",serif;--t-body:"IBM Plex Sans KR",sans-serif;
+  --t-pattern:linear-gradient(90deg, transparent 0 26px, rgba(139,94,52,.28) 26px 27px, transparent 27px 100%), repeating-linear-gradient(0deg, transparent 0 23px, rgba(31,42,51,.08) 23px 24px)}
+.phone[data-theme="ledger"] .bar b,.phone[data-theme="ledger"] .card h4{font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
 <main>
 <h1>Paperling 디자인 시안</h1>
-<p class="sub">MVP 4화면을 4테마 × 4손글씨 폰트로 바꿔 보세요. 화면 구조는 같고, 테마는 색·폰트·무늬 토큰만 바뀝니다.</p>
+<p class="sub">MVP 4화면을 9테마(일반·보태니컬·비즈니스) × 4손글씨 폰트로 바꿔 보세요. 화면 구조는 같고, 테마는 색·폰트·그림 토큰만 바뀝니다. 보태니컬 식물 그림은 작가 협업 전 임시 이미지(AI 생성)입니다.</p>
 
 <div class="ctl">
   <div class="g" role="group" aria-label="테마"><b>테마</b>
     <button type="button" data-theme="white" aria-pressed="true">화이트 노트</button>
     <button type="button" data-theme="planner" aria-pressed="false">클래식 플래너</button>
-    <button type="button" data-theme="garden" aria-pressed="false">수채화 정원</button>
     <button type="button" data-theme="dark" aria-pressed="false">다크 저널</button>
+    <span class="sep"></span>
+    <button type="button" data-theme="wild" aria-pressed="false">들꽃 정원</button>
+    <button type="button" data-theme="hydrangea" aria-pressed="false">수국</button>
+    <button type="button" data-theme="lilac" aria-pressed="false">라일락</button>
+    <button type="button" data-theme="forest" aria-pressed="false">초록 숲</button>
+    <span class="sep"></span>
+    <button type="button" data-theme="blueprint" aria-pressed="false">블루프린트</button>
+    <button type="button" data-theme="ledger" aria-pressed="false">레저</button>
   </div>
   <div class="g f" role="group" aria-label="손글씨 폰트"><b>손글씨</b>
     <button type="button" data-font="'Nanum Pen Script', cursive" style="font-family:'Nanum Pen Script'" aria-pressed="true">나눔 펜</button>
@@ -167,7 +185,7 @@ h1{font-family:var(--display);font-size:1.6rem;margin:0}
         <div class="tog"><span>구글 캘린더 <span class="q">· 개인</span></span><span class="sw on"></span></div>
         <div class="tog"><span>원노트 <span class="q">· 곧</span></span><span class="sw"></span></div>
         <div class="tog"><span>마크다운 내보내기</span><span class="sw"></span></div></div>
-      <div class="card"><h4>디자인</h4><span class="chip on">화이트 노트</span><span class="chip">클래식 플래너</span><span class="chip">수채화 정원</span><span class="chip">다크 저널</span>
+      <div class="card"><h4>디자인</h4><span class="chip on">화이트 노트</span><span class="chip">클래식 플래너</span><span class="chip">들꽃 정원</span><span class="chip">수국</span><span class="chip">블루프린트</span>
         <div class="q" style="margin-top:.4rem">손글씨</div><div class="hand">내 글씨랑 제일 비슷한 걸로</div></div>
       <div class="card"><h4>사진 보관</h4><div class="tog"><span>원본 보관 <span class="q">· 국내 서버</span></span><span class="sw on"></span></div><div class="tog"><span>추억 복원(업스케일) <span class="q">· 프로</span></span><span class="sw on"></span></div></div>
       <div class="card"><h4>계정</h4><div class="q">soon@… · 무료 · 이번 달 7/20장<br>전체 내보내기 · 탈퇴</div></div>
@@ -179,8 +197,13 @@ h1{font-family:var(--display);font-size:1.6rem;margin:0}
 <div class="notes">
   <div><b>화이트 노트</b><p>일반 라인 기본. 흰 바탕, 잉크 초록 포인트, 고운바탕 제목. 매일 봐도 안 질리는 쪽.</p></div>
   <div><b>클래식 플래너</b><p>프랭클린 플래너형. 크림 종이, 괘선, 버건디 포인트, 세리프 제목. 50대 신뢰 톤.</p></div>
-  <div><b>수채화 정원</b><p>아티스트 라인 예시. 파스텔 워시, 둥근 손글씨 제목(개구). 실제 작가 협업 시 배경·스티커 교체.</p></div>
-  <div><b>다크 저널</b><p>밤에 쓰는 분. 숯색 바탕, 황동 포인트, 세리프 제목. 사진은 살짝 어둡게.</p></div>
+    <div><b>다크 저널</b><p>밤에 쓰는 분. 숯색 바탕, 황동 포인트, 세리프 제목. 사진은 살짝 어둡게.</p></div>
+  <div><b>들꽃 정원</b><p>보태니컬 라인. 화면 아래에 수채화 들꽃 띠(데이지·민들레·아마꽃). 카드는 반투명 흰색이라 그림이 비친다.</p></div>
+  <div><b>수국</b><p>보태니컬 라인. 오른쪽 위에 파란 수국 한 송이. 포인트 색은 수국 파랑.</p></div>
+  <div><b>라일락</b><p>보태니컬 라인. 왼쪽 위에서 늘어진 라일락 가지. 포인트 색은 연보라.</p></div>
+  <div><b>초록 숲</b><p>보태니컬 라인. 왼쪽 아래 유칼립투스·고사리 잎 다발. 꽃 없이 초록만, 차분하게 오래 보는 쪽.</p></div>
+  <div><b>블루프린트</b><p>비즈니스 라인. 건축 도면의 남색 바탕과 모눈, 치수선 느낌의 대문자 라벨, 형광 노랑 포인트.</p></div>
+  <div><b>레저</b><p>비즈니스 라인. 장부의 세로 괘선과 가죽 탄 포인트, 숯색 글자, 세리프 제목. 숫자는 표 정렬.</p></div>
 </div>
 </main>
 <script>
