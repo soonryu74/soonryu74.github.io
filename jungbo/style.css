@@ -335,8 +335,8 @@ button:disabled{opacity:.45; cursor:not-allowed}
   font-family:'Kyobo Handwriting 2019','Nanum Brush Script','Gowun Batang',serif; font-size:31px; line-height:1.9; letter-spacing:.03em; color:#24201a; white-space:pre-wrap; word-break:keep-all}
 .lp-text .lp-title{font-size:46px; line-height:1.4; margin-left:18px; color:#1a1612}
 .lp-text .lp-ref{font-size:17px; color:#6a5c44; line-height:2.2}
-.lp-seal{position:absolute; left:22px; bottom:calc(92px + env(safe-area-inset-bottom)); width:46px; height:46px; border-radius:4px; background:#b8302a; color:#fff3e3; font-family:'Gowun Batang',serif; font-weight:700; font-size:18px;
-  display:flex; align-items:center; justify-content:center; writing-mode:vertical-rl; text-orientation:upright; letter-spacing:.1em; box-shadow:0 1px 0 rgba(0,0,0,.2) inset; opacity:.92; transform:rotate(-3deg)}
+.lp-seal{display:inline-block; width:40px; height:40px; margin-top:14px; margin-left:4px; border-radius:4px; background:#b8302a; color:#fff3e3; font-family:'Gowun Batang',serif; font-weight:700; font-size:15px; line-height:1.1;
+  text-align:center; padding-top:4px; letter-spacing:.06em; box-shadow:0 1px 0 rgba(0,0,0,.2) inset; opacity:.92; transform:rotate(-3deg); vertical-align:top}   /* 낙관: 글 끝(마지막 줄 아래) */
 .lp-foot{display:flex; gap:8px; align-items:center; padding:10px 14px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid rgba(0,0,0,.08); background:rgba(255,255,255,.35)}
 .lp-foot button{background:rgba(255,255,255,.6); color:#1c1a16; border-color:rgba(0,0,0,.15)}
 .lp-foot button.primary{background:#1f4d3b; color:#fff; border-color:#143627; flex:1}

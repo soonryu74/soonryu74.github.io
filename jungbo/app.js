@@ -105,8 +105,7 @@
     var bg = document.createElement('div'); bg.className = 'lp-bg';
     function render() {
       var L = LORDS[ver];
-      bg.innerHTML = '<div class="lp" role="dialog" aria-modal="true" aria-label="주기도문"><div class="lp-scroll"><div class="lp-text"><span class="lp-title">주기도문</span>' + esc(L.text) + '<span class="lp-ref">' + esc(L.ref) + '</span></div></div>' +
-        '<div class="lp-seal">아멘</div>' +
+      bg.innerHTML = '<div class="lp" role="dialog" aria-modal="true" aria-label="주기도문"><div class="lp-scroll"><div class="lp-text"><span class="lp-title">주기도문</span>' + esc(L.text) + '<span class="lp-ref">' + esc(L.ref) + '</span><span class="lp-seal" aria-hidden="true">아멘</span></div></div>' +
         '<div class="lp-foot"><span class="ver">오른쪽부터 아래로 읽으세요</span><button type="button" class="small" data-ver>' + (ver === 'old' ? '새번역으로' : '전통으로') + '</button><button type="button" class="primary" data-amen>아멘 🙏</button><button type="button" class="ghost" data-c>닫기</button></div></div>';
       var sc = $('.lp-scroll', bg); sc.scrollLeft = sc.scrollWidth;   // 오른쪽 끝(첫 줄)부터
     }
