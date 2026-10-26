@@ -9,6 +9,7 @@ import GoldenDiamond from "./GoldenDiamond";
 import PeerCard from "./PeerCard";
 import EquityPriorityCard from "./equity/EquityPriorityCard";
 import IndInfo from "./equity/IndInfo";
+import { rankBand } from "../lib/equity";
 
 const tone = (p) => (p == null ? "" : p >= 75 ? "t-high" : p >= 50 ? "t-mid" : p >= 25 ? "t-low" : "t-min");
 
@@ -104,10 +105,11 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
   const [showWeak, setShowWeak] = useState(false);
   const smoothNote = rankOpt.smooth === 3 ? "최근 3년 평균" : "최신 연도";
   // 백분위 문구: 30곳 이하 풀(17개 시도 등)에서는 「17곳 중 17위」처럼 순위로만 쓴다 — 17곳 꼴찌의 백분위 2.9%가 「하위 3%」로 읽히는 문제(건강격차 검토 P1: 소집단 분위 금지)
-  // 순위는 항상 「양호한 순」(1위 = 가장 양호) — 방향 보정된 순위라 값이 크고 작음과 다를 수 있어 글자로 밝힌다(2026-10-05 소유자 지적 "좋은 순·나쁜 순 헷갈려")
+  // 순위는 항상 1위 = 가장 양호(방향 보정) — 값의 크고 작음과 다를 수 있어 글자로 밝힌다(2026-10-05 "좋은 순·나쁜 순 헷갈려").
+  // 「(양호한 순)」은 평가 결과로 읽혀(2026-10-26 "17위인데 양호하다고 써 있다") 「하위권 (1위 = 가장 양호)」처럼 위치 + 기준으로 쓴다.
   const pctLabel = (r, side) => (r.n <= 30
-    ? (poolName === "17개 시도" ? `17개 시도 중 ${r.rank}위(양호한 순)` : `${poolName} ${r.n}곳 중 ${r.rank}위(양호한 순)`)
-    : side === "top" ? `상위 ${Math.max(1, Math.round(100 - r.pct))}% · 양호한 순 ${r.rank}/${r.n}위` : `하위 ${Math.max(1, Math.round(r.pct))}% · 양호한 순 ${r.rank}/${r.n}위`);
+    ? `${poolName === "17개 시도" ? "17개 시도" : `${poolName} ${r.n}곳`} 중 ${r.rank}위 · ${rankBand(r.rank, r.n)} (1위 = 가장 양호)`
+    : `${side === "top" ? `상위 ${Math.max(1, Math.round(100 - r.pct))}%` : `하위 ${Math.max(1, Math.round(r.pct))}%`} · ${r.n}곳 중 ${r.rank}위 (1위 = 가장 양호)`);
   const basisOf = (r) => (rankOpt.smooth === 3 ? `${r.y}년 기준 3년 평균` : `${r.y}년`);
 
   return (
@@ -199,7 +201,7 @@ export default function Profile({ item, sel, scope, rankOpt, onRankOpt, onPick, 
         </div>
 
         <div className="card span2">
-          <h3>권고 예방·관리 사업 <small className="muted">(하위 25% 지표 기준 · 순위는 양호한 순(1위 = 가장 양호) · 값과 순위는 위 「순위 산출 방식」 설정을 따름 — 기본 {smoothNote}·{poolName} · 지식베이스 연결)</small></h3>
+          <h3>권고 예방·관리 사업 <small className="muted">(하위 25% 지표 기준 · 순위는 1위 = 가장 양호 · 값과 순위는 위 「순위 산출 방식」 설정을 따름 — 기본 {smoothNote}·{poolName} · 지식베이스 연결)</small></h3>
           <div className="desc">이 지역의 낮은 지표마다 시도 계획 → 국가 사업 → WHO 권고 순으로 연결된 항목을 보여줍니다. "더 보기"를 누르면 예방·관리 탭에서 전체를 볼 수 있습니다.</div>
           {(() => {
             const sidoFull = isSgg ? RBY.get(sel.p)?.n : sel.n;

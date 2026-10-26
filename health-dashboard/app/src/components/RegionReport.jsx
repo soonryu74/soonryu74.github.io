@@ -146,7 +146,7 @@ export default function RegionReport({ sel, item = "std", smooth = 3, onBack, on
 
         <section>
           <h2><span className="rpt-no">{strengths.length ? 4 : 3}</span>지역사회건강조사 지표 전체</h2>
-          <p className="muted">{p.rows.length}개 · 값: {basis} · 차이는 지역 값 − 전국 중앙값 · 위치는 비교 집단에서의 구간(30곳 이하는 양호한 순 순위, 1위 = 가장 양호).</p>
+          <p className="muted">{p.rows.length}개 · 값: {basis} · 차이는 지역 값 − 전국 중앙값 · 위치는 비교 집단에서의 구간(30곳 이하는 순위, 1위 = 가장 양호).</p>
           <table className="rpt-tbl rpt-all"><thead><tr><th>영역</th><th>지표</th><th>지역 값</th><th>전국 중앙값</th><th>차이</th><th>위치</th><th>추세</th><th>판정</th></tr></thead>
             <tbody>{byDomain(p.rows).flatMap(([d, rs]) => rs.map((r, i) => (
               <tr key={r.id} className={r.tier === "priority" ? "row-pri" : r.tier === "watch" ? "row-watch" : undefined}>{i === 0 && <td rowSpan={rs.length} className="rpt-dom">{d}</td>}<td>{r.name}</td>

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { fmt, label, DEP } from "../../data";
-import { priorityFor, SCOPES, TIERS, WEIGHTS, THRESHOLDS, TREND_WINDOW, TREND_MIN } from "../../lib/equity";
+import { priorityFor, rankBand, SCOPES, TIERS, WEIGHTS, THRESHOLDS, TREND_WINDOW, TREND_MIN } from "../../lib/equity";
 import { buildReasonsEn, POOL_EN, TREND_EN } from "../../lib/equity/buildReasons.js";
 import WhyThisMatters from "./WhyThisMatters";
 import EvidenceActions from "./EvidenceActions";
@@ -86,7 +86,7 @@ export default function EquityPriorityCard({ sel, item, smooth = 3, onPick, onPe
               <dl className="eq-facts">
                 <div><dt>{L.local}</dt><dd><b>{fmt(r.v)}{r.unit}</b><small>{en ? `${r.y}${r.k === 3 ? ", 3-year average" : ""}` : `${r.y}년${r.k === 3 ? " 기준 3년 평균" : ""}`}</small></dd></div>
                 <div><dt>{L.median}</dt><dd><b>{fmt(r.ref)}{r.unit}</b><small>{en ? "difference " : "차이 "}{r.gap.abs > 0 ? "+" : r.gap.abs < 0 ? "−" : "±"}{fmt(Math.abs(r.gap.abs))}{du(r.unit, lang)}</small></dd></div>
-                <div><dt>{L.pos}</dt><dd><b>{posText(r)}</b><small>{r.pos.n <= 30 ? (en ? "best first" : "양호한 순") : en ? `${r.pos.n} ${POOL_EN[r.poolName] || r.poolName}` : `${r.poolName} ${r.pos.n}곳`}</small></dd></div>
+                <div><dt>{L.pos}</dt><dd><b>{posText(r)}</b><small>{r.pos.n <= 30 ? (en ? `${rankBand(r.pos.rank, r.pos.n, true)} · 1st = best` : `${rankBand(r.pos.rank, r.pos.n)} · 1위 = 가장 양호`) : en ? `${r.pos.n} ${POOL_EN[r.poolName] || r.poolName}` : `${r.poolName} ${r.pos.n}곳`}</small></dd></div>
                 <div><dt>{L.trend}</dt><dd><b>{r.trendCls ? (en ? TREND_EN[r.trendCls.label] : r.trendCls.label) : en ? "Not assessed" : "평가 안 함"}</b><small>{r.trend ? `${r.trend.y0}–${r.trend.y1} ${en ? "per year" : "연"} ${r.trend.slope > 0 ? "▲" : r.trend.slope < 0 ? "▼" : ""}${fmt(Math.abs(r.trend.slope), 2)}${du(r.unit, lang)}` : en ? `fewer than ${TREND_MIN} valid years` : `유효 연도 ${TREND_MIN}개 미만`}</small></dd></div>
                 <div><dt>{L.dep}</dt><dd><b>{depWord(r.depQ) ? (en ? DEP_EN[depWord(r.depQ)] : depWord(r.depQ)) : isSido ? (en ? "Not applicable" : "해당 없음") : en ? "No data" : "자료 없음"}</b><small>{r.depQ ? (en ? `deprivation quintile ${r.depQ}` : `지역박탈 ${r.depQ}분위`) : en ? "weights renormalized" : "가중치 재정규화"}</small></dd></div>
               </dl>

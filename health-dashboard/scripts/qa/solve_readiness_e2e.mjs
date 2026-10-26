@@ -155,6 +155,9 @@ for (const [w, h] of VPS) {
   await pg.goto(`${BASE}/index.html#view=profile&sido=001`, { waitUntil: "load" });
   await pg.waitForSelector(".eq-item .eq-sbar");
   check(/박탈\s*없음/.test(await pg.locator(".eq-item .eq-sbar-leg").first().innerText()), "점수 구성 막대: 시도(서울)는 박탈 「없음」(0점 아님)");
+  // 순위 표기(2026-10-26 소유자 지적 "17위인데 양호하다고 써 있다"): 「(양호한 순)」 대신 구간 + 기준
+  const pfTxt = await pg.locator(".profile").innerText();
+  check(!/\(양호한 순\)|양호한 순 \d/.test(pfTxt) && /고혈압 진단 경험자의 치료율[\s\S]{0,120}17개 시도 중 17위 · 하위권 \(1위 = 가장 양호\)/.test(pfTxt), "서울 프로파일: 「(양호한 순)」 없음, 고혈압 치료율 「17개 시도 중 17위 · 하위권 (1위 = 가장 양호)」");
   const on = async () => (await pg.locator(".plan-steps button.on").innerText()).replace(/\s+/g, " ");
   check((await pg.locator(".plan-steps li").count()) === 5, "계획 수립 띠 5단계");
   await pg.locator(".plan-steps li").nth(2).locator("button").click(); await pg.waitForTimeout(2200);
