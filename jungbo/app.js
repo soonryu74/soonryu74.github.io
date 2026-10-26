@@ -93,13 +93,19 @@
     neo: { name: '새번역', text: '하늘에 계신 우리 아버지,\n아버지의 이름을 거룩하게 하시며\n아버지의 나라가 오게 하시며,\n아버지의 뜻이 하늘에서와 같이\n땅에서도 이루어지게 하소서.\n오늘 우리에게 일용할 양식을 주시고,\n우리가 우리에게 잘못한 사람을 용서하여 준 것같이\n우리 죄를 용서하여 주시고,\n우리를 시험에 빠지지 않게 하시고\n악에서 구하소서.\n나라와 권능과 영광이\n영원히 아버지의 것입니다.\n아멘.', ref: '새번역 주기도문 (2004)' }
   };
   var LS_LP = 'jungbo-lp';
-  function lordsPrayerSheet() {
+  var lpFontReady = false;
+  async function lordsPrayerSheet() {
+    // 교보손글씨(7MB)는 처음 한 번만 내려받는다 — 오래 걸리면 안내
+    if (!lpFontReady && document.fonts && document.fonts.load) {
+      var slow = setTimeout(function () { toast('붓글씨 글꼴을 불러오는 중이에요 (처음 한 번)…'); }, 1200);
+      try { await document.fonts.load("31px 'Kyobo Handwriting 2019'"); lpFontReady = true; } catch (e) {}
+      clearTimeout(slow);
+    }
     var ver = 'old'; try { ver = localStorage.getItem(LS_LP) === 'neo' ? 'neo' : 'old'; } catch (e) {}
     var bg = document.createElement('div'); bg.className = 'lp-bg';
     function render() {
       var L = LORDS[ver];
-      bg.innerHTML = '<div class="lp" role="dialog" aria-modal="true" aria-label="주기도문"><div class="lp-scroll"><div class="lp-text"><span class="lp-title">주기도문</span>' + esc(L.text) + '<span class="lp-ref">' + esc(L.ref) + '</span></div></div>' +
-        '<div class="lp-seal">아멘</div>' +
+      bg.innerHTML = '<div class="lp" role="dialog" aria-modal="true" aria-label="주기도문"><div class="lp-scroll"><div class="lp-text"><span class="lp-title">주기도문</span>' + esc(L.text) + '<span class="lp-ref">' + esc(L.ref) + '</span><span class="lp-seal" aria-hidden="true">아멘</span></div></div>' +
         '<div class="lp-foot"><span class="ver">오른쪽부터 아래로 읽으세요</span><button type="button" class="small" data-ver>' + (ver === 'old' ? '새번역으로' : '전통으로') + '</button><button type="button" class="primary" data-amen>아멘 🙏</button><button type="button" class="ghost" data-c>닫기</button></div></div>';
       var sc = $('.lp-scroll', bg); sc.scrollLeft = sc.scrollWidth;   // 오른쪽 끝(첫 줄)부터
     }
