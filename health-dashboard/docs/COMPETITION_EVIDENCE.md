@@ -3,7 +3,7 @@
 Generated automatically on 2026-10-26 from the data files and test records in this repository (`node scripts/build_competition_evidence.mjs`, run by `scripts/build_dashboard.py`). **Use these numbers in applications; do not retype them from memory.** If a number here differs from any other document, this file wins until the data change.
 
 ## 1. Build
-- Source repository commit at generation: `4cc0d93` (the site footer shows the build of the deployed page).
+- Source repository commit at generation: `78c6f11` (the site footer shows the build of the deployed page).
 - Data validation date: 2026-10-26 (`docs/DATA_VALIDATION.md`).
 
 ## 2–4. Korea deployment — indicators, geography, years
@@ -33,13 +33,13 @@ Do not combine levels (wrong: "171 indicators across 258 areas").
 | Area deprivation index (derived in this project) | 1 | 2015–2020 |
 
 ## 6. Tests
-All passed — 25 unit tests; 7 browser test suites with 410 checks (last run 2026-10-17 00:33 KST, commit 54c6d3f).
+All passed — 26 unit tests; 7 browser test suites with 411 checks (last run 2026-10-26 17:00 KST, commit 78c6f11).
 
 | Suite | Passed | Failed |
 |---|---|---|
-| Unit tests (priority engine, data, reports) | 25 | 0 |
+| Unit tests (priority engine, data, reports) | 26 | 0 |
 | Korea app — routes, Health Equity Priority, mobile, dark mode | 53 | 0 |
-| Judge flow at 390/430/768/1440 px, accessibility, links | 128 | 0 |
+| Judge flow at 390/430/768/1440 px, accessibility, links | 129 | 0 |
 | Browser back/forward, header, feedback export | 32 | 0 |
 | Community health report | 28 | 0 |
 | Indicator report (national) | 44 | 0 |
