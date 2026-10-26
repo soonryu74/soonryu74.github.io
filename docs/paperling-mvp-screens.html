@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebPage","headline":"Paperling MVP 화면 설계 v0.1","url":"/docs/paperling-mvp-screens.html"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=2640145b2b75f743ace8e0d30cc487b6c0cc68a7">
+    <link rel="stylesheet" href="/assets/css/style.css?v=da407d2c5296568675ee766b087339c3d02279f3">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -45,7 +45,7 @@
 디자인 시안(4화면 × 4테마 × 4폰트, 라이브 전환): https://soonryu74.github.io/paperling/design.html</p>
 </blockquote>
 
-<p>MVP 범위: 사진 → AI 정리 → 서랍 분류 → 노션 저장 + 구글 캘린더 일정 생성. 웹앱(PWA). 디자인 2종.
+<p>MVP 범위: 사진·음성 → AI 정리 → 서랍 분류 → 노션 저장 + 구글 캘린더 일정 생성. 웹앱(PWA). 디자인 2종.
 화면은 <strong>3개 + 설정 1개</strong>로 끝낸다. 화면이 늘어나면 범위가 늘어난 것이다.</p>
 
 <h2 id="1-화면-목록">1. 화면 목록</h2>
@@ -62,8 +62,8 @@
   <tbody>
     <tr>
       <td>S1</td>
-      <td>찍기</td>
-      <td>사진을 가장 빨리 올린다</td>
+      <td>찍기·말하기</td>
+      <td>사진 또는 음성을 가장 빨리 올린다</td>
       <td>앱 홈, 공유 시트</td>
     </tr>
     <tr>
@@ -87,10 +87,11 @@
   </tbody>
 </table>
 
-<h2 id="2-s1-찍기">2. S1 찍기</h2>
+<h2 id="2-s1-찍기말하기">2. S1 찍기·말하기</h2>
 
 <ul>
-  <li>큰 버튼 2개: <strong>카메라로 찍기</strong> / <strong>갤러리에서 고르기</strong>. 그 아래 “최근 3장” 썸네일.</li>
+  <li>큰 버튼 2개: <strong>카메라로 찍기</strong> / <strong>갤러리에서 고르기</strong>. 그 아래 둥근 <strong>녹음</strong> 버튼(길게 누르면 녹음, 떼면 끝. 최대 10분). 그 아래 “최근 3개” 썸네일(음성은 파형 아이콘).</li>
+  <li>음성 파일 업로드(m4a·mp3·wav)와 카톡 음성 메시지 공유도 같은 흐름으로 들어온다.</li>
   <li>여러 장 선택 가능(최대 10장). 한 묶음은 한 노트로 합칠지 따로 둘지 S2에서 결정.</li>
   <li>업로드 직후 자동 처리: 기울기 보정, 여백 자르기, 밝기 보정. 실패해도 원본으로 진행.</li>
   <li>처리 중 화면: 사진 위에 “읽는 중 → 정리하는 중 → 서랍 고르는 중” 3단계 문구. 보통 5~10초.</li>
@@ -119,7 +120,12 @@
     <tr>
       <td>본문</td>
       <td>텍스트화된 글. 문단·목록 유지</td>
-      <td>단어 탭 → 원본의 해당 부분 하이라이트 + 수정 입력</td>
+      <td>단어 탭 → 원본 사진의 해당 부분 하이라이트 + 수정 입력. 음성이면 그 구간 재생</td>
+    </tr>
+    <tr>
+      <td>원본(음성)</td>
+      <td>왼쪽에 사진 대신 파형 + 재생 버튼</td>
+      <td>구간 탭 재생, 1.5배속</td>
     </tr>
     <tr>
       <td>말투</td>
@@ -204,6 +210,10 @@
       <td>id, note_id, storage_path, page_no, width, height, keep_original bool</td>
     </tr>
     <tr>
+      <td>note_audio</td>
+      <td>id, note_id, storage_path, duration_sec, segments jsonb(시작·끝·텍스트), keep_original bool</td>
+    </tr>
+    <tr>
       <td>entities</td>
       <td>id, note_id, kind(event/todo/person/place), text, start_at, end_at, done bool</td>
     </tr>
@@ -226,7 +236,7 @@
 
 <h2 id="7-ai-처리-계약">7. AI 처리 계약</h2>
 
-<p>입력: 사진 1~10장 + 사용자 사전 + 오늘 날짜 + 시간대.
+<p>입력: 사진 1~10장 또는 음성 1개(≤10분) + 사용자 사전 + 오늘 날짜 + 시간대.
 출력(JSON 고정):</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
@@ -244,10 +254,10 @@
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<p>규칙: 원문을 바꾸지 않는다(raw_text). 날짜가 없으면 사진 촬영일. 확신 0.7 미만 일정은 캘린더 기본 OFF.
+<p>규칙: 원문을 바꾸지 않는다(raw_text). 음성은 segments에 구간별 시작·끝 초를 함께 낸다. 날짜가 없으면 사진 촬영일. 확신 0.7 미만 일정은 캘린더 기본 OFF.
 모델은 멀티모달 1회 호출. 한글 손글씨 정확도는 2개 모델로 50장 비교 후 선택.</p>
 
-<h2 id="8-6주-일정">8. 6주 일정</h2>
+<h2 id="8-8주-일정">8. 8주 일정</h2>
 
 <table>
   <thead>
@@ -285,7 +295,17 @@
     </tr>
     <tr>
       <td>6</td>
-      <td>S4 설정, 디자인 2종·폰트 3종, PWA 설치·공유 타깃, 베타 초대</td>
+      <td>녹음 UI, 음성 업로드·공유 타깃, 음성→텍스트 엣지 함수, segments 재생</td>
+      <td>3분 음성이 정리돼 저장된다</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>S4 설정, 디자인 2종·폰트 3종, PWA 설치, 무료 한도(장+분 합산)</td>
+      <td>설정 1분 안에 완료</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>사진·음성 각 50건 정확도 측정, 버그 수정, 베타 초대</td>
       <td>대기자 30명 초대</td>
     </tr>
   </tbody>

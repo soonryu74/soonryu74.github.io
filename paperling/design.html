@@ -42,6 +42,10 @@ h1{font-family:var(--display);font-size:1.6rem;margin:0}
 .big{border-radius:14px;padding:1.05rem;text-align:center;font-weight:600;background:var(--t-card);border:1px solid var(--t-line);color:var(--t-fg);font-size:.95rem}
 .big.pri{background:var(--t-acc);color:var(--t-on-acc);border-color:var(--t-acc)}
 .q{font-size:.72rem;color:var(--t-mute)}
+.rec{display:flex;align-items:center;justify-content:center;gap:.5rem;border-radius:999px;padding:.6rem;border:1.5px solid var(--t-acc);color:var(--t-acc);font-weight:600;font-size:.88rem;background:var(--t-card)}
+.rec small{font-weight:400;color:var(--t-mute)}
+.rec .dot{width:12px;height:12px;border-radius:50%;background:#c2452f;box-shadow:0 0 0 3px rgba(194,69,47,.2)}
+.th.wave{background:var(--t-card) repeating-linear-gradient(90deg,var(--t-acc) 0 2px,transparent 2px 6px) center/70% 40% no-repeat}
 .row{display:flex;gap:.45rem;flex-wrap:wrap}
 .th{width:54px;height:54px;border-radius:10px;background:repeating-linear-gradient(0deg,#ece6d6 0 6px,#d6cdb8 6px 7px);border:1px solid var(--t-line)}
 .photo{background:repeating-linear-gradient(0deg,#f6f1e3 0 13px,#dcd3bd 13px 14px);border:1px solid #d8cfbc;border-radius:10px;padding:.55rem .7rem;font-family:var(--t-hand);font-size:1.15rem;line-height:1.25;color:#3a3630}
@@ -133,14 +137,15 @@ h1{font-family:var(--display);font-size:1.6rem;margin:0}
 </div>
 
 <div class="wall" id="wall">
-  <div class="slot"><h3><b>S1</b>찍기</h3>
+  <div class="slot"><h3><b>S1</b>찍기 · 말하기</h3>
   <div class="phone" data-theme="white"><div class="scr">
     <div class="bar"><b>Paperling</b><span>이번 달 13장 남음 · ⚙</span></div>
     <div class="bd">
       <div class="big pri">📷 카메라로 찍기</div>
       <div class="big">갤러리에서 고르기</div>
-      <div class="q">최근 올린 사진</div>
-      <div class="row"><div class="th"></div><div class="th"></div><div class="th"></div><div class="th"></div></div>
+      <div class="rec"><span class="dot"></span>길게 눌러 말하기 <small>· 녹음 파일 올리기</small></div>
+      <div class="q">최근 올린 것</div>
+      <div class="row"><div class="th"></div><div class="th wave"></div><div class="th"></div><div class="th"></div></div>
       <div class="card"><h4>처리 중</h4><div class="seg"><span class="on">읽는 중</span><span>정리</span><span>서랍</span></div><div class="q" style="margin-top:.4rem">보통 5~10초. 기울기·여백은 자동으로 맞춥니다.</div></div>
       <div class="card"><div class="hand">오늘도 한 장 찍어볼까요?</div><div class="q">폰 공유 메뉴에서 Paperling을 고르면 바로 처리돼요.</div></div>
     </div>
