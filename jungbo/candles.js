@@ -395,7 +395,14 @@
     if (dark && document.visibilityState === 'visible') start(); else stop();
     if (reduced && dark) frame(1000);
   }
-  var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); if (reduced) frame(1000); }, 150); });
+  var rt; window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      var dw = window.innerWidth !== W, dh = Math.abs(window.innerHeight - H) > H * .3;
+      if (!dw && !dh) return;   // 주소창 접힘 정도의 변화는 무시 — 초가 제자리에 있게
+      layout(); if (reduced) frame(1000);
+    }, 150);
+  });
   document.addEventListener('visibilitychange', sync);
   new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-sky', 'data-scene'] });
   layout(); sync();
