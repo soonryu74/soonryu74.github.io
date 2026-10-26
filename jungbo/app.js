@@ -344,7 +344,7 @@
   function renderRoomTabs() {
     var box = $('#roomtabs'); if (!box) return;
     var mine = myRooms();
-    box.hidden = !rooms.length || tab === 'group';
+    box.hidden = !rooms.length;
     if (box.hidden) return;
     var on = function (sc, id) { return roomFilter.scope === sc && (sc !== 'room' || roomFilter.room === id) ? ' on' : ''; };
     box.innerHTML = '<button type="button" class="' + on('mine') + '" data-scope="mine">' + (me.role === 'leader' ? '전체' : '내 방 모두') + '</button>' +
@@ -374,12 +374,13 @@
     var urgent = feed.filter(function (p) { return p.kind === 'urgent' && p.status === 'open'; }).length;
     var open = feed.filter(function (p) { return p.status === 'open'; }).length;
     var lights = feed.reduce(function (s, p) { return s + (+p.prayed_total || 0); }, 0);
-    $('#chips').innerHTML =
-      (urgent ? '<span class="chip urgent">긴급 <b>' + urgent + '</b></span>' : '') +
+    var html =
+      '<span class="chip' + (urgent ? ' urgent' : ' dim') + '">긴급 <b>' + urgent + '</b></span>' +
       '<span class="chip">기도 중 <b>' + open + '</b></span>' +
       '<span class="chip lights">켜진 불빛 <b>' + lights + '</b></span>' +
       '<span class="chip">함께 <b>' + group.member_count + '</b>명</span>' +
-      '<button type="button" class="chip" id="chip-lord" style="cursor:pointer">✝ 주기도문</button>';
+      '<span class="chips-break"></span><button type="button" class="chip" id="chip-lord" style="cursor:pointer">✝ 주기도문</button>';
+    if ($('#chips').innerHTML !== html) $('#chips').innerHTML = html;   // 같으면 다시 그리지 않는다 (깜빡임·밀림 방지)
     $('#n-open').textContent = open ? open : ''; $('#n-urgent').textContent = urgent ? urgent : '';
   }
 
@@ -985,7 +986,7 @@
     var j = sub.toJSON();
     await rpc('pray_push_save', { p_token: acct.token, p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_ua: navigator.userAgent.slice(0, 200) });
     try { localStorage.setItem(LS_NUDGE, 'done'); } catch (e) {}
-    $('#push-nudge').hidden = true;
+    $('#push-nudge').hidden = true; $('#push-nudge').classList.remove('show');
   }
   async function pushDisable() {
     var reg = await navigator.serviceWorker.getRegistration('./');
@@ -1011,10 +1012,10 @@
       : st === 'ios-home' ? '아이폰은 <b>홈 화면에 추가</b>해야 긴급기도 알림이 와요. 사파리 공유 단추 → 홈 화면에 추가. <button type="button" class="small ghost" data-later>알겠어요</button>'
       : st === 'off' ? '🔔 <b>긴급기도 알림</b>을 켜 두시면 중요한 기도를 놓치지 않아요. <button type="button" class="small primary" data-on>알림 켜기</button> <button type="button" class="small ghost" data-later>나중에</button>'
       : '');
-    el.hidden = !el.innerHTML;
+    el.hidden = !el.innerHTML; el.classList.toggle('show', !!el.innerHTML);
     el.onclick = async function (e) {
       if (e.target.closest('[data-ext]')) return openExternal();
-      if (e.target.closest('[data-later]')) { try { localStorage.setItem(LS_NUDGE, 'done'); } catch (e2) {} el.hidden = true; }
+      if (e.target.closest('[data-later]')) { try { localStorage.setItem(LS_NUDGE, 'done'); } catch (e2) {} el.hidden = true; el.classList.remove('show'); }
       if (e.target.closest('[data-on]')) { try { await pushEnable(); toast('알림을 켰어요 🔔'); await refreshMe(); } catch (err) { toast(err.message); } }
     };
   }
