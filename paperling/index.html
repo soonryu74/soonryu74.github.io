@@ -95,6 +95,7 @@ h2 .lab{font-family:var(--body);font-size:.68rem;font-weight:600;letter-spacing:
   --s-bg:#ffffff;--s-fg:#2a2824;--s-mute:#7a7368;--s-acc:#36655a;--s-line:#e6e0d3;--s-head:var(--display);--s-pattern:none;
   background:var(--s-bg);background-image:var(--s-pattern);color:var(--s-fg)}
 .sample .inner{background:rgba(255,255,255,.72);border-radius:10px;padding:.7rem .8rem}
+.sample.band .inner{margin-top:170px;background:#fff}
 .sample h4{font-family:var(--s-head);font-size:1.1rem;margin:0 0 .4rem;color:var(--s-fg)}
 .sample .date{font-size:.75rem;color:var(--s-mute);letter-spacing:.06em;margin-bottom:.5rem}
 .sample p{font-family:var(--s-hand,var(--hand));font-size:1.35rem;line-height:1.3;margin:0 0 .6rem;color:var(--s-fg)}
@@ -335,10 +336,10 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
     white:{bg:'#ffffff',fg:'#2a2824',mute:'#7a7368',acc:'#36655a',line:'#e6e0d3',head:"'Gowun Batang', serif",pattern:'none'},
     planner:{bg:'#f8f2e2',fg:'#3a2f24',mute:'#8a7a63',acc:'#8a3b2e',line:'#d7cbb0',head:"'Noto Serif KR', serif",pattern:'repeating-linear-gradient(0deg, transparent 0 27px, rgba(138,59,46,.18) 27px 28px)'},
     dark:{bg:'#23211d',fg:'#ebe3d2',mute:'#a89f8f',acc:'#d4b267',line:'#3f3a33',head:"'Noto Serif KR', serif",pattern:'none'},
-    wild:{bg:'#fbfaf4',acc:'#6b7f5e',fg:'#2f3a2c',mute:'#7d8a74',line:'#dfe4d6',head:"'Gowun Batang', serif",rep:'no-repeat',pattern:'url(assets/meadow.webp)',pos:'center bottom 10px',size:'62% auto'},
-    hydrangea:{bg:'#f9fafc',acc:'#5b78b4',fg:'#2f3a2c',mute:'#7d8a74',line:'#dfe4d6',head:"'Gowun Batang', serif",rep:'no-repeat',pattern:'url(assets/hydrangea.webp)',pos:'right 14px bottom 12px',size:'38% auto'},
-    lilac:{bg:'#faf8fb',acc:'#8a6fa6',fg:'#2f3a2c',mute:'#7d8a74',line:'#dfe4d6',head:"'Gowun Batang', serif",rep:'no-repeat',pattern:'url(assets/lilac.webp)',pos:'left 14px bottom 12px',size:'40% auto'},
-    forest:{bg:'#f6f8f3',acc:'#2f5d47',fg:'#2f3a2c',mute:'#7d8a74',line:'#dfe4d6',head:"'Gowun Batang', serif",rep:'no-repeat',pattern:'url(assets/greens.webp)',pos:'left 14px bottom 12px',size:'40% auto'},
+    wild:{bg:'#fbfaf4',acc:'#6b7f5e',fg:'#2f3a2c',mute:'#7d8a74',line:'#dfe4d6',head:"'Gowun Batang', serif",rep:'no-repeat',pattern:'url(assets/meadow.webp)',pos:'center top 14px',size:'64% auto',band:1},
+    hydrangea:{bg:'#f9fafc',acc:'#5b78b4',fg:'#2f3a2c',mute:'#7d8a74',line:'#dfe4d6',head:"'Gowun Batang', serif",rep:'no-repeat',pattern:'url(assets/hydrangea.webp)',pos:'center top 12px',size:'26% auto',band:1},
+    lilac:{bg:'#faf8fb',acc:'#8a6fa6',fg:'#2f3a2c',mute:'#7d8a74',line:'#dfe4d6',head:"'Gowun Batang', serif",rep:'no-repeat',pattern:'url(assets/lilac.webp)',pos:'center top 12px',size:'38% auto',band:1},
+    forest:{bg:'#f6f8f3',acc:'#2f5d47',fg:'#2f3a2c',mute:'#7d8a74',line:'#dfe4d6',head:"'Gowun Batang', serif",rep:'no-repeat',pattern:'url(assets/greens.webp)',pos:'center top 12px',size:'34% auto',band:1},
     blueprint:{bg:'#1f3a5f',fg:'#e8eef7',mute:'#9db3cf',acc:'#f2c14e',line:'rgba(255,255,255,.22)',head:"'IBM Plex Sans KR', sans-serif",pattern:'repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px 20px), repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 1px, transparent 1px 20px)'},
     ledger:{bg:'#f4f1ea',fg:'#1f2a33',mute:'#6f6a60',acc:'#8b5e34',line:'#d3cbbb',head:"'Noto Serif KR', serif",pattern:'linear-gradient(90deg, transparent 0 26px, rgba(139,94,52,.28) 26px 27px, transparent 27px 100%), repeating-linear-gradient(0deg, transparent 0 23px, rgba(31,42,51,.08) 23px 24px)'}
   };
@@ -347,7 +348,7 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
     document.querySelectorAll('.sw').forEach(function(x){x.setAttribute('aria-pressed','false');}); b.setAttribute('aria-pressed','true');
     var t=themes[b.dataset.theme]; sample.style.setProperty('--s-bg',t.bg); sample.style.setProperty('--s-fg',t.fg); sample.style.setProperty('--s-mute',t.mute);
     sample.style.setProperty('--s-acc',t.acc); sample.style.setProperty('--s-line',t.line); sample.style.setProperty('--s-head',t.head); sample.style.setProperty('--s-pattern',t.pattern);
-    sample.style.backgroundRepeat=t.rep||'repeat'; sample.style.backgroundPosition=t.pos||'0 0'; sample.style.backgroundSize=t.size||'auto';
+    sample.classList.toggle('band',!!t.band); sample.style.backgroundRepeat=t.rep||'repeat'; sample.style.backgroundPosition=t.pos||'0 0'; sample.style.backgroundSize=t.size||'auto';
   });});
   document.querySelectorAll('.fonts button').forEach(function(b){ b.addEventListener('click',function(){
     document.querySelectorAll('.fonts button').forEach(function(x){x.setAttribute('aria-pressed','false');}); b.setAttribute('aria-pressed','true');

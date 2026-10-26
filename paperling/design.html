@@ -86,10 +86,14 @@ h1{font-family:var(--display);font-size:1.6rem;margin:0}
 .phone[data-theme="dark"] .scr{--t-bg:#23211d;--t-card:#2c2925;--t-fg:#ebe3d2;--t-mute:#a89f8f;--t-line:#3f3a33;--t-acc:#d4b267;--t-acc-soft:#3a3324;--t-on-acc:#1b1915;
   --t-head:"Noto Serif KR",serif;--t-body:"IBM Plex Sans KR",sans-serif;--t-pattern:none}
 .phone[data-theme="dark"] .photo{filter:brightness(.92)}
-.phone[data-theme="wild"] .scr{--t-bg:#fbfaf4;--t-card:rgba(255,255,255,.78);--t-acc:#6b7f5e;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/meadow.webp);background-position:center bottom 44px;background-size:72% auto}
-.phone[data-theme="forest"] .scr{--t-bg:#f6f8f3;--t-card:rgba(255,255,255,.78);--t-acc:#2f5d47;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/greens.webp);background-position:left 10px bottom 48px;background-size:46% auto}
-.phone[data-theme="hydrangea"] .scr{--t-bg:#f9fafc;--t-card:rgba(255,255,255,.78);--t-acc:#5b78b4;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/hydrangea.webp);background-position:right 10px top 8px;background-size:40% auto}
-.phone[data-theme="lilac"] .scr{--t-bg:#faf8fb;--t-card:rgba(255,255,255,.78);--t-acc:#8a6fa6;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/lilac.webp);background-position:left 8px top 6px;background-size:44% auto}
+/* botanical: painting lives in its own band under the top bar; content starts below it */
+.phone[data-theme="wild"] .bd{padding-top:120px}
+.phone[data-theme="forest"] .bd,.phone[data-theme="hydrangea"] .bd,.phone[data-theme="lilac"] .bd{padding-top:140px}
+.phone[data-theme="wild"] .scr,.phone[data-theme="forest"] .scr,.phone[data-theme="hydrangea"] .scr,.phone[data-theme="lilac"] .scr{--t-card:#ffffff}
+.phone[data-theme="wild"] .scr{--t-bg:#fbfaf4;--t-card:rgba(255,255,255,.78);--t-acc:#6b7f5e;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/meadow.webp);background-position:center top 48px;background-size:78% auto}
+.phone[data-theme="forest"] .scr{--t-bg:#f6f8f3;--t-card:rgba(255,255,255,.78);--t-acc:#2f5d47;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/greens.webp);background-position:center top 46px;background-size:40% auto}
+.phone[data-theme="hydrangea"] .scr{--t-bg:#f9fafc;--t-card:rgba(255,255,255,.78);--t-acc:#5b78b4;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/hydrangea.webp);background-position:center top 44px;background-size:34% auto}
+.phone[data-theme="lilac"] .scr{--t-bg:#faf8fb;--t-card:rgba(255,255,255,.78);--t-acc:#8a6fa6;--t-fg:#2f3a2c;--t-mute:#7d8a74;--t-line:#dfe4d6;--t-acc-soft:#e8eee2;--t-on-acc:#fff;--t-head:"Gowun Batang",serif;--t-body:"IBM Plex Sans KR",sans-serif;background-repeat:no-repeat;--t-pattern:url(assets/lilac.webp);background-position:center top 44px;background-size:44% auto}
 .phone[data-theme="blueprint"] .scr{--t-bg:#1f3a5f;--t-card:rgba(255,255,255,.07);--t-fg:#e8eef7;--t-mute:#9db3cf;--t-line:rgba(255,255,255,.22);--t-acc:#f2c14e;--t-acc-soft:rgba(242,193,78,.18);--t-on-acc:#1b2b45;
   --t-head:"IBM Plex Sans KR",sans-serif;--t-body:"IBM Plex Sans KR",sans-serif;
   --t-pattern:repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px 20px), repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 1px, transparent 1px 20px)}
@@ -198,7 +202,7 @@ h1{font-family:var(--display);font-size:1.6rem;margin:0}
   <div><b>화이트 노트</b><p>일반 라인 기본. 흰 바탕, 잉크 초록 포인트, 고운바탕 제목. 매일 봐도 안 질리는 쪽.</p></div>
   <div><b>클래식 플래너</b><p>프랭클린 플래너형. 크림 종이, 괘선, 버건디 포인트, 세리프 제목. 50대 신뢰 톤.</p></div>
     <div><b>다크 저널</b><p>밤에 쓰는 분. 숯색 바탕, 황동 포인트, 세리프 제목. 사진은 살짝 어둡게.</p></div>
-  <div><b>들꽃 정원</b><p>보태니컬 라인. 화면 아래에 수채화 들꽃 띠(데이지·민들레·아마꽃). 카드는 반투명 흰색이라 그림이 비친다.</p></div>
+  <div><b>들꽃 정원</b><p>보태니컬 라인. 상단 띠에 수채화 들꽃(데이지·민들레·아마꽃)이 통째로 보이고, 카드는 그 아래부터 시작한다. 그림과 글이 겹치지 않는다.</p></div>
   <div><b>수국</b><p>보태니컬 라인. 오른쪽 위에 파란 수국 한 송이. 포인트 색은 수국 파랑.</p></div>
   <div><b>라일락</b><p>보태니컬 라인. 왼쪽 위에서 늘어진 라일락 가지. 포인트 색은 연보라.</p></div>
   <div><b>초록 숲</b><p>보태니컬 라인. 왼쪽 아래 유칼립투스·고사리 잎 다발. 꽃 없이 초록만, 차분하게 오래 보는 쪽.</p></div>
