@@ -116,6 +116,9 @@ class Promo:
                    for u in [i / 120 * 2 * math.pi for i in range(121)]]
             d.line(pts, fill=self.on_dark + (int(255 * k),), width=16, joint="curve")
         f = F("Black", 150)
+        wmax = max(f.getlength(ln) for ln in cv["lines"])
+        if wmax > W - 760 - 90:                                    # 긴 표지 글자는 줄여서 화면 안에
+            f = F("Black", int(150 * (W - 760 - 90) / wmax))
         for i, ln in enumerate(cv["lines"]):
             ki = ease((t - 0.25 - i * 0.25) / 0.6)
             d.text((760 + int((1 - ki) * 40), 390 + i * 180), ln, font=f, fill=self.on_dark + (int(255 * ki),))
@@ -287,7 +290,10 @@ class Promo:
         y2 = 500 + int((1 - k2) * 30)
         d.rounded_rectangle((90, y2 + 6, 90 + tw + 40, y2 + 124), 14, fill=self.ink + (int(255 * k2),))
         d.text((110, y2), sc["l2"], font=f1, fill=(255, 255, 255, int(255 * k2)))
-        d.text((100, 680), sc.get("sub", ""), font=F("SemiBold", 38), fill=self.sub + (int(255 * k3),))
+        fs = F("SemiBold", 38); sw = fs.getlength(sc.get("sub", ""))
+        if sw > 750:                                               # 긴 설명은 줄여서 카드와 겹치지 않게
+            fs = F("SemiBold", max(26, int(38 * 750 / sw)))
+        d.text((100, 680), sc.get("sub", ""), font=fs, fill=self.sub + (int(255 * k3),))
         d.text((96, 1028), self.sp.get("footer", ""), font=F("SemiBold", 28), fill=self.sub + (255,))
         # 오른쪽 카드
         kc = ease(t / 0.5)
