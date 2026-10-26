@@ -29,7 +29,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="목장나눔터">
-<link rel="stylesheet" href="style.css?v=202610251500">
+<link rel="stylesheet" href="style.css?v=202610261000">
 <style>
   .hero{text-align:center; padding:46px 16px 6px; animation:rise .6s ease both}
   .hero .logo{height:96px; width:96px; object-fit:contain; display:block; margin:0 auto;
@@ -107,6 +107,7 @@ try { (function (m, q) { var s = q.get('c');
     <p class="foot">
       <a href="#" id="to-recover">비밀번호를 잊으셨나요?</a>
       <span id="setup-link"><br><a href="#" id="to-setup">우리 교회도 쓰고 싶어요 — 새 교회 등록</a></span>
+      <span id="forget-link" hidden><br><a href="#" id="to-forget">다른 교회로 들어가기 (처음 화면으로)</a></span>
     </p>
   </div>
 
@@ -230,8 +231,8 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610251500"></script>
-<script src="common.js?v=202610251500"></script>
+<script src="lang-en.js?v=202610261000"></script>
+<script src="common.js?v=202610261000"></script>
 <script>
 (function () {
   var C = window.CHURCH, $ = C.$;
@@ -282,12 +283,18 @@ try { (function (m, q) { var s = q.get('c');
     if (!c) { if (!$('#hero-logo').getAttribute('src')) $('#hero-logo').src = 'assets/icon-192.png'; return; }
     document.documentElement.classList.add('branded');
     $('#setup-link').style.display = 'none';
+    $('#forget-link').hidden = false;   // 이 기기가 기억한 교회에서 벗어나 공용 첫 화면으로
     C.applyLook(c);
     $('#hero-church').textContent = c.name;
     if (c.logo_url) { $('#hero-logo').src = c.logo_url; $('#hero-logo').alt = C.t('{0} 로고', c.name); }
     document.title = C.t('{0} 목장 나눔터 — 들어가기', c.name);
   }).catch(function () { if (!$('#hero-logo').getAttribute('src')) $('#hero-logo').src = 'assets/icon-192.png'; });
 
+  $('#to-forget').addEventListener('click', function (e) {
+    e.preventDefault();
+    try { localStorage.removeItem('gajeong-church'); } catch (err) {}
+    location.href = 'index.html';
+  });
   C.fillTimezones($('#stz'));
   $('#to-setup').addEventListener('click', function (e) { e.preventDefault(); showSetup(); });
   $('#to-login').addEventListener('click', function () {

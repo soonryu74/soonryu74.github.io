@@ -825,5 +825,6 @@ window.I18N.en = {
   "매주 토요일 밤 9시에 이번 주 기도제목이 모였다고 알려 드립니다.": "We'll let you know every Saturday at 9 PM when this week's prayer requests are gathered.",
   "토요일 밤 기도제목 알림을 껐습니다.": "Saturday prayer alert turned off.",
   "우리 교회": "Our church",
-  "토요일 밤 9시에 '이번 주 기도제목이 모였습니다' 알림 받기 (누르면 바로 기도제목 모아보기·인쇄)": "Get a Saturday 9 PM alert when this week's prayer requests are in (tap to view and print)"
+  "토요일 밤 9시에 '이번 주 기도제목이 모였습니다' 알림 받기 (누르면 바로 기도제목 모아보기·인쇄)": "Get a Saturday 9 PM alert when this week's prayer requests are in (tap to view and print)",
+  "다른 교회로 들어가기 (처음 화면으로)": "Use a different church (start page)"
 };
