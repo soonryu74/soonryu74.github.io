@@ -321,7 +321,9 @@ button:disabled{opacity:.45; cursor:not-allowed}
 .scene-tile .pv.day{background:linear-gradient(180deg,#fbe7d6,#f6f1e7)}
 .scene-tile b{display:block; padding:8px 10px 9px; font-size:14.5px; color:var(--ink)}
 
-/* ── 주기도문방: 한지 위 붓글씨, 세로쓰기(위→아래), 오른쪽→왼쪽 ─────── */
+/* ── 주기도문방: 한지 위 교보손글씨, 세로쓰기(위→아래), 오른쪽→왼쪽 ─────── */
+/* 교보 손글씨 2019 — 교보문고 무료 배포(원본 파일 그대로, 주기도문방을 열 때만 내려받는다) */
+@font-face{font-family:'Kyobo Handwriting 2019'; src:url('assets/fonts/KyoboHandwriting2019.ttf') format('truetype'); font-display:swap}
 .lp-bg{position:fixed; inset:0; z-index:65; background:rgba(5,9,10,.78); display:flex; align-items:center; justify-content:center; padding:14px; opacity:0; transition:opacity .35s}
 .lp-bg.open{opacity:1}
 .lp{position:relative; width:min(96vw,760px); height:min(92vh,92dvh); border-radius:8px; overflow:hidden; display:flex; flex-direction:column;
@@ -330,8 +332,8 @@ button:disabled{opacity:.45; cursor:not-allowed}
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .25 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E")}
 .lp-scroll{flex:1; overflow-x:auto; overflow-y:hidden; padding:26px 22px 10px; direction:rtl}
 .lp-text{direction:ltr; writing-mode:vertical-rl; text-orientation:upright; height:100%; display:inline-block;
-  font-family:'Nanum Brush Script','Gowun Batang',serif; font-size:30px; line-height:1.95; letter-spacing:.02em; color:#24201a; white-space:pre-wrap; word-break:keep-all}
-.lp-text .lp-title{font-size:44px; line-height:1.4; margin-left:18px; color:#1a1612}
+  font-family:'Kyobo Handwriting 2019','Nanum Brush Script','Gowun Batang',serif; font-size:31px; line-height:1.9; letter-spacing:.03em; color:#24201a; white-space:pre-wrap; word-break:keep-all}
+.lp-text .lp-title{font-size:46px; line-height:1.4; margin-left:18px; color:#1a1612}
 .lp-text .lp-ref{font-size:17px; color:#6a5c44; line-height:2.2}
 .lp-seal{position:absolute; left:22px; bottom:calc(92px + env(safe-area-inset-bottom)); width:46px; height:46px; border-radius:4px; background:#b8302a; color:#fff3e3; font-family:'Gowun Batang',serif; font-weight:700; font-size:18px;
   display:flex; align-items:center; justify-content:center; writing-mode:vertical-rl; text-orientation:upright; letter-spacing:.1em; box-shadow:0 1px 0 rgba(0,0,0,.2) inset; opacity:.92; transform:rotate(-3deg)}
