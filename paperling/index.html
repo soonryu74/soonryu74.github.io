@@ -175,8 +175,9 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
 
 <section id="how">
   <h2><span class="lab">01</span>딱 세 단계, 탭 세 번</h2>
+  <p>손으로 쓴 것도, 말로 한 것도 같은 서랍장으로 들어갑니다. 운전 중 떠오른 생각은 말로, 다이어리는 사진으로.</p>
   <div class="flow">
-    <div class="step"><i>1</i><b>찍기</b><span>다이어리 페이지, 메모지, 포스트잇. 여러 장도 한 번에. 폰 공유 메뉴에서 바로 보낼 수도 있어요.</span></div>
+    <div class="step"><i>1</i><b>찍기 · 말하기</b><span>다이어리 페이지, 메모지, 포스트잇을 찍거나, 녹음 버튼을 누르고 말하세요. 폰 녹음 파일과 카톡 음성 메시지도 공유로 보낼 수 있어요.</span></div>
     <div class="step"><i>2</i><b>확인</b><span>AI가 읽은 글과 정리 결과를 보여드립니다. 틀린 글자는 한 번 탭으로 고치고, 원본 사진은 항상 옆에 둡니다.</span></div>
     <div class="step"><i>3</i><b>저장</b><span>서랍에 자동 분류되고, 노션과 구글 캘린더에 동시에 들어갑니다. 내 글은 "그대로"가 기본값이에요.</span></div>
   </div>
@@ -280,6 +281,14 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
       </div>
     </div>
     <div>
+      <label>음성 메모도 쓰고 싶으세요? <small>(녹음하면 글로 정리)</small></label>
+      <div class="radios">
+        <label><input type="radio" name="voice_interest" value="자주 쓸 것">자주 쓸 것 같아요 (운전·산책 중 생각 정리)</label>
+        <label><input type="radio" name="voice_interest" value="가끔">가끔 쓸 것 같아요</label>
+        <label><input type="radio" name="voice_interest" value="손글씨만">손글씨만 있으면 돼요</label>
+      </div>
+    </div>
+    <div>
       <label>오래된 다이어리·육아 일기 복원에 관심 있으세요?</label>
       <div class="radios">
         <label><input type="radio" name="restore_interest" value="꼭 필요">꼭 필요해요. 정리하고 싶은 기록이 있어요</label>
@@ -314,6 +323,8 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
 <section class="faq">
   <h2><span class="lab">06</span>자주 묻는 질문</h2>
   <dl>
+    <dt>음성도 되나요?</dt>
+    <dd>네. 녹음 버튼을 누르고 말하거나 녹음 파일을 올리면 글로 받아적어 똑같이 정리합니다. 원본 음성은 글 옆에 붙어 있고, 못 알아들은 구간은 못 알아들었다고 표시합니다. 다른 사람 목소리가 들어간 녹음은 동의를 받은 것만 올려 주세요.</dd>
     <dt>제 글씨가 많이 흘려 쓴 글씨인데 읽을 수 있나요?</dt>
     <dd>최신 AI는 꽤 잘 읽지만 완벽하지는 않습니다. 그래서 "확인" 단계를 꼭 거치고, 원본 사진을 항상 함께 보관합니다. 틀린 글자를 고쳐 주시면 점점 나아집니다.</dd>
     <dt>사진은 어디에 저장되나요?</dt>
@@ -371,7 +382,7 @@ footer{border-top:1px solid var(--line);padding-top:1.2rem;margin-top:2rem;font-
     var pay=form.querySelector('input[name=pay_intent]:checked');
     var row={ email:email, diary_type:form.diary_type.value||null, tools:tools.length?tools:null,
       pay_intent:pay?pay.value:null, mbti:(form.mbti.value||'').trim().toUpperCase()||null,
-      note:form.note.value.trim()||null, restore_interest:(form.querySelector('input[name=restore_interest]:checked')||{}).value||null, source:location.search.slice(1)||document.referrer||null, ua:navigator.userAgent.slice(0,200) };
+      note:form.note.value.trim()||null, restore_interest:(form.querySelector('input[name=restore_interest]:checked')||{}).value||null, voice_interest:(form.querySelector('input[name=voice_interest]:checked')||{}).value||null, source:location.search.slice(1)||document.referrer||null, ua:navigator.userAgent.slice(0,200) };
     var old=btn.textContent; btn.disabled=true; btn.textContent='접수 중…';
     try{
       if(!sb) throw new Error('no-client');
