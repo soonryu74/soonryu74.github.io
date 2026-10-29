@@ -327,7 +327,10 @@ class Promo:
         fl = F("Bold", 34); lw = fl.getlength(mo["label"])
         d.rounded_rectangle(((W - lw) / 2 - 28, 300, (W + lw) / 2 + 28, 360), 30, fill=self.ink)
         d.text(((W - lw) / 2, 308), mo["label"], font=fl, fill=(255, 255, 255))
-        f = F("Black", 130)
+        fz = 130                                                  # 긴 모토는 화면 안에 들어오게 줄인다
+        while fz > 70 and max(F("Black", fz).getlength(mo["l1"]), F("Black", fz).getlength(mo["l2"])) > W - 240:
+            fz -= 4
+        f = F("Black", fz)
         k1 = ease((t - 0.3) / 0.6); k2 = ease((t - 0.9) / 0.6); k3 = ease((t - 1.6) / 0.6)
         w1 = f.getlength(mo["l1"])
         d.text(((W - w1) / 2, 400 + int((1 - k1) * 30)), mo["l1"], font=f, fill=self.ink + (int(255 * k1),))
@@ -360,6 +363,8 @@ class Promo:
         bg, fg = ((255, 255, 255), self.dark) if C == (255, 255, 255) else (self.ink, self.dark)
         d.rounded_rectangle(((W - w) / 2 - 26, 626 + int((1 - k) * 24), (W + w) / 2 + 26, 760 + int((1 - k) * 24)), 16, fill=bg + (int(255 * k),))
         d.text(((W - w) / 2, 622 + int((1 - k) * 24)), "일터아카데미", font=f, fill=fg + (int(255 * k),))
+        if self.sp.get("close_note"):                              # 문의처 한 줄 (예: "문의 · 커피선교그룹 백기현 생도")
+            ctext(self.sp["close_note"], 830, F("SemiBold", 40), C, ease((t - 1.8) / 0.6))
         return im
 
 
