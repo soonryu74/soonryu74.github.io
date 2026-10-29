@@ -81,6 +81,28 @@ def stage(im, scale=1.5, width=0.86, y=0.5):
     return canvas.convert("RGB")
 
 
+def inset(im, card_w=0.84, y=0.56):
+    """작은 카탈로그 사진: 같은 사진을 크게 흐리고 어둡게 깔고, 위에 둥근 카드로 (글자 자리 피해 아래쪽)"""
+    SW, SH = int(W * 1.2), int(H * 1.2)
+    im = im.convert("RGB")
+    r = max(SW / im.width, SH / im.height)
+    bg = im.resize((max(1, int(im.width * r / 8)), max(1, int(im.height * r / 8))))
+    bg = bg.filter(ImageFilter.GaussianBlur(6)).resize((int(im.width * r), int(im.height * r)), Image.BICUBIC)
+    bg = bg.crop(((bg.width - SW) // 2, (bg.height - SH) // 2, (bg.width - SW) // 2 + SW, (bg.height - SH) // 2 + SH))
+    bg = ImageEnhance.Brightness(bg).enhance(0.28)
+    cw = int(SW * card_w); ch = int(cw * im.height / im.width)
+    card = im.resize((cw, ch), Image.LANCZOS)
+    m = Image.new("L", (cw, ch), 0); ImageDraw.Draw(m).rounded_rectangle((0, 0, cw - 1, ch - 1), 26, fill=255)
+    x0, y0 = (SW - cw) // 2, int(SH * y - ch / 2)
+    canvas = bg.convert("RGBA")
+    sh = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+    ImageDraw.Draw(sh).rounded_rectangle((x0 + 10, y0 + 30, x0 + cw - 10, y0 + ch + 40), 30, fill=(0, 0, 0, 200))
+    canvas.alpha_composite(sh.filter(ImageFilter.GaussianBlur(30)))
+    c = card.convert("RGBA"); c.putalpha(m); canvas.alpha_composite(c, (x0, y0))
+    ImageDraw.Draw(canvas).rounded_rectangle((x0, y0, x0 + cw - 1, y0 + ch - 1), 26, outline=(212, 178, 106, 110), width=2)
+    return canvas.convert("RGB")
+
+
 def vignette():
     m = Image.new("L", (W // 4, H // 4), 0)
     ImageDraw.Draw(m).ellipse((-W // 4 * 0.25, -H // 4 * 0.12, W // 4 * 1.25, H // 4 * 1.12), fill=255)
@@ -126,8 +148,9 @@ def text_layer(sp, sh):
             rows.append((sh["title"], F("bold", 60), (250, 246, 238), 318, 0))
         if sh.get("sub"):
             rows.append((sh["sub"], F("semi", 48), (246, 230, 194), 404, 0))
-        if sh.get("note"):
-            rows.append((sh["note"], F("reg", 30), (220, 214, 204), 478, 0))
+        for k, ln in enumerate((sh.get("note") or "").split("\n")):
+            if ln:
+                rows.append((ln, F("semi", 31), (226, 220, 210), 476 + k * 46, 0))
     shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0)); sd = ImageDraw.Draw(shadow)
     for s, f, col, y, sp_ in rows:
         w = sum(f.getlength(c) + sp_ for c in s) - sp_
@@ -146,6 +169,8 @@ class Shot:
         im = Image.open(root / sh["src"])
         if sh.get("stage"):
             im = stage(im, **sh.get("stage_opt", {}))
+        elif sh.get("inset"):
+            im = inset(im, **sh.get("inset_opt", {}))
         im = im.convert("RGB")
         if sh.get("warm", True):
             im = Image.blend(ImageEnhance.Contrast(im).enhance(1.06), Image.new("RGB", im.size, (255, 196, 140)), 0.05)
