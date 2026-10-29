@@ -26,7 +26,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import ImageOps, Image, ImageDraw, ImageFilter, ImageFont
 
 W, H, FPS = 1920, 1080, 30
 FONTS = Path(__file__).resolve().parent.parent / "assets" / "fonts"
@@ -229,7 +229,7 @@ class Promo:
     # ── 사진 카드 한 장 (REC 테두리 · 태그 · AI 생성 표시 · 출처) ──
     def photo_card(self, shot, tl, span, t):
         if shot["src"] not in self.photos:
-            self.photos[shot["src"]] = Image.open(self.root / shot["src"]).convert("RGB")
+            self.photos[shot["src"]] = ImageOps.exif_transpose(Image.open(self.root / shot["src"])).convert("RGB")   # 폰 사진 회전 정보 반영
         ph = self.photos[shot["src"]]
         z = 1.0 + 0.06 * tl / max(span, 0.1)
         w, h = 968, 760; fx, fy = shot.get("focus") or [0.5, 0.5]
