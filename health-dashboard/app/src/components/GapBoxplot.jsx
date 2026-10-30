@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { fmt, val, boxStats, poolFor, label, ITEMS } from "../data";
+import { fmt, val, boxStats, poolFor, label, ITEMS, depGradient, areaBgv, POP_YEAR } from "../data";
 import { gapMeasures, distSummary, QUANTILE_MIN_N } from "../lib/gapMeasures";
 import Cite from "./Cite";
 import { nearestIndex, clientXY, Gridlines, XAxis } from "./svgUtil";
@@ -59,7 +59,7 @@ export default function GapBoxplot({ ind, item, year, sel, scope, setTip }) {
         <rect x={L} y={T} width={W - L - R} height={H - T - B} fill="transparent"
           onMouseMove={onMove} onTouchMove={onMove} onMouseLeave={() => setTip(null)} onTouchEnd={() => setTip(null)} />
       </svg>
-      <GapTable ind={ind} item={item} year={year} pool={pool} ext={ext[ys.indexOf(year)]} />
+      <GapTable ind={ind} item={item} year={year} pool={pool} ext={ext[ys.indexOf(year)]} scope={scope} />
       <DistSummary ind={ind} item={item} year={year} pool={pool} />
       <DecileGap ind={ind} item={item} year={year} pool={pool} />
     </>
@@ -68,7 +68,7 @@ export default function GapBoxplot({ ind, item, year, sel, scope, setTip }) {
 
 /* 격차 읽기 — 같은 해·같은 비교 지역을 세 가지 방식으로 계산해 절대(%p)·상대(배)를 함께 보여 준다.
    노은정(2026-09-29) 발표: 「격차를 제시할 때 무엇과 비교했는지(기준)와 어떻게 계산했는지(방식)를 반드시 함께 표기」. */
-function GapTable({ ind, item, year, pool, ext }) {
+function GapTable({ ind, item, year, pool, ext, scope }) {
   const g = gapMeasures(pool.map((r) => val(ind, item, year, r.c)));
   if (!g) return null;
   const du = ind.unit === "%" ? "%p" : ` ${ind.unit}`;
@@ -81,6 +81,25 @@ function GapTable({ ind, item, year, pool, ext }) {
     { m: "상·하위 20% 평균 차이", calc: g.quintile ? `${fmt(g.quintile.hi)} − ${fmt(g.quintile.lo)} (각 ${g.quintile.k}곳 평균)` : null, abs: g.quintile?.abs, r: g.quintile?.rel,
       note: "양 끝 20% 지역 전체의 수준. 취약 지역 전체가 좋아졌는지 볼 때(HP2030 소득 격차 방식)" },
   ];
+  // 박탈 경사·집단 간 분산은 비교 범위와 관계없이 전국 시군구 기준(박탈지수·인구가 시군구 단위) — 행 안에 기준을 적는다
+  const sido = scope === "sidoAll";
+  const gr = sido ? null : depGradient(ind, item, year);
+  const bg = areaBgv(ind, item, year, sido ? "sido" : "sgg");
+  const sgn = (v) => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v));
+  const extra = [
+    { m: "박탈 경사(SII · RII)", key: "sii",
+      calc: gr ? `회귀선 박탈 1분위 끝 ${fmt(gr.y0)} → 5분위 끝 ${fmt(gr.y1)} (전국 시군구 ${gr.n}곳 · 2020 박탈 분위)` : null,
+      absTxt: gr ? <><b>SII {sgn(gr.sii)}{du}</b><br /><small className="muted">95% 구간 {fmt(gr.lo)} ~ {fmt(gr.hi)}</small></> : null,
+      relTxt: gr ? `RII ${rel(gr.rii)}` : null,
+      na: sido ? "17개 시도 비교에는 해당 없음(박탈지수는 시군구 단위)" : "박탈 분위별 값이 부족함",
+      note: gr ? `순서 있는 5개 분위 전체를 쓰는 경사(WHO HEAT).${gr.lo > 0 || gr.hi < 0 ? "" : " 95% 구간이 0을 포함 — 뚜렷한 경사 아님."}` : "" },
+    { m: "집단 간 분산(BGV, 인구 가중)", key: "bgv",
+      calc: bg ? `${sido ? "17개 시도" : `전국 시군구 ${bg.n}곳`} · ${POP_YEAR}년 주민등록 인구 가중 · 가중 평균 ${fmt(bg.mu)}` : null,
+      absTxt: bg ? <><b>BGV {fmt(bg.bgv, 2)}</b><br /><small className="muted">√BGV = {fmt(bg.bgsd)}{du}</small></> : null,
+      relTxt: "–",
+      na: "인구 또는 값이 부족함",
+      note: "지역마다 인구 비중을 곱해 가중 평균과의 차이 제곱을 더한 값(WHO HEAT). 인구가 많은 지역의 차이가 더 크게 반영됨. 단위가 제곱이라 √BGV(가중 표준편차)를 함께 표기" },
+  ];
   return (
     <div className="gap-read gap-main">
       <div className="gr-head"><b>격차 읽기 — {year}년</b> <span className="muted">기준: 비교 지역 {g.n}곳 · {ITEMS[item] || item} · 중앙값 {fmt(g.med)}{ind.unit === "%" ? "%" : ` ${ind.unit}`}</span></div>
@@ -90,37 +109,46 @@ function GapTable({ ind, item, year, pool, ext }) {
           <tr key={x.m} className={x.calc == null ? "gr-na" : ""}><th scope="row">{x.m}</th>
             {x.calc == null ? <td colSpan={3} className="muted">비교 지역이 {QUANTILE_MIN_N}곳 이하라 쓰지 않음(20%가 몇 곳뿐이라 불안정)</td>
               : <><td>{x.calc}</td><td className="num"><b>{fmt(x.abs)}{du}</b></td><td className="num">{rel(x.r)}</td></>}
-            <td className="muted">{x.note}</td></tr>))}</tbody>
+            <td className="muted">{x.note}</td></tr>))}
+          {extra.map((x) => (
+            <tr key={x.m} className={`gr-${x.key}${x.calc == null ? " gr-na" : ""}`}><th scope="row">{x.m}</th>
+              {x.calc == null ? <td colSpan={3} className="muted">{x.na}</td>
+                : <><td>{x.calc}</td><td className="num">{x.absTxt}</td><td className="num">{x.relTxt}</td></>}
+              <td className="muted">{x.note}</td></tr>))}</tbody>
       </table></div>
-      <div className="desc">절대 격차는 줄여야 할 부담의 양(단위 %p), 상대 격차는 몇 배인지입니다. 유병률이 낮으면 상대 격차는 쉽게 커지므로 둘을 함께 봅니다. 「격차가 줄었다」는 불리한 쪽이 좋아져서인지(끌어올림), 양호한 쪽이 나빠져서인지(하향 수렴) 함께 확인해야 합니다.</div>
+      <div className="desc">절대 격차는 줄여야 할 부담의 양(단위 %p — SII·BGV 포함), 상대 격차는 몇 배인지입니다(RII 포함). 박탈 경사와 집단 간 분산은 비교 범위와 관계없이 전국 시군구(시도 비교에서는 BGV만 17개 시도) 기준입니다. 유병률이 낮으면 상대 격차는 쉽게 커지므로 둘을 함께 봅니다. 「격차가 줄었다」는 불리한 쪽이 좋아져서인지(끌어올림), 양호한 쪽이 나빠져서인지(하향 수렴) 함께 확인해야 합니다.</div>
     </div>
   );
 }
 
 /* 분포 요약지표(연구자용) — 순서가 없는 지역 집단 전체의 퍼짐. WHO HEAT Plus 기술노트 v4.0 의 비가중 지표.
-   COV(변동계수, 상대) · MDMU(평균으로부터의 평균 절대차, 절대) · IDISU(격차지수, 상대). 보건소 단위 인구가 없어 인구 가중 지표(BGV·Theil)는 쓰지 않는다. */
+   COV(변동계수, 상대) · MDMU(평균으로부터의 평균 절대차, 절대) · IDISU(격차지수, 상대).
+   인구 가중 BGV(집단 간 분산)는 보건소 단위 인구가 없어 전국 시군구 229곳(주민등록 인구) 기준으로 따로 계산해 같은 표에 둔다. */
 function DistSummary({ ind, item, year, pool }) {
   const cur = distSummary(pool.map((r) => val(ind, item, year, r.c)));
   if (!cur) return null;
   const du = ind.unit === "%" ? "%p" : ` ${ind.unit}`;
   const rows = ind.years.filter((y) => y <= year).slice(-10)
-    .map((y) => ({ y, d: distSummary(pool.map((r) => val(ind, item, y, r.c))) })).filter((r) => r.d);
+    .map((y) => ({ y, d: distSummary(pool.map((r) => val(ind, item, y, r.c))), b: areaBgv(ind, item, y, "sgg") })).filter((r) => r.d);
+  const curB = areaBgv(ind, item, year, "sgg");
   const pct = (v) => (v == null ? "–" : `${fmt(v)}%`);
   return (
     <details className="gap-read dist-sum">
-      <summary><b>분포 요약지표(연구자용)</b> <span className="muted">— {year}년 COV {pct(cur.cov)} · MDMU {fmt(cur.mdmu)}{du} · IDISU {pct(cur.idisu)} (비교 지역 {cur.n}곳)</span></summary>
+      <summary><b>분포 요약지표(연구자용)</b> <span className="muted">— {year}년 COV {pct(cur.cov)} · MDMU {fmt(cur.mdmu)}{du} · IDISU {pct(cur.idisu)} (비교 지역 {cur.n}곳){curB ? ` · BGV ${fmt(curB.bgv, 2)}(시군구 인구 가중)` : ""}</span></summary>
       <div className="desc">
         양 끝만 보는 「격차 읽기」와 달리 <b>모든 비교 지역의 퍼짐</b>을 한 숫자로 요약합니다(순서가 없는 지역 집단용, WHO HEAT 정의<Cite k="heat" />).
         <b> COV</b>(변동계수) = 표준편차 ÷ 평균 × 100 · <b>MDMU</b> = 각 지역 값과 평균의 차이(절대값)의 평균 · <b>IDISU</b>(격차지수) = MDMU ÷ 평균 × 100.
         MDMU 는 절대(단위 {du.trim()}), COV·IDISU 는 상대(%)라 함께 봅니다.
+        <b> BGV</b>(집단 간 분산) = Σ 인구 비중 × (지역 값 − 인구 가중 평균)² — 인구가 많은 지역의 차이가 더 크게 들어가는 절대 지표(단위 제곱, √BGV 는 단위 {du.trim()}). 전국 시군구·{POP_YEAR}년 주민등록 인구 기준.
       </div>
       <div className="tbl-wrap"><table className="gr-tbl">
-        <thead><tr><th>연도</th><th className="num">평균</th><th className="num">MDMU(절대)</th><th className="num">COV(상대)</th><th className="num">IDISU(상대)</th><th className="num">지역 수</th></tr></thead>
-        <tbody>{rows.map(({ y, d }) => (
+        <thead><tr><th>연도</th><th className="num">평균</th><th className="num">MDMU(절대)</th><th className="num">COV(상대)</th><th className="num">IDISU(상대)</th><th className="num">지역 수</th><th className="num">BGV(가중·절대)</th><th className="num">√BGV</th></tr></thead>
+        <tbody>{rows.map(({ y, d, b }) => (
           <tr key={y} className={y === year ? "row-cur" : undefined}><th scope="row">{y}</th><td className="num">{fmt(d.mean)}</td><td className="num">{fmt(d.mdmu)}{du}</td>
-            <td className="num">{pct(d.cov)}</td><td className="num">{pct(d.idisu)}</td><td className="num">{d.n}</td></tr>))}</tbody>
+            <td className="num">{pct(d.cov)}</td><td className="num">{pct(d.idisu)}</td><td className="num">{d.n}</td>
+            <td className="num">{b ? fmt(b.bgv, 2) : "–"}</td><td className="num">{b ? `${fmt(b.bgsd)}${du}` : "–"}</td></tr>))}</tbody>
       </table></div>
-      <div className="desc muted">비가중 — 표본이 작은 지역의 불안정한 값도 같은 비중으로 들어갑니다. 지역별 인구로 가중하는 지표(BGV·Theil)는 보건소 단위 인구 자료가 없어 넣지 않았습니다. 해마다 참여 지역 수가 다르면 비교에 주의하세요.</div>
+      <div className="desc muted">COV·MDMU·IDISU 는 비가중 — 표본이 작은 지역의 불안정한 값도 같은 비중으로 들어갑니다. BGV 는 시군구 인구로 가중(보건소 단위 인구가 없어 시군구 229곳 기준, 인구는 {POP_YEAR}년으로 고정). 상대 가중 지표(Theil·MLD)는 아직 넣지 않았습니다. 해마다 참여 지역 수가 다르면 비교에 주의하세요.</div>
     </details>
   );
 }

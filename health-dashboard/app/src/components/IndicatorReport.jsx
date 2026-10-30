@@ -11,6 +11,7 @@ import ReportMode from "./ReportMode";
    분석 방향: 전국 분포·추이 → 시도별 집중도 → 검토 대상 지역(불리한 쪽 10%, 신뢰구간 확인) → 불리 + 악화 → 개선 폭 큰 지역(참고) → 박탈 분위별 → 사업 참고 자료.
    순위표가 아니라 사업 대상 「검토」 목록이며, 원인·효과·처방은 쓰지 않는다. */
 const du = (u) => (u === "%" ? "%p" : u ? ` ${u}` : "");
+const sgn = (v) => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v));
 const sign = (v) => (v > 0 ? "+" : v < 0 ? "−" : "±");
 const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : "–");
 const LEVEL = { national: "국가", regional: "WHO 서태평양", global: "WHO" };
@@ -40,6 +41,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
   const ciTxt = (a) => (a.ci && Number.isFinite(a.ci.lo) ? `${fmt(a.ci.lo)}–${fmt(a.ci.hi)}` : "–");
   const ciFlag = (a) => (a.ciIncludesRef === false ? "뚜렷" : a.ciIncludesRef === true ? "불확실" : "–");
   const recent = m.series.slice(-10);
+  const lastS = m.series[m.series.length - 1];
   let secN = 4; const no = () => ++secN; // 4절 이후 번호(빈 절은 건너뜀)
   const maxShare = Math.max(...m.sido.map((x) => x.share || 0), 0.01);
 
@@ -89,7 +91,9 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
           <h2><span className="rpt-no">1</span>요약</h2>
           <table className="rpt-tbl rpt-sum"><tbody>
             <tr><th scope="row">전국 중앙값</th><td>{fmt(m.ref)}{ind.unit} (비교 지역 {m.n}곳)</td></tr>
-            <tr><th scope="row">지역 간 격차</th><td>하위 20% 경계 {fmt(m.p20)} · 상위 20% 경계 {fmt(m.p80)}{ind.unit} → 차이 {fmt(m.p80 - m.p20)}{du(ind.unit)} · 범위 {fmt(m.min)}–{fmt(m.max)}</td></tr>
+            <tr><th scope="row">지역 간 격차</th><td>하위 20% 경계 {fmt(m.p20)} · 상위 20% 경계 {fmt(m.p80)}{ind.unit} → 차이 {fmt(m.p80 - m.p20)}{du(ind.unit)}({m.p20 > 0 ? `${fmt(m.p80 / m.p20, 2)}배` : "–"}) · 범위 {fmt(m.min)}–{fmt(m.max)}</td></tr>
+            {lastS?.sii && <tr><th scope="row">박탈 경사({lastS.y}, 단년)</th><td>SII {sgn(lastS.sii.sii)}{du(ind.unit)} (95% 구간 {fmt(lastS.sii.lo)}~{fmt(lastS.sii.hi)}) · RII {lastS.sii.rii == null ? "–" : `${fmt(lastS.sii.rii, 2)}배`} — 전국 시군구 {lastS.sii.n}곳, 2020 박탈 분위{lastS.sii.lo > 0 || lastS.sii.hi < 0 ? "" : " · 95% 구간이 0을 포함(뚜렷한 경사 아님)"}</td></tr>}
+            {lastS?.bgv && <tr><th scope="row">집단 간 분산({lastS.y}, 단년)</th><td>BGV {fmt(lastS.bgv.bgv, 2)} (√BGV {fmt(lastS.bgv.bgsd)}{du(ind.unit)}) — 전국 시군구 {lastS.bgv.n}곳, 주민등록 인구 가중</td></tr>}
             <tr><th scope="row">검토 대상(불리한 쪽 10%)</th><td>{m.vulnerable.length}곳 · 경계값 {lowerBetter ? "≥" : "≤"} {fmt(m.cut10)}{ind.unit}{m.hasCi ? ` · 그중 95% 신뢰구간이 전국 중앙값과 겹치지 않음 ${m.vulnerable.filter((x) => x.a.ciIncludesRef === false).length}곳` : " · 표본오차 정보 없음(행정 통계)"}</td></tr>
             <tr><th scope="row">불리 + 악화</th><td>{m.worsening.length}곳(전국 중앙값보다 불리하고 최근 5년 악화 속도가 빠른 쪽)</td></tr>
             <tr><th scope="row">취약지역이 몰린 시도</th><td>{m.sido.filter((x) => x.n20).slice(0, 5).map((x) => `${x.s.n} ${x.n20}/${x.n}곳`).join(" · ") || "–"}</td></tr>
@@ -100,11 +104,14 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
 
         <section>
           <h2><span className="rpt-no">2</span>전국 추이 <small>중앙값과 지역 간 격차</small></h2>
-          <p className="muted">격차 = 비교 지역의 상위 20% 경계 − 하위 20% 경계(P80−P20, 단년 값). 격차가 줄어도 모두 나빠져 줄어든 것인지(하향 수렴) 함께 봐야 합니다.</p>
+          <p className="muted">격차 = 비교 지역의 상위 20% 경계 − 하위 20% 경계(P80−P20, 단년 값). SII·RII = 전국 시군구를 2020 지역박탈지수 분위 순으로 놓은 회귀 경사(절대·상대), BGV = 시군구 인구 가중 집단 간 분산(단위 제곱). 격차가 줄어도 모두 나빠져 줄어든 것인지(하향 수렴) 함께 봐야 합니다.</p>
           <table className="rpt-tbl rpt-wide"><thead><tr><th>연도</th>{recent.map((s) => <th key={s.y}>{s.y}</th>)}</tr></thead>
             <tbody>
               <tr><th scope="row">전국 중앙값</th>{recent.map((s) => <td key={s.y}>{fmt(s.med)}</td>)}</tr>
               <tr><th scope="row">P80−P20</th>{recent.map((s) => <td key={s.y}>{fmt(s.gap)}</td>)}</tr>
+              <tr><th scope="row">SII(박탈 경사, 절대)</th>{recent.map((s) => <td key={s.y}>{s.sii ? sgn(s.sii.sii) : "–"}</td>)}</tr>
+              <tr><th scope="row">RII(박탈 경사, 상대)</th>{recent.map((s) => <td key={s.y}>{s.sii?.rii == null ? "–" : fmt(s.sii.rii, 2)}</td>)}</tr>
+              <tr><th scope="row">BGV(인구 가중)</th>{recent.map((s) => <td key={s.y}>{s.bgv ? fmt(s.bgv.bgv, 1) : "–"}</td>)}</tr>
             </tbody></table>
         </section>
 
@@ -180,6 +187,7 @@ export default function IndicatorReport({ ind, sel, item = "std", smooth = 3, on
           <ul>
             <li>지역마다 대시보드 「우선 검토」와 같은 계산(전국 중앙값 대비 방향 보정 격차, 비교 집단 안 불리한 쪽 백분위, 최근 5년 기울기의 3분위, 지역박탈지수)을 돌려 집계했습니다. 검토 대상 = 불리한 쪽 백분위 90% 이상, 시도별 집계 = 80% 이상.</li>
             <li>{m.survey ? `지역사회건강조사 지표는 조사 단위(보건소 관할) ${m.pool.length}곳과 비교합니다. 표본조사라 95% 신뢰구간을 함께 봐야 합니다.` : "시군구 단위 행정 통계로, 표본오차 정보가 없습니다."} 일반구가 있는 시는 구(보건소) 단위로 나옵니다.</li>
+            <li>격차 지표: P80−P20(분포 폭) · SII·RII(박탈 분위 경사, 지역 단위 비가중 회귀 — WHO HEAT) · BGV(시군구 주민등록 인구 가중, 인구는 고정 연도). 지역 평균끼리의 비교라 개인의 소득·학력 차이를 뜻하지 않으며, 지역박탈지수는 근사 산출값입니다.</li>
             <li>사업 투입·산출 자료가 없어 사업 효과를 판단할 수 없습니다. 지역 이름이 목록에 있다는 것은 「검토할 근거」이지 평가 결과가 아닙니다.</li>
             <li>출처: {src ? `${src.org} — ${src.title}` : "–"}{ref?.url ? <> · 원표 <a href={ref.url}>{ref.url}</a></> : null} · 지역 건강프로파일 대시보드(health-profile.kr) · 기획·제작 지음웍스 · 자동 생성 {today}</li>
           </ul>

@@ -223,3 +223,15 @@ test("순위 표기: 17개 시도 중 17위는 「하위권」, 문장에 「양
   const te = buildReasonsEn(row).find((x) => x.k === "rank").t;
   assert.ok(te.includes("bottom third") && !te.includes("best first"), te);
 });
+
+test("집단 간 분산(BGV): 인구 가중 평균과의 차이 제곱의 가중합, 결측·인구 없음 제외", async () => {
+  const { bgv } = await import("../src/lib/gapMeasures.js");
+  const b = bgv([{ y: 10, w: 1 }, { y: 20, w: 3 }, { y: null, w: 5 }, { y: 99, w: 0 }]);
+  // μ = (10·1 + 20·3)/4 = 17.5, BGV = 0.25·56.25 + 0.75·6.25 = 18.75
+  assert.equal(b.n, 2); assert.equal(b.mu, 17.5); assert.equal(b.bgv, 18.75);
+  assert.ok(Math.abs(b.bgsd - Math.sqrt(18.75)) < 1e-12);
+  assert.equal(bgv([{ y: 1, w: 1 }]), null);
+  // 인구가 같으면 모집단 분산과 같다
+  const e = bgv([2, 4, 6].map((y) => ({ y, w: 7 })));
+  assert.ok(Math.abs(e.bgv - 8 / 3) < 1e-12);
+});

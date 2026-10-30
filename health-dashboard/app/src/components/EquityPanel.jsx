@@ -1,17 +1,13 @@
 import { useRef } from "react";
 import { DepCalc } from "./CalcExample";
-import { DEP, depOf, depQuintiles, boxStats, fmt, val, label, poolFor, SGG_ALL } from "../data";
+import { DEP, depOf, depQuintiles, depGradient, boxStats, fmt, val, label, poolFor, SGG_ALL } from "../data";
 import { clientXY } from "./svgUtil";
-import { siiRii, quintileRidits } from "../lib/gapMeasures";
 import Cite from "./Cite";
 
 /* 경사불평등지수(SII)·상대불평등지수(RII): 박탈 분위는 순서가 있는 집단이므로 순서를 반영한 요약지표(Keppel 2005 지침 10, WHO HEAT).
    지역마다 소속 분위의 누적 비율 중간점(0 = 가장 덜 박탈 … 1 = 가장 박탈)에 놓고 지역 단위 비가중 회귀. */
-function gradient(ind, item, year, groups) {
-  const withV = [1, 2, 3, 4, 5].map((q) => groups[q].filter((r) => val(ind, item, year, r.c) != null));
-  const xs = quintileRidits(withV.map((a) => a.length));
-  return siiRii(withV.flatMap((a, k) => a.map((r) => ({ x: xs[k], y: val(ind, item, year, r.c) }))));
-}
+// 계산은 data.js depGradient(시군구·2020 박탈 분위 고정) — 「격차 읽기」 표·지표별 보고서와 같은 값
+const gradient = (ind, item, year) => depGradient(ind, item, year);
 
 const QN = { 1: "1분위(가장 덜 박탈)", 2: "2분위", 3: "3분위", 4: "4분위", 5: "5분위(가장 박탈)" };
 

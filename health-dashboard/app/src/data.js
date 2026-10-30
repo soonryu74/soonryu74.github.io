@@ -138,6 +138,7 @@ import DIR_RAW from "../../data/directions.json";
 })();
 // 방향 문자열 메타데이터(Health Equity Radar): 기존 bad 는 그대로 두고 모든 지표에 direction 을 붙인다
 import { directionOf } from "./lib/equity/normalizeIndicator.js";
+import { siiRii, quintileRidits, bgv } from "./lib/gapMeasures.js";
 for (const ind of RAW.indicators) ind.direction = directionOf(ind.bad);
 
 export const DS = RAW;
@@ -581,6 +582,32 @@ export function depQuintiles(pool) {
   const q = { 1: [], 2: [], 3: [], 4: [], 5: [] };
   for (const r of pool) { const d = depOf(r.c); if (d?.q) q[d.q].push(r); }
   return q;
+}
+
+/* 격차 복합지표 공용 계산 — 지표 분석 「격차 읽기」·「분포 요약지표」·「건강형평성」 카드와 지표별 보고서가 같은 값을 쓴다. */
+const DEP_Q = depQuintiles(SGG_ALL);
+const _gradCache = new Map(), _bgvCache = new Map();
+/** 박탈 경사 SII·RII: 시군구(2020 박탈 분위 고정)를 분위 누적 비율 중간점에 놓고 지역 단위 비가중 회귀 */
+export function depGradient(ind, item, year) {
+  const key = `${ind.id}|${item}|${year}`;
+  if (_gradCache.has(key)) return _gradCache.get(key);
+  const withV = [1, 2, 3, 4, 5].map((q) => DEP_Q[q].filter((r) => val(ind, item, year, r.c) != null));
+  const xs = quintileRidits(withV.map((a) => a.length));
+  const g = siiRii(withV.flatMap((a, k) => a.map((r) => ({ x: xs[k], y: val(ind, item, year, r.c) }))));
+  _gradCache.set(key, g);
+  return g;
+}
+/** 지역 인구(주민등록 연앙인구, risk.json pop_year 고정). 세종은 시도 코드(0071)에 있다. */
+export const popOf = (r) => riskOf(r.c)?.pop || (r.c.startsWith("0071") ? riskOf("0071")?.pop : null) || null;
+export const POP_YEAR = RISK.pop_year;
+/** 집단 간 분산(BGV·BGSD, 인구 가중) — level "sgg" = 전국 시군구 간, "sido" = 17개 시도 간 */
+export function areaBgv(ind, item, year, level = "sgg") {
+  const key = `${ind.id}|${item}|${year}|${level}`;
+  if (_bgvCache.has(key)) return _bgvCache.get(key);
+  const pool = level === "sido" ? REGIONS.filter((r) => r.l === "sido") : SGG_ALL;
+  const g = bgv(pool.map((r) => ({ y: val(ind, item, year, r.c), w: popOf(r) })));
+  _bgvCache.set(key, g);
+  return g;
 }
 
 // ── 평가 계층(결과사슬) 주입: scripts/classify_tiers.py → data/eval_tiers.json ──

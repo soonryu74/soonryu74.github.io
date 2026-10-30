@@ -1,7 +1,7 @@
 /* 지표별 보고서(전국 취약지역 현황) — 정책 담당자가 금연·절주 같은 사업을 기획할 때 「이 지표가 전국 어디에서 불리한가」를 한 문서로 본다.
    우선 검토 엔진(assess)을 비교 집단 전체(조사 단위 258곳 또는 시군구 229곳)에 돌려 얻은 판정만 쓴다.
    취약 = 비교 집단에서 불리한 쪽 상위 10%(검토 대상) / 20%(시도별 집계). 인과·처방·「최악」 표현은 쓰지 않는다. */
-import { natPool, nationalMedian, quantile, SIDOS, sidoPoolOf, valSmooth, depOf, label, isSurvey, recommendFor, evidenceOf, guideOf } from "../data";
+import { natPool, nationalMedian, quantile, SIDOS, sidoPoolOf, valSmooth, depOf, label, isSurvey, recommendFor, evidenceOf, guideOf, depGradient, areaBgv } from "../data";
 import { assess } from "./equity";
 import KC from "../../../data/khepi_cases.json";
 
@@ -57,7 +57,9 @@ export function buildIndicatorReport(ind, item = "std", smooth = 3) {
   // 연도별 전국 중앙값과 P80−P20(지역 간 격차)
   const series = ind.years.map((yy) => {
     const vs = pool.map((r) => valSmooth(ind, item, yy, r.c, 1)).filter(isNum).sort((a, b) => a - b);
-    return vs.length >= 10 ? { y: yy, med: nationalMedian(ind, item, yy), gap: quantile(vs, 0.8) - quantile(vs, 0.2), n: vs.length } : null;
+    if (vs.length < 10) return null;
+    const g = depGradient(ind, item, yy), b = areaBgv(ind, item, yy, "sgg");   // 박탈 경사(SII·RII)·집단 간 분산(BGV) — 전국 시군구, 단년
+    return { y: yy, med: nationalMedian(ind, item, yy), gap: quantile(vs, 0.8) - quantile(vs, 0.2), n: vs.length, sii: g, bgv: b };
   }).filter(Boolean);
 
   // 사업 자료: 국가·WHO 권고 + 시도 계획 수 + NICE·CPSTF + 우수사례 수
@@ -89,6 +91,9 @@ export function draftIndicatorParagraphs(m) {
   if (s.length >= 2) {
     const a = s[0], b = s[s.length - 1];
     out.push(`단년 값으로 보면 ${a.y}년 이후 전국 중앙값은 ${f(a.med)}에서 ${f(b.med)}${u}로, 지역 간 격차(P80−P20)는 ${f(a.gap)}에서 ${f(b.gap)}${u === "%" ? "%p" : u}로 바뀌었다.`);
+    const g = b.sii, du = u === "%" ? "%p" : u;
+    if (g && (g.lo > 0 || g.hi < 0)) out.push(`${b.y}년 전국 시군구를 지역박탈지수 분위 순으로 놓으면 박탈이 큰 지역일수록 값이 ${g.sii > 0 ? "높다" : "낮다"}(경사불평등지수 SII ${g.sii > 0 ? "+" : "−"}${f(Math.abs(g.sii))}${du}, 95% 구간 ${f(g.lo)}~${f(g.hi)} · 상대불평등지수 RII ${f(g.rii, 2)}배). 지역 평균끼리의 관계이며 원인 관계를 뜻하지 않는다.`);
+    else if (g) out.push(`${b.y}년 지역박탈지수 분위에 따른 뚜렷한 경사는 확인되지 않았다(SII 95% 구간 ${f(g.lo)}~${f(g.hi)}가 0을 포함).`);
   }
   const clear = m.vulnerable.filter((x) => x.a.ciIncludesRef === false).length;
   out.push(`${lower ? "값이 높은" : "값이 낮은"} 쪽 상위 10%(검토 대상) ${m.vulnerable.length}곳의 경계값은 ${f(m.cut10)}${u}${m.hasCi ? `이며, 이 가운데 95% 신뢰구간이 전국 중앙값과 겹치지 않는 곳은 ${clear}곳이다.` : "이다(표본오차 정보가 없는 행정 통계)."}`);

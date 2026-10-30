@@ -15,6 +15,10 @@ for (const [w,h,s] of [[1440,900,"light"],[390,844,"dark"],[430,932,"light"],[76
   const sec = await pg.locator("article.rpt h2").allInnerTexts(); ck(sec.length>=8, `[${w}] 절 ${sec.length}개: ${sec.join(" | ")}`);
   const nv = await pg.locator(".rpt-vul tbody tr").count(); ck(nv>=20 && nv<=30, `[${w}] 검토 대상 ${nv}행`);
   ck(await pg.locator(".rpt-bar").count()===17, `[${w}] 시도 막대 17`);
+  const trendRows = await pg.locator("table.rpt-wide tbody th").allInnerTexts();
+  ck(["P80−P20","SII(박탈 경사, 절대)","RII(박탈 경사, 상대)","BGV(인구 가중)"].every((x)=>trendRows.includes(x)), `[${w}] 전국 추이 표: P80−P20·SII·RII·BGV 행`);
+  const sumTxt = await pg.locator("table.rpt-sum").innerText();
+  ck(/SII [+−±]\d/.test(sumTxt) && /RII \d/.test(sumTxt) && /BGV \d/.test(sumTxt), `[${w}] 요약: 박탈 경사·집단 간 분산 행`);
   ck(await pg.evaluate(()=>document.documentElement.scrollWidth-innerWidth)<=0, `[${w}] 가로 넘침 없음`);
   ck(await pg.locator(".controls select, .controls input").count()>0 && await pg.locator(".yearctrl").count()===0, `[${w}] 지표 선택 있음·연도 컨트롤 숨김`);
   await pg.getByRole("button",{name:"📋 문장 초안 복사"}).click(); await pg.waitForTimeout(300);

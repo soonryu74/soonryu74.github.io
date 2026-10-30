@@ -118,3 +118,19 @@ test("분포 요약지표 재현: 2025 비만율(표준화) 258곳 COV 12.4% · 
   assert.equal(+d.cov.toFixed(1), 12.4);
   assert.equal(+d.mdmu.toFixed(2), 3.43);
 });
+
+test("박탈 경사·집단 간 분산(공용 계산): 2025 비만율(표준화) SII +4.39%p · RII 1.13배, BGV = 인구 가중 분산", async () => {
+  const { depGradient, areaBgv, popOf, SGG_ALL: S } = await import("../src/data.js");
+  const ind = byId("DT_H_OBE_OBE");
+  const g = depGradient(ind, "std", 2025);
+  assert.equal(+g.sii.toFixed(2), 4.39);
+  assert.equal(+g.rii.toFixed(2), 1.13);
+  const b = areaBgv(ind, "std", 2025, "sgg");
+  // 독립 재계산: Σ (w/W)(y − μ)²
+  const pts = S.map((r) => ({ y: val(ind, "std", 2025, r.c), w: popOf(r) })).filter((p) => p.y != null && p.w > 0);
+  const W = pts.reduce((s, p) => s + p.w, 0), mu = pts.reduce((s, p) => s + p.w * p.y, 0) / W;
+  const v = pts.reduce((s, p) => s + (p.w / W) * (p.y - mu) ** 2, 0);
+  assert.ok(b.n >= 228 && Math.abs(b.bgv - v) < 1e-9 && Math.abs(b.bgsd - Math.sqrt(v)) < 1e-9);
+  const sd = areaBgv(ind, "std", 2025, "sido");
+  assert.equal(sd.n, 17);
+});

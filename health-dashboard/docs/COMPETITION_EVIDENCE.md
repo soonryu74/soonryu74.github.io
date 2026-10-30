@@ -1,10 +1,10 @@
 # Competition Evidence Pack
 
-Generated automatically on 2026-10-26 from the data files and test records in this repository (`node scripts/build_competition_evidence.mjs`, run by `scripts/build_dashboard.py`). **Use these numbers in applications; do not retype them from memory.** If a number here differs from any other document, this file wins until the data change.
+Generated automatically on 2026-10-30 from the data files and test records in this repository (`node scripts/build_competition_evidence.mjs`, run by `scripts/build_dashboard.py`). **Use these numbers in applications; do not retype them from memory.** If a number here differs from any other document, this file wins until the data change.
 
 ## 1. Build
-- Source repository commit at generation: `78c6f11` (the site footer shows the build of the deployed page).
-- Data validation date: 2026-10-26 (`docs/DATA_VALIDATION.md`).
+- Source repository commit at generation: `53bb38e` (the site footer shows the build of the deployed page).
+- Data validation date: 2026-10-30 (`docs/DATA_VALIDATION.md`).
 
 ## 2–4. Korea deployment — indicators, geography, years
 | Fact | Value | Note |
@@ -103,4 +103,4 @@ Global v0.1 comparison (all 217 economies: signals, Watch, top 3, scores unchang
 - Does not claim that neighbouring ranks are meaningfully different.
 - Does not replace local public-health judgement.
 
-Never claim: deployed in / used by 217 countries (correct: prototype applied to data from 217 countries and economies); validated by governments, WHO, MIT or any partner; user numbers, adoption, impact or cost savings; AI prediction, AI diagnosis or AI-generated policy; risk map, real-time surveillance, proven impact. The build stops if these phrases appear in the English page sources (6 files checked, 0 found on 2026-10-26).
+Never claim: deployed in / used by 217 countries (correct: prototype applied to data from 217 countries and economies); validated by governments, WHO, MIT or any partner; user numbers, adoption, impact or cost savings; AI prediction, AI diagnosis or AI-generated policy; risk map, real-time surveillance, proven impact. The build stops if these phrases appear in the English page sources (6 files checked, 0 found on 2026-10-30).

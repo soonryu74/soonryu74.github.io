@@ -123,6 +123,19 @@ export function siiRii(points) {
   return { n, sii, se, lo: sii - 1.96 * se, hi: sii + 1.96 * se, y0, y1, rii: y0 > 0 ? y1 / y0 : null };
 }
 
+/** 집단 간 분산(BGV, Between-Group Variance) — 순서 없는 다집단용 인구 가중 절대지표(WHO HEAT Plus 기술노트 v4.0).
+ *  points = [{y: 집단(지역) 값, w: 집단 인구}] → BGV = Σ (w_j/W)(y_j − μ)², μ = 인구 가중 평균.
+ *  단위는 지표 단위의 제곱이라 읽기 쉽게 BGSD(= √BGV, 지표 단위)도 함께 낸다. 값·인구가 없는 집단은 뺀다. */
+export function bgv(points) {
+  const p = points.filter((q) => q && q.y != null && Number.isFinite(q.y) && q.w > 0);
+  const n = p.length;
+  if (n < 2) return null;
+  const W = p.reduce((s, q) => s + q.w, 0);
+  const mu = p.reduce((s, q) => s + q.w * q.y, 0) / W;
+  const v = p.reduce((s, q) => s + (q.w / W) * (q.y - mu) ** 2, 0);
+  return { n, w: W, mu, bgv: v, bgsd: Math.sqrt(v) };
+}
+
 /** 정밀도 판정(지역사회건강조사 표본오차): RSE 20% 초과는 대시보드 순위 제외 기준(CHR&R), 30% 이상은 통계청 인용 주의 기준. */
 export function precisionNote(rse) {
   if (rse == null) return null;

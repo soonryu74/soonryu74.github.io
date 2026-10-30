@@ -133,9 +133,16 @@ for (const [w, h] of VPS) {
   check(["38.4%(95% 신뢰구간 34.7~42.1%)", "258곳 중 값이 높은 순 58번째(상위 약 22%)", "수도권 101곳 중 값이 높은 순 19번째(상위 약 19%)", "3.0%p 높지만", "통계적으로 유의하지 않다", "31.3%)와는 7.1%p(1.23배)"].every((x) => t.includes(x)), "우리 지역 읽기: 발표 예시(경기 광주시 비만율) 해석 문장 재현");
   check((await pg.locator(".rmr-steps > li").count()) === 5, "우리 지역 읽기 5단계");
   const rows = await pg.locator(".gap-main .gr-tbl tbody tr").allInnerTexts();
-  check(rows.length === 3 && /24\.9%p/.test(rows[0]) && /7\.3%p/.test(rows[1]) && /1\.23배/.test(rows[1]), `격차 읽기 3방식(최대−최소 24.9%p · 경계값 7.3%p·1.23배): ${rows.map((r) => r.split("\t")[0]).join(" / ")}`);
+  check(rows.length === 5 && /24\.9%p/.test(rows[0]) && /7\.3%p/.test(rows[1]) && /1\.23배/.test(rows[1]), `격차 읽기 3방식(최대−최소 24.9%p · 경계값 7.3%p·1.23배) + 2행: ${rows.map((r) => r.split("\t")[0]).join(" / ")}`);
+  // SII·RII · BGV 병행 표기(2026-10-30): 같은 표 안에 절대·상대로
+  check(/SII \+4\.4%p/.test(rows[3]) && /RII 1\.13배/.test(rows[3]) && /95% 구간/.test(rows[3]), `격차 읽기: 박탈 경사 SII +4.4%p · RII 1.13배 (${rows[3].replace(/\s+/g, " ").slice(0, 80)})`);
+  check(/BGV \d+\.\d\d/.test(rows[4]) && /√BGV = \d/.test(rows[4]) && /인구 가중/.test(rows[4]), "격차 읽기: 집단 간 분산 BGV·√BGV(시군구 인구 가중)");
+  await pg.locator("details.dist-sum summary").click();
+  check(/BGV/.test(await pg.locator("details.dist-sum").innerText()) && (await pg.locator("details.dist-sum thead th").allInnerTexts()).some((x) => /BGV/.test(x)), "분포 요약지표 표에 BGV 열");
   await pg.goto(`${BASE}/index.html#view=analysis&ind=DT_H_OBE_OBE&sido=008&year=2025&scope=sidoAll`, { waitUntil: "load" }); await pg.waitForTimeout(800);
-  check(/30곳 이하라 쓰지 않음/.test(await pg.locator(".gap-main").innerText()), "17개 시도 비교에서는 분위 방식 미적용 표시");
+  const gm = await pg.locator(".gap-main").innerText();
+  check(/30곳 이하라 쓰지 않음/.test(gm), "17개 시도 비교에서는 분위 방식 미적용 표시");
+  check(/17개 시도 비교에는 해당 없음/.test(gm) && /17개 시도 · \d{4}년 주민등록 인구 가중/.test(gm), "17개 시도 비교: SII 해당 없음 · BGV 는 17개 시도 인구 가중");
   await pg.close();
 }
 // 아르곤 검토 반영(2026-10-14): ③ 점수 구성 막대 · ④ 표 서식째 복사 · ① 계획 수립 단계 안내 띠
