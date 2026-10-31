@@ -342,8 +342,11 @@ class Deck:
         for (ox, oy, col), lab in zip(spots, labels):
             dd = d * (1.0 if col != "pink" else 0.9)
             self.oval(slide, cx + ox * scale - dd / 2, cy + oy * scale - dd / 2, dd, dd, fill=col, shadow=True)
+            # 라벨이 길면(4자 이상) 글자를 줄여 이웃 풍선과 겹치는 가장자리를 피한다
+            lab_size = max(12, 20 * scale * (1.0 if len(str(lab)) <= 3 else 0.78 if len(str(lab)) == 4 else 0.62))
+            self._warn_len("풍선 라벨", str(lab), 5)
             self.text(slide, cx + ox * scale - dd / 2, cy + oy * scale - dd / 2, dd, dd, lab,
-                      size=max(14, 20 * scale), color=self.on(col),
+                      size=lab_size, color=self.on(col),
                       font="number", align="center", anchor="middle")
         if badge:
             bd = 1.05 * scale
