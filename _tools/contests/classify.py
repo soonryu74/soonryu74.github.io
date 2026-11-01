@@ -47,7 +47,10 @@ def classify(r):
     pm = prize_max(r.get('상금'))
     reasons, tags = [], []
     status = 'eligible'
-    if RE_STAFF.search(text):
+    tgt = re.search(r'참가대상: ([^.]*)', summ)
+    if tgt and re.search(r'기업|법인|사업자', tgt[1]) and not RE_OPEN.search(tgt[1]):
+        status = 'excluded'; reasons.append('기업·단체 대상(' + tgt[1].strip()[:30] + ')')
+    elif RE_STAFF.search(text):
         status = 'excluded'; reasons.append('소속자 한정(' + RE_STAFF.search(text)[0] + ')')
     elif RE_YOUTH.search(text) and '누구나(일반인 포함)' not in text:
         if RE_OPEN.search(text) or RE_SPLIT.search(text):
