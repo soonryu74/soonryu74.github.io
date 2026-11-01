@@ -1,8 +1,8 @@
 """복지로 중앙부처복지서비스 API(한국사회보장정보원, 공공데이터포털 15090532) 수집 → JSON.
 
 엔드포인트: https://apis.data.go.kr/B554287/NationalWelfareInformationsV001
-  목록 callTp=L (pageNo·numOfRows·srchKeyCode 필수, lifeArray·trgterIndvdlArray·intrsThemaArray·age·onapPsbltYn 선택)
-  상세 callTp=D (servId 필수)
+  목록 /NationalWelfarelistV001  callTp=L (pageNo·numOfRows·srchKeyCode 필수, lifeArray·trgterIndvdlArray·intrsThemaArray·age·onapPsbltYn 선택)
+  상세 /NationalWelfaredetailedV001  callTp=D (servId 필수)
 응답은 XML. 필드명은 공공데이터포털 활용가이드로 재확인 필요(아래 파서는 태그를 그대로 dict로 옮긴다).
 
 실행 (인증키는 환경변수, 소스에 넣지 않는다):
@@ -14,20 +14,32 @@ import argparse
 import json
 import os
 import sys
+import time
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import date
 
 BASE = "https://apis.data.go.kr/B554287/NationalWelfareInformationsV001"
+LIST = BASE + "/NationalWelfarelistV001"
+DETAIL = BASE + "/NationalWelfaredetailedV001"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "data")
 
 
-def call(params):
-    url = BASE + "?" + urllib.parse.urlencode(params, safe="%")
-    with urllib.request.urlopen(url, timeout=30) as r:
-        return r.read().decode("utf-8", "replace")
+def call(endpoint, params):
+    # 포털의 '인증키(Encoding)'는 이미 URL 인코딩돼 있으므로 다시 인코딩하지 않는다
+    key = params.pop("serviceKey")
+    url = endpoint + "?serviceKey=" + key + "&" + urllib.parse.urlencode(params)
+    last = None
+    for attempt in range(4):  # 네트워크 끊김 재시도
+        try:
+            with urllib.request.urlopen(url, timeout=30) as r:
+                return r.read().decode("utf-8", "replace")
+        except (urllib.error.URLError, ConnectionError, TimeoutError) as e:
+            last = e
+            time.sleep(1.5 * (attempt + 1))
+    raise SystemExit(f"호출 실패: {last}")
 
 
 def xml_to_records(text, tag):
@@ -46,6 +58,7 @@ def main():
     ap.add_argument("--pages", type=int, default=1, help="목록 페이지 수 (페이지당 최대 500건)")
     ap.add_argument("--rows", type=int, default=100)
     ap.add_argument("--detail", type=int, default=0, help="상세조회 건수 (0이면 생략)")
+    ap.add_argument("--skip-list", action="store_true", help="기존 central_list.json을 재사용")
     a = ap.parse_args()
 
     key = os.environ.get("DATA_GO_KR_KEY")
@@ -55,16 +68,22 @@ def main():
 
     os.makedirs(OUT, exist_ok=True)
     items = []
-    for p in range(1, a.pages + 1):
-        txt = call({"serviceKey": key, "callTp": "L", "pageNo": p, "numOfRows": a.rows, "srchKeyCode": "003"})
+    list_path = os.path.join(OUT, "central_list.json")
+    if a.skip_list and os.path.exists(list_path):
+        with open(list_path, encoding="utf-8") as f:
+            items = json.load(f)["items"]
+        print(f"기존 목록 {len(items)}건 재사용")
+    for p in range(1, 0 if a.skip_list else a.pages + 1):
+        txt = call(LIST, {"serviceKey": key, "callTp": "L", "pageNo": p, "numOfRows": a.rows, "srchKeyCode": "003"})
         page = xml_to_records(txt, "servList")
         if not page:
             break
         items += page
         print(f"목록 {p}페이지 {len(page)}건")
     meta = {"source": "한국사회보장정보원 중앙부처복지서비스 API (data.go.kr 15090532)", "fetched": date.today().isoformat(), "count": len(items)}
-    with open(os.path.join(OUT, "central_list.json"), "w", encoding="utf-8") as f:
-        json.dump({"meta": meta, "items": items}, f, ensure_ascii=False, indent=1)
+    if not a.skip_list:
+        with open(list_path, "w", encoding="utf-8") as f:
+            json.dump({"meta": meta, "items": items}, f, ensure_ascii=False, indent=1)
 
     if a.detail:
         details = []
@@ -72,7 +91,7 @@ def main():
             sid = it.get("servId")
             if not sid:
                 continue
-            txt = call({"serviceKey": key, "callTp": "D", "servId": sid})
+            txt = call(DETAIL, {"serviceKey": key, "callTp": "D", "servId": sid})
             recs = xml_to_records(txt, "wantedDtl")
             details += recs or [{"servId": sid, "_raw": txt[:2000]}]
         with open(os.path.join(OUT, "central_detail.json"), "w", encoding="utf-8") as f:
