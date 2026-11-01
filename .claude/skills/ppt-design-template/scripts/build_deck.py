@@ -81,6 +81,11 @@ class Deck:
         self.warnings = []
         self.page = 0
         self._clouds = {}
+        # 영문 슬라이드("lang": "en")는 글자 폭이 좁아 글자 수 한도·칩 폭을 다르게 잡는다
+        self.en = spec.get("lang", "ko").lower().startswith("en")
+        self.len_factor = 1.9 if self.en else 1.0
+        self.chip_cw = 0.24 if self.en else 0.42   # 킥커 칩 글자당 폭(inch)
+        self.cta_cw = 0.19 if self.en else 0.33    # CTA 칩 글자당 폭
 
     # ---- 색/폰트 -------------------------------------------------------------
     def c(self, key):
@@ -343,7 +348,8 @@ class Deck:
             dd = d * (1.0 if col != "pink" else 0.9)
             self.oval(slide, cx + ox * scale - dd / 2, cy + oy * scale - dd / 2, dd, dd, fill=col, shadow=True)
             # 라벨이 길면(4자 이상) 글자를 줄여 이웃 풍선과 겹치는 가장자리를 피한다
-            lab_size = max(12, 20 * scale * (1.0 if len(str(lab)) <= 3 else 0.78 if len(str(lab)) == 4 else 0.62))
+            n = len(str(lab)) / self.len_factor
+            lab_size = max(12, 20 * scale * (1.0 if n <= 3 else 0.78 if n <= 4 else 0.62))
             self._warn_len("풍선 라벨", str(lab), 5)
             self.text(slide, cx + ox * scale - dd / 2, cy + oy * scale - dd / 2, dd, dd, lab,
                       size=lab_size, color=self.on(col),
@@ -399,6 +405,7 @@ class Deck:
     def _warn_len(self, what, s, limit):
         plain = str(s).replace("[[", "").replace("]]", "")
         longest = max((len(line) for line in plain.split("\n")), default=0)
+        limit = int(limit * self.len_factor)
         if longest > limit:
             self.warnings.append(f"{what}이(가) 한 줄 {limit}자를 넘습니다({longest}자): '{s[:30]}…' → 줄바꿈(\\n) 또는 축약 권장")
 
@@ -577,9 +584,9 @@ class Deck:
             self.oval(s, x + cw / 2 - 0.22, y + 0.35, 0.44, 0.44, fill=col)
             self.text(s, x + 0.2, y + 1.0, cw - 0.4, 1.3, it["value"], size=48 if n <= 3 else 38,
                       color=self.c(col + "_d"), font="display", align="center", anchor="middle")
-            self.text(s, x + 0.2, y + 2.35, cw - 0.4, 0.5, it["label"], size=17, color="navy", font="head", align="center", anchor="middle")
+            self.text(s, x + 0.2, y + 2.3, cw - 0.4, 0.75, it["label"], size=17 if n <= 3 else 15, color="navy", font="head", align="center", anchor="middle", line_spacing=1.1)
             if it.get("note"):
-                self.text(s, x + 0.3, y + 2.9, cw - 0.6, 0.8, it["note"], size=13, color="muted", font="body", align="center", line_spacing=1.25)
+                self.text(s, x + 0.3, y + 3.1, cw - 0.6, 0.7, it["note"], size=12.5, color="muted", font="body", align="center", line_spacing=1.2)
         if sl.get("footnote"):
             self.text(s, M, H - 1.15, W - 2 * M, 0.4, sl["footnote"], size=12, color="muted", font="body")
         self.footer(s)
@@ -628,10 +635,12 @@ class Deck:
             x = xs[i]
             self.num_circle(s, x - d / 2, cy - d / 2, d, st.get("label", f"{i+1}"), pastel=col, size=26,
                             color=self.on(col))
-            self.text(s, x - colw / 2, cy + d / 2 + 0.3, colw, 0.5, st["head"], size=18, color="navy", font="head", align="center", anchor="middle")
+            # 글상자가 슬라이드 밖으로 나가지 않게 여백 안으로 밀어 넣는다(첫·마지막 단계)
+            tx = max(M, min(x - colw / 2, W - M - colw))
+            self.text(s, tx, cy + d / 2 + 0.3, colw, 0.5, st["head"], size=18, color="navy", font="head", align="center", anchor="middle")
             self._warn_len("단계 제목", st["head"], 12)
             if st.get("desc"):
-                self.text(s, x - colw / 2, cy + d / 2 + 0.85, colw, 1.6, st["desc"], size=14, color="navy_soft", font="body", align="center", line_spacing=1.3)
+                self.text(s, tx, cy + d / 2 + 0.85, colw, 1.6, st["desc"], size=14, color="navy_soft", font="body", align="center", line_spacing=1.3)
         self.footer(s)
         return s
 
@@ -658,7 +667,7 @@ class Deck:
         if sl.get("subtitle"):
             self.text(s, M + 0.05, 3.55, 8.6, 1.0, sl["subtitle"], size=19, color="navy_soft", font="head", line_spacing=1.3)
         if sl.get("cta"):
-            self.chip(s, M, 4.85, min(7.5, 0.33 * len(sl["cta"]) + 1.0), 0.72, sl["cta"], fill="navy", color="white", size=19, font="head", radius=0.5)
+            self.chip(s, M, 4.85, min(7.5, self.cta_cw * len(sl["cta"]) + 1.0), 0.72, sl["cta"], fill="navy", color="white", size=19, font="head", radius=0.5)
         links = sl.get("links", [])
         for i, ln in enumerate(links[:3]):
             self.text(s, M, 5.85 + i * 0.36, 9, 0.34, ln, size=13.5, color="navy", font="body")
@@ -675,7 +684,7 @@ class Deck:
         # 왼쪽: 킥커 칩
         y = 0.9
         if sl.get("kicker"):
-            kw = 0.42 * len(sl["kicker"]) + 0.9
+            kw = self.chip_cw * len(sl["kicker"]) + 0.9
             self.chip(s, M, y, kw, 0.78, sl["kicker"], fill="navy", color="white", size=24, font="head", radius=0.5)
             y += 1.05
         # 제목: 2줄 권장, [[강조]] 지원

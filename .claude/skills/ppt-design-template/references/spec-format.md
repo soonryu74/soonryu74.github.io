@@ -3,6 +3,7 @@
 ```json
 {
   "output": "deck.pptx",            // -o 로 덮어쓸 수 있음
+  "lang": "ko",                     // "en"이면 영문용 글자 수 한도(×1.9)·칩 폭 적용
   "accent": "pink",                 // 강조색: yellow | green | blue | pink | "D9456B"(hex)
   "brand": {"name": "AI 발굴러 순류", "tagline": "한 줄 슬로건(표지)", "logo": "logo.png"},
   "fonts": {"display": "Cafe24 Ssurround"},   // 선택, 역할별 덮어쓰기 (references/fonts.md)
