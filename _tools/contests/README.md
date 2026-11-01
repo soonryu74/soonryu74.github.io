@@ -1,21 +1,26 @@
 # 공모전 상황판 자동 갱신
 
-노션 공개 DB(AI 공모전 자동 수집)를 매일 읽어 claude.ai 상황판(Artifact)의 데이터를 바꿉니다.
+노션 공개 DB(AI 공모전 자동 수집)와 콘테스트코리아 공모전 목록을 매일 읽어 claude.ai 상황판(Artifact)의 데이터를 바꿉니다.
+노션 DB는 2026-10 말부터 새 행이 들어오지 않아, 콘테스트코리아를 주 수집원으로 더했습니다.
 `_tools/`는 밑줄로 시작해서 지킬 사이트에는 게시되지 않습니다.
 
 ## 흐름
 
 1. `scrape_notion.mjs` — 헤드리스 크로미움으로 노션 표를 열고, 화면에 보이는 30줄씩 스크롤하며
    줄(block id)별로 열 이름 기준으로 모읍니다. 10줄 미만이면 실패로 끝나 기존 데이터를 지킵니다.
-2. `classify.py` — 마감 지난 것 제거, 중복 제거, 상금 최대 표기(만원), 1차 판정
+2. `scrape_contestkorea.py` — 콘테스트코리아 공모전 8개 분야 목록(분야당 최대 8쪽)에서 접수 중인 것만 골라
+   상세 페이지의 접수기간·시상내역·참가대상·대회지역·AI 3줄 요약을 읽습니다. `--merge`로 노션 rows 뒤에 붙입니다.
+   20건 미만이면 실패로 끝나 기존 데이터를 지킵니다.
+3. `classify.py` — 마감 지난 것 제거, 중복 제거, 상금 최대 표기(만원), 1차 판정
    (지원 가능 · 확인 필요 · 제외), 태그(AI 명시 · 숏폼 · 직접 촬영 · 큰 상금), 추천 표시,
    처음 본 날(`firstSeen`, 최근 3일 = 신규)을 붙여 `feed.json`을 만듭니다.
-3. 결과를 상황판 데이터베이스의 `feed/latest` 문서 하나에 통째로 씁니다.
+4. 결과를 상황판 데이터베이스의 `feed/latest` 문서 하나에 통째로 씁니다.
    우리 진행 현황은 `ops/pipeline` 문서이며, 자동 갱신은 이 문서를 건드리지 않습니다.
 
 ```bash
 node _tools/contests/scrape_notion.mjs notion_raw.json
-python3 _tools/contests/classify.py notion_raw.json feed.json --prev prev_feed.json
+python3 _tools/contests/scrape_contestkorea.py merged_raw.json --merge notion_raw.json
+python3 _tools/contests/classify.py merged_raw.json feed.json --prev prev_feed.json
 ```
 
 ## 인증서

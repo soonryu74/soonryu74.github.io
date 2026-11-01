@@ -22,6 +22,7 @@ def prize_max(s):
     for num, unit in re.findall(r'(\d[\d,\.]*)\s*(억|천만|백만|만|원)', s or ''):
         try: v = float(num.replace(',', ''))
         except ValueError: continue
+        if unit == '만' and v >= 50000: v = v / 10000             # '원'을 '만원' 칸에 잘못 적은 경우(예: 600,000만원)
         v = {'억': v * 10000, '천만': v * 1000, '백만': v * 100, '만': v}.get(unit, v / 10000 if v >= 10000 else 0)
         best = max(best, v)
     return int(round(best))
@@ -48,7 +49,7 @@ def classify(r):
     status = 'eligible'
     if RE_STAFF.search(text):
         status = 'excluded'; reasons.append('소속자 한정(' + RE_STAFF.search(text)[0] + ')')
-    elif RE_YOUTH.search(text):
+    elif RE_YOUTH.search(text) and '누구나(일반인 포함)' not in text:
         if RE_OPEN.search(text) or RE_SPLIT.search(text):
             status = 'check'; reasons.append('학생·청소년 부문이 섞여 있음 — 일반 부문 확인')
         else:
@@ -59,6 +60,9 @@ def classify(r):
         m = RE_LOCAL.search(text)
         if m and not RE_SEOUL.search(text + ' ' + host):
             status = 'check'; reasons.append(f'거주·소재 조건 확인({m[0]})')
+    area = (r.get('지역') or '').strip()
+    if status == 'eligible' and area and area not in ('전국', '온라인', '해외', '전세계') and not RE_SEOUL.search(area):
+        status = 'check'; reasons.append(f'대회지역 {area} — 거주 조건·현장 참석 확인')
     if due is None:
         if status == 'eligible': status = 'check'
         reasons.append('마감일 표기 없음')
@@ -72,7 +76,7 @@ def classify(r):
         id=r['id'], name=name, host='' if host == '없음' else host,
         field=r.get('분야', ''), reg=str(parse_date(r.get('등록일')) or ''),
         due=str(due) if due else '', prize=r.get('상금', ''), prizeMax=pm,
-        link=link, src=r.get('출처', ''), summary=summ[:200],
+        link=link, src=r.get('출처', ''), summary=summ[:160],
         status=status, reasons=reasons, tags=tags,
     )
 
