@@ -12,14 +12,15 @@ description: 하늘·파스텔 '청렴한 달' 포스터 스타일의 16:9 PPT(.
 
 | 결과물 | 만드는 법 | 비고 |
 |---|---|---|
-| 강의·발표용 `.pptx` (16:9, 13.333×7.5in) | 스펙 JSON → `scripts/build_deck.py` | 11가지 슬라이드 타입 조합 |
+| 강의·발표용 `.pptx` (16:9, 13.333×7.5in) | 스펙 JSON → `scripts/build_deck.py` | 12가지 슬라이드 타입 조합(인물 소개 `people` 포함). 영문 덱은 `"lang": "en"` |
 | 유튜브 썸네일 PNG 1280×720 | `type: "thumbnail"` 슬라이드 1장 → `scripts/render.py --thumb N` | pptx에도 남아 글자 수정 가능 |
 | QA용 슬라이드 PNG / 요약 이미지 | `scripts/render.py deck.pptx --sheet` | 눈으로 넘침·겹침 확인 |
 
 ## 작업 순서
 
 1. **내용 콘티부터.** 디자인보다 먼저 "한 장 = 한 메시지"로 쪼갠다. 강의 10~15분 분량 ≈ 8~12장. 흐름 예:
-   표지 → 목차(agenda) → 섹션 → 숫자/문제 제기(stats) → 핵심 3가지(rows/cards) → 실습(two_col/steps) → 전후 비교(compare) → 한마디(quote) → 마무리 CTA(closing).
+   표지 → 목차(agenda) → 섹션 → 숫자/문제 제기(stats) → 핵심 3가지(rows/cards) → 실습(two_col/steps) → 전후 비교(compare) → 한마디(quote) → 마무리 CTA(closing). 기관·강의 소개에는 교수진/팀 소개(people, 사진 카드)를 넣는다.
+   - **사이트·자료에서 가져올 수 있는 것은 가져온다.** 기관 소개 덱이면 홈페이지의 교수진 사진, 로고(`brand.logo`), 슬로건 원문을 내려받아 쓴다. 공식 사이트에 없는 약력은 공개 자료로 확인된 것만 한 줄로 적고, 확인 안 되면 직함만 쓴다.
    사용자가 준 글이 길면 **요약·재서술**한다. 슬라이드에 문단을 붙여 넣지 않는다.
 2. **스펙 JSON 작성.** 형식은 `references/spec-format.md`. 예시 `assets/example-lecture.json`, `assets/example-thumbnail.json`을 복사해 바꾸는 게 가장 빠르다.
    - **예시 값은 전부 바꾸거나 지운다.** 배지("Vibe Coding Class / 2026"), 날짜, 링크(youtube.com/@…)는 예시일 뿐이다. 사용자가 주지 않은 정보는 꾸며 넣지 말고 해당 키를 **생략**한다(배지·날짜·링크는 모두 선택 항목). 모르는 링크 대신 "영상 설명란 링크"처럼 사실인 문구를 쓴다.

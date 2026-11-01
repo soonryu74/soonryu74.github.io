@@ -550,6 +550,50 @@ class Deck:
         self.footer(s)
         return s
 
+    # 인물 소개(사진 + 이름 + 직함 + 한 줄) --------------------------------------------
+    def s_people(self, sl):
+        """교수진·강사진·팀 소개. items: {photo, name, role, subject, bio}. 1~3명은 1행(큰 사진+소개), 4~6명은 2행 3열."""
+        s = self.new_slide()
+        self.slide_title(s, sl["title"], idx=sl.get("idx"), kicker=sl.get("kicker"))
+        items = sl["items"][:6]
+        n = len(items)
+        cols = 3 if n > 3 else n
+        rows = math.ceil(n / cols)
+        gap = 0.3
+        top = 1.65
+        cw = (W - 2 * M - gap * (cols - 1)) / cols
+        ch = (H - top - 0.8 - gap * (rows - 1)) / rows
+        big = rows == 1
+        pw, ph = (1.5, 1.9) if big else (1.0, 1.25)
+        for i, it in enumerate(items):
+            col = PASTELS[i % 4]
+            r, c = divmod(i, cols)
+            x, y = M + c * (cw + gap), top + r * (ch + gap)
+            self.rect(s, x, y, cw, ch, fill="card", shadow=True, radius=0.07)
+            px, py = x + 0.25, y + 0.25
+            if it.get("photo") and os.path.exists(it["photo"]):
+                self.rect(s, px, py, pw, ph, fill=col, radius=0.08, alpha=55)
+                self.picture(s, it["photo"], px + 0.05, py + 0.05, pw - 0.1, ph - 0.1)
+            else:
+                self.num_circle(s, px, py, pw, it["name"][:1], pastel=col, shadow=False, size=22)
+            tx = px + pw + 0.22
+            tw = x + cw - tx - 0.22
+            self.text(s, tx, py - 0.03, tw, 0.62, it["name"], size=17 if big else 15, color="navy", font="head",
+                      anchor="top", line_spacing=1.05)
+            self._warn_len("이름", it["name"], 11)
+            if it.get("role"):
+                self.text(s, tx, py + 0.62, tw, 0.62, it["role"], size=11.5 if big else 10.5, color="muted",
+                          font="body", anchor="top", line_spacing=1.2)
+                self._warn_len("직함", it["role"], 26)
+            if it.get("subject"):
+                chip_w = min(cw - 0.5, 0.13 * len(it["subject"]) * self.len_factor + 0.5)
+                self.chip(s, px, py + ph + 0.15, chip_w, 0.32, it["subject"], fill=col, color=self.on(col), size=10.5, font="head")
+            if big and it.get("bio"):
+                self.text(s, px, py + ph + 0.6, cw - 0.5, ch - ph - 0.95, it["bio"], size=12.5,
+                          color="navy_soft", font="body", line_spacing=1.25)
+        self.footer(s)
+        return s
+
     # 2단(글 + 이미지) --------------------------------------------------------------
     def s_two_col(self, sl):
         s = self.new_slide()
