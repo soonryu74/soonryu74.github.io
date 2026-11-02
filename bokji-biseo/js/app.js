@@ -35,33 +35,36 @@ async function viewHome() {
   const d = await load();
   const approved = d.services.filter(s => s.rule?.status === 'approved').length;
   const draft = d.services.filter(s => s.rule?.status === 'draft').length;
+  const ICON = { tb: '🩺', shop: '☕', baby: '👶' };
   app.innerHTML = `
-  <h1>검색하지 않아도, 받을 수 있는 복지가 먼저 찾아옵니다</h1>
-  <p class="lead">한국사회보장정보원이 공개한 복지서비스 데이터를 매일 읽어, 내 조건에 맞는 것이 생기면 알려 드리고 쉬운말 요약과 서류 체크리스트로 신청까지 함께 갑니다.</p>
+  <section class="hero">
+    <span class="eyebrow">◎ 복지로 공개 데이터 × AI · 2026 사회보장 데이터 활용 AI 혁신 아이디어</span>
+    <h1>검색하지 않아도,<br>받을 수 있는 복지가 먼저 찾아옵니다</h1>
+    <p class="lead">한국사회보장정보원이 공개한 복지서비스 데이터를 매일 읽어, 내 조건에 맞는 것이 생기면 알려 드리고 쉬운말 요약과 서류 체크리스트로 신청까지 함께 갑니다.</p>
+    <div class="row"><a class="btn" href="#/profile">내 조건으로 직접 해 보기</a><a class="btn ghost" href="#/about">무엇을 근거로 하나요?</a></div>
+  </section>
   <ol class="steps">
-    <li><b>1 수집</b>복지로 공개 API ${d.meta.count}건, 매일</li>
-    <li><b>2 구조화</b>AI가 지원 조건을 뽑고 사람이 승인</li>
-    <li><b>3 판정</b>규칙 엔진, 근거 문장 공개</li>
-    <li><b>4 알림·준비</b>쉬운말 · 서류 · 신청 경로</li>
+    <li><b data-n="1">수집</b>복지로 공개 API ${d.meta.count}건을 매일 읽어 새로 생긴 것·바뀐 것을 찾습니다</li>
+    <li><b data-n="2">구조화</b>AI가 지원 조건 초안을 뽑고, 사람이 원문과 대조해 승인합니다</li>
+    <li><b data-n="3">판정</b>규칙 엔진이 조건마다 ✅❌❔를 매기고 근거 문장을 공개합니다</li>
+    <li><b data-n="4">알림·준비</b>쉬운말 4줄, 서류 체크리스트, 신청 경로까지 한 장으로</li>
   </ol>
   <h2>사례로 바로 보기</h2>
   <div class="grid">
     ${Object.values(PERSONAS).map(p => `
-      <button class="persona" data-p="${p.id}">
+      <button class="persona p-${p.id}" data-p="${p.id}">
+        <div class="ico">${ICON[p.id] || '◎'}</div>
         <span class="tag">${esc(p.tag)}</span>
         <h3>${esc(p.name)}</h3>
         <p>${esc(p.story)}</p>
+        <span class="go">이 사례로 결과 보기 →</span>
       </button>`).join('')}
-  </div>
-  <div class="row" style="margin-top:18px">
-    <a class="btn" href="#/profile">내 조건으로 직접 해 보기</a>
-    <a class="btn ghost" href="#/about">이 결과는 무엇을 근거로 하나요?</a>
   </div>
   <h2>지금 이 데모가 다루는 데이터</h2>
   <div class="summary-bar">
-    <div class="stat"><b>${d.meta.count}</b>중앙부처 복지서비스 (${d.meta.ministries}개 부처)</div>
-    <div class="stat"><b>${approved}</b>사람이 승인한 규칙 <span class="badge b-ok">승인</span></div>
-    <div class="stat"><b>${draft}</b>AI 초안 규칙 <span class="badge b-draft">미검수</span></div>
+    <div class="stat s-brand"><b>${d.meta.count}</b>중앙부처 복지서비스 · ${d.meta.ministries}개 부처</div>
+    <div class="stat s-ok"><b>${approved}</b>사람이 승인한 규칙</div>
+    <div class="stat s-draft"><b>${draft}</b>AI 초안 규칙 (미검수)</div>
     <div class="stat"><b>${d.meta.fetched}</b>데이터 수집일</div>
   </div>
   <p class="small muted">지자체 복지서비스 API(접수기간 포함)는 다음 단계에서 연결합니다. 이 데모는 중앙부처 데이터만 사용합니다.</p>`;
@@ -159,9 +162,9 @@ async function viewResult(q) {
   ${story}
   <div class="card"><b>입력한 조건</b> <span class="muted small">(${profileSummary(p).map(esc).join(' · ') || '없음'})</span> <a class="btn sm ghost" href="#/profile" style="margin-left:8px">수정</a></div>
   <div class="summary-bar">
-    <div class="stat"><b>${g.ok.length}</b>지금 해당 가능</div>
-    <div class="stat"><b>${g.check.length}</b>확인 필요</div>
-    <div class="stat"><b>${g.draft.length}</b>AI 초안(미검수) 후보</div>
+    <div class="stat s-ok"><b>${g.ok.length}</b>지금 해당 가능</div>
+    <div class="stat s-warn"><b>${g.check.length}</b>확인 필요</div>
+    <div class="stat s-draft"><b>${g.draft.length}</b>AI 초안(미검수) 후보</div>
   </div>
   <p class="notice">"지금 해당 가능"은 입력하신 내용 기준입니다. 소득은 구간 자가신고이므로 최종 자격은 신청 기관이 판정합니다.</p>
   <h2>지금 해당 가능 <span class="badge b-ok">사람이 승인한 규칙</span></h2>
@@ -172,7 +175,7 @@ async function viewResult(q) {
   <p class="small muted">AI가 원문에서 뽑은 조건 초안으로 걸러낸 후보입니다. 아직 사람이 승인하지 않았으므로 참고만 하세요. 승인되면 위 목록으로 올라갑니다.</p>
   <div id="drafts">${g.draft.slice(0, DRAFT_SHOW).map(x => svcCard(x, 'draft')).join('')}</div>
   ${g.draft.length > DRAFT_SHOW ? `<button class="btn ghost more" id="more">후보 ${g.draft.length - DRAFT_SHOW}개 더 보기</button>` : ''}
-  <div class="row" style="margin-top:20px"><a class="btn" href="#/alert">이 조건으로 알림 받으면? 미리보기</a><button class="btn ghost" onclick="window.print()">결과 인쇄·PDF 저장</button></div>`;
+  <div class="row" style="margin-top:20px"><a class="btn accent" href="#/alert">이 조건으로 알림 받으면? 미리보기</a><button class="btn ghost" onclick="window.print()">결과 인쇄·PDF 저장</button></div>`;
   $('#more')?.addEventListener('click', () => { $('#drafts').innerHTML = g.draft.map(x => svcCard(x, 'draft')).join(''); $('#more').remove(); });
 }
 
