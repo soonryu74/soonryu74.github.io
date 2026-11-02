@@ -8,7 +8,7 @@
 실행 (인증키는 환경변수, 소스에 넣지 않는다):
   맥:      DATA_GO_KR_KEY=발급키 python3 bokji-biseo/scripts/fetch_bokjiro.py --pages 2 --detail 20
   윈도우:  $env:DATA_GO_KR_KEY="발급키"; py bokji-biseo\\scripts\\fetch_bokjiro.py --pages 2 --detail 20
-출력: bokji-biseo/data/central_list.json, central_detail.json (키 미설정 시 안내만 출력)
+출력: bokji-biseo/data/raw/central_list.json, central_detail.json (키 미설정 시 안내만 출력)
 """
 import argparse
 import json
@@ -24,7 +24,7 @@ BASE = "https://apis.data.go.kr/B554287/NationalWelfareInformationsV001"
 LIST = BASE + "/NationalWelfarelistV001"
 DETAIL = BASE + "/NationalWelfaredetailedV001"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(ROOT, "data")
+OUT = os.path.join(ROOT, "data", "raw")
 
 
 def call(endpoint, params):
@@ -36,6 +36,10 @@ def call(endpoint, params):
         try:
             with urllib.request.urlopen(url, timeout=30) as r:
                 return r.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                raise SystemExit("HTTP 429")
+            last = e; time.sleep(1.5 * (attempt + 1))
         except (urllib.error.URLError, ConnectionError, TimeoutError) as e:
             last = e
             time.sleep(1.5 * (attempt + 1))
@@ -59,6 +63,7 @@ def main():
     ap.add_argument("--rows", type=int, default=100)
     ap.add_argument("--detail", type=int, default=0, help="상세조회 건수 (0이면 생략)")
     ap.add_argument("--skip-list", action="store_true", help="기존 central_list.json을 재사용")
+    ap.add_argument("--sleep", type=float, default=1.0, help="상세 호출 간격(초). 개발계정 호출 제한 대응")
     a = ap.parse_args()
 
     key = os.environ.get("DATA_GO_KR_KEY")
@@ -86,17 +91,31 @@ def main():
             json.dump({"meta": meta, "items": items}, f, ensure_ascii=False, indent=1)
 
     if a.detail:
-        details = []
-        for it in items[: a.detail]:
-            sid = it.get("servId")
-            if not sid:
-                continue
-            txt = call(DETAIL, {"serviceKey": key, "callTp": "D", "servId": sid})
+        det_path = os.path.join(OUT, "central_detail.json")
+        details, done = [], set()
+        if os.path.exists(det_path):  # 이어받기
+            details = json.load(open(det_path, encoding="utf-8"))["items"]
+            done = {d.get("servId") for d in details}
+        todo = [it for it in items[: a.detail] if it.get("servId") and it["servId"] not in done]
+        print(f"상세 기존 {len(done)}건, 남은 {len(todo)}건")
+        for n, it in enumerate(todo, 1):
+            sid = it["servId"]
+            for attempt in range(6):
+                try:
+                    txt = call(DETAIL, {"serviceKey": key, "callTp": "D", "servId": sid})
+                    break
+                except SystemExit as e:
+                    if "429" in str(e) and attempt < 5:
+                        wait = 15 * (attempt + 1); print(f"  429 제한 → {wait}초 대기", flush=True); time.sleep(wait)
+                    else:
+                        raise
             recs = xml_to_records(txt, "wantedDtl")
             details += recs or [{"servId": sid, "_raw": txt[:2000]}]
-        with open(os.path.join(OUT, "central_detail.json"), "w", encoding="utf-8") as f:
-            json.dump({"meta": meta, "items": details}, f, ensure_ascii=False, indent=1)
-        print(f"상세 {len(details)}건 저장")
+            if n % 10 == 0 or n == len(todo):
+                with open(det_path, "w", encoding="utf-8") as f:
+                    json.dump({"meta": meta, "items": details}, f, ensure_ascii=False, indent=1)
+                print(f"  {len(details)}건 저장", flush=True)
+            time.sleep(a.sleep)
     print("완료:", OUT)
 
 
