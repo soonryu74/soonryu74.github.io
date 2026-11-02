@@ -1,17 +1,24 @@
-import { HOUSEHOLD, SITUATION, BUSINESS, EMPLOYMENT, INCOME, emptyProfile, run } from './engine.js';
+import { HOUSEHOLD, SITUATION, BUSINESS, EMPLOYMENT, INCOME, emptyProfile, run, regionCandidates } from './engine.js';
 import { PERSONAS } from './personas.js';
 
 const $ = sel => document.querySelector(sel);
 const app = $('#app');
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const SIDO = ['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
 const STORE = 'bokji-biseo-profile-v1';
 
-let DATA = null;
+let DATA = null, LOCAL_INDEX = null; const LOCAL_CACHE = {};
 async function load() {
   if (DATA) return DATA;
-  const r = await fetch('data/services.json'); DATA = await r.json(); return DATA;
+  const [r, li] = await Promise.all([fetch('data/services.json'), fetch('data/local/index.json')]);
+  DATA = await r.json(); LOCAL_INDEX = await li.json(); return DATA;
 }
+async function loadLocal(sido) {
+  if (!sido || !LOCAL_INDEX) return [];
+  const e = LOCAL_INDEX.sidos.find(x => x.name === sido); if (!e) return [];
+  if (!LOCAL_CACHE[sido]) { const r = await fetch('data/local/' + e.file); LOCAL_CACHE[sido] = (await r.json()).services; }
+  return LOCAL_CACHE[sido];
+}
+const sggOptions = (sido, sel) => { const e = LOCAL_INDEX?.sidos.find(x => x.name === sido); return `<option value="">시·군·구 선택(선택)</option>` + (e ? e.sggs.map(g => `<option ${sel === g ? 'selected' : ''}>${esc(g)}</option>`).join('') : ''); };
 function getProfile() { try { return JSON.parse(localStorage.getItem(STORE)) || emptyProfile(); } catch { return emptyProfile(); } }
 function setProfile(p) { try { localStorage.setItem(STORE, JSON.stringify(p)); } catch {} }
 
@@ -44,7 +51,7 @@ async function viewHome() {
     <div class="row"><a class="btn" href="#/profile">내 조건으로 직접 해 보기</a><a class="btn ghost" href="#/about">무엇을 근거로 하나요?</a></div>
   </section>
   <ol class="steps">
-    <li><b data-n="1">수집</b>복지로 공개 API ${d.meta.count}건을 매일 읽어 새로 생긴 것·바뀐 것을 찾습니다</li>
+    <li><b data-n="1">수집</b>복지로 공개 API ${d.meta.count}건(중앙) + ${LOCAL_INDEX.meta.count.toLocaleString()}건(지자체)을 매일 읽어 새로 생긴 것·바뀐 것을 찾습니다</li>
     <li><b data-n="2">구조화</b>AI가 지원 조건 초안을 뽑고, 사람이 원문과 대조해 승인합니다</li>
     <li><b data-n="3">판정</b>규칙 엔진이 조건마다 ✅❌❔를 매기고 근거 문장을 공개합니다</li>
     <li><b data-n="4">알림·준비</b>쉬운말 4줄, 서류 체크리스트, 신청 경로까지 한 장으로</li>
@@ -63,11 +70,11 @@ async function viewHome() {
   <h2>지금 이 데모가 다루는 데이터</h2>
   <div class="summary-bar">
     <div class="stat s-brand"><b>${d.meta.count}</b>중앙부처 복지서비스 · ${d.meta.ministries}개 부처</div>
-    <div class="stat s-ok"><b>${approved}</b>사람이 승인한 규칙</div>
-    <div class="stat s-draft"><b>${draft}</b>AI 초안 규칙 (미검수)</div>
-    <div class="stat"><b>${d.meta.fetched}</b>데이터 수집일</div>
+    <div class="stat s-brand"><b>${LOCAL_INDEX.meta.count.toLocaleString()}</b>지자체 복지서비스 · ${LOCAL_INDEX.sidos.length}개 시·도</div>
+    <div class="stat s-ok"><b>${approved + LOCAL_INDEX.meta.approved}</b>사람이 승인한 규칙</div>
+    <div class="stat s-draft"><b>${draft + LOCAL_INDEX.meta.draft}</b>AI 초안 규칙 (미검수)</div>
   </div>
-  <p class="small muted">지자체 복지서비스 API(접수기간 포함)는 다음 단계에서 연결합니다. 이 데모는 중앙부처 데이터만 사용합니다.</p>`;
+  <p class="small muted">중앙부처 API 수집일 ${d.meta.fetched} · 지자체 API 수집일 ${LOCAL_INDEX.meta.fetched}. 지자체 상세 원문은 사례 지역 중심으로 ${LOCAL_INDEX.meta.detail}건 확보했습니다.</p>`;
   app.querySelectorAll('.persona').forEach(b => b.addEventListener('click', () => { setProfile(PERSONAS[b.dataset.p].profile); location.hash = `#/result?persona=${b.dataset.p}`; }));
 }
 
@@ -87,9 +94,10 @@ async function viewProfile(q) {
     <fieldset><legend>1. 나이와 사는 곳</legend>
       <div class="row">
         <label>만 나이 <input type="number" name="age" min="0" max="120" value="${p.age ?? ''}" placeholder="예: 62"></label>
-        <label>시·도 <select name="sido"><option value="">선택</option>${SIDO.map(s => `<option ${p.sido === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+        <label>시·도 <select name="sido" id="sido"><option value="">선택</option>${LOCAL_INDEX.sidos.map(s => `<option ${p.sido === s.name ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select></label>
+        <label>시·군·구 <select name="sgg" id="sgg">${sggOptions(p.sido, p.sgg)}</select></label>
       </div>
-      <p class="hint">시·도는 지자체 서비스 연결(다음 단계)에 쓰입니다. 지금 데모 판정에는 영향이 없습니다.</p>
+      <p class="hint">시·도를 고르면 그 지역 지자체 복지서비스(전국 ${LOCAL_INDEX.meta.count.toLocaleString()}건)가 결과에 함께 나옵니다. 시·군·구까지 고르면 더 정확합니다.</p>
     </fieldset>
     <fieldset><legend>2. 가구·해당 사항</legend><p class="hint">해당하는 것을 모두 고르세요. 모르면 비워 두어도 됩니다.</p>${chk('household', HOUSEHOLD, p.household)}</fieldset>
     <fieldset><legend>3. 지금 겪고 있는 상황</legend>${chk('situation', SITUATION, p.situation)}</fieldset>
@@ -101,10 +109,11 @@ async function viewProfile(q) {
     </fieldset>
     <div class="row"><button class="btn" type="submit">받을 수 있는 서비스 찾기</button><button class="btn ghost" type="button" id="reset">지우기</button></div>
   </form>`;
+  $('#sido').addEventListener('change', e => { $('#sgg').innerHTML = sggOptions(e.target.value, ''); });
   $('#f').addEventListener('submit', e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const np = { age: fd.get('age') ? Number(fd.get('age')) : null, sido: fd.get('sido') || '', household: fd.getAll('household'), situation: fd.getAll('situation'),
+    const np = { age: fd.get('age') ? Number(fd.get('age')) : null, sido: fd.get('sido') || '', sgg: fd.get('sgg') || '', household: fd.getAll('household'), situation: fd.getAll('situation'),
       business: fd.get('business') || 'none', employment: fd.get('employment') || 'none', income_pct: fd.get('income_pct') ? Number(fd.get('income_pct')) : null, themes: [] };
     setProfile(np); location.hash = '#/result';
   });
@@ -115,7 +124,7 @@ async function viewProfile(q) {
 function profileSummary(p) {
   const parts = [];
   if (p.age != null) parts.push(`만 ${p.age}세`);
-  if (p.sido) parts.push(p.sido);
+  if (p.sido) parts.push(p.sido + (p.sgg ? ' ' + p.sgg : ''));
   parts.push(...p.household.map(k => HOUSEHOLD[k]));
   parts.push(...p.situation.map(k => SITUATION[k]));
   if (p.business !== 'none') parts.push(BUSINESS[p.business]);
@@ -131,13 +140,14 @@ function checkList(checks) {
 function svcCard({ s, r }, tier) {
   const rule = s.rule || {};
   const badge = tier === 'ok' ? '<span class="badge b-ok">지금 해당 가능</span>' : tier === 'check' ? '<span class="badge b-warn">확인 필요</span>' : '<span class="badge b-draft">AI 초안 · 미검수</span>';
-  const online = s.online === 'Y' ? '<span class="badge b-brand">온라인 신청 가능</span>' : '<span class="badge b-mute">방문·우편 신청</span>';
+  const online = s.local ? `<span class="badge b-brand">지자체 · ${esc(s.sgg || s.sido)}</span>${s.end ? ` <span class="badge b-warn">종료 ${esc(s.end.slice(0,4))}.${esc(s.end.slice(4,6))}.${esc(s.end.slice(6,8))}</span>` : ''}` : (s.online === 'Y' ? '<span class="badge b-brand">온라인 신청 가능</span>' : '<span class="badge b-mute">방문·우편 신청</span>');
+  const jur = s.local ? `${esc(s.sido)}${s.sgg ? ' ' + esc(s.sgg) : ''}${s.dept ? ' · ' + esc(s.dept) : ''}${s.apply ? ' · 신청 ' + esc(s.apply) : ''}` : `${esc(s.jur)}${s.org ? ' · ' + esc(s.org) : ''}`;
   const easy = rule.easy ? `<dl class="easy"><dt>누가</dt><dd>${esc(rule.easy.who)}</dd><dt>무엇을</dt><dd>${esc(rule.easy.what)}</dd><dt>어떻게</dt><dd>${esc(rule.easy.how)}</dd><dt>어디서</dt><dd>${esc(rule.easy.where)}</dd></dl>` : '';
   const docs = rule.docs?.length ? `<div class="docs"><b>준비할 서류</b><ul>${rule.docs.map(d => `<li>☐ ${esc(d)}</li>`).join('')}</ul></div>` : '';
   const note = rule.note ? `<p class="small muted">※ ${esc(rule.note)}</p>` : '';
-  const quotes = rule.quotes?.length ? `<details><summary>근거가 된 원문 문장</summary>${rule.quotes.map(q => `<p class="quote">“${esc(q)}”</p>`).join('')}<p class="small muted">출처: 복지로 ${esc(s.name)} 상세 (${esc(s.jur)})${rule.reviewed ? ` · 규칙 검수 ${esc(rule.reviewed)}` : ' · AI 초안, 검수 전'}</p></details>` : '';
+  const quotes = rule.quotes?.length ? `<details><summary>근거가 된 원문 문장</summary>${rule.quotes.map(q => `<p class="quote">“${esc(q)}”</p>`).join('')}<p class="small muted">출처: 복지로 ${esc(s.name)} 상세 (${s.local ? esc(s.sido + ' ' + (s.sgg || '')) : esc(s.jur)})${rule.reviewed ? ` · 규칙 검수 ${esc(rule.reviewed)}` : ' · AI 초안, 검수 전'}</p></details>` : '';
   return `<article class="card svc ${tier}">
-    <div class="head"><div><h3>${esc(s.name)}</h3><div class="jur">${esc(s.jur)}${s.org ? ' · ' + esc(s.org) : ''}</div></div><div>${badge} ${online}</div></div>
+    <div class="head"><div><h3>${esc(s.name)}</h3><div class="jur">${jur}</div></div><div>${badge} ${online}</div></div>
     <p class="digest">${esc(s.digest)}</p>
     ${checkList(r.checks)}
     ${easy}${docs}${note}
@@ -152,7 +162,9 @@ async function viewResult(q) {
   const d = await load();
   const personaId = q.get('persona'); const persona = personaId ? PERSONAS[personaId] : null;
   const p = persona ? persona.profile : getProfile();
-  const g = run(d.services, p);
+  const local = await loadLocal(p.sido);
+  const g = run(d.services.concat(local), p);
+  const region = regionCandidates(local, p, 8);
   const judge = q.get('judge') ? `<div class="judge"><b>심사위원 모드</b> — 사례 "${esc(persona.name)}"의 조건을 자동 입력했습니다. 판정은 규칙 엔진이, 쉬운말 요약은 AI가 사람 검수를 거쳐 작성했습니다. 아래 "왜 이 결과인가요?"와 "근거가 된 원문 문장"을 펼쳐 보세요.</div>` : '';
   const story = persona ? `<div class="card"><span class="badge b-brand">${esc(persona.tag)}</span> <b>${esc(persona.name)}</b><p class="muted" style="margin:6px 0 0">${esc(persona.story)}</p></div>` : '';
   const DRAFT_SHOW = 6;
@@ -175,6 +187,9 @@ async function viewResult(q) {
   <p class="small muted">AI가 원문에서 뽑은 조건 초안으로 걸러낸 후보입니다. 아직 사람이 승인하지 않았으므로 참고만 하세요. 승인되면 위 목록으로 올라갑니다.</p>
   <div id="drafts">${g.draft.slice(0, DRAFT_SHOW).map(x => svcCard(x, 'draft')).join('')}</div>
   ${g.draft.length > DRAFT_SHOW ? `<button class="btn ghost more" id="more">후보 ${g.draft.length - DRAFT_SHOW}개 더 보기</button>` : ''}
+  <h2>우리 지역 서비스 후보 <span class="badge b-brand">${p.sido ? esc(p.sido + (p.sgg ? ' ' + p.sgg : '')) : '시·도 미입력'}</span></h2>
+  <p class="small muted">지자체복지서비스 API의 가구상황·생애주기·관심주제 분류만으로 고른 후보입니다. 조건 판정이 아니라 "살펴볼 만한 것"이며, 승인 규칙이 생기면 위 목록으로 올라갑니다.</p>
+  ${!p.sido ? '<p class="muted">시·도를 입력하면 그 지역 사업이 나옵니다. <a href="#/profile">입력하기</a></p>' : region.length ? region.map(({ s, why }) => `<article class="card svc"><div class="head"><div><h3>${esc(s.name)}</h3><div class="jur">${esc(s.sido)}${s.sgg ? ' ' + esc(s.sgg) : ''}${s.dept ? ' · ' + esc(s.dept) : ''}</div></div><div><span class="badge b-brand">지자체 후보</span>${s.end ? ` <span class="badge b-warn">종료 ${esc(s.end.slice(0,4))}.${esc(s.end.slice(4,6))}.${esc(s.end.slice(6,8))}</span>` : ''}</div></div><p class="digest">${esc(s.digest)}</p><div class="why"><b>왜 후보인가요?</b> ${why.map(esc).join(' · ')} <span class="muted">— 분류 일치, 조건 미확인</span></div><div class="row" style="margin-top:10px"><a class="btn sm" href="${esc(s.link)}" target="_blank" rel="noopener">복지로에서 원문 보기 ↗</a><span class="small muted">최종 수정 ${esc(s.lastMod)}</span></div></article>`).join('') : '<p class="muted">분류가 맞는 지자체 사업이 없습니다.</p>'}
   <div class="row" style="margin-top:20px"><a class="btn accent" href="#/alert">이 조건으로 알림 받으면? 미리보기</a><button class="btn ghost" onclick="window.print()">결과 인쇄·PDF 저장</button></div>`;
   $('#more')?.addEventListener('click', () => { $('#drafts').innerHTML = g.draft.map(x => svcCard(x, 'draft')).join(''); $('#more').remove(); });
 }
@@ -183,25 +198,30 @@ async function viewResult(q) {
 async function viewAlert() {
   const d = await load();
   const p = getProfile();
-  const g = run(d.services, p);
-  const recent = [...d.services].filter(s => s.registered).sort((a, b) => b.registered.localeCompare(a.registered)).slice(0, 5);
+  const local = await loadLocal(p.sido);
+  const g = run(d.services.concat(local), p);
+  const recentN = [...d.services].filter(s => s.registered).sort((a, b) => b.registered.localeCompare(a.registered)).slice(0, 3);
+  const mine = local.filter(s => !s.sgg || !p.sgg || s.sgg === p.sgg);
+  const recentL = [...mine].filter(s => s.lastMod).sort((a, b) => b.lastMod.localeCompare(a.lastMod)).slice(0, 5);
+  const ending = mine.filter(s => s.end).sort((a, b) => a.end.localeCompare(b.end)).slice(0, 5);
   const fmt = s => s ? `${s.slice(0, 4)}.${s.slice(4, 6)}.${s.slice(6, 8)}` : '';
   app.innerHTML = `
   <h1>알림 미리보기</h1>
   <p class="lead">실제 서비스에서는 매일 데이터를 다시 읽어 아래 세 종류의 알림을 카카오톡·이메일로 보냅니다. 이 화면은 그 모습을 보여 주는 미리보기입니다.</p>
   <div class="card">
-    <h3>① 새로 생겼어요 <span class="badge b-brand">실제 데이터</span></h3>
-    <p class="small muted">복지로 등록일(svcfrstRegTs) 기준 최근 등록된 중앙부처 서비스. 매일 수집해 어제와 비교하면 "신규"가 됩니다.</p>
-    ${recent.map(s => `<div class="alert-item"><div class="ic">🆕</div><div><b>${esc(s.name)}</b> <span class="muted small">${esc(s.jur)}</span><br><time>등록 ${fmt(s.registered)}</time> · <a href="${esc(s.link)}" target="_blank" rel="noopener">원문</a></div></div>`).join('')}
+    <h3>① 새로 생기거나 바뀌었어요 <span class="badge b-brand">실제 데이터</span></h3>
+    <p class="small muted">${p.sido ? esc(p.sido + (p.sgg ? ' ' + p.sgg : '')) + ' 지자체 사업의 최종 수정일(lastModYmd)과 ' : ''}중앙부처 등록일(svcfrstRegTs) 기준. 매일 수집해 어제와 비교하면 "신규·변경"이 됩니다.</p>
+    ${recentL.map(s => `<div class="alert-item"><div class="ic">🔄</div><div><b>${esc(s.name)}</b> <span class="muted small">${esc(s.sido)} ${esc(s.sgg)}</span><br><time>수정 ${fmt(s.lastMod)}</time> · <a href="${esc(s.link)}" target="_blank" rel="noopener">원문</a></div></div>`).join('')}
+    ${recentN.map(s => `<div class="alert-item"><div class="ic">🆕</div><div><b>${esc(s.name)}</b> <span class="muted small">${esc(s.jur)}</span><br><time>등록 ${fmt(s.registered)}</time> · <a href="${esc(s.link)}" target="_blank" rel="noopener">원문</a></div></div>`).join('')}
   </div>
   <div class="card">
     <h3>② 내 조건에 맞아요 <span class="badge b-ok">현재 입력 기준</span></h3>
     ${g.ok.length ? g.ok.slice(0, 4).map(x => `<div class="alert-item"><div class="ic">✅</div><div><b>${esc(x.s.name)}</b><br><span class="small">${esc(x.s.rule?.easy?.what || x.s.digest)}</span></div></div>`).join('') : '<p class="muted">내 조건을 먼저 입력하면 여기에 표시됩니다. <a href="#/profile">입력하기</a></p>'}
   </div>
   <div class="card">
-    <h3>③ 마감이 다가와요 <span class="badge b-mute">예시 · 지자체 API 연결 후</span></h3>
-    <p class="small muted">중앙부처 API 상세에는 접수기간 항목이 없다는 것을 수집 과정에서 확인했습니다. 마감 알림은 지자체복지서비스 API(접수기간 포함)와 공고 원문을 연결하는 다음 단계에서 제공합니다. 아래는 형식 예시이며 실제 공고가 아닙니다.</p>
-    <div class="alert-item"><div class="ic">⏰</div><div><b>[예시] ○○시 소상공인 공공요금 지원</b> <span class="badge b-mute">DEMO · 실제 공고 아님</span><br><time>마감 D-7</time> · 준비 서류 3종 체크리스트 보기</div></div>
+    <h3>③ 마감이 다가와요 <span class="badge ${ending.length ? 'b-ok' : 'b-mute'}">${ending.length ? '실제 데이터' : '해당 지역 데이터 없음'}</span></h3>
+    <p class="small muted">지자체 API 상세의 시행종료일(enfcEndYmd)을 씁니다. 대부분의 사업은 종료일이 정해져 있지 않아(상시) 마감 알림은 기간제 사업에만 뜹니다. 중앙부처 API에는 접수기간 항목이 없습니다.</p>
+    ${ending.length ? ending.map(s => `<div class="alert-item"><div class="ic">⏰</div><div><b>${esc(s.name)}</b> <span class="muted small">${esc(s.sido)} ${esc(s.sgg)}</span><br><time>종료 ${fmt(s.end)}</time> · <a href="${esc(s.link)}" target="_blank" rel="noopener">원문</a></div></div>`).join('') : `<div class="alert-item"><div class="ic">⏰</div><div><span class="muted">${p.sido ? '이 지역에서 상세를 확보한 사업 중 종료일이 정해진 것이 없습니다.' : '시·도를 입력하면 그 지역의 기간제 사업이 나옵니다.'}</span> <span class="badge b-mute">형식 예시: ○○시 ○○지원 · 마감 D-7</span></div></div>`}
   </div>
   <div class="card">
     <h3>④ 데이터 품질 피드백 <span class="badge b-brand">정보원에 보내는 리포트</span></h3>
@@ -218,7 +238,7 @@ async function viewAbout() {
     <h3>데이터</h3>
     <table><tr><th>데이터</th><th>제공</th><th>이 데모에서 쓰는 곳</th></tr>
     <tr><td>중앙부처복지서비스 목록·상세 API (공공데이터포털 15090532)</td><td>한국사회보장정보원</td><td>서비스 ${d.meta.count}건 전체. 상세의 지원대상·선정기준·신청방법·구비서류·문의처 문장</td></tr>
-    <tr><td>지자체복지서비스 API (15108347)</td><td>한국사회보장정보원</td><td>다음 단계(접수기간·시군구 사업). 데모 미연결</td></tr>
+    <tr><td>지자체복지서비스 API (15108347)</td><td>한국사회보장정보원</td><td>전국 ${LOCAL_INDEX.meta.count.toLocaleString()}건 목록(시·도별 분할 로딩), 사례 지역 상세 ${LOCAL_INDEX.meta.detail}건. 시행종료일·최종수정일로 마감·변경 알림</td></tr>
     <tr><td>기준 중위소득 고시</td><td>보건복지부</td><td>소득 구간 보기 문구</td></tr></table>
     <p class="small muted">수집일 ${d.meta.fetched}. 원자료 값은 바꾸지 않았고, 화면 문구는 원문 링크로 확인할 수 있습니다.</p>
   </div>
@@ -234,7 +254,7 @@ async function viewAbout() {
     <h3>정직한 한계</h3>
     <ul>
       <li>소득은 구간 자가신고입니다. 소득인정액 산정(재산 환산 등)은 하지 않으므로 최종 자격은 신청 기관이 판정합니다.</li>
-      <li>중앙부처 API에는 접수기간이 없어 마감 알림은 지자체 API 연결 후 가능합니다.</li>
+      <li>중앙부처 API에는 접수기간이 없습니다. 지자체 API에는 시행종료일이 있지만 대부분 상시(9999-12-31)라 마감 알림은 기간제 사업에만 뜹니다.</li>
       <li>공공데이터포털 개발계정은 하루 호출 제한이 있어 상세 원문은 ${d.meta.detail_api}건만 수집했습니다. 나머지 승인 규칙은 복지로 요약문 기준이며 카드에 그 사실을 표시합니다.</li>
       <li>AI 초안 규칙의 정확도는 사람 검수 전이며, 사전 시험 40건에서 근거 인용 일치율 96%, 가구유형 추출 50%, 소득 기준 추출 22%였습니다.</li>
       <li>개인정보: 이름·주민번호·금액을 받지 않고, 입력은 브라우저(localStorage)에만 저장됩니다.</li>

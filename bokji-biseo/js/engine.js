@@ -18,7 +18,7 @@ export const INCOME = [
   [125, '125% 이하'], [150, '150% 이하'], [200, '200% 이하'], [999, '200% 초과 또는 모름'],
 ];
 
-export const emptyProfile = () => ({ age: null, sido: '', household: [], situation: [], business: 'none', employment: 'none', income_pct: null, themes: [] });
+export const emptyProfile = () => ({ age: null, sido: '', sgg: '', household: [], situation: [], business: 'none', employment: 'none', income_pct: null, themes: [] });
 
 function evalCond(cond, p) {
   const out = []; // {label, state:true|false|null, text}
@@ -53,6 +53,14 @@ function evalCond(cond, p) {
     const lab = cond.employment === 'insured' ? '고용보험 가입 근로자' : cond.employment === 'uninsured' ? '고용보험 미적용(1인 사업자·프리랜서 등)' : '';
     if (lab) out.push({ label: lab, state: cond.employment === 'insured' ? p.employment === 'insured' : (p.employment === 'uninsured' || p.business !== 'none') });
   }
+  if (cond.region) {
+    const lab = `거주지: ${cond.region.sido}${cond.region.sgg ? ' ' + cond.region.sgg : ''}`;
+    if (!p.sido) out.push({ label: lab, state: null });
+    else if (p.sido !== cond.region.sido) out.push({ label: lab, state: false });
+    else if (cond.region.sgg && p.sgg && p.sgg !== cond.region.sgg) out.push({ label: lab, state: false });
+    else if (cond.region.sgg && !p.sgg) out.push({ label: lab, state: null });
+    else out.push({ label: lab, state: true });
+  }
   if (cond.manual) out.push({ label: cond.manual, state: null });
   return out;
 }
@@ -79,4 +87,59 @@ export function run(services, profile) {
   const score = x => (x.r.positives || 0) * 10 + (x.s.online === 'Y' ? 1 : 0);
   for (const k of Object.keys(groups)) groups[k].sort((a, b) => score(b) - score(a));
   return groups;
+}
+
+// 지자체 목록 필드(가구상황·생애주기·관심주제)만으로 매기는 '우리 지역 후보' 점수. 판정이 아니라 정렬용이다.
+const TARGET_FLAGS = { '저소득': ['basic', 'near_poor'], '한부모·조손': ['single_parent'], '다자녀': ['multi_child'], '장애인': ['disabled'], '다문화·탈북민': ['multicultural', 'defector'], '보훈대상자': ['veteran'] };
+const THEME_SIT = { '신체건강': ['illness_tb', 'illness_severe', 'illness_other', 'hospital_bills'], '안전·위기': ['housing_crisis'], '생활지원': ['energy', 'housing_crisis', 'income_loss'], '주거': ['housing_crisis'], '서민금융': ['income_loss'], '일자리': ['job_seeking'] };
+export function regionCandidates(localServices, p, limit = 8) {
+  if (!p.sido) return [];
+  const out = [];
+  const lifeOf = (s) => {
+    const hits = [];
+    if (s.life.includes('임신 · 출산') && p.household.includes('pregnant')) hits.push('생애주기 임신·출산');
+    if (s.life.includes('영유아') && p.household.includes('infant')) hits.push('생애주기 영유아');
+    if (s.life.includes('아동') && p.household.includes('infant')) hits.push('생애주기 아동');
+    if (p.age != null) {
+      if (s.life.includes('노년') && p.age >= 65) hits.push('생애주기 노년');
+      if (s.life.includes('중장년') && p.age >= 40 && p.age < 65) hits.push('생애주기 중장년');
+      if (s.life.includes('청년') && p.age >= 19 && p.age < 40) hits.push('생애주기 청년');
+    }
+    return hits;
+  };
+  for (const s of localServices) {
+    if (s.sido !== p.sido) continue;
+    if (s.sgg && p.sgg && s.sgg !== p.sgg) continue; // 다른 시군구 사업 제외(시도 단위 사업은 통과)
+    if (s.rule && s.rule.status !== 'none') continue; // 규칙 있는 것은 본 판정에서 다룸
+    let score = 0; const why = [];
+    // 가구상황 분류가 있는데 하나도 안 맞으면 제외 (예: 장애인 전용 사업)
+    if (s.target.length) {
+      const hit = s.target.filter(t => (TARGET_FLAGS[t] || []).some(f => p.household.includes(f)));
+      if (!hit.length) continue;
+      score += 2 * hit.length; why.push(...hit.map(t => `가구상황 '${t}'`));
+    }
+    // 생애주기 분류가 있는데 하나도 안 맞으면 제외
+    if (s.life.length) {
+      const hits = lifeOf(s);
+      if (!hits.length) continue;
+      score += hits.length; why.push(...hits);
+    }
+    for (const th of s.themes) for (const sit of THEME_SIT[th] || []) if (p.situation.includes(sit)) { score += 1; why.push(`관심주제 '${th}'`); break; }
+    const text = s.name + ' ' + s.digest;
+    const preg = p.household.includes('pregnant') || p.household.includes('infant');
+    if (/난임|임신|출산|산모|신생아|육아/.test(text) && !preg) continue;
+    if (/취업|일자리|재취업|구직/.test(text) && !p.situation.includes('job_seeking') && p.business === 'none') continue;
+    if (/장례|장제|사망|성매매|보훈|국가유공/.test(text)) continue;
+    if (p.business !== 'none' && /소상공인|자영업|사업자|창업/.test(text)) { score += 2; why.push('소상공인·자영업 키워드'); }
+    if (p.situation.includes('illness_tb') && /결핵/.test(text)) { score += 3; why.push("'결핵' 키워드"); }
+    if (p.household.includes('single') && /1인 ?가구|독거/.test(text)) { score += 2; why.push("'1인가구·독거' 키워드"); }
+    if ((p.situation.includes('hospital_bills') || p.situation.includes('illness_tb') || p.situation.includes('illness_severe')) && /의료비|진료비|치료비|건강보험료/.test(text)) { score += 2; why.push("'의료비' 키워드"); }
+    if (p.situation.includes('energy') && /난방|연료|에너지|전기요금/.test(text)) { score += 2; why.push("'난방·에너지' 키워드"); }
+    if (p.situation.includes('income_loss') && /긴급|생계/.test(text)) { score += 1; why.push("'긴급·생계' 키워드"); }
+    if ((p.situation.includes('illness_tb') || p.situation.includes('illness_other') || p.situation.includes('illness_severe')) && /병가|입원|간병/.test(text)) { score += 2; why.push("'입원·병가·간병' 키워드"); }
+    if (score < 2) continue;
+    out.push({ s, score, why: [...new Set(why)] });
+  }
+  out.sort((a, b) => b.score - a.score || (b.s.lastMod || '').localeCompare(a.s.lastMod || ''));
+  return out.slice(0, limit);
 }

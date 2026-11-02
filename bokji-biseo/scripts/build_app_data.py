@@ -6,8 +6,12 @@
   data/raw/web_detail.json          상세 (복지로 웹 렌더링, 보조)
   data/raw/structuring_all.json     AI 조건 초안 (structure_trial.py --out)
   data/rules_approved.json          사람이 원문과 대조해 승인한 규칙 + 쉬운말 카드
+  data/raw/local_list.json          지자체복지서비스 목록 전국 (fetch_local.py --list)
+  data/raw/local_detail.json        지자체 상세 (선택 수집)
+  data/raw/structuring_local.json   지자체 AI 조건 초안
 출력
-  data/services.json                앱이 읽는 파일 (원자료 값은 바꾸지 않고 필드 선택·정리만)
+  data/services.json                중앙부처 (앱이 읽는 파일, 원자료 값은 바꾸지 않고 필드 선택·정리만)
+  data/local/index.json, data/local/NN.json   지자체: 시도별 분할
 실행: python3 bokji-biseo/scripts/build_app_data.py   (윈도우: py bokji-biseo\\scripts\\build_app_data.py)
 """
 import json, os, re
@@ -73,6 +77,41 @@ def main():
         "approved": sum(1 for s in out if s["rule"]["status"] == "approved"), "draft": sum(1 for s in out if s["rule"]["status"] == "draft"),
         "detail_api": len(det), "detail_web": len(web), "ambiguous": sum(1 for d in drafts.values() if d.get("ambiguous")),
     }
+    # ----- 지자체 -----
+    LL = load("local_list.json", {"items": [], "meta": {}})
+    ldet = {x.get("servId"): x for x in load("local_detail.json", {"items": []})["items"]}
+    ldrafts = {x.get("_servId"): x for x in load("structuring_local.json", {"results": []})["results"]}
+    by_sido = {}
+    for it in LL["items"]:
+        sid = it.get("servId"); sido = it.get("ctpvNm") or "기타"
+        d = ldet.get(sid, {})
+        end = d.get("enfcEndYmd", "")
+        s = {
+            "id": sid, "name": it.get("servNm", ""), "sido": sido, "sgg": it.get("sggNm", ""), "dept": it.get("bizChrDeptNm", ""),
+            "digest": (it.get("servDgst", "") or "")[:200], "themes": [t.strip() for t in it.get("intrsThemaNmArray", "").split(",") if t.strip()],
+            "life": [t.strip() for t in it.get("lifeNmArray", "").split(",") if t.strip()], "target": [t.strip() for t in it.get("trgterIndvdlNmArray", "").split(",") if t.strip()],
+            "apply": it.get("aplyMtdNm", ""), "lastMod": it.get("lastModYmd", ""), "link": it.get("servDtlLink", ""), "local": True,
+            "end": end if end and not end.startswith("9999") else "", "begin": d.get("enfcBgngYmd", ""), "detail": bool(d),
+        }
+        if sid in approved:
+            r = dict(approved[sid]); r["status"] = "approved"; s["rule"] = r
+        elif sid in ldrafts and not ldrafts[sid].get("_error"):
+            dd = ldrafts[sid]; cond = draft_to_cond(dd); cond["region"] = {"sido": sido, **({"sgg": s["sgg"]} if s["sgg"] else {})}
+            s["rule"] = {"status": "draft", "cond": cond, "quotes": dd.get("quotes", [])[:3], "ambiguous": bool(dd.get("ambiguous")), "ambiguous_reason": dd.get("ambiguous_reason", "")}
+        else:
+            s["rule"] = {"status": "none"}
+        by_sido.setdefault(sido, []).append(s)
+    ldir = os.path.join(ROOT, "data", "local"); os.makedirs(ldir, exist_ok=True)
+    index = {"meta": {"source": "한국사회보장정보원 지자체복지서비스 API (공공데이터포털 15108347)", "fetched": LL.get("meta", {}).get("fetched", ""), "count": len(LL["items"]),
+                      "detail": len(ldet), "approved": sum(1 for v in by_sido.values() for x in v if x["rule"]["status"] == "approved"), "draft": sum(1 for v in by_sido.values() for x in v if x["rule"]["status"] == "draft")}, "sidos": []}
+    for i, (sido, items) in enumerate(sorted(by_sido.items())):
+        fname = f"{i:02d}.json"
+        with open(os.path.join(ldir, fname), "w", encoding="utf-8") as f:
+            json.dump({"sido": sido, "services": items}, f, ensure_ascii=False, separators=(",", ":"))
+        index["sidos"].append({"name": sido, "file": fname, "count": len(items), "sggs": sorted({x["sgg"] for x in items if x["sgg"]})})
+    with open(os.path.join(ldir, "index.json"), "w", encoding="utf-8") as f:
+        json.dump(index, f, ensure_ascii=False, separators=(",", ":"))
+    meta["local"] = index["meta"]
     with open(os.path.join(ROOT, "data", "services.json"), "w", encoding="utf-8") as f:
         json.dump({"meta": meta, "services": out}, f, ensure_ascii=False, separators=(",", ":"))
     print(json.dumps(meta, ensure_ascii=False))

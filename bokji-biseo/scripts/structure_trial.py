@@ -73,8 +73,13 @@ def main():
     ap.add_argument("--workers", type=int, default=1)
     ap.add_argument("--out", default=OUT_JSON)
     ap.add_argument("--md", default=OUT_MD, help="요약 마크다운 경로 ('-'면 생략)")
+    ap.add_argument("--in", dest="inp", default=IN, help="입력 상세 JSON (중앙부처 또는 지자체 상세)")
     a = ap.parse_args()
-    items = json.load(open(IN, encoding="utf-8"))["items"][: a.limit]
+    items = json.load(open(a.inp, encoding="utf-8"))["items"][: a.limit]
+    for it in items:  # 지자체 상세 필드명을 중앙부처 필드명으로 맞춘다
+        it.setdefault("tgtrDtlCn", it.get("sprtTrgtCn", ""))
+        it.setdefault("applmetList", it.get("aplyMtdCn", ""))
+        it.setdefault("jurMnofNm", " ".join(x for x in [it.get("ctpvNm"), it.get("sggNm")] if x))
 
     def one(it):
         text = PROMPT.format(servNm=it.get("servNm", ""), tgtrDtlCn=clean(it.get("tgtrDtlCn")), slctCritCn=clean(it.get("slctCritCn")),
