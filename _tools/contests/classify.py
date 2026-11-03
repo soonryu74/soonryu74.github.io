@@ -5,7 +5,7 @@
 --prev 를 주면 이전에 본 공모전의 firstSeen(처음 본 날)을 이어받아 '신규'를 가립니다.
 판정은 제목·요약의 낱말로만 하는 1차 분류입니다. '확인 필요'는 사람이 요강을 봐야 합니다.
 """
-import json, re, sys, datetime as dt
+import json, os, re, sys, datetime as dt
 
 KST = dt.timezone(dt.timedelta(hours=9))
 TODAY = dt.datetime.now(KST).date()
@@ -116,6 +116,16 @@ def main():
         # 처음 본 날: 이전 피드에 있으면 그 날짜, 없으면 노션 등록일(없으면 오늘)
         c['firstSeen'] = prev.get(c['id'], {}).get('firstSeen') or min(c['reg'] or str(TODAY), str(TODAY))
         items.append(c)
+    # 사람이 요강 원문으로 확인한 판정(overrides.json)은 자동 판정보다 우선
+    try:
+        ov = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'overrides.json'), encoding='utf-8'))
+    except (OSError, ValueError):
+        ov = []
+    for c in items:
+        for o in ov:
+            if o['match'] in c['name']:
+                c['status'] = o['status']; c['reasons'] = o.get('reasons', c['reasons'])
+                c['tags'] = list(dict.fromkeys(c['tags'] + o.get('tags', [])))
     for c in items:
         d = dt.date.fromisoformat(c['due']) if c['due'] else None
         c['pick'] = c['status'] == 'eligible' and c['prizeMax'] >= 250 and d is not None and (d - TODAY).days >= 3

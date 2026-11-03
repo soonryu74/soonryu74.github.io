@@ -33,6 +33,11 @@ command -v certutil || apt-get install -y -q libnss3-tools
 certutil -A -d sql:$HOME/.pki/nssdb -n "ccr-agent-proxy-$(date +%Y%m%d%H%M)" -t "C,," -i /root/.ccr/agent-proxy-ca.crt
 ```
 
+## 사람 확인 판정
+
+요강 원문으로 확인한 결과는 `overrides.json`에 `match`(이름 일부)·`status`·`reasons`로 적습니다.
+`classify.py`가 자동 판정 뒤에 덮어써서, 다음 날 갱신에도 유지됩니다.
+
 ## 판정의 한계
 
 판정은 공모전 이름과 요약에 나온 낱말만 봅니다. '확인 필요'와 신규 고액 공모전은 요강 원문을 열어
