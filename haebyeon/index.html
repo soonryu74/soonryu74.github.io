@@ -180,7 +180,7 @@
       <button id="look-open" class="btn ghost" type="button">꾸미기 · 친구 고르기</button>
     </div>
     <div class="seg" id="scene-pick" style="margin-top:14px" role="group" aria-label="장소"><button type="button" data-scene="beach">해변</button><button type="button" data-scene="hangang">한강</button></div>
-    <p class="welcome-hint">소리를 켜면 파도와 갈매기 소리가 함께해요</p>
+    <p class="welcome-hint" id="welcome-live">소리를 켜면 파도와 갈매기 소리가 함께해요</p>
   </div>
 </section>
 
@@ -332,7 +332,7 @@ if(isTouch) document.body.classList.add('is-touch');
 
 const state = {
   started:false, held:false, autoRun:false, speed:0, laneTarget:2.2, lane:2.2,
-  x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, stridePhase:0, stillFor:0, resting:false, pose:'stand', pendingPose:null, prevLane:2.2, restFor:0,
+  x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, hop:0, stridePhase:0, stillFor:0, resting:false, pose:'stand', pendingPose:null, prevLane:2.2, restFor:0,
   todMode:'auto', todT:0.5, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
 };
 let PRIV = (new URL(location.href).searchParams.get('room')||'').replace(/[^0-9a-zA-Z가-힣_-]/g,'').slice(0,24);
@@ -535,7 +535,16 @@ const inkM = new THREE.MeshBasicMaterial({color:0x3b2f2f});
 const blushM = new THREE.MeshBasicMaterial({color:0xffb3a7, transparent:true, opacity:0.75});
 function box(w,h,d,m){ const o = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); o.castShadow = true; return o; }
 function capsule(r,l,m){ const o = new THREE.Mesh(new THREE.CapsuleGeometry(r,l,6,12), m); o.castShadow = true; return o; }
-function limb(len, r, mat, y, z){ const g = new THREE.Group(); g.position.set(0, y, z); const m = capsule(r, len, mat); m.position.y = -len/2; g.add(m); return g; }
+function limb(len, r, mat, y, z){
+  // 윗마디(어깨/엉덩이에서 회전) + 아랫마디(팔꿈치/무릎에서 회전). 두 마디 길이는 같다 → 네 팔다리가 같은 규칙으로 움직인다
+  const g = new THREE.Group(); g.position.set(0, y, z);
+  const half = len/2;
+  const up = capsule(r, half, mat); up.position.y = -half/2; g.add(up);
+  const lower = new THREE.Group(); lower.position.y = -half; g.add(lower);
+  const lo = capsule(r*0.92, half, mat); lo.position.y = -half/2; lower.add(lo);
+  const joint = new THREE.Mesh(new THREE.SphereGeometry(r*1.05, 10, 8), mat); lower.add(joint);
+  g.userData.lower = lower; g.userData.len = len; return g;
+}
 // 둥글둥글 러너 모델 — 나와 다른 사람 모두 이 함수로 만든다
 function buildRunner(mats){
   const g = new THREE.Group();
@@ -560,12 +569,37 @@ function buildRunner(mats){
   [[-0.11],[0.11]].forEach(([z])=>{ const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), inkM); e.position.set(0.3, 0.02, z); e.scale.y = 1.4; headGroup.add(e);
     const bl = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), blushM); bl.position.set(0.3, -0.06, z*1.9); bl.lookAt(1, -0.06, z*4); headGroup.add(bl); });
   const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 12, Math.PI), inkM); mouth.position.set(0.33, -0.09, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headGroup.add(mouth);
-  const armL = limb(0.38, 0.07, skin, 1.02, -0.3), armR = limb(0.38, 0.07, skin, 1.02, 0.3);
-  const legL = limb(0.3, 0.085, skin, 0.56, -0.12), legR = limb(0.3, 0.085, skin, 0.56, 0.12);
-  [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.04, -0.46, 0); l.add(sh); });
+  const armL = limb(0.40, 0.07, skin, 1.02, -0.3), armR = limb(0.40, 0.07, skin, 1.02, 0.3);
+  const legL = limb(0.40, 0.085, skin, 0.60, -0.12), legR = limb(0.40, 0.085, skin, 0.60, 0.12);
+  [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.22, 0); l.userData.lower.add(sh); });
+  [armL, armR].forEach(a=>{ const hand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), skin); hand.position.y = -0.2; a.userData.lower.add(hand); });
   g.add(armL, armR, legL, legR);
   return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR, mats};
 }
+// 걷기·달리기 폼. ph: 보폭 위상, amp: 0 걷기 … 1 전력. 네 팔다리가 같은 규칙: 같은 쪽 팔과 다리는 반대로, 왼쪽·오른쪽은 반 바퀴 차이
+function animateGait(P, ph, amp, g){
+  const run = THREE.MathUtils.smoothstep(amp, 0.25, 0.75);            // 0 걷기 → 1 달리기
+  const thighA = 0.42 + 0.5*run, kneeK = 0.35 + 1.25*run, shoulderA = 0.32 + 0.55*run, elbow = 0.35 + 1.15*run;
+  const legs = [[P.legL, ph + Math.PI], [P.legR, ph]];
+  for(const [leg, f] of legs){
+    leg.rotation.z = thighA*Math.sin(f) - 0.08*run;                                        // 허벅지: 앞(+) 뒤(-)
+    const flex = Math.pow(Math.max(0, Math.cos(f + 0.45)), 1.3);                           // 발을 뒤로 차올리며 앞으로 가져올 때 무릎이 접힘, 착지 땐 펴짐
+    leg.userData.lower.rotation.z = -kneeK*flex;
+  }
+  const arms = [[P.armL, ph], [P.armR, ph + Math.PI]];                                      // 같은 쪽 다리와 반대 위상
+  for(const [arm, f] of arms){
+    arm.rotation.z = shoulderA*Math.sin(f) - 0.25*run;                                     // 어깨: 달릴 땐 전체적으로 조금 앞으로
+    arm.userData.lower.rotation.z = elbow + 0.25*run*Math.max(0, Math.sin(f));             // 팔꿈치: 걸을 땐 살짝, 달릴 땐 90도 가까이
+  }
+  P.armL.rotation.x = -0.18; P.armR.rotation.x = 0.18;
+  // 몸: 달릴 땐 두 발이 뜨는 순간이 한 바퀴에 두 번 → 통통. 걸을 땐 거의 안 뜸
+  const flight = Math.max(0, Math.sin(2*ph + 0.9));
+  g.position.y = flight*flight*(0.02 + 0.12*run) + (1-run)*Math.abs(Math.sin(ph))*0.012;
+  g.rotation.z = -0.1*run;                                                                 // 앞으로 살짝 기울기
+  if(P.torso){ const sq = 1 - 0.05*run*Math.max(0, -Math.sin(2*ph + 0.9)); P.torso.scale.set(1/sq, sq, 1/sq); }  // 착지 때 살짝 눌림
+  if(P.headGroup){ P.headGroup.rotation.z = 0.08*run + Math.sin(ph*2 + 0.9)*0.04*run; P.headGroup.rotation.x = Math.sin(ph)*0.05*run; if(P.head){ P.head.rotation.z = P.headGroup.rotation.z; P.head.rotation.x = P.headGroup.rotation.x; } }
+}
+function resetGait(P, dt){ const D = (o,k,v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 6, dt); }; for(const l of [P.legL,P.legR,P.armL,P.armR]) D(l.userData.lower,'z',0); if(P.torso) P.torso.scale.set(1,1,1); }
 function applyLookTo(parts, lk){
   parts.mats.hair.color.set(lk.hair); parts.mats.shirt.color.set(lk.shirt); parts.mats.accent.color.set(lk.accent); parts.mats.accent.emissive.set(lk.accent);
   parts.hatBand.visible = lk.hat==='band'; parts.hatCap.visible = lk.hat==='cap'; parts.hatStraw.visible = lk.hat==='straw'; parts.hair.visible = lk.hat!=='cap';
@@ -718,15 +752,15 @@ function updateOthers(dt, t){
     if(o.resting){
       g.rotation.y = THREE.MathUtils.damp(g.rotation.y, Math.PI/2, 3, dt);
       const D = (ob,k,v)=>{ ob.rotation[k] = THREE.MathUtils.damp(ob.rotation[k], v, 4, dt); };
-      if(o.pose==='sit'){ D(P.legL,'z',1.5); D(P.legR,'z',1.5); D(P.armL,'z',0.55); D(P.armR,'z',0.55); g.position.y = THREE.MathUtils.damp(g.position.y, -0.5, 4, dt); g.rotation.x = THREE.MathUtils.damp(g.rotation.x, 0, 3, dt); }
+      resetGait(P, dt);
+      if(o.pose==='sit'){ D(P.legL,'z',1.5); D(P.legR,'z',1.5); D(P.legL.userData.lower,'z',-0.35); D(P.legR.userData.lower,'z',-0.35); D(P.armL,'z',0.55); D(P.armR,'z',0.55); g.position.y = THREE.MathUtils.damp(g.position.y, -0.5, 4, dt); g.rotation.x = THREE.MathUtils.damp(g.rotation.x, 0, 3, dt); }
       else if(o.pose==='lie'){ g.rotation.x = THREE.MathUtils.damp(g.rotation.x, -Math.PI/2, 3, dt); g.position.y = THREE.MathUtils.damp(g.position.y, -0.55, 3, dt); D(P.legL,'z',0); D(P.legR,'z',0); D(P.armL,'z',-2.6); D(P.armR,'z',2.6); }
       else { D(P.legL,'z',0); D(P.legR,'z',0); D(P.armL,'z',0); D(P.armR,'z',0); g.position.y = THREE.MathUtils.damp(g.position.y, 0, 4, dt); g.rotation.x = THREE.MathUtils.damp(g.rotation.x, 0, 3, dt); }
     } else {
       g.rotation.y = THREE.MathUtils.damp(g.rotation.y, 0, 3, dt); g.rotation.x = 0;
-      P.legL.rotation.z = -legA; P.legR.rotation.z = legA; P.armL.rotation.z = -armA; P.armR.rotation.z = armA; P.armL.rotation.x = -0.25; P.armR.rotation.x = 0.25;
-      g.position.y = Math.abs(Math.sin(ph))*(0.03 + 0.09*amp);
+      if(o.sp > 0.05) animateGait(P, ph, amp, g); else { resetGait(P, dt); g.position.y = 0; g.rotation.z = 0; }
     }
-    g.position.x = o.x; g.position.z = o.lane; g.rotation.z = -0.06*amp;
+    g.position.x = o.x; g.position.z = o.lane;
   }
 }
 function myPacket(full){
@@ -748,7 +782,8 @@ function netTick(){
 }
 function teleportTo(x){ state.x = x; state.prevLane = state.lane; runner.position.x = x; buddyState.x = x - 1.2; buddyState.px = buddyState.x; camera.position.x = x - 6; if(camera.userData.look) camera.userData.look.x = x + 5;
   for(const p of props){ scene.remove(p.obj); dispose(p.obj); } props.length = 0; genX = x - 30; populateTo(x + 90); foots.forEach(f=>{ f.visible = false; }); }
-function setRoomUI(){ meLabel.visible = net.status==='joined' && net.count > 1; const r = $('room'); if(net.status==='joined'){ r.hidden = false; r.textContent = net.priv ? `우리 ${SC.name} '${net.priv}' · ${net.count}명 함께` : `${SC.name} ${net.room} · ${net.count}명 함께`; $('st-ppl').textContent = net.count; $('st-ppl-wrap').hidden = net.count < 2; } else { r.hidden = true; $('st-ppl-wrap').hidden = true; } }
+function setRoomUI(){ { const wl = $('welcome-live'); if(wl && !state.started){ if(net.status==='joined'){ const n = Math.max(0, net.count - 1); wl.textContent = net.priv ? `우리 ${SC.name} '${net.priv}' · 지금 ${n}명 있어요` : (n ? `지금 ${SC.name}에 ${n}명이 달리고 있어요 · 들어가면 바로 같이 뛰어요` : `지금은 비어 있어요 · 들어오면 다음 사람이 보여요`); } } }
+  meLabel.visible = net.status==='joined' && net.count > 1; const r = $('room'); if(net.status==='joined'){ r.hidden = false; r.textContent = net.priv ? `우리 ${SC.name} '${net.priv}' · ${net.count}명 함께` : `${SC.name} ${net.room} · ${net.count}명 함께`; $('st-ppl').textContent = net.count; $('st-ppl-wrap').hidden = net.count < 2; } else { r.hidden = true; $('st-ppl-wrap').hidden = true; } }
 async function netJoin(room = 1){
   if(!net.on) return;
   try{
@@ -1273,10 +1308,12 @@ function frame(){
     if(state.speed > 0.05) state.stridePhase += (state.speed/strideLen)*Math.PI*dt;
     else state.stridePhase = THREE.MathUtils.damp(state.stridePhase, Math.round(state.stridePhase/Math.PI)*Math.PI, 6, dt);
     const ph = state.stridePhase, amp = THREE.MathUtils.clamp(state.speed/RUN, 0, 1);
-    const legA = Math.sin(ph)*(0.35 + 0.55*amp), armA = -Math.sin(ph)*(0.3 + 0.5*amp);
-    if(!(state.resting && state.pose!=='stand')){ legL.rotation.z = -legA; legR.rotation.z = legA; armL.rotation.z = -armA; armR.rotation.z = armA; armL.rotation.x = -0.25; armR.rotation.x = 0.25; }
-    runner.position.y = Math.abs(Math.sin(ph))*(0.03 + 0.09*amp);
-    runner.rotation.z = -0.06*amp; headGroup.rotation.z = Math.sin(ph*0.5)*0.06*amp; head.rotation.z = headGroup.rotation.z;
+    if(!state.resting){
+      if(state.speed > 0.05) animateGait(me, ph, amp, runner); else { resetGait(me, dt); runner.position.y = 0; runner.rotation.z = 0; headGroup.rotation.set(0,0,0); head.rotation.set(0,0,0); }
+      // 통나무·바위 폴짝 넘기
+      if(state.hop > 0){ state.hop -= dt; const u = 1 - state.hop/0.5; runner.position.y += Math.sin(u*Math.PI)*0.7; legL.rotation.z = 0.9; legR.rotation.z = 0.9; legL.userData.lower.rotation.z = -1.6; legR.userData.lower.rotation.z = -1.6; armL.rotation.z = 1.4; armR.rotation.z = 1.4; }
+      else if(state.speed > 0.3){ for(const p of props){ if((p.kind==='wood' || p.kind==='rock') && Math.abs(p.obj.position.z - state.lane) < 1.5){ const dxo = p.obj.position.x - state.x; if(dxo > 0.2 && dxo < 0.9){ state.hop = 0.5; say(['폴짝','영차','휙'][Math.random()*3|0], 900); break; } } } }
+    }
     const wetness = THREE.MathUtils.clamp(1 - (state.lane - (tide + 0.6))/2.0, 0, 1);
     const stepNow = Math.floor(ph/Math.PI);
     const inWater = state.lane < tide + 0.6; // 밀려온 파도선보다 바다 쪽
@@ -1295,11 +1332,12 @@ function frame(){
         runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 4, dt);
         const sp = Math.abs(lateral); state.stridePhase += (sp/0.8)*Math.PI*dt;
         const a = Math.sin(state.stridePhase)*0.45*Math.min(1, sp/WALK);
-        legL.rotation.z = -a; legR.rotation.z = a; armL.rotation.z = a*0.8; armR.rotation.z = -a*0.8;
+        animateGait(me, state.stridePhase, 0.1, runner);
         runner.position.y = Math.abs(Math.sin(state.stridePhase))*0.03;
         if(Math.abs(state.lane - state.laneTarget) < 0.15 && state.pendingPose){ state.pose = state.pendingPose; state.pendingPose = null; }
       } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 3, dt);
-      if(state.pose==='sit'){ D(legL,'z',1.5); D(legR,'z',1.5); D(armL,'z',0.55); D(armR,'z',0.55); D(armL,'x',-0.15); D(armR,'x',0.15); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.5, 4, dt); headGroup.rotation.z = THREE.MathUtils.damp(headGroup.rotation.z, 0.08, 3, dt); head.rotation.z = headGroup.rotation.z; }
+      resetGait(me, dt);
+      if(state.pose==='sit'){ D(legL,'z',1.5); D(legR,'z',1.5); D(legL.userData.lower,'z',-0.35); D(legR.userData.lower,'z',-0.35); D(armL,'z',0.55); D(armR,'z',0.55); D(armL,'x',-0.15); D(armR,'x',0.15); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.5, 4, dt); headGroup.rotation.z = THREE.MathUtils.damp(headGroup.rotation.z, 0.08, 3, dt); head.rotation.z = headGroup.rotation.z; }
       else if(state.pose==='lie'){ runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, -Math.PI/2, 3, dt); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.55, 3, dt); D(legL,'z',0); D(legR,'z',0); D(armL,'z',-2.6); D(armR,'z',2.6); }
     } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, 0, 3, dt);
     if(!state.resting || state.pose!=='lie') runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, 0, 3, dt);
@@ -1357,11 +1395,11 @@ function frame(){
 
 /* ---------- 부팅 ---------- */
 populateTo(90); applyTod(state.todT);
-try{ renderer.compile(scene, camera); frame(); requestAnimationFrame(()=>{ $('boot').classList.add('is-hidden'); $('welcome').classList.remove('is-hidden'); if(BOT){ start(); setTimeout(()=>setAutoRun(true), 4000); } }); }
+try{ renderer.compile(scene, camera); frame(); if(net.on) netJoin(1); requestAnimationFrame(()=>{ $('boot').classList.add('is-hidden'); $('welcome').classList.remove('is-hidden'); if(BOT){ start(); setTimeout(()=>setAutoRun(true), 4000); } }); }
 catch(e){ bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); console.error(e); }
 addEventListener('error', ()=>{ if(!state.started) bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); });
 window.__haebyeon = {state, others, net, buddyState};
-function netReconnect(){ if(!net.on || !state.started || state.ended) return; netLeave(); net.status = 'off'; setTimeout(()=>{ if(net.on && net.status==='off') netJoin(1); }, 400); }
+function netReconnect(){ if(!net.on || state.ended) return; netLeave(); net.status = 'off'; setTimeout(()=>{ if(net.on && net.status==='off') netJoin(1); }, 400); }
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden){ hold(false); keys.left = keys.right = false; net.hiddenAt = performance.now(); } else { if(net.hiddenAt && performance.now() - net.hiddenAt > 4000) netReconnect(); } });
 addEventListener('online', ()=>netReconnect());
 addEventListener('pageshow', (e)=>{ if(e.persisted) netReconnect(); });
