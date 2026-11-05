@@ -190,6 +190,7 @@
       <button id="sound" class="icon-btn" type="button" aria-pressed="false" aria-label="소리 켜기" title="소리"><svg viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
       <button id="breath-toggle" class="icon-btn" type="button" aria-pressed="false" aria-label="호흡 안내" title="호흡 안내"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/></svg></button>
       <button id="share" class="icon-btn" type="button" aria-label="오늘의 러닝 카드 공유" title="공유"><svg viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/></svg></button>
+      <button id="log" class="icon-btn" type="button" aria-label="내 발자국" title="내 발자국"><svg viewBox="0 0 24 24"><path d="M6 20c-1.6 0-2.4-1.3-1.8-2.7C5 15.5 6.6 14 8 14s2.4 1.5 2 3.3C9.6 19 8 20 6 20z"/><path d="M15.5 13c-1.6 0-2.4-1.3-1.8-2.7.8-1.8 2.4-3.3 3.8-3.3s2.4 1.5 2 3.3c-.4 1.7-2.4 2.7-4 2.7z"/><circle cx="4.5" cy="11.5" r="1.3"/><circle cx="8" cy="9.5" r="1.3"/><circle cx="11.5" cy="10" r="1.3"/><circle cx="14" cy="4.5" r="1.3"/><circle cx="18" cy="3.5" r="1.3"/><circle cx="21" cy="6.5" r="1.3"/></svg></button>
       <button id="look" class="icon-btn" type="button" aria-label="꾸미기" title="꾸미기"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></button>
       <button id="help" class="icon-btn" type="button" aria-label="조작 방법" title="조작 방법"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 17h.01"/></svg></button>
       <button id="settings" class="icon-btn" type="button" aria-label="설정" title="설정"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
@@ -268,6 +269,16 @@
   </div>
 </section>
 
+<section id="sheet-log" class="sheet" role="dialog" aria-modal="true" aria-labelledby="log-title">
+  <div class="sheet-card">
+    <div class="sheet-head"><h2 id="log-title">내 발자국</h2><button class="icon-btn" data-close type="button" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <p>순위도 목표도 없어요. 이 폰에만 조용히 남는 산책 메모예요.</p>
+    <div class="sum" style="display:flex;justify-content:center;gap:18px;margin:6px 0 14px"><div style="text-align:center"><b id="log-km" style="display:block;font-size:22px;font-weight:700">0.0</b><span style="font-size:11px;letter-spacing:1px;color:var(--ink-soft)">km 모두</span></div><div style="text-align:center"><b id="log-days" style="display:block;font-size:22px;font-weight:700">0</b><span style="font-size:11px;letter-spacing:1px;color:var(--ink-soft)">날</span></div><div style="text-align:center"><b id="log-time" style="display:block;font-size:22px;font-weight:700">0:00</b><span style="font-size:11px;letter-spacing:1px;color:var(--ink-soft)">시간</span></div><div style="text-align:center"><b id="log-shell" style="display:block;font-size:22px;font-weight:700">0</b><span style="font-size:11px;letter-spacing:1px;color:var(--ink-soft)">조개</span></div></div>
+    <div id="log-cal" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px"></div>
+    <div id="log-list" style="font-size:13px;color:var(--ink-soft);line-height:1.9"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px"><small style="color:var(--mist)">오늘 달리기는 달리는 동안 저절로 적혀요</small><button id="log-clear" class="btn ghost small" type="button">모두 지우기</button></div>
+  </div>
+</section>
 <section id="sheet-settings" class="sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title">
   <div class="sheet-card">
     <div class="sheet-head"><h2 id="settings-title">설정</h2><button class="icon-btn" data-close type="button" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -283,7 +294,7 @@
     <div class="row"><div><strong>움직임 줄이기</strong><small>카메라 흔들림을 줄여요</small></div><button id="reduce" class="switch" type="button" role="switch" aria-checked="false" aria-label="움직임 줄이기"></button></div>
     <div class="row"><div><strong>화질</strong><small>느리면 낮춰주세요</small></div>
       <div class="seg" role="group" aria-label="화질"><button type="button" data-q="1" aria-pressed="false">낮음</button><button type="button" data-q="2" aria-pressed="true">보통</button></div></div>
-    <p style="margin-top:14px;font-size:12px">위치는 같은 해변 사람들에게만 잠깐 전해지고 저장되지 않아요. 기록도 저장하지 않아요.</p>
+    <p style="margin-top:14px;font-size:12px">위치는 같은 해변 사람들에게만 잠깐 전해지고 서버에 저장되지 않아요. 달린 기록은 이 폰에만 남아요(내 발자국).</p>
   </div>
 </section>
 
@@ -292,6 +303,7 @@
     <span class="boot-mark" aria-hidden="true" style="display:inline-block;color:var(--sea);margin-bottom:10px"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="6" r="2.6"/><path d="M2 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg></span>
     <h1 id="end-title">편안히 달리셨나요</h1>
     <div class="sum"><div><b id="end-dist">0.00</b><span>km</span></div><div><b id="end-time">0:00</b><span>시간</span></div><div><b id="end-shell">0</b><span>조개</span></div></div>
+    <p id="end-total" style="margin-top:-8px;font-size:13px;color:var(--mist)"></p>
     <p>소리와 장면을 모두 마쳤어요.<br>다시 달리고 싶을 때 들러주세요.</p>
     <div class="welcome-actions"><button id="end-share" class="btn ghost" type="button">오늘의 카드 저장</button><button id="again" class="btn" type="button">다시 달리기</button></div>
   </div>
@@ -996,7 +1008,34 @@ $('rest-run').addEventListener('click', ()=>{ leaveRest(); setAutoRun(true); say
 $('sandform').addEventListener('submit', e=>{ e.preventDefault(); const v = $('sandtext').value.trim(); if(!v) return; writeOnSand(v); $('sandtext').value = ''; $('sandtext').blur(); say('파도가 천천히 지워 줄 거예요', 3000); });
 $('again').addEventListener('click', ()=>location.reload());
 
-function endSession(){ state.ended = true; leaveRest(); audioStop(); $('end-dist').textContent = (state.dist/1000).toFixed(2); $('end-time').textContent = fmtTime(state.time); $('end-shell').textContent = state.shells; hud.classList.remove('is-on'); $('end').classList.add('is-on'); }
+/* ---------- 내 발자국 (이 기기에만) ---------- */
+const LOG_KEY = 'haebyeon.log', sessionId = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+function logLoad(){ try{ const v = JSON.parse(localStorage.getItem(LOG_KEY)||'[]'); return Array.isArray(v) ? v : []; }catch(e){ return []; } }
+function logSave(list){ try{ localStorage.setItem(LOG_KEY, JSON.stringify(list.slice(-400))); }catch(e){} }
+function todayKey(){ const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+let logLastSave = 0;
+function logFlush(force){
+  if(!state.started || state.dist < 20) return; const now = performance.now(); if(!force && now - logLastSave < 15000) return; logLastSave = now;
+  const list = logLoad(); let row = list.find(r=>r.id===sessionId);
+  if(!row){ row = {id:sessionId, d:todayKey(), m:0, s:0, sh:0, le:0, cat:0, b:look.buddy}; list.push(row); }
+  row.m = Math.round(state.dist); row.s = Math.round(state.time); row.sh = state.shells; row.le = state.letters; row.cat = state.catRescues; row.b = look.buddy;
+  logSave(list);
+}
+function logTotals(list){ const days = new Set(list.map(r=>r.d)); return {m:list.reduce((a,r)=>a+r.m,0), s:list.reduce((a,r)=>a+r.s,0), sh:list.reduce((a,r)=>a+r.sh,0), days:days.size, runs:list.length}; }
+function renderLog(){
+  const list = logLoad(), T = logTotals(list);
+  $('log-km').textContent = (T.m/1000).toFixed(1); $('log-days').textContent = T.days; $('log-time').textContent = fmtTime(T.s); $('log-shell').textContent = T.sh;
+  const byDay = {}; for(const r of list){ byDay[r.d] = (byDay[r.d]||0) + r.m; }
+  const cal = $('log-cal'); cal.innerHTML = ''; const today = new Date(); const start = new Date(today); start.setDate(today.getDate() - 27);
+  for(let i=0;i<28;i++){ const d = new Date(start); d.setDate(start.getDate()+i); const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; const m = byDay[k]||0;
+    const cell = document.createElement('div'); cell.title = `${k} · ${(m/1000).toFixed(2)} km`; cell.style.cssText = `aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:${m?'#fff':'var(--mist)'};background:${m ? (m>3000?'#3aa89f':m>1000?'#5cc3bd':'#a8e2dc') : '#f1ece3'}`; cell.textContent = d.getDate(); cal.appendChild(cell); }
+  const BN = {maltese:'말티즈', golden:'골든', shiba:'시바', poodle:'푸들', cat:'고양이', gull:'갈매기', none:'혼자'};
+  $('log-list').innerHTML = list.slice(-8).reverse().map(r=>`<div>${r.d.slice(5).replace('-','/')} · <b style="color:var(--ink)">${(r.m/1000).toFixed(2)} km</b> · ${fmtTime(r.s)} · 조개 ${r.sh}${r.le?` · 편지 ${r.le}`:''}${r.cat?` · 고양이 ${r.cat}`:''} · ${BN[r.b]||''}</div>`).join('') || '<div>아직 발자국이 없어요. 오늘 첫 걸음부터.</div>';
+}
+$('log').addEventListener('click', ()=>{ logFlush(true); renderLog(); openSheet('sheet-log'); });
+$('log-clear').addEventListener('click', ()=>{ if(confirm('이 폰의 발자국을 모두 지울까요?')){ logSave([]); renderLog(); say('발자국을 지웠어요 · 파도처럼'); } });
+addEventListener('pagehide', ()=>logFlush(true));
+function endSession(){ state.ended = true; leaveRest(); audioStop(); logFlush(true); { const T = logTotals(logLoad()); if(T.runs > 1) $('end-total').textContent = `지금까지 ${T.days}일 · ${(T.m/1000).toFixed(1)} km`; } $('end-dist').textContent = (state.dist/1000).toFixed(2); $('end-time').textContent = fmtTime(state.time); $('end-shell').textContent = state.shells; hud.classList.remove('is-on'); $('end').classList.add('is-on'); }
 function start(){ if(state.started) return; state.started = true; closeSheets(); if(net.on && net.status==='off') netJoin(1); $('welcome').classList.add('is-hidden'); hud.classList.add('is-on'); hud.setAttribute('aria-hidden','false');
   say(isTouch ? '달리기 버튼을 한 번 누르면 계속 달려요 · 다시 누르면 멈춰요' : '누르는 동안 달려요 · 손을 떼면 걷다가 멈춰요 · 한 번 클릭하면 계속 달려요', 4200);
   if(!audio.on){ try{ audioStart(); $('sound').setAttribute('aria-pressed','true'); $('sound').setAttribute('aria-label','소리 끄기'); }catch(e){} } }
@@ -1187,7 +1226,7 @@ function frame(){
       if(p.kind==='palm') p.obj.userData.crown.rotation.z = Math.sin(t*0.8 + p.obj.position.x)*0.04;
     }
     populateTo(state.x + 90);
-    updateOthers(dt, t); netTick(); updateSplash(dt);
+    updateOthers(dt, t); netTick(); updateSplash(dt); logFlush(false);
 
     for(const f of foots){ if(!f.visible) continue; const washed = f.position.z < tide + 0.9; f.material.opacity -= dt*(washed ? 0.5 : 0.012); if(f.material.opacity <= 0) f.visible = false; }
     for(let i=sandNotes.length-1;i>=0;i--){ const n = sandNotes[i]; const washed = n.position.z < tide + 1.2; n.material.opacity -= dt*(washed ? 0.25 : 0.018); if(n.material.opacity <= 0 || n.position.x < state.x - 40){ scene.remove(n); n.material.map.dispose(); n.geometry.dispose(); sandNotes.splice(i,1); } }
