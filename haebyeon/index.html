@@ -412,7 +412,7 @@ const seaUniforms = { time:{value:0}, deep:{value:new THREE.Color(SC.deep.value)
   sunDir:{value:skyUniforms.sunDir.value}, sunColor:{value:skyUniforms.sunColor.value}, fogColor:{value:scene.fog.color}, fogNear:{value:SCENE_ID==='hangang' ? 90 : 40}, fogFar:{value:SCENE_ID==='hangang' ? 480 : 170}, camX:{value:0}, night:{value:0} };
 const SEA_W = SCENE_ID==='hangang' ? 300 : 140;
 const seaGeo = new THREE.PlaneGeometry(520, SEA_W, 260, 70);
-seaGeo.rotateX(-Math.PI/2); seaGeo.translate(0, 0, SHORE_Z - SEA_W/2 + 6);
+seaGeo.rotateX(-Math.PI/2); seaGeo.translate(0, 0, SHORE_Z - SEA_W/2 + 12);
 const seaMat = new THREE.ShaderMaterial({
   uniforms:seaUniforms, transparent:true,
   vertexShader:`uniform float time; uniform float camX; uniform float waveAmp; varying vec3 vPos; varying float vH; varying vec3 vN;
@@ -422,7 +422,7 @@ const seaMat = new THREE.ShaderMaterial({
       vec3 p = position; p.x += camX; float t = time;
       float shoreFade = mix(smoothstep(0.0, 14.0, -p.z), 1.0, rippleAmt);
       float h = wave(p.xz, t) * mix(0.04, 1.0, shoreFade) * waveAmp;
-      p.y += h + 0.03; float e = 0.6;
+      p.y += h + 0.03 + 0.03*smoothstep(-3.0, 3.0, p.z); float e = 0.6;   // 모래 위로 올라오는 부분은 살짝 띄워 겹침 깜빡임 방지
       float hx = wave(p.xz + vec2(e,0.0), t) * mix(0.04,1.0,shoreFade) * waveAmp;
       float hz = wave(p.xz + vec2(0.0,e), t) * mix(0.04,1.0,shoreFade) * waveAmp;
       vN = normalize(vec3(h-hx, e, h-hz)); vPos = p; vH = h;
@@ -472,6 +472,7 @@ const seaMat = new THREE.ShaderMaterial({
       float alpha = smoothstep(1.2, -0.8, dEdge);
       float film = smoothstep(2.8, 0.6, dEdge) * 0.35 * (0.6 + 0.4*n1);
       alpha = max(alpha, film); alpha = max(alpha, foamLine*0.9); alpha = max(alpha, step(vPos.z, -1.0));
+      alpha *= 1.0 - smoothstep(6.0, 9.0, vPos.z);   // 평면 가장자리(z=12) 훨씬 전에 완전히 사라지게 → 직선으로 잘린 띠 없음
       float fogF = smoothstep(fogNear, fogFar, length(cameraPosition - vPos));
       c = mix(c, fogColor, fogF);
       gl_FragColor = vec4(c, alpha);
@@ -940,7 +941,10 @@ const lighthouse = (()=>{
   // 회전 광선 (양쪽으로 뻗는 긴 원뿔) + 바다를 비추는 점광원
   const beamM = new THREE.MeshBasicMaterial({color:0xfff0b8, transparent:true, opacity:0, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.DoubleSide, fog:false});
   const beams = new THREE.Group(); beams.position.y = 11.8;
-  for(const sgn of [1,-1]){ const cone = new THREE.Mesh(new THREE.ConeGeometry(3.2, 160, 16, 1, true), beamM); cone.rotation.z = sgn*Math.PI/2; cone.position.x = sgn*80; beams.add(cone); }
+  const beamGeo = new THREE.ConeGeometry(3.2, 160, 16, 1, true);
+  { const pos = beamGeo.attributes.position, col = new Float32Array(pos.count*4); for(let i=0;i<pos.count;i++){ const a = Math.pow(THREE.MathUtils.clamp((pos.getY(i) + 80)/160, 0, 1), 1.6); col[i*4]=1; col[i*4+1]=1; col[i*4+2]=1; col[i*4+3]=a; } beamGeo.setAttribute('color', new THREE.BufferAttribute(col, 4)); }
+  beamM.vertexColors = true;
+  for(const sgn of [1,-1]){ const cone = new THREE.Mesh(beamGeo, beamM); cone.rotation.z = sgn*Math.PI/2; cone.position.x = sgn*80; beams.add(cone); }
   beams.rotation.x = -0.04; // 수평선 쪽으로 살짝 아래
   g.add(beams);
   const light = new THREE.PointLight(0xffd27a, 0, 90, 1.6); light.position.y = 11.8; g.add(light);
