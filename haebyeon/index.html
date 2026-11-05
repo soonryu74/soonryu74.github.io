@@ -329,7 +329,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-05-47';
+window.__BUILD = '2026-11-05-48';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1022,7 +1022,7 @@ let bridge = null;
 if(SCENE_ID==='hangang'){
   const concrete = new THREE.MeshStandardMaterial({color:0xe6e9ee, roughness:1, emissive:0x3a3d44, emissiveIntensity:0.35});   // 밑면이 새까맣게 보이지 않게
   bridge = new THREE.Group();
-  const L = SEA_W + 50; const Z0 = 40;   // 뒤쪽 땅(둔치 너머)에서 시작해 강을 건넌다. 러닝 길 근처엔 기둥 없음
+  const L = SEA_W + 170; const Z0 = 40;   // 건너편 아파트 단지 뒤까지 이어져 끝이 잘려 보이지 않게   // 뒤쪽 땅(둔치 너머)에서 시작해 강을 건넌다. 러닝 길 근처엔 기둥 없음
   const deck = new THREE.Mesh(new THREE.BoxGeometry(11, 1.6, L), concrete); deck.position.set(0, 12, Z0 - L/2); bridge.add(deck);
   const railM = new THREE.MeshStandardMaterial({color:0x6f7680});
   for(const sx of [-5.3, 5.3]){ const rail = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.1, L), railM); rail.position.set(sx, 13.3, Z0 - L/2); bridge.add(rail); }
