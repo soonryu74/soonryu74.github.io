@@ -321,7 +321,7 @@ const ROOM_CAP = 30, LOOP_LEN = 1000; // 방당 30명 · 해변은 1 km 로 이�
 const SCENE_ID = (new URL(location.href).searchParams.get('scene')==='hangang') ? 'hangang' : 'beach';
 const SCENES = {
   beach:   {name:'해변', eyebrow:'BEACH RUN', title:'해변, 잠깐 달려요', laneMin:-2.6, dryLane:5.4, laneSea:'물가 쪽', laneSand:'모래 쪽', collect:'조개', shareText:'말없이 파도 옆을 달리는 온라인 해변', cardTitle:'해변, 잠깐 달렸어요', deep:{value:0x2d8fa8}, shallow:0x8fdcd6, waveAmp:1, foamAmt:1, tideAmp:1, seaVol:1, bird:'gull', chan:'beach', ground:'sand', sitMsg:'물에서 조금 떨어진 모래로 올라가요', sandMsg:'모래에 한 줄 써 보세요 · 파도가 지워 줘요'},
-  hangang: {name:'한강', eyebrow:'HANGANG RUN', title:'한강, 잠깐 달려요', laneMin:1.0, dryLane:7.2, laneSea:'강가 쪽', laneSand:'잔디 쪽', collect:'클로버', shareText:'말없이 강바람 맞으며 달리는 온라인 한강', cardTitle:'한강, 잠깐 달렸어요', deep:{value:0x3d7d93}, shallow:0x7fb3bd, waveAmp:0.22, foamAmt:0.08, tideAmp:0.12, seaVol:0.45, bird:'sparrow', chan:'hangang', ground:'grass', sitMsg:'잔디밭으로 올라가요', sandMsg:'잔디에 한 줄 남겨 보세요 · 바람이 지워 줘요'},
+  hangang: {name:'한강', eyebrow:'HANGANG RUN', title:'한강, 잠깐 달려요', laneMin:1.0, dryLane:7.2, laneSea:'강가 쪽', laneSand:'잔디 쪽', collect:'클로버', shareText:'말없이 강바람 맞으며 달리는 온라인 한강', cardTitle:'한강, 잠깐 달렸어요', deep:{value:0x4b7f98}, shallow:0x6f9fb4, waveAmp:0.22, foamAmt:0.08, tideAmp:0.12, seaVol:0.45, bird:'sparrow', chan:'hangang', ground:'grass', sitMsg:'잔디밭으로 올라가요', sandMsg:'잔디에 한 줄 남겨 보세요 · 바람이 지워 줘요'},
 };
 const SC = SCENES[SCENE_ID];
 const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = 8.5, WALK = 1.6, RUN = 4.6;
@@ -356,8 +356,8 @@ renderer.toneMappingExposure = 1.05;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xe6eef0, 40, 170);
-const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 600);
+scene.fog = new THREE.Fog(0xe6eef0, SCENE_ID==='hangang' ? 90 : 40, SCENE_ID==='hangang' ? 480 : 170);
+const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 900);
 function resize(){
   const w = innerWidth, h = innerHeight;
   renderer.setPixelRatio(Math.min(devicePixelRatio, state.quality===2 ? 2 : 1));
@@ -405,9 +405,10 @@ scene.add(moon);
 
 /* ---------- 바다 ---------- */
 const seaUniforms = { time:{value:0}, deep:{value:new THREE.Color(SC.deep.value)}, shallow:{value:new THREE.Color(SC.shallow)}, foam:{value:new THREE.Color(0xffffff)}, waveAmp:{value:SC.waveAmp}, foamAmt:{value:SC.foamAmt}, tideAmp:{value:SC.tideAmp},
-  sunDir:{value:skyUniforms.sunDir.value}, sunColor:{value:skyUniforms.sunColor.value}, fogColor:{value:scene.fog.color}, fogNear:{value:40}, fogFar:{value:170}, camX:{value:0}, night:{value:0} };
-const seaGeo = new THREE.PlaneGeometry(520, 140, 260, 70);
-seaGeo.rotateX(-Math.PI/2); seaGeo.translate(0, 0, SHORE_Z - 64);
+  sunDir:{value:skyUniforms.sunDir.value}, sunColor:{value:skyUniforms.sunColor.value}, fogColor:{value:scene.fog.color}, fogNear:{value:SCENE_ID==='hangang' ? 90 : 40}, fogFar:{value:SCENE_ID==='hangang' ? 480 : 170}, camX:{value:0}, night:{value:0} };
+const SEA_W = SCENE_ID==='hangang' ? 300 : 140;
+const seaGeo = new THREE.PlaneGeometry(520, SEA_W, 260, 70);
+seaGeo.rotateX(-Math.PI/2); seaGeo.translate(0, 0, SHORE_Z - SEA_W/2 + 6);
 const seaMat = new THREE.ShaderMaterial({
   uniforms:seaUniforms, transparent:true,
   vertexShader:`uniform float time; uniform float camX; uniform float waveAmp; varying vec3 vPos; varying float vH; varying vec3 vN;
@@ -448,7 +449,7 @@ const seaMat = new THREE.ShaderMaterial({
       float spec = pow(max(dot(vN, H), 0.0), 180.0) * 1.4 + pow(max(dot(vN,H),0.0), 24.0)*0.12;
       c += sunColor * spec * (1.0 - night*0.6);
       float fres = pow(1.0 - max(dot(vN, V), 0.0), 3.0);
-      c = mix(c, fogColor, fres*0.45);
+      c = mix(c, fogColor, fres*0.45 + night*0.0);
       float alpha = smoothstep(1.2, -0.8, dEdge);
       float film = smoothstep(2.8, 0.6, dEdge) * 0.35 * (0.6 + 0.4*n1);
       alpha = max(alpha, film); alpha = max(alpha, foamLine*0.9); alpha = max(alpha, step(vPos.z, -1.0));
@@ -911,26 +912,54 @@ let bridge = null;
 if(SCENE_ID==='hangang'){
   const concrete = new THREE.MeshStandardMaterial({color:0xb9bcc2, roughness:1});
   bridge = new THREE.Group();
-  const deck = new THREE.Mesh(new THREE.BoxGeometry(9, 1.4, 170), concrete); deck.position.set(0, 10, -80); bridge.add(deck);
-  const rail = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.1, 170), new THREE.MeshStandardMaterial({color:0x6f7680})); rail.position.set(-4.5, 11.2, -80); bridge.add(rail); const rail2 = rail.clone(); rail2.position.x = 4.5; bridge.add(rail2);
-  for(let z=-8; z>-170; z-=24){ const pier = new THREE.Mesh(new THREE.BoxGeometry(5, 12, 2.2), concrete); pier.position.set(0, 4, z); bridge.add(pier); }
-  // 아치 두 개 (케이블 느낌의 호)
-  for(const zc of [-40, -90, -140]){ const arc = new THREE.Mesh(new THREE.TorusGeometry(15, 0.45, 8, 36, Math.PI), new THREE.MeshStandardMaterial({color:0xd9dde3, roughness:0.8})); arc.position.set(0, 10.7, zc); arc.rotation.y = Math.PI/2; bridge.add(arc); }
-  const bulbM = new THREE.MeshStandardMaterial({color:0xfff2c2, emissive:0xffd27a, emissiveIntensity:0}); nightLights.push({m:bulbM, base:0, night:2.2});
-  for(let z=-10; z>-170; z-=8){ for(const sx of [-4.3, 4.3]){ const b = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 6), bulbM); b.position.set(sx, 12.4, z); bridge.add(b); } }
-  const glow = new THREE.PointLight(0xffd9a0, 0, 60, 1.5); glow.position.set(0, 11, -30); bridge.add(glow); bridge.userData.glow = glow;
-  bridge.position.set(210, 0, 0); hangangSet.add(bridge);
-  // 건너편 아파트 단지
-  const wc = document.createElement('canvas'); wc.width = 64; wc.height = 128; const wg = wc.getContext('2d'); wg.fillStyle = '#000'; wg.fillRect(0,0,64,128);
-  for(let y=6;y<124;y+=10) for(let x=4;x<60;x+=12){ if(Math.random()<0.55){ wg.fillStyle = ['#ffe9b0','#fff4d6','#ffd98a'][Math.random()*3|0]; wg.fillRect(x,y,7,5); } }
-  const wtex = new THREE.CanvasTexture(wc); wtex.colorSpace = THREE.SRGBColorSpace; wtex.wrapS = wtex.wrapT = THREE.RepeatWrapping;
-  const aptMats = [];
-  for(let x=-220; x<560; x+=16+Math.random()*10){
-    const h = 14 + Math.random()*22, w = 9 + Math.random()*6;
-    const m = new THREE.MeshStandardMaterial({color:[0x7d8794,0x8a93a0,0x717c8a][Math.random()*3|0], roughness:1, emissive:0xffffff, emissiveMap:wtex, emissiveIntensity:0}); aptMats.push(m);
-    const apt = new THREE.Mesh(new THREE.BoxGeometry(w, h, 10), m); apt.position.set(x, h/2 - 1.2, -215 - Math.random()*25); hangangSet.add(apt);
+  const L = SEA_W + 30;
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(11, 1.6, L), concrete); deck.position.set(0, 12, -L/2 + 10); bridge.add(deck);
+  const railM = new THREE.MeshStandardMaterial({color:0x6f7680});
+  for(const sx of [-5.3, 5.3]){ const rail = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.1, L), railM); rail.position.set(sx, 13.3, -L/2 + 10); bridge.add(rail); }
+  for(let z=0; z>-L; z-=36){ const pier = new THREE.Mesh(new THREE.BoxGeometry(6, 14, 2.6), concrete); pier.position.set(0, 5, z - 8); bridge.add(pier); }
+  // 사장교 주탑 2개 + 케이블
+  const cableM = new THREE.MeshStandardMaterial({color:0xe9ecf0, roughness:0.6});
+  for(const zc of [-L*0.32, -L*0.68]){
+    const tw = new THREE.Mesh(new THREE.BoxGeometry(2.2, 52, 3), concrete); tw.position.set(0, 26, zc); bridge.add(tw);
+    for(let i=1;i<=7;i++){ for(const sgn of [1,-1]){ const dz = sgn*i*9, len = Math.hypot(dz, 36 - i*3); const c = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, len, 4), cableM); c.position.set(0, 12.5 + (36 - i*3)/2 + 1, zc + dz/2); c.rotation.x = Math.atan2(dz, 36 - i*3) * -1; bridge.add(c); } }
   }
-  for(const m of aptMats) nightLights.push({m, base:0, night:0.9});
+  const bulbM = new THREE.MeshStandardMaterial({color:0xfff2c2, emissive:0xffd27a, emissiveIntensity:0, fog:false}); nightLights.push({m:bulbM, base:0, night:2.2});
+  for(let z=-4; z>-L; z-=10){ for(const sx of [-5.1, 5.1]){ const b = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), bulbM); b.position.set(sx, 14.4, z); bridge.add(b); } }
+  const glow = new THREE.PointLight(0xffd9a0, 0, 80, 1.5); glow.position.set(0, 13, -40); bridge.add(glow); bridge.userData.glow = glow;
+  bridge.position.set(420, 0, 0); hangangSet.add(bridge);
+  // 건너편: 강폭 400 m. 가까운 둔치(갈대·나무) → 강변도로·가로수 → 아파트/오피스 스카이라인 2겹 → 뒤쪽 산 능선. 63빌딩·남산타워 랜드마크
+  const farZ = -SEA_W + 6;
+  const wc = document.createElement('canvas'); wc.width = 64; wc.height = 128; const wg = wc.getContext('2d'); wg.fillStyle = '#000'; wg.fillRect(0,0,64,128);
+  for(let y=4;y<126;y+=8) for(let x=3;x<62;x+=9){ if(Math.random()<0.6){ wg.fillStyle = ['#ffe9b0','#fff4d6','#ffd98a'][Math.random()*3|0]; wg.fillRect(x,y,6,5); } }
+  const wtex = new THREE.CanvasTexture(wc); wtex.colorSpace = THREE.SRGBColorSpace; wtex.wrapS = wtex.wrapT = THREE.RepeatWrapping; wtex.repeat.set(2, 3);
+  const aptMats = [];
+  function building(x, z, w, h, d, col){ const m = new THREE.MeshStandardMaterial({color:col, roughness:1, emissive:0xffffff, emissiveMap:wtex, emissiveIntensity:0, fog:false}); aptMats.push(m); const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, h/2 - 0.5, z); hangangSet.add(b); return b; }
+  // 건너편 둔치: 낮은 제방 + 갈대 띠 + 가로수
+  const bankM = new THREE.MeshStandardMaterial({color:0xb7c48f, roughness:1});
+  const bank = new THREE.Mesh(new THREE.BoxGeometry(900, 2.2, 36), bankM); bank.position.set(150, 0.6, farZ - 18); hangangSet.add(bank);
+  const reedM = new THREE.MeshStandardMaterial({color:0xcfc98a, roughness:1, side:THREE.DoubleSide});
+  for(let x=-250; x<560; x+=4+Math.random()*4){ const r = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 1.8+Math.random()), reedM); r.position.set(x, 2.4, farZ - 2 - Math.random()*3); hangangSet.add(r); }
+  const treeM = new THREE.MeshStandardMaterial({color:0x6aa36b, roughness:1});
+  for(let x=-250; x<560; x+=9+Math.random()*6){ const t = new THREE.Mesh(new THREE.SphereGeometry(2.4+Math.random()*1.2, 8, 6), treeM); t.position.set(x, 4.2, farZ - 28 - Math.random()*6); hangangSet.add(t); }
+  // 강변도로 + 가로등 줄 (밤에 점선처럼 빛남)
+  const road = new THREE.Mesh(new THREE.BoxGeometry(900, 1.2, 12), new THREE.MeshStandardMaterial({color:0x6b6e74, roughness:1})); road.position.set(150, 1.4, farZ - 42); hangangSet.add(road);
+  const roadLampM = new THREE.MeshStandardMaterial({color:0xfff2c2, emissive:0xffd9a0, emissiveIntensity:0, fog:false}); nightLights.push({m:roadLampM, base:0, night:3});
+  for(let x=-250; x<560; x+=14){ const l = new THREE.Mesh(new THREE.SphereGeometry(0.35, 6, 5), roadLampM); l.position.set(x, 6.5, farZ - 40); hangangSet.add(l); }
+  // 스카이라인 1겹: 아파트 단지 (15~25층, 같은 모양이 3~5동씩 줄지어)
+  for(let x=-260; x<580; ){ const n = 3 + (Math.random()*3|0), h = 40 + Math.random()*30, w = 14 + Math.random()*6, col = [0xaab3bf,0xb6bec9,0xa1aab6,0xbfc6cf][Math.random()*4|0];
+    for(let i=0;i<n;i++){ building(x + i*(w+5), farZ - 55 - Math.random()*10, w, h*1.15, 10, col); } x += n*(w+5) + 18 + Math.random()*20; }
+  // 스카이라인 2겹: 더 멀리, 더 높은 오피스
+  for(let x=-280; x<600; x+=22+Math.random()*26){ const h = 70 + Math.random()*60; building(x, farZ - 95 - Math.random()*30, 16 + Math.random()*12, h, 16, [0x97a3b2,0x8d9aaa,0xa2aebb][Math.random()*3|0]); }
+  // 랜드마크: 63빌딩(금색 유리), 남산타워(산 위)
+  const gold = new THREE.MeshStandardMaterial({color:0xd9b25a, roughness:0.3, metalness:0.6, emissive:0xffc45a, emissiveIntensity:0, fog:false}); nightLights.push({m:gold, base:0, night:0.35});
+  const b63 = new THREE.Mesh(new THREE.BoxGeometry(26, 120, 14), gold); b63.position.set(330, 59, farZ - 80); hangangSet.add(b63);
+  const hillM = new THREE.MeshStandardMaterial({color:0x7f9a7a, roughness:1});
+  for(const [hx, hw, hh] of [[0, 260, 70],[260, 220, 55],[520, 300, 80],[-220, 240, 60]]){ const hill = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10), hillM); hill.scale.set(hw, hh*1.4, 80); hill.position.set(hx, -8, farZ - 180); hangangSet.add(hill); }
+  const towerM = new THREE.MeshStandardMaterial({color:0xe8ecef, roughness:0.6});
+  const tower = new THREE.Group(); const tb = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 2.6, 70, 10), towerM); tb.position.y = 35; tower.add(tb); const td = new THREE.Mesh(new THREE.CylinderGeometry(7, 5, 9, 12), towerM); td.position.y = 62; tower.add(td); const tn = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 1, 30, 6), towerM); tn.position.y = 85; tower.add(tn);
+  const towerLightM = new THREE.MeshStandardMaterial({color:0xfff2c2, emissive:0x9ad8ff, emissiveIntensity:0, fog:false}); nightLights.push({m:towerLightM, base:0, night:2.5}); const tl = new THREE.Mesh(new THREE.TorusGeometry(7.2, 0.5, 6, 24), towerLightM); tl.position.y = 62; tl.rotation.x = Math.PI/2; tower.add(tl);
+  tower.position.set(60, 80, farZ - 180); hangangSet.add(tower);
+  for(const m of aptMats) nightLights.push({m, base:0, night:1.4});
   // 가로등 (자전거길 옆, 30 m 간격) — 조명은 가까운 것만
   const lampM = new THREE.MeshStandardMaterial({color:0xfff6dc, emissive:0xffe2a0, emissiveIntensity:0}); nightLights.push({m:lampM, base:0, night:2.5});
   hangangSet.userData.lampM = lampM;
@@ -1382,7 +1411,7 @@ function frame(){
   sand.position.x = state.x; wet.position.x = state.x; sandMat.map.offset.x = state.x/520*60;
   sun.position.copy(skyUniforms.sunDir.value).multiplyScalar(60).add(new THREE.Vector3(state.x, 0, state.lane)); sun.target.position.set(state.x, 0, state.lane);
   if(lighthouse.position.x < state.x - 60) lighthouse.position.x += 420;
-  if(bridge){ if(bridge.position.x < state.x - 40) bridge.position.x += 520; bridge.userData.glow.intensity = 40*nightMix; }
+  if(bridge){ if(bridge.position.x < state.x - 60) bridge.position.x += 720; bridge.userData.glow.intensity = 40*nightMix; }
   if(embank.visible){ embank.position.x = state.x; embank.userData.ptex.offset.x = state.x/520*60; }
   lighthouse.userData.beams.rotation.y = t*0.35;
   for(const g of gulls){ const u = g.userData, a = t*u.spd + u.off; g.position.set(state.x + 30 + Math.cos(a)*u.rad*2.6, u.h + Math.sin(a*2.3)*1.2, -40 + Math.sin(a)*u.rad); g.rotation.y = Math.atan2(-Math.cos(a)*u.rad, -Math.sin(a)*u.rad*2.6); const fl = Math.sin(t*5+u.off); u.l.rotation.x = 0.25 + fl*0.5; u.r.rotation.x = -0.25 - fl*0.5; u.l.userData.elbow.rotation.x = -0.35 - Math.sin(t*5+u.off-0.9)*0.5; u.r.userData.elbow.rotation.x = 0.35 + Math.sin(t*5+u.off-0.9)*0.5; g.rotation.z = Math.sin(a*1.3)*0.15; g.visible = nightMix < 0.3 && SCENE_ID==='beach'; }
@@ -1398,7 +1427,7 @@ populateTo(90); applyTod(state.todT);
 try{ renderer.compile(scene, camera); frame(); if(net.on) netJoin(1); requestAnimationFrame(()=>{ $('boot').classList.add('is-hidden'); $('welcome').classList.remove('is-hidden'); if(BOT){ start(); setTimeout(()=>setAutoRun(true), 4000); } }); }
 catch(e){ bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); console.error(e); }
 addEventListener('error', ()=>{ if(!state.started) bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); });
-window.__haebyeon = {state, others, net, buddyState};
+window.__haebyeon = {state, others, net, buddyState, hangangSet, nightLights, scene};
 function netReconnect(){ if(!net.on || state.ended) return; netLeave(); net.status = 'off'; setTimeout(()=>{ if(net.on && net.status==='off') netJoin(1); }, 400); }
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden){ hold(false); keys.left = keys.right = false; net.hiddenAt = performance.now(); } else { if(net.hiddenAt && performance.now() - net.hiddenAt > 4000) netReconnect(); } });
 addEventListener('online', ()=>netReconnect());
