@@ -316,7 +316,7 @@ const state = {
   todMode:'auto', todT:0.5, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
 };
 const PRIV = (new URL(location.href).searchParams.get('room')||'').replace(/[^0-9a-zA-Z가-힣_-]/g,'').slice(0,24);
-const BOT = new URL(location.href).searchParams.get('bot')==='1';
+const BOT = new URL(location.href).searchParams.get('bot')==='1'; const BOTF = BOT ? Math.min(1, Math.max(0.05, parseFloat(new URL(location.href).searchParams.get('bs')||'1') || 1)) : 1;
 let nick = ''; try{ nick = (localStorage.getItem('haebyeon.nick')||'').slice(0,8); }catch(e){}
 const net = { on:true, ch:null, sb:null, id:Math.random().toString(36).slice(2,10), priv:PRIV, room:0, count:1, lastSend:0, lastHeartbeat:0, lastPresence:0, lookDirty:true, sentLane:2.2, sentState:'', status:'off', joinedAt:0 };
 const LOOK_DEFAULT = {hair:'#4a3b38', shirt:'#fff6e9', hat:'band', accent:'#ff9b8a', buddy:'maltese'};
@@ -1022,7 +1022,7 @@ function frame(){
   const tide = tideZ(t);
   if(!state.ended){
     const heldNow = state.held || state.autoRun;
-    let goal = state.resting ? 0 : heldNow ? RUN : 0;
+    let goal = state.resting ? 0 : heldNow ? RUN*BOTF : 0;
     if(!heldNow && !state.resting && state.speed > WALK) goal = WALK;
     state.speed = THREE.MathUtils.damp(state.speed, goal, heldNow ? 2.4 : 1.4, dt);
     if(!heldNow && state.speed < WALK*0.98 && state.speed > 0.05) state.speed = THREE.MathUtils.damp(state.speed, 0, 0.9, dt);
