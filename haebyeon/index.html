@@ -326,7 +326,9 @@ const SCENES = {
 };
 const SC = SCENES[SCENE_ID];
 const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
-const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = 8.5, WALK = 1.6, RUN = 4.6;
+const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = 8.5, WALK = 1.4, RUN = 3.4;
+// 한 걸음 길이: 다리 기하에서 계산(발이 땅에서 미끄러지지 않게). 걷기 0.43 m, 달리기 0.8 m
+function stepLen(amp){ const run = THREE.MathUtils.smoothstep(amp, 0.25, 0.75); const thighA = 0.42 + 0.6*run; return 2*0.4*Math.sin(thighA) + 0.08 + 0.1*run; }
 const $ = (id) => document.getElementById(id);
 const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isTouch = matchMedia('(pointer: coarse)').matches;
@@ -594,7 +596,7 @@ function buildRunner(mats){
   const armL = limb(0.40, 0.07, skin, 1.02, -0.3), armR = limb(0.40, 0.07, skin, 1.02, 0.3);
   const legL = limb(0.40, 0.085, skin, 0.60, -0.12), legR = limb(0.40, 0.085, skin, 0.60, 0.12);
   const shoes = [];
-  [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.22, 0); l.userData.lower.add(sh); shoes.push(sh); });
+  [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.22, 0); l.userData.lower.add(sh); l.userData.shoe = sh; shoes.push(sh); });
   [armL, armR].forEach(a=>{ const hand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), skin); hand.position.y = -0.2; a.userData.lower.add(hand); });
   g.add(armL, armR, legL, legR);
   return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR, shoes, mats};
@@ -602,7 +604,7 @@ function buildRunner(mats){
 // 걷기·달리기 폼. ph: 보폭 위상, amp: 0 걷기 … 1 전력. 네 팔다리가 같은 규칙: 같은 쪽 팔과 다리는 반대로, 왼쪽·오른쪽은 반 바퀴 차이
 function animateGait(P, ph, amp, g){
   const run = THREE.MathUtils.smoothstep(amp, 0.25, 0.75);            // 0 걷기 → 1 달리기
-  const thighA = 0.42 + 0.5*run, kneeK = 0.35 + 1.25*run, shoulderA = 0.32 + 0.55*run, elbow = 0.35 + 1.15*run;
+  const thighA = 0.42 + 0.6*run, kneeK = 0.35 + 1.25*run, shoulderA = 0.32 + 0.55*run, elbow = 0.35 + 1.15*run;
   const legs = [[P.legL, ph + Math.PI], [P.legR, ph]];
   for(const [leg, f] of legs){
     leg.rotation.z = thighA*Math.sin(f) - 0.08*run;                                        // 허벅지: 앞(+) 뒤(-)
@@ -616,10 +618,11 @@ function animateGait(P, ph, amp, g){
   }
   P.armL.rotation.x = -0.18; P.armR.rotation.x = 0.18;
   // 몸: 달릴 땐 두 발이 뜨는 순간이 한 바퀴에 두 번 → 통통. 걸을 땐 거의 안 뜸
-  const flight = Math.max(0, Math.sin(2*ph + 0.9));
   g.rotation.z = -0.1*run;
-  groundFeet(P, g, flight*flight*(0.01 + 0.07*run));                                                                 // 앞으로 살짝 기울기
-  if(P.torso){ const sq = 1 - 0.05*run*Math.max(0, -Math.sin(2*ph + 0.9)); P.torso.scale.set(1/sq, sq, 1/sq); }  // 착지 때 살짝 눌림
+  // 발바닥은 항상 땅과 평행 (무릎·허벅지 각을 상쇄)
+  for(const leg of [P.legL, P.legR]){ const sh = leg.userData.shoe; if(sh) sh.rotation.z = Math.PI/2 - (leg.rotation.z + leg.userData.lower.rotation.z); }
+  groundFeet(P, g, 0);   // 두 발 중 하나는 항상 땅. 몸 높이는 다리 기하에서만 나온다 (뜀 없음)                                                                 // 앞으로 살짝 기울기
+  if(P.torso){ P.torso.scale.set(1,1,1); }
   if(P.headGroup){ P.headGroup.rotation.z = 0.08*run + Math.sin(ph*2 + 0.9)*0.04*run; P.headGroup.rotation.x = Math.sin(ph)*0.05*run; if(P.head){ P.head.rotation.z = P.headGroup.rotation.z; P.head.rotation.x = P.headGroup.rotation.x; } }
 }
 function resetGait(P, dt){ const D = (o,k,v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 6, dt); }; for(const l of [P.legL,P.legR,P.armL,P.armR]) D(l.userData.lower,'z',0); if(P.torso) P.torso.scale.set(1,1,1); }
@@ -785,7 +788,7 @@ function updateOthers(dt, t){
     o.lane = THREE.MathUtils.damp(o.lane, o.tlane, 3, dt);
     const g = o.parts.group; g.visible = Math.abs(o.x - state.x) < 70;
     if(!g.visible) continue;
-    const strideLen = o.sp > WALK+0.3 ? 1.35 : 0.8; if(o.sp > 0.05) o.phase += (o.sp/strideLen)*Math.PI*dt;
+    const strideLen = stepLen(THREE.MathUtils.clamp(o.sp/RUN, 0, 1)); if(o.sp > 0.05) o.phase += (o.sp/strideLen)*Math.PI*dt;
     const amp = THREE.MathUtils.clamp(o.sp/RUN, 0, 1), ph = o.phase;
     const legA = Math.sin(ph)*(0.35 + 0.55*amp), armA = -Math.sin(ph)*(0.3 + 0.5*amp);
     const P = o.parts;
@@ -1433,7 +1436,7 @@ function frame(){
     }
 
     // 보폭
-    const strideLen = state.speed > WALK+0.3 ? 1.35 : 0.8;
+    const strideLen = stepLen(THREE.MathUtils.clamp(state.speed/RUN, 0, 1));
     if(state.speed > 0.05) state.stridePhase += (state.speed/strideLen)*Math.PI*dt;
     else state.stridePhase = THREE.MathUtils.damp(state.stridePhase, Math.round(state.stridePhase/Math.PI)*Math.PI, 6, dt);
     const ph = state.stridePhase, amp = THREE.MathUtils.clamp(state.speed/RUN, 0, 1);
@@ -1452,7 +1455,8 @@ function frame(){
     const stepNow = Math.floor(ph/Math.PI);
     const inWater = state.lane < tide + 0.6; // 밀려온 파도선보다 바다 쪽
     const depth = THREE.MathUtils.clamp((tide + 0.6 - state.lane)/2.2, 0, 1);
-    if(stepNow !== lastStride && state.speed > 0.05){ lastStride = stepNow; state.lastStepSide *= -1; if(inWater) splash(state.x, state.lane + state.lastStepSide*0.15, 0.4 + depth); else stamp(state.x - 0.1, state.lane, state.lastStepSide); step(inWater ? 1 : wetness, state.speed > WALK+0.3); }
+    if(stepNow !== lastStride && state.speed > 0.05){ lastStride = stepNow; state.lastStepSide *= -1; const fp = (()=>{ let best = null, by = Infinity; for(const sh of me.shoes){ sh.getWorldPosition(_fw); if(_fw.y < by){ by = _fw.y; best = _fw.clone(); } } return best; })();
+      if(inWater) splash(fp ? fp.x : state.x, fp ? fp.z : state.lane, 0.4 + depth); else stamp(fp ? fp.x : state.x - 0.1, fp ? fp.z - state.lastStepSide*0.17 : state.lane, state.lastStepSide); step(inWater ? 1 : wetness, state.speed > WALK+0.3); }
     if(inWater && depth > 0.7 && !state.resting){ if(!state.deepWarned){ state.deepWarned = true; say('여기부턴 파도가 깊어요 · 모래 쪽으로', 2800, 'is-cat'); } state.laneTarget = Math.max(state.laneTarget, LANE_MIN + 0.9); }
     else if(depth < 0.4) state.deepWarned = false;
     runner.position.y -= depth*0.18; // 물에 발이 잠김
