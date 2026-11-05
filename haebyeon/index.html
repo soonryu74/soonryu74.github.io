@@ -287,6 +287,7 @@
     <div class="row"><div><strong>파도 소리</strong><small>브라우저가 직접 만드는 소리예요 · 파일 없음</small></div><input id="vol-sea" type="range" min="0" max="100" value="70" aria-label="파도 소리 크기"></div>
     <div class="row"><div><strong>갈매기 · 바람</strong><small>가끔 멀리서 들려요</small></div><input id="vol-bird" type="range" min="0" max="100" value="50" aria-label="갈매기 소리 크기"></div>
     <div class="row"><div><strong>발소리</strong><small>젖은 모래와 마른 모래가 달라요</small></div><input id="vol-step" type="range" min="0" max="100" value="55" aria-label="발소리 크기"></div>
+    <div class="row"><div><strong>달리기 속도</strong><small id="pace-note">시속 12 km · 가볍게</small></div><input id="pace" type="range" min="6" max="16" step="1" value="12" aria-label="달리기 속도"></div>
     <div class="row"><div><strong>시간</strong><small>하루 20분 · 해가 저물고 별이 뜨고 다시 떠요</small></div>
       <div class="seg" role="group" aria-label="시간대"><button type="button" data-tod="auto" aria-pressed="true">흐름</button><button type="button" data-tod="dawn" aria-pressed="false">새벽</button><button type="button" data-tod="noon" aria-pressed="false">한낮</button><button type="button" data-tod="dusk" aria-pressed="false">노을</button><button type="button" data-tod="night" aria-pressed="false">밤</button></div></div>
     <div class="row"><div><strong>함께 달리기</strong><small id="together-note">같은 해변의 다른 사람이 말없이 보여요 · 이름·채팅 없음</small></div><button id="together" class="switch" type="button" role="switch" aria-checked="true" aria-label="함께 달리기"></button></div>
@@ -336,7 +337,7 @@ if(isTouch) document.body.classList.add('is-touch');
 
 const state = {
   started:false, held:false, autoRun:false, speed:0, laneTarget:2.2, lane:2.2,
-  x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, hop:0, dodging:false, laneHome:2.2, stridePhase:0, stillFor:0, resting:false, pose:'stand', pendingPose:null, prevLane:2.2, restFor:0,
+  x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, hop:0, dodging:false, laneHome:2.2, paceMul:1, stridePhase:0, stillFor:0, resting:false, pose:'stand', pendingPose:null, prevLane:2.2, restFor:0,
   todMode:'auto', todT:0.5, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
 };
 let PRIV = (new URL(location.href).searchParams.get('room')||'').replace(/[^0-9a-zA-Z가-힣_-]/g,'').slice(0,24);
@@ -1238,6 +1239,10 @@ document.querySelectorAll('[data-tod]').forEach(b=>b.addEventListener('click', (
 document.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click', ()=>{ document.querySelectorAll('[data-q]').forEach(x=>x.setAttribute('aria-pressed', String(x===b))); state.quality = +b.dataset.q; renderer.shadowMap.enabled = state.quality===2; resize(); }));
 $('reduce').addEventListener('click', ()=>{ state.reduce = !state.reduce; $('reduce').setAttribute('aria-checked', String(state.reduce)); });
 $('reduce').setAttribute('aria-checked', String(state.reduce));
+// 달리기 속도 (시속 6~16 km). 이 기기에 기억
+(function(){ const el = $('pace'); let v = 12; try{ v = +(localStorage.getItem('haebyeon.pace')||12) || 12; }catch(e){} el.value = v;
+  const apply = (kmh)=>{ state.paceMul = (kmh/3.6)/RUN; const label = kmh<=7 ? '산책하듯' : kmh<=10 ? '천천히' : kmh<=13 ? '가볍게' : '힘차게'; $('pace-note').textContent = `시속 ${kmh} km · ${label}`; };
+  apply(v); el.addEventListener('input', ()=>{ const kmh = +el.value; apply(kmh); try{ localStorage.setItem('haebyeon.pace', String(kmh)); }catch(e){} }); })();
 
 let breathOn = false;
 function toggleBreath(){ breathOn = !breathOn; $('breath').classList.toggle('is-on', breathOn); $('breath-toggle').setAttribute('aria-pressed', String(breathOn)); say(breathOn ? '숨에 맞춰 천천히 · 4초 들이쉬고 6초 내쉬어요' : '호흡 안내를 껐어요'); }
@@ -1375,7 +1380,7 @@ function frame(){
   const tide = tideZ(t);
   if(!state.ended){
     const heldNow = state.held || state.autoRun;
-    let goal = state.resting ? 0 : heldNow ? RUN*BOTF : 0;
+    let goal = state.resting ? 0 : heldNow ? RUN*BOTF*state.paceMul : 0;
     if(!heldNow && !state.resting && state.speed > WALK) goal = WALK;
     state.speed = THREE.MathUtils.damp(state.speed, goal, heldNow ? 2.4 : 1.4, dt);
     if(!heldNow && state.speed < WALK*0.98 && state.speed > 0.05) state.speed = THREE.MathUtils.damp(state.speed, 0, 0.9, dt);
@@ -1425,15 +1430,17 @@ function frame(){
         if(U.headG){ const hy = isCat ? 0.46 : 0.62, hx = isCat ? 0.26 : 0.3; U.headG.rotation.z = -buddy.rotation.z + Math.sin(ph*2)*0.04*gait - 0.08*k; U.headG.position.y = hy - 0.01*air*gait; U.headG.position.x = hx + 0.04*k; }
         if(U.ears){ U.ears.forEach((e,i)=>{ e.rotation.z = 0.2 + Math.sin(ph*2 + i*0.7)*0.18*gait - 0.3*k; }); }
         if(U.tongue){ U.tongue.visible = gait > 0.6 && !sitting; }
+        U._needGround = !sitting;
         const faceZ = kind==='cat' && cat.mode==='wander' ? (cat.target < 0 ? Math.PI/2 : -Math.PI/2) : Math.PI/2;
+        if(U._needGround){ buddy.updateMatrixWorld(true); let minY = Infinity; for(const l of U.legs){ const paw = l.children[1] || l; paw.getWorldPosition(_fw); minY = Math.min(minY, _fw.y - (l.children[1] ? 0.05 : 0.08)); } if(isFinite(minY)) buddy.position.y += (air*0.03*k*gait) - minY; }
         const heading = Math.atan2(-(buddyState.z - tz), 1);
         buddy.rotation.y = THREE.MathUtils.damp(buddy.rotation.y, sitting ? faceZ : THREE.MathUtils.clamp(heading, -0.6, 0.6), 4, dt);
         U.legs.forEach((l,i)=>{
           if(sitting){ l.rotation.z = 0; return; }
           const front = i < 2, left = (i % 2) === 0;
-          const trot = Math.sin(ph + ((front === left) ? 0 : Math.PI)) * (0.5 + 0.25*k);             // 대각선 짝: 총총
-          const canter = front ? Math.sin(ph - (left ? 0 : 0.5)) * 0.8 : -Math.sin(ph - (left ? 0 : 0.35)) * 0.7;
-          l.rotation.z = (trot*(1 - 0.5*k) + canter*0.5*k) * gait;
+          // 대각선 짝 트롯: 왼앞+오른뒤 / 오른앞+왼뒤. 네 다리 모두 같은 크기로 흔들린다
+          const phase = ph + ((front === left) ? 0 : Math.PI);
+          l.rotation.z = Math.sin(phase) * (0.5 + 0.3*k) * gait;
         });
         if(kind==='dog'){ buddy.userData.tail.rotation.x = Math.sin(t*8)*0.55*(0.6 + 0.4*gait); if(buddy.userData.tail.geometry.type==='CapsuleGeometry') buddy.userData.tail.rotation.z = 0.7 + 0.4*k; } else buddy.userData.tail.rotation.x = Math.sin(t*2.5)*0.5;
       }
