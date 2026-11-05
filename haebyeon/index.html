@@ -265,6 +265,7 @@
       <dt>조개 · 바다유리</dt><dd>지나가면 저절로 주워요. 숫자는 기록이 아니라 오늘의 산책 메모예요.</dd>
       <dt>유리병</dt><dd>가끔 떠내려와요. 주우면 짧은 편지가 들어 있어요.</dd>
       <dt>고양이</dt><dd>자꾸 딴 길로 가요. 가까이 가면 다시 따라와요. 데려온 횟수만 세요.</dd>
+      <dt>통나무·바위</dt><dd>앞에 있으면 저절로 옆으로 비껴 달려요.</dd>
     </dl>
     <p style="margin-top:14px">물가 가까이 달리면 발이 젖어 발소리가 달라지고, 파도가 발자국을 지워요.</p>
   </div>
@@ -333,7 +334,7 @@ if(isTouch) document.body.classList.add('is-touch');
 
 const state = {
   started:false, held:false, autoRun:false, speed:0, laneTarget:2.2, lane:2.2,
-  x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, hop:0, stridePhase:0, stillFor:0, resting:false, pose:'stand', pendingPose:null, prevLane:2.2, restFor:0,
+  x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, hop:0, dodging:false, laneHome:2.2, stridePhase:0, stillFor:0, resting:false, pose:'stand', pendingPose:null, prevLane:2.2, restFor:0,
   todMode:'auto', todT:0.5, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
 };
 let PRIV = (new URL(location.href).searchParams.get('room')||'').replace(/[^0-9a-zA-Z가-힣_-]/g,'').slice(0,24);
@@ -646,44 +647,54 @@ const DOGS = {
 };
 function makeDog(v){
   const g = new THREE.Group(); const fur = new THREE.MeshStandardMaterial({color:v.body, roughness:1}); const earM = new THREE.MeshStandardMaterial({color:v.ear, roughness:1});
-  const body = capsule(v.fluffy?0.18:0.16, 0.2, fur); body.rotation.z = Math.PI/2; body.position.y = 0.28; g.add(body);
-  const h = new THREE.Mesh(new THREE.SphereGeometry(v.fluffy?0.19:0.17, 18, 14), fur); h.position.set(0.26, 0.42, 0); h.castShadow = true; g.add(h);
-  if(v.mask){ const m = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 10), new THREE.MeshStandardMaterial({color:v.mask, roughness:1})); m.position.set(0.36, 0.38, 0); m.scale.set(1,0.8,1.1); g.add(m); }
-  const headG = new THREE.Group(); headG.position.set(0.26, 0.42, 0); g.add(headG); h.position.set(0,0,0); headG.add(h);
+  const body = capsule(v.fluffy?0.15:0.135, 0.16, fur); body.rotation.z = Math.PI/2; body.position.set(-0.02, 0.36, 0); g.add(body);
+  const chest = new THREE.Mesh(new THREE.SphereGeometry(v.fluffy?0.16:0.145, 12, 10), fur); chest.position.set(0.12, 0.37, 0); g.add(chest);
+  const neck = capsule(0.07, 0.1, fur); neck.position.set(0.2, 0.48, 0); neck.rotation.z = -0.6; g.add(neck);
+  const h = new THREE.Mesh(new THREE.SphereGeometry(v.fluffy?0.2:0.185, 18, 14), fur); h.castShadow = true;
+  const headG = new THREE.Group(); headG.position.set(0.3, 0.62, 0); g.add(headG); headG.add(h);
+  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), new THREE.MeshStandardMaterial({color:v.mask || v.body, roughness:1})); muzzle.position.set(0.13, -0.05, 0); muzzle.scale.set(1.1, 0.8, 1); headG.add(muzzle);
   const ears = [];
   [[-0.1],[0.1]].forEach(([z])=>{
     let ear;
-    if(v.earStyle==='point'){ ear = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.12, 4), earM); ear.position.set(-0.04, 0.16, z*1.1); }
-    else { ear = capsule(v.fluffy?0.055:0.045, 0.1, earM); ear.position.set(-0.04, 0.08, z*1.5); ear.rotation.x = z>0?0.5:-0.5; }
+    if(v.earStyle==='point'){ ear = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.14, 4), earM); ear.position.set(-0.03, 0.2, z*1.2); }
+    else { ear = capsule(v.fluffy?0.06:0.05, 0.12, earM); ear.position.set(-0.02, 0.1, z*1.7); ear.rotation.x = z>0?0.55:-0.55; ear.rotation.z = 0.2; }
     headG.add(ear); ears.push(ear);
-    const e = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), inkM); e.position.set(0.14, 0.03, z); headG.add(e); });
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), inkM); nose.position.set(0.17, -0.04, 0); headG.add(nose);
-  const tongue = new THREE.Mesh(new THREE.CapsuleGeometry(0.022, 0.05, 4, 8), new THREE.MeshStandardMaterial({color:0xff8aa0, roughness:0.8})); tongue.position.set(0.15, -0.11, 0); tongue.rotation.z = -0.9; tongue.scale.set(1, 1, 0.5); tongue.visible = false; headG.add(tongue);
+    const e = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), inkM); e.position.set(0.14, 0.05, z*0.9); headG.add(e);
+    const hl = new THREE.Mesh(new THREE.SphereGeometry(0.01, 6, 5), new THREE.MeshBasicMaterial({color:0xffffff})); hl.position.set(0.165, 0.065, z*0.9 - 0.006); headG.add(hl); });
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), inkM); nose.position.set(0.23, -0.02, 0); headG.add(nose);
+  const tongue = new THREE.Mesh(new THREE.CapsuleGeometry(0.022, 0.05, 4, 8), new THREE.MeshStandardMaterial({color:0xff8aa0, roughness:0.8})); tongue.position.set(0.19, -0.12, 0); tongue.rotation.z = -0.9; tongue.scale.set(1, 1, 0.5); tongue.visible = false; headG.add(tongue);
   let tail;
-  if(v.tail==='curl'){ tail = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.035, 8, 14, Math.PI*1.4), fur); tail.position.set(-0.26, 0.42, 0); tail.rotation.y = Math.PI/2; }
-  else if(v.tail==='pom'){ tail = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), fur); tail.position.set(-0.3, 0.4, 0); }
-  else { tail = capsule(0.035, 0.14, fur); tail.position.set(-0.26, 0.4, 0); tail.rotation.z = 0.9; }
+  if(v.tail==='curl'){ tail = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.035, 8, 14, Math.PI*1.4), fur); tail.position.set(-0.22, 0.5, 0); tail.rotation.y = Math.PI/2; }
+  else if(v.tail==='pom'){ tail = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), fur); tail.position.set(-0.24, 0.5, 0); }
+  else { tail = capsule(0.035, 0.16, fur); tail.position.set(-0.22, 0.46, 0); tail.rotation.z = 0.7; }
   g.add(tail);
-  const legs = []; [[0.12,-0.08],[0.12,0.08],[-0.12,-0.08],[-0.12,0.08]].forEach(([x,z])=>{ const l = capsule(0.04, 0.1, fur); l.position.set(x, 0.1, z); g.add(l); legs.push(l); });
+  const legs = []; [[0.14,-0.08],[0.14,0.08],[-0.14,-0.08],[-0.14,0.08]].forEach(([x,z])=>{ const l = new THREE.Group(); l.position.set(x, 0.3, z); const m = capsule(0.038, 0.18, fur); m.position.y = -0.13; l.add(m); const paw = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), fur); paw.position.y = -0.26; l.add(paw); g.add(l); legs.push(l); });
   const collarM = new THREE.MeshStandardMaterial({color:0x7fe3dc, roughness:0.6, emissive:0x7fe3dc, emissiveIntensity:0}); glowMats.push(collarM);
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.022, 6, 20), collarM); collar.position.set(0.17, 0.38, 0); collar.rotation.y = Math.PI/2; g.add(collar);
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.022, 6, 20), collarM); collar.position.set(0.22, 0.5, 0); collar.rotation.y = Math.PI/2; collar.rotation.x = 0.5; g.add(collar);
   g.userData = {legs, tail, kind:'dog', ears, headG, body, tongue}; return g;
 }
 const furC = new THREE.MeshStandardMaterial({color:0xf2d6b0, roughness:1});
 function makeCat(){
-  const g = new THREE.Group(); const body = capsule(0.14, 0.22, furC); body.rotation.z = Math.PI/2; body.position.y = 0.25; g.add(body);
-  const h = new THREE.Mesh(new THREE.SphereGeometry(0.15, 18, 14), furC); h.position.set(0.26, 0.38, 0); h.castShadow = true; g.add(h);
-  [[-0.08],[0.08]].forEach(([z])=>{ const ear = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 4), furC); ear.position.set(0.24, 0.52, z*1.2); g.add(ear);
-    const e = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 6), inkM); e.position.set(0.38, 0.4, z); e.scale.y = 1.6; g.add(e); });
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), new THREE.MeshBasicMaterial({color:0xff9b8a})); nose.position.set(0.4, 0.35, 0); g.add(nose);
+  const g = new THREE.Group();
+  // 몸: 등을 살짝 올린 긴 타원, 목이 짧고 머리는 몸 앞 위
+  const body = capsule(0.13, 0.2, furC); body.rotation.z = Math.PI/2; body.position.set(-0.02, 0.3, 0); g.add(body);
+  const headG = new THREE.Group(); headG.position.set(0.26, 0.46, 0); g.add(headG);
+  const h = new THREE.Mesh(new THREE.SphereGeometry(0.15, 18, 14), furC); h.castShadow = true; headG.add(h);
+  const ears = [];
+  [[-0.08],[0.08]].forEach(([z])=>{ const ear = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.11, 4), furC); ear.position.set(-0.02, 0.15, z*1.2); headG.add(ear); ears.push(ear);
+    const e = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 6), inkM); e.position.set(0.12, 0.03, z); e.scale.y = 1.6; headG.add(e); });
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), new THREE.MeshBasicMaterial({color:0xff9b8a})); nose.position.set(0.14, -0.03, 0); headG.add(nose);
+  // 줄무늬: 고리 대신 등 위에 납작한 반점
   const stripeM = new THREE.MeshStandardMaterial({color:0xd9b68a, roughness:1});
-  for(let i=0;i<3;i++){ const s = new THREE.Mesh(new THREE.TorusGeometry(0.145, 0.018, 6, 16), stripeM); s.position.set(-0.08 + i*0.09, 0.25, 0); s.rotation.y = Math.PI/2; g.add(s); }
-  const tail = capsule(0.03, 0.3, furC); tail.position.set(-0.3, 0.4, 0); tail.rotation.z = 0.6; g.add(tail);
-  const legs = []; [[0.1,-0.07],[0.1,0.07],[-0.12,-0.07],[-0.12,0.07]].forEach(([x,z])=>{ const l = capsule(0.035, 0.1, furC); l.position.set(x, 0.1, z); g.add(l); legs.push(l); });
+  for(let i=0;i<3;i++){ const st = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), stripeM); st.position.set(-0.1 + i*0.09, 0.42, 0); st.scale.set(0.6, 0.25, 1.4); g.add(st); }
+  // 꼬리: 위로 휘어 올라감
+  const tail = capsule(0.028, 0.28, furC); tail.position.set(-0.26, 0.4, 0); tail.rotation.z = 0.5; g.add(tail);
+  // 다리: 어깨/엉덩이 피벗에서 매달린 긴 다리 + 둥근 발
+  const legs = []; [[0.12,-0.07],[0.12,0.07],[-0.14,-0.07],[-0.14,0.07]].forEach(([x,z])=>{ const l = new THREE.Group(); l.position.set(x, 0.26, z); const m = capsule(0.03, 0.14, furC); m.position.y = -0.11; l.add(m); const paw = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 6), furC); paw.position.y = -0.22; l.add(paw); g.add(l); legs.push(l); });
   const collarM = new THREE.MeshStandardMaterial({color:0x7fe3dc, roughness:0.6, emissive:0x7fe3dc, emissiveIntensity:0}); glowMats.push(collarM);
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.02, 6, 20), collarM); collar.position.set(0.17, 0.35, 0); collar.rotation.y = Math.PI/2; g.add(collar);
-  const bell = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), new THREE.MeshStandardMaterial({color:0xffd166, roughness:0.4})); bell.position.set(0.28, 0.28, 0); g.add(bell);
-  g.userData = {legs, tail, kind:'cat'}; return g;
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.02, 6, 20), collarM); collar.position.set(0.2, 0.38, 0); collar.rotation.y = Math.PI/2; collar.rotation.x = 0.4; g.add(collar);
+  const bell = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), new THREE.MeshStandardMaterial({color:0xffd166, roughness:0.4})); bell.position.set(0.27, 0.31, 0); g.add(bell);
+  g.userData = {legs, tail, kind:'cat', ears, headG, body}; return g;
 }
 const gullMat = new THREE.MeshStandardMaterial({color:0xf7f7f2, emissive:0xd0d0ca, emissiveIntensity:0.7, roughness:1, side:THREE.DoubleSide});
 const gullDark = new THREE.MeshStandardMaterial({color:0x4a4a50, roughness:1});
@@ -1196,7 +1207,7 @@ addEventListener('keydown', e=>{
 addEventListener('keyup', e=>{ if(e.code==='Space') hold(false); if(e.code==='ArrowLeft'||e.code==='KeyA') keys.left = false; if(e.code==='ArrowRight'||e.code==='KeyD') keys.right = false; });
 let swipe = null;
 canvas.addEventListener('pointerdown', e=>{ swipe = {x:e.clientX, lane:state.laneTarget}; });
-canvas.addEventListener('pointermove', e=>{ if(!swipe) return; const dx = (e.clientX - swipe.x)/innerWidth; state.laneTarget = THREE.MathUtils.clamp(swipe.lane - dx*9, LANE_MIN, LANE_MAX); });
+canvas.addEventListener('pointermove', e=>{ if(!swipe) return; const dx = (e.clientX - swipe.x)/innerWidth; state.laneTarget = THREE.MathUtils.clamp(swipe.lane - dx*9, LANE_MIN, LANE_MAX); state.laneHome = state.laneTarget; state.dodging = false; });
 addEventListener('pointerup', ()=>{ swipe = null; });
 
 $('sound').addEventListener('click', ()=>{ const b = $('sound');
@@ -1363,8 +1374,8 @@ function frame(){
     if(!heldNow && state.speed < WALK*0.98 && state.speed > 0.05) state.speed = THREE.MathUtils.damp(state.speed, 0, 0.9, dt);
     if(state.speed < 0.03) state.speed = 0;
     if(state.started && !state.resting) state.time += dt;
-    if(keys.left) state.laneTarget = Math.max(LANE_MIN, state.laneTarget - 3.5*dt);
-    if(keys.right) state.laneTarget = Math.min(LANE_MAX, state.laneTarget + 3.5*dt);
+    if(keys.left){ state.laneTarget = Math.max(LANE_MIN, state.laneTarget - 3.5*dt); state.laneHome = state.laneTarget; state.dodging = false; }
+    if(keys.right){ state.laneTarget = Math.min(LANE_MAX, state.laneTarget + 3.5*dt); state.laneHome = state.laneTarget; state.dodging = false; }
     state.lane = THREE.MathUtils.damp(state.lane, state.laneTarget, 3, dt);
     const dx = state.speed*dt; state.x += dx; state.dist += dx;
     runner.position.set(state.x, 0, state.lane);
@@ -1390,28 +1401,22 @@ function frame(){
       }
       buddyState.x = THREE.MathUtils.damp(buddyState.x, tx, 2.5, dt); buddyState.z = THREE.MathUtils.damp(buddyState.z, tz, kind==='cat' && cat.mode==='wander' ? 1.2 : 2.5, dt);
       const bvel = Math.hypot(buddyState.x - buddyState.px, buddyState.z - buddyState.pz)/Math.max(dt, 1e-4); buddyState.px = buddyState.x; buddyState.pz = buddyState.z;
-      const dv = bvel; buddyState.phase += (bvel/(0.7 + 0.5*THREE.MathUtils.clamp(bvel/RUN,0,1)))*Math.PI*2*dt;
+      const dv = bvel; buddyState.phase += (bvel/(0.55 + 0.45*THREE.MathUtils.clamp(bvel/RUN,0,1)))*Math.PI*2*dt;
       if(kind==='gull'){ tx += 2.2; tz -= 1.4; const ty = state.resting ? 0.1 : 2.3 + Math.sin(t*1.3)*0.3; buddyState.y = THREE.MathUtils.damp(buddyState.y, ty, 2, dt); buddy.position.set(buddyState.x, buddyState.y, buddyState.z); buddy.rotation.y = -Math.PI/2; const fl = state.resting ? 0 : Math.sin(t*7); buddy.userData.l.rotation.x = 0.25 + fl*0.55; buddy.userData.r.rotation.x = -0.25 - fl*0.55; buddy.userData.l.userData.elbow.rotation.x = -0.35 - (state.resting?0:Math.sin(t*7-0.9))*0.5; buddy.userData.r.userData.elbow.rotation.x = 0.35 + (state.resting?0:Math.sin(t*7-0.9))*0.5; }
       else {
         const sitting = state.resting || (kind==='cat' && cat.mode==='wander' && !moving);
         const run = sitting ? 0 : THREE.MathUtils.clamp(bvel/RUN, 0, 1), gait = sitting ? 0 : THREE.MathUtils.clamp(bvel/WALK, 0, 1);
-        // 개의 달리기: 느리면 트롯(대각선 다리가 짝), 빠르면 바운드/갤럽(앞다리 짝·뒷다리 짝, 공중에 뜨는 구간, 몸이 늘었다 움츠림)
-        const ph = buddyState.phase, k = THREE.MathUtils.smoothstep(bvel, WALK*0.9, RUN*0.75); // 0 트롯 → 1 갤럽
-        // 갤럽 한 바퀴: ph=π/2 가 '날아가는 순간'(앞다리 앞으로 쭉·뒷다리 뒤로 쭉·몸 길게·공중), ph=3π/2 가 '움츠린 순간'(다리가 몸 아래로 모임)
+        const ph = buddyState.phase, k = THREE.MathUtils.smoothstep(bvel, WALK*0.9, RUN*0.75); // 0 총총 걷기 → 1 가벼운 캔터
+        // 기본은 '총총' 트롯(대각선 다리 짝, 항상 두 발은 땅). 빨라지면 아주 살짝만 뜸. 몸은 늘어나지 않음
         const ext = Math.sin(ph);
-        const air = Math.pow(Math.max(0, ext), 1.4);
-        buddy.position.set(buddyState.x, air*0.14*k, buddyState.z);
-        buddy.rotation.z = (0.16*Math.cos(ph))*k;      // 뛰어오를 땐 코가 위, 착지 직전엔 코가 아래
+        const air = Math.pow(Math.max(0, Math.sin(2*ph)), 2);
         const U = buddy.userData;
-        if(U.body){ U.body.scale.set(1 + 0.16*ext*k, 1 - 0.06*ext*k, 1); }   // 척추가 늘었다 움츠림
-        if(U.headG){
-          // 머리 안정화: 몸이 기울고 들썩여도 머리는 수평·일정 높이를 유지한다 (개의 시선 안정 반사)
-          U.headG.rotation.z = -buddy.rotation.z*0.85 + (-0.06 + 0.08*ext)*k - 0.04*gait;
-          U.headG.position.y = 0.42 - air*0.14*k*0.6 - 0.015*ext*k;
-          U.headG.position.x = 0.26 + 0.07*k;                     // 전력 질주 땐 목을 앞으로 쭉
-        }
-        if(U.body){ U.body.position.y = 0.28 - 0.02*k*Math.max(0, -ext); }   // 움츠릴 땐 가슴이 낮아진다
-        if(U.ears){ U.ears.forEach((e,i)=>{ e.rotation.z = (-0.25 - 0.55*Math.max(0, ext))*k + Math.sin(ph*2 + i)*0.12*gait; }); } // 날 땐 귀가 뒤로 눕는다
+        const isCat = kind==='cat';
+        buddy.position.set(buddyState.x, air*0.03*k*gait, buddyState.z);
+        buddy.rotation.z = 0.04*Math.cos(ph)*k;
+        if(U.body && !isCat){ U.body.scale.set(1 + 0.03*ext*k, 1, 1); }
+        if(U.headG){ const hy = isCat ? 0.46 : 0.62, hx = isCat ? 0.26 : 0.3; U.headG.rotation.z = -buddy.rotation.z + Math.sin(ph*2)*0.04*gait - 0.08*k; U.headG.position.y = hy - 0.01*air*gait; U.headG.position.x = hx + 0.04*k; }
+        if(U.ears){ U.ears.forEach((e,i)=>{ e.rotation.z = 0.2 + Math.sin(ph*2 + i*0.7)*0.18*gait - 0.3*k; }); }
         if(U.tongue){ U.tongue.visible = gait > 0.6 && !sitting; }
         const faceZ = kind==='cat' && cat.mode==='wander' ? (cat.target < 0 ? Math.PI/2 : -Math.PI/2) : Math.PI/2;
         const heading = Math.atan2(-(buddyState.z - tz), 1);
@@ -1419,12 +1424,11 @@ function frame(){
         U.legs.forEach((l,i)=>{
           if(sitting){ l.rotation.z = 0; return; }
           const front = i < 2, left = (i % 2) === 0;
-          const trot = Math.sin(ph + ((front === left) ? 0 : Math.PI)) * 0.55;                       // 대각선 짝
-          // 갤럽: 앞다리는 비행 순간 앞으로 1.15 rad, 뒷다리는 뒤로 1.05 rad. 좌우는 0.3 rad 어긋나 로터리 느낌
-          const bound = front ? Math.sin(ph - (left ? 0 : 0.42)) * 1.15 : -Math.sin(ph - (left ? 0 : 0.3)) * 1.05; // 앞다리는 한쪽이 먼저 닿는다
-          l.rotation.z = (trot*(1-k) + bound*k) * gait;
+          const trot = Math.sin(ph + ((front === left) ? 0 : Math.PI)) * (0.5 + 0.25*k);             // 대각선 짝: 총총
+          const canter = front ? Math.sin(ph - (left ? 0 : 0.5)) * 0.8 : -Math.sin(ph - (left ? 0 : 0.35)) * 0.7;
+          l.rotation.z = (trot*(1 - 0.5*k) + canter*0.5*k) * gait;
         });
-        if(kind==='dog'){ buddy.userData.tail.rotation.x = Math.sin(t*9)*0.5*(1-k*0.6); if(buddy.userData.tail.geometry.type==='CapsuleGeometry') buddy.userData.tail.rotation.z = 0.9 + 0.5*k; } else buddy.userData.tail.rotation.x = Math.sin(t*2.5)*0.5;
+        if(kind==='dog'){ buddy.userData.tail.rotation.x = Math.sin(t*8)*0.55*(0.6 + 0.4*gait); if(buddy.userData.tail.geometry.type==='CapsuleGeometry') buddy.userData.tail.rotation.z = 0.7 + 0.4*k; } else buddy.userData.tail.rotation.x = Math.sin(t*2.5)*0.5;
       }
     }
 
@@ -1436,8 +1440,13 @@ function frame(){
     if(!state.resting){
       if(state.speed > 0.05) animateGait(me, ph, amp, runner); else { resetGait(me, dt); runner.rotation.z = 0; headGroup.rotation.set(0,0,0); head.rotation.set(0,0,0); groundFeet(me, runner, 0); }
       // 통나무·바위 폴짝 넘기
-      if(state.hop > 0){ state.hop -= dt; const u = 1 - state.hop/0.5; runner.position.y += Math.sin(u*Math.PI)*0.7; legL.rotation.z = 0.9; legR.rotation.z = 0.9; legL.userData.lower.rotation.z = -1.6; legR.userData.lower.rotation.z = -1.6; armL.rotation.z = 1.4; armR.rotation.z = 1.4; }
-      else if(state.speed > 0.3){ for(const p of props){ if((p.kind==='wood' || p.kind==='rock') && Math.abs(p.obj.position.z - state.lane) < 1.5){ const dxo = p.obj.position.x - state.x; if(dxo > 0.2 && dxo < 0.9){ state.hop = 0.5; say(['폴짝','영차','휙'][Math.random()*3|0], 900); break; } } } }
+      // 장애물(통나무·바위·벤치)은 옆으로 비껴 달린다: 앞 6 m 안에 있으면 빈 쪽으로 차선을 옮기고, 지나가면 원래 자리로
+      if(state.speed > 0.3){
+        let dodge = 0;
+        for(const p of props){ if(p.kind==='wood' || p.kind==='rock'){ const dxo = p.obj.position.x - state.x; if(dxo > -1.0 && dxo < 6.0){ const dz = state.lane - p.obj.position.z; const half = p.kind==='wood' ? 1.7 : 1.1; if(Math.abs(dz) < half + 0.5){ const dir = dz >= 0 ? 1 : -1; const need = (half + 0.6 - Math.abs(dz)) * dir; if(Math.abs(need) > Math.abs(dodge)) dodge = need; } } } }
+        if(dodge !== 0){ if(!state.dodging){ state.dodging = true; state.laneHome = state.laneTarget; } state.laneTarget = THREE.MathUtils.clamp(state.laneTarget + dodge*Math.min(1, 6*dt), LANE_MIN, LANE_MAX); runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, -Math.sign(dodge)*0.35, 6, dt); }
+        else if(state.dodging){ state.dodging = false; state.laneTarget = THREE.MathUtils.clamp(state.laneHome, LANE_MIN, LANE_MAX); }
+      }
     }
     const wetness = THREE.MathUtils.clamp(1 - (state.lane - (tide + 0.6))/2.0, 0, 1);
     const stepNow = Math.floor(ph/Math.PI);
