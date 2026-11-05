@@ -84,6 +84,7 @@
   .lane-btns{display:none;gap:8px}
   .lane-btns button{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:40px;padding:0 12px;border-radius:999px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1);font-size:12px;font-weight:600;user-select:none;-webkit-user-select:none}
   .lane-btns button:active{background:var(--sea);color:#fff}
+  .pace #restbtn{min-height:40px}
   body.is-touch .pace-hint{display:none}
   body.is-touch .lane-btns{display:flex}
 
@@ -209,6 +210,7 @@
   <div class="pace">
     <div class="pace-hint"><kbd>Space</kbd> 누르는 동안 달리기<br><kbd>←</kbd><kbd>→</kbd> 물가 쪽 · 모래 쪽</div>
     <div class="lane-btns"><button id="lane-sea" type="button">물가 쪽</button><button id="lane-sand" type="button">모래 쪽</button></div>
+    <button id="restbtn" class="btn ghost small" type="button" style="background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1)">잠깐 쉬어가기</button>
     <button id="runbtn" class="runbtn" type="button" aria-label="누르는 동안 달리기">달리기</button>
   </div>
 
@@ -260,7 +262,7 @@
     <dl>
       <dt><kbd>Space</kbd> / 버튼</dt><dd>한 번 누르면 계속 달리기 · 다시 누르면 멈춤 · 길게 누르면 누르는 동안만</dd>
       <dt><kbd>←</kbd> <kbd>→</kbd> / 버튼·쓸기</dt><dd>물가 쪽으로 · 마른 모래 쪽으로</dd>
-      <dt><kbd>R</kbd> / 10초 멈춰 서 있기</dt><dd>잠깐 쉬어가기 (앉기 · 눕기 · 모래에 글쓰기) · '다시 달리기'로 나와요</dd>
+      <dt>잠깐 쉬어가기 버튼 / <kbd>R</kbd></dt><dd>앉기 · 눕기 · 모래에 글쓰기 · '다시 달리기'로 나와요. 10초 멈춰 서 있어도 들어가요</dd>
       <dt><kbd>B</kbd></dt><dd>호흡 안내 켜고 끄기</dd>
       <dt>조개 · 바다유리</dt><dd>지나가면 저절로 주워요. 숫자는 기록이 아니라 오늘의 산책 메모예요.</dd>
       <dt>유리병</dt><dd>가끔 떠내려와요. 주우면 짧은 편지가 들어 있어요.</dd>
@@ -648,7 +650,7 @@ const DOGS = {
   maltese:{body:0xfffaf3, ear:0xf5ebdd, earStyle:'floppy', tail:'up', fluffy:true},
   golden:{body:0xe8b86d, ear:0xcf9a4e, earStyle:'floppy', tail:'wag', fluffy:false},
   shiba:{body:0xe0905a, ear:0xe0905a, earStyle:'point', tail:'curl', fluffy:false, mask:0xfff3e0},
-  poodle:{body:0xf2c9a6, ear:0xe9b88f, earStyle:'floppy', tail:'pom', fluffy:true, curly:true},
+  poodle:{body:0xe9b685, ear:0xe9b685, earStyle:'floppy', tail:'pom', fluffy:true, curly:true, mask:0xf3cfa8},
 };
 function makeDog(v){
   const g = new THREE.Group(); const fur = new THREE.MeshStandardMaterial({color:v.body, roughness:1}); const earM = new THREE.MeshStandardMaterial({color:v.ear, roughness:1});
@@ -675,16 +677,18 @@ function makeDog(v){
   g.add(tail);
   const legs = []; [[0.14,-0.08],[0.14,0.08],[-0.14,-0.08],[-0.14,0.08]].forEach(([x,z])=>{ const l = new THREE.Group(); l.position.set(x, 0.3, z); const m = capsule(0.038, 0.18, fur); m.position.y = -0.13; l.add(m); const paw = new THREE.Mesh(new THREE.SphereGeometry(v.curly ? 0.075 : 0.05, 8, 6), fur); paw.position.y = v.curly ? -0.24 : -0.26; l.add(paw); g.add(l); legs.push(l); });
   if(v.curly){
-    // 푸들 컷: 머리 위 둥근 탑놋, 귀 퐁퐁, 몸은 고른 곱슬 공, 발목 퐁퐁
-    const curlM = new THREE.MeshStandardMaterial({color:0xf8dcc2, roughness:1});
-    const ball = (parent, x, y, z, r)=>{ const c = new THREE.Mesh(new THREE.SphereGeometry(r, 9, 7), curlM); c.position.set(x, y, z); parent.add(c); return c; };
-    const topknot = ball(headG, -0.03, 0.14, 0, 0.17);                                   // 탑놋
-    for(let i=0;i<10;i++){ const a = i/10*Math.PI*2; ball(headG, -0.03 + Math.cos(a)*0.11, 0.1 + Math.sin(a*2)*0.03, Math.sin(a)*0.13, 0.07); }  // 탑놋 둘레 곱슬
-    for(const e of ears){ ball(e, 0, -0.07, 0, 0.075); }                                // 귀 끝 퐁퐁
-    for(let i=0;i<16;i++){ const a = i/16*Math.PI*2; ball(g, -0.02 + Math.cos(a*3)*0.06, 0.36 + Math.sin(a)*0.13, Math.cos(a)*0.14, 0.07); }  // 몸통 둘레
-    for(let i=0;i<8;i++){ const a = i/8*Math.PI*2; ball(g, -0.15 + Math.cos(a)*0.08, 0.38 + Math.sin(a)*0.1, Math.sin(a)*0.1, 0.065); }      // 엉덩이
-    for(let i=0;i<8;i++){ const a = i/8*Math.PI*2; ball(g, 0.14 + Math.cos(a)*0.08, 0.4 + Math.sin(a)*0.11, Math.sin(a)*0.11, 0.065); }     // 가슴
-    g.userData.topknot = topknot;
+    // 푸들 테디베어 컷: 둥근 털 돔 머리, 늘어진 둥근 귀, 통통한 몸, 털 기둥 다리. (참고 이미지의 토이푸들)
+    const furL = new THREE.MeshStandardMaterial({color:0xf3cfa8, roughness:1});
+    h.scale.set(1.08, 1.08, 1.08);
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.205, 18, 14), furL); dome.position.set(-0.05, 0.07, 0); headG.add(dome);          // 머리 위 털 돔
+    const cheekL = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 10), furL); cheekL.position.set(0.06, -0.06, -0.13); headG.add(cheekL);  // 볼 털
+    const cheekR = cheekL.clone(); cheekR.position.z = 0.13; headG.add(cheekR);
+    for(const e of ears){ e.visible = false; }
+    for(const z of [-0.2, 0.2]){ const ear = new THREE.Mesh(new THREE.SphereGeometry(0.1, 14, 10), fur); ear.scale.set(0.75, 1.35, 0.55); ear.position.set(-0.04, -0.06, z); headG.add(ear); ears.push(ear); }  // 늘어진 둥근 귀
+    body.scale.set(1.15, 1.15, 1.15); chest.scale.setScalar(1.15);
+    const rump = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 10), fur); rump.position.set(-0.16, 0.37, 0); g.add(rump);
+    for(const l of legs){ const col = l.children[0]; col.scale.set(1.9, 1.0, 1.9); const paw = l.children[1]; paw.scale.setScalar(1.3); }   // 털 기둥 다리
+    muzzle.scale.set(0.9, 0.7, 0.9); muzzle.position.set(0.15, -0.07, 0);
   }
   const collarM = new THREE.MeshStandardMaterial({color:0x7fe3dc, roughness:0.6, emissive:0x7fe3dc, emissiveIntensity:0}); glowMats.push(collarM);
   const collar = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.022, 6, 20), collarM); collar.position.set(0.22, 0.5, 0); collar.rotation.y = Math.PI/2; collar.rotation.x = 0.5; g.add(collar);
@@ -1280,6 +1284,7 @@ function setPose(p){
 $('rest-sit').addEventListener('click', ()=>{ const cur = state.pendingPose || state.pose; setPose(cur==='sit' ? 'stand' : 'sit'); if(state.pose==='sit') say('해가 저무는 걸 바라봐요'); });
 $('rest-lie').addEventListener('click', ()=>{ const cur = state.pendingPose || state.pose; setPose(cur==='lie' ? 'stand' : 'lie'); if(state.pose==='lie') say('하늘을 봐요 · 시간이 조금 빨리 흘러요'); });
 $('rest-leave').addEventListener('click', endSession);
+$('restbtn').addEventListener('click', ()=>{ if(!state.started) return; setAutoRun(false); hold(false); enterRest(); say('잠깐 쉬어가요 · 바다를 바라봐요'); });
 $('rest-run').addEventListener('click', ()=>{ leaveRest(); setAutoRun(true); say('계속 달려요 · 멈추려면 버튼을 다시 눌러요', 2600); });
 $('sandform').addEventListener('submit', e=>{ e.preventDefault(); const v = $('sandtext').value.trim(); if(!v) return; writeOnSand(v); $('sandtext').value = ''; $('sandtext').blur(); say('파도가 천천히 지워 줄 거예요', 3000); });
 $('again').addEventListener('click', ()=>location.reload());
@@ -1423,7 +1428,9 @@ function frame(){
           if(d < 1.3){ cat.mode = 'follow'; cat.timer = 14 + Math.random()*16; state.catRescues++; $('st-cat').textContent = state.catRescues; chime(); say(CAT_BACK[Math.random()*CAT_BACK.length|0], 2600, 'is-cat'); }
         }
       }
-      buddyState.x = THREE.MathUtils.damp(buddyState.x, tx, 2.5, dt); buddyState.z = THREE.MathUtils.damp(buddyState.z, tz, kind==='cat' && cat.mode==='wander' ? 1.2 : 2.5, dt);
+      // 친구도 통나무·바위를 옆으로 비껴간다
+      if(!state.resting && !(kind==='cat' && cat.mode==='wander')){ let dz0 = 0; for(const p of props){ if(p.kind==='wood' || p.kind==='rock'){ const dxo = p.obj.position.x - buddyState.x; if(dxo > -1.2 && dxo < 5){ const dz = tz - p.obj.position.z; const half = p.kind==='wood' ? 1.7 : 1.1; if(Math.abs(dz) < half + 0.4){ const need = (half + 0.5 - Math.abs(dz)) * (dz >= 0 ? 1 : -1); if(Math.abs(need) > Math.abs(dz0)) dz0 = need; } } } } tz = THREE.MathUtils.clamp(tz + dz0, LANE_MIN + 0.4, LANE_MAX); }
+      buddyState.x = THREE.MathUtils.damp(buddyState.x, tx, 2.5, dt); buddyState.z = THREE.MathUtils.damp(buddyState.z, tz, kind==='cat' && cat.mode==='wander' ? 1.2 : 3.5, dt);
       const bvel = Math.hypot(buddyState.x - buddyState.px, buddyState.z - buddyState.pz)/Math.max(dt, 1e-4); buddyState.px = buddyState.x; buddyState.pz = buddyState.z;
       const dv = bvel; buddyState.phase += (bvel/(0.55 + 0.45*THREE.MathUtils.clamp(bvel/RUN,0,1)))*Math.PI*2*dt;
       if(kind==='gull'){ tx += 2.2; tz -= 1.4; const ty = state.resting ? 0.1 : 2.3 + Math.sin(t*1.3)*0.3; buddyState.y = THREE.MathUtils.damp(buddyState.y, ty, 2, dt); buddy.position.set(buddyState.x, buddyState.y, buddyState.z); buddy.rotation.y = -Math.PI/2; const fl = state.resting ? 0 : Math.sin(t*7); buddy.userData.l.rotation.x = 0.25 + fl*0.55; buddy.userData.r.rotation.x = -0.25 - fl*0.55; buddy.userData.l.userData.elbow.rotation.x = -0.35 - (state.resting?0:Math.sin(t*7-0.9))*0.5; buddy.userData.r.userData.elbow.rotation.x = 0.35 + (state.resting?0:Math.sin(t*7-0.9))*0.5; }
