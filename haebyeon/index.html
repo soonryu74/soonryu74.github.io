@@ -226,7 +226,7 @@
 <section id="rest" class="rest">
   <button id="rest-mini" class="rest-mini" type="button" aria-label="쉬어가기 메뉴 펼치기"><span>잠깐 쉬고 있어요 · <span id="rest-sec2">0</span>초</span><b>메뉴 펼치기</b></button>
   <div class="rest-card">
-    <button id="rest-fold" type="button" aria-label="메뉴 접기" style="align-self:flex-end;margin:-6px -8px -14px 0;font-size:12px;color:var(--ink-soft)">접기 ⌄</button>
+    <button id="rest-fold" type="button" aria-label="메뉴 접기" style="width:100%;margin:-6px 0 -2px;padding:6px 0;font-size:13px;color:var(--ink-soft);border-bottom:1px solid var(--line)">▾ 메뉴 내리기 · 장면 보기</button>
     <p class="quote" id="rest-quote">파도는 서두르지 않아요.</p>
     <p>잠깐 쉬고 있어요 · <span id="rest-sec">0</span>초</p>
     <form class="sandform" id="sandform" autocomplete="off"><input id="sandtext" type="text" maxlength="24" placeholder="모래에 한 줄 써 보세요 · 파도가 지워 줘요" aria-label="모래에 쓸 글"><button class="btn small" type="submit">쓰기</button></form>
@@ -1313,13 +1313,15 @@ function setPose(p){
   const shown = state.pendingPose || state.pose;
   $('rest-sit').textContent = shown==='sit' ? '일어나기' : '앉기'; $('rest-lie').textContent = shown==='lie' ? '일어나기' : '눕기';
 }
-$('rest-sit').addEventListener('click', ()=>{ const cur = state.pendingPose || state.pose; setPose(cur==='sit' ? 'stand' : 'sit'); if(state.pose==='sit') say('해가 저무는 걸 바라봐요'); });
+$('rest-sit').addEventListener('click', ()=>{ const cur = state.pendingPose || state.pose; setPose(cur==='sit' ? 'stand' : 'sit'); if(cur!=='sit') setTimeout(()=>$('rest').classList.add('is-mini'), 600); if(state.pose==='sit') say('해가 저무는 걸 바라봐요'); });
 $('rest-lie').addEventListener('click', ()=>{ const cur = state.pendingPose || state.pose; setPose(cur==='lie' ? 'stand' : 'lie'); if(cur!=='lie') $('rest').classList.add('is-mini'); if(state.pose==='lie') say('하늘을 봐요 · 시간이 조금 빨리 흘러요'); });
 $('rest-leave').addEventListener('click', endSession);
 $('restbtn').addEventListener('click', ()=>{ if(!state.started) return; setAutoRun(false); hold(false); enterRest(); say('잠깐 쉬어가요 · 바다를 바라봐요'); });
 $('rest-run').addEventListener('click', ()=>{ leaveRest(); setAutoRun(true); say('계속 달려요 · 멈추려면 버튼을 다시 눌러요', 2600); });
 $('sandform').addEventListener('submit', e=>{ e.preventDefault(); const v = $('sandtext').value.trim(); if(!v) return; writeOnSand(v); $('sandtext').value = ''; $('sandtext').blur(); $('rest').classList.add('is-mini'); say('파도가 밀려와 지워 줄 거예요 · 잠깐 지켜봐요', 3000); });
 $('rest-fold').addEventListener('click', ()=>$('rest').classList.add('is-mini'));
+$('rest-quote').addEventListener('click', ()=>$('rest').classList.add('is-mini'));
+$('rest-quote').style.cursor = 'pointer';
 $('rest-mini').addEventListener('click', ()=>$('rest').classList.remove('is-mini'));
 $('again').addEventListener('click', ()=>location.reload());
 
