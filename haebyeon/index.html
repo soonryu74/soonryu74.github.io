@@ -293,7 +293,7 @@
     <div class="sheet-head"><h2 id="settings-title">설정</h2><button class="icon-btn" data-close type="button" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="row"><div><strong>파도 소리</strong><small>브라우저가 직접 만드는 소리예요 · 파일 없음</small></div><input id="vol-sea" type="range" min="0" max="100" value="70" aria-label="파도 소리 크기"></div>
     <div class="row"><div><strong>갈매기 · 바람</strong><small>가끔 멀리서 들려요</small></div><input id="vol-bird" type="range" min="0" max="100" value="50" aria-label="갈매기 소리 크기"></div>
-    <div class="row"><div><strong>발소리</strong><small>젖은 모래와 마른 모래가 달라요</small></div><input id="vol-step" type="range" min="0" max="100" value="55" aria-label="발소리 크기"></div>
+    <div class="row"><div><strong>발소리</strong><small>젖은 모래와 마른 모래가 달라요</small></div><input id="vol-step" type="range" min="0" max="100" value="40" aria-label="발소리 크기"></div>
     <div class="row"><div><strong>달리기 속도</strong><small id="pace-note">시속 12 km · 가볍게</small></div><input id="pace" type="range" min="6" max="16" step="1" value="12" aria-label="달리기 속도"></div>
     <div class="row"><div><strong>시간</strong><small>하루 20분 · 해가 저물고 별이 뜨고 다시 떠요</small></div>
       <div class="seg" role="group" aria-label="시간대"><button type="button" data-tod="auto" aria-pressed="true">흐름</button><button type="button" data-tod="dawn" aria-pressed="false">새벽</button><button type="button" data-tod="noon" aria-pressed="false">한낮</button><button type="button" data-tod="dusk" aria-pressed="false">노을</button><button type="button" data-tod="night" aria-pressed="false">밤</button></div></div>
@@ -1185,7 +1185,7 @@ function audioStart(){
   const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 0.7;
   audio.birdGain = ctx.createGain(); audio.birdGain.gain.value = 0.5;
   const wg = ctx.createGain(); wg.gain.value = 0.045; wsrc.connect(bp); bp.connect(wg); wg.connect(audio.birdGain); audio.birdGain.connect(audio.master); wsrc.start();
-  audio.stepGain = ctx.createGain(); audio.stepGain.gain.value = 0.55; audio.stepGain.connect(audio.master);
+  audio.stepGain = ctx.createGain(); audio.stepGain.gain.value = 0.4; audio.stepGain.connect(audio.master);
   audio.master.gain.linearRampToValueAtTime(1, ctx.currentTime + 1.5);
   audio.on = true; audio.nextGull = ctx.currentTime + 4;
 }
@@ -1214,10 +1214,19 @@ function meow(){
 }
 function step(wetness, running){
   const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime;
-  const s = ctx.createBufferSource(); s.buffer = noiseBuffer(ctx, 0.12, false); const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = wetness>0.5 ? 900 : 2600;
-  const g = ctx.createGain(); const v = (running?0.22:0.12) * (wetness>0.5 ? 0.9 : 1); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t + (wetness>0.5?0.14:0.08));
-  s.connect(f); f.connect(g); g.connect(audio.stepGain); s.start(t); s.stop(t+0.15);
-  if(wetness>=0.6){ const s2 = ctx.createBufferSource(); s2.buffer = noiseBuffer(ctx, 0.2, false); const f2 = ctx.createBiquadFilter(); f2.type = 'highpass'; f2.frequency.value = 3000; const g2 = ctx.createGain(); g2.gain.setValueAtTime(wetness>=1 ? 0.12 : 0.05, t+0.02); g2.gain.exponentialRampToValueAtTime(0.001, t+0.2); s2.connect(f2); f2.connect(g2); g2.connect(audio.stepGain); s2.start(t+0.02); s2.stop(t+0.22); }
+  const grass = SC.ground==='grass';
+  // 모래: 사삭 — 낮은 대역의 부드러운 소음이 눌렸다가 스르르 빠진다. 젖은 모래는 더 둔탁하고 짧게, 잔디는 더 부드럽고 바스락
+  const s = ctx.createBufferSource(); s.buffer = noiseBuffer(ctx, 0.35, true);          // 갈색 소음(저음 위주)
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = grass ? 1400 : (wetness>0.5 ? 420 : 700); bp.Q.value = 0.7;
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = grass ? 3200 : 1800;
+  const g = ctx.createGain(); const v = (running ? 0.16 : 0.09) * (wetness>0.5 ? 0.8 : 1);
+  const dur = wetness>0.5 ? 0.12 : (running ? 0.16 : 0.22);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.025); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(bp); bp.connect(lp); lp.connect(g); g.connect(audio.stepGain); s.start(t); s.stop(t + dur + 0.05);
+  // 마른 모래: 모래알이 흩어지는 아주 작은 고음 꼬리
+  if(!grass && wetness < 0.5){ const s3 = ctx.createBufferSource(); s3.buffer = noiseBuffer(ctx, 0.25, false); const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2500; const g3 = ctx.createGain(); g3.gain.setValueAtTime(0.0001, t+0.03); g3.gain.exponentialRampToValueAtTime(0.012, t+0.06); g3.gain.exponentialRampToValueAtTime(0.0001, t+0.22); s3.connect(hp); hp.connect(g3); g3.connect(audio.stepGain); s3.start(t+0.03); s3.stop(t+0.3); }
+  if(wetness>=1){ // 물 튀김
+    const s2 = ctx.createBufferSource(); s2.buffer = noiseBuffer(ctx, 0.2, false); const f2 = ctx.createBiquadFilter(); f2.type = 'highpass'; f2.frequency.value = 2200; const g2 = ctx.createGain(); g2.gain.setValueAtTime(0.0001, t+0.02); g2.gain.exponentialRampToValueAtTime(0.07, t+0.05); g2.gain.exponentialRampToValueAtTime(0.0001, t+0.2); s2.connect(f2); f2.connect(g2); g2.connect(audio.stepGain); s2.start(t+0.02); s2.stop(t+0.22); }
 }
 function chime(){
   const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime, base = [523.25, 659.25, 783.99, 1046.5][Math.random()*4|0];
