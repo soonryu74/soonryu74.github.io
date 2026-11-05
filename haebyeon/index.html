@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1d2b35">
+<meta name="theme-color" content="#bfe6f5">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="해변">
@@ -21,11 +21,11 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e9d9b4' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='17' cy='6' r='2.6'/%3E%3Cpath d='M2 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0'/%3E%3C/svg%3E">
 <style>
   :root{
-    --sand:#eadfc6; --sand-deep:#c8b78f; --ink:#2b3a3f; --ink-soft:#5c6b70; --mist:#8ea2a6;
-    --sea:#2f6f8a; --foam:#f3f7f6; --sun:#f0b07a; --panel:rgba(246,241,230,.86); --line:rgba(43,58,63,.14);
+    --sand:#fff3e4; --sand-deep:#f1d9bd; --ink:#3a3340; --ink-soft:#7a6f80; --mist:#9fb6bb;
+    --sea:#5cc3bd; --foam:#ffffff; --sun:#ffb59e; --panel:rgba(255,250,244,.9); --line:rgba(58,51,64,.12);
   }
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;overflow:hidden;background:#1d2b35;color:var(--ink);
+  html,body{margin:0;height:100%;overflow:hidden;background:#bfe6f5;color:var(--ink);
     font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",-apple-system,BlinkMacSystemFont,sans-serif;
     -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
@@ -36,10 +36,10 @@
 
   /* boot */
   .boot{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;
-    background:var(--sand);color:#4d5a5e;text-align:center;z-index:50;transition:opacity .9s ease}
+    background:var(--sand);color:var(--ink);text-align:center;z-index:50;transition:opacity .9s ease}
   .boot.is-hidden{opacity:0;pointer-events:none}
-  .boot-mark{color:#8e7d5e}.boot-mark svg{width:34px;height:34px;stroke-width:1.2}
-  .boot h1{margin:0;padding-left:5px;font-size:27px;font-weight:500;letter-spacing:5px}
+  .boot-mark{color:var(--sea)}.boot-mark svg{width:34px;height:34px;stroke-width:1.2}
+  .boot h1{margin:0;font-size:27px;font-weight:700;letter-spacing:2px}
   .boot p{margin:0;color:#7d8a8e;font-size:12px;line-height:1.7}
   .boot-dot{width:4px;height:4px;margin-top:18px;background:#a99a7b;border-radius:50%;animation:breathe 1.8s ease-in-out infinite}
   .boot-retry{position:absolute;bottom:max(24px,env(safe-area-inset-bottom));min-height:44px;padding:0 16px;display:inline-flex;align-items:center;color:#64664f;font-size:13px;text-decoration:underline;text-underline-offset:3px;visibility:hidden;animation:retry 0s 15s forwards}
@@ -47,13 +47,13 @@
   @keyframes breathe{50%{opacity:.25}}@keyframes retry{to{visibility:visible}}
 
   /* welcome */
-  .welcome{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(29,43,53,.35);backdrop-filter:blur(2px);transition:opacity .6s}
+  .welcome{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(191,230,245,.35);backdrop-filter:blur(2px);transition:opacity .6s}
   .welcome.is-hidden{opacity:0;pointer-events:none}
   .welcome-card{width:min(420px,100%);padding:28px 26px 24px;border-radius:22px;background:var(--panel);box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
   .welcome-card .eyebrow{margin:0 0 6px;font-size:12px;letter-spacing:3px;color:var(--ink-soft)}
   .welcome-card h1{margin:0 0 10px;font-size:24px;font-weight:600;letter-spacing:1px}
   .welcome-card p{margin:0 0 18px;font-size:14px;line-height:1.8;color:var(--ink-soft)}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;border-radius:999px;font-size:15px;font-weight:600;background:var(--ink);color:#f6f1e6;transition:transform .15s}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;border-radius:999px;font-size:15px;font-weight:600;background:var(--sea);color:#fff;transition:transform .15s}
   .btn:active{transform:scale(.97)}
   .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
   .welcome-hint{margin-top:14px;font-size:12px;color:var(--mist)}
@@ -63,16 +63,16 @@
   .hud.is-on{opacity:1}
   .hud>*{pointer-events:auto}
   .top{position:absolute;top:max(14px,env(safe-area-inset-top));left:16px;right:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-  .brand{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:16px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.12)}
+  .brand{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:20px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.12)}
   .brand span{font-size:11px;letter-spacing:3px;color:var(--ink-soft)}
   .brand h1{margin:0;font-size:18px;font-weight:600;letter-spacing:2px}
   .brand small{font-size:11px;color:var(--mist)}
   .tools{display:flex;gap:8px}
-  .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:14px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.12);color:var(--ink)}
+  .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.12);color:var(--ink)}
   .icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-  .icon-btn[aria-pressed="true"]{background:var(--ink);color:#f6f1e6}
+  .icon-btn[aria-pressed="true"]{background:var(--sea);color:#fff}
 
-  .stats{position:absolute;left:16px;bottom:max(16px,env(safe-area-inset-bottom));display:flex;gap:6px;padding:10px 12px;border-radius:16px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.12)}
+  .stats{position:absolute;left:16px;bottom:max(16px,env(safe-area-inset-bottom));display:flex;gap:6px;padding:10px 12px;border-radius:22px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.12)}
   .stat{min-width:64px;padding:0 6px;text-align:center}
   .stat b{display:block;font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
   .stat span{font-size:10.5px;color:var(--ink-soft);letter-spacing:1px}
@@ -81,19 +81,19 @@
   .pace{position:absolute;right:16px;bottom:max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:8px}
   .runbtn{display:flex;align-items:center;justify-content:center;width:84px;height:84px;border-radius:50%;background:var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:13px;font-weight:600;letter-spacing:1px;user-select:none;-webkit-user-select:none;transition:transform .12s,background .2s}
   .runbtn.is-held{background:var(--sun);transform:scale(.95)}
-  .pace-hint{font-size:11.5px;color:#f6f1e6;text-shadow:0 1px 6px rgba(0,0,0,.5);text-align:right;line-height:1.6}
-  .pace-hint kbd{background:#fff3;border-color:#fff5;color:#fff}
+  .pace-hint{font-size:11.5px;color:var(--ink);text-shadow:0 1px 6px rgba(255,255,255,.8);text-align:right;line-height:1.6}
+  .pace-hint kbd{background:#fffc}
 
-  .toast{position:absolute;left:50%;top:max(80px,calc(env(safe-area-inset-top) + 70px));transform:translateX(-50%);max-width:min(88vw,420px);padding:10px 16px;border-radius:999px;background:rgba(43,58,63,.78);color:#f6f1e6;font-size:13.5px;letter-spacing:.3px;text-align:center;opacity:0;transition:opacity .5s;pointer-events:none}
+  .toast{position:absolute;left:50%;top:max(80px,calc(env(safe-area-inset-top) + 70px));transform:translateX(-50%);max-width:min(88vw,420px);padding:10px 16px;border-radius:999px;background:rgba(255,250,244,.92);color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.12);font-size:13.5px;letter-spacing:.3px;text-align:center;opacity:0;transition:opacity .5s;pointer-events:none}
   .toast.is-on{opacity:1}
 
   .breath{position:absolute;left:50%;bottom:max(120px,calc(env(safe-area-inset-bottom) + 108px));transform:translateX(-50%);display:none;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
   .breath.is-on{display:flex}
-  .breath-ring{width:72px;height:72px;border-radius:50%;border:1.5px solid #fff9;background:#ffffff22;transform:scale(.6)}
-  .breath-label{font-size:12px;letter-spacing:2px;color:#f6f1e6;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+  .breath-ring{width:72px;height:72px;border-radius:50%;border:2px solid var(--sea);background:#ffffff55;transform:scale(.6)}
+  .breath-label{font-size:12px;letter-spacing:2px;color:var(--ink);text-shadow:0 1px 6px rgba(255,255,255,.8)}
 
   /* sheets */
-  .sheet{position:fixed;inset:0;z-index:30;display:none;align-items:flex-end;justify-content:center;background:rgba(29,43,53,.35)}
+  .sheet{position:fixed;inset:0;z-index:30;display:none;align-items:flex-end;justify-content:center;background:rgba(58,51,64,.25)}
   .sheet.is-open{display:flex}
   .sheet-card{width:min(460px,100%);max-height:84vh;overflow:auto;padding:20px 22px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:var(--panel);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
   @media(min-width:640px){.sheet{align-items:center}.sheet-card{border-radius:22px;padding-bottom:22px}}
@@ -112,7 +112,7 @@
   .help dt{color:var(--ink-soft)}.help dd{margin:0}
   .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
   .seg button{padding:7px 12px;font-size:12.5px}
-  .seg button[aria-pressed="true"]{background:var(--ink);color:#f6f1e6}
+  .seg button[aria-pressed="true"]{background:var(--sea);color:#fff}
 
   /* rest overlay */
   .rest{position:fixed;inset:0;z-index:25;display:none;align-items:flex-end;justify-content:center;padding:0 16px max(28px,env(safe-area-inset-bottom));pointer-events:none}
@@ -148,9 +148,9 @@
 
 <section id="welcome" class="welcome is-hidden" aria-labelledby="welcome-title">
   <div class="welcome-card">
-    <p class="eyebrow">海邊 · 해변</p>
+    <p class="eyebrow">BEACH RUN</p>
     <h1 id="welcome-title">해변, 잠깐 달려요</h1>
-    <p>경쟁도 기록도 없어요.<br>파도 옆을 천천히 달리다가, 쉬고 싶을 때 멈춰 바다를 바라보세요.</p>
+    <p>경쟁도 기록도 없어요.<br>강아지랑 파도 옆을 천천히 달리다가,<br>쉬고 싶을 때 멈춰 바다를 바라보세요.</p>
     <button id="start" class="btn" type="button">달리러 가기</button>
     <p class="welcome-hint">소리를 켜면 파도와 갈매기 소리가 함께해요</p>
   </div>
@@ -159,7 +159,7 @@
 <div id="hud" class="hud" aria-hidden="true">
   <div class="top">
     <div class="brand">
-      <span>海邊</span>
+      <span>BEACH RUN</span>
       <h1>해변</h1>
       <small id="tod">해 질 녘</small>
     </div>
@@ -265,7 +265,7 @@ const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const state = {
   started:false, running:false, held:false, speed:0, laneTarget:2.2, lane:2.2,
   x:0, dist:0, time:0, shells:0, stridePhase:0, stillFor:0, resting:false, sitting:false, restFor:0,
-  todMode:'auto', todT:0.72, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
+  todMode:'auto', todT:0.5, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
 };
 
 /* ---------- 렌더러 ---------- */
@@ -281,7 +281,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xd9c9b3, 40, 170);
+scene.fog = new THREE.Fog(0xe6eef0, 40, 170);
 const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 600);
 
 function resize(){
@@ -327,7 +327,7 @@ scene.add(sky);
 
 /* ---------- 바다 ---------- */
 const seaUniforms = {
-  time:{value:0}, deep:{value:new THREE.Color(0x1f4f6e)}, shallow:{value:new THREE.Color(0x5fa6b8)}, foam:{value:new THREE.Color(0xf3f7f6)},
+  time:{value:0}, deep:{value:new THREE.Color(0x2d8fa8)}, shallow:{value:new THREE.Color(0x8fdcd6)}, foam:{value:new THREE.Color(0xf3f7f6)},
   sunDir:{value:skyUniforms.sunDir.value}, sunColor:{value:skyUniforms.sunColor.value}, fogColor:{value:scene.fog.color}, fogNear:{value:40}, fogFar:{value:170},
   camX:{value:0},
 };
@@ -396,7 +396,7 @@ scene.add(sea);
 function sandTexture(){
   const c = document.createElement('canvas'); c.width = c.height = 512;
   const g = c.getContext('2d');
-  g.fillStyle = '#efe4cb'; g.fillRect(0,0,512,512);
+  g.fillStyle = '#f7ecd9'; g.fillRect(0,0,512,512);
   for(let i=0;i<26000;i++){
     const v = 190 + Math.random()*55;
     g.fillStyle = `rgba(${v},${v-10},${v-34},${0.12+Math.random()*0.18})`;
@@ -425,7 +425,7 @@ sand.position.set(0, 0, 0);
 sand.receiveShadow = true;
 scene.add(sand);
 // 젖은 모래 띠
-const wetMat = new THREE.MeshStandardMaterial({color:0xc9b48d, roughness:0.35, metalness:0.05, transparent:true, opacity:0.85});
+const wetMat = new THREE.MeshStandardMaterial({color:0xe3cfb0, roughness:0.35, metalness:0.05, transparent:true, opacity:0.85});
 const wet = new THREE.Mesh(new THREE.PlaneGeometry(520, 7.5).rotateX(-Math.PI/2), wetMat);
 wet.position.set(0, 0.012, SHORE_Z + 1.4);
 wet.receiveShadow = true;
@@ -451,28 +451,50 @@ function stamp(x, z, side){
   footIdx = (footIdx+1) % FOOT_N;
 }
 
-/* ---------- 달리는 사람 (단순 도형) ---------- */
+/* ---------- 달리는 아이 (둥글둥글 치비) ---------- */
 const runner = new THREE.Group();
-const skin = new THREE.MeshStandardMaterial({color:0xf0c9a8, roughness:0.8});
-const shirt = new THREE.MeshStandardMaterial({color:0xf2efe6, roughness:0.9});
-const shorts = new THREE.MeshStandardMaterial({color:0x3f6c80, roughness:0.9});
-const hairM = new THREE.MeshStandardMaterial({color:0x3b2e27, roughness:0.9});
+const skin = new THREE.MeshStandardMaterial({color:0xffdcc4, roughness:0.9});
+const shirt = new THREE.MeshStandardMaterial({color:0xfff6e9, roughness:0.95});
+const shorts = new THREE.MeshStandardMaterial({color:0x7fc8c2, roughness:0.95});
+const hairM = new THREE.MeshStandardMaterial({color:0x4a3b38, roughness:0.95});
+const bandM = new THREE.MeshStandardMaterial({color:0xff9b8a, roughness:0.9});
+const inkM = new THREE.MeshBasicMaterial({color:0x3b2f2f});
+const blushM = new THREE.MeshBasicMaterial({color:0xffb3a7, transparent:true, opacity:0.75});
 function box(w,h,d,m){ const o = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); o.castShadow = true; return o; }
-const torso = box(0.42, 0.56, 0.24, shirt); torso.position.y = 1.12; runner.add(torso);
-const hips  = box(0.40, 0.2, 0.24, shorts); hips.position.y = 0.76; runner.add(hips);
-const head  = new THREE.Mesh(new THREE.SphereGeometry(0.17, 18, 14), skin); head.position.y = 1.58; head.castShadow = true; runner.add(head);
-const hair  = new THREE.Mesh(new THREE.SphereGeometry(0.178, 18, 14, 0, Math.PI*2, 0, Math.PI*0.55), hairM); hair.position.y = 1.6; runner.add(hair);
-function limb(len, thick, mat, y, x){
-  const g = new THREE.Group(); g.position.set(x, y, 0);
-  const m = box(thick, len, thick, mat); m.position.y = -len/2; g.add(m); return g;
-}
-const armL = limb(0.5, 0.11, skin, 1.36, -0.29), armR = limb(0.5, 0.11, skin, 1.36, 0.29);
-const legL = limb(0.72, 0.14, skin, 0.7, -0.12), legR = limb(0.72, 0.14, skin, 0.7, 0.12);
-[armL, armR].forEach(a=>{ const s = box(0.13, 0.22, 0.13, shirt); s.position.y = -0.1; a.add(s); });
-[legL, legR].forEach(l=>{ const s = box(0.15, 0.2, 0.15, shorts); s.position.y = -0.08; l.add(s); const sh = box(0.15, 0.08, 0.24, new THREE.MeshStandardMaterial({color:0xe9e4d6})); sh.position.set(0,-0.72,0.04); l.add(sh); });
+function capsule(r,l,m){ const o = new THREE.Mesh(new THREE.CapsuleGeometry(r,l,6,12), m); o.castShadow = true; return o; }
+// 몸: 작고 통통하게
+const torso = capsule(0.24, 0.22, shirt); torso.position.y = 0.86; runner.add(torso);
+const hips  = capsule(0.23, 0.08, shorts); hips.position.y = 0.66; runner.add(hips);
+// 머리: 크고 둥글게 (몸의 1.4배)
+const head  = new THREE.Mesh(new THREE.SphereGeometry(0.34, 24, 18), skin); head.position.y = 1.42; head.castShadow = true; runner.add(head);
+const hair  = new THREE.Mesh(new THREE.SphereGeometry(0.355, 24, 18, 0, Math.PI*2, 0, Math.PI*0.52), hairM); hair.position.y = 1.46; hair.rotation.x = -0.15; runner.add(hair);
+const band  = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.035, 8, 28), bandM); band.position.y = 1.5; band.rotation.x = Math.PI/2; band.rotation.z = 0.1; runner.add(band);
+const knot  = box(0.1, 0.06, 0.16, bandM); knot.position.set(-0.3, 1.5, -0.05); knot.rotation.z = 0.5; runner.add(knot);
+// 눈·볼 (얼굴은 +x 방향)
+[[-0.11],[0.11]].forEach(([z])=>{ const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), inkM); e.position.set(0.3, 1.44, z); e.scale.y = 1.4; runner.add(e);
+  const bl = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), blushM); bl.position.set(0.3, 1.36, z*1.9); bl.lookAt(1, 1.36, z*4); runner.add(bl); });
+const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 12, Math.PI), inkM); mouth.position.set(0.33, 1.33, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); runner.add(mouth);
+function limb(len, r, mat, y, z){ const g = new THREE.Group(); g.position.set(0, y, z); const m = capsule(r, len, mat); m.position.y = -len/2; g.add(m); return g; }
+const armL = limb(0.22, 0.07, skin, 1.0, -0.3), armR = limb(0.22, 0.07, skin, 1.0, 0.3);
+const legL = limb(0.24, 0.085, skin, 0.52, -0.12), legR = limb(0.24, 0.085, skin, 0.52, 0.12);
+[legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, new THREE.MeshStandardMaterial({color:0xff9b8a, roughness:0.9})); sh.rotation.z = Math.PI/2; sh.position.set(0.04, -0.4, 0); l.add(sh); });
 runner.add(armL, armR, legL, legR);
-runner.rotation.y = Math.PI/2; // +x 방향으로 달림
 scene.add(runner);
+
+// 같이 달리는 강아지 (하얗고 동그란)
+const dog = new THREE.Group();
+const furM = new THREE.MeshStandardMaterial({color:0xfffaf3, roughness:1});
+const dBody = capsule(0.16, 0.2, furM); dBody.rotation.z = Math.PI/2; dBody.position.y = 0.28; dog.add(dBody);
+const dHead = new THREE.Mesh(new THREE.SphereGeometry(0.17, 18, 14), furM); dHead.position.set(0.26, 0.42, 0); dHead.castShadow = true; dog.add(dHead);
+[[-0.1],[0.1]].forEach(([z])=>{ const ear = capsule(0.045, 0.1, new THREE.MeshStandardMaterial({color:0xf0d9c8, roughness:1})); ear.position.set(0.22, 0.52, z*1.5); ear.rotation.x = z>0?0.5:-0.5; dog.add(ear);
+  const e = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), inkM); e.position.set(0.4, 0.45, z); dog.add(e); });
+const nose = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), inkM); nose.position.set(0.43, 0.38, 0); dog.add(nose);
+const tail = capsule(0.035, 0.14, furM); tail.position.set(-0.26, 0.4, 0); tail.rotation.z = 0.9; dog.add(tail);
+const dLegs = [];
+[[0.12,-0.08],[0.12,0.08],[-0.12,-0.08],[-0.12,0.08]].forEach(([x,z])=>{ const l = capsule(0.04, 0.1, furM); l.position.set(x, 0.1, z); dog.add(l); dLegs.push(l); });
+const collar = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.02, 6, 20), new THREE.MeshStandardMaterial({color:0x7fc8c2})); collar.position.set(0.17, 0.38, 0); collar.rotation.y = Math.PI/2; dog.add(collar);
+scene.add(dog);
+const dogState = {x:-1.2, z:0.9, phase:0};
 
 /* ---------- 장식물: 갈매기, 유목, 조개, 소나무, 등대 ---------- */
 const props = []; // {obj, x, z, kind}
@@ -740,14 +762,14 @@ function start(){
 $('start').addEventListener('click', start);
 
 /* ---------- 시간대 ---------- */
-const TOD = [ // t: 0 새벽 → 0.4 한낮 → 0.72 해 질 녘 → 1 밤 → 다시 새벽
-  {t:0.00, top:0x33496b, mid:0xd98a7a, bot:0xf2d3b8, sun:0xffc9a0, fog:0xd7c5bc, elev:0.08, az:0.95, li:1.1, hemi:0.8, exp:0.95},
-  {t:0.18, top:0x4f86b3, mid:0xf2c79c, bot:0xf8e8d2, sun:0xfff0d0, fog:0xdcd0c0, elev:0.35, az:0.6, li:2.0, hemi:0.9, exp:1.05},
-  {t:0.40, top:0x3a7fb8, mid:0xa9d5ec, bot:0xeef4f2, sun:0xffffff, fog:0xd9e3e6, elev:0.85, az:0.1, li:2.6, hemi:1.0, exp:1.1},
-  {t:0.60, top:0x3e6f98, mid:0xf1c28c, bot:0xfbe6cb, sun:0xffe0b0, fog:0xe0cfb8, elev:0.42, az:-0.5, li:2.1, hemi:0.9, exp:1.05},
-  {t:0.72, top:0x2f4e6e, mid:0xf1a070, bot:0xf8dbb8, sun:0xffbf80, fog:0xd9c3ae, elev:0.17, az:-0.85, li:1.6, hemi:0.95, exp:1.0},
-  {t:0.84, top:0x1a2a44, mid:0x8a5d6a, bot:0xd5a893, sun:0xff9e70, fog:0x8c8390, elev:0.02, az:-1.0, li:0.6, hemi:0.6, exp:0.9},
-  {t:1.00, top:0x33496b, mid:0xd98a7a, bot:0xf2d3b8, sun:0xffc9a0, fog:0xd7c5bc, elev:0.08, az:0.95, li:1.1, hemi:0.8, exp:0.95},
+const TOD = [ // t: 0 새벽 → 0.4 한낮 → 0.72 해 질 녘 → 1 밤 → 다시 새벽 (파스텔)
+  {t:0.00, top:0x6f7fb5, mid:0xf3b7c4, bot:0xfde9dc, sun:0xffd6b8, fog:0xe9dfe3, elev:0.08, az:0.95, li:1.1, hemi:0.9, exp:1.0},
+  {t:0.18, top:0x7fb6e8, mid:0xffd7b8, bot:0xfff4e6, sun:0xfff4de, fog:0xe9eef0, elev:0.35, az:0.6, li:2.0, hemi:1.0, exp:1.05},
+  {t:0.40, top:0x6fb8f0, mid:0xbfe6f5, bot:0xf5fbfb, sun:0xffffff, fog:0xe3f0f3, elev:0.85, az:0.1, li:2.5, hemi:1.1, exp:1.1},
+  {t:0.60, top:0x7aa9dc, mid:0xffd3a8, bot:0xfff0dc, sun:0xfff0c8, fog:0xeadfd2, elev:0.42, az:-0.5, li:2.1, hemi:1.0, exp:1.05},
+  {t:0.72, top:0x5f6fa6, mid:0xffb08c, bot:0xffe2c8, sun:0xffc890, fog:0xe6d2c6, elev:0.17, az:-0.85, li:1.6, hemi:0.95, exp:1.0},
+  {t:0.84, top:0x2f3a66, mid:0xa77ba0, bot:0xe8b7b0, sun:0xffb08c, fog:0xa99fb2, elev:0.02, az:-1.0, li:0.6, hemi:0.6, exp:0.9},
+  {t:1.00, top:0x6f7fb5, mid:0xf3b7c4, bot:0xfde9dc, sun:0xffd6b8, fog:0xe9dfe3, elev:0.08, az:0.95, li:1.1, hemi:0.9, exp:1.0},
 ];
 const cA = new THREE.Color(), cB = new THREE.Color();
 function lerpColor(target, a, b, f){ cA.setHex(a); cB.setHex(b); target.copy(cA).lerp(cB, f); }
@@ -794,6 +816,14 @@ function frame(){
     const dx = state.speed*dt;
     state.x += dx; state.dist += dx;
     runner.position.set(state.x, 0, state.lane);
+    // 강아지: 살짝 뒤에서 따라오다가, 쉬면 옆에 앉는다
+    { const tx = state.resting ? state.x + 0.9 : state.x - 1.1 + Math.sin(t*0.7)*0.3, tz = state.resting ? state.lane + 0.2 : state.lane + 0.9 + Math.sin(t*0.5)*0.4;
+      dogState.x = THREE.MathUtils.damp(dogState.x, tx, 2.5, dt); dogState.z = THREE.MathUtils.damp(dogState.z, tz, 2.5, dt);
+      const dv = Math.hypot(tx - dogState.x, tz - dogState.z) + state.speed; dogState.phase += dv*2.2*dt*Math.PI;
+      dog.position.set(dogState.x, state.resting ? 0 : Math.abs(Math.sin(dogState.phase))*0.08*Math.min(1, state.speed/RUN+0.2), dogState.z);
+      dog.rotation.y = state.resting ? Math.PI/2 : 0;
+      dLegs.forEach((l,i)=>{ l.rotation.z = Math.sin(dogState.phase + (i%2?Math.PI:0))*0.6*Math.min(1, state.speed/WALK); });
+      tail.rotation.x = Math.sin(t*9)*0.5; }
 
     // 보폭 애니메이션
     const strideLen = state.speed > WALK+0.3 ? 1.35 : 0.8;
@@ -801,12 +831,12 @@ function frame(){
     else { state.stridePhase = THREE.MathUtils.damp(state.stridePhase, Math.round(state.stridePhase/Math.PI)*Math.PI, 6, dt); }
     const ph = state.stridePhase, amp = THREE.MathUtils.clamp(state.speed/RUN, 0, 1);
     const legA = Math.sin(ph)*(0.35 + 0.55*amp), armA = -Math.sin(ph)*(0.3 + 0.5*amp);
-    legL.rotation.x = legA; legR.rotation.x = -legA; armL.rotation.x = armA; armR.rotation.x = -armA;
-    armL.rotation.z = 0.15 + 0.1*amp; armR.rotation.z = -0.15 - 0.1*amp;
+    legL.rotation.z = -legA; legR.rotation.z = legA; armL.rotation.z = -armA; armR.rotation.z = armA;
+    armL.rotation.x = -0.25; armR.rotation.x = 0.25;
     const bob = Math.abs(Math.sin(ph))*(0.03 + 0.09*amp);
     runner.position.y = bob;
-    runner.rotation.z = -0.03*amp; // 살짝 앞으로 기울기
-    torso.rotation.x = 0.08*amp;
+    runner.rotation.z = -0.06*amp; // 살짝 앞으로 기울기
+    head.rotation.z = Math.sin(ph*0.5)*0.06*amp; // 머리 살랑
     const wetness = THREE.MathUtils.clamp(1 - (state.lane - LANE_MIN)/2.4, 0, 1);
     // 발 닿는 순간
     const stepNow = Math.floor(ph/Math.PI);
@@ -818,10 +848,10 @@ function frame(){
     // 앉기/쉬기 자세
     if(state.resting){
       state.restFor += dt; $('rest-sec').textContent = Math.floor(state.restFor);
-      runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI, 3, dt); // 바다 쪽(-z) 바라보기
-      if(state.sitting){ legL.rotation.x = THREE.MathUtils.damp(legL.rotation.x, -1.4, 4, dt); legR.rotation.x = THREE.MathUtils.damp(legR.rotation.x, -1.4, 4, dt); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.42, 4, dt); }
+      runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 3, dt); // 바다 쪽(-z) 바라보기
+      if(state.sitting){ legL.rotation.z = THREE.MathUtils.damp(legL.rotation.z, -1.5, 4, dt); legR.rotation.z = THREE.MathUtils.damp(legR.rotation.z, -1.5, 4, dt); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.3, 4, dt); }
     } else {
-      runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 3, dt);
+      runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, 0, 3, dt);
     }
     // 가만히 서 있으면 쉬어가기 제안
     if(state.started && state.speed === 0 && !state.resting){ state.stillFor += dt; if(state.stillFor > 6){ enterRest(); say('잠깐 쉬어가요 · 바다를 바라봐요'); } } else state.stillFor = 0;
