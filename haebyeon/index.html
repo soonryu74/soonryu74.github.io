@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="해변, 잠깐 달려요">
 <meta name="twitter:description" content="말없이 파도 옆을 달리는 온라인 해변.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235cc3bd' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='17' cy='6' r='2.6'/%3E%3Cpath d='M2 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0'/%3E%3C/svg%3E">
 <style>
 body{word-break:keep-all;overflow-wrap:break-word}
@@ -328,7 +328,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-05-33';
+window.__BUILD = '2026-11-05-34';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -558,14 +558,14 @@ function stamp(x, z, side){ const m = foots[footIdx]; footIdx = (footIdx+1)%FOOT
 
 /* ---------- 모래에 쓴 글 ---------- */
 const sandNotes = [];
-function writeOnSand(text){ const go = ()=>writeOnSandNow(text); (document.fonts && document.fonts.load ? document.fonts.load('110px "Nanum Pen Script"').then(go, go) : go()); }
+function writeOnSand(text){ const go = ()=>writeOnSandNow(text); (document.fonts && document.fonts.load ? document.fonts.load('110px "Nanum Brush Script"').then(go, go) : go()); }
 function writeOnSandNow(text){
   const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const g = c.getContext('2d');
-  g.fillStyle = 'rgba(104,80,52,0.95)'; g.font = '400 128px "Nanum Pen Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
+  g.fillStyle = 'rgba(104,80,52,0.95)'; g.font = '400 150px "Nanum Brush Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0.95, depthWrite:false}));
-  const nz = SC.ground==='grass' ? Math.max(state.lane + 1.8, 6.0) : THREE.MathUtils.clamp(state.lane - 1.6, (state.tideNow || 0) + 2.6, 3.4);   // 해변: 지금 파도선보다 위 젖은 모래(다음 밀물에 지워짐) / 한강: 뒤쪽 잔디   // 해변: 물가 가까이 → 다음 밀물에 지워진다 / 한강: 바로 앞 잔디, 바람이 지운다
-  m.userData.age = 0; m.position.set(state.x, SC.ground==='grass' ? 0.06 : 0.03, nz); m.rotation.y = SC.ground==='grass' ? Math.PI : 0; /* 카메라가 서는 쪽(해변: 뒤 위, 한강: 강 쪽 위)에서 바로 읽힘 */ m.renderOrder = 1; scene.add(m); sandNotes.push(m);
+  const nz = SC.ground==='grass' ? state.lane - 2.9 : state.lane - 2.8;   // 앉은 사람 앞 바닥 (해변: 밀물이 올라오면 지워짐 / 한강: 바람이 지움)   // 해변: 물가 가까이 → 다음 밀물에 지워진다 / 한강: 바로 앞 잔디, 바람이 지운다
+  m.userData.age = 0; m.position.set(state.x, SC.ground==='grass' ? 0.06 : 0.03, nz); m.rotation.y = 0; /* 앉은 사람(등 뒤 카메라)에서 바로 읽힘 */ m.renderOrder = 1; scene.add(m); sandNotes.push(m);
   state.noteCam = m; state.noteCamT = performance.now();   // 글을 쓰면 잠시 글씨가 잘 보이는 앵글로
 }
 
@@ -717,42 +717,35 @@ function makeDog(v){
 }
 const furC = new THREE.MeshStandardMaterial({color:0xf2d6b0, roughness:1});
 function makeCat(){
-  // 페르시안(참고 이미지): 큰 둥근 얼굴, 넓게 벌어진 동그란 구릿빛 눈, 납작한 코, 작은 둥근 귀, 목 둘레 풍성한 갈기, 솜털 몸, 깃털 꼬리
+  // 페르시안: 매끈하고 둥근 솜뭉치 느낌. 큰 둥근 얼굴, 넓게 벌어진 구릿빛 눈, 납작한 분홍 코, 작은 귀, 풍성한 목털, 깃털 꼬리
   const g = new THREE.Group();
   const cream = new THREE.MeshStandardMaterial({color:0xf7f1e6, roughness:1});
   const light = new THREE.MeshStandardMaterial({color:0xfdfaf5, roughness:1});
-  const shade = new THREE.MeshStandardMaterial({color:0xe9dfd0, roughness:1});
-  const fuzz = (parent, cx, cy, cz, R, n, r, mat)=>{ for(let i=0;i<n;i++){ const a = i/n*Math.PI*2 + Math.random()*0.3; const b = (Math.random()-0.5)*0.8; const c = new THREE.Mesh(new THREE.SphereGeometry(r*(0.85+Math.random()*0.3), 8, 6), mat||cream); c.position.set(cx + R*Math.cos(a)*Math.cos(b), cy + R*Math.sin(b), cz + R*Math.sin(a)*Math.cos(b)); parent.add(c); } };
-  // 몸: 통통하고 털이 겹겹
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 12), cream); body.scale.set(1.45, 1.0, 1.1); body.position.set(-0.04, 0.33, 0); g.add(body);
-  fuzz(g, -0.04, 0.3, 0, 0.19, 14, 0.07, shade); fuzz(g, -0.04, 0.36, 0, 0.17, 12, 0.07, cream);
-  // 머리: 크고 둥글게, 얼굴은 밝은 색
-  const headG = new THREE.Group(); headG.position.set(0.2, 0.52, 0); g.add(headG);
-  const h = new THREE.Mesh(new THREE.SphereGeometry(0.2, 20, 16), light); h.scale.set(1.0, 0.95, 1.1); h.castShadow = true; headG.add(h);
-  fuzz(headG, -0.06, 0.0, 0, 0.19, 16, 0.065, cream);                      // 머리 둘레 털
-  const ruff = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 12), cream); ruff.position.set(-0.1, -0.1, 0); ruff.scale.set(0.9, 0.8, 1.25); headG.add(ruff);   // 갈기
-  fuzz(headG, -0.1, -0.12, 0, 0.24, 16, 0.07, shade);
-  // 볼 (납작한 얼굴)
-  for(const z of [-0.09, 0.09]){ const cheek = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10), light); cheek.position.set(0.14, -0.06, z); headG.add(cheek); }
-  // 눈: 넓게, 크고 동그란 구릿빛 + 검은 동공 + 하이라이트
+  const shade = new THREE.MeshStandardMaterial({color:0xeee4d6, roughness:1});
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.2, 18, 14), cream); body.scale.set(1.45, 1.0, 1.15); body.position.set(-0.05, 0.33, 0); body.castShadow = true; g.add(body);
+  const belly = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 12), light); belly.scale.set(1.3, 0.8, 1.0); belly.position.set(-0.03, 0.27, 0); g.add(belly);
+  const ruff = new THREE.Mesh(new THREE.SphereGeometry(0.22, 18, 14), cream); ruff.scale.set(0.85, 0.85, 1.2); ruff.position.set(0.1, 0.4, 0); g.add(ruff);   // 목 둘레 풍성한 털
+  const headG = new THREE.Group(); headG.position.set(0.2, 0.55, 0); g.add(headG);
+  const h = new THREE.Mesh(new THREE.SphereGeometry(0.2, 22, 18), light); h.scale.set(0.95, 0.92, 1.1); h.castShadow = true; headG.add(h);
+  for(const z of [-0.09, 0.09]){ const cheek = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 12), light); cheek.position.set(0.12, -0.07, z); headG.add(cheek); }
+  const brow = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 12), light); brow.scale.set(0.9, 0.6, 1.0); brow.position.set(0.06, 0.1, 0); headG.add(brow);   // 둥근 이마
   const ears = [];
   for(const z of [-0.085, 0.085]){
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.042, 12, 10), new THREE.MeshStandardMaterial({color:0xc98a3c, roughness:0.25})); eye.position.set(0.165, 0.02, z); headG.add(eye);
-    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), inkM); pupil.position.set(0.2, 0.02, z); headG.add(pupil);
-    const hl = new THREE.Mesh(new THREE.SphereGeometry(0.009, 6, 5), new THREE.MeshBasicMaterial({color:0xffffff})); hl.position.set(0.212, 0.035, z - 0.008); headG.add(hl);
-    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), cream); ear.scale.set(0.6, 1.0, 0.8); ear.position.set(-0.02, 0.14, z*1.7); headG.add(ear); ears.push(ear);
-    const earIn = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), new THREE.MeshStandardMaterial({color:0xf0c9c4, roughness:1})); earIn.position.set(0.0, 0.14, z*1.75); headG.add(earIn);
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 14, 12), new THREE.MeshStandardMaterial({color:0xc98a3c, roughness:0.25})); eye.position.set(0.155, 0.015, z); headG.add(eye);
+    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.021, 10, 8), inkM); pupil.position.set(0.192, 0.015, z); headG.add(pupil);
+    const hl = new THREE.Mesh(new THREE.SphereGeometry(0.01, 6, 5), new THREE.MeshBasicMaterial({color:0xffffff})); hl.position.set(0.206, 0.03, z - 0.01); headG.add(hl);
+    const ear = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.1, 10), cream); ear.position.set(-0.03, 0.17, z*1.6); ear.rotation.x = z > 0 ? 0.35 : -0.35; headG.add(ear); ears.push(ear);
+    const earIn = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.065, 8), new THREE.MeshStandardMaterial({color:0xf0c9c4, roughness:1})); earIn.position.set(-0.015, 0.165, z*1.6); earIn.rotation.x = ear.rotation.x; headG.add(earIn);
   }
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), new THREE.MeshBasicMaterial({color:0xe39aa0})); nose.position.set(0.21, -0.03, 0); nose.scale.set(0.8, 0.7, 1.3); headG.add(nose);
-  const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.02, 0.005, 5, 10, Math.PI), inkM); mouth.position.set(0.205, -0.065, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headG.add(mouth);
-  // 꼬리: 깃털처럼 풍성한 공 연결
-  const tail = new THREE.Group(); tail.position.set(-0.3, 0.4, 0);
-  for(let i=0;i<5;i++){ const seg = new THREE.Mesh(new THREE.SphereGeometry(0.06 + i*0.008, 8, 6), i%2 ? shade : cream); seg.position.set(-i*0.07, i*0.045, 0); tail.add(seg); }
-  tail.rotation.z = 0.4; g.add(tail);
-  // 다리: 짧고 털로 덮인 기둥, 둥근 발
-  const legs = []; [[0.1,-0.09],[0.1,0.09],[-0.16,-0.09],[-0.16,0.09]].forEach(([x,z])=>{ const l = new THREE.Group(); l.position.set(x, 0.26, z); const m = capsule(0.055, 0.08, cream); m.position.y = -0.09; l.add(m); const paw = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), light); paw.position.y = -0.19; l.add(paw); g.add(l); legs.push(l); });
-  const collarM = new THREE.MeshStandardMaterial({color:0xf49ac1, roughness:0.6, emissive:0xf49ac1, emissiveIntensity:0}); glowMats.push(collarM);
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.018, 6, 20), collarM); collar.position.set(0.1, 0.4, 0); collar.rotation.y = Math.PI/2; collar.rotation.x = 0.4; g.add(collar);
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.022, 10, 8), new THREE.MeshBasicMaterial({color:0xe39aa0})); nose.position.set(0.205, -0.035, 0); nose.scale.set(0.7, 0.6, 1.3); headG.add(nose);
+  const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.022, 0.005, 5, 10, Math.PI), inkM); mouth.position.set(0.2, -0.07, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headG.add(mouth);
+  const tail = new THREE.Group(); tail.position.set(-0.3, 0.38, 0);
+  const plume = capsule(0.06, 0.26, cream); plume.position.set(-0.12, 0.1, 0); plume.rotation.z = 0.9; plume.scale.set(1, 1, 0.8); tail.add(plume);
+  const plumeTip = new THREE.Mesh(new THREE.SphereGeometry(0.065, 10, 8), shade); plumeTip.position.set(-0.24, 0.2, 0); tail.add(plumeTip);
+  g.add(tail);
+  const legs = []; [[0.1,-0.09],[0.1,0.09],[-0.16,-0.09],[-0.16,0.09]].forEach(([x,z])=>{ const l = new THREE.Group(); l.position.set(x, 0.26, z); const m = capsule(0.055, 0.08, cream); m.position.y = -0.09; l.add(m); const paw = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 8), light); paw.position.y = -0.19; l.add(paw); g.add(l); legs.push(l); });
+  const collarM = new THREE.MeshStandardMaterial({color:0xff9bb0, roughness:0.6, emissive:0xff9bb0, emissiveIntensity:0}); glowMats.push(collarM);
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.018, 6, 20), collarM); collar.position.set(0.17, 0.46, 0); collar.rotation.y = Math.PI/2; collar.rotation.x = 0.4; g.add(collar);
   g.userData = {legs, tail, kind:'cat', ears, headG, body}; return g;
 }
 const gullMat = new THREE.MeshStandardMaterial({color:0xf7f7f2, emissive:0xd0d0ca, emissiveIntensity:0.7, roughness:1, side:THREE.DoubleSide});
@@ -1356,7 +1349,7 @@ function openLetter(){ state.letters++; $('letter-text').textContent = LETTERS[M
 $('letter-close').addEventListener('click', ()=>$('letter').classList.remove('is-on'));
 
 function enterRest(){ document.body.classList.add('is-resting'); $('rest').classList.remove('is-mini'); state.resting = true; state.restFor = 0; state.held = false; state.autoRun = false; syncRunBtn(); $('rest').classList.add('is-on'); $('rest-quote').textContent = QUOTES[Math.random()*QUOTES.length|0]; setPose('stand'); }
-function leaveRest(){ document.body.classList.remove('is-resting'); state.resting = false; state.noteCam = null; state.pendingPose = null; setPose('stand'); $('rest').classList.remove('is-on'); }
+function leaveRest(){ document.body.classList.remove('is-resting'); state.resting = false; state.noteCam = null; state.pendingNote = null; state.pendingPose = null; setPose('stand'); $('rest').classList.remove('is-on'); }
 function toggleRest(){ state.resting ? leaveRest() : enterRest(); }
 const DRY_LANE = SC.dryLane;
 function setPose(p){
@@ -1377,7 +1370,7 @@ $('rest-lie').addEventListener('click', ()=>{ const cur = state.pendingPose || s
 $('rest-leave').addEventListener('click', endSession);
 $('restbtn').addEventListener('click', ()=>{ if(!state.started) return; setAutoRun(false); hold(false); enterRest(); say('잠깐 쉬어가요 · 바다를 바라봐요'); });
 $('rest-run').addEventListener('click', ()=>{ leaveRest(); setAutoRun(true); say('계속 달려요 · 멈추려면 버튼을 다시 눌러요', 2600); });
-$('sandform').addEventListener('submit', e=>{ e.preventDefault(); const v = $('sandtext').value.trim(); if(!v) return; writeOnSand(v); $('sandtext').value = ''; $('sandtext').blur(); $('rest').classList.add('is-mini'); say(SC.ground==='grass' ? '바람이 살살 지워 줄 거예요 · 잠깐 지켜봐요' : '파도가 밀려와 지워 줄 거예요 · 잠깐 지켜봐요', 3000); });
+$('sandform').addEventListener('submit', e=>{ e.preventDefault(); const v = $('sandtext').value.trim(); if(!v) return; if(state.pose==='sit' && !state.pendingPose) writeOnSand(v); else { state.pendingNote = v; setPose('sit'); } $('sandtext').value = ''; $('sandtext').blur(); $('rest').classList.add('is-mini'); say(SC.ground==='grass' ? '바람이 살살 지워 줄 거예요 · 잠깐 지켜봐요' : '파도가 밀려와 지워 줄 거예요 · 잠깐 지켜봐요', 3000); });
 $('rest-fold').addEventListener('click', ()=>$('rest').classList.add('is-mini'));
 $('rest-quote').addEventListener('click', ()=>$('rest').classList.add('is-mini'));
 $('rest-quote').style.cursor = 'pointer';
@@ -1638,6 +1631,7 @@ function frame(){
     for(const f of foots){ if(!f.visible) continue; const washed = f.position.z < tide + 0.9; f.material.opacity -= dt*(washed ? 0.5 : 0.012); if(f.material.opacity <= 0) f.visible = false; }
     for(let i=sandNotes.length-1;i>=0;i--){ const n = sandNotes[i]; n.userData.age += dt; const wind = SC.ground==='grass' && n.userData.age > 18; const washed = (SC.ground!=='grass' && n.position.z < tide + 1.2) || wind; if(washed && !n.userData.washing){ n.userData.washing = true; splash(n.position.x, n.position.z, 0.6); say(wind ? '바람이 글씨를 살살 지워 가요' : '파도가 글씨를 지워 가요', 2600); } n.material.opacity -= dt*(washed ? (wind ? 0.12 : 0.35) : 0.012); if(n.material.opacity <= 0 || n.position.x < state.x - 40){ scene.remove(n); n.material.map.dispose(); n.geometry.dispose(); sandNotes.splice(i,1); } }
 
+    if(state.pendingNote && state.resting && state.pose==='sit' && !state.pendingPose){ state.noteWait = (state.noteWait || 0) + dt; if(state.noteWait > 0.5){ writeOnSand(state.pendingNote); state.pendingNote = null; state.noteWait = 0; } }
     if(state.todMode==='auto') state.todT = (state.todT + dt/(state.resting && state.pose!=='stand' ? 300 : 1200)) % 1; // 하루 20분, 앉거나 누우면 4배
     applyTod(state.todT);
 
@@ -1649,7 +1643,7 @@ function frame(){
 
   const shake = state.reduce ? 0 : 1;
   if(state.noteCam && (!state.resting || !sandNotes.includes(state.noteCam) || performance.now() - state.noteCamT > 60000)) state.noteCam = null;
-  if(state.resting && state.noteCam){ const n = state.noteCam; const dir = SC.ground==='grass' ? -1 : 1; camPos.set(n.position.x, 4.2, n.position.z + dir*1.7); camLook.set(n.position.x, 0, n.position.z - dir*0.25); }   // 글씨 뒤 위에서 내려다본다 · 파도가 지우는 것까지 보인다
+  if(state.resting && state.noteCam){ const n = state.noteCam; camPos.set(state.x + 0.15, 3.4, state.lane + 2.3); camLook.set(state.x, 0.1, state.lane - 2.6); }   // 앉은 등 뒤 위에서 하이앵글로: 사람 너머 바닥 글씨와 파도   // 글씨 뒤 위에서 내려다본다 · 파도가 지우는 것까지 보인다
   else if(state.resting){
     if(state.pose==='lie'){ camPos.set(state.x + 0.3, 1.15, state.lane + 1.9); camLook.set(state.x + 0.2, -0.15, state.lane - 2.2); }   // 머리맡에서 내 다리·옆에 누운 친구 너머 바다를 본다
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
