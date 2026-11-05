@@ -648,7 +648,7 @@ const DOGS = {
   maltese:{body:0xfffaf3, ear:0xf5ebdd, earStyle:'floppy', tail:'up', fluffy:true},
   golden:{body:0xe8b86d, ear:0xcf9a4e, earStyle:'floppy', tail:'wag', fluffy:false},
   shiba:{body:0xe0905a, ear:0xe0905a, earStyle:'point', tail:'curl', fluffy:false, mask:0xfff3e0},
-  poodle:{body:0x8a6a52, ear:0x7a5a44, earStyle:'floppy', tail:'pom', fluffy:true},
+  poodle:{body:0xf2c9a6, ear:0xe9b88f, earStyle:'floppy', tail:'pom', fluffy:true, curly:true},
 };
 function makeDog(v){
   const g = new THREE.Group(); const fur = new THREE.MeshStandardMaterial({color:v.body, roughness:1}); const earM = new THREE.MeshStandardMaterial({color:v.ear, roughness:1});
@@ -673,7 +673,19 @@ function makeDog(v){
   else if(v.tail==='pom'){ tail = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), fur); tail.position.set(-0.24, 0.5, 0); }
   else { tail = capsule(0.035, 0.16, fur); tail.position.set(-0.22, 0.46, 0); tail.rotation.z = 0.7; }
   g.add(tail);
-  const legs = []; [[0.14,-0.08],[0.14,0.08],[-0.14,-0.08],[-0.14,0.08]].forEach(([x,z])=>{ const l = new THREE.Group(); l.position.set(x, 0.3, z); const m = capsule(0.038, 0.18, fur); m.position.y = -0.13; l.add(m); const paw = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), fur); paw.position.y = -0.26; l.add(paw); g.add(l); legs.push(l); });
+  const legs = []; [[0.14,-0.08],[0.14,0.08],[-0.14,-0.08],[-0.14,0.08]].forEach(([x,z])=>{ const l = new THREE.Group(); l.position.set(x, 0.3, z); const m = capsule(0.038, 0.18, fur); m.position.y = -0.13; l.add(m); const paw = new THREE.Mesh(new THREE.SphereGeometry(v.curly ? 0.075 : 0.05, 8, 6), fur); paw.position.y = v.curly ? -0.24 : -0.26; l.add(paw); g.add(l); legs.push(l); });
+  if(v.curly){
+    // 푸들 컷: 머리 위 둥근 탑놋, 귀 퐁퐁, 몸은 고른 곱슬 공, 발목 퐁퐁
+    const curlM = new THREE.MeshStandardMaterial({color:0xf8dcc2, roughness:1});
+    const ball = (parent, x, y, z, r)=>{ const c = new THREE.Mesh(new THREE.SphereGeometry(r, 9, 7), curlM); c.position.set(x, y, z); parent.add(c); return c; };
+    const topknot = ball(headG, -0.03, 0.14, 0, 0.17);                                   // 탑놋
+    for(let i=0;i<10;i++){ const a = i/10*Math.PI*2; ball(headG, -0.03 + Math.cos(a)*0.11, 0.1 + Math.sin(a*2)*0.03, Math.sin(a)*0.13, 0.07); }  // 탑놋 둘레 곱슬
+    for(const e of ears){ ball(e, 0, -0.07, 0, 0.075); }                                // 귀 끝 퐁퐁
+    for(let i=0;i<16;i++){ const a = i/16*Math.PI*2; ball(g, -0.02 + Math.cos(a*3)*0.06, 0.36 + Math.sin(a)*0.13, Math.cos(a)*0.14, 0.07); }  // 몸통 둘레
+    for(let i=0;i<8;i++){ const a = i/8*Math.PI*2; ball(g, -0.15 + Math.cos(a)*0.08, 0.38 + Math.sin(a)*0.1, Math.sin(a)*0.1, 0.065); }      // 엉덩이
+    for(let i=0;i<8;i++){ const a = i/8*Math.PI*2; ball(g, 0.14 + Math.cos(a)*0.08, 0.4 + Math.sin(a)*0.11, Math.sin(a)*0.11, 0.065); }     // 가슴
+    g.userData.topknot = topknot;
+  }
   const collarM = new THREE.MeshStandardMaterial({color:0x7fe3dc, roughness:0.6, emissive:0x7fe3dc, emissiveIntensity:0}); glowMats.push(collarM);
   const collar = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.022, 6, 20), collarM); collar.position.set(0.22, 0.5, 0); collar.rotation.y = Math.PI/2; collar.rotation.x = 0.5; g.add(collar);
   g.userData = {legs, tail, kind:'dog', ears, headG, body, tongue}; return g;
