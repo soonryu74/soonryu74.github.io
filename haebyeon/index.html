@@ -64,7 +64,7 @@
   .brand{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:20px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1)}
   .brand span{font-size:10px;letter-spacing:3px;color:var(--ink-soft)}
   .brand h1{margin:0;font-size:18px;font-weight:700;letter-spacing:2px}
-  .brand small{font-size:11px;color:var(--mist)}
+  .brand small{font-size:11px;color:var(--mist);white-space:nowrap}
   .tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1);color:var(--ink)}
   .icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -646,7 +646,7 @@ function updateOthers(dt, t){
     if(o.resting){
       g.rotation.y = THREE.MathUtils.damp(g.rotation.y, Math.PI/2, 3, dt);
       const D = (ob,k,v)=>{ ob.rotation[k] = THREE.MathUtils.damp(ob.rotation[k], v, 4, dt); };
-      if(o.pose==='sit'){ D(P.legL,'z',-1.45); D(P.legR,'z',-1.45); D(P.armL,'z',-0.7); D(P.armR,'z',0.7); g.position.y = THREE.MathUtils.damp(g.position.y, -0.5, 4, dt); g.rotation.x = THREE.MathUtils.damp(g.rotation.x, 0, 3, dt); }
+      if(o.pose==='sit'){ D(P.legL,'z',1.5); D(P.legR,'z',1.5); D(P.armL,'z',0.55); D(P.armR,'z',0.55); g.position.y = THREE.MathUtils.damp(g.position.y, -0.5, 4, dt); g.rotation.x = THREE.MathUtils.damp(g.rotation.x, 0, 3, dt); }
       else if(o.pose==='lie'){ g.rotation.x = THREE.MathUtils.damp(g.rotation.x, -Math.PI/2, 3, dt); g.position.y = THREE.MathUtils.damp(g.position.y, -0.55, 3, dt); D(P.legL,'z',0); D(P.legR,'z',0); D(P.armL,'z',-2.6); D(P.armR,'z',2.6); }
       else { D(P.legL,'z',0); D(P.legR,'z',0); D(P.armL,'z',0); D(P.armR,'z',0); g.position.y = THREE.MathUtils.damp(g.position.y, 0, 4, dt); g.rotation.x = THREE.MathUtils.damp(g.rotation.x, 0, 3, dt); }
     } else {
@@ -1112,7 +1112,7 @@ function frame(){
         runner.position.y = Math.abs(Math.sin(state.stridePhase))*0.03;
         if(Math.abs(state.lane - state.laneTarget) < 0.15 && state.pendingPose){ state.pose = state.pendingPose; state.pendingPose = null; }
       } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 3, dt);
-      if(state.pose==='sit'){ D(legL,'z',-1.45); D(legR,'z',-1.45); D(armL,'z',-0.7); D(armR,'z',0.7); D(armL,'x',-0.1); D(armR,'x',0.1); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.5, 4, dt); headGroup.rotation.z = THREE.MathUtils.damp(headGroup.rotation.z, 0.08, 3, dt); head.rotation.z = headGroup.rotation.z; }
+      if(state.pose==='sit'){ D(legL,'z',1.5); D(legR,'z',1.5); D(armL,'z',0.55); D(armR,'z',0.55); D(armL,'x',-0.15); D(armR,'x',0.15); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.5, 4, dt); headGroup.rotation.z = THREE.MathUtils.damp(headGroup.rotation.z, 0.08, 3, dt); head.rotation.z = headGroup.rotation.z; }
       else if(state.pose==='lie'){ runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, -Math.PI/2, 3, dt); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.55, 3, dt); D(legL,'z',0); D(legR,'z',0); D(armL,'z',-2.6); D(armR,'z',2.6); }
     } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, 0, 3, dt);
     if(!state.resting || state.pose!=='lie') runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, 0, 3, dt);
