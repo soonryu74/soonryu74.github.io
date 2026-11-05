@@ -362,8 +362,8 @@ const sky = new THREE.Mesh(new THREE.SphereGeometry(420, 32, 16), new THREE.Shad
   fragmentShader:`uniform vec3 top, mid, bottom, sunDir, sunColor; uniform float sunSize; varying vec3 vDir;
     void main(){
       float h = clamp(vDir.y, -0.05, 1.0);
-      vec3 c = mix(bottom, mid, smoothstep(0.0, 0.18, h));
-      c = mix(c, top, smoothstep(0.12, 0.75, h));
+      vec3 c = mix(bottom, mid, smoothstep(0.0, 0.08, h));
+      c = mix(c, top, smoothstep(0.05, 0.32, h));
       float d = max(dot(normalize(vDir), normalize(sunDir)), 0.0);
       float glow = pow(d, 64.0) * 0.4 + pow(d, 6.0) * 0.16;
       float disk = smoothstep(1.0 - sunSize, 1.0 - sunSize*0.55, d);
@@ -477,7 +477,8 @@ const skin = new THREE.MeshStandardMaterial({color:0xffdcc4, roughness:0.9});
 const shirt = new THREE.MeshStandardMaterial({color:0xfff6e9, roughness:0.95});
 const shorts = new THREE.MeshStandardMaterial({color:0x7fc8c2, roughness:0.95});
 const hairM = new THREE.MeshStandardMaterial({color:0x4a3b38, roughness:0.95});
-const accentM = new THREE.MeshStandardMaterial({color:0xff9b8a, roughness:0.9});
+const accentM = new THREE.MeshStandardMaterial({color:0xff9b8a, roughness:0.9, emissive:0xff9b8a, emissiveIntensity:0});
+const glowMats = [accentM];
 const strawM = new THREE.MeshStandardMaterial({color:0xf0d9a0, roughness:1});
 const inkM = new THREE.MeshBasicMaterial({color:0x3b2f2f});
 const blushM = new THREE.MeshBasicMaterial({color:0xffb3a7, transparent:true, opacity:0.75});
@@ -515,7 +516,7 @@ function buildRunner(mats){
   return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR, mats};
 }
 function applyLookTo(parts, lk){
-  parts.mats.hair.color.set(lk.hair); parts.mats.shirt.color.set(lk.shirt); parts.mats.accent.color.set(lk.accent);
+  parts.mats.hair.color.set(lk.hair); parts.mats.shirt.color.set(lk.shirt); parts.mats.accent.color.set(lk.accent); parts.mats.accent.emissive.set(lk.accent);
   parts.hatBand.visible = lk.hat==='band'; parts.hatCap.visible = lk.hat==='cap'; parts.hatStraw.visible = lk.hat==='straw'; parts.hair.visible = lk.hat!=='cap';
 }
 const me = buildRunner({hair:hairM, shirt, accent:accentM, shorts});
@@ -550,7 +551,8 @@ function makeDog(v){
   else { tail = capsule(0.035, 0.14, fur); tail.position.set(-0.26, 0.4, 0); tail.rotation.z = 0.9; }
   g.add(tail);
   const legs = []; [[0.12,-0.08],[0.12,0.08],[-0.12,-0.08],[-0.12,0.08]].forEach(([x,z])=>{ const l = capsule(0.04, 0.1, fur); l.position.set(x, 0.1, z); g.add(l); legs.push(l); });
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.02, 6, 20), accentM); collar.position.set(0.17, 0.38, 0); collar.rotation.y = Math.PI/2; g.add(collar);
+  const collarM = new THREE.MeshStandardMaterial({color:0x7fe3dc, roughness:0.6, emissive:0x7fe3dc, emissiveIntensity:0}); glowMats.push(collarM);
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.022, 6, 20), collarM); collar.position.set(0.17, 0.38, 0); collar.rotation.y = Math.PI/2; g.add(collar);
   g.userData = {legs, tail, kind:'dog', ears, headG, body, tongue}; return g;
 }
 const furC = new THREE.MeshStandardMaterial({color:0xf2d6b0, roughness:1});
@@ -564,7 +566,8 @@ function makeCat(){
   for(let i=0;i<3;i++){ const s = new THREE.Mesh(new THREE.TorusGeometry(0.145, 0.018, 6, 16), stripeM); s.position.set(-0.08 + i*0.09, 0.25, 0); s.rotation.y = Math.PI/2; g.add(s); }
   const tail = capsule(0.03, 0.3, furC); tail.position.set(-0.3, 0.4, 0); tail.rotation.z = 0.6; g.add(tail);
   const legs = []; [[0.1,-0.07],[0.1,0.07],[-0.12,-0.07],[-0.12,0.07]].forEach(([x,z])=>{ const l = capsule(0.035, 0.1, furC); l.position.set(x, 0.1, z); g.add(l); legs.push(l); });
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.018, 6, 20), accentM); collar.position.set(0.17, 0.35, 0); collar.rotation.y = Math.PI/2; g.add(collar);
+  const collarM = new THREE.MeshStandardMaterial({color:0x7fe3dc, roughness:0.6, emissive:0x7fe3dc, emissiveIntensity:0}); glowMats.push(collarM);
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.02, 6, 20), collarM); collar.position.set(0.17, 0.35, 0); collar.rotation.y = Math.PI/2; g.add(collar);
   const bell = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), new THREE.MeshStandardMaterial({color:0xffd166, roughness:0.4})); bell.position.set(0.28, 0.28, 0); g.add(bell);
   g.userData = {legs, tail, kind:'cat'}; return g;
 }
@@ -617,7 +620,7 @@ function setOtherLabel(o, name){ if(o.label){ o.parts.group.remove(o.label); o.l
 function upsertOther(id, m){
   let o = others.get(id);
   if(!o){
-    const parts = buildRunner({hair:new THREE.MeshStandardMaterial({roughness:0.95}), shirt:new THREE.MeshStandardMaterial({roughness:0.95}), accent:new THREE.MeshStandardMaterial({roughness:0.9}), shorts:new THREE.MeshStandardMaterial({color:[0x7fc8c2,0xf2a7a0,0x8fa9ff,0xf5d76e][Math.random()*4|0], roughness:0.95})});
+    const parts = buildRunner({hair:new THREE.MeshStandardMaterial({roughness:0.95}), shirt:new THREE.MeshStandardMaterial({roughness:0.95}), accent:(()=>{ const m = new THREE.MeshStandardMaterial({roughness:0.9, emissiveIntensity:0}); glowMats.push(m); return m; })(), shorts:new THREE.MeshStandardMaterial({color:[0x7fc8c2,0xf2a7a0,0x8fa9ff,0xf5d76e][Math.random()*4|0], roughness:0.95})});
     parts.group.traverse(c=>{ if(c.isMesh) c.castShadow = true; });
     scene.add(parts.group);
     o = {parts, x:m.x, lane:m.l, tx:m.x, tlane:m.l, sp:0, resting:0, pose:'stand', seen:performance.now(), phase:Math.random()*6, lk:null};
@@ -993,9 +996,9 @@ const TOD = [
   {t:0.40, top:0x6fb8f0, mid:0xbfe6f5, bot:0xf5fbfb, sun:0xffffff, fog:0xe3f0f3, elev:0.85, az:0.1, li:2.5, hemi:1.1, exp:1.1, night:0},
   {t:0.54, top:0x72b0ea, mid:0xd6ecf5, bot:0xfaf8f0, sun:0xfffaf0, fog:0xe6edee, elev:0.6, az:-0.3, li:2.3, hemi:1.05, exp:1.08, night:0},
   {t:0.64, top:0x7aa9dc, mid:0xffd3a8, bot:0xfff0dc, sun:0xfff0c8, fog:0xeadfd2, elev:0.32, az:-0.6, li:2.0, hemi:1.0, exp:1.05, night:0},
-  {t:0.74, top:0x5f6fa6, mid:0xffb08c, bot:0xffe2c8, sun:0xffc890, fog:0xe6d2c6, elev:0.12, az:-0.85, li:1.5, hemi:0.9, exp:1.0, night:0.05},
-  {t:0.82, top:0x2f3a66, mid:0xa77ba0, bot:0xe8b7b0, sun:0xffb08c, fog:0xa99fb2, elev:0.02, az:-1.0, li:0.6, hemi:0.6, exp:0.9, night:0.5},
-  {t:0.90, top:0x121a38, mid:0x33406a, bot:0x5b5f86, sun:0xd8dcff, fog:0x5a5f7c, elev:-0.08, az:-1.1, li:0.25, hemi:0.4, exp:0.85, night:1},
+  {t:0.74, top:0x3d4f8f, mid:0xf0a070, bot:0xffd9b4, sun:0xffc890, fog:0xe6d2c6, elev:0.12, az:-0.85, li:1.5, hemi:0.9, exp:1.0, night:0.05},
+  {t:0.82, top:0x1f2a56, mid:0x8a6a98, bot:0xe8a890, sun:0xffb08c, fog:0xa99fb2, elev:0.02, az:-1.0, li:0.6, hemi:0.6, exp:0.9, night:0.5},
+  {t:0.90, top:0x121a38, mid:0x33406a, bot:0x5b5f86, sun:0xd8dcff, fog:0x5a5f7c, elev:-0.08, az:-1.1, li:0.35, hemi:0.6, exp:0.95, night:1},
   {t:1.00, top:0x5a6aa8, mid:0xf3b7c4, bot:0xfde9dc, sun:0xffd6b8, fog:0xe9dfe3, elev:0.08, az:0.95, li:1.1, hemi:0.9, exp:1.0, night:0.25},
 ];
 const cA = new THREE.Color(), cB = new THREE.Color();
@@ -1013,6 +1016,7 @@ function applyTod(t){
   nightMix = L(a.night, b.night, f); seaUniforms.night.value = nightMix; stars.material.opacity = nightMix*0.95; moon.material.opacity = Math.min(1, nightMix*1.4);
   skyUniforms.sunSize.value = nightMix > 0.6 ? 0 : 0.0045;
   lighthouse.userData.lamp.material.emissiveIntensity = nightMix > 0.1 ? 3 : 0.3;
+  const glow = THREE.MathUtils.smoothstep(nightMix, 0.15, 0.7) * 1.6; for(const m of glowMats) m.emissiveIntensity = glow;
   const label = t<0.12?'새벽':t<0.3?'아침':t<0.55?'한낮':t<0.66?'오후':t<0.8?'노을':t<0.95?'밤':'새벽';
   if($('tod').textContent !== label) $('tod').textContent = label;
 }
