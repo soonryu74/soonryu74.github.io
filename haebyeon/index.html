@@ -451,8 +451,21 @@ const seaMat = new THREE.ShaderMaterial({
       float spec = pow(max(dot(vN, H), 0.0), 180.0) * 1.4 + pow(max(dot(vN,H),0.0), 24.0)*0.12;
       c *= 0.92 + 0.16*max(0.0, dot(vN, normalize(vec3(0.3, 1.0, 0.2))));
       c += sunColor * spec * (1.0 - night*0.6);
-      float fres = pow(1.0 - max(dot(vN, V), 0.0), 3.0);
-      c = mix(c, fogColor, fres*0.45 + night*0.0);
+      // 윤슬: 물결 위 점점이 부서지는 빛. 해·달 방향 띠는 더 밝고, 그 밖에도 은은히 반짝인다
+      vec2 rel = vPos.xz - cameraPosition.xz; float dist = length(rel);
+      vec2 toSun = normalize(vec2(sunDir.x, sunDir.z) + 0.0001);
+      float along = dot(normalize(rel + 0.001), toSun);
+      float lane = 0.35 + 0.65*smoothstep(0.3, 0.98, along);
+      float lowSun = 1.0 - smoothstep(0.05, 0.7, sunDir.y);
+      float sp1 = noise(vec2(vPos.x*2.6 + time*0.9, vPos.z*2.8 - time*0.7));
+      float sp2 = noise(vec2(vPos.x*6.5 - time*1.4, vPos.z*6.0 + time*1.0));
+      float sp3 = noise(vec2(vPos.x*13.0 + time*2.1, vPos.z*12.0 - time*1.7));
+      float sparkle = smoothstep(0.62, 0.9, sp1*0.45 + sp2*0.35 + sp3*0.2);
+      float range = smoothstep(4.0, 14.0, dist) * (1.0 - smoothstep(90.0, 320.0, dist));
+      float yunseul = lane * sparkle * range * (0.35 + 0.55*lowSun);
+      vec3 glint = mix(sunColor, vec3(1.0), 0.6);
+      c += glint * yunseul * (1.1 - night*0.8);
+      c += vec3(0.85, 0.92, 1.0) * sparkle * range * night * 0.45;
       float alpha = smoothstep(1.2, -0.8, dEdge);
       float film = smoothstep(2.8, 0.6, dEdge) * 0.35 * (0.6 + 0.4*n1);
       alpha = max(alpha, film); alpha = max(alpha, foamLine*0.9); alpha = max(alpha, step(vPos.z, -1.0));
