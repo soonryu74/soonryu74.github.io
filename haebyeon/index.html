@@ -216,8 +216,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
   </div>
 
   <div class="pace">
-    <div class="pace-hint"><kbd>Space</kbd> 누르는 동안 달리기<br><kbd>←</kbd><kbd>→</kbd> 물가 쪽 · 모래 쪽</div>
-    <div class="lane-btns"><button id="lane-sea" type="button">물가 쪽</button><button id="lane-sand" type="button">모래 쪽</button></div>
+    <div class="pace-hint"><kbd>Space</kbd> 누르는 동안 달리기<br><kbd>←</kbd><kbd>→</kbd> 왼쪽 · 오른쪽</div>
+    <div class="lane-btns"><button id="lane-sea" type="button">왼쪽</button><button id="lane-sand" type="button">오른쪽</button></div>
     <button id="restbtn" class="btn ghost small" type="button" style="background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1)">잠깐 쉬어가기</button>
     <button id="runbtn" class="runbtn" type="button" aria-label="누르는 동안 달리기">달리기</button>
   </div>
@@ -271,7 +271,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
     <p>잘하려고 하지 않아도 돼요. 누르고 있는 동안만 달리고, 손을 떼면 천천히 걷다가 멈춰요.</p>
     <dl>
       <dt><kbd>Space</kbd> / 버튼</dt><dd>한 번 누르면 계속 달리기 · 다시 누르면 멈춤 · 길게 누르면 누르는 동안만</dd>
-      <dt><kbd>←</kbd> <kbd>→</kbd> / 버튼·쓸기</dt><dd>물가 쪽으로 · 마른 모래 쪽으로</dd>
+      <dt><kbd>←</kbd> <kbd>→</kbd> / 버튼·쓸기</dt><dd>왼쪽으로 · 오른쪽으로</dd>
       <dt>잠깐 쉬어가기 버튼 / <kbd>R</kbd></dt><dd>앉기 · 눕기 · 모래에 글쓰기 · '다시 달리기'로 나와요. 10초 멈춰 서 있어도 들어가요</dd>
       <dt><kbd>B</kbd></dt><dd>호흡 안내 켜고 끄기</dd>
       <dt>조개 · 바다유리</dt><dd>지나가면 저절로 주워요. 숫자는 기록이 아니라 오늘의 산책 메모예요.</dd>
@@ -328,7 +328,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-05-43';
+window.__BUILD = '2026-11-05-44';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -339,10 +339,10 @@ const ROOM_CAP = 30, LOOP_LEN = 1000; // 방당 30명 · 해변은 1 km 로 이�
 /* ---------- 상수·상태 ---------- */
 const SCENE_ID = (()=>{ const v = new URL(location.href).searchParams.get('scene'); return (v==='hangang' || v==='gung') ? v : 'beach'; })();
 const SCENES = {
-  beach:   {name:'해변', eyebrow:'BEACH RUN', title:'해변, 잠깐 달려요', laneMin:-2.6, dryLane:5.4, laneSea:'물가 쪽', laneSand:'모래 쪽', collect:'조개', shareText:'말없이 파도 옆을 달리는 온라인 해변', cardTitle:'해변, 잠깐 달렸어요', deep:{value:0x2d8fa8}, shallow:0x8fdcd6, waveAmp:1, foamAmt:1, tideAmp:1, seaVol:1, bird:'gull', chan:'beach', ground:'sand', sitMsg:'물에서 조금 떨어진 모래로 올라가요', sandMsg:'모래에 한 줄 써 보세요 · 파도가 지워 줘요'},
-  hangang: {name:'한강', eyebrow:'HANGANG RUN', title:'한강, 잠깐 달려요', laneMin:1.0, dryLane:7.2, laneSea:'강가 쪽', laneSand:'잔디 쪽', collect:'클로버', shareText:'말없이 강바람 맞으며 달리는 온라인 한강', cardTitle:'한강, 잠깐 달렸어요', deep:{value:0x4f9ab5}, shallow:0x8fd3da, waveAmp:0.45, foamAmt:0.05, tideAmp:0.12, ripple:1, seaVol:0.45, bird:'sparrow', chan:'hangang', ground:'grass', sitMsg:'잔디밭으로 올라가요', sandMsg:'잔디에 한 줄 남겨 보세요 · 바람이 지워 줘요'},
+  beach:   {name:'해변', eyebrow:'BEACH RUN', title:'해변, 잠깐 달려요', laneMin:-2.6, dryLane:5.4, laneSea:'왼쪽', laneSand:'오른쪽', collect:'조개', shareText:'말없이 파도 옆을 달리는 온라인 해변', cardTitle:'해변, 잠깐 달렸어요', deep:{value:0x2d8fa8}, shallow:0x8fdcd6, waveAmp:1, foamAmt:1, tideAmp:1, seaVol:1, bird:'gull', chan:'beach', ground:'sand', sitMsg:'물에서 조금 떨어진 모래로 올라가요', sandMsg:'모래에 한 줄 써 보세요 · 파도가 지워 줘요'},
+  hangang: {name:'한강', eyebrow:'HANGANG RUN', title:'한강, 잠깐 달려요', laneMin:1.0, dryLane:7.2, laneSea:'왼쪽', laneSand:'오른쪽', collect:'클로버', shareText:'말없이 강바람 맞으며 달리는 온라인 한강', cardTitle:'한강, 잠깐 달렸어요', deep:{value:0x4f9ab5}, shallow:0x8fd3da, waveAmp:0.45, foamAmt:0.05, tideAmp:0.12, ripple:1, seaVol:0.45, bird:'sparrow', chan:'hangang', ground:'grass', sitMsg:'잔디밭으로 올라가요', sandMsg:'잔디에 한 줄 남겨 보세요 · 바람이 지워 줘요'},
 };
-SCENES.gung = {name:'돌담길', eyebrow:'GUNG RUN', title:'경복궁 돌담길, 잠깐 달려요', laneMin:1.2, dryLane:6.4, laneSea:'담장 쪽', laneSand:'나무 쪽', collect:'은행잎', shareText:'말없이 밤의 고궁 돌담길을 달리는 온라인 산책', cardTitle:'돌담길, 잠깐 달렸어요', deep:{value:0x202838}, shallow:0x2a3448, waveAmp:0, foamAmt:0, tideAmp:0, ripple:0, seaVol:0.14, bird:'cricket', chan:'gung', ground:'stone', night:true, sitMsg:'은행나무 아래 벤치 쪽으로 가요', sandMsg:'돌길에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
+SCENES.gung = {name:'돌담길', eyebrow:'GUNG RUN', title:'경복궁 돌담길, 잠깐 달려요', laneMin:1.2, dryLane:6.4, laneSea:'왼쪽', laneSand:'오른쪽', collect:'은행잎', shareText:'말없이 밤의 고궁 돌담길을 달리는 온라인 산책', cardTitle:'돌담길, 잠깐 달렸어요', deep:{value:0x202838}, shallow:0x2a3448, waveAmp:0, foamAmt:0, tideAmp:0, ripple:0, seaVol:0.14, bird:'cricket', chan:'gung', ground:'stone', night:true, sitMsg:'은행나무 아래 벤치 쪽으로 가요', sandMsg:'돌길에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 const SC = SCENES[SCENE_ID];
 const GUNG = SCENE_ID==='gung';
 const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
@@ -1550,7 +1550,7 @@ $('start').addEventListener('click', start);
 (function(){ $('w-eyebrow').textContent = SC.eyebrow; $('b-eyebrow').textContent = SC.eyebrow; $('b-name').textContent = SC.name; $('welcome-title').textContent = SC.title; document.title = SC.title;
   $('lane-sea').textContent = SC.laneSea; $('lane-sand').textContent = SC.laneSand; document.querySelector('#st-shell + span').textContent = SC.collect; $('sandtext').placeholder = SC.sandMsg;
   document.querySelectorAll('#scene-pick button').forEach(b=>{ b.setAttribute('aria-pressed', String(b.dataset.scene===SCENE_ID)); b.addEventListener('click', ()=>{ if(b.dataset.scene===SCENE_ID) return; const u = new URL(location.href); if(b.dataset.scene==='beach') u.searchParams.delete('scene'); else u.searchParams.set('scene', b.dataset.scene); location.href = u.toString(); }); });
-  if(SCENE_ID!=='beach'){ const hint = document.querySelector('.pace-hint'); if(hint) hint.innerHTML = `<kbd>Space</kbd> 누르는 동안 달리기<br><kbd>←</kbd><kbd>→</kbd> ${SC.laneSea} · ${SC.laneSand}`; }
+  if(SCENE_ID!=='beach'){ const hint = document.querySelector('.pace-hint'); if(hint) hint.innerHTML = '<kbd>Space</kbd> 누르는 동안 달리기<br><kbd>←</kbd><kbd>→</kbd> 왼쪽 · 오른쪽'; }
 })();
 
 /* ---------- 공유 카드 ---------- */
