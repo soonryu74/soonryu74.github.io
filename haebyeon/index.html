@@ -942,6 +942,13 @@ function makePine(){
   for(let i=0;i<3;i++){ const c = new THREE.Mesh(new THREE.ConeGeometry(1.5 - i*0.35, 1.5, 8), leaf); c.position.y = 2.6 + i*0.85; c.castShadow = true; g.add(c); }
   g.scale.setScalar(0.8 + Math.random()*0.7); return g;
 }
+function makeDuneBush(){
+  // 낮게 깔린 해안 관목(순비기나무 느낌): 그림자 안 드리움, 멀리서도 눈에 안 띔
+  const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({color:[0x9fb98a,0xaac39a,0x93ad84][Math.random()*3|0], roughness:1});
+  const n = 3 + (Math.random()*3|0);
+  for(let i=0;i<n;i++){ const b = new THREE.Mesh(new THREE.SphereGeometry(0.5 + Math.random()*0.5, 8, 6), m); b.position.set((Math.random()-0.5)*1.6, 0.25, (Math.random()-0.5)*1.2); b.scale.y = 0.55; g.add(b); }
+  return g;
+}
 function makeGrass(){
   const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({color:0xcfd39a, roughness:1, side:THREE.DoubleSide});
   for(let i=0;i<7;i++){ const b = new THREE.Mesh(new THREE.PlaneGeometry(0.06, 0.7+Math.random()*0.5), m); b.position.set((Math.random()-0.5)*0.5, 0.4, (Math.random()-0.5)*0.5); b.rotation.set((Math.random()-0.5)*0.4, Math.random()*Math.PI, (Math.random()-0.5)*0.5); g.add(b); }
@@ -1133,8 +1140,7 @@ function populateTo(limitX){
     else if(r < 0.46){ const o = makeShell(); o.position.set(x + Math.random(), 0.02, -0.8 + Math.random()*5.6); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
     else if(r < 0.52){ const o = makeDriftwood(); o.position.set(x, 0, 7 + Math.random()*4); o.rotation.y = Math.random()*Math.PI; scene.add(o); props.push({obj:o, kind:'wood'}); }
     else if(r < 0.57){ const o = makeRock(); o.position.set(x, 0, -1 + Math.random()*2.5); scene.add(o); props.push({obj:o, kind:'rock'}); }
-    else if(r < 0.70){ const o = makePalm(); o.position.set(x, 0.6 + Math.random()*1.4, 16 + Math.random()*8); scene.add(o); props.push({obj:o, kind:'palm'}); }
-    else if(r < 0.82){ const o = makePine(); o.position.set(x, 1.5 + Math.random()*2, 24 + Math.random()*14); scene.add(o); props.push({obj:o, kind:'pine'}); }
+    else if(r < 0.74){ const o = makeDuneBush(); o.position.set(x, 0.4 + Math.random()*1.2, 15 + Math.random()*9); scene.add(o); props.push({obj:o, kind:'bush'}); }
     else { const o = makeGrass(); o.position.set(x, 0.3+Math.random()*1.2, 12 + Math.random()*8); scene.add(o); props.push({obj:o, kind:'grass'}); }
   }
   for(let i=props.length-1;i>=0;i--){ const far = props[i].kind==='island' || props[i].kind==='cafe' || props[i].kind==='park' ? 90 : 40; if(props[i].obj.position.x < state.x - far){ scene.remove(props[i].obj); dispose(props[i].obj); props.splice(i,1); } }
