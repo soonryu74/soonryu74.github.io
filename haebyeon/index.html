@@ -328,7 +328,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-05-34';
+window.__BUILD = '2026-11-05-35';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -378,7 +378,7 @@ renderer.toneMappingExposure = 1.05;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xe6eef0, SCENE_ID==='hangang' ? 110 : 40, SCENE_ID==='hangang' ? 520 : 170);
+scene.fog = new THREE.Fog(0xe6eef0, SCENE_ID==='hangang' ? 90 : 40, SCENE_ID==='hangang' ? 520 : 170);
 const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 900);
 function resize(){
   const w = innerWidth, h = innerHeight;
@@ -561,10 +561,10 @@ const sandNotes = [];
 function writeOnSand(text){ const go = ()=>writeOnSandNow(text); (document.fonts && document.fonts.load ? document.fonts.load('110px "Nanum Brush Script"').then(go, go) : go()); }
 function writeOnSandNow(text){
   const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const g = c.getContext('2d');
-  g.fillStyle = 'rgba(104,80,52,0.95)'; g.font = '400 150px "Nanum Brush Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
+  if(SC.ground==='grass'){ g.shadowColor = 'rgba(60,30,20,0.55)'; g.shadowBlur = 10; g.fillStyle = 'rgba(255,250,236,0.96)'; } else g.fillStyle = 'rgba(104,80,52,0.95)';   /* 한강: 트랙 위 분필 느낌 */ g.font = '400 150px "Nanum Brush Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0.95, depthWrite:false}));
-  const nz = SC.ground==='grass' ? state.lane - 2.9 : state.lane - 2.8;   // 앉은 사람 앞 바닥 (해변: 밀물이 올라오면 지워짐 / 한강: 바람이 지움)   // 해변: 물가 가까이 → 다음 밀물에 지워진다 / 한강: 바로 앞 잔디, 바람이 지운다
+  const nz = SC.ground==='grass' ? state.lane - 2.3 : state.lane - 2.8;   // 한강: 차선(z 4.0)에 걸치지 않는 트랙 바깥쪽   // 앉은 사람 앞 바닥 (해변: 밀물이 올라오면 지워짐 / 한강: 바람이 지움)   // 해변: 물가 가까이 → 다음 밀물에 지워진다 / 한강: 바로 앞 잔디, 바람이 지운다
   m.userData.age = 0; m.position.set(state.x, SC.ground==='grass' ? 0.06 : 0.03, nz); m.rotation.y = 0; /* 앉은 사람(등 뒤 카메라)에서 바로 읽힘 */ m.renderOrder = 1; scene.add(m); sandNotes.push(m);
   state.noteCam = m; state.noteCamT = performance.now();   // 글을 쓰면 잠시 글씨가 잘 보이는 앵글로
 }
@@ -1186,9 +1186,8 @@ function populateTo(limitX){
     const r = Math.random();
     if(SCENE_ID==='hangang'){
 
-      if(x > nextIsland){ nextIsland = x + 260 + Math.random()*200; const o = makeIsland(); o.position.set(x + 20, 0, -60 - Math.random()*50); scene.add(o); props.push({obj:o, kind:'island'}); genX += 10; continue; }
-      if(x > nextCafe){ nextCafe = x + 180 + Math.random()*140; const o = makeCafe(); o.position.set(x + 4, 0, 11.5); scene.add(o); props.push({obj:o, kind:'cafe'}); genX += 12; continue; }
-      if(x > nextPark){ nextPark = x + 220 + Math.random()*160; const o = makeParkSet(); o.position.set(x + 8, 0, 6); scene.add(o); props.push({obj:o, kind:'park'}); genX += 26; continue; }
+      if(x > nextIsland){ nextIsland = x + 260 + Math.random()*200; const o = makeIsland(); o.position.set(x + 360, 0, -60 - Math.random()*50); scene.add(o); props.push({obj:o, kind:'island'}); genX += 10; continue; }   // 안개 속 저 멀리(360 m 앞)에 두고 서서히 다가온다
+      // 카페·공원 세트는 카메라가 통과하는 벽이 되어 뺐다 (강 쪽 풍경만 유지)
       if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.02, 6.8 + Math.random()*1.5); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
       else if(r < 0.40){ const o = makeClover(); o.position.set(x + Math.random(), 0, 1.4 + Math.random()*7); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
       else if(r < 0.56){ }
