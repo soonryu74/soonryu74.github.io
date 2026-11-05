@@ -324,6 +324,7 @@ const SCENES = {
   hangang: {name:'한강', eyebrow:'HANGANG RUN', title:'한강, 잠깐 달려요', laneMin:1.0, dryLane:7.2, laneSea:'강가 쪽', laneSand:'잔디 쪽', collect:'클로버', shareText:'말없이 강바람 맞으며 달리는 온라인 한강', cardTitle:'한강, 잠깐 달렸어요', deep:{value:0x4f9ab5}, shallow:0x8fd3da, waveAmp:0.45, foamAmt:0.05, tideAmp:0.12, ripple:1, seaVol:0.45, bird:'sparrow', chan:'hangang', ground:'grass', sitMsg:'잔디밭으로 올라가요', sandMsg:'잔디에 한 줄 남겨 보세요 · 바람이 지워 줘요'},
 };
 const SC = SCENES[SCENE_ID];
+const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
 const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = 8.5, WALK = 1.6, RUN = 4.6;
 const $ = (id) => document.getElementById(id);
 const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -493,8 +494,12 @@ if(SC.ground==='grass'){
   pg.fillStyle = '#c96f5e'; pg.fillRect(0,0,512,64); for(let i=0;i<4000;i++){ const v = 170+Math.random()*50; pg.fillStyle = `rgba(${v},${v-70},${v-80},0.25)`; pg.fillRect(Math.random()*512, Math.random()*64, 1.5, 1.5); }
   pg.fillStyle = '#fff3dc'; for(let x=0;x<512;x+=48) pg.fillRect(x, 30, 26, 3);
   const ptex = new THREE.CanvasTexture(pc); ptex.wrapS = THREE.RepeatWrapping; ptex.repeat.set(60, 1); ptex.colorSpace = THREE.SRGBColorSpace;
-  const path = new THREE.Mesh(new THREE.PlaneGeometry(520, 3.0).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({map:ptex, roughness:1})); path.position.set(0, 0.03, 4.0); path.receiveShadow = true; embank.add(path);
-  embank.userData.ptex = ptex;
+  // 밤에 빛나는 차선: 차선만 그린 캔버스를 발광 맵으로
+  const ec = document.createElement('canvas'); ec.width = 512; ec.height = 64; const eg = ec.getContext('2d'); eg.fillStyle = '#000'; eg.fillRect(0,0,512,64); eg.fillStyle = '#7dffd9'; for(let x=0;x<512;x+=48) eg.fillRect(x, 29, 26, 5); eg.fillStyle = '#7dffd9'; eg.fillRect(0, 2, 512, 2); eg.fillRect(0, 60, 512, 2);
+  const etex = new THREE.CanvasTexture(ec); etex.wrapS = THREE.RepeatWrapping; etex.repeat.set(60, 1); etex.colorSpace = THREE.SRGBColorSpace;
+  const pathM = new THREE.MeshStandardMaterial({map:ptex, roughness:1, emissive:0xffffff, emissiveMap:etex, emissiveIntensity:0}); nightLights.push({m:pathM, base:0, night:1.2});
+  const path = new THREE.Mesh(new THREE.PlaneGeometry(520, 3.0).rotateX(-Math.PI/2), pathM); path.position.set(0, 0.03, 4.0); path.receiveShadow = true; embank.add(path);
+  embank.userData.ptex = ptex; embank.userData.etex = etex;
 }
 
 /* ---------- 발자국 (파도가 지움) ---------- */
@@ -908,7 +913,6 @@ const lighthouse = (()=>{
 })();
 lighthouse.position.set(140, 0, -24); lighthouse.visible = SCENE_ID==='beach'; scene.add(lighthouse);
 // 한강: 다리 + 건너편 아파트 + 가로등 (밤에 불이 켜짐)
-const nightLights = []; // {m, base, night}
 const hangangSet = new THREE.Group(); hangangSet.visible = SCENE_ID==='hangang'; scene.add(hangangSet);
 let bridge = null;
 if(SCENE_ID==='hangang'){
@@ -1483,7 +1487,7 @@ function frame(){
   sun.position.copy(skyUniforms.sunDir.value).multiplyScalar(60).add(new THREE.Vector3(state.x, 0, state.lane)); sun.target.position.set(state.x, 0, state.lane);
   if(lighthouse.position.x < state.x - 60) lighthouse.position.x += 420;
   if(bridge){ if(bridge.position.x < state.x - 60) bridge.position.x += 720; bridge.userData.glow.intensity = 40*nightMix; }
-  if(embank.visible){ embank.position.x = state.x; embank.userData.ptex.offset.x = state.x/520*60; }
+  if(embank.visible){ embank.position.x = state.x; embank.userData.ptex.offset.x = state.x/520*60; embank.userData.etex.offset.x = state.x/520*60; }
   for(const tx of taxis){ const u = tx.userData; tx.position.x += u.dir*u.speed*dt; tx.position.y = 0.05 + Math.sin(t*1.7 + u.z)*0.06; tx.rotation.z = Math.sin(t*1.3 + u.z)*0.03;
     if(u.dir > 0 && tx.position.x > state.x + 260){ tx.position.x = state.x - 200; u.z = -22 - Math.random()*60; tx.position.z = u.z; } if(u.dir < 0 && tx.position.x < state.x - 200){ tx.position.x = state.x + 260; u.z = -22 - Math.random()*60; tx.position.z = u.z; }
     u.wake.material.opacity = 0.18 + 0.08*Math.sin(t*3 + u.z); }
