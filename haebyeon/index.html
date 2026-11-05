@@ -328,7 +328,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-05-35';
+window.__BUILD = '2026-11-05-36';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1163,6 +1163,23 @@ function makeCafe(){
   g.rotation.y = Math.PI; return g;
 }
 // 한강공원 구간: 돗자리와 사람들·텐트·농구 골대·편의점 라면 벤치
+// 캠핑 의자에 앉아 강을 보는 사람 (잔디 쪽 소품은 이것만)
+function makeCamper(){
+  const g = new THREE.Group(); const M = (c)=>new THREE.MeshStandardMaterial({color:c, roughness:1});
+  const chairC = [0x7fc8c2, 0xffb3a7, 0xffd166, 0x9fd8f0][Math.random()*4|0];
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.06, 0.55), M(chairC)); seat.position.set(0, 0.42, 0); g.add(seat);
+  const back = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.6, 0.55), M(chairC)); back.position.set(-0.3, 0.72, 0); back.rotation.z = -0.25; g.add(back);
+  for(const [x,z] of [[-0.25,-0.22],[-0.25,0.22],[0.25,-0.22],[0.25,0.22]]){ const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.42, 6), M(0x4a4f57)); leg.position.set(x, 0.21, z); g.add(leg); }
+  const skinC = [0xffdcc4, 0xf2d6b0, 0xe8c39e][Math.random()*3|0], shirtC = [0xfff6e9, 0xcfe8ff, 0xffe3ec, 0xe6f6d8][Math.random()*4|0];
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.26, 4, 10), M(shirtC)); body.position.set(-0.08, 0.72, 0); body.rotation.z = -0.2; g.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.19, 12, 10), M(skinC)); head.position.set(-0.04, 1.12, 0); g.add(head);
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 10, 0, Math.PI*2, 0, Math.PI*0.5), M([0x4a3b38, 0x2b2320, 0x8a5a3c][Math.random()*3|0])); hair.position.set(-0.05, 1.14, 0); g.add(hair);
+  for(const z of [-0.1, 0.1]){ const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.3, 4, 8), M(0x6b7a99)); leg.position.set(0.22, 0.4, z); leg.rotation.z = Math.PI/2 - 0.3; g.add(leg); }
+  const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.04, 0.12, 8), M(0xffffff)); cup.position.set(0.14, 0.86, 0.16); g.add(cup);
+  g.rotation.y = Math.PI/2 + (Math.random()-0.5)*0.4;   // 강 쪽을 본다
+  g.traverse(o=>{ if(o.isMesh) o.castShadow = true; });
+  return g;
+}
 function makeParkSet(){
   const g = new THREE.Group();
   const matM = (col)=>new THREE.MeshStandardMaterial({color:col, roughness:1});
@@ -1192,8 +1209,7 @@ function populateTo(limitX){
       else if(r < 0.40){ const o = makeClover(); o.position.set(x + Math.random(), 0, 1.4 + Math.random()*7); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
       else if(r < 0.56){ }
       else if(r < 0.60){ const o = makeBench(); o.position.set(x, 0, 7.4); scene.add(o); props.push({obj:o, kind:'wood'}); }
-      else if(r < 0.70){ const o = makeWillow(); o.position.set(x, 0, 9 + Math.random()*4); scene.add(o); props.push({obj:o, kind:'palm'}); }
-      else if(r < 0.86){ const o = makeCherry(); o.position.set(x, 0.2, 8.5 + Math.random()*9); scene.add(o); props.push({obj:o, kind:'pine'}); }
+      else if(r < 0.66){ const o = makeCamper(); o.position.set(x, 0, 8.6 + Math.random()*3); scene.add(o); props.push({obj:o, kind:'camper'}); }   // 우측 잔디: 캠핑 의자에 앉은 사람만
       else { }
       continue;
     }
@@ -1676,7 +1692,7 @@ populateTo(90); applyTod(state.todT);
 try{ renderer.compile(scene, camera); frame(); if(net.on) netJoin(1); requestAnimationFrame(()=>{ $('boot').classList.add('is-hidden'); $('welcome').classList.remove('is-hidden'); if(BOT){ start(); setTimeout(()=>setAutoRun(true), 4000); } }); }
 catch(e){ bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); console.error(e); }
 addEventListener('error', ()=>{ if(!state.started) bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); });
-window.__haebyeon = {state, others, net, buddyState, hangangSet, nightLights, scene, camera, runner, THREE, renderer, sandNotes, buddies, makeDog, makeCat, DOGS};
+window.__haebyeon = {state, others, net, buddyState, hangangSet, nightLights, scene, camera, runner, THREE, renderer, sandNotes, buddies, makeDog, makeCat, DOGS, makeCamper, props};
 $('stage').addEventListener('pointerdown', ()=>{ if(state.noteCam && performance.now() - state.noteCamT > 1500) state.noteCam = null; });
 function netReconnect(){ if(!net.on || state.ended) return; netLeave(); net.status = 'off'; setTimeout(()=>{ if(net.on && net.status==='off') netJoin(1); }, 400); }
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden){ hold(false); keys.left = keys.right = false; net.hiddenAt = performance.now(); } else { if(net.hiddenAt && performance.now() - net.hiddenAt > 4000) netReconnect(); } });
