@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#bfe6f5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="해변">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="말없이 파도 옆을 달리는 온라인 해변, 해변 러닝.">
+<title>해변, 잠깐 달려요</title>
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="해변">
+<meta property="og:title" content="해변, 잠깐 달려요">
+<meta property="og:description" content="말없이 파도 옆을 달리는 온라인 해변.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="해변, 잠깐 달려요">
+<meta name="twitter:description" content="말없이 파도 옆을 달리는 온라인 해변.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235cc3bd' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='17' cy='6' r='2.6'/%3E%3Cpath d='M2 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --sand:#fff3e4; --ink:#3a3340; --ink-soft:#7a6f80; --mist:#9fb6bb;
+    --sea:#5cc3bd; --sun:#ffb59e; --panel:rgba(255,250,244,.9); --line:rgba(58,51,64,.12);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#bfe6f5;color:var(--ink);
+    font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+  button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--sea);outline-offset:3px}
+  kbd{display:inline-block;min-width:1.5em;padding:1px 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;font:inherit;font-size:11px;text-align:center;background:#fffc;margin:0 2px}
+  #stage{position:fixed;inset:0;display:block;touch-action:none}
+  canvas{display:block}
+
+  .boot{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;background:var(--sand);color:var(--ink);text-align:center;z-index:50;transition:opacity .9s ease}
+  .boot.is-hidden{opacity:0;pointer-events:none}
+  .boot-mark{color:var(--sea)}.boot-mark svg{width:34px;height:34px;stroke-width:1.4}
+  .boot h1{margin:0;font-size:27px;font-weight:700;letter-spacing:2px}
+  .boot p{margin:0;color:var(--ink-soft);font-size:12px;line-height:1.7}
+  .boot-dot{width:5px;height:5px;margin-top:18px;background:var(--sea);border-radius:50%;animation:breathe 1.8s ease-in-out infinite}
+  .boot-retry{position:absolute;bottom:max(24px,env(safe-area-inset-bottom));min-height:44px;padding:0 16px;display:inline-flex;align-items:center;color:var(--ink-soft);font-size:13px;text-decoration:underline;text-underline-offset:3px;visibility:hidden;animation:retry 0s 15s forwards}
+  .boot.is-error .boot-dot{display:none}.boot.is-error .boot-retry{position:static;visibility:visible;animation:none}
+  @keyframes breathe{50%{opacity:.25}}@keyframes retry{to{visibility:visible}}
+
+  .welcome{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(191,230,245,.35);backdrop-filter:blur(2px);transition:opacity .6s}
+  .welcome.is-hidden{opacity:0;pointer-events:none}
+  .welcome-card{width:min(420px,100%);padding:28px 26px 24px;border-radius:26px;background:var(--panel);box-shadow:0 20px 60px rgba(0,0,0,.18);text-align:center}
+  .welcome-card .eyebrow{margin:0 0 6px;font-size:11px;letter-spacing:3px;color:var(--ink-soft)}
+  .welcome-card h1{margin:0 0 10px;font-size:24px;font-weight:700;letter-spacing:1px}
+  .welcome-card p{margin:0 0 18px;font-size:14px;line-height:1.8;color:var(--ink-soft)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;border-radius:999px;font-size:15px;font-weight:600;background:var(--sea);color:#fff;transition:transform .15s}
+  .btn:active{transform:scale(.97)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+  .btn.small{min-height:38px;padding:0 14px;font-size:13px}
+  .welcome-hint{margin-top:14px;font-size:12px;color:var(--mist)}
+  .welcome-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+  .hud{position:fixed;inset:0;pointer-events:none;z-index:20;opacity:0;transition:opacity .8s}
+  .hud.is-on{opacity:1}
+  .hud>*{pointer-events:auto}
+  .top{position:absolute;top:max(14px,env(safe-area-inset-top));left:16px;right:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .brand{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:20px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1)}
+  .brand span{font-size:10px;letter-spacing:3px;color:var(--ink-soft)}
+  .brand h1{margin:0;font-size:18px;font-weight:700;letter-spacing:2px}
+  .brand small{font-size:11px;color:var(--mist)}
+  .tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1);color:var(--ink)}
+  .icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .icon-btn[aria-pressed="true"]{background:var(--sea);color:#fff}
+
+  .stats{position:absolute;left:16px;bottom:max(16px,env(safe-area-inset-bottom));display:flex;gap:6px;padding:10px 12px;border-radius:22px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1)}
+  .stat{min-width:62px;padding:0 6px;text-align:center}
+  .stat b{display:block;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+  .stat span{font-size:10.5px;color:var(--ink-soft);letter-spacing:1px}
+  .stat+.stat{border-left:1px solid var(--line)}
+  .stat[hidden]{display:none}
+
+  .pace{position:absolute;right:16px;bottom:max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .runbtn{display:flex;align-items:center;justify-content:center;width:84px;height:84px;border-radius:50%;background:var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.14);font-size:13px;font-weight:700;letter-spacing:1px;user-select:none;-webkit-user-select:none;transition:transform .12s,background .2s}
+  .runbtn.is-held{background:var(--sun);transform:scale(.95)}
+  .pace-hint{font-size:11.5px;color:var(--ink);text-shadow:0 1px 6px rgba(255,255,255,.8);text-align:right;line-height:1.6}
+  .lane-btns{display:none;gap:8px}
+  .lane-btns button{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:40px;padding:0 12px;border-radius:999px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1);font-size:12px;font-weight:600;user-select:none;-webkit-user-select:none}
+  .lane-btns button:active{background:var(--sea);color:#fff}
+  body.is-touch .pace-hint{display:none}
+  body.is-touch .lane-btns{display:flex}
+
+  .toast{position:absolute;left:50%;top:max(80px,calc(env(safe-area-inset-top) + 70px));transform:translateX(-50%);max-width:min(88vw,420px);padding:10px 16px;border-radius:999px;background:var(--panel);color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.1);font-size:13.5px;text-align:center;opacity:0;transition:opacity .5s;pointer-events:none}
+  .toast.is-on{opacity:1}
+  .toast.is-cat{background:#fff0d6}
+  .letter{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(86vw,340px);padding:22px 22px 18px;border-radius:18px;background:#fffdf7;box-shadow:0 20px 60px rgba(0,0,0,.18);text-align:center;display:none;border:1px solid #efe4d0}
+  .letter.is-on{display:block}
+  .letter small{display:block;font-size:11px;letter-spacing:2px;color:var(--mist);margin-bottom:10px}
+  .letter p{margin:0 0 14px;font-size:15px;line-height:1.9;color:var(--ink)}
+
+  .breath{position:absolute;left:50%;bottom:max(120px,calc(env(safe-area-inset-bottom) + 108px));transform:translateX(-50%);display:none;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+  .breath.is-on{display:flex}
+  .breath-ring{width:72px;height:72px;border-radius:50%;border:2px solid var(--sea);background:#ffffff55;transform:scale(.6)}
+  .breath-label{font-size:12px;letter-spacing:2px;color:var(--ink);text-shadow:0 1px 6px rgba(255,255,255,.8)}
+
+  .sheet{position:fixed;inset:0;z-index:44;display:none;align-items:flex-end;justify-content:center;background:rgba(58,51,64,.25)}
+  .sheet.is-open{display:flex}
+  .sheet-card{width:min(460px,100%);max-height:84vh;overflow:auto;padding:20px 22px calc(22px + env(safe-area-inset-bottom));border-radius:26px 26px 0 0;background:var(--panel);box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+  @media(min-width:640px){.sheet{align-items:center}.sheet-card{border-radius:26px;padding-bottom:22px}}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .sheet-head h2{margin:0;font-size:17px;font-weight:700}
+  .sheet p{margin:0 0 10px;font-size:13.5px;line-height:1.8;color:var(--ink-soft)}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+  .row:first-of-type{border-top:0}
+  .row strong{display:block;font-size:14px;font-weight:600}
+  .row small{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .switch{position:relative;width:46px;height:28px;border-radius:999px;background:#d8d2c6;transition:background .2s;flex:none}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .switch[aria-checked="true"]{background:var(--sea)}.switch[aria-checked="true"]::after{transform:translateX(18px)}
+  input[type=range]{width:120px;accent-color:var(--sea)}
+  .help dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:13.5px}
+  .help dt{color:var(--ink-soft)}.help dd{margin:0}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex-wrap:wrap}
+  .seg button{padding:7px 12px;font-size:12.5px}
+  .seg button[aria-pressed="true"]{background:var(--sea);color:#fff}
+  .swatches{display:flex;gap:8px;flex-wrap:wrap}
+  .swatch{width:32px;height:32px;border-radius:50%;border:3px solid transparent;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+  .swatch[aria-pressed="true"]{border-color:var(--ink)}
+  .look-row{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+  .look-row:first-of-type{border-top:0}
+  .look-row strong{font-size:13px;font-weight:600}
+  .look-row small{font-size:12px;color:var(--ink-soft)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;background:#fff}
+  .chip i{width:12px;height:12px;border-radius:50%;display:inline-block}
+  .chip[aria-pressed="true"]{background:var(--sea);color:#fff;border-color:var(--sea)}
+
+  .rest{position:fixed;inset:0;z-index:25;display:none;align-items:flex-end;justify-content:center;padding:0 16px max(28px,env(safe-area-inset-bottom));pointer-events:none}
+  .rest.is-on{display:flex}
+  .rest-card{pointer-events:auto;display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 20px;border-radius:22px;background:var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.14);text-align:center;width:min(100%,420px)}
+  .rest-card p{margin:0;font-size:13.5px;color:var(--ink-soft);line-height:1.7}
+  .rest-card .quote{font-size:14.5px;color:var(--ink);max-width:320px}
+  .rest-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .sandform{display:flex;gap:6px;width:100%}
+  .sandform input{flex:1;min-width:0;height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;color:var(--ink)}
+
+  .end{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;padding:24px;background:var(--sand)}
+  .end.is-on{display:flex}
+  .end-card{max-width:400px;text-align:center}
+  .end h1{margin:0 0 10px;font-size:22px;font-weight:700}
+  .end p{margin:0 0 20px;font-size:14px;line-height:1.8;color:var(--ink-soft)}
+  .end .sum{display:flex;justify-content:center;gap:18px;margin:0 0 22px}
+  .end .sum b{display:block;font-size:20px;font-weight:700}.end .sum span{font-size:11px;letter-spacing:1px;color:var(--ink-soft)}
+  .end .welcome-actions{margin-top:4px}
+
+  @media(prefers-reduced-motion:reduce){.boot-dot{animation:none}}
+  @media(max-width:480px){.stat{min-width:50px}.stat b{font-size:15px}.brand h1{font-size:15px}.brand{padding:7px 10px;gap:0}.brand span{font-size:9px;letter-spacing:2px}.tools{gap:5px}.icon-btn{width:36px;height:36px}.icon-btn svg{width:17px;height:17px}.runbtn{width:76px;height:76px}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
+</head>
+<body>
+<canvas id="stage" aria-label="해변 장면"></canvas>
+
+<main id="boot" class="boot" role="status" aria-label="해변">
+  <span class="boot-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="6" r="2.6"/><path d="M2 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg></span>
+  <h1 id="boot-title">해변</h1>
+  <p id="boot-message">파도를 불러오는 중</p>
+  <span class="boot-dot" aria-hidden="true"></span>
+  <a class="boot-retry" href="">다시 들어가기</a>
+</main>
+
+<section id="welcome" class="welcome is-hidden" aria-labelledby="welcome-title">
+  <div class="welcome-card">
+    <p class="eyebrow">BEACH RUN</p>
+    <h1 id="welcome-title">해변, 잠깐 달려요</h1>
+    <p>경쟁도 기록도 없어요.<br>친구랑 파도 옆을 천천히 달리다가,<br>쉬고 싶을 때 멈춰 바다를 바라보세요.</p>
+    <div class="welcome-actions">
+      <button id="start" class="btn" type="button">달리러 가기</button>
+      <button id="look-open" class="btn ghost" type="button">꾸미기 · 친구 고르기</button>
+    </div>
+    <p class="welcome-hint">소리를 켜면 파도와 갈매기 소리가 함께해요</p>
+  </div>
+</section>
+
+<div id="hud" class="hud" aria-hidden="true">
+  <div class="top">
+    <div class="brand"><span>BEACH RUN</span><h1>해변</h1><small id="tod">한낮</small></div>
+    <div class="tools">
+      <button id="sound" class="icon-btn" type="button" aria-pressed="false" aria-label="소리 켜기" title="소리"><svg viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
+      <button id="breath-toggle" class="icon-btn" type="button" aria-pressed="false" aria-label="호흡 안내" title="호흡 안내"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/></svg></button>
+      <button id="share" class="icon-btn" type="button" aria-label="오늘의 러닝 카드 공유" title="공유"><svg viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/></svg></button>
+      <button id="look" class="icon-btn" type="button" aria-label="꾸미기" title="꾸미기"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></button>
+      <button id="help" class="icon-btn" type="button" aria-label="조작 방법" title="조작 방법"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 17h.01"/></svg></button>
+      <button id="settings" class="icon-btn" type="button" aria-label="설정" title="설정"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
+  </div>
+
+  <div class="stats" role="group" aria-label="오늘의 달리기">
+    <div class="stat"><b id="st-dist">0.00</b><span>km</span></div>
+    <div class="stat"><b id="st-time">0:00</b><span>시간</span></div>
+    <div class="stat"><b id="st-shell">0</b><span>조개</span></div>
+    <div class="stat" id="st-cat-wrap" hidden><b id="st-cat">0</b><span>데려옴</span></div>
+  </div>
+
+  <div class="pace">
+    <div class="pace-hint"><kbd>Space</kbd> 누르는 동안 달리기<br><kbd>←</kbd><kbd>→</kbd> 물가 쪽 · 모래 쪽</div>
+    <div class="lane-btns"><button id="lane-sea" type="button">물가 쪽</button><button id="lane-sand" type="button">모래 쪽</button></div>
+    <button id="runbtn" class="runbtn" type="button" aria-label="누르는 동안 달리기">달리기</button>
+  </div>
+
+  <div id="breath" class="breath"><div class="breath-ring" id="breath-ring"></div><div class="breath-label" id="breath-label">들이쉬고</div></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="letter" class="letter" role="dialog" aria-live="polite"><small>유리병 속 편지</small><p id="letter-text"></p><button class="btn ghost small" id="letter-close" type="button">바다에 다시 띄우기</button></div>
+</div>
+
+<section id="rest" class="rest">
+  <div class="rest-card">
+    <p class="quote" id="rest-quote">파도는 서두르지 않아요.</p>
+    <p>잠깐 쉬고 있어요 · <span id="rest-sec">0</span>초</p>
+    <form class="sandform" id="sandform" autocomplete="off"><input id="sandtext" type="text" maxlength="24" placeholder="모래에 한 줄 써 보세요 · 파도가 지워 줘요" aria-label="모래에 쓸 글"><button class="btn small" type="submit">쓰기</button></form>
+    <div class="rest-actions">
+      <button id="rest-sit" class="btn ghost small" type="button">앉기</button>
+      <button id="rest-lie" class="btn ghost small" type="button">눕기</button>
+      <button id="rest-leave" class="btn ghost small" type="button">오늘은 여기까지</button>
+    </div>
+  </div>
+</section>
+
+<section id="sheet-look" class="sheet" role="dialog" aria-modal="true" aria-labelledby="look-title">
+  <div class="sheet-card">
+    <div class="sheet-head"><h2 id="look-title">꾸미기</h2><button class="icon-btn" data-close type="button" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="look-row"><strong>같이 달리는 친구</strong>
+      <div class="chips" data-look="buddy">
+        <button type="button" class="chip" data-v="maltese"><i style="background:#fffaf3"></i>말티즈</button>
+        <button type="button" class="chip" data-v="golden"><i style="background:#e8b86d"></i>골든</button>
+        <button type="button" class="chip" data-v="shiba"><i style="background:#e0905a"></i>시바</button>
+        <button type="button" class="chip" data-v="poodle"><i style="background:#8a6a52"></i>푸들</button>
+        <button type="button" class="chip" data-v="cat"><i style="background:#f2d6b0"></i>고양이</button>
+        <button type="button" class="chip" data-v="gull"><i style="background:#f7f7f2"></i>갈매기</button>
+        <button type="button" class="chip" data-v="none">혼자</button>
+      </div>
+      <small id="buddy-note">강아지는 옆에서 같이 달려요.</small></div>
+    <div class="look-row"><strong>머리색</strong><div class="swatches" data-look="hair"></div></div>
+    <div class="look-row"><strong>옷 색</strong><div class="swatches" data-look="shirt"></div></div>
+    <div class="look-row"><strong>머리띠 · 모자</strong><div class="seg" data-look="hat"><button type="button" data-v="band">머리띠</button><button type="button" data-v="cap">캡모자</button><button type="button" data-v="straw">밀짚모자</button><button type="button" data-v="none">없음</button></div></div>
+    <div class="look-row"><strong>포인트 색</strong><div class="swatches" data-look="accent"></div></div>
+    <p style="margin-top:12px;font-size:12px">이 기기에만 기억해 둬요.</p>
+  </div>
+</section>
+
+<section id="sheet-help" class="sheet" role="dialog" aria-modal="true" aria-labelledby="help-title">
+  <div class="sheet-card help">
+    <div class="sheet-head"><h2 id="help-title">조작 방법</h2><button class="icon-btn" data-close type="button" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <p>잘하려고 하지 않아도 돼요. 누르고 있는 동안만 달리고, 손을 떼면 천천히 걷다가 멈춰요.</p>
+    <dl>
+      <dt><kbd>Space</kbd> / 버튼 길게</dt><dd>달리기 · 손을 떼면 걷기</dd>
+      <dt><kbd>←</kbd> <kbd>→</kbd> / 버튼·쓸기</dt><dd>물가 쪽으로 · 마른 모래 쪽으로</dd>
+      <dt><kbd>R</kbd> / 멈춰 서 있기</dt><dd>잠깐 쉬어가기 (앉기 · 눕기 · 모래에 글쓰기)</dd>
+      <dt><kbd>B</kbd></dt><dd>호흡 안내 켜고 끄기</dd>
+      <dt>조개 · 바다유리</dt><dd>지나가면 저절로 주워요. 숫자는 기록이 아니라 오늘의 산책 메모예요.</dd>
+      <dt>유리병</dt><dd>가끔 떠내려와요. 주우면 짧은 편지가 들어 있어요.</dd>
+      <dt>고양이</dt><dd>자꾸 딴 길로 가요. 가까이 가면 다시 따라와요. 데려온 횟수만 세요.</dd>
+    </dl>
+    <p style="margin-top:14px">물가 가까이 달리면 발이 젖어 발소리가 달라지고, 파도가 발자국을 지워요.</p>
+  </div>
+</section>
+
+<section id="sheet-settings" class="sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+  <div class="sheet-card">
+    <div class="sheet-head"><h2 id="settings-title">설정</h2><button class="icon-btn" data-close type="button" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="row"><div><strong>파도 소리</strong><small>브라우저가 직접 만드는 소리예요 · 파일 없음</small></div><input id="vol-sea" type="range" min="0" max="100" value="70" aria-label="파도 소리 크기"></div>
+    <div class="row"><div><strong>갈매기 · 바람</strong><small>가끔 멀리서 들려요</small></div><input id="vol-bird" type="range" min="0" max="100" value="50" aria-label="갈매기 소리 크기"></div>
+    <div class="row"><div><strong>발소리</strong><small>젖은 모래와 마른 모래가 달라요</small></div><input id="vol-step" type="range" min="0" max="100" value="55" aria-label="발소리 크기"></div>
+    <div class="row"><div><strong>시간</strong><small>해가 천천히 저물고 별이 떠요</small></div>
+      <div class="seg" role="group" aria-label="시간대"><button type="button" data-tod="auto" aria-pressed="true">흐름</button><button type="button" data-tod="dawn" aria-pressed="false">새벽</button><button type="button" data-tod="noon" aria-pressed="false">한낮</button><button type="button" data-tod="dusk" aria-pressed="false">노을</button><button type="button" data-tod="night" aria-pressed="false">밤</button></div></div>
+    <div class="row"><div><strong>움직임 줄이기</strong><small>카메라 흔들림을 줄여요</small></div><button id="reduce" class="switch" type="button" role="switch" aria-checked="false" aria-label="움직임 줄이기"></button></div>
+    <div class="row"><div><strong>화질</strong><small>느리면 낮춰주세요</small></div>
+      <div class="seg" role="group" aria-label="화질"><button type="button" data-q="1" aria-pressed="false">낮음</button><button type="button" data-q="2" aria-pressed="true">보통</button></div></div>
+    <p style="margin-top:14px;font-size:12px">서버 없이 브라우저에서만 돌아가요. 기록은 저장하지 않아요.</p>
+  </div>
+</section>
+
+<section id="end" class="end" aria-labelledby="end-title">
+  <div class="end-card">
+    <span class="boot-mark" aria-hidden="true" style="display:inline-block;color:var(--sea);margin-bottom:10px"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="6" r="2.6"/><path d="M2 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg></span>
+    <h1 id="end-title">편안히 달리셨나요</h1>
+    <div class="sum"><div><b id="end-dist">0.00</b><span>km</span></div><div><b id="end-time">0:00</b><span>시간</span></div><div><b id="end-shell">0</b><span>조개</span></div></div>
+    <p>소리와 장면을 모두 마쳤어요.<br>다시 달리고 싶을 때 들러주세요.</p>
+    <div class="welcome-actions"><button id="end-share" class="btn ghost" type="button">오늘의 카드 저장</button><button id="again" class="btn" type="button">다시 달리기</button></div>
+  </div>
+</section>
+
+<noscript><style>.boot{display:none}body{background:#bfe6f5}</style><main style="padding:3rem;max-width:36rem;margin:auto;color:#3a3340;font-family:sans-serif;line-height:1.8"><h1>해변 · 온라인 해변</h1><p>파도 옆을 달리고, 조개를 줍고, 잠깐 쉬어가는 공간입니다.</p><p>해변을 둘러보려면 브라우저의 JavaScript를 켜주세요.</p></main></noscript>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ---------- 상수·상태 ---------- */
+const SHORE_Z = 0, LANE_MIN = -1.6, LANE_MAX = 8.5, WALK = 1.6, RUN = 4.6;
+const $ = (id) => document.getElementById(id);
+const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isTouch = matchMedia('(pointer: coarse)').matches;
+if(isTouch) document.body.classList.add('is-touch');
+
+const state = {
+  started:false, held:false, speed:0, laneTarget:2.2, lane:2.2,
+  x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, stridePhase:0, stillFor:0, resting:false, pose:'stand', restFor:0,
+  todMode:'auto', todT:0.5, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
+};
+const LOOK_DEFAULT = {hair:'#4a3b38', shirt:'#fff6e9', hat:'band', accent:'#ff9b8a', buddy:'maltese'};
+let look = {...LOOK_DEFAULT};
+try{ const saved = JSON.parse(localStorage.getItem('haebyeon.look')||'null'); if(saved && typeof saved==='object') look = {...LOOK_DEFAULT, ...saved}; if(look.buddy==='dog') look.buddy = 'maltese'; }catch(e){}
+function saveLook(){ try{ localStorage.setItem('haebyeon.look', JSON.stringify(look)); }catch(e){} }
+
+/* ---------- 렌더러 ---------- */
+const canvas = $('stage');
+let renderer;
+try{ renderer = new THREE.WebGLRenderer({canvas, antialias:true, powerPreference:'high-performance'}); }
+catch(e){ bootError('이 브라우저에서는 장면을 그릴 수 없어요'); throw e; }
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xe6eef0, 40, 170);
+const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 600);
+function resize(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setPixelRatio(Math.min(devicePixelRatio, state.quality===2 ? 2 : 1));
+  renderer.setSize(w, h, false);
+  camera.aspect = w/h; camera.fov = w < h ? 62 : 50; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+/* ---------- 빛 ---------- */
+const hemi = new THREE.HemisphereLight(0xcfe6f2, 0xd8c7a2, 1.1); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffe2b8, 2.2);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.near = 1; sun.shadow.camera.far = 120;
+sun.shadow.camera.left = -30; sun.shadow.camera.right = 60; sun.shadow.camera.top = 30; sun.shadow.camera.bottom = -30;
+sun.shadow.bias = -0.0008;
+scene.add(sun); scene.add(sun.target);
+
+/* ---------- 하늘·별·달 ---------- */
+const skyUniforms = { top:{value:new THREE.Color()}, mid:{value:new THREE.Color()}, bottom:{value:new THREE.Color()}, sunDir:{value:new THREE.Vector3(0,0.2,-1)}, sunColor:{value:new THREE.Color()}, sunSize:{value:0.0045} };
+const sky = new THREE.Mesh(new THREE.SphereGeometry(420, 32, 16), new THREE.ShaderMaterial({
+  side:THREE.BackSide, depthWrite:false, uniforms:skyUniforms,
+  vertexShader:`varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+  fragmentShader:`uniform vec3 top, mid, bottom, sunDir, sunColor; uniform float sunSize; varying vec3 vDir;
+    void main(){
+      float h = clamp(vDir.y, -0.05, 1.0);
+      vec3 c = mix(bottom, mid, smoothstep(0.0, 0.18, h));
+      c = mix(c, top, smoothstep(0.12, 0.75, h));
+      float d = max(dot(normalize(vDir), normalize(sunDir)), 0.0);
+      float glow = pow(d, 64.0) * 0.4 + pow(d, 6.0) * 0.16;
+      float disk = smoothstep(1.0 - sunSize, 1.0 - sunSize*0.55, d);
+      c += sunColor * glow + sunColor * disk * 1.3;
+      gl_FragColor = vec4(c, 1.0);
+    }`,
+}));
+scene.add(sky);
+const stars = (()=>{
+  const n = 900, pos = new Float32Array(n*3);
+  for(let i=0;i<n;i++){ const a = Math.random()*Math.PI*2, e = Math.asin(Math.random()*0.9+0.08), r = 400; pos[i*3] = Math.cos(a)*Math.cos(e)*r; pos[i*3+1] = Math.sin(e)*r; pos[i*3+2] = Math.sin(a)*Math.cos(e)*r; }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const m = new THREE.PointsMaterial({color:0xfff8e6, size:1.6, sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false, fog:false});
+  const p = new THREE.Points(g, m); scene.add(p); return p;
+})();
+const moon = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 16), new THREE.MeshBasicMaterial({color:0xfff6dc, transparent:true, opacity:0, fog:false}));
+scene.add(moon);
+
+/* ---------- 바다 ---------- */
+const seaUniforms = { time:{value:0}, deep:{value:new THREE.Color(0x2d8fa8)}, shallow:{value:new THREE.Color(0x8fdcd6)}, foam:{value:new THREE.Color(0xffffff)},
+  sunDir:{value:skyUniforms.sunDir.value}, sunColor:{value:skyUniforms.sunColor.value}, fogColor:{value:scene.fog.color}, fogNear:{value:40}, fogFar:{value:170}, camX:{value:0}, night:{value:0} };
+const seaGeo = new THREE.PlaneGeometry(520, 140, 260, 70);
+seaGeo.rotateX(-Math.PI/2); seaGeo.translate(0, 0, SHORE_Z - 64);
+const seaMat = new THREE.ShaderMaterial({
+  uniforms:seaUniforms, transparent:true,
+  vertexShader:`uniform float time; uniform float camX; varying vec3 vPos; varying float vH; varying vec3 vN;
+    float wave(vec2 p, float t){ return sin(p.x*0.12 + t*0.9)*0.18 + sin(p.y*0.35 - t*1.3)*0.22 + sin((p.x+p.y)*0.21 + t*0.7)*0.12 + sin(p.y*0.9 - t*2.1)*0.05; }
+    void main(){
+      vec3 p = position; p.x += camX; float t = time;
+      float shoreFade = smoothstep(0.0, 14.0, -p.z);
+      float h = wave(p.xz, t) * mix(0.15, 1.0, shoreFade);
+      p.y += h; float e = 0.6;
+      float hx = wave(p.xz + vec2(e,0.0), t) * mix(0.15,1.0,shoreFade);
+      float hz = wave(p.xz + vec2(0.0,e), t) * mix(0.15,1.0,shoreFade);
+      vN = normalize(vec3(h-hx, e, h-hz)); vPos = p; vH = h;
+      gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0);
+    }`,
+  fragmentShader:`uniform float time, night; uniform vec3 deep, shallow, foam, sunDir, sunColor, fogColor; uniform float fogNear, fogFar;
+    varying vec3 vPos; varying float vH; varying vec3 vN;
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
+    float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+    void main(){
+      float depth = clamp(-vPos.z/26.0, 0.0, 1.0);
+      vec3 c = mix(shallow, deep, depth);
+      c = mix(c, c*vec3(0.25,0.3,0.45), night);
+      float tide = sin(time*0.55)*1.6 + sin(time*0.23)*0.8;
+      float edge = tide + noise(vec2(vPos.x*0.08, time*0.2))*1.4;
+      float dEdge = vPos.z - edge;
+      float foamLine = smoothstep(2.2, 0.0, abs(dEdge)) * (0.65 + 0.35*noise(vec2(vPos.x*0.9, vPos.z*0.9 + time*0.8)));
+      float lace = smoothstep(0.6, 0.0, abs(dEdge + 1.2 + sin(vPos.x*0.7+time)*0.4)) * 0.5;
+      float crest = smoothstep(0.22, 0.42, vH) * noise(vec2(vPos.x*0.6, vPos.z*0.6 - time*0.6));
+      c = mix(c, foam, clamp(foamLine + lace + crest*0.8, 0.0, 1.0));
+      vec3 V = normalize(cameraPosition - vPos); vec3 H = normalize(V + normalize(sunDir));
+      float spec = pow(max(dot(vN, H), 0.0), 180.0) * 1.4 + pow(max(dot(vN,H),0.0), 24.0)*0.12;
+      c += sunColor * spec * (1.0 - night*0.6);
+      float fres = pow(1.0 - max(dot(vN, V), 0.0), 3.0);
+      c = mix(c, fogColor, fres*0.45);
+      float alpha = smoothstep(2.4, -0.6, dEdge); alpha = max(alpha, step(vPos.z, -1.0));
+      float fogF = smoothstep(fogNear, fogFar, length(cameraPosition - vPos));
+      c = mix(c, fogColor, fogF);
+      gl_FragColor = vec4(c, alpha);
+    }`,
+});
+const sea = new THREE.Mesh(seaGeo, seaMat); sea.position.set(0, 0.02, 0); sea.renderOrder = 2; scene.add(sea);
+function tideZ(t){ return Math.sin(t*0.55)*1.6 + Math.sin(t*0.23)*0.8; }
+
+/* ---------- 모래 ---------- */
+function sandTexture(){
+  const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d');
+  g.fillStyle = '#f7ecd9'; g.fillRect(0,0,512,512);
+  for(let i=0;i<26000;i++){ const v = 190 + Math.random()*55; g.fillStyle = `rgba(${v},${v-10},${v-34},${0.12+Math.random()*0.18})`; g.fillRect(Math.random()*512, Math.random()*512, 1.4, 1.4); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(60, 14); t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); return t;
+}
+const sandMat = new THREE.MeshStandardMaterial({map:sandTexture(), color:0xfff3dc, roughness:1, metalness:0});
+const sandGeo = new THREE.PlaneGeometry(520, 120, 130, 30);
+sandGeo.rotateX(-Math.PI/2); sandGeo.translate(0, 0, SHORE_Z + 56);
+{ const pos = sandGeo.attributes.position; for(let i=0;i<pos.count;i++){ const z = pos.getZ(i), x = pos.getX(i); const dune = Math.max(0, (z-14)/22); pos.setY(i, dune*dune*3.2 + Math.sin(x*0.07)*0.25*dune); } sandGeo.computeVertexNormals(); }
+const sand = new THREE.Mesh(sandGeo, sandMat); sand.receiveShadow = true; scene.add(sand);
+const wetMat = new THREE.MeshStandardMaterial({color:0xe3cfb0, roughness:0.3, metalness:0.05, transparent:true, opacity:0.85});
+const wet = new THREE.Mesh(new THREE.PlaneGeometry(520, 7.5).rotateX(-Math.PI/2), wetMat); wet.position.set(0, 0.012, SHORE_Z + 1.4); wet.receiveShadow = true; scene.add(wet);
+
+/* ---------- 발자국 (파도가 지움) ---------- */
+const footGeo = new THREE.CircleGeometry(0.15, 10); footGeo.rotateX(-Math.PI/2); footGeo.scale(0.6, 1, 1);
+const FOOT_N = 72, foots = [];
+for(let i=0;i<FOOT_N;i++){ const m = new THREE.Mesh(footGeo, new THREE.MeshBasicMaterial({color:0xb79f78, transparent:true, opacity:0, depthWrite:false})); m.visible = false; m.renderOrder = 1; scene.add(m); foots.push(m); }
+let footIdx = 0;
+function stamp(x, z, side){ const m = foots[footIdx]; footIdx = (footIdx+1)%FOOT_N; m.position.set(x, 0.02, z + side*0.17); m.rotation.y = side*0.12; m.material.opacity = 0.45; m.visible = true; }
+
+/* ---------- 모래에 쓴 글 ---------- */
+const sandNotes = [];
+function writeOnSand(text){
+  const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const g = c.getContext('2d');
+  g.fillStyle = 'rgba(120,96,66,0.9)'; g.font = '600 110px "Nanum Pen Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0.95, depthWrite:false}));
+  m.position.set(state.x + 0.4, 0.03, state.lane - 1.9); m.rotation.y = Math.PI; m.renderOrder = 1; scene.add(m); sandNotes.push(m);
+}
+
+/* ---------- 캐릭터 ---------- */
+const runner = new THREE.Group();
+const skin = new THREE.MeshStandardMaterial({color:0xffdcc4, roughness:0.9});
+const shirt = new THREE.MeshStandardMaterial({color:0xfff6e9, roughness:0.95});
+const shorts = new THREE.MeshStandardMaterial({color:0x7fc8c2, roughness:0.95});
+const hairM = new THREE.MeshStandardMaterial({color:0x4a3b38, roughness:0.95});
+const accentM = new THREE.MeshStandardMaterial({color:0xff9b8a, roughness:0.9});
+const strawM = new THREE.MeshStandardMaterial({color:0xf0d9a0, roughness:1});
+const inkM = new THREE.MeshBasicMaterial({color:0x3b2f2f});
+const blushM = new THREE.MeshBasicMaterial({color:0xffb3a7, transparent:true, opacity:0.75});
+function box(w,h,d,m){ const o = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); o.castShadow = true; return o; }
+function capsule(r,l,m){ const o = new THREE.Mesh(new THREE.CapsuleGeometry(r,l,6,12), m); o.castShadow = true; return o; }
+const torso = capsule(0.24, 0.22, shirt); torso.position.y = 0.86; runner.add(torso);
+const hips  = capsule(0.23, 0.08, shorts); hips.position.y = 0.66; runner.add(hips);
+const head  = new THREE.Mesh(new THREE.SphereGeometry(0.34, 24, 18), skin); head.position.y = 1.42; head.castShadow = true; runner.add(head);
+const headGroup = new THREE.Group(); headGroup.position.y = 1.42; runner.add(headGroup);
+const hair  = new THREE.Mesh(new THREE.SphereGeometry(0.355, 24, 18, 0, Math.PI*2, 0, Math.PI*0.52), hairM); hair.position.y = 0.04; hair.rotation.x = -0.15; headGroup.add(hair);
+const hatBand = new THREE.Group();
+const band = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.035, 8, 28), accentM); band.position.y = 0.08; band.rotation.x = Math.PI/2; band.rotation.z = 0.1; hatBand.add(band);
+const knot = box(0.1, 0.06, 0.16, accentM); knot.position.set(-0.3, 0.08, -0.05); knot.rotation.z = 0.5; hatBand.add(knot);
+headGroup.add(hatBand);
+const hatCap = new THREE.Group();
+const capTop = new THREE.Mesh(new THREE.SphereGeometry(0.36, 20, 14, 0, Math.PI*2, 0, Math.PI*0.5), accentM); capTop.position.y = 0.05; hatCap.add(capTop);
+const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.03, 16, 1, false, 0, Math.PI), accentM); brim.position.set(0.22, 0.06, 0); brim.rotation.y = -Math.PI/2; brim.rotation.z = 0.1; hatCap.add(brim);
+headGroup.add(hatCap);
+const hatStraw = new THREE.Group();
+const strawTop = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.34, 0.22, 18), strawM); strawTop.position.y = 0.26; hatStraw.add(strawTop);
+const strawBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.03, 24), strawM); strawBrim.position.y = 0.16; hatStraw.add(strawBrim);
+const strawRibbon = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.345, 0.06, 18), accentM); strawRibbon.position.y = 0.2; hatStraw.add(strawRibbon);
+hatStraw.rotation.z = -0.08; headGroup.add(hatStraw);
+[[-0.11],[0.11]].forEach(([z])=>{ const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), inkM); e.position.set(0.3, 0.02, z); e.scale.y = 1.4; headGroup.add(e);
+  const bl = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), blushM); bl.position.set(0.3, -0.06, z*1.9); bl.lookAt(1, -0.06, z*4); headGroup.add(bl); });
+const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 12, Math.PI), inkM); mouth.position.set(0.33, -0.09, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headGroup.add(mouth);
+function limb(len, r, mat, y, z){ const g = new THREE.Group(); g.position.set(0, y, z); const m = capsule(r, len, mat); m.position.y = -len/2; g.add(m); return g; }
+const armL = limb(0.22, 0.07, skin, 1.0, -0.3), armR = limb(0.22, 0.07, skin, 1.0, 0.3);
+const legL = limb(0.24, 0.085, skin, 0.52, -0.12), legR = limb(0.24, 0.085, skin, 0.52, 0.12);
+[legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, accentM); sh.rotation.z = Math.PI/2; sh.position.set(0.04, -0.4, 0); l.add(sh); });
+runner.add(armL, armR, legL, legR);
+scene.add(runner);
+
+/* ---------- 친구: 강아지(4종) · 고양이 · 갈매기 ---------- */
+const DOGS = {
+  maltese:{body:0xfffaf3, ear:0xf5ebdd, earStyle:'floppy', tail:'up', fluffy:true},
+  golden:{body:0xe8b86d, ear:0xcf9a4e, earStyle:'floppy', tail:'wag', fluffy:false},
+  shiba:{body:0xe0905a, ear:0xe0905a, earStyle:'point', tail:'curl', fluffy:false, mask:0xfff3e0},
+  poodle:{body:0x8a6a52, ear:0x7a5a44, earStyle:'floppy', tail:'pom', fluffy:true},
+};
+function makeDog(v){
+  const g = new THREE.Group(); const fur = new THREE.MeshStandardMaterial({color:v.body, roughness:1}); const earM = new THREE.MeshStandardMaterial({color:v.ear, roughness:1});
+  const body = capsule(v.fluffy?0.18:0.16, 0.2, fur); body.rotation.z = Math.PI/2; body.position.y = 0.28; g.add(body);
+  const h = new THREE.Mesh(new THREE.SphereGeometry(v.fluffy?0.19:0.17, 18, 14), fur); h.position.set(0.26, 0.42, 0); h.castShadow = true; g.add(h);
+  if(v.mask){ const m = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 10), new THREE.MeshStandardMaterial({color:v.mask, roughness:1})); m.position.set(0.36, 0.38, 0); m.scale.set(1,0.8,1.1); g.add(m); }
+  [[-0.1],[0.1]].forEach(([z])=>{
+    if(v.earStyle==='point'){ const ear = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.12, 4), earM); ear.position.set(0.22, 0.58, z*1.1); g.add(ear); }
+    else { const ear = capsule(v.fluffy?0.055:0.045, 0.1, earM); ear.position.set(0.22, 0.5, z*1.5); ear.rotation.x = z>0?0.5:-0.5; g.add(ear); }
+    const e = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), inkM); e.position.set(0.4, 0.45, z); g.add(e); });
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), inkM); nose.position.set(0.43, 0.38, 0); g.add(nose);
+  let tail;
+  if(v.tail==='curl'){ tail = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.035, 8, 14, Math.PI*1.4), fur); tail.position.set(-0.26, 0.42, 0); tail.rotation.y = Math.PI/2; }
+  else if(v.tail==='pom'){ tail = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), fur); tail.position.set(-0.3, 0.4, 0); }
+  else { tail = capsule(0.035, 0.14, fur); tail.position.set(-0.26, 0.4, 0); tail.rotation.z = 0.9; }
+  g.add(tail);
+  const legs = []; [[0.12,-0.08],[0.12,0.08],[-0.12,-0.08],[-0.12,0.08]].forEach(([x,z])=>{ const l = capsule(0.04, 0.1, fur); l.position.set(x, 0.1, z); g.add(l); legs.push(l); });
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.02, 6, 20), accentM); collar.position.set(0.17, 0.38, 0); collar.rotation.y = Math.PI/2; g.add(collar);
+  g.userData = {legs, tail, kind:'dog'}; return g;
+}
+const furC = new THREE.MeshStandardMaterial({color:0xf2d6b0, roughness:1});
+function makeCat(){
+  const g = new THREE.Group(); const body = capsule(0.14, 0.22, furC); body.rotation.z = Math.PI/2; body.position.y = 0.25; g.add(body);
+  const h = new THREE.Mesh(new THREE.SphereGeometry(0.15, 18, 14), furC); h.position.set(0.26, 0.38, 0); h.castShadow = true; g.add(h);
+  [[-0.08],[0.08]].forEach(([z])=>{ const ear = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 4), furC); ear.position.set(0.24, 0.52, z*1.2); g.add(ear);
+    const e = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 6), inkM); e.position.set(0.38, 0.4, z); e.scale.y = 1.6; g.add(e); });
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), new THREE.MeshBasicMaterial({color:0xff9b8a})); nose.position.set(0.4, 0.35, 0); g.add(nose);
+  const stripeM = new THREE.MeshStandardMaterial({color:0xd9b68a, roughness:1});
+  for(let i=0;i<3;i++){ const s = new THREE.Mesh(new THREE.TorusGeometry(0.145, 0.018, 6, 16), stripeM); s.position.set(-0.08 + i*0.09, 0.25, 0); s.rotation.y = Math.PI/2; g.add(s); }
+  const tail = capsule(0.03, 0.3, furC); tail.position.set(-0.3, 0.4, 0); tail.rotation.z = 0.6; g.add(tail);
+  const legs = []; [[0.1,-0.07],[0.1,0.07],[-0.12,-0.07],[-0.12,0.07]].forEach(([x,z])=>{ const l = capsule(0.035, 0.1, furC); l.position.set(x, 0.1, z); g.add(l); legs.push(l); });
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.018, 6, 20), accentM); collar.position.set(0.17, 0.35, 0); collar.rotation.y = Math.PI/2; g.add(collar);
+  const bell = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), new THREE.MeshStandardMaterial({color:0xffd166, roughness:0.4})); bell.position.set(0.28, 0.28, 0); g.add(bell);
+  g.userData = {legs, tail, kind:'cat'}; return g;
+}
+const gullMat = new THREE.MeshStandardMaterial({color:0xf7f7f2, emissive:0x9a9a94, emissiveIntensity:0.6, roughness:1, side:THREE.DoubleSide});
+function makeGull(scale=1){
+  const g = new THREE.Group();
+  const l = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.14).translate(-0.27,0,0), gullMat); const r = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.14).translate(0.27,0,0), gullMat);
+  const b = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), gullMat); b.scale.set(1.6,0.8,1);
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.09, 6), accentM); beak.rotation.z = -Math.PI/2; beak.position.x = 0.15; b.add(beak);
+  g.add(l, r, b); g.scale.setScalar(scale); g.userData = {l, r, kind:'gull'}; return g;
+}
+const buddies = {maltese:makeDog(DOGS.maltese), golden:makeDog(DOGS.golden), shiba:makeDog(DOGS.shiba), poodle:makeDog(DOGS.poodle), cat:makeCat(), gull:makeGull(1.1)};
+Object.values(buddies).forEach(b=>{ b.visible = false; scene.add(b); });
+const buddyState = {x:-1.2, z:0.9, y:0, phase:0};
+// 고양이 미션 상태
+const cat = { mode:'follow', target:0, timer:8 + Math.random()*8, sitTimer:0, warned:false };
+const CAT_WANDER = ['고양이가 풀숲 쪽으로 샜어요 · 데리러 가요','고양이가 물가에 관심이 생겼어요','고양이가 유목 냄새를 맡으러 갔어요','고양이가 조개를 구경하러 갔어요'];
+const CAT_BACK = ['고양이를 데려왔어요','다시 같이 가요','고양이가 못 이기는 척 따라와요','야옹, 알았다고요'];
+const BUDDY_NOTES = {maltese:'말티즈 · 옆에서 같이 달려요.', golden:'골든 · 꼬리를 세게 흔들어요.', shiba:'시바 · 꼬리가 말려 있어요.', poodle:'푸들 · 곱슬곱슬.', cat:'고양이 · 자꾸 딴 길로 가요. 가까이 가면 따라와요(미션).', gull:'갈매기 · 머리 위에서 같이 날아요.', none:'오늘은 혼자 조용히.'};
+
+function applyLook(){
+  hairM.color.set(look.hair); shirt.color.set(look.shirt); accentM.color.set(look.accent);
+  hatBand.visible = look.hat==='band'; hatCap.visible = look.hat==='cap'; hatStraw.visible = look.hat==='straw'; hair.visible = look.hat!=='cap';
+  Object.entries(buddies).forEach(([k,b])=>{ b.visible = k===look.buddy; });
+  $('st-cat-wrap').hidden = look.buddy!=='cat';
+  $('buddy-note').textContent = BUDDY_NOTES[look.buddy] || '';
+  document.querySelectorAll('[data-look]').forEach(box=>{ const key = box.dataset.look; box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===look[key]))); });
+}
+const SWATCHES = { hair:['#4a3b38','#7a4b32','#2a2a33','#c99a5a','#e8d2b8','#9a6f8e'], shirt:['#fff6e9','#bfe9e3','#ffd6e0','#e4dcff','#fff1a8','#3a3340'], accent:['#ff9b8a','#5cc3bd','#ffd166','#8fa9ff','#f49ac1','#3a3340'] };
+Object.entries(SWATCHES).forEach(([key, cols])=>{ const box = document.querySelector(`[data-look="${key}"]`); cols.forEach(c=>{ const b = document.createElement('button'); b.type = 'button'; b.className = 'swatch'; b.dataset.v = c; b.style.background = c; b.setAttribute('aria-label', c); b.addEventListener('click', ()=>{ look[key] = c; saveLook(); applyLook(); }); box.appendChild(b); }); });
+document.querySelectorAll('.seg[data-look] button, .chips[data-look] button').forEach(b=>b.addEventListener('click', ()=>{ const key = b.closest('[data-look]').dataset.look; look[key] = b.dataset.v; if(key==='buddy'){ cat.mode = 'follow'; cat.timer = 8 + Math.random()*8; } saveLook(); applyLook(); }));
+applyLook();
+
+/* ---------- 장식물 ---------- */
+const props = [];
+function dispose(o){ o.traverse(c=>{ if(c.geometry) c.geometry.dispose(); }); }
+function makeShell(){
+  let m;
+  if(Math.random() < 0.6){ m = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 6, 0, Math.PI*2, 0, Math.PI/2), new THREE.MeshStandardMaterial({color:[0xfbeee0,0xf7dcc8,0xf0d8dc,0xfff2c6][Math.random()*4|0], roughness:0.6})); m.scale.set(1, 0.55, 0.85); }
+  else { m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08, 0), new THREE.MeshStandardMaterial({color:[0x9ed6c9,0x8fc4e0,0xd8e7c7][Math.random()*3|0], roughness:0.35, transparent:true, opacity:0.85})); m.scale.y = 0.5; }
+  m.castShadow = true; m.rotation.y = Math.random()*Math.PI; return m;
+}
+function makeBottle(){
+  const g = new THREE.Group(); const glass = new THREE.MeshStandardMaterial({color:0xbfe9e3, roughness:0.2, transparent:true, opacity:0.7});
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.09, 0.32, 12), glass); body.position.y = 0.09; body.rotation.z = Math.PI/2 - 0.25; g.add(body);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.12, 10), glass); neck.position.set(0.21, 0.14, 0); neck.rotation.z = Math.PI/2 - 0.25; g.add(neck);
+  const cork = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.05, 8), new THREE.MeshStandardMaterial({color:0xb08a5a})); cork.position.set(0.28, 0.16, 0); cork.rotation.z = Math.PI/2 - 0.25; g.add(cork);
+  const paper = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.2, 6), new THREE.MeshStandardMaterial({color:0xfff8e6})); paper.position.y = 0.09; paper.rotation.z = Math.PI/2 - 0.25; g.add(paper);
+  g.rotation.y = Math.random()*Math.PI*2; return g;
+}
+function makeDriftwood(){
+  const g = new THREE.Group(); const mat = new THREE.MeshStandardMaterial({color:0xb9a384, roughness:0.95});
+  const log = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.3, 2.6, 9), mat); log.rotation.z = Math.PI/2; log.position.y = 0.26; log.castShadow = true; g.add(log);
+  const br = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.1, 0.9, 6), mat); br.position.set(0.6, 0.45, 0.1); br.rotation.z = -0.8; br.rotation.x = 0.4; g.add(br); return g;
+}
+function makeRock(){
+  const g = new THREE.Group(); const mat = new THREE.MeshStandardMaterial({color:0x9aa0a6, roughness:1});
+  for(let i=0;i<3;i++){ const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.35 + Math.random()*0.5, 0), mat); r.position.set((Math.random()-0.5)*0.9, 0.15, (Math.random()-0.5)*0.9); r.scale.y = 0.6; r.rotation.set(Math.random(), Math.random(), 0); r.castShadow = true; g.add(r); }
+  return g;
+}
+const palmLeafM = new THREE.MeshStandardMaterial({color:0x5fae7a, roughness:1, side:THREE.DoubleSide});
+function makePalm(){
+  const g = new THREE.Group(); const trunkM = new THREE.MeshStandardMaterial({color:0xa98a62, roughness:1});
+  const n = 6, lean = (Math.random()-0.5)*0.5; let x = 0, y = 0;
+  for(let i=0;i<n;i++){ const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.11 - i*0.008, 0.14 - i*0.008, 0.9, 8), trunkM); seg.position.set(x, y + 0.45, 0); seg.rotation.z = -lean*(i/n); seg.castShadow = true; g.add(seg); x += Math.sin(lean*(i/n))*0.9; y += Math.cos(lean*(i/n))*0.9; }
+  const crown = new THREE.Group(); crown.position.set(x, y, 0);
+  for(let i=0;i<8;i++){ const geo = new THREE.PlaneGeometry(0.5, 2.2, 1, 6); const pos = geo.attributes.position; for(let k=0;k<pos.count;k++){ const ly = pos.getY(k); pos.setZ(k, -Math.pow((ly+1.1)/2.2, 2)*1.1); pos.setX(k, pos.getX(k)*(1-(ly+1.1)/2.6)); } geo.computeVertexNormals(); geo.translate(0, 1.1, 0);
+    const leaf = new THREE.Mesh(geo, palmLeafM); leaf.rotation.set(-1.25, 0, 0); const holder = new THREE.Group(); holder.rotation.y = (i/8)*Math.PI*2; holder.add(leaf); crown.add(holder); }
+  g.add(crown); g.scale.setScalar(0.9 + Math.random()*0.6); g.userData.crown = crown; return g;
+}
+function makePine(){
+  const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.22, 3.2, 7), new THREE.MeshStandardMaterial({color:0x8a6a4a, roughness:1}));
+  trunk.position.y = 1.6; trunk.rotation.z = (Math.random()-0.5)*0.25; trunk.castShadow = true; g.add(trunk);
+  const leaf = new THREE.MeshStandardMaterial({color:0x6fb48a, roughness:1});
+  for(let i=0;i<3;i++){ const c = new THREE.Mesh(new THREE.ConeGeometry(1.5 - i*0.35, 1.5, 8), leaf); c.position.y = 2.6 + i*0.85; c.castShadow = true; g.add(c); }
+  g.scale.setScalar(0.8 + Math.random()*0.7); return g;
+}
+function makeGrass(){
+  const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({color:0xcfd39a, roughness:1, side:THREE.DoubleSide});
+  for(let i=0;i<7;i++){ const b = new THREE.Mesh(new THREE.PlaneGeometry(0.06, 0.7+Math.random()*0.5), m); b.position.set((Math.random()-0.5)*0.5, 0.4, (Math.random()-0.5)*0.5); b.rotation.set((Math.random()-0.5)*0.4, Math.random()*Math.PI, (Math.random()-0.5)*0.5); g.add(b); }
+  return g;
+}
+const lighthouse = (()=>{
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.9, 11, 14), new THREE.MeshStandardMaterial({color:0xfbf6ec, roughness:0.9})); body.position.y = 5.5; g.add(body);
+  const band = new THREE.Mesh(new THREE.CylinderGeometry(1.62, 1.72, 1.6, 14), new THREE.MeshStandardMaterial({color:0xff9b8a, roughness:0.9})); band.position.y = 6.6; g.add(band);
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.3, 1.8, 10), new THREE.MeshStandardMaterial({color:0x3a3340, roughness:0.7})); top.position.y = 11.9; g.add(top);
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.6, 10, 8), new THREE.MeshStandardMaterial({color:0xfff2c2, emissive:0xffd27a, emissiveIntensity:1.6})); lamp.position.y = 11.8; g.add(lamp);
+  const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(4, 1), new THREE.MeshStandardMaterial({color:0x8d8f94, roughness:1})); rock.scale.set(1.6, 0.5, 1.2); rock.position.y = -0.8; g.add(rock);
+  g.userData.lamp = lamp; return g;
+})();
+lighthouse.position.set(140, 0, -24); scene.add(lighthouse);
+
+const gulls = [];
+for(let i=0;i<7;i++){ const g = makeGull(2.2); g.userData.off = Math.random()*100; g.userData.h = 14+Math.random()*10; g.userData.rad = 10+Math.random()*12; g.userData.spd = 0.25+Math.random()*0.25; scene.add(g); gulls.push(g); }
+
+const cloudMat = new THREE.SpriteMaterial({color:0xffffff, transparent:true, opacity:0.6, depthWrite:false});
+{ const c = document.createElement('canvas'); c.width = 256; c.height = 128; const g = c.getContext('2d');
+  for(let i=0;i<14;i++){ const r = 22+Math.random()*26, x = 40+Math.random()*176, y = 50+Math.random()*30; const rg = g.createRadialGradient(x,y,0,x,y,r); rg.addColorStop(0,'rgba(255,255,255,.9)'); rg.addColorStop(1,'rgba(255,255,255,0)'); g.fillStyle = rg; g.fillRect(0,0,256,128); }
+  cloudMat.map = new THREE.CanvasTexture(c); cloudMat.map.colorSpace = THREE.SRGBColorSpace; }
+const clouds = [];
+for(let i=0;i<9;i++){ const s = new THREE.Sprite(cloudMat); s.scale.set(50+Math.random()*50, 18+Math.random()*12, 1); s.userData = {ox:(i/9)*400-200, z:-80-Math.random()*160, y:30+Math.random()*26, v:0.4+Math.random()*0.4}; scene.add(s); clouds.push(s); }
+
+let genX = -20, sinceBottle = 0;
+function populateTo(limitX){
+  while(genX < limitX){
+    const x = genX; genX += 2.0 + Math.random()*2.4; sinceBottle += 1;
+    const r = Math.random();
+    if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.0, -0.4 + Math.random()*2.2); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
+    else if(r < 0.46){ const o = makeShell(); o.position.set(x + Math.random(), 0.02, -0.8 + Math.random()*5.6); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
+    else if(r < 0.52){ const o = makeDriftwood(); o.position.set(x, 0, 7 + Math.random()*4); o.rotation.y = Math.random()*Math.PI; scene.add(o); props.push({obj:o, kind:'wood'}); }
+    else if(r < 0.57){ const o = makeRock(); o.position.set(x, 0, -1 + Math.random()*2.5); scene.add(o); props.push({obj:o, kind:'rock'}); }
+    else if(r < 0.70){ const o = makePalm(); o.position.set(x, 0.6 + Math.random()*1.4, 16 + Math.random()*8); scene.add(o); props.push({obj:o, kind:'palm'}); }
+    else if(r < 0.82){ const o = makePine(); o.position.set(x, 1.5 + Math.random()*2, 24 + Math.random()*14); scene.add(o); props.push({obj:o, kind:'pine'}); }
+    else { const o = makeGrass(); o.position.set(x, 0.3+Math.random()*1.2, 12 + Math.random()*8); scene.add(o); props.push({obj:o, kind:'grass'}); }
+  }
+  for(let i=props.length-1;i>=0;i--){ if(props[i].obj.position.x < state.x - 40){ scene.remove(props[i].obj); dispose(props[i].obj); props.splice(i,1); } }
+}
+
+/* ---------- 소리 (Web Audio, 파일 없음) ---------- */
+const audio = { ctx:null, on:false, master:null, seaGain:null, birdGain:null, stepGain:null, nextGull:0 };
+function noiseBuffer(ctx, seconds, brown){
+  const len = ctx.sampleRate*seconds, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0); let last = 0;
+  for(let i=0;i<len;i++){ const w = Math.random()*2-1; if(brown){ last = (last + 0.02*w)/1.02; d[i] = last*3.5; } else d[i] = w; }
+  return buf;
+}
+function audioStart(){
+  if(audio.ctx){ audio.ctx.resume(); audio.master.gain.cancelScheduledValues(audio.ctx.currentTime); audio.master.gain.linearRampToValueAtTime(1, audio.ctx.currentTime+0.6); audio.on = true; return; }
+  const ctx = new (window.AudioContext||window.webkitAudioContext)(); audio.ctx = ctx;
+  audio.master = ctx.createGain(); audio.master.gain.value = 0; audio.master.connect(ctx.destination);
+  const src = ctx.createBufferSource(); src.buffer = noiseBuffer(ctx, 6, true); src.loop = true;
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 480; lp.Q.value = 0.4;
+  audio.seaGain = ctx.createGain(); audio.seaGain.gain.value = 0.7;
+  const swell = ctx.createGain(); swell.gain.value = 0.55;
+  const lfo = ctx.createOscillator(); lfo.frequency.value = 0.09; const lfoG = ctx.createGain(); lfoG.gain.value = 0.35; lfo.connect(lfoG); lfoG.connect(swell.gain); lfo.start();
+  const lfo2 = ctx.createOscillator(); lfo2.frequency.value = 0.23; const lfoG2 = ctx.createGain(); lfoG2.gain.value = 0.12; lfo2.connect(lfoG2); lfoG2.connect(swell.gain); lfo2.start();
+  src.connect(lp); lp.connect(swell); swell.connect(audio.seaGain); audio.seaGain.connect(audio.master); src.start();
+  const wsrc = ctx.createBufferSource(); wsrc.buffer = noiseBuffer(ctx, 4, false); wsrc.loop = true;
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 0.7;
+  audio.birdGain = ctx.createGain(); audio.birdGain.gain.value = 0.5;
+  const wg = ctx.createGain(); wg.gain.value = 0.045; wsrc.connect(bp); bp.connect(wg); wg.connect(audio.birdGain); audio.birdGain.connect(audio.master); wsrc.start();
+  audio.stepGain = ctx.createGain(); audio.stepGain.gain.value = 0.55; audio.stepGain.connect(audio.master);
+  audio.master.gain.linearRampToValueAtTime(1, ctx.currentTime + 1.5);
+  audio.on = true; audio.nextGull = ctx.currentTime + 4;
+}
+function audioStop(){ if(!audio.ctx) return; audio.master.gain.cancelScheduledValues(audio.ctx.currentTime); audio.master.gain.linearRampToValueAtTime(0, audio.ctx.currentTime+0.6); audio.on = false; }
+function gull(){
+  const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime, n = 2 + (Math.random()*3|0);
+  const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null; if(pan) pan.pan.value = Math.random()*2-1;
+  const g = ctx.createGain(); g.gain.value = 0; g.connect(pan||audio.birdGain); if(pan) pan.connect(audio.birdGain);
+  for(let i=0;i<n;i++){ const o = ctx.createOscillator(); o.type = 'sawtooth'; const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1800; f.Q.value = 3;
+    const st = t + i*0.32, f0 = 900+Math.random()*300; o.frequency.setValueAtTime(f0, st); o.frequency.exponentialRampToValueAtTime(f0*1.9, st+0.09); o.frequency.exponentialRampToValueAtTime(f0*1.1, st+0.26);
+    g.gain.setValueAtTime(0, st); g.gain.linearRampToValueAtTime(0.09, st+0.04); g.gain.exponentialRampToValueAtTime(0.001, st+0.28); o.connect(f); f.connect(g); o.start(st); o.stop(st+0.3); }
+}
+function meow(){
+  const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime;
+  const o = ctx.createOscillator(); o.type = 'triangle'; const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1200; f.Q.value = 1.5;
+  o.frequency.setValueAtTime(520, t); o.frequency.exponentialRampToValueAtTime(760, t+0.18); o.frequency.exponentialRampToValueAtTime(480, t+0.5);
+  const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.07, t+0.05); g.gain.exponentialRampToValueAtTime(0.001, t+0.55);
+  o.connect(f); f.connect(g); g.connect(audio.birdGain); o.start(t); o.stop(t+0.6);
+}
+function step(wetness, running){
+  const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime;
+  const s = ctx.createBufferSource(); s.buffer = noiseBuffer(ctx, 0.12, false); const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = wetness>0.5 ? 900 : 2600;
+  const g = ctx.createGain(); const v = (running?0.22:0.12) * (wetness>0.5 ? 0.9 : 1); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t + (wetness>0.5?0.14:0.08));
+  s.connect(f); f.connect(g); g.connect(audio.stepGain); s.start(t); s.stop(t+0.15);
+  if(wetness>0.6){ const s2 = ctx.createBufferSource(); s2.buffer = noiseBuffer(ctx, 0.2, false); const f2 = ctx.createBiquadFilter(); f2.type = 'highpass'; f2.frequency.value = 3000; const g2 = ctx.createGain(); g2.gain.setValueAtTime(0.05, t+0.02); g2.gain.exponentialRampToValueAtTime(0.001, t+0.2); s2.connect(f2); f2.connect(g2); g2.connect(audio.stepGain); s2.start(t+0.02); s2.stop(t+0.22); }
+}
+function chime(){
+  const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime, base = [523.25, 659.25, 783.99, 1046.5][Math.random()*4|0];
+  [1, 2.01, 3.0].forEach((h,i)=>{ const o = ctx.createOscillator(); o.type='sine'; o.frequency.value = base*h; const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.06/(i+1), t+0.01); g.gain.exponentialRampToValueAtTime(0.0005, t+1.6-i*0.3); o.connect(g); g.connect(audio.stepGain); o.start(t); o.stop(t+1.7); });
+}
+
+/* ---------- UI ---------- */
+const hud = $('hud'), toast = $('toast'); let toastT;
+function say(msg, ms=2600, cls=''){ toast.textContent = msg; toast.className = 'toast is-on ' + cls; clearTimeout(toastT); toastT = setTimeout(()=>toast.classList.remove('is-on'), ms); }
+function bootError(msg){ const b = $('boot'); b.classList.add('is-error'); $('boot-title').textContent = '해변 로딩 실패'; $('boot-message').textContent = msg; }
+function fmtTime(s){ s = Math.floor(s); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+
+const runbtn = $('runbtn');
+function hold(v){ if(!state.started || state.ended) return; state.held = v; runbtn.classList.toggle('is-held', v); if(v && state.resting) leaveRest(); }
+runbtn.addEventListener('pointerdown', e=>{ e.preventDefault(); runbtn.setPointerCapture(e.pointerId); hold(true); });
+['pointerup','pointercancel','lostpointercapture'].forEach(ev=>runbtn.addEventListener(ev, ()=>hold(false)));
+runbtn.addEventListener('contextmenu', e=>e.preventDefault());
+const keys = {};
+function laneHold(btn, key){ btn.addEventListener('pointerdown', e=>{ e.preventDefault(); btn.setPointerCapture(e.pointerId); keys[key] = true; }); ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>btn.addEventListener(ev, ()=>{ keys[key] = false; })); btn.addEventListener('contextmenu', e=>e.preventDefault()); }
+laneHold($('lane-sea'), 'left'); laneHold($('lane-sand'), 'right');
+
+addEventListener('keydown', e=>{
+  if(e.target.matches('input,textarea')) return;
+  if(e.code==='Space'){ e.preventDefault(); if(!state.started) start(); hold(true); }
+  if(e.code==='ArrowLeft'||e.code==='KeyA') keys.left = true;
+  if(e.code==='ArrowRight'||e.code==='KeyD') keys.right = true;
+  if(e.code==='KeyR' && state.started) toggleRest();
+  if(e.code==='KeyB' && state.started) toggleBreath();
+  if(e.code==='Escape'){ closeSheets(); $('letter').classList.remove('is-on'); }
+});
+addEventListener('keyup', e=>{ if(e.code==='Space') hold(false); if(e.code==='ArrowLeft'||e.code==='KeyA') keys.left = false; if(e.code==='ArrowRight'||e.code==='KeyD') keys.right = false; });
+let swipe = null;
+canvas.addEventListener('pointerdown', e=>{ swipe = {x:e.clientX, lane:state.laneTarget}; });
+canvas.addEventListener('pointermove', e=>{ if(!swipe) return; const dx = (e.clientX - swipe.x)/innerWidth; state.laneTarget = THREE.MathUtils.clamp(swipe.lane - dx*9, LANE_MIN, LANE_MAX); });
+addEventListener('pointerup', ()=>{ swipe = null; });
+
+$('sound').addEventListener('click', ()=>{ const b = $('sound');
+  if(audio.on){ audioStop(); b.setAttribute('aria-pressed','false'); b.setAttribute('aria-label','소리 켜기'); say('소리를 껐어요'); }
+  else { try{ audioStart(); b.setAttribute('aria-pressed','true'); b.setAttribute('aria-label','소리 끄기'); say('파도 소리가 들려요'); }catch(e){ say('소리를 시작하지 못했어요. 다시 눌러주세요.'); } } });
+$('vol-sea').addEventListener('input', e=>{ if(audio.seaGain) audio.seaGain.gain.value = e.target.value/100; });
+$('vol-bird').addEventListener('input', e=>{ if(audio.birdGain) audio.birdGain.gain.value = e.target.value/100; });
+$('vol-step').addEventListener('input', e=>{ if(audio.stepGain) audio.stepGain.gain.value = e.target.value/100; });
+
+function openSheet(id){ closeSheets(); $(id).classList.add('is-open'); hold(false); }
+function closeSheets(){ document.querySelectorAll('.sheet.is-open').forEach(s=>s.classList.remove('is-open')); }
+$('help').addEventListener('click', ()=>openSheet('sheet-help'));
+$('settings').addEventListener('click', ()=>openSheet('sheet-settings'));
+$('look').addEventListener('click', ()=>openSheet('sheet-look'));
+$('look-open').addEventListener('click', ()=>openSheet('sheet-look'));
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', closeSheets));
+document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('click', e=>{ if(e.target===s) closeSheets(); }));
+document.querySelectorAll('[data-tod]').forEach(b=>b.addEventListener('click', ()=>{
+  document.querySelectorAll('[data-tod]').forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+  state.todMode = b.dataset.tod; const v = {dawn:0.06, noon:0.45, dusk:0.72, night:0.9}[state.todMode]; if(v !== undefined) state.todT = v; }));
+document.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click', ()=>{ document.querySelectorAll('[data-q]').forEach(x=>x.setAttribute('aria-pressed', String(x===b))); state.quality = +b.dataset.q; renderer.shadowMap.enabled = state.quality===2; resize(); }));
+$('reduce').addEventListener('click', ()=>{ state.reduce = !state.reduce; $('reduce').setAttribute('aria-checked', String(state.reduce)); });
+$('reduce').setAttribute('aria-checked', String(state.reduce));
+
+let breathOn = false;
+function toggleBreath(){ breathOn = !breathOn; $('breath').classList.toggle('is-on', breathOn); $('breath-toggle').setAttribute('aria-pressed', String(breathOn)); say(breathOn ? '숨에 맞춰 천천히 · 4초 들이쉬고 6초 내쉬어요' : '호흡 안내를 껐어요'); }
+$('breath-toggle').addEventListener('click', toggleBreath);
+function breathTick(t){ if(!breathOn) return; const p = t % 10, ring = $('breath-ring'), lab = $('breath-label'); let s; if(p < 4){ s = 0.6 + 0.4*(p/4); lab.textContent = '들이쉬고'; } else { s = 1 - 0.4*((p-4)/6); lab.textContent = '내쉬어요'; } ring.style.transform = `scale(${s.toFixed(3)})`; }
+
+const QUOTES = ['파도는 서두르지 않아요.','오늘 여기까지 온 것만으로 충분해요.','바다는 누구에게도 빨리 오라고 하지 않아요.','숨을 길게 내쉬면, 어깨가 내려가요.','잘하지 않아도 괜찮아요. 그냥 여기 있어요.','발자국은 파도가 지워 줘요. 실수도요.','멀리 보면, 가까운 걱정이 작아져요.'];
+const LETTERS = ['오늘 하루도 애썼어요. 그거면 돼요.','누군가는 지금 당신이 잘 지내길 바라고 있어요.','완벽하지 않아도 계속 가는 사람이 결국 도착해요.','힘든 날엔 멀리 보지 말고, 다음 한 걸음만 봐요.','당신이 버틴 시간은 아무도 못 지워요.','쉬는 것도 달리기의 일부예요.','오늘의 걱정은 내일의 파도가 데려가요.','혼자라고 느끼는 날, 이 바다도 혼자 아니에요.','천천히 해도 늦지 않아요. 바다는 기다려요.','괜찮은 척 안 해도 되는 곳이 하나쯤 있어야죠. 여기요.'];
+function openLetter(){ state.letters++; $('letter-text').textContent = LETTERS[Math.random()*LETTERS.length|0]; $('letter').classList.add('is-on'); hold(false); }
+$('letter-close').addEventListener('click', ()=>$('letter').classList.remove('is-on'));
+
+function enterRest(){ state.resting = true; state.restFor = 0; state.held = false; runbtn.classList.remove('is-held'); $('rest').classList.add('is-on'); $('rest-quote').textContent = QUOTES[Math.random()*QUOTES.length|0]; setPose('stand'); }
+function leaveRest(){ state.resting = false; setPose('stand'); $('rest').classList.remove('is-on'); }
+function toggleRest(){ state.resting ? leaveRest() : enterRest(); }
+function setPose(p){ state.pose = p; $('rest-sit').textContent = p==='sit' ? '일어나기' : '앉기'; $('rest-lie').textContent = p==='lie' ? '일어나기' : '눕기'; }
+$('rest-sit').addEventListener('click', ()=>{ setPose(state.pose==='sit' ? 'stand' : 'sit'); if(state.pose==='sit') say('해가 저무는 걸 바라봐요'); });
+$('rest-lie').addEventListener('click', ()=>{ setPose(state.pose==='lie' ? 'stand' : 'lie'); if(state.pose==='lie') say('하늘을 봐요 · 시간이 조금 빨리 흘러요'); });
+$('rest-leave').addEventListener('click', endSession);
+$('sandform').addEventListener('submit', e=>{ e.preventDefault(); const v = $('sandtext').value.trim(); if(!v) return; writeOnSand(v); $('sandtext').value = ''; $('sandtext').blur(); say('파도가 천천히 지워 줄 거예요', 3000); });
+$('again').addEventListener('click', ()=>location.reload());
+
+function endSession(){ state.ended = true; leaveRest(); audioStop(); $('end-dist').textContent = (state.dist/1000).toFixed(2); $('end-time').textContent = fmtTime(state.time); $('end-shell').textContent = state.shells; hud.classList.remove('is-on'); $('end').classList.add('is-on'); }
+function start(){ if(state.started) return; state.started = true; closeSheets(); $('welcome').classList.add('is-hidden'); hud.classList.add('is-on'); hud.setAttribute('aria-hidden','false');
+  say(isTouch ? '버튼을 누르는 동안 달려요 · 손을 떼면 걷다가 멈춰요' : '누르는 동안 달려요 · 손을 떼면 걷다가 멈춰요', 3600);
+  if(!audio.on){ try{ audioStart(); $('sound').setAttribute('aria-pressed','true'); $('sound').setAttribute('aria-label','소리 끄기'); }catch(e){} } }
+$('start').addEventListener('click', start);
+
+/* ---------- 공유 카드 ---------- */
+function roundRect(g, x, y, w, h, r){ g.beginPath(); g.moveTo(x+r, y); g.arcTo(x+w, y, x+w, y+h, r); g.arcTo(x+w, y+h, x, y+h, r); g.arcTo(x, y+h, x, y, r); g.arcTo(x, y, x+w, y, r); g.closePath(); }
+async function shareCard(){
+  renderer.render(scene, camera);
+  const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  g.fillStyle = '#fff3e4'; g.fillRect(0,0,W,H);
+  const sw = canvas.width, sh = canvas.height, ph = Math.round(H*0.66), ratio = Math.max(W/sw, ph/sh), dw = sw*ratio, dh = sh*ratio;
+  g.save(); roundRect(g, 0, 0, W, ph, 0); g.clip(); g.drawImage(canvas, (W-dw)/2, (ph-dh)/2, dw, dh); g.restore();
+  const grad = g.createLinearGradient(0, ph-200, 0, ph); grad.addColorStop(0, 'rgba(255,243,228,0)'); grad.addColorStop(1, 'rgba(255,243,228,1)'); g.fillStyle = grad; g.fillRect(0, ph-200, W, 200);
+  const F = '"Apple SD Gothic Neo","Noto Sans KR",sans-serif';
+  g.fillStyle = '#7a6f80'; g.font = `600 26px ${F}`; g.textAlign = 'left'; g.fillText('B E A C H   R U N', 80, ph+10);
+  g.fillStyle = '#3a3340'; g.font = `700 64px ${F}`; g.fillText('해변, 잠깐 달렸어요', 80, ph+90);
+  const stats = [[(state.dist/1000).toFixed(2),'km'],[fmtTime(state.time),'시간'],[String(state.shells),'조개'], look.buddy==='cat' ? [String(state.catRescues),'고양이 데려옴'] : [String(state.letters),'편지']];
+  stats.forEach(([v,l],i)=>{ const x = 80 + i*240; roundRect(g, x, ph+140, 210, 150, 28); g.fillStyle = '#ffffff'; g.fill(); g.fillStyle = '#3a3340'; g.font = `700 56px ${F}`; g.textAlign = 'center'; g.fillText(v, x+105, ph+215); g.fillStyle = '#7a6f80'; g.font = `500 22px ${F}`; g.fillText(l, x+105, ph+262); });
+  g.textAlign = 'left'; g.fillStyle = '#5a5060'; g.font = `500 32px ${F}`; g.fillText(QUOTES[Math.random()*QUOTES.length|0], 80, ph+360);
+  g.fillStyle = '#9fb6bb'; g.font = `500 26px ${F}`; g.fillText(location.host + location.pathname, 80, H-60);
+  g.beginPath(); for(let x=W-320;x<=W-80;x+=4){ const y = H-74 + Math.sin((x/18))*6; x===W-320 ? g.moveTo(x,y) : g.lineTo(x,y); } g.lineWidth = 6; g.strokeStyle = '#5cc3bd'; g.lineCap = 'round'; g.stroke();
+  const blob = await new Promise(res=>c.toBlob(res, 'image/png'));
+  const file = new File([blob], '해변-오늘의-러닝.png', {type:'image/png'});
+  try{ if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:'해변, 잠깐 달려요', text:'말없이 파도 옆을 달리는 온라인 해변'}); say('카드를 보냈어요'); return; } }catch(e){ if(e && e.name==='AbortError'){ say('공유 창을 닫았어요'); return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  try{ await navigator.clipboard.writeText(location.href.split('?')[0]); say('카드 이미지를 저장하고 링크를 복사했어요', 3600); }catch(e){ say('카드 이미지를 저장했어요', 3000); }
+}
+$('share').addEventListener('click', ()=>{ hold(false); shareCard(); });
+$('end-share').addEventListener('click', shareCard);
+
+/* ---------- 시간대 ---------- */
+const TOD = [
+  {t:0.00, top:0x5a6aa8, mid:0xf3b7c4, bot:0xfde9dc, sun:0xffd6b8, fog:0xe9dfe3, elev:0.08, az:0.95, li:1.1, hemi:0.9, exp:1.0, night:0.25},
+  {t:0.18, top:0x7fb6e8, mid:0xffd7b8, bot:0xfff4e6, sun:0xfff4de, fog:0xe9eef0, elev:0.35, az:0.6, li:2.0, hemi:1.0, exp:1.05, night:0},
+  {t:0.40, top:0x6fb8f0, mid:0xbfe6f5, bot:0xf5fbfb, sun:0xffffff, fog:0xe3f0f3, elev:0.85, az:0.1, li:2.5, hemi:1.1, exp:1.1, night:0},
+  {t:0.54, top:0x72b0ea, mid:0xd6ecf5, bot:0xfaf8f0, sun:0xfffaf0, fog:0xe6edee, elev:0.6, az:-0.3, li:2.3, hemi:1.05, exp:1.08, night:0},
+  {t:0.64, top:0x7aa9dc, mid:0xffd3a8, bot:0xfff0dc, sun:0xfff0c8, fog:0xeadfd2, elev:0.32, az:-0.6, li:2.0, hemi:1.0, exp:1.05, night:0},
+  {t:0.74, top:0x5f6fa6, mid:0xffb08c, bot:0xffe2c8, sun:0xffc890, fog:0xe6d2c6, elev:0.12, az:-0.85, li:1.5, hemi:0.9, exp:1.0, night:0.05},
+  {t:0.82, top:0x2f3a66, mid:0xa77ba0, bot:0xe8b7b0, sun:0xffb08c, fog:0xa99fb2, elev:0.02, az:-1.0, li:0.6, hemi:0.6, exp:0.9, night:0.5},
+  {t:0.90, top:0x121a38, mid:0x33406a, bot:0x5b5f86, sun:0xd8dcff, fog:0x5a5f7c, elev:-0.08, az:-1.1, li:0.25, hemi:0.4, exp:0.85, night:1},
+  {t:1.00, top:0x5a6aa8, mid:0xf3b7c4, bot:0xfde9dc, sun:0xffd6b8, fog:0xe9dfe3, elev:0.08, az:0.95, li:1.1, hemi:0.9, exp:1.0, night:0.25},
+];
+const cA = new THREE.Color(), cB = new THREE.Color();
+function lerpColor(target, a, b, f){ cA.setHex(a); cB.setHex(b); target.copy(cA).lerp(cB, f); }
+let nightMix = 0;
+function applyTod(t){
+  let i = 0; while(i < TOD.length-2 && TOD[i+1].t <= t) i++;
+  const a = TOD[i], b = TOD[i+1], f = THREE.MathUtils.clamp((t-a.t)/(b.t-a.t), 0, 1), L = THREE.MathUtils.lerp;
+  lerpColor(skyUniforms.top.value, a.top, b.top, f); lerpColor(skyUniforms.mid.value, a.mid, b.mid, f); lerpColor(skyUniforms.bottom.value, a.bot, b.bot, f);
+  lerpColor(skyUniforms.sunColor.value, a.sun, b.sun, f); lerpColor(scene.fog.color, a.fog, b.fog, f);
+  const elev = L(a.elev, b.elev, f), az = L(a.az, b.az, f);
+  skyUniforms.sunDir.value.set(Math.sin(az)*Math.cos(elev), Math.sin(elev), -Math.cos(az)*Math.cos(elev)).normalize();
+  sun.intensity = L(a.li, b.li, f); hemi.intensity = L(a.hemi, b.hemi, f); sun.color.copy(skyUniforms.sunColor.value);
+  renderer.toneMappingExposure = L(a.exp, b.exp, f);
+  nightMix = L(a.night, b.night, f); seaUniforms.night.value = nightMix; stars.material.opacity = nightMix*0.95; moon.material.opacity = Math.min(1, nightMix*1.4);
+  skyUniforms.sunSize.value = nightMix > 0.6 ? 0 : 0.0045;
+  lighthouse.userData.lamp.material.emissiveIntensity = nightMix > 0.1 ? 3 : 0.3;
+  const label = t<0.12?'새벽':t<0.3?'아침':t<0.55?'한낮':t<0.66?'오후':t<0.8?'노을':t<0.95?'밤':'새벽';
+  if($('tod').textContent !== label) $('tod').textContent = label;
+}
+
+/* ---------- 메인 루프 ---------- */
+const clock = new THREE.Clock();
+let lastStride = 0;
+const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
+function frame(){
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  const tide = tideZ(t);
+  if(!state.ended){
+    let goal = state.resting ? 0 : state.held ? RUN : 0;
+    if(!state.held && !state.resting && state.speed > WALK) goal = WALK;
+    state.speed = THREE.MathUtils.damp(state.speed, goal, state.held ? 2.4 : 1.4, dt);
+    if(!state.held && state.speed < WALK*0.98 && state.speed > 0.05) state.speed = THREE.MathUtils.damp(state.speed, 0, 0.9, dt);
+    if(state.speed < 0.03) state.speed = 0;
+    if(state.started && !state.resting) state.time += dt;
+    if(keys.left) state.laneTarget = Math.max(LANE_MIN, state.laneTarget - 3.5*dt);
+    if(keys.right) state.laneTarget = Math.min(LANE_MAX, state.laneTarget + 3.5*dt);
+    state.lane = THREE.MathUtils.damp(state.lane, state.laneTarget, 3, dt);
+    const dx = state.speed*dt; state.x += dx; state.dist += dx;
+    runner.position.set(state.x, 0, state.lane);
+
+    // 친구
+    const buddy = buddies[look.buddy];
+    if(buddy){
+      const kind = buddy.userData.kind;
+      let tx = state.resting ? state.x + 0.9 : state.x - 1.1 + Math.sin(t*0.7)*0.3, tz = state.resting ? state.lane + 0.2 : state.lane + 0.9 + Math.sin(t*0.5)*0.4;
+      let moving = true;
+      if(kind==='cat' && state.started){
+        // 고양이 미션: 가끔 딴 길로 샌다 → 가까이 가면 다시 따라온다
+        if(cat.mode==='follow'){
+          if(state.speed > 0.1) cat.timer -= dt;
+          if(cat.timer <= 0){ cat.mode = 'wander'; cat.target = Math.random() < 0.5 ? -1.3 : 6.5 + Math.random()*2; cat.sitTimer = 0; cat.warned = false; meow(); say(CAT_WANDER[Math.random()*CAT_WANDER.length|0], 3200, 'is-cat'); }
+        } else {
+          tx = state.x - 0.6; tz = cat.target;
+          const near = Math.abs(buddyState.z - cat.target) < 0.35;
+          if(near){ moving = false; cat.sitTimer += dt; if(cat.sitTimer > 10 && !cat.warned){ cat.warned = true; meow(); say('고양이가 앉아서 기다려요 · 물가/모래 쪽으로 가까이 가 보세요', 3400, 'is-cat'); } }
+          const d = Math.hypot(buddyState.x - state.x, buddyState.z - state.lane);
+          if(d < 1.3){ cat.mode = 'follow'; cat.timer = 14 + Math.random()*16; state.catRescues++; $('st-cat').textContent = state.catRescues; chime(); say(CAT_BACK[Math.random()*CAT_BACK.length|0], 2600, 'is-cat'); }
+        }
+      }
+      buddyState.x = THREE.MathUtils.damp(buddyState.x, tx, 2.5, dt); buddyState.z = THREE.MathUtils.damp(buddyState.z, tz, kind==='cat' && cat.mode==='wander' ? 1.2 : 2.5, dt);
+      const dv = Math.hypot(tx - buddyState.x, tz - buddyState.z) + (moving ? state.speed : 0); buddyState.phase += dv*2.2*dt*Math.PI;
+      if(kind==='gull'){ const ty = state.resting ? 0.1 : 1.6 + Math.sin(t*1.3)*0.3; buddyState.y = THREE.MathUtils.damp(buddyState.y, ty, 2, dt); buddy.position.set(buddyState.x, buddyState.y, buddyState.z); buddy.rotation.y = -Math.PI/2; const flap = state.resting ? 0 : Math.sin(t*9)*0.7; buddy.userData.l.rotation.x = flap; buddy.userData.r.rotation.x = -flap; }
+      else {
+        const sitting = state.resting || (kind==='cat' && cat.mode==='wander' && !moving);
+        buddy.position.set(buddyState.x, sitting ? 0 : Math.abs(Math.sin(buddyState.phase))*0.08*Math.min(1, state.speed/RUN+0.2), buddyState.z);
+        const faceZ = kind==='cat' && cat.mode==='wander' ? (cat.target < 0 ? Math.PI/2 : -Math.PI/2) : Math.PI/2;
+        buddy.rotation.y = THREE.MathUtils.damp(buddy.rotation.y, sitting ? faceZ : 0, 4, dt);
+        buddy.userData.legs.forEach((l,i)=>{ l.rotation.z = sitting ? 0 : Math.sin(buddyState.phase + (i%2?Math.PI:0))*0.6*Math.min(1, Math.max(state.speed, dv)/WALK); });
+        if(kind==='dog') buddy.userData.tail.rotation.x = Math.sin(t*9)*0.5; else buddy.userData.tail.rotation.x = Math.sin(t*2.5)*0.5;
+      }
+    }
+
+    // 보폭
+    const strideLen = state.speed > WALK+0.3 ? 1.35 : 0.8;
+    if(state.speed > 0.05) state.stridePhase += (state.speed/strideLen)*Math.PI*dt;
+    else state.stridePhase = THREE.MathUtils.damp(state.stridePhase, Math.round(state.stridePhase/Math.PI)*Math.PI, 6, dt);
+    const ph = state.stridePhase, amp = THREE.MathUtils.clamp(state.speed/RUN, 0, 1);
+    const legA = Math.sin(ph)*(0.35 + 0.55*amp), armA = -Math.sin(ph)*(0.3 + 0.5*amp);
+    if(!(state.resting && state.pose!=='stand')){ legL.rotation.z = -legA; legR.rotation.z = legA; armL.rotation.z = -armA; armR.rotation.z = armA; armL.rotation.x = -0.25; armR.rotation.x = 0.25; }
+    runner.position.y = Math.abs(Math.sin(ph))*(0.03 + 0.09*amp);
+    runner.rotation.z = -0.06*amp; headGroup.rotation.z = Math.sin(ph*0.5)*0.06*amp; head.rotation.z = headGroup.rotation.z;
+    const wetness = THREE.MathUtils.clamp(1 - (state.lane - LANE_MIN)/2.4, 0, 1);
+    const stepNow = Math.floor(ph/Math.PI);
+    if(stepNow !== lastStride && state.speed > 0.05){ lastStride = stepNow; state.lastStepSide *= -1; stamp(state.x - 0.1, state.lane, state.lastStepSide); step(wetness, state.speed > WALK+0.3); }
+
+    if(state.resting){
+      state.restFor += dt; $('rest-sec').textContent = Math.floor(state.restFor);
+      runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 3, dt);
+      const D = (o, k, v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 4, dt); };
+      if(state.pose==='sit'){ D(legL,'z',-1.5); D(legR,'z',-1.5); D(armL,'z',-0.2); D(armR,'z',0.2); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.3, 4, dt); }
+      else if(state.pose==='lie'){ runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, -Math.PI/2, 3, dt); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.55, 3, dt); D(legL,'z',0); D(legR,'z',0); D(armL,'z',-2.6); D(armR,'z',2.6); }
+    } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, 0, 3, dt);
+    if(!state.resting || state.pose!=='lie') runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, 0, 3, dt);
+
+    if(state.started && state.speed === 0 && !state.resting){ state.stillFor += dt; if(state.stillFor > 6){ enterRest(); say('잠깐 쉬어가요 · 바다를 바라봐요'); } } else state.stillFor = 0;
+
+    for(const p of props){
+      if((p.kind==='shell'||p.kind==='bottle') && !p.taken){
+        const d = Math.hypot(p.obj.position.x - state.x, p.obj.position.z - state.lane);
+        if(d < (p.kind==='bottle' ? 0.8 : 0.55)){ p.taken = true; chime(); if(p.kind==='shell'){ state.shells++; $('st-shell').textContent = state.shells; } else openLetter(); }
+      } else if(p.taken){ p.obj.position.y += 2.2*dt; p.obj.scale.multiplyScalar(1 - 3*dt); if(p.obj.scale.x < 0.02) p.obj.visible = false; }
+      if(p.kind==='palm') p.obj.userData.crown.rotation.z = Math.sin(t*0.8 + p.obj.position.x)*0.04;
+    }
+    populateTo(state.x + 90);
+
+    for(const f of foots){ if(!f.visible) continue; const washed = f.position.z < tide + 0.9; f.material.opacity -= dt*(washed ? 0.5 : 0.012); if(f.material.opacity <= 0) f.visible = false; }
+    for(let i=sandNotes.length-1;i>=0;i--){ const n = sandNotes[i]; const washed = n.position.z < tide + 1.2; n.material.opacity -= dt*(washed ? 0.25 : 0.018); if(n.material.opacity <= 0 || n.position.x < state.x - 40){ scene.remove(n); n.material.map.dispose(); n.geometry.dispose(); sandNotes.splice(i,1); } }
+
+    if(state.todMode==='auto') state.todT = (state.todT + dt/(state.resting && state.pose!=='stand' ? 110 : 480)) % 1;
+    applyTod(state.todT);
+
+    if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + 9 + Math.random()*18; } }
+    $('st-dist').textContent = (state.dist/1000).toFixed(2); $('st-time').textContent = fmtTime(state.time);
+    breathTick(t);
+    if(state.dist > 0 && Math.floor(state.dist/500) !== Math.floor((state.dist-dx)/500)) say(['반 바퀴 더 왔어요','잘 가고 있어요','여기까지 온 것도 충분해요','숨 한 번 깊게','파도가 발자국을 지워 줘요'][Math.random()*5|0]);
+  }
+
+  const shake = state.reduce ? 0 : 1;
+  if(state.resting){
+    if(state.pose==='lie'){ camPos.set(state.x + 1.2, 0.9, state.lane + 2.4); camLook.set(state.x - 1.5, 6, state.lane - 14); }
+    else { camPos.set(state.x + 2.6, 1.5 + (state.pose==='sit'?0.1:0.4), state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); }
+  } else { camPos.set(state.x - 6.2, 2.9 + Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN), state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); }
+  camera.position.lerp(camPos, 1 - Math.exp(-dt*3));
+  const lookAt = camera.userData.look || (camera.userData.look = camLook.clone()); lookAt.lerp(camLook, 1 - Math.exp(-dt*3)); camera.lookAt(lookAt);
+
+  sky.position.set(camera.position.x, 0, camera.position.z); stars.position.copy(sky.position);
+  moon.position.copy(skyUniforms.sunDir.value).multiplyScalar(-1).setY(Math.max(0.25, -skyUniforms.sunDir.value.y + 0.4)).normalize().multiplyScalar(380).add(sky.position);
+  sea.position.x = state.x; seaUniforms.camX.value = state.x; seaUniforms.time.value = t;
+  sand.position.x = state.x; wet.position.x = state.x; sandMat.map.offset.x = state.x/520*60;
+  sun.position.copy(skyUniforms.sunDir.value).multiplyScalar(60).add(new THREE.Vector3(state.x, 0, state.lane)); sun.target.position.set(state.x, 0, state.lane);
+  if(lighthouse.position.x < state.x - 60) lighthouse.position.x += 420;
+  for(const g of gulls){ const u = g.userData, a = t*u.spd + u.off; g.position.set(state.x + 24 + Math.cos(a)*u.rad*2.2, u.h + Math.sin(a*2.3)*1.2, -34 + Math.sin(a)*u.rad); g.rotation.y = -a + Math.PI/2; const flap = Math.sin(t*7+u.off)*0.6; u.l.rotation.x = flap; u.r.rotation.x = -flap; g.visible = nightMix < 0.7; }
+  for(const c of clouds){ const u = c.userData; c.position.set(state.x + ((u.ox + t*u.v*2) % 400 + 400) % 400 - 200, u.y, u.z); }
+  cloudMat.opacity = 0.6 - nightMix*0.45;
+  wetMat.opacity = 0.75 + 0.2*Math.sin(t*0.55);
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+
+/* ---------- 부팅 ---------- */
+populateTo(90); applyTod(state.todT);
+try{ renderer.compile(scene, camera); frame(); requestAnimationFrame(()=>{ $('boot').classList.add('is-hidden'); $('welcome').classList.remove('is-hidden'); }); }
+catch(e){ bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); console.error(e); }
+addEventListener('error', ()=>{ if(!state.started) bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); });
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden){ hold(false); keys.left = keys.right = false; } });
+</script>
+</body>
+</html>
