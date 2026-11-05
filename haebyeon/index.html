@@ -274,7 +274,7 @@
     <div class="row"><div><strong>파도 소리</strong><small>브라우저가 직접 만드는 소리예요 · 파일 없음</small></div><input id="vol-sea" type="range" min="0" max="100" value="70" aria-label="파도 소리 크기"></div>
     <div class="row"><div><strong>갈매기 · 바람</strong><small>가끔 멀리서 들려요</small></div><input id="vol-bird" type="range" min="0" max="100" value="50" aria-label="갈매기 소리 크기"></div>
     <div class="row"><div><strong>발소리</strong><small>젖은 모래와 마른 모래가 달라요</small></div><input id="vol-step" type="range" min="0" max="100" value="55" aria-label="발소리 크기"></div>
-    <div class="row"><div><strong>시간</strong><small>해가 천천히 저물고 별이 떠요</small></div>
+    <div class="row"><div><strong>시간</strong><small>하루 20분 · 해가 저물고 별이 뜨고 다시 떠요</small></div>
       <div class="seg" role="group" aria-label="시간대"><button type="button" data-tod="auto" aria-pressed="true">흐름</button><button type="button" data-tod="dawn" aria-pressed="false">새벽</button><button type="button" data-tod="noon" aria-pressed="false">한낮</button><button type="button" data-tod="dusk" aria-pressed="false">노을</button><button type="button" data-tod="night" aria-pressed="false">밤</button></div></div>
     <div class="row"><div><strong>함께 달리기</strong><small id="together-note">같은 해변의 다른 사람이 말없이 보여요 · 이름·채팅 없음</small></div><button id="together" class="switch" type="button" role="switch" aria-checked="true" aria-label="함께 달리기"></button></div>
     <div class="row"><div><strong>지인과 달리기</strong><small id="invite-note">초대 링크를 받은 사람끼리만 모이는 우리 해변 · 여기선 닉네임이 보여요</small></div><button id="invite" class="btn ghost small" type="button">초대 링크 복사</button></div>
@@ -1147,7 +1147,7 @@ function frame(){
     for(const f of foots){ if(!f.visible) continue; const washed = f.position.z < tide + 0.9; f.material.opacity -= dt*(washed ? 0.5 : 0.012); if(f.material.opacity <= 0) f.visible = false; }
     for(let i=sandNotes.length-1;i>=0;i--){ const n = sandNotes[i]; const washed = n.position.z < tide + 1.2; n.material.opacity -= dt*(washed ? 0.25 : 0.018); if(n.material.opacity <= 0 || n.position.x < state.x - 40){ scene.remove(n); n.material.map.dispose(); n.geometry.dispose(); sandNotes.splice(i,1); } }
 
-    if(state.todMode==='auto') state.todT = (state.todT + dt/(state.resting && state.pose!=='stand' ? 110 : 480)) % 1;
+    if(state.todMode==='auto') state.todT = (state.todT + dt/(state.resting && state.pose!=='stand' ? 300 : 1200)) % 1; // 하루 20분, 앉거나 누우면 4배
     applyTod(state.todT);
 
     if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + 9 + Math.random()*18; } }
