@@ -304,7 +304,7 @@ const SB_URL = 'https://dxhmprqfgigljgbstqrg.supabase.co', SB_KEY = 'sb_publisha
 const ROOM_CAP = 30, LOOP_LEN = 1000; // 방당 30명 · 해변은 1 km 로 이어져 다시 만난다
 
 /* ---------- 상수·상태 ---------- */
-const SHORE_Z = 0, LANE_MIN = -1.6, LANE_MAX = 8.5, WALK = 1.6, RUN = 4.6;
+const SHORE_Z = 0, LANE_MIN = -2.6, LANE_MAX = 8.5, WALK = 1.6, RUN = 4.6;
 const $ = (id) => document.getElementById(id);
 const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isTouch = matchMedia('(pointer: coarse)').matches;
@@ -459,6 +459,18 @@ const wet = new THREE.Mesh(new THREE.PlaneGeometry(520, 5).rotateX(-Math.PI/2), 
 const footGeo = new THREE.CircleGeometry(0.15, 10); footGeo.rotateX(-Math.PI/2); footGeo.scale(0.6, 1, 1);
 const FOOT_N = 72, foots = [];
 for(let i=0;i<FOOT_N;i++){ const m = new THREE.Mesh(footGeo, new THREE.MeshBasicMaterial({color:0xb79f78, transparent:true, opacity:0, depthWrite:false})); m.visible = false; m.renderOrder = 1; scene.add(m); foots.push(m); }
+// 물보라
+const splashGeo = new THREE.SphereGeometry(0.05, 6, 5);
+const splashMat = new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0.9, depthWrite:false});
+const SPL_N = 48, spl = [];
+for(let i=0;i<SPL_N;i++){ const m = new THREE.Mesh(splashGeo, splashMat.clone()); m.visible = false; scene.add(m); spl.push({m, vx:0, vy:0, vz:0, life:0}); }
+let splIdx = 0;
+function splash(x, z, strength){
+  const n = Math.round(4 + 8*strength);
+  for(let i=0;i<n;i++){ const p = spl[splIdx]; splIdx = (splIdx+1)%SPL_N; p.m.visible = true; p.m.position.set(x + (Math.random()-0.5)*0.3, 0.05, z + (Math.random()-0.5)*0.3);
+    p.vx = (Math.random()-0.5)*1.2; p.vz = (Math.random()-0.5)*1.4; p.vy = 1.2 + Math.random()*1.6*strength; p.life = 0.45 + Math.random()*0.3; p.m.material.opacity = 0.9; p.m.scale.setScalar(0.6 + strength*0.8); }
+}
+function updateSplash(dt){ for(const p of spl){ if(!p.m.visible) continue; p.life -= dt; p.vy -= 7*dt; p.m.position.x += p.vx*dt; p.m.position.y += p.vy*dt; p.m.position.z += p.vz*dt; p.m.material.opacity = Math.max(0, p.life*2); if(p.life <= 0 || p.m.position.y < 0) p.m.visible = false; } }
 let footIdx = 0;
 function stamp(x, z, side){ const m = foots[footIdx]; footIdx = (footIdx+1)%FOOT_N; m.position.set(x, 0.02, z + side*0.17); m.rotation.y = side*0.12; m.material.opacity = 0.45; m.visible = true; }
 
@@ -572,13 +584,30 @@ function makeCat(){
   g.userData = {legs, tail, kind:'cat'}; return g;
 }
 const gullMat = new THREE.MeshStandardMaterial({color:0xf7f7f2, emissive:0xd0d0ca, emissiveIntensity:0.7, roughness:1, side:THREE.DoubleSide});
+const gullDark = new THREE.MeshStandardMaterial({color:0x4a4a50, roughness:1});
+const gullGrey = new THREE.MeshStandardMaterial({color:0xc9ccd2, roughness:1, side:THREE.DoubleSide});
 function makeGull(scale=1){
   const g = new THREE.Group();
-  const l = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.2).translate(-0.27,0,0), gullMat); const r = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.2).translate(0.27,0,0), gullMat);
-  l.rotation.x = 0.35; r.rotation.x = -0.35;
-  const b = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), gullMat); b.scale.set(1.7,0.9,1);
-  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.09, 6), accentM); beak.rotation.z = -Math.PI/2; beak.position.x = 0.15; b.add(beak);
-  g.add(l, r, b); g.scale.setScalar(scale); g.userData = {l, r, kind:'gull'}; return g;
+  // 몸통: 앞뒤로 긴 타원, 흰 배
+  const b = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 8), gullMat); b.scale.set(2.2, 0.9, 1); g.add(b);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 9, 7), gullMat); head.position.set(0.27, 0.05, 0); g.add(head);
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.028, 0.12, 6), accentM); beak.rotation.z = -Math.PI/2; beak.position.set(0.37, 0.04, 0); g.add(beak);
+  const tailGeo = new THREE.PlaneGeometry(0.2, 0.16); tailGeo.rotateX(-Math.PI/2); const tail = new THREE.Mesh(tailGeo, gullGrey); tail.position.set(-0.3, 0.03, 0); g.add(tail);
+  // 날개: 안쪽(회색) + 바깥쪽(끝이 검은색), 가운데서 꺾여 M자
+  function wing(sgn){
+    // 어깨에서 밖으로(z 방향) 뻗는 안쪽 날개, 팔꿈치에서 한 번 더 꺾여 뒤로 쓸리는 바깥 날개. 평면은 눕혀서(xz) 위에서 보면 날개 모양
+    const root = new THREE.Group(); root.position.set(0.03, 0.05, sgn*0.08);
+    const innerGeo = new THREE.PlaneGeometry(0.40, 0.30); innerGeo.rotateX(-Math.PI/2); innerGeo.translate(-0.02, 0, sgn*0.15);
+    root.add(new THREE.Mesh(innerGeo, gullGrey));
+    const elbow = new THREE.Group(); elbow.position.set(0, 0, sgn*0.30); root.add(elbow);
+    const outerGeo = new THREE.PlaneGeometry(0.30, 0.26); outerGeo.rotateX(-Math.PI/2); outerGeo.translate(-0.08, 0, sgn*0.14);
+    elbow.add(new THREE.Mesh(outerGeo, gullGrey));
+    const tipGeo = new THREE.PlaneGeometry(0.18, 0.16); tipGeo.rotateX(-Math.PI/2); tipGeo.translate(-0.16, 0, sgn*0.34);
+    elbow.add(new THREE.Mesh(tipGeo, gullDark));
+    root.userData.elbow = elbow; return root;
+  }
+  const l = wing(-1), r = wing(1);
+  g.add(l, r); g.scale.setScalar(scale); g.userData = {l, r, kind:'gull'}; return g;
 }
 const buddies = {maltese:makeDog(DOGS.maltese), golden:makeDog(DOGS.golden), shiba:makeDog(DOGS.shiba), poodle:makeDog(DOGS.poodle), cat:makeCat(), gull:makeGull(1.1)};
 Object.values(buddies).forEach(b=>{ b.visible = false; scene.add(b); });
@@ -802,7 +831,7 @@ const lighthouse = (()=>{
 lighthouse.position.set(140, 0, -24); scene.add(lighthouse);
 
 const gulls = [];
-for(let i=0;i<7;i++){ const g = makeGull(2.2); g.userData.off = Math.random()*100; g.userData.h = 14+Math.random()*10; g.userData.rad = 10+Math.random()*12; g.userData.spd = 0.25+Math.random()*0.25; scene.add(g); gulls.push(g); }
+for(let i=0;i<7;i++){ const g = makeGull(2.6); g.userData.off = Math.random()*100; g.userData.h = 14+Math.random()*10; g.userData.rad = 10+Math.random()*12; g.userData.spd = 0.25+Math.random()*0.25; scene.add(g); gulls.push(g); }
 
 const cloudMat = new THREE.SpriteMaterial({color:0xffffff, transparent:true, opacity:0.6, depthWrite:false});
 { const c = document.createElement('canvas'); c.width = 256; c.height = 128; const g = c.getContext('2d');
@@ -874,7 +903,7 @@ function step(wetness, running){
   const s = ctx.createBufferSource(); s.buffer = noiseBuffer(ctx, 0.12, false); const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = wetness>0.5 ? 900 : 2600;
   const g = ctx.createGain(); const v = (running?0.22:0.12) * (wetness>0.5 ? 0.9 : 1); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t + (wetness>0.5?0.14:0.08));
   s.connect(f); f.connect(g); g.connect(audio.stepGain); s.start(t); s.stop(t+0.15);
-  if(wetness>0.6){ const s2 = ctx.createBufferSource(); s2.buffer = noiseBuffer(ctx, 0.2, false); const f2 = ctx.createBiquadFilter(); f2.type = 'highpass'; f2.frequency.value = 3000; const g2 = ctx.createGain(); g2.gain.setValueAtTime(0.05, t+0.02); g2.gain.exponentialRampToValueAtTime(0.001, t+0.2); s2.connect(f2); f2.connect(g2); g2.connect(audio.stepGain); s2.start(t+0.02); s2.stop(t+0.22); }
+  if(wetness>=0.6){ const s2 = ctx.createBufferSource(); s2.buffer = noiseBuffer(ctx, 0.2, false); const f2 = ctx.createBiquadFilter(); f2.type = 'highpass'; f2.frequency.value = 3000; const g2 = ctx.createGain(); g2.gain.setValueAtTime(wetness>=1 ? 0.12 : 0.05, t+0.02); g2.gain.exponentialRampToValueAtTime(0.001, t+0.2); s2.connect(f2); f2.connect(g2); g2.connect(audio.stepGain); s2.start(t+0.02); s2.stop(t+0.22); }
 }
 function chime(){
   const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime, base = [523.25, 659.25, 783.99, 1046.5][Math.random()*4|0];
@@ -1072,7 +1101,7 @@ function frame(){
       buddyState.x = THREE.MathUtils.damp(buddyState.x, tx, 2.5, dt); buddyState.z = THREE.MathUtils.damp(buddyState.z, tz, kind==='cat' && cat.mode==='wander' ? 1.2 : 2.5, dt);
       const bvel = Math.hypot(buddyState.x - buddyState.px, buddyState.z - buddyState.pz)/Math.max(dt, 1e-4); buddyState.px = buddyState.x; buddyState.pz = buddyState.z;
       const dv = bvel; buddyState.phase += (bvel/(0.7 + 0.5*THREE.MathUtils.clamp(bvel/RUN,0,1)))*Math.PI*2*dt;
-      if(kind==='gull'){ const ty = state.resting ? 0.1 : 1.6 + Math.sin(t*1.3)*0.3; buddyState.y = THREE.MathUtils.damp(buddyState.y, ty, 2, dt); buddy.position.set(buddyState.x, buddyState.y, buddyState.z); buddy.rotation.y = -Math.PI/2; const flap = state.resting ? 0 : Math.sin(t*9)*0.7; buddy.userData.l.rotation.x = 0.35 + flap; buddy.userData.r.rotation.x = -0.35 - flap; }
+      if(kind==='gull'){ tx += 2.2; tz -= 1.4; const ty = state.resting ? 0.1 : 2.3 + Math.sin(t*1.3)*0.3; buddyState.y = THREE.MathUtils.damp(buddyState.y, ty, 2, dt); buddy.position.set(buddyState.x, buddyState.y, buddyState.z); buddy.rotation.y = -Math.PI/2; const fl = state.resting ? 0 : Math.sin(t*7); buddy.userData.l.rotation.x = 0.25 + fl*0.55; buddy.userData.r.rotation.x = -0.25 - fl*0.55; buddy.userData.l.userData.elbow.rotation.x = -0.35 - (state.resting?0:Math.sin(t*7-0.9))*0.5; buddy.userData.r.userData.elbow.rotation.x = 0.35 + (state.resting?0:Math.sin(t*7-0.9))*0.5; }
       else {
         const sitting = state.resting || (kind==='cat' && cat.mode==='wander' && !moving);
         const run = sitting ? 0 : THREE.MathUtils.clamp(bvel/RUN, 0, 1), gait = sitting ? 0 : THREE.MathUtils.clamp(bvel/WALK, 0, 1);
@@ -1118,9 +1147,14 @@ function frame(){
     if(!(state.resting && state.pose!=='stand')){ legL.rotation.z = -legA; legR.rotation.z = legA; armL.rotation.z = -armA; armR.rotation.z = armA; armL.rotation.x = -0.25; armR.rotation.x = 0.25; }
     runner.position.y = Math.abs(Math.sin(ph))*(0.03 + 0.09*amp);
     runner.rotation.z = -0.06*amp; headGroup.rotation.z = Math.sin(ph*0.5)*0.06*amp; head.rotation.z = headGroup.rotation.z;
-    const wetness = THREE.MathUtils.clamp(1 - (state.lane - LANE_MIN)/2.4, 0, 1);
+    const wetness = THREE.MathUtils.clamp(1 - (state.lane - (tide + 0.6))/2.0, 0, 1);
     const stepNow = Math.floor(ph/Math.PI);
-    if(stepNow !== lastStride && state.speed > 0.05){ lastStride = stepNow; state.lastStepSide *= -1; stamp(state.x - 0.1, state.lane, state.lastStepSide); step(wetness, state.speed > WALK+0.3); }
+    const inWater = state.lane < tide + 0.6; // 밀려온 파도선보다 바다 쪽
+    const depth = THREE.MathUtils.clamp((tide + 0.6 - state.lane)/2.2, 0, 1);
+    if(stepNow !== lastStride && state.speed > 0.05){ lastStride = stepNow; state.lastStepSide *= -1; if(inWater) splash(state.x, state.lane + state.lastStepSide*0.15, 0.4 + depth); else stamp(state.x - 0.1, state.lane, state.lastStepSide); step(inWater ? 1 : wetness, state.speed > WALK+0.3); }
+    if(inWater && depth > 0.7 && !state.resting){ if(!state.deepWarned){ state.deepWarned = true; say('여기부턴 파도가 깊어요 · 모래 쪽으로', 2800, 'is-cat'); } state.laneTarget = Math.max(state.laneTarget, LANE_MIN + 0.9); }
+    else if(depth < 0.4) state.deepWarned = false;
+    runner.position.y -= depth*0.18; // 물에 발이 잠김
 
     const lateral = (state.lane - state.prevLane)/Math.max(dt, 1e-4); state.prevLane = state.lane;
     if(state.resting){
@@ -1150,7 +1184,7 @@ function frame(){
       if(p.kind==='palm') p.obj.userData.crown.rotation.z = Math.sin(t*0.8 + p.obj.position.x)*0.04;
     }
     populateTo(state.x + 90);
-    updateOthers(dt, t); netTick();
+    updateOthers(dt, t); netTick(); updateSplash(dt);
 
     for(const f of foots){ if(!f.visible) continue; const washed = f.position.z < tide + 0.9; f.material.opacity -= dt*(washed ? 0.5 : 0.012); if(f.material.opacity <= 0) f.visible = false; }
     for(let i=sandNotes.length-1;i>=0;i--){ const n = sandNotes[i]; const washed = n.position.z < tide + 1.2; n.material.opacity -= dt*(washed ? 0.25 : 0.018); if(n.material.opacity <= 0 || n.position.x < state.x - 40){ scene.remove(n); n.material.map.dispose(); n.geometry.dispose(); sandNotes.splice(i,1); } }
@@ -1180,7 +1214,7 @@ function frame(){
   sun.position.copy(skyUniforms.sunDir.value).multiplyScalar(60).add(new THREE.Vector3(state.x, 0, state.lane)); sun.target.position.set(state.x, 0, state.lane);
   if(lighthouse.position.x < state.x - 60) lighthouse.position.x += 420;
   lighthouse.userData.beams.rotation.y = t*0.35;
-  for(const g of gulls){ const u = g.userData, a = t*u.spd + u.off; g.position.set(state.x + 30 + Math.cos(a)*u.rad*2.6, u.h + Math.sin(a*2.3)*1.2, -58 + Math.sin(a)*u.rad); g.rotation.y = -a + Math.PI/2; const flap = Math.sin(t*7+u.off)*0.55; u.l.rotation.x = 0.35 + flap; u.r.rotation.x = -0.35 - flap; g.visible = nightMix < 0.3; }
+  for(const g of gulls){ const u = g.userData, a = t*u.spd + u.off; g.position.set(state.x + 30 + Math.cos(a)*u.rad*2.6, u.h + Math.sin(a*2.3)*1.2, -40 + Math.sin(a)*u.rad); g.rotation.y = Math.atan2(-Math.cos(a)*u.rad, -Math.sin(a)*u.rad*2.6); const fl = Math.sin(t*5+u.off); u.l.rotation.x = 0.25 + fl*0.5; u.r.rotation.x = -0.25 - fl*0.5; u.l.userData.elbow.rotation.x = -0.35 - Math.sin(t*5+u.off-0.9)*0.5; u.r.userData.elbow.rotation.x = 0.35 + Math.sin(t*5+u.off-0.9)*0.5; g.rotation.z = Math.sin(a*1.3)*0.15; g.visible = nightMix < 0.3; }
   for(const c of clouds){ const u = c.userData; c.position.set(state.x + ((u.ox + t*u.v*2) % 400 + 400) % 400 - 200, u.y, u.z); }
   cloudMat.opacity = 0.6 - nightMix*0.45;
   wetMat.opacity = 0.7 + 0.2*Math.sin(t*0.55); wet.position.z = SHORE_Z + 3 + tide*0.3;
