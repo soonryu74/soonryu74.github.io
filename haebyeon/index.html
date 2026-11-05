@@ -306,7 +306,7 @@ if(isTouch) document.body.classList.add('is-touch');
 
 const state = {
   started:false, held:false, autoRun:false, speed:0, laneTarget:2.2, lane:2.2,
-  x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, stridePhase:0, stillFor:0, resting:false, pose:'stand', restFor:0,
+  x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, stridePhase:0, stillFor:0, resting:false, pose:'stand', pendingPose:null, prevLane:2.2, restFor:0,
   todMode:'auto', todT:0.5, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
 };
 const LOOK_DEFAULT = {hair:'#4a3b38', shirt:'#fff6e9', hat:'band', accent:'#ff9b8a', buddy:'maltese'};
@@ -554,7 +554,7 @@ function makeGull(scale=1){
 }
 const buddies = {maltese:makeDog(DOGS.maltese), golden:makeDog(DOGS.golden), shiba:makeDog(DOGS.shiba), poodle:makeDog(DOGS.poodle), cat:makeCat(), gull:makeGull(1.1)};
 Object.values(buddies).forEach(b=>{ b.visible = false; scene.add(b); });
-const buddyState = {x:-1.2, z:0.9, y:0, phase:0};
+const buddyState = {x:-1.2, z:0.9, y:0, phase:0, px:-1.2, pz:0.9};
 // 고양이 미션 상태
 const cat = { mode:'follow', target:0, timer:8 + Math.random()*8, sitTimer:0, warned:false };
 const CAT_WANDER = ['고양이가 풀숲 쪽으로 샜어요 · 데리러 가요','고양이가 물가에 관심이 생겼어요','고양이가 유목 냄새를 맡으러 갔어요','고양이가 조개를 구경하러 갔어요'];
@@ -780,11 +780,18 @@ function openLetter(){ state.letters++; $('letter-text').textContent = LETTERS[M
 $('letter-close').addEventListener('click', ()=>$('letter').classList.remove('is-on'));
 
 function enterRest(){ document.body.classList.add('is-resting'); state.resting = true; state.restFor = 0; state.held = false; state.autoRun = false; syncRunBtn(); $('rest').classList.add('is-on'); $('rest-quote').textContent = QUOTES[Math.random()*QUOTES.length|0]; setPose('stand'); }
-function leaveRest(){ document.body.classList.remove('is-resting'); state.resting = false; setPose('stand'); $('rest').classList.remove('is-on'); }
+function leaveRest(){ document.body.classList.remove('is-resting'); state.resting = false; state.pendingPose = null; setPose('stand'); $('rest').classList.remove('is-on'); }
 function toggleRest(){ state.resting ? leaveRest() : enterRest(); }
-function setPose(p){ state.pose = p; $('rest-sit').textContent = p==='sit' ? '일어나기' : '앉기'; $('rest-lie').textContent = p==='lie' ? '일어나기' : '눕기'; }
-$('rest-sit').addEventListener('click', ()=>{ setPose(state.pose==='sit' ? 'stand' : 'sit'); if(state.pose==='sit') say('해가 저무는 걸 바라봐요'); });
-$('rest-lie').addEventListener('click', ()=>{ setPose(state.pose==='lie' ? 'stand' : 'lie'); if(state.pose==='lie') say('하늘을 봐요 · 시간이 조금 빨리 흘러요'); });
+const DRY_LANE = 5.4;
+function setPose(p){
+  state.pendingPose = null;
+  if((p==='sit' || p==='lie') && state.lane < DRY_LANE - 0.6){ state.laneTarget = DRY_LANE; state.pendingPose = p; state.pose = 'walk'; say('물에서 조금 떨어진 모래로 올라가요', 2400); }
+  else state.pose = p;
+  const shown = state.pendingPose || state.pose;
+  $('rest-sit').textContent = shown==='sit' ? '일어나기' : '앉기'; $('rest-lie').textContent = shown==='lie' ? '일어나기' : '눕기';
+}
+$('rest-sit').addEventListener('click', ()=>{ const cur = state.pendingPose || state.pose; setPose(cur==='sit' ? 'stand' : 'sit'); if(state.pose==='sit') say('해가 저무는 걸 바라봐요'); });
+$('rest-lie').addEventListener('click', ()=>{ const cur = state.pendingPose || state.pose; setPose(cur==='lie' ? 'stand' : 'lie'); if(state.pose==='lie') say('하늘을 봐요 · 시간이 조금 빨리 흘러요'); });
 $('rest-leave').addEventListener('click', endSession);
 $('rest-run').addEventListener('click', ()=>{ leaveRest(); setAutoRun(true); say('계속 달려요 · 멈추려면 버튼을 다시 눌러요', 2600); });
 $('sandform').addEventListener('submit', e=>{ e.preventDefault(); const v = $('sandtext').value.trim(); if(!v) return; writeOnSand(v); $('sandtext').value = ''; $('sandtext').blur(); say('파도가 천천히 지워 줄 거예요', 3000); });
@@ -878,7 +885,7 @@ function frame(){
     const buddy = buddies[look.buddy];
     if(buddy){
       const kind = buddy.userData.kind;
-      let tx = state.resting ? state.x + 0.9 : state.x - 1.1 + Math.sin(t*0.7)*0.3, tz = state.resting ? state.lane + 0.2 : state.lane + 0.9 + Math.sin(t*0.5)*0.4;
+      let tx = state.resting ? state.x + 0.9 : state.x - 1.1 + Math.sin(t*0.35)*0.2, tz = state.resting ? state.lane + 0.2 : state.lane + 0.9 + Math.sin(t*0.25)*0.25;
       let moving = true;
       if(kind==='cat' && state.started){
         // 고양이 미션: 가끔 딴 길로 샌다 → 가까이 가면 다시 따라온다
@@ -894,14 +901,19 @@ function frame(){
         }
       }
       buddyState.x = THREE.MathUtils.damp(buddyState.x, tx, 2.5, dt); buddyState.z = THREE.MathUtils.damp(buddyState.z, tz, kind==='cat' && cat.mode==='wander' ? 1.2 : 2.5, dt);
-      const dv = Math.hypot(tx - buddyState.x, tz - buddyState.z) + (moving ? state.speed : 0); buddyState.phase += dv*2.2*dt*Math.PI;
+      const bvel = Math.hypot(buddyState.x - buddyState.px, buddyState.z - buddyState.pz)/Math.max(dt, 1e-4); buddyState.px = buddyState.x; buddyState.pz = buddyState.z;
+      const dv = bvel; buddyState.phase += (bvel/0.9)*Math.PI*2*dt;
       if(kind==='gull'){ const ty = state.resting ? 0.1 : 1.6 + Math.sin(t*1.3)*0.3; buddyState.y = THREE.MathUtils.damp(buddyState.y, ty, 2, dt); buddy.position.set(buddyState.x, buddyState.y, buddyState.z); buddy.rotation.y = -Math.PI/2; const flap = state.resting ? 0 : Math.sin(t*9)*0.7; buddy.userData.l.rotation.x = 0.35 + flap; buddy.userData.r.rotation.x = -0.35 - flap; }
       else {
         const sitting = state.resting || (kind==='cat' && cat.mode==='wander' && !moving);
-        buddy.position.set(buddyState.x, sitting ? 0 : Math.abs(Math.sin(buddyState.phase))*0.08*Math.min(1, state.speed/RUN+0.2), buddyState.z);
+        const run = sitting ? 0 : THREE.MathUtils.clamp(bvel/RUN, 0, 1), gait = sitting ? 0 : THREE.MathUtils.clamp(bvel/WALK, 0, 1);
+        // 갤럽: 앞다리 둘이 같이, 뒷다리 둘이 같이. 몸은 살짝 들썩이고 앞뒤로 기운다
+        buddy.position.set(buddyState.x, Math.max(0, Math.sin(buddyState.phase))*0.05*run, buddyState.z);
+        buddy.rotation.z = -Math.cos(buddyState.phase)*0.1*run;
         const faceZ = kind==='cat' && cat.mode==='wander' ? (cat.target < 0 ? Math.PI/2 : -Math.PI/2) : Math.PI/2;
-        buddy.rotation.y = THREE.MathUtils.damp(buddy.rotation.y, sitting ? faceZ : 0, 4, dt);
-        buddy.userData.legs.forEach((l,i)=>{ l.rotation.z = sitting ? 0 : Math.sin(buddyState.phase + (i%2?Math.PI:0))*0.6*Math.min(1, Math.max(state.speed, dv)/WALK); });
+        const heading = Math.atan2(-(buddyState.z - tz), 1); // 옆으로 갈 땐 살짝 몸을 튼다
+        buddy.rotation.y = THREE.MathUtils.damp(buddy.rotation.y, sitting ? faceZ : THREE.MathUtils.clamp(heading, -0.6, 0.6), 4, dt);
+        buddy.userData.legs.forEach((l,i)=>{ l.rotation.z = sitting ? 0 : Math.sin(buddyState.phase + (i<2 ? 0 : 2.4))*0.75*gait; });
         if(kind==='dog') buddy.userData.tail.rotation.x = Math.sin(t*9)*0.5; else buddy.userData.tail.rotation.x = Math.sin(t*2.5)*0.5;
       }
     }
@@ -919,11 +931,20 @@ function frame(){
     const stepNow = Math.floor(ph/Math.PI);
     if(stepNow !== lastStride && state.speed > 0.05){ lastStride = stepNow; state.lastStepSide *= -1; stamp(state.x - 0.1, state.lane, state.lastStepSide); step(wetness, state.speed > WALK+0.3); }
 
+    const lateral = (state.lane - state.prevLane)/Math.max(dt, 1e-4); state.prevLane = state.lane;
     if(state.resting){
       state.restFor += dt; $('rest-sec').textContent = Math.floor(state.restFor);
-      runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 3, dt);
       const D = (o, k, v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 4, dt); };
-      if(state.pose==='sit'){ D(legL,'z',-1.5); D(legR,'z',-1.5); D(armL,'z',-0.2); D(armR,'z',0.2); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.3, 4, dt); }
+      if(state.pose==='walk'){
+        // 마른 모래로 몇 걸음: 바다를 본 채로 옆걸음
+        runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 4, dt);
+        const sp = Math.abs(lateral); state.stridePhase += (sp/0.8)*Math.PI*dt;
+        const a = Math.sin(state.stridePhase)*0.45*Math.min(1, sp/WALK);
+        legL.rotation.z = -a; legR.rotation.z = a; armL.rotation.z = a*0.8; armR.rotation.z = -a*0.8;
+        runner.position.y = Math.abs(Math.sin(state.stridePhase))*0.03;
+        if(Math.abs(state.lane - state.laneTarget) < 0.15 && state.pendingPose){ state.pose = state.pendingPose; state.pendingPose = null; }
+      } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 3, dt);
+      if(state.pose==='sit'){ D(legL,'z',-1.45); D(legR,'z',-1.45); D(armL,'z',-0.7); D(armR,'z',0.7); D(armL,'x',-0.1); D(armR,'x',0.1); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.5, 4, dt); headGroup.rotation.z = THREE.MathUtils.damp(headGroup.rotation.z, 0.08, 3, dt); head.rotation.z = headGroup.rotation.z; }
       else if(state.pose==='lie'){ runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, -Math.PI/2, 3, dt); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.55, 3, dt); D(legL,'z',0); D(legR,'z',0); D(armL,'z',-2.6); D(armR,'z',2.6); }
     } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, 0, 3, dt);
     if(!state.resting || state.pose!=='lie') runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, 0, 3, dt);
@@ -954,7 +975,8 @@ function frame(){
   const shake = state.reduce ? 0 : 1;
   if(state.resting){
     if(state.pose==='lie'){ camPos.set(state.x + 1.2, 0.9, state.lane + 2.4); camLook.set(state.x - 1.5, 6, state.lane - 14); }
-    else { const portrait = innerWidth < innerHeight; if(portrait){ const sit = state.pose==='sit'; camPos.set(state.x + 0.9, sit ? 1.3 : 1.6, state.lane + (sit ? 4.4 : 4.0)); camLook.set(state.x + 0.3, sit ? 0.4 : 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.5 + (state.pose==='sit'?0.1:0.4), state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
+    else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; camPos.set(state.x + (portrait ? 4.0 : 4.8), 1.5, state.lane + (portrait ? 0.9 : 1.2)); camLook.set(state.x - 3.5, 0.3, state.lane - (portrait ? 2.2 : 3)); }
+    else { const portrait = innerWidth < innerHeight; if(portrait){ camPos.set(state.x + 0.9, 1.6, state.lane + 4.0); camLook.set(state.x + 0.3, 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.9, state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
   } else { camPos.set(state.x - 6.2, 2.9 + Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN), state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); }
   camera.position.lerp(camPos, 1 - Math.exp(-dt*3));
   const lookAt = camera.userData.look || (camera.userData.look = camLook.clone()); lookAt.lerp(camLook, 1 - Math.exp(-dt*3)); camera.lookAt(lookAt);
