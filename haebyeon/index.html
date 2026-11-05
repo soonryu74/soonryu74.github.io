@@ -328,7 +328,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-05-37';
+window.__BUILD = '2026-11-05-38';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1545,7 +1545,7 @@ function frame(){
       buddyState.x = THREE.MathUtils.damp(buddyState.x, tx, 2.5, dt); buddyState.z = THREE.MathUtils.damp(buddyState.z, tz, kind==='cat' && cat.mode==='wander' ? 1.2 : 3.5, dt);
       const bvel = Math.hypot(buddyState.x - buddyState.px, buddyState.z - buddyState.pz)/Math.max(dt, 1e-4); buddyState.px = buddyState.x; buddyState.pz = buddyState.z;
       const dv = bvel; buddyState.phase += (bvel/(0.55 + 0.45*THREE.MathUtils.clamp(bvel/RUN,0,1)))*Math.PI*2*dt;
-      if(kind==='gull'){ tx += 2.2; tz -= 1.4; const ty = state.resting ? 0.1 : 2.3 + Math.sin(t*1.3)*0.3; buddyState.y = THREE.MathUtils.damp(buddyState.y, ty, 2, dt); buddy.position.set(buddyState.x, buddyState.y, buddyState.z); buddy.rotation.y = THREE.MathUtils.damp(buddy.rotation.y, state.resting ? Math.PI/2 : 0, 4, dt);   // 달릴 땐 우리와 같은 방향(앞)을 보고 난다 → 뒷모습, 쉴 땐 바다를 본다 const fl = state.resting ? 0 : Math.sin(t*7); buddy.userData.l.rotation.x = 0.25 + fl*0.55; buddy.userData.r.rotation.x = -0.25 - fl*0.55; buddy.userData.l.userData.elbow.rotation.x = -0.35 - (state.resting?0:Math.sin(t*7-0.9))*0.5; buddy.userData.r.userData.elbow.rotation.x = 0.35 + (state.resting?0:Math.sin(t*7-0.9))*0.5; }
+      if(kind==='gull'){ tx += 2.2; tz -= 1.4; const ty = state.resting ? 0.1 : 2.3 + Math.sin(t*1.3)*0.3; buddyState.y = THREE.MathUtils.damp(buddyState.y, ty, 2, dt); buddy.position.set(buddyState.x, buddyState.y, buddyState.z); buddy.rotation.y = THREE.MathUtils.damp(buddy.rotation.y, state.resting ? -Math.PI/2 : 0, 4, dt); /* 달릴 땐 앞을 보고 난다(뒷모습), 쉴 땐 바다 쪽 */ const fl = state.resting ? 0 : Math.sin(t*7); const fold = state.resting ? 1.25 : 0; buddy.userData.l.rotation.x = THREE.MathUtils.damp(buddy.userData.l.rotation.x, 0.25 + fl*0.55 + fold, 5, dt); buddy.userData.r.rotation.x = THREE.MathUtils.damp(buddy.userData.r.rotation.x, -0.25 - fl*0.55 - fold, 5, dt); /* 쉴 땐 날개를 접는다 */ buddy.userData.l.userData.elbow.rotation.x = -0.35 - (state.resting?0:Math.sin(t*7-0.9))*0.5; buddy.userData.r.userData.elbow.rotation.x = 0.35 + (state.resting?0:Math.sin(t*7-0.9))*0.5; }
       else {
         const sitting = state.resting || (kind==='cat' && cat.mode==='wander' && !moving);
         const lying = state.resting && state.pose==='lie';
@@ -1660,7 +1660,7 @@ function frame(){
   if(state.noteCam && (!state.resting || !sandNotes.includes(state.noteCam) || performance.now() - state.noteCamT > 60000)) state.noteCam = null;
   if(state.resting && state.noteCam){ const n = state.noteCam; camPos.set(state.x + 0.15, 3.4, state.lane + 2.3); camLook.set(state.x, 0.1, state.lane - 2.6); }   // 앉은 등 뒤 위에서 하이앵글로: 사람 너머 바닥 글씨와 파도   // 글씨 뒤 위에서 내려다본다 · 파도가 지우는 것까지 보인다
   else if(state.resting){
-    if(state.pose==='lie'){ camPos.set(state.x + 0.3, 1.15, state.lane + 1.9); camLook.set(state.x + 0.2, -0.15, state.lane - 2.2); }   // 머리맡에서 내 다리·옆에 누운 친구 너머 바다를 본다
+    if(state.pose==='lie'){ camPos.set(state.x + 0.3, 1.05, state.lane + 1.42); camLook.set(state.x + 0.2, -0.1, state.lane - 2.4); }   // 이마 바로 위에서: 모자 챙이 시야를 가리지 않게 챙 앞쪽에 둔다   // 머리맡에서 내 다리·옆에 누운 친구 너머 바다를 본다
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
     else { const portrait = innerWidth < innerHeight; if(portrait){ camPos.set(state.x + 0.9, 1.6, state.lane + 4.0); camLook.set(state.x + 0.3, 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.9, state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
   } else { camPos.set(state.x - 6.2, 2.9 + Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN), state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); }
