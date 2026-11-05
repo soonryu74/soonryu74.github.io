@@ -329,7 +329,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-05-48';
+window.__BUILD = '2026-11-05-49';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -347,7 +347,7 @@ SCENES.gung = {name:'돌담길', eyebrow:'GUNG RUN', title:'경복궁 돌담길,
 const SC = SCENES[SCENE_ID];
 const GUNG = SCENE_ID==='gung';
 const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
-const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = GUNG ? 5.0 : 8.5, WALK = 1.4, RUN = 3.4;
+const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = GUNG ? 5.0 : (SCENE_ID==='hangang' ? 6.4 : 8.5), WALK = 1.4, RUN = 3.4;   // 한강: 달릴 땐 벤치가 있는 잔디 안쪽까지 안 들어간다
 // 돌담길 오른쪽 잔디 언덕: 담장 너머 궁 전경을 보며 앉고 눕는 자리. z 6.5→9.5 오르막, 9.5~11.5 꼭대기(2.4 m), 11.5→14.5 내리막
 function groundY(z){ if(!GUNG) return 0; const up = THREE.MathUtils.smoothstep(z, 6.5, 9.5), down = 1 - THREE.MathUtils.smoothstep(z, 11.5, 14.5); return 2.4*Math.min(up, down); }
 // 한 걸음 길이: 다리 기하에서 계산(발이 땅에서 미끄러지지 않게). 걷기 0.43 m, 달리기 0.8 m
@@ -1726,7 +1726,7 @@ function frame(){
         }
       }
       // 친구도 통나무·바위를 옆으로 비껴간다
-      if(!state.resting && !(kind==='cat' && cat.mode==='wander')){ let dz0 = 0; for(const p of props){ if(p.kind==='wood' || p.kind==='rock'){ const dxo = p.obj.position.x - buddyState.x; if(dxo > -1.2 && dxo < 5){ const dz = tz - p.obj.position.z; const half = p.kind==='wood' ? 1.7 : 1.1; if(Math.abs(dz) < half + 0.4){ const need = (half + 0.5 - Math.abs(dz)) * (dz >= 0 ? 1 : -1); if(Math.abs(need) > Math.abs(dz0)) dz0 = need; } } } } tz = THREE.MathUtils.clamp(tz + dz0, LANE_MIN + 0.4, LANE_MAX); }
+      if(!state.resting && !(kind==='cat' && cat.mode==='wander')){ let dz0 = 0; for(const p of props){ if((p.kind==='wood' && SC.ground==='sand') || p.kind==='rock'){ const dxo = p.obj.position.x - buddyState.x; if(dxo > -1.2 && dxo < 5){ const dz = tz - p.obj.position.z; const half = p.kind==='wood' ? 1.7 : 1.1; if(Math.abs(dz) < half + 0.4){ const need = (half + 0.5 - Math.abs(dz)) * (dz >= 0 ? 1 : -1); if(Math.abs(need) > Math.abs(dz0)) dz0 = need; } } } } tz = THREE.MathUtils.clamp(tz + dz0, LANE_MIN + 0.4, LANE_MAX); }
       buddyState.x = THREE.MathUtils.damp(buddyState.x, tx, 2.5, dt); buddyState.z = THREE.MathUtils.damp(buddyState.z, tz, kind==='cat' && cat.mode==='wander' ? 1.2 : 3.5, dt);
       const bvel = Math.hypot(buddyState.x - buddyState.px, buddyState.z - buddyState.pz)/Math.max(dt, 1e-4); buddyState.px = buddyState.x; buddyState.pz = buddyState.z;
       const dv = bvel; buddyState.phase += (bvel/(0.55 + 0.45*THREE.MathUtils.clamp(bvel/RUN,0,1)))*Math.PI*2*dt;
@@ -1782,7 +1782,7 @@ function frame(){
       // 장애물(통나무·바위·벤치)은 옆으로 비껴 달린다: 앞 6 m 안에 있으면 빈 쪽으로 차선을 옮기고, 지나가면 원래 자리로
       if(state.speed > 0.3){
         let dodge = 0;
-        for(const p of props){ if(p.kind==='wood' || p.kind==='rock'){ const dxo = p.obj.position.x - state.x; if(dxo > -1.0 && dxo < 6.0){ const dz = state.lane - p.obj.position.z; const half = p.kind==='wood' ? 1.7 : 1.1; if(Math.abs(dz) < half + 0.5){ const dir = dz >= 0 ? 1 : -1; const need = (half + 0.6 - Math.abs(dz)) * dir; if(Math.abs(need) > Math.abs(dodge)) dodge = need; } } } }
+        for(const p of props){ if((p.kind==='wood' && SC.ground==='sand') || p.kind==='rock'){ const dxo = p.obj.position.x - state.x; if(dxo > -1.0 && dxo < 6.0){ const dz = state.lane - p.obj.position.z; const half = p.kind==='wood' ? 1.7 : 1.1; if(Math.abs(dz) < half + 0.5){ const dir = dz >= 0 ? 1 : -1; const need = (half + 0.6 - Math.abs(dz)) * dir; if(Math.abs(need) > Math.abs(dodge)) dodge = need; } } } }
         if(dodge !== 0){ if(!state.dodging){ state.dodging = true; state.laneHome = state.laneTarget; } state.laneTarget = THREE.MathUtils.clamp(state.laneTarget + dodge*Math.min(1, 6*dt), LANE_MIN, LANE_MAX); runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, -Math.sign(dodge)*0.35, 6, dt); }
         else if(state.dodging){ state.dodging = false; state.laneTarget = THREE.MathUtils.clamp(state.laneHome, LANE_MIN, LANE_MAX); }
       }
