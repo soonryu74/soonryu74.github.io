@@ -592,10 +592,11 @@ function buildRunner(mats){
   const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 12, Math.PI), inkM); mouth.position.set(0.33, -0.09, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headGroup.add(mouth);
   const armL = limb(0.40, 0.07, skin, 1.02, -0.3), armR = limb(0.40, 0.07, skin, 1.02, 0.3);
   const legL = limb(0.40, 0.085, skin, 0.60, -0.12), legR = limb(0.40, 0.085, skin, 0.60, 0.12);
-  [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.22, 0); l.userData.lower.add(sh); });
+  const shoes = [];
+  [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.22, 0); l.userData.lower.add(sh); shoes.push(sh); });
   [armL, armR].forEach(a=>{ const hand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), skin); hand.position.y = -0.2; a.userData.lower.add(hand); });
   g.add(armL, armR, legL, legR);
-  return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR, mats};
+  return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR, shoes, mats};
 }
 // 걷기·달리기 폼. ph: 보폭 위상, amp: 0 걷기 … 1 전력. 네 팔다리가 같은 규칙: 같은 쪽 팔과 다리는 반대로, 왼쪽·오른쪽은 반 바퀴 차이
 function animateGait(P, ph, amp, g){
@@ -615,12 +616,19 @@ function animateGait(P, ph, amp, g){
   P.armL.rotation.x = -0.18; P.armR.rotation.x = 0.18;
   // 몸: 달릴 땐 두 발이 뜨는 순간이 한 바퀴에 두 번 → 통통. 걸을 땐 거의 안 뜸
   const flight = Math.max(0, Math.sin(2*ph + 0.9));
-  g.position.y = flight*flight*(0.02 + 0.12*run) + (1-run)*Math.abs(Math.sin(ph))*0.012;
-  g.rotation.z = -0.1*run;                                                                 // 앞으로 살짝 기울기
+  g.rotation.z = -0.1*run;
+  groundFeet(P, g, flight*flight*(0.01 + 0.07*run));                                                                 // 앞으로 살짝 기울기
   if(P.torso){ const sq = 1 - 0.05*run*Math.max(0, -Math.sin(2*ph + 0.9)); P.torso.scale.set(1/sq, sq, 1/sq); }  // 착지 때 살짝 눌림
   if(P.headGroup){ P.headGroup.rotation.z = 0.08*run + Math.sin(ph*2 + 0.9)*0.04*run; P.headGroup.rotation.x = Math.sin(ph)*0.05*run; if(P.head){ P.head.rotation.z = P.headGroup.rotation.z; P.head.rotation.x = P.headGroup.rotation.x; } }
 }
 function resetGait(P, dt){ const D = (o,k,v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 6, dt); }; for(const l of [P.legL,P.legR,P.armL,P.armR]) D(l.userData.lower,'z',0); if(P.torso) P.torso.scale.set(1,1,1); }
+// 발 접지: 자세를 잡은 뒤 가장 낮은 신발 바닥이 정확히 땅(+공중 높이)에 오도록 몸 전체를 올리고 내린다
+const _fw = new THREE.Vector3();
+function groundFeet(P, g, lift){
+  g.position.y = 0; g.updateMatrixWorld(true);
+  let minY = Infinity; for(const sh of P.shoes){ sh.getWorldPosition(_fw); minY = Math.min(minY, _fw.y - 0.1); }
+  g.position.y = lift - minY;
+}
 function applyLookTo(parts, lk){
   parts.mats.hair.color.set(lk.hair); parts.mats.shirt.color.set(lk.shirt); parts.mats.accent.color.set(lk.accent); parts.mats.accent.emissive.set(lk.accent);
   parts.hatBand.visible = lk.hat==='band'; parts.hatCap.visible = lk.hat==='cap'; parts.hatStraw.visible = lk.hat==='straw'; parts.hair.visible = lk.hat!=='cap';
@@ -779,7 +787,7 @@ function updateOthers(dt, t){
       else { D(P.legL,'z',0); D(P.legR,'z',0); D(P.armL,'z',0); D(P.armR,'z',0); g.position.y = THREE.MathUtils.damp(g.position.y, 0, 4, dt); g.rotation.x = THREE.MathUtils.damp(g.rotation.x, 0, 3, dt); }
     } else {
       g.rotation.y = THREE.MathUtils.damp(g.rotation.y, 0, 3, dt); g.rotation.x = 0;
-      if(o.sp > 0.05) animateGait(P, ph, amp, g); else { resetGait(P, dt); g.position.y = 0; g.rotation.z = 0; }
+      if(o.sp > 0.05) animateGait(P, ph, amp, g); else { resetGait(P, dt); g.rotation.z = 0; groundFeet(P, g, 0); }
     }
     g.position.x = o.x; g.position.z = o.lane;
   }
@@ -1426,7 +1434,7 @@ function frame(){
     else state.stridePhase = THREE.MathUtils.damp(state.stridePhase, Math.round(state.stridePhase/Math.PI)*Math.PI, 6, dt);
     const ph = state.stridePhase, amp = THREE.MathUtils.clamp(state.speed/RUN, 0, 1);
     if(!state.resting){
-      if(state.speed > 0.05) animateGait(me, ph, amp, runner); else { resetGait(me, dt); runner.position.y = 0; runner.rotation.z = 0; headGroup.rotation.set(0,0,0); head.rotation.set(0,0,0); }
+      if(state.speed > 0.05) animateGait(me, ph, amp, runner); else { resetGait(me, dt); runner.rotation.z = 0; headGroup.rotation.set(0,0,0); head.rotation.set(0,0,0); groundFeet(me, runner, 0); }
       // 통나무·바위 폴짝 넘기
       if(state.hop > 0){ state.hop -= dt; const u = 1 - state.hop/0.5; runner.position.y += Math.sin(u*Math.PI)*0.7; legL.rotation.z = 0.9; legR.rotation.z = 0.9; legL.userData.lower.rotation.z = -1.6; legR.userData.lower.rotation.z = -1.6; armL.rotation.z = 1.4; armR.rotation.z = 1.4; }
       else if(state.speed > 0.3){ for(const p of props){ if((p.kind==='wood' || p.kind==='rock') && Math.abs(p.obj.position.z - state.lane) < 1.5){ const dxo = p.obj.position.x - state.x; if(dxo > 0.2 && dxo < 0.9){ state.hop = 0.5; say(['폴짝','영차','휙'][Math.random()*3|0], 900); break; } } } }
@@ -1453,7 +1461,7 @@ function frame(){
         runner.position.y = Math.abs(Math.sin(state.stridePhase))*0.03;
         if(Math.abs(state.lane - state.laneTarget) < 0.15 && state.pendingPose){ state.pose = state.pendingPose; state.pendingPose = null; }
       } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, Math.PI/2, 3, dt);
-      resetGait(me, dt);
+      resetGait(me, dt); if(state.pose==='stand'){ groundFeet(me, runner, 0); }
       if(state.pose==='sit'){ D(legL,'z',1.5); D(legR,'z',1.5); D(legL.userData.lower,'z',-0.35); D(legR.userData.lower,'z',-0.35); D(armL,'z',0.55); D(armR,'z',0.55); D(armL,'x',-0.15); D(armR,'x',0.15); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.5, 4, dt); headGroup.rotation.z = THREE.MathUtils.damp(headGroup.rotation.z, 0.08, 3, dt); head.rotation.z = headGroup.rotation.z; }
       else if(state.pose==='lie'){ runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, -Math.PI/2, 3, dt); runner.position.y = THREE.MathUtils.damp(runner.position.y, -0.55, 3, dt); D(legL,'z',0); D(legR,'z',0); D(armL,'z',-2.6); D(armR,'z',2.6); }
     } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, 0, 3, dt);
