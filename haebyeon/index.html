@@ -686,7 +686,10 @@ async function netJoin(room = 1){
   net.status = 'joining'; net.room = room;
   const ch = net.sb.channel(net.priv ? `beach:priv:${net.priv}` : `beach:${room}`, {config:{broadcast:{self:false, ack:false}, presence:{key:net.id}}});
   net.ch = ch;
-  ch.on('broadcast', {event:'p'}, ({payload})=>{ if(payload && payload.id && payload.id !== net.id) upsertOther(payload.id, payload); });
+  ch.on('broadcast', {event:'p'}, ({payload})=>{ if(payload && payload.id && payload.id !== net.id){
+    // 막 들어왔고 아직 안 움직였으면, 첫 위치 소식을 준 사람 바로 앞에서 시작한다 (presence 값은 최대 12초 전이라 부정확)
+    if(net.status==='joined' && performance.now() - net.joinedAt < 5000 && state.dist < 5 && typeof payload.x === 'number' && Math.abs(wrapDx(payload.x)) > 12){ teleportTo(payload.x + 8); for(const o of others.values()){ o.x = state.x + wrapDx(o.tx); } }
+    upsertOther(payload.id, payload); } });
   ch.on('presence', {event:'sync'}, ()=>{
     const st = ch.presenceState(); const ids = Object.keys(st);
     if(net.status==='joining'){
