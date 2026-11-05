@@ -328,7 +328,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-05-39';
+window.__BUILD = '2026-11-05-40';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -558,7 +558,7 @@ function stamp(x, z, side){ const m = foots[footIdx]; footIdx = (footIdx+1)%FOOT
 
 /* ---------- 모래에 쓴 글 ---------- */
 const sandNotes = [];
-function writeOnSand(text){ const go = ()=>writeOnSandNow(text); (document.fonts && document.fonts.load ? document.fonts.load('110px "Nanum Brush Script"').then(go, go) : go()); }
+function writeOnSand(text){ let done = false; const go = ()=>{ if(done) return; done = true; writeOnSandNow(text); }; if(document.fonts && document.fonts.load){ document.fonts.load('150px "Nanum Brush Script"', text).then(go, go); setTimeout(go, 2500); } else go(); }   // 구글폰트는 글자 범위별로 쪼개져 오므로, 쓸 글자를 넘겨서 해당 조각까지 받은 뒤 그린다
 function writeOnSandNow(text){
   const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const g = c.getContext('2d');
   if(SC.ground==='grass'){ g.shadowColor = 'rgba(60,30,20,0.55)'; g.shadowBlur = 10; g.fillStyle = 'rgba(255,250,236,0.96)'; } else g.fillStyle = 'rgba(104,80,52,0.95)';   /* 한강: 트랙 위 분필 느낌 */ g.font = '400 150px "Nanum Brush Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
