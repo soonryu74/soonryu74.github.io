@@ -688,7 +688,7 @@ async function netJoin(room = 1){
   net.ch = ch;
   ch.on('broadcast', {event:'p'}, ({payload})=>{ if(payload && payload.id && payload.id !== net.id){
     // 막 들어왔고 아직 안 움직였으면, 첫 위치 소식을 준 사람 바로 앞에서 시작한다 (presence 값은 최대 12초 전이라 부정확)
-    if(net.status==='joined' && !net.placed && performance.now() - net.joinedAt < 6000 && state.dist < 40 && typeof payload.x === 'number' && Math.abs(wrapDx(payload.x)) > 12){ net.placed = true; teleportTo(payload.x + 8); for(const o of others.values()){ o.x = state.x + wrapDx(o.tx); } }
+    if(net.status==='joined' && !net.placed && performance.now() - net.joinedAt < 6000 && state.dist < 40 && typeof payload.x === 'number' && Math.abs(wrapDx(payload.x)) > 6){ net.placed = true; teleportTo(payload.x + 8); state.laneTarget = THREE.MathUtils.clamp((typeof payload.l==='number' ? payload.l : 2.2) + (Math.random() < 0.5 ? -1.5 : 1.7), LANE_MIN + 0.3, LANE_MAX - 1); state.lane = state.laneTarget; state.prevLane = state.lane; for(const o of others.values()){ o.x = state.x + wrapDx(o.tx); } }
     upsertOther(payload.id, payload); } });
   ch.on('presence', {event:'sync'}, ()=>{
     const st = ch.presenceState(); const ids = Object.keys(st);
@@ -698,7 +698,7 @@ async function netJoin(room = 1){
       net.status = 'joined'; net.joinedAt = performance.now(); net.placed = false;
       // 누군가 있으면 그 사람 조금 뒤에서 시작한다 → 바로 함께 달리는 느낌
       const spots = ids.filter(k=>k!==net.id).map(k=>st[k][0]?.x).filter(v=>typeof v==='number');
-      if(spots.length && state.dist < 5){ teleportTo(spots[Math.random()*spots.length|0] + 9); } // 먼저 온 사람 9 m 앞에서 시작 → 서로 자연스럽게 보인다
+      if(spots.length && state.dist < 5){ teleportTo(spots[Math.random()*spots.length|0] + 9); state.laneTarget = THREE.MathUtils.clamp(2.2 + (Math.random() < 0.5 ? -1.5 : 1.7), LANE_MIN + 0.3, LANE_MAX - 1); state.lane = state.laneTarget; state.prevLane = state.lane; } // 먼저 온 사람 9 m 앞에서 시작 → 서로 자연스럽게 보인다
       if(state.started) say(othersN ? `지금 ${othersN+1}명이 같은 해변을 달리고 있어요` : (net.priv ? `우리 해변 '${net.priv}' · 친구가 오면 보여요` : '지금은 혼자예요 · 누가 오면 보여요'), 3200);
       net.ch.send({type:'broadcast', event:'p', payload:{id:net.id, ...myPacket(true)}}); net.lastSend = performance.now(); net.lastHeartbeat = net.lastSend;
     }
@@ -1169,6 +1169,7 @@ populateTo(90); applyTod(state.todT);
 try{ renderer.compile(scene, camera); frame(); requestAnimationFrame(()=>{ $('boot').classList.add('is-hidden'); $('welcome').classList.remove('is-hidden'); if(BOT){ start(); setTimeout(()=>setAutoRun(true), 4000); } }); }
 catch(e){ bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); console.error(e); }
 addEventListener('error', ()=>{ if(!state.started) bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); });
+window.__haebyeon = {state, others, net, buddyState};
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden){ hold(false); keys.left = keys.right = false; } });
 </script>
 </body>
