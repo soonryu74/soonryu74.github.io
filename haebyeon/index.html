@@ -2,6 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#bfe6f5">
 <meta name="mobile-web-app-capable" content="yes">
@@ -305,6 +307,7 @@
     <div class="row"><div><strong>화질</strong><small>느리면 낮춰주세요</small></div>
       <div class="seg" role="group" aria-label="화질"><button type="button" data-q="1" aria-pressed="false">낮음</button><button type="button" data-q="2" aria-pressed="true">보통</button></div></div>
     <p style="margin-top:14px;font-size:12px">위치는 같은 해변 사람들에게만 잠깐 전해지고 서버에 저장되지 않아요. 달린 기록은 이 폰에만 남아요(내 발자국).</p>
+    <p style="font-size:11px;color:var(--mist)">버전 <span id="build"></span> · <button id="hard-reload" type="button" style="text-decoration:underline">최신으로 새로고침</button></p>
   </div>
 </section>
 
@@ -321,6 +324,11 @@
 
 <noscript><style>.boot{display:none}body{background:#bfe6f5}</style><main style="padding:3rem;max-width:36rem;margin:auto;color:#3a3340;font-family:sans-serif;line-height:1.8"><h1>해변 · 온라인 해변</h1><p>파도 옆을 달리고, 조개를 줍고, 잠깐 쉬어가는 공간입니다.</p><p>해변을 둘러보려면 브라우저의 JavaScript를 켜주세요.</p></main></noscript>
 
+<script>
+// 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
+window.__BUILD = '2026-11-05-31';
+(async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
+</script>
 <script type="module">
 import * as THREE from 'three';
 const SB_URL = 'https://dxhmprqfgigljgbstqrg.supabase.co', SB_KEY = 'sb_publishable__FXGut04uxuz44s2443_8g_AByEuL-n';
@@ -1287,6 +1295,7 @@ document.querySelectorAll('[data-tod]').forEach(b=>b.addEventListener('click', (
 document.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click', ()=>{ document.querySelectorAll('[data-q]').forEach(x=>x.setAttribute('aria-pressed', String(x===b))); state.quality = +b.dataset.q; renderer.shadowMap.enabled = state.quality===2; resize(); }));
 $('reduce').addEventListener('click', ()=>{ state.reduce = !state.reduce; $('reduce').setAttribute('aria-checked', String(state.reduce)); });
 $('reduce').setAttribute('aria-checked', String(state.reduce));
+$('build').textContent = window.__BUILD; $('hard-reload').addEventListener('click', ()=>{ const u = new URL(location.href); u.searchParams.set('v', Date.now().toString(36)); location.href = u.toString(); });
 // 달리기 속도 (시속 6~16 km). 이 기기에 기억
 (function(){ const el = $('pace'); let v = 12; try{ v = +(localStorage.getItem('haebyeon.pace')||12) || 12; }catch(e){} el.value = v;
   const apply = (kmh)=>{ state.paceMul = (kmh/3.6)/RUN; const label = kmh<=7 ? '산책하듯' : kmh<=10 ? '천천히' : kmh<=13 ? '가볍게' : '힘차게'; $('pace-note').textContent = `시속 ${kmh} km · ${label}`; };
