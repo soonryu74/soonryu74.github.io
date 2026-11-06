@@ -382,7 +382,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-94';
+window.__BUILD = '2026-11-06-96';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -419,7 +419,7 @@ try{ const bm = document.getElementById('boot-message'); if(bm) bm.textContent =
 const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
 const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = SCENE_ID==='gung' ? 5.0 : (FG ? 7.4 : ((SC.ground==='deck' || SC.ground==='stonepath') ? 6.0 : (FH ? 6.4 : 8.5))), WALK = 1.4, RUN = 3.4;   // 한강: 달릴 땐 벤치가 있는 잔디 안쪽까지 안 들어간다
 // 돌담길 오른쪽 잔디 언덕: 담장 너머 궁 전경을 보며 앉고 눕는 자리. z 6.5→9.5 오르막, 9.5~11.5 꼭대기(2.4 m), 11.5→14.5 내리막
-function groundY(z, x){ if(SCENE_ID==='ulsan') return bridgeY(x === undefined ? state.x : x); if(SCENE_ID==='chuncheon') return 1.6; if(CW) return 9.0; if(SCENE_ID==='niagara') return 2.2; if(SCENE_ID==='gung'){ const up = THREE.MathUtils.smoothstep(z, 6.5, 9.5), down = 1 - THREE.MathUtils.smoothstep(z, 11.5, 14.5); return 2.4*Math.min(up, down); } return -1.2*THREE.MathUtils.smoothstep(-z, 0, 12); }   // 해변·한강: 물가로 갈수록 모래가 낮아지는 만큼 (바닥 메시와 같은 식)
+function groundY(z, x){ if(SCENE_ID==='ulsan') return bridgeY(x === undefined ? state.x : x); if(SCENE_ID==='chuncheon') return 1.6; if(CW) return 9.0; if(SCENE_ID==='niagara') return 46.0; if(SCENE_ID==='gung'){ const up = THREE.MathUtils.smoothstep(z, 6.5, 9.5), down = 1 - THREE.MathUtils.smoothstep(z, 11.5, 14.5); return 2.4*Math.min(up, down); } return -1.2*THREE.MathUtils.smoothstep(-z, 0, 12); }   // 해변·한강: 물가로 갈수록 모래가 낮아지는 만큼 (바닥 메시와 같은 식)
 // 한 걸음 길이: 다리 기하에서 계산(발이 땅에서 미끄러지지 않게). 걷기 0.43 m, 달리기 0.8 m
 function stepLen(amp){ const run = THREE.MathUtils.smoothstep(amp, 0.25, 0.75); const thighA = 0.42 + 0.6*run; return 2*0.4*Math.sin(thighA) + 0.08 + 0.1*run; }
 const $ = (id) => document.getElementById(id);
@@ -505,7 +505,7 @@ const seaUniforms = { time:{value:0}, deep:{value:new THREE.Color(SC.deep.value)
   sunDir:{value:skyUniforms.sunDir.value}, sunColor:{value:skyUniforms.sunColor.value}, fogColor:{value:scene.fog.color}, ridge:{value:SCENE_ID==='chuncheon' ? 0.22 : (FH ? 0.06 : 0.0)}, fogNear:{value:FH ? 90 : (FG ? 55 : 40)}, fogFar:{value:FH ? 480 : (FG ? 260 : 170)}, camX:{value:0}, night:{value:0} };
 const SEA_W = FH ? 300 : 140;
 const seaGeo = new THREE.PlaneGeometry(520, SEA_W, 260, 70);
-seaGeo.rotateX(-Math.PI/2); seaGeo.translate(0, 0, SHORE_Z - SEA_W/2 + (SCENE_ID==='chuncheon' ? 160 : (SCENE_ID==='niagara' ? 150 : 12)));   // 철원: 강은 왼쪽 협곡 바닥
+seaGeo.rotateX(-Math.PI/2); seaGeo.translate(0, 0, SHORE_Z - SEA_W/2 + (SCENE_ID==='chuncheon' ? 160 : (SCENE_ID==='niagara' ? 12 : 12)));   // 철원: 강은 왼쪽 협곡 바닥
 const seaMat = new THREE.ShaderMaterial({
   uniforms:seaUniforms, transparent:true,
   vertexShader:`uniform float time; uniform float camX; uniform float waveAmp; varying vec3 vPos; varying float vH; varying vec3 vN;
@@ -648,11 +648,12 @@ if(SC.ground==='stonepath'){
   for(let i=0;i<6000;i++){ pg.fillStyle = `rgba(${40+Math.random()*40},${38+Math.random()*36},${34+Math.random()*30},${0.08+Math.random()*0.18})`; pg.fillRect(Math.random()*256, Math.random()*256, 1.6, 1.6); }
   const ptex = new THREE.CanvasTexture(pc); ptex.wrapS = ptex.wrapT = THREE.RepeatWrapping; ptex.repeat.set(80, 1); ptex.colorSpace = THREE.SRGBColorSpace;
   const DY = groundY(3.7);
-  const bank = new THREE.Mesh(new THREE.BoxGeometry(520, DY + 1.2, 14), new THREE.MeshStandardMaterial({color:0x5c5a55, roughness:1})); bank.position.set(0, (DY + 1.2)/2 - 1.5, 7); deckSet.add(bank);   // 윗면이 돌길보다 0.3 m 낮아 겹침 없음
+  const bank = new THREE.Mesh(new THREE.BoxGeometry(520, DY + 1.2, 14), new THREE.MeshStandardMaterial({color:0x5c5a55, roughness:1})); bank.position.set(0, (DY + 1.2)/2 - 1.5, 7); deckSet.add(bank);   // 절벽 몸통(길 아래). 윗면이 돌길보다 0.3 m 낮아 겹침 없음
   const path = new THREE.Mesh(new THREE.BoxGeometry(520, 0.2, 6.4), new THREE.MeshStandardMaterial({map:ptex, roughness:1, color:0xfff4e4})); path.position.set(0, DY - 0.1, 3.7); path.receiveShadow = true; deckSet.add(path); deckSet.userData.dtex = ptex;
   const wallM = new THREE.MeshStandardMaterial({color:0x8a857c, roughness:1}); const wall = new THREE.Mesh(new THREE.BoxGeometry(520, 0.9, 0.5), wallM); wall.position.set(0, DY + 0.45, 0.4); deckSet.add(wall);
+  const cliffFace = new THREE.Mesh(new THREE.BoxGeometry(520, DY + 1.2, 1.2), new THREE.MeshStandardMaterial({color:0x4a4740, roughness:1})); cliffFace.position.set(0, (DY + 1.2)/2 - 1.5, -0.3); deckSet.add(cliffFace);
   const grassM = new THREE.MeshStandardMaterial({color:0x5f9a4c, roughness:1}); const verge = new THREE.Mesh(new THREE.BoxGeometry(520, 0.5, 6), grassM); verge.position.set(0, DY - 0.2, 10.2); deckSet.add(verge);
-  const rockM = new THREE.MeshStandardMaterial({color:0x6a665e, roughness:1}); for(let x=-260; x<260; x+=3+Math.random()*4){ const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8 + Math.random()*1.2, 0), rockM); r.position.set(x, DY - 1.4 + Math.random()*0.6, -0.8 - Math.random()*1.4); r.scale.y = 0.7; deckSet.add(r); }
+  
 }
 if(SC.ground==='deck'){
   const dc = document.createElement('canvas'); dc.width = 512; dc.height = 64; const dg = dc.getContext('2d');
@@ -1360,7 +1361,7 @@ if(FH){
   for(const [hx, hw, hh] of [[0, 260, 70],[260, 220, 55],[520, 300, 80],[-220, 240, 60]]){ const hill = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10), hillM); hill.scale.set(hw, hh*1.4, 80); hill.position.set(hx, -8, farZ - 180); hangangSet.add(hill); }
   if(SCENE_ID==='niagara'){
     // 나이아가라: 강 건너편 전체가 폭포 벽. 셰이더로 물줄기가 흘러내리고, 밑에선 하얀 물보라가 끓고, 위로 물안개가 피어오른다
-    const FH_ = 44, FZ = -78;
+    const FH_ = 44, FZ = -95;   // 협곡 건너편 절벽에서 쏟아지는 폭포. 우리는 이쪽 절벽 꼭대기 길에서 내려다본다
     const fallsUniforms = {time:{value:0}, sunColor:{value:skyUniforms.sunColor.value}, night:{value:0}};
     const fallsMat = new THREE.ShaderMaterial({uniforms:fallsUniforms, transparent:true, depthWrite:false, side:THREE.DoubleSide,
       vertexShader:`varying vec2 vUv; varying vec3 vPos; void main(){ vUv = uv; vPos = (modelMatrix*vec4(position,1.0)).xyz; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
@@ -2510,7 +2511,7 @@ function frame(){
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
     else { const portrait = innerWidth < innerHeight; if(portrait){ camPos.set(state.x + 0.9, 1.6, state.lane + 4.0); camLook.set(state.x + 0.3, 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.9, state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
   } else { camPos.set(state.x - 6.2, 2.9 + Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN), state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); }
-  if(SCENE_ID==='gung' || SC.ground==='deck' || SC.ground==='stonepath' || SCENE_ID==='ulsan'){ const gy = groundY(state.lane, state.x); camPos.y += gy; camLook.y += gy; if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
+  if(SCENE_ID==='gung' || SC.ground==='deck' || SC.ground==='stonepath' || SCENE_ID==='ulsan'){ const gy = groundY(state.lane, state.x); camPos.y += gy; camLook.y += gy; if(SCENE_ID==='niagara' && !state.resting){ camPos.y += 0.9; camLook.y -= 1.6; camLook.z -= 3; } if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
   camera.position.lerp(camPos, 1 - Math.exp(-dt*3));
   const lookAt = camera.userData.look || (camera.userData.look = camLook.clone()); lookAt.lerp(camLook, 1 - Math.exp(-dt*3)); camera.lookAt(lookAt);
 
