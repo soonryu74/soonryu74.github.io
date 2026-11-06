@@ -56,7 +56,9 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
   .welcome{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(191,230,245,.35);backdrop-filter:blur(2px);transition:opacity .6s}
   .welcome.is-hidden{opacity:0;pointer-events:none}
-  .welcome-card{width:min(420px,100%);padding:28px 26px 24px;border-radius:26px;background:var(--panel);box-shadow:0 20px 60px rgba(0,0,0,.18);text-align:center}
+  .welcome-card{width:min(420px,100%);max-height:calc(100dvh - 32px);overflow-y:auto;padding:22px 22px 18px;border-radius:26px;background:var(--panel);box-shadow:0 20px 60px rgba(0,0,0,.18);text-align:center}
+  .welcome-card h1{font-size:24px;margin:4px 0 6px}
+  .welcome-card > p{margin:0 0 12px;font-size:14px;line-height:1.5}
   .welcome-card .eyebrow{margin:0 0 6px;font-size:11px;letter-spacing:3px;color:var(--ink-soft)}
   .welcome-card h1{margin:0 0 10px;font-size:24px;font-weight:700;letter-spacing:1px}
   .welcome-card p{margin:0 0 18px;font-size:14px;line-height:1.8;color:var(--ink-soft)}
@@ -65,6 +67,19 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
   .btn.small{min-height:38px;padding:0 14px;font-size:13px}
   .welcome-hint{margin-top:14px;font-size:12px;color:var(--mist)}
+  .kmap{margin:14px auto 0;width:min(300px,100%);position:relative}
+  .kmap svg{width:100%;height:auto;display:block}
+  .kmap .land{fill:#dfeee0;stroke:#9fc3a6;stroke-width:1.5}
+  .kmap .sea{fill:#e6f3f9}
+  .kmap .pin{cursor:pointer}
+  .kmap .pin circle.dot{fill:var(--accent,#5cc3bd);stroke:#fff;stroke-width:2.5}
+  .kmap .pin.soon circle.dot{fill:#c9c3b8}
+  .kmap .pin text{font-size:11px;font-weight:700;fill:#2b3a40;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+  .kmap .pin text.sub{font-size:9px;font-weight:500;fill:#6b7a80}
+  .kmap .pin.stamp circle.ring{fill:none;stroke:#ff9b8a;stroke-width:2;stroke-dasharray:2 2}
+  .kmap .pin.here circle.dot{fill:#ff9b8a}
+  .klegend{display:flex;justify-content:center;gap:10px;margin-top:6px;font-size:10px;color:var(--mist);white-space:nowrap}
+  .klegend i{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin-right:4px}
   .welcome-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 
   .hud{position:fixed;inset:0;pointer-events:none;z-index:20;opacity:0;transition:opacity .8s;user-select:none;-webkit-user-select:none}
@@ -189,12 +204,20 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <div class="welcome-card">
     <p class="eyebrow" id="w-eyebrow">BEACH RUN</p>
     <h1 id="welcome-title">해변, 잠깐 달려요</h1>
-    <p>경쟁도 기록도 없어요.<br>친구랑 파도 옆을 천천히 달리다가,<br>쉬고 싶을 때 멈춰 바다를 바라보세요.<br><small style="color:var(--mist)">같은 해변의 다른 사람도 말없이 보여요</small></p>
+    <p>경쟁도 기록도 없어요. 천천히 달리다 쉬고 싶을 때 멈춰요.<br><small style="color:var(--mist)">지도에서 달릴 곳을 고르세요 · 같은 곳의 다른 사람도 말없이 보여요</small></p>
     <div class="welcome-actions">
       <button id="start" class="btn" type="button">달리러 가기</button>
       <button id="look-open" class="btn ghost" type="button">꾸미기 · 친구 고르기</button>
     </div>
-    <div class="seg" id="scene-pick" style="margin-top:14px" role="group" aria-label="장소"><button type="button" data-scene="beach">해변</button><button type="button" data-scene="hangang">한강</button><button type="button" data-scene="gung">돌담길</button></div>
+    <div class="kmap" id="kmap" role="group" aria-label="달릴 장소 고르기">
+      <svg viewBox="0 0 300 430" aria-hidden="true">
+        <rect class="sea" x="0" y="0" width="300" height="430" rx="18"/>
+        <path class="land" d="M96,104 L128,88 L160,72 L198,62 L214,84 L224,118 L232,152 L240,198 L250,244 L262,282 L250,312 L226,318 L202,308 L182,322 L152,318 L126,330 L102,320 L86,300 L90,270 L80,240 L95,210 L84,180 L100,150 L90,126 Z"/>
+        <ellipse class="land" cx="100" cy="392" rx="30" ry="12"/>
+        <g id="kpins"></g>
+      </svg>
+    </div>
+    <div class="klegend"><span><i style="background:#5cc3bd"></i>달릴 수 있어요</span><span><i style="background:#c9c3b8"></i>준비 중 · 눌러서 투표</span><span><i style="background:#fff;border:2px dashed #ff9b8a;width:7px;height:7px"></i>달린 곳</span></div>
     <p class="welcome-hint" id="welcome-live">소리를 켜면 파도와 갈매기 소리가 함께해요</p>
   </div>
 </section>
@@ -336,7 +359,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-51';
+window.__BUILD = '2026-11-06-52';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1603,7 +1626,7 @@ let logLastSave = 0;
 function logFlush(force){
   if(!state.started || state.dist < 20) return; const now = performance.now(); if(!force && now - logLastSave < 15000) return; logLastSave = now;
   const list = logLoad(); let row = list.find(r=>r.id===sessionId);
-  if(!row){ row = {id:sessionId, d:todayKey(), m:0, s:0, sh:0, le:0, cat:0, b:look.buddy}; list.push(row); }
+  if(!row){ row = {id:sessionId, d:todayKey(), sc:SCENE_ID, m:0, s:0, sh:0, le:0, cat:0, b:look.buddy}; list.push(row); }
   row.m = Math.round(state.dist); row.s = Math.round(state.time); row.sh = state.shells; row.le = state.letters; row.cat = state.catRescues; row.b = look.buddy;
   logSave(list);
 }
@@ -1627,6 +1650,58 @@ function start(){ if(state.started) return; state.started = true; closeSheets();
   if(!audio.on){ try{ audioStart(); $('sound').setAttribute('aria-pressed','true'); $('sound').setAttribute('aria-label','소리 끄기'); }catch(e){} } }
 $('start').addEventListener('click', start);
 // 장소 적용
+/* ---------- 대한민국 지도 첫 화면: 핀 = 장면, 준비 중 핀 = 투표, 달린 곳 = 도장 ---------- */
+const PLACES = [
+  {id:'gangneung', name:'강릉 경포', sub:'해변', scene:'beach', x:222, y:128, dy:16, dx:-14},
+  {id:'hangang', name:'서울 한강', sub:'강변', scene:'hangang', x:134, y:138},
+  {id:'gung', name:'경복궁 돌담길', sub:'밤 산책', scene:'gung', x:112, y:104, left:true, dy:-12},
+  {id:'chuncheon', name:'춘천 의암호', sub:'준비 중', scene:null, x:170, y:92, dy:-10},
+  {id:'jeonju', name:'전주 한옥마을', sub:'준비 중', scene:null, x:122, y:232},
+  {id:'ulsan', name:'울산 대왕암', sub:'준비 중', scene:null, x:252, y:258, left:true},
+  {id:'busan', name:'부산 광안리', sub:'준비 중', scene:null, x:240, y:300, left:true, dy:14},
+  {id:'jeju', name:'제주 올레', sub:'준비 중', scene:null, x:100, y:392},
+];
+const DEVICE_ID = (()=>{ try{ let v = localStorage.getItem('haebyeon.dev'); if(!v){ v = Math.random().toString(36).slice(2,10) + Date.now().toString(36); localStorage.setItem('haebyeon.dev', v); } return v; }catch(e){ return 'anon'; } })();
+const votes = {counts:{}, mine:new Set()};
+try{ (JSON.parse(localStorage.getItem('haebyeon.votes')||'[]')).forEach(v=>votes.mine.add(v)); }catch(e){}
+const liveCounts = {};
+function stampTotals(){ const t = {}; for(const r of logLoad()){ if(!r.sc || !r.m) continue; t[r.sc] = (t[r.sc]||0) + r.m; } return t; }
+function renderMap(){
+  const g = document.getElementById('kpins'); if(!g) return; const totals = stampTotals(); const NS = 'http://www.w3.org/2000/svg';
+  g.innerHTML = '';
+  for(const pl of PLACES){
+    const grp = document.createElementNS(NS, 'g'); grp.setAttribute('class', 'pin' + (pl.scene ? '' : ' soon') + (pl.scene && totals[pl.scene] ? ' stamp' : '') + (pl.scene===SCENE_ID ? ' here' : '')); grp.setAttribute('transform', `translate(${pl.x},${pl.y})`); grp.setAttribute('role','button'); grp.setAttribute('tabindex','0');
+    const ring = document.createElementNS(NS, 'circle'); ring.setAttribute('class','ring'); ring.setAttribute('r','9'); grp.appendChild(ring);
+    const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class','dot'); dot.setAttribute('r','5.5'); grp.appendChild(dot);
+    const tx = pl.left ? -9 : (pl.dx||0) + 9, ty = (pl.dy||0) + 3; const anchor = pl.left ? 'end' : 'start';
+    const t1 = document.createElementNS(NS, 'text'); t1.setAttribute('x', tx); t1.setAttribute('y', ty); t1.setAttribute('text-anchor', anchor); t1.textContent = pl.name; grp.appendChild(t1);
+    const t2 = document.createElementNS(NS, 'text'); t2.setAttribute('class','sub'); t2.setAttribute('x', tx); t2.setAttribute('y', ty + 11); t2.setAttribute('text-anchor', anchor);
+    let sub = pl.sub;
+    if(pl.scene){ const parts = []; if(liveCounts[pl.scene]) parts.push(`지금 ${liveCounts[pl.scene]}명`); if(totals[pl.scene]) parts.push(`내 기록 ${(totals[pl.scene]/1000).toFixed(1)} km`); sub = parts.length ? parts.join(' · ') : pl.sub; }
+    else { const n = votes.counts[pl.id] || 0; sub = votes.mine.has(pl.id) ? `투표했어요 · ${n}표` : (n ? `준비 중 · ${n}표` : '준비 중 · 눌러서 투표'); }
+    t2.textContent = sub; grp.appendChild(t2);
+    const title = document.createElementNS(NS, 'title'); title.textContent = pl.scene ? `${pl.name}에서 달리기` : `${pl.name} 만들어 달라고 투표`; grp.appendChild(title);
+    const act = ()=>{ if(pl.scene){ if(pl.scene===SCENE_ID){ $('start').click(); return; } const u = new URL(location.href); if(pl.scene==='beach') u.searchParams.delete('scene'); else u.searchParams.set('scene', pl.scene); location.href = u.toString(); } else castVote(pl.id); };
+    grp.addEventListener('click', act); grp.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); act(); } });
+    g.appendChild(grp);
+  }
+}
+async function loadVotes(){ try{ const r = await fetch(`${SB_URL}/rest/v1/scene_vote_counts?select=place,n`, {headers:{apikey:SB_KEY, Authorization:`Bearer ${SB_KEY}`}}); if(!r.ok) return; const rows = await r.json(); votes.counts = {}; for(const row of rows) votes.counts[row.place] = row.n; renderMap(); }catch(e){} }
+async function castVote(place){
+  if(votes.mine.has(place)){ say('이미 투표했어요 · 고마워요', 1800); return; }
+  votes.mine.add(place); try{ localStorage.setItem('haebyeon.votes', JSON.stringify([...votes.mine])); }catch(e){}
+  votes.counts[place] = (votes.counts[place]||0) + 1; renderMap(); say('투표 고마워요 · 많이 모이면 먼저 만들게요', 2400);
+  try{ await fetch(`${SB_URL}/rest/v1/scene_votes`, {method:'POST', headers:{apikey:SB_KEY, Authorization:`Bearer ${SB_KEY}`, 'Content-Type':'application/json', Prefer:'return=minimal'}, body:JSON.stringify({place, device:DEVICE_ID})}); loadVotes(); }catch(e){}
+}
+// 핀마다 '지금 N명': 각 장면의 1번 방 presence를 잠깐 들여다본다 (내 자리는 등록하지 않음)
+async function peekLive(){
+  try{ if(!net.sb){ const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/+esm'); net.sb = mod.createClient(SB_URL, SB_KEY, {realtime:{params:{eventsPerSecond:8}}}); }
+    for(const pl of PLACES){ if(!pl.scene) continue; const chan = SCENES[pl.scene].chan; const ch = net.sb.channel(`${chan}:1`, {config:{presence:{key:'peek-' + DEVICE_ID}}});
+      ch.on('presence', {event:'sync'}, ()=>{ const n = Object.keys(ch.presenceState()).filter(k=>!k.startsWith('peek-')).length; liveCounts[pl.scene] = n; renderMap(); });
+      ch.subscribe(); setTimeout(()=>{ try{ ch.unsubscribe(); }catch(e){} }, 6000); }
+  }catch(e){}
+}
+renderMap(); loadVotes(); peekLive();
 (function(){ $('w-eyebrow').textContent = SC.eyebrow; $('b-eyebrow').textContent = SC.eyebrow; $('b-name').textContent = SC.name; $('welcome-title').textContent = SC.title; document.title = SC.title;
   $('lane-sea').textContent = SC.laneSea; $('lane-sand').textContent = SC.laneSand; document.querySelector('#st-shell + span').textContent = SC.collect; $('sandtext').placeholder = SC.sandMsg;
   document.querySelectorAll('#scene-pick button').forEach(b=>{ b.setAttribute('aria-pressed', String(b.dataset.scene===SCENE_ID)); b.addEventListener('click', ()=>{ if(b.dataset.scene===SCENE_ID) return; const u = new URL(location.href); if(b.dataset.scene==='beach') u.searchParams.delete('scene'); else u.searchParams.set('scene', b.dataset.scene); location.href = u.toString(); }); });
