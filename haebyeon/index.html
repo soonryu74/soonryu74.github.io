@@ -89,8 +89,10 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .kmap .pin{cursor:pointer}
   .kmap .pin circle.dot{fill:var(--accent,#5cc3bd);stroke:#fff;stroke-width:2.5}
   .kmap .pin.soon circle.dot{fill:#c9c3b8}
-  .kmap .pin text{font-size:11px;font-weight:700;fill:#2b3a40;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
-  .kmap .pin text.sub{font-size:9px;font-weight:500;fill:#6b7a80}
+  .kmap .pin text{font-size:8px;font-weight:600;fill:#3b4a50;paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;letter-spacing:-0.2px}
+  .kmap .pin.live circle.dot{fill:#ff9b8a}
+  .kmap .pin circle.badge{fill:#ff6f5a;stroke:#fff;stroke-width:1.2}
+  .kmap .pin text.badge{font-size:6.5px;font-weight:700;fill:#fff;stroke:none}
   .kmap .pin.stamp circle.ring{fill:none;stroke:#ff9b8a;stroke-width:2;stroke-dasharray:2 2}
   .kmap .pin.here circle.dot{stroke-width:3}
   .klegend{display:flex;justify-content:center;gap:10px;margin-top:6px;font-size:10px;color:var(--mist);white-space:nowrap}
@@ -412,7 +414,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-115';
+window.__BUILD = '2026-11-06-117';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -822,7 +824,7 @@ const sandNotes = [];
 function writeOnSand(text){ let done = false; const go = ()=>{ if(done) return; done = true; writeOnSandNow(text); }; if(document.fonts && document.fonts.load){ document.fonts.load('150px "Nanum Brush Script"', text).then(go, go); setTimeout(go, 2500); } else go(); }   // 구글폰트는 글자 범위별로 쪼개져 오므로, 쓸 글자를 넘겨서 해당 조각까지 받은 뒤 그린다
 function writeOnSandNow(text){
   const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const g = c.getContext('2d');
-  if(SC.ground!=='sand'){ g.shadowColor = 'rgba(40,30,20,0.55)'; g.shadowBlur = 10; g.fillStyle = 'rgba(255,250,236,0.96)'; } else g.fillStyle = 'rgba(104,80,52,0.95)';   /* 한강: 트랙 위 분필 느낌 */ g.font = '400 150px "Nanum Brush Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
+  if(SNOWFIELD){ g.shadowColor = 'rgba(255,255,255,0.8)'; g.shadowBlur = 6; g.fillStyle = 'rgba(58,70,84,0.95)'; } /* 눈 위: 눌린 그늘색 진한 글씨 */ else if(SC.ground!=='sand'){ g.shadowColor = 'rgba(40,30,20,0.55)'; g.shadowBlur = 10; g.fillStyle = 'rgba(255,250,236,0.96)'; } else g.fillStyle = 'rgba(104,80,52,0.95)';   /* 한강: 트랙 위 분필 느낌 */ g.font = '400 150px "Nanum Brush Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0.95, depthWrite:false}));
   const nz = SC.ground==='grass' ? state.lane - 2.3 : (SCENE_ID==='gung' ? state.lane - 1.2 : ((SC.ground==='deck' || SC.ground==='stonepath') ? THREE.MathUtils.clamp(state.lane - 2.8, 1.5, 6.0) : state.lane - 2.8));   // 돌담길만 언덕 위라 바로 앞, 나머지는 머리에 안 가리게 2.8 m 앞   // 한강: 차선(z 4.0)에 걸치지 않는 트랙 바깥쪽   // 앉은 사람 앞 바닥 (해변: 밀물이 올라오면 지워짐 / 한강: 바람이 지움)   // 해변: 물가 가까이 → 다음 밀물에 지워진다 / 한강: 바로 앞 잔디, 바람이 지운다
@@ -2291,20 +2293,20 @@ function renderAbroad(){
 }
 document.querySelectorAll('#region-tab button').forEach(b=>b.addEventListener('click', ()=>{ const ab = b.dataset.region==='abroad'; document.querySelectorAll('#region-tab button').forEach(x=>x.setAttribute('aria-pressed', String(x===b))); $('kmap').hidden = ab; $('klegend').hidden = ab; $('abroad').hidden = !ab; try{ localStorage.setItem('haebyeon.region', b.dataset.region); }catch(e){} }));
 const PLACES = [
-  {id:'gangneung', name:'강릉 경포', sub:'해변', scene:'beach', x:217, y:76, dy:3},
-  {id:'pine', name:'대관령 소나무길', sub:'금강송 숲', scene:'pine', x:208, y:110, dy:18, dx:-60},
-  {id:'bamboo', name:'밤부길 대나무 숲', sub:'대숲', scene:'bamboo', x:196, y:214, dy:-14, dx:-50},
-  {id:'chuncheon', name:'춘천 의암호', sub:'호숫길', scene:'chuncheon', x:152, y:62, dy:-14, dx:-40},
-  {id:'cheorwon', name:'철원 주상절리길', sub:'협곡 잔도', scene:'cheorwon', x:124, y:50, left:true, dy:-10},
-  {id:'snow', name:'철원 눈길', sub:'눈 덮인 한탄강', scene:'snow', x:150, y:40, dy:-10},
-  {id:'forest', name:'남이섬 숲길', sub:'은행·단풍', scene:'forest', x:150, y:92, dy:16, dx:-60},
-  {id:'gung', name:'경복궁 돌담길', sub:'밤 산책', scene:'gung', x:105, y:88, left:true, dy:-10},
-  {id:'hangang', name:'서울 한강', sub:'강변', scene:'hangang', x:100, y:102, left:true, dy:14},
-  {id:'jeonju', name:'전주 한옥마을', sub:'골목', scene:'jeonju', x:115, y:219, left:true, dy:4},
-  {id:'ulsan', name:'울산 대왕암', sub:'바위섬 다리', scene:'ulsan', x:249, y:242, left:true, dy:4},
-  {id:'busan', name:'부산 광안리', sub:'광안대교', scene:'busan', x:230, y:268, left:true, dy:14},
-  {id:'jejucoast', name:'제주 해안길', sub:'현무암 바다', scene:'jejucoast', x:68, y:392, dy:-12},
-  {id:'jeju', name:'제주 올레 숲길', sub:'곶자왈', scene:'jeju', x:96, y:398, dy:14},
+  {id:'gangneung', name:'강릉 경포', short:'강릉 경포', sub:'해변', scene:'beach', x:217, y:76, dy:1},
+  {id:'pine', name:'대관령 소나무길', short:'대관령 솔숲', sub:'금강송 숲', scene:'pine', x:208, y:110, dy:1},
+  {id:'bamboo', name:'밤부길 대나무 숲', short:'밤부길 대숲', sub:'대숲', scene:'bamboo', x:196, y:214, left:true, dy:1},
+  {id:'chuncheon', name:'춘천 의암호', short:'춘천 의암호', sub:'호숫길', scene:'chuncheon', x:152, y:62, dy:1},
+  {id:'cheorwon', name:'철원 주상절리길', short:'철원 잔도', sub:'협곡 잔도', scene:'cheorwon', x:124, y:50, left:true, dy:1},
+  {id:'snow', name:'철원 눈길', short:'철원 눈길', sub:'눈 덮인 한탄강', scene:'snow', x:150, y:40, dy:-4},
+  {id:'forest', name:'남이섬 숲길', short:'남이섬', sub:'은행·단풍', scene:'forest', x:150, y:92, dy:1},
+  {id:'gung', name:'경복궁 돌담길', short:'경복궁', sub:'밤 산책', scene:'gung', x:105, y:88, left:true, dy:1},
+  {id:'hangang', name:'서울 한강', short:'서울 한강', sub:'강변', scene:'hangang', x:100, y:104, left:true, dy:4},
+  {id:'jeonju', name:'전주 한옥마을', short:'전주 한옥', sub:'골목', scene:'jeonju', x:115, y:219, left:true, dy:1},
+  {id:'ulsan', name:'울산 대왕암', short:'울산 대왕암', sub:'바위섬 다리', scene:'ulsan', x:249, y:242, left:true, dy:1},
+  {id:'busan', name:'부산 광안리', short:'부산 광안리', sub:'광안대교', scene:'busan', x:230, y:268, left:true, dy:4},
+  {id:'jejucoast', name:'제주 해안길', short:'제주 해안', sub:'현무암 바다', scene:'jejucoast', x:68, y:392, left:true, dy:1},
+  {id:'jeju', name:'제주 올레 숲길', short:'제주 숲길', sub:'곶자왈', scene:'jeju', x:96, y:398, dy:1},
 ];
 const DEVICE_ID = (()=>{ try{ let v = localStorage.getItem('haebyeon.dev'); if(!v){ v = Math.random().toString(36).slice(2,10) + Date.now().toString(36); localStorage.setItem('haebyeon.dev', v); } return v; }catch(e){ return 'anon'; } })();
 const votes = {counts:{}, mine:new Set()};
@@ -2316,15 +2318,12 @@ function renderMap(){
   g.innerHTML = '';
   for(const pl of PLACES){
     const grp = document.createElementNS(NS, 'g'); grp.setAttribute('class', 'pin' + (pl.scene ? '' : ' soon') + (pl.scene===SCENE_ID ? ' here' : '')); grp.setAttribute('transform', `translate(${pl.x},${pl.y})`); grp.setAttribute('role','button'); grp.setAttribute('tabindex','0');
-    const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class','dot'); dot.setAttribute('r','5.5'); grp.appendChild(dot);
-    const tx = pl.left ? -9 : (pl.dx||0) + 9, ty = (pl.dy||0) + 3; const anchor = pl.left ? 'end' : 'start';
-    const t1 = document.createElementNS(NS, 'text'); t1.setAttribute('x', tx); t1.setAttribute('y', ty); t1.setAttribute('text-anchor', anchor); t1.textContent = pl.name; grp.appendChild(t1);
-    const t2 = document.createElementNS(NS, 'text'); t2.setAttribute('class','sub'); t2.setAttribute('x', tx); t2.setAttribute('y', ty + 11); t2.setAttribute('text-anchor', anchor);
-    let sub = pl.sub;
-    if(pl.scene){ const n = liveCounts[pl.scene]; sub = n ? `지금 ${n}명 달리는 중` : `${pl.sub} · 지금 0명`; }
-    else { const n = votes.counts[pl.id] || 0; sub = votes.mine.has(pl.id) ? `투표했어요 · ${n}표` : (n ? `준비 중 · ${n}표` : '준비 중 · 눌러서 투표'); }
-    t2.textContent = sub; grp.appendChild(t2);
-    const title = document.createElementNS(NS, 'title'); title.textContent = pl.scene ? `${pl.name}에서 달리기` : `${pl.name} 만들어 달라고 투표`; grp.appendChild(title);
+    const n = pl.scene ? (liveCounts[pl.scene] || 0) : 0; if(n) grp.classList.add('live');
+    const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class','dot'); dot.setAttribute('r','4.5'); grp.appendChild(dot);
+    const tx = pl.left ? -7 : (pl.dx||0) + 7, ty = (pl.dy||0) + 2; const anchor = pl.left ? 'end' : 'start';
+    const t1 = document.createElementNS(NS, 'text'); t1.setAttribute('x', tx); t1.setAttribute('y', ty); t1.setAttribute('text-anchor', anchor); t1.textContent = pl.short || pl.name; grp.appendChild(t1);
+    if(n){ const b = document.createElementNS(NS, 'circle'); b.setAttribute('class','badge'); const bx = pl.left ? 5 : -5; b.setAttribute('cx', bx); b.setAttribute('cy', -5); b.setAttribute('r', 5); grp.appendChild(b); const bt = document.createElementNS(NS, 'text'); bt.setAttribute('class','badge'); bt.setAttribute('x', bx); bt.setAttribute('y', -2.6); bt.setAttribute('text-anchor','middle'); bt.textContent = n > 99 ? '99+' : String(n); grp.appendChild(bt); }
+    const title = document.createElementNS(NS, 'title'); title.textContent = pl.scene ? `${pl.name} · ${pl.sub}${n ? ` · 지금 ${n}명` : ''}` : `${pl.name} 만들어 달라고 투표`; grp.appendChild(title);
     const act = ()=>{ if(pl.scene){ if(pl.scene===SCENE_ID){ $('start').click(); return; } const u = new URL(location.href); if(pl.scene==='beach') u.searchParams.delete('scene'); else u.searchParams.set('scene', pl.scene); location.href = u.toString(); } else castVote(pl.id); };
     grp.addEventListener('click', act); grp.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); act(); } });
     g.appendChild(grp);
