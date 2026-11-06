@@ -78,7 +78,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .kmap .pin text{font-size:11px;font-weight:700;fill:#2b3a40;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
   .kmap .pin text.sub{font-size:9px;font-weight:500;fill:#6b7a80}
   .kmap .pin.stamp circle.ring{fill:none;stroke:#ff9b8a;stroke-width:2;stroke-dasharray:2 2}
-  .kmap .pin.here circle.dot{fill:#ff9b8a}
+  .kmap .pin.here circle.dot{stroke-width:3}
   .klegend{display:flex;justify-content:center;gap:10px;margin-top:6px;font-size:10px;color:var(--mist);white-space:nowrap}
   .klegend i{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin-right:4px}
   .abroad{list-style:none;margin:12px 0 0;padding:0;text-align:left}
@@ -382,7 +382,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-110';
+window.__BUILD = '2026-11-06-111';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -433,7 +433,7 @@ const state = {
   todMode:'auto', todT:0.12, todPhase:0.5, todStart:Date.now(), reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
 };
 let PRIV = (new URL(location.href).searchParams.get('room')||'').replace(/[^0-9a-zA-Z가-힣_-]/g,'').slice(0,24);
-try{ if(PRIV) localStorage.setItem('haebyeon.room', PRIV); else { const r = localStorage.getItem('haebyeon.room')||''; if(r){ PRIV = r; const u = new URL(location.href); u.searchParams.set('room', r); history.replaceState(null, '', u.toString()); } } }catch(e){}
+try{ if(PRIV) localStorage.setItem('haebyeon.room', PRIV); else localStorage.removeItem('haebyeon.room'); }catch(e){}
 const BOT = new URL(location.href).searchParams.get('bot')==='1'; const BOTF = BOT ? Math.min(1, Math.max(0.05, parseFloat(new URL(location.href).searchParams.get('bs')||'1') || 1)) : 1;
 let nick = ''; try{ nick = (localStorage.getItem('haebyeon.nick')||'').slice(0,8); }catch(e){}
 const net = { on:true, ch:null, sb:null, id:Math.random().toString(36).slice(2,10), priv:PRIV, room:0, placed:false, count:1, lastSend:0, lastHeartbeat:0, lastPresence:0, lookDirty:true, sentLane:2.2, sentState:'', status:'off', joinedAt:0 };
@@ -1102,7 +1102,7 @@ async function netJoin(room = 1){
       if(state.started) say(othersN ? `지금 ${othersN+1}명이 같은 ${SC.name}을 달리고 있어요` : '지금은 혼자예요 · 누가 오면 보여요', 3200);
       net.ch.send({type:'broadcast', event:'p', payload:{id:net.id, ...myPacket(true)}}); net.lastSend = performance.now(); net.lastHeartbeat = net.lastSend;
       net.ch.track({x:+state.x.toFixed(1), t:Date.now(), t0:state.todStart}).catch(()=>{}); net.lastPresence = performance.now();
-      if(lobby){ try{ lobby.track({sc:SCENE_ID, t:Date.now()}); }catch(e){} } else lobbyJoin(true);
+      if(state.started){ if(lobby){ try{ lobby.track({sc:SCENE_ID, t:Date.now()}); }catch(e){} } else lobbyJoin(true); }
     }
     net.count = ids.length || 1; setRoomUI();
     for(const id of others.keys()) if(!ids.includes(id)) removeOther(id);
@@ -2241,7 +2241,7 @@ async function castVote(place){
 // 핀마다 '지금 N명': 각 장면의 1번 방 presence를 잠깐 들여다본다 (내 자리는 등록하지 않음)
 // 로비: 모든 장소의 러너가 한 채널에 '어디서 달리는지'만 등록 → 지도에서 장소별 인원을 바로 읽는다
 let lobby = null;
-function lobbyCounts(){ const c = {}; if(!lobby) return c; const st = lobby.presenceState(); for(const k of Object.keys(st)){ for(const v of st[k]){ if(v && v.sc && !v.peek) c[v.sc] = (c[v.sc]||0) + 1; } } return c; }
+function lobbyCounts(){ const c = {}; if(!lobby) return c; const st = lobby.presenceState(); for(const k of Object.keys(st)){ if(k===DEVICE_ID) continue; for(const v of st[k]){ if(v && v.sc && !v.peek) c[v.sc] = (c[v.sc]||0) + 1; } } return c; }
 async function lobbyJoin(track){
   try{ if(!net.sb){ const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/+esm'); net.sb = mod.createClient(SB_URL, SB_KEY, {realtime:{params:{eventsPerSecond:8}}}); }
     if(lobby) return;
