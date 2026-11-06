@@ -10,13 +10,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="해변">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="description" content="말없이 파도 옆을 달리는 온라인 해변, 해변 러닝.">
-<title>해변, 잠깐 달려요</title>
+<meta name="description" content="윤슬런 · 해변·한강·고궁·가을 숲길까지 전국 9곳을 지도에서 고르고, 말없이 함께 달리는 온라인 러닝. 무료, 설치 없음.">
+<title>윤슬런 · 오늘은 어디서 달릴까요</title>
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
-<meta property="og:site_name" content="해변">
-<meta property="og:title" content="해변, 잠깐 달려요">
-<meta property="og:description" content="말없이 파도 옆을 달리는 온라인 해변.">
+<meta property="og:site_name" content="윤슬런">
+<meta property="og:title" content="윤슬런 · 오늘은 어디서 달릴까요">
+<meta property="og:description" content="해변·한강·고궁·가을 숲길… 전국 9곳을 지도에서 고르고 말없이 함께 달리는 온라인 러닝. 무료, 설치 없음.">
 <meta property="og:image" content="https://soonryu74.github.io/haebyeon/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -24,8 +24,8 @@
 <meta property="og:url" content="https://soonryu74.github.io/haebyeon/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://soonryu74.github.io/haebyeon/og.png">
-<meta name="twitter:title" content="해변, 잠깐 달려요">
-<meta name="twitter:description" content="말없이 파도 옆을 달리는 온라인 해변.">
+<meta name="twitter:title" content="윤슬런 · 오늘은 어디서 달릴까요">
+<meta name="twitter:description" content="해변·한강·고궁·가을 숲길… 전국 9곳을 지도에서 고르고 말없이 함께 달리는 온라인 러닝.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235cc3bd' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='17' cy='6' r='2.6'/%3E%3Cpath d='M2 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0'/%3E%3C/svg%3E">
 <style>
@@ -203,10 +203,10 @@ body{word-break:keep-all;overflow-wrap:break-word}
 <body>
 <canvas id="stage" aria-label="해변 장면"></canvas>
 
-<main id="boot" class="boot" role="status" aria-label="해변">
+<main id="boot" class="boot" role="status" aria-label="윤슬런">
   <span class="boot-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="6" r="2.6"/><path d="M2 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg></span>
-  <h1 id="boot-title">해변</h1>
-  <p id="boot-message">파도를 불러오는 중</p>
+  <h1 id="boot-title">윤슬런</h1>
+  <p id="boot-message">장면을 불러오는 중</p>
   <span class="boot-dot" aria-hidden="true"></span>
   <a class="boot-retry" href="">다시 들어가기</a>
 </main>
@@ -215,7 +215,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <div class="welcome-card">
     <p class="eyebrow" id="w-eyebrow">BEACH RUN</p>
     <h1 id="welcome-title">해변, 잠깐 달려요</h1>
-    <p>경쟁도 기록도 없어요. 천천히 달리다 쉬고 싶을 때 멈춰요.<br><small style="color:var(--mist)">지도에서 달릴 곳을 고르세요 · 같은 곳의 다른 사람도 말없이 보여요</small></p>
+    <p>오늘은 어디서 달릴까요?<br><small style="color:var(--mist)">경쟁도 기록도 없어요 · 지도에서 고르면 같은 곳의 사람들과 말없이 함께 달려요</small></p>
     <div class="welcome-actions">
       <button id="start" class="btn" type="button">달리러 가기</button>
       <button id="look-open" class="btn ghost" type="button">꾸미기 · 친구 고르기</button>
@@ -373,7 +373,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-72';
+window.__BUILD = '2026-11-06-73';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -398,6 +398,7 @@ SCENES.jeonju = {...SCENES.gung, name:'한옥마을', eyebrow:'JEONJU RUN', titl
 SCENES.forest = {todOffset:0.14, ...SCENES.gung, name:'가을 숲길', eyebrow:'AUTUMN RUN', title:'가을 숲길, 잠깐 달려요', shareText:'은행잎·단풍이 쌓인 숲길을 달리는 온라인 산책', cardTitle:'가을 숲길, 잠깐 달렸어요', chan:'forest', night:false, dryLane:6.6, bird:'sparrow', collect:'단풍잎', sitMsg:'낙엽 쌓인 벤치 쪽으로 가요', sandMsg:'낙엽 위에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 const SC = SCENES[SCENE_ID];
 const GUNG = FG;
+try{ const bm = document.getElementById('boot-message'); if(bm) bm.textContent = (FB ? '파도를' : FH ? '강바람을' : SCENE_ID==='forest' ? '낙엽을' : '돌담길을') + ' 불러오는 중 · ' + SC.name; }catch(e){}
 const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
 const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = SCENE_ID==='gung' ? 5.0 : (FG ? 7.4 : (FH ? 6.4 : 8.5)), WALK = 1.4, RUN = 3.4;   // 한강: 달릴 땐 벤치가 있는 잔디 안쪽까지 안 들어간다
 // 돌담길 오른쪽 잔디 언덕: 담장 너머 궁 전경을 보며 앉고 눕는 자리. z 6.5→9.5 오르막, 9.5~11.5 꼭대기(2.4 m), 11.5→14.5 내리막
@@ -1022,7 +1023,7 @@ $('invite').addEventListener('click', async ()=>{
   const hadPriv = !!net.priv; const link = inviteLink();
   if(!hadPriv){ history.replaceState(null, '', link); try{ localStorage.setItem('haebyeon.room', net.priv); }catch(e){} $('leave-row').hidden = false; netLeave(); net.on = true; $('together').setAttribute('aria-checked','true'); if(state.started) netJoin(1); }
   $('invite-note').textContent = `우리 해변 '${net.priv}' · ${link}`;
-  try{ if(navigator.share){ await navigator.share({title:'해변, 같이 달려요', text:`우리 해변 '${net.priv}'에서 같이 달려요`, url:link}); say('초대를 보냈어요'); return; } }catch(e){ if(e && e.name==='AbortError') return; }
+  try{ if(navigator.share){ await navigator.share({title:'윤슬런 · ' + SC.name + ', 같이 달려요', text:`윤슬런 ${SC.name}에서 같이 달려요`, url:link}); say('초대를 보냈어요'); return; } }catch(e){ if(e && e.name==='AbortError') return; }
   try{ await navigator.clipboard.writeText(link); say('초대 링크를 복사했어요 · 카톡에 붙여넣기', 3200); }catch(e){ say('링크를 길게 눌러 복사해 주세요'); }
 });
 if(PRIV){ $('invite-note').textContent = `우리 해변 '${PRIV}' 에 들어와 있어요`; $('leave-row').hidden = false; }
@@ -1716,7 +1717,7 @@ function chime(){
 /* ---------- UI ---------- */
 const hud = $('hud'), toast = $('toast'); let toastT;
 function say(msg, ms=2600, cls=''){ toast.textContent = msg; toast.className = 'toast is-on ' + cls; clearTimeout(toastT); toastT = setTimeout(()=>toast.classList.remove('is-on'), ms); }
-function bootError(msg){ const b = $('boot'); b.classList.add('is-error'); $('boot-title').textContent = '해변 로딩 실패'; $('boot-message').textContent = msg; }
+function bootError(msg){ const b = $('boot'); b.classList.add('is-error'); $('boot-title').textContent = '윤슬런 로딩 실패'; $('boot-message').textContent = msg; }
 function fmtTime(s){ s = Math.floor(s); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
 
 const runbtn = $('runbtn');
@@ -1904,7 +1905,7 @@ async function peekLive(){
   }catch(e){}
 }
 renderMap(); loadVotes(); peekLive();
-(function(){ $('w-eyebrow').textContent = SC.eyebrow; $('b-eyebrow').textContent = SC.eyebrow; $('b-name').textContent = SC.name; $('welcome-title').textContent = SC.title; document.title = SC.title;
+(function(){ $('w-eyebrow').textContent = 'YUNSEUL RUN · ' + SC.eyebrow; $('b-eyebrow').textContent = SC.eyebrow; $('b-name').textContent = SC.name; $('welcome-title').textContent = '윤슬런'; document.title = '윤슬런 · ' + SC.title;
   $('lane-sea').textContent = SC.laneSea; $('lane-sand').textContent = SC.laneSand; document.querySelector('#st-shell + span').textContent = SC.collect; $('sandtext').placeholder = SC.sandMsg;
   document.querySelectorAll('#scene-pick button').forEach(b=>{ b.setAttribute('aria-pressed', String(b.dataset.scene===SCENE_ID)); b.addEventListener('click', ()=>{ if(b.dataset.scene===SCENE_ID) return; const u = new URL(location.href); if(b.dataset.scene==='beach') u.searchParams.delete('scene'); else u.searchParams.set('scene', b.dataset.scene); location.href = u.toString(); }); });
   if(SCENE_ID!=='beach'){ const hint = document.querySelector('.pace-hint'); if(hint) hint.innerHTML = '<kbd>Space</kbd> 누르는 동안 달리기<br><kbd>←</kbd><kbd>→</kbd> 왼쪽 · 오른쪽'; }
@@ -1929,7 +1930,7 @@ async function shareCard(){
   g.beginPath(); for(let x=W-320;x<=W-80;x+=4){ const y = H-74 + Math.sin((x/18))*6; x===W-320 ? g.moveTo(x,y) : g.lineTo(x,y); } g.lineWidth = 6; g.strokeStyle = '#5cc3bd'; g.lineCap = 'round'; g.stroke();
   const blob = await new Promise(res=>c.toBlob(res, 'image/png'));
   const file = new File([blob], '해변-오늘의-러닝.png', {type:'image/png'});
-  try{ if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:SC.title, text:SC.shareText}); say('카드를 보냈어요'); return; } }catch(e){ if(e && e.name==='AbortError'){ say('공유 창을 닫았어요'); return; } }
+  try{ if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:'윤슬런 · ' + SC.title, text:SC.shareText}); say('카드를 보냈어요'); return; } }catch(e){ if(e && e.name==='AbortError'){ say('공유 창을 닫았어요'); return; } }
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
   try{ await navigator.clipboard.writeText(net.priv ? inviteLink() : location.href.split('?')[0]); say('카드 이미지를 저장하고 링크를 복사했어요', 3600); }catch(e){ say('카드 이미지를 저장했어요', 3000); }
 }
