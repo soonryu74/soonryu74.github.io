@@ -2034,7 +2034,7 @@ function frame(){
 
     if(state.pendingNote && state.resting && state.pose==='sit' && !state.pendingPose){ state.noteWait = (state.noteWait || 0) + dt; if(state.noteWait > 0.5){ writeOnSand(state.pendingNote); state.pendingNote = null; state.noteWait = 0; } }
     if(state.todMode==='auto'){ const clock = ((Date.now()/1000) % 1200)/1200 + (SC.todOffset || 0);   // 같은 장소의 모든 사람이 같은 시간을 본다: 실제 시계 기준 20분 주기
-      if(SC.night) state.todT = 0.80 + 0.14*(0.5 - 0.5*Math.cos(clock*Math.PI*2)); /* 돌담길: 깊은 밤 ↔ 저녁 노을 */ else state.todT = clock % 1; }, 앉거나 누우면 4배
+      if(SC.night) state.todT = 0.80 + 0.14*(0.5 - 0.5*Math.cos(clock*Math.PI*2)); /* 돌담길: 깊은 밤 ↔ 저녁 노을 */ else state.todT = clock % 1; }
     applyTod(state.todT);
 
     if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness) * SC.seaVol; if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + 9 + Math.random()*18; } }
