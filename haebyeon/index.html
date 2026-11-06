@@ -414,7 +414,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-120';
+window.__BUILD = '2026-11-06-122';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1878,7 +1878,7 @@ function updateLeaves(t, dt){
     if(L.y < 0.02){ L.rest -= dt;
       if(gust > 0.35 && Math.random() < gust*0.6*dt*4){ L.y = 0.1 + Math.random()*0.9*gust; L.vy = 0.35 + Math.random()*0.4; }   // 돌풍에 바닥 낙엽이 들썩이며 날아오른다
       else if(gust > 0.15){ L.x += wind*0.5*dt; L.spin += dt*3*gust; }                                                            // 안 뜬 잎은 바닥을 구른다
-      if(L.rest <= 0){ L.x = state.x - 8 + Math.random()*44; L.z = -3 + Math.random()*18; L.y = 4 + Math.random()*5; L.vy = 0.28 + Math.random()*0.3; L.rest = 3 + Math.random()*6; L.ph = Math.random()*10; } }
+      if(L.rest <= 0){ const lying = state.resting && state.pose==='lie'; if(lying){ L.x = state.x - 5 + Math.random()*14; L.z = state.lane - 7 + Math.random()*12; L.y = 7 + Math.random()*6; L.rest = 1 + Math.random()*3; } else { L.x = state.x - 8 + Math.random()*44; L.z = -3 + Math.random()*18; L.y = 4 + Math.random()*5; L.rest = 3 + Math.random()*6; } L.vy = 0.28 + Math.random()*0.3; L.ph = Math.random()*10; } }   /* 누워 있으면 머리 위 높은 데서 더 자주 떨어진다 */
     else { const flutter = Math.sin(t*2.4*L.sway + L.ph); L.y -= L.vy*(1 - 0.45*gust)*(0.75 + 0.25*Math.abs(flutter))*dt; L.x += (wind + flutter*0.9*L.sway)*dt; L.z += Math.cos(t*1.1*L.sway + L.ph)*0.7*dt; if(L.y < 0.02) L.y = 0.015; }   // 나풀나풀: 좌우로 흔들리며 느리게
     const onGround = L.y <= 0.02; _lp.set(L.x, Math.max(L.y, 0.015) + (onGround ? 0 : 0), L.z);
     if(onGround) _le.set(-Math.PI/2, 0, L.spin); else _le.set(Math.sin(t*2.4*L.sway + L.ph)*1.2, t*0.5 + L.spin, Math.cos(t*1.9*L.sway + L.ph)*0.9);
@@ -2624,7 +2624,8 @@ function frame(){
   if(state.noteCam && (!state.resting || !sandNotes.includes(state.noteCam) || performance.now() - state.noteCamT > 60000)) state.noteCam = null;
   if(state.resting && state.noteCam){ const n = state.noteCam; camPos.set(state.x + 0.15, 3.4, state.lane + 2.3); camLook.set(state.x, 0.1, state.lane - 2.6); }   // 앉은 등 뒤 위에서 하이앵글로: 사람 너머 바닥 글씨와 파도   // 글씨 뒤 위에서 내려다본다 · 파도가 지우는 것까지 보인다
   else if(state.resting){
-    if(state.pose==='lie'){ camPos.set(state.x + 0.15, 0.9, state.lane + 1.2); camLook.set(state.x + 0.15, 0.15, state.lane - 4.5); }   // 머리를 바닥에 댄 눈높이: 발끝이 땅에 붙고 그 너머 수평선이 보인다   // 이마 바로 위에서: 모자 챙이 시야를 가리지 않게 챙 앞쪽에 둔다   // 머리맡에서 내 다리·옆에 누운 친구 너머 바다를 본다
+    if(state.pose==='lie' && (FG || SNOWFIELD)){ camPos.set(state.x + 0.15, 0.85, state.lane + 0.7); camLook.set(state.x + 0.15, 0.85 + 9.4, state.lane + 0.7 - (FG ? 6.3 : 3.4)); }   /* 숲길: 누우면 약 60도 위 나무 지붕과 하늘, 떨어지는 잎 · 눈길: 70도 하늘과 눈 */
+    else if(state.pose==='lie'){ camPos.set(state.x + 0.15, 0.9, state.lane + 1.2); camLook.set(state.x + 0.15, 0.15, state.lane - 4.5); }   // 머리를 바닥에 댄 눈높이: 발끝이 땅에 붙고 그 너머 수평선이 보인다   // 이마 바로 위에서: 모자 챙이 시야를 가리지 않게 챙 앞쪽에 둔다   // 머리맡에서 내 다리·옆에 누운 친구 너머 바다를 본다
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
     else { const portrait = innerWidth < innerHeight; if(portrait){ camPos.set(state.x + 0.9, 1.6, state.lane + 4.0); camLook.set(state.x + 0.3, 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.9, state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
   } else { camPos.set(state.x - 6.2, 2.9 + Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN), state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); }
