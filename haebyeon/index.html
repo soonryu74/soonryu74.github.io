@@ -361,7 +361,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-57';
+window.__BUILD = '2026-11-06-58';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -383,7 +383,7 @@ SCENES.ulsan = {...SCENES.beach, name:'대왕암', eyebrow:'ULSAN RUN', title:'�
 SCENES.jeju = {...SCENES.beach, name:'제주 올레', eyebrow:'JEJU RUN', title:'제주 올레, 잠깐 달려요', shareText:'현무암 돌담과 에메랄드 바다 옆을 달리는 온라인 올레길', cardTitle:'제주 올레, 잠깐 달렸어요', chan:'jeju', deep:{value:0x2290a8}, shallow:0x9fe6dc, collect:'귤'};
 SCENES.chuncheon = {...SCENES.hangang, name:'의암호', eyebrow:'CHUNCHEON RUN', title:'춘천 의암호, 잠깐 달려요', shareText:'안개 낀 호수와 산을 보며 달리는 온라인 호숫길', cardTitle:'의암호, 잠깐 달렸어요', chan:'chuncheon', deep:{value:0x3f7f8f}, shallow:0x8fc8c8, waveAmp:0.25, seaVol:0.3, collect:'단풍잎'};
 SCENES.jeonju = {...SCENES.gung, name:'한옥마을', eyebrow:'JEONJU RUN', title:'전주 한옥마을, 잠깐 달려요', shareText:'기와지붕 사이 골목을 달리는 온라인 한옥마을', cardTitle:'한옥마을, 잠깐 달렸어요', chan:'jeonju', night:false, dryLane:6.6, bird:'sparrow', collect:'감', sitMsg:'골목 옆 평상 쪽으로 가요', sandMsg:'골목에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
-SCENES.forest = {...SCENES.gung, name:'가을 숲길', eyebrow:'AUTUMN RUN', title:'가을 숲길, 잠깐 달려요', shareText:'은행잎·단풍이 쌓인 숲길을 달리는 온라인 산책', cardTitle:'가을 숲길, 잠깐 달렸어요', chan:'forest', night:false, dryLane:6.6, bird:'sparrow', collect:'단풍잎', sitMsg:'낙엽 쌓인 벤치 쪽으로 가요', sandMsg:'낙엽 위에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
+SCENES.forest = {todOffset:0.14, ...SCENES.gung, name:'가을 숲길', eyebrow:'AUTUMN RUN', title:'가을 숲길, 잠깐 달려요', shareText:'은행잎·단풍이 쌓인 숲길을 달리는 온라인 산책', cardTitle:'가을 숲길, 잠깐 달렸어요', chan:'forest', night:false, dryLane:6.6, bird:'sparrow', collect:'단풍잎', sitMsg:'낙엽 쌓인 벤치 쪽으로 가요', sandMsg:'낙엽 위에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 const SC = SCENES[SCENE_ID];
 const GUNG = FG;
 const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
@@ -400,7 +400,7 @@ if(isTouch) document.body.classList.add('is-touch');
 const state = {
   started:false, held:false, autoRun:false, speed:0, laneTarget:2.2, lane:2.2,
   x:0, dist:0, time:0, shells:0, letters:0, catRescues:0, hop:0, dodging:false, laneHome:2.2, paceMul:1, stridePhase:0, stillFor:0, resting:false, pose:'stand', pendingPose:null, prevLane:2.2, restFor:0,
-  todMode:'auto', todT:(SC.night ? 0.94 : (SCENE_ID==='forest' ? 0.64 : 0.5)), todPhase:0.5, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
+  todMode:'auto', todT:0.5, todPhase:0.5, reduce:prefersReduced, quality:2, ended:false, lastStepSide:1,
 };
 let PRIV = (new URL(location.href).searchParams.get('room')||'').replace(/[^0-9a-zA-Z가-힣_-]/g,'').slice(0,24);
 try{ if(PRIV) localStorage.setItem('haebyeon.room', PRIV); else { const r = localStorage.getItem('haebyeon.room')||''; if(r){ PRIV = r; const u = new URL(location.href); u.searchParams.set('room', r); history.replaceState(null, '', u.toString()); } } }catch(e){}
@@ -2033,7 +2033,8 @@ function frame(){
     for(let i=sandNotes.length-1;i>=0;i--){ const n = sandNotes[i]; n.userData.age += dt; const wind = SC.ground!=='sand' && n.userData.age > 18; const washed = (SC.ground==='sand' && n.position.z < tide + 1.2) || wind; if(washed && !n.userData.washing){ n.userData.washing = true; splash(n.position.x, n.position.z, 0.6); say(wind ? '바람이 글씨를 살살 지워 가요' : '파도가 글씨를 지워 가요', 2600); } n.material.opacity -= dt*(washed ? (wind ? 0.12 : 0.35) : 0.012); if(n.material.opacity <= 0 || n.position.x < state.x - 40){ scene.remove(n); n.material.map.dispose(); n.geometry.dispose(); sandNotes.splice(i,1); } }
 
     if(state.pendingNote && state.resting && state.pose==='sit' && !state.pendingPose){ state.noteWait = (state.noteWait || 0) + dt; if(state.noteWait > 0.5){ writeOnSand(state.pendingNote); state.pendingNote = null; state.noteWait = 0; } }
-    if(state.todMode==='auto'){ if(SC.night){ state.todPhase += dt/(state.resting && state.pose!=='stand' ? 300 : 1200); state.todT = 0.80 + 0.14*(0.5 - 0.5*Math.cos(state.todPhase*Math.PI*2)); /* 돌담길: 깊은 밤(0.94) ↔ 저녁 노을(0.80) 사이를 천천히 오간다 */ } else state.todT = (state.todT + dt/(state.resting && state.pose!=='stand' ? 300 : 1200)) % 1; } // 하루 20분, 앉거나 누우면 4배
+    if(state.todMode==='auto'){ const clock = ((Date.now()/1000) % 1200)/1200 + (SC.todOffset || 0);   // 같은 장소의 모든 사람이 같은 시간을 본다: 실제 시계 기준 20분 주기
+      if(SC.night) state.todT = 0.80 + 0.14*(0.5 - 0.5*Math.cos(clock*Math.PI*2)); /* 돌담길: 깊은 밤 ↔ 저녁 노을 */ else state.todT = clock % 1; }, 앉거나 누우면 4배
     applyTod(state.todT);
 
     if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness) * SC.seaVol; if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + 9 + Math.random()*18; } }
