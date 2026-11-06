@@ -373,7 +373,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-71';
+window.__BUILD = '2026-11-06-72';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1854,11 +1854,11 @@ $('start').addEventListener('click', start);
 // 장소 적용
 /* ---------- 대한민국 지도 첫 화면: 핀 = 장면, 준비 중 핀 = 투표, 달린 곳 = 도장 ---------- */
 const PLACES = [
-  {id:'gangneung', name:'강릉 경포', sub:'해변', scene:'beach', x:217, y:76, left:true, dy:20},
+  {id:'gangneung', name:'강릉 경포', sub:'해변', scene:'beach', x:217, y:76, dy:22, dx:-30},
   {id:'chuncheon', name:'춘천 의암호', sub:'호숫길', scene:'chuncheon', x:152, y:66, dy:-12},
-  {id:'forest', name:'남이섬 숲길', sub:'은행·단풍', scene:'forest', x:150, y:88, dy:14},
+  {id:'forest', name:'남이섬 숲길', sub:'은행·단풍', scene:'forest', x:150, y:92, dy:26, dx:-32},
   {id:'gung', name:'경복궁 돌담길', sub:'밤 산책', scene:'gung', x:105, y:88, left:true, dy:-10},
-  {id:'hangang', name:'서울 한강', sub:'강변', scene:'hangang', x:100, y:102, left:true, dy:16},
+  {id:'hangang', name:'서울 한강', sub:'강변', scene:'hangang', x:100, y:102, left:true, dy:18},
   {id:'jeonju', name:'전주 한옥마을', sub:'골목', scene:'jeonju', x:115, y:219},
   {id:'ulsan', name:'울산 대왕암', sub:'바위 해안', scene:'ulsan', x:249, y:242, left:true},
   {id:'busan', name:'부산 광안리', sub:'광안대교', scene:'busan', x:230, y:268, left:true, dy:14},
