@@ -281,6 +281,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
       <button id="rest-run" class="btn small" type="button">다시 달리기</button>
       <button id="rest-sit" class="btn ghost small" type="button">앉기</button>
       <button id="rest-lie" class="btn ghost small" type="button">눕기</button>
+      <button id="rest-photo" class="btn ghost small" type="button">📷 사진 찍기</button>
       <button id="rest-leave" class="btn ghost small" type="button">오늘은 여기까지</button>
     </div>
   </div>
@@ -372,7 +373,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-65';
+window.__BUILD = '2026-11-06-67';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1842,11 +1843,11 @@ $('start').addEventListener('click', start);
 // 장소 적용
 /* ---------- 대한민국 지도 첫 화면: 핀 = 장면, 준비 중 핀 = 투표, 달린 곳 = 도장 ---------- */
 const PLACES = [
-  {id:'gangneung', name:'강릉 경포', sub:'해변', scene:'beach', x:217, y:76, left:true, dy:16},
-  {id:'chuncheon', name:'춘천 의암호', sub:'호숫길', scene:'chuncheon', x:148, y:70, left:true, dy:-8},
-  {id:'forest', name:'남이섬 가을 숲길', sub:'은행·단풍', scene:'forest', x:140, y:82, dy:14},
-  {id:'gung', name:'경복궁 돌담길', sub:'밤 산책', scene:'gung', x:105, y:90, left:true, dy:-8},
-  {id:'hangang', name:'서울 한강', sub:'강변', scene:'hangang', x:102, y:100, dy:14},
+  {id:'gangneung', name:'강릉 경포', sub:'해변', scene:'beach', x:217, y:76, left:true, dy:20},
+  {id:'chuncheon', name:'춘천 의암호', sub:'호숫길', scene:'chuncheon', x:152, y:66, dy:-12},
+  {id:'forest', name:'남이섬 숲길', sub:'은행·단풍', scene:'forest', x:150, y:88, dy:14},
+  {id:'gung', name:'경복궁 돌담길', sub:'밤 산책', scene:'gung', x:105, y:88, left:true, dy:-10},
+  {id:'hangang', name:'서울 한강', sub:'강변', scene:'hangang', x:100, y:102, left:true, dy:16},
   {id:'jeonju', name:'전주 한옥마을', sub:'골목', scene:'jeonju', x:115, y:219},
   {id:'ulsan', name:'울산 대왕암', sub:'바위 해안', scene:'ulsan', x:249, y:242, left:true},
   {id:'busan', name:'부산 광안리', sub:'광안대교', scene:'busan', x:230, y:268, left:true, dy:14},
@@ -1868,7 +1869,7 @@ function renderMap(){
     const t1 = document.createElementNS(NS, 'text'); t1.setAttribute('x', tx); t1.setAttribute('y', ty); t1.setAttribute('text-anchor', anchor); t1.textContent = pl.name; grp.appendChild(t1);
     const t2 = document.createElementNS(NS, 'text'); t2.setAttribute('class','sub'); t2.setAttribute('x', tx); t2.setAttribute('y', ty + 11); t2.setAttribute('text-anchor', anchor);
     let sub = pl.sub;
-    if(pl.scene){ const parts = []; if(liveCounts[pl.scene]) parts.push(`지금 ${liveCounts[pl.scene]}명`); if(totals[pl.scene]) parts.push(`내 기록 ${(totals[pl.scene]/1000).toFixed(1)} km`); sub = parts.length ? parts.join(' · ') : pl.sub; }
+    if(pl.scene){ const n = liveCounts[pl.scene]; sub = n ? `지금 ${n}명 달리는 중` : `${pl.sub} · 지금 0명`; }
     else { const n = votes.counts[pl.id] || 0; sub = votes.mine.has(pl.id) ? `투표했어요 · ${n}표` : (n ? `준비 중 · ${n}표` : '준비 중 · 눌러서 투표'); }
     t2.textContent = sub; grp.appendChild(t2);
     const title = document.createElementNS(NS, 'title'); title.textContent = pl.scene ? `${pl.name}에서 달리기` : `${pl.name} 만들어 달라고 투표`; grp.appendChild(title);
@@ -1923,6 +1924,22 @@ async function shareCard(){
   try{ await navigator.clipboard.writeText(net.priv ? inviteLink() : location.href.split('?')[0]); say('카드 이미지를 저장하고 링크를 복사했어요', 3600); }catch(e){ say('카드 이미지를 저장했어요', 3000); }
 }
 $('share').addEventListener('click', ()=>{ hold(false); shareCard(); });
+// 사진 찍기: 지금 보이는 장면 그대로(UI 없이) + 아래 작은 캡션. 쉬면서 쓴 모래 글씨도 같이 찍힌다
+async function takePhoto(){
+  const flash = document.createElement('div'); flash.style.cssText = 'position:fixed;inset:0;background:#fff;opacity:.85;z-index:99;pointer-events:none;transition:opacity .5s'; document.body.appendChild(flash); requestAnimationFrame(()=>{ flash.style.opacity = '0'; setTimeout(()=>flash.remove(), 600); });
+  if(audio.on && audio.ctx){ const ctx = audio.ctx, t0 = ctx.currentTime; const o = ctx.createOscillator(); o.type = 'square'; o.frequency.value = 1800; const g = ctx.createGain(); g.gain.setValueAtTime(0.03, t0); g.gain.exponentialRampToValueAtTime(0.0005, t0+0.06); o.connect(g); g.connect(audio.master); o.start(t0); o.stop(t0+0.07); }
+  const lblWas = meLabel.visible; meLabel.visible = false; renderer.render(scene, camera); meLabel.visible = lblWas;
+  const sw = canvas.width, sh = canvas.height, c = document.createElement('canvas'); c.width = sw; c.height = sh; const g = c.getContext('2d'); g.drawImage(canvas, 0, 0);
+  const F = '"Noto Sans KR","Apple SD Gothic Neo",sans-serif'; const k = sw/1080;
+  const d = new Date(); const cap = `${SC.name} · ${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} · ${(state.dist/1000).toFixed(2)} km`;
+  g.font = `600 ${Math.round(34*k)}px ${F}`; g.textAlign = 'right'; g.fillStyle = 'rgba(0,0,0,.35)'; g.fillText(cap, sw - 40*k + 2, sh - 44*k + 2); g.fillStyle = '#fff'; g.fillText(cap, sw - 40*k, sh - 44*k);
+  g.font = `500 ${Math.round(24*k)}px ${F}`; g.fillStyle = 'rgba(255,255,255,.8)'; g.fillText(location.host + location.pathname, sw - 40*k, sh - 14*k);
+  const blob = await new Promise(res=>c.toBlob(res, 'image/jpeg', 0.92));
+  const file = new File([blob], `${SC.name}-사진.jpg`, {type:'image/jpeg'});
+  try{ if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:SC.title}); say('사진을 보냈어요'); return; } }catch(e){ if(e && e.name==='AbortError'){ say('공유 창을 닫았어요'); return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000); say('사진을 저장했어요', 2600);
+}
+$('rest-photo').addEventListener('click', ()=>{ $('rest').classList.add('is-mini'); setTimeout(takePhoto, 350); });
 $('end-share').addEventListener('click', shareCard);
 
 /* ---------- 시간대 ---------- */
