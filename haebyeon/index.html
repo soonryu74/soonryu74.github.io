@@ -373,7 +373,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-67';
+window.__BUILD = '2026-11-06-68';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -632,7 +632,7 @@ function writeOnSandNow(text){
   if(SC.ground!=='sand'){ g.shadowColor = 'rgba(40,30,20,0.55)'; g.shadowBlur = 10; g.fillStyle = 'rgba(255,250,236,0.96)'; } else g.fillStyle = 'rgba(104,80,52,0.95)';   /* 한강: 트랙 위 분필 느낌 */ g.font = '400 150px "Nanum Brush Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0.95, depthWrite:false}));
-  const nz = SC.ground==='grass' ? state.lane - 2.3 : (GUNG ? state.lane - 1.2 : state.lane - 2.8);   // 한강: 차선(z 4.0)에 걸치지 않는 트랙 바깥쪽   // 앉은 사람 앞 바닥 (해변: 밀물이 올라오면 지워짐 / 한강: 바람이 지움)   // 해변: 물가 가까이 → 다음 밀물에 지워진다 / 한강: 바로 앞 잔디, 바람이 지운다
+  const nz = SC.ground==='grass' ? state.lane - 2.3 : (SCENE_ID==='gung' ? state.lane - 1.2 : state.lane - 2.8);   // 돌담길만 언덕 위라 바로 앞, 나머지는 머리에 안 가리게 2.8 m 앞   // 한강: 차선(z 4.0)에 걸치지 않는 트랙 바깥쪽   // 앉은 사람 앞 바닥 (해변: 밀물이 올라오면 지워짐 / 한강: 바람이 지움)   // 해변: 물가 가까이 → 다음 밀물에 지워진다 / 한강: 바로 앞 잔디, 바람이 지운다
   m.userData.age = 0; m.position.set(state.x, (SC.ground!=='sand' ? 0.06 : 0.03) + groundY(nz), nz); m.rotation.y = 0; /* 앉은 사람(등 뒤 카메라)에서 바로 읽힘 */ m.renderOrder = 1; scene.add(m); sandNotes.push(m);
   state.noteCam = m; state.noteCamT = performance.now();   // 글을 쓰면 잠시 글씨가 잘 보이는 앵글로
 }
