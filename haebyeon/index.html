@@ -95,17 +95,24 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   .icon-btn[aria-pressed="true"]{background:var(--sea);color:#fff}
 
-  .stats{position:absolute;left:16px;bottom:max(16px,env(safe-area-inset-bottom));display:flex;gap:6px;padding:10px 12px;border-radius:22px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1)}
+  .stats{position:absolute;left:16px;bottom:calc(max(10px,env(safe-area-inset-bottom)) + 30px);display:flex;gap:6px;padding:10px 12px;border-radius:22px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1)}
   .stat{min-width:62px;padding:0 6px;text-align:center}
   .stat b{display:block;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
   .stat span{font-size:10.5px;color:var(--ink-soft);letter-spacing:1px}
   .stat+.stat{border-left:1px solid var(--line)}
   .stat[hidden]{display:none}
 
-  .pace{position:absolute;right:16px;bottom:max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:stretch;gap:8px;width:168px}
+  .pace{position:absolute;right:16px;bottom:calc(max(10px,env(safe-area-inset-bottom)) + 30px);display:flex;flex-direction:column;align-items:stretch;gap:8px;width:168px}
   .pace .lane-btns button{flex:1;min-width:0;height:40px}
   .pace #restbtn,.pace #friendbtn{width:100%;min-height:40px;padding:0 10px;font-size:12px;white-space:nowrap;justify-content:center}
   .pace .runbtn{align-self:center}
+  .coursebar{position:absolute;left:16px;right:16px;bottom:max(8px,env(safe-area-inset-bottom));height:22px;display:none;touch-action:none}
+  body.is-running-ui .coursebar{display:block}
+  .coursebar .track{position:absolute;left:0;right:0;top:11px;height:4px;border-radius:2px;background:rgba(255,255,255,.55);box-shadow:0 1px 6px rgba(0,0,0,.12)}
+  .coursebar .mk{position:absolute;top:0;width:22px;height:22px;margin-left:-11px;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+  .coursebar .mk.me{width:16px;height:16px;top:3px;margin-left:-8px;border-radius:50%;background:var(--accent,#ff9b8a);border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25);z-index:2}
+  .coursebar .mk.friend{width:12px;height:12px;top:5px;margin-left:-6px;border-radius:50%;background:#5cc3bd;border:2px solid #fff;z-index:1}
+  .coursebar .mk.friend small{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:9px;color:#2b3a40;background:rgba(255,255,255,.85);padding:1px 4px;border-radius:6px;white-space:nowrap}
   .runbtn{display:flex;align-items:center;justify-content:center;width:84px;height:84px;border-radius:50%;background:var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.14);font-size:13px;font-weight:700;letter-spacing:1px;user-select:none;-webkit-user-select:none;transition:transform .12s,background .2s}
   .runbtn.is-held{background:var(--sun);transform:scale(.95)}
   .pace-hint{font-size:11.5px;color:var(--ink);text-shadow:0 1px 6px rgba(255,255,255,.8);text-align:right;line-height:1.6}
@@ -246,6 +253,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
     <div class="stat" id="st-ppl-wrap" hidden><b id="st-ppl">1</b><span>함께</span></div>
   </div>
 
+  <div class="coursebar" id="coursebar" aria-label="코스 · 탭하면 그 지점으로"><div class="track"></div></div>
+
   <div class="pace">
     <div class="pace-hint"><kbd>Space</kbd> 누르는 동안 달리기<br><kbd>←</kbd><kbd>→</kbd> 왼쪽 · 오른쪽</div>
     <div class="lane-btns"><button id="lane-sea" type="button">왼쪽</button><button id="lane-sand" type="button">오른쪽</button></div>
@@ -361,7 +370,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-58';
+window.__BUILD = '2026-11-06-59';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -938,6 +947,30 @@ function netTick(){
   }
   if(now - net.lastPresence > 12000){ net.lastPresence = now; net.ch.track({x:+state.x.toFixed(1), t:Date.now()}).catch(()=>{}); }
 }
+/* ---------- 코스 바: 1 km 고리 위의 나·친구·랜드마크. 탭하면 그 지점으로 ---------- */
+const COURSE_ICON = {fountain:'💦', island:'🏝️', wood:'🪑', lantern:'🏮', camper:'⛺', lighthouse:'🗼'};
+let courseLast = 0, courseEls = [];
+function courseTick(){
+  const now = performance.now(); if(now - courseLast < 200) return; courseLast = now;
+  const bar = $('coursebar'); if(!bar) return; document.body.classList.toggle('is-running-ui', state.started && !state.ended);
+  if(!state.started) return;
+  const items = []; const myPos = ((state.x % LOOP_LEN) + LOOP_LEN) % LOOP_LEN;
+  const seen = new Set();
+  for(const p of props){ const ic = COURSE_ICON[p.kind]; if(!ic) continue; const key = p.kind + '|' + Math.round(p.obj.position.x/40); if(seen.has(key)) continue; seen.add(key); items.push({kind:'lm', ic, pos:((p.obj.position.x % LOOP_LEN) + LOOP_LEN) % LOOP_LEN, x:p.obj.position.x}); }
+  if(lighthouse.visible && Math.abs(lighthouse.position.x - state.x) < 600) items.push({kind:'lm', ic:'🗼', pos:((lighthouse.position.x % LOOP_LEN) + LOOP_LEN) % LOOP_LEN, x:lighthouse.position.x});
+  for(const [id, o] of others){ items.push({kind:'friend', pos:((o.x % LOOP_LEN) + LOOP_LEN) % LOOP_LEN, x:o.x, nick:o.nick || ''}); }
+  items.push({kind:'me', pos:myPos});
+  // DOM 재사용
+  while(courseEls.length < items.length){ const d = document.createElement('div'); bar.appendChild(d); courseEls.push(d); }
+  for(let i=0;i<courseEls.length;i++){ const d = courseEls[i], it = items[i]; if(!it){ d.style.display = 'none'; continue; } d.style.display = ''; d.style.left = (it.pos/LOOP_LEN*100) + '%';
+    if(it.kind==='me'){ d.className = 'mk me'; d.textContent = ''; } else if(it.kind==='friend'){ d.className = 'mk friend'; d.innerHTML = it.nick ? `<small>${it.nick}</small>` : ''; d.dataset.x = it.x; } else { d.className = 'mk'; d.textContent = it.ic; d.dataset.x = it.x; } }
+}
+function courseJump(clientX){ const bar = $('coursebar'); const r = bar.getBoundingClientRect(); const f = THREE.MathUtils.clamp((clientX - r.left)/r.width, 0, 1);
+  // 가장 가까운 친구·랜드마크 점이 있으면 그 옆으로, 없으면 그 지점으로
+  let best = null; for(const d of courseEls){ if(d.style.display==='none' || !d.dataset.x) continue; const dl = parseFloat(d.style.left)/100; if(best===null || Math.abs(dl - f) < Math.abs(best.f - f)) best = {f:dl, x:+d.dataset.x}; }
+  let target; if(best && Math.abs(best.f - f) < 0.03) target = best.x - 2.5; else { const myPos = ((state.x % LOOP_LEN) + LOOP_LEN) % LOOP_LEN; let d = f*LOOP_LEN - myPos; if(d > LOOP_LEN/2) d -= LOOP_LEN; if(d < -LOOP_LEN/2) d += LOOP_LEN; target = state.x + d; }
+  if(state.resting) leaveRest(); teleportTo(target); say('코스의 그 지점으로 왔어요', 1800); }
+$('coursebar').addEventListener('pointerdown', e=>{ e.preventDefault(); courseJump(e.clientX); });
 function teleportTo(x){ state.x = x; state.prevLane = state.lane; runner.position.x = x; buddyState.x = x - 1.2; buddyState.px = buddyState.x; camera.position.x = x - 6; if(camera.userData.look) camera.userData.look.x = x + 5;
   for(const p of props){ scene.remove(p.obj); dispose(p.obj); } props.length = 0; genX = x - 30; populateTo(x + 90); foots.forEach(f=>{ f.visible = false; }); }
 function setRoomUI(){ { const wl = $('welcome-live'); if(wl && !state.started){ if(net.status==='joined'){ const n = Math.max(0, net.count - 1); wl.textContent = n ? `지금 ${SC.name}에 ${n}명이 달리고 있어요 · 들어가면 바로 같이 뛰어요` : `지금은 비어 있어요 · 들어오면 다음 사람이 보여요`; } } }
@@ -2040,6 +2073,7 @@ function frame(){
     if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness) * SC.seaVol; if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + 9 + Math.random()*18; } }
     $('st-dist').textContent = (state.dist/1000).toFixed(2); $('st-time').textContent = fmtTime(state.time);
     breathTick(t);
+    courseTick();
     if(state.dist > 0 && Math.floor(state.dist/500) !== Math.floor((state.dist-dx)/500)) say(['반 바퀴 더 왔어요','잘 가고 있어요','여기까지 온 것도 충분해요','숨 한 번 깊게', FH ? '강바람이 시원해요' : (FG ? '골목이 조용해요' : '파도가 발자국을 지워 줘요')][Math.random()*5|0]);
   }
 
