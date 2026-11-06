@@ -102,7 +102,10 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .stat+.stat{border-left:1px solid var(--line)}
   .stat[hidden]{display:none}
 
-  .pace{position:absolute;right:16px;bottom:max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .pace{position:absolute;right:16px;bottom:max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:stretch;gap:8px;width:168px}
+  .pace .lane-btns button{flex:1;min-width:0;height:40px}
+  .pace #restbtn,.pace #friendbtn{width:100%;min-height:40px;padding:0 10px;font-size:12px;white-space:nowrap;justify-content:center}
+  .pace .runbtn{align-self:center}
   .runbtn{display:flex;align-items:center;justify-content:center;width:84px;height:84px;border-radius:50%;background:var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.14);font-size:13px;font-weight:700;letter-spacing:1px;user-select:none;-webkit-user-select:none;transition:transform .12s,background .2s}
   .runbtn.is-held{background:var(--sun);transform:scale(.95)}
   .pace-hint{font-size:11.5px;color:var(--ink);text-shadow:0 1px 6px rgba(255,255,255,.8);text-align:right;line-height:1.6}
@@ -185,7 +188,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .end .welcome-actions{margin-top:4px}
 
   @media(prefers-reduced-motion:reduce){.boot-dot{animation:none}}
-  @media(max-width:480px){.stat{min-width:42px}.stat b{font-size:14px}.stat small{font-size:10px}.stats{padding:8px 10px;gap:0}.brand h1{font-size:15px}.brand{padding:7px 10px;gap:0}.brand span{font-size:9px;letter-spacing:2px}.tools{gap:5px}.icon-btn{width:36px;height:36px}.icon-btn svg{width:17px;height:17px}.runbtn{width:64px;height:64px;font-size:12px}.lane-btns button{min-width:52px;height:32px;padding:0 10px;font-size:11px}.lane-btns{gap:6px}#restbtn,#friendbtn{min-height:30px;padding:0 11px;font-size:11px}}
+  @media(max-width:480px){.stat{min-width:42px}.stat b{font-size:14px}.stat small{font-size:10px}.stats{padding:8px 10px;gap:0}.brand h1{font-size:15px}.brand{padding:7px 10px;gap:0}.brand span{font-size:9px;letter-spacing:2px}.tools{gap:5px}.icon-btn{width:36px;height:36px}.icon-btn svg{width:17px;height:17px}.runbtn{width:64px;height:64px;font-size:12px}.lane-btns button{min-width:52px;height:32px;padding:0 10px;font-size:11px}.lane-btns{gap:6px}#restbtn,#friendbtn{min-height:34px;font-size:11px}.pace{width:150px;gap:6px}.pace .lane-btns button{height:34px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
 </head>
@@ -300,7 +303,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
     <p>잘하려고 하지 않아도 돼요. 누르고 있는 동안만 달리고, 손을 떼면 천천히 걷다가 멈춰요.</p>
     <dl>
       <dt><kbd>Space</kbd> / 버튼</dt><dd>한 번 누르면 계속 달리기 · 다시 누르면 멈춤 · 길게 누르면 누르는 동안만</dd>
-      <dt><kbd>←</kbd> <kbd>→</kbd> / 버튼·쓸기</dt><dd>왼쪽으로 · 오른쪽으로</dd>
+      <dt><kbd>←</kbd> <kbd>→</kbd> / 버튼·쓸기·탭</dt><dd>왼쪽으로 · 오른쪽으로 · 바닥을 탭하면 그 자리로</dd>
       <dt>잠깐 쉬어가기 버튼 / <kbd>R</kbd></dt><dd>앉기 · 눕기 · 모래에 글쓰기 · '다시 달리기'로 나와요. 10초 멈춰 서 있어도 들어가요</dd>
       <dt><kbd>B</kbd></dt><dd>호흡 안내 켜고 끄기</dd>
       <dt>조개 · 바다유리</dt><dd>지나가면 저절로 주워요. 숫자는 기록이 아니라 오늘의 산책 메모예요.</dd>
@@ -358,7 +361,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-55';
+window.__BUILD = '2026-11-06-57';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -605,6 +608,7 @@ function splash(x, z, strength){
     p.vx = (Math.random()-0.5)*1.2; p.vz = (Math.random()-0.5)*1.4; p.vy = 1.2 + Math.random()*1.6*strength; p.life = 0.45 + Math.random()*0.3; p.m.material.opacity = 0.9; p.m.scale.setScalar(0.6 + strength*0.8); }
 }
 function updateSplash(dt){ for(const p of spl){ if(!p.m.visible) continue; p.life -= dt; p.vy -= 7*dt; p.m.position.x += p.vx*dt; p.m.position.y += p.vy*dt; p.m.position.z += p.vz*dt; p.m.material.opacity = Math.max(0, p.life*2); if(p.life <= 0 || p.m.position.y < 0) p.m.visible = false; } }
+const goRing = new THREE.Mesh(new THREE.RingGeometry(0.25, 0.4, 24).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0, depthWrite:false})); goRing.renderOrder = 3; scene.add(goRing);
 let footIdx = 0;
 function stamp(x, z, side){ const m = foots[footIdx]; footIdx = (footIdx+1)%FOOT_N; m.position.set(x, 0.02, z + side*0.17); m.rotation.y = side*0.12; m.material.opacity = SC.ground==='grass' ? 0.18 : (GUNG ? 0 : 0.45); m.visible = !GUNG; }
 
@@ -885,7 +889,7 @@ function trackFriends(){
   for(const [id, o] of others){ const d = o.x - state.x; if(!best || Math.abs(d) < Math.abs(best.d)) best = {o, d, sp:o.sp}; }
   nearFriend = best;
   const btn = $('friendbtn'); const far = best && Math.abs(best.d) > 45;
-  if(btn){ const show = !!far && state.started && !state.ended; btn.hidden = !show; if(show){ const m = Math.round(Math.abs(best.d)); btn.textContent = best.d > 0 ? `친구가 ${m} m 앞 · 옆으로 가기` : `친구가 ${m} m 뒤 · 옆으로 가기`; } }
+  if(btn){ const show = !!far && state.started && !state.ended; btn.hidden = !show; if(show){ const m = Math.round(Math.abs(best.d)); btn.textContent = best.d > 0 ? `친구 옆으로 · ${m} m 앞` : `친구 옆으로 · ${m} m 뒤`; } }
 }
 function goToFriend(){ if(!nearFriend) return; const o = nearFriend.o; teleportTo(o.x - 2.5); state.laneTarget = THREE.MathUtils.clamp(o.lane + (o.lane > 4 ? -1.4 : 1.4), LANE_MIN + 0.3, LANE_MAX - 0.3); state.lane = state.laneTarget; state.prevLane = state.lane; say('친구 옆으로 왔어요 · 같이 달려요', 2400); }
 function updateOthers(dt, t){
@@ -1639,9 +1643,12 @@ addEventListener('keydown', e=>{
 });
 addEventListener('keyup', e=>{ if(e.code==='Space') hold(false); if(e.code==='ArrowLeft'||e.code==='KeyA') keys.left = false; if(e.code==='ArrowRight'||e.code==='KeyD') keys.right = false; });
 let swipe = null;
-canvas.addEventListener('pointerdown', e=>{ swipe = {x:e.clientX, lane:state.laneTarget}; });
-canvas.addEventListener('pointermove', e=>{ if(!swipe) return; const dx = (e.clientX - swipe.x)/innerWidth; state.laneTarget = THREE.MathUtils.clamp(swipe.lane - dx*9, LANE_MIN, LANE_MAX); state.laneHome = state.laneTarget; state.dodging = false; });
-addEventListener('pointerup', ()=>{ swipe = null; });
+canvas.addEventListener('pointerdown', e=>{ swipe = {x:e.clientX, y:e.clientY, lane:state.laneTarget, t:performance.now(), moved:false}; });
+// 탭한 자리로 가기: 바닥을 짚어 그 가로 위치(차선)로 이동. 앞뒤는 달리는 방향 그대로
+const _ray = new THREE.Raycaster(), _ndc = new THREE.Vector2(), _plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), _hit = new THREE.Vector3();
+function tapToGo(cx, cy){ if(!state.started || state.resting) return; _ndc.set((cx/innerWidth)*2 - 1, -(cy/innerHeight)*2 + 1); _ray.setFromCamera(_ndc, camera); if(!_ray.ray.intersectPlane(_plane, _hit)) return; if(_hit.y !== _hit.y) return; const z = THREE.MathUtils.clamp(_hit.z, LANE_MIN, LANE_MAX); state.laneTarget = z; state.laneHome = z; state.dodging = false; state.goMark = {x:_hit.x, z, t:performance.now()}; }
+canvas.addEventListener('pointermove', e=>{ if(!swipe) return; if(Math.abs(e.clientX - swipe.x) > 8 || Math.abs(e.clientY - swipe.y) > 8) swipe.moved = true; if(!swipe.moved) return; const dx = (e.clientX - swipe.x)/innerWidth; state.laneTarget = THREE.MathUtils.clamp(swipe.lane - dx*9, LANE_MIN, LANE_MAX); state.laneHome = state.laneTarget; state.dodging = false; });
+addEventListener('pointerup', e=>{ if(swipe && !swipe.moved && performance.now() - swipe.t < 400 && e.target === canvas) tapToGo(e.clientX, e.clientY); swipe = null; });
 
 $('sound').addEventListener('click', ()=>{ const b = $('sound');
   if(audio.on){ audioStop(); b.setAttribute('aria-pressed','false'); b.setAttribute('aria-label','소리 켜기'); say('소리를 껐어요'); }
@@ -1960,7 +1967,9 @@ function frame(){
       }
     }
 
-    if(buddy) buddy.position.y += groundY(buddyState.z);
+    if(buddy){ buddy.position.y += groundY(buddyState.z);
+      if(FB && buddy.userData.kind!=='gull'){ const bDepth = THREE.MathUtils.clamp((tide + 0.6 - buddyState.z)/2.2, 0, 1); buddy.position.y -= bDepth*0.22;   // 물에 들어가면 다리가 잠긴다
+        const bStep = Math.floor(buddyState.phase/Math.PI); if(bDepth > 0.05 && bStep !== buddyState.lastStep && Math.hypot(buddyState.x - buddyState.px, buddyState.z - buddyState.pz) > 0.001){ buddyState.lastStep = bStep; splash(buddyState.x + 0.1, buddyState.z, 0.3 + bDepth*0.7); if(audio.on && Math.random() < 0.5) step(1, false); } } }
     // 보폭
     const strideLen = stepLen(THREE.MathUtils.clamp(state.speed/RUN, 0, 1));
     if(state.speed > 0.05) state.stridePhase += (state.speed/strideLen)*Math.PI*dt;
@@ -2049,6 +2058,7 @@ function frame(){
   moon.position.copy(skyUniforms.sunDir.value).multiplyScalar(-1).setY(Math.max(0.25, -skyUniforms.sunDir.value.y + 0.4)).normalize().multiplyScalar(380).add(sky.position);
   sea.position.x = state.x; seaUniforms.camX.value = state.x; seaUniforms.time.value = t;
   updateFountains(t, dt); updateRain(dt);
+  if(state.goMark){ const age = (performance.now() - state.goMark.t)/1000; goRing.position.set(state.goMark.x, groundY(state.goMark.z) + 0.03, state.goMark.z); const k = Math.min(1, age/0.6); goRing.scale.setScalar(1 + k*1.5); goRing.material.opacity = 0.8*(1 - k); if(age > 0.6) state.goMark = null; } else goRing.material.opacity = 0;
   if(beachSet.userData.bridgeLampM){ const h = (t*0.03) % 1; beachSet.userData.bridgeLampM.emissive.setHSL(h, 0.8, 0.6); }
   sand.position.x = state.x; wet.position.x = state.x; sandMat.map.offset.x = state.x/520*60;
   sun.position.copy(skyUniforms.sunDir.value).multiplyScalar(60).add(new THREE.Vector3(state.x, 0, state.lane)); sun.target.position.set(state.x, 0, state.lane);
