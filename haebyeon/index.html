@@ -102,7 +102,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .stat+.stat{border-left:1px solid var(--line)}
   .stat[hidden]{display:none}
 
-  .pace{position:absolute;right:16px;bottom:calc(max(10px,env(safe-area-inset-bottom)) + 30px);display:flex;flex-direction:column;align-items:stretch;gap:8px;width:168px}
+  .pace{position:absolute;right:16px;bottom:calc(max(10px,env(safe-area-inset-bottom)) + 30px);display:flex;flex-direction:column;align-items:stretch;gap:5px;width:160px}
   .pace .lane-btns button{flex:1;min-width:0;height:40px}
   .pace #restbtn,.pace #friendbtn{width:100%;min-height:40px;padding:0 10px;font-size:12px;white-space:nowrap;justify-content:center}
   .pace .runbtn{align-self:center}
@@ -195,7 +195,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .end .welcome-actions{margin-top:4px}
 
   @media(prefers-reduced-motion:reduce){.boot-dot{animation:none}}
-  @media(max-width:480px){.stat{min-width:42px}.stat b{font-size:14px}.stat small{font-size:10px}.stats{padding:8px 10px;gap:0}.brand h1{font-size:15px}.brand{padding:7px 10px;gap:0}.brand span{font-size:9px;letter-spacing:2px}.tools{gap:5px}.icon-btn{width:36px;height:36px}.icon-btn svg{width:17px;height:17px}.runbtn{width:64px;height:64px;font-size:12px}.lane-btns button{min-width:52px;height:32px;padding:0 10px;font-size:11px}.lane-btns{gap:6px}#restbtn,#friendbtn{min-height:34px;font-size:11px}.pace{width:150px;gap:6px}.pace .lane-btns button{height:34px}}
+  @media(max-width:480px){.stat{min-width:42px}.stat b{font-size:14px}.stat small{font-size:10px}.stats{padding:8px 10px;gap:0}.brand h1{font-size:15px}.brand{padding:7px 10px;gap:0}.brand span{font-size:9px;letter-spacing:2px}.tools{gap:5px}.icon-btn{width:36px;height:36px}.icon-btn svg{width:17px;height:17px}.runbtn{width:64px;height:64px;font-size:12px}.lane-btns button{min-width:52px;height:32px;padding:0 10px;font-size:11px}.lane-btns{gap:6px}#restbtn,#friendbtn{min-height:34px;font-size:11px}.pace{width:136px;gap:4px}.pace .lane-btns{gap:4px}.pace .lane-btns button{height:32px}.pace #restbtn,.pace #friendbtn{min-height:32px}.tools{gap:4px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
 </head>
@@ -370,7 +370,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-59';
+window.__BUILD = '2026-11-06-60';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -948,7 +948,7 @@ function netTick(){
   if(now - net.lastPresence > 12000){ net.lastPresence = now; net.ch.track({x:+state.x.toFixed(1), t:Date.now()}).catch(()=>{}); }
 }
 /* ---------- 코스 바: 1 km 고리 위의 나·친구·랜드마크. 탭하면 그 지점으로 ---------- */
-const COURSE_ICON = {fountain:'💦', island:'🏝️', wood:'🪑', lantern:'🏮', camper:'⛺', lighthouse:'🗼'};
+const COURSE_ICON = {fountain:'💦', island:'🏝️', camper:'⛺', lighthouse:'🗼'};
 let courseLast = 0, courseEls = [];
 function courseTick(){
   const now = performance.now(); if(now - courseLast < 200) return; courseLast = now;
