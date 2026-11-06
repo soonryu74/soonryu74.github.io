@@ -373,7 +373,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-82';
+window.__BUILD = '2026-11-06-83';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -392,7 +392,7 @@ const SCENES = {
 SCENES.gung = {name:'돌담길', eyebrow:'GUNG RUN', title:'경복궁 돌담길, 잠깐 달려요', laneMin:1.2, dryLane:10.5, laneSea:'왼쪽', laneSand:'오른쪽', collect:'은행잎', shareText:'말없이 밤의 고궁 돌담길을 달리는 온라인 산책', cardTitle:'돌담길, 잠깐 달렸어요', deep:{value:0x202838}, shallow:0x2a3448, waveAmp:0, foamAmt:0, tideAmp:0, ripple:0, seaVol:0.14, bird:'cricket', chan:'gung', ground:'stone', night:true, sitMsg:'잔디 언덕으로 올라가요 · 담장 너머 궁이 보여요', sandMsg:'돌길에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.beach.todOffset = 0.02; SCENES.hangang.todOffset = 0.22;
 SCENES.busan = {...SCENES.beach, todOffset:0.42, name:'광안리', eyebrow:'BUSAN RUN', title:'부산 광안리, 잠깐 달려요', shareText:'광안대교 불빛 옆을 달리는 온라인 해변', cardTitle:'광안리, 잠깐 달렸어요', chan:'busan', deep:{value:0x2a7fa0}, shallow:0x7fd0d2};
-SCENES.ulsan = {...SCENES.beach, todOffset:0.12, name:'대왕암', eyebrow:'ULSAN RUN', title:'울산 대왕암, 잠깐 달려요', shareText:'소나무 숲과 바위 해안을 달리는 온라인 바닷길', cardTitle:'대왕암, 잠깐 달렸어요', chan:'ulsan', deep:{value:0x1f6f95}, shallow:0x7cc6cf, collect:'솔방울'};
+SCENES.ulsan = {...SCENES.beach, todOffset:0.12, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.3, name:'대왕암', eyebrow:'ULSAN RUN', title:'울산 대왕암, 잠깐 달려요', shareText:'해송 숲길과 바위섬 다리를 달리는 온라인 바닷길', cardTitle:'대왕암, 잠깐 달렸어요', chan:'ulsan', deep:{value:0x1f6f95}, shallow:0x7cc6cf, collect:'솔방울', sitMsg:'소나무 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.jejucoast = {...SCENES.beach, todOffset:0.3, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.25, name:'제주 해안', eyebrow:'JEJU COAST', title:'제주 해안길, 잠깐 달려요', shareText:'현무암 해안과 에메랄드 바다 옆을 달리는 온라인 올레길', cardTitle:'제주 해안길, 잠깐 달렸어요', chan:'jejucoast', deep:{value:0x2290a8}, shallow:0x9fe6dc, collect:'귤'};
 SCENES.chuncheon = {...SCENES.hangang, todOffset:0.08, ground:'deck', laneMin:1.4, dryLane:5.6, sitMsg:'난간 옆으로 가요 · 호수가 내려다보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 바람이 지워 줘요', name:'의암호', eyebrow:'CHUNCHEON RUN', title:'춘천 의암호, 잠깐 달려요', shareText:'안개 낀 호수와 산을 보며 달리는 온라인 호숫길', cardTitle:'의암호, 잠깐 달렸어요', chan:'chuncheon', deep:{value:0x3f7f8f}, shallow:0x8fc8c8, waveAmp:0.25, seaVol:0.3, collect:'단풍잎'};
 SCENES.cheorwon = {...SCENES.hangang, todOffset:0.2, ground:'deck', laneMin:1.4, dryLane:5.6, name:'주상절리길', eyebrow:'CHEORWON RUN', title:'철원 주상절리길, 잠깐 달려요', shareText:'한탄강 협곡 절벽에 매달린 잔도를 달리는 온라인 트레일', cardTitle:'주상절리길, 잠깐 달렸어요', chan:'cheorwon', deep:{value:0x2f6f7a}, shallow:0x6fb3b0, waveAmp:0.3, seaVol:0.35, collect:'돌멩이', sitMsg:'난간 옆으로 가요 · 협곡이 내려다보여요', sandMsg:'잔도에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
@@ -407,7 +407,7 @@ try{ const bm = document.getElementById('boot-message'); if(bm) bm.textContent =
 const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
 const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = SCENE_ID==='gung' ? 5.0 : (FG ? 7.4 : (SC.ground==='deck' ? 6.0 : (FH ? 6.4 : 8.5))), WALK = 1.4, RUN = 3.4;   // 한강: 달릴 땐 벤치가 있는 잔디 안쪽까지 안 들어간다
 // 돌담길 오른쪽 잔디 언덕: 담장 너머 궁 전경을 보며 앉고 눕는 자리. z 6.5→9.5 오르막, 9.5~11.5 꼭대기(2.4 m), 11.5→14.5 내리막
-function groundY(z){ if(SCENE_ID==='chuncheon') return 1.6; if(SCENE_ID==='cheorwon') return 9.0; if(SCENE_ID==='gung'){ const up = THREE.MathUtils.smoothstep(z, 6.5, 9.5), down = 1 - THREE.MathUtils.smoothstep(z, 11.5, 14.5); return 2.4*Math.min(up, down); } return -1.2*THREE.MathUtils.smoothstep(-z, 0, 12); }   // 해변·한강: 물가로 갈수록 모래가 낮아지는 만큼 (바닥 메시와 같은 식)
+function groundY(z, x){ if(SCENE_ID==='ulsan') return bridgeY(x === undefined ? state.x : x); if(SCENE_ID==='chuncheon') return 1.6; if(SCENE_ID==='cheorwon') return 9.0; if(SCENE_ID==='gung'){ const up = THREE.MathUtils.smoothstep(z, 6.5, 9.5), down = 1 - THREE.MathUtils.smoothstep(z, 11.5, 14.5); return 2.4*Math.min(up, down); } return -1.2*THREE.MathUtils.smoothstep(-z, 0, 12); }   // 해변·한강: 물가로 갈수록 모래가 낮아지는 만큼 (바닥 메시와 같은 식)
 // 한 걸음 길이: 다리 기하에서 계산(발이 땅에서 미끄러지지 않게). 걷기 0.43 m, 달리기 0.8 m
 function stepLen(amp){ const run = THREE.MathUtils.smoothstep(amp, 0.25, 0.75); const thighA = 0.42 + 0.6*run; return 2*0.4*Math.sin(thighA) + 0.08 + 0.1*run; }
 const $ = (id) => document.getElementById(id);
@@ -998,7 +998,7 @@ function updateOthers(dt, t){
       g.rotation.y = THREE.MathUtils.damp(g.rotation.y, 0, 3, dt); g.rotation.x = 0;
       if(o.sp > 0.05) animateGait(P, ph, amp, g); else { resetGait(P, dt); g.rotation.z = 0; groundFeet(P, g, 0); }
     }
-    g.position.x = o.x; g.position.z = o.lane; g.position.y += groundY(o.lane);
+    g.position.x = o.x; g.position.z = o.lane; g.position.y += groundY(o.lane, o.x);
   }
 }
 function myPacket(full){
@@ -1019,7 +1019,7 @@ function netTick(){
   if(now - net.lastPresence > 12000){ net.lastPresence = now; net.ch.track({x:+state.x.toFixed(1), t:Date.now(), t0:state.todStart}).catch(()=>{}); }
 }
 /* ---------- 코스 바: 1 km 고리 위의 나·친구·랜드마크. 탭하면 그 지점으로 ---------- */
-const COURSE_ICON = {fountain:'💦', island:'🏝️', camper:'⛺', lighthouse:'🗼'};
+const COURSE_ICON = {fountain:'💦', island:'🏝️', camper:'⛺', lighthouse:'🗼', rockbridge:'🌉', skywalk:'🔭'};
 let courseLast = 0, courseEls = [];
 function courseTick(){
   const now = performance.now(); if(now - courseLast < 200) return; courseLast = now;
@@ -1223,16 +1223,34 @@ if(SCENE_ID==='busan'){
   for(let x=-300; x<1300; x+=22+Math.random()*30){ const h = 40 + Math.random()*90, w = 14 + Math.random()*10; const m = new THREE.MeshStandardMaterial({color:[0xdfe6ee,0xe9edf2,0xd6dde6][Math.random()*3|0], roughness:1, emissive:0xffffff, emissiveMap:wtex, emissiveIntensity:0, fog:false}); nightLights.push({m, base:0, night:1.3}); const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, 14), m); b.position.set(x, h/2 + 2, 42 + Math.random()*16); beachSet.add(b); }
 }
 if(SCENE_ID==='ulsan'){
-  // 대왕암: 바다 쪽 큰 바위 군락 + 해안 소나무 숲
-  const rockM = new THREE.MeshStandardMaterial({color:0x8a8078, roughness:1}); const rockD = new THREE.MeshStandardMaterial({color:0x6e655d, roughness:1});
-  for(let x=-200; x<1200; x+=28+Math.random()*40){ const n = 2 + (Math.random()*3|0); for(let i=0;i<n;i++){ const r = new THREE.Mesh(new THREE.DodecahedronGeometry(2.5 + Math.random()*4, 1), Math.random()<0.5 ? rockM : rockD); r.scale.set(1.2 + Math.random(), 0.6 + Math.random()*0.8, 1 + Math.random()); r.position.set(x + i*5, -1 + Math.random(), -18 - Math.random()*30); r.rotation.y = Math.random()*3; beachSet.add(r); } }
-  const big = new THREE.Mesh(new THREE.DodecahedronGeometry(12, 1), rockM); big.scale.set(2.2, 1.3, 1.4); big.position.set(260, 2, -62); beachSet.add(big);
-  const big2 = new THREE.Mesh(new THREE.DodecahedronGeometry(9, 1), rockD); big2.scale.set(1.6, 1.6, 1.2); big2.position.set(290, 3, -70); beachSet.add(big2);
-  const pineM = new THREE.MeshStandardMaterial({color:0x2f5a3c, roughness:1}); const trunkM = new THREE.MeshStandardMaterial({color:0x5a4634, roughness:1});
-  for(let x=-200; x<1200; x+=6+Math.random()*7){ const z = 13 + Math.random()*14; const h = 4 + Math.random()*4; const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.3, h, 6), trunkM); tr.position.set(x, h/2 + 0.6, z); tr.rotation.z = (Math.random()-0.5)*0.25; beachSet.add(tr); for(let k=0;k<3;k++){ const b = new THREE.Mesh(new THREE.SphereGeometry(1.6 + Math.random(), 8, 6), pineM); b.position.set(x + (Math.random()-0.5)*2, h + 0.6 + k*0.9, z + (Math.random()-0.5)*1.6); b.scale.y = 0.7; beachSet.add(b); } }
+  // 대왕암: 황금빛 화강암 바위 해안(물가에 바짝) + 해송 숲 흙길. 300~400 m마다 바위섬으로 건너가는 파란 아치 다리 구간
+  const rockM = new THREE.MeshStandardMaterial({color:0xd4a86a, roughness:1}); const rockD = new THREE.MeshStandardMaterial({color:0xb98d55, roughness:1});
+  for(let x=-200; x<1200; x+=4+Math.random()*5){ const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8 + Math.random()*1.4, 1), Math.random()<0.5 ? rockM : rockD); r.scale.set(1.3, 0.6 + Math.random()*0.5, 1); r.position.set(x, -0.3, -1 + Math.random()*2); r.rotation.y = Math.random()*3; beachSet.add(r); }   // 길과 바다 사이 바위턱
+  for(let x=-200; x<1200; x+=18+Math.random()*30){ const n = 2 + (Math.random()*3|0); for(let i=0;i<n;i++){ const r = new THREE.Mesh(new THREE.DodecahedronGeometry(2 + Math.random()*3.5, 1), Math.random()<0.5 ? rockM : rockD); r.scale.set(1.2 + Math.random(), 0.6 + Math.random()*0.7, 1 + Math.random()); r.position.set(x + i*4, -1 + Math.random(), -8 - Math.random()*20); r.rotation.y = Math.random()*3; beachSet.add(r); } }
+  const pineM = new THREE.MeshStandardMaterial({color:0x2f5a3c, roughness:1}); const trunkM = new THREE.MeshStandardMaterial({color:0x7a4a30, roughness:1});
+  for(let x=-200; x<1200; x+=3.5+Math.random()*3){ const z = 8 + Math.random()*16; const h = 4 + Math.random()*4; const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.26, h, 6), trunkM); tr.position.set(x, h/2 + 0.3, z); tr.rotation.z = (Math.random()-0.5)*0.3; beachSet.add(tr); for(let k=0;k<3;k++){ const b = new THREE.Mesh(new THREE.SphereGeometry(1.5 + Math.random(), 8, 6), pineM); b.position.set(x + (Math.random()-0.5)*2, h + 0.3 + k*0.9, z + (Math.random()-0.5)*1.6); b.scale.y = 0.7; beachSet.add(b); } }
 }
-const ollePath = new THREE.Group(); ollePath.visible = SCENE_ID==='jejucoast'; scene.add(ollePath);
-if(SCENE_ID==='jejucoast'){
+// 대왕암 다리 구간: 길에서 바다 쪽으로 꺾여 바위섬을 건너는 파란 아치 다리 (코스 위에 놓이는 소품)
+function makeRockBridge(){
+  const g = new THREE.Group(); const steel = new THREE.MeshStandardMaterial({color:0x5b7fb5, roughness:0.5, metalness:0.4}); const deckM = new THREE.MeshStandardMaterial({color:0xcfc4b0, roughness:1}); const rockM = new THREE.MeshStandardMaterial({color:0xd4a86a, roughness:1});
+  const L = 60;
+  // 다리 상판: 길(z 3.4) 높이에서 시작해 바다 위로 1.8 m 떠서 건너감
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(L, 0.25, 3.6), deckM); deck.position.set(L/2, 1.8, 3.4); g.add(deck);
+  for(const dz of [-1.6, 1.6]){ for(const y of [2.4, 2.9]){ const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, L, 6), steel); rail.rotation.z = Math.PI/2; rail.position.set(L/2, y, 3.4 + dz); g.add(rail); } for(let x=1; x<L; x+=2){ const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.2, 6), steel); post.position.set(x, 2.4, 3.4 + dz); g.add(post); } }
+  // 아치: 상판 아래로 늘어진 강철 호 + 수직 행어
+  for(const dz of [-1.7, 1.7]){ let px = 0, py = 1.8; for(let x=2; x<=L; x+=2){ const y = 1.8 - 5.5*Math.sin(Math.PI*x/L); const c = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, Math.hypot(x-px, y-py), 5), steel); c.position.set((x+px)/2, (y+py)/2, 3.4 + dz); c.rotation.z = Math.atan2(y-py, x-px) - Math.PI/2; g.add(c); if(x % 6 === 0){ const h = 1.8 - y; const hg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, h, 4), steel); hg.position.set(x, y + h/2, 3.4 + dz); g.add(hg); } px = x; py = y; } }
+  // 양 끝 기둥 + 가운데 바위섬 + 소나무
+  for(const x of [0, L]){ const p = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.2, 4.2), new THREE.MeshStandardMaterial({color:0x9a9a9a, roughness:1})); p.position.set(x, 0.6, 3.4); g.add(p); }
+  const isle = new THREE.Mesh(new THREE.DodecahedronGeometry(7, 1), rockM); isle.scale.set(1.6, 0.5, 1.2); isle.position.set(L/2, -1.2, 3.4); g.add(isle);
+  for(let i=0;i<3;i++){ const r = new THREE.Mesh(new THREE.DodecahedronGeometry(2 + Math.random()*2, 1), rockM); r.position.set(L/2 + (Math.random()-0.5)*10, 0.5, 3.4 + (Math.random()-0.5)*6 - 4); g.add(r); }
+  const pineM = new THREE.MeshStandardMaterial({color:0x2f5a3c, roughness:1}); const trunkM = new THREE.MeshStandardMaterial({color:0x7a4a30, roughness:1});
+  for(const [dx, dz] of [[-4, -4],[5, -5]]){ const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.2, 3, 6), trunkM); tr.position.set(L/2 + dx, 2.5, 3.4 + dz); g.add(tr); const b = new THREE.Mesh(new THREE.SphereGeometry(1.6, 8, 6), pineM); b.position.set(L/2 + dx, 4.3, 3.4 + dz); b.scale.y = 0.7; g.add(b); }
+  g.userData.len = L; return g;
+}
+let nextRockBridge = 140 + Math.random()*80;
+function bridgeY(x){ for(const p of props){ if(p.kind!=='rockbridge') continue; const dx = x - p.obj.position.x; if(dx >= -1 && dx <= p.obj.userData.len + 1){ const ramp = THREE.MathUtils.smoothstep(dx, -1, 3) * (1 - THREE.MathUtils.smoothstep(dx, p.obj.userData.len - 3, p.obj.userData.len + 1)); return 1.8*ramp; } } return 0; }
+const ollePath = new THREE.Group(); ollePath.visible = SC.ground==='olle'; scene.add(ollePath);
+if(SC.ground==='olle'){
   // 올레길: 흙길(자갈 섞인 황토) 띠. 러너를 따라 x로 이동하며 무늬만 흐른다
   const pc = document.createElement('canvas'); pc.width = 512; pc.height = 64; const pg = pc.getContext('2d'); pg.fillStyle = '#b89b74'; pg.fillRect(0,0,512,64);
   for(let i=0;i<6000;i++){ const v = 140 + Math.random()*70; pg.fillStyle = `rgba(${v},${v-20},${v-45},${0.2+Math.random()*0.3})`; pg.fillRect(Math.random()*512, Math.random()*64, 1.6, 1.6); }
@@ -1371,11 +1389,12 @@ function makeGinkgo(){
 }
 // 잎 카드 캔버스: 은행잎(부채꼴) / 단풍잎(별 모양)을 수백 장 흩뿌려 투명 배경에
 function leafCanopyTex(kind){
-  const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
-  const cols = kind==='ginkgo' ? ['#ffd21f','#ffdf4d','#ffc914','#fff07a','#ffe45c'] : kind==='green' ? ['#4a9a52','#5fb064','#3f8a47','#6fc072','#56a35a'] : kind==='needle' ? ['#3f6f3c','#4a7f45','#365f34','#588f52','#2f5a30'] : kind==='bamboo' ? ['#8cc152','#a3d16a','#7bb043','#b5de7a','#6a9e3a'] : ['#d9432b','#e8632c','#f08a2e','#c63a2a','#f2a93b'];
-  for(let i=0;i<150;i++){ const x = 128 + (Math.random()-0.5)*220, y = 128 + (Math.random()-0.5)*220; if(Math.hypot(x-128, y-128) > 118) continue; const r = 9 + Math.random()*9, a = Math.random()*Math.PI*2; g.fillStyle = cols[Math.random()*cols.length|0]; g.globalAlpha = 0.95;
+  const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); g.scale(2, 2);
+  const cols = kind==='ginkgo' ? ['#ffd21f','#ffdf4d','#ffc914','#fff07a','#ffe45c'] : kind==='green' ? ['#4a9a52','#5fb064','#3f8a47','#6fc072','#56a35a'] : kind==='needle' ? ['#3f6f3c','#4a7f45','#365f34','#588f52','#2f5a30'] : kind==='bamboo' ? ['#8cc152','#a3d16a','#7bb043','#b5de7a','#6a9e3a'] : ['#d9432b','#e8632c','#f08a2e','#c63a2a','#f2a93b','#f4e04d','#f7ea6a','#e9d23a'];
+  const N = kind==='ginkgo' ? 260 : 170;
+  for(let i=0;i<N;i++){ const x = 128 + (Math.random()-0.5)*220, y = 128 + (Math.random()-0.5)*220; if(Math.hypot(x-128, y-128) > 118) continue; const r = 9 + Math.random()*9, a = Math.random()*Math.PI*2; g.fillStyle = cols[Math.random()*cols.length|0]; g.globalAlpha = 0.95;
     g.save(); g.translate(x, y); g.rotate(a);
-    if(kind==='ginkgo'){ g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, r, Math.PI*0.2, Math.PI*0.8); g.closePath(); g.fill(); }
+    if(kind==='ginkgo'){ const rr = r*0.75; g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, rr, Math.PI*0.12, Math.PI*0.5 - 0.08); g.lineTo(0, rr*0.72); g.arc(0, 0, rr, Math.PI*0.5 + 0.08, Math.PI*0.88); g.closePath(); g.fill(); g.strokeStyle = 'rgba(190,140,20,0.45)'; g.lineWidth = 0.6; for(let v=0.2; v<0.85; v+=0.13){ g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(Math.PI*v)*rr, Math.sin(Math.PI*v)*rr); g.stroke(); } g.strokeStyle = 'rgba(120,90,30,0.7)'; g.lineWidth = 0.9; g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -rr*0.6); g.stroke(); }   // 부채꼴 + 가운데 홈 + 잎맥 + 잎자루
     else if(kind==='bamboo' || kind==='needle'){ g.beginPath(); g.ellipse(0, 0, r*1.6, r*0.22, 0, 0, Math.PI*2); g.fill(); }
     else { g.beginPath(); for(let k=0;k<10;k++){ const rr = k%2 ? r*0.45 : r; const t = k/10*Math.PI*2; g.lineTo(Math.cos(t)*rr, Math.sin(t)*rr); } g.closePath(); g.fill(); }
     g.restore(); }
@@ -1809,14 +1828,15 @@ function populateTo(limitX){
       else { }
       continue;
     }
+    if(SCENE_ID==='ulsan' && x > nextRockBridge){ nextRockBridge = x + 320 + Math.random()*120; const o = makeRockBridge(); o.position.set(x + 40, 0, 0); scene.add(o); props.push({obj:o, kind:'rockbridge'}); genX += 2; continue; }
     if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.0, -0.4 + Math.random()*2.2); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
     else if(r < 0.46){ const o = makeShell(); o.position.set(x + Math.random(), 0.02, -0.8 + Math.random()*5.6); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
-    else if(r < 0.52){ const o = makeDriftwood(); o.position.set(x, 0, 7 + Math.random()*4); o.rotation.y = Math.random()*Math.PI; scene.add(o); props.push({obj:o, kind:'wood'}); }
-    else if(r < 0.57){ const o = makeRock(); o.position.set(x, 0, -1 + Math.random()*2.5); scene.add(o); props.push({obj:o, kind:'rock'}); }
+    else if(r < 0.52){ if(SCENE_ID==='ulsan') continue; const o = makeDriftwood(); o.position.set(x, 0, 7 + Math.random()*4); o.rotation.y = Math.random()*Math.PI; scene.add(o); props.push({obj:o, kind:'wood'}); }
+    else if(r < 0.57){ if(SCENE_ID==='ulsan' || SCENE_ID==='jejucoast') continue; const o = makeRock(); o.position.set(x, 0, -1 + Math.random()*2.5); scene.add(o); props.push({obj:o, kind:'rock'}); }
     else if(r < 0.74){ if(SCENE_ID==='jejucoast' || SCENE_ID==='ulsan') continue; const o = makeDuneBush(); o.position.set(x, 0.4 + Math.random()*1.2, 15 + Math.random()*9); scene.add(o); props.push({obj:o, kind:'bush'}); }
     else { if(SCENE_ID==='jejucoast' || SCENE_ID==='busan') continue; const o = makeGrass(); o.position.set(x, 0.3+Math.random()*1.2, 12 + Math.random()*8); scene.add(o); props.push({obj:o, kind:'grass'}); }
   }
-  for(let i=props.length-1;i>=0;i--){ const far = props[i].kind==='island' || props[i].kind==='cafe' || props[i].kind==='park' || props[i].kind==='fountain' ? 90 : 40; if(props[i].obj.position.x < state.x - far){ scene.remove(props[i].obj); dispose(props[i].obj); props.splice(i,1); } }
+  for(let i=props.length-1;i>=0;i--){ const far = ['island','cafe','park','fountain','rockbridge'].includes(props[i].kind) ? 90 : 40; if(props[i].obj.position.x < state.x - far){ scene.remove(props[i].obj); dispose(props[i].obj); props.splice(i,1); } }
 }
 
 /* ---------- 소리 (Web Audio, 파일 없음) ---------- */
@@ -1878,7 +1898,7 @@ function meow(){
 }
 function step(wetness, running){
   const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime;
-  const grass = SC.ground==='grass' || SC.ground==='olle' || ['jeju','pine','bamboo'].includes(SCENE_ID); const stone = GUNG && !['jeju','pine','bamboo'].includes(SCENE_ID); const deck = SC.ground==='deck';
+  const grass = SC.ground==='grass' || SC.ground==='olle' || ['jeju','pine','bamboo'].includes(SCENE_ID); const stone = GUNG && !['jeju','pine','bamboo'].includes(SCENE_ID); const deck = SC.ground==='deck' || (SCENE_ID==='ulsan' && bridgeY(state.x) > 0.5);
   // 모래: 사삭 — 낮은 대역의 부드러운 소음이 눌렸다가 스르르 빠진다. 젖은 모래는 더 둔탁하고 짧게, 잔디는 더 부드럽고 바스락
   const s = ctx.createBufferSource(); s.buffer = noiseBuffer(ctx, 0.35, true);          // 갈색 소음(저음 위주)
   const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = deck ? 260 : (stone ? 2300 : (grass ? 1400 : (wetness>0.5 ? 420 : 700))); bp.Q.value = deck ? 2.2 : (stone ? 1.4 : 0.7);
@@ -2047,7 +2067,7 @@ const PLACES = [
   {id:'gung', name:'경복궁 돌담길', sub:'밤 산책', scene:'gung', x:105, y:88, left:true, dy:-10},
   {id:'hangang', name:'서울 한강', sub:'강변', scene:'hangang', x:100, y:102, left:true, dy:18},
   {id:'jeonju', name:'전주 한옥마을', sub:'골목', scene:'jeonju', x:115, y:219},
-  {id:'ulsan', name:'울산 대왕암', sub:'바위 해안', scene:'ulsan', x:249, y:242, left:true},
+  {id:'ulsan', name:'울산 대왕암', sub:'해송길·바위섬 다리', scene:'ulsan', x:249, y:242, left:true},
   {id:'busan', name:'부산 광안리', sub:'광안대교', scene:'busan', x:230, y:268, left:true, dy:14},
   {id:'jejucoast', name:'제주 해안길', sub:'현무암 바다', scene:'jejucoast', x:68, y:392, dy:-12},
   {id:'jeju', name:'제주 올레 숲길', sub:'곶자왈', scene:'jeju', x:96, y:398, dy:14},
@@ -2271,7 +2291,7 @@ function frame(){
       }
     }
 
-    if(buddy){ buddy.position.y += groundY(buddyState.z);
+    if(buddy){ buddy.position.y += groundY(buddyState.z, buddyState.x);
       if(FB && buddy.userData.kind!=='gull'){ const bDepth = THREE.MathUtils.clamp((tide + 0.6 - buddyState.z)/2.2, 0, 1); buddy.position.y -= bDepth*0.22;   // 물에 들어가면 다리가 잠긴다
         const bStep = Math.floor(buddyState.phase/Math.PI); if(bDepth > 0.05 && bStep !== buddyState.lastStep && Math.hypot(buddyState.x - buddyState.px, buddyState.z - buddyState.pz) > 0.001){ buddyState.lastStep = bStep; splash(buddyState.x + 0.1, buddyState.z, 0.3 + bDepth*0.7); if(audio.on && Math.random() < 0.5) step(1, false); } } }
     // 보폭
@@ -2319,7 +2339,7 @@ function frame(){
     } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, 0, 3, dt);
     if(!state.resting || state.pose!=='lie') runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, 0, 3, dt);
 
-    runner.position.y += groundY(state.lane);   // 발을 실제 바닥 높이에 맞춘다 (물가 경사·언덕)
+    runner.position.y += groundY(state.lane, state.x);   // 발을 실제 바닥 높이에 맞춘다 (물가 경사·언덕·다리)
     if(state.started && state.speed === 0 && !state.resting){ state.stillFor += dt; if(state.stillFor > 10){ enterRest(); say('잠깐 쉬어가요 · 바다를 바라봐요'); } } else state.stillFor = 0;
 
     for(const p of props){
@@ -2356,7 +2376,7 @@ function frame(){
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
     else { const portrait = innerWidth < innerHeight; if(portrait){ camPos.set(state.x + 0.9, 1.6, state.lane + 4.0); camLook.set(state.x + 0.3, 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.9, state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
   } else { camPos.set(state.x - 6.2, 2.9 + Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN), state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); }
-  if(SCENE_ID==='gung' || SC.ground==='deck'){ const gy = groundY(state.lane); camPos.y += gy; camLook.y += gy; if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
+  if(SCENE_ID==='gung' || SC.ground==='deck' || SCENE_ID==='ulsan'){ const gy = groundY(state.lane, state.x); camPos.y += gy; camLook.y += gy; if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
   camera.position.lerp(camPos, 1 - Math.exp(-dt*3));
   const lookAt = camera.userData.look || (camera.userData.look = camLook.clone()); lookAt.lerp(camLook, 1 - Math.exp(-dt*3)); camera.lookAt(lookAt);
 
