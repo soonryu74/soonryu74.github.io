@@ -227,7 +227,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
         <g id="kpins"></g>
       </svg>
     </div>
-    <div class="klegend"><span><i style="background:#5cc3bd"></i>핀을 눌러 장소 선택</span><span><i style="background:#fff;border:2px dashed #ff9b8a;width:7px;height:7px"></i>달린 곳</span></div>
+    <div class="klegend"><span><i style="background:#5cc3bd"></i>핀을 눌러 장소 선택</span><span><i style="background:#ff9b8a"></i>지금 있는 곳</span></div>
     <p class="welcome-hint" id="welcome-live">소리를 켜면 파도와 갈매기 소리가 함께해요</p>
   </div>
 </section>
@@ -267,7 +267,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
   <div id="breath" class="breath"><div class="breath-ring" id="breath-ring"></div><div class="breath-label" id="breath-label">들이쉬고</div></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <div id="letter" class="letter" role="dialog" aria-live="polite"><small>유리병 속 편지</small><p id="letter-text"></p><button class="btn ghost small" id="letter-close" type="button">바다에 다시 띄우기</button></div>
+  <div id="letter" class="letter" role="dialog" aria-live="polite"><small id="letter-kind">유리병 속 편지</small><p id="letter-text"></p><button class="btn ghost small" id="letter-close" type="button">바다에 다시 띄우기</button></div>
 </div>
 
 <section id="rest" class="rest">
@@ -373,7 +373,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-69';
+window.__BUILD = '2026-11-06-71';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1040,7 +1040,17 @@ function makeShell(){
   else { m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08, 0), new THREE.MeshStandardMaterial({color:[0x9ed6c9,0x8fc4e0,0xd8e7c7][Math.random()*3|0], roughness:0.35, transparent:true, opacity:0.85})); m.scale.y = 0.5; }
   m.castShadow = true; m.rotation.y = Math.random()*Math.PI; return m;
 }
+function makePaperPlane(){
+  // 종이비행기: 접힌 흰 종이 두 날개 + 가운데 접힘선. 숲길·골목에서는 병 대신 이게 떨어져 있다
+  const g = new THREE.Group(); const paperM = new THREE.MeshStandardMaterial({color:0xfffdf6, roughness:0.9, side:THREE.DoubleSide});
+  const shape = new THREE.Shape(); shape.moveTo(0.26, 0); shape.lineTo(-0.2, 0.17); shape.lineTo(-0.12, 0); shape.lineTo(-0.2, -0.17); shape.closePath();
+  for(const sgn of [1, -1]){ const wing = new THREE.Mesh(new THREE.ShapeGeometry(shape), paperM); wing.rotation.x = -Math.PI/2 + sgn*0.35; wing.position.y = 0.06; g.add(wing); }
+  const keel = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.07), paperM); keel.rotation.y = Math.PI/2; keel.rotation.z = Math.PI/2; keel.rotation.set(0, 0, 0); keel.position.set(0.02, 0.03, 0); keel.rotation.y = 0; keel.rotation.x = 0; keel.rotation.z = 0; keel.rotation.y = Math.PI/2; g.add(keel);
+  const line = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.004, 0.01), new THREE.MeshStandardMaterial({color:0xd8cfbf})); line.position.set(0.03, 0.065, 0); g.add(line);
+  g.rotation.y = Math.random()*Math.PI*2; g.rotation.z = 0.15; return g;
+}
 function makeBottle(){
+  if(FG) return makePaperPlane();
   const g = new THREE.Group(); const glass = new THREE.MeshStandardMaterial({color:0xbfe9e3, roughness:0.2, transparent:true, opacity:0.7});
   const body = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.09, 0.32, 12), glass); body.position.y = 0.09; body.rotation.z = Math.PI/2 - 0.25; g.add(body);
   const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.12, 10), glass); neck.position.set(0.21, 0.14, 0); neck.rotation.z = Math.PI/2 - 0.25; g.add(neck);
@@ -1777,7 +1787,8 @@ function breathTick(t){ if(!breathOn) return; const p = t % 10, ring = $('breath
 const QUOTES = FG ? ['담장은 오래 서 있어도 서두른 적이 없어요.','오늘 밤도 여기까지 온 것만으로 충분해요.','불빛 하나면 길은 이어져요.','돌 하나하나가 누군가의 하루였어요.','천천히 가도 돌담길은 기다려 줘요.'] : FH ? ['강은 서두르지 않아도 바다에 닿아요.','오늘 여기까지 온 것만으로 충분해요.','건너편 불빛도 누군가의 하루예요.','숨을 길게 내쉬면, 어깨가 내려가요.','잘하지 않아도 괜찮아요. 그냥 여기 있어요.','강바람이 땀을 데려가요. 걱정도요.','멀리 보면, 가까운 걱정이 작아져요.'] : ['파도는 서두르지 않아요.','오늘 여기까지 온 것만으로 충분해요.','바다는 누구에게도 빨리 오라고 하지 않아요.','숨을 길게 내쉬면, 어깨가 내려가요.','잘하지 않아도 괜찮아요. 그냥 여기 있어요.','발자국은 파도가 지워 줘요. 실수도요.','멀리 보면, 가까운 걱정이 작아져요.'];
 const LETTERS = ['오늘 하루도 애썼어요. 그거면 돼요.','누군가는 지금 당신이 잘 지내길 바라고 있어요.','완벽하지 않아도 계속 가는 사람이 결국 도착해요.','힘든 날엔 멀리 보지 말고, 다음 한 걸음만 봐요.','당신이 버틴 시간은 아무도 못 지워요.','쉬는 것도 달리기의 일부예요.','오늘의 걱정은 내일의 파도가 데려가요.','혼자라고 느끼는 날, 이 바다도 혼자 아니에요.','천천히 해도 늦지 않아요. 바다는 기다려요.','괜찮은 척 안 해도 되는 곳이 하나쯤 있어야죠. 여기요.'];
 function openLetter(){ state.letters++; $('letter-text').textContent = LETTERS[Math.random()*LETTERS.length|0]; $('letter').classList.add('is-on'); hold(false); }
-$('letter-close').addEventListener('click', ()=>$('letter').classList.remove('is-on'));
+$('letter-kind').textContent = FG ? '종이비행기 편지' : '유리병 속 편지'; $('letter-close').textContent = FG ? '다시 날려 보내기' : (FH ? '강물에 다시 띄우기' : '바다에 다시 띄우기');
+$('letter-close').addEventListener('click', ()=>{ $('letter').classList.remove('is-on'); say(FG ? '종이비행기가 바람을 타고 날아갔어요' : (FH ? '편지가 강물을 따라 흘러갔어요' : '편지가 파도를 타고 떠났어요'), 2400); });
 
 function enterRest(){ document.body.classList.add('is-resting'); $('rest').classList.remove('is-mini'); state.resting = true; state.restFor = 0; state.held = false; state.autoRun = false; syncRunBtn(); $('rest').classList.add('is-on'); $('rest-quote').textContent = QUOTES[Math.random()*QUOTES.length|0]; setPose('stand'); }
 function leaveRest(){ document.body.classList.remove('is-resting'); state.resting = false; state.noteCam = null; state.pendingNote = null; if(SCENE_ID==='gung') state.laneTarget = Math.min(state.laneTarget, 4.0); state.pendingPose = null; setPose('stand'); $('rest').classList.remove('is-on'); }
@@ -1862,8 +1873,7 @@ function renderMap(){
   const g = document.getElementById('kpins'); if(!g) return; const totals = stampTotals(); const NS = 'http://www.w3.org/2000/svg';
   g.innerHTML = '';
   for(const pl of PLACES){
-    const grp = document.createElementNS(NS, 'g'); grp.setAttribute('class', 'pin' + (pl.scene ? '' : ' soon') + (pl.scene && totals[pl.scene] ? ' stamp' : '') + (pl.scene===SCENE_ID ? ' here' : '')); grp.setAttribute('transform', `translate(${pl.x},${pl.y})`); grp.setAttribute('role','button'); grp.setAttribute('tabindex','0');
-    const ring = document.createElementNS(NS, 'circle'); ring.setAttribute('class','ring'); ring.setAttribute('r','9'); grp.appendChild(ring);
+    const grp = document.createElementNS(NS, 'g'); grp.setAttribute('class', 'pin' + (pl.scene ? '' : ' soon') + (pl.scene===SCENE_ID ? ' here' : '')); grp.setAttribute('transform', `translate(${pl.x},${pl.y})`); grp.setAttribute('role','button'); grp.setAttribute('tabindex','0');
     const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class','dot'); dot.setAttribute('r','5.5'); grp.appendChild(dot);
     const tx = pl.left ? -9 : (pl.dx||0) + 9, ty = (pl.dy||0) + 3; const anchor = pl.left ? 'end' : 'start';
     const t1 = document.createElementNS(NS, 'text'); t1.setAttribute('x', tx); t1.setAttribute('y', ty); t1.setAttribute('text-anchor', anchor); t1.textContent = pl.name; grp.appendChild(t1);
@@ -2191,7 +2201,7 @@ populateTo(90); applyTod(state.todT);
 try{ renderer.compile(scene, camera); frame(); if(net.on) netJoin(1); requestAnimationFrame(()=>{ $('boot').classList.add('is-hidden'); $('welcome').classList.remove('is-hidden'); if(BOT){ start(); setTimeout(()=>setAutoRun(true), 4000); } }); }
 catch(e){ bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); console.error(e); }
 addEventListener('error', ()=>{ if(!state.started) bootError('풍경을 불러오지 못했어요. 연결을 확인하고 다시 들어와주세요'); });
-window.__haebyeon = {state, others, net, buddyState, hangangSet, nightLights, scene, camera, runner, THREE, renderer, sandNotes, buddies, makeDog, makeCat, DOGS, makeCamper, props};
+window.__haebyeon = {state, others, net, buddyState, hangangSet, nightLights, scene, camera, runner, THREE, renderer, sandNotes, buddies, makeDog, makeCat, DOGS, makeCamper, props, makeBottle};
 $('stage').addEventListener('pointerdown', ()=>{ if(state.noteCam && performance.now() - state.noteCamT > 1500) state.noteCam = null; });
 function netReconnect(){ if(!net.on || state.ended) return; netLeave(); net.status = 'off'; setTimeout(()=>{ if(net.on && net.status==='off') netJoin(1); }, 400); }
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden){ hold(false); keys.left = keys.right = false; net.hiddenAt = performance.now(); } else { if(net.hiddenAt && performance.now() - net.hiddenAt > 4000) netReconnect(); } });
