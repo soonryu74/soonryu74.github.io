@@ -343,7 +343,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
     <div class="row"><div><strong>갈매기 · 바람</strong><small>가끔 멀리서 들려요</small></div><input id="vol-bird" type="range" min="0" max="100" value="50" aria-label="갈매기 소리 크기"></div>
     <div class="row"><div><strong>발소리</strong><small>젖은 모래와 마른 모래가 달라요</small></div><input id="vol-step" type="range" min="0" max="100" value="40" aria-label="발소리 크기"></div>
     <div class="row"><div><strong>비 오는 날</strong><small>잔잔한 비 · 빗소리와 함께</small></div><input id="rain-on" type="checkbox" aria-label="비 오는 날"></div>
-    <div class="row"><div><strong>달리기 속도</strong><small id="pace-note">시속 10 km · 천천히</small></div><input id="pace" type="range" min="6" max="16" step="1" value="10" aria-label="달리기 속도"></div>
+    <div class="row"><div><strong>달리기 속도</strong><small id="pace-note">시속 16 km · 힘차게</small></div><input id="pace" type="range" min="6" max="16" step="1" value="16" aria-label="달리기 속도"></div>
     <div class="row"><div><strong>시간</strong><small>하루 20분 · 해가 저물고 별이 뜨고 다시 떠요</small></div>
       <div class="seg" role="group" aria-label="시간대"><button type="button" data-tod="auto" aria-pressed="true">흐름</button><button type="button" data-tod="dawn" aria-pressed="false">새벽</button><button type="button" data-tod="noon" aria-pressed="false">한낮</button><button type="button" data-tod="dusk" aria-pressed="false">노을</button><button type="button" data-tod="night" aria-pressed="false">밤</button></div></div>
     <div class="row"><div><strong>함께 달리기</strong><small id="together-note">같은 해변의 다른 사람이 말없이 보여요 · 이름·채팅 없음</small></div><button id="together" class="switch" type="button" role="switch" aria-checked="true" aria-label="함께 달리기"></button></div>
@@ -373,7 +373,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-68';
+window.__BUILD = '2026-11-06-69';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1765,7 +1765,7 @@ $('reduce').addEventListener('click', ()=>{ state.reduce = !state.reduce; $('red
 $('reduce').setAttribute('aria-checked', String(state.reduce));
 $('build').textContent = window.__BUILD; $('hard-reload').addEventListener('click', ()=>{ const u = new URL(location.href); u.searchParams.set('v', Date.now().toString(36)); location.href = u.toString(); });
 // 달리기 속도 (시속 6~16 km). 이 기기에 기억
-(function(){ const el = $('pace'); let v = 10; try{ v = +(localStorage.getItem('haebyeon.pace')||10) || 10; }catch(e){} el.value = v;
+(function(){ const el = $('pace'); let v = 16; try{ v = +(localStorage.getItem('haebyeon.pace')||16) || 16; }catch(e){} el.value = v;
   const apply = (kmh)=>{ state.paceMul = (kmh/3.6)/RUN; const label = kmh<=7 ? '산책하듯' : kmh<=10 ? '천천히' : kmh<=13 ? '가볍게' : '힘차게'; $('pace-note').textContent = `시속 ${kmh} km · ${label}`; };
   apply(v); el.addEventListener('input', ()=>{ const kmh = +el.value; apply(kmh); try{ localStorage.setItem('haebyeon.pace', String(kmh)); }catch(e){} }); })();
 
