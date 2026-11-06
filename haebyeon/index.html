@@ -185,7 +185,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .end .welcome-actions{margin-top:4px}
 
   @media(prefers-reduced-motion:reduce){.boot-dot{animation:none}}
-  @media(max-width:480px){.stat{min-width:50px}.stat b{font-size:15px}.brand h1{font-size:15px}.brand{padding:7px 10px;gap:0}.brand span{font-size:9px;letter-spacing:2px}.tools{gap:5px}.icon-btn{width:36px;height:36px}.icon-btn svg{width:17px;height:17px}.runbtn{width:76px;height:76px}}
+  @media(max-width:480px){.stat{min-width:42px}.stat b{font-size:14px}.stat small{font-size:10px}.stats{padding:8px 10px;gap:0}.brand h1{font-size:15px}.brand{padding:7px 10px;gap:0}.brand span{font-size:9px;letter-spacing:2px}.tools{gap:5px}.icon-btn{width:36px;height:36px}.icon-btn svg{width:17px;height:17px}.runbtn{width:64px;height:64px;font-size:12px}.lane-btns button{min-width:52px;height:32px;padding:0 10px;font-size:11px}.lane-btns{gap:6px}#restbtn,#friendbtn{min-height:30px;padding:0 11px;font-size:11px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
 </head>
@@ -358,7 +358,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-53';
+window.__BUILD = '2026-11-06-54';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -861,7 +861,7 @@ function upsertOther(id, m){
     if(state.started) say(`누군가 같은 ${SC.name}에 왔어요`, 2200);
   }
   if(m.x !== undefined){ o.tx = m.x; o.tlane = m.l; o.sp = m.sp||0; o.resting = m.r||0; o.pose = m.p||'stand'; }
-  if(m.lk){ const key = JSON.stringify(m.lk); if(o.lk !== key){ o.lk = key; applyLookTo(o.parts, otherLook(m.lk)); const nm = net.priv ? ((m.lk.n||'').slice(0,8) || '친구') : ''; if(nm !== o.nick){ o.nick = nm; setOtherLabel(o, nm); } } }
+  if(m.lk){ const key = JSON.stringify(m.lk); if(o.lk !== key){ o.lk = key; applyLookTo(o.parts, otherLook(m.lk)); const nm = (m.lk.n||'').slice(0,8); /* 이름을 정한 사람은 누구나 이름이 보인다 */ if(nm !== o.nick){ o.nick = nm; setOtherLabel(o, nm); } } }
   o.seen = performance.now();
 }
 function removeOther(id){ const o = others.get(id); if(!o) return; scene.remove(o.parts.group); o.parts.group.traverse(c=>{ if(c.geometry) c.geometry.dispose(); }); others.delete(id); }
@@ -923,8 +923,8 @@ function netTick(){
 }
 function teleportTo(x){ state.x = x; state.prevLane = state.lane; runner.position.x = x; buddyState.x = x - 1.2; buddyState.px = buddyState.x; camera.position.x = x - 6; if(camera.userData.look) camera.userData.look.x = x + 5;
   for(const p of props){ scene.remove(p.obj); dispose(p.obj); } props.length = 0; genX = x - 30; populateTo(x + 90); foots.forEach(f=>{ f.visible = false; }); }
-function setRoomUI(){ { const wl = $('welcome-live'); if(wl && !state.started){ if(net.status==='joined'){ const n = Math.max(0, net.count - 1); wl.textContent = net.priv ? `우리 ${SC.name} '${net.priv}' · 지금 ${n}명 있어요` : (n ? `지금 ${SC.name}에 ${n}명이 달리고 있어요 · 들어가면 바로 같이 뛰어요` : `지금은 비어 있어요 · 들어오면 다음 사람이 보여요`); } } }
-  meLabel.visible = net.status==='joined' && net.count > 1; const r = $('room'); if(net.status==='joined'){ r.hidden = false; r.textContent = net.priv ? `우리 ${SC.name} '${net.priv}' · ${net.count}명 함께` : `${SC.name} ${net.room} · ${net.count}명 함께`; $('st-ppl').textContent = net.count; $('st-ppl-wrap').hidden = net.count < 2; } else { r.hidden = true; $('st-ppl-wrap').hidden = true; } }
+function setRoomUI(){ { const wl = $('welcome-live'); if(wl && !state.started){ if(net.status==='joined'){ const n = Math.max(0, net.count - 1); wl.textContent = n ? `지금 ${SC.name}에 ${n}명이 달리고 있어요 · 들어가면 바로 같이 뛰어요` : `지금은 비어 있어요 · 들어오면 다음 사람이 보여요`; } } }
+  meLabel.visible = net.status==='joined' && net.count > 1; const r = $('room'); if(net.status==='joined'){ r.hidden = false; r.textContent = `${SC.name} · ${net.count}명 함께`; $('st-ppl').textContent = net.count; $('st-ppl-wrap').hidden = net.count < 2; } else { r.hidden = true; $('st-ppl-wrap').hidden = true; } }
 async function netJoin(room = 1){
   if(!net.on) return;
   try{
@@ -932,7 +932,7 @@ async function netJoin(room = 1){
   }catch(e){ net.status = 'off'; return; }
   if(room > 20){ net.status = 'off'; say('해변이 모두 가득 찼어요 · 혼자 달려요', 3000); return; }
   net.status = 'joining'; net.room = room;
-  const ch = net.sb.channel(net.priv ? `${SC.chan}:priv:${net.priv}` : `${SC.chan}:${room}`, {config:{broadcast:{self:false, ack:false}, presence:{key:net.id}}});
+  const ch = net.sb.channel(`${SC.chan}:${room}`, {config:{broadcast:{self:false, ack:false}, presence:{key:net.id}}}); /* 초대 코드가 있어도 같은 공개 방: 접속한 사람은 모두 보인다 */
   net.ch = ch;
   ch.on('broadcast', {event:'p'}, ({payload})=>{ if(payload && payload.id && payload.id !== net.id){
     // 막 들어왔고 아직 안 움직였으면, 첫 위치 소식을 준 사람 바로 앞에서 시작한다 (presence 값은 최대 12초 전이라 부정확)
@@ -942,12 +942,12 @@ async function netJoin(room = 1){
     const st = ch.presenceState(); const ids = Object.keys(st);
     if(net.status==='joining'){
       const othersN = ids.filter(k=>k!==net.id).length;
-      if(othersN >= ROOM_CAP && !net.priv){ ch.unsubscribe(); net.ch = null; netJoin(room + 1); return; }
+      if(othersN >= ROOM_CAP){ ch.unsubscribe(); net.ch = null; netJoin(room + 1); return; }
       net.status = 'joined'; net.joinedAt = performance.now(); net.placed = false;
       // 누군가 있으면 그 사람 조금 뒤에서 시작한다 → 바로 함께 달리는 느낌
       const spots = ids.filter(k=>k!==net.id).map(k=>st[k][0]?.x).filter(v=>typeof v==='number');
       if(spots.length && state.dist < 5){ teleportTo(spots[Math.random()*spots.length|0] + 9); state.laneTarget = THREE.MathUtils.clamp(2.2 + (Math.random() < 0.5 ? -1.5 : 1.7), LANE_MIN + 0.3, LANE_MAX - 1); state.lane = state.laneTarget; state.prevLane = state.lane; } // 먼저 온 사람 9 m 앞에서 시작 → 서로 자연스럽게 보인다
-      if(state.started) say(othersN ? `지금 ${othersN+1}명이 같은 ${SC.name}을 달리고 있어요` : (net.priv ? `우리 ${SC.name} '${net.priv}' · 친구가 오면 보여요` : '지금은 혼자예요 · 누가 오면 보여요'), 3200);
+      if(state.started) say(othersN ? `지금 ${othersN+1}명이 같은 ${SC.name}을 달리고 있어요` : '지금은 혼자예요 · 누가 오면 보여요', 3200);
       net.ch.send({type:'broadcast', event:'p', payload:{id:net.id, ...myPacket(true)}}); net.lastSend = performance.now(); net.lastHeartbeat = net.lastSend;
     }
     net.count = ids.length || 1; setRoomUI();
