@@ -382,7 +382,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-92';
+window.__BUILD = '2026-11-06-94';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -642,15 +642,16 @@ if(SC.ground==='grass'){
 const deckSet = new THREE.Group(); deckSet.visible = SC.ground==='deck' || SC.ground==='stonepath'; scene.add(deckSet);
 if(SC.ground==='stonepath'){
   // 나이아가라: 강가 바위 둔덕 위 돌길 + 낮은 돌난간. 러너를 따라 x로 이동
-  const pc = document.createElement('canvas'); pc.width = 512; pc.height = 64; const pg = pc.getContext('2d'); pg.fillStyle = '#6e6a62'; pg.fillRect(0,0,512,64);
-  for(let y=0;y<64;y+=16){ for(let x=((y/16)|0)%2 ? 14 : 0; x<512; x+=28){ const v = 150 + Math.random()*60; pg.fillStyle = `rgb(${v},${v-4},${v-12})`; pg.fillRect(x+1, y+1, 26, 14); } }
-  for(let i=0;i<2500;i++){ pg.fillStyle = `rgba(60,55,50,${0.1+Math.random()*0.2})`; pg.fillRect(Math.random()*512, Math.random()*64, 1.5, 1.5); }
-  const ptex = new THREE.CanvasTexture(pc); ptex.wrapS = THREE.RepeatWrapping; ptex.repeat.set(60, 1); ptex.colorSpace = THREE.SRGBColorSpace;
+  // 판석 돌길: 큼직한 불규칙 사각 돌 + 어두운 줄눈 (정사각 캔버스를 길이 방향으로 반복)
+  const pc = document.createElement('canvas'); pc.width = 256; pc.height = 256; const pg = pc.getContext('2d'); pg.fillStyle = '#4e4a44'; pg.fillRect(0,0,256,256);
+  for(let y=0;y<256;y+=64){ let x = ((y/64)|0)%2 ? 30 : 0; while(x < 256){ const w = 50 + Math.random()*40; const v = 140 + Math.random()*55; pg.fillStyle = `rgb(${v},${v-5},${v-14})`; pg.fillRect(x+2, y+2, Math.min(w, 256-x)-4, 60); x += w; } }
+  for(let i=0;i<6000;i++){ pg.fillStyle = `rgba(${40+Math.random()*40},${38+Math.random()*36},${34+Math.random()*30},${0.08+Math.random()*0.18})`; pg.fillRect(Math.random()*256, Math.random()*256, 1.6, 1.6); }
+  const ptex = new THREE.CanvasTexture(pc); ptex.wrapS = ptex.wrapT = THREE.RepeatWrapping; ptex.repeat.set(80, 1); ptex.colorSpace = THREE.SRGBColorSpace;
   const DY = groundY(3.7);
-  const bank = new THREE.Mesh(new THREE.BoxGeometry(520, DY + 1.5, 14), new THREE.MeshStandardMaterial({color:0x5c5a55, roughness:1})); bank.position.set(0, (DY + 1.5)/2 - 1.5, 7); deckSet.add(bank);
+  const bank = new THREE.Mesh(new THREE.BoxGeometry(520, DY + 1.2, 14), new THREE.MeshStandardMaterial({color:0x5c5a55, roughness:1})); bank.position.set(0, (DY + 1.2)/2 - 1.5, 7); deckSet.add(bank);   // 윗면이 돌길보다 0.3 m 낮아 겹침 없음
   const path = new THREE.Mesh(new THREE.BoxGeometry(520, 0.2, 6.4), new THREE.MeshStandardMaterial({map:ptex, roughness:1, color:0xfff4e4})); path.position.set(0, DY - 0.1, 3.7); path.receiveShadow = true; deckSet.add(path); deckSet.userData.dtex = ptex;
   const wallM = new THREE.MeshStandardMaterial({color:0x8a857c, roughness:1}); const wall = new THREE.Mesh(new THREE.BoxGeometry(520, 0.9, 0.5), wallM); wall.position.set(0, DY + 0.45, 0.4); deckSet.add(wall);
-  const grassM = new THREE.MeshStandardMaterial({color:0x5f9a4c, roughness:1}); const verge = new THREE.Mesh(new THREE.BoxGeometry(520, 0.3, 6), grassM); verge.position.set(0, DY + 0.05, 10); deckSet.add(verge);
+  const grassM = new THREE.MeshStandardMaterial({color:0x5f9a4c, roughness:1}); const verge = new THREE.Mesh(new THREE.BoxGeometry(520, 0.5, 6), grassM); verge.position.set(0, DY - 0.2, 10.2); deckSet.add(verge);
   const rockM = new THREE.MeshStandardMaterial({color:0x6a665e, roughness:1}); for(let x=-260; x<260; x+=3+Math.random()*4){ const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8 + Math.random()*1.2, 0), rockM); r.position.set(x, DY - 1.4 + Math.random()*0.6, -0.8 - Math.random()*1.4); r.scale.y = 0.7; deckSet.add(r); }
 }
 if(SC.ground==='deck'){
@@ -1395,13 +1396,18 @@ if(FH){
           gl_FragColor = vec4(c, clamp(alpha, 0.0, 1.0));
         }`});
     hangangSet.userData.fallsU = fallsUniforms;
-    const wall = new THREE.Mesh(new THREE.PlaneGeometry(1600, FH_, 160, 1), fallsMat); wall.position.set(400, FH_/2 + 1.0, FZ + 1.5); wall.rotation.x = 0.06; hangangSet.add(wall);
-    const wall2 = new THREE.Mesh(new THREE.PlaneGeometry(1600, FH_*0.8, 160, 1), fallsMat); wall2.position.set(400, FH_*0.4 + 1.0, FZ + 3.2); wall2.rotation.x = 0.12; hangangSet.add(wall2);   // 앞쪽에 한 겹 더: 두께감
-    // 폭포 뒤 어두운 바위벽(물 사이로 비침), 꼭대기 물 테두리, 폭포 위 강
-    const back = new THREE.Mesh(new THREE.PlaneGeometry(1600, FH_), new THREE.MeshStandardMaterial({color:0x2a3a44, roughness:1})); back.position.set(400, FH_/2 + 1.0, FZ - 1.2); hangangSet.add(back);
-    const lip = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 1600, 14, 1, false, 0, Math.PI), new THREE.MeshStandardMaterial({color:0x5fc4cc, roughness:0.15, emissive:0x1f5f6a, emissiveIntensity:0.35, transparent:true, opacity:0.92})); lip.rotation.z = Math.PI/2; lip.rotation.y = 0; lip.position.set(400, FH_ + 1.0, FZ + 0.2); hangangSet.add(lip);   // 꼭대기에서 둥글게 넘어오는 물
-    const rockLip = new THREE.Mesh(new THREE.BoxGeometry(1600, 2.2, 3), new THREE.MeshStandardMaterial({color:0x4a4f55, roughness:1})); rockLip.position.set(400, FH_ - 0.4, FZ - 2.4); hangangSet.add(rockLip);
-    const upper = new THREE.Mesh(new THREE.PlaneGeometry(1600, 300).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({color:0x2f7f8c, roughness:0.25})); upper.position.set(400, FH_ + 1.6, FZ - 150); hangangSet.add(upper);
+    // 낙하 곡면: 꼭대기에서 바깥(앞)으로 불룩하게 넘어와 아래로 갈수록 바위에서 멀어지며 떨어진다 (포물선)
+    function pourGeo(w, h, segs, bulge){ const g = new THREE.PlaneGeometry(w, h, 8, segs); const pos = g.attributes.position; for(let i=0;i<pos.count;i++){ const y = pos.getY(i); const u = (y + h/2)/h; /* 0 바닥 … 1 꼭대기 */ const crest = Math.pow(u, 6.0); const fall = (1 - u); pos.setZ(i, bulge*(0.6*Math.sin(u*Math.PI*0.5) + 1.2*crest) + fall*fall*2.5); } g.computeVertexNormals(); return g; }
+    const wall = new THREE.Mesh(pourGeo(1600, FH_, 40, 3.0), fallsMat); wall.position.set(400, FH_/2 + 1.0, FZ); hangangSet.add(wall);
+    const wall2 = new THREE.Mesh(pourGeo(1600, FH_*0.9, 40, 2.2), fallsMat); wall2.position.set(400, FH_*0.45 + 1.0, FZ + 3.5); hangangSet.add(wall2);   // 앞 겹: 더 투명한 물보라 막
+    // 꼭대기: 상류 강이 절벽 끝으로 흘러와 꺾이는 면 (위에서 보임)
+    const topGeo = new THREE.PlaneGeometry(1600, 14, 8, 6); { const pos = topGeo.attributes.position; for(let i=0;i<pos.count;i++){ const yy = pos.getY(i); const u = (yy + 7)/14; pos.setZ(i, -Math.pow(u, 3)*3.0); } topGeo.computeVertexNormals(); }
+    const topFlow = new THREE.Mesh(topGeo, fallsMat); topFlow.rotation.x = -Math.PI/2; topFlow.position.set(400, FH_ + 1.0, FZ - 6); hangangSet.add(topFlow);
+    const upper = new THREE.Mesh(new THREE.PlaneGeometry(1600, 300).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({color:0x2f7f8c, roughness:0.25})); upper.position.set(400, FH_ + 0.9, FZ - 160); hangangSet.add(upper);
+    const rockLip = new THREE.Mesh(new THREE.BoxGeometry(1600, FH_ + 2, 6), new THREE.MeshStandardMaterial({color:0x3f444a, roughness:1})); rockLip.position.set(400, (FH_ + 2)/2 - 1, FZ - 4.5); hangangSet.add(rockLip);   // 폭포 뒤 절벽 바위
+    // 바닥: 물보라 풀(흰 거품 원반들)
+    const poolM = new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.9, transparent:true, opacity:0.75, emissive:0xdff4f8, emissiveIntensity:0.4});
+    for(let x=-300; x<1300; x+=7+Math.random()*6){ const d = new THREE.Mesh(new THREE.CircleGeometry(5 + Math.random()*5, 16).rotateX(-Math.PI/2), poolM); d.position.set(x, 0.12, FZ + 6 + Math.random()*10); hangangSet.add(d); }
     // 양쪽 끝 절벽 + 멀리 숲
     const cliffM = new THREE.MeshStandardMaterial({color:0x7a756b, roughness:1}); for(const x of [-420, 1220]){ const c = new THREE.Mesh(new THREE.BoxGeometry(100, FH_ + 6, 120), cliffM); c.position.set(x, (FH_+6)/2, FZ - 40); hangangSet.add(c); }
     const treeM = new THREE.MeshStandardMaterial({color:0x3f7a3c, roughness:1}); for(let x=-300; x<1300; x+=9+Math.random()*8){ const t = new THREE.Mesh(new THREE.SphereGeometry(3 + Math.random()*2.5, 7, 6), treeM); t.position.set(x, FH_ + 4, FZ - 40 - Math.random()*60); hangangSet.add(t); }
@@ -2518,7 +2524,7 @@ function frame(){
   if(beachSet.userData.bridgeLampM){ const h = (t*0.03) % 1; beachSet.userData.bridgeLampM.emissive.setHSL(h, 0.8, 0.6); }
   if(ollePath.visible){ ollePath.position.x = state.x; ollePath.userData.ptex.offset.x = state.x/520*60; }
   if(hangangSet.userData.fallsU){ const U = hangangSet.userData.fallsU; U.time.value = t; U.night.value = nightMix; for(const sp of hangangSet.userData.mist){ const u = sp.userData; if(u.big){ sp.position.y += (0.6 + 0.4*Math.sin(t*0.3 + u.ph))*dt; if(sp.position.y > 50){ sp.position.y = 8; } sp.material.opacity = 0.35*(1 - sp.position.y/55) + 0.1; } else { sp.material.opacity = 0.45 + 0.25*Math.sin(t*1.3 + u.ph); } } hangangSet.userData.bow.material.opacity = 0.65*(1 - nightMix)*THREE.MathUtils.smoothstep(skyUniforms.sunDir.value.y, 0.1, 0.5); }
-  if(deckSet.visible){ deckSet.position.x = state.x; deckSet.userData.dtex.offset.x = state.x/520*60; if(deckSet.userData.ctex) deckSet.userData.ctex.offset.x = state.x/520*40; }
+  if(deckSet.visible){ deckSet.position.x = state.x; deckSet.userData.dtex.offset.x = state.x/520*(SC.ground==='stonepath' ? 80 : 60); if(deckSet.userData.ctex) deckSet.userData.ctex.offset.x = state.x/520*40; }
   sand.position.x = state.x; wet.position.x = state.x; sandMat.map.offset.x = state.x/520*60;
   sun.position.copy(skyUniforms.sunDir.value).multiplyScalar(60).add(new THREE.Vector3(state.x, 0, state.lane)); sun.target.position.set(state.x, 0, state.lane);
   if(lighthouse.position.x < state.x - 60) lighthouse.position.x += 420;
