@@ -224,6 +224,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <div class="pace">
     <div class="pace-hint"><kbd>Space</kbd> 누르는 동안 달리기<br><kbd>←</kbd><kbd>→</kbd> 왼쪽 · 오른쪽</div>
     <div class="lane-btns"><button id="lane-sea" type="button">왼쪽</button><button id="lane-sand" type="button">오른쪽</button></div>
+    <button id="friendbtn" class="btn ghost small" type="button" hidden style="background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1)">친구 옆으로 가기</button>
     <button id="restbtn" class="btn ghost small" type="button" style="background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.1)">잠깐 쉬어가기</button>
     <button id="runbtn" class="runbtn" type="button" aria-label="누르는 동안 달리기">달리기</button>
   </div>
@@ -335,7 +336,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-05-49';
+window.__BUILD = '2026-11-06-51';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -355,7 +356,7 @@ const GUNG = SCENE_ID==='gung';
 const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
 const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = GUNG ? 5.0 : (SCENE_ID==='hangang' ? 6.4 : 8.5), WALK = 1.4, RUN = 3.4;   // 한강: 달릴 땐 벤치가 있는 잔디 안쪽까지 안 들어간다
 // 돌담길 오른쪽 잔디 언덕: 담장 너머 궁 전경을 보며 앉고 눕는 자리. z 6.5→9.5 오르막, 9.5~11.5 꼭대기(2.4 m), 11.5→14.5 내리막
-function groundY(z){ if(!GUNG) return 0; const up = THREE.MathUtils.smoothstep(z, 6.5, 9.5), down = 1 - THREE.MathUtils.smoothstep(z, 11.5, 14.5); return 2.4*Math.min(up, down); }
+function groundY(z){ if(GUNG){ const up = THREE.MathUtils.smoothstep(z, 6.5, 9.5), down = 1 - THREE.MathUtils.smoothstep(z, 11.5, 14.5); return 2.4*Math.min(up, down); } return -1.2*THREE.MathUtils.smoothstep(-z, 0, 12); }   // 해변·한강: 물가로 갈수록 모래가 낮아지는 만큼 (바닥 메시와 같은 식)
 // 한 걸음 길이: 다리 기하에서 계산(발이 땅에서 미끄러지지 않게). 걷기 0.43 m, 달리기 0.8 m
 function stepLen(amp){ const run = THREE.MathUtils.smoothstep(amp, 0.25, 0.75); const thighA = 0.42 + 0.6*run; return 2*0.4*Math.sin(thighA) + 0.08 + 0.1*run; }
 const $ = (id) => document.getElementById(id);
@@ -842,8 +843,18 @@ function upsertOther(id, m){
   o.seen = performance.now();
 }
 function removeOther(id){ const o = others.get(id); if(!o) return; scene.remove(o.parts.group); o.parts.group.traverse(c=>{ if(c.geometry) c.geometry.dispose(); }); others.delete(id); }
+// 가장 가까운 친구: 거리·속도. 보이지 않을 만큼 멀면 HUD에 '친구 옆으로 가기'를 띄운다
+let nearFriend = null;
+function trackFriends(){
+  let best = null;
+  for(const [id, o] of others){ const d = o.x - state.x; if(!best || Math.abs(d) < Math.abs(best.d)) best = {o, d, sp:o.sp}; }
+  nearFriend = best;
+  const btn = $('friendbtn'); const far = best && Math.abs(best.d) > 45;
+  if(btn){ const show = !!far && state.started && !state.ended; if(btn.hidden === show){ btn.hidden = !show; } if(show){ const m = Math.round(Math.abs(best.d)); btn.textContent = best.d > 0 ? `친구가 ${m} m 앞 · 옆으로 가기` : `친구가 ${m} m 뒤 · 옆으로 가기`; } }
+}
+function goToFriend(){ if(!nearFriend) return; const o = nearFriend.o; teleportTo(o.x - 2.5); state.laneTarget = THREE.MathUtils.clamp(o.lane + (o.lane > 4 ? -1.4 : 1.4), LANE_MIN + 0.3, LANE_MAX - 0.3); state.lane = state.laneTarget; state.prevLane = state.lane; say('친구 옆으로 왔어요 · 같이 달려요', 2400); }
 function updateOthers(dt, t){
-  const now = performance.now();
+  const now = performance.now(); trackFriends();
   for(const [id, o] of others){
     if(now - o.seen > 20000){ removeOther(id); continue; }
     o.tx += o.sp*dt; // 마지막 속도로 추정
@@ -851,7 +862,7 @@ function updateOthers(dt, t){
     const goalX = state.x + dx;
     if(Math.abs(goalX - o.x) > 30) o.x = goalX; else o.x = THREE.MathUtils.damp(o.x, goalX, 4, dt);
     o.lane = THREE.MathUtils.damp(o.lane, o.tlane, 3, dt);
-    const g = o.parts.group; g.visible = Math.abs(o.x - state.x) < 70;
+    const g = o.parts.group; g.visible = Math.abs(o.x - state.x) < 140;
     if(!g.visible) continue;
     const strideLen = stepLen(THREE.MathUtils.clamp(o.sp/RUN, 0, 1)); if(o.sp > 0.05) o.phase += (o.sp/strideLen)*Math.PI*dt;
     const amp = THREE.MathUtils.clamp(o.sp/RUN, 0, 1), ph = o.phase;
@@ -1518,6 +1529,7 @@ addEventListener('pointerup', ()=>{ swipe = null; });
 $('sound').addEventListener('click', ()=>{ const b = $('sound');
   if(audio.on){ audioStop(); b.setAttribute('aria-pressed','false'); b.setAttribute('aria-label','소리 켜기'); say('소리를 껐어요'); }
   else { try{ audioStart(); b.setAttribute('aria-pressed','true'); b.setAttribute('aria-label','소리 끄기'); say('파도 소리가 들려요'); }catch(e){ say('소리를 시작하지 못했어요. 다시 눌러주세요.'); } } });
+$('friendbtn').addEventListener('click', goToFriend);
 $('rain-on').addEventListener('change', e=>{ state.rain = e.target.checked; say(state.rain ? '비가 내려요 · 천천히 가도 돼요' : '비가 그쳤어요', 2200); });
 $('vol-sea').addEventListener('input', e=>{ if(audio.seaGain) audio.seaGain.gain.value = e.target.value/100; });
 $('vol-bird').addEventListener('input', e=>{ if(audio.birdGain) audio.birdGain.gain.value = e.target.value/100; });
@@ -1692,6 +1704,8 @@ function frame(){
   if(!state.ended){
     const heldNow = state.held || state.autoRun;
     let goal = state.resting ? 0 : heldNow ? RUN*BOTF*state.paceMul : 0;
+    // 친구와 나란히: 40 m 안에 친구가 있으면 속도를 살짝(±12 %) 맞춰 벌어지지 않게
+    if(goal > 0 && nearFriend && Math.abs(nearFriend.d) < 40 && nearFriend.sp > WALK){ const d = nearFriend.d; if(d > 6) goal *= 1.12; else if(d < -6) goal *= 0.88; else goal = THREE.MathUtils.lerp(goal, nearFriend.sp, 0.5); }
     if(!heldNow && !state.resting && state.speed > WALK) goal = WALK;
     state.speed = THREE.MathUtils.damp(state.speed, goal, heldNow ? 2.4 : 1.4, dt);
     if(!heldNow && state.speed < WALK*0.98 && state.speed > 0.05) state.speed = THREE.MathUtils.damp(state.speed, 0, 0.9, dt);
@@ -1776,7 +1790,7 @@ function frame(){
       }
     }
 
-    if(buddy && GUNG) buddy.position.y += groundY(buddyState.z);
+    if(buddy) buddy.position.y += groundY(buddyState.z);
     // 보폭
     const strideLen = stepLen(THREE.MathUtils.clamp(state.speed/RUN, 0, 1));
     if(state.speed > 0.05) state.stridePhase += (state.speed/strideLen)*Math.PI*dt;
@@ -1822,7 +1836,7 @@ function frame(){
     } else runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, 0, 3, dt);
     if(!state.resting || state.pose!=='lie') runner.rotation.x = THREE.MathUtils.damp(runner.rotation.x, 0, 3, dt);
 
-    if(GUNG) runner.position.y += groundY(state.lane);
+    runner.position.y += groundY(state.lane);   // 발을 실제 바닥 높이에 맞춘다 (물가 경사·언덕)
     if(state.started && state.speed === 0 && !state.resting){ state.stillFor += dt; if(state.stillFor > 10){ enterRest(); say('잠깐 쉬어가요 · 바다를 바라봐요'); } } else state.stillFor = 0;
 
     for(const p of props){
