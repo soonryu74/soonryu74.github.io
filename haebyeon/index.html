@@ -382,7 +382,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-91';
+window.__BUILD = '2026-11-06-92';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1367,36 +1367,47 @@ if(FH){
         float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
         float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f); return mix(mix(hash(i), hash(i+vec2(1,0)), f.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y); }
         void main(){
-          float x = vPos.x*0.9;                       // 가로로 물줄기 결
-          float y = vUv.y;                            // 1 = 꼭대기, 0 = 바닥
-          float fall = y + time*0.55;                 // 아래로 흐름
-          float s1 = noise(vec2(x*6.0, fall*4.0));
-          float s2 = noise(vec2(x*18.0 + 3.0, fall*9.0));
-          float s3 = noise(vec2(x*40.0, fall*20.0));
+          float x = vPos.x*0.9;
+          float y = vUv.y;                                   // 1 = 꼭대기(낙하 시작), 0 = 바닥
+          float d = 1.0 - y;                                 // 떨어진 거리
+          // 자유낙하: 아래로 갈수록 빨라진다 (속도 ∝ sqrt(거리))
+          float fall = sqrt(d + 0.05)*2.2 + time*0.9;
+          float s1 = noise(vec2(x*5.0,  fall*3.0));
+          float s2 = noise(vec2(x*16.0 + 3.0, fall*7.0 + x));
+          float s3 = noise(vec2(x*38.0, fall*16.0));
           float streak = s1*0.5 + s2*0.3 + s3*0.2;
-          // 꼭대기: 매끈한 청록 물, 내려갈수록 흰 거품이 늘어난다
-          float foam = smoothstep(0.75, 1.0, 1.0 - y) * 0.6 + smoothstep(0.55, 0.95, streak) * (0.4 + 0.6*(1.0 - y));
-          vec3 water = mix(vec3(0.10, 0.42, 0.50), vec3(0.45, 0.78, 0.82), smoothstep(0.3, 0.9, streak));
-          vec3 c = mix(water, vec3(0.97, 0.99, 1.0), clamp(foam, 0.0, 1.0));
-          // 바닥 물보라 띠: 끓어오르는 흰색
-          float base = smoothstep(0.22, 0.0, y) * (0.6 + 0.4*noise(vec2(x*5.0, time*2.5)));
+          // 꼭대기: 매끈한 청록 물이 둥글게 넘어오는 띠
+          float crest = smoothstep(0.86, 1.0, y);
+          vec3 crestCol = mix(vec3(0.12, 0.55, 0.62), vec3(0.6, 0.9, 0.92), smoothstep(0.93, 1.0, y));
+          // 중간: 물줄기가 갈라져 밧줄처럼, 사이는 비친다(투명)
+          float ropes = smoothstep(0.38, 0.62, noise(vec2(x*9.0, fall*2.2)) * 0.6 + s2*0.4);
+          float tear = smoothstep(0.25, 0.75, d) * (1.0 - ropes);          // 갈라진 틈
+          float foam = smoothstep(0.45, 0.95, streak) * (0.3 + 0.9*d);
+          vec3 water = mix(vec3(0.10, 0.45, 0.55), vec3(0.55, 0.85, 0.88), smoothstep(0.3, 0.9, streak));
+          vec3 c = mix(water, vec3(0.98, 1.0, 1.0), clamp(foam, 0.0, 1.0));
+          c = mix(c, crestCol, crest);
+          // 바닥: 부딪혀 터지는 물보라(두껍고 요동)
+          float boil = noise(vec2(x*4.0 + time*0.7, d*6.0 - time*2.0)) * 0.5 + noise(vec2(x*11.0 - time*1.1, d*14.0 - time*4.0)) * 0.5;
+          float base = smoothstep(0.30, 0.0, y) * (0.55 + 0.45*boil);
           c = mix(c, vec3(1.0), base);
           c *= 1.0 - night*0.55;
-          float alpha = 0.92;
-          gl_FragColor = vec4(c, alpha);
+          float alpha = mix(0.95, 0.35, tear) + base*0.6 + crest*0.3;
+          gl_FragColor = vec4(c, clamp(alpha, 0.0, 1.0));
         }`});
     hangangSet.userData.fallsU = fallsUniforms;
-    const wall = new THREE.Mesh(new THREE.PlaneGeometry(1600, FH_, 160, 1), fallsMat); wall.position.set(400, FH_/2 + 1.0, FZ); hangangSet.add(wall);
+    const wall = new THREE.Mesh(new THREE.PlaneGeometry(1600, FH_, 160, 1), fallsMat); wall.position.set(400, FH_/2 + 1.0, FZ + 1.5); wall.rotation.x = 0.06; hangangSet.add(wall);
+    const wall2 = new THREE.Mesh(new THREE.PlaneGeometry(1600, FH_*0.8, 160, 1), fallsMat); wall2.position.set(400, FH_*0.4 + 1.0, FZ + 3.2); wall2.rotation.x = 0.12; hangangSet.add(wall2);   // 앞쪽에 한 겹 더: 두께감
     // 폭포 뒤 어두운 바위벽(물 사이로 비침), 꼭대기 물 테두리, 폭포 위 강
     const back = new THREE.Mesh(new THREE.PlaneGeometry(1600, FH_), new THREE.MeshStandardMaterial({color:0x2a3a44, roughness:1})); back.position.set(400, FH_/2 + 1.0, FZ - 1.2); hangangSet.add(back);
-    const lip = new THREE.Mesh(new THREE.BoxGeometry(1600, 1.2, 2.5), new THREE.MeshStandardMaterial({color:0x7fd0d8, roughness:0.2, emissive:0x2a6c78, emissiveIntensity:0.3})); lip.position.set(400, FH_ + 1.2, FZ - 0.5); hangangSet.add(lip);
+    const lip = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 1600, 14, 1, false, 0, Math.PI), new THREE.MeshStandardMaterial({color:0x5fc4cc, roughness:0.15, emissive:0x1f5f6a, emissiveIntensity:0.35, transparent:true, opacity:0.92})); lip.rotation.z = Math.PI/2; lip.rotation.y = 0; lip.position.set(400, FH_ + 1.0, FZ + 0.2); hangangSet.add(lip);   // 꼭대기에서 둥글게 넘어오는 물
+    const rockLip = new THREE.Mesh(new THREE.BoxGeometry(1600, 2.2, 3), new THREE.MeshStandardMaterial({color:0x4a4f55, roughness:1})); rockLip.position.set(400, FH_ - 0.4, FZ - 2.4); hangangSet.add(rockLip);
     const upper = new THREE.Mesh(new THREE.PlaneGeometry(1600, 300).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({color:0x2f7f8c, roughness:0.25})); upper.position.set(400, FH_ + 1.6, FZ - 150); hangangSet.add(upper);
     // 양쪽 끝 절벽 + 멀리 숲
     const cliffM = new THREE.MeshStandardMaterial({color:0x7a756b, roughness:1}); for(const x of [-420, 1220]){ const c = new THREE.Mesh(new THREE.BoxGeometry(100, FH_ + 6, 120), cliffM); c.position.set(x, (FH_+6)/2, FZ - 40); hangangSet.add(c); }
     const treeM = new THREE.MeshStandardMaterial({color:0x3f7a3c, roughness:1}); for(let x=-300; x<1300; x+=9+Math.random()*8){ const t = new THREE.Mesh(new THREE.SphereGeometry(3 + Math.random()*2.5, 7, 6), treeM); t.position.set(x, FH_ + 4, FZ - 40 - Math.random()*60); hangangSet.add(t); }
     // 물안개: 폭포 밑 전체에 띠처럼 + 위로 피어오르는 큰 구름
     { const mc = document.createElement('canvas'); mc.width = 256; mc.height = 256; const mg = mc.getContext('2d'); const rg = mg.createRadialGradient(128, 128, 0, 128, 128, 128); rg.addColorStop(0, 'rgba(255,255,255,0.9)'); rg.addColorStop(0.55, 'rgba(255,255,255,0.35)'); rg.addColorStop(1, 'rgba(255,255,255,0)'); mg.fillStyle = rg; mg.fillRect(0,0,256,256); const mtex = new THREE.CanvasTexture(mc);
-      hangangSet.userData.mist = []; for(let i=0;i<60;i++){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:mtex, transparent:true, opacity:0.5, depthWrite:false})); const big = i % 3 === 0; sp.scale.set(big ? 70 + Math.random()*40 : 30 + Math.random()*20, big ? 50 + Math.random()*30 : 16 + Math.random()*10, 1); sp.position.set(-200 + Math.random()*1500, big ? 10 + Math.random()*30 : 3 + Math.random()*6, FZ + 2 + Math.random()*26); sp.userData = {ph:Math.random()*10, big}; hangangSet.add(sp); hangangSet.userData.mist.push(sp); } }
+      hangangSet.userData.mist = []; for(let i=0;i<110;i++){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:mtex, transparent:true, opacity:0.5, depthWrite:false})); const big = i % 3 === 0; sp.scale.set(big ? 70 + Math.random()*40 : 30 + Math.random()*20, big ? 50 + Math.random()*30 : 16 + Math.random()*10, 1); sp.position.set(-200 + Math.random()*1500, big ? 10 + Math.random()*30 : 3 + Math.random()*6, FZ + 2 + Math.random()*26); sp.userData = {ph:Math.random()*10, big}; hangangSet.add(sp); hangangSet.userData.mist.push(sp); } }
     // 무지개 (낮, 해 높을 때)
     const rc = document.createElement('canvas'); rc.width = 512; rc.height = 256; const rg2 = rc.getContext('2d'); const cols = ['#ff5b5b','#ffb24a','#fff35c','#7ee07a','#5bb7ff','#6a6cff','#b06cff']; for(let b=0;b<7;b++){ rg2.strokeStyle = cols[b]; rg2.globalAlpha = 0.5; rg2.lineWidth = 9; rg2.beginPath(); rg2.arc(256, 250, 215 - b*9, Math.PI, 0); rg2.stroke(); }
     const rtex = new THREE.CanvasTexture(rc); rtex.colorSpace = THREE.SRGBColorSpace; const bow = new THREE.Sprite(new THREE.SpriteMaterial({map:rtex, transparent:true, opacity:0, depthWrite:false, fog:false})); bow.scale.set(220, 110, 1); bow.position.set(400, 36, FZ + 30); hangangSet.add(bow); hangangSet.userData.bow = bow;
