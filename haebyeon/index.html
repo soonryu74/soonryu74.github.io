@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-07-131';
+window.__BUILD = '2026-11-07-134';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1648,18 +1648,38 @@ function makeGinkgo(){
 // 잎 카드 캔버스: 은행잎(부채꼴) / 단풍잎(별 모양)을 수백 장 흩뿌려 투명 배경에
 function leafCanopyTex(kind){
   const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); g.scale(2, 2);
-  const cols = kind==='ginkgo' ? ['#ffc400','#ffcf1a','#f5b800','#ffd83a','#e8ac00'] : kind==='blossom' ? ['#ffd6e3','#ffc8d9','#ffe9f0','#fff6f9','#fbbfd0'] : kind==='green' ? ['#4a9a52','#5fb064','#3f8a47','#6fc072','#56a35a'] : kind==='needle' ? ['#3f6f3c','#4a7f45','#365f34','#588f52','#2f5a30'] : kind==='bamboo' ? ['#8cc152','#a3d16a','#7bb043','#b5de7a','#6a9e3a'] : ['#d9432b','#e8632c','#f08a2e','#c63a2a','#f2a93b','#f4e04d','#f7ea6a','#e9d23a'];
-  const N = kind==='ginkgo' ? 260 : (kind==='blossom' ? 320 : 170);
-  for(let i=0;i<N;i++){ const x = 128 + (Math.random()-0.5)*220, y = 128 + (Math.random()-0.5)*220; if(Math.hypot(x-128, y-128) > 118) continue; const r = 9 + Math.random()*9, a = Math.random()*Math.PI*2; g.fillStyle = cols[Math.random()*cols.length|0]; g.globalAlpha = 0.95;
+  const cols = kind==='ginkgo' ? ['#ffc400','#ffcf1a','#f5b800','#ffd83a','#e8ac00'] : kind==='blossom' ? ['#ffd6e3','#ffc8d9','#ffe9f0','#fff6f9','#fbbfd0'] : kind==='cherry' ? ['#fff1f5','#ffe6ee','#ffdce7','#fff8fa','#ffd3e0'] : kind==='green' ? ['#4a9a52','#5fb064','#3f8a47','#6fc072','#56a35a'] : kind==='needle' ? ['#3f6f3c','#4a7f45','#365f34','#588f52','#2f5a30'] : kind==='bamboo' ? ['#8cc152','#a3d16a','#7bb043','#b5de7a','#6a9e3a'] : ['#d9432b','#e8632c','#f08a2e','#c63a2a','#f2a93b','#f4e04d','#f7ea6a','#e9d23a'];
+  const N = kind==='ginkgo' ? 260 : (kind==='blossom' ? 320 : (kind==='cherry' ? 1500 : 170));
+  for(let i=0;i<N;i++){ const x = 128 + (Math.random()-0.5)*220, y = 128 + (Math.random()-0.5)*220; if(Math.hypot(x-128, y-128) > 118) continue; const r = kind==='cherry' ? 2.2 + Math.random()*2.2 : 9 + Math.random()*9, a = Math.random()*Math.PI*2; g.fillStyle = cols[Math.random()*cols.length|0]; g.globalAlpha = 0.95;
     g.save(); g.translate(x, y); g.rotate(a);
     if(kind==='ginkgo'){ const rr = r*0.75; g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, rr, Math.PI*0.12, Math.PI*0.5 - 0.08); g.lineTo(0, rr*0.72); g.arc(0, 0, rr, Math.PI*0.5 + 0.08, Math.PI*0.88); g.closePath(); g.fill(); g.strokeStyle = 'rgba(190,140,20,0.45)'; g.lineWidth = 0.6; for(let v=0.2; v<0.85; v+=0.13){ g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(Math.PI*v)*rr, Math.sin(Math.PI*v)*rr); g.stroke(); } g.strokeStyle = 'rgba(120,90,30,0.7)'; g.lineWidth = 0.9; g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -rr*0.6); g.stroke(); }   // 부채꼴 + 가운데 홈 + 잎맥 + 잎자루
     else if(kind==='bamboo' || kind==='needle'){ g.beginPath(); g.ellipse(0, 0, r*1.6, r*0.22, 0, 0, Math.PI*2); g.fill(); }
+    else if(kind==='cherry'){ const pr = r*0.5; for(let k=0;k<5;k++){ const t = k/5*Math.PI*2; g.beginPath(); g.arc(Math.cos(t)*pr, Math.sin(t)*pr, pr*0.85, 0, Math.PI*2); g.fill(); } if(Math.random() < 0.5){ g.fillStyle = '#e97a98'; g.beginPath(); g.arc(0, 0, pr*0.35, 0, Math.PI*2); g.fill(); } }   /* 아주 작은 벚꽃 수천 송이: 가지가 비쳐 보이게 */
     else if(kind==='blossom'){ const pr = r*0.42; for(let k=0;k<5;k++){ const t = k/5*Math.PI*2; g.beginPath(); g.arc(Math.cos(t)*pr, Math.sin(t)*pr, pr*0.8, 0, Math.PI*2); g.fill(); } g.fillStyle = '#e8577a'; g.beginPath(); g.arc(0, 0, pr*0.3, 0, Math.PI*2); g.fill(); }   /* 꽃잎 다섯 장 + 진분홍 꽃술 */
     else { g.beginPath(); for(let k=0;k<10;k++){ const rr = k%2 ? r*0.45 : r; const t = k/10*Math.PI*2; g.lineTo(Math.cos(t)*rr, Math.sin(t)*rr); } g.closePath(); g.fill(); }
     g.restore(); }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
 const canopyTex = {ginkgo:null, maple:null};
+function makeCherry(toward){
+  // 왕벚나무(사진 기준): 곧은 검은 줄기 3 m, 거기서 굵은 가지 5~6개가 길 쪽으로 비스듬히 넓게 뻗고, 잔가지 끝마다 연분홍 꽃구름. 가지가 꽃 사이로 비친다
+  if(!canopyTex.cherry) canopyTex.cherry = leafCanopyTex('cherry');
+  const g = new THREE.Group(); const parts = []; const push = (geo, m)=>{ geo.applyMatrix4(m); parts.push(geo.toNonIndexed()); };
+  const H = 2.6 + Math.random()*0.9; push(new THREE.CylinderGeometry(0.11, 0.2, H, 7), new THREE.Matrix4().makeTranslation(0, H/2, 0));
+  const leafM = new THREE.MeshStandardMaterial({map:canopyTex.cherry, transparent:true, alphaTest:0.5, side:THREE.DoubleSide, roughness:1, emissive:0x9a7082, emissiveIntensity:0.7});
+  const spots = []; const nB = 5 + (Math.random()*2|0);
+  for(let i=0;i<nB;i++){
+    const a = toward + (i/nB - 0.5)*Math.PI*1.5 + (Math.random()-0.5)*0.3, tilt = 0.55 + Math.random()*0.5, len = 3.2 + Math.random()*1.6, y0 = H*0.78 + Math.random()*H*0.22;
+    const base = new THREE.Matrix4().makeTranslation(0, y0, 0).multiply(new THREE.Matrix4().makeRotationY(a)).multiply(new THREE.Matrix4().makeRotationZ(tilt));
+    push(new THREE.CylinderGeometry(0.03, 0.09, len, 5), base.clone().multiply(new THREE.Matrix4().makeTranslation(0, len/2, 0)));
+    const tip = new THREE.Vector3(0, len, 0).applyMatrix4(base), mid = new THREE.Vector3(0, len*0.6, 0).applyMatrix4(base);
+    spots.push([tip, 2.6 + Math.random()*0.8], [mid, 2.0 + Math.random()*0.6]);
+    for(let k=0;k<2;k++){ const l2 = len*0.5 + Math.random()*0.8; const m2 = new THREE.Matrix4().makeTranslation(tip.x, tip.y, tip.z).multiply(new THREE.Matrix4().makeRotationY(a + (Math.random()-0.5)*1.4)).multiply(new THREE.Matrix4().makeRotationZ(tilt*0.5 + (Math.random()-0.5)*0.9)).multiply(new THREE.Matrix4().makeTranslation(0, l2/2, 0)); push(new THREE.CylinderGeometry(0.012, 0.035, l2, 4), m2); const t2 = new THREE.Vector3(0, l2, 0).applyMatrix4(new THREE.Matrix4().makeTranslation(tip.x, tip.y, tip.z).multiply(new THREE.Matrix4().makeRotationY(a + (Math.random()-0.5)*1.4)).multiply(new THREE.Matrix4().makeRotationZ(tilt*0.5 + (Math.random()-0.5)*0.9))); spots.push([t2, 2.2 + Math.random()*0.8]); }
+  }
+  const wood = new THREE.Mesh(mergeGeos(parts), new THREE.MeshStandardMaterial({color:0x2e2622, roughness:1})); wood.castShadow = true; g.add(wood);
+  for(const [pt, sz] of spots){ for(let k=0;k<2;k++){ const card = new THREE.Mesh(new THREE.PlaneGeometry(sz, sz*0.8), leafM); card.position.set(pt.x + (Math.random()-0.5)*0.6, pt.y + (Math.random()-0.5)*0.5, pt.z + (Math.random()-0.5)*0.6); card.rotation.set((Math.random()-0.5)*1.2, Math.random()*Math.PI, (Math.random()-0.5)*0.6); g.add(card); } }
+  return g;
+}
 function makeLeafTree(kind){
   if(!canopyTex[kind]) canopyTex[kind] = leafCanopyTex(kind);
   const g = new THREE.Group(); const barkM = new THREE.MeshStandardMaterial({color:kind==='ginkgo' ? 0x5a4a3a : 0x4a3a30, roughness:1});
@@ -1828,9 +1848,10 @@ if(GUNG){
     const streamM = new THREE.MeshStandardMaterial({color:0x7fc4d4, roughness:0.15, metalness:0.1}); const stream = new THREE.Mesh(new THREE.PlaneGeometry(1400, 16).rotateX(-Math.PI/2), streamM); stream.position.set(500, -0.3, -22); gungSet.add(stream);   // 화개천
     const stoneM = new THREE.MeshStandardMaterial({color:0x9a9790, roughness:1}); for(let x=-120; x<1120; x+=4+Math.random()*6){ const st = new THREE.Mesh(new THREE.SphereGeometry(0.4 + Math.random()*0.6, 6, 5), stoneM); st.position.set(x, -0.1, -14.5 - Math.random()*1.5); st.scale.y = 0.5; gungSet.add(st); }   // 냇가 자갈
     const farGrass = new THREE.Mesh(new THREE.PlaneGeometry(1400, 160).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({color:0x8fc45e, roughness:1})); farGrass.position.set(500, 0.0, -110); gungSet.add(farGrass);
-    for(let x=-120; x<1120; x+=2.6+Math.random()*1.0){ for(const z of [-1.4 - Math.random()*1.0, 9.6 + Math.random()*1.0]){ const t = makeLeafTree('blossom'); t.position.set(x + (Math.random()-0.5)*0.8, 0, z); t.rotation.y = Math.random()*Math.PI; t.scale.set(1.35 + Math.random()*0.3, 1.5 + Math.random()*0.3, 1.35 + Math.random()*0.3); gungSet.add(t); } }   // 벚꽃 터널
-    for(let x=-120; x<1120; x+=8+Math.random()*6){ const t = makeLeafTree('blossom'); t.position.set(x, 0, 14 + Math.random()*6); t.rotation.y = Math.random()*Math.PI; t.scale.setScalar(0.9 + Math.random()*0.3); gungSet.add(t); }   // 오른쪽 뒷줄
-    for(let x=-120; x<1120; x+=10+Math.random()*8){ const t = makeLeafTree('blossom'); t.position.set(x, 0, -34 - Math.random()*8); t.rotation.y = Math.random()*Math.PI; t.scale.setScalar(0.9 + Math.random()*0.3); gungSet.add(t); }   // 냇가 건너편 벚나무
+    for(let x=-120; x<1000; x+=6.5+Math.random()*2){ const t = makeCherry(Math.PI/2); t.position.set(x + (Math.random()-0.5)*0.6, 0, -1.6 - Math.random()*0.8); t.scale.setScalar(1.15 + Math.random()*0.25); gungSet.add(t); }   // 왼쪽 줄(냇가 쪽): 가지가 길 위로
+    for(let x=-116; x<1000; x+=6.5+Math.random()*2){ const t = makeCherry(-Math.PI/2); t.position.set(x + (Math.random()-0.5)*0.6, 0, 10.2 + Math.random()*0.8); t.scale.setScalar(1.15 + Math.random()*0.25); gungSet.add(t); }   // 오른쪽 줄: 가지가 길 위로 → 터널
+    for(let x=-120; x<1000; x+=14+Math.random()*10){ const t = makeCherry(Math.random()*Math.PI*2); t.position.set(x, 0, 17 + Math.random()*8); t.scale.setScalar(0.9 + Math.random()*0.3); gungSet.add(t); }   // 오른쪽 뒷줄 드문드문
+    for(let x=-120; x<1000; x+=12+Math.random()*8){ const t = makeCherry(Math.PI/2); t.position.set(x, 0, -33 - Math.random()*6); t.scale.setScalar(0.95 + Math.random()*0.3); gungSet.add(t); }   // 냇가 건너편 줄
     const hillA = new THREE.MeshStandardMaterial({color:0x7fae63, roughness:1, fog:false}); const hillB = new THREE.MeshStandardMaterial({color:0x6a8f8a, roughness:1, fog:false});
     for(const [hx, hw, hh] of [[60, 240, 60],[380, 280, 80],[700, 260, 65],[1020, 240, 70]]){ const hill = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10), hillA); hill.scale.set(hw, hh, 90); hill.position.set(hx, -24, -200); gungSet.add(hill); }
     for(const [hx, hw, hh] of [[-100, 420, 150],[500, 520, 190],[1100, 440, 160]]){ const m = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10), hillB); m.scale.set(hw, hh, 120); m.position.set(hx, -40, -360); gungSet.add(m); }   // 지리산 능선
@@ -1899,7 +1920,7 @@ function makeClover(){ const g = new THREE.Group(); const m = new THREE.MeshStan
 function makeFlowerBed(){ const g = new THREE.Group(); const cols = [0xff9bb3, 0xffd166, 0xffffff, 0xff7a9a, 0xc8a2ff]; for(let i=0;i<7;i++){ const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.35, 5), new THREE.MeshStandardMaterial({color:0x7fb06a})); stem.position.set((Math.random()-0.5)*1.2, 0.17, (Math.random()-0.5)*0.8); g.add(stem); const head = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), new THREE.MeshStandardMaterial({color:cols[Math.random()*cols.length|0], roughness:1})); head.position.set(stem.position.x, 0.38, stem.position.z); head.scale.y = 0.5; g.add(head); } return g; }
 function makeDandelion(){ const g = new THREE.Group(); const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.3, 5), new THREE.MeshStandardMaterial({color:0x7fb06a})); stem.position.y = 0.15; g.add(stem); const head = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), new THREE.MeshStandardMaterial({color:Math.random()<0.5 ? 0xffd94a : 0xffffff, roughness:1})); head.position.y = 0.32; g.add(head); return g; }
 function makeWillow(){ const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.26, 3.4, 8), new THREE.MeshStandardMaterial({color:0x7a6248, roughness:1})); trunk.position.y = 1.7; g.add(trunk); const leafM = new THREE.MeshStandardMaterial({color:0x8cc46e, roughness:1, side:THREE.DoubleSide}); const crown = new THREE.Mesh(new THREE.SphereGeometry(1.6, 10, 8), leafM); crown.position.y = 3.8; crown.scale.set(1.2, 0.8, 1.2); g.add(crown); for(let i=0;i<14;i++){ const a = i/14*Math.PI*2; const strand = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 2.2 + Math.random()*0.8), leafM); strand.position.set(Math.cos(a)*1.7, 2.6, Math.sin(a)*1.7); strand.rotation.y = -a; g.add(strand); } g.scale.setScalar(0.9 + Math.random()*0.5); g.userData.crown = crown; return g; }
-function makeCherry(){ const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.22, 2.6, 8), new THREE.MeshStandardMaterial({color:0x5c4636, roughness:1})); trunk.position.y = 1.3; g.add(trunk); const m = new THREE.MeshStandardMaterial({color:0xffd3df, roughness:1}); for(let i=0;i<5;i++){ const b = new THREE.Mesh(new THREE.SphereGeometry(0.9 + Math.random()*0.5, 9, 7), m); b.position.set((Math.random()-0.5)*1.6, 2.8 + Math.random()*1.0, (Math.random()-0.5)*1.6); g.add(b); } g.scale.setScalar(0.9 + Math.random()*0.5); return g; }
+function makeCherryOld(){ const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.22, 2.6, 8), new THREE.MeshStandardMaterial({color:0x5c4636, roughness:1})); trunk.position.y = 1.3; g.add(trunk); const m = new THREE.MeshStandardMaterial({color:0xffd3df, roughness:1}); for(let i=0;i<5;i++){ const b = new THREE.Mesh(new THREE.SphereGeometry(0.9 + Math.random()*0.5, 9, 7), m); b.position.set((Math.random()-0.5)*1.6, 2.8 + Math.random()*1.0, (Math.random()-0.5)*1.6); g.add(b); } g.scale.setScalar(0.9 + Math.random()*0.5); return g; }
 
 
 /* ---------- 비 오는 날 (옵션) ---------- */
@@ -2191,14 +2212,13 @@ function step(wetness, running){
   const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime;
   const grass = SC.ground==='grass' || SC.ground==='olle' || ['jeju','pine','bamboo'].includes(SCENE_ID); const stone = (GUNG && !['jeju','pine','bamboo'].includes(SCENE_ID)) || SC.ground==='stonepath'; const deck = (SC.ground==='deck' && !SNOW) || (SCENE_ID==='ulsan' && bridgeY(state.x) > 0.5); const snow = SNOW;
   // 모래: 사삭 — 낮은 대역의 부드러운 소음이 눌렸다가 스르르 빠진다. 젖은 모래는 더 둔탁하고 짧게, 잔디는 더 부드럽고 바스락
-  if(snow){   // 뽀드득: 눈 알갱이 수십 개가 연달아 부서지는 미세한 딱딱 소리를 직접 만든다(발꿈치 눌림 → 잠깐 쉼 → 발끝 밀림), 고음 띠를 위로 쓸어 올려 '뽀드-득' 느낌
-    const v0 = running ? 0.55 : 0.38; const sr = ctx.sampleRate, dur = 0.27, N = Math.floor(sr*dur); const buf = ctx.createBuffer(1, N, sr); const d = buf.getChannelData(0);
-    for(let k=0;k<90;k++){ const heel = k < 55; const ph = heel ? Math.pow(Math.random(), 0.7)*0.10 : 0.14 + Math.random()*0.10; const st = Math.floor(ph*sr); const len = Math.floor((0.0015 + Math.random()*0.005)*sr); const amp = (0.35 + Math.random()*0.65)*(heel ? 1 : 0.75); for(let i=0;i<len && st+i<N;i++){ d[st+i] += (Math.random()*2 - 1)*amp*Math.exp(-i/len*3.5); } }
-    for(let i=0;i<N;i++){ d[i] = Math.max(-1, Math.min(1, d[i])); }
-    const src = ctx.createBufferSource(); src.buffer = buf; const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1500; const bp = ctx.createBiquadFilter(); bp.type = 'peaking'; bp.gain.value = 9; bp.Q.value = 1.1; bp.frequency.setValueAtTime(2400, t); bp.frequency.exponentialRampToValueAtTime(5200, t + 0.1); bp.frequency.exponentialRampToValueAtTime(3200, t + 0.26);
-    const g = ctx.createGain(); g.gain.setValueAtTime(v0, t); g.gain.setValueAtTime(v0, t + 0.12); g.gain.exponentialRampToValueAtTime(v0*0.8, t + 0.2); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3); src.connect(hp); hp.connect(bp); bp.connect(g); g.connect(audio.stepGain); src.start(t); src.stop(t + 0.32);
-    const sq = ctx.createOscillator(); sq.type = 'triangle'; sq.frequency.setValueAtTime(650, t + 0.02); sq.frequency.exponentialRampToValueAtTime(1250, t + 0.11); const sg = ctx.createGain(); sg.gain.setValueAtTime(0.0001, t + 0.02); sg.gain.exponentialRampToValueAtTime(v0*0.06, t + 0.05); sg.gain.exponentialRampToValueAtTime(0.0001, t + 0.13); sq.connect(sg); sg.connect(audio.stepGain); sq.start(t + 0.02); sq.stop(t + 0.14);   // 눌리며 살짝 올라가는 삑
-    const th = ctx.createBufferSource(); th.buffer = noiseBuffer(ctx, 0.12, true); const tl = ctx.createBiquadFilter(); tl.type = 'lowpass'; tl.frequency.value = 220; const tg = ctx.createGain(); tg.gain.setValueAtTime(0.0001, t); tg.gain.exponentialRampToValueAtTime(v0*0.7, t + 0.01); tg.gain.exponentialRampToValueAtTime(0.0001, t + 0.08); th.connect(tl); tl.connect(tg); tg.connect(audio.stepGain); th.start(t); th.stop(t + 0.1);   // 둔탁한 눌림
+  if(snow){   // 뽀드득: 눈 알갱이 수백 개가 짓눌려 부서지는 촘촘한 자글자글(1~3 kHz, 공명 없음) + 눌리는 둔탁한 몸통. 발꿈치(앞 0.11초) → 발끝(0.15~0.26초)
+    const v0 = running ? 0.5 : 0.36; const sr = ctx.sampleRate, dur = 0.28, N = Math.floor(sr*dur); const buf = ctx.createBuffer(1, N, sr); const d = buf.getChannelData(0);
+    for(let k=0;k<220;k++){ const heel = k < 130; const ph = heel ? Math.pow(Math.random(), 0.8)*0.11 : 0.15 + Math.random()*0.11; const st = Math.floor(ph*sr); const len = Math.floor((0.004 + Math.random()*0.012)*sr); const amp = (0.25 + Math.random()*0.5)*(heel ? 1 : 0.8); const f = 900 + Math.random()*2200; const w = 2*Math.PI*f/sr; let lp = 0; for(let i=0;i<len && st+i<N;i++){ const n = Math.random()*2 - 1; lp += 0.35*(n - lp); d[st+i] += lp*amp*Math.exp(-i/len*2.5)*(0.6 + 0.4*Math.cos(w*i)); } }   // 알갱이마다 다른 굵기의 짧은 바스락
+    let mx = 0; for(let i=0;i<N;i++) mx = Math.max(mx, Math.abs(d[i])); if(mx > 0){ const k = 0.9/mx; for(let i=0;i<N;i++) d[i] *= k; }
+    const src = ctx.createBufferSource(); src.buffer = buf; const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 500; hp.Q.value = 0.5; const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(3200, t); lp.frequency.exponentialRampToValueAtTime(5200, t + 0.1); lp.frequency.exponentialRampToValueAtTime(2600, t + 0.27); lp.Q.value = 0.4;
+    const g = ctx.createGain(); g.gain.setValueAtTime(v0, t); g.gain.setValueAtTime(v0, t + 0.12); g.gain.linearRampToValueAtTime(v0*0.85, t + 0.2); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3); src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(audio.stepGain); src.start(t); src.stop(t + 0.32);
+    const th = ctx.createBufferSource(); th.buffer = noiseBuffer(ctx, 0.14, true); const tl = ctx.createBiquadFilter(); tl.type = 'lowpass'; tl.frequency.value = 260; const tg = ctx.createGain(); tg.gain.setValueAtTime(0.0001, t); tg.gain.exponentialRampToValueAtTime(v0*0.9, t + 0.012); tg.gain.exponentialRampToValueAtTime(0.0001, t + 0.11); th.connect(tl); tl.connect(tg); tg.connect(audio.stepGain); th.start(t); th.stop(t + 0.14);   // 푹 눌리는 몸통
     return;
   }
   const s = ctx.createBufferSource(); s.buffer = noiseBuffer(ctx, 0.35, true);          // 갈색 소음(저음 위주)
