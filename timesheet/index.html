@@ -18,10 +18,11 @@
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--ink);line-height:1.45;-webkit-text-size-adjust:100%}
   input,select,textarea,button{font:inherit;color:inherit}
   .wrap{max-width:720px;margin:0 auto;padding:0 14px calc(120px + env(safe-area-inset-bottom))}
-  header.top{background:var(--brand);color:#fff;padding:18px 16px 16px;text-align:center}
-  header.top .co{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+  header.top{background:#fff;color:var(--ink);padding:14px 16px 12px;text-align:center;border-bottom:1px solid var(--line)}
+  header.top .logo{width:120px;height:auto;display:block;margin:0 auto 2px}
+  header.top .co{font-size:.7rem;color:var(--muted)}
   header.top .co small{display:block;letter-spacing:.02em;text-transform:none;font-size:.68rem;opacity:.8}
-  header.top h1{margin:6px 0 0;font-size:1.3rem;letter-spacing:.03em}
+  header.top h1{margin:4px 0 0;font-size:1.2rem;letter-spacing:.04em;color:var(--brand)}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-top:14px}
   .card h2{margin:0 0 10px;font-size:1rem;display:flex;justify-content:space-between;align-items:center}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -65,33 +66,32 @@
   /* PRINT: paper-form replica */
   .print-only{display:none}
   @media print{
-    @page{size:A4;margin:12mm}
+    @page{size:A4;margin:10mm 12mm}
     body{background:#fff;color:#000}
     header.top,.wrap,.sumbar,.toast{display:none!important}
     .print-only{display:block;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#000}
     .p-head{text-align:center;margin-bottom:10px}
     .p-head .logo{font-weight:900;font-size:12px;letter-spacing:.12em}
     .p-head .logo small{display:block;font-weight:400;font-size:9px;letter-spacing:.02em}
-    .p-head h1{font-size:15px;margin:6px 0 10px;letter-spacing:.04em}
+    .p-head h1{font-size:14px;margin:4px 0 8px;letter-spacing:.04em}
     .p-meta{margin:0 0 10px}
     .p-meta div{margin:4px 0}
     .p-meta span{display:inline-block;border-bottom:1px solid #000;min-width:200px;padding:0 6px}
-    table.p-day{width:100%;border-collapse:collapse;margin:0 0 9px;page-break-inside:avoid}
-    table.p-day th,table.p-day td{border:1px solid #000;padding:3px 5px;text-align:left;vertical-align:top}
+    table.p-day{width:100%;border-collapse:collapse;margin:0 0 6px;page-break-inside:avoid}
+    table.p-day th,table.p-day td{border:1px solid #000;padding:2px 5px;text-align:left;vertical-align:top}
     table.p-day th{font-weight:700;background:#f2f2f2}
     table.p-day .dname{font-weight:700;width:80px;border:0;background:#fff}
-    table.p-day td.v{height:18px;text-align:center}
+    table.p-day td.v{height:15px;text-align:center}
     table.p-day td.hrs{text-align:center;font-weight:700}
-    .p-total{margin-top:8px;text-align:right;font-weight:700;font-size:12px}
-    .p-sign{margin-top:16px;display:flex;justify-content:space-between;gap:30px}
-    .p-sign div{flex:1;border-top:1px solid #000;padding-top:4px;font-size:10px}
+    .p-total{margin-top:6px;text-align:right;font-size:10px}
   }
 </style>
 </head>
 <body>
 
 <header class="top">
-  <div class="co">Watertite Waterproofing<small>Waterproofing Experts</small></div>
+  <img class="logo" src="logo.svg" alt="Watertite Waterproofing" width="120" height="120">
+  <div class="co">Waterproofing Experts</div>
   <h1>WEEKLY TIME SHEET</h1>
 </header>
 
@@ -118,20 +118,22 @@
   <section class="card">
     <h2>Send / Save</h2>
     <div class="actions">
-      <button class="btn p" type="button" id="btnPdf">Print / Save PDF</button>
-      <button class="btn p" type="button" id="btnMail">Email</button>
+      <button class="btn p" type="button" id="btnMail">Email PDF</button>
+      <button class="btn p" type="button" id="btnDl">Download PDF</button>
+      <button class="btn" type="button" id="btnPdf">Print</button>
       <button class="btn" type="button" id="btnCopy">Copy as text</button>
       <button class="btn" type="button" id="btnCsv">Download CSV</button>
       <button class="btn" type="button" id="btnShare">Share</button>
       <button class="btn" type="button" id="btnClear" style="color:var(--warn)">Clear week</button>
     </div>
-    <p class="note"><b>Auto-saved</b> on this phone as you type. Hours = Finish − Start − Break. Overnight shifts are handled. · 입력하는 대로 이 폰에 자동 저장돼요.</p>
+    <label class="hint" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="optHours" checked> Show total hours on the PDF</label>
+    <p class="note"><b>Auto-saved</b> on this phone as you type. The PDF is the company form with the logo. · 입력하는 대로 자동 저장. PDF는 회사 양식 그대로 나와요.</p>
     <details class="guide" style="margin-top:8px">
-      <summary>How to send as PDF (iPhone / Android)</summary>
+      <summary>How to email (이메일 보내는 법)</summary>
       <ol>
-        <li>Tap <b>Print / Save PDF</b>.</li>
-        <li>iPhone: in the print preview pinch‑out the page, tap Share, choose Mail or Save to Files.</li>
-        <li>Android: choose printer <b>Save as PDF</b>, tap the PDF icon, then share the file.</li>
+        <li>Tap <b>Email PDF</b> → choose <b>Gmail</b> (or Mail) in the share sheet. The PDF is already attached.</li>
+        <li>Type the boss's email address and tap send.</li>
+        <li>If the share sheet doesn't appear, the PDF downloads instead. Open Gmail → attach it from Files / Downloads.</li>
       </ol>
     </details>
   </section>
@@ -142,7 +144,7 @@
   <div class="tot">Week total<b id="total">0h 00m</b></div>
   <div class="btns">
     <button class="btn" type="button" id="btnCopy2">Copy</button>
-    <button class="btn p" type="button" id="btnPdf2">PDF</button>
+    <button class="btn p" type="button" id="btnMail2">Email PDF</button>
   </div>
 </div></div>
 
@@ -151,6 +153,7 @@
 <!-- Print replica of the paper form -->
 <div class="print-only" id="printArea"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 (function(){
   const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -284,20 +287,20 @@
   function fileBase(){return 'timesheet_'+(state.name||'applicator').replace(/\s+/g,'_')+'_'+(state.start||'week');}
   function renderPrint(){
     const s=parseISO(state.start);let tot=0;
-    let h=`<div class="p-head"><div class="logo">WATERTITE WATERPROOFING<small>Waterproofing Experts</small></div><h1>WEEKLY TIME SHEET</h1></div>
+    let h=`<div class="p-head"><img src="logo.svg" alt="" style="width:30mm;height:auto"><div class="logo"><small>Waterproofing Experts</small></div><h1>WEEKLY TIME SHEET</h1></div>
       <div class="p-meta"><div>Name of Applicator <span>${esc(state.name)}</span></div>
       <div>Start Date <span>${s?fmtLong(s):''}</span> &nbsp; End Date <span>${s?fmtLong(addDays(s,6)):''}</span></div></div>`;
     state.days.forEach((d,i)=>{
-      const r=dayMinutes(d);const m=r.empty?0:r.m;tot+=m;const dd=dayDate(i);
+      const r=dayMinutes(d);const m=r.empty?0:r.m;tot+=m;
       h+=`<table class="p-day">
-        <tr><th class="dname" rowspan="2">${DAYS[i]}<br><small style="font-weight:400">${dd?fmt(dd):''}</small></th><th>Start</th><th>Break start</th><th>Location</th><th>Break end</th><th>Finish</th><th>Hours</th></tr>
-        <tr><td class="v">${esc(d.start)}</td><td class="v">${esc(d.bstart)}</td><td class="v">${esc(d.location)}</td><td class="v">${esc(d.bend)}</td><td class="v">${esc(d.finish)}</td><td class="hrs">${r.empty?'':hm(m)}</td></tr>
-        <tr><td colspan="7">Project: ${esc(d.project)}</td></tr>
-        <tr><td colspan="7">Work Area/Level: ${esc(d.area)}</td></tr>
+        <tr><th class="dname" rowspan="2">${DAYS[i]}</th><th>Start</th><th>Break start</th><th>Location</th><th>Break end</th><th>Finish</th></tr>
+        <tr><td class="v">${esc(d.start)}</td><td class="v">${esc(d.bstart)}</td><td class="v">${esc(d.location)}</td><td class="v">${esc(d.bend)}</td><td class="v">${esc(d.finish)}</td></tr>
+        <tr><td colspan="6">Project: ${esc(d.project)}</td></tr>
+        <tr><td colspan="6">Work Area/Level: ${esc(d.area)}</td></tr>
+        <tr><td colspan="6" class="v"></td></tr>
       </table>`;
     });
-    h+=`<div class="p-total">TOTAL HOURS: ${hm(tot)} (${dec(tot)} h)</div>
-        <div class="p-sign"><div>Applicator signature</div><div>Supervisor signature</div><div>Date</div></div>`;
+    if($('#optHours').checked) h+=`<div class="p-total">Total hours: ${hm(tot)} (${dec(tot)} h)</div>`;
     $('#printArea').innerHTML=h;
   }
   function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -308,10 +311,59 @@
     try{await navigator.clipboard.writeText(t);toast('Copied – paste into KakaoTalk / email');}
     catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Copied');}
   }
-  function doMail(){
-    const subj=encodeURIComponent('Time sheet '+(state.name||'')+' '+(state.start||''));
-    location.href='mailto:?subject='+subj+'&body='+encodeURIComponent(textSummary());
+  // ---- PDF (company form replica) via jsPDF
+  let logoPng=null;
+  function loadLogo(){
+    if(logoPng) return Promise.resolve(logoPng);
+    return new Promise(res=>{
+      const img=new Image();
+      img.onload=()=>{const c=document.createElement('canvas');c.width=600;c.height=600;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,600,600);x.drawImage(img,0,0,600,600);logoPng=c.toDataURL('image/jpeg',0.92);res(logoPng);};
+      img.onerror=()=>res(null);
+      img.src='logo.svg';
+    });
   }
+  async function buildPdf(){
+    if(!window.jspdf){toast('PDF library not loaded – check internet');return null;}
+    const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
+    const L=18,R=192,W=R-L;let y=12;
+    const logo=await loadLogo();
+    if(logo){doc.addImage(logo,'JPEG',105-16,y,32,32);y+=34;} else {doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('WATERTITE WATERPROOFING',105,y+6,{align:'center'});y+=10;}
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.text('Waterproofing Experts',105,y,{align:'center'});y+=5;
+    doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text('WEEKLY TIME SHEET',105,y,{align:'center'});y+=8;
+    const s=parseISO(state.start);
+    doc.setFontSize(9);doc.text('Name of Applicator',L,y);doc.setFont('helvetica','normal');doc.line(L+32,y+1,L+100,y+1);doc.text(state.name||'',L+34,y);y+=7;
+    doc.setFont('helvetica','bold');doc.text('Start Date',L,y);doc.setFont('helvetica','normal');doc.line(L+18,y+1,L+70,y+1);doc.text(s?fmtLong(s):'',L+20,y);
+    doc.setFont('helvetica','bold');doc.text('End Date',L+78,y);doc.setFont('helvetica','normal');doc.line(L+94,y+1,R,y+1);doc.text(s?fmtLong(addDays(s,6)):'',L+96,y);y+=7;
+    const cols=['Start','Break start','Location','Break end','Finish'];const cw=[24,24,36,24,24];const x0=L+30;
+    let tot=0;
+    state.days.forEach((d,i)=>{
+      const r=dayMinutes(d);tot+=r.empty?0:r.m;
+      const vals=[d.start,d.bstart,d.location,d.bend,d.finish];
+      doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(DAYS[i],L+2,y+5);
+      let x=x0;doc.setFontSize(8);
+      cols.forEach((c,k)=>{doc.rect(x,y,cw[k],5);doc.rect(x,y+5,cw[k],5.5);doc.setFont('helvetica','bold');doc.text(c,x+1.5,y+3.6);doc.setFont('helvetica','normal');doc.text(String(vals[k]||''),x+cw[k]/2,y+9,{align:'center',maxWidth:cw[k]-2});x+=cw[k];});
+      y+=10.5;
+      doc.setFont('helvetica','bold');doc.rect(L,y,W,5);doc.text('Project:',L+2,y+3.6);doc.setFont('helvetica','normal');doc.text(String(d.project||''),L+17,y+3.6,{maxWidth:W-20});y+=5;
+      doc.setFont('helvetica','bold');doc.rect(L,y,W,5);doc.text('Work Area/Level:',L+2,y+3.6);doc.setFont('helvetica','normal');doc.text(String(d.area||''),L+30,y+3.6,{maxWidth:W-33});y+=5;
+      doc.rect(L,y,W,5);y+=5+3.5;
+    });
+    if($('#optHours').checked){doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text('Total hours: '+hm(tot)+' ('+dec(tot)+' h)',R,y+2,{align:'right'});}
+    return doc;
+  }
+  async function doMail(){
+    const doc=await buildPdf(); if(!doc) return;
+    const name=fileBase()+'.pdf';
+    const blob=doc.output('blob');
+    const file=new File([blob],name,{type:'application/pdf'});
+    const subj='Time sheet '+(state.name||'')+' '+(state.start||'');
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:subj,text:subj});return;}catch(e){if(e.name==='AbortError')return;}
+    }
+    doc.save(name);
+    toast('PDF downloaded – attach it in Gmail');
+    setTimeout(()=>{location.href='mailto:?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent('Please find my weekly time sheet attached.\n\n'+textSummary());},800);
+  }
+  async function doDownload(){const doc=await buildPdf(); if(!doc) return; doc.save(fileBase()+'.pdf'); toast('PDF saved');}
   function doCsv(){
     const blob=new Blob(['﻿'+csv()],{type:'text/csv;charset=utf-8'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fileBase()+'.csv';document.body.appendChild(a);a.click();a.remove();
@@ -325,9 +377,10 @@
     if(!confirm('Clear all times for this week? Name and date are kept.'))return;
     state.days.forEach(d=>FIELDS.forEach(f=>d[f]=''));save();DAYS.forEach((_,i)=>fill(i));calc();toast('Week cleared');
   }
-  $('#btnPdf').onclick=$('#btnPdf2').onclick=doPrint;
+  $('#btnPdf').onclick=doPrint;
+  $('#btnDl').onclick=doDownload;
   $('#btnCopy').onclick=$('#btnCopy2').onclick=doCopy;
-  $('#btnMail').onclick=doMail;
+  $('#btnMail').onclick=$('#btnMail2').onclick=doMail;
   $('#btnCsv').onclick=doCsv;
   $('#btnShare').onclick=doShare;
   $('#btnClear').onclick=doClear;
