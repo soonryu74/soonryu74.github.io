@@ -414,7 +414,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-06-124';
+window.__BUILD = '2026-11-07-125';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1471,7 +1471,7 @@ if(FH){
         void main(){
           float x = (vPos.x + vPos.z*0.7)*0.9;   // 월드 좌표 기준 물줄기 결 (곡면·긴 폭포 모두 같은 굵기)
           float y = vUv.y; float d = 1.0 - y;
-          float fall = sqrt(d + 0.05)*2.2 + time*0.9;
+          float fall = sqrt(d + 0.05)*2.2 - time*0.9;   /* time을 빼야 결이 아래로 흐른다 (더하면 거꾸로 올라가 보인다) */
           float s1 = noise(vec2(x*1.2,  fall*3.0));
           float s2 = noise(vec2(x*3.5 + 3.0, fall*7.0 + x*0.3));
           float s3 = noise(vec2(x*9.0, fall*16.0));
@@ -1526,7 +1526,8 @@ if(FH){
     { const mc = document.createElement('canvas'); mc.width = 256; mc.height = 256; const mg = mc.getContext('2d'); const rg = mg.createRadialGradient(128, 128, 0, 128, 128, 128); rg.addColorStop(0, 'rgba(255,255,255,0.92)'); rg.addColorStop(0.55, 'rgba(255,255,255,0.4)'); rg.addColorStop(1, 'rgba(255,255,255,0)'); mg.fillStyle = rg; mg.fillRect(0,0,256,256); const mtex = new THREE.CanvasTexture(mc);
       hangangSet.userData.mist = [];
       for(let i=0;i<50;i++){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:mtex, transparent:true, opacity:0.5, depthWrite:false})); sp.scale.set(90 + Math.random()*70, 70 + Math.random()*50, 1); sp.position.set(hx + (Math.random()-0.5)*120, 10 + Math.random()*90, hz - 10 + (Math.random()-0.5)*80); sp.userData = {ph:Math.random()*10, big:true, base:10}; hangangSet.add(sp); hangangSet.userData.mist.push(sp); }
-      for(let i=0;i<110;i++){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:mtex, transparent:true, opacity:0.45, depthWrite:false})); sp.scale.set(36 + Math.random()*30, 22 + Math.random()*16, 1); const ax = -250 + Math.random()*1500; const ap = amPts[Math.round((ax + 250)/10)] || amPts[0]; sp.position.set(ax, 2 + Math.random()*22, ap.z + 1 + Math.random()*10); sp.userData = {ph:Math.random()*10, big:false, rise:0.5 + Math.random()*0.7}; hangangSet.add(sp); hangangSet.userData.mist.push(sp); }   /* 아메리칸 폭포 발치 물안개: 절벽선을 따라 피어오른다 */
+      for(let i=0;i<110;i++){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:mtex, transparent:true, opacity:0.45, depthWrite:false})); sp.scale.set(36 + Math.random()*30, 22 + Math.random()*16, 1); const ax = -250 + Math.random()*1500; const ap = amPts[Math.round((ax + 250)/10)] || amPts[0]; sp.position.set(ax, 2 + Math.random()*22, ap.z - 3 - Math.random()*14); sp.userData = {ph:Math.random()*10, big:false, rise:0.5 + Math.random()*0.7}; hangangSet.add(sp); hangangSet.userData.mist.push(sp); }   /* 아메리칸 폭포 발치 물안개: 폭포 앞(협곡 쪽)에서 피어오른다 */
+      for(let i=0;i<90;i++){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:mtex, transparent:true, opacity:0.5, depthWrite:false})); sp.scale.set(8 + Math.random()*10, 6 + Math.random()*7, 1); const ax = -250 + Math.random()*1500; const ap = amPts[Math.round((ax + 250)/10)] || amPts[0]; sp.position.set(ax, FH_ - 8 + Math.random()*8, ap.z - 2 - Math.random()*5); sp.userData = {ph:Math.random()*10, big:false, crest:true, y0:FH_ - 8, rise:1.2 + Math.random()*1.2}; hangangSet.add(sp); hangangSet.userData.mist.push(sp); }   /* 물마루 물보라: 떨어지는 가장자리에서 튀어 오른다 */
       const foamM = new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0.6, depthWrite:false}); for(const pt of amPts){ for(let k=0;k<2;k++){ const f = new THREE.Mesh(new THREE.CircleGeometry(5 + Math.random()*6, 12).rotateX(-Math.PI/2), foamM); f.position.set(pt.x + Math.random()*8, 0.2 + k*0.05, pt.z + 2 + k*7 + Math.random()*5); f.renderOrder = 6; hangangSet.add(f); } }   /* 발치 물거품 띠 */ }
     // (F) 무지개: 말굽 폭포 앞
     const rc = document.createElement('canvas'); rc.width = 512; rc.height = 256; const rg2 = rc.getContext('2d'); const cols = ['#ff5b5b','#ffb24a','#fff35c','#7ee07a','#5bb7ff','#6a6cff','#b06cff']; for(let b=0;b<7;b++){ rg2.strokeStyle = cols[b]; rg2.globalAlpha = 0.5; rg2.lineWidth = 9; rg2.beginPath(); rg2.arc(256, 250, 215 - b*9, Math.PI, 0); rg2.stroke(); }
@@ -2643,7 +2644,7 @@ function frame(){
   if(state.goMark){ const age = (performance.now() - state.goMark.t)/1000; goRing.position.set(state.goMark.x, groundY(state.goMark.z) + 0.03, state.goMark.z); const k = Math.min(1, age/0.6); goRing.scale.setScalar(1 + k*1.5); goRing.material.opacity = 0.8*(1 - k); if(age > 0.6) state.goMark = null; } else goRing.material.opacity = 0;
   if(beachSet.userData.bridgeLampM){ const h = (t*0.03) % 1; beachSet.userData.bridgeLampM.emissive.setHSL(h, 0.8, 0.6); }
   if(ollePath.visible){ ollePath.position.x = state.x; ollePath.userData.ptex.offset.x = state.x/520*60; }
-  if(hangangSet.userData.fallsU){ const U = hangangSet.userData.fallsU; U.time.value = t; U.night.value = nightMix; for(const sp of hangangSet.userData.mist){ const u = sp.userData; if(u.big){ sp.position.y += (1.2 + 0.6*Math.sin(t*0.3 + u.ph))*dt; if(sp.position.y > 110){ sp.position.y = 10; } sp.material.opacity = 0.45*(1 - sp.position.y/120) + 0.12; } else { sp.position.y += (u.rise || 0.6)*dt; if(sp.position.y > 30) sp.position.y = 2; sp.material.opacity = (0.45 + 0.15*Math.sin(t*1.3 + u.ph))*(1 - sp.position.y/36); } } if(hangangSet.userData.boat){ const bt = hangangSet.userData.boat; bt.position.x += Math.sin(t*0.2)*0.02; bt.rotation.z = Math.sin(t*1.1)*0.03; } hangangSet.userData.bow.material.opacity = 0.65*(1 - nightMix)*THREE.MathUtils.smoothstep(skyUniforms.sunDir.value.y, 0.1, 0.5); }
+  if(hangangSet.userData.fallsU){ const U = hangangSet.userData.fallsU; U.time.value = t; U.night.value = nightMix; for(const sp of hangangSet.userData.mist){ const u = sp.userData; if(u.big){ sp.position.y += (1.2 + 0.6*Math.sin(t*0.3 + u.ph))*dt; if(sp.position.y > 110){ sp.position.y = 10; } sp.material.opacity = 0.45*(1 - sp.position.y/120) + 0.12; } else if(u.crest){ sp.position.y += u.rise*dt; if(sp.position.y > u.y0 + 14) sp.position.y = u.y0; sp.material.opacity = 0.55*(1 - (sp.position.y - u.y0)/16); } else { sp.position.y += (u.rise || 0.6)*dt; if(sp.position.y > 30) sp.position.y = 2; sp.material.opacity = (0.5 + 0.15*Math.sin(t*1.3 + u.ph))*(1 - sp.position.y/36); } } if(hangangSet.userData.boat){ const bt = hangangSet.userData.boat; bt.position.x += Math.sin(t*0.2)*0.02; bt.rotation.z = Math.sin(t*1.1)*0.03; } hangangSet.userData.bow.material.opacity = 0.65*(1 - nightMix)*THREE.MathUtils.smoothstep(skyUniforms.sunDir.value.y, 0.1, 0.5); }
   if(deckSet.visible){ deckSet.position.x = state.x; deckSet.userData.dtex.offset.x = state.x/520*(SC.ground==='stonepath' ? 80 : 60); if(deckSet.userData.ctex) deckSet.userData.ctex.offset.x = state.x/520*40; }
   sand.position.x = state.x; wet.position.x = state.x; sandMat.map.offset.x = state.x/520*60;
   if(SNOWFIELD){ snowFollow.position.x = state.x; riverTex.offset.x = sandMat.map.offset.x; snowSet.position.x = Math.round(state.x/520)*520; }
