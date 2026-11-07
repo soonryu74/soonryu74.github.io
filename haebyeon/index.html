@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-07-138';
+window.__BUILD = '2026-11-07-139';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -697,7 +697,7 @@ if(SC.ground==='stonepath'){
   const grassM = new THREE.MeshStandardMaterial({color:0x5f9a4c, roughness:1});
   const rim = new THREE.Mesh(new THREE.BoxGeometry(520, DY + 1.2, 30), grassM); rim.position.set(0, (DY + 1.2)/2 - 1.5, 15); deckSet.add(rim);               // 잔디 둔덕(길 아래 몸통)
   const path = new THREE.Mesh(new THREE.BoxGeometry(520, 0.2, 5.6), new THREE.MeshStandardMaterial({map:ptex, roughness:1})); path.position.set(0, DY - 0.1, 3.7); path.receiveShadow = true; deckSet.add(path); deckSet.userData.dtex = ptex;
-  const cliffM = new THREE.MeshStandardMaterial({color:0x5a564e, roughness:1}); const cliffFace = new THREE.Mesh(new THREE.BoxGeometry(520, DY + 1.2, 2), cliffM); cliffFace.position.set(0, (DY + 1.2)/2 - 1.5, -0.6); deckSet.add(cliffFace);   // 절벽면
+  const cliffM = new THREE.MeshStandardMaterial({color:0x5a564e, roughness:1}); const cliffFace = new THREE.Mesh(new THREE.BoxGeometry(520, DY + 1.0, 2), cliffM); cliffFace.position.set(0, (DY + 1.0)/2 - 1.5, -1.0); deckSet.add(cliffFace);   // 절벽면 (윗면을 잔디 둔덕보다 20 cm 낮게, z도 겹치지 않게 → 깜빡임 없음)
   const shelf = new THREE.Mesh(new THREE.BoxGeometry(520, 1.2, 6), cliffM); shelf.position.set(0, DY - 4.6, -4); deckSet.add(shelf);   // 6 m 아래 선반(그 위로 강물이 흘러 폭포로)
   const railM = new THREE.MeshStandardMaterial({color:0x3a3d42, roughness:0.5, metalness:0.5});
   for(const y of [DY + 0.55, DY + 1.05]){ const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 520, 6), railM); rail.rotation.z = Math.PI/2; rail.position.set(0, y, 0.6); deckSet.add(rail); }
