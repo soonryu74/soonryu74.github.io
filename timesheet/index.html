@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1b4965">
+<meta name="robots" content="noindex">
+<title>Weekly Time Sheet</title>
+<meta name="description" content="Weekly time sheet with automatic hours calculation. Works on any phone, no Excel needed.">
+<style>
+  :root{
+    --bg:#f3f6f9; --card:#fff; --ink:#1a2430; --muted:#6b7a8c; --line:#d9e1ea;
+    --brand:#1b4965; --brand-2:#2d6f94; --accent:#e8f1f7; --ok:#1f8a5b; --warn:#c2410c;
+    --radius:14px; --shadow:0 2px 10px rgba(16,30,50,.07);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--ink);line-height:1.45;-webkit-text-size-adjust:100%}
+  input,select,textarea,button{font:inherit;color:inherit}
+  .wrap{max-width:720px;margin:0 auto;padding:0 14px calc(120px + env(safe-area-inset-bottom))}
+  header.top{background:var(--brand);color:#fff;padding:18px 16px 16px;text-align:center}
+  header.top .co{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+  header.top .co small{display:block;letter-spacing:.02em;text-transform:none;font-size:.68rem;opacity:.8}
+  header.top h1{margin:6px 0 0;font-size:1.3rem;letter-spacing:.03em}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-top:14px}
+  .card h2{margin:0 0 10px;font-size:1rem;display:flex;justify-content:space-between;align-items:center}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .row.one{grid-template-columns:1fr}
+  label.f{display:block;font-size:.78rem;color:var(--muted);font-weight:600;margin-bottom:4px}
+  .inp{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;min-height:42px}
+  .inp:focus{outline:2px solid var(--brand-2);outline-offset:-1px;border-color:var(--brand-2)}
+  .hint{font-size:.76rem;color:var(--muted);margin:6px 0 0}
+  /* day card */
+  .day{margin-top:12px}
+  .day h2 .dn{color:var(--brand)}
+  .day h2 .dt{font-weight:500;color:var(--muted);font-size:.85rem;margin-left:8px}
+  .day h2 .hrs{font-size:.95rem;font-weight:800;color:var(--ok);background:#eaf6ef;padding:3px 10px;border-radius:20px;white-space:nowrap}
+  .day h2 .hrs.zero{color:var(--muted);background:var(--accent)}
+  .day h2 .hrs.bad{color:var(--warn);background:#fdeee6}
+  .times{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .times .cell label.f{margin-bottom:3px}
+  .times input[type=time]{padding:9px 8px;text-align:center}
+  .day .wide{margin-top:8px}
+  .day .tools{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:.78rem;color:var(--brand);cursor:pointer}
+  .mini:active{background:var(--accent)}
+  /* summary bar */
+  .sumbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(16,30,50,.08);padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
+  .sumbar .in{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .sumbar .tot{font-size:.78rem;color:var(--muted)}
+  .sumbar .tot b{display:block;font-size:1.35rem;color:var(--brand);line-height:1.1}
+  .btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .btn{border:0;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer;background:var(--accent);color:var(--brand);font-size:.85rem;white-space:nowrap}
+  .btn.p{background:var(--brand);color:#fff}
+  .btn:active{opacity:.85}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  .actions .btn{padding:12px 10px}
+  .note{font-size:.8rem;color:var(--muted);margin-top:10px}
+  .note b{color:var(--ink)}
+  .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#1a2430;color:#fff;padding:9px 16px;border-radius:30px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+  .toast.show{opacity:1}
+  details.guide summary{cursor:pointer;font-weight:700;color:var(--brand)}
+  details.guide ol{padding-left:18px;margin:8px 0 0;font-size:.86rem}
+  details.guide li{margin:4px 0}
+  /* PRINT: paper-form replica */
+  .print-only{display:none}
+  @media print{
+    @page{size:A4;margin:12mm}
+    body{background:#fff;color:#000}
+    header.top,.wrap,.sumbar,.toast{display:none!important}
+    .print-only{display:block;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#000}
+    .p-head{text-align:center;margin-bottom:10px}
+    .p-head .logo{font-weight:900;font-size:12px;letter-spacing:.12em}
+    .p-head .logo small{display:block;font-weight:400;font-size:9px;letter-spacing:.02em}
+    .p-head h1{font-size:15px;margin:6px 0 10px;letter-spacing:.04em}
+    .p-meta{margin:0 0 10px}
+    .p-meta div{margin:4px 0}
+    .p-meta span{display:inline-block;border-bottom:1px solid #000;min-width:200px;padding:0 6px}
+    table.p-day{width:100%;border-collapse:collapse;margin:0 0 9px;page-break-inside:avoid}
+    table.p-day th,table.p-day td{border:1px solid #000;padding:3px 5px;text-align:left;vertical-align:top}
+    table.p-day th{font-weight:700;background:#f2f2f2}
+    table.p-day .dname{font-weight:700;width:80px;border:0;background:#fff}
+    table.p-day td.v{height:18px;text-align:center}
+    table.p-day td.hrs{text-align:center;font-weight:700}
+    .p-total{margin-top:8px;text-align:right;font-weight:700;font-size:12px}
+    .p-sign{margin-top:16px;display:flex;justify-content:space-between;gap:30px}
+    .p-sign div{flex:1;border-top:1px solid #000;padding-top:4px;font-size:10px}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="co">Watertite Waterproofing<small>Waterproofing Experts</small></div>
+  <h1>WEEKLY TIME SHEET</h1>
+</header>
+
+<div class="wrap">
+
+  <section class="card">
+    <h2>Applicator &amp; Week</h2>
+    <div class="row one">
+      <div><label class="f" for="name">Name of Applicator</label><input class="inp" id="name" placeholder="Full name" autocomplete="name"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div><label class="f" for="start">Start Date (Monday)</label><input class="inp" id="start" type="date"></div>
+      <div><label class="f" for="end">End Date (Sunday)</label><input class="inp" id="end" type="date" readonly></div>
+    </div>
+    <p class="hint">End date and each day's date fill in automatically. · 시작일만 고르면 종료일·요일별 날짜가 자동으로 채워져요.</p>
+    <div class="actions">
+      <button class="btn" id="btnThisWeek" type="button">This week</button>
+      <button class="btn" id="btnNextWeek" type="button">Next week</button>
+    </div>
+  </section>
+
+  <div id="days"></div>
+
+  <section class="card">
+    <h2>Send / Save</h2>
+    <div class="actions">
+      <button class="btn p" type="button" id="btnPdf">Print / Save PDF</button>
+      <button class="btn p" type="button" id="btnMail">Email</button>
+      <button class="btn" type="button" id="btnCopy">Copy as text</button>
+      <button class="btn" type="button" id="btnCsv">Download CSV</button>
+      <button class="btn" type="button" id="btnShare">Share</button>
+      <button class="btn" type="button" id="btnClear" style="color:var(--warn)">Clear week</button>
+    </div>
+    <p class="note"><b>Auto-saved</b> on this phone as you type. Hours = Finish − Start − Break. Overnight shifts are handled. · 입력하는 대로 이 폰에 자동 저장돼요.</p>
+    <details class="guide" style="margin-top:8px">
+      <summary>How to send as PDF (iPhone / Android)</summary>
+      <ol>
+        <li>Tap <b>Print / Save PDF</b>.</li>
+        <li>iPhone: in the print preview pinch‑out the page, tap Share, choose Mail or Save to Files.</li>
+        <li>Android: choose printer <b>Save as PDF</b>, tap the PDF icon, then share the file.</li>
+      </ol>
+    </details>
+  </section>
+
+</div>
+
+<div class="sumbar"><div class="in">
+  <div class="tot">Week total<b id="total">0h 00m</b></div>
+  <div class="btns">
+    <button class="btn" type="button" id="btnCopy2">Copy</button>
+    <button class="btn p" type="button" id="btnPdf2">PDF</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Print replica of the paper form -->
+<div class="print-only" id="printArea"></div>
+
+<script>
+(function(){
+  const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const FIELDS=['start','bstart','location','bend','finish','project','area'];
+  const KEY='watertite-timesheet-v1';
+  const $=s=>document.querySelector(s);
+  let state=load();
+
+  function load(){
+    try{const s=JSON.parse(localStorage.getItem(KEY)||'null'); if(s&&s.days&&s.days.length===7) return s;}catch(e){}
+    return {name:'',start:'',days:DAYS.map(()=>({start:'',bstart:'',location:'',bend:'',finish:'',project:'',area:''}))};
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+  // ---- dates
+  function pad(n){return String(n).padStart(2,'0')}
+  function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+  function parseISO(s){if(!s)return null;const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+  function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+  function mondayOf(d){const x=new Date(d);const wd=(x.getDay()+6)%7;x.setDate(x.getDate()-wd);return x}
+  function fmt(d){return d? d.toLocaleDateString('en-AU',{day:'2-digit',month:'short'}) : ''}
+  function fmtLong(d){return d? d.toLocaleDateString('en-AU',{day:'2-digit',month:'2-digit',year:'numeric'}) : ''}
+  function dayDate(i){const s=parseISO(state.start);return s?addDays(s,i):null}
+
+  // ---- time math
+  function mins(t){if(!t)return null;const [h,m]=t.split(':').map(Number);return h*60+m}
+  function dayMinutes(d){
+    const s=mins(d.start),f=mins(d.finish);
+    if(s===null||f===null) return {m:0,ok:true,empty:true};
+    let work=f-s; if(work<0) work+=1440;
+    const bs=mins(d.bstart),be=mins(d.bend);
+    let brk=0;
+    if(bs!==null&&be!==null){brk=be-bs; if(brk<0) brk+=1440;}
+    const m=work-brk;
+    return {m:Math.max(m,0),ok:m>=0,empty:false,brk};
+  }
+  function hm(m){return Math.floor(m/60)+'h '+pad(m%60)+'m'}
+  function dec(m){return (m/60).toFixed(2)}
+
+  // ---- render
+  function buildDays(){
+    const host=$('#days');
+    host.innerHTML=DAYS.map((n,i)=>`
+      <section class="card day" data-i="${i}">
+        <h2><span><span class="dn">${n}</span><span class="dt" id="dt${i}"></span></span><span class="hrs zero" id="h${i}">—</span></h2>
+        <div class="times">
+          <div class="cell"><label class="f">Start</label><input class="inp" type="time" data-f="start"></div>
+          <div class="cell"><label class="f">Finish</label><input class="inp" type="time" data-f="finish"></div>
+          <div class="cell"><label class="f">Break start</label><input class="inp" type="time" data-f="bstart"></div>
+          <div class="cell"><label class="f">Break end</label><input class="inp" type="time" data-f="bend"></div>
+        </div>
+        <div class="wide"><label class="f">Location</label><input class="inp" data-f="location" placeholder="Site / suburb"></div>
+        <div class="wide"><label class="f">Project</label><input class="inp" data-f="project" placeholder="Project name"></div>
+        <div class="wide"><label class="f">Work Area/Level</label><input class="inp" data-f="area" placeholder="e.g. Level 3 bathrooms"></div>
+        <div class="tools">
+          <button class="mini" type="button" data-act="copyprev">Same as previous day</button>
+          <button class="mini" type="button" data-act="clearday">Clear day</button>
+        </div>
+      </section>`).join('');
+    host.querySelectorAll('.day').forEach(sec=>{
+      const i=+sec.dataset.i;
+      sec.querySelectorAll('[data-f]').forEach(inp=>{
+        inp.value=state.days[i][inp.dataset.f]||'';
+        inp.addEventListener('input',()=>{state.days[i][inp.dataset.f]=inp.value;save();calc();});
+      });
+      sec.querySelector('[data-act=copyprev]').addEventListener('click',()=>{
+        if(i===0){toast('No previous day');return;}
+        state.days[i]={...state.days[i-1]};save();fill(i);calc();toast('Copied from '+DAYS[i-1]);
+      });
+      sec.querySelector('[data-act=clearday]').addEventListener('click',()=>{
+        FIELDS.forEach(f=>state.days[i][f]='');save();fill(i);calc();
+      });
+    });
+  }
+  function fill(i){document.querySelectorAll(`.day[data-i="${i}"] [data-f]`).forEach(inp=>inp.value=state.days[i][inp.dataset.f]||'');}
+
+  function calc(){
+    let tot=0;
+    state.days.forEach((d,i)=>{
+      const r=dayMinutes(d);const el=$('#h'+i);
+      if(r.empty){el.textContent='—';el.className='hrs zero';}
+      else if(!r.ok){el.textContent='check times';el.className='hrs bad';}
+      else{el.textContent=hm(r.m);el.className='hrs';tot+=r.m;}
+      const dd=dayDate(i);$('#dt'+i).textContent=dd?fmt(dd):'';
+    });
+    $('#total').textContent=hm(tot)+'  ('+dec(tot)+' h)';
+    const s=parseISO(state.start);$('#end').value=s?iso(addDays(s,6)):'';
+  }
+
+  // ---- header inputs
+  $('#name').value=state.name;
+  $('#name').addEventListener('input',e=>{state.name=e.target.value;save();});
+  $('#start').value=state.start;
+  $('#start').addEventListener('change',e=>{
+    const d=parseISO(e.target.value); if(!d)return;
+    const mon=mondayOf(d); state.start=iso(mon); e.target.value=state.start;
+    if(iso(d)!==state.start) toast('Moved to Monday '+fmt(mon));
+    save();calc();
+  });
+  $('#btnThisWeek').addEventListener('click',()=>{state.start=iso(mondayOf(new Date()));$('#start').value=state.start;save();calc();});
+  $('#btnNextWeek').addEventListener('click',()=>{state.start=iso(addDays(mondayOf(new Date()),7));$('#start').value=state.start;save();calc();});
+
+  // ---- export
+  function textSummary(){
+    const s=parseISO(state.start);
+    let out=`WEEKLY TIME SHEET - Watertite Waterproofing\nName: ${state.name||''}\nWeek: ${s?fmtLong(s):''} - ${s?fmtLong(addDays(s,6)):''}\n\n`;
+    let tot=0;
+    state.days.forEach((d,i)=>{
+      const r=dayMinutes(d);const dd=dayDate(i);
+      out+=`${DAYS[i]}${dd?' '+fmt(dd):''}: `;
+      if(r.empty){out+='-\n';return;}
+      tot+=r.m;
+      out+=`${d.start}-${d.finish}`+(d.bstart&&d.bend?` (break ${d.bstart}-${d.bend})`:'')+` = ${hm(r.m)}\n`;
+      if(d.location)out+=`  Location: ${d.location}\n`;
+      if(d.project)out+=`  Project: ${d.project}\n`;
+      if(d.area)out+=`  Work Area/Level: ${d.area}\n`;
+    });
+    out+=`\nTOTAL: ${hm(tot)} (${dec(tot)} hours)`;
+    return out;
+  }
+  function csv(){
+    const q=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
+    let rows=[['Name',state.name],['Start Date',state.start],['End Date',$('#end').value],[],
+      ['Day','Date','Start','Break start','Break end','Finish','Hours (h:mm)','Hours (decimal)','Location','Project','Work Area/Level']];
+    let tot=0;
+    state.days.forEach((d,i)=>{const r=dayMinutes(d);const m=r.empty?0:r.m;tot+=m;const dd=dayDate(i);
+      rows.push([DAYS[i],dd?iso(dd):'',d.start,d.bstart,d.bend,d.finish,r.empty?'':hm(m),r.empty?'':dec(m),d.location,d.project,d.area]);});
+    rows.push([],['TOTAL','','','','','',hm(tot),dec(tot)]);
+    return rows.map(r=>r.map(q).join(',')).join('\r\n');
+  }
+  function fileBase(){return 'timesheet_'+(state.name||'applicator').replace(/\s+/g,'_')+'_'+(state.start||'week');}
+  function renderPrint(){
+    const s=parseISO(state.start);let tot=0;
+    let h=`<div class="p-head"><div class="logo">WATERTITE WATERPROOFING<small>Waterproofing Experts</small></div><h1>WEEKLY TIME SHEET</h1></div>
+      <div class="p-meta"><div>Name of Applicator <span>${esc(state.name)}</span></div>
+      <div>Start Date <span>${s?fmtLong(s):''}</span> &nbsp; End Date <span>${s?fmtLong(addDays(s,6)):''}</span></div></div>`;
+    state.days.forEach((d,i)=>{
+      const r=dayMinutes(d);const m=r.empty?0:r.m;tot+=m;const dd=dayDate(i);
+      h+=`<table class="p-day">
+        <tr><th class="dname" rowspan="2">${DAYS[i]}<br><small style="font-weight:400">${dd?fmt(dd):''}</small></th><th>Start</th><th>Break start</th><th>Location</th><th>Break end</th><th>Finish</th><th>Hours</th></tr>
+        <tr><td class="v">${esc(d.start)}</td><td class="v">${esc(d.bstart)}</td><td class="v">${esc(d.location)}</td><td class="v">${esc(d.bend)}</td><td class="v">${esc(d.finish)}</td><td class="hrs">${r.empty?'':hm(m)}</td></tr>
+        <tr><td colspan="7">Project: ${esc(d.project)}</td></tr>
+        <tr><td colspan="7">Work Area/Level: ${esc(d.area)}</td></tr>
+      </table>`;
+    });
+    h+=`<div class="p-total">TOTAL HOURS: ${hm(tot)} (${dec(tot)} h)</div>
+        <div class="p-sign"><div>Applicator signature</div><div>Supervisor signature</div><div>Date</div></div>`;
+    $('#printArea').innerHTML=h;
+  }
+  function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+  function doPrint(){renderPrint();document.title=fileBase();setTimeout(()=>{window.print();document.title='Weekly Time Sheet';},50);}
+  async function doCopy(){
+    const t=textSummary();
+    try{await navigator.clipboard.writeText(t);toast('Copied – paste into KakaoTalk / email');}
+    catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Copied');}
+  }
+  function doMail(){
+    const subj=encodeURIComponent('Time sheet '+(state.name||'')+' '+(state.start||''));
+    location.href='mailto:?subject='+subj+'&body='+encodeURIComponent(textSummary());
+  }
+  function doCsv(){
+    const blob=new Blob(['﻿'+csv()],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fileBase()+'.csv';document.body.appendChild(a);a.click();a.remove();
+    toast('CSV downloaded (opens in Excel / Google Sheets)');
+  }
+  async function doShare(){
+    if(navigator.share){try{await navigator.share({title:'Weekly Time Sheet',text:textSummary()});}catch(e){}}
+    else doCopy();
+  }
+  function doClear(){
+    if(!confirm('Clear all times for this week? Name and date are kept.'))return;
+    state.days.forEach(d=>FIELDS.forEach(f=>d[f]=''));save();DAYS.forEach((_,i)=>fill(i));calc();toast('Week cleared');
+  }
+  $('#btnPdf').onclick=$('#btnPdf2').onclick=doPrint;
+  $('#btnCopy').onclick=$('#btnCopy2').onclick=doCopy;
+  $('#btnMail').onclick=doMail;
+  $('#btnCsv').onclick=doCsv;
+  $('#btnShare').onclick=doShare;
+  $('#btnClear').onclick=doClear;
+
+  let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200);}
+
+  buildDays();calc();
+})();
+</script>
+</body>
+</html>
