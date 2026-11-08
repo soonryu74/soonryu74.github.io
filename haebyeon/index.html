@@ -345,7 +345,6 @@ body{word-break:keep-all;overflow-wrap:break-word}
       <small id="buddy-note">강아지는 옆에서 같이 달려요.</small></div>
     <div class="look-row"><strong>머리색</strong><div class="swatches" data-look="hair"></div></div>
     <div class="look-row"><strong>옷 색</strong><div class="swatches" data-look="shirt"></div></div>
-    <div class="look-row"><strong>스타일</strong><div class="seg" data-look="style"><button type="button" data-v="cute">기본</button><button type="button" data-v="girl">긴 생머리</button><button type="button" data-v="real">실사 러너</button></div></div>
     <div class="look-row"><strong>머리띠 · 모자</strong><div class="seg" data-look="hat"><button type="button" data-v="band">머리띠</button><button type="button" data-v="cap">캡모자</button><button type="button" data-v="straw">밀짚모자</button><button type="button" data-v="none">없음</button></div></div>
     <div class="look-row"><strong>포인트 색</strong><div class="swatches" data-look="accent"></div></div>
     <p style="margin-top:12px;font-size:12px">이 기기에만 기억해 둬요.</p>
@@ -416,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-08-142';
+window.__BUILD = '2026-11-07-139';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -472,7 +471,7 @@ try{ if(PRIV) localStorage.setItem('haebyeon.room', PRIV); else localStorage.rem
 const BOT = new URL(location.href).searchParams.get('bot')==='1'; const BOTF = BOT ? Math.min(1, Math.max(0.05, parseFloat(new URL(location.href).searchParams.get('bs')||'1') || 1)) : 1;
 let nick = ''; try{ nick = (localStorage.getItem('haebyeon.nick')||'').slice(0,8); }catch(e){}
 const net = { on:true, ch:null, sb:null, id:Math.random().toString(36).slice(2,10), priv:PRIV, room:0, placed:false, count:1, lastSend:0, lastHeartbeat:0, lastPresence:0, lookDirty:true, sentLane:2.2, sentState:'', status:'off', joinedAt:0 };
-const LOOK_DEFAULT = {hair:'#4a3b38', shirt:'#fff6e9', hat:'band', accent:'#ff9b8a', buddy:'maltese', style:'cute'};
+const LOOK_DEFAULT = {hair:'#4a3b38', shirt:'#fff6e9', hat:'band', accent:'#ff9b8a', buddy:'maltese'};
 let look = {...LOOK_DEFAULT};
 try{ const saved = JSON.parse(localStorage.getItem('haebyeon.look')||'null'); if(saved && typeof saved==='object') look = {...LOOK_DEFAULT, ...saved}; if(look.buddy==='dog') look.buddy = 'maltese'; }catch(e){}
 function saveLook(){ try{ localStorage.setItem('haebyeon.look', JSON.stringify(look)); }catch(e){} }
@@ -863,37 +862,6 @@ function limb(len, r, mat, y, z){
   const joint = new THREE.Mesh(new THREE.SphereGeometry(r*1.05, 10, 8), mat); lower.add(joint);
   g.userData.lower = lower; g.userData.len = len; return g;
 }
-// 실사 비율 러너 (사진 기준): 키 1.75 m, 작은 머리, 긴 팔다리, 나시 상의·검정 쇼츠, 흔들리는 포니테일과 애교머리
-function buildRunnerReal(mats){
-  const g = new THREE.Group();
-  const torso = capsule(0.135, 0.36, mats.shirt); torso.position.y = 1.24; torso.scale.set(1, 1, 0.8); g.add(torso);                 // 나시 상의
-  const waist = capsule(0.12, 0.1, skin); waist.position.y = 1.02; waist.scale.set(1, 1, 0.8); g.add(waist);                         // 드러난 허리
-  const hips = capsule(0.15, 0.1, new THREE.MeshStandardMaterial({color:0x23232a, roughness:0.95})); hips.position.y = 0.92; hips.scale.set(1, 1, 0.85); g.add(hips);           // 검정 러닝 쇼츠
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.045, 0.1, 10), skin); neck.position.y = 1.5; g.add(neck);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.115, 20, 16), skin); head.position.y = 1.62; head.scale.set(1.0, 1.12, 0.95); head.castShadow = true; g.add(head);
-  const headGroup = new THREE.Group(); headGroup.position.y = 1.62; g.add(headGroup);
-  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.123, 20, 16, 0, Math.PI*2, 0, Math.PI*0.58), mats.hair); hair.position.y = 0.015; hair.scale.set(1.0, 1.12, 0.97); hair.rotation.x = -0.1; headGroup.add(hair);
-  const bun = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), mats.hair); bun.position.set(-0.1, 0.05, 0); headGroup.add(bun);   // 묶은 자리
-  const hatBand = new THREE.Group(); const band = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.014, 8, 28), mats.accent); band.position.y = 0.05; band.rotation.x = Math.PI/2; band.rotation.z = 0.1; hatBand.add(band); headGroup.add(hatBand);
-  const hatCap = new THREE.Group(); const capTop = new THREE.Mesh(new THREE.SphereGeometry(0.128, 20, 14, 0, Math.PI*2, 0, Math.PI*0.5), mats.accent); capTop.position.y = 0.02; hatCap.add(capTop); const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.012, 16, 1, false, 0, Math.PI), mats.accent); brim.position.set(0.08, 0.025, 0); brim.rotation.y = -Math.PI/2; hatCap.add(brim); headGroup.add(hatCap);
-  const hatStraw = new THREE.Group(); const strawTop = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.125, 0.09, 18), strawM); strawTop.position.y = 0.1; hatStraw.add(strawTop); const strawBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.012, 24), strawM); strawBrim.position.y = 0.06; hatStraw.add(strawBrim); const strawRibbon = new THREE.Mesh(new THREE.CylinderGeometry(0.118, 0.126, 0.025, 18), mats.accent); strawRibbon.position.y = 0.075; hatStraw.add(strawRibbon); hatStraw.rotation.z = -0.06; headGroup.add(hatStraw);
-  // 포니테일(7마디) + 양 옆 애교머리 + 얇은 앞머리. hairTail 규칙으로 달릴 때 뒤로 날린다
-  const girl = new THREE.Group(); headGroup.add(girl);
-  const tail = []; let parent = girl; let py = 0.05, px = -0.11; for(let i=0;i<7;i++){ const seg = new THREE.Group(); seg.position.set(px, py, 0); const L = 0.09, r = 0.03 - i*0.0025; const strand = new THREE.Mesh(new THREE.CapsuleGeometry(Math.max(0.012, r), L*0.8, 4, 8), mats.hair); strand.position.y = -L/2; strand.castShadow = true; seg.add(strand); parent.add(seg); tail.push(seg); parent = seg; px = 0; py = -L; }
-  for(const sgn of [-1, 1]){ const wisp = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.007, 0.12, 5), mats.hair); wisp.position.set(0.06, -0.03, sgn*0.115); wisp.rotation.x = sgn*0.1; wisp.rotation.z = 0.1; girl.add(wisp); }   // 애교머리
-  const bangs = new THREE.Mesh(new THREE.SphereGeometry(0.125, 20, 10, Math.PI - 0.7, 1.4, Math.PI*0.34, Math.PI*0.14), mats.hair); bangs.position.y = 0.015; bangs.scale.set(1.0, 1.12, 0.97); girl.add(bangs);
-  [[-0.038],[0.038]].forEach(([z])=>{ const e = new THREE.Mesh(new THREE.SphereGeometry(0.011, 8, 6), inkM); e.position.set(0.105, 0.0, z); e.scale.y = 1.3; headGroup.add(e); });
-  const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.014, 0.004, 5, 10, Math.PI), inkM); mouth.position.set(0.11, -0.045, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headGroup.add(mouth);
-  const armL = limb(0.6, 0.038, skin, 1.42, -0.2), armR = limb(0.6, 0.038, skin, 1.42, 0.2);
-  const legL = limb(0.86, 0.062, skin, 0.9, -0.09), legR = limb(0.86, 0.062, skin, 0.9, 0.09);
-  const shoes = []; const shoeM = new THREE.MeshStandardMaterial({color:0xf7f7f7, roughness:0.6});
-  [legL, legR].forEach(l=>{ const sh = capsule(0.055, 0.14, shoeM); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.42, 0); l.userData.lower.add(sh); l.userData.shoe = sh; shoes.push(sh); const sole = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.02, 0.1), mats.accent); sole.position.set(0.05, -0.47, 0); l.userData.lower.add(sole); });
-  [armL, armR].forEach(a=>{ const hand = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 6), skin); hand.position.y = -0.3; hand.scale.set(1, 1.3, 0.7); a.userData.lower.add(hand); });
-  g.add(armL, armR, legL, legR);
-  g.userData.real = true;
-  return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR, shoes, mats, girl, hairTail:tail, real:true};
-}
-function buildRunnerFor(style, mats){ return style==='real' ? buildRunnerReal(mats) : buildRunner(mats); }
 // 둥글둥글 러너 모델 — 나와 다른 사람 모두 이 함수로 만든다
 function buildRunner(mats){
   const g = new THREE.Group();
@@ -915,15 +883,6 @@ function buildRunner(mats){
   const strawBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.03, 24), strawM); strawBrim.position.y = 0.16; hatStraw.add(strawBrim);
   const strawRibbon = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.345, 0.06, 18), mats.accent); strawRibbon.position.y = 0.2; hatStraw.add(strawRibbon);
   hatStraw.rotation.z = -0.08; headGroup.add(hatStraw);
-  // 긴 생머리 스타일: 앞머리(이마 덮개) + 양 옆 애교머리 + 등까지 내려오는 뒷머리(5마디, 달릴 때 뒤로 흐르고 좌우로 찰랑)
-  const girl = new THREE.Group(); girl.visible = false; headGroup.add(girl);
-  const bangs = new THREE.Mesh(new THREE.SphereGeometry(0.362, 24, 10, Math.PI - 0.95, 1.9, Math.PI*0.3, Math.PI*0.19), mats.hair); bangs.position.y = 0.04; girl.add(bangs);   // 앞: 눈썹 바로 위까지
-  for(const sgn of [-1, 1]){ const wisp = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.016, 0.24, 6), mats.hair); wisp.position.set(0.21, -0.1, sgn*0.33); wisp.rotation.x = sgn*0.12; wisp.rotation.z = 0.08; girl.add(wisp); }   // 애교머리
-  const sideL = new THREE.Mesh(new THREE.SphereGeometry(0.36, 24, 12, Math.PI*0.5 - 0.5, 1.0, Math.PI*0.25, Math.PI*0.38), mats.hair); sideL.position.y = 0.04; girl.add(sideL);   // 옆머리(왼) 귀 덮기
-  const sideR = new THREE.Mesh(new THREE.SphereGeometry(0.36, 24, 12, Math.PI*1.5 - 0.5, 1.0, Math.PI*0.25, Math.PI*0.38), mats.hair); sideR.position.y = 0.04; girl.add(sideR);
-  const tail = []; let parent = girl; let py = -0.04, px = -0.24; for(let i=0;i<5;i++){ const seg = new THREE.Group(); seg.position.set(px, py, 0); const w = 0.4 - i*0.035, L = 0.19; const plate = new THREE.Mesh(new THREE.BoxGeometry(0.035, L, w), mats.hair); plate.position.y = -L/2; plate.castShadow = true; seg.add(plate); parent.add(seg); tail.push(seg); parent = seg; px = 0; py = -L; }   // 뒷머리: 머리 뒤에서 시작해 어깨뼈까지
-  const lashM = inkM; for(const sgn of [-1, 1]){ const lash = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.007, 5, 10, Math.PI*0.9), lashM); lash.position.set(0.31, 0.06, sgn*0.11); lash.rotation.set(0, Math.PI/2, 0.1); lash.visible = false; girl.add(lash); }   // 속눈썹
-  g.userData.girl = girl; g.userData.hairTail = tail;
   [[-0.11],[0.11]].forEach(([z])=>{ const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), inkM); e.position.set(0.3, 0.02, z); e.scale.y = 1.4; headGroup.add(e);
     const bl = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), blushM); bl.position.set(0.3, -0.06, z*1.9); bl.lookAt(1, -0.06, z*4); headGroup.add(bl); });
   const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 12, Math.PI), inkM); mouth.position.set(0.33, -0.09, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headGroup.add(mouth);
@@ -933,7 +892,7 @@ function buildRunner(mats){
   [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.22, 0); l.userData.lower.add(sh); l.userData.shoe = sh; shoes.push(sh); });
   [armL, armR].forEach(a=>{ const hand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), skin); hand.position.y = -0.2; a.userData.lower.add(hand); });
   g.add(armL, armR, legL, legR);
-  return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR, shoes, mats, girl, hairTail:tail};
+  return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR, shoes, mats};
 }
 // 걷기·달리기 폼. ph: 보폭 위상, amp: 0 걷기 … 1 전력. 네 팔다리가 같은 규칙: 같은 쪽 팔과 다리는 반대로, 왼쪽·오른쪽은 반 바퀴 차이
 function animateGait(P, ph, amp, g){
@@ -957,10 +916,9 @@ function animateGait(P, ph, amp, g){
   for(const leg of [P.legL, P.legR]){ const sh = leg.userData.shoe; if(sh) sh.rotation.z = Math.PI/2 - (leg.rotation.z + leg.userData.lower.rotation.z); }
   groundFeet(P, g, 0);   // 두 발 중 하나는 항상 땅. 몸 높이는 다리 기하에서만 나온다 (뜀 없음)                                                                 // 앞으로 살짝 기울기
   if(P.torso){ P.torso.scale.set(1,1,1); }
-  if(P.hairTail){ const flow = 0.18 + 0.55*run, sway = Math.sin(ph + 0.6)*(0.05 + 0.12*run); P.hairTail.forEach((seg, i)=>{ seg.rotation.z = -flow*(i===0 ? 0.6 : 0.45) + Math.sin(ph*2 + i*0.7)*0.04*run; seg.rotation.x = sway*(i===0 ? 0.5 : 0.6); }); }   // 긴 머리: 달릴수록 뒤로 날리고, 보폭에 맞춰 좌우로 찰랑
   if(P.headGroup){ P.headGroup.rotation.z = 0.08*run + Math.sin(ph*2 + 0.9)*0.04*run; P.headGroup.rotation.x = Math.sin(ph)*0.05*run; if(P.head){ P.head.rotation.z = P.headGroup.rotation.z; P.head.rotation.x = P.headGroup.rotation.x; } }
 }
-function resetGait(P, dt){ const D = (o,k,v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 6, dt); }; for(const l of [P.legL,P.legR,P.armL,P.armR]) D(l.userData.lower,'z',0); if(P.hairTail) P.hairTail.forEach((seg, i)=>{ D(seg,'z', i===0 ? 0.12 : 0.04); D(seg,'x', 0); });   /* 멈추면 머리카락이 등을 따라 늘어진다 */ if(P.torso) P.torso.scale.set(1,1,1); }
+function resetGait(P, dt){ const D = (o,k,v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 6, dt); }; for(const l of [P.legL,P.legR,P.armL,P.armR]) D(l.userData.lower,'z',0); if(P.torso) P.torso.scale.set(1,1,1); }
 // 발 접지: 자세를 잡은 뒤 가장 낮은 신발 바닥이 정확히 땅(+공중 높이)에 오도록 몸 전체를 올리고 내린다
 const _fw = new THREE.Vector3(); const _moonDir = new THREE.Vector3();
 // 보이는 부분 중 가장 낮은 점(월드 y). 앉기·눕기처럼 발이 아닌 곳이 땅에 닿는 자세에 쓴다
@@ -975,9 +933,8 @@ function groundFeet(P, g, lift){
 function applyLookTo(parts, lk){
   parts.mats.hair.color.set(lk.hair); parts.mats.shirt.color.set(lk.shirt); parts.mats.accent.color.set(lk.accent); parts.mats.accent.emissive.set(lk.accent);
   parts.hatBand.visible = lk.hat==='band'; parts.hatCap.visible = lk.hat==='cap'; parts.hatStraw.visible = lk.hat==='straw'; parts.hair.visible = lk.hat!=='cap';
-  if(parts.girl){ parts.girl.visible = parts.real ? true : lk.style==='girl'; }
 }
-const me = buildRunnerFor(look.style, {hair:hairM, shirt, accent:accentM, shorts});
+const me = buildRunner({hair:hairM, shirt, accent:accentM, shorts});
 const runner = me.group; const {torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR} = me;
 scene.add(runner);
 
@@ -1106,7 +1063,7 @@ function applyLook(){
 }
 const SWATCHES = { hair:['#4a3b38','#7a4b32','#2a2a33','#c99a5a','#e8d2b8','#9a6f8e'], shirt:['#fff6e9','#bfe9e3','#ffd6e0','#e4dcff','#fff1a8','#3a3340'], accent:['#ff9b8a','#5cc3bd','#ffd166','#8fa9ff','#f49ac1','#3a3340'] };
 Object.entries(SWATCHES).forEach(([key, cols])=>{ const box = document.querySelector(`[data-look="${key}"]`); cols.forEach(c=>{ const b = document.createElement('button'); b.type = 'button'; b.className = 'swatch'; b.dataset.v = c; b.style.background = c; b.setAttribute('aria-label', c); b.addEventListener('click', ()=>{ look[key] = c; saveLook(); applyLook(); }); box.appendChild(b); }); });
-document.querySelectorAll('.seg[data-look] button, .chips[data-look] button').forEach(b=>b.addEventListener('click', ()=>{ const key = b.closest('[data-look]').dataset.look; const prev = look[key]; look[key] = b.dataset.v; if(key==='buddy'){ cat.mode = 'follow'; cat.timer = 8 + Math.random()*8; } saveLook(); if(key==='style' && (prev==='real') !== (b.dataset.v==='real')){ say('몸을 바꾸는 중이에요', 1500); setTimeout(()=>location.reload(), 500); return; } applyLook(); }));   /* 실사 몸은 처음에 한 번 만들기 때문에 다시 불러온다 */
+document.querySelectorAll('.seg[data-look] button, .chips[data-look] button').forEach(b=>b.addEventListener('click', ()=>{ const key = b.closest('[data-look]').dataset.look; look[key] = b.dataset.v; if(key==='buddy'){ cat.mode = 'follow'; cat.timer = 8 + Math.random()*8; } saveLook(); applyLook(); }));
 applyLook();
 
 
@@ -1114,7 +1071,7 @@ applyLook();
 try{ if(localStorage.getItem('haebyeon.together')==='0') net.on = false; }catch(e){}
 const others = new Map(); // id → {parts, x, lane, tx, tlane, sp, resting, pose, seen, phase}
 function wrapDx(ox){ let d = ((ox - state.x) % LOOP_LEN + LOOP_LEN) % LOOP_LEN; if(d > LOOP_LEN/2) d -= LOOP_LEN; return d; }
-function otherLook(lk){ return {hair:lk?.h||'#4a3b38', shirt:lk?.s||'#fff6e9', accent:lk?.a||'#ff9b8a', hat:lk?.t||'band', style:lk?.y||'cute'}; }
+function otherLook(lk){ return {hair:lk?.h||'#4a3b38', shirt:lk?.s||'#fff6e9', accent:lk?.a||'#ff9b8a', hat:lk?.t||'band'}; }
 function makeLabel(text, kind){
   const c = document.createElement('canvas'); const g = c.getContext('2d');
   if(kind==='me'){ c.width = 96; c.height = 96; g.fillStyle = '#ff9b8a'; g.beginPath(); g.arc(48,48,40,0,Math.PI*2); g.fill(); g.lineWidth = 6; g.strokeStyle = '#fff'; g.stroke(); g.fillStyle = '#fff'; g.font = '700 40px "Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('나', 48, 50); }
@@ -1136,7 +1093,7 @@ function upsertOther(id, m){
     if(state.started) say(`누군가 같은 ${SC.name}에 왔어요`, 2200);
   }
   if(m.x !== undefined){ o.tx = m.x; o.tlane = m.l; o.sp = m.sp||0; o.resting = m.r||0; o.pose = m.p||'stand'; }
-  if(m.lk){ const key = JSON.stringify(m.lk); if(o.lk !== key){ o.lk = key; const wantReal = m.lk.y==='real'; if(wantReal !== !!o.parts.real){ scene.remove(o.parts.group); o.parts.group.traverse(c=>{ if(c.geometry) c.geometry.dispose(); }); const np = buildRunnerFor(m.lk.y, {hair:new THREE.MeshStandardMaterial({roughness:0.95}), shirt:new THREE.MeshStandardMaterial({roughness:0.95}), accent:(()=>{ const mm = new THREE.MeshStandardMaterial({roughness:0.9, emissiveIntensity:0}); glowMats.push(mm); return mm; })(), shorts:new THREE.MeshStandardMaterial({color:0x222222, roughness:0.95})}); np.group.traverse(c=>{ if(c.isMesh) c.castShadow = true; }); scene.add(np.group); o.parts = np; if(o.label){ o.label = null; } } applyLookTo(o.parts, otherLook(m.lk)); const nm = (m.lk.n||'').slice(0,8); /* 이름을 정한 사람은 누구나 이름이 보인다 */ if(nm !== o.nick){ o.nick = nm; setOtherLabel(o, nm); } } }
+  if(m.lk){ const key = JSON.stringify(m.lk); if(o.lk !== key){ o.lk = key; applyLookTo(o.parts, otherLook(m.lk)); const nm = (m.lk.n||'').slice(0,8); /* 이름을 정한 사람은 누구나 이름이 보인다 */ if(nm !== o.nick){ o.nick = nm; setOtherLabel(o, nm); } } }
   o.seen = performance.now();
 }
 function removeOther(id){ const o = others.get(id); if(!o) return; scene.remove(o.parts.group); o.parts.group.traverse(c=>{ if(c.geometry) c.geometry.dispose(); }); others.delete(id); }
@@ -1181,7 +1138,7 @@ function updateOthers(dt, t){
 }
 function myPacket(full){
   const pk = {x:+state.x.toFixed(2), l:+state.lane.toFixed(2), sp:+state.speed.toFixed(2), r:state.resting?1:0, p:state.pose};
-  if(full || net.lookDirty){ pk.lk = {h:look.hair, s:look.shirt, a:look.accent, t:look.hat, n:nick, y:look.style}; net.lookDirty = false; }
+  if(full || net.lookDirty){ pk.lk = {h:look.hair, s:look.shirt, a:look.accent, t:look.hat, n:nick}; net.lookDirty = false; }
   return pk;
 }
 function netTick(){
