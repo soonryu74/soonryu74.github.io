@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-08-143';
+window.__BUILD = '2026-11-08-144';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -429,7 +429,7 @@ const FAMILY = {beach:'beach', busan:'beach', ulsan:'beach', jejucoast:'beach', 
 const FB = FAMILY==='beach', FH = FAMILY==='hangang', FG = FAMILY==='gung';
 const SCENES = {
   beach:   {name:'해변', eyebrow:'BEACH RUN', title:'해변, 잠깐 달려요', laneMin:-2.6, dryLane:5.4, laneSea:'왼쪽', laneSand:'오른쪽', collect:'조개', shareText:'말없이 파도 옆을 달리는 온라인 해변', cardTitle:'해변, 잠깐 달렸어요', deep:{value:0x2d8fa8}, shallow:0x8fdcd6, waveAmp:1, foamAmt:1, tideAmp:1, seaVol:1, bird:'gull', chan:'beach', ground:'sand', sitMsg:'물에서 조금 떨어진 모래로 올라가요', sandMsg:'모래에 한 줄 써 보세요 · 파도가 지워 줘요'},
-  hangang: {name:'한강', eyebrow:'HANGANG RUN', title:'한강, 잠깐 달려요', laneMin:1.0, dryLane:7.2, laneSea:'왼쪽', laneSand:'오른쪽', collect:'클로버', shareText:'말없이 강바람 맞으며 달리는 온라인 한강', cardTitle:'한강, 잠깐 달렸어요', deep:{value:0x4f9ab5}, shallow:0x8fd3da, waveAmp:0.45, foamAmt:0.05, tideAmp:0.12, ripple:1, seaVol:0.45, bird:'sparrow', chan:'hangang', ground:'grass', sitMsg:'잔디밭으로 올라가요', sandMsg:'잔디에 한 줄 남겨 보세요 · 바람이 지워 줘요'},
+  hangang: {name:'한강', eyebrow:'HANGANG RUN', title:'한강, 잠깐 달려요', laneMin:1.0, dryLane:7.2, laneSea:'왼쪽', laneSand:'오른쪽', collect:'클로버', shareText:'말없이 강바람 맞으며 달리는 온라인 한강', cardTitle:'한강, 잠깐 달렸어요', deep:{value:0x4b7d8e}, shallow:0x7fa6ae, waveAmp:0.12, foamAmt:0, tideAmp:0, ripple:1, seaVol:0.25, bird:'sparrow', chan:'hangang', ground:'grass', sitMsg:'잔디밭으로 올라가요', sandMsg:'잔디에 한 줄 남겨 보세요 · 바람이 지워 줘요'},
 };
 SCENES.gung = {name:'돌담길', eyebrow:'GUNG RUN', title:'경복궁 돌담길, 잠깐 달려요', laneMin:1.2, dryLane:10.5, laneSea:'왼쪽', laneSand:'오른쪽', collect:'은행잎', shareText:'말없이 밤의 고궁 돌담길을 달리는 온라인 산책', cardTitle:'돌담길, 잠깐 달렸어요', deep:{value:0x202838}, shallow:0x2a3448, waveAmp:0, foamAmt:0, tideAmp:0, ripple:0, seaVol:0, amb:'wind', windVol:0.45, rustleVol:0.25, rustleHz:2600, soundMsg:'밤바람과 풀벌레 소리가 들려요', bird:'cricket', chan:'gung', ground:'stone', night:true, sitMsg:'잔디 언덕으로 올라가요 · 담장 너머 궁이 보여요', sandMsg:'돌길에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.beach.todOffset = 0.02; SCENES.hangang.todOffset = 0.22;
@@ -668,7 +668,7 @@ const sand = new THREE.Mesh(sandGeo, sandMat); sand.receiveShadow = true; sand.v
 const wetMat = new THREE.MeshStandardMaterial({color:0xe3cfb0, roughness:0.3, metalness:0.05, transparent:true, opacity:0.85});
 const wet = new THREE.Mesh(new THREE.PlaneGeometry(520, 5).rotateX(-Math.PI/2), wetMat); wet.position.set(0, 0.012, SHORE_Z + 3); wet.receiveShadow = true; wet.visible = SC.ground==='sand'; scene.add(wet);
 // 한강: 강변 둑(돌벽) + 자전거길
-const embank = new THREE.Group(); embank.visible = SC.ground==='grass';   // 의암호는 데크 다리(아래 별도) scene.add(embank);
+const embank = new THREE.Group(); embank.visible = SC.ground==='grass'; scene.add(embank);   /* 한강 둑·자전거길 (의암호는 데크 다리) — 주석에 묻혀 scene에 안 들어가던 버그 수정 */
 if(SC.ground==='grass'){
   const wallM = new THREE.MeshStandardMaterial({color:0xe3dccb, roughness:1});
   const wall = new THREE.Mesh(new THREE.BoxGeometry(520, 0.7, 1.0), wallM); wall.position.set(0, 0.2, 0.4); wall.receiveShadow = true; wall.castShadow = true; embank.add(wall);
