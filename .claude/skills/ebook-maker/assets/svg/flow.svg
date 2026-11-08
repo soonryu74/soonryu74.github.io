@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 150" role="img" aria-label="세 단계 흐름">
+<g style="fill:var(--ac-soft);stroke:var(--ac);stroke-width:2">
+<rect x="12" y="45" width="104" height="60" rx="12"/><rect x="148" y="45" width="104" height="60" rx="12"/><rect x="284" y="45" width="104" height="60" rx="12"/>
+</g>
+<g style="stroke:var(--ac);stroke-width:3;stroke-linecap:round;fill:none"><path d="M118 75h22"/><path d="M254 75h22"/></g>
+<g style="fill:var(--ac)"><path d="M138 68l12 7-12 7z"/><path d="M274 68l12 7-12 7z"/></g>
+<g style="fill:var(--ink);font-family:var(--sans);font-size:15px;font-weight:700;text-anchor:middle">
+<text x="64" y="81">{1:입력}</text><text x="200" y="81">{2:처리}</text><text x="336" y="81">{3:결과}</text>
+</g>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" role="img" aria-label="성장 그래프">
+<g style="stroke:var(--line2);stroke-width:2"><path d="M40 170h330"/><path d="M40 170V30"/></g>
+<g style="fill:var(--ac-soft);stroke:var(--ac);stroke-width:2"><rect x="70" y="128" width="52" height="42" rx="4"/><rect x="150" y="98" width="52" height="72" rx="4"/><rect x="230" y="70" width="52" height="100" rx="4"/></g>
+<rect x="310" y="36" width="52" height="134" rx="4" style="fill:var(--ac)"/>
+<g style="fill:var(--ink);font-family:var(--sans);font-size:13px;font-weight:700;text-anchor:middle">
+<text x="96" y="190">{1:1월}</text><text x="176" y="190">{2:2월}</text><text x="256" y="190">{3:3월}</text><text x="336" y="190">{4:지금}</text>
+</g>
+</svg>

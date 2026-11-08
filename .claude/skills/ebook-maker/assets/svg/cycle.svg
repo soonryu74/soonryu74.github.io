@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" role="img" aria-label="반복 순환">
+<g style="fill:none;stroke:var(--ac);stroke-width:4;stroke-linecap:round">
+<path d="M200 38a72 72 0 0 1 68 50"/><path d="M262 148a72 72 0 0 1-116 10"/><path d="M134 128a72 72 0 0 1 36-86"/>
+</g>
+<g style="fill:var(--ac)"><path d="M262 78l12 18-21 2z"/><path d="M150 170l-20-6 10-18z"/><path d="M178 36l-6 20-16-13z"/></g>
+<g style="fill:var(--ac-soft);stroke:var(--ac);stroke-width:2"><circle cx="200" cy="34" r="30"/><circle cx="296" cy="170" r="30"/><circle cx="104" cy="170" r="30"/></g>
+<g style="fill:var(--ink);font-family:var(--sans);font-size:13px;font-weight:700;text-anchor:middle">
+<text x="200" y="39">{1:시도}</text><text x="296" y="175">{2:확인}</text><text x="104" y="175">{3:고침}</text>
+</g>
+</svg>

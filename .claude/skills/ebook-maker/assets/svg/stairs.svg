@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" role="img" aria-label="단계별 성장">
+<g style="fill:var(--ac-soft);stroke:var(--ac);stroke-width:2">
+<rect x="20" y="130" width="110" height="56" rx="6"/><rect x="145" y="90" width="110" height="96" rx="6"/><rect x="270" y="46" width="110" height="140" rx="6"/>
+</g>
+<g style="fill:var(--ac)"><circle cx="75" cy="112" r="12"/><circle cx="200" cy="72" r="12"/><circle cx="325" cy="28" r="12"/></g>
+<g style="fill:#fff;font-family:var(--sans);font-size:13px;font-weight:800;text-anchor:middle"><text x="75" y="117">1</text><text x="200" y="77">2</text><text x="325" y="33">3</text></g>
+<g style="fill:var(--ink);font-family:var(--sans);font-size:14px;font-weight:700;text-anchor:middle">
+<text x="75" y="163">{1:시작}</text><text x="200" y="143">{2:익숙}</text><text x="325" y="121">{3:자동화}</text>
+</g>
+</svg>

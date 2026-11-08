@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" role="img" aria-label="두 가지 비교">
+<rect x="14" y="14" width="176" height="172" rx="14" style="fill:var(--wash);stroke:var(--line2);stroke-width:2"/>
+<rect x="210" y="14" width="176" height="172" rx="14" style="fill:var(--ac-soft);stroke:var(--ac);stroke-width:2"/>
+<g style="font-family:var(--sans);font-weight:800;text-anchor:middle">
+<text x="102" y="52" style="fill:var(--muted);font-size:17px">{1:이전}</text>
+<text x="298" y="52" style="fill:var(--ac-deep);font-size:17px">{2:이후}</text>
+</g>
+<g style="stroke:var(--line2);stroke-width:8;stroke-linecap:round"><path d="M46 90h112"/><path d="M46 118h86"/><path d="M46 146h100"/></g>
+<g style="stroke:var(--ac);stroke-width:8;stroke-linecap:round"><path d="M242 90h112"/><path d="M242 118h70"/><path d="M242 146h40"/></g>
+<g style="fill:var(--ink);font-family:var(--sans);font-size:13px;font-weight:600;text-anchor:middle">
+<text x="102" y="176">{3:}</text><text x="298" y="176">{4:}</text>
+</g>
+</svg>
