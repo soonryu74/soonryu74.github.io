@@ -173,3 +173,34 @@ EPS += [
        extra=[{"lines": ["일은 하나님을 온전히 닮아 가는 거룩한 도구가 될 수 있습니다."], "prompt": TOOLS_PROMPT}],
        rows=["[사가일터선교 1분 칼럼]", "성경 최초의 성령 충만자는", "*일꾼*이었습니다"], title_pt=91),
 ]
+
+
+# ── 11/2 김재원 아나운서 편 (9:16 쇼츠) — 방송 원본 음성 그대로(앞 1.5초 무음 + 로고송 + 멘트 + 본문 + 마무리) ──
+EPS += [
+ {"key": "1102", "cover_scene": 1, "audio": str(HERE / "1102_voice.m4a"), "start": 0.0, "end": 0, "speaker": "김재원 아나운서",
+  "rows": ["[사가일터선교 1분 칼럼]", "일터를 주시기 전", "*사람*을 먼저", "준비시키십니다"], "hand": "\"각각 은사를 받은 대로, 베드로전서 4:10\"",
+  "scenes": [
+   {"lines": ["[사가일터선교 1분 칼럼] 아나운서가 되기까지의 훈련", "FEBC 1분 칼럼, 사랑글로벌아카데미와 함께합니다."],
+    "prompt": "a classic broadcast studio microphone on a wooden desk in warm morning light, soft bokeh, radio station, still life, vertical composition"},
+   {"lines": ["안녕하십니까, 김재원입니다."],
+    "prompt": "an empty radio announcer booth with a microphone, headphones and an on-air lamp glowing, warm light, vertical"},
+   {"lines": ["청년 시절 저는 농촌 마을 무교회 지역을 다니며", "복음을 전하는 선교 단체를 섬겼습니다."],
+    "prompt": "a narrow dirt road through a quiet Korean farming village at golden hour, rice fields and low tiled roofs, no church in sight, vertical"},
+   {"lines": ["복음을 전하려면 먼저 말씀으로 무장되어야 한다는 기치 하에", "매년 여름과 겨울, 5박 6일 하루 종일 성경을 읽는", "성경 통독 사경회에 참가했습니다."],
+    "prompt": "a long wooden table in a retreat hall with many open bibles and notebooks, morning light through tall windows, no people, vertical"},
+   {"lines": ["저는 통독사를 맡아 빠른 속도로", "창세기부터 계시록까지 읽을 기회가 있었습니다."],
+    "prompt": "an open bible on a reading stand under a single warm lamp, pages mid-turn in motion blur, dark room, vertical"},
+   {"lines": ["이 시간은 제게 아나운서가 되기 위한 훈련의 시간이었습니다."],
+    "prompt": "a vintage studio microphone and a script on a stand, red on-air light reflected on a glass window, vertical"},
+   {"lines": ["이 달란트를 주셨다면 언젠가 갚을 기회가 있으면 좋겠다,", "저는 생각했습니다."],
+    "prompt": "a small wooden box with a few old gold coins on a desk by a window, soft morning light, still life, vertical"},
+   {"lines": ["성경은 말씀합니다.", "각각 은사를 받은 대로 서로 봉사하라."],
+    "prompt": "an old leather bible lying open on a plain wooden table with a ribbon marker, soft daylight, vertical"},
+   {"lines": ["하나님은 일터를 주시기 전 사람을 먼저 준비시키십니다."],
+    "prompt": "a potter's hands-free wheel with a shaped clay vessel drying in warm sunlight, pottery studio, no people, vertical"},
+   {"lines": ["지금 여러분이 감당하는 훈련도", "언젠가 여러분의 일터에서 열매가 될 겁니다."],
+    "prompt": "a young fruit tree heavy with ripe fruit in an orchard at sunrise, dew on leaves, vertical"},
+   {"lines": ["아나운서 김재원입니다."],
+    "prompt": "a radio studio window at dusk with the city lights beyond and a microphone silhouette, calm, vertical"},
+   OUTRO]},
+]
