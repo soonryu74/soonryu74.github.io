@@ -7,37 +7,37 @@
 
 ## 공통 규칙 (모든 프롬프트 맨 앞에 붙이기)
 ```
-Photorealistic, candid everyday footage, fixed camera like a bystander sitting on a park bench, natural soft light, shallow depth of field, gentle warm color grade, no cuts, no camera movement, ambient sound only (birds, light footsteps, breeze)
+Photorealistic cinematic footage, first-person following shot from directly behind, camera glides smoothly 3 meters behind her at her exact pace, she never turns around and never leaves the frame, continuous forward motion, no cuts, no camera shake, natural light, shallow depth of field, gentle warm color grade, ambient sound only (light footsteps, breeze, breathing)
 ```
 
-## Scene 01 — 공원 산책로, 늦은 오후
+## Scene 01 — 가로수길, 해질녘
 ```
-A pretty young Korean woman in her mid-20s jogging at an easy relaxed pace along a tree-lined park path, approaching from the distance and passing by. Long straight black hair in a loose ponytail swaying softly, light pink crop top, grey jogging shorts, white sneakers, earbuds in. Calm content expression, slight smile, unhurried rhythm, arms swinging gently. Golden late-afternoon light through the trees, people blurred far in the background. Peaceful, pleasant to watch.
-```
-
-## Scene 02 — 호숫가 길, 아침
-```
-A charming young East Asian woman in her late 20s lightly jogging along a lakeside path toward the camera in the soft morning light. Dark brown hair in a high ponytail, white sports bra top under an open light grey zip hoodie, black leggings. Fresh natural face with minimal makeup, cheeks slightly flushed, breathing easily, comfortable slow jog. Mist on the water, ducks nearby, warm sun flare. Serene and effortless.
+A captivating young Korean woman seen from behind, running at a steady graceful pace down a long tree-lined avenue toward the golden sunset. Long glossy black ponytail swaying side to side with each stride, slim toned figure, white open-back running top, black shorts, smooth elegant form. Warm backlight outlining her hair and shoulders, long shadows on the path, the road stretching endlessly ahead. The viewer feels drawn to keep following her.
 ```
 
-## Scene 03 — 동네 주택가, 해질녘
+## Scene 02 — 다리 위, 늦은 오후
 ```
-An attractive young Korean woman with long black hair jogging casually down a quiet tree-lined residential street, moving from left to right across the frame at a gentle pace. Sage-green tank top, navy shorts, hair swaying with each light step, relaxed shoulders, soft smile as if enjoying the evening. Warm sunset glow, long shadows, calm neighborhood. Simple and lovely.
-```
-
-## Scene 04 — 해변 산책로, 오전
-```
-A lovely young Japanese woman with shoulder-length dark hair jogging slowly along a seaside boardwalk, passing the camera at a leisurely pace. Soft white tank top, coral shorts, hair moving in the sea breeze, relaxed happy face. Bright but soft morning light, gentle waves and gulls in the background. Easygoing, warm, nice to watch.
+Following directly behind an alluring young East Asian woman running across a long bridge in late afternoon light. High dark ponytail bouncing rhythmically, light grey tank top, navy running shorts, graceful posture, relaxed arms, light quick steps. Harbor and city skyline blurred beyond the railing, warm sun on her back, wind lifting a few strands of hair. Hypnotic, effortless, endless.
 ```
 
-## Scene 05 — 강변 자전거길, 저녁
+## Scene 03 — 숲길, 아침
 ```
-A pretty young Korean woman jogging at an easy pace along a riverside path in the blue hour, coming toward the camera and passing close by. Light grey hoodie half-zipped, black leggings, high black ponytail, calm gentle expression, steady light breathing. City lights twinkling across the river, soft reflections on the water. Relaxed and dreamy.
+Back view of a beautiful young Korean woman running ahead along a winding forest path in soft morning light. Long black hair in a loose braid swinging gently, pale pink sports top, black leggings, slender athletic silhouette, light graceful strides. Dappled sunlight through green leaves falling on her shoulders, the path curving ahead invitingly. Calm, dreamlike, the camera never catches up.
+```
+
+## Scene 04 — 강변길, 블루아워
+```
+Following a mesmerizing young East Asian woman from behind as she runs along a quiet riverside path at blue hour. Sleek black ponytail, fitted cream-colored running top, dark shorts, elegant upright posture, smooth steady rhythm. City lights twinkling across the water, soft reflections, cool evening air, lamp posts passing one by one. Serene and magnetic.
+```
+
+## Scene 05 — 해안도로, 이른 아침
+```
+Back view of a graceful young Korean woman running along an empty coastal road at sunrise, the ocean on her left. Long dark hair tied high and flowing with the sea breeze, white sleeveless top, black shorts, toned legs, light floating strides. Pink-gold morning sky, waves rolling in, the road curving along the cliffs ahead. Peaceful, beautiful, you want to keep following.
 ```
 
 ## 루프 품질 팁
-- "fixed camera", "no cuts", "no camera movement" 세 구절이 핵심. 빠지면 스포츠 촬영처럼 카메라가 따라붙음.
-- 피할 단어: marathon, race, athletic, sprint, intense, tracking shot. (운동 경기 톤으로 바뀜)
+- "from directly behind", "she never turns around", "camera never catches up" 세 구절이 핵심. 빠지면 여자가 카메라를 지나치거나 돌아봄.
+- 피할 단어: passing by, toward the camera, turns around, fixed camera, marathon, race, sprint.
 - 사람 얼굴이 정면으로 크게 나오면 AI 티가 남. 뒷모습·옆모습·중거리가 안전.
 - 걸음이 어색하면 "natural running gait, heel-to-toe, arms relaxed at 90 degrees" 추가.
 - 그리고 close-up, slow zoom, dramatic, sexy, revealing. (품질 저하 + 필터 차단)
