@@ -7,33 +7,38 @@
 
 ## 공통 규칙 (모든 프롬프트 맨 앞에 붙이기)
 ```
-Photorealistic cinematic footage, first-person following shot from directly behind, camera glides smoothly 3 meters behind her at her exact pace, she never turns around and never leaves the frame, continuous forward motion, no cuts, no camera shake, natural light, shallow depth of field, gentle warm color grade, ambient sound only (light footsteps, breeze, breathing)
+Cinematic tracking shot from behind a runner, camera on a gimbal 3 meters back, matching her pace, continuous forward motion, no cuts, natural light, shallow depth of field, warm color grade
 ```
 
 ## Scene 01 — 가로수길, 해질녘
 ```
-A captivating young Korean woman seen from behind, running at a steady graceful pace down a long tree-lined avenue toward the golden sunset. Long glossy black ponytail swaying side to side with each stride, slim toned figure, white open-back running top, black shorts, smooth elegant form. Warm backlight outlining her hair and shoulders, long shadows on the path, the road stretching endlessly ahead. The viewer feels drawn to keep following her.
+A young Korean woman in her 20s running down a long tree-lined avenue toward the sunset, seen from behind. Long black ponytail swinging with each stride, white running top, black running shorts, relaxed steady form. Warm backlight, long shadows, the road stretching ahead.
 ```
 
 ## Scene 02 — 다리 위, 늦은 오후
 ```
-Following directly behind an alluring young East Asian woman running across a long bridge in late afternoon light. High dark ponytail bouncing rhythmically, light grey tank top, navy running shorts, graceful posture, relaxed arms, light quick steps. Harbor and city skyline blurred beyond the railing, warm sun on her back, wind lifting a few strands of hair. Hypnotic, effortless, endless.
+A young East Asian woman running across a long bridge in late afternoon light, viewed from behind. High dark ponytail, light grey tank top, navy running shorts, steady light steps. Harbor and city skyline blurred past the railing, wind in her hair.
 ```
 
 ## Scene 03 — 숲길, 아침
 ```
-Back view of a beautiful young Korean woman running ahead along a winding forest path in soft morning light. Long black hair in a loose braid swinging gently, pale pink sports top, black leggings, slender athletic silhouette, light graceful strides. Dappled sunlight through green leaves falling on her shoulders, the path curving ahead invitingly. Calm, dreamlike, the camera never catches up.
+A young Korean woman running along a winding forest path in the morning, viewed from behind. Black hair in a loose braid, pale pink sports top, black leggings, light steady strides. Dappled sunlight through green leaves, path curving ahead.
 ```
 
 ## Scene 04 — 강변길, 블루아워
 ```
-Following a mesmerizing young East Asian woman from behind as she runs along a quiet riverside path at blue hour. Sleek black ponytail, fitted cream-colored running top, dark shorts, elegant upright posture, smooth steady rhythm. City lights twinkling across the water, soft reflections, cool evening air, lamp posts passing one by one. Serene and magnetic.
+A young East Asian woman running along a quiet riverside path at blue hour, viewed from behind. Black ponytail, cream running top, dark shorts, upright posture, steady rhythm. City lights across the water, lamp posts passing one by one.
 ```
 
 ## Scene 05 — 해안도로, 이른 아침
 ```
-Back view of a graceful young Korean woman running along an empty coastal road at sunrise, the ocean on her left. Long dark hair tied high and flowing with the sea breeze, white sleeveless top, black shorts, toned legs, light floating strides. Pink-gold morning sky, waves rolling in, the road curving along the cliffs ahead. Peaceful, beautiful, you want to keep following.
+A young Korean woman running along an empty coastal road at sunrise, ocean on her left, viewed from behind. Dark hair tied high moving in the sea breeze, white sleeveless top, black shorts, light strides. Pink-gold sky, waves rolling in, road curving along the cliffs.
 ```
+
+## 생성 실패 시
+- "동영상을 생성할 수 없습니다" → 안전 필터. captivating, alluring, mesmerizing, slim, toned, figure, legs, "want to follow her" 같은 외모·감정 표현 금지. 촬영 지시문처럼만 쓸 것.
+- 그래도 실패하면 `woman` → `runner`, 나이 표현 삭제.
+- "오디오를 생성할 수 없습니다" → Flow 설정에서 **무음 동영상 반환** 켜기. 웹앱은 기본 음소거라 무관.
 
 ## 루프 품질 팁
 - "from directly behind", "she never turns around", "camera never catches up" 세 구절이 핵심. 빠지면 여자가 카메라를 지나치거나 돌아봄.
