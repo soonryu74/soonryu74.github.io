@@ -379,6 +379,13 @@ def wide_caption_parts(out_dir: Path, name: str, text: str, fonts: dict, accent_
     f = _f(fonts["bold"], WIDE_PT)
     lines = _wrap_rich(auto_highlight(text), f, int(W * WIDE_W))[:2]
     line_h = WIDE_LH
+    if len(lines) == 2:   # 조금만 넘쳐 두 줄이 된 자막은 글자를 살짝 줄이고 폭을 넓혀 한 줄로 (최소 72pt)
+        for pt in range(WIDE_PT - 1, 71, -1):
+            f2 = _f(fonts["bold"], pt)
+            one = _wrap_rich(auto_highlight(text), f2, int(W * 0.94))
+            if len(one) == 1:
+                f, lines, line_h = f2, one, int(WIDE_LH * pt / WIDE_PT)
+                break
     block = line_h * len(lines)
     y0 = H - 40 - block
     out_dir.mkdir(parents=True, exist_ok=True)
