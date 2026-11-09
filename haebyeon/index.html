@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-09-150';
+window.__BUILD = '2026-11-09-151';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2277,6 +2277,13 @@ function step(wetness, running){
   const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime;
   const grass = SC.ground==='grass' || SC.ground==='olle' || ['jeju','pine','bamboo'].includes(SCENE_ID); const stone = (GUNG && !['jeju','pine','bamboo'].includes(SCENE_ID)) || SC.ground==='stonepath'; const deck = (SC.ground==='deck' && !SNOW) || (SCENE_ID==='ulsan' && bridgeY(state.x) > 0.5); const snow = SNOW;
   // 모래: 사삭 — 낮은 대역의 부드러운 소음이 눌렸다가 스르르 빠진다. 젖은 모래는 더 둔탁하고 짧게, 잔디는 더 부드럽고 바스락
+  if(deck){   // 나무 데크: 신발이 널빤지를 치는 '톡' + 널빤지가 울리는 짧은 저음 + 속이 빈 공명
+    const v0 = running ? 0.42 : 0.3;
+    const k = ctx.createBufferSource(); k.buffer = noiseBuffer(ctx, 0.08, false); const kb = ctx.createBiquadFilter(); kb.type = 'bandpass'; kb.frequency.value = 1400; kb.Q.value = 1.1; const kg = ctx.createGain(); kg.gain.setValueAtTime(0.0001, t); kg.gain.exponentialRampToValueAtTime(v0*0.5, t + 0.004); kg.gain.exponentialRampToValueAtTime(0.0001, t + 0.045); k.connect(kb); kb.connect(kg); kg.connect(audio.stepGain); k.start(t); k.stop(t + 0.08);
+    const o = ctx.createOscillator(); o.type = 'sine'; const f0 = 150 + Math.random()*60; o.frequency.setValueAtTime(f0*1.6, t); o.frequency.exponentialRampToValueAtTime(f0, t + 0.03); const og = ctx.createGain(); og.gain.setValueAtTime(0.0001, t); og.gain.exponentialRampToValueAtTime(v0*0.8, t + 0.008); og.gain.exponentialRampToValueAtTime(0.0001, t + 0.13); o.connect(og); og.connect(audio.stepGain); o.start(t); o.stop(t + 0.15);   // 널빤지 울림
+    const b = ctx.createBufferSource(); b.buffer = noiseBuffer(ctx, 0.15, true); const bl = ctx.createBiquadFilter(); bl.type = 'lowpass'; bl.frequency.value = 320; const bg = ctx.createGain(); bg.gain.setValueAtTime(0.0001, t); bg.gain.exponentialRampToValueAtTime(v0*0.6, t + 0.01); bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.1); b.connect(bl); bl.connect(bg); bg.connect(audio.stepGain); b.start(t); b.stop(t + 0.14);   // 속 빈 둔탁음
+    return;
+  }
   if(SCENE_ID==='forest'){   // 낙엽 밟기: 마른 잎이 바삭 부서지는 밝은 크래클(2~7 kHz) 수백 개가 발을 디딜 때 와르르, 떼면 잎이 쓸리는 짧은 바스락, 아래는 푹신한 둔탁음
     const v0 = running ? 0.5 : 0.34; const sr = ctx.sampleRate, dur = 0.3, N = Math.floor(sr*dur); const buf = ctx.createBuffer(1, N, sr); const d = buf.getChannelData(0);
     for(let k=0;k<260;k++){ const press = k < 170; const ph = press ? Math.pow(Math.random(), 1.6)*0.13 : 0.16 + Math.random()*0.12; const st = Math.floor(ph*sr); const len = Math.floor((0.0012 + Math.random()*0.006)*sr); const amp = (0.3 + Math.random()*0.7)*(press ? 1 : 0.55); const f = 2200 + Math.random()*4500; const w = 2*Math.PI*f/sr; for(let i=0;i<len && st+i<N;i++){ d[st+i] += (Math.random()*2 - 1)*amp*Math.exp(-i/len*3)*(0.5 + 0.5*Math.cos(w*i)); } }   // 잎마다 다른 높이의 짧은 바삭
@@ -2807,7 +2814,7 @@ function frame(){
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
     else { const portrait = innerWidth < innerHeight; if(portrait){ camPos.set(state.x + 0.9, 1.6, state.lane + 4.0); camLook.set(state.x + 0.3, 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.9, state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
   } else { camPos.set(state.x - 6.2, 2.9 + Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN), state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); }
-  if(SCENE_ID==='gung' || SC.ground==='deck' || SC.ground==='stonepath' || SCENE_ID==='ulsan'){ const gy = groundY(state.lane, state.x); camPos.y += gy; camLook.y += gy; if(SCENE_ID==='niagara' && !state.resting){ camPos.y += 2.4; camLook.y -= 4.5; camLook.z -= 2; }   /* 사람은 화면 안쪽에, 시선은 난간 너머 아래 폭포 면으로 */ if(CW && !state.resting){ camPos.y += 2.4; camLook.y -= 5.5; camLook.z -= 2.5; }   /* 주상절리: 난간 너머 협곡 아래를 내려다본다 */ if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
+  if(SCENE_ID==='gung' || SC.ground==='deck' || SC.ground==='stonepath' || SCENE_ID==='ulsan'){ const gy = groundY(state.lane, state.x); camPos.y += gy; camLook.y += gy; if(SCENE_ID==='niagara' && !state.resting){ camPos.y += 2.4; camLook.y -= 4.5; camLook.z -= 2; }   /* 사람은 화면 안쪽에, 시선은 난간 너머 아래 폭포 면으로 */ if(CW && !state.resting){ camPos.y += 1.3; camLook.y -= 2.6; camLook.z -= 2.0; }   /* 사람이 화면 가운데쯤, 난간 너머 협곡은 그대로 보이게 */   /* 주상절리: 난간 너머 협곡 아래를 내려다본다 */ if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
   camera.position.lerp(camPos, 1 - Math.exp(-dt*3));
   const lookAt = camera.userData.look || (camera.userData.look = camLook.clone()); lookAt.lerp(camLook, 1 - Math.exp(-dt*3)); camera.lookAt(lookAt);
 
