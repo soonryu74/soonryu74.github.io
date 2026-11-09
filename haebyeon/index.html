@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-09-154';
+window.__BUILD = '2026-11-09-158';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -435,13 +435,13 @@ SCENES.gung = {name:'돌담길', eyebrow:'GUNG RUN', title:'경복궁 돌담길,
 SCENES.beach.todOffset = 0.02; SCENES.hangang.todOffset = 0.22;
 SCENES.busan = {...SCENES.beach, todOffset:0.42, name:'광안리', eyebrow:'BUSAN RUN', title:'부산 광안리, 잠깐 달려요', shareText:'광안대교 불빛 옆을 달리는 온라인 해변', cardTitle:'광안리, 잠깐 달렸어요', chan:'busan', deep:{value:0x2a7fa0}, shallow:0x7fd0d2};
 SCENES.ulsan = {...SCENES.beach, todOffset:0.12, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.3, name:'대왕암', eyebrow:'ULSAN RUN', title:'울산 대왕암, 잠깐 달려요', shareText:'해송 숲길과 바위섬 다리를 달리는 온라인 바닷길', cardTitle:'대왕암, 잠깐 달렸어요', chan:'ulsan', deep:{value:0x1f6f95}, shallow:0x7cc6cf, collect:'솔방울', sitMsg:'소나무 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
-SCENES.jejucoast = {...SCENES.beach, todOffset:0.3, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.25, name:'제주 해안', eyebrow:'JEJU COAST', title:'제주 해안길, 잠깐 달려요', shareText:'현무암 해안과 에메랄드 바다 옆을 달리는 온라인 올레길', cardTitle:'제주 해안길, 잠깐 달렸어요', chan:'jejucoast', deep:{value:0x2290a8}, shallow:0x9fe6dc, collect:'귤'};
+SCENES.jejucoast = {...SCENES.beach, todOffset:0.3, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.25, name:'제주 해안', eyebrow:'JEJU COAST', title:'제주 해안길, 잠깐 달려요', shareText:'현무암 해안과 에메랄드 바다 옆을 달리는 온라인 올레길', cardTitle:'제주 해안길, 잠깐 달렸어요', chan:'jejucoast', deep:{value:0x2290a8}, shallow:0x9fe6dc, collect:'귤', bird:'jeju'};
 SCENES.chuncheon = {...SCENES.hangang, todOffset:0.08, ground:'deck', laneMin:1.4, dryLane:5.6, sitMsg:'난간 옆으로 가요 · 호수가 내려다보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 바람이 지워 줘요', name:'의암호', eyebrow:'CHUNCHEON RUN', title:'춘천 의암호, 잠깐 달려요', shareText:'안개 낀 호수와 산을 보며 달리는 온라인 호숫길', cardTitle:'의암호, 잠깐 달렸어요', chan:'chuncheon', deep:{value:0x3f7f8f}, shallow:0x8fc8c8, waveAmp:0.25, seaVol:0.3, collect:'단풍잎'};
 SCENES.cheorwon = {...SCENES.hangang, todOffset:0.2, ground:'deck', laneMin:1.4, dryLane:5.6, name:'주상절리길', eyebrow:'CHEORWON RUN', title:'철원 주상절리길, 잠깐 달려요', shareText:'한탄강 협곡 절벽에 매달린 잔도를 달리는 온라인 트레일', cardTitle:'주상절리길, 잠깐 달렸어요', chan:'cheorwon', deep:{value:0x1f7f82}, shallow:0x7fd0c4, waveAmp:0.35, seaVol:0.5, collect:'돌멩이', sitMsg:'난간 옆으로 가요 · 협곡이 내려다보여요', sandMsg:'잔도에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.niagara = {...SCENES.hangang, todOffset:0.15, ground:'stonepath', laneMin:1.6, dryLane:5.4, tideAmp:0, name:'나이아가라', eyebrow:'NIAGARA RUN', title:'나이아가라 폭포길, 잠깐 달려요', shareText:'물안개 속 나이아가라 폭포 옆 데크를 달리는 온라인 트레일', cardTitle:'나이아가라, 잠깐 달렸어요', chan:'niagara', deep:{value:0x1f6a7c}, shallow:0x7fc8c8, waveAmp:0.6, seaVol:1.0, bird:'gull', collect:'물방울', sitMsg:'난간 옆으로 가요 · 폭포가 보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 물안개가 지워 줘요', abroad:true, soundMsg:'폭포 소리가 들려요'};
 SCENES.snow = {...SCENES.hangang, todOffset:0.32, ground:'snowfield', laneMin:0.6, dryLane:6.0, tideAmp:0, name:'철원 눈길', eyebrow:'SNOW RUN', title:'철원 눈 덮인 강길, 잠깐 달려요', shareText:'눈 덮인 한탄강 얼음 위, 발자국 길을 따라 달리는 온라인 겨울길', cardTitle:'눈길, 잠깐 달렸어요', chan:'snow', deep:{value:0x23505c}, shallow:0x5f9aa0, waveAmp:0, seaVol:0, bird:'cricket', collect:'눈송이', snow:true, sitMsg:'눈 위에 앉아요 · 갈대와 겨울 산이 보여요', sandMsg:'눈 위에 한 줄 남겨 보세요 · 눈이 덮어 줘요', amb:'wind', windVol:0.5, rustleVol:0.1, rustleHz:900, soundMsg:'겨울 바람 소리가 들려요'};
 SCENES.jeonju = {...SCENES.gung, todOffset:0.28, name:'한옥마을', eyebrow:'JEONJU RUN', title:'전주 한옥마을, 잠깐 달려요', shareText:'기와지붕 사이 골목을 달리는 온라인 한옥마을', cardTitle:'한옥마을, 잠깐 달렸어요', chan:'jeonju', night:false, dryLane:6.6, bird:'sparrow', collect:'감', sitMsg:'골목 옆 평상 쪽으로 가요', sandMsg:'골목에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.15, rustleVol:0.08, rustleHz:2600, soundMsg:'골목 바람 소리가 들려요'};
-SCENES.jeju = {...SCENES.gung, todOffset:0.3, name:'제주 숲길', eyebrow:'JEJU OLLE', title:'제주 올레 숲길, 잠깐 달려요', shareText:'오래된 나무와 현무암 돌담 사이 올레 숲길을 달리는 온라인 산책', cardTitle:'제주 올레 숲길, 잠깐 달렸어요', chan:'jeju', night:false, dryLane:6.6, bird:'forest', collect:'동백꽃', sitMsg:'돌담 옆 나무 그늘로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.3, rustleVol:0.3, rustleHz:2600, soundMsg:'숲 바람 소리가 들려요'};
+SCENES.jeju = {...SCENES.gung, todOffset:0.3, name:'제주 숲길', eyebrow:'JEJU OLLE', title:'제주 올레 숲길, 잠깐 달려요', shareText:'오래된 나무와 현무암 돌담 사이 올레 숲길을 달리는 온라인 산책', cardTitle:'제주 올레 숲길, 잠깐 달렸어요', chan:'jeju', night:false, dryLane:6.6, bird:'jeju', collect:'동백꽃', sitMsg:'돌담 옆 나무 그늘로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.15, rustleVol:0.12, rustleHz:2600, soundMsg:'숲 바람 소리가 들려요'};
 SCENES.pine = {...SCENES.gung, todOffset:0.1, name:'대관령 소나무길', eyebrow:'PINE RUN', title:'대관령 소나무길, 잠깐 달려요', shareText:'안개 낀 금강소나무 숲길을 달리는 온라인 산책', cardTitle:'소나무길, 잠깐 달렸어요', chan:'pine', night:false, dryLane:6.6, bird:'forest', collect:'솔방울', sitMsg:'소나무 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.25, rustleVol:0.18, rustleHz:1500, soundMsg:'솔바람 소리가 들려요'};
 SCENES.bamboo = {...SCENES.gung, todOffset:0.18, name:'대나무 숲길', eyebrow:'BAMBOO RUN', title:'밤부길 대나무 숲, 잠깐 달려요', shareText:'바람에 사각이는 대나무 숲길을 달리는 온라인 산책', cardTitle:'대나무 숲길, 잠깐 달렸어요', chan:'bamboo', night:false, dryLane:6.6, bird:'forest', collect:'댓잎', sitMsg:'대숲 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.28, rustleVol:0.35, rustleHz:2100, soundMsg:'대나무 사각이는 소리가 들려요'};
 SCENES.forest = {...SCENES.gung, todOffset:0.14, name:'남이섬 숲길', eyebrow:'NAMI RUN', title:'남이섬 은행나무길, 잠깐 달려요', shareText:'노란 은행잎 터널을 달리는 온라인 산책', cardTitle:'남이섬 숲길, 잠깐 달렸어요', chan:'forest', night:false, dryLane:6.6, bird:'forest', collect:'은행잎', sitMsg:'낙엽 쌓인 벤치 쪽으로 가요', sandMsg:'낙엽 위에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.35, rustleVol:0.45, rustleHz:3000, soundMsg:'바람과 낙엽 날리는 소리가 들려요'};
@@ -1662,13 +1662,13 @@ function makeGinkgo(){
 function leafCanopyTex(kind){ const _t = leafCanopyTexRaw(kind); _t.userData.shared = true; return _t; }
 function leafCanopyTexRaw(kind){
   const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); g.scale(2, 2);
-  const cols = kind==='ginkgo' ? ['#ffc400','#ffcf1a','#f5b800','#ffd83a','#e8ac00'] : kind==='blossom' ? ['#ffd6e3','#ffc8d9','#ffe9f0','#fff6f9','#fbbfd0'] : kind==='cherry' ? ['#fff1f5','#ffe6ee','#ffd9e4','#fff8fa','#ffc9d9','#ffbfd2'] : kind==='cherryDeep' ? ['#ffb8cd','#ffa9c3','#ff9dba','#ffc6d8','#f78fb0','#ffd2df'] : kind==='green' ? ['#4a9a52','#5fb064','#3f8a47','#6fc072','#56a35a'] : kind==='needle' ? ['#3f6f3c','#4a7f45','#365f34','#588f52','#2f5a30'] : kind==='bamboo' ? ['#8cc152','#a3d16a','#7bb043','#b5de7a','#6a9e3a'] : ['#d9432b','#e8632c','#f08a2e','#c63a2a','#f2a93b','#f4e04d','#f7ea6a','#e9d23a'];
-  const N = kind==='ginkgo' ? 260 : (kind==='blossom' ? 320 : ((kind==='cherry' || kind==='cherryDeep') ? 2600 : 170));
-  for(let i=0;i<N;i++){ const x = 128 + (Math.random()-0.5)*220, y = 128 + (Math.random()-0.5)*220; if(Math.hypot(x-128, y-128) > 118) continue; const r = (kind==='cherry' || kind==='cherryDeep') ? 2.4 + Math.random()*2.6 : 9 + Math.random()*9, a = Math.random()*Math.PI*2; g.fillStyle = cols[Math.random()*cols.length|0]; g.globalAlpha = 0.95;
+  const cols = kind==='ginkgo' ? ['#ffc400','#ffcf1a','#f5b800','#ffd83a','#e8ac00'] : kind==='blossom' ? ['#ffd6e3','#ffc8d9','#ffe9f0','#fff6f9','#fbbfd0'] : kind==='cherry' ? ['#fff1f5','#ffe6ee','#ffd9e4','#fff8fa','#ffc9d9','#ffbfd2'] : kind==='cherryDeep' ? ['#ffb8cd','#ffa9c3','#ff9dba','#ffc6d8','#f78fb0','#ffd2df'] : kind==='cluster' ? ['#fff3f7','#ffe8ef','#ffdde7','#fff9fb','#ffd0dd'] : kind==='clusterDeep' ? ['#ffb9ce','#ffa8c2','#ff9cb9','#ffc8da','#f98fb2'] : kind==='green' ? ['#4a9a52','#5fb064','#3f8a47','#6fc072','#56a35a'] : kind==='needle' ? ['#3f6f3c','#4a7f45','#365f34','#588f52','#2f5a30'] : kind==='bamboo' ? ['#8cc152','#a3d16a','#7bb043','#b5de7a','#6a9e3a'] : ['#d9432b','#e8632c','#f08a2e','#c63a2a','#f2a93b','#f4e04d','#f7ea6a','#e9d23a'];
+  const N = kind==='ginkgo' ? 260 : (kind==='blossom' ? 320 : ((kind==='cherry' || kind==='cherryDeep') ? 2600 : ((kind==='cluster' || kind==='clusterDeep') ? 44 : 170)));
+  for(let i=0;i<N;i++){ const x = 128 + (Math.random()-0.5)*220, y = 128 + (Math.random()-0.5)*220; if(Math.hypot(x-128, y-128) > ((kind==='cluster' || kind==='clusterDeep') ? 104 : 118)) continue; const r = (kind==='cherry' || kind==='cherryDeep') ? 2.4 + Math.random()*2.6 : ((kind==='cluster' || kind==='clusterDeep') ? 12 + Math.random()*9 : 9 + Math.random()*9), a = Math.random()*Math.PI*2; g.fillStyle = cols[Math.random()*cols.length|0]; g.globalAlpha = 0.95;
     g.save(); g.translate(x, y); g.rotate(a);
     if(kind==='ginkgo'){ const rr = r*0.75; g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, rr, Math.PI*0.12, Math.PI*0.5 - 0.08); g.lineTo(0, rr*0.72); g.arc(0, 0, rr, Math.PI*0.5 + 0.08, Math.PI*0.88); g.closePath(); g.fill(); g.strokeStyle = 'rgba(190,140,20,0.45)'; g.lineWidth = 0.6; for(let v=0.2; v<0.85; v+=0.13){ g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(Math.PI*v)*rr, Math.sin(Math.PI*v)*rr); g.stroke(); } g.strokeStyle = 'rgba(120,90,30,0.7)'; g.lineWidth = 0.9; g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -rr*0.6); g.stroke(); }   // 부채꼴 + 가운데 홈 + 잎맥 + 잎자루
     else if(kind==='bamboo' || kind==='needle'){ g.beginPath(); g.ellipse(0, 0, r*1.6, r*0.22, 0, 0, Math.PI*2); g.fill(); }
-    else if(kind==='cherry' || kind==='cherryDeep'){ const pr = r*0.5; for(let k=0;k<5;k++){ const t = k/5*Math.PI*2; g.beginPath(); g.arc(Math.cos(t)*pr, Math.sin(t)*pr, pr*0.85, 0, Math.PI*2); g.fill(); } if(Math.random() < 0.5){ g.fillStyle = '#e97a98'; g.beginPath(); g.arc(0, 0, pr*0.35, 0, Math.PI*2); g.fill(); } }   /* 아주 작은 벚꽃 수천 송이: 가지가 비쳐 보이게 */
+    else if(kind==='cherry' || kind==='cherryDeep' || kind==='cluster' || kind==='clusterDeep'){ const pr = r*0.5; for(let k=0;k<5;k++){ const t = k/5*Math.PI*2; g.beginPath(); g.arc(Math.cos(t)*pr, Math.sin(t)*pr, pr*0.85, 0, Math.PI*2); g.fill(); } if(Math.random() < 0.5){ g.fillStyle = '#e97a98'; g.beginPath(); g.arc(0, 0, pr*0.35, 0, Math.PI*2); g.fill(); } }   /* 아주 작은 벚꽃 수천 송이: 가지가 비쳐 보이게 */
     else if(kind==='blossom'){ const pr = r*0.42; for(let k=0;k<5;k++){ const t = k/5*Math.PI*2; g.beginPath(); g.arc(Math.cos(t)*pr, Math.sin(t)*pr, pr*0.8, 0, Math.PI*2); g.fill(); } g.fillStyle = '#e8577a'; g.beginPath(); g.arc(0, 0, pr*0.3, 0, Math.PI*2); g.fill(); }   /* 꽃잎 다섯 장 + 진분홍 꽃술 */
     else { g.beginPath(); for(let k=0;k<10;k++){ const rr = k%2 ? r*0.45 : r; const t = k/10*Math.PI*2; g.lineTo(Math.cos(t)*rr, Math.sin(t)*rr); } g.closePath(); g.fill(); }
     g.restore(); }
@@ -1677,27 +1677,32 @@ function leafCanopyTexRaw(kind){
 const canopyTex = {ginkgo:null, maple:null};
 function mergeGeosUV(list){ let n = 0; for(const g of list) n += g.attributes.position.count; const pos = new Float32Array(n*3), nor = new Float32Array(n*3), uv = new Float32Array(n*2); let o = 0; for(const g of list){ pos.set(g.attributes.position.array, o*3); nor.set(g.attributes.normal.array, o*3); if(g.attributes.uv) uv.set(g.attributes.uv.array, o*2); o += g.attributes.position.count; } const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.BufferAttribute(pos, 3)); out.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); out.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); return out; }
 function cherryGeo(toward){
-  // 왕벚나무(사진 기준): 곧은 검은 줄기 3 m, 거기서 굵은 가지 5~6개가 길 쪽으로 비스듬히 넓게 뻗고, 잔가지 끝마다 연분홍 꽃구름. 한 그루 = 나무 지오메트리 1 + 꽃 지오메트리 1 (인스턴스로 수백 그루)
+  // 왕벚나무(가지 중심): 줄기 → 굵은 가지 5~6 → 중간 가지 → 잔가지. 꽃은 중간·잔가지를 따라 작은 송이 뭉치로 촘촘히 달린다 (솜사탕 덩어리 아님, 가지와 하늘이 비친다)
   const wood = [], bloom = []; const push = (geo, m)=>{ geo.applyMatrix4(m); wood.push(geo.toNonIndexed()); };
-  const H = 2.6 + Math.random()*0.9; push(new THREE.CylinderGeometry(0.11, 0.2, H, 7), new THREE.Matrix4().makeTranslation(0, H/2, 0));
-  const spots = []; const nB = 5 + (Math.random()*2|0);
-  for(let i=0;i<nB;i++){
-    const a = toward + (i/nB - 0.5)*Math.PI*1.5 + (Math.random()-0.5)*0.3, tilt = 0.55 + Math.random()*0.5, len = 3.2 + Math.random()*1.6, y0 = H*0.78 + Math.random()*H*0.22;
-    const base = new THREE.Matrix4().makeTranslation(0, y0, 0).multiply(new THREE.Matrix4().makeRotationY(a)).multiply(new THREE.Matrix4().makeRotationZ(tilt));
-    push(new THREE.CylinderGeometry(0.03, 0.09, len, 5), base.clone().multiply(new THREE.Matrix4().makeTranslation(0, len/2, 0)));
-    const tip = new THREE.Vector3(0, len, 0).applyMatrix4(base), mid = new THREE.Vector3(0, len*0.6, 0).applyMatrix4(base);
-    spots.push([tip, 3.4 + Math.random()*0.9], [mid, 2.8 + Math.random()*0.7], [new THREE.Vector3(0, len*0.32, 0).applyMatrix4(base), 2.2 + Math.random()*0.5]);
-    for(let k=0;k<3;k++){ const l2 = len*0.5 + Math.random()*0.8; const m0 = new THREE.Matrix4().makeTranslation(tip.x, tip.y, tip.z).multiply(new THREE.Matrix4().makeRotationY(a + (Math.random()-0.5)*1.4)).multiply(new THREE.Matrix4().makeRotationZ(tilt*0.5 + (Math.random()-0.5)*0.9)); push(new THREE.CylinderGeometry(0.012, 0.035, l2, 4), m0.clone().multiply(new THREE.Matrix4().makeTranslation(0, l2/2, 0))); spots.push([new THREE.Vector3(0, l2, 0).applyMatrix4(m0), 3.0 + Math.random()*0.9]); }
-  }
   const q = new THREE.Quaternion(), e = new THREE.Euler(), one = new THREE.Vector3(1,1,1), pv = new THREE.Vector3();
-  for(const [pt, sz] of spots){ for(let c=0;c<2;c++){ const card = new THREE.PlaneGeometry(sz, sz*0.8); e.set((Math.random()-0.5)*1.4, Math.random()*Math.PI, (Math.random()-0.5)*0.7); q.setFromEuler(e); pv.set(pt.x + (Math.random()-0.5)*0.9, pt.y + (Math.random()-0.5)*0.7, pt.z + (Math.random()-0.5)*0.9); card.applyMatrix4(new THREE.Matrix4().compose(pv, q, one)); bloom.push(card.toNonIndexed()); } }   /* 자리마다 꽃 카드 두 장 → 흐드러지게 */
+  const addCluster = (p, sz)=>{ const card = new THREE.PlaneGeometry(sz, sz); e.set((Math.random()-0.5)*1.6, Math.random()*Math.PI, (Math.random()-0.5)*0.8); q.setFromEuler(e); pv.set(p.x + (Math.random()-0.5)*0.2, p.y + (Math.random()-0.5)*0.2, p.z + (Math.random()-0.5)*0.2); card.applyMatrix4(new THREE.Matrix4().compose(pv, q, one)); bloom.push(card.toNonIndexed()); };
+  const grow = (base, len, r0, r1, depth)=>{
+    push(new THREE.CylinderGeometry(r1, r0, len, depth===0 ? 6 : 4), base.clone().multiply(new THREE.Matrix4().makeTranslation(0, len/2, 0)));
+    for(let u=(depth===0 ? 0.45 : 0.12); u<=1.0; u+=0.17){ addCluster(new THREE.Vector3(0, len*u, 0).applyMatrix4(base), (depth===0 ? 0.7 : 0.85) + Math.random()*0.4); }   // 가지를 따라 꽃송이 뭉치가 촘촘히 (굵은 가지는 윗부분만)
+    if(depth === 2) return;
+    const n = depth===0 ? 3 : 3;
+    for(let k=0;k<n;k++){ const u = depth===0 ? 0.45 + k*0.27 : 0.5 + k*0.25; const at = new THREE.Vector3(0, len*Math.min(1, u), 0).applyMatrix4(base);
+      const m = new THREE.Matrix4().makeTranslation(at.x, at.y, at.z).multiply(new THREE.Matrix4().makeRotationY(Math.random()*Math.PI*2)).multiply(new THREE.Matrix4().makeRotationZ(0.45 + Math.random()*0.7));
+      // 어느 방향으로 뻗든 부모 가지의 방향을 절반쯤 따라간다 (가지가 흩어지지 않게)
+      const dir = new THREE.Vector3(0,1,0).transformDirection(base); const own = new THREE.Vector3(0,1,0).transformDirection(m); const mix = dir.multiplyScalar(0.5).add(own.multiplyScalar(0.5)).normalize(); const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), mix); const m2 = new THREE.Matrix4().compose(at, quat, one);
+      grow(m2, len*(0.55 + Math.random()*0.2), r1, r1*0.45, depth + 1); }
+  };
+  const H = 2.6 + Math.random()*0.9; push(new THREE.CylinderGeometry(0.11, 0.2, H, 7), new THREE.Matrix4().makeTranslation(0, H/2, 0));
+  const nB = 5 + (Math.random()*2|0);
+  for(let i=0;i<nB;i++){ const a = toward + (i/nB - 0.5)*Math.PI*1.5 + (Math.random()-0.5)*0.3, tilt = 0.55 + Math.random()*0.5, len = 2.6 + Math.random()*1.2, y0 = H*0.78 + Math.random()*H*0.22;
+    const base = new THREE.Matrix4().makeTranslation(0, y0, 0).multiply(new THREE.Matrix4().makeRotationY(a)).multiply(new THREE.Matrix4().makeRotationZ(tilt)); grow(base, len, 0.09, 0.045, 0); }
   return {wood:mergeGeos(wood), bloom:mergeGeosUV(bloom)};
 }
 function plantCherries(group, toward, spots){
   // spots: [x, z, scale]. 같은 방향의 나무 4가지 변형을 섞어 인스턴스로 심는다
-  if(!canopyTex.cherry) canopyTex.cherry = leafCanopyTex('cherry'); if(!canopyTex.cherryDeep) canopyTex.cherryDeep = leafCanopyTex('cherryDeep');
-  if(!plantCherries.leafM) plantCherries.leafM = new THREE.MeshStandardMaterial({map:canopyTex.cherry, transparent:true, alphaTest:0.5, side:THREE.DoubleSide, roughness:1, emissive:0x9a7082, emissiveIntensity:0.7});
-  if(!plantCherries.deepM) plantCherries.deepM = new THREE.MeshStandardMaterial({map:canopyTex.cherryDeep, transparent:true, alphaTest:0.5, side:THREE.DoubleSide, roughness:1, emissive:0x8a4a62, emissiveIntensity:0.6});   // 진분홍 나무(겹벚꽃 느낌) 섞기
+  if(!canopyTex.cluster) canopyTex.cluster = leafCanopyTex('cluster'); if(!canopyTex.clusterDeep) canopyTex.clusterDeep = leafCanopyTex('clusterDeep');
+  if(!plantCherries.leafM) plantCherries.leafM = new THREE.MeshStandardMaterial({map:canopyTex.cluster, transparent:true, alphaTest:0.5, side:THREE.DoubleSide, roughness:1, emissive:0x9a7082, emissiveIntensity:0.7});
+  if(!plantCherries.deepM) plantCherries.deepM = new THREE.MeshStandardMaterial({map:canopyTex.clusterDeep, transparent:true, alphaTest:0.5, side:THREE.DoubleSide, roughness:1, emissive:0x8a4a62, emissiveIntensity:0.6});   // 진분홍 나무(겹벚꽃 느낌) 섞기
   if(!plantCherries.woodM) plantCherries.woodM = new THREE.MeshStandardMaterial({color:0x2e2622, roughness:1});
   const V = 4; const dummy = new THREE.Object3D();
   for(let v=0; v<V; v++){ const mine = spots.filter((_, i)=>i%V===v); if(!mine.length) continue; const geo = cherryGeo(toward); const wood = new THREE.InstancedMesh(geo.wood, plantCherries.woodM, mine.length); const bloom = new THREE.InstancedMesh(geo.bloom, v===1 ? plantCherries.deepM : plantCherries.leafM, mine.length);
@@ -1871,6 +1876,16 @@ if(GUNG){
       const litterM = new THREE.MeshStandardMaterial({color:0x5e5a3c, roughness:1}); for(const [z, w] of [[-9.5, 17],[17.5, 17]]){ const lt = new THREE.Mesh(new THREE.PlaneGeometry(1400, w).rotateX(-Math.PI/2), litterM); lt.position.set(500, 0.015, z); gungSet.add(lt); }   // 댓잎 쌓인 어두운 숲 바닥
     } else {
       for(let x=-120; x<1120; x+=3.5+Math.random()*2.5){ for(const z of [-1.2 - Math.random()*14, 9.2 + Math.random()*14]){ const t = makePineTree(); t.position.set(x + (Math.random()-0.5)*1.2, 0, z); t.rotation.y = Math.random()*Math.PI; gungSet.add(t); } }
+      // 소나무 사이 키 작은 활엽 관목(잎이 길고 넓은 산수국·생강나무·조릿대 느낌): 줄기 짧고 잎 12장이 방사형으로. 인스턴스 2개로 1,600그루
+      const lc = document.createElement('canvas'); lc.width = 128; lc.height = 64; const lg = lc.getContext('2d'); lg.fillStyle = '#5f9a46'; lg.beginPath(); lg.moveTo(4, 32); lg.quadraticCurveTo(50, 2, 124, 32); lg.quadraticCurveTo(50, 62, 4, 32); lg.closePath(); lg.fill(); lg.strokeStyle = '#3f7a30'; lg.lineWidth = 1.5; lg.beginPath(); lg.moveTo(6, 32); lg.lineTo(122, 32); lg.stroke(); for(let x=20;x<120;x+=12){ lg.beginPath(); lg.moveTo(x, 32); lg.lineTo(x + 10, 14); lg.moveTo(x, 32); lg.lineTo(x + 10, 50); lg.stroke(); }
+      const ltex = new THREE.CanvasTexture(lc); ltex.colorSpace = THREE.SRGBColorSpace; ltex.userData.shared = true;
+      const leafGeo = new THREE.PlaneGeometry(0.95, 0.3).translate(0.45, 0, 0); const leafM = new THREE.MeshStandardMaterial({map:ltex, transparent:true, alphaTest:0.5, side:THREE.DoubleSide, roughness:1});
+      const stemGeo = new THREE.CylinderGeometry(0.015, 0.03, 1, 5).translate(0, 0.5, 0); const stemM = new THREE.MeshStandardMaterial({color:0x5a4a36, roughness:1});
+      const shrubs = []; for(let x=-120; x<1120; x+=1.4+Math.random()*1.2){ for(const [z0, z1] of [[-1.6, -13],[9.6, 21]]){ if(Math.random() < 0.35) continue; shrubs.push([x + Math.random(), z0 + (z1 - z0)*Math.random(), 0.9 + Math.random()*1.3]); } }
+      const stems = new THREE.InstancedMesh(stemGeo, stemM, shrubs.length); const leaves = new THREE.InstancedMesh(leafGeo, leafM, shrubs.length*12); const d = new THREE.Object3D(); let li = 0;
+      shrubs.forEach((sh, i)=>{ d.position.set(sh[0], 0, sh[1]); d.rotation.set(0, 0, (Math.random()-0.5)*0.2); d.scale.set(1, sh[2], 1); d.updateMatrix(); stems.setMatrixAt(i, d.matrix);
+        for(let k=0;k<12;k++){ const h = sh[2]*(0.35 + 0.6*Math.random()); d.position.set(sh[0], h, sh[1]); d.rotation.set((Math.random()-0.5)*0.4, k/12*Math.PI*2 + Math.random()*0.5, 0.25 + Math.random()*0.7); const sc = 0.8 + Math.random()*0.6; d.scale.set(sc, sc, sc); d.updateMatrix(); leaves.setMatrixAt(li++, d.matrix); } });
+      stems.frustumCulled = false; leaves.frustumCulled = false; gungSet.add(stems); gungSet.add(leaves);
     }
     const bushM = new THREE.MeshStandardMaterial({color:0x4f8f3e, roughness:1}); const fernM = new THREE.MeshStandardMaterial({color:0x5f9a4a, roughness:1, side:THREE.DoubleSide});
     for(let x=-120; x<1120; x+=(BM ? 4 : 1.6)+Math.random()*1.4){ for(const z of [-0.8 - Math.random()*3, 9.3 + Math.random()*3]){ if(Math.random() < 0.5){ const b = new THREE.Mesh(new THREE.SphereGeometry(0.4 + Math.random()*0.4, 7, 6), bushM); b.position.set(x, 0.25, z); b.scale.y = 0.7; gungSet.add(b); } else { const f = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.8, 5), fernM); f.position.set(x, 0.4, z); f.rotation.y = Math.random()*3; gungSet.add(f); } } }
@@ -1899,8 +1914,8 @@ if(GUNG){
     const stoneM = new THREE.MeshStandardMaterial({color:0x9a9790, roughness:1}); for(let x=-120; x<1120; x+=4+Math.random()*6){ const st = new THREE.Mesh(new THREE.SphereGeometry(0.4 + Math.random()*0.6, 6, 5), stoneM); st.position.set(x, -0.1, -14.5 - Math.random()*1.5); st.scale.y = 0.5; gungSet.add(st); }   // 냇가 자갈
     const farGrass = new THREE.Mesh(new THREE.PlaneGeometry(1400, 160).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({color:0x8fc45e, roughness:1})); farGrass.position.set(500, 0.0, -110); gungSet.add(farGrass);
     const L = [], R = [], B = [], F = [];
-    for(let x=-120; x<1000; x+=6.5+Math.random()*2) L.push([x + (Math.random()-0.5)*0.6, -1.6 - Math.random()*0.8, 1.15 + Math.random()*0.25]);   // 왼쪽 줄(냇가 쪽): 가지가 길 위로
-    for(let x=-116; x<1000; x+=6.5+Math.random()*2) R.push([x + (Math.random()-0.5)*0.6, 10.2 + Math.random()*0.8, 1.15 + Math.random()*0.25]);   // 오른쪽 줄 → 터널
+    for(let x=-120; x<1000; x+=8+Math.random()*2.5) L.push([x + (Math.random()-0.5)*0.6, -1.6 - Math.random()*0.8, 1.15 + Math.random()*0.25]);   // 왼쪽 줄(냇가 쪽): 가지가 길 위로
+    for(let x=-116; x<1000; x+=8+Math.random()*2.5) R.push([x + (Math.random()-0.5)*0.6, 10.2 + Math.random()*0.8, 1.15 + Math.random()*0.25]);   // 오른쪽 줄 → 터널
     for(let x=-120; x<1000; x+=14+Math.random()*10) B.push([x, 17 + Math.random()*8, 0.9 + Math.random()*0.3]);   // 오른쪽 뒷줄
     for(let x=-120; x<1000; x+=12+Math.random()*8) F.push([x, -33 - Math.random()*6, 0.95 + Math.random()*0.3]);   // 냇가 건너편
     plantCherries(gungSet, Math.PI/2, L); plantCherries(gungSet, -Math.PI/2, R); plantCherries(gungSet, Math.PI/4, B); plantCherries(gungSet, Math.PI/2, F);   // 그루마다 메시 45개 → 줄마다 인스턴스 8개 (폰에서 창이 닫히던 원인)
@@ -2275,11 +2290,37 @@ function titTrill(){   // 박새: 아주 짧은 높은 지저귐 4~6번(쯔쯔�
   const n = 4 + (Math.random()*3|0); const f0 = 4200 + Math.random()*900;
   for(let i=0;i<n;i++){ const st = t + i*0.13; const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(f0, st); o.frequency.exponentialRampToValueAtTime(f0*0.7, st + 0.06); const og = ctx.createGain(); og.gain.setValueAtTime(0, st); og.gain.linearRampToValueAtTime(0.035, st + 0.01); og.gain.exponentialRampToValueAtTime(0.0005, st + 0.08); o.connect(og); og.connect(g); o.start(st); o.stop(st + 0.1); }
 }
+function warbler(){   // 휘파람새: 길게 올라가는 맑은 휘파람 '호오——' 뒤에 '호케쿄' 하고 꺾인다
+  const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime; const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null; if(pan) pan.pan.value = Math.random()*1.6-0.8;
+  const g = ctx.createGain(); g.gain.value = 1; g.connect(pan||audio.birdGain); if(pan) pan.connect(audio.birdGain);
+  const o = ctx.createOscillator(); o.type = 'sine'; const og = ctx.createGain(); o.connect(og); og.connect(g);
+  const f0 = 1500 + Math.random()*300; o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f0*1.35, t + 0.75);   // 호오—— (서서히 올라감)
+  og.gain.setValueAtTime(0, t); og.gain.linearRampToValueAtTime(0.045, t + 0.25); og.gain.linearRampToValueAtTime(0.05, t + 0.75); og.gain.exponentialRampToValueAtTime(0.0005, t + 0.82);
+  const seq = [[2600, 0.86, 0.07],[2000, 0.95, 0.06],[3100, 1.03, 0.08],[2400, 1.13, 0.1]];   // 호케쿄
+  for(const [f, st, d] of seq){ o.frequency.setValueAtTime(f, t + st); og.gain.setValueAtTime(0.0005, t + st); og.gain.linearRampToValueAtTime(0.06, t + st + 0.012); og.gain.exponentialRampToValueAtTime(0.0005, t + st + d); }
+  o.start(t); o.stop(t + 1.3);
+}
+function oriole(){   // 꾀꼬리: 피리 같은 둥근 음 3~4개가 흘러내리듯, 살짝 떨림
+  const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime; const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null; if(pan) pan.pan.value = Math.random()*1.6-0.8;
+  const g = ctx.createGain(); g.gain.value = 1; g.connect(pan||audio.birdGain); if(pan) pan.connect(audio.birdGain); const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600; lp.connect(g);
+  const notes = [[1180, 0.0, 0.22],[1480, 0.26, 0.2],[1320, 0.5, 0.26],[990, 0.82, 0.34]]; const vib = ctx.createOscillator(); vib.frequency.value = 6; const vg = ctx.createGain(); vg.gain.value = 18; vib.connect(vg); vib.start(t); vib.stop(t + 1.4);
+  for(const [f, st, d] of notes){ const o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.setValueAtTime(f*(0.97 + Math.random()*0.06), t + st); vg.connect(o.frequency); const og = ctx.createGain(); og.gain.setValueAtTime(0, t + st); og.gain.linearRampToValueAtTime(0.05, t + st + 0.04); og.gain.setValueAtTime(0.05, t + st + d - 0.06); og.gain.exponentialRampToValueAtTime(0.0005, t + st + d); o.connect(og); og.connect(lp); o.start(t + st); o.stop(t + st + d + 0.05); }
+}
+function whiteEye(){   // 동박새: 가늘고 빠른 지저귐이 물결치듯 10여 번
+  const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime; const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null; if(pan) pan.pan.value = Math.random()*1.6-0.8;
+  const g = ctx.createGain(); g.gain.value = 1; g.connect(pan||audio.birdGain); if(pan) pan.connect(audio.birdGain);
+  const n = 9 + (Math.random()*6|0); for(let i=0;i<n;i++){ const st = t + i*0.09; const o = ctx.createOscillator(); o.type = 'sine'; const f0 = 3600 + 900*Math.sin(i*0.9) + Math.random()*300; o.frequency.setValueAtTime(f0, st); o.frequency.exponentialRampToValueAtTime(f0*1.25, st + 0.03); o.frequency.exponentialRampToValueAtTime(f0*0.85, st + 0.06); const og = ctx.createGain(); og.gain.setValueAtTime(0, st); og.gain.linearRampToValueAtTime(0.03, st + 0.008); og.gain.exponentialRampToValueAtTime(0.0005, st + 0.07); o.connect(og); og.connect(g); o.start(st); o.stop(st + 0.08); }
+}
+function jejuBird(){ if(nightMix > 0.6) return cricket(); const r = Math.random(); if(r < 0.35) return warbler(); if(r < 0.65) return oriole(); if(r < 0.85) return whiteEye(); return SCENE_ID==='jejucoast' ? gullCall() : titTrill(); }   // 제주: 휘파람새·꾀꼬리·동박새, 해안에선 가끔 갈매기
 function forestBird(){ if(nightMix > 0.6) return cricket(); const r = Math.random(); if(r < 0.3) return cuckoo(); if(r < 0.5) return woodpecker(); if(r < 0.75) return titTrill(); return sparrow(); }   // 아침 숲: 뻐꾸기·딱따구리·박새·참새가 번갈아, 밤엔 풀벌레
 function gull(){
+  if(SC.bird==='jeju') return jejuBird();
   if(SC.bird==='forest') return forestBird();
   if(SC.bird==='sparrow') return sparrow();
   if(SC.bird==='cricket') return cricket();
+  return gullCall();
+}
+function gullCall(){
   const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime, n = 2 + (Math.random()*3|0);
   const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null; if(pan) pan.pan.value = Math.random()*2-1;
   const g = ctx.createGain(); g.gain.value = 0; g.connect(pan||audio.birdGain); if(pan) pan.connect(audio.birdGain);
@@ -2818,7 +2859,7 @@ function frame(){
     applyTod(state.todT);
 
     if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness) * SC.seaVol;
-      if(SC.amb==='wind' && audio.windGain){ const vol = +$('vol-sea').value/100; const gp = (t % 9)/9, gust = Math.pow(Math.max(0, Math.sin(gp*Math.PI)), 3)*(0.6 + 0.4*Math.sin(t*0.07)); const lying = state.resting && state.pose==='lie' ? 1.25 : 1; audio.windBp.frequency.value = (SC.rustleHz < 1000 ? 600 : 340) + 180*gust; audio.rustleJit = THREE.MathUtils.damp(audio.rustleJit || 0.5, Math.random(), 2.5, dt); const soft = Math.pow(gust, 1.4); audio.windGain.gain.value = vol*SC.windVol*(0.05 + 0.2*soft)*lying; audio.rustleBp.frequency.value = SC.rustleHz; audio.rustleGain.gain.value = vol*SC.rustleVol*(0.006 + 0.05*soft*(0.6 + 0.4*audio.rustleJit))*lying; }   /* 멀리서 부드럽게: 돌풍일 때만 살짝 커지고, 떨림은 천천히 */   /* 낙엽 돌풍과 같은 9초 주기: 잎이 날릴 때 소리도 세진다 */ if(SCENE_ID==='niagara' && audio.rainGain && !state.rain) audio.rainGain.gain.value = 0.35*(+$('vol-sea').value/100); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + (SC.bird==='forest' ? 4 + Math.random()*8 : 9 + Math.random()*18); } }
+      if(SC.amb==='wind' && audio.windGain){ const vol = +$('vol-sea').value/100; const gp = (t % 9)/9, gust = Math.pow(Math.max(0, Math.sin(gp*Math.PI)), 3)*(0.6 + 0.4*Math.sin(t*0.07)); const lying = state.resting && state.pose==='lie' ? 1.25 : 1; audio.windBp.frequency.value = (SC.rustleHz < 1000 ? 600 : 340) + 180*gust; audio.rustleJit = THREE.MathUtils.damp(audio.rustleJit || 0.5, Math.random(), 2.5, dt); const soft = Math.pow(gust, 1.4); audio.windGain.gain.value = vol*SC.windVol*(0.05 + 0.2*soft)*lying; audio.rustleBp.frequency.value = SC.rustleHz; audio.rustleGain.gain.value = vol*SC.rustleVol*(0.006 + 0.05*soft*(0.6 + 0.4*audio.rustleJit))*lying; }   /* 멀리서 부드럽게: 돌풍일 때만 살짝 커지고, 떨림은 천천히 */   /* 낙엽 돌풍과 같은 9초 주기: 잎이 날릴 때 소리도 세진다 */ if(SCENE_ID==='niagara' && audio.rainGain && !state.rain) audio.rainGain.gain.value = 0.35*(+$('vol-sea').value/100); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + ((SC.bird==='forest' || SC.bird==='jeju') ? 4 + Math.random()*8 : 9 + Math.random()*18); } }
     $('st-dist').textContent = (state.dist/1000).toFixed(2); $('st-time').textContent = fmtTime(state.time);
     breathTick(t);
     courseTick();
