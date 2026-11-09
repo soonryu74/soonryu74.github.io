@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-09-148';
+window.__BUILD = '2026-11-09-149';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2395,7 +2395,7 @@ function leaveRest(){ document.body.classList.remove('is-resting'); state.restin
 function toggleRest(){ state.resting ? leaveRest() : enterRest(); }
 const DRY_LANE = SC.dryLane;
 function setPose(p){
-  state.pendingPose = null;
+  state.pendingPose = null; if(p==='lie') state.noteCam = null;   /* 누우면 글씨 카메라는 끝 → 풍경을 본다 */
   if(p==='sit' || p==='lie'){
     // 벤치·통나무·바위가 있는 자리는 피해서 앉는다
     let target = DRY_LANE; const near = props.some(q => (q.kind==='wood' || q.kind==='rock') && Math.abs(q.obj.position.x - state.x) < 2.6 && Math.abs(q.obj.position.z - target) < 1.6);
@@ -2801,7 +2801,8 @@ function frame(){
   if(state.noteCam && (!state.resting || !sandNotes.includes(state.noteCam) || performance.now() - state.noteCamT > 60000)) state.noteCam = null;
   if(state.resting && state.noteCam){ const n = state.noteCam; camPos.set(state.x + 0.15, 3.4, state.lane + 2.3); camLook.set(state.x, 0.1, state.lane - 2.6); }   // 앉은 등 뒤 위에서 하이앵글로: 사람 너머 바닥 글씨와 파도   // 글씨 뒤 위에서 내려다본다 · 파도가 지우는 것까지 보인다
   else if(state.resting){
-    if(state.pose==='lie' && (FG || SNOWFIELD)){ camPos.set(state.x + 0.15, 0.85, state.lane + 0.7); camLook.set(state.x + 0.15, 0.85 + 9.4, state.lane + 0.7 - (FG ? 6.3 : 3.4)); }   /* 숲길: 누우면 약 60도 위 나무 지붕과 하늘, 떨어지는 잎 · 눈길: 70도 하늘과 눈 */
+    if(state.pose==='lie' && SNOWFIELD){ camPos.set(state.x + 0.15, 0.8, state.lane + 0.6); camLook.set(state.x + 0.15, 0.8 + 3.2, state.lane + 0.6 - 13); }   /* 눈길: 머리맡에서 눈밭 건너 겨울나무·산·하늘이 트인 설경 (약 14도 위) */
+    else if(state.pose==='lie' && FG){ camPos.set(state.x + 0.15, 0.85, state.lane + 0.7); camLook.set(state.x + 0.15, 0.85 + 9.4, state.lane + 0.7 - 6.3); }   /* 숲길: 누우면 약 60도 위 나무 지붕과 하늘, 떨어지는 잎 */
     else if(state.pose==='lie'){ camPos.set(state.x + 0.15, 0.9, state.lane + 1.2); camLook.set(state.x + 0.15, 0.15, state.lane - 4.5); }   // 머리를 바닥에 댄 눈높이: 발끝이 땅에 붙고 그 너머 수평선이 보인다   // 이마 바로 위에서: 모자 챙이 시야를 가리지 않게 챙 앞쪽에 둔다   // 머리맡에서 내 다리·옆에 누운 친구 너머 바다를 본다
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
     else { const portrait = innerWidth < innerHeight; if(portrait){ camPos.set(state.x + 0.9, 1.6, state.lane + 4.0); camLook.set(state.x + 0.3, 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.9, state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
