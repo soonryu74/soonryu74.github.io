@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-09-149';
+window.__BUILD = '2026-11-09-150';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2790,7 +2790,7 @@ function frame(){
     applyTod(state.todT);
 
     if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness) * SC.seaVol;
-      if(SC.amb==='wind' && audio.windGain){ const vol = +$('vol-sea').value/100; const gp = (t % 9)/9, gust = Math.pow(Math.max(0, Math.sin(gp*Math.PI)), 3)*(0.6 + 0.4*Math.sin(t*0.07)); const lying = state.resting && state.pose==='lie' ? 1.25 : 1; audio.windBp.frequency.value = (SC.rustleHz < 1000 ? 650 : 380) + 250*gust; audio.windGain.gain.value = vol*SC.windVol*(0.12 + 0.5*gust)*lying; audio.rustleBp.frequency.value = SC.rustleHz; audio.rustleGain.gain.value = vol*SC.rustleVol*(0.015 + 0.16*gust*(0.5 + 0.5*Math.random()))*lying; }   /* 낙엽 돌풍과 같은 9초 주기: 잎이 날릴 때 소리도 세진다 */ if(SCENE_ID==='niagara' && audio.rainGain && !state.rain) audio.rainGain.gain.value = 0.35*(+$('vol-sea').value/100); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + 9 + Math.random()*18; } }
+      if(SC.amb==='wind' && audio.windGain){ const vol = +$('vol-sea').value/100; const gp = (t % 9)/9, gust = Math.pow(Math.max(0, Math.sin(gp*Math.PI)), 3)*(0.6 + 0.4*Math.sin(t*0.07)); const lying = state.resting && state.pose==='lie' ? 1.25 : 1; audio.windBp.frequency.value = (SC.rustleHz < 1000 ? 600 : 340) + 180*gust; audio.rustleJit = THREE.MathUtils.damp(audio.rustleJit || 0.5, Math.random(), 2.5, dt); const soft = Math.pow(gust, 1.4); audio.windGain.gain.value = vol*SC.windVol*(0.05 + 0.2*soft)*lying; audio.rustleBp.frequency.value = SC.rustleHz; audio.rustleGain.gain.value = vol*SC.rustleVol*(0.006 + 0.05*soft*(0.6 + 0.4*audio.rustleJit))*lying; }   /* 멀리서 부드럽게: 돌풍일 때만 살짝 커지고, 떨림은 천천히 */   /* 낙엽 돌풍과 같은 9초 주기: 잎이 날릴 때 소리도 세진다 */ if(SCENE_ID==='niagara' && audio.rainGain && !state.rain) audio.rainGain.gain.value = 0.35*(+$('vol-sea').value/100); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + 9 + Math.random()*18; } }
     $('st-dist').textContent = (state.dist/1000).toFixed(2); $('st-time').textContent = fmtTime(state.time);
     breathTick(t);
     courseTick();
