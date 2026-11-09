@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-09-162';
+window.__BUILD = '2026-11-09-164';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2193,13 +2193,13 @@ function populateTo(limitX){
     const x = genX; genX += 2.0 + Math.random()*2.4; sinceBottle += 1;
     const r = Math.random();
     if(GUNG){
-      if(!['forest','jeju','pine','bamboo','blossom'].includes(SCENE_ID) && x > nextLantern){ nextLantern = x + 16; const o = makeLantern(); o.position.set(x, 0, 1.15); scene.add(o); props.push({obj:o, kind:'lantern'}); }
+      if(!['forest','jeju','pine','bamboo','blossom'].includes(SCENE_ID) && x > nextLantern){ nextLantern = x + 16; const o = makeLantern(); o.position.set(x, 0, 0.55); scene.add(o); props.push({obj:o, kind:'lantern', half:0.35}); }   /* 담장에 바짝 붙여 길을 막지 않게 */
       if(!['forest','jeju','pine','bamboo','blossom'].includes(SCENE_ID) && x > nextTree){ nextTree = x + 9 + Math.random()*4; const o = makeGinkgo(); o.position.set(x, 0, SCENE_ID==='jeonju' ? 9.5 + Math.random() : 14.5 + Math.random()*1.5); o.rotation.y = Math.random()*Math.PI; scene.add(o); props.push({obj:o, kind:'tree'}); }
       if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.02, 2 + Math.random()*4); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
       else if(r < 0.42){ const o = SCENE_ID==='jeju' ? makeCamellia() : (SCENE_ID==='pine' ? makePinecone() : (SCENE_ID==='blossom' ? makePetal() : makeGinkgoLeaf())); if(SCENE_ID==='bamboo'){ o.traverse(m=>{ if(m.isMesh && m.material.color) m.material = new THREE.MeshStandardMaterial({color:0x8cc152, roughness:1, side:THREE.DoubleSide}); }); o.scale.set(1.6, 1, 0.5); } o.position.set(x + Math.random(), 0, 1.6 + Math.random()*4.4); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
       else if(['jeju','pine','bamboo','blossom'].includes(SCENE_ID) && r < 0.64){ }
       else if(r < 0.64){ const o = makeLeafPile(); o.position.set(x, 0, 1.4 + Math.random()*4.6); scene.add(o); props.push({obj:o, kind:'leaf'}); if(SCENE_ID==='forest'){ const o2 = makeLeafPile(); o2.position.set(x + 1.5, 0, 0.5 + Math.random()*8); scene.add(o2); props.push({obj:o2, kind:'leaf'}); } }
-      else if(['jeonju','forest','jeju','pine','bamboo','blossom'].includes(SCENE_ID) && r < 0.68){ const o = makeBench(); o.position.set(x, 0, 7.6); scene.add(o); props.push({obj:o, kind:'wood'}); }
+      else if(['jeonju','forest','jeju','pine','bamboo','blossom'].includes(SCENE_ID) && r < 0.68){ const o = makeBench(); o.position.set(x, 0, 8.9); scene.add(o); props.push({obj:o, kind:'wood'}); }
       continue;
     }
     if(FH){
@@ -2812,7 +2812,7 @@ function frame(){
       // 장애물(통나무·바위·벤치)은 옆으로 비껴 달린다: 앞 6 m 안에 있으면 빈 쪽으로 차선을 옮기고, 지나가면 원래 자리로
       if(state.speed > 0.3){
         let dodge = 0;
-        for(const p of props){ if((p.kind==='wood' && SC.ground==='sand') || p.kind==='rock'){ const dxo = p.obj.position.x - state.x; if(dxo > -1.0 && dxo < 6.0){ const dz = state.lane - p.obj.position.z; const half = p.half || (p.kind==='wood' ? 1.7 : 1.1); if(Math.abs(dz) < half + 0.5){ const dir = dz >= 0 ? 1 : -1; const need = (half + 0.6 - Math.abs(dz)) * dir; if(Math.abs(need) > Math.abs(dodge)) dodge = need; } } } }
+        for(const p of props){ if((p.kind==='wood' && SC.ground==='sand') || p.kind==='rock' || p.kind==='lantern'){ const dxo = p.obj.position.x - state.x; if(dxo > -1.0 && dxo < 6.0){ const dz = state.lane - p.obj.position.z; const half = p.half || (p.kind==='wood' ? 1.7 : 1.1); if(Math.abs(dz) < half + 0.5){ const dir = dz >= 0 ? 1 : -1; const need = (half + 0.6 - Math.abs(dz)) * dir; if(Math.abs(need) > Math.abs(dodge)) dodge = need; } } } }
         if(dodge !== 0){ if(!state.dodging){ state.dodging = true; state.laneHome = state.laneTarget; } state.laneTarget = THREE.MathUtils.clamp(state.laneTarget + dodge*Math.min(1, 6*dt), LANE_MIN, LANE_MAX); runner.rotation.y = THREE.MathUtils.damp(runner.rotation.y, -Math.sign(dodge)*0.35, 6, dt); }
         else if(state.dodging){ state.dodging = false; state.laneTarget = THREE.MathUtils.clamp(state.laneHome, LANE_MIN, LANE_MAX); }
       }
@@ -2886,7 +2886,7 @@ function frame(){
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
     else { const portrait = innerWidth < innerHeight; if(portrait){ camPos.set(state.x + 0.9, 1.6, state.lane + 4.0); camLook.set(state.x + 0.3, 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.9, state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
   } else { camPos.set(state.x - 6.2, 2.9 + Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN), state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); }
-  if(SCENE_ID==='gung' || SC.ground==='deck' || SC.ground==='stonepath' || SCENE_ID==='ulsan'){ const gy = groundY(state.lane, state.x); camPos.y += gy; camLook.y += gy; if(SCENE_ID==='niagara' && !state.resting){ camPos.y += 0.9; camLook.y -= 1.6; camLook.z -= 0.6; }   /* 다른 장면과 비슷한 구도, 아주 살짝만 아래로 */   /* 사람은 화면 안쪽에, 시선은 난간 너머 아래 폭포 면으로 */ if(CW && !state.resting){ camPos.y += 1.3; camLook.y -= 2.6; camLook.z -= 2.0; }   /* 사람이 화면 가운데쯤, 난간 너머 협곡은 그대로 보이게 */   /* 주상절리: 난간 너머 협곡 아래를 내려다본다 */ if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
+  if(SCENE_ID==='gung' || SC.ground==='deck' || SC.ground==='stonepath' || SCENE_ID==='ulsan'){ const gy = groundY(state.lane, state.x); camPos.y += gy; camLook.y += gy; if(SCENE_ID==='niagara' && !state.resting){ camPos.y += 0.9; camLook.y -= 1.6; camLook.z -= 0.6; }   /* 다른 장면과 비슷한 구도, 아주 살짝만 아래로 */   /* 사람은 화면 안쪽에, 시선은 난간 너머 아래 폭포 면으로 */ if(CW && !state.resting){ camPos.y += 0.5; camLook.y -= 0.9; camLook.z -= 0.3; }   /* 사람이 화면 가운데쯤, 난간 너머 협곡은 그대로 보이게 */   /* 주상절리: 난간 너머 협곡 아래를 내려다본다 */ if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
   camera.position.lerp(camPos, 1 - Math.exp(-dt*3));
   const lookAt = camera.userData.look || (camera.userData.look = camLook.clone()); lookAt.lerp(camLook, 1 - Math.exp(-dt*3)); camera.lookAt(lookAt);
 
