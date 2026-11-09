@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-09-161';
+window.__BUILD = '2026-11-09-162';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2719,6 +2719,7 @@ function frame(){
     if(state.started && !state.resting) state.time += dt;
     if(keys.left){ state.laneTarget = Math.max(LANE_MIN, state.laneTarget - 3.5*dt); state.laneHome = state.laneTarget; state.dodging = false; }
     if(keys.right){ state.laneTarget = Math.min(LANE_MAX, state.laneTarget + 3.5*dt); state.laneHome = state.laneTarget; state.dodging = false; }
+    if(SCENE_ID==='ulsan' && bridgeY(state.x + 4) > 0.2){ state.laneTarget = THREE.MathUtils.clamp(state.laneTarget, 2.3, 4.5); state.laneHome = THREE.MathUtils.clamp(state.laneHome ?? state.laneTarget, 2.3, 4.5); }   /* 대왕암 다리 위(와 진입 직전)에선 난간 안쪽으로만 */
     state.lane = THREE.MathUtils.damp(state.lane, state.laneTarget, 3, dt);
     const dx = state.speed*dt; state.x += dx; state.dist += dx;
     runner.position.set(state.x, 0, state.lane);
@@ -2753,6 +2754,7 @@ function frame(){
       }
       // 친구도 통나무·바위를 옆으로 비껴간다
       if(!state.resting && !(kind==='cat' && cat.mode==='wander')){ let dz0 = 0; for(const p of props){ if((p.kind==='wood' && SC.ground==='sand') || p.kind==='rock'){ const dxo = p.obj.position.x - buddyState.x; if(dxo > -1.2 && dxo < 5){ const dz = tz - p.obj.position.z; const half = p.half || (p.kind==='wood' ? 1.7 : 1.1); if(Math.abs(dz) < half + 0.4){ const need = (half + 0.5 - Math.abs(dz)) * (dz >= 0 ? 1 : -1); if(Math.abs(need) > Math.abs(dz0)) dz0 = need; } } } } tz = THREE.MathUtils.clamp(tz + dz0, LANE_MIN + 0.4, LANE_MAX); }
+      if(SCENE_ID==='ulsan' && bridgeY(buddyState.x + 3) > 0.2) tz = THREE.MathUtils.clamp(tz, 2.2, 4.6);   /* 친구도 다리 난간 안쪽 */
       buddyState.x = THREE.MathUtils.damp(buddyState.x, tx, 2.5, dt); buddyState.z = THREE.MathUtils.damp(buddyState.z, tz, kind==='cat' && cat.mode==='wander' ? 1.2 : 3.5, dt);
       const bvel = Math.hypot(buddyState.x - buddyState.px, buddyState.z - buddyState.pz)/Math.max(dt, 1e-4); buddyState.px = buddyState.x; buddyState.pz = buddyState.z;
       const dv = bvel; buddyState.phase += (bvel/(0.55 + 0.45*THREE.MathUtils.clamp(bvel/RUN,0,1)))*Math.PI*2*dt;
