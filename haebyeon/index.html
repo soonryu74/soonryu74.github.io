@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-09-160';
+window.__BUILD = '2026-11-09-161';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -838,13 +838,21 @@ function stamp(x, z, side){ const m = foots[footIdx]; footIdx = (footIdx+1)%FOOT
 /* ---------- 모래에 쓴 글 ---------- */
 const sandNotes = [];
 function writeOnSand(text){ let done = false; const go = ()=>{ if(done) return; done = true; writeOnSandNow(text); }; if(document.fonts && document.fonts.load){ document.fonts.load('150px "Nanum Brush Script"', text).then(go, go); setTimeout(go, 2500); } else go(); }   // 구글폰트는 글자 범위별로 쪼개져 오므로, 쓸 글자를 넘겨서 해당 조각까지 받은 뒤 그린다
-function writeOnSandNow(text){
+function drawNoteCanvas(text, night){
+  // 낮: 모래엔 갈색, 돌·잔디엔 흰 분필, 눈엔 진한 그늘색. 밤: 바닥이 어두워지니 모래·눈에서도 밝은 크림색 + 어두운 테두리로 (안 보이던 문제)
   const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const g = c.getContext('2d');
-  if(SNOWFIELD){ g.shadowColor = 'rgba(255,255,255,0.8)'; g.shadowBlur = 6; g.fillStyle = 'rgba(58,70,84,0.95)'; } /* 눈 위: 눌린 그늘색 진한 글씨 */ else if(SC.ground!=='sand'){ g.shadowColor = 'rgba(40,30,20,0.55)'; g.shadowBlur = 10; g.fillStyle = 'rgba(255,250,236,0.96)'; } else g.fillStyle = 'rgba(104,80,52,0.95)';   /* 한강: 트랙 위 분필 느낌 */ g.font = '400 150px "Nanum Brush Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
-  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  if(night){ g.shadowColor = 'rgba(0,0,0,0.7)'; g.shadowBlur = 12; g.fillStyle = 'rgba(255,244,214,0.97)'; }
+  else if(SNOWFIELD){ g.shadowColor = 'rgba(255,255,255,0.8)'; g.shadowBlur = 6; g.fillStyle = 'rgba(58,70,84,0.95)'; }
+  else if(SC.ground!=='sand'){ g.shadowColor = 'rgba(40,30,20,0.55)'; g.shadowBlur = 10; g.fillStyle = 'rgba(255,250,236,0.96)'; }
+  else g.fillStyle = 'rgba(104,80,52,0.95)';
+  g.font = '400 150px "Nanum Brush Script","Apple SD Gothic Neo","Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 512, 134);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; return tex;
+}
+function writeOnSandNow(text){
+  const tex = drawNoteCanvas(text, nightMix > 0.5), texDay = nightMix > 0.5 ? null : tex, texNight = nightMix > 0.5 ? tex : null;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0.95, depthWrite:false}));
   const nz = SC.ground==='grass' ? state.lane - 2.3 : (SCENE_ID==='gung' ? state.lane - 1.2 : ((SC.ground==='deck' || SC.ground==='stonepath') ? THREE.MathUtils.clamp(state.lane - 2.8, 1.5, 6.0) : state.lane - 2.8));   // 돌담길만 언덕 위라 바로 앞, 나머지는 머리에 안 가리게 2.8 m 앞   // 한강: 차선(z 4.0)에 걸치지 않는 트랙 바깥쪽   // 앉은 사람 앞 바닥 (해변: 밀물이 올라오면 지워짐 / 한강: 바람이 지움)   // 해변: 물가 가까이 → 다음 밀물에 지워진다 / 한강: 바로 앞 잔디, 바람이 지운다
-  m.userData.age = 0; m.position.set(state.x, (SC.ground!=='sand' ? 0.06 : 0.03) + groundY(nz), nz); m.rotation.y = 0; /* 앉은 사람(등 뒤 카메라)에서 바로 읽힘 */ m.renderOrder = 1; scene.add(m); sandNotes.push(m);
+  m.userData.age = 0; m.userData.text = text; m.userData.texDay = texDay; m.userData.texNight = texNight; m.userData.isNight = nightMix > 0.5; m.position.set(state.x, (SC.ground!=='sand' ? 0.06 : 0.03) + groundY(nz), nz); m.rotation.y = 0; /* 앉은 사람(등 뒤 카메라)에서 바로 읽힘 */ m.renderOrder = 1; scene.add(m); sandNotes.push(m);
   state.noteCam = m; state.noteCamT = performance.now();   // 글을 쓰면 잠시 글씨가 잘 보이는 앵글로
 }
 
@@ -2851,7 +2859,7 @@ function frame(){
     updateOthers(dt, t); netTick(); updateSplash(dt); logFlush(false);
 
     for(const f of foots){ if(!f.visible) continue; const washed = f.position.z < tide + 0.9; f.material.opacity -= dt*(washed ? 0.5 : 0.012); if(f.material.opacity <= 0) f.visible = false; }
-    for(let i=sandNotes.length-1;i>=0;i--){ const n = sandNotes[i]; n.userData.age += dt; const wind = SC.ground!=='sand' && n.userData.age > 18; const washed = (SC.ground==='sand' && n.position.z < tide + 1.2) || wind; if(washed && !n.userData.washing){ n.userData.washing = true; splash(n.position.x, n.position.z, 0.6); say(wind ? '바람이 글씨를 살살 지워 가요' : '파도가 글씨를 지워 가요', 2600); } n.material.opacity -= dt*(washed ? (wind ? 0.12 : 0.35) : 0.012); if(n.material.opacity <= 0 || n.position.x < state.x - 40){ scene.remove(n); n.material.map.dispose(); n.geometry.dispose(); sandNotes.splice(i,1); } }
+    for(let i=sandNotes.length-1;i>=0;i--){ const n = sandNotes[i]; n.userData.age += dt; { const wantNight = nightMix > 0.5; if(wantNight !== n.userData.isNight){ n.userData.isNight = wantNight; if(wantNight && !n.userData.texNight) n.userData.texNight = drawNoteCanvas(n.userData.text, true); if(!wantNight && !n.userData.texDay) n.userData.texDay = drawNoteCanvas(n.userData.text, false); n.material.map = wantNight ? n.userData.texNight : n.userData.texDay; n.material.needsUpdate = true; } }   /* 해가 지면 밝은 글씨로 바꿔 그린다 */ const wind = SC.ground!=='sand' && n.userData.age > 18; const washed = (SC.ground==='sand' && n.position.z < tide + 1.2) || wind; if(washed && !n.userData.washing){ n.userData.washing = true; splash(n.position.x, n.position.z, 0.6); say(wind ? '바람이 글씨를 살살 지워 가요' : '파도가 글씨를 지워 가요', 2600); } n.material.opacity -= dt*(washed ? (wind ? 0.12 : 0.35) : 0.012); if(n.material.opacity <= 0 || n.position.x < state.x - 40){ scene.remove(n); n.material.map.dispose(); n.geometry.dispose(); sandNotes.splice(i,1); } }
 
     if(state.pendingNote && state.resting && state.pose==='sit' && !state.pendingPose){ state.noteWait = (state.noteWait || 0) + dt; if(state.noteWait > 0.5){ writeOnSand(state.pendingNote); state.pendingNote = null; state.noteWait = 0; } }
     if(state.todMode==='auto'){ const clock = 0.12 + (SC.todOffset||0) + ((Date.now() - state.todStart)/1000)/1200;   // 이른 아침에서 시작, 20분에 하루. 같은 장소의 먼저 온 사람 시계에 맞춘다
