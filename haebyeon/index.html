@@ -415,7 +415,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-08-147';
+window.__BUILD = '2026-11-09-148';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2277,6 +2277,16 @@ function step(wetness, running){
   const ctx = audio.ctx; if(!ctx || !audio.on) return; const t = ctx.currentTime;
   const grass = SC.ground==='grass' || SC.ground==='olle' || ['jeju','pine','bamboo'].includes(SCENE_ID); const stone = (GUNG && !['jeju','pine','bamboo'].includes(SCENE_ID)) || SC.ground==='stonepath'; const deck = (SC.ground==='deck' && !SNOW) || (SCENE_ID==='ulsan' && bridgeY(state.x) > 0.5); const snow = SNOW;
   // 모래: 사삭 — 낮은 대역의 부드러운 소음이 눌렸다가 스르르 빠진다. 젖은 모래는 더 둔탁하고 짧게, 잔디는 더 부드럽고 바스락
+  if(SCENE_ID==='forest'){   // 낙엽 밟기: 마른 잎이 바삭 부서지는 밝은 크래클(2~7 kHz) 수백 개가 발을 디딜 때 와르르, 떼면 잎이 쓸리는 짧은 바스락, 아래는 푹신한 둔탁음
+    const v0 = running ? 0.5 : 0.34; const sr = ctx.sampleRate, dur = 0.3, N = Math.floor(sr*dur); const buf = ctx.createBuffer(1, N, sr); const d = buf.getChannelData(0);
+    for(let k=0;k<260;k++){ const press = k < 170; const ph = press ? Math.pow(Math.random(), 1.6)*0.13 : 0.16 + Math.random()*0.12; const st = Math.floor(ph*sr); const len = Math.floor((0.0012 + Math.random()*0.006)*sr); const amp = (0.3 + Math.random()*0.7)*(press ? 1 : 0.55); const f = 2200 + Math.random()*4500; const w = 2*Math.PI*f/sr; for(let i=0;i<len && st+i<N;i++){ d[st+i] += (Math.random()*2 - 1)*amp*Math.exp(-i/len*3)*(0.5 + 0.5*Math.cos(w*i)); } }   // 잎마다 다른 높이의 짧은 바삭
+    let mx = 0; for(let i=0;i<N;i++) mx = Math.max(mx, Math.abs(d[i])); if(mx > 0){ const k = 0.9/mx; for(let i=0;i<N;i++) d[i] *= k; }
+    const src = ctx.createBufferSource(); src.buffer = buf; const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1400; hp.Q.value = 0.5; const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 9000; lp.Q.value = 0.4;
+    const g = ctx.createGain(); g.gain.setValueAtTime(v0, t); g.gain.setValueAtTime(v0, t + 0.14); g.gain.linearRampToValueAtTime(v0*0.6, t + 0.22); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32); src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(audio.stepGain); src.start(t); src.stop(t + 0.34);
+    const sw = ctx.createBufferSource(); sw.buffer = noiseBuffer(ctx, 0.2, false); const sb = ctx.createBiquadFilter(); sb.type = 'bandpass'; sb.frequency.value = 3800; sb.Q.value = 0.6; const sg = ctx.createGain(); sg.gain.setValueAtTime(0.0001, t + 0.15); sg.gain.exponentialRampToValueAtTime(v0*0.25, t + 0.19); sg.gain.exponentialRampToValueAtTime(0.0001, t + 0.3); sw.connect(sb); sb.connect(sg); sg.connect(audio.stepGain); sw.start(t + 0.15); sw.stop(t + 0.32);   // 발 뗄 때 잎이 쓸리는 소리
+    const th = ctx.createBufferSource(); th.buffer = noiseBuffer(ctx, 0.12, true); const tl = ctx.createBiquadFilter(); tl.type = 'lowpass'; tl.frequency.value = 240; const tg = ctx.createGain(); tg.gain.setValueAtTime(0.0001, t); tg.gain.exponentialRampToValueAtTime(v0*0.55, t + 0.012); tg.gain.exponentialRampToValueAtTime(0.0001, t + 0.09); th.connect(tl); tl.connect(tg); tg.connect(audio.stepGain); th.start(t); th.stop(t + 0.12);   // 푹신한 낙엽 둔덕
+    return;
+  }
   if(snow){   // 뽀드득: 눈 알갱이 수백 개가 짓눌려 부서지는 촘촘한 자글자글(1~3 kHz, 공명 없음) + 눌리는 둔탁한 몸통. 발꿈치(앞 0.11초) → 발끝(0.15~0.26초)
     const v0 = running ? 0.5 : 0.36; const sr = ctx.sampleRate, dur = 0.28, N = Math.floor(sr*dur); const buf = ctx.createBuffer(1, N, sr); const d = buf.getChannelData(0);
     for(let k=0;k<220;k++){ const heel = k < 130; const ph = heel ? Math.pow(Math.random(), 0.8)*0.11 : 0.15 + Math.random()*0.11; const st = Math.floor(ph*sr); const len = Math.floor((0.004 + Math.random()*0.012)*sr); const amp = (0.25 + Math.random()*0.5)*(heel ? 1 : 0.8); const f = 900 + Math.random()*2200; const w = 2*Math.PI*f/sr; let lp = 0; for(let i=0;i<len && st+i<N;i++){ const n = Math.random()*2 - 1; lp += 0.35*(n - lp); d[st+i] += lp*amp*Math.exp(-i/len*2.5)*(0.6 + 0.4*Math.cos(w*i)); } }   // 알갱이마다 다른 굵기의 짧은 바스락
