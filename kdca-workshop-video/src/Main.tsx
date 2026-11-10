@@ -178,14 +178,14 @@ const YearScene: React.FC<{ item: YearItem; act: Act; dur: number }> = ({ item, 
   return (
     <AbsoluteFill>
       {/* 좌: 그 세상 */}
-      <div style={{ position: "absolute", left: 90, top: 330, width: 810, display: "flex", flexDirection: "column", gap: 28 }}>
+      <div style={{ position: "absolute", left: 90, top: 300, width: 810, display: "flex", flexDirection: "column", gap: 28 }}>
         {item.world.map((w, i) => (
           <WorldCard key={i} text={w} i={i} dur={dur} lead={i === 0} />
         ))}
       </div>
 
       {/* 우: 그리고 우리 */}
-      <div style={{ position: "absolute", left: 1030, top: 318, width: 810, opacity: out, transform: `translateX(${(1 - out) * 60}px)` }}>
+      <div style={{ position: "absolute", left: 1030, top: 286, width: 810, opacity: out, transform: `translateX(${(1 - out) * 60}px)` }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 14, opacity: useIn(start - 6), marginBottom: 22 }}>
           <div style={{ width: 14, height: 14, borderRadius: 99, background: act.color, boxShadow: `0 0 20px ${act.color}` }} />
           <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 30, color: act.color, letterSpacing: 2 }}>{org}</div>
@@ -204,7 +204,7 @@ const YearScene: React.FC<{ item: YearItem; act: Act; dur: number }> = ({ item, 
         </Rise>
 
         {item.stat ? (
-          <div style={{ marginTop: 34, display: "flex", alignItems: "baseline", gap: 18, opacity: interpolate(frame, [start + 40, start + 55], [0, 1], clamp) }}>
+          <div style={{ marginTop: 24, display: "flex", alignItems: "baseline", gap: 18, opacity: interpolate(frame, [start + 40, start + 55], [0, 1], clamp) }}>
             <div style={{ fontFamily: FONT, fontWeight: 900, fontSize: 150, lineHeight: 1, color: act.color, letterSpacing: -6, fontVariantNumeric: "tabular-nums", textShadow: `0 0 60px ${act.color}88` }}>
               {Math.round(interpolate(frame, [start + 40, start + 100], [item.stat.from ?? 0, item.stat.value], { ...clamp, easing: ease }))}
               <span style={{ fontSize: 64, letterSpacing: -2 }}>{item.stat.unit}</span>
@@ -214,7 +214,7 @@ const YearScene: React.FC<{ item: YearItem; act: Act; dur: number }> = ({ item, 
         ) : null}
 
         {ex && frame >= ex.at ? (
-          <div style={{ marginTop: 44, position: "relative", display: "inline-block" }}>
+          <div style={{ marginTop: 30, position: "relative", display: "inline-block" }}>
             <div style={{ position: "absolute", inset: -8, border: `3px solid ${act.color}`, borderRadius: 16, transform: `scale(${1 + ring * 0.22})`, opacity: 1 - ring }} />
             <div style={{ transform: `scale(${0.6 + exP * 0.4})`, transformOrigin: "left center", opacity: Math.min(1, exP * 2), background: `linear-gradient(135deg, ${act.color}, ${act.color}aa)`, padding: "22px 36px 24px", borderRadius: 12, boxShadow: `0 18px 70px ${act.color}66` }}>
               <div style={{ fontFamily: FONT, fontWeight: 900, fontSize: 68, color: "#04101f", letterSpacing: -2, lineHeight: 1.1 }}>{ex.big}</div>
@@ -342,12 +342,12 @@ const Outro: React.FC = () => {
   const cnt = Math.round(interpolate(frame, [20, 150], [0, 20], { ...clamp, easing: ease }));
   // 2) 방패 + 핵심 메시지
   const sh = interpolate(frame, [215, 300], [0, 1], { ...clamp, easing: ease });
-  const glow = interpolate(frame, [N5_AT + 200, N5_AT + 250], [0, 1], clamp);
+  const glow = interpolate(frame, [N5_AT + 165, N5_AT + 215], [0, 1], clamp);
   const msgO = interpolate(frame, [215, 235, 555, 580], [0, 1, 1, 0], clamp);
   const beats: [number, string, boolean][] = [
     [N5_AT + 4, "세상이 바뀌고, 숱한 위기가 찾아올 때", false],
-    [N5_AT + 140, "질병관리청은 언제나", false],
-    [N5_AT + 204, "국민의 가장 가까운 방패였습니다", true],
+    [N5_AT + 109, "질병관리청은 언제나", false],
+    [N5_AT + 169, "국민의 가장 가까운 방패였습니다", true],
   ];
   // 3) 당신이 있었습니다
   const youO = interpolate(frame, [585, 605, 760, 782], [0, 1, 1, 0], clamp);
