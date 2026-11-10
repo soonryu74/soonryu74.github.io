@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-183';
+window.__BUILD = '2026-11-10-184';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -963,7 +963,7 @@ function buildRunner(mats){
 // 걷기·달리기 폼. ph: 보폭 위상, amp: 0 걷기 … 1 전력. 네 팔다리가 같은 규칙: 같은 쪽 팔과 다리는 반대로, 왼쪽·오른쪽은 반 바퀴 차이
 function animateGait(P, ph, amp, g){
   const run = THREE.MathUtils.smoothstep(amp, 0.25, 0.75);            // 0 걷기 → 1 달리기
-  const thighA = 0.42 + 0.6*run, kneeK = 0.35 + 1.25*run, shoulderA = 0.32 + 0.55*run, elbow = 0.35 + 1.15*run;
+  const thighA = 0.42 + 0.6*run, kneeK = 0.35 + 1.25*run, shoulderA = 0.32 + 0.5*run, elbow = 0.3 + 0.65*run;
   const legs = [[P.legL, ph + Math.PI], [P.legR, ph]];
   for(const [leg, f] of legs){
     leg.rotation.z = thighA*Math.sin(f) - 0.08*run;                                        // 허벅지: 앞(+) 뒤(-)
@@ -973,7 +973,7 @@ function animateGait(P, ph, amp, g){
   const arms = [[P.armL, ph], [P.armR, ph + Math.PI]];                                      // 같은 쪽 다리와 반대 위상
   for(const [arm, f] of arms){
     arm.rotation.z = shoulderA*Math.sin(f) - 0.25*run;                                     // 어깨: 달릴 땐 전체적으로 조금 앞으로
-    arm.userData.lower.rotation.z = elbow + 0.25*run*Math.max(0, Math.sin(f));             // 팔꿈치: 걸을 땐 살짝, 달릴 땐 90도 가까이
+    arm.userData.lower.rotation.z = elbow + 0.55*run*Math.max(0, Math.sin(f));             // 팔꿈치: 앞으로 나갈 때 90도쯤 접혀 손이 가슴 높이, 뒤로 갈 땐 덜 접혀 손이 엉덩이 뒤 (팔이 어깨 위로 접히지 않게)
   }
   P.armL.rotation.x = -0.18; P.armR.rotation.x = 0.18;
   // 실제 달리기처럼 몸통도 움직인다 (상체 전경 + 어깨·골반 역회전 + 좌우 흔들림 + 짧은 체공)
