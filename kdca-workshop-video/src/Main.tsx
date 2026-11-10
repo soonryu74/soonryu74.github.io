@@ -254,7 +254,7 @@ const YearScene: React.FC<{ item: YearItem; act: Act; dur: number }> = ({ item, 
           <div style={{ position: "absolute", inset: 0, background: `linear-gradient(100deg, transparent ${sweep - 14}%, rgba(255,255,255,0.35) ${sweep}%, transparent ${sweep + 14}%)`, mixBlendMode: "overlay", pointerEvents: "none" }} />
         </div>
         <div style={{ height: 5, width: interpolate(frame, [start + 16, start + 46], [0, 150], { ...clamp, easing: ease }), background: act.color, margin: "26px 0 24px", borderRadius: 4 }} />
-        <Rise delay={start + 22} style={{ fontFamily: FONT, fontWeight: 500, fontSize: 36, color: C.dim, letterSpacing: -0.8, lineHeight: 1.35 }}>
+        <Rise delay={start + 22} style={{ fontFamily: FONT, fontWeight: 500, fontSize: 36, color: C.dim, letterSpacing: -0.8, lineHeight: 1.35, wordBreak: "keep-all" }}>
           {item.sub}
         </Rise>
 
