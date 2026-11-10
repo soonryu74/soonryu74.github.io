@@ -26,3 +26,5 @@ exclude:
   - movesafe/playwright-report
   # 국민 곁에 ON: Streamlit 앱이라 Jekyll 사이트에서는 제외(Streamlit Cloud에서 별도 실행)
   - gov-care-on
+  # 하트가드: 소스·의존성은 배포하지 않는다(빌드 결과 heartguard/index.html, assets/만 제공)
+  - heartguard/app
