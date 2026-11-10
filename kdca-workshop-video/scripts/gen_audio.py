@@ -25,7 +25,7 @@ def save_part(resp, name):
             return
         elif "text" in p: print(name, "text:", p["text"][:200])
 
-NARR = {c["id"]: c["ko"].replace("|", " ") for c in json.load(open(os.path.join(os.path.dirname(__file__), "..", "src", "narration.json")))}
+NARR = {c["id"]: c.get("tts", c["ko"]).replace("|", " ") for c in json.load(open(os.path.join(os.path.dirname(__file__), "..", "src", "narration.json")))}
 VOICE = os.environ.get("VOICE", "Charon")
 MUSIC = {
  "m1_news": "Instrumental only, no vocals. Fast-tempo broadcast news opening theme, 128 bpm, urgent staccato strings, bold brass stabs, timpani hits, ticking percussion, confident and trustworthy, ends on a strong final hit.",

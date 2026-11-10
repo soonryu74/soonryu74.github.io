@@ -260,8 +260,8 @@ const YearScene: React.FC<{ item: YearItem; act: Act; dur: number }> = ({ item, 
 
         {item.stat ? (
           <div style={{ marginTop: 24, display: "flex", alignItems: "baseline", gap: 18, opacity: interpolate(frame, [start + 40, start + 55], [0, 1], clamp) }}>
-            <div style={{ fontFamily: FONT, fontWeight: 900, fontSize: 150, lineHeight: 1, color: act.color, letterSpacing: -6, fontVariantNumeric: "tabular-nums", textShadow: `0 0 60px ${act.color}88` }}>
-              {Math.round(interpolate(frame, [start + 40, start + 100], [item.stat.from ?? 0, item.stat.value], { ...clamp, easing: ease }))}
+            <div style={{ fontFamily: FONT, fontWeight: 900, fontSize: 150, lineHeight: 1, color: act.color, letterSpacing: -6, fontVariantNumeric: "tabular-nums", textShadow: `0 0 60px ${act.color}88` , transform: `scale(${0.7 + 0.3 * spring({ frame: frame - start - 40, fps, config: { damping: 12, stiffness: 140 } })})`, transformOrigin: "left bottom" }}>
+              {item.stat.value}
               <span style={{ fontSize: 64, letterSpacing: -2 }}>{item.stat.unit}</span>
             </div>
             <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 34, color: C.ink, letterSpacing: -0.8 }}>{item.stat.label}</div>
