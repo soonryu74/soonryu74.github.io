@@ -419,7 +419,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-176';
+window.__BUILD = '2026-11-10-178';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -963,15 +963,23 @@ function animateGait(P, ph, amp, g){
     arm.userData.lower.rotation.z = elbow + 0.25*run*Math.max(0, Math.sin(f));             // 팔꿈치: 걸을 땐 살짝, 달릴 땐 90도 가까이
   }
   P.armL.rotation.x = -0.18; P.armR.rotation.x = 0.18;
-  // 몸: 달릴 땐 두 발이 뜨는 순간이 한 바퀴에 두 번 → 통통. 걸을 땐 거의 안 뜸
-  g.rotation.z = -0.1*run;
+  // 실제 달리기처럼 몸통도 움직인다 (상체 전경 + 어깨·골반 역회전 + 좌우 흔들림 + 짧은 체공)
+  const sp = Math.sin(ph);                                                                  // +: 오른다리 앞·왼팔 앞
+  g.rotation.z = -(0.06 + 0.08*run);                                                        // 앞으로 기울기: 달릴수록 더
+  g.rotation.x = 0.035*sp*run;                                                              // 디딘 다리 쪽으로 살짝 기우는 좌우 흔들림
+  if(P.torso){ P.torso.rotation.y = -0.16*sp*run; }                                        // 어깨: 앞으로 나간 팔 쪽이 앞으로
+  if(P.hips){ P.hips.rotation.y = 0.12*sp*run; }                                           // 골반: 앞으로 나간 다리 쪽이 앞으로 (어깨와 반대)
+  P.armL.position.x = 0.06*sp*run; P.armR.position.x = -0.06*sp*run;                       // 어깨 비틀림을 팔 뿌리 위치로 보이게
+  P.legL.position.x = -0.03*sp*run; P.legR.position.x = 0.03*sp*run;                       // 골반 비틀림
+  if(P.headGroup){ P.headGroup.rotation.y = 0.08*sp*run; if(P.head) P.head.rotation.y = P.headGroup.rotation.y; }   // 머리는 시선을 지키려 반대로 조금
   // 발바닥은 항상 땅과 평행 (무릎·허벅지 각을 상쇄)
   for(const leg of [P.legL, P.legR]){ const sh = leg.userData.shoe; if(sh) sh.rotation.z = Math.PI/2 - (leg.rotation.z + leg.userData.lower.rotation.z); }
-  groundFeet(P, g, 0);   // 두 발 중 하나는 항상 땅. 몸 높이는 다리 기하에서만 나온다 (뜀 없음)                                                                 // 앞으로 살짝 기울기
-  if(P.torso){ P.torso.scale.set(1,1,1); }
-  if(P.headGroup){ P.headGroup.rotation.z = 0.08*run + Math.sin(ph*2 + 0.9)*0.04*run; P.headGroup.rotation.x = Math.sin(ph)*0.05*run; if(P.head){ P.head.rotation.z = P.headGroup.rotation.z; P.head.rotation.x = P.headGroup.rotation.x; } }
+  const flight = Math.max(0, -Math.cos(2*ph));                                              // 다리가 벌어질 때(발 떼고 다음 발 딛기 전) 잠깐 뜬다, 교차할 때 가장 낮다
+  groundFeet(P, g, 0.05*run*flight);
+  if(P.torso){ const squash = 1 - 0.025*run*Math.max(0, Math.cos(2*ph)); P.torso.scale.set(1, squash, 1); }   // 딛는 순간 상체가 살짝 눌린다
+  if(P.headGroup){ P.headGroup.rotation.z = 0.06*run + Math.sin(ph*2 + 0.9)*0.03*run; P.headGroup.rotation.x = Math.sin(ph)*0.03*run; if(P.head){ P.head.rotation.z = P.headGroup.rotation.z; P.head.rotation.x = P.headGroup.rotation.x; } }
 }
-function resetGait(P, dt){ const D = (o,k,v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 6, dt); }; for(const l of [P.legL,P.legR,P.armL,P.armR]) D(l.userData.lower,'z',0); if(P.torso) P.torso.scale.set(1,1,1); }
+function resetGait(P, dt){ const D = (o,k,v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 6, dt); }; for(const l of [P.legL,P.legR,P.armL,P.armR]){ D(l.userData.lower,'z',0); l.position.x = THREE.MathUtils.damp(l.position.x, 0, 6, dt); } if(P.torso) D(P.torso,'y',0); if(P.hips) D(P.hips,'y',0); D(P.group || {rotation:{x:0}}, 'x', 0); if(P.torso) P.torso.scale.set(1,1,1); }
 // 발 접지: 자세를 잡은 뒤 가장 낮은 신발 바닥이 정확히 땅(+공중 높이)에 오도록 몸 전체를 올리고 내린다
 const _fw = new THREE.Vector3(); const _moonDir = new THREE.Vector3();
 // 보이는 부분 중 가장 낮은 점(월드 y). 앉기·눕기처럼 발이 아닌 곳이 땅에 닿는 자세에 쓴다
@@ -1112,7 +1120,7 @@ function updatePushed(t, dt){
     const ahead = 1.2; let tx = state.x + ahead, tz = state.lane + 0.22, rot = 0;   /* 살짝 오른쪽: 뒤에서 봐도 유모차·휠체어가 몸 옆으로 보인다 */
     if(resting){ tx = state.x + 0.3; tz = state.lane - 1.25; rot = Math.PI/2; }
     pushState.x = tx; pushState.z = THREE.MathUtils.damp(pushState.z || tz, tz, 8, dt);   /* 손잡이는 손에 붙어 있어야 하므로 앞뒤 지연 없음 */ pushState.rot = THREE.MathUtils.damp(pushState.rot, rot, 4, dt);
-    const gy = groundY(pushState.z, pushState.x); veh.position.set(pushState.x, gy, pushState.z); veh.rotation.y = pushState.rot;
+    const gy = groundY(pushState.z, pushState.x); veh.position.set(pushState.x, gy + 0.04, pushState.z); veh.rotation.y = pushState.rot;
     const roll = resting ? 0 : state.speed*dt/0.17; const U = veh.userData; for(const w of U.wheels){ if(w.geometry.type==='TorusGeometry' || w.geometry.type==='CylinderGeometry') w.rotation.z -= roll; }
     if(U.kind==='stroller'){
       const k = U.kid; if(st === 1){ k.rotation.x = 0; k.rotation.z = 1.2; k.position.set(0.12, 0.6, 0); U.kArm.rotation.z = -0.4; U.blanket.visible = true; }   // 신생아: 누워 잠
@@ -1178,11 +1186,11 @@ function makeWheelchair(){
   const armR = new THREE.Group(); armR.position.set(-0.02, 0.95, 0.24); const armRm = new THREE.Mesh(new THREE.CapsuleGeometry(0.05, 0.22, 4, 8), cardigan); armRm.position.y = 0.15; armR.add(armRm); const hand = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), skin); hand.position.y = 0.32; armR.add(hand); armR.rotation.z = 1.6; mom.add(armR);
   g.userData = {kind:'wheelchair', wheels, mom, head, armR, wave:0, nextWave:6}; return g;
 }
-const pushed = {stroller:makeStroller(), wheelchair:makeWheelchair()}; Object.values(pushed).forEach(o=>{ o.visible = false; scene.add(o); });
+const pushed = {stroller:makeStroller(), wheelchair:makeWheelchair()}; Object.values(pushed).forEach(o=>{ o.visible = false; o.traverse(c=>{ if(c.isMesh) c.castShadow = true; }); scene.add(o); });
 const pushState = {x:0, z:0, y:0, rot:0, kidX:0, kidZ:0, stage:0, nextMom:0};
 // 단계 4·5: 유모차 대신 작은 러너(아이)가 옆에서 같이 달린다
 const kidParts = buildRunner({hair:new THREE.MeshStandardMaterial({color:0x4a3b38, roughness:0.95}), shirt:new THREE.MeshStandardMaterial({color:0xfff1a8, roughness:0.95}), accent:new THREE.MeshStandardMaterial({color:0xff9b8a, roughness:0.9, emissive:0xff9b8a, emissiveIntensity:0}), shorts:new THREE.MeshStandardMaterial({color:0x8fd3f4, roughness:0.95})});
-kidParts.group.visible = false; kidParts.hatBeanie.visible = false; kidParts.hatBand.visible = false; kidParts.hatCap.visible = false; kidParts.hatStraw.visible = false; scene.add(kidParts.group); const kidState = {x:-2, z:1.2, px:-2, pz:1.2, phase:0};
+kidParts.group.visible = false; kidParts.group.traverse(c=>{ if(c.isMesh) c.castShadow = true; }); kidParts.hatBeanie.visible = false; kidParts.hatBand.visible = false; kidParts.hatCap.visible = false; kidParts.hatStraw.visible = false; scene.add(kidParts.group); const kidState = {x:-2, z:1.2, px:-2, pz:1.2, phase:0};
 const buddies = {maltese:makeDog(DOGS.maltese), golden:makeDog(DOGS.golden), shiba:makeDog(DOGS.shiba), poodle:makeDog(DOGS.poodle), cat:makeCat(), gull:makeGull(1.1)};
 Object.values(buddies).forEach(b=>{ b.visible = false; scene.add(b); });
 const buddyState = {x:-1.2, z:0.9, y:0, phase:0, px:-1.2, pz:0.9};
@@ -1190,7 +1198,7 @@ const buddyState = {x:-1.2, z:0.9, y:0, phase:0, px:-1.2, pz:0.9};
 const cat = { mode:'follow', target:0, timer:8 + Math.random()*8, sitTimer:0, warned:false };
 const CAT_WANDER = ['고양이가 풀숲 쪽으로 샜어요 · 데리러 가요','고양이가 물가에 관심이 생겼어요','고양이가 유목 냄새를 맡으러 갔어요','고양이가 조개를 구경하러 갔어요'];
 const CAT_BACK = ['고양이를 데려왔어요','다시 같이 가요','고양이가 못 이기는 척 따라와요','야옹, 알았다고요'];
-const BUDDY_NOTES = {maltese:'말티즈 · 옆에서 같이 달려요.', golden:'골든 · 꼬리를 세게 흔들어요.', shiba:'시바 · 꼬리가 말려 있어요.', poodle:'푸들 · 곱슬곱슬.', cat:'페르시안 · 하얀 털 뭉치가 총총 따라와요.', gull:'갈매기 · 머리 위에서 같이 날아요.', stroller:'유모차 아이 · 달린 거리가 쌓일수록 아이가 자라요.', wheelchair:'휠체어 어머니 · 앞에서 밀며 달려요. 가끔 말을 건네요.', none:'오늘은 혼자 조용히.'};
+const BUDDY_NOTES = {maltese:'말티즈 · 옆에서 같이 달려요.', golden:'골든 · 꼬리를 세게 흔들어요.', shiba:'시바 · 꼬리가 말려 있어요.', poodle:'푸들 · 곱슬곱슬.', cat:'페르시안 · 하얀 털 뭉치가 총총 따라와요.', gull:'갈매기 · 머리 위에서 같이 날아요.', stroller:'유모차 아이 · 고르면 달리기가 산책으로 바뀌어요. 걸은 거리가 쌓일수록 아이가 자라요.', wheelchair:'휠체어 어머니 · 고르면 달리기가 산책으로 바뀌어요. 가끔 말을 건네요.', none:'오늘은 혼자 조용히.'};
 
 function applyLook(){
   applyLookTo(me, look); net.lookDirty = true;
@@ -1202,7 +1210,7 @@ function applyLook(){
 }
 const SWATCHES = { hair:['#4a3b38','#7a4b32','#2a2a33','#c99a5a','#e8d2b8','#9a6f8e'], shirt:['#fff6e9','#bfe9e3','#ffd6e0','#e4dcff','#fff1a8','#3a3340'], accent:['#ff9b8a','#5cc3bd','#ffd166','#8fa9ff','#f49ac1','#3a3340'] };
 Object.entries(SWATCHES).forEach(([key, cols])=>{ const box = document.querySelector(`[data-look="${key}"]`); cols.forEach(c=>{ const b = document.createElement('button'); b.type = 'button'; b.className = 'swatch'; b.dataset.v = c; b.style.background = c; b.setAttribute('aria-label', c); b.addEventListener('click', ()=>{ look[key] = c; saveLook(); applyLook(); }); box.appendChild(b); }); });
-document.querySelectorAll('.seg[data-look] button, .chips[data-look] button').forEach(b=>b.addEventListener('click', ()=>{ const key = b.closest('[data-look]').dataset.look; look[key] = b.dataset.v; if(key==='buddy'){ cat.mode = 'follow'; cat.timer = 8 + Math.random()*8; } saveLook(); applyLook(); }));
+document.querySelectorAll('.seg[data-look] button, .chips[data-look] button').forEach(b=>b.addEventListener('click', ()=>{ const key = b.closest('[data-look]').dataset.look; look[key] = b.dataset.v; if(key==='buddy'){ cat.mode = 'follow'; cat.timer = 8 + Math.random()*8; if(b.dataset.v==='stroller' || b.dataset.v==='wheelchair') say('유모차·휠체어를 고르면 달리기가 "산책"으로 바뀝니다 · 천천히 걸어요', 3800); try{ syncRunBtn(); }catch(e){} } saveLook(); applyLook(); }));
 applyLook();
 
 
@@ -2553,7 +2561,7 @@ function bootError(msg){ const b = $('boot'); b.classList.add('is-error'); $('bo
 function fmtTime(s){ s = Math.floor(s); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
 
 const runbtn = $('runbtn');
-function syncRunBtn(){ const on = state.held || state.autoRun; runbtn.classList.toggle('is-held', on); runbtn.textContent = state.autoRun ? '멈추기' : '달리기'; }
+function syncRunBtn(){ const on = state.held || state.autoRun; runbtn.classList.toggle('is-held', on); const strolling = look.buddy==='stroller' || look.buddy==='wheelchair'; runbtn.textContent = state.autoRun ? '멈추기' : (strolling ? '산책' : '달리기'); }
 function hold(v){ if(!state.started || state.ended) return; state.held = v; if(v && state.resting) leaveRest(); syncRunBtn(); }
 function setAutoRun(v){ if(!state.started || state.ended) return; state.autoRun = v; if(v && state.resting) leaveRest(); syncRunBtn(); }
 let runDownAt = 0;
@@ -2873,9 +2881,10 @@ function frame(){
   const tide = tideZ(t); state.tideNow = tide;
   if(!state.ended){
     const heldNow = state.held || state.autoRun;
-    let goal = state.resting ? 0 : heldNow ? RUN*BOTF*state.paceMul : 0;
+    const strolling = look.buddy==='stroller' || look.buddy==='wheelchair';   // 유모차·휠체어는 산책: 걷는 속도로만
+    let goal = state.resting ? 0 : heldNow ? (strolling ? WALK*1.15 : RUN*BOTF*state.paceMul) : 0;
     // 친구와 나란히: 40 m 안에 친구가 있으면 속도를 살짝(±12 %) 맞춰 벌어지지 않게
-    if(goal > 0 && nearFriend && Math.abs(nearFriend.d) < 40 && nearFriend.sp > WALK){ const d = nearFriend.d; if(d > 6) goal *= 1.12; else if(d < -6) goal *= 0.88; else goal = THREE.MathUtils.lerp(goal, nearFriend.sp, 0.5); }
+    if(!strolling && goal > 0 && nearFriend && Math.abs(nearFriend.d) < 40 && nearFriend.sp > WALK){ const d = nearFriend.d; if(d > 6) goal *= 1.12; else if(d < -6) goal *= 0.88; else goal = THREE.MathUtils.lerp(goal, nearFriend.sp, 0.5); }
     if(!heldNow && !state.resting && state.speed > WALK) goal = WALK;
     state.speed = THREE.MathUtils.damp(state.speed, goal, heldNow ? 2.4 : 1.4, dt);
     if(!heldNow && state.speed < WALK*0.98 && state.speed > 0.05) state.speed = THREE.MathUtils.damp(state.speed, 0, 0.9, dt);
