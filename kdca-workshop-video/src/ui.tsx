@@ -1,4 +1,5 @@
 import React from "react";
+import "@fontsource/noto-serif-kr/700.css";
 import { continueRender, delayRender, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 
 export const FONT = "Pretendard, sans-serif";
@@ -25,7 +26,9 @@ if (typeof document !== "undefined") {
       const f = new FontFace("Pretendard", `url(${staticFile(`fonts/Pretendard-${name}.woff2`)})`, { weight });
       return f.load().then((l) => document.fonts.add(l));
     })
-  ).then(() => continueRender(handle));
+  )
+    .then(() => document.fonts.load('700 80px "Noto Serif KR"', "(意論)音心言侖"))
+    .then(() => continueRender(handle));
 }
 
 export const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;

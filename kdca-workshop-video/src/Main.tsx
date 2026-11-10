@@ -21,6 +21,57 @@ const FLASH: [number, string][] = [
 ];
 const FLASH_LEN = 24;
 const TITLE_AT = FLASH.length * FLASH_LEN; // 240
+const CONCEPT_AT = 540;
+
+/** 워크샵 컨셉: 감염병위기관리국 의논(意論)하다 */
+const HANJA = '"Noto Serif KR", serif';
+const Concept: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const rows: [string, [string, string][]][] = [
+    ["意", [["音", "소리 음"], ["心", "마음 심"]]],
+    ["論", [["言", "말씀 언"], ["侖", "둥글 륜"]]],
+  ];
+  const head = spring({ frame: frame - 4, fps, config: { damping: 200 } });
+  return (
+    <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", opacity: interpolate(frame, [0, 14], [0, 1], clamp) }}>
+      <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 34, letterSpacing: 12, color: C.world, opacity: head }}>2026 워크샵</div>
+      <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 60, color: C.ink, letterSpacing: -1.5, marginTop: 18, opacity: head, transform: `translateY(${(1 - head) * 24}px)` }}>감염병위기관리국</div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4, overflow: "hidden", paddingBottom: 14 }}>
+        <div style={{ display: "flex", alignItems: "baseline", transform: `translateY(${(1 - spring({ frame: frame - 14, fps, config: { damping: 200 } })) * 110}%)` }}>
+          <span style={{ fontFamily: FONT, fontWeight: 900, fontSize: 150, color: C.us, letterSpacing: -5 }}>의논</span>
+          <span style={{ fontFamily: HANJA, fontWeight: 700, fontSize: 96, color: C.ink, margin: "0 14px" }}>(意論)</span>
+          <span style={{ fontFamily: FONT, fontWeight: 900, fontSize: 150, color: C.ink, letterSpacing: -5 }}>하다</span>
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 110, marginTop: 34 }}>
+        {rows.map(([whole, parts], r) => {
+          const at = 50 + r * 34;
+          const p = spring({ frame: frame - at, fps, config: { damping: 16, stiffness: 120 } });
+          const merge = spring({ frame: frame - at - 22, fps, config: { damping: 200 } });
+          return (
+            <div key={r} style={{ display: "flex", alignItems: "center", gap: 22, opacity: Math.min(1, p * 2) }}>
+              <div style={{ fontFamily: HANJA, fontWeight: 700, fontSize: 124, color: C.us, lineHeight: 1, transform: `scale(${0.7 + merge * 0.3})`, opacity: merge, textShadow: `0 0 50px ${C.us}88` }}>{whole}</div>
+              <div style={{ fontFamily: FONT, fontWeight: 300, fontSize: 60, color: C.dim, opacity: merge }}>=</div>
+              {parts.map(([h, k], i) => (
+                <React.Fragment key={i}>
+                  {i === 1 ? <div style={{ fontFamily: FONT, fontWeight: 300, fontSize: 56, color: C.dim }}>+</div> : null}
+                  <div style={{ textAlign: "center", transform: `translateY(${(1 - p) * (i === 0 ? -50 : 50)}px)` }}>
+                    <div style={{ fontFamily: HANJA, fontWeight: 700, fontSize: 92, color: C.ink, lineHeight: 1.05 }}>{h}</div>
+                    <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 28, color: C.world, marginTop: 8, letterSpacing: -0.5 }}>{k}</div>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 42, color: C.ink, marginTop: 54, letterSpacing: -1, opacity: interpolate(frame, [128, 152], [0, 1], clamp) }}>
+        마음의 소리를, 둥글게 모여 말하다
+      </div>
+    </AbsoluteFill>
+  );
+};
 
 const Opening: React.FC = () => {
   const frame = useCurrentFrame();
@@ -84,8 +135,12 @@ const Opening: React.FC = () => {
             </div>
           </div>
         </AbsoluteFill>
+      ) : frame >= CONCEPT_AT ? (
+        <Sequence from={CONCEPT_AT}>
+          <Concept />
+        </Sequence>
       ) : (
-        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", opacity: interpolate(frame, [CONCEPT_AT - 14, CONCEPT_AT], [1, 0], clamp) }}>
           <AbsoluteFill style={{ background: "#fff", opacity: interpolate(tf, [0, 14], [0.9, 0], clamp) }} />
           <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, letterSpacing: 18, color: C.world, opacity: interpolate(tf, [10, 30], [0, 1], clamp), marginBottom: 36 }}>
             2007 ~ 2026
@@ -429,6 +484,9 @@ const Outro: React.FC = () => {
           <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 26, color: "rgba(244,247,251,0.45)", marginTop: 22, letterSpacing: 6, opacity: interpolate(ef, [90, 130], [0, 1], clamp) }}>
             KOREA DISEASE CONTROL AND PREVENTION AGENCY
           </div>
+          <div style={{ position: "absolute", bottom: 70, fontFamily: FONT, fontWeight: 500, fontSize: 26, color: "rgba(244,247,251,0.6)", opacity: interpolate(ef, [100, 140], [0, 1], clamp) }}>
+            이 영상은 AI로 제작되었습니다 (영상 · 내레이션 · 음악)
+          </div>
         </AbsoluteFill>
       ) : null}
 
@@ -478,9 +536,12 @@ export const Main: React.FC = () => (
       <Outro />
     </Sequence>
 
+    {/* AI 제작 표기 (상시) */}
+    <div style={{ position: "absolute", top: 16, right: 28, fontFamily: FONT, fontWeight: 500, fontSize: 20, color: "rgba(244,247,251,0.6)", letterSpacing: 0.5 }}>AI로 제작되었습니다</div>
+
     {/* 음악: 뉴스 오프닝 → 메인 비트 → (2015 피아노) → 메인 비트 → 클라이맥스 */}
-    <Music file="m1_news" from={0} dur={OPENING + 10} startSec={0} vol={0.6} fadeIn={2} />
-    <Music file="m2_beat" from={A1} dur={A2 - A1 + 15} startSec={0} vol={0.55} />
+    <Music file="m1_news" from={0} dur={560} startSec={0} vol={0.6} fadeIn={2} />
+    <Music file="m2_beat" from={530} dur={A2 - 530 + 15} fadeIn={40} startSec={0} vol={0.55} />
     <Music file="m3_climax" from={A2} dur={A3 - A2 + 15} startSec={0} vol={0.9} fadeIn={30} />
     <Music file="m2_beat" from={A3} dur={OUTRO_FROM - A3 + 20} startSec={58} vol={0.55} fadeOut={45} />
     <Music file="m3_climax" from={OUTRO_FROM - 10} dur={TOTAL - OUTRO_FROM + 10} startSec={134.5} vol={0.85} fadeIn={30} fadeOut={60} />
