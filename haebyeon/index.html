@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-184';
+window.__BUILD = '2026-11-10-185';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -454,11 +454,11 @@ SCENES.cheorwon = {...SCENES.hangang, todOffset:0.2, ground:'deck', laneMin:1.4,
 SCENES.niagara = {...SCENES.hangang, todOffset:0.15, ground:'stonepath', laneMin:1.6, dryLane:5.4, tideAmp:0, name:'나이아가라', eyebrow:'NIAGARA RUN', title:'나이아가라 폭포길, 잠깐 달려요', shareText:'물안개 속 나이아가라 폭포 옆 데크를 달리는 온라인 트레일', cardTitle:'나이아가라, 잠깐 달렸어요', chan:'niagara', deep:{value:0x1f6a7c}, shallow:0x7fc8c8, waveAmp:0.6, seaVol:1.0, bird:'gull', collect:'물방울', sitMsg:'난간 옆으로 가요 · 폭포가 보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 물안개가 지워 줘요', abroad:true, soundMsg:'폭포 소리가 들려요'};
 SCENES.snow = {...SCENES.hangang, todOffset:0.32, ground:'snowfield', laneMin:0.6, dryLane:6.0, tideAmp:0, name:'철원 눈길', eyebrow:'SNOW RUN', title:'철원 눈 덮인 강길, 잠깐 달려요', shareText:'눈 덮인 한탄강 얼음 위, 발자국 길을 따라 달리는 온라인 겨울길', cardTitle:'눈길, 잠깐 달렸어요', chan:'snow', deep:{value:0x23505c}, shallow:0x5f9aa0, waveAmp:0, seaVol:0, bird:'cricket', collect:'눈송이', snow:true, sitMsg:'눈 위에 앉아요 · 갈대와 겨울 산이 보여요', sandMsg:'눈 위에 한 줄 남겨 보세요 · 눈이 덮어 줘요', amb:'wind', windVol:0.5, rustleVol:0.1, rustleHz:900, soundMsg:'겨울 바람 소리가 들려요'};
 SCENES.jeonju = {...SCENES.gung, todOffset:0.28, name:'한옥마을', eyebrow:'JEONJU RUN', title:'전주 한옥마을, 잠깐 달려요', shareText:'기와지붕 사이 골목을 달리는 온라인 한옥마을', cardTitle:'한옥마을, 잠깐 달렸어요', chan:'jeonju', night:false, dryLane:6.6, bird:'sparrow', collect:'감', sitMsg:'골목 옆 평상 쪽으로 가요', sandMsg:'골목에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.15, rustleVol:0.08, rustleHz:2600, soundMsg:'골목 바람 소리가 들려요'};
-SCENES.jeju = {...SCENES.gung, todOffset:0.3, name:'제주 숲길', eyebrow:'JEJU OLLE', title:'제주 올레 숲길, 잠깐 달려요', shareText:'오래된 나무와 현무암 돌담 사이 올레 숲길을 달리는 온라인 산책', cardTitle:'제주 올레 숲길, 잠깐 달렸어요', chan:'jeju', night:false, dryLane:6.6, bird:'jeju', collect:'동백꽃', sitMsg:'돌담 옆 나무 그늘로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.15, rustleVol:0.12, rustleHz:2600, soundMsg:'숲 바람 소리가 들려요'};
-SCENES.pine = {...SCENES.gung, todOffset:0.1, name:'대관령 소나무길', eyebrow:'PINE RUN', title:'대관령 소나무길, 잠깐 달려요', shareText:'안개 낀 금강소나무 숲길을 달리는 온라인 산책', cardTitle:'소나무길, 잠깐 달렸어요', chan:'pine', night:false, dryLane:6.6, bird:'forest', collect:'솔방울', sitMsg:'소나무 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.25, rustleVol:0.18, rustleHz:1500, soundMsg:'솔바람 소리가 들려요'};
-SCENES.bamboo = {...SCENES.gung, todOffset:0.18, name:'대나무 숲길', eyebrow:'BAMBOO RUN', title:'밤부길 대나무 숲, 잠깐 달려요', shareText:'바람에 사각이는 대나무 숲길을 달리는 온라인 산책', cardTitle:'대나무 숲길, 잠깐 달렸어요', chan:'bamboo', night:false, dryLane:6.6, bird:'forest', collect:'댓잎', sitMsg:'대숲 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.28, rustleVol:0.35, rustleHz:2100, soundMsg:'대나무 사각이는 소리가 들려요'};
-SCENES.forest = {...SCENES.gung, todOffset:0.14, name:'남이섬 숲길', eyebrow:'NAMI RUN', title:'남이섬 은행나무길, 잠깐 달려요', shareText:'노란 은행잎 터널을 달리는 온라인 산책', cardTitle:'남이섬 숲길, 잠깐 달렸어요', chan:'forest', night:false, dryLane:6.6, bird:'forest', collect:'은행잎', sitMsg:'낙엽 쌓인 벤치 쪽으로 가요', sandMsg:'낙엽 위에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.35, rustleVol:0.45, rustleHz:3000, soundMsg:'바람과 낙엽 날리는 소리가 들려요'};
-SCENES.blossom = {...SCENES.forest, todOffset:0.2, name:'하동 벚꽃길', eyebrow:'HADONG RUN', title:'하동 십리벚꽃길, 잠깐 달려요', shareText:'섬진강 옆 벚꽃 터널을 달리는 온라인 봄길', cardTitle:'벚꽃길, 잠깐 달렸어요', chan:'blossom', collect:'꽃잎', sitMsg:'꽃잎 떨어지는 길가 벤치로 가요', sandMsg:'꽃잎 위에 한 줄 남겨 보세요 · 바람이 지워 줘요', windVol:0.25, rustleVol:0.2, rustleHz:3400, soundMsg:'봄바람에 꽃잎 지는 소리가 들려요'};
+SCENES.jeju = {...SCENES.gung, todOffset:0.3, name:'제주 숲길', eyebrow:'JEJU OLLE', title:'제주 올레 숲길, 잠깐 달려요', shareText:'오래된 나무와 현무암 돌담 사이 올레 숲길을 달리는 온라인 산책', cardTitle:'제주 올레 숲길, 잠깐 달렸어요', chan:'jeju', night:false, dryLane:6.6, bird:'jeju', collect:'동백꽃', sitMsg:'돌담 옆 나무 그늘로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.08, rustleVol:0, rustleHz:2600, soundMsg:'숲 바람 소리가 들려요'};
+SCENES.pine = {...SCENES.gung, todOffset:0.1, name:'대관령 소나무길', eyebrow:'PINE RUN', title:'대관령 소나무길, 잠깐 달려요', shareText:'안개 낀 금강소나무 숲길을 달리는 온라인 산책', cardTitle:'소나무길, 잠깐 달렸어요', chan:'pine', night:false, dryLane:6.6, bird:'forest', collect:'솔방울', sitMsg:'소나무 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.08, rustleVol:0, rustleHz:1500, soundMsg:'솔바람 소리가 들려요'};
+SCENES.bamboo = {...SCENES.gung, todOffset:0.18, name:'대나무 숲길', eyebrow:'BAMBOO RUN', title:'밤부길 대나무 숲, 잠깐 달려요', shareText:'바람에 사각이는 대나무 숲길을 달리는 온라인 산책', cardTitle:'대나무 숲길, 잠깐 달렸어요', chan:'bamboo', night:false, dryLane:6.6, bird:'forest', collect:'댓잎', sitMsg:'대숲 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.08, rustleVol:0, rustleHz:2100, soundMsg:'대나무 사각이는 소리가 들려요'};
+SCENES.forest = {...SCENES.gung, todOffset:0.14, name:'남이섬 숲길', eyebrow:'NAMI RUN', title:'남이섬 은행나무길, 잠깐 달려요', shareText:'노란 은행잎 터널을 달리는 온라인 산책', cardTitle:'남이섬 숲길, 잠깐 달렸어요', chan:'forest', night:false, dryLane:6.6, bird:'forest', collect:'은행잎', sitMsg:'낙엽 쌓인 벤치 쪽으로 가요', sandMsg:'낙엽 위에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.08, rustleVol:0, rustleHz:3000, soundMsg:'새소리가 들려요'};
+SCENES.blossom = {...SCENES.forest, todOffset:0.2, name:'하동 벚꽃길', eyebrow:'HADONG RUN', title:'하동 십리벚꽃길, 잠깐 달려요', shareText:'섬진강 옆 벚꽃 터널을 달리는 온라인 봄길', cardTitle:'벚꽃길, 잠깐 달렸어요', chan:'blossom', collect:'꽃잎', sitMsg:'꽃잎 떨어지는 길가 벤치로 가요', sandMsg:'꽃잎 위에 한 줄 남겨 보세요 · 바람이 지워 줘요', windVol:0.08, rustleVol:0, rustleHz:3400, soundMsg:'봄바람에 꽃잎 지는 소리가 들려요'};
 const SC = SCENES[SCENE_ID];
 const CW = SCENE_ID==='cheorwon'; const SNOW = !!SC.snow; const SNOWFIELD = SC.ground==='snowfield';
 const GUNG = FG;
@@ -604,10 +604,11 @@ const seaMat = new THREE.ShaderMaterial({
       float sp1 = noise(vec2(vPos.x*2.6 + time*0.9, vPos.z*2.8 - time*0.7));
       float sp2 = noise(vec2(vPos.x*6.5 - time*1.4, vPos.z*6.0 + time*1.0));
       float sp3 = noise(vec2(vPos.x*13.0 + time*2.1, vPos.z*12.0 - time*1.7));
-      float sparkle = smoothstep(0.62, 0.9, sp1*0.45 + sp2*0.35 + sp3*0.2);
+      float sp4 = noise(vec2(vPos.x*26.0 - time*3.1, vPos.z*24.0 + time*2.6));
+      float sparkle = smoothstep(0.62, 0.9, sp1*0.45 + sp2*0.35 + sp3*0.2) + 0.7*smoothstep(0.78, 0.95, sp3*0.5 + sp4*0.5);   // 큰 반짝임 + 잘게 부서지는 금빛 점 (애니메이션 윤슬)
       float range = smoothstep(4.0, 14.0, dist) * (1.0 - smoothstep(90.0, 320.0, dist));
-      float yunseul = lane * sparkle * range * (0.35 + 0.55*lowSun) * mix(0.25, 1.0, vis);
-      vec3 glint = mix(sunColor, vec3(1.0), 0.6);
+      float yunseul = lane * sparkle * range * (0.35 + 0.95*lowSun) * mix(0.25, 1.0, vis);
+      vec3 glint = mix(mix(sunColor, vec3(1.0, 0.85, 0.55), 0.5*lowSun), vec3(1.0), 0.45);   // 노을엔 금빛
       c += glint * yunseul * (1.1 - night*0.8);
       c += vec3(0.85, 0.92, 1.0) * sparkle * range * night * 0.45;
       float alpha = smoothstep(1.2, -0.8, dEdge);
@@ -952,12 +953,13 @@ function buildRunner(mats){
   [[-0.11],[0.11]].forEach(([z])=>{ const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), inkM); e.position.set(0.3, 0.02, z); e.scale.y = 1.4; headGroup.add(e);
     const bl = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), blushM); bl.position.set(0.3, -0.06, z*1.9); bl.lookAt(1, -0.06, z*4); headGroup.add(bl); });
   const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 12, Math.PI), inkM); mouth.position.set(0.33, -0.09, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headGroup.add(mouth);
-  const armL = limb(0.40, 0.07, skin, 1.02, -0.3), armR = limb(0.40, 0.07, skin, 1.02, 0.3);
+  const armL = limb(0.40, 0.07, skin, 0.17, -0.25), armR = limb(0.40, 0.07, skin, 0.17, 0.25);   // 몸통(y 0.86)에 매달린 팔: 어깨점은 몸통 위쪽 모서리 안쪽
+  for(const [a, sgn] of [[armL, -1],[armR, 1]]){ const cap = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), mats.shirt); cap.position.set(0, 0.17, sgn*0.24); torso.add(cap); }   // 둥근 어깨: 몸통에서 팔로 부드럽게 이어진다
   const legL = limb(0.40, 0.085, skin, 0.60, -0.12), legR = limb(0.40, 0.085, skin, 0.60, 0.12);
   const shoes = [];
   [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.22, 0); l.userData.lower.add(sh); l.userData.shoe = sh; shoes.push(sh); });
   [armL, armR].forEach(a=>{ const hand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), skin); hand.position.y = -0.2; a.userData.lower.add(hand); });
-  g.add(armL, armR, legL, legR);
+  torso.add(armL, armR); g.add(legL, legR);   // 팔은 몸통의 자식: 어깨 비틀림이 몸통과 함께 움직인다
   return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, hatBeanie, armL, armR, legL, legR, shoes, mats};
 }
 // 걷기·달리기 폼. ph: 보폭 위상, amp: 0 걷기 … 1 전력. 네 팔다리가 같은 규칙: 같은 쪽 팔과 다리는 반대로, 왼쪽·오른쪽은 반 바퀴 차이
@@ -980,19 +982,18 @@ function animateGait(P, ph, amp, g){
   const sp = Math.sin(ph);                                                                  // +: 오른다리 앞·왼팔 앞
   g.rotation.z = -(0.06 + 0.08*run);                                                        // 앞으로 기울기: 달릴수록 더
   g.rotation.x = 0.035*sp*run;                                                              // 디딘 다리 쪽으로 살짝 기우는 좌우 흔들림
-  if(P.torso){ P.torso.rotation.y = -0.16*sp*run; }                                        // 어깨: 앞으로 나간 팔 쪽이 앞으로
+  if(P.torso){ P.torso.rotation.y = -0.16*sp*run; }                                        // 어깨: 앞으로 나간 팔 쪽이 앞으로 (팔이 몸통에 달려 있어 같이 돈다)
   if(P.hips){ P.hips.rotation.y = 0.12*sp*run; }                                           // 골반: 앞으로 나간 다리 쪽이 앞으로 (어깨와 반대)
-  P.armL.position.x = 0.06*sp*run; P.armR.position.x = -0.06*sp*run;                       // 어깨 비틀림을 팔 뿌리 위치로 보이게
   P.legL.position.x = -0.03*sp*run; P.legR.position.x = 0.03*sp*run;                       // 골반 비틀림
   if(P.headGroup){ P.headGroup.rotation.y = 0.08*sp*run; if(P.head) P.head.rotation.y = P.headGroup.rotation.y; }   // 머리는 시선을 지키려 반대로 조금
   // 발바닥은 항상 땅과 평행 (무릎·허벅지 각을 상쇄)
   for(const leg of [P.legL, P.legR]){ const sh = leg.userData.shoe; if(sh) sh.rotation.z = Math.PI/2 - (leg.rotation.z + leg.userData.lower.rotation.z); }
   const flight = Math.max(0, -Math.cos(2*ph));                                              // 다리가 벌어질 때(발 떼고 다음 발 딛기 전) 잠깐 뜬다, 교차할 때 가장 낮다
   groundFeet(P, g, 0.05*run*flight);
-  if(P.torso){ const squash = 1 - 0.025*run*Math.max(0, Math.cos(2*ph)); P.torso.scale.set(1, squash, 1); }   // 딛는 순간 상체가 살짝 눌린다
+
   if(P.headGroup){ P.headGroup.rotation.z = 0.06*run + Math.sin(ph*2 + 0.9)*0.03*run; P.headGroup.rotation.x = Math.sin(ph)*0.03*run; if(P.head){ P.head.rotation.z = P.headGroup.rotation.z; P.head.rotation.x = P.headGroup.rotation.x; } }
 }
-function resetGait(P, dt){ const D = (o,k,v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 6, dt); }; for(const l of [P.legL,P.legR,P.armL,P.armR]){ D(l.userData.lower,'z',0); l.position.x = THREE.MathUtils.damp(l.position.x, 0, 6, dt); } if(P.torso) D(P.torso,'y',0); if(P.hips) D(P.hips,'y',0); D(P.group || {rotation:{x:0}}, 'x', 0); if(P.torso) P.torso.scale.set(1,1,1); }
+function resetGait(P, dt){ const D = (o,k,v)=>{ o.rotation[k] = THREE.MathUtils.damp(o.rotation[k], v, 6, dt); }; for(const l of [P.legL,P.legR,P.armL,P.armR]){ D(l.userData.lower,'z',0); } if(P.torso) D(P.torso,'y',0); if(P.hips) D(P.hips,'y',0); D(P.group || {rotation:{x:0}}, 'x', 0); if(P.torso) P.torso.scale.set(1,1,1); }
 // 발 접지: 자세를 잡은 뒤 가장 낮은 신발 바닥이 정확히 땅(+공중 높이)에 오도록 몸 전체를 올리고 내린다
 const _fw = new THREE.Vector3(); const _moonDir = new THREE.Vector3();
 // 보이는 부분 중 가장 낮은 점(월드 y). 앉기·눕기처럼 발이 아닌 곳이 땅에 닿는 자세에 쓴다
@@ -3037,7 +3038,7 @@ function frame(){
     const ph = state.stridePhase, amp = THREE.MathUtils.clamp(state.speed/RUN, 0, 1);
     if(!state.resting){
       if(state.speed > 0.05) animateGait(me, ph, amp, runner); else { resetGait(me, dt); runner.rotation.z = 0; headGroup.rotation.set(0,0,0); head.rotation.set(0,0,0); groundFeet(me, runner, 0); }
-      if((look.buddy==='stroller' && pushState.stage <= 3) || look.buddy==='wheelchair'){ const pump = Math.max(0, Math.sin(state.stridePhase*2)); for(const a of [armL, armR]){ a.rotation.z = 1.45 + 0.05*Math.sin(state.stridePhase*2); a.userData.lower.rotation.z = 0.12 + 0.1*pump; a.position.x = 0; } armL.rotation.x = -0.1; armR.rotation.x = 0.1; }   /* 팔을 거의 수평으로 뻗어 손이 손잡이(어깨 높이, 앞 40 cm)에 닿는다 */   /* 손은 손잡이에, 걸음마다 팔꿈치가 접혔다 펴지며 밀어낸다 */   /* 밀 때는 두 팔을 앞으로 손잡이에 */
+      if((look.buddy==='stroller' && pushState.stage <= 3) || look.buddy==='wheelchair'){ const pump = Math.max(0, Math.sin(state.stridePhase*2)); for(const a of [armL, armR]){ a.rotation.z = 1.45 + 0.05*Math.sin(state.stridePhase*2); a.userData.lower.rotation.z = 0.12 + 0.1*pump; } armL.rotation.x = -0.1; armR.rotation.x = 0.1; }   /* 팔을 거의 수평으로 뻗어 손이 손잡이(어깨 높이, 앞 40 cm)에 닿는다 */   /* 손은 손잡이에, 걸음마다 팔꿈치가 접혔다 펴지며 밀어낸다 */   /* 밀 때는 두 팔을 앞으로 손잡이에 */
       // 통나무·바위 폴짝 넘기
       // 장애물(통나무·바위·벤치)은 옆으로 비껴 달린다: 앞 6 m 안에 있으면 빈 쪽으로 차선을 옮기고, 지나가면 원래 자리로
       if(state.speed > 0.3){
@@ -3099,7 +3100,7 @@ function frame(){
     applyTod(state.todT);
 
     if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness) * SC.seaVol;
-      if(SC.amb==='wind' && audio.windGain){ const vol = +$('vol-sea').value/100; const gp = (t % 9)/9, gust = Math.pow(Math.max(0, Math.sin(gp*Math.PI)), 3)*(0.6 + 0.4*Math.sin(t*0.07)); const lying = state.resting && state.pose==='lie' ? 1.25 : 1; audio.windBp.frequency.value = (SC.rustleHz < 1000 ? 600 : 340) + 180*gust; audio.rustleJit = THREE.MathUtils.damp(audio.rustleJit || 0.5, Math.random(), 2.5, dt); const soft = Math.pow(gust, 1.4); audio.windGain.gain.value = vol*SC.windVol*(0.015 + 0.07*soft)*lying; audio.rustleBp.frequency.value = SC.rustleHz; audio.rustleGain.gain.value = vol*SC.rustleVol*(0.002 + 0.018*soft*(0.6 + 0.4*audio.rustleJit))*lying; }   /* 멀리서 부드럽게: 돌풍일 때만 살짝 커지고, 떨림은 천천히 */   /* 낙엽 돌풍과 같은 9초 주기: 잎이 날릴 때 소리도 세진다 */ if(SCENE_ID==='niagara' && audio.rainGain && !state.rain) audio.rainGain.gain.value = 0.35*(+$('vol-sea').value/100); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + ((SC.bird==='forest' || SC.bird==='jeju') ? 4 + Math.random()*8 : 9 + Math.random()*18); } }
+      if(SC.amb==='wind' && audio.windGain){ const vol = +$('vol-sea').value/100; const gp = (t % 9)/9, gust = Math.pow(Math.max(0, Math.sin(gp*Math.PI)), 3)*(0.6 + 0.4*Math.sin(t*0.07)); const lying = state.resting && state.pose==='lie' ? 1.25 : 1; audio.windBp.frequency.value = (SC.rustleHz < 1000 ? 600 : 340) + 180*gust; audio.rustleJit = THREE.MathUtils.damp(audio.rustleJit || 0.5, Math.random(), 2.5, dt); const soft = Math.pow(gust, 1.4); audio.windGain.gain.value = vol*SC.windVol*(0.015 + 0.07*soft)*lying; audio.rustleBp.frequency.value = SC.rustleHz; audio.rustleGain.gain.value = vol*SC.rustleVol*(0.002 + 0.018*soft*(0.6 + 0.4*audio.rustleJit))*lying; }   /* 멀리서 부드럽게: 돌풍일 때만 살짝 커지고, 떨림은 천천히 */   /* 낙엽 돌풍과 같은 9초 주기: 잎이 날릴 때 소리도 세진다 */ if(SCENE_ID==='niagara' && audio.rainGain && !state.rain) audio.rainGain.gain.value = 0.35*(+$('vol-sea').value/100); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + ((SC.bird==='forest' || SC.bird==='jeju') ? 2.5 + Math.random()*5 : 9 + Math.random()*18); } }
     $('st-dist').textContent = (state.dist/1000).toFixed(2); $('st-time').textContent = fmtTime(state.time);
     breathTick(t);
     courseTick();
