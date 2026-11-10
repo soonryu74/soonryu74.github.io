@@ -153,6 +153,10 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .toast.is-cat{background:#fff0d6}
   .letter{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(86vw,340px);padding:22px 22px 18px;border-radius:18px;background:#fffdf7;box-shadow:0 20px 60px rgba(0,0,0,.18);text-align:center;display:none;border:1px solid #efe4d0}
   .letter.is-on{display:block}
+  .row-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .rec-badge{position:absolute;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;z-index:30}
+  .rec-badge i{width:9px;height:9px;border-radius:50%;background:#ff4d4d;animation:breathe 1s ease-in-out infinite}
+  #rec.is-rec{background:#ff6b6b;color:#fff}
   .letter small{display:block;font-size:11px;letter-spacing:2px;color:var(--mist);margin-bottom:10px}
   .letter p{margin:0 0 14px;font-size:15px;line-height:1.9;color:var(--ink)}
 
@@ -281,6 +285,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
       <button id="home" class="icon-btn" type="button" aria-label="지도로 돌아가기" title="지도(홈)"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       <button id="sound" class="icon-btn" type="button" aria-pressed="false" aria-label="소리 켜기" title="소리"><svg viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
       <button id="breath-toggle" class="icon-btn" type="button" aria-pressed="false" aria-label="호흡 안내" title="호흡 안내"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/></svg></button>
+      <button id="rec" class="icon-btn" type="button" aria-label="화면 녹화" title="녹화 · 쇼츠·릴스용"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></button>
       <button id="share" class="icon-btn" type="button" aria-label="오늘의 러닝 카드 공유" title="공유"><svg viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/></svg></button>
       <button id="log" class="icon-btn" type="button" aria-label="내 발자국" title="내 발자국"><svg viewBox="0 0 24 24"><path d="M6 20c-1.6 0-2.4-1.3-1.8-2.7C5 15.5 6.6 14 8 14s2.4 1.5 2 3.3C9.6 19 8 20 6 20z"/><path d="M15.5 13c-1.6 0-2.4-1.3-1.8-2.7.8-1.8 2.4-3.3 3.8-3.3s2.4 1.5 2 3.3c-.4 1.7-2.4 2.7-4 2.7z"/><circle cx="4.5" cy="11.5" r="1.3"/><circle cx="8" cy="9.5" r="1.3"/><circle cx="11.5" cy="10" r="1.3"/><circle cx="14" cy="4.5" r="1.3"/><circle cx="18" cy="3.5" r="1.3"/><circle cx="21" cy="6.5" r="1.3"/></svg></button>
       <button id="look" class="icon-btn" type="button" aria-label="꾸미기" title="꾸미기"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></button>
@@ -309,6 +314,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
   <div id="breath" class="breath"><div class="breath-ring" id="breath-ring"></div><div class="breath-label" id="breath-label">들이쉬고</div></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="rec-badge" class="rec-badge" hidden><i></i><span id="rec-time">0:00</span></div>
+  <div id="recdone" class="letter" role="dialog" aria-live="polite"><small>녹화 완료</small><p id="recdone-text">세로 영상이 준비됐어요.<br>공유를 누르면 유튜브 쇼츠·인스타 릴스 앱으로 바로 보낼 수 있어요.</p><div class="row-btns"><button class="btn small" id="rec-share" type="button">공유하기</button><button class="btn ghost small" id="rec-save" type="button">저장</button><button class="btn ghost small" id="rec-close" type="button">닫기</button></div></div>
   <div id="letter" class="letter" role="dialog" aria-live="polite"><small id="letter-kind">유리병 속 편지</small><p id="letter-text"></p><button class="btn ghost small" id="letter-close" type="button">바다에 다시 띄우기</button></div>
 </div>
 
@@ -360,6 +367,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
     <dl>
       <dt><kbd>Space</kbd> / 버튼</dt><dd>한 번 누르면 계속 달리기 · 다시 누르면 멈춤 · 길게 누르면 누르는 동안만</dd>
       <dt><kbd>←</kbd> <kbd>→</kbd> / 버튼·쓸기·탭</dt><dd>왼쪽으로 · 오른쪽으로 · 바닥을 탭하면 그 자리로</dd>
+      <dt>녹화 버튼</dt><dd>달리는 화면을 세로 영상(소리 포함, 최대 60초)으로 담아요. 끝나면 공유로 유튜브 쇼츠·인스타 릴스에 바로 올리거나 저장할 수 있어요.</dd>
       <dt>잠깐 쉬어가기 버튼 / <kbd>R</kbd></dt><dd>앉기 · 눕기 · 모래에 글쓰기 · '다시 달리기'로 나와요. 10초 멈춰 서 있어도 들어가요</dd>
       <dt><kbd>B</kbd></dt><dd>호흡 안내 켜고 끄기</dd>
       <dt>조개 · 바다유리</dt><dd>지나가면 저절로 주워요. 숫자는 기록이 아니라 오늘의 산책 메모예요.</dd>
@@ -419,7 +427,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-179';
+window.__BUILD = '2026-11-10-180';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2415,7 +2423,7 @@ function noiseBuffer(ctx, seconds, brown){
 function audioStart(){
   if(audio.ctx){ audio.ctx.resume(); audio.master.gain.cancelScheduledValues(audio.ctx.currentTime); audio.master.gain.linearRampToValueAtTime(1, audio.ctx.currentTime+0.6); audio.on = true; return; }
   const ctx = new (window.AudioContext||window.webkitAudioContext)(); audio.ctx = ctx;
-  audio.master = ctx.createGain(); audio.master.gain.value = 0; audio.master.connect(ctx.destination);
+  audio.master = ctx.createGain(); audio.master.gain.value = 0; audio.master.connect(ctx.destination); try{ audio.recDest = ctx.createMediaStreamDestination(); audio.master.connect(audio.recDest); }catch(e){}   // 녹화용 소리 분기
   const src = ctx.createBufferSource(); src.buffer = noiseBuffer(ctx, 6, true); src.loop = true;
   const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 480; lp.Q.value = 0.4;
   audio.seaGain = ctx.createGain(); audio.seaGain.gain.value = 0.7;
@@ -2605,6 +2613,40 @@ $('vol-bird').addEventListener('input', e=>{ if(audio.birdGain) audio.birdGain.g
 $('vol-step').addEventListener('input', e=>{ if(audio.stepGain) audio.stepGain.gain.value = e.target.value/100; });
 
 function openSheet(id){ closeSheets(); $(id).classList.add('is-open'); hold(false); }
+/* ---------- 화면 녹화 (쇼츠·릴스용 세로 영상) ---------- */
+// 3D 캔버스를 9:16 오프스크린 캔버스에 매 프레임 옮겨 그리고(워터마크 포함) MediaRecorder로 담는다. 소리는 오디오 마스터에서 분기. 최대 60초
+const rec = {on:false, mr:null, chunks:[], blob:null, t0:0, cv:null, cx:null, ext:'webm', timer:0};
+function recSupported(){ return typeof MediaRecorder !== 'undefined' && canvas.captureStream; }
+function recStart(){
+  if(rec.on || !recSupported()){ if(!recSupported()) say('이 브라우저는 녹화를 지원하지 않아요 · 크롬·사파리에서 열어 보세요', 3600); return; }
+  if(!state.started) start();
+  const W = 720, H = 1280; rec.cv = document.createElement('canvas'); rec.cv.width = W; rec.cv.height = H; rec.cx = rec.cv.getContext('2d');
+  const stream = rec.cv.captureStream(30); if(audio.recDest && audio.on){ for(const tr of audio.recDest.stream.getAudioTracks()) stream.addTrack(tr); }
+  const types = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']; const mime = types.find(t=>MediaRecorder.isTypeSupported(t)) || ''; rec.ext = mime.includes('mp4') ? 'mp4' : 'webm';
+  try{ rec.mr = new MediaRecorder(stream, mime ? {mimeType:mime, videoBitsPerSecond:6_000_000} : undefined); }catch(e){ say('녹화를 시작하지 못했어요', 2600); return; }
+  rec.chunks = []; rec.mr.ondataavailable = e=>{ if(e.data && e.data.size) rec.chunks.push(e.data); }; rec.mr.onstop = recFinish; rec.mr.start(500);
+  rec.on = true; rec.t0 = performance.now(); $('rec').classList.add('is-rec'); $('rec-badge').hidden = false; say('녹화 중 · 다시 누르면 끝나요 (최대 60초)', 2600);
+}
+function recStop(){ if(!rec.on) return; rec.on = false; $('rec').classList.remove('is-rec'); $('rec-badge').hidden = true; try{ rec.mr.stop(); }catch(e){} }
+function recFrame(){
+  if(!rec.on) return; const cx = rec.cx, W = rec.cv.width, H = rec.cv.height; const sw = canvas.width, sh = canvas.height;
+  // 가운데를 9:16으로 잘라 채운다 (가로 화면이면 가운데 세로 띠)
+  let cw = sw, ch = sh; if(sw/sh > W/H){ cw = sh*W/H; } else { ch = sw*H/W; } const sx = (sw - cw)/2, sy = (sh - ch)/2;
+  cx.drawImage(canvas, sx, sy, cw, ch, 0, 0, W, H);
+  cx.save(); cx.font = '600 26px "Noto Sans KR", sans-serif'; cx.textAlign = 'left'; cx.shadowColor = 'rgba(0,0,0,0.45)'; cx.shadowBlur = 8; cx.fillStyle = 'rgba(255,255,255,0.92)'; cx.fillText('윤슬런 · ' + SC.name, 28, H - 44); cx.font = '400 18px "Noto Sans KR", sans-serif'; cx.fillStyle = 'rgba(255,255,255,0.75)'; cx.fillText(location.host + '/haebyeon', 28, H - 18); cx.restore();
+  const el = (performance.now() - rec.t0)/1000; $('rec-time').textContent = fmtTime(el); if(el >= 60) recStop();
+}
+function recFinish(){
+  rec.blob = new Blob(rec.chunks, {type:rec.chunks[0] ? rec.chunks[0].type : 'video/webm'}); rec.chunks = []; rec.ext = /mp4/.test(rec.blob.type) ? 'mp4' : 'webm';   /* 실제 담긴 형식 기준으로 확장자 */
+  const name = `yunseul-${SC.chan}-${todayKey()}.${rec.ext}`; rec.file = new File([rec.blob], name, {type:rec.blob.type});
+  const canShare = !!(navigator.canShare && navigator.canShare({files:[rec.file]})); $('rec-share').style.display = canShare ? '' : 'none';
+  $('recdone-text').innerHTML = canShare ? '세로 영상이 준비됐어요.<br>공유를 누르면 유튜브 쇼츠·인스타 릴스 앱으로 바로 보낼 수 있어요.' : '세로 영상이 준비됐어요.<br>저장한 뒤 유튜브·인스타 앱에서 올려 주세요.' + (rec.ext==='webm' ? '<br><small>webm 파일도 유튜브에 바로 올라가요</small>' : '');
+  $('recdone').classList.add('is-on'); hold(false);
+}
+$('rec').addEventListener('click', ()=>{ if(rec.on) recStop(); else recStart(); });
+$('rec-share').addEventListener('click', async ()=>{ try{ await navigator.share({files:[rec.file], title:'윤슬런 · ' + SC.name, text:SC.shareText + ' · ' + location.origin + '/haebyeon/'}); $('recdone').classList.remove('is-on'); }catch(e){ if(e && e.name !== 'AbortError') say('공유 창을 열지 못했어요 · 저장해서 올려 주세요', 3000); } });
+$('rec-save').addEventListener('click', ()=>{ const a = document.createElement('a'); a.href = URL.createObjectURL(rec.blob); a.download = rec.file.name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 4000); say('저장했어요 · 갤러리/다운로드에서 유튜브 앱으로 올려 주세요', 3600); });
+$('rec-close').addEventListener('click', ()=>$('recdone').classList.remove('is-on'));
 function closeSheets(){ document.querySelectorAll('.sheet.is-open').forEach(s=>s.classList.remove('is-open')); }
 $('help').addEventListener('click', ()=>openSheet('sheet-help'));
 $('settings').addEventListener('click', ()=>openSheet('sheet-settings'));
@@ -3101,6 +3143,7 @@ function frame(){
     for(const c of clouds){ const u = c.userData; const rel = ((u.ox + t*u.v*2) % 520 + 520) % 520 - 260; c.position.set(state.x + rel, u.y, u.z); const edge = 1 - THREE.MathUtils.smoothstep(Math.abs(rel), 180, 255); c.material.opacity = op*edge; c.material.color.setRGB(tint, tint, tint + nightMix*0.08); } }
   wetMat.opacity = 0.7 + 0.2*Math.sin(t*0.55); wet.position.z = SHORE_Z + 3 + tide*0.3;
   if(!BOT) renderer.render(scene, camera);
+  if(rec.on) recFrame();
   requestAnimationFrame(frame);
 }
 
