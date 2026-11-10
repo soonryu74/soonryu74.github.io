@@ -190,7 +190,7 @@ export const ACTS: Act[] = [
   },
 ];
 
-export const OPENING = 820; // 뉴스 플래시(0~240) + 제목(240~540) + 워크샵 컨셉(540~820)
+export const OPENING = 770; // 뉴스 플래시(0~240) + 제목(240~540) + 워크샵 컨셉(540~770)
 export const ACT_CARD = 90;
 export const YEAR_DUR = 270;
 export const OUTRO = 1200;
