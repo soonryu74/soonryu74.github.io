@@ -1,6 +1,6 @@
 # 그 세상, 그 시간, 그리고 우리 : 2007 ~ 2026
 
-질병관리청 워크샵 상영용 영상 (4분 33초, 1920×1080, 30fps). Remotion으로 제작.
+질병관리청 워크샵 상영용 영상 (4분 29초, 1920×1080, 30fps). Remotion으로 제작.
 
 ## 구조도
 
@@ -20,7 +20,7 @@
 - 연도별 문구: `src/data.ts`
 - 내레이션·음악 재생성: `python3 scripts/gen_audio.py tts` / `music` (Gemini API)
 - 미리보기: `npm run studio`
-- 렌더링: `npm run render` → `out/kdca-workshop.mp4`
+- 렌더링: `npm run render` → `out/kdca-workshop.mp4` (완성본: `kdca-workshop.mp4`)
 
 ## 상영 전 확인 필요
 
