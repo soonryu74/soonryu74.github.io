@@ -388,6 +388,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
     <div class="row"><div><strong>달리기 속도</strong><small id="pace-note">시속 16 km · 힘차게</small></div><input id="pace" type="range" min="6" max="16" step="1" value="16" aria-label="달리기 속도"></div>
     <div class="row"><div><strong>시간</strong><small>하루 20분 · 해가 저물고 별이 뜨고 다시 떠요</small></div>
       <div class="seg" role="group" aria-label="시간대"><button type="button" data-tod="auto" aria-pressed="true">흐름</button><button type="button" data-tod="dawn" aria-pressed="false">새벽</button><button type="button" data-tod="noon" aria-pressed="false">한낮</button><button type="button" data-tod="dusk" aria-pressed="false">노을</button><button type="button" data-tod="night" aria-pressed="false">밤</button></div></div>
+    <div class="row"><div><strong>보는 각도</strong><small>달릴 때 카메라 · 화면 가장자리를 좌우로 쓸어넘겨도 바뀌어요</small>
+      <div class="seg" role="group" aria-label="보는 각도"><button type="button" data-view="left">왼쪽 뒤</button><button type="button" data-view="back">바로 뒤</button><button type="button" data-view="right">오른쪽 뒤</button><button type="button" data-view="high">높은 곳</button></div></div></div>
     <div class="row"><div><strong>함께 달리기</strong><small id="together-note">같은 해변의 다른 사람이 말없이 보여요 · 이름·채팅 없음</small></div><button id="together" class="switch" type="button" role="switch" aria-checked="true" aria-label="함께 달리기"></button></div>
     <div class="row"><div><strong>지인과 달리기</strong><small id="invite-note">초대 링크를 받은 사람끼리만 모이는 우리 해변 · 여기선 닉네임이 보여요</small></div><button id="invite" class="btn ghost small" type="button">초대 링크 복사</button></div>
     <div class="row" id="leave-row" hidden><div><strong>우리 해변 나가기</strong><small>공개 해변으로 돌아가요</small></div><button id="leave-room" class="btn ghost small" type="button">나가기</button></div>
@@ -415,7 +417,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-09-164';
+window.__BUILD = '2026-11-09-165';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2419,12 +2421,12 @@ addEventListener('keydown', e=>{
 });
 addEventListener('keyup', e=>{ if(e.code==='Space') hold(false); if(e.code==='ArrowLeft'||e.code==='KeyA') keys.left = false; if(e.code==='ArrowRight'||e.code==='KeyD') keys.right = false; });
 let swipe = null;
-canvas.addEventListener('pointerdown', e=>{ swipe = {x:e.clientX, y:e.clientY, lane:state.laneTarget, t:performance.now(), moved:false}; });
+canvas.addEventListener('pointerdown', e=>{ swipe = {x:e.clientX, y:e.clientY, lane:state.laneTarget, t:performance.now(), moved:false, edge:(e.clientX < 40 || e.clientX > innerWidth - 40)}; });   // 가장자리에서 시작한 쓸기는 보는 각도 전환
 // 탭한 자리로 가기: 바닥을 짚어 그 가로 위치(차선)로 이동. 앞뒤는 달리는 방향 그대로
 const _ray = new THREE.Raycaster(), _ndc = new THREE.Vector2(), _plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), _hit = new THREE.Vector3();
 function tapToGo(cx, cy){ if(!state.started || state.resting) return; _ndc.set((cx/innerWidth)*2 - 1, -(cy/innerHeight)*2 + 1); _ray.setFromCamera(_ndc, camera); if(!_ray.ray.intersectPlane(_plane, _hit)) return; if(_hit.y !== _hit.y) return; const z = THREE.MathUtils.clamp(_hit.z, LANE_MIN, LANE_MAX); state.laneTarget = z; state.laneHome = z; state.dodging = false; state.goMark = {x:_hit.x, z, t:performance.now()}; }
-canvas.addEventListener('pointermove', e=>{ if(!swipe) return; if(Math.abs(e.clientX - swipe.x) > 8 || Math.abs(e.clientY - swipe.y) > 8) swipe.moved = true; if(!swipe.moved) return; const dx = (e.clientX - swipe.x)/innerWidth; state.laneTarget = THREE.MathUtils.clamp(swipe.lane - dx*9, LANE_MIN, LANE_MAX); state.laneHome = state.laneTarget; state.dodging = false; });
-addEventListener('pointerup', e=>{ if(swipe && !swipe.moved && performance.now() - swipe.t < 400 && e.target === canvas) tapToGo(e.clientX, e.clientY); swipe = null; });
+canvas.addEventListener('pointermove', e=>{ if(!swipe) return; if(Math.abs(e.clientX - swipe.x) > 8 || Math.abs(e.clientY - swipe.y) > 8) swipe.moved = true; if(!swipe.moved || swipe.edge) return; const dx = (e.clientX - swipe.x)/innerWidth; state.laneTarget = THREE.MathUtils.clamp(swipe.lane - dx*9, LANE_MIN, LANE_MAX); state.laneHome = state.laneTarget; state.dodging = false; });
+addEventListener('pointerup', e=>{ if(swipe && swipe.edge && swipe.moved){ const dx = e.clientX - swipe.x; if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(e.clientY - swipe.y)){ const order = ['left','back','right']; let i = order.indexOf(state.view); if(i < 0) i = 1; i = THREE.MathUtils.clamp(i + (dx < 0 ? 1 : -1), 0, 2); setView(order[i]); } swipe = null; return; } if(swipe && !swipe.moved && performance.now() - swipe.t < 400 && e.target === canvas) tapToGo(e.clientX, e.clientY); swipe = null; });   /* 왼쪽으로 쓸면 시선이 오른쪽으로(왼쪽 뒤→바로 뒤→오른쪽 뒤) */
 
 $('sound').addEventListener('click', ()=>{ const b = $('sound');
   if(audio.on){ audioStop(); b.setAttribute('aria-pressed','false'); b.setAttribute('aria-label','소리 켜기'); say('소리를 껐어요'); }
@@ -2444,6 +2446,13 @@ $('look').addEventListener('click', ()=>openSheet('sheet-look'));
 $('look-open').addEventListener('click', ()=>openSheet('sheet-look'));
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', closeSheets));
 document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('click', e=>{ if(e.target===s) closeSheets(); }));
+// 보는 각도: 장면별 기본값(협곡·폭포·바위섬 다리는 높은 곳, 터널형 숲길은 바로 뒤), 한 번 고르면 이 기기에 기억
+const VIEW_DEFAULT = ['niagara','cheorwon','ulsan'].includes(SCENE_ID) ? 'high' : (['blossom','bamboo','forest','pine','jeju'].includes(SCENE_ID) ? 'back' : 'left');
+const VIEW_NAME = {left:'왼쪽 뒤에서 봐요', back:'바로 뒤에서 봐요', right:'오른쪽 뒤에서 봐요', high:'높은 곳에서 내려다봐요'};
+state.view = VIEW_DEFAULT; try{ const v = localStorage.getItem('haebyeon.view'); if(v && VIEW_NAME[v]) state.view = v; }catch(e){}
+function setView(v, quiet){ if(!VIEW_NAME[v]) return; state.view = v; try{ localStorage.setItem('haebyeon.view', v); }catch(e){} document.querySelectorAll('[data-view]').forEach(x=>x.setAttribute('aria-pressed', String(x.dataset.view===v))); if(!quiet) say(VIEW_NAME[v], 1600); }
+setView(state.view, true);
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click', ()=>setView(b.dataset.view)));
 document.querySelectorAll('[data-tod]').forEach(b=>b.addEventListener('click', ()=>{
   document.querySelectorAll('[data-tod]').forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
   state.todMode = b.dataset.tod; const v = {dawn:0.06, noon:0.45, dusk:0.72, night:0.9}[state.todMode]; if(v !== undefined) state.todT = v; }));
@@ -2885,8 +2894,12 @@ function frame(){
     else if(state.pose==='lie'){ camPos.set(state.x + 0.15, 0.9, state.lane + 1.2); camLook.set(state.x + 0.15, 0.15, state.lane - 4.5); }   // 머리를 바닥에 댄 눈높이: 발끝이 땅에 붙고 그 너머 수평선이 보인다   // 이마 바로 위에서: 모자 챙이 시야를 가리지 않게 챙 앞쪽에 둔다   // 머리맡에서 내 다리·옆에 누운 친구 너머 바다를 본다
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
     else { const portrait = innerWidth < innerHeight; if(portrait){ camPos.set(state.x + 0.9, 1.6, state.lane + 4.0); camLook.set(state.x + 0.3, 0.9, state.lane - 24); } else { camPos.set(state.x + 2.6, 1.9, state.lane + 4.2); camLook.set(state.x - 2, 0.9, state.lane - 30); } }
-  } else { camPos.set(state.x - 6.2, 2.9 + Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN), state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); }
-  if(SCENE_ID==='gung' || SC.ground==='deck' || SC.ground==='stonepath' || SCENE_ID==='ulsan'){ const gy = groundY(state.lane, state.x); camPos.y += gy; camLook.y += gy; if(SCENE_ID==='niagara' && !state.resting){ camPos.y += 0.9; camLook.y -= 1.6; camLook.z -= 0.6; }   /* 다른 장면과 비슷한 구도, 아주 살짝만 아래로 */   /* 사람은 화면 안쪽에, 시선은 난간 너머 아래 폭포 면으로 */ if(CW && !state.resting){ camPos.y += 0.5; camLook.y -= 0.9; camLook.z -= 0.3; }   /* 사람이 화면 가운데쯤, 난간 너머 협곡은 그대로 보이게 */   /* 주상절리: 난간 너머 협곡 아래를 내려다본다 */ if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
+  } else { const bob = Math.sin(state.stridePhase)*0.03*shake*(state.speed/RUN);
+    if(state.view==='back'){ camPos.set(state.x - 5.6, 2.3 + bob, state.lane + 0.3); camLook.set(state.x + 6, 1.2, state.lane); }                 // 바로 뒤: 길 양쪽이 고르게, 몰입
+    else if(state.view==='right'){ camPos.set(state.x - 6.2, 2.9 + bob, state.lane - 4.6); camLook.set(state.x + 5, 1.1, state.lane + 2.5); }      // 오른쪽 뒤: 육지 쪽 풍경
+    else if(state.view==='high'){ camPos.set(state.x - 11, 8.5 + bob, state.lane + 2.5); camLook.set(state.x + 7, 0.6, state.lane - 1.5); }         // 높은 곳: 지형이 주인공
+    else { camPos.set(state.x - 6.2, 2.9 + bob, state.lane + 4.6); camLook.set(state.x + 5, 1.1, state.lane - 2.5); } }                               // 왼쪽 뒤(기본): 물가 풍경
+  if(SCENE_ID==='gung' || SC.ground==='deck' || SC.ground==='stonepath' || SCENE_ID==='ulsan'){ const gy = groundY(state.lane, state.x); camPos.y += gy; camLook.y += gy; if(SCENE_ID==='niagara' && !state.resting && state.view==='left'){ camPos.y += 0.9; camLook.y -= 1.6; camLook.z -= 0.6; }   /* 다른 장면과 비슷한 구도, 아주 살짝만 아래로 */   /* 사람은 화면 안쪽에, 시선은 난간 너머 아래 폭포 면으로 */ if(CW && !state.resting && state.view==='left'){ camPos.y += 0.5; camLook.y -= 0.9; camLook.z -= 0.3; }   /* 사람이 화면 가운데쯤, 난간 너머 협곡은 그대로 보이게 */   /* 주상절리: 난간 너머 협곡 아래를 내려다본다 */ if(state.resting && state.pose==='lie' && !state.noteCam){ camLook.set(state.x + 0.15, gy + 1.5, state.lane - 3.4); } }   // 언덕 위에서: 누우면 발끝 너머 밤하늘
   camera.position.lerp(camPos, 1 - Math.exp(-dt*3));
   const lookAt = camera.userData.look || (camera.userData.look = camLook.clone()); lookAt.lerp(camLook, 1 - Math.exp(-dt*3)); camera.lookAt(lookAt);
 
