@@ -347,7 +347,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
       <small id="buddy-note">강아지는 옆에서 같이 달려요.</small></div>
     <div class="look-row"><strong>머리색</strong><div class="swatches" data-look="hair"></div></div>
     <div class="look-row"><strong>옷 색</strong><div class="swatches" data-look="shirt"></div></div>
-    <div class="look-row"><strong>머리띠 · 모자</strong><div class="seg" data-look="hat"><button type="button" data-v="band">머리띠</button><button type="button" data-v="cap">캡모자</button><button type="button" data-v="straw">밀짚모자</button><button type="button" data-v="none">없음</button></div></div>
+    <div class="look-row"><strong>머리띠 · 모자</strong><div class="seg" data-look="hat"><button type="button" data-v="band">머리띠</button><button type="button" data-v="cap">캡모자</button><button type="button" data-v="straw">밀짚모자</button><button type="button" data-v="beanie">겨울 비니</button><button type="button" data-v="none">없음</button></div></div>
     <div class="look-row"><strong>포인트 색</strong><div class="swatches" data-look="accent"></div></div>
     <p style="margin-top:12px;font-size:12px">이 기기에만 기억해 둬요.</p>
   </div>
@@ -419,7 +419,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-170';
+window.__BUILD = '2026-11-10-171';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -903,6 +903,14 @@ function buildRunner(mats){
   const strawBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.03, 24), strawM); strawBrim.position.y = 0.16; hatStraw.add(strawBrim);
   const strawRibbon = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.345, 0.06, 18), mats.accent); strawRibbon.position.y = 0.2; hatStraw.add(strawRibbon);
   hatStraw.rotation.z = -0.08; headGroup.add(hatStraw);
+  // 겨울 비니: 포인트 색 뜨개 모자(골 무늬) + 접어 올린 밑단 + 꼭대기 방울. 머리를 거의 다 덮는다
+  const hatBeanie = new THREE.Group();
+  const knit = (()=>{ const c = document.createElement('canvas'); c.width = 64; c.height = 32; const g2 = c.getContext('2d'); g2.fillStyle = '#fff'; g2.fillRect(0,0,64,32); g2.fillStyle = 'rgba(0,0,0,0.22)'; for(let x=0;x<64;x+=6) g2.fillRect(x, 0, 2.5, 32); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(12, 2); t.userData.shared = true; return t; })();
+  const beanieM = new THREE.MeshStandardMaterial({map:knit, color:0xffffff, roughness:1}); hatBeanie.userData.mat = beanieM;
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(0.375, 24, 18, 0, Math.PI*2, 0, Math.PI*0.62), beanieM); dome.position.y = 0.0; dome.scale.y = 1.15; hatBeanie.add(dome);
+  const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.385, 0.385, 0.13, 24, 1, true), beanieM); cuff.position.y = -0.17; hatBeanie.add(cuff);
+  const pom = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), new THREE.MeshStandardMaterial({color:0xfff6ea, roughness:1})); pom.position.y = 0.46; hatBeanie.add(pom);
+  hatBeanie.rotation.z = -0.06; headGroup.add(hatBeanie);
   [[-0.11],[0.11]].forEach(([z])=>{ const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), inkM); e.position.set(0.3, 0.02, z); e.scale.y = 1.4; headGroup.add(e);
     const bl = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), blushM); bl.position.set(0.3, -0.06, z*1.9); bl.lookAt(1, -0.06, z*4); headGroup.add(bl); });
   const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 12, Math.PI), inkM); mouth.position.set(0.33, -0.09, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headGroup.add(mouth);
@@ -912,7 +920,7 @@ function buildRunner(mats){
   [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.22, 0); l.userData.lower.add(sh); l.userData.shoe = sh; shoes.push(sh); });
   [armL, armR].forEach(a=>{ const hand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), skin); hand.position.y = -0.2; a.userData.lower.add(hand); });
   g.add(armL, armR, legL, legR);
-  return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR, shoes, mats};
+  return {group:g, torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, hatBeanie, armL, armR, legL, legR, shoes, mats};
 }
 // 걷기·달리기 폼. ph: 보폭 위상, amp: 0 걷기 … 1 전력. 네 팔다리가 같은 규칙: 같은 쪽 팔과 다리는 반대로, 왼쪽·오른쪽은 반 바퀴 차이
 function animateGait(P, ph, amp, g){
@@ -952,7 +960,7 @@ function groundFeet(P, g, lift){
 }
 function applyLookTo(parts, lk){
   parts.mats.hair.color.set(lk.hair); parts.mats.shirt.color.set(lk.shirt); parts.mats.accent.color.set(lk.accent); parts.mats.accent.emissive.set(lk.accent);
-  parts.hatBand.visible = lk.hat==='band'; parts.hatCap.visible = lk.hat==='cap'; parts.hatStraw.visible = lk.hat==='straw'; parts.hair.visible = lk.hat!=='cap';
+  parts.hatBand.visible = lk.hat==='band'; parts.hatCap.visible = lk.hat==='cap'; parts.hatStraw.visible = lk.hat==='straw'; parts.hatBeanie.visible = lk.hat==='beanie'; parts.hatBeanie.userData.mat.color.set(lk.accent); parts.hair.visible = lk.hat!=='cap' && lk.hat!=='beanie';
 }
 const me = buildRunner({hair:hairM, shirt, accent:accentM, shorts});
 const runner = me.group; const {torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR} = me;
@@ -1149,7 +1157,7 @@ const pushed = {stroller:makeStroller(), wheelchair:makeWheelchair()}; Object.va
 const pushState = {x:0, z:0, y:0, rot:0, kidX:0, kidZ:0, stage:0, nextMom:0};
 // 단계 4·5: 유모차 대신 작은 러너(아이)가 옆에서 같이 달린다
 const kidParts = buildRunner({hair:new THREE.MeshStandardMaterial({color:0x4a3b38, roughness:0.95}), shirt:new THREE.MeshStandardMaterial({color:0xfff1a8, roughness:0.95}), accent:new THREE.MeshStandardMaterial({color:0xff9b8a, roughness:0.9, emissive:0xff9b8a, emissiveIntensity:0}), shorts:new THREE.MeshStandardMaterial({color:0x8fd3f4, roughness:0.95})});
-kidParts.group.visible = false; kidParts.hatBand.visible = false; kidParts.hatCap.visible = false; kidParts.hatStraw.visible = false; scene.add(kidParts.group); const kidState = {x:-2, z:1.2, px:-2, pz:1.2, phase:0};
+kidParts.group.visible = false; kidParts.hatBeanie.visible = false; kidParts.hatBand.visible = false; kidParts.hatCap.visible = false; kidParts.hatStraw.visible = false; scene.add(kidParts.group); const kidState = {x:-2, z:1.2, px:-2, pz:1.2, phase:0};
 const buddies = {maltese:makeDog(DOGS.maltese), golden:makeDog(DOGS.golden), shiba:makeDog(DOGS.shiba), poodle:makeDog(DOGS.poodle), cat:makeCat(), gull:makeGull(1.1)};
 Object.values(buddies).forEach(b=>{ b.visible = false; scene.add(b); });
 const buddyState = {x:-1.2, z:0.9, y:0, phase:0, px:-1.2, pz:0.9};
