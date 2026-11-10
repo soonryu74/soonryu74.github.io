@@ -155,6 +155,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .letter.is-on{display:block}
   .row-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
   .rec-badge{position:absolute;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;z-index:30}
+  .rec-badge[hidden]{display:none}
   .rec-badge i{width:9px;height:9px;border-radius:50%;background:#ff4d4d;animation:breathe 1s ease-in-out infinite}
   #rec.is-rec{background:#ff6b6b;color:#fff}
   .letter small{display:block;font-size:11px;letter-spacing:2px;color:var(--mist);margin-bottom:10px}
@@ -427,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-180';
+window.__BUILD = '2026-11-10-181';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1129,7 +1130,7 @@ function updatePushed(t, dt){
   const resting = state.resting;
   if(veh){
     // 달릴 땐 러너 바로 앞(손잡이가 손에), 쉴 땐 옆에 세워 두고 풍경 쪽을 보게
-    const ahead = 1.2; let tx = state.x + ahead, tz = state.lane + 0.22, rot = 0;   /* 살짝 오른쪽: 뒤에서 봐도 유모차·휠체어가 몸 옆으로 보인다 */
+    const ahead = look.buddy==='wheelchair' ? 0.76 : 0.9; let tx = state.x + ahead, tz = state.lane, rot = 0;   /* 손잡이가 러너 어깨 앞 40 cm(팔 길이)에 오도록 */
     if(resting){ tx = state.x + 0.3; tz = state.lane - 1.25; rot = Math.PI/2; }
     pushState.x = tx; pushState.z = THREE.MathUtils.damp(pushState.z || tz, tz, 8, dt);   /* 손잡이는 손에 붙어 있어야 하므로 앞뒤 지연 없음 */ pushState.rot = THREE.MathUtils.damp(pushState.rot, rot, 4, dt);
     const gy = groundY(pushState.z, pushState.x); veh.position.set(pushState.x, gy + 0.04, pushState.z); veh.rotation.y = pushState.rot;
@@ -3028,7 +3029,7 @@ function frame(){
     const ph = state.stridePhase, amp = THREE.MathUtils.clamp(state.speed/RUN, 0, 1);
     if(!state.resting){
       if(state.speed > 0.05) animateGait(me, ph, amp, runner); else { resetGait(me, dt); runner.rotation.z = 0; headGroup.rotation.set(0,0,0); head.rotation.set(0,0,0); groundFeet(me, runner, 0); }
-      if((look.buddy==='stroller' && pushState.stage <= 3) || look.buddy==='wheelchair'){ const pump = Math.max(0, Math.sin(state.stridePhase*2)); for(const a of [armL, armR]){ a.rotation.z = 0.8 + 0.08*Math.sin(state.stridePhase*2); a.userData.lower.rotation.z = 0.5 + 0.2*pump; } armL.rotation.x = -0.32; armR.rotation.x = 0.32 + 0.1; }   /* 손잡이 폭만큼 팔을 벌려 앞으로 */   /* 손은 손잡이에, 걸음마다 팔꿈치가 접혔다 펴지며 밀어낸다 */   /* 밀 때는 두 팔을 앞으로 손잡이에 */
+      if((look.buddy==='stroller' && pushState.stage <= 3) || look.buddy==='wheelchair'){ const pump = Math.max(0, Math.sin(state.stridePhase*2)); for(const a of [armL, armR]){ a.rotation.z = 1.45 + 0.05*Math.sin(state.stridePhase*2); a.userData.lower.rotation.z = 0.12 + 0.1*pump; a.position.x = 0; } armL.rotation.x = -0.1; armR.rotation.x = 0.1; }   /* 팔을 거의 수평으로 뻗어 손이 손잡이(어깨 높이, 앞 40 cm)에 닿는다 */   /* 손은 손잡이에, 걸음마다 팔꿈치가 접혔다 펴지며 밀어낸다 */   /* 밀 때는 두 팔을 앞으로 손잡이에 */
       // 통나무·바위 폴짝 넘기
       // 장애물(통나무·바위·벤치)은 옆으로 비껴 달린다: 앞 6 m 안에 있으면 빈 쪽으로 차선을 옮기고, 지나가면 원래 자리로
       if(state.speed > 0.3){
