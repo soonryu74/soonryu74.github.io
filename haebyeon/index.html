@@ -419,7 +419,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-174';
+window.__BUILD = '2026-11-10-175';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1860,6 +1860,25 @@ function makePalm(){
   const deadM = new THREE.MeshStandardMaterial({color:0xb09a66, roughness:1, side:THREE.DoubleSide}); for(let i=0;i<3;i++){ const d = new THREE.Mesh(new THREE.PlaneGeometry(0.35, 1.6), deadM); d.position.set(px + Math.cos(i*2.1)*0.25, py - 0.7, Math.sin(i*2.1)*0.25); d.rotation.y = i*2.1; g.add(d); }
   g.rotation.y = Math.random()*Math.PI*2; return g;
 }
+// 잎 나무를 인스턴스로 심기: 한 종류당 변형 4개(줄기+가지 1메시, 잎 카드 1메시) → 수백 그루를 그리기 8번에
+function leafTreeGeo(kind){
+  const wood = [], cards = []; const push = (geo, m)=>{ geo.applyMatrix4(m); wood.push(geo.toNonIndexed()); };
+  const h = 3.0 + Math.random()*1.2; push(new THREE.CylinderGeometry(0.12, 0.22, h, 8), new THREE.Matrix4().makeTranslation(0, h/2, 0));
+  for(let i=0;i<3;i++){ const m = new THREE.Matrix4().makeTranslation(0, h - 0.3, 0).multiply(new THREE.Matrix4().makeRotationY(Math.random()*Math.PI)).multiply(new THREE.Matrix4().makeRotationZ((i-1)*0.7 + (Math.random()-0.5)*0.3)).multiply(new THREE.Matrix4().makeTranslation(0, 0.8, 0)); push(new THREE.CylinderGeometry(0.05, 0.09, 1.6, 6), m); }
+  const cy = h + 1.2, R = 1.5 + Math.random()*0.6; const q = new THREE.Quaternion(), e = new THREE.Euler(), one = new THREE.Vector3(1,1,1), pv = new THREE.Vector3();
+  for(let i=0;i<7;i++){ const card = new THREE.PlaneGeometry(R*2.1, R*2.1); e.set((Math.random()-0.5)*0.9, Math.random()*Math.PI, (Math.random()-0.5)*0.5); q.setFromEuler(e); pv.set((Math.random()-0.5)*R*0.9, cy + (Math.random()-0.5)*R*0.8, (Math.random()-0.5)*R*0.9); card.applyMatrix4(new THREE.Matrix4().compose(pv, q, one)); cards.push(card.toNonIndexed()); }
+  const top = new THREE.PlaneGeometry(R*2.2, R*2.2).rotateX(-Math.PI/2).translate(0, cy + R*0.35, 0); cards.push(top.toNonIndexed());
+  return {wood:mergeGeos(wood), leaf:mergeGeosUV(cards)};
+}
+function plantLeafTrees(group, kind, spots){
+  // spots: [x, z, sx, sy, sz, rotY]
+  if(!canopyTex[kind]) canopyTex[kind] = leafCanopyTex(kind);
+  plantLeafTrees.mats = plantLeafTrees.mats || {}; if(!plantLeafTrees.mats[kind]) plantLeafTrees.mats[kind] = {bark:new THREE.MeshStandardMaterial({color:kind==='ginkgo' ? 0x5a4a3a : 0x4a3a30, roughness:1}), leaf:new THREE.MeshStandardMaterial({map:canopyTex[kind], transparent:true, alphaTest:0.5, side:THREE.DoubleSide, roughness:1, emissive:kind==='ginkgo' ? 0x6a4e00 : 0x000000, emissiveIntensity:kind==='ginkgo' ? 0.7 : 0})};
+  const M = plantLeafTrees.mats[kind]; const V = 4; const d = new THREE.Object3D();
+  for(let v=0; v<V; v++){ const mine = spots.filter((_, i)=>i%V===v); if(!mine.length) continue; const geo = leafTreeGeo(kind); const wood = new THREE.InstancedMesh(geo.wood, M.bark, mine.length); const leaf = new THREE.InstancedMesh(geo.leaf, M.leaf, mine.length);
+    mine.forEach((sp, i)=>{ d.position.set(sp[0], 0, sp[1]); d.rotation.set(0, sp[5], 0); d.scale.set(sp[2], sp[3], sp[4]); d.updateMatrix(); wood.setMatrixAt(i, d.matrix); leaf.setMatrixAt(i, d.matrix); });
+    wood.frustumCulled = false; leaf.frustumCulled = false; wood.castShadow = true; leaf.castShadow = true; group.add(wood); group.add(leaf); }
+}
 function makeLeafTree(kind){
   if(!canopyTex[kind]) canopyTex[kind] = leafCanopyTex(kind);
   const g = new THREE.Group(); const barkM = new THREE.MeshStandardMaterial({color:kind==='ginkgo' ? 0x5a4a3a : 0x4a3a30, roughness:1});
@@ -2069,8 +2088,9 @@ if(GUNG){
     for(const z of [0.2, 8.6]){ const curb = new THREE.Mesh(new THREE.BoxGeometry(1400, 0.22, 0.4), curbM); curb.position.set(500, 0.11, z); gungSet.add(curb); }
     const leafBedM = new THREE.MeshStandardMaterial({color:0xf2b800, roughness:1, emissive:0x5a4200, emissiveIntensity:0.3});
     for(const [z, w] of [[-4.5, 9],[13, 9]]){ const bed = new THREE.Mesh(new THREE.PlaneGeometry(1400, w).rotateX(-Math.PI/2), leafBedM); bed.position.set(500, 0.02, z); gungSet.add(bed); }
-    for(let x=-120; x<1120; x+=3.2+Math.random()*1.2){ for(const z of [-1.6 - Math.random()*1.2, 9.8 + Math.random()*1.2]){ const t = makeLeafTree('ginkgo'); t.position.set(x + (Math.random()-0.5)*0.8, 0, z); t.rotation.y = Math.random()*Math.PI; t.scale.set(1.25 + Math.random()*0.25, 1.45 + Math.random()*0.3, 1.25 + Math.random()*0.25); gungSet.add(t); } }   // 은행나무 터널: 양쪽 3 m 간격, 키 크게
-    for(let x=-120; x<1120; x+=6+Math.random()*4){ for(const z of [-5.5 - Math.random()*5, 13.5 + Math.random()*5]){ const t = makeLeafTree(Math.random() < 0.8 ? 'ginkgo' : 'maple'); t.position.set(x, 0, z); t.rotation.y = Math.random()*Math.PI; t.scale.setScalar(0.9 + Math.random()*0.3); gungSet.add(t); } }   // 뒷줄
+    { const G = [], Mp = []; for(let x=-120; x<1120; x+=3.2+Math.random()*1.2){ for(const z of [-1.6 - Math.random()*1.2, 9.8 + Math.random()*1.2]){ const sxz = 1.25 + Math.random()*0.25; G.push([x + (Math.random()-0.5)*0.8, z, sxz, 1.45 + Math.random()*0.3, sxz, Math.random()*Math.PI]); } }   // 은행나무 터널: 양쪽 3 m 간격, 키 크게
+      for(let x=-120; x<1120; x+=6+Math.random()*4){ for(const z of [-5.5 - Math.random()*5, 13.5 + Math.random()*5]){ const sc = 0.9 + Math.random()*0.3; (Math.random() < 0.8 ? G : Mp).push([x, z, sc, sc, sc, Math.random()*Math.PI]); } }   // 뒷줄
+      plantLeafTrees(gungSet, 'ginkgo', G); plantLeafTrees(gungSet, 'maple', Mp); }   // 그루당 메시 12개 → 인스턴스 16개 (폰 슬로모션 해결)
     const hillM3 = new THREE.MeshStandardMaterial({color:0xc9a04e, roughness:1, fog:false});
     for(const [hx, hw, hh] of [[60, 240, 60],[380, 280, 80],[700, 260, 65],[1020, 240, 70]]){ const hill = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10), hillM3); hill.scale.set(hw, hh, 90); hill.position.set(hx, -24, -200); gungSet.add(hill); }
   } else if(JJ){
