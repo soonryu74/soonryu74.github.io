@@ -340,6 +340,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
         <button type="button" class="chip" data-v="poodle"><i style="background:#8a6a52"></i>푸들</button>
         <button type="button" class="chip" data-v="cat"><i style="background:#fbf7f0"></i>페르시안</button>
         <button type="button" class="chip" data-v="gull"><i style="background:#f7f7f2"></i>갈매기</button>
+        <button type="button" class="chip" data-v="stroller"><i style="background:#ffd9a8"></i>유모차 아이</button>
+        <button type="button" class="chip" data-v="wheelchair"><i style="background:#cfd8e3"></i>휠체어 어머니</button>
         <button type="button" class="chip" data-v="none">혼자</button>
       </div>
       <small id="buddy-note">강아지는 옆에서 같이 달려요.</small></div>
@@ -417,7 +419,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-09-165';
+window.__BUILD = '2026-11-10-166';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1063,6 +1065,91 @@ function makeGull(scale=1){
   const l = wing(-1), r = wing(1);
   g.add(l, r); g.scale.setScalar(scale); g.userData = {l, r, kind:'gull'}; return g;
 }
+/* ---------- 유모차 아이 · 휠체어 어머니 (앞에서 밀며 달린다) ---------- */
+const KID_STAGES = [20, 60, 150, 400];   // 누적 km 기준 단계 경계 (1 신생아 → 5 훌쩍 큰 아이)
+const KID_MSG = ['아직 아기예요 · 유모차에서 잠만 자요', '아이가 앉아서 손을 흔들어요', '아이가 걸음마를 떼요 · 쉴 때 옆에서 아장아장', '아이가 같이 달리기 시작했어요', '아이가 훌쩍 컸어요 · 앞서 달리다 기다려 줘요'];
+function kidKm(){ let m = 0; for(const r of logLoad()) m += (r.m||0); m += state.dist; return m/1000; }
+function kidStage(){ const dev = +new URL(location.href).searchParams.get('kid'); if(dev >= 1 && dev <= 5) return dev; const km = kidKm(); let st = 1; for(const k of KID_STAGES) if(km >= k) st++; return st; }
+const MOM_MSG = ['천천히 가도 돼. 엄마는 지금이 좋아.', '바람이 좋다. 네가 데려와 줘서.', '저기 봐, 물빛이 예쁘지.', '힘들면 쉬어. 엄마가 기다릴게.', '네 뒷모습이 어릴 때랑 똑같구나.', '오늘 같이 나오길 잘했어.', '고마워. 그 말이 하고 싶었어.', '이 길, 다음에 또 오자.'];
+function updatePushed(t, dt){
+  const st = pushState.stage, isKid = look.buddy==='stroller' && st >= 4; const veh = look.buddy==='wheelchair' ? pushed.wheelchair : (st <= 3 ? pushed.stroller : null);
+  const resting = state.resting;
+  if(veh){
+    // 달릴 땐 러너 바로 앞(손잡이가 손에), 쉴 땐 옆에 세워 두고 풍경 쪽을 보게
+    const ahead = 1.15; let tx = state.x + ahead, tz = state.lane, rot = 0;
+    if(resting){ tx = state.x + 0.3; tz = state.lane - 1.25; rot = Math.PI/2; }
+    pushState.x = THREE.MathUtils.damp(pushState.x || tx, tx, 6, dt); pushState.z = THREE.MathUtils.damp(pushState.z || tz, tz, 4, dt); pushState.rot = THREE.MathUtils.damp(pushState.rot, rot, 4, dt);
+    const gy = groundY(pushState.z, pushState.x); veh.position.set(pushState.x, gy, pushState.z); veh.rotation.y = pushState.rot;
+    const roll = resting ? 0 : state.speed*dt/0.17; const U = veh.userData; for(const w of U.wheels){ if(w.geometry.type==='TorusGeometry' || w.geometry.type==='CylinderGeometry') w.rotation.z -= roll; }
+    if(U.kind==='stroller'){
+      const k = U.kid; if(st === 1){ k.rotation.x = 0; k.rotation.z = 1.2; k.position.set(0.12, 0.6, 0); U.kArm.rotation.z = -0.4; U.blanket.visible = true; }   // 신생아: 누워 잠
+      else { k.rotation.z = 0; k.position.set(0.0, 0.62, 0); U.blanket.visible = st === 2; const wave = (st >= 2) ? Math.sin(t*5)*0.5 - 2.2 : -0.4; U.kArm.rotation.z = resting ? -0.4 : wave; }   // 앉아서 손 흔들기
+      if(st === 3 && resting){ k.position.set(0.9, -0.35, 0.3 + Math.sin(t*0.7)*0.3); k.rotation.z = 0; k.rotation.y = Math.sin(t*0.9)*0.6; k.position.y += Math.abs(Math.sin(t*6))*0.03; }   // 걸음마: 쉴 때 유모차 옆에서 아장아장
+      else if(st === 3) k.rotation.y = 0;
+      veh.position.y += resting ? 0 : Math.abs(Math.sin(state.stridePhase))*0.01;
+    } else {
+      const U2 = U; U2.nextWave -= dt; if(U2.nextWave <= 0){ U2.wave = 2.2; U2.nextWave = 9 + Math.random()*12; }
+      U2.wave = Math.max(0, U2.wave - dt); U2.armR.rotation.z = U2.wave > 0 ? 1.6 - 1.9 + Math.sin(t*6)*0.35 : THREE.MathUtils.damp(U2.armR.rotation.z, 1.6, 4, dt);   // 가끔 손을 흔든다
+      U2.head.rotation.y = THREE.MathUtils.damp(U2.head.rotation.y, resting ? 0 : Math.sin(t*0.4)*0.5 + 0.3, 2, dt); U2.mom.rotation.z = Math.sin(t*1.1)*0.01;
+      if(!resting && state.speed > 0.3){ pushState.nextMom -= state.speed*dt; if(pushState.nextMom <= 0){ pushState.nextMom = 900 + Math.random()*900; say('어머니: ' + MOM_MSG[Math.random()*MOM_MSG.length|0], 4200); } }   // 900 m쯤마다 한 마디
+    }
+  }
+  if(isKid){
+    // 아이 러너: 옆(4단계) 또는 조금 앞(5단계)에서 달리고, 쉬면 옆에 서서 기다린다
+    const P = kidParts, g = P.group; let tx = st >= 5 ? state.x + 1.6 : state.x - 1.0, tz = state.lane + 1.1; if(resting){ tx = state.x + 0.9; tz = state.lane + 1.0; }
+    kidState.x = THREE.MathUtils.damp(kidState.x, tx, 2.5, dt); kidState.z = THREE.MathUtils.damp(kidState.z, tz, 3.5, dt);
+    const v = Math.hypot(kidState.x - kidState.px, kidState.z - kidState.pz)/Math.max(dt, 1e-4); kidState.px = kidState.x; kidState.pz = kidState.z;
+    kidState.phase += (v/(0.5 + 0.5*THREE.MathUtils.clamp(v/RUN, 0, 1)))*Math.PI*2*dt*1.3;
+    g.position.x = kidState.x; g.position.z = kidState.z; g.rotation.y = THREE.MathUtils.damp(g.rotation.y, resting ? Math.PI/2 : 0, 4, dt);
+    if(v > 0.05) animateGait(P, kidState.phase, THREE.MathUtils.clamp(v/RUN, 0, 1), g); else { resetGait(P, dt); g.rotation.z = 0; groundFeet(P, g, 0); }
+    g.position.y += groundY(kidState.z, kidState.x);
+  }
+}
+function makeStroller(){
+  const g = new THREE.Group(); const frameM = new THREE.MeshStandardMaterial({color:0x3a3d44, roughness:0.5, metalness:0.4}); const clothM = new THREE.MeshStandardMaterial({color:0xf2c9a8, roughness:1}); const rubber = new THREE.MeshStandardMaterial({color:0x2a2a2e, roughness:0.8});
+  const wheels = []; for(const [x, r, z] of [[-0.26, 0.17, -0.22],[-0.26, 0.17, 0.22],[0.34, 0.12, -0.2],[0.34, 0.12, 0.2]]){ const w = new THREE.Mesh(new THREE.TorusGeometry(r, 0.035, 8, 18), rubber); w.position.set(x, r, z); g.add(w); const hub = new THREE.Mesh(new THREE.CylinderGeometry(r*0.55, r*0.55, 0.04, 10), frameM); hub.rotation.x = Math.PI/2; hub.position.copy(w.position); g.add(hub); wheels.push(w, hub); }
+  for(const z of [-0.2, 0.2]){ const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 1.0, 6), frameM); bar.position.set(-0.22, 0.6, z); bar.rotation.z = 0.55; g.add(bar); const low = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.64, 6), frameM); low.position.set(0.04, 0.2, z); low.rotation.z = Math.PI/2; g.add(low); }
+  const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.5, 8), frameM); handle.rotation.x = Math.PI/2; handle.position.set(-0.5, 1.0, 0); g.add(handle);
+  const basket = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.3, 0.44), clothM); basket.position.set(0.08, 0.5, 0); g.add(basket);
+  const canopy = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.46, 16, 1, false, Math.PI, Math.PI), clothM); canopy.rotation.z = Math.PI/2; canopy.rotation.y = Math.PI/2; canopy.position.set(0.18, 0.72, 0); canopy.material = new THREE.MeshStandardMaterial({color:0xe8a87c, roughness:1, side:THREE.DoubleSide}); g.add(canopy);
+  // 아이: 머리·몸·팔. 단계에 따라 누움/앉음, 손 흔들기
+  const kid = new THREE.Group(); kid.position.set(0.0, 0.62, 0); g.add(kid);
+  const kBody = capsule(0.11, 0.1, new THREE.MeshStandardMaterial({color:0xfff1a8, roughness:1})); kBody.position.y = 0.08; kid.add(kBody);
+  const kHead = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), skin); kHead.position.y = 0.3; kid.add(kHead);
+  const kHair = new THREE.Mesh(new THREE.SphereGeometry(0.165, 16, 12, 0, Math.PI*2, 0, Math.PI*0.4), new THREE.MeshStandardMaterial({color:0x4a3b38, roughness:1})); kHair.position.y = 0.32; kid.add(kHair);
+  for(const z of [-0.06, 0.06]){ const e = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 5), inkM); e.position.set(0.14, 0.3, z); kid.add(e); }
+  const kArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.03, 0.14, 4, 8), skin); kArm.position.set(0.05, 0.14, 0.13); kArm.rotation.z = -0.4; kid.add(kArm);
+  const blanket = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.08, 0.36), new THREE.MeshStandardMaterial({color:0xcfe8ff, roughness:1})); blanket.position.set(0.14, 0.03, 0); kid.add(blanket);
+  g.userData = {kind:'stroller', wheels, kid, kArm, kHead, blanket}; return g;
+}
+function makeWheelchair(){
+  const g = new THREE.Group(); const frameM = new THREE.MeshStandardMaterial({color:0x3a3d44, roughness:0.5, metalness:0.4}); const rubber = new THREE.MeshStandardMaterial({color:0x2a2a2e, roughness:0.8}); const seatM = new THREE.MeshStandardMaterial({color:0x2f3a4a, roughness:1});
+  const wheels = []; for(const z of [-0.33, 0.33]){ const w = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.035, 8, 24), rubber); w.position.set(-0.1, 0.3, z); g.add(w); const rim = new THREE.Mesh(new THREE.TorusGeometry(0.33, 0.012, 6, 24), frameM); rim.position.copy(w.position); g.add(rim); for(let k=0;k<6;k++){ const sp = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.58, 4), frameM); sp.position.copy(w.position); sp.rotation.z = k*Math.PI/6; g.add(sp); wheels.push(sp); } wheels.push(w, rim); }
+  for(const z of [-0.2, 0.2]){ const c = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.025, 6, 12), rubber); c.position.set(0.36, 0.08, z); g.add(c); wheels.push(c); }
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.06, 0.5), seatM); seat.position.set(0.02, 0.5, 0); g.add(seat);
+  const back = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.46, 0.5), seatM); back.position.set(-0.24, 0.76, 0); g.add(back);
+  for(const z of [-0.26, 0.26]){ const arm = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.04, 0.05), frameM); arm.position.set(0.0, 0.72, z); g.add(arm); const post = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.9, 6), frameM); post.position.set(-0.3, 0.6, z); g.add(post); }
+  const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.56, 8), frameM); handle.rotation.x = Math.PI/2; handle.position.set(-0.36, 1.02, 0); g.add(handle);
+  const rest = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.03, 0.42), frameM); rest.position.set(0.42, 0.14, 0); g.add(rest);
+  // 어머니: 카디건, 흰머리 쪽, 무릎담요, 손 흔드는 팔
+  const mom = new THREE.Group(); g.add(mom);
+  const cardigan = new THREE.MeshStandardMaterial({color:0xb7a6d6, roughness:1}); const body = capsule(0.2, 0.22, cardigan); body.position.set(-0.08, 0.82, 0); mom.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 18, 14), skin); head.position.set(-0.05, 1.26, 0); mom.add(head);
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.27, 18, 14, 0, Math.PI*2, 0, Math.PI*0.5), new THREE.MeshStandardMaterial({color:0xd9d4cc, roughness:1})); hair.position.set(-0.05, 1.29, 0); hair.rotation.x = -0.1; mom.add(hair);
+  const bun = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), hair.material); bun.position.set(-0.28, 1.36, 0); mom.add(bun);
+  for(const z of [-0.09, 0.09]){ const e = new THREE.Mesh(new THREE.SphereGeometry(0.026, 8, 6), inkM); e.position.set(0.19, 1.27, z); mom.add(e); const bl = new THREE.Mesh(new THREE.CircleGeometry(0.04, 10), blushM); bl.position.set(0.2, 1.2, z*1.9); bl.lookAt(1, 1.2, z*4); mom.add(bl); }
+  const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.01, 6, 10, Math.PI), inkM); mouth.position.set(0.24, 1.18, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); mom.add(mouth);
+  const blanket = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.08, 0.52), new THREE.MeshStandardMaterial({color:0xe8c9a0, roughness:1})); blanket.position.set(0.1, 0.6, 0); mom.add(blanket);
+  for(const z of [-0.1, 0.1]){ const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.3, 4, 8), new THREE.MeshStandardMaterial({color:0x6b6b70, roughness:1})); leg.position.set(0.32, 0.36, z); leg.rotation.z = 0.5; mom.add(leg); const shoe = capsule(0.06, 0.08, new THREE.MeshStandardMaterial({color:0x3a3340, roughness:0.8})); shoe.rotation.z = Math.PI/2; shoe.position.set(0.44, 0.2, z); mom.add(shoe); }
+  const armL = new THREE.Mesh(new THREE.CapsuleGeometry(0.05, 0.22, 4, 8), cardigan); armL.position.set(0.1, 0.78, -0.24); armL.rotation.z = -1.1; mom.add(armL);
+  const armR = new THREE.Group(); armR.position.set(-0.02, 0.95, 0.24); const armRm = new THREE.Mesh(new THREE.CapsuleGeometry(0.05, 0.22, 4, 8), cardigan); armRm.position.y = 0.15; armR.add(armRm); const hand = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), skin); hand.position.y = 0.32; armR.add(hand); armR.rotation.z = 1.6; mom.add(armR);
+  g.userData = {kind:'wheelchair', wheels, mom, head, armR, wave:0, nextWave:6}; return g;
+}
+const pushed = {stroller:makeStroller(), wheelchair:makeWheelchair()}; Object.values(pushed).forEach(o=>{ o.visible = false; scene.add(o); });
+const pushState = {x:0, z:0, y:0, rot:0, kidX:0, kidZ:0, stage:0, nextMom:0};
+// 단계 4·5: 유모차 대신 작은 러너(아이)가 옆에서 같이 달린다
+const kidParts = buildRunner({hair:new THREE.MeshStandardMaterial({color:0x4a3b38, roughness:0.95}), shirt:new THREE.MeshStandardMaterial({color:0xfff1a8, roughness:0.95}), accent:new THREE.MeshStandardMaterial({color:0xff9b8a, roughness:0.9, emissive:0xff9b8a, emissiveIntensity:0}), shorts:new THREE.MeshStandardMaterial({color:0x8fd3f4, roughness:0.95})});
+kidParts.group.visible = false; kidParts.hatBand.visible = false; kidParts.hatCap.visible = false; kidParts.hatStraw.visible = false; scene.add(kidParts.group); const kidState = {x:-2, z:1.2, px:-2, pz:1.2, phase:0};
 const buddies = {maltese:makeDog(DOGS.maltese), golden:makeDog(DOGS.golden), shiba:makeDog(DOGS.shiba), poodle:makeDog(DOGS.poodle), cat:makeCat(), gull:makeGull(1.1)};
 Object.values(buddies).forEach(b=>{ b.visible = false; scene.add(b); });
 const buddyState = {x:-1.2, z:0.9, y:0, phase:0, px:-1.2, pz:0.9};
@@ -1070,11 +1157,12 @@ const buddyState = {x:-1.2, z:0.9, y:0, phase:0, px:-1.2, pz:0.9};
 const cat = { mode:'follow', target:0, timer:8 + Math.random()*8, sitTimer:0, warned:false };
 const CAT_WANDER = ['고양이가 풀숲 쪽으로 샜어요 · 데리러 가요','고양이가 물가에 관심이 생겼어요','고양이가 유목 냄새를 맡으러 갔어요','고양이가 조개를 구경하러 갔어요'];
 const CAT_BACK = ['고양이를 데려왔어요','다시 같이 가요','고양이가 못 이기는 척 따라와요','야옹, 알았다고요'];
-const BUDDY_NOTES = {maltese:'말티즈 · 옆에서 같이 달려요.', golden:'골든 · 꼬리를 세게 흔들어요.', shiba:'시바 · 꼬리가 말려 있어요.', poodle:'푸들 · 곱슬곱슬.', cat:'페르시안 · 하얀 털 뭉치가 총총 따라와요.', gull:'갈매기 · 머리 위에서 같이 날아요.', none:'오늘은 혼자 조용히.'};
+const BUDDY_NOTES = {maltese:'말티즈 · 옆에서 같이 달려요.', golden:'골든 · 꼬리를 세게 흔들어요.', shiba:'시바 · 꼬리가 말려 있어요.', poodle:'푸들 · 곱슬곱슬.', cat:'페르시안 · 하얀 털 뭉치가 총총 따라와요.', gull:'갈매기 · 머리 위에서 같이 날아요.', stroller:'유모차 아이 · 달린 거리가 쌓일수록 아이가 자라요.', wheelchair:'휠체어 어머니 · 앞에서 밀며 달려요. 가끔 말을 건네요.', none:'오늘은 혼자 조용히.'};
 
 function applyLook(){
   applyLookTo(me, look); net.lookDirty = true;
   Object.entries(buddies).forEach(([k,b])=>{ b.visible = k===look.buddy; });
+  { const st = look.buddy==='stroller' ? kidStage() : 0; pushState.stage = st; pushed.stroller.visible = look.buddy==='stroller' && st <= 3; pushed.wheelchair.visible = look.buddy==='wheelchair'; kidParts.group.visible = look.buddy==='stroller' && st >= 4; kidParts.group.scale.setScalar(st >= 5 ? 0.72 : 0.52); try{ const seen = +localStorage.getItem('haebyeon.kidStage') || 0; if(look.buddy==='stroller'){ if(seen && st > seen) say(KID_MSG[st-1], 6000); localStorage.setItem('haebyeon.kidStage', String(st)); } }catch(e){} }
   $('st-cat-wrap').hidden = true;
   $('buddy-note').textContent = BUDDY_NOTES[look.buddy] || '';
   document.querySelectorAll('[data-look]').forEach(box=>{ const key = box.dataset.look; box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===look[key]))); });
@@ -1512,7 +1600,7 @@ if(FH){
   if(SCENE_ID==='hangang'){
   for(let x=-250; x<560; x+=28){ const lp = makeLampPost(); lp.position.set(x, 0, 8.3); hangangSet.add(lp); }   // 둔치 가로등 줄
   for(let x=-250; x<560; x+=9+Math.random()*7){ if(Math.random() < 0.35){ const w = makeWillow(); w.position.set(x, 0, 11 + Math.random()*4); w.scale.setScalar(1.1 + Math.random()*0.4); hangangSet.add(w); } else { const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.16, 5 + Math.random()*2, 7), new THREE.MeshStandardMaterial({color:0x6b5a48, roughness:1})); tr.position.set(x, 3, 12 + Math.random()*8); hangangSet.add(tr); const cr = new THREE.Mesh(new THREE.SphereGeometry(1.6 + Math.random()*0.8, 9, 7), new THREE.MeshStandardMaterial({color:[0x5f9a4c,0x6faa52,0x4f8a44][Math.random()*3|0], roughness:1})); cr.position.set(tr.position.x, tr.position.y + 3.6, tr.position.z); cr.scale.y = 1.8 + Math.random()*0.6; hangangSet.add(cr); } }   // 버드나무 + 키 큰 포플러
-  { const rM = new THREE.MeshStandardMaterial({color:0xb7b07c, roughness:1, side:THREE.DoubleSide}); for(let x=-250; x<560; x+=4+Math.random()*10){ if(Math.random() < 0.55) continue; for(let k=0;k<2;k++){ const r = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.4), rM); r.position.set(x + Math.random(), 0.5, -0.9 + Math.random()*0.8); r.rotation.y = k*Math.PI/2 + Math.random()*0.4; hangangSet.add(r); } } }   // 호안 틈 갈대
+  { const rc = document.createElement('canvas'); rc.width = 64; rc.height = 128; const rg = rc.getContext('2d'); for(let i=0;i<14;i++){ const x0 = 8 + Math.random()*48, x1 = x0 + (Math.random()-0.5)*12, top = 6 + Math.random()*30; const v = 150 + Math.random()*50; rg.strokeStyle = `rgb(${v+20},${v+10},${v-60})`; rg.lineWidth = 1 + Math.random(); rg.beginPath(); rg.moveTo(x0, 128); rg.quadraticCurveTo(x0 + (x1-x0)*0.5, 70, x1, top); rg.stroke(); if(Math.random() < 0.6){ rg.fillStyle = `rgba(${v+40},${v+25},${v-30},0.9)`; rg.beginPath(); rg.ellipse(x1, top + 4, 2, 7, (x1-x0)*0.03, 0, Math.PI*2); rg.fill(); } } const rtex2 = new THREE.CanvasTexture(rc); rtex2.colorSpace = THREE.SRGBColorSpace; rtex2.userData.shared = true; const rM = new THREE.MeshStandardMaterial({map:rtex2, transparent:true, alphaTest:0.35, roughness:1, side:THREE.DoubleSide}); for(let x=-250; x<560; x+=4+Math.random()*10){ if(Math.random() < 0.55) continue; for(let k=0;k<2;k++){ const r = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.5), rM); r.position.set(x + Math.random(), 0.45, -0.9 + Math.random()*0.8); r.rotation.y = k*Math.PI/2 + Math.random()*0.4; hangangSet.add(r); } } }   // 호안 틈 갈대(줄기 그림)
   // 아파트 단지 1겹: 같은 모양 판상형 3~6동이 줄지어 (15~25층)
   for(let x=-260; x<580; ){ const n = 3 + (Math.random()*4|0), h = 45 + Math.random()*30, w = 22 + Math.random()*10, col = [0xfff5e8,0xf4f6f8,0xfbeee6,0xeef5ee][Math.random()*4|0];
     for(let i=0;i<n;i++){ building(x + i*(w+7), farZ - 55 - Math.random()*8, w, h, 11, col); } x += n*(w+7) + 24 + Math.random()*24; }
@@ -2734,6 +2822,7 @@ function frame(){
     runner.position.set(state.x, 0, state.lane);
 
     // 친구
+    if(look.buddy==='stroller' || look.buddy==='wheelchair'){ updatePushed(t, dt); }
     const buddy = buddies[look.buddy];
     if(buddy){
       const kind = buddy.userData.kind;
@@ -2817,6 +2906,7 @@ function frame(){
     const ph = state.stridePhase, amp = THREE.MathUtils.clamp(state.speed/RUN, 0, 1);
     if(!state.resting){
       if(state.speed > 0.05) animateGait(me, ph, amp, runner); else { resetGait(me, dt); runner.rotation.z = 0; headGroup.rotation.set(0,0,0); head.rotation.set(0,0,0); groundFeet(me, runner, 0); }
+      if((look.buddy==='stroller' && pushState.stage <= 3) || look.buddy==='wheelchair'){ for(const a of [armL, armR]){ a.rotation.z = -1.15 + Math.sin(state.stridePhase*2)*0.03; a.userData.lower.rotation.z = 0.35; } armL.rotation.x = -0.06; armR.rotation.x = 0.06; }   /* 밀 때는 두 팔을 앞으로 손잡이에 */
       // 통나무·바위 폴짝 넘기
       // 장애물(통나무·바위·벤치)은 옆으로 비껴 달린다: 앞 6 m 안에 있으면 빈 쪽으로 차선을 옮기고, 지나가면 원래 자리로
       if(state.speed > 0.3){
