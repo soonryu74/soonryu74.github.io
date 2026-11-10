@@ -394,7 +394,8 @@ const Outro: React.FC = () => {
 
   // 1) 20년의 기록이 흘러 올라감
   const wallO = interpolate(frame, [0, 20, 190, 225], [0, 1, 1, 0], clamp);
-  const cnt = Math.round(interpolate(frame, [20, 150], [0, 20], { ...clamp, easing: ease }));
+  const cnt = 20;
+  const cntP = spring({ frame: frame - 14, fps, config: { damping: 13, stiffness: 120 } });
   // 2) 방패 + 핵심 메시지
   const sh = interpolate(frame, [215, 300], [0, 1], { ...clamp, easing: ease });
   const glow = interpolate(frame, [N5_AT + 165, N5_AT + 215], [0, 1], clamp);
@@ -430,7 +431,7 @@ const Outro: React.FC = () => {
         </div>
         <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
           <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 36, color: C.dim, letterSpacing: 10 }}>2007 → 2026</div>
-          <div style={{ fontFamily: FONT, fontWeight: 900, fontSize: 330, color: C.ink, lineHeight: 1.05, letterSpacing: -12, fontVariantNumeric: "tabular-nums", textShadow: "0 0 90px rgba(53,208,186,0.5)" }}>
+          <div style={{ fontFamily: FONT, fontWeight: 900, fontSize: 330, color: C.ink, lineHeight: 1.05, letterSpacing: -12, fontVariantNumeric: "tabular-nums", textShadow: "0 0 90px rgba(53,208,186,0.5)", transform: `scale(${0.6 + 0.4 * cntP})`, opacity: Math.min(1, cntP * 2) }}>
             {cnt}
             <span style={{ fontSize: 130, letterSpacing: -4, color: C.us }}>년</span>
           </div>
