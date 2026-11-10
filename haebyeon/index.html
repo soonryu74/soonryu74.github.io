@@ -419,7 +419,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-178';
+window.__BUILD = '2026-11-10-179';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -820,16 +820,20 @@ function makeSkywalk(){
 }
 let nextPosts = -20, nextSkywalk = 90; const bambooList = []; let nextXmas = 40, nextBigSnowman = 60;
 // 눈길: 길가 큰 눈사람(장식) · 저 멀리서 다가오는 크리스마스 트리(반짝이는 전구·꼭대기 별)
-function makeBigSnowman(){
-  const g = new THREE.Group(); const snowM = new THREE.MeshStandardMaterial({color:0xf7fafc, roughness:1}); const darkM = new THREE.MeshStandardMaterial({color:0x2b2b2b});
-  const sc = 1.6 + Math.random()*0.8; let y = 0; for(const r of [0.62, 0.46, 0.34]){ const b = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 11), snowM); y += r*0.9; b.position.y = y; g.add(b); y += r*0.85; }
-  const hy = y - 0.34*0.85; for(const sx of [-0.12, 0.12]){ const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 5), darkM); e.position.set(0.3, hy + 0.08, sx); g.add(e); }
-  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.26, 7), new THREE.MeshStandardMaterial({color:0xf08a2e})); nose.rotation.z = -Math.PI/2; nose.position.set(0.42, hy, 0); g.add(nose);
-  for(let k=0;k<3;k++){ const btn = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 5), darkM); btn.position.set(0.44 - k*0.02, 0.62*0.9 + 0.62*0.85 + 0.46*0.9 - 0.2 + k*0.18, 0); g.add(btn); }
-  const armM = new THREE.MeshStandardMaterial({color:0x5a4030}); for(const sgn of [1, -1]){ const a = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.04, 0.9, 5), armM); a.position.set(0, 1.25, sgn*0.6); a.rotation.x = sgn*1.1; a.rotation.z = 0.3; g.add(a); }
-  const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.08, 8, 16), new THREE.MeshStandardMaterial({color:[0xd9453a, 0x2f6fd6, 0x3a9a5a][Math.random()*3|0], roughness:1})); scarf.rotation.x = Math.PI/2; scarf.position.y = hy - 0.36; g.add(scarf);
-  const hat = new THREE.Group(); const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.04, 18), darkM); const top = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.3, 0.4, 18), darkM); top.position.y = 0.22; hat.add(brim, top); hat.position.y = hy + 0.28; hat.rotation.z = -0.1; g.add(hat);
-  g.scale.setScalar(sc); g.rotation.y = -Math.PI/2 + (Math.random()-0.5)*0.6; return g;
+function makeBigSnowman(side){
+  // 큰 눈사람: 눈 덩이 3단 + 석탄 눈·웃는 입·당근 코·단추, 나뭇가지 팔(벙어리장갑), 목도리, 중절모. 다가오는 러너 쪽을 본다
+  const g = new THREE.Group(); const snowM = new THREE.MeshStandardMaterial({color:0xf7fafc, roughness:1}); const darkM = new THREE.MeshStandardMaterial({color:0x2b2b2b, roughness:0.8});
+  const sc = 1.6 + Math.random()*0.8; const R = [0.62, 0.46, 0.34]; const Y = []; let y = 0; for(const r of R){ y += r*0.88; Y.push(y); const b = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), snowM); b.position.y = y; g.add(b); y += r*0.8; }
+  const hy = Y[2], hr = R[2];
+  for(const sz of [-0.13, 0.13]){ const e = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), darkM); e.position.set(hr*0.86, hy + 0.09, sz); g.add(e); }
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.42, 8), new THREE.MeshStandardMaterial({color:0xf08a2e, roughness:0.8})); nose.rotation.z = -Math.PI/2; nose.position.set(hr*0.9 + 0.2, hy, 0); g.add(nose);
+  for(let k=0;k<5;k++){ const a = -0.6 + k*0.3; const m = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 5), darkM); m.position.set(hr*0.9, hy - 0.12 - 0.05*Math.cos(a*1.6), Math.sin(a)*0.22); g.add(m); }   // 웃는 입
+  for(let k=0;k<3;k++){ const btn = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 5), darkM); btn.position.set(R[1]*0.92, Y[1] - 0.18 + k*0.2, 0); g.add(btn); }
+  const armM = new THREE.MeshStandardMaterial({color:0x5a4030, roughness:1}); const mitM = new THREE.MeshStandardMaterial({color:[0xd9453a, 0x2f6fd6, 0x3a9a5a][Math.random()*3|0], roughness:1});
+  for(const sgn of [1, -1]){ const a = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 1.3, 6), armM); a.position.set(0.05, Y[1] + 0.25, sgn*(R[1] + 0.5)); a.rotation.x = sgn*1.25; a.rotation.z = 0.15; g.add(a); const tw = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.03, 0.35, 5), armM); tw.position.set(0.1, Y[1] + 0.75, sgn*(R[1] + 0.95)); tw.rotation.x = sgn*0.6; g.add(tw); const mit = new THREE.Mesh(new THREE.SphereGeometry(0.11, 8, 6), mitM); mit.position.set(0.05, Y[1] + 0.85, sgn*(R[1] + 1.1)); g.add(mit); }
+  const scarf = new THREE.Mesh(new THREE.TorusGeometry(hr*0.95, 0.09, 8, 18), mitM); scarf.rotation.x = Math.PI/2; scarf.position.y = hy - hr*0.85; g.add(scarf); const tail = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.5, 0.08), mitM); tail.position.set(hr*0.8, hy - hr - 0.1, 0.12); tail.rotation.z = 0.15; g.add(tail);
+  const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.44, 0.44, 0.05, 18), darkM); brim.position.y = hy + hr*0.78; g.add(brim); const top = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.3, 0.45, 18), darkM); top.position.y = hy + hr*0.78 + 0.25; g.add(top); const band = new THREE.Mesh(new THREE.CylinderGeometry(0.305, 0.305, 0.08, 18), mitM); band.position.y = hy + hr*0.78 + 0.08; g.add(band);
+  g.scale.setScalar(sc); g.rotation.y = side < 0 ? -Math.PI*0.72 : Math.PI*0.72; g.traverse(c=>{ if(c.isMesh) c.castShadow = true; }); return g;
 }
 function makeXmasTree(){
   const g = new THREE.Group(); const H = 16; g.scale.setScalar(1.5); const greenM = new THREE.MeshStandardMaterial({color:0x1f5a34, roughness:1, flatShading:true}); const snowM = new THREE.MeshStandardMaterial({color:0xf4f7fb, roughness:1, flatShading:true});
@@ -2367,7 +2371,7 @@ function populateTo(limitX){
     if(FH){
       if(SNOWFIELD){
         if(x > nextXmas){ nextXmas = x + 420 + Math.random()*160; const o = makeXmasTree(); o.position.set(x + 340, 0.3, -9); scene.add(o); props.push({obj:o, kind:'xmas'}); genX += 2; continue; }   // 저 멀리(340 m 앞) 눈밭에 큰 트리가 보이고 점점 가까워진다
-        if(x > nextBigSnowman){ nextBigSnowman = x + 110 + Math.random()*120; const o = makeBigSnowman(); const z = Math.random() < 0.6 ? -6 - Math.random()*3 : 11.5 + Math.random()*2; o.position.set(x + 20, groundY(z) + 0.1, z); scene.add(o); props.push({obj:o, kind:'snowman'}); }   // 길가 큰 눈사람
+        if(x > nextBigSnowman){ nextBigSnowman = x + 110 + Math.random()*120; const z = Math.random() < 0.6 ? -6 - Math.random()*3 : 11.5 + Math.random()*2; const o = makeBigSnowman(z < 0 ? -1 : 1); o.position.set(x + 20, groundY(z) + 0.1, z); scene.add(o); props.push({obj:o, kind:'snowman'}); }   // 길가 큰 눈사람
         if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.02, 2 + Math.random()*4); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
         else if(r < 0.28){ const o = makeSnowflake(); o.position.set(x + Math.random(), 0.02, 1.2 + Math.random()*5); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
         continue;
