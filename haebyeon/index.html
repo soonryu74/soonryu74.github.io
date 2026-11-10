@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-185';
+window.__BUILD = '2026-11-10-186';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -977,7 +977,8 @@ function animateGait(P, ph, amp, g){
     arm.rotation.z = shoulderA*Math.sin(f) - 0.25*run;                                     // 어깨: 달릴 땐 전체적으로 조금 앞으로
     arm.userData.lower.rotation.z = elbow + 0.55*run*Math.max(0, Math.sin(f));             // 팔꿈치: 앞으로 나갈 때 90도쯤 접혀 손이 가슴 높이, 뒤로 갈 땐 덜 접혀 손이 엉덩이 뒤 (팔이 어깨 위로 접히지 않게)
   }
-  P.armL.rotation.x = -0.18; P.armR.rotation.x = 0.18;
+  P.armL.rotation.x = -0.05; P.armR.rotation.x = 0.05;                                      // 팔은 몸통에 붙여서 (벌어지면 기형처럼 보인다)
+  P.armL.userData.lower.rotation.y = 0.35; P.armR.userData.lower.rotation.y = -0.35;        // 아래팔은 몸 앞쪽으로 살짝 안으로 모은다
   // 실제 달리기처럼 몸통도 움직인다 (상체 전경 + 어깨·골반 역회전 + 좌우 흔들림 + 짧은 체공)
   const sp = Math.sin(ph);                                                                  // +: 오른다리 앞·왼팔 앞
   g.rotation.z = -(0.06 + 0.08*run);                                                        // 앞으로 기울기: 달릴수록 더
@@ -2445,7 +2446,7 @@ function audioStart(){
   const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 0.7;
   audio.birdGain = ctx.createGain(); audio.birdGain.gain.value = 0.5;
   const wg = ctx.createGain(); wg.gain.value = SC.seaVol > 0 ? 0.045 : 0.008;   /* 바닷가 외엔 깔리는 바람결 소음을 거의 끈다 */ wsrc.connect(bp); bp.connect(wg); wg.connect(audio.birdGain); audio.birdGain.connect(audio.master); wsrc.start();
-  audio.stepGain = ctx.createGain(); audio.stepGain.gain.value = 0.4; audio.stepGain.connect(audio.master);
+  audio.stepGain = ctx.createGain(); audio.stepGain.gain.value = 0.2; audio.stepGain.connect(audio.master);
   { const rs = ctx.createBufferSource(); rs.buffer = noiseBuffer(ctx, 5, false); rs.loop = true; const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900; const lp2 = ctx.createBiquadFilter(); lp2.type = 'lowpass'; lp2.frequency.value = 5200; audio.rainGain = ctx.createGain(); audio.rainGain.gain.value = 0; rs.connect(hp); hp.connect(lp2); lp2.connect(audio.rainGain); audio.rainGain.connect(audio.master); rs.start(); }   // 빗소리: 가는 흰 소음
   { const ws = ctx.createBufferSource(); ws.buffer = noiseBuffer(ctx, 5, true); ws.loop = true; const wb = ctx.createBiquadFilter(); wb.type = 'bandpass'; wb.frequency.value = 380; wb.Q.value = 0.45; audio.windGain = ctx.createGain(); audio.windGain.gain.value = 0; ws.connect(wb); wb.connect(audio.windGain); audio.windGain.connect(audio.master); ws.start(); audio.windBp = wb; }   // 바람: 낮게 웅 하는 갈색 소음, 돌풍 따라 세진다
   { const rs = ctx.createBufferSource(); rs.buffer = noiseBuffer(ctx, 3, false); rs.loop = true; const rb = ctx.createBiquadFilter(); rb.type = 'bandpass'; rb.frequency.value = 3000; rb.Q.value = 0.8; audio.rustleGain = ctx.createGain(); audio.rustleGain.gain.value = 0; rs.connect(rb); rb.connect(audio.rustleGain); audio.rustleGain.connect(audio.master); rs.start(); audio.rustleBp = rb; }   // 잎 사각임: 높은 소음이 돌풍에 자글자글
@@ -2620,7 +2621,7 @@ $('home').addEventListener('click', ()=>{ try{ logFlush(true); }catch(e){} const
 $('rain-on').addEventListener('change', e=>{ state.rain = e.target.checked; say(state.rain ? '비가 내려요 · 천천히 가도 돼요' : '비가 그쳤어요', 2200); });
 $('vol-sea').addEventListener('input', e=>{ if(audio.seaGain) audio.seaGain.gain.value = e.target.value/100; });
 $('vol-bird').addEventListener('input', e=>{ if(audio.birdGain) audio.birdGain.gain.value = e.target.value/100; });
-$('vol-step').addEventListener('input', e=>{ if(audio.stepGain) audio.stepGain.gain.value = e.target.value/100; });
+$('vol-step').addEventListener('input', e=>{ if(audio.stepGain) audio.stepGain.gain.value = e.target.value/200; });   /* 전체 발소리 절반 */
 
 function openSheet(id){ closeSheets(); $(id).classList.add('is-open'); hold(false); }
 /* ---------- 화면 녹화 (쇼츠·릴스용 세로 영상) ---------- */
