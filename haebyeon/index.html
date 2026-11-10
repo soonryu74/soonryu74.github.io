@@ -419,7 +419,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-10-175';
+window.__BUILD = '2026-11-10-176';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -926,14 +926,16 @@ function buildRunner(mats){
   const strawBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.03, 24), strawM); strawBrim.position.y = 0.16; hatStraw.add(strawBrim);
   const strawRibbon = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.345, 0.06, 18), mats.accent); strawRibbon.position.y = 0.2; hatStraw.add(strawRibbon);
   hatStraw.rotation.z = -0.08; headGroup.add(hatStraw);
-  // 겨울 비니: 포인트 색 뜨개 모자(골 무늬) + 접어 올린 밑단 + 꼭대기 방울. 머리를 거의 다 덮는다
+  // 겨울 비니(사진 참고): 골이 촘촘한 뜨개, 두툼하게 접어 올린 밑단, 위가 살짝 뒤로 처진 슬라우치, 밑단 앞 작은 가죽 라벨. 색은 포인트 색을 차분하게
   const hatBeanie = new THREE.Group();
-  const knit = (()=>{ const c = document.createElement('canvas'); c.width = 64; c.height = 32; const g2 = c.getContext('2d'); g2.fillStyle = '#fff'; g2.fillRect(0,0,64,32); g2.fillStyle = 'rgba(0,0,0,0.22)'; for(let x=0;x<64;x+=6) g2.fillRect(x, 0, 2.5, 32); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(12, 2); t.userData.shared = true; return t; })();
+  const knit = (()=>{ const c = document.createElement('canvas'); c.width = 128; c.height = 64; const g2 = c.getContext('2d'); g2.fillStyle = '#fff'; g2.fillRect(0,0,128,64); for(let x=0;x<128;x+=4){ g2.fillStyle = 'rgba(0,0,0,0.28)'; g2.fillRect(x, 0, 1.6, 64); g2.fillStyle = 'rgba(255,255,255,0.35)'; g2.fillRect(x + 2, 0, 1, 64); } for(let i=0;i<900;i++){ g2.fillStyle = `rgba(${Math.random()<0.5 ? 0 : 255},${Math.random()<0.5 ? 0 : 255},${Math.random()<0.5 ? 0 : 255},0.07)`; g2.fillRect(Math.random()*128, Math.random()*64, 1.2, 1.2); } const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(18, 2); t.userData.shared = true; return t; })();   // 멜란지 섞인 골 무늬
   const beanieM = new THREE.MeshStandardMaterial({map:knit, color:0xffffff, roughness:1}); hatBeanie.userData.mat = beanieM;
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(0.365, 24, 18, 0, Math.PI*2, 0, Math.PI*0.46), beanieM); dome.position.y = 0.09; dome.scale.y = 1.2; hatBeanie.add(dome);   /* 눈썹 위까지만: 얼굴은 보인다 */
-  const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.372, 0.372, 0.11, 24, 1, true), beanieM); cuff.position.y = 0.1; hatBeanie.add(cuff);
-  const pom = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), new THREE.MeshStandardMaterial({color:0xfff6ea, roughness:1})); pom.position.y = 0.55; hatBeanie.add(pom);
-  hatBeanie.rotation.z = -0.06; headGroup.add(hatBeanie);
+  const crown = new THREE.Mesh(new THREE.SphereGeometry(0.36, 28, 20, 0, Math.PI*2, 0, Math.PI*0.5), beanieM); crown.position.set(-0.03, 0.1, 0); crown.scale.set(1.0, 1.32, 1.0); crown.rotation.z = 0.18; hatBeanie.add(crown);   // 위가 뒤로 처진 슬라우치
+  const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.378, 0.372, 0.15, 28, 1, true), beanieM); cuff.position.y = 0.11; hatBeanie.add(cuff);   // 두툼한 접은 밑단
+  const fold = new THREE.Mesh(new THREE.TorusGeometry(0.375, 0.014, 6, 36), beanieM); fold.rotation.x = Math.PI/2; fold.position.y = 0.185; hatBeanie.add(fold);   // 접힌 선
+  const label = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.055, 0.075), new THREE.MeshStandardMaterial({color:0xb08a5a, roughness:0.7})); label.position.set(0.368, 0.1, 0.0); hatBeanie.add(label);   // 가죽 라벨
+  const stitch = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.04, 0.06), new THREE.MeshStandardMaterial({color:0xe8d6b4})); stitch.position.set(0.38, 0.1, 0); hatBeanie.add(stitch);
+  hatBeanie.rotation.z = -0.04; headGroup.add(hatBeanie);
   [[-0.11],[0.11]].forEach(([z])=>{ const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), inkM); e.position.set(0.3, 0.02, z); e.scale.y = 1.4; headGroup.add(e);
     const bl = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), blushM); bl.position.set(0.3, -0.06, z*1.9); bl.lookAt(1, -0.06, z*4); headGroup.add(bl); });
   const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 12, Math.PI), inkM); mouth.position.set(0.33, -0.09, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headGroup.add(mouth);
@@ -983,7 +985,7 @@ function groundFeet(P, g, lift){
 }
 function applyLookTo(parts, lk){
   parts.mats.hair.color.set(lk.hair); parts.mats.shirt.color.set(lk.shirt); parts.mats.accent.color.set(lk.accent); parts.mats.accent.emissive.set(lk.accent);
-  parts.hatBand.visible = lk.hat==='band'; parts.hatCap.visible = lk.hat==='cap'; parts.hatStraw.visible = lk.hat==='straw'; parts.hatBeanie.visible = lk.hat==='beanie'; parts.hatBeanie.userData.mat.color.set(lk.accent); parts.hair.visible = lk.hat!=='cap' && lk.hat!=='beanie';
+  parts.hatBand.visible = lk.hat==='band'; parts.hatCap.visible = lk.hat==='cap'; parts.hatStraw.visible = lk.hat==='straw'; parts.hatBeanie.visible = lk.hat==='beanie'; { const c = new THREE.Color(lk.accent); const hsl = {}; c.getHSL(hsl); c.setHSL(hsl.h, Math.min(hsl.s, 0.45), Math.min(0.62, Math.max(0.3, hsl.l*0.85))); parts.hatBeanie.userData.mat.color.copy(c); }   /* 차분한 톤으로 */ parts.hair.visible = lk.hat!=='cap' && lk.hat!=='beanie';
 }
 const me = buildRunner({hair:hairM, shirt, accent:accentM, shorts});
 const runner = me.group; const {torso, hips, head, headGroup, hair, hatBand, hatCap, hatStraw, armL, armR, legL, legR} = me;
