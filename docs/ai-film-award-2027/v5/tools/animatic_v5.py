@@ -5,6 +5,7 @@ import csv, os, re, subprocess, sys, textwrap
 from PIL import Image, ImageDraw, ImageFont
 D = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 work, out = sys.argv[1], sys.argv[2]
+STILLS = sys.argv[3] if len(sys.argv) > 3 else None  # 선택: <shot_id>.jpg 스틸 폴더
 W, H = 1280, 720
 FP = "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"
 F = lambda n: ImageFont.truetype(FP, n)
@@ -20,7 +21,13 @@ def card(r, cue):
     black = r["shot_type"] == "black"
     im = Image.new("RGB", (W, H), (0, 0, 0) if black else BG[r["scene_id"]]); d = ImageDraw.Draw(im)
     st = float(r["start_sec"]); du = float(r["duration_sec"])
-    if not black:
+    still = STILLS and os.path.join(STILLS, r["shot_id"] + ".jpg")
+    if still and os.path.exists(still) and not black:
+        im = Image.open(still).convert("RGB").resize((W, H)); d = ImageDraw.Draw(im, "RGBA")
+        d.rectangle([0, 0, W, 54], fill=(0, 0, 0, 150))
+        d.text((20, 12), f"{r['shot_id']} · {du:.0f}s · {r['action']}", font=F(24), fill=(255, 255, 255))
+        if cue: d.rectangle([0, H - 170, W, H], fill=(0, 0, 0, 150))
+    elif not black:
         accent = (240, 200, 40) if "GLOVE" in r["continuity_id"] else (230, 140, 60)
         d.rectangle([60, 60, 68, 130], fill=accent)
         d.text((84, 56), f"{r['shot_id']}  ·  {r['shot_type']}  ·  {du:.0f}s", font=F(34), fill=(235, 235, 235))
