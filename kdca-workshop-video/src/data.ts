@@ -214,5 +214,6 @@ export const SEGS: Seg[] = [];
 }
 export const OUTRO_FROM = SEGS[SEGS.length - 1].from + SEGS[SEGS.length - 1].dur;
 export const TOTAL = OUTRO_FROM + OUTRO;
+export const NOTICE = 120; // 시작 안내문 (4초)
 export const YEAR_SEGS = SEGS.filter((s) => s.kind === "year") as Extract<Seg, { kind: "year" }>[];
 export const actFrom = (no: number) => SEGS.find((s) => s.kind === "act" && s.act.no === no)!.from;

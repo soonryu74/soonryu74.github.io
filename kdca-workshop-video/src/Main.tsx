@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Audio, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import { ACTS, ACT_CARD, FPS, OPENING, OUTRO, OUTRO_FROM, SEGS, TOTAL, YEAR_SEGS, YearItem, Act, actFrom } from "./data";
+import { ACTS, ACT_CARD, FPS, NOTICE, OPENING, OUTRO, OUTRO_FROM, SEGS, TOTAL, YEAR_SEGS, YearItem, Act, actFrom } from "./data";
 import cues from "./narration.json";
 import durations from "./durations.json";
 import { Backdrop, C, Caption, FONT, Odometer, Rise, clamp, ease, useIn, useOut } from "./ui";
@@ -485,8 +485,8 @@ const Outro: React.FC = () => {
           <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 26, color: "rgba(244,247,251,0.45)", marginTop: 22, letterSpacing: 6, opacity: interpolate(ef, [90, 130], [0, 1], clamp) }}>
             KOREA DISEASE CONTROL AND PREVENTION AGENCY
           </div>
-          <div style={{ position: "absolute", bottom: 70, fontFamily: FONT, fontWeight: 500, fontSize: 26, color: "rgba(244,247,251,0.6)", opacity: interpolate(ef, [100, 140], [0, 1], clamp) }}>
-            이 영상은 AI로 제작되었습니다 (영상 · 내레이션 · 음악)
+          <div style={{ position: "absolute", bottom: 70, fontFamily: FONT, fontWeight: 500, fontSize: 32, color: "rgba(244,247,251,0.82)", opacity: interpolate(ef, [100, 140], [0, 1], clamp) }}>
+            {NOTICE_TEXT}
           </div>
         </AbsoluteFill>
       ) : null}
@@ -525,8 +525,32 @@ const Music: React.FC<{ file: string; from: number; dur: number; startSec: numbe
   </Sequence>
 );
 
+const NOTICE_TEXT = "본 자료는 지난 20년간 대한민국과 질병관리청의 대표 뉴스를 AI를 통해 선정한 뒤 AI로 제작한 영상입니다.";
+
+/** 시작 안내문 */
+const Notice: React.FC = () => {
+  const frame = useCurrentFrame();
+  const o = Math.min(interpolate(frame, [6, 24], [0, 1], clamp), interpolate(frame, [NOTICE - 18, NOTICE - 2], [1, 0], clamp));
+  return (
+    <AbsoluteFill style={{ background: "#050b18", alignItems: "center", justifyContent: "center", flexDirection: "column", opacity: o }}>
+      <div style={{ width: 90, height: 4, background: `linear-gradient(90deg, ${C.world}, ${C.us})`, borderRadius: 4, marginBottom: 40 }} />
+      <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 46, color: C.ink, letterSpacing: -1, lineHeight: 1.6, textAlign: "center", wordBreak: "keep-all" }}>
+        본 자료는 지난 20년간 대한민국과 질병관리청의 대표 뉴스를
+        <br />
+        AI를 통해 선정한 뒤 AI로 제작한 영상입니다.
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 export const Main: React.FC = () => (
   <AbsoluteFill style={{ background: "#000" }}>
+    <Sequence durationInFrames={NOTICE}>
+      <Notice />
+    </Sequence>
+    {/* 좌측 상단 AI 제작 표기 (상시) */}
+    <div style={{ position: "absolute", top: 16, left: 28, zIndex: 10, fontFamily: FONT, fontWeight: 500, fontSize: 22, color: "rgba(244,247,251,0.7)", letterSpacing: 0.5 }}>AI로 제작한 영상자료</div>
+    <Sequence from={NOTICE}>
     <Sequence durationInFrames={OPENING}>
       <Opening />
     </Sequence>
@@ -536,9 +560,6 @@ export const Main: React.FC = () => (
     <Sequence from={OUTRO_FROM} durationInFrames={OUTRO}>
       <Outro />
     </Sequence>
-
-    {/* AI 제작 표기 (상시) */}
-    <div style={{ position: "absolute", top: 16, right: 28, fontFamily: FONT, fontWeight: 500, fontSize: 20, color: "rgba(244,247,251,0.6)", letterSpacing: 0.5 }}>AI로 제작되었습니다</div>
 
     {/* 음악: 뉴스 오프닝 → 메인 비트 → (2015 피아노) → 메인 비트 → 클라이맥스 */}
     <Music file="m1_news" from={0} dur={560} startSec={0} vol={0.6} fadeIn={2} />
@@ -553,6 +574,7 @@ export const Main: React.FC = () => (
         {c.scope === "outro" ? null : <Caption text={c.ko} en={c.en} frames={c.len} />}
       </Sequence>
     ))}
+    </Sequence>
   </AbsoluteFill>
 );
 
