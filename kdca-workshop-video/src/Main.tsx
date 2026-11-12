@@ -23,7 +23,7 @@ const FLASH_LEN = 24;
 const TITLE_AT = FLASH.length * FLASH_LEN; // 240
 const CONCEPT_AT = 540;
 
-/** 워크샵 컨셉: 감염병위기관리국 의논(意論)하다 */
+/** 워크숍 컨셉: 감염병위기관리국 의논(意論)하다 */
 const HANJA = '"Noto Serif KR", serif';
 const Concept: React.FC = () => {
   const frame = useCurrentFrame();
@@ -35,7 +35,7 @@ const Concept: React.FC = () => {
   const head = spring({ frame: frame - 4, fps, config: { damping: 200 } });
   return (
     <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", opacity: interpolate(frame, [0, 14], [0, 1], clamp) }}>
-      <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 34, letterSpacing: 12, color: C.world, opacity: head }}>2026 워크샵</div>
+      <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 34, letterSpacing: 12, color: C.world, opacity: head }}>2026 워크숍</div>
       <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 60, color: C.ink, letterSpacing: -1.5, marginTop: 18, opacity: head, transform: `translateY(${(1 - head) * 24}px)` }}>감염병위기관리국</div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4, overflow: "hidden", paddingBottom: 14 }}>
         <div style={{ display: "flex", alignItems: "baseline", transform: `translateY(${(1 - spring({ frame: frame - 14, fps, config: { damping: 200 } })) * 110}%)` }}>
