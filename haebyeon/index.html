@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-14-192';
+window.__BUILD = '2026-11-14-193';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2904,15 +2904,15 @@ $('end-share').addEventListener('click', shareCard);
 
 /* ---------- 시간대 ---------- */
 const TOD = [
-  {t:0.00, top:0x5a6aa8, mid:0xf3b7c4, bot:0xfde9dc, sun:0xffd6b8, fog:0xe9dfe3, elev:0.08, az:0.95, li:1.1, hemi:0.9, exp:1.0, night:0.25},
-  {t:0.18, top:0x7fb6e8, mid:0xffd7b8, bot:0xfff4e6, sun:0xfff4de, fog:0xe9eef0, elev:0.35, az:0.6, li:2.0, hemi:1.0, exp:1.05, night:0},
-  {t:0.40, top:0x6fb8f0, mid:0xbfe6f5, bot:0xf5fbfb, sun:0xffffff, fog:0xe3f0f3, elev:0.85, az:0.1, li:2.5, hemi:1.1, exp:1.1, night:0},
-  {t:0.54, top:0x72b0ea, mid:0xd6ecf5, bot:0xfaf8f0, sun:0xfffaf0, fog:0xe6edee, elev:0.6, az:-0.3, li:2.3, hemi:1.05, exp:1.08, night:0},
-  {t:0.64, top:0x7aa9dc, mid:0xffd3a8, bot:0xfff0dc, sun:0xfff0c8, fog:0xeadfd2, elev:0.32, az:-0.6, li:2.0, hemi:1.0, exp:1.05, night:0},
+  {t:0.00, top:0x5a6aa8, mid:0xf3b7c4, bot:0xfde9dc, sun:0xffd6b8, fog:0xe9dfe3, elev:0.06, az:0.95, li:1.1, hemi:0.9, exp:1.0, night:0.25},
+  {t:0.18, top:0x7fb6e8, mid:0xffd7b8, bot:0xfff4e6, sun:0xfff4de, fog:0xe9eef0, elev:0.3, az:0.6, li:2.0, hemi:1.0, exp:1.05, night:0},
+  {t:0.40, top:0x6fb8f0, mid:0xbfe6f5, bot:0xf5fbfb, sun:0xffffff, fog:0xe3f0f3, elev:1.25, az:0.1, li:2.5, hemi:1.1, exp:1.1, night:0},
+  {t:0.54, top:0x72b0ea, mid:0xd6ecf5, bot:0xfaf8f0, sun:0xfffaf0, fog:0xe6edee, elev:0.95, az:-0.3, li:2.3, hemi:1.05, exp:1.08, night:0},
+  {t:0.64, top:0x7aa9dc, mid:0xffd3a8, bot:0xfff0dc, sun:0xfff0c8, fog:0xeadfd2, elev:0.45, az:-0.6, li:2.0, hemi:1.0, exp:1.05, night:0},
   {t:0.74, top:0x3d4f8f, mid:0xf0a070, bot:0xffd9b4, sun:0xffc890, fog:0xe6d2c6, elev:0.12, az:-0.85, li:1.5, hemi:0.9, exp:1.0, night:0.05},
   {t:0.82, top:0x1f2a56, mid:0x8a6a98, bot:0xe8a890, sun:0xffb08c, fog:0xa99fb2, elev:0.02, az:-1.0, li:0.6, hemi:0.6, exp:0.9, night:0.5},
   {t:0.90, top:0x121a38, mid:0x33406a, bot:0x5b5f86, sun:0xd8dcff, fog:0x5a5f7c, elev:-0.08, az:-1.1, li:0.35, hemi:0.6, exp:0.95, night:1},
-  {t:1.00, top:0x5a6aa8, mid:0xf3b7c4, bot:0xfde9dc, sun:0xffd6b8, fog:0xe9dfe3, elev:0.08, az:0.95, li:1.1, hemi:0.9, exp:1.0, night:0.25},
+  {t:1.00, top:0x5a6aa8, mid:0xf3b7c4, bot:0xfde9dc, sun:0xffd6b8, fog:0xe9dfe3, elev:0.06, az:0.95, li:1.1, hemi:0.9, exp:1.0, night:0.25},
 ];
 const cA = new THREE.Color(), cB = new THREE.Color();
 function lerpColor(target, a, b, f){ cA.setHex(a); cB.setHex(b); target.copy(cA).lerp(cB, f); }
@@ -3150,6 +3150,7 @@ function frame(){
   sand.position.x = state.x; wet.position.x = state.x; sandMat.map.offset.x = state.x/520*60;
   if(SNOWFIELD){ snowFollow.position.x = state.x; riverTex.offset.x = sandMat.map.offset.x; snowSet.position.x = Math.round(state.x/520)*520; }
   sun.position.copy(skyUniforms.sunDir.value).multiplyScalar(60).add(new THREE.Vector3(state.x, 0, state.lane)); sun.target.position.set(state.x, 0, state.lane);
+  { const low = 1 - THREE.MathUtils.smoothstep(skyUniforms.sunDir.value.y, 0.1, 0.5); const ext = 30 + 40*low; if(Math.abs(sun.shadow.camera.top - ext) > 1){ sun.shadow.camera.top = ext; sun.shadow.camera.bottom = -ext; sun.shadow.camera.left = -ext; sun.shadow.camera.right = ext*2; sun.shadow.camera.updateProjectionMatrix(); } }   /* 해가 낮으면 그림자가 길어지므로 그림자 범위를 넓힌다 */
   if(lighthouse.position.x < state.x - 60) lighthouse.position.x += 420;
   if(bridge){ if(bridge.position.x < state.x - 60) bridge.position.x += 720; bridge.userData.glow.intensity = 40*nightMix; }
   if(embank.visible){ embank.position.x = state.x; embank.userData.ptex.offset.x = state.x/520*60; embank.userData.etex.offset.x = state.x/520*60; embank.userData.stex.offset.x = state.x/520*60; embank.userData.wtex.offset.x = state.x/520*120; }
