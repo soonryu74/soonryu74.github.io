@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-14-193';
+window.__BUILD = '2026-11-14-194';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -953,9 +953,9 @@ function buildRunner(mats){
   [[-0.11],[0.11]].forEach(([z])=>{ const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), inkM); e.position.set(0.3, 0.02, z); e.scale.y = 1.4; headGroup.add(e);
     const bl = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), blushM); bl.position.set(0.3, -0.06, z*1.9); bl.lookAt(1, -0.06, z*4); headGroup.add(bl); });
   const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 12, Math.PI), inkM); mouth.position.set(0.33, -0.09, 0); mouth.rotation.set(0, Math.PI/2, Math.PI); headGroup.add(mouth);
-  const yoke = new THREE.Mesh(new THREE.SphereGeometry(0.25, 20, 14), mats.shirt); yoke.scale.set(0.8, 0.46, 1.28); yoke.position.y = 0.1; torso.add(yoke);   // 어깨선: 목에서 양 어깨로 완만하게 내려오는 넓은 곡선 (사진의 어깨 라인)
-  const armL = limb(0.40, 0.07, skin, 0.06, -0.3), armR = limb(0.40, 0.07, skin, 0.06, 0.3);   // 팔은 어깨선 끝 '아래'에 매달린다 (어깨보다 높이 붙지 않게)
-  for(const [a, sgn] of [[armL, -1],[armR, 1]]){ const cap = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10), mats.shirt); cap.position.set(0, 0.07, sgn*0.28); torso.add(cap); }   // 둥근 삼각근
+  const yoke = new THREE.Mesh(new THREE.SphereGeometry(0.26, 24, 16), mats.shirt); yoke.scale.set(0.8, 0.42, 1.25); yoke.position.y = 0.11; torso.add(yoke);   // 어깨선: 목에서 양 어깨로 완만하게 내려오는 넓은 곡선 (사진의 어깨 라인)
+  const armL = limb(0.40, 0.07, skin, 0.11, -0.27), armR = limb(0.40, 0.07, skin, 0.11, 0.27);   // 팔 뿌리를 어깨선 안쪽에 묻는다 → 몸통에서 팔이 '자라 나온' 모양
+  for(const a of [armL, armR]){ const sleeve = capsule(0.1, 0.08, mats.shirt); sleeve.position.y = -0.05; a.add(sleeve); }   // 티셔츠 소매: 어깨 관절을 덮고 팔과 함께 움직여 이음새가 안 보인다   // 둥근 삼각근
   const legL = limb(0.40, 0.085, skin, 0.60, -0.12), legR = limb(0.40, 0.085, skin, 0.60, 0.12);
   const shoes = [];
   [legL, legR].forEach(l=>{ const sh = capsule(0.1, 0.1, mats.accent); sh.rotation.z = Math.PI/2; sh.position.set(0.05, -0.22, 0); l.userData.lower.add(sh); l.userData.shoe = sh; shoes.push(sh); });
