@@ -5,6 +5,7 @@
 //  · 알림마다 보낸 사람 사진(icon)을 함께 보낸다 (7일짜리 주소)
 //  · notice    : 목사님 공지를 올리거나(제목·내용·기간 until) 내리고(clear), 목자들에게 알림을 보낸다
 //  · remind    : 목사가 [제출 안 한 목장에 알림 보내기]를 누르면, 그 주 일기를 제출하지 않은 목자에게 보낸다
+//  · push_cover: 목사가 볼 '앱 알림을 켠 목자 / 안 켠 목자' (안 켠 목자에게 카톡으로 켜는 법을 보내도록)
 //  · encourage : 목사가 고른 목장(출석 통계 '안 모인 목장')의 목자에게 격려 글을 보낸다
 //  · set_deadline : 목사가 마감 알림 요일·시각을 정한다 (features.deadline = { dow, hour } 또는 false)
 //  · deadline_tick: (로그인 없이, 데이터베이스 pg_cron이 10분마다 · GitHub Actions는 예비) 교회마다 마감 시각이 지났으면
@@ -295,6 +296,21 @@ Deno.serve(async (req) => {
         icon,
       }))
       return json({ ok: true, ...r })
+    }
+
+    // 목사님: 앱 알림을 켠 목자 / 안 켠 목자 (안 켠 목자에게는 마감 알림이 가지 않는다 → 켜는 법을 카톡으로 보내도록)
+    if (body.action === 'push_cover') {
+      const { data: me } = await admin.from('church_profile').select('church_id, role').eq('id', uid).maybeSingle()
+      if (!me || me.role !== 'pastor' || !me.church_id) return json({ error: '목사 계정만 쓸 수 있습니다' }, 403)
+      const { data: mjs } = await admin.from('church_mokjang').select('name, mokja_id, mokja_name')
+        .eq('church_id', me.church_id).eq('active', true).not('mokja_id', 'is', null)
+      const ids = [...new Set((mjs ?? []).map((m) => m.mokja_id as string))]
+      const { data: subs } = ids.length ? await admin.from('church_push').select('user_id').in('user_id', ids) : { data: [] }
+      const has = new Set((subs ?? []).map((s) => s.user_id))
+      const seen = new Set<string>()
+      const off = (mjs ?? []).filter((m) => !has.has(m.mokja_id) && !seen.has(m.mokja_id) && seen.add(m.mokja_id))
+        .map((m) => ({ group: m.name, name: m.mokja_name || '' }))
+      return json({ ok: true, total: ids.length, on: ids.filter((i) => has.has(i)).length, off })
     }
 
     if (body.action === 'remind' || body.action === 'set_deadline') {
