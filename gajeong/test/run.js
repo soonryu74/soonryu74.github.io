@@ -938,6 +938,11 @@ const db = p => p.evaluate(() => window.__DB());
     await p.fill('#new-name', '전도대상'); await p.click('#add-vip'); await p.waitForTimeout(500);
     const w = (await db(p)).church_mokwon.find(x => x.name === '전도대상');
     ok('[VIP로 추가] → 표시 VIP로 저장', w && w.tag === 'VIP');
+    ok('카톡 메시지 200자 줄이기: 첫 줄·마지막 글·주소는 살리고 명단은 외 n', await p.evaluate(() => {
+      const names = Array.from({ length: 20 }, (_, i) => '· 목장' + i + ' (김목자' + i + ' 목자님)').join('\n');
+      const r = CHURCH.kakaoShort('[교회] 아직 안 낸 목장입니다.\n' + names + '\n\n이번 주 일기를 기다립니다.\nhttps://mokjang.app/bangjoo/#push');
+      return r.text.length <= 200 && r.text.startsWith('[교회]') && r.text.endsWith('이번 주 일기를 기다립니다.') && /외 \d+/.test(r.text) && r.url === 'https://mokjang.app/bangjoo/#push';
+    }));
     ok("표시 칸의 '목원'은 화면에서 빼고 나머지만", await p.evaluate(() => CHURCH.tagText('목원') === '' && CHURCH.tagText('새가족 · 목원') === '새가족' && CHURCH.tagText('VIP') === 'VIP'));
     ok('명단 맨 아래 VIP 칸에 따로', await p.$eval('#member-list', (el, id) => { const t = el.querySelector('.vip-title'), it = el.querySelector('.list-item[data-id="' + id + '"]');
       return !!t && !!it && it.classList.contains('is-vip') && !!(t.compareDocumentPosition(it) & 4) && [...el.querySelectorAll('.list-item')].pop() === it; }, w.id));
