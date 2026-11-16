@@ -233,8 +233,17 @@ window.CHURCH = (function () {
     { id: 'night', name: '밤 기도', desc: '어두운 화면 · 금빛', colors: ['#121517', '#1a1e21', '#d6b36e'] }
   ];
   var THEME_COLOR = { note: '#ffffff', sky: '#ffffff', night: '#1a1e21' };   // 머리말 색과 같게
+  // 야간 모드: 이 기기에서 고른 것(LS 'look-dark' = on/off), 안 골랐으면 휴대폰 설정(어두운 화면)을 따른다
+  function darkOn() {
+    var v = ''; try { v = localStorage.getItem('look-dark') || ''; } catch (e) {}
+    if (v) return v === 'on';
+    return !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+  var churchTheme = 'note';
   function setTheme(id) {
     if (!THEME_COLOR[id]) id = 'note';
+    churchTheme = id;
+    if (darkOn()) id = 'night';
     document.documentElement.setAttribute('data-theme', id);
     var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', THEME_COLOR[id]);
   }
@@ -408,6 +417,24 @@ window.CHURCH = (function () {
       p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_ua: navigator.userAgent.slice(0, 200), p_lang: LANG
     });
     if (r.error) throw new Error(r.error.message);
+    try { localStorage.removeItem('push-off'); } catch (e) {}
+  }
+  // 알림을 켜 둔 기기는 들어올 때마다 서버 등록을 새로 맞춘다. 브라우저가 구독을 몰래 바꾸거나(새 주소),
+  // 서버가 끊긴 주소를 지워도 알림이 저절로 다시 이어진다 — '처음엔 오다가 요즘 안 와요'를 막는다
+  async function pushSync() {
+    try {
+      if (inApp() || !pushSupported() || Notification.permission !== 'granted') return;
+      var ses = (await sb.auth.getSession()).data.session; if (!ses) return;
+      // 같은 휴대폰에서 다른 계정으로 들어와도(목사님 휴대폰으로 목자 화면 확인 등) 지금 계정으로 다시 맞춘다
+      if (localStorage.getItem('push-off') || sessionStorage.getItem('push-synced') === ses.user.id) return;
+      var reg = await pushRegistration(); await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription() ||
+        await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64((await notify({ action: 'key' })).publicKey) });
+      var j = sub.toJSON();
+      var r = await sb.rpc('church_push_save2', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth,
+        p_ua: navigator.userAgent.slice(0, 200), p_lang: LANG });
+      if (!r.error) sessionStorage.setItem('push-synced', ses.user.id);
+    } catch (e) {}
   }
   // 시험 알림: ① 이 휴대폰이 직접 띄우는 알림(휴대폰·크롬 설정 확인) ② 서버에서 '이 기기로만' 보내는 알림(보내는 길 확인)
   async function pushTest() {
@@ -420,6 +447,7 @@ window.CHURCH = (function () {
     return { local: local, sent: r.sent || 0, devices: r.devices || 0, code: (r.codes || [])[0] || 0 };
   }
   async function pushDisable() {
+    try { localStorage.setItem('push-off', '1'); } catch (e) {}   // 일부러 끈 기기는 저절로 다시 켜지 않는다
     var reg = await navigator.serviceWorker.getRegistration('./');
     var sub = reg && await reg.pushManager.getSubscription();
     if (!sub) return;
@@ -450,10 +478,16 @@ window.CHURCH = (function () {
       '<button class="small who-toggle" type="button" aria-expanded="false">' + esc(t('메뉴')) + '</button>' +
       '<div class="who-menu"><span class="who-menu-name">' + esc(title2(profile)) + '</span>' + langButton() +
       '<button class="small" id="btn-guide">' + esc(t('사용법 영상')) + '</button>' +
+      '<button class="small" id="btn-dark">' + esc(darkOn() ? t('☀ 밝게 보기') : t('🌙 어둡게 보기')) + '</button>' +
       '<button class="small" id="btn-signout">' + esc(t('로그아웃')) + '</button></div></div></div>';
     document.body.insertBefore(el, document.body.firstChild);
     el.querySelector('#btn-signout').addEventListener('click', signOut);
     el.querySelector('#btn-guide').addEventListener('click', function () { el.classList.remove('menu-open'); guideSheet(profile); });
+    el.querySelector('#btn-dark').addEventListener('click', function () {   // 이 기기만 (새벽에 눈부시지 않게)
+      var on = !darkOn(); try { localStorage.setItem('look-dark', on ? 'on' : 'off'); } catch (e) {}
+      setTheme(churchTheme); this.textContent = on ? t('☀ 밝게 보기') : t('🌙 어둡게 보기');
+    });
+    pushSync();
     signOutCard();
     // 왼쪽 위 로고·교회 이름을 누르면 첫 화면(첫 탭, 맨 위)으로
     var goHome = function () {
@@ -659,13 +693,24 @@ window.CHURCH = (function () {
   async function bgm(top) {
     var xmas = season() === 'xmas' || season() === 'snowman';   // 겨울(성탄·눈사람)엔 성탄 곡
     var on = true; try { on = localStorage.getItem('bgm') !== 'off'; } catch (e) {}
-    var a = new Audio(); a.loop = true; a.preload = 'auto';
+    var a = new Audio(); a.preload = 'auto';
     // 아이폰은 소리 크기(volume)를 못 바꿔 늘 최대로 나온다 → 미리 작게 만든 곡(-soft)을 쓴다 (무음 모드에서도 나오게 <audio> 그대로)
     var fixedVol = (function () { try { a.volume = 0.5; var r = a.volume !== 0.5; a.volume = 1; return r; } catch (e) { return true; } })();
-    a.src = (xmas ? 'assets/bgm-xmas' : 'assets/bgm') + (fixedVol ? '-soft' : '') + '.mp3?v=3';   // 화면이 열리자마자 받아 둔다
+    // 곡 목록은 assets/bgm.json ({ xmas: [...], plain: [...] }) — 곡을 늘릴 때 파일(이름.mp3 + 이름-soft.mp3)과 이 목록만 고친다
+    var list = [xmas ? 'bgm-xmas' : 'bgm'];
+    try { var mf = await (await fetch('assets/bgm.json?v=' + Date.now().toString(36).slice(0, -4))).json(); var l = (xmas ? mf.xmas : mf.plain) || []; if (l.length) list = l.slice(); } catch (e) {}
+    for (var k = list.length - 1; k > 0; k--) { var r0 = Math.floor(Math.random() * (k + 1)), tmp = list[k]; list[k] = list[r0]; list[r0] = tmp; }   // 들어올 때마다 다른 곡부터
+    var track = 0, misses = 0;
+    function srcOf(i) { return 'assets/' + list[i % list.length] + (fixedVol ? '-soft' : '') + '.mp3?v=3'; }
+    a.loop = list.length === 1;
+    a.src = srcOf(0);   // 화면이 열리자마자 받아 둔다
+    a.addEventListener('ended', function () { track++; a.src = srcOf(track); if (on) a.play().catch(function () {}); });   // 다음 곡
     var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'small bgm-btn';
     var who = top.querySelector('.who'); who.insertBefore(btn, top.querySelector('.who-toggle'));
-    a.addEventListener('error', function () { btn.remove(); off(); });   // 곡 파일이 없으면 단추도 없앤다
+    a.addEventListener('error', function () {   // 없는 곡은 건너뛰고, 하나도 없으면 단추도 없앤다
+      if (++misses < list.length) { track++; a.src = srcOf(track); if (started && on) a.play().catch(function () {}); return; }
+      btn.remove(); off();
+    });
     function setVol(v) { if (!fixedVol) a.volume = Math.max(0, Math.min(1, v)); }
     setVol(0);
     var timer = null, started = false;

@@ -25,6 +25,15 @@
 
   /* 알림을 눌러 들어오면(moksa.html#j=일기) 그 주로 가서 그 목장을 펼친다 */
   async function openFromLink() {
+    if (/^#remind\b/.test(location.hash)) {   // 마감 알림 '안 낸 목장 n곳' → 그 주로 가서 카톡 글 창
+      history.replaceState(null, '', location.pathname);
+      var dlf = ((C.getChurch() || {}).features || {}).deadline;
+      week = C.mondayOf(); if (dlf && dlf.dow < 2) week = C.addWeeks(week, -1);
+      var tw = $('.tabs button[data-pane="week"]'); if (tw && !tw.classList.contains('on')) tw.click();
+      await loadWeek();
+      openRemindSheet();
+      return true;
+    }
     if (/^#gather\b/.test(location.hash)) {   // 토요일 밤 '기도제목이 모였습니다' 알림 → 기도제목 모아보기
       history.replaceState(null, '', location.pathname);
       var gb = $('.tabs button[data-pane="gather"]'); if (gb) setTimeout(function () { gb.click(); }, 0);
@@ -639,6 +648,26 @@
     remindLeft = left;
   }
   var remindLeft = [];
+  // 안 낸 목장에 보낼 카톡 글: 목록 + (목사님이 정한 글 또는 기본 글) + 바로 쓰는 주소
+  function remindKakaoText() {
+    var c = C.getChurch() || {}, custom = ((c.features || {}).remind_text || '').trim();
+    return T('[{0}] {1} 목장 일기를 아직 제출하지 않은 목장입니다.', c.name || '', C.weekLabel(week)) + '\n' +
+      remindLeft.map(function (m) { return '· ' + m.name + (m.mokja_name ? ' (' + T('{0} 목자님', m.mokja_name) + ')' : ''); }).join('\n') + '\n\n' +
+      (custom || T('모임 이야기와 기도제목을 올려 주세요. 여기서 바로 쓰실 수 있습니다:')) + '\n' + C.churchLink(c);
+  }
+  // 마감 알림(moksa.html#remind)을 누르고 들어오면: 안 낸 목장 카톡 글을 창으로 보여 주고 한 번에 보내기
+  function openRemindSheet() {
+    if (!remindLeft.length) return C.sheet({ kicker: T('마감 알림'), title: T('모든 목장이 제출했습니다'), html: '<p class="desc">' + esc(T('감사합니다!')) + '</p>' });
+    var text = remindKakaoText();
+    C.sheet({ kicker: T('마감 알림'), title: T('아직 안 낸 목장 {0}곳', remindLeft.length), cls: 'remind-sheet',
+      html: '<div class="prose sheet-text">' + C.proseHtml(text) + '</div><div class="msg" id="msg-rs"></div>',
+      foot: [{ label: T('닫기') }, { label: T('카톡으로 보내기'), fn: async function () {
+        if (navigator.share && !C.inApp()) { try { await navigator.share({ text: text }); return; } catch (e) { if (e && e.name === 'AbortError') return true; } }
+        var copied = false; try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+        C.say($('#msg-rs'), copied ? T('알림 글을 복사했습니다. 카카오톡 목자 단톡방에 붙여 넣어 보내 주세요.') : T('아래 글을 길게 눌러 복사해서 카카오톡 목자 단톡방에 보내 주세요.'), 'ok', true);
+        return true;
+      } }] });
+  }
   function bindRemind() {
     $('#btn-remind').addEventListener('click', async function () {
       var b = this;
@@ -655,10 +684,7 @@
 
     // 카카오톡: 안 낸 목장 목록 + 바로 쓰는 주소를 글로 만들어 목자 단톡방에 보낸다 (휴대폰 '공유' → 카카오톡)
     $('#btn-remind-kakao').addEventListener('click', async function () {
-      var c = C.getChurch() || {};
-      var text = T('[{0}] {1} 목장 일기를 아직 제출하지 않은 목장입니다.', c.name || '', C.weekLabel(week)) + '\n' +
-        remindLeft.map(function (m) { return '· ' + m.name + (m.mokja_name ? ' (' + T('{0} 목자님', m.mokja_name) + ')' : ''); }).join('\n') + '\n\n' +
-        T('모임 이야기와 기도제목을 올려 주세요. 여기서 바로 쓰실 수 있습니다:') + '\n' + C.churchLink(c);
+      var text = remindKakaoText();
       if (navigator.share && !C.inApp()) {
         try { await navigator.share({ text: text }); C.say($('#msg-remind'), T('공유 창에서 카카오톡 → 목자 단톡방을 고르시면 됩니다.'), 'ok'); return; }
         catch (e) { if (e && e.name === 'AbortError') return; }
@@ -680,6 +706,18 @@
     $('#dl-dow').value = dl ? dl.dow : -1; $('#dl-hour').value = dl ? dl.hour : 20;
     $('#dl-hour').disabled = !dl;
     $('#dl-dow').addEventListener('change', function () { $('#dl-hour').disabled = this.value === '-1'; });
+    $('#rm-text').value = f.remind_text || '';
+    $('#rm-save').addEventListener('click', async function () {
+      var v = $('#rm-text').value.trim().slice(0, 200);
+      try {
+        var cur = (await sb.from('church_church').select('features').eq('id', c.id).maybeSingle()).data;
+        var nf = Object.assign({}, (cur && cur.features) || f, { remind_text: v });
+        var r = await sb.from('church_church').update({ features: nf }).eq('id', c.id);
+        if (r.error) throw new Error(r.error.message);
+        f = nf; c.features = nf;
+        C.say($('#msg-deadline'), v ? T('저장했습니다. 마감 알림과 카톡 글에 이 글이 들어갑니다.') : T('기본 글로 돌아갔습니다.'), 'ok');
+      } catch (e) { C.say($('#msg-deadline'), e.message, 'err'); }
+    });
     $('#dg-on').checked = f.digest !== false;
     $('#dg-on').addEventListener('change', async function () {
       var on = this.checked;

@@ -32,3 +32,10 @@ self.addEventListener('notificationclick', function (e) {
     return self.clients.openWindow(url);
   }));
 });
+
+// 브라우저가 구독을 바꾸면 같은 설정으로 다시 구독해 둔다 (다음에 앱을 열 때 화면이 서버 등록을 새로 맞춘다)
+self.addEventListener('pushsubscriptionchange', function (e) {
+  var opt = e.oldSubscription && e.oldSubscription.options;
+  if (!opt || !opt.applicationServerKey) return;
+  e.waitUntil(self.registration.pushManager.subscribe(opt).catch(function () {}));
+});
