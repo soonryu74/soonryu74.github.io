@@ -612,7 +612,7 @@ const db = p => p.evaluate(() => window.__DB());
     ok('목사 화면: 말씀 앞에 목사님 사진', await p.$eval('#week-list .mj[data-mj="mj1"] .cmt-head .avatar', e => e.tagName) === 'IMG');
     await p.click('.top #btn-signout').catch(() => {}); await p.waitForTimeout(600);
     await login(p, 'mokja1');
-    ok('목자: 알림이 꺼져 있으면 일기 쓰기 맨 위에 안내', await p.isVisible('#notify-ask') && (await p.textContent('#notify-ask')).includes('목사님이 말씀을'));
+    ok('목자: 알림이 꺼져 있으면 일기 쓰기 맨 위에 안내', await p.isVisible('#notify-ask') && (await p.textContent('#notify-ask')).includes('목사님 말씀과 마감 알림'));
     await p.click('#notify-ask-on'); await p.waitForTimeout(400);
     ok('목자: 알림 켜짐', !(await p.isVisible('#notify-ask')) && (await db(p)).church_push.length > 0);
     const nChips = await p.$$eval('#members-chips .chip', c => c.length), nMem = await p.$$eval('#members-box .member', c => c.length);
@@ -961,6 +961,23 @@ const db = p => p.evaluate(() => window.__DB());
     await p.goto(BASE + 'moksa.html#remind'); await p.waitForSelector('.top h1'); await p.waitForTimeout(1200);
     const rs = await p.textContent('.remind-sheet').catch(() => '');
     ok('마감 알림(#remind)으로 들어오면 안 낸 목장 카톡 글 창 (정한 글 포함)', rs.includes('김 목장') && rs.includes('기다립니다') && rs.includes('카톡으로 보내기'), rs.slice(0, 200));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
+  console.log('\n[VIP 명단] 목원과 따로 묶기');
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1');
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    await p.fill('#new-name', '전도대상'); await p.click('#add-vip'); await p.waitForTimeout(500);
+    const w = (await db(p)).church_mokwon.find(x => x.name === '전도대상');
+    ok('[VIP로 추가] → 표시 VIP로 저장', w && w.tag === 'VIP');
+    ok('명단 맨 아래 VIP 칸에 따로', await p.$eval('#member-list', (el, id) => { const t = el.querySelector('.vip-title'), it = el.querySelector('.list-item[data-id="' + id + '"]');
+      return !!t && !!it && it.classList.contains('is-vip') && !!(t.compareDocumentPosition(it) & 4) && [...el.querySelectorAll('.list-item')].pop() === it; }, w.id));
+    await p.click('.tabs button[data-pane="write"]'); await p.waitForTimeout(300);
+    ok('일기에서도 VIP는 맨 아래 따로', await p.$eval('#members-box', el => { const ms = [...el.querySelectorAll('.member')]; return !!el.querySelector('.vip-title') && ms.pop().classList.contains('is-vip') && !ms.some(x => x.classList.contains('is-vip')); }));
+    await p.click('.tabs button[data-pane="members"]'); await p.waitForTimeout(300);
+    await p.click('#member-list .list-item[data-id="' + w.id + '"] .act-vip'); await p.waitForTimeout(500);
+    ok('[목원으로] → VIP 표시만 빠짐', (await db(p)).church_mokwon.find(x => x.id === w.id).tag === '' && !(await p.$('#member-list .list-item[data-id="' + w.id + '"].is-vip')));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
