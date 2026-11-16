@@ -714,10 +714,48 @@ window.CHURCH = (function () {
     if (u.pathname !== location.pathname) { location.href = u.href; return; }
     if (u.hash) { if (location.hash === u.hash) window.dispatchEvent(new HashChangeEvent('hashchange')); else location.hash = u.hash; }
   });
-  // 카톡으로 보내기: 휴대폰 '공유' 창(→ 카카오톡)을 열고, 카카오톡 안에서 연 화면이면 글을 복사한 뒤 카카오톡으로 돌아간다
-  //   돌려주는 값: shared(공유 창으로 보냄) · cancel(취소) · kakao(복사하고 카톡으로 넘어감) · copied(복사만) · manual(복사도 안 됨)
+  // 카카오톡 공유 (대화방 고르는 카톡 창) — 카카오 개발자 JavaScript 키(공개용, 비밀 아님)가 있으면 쓴다
+  var KAKAO_KEY = '';
+  var kakaoLoading = null;
+  function loadKakao() {
+    if (!KAKAO_KEY) return Promise.reject(new Error('no key'));
+    if (window.Kakao && window.Kakao.isInitialized && window.Kakao.isInitialized()) return Promise.resolve(window.Kakao);
+    if (!kakaoLoading) kakaoLoading = new Promise(function (ok, no) {
+      var s = document.createElement('script');
+      s.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js';
+      s.integrity = 'sha384-DKYJZ8NLiK8MN4/C5P2dtSmLQ4KwPaoqAfyA/DfmEc1VDxu4yyC7wy6K1Hs90nka'; s.crossOrigin = 'anonymous';
+      s.onload = function () { try { if (!window.Kakao.isInitialized()) window.Kakao.init(KAKAO_KEY); ok(window.Kakao); } catch (e) { no(e); } };
+      s.onerror = function () { kakaoLoading = null; no(new Error('load')); };
+      document.head.appendChild(s);
+    });
+    return kakaoLoading;
+  }
+  // 카톡 메시지는 200자까지: 첫 줄과 마지막 문단(목사님 글)은 살리고, 가운데 명단은 들어가는 만큼 + '외 n'
+  function kakaoShort(text) {
+    var lines = String(text).split('\n'), url = '';
+    while (lines.length && /^\s*$/.test(lines[lines.length - 1])) lines.pop();
+    if (lines.length && /^https?:\/\/\S+$/.test(lines[lines.length - 1].trim())) url = lines.pop().trim();
+    while (lines.length && /^\s*$/.test(lines[lines.length - 1])) lines.pop();
+    var body = lines.join('\n');
+    if (body.length <= 200) return { text: body, url: url };
+    var head = lines[0], tail = lines.length > 1 ? lines[lines.length - 1] : '', mid = lines.slice(1, -1), out = [head], used = head.length + tail.length + 12, left = 0;
+    mid.forEach(function (l) { if (left || used + l.length + 1 > 200) { if (l.trim()) left++; return; } out.push(l); used += l.length + 1; });
+    if (left) out.push(t('· 외 {0}', left));
+    out.push(tail);
+    var s = out.join('\n'); if (s.length > 200) s = s.slice(0, 199) + '…';
+    return { text: s, url: url };
+  }
+  // 카톡으로 보내기: ① 카카오톡 공유(대화방 고르는 창) ② 휴대폰 '공유' 창 ③ 복사하고 카카오톡으로 돌아가기
+  //   돌려주는 값: shared(보냄) · cancel(취소) · kakao(복사하고 카톡으로 넘어감) · copied(복사만) · manual(복사도 안 됨)
   async function toKakao(text) {
     var kakao = /KAKAOTALK/i.test(navigator.userAgent);
+    if (KAKAO_KEY) {
+      try {
+        var K = await loadKakao(), sh = kakaoShort(text), link = sh.url || churchLink(church || {});
+        K.Share.sendDefault({ objectType: 'text', text: sh.text, link: { mobileWebUrl: link, webUrl: link }, buttonTitle: t('앱에서 보기') });
+        return 'shared';
+      } catch (e) {}
+    }
     if (navigator.share && !kakao) { try { await navigator.share({ text: text }); return 'shared'; } catch (e) { if (e && e.name === 'AbortError') return 'cancel'; } }
     var copied = false;
     try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
@@ -1172,7 +1210,7 @@ window.CHURCH = (function () {
     header: header, title2: title2,
     loadChurch: loadChurch, publicChurch: publicChurch, rememberChurch: rememberChurch,
     churchLink: churchLink, logoOf: logoOf, getChurch: function () { return church; }, fillTimezones: fillTimezones,
-    toKakao: toKakao, tagText: tagText, isVip: isVip, vipTag: vipTag, pushSupported: pushSupported, pushState: pushState, pushTest: pushTest, inApp: inApp, openExternal: openExternal, pushEnable: pushEnable, pushDisable: pushDisable,
+    toKakao: toKakao, kakaoShort: kakaoShort, tagText: tagText, isVip: isVip, vipTag: vipTag, pushSupported: pushSupported, pushState: pushState, pushTest: pushTest, inApp: inApp, openExternal: openExternal, pushEnable: pushEnable, pushDisable: pushDisable,
     isIOS: isIOS, standalone: standalone,
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
