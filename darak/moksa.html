@@ -16,7 +16,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="다락방나눔터">
-<link rel="stylesheet" href="style.css?v=202611161600">
+<link rel="stylesheet" href="style.css?v=202611171000">
 </head>
 <body>
 <div class="wrap wrap-wide">
@@ -148,6 +148,10 @@ try { (function (m, q) { var s = q.get('c');
     <div class="card" id="deadline-card">
       <h2>마감 알림</h2>
       <p class="desc">정한 때까지 일기를 제출하지 않은 목자에게 휴대전화 알림을 한 번 보냅니다. 알림을 켠 목자에게만 갑니다. 그때 목사님께도 '안 낸 목장' 알림이 가고, 누르면 카톡으로 한 번에 보낼 수 있습니다.</p>
+      <div class="push-cover" id="push-cover" hidden>
+        <p id="pc-text"></p>
+        <div class="row"><button type="button" class="small primary" id="pc-open">안 켠 목자 보기 · 카톡으로 켜는 법 보내기</button></div>
+      </div>
       <div class="row" style="align-items:center; gap:8px">
         <select id="dl-dow" aria-label="요일"></select>
         <select id="dl-hour" aria-label="시각"></select>
@@ -348,9 +352,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202611161600"></script>
-<script src="common.js?v=202611161600"></script>
-<script src="moksa.js?v=202611161600"></script>
+<script src="lang-en.js?v=202611171000"></script>
+<script src="common.js?v=202611171000"></script>
+<script src="moksa.js?v=202611171000"></script>
 
 </body>
 </html>

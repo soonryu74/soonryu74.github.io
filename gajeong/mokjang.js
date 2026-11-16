@@ -47,6 +47,15 @@
 
   /* 말씀 알림을 눌러 들어오면(mokjang.html#j=일기) [지난 일기]에서 그 주를 펼친다 */
   async function openFromLink() {
+    if (/[#&]push\b/.test(location.hash) || /[?&]push=1/.test(location.search)) {
+      history.replaceState(null, '', location.pathname);
+      pushAsk = true;
+      $$('.tabs button').forEach(function (x) { x.classList.toggle('on', x.dataset.pane === 'write'); });
+      $$('.pane').forEach(function (x) { x.classList.toggle('on', x.id === 'pane-write'); });
+      await showNotify();
+      $('#notify-ask').scrollIntoView({ block: 'start' });
+      return;
+    }
     var m = /[#&]j=([0-9a-f-]{36})/.exec(location.hash);
     if (!m) return;
     history.replaceState(null, '', location.pathname);
@@ -60,10 +69,11 @@
   }
 
   /* ── 휴대전화 알림 (목사님 말씀) ───────────────── */
+  var pushAsk = false;   // 목사님이 보낸 '알림 켜는 법' 주소로 들어옴 → '나중에'를 눌렀어도 안내를 보인다
   var ASK_LATER = 'gajeong-notify-later-mokja';
   function bindNotify() {
     $('#notify-on').addEventListener('click', function () { turnOn($('#msg-notify')); });
-    $('#notify-ask-on').addEventListener('click', function () { if (C.inApp()) return C.openExternal(); turnOn($('#msg-notify-ask')); });
+    $('#notify-ask-on').addEventListener('click', function () { if (C.inApp()) return C.openExternal('push=1'); turnOn($('#msg-notify-ask')); });
     document.addEventListener('click', function (e) { if (e.target.closest('.open-ext')) C.openExternal(); });
     $('#notify-ask-later').addEventListener('click', function () {
       try { localStorage.setItem(ASK_LATER, String(Date.now())); } catch (e) {}
@@ -118,6 +128,13 @@
     // 일기 쓰기 맨 위 안내: 아직 안 켰고, '나중에'를 누른 지 7일이 지났을 때만
     var later = 0; try { later = +localStorage.getItem(ASK_LATER) || 0; } catch (e) {}
     $('#notify-ask').hidden = !((st === 'off' || st === 'ios-home' || st === 'inapp') && Date.now() - later > 7 * 864e5);
+    if (pushAsk) {
+      $('#notify-ask').hidden = false;
+      $('#notify-ask').classList.add('hl');
+      $('#notify-ask-later').hidden = st === 'on';
+      if (st === 'on') { $('#notify-ask-desc').textContent = T('이 기기는 이미 알림을 받고 있습니다. 감사합니다!'); $('#notify-ask-on').hidden = true; }
+      if (st === 'unsupported' || st === 'denied') { $('#notify-ask-desc').textContent = help; $('#notify-ask-on').hidden = true; }
+    }
     if (st === 'inapp') { $('#notify-ask-desc').textContent = help; $('#notify-ask-on').textContent = T('크롬·사파리로 열기'); }
     if (st === 'ios-home') { $('#notify-ask-desc').textContent = help; $('#notify-ask-on').hidden = true; }
   }
