@@ -276,7 +276,7 @@
       return '<div class="people-mj"><h3>' + esc(mj.name) + '</h3>' + list.map(function (m) {
         return '<div class="list-item" data-id="' + esc(m.id) + '">' + (C.has('member_photos') ? C.avatar(m, peoplePhoto[m.id]) : '') +
           '<div class="grow"><div class="t">' + esc(m.name) +
-          (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
+          (C.tagText(m.tag) ? ' <span class="badge gold">' + esc(C.tagText(m.tag)) + '</span>' : '') +
           (m.active ? '' : T(' <span class="badge">쉼</span>')) + '</div>' +
           '<div class="s">' + (esc(C.memberDatesLine(m)) || T('등록 정보 없음')) + '</div></div>' +
           T('<button class="small act-dates">등록 정보</button>') + '</div>';
@@ -308,7 +308,8 @@
 
   function bindTabs() {
     $$('.tabs button').forEach(function (b) {
-      b.addEventListener('click', function () {
+      b.addEventListener('click', function (e) {
+        if (b.dataset.pane === 'gather' && e && e.isTrusted) setTimeout(showSharedPop, 150);   // 직접 눌렀을 때만 (알림으로 들어올 땐 안 띄움)
         $$('.tabs button').forEach(function (x) { x.classList.remove('on'); });
         $$('.pane').forEach(function (x) { x.classList.remove('on'); });
         b.classList.add('on');
@@ -518,8 +519,8 @@
         var ids = picked(), body = $('#um-body').value.trim(); if (!body) { C.say($('#msg-um'), T('보낼 글을 적어 주세요.'), 'err'); return true; }
         var names = list.filter(function (x) { return ids.indexOf(x.id) >= 0; }).map(function (x) { return x.mokja_name || x.name; });
         var text = (names.length ? names.map(function (n) { return T('{0} 목자님', n); }).join(', ') + '\n\n' : '') + body + '\n\n' + C.churchLink(c);
-        if (navigator.share && !C.inApp()) { try { await navigator.share({ text: text }); return true; } catch (e) { if (e && e.name === 'AbortError') return true; } }
-        var copied = false; try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+        var how = await C.toKakao(text); if (how !== 'copied' && how !== 'manual') return true;
+        var copied = how === 'copied';
         C.say($('#msg-um'), copied ? T('글을 복사했습니다. 카카오톡에 붙여 넣어 보내 주세요.') : T('아래 글을 길게 눌러 복사해서 카카오톡으로 보내 주세요.') + '\n\n' + text, 'ok', true);
         return true;
       } },
@@ -662,8 +663,8 @@
     C.sheet({ kicker: T('마감 알림'), title: T('아직 안 낸 목장 {0}곳', remindLeft.length), cls: 'remind-sheet',
       html: '<div class="prose sheet-text">' + C.proseHtml(text) + '</div><div class="msg" id="msg-rs"></div>',
       foot: [{ label: T('닫기') }, { label: T('카톡으로 보내기'), fn: async function () {
-        if (navigator.share && !C.inApp()) { try { await navigator.share({ text: text }); return; } catch (e) { if (e && e.name === 'AbortError') return true; } }
-        var copied = false; try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+        var how = await C.toKakao(text); if (how !== 'copied' && how !== 'manual') return true;
+        var copied = how === 'copied';
         C.say($('#msg-rs'), copied ? T('알림 글을 복사했습니다. 카카오톡 목자 단톡방에 붙여 넣어 보내 주세요.') : T('아래 글을 길게 눌러 복사해서 카카오톡 목자 단톡방에 보내 주세요.'), 'ok', true);
         return true;
       } }] });
@@ -698,8 +699,8 @@
         '<p class="desc">' + esc(T('아래 글을 목자 단톡방에 보내면, 목자님이 주소를 눌러 한 번에 알림을 켤 수 있습니다.')) + '</p>' +
         '<div class="prose sheet-text">' + C.proseHtml(text) + '</div><div class="msg" id="msg-pc"></div>',
       foot: [{ label: T('닫기') }, { label: T('카톡으로 보내기'), fn: async function () {
-        if (navigator.share && !C.inApp()) { try { await navigator.share({ text: text }); return; } catch (e) { if (e && e.name === 'AbortError') return true; } }
-        var copied = false; try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+        var how = await C.toKakao(text); if (how !== 'copied' && how !== 'manual') return true;
+        var copied = how === 'copied';
         C.say($('#msg-pc'), copied ? T('글을 복사했습니다. 카카오톡 목자 단톡방에 붙여 넣어 보내 주세요.') : T('위 글을 길게 눌러 복사해서 카카오톡 목자 단톡방에 보내 주세요.'), 'ok', true);
         return true;
       } }] });
@@ -721,11 +722,10 @@
     // 카카오톡: 안 낸 목장 목록 + 바로 쓰는 주소를 글로 만들어 목자 단톡방에 보낸다 (휴대폰 '공유' → 카카오톡)
     $('#btn-remind-kakao').addEventListener('click', async function () {
       var text = remindKakaoText();
-      if (navigator.share && !C.inApp()) {
-        try { await navigator.share({ text: text }); C.say($('#msg-remind'), T('공유 창에서 카카오톡 → 목자 단톡방을 고르시면 됩니다.'), 'ok'); return; }
-        catch (e) { if (e && e.name === 'AbortError') return; }
-      }
-      var copied = false; try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+      var how = await C.toKakao(text);
+      if (how === 'shared') return C.say($('#msg-remind'), T('공유 창에서 카카오톡 → 목자 단톡방을 고르시면 됩니다.'), 'ok');
+      if (how === 'cancel' || how === 'kakao') return;
+      var copied = how === 'copied';
       C.say($('#msg-remind'), (copied ? T('알림 글을 복사했습니다. 카카오톡 목자 단톡방에 붙여 넣어 보내 주세요.')
         : T('아래 글을 길게 눌러 복사해서 카카오톡 목자 단톡방에 보내 주세요.')) + '\n\n' + text, 'ok', true);
     });
@@ -1064,6 +1064,17 @@
         try { await saveShared(l); renderShared(); } catch (err) { alert(err.message); }
       }
     });
+  }
+  // 기도제목 모아보기를 누르면 '함께 기도해요'를 공지처럼 아래에서 올려 보여 준다
+  function showSharedPop() {
+    var list = sharedList(); if (!list.length || document.querySelector('.sheet-bg.shared-pop')) return;
+    C.sheet({ kicker: T('기도제목 모아보기'), title: T('함께 기도해요'), cls: 'shared-pop',
+      html: list.map(function (x) {
+        return '<div class="sp-pop-item"><div class="sp-pop-who">' + esc(spKind(x.kind)) + (x.who ? ' · ' + esc(x.who) : '') + '</div>' +
+          '<div class="prose sheet-text">' + C.proseHtml(x.text || '') + '</div></div>';
+      }).join(''),
+      foot: [{ label: T('고치기'), fn: function () { var el = $('#shared-card'); if (el) setTimeout(function () { el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 280); } },
+             { label: T('닫기') }] });
   }
   function editShared(i) {
     var l = sharedList(), x = i >= 0 ? l[i] : null;
