@@ -297,6 +297,14 @@ window.CHURCH = (function () {
     return c;
   }
   // 교회 전용 주소 /코드/ — 카카오톡 미리보기에 교회 이름·로고가 뜬다 (GitHub Actions가 만들어 둠, 없으면 404.html이 넘겨 줌)
+  // VIP(전도 대상): 목원 '표시'에 VIP가 들어 있으면. 표시는 '새가족 · VIP'처럼 다른 말과 함께 쓸 수 있다
+  function isVip(m) { return /vip/i.test((m && m.tag) || ''); }
+  function vipTag(tag, on) {
+    var parts = String(tag || '').split(/\s*[·,\/]\s*/).map(function (x) { return x.trim(); })
+      .filter(function (x) { return x && !/^vip$/i.test(x); });
+    if (on) parts.push('VIP');
+    return parts.join(' · ');
+  }
   function churchLink(c) {
     return new URL(encodeURIComponent(c.slug) + '/', document.baseURI).href;   // 교회 주소(/코드/)에서 열어도 맨 위 기준
   }
@@ -1017,7 +1025,7 @@ window.CHURCH = (function () {
     header: header, title2: title2,
     loadChurch: loadChurch, publicChurch: publicChurch, rememberChurch: rememberChurch,
     churchLink: churchLink, logoOf: logoOf, getChurch: function () { return church; }, fillTimezones: fillTimezones,
-    pushSupported: pushSupported, pushState: pushState, pushTest: pushTest, inApp: inApp, openExternal: openExternal, pushEnable: pushEnable, pushDisable: pushDisable,
+    isVip: isVip, vipTag: vipTag, pushSupported: pushSupported, pushState: pushState, pushTest: pushTest, inApp: inApp, openExternal: openExternal, pushEnable: pushEnable, pushDisable: pushDisable,
     isIOS: isIOS, standalone: standalone,
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,

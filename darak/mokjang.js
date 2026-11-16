@@ -113,7 +113,7 @@
   async function turnOn(msgEl) {
     try {
       await C.pushEnable();
-      C.say(msgEl, T('알림을 켰습니다. 목사님이 말씀을 남기시면 이 기기로 알려 드립니다.'), 'ok', true);
+      C.say(msgEl, T('알림을 켰습니다. 목사님 말씀과 마감 알림이 이 기기로 옵니다.'), 'ok', true);
     } catch (e) { C.say(msgEl, e.message, 'err'); }
     showNotify();
   }
@@ -286,8 +286,11 @@
     if (!mokwon.length) { box.innerHTML = T('<p class="empty">아직 목원이 없습니다. 위에 이름을 넣어 주세요.</p>'); return; }
     var dates = C.has('member_dates');   // 성도 날짜(교회 등록·생명의 삶·침례)는 켠 교회만
     var photos = C.has('member_photos');
-    box.innerHTML = mokwon.map(function (m) {
-      return '<div class="list-item" data-id="' + m.id + '">' +
+    var mem = mokwon.filter(function (m) { return !C.isVip(m); }), vips = mokwon.filter(C.isVip);
+    box.innerHTML = mem.map(item).join('') +
+      (vips.length ? '<div class="section-title vip-title">' + esc(T('VIP 명단 {0}명', vips.length)) + '</div>' + vips.map(item).join('') : '');
+    function item(m) {
+      return '<div class="list-item' + (C.isVip(m) ? ' is-vip' : '') + '" data-id="' + m.id + '">' +
         (photos ? C.avatar(m, photoUrl[m.id]) : '') +
         '<div class="grow"><div class="t">' + esc(m.name) +
         (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
@@ -298,25 +301,32 @@
         (dates ? T('<button class="small act-dates">등록 정보</button>') : '') +
         (photos ? T('<button class="small act-photo">사진</button>') : '') +
         (photos && m.photo_path ? T('<button class="small act-photo-del">사진 지우기</button>') : '') +
+        '<button class="small act-vip">' + (C.isVip(m) ? T('목원으로') : T('VIP로')) + '</button>' +
         '<button class="small act-toggle">' + (m.active ? T('잠시 쉼으로') : T('다시 참여')) + '</button>' +
         T('<button class="small danger act-del">삭제</button></div>');
-    }).join('');
+    }
   }
 
   function bindMembers() {
-    $('#form-add').addEventListener('submit', async function (e) {
-      e.preventDefault();
+    $('#add-vip').addEventListener('click', function () {
+      if (!$('#new-name').value.trim()) { $('#new-name').focus(); return C.say($('#msg-members'), T('VIP 이름을 먼저 넣어 주세요.'), 'err'); }
+      addMember(true);
+    });
+    $('#form-add').addEventListener('submit', function (e) { e.preventDefault(); addMember(false); });
+    async function addMember(vip) {
       var name = $('#new-name').value.trim();
       if (!name) return;
+      var tag = $('#new-tag').value.trim();
+      if (vip && !C.isVip({ tag: tag })) tag = C.vipTag(tag, true);
       var r = await sb.from('church_mokwon').insert({
-        mokjang_id: mokjang.id, name: name, tag: $('#new-tag').value.trim(),
+        mokjang_id: mokjang.id, name: name, tag: tag,
         sort_order: mokwon.length + 1
       });
       if (r.error) return C.say($('#msg-members'), r.error.message, 'err');
       $('#new-name').value = ''; $('#new-tag').value = '';
       await loadMokwon(); renderMembers();
-      C.say($('#msg-members'), T('{0} 님을 넣었습니다.', name), 'ok');
-    });
+      C.say($('#msg-members'), vip ? T('{0} 님을 VIP 명단에 넣었습니다.', name) : T('{0} 님을 넣었습니다.', name), 'ok');
+    }
 
     $('#member-list').addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -354,6 +364,8 @@
         var nm = prompt(T('이름'), m.name); if (nm === null) return;
         var tg = prompt(T('표시 (새가족·VIP 등, 비워도 됩니다)'), m.tag || ''); if (tg === null) tg = m.tag;
         await sb.from('church_mokwon').update({ name: nm.trim(), tag: (tg || '').trim() }).eq('id', id);
+      } else if (btn.classList.contains('act-vip')) {
+        await sb.from('church_mokwon').update({ tag: C.vipTag(m.tag, !C.isVip(m)) }).eq('id', id);
       } else if (btn.classList.contains('act-toggle')) {
         await sb.from('church_mokwon').update({ active: !m.active }).eq('id', id);
       } else if (btn.classList.contains('act-photo')) {   // 성도 사진: 고르면 400px로 줄여 올린다
@@ -498,7 +510,8 @@
     mokwon.filter(function (m) { return m.active && !seen[m.id]; }).forEach(function (m) {
       out.push({ id: null, mokwon_id: m.id, name: m.name, attended: true, content: '', answered: false, answer_note: '' });
     });
-    return out;
+    var vipId = {}; mokwon.forEach(function (m) { if (C.isVip(m)) vipId[m.id] = true; });
+    return out.filter(function (p) { return !vipId[p.mokwon_id]; }).concat(out.filter(function (p) { return vipId[p.mokwon_id]; }));   // VIP는 맨 아래에 따로
   }
 
   /* 화면에 쳐 넣던 글을 잃지 않게, 다시 그리기 전에 먼저 거둬들인다 */
@@ -528,9 +541,12 @@
     rendered = list;
     var box = $('#members-box');
     $('#no-members').style.display = list.length ? 'none' : 'block';
+    var firstVip = -1;
     box.innerHTML = list.map(function (p, i) {
       var tag = (mokwon.find(function (m) { return m.id === p.mokwon_id; }) || {}).tag;
-      return '<div class="member" data-i="' + i + '">' +
+      var vip = C.isVip({ tag: tag }), head = '';
+      if (vip && firstVip < 0) { firstVip = i; head = '<div class="section-title vip-title">' + esc(T('VIP {0}명', list.length - i)) + '</div>'; }
+      return head + '<div class="member' + (vip ? ' is-vip' : '') + '" data-i="' + i + '">' +
         '<div class="head"><span class="name">' + esc(p.name) + '</span>' +
         (tag ? '<span class="badge gold">' + esc(tag) + '</span>' : '') +
         '<span class="spacer"></span>' +
