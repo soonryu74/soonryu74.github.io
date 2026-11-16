@@ -280,7 +280,7 @@
       return '<div class="list-item' + (C.isVip(m) ? ' is-vip' : '') + '" data-id="' + m.id + '">' +
         (photos ? C.avatar(m, photoUrl[m.id]) : '') +
         '<div class="grow"><div class="t">' + esc(m.name) +
-        (m.tag ? ' <span class="badge gold">' + esc(m.tag) + '</span>' : '') +
+        (C.tagText(m.tag) ? ' <span class="badge gold">' + esc(C.tagText(m.tag)) + '</span>' : '') +
         (m.active ? '' : T(' <span class="badge">쉼</span>')) +
         (m.active && streak[m.id] >= C.ABSENT_WEEKS ? ' <span class="badge warn">' + esc(T('{0}주째 못 오심', streak[m.id])) + '</span>' : '') + '</div>' +
         (dates ? '<div class="s">' + esc(C.memberDatesLine(m)) + '</div>' : '') + '</div>' +
@@ -535,7 +535,7 @@
       if (vip && firstVip < 0) { firstVip = i; head = '<div class="section-title vip-title">' + esc(T('VIP {0}명', list.length - i)) + '</div>'; }
       return head + '<div class="member' + (vip ? ' is-vip' : '') + '" data-i="' + i + '">' +
         '<div class="head"><span class="name">' + esc(p.name) + '</span>' +
-        (tag ? '<span class="badge gold">' + esc(tag) + '</span>' : '') +
+        (C.tagText(tag) ? '<span class="badge gold">' + esc(C.tagText(tag)) + '</span>' : '') +
         '<span class="spacer"></span>' +
         '<label class="check"><input type="checkbox" class="f-att"' + (p.attended ? ' checked' : '') + T('> 참석</label>') +
         '<label class="check"><input type="checkbox" class="f-ans"' + (p.answered ? ' checked' : '') + T('> 응답됨</label>') +

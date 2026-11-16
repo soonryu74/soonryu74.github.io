@@ -841,3 +841,54 @@ html[data-theme="night"] .mp-row.on,html[data-theme="night"] .mp-more{color:#8fd
 .mp-bar{background:rgba(127,127,127,.32)}
 .mp-bar i{background:currentColor}
 .mp-list,.mp-row{border-color:rgba(127,127,127,.28)}
+
+/* 선택곡 듣기: 곡마다 체크칸 (멜론처럼) */
+.mp-row{padding:0}
+.mp-ck{display:flex;align-items:center;justify-content:center;width:44px;align-self:stretch;flex:none;margin:0;cursor:pointer}
+.mp-ck input{width:22px;height:22px;margin:0;accent-color:var(--brand,#1f5c3a)}
+.mp-go{display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;border:0;background:transparent;padding:12px 4px 12px 0;font:inherit;color:inherit;box-shadow:none;border-radius:0}
+.mp-row.on .mp-go{font-weight:800}
+.mp-pickbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 4px;font-size:14px}
+.mp-pickbar span{opacity:.8}
+.mp-msg{display:none;margin:0 0 8px;padding:8px 12px;border-radius:10px;background:#fff3d6;color:#7a5200;font-size:14px;font-weight:700}
+.mp-msg.on{display:block}
+/* 음악 고르기: 창은 고정, 곡 목록만 움직인다 */
+.music-sheet .sheet-body{display:flex;flex-direction:column;overflow:hidden;overflow:clip;max-height:78vh;padding-bottom:12px}
+.music-sheet .sheet-kicker,.music-sheet .sheet-title,.mp-now,.mp-bar,.mp-time,.mp-ctl,.mp-modes,.mp-msg,.mp-pickbar{flex:none}
+.music-sheet .mp{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+.music-sheet .mp-list{flex:1 1 auto;min-height:96px;max-height:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.music-sheet .sheet-title{margin-bottom:8px}
+/* 누른 뒤 남는 흰 바탕(손가락 hover) 없애고, 지금 곡은 옅은 띠로 */
+.mp-go:hover,.mp-go:focus,.mp-go:active,.mp-ctl button:not(.mp-play):hover{background:transparent;border-color:transparent}
+.mp-ctl .mp-play:hover{background:var(--brand,#1f5c3a)}
+.mp-row.on{background:rgba(127,127,127,.2);border-radius:10px;color:inherit}
+html[data-theme="night"] .mp-row.on{color:inherit}
+/* 음악 고르기: 위쪽을 줄여 곡 목록을 더 보이게 */
+.music-sheet .sheet-body{max-height:84vh;padding-top:20px}
+.music-sheet .sheet-kicker{display:none}
+.music-sheet .sheet-title{font-size:20px;margin:0 0 8px}
+.music-sheet .mp-now{margin:0 0 6px}
+.music-sheet .mp-art{width:44px;height:44px;border-radius:12px;padding-bottom:11px}
+.music-sheet .mp-title{font-size:17px}
+.music-sheet .mp-ctl{margin:2px 0 8px;gap:18px}
+.music-sheet .mp-ctl button{width:46px;height:46px}
+.music-sheet .mp-ctl .mp-play{width:58px;height:58px}
+.music-sheet .mp-modes{margin-bottom:6px}
+.music-sheet .mp-modes button{padding:8px 4px}
+.music-sheet .mp-pickbar .small{padding:6px 12px}
+/* 음악 고르기: 창 높이에 맞춰 목록만 줄어든다 (아래 [음악 끄기]·[닫기]는 늘 보이게) */
+.music-sheet .sheet{display:flex;flex-direction:column;max-height:92vh;max-height:92dvh}
+.music-sheet .sheet-body{flex:1 1 auto;min-height:0;max-height:none}
+.music-sheet .sheet-foot{flex:none}
+
+/* 기도제목 모아보기 → '함께 기도해요' 창 */
+.sp-pop-item{padding:10px 0 12px;border-bottom:1px solid rgba(255,255,255,.22)}
+.sp-pop-item:last-child{border-bottom:0}
+.sp-pop-who{font-weight:800;font-size:15px;color:#f5d27a;margin-bottom:4px}
+html[data-season="aurora"] .sp-pop-who{color:#9ff3d4}
+/* 창(시트) 안의 기도제목 목록: 창 바탕은 늘 어두운 색(교회 디자인·성탄·오로라·눈사람·야간) → 옅은 띠 + 흰 글씨로 어디서나 보이게 */
+.sheet-body .pr-list > li{background:rgba(255,255,255,.12) !important;border:0 !important;border-radius:14px}
+.sheet-body .pr-list .pr-name{display:block;color:#ffe7a8 !important;margin-bottom:2px}
+.sheet-body .pr-list .pr-text,.sheet-body .pr-list .pr-text p{display:block;color:#fff !important}
+.sheet-body .pr-list .ans-note{color:#ffd98a !important;margin:6px 0 2px}
+.sheet-body .pr-list .sheet-meta{display:block;color:rgba(255,255,255,.72) !important;margin-top:4px}

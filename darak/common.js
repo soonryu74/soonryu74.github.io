@@ -302,6 +302,12 @@ window.CHURCH = (function () {
   // 교회 전용 주소 /코드/ — 카카오톡 미리보기에 교회 이름·로고가 뜬다 (GitHub Actions가 만들어 둠, 없으면 404.html이 넘겨 줌)
   // VIP(전도 대상): 목원 '표시'에 VIP가 들어 있으면. 표시는 '새가족 · VIP'처럼 다른 말과 함께 쓸 수 있다
   function isVip(m) { return /vip/i.test((m && m.tag) || ''); }
+  // 화면에 보일 표시: '목원'처럼 원래 그 사람인 말은 빼고(목자가 표시 칸에 적어 둔 경우) 나머지만
+  function tagText(tag) {
+    var same = ['목원', '순원', 'member', t('목원').toLowerCase()];
+    return String(tag || '').split(/\s*[·,\/]\s*/).map(function (x) { return x.trim(); })
+      .filter(function (x) { return x && same.indexOf(x.toLowerCase()) < 0; }).join(' · ');
+  }
   function vipTag(tag, on) {
     var parts = String(tag || '').split(/\s*[·,\/]\s*/).map(function (x) { return x.trim(); })
       .filter(function (x) { return x && !/^vip$/i.test(x); });
@@ -708,11 +714,28 @@ window.CHURCH = (function () {
     if (u.pathname !== location.pathname) { location.href = u.href; return; }
     if (u.hash) { if (location.hash === u.hash) window.dispatchEvent(new HashChangeEvent('hashchange')); else location.hash = u.hash; }
   });
+  // 카톡으로 보내기: 휴대폰 '공유' 창(→ 카카오톡)을 열고, 카카오톡 안에서 연 화면이면 글을 복사한 뒤 카카오톡으로 돌아간다
+  //   돌려주는 값: shared(공유 창으로 보냄) · cancel(취소) · kakao(복사하고 카톡으로 넘어감) · copied(복사만) · manual(복사도 안 됨)
+  async function toKakao(text) {
+    var kakao = /KAKAOTALK/i.test(navigator.userAgent);
+    if (navigator.share && !kakao) { try { await navigator.share({ text: text }); return 'shared'; } catch (e) { if (e && e.name === 'AbortError') return 'cancel'; } }
+    var copied = false;
+    try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+    if (!copied) { try { var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); copied = document.execCommand('copy'); ta.remove(); } catch (e) {} }
+    if (copied && kakao) {
+      alert(t('글을 복사했습니다.\n\n카카오톡으로 넘어갑니다. 보낼 대화방에서 입력칸을 길게 눌러 [붙여넣기] 하세요.'));
+      location.href = 'kakaotalk://inappbrowser/close';
+      return 'kakao';
+    }
+    return copied ? 'copied' : 'manual';
+  }
   async function bgm(top) {
     var xmas = season() === 'xmas' || season() === 'snowman';   // 겨울(성탄·눈사람)엔 성탄 곡도 함께
     var on = true; try { on = localStorage.getItem('bgm') !== 'off'; } catch (e) {}
-    var mode = 'shuffle'; try { mode = localStorage.getItem('bgm-mode') || 'shuffle'; } catch (e) {}   // all 전체 재생 · shuffle 섞어 듣기 · one 한 곡 반복
-    if (['all', 'shuffle', 'one'].indexOf(mode) < 0) mode = 'shuffle';
+    var mode = 'all'; try { mode = localStorage.getItem('bgm-mode') || 'all'; } catch (e) {}   // all 전체 재생 · pick 선택곡 듣기 · one 한 곡 반복
+    if (['all', 'pick', 'one'].indexOf(mode) < 0) mode = 'all';
+    var picked = []; try { picked = JSON.parse(localStorage.getItem('bgm-pick') || '[]'); } catch (e) {}   // 선택곡 (파일 이름)
+    var last = ''; try { last = localStorage.getItem('bgm-last') || ''; } catch (e) {}   // 지난번에 듣던 곡 → 이번엔 그다음 곡부터
     var a = new Audio(); a.preload = 'auto';
     // 아이폰은 소리 크기(volume)를 못 바꿔 늘 최대로 나온다 → 미리 작게 만든 곡(-soft)을 쓴다 (무음 모드에서도 나오게 <audio> 그대로)
     var fixedVol = (function () { try { a.volume = 0.5; var r = a.volume !== 0.5; a.volume = 1; return r; } catch (e) { return true; } })();
@@ -725,25 +748,28 @@ window.CHURCH = (function () {
       if (ids.length) list = ids.map(function (id) { return { id: id, title: ti[id] || id, group: ps.indexOf(id) < 0 ? 'xmas' : 'plain' }; });
       if (mf.more && /^https:\/\//.test(mf.more.url || '')) more = mf.more;
     } catch (e) {}
+    picked = picked.filter(function (id) { return list.some(function (x) { return x.id === id; }); });
     var order = [], pos = 0, misses = 0;
-    // 듣는 순서: 전체 재생·한 곡 반복은 목록 순서, 섞어 듣기는 들어올 때마다 다른 순서. first를 주면 그 곡부터
+    // 듣는 순서: 목록 순서대로. 선택곡 듣기는 체크한 곡만 (하나도 없으면 전체). first를 주면 그 곡부터
     function makeOrder(first) {
-      order = list.map(function (_, i) { return i; });
-      if (mode === 'shuffle') for (var k = order.length - 1; k > 0; k--) { var r0 = Math.floor(Math.random() * (k + 1)), tmp = order[k]; order[k] = order[r0]; order[r0] = tmp; }
-      if (first != null) { order.splice(order.indexOf(first), 1); order.unshift(first); }
+      var all = list.map(function (_, i) { return i; });
+      order = mode === 'pick' ? all.filter(function (i) { return picked.indexOf(list[i].id) >= 0; }) : all;
+      if (!order.length) order = all;
       pos = 0;
+      if (first != null) { pos = order.indexOf(first); if (pos < 0) { order = [first].concat(order); pos = 0; } }
     }
     makeOrder();
+    (function () { var li = -1; list.forEach(function (x, i) { if (x.id === last) li = i; }); var k = order.indexOf(li); if (k >= 0) pos = (k + 1) % order.length; })();
     function cur() { return list[order[pos]]; }
     function load() {
       a.src = 'assets/' + cur().id + (fixedVol ? '-soft' : '') + '.mp3?v=3';
+      try { localStorage.setItem('bgm-last', cur().id); } catch (e) {}
       a.loop = mode === 'one' || list.length === 1;
       paint();
     }
     load();   // 화면이 열리자마자 받아 둔다
     function go(step) {
       pos = (pos + step + order.length) % order.length;
-      if (step > 0 && pos === 0 && mode === 'shuffle') makeOrder();   // 한 바퀴 돌면 새로 섞는다
       load(); if (on) play();
     }
     a.addEventListener('ended', function () { go(1); });   // 다음 곡
@@ -797,7 +823,7 @@ window.CHURCH = (function () {
       prev: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2.5v14H6zM19 5.5v13L9.5 12z"/></svg>',
       next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 5H18v14h-2.5zM5 5.5v13L14.5 12z"/></svg>'
     };
-    var MODES = [['all', '전체 재생'], ['shuffle', '섞어 듣기'], ['one', '한 곡 반복']];
+    var MODES = [['all', '전체 재생'], ['pick', '선택곡 듣기'], ['one', '한 곡 반복']];
     var GROUPS = { xmas: '성탄', plain: '찬양' };
     function mmss(s) { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
     function sheetEl() { return document.querySelector('.sheet-bg.music-sheet'); }
@@ -810,11 +836,17 @@ window.CHURCH = (function () {
           '<button type="button" data-act="toggle" class="mp-play" aria-label="' + esc(playing ? t('멈추기') : t('듣기')) + '">' + (playing ? IC.pause : IC.play) + '</button>' +
           '<button type="button" data-act="next" aria-label="' + esc(t('다음 곡')) + '">' + IC.next + '</button></div>' +
         '<div class="mp-modes">' + MODES.map(function (m) { return '<button type="button" data-mode="' + m[0] + '"' + (mode === m[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + esc(t(m[1])) + '</button>'; }).join('') + '</div>' +
+        '<div class="mp-msg" role="status"></div>' +
+        '<div class="mp-pickbar"><span>' + esc(picked.length ? t('{0}곡 선택', picked.length) : t('듣고 싶은 곡을 체크하세요')) + '</span>' +
+          '<button type="button" class="small" data-act="pickall">' + esc(picked.length === list.length ? t('선택 해제') : t('전체 선택')) + '</button></div>' +
         '<div class="mp-list">' + list.map(function (x, i) {
           var head = x.group !== g && list.some(function (y) { return y.group !== x.group; }) ? '<div class="section-title">' + esc(t(GROUPS[x.group])) + '</div>' : '';
           g = x.group;
-          return head + '<button type="button" class="mp-row' + (i === i0 ? ' on' : '') + '" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><span class="t">' + esc(x.title) + '</span>' +
-            (i === i0 ? '<span class="eq' + (playing ? ' on' : '') + '"><i></i><i></i><i></i></span>' : '') + '</button>';
+          var ck = picked.indexOf(x.id) >= 0;
+          return head + '<div class="mp-row' + (i === i0 ? ' on' : '') + '">' +
+            '<label class="mp-ck"><input type="checkbox" data-id="' + esc(x.id) + '"' + (ck ? ' checked' : '') + ' aria-label="' + esc(t('{0} 선택', x.title)) + '"></label>' +
+            '<button type="button" class="mp-go" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><span class="t">' + esc(x.title) + '</span>' +
+            (i === i0 ? '<span class="eq' + (playing ? ' on' : '') + '"><i></i><i></i><i></i></span>' : '') + '</button></div>';
         }).join('') + '</div>' +
         (more ? '<a class="mp-more" href="' + esc(more.url) + '" target="_blank" rel="noopener">' + esc(more.label || t('플레이리스트 더 듣기')) + ' ›</a>' : '');
     }
@@ -841,20 +873,32 @@ window.CHURCH = (function () {
         foot: [{ label: t('음악 끄기'), fn: function () { setOn(false); stop(); } }, { label: t('닫기') }] });
       var bg = sheetEl();
       paint();
-      var row = bg.querySelector('.mp-row.on'); if (row) row.scrollIntoView({ block: 'nearest' });
+      var row = bg.querySelector('.mp-row.on'), ls = bg.querySelector('.mp-list');   // 창은 그대로, 목록만 지금 곡 쪽으로
+      if (row && ls) ls.scrollTop += row.getBoundingClientRect().top - ls.getBoundingClientRect().top - ls.clientHeight / 3;
+      function savePick() { try { localStorage.setItem('bgm-pick', JSON.stringify(picked)); } catch (e) {} if (mode === 'pick') makeOrder(order[pos]); }
+      function say(m) { var el = bg.querySelector('.mp-msg'); if (el) { el.textContent = m; el.classList.toggle('on', !!m); } }
+      bg.querySelector('.mp').addEventListener('change', function (e) {   // 곡 체크 → 선택곡
+        var c = e.target.closest('input[data-id]'); if (!c) return;
+        var id = c.dataset.id;
+        picked = picked.filter(function (x) { return x !== id; });
+        if (c.checked) picked = list.map(function (x) { return x.id; }).filter(function (x) { return x === id || picked.indexOf(x) >= 0; });   // 목록 순서대로
+        savePick(); paint();
+      });
       bg.querySelector('.mp').addEventListener('click', function (e) {
         var b = e.target.closest('button'), bar = e.target.closest('.mp-bar');
         if (bar) { var r = bar.getBoundingClientRect(); if (isFinite(a.duration)) a.currentTime = a.duration * Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); tick(); return; }
         if (!b) return;
+        if (b.dataset.act === 'pickall') { picked = picked.length === list.length ? [] : list.map(function (x) { return x.id; }); savePick(); paint(); return; }
         if (b.dataset.act === 'toggle') { if (!a.paused && on) { setOn(false); stop(); setTimeout(paint, 300); } else start(); return; }
         if (b.dataset.act === 'prev') { if (a.currentTime > 3) { a.currentTime = 0; tick(); return; } on = true; setOn(true); go(-1); return; }
         if (b.dataset.act === 'next') { setOn(true); go(1); return; }
         if (b.dataset.mode) {
+          if (b.dataset.mode === 'pick' && !picked.length) return say(t('듣고 싶은 곡을 먼저 체크(✓)한 뒤 눌러 주세요.'));
           mode = b.dataset.mode; try { localStorage.setItem('bgm-mode', mode); } catch (e) {}
           if (mode === 'one') { a.loop = true; makeOrder(order[pos]); paint(); if (a.paused) start(); return; }
-          makeOrder(mode === 'all' ? 0 : null); load(); start(); return;   // 전체 재생은 1번부터, 섞어 듣기는 새로 섞어서
+          makeOrder(); load(); start(); return;   // 전체 재생은 1번부터, 선택곡 듣기는 체크한 첫 곡부터
         }
-        if (b.classList.contains('mp-row')) { var i = +b.dataset.i; makeOrder(i); load(); start(); }
+        if (b.classList.contains('mp-go')) { var i = +b.dataset.i; makeOrder(i); load(); start(); }
       });
     }
     btn.addEventListener('click', function () {
@@ -1128,7 +1172,7 @@ window.CHURCH = (function () {
     header: header, title2: title2,
     loadChurch: loadChurch, publicChurch: publicChurch, rememberChurch: rememberChurch,
     churchLink: churchLink, logoOf: logoOf, getChurch: function () { return church; }, fillTimezones: fillTimezones,
-    isVip: isVip, vipTag: vipTag, pushSupported: pushSupported, pushState: pushState, pushTest: pushTest, inApp: inApp, openExternal: openExternal, pushEnable: pushEnable, pushDisable: pushDisable,
+    toKakao: toKakao, tagText: tagText, isVip: isVip, vipTag: vipTag, pushSupported: pushSupported, pushState: pushState, pushTest: pushTest, inApp: inApp, openExternal: openExternal, pushEnable: pushEnable, pushDisable: pushDisable,
     isIOS: isIOS, standalone: standalone,
     t: t, terms: function () { return terms; }, setTerms: setTerms, TERM_PRESETS: TERM_PRESETS, cleanTerms: cleanTerms,
     THEMES: THEMES, setTheme: setTheme, applyLook: applyLook, translatePage: translatePage,
