@@ -964,6 +964,29 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[음악 고르기] 곡 목록 · 전체 재생 · 섞어 듣기 · 한 곡 반복');
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1'); await p.keyboard.press('Escape'); await p.waitForTimeout(300);
+    await p.click('.top .bgm-btn'); await p.waitForTimeout(600);
+    ok('♪를 누르면 음악 고르기 창 + 곡 목록 9곡 (평소)', await p.isVisible('.music-sheet .mp') && (await p.$$('.music-sheet .mp-row')).length === 9);
+    await p.click('.music-sheet .mp-row[data-i="3"]'); await p.waitForTimeout(500);
+    ok('곡을 누르면 그 곡이 지금 곡', (await p.textContent('.music-sheet .mp-title')) === 'Peace, Be Still' && await p.$eval('.music-sheet .mp-row[data-i="3"]', e => e.classList.contains('on')));
+    await p.click('.music-sheet .mp-modes [data-mode="all"]'); await p.waitForTimeout(500);
+    ok('[전체 재생] → 1번 곡부터', (await p.textContent('.music-sheet .mp-title')) === '잘하고 있다, 나의 지난 날아' && await p.evaluate(() => localStorage.getItem('bgm-mode')) === 'all');
+    await p.click('.music-sheet [data-act="next"]'); await p.waitForTimeout(400);
+    ok('[다음] → 2번 곡', (await p.textContent('.music-sheet .mp-title')) === '너라서 사랑해');
+    await p.click('.music-sheet .mp-modes [data-mode="one"]'); await p.waitForTimeout(300);
+    ok('[한 곡 반복] 켜짐 (곡은 그대로)', await p.$eval('.music-sheet .mp-modes [data-mode="one"]', e => e.classList.contains('on')) && (await p.textContent('.music-sheet .mp-title')) === '너라서 사랑해');
+    await p.click('.music-sheet .sheet-foot button[data-i="0"]'); await p.waitForTimeout(500);
+    ok('[음악 끄기] → 꺼짐 기억 + ♪ 흐리게', await p.evaluate(() => localStorage.getItem('bgm')) === 'off' && await p.$eval('.top .bgm-btn', e => e.classList.contains('off')));
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(600); await p.keyboard.press('Escape');
+    await p.click('.top .bgm-btn'); await p.waitForTimeout(500);
+    ok('다시 열어도 한 곡 반복 기억', await p.$eval('.music-sheet .mp-modes [data-mode="one"]', e => e.classList.contains('on')));
+    await p.click('.music-sheet .mp-play'); await p.waitForTimeout(500);
+    ok('▶ 누르면 다시 켜짐', await p.evaluate(() => localStorage.getItem('bgm')) === 'on');
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   console.log('\n[VIP 명단] 목원과 따로 묶기');
   { const { c, p } = await ctx(b);
     await login(p, 'mokja1');
