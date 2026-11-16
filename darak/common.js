@@ -433,15 +433,16 @@ window.CHURCH = (function () {
   async function pushSync() {
     try {
       if (inApp() || !pushSupported() || Notification.permission !== 'granted') return;
-      if (localStorage.getItem('push-off') || sessionStorage.getItem('push-synced')) return;
-      if (!(await sb.auth.getSession()).data.session) return;
+      var ses = (await sb.auth.getSession()).data.session; if (!ses) return;
+      // 같은 휴대폰에서 다른 계정으로 들어와도(목사님 휴대폰으로 목자 화면 확인 등) 지금 계정으로 다시 맞춘다
+      if (localStorage.getItem('push-off') || sessionStorage.getItem('push-synced') === ses.user.id) return;
       var reg = await pushRegistration(); await navigator.serviceWorker.ready;
       var sub = await reg.pushManager.getSubscription() ||
         await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64((await notify({ action: 'key' })).publicKey) });
       var j = sub.toJSON();
       var r = await sb.rpc('church_push_save2', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth,
         p_ua: navigator.userAgent.slice(0, 200), p_lang: LANG });
-      if (!r.error) sessionStorage.setItem('push-synced', '1');
+      if (!r.error) sessionStorage.setItem('push-synced', ses.user.id);
     } catch (e) {}
   }
   // 시험 알림: ① 이 휴대폰이 직접 띄우는 알림(휴대폰·크롬 설정 확인) ② 서버에서 '이 기기로만' 보내는 알림(보내는 길 확인)
