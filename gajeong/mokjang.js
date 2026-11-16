@@ -104,6 +104,34 @@
     } catch (e) { C.say(msgEl, e.message, 'err'); }
     showNotify();
   }
+  // 알림을 안 켠 목자: 앱을 열면 공지처럼 '알림 켜기' 창 (공지가 떠 있으면 닫힌 뒤에). [오늘 하루 보지 않기]가 있다
+  var pushPopDone = false;
+  function pushPop(st, help) {
+    if (pushPopDone || pushAsk || window.__NO_PUSH_POP) return;
+    if (['off', 'inapp', 'ios-home', 'denied'].indexOf(st) < 0) return;
+    var hideKey = 'push-pop-hide';
+    try { if (localStorage.getItem(hideKey) === C.today()) return; } catch (e) {}
+    pushPopDone = true;
+    var tries = 0;
+    (function wait() {   // 다른 창(공지 등)이 떠 있으면 닫힐 때까지 기다린다
+      if (document.querySelector('.sheet-bg') && tries++ < 240) return setTimeout(wait, 500);
+      open();
+    })();
+    function open() {
+      var hide = { label: T('오늘 하루 보지 않기'), fn: function () { try { localStorage.setItem(hideKey, C.today()); } catch (e) {} } };
+      var desc = T('토요일 마감 알림과 목사님 말씀이 이 휴대폰으로 바로 옵니다. 한 번만 켜 두시면 됩니다.');
+      var foot = [hide];
+      if (st === 'off') foot.push({ label: T('알림 받기'), fn: async function () {
+        try { await C.pushEnable(); showNotify(); alert(T('알림을 켰습니다. 목사님 말씀과 마감 알림이 이 기기로 옵니다.')); }
+        catch (e) { C.say($('#msg-pp'), e.message, 'err'); return true; }
+      } });
+      else if (st === 'inapp') foot.push({ label: T('크롬·사파리로 열기'), fn: function () { C.openExternal('push=1'); } });
+      else foot.push({ label: T('닫기') });
+      C.sheet({ kicker: T('알림 켜기'), title: T('알림을 켜 주세요'), cls: 'push-pop',
+        html: '<p class="desc">' + esc(desc) + '</p>' + (st !== 'off' && help ? '<p class="desc pp-help">' + esc(help) + '</p>' : '') + '<div class="msg" id="msg-pp"></div>',
+        foot: foot });
+    }
+  }
   async function showNotify() {
     var st = 'unsupported';
     try { st = await C.pushState(); } catch (e) {}
@@ -128,6 +156,7 @@
     // 일기 쓰기 맨 위 안내: 아직 안 켰고, '나중에'를 누른 지 7일이 지났을 때만
     var later = 0; try { later = +localStorage.getItem(ASK_LATER) || 0; } catch (e) {}
     $('#notify-ask').hidden = !((st === 'off' || st === 'ios-home' || st === 'inapp') && Date.now() - later > 7 * 864e5);
+    pushPop(st, help);
     if (pushAsk) {
       $('#notify-ask').hidden = false;
       $('#notify-ask').classList.add('hl');
