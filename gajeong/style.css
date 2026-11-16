@@ -894,3 +894,6 @@ html[data-season="aurora"] .sp-pop-who{color:#9ff3d4}
 .sheet-body .pr-list .sheet-meta{display:block;color:rgba(255,255,255,.72) !important;margin-top:4px}
 /* 글(공지·기도제목·함께 기도해요): 한글 낱말 중간에서 줄이 바뀌지 않게 (긴 주소만 어디서든 끊음) */
 .prose,.prose p,.prose li,.pr-list .pr-text,.sheet-text,.sheet-text li{word-break:keep-all;overflow-wrap:anywhere}
+
+/* 알림 켜기 창 */
+.push-pop .pp-help{background:rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;color:#fff}

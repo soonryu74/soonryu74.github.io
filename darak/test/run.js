@@ -35,7 +35,7 @@ const ok = (n, c, x = '') => { c ? (pass++, console.log('  PASS', n)) : (fail++,
 async function ctx(browser, opts = {}) {
   const c = await browser.newContext(Object.assign({ viewport: { width: 900, height: 1000 } }, opts.device || {}));
   await c.clock.install({ time: NOW });
-  await c.addInitScript(`window.__SEED=${JSON.stringify(SEED)};${opts.noPush ? 'window.__NO_PUSH=1;' : ''}${opts.deny ? 'window.__DENY=1;' : ''}`);
+  await c.addInitScript(`window.__SEED=${JSON.stringify(SEED)};${opts.noPush ? 'window.__NO_PUSH=1;' : ''}${opts.pushPop ? '' : 'window.__NO_PUSH_POP=1;'}${opts.deny ? 'window.__DENY=1;' : ''}`);
   await c.addInitScript(MOCK);
   await c.route('**/cdn.jsdelivr.net/**', r => r.abort());
   const p = await c.newPage();
@@ -1024,6 +1024,25 @@ const db = p => p.evaluate(() => window.__DB());
     await p.click('#member-list .list-item[data-id="' + w.id + '"] .act-vip'); await p.waitForTimeout(500);
     ok('[목원으로] → VIP 표시만 빠짐', (await db(p)).church_mokwon.find(x => x.id === w.id).tag === '' && !(await p.$('#member-list .list-item[data-id="' + w.id + '"].is-vip')));
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
+  console.log('\n[알림 안 켠 목자] 앱을 열면 알림 켜기 창');
+  { const { c, p } = await ctx(b, { pushPop: true });
+    await login(p, 'mokja1'); await p.waitForTimeout(1500);
+    for (let i = 0; i < 3 && !(await p.$('.push-pop')); i++) { await p.keyboard.press('Escape'); await p.waitForTimeout(1200); }
+    ok('알림이 꺼져 있으면 열자마자 알림 켜기 창', await p.isVisible('.push-pop') && (await p.textContent('.push-pop')).includes('알림 받기'));
+    await p.click('.push-pop .sheet-foot button:has-text("알림 받기")'); await p.waitForTimeout(800);
+    ok('[알림 받기] → 켜지고 창 닫힘', (await calls(p)).some(x => x.rpc === 'church_push_save2') && !(await p.$('.push-pop')));
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(2500);
+    ok('켠 뒤에는 다시 안 뜸', !(await p.$('.push-pop')));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b, { pushPop: true });
+    await login(p, 'mokja1'); await p.waitForTimeout(1500);
+    for (let i = 0; i < 3 && !(await p.$('.push-pop')); i++) { await p.keyboard.press('Escape'); await p.waitForTimeout(1200); }
+    await p.click('.push-pop .sheet-foot button:has-text("오늘 하루 보지 않기")'); await p.waitForTimeout(500);
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(2500);
+    ok('[오늘 하루 보지 않기] → 오늘은 다시 안 뜸', !(await p.$('.push-pop')));
     await c.close(); }
 
   console.log('\n[알림 켜기 독려] 안 켠 목자 명단 → 카톡 글 → 목자가 주소로 들어와 켜기');
