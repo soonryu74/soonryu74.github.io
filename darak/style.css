@@ -799,3 +799,45 @@ html[data-theme="night"] .hero-chip:not(.primary) b{color:#ffd77a}
 html[data-theme="night"] .list-item.is-vip,html[data-theme="night"] .member.is-vip{background:rgba(255,220,150,.06)}
 html[data-theme="night"] .vip-title{color:#e6c37a}
 .vip-add{border-color:#d9b65c}
+
+/* 음악 고르기 (♪) — 멜론처럼 곡 목록 · 전체 재생 · 섞어 듣기 · 한 곡 반복 */
+.music-sheet .sheet{max-height:88vh}
+.mp-now{display:flex;align-items:center;gap:12px;margin:2px 0 10px}
+.mp-art{width:52px;height:52px;border-radius:14px;flex:none;background:linear-gradient(150deg,var(--brand,#1f5c3a),#0f3a24);display:flex;align-items:flex-end;justify-content:center;gap:4px;padding:0 0 14px}
+.mp-art i{display:block;width:5px;height:8px;border-radius:3px;background:#fff;opacity:.9}
+.mp-art.on i{animation:mpEq 1s ease-in-out infinite}
+.mp-art.on i:nth-child(2){animation-delay:.25s}.mp-art.on i:nth-child(3){animation-delay:.5s}
+@keyframes mpEq{0%,100%{height:6px}50%{height:22px}}
+.mp-info{min-width:0}
+.mp-title{font-weight:800;font-size:18px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mp-sub{font-size:13.5px;color:var(--muted,#6b736e);margin-top:2px}
+.mp-bar{height:8px;border-radius:99px;background:var(--line,#e7e2d8);overflow:hidden;cursor:pointer;margin:6px 0 4px}
+.mp-bar i{display:block;height:100%;width:0;background:var(--brand,#1f5c3a);border-radius:99px}
+.mp-time{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted,#6b736e);font-variant-numeric:tabular-nums}
+.mp-ctl{display:flex;align-items:center;justify-content:center;gap:22px;margin:8px 0 12px}
+.mp-ctl button{width:52px;height:52px;border-radius:50%;border:0;background:transparent;display:flex;align-items:center;justify-content:center;padding:0;color:inherit;box-shadow:none}
+.mp-ctl button svg{width:30px;height:30px;fill:currentColor}
+.mp-ctl .mp-play{width:66px;height:66px;background:var(--brand,#1f5c3a);color:#fff}
+.mp-ctl .mp-play svg{width:34px;height:34px}
+.mp-modes{display:flex;gap:6px;margin:0 0 10px}
+.mp-modes button{flex:1;border-radius:99px;padding:9px 6px;font-size:14px;font-weight:700}
+.mp-modes button.on{background:var(--brand,#1f5c3a);color:#fff;border-color:var(--brand,#1f5c3a)}
+.mp-list{max-height:38vh;overflow:auto;border-top:1px solid var(--line,#e7e2d8);margin:0 -4px;padding:0 4px}
+.mp-list .section-title{margin:10px 0 2px;font-size:13px}
+.mp-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line,#e7e2d8);border-radius:0;background:transparent;padding:12px 4px;font-size:16px;color:inherit;box-shadow:none}
+.mp-row .n{width:22px;flex:none;color:var(--muted,#6b736e);font-size:13.5px;text-align:right;font-variant-numeric:tabular-nums}
+.mp-row .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mp-row.on{font-weight:800;color:var(--brand,#1f5c3a)}
+.mp-row .eq{display:flex;align-items:flex-end;gap:2px;height:14px}
+.mp-row .eq i{display:block;width:3px;height:5px;background:currentColor;border-radius:2px}
+.mp-row .eq.on i{animation:mpEq2 .9s ease-in-out infinite}
+.mp-row .eq.on i:nth-child(2){animation-delay:.2s}.mp-row .eq.on i:nth-child(3){animation-delay:.4s}
+@keyframes mpEq2{0%,100%{height:4px}50%{height:14px}}
+.mp-more{display:block;text-align:center;margin:12px 0 2px;font-weight:700;color:var(--brand,#1f5c3a)}
+html[data-theme="night"] .mp-row.on,html[data-theme="night"] .mp-more{color:#8fd3a8}
+@media (prefers-reduced-motion: reduce){.mp-art.on i,.mp-row .eq.on i{animation:none;height:12px}}
+/* 음악 고르기: 성탄(붉은 창)·야간에서도 보이게 글자색을 따라간다 */
+.mp-sub,.mp-time,.mp-row .n{color:inherit;opacity:.75}
+.mp-bar{background:rgba(127,127,127,.32)}
+.mp-bar i{background:currentColor}
+.mp-list,.mp-row{border-color:rgba(127,127,127,.28)}

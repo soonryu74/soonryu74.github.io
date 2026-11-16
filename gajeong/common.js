@@ -700,24 +700,50 @@ window.CHURCH = (function () {
     if (u.hash) { if (location.hash === u.hash) window.dispatchEvent(new HashChangeEvent('hashchange')); else location.hash = u.hash; }
   });
   async function bgm(top) {
-    var xmas = season() === 'xmas' || season() === 'snowman';   // 겨울(성탄·눈사람)엔 성탄 곡
+    var xmas = season() === 'xmas' || season() === 'snowman';   // 겨울(성탄·눈사람)엔 성탄 곡도 함께
     var on = true; try { on = localStorage.getItem('bgm') !== 'off'; } catch (e) {}
+    var mode = 'shuffle'; try { mode = localStorage.getItem('bgm-mode') || 'shuffle'; } catch (e) {}   // all 전체 재생 · shuffle 섞어 듣기 · one 한 곡 반복
+    if (['all', 'shuffle', 'one'].indexOf(mode) < 0) mode = 'shuffle';
     var a = new Audio(); a.preload = 'auto';
     // 아이폰은 소리 크기(volume)를 못 바꿔 늘 최대로 나온다 → 미리 작게 만든 곡(-soft)을 쓴다 (무음 모드에서도 나오게 <audio> 그대로)
     var fixedVol = (function () { try { a.volume = 0.5; var r = a.volume !== 0.5; a.volume = 1; return r; } catch (e) { return true; } })();
-    // 곡 목록은 assets/bgm.json ({ xmas: [...], plain: [...] }) — 곡을 늘릴 때 파일(이름.mp3 + 이름-soft.mp3)과 이 목록만 고친다
-    var list = [xmas ? 'bgm-xmas' : 'bgm'];
-    try { var mf = await (await fetch('assets/bgm.json?v=' + Date.now().toString(36).slice(0, -4))).json(); var l = (xmas ? mf.xmas : mf.plain) || []; if (l.length) list = l.slice(); } catch (e) {}
-    for (var k = list.length - 1; k > 0; k--) { var r0 = Math.floor(Math.random() * (k + 1)), tmp = list[k]; list[k] = list[r0]; list[r0] = tmp; }   // 들어올 때마다 다른 곡부터
-    var track = 0, misses = 0;
-    function srcOf(i) { return 'assets/' + list[i % list.length] + (fixedVol ? '-soft' : '') + '.mp3?v=3'; }
-    a.loop = list.length === 1;
-    a.src = srcOf(0);   // 화면이 열리자마자 받아 둔다
-    a.addEventListener('ended', function () { track++; a.src = srcOf(track); if (on) a.play().catch(function () {}); });   // 다음 곡
+    // 곡 목록은 assets/bgm.json ({ xmas: [...], plain: [...], titles: { 파일: 곡 이름 }, more: { label, url } })
+    //   곡을 늘릴 때 파일(이름.mp3 + 이름-soft.mp3)과 이 목록만 고친다. more가 있으면 플레이어 아래 '더 듣기' 주소
+    var list = [{ id: xmas ? 'bgm-xmas' : 'bgm', title: t('배경 음악'), group: xmas ? 'xmas' : 'plain' }], more = null;
+    try {
+      var mf = await (await fetch('assets/bgm.json?v=' + Date.now().toString(36).slice(0, -4))).json();
+      var ids = (xmas ? mf.xmas : mf.plain) || [], ti = mf.titles || {}, ps = mf.plain || [];
+      if (ids.length) list = ids.map(function (id) { return { id: id, title: ti[id] || id, group: ps.indexOf(id) < 0 ? 'xmas' : 'plain' }; });
+      if (mf.more && /^https:\/\//.test(mf.more.url || '')) more = mf.more;
+    } catch (e) {}
+    var order = [], pos = 0, misses = 0;
+    // 듣는 순서: 전체 재생·한 곡 반복은 목록 순서, 섞어 듣기는 들어올 때마다 다른 순서. first를 주면 그 곡부터
+    function makeOrder(first) {
+      order = list.map(function (_, i) { return i; });
+      if (mode === 'shuffle') for (var k = order.length - 1; k > 0; k--) { var r0 = Math.floor(Math.random() * (k + 1)), tmp = order[k]; order[k] = order[r0]; order[r0] = tmp; }
+      if (first != null) { order.splice(order.indexOf(first), 1); order.unshift(first); }
+      pos = 0;
+    }
+    makeOrder();
+    function cur() { return list[order[pos]]; }
+    function load() {
+      a.src = 'assets/' + cur().id + (fixedVol ? '-soft' : '') + '.mp3?v=3';
+      a.loop = mode === 'one' || list.length === 1;
+      paint();
+    }
+    load();   // 화면이 열리자마자 받아 둔다
+    function go(step) {
+      pos = (pos + step + order.length) % order.length;
+      if (step > 0 && pos === 0 && mode === 'shuffle') makeOrder();   // 한 바퀴 돌면 새로 섞는다
+      load(); if (on) play();
+    }
+    a.addEventListener('ended', function () { go(1); });   // 다음 곡
     var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'small bgm-btn';
     var who = top.querySelector('.who'); who.insertBefore(btn, top.querySelector('.who-toggle'));
+    a.addEventListener('playing', function () { misses = 0; paint(); });
+    a.addEventListener('pause', paint);
     a.addEventListener('error', function () {   // 없는 곡은 건너뛰고, 하나도 없으면 단추도 없앤다
-      if (++misses < list.length) { track++; a.src = srcOf(track); if (started && on) a.play().catch(function () {}); return; }
+      if (++misses < list.length) { pos = (pos + 1) % order.length; load(); if (started && on) a.play().catch(function () {}); return; }
       btn.remove(); off();
     });
     function setVol(v) { if (!fixedVol) a.volume = Math.max(0, Math.min(1, v)); }
@@ -736,13 +762,14 @@ window.CHURCH = (function () {
       return Promise.resolve(a.play()).then(function () { started = true; btn.classList.remove('wait'); fade(BGM_VOL, 0.05); return true; }, function () { return false; });
     }
     function stop() { fade(0, 0.04, function () { a.pause(); }); }
-    function show() { btn.classList.toggle('off', !on); btn.textContent = '♪'; btn.title = on ? t('배경 음악 끄기') : t('배경 음악 켜기'); btn.setAttribute('aria-label', btn.title); }
+    function setOn(v) { on = v; try { localStorage.setItem('bgm', on ? 'on' : 'off'); } catch (e) {} off(); btn.classList.remove('wait'); show(); }
+    function show() { btn.classList.toggle('off', !on); btn.textContent = '♪'; btn.title = t('음악 고르기'); btn.setAttribute('aria-label', btn.title); }
     show();
     // 브라우저는 소리 나는 자동 재생을 막는 경우가 많다: 먼저 바로 틀어 보고, 막히면 화면을 처음 누르는 순간 튼다 (그동안 ♪가 깜빡인다)
     var EV = ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown'];
     function off() { EV.forEach(function (n) { document.removeEventListener(n, first, true); }); }
     function first(e) {
-      if (e.target.closest && e.target.closest('.bgm-btn')) return;
+      if (e.target.closest && e.target.closest('.bgm-btn, .music-sheet')) return;
       if (!on || started) return off();
       play().then(function (ok) { if (ok) off(); });   // 막히면 다음 누름에서 다시
     }
@@ -750,16 +777,83 @@ window.CHURCH = (function () {
       EV.forEach(function (n) { document.addEventListener(n, first, true); });
       play().then(function (ok) { if (ok) off(); else if (on && !started) btn.classList.add('wait'); });
     }
-    btn.addEventListener('click', function () {
-      on = !on; try { localStorage.setItem('bgm', on ? 'on' : 'off'); } catch (e) {}
-      off(); btn.classList.remove('wait');
-      if (on) play(); else stop();
-      show();
-    });
     document.addEventListener('visibilitychange', function () {   // 다른 앱으로 가면 멈추고, 돌아오면 다시
       if (document.hidden) { if (!a.paused) a.pause(); } else if (on && started) play();
     });
+
+    /* ── 음악 고르기 (♪): 지금 곡 · 이전/재생/다음 · 전체 재생/섞어 듣기/한 곡 반복 · 곡 목록 ── */
+    var IC = {
+      play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>',
+      pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>',
+      prev: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2.5v14H6zM19 5.5v13L9.5 12z"/></svg>',
+      next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 5H18v14h-2.5zM5 5.5v13L14.5 12z"/></svg>'
+    };
+    var MODES = [['all', '전체 재생'], ['shuffle', '섞어 듣기'], ['one', '한 곡 반복']];
+    var GROUPS = { xmas: '성탄', plain: '찬양' };
+    function mmss(s) { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+    function sheetEl() { return document.querySelector('.sheet-bg.music-sheet'); }
+    function playerHtml() {
+      var c = cur(), playing = !a.paused && on, i0 = order[pos], g = null;
+      return '<div class="mp-now"><div class="mp-art' + (playing ? ' on' : '') + '"><i></i><i></i><i></i></div><div class="mp-info">' +
+          '<div class="mp-title">' + esc(c.title) + '</div><div class="mp-sub">' + esc(t('{0}곡 중 {1}번째', list.length, i0 + 1)) + ' · ' + esc(playing ? t('듣는 중') : t('멈춤')) + '</div></div></div>' +
+        '<div class="mp-bar" role="slider" aria-label="' + esc(t('곡 위치')) + '"><i></i></div><div class="mp-time"><span class="mp-at">0:00</span><span class="mp-len">0:00</span></div>' +
+        '<div class="mp-ctl"><button type="button" data-act="prev" aria-label="' + esc(t('이전 곡')) + '">' + IC.prev + '</button>' +
+          '<button type="button" data-act="toggle" class="mp-play" aria-label="' + esc(playing ? t('멈추기') : t('듣기')) + '">' + (playing ? IC.pause : IC.play) + '</button>' +
+          '<button type="button" data-act="next" aria-label="' + esc(t('다음 곡')) + '">' + IC.next + '</button></div>' +
+        '<div class="mp-modes">' + MODES.map(function (m) { return '<button type="button" data-mode="' + m[0] + '"' + (mode === m[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + esc(t(m[1])) + '</button>'; }).join('') + '</div>' +
+        '<div class="mp-list">' + list.map(function (x, i) {
+          var head = x.group !== g && list.some(function (y) { return y.group !== x.group; }) ? '<div class="section-title">' + esc(t(GROUPS[x.group])) + '</div>' : '';
+          g = x.group;
+          return head + '<button type="button" class="mp-row' + (i === i0 ? ' on' : '') + '" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><span class="t">' + esc(x.title) + '</span>' +
+            (i === i0 ? '<span class="eq' + (playing ? ' on' : '') + '"><i></i><i></i><i></i></span>' : '') + '</button>';
+        }).join('') + '</div>' +
+        (more ? '<a class="mp-more" href="' + esc(more.url) + '" target="_blank" rel="noopener">' + esc(more.label || t('플레이리스트 더 듣기')) + ' ›</a>' : '');
+    }
+    function paint() {
+      var bg = sheetEl(); if (!bg) return;
+      var box = bg.querySelector('.mp'), y = box.querySelector('.mp-list') ? box.querySelector('.mp-list').scrollTop : 0;
+      box.innerHTML = playerHtml();
+      box.querySelector('.mp-list').scrollTop = y;
+      tick();
+    }
+    function tick() {
+      var bg = sheetEl(); if (!bg) return;
+      var d = isFinite(a.duration) ? a.duration : 0;
+      bg.querySelector('.mp-bar i').style.width = (d ? Math.min(100, a.currentTime / d * 100) : 0) + '%';
+      bg.querySelector('.mp-at').textContent = mmss(a.currentTime);
+      bg.querySelector('.mp-len').textContent = mmss(d);
+    }
+    a.addEventListener('timeupdate', tick);
+    a.addEventListener('loadedmetadata', tick);
+    function start() { setOn(true); play(); }
+    function openPlayer() {
+      if (sheetEl()) return;
+      sheet({ kicker: t('배경 음악'), title: t('음악 고르기'), cls: 'music-sheet', html: '<div class="mp"></div>',
+        foot: [{ label: t('음악 끄기'), fn: function () { setOn(false); stop(); } }, { label: t('닫기') }] });
+      var bg = sheetEl();
+      paint();
+      var row = bg.querySelector('.mp-row.on'); if (row) row.scrollIntoView({ block: 'nearest' });
+      bg.querySelector('.mp').addEventListener('click', function (e) {
+        var b = e.target.closest('button'), bar = e.target.closest('.mp-bar');
+        if (bar) { var r = bar.getBoundingClientRect(); if (isFinite(a.duration)) a.currentTime = a.duration * Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); tick(); return; }
+        if (!b) return;
+        if (b.dataset.act === 'toggle') { if (!a.paused && on) { setOn(false); stop(); setTimeout(paint, 300); } else start(); return; }
+        if (b.dataset.act === 'prev') { if (a.currentTime > 3) { a.currentTime = 0; tick(); return; } on = true; setOn(true); go(-1); return; }
+        if (b.dataset.act === 'next') { setOn(true); go(1); return; }
+        if (b.dataset.mode) {
+          mode = b.dataset.mode; try { localStorage.setItem('bgm-mode', mode); } catch (e) {}
+          if (mode === 'one') { a.loop = true; makeOrder(order[pos]); paint(); if (a.paused) start(); return; }
+          makeOrder(mode === 'all' ? 0 : null); load(); start(); return;   // 전체 재생은 1번부터, 섞어 듣기는 새로 섞어서
+        }
+        if (b.classList.contains('mp-row')) { var i = +b.dataset.i; makeOrder(i); load(); start(); }
+      });
+    }
+    btn.addEventListener('click', function () {
+      openPlayer();
+      if (on && !started) play();   // 자동 재생이 막혀 있던 휴대폰은 ♪를 누르는 순간 튼다
+    });
   }
+
 
 
 
