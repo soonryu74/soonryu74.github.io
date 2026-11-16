@@ -792,3 +792,10 @@ html[data-theme="night"] .hero-chip:not(.primary) b{color:#ffd77a}
 .pc-list li{padding:7px 0;border-bottom:1px solid var(--line,#e7e2d8)}
 .pc-list li span{color:var(--muted,#777);font-size:13.5px}
 .notify-ask.hl{outline:2px solid var(--brand,#1f5c3a);outline-offset:2px}
+
+/* VIP 명단: 목원 아래 따로 */
+.vip-title{margin:18px 0 6px;padding-top:12px;border-top:2px dashed var(--line,#e7e2d8);color:#9a7a2a}
+.list-item.is-vip,.member.is-vip{background:#fffaf0}
+html[data-theme="night"] .list-item.is-vip,html[data-theme="night"] .member.is-vip{background:rgba(255,220,150,.06)}
+html[data-theme="night"] .vip-title{color:#e6c37a}
+.vip-add{border-color:#d9b65c}

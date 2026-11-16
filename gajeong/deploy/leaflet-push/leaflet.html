@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>알림 켜는 법</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  @page { size: A4; margin: 0 }
+  :root { --red:#a3242b; --red2:#6e141b; --green:#1f5c3a; --soft:#eef4ef; --cream:#fbf7ef; --ink:#1d2621; --muted:#5f6862; --line:#e5dfd3; --gold:#f5d27a }
+  * { box-sizing: border-box }
+  html, body { margin:0; background:#fff; color:var(--ink); font-family: Pretendard, 'Apple SD Gothic Neo', sans-serif; word-break: keep-all; -webkit-print-color-adjust: exact; print-color-adjust: exact }
+  .page { width:210mm; height:297mm; position:relative; overflow:hidden; page-break-after:always; display:flex; flex-direction:column }
+  .page:last-child { page-break-after:auto }
+  .band { background:linear-gradient(160deg,var(--red),var(--red2)); color:#fff; padding:11mm 14mm 8mm }
+  .kick { font-size:12.5pt; font-weight:800; color:var(--gold); letter-spacing:.06em }
+  h1 { margin:2.5mm 0 2mm; font-size:27pt; line-height:1.25; letter-spacing:-.03em }
+  .lead { font-size:13.5pt; line-height:1.55; color:rgba(255,255,255,.9); margin:0 }
+  .lead b { color:#ffe7a8 }
+  .body { padding:7mm 14mm 0; flex:1; display:flex; flex-direction:column }
+  .os { display:flex; align-items:center; gap:3mm; font-size:17pt; font-weight:800; margin:0 0 5mm; color:var(--green) }
+  .os .chip { background:var(--soft); color:var(--green); border-radius:99px; padding:1.2mm 4.5mm; font-size:12pt }
+  .steps { display:grid; gap:6mm }
+  .steps.three { grid-template-columns:repeat(3,1fr) }
+  .steps.four { grid-template-columns:repeat(4,1fr); gap:4mm }
+  .step { display:flex; flex-direction:column }
+  .num { width:10mm; height:10mm; border-radius:50%; background:var(--red); color:#fff; font-weight:800; font-size:15pt; display:flex; align-items:center; justify-content:center; margin-bottom:2.5mm }
+  .step h3 { margin:0 0 1.5mm; font-size:14pt; line-height:1.35; letter-spacing:-.02em }
+  .step p { margin:0 0 3mm; font-size:11.5pt; line-height:1.5; color:var(--muted) }
+  .four .step h3 { font-size:12.5pt } .four .step p { font-size:10.5pt }
+  .phone { margin-top:auto; border:2.2mm solid #1d1d1f; border-radius:6mm; overflow:hidden; background:#fff; position:relative; box-shadow:0 1.5mm 4mm rgba(0,0,0,.12) }
+  .phone img { display:block; width:100% }
+  .phone, .draw { aspect-ratio: 390 / 500; height:auto !important }
+  .ring { position:absolute; border:1.2mm solid #ffb800; border-radius:99px; box-shadow:0 0 0 1mm rgba(255,184,0,.25) }
+  .tag { position:absolute; right:2mm; top:2mm; background:rgba(0,0,0,.6); color:#fff; font-size:8pt; padding:.6mm 2mm; border-radius:99px }
+  /* 그림 (실제 화면은 휴대폰마다 조금 다름) */
+  .draw { margin-top:auto; border:2.2mm solid #1d1d1f; border-radius:6mm; overflow:hidden; background:#f2f2f4; height:78mm; position:relative; box-shadow:0 1.5mm 4mm rgba(0,0,0,.12) }
+  .four .draw { height:64mm }
+  .dlg { position:absolute; left:4mm; right:4mm; bottom:6mm; background:#fff; border-radius:4mm; padding:5mm 4mm 4mm; box-shadow:0 1mm 4mm rgba(0,0,0,.15) }
+  .dlg .t { font-size:11pt; font-weight:700; line-height:1.45; margin-bottom:4mm }
+  .dlg .btns { display:flex; gap:2mm; justify-content:flex-end }
+  .dlg .btns span { font-size:11pt; font-weight:700; padding:1.8mm 4mm; border-radius:99px; color:#1a5fd0 }
+  .dlg .btns .on { background:#1a5fd0; color:#fff; outline:1.2mm solid #ffb800; outline-offset:.6mm }
+  .share { position:absolute; left:0; right:0; bottom:0; background:#fff; border-radius:4mm 4mm 0 0; padding:2mm 2mm 3mm; box-shadow:0 -1mm 3mm rgba(0,0,0,.1) }
+  .share .row { display:flex; align-items:center; justify-content:space-between; padding:2.2mm 2.5mm; font-size:9.5pt; border-bottom:1px solid #eee; white-space:nowrap }
+  .share .row.on { background:#fff7dc; outline:1.2mm solid #ffb800; border-radius:2mm; font-weight:800 }
+  .share .ic { width:5mm; height:5mm; border:.4mm solid #333; border-radius:1mm; display:inline-flex; align-items:center; justify-content:center; font-size:8pt }
+  .bar { position:absolute; left:0; right:0; bottom:0; height:13mm; background:#fafafa; border-top:1px solid #ddd; display:flex; align-items:center; justify-content:space-around; font-size:13pt; color:#1a5fd0 }
+  .bar .sh { width:9mm; height:9mm; border-radius:50%; outline:1.2mm solid #ffb800; display:flex; align-items:center; justify-content:center }
+  .url { position:absolute; left:3mm; right:3mm; top:9mm; background:#fff; border-radius:3mm; padding:2mm 3mm; font-size:9.5pt; color:#555; text-align:center }
+  .home { position:absolute; inset:0; background:linear-gradient(170deg,#7aa0c8,#3c5b86); display:grid; grid-template-columns:repeat(3,1fr); gap:4mm 2mm; padding:7mm 3mm; align-content:start }
+  .home .app { display:flex; flex-direction:column; align-items:center; gap:1mm; color:#fff; font-size:7pt; white-space:nowrap }
+  .home .app i { width:10.5mm; height:10.5mm; border-radius:2.6mm; background:rgba(255,255,255,.35); display:block }
+  .home .app.on img { width:10.5mm; height:10.5mm; border-radius:2.6mm; outline:1.2mm solid #ffb800; outline-offset:.5mm; display:block; background:#fff }
+  .home .app.on b { font-weight:800 }
+  .note { font-size:8.5pt; color:var(--muted); margin-top:1.5mm; text-align:center }
+  .done { margin:6mm 0 0; background:var(--soft); border-radius:4mm; padding:4.5mm 6mm; font-size:13pt; line-height:1.55 }
+  .done b { color:var(--green) }
+  .help { margin:4.5mm 0 0; border:1px solid var(--line); border-radius:4mm; padding:4mm 6mm }
+  .help h4 { margin:0 0 2mm; font-size:13pt }
+  .help ul { margin:0; padding-left:5mm; font-size:11pt; line-height:1.65; color:var(--ink) }
+  .foot { padding:3.5mm 14mm 5mm; font-size:10pt; color:var(--muted); display:flex; justify-content:space-between; border-top:1px solid var(--line); margin-top:auto }
+  .pg { font-weight:800; color:var(--red) }
+</style>
+</head>
+<body>
+
+<!-- ───── 1쪽: 갤럭시(안드로이드) ───── -->
+<section class="page">
+  <div class="band">
+    <div class="kick">목장 나눔터 · 알림 켜는 법</div>
+    <h1>토요일 마감 알림,<br>휴대폰으로 받으세요</h1>
+    <p class="lead">딱 한 번만 켜 두시면, 매주 <b>토요일 밤 10시 일기 마감 알림</b>과<br><b>목사님 말씀</b>이 휴대폰으로 바로 옵니다.</p>
+  </div>
+  <div class="body">
+    <div class="os">갤럭시 · 안드로이드 <span class="chip">아이폰은 뒷장</span></div>
+    <div class="steps three">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>카톡으로 받은 주소를 누르세요</h3>
+        <p>카톡 안에서 열리면 <b>[크롬·사파리로 열기]</b>를 누르세요. 크롬으로 열려야 알림을 받을 수 있어요.</p>
+        <div class="phone"><img src="img/c-kakao.png"><div class="ring" style="left:5.5%;top:82.8%;width:43%;height:10.8%"></div></div>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>맨 위 [알림 받기]를 누르세요</h3>
+        <p>크롬으로 열리면 화면 맨 위에 알림 안내가 보여요.</p>
+        <div class="phone"><img src="img/c-android.png"><div class="ring" style="left:5.5%;top:82.8%;width:28%;height:10.8%"></div></div>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>[허용]을 누르면 끝!</h3>
+        <p>휴대폰이 알림을 허락할지 물어봐요. <b>[허용]</b>을 눌러 주세요.</p>
+        <div class="draw">
+          <div class="url">🔒 mokjang.app</div>
+          <div class="dlg"><div class="t">mokjang.app에서 알림을 보내도록 허용할까요?</div>
+            <div class="btns"><span>허용 안함</span><span class="on">허용</span></div></div>
+          <div class="tag">그림 예시</div>
+        </div>
+        <div class="note">휴대폰마다 글자가 조금 다를 수 있어요</div>
+      </div>
+    </div>
+    <div class="done">✅ 화면에 <b>“알림을 켰습니다”</b>가 보이면 성공이에요.<br>이제 토요일 밤 10시까지 일기를 안 내셨으면, 휴대폰으로 알려 드려요.</div>
+    <div class="help">
+      <h4>잘 안 되시나요?</h4>
+      <ul>
+        <li><b>‘브라우저에서 막혀 있음’</b>이 보이면: 휴대폰 <b>설정 → 애플리케이션 → Chrome → 알림</b>을 켜 주세요.</li>
+        <li>잘 오는지 시험해 보려면: 앱 아래 <b>[내 계정] → [시험 알림 보내기]</b></li>
+        <li>휴대폰을 바꾸셨다면 새 휴대폰에서 한 번 더 켜 주세요.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>목장 나눔터 · mokjang.app</span><span class="pg">1 / 2</span></div>
+</section>
+
+<!-- ───── 2쪽: 아이폰 ───── -->
+<section class="page">
+  <div class="band" style="padding-bottom:7mm">
+    <div class="kick">목장 나눔터 · 알림 켜는 법</div>
+    <h1 style="font-size:24pt">아이폰은 ‘홈 화면에 추가’를<br>먼저 해 주세요</h1>
+    <p class="lead">아이폰은 사파리에서 <b>홈 화면에 추가한 앱</b>으로만 알림을 받을 수 있어요. 한 번만 하시면 됩니다.</p>
+  </div>
+  <div class="body">
+    <div class="os">아이폰 <span class="chip">iOS 16.4 이상</span></div>
+    <div class="steps four">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>사파리로 여세요</h3>
+        <p>카톡에서 주소를 누른 뒤, 오른쪽 아래 <b>메뉴(⋯) → [Safari로 열기]</b>. 이런 안내가 보여요.</p>
+        <div class="phone"><img src="img/c-ios-safari.png"><div class="ring" style="left:4%;top:72.5%;width:92%;height:11%;border-radius:2mm"></div></div>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>공유 단추 → [홈 화면에 추가]</h3>
+        <p>사파리 아래쪽 <b>공유 단추(□↑)</b>를 누르고, <b>[홈 화면에 추가] → [추가]</b>.</p>
+        <div class="draw">
+          <div class="share">
+            <div class="row">복사 <span class="ic">⧉</span></div>
+                        <div class="row on">홈 화면에 추가 <span class="ic">＋</span></div>
+            <div class="row">책갈피 추가 <span class="ic">▭</span></div>
+          </div>
+          <div class="url">🔒 mokjang.app</div>
+          <div class="tag">그림 예시</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>홈 화면 아이콘으로 여세요</h3>
+        <p>홈 화면에 생긴 <b>‘멜번방주교회’</b> 아이콘을 눌러 여세요.</p>
+        <div class="draw">
+          <div class="home">
+            <div class="app"><i></i>사진</div><div class="app"><i></i>카메라</div><div class="app"><i></i>카카오톡</div>
+            <div class="app"><i></i>설정</div><div class="app on"><img src="img/icon.png"><b>멜번방주교회</b></div>
+          </div>
+          <div class="tag">그림 예시</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <h3>[알림 받기] → [허용]</h3>
+        <p>맨 위 <b>[알림 받기]</b>를 누르고, 물어보면 <b>[허용]</b>.</p>
+        <div class="phone"><img src="img/c-android.png"><div class="ring" style="left:5.5%;top:82.8%;width:28%;height:10.8%"></div></div>
+      </div>
+    </div>
+    <div class="done">✅ <b>“알림을 켰습니다”</b>가 보이면 성공이에요.<br>앞으로는 <b>홈 화면의 ‘멜번방주교회’ 아이콘</b>으로 들어오시면 됩니다.</div>
+    <div class="help">
+      <h4>잘 안 되시나요?</h4>
+      <ul>
+        <li>[알림 받기]가 안 보이면: 사파리가 아니라 <b>홈 화면 아이콘</b>으로 열었는지 확인해 주세요.</li>
+        <li>알림이 안 오면: 아이폰 <b>설정 → 알림 → 멜번방주교회</b>에서 ‘알림 허용’을 켜 주세요.</li>
+        <li>아이폰 소프트웨어가 오래되었으면 <b>설정 → 일반 → 소프트웨어 업데이트</b>를 먼저 해 주세요.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>궁금한 점은 목사님께 여쭤 주세요 · mokjang.app</span><span class="pg">2 / 2</span></div>
+</section>
+
+</body>
+</html>
