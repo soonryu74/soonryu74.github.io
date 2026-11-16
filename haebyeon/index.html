@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-14-194';
+window.__BUILD = '2026-11-16-195';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -437,8 +437,8 @@ const SB_URL = 'https://dxhmprqfgigljgbstqrg.supabase.co', SB_KEY = 'sb_publisha
 const ROOM_CAP = 30, LOOP_LEN = 1000; // 방당 30명 · 해변은 1 km 로 이어져 다시 만난다
 
 /* ---------- 상수·상태 ---------- */
-const SCENE_ID = (()=>{ const v = new URL(location.href).searchParams.get('scene'); return ['hangang','gung','busan','ulsan','jeju','jejucoast','chuncheon','cheorwon','snow','jeonju','forest','pine','bamboo','niagara','blossom'].includes(v) ? v : 'beach'; })();
-const FAMILY = {beach:'beach', busan:'beach', ulsan:'beach', jejucoast:'beach', jeju:'gung', hangang:'hangang', chuncheon:'hangang', cheorwon:'hangang', snow:'hangang', niagara:'hangang', gung:'gung', jeonju:'gung', forest:'gung', pine:'gung', bamboo:'gung', blossom:'gung'}[SCENE_ID];
+const SCENE_ID = (()=>{ const v = new URL(location.href).searchParams.get('scene'); return ['hangang','gung','busan','ulsan','jeju','jejucoast','chuncheon','cheorwon','snow','jeonju','forest','pine','bamboo','niagara','blossom','aurora'].includes(v) ? v : 'beach'; })();
+const FAMILY = {beach:'beach', busan:'beach', ulsan:'beach', jejucoast:'beach', jeju:'gung', hangang:'hangang', chuncheon:'hangang', cheorwon:'hangang', snow:'hangang', aurora:'hangang', niagara:'hangang', gung:'gung', jeonju:'gung', forest:'gung', pine:'gung', bamboo:'gung', blossom:'gung'}[SCENE_ID];
 const FB = FAMILY==='beach', FH = FAMILY==='hangang', FG = FAMILY==='gung';
 const SCENES = {
   beach:   {name:'해변', eyebrow:'BEACH RUN', title:'해변, 잠깐 달려요', laneMin:-2.6, dryLane:5.4, laneSea:'왼쪽', laneSand:'오른쪽', collect:'조개', shareText:'말없이 파도 옆을 달리는 온라인 해변', cardTitle:'해변, 잠깐 달렸어요', deep:{value:0x2d8fa8}, shallow:0x8fdcd6, waveAmp:1, foamAmt:1, tideAmp:1, seaVol:1, bird:'gull', chan:'beach', ground:'sand', sitMsg:'물에서 조금 떨어진 모래로 올라가요', sandMsg:'모래에 한 줄 써 보세요 · 파도가 지워 줘요'},
@@ -453,6 +453,7 @@ SCENES.chuncheon = {...SCENES.hangang, todOffset:0.08, ground:'deck', laneMin:1.
 SCENES.cheorwon = {...SCENES.hangang, todOffset:0.2, ground:'deck', laneMin:1.4, dryLane:5.6, name:'주상절리길', eyebrow:'CHEORWON RUN', title:'철원 주상절리길, 잠깐 달려요', shareText:'한탄강 협곡 절벽에 매달린 잔도를 달리는 온라인 트레일', cardTitle:'주상절리길, 잠깐 달렸어요', chan:'cheorwon', deep:{value:0x1f7f82}, shallow:0x7fd0c4, waveAmp:0.35, seaVol:0.5, collect:'돌멩이', sitMsg:'난간 옆으로 가요 · 협곡이 내려다보여요', sandMsg:'잔도에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.niagara = {...SCENES.hangang, todOffset:0.15, ground:'stonepath', laneMin:1.6, dryLane:5.4, tideAmp:0, name:'나이아가라', eyebrow:'NIAGARA RUN', title:'나이아가라 폭포길, 잠깐 달려요', shareText:'물안개 속 나이아가라 폭포 옆 데크를 달리는 온라인 트레일', cardTitle:'나이아가라, 잠깐 달렸어요', chan:'niagara', deep:{value:0x1f6a7c}, shallow:0x7fc8c8, waveAmp:0.6, seaVol:1.0, bird:'gull', collect:'물방울', sitMsg:'난간 옆으로 가요 · 폭포가 보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 물안개가 지워 줘요', abroad:true, soundMsg:'폭포 소리가 들려요'};
 SCENES.snow = {...SCENES.hangang, todOffset:0.32, ground:'snowfield', laneMin:0.6, dryLane:6.0, tideAmp:0, name:'철원 눈길', eyebrow:'SNOW RUN', title:'철원 눈 덮인 강길, 잠깐 달려요', shareText:'눈 덮인 한탄강 얼음 위, 발자국 길을 따라 달리는 온라인 겨울길', cardTitle:'눈길, 잠깐 달렸어요', chan:'snow', deep:{value:0x23505c}, shallow:0x5f9aa0, waveAmp:0, seaVol:0, bird:'cricket', collect:'눈송이', snow:true, sitMsg:'눈 위에 앉아요 · 갈대와 겨울 산이 보여요', sandMsg:'눈 위에 한 줄 남겨 보세요 · 눈이 덮어 줘요', amb:'wind', windVol:0.5, rustleVol:0.1, rustleHz:900, soundMsg:'겨울 바람 소리가 들려요'};
+SCENES.aurora = {...SCENES.snow, todOffset:0, name:'옐로나이프 오로라길', eyebrow:'AURORA RUN', title:'옐로나이프 오로라길, 잠깐 달려요', shareText:'얼어붙은 호수 위, 오로라 폭풍 아래를 달리는 온라인 밤길', cardTitle:'오로라길, 잠깐 달렸어요', chan:'aurora', night:true, bird:'none', collect:'별빛', snow:true, abroad:true, windVol:0.2, rustleVol:0, soundMsg:'눈 밟는 소리만 들리는 고요한 밤이에요', sitMsg:'눈 위에 앉아요 · 오로라가 춤춰요', sandMsg:'눈 위에 한 줄 남겨 보세요 · 눈이 덮어 줘요'};
 SCENES.jeonju = {...SCENES.gung, todOffset:0.28, name:'한옥마을', eyebrow:'JEONJU RUN', title:'전주 한옥마을, 잠깐 달려요', shareText:'기와지붕 사이 골목을 달리는 온라인 한옥마을', cardTitle:'한옥마을, 잠깐 달렸어요', chan:'jeonju', night:false, dryLane:6.6, bird:'sparrow', collect:'감', sitMsg:'골목 옆 평상 쪽으로 가요', sandMsg:'골목에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.15, rustleVol:0.08, rustleHz:2600, soundMsg:'골목 바람 소리가 들려요'};
 SCENES.jeju = {...SCENES.gung, todOffset:0.3, name:'제주 숲길', eyebrow:'JEJU OLLE', title:'제주 올레 숲길, 잠깐 달려요', shareText:'오래된 나무와 현무암 돌담 사이 올레 숲길을 달리는 온라인 산책', cardTitle:'제주 올레 숲길, 잠깐 달렸어요', chan:'jeju', night:false, dryLane:6.6, bird:'jeju', collect:'동백꽃', sitMsg:'돌담 옆 나무 그늘로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.08, rustleVol:0, rustleHz:2600, soundMsg:'숲 바람 소리가 들려요'};
 SCENES.pine = {...SCENES.gung, todOffset:0.1, name:'대관령 소나무길', eyebrow:'PINE RUN', title:'대관령 소나무길, 잠깐 달려요', shareText:'안개 낀 금강소나무 숲길을 달리는 온라인 산책', cardTitle:'소나무길, 잠깐 달렸어요', chan:'pine', night:false, dryLane:6.6, bird:'forest', collect:'솔방울', sitMsg:'소나무 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.08, rustleVol:0, rustleHz:1500, soundMsg:'솔바람 소리가 들려요'};
@@ -462,7 +463,7 @@ SCENES.blossom = {...SCENES.forest, todOffset:0.2, name:'하동 벚꽃길', eyeb
 const SC = SCENES[SCENE_ID];
 const CW = SCENE_ID==='cheorwon'; const SNOW = !!SC.snow; const SNOWFIELD = SC.ground==='snowfield';
 const GUNG = FG;
-try{ const bm = document.getElementById('boot-message'); if(bm) bm.textContent = (FB ? '파도를' : FH ? '강바람을' : SCENE_ID==='forest' ? '낙엽을' : SCENE_ID==='blossom' ? '꽃잎을' : '돌담길을') + ' 불러오는 중 · ' + SC.name; }catch(e){}
+try{ const bm = document.getElementById('boot-message'); if(bm) bm.textContent = (FB ? '파도를' : FH ? '강바람을' : SCENE_ID==='forest' ? '낙엽을' : SCENE_ID==='blossom' ? '꽃잎을' : SCENE_ID==='aurora' ? '오로라를' : '돌담길을') + ' 불러오는 중 · ' + SC.name; }catch(e){}
 const nightLights = []; // {m, base, night} — 밤에 발광 세기를 올리는 재질들
 const SHORE_Z = 0, LANE_MIN = SC.laneMin, LANE_MAX = SCENE_ID==='gung' ? 5.0 : (FG ? 7.4 : ((SC.ground==='deck' || SC.ground==='stonepath') ? 6.0 : (FH ? 6.4 : 8.5))), WALK = 1.4, RUN = 3.4;   // 한강: 달릴 땐 벤치가 있는 잔디 안쪽까지 안 들어간다
 // 돌담길 오른쪽 잔디 언덕: 담장 너머 궁 전경을 보며 앉고 눕는 자리. z 6.5→9.5 오르막, 9.5~11.5 꼭대기(2.4 m), 11.5→14.5 내리막
@@ -756,6 +757,41 @@ const snowFollow = new THREE.Group(); snowFollow.visible = SNOWFIELD; scene.add(
 const snowSet = new THREE.Group(); snowSet.visible = SNOWFIELD; scene.add(snowSet);            // 520 m 주기로 점프(갈대·나무는 세상에 고정)
 let riverTex = null;
 function mergeGeos(list){ let n = 0; for(const g of list) n += g.attributes.position.count; const pos = new Float32Array(n*3), nor = new Float32Array(n*3); let o = 0; for(const g of list){ pos.set(g.attributes.position.array, o*3); nor.set(g.attributes.normal.array, o*3); o += g.attributes.position.count; } const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.BufferAttribute(pos, 3)); out.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); return out; }
+function spruceGeo(){
+  // 가문비나무(옐로나이프 흑가문비): 가늘고 높은 원뿔 5단 + 줄기. 윗단은 좁고 뾰족
+  const parts = []; const push = (geo, m)=>{ geo.applyMatrix4(m); parts.push(geo.toNonIndexed()); };
+  const H = 7 + Math.random()*4; push(new THREE.CylinderGeometry(0.06, 0.16, H, 5), new THREE.Matrix4().makeTranslation(0, H/2, 0));
+  for(let k=0;k<5;k++){ const y = 0.8 + k*(H - 1.2)/5, r = (1.4 - k*0.22)*(0.8 + Math.random()*0.3), h = (H - 1.2)/5*1.6; push(new THREE.ConeGeometry(r, h, 6, 1, true), new THREE.Matrix4().makeTranslation(0, y + h/2, 0)); }
+  return mergeGeos(parts);
+}
+// 오로라 커튼: 하늘에 걸린 긴 띠 4장. 세로 줄무늬가 흐르고 접힘이 천천히 춤춘다 (더하기 혼합, 안개 영향 없음)
+const auroraSet = new THREE.Group(); auroraSet.visible = SCENE_ID==='aurora'; scene.add(auroraSet);
+if(SCENE_ID==='aurora'){
+  const mk = (w, h, y, z, cA, cB, phase, lean)=>{ const geo = new THREE.PlaneGeometry(w, h, 96, 6); const pos = geo.attributes.position; for(let i=0;i<pos.count;i++){ const x = pos.getX(i); pos.setZ(i, Math.sin(x*0.0045 + phase)*70 + Math.sin(x*0.013 + phase*2.0)*22); } geo.computeVertexNormals();
+    const mat = new THREE.ShaderMaterial({uniforms:{time:{value:0}, phase:{value:phase}, cA:{value:new THREE.Color(cA)}, cB:{value:new THREE.Color(cB)}}, transparent:true, depthWrite:false, side:THREE.DoubleSide, blending:THREE.AdditiveBlending, fog:false,
+      vertexShader:`varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+      fragmentShader:`uniform float time, phase; uniform vec3 cA, cB; varying vec2 vUv;
+        float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
+        float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f); return mix(mix(hash(i), hash(i+vec2(1,0)), f.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y); }
+        void main(){
+          float x = vUv.x*7.0 + phase;
+          float rays = noise(vec2(x*5.0 + time*0.12, 0.3))*0.55 + noise(vec2(x*13.0 - time*0.35, 1.7))*0.45;   // 세로 빛줄기
+          float fold = 0.5 + 0.5*sin(x*2.1 + time*0.22 + sin(x*0.7 + time*0.1)*1.5);                               // 접힘(밝은 주름)
+          float lowEdge = 0.06 + 0.1*noise(vec2(x*2.5, time*0.08));                                                 // 물결치는 아랫단
+          float v = clamp((vUv.y - lowEdge)/(1.0 - lowEdge), 0.0, 1.0);
+          float curtain = pow(1.0 - v, 1.7) * smoothstep(0.0, 0.05, vUv.y - lowEdge);
+          float a = curtain * (0.3 + 0.7*rays) * (0.45 + 0.55*fold) * smoothstep(0.0, 0.08, vUv.x) * smoothstep(1.0, 0.92, vUv.x);
+          vec3 c = mix(cA, cB, pow(v, 0.8)); c += vec3(0.7, 1.0, 0.8) * pow(rays, 3.0) * curtain * 0.6;            // 아래 초록 → 위 보라, 줄기는 희게
+          gl_FragColor = vec4(c*a*1.7, a);
+        }`});
+    const m = new THREE.Mesh(geo, mat); m.position.set(0, y, z); m.rotation.x = lean; m.userData = {mat, drift:0.6 + Math.random()*0.6, w}; auroraSet.add(m); };
+  mk(1400, 220, 120, -420, 0x2bd97a, 0x7a3fd0, 0.0, -0.18);
+  mk(1100, 170, 150, -330, 0x44ff9a, 0xc24fb0, 2.1, -0.25);
+  mk(1600, 260, 190, -520, 0x1fbf72, 0x5a2fb8, 4.0, -0.12);
+  mk(900, 140, 210, -160, 0x5affb0, 0xd06bd8, 1.2, -0.55);   // 머리 위로 지나가는 띠
+  mk(1200, 150, 140, 260, 0x36e08a, 0x8a4fd8, 3.3, 0.35);    // 오른쪽(육지) 하늘에도 한 장
+  { const f = auroraSet.children[2].clone(); f.rotation.set(-0.15, Math.PI/2, 0); f.position.set(0, 170, -40); f.userData = {...auroraSet.children[2].userData, ox:520}; auroraSet.add(f); }   // 달리는 방향 앞 하늘을 가로지르는 띠
+}
 function bareTreeGeo(){
   // 잎 없는 겨울나무: 줄기 + 가지 7 + 잔가지 (한 덩어리 지오메트리 → 인스턴스)
   const parts = []; const push = (geo, m)=>{ geo.applyMatrix4(m); parts.push(geo.toNonIndexed()); };
@@ -794,17 +830,18 @@ if(SNOWFIELD){
   for(let x=-520; x<520; x+=1.0){ reedSpots.push([x + Math.random(), groundY(13.5), 12 + Math.random()*7.5]); if(Math.random() < 0.5) reedSpots.push([x + Math.random(), groundY(15), 13 + Math.random()*6]); }   // 오른쪽 둑
   for(let k=0;k<2;k++){ const inst = new THREE.InstancedMesh(reedGeo, reedM, reedSpots.length); reedSpots.forEach((sp, i)=>{ dummy.position.set(sp[0], sp[1] - 0.1, sp[2]); dummy.rotation.set(0, k*Math.PI/2 + Math.random()*0.5, 0); const sc = 0.7 + Math.random()*0.6; dummy.scale.set(sc, sc, sc); dummy.updateMatrix(); inst.setMatrixAt(i, dummy.matrix); }); inst.frustumCulled = false; snowSet.add(inst); }
   // 겨울나무: 양쪽 둑 뒤로 드문드문, 건너편엔 더 멀리 한 줄 더
-  const woodM = new THREE.MeshStandardMaterial({color:0x4e4238, roughness:1});
+  const AUR = SCENE_ID==='aurora';
+  const woodM = new THREE.MeshStandardMaterial({color:AUR ? 0x16302a : 0x4e4238, roughness:1, flatShading:AUR});
   const treeSpots = [];
   for(let x=-520; x<520; x+=7 + Math.random()*6) treeSpots.push([x, 0.9, -52 - Math.random()*22]);
   for(let x=-520; x<520; x+=10 + Math.random()*8) treeSpots.push([x, 0.9, -80 - Math.random()*40]);
   for(let x=-520; x<520; x+=6 + Math.random()*5) treeSpots.push([x, groundY(24), 20 + Math.random()*16]);
-  for(let v=0; v<3; v++){ const geo = bareTreeGeo(); const mine = treeSpots.filter((_, i)=>i%3===v); const inst = new THREE.InstancedMesh(geo, woodM, mine.length); mine.forEach((sp, i)=>{ dummy.position.set(sp[0], sp[1], sp[2]); dummy.rotation.set(0, Math.random()*Math.PI*2, 0); const sc = 0.8 + Math.random()*0.7; dummy.scale.set(sc, sc, sc); dummy.updateMatrix(); inst.setMatrixAt(i, dummy.matrix); }); inst.frustumCulled = false; inst.castShadow = true; snowSet.add(inst); }
+  for(let v=0; v<3; v++){ const geo = AUR ? spruceGeo() : bareTreeGeo(); const mine = treeSpots.filter((_, i)=>i%3===v); const inst = new THREE.InstancedMesh(geo, woodM, mine.length); mine.forEach((sp, i)=>{ dummy.position.set(sp[0], sp[1], sp[2]); dummy.rotation.set(0, Math.random()*Math.PI*2, 0); const sc = 0.8 + Math.random()*0.7; dummy.scale.set(sc, sc, sc); dummy.updateMatrix(); inst.setMatrixAt(i, dummy.matrix); }); inst.frustumCulled = false; inst.castShadow = true; snowSet.add(inst); }
   // 먼 숲 띠(산 아래 어두운 줄)와 전봇대 몇 개
-  const farWoodM = new THREE.MeshStandardMaterial({color:0x6b6158, roughness:1});
+  const farWoodM = new THREE.MeshStandardMaterial({color:AUR ? 0x101c18 : 0x6b6158, roughness:1}); if(AUR){ hillM.color.setHex(0x2a3038); hillM2.color.setHex(0x343b45); }
   for(let x=-520; x<520; x+=14 + Math.random()*12){ const b = new THREE.Mesh(new THREE.BoxGeometry(10 + Math.random()*10, 5 + Math.random()*4, 6), farWoodM); b.position.set(x, 3, -150 - Math.random()*40); snowSet.add(b); }
   const poleM = new THREE.MeshStandardMaterial({color:0x8a8a86, roughness:1});
-  for(let x=-520; x<520; x+=46){ const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 8, 5), poleM); pole.position.set(x, 4.9, 30); snowSet.add(pole); const arm = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 1.6), poleM); arm.position.set(x, 8.4, 30); snowSet.add(arm); }
+  if(!AUR) for(let x=-520; x<520; x+=46){ const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 8, 5), poleM); pole.position.set(x, 4.9, 30); snowSet.add(pole); const arm = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 1.6), poleM); arm.position.set(x, 8.4, 30); snowSet.add(arm); }
 }
 function makeDeckPosts(){
   if(SC.ground==='stonepath'){ const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({color:0x3a3d42, roughness:0.5, metalness:0.5}); for(let x=0;x<10;x+=2){ const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.2, 6), m); post.position.set(x, groundY(3.7) + 0.6, 0.6); g.add(post); } return g; }
@@ -1418,7 +1455,7 @@ function makePaperPlane(){
   const line = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.004, 0.01), new THREE.MeshStandardMaterial({color:0xd8cfbf})); line.position.set(0.03, 0.065, 0); g.add(line);
   g.rotation.y = Math.random()*Math.PI*2; g.rotation.z = 0.15; return g;
 }
-const LETTER_KIND = FG ? 'plane' : ((SCENE_ID==='niagara' || SCENE_ID==='cheorwon' || SCENE_ID==='snow') ? 'cairn' : (FH ? 'boat' : 'bottle'));   // 눈길도 돌탑 쪽지   // 편지 담는 것: 바다=유리병, 강·호수=종이배, 절벽길=돌탑 쪽지, 눈길=눈사람, 숲길=종이비행기
+const LETTER_KIND = FG ? 'plane' : ((SCENE_ID==='niagara' || SCENE_ID==='cheorwon' || SCENE_ID==='snow' || SCENE_ID==='aurora') ? 'cairn' : (FH ? 'boat' : 'bottle'));   // 눈길도 돌탑 쪽지   // 편지 담는 것: 바다=유리병, 강·호수=종이배, 절벽길=돌탑 쪽지, 눈길=눈사람, 숲길=종이비행기
 const LETTER_UI = {
   bottle:{kind:'유리병 속 편지', close:'바다에 다시 띄우기', bye:'편지가 파도를 타고 떠났어요', help:'유리병', helpText:'가끔 떠내려와요. 주우면 짧은 편지가 들어 있어요.'},
   boat:{kind:'종이배 편지', close:'강물에 다시 띄우기', bye:'종이배가 강물을 따라 흘러갔어요', help:'종이배', helpText:'강가에 종이배가 닿아 있어요. 주우면 짧은 편지가 들어 있어요.'},
@@ -2390,7 +2427,7 @@ function populateTo(limitX){
     }
     if(FH){
       if(SNOWFIELD){
-        if(x > nextXmas){ nextXmas = x + 420 + Math.random()*160; const o = makeXmasTree(); o.position.set(x + 340, 0.3, -9); scene.add(o); props.push({obj:o, kind:'xmas'}); genX += 2; continue; }   // 저 멀리(340 m 앞) 눈밭에 큰 트리가 보이고 점점 가까워진다
+        if(SCENE_ID==='snow' && x > nextXmas){ nextXmas = x + 420 + Math.random()*160; const o = makeXmasTree(); o.position.set(x + 340, 0.3, -9); scene.add(o); props.push({obj:o, kind:'xmas'}); genX += 2; continue; }   // 저 멀리(340 m 앞) 눈밭에 큰 트리가 보이고 점점 가까워진다
         if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.02, 2 + Math.random()*4); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
         else if(r < 0.28){ const o = makeSnowflake(); o.position.set(x + Math.random(), 0.02, 1.2 + Math.random()*5); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
         continue;
@@ -2509,6 +2546,7 @@ function whiteEye(){   // 동박새: 가늘고 빠른 지저귐이 물결치듯 
 function jejuBird(){ if(nightMix > 0.6) return cricket(); const r = Math.random(); if(r < 0.35) return warbler(); if(r < 0.65) return oriole(); if(r < 0.85) return whiteEye(); return SCENE_ID==='jejucoast' ? gullCall() : titTrill(); }   // 제주: 휘파람새·꾀꼬리·동박새, 해안에선 가끔 갈매기
 function forestBird(){ if(nightMix > 0.6) return cricket(); const r = Math.random(); if(r < 0.3) return cuckoo(); if(r < 0.5) return woodpecker(); if(r < 0.75) return titTrill(); return sparrow(); }   // 아침 숲: 뻐꾸기·딱따구리·박새·참새가 번갈아, 밤엔 풀벌레
 function gull(){
+  if(SC.bird==='none') return;
   if(SC.bird==='jeju') return jejuBird();
   if(SC.bird==='forest') return forestBird();
   if(SC.bird==='sparrow') return sparrow();
@@ -2770,6 +2808,7 @@ $('start').addEventListener('click', ()=>{ start(); if(lobby){ try{ lobby.track(
 /* ---------- 대한민국 지도 첫 화면: 핀 = 장면, 준비 중 핀 = 투표, 달린 곳 = 도장 ---------- */
 const ABROAD = [
   {id:'niagara', flag:'🇨🇦', name:'나이아가라 폭포길', sub:'물안개 속 데크, 무지개', scene:'niagara'},
+  {id:'aurora', flag:'🇨🇦', name:'옐로나이프 오로라길', sub:'얼어붙은 호수 위, 오로라 폭풍', scene:'aurora'},
   {id:'centralpark', flag:'🇺🇸', name:'뉴욕 센트럴파크', sub:'가을 단풍 호숫길', scene:null},
   {id:'seine', flag:'🇫🇷', name:'파리 센강변', sub:'에펠탑 보며 강변 달리기', scene:null},
   {id:'imperial', flag:'🇯🇵', name:'도쿄 황궁 루프', sub:'벚꽃, 해자 옆 5 km', scene:null},
@@ -3107,8 +3146,9 @@ function frame(){
 
     if(state.pendingNote && state.resting && state.pose==='sit' && !state.pendingPose){ state.noteWait = (state.noteWait || 0) + dt; if(state.noteWait > 0.5){ writeOnSand(state.pendingNote); state.pendingNote = null; state.noteWait = 0; } }
     if(state.todMode==='auto'){ const clock = 0.12 + (SC.todOffset||0) + ((Date.now() - state.todStart)/1000)/1200;   // 이른 아침에서 시작, 20분에 하루. 같은 장소의 먼저 온 사람 시계에 맞춘다
-      if(SC.night) state.todT = 0.80 + 0.14*(0.5 - 0.5*Math.cos(clock*Math.PI*2)); /* 돌담길: 깊은 밤 ↔ 저녁 노을 */ else state.todT = clock % 1; }
+      if(SCENE_ID==='aurora') state.todT = 0.905 + 0.03*(0.5 - 0.5*Math.cos(clock*Math.PI*2)); /* 오로라길: 늘 깊은 밤 */ else if(SC.night) state.todT = 0.80 + 0.14*(0.5 - 0.5*Math.cos(clock*Math.PI*2)); /* 돌담길: 깊은 밤 ↔ 저녁 노을 */ else state.todT = clock % 1; }
     applyTod(state.todT);
+    if(SCENE_ID==='aurora'){ hemi.intensity = Math.max(hemi.intensity, 0.5); hemi.color.setHex(0xc9e6d4); sun.intensity = Math.max(sun.intensity, 0.3); }   /* 오로라 빛이 눈밭에 초록빛으로 비친다 */
 
     if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness) * SC.seaVol;
       if(SC.amb==='wind' && audio.windGain){ const vol = +$('vol-sea').value/100; const gp = (t % 9)/9, gust = Math.pow(Math.max(0, Math.sin(gp*Math.PI)), 3)*(0.6 + 0.4*Math.sin(t*0.07)); const lying = state.resting && state.pose==='lie' ? 1.25 : 1; audio.windBp.frequency.value = (SC.rustleHz < 1000 ? 600 : 340) + 180*gust; audio.rustleJit = THREE.MathUtils.damp(audio.rustleJit || 0.5, Math.random(), 2.5, dt); const soft = Math.pow(gust, 1.4); audio.windGain.gain.value = vol*SC.windVol*(0.015 + 0.07*soft)*lying; audio.rustleBp.frequency.value = SC.rustleHz; audio.rustleGain.gain.value = vol*SC.rustleVol*(0.002 + 0.018*soft*(0.6 + 0.4*audio.rustleJit))*lying; }   /* 멀리서 부드럽게: 돌풍일 때만 살짝 커지고, 떨림은 천천히 */   /* 낙엽 돌풍과 같은 9초 주기: 잎이 날릴 때 소리도 세진다 */ if(SCENE_ID==='niagara' && audio.rainGain && !state.rain) audio.rainGain.gain.value = 0.35*(+$('vol-sea').value/100); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + ((SC.bird==='forest' || SC.bird==='jeju') ? 2.5 + Math.random()*5 : 9 + Math.random()*18); } }
@@ -3122,7 +3162,8 @@ function frame(){
   if(state.noteCam && (!state.resting || !sandNotes.includes(state.noteCam) || performance.now() - state.noteCamT > 60000)) state.noteCam = null;
   if(state.resting && state.noteCam){ const n = state.noteCam; camPos.set(state.x + 0.15, 3.4, state.lane + 2.3); camLook.set(state.x, 0.1, state.lane - 2.6); }   // 앉은 등 뒤 위에서 하이앵글로: 사람 너머 바닥 글씨와 파도   // 글씨 뒤 위에서 내려다본다 · 파도가 지우는 것까지 보인다
   else if(state.resting){
-    if(state.pose==='lie' && SNOWFIELD){ camPos.set(state.x + 0.15, 0.8, state.lane + 0.6); camLook.set(state.x + 0.15, 0.8 + 3.2, state.lane + 0.6 - 13); }   /* 눈길: 머리맡에서 눈밭 건너 겨울나무·산·하늘이 트인 설경 (약 14도 위) */
+    if(state.pose==='lie' && SCENE_ID==='aurora'){ camPos.set(state.x + 0.15, 0.85, state.lane + 0.7); camLook.set(state.x + 0.15, 0.85 + 9.4, state.lane + 0.7 - 6.3); }   /* 오로라길: 누우면 약 60도 위 오로라 (머리에 안 가리게) */
+    else if(state.pose==='lie' && SNOWFIELD){ camPos.set(state.x + 0.15, 0.8, state.lane + 0.6); camLook.set(state.x + 0.15, 0.8 + 3.2, state.lane + 0.6 - 13); }   /* 눈길: 머리맡에서 눈밭 건너 겨울나무·산·하늘이 트인 설경 (약 14도 위) */
     else if(state.pose==='lie' && FG){ camPos.set(state.x + 0.15, 0.85, state.lane + 0.7); camLook.set(state.x + 0.15, 0.85 + 9.4, state.lane + 0.7 - 6.3); }   /* 숲길: 누우면 약 60도 위 나무 지붕과 하늘, 떨어지는 잎 */
     else if(state.pose==='lie'){ camPos.set(state.x + 0.15, 0.9, state.lane + 1.2); camLook.set(state.x + 0.15, 0.15, state.lane - 4.5); }   // 머리를 바닥에 댄 눈높이: 발끝이 땅에 붙고 그 너머 수평선이 보인다   // 이마 바로 위에서: 모자 챙이 시야를 가리지 않게 챙 앞쪽에 둔다   // 머리맡에서 내 다리·옆에 누운 친구 너머 바다를 본다
     else if(state.pose==='sit'){ const portrait = innerWidth < innerHeight; const ox = portrait ? 2.6 : 3.4, oz = portrait ? 2.0 : 2.2; camPos.set(state.x + ox, 1.6, state.lane + oz); camLook.set(state.x - ox*0.3, 0.45, state.lane - oz*0.3); }   // 사람이 화면 가운데, 시선은 사람 너머 바다 쪽
@@ -3149,6 +3190,7 @@ function frame(){
   if(deckSet.visible){ deckSet.position.x = state.x; deckSet.userData.dtex.offset.x = state.x/520*(SC.ground==='stonepath' ? 80 : 60); if(deckSet.userData.ctex) deckSet.userData.ctex.offset.x = state.x/520*40; }
   sand.position.x = state.x; wet.position.x = state.x; sandMat.map.offset.x = state.x/520*60;
   if(SNOWFIELD){ snowFollow.position.x = state.x; riverTex.offset.x = sandMat.map.offset.x; snowSet.position.x = Math.round(state.x/520)*520; }
+  if(auroraSet.visible){ for(const m of auroraSet.children){ m.userData.mat.uniforms.time.value = t; m.position.x = state.x + (m.userData.ox || 0) + Math.sin(t*0.02*m.userData.drift)*60; } }   /* 오로라는 러너를 따라오며 천천히 흔들린다 */
   sun.position.copy(skyUniforms.sunDir.value).multiplyScalar(60).add(new THREE.Vector3(state.x, 0, state.lane)); sun.target.position.set(state.x, 0, state.lane);
   { const low = 1 - THREE.MathUtils.smoothstep(skyUniforms.sunDir.value.y, 0.1, 0.5); const ext = 30 + 40*low; if(Math.abs(sun.shadow.camera.top - ext) > 1){ sun.shadow.camera.top = ext; sun.shadow.camera.bottom = -ext; sun.shadow.camera.left = -ext; sun.shadow.camera.right = ext*2; sun.shadow.camera.updateProjectionMatrix(); } }   /* 해가 낮으면 그림자가 길어지므로 그림자 범위를 넓힌다 */
   if(lighthouse.position.x < state.x - 60) lighthouse.position.x += 420;
