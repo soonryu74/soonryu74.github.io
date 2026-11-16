@@ -6,6 +6,7 @@
 try { (function (m, q) { var s = q.get('c');
   if (m && m.theme && !q.has('new') && (!s || s === m.slug)) document.documentElement.setAttribute('data-theme', m.theme);
 })(JSON.parse(localStorage.getItem('darak-my-church') || 'null'), new URLSearchParams(location.search)); } catch (e) {}</script>
+<script>/* 야간 모드(이 기기에서 고른 것 또는 휴대폰의 어두운 화면) */try{var dk=localStorage.getItem('look-dark');if(dk==='on'||(dk!=='off'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','night')}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>다락방 나눔터 — 순장 화면</title>
 <meta name="robots" content="noindex, nofollow">
@@ -15,7 +16,7 @@ try { (function (m, q) { var s = q.get('c');
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="다락방나눔터">
-<link rel="stylesheet" href="style.css?v=202610261000">
+<link rel="stylesheet" href="style.css?v=202611161600">
 </head>
 <body>
 <div class="wrap">
@@ -207,9 +208,9 @@ try { (function (m, q) { var s = q.get('c');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="lang-en.js?v=202610261000"></script>
-<script src="common.js?v=202610261000"></script>
-<script src="mokjang.js?v=202610261000"></script>
+<script src="lang-en.js?v=202611161600"></script>
+<script src="common.js?v=202611161600"></script>
+<script src="mokjang.js?v=202611161600"></script>
 
 </body>
 </html>

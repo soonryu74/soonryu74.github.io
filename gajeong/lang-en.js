@@ -530,7 +530,6 @@ window.I18N.en = {
   "성탄": "Christmas",
   "눈사람": "Snowman",
   "오로라": "Aurora",
-  "끄기": "Off",
   "첫 화면 인사 띠와 공지 창의 모양입니다. '자동'은 10월 24일~12월 31일 성탄, 1~2월 새해 오로라입니다.": "The look of the greeting banner and notice popup. 'Auto' = Christmas Oct 24–Dec 31, aurora for the new year (Jan–Feb).",
   "날짜 고르기": "Pick a date",
   "이날까지 띄우기": "Show until",
@@ -565,7 +564,6 @@ window.I18N.en = {
   "새 비밀번호 정하기": "Set a new password",
   "목자님": "Leaders",
   "은 목사님께 말씀해 주세요. 목사님 화면에서 바로 새 비밀번호를 정해 드립니다.": ": please ask your pastor — they can set a new password right away.",
-  "목사님": "Pastors",
   "은 교회를 등록할 때 받으신 복구 코드로 여기서 새 비밀번호를 정하실 수 있습니다.": ": use the recovery code you got when registering your church to set a new password here.",
   "복구 코드": "Recovery code",
   "새 비밀번호로 바꾸기": "Change password",
@@ -759,5 +757,16 @@ window.I18N.en = {
   "토요일 밤 기도제목 알림을 껐습니다.": "Saturday prayer alert turned off.",
   "우리 교회": "Our church",
   "토요일 밤 9시에 '이번 주 기도제목이 모였습니다' 알림 받기 (누르면 바로 기도제목 모아보기·인쇄)": "Get a Saturday 9 PM alert when this week's prayer requests are in (tap to view and print)",
-  "다른 교회로 들어가기 (처음 화면으로)": "Use a different church (start page)"
+  "다른 교회로 들어가기 (처음 화면으로)": "Use a different church (start page)",
+  "☀ 밝게 보기": "☀ Light mode",
+  "🌙 어둡게 보기": "🌙 Dark mode",
+  "정한 때까지 일기를 제출하지 않은 목자에게 휴대전화 알림을 한 번 보냅니다. 알림을 켠 목자에게만 갑니다. 그때 목사님께도 '안 낸 목장' 알림이 가고, 누르면 카톡으로 한 번에 보낼 수 있습니다.": "Leaders who haven't submitted by the deadline get one phone alert (if they turned alerts on). You'll also get an alert listing them, and can send a KakaoTalk reminder in one tap.",
+  "목자에게 보낼 글 (앱 알림과 카톡에 함께 들어갑니다)": "Message to leaders (used in the app alert and KakaoTalk)",
+  "예: 이번 주 목장 일기를 아직 올리지 않으셨어요. 모임 이야기와 기도제목을 올려 주세요. 늘 수고에 감사드립니다!": "e.g. This week's journal isn't in yet. Please share your gathering and prayer requests. Thank you!",
+  "글 저장": "Save message",
+  "모든 목장이 제출했습니다": "Every group has submitted",
+  "감사합니다!": "Thank you!",
+  "아직 안 낸 목장 {0}곳": "{0} groups not submitted",
+  "저장했습니다. 마감 알림과 카톡 글에 이 글이 들어갑니다.": "Saved. This message will be used for deadline alerts and KakaoTalk.",
+  "기본 글로 돌아갔습니다.": "Back to the default message."
 };

@@ -7,7 +7,8 @@
 //  · remind    : 목사가 [제출 안 한 목장에 알림 보내기]를 누르면, 그 주 일기를 제출하지 않은 목자에게 보낸다
 //  · encourage : 목사가 고른 목장(출석 통계 '안 모인 목장')의 목자에게 격려 글을 보낸다
 //  · set_deadline : 목사가 마감 알림 요일·시각을 정한다 (features.deadline = { dow, hour } 또는 false)
-//  · deadline_tick: (로그인 없이, GitHub Actions가 30분마다) 교회마다 마감 시각이 지났으면 제출 안 한 목자에게 한 번 보낸다
+//  · deadline_tick: (로그인 없이, 데이터베이스 pg_cron이 10분마다 · GitHub Actions는 예비) 교회마다 마감 시각이 지났으면
+//                  제출 안 한 목자에게 한 번 보낸다. 실행이 늦게 와도 36시간 안이면 따라잡는다. 목사님께는 '카톡으로 알리기' 알림
 // 비밀값: VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY (선택: VAPID_SUBJECT)
 //   함수 비밀값이 없으면 church_secret 표(서버 전용, RLS 정책 없음)에서 읽고,
 //   거기도 없으면 처음 한 번 서버에서 만들어 둔다 (비밀키는 서버 밖으로 나가지 않는다)
@@ -88,7 +89,10 @@ async function sendTo(userIds: string[], payload: (lang: string) => Payload, end
   const { data: subs } = await q
   const results = await Promise.allSettled((subs ?? []).map((s) => push(s as Sub, payload((s as { lang?: string }).lang ?? 'ko'))))
   const sent = results.filter((r) => r.status === 'fulfilled' && r.value >= 200 && r.value < 300).length
-  results.forEach((r) => { if (r.status === 'rejected') console.error('push', String(r.reason).slice(0, 200)) })
+  results.forEach((r) => {
+    if (r.status === 'rejected') console.error('push', String(r.reason).slice(0, 200))
+    else if (r.value < 200 || r.value >= 300) console.error('push-status', r.value)   // 410·404는 지웠고, 그 밖의 실패는 원인을 찾을 수 있게 남긴다
+  })
   const codes = results.map((r) => r.status === 'fulfilled' ? r.value : 0)
   return { sent, devices: subs?.length ?? 0, codes }
 }
@@ -141,7 +145,7 @@ async function notSubmitted(churchId: string, week: string) {
   const done = new Set((js ?? []).map((j) => j.mokjang_id))
   return mjs.filter((m) => !done.has(m.id))
 }
-async function remindWeek(churchId: string, week: string, fromPastor: boolean, icon = '') {
+async function remindWeek(churchId: string, week: string, fromPastor: boolean, icon = '', custom = '') {
   const left = await notSubmitted(churchId, week)
   const ids = [...new Set(left.map((m) => m.mokja_id as string))]
   if (!ids.length) return { leaders: 0, reached: 0, sent: 0, devices: 0, noDevice: [] as string[] }
@@ -153,7 +157,7 @@ async function remindWeek(churchId: string, week: string, fromPastor: boolean, i
         body: `${weekLabel(week, 'en')} · Your journal hasn't been submitted yet. Please share your gathering and prayer requests.`,
         url: 'mokjang.html', tag: `remind-${week}`, icon }
     : { title: fromPastor ? `목사님이 ${tm.unit} 일기를 기다리십니다` : `${tm.unit} 일기 마감 알림`,
-        body: `${weekLabel(week)} 일기를 아직 제출하지 않으셨어요. 모임 이야기와 기도제목을 올려 주세요.`,
+        body: custom ? `${weekLabel(week)} · ${custom}` : `${weekLabel(week)} 일기를 아직 제출하지 않으셨어요. 모임 이야기와 기도제목을 올려 주세요.`,
         url: 'mokjang.html', tag: `remind-${week}`, icon })
   return { leaders: ids.length, reached: ids.filter((i) => has.has(i)).length, ...r,
     noDevice: left.filter((m) => !has.has(m.mokja_id)).map((m) => m.mokja_name || m.name) }
@@ -201,10 +205,17 @@ Deno.serve(async (req) => {
         const f = (ch.features ?? {}) as Record<string, unknown>
         if (f.solo) continue
         let now: ReturnType<typeof localNow>; try { now = localNow(ch.timezone || 'Australia/Melbourne') } catch { continue }
+        // 예약 실행이 늦게 와도 놓치지 않게: 정한 시각이 지난 뒤 하루~하루 반 안에 처음 불렸을 때 한 번 보낸다
+        const since = (dow: number, hour: number) => {   // 가장 최근 (요일, 시각)이 몇 시간 전이었는지 + 그날 날짜
+          let back = (now.dow - dow + 7) % 7
+          if (back === 0 && now.hour < hour) back = 7
+          return { hours: back * 24 + now.hour - hour, day: addDays(now.ymd, -back) }
+        }
         // 토요일 밤 9시: 목사님께 '이번 주 기도제목이 모였습니다' (features.digest === false면 끔)
-        if (f.digest !== false && now.dow === 6 && now.hour >= 21) {
-          const wk = addDays(now.ymd, -6)
-          if (f.digest_sent !== wk) {
+        if (f.digest !== false) {
+          const d = since(6, 21)
+          const wk = addDays(d.day, -6)
+          if (d.hours <= 24 && f.digest_sent !== wk) {
             await admin.from('church_church').update({ features: { ...f, digest_sent: wk } }).eq('id', ch.id)
             f.digest_sent = wk
             const r = await prayerDigest(ch.id, wk)
@@ -212,12 +223,23 @@ Deno.serve(async (req) => {
           }
         }
         const dl = deadlineOf(f); if (!dl) continue
-        if (now.dow !== dl.dow || now.hour < dl.hour) continue
-        const sunday = addDays(now.ymd, -now.dow)
-        const week = now.dow >= 2 ? sunday : addDays(sunday, -7)
+        const d = since(dl.dow, dl.hour)
+        if (d.hours > 36) continue
+        const sunday = addDays(d.day, -dl.dow)
+        const week = dl.dow >= 2 ? sunday : addDays(sunday, -7)   // 일·월요일 마감이면 지난주 일기
         if (f.deadline_sent === week) continue
         await admin.from('church_church').update({ features: { ...f, deadline_sent: week } }).eq('id', ch.id)   // 먼저 적어 두어 두 번 보내지 않게
-        const r = await remindWeek(ch.id, week, false)
+        f.deadline_sent = week
+        const custom = typeof f.remind_text === 'string' ? f.remind_text.trim().slice(0, 200) : ''
+        const r = await remindWeek(ch.id, week, false, '', custom)
+        // 목사님께도: 안 낸 목장이 있으면 '눌러서 카톡으로 보내기' (알림을 안 켠 목자에게는 카톡이 확실하다)
+        if (r.leaders) {
+          const { data: pastors } = await admin.from('church_profile').select('id').eq('church_id', ch.id).eq('role', 'pastor')
+          const tm = await churchTerms(ch.id)
+          await sendTo((pastors ?? []).map((p) => p.id), (lang) => lang === 'en'
+            ? { title: `${r.leaders} groups haven't submitted`, body: 'Tap to send a KakaoTalk reminder', url: 'moksa.html#remind', tag: `remind-p-${week}` }
+            : { title: `아직 안 낸 ${tm.unit} ${r.leaders}곳`, body: '눌러서 카톡으로 한 번에 알리기', url: 'moksa.html#remind', tag: `remind-p-${week}` })
+        }
         done.push({ church: ch.id, week, leaders: r.leaders, sent: r.sent })
       }
       return json({ ok: true, done })
@@ -281,7 +303,10 @@ Deno.serve(async (req) => {
       if (body.action === 'remind') {
         const week = String(body.week ?? '')
         if (!YMD_RE.test(week)) return json({ error: '주를 다시 골라 주세요' }, 400)
-        return json({ ok: true, ...(await remindWeek(me.church_id, week, true, await photoIcon(uid))) })
+        const { data: chf } = await admin.from('church_church').select('features').eq('id', me.church_id).maybeSingle()
+        const rt = (chf?.features as Record<string, unknown> | null)?.remind_text
+        const custom = typeof rt === 'string' ? rt.trim().slice(0, 200) : ''
+        return json({ ok: true, ...(await remindWeek(me.church_id, week, true, await photoIcon(uid), custom)) })
       }
       const dow = Number(body.dow), hour = Number(body.hour)
       const { data: ch } = await admin.from('church_church').select('features').eq('id', me.church_id).maybeSingle()

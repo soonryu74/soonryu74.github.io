@@ -780,3 +780,6 @@ html[data-season="snowman"] .sheet-body .section-title{color:#e4f2ff}
 .sheet-body .pr-list .pr-name{color:#f5d27a}
 .sheet-body .pr-list .pr-text, .sheet-body .pr-list .pr-text p{color:rgba(255,255,255,.92)}
 .sheet-body .desc{color:rgba(255,255,255,.82)}
+/* 야간 모드: 인사 띠 알약 단추 글씨가 흐려지지 않게 */
+html[data-theme="night"] .hero-chip:not(.primary){background:rgba(255,255,255,.14); color:#fff; border-color:rgba(255,255,255,.28)}
+html[data-theme="night"] .hero-chip:not(.primary) b{color:#ffd77a}

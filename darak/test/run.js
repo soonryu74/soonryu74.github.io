@@ -943,6 +943,27 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[재발 방지] 야간 모드 · 마감 알림 → 카톡 글 창 · 목자에게 보낼 글');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1'); await p.keyboard.press('Escape');
+    await p.setViewportSize({ width: 390, height: 800 }); await p.waitForTimeout(200);
+    await p.click('.top .who-toggle'); await p.waitForTimeout(150);
+    await p.click('#btn-dark'); await p.waitForTimeout(200);
+    ok('메뉴 [어둡게 보기] → 야간 모드', (await p.getAttribute('html', 'data-theme')) === 'night' && (await p.textContent('#btn-dark')).includes('밝게'));
+    await p.reload(); await p.waitForSelector('.top h1'); await p.waitForTimeout(500);
+    ok('다시 열어도 야간 모드 (이 기기)', (await p.getAttribute('html', 'data-theme')) === 'night');
+    await p.click('.top .who-toggle'); await p.waitForTimeout(150); await p.click('#btn-dark'); await p.waitForTimeout(200);
+    ok('[밝게 보기] → 교회 디자인으로', (await p.getAttribute('html', 'data-theme')) !== 'night');
+    await p.setViewportSize({ width: 900, height: 1000 }); await p.keyboard.press('Escape');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(300);
+    await p.fill('#rm-text', '이번 주 일기를 기다립니다. 힘내세요!'); await p.click('#rm-save'); await p.waitForTimeout(500);
+    ok('목자에게 보낼 글 저장', (await db(p)).church_church.find(x => x.id === 'cb').features.remind_text === '이번 주 일기를 기다립니다. 힘내세요!');
+    await p.goto(BASE + 'moksa.html#remind'); await p.waitForSelector('.top h1'); await p.waitForTimeout(1200);
+    const rs = await p.textContent('.remind-sheet').catch(() => '');
+    ok('마감 알림(#remind)으로 들어오면 안 낸 목장 카톡 글 창 (정한 글 포함)', rs.includes('김 목장') && rs.includes('기다립니다') && rs.includes('카톡으로 보내기'), rs.slice(0, 200));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
