@@ -389,8 +389,9 @@ window.CHURCH = (function () {
   // 카카오톡·네이버·인스타그램 같은 앱 안에서 열린 화면 (휴대폰 알림을 못 받는다)
   function inApp() { return /KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|; wv\)/i.test(navigator.userAgent); }
   // 지금 화면을 크롬(안드로이드)·사파리(아이폰)로 다시 연다
-  function openExternal() {
+  function openExternal(q) {   // q: 크롬에서 이어서 할 일 (예: 'push=1' → 알림 켜기 화면)
     var url = location.href.replace(/#.*$/, '');
+    if (q) url += (url.indexOf('?') < 0 ? '?' : '&') + q;
     if (/KAKAOTALK/i.test(navigator.userAgent)) { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url); return; }
     if (/android/i.test(navigator.userAgent)) { location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end'; return; }
     alert(t('오른쪽 위(또는 아래) 메뉴에서 [Safari로 열기]를 눌러 주세요.'));

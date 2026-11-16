@@ -783,3 +783,12 @@ html[data-season="snowman"] .sheet-body .section-title{color:#e4f2ff}
 /* 야간 모드: 인사 띠 알약 단추 글씨가 흐려지지 않게 */
 html[data-theme="night"] .hero-chip:not(.primary){background:rgba(255,255,255,.14); color:#fff; border-color:rgba(255,255,255,.28)}
 html[data-theme="night"] .hero-chip:not(.primary) b{color:#ffd77a}
+
+/* 앱 알림을 켠 목자 / 안 켠 목자 (마감 알림 카드) */
+.push-cover{background:var(--soft,#f4efe6);border-radius:12px;padding:10px 12px;margin:10px 0 12px}
+.push-cover p{margin:0 0 8px;font-size:14.5px;line-height:1.55}
+.push-cover.all p{margin:0}
+.pc-list{list-style:none;margin:0 0 10px;padding:0}
+.pc-list li{padding:7px 0;border-bottom:1px solid var(--line,#e7e2d8)}
+.pc-list li span{color:var(--muted,#777);font-size:13.5px}
+.notify-ask.hl{outline:2px solid var(--brand,#1f5c3a);outline-offset:2px}

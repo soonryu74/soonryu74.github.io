@@ -892,6 +892,26 @@ const db = p => p.evaluate(() => window.__DB());
     ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
     await c.close(); }
 
+  console.log('\n[알림 켜기 독려] 안 켠 목자 명단 → 카톡 글 → 목자가 주소로 들어와 켜기');
+  { const { c, p } = await ctx(b);
+    await login(p, 'pastor1'); await p.keyboard.press('Escape');
+    await p.click('.tabs button[data-pane="manage"]'); await p.waitForTimeout(400);
+    ok('마감 알림 칸에 앱 알림 켠 목자 수', /1명 \/ 3명/.test(await p.textContent('#pc-text')) && await p.isVisible('#pc-open'));
+    await p.click('#pc-open'); await p.waitForTimeout(300);
+    const st = await p.textContent('.remind-sheet').catch(() => '');
+    ok('안 켠 목자 명단 + 켜는 법 + #push 주소', st.includes('김목자') && st.includes('이목자') && st.includes('홈 화면에 추가') && st.includes('#push'), st.slice(0, 200));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+  { const { c, p } = await ctx(b);
+    await login(p, 'mokja1');
+    await p.evaluate(() => localStorage.setItem('gajeong-notify-later-mokja', String(Date.now())));
+    await p.goto(BASE + 'mokjang.html#push'); await p.waitForSelector('.top h1'); await p.waitForTimeout(900);
+    ok('#push 주소로 들어오면 \'나중에\'를 눌렀어도 알림 켜기 안내가 맨 위에', await p.isVisible('#notify-ask') && await p.$eval('#notify-ask', e => e.classList.contains('hl')));
+    await p.click('#notify-ask-on'); await p.waitForTimeout(500);
+    ok('누르면 알림이 켜지고 고맙다는 안내', (await calls(p)).some(x => x.rpc === 'church_push_save2') && /이미 알림을 받고/.test(await p.textContent('#notify-ask')));
+    ok('JS 오류 없음', p.errs.length === 0, p.errs.join('|'));
+    await c.close(); }
+
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);

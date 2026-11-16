@@ -668,6 +668,42 @@
         return true;
       } }] });
   }
+  // 앱 알림을 켠 목자만 마감 알림을 받는다 → 안 켠 목자 명단 + 켜는 법을 카톡으로 한 번에
+  var pushCover = null;
+  async function loadPushCover() {
+    try { pushCover = await C.notify({ action: 'push_cover' }); } catch (e) { return; }
+    if (!pushCover || !pushCover.total) return;
+    $('#push-cover').hidden = false;
+    $('#push-cover').classList.toggle('all', !pushCover.off.length);
+    $('#pc-text').textContent = pushCover.off.length
+      ? T('앱 알림을 켠 목자 {0}명 / {1}명 — 안 켠 {2}명은 마감 알림을 받지 못합니다.', pushCover.on, pushCover.total, pushCover.off.length)
+      : T('목자 {0}명 모두 앱 알림을 켰습니다.', pushCover.total);
+    $('#pc-open').hidden = !pushCover.off.length;
+  }
+  function pushHowText() {
+    var c = C.getChurch() || {};
+    return T('[{0}] 목자님들께', c.name || '') + '\n' +
+      T('토요일 마감 알림과 목사님 말씀 알림을 휴대폰으로 받으시려면, 아래 주소를 눌러 [알림 받기]를 한 번만 눌러 주세요.') + '\n\n' +
+      T('· 카카오톡 안에서 열리면 [크롬·사파리로 열기]를 먼저 눌러 주세요.') + '\n' +
+      T('· 아이폰은 사파리 아래 공유 단추 → [홈 화면에 추가] 후, 홈 화면 아이콘으로 열어서 켜 주세요.') + '\n\n' +
+      T('아직 안 켜신 목자님: {0}', pushCover.off.map(function (m) { return m.name || m.group; }).join(', ')) + '\n\n' +
+      C.churchLink(c) + '#push';
+  }
+  function openPushCover() {
+    if (!pushCover || !pushCover.off.length) return;
+    var text = pushHowText();
+    C.sheet({ kicker: T('마감 알림'), title: T('앱 알림을 안 켠 목자 {0}명', pushCover.off.length), cls: 'remind-sheet',
+      html: '<ul class="pc-list">' + pushCover.off.map(function (m) {
+          return '<li><b>' + esc(m.name || '') + '</b> <span>' + esc(m.group || '') + '</span></li>'; }).join('') + '</ul>' +
+        '<p class="desc">' + esc(T('아래 글을 목자 단톡방에 보내면, 목자님이 주소를 눌러 한 번에 알림을 켤 수 있습니다.')) + '</p>' +
+        '<div class="prose sheet-text">' + C.proseHtml(text) + '</div><div class="msg" id="msg-pc"></div>',
+      foot: [{ label: T('닫기') }, { label: T('카톡으로 보내기'), fn: async function () {
+        if (navigator.share && !C.inApp()) { try { await navigator.share({ text: text }); return; } catch (e) { if (e && e.name === 'AbortError') return true; } }
+        var copied = false; try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+        C.say($('#msg-pc'), copied ? T('글을 복사했습니다. 카카오톡 목자 단톡방에 붙여 넣어 보내 주세요.') : T('위 글을 길게 눌러 복사해서 카카오톡 목자 단톡방에 보내 주세요.'), 'ok', true);
+        return true;
+      } }] });
+  }
   function bindRemind() {
     $('#btn-remind').addEventListener('click', async function () {
       var b = this;
@@ -693,6 +729,9 @@
       C.say($('#msg-remind'), (copied ? T('알림 글을 복사했습니다. 카카오톡 목자 단톡방에 붙여 넣어 보내 주세요.')
         : T('아래 글을 길게 눌러 복사해서 카카오톡 목자 단톡방에 보내 주세요.')) + '\n\n' + text, 'ok', true);
     });
+
+    loadPushCover();
+    $('#pc-open').addEventListener('click', openPushCover);
 
     var DOWS = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
     var c = C.getChurch() || {}, f = c.features || {};

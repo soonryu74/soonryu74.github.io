@@ -235,6 +235,7 @@
       else { DB.__newpw = DB.__newpw || {}; DB.__newpw[pf.id] = b.password; }
     }
     if (u.indexOf('church-notify') >= 0) reply = b.action === 'key' ? { publicKey: 'BEd3W7naVVZVjZKZZYJiVVxsVFqwxfQM4oNwgxuRb88ja3SPrlpHK0WKduDOHUVXfRhz3I6ZlC-iNnyB4Ob64p4' } : { ok: true, sent: b.action === 'test' ? DB.church_push.length : 1, devices: 1 };
+    if (u.indexOf('church-notify') >= 0 && b.action === 'push_cover') reply = { ok: true, total: 3, on: 1, off: [{ group: '김 목장', name: '김목자' }, { group: '이 목장', name: '이목자' }] };
     if (u.indexOf('church-notify') >= 0 && b.action === 'encourage') reply = { ok: true, leaders: (b.mokjang_ids || []).length, reached: 0, sent: 0, devices: 0, noDevice: ['송목자'] };
     if (u.indexOf('church-notify') >= 0 && b.action === 'remind') reply = { ok: true, leaders: 1, reached: DB.church_push.length ? 1 : 0, sent: 1, devices: 1, noDevice: DB.church_push.length ? [] : ['김목자'] };
     if (u.indexOf('church-notify') >= 0 && b.action === 'notice') {
