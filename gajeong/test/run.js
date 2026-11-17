@@ -38,6 +38,7 @@ async function ctx(browser, opts = {}) {
   await c.addInitScript(`window.__SEED=${JSON.stringify(SEED)};${opts.noPush ? 'window.__NO_PUSH=1;' : ''}${opts.pushPop ? '' : 'window.__NO_PUSH_POP=1;'}${opts.deny ? 'window.__DENY=1;' : ''}`);
   await c.addInitScript(MOCK);
   await c.route('**/cdn.jsdelivr.net/**', r => r.abort());
+  await c.route('**/t1.kakaocdn.net/**', r => r.abort());
   const p = await c.newPage();
   p.errs = []; p.on('pageerror', e => p.errs.push(String(e)));
   return { c, p };
