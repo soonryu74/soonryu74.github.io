@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-208';
+window.__BUILD = '2026-11-17-209';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -780,9 +780,9 @@ if(SCENE_ID==='aurora'){
           float fold = 0.5 + 0.5*sin(x*2.1 + time*0.22 + sin(x*0.7 + time*0.1)*1.5);                               // 접힘(밝은 주름)
           float lowEdge = 0.04 + 0.12*noise(vec2(x*2.5, time*0.08));                                                // 물결치는 아랫단
           float v = clamp((vUv.y - lowEdge)/(1.0 - lowEdge), 0.0, 1.0);
-          float soft = smoothstep(lowEdge - 0.02, lowEdge + 0.1 + 0.08*noise(vec2(x*1.7 + 5.0, time*0.05)), vUv.y);   // 아랫단: 살짝 번진 밝은 테두리
-          float rim = soft * (1.0 - smoothstep(lowEdge + 0.04, lowEdge + 0.3, vUv.y));                                  // 실제 오로라처럼 아랫단이 가장 밝고 위로 갈수록 옅어진다
-          float curtain = pow(1.0 - v, 1.9) * soft;
+          float soft = smoothstep(lowEdge - 0.14, lowEdge + 0.16 + 0.1*noise(vec2(x*1.7 + 5.0, time*0.05)), vUv.y);  // 아랫단이 아래로도 부드럽게 번진다
+          float rim = soft * (1.0 - smoothstep(lowEdge + 0.02, lowEdge + 0.5, vUv.y));                                  // 가장 밝은 아랫단에서 위로 길게 옅어진다
+          float curtain = pow(1.0 - v, 1.3) * soft;
           float a = (curtain * (0.2 + 0.8*rays) + rim * 0.8 * (0.55 + 0.45*rays)) * (0.45 + 0.55*fold) * smoothstep(0.0, 0.18, vUv.x) * smoothstep(1.0, 0.82, vUv.x);
           float pulse = 0.5 + 0.5*sin(time*0.17 + phase*1.3 + vUv.x*3.0);                                             // 폭풍: 색이 띠를 따라 천천히 밀려간다
           vec3 c = mix(cA, cB, smoothstep(0.08 - 0.06*pulse, 0.5 - 0.2*pulse, v)); c += vec3(0.9, 0.9, 1.0) * pow(rays, 3.0) * curtain * 0.5;   // 아랫단 색 → 윗단 색(핑크·보라·빨강), 줄기는 희게
@@ -791,9 +791,9 @@ if(SCENE_ID==='aurora'){
         }`});
     const m = new THREE.Mesh(geo, mat); m.position.set(0, y, z); m.rotation.x = lean; m.userData = {mat, drift:0.6 + Math.random()*0.6, w}; auroraSet.add(m); };
   // 사진처럼 '색 머플러'가 하늘을 지나가는 모습: 긴 띠 두 장이 지평선 위를 가로지르고, 한 장이 머리 위를 지난다. 나머지 하늘은 별
-  mk(1700, 150, 150, -380, 0x2bd97a, 0xff4fa0, 0.0, -0.2);    // 주 띠: 초록 → 핑크
-  mk(1200, 110, 185, -300, 0x44ff9a, 0xc24fb0, 2.1, -0.28);   // 보조 띠: 초록 → 자주
-  mk(1700, 140, 230, -170, 0x3df08c, 0xff5fb0, 5.1, -Math.PI/2 + 0.42);   // 머리 위를 지나는 띠 (누우면 보인다)
+  mk(1700, 210, 150, -380, 0x2bd97a, 0xff4fa0, 0.0, -0.2);    // 주 띠: 초록 → 핑크
+  mk(1200, 160, 185, -300, 0x44ff9a, 0xc24fb0, 2.1, -0.28);   // 보조 띠: 초록 → 자주
+  mk(1700, 200, 230, -170, 0x3df08c, 0xff5fb0, 5.1, -Math.PI/2 + 0.42);   // 머리 위를 지나는 띠 (누우면 보인다)
 }
 function bareTreeGeo(){
   // 잎 없는 겨울나무: 줄기 + 가지 7 + 잔가지 (한 덩어리 지오메트리 → 인스턴스)
