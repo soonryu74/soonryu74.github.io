@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-199';
+window.__BUILD = '2026-11-17-200';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -865,9 +865,9 @@ if(SALT){
   const fallback = new THREE.Mesh(new THREE.PlaneGeometry(520, 400).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({color:0xbcd8e6, roughness:0.15, metalness:0.1})); fallback.position.y = 0.0; saltSet.add(fallback);
   import('three/addons/objects/Reflector.js').then(({Reflector})=>{ const mirror = new Reflector(new THREE.PlaneGeometry(520, 400), {clipBias:0.003, textureWidth:1024, textureHeight:1024, color:0xc4d0d6}); mirror.rotation.x = -Math.PI/2; mirror.position.y = 0.0; saltSet.remove(fallback); saltSet.add(mirror); }).catch(()=>{});
   // 지평선: 양쪽으로 낮은 푸른 산맥, 멀리 툰우파 화산(둥근 봉우리)
-  const mtM = new THREE.MeshStandardMaterial({color:0x6f87a0, roughness:1, fog:false}); const mtM2 = new THREE.MeshStandardMaterial({color:0x8ea3b8, roughness:1, fog:false});
+  const mtM = new THREE.MeshStandardMaterial({color:0x6f87a0, roughness:1}); const mtM2 = new THREE.MeshStandardMaterial({color:0x8ea3b8, roughness:1});   // 안개에 묻혀 멀리 보이게
   for(const [hx, hw, hh, hz, m] of [[-300, 300, 11, -400, mtM],[20, 260, 9, -405, mtM],[330, 340, 13, -402, mtM],[650, 280, 10, -400, mtM],[-150, 420, 20, -410, mtM2],[480, 460, 23, -415, mtM2],[-250, 300, 10, 400, mtM],[150, 280, 8, 402, mtM],[520, 320, 11, 400, mtM],[150, 520, 30, 408, mtM2]]){ const o = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 12), m); o.scale.set(hw, hh, 40); o.position.set(hx, -3, hz); saltSet.add(o); }   // 지평선에 납작하게 깔린 먼 산
-  const volcano = new THREE.Mesh(new THREE.ConeGeometry(170, 48, 24), new THREE.MeshStandardMaterial({color:0x7d8fa3, roughness:1, fog:false})); volcano.position.set(380, 20, -410); saltSet.add(volcano); const cap = new THREE.Mesh(new THREE.ConeGeometry(50, 15, 24), new THREE.MeshStandardMaterial({color:0xe8edf2, roughness:1, fog:false})); cap.position.set(380, 37, -410); saltSet.add(cap);   // 툰우파 화산
+  const volcano = new THREE.Mesh(new THREE.ConeGeometry(170, 48, 24), new THREE.MeshStandardMaterial({color:0x7d8fa3, roughness:1})); volcano.position.set(380, 20, -410); saltSet.add(volcano); const cap = new THREE.Mesh(new THREE.ConeGeometry(50, 15, 24), new THREE.MeshStandardMaterial({color:0xe8edf2, roughness:1})); cap.position.set(380, 37, -410); saltSet.add(cap);   // 툰우파 화산
 }
 function makeDeckPosts(){
   if(SC.ground==='stonepath'){ const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({color:0x3a3d42, roughness:0.5, metalness:0.5}); for(let x=0;x<10;x+=2){ const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.2, 6), m); post.position.set(x, groundY(3.7) + 0.6, 0.6); g.add(post); } return g; }
