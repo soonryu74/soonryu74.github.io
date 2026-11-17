@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-206';
+window.__BUILD = '2026-11-17-208';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -454,7 +454,7 @@ SCENES.cheorwon = {...SCENES.hangang, todOffset:0.2, ground:'deck', laneMin:1.4,
 SCENES.niagara = {...SCENES.hangang, todOffset:0.15, ground:'stonepath', laneMin:1.6, dryLane:5.4, tideAmp:0, name:'나이아가라', eyebrow:'NIAGARA RUN', title:'나이아가라 폭포길, 잠깐 달려요', shareText:'물안개 속 나이아가라 폭포 옆 데크를 달리는 온라인 트레일', cardTitle:'나이아가라, 잠깐 달렸어요', chan:'niagara', deep:{value:0x1f6a7c}, shallow:0x7fc8c8, waveAmp:0.6, seaVol:1.0, bird:'gull', collect:'물방울', sitMsg:'난간 옆으로 가요 · 폭포가 보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 물안개가 지워 줘요', abroad:true, soundMsg:'폭포 소리가 들려요'};
 SCENES.snow = {...SCENES.hangang, todOffset:0.32, ground:'snowfield', laneMin:0.6, dryLane:6.0, tideAmp:0, name:'철원 눈길', eyebrow:'SNOW RUN', title:'철원 눈 덮인 강길, 잠깐 달려요', shareText:'눈 덮인 한탄강 얼음 위, 발자국 길을 따라 달리는 온라인 겨울길', cardTitle:'눈길, 잠깐 달렸어요', chan:'snow', deep:{value:0x23505c}, shallow:0x5f9aa0, waveAmp:0, seaVol:0, bird:'cricket', collect:'눈송이', snow:true, sitMsg:'눈 위에 앉아요 · 갈대와 겨울 산이 보여요', sandMsg:'눈 위에 한 줄 남겨 보세요 · 눈이 덮어 줘요', amb:'wind', windVol:0.5, rustleVol:0.1, rustleHz:900, soundMsg:'겨울 바람 소리가 들려요'};
 SCENES.aurora = {...SCENES.snow, todOffset:0, name:'옐로나이프 오로라길', eyebrow:'AURORA RUN', title:'옐로나이프 오로라길, 잠깐 달려요', shareText:'얼어붙은 호수 위, 오로라 폭풍 아래를 달리는 온라인 밤길', cardTitle:'오로라길, 잠깐 달렸어요', chan:'aurora', night:true, bird:'none', collect:'별빛', snow:true, abroad:true, windVol:0.2, rustleVol:0, soundMsg:'눈 밟는 소리만 들리는 고요한 밤이에요', sitMsg:'눈 위에 앉아요 · 오로라가 춤춰요', sandMsg:'눈 위에 한 줄 남겨 보세요 · 눈이 덮어 줘요'};
-SCENES.uyuni = {...SCENES.hangang, todOffset:0.3, ground:'salt', laneMin:-4.0, dryLane:4.0, tideAmp:0, name:'우유니 소금사막', eyebrow:'UYUNI RUN', title:'우유니 소금사막, 잠깐 달려요', shareText:'하늘이 발밑에 비치는 거울 호수 위를 달리는 온라인 소금사막', cardTitle:'우유니, 잠깐 달렸어요', chan:'uyuni', deep:{value:0x7fb3c8}, shallow:0xcfe6ee, waveAmp:0, seaVol:0, bird:'none', collect:'소금 결정', abroad:true, amb:'wind', windVol:0.15, rustleVol:0, rustleHz:900, soundMsg:'바람 소리만 들리는 넓은 사막이에요', sitMsg:'거울 위에 앉아요 · 하늘이 발밑에 있어요', sandMsg:'소금 위에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
+SCENES.uyuni = {...SCENES.hangang, todOffset:0.56, ground:'salt', laneMin:-4.0, dryLane:4.0, tideAmp:0, name:'우유니 소금사막', eyebrow:'UYUNI RUN', title:'우유니 소금사막, 잠깐 달려요', shareText:'하늘이 발밑에 비치는 거울 호수 위를 달리는 온라인 소금사막', cardTitle:'우유니, 잠깐 달렸어요', chan:'uyuni', deep:{value:0x7fb3c8}, shallow:0xcfe6ee, waveAmp:0, seaVol:0, bird:'none', collect:'소금 결정', abroad:true, amb:'wind', windVol:0.15, rustleVol:0, rustleHz:900, soundMsg:'바람 소리만 들리는 넓은 사막이에요', sitMsg:'거울 위에 앉아요 · 하늘이 발밑에 있어요', sandMsg:'소금 위에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.jeonju = {...SCENES.gung, todOffset:0.28, name:'한옥마을', eyebrow:'JEONJU RUN', title:'전주 한옥마을, 잠깐 달려요', shareText:'기와지붕 사이 골목을 달리는 온라인 한옥마을', cardTitle:'한옥마을, 잠깐 달렸어요', chan:'jeonju', night:false, dryLane:6.6, bird:'sparrow', collect:'감', sitMsg:'골목 옆 평상 쪽으로 가요', sandMsg:'골목에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.15, rustleVol:0.08, rustleHz:2600, soundMsg:'골목 바람 소리가 들려요'};
 SCENES.jeju = {...SCENES.gung, todOffset:0.3, name:'제주 숲길', eyebrow:'JEJU OLLE', title:'제주 올레 숲길, 잠깐 달려요', shareText:'오래된 나무와 현무암 돌담 사이 올레 숲길을 달리는 온라인 산책', cardTitle:'제주 올레 숲길, 잠깐 달렸어요', chan:'jeju', night:false, dryLane:6.6, bird:'jeju', collect:'동백꽃', sitMsg:'돌담 옆 나무 그늘로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.08, rustleVol:0, rustleHz:2600, soundMsg:'숲 바람 소리가 들려요'};
 SCENES.pine = {...SCENES.gung, todOffset:0.1, name:'대관령 소나무길', eyebrow:'PINE RUN', title:'대관령 소나무길, 잠깐 달려요', shareText:'안개 낀 금강소나무 숲길을 달리는 온라인 산책', cardTitle:'소나무길, 잠깐 달렸어요', chan:'pine', night:false, dryLane:6.6, bird:'forest', collect:'솔방울', sitMsg:'소나무 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', amb:'wind', windVol:0.08, rustleVol:0, rustleHz:1500, soundMsg:'솔바람 소리가 들려요'};
@@ -540,7 +540,7 @@ const sky = new THREE.Mesh(new THREE.SphereGeometry(420, 32, 16), new THREE.Shad
 }));
 scene.add(sky);
 const stars = (()=>{
-  const n = 900, pos = new Float32Array(n*3);
+  const n = SC.ground==='salt' ? 2600 : 900, pos = new Float32Array(n*3);
   for(let i=0;i<n;i++){ const a = Math.random()*Math.PI*2, e = Math.asin(Math.random()*0.9+0.08), r = 400; pos[i*3] = Math.cos(a)*Math.cos(e)*r; pos[i*3+1] = Math.sin(e)*r; pos[i*3+2] = Math.sin(a)*Math.cos(e)*r; }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   const m = new THREE.PointsMaterial({color:0xfff8e6, size:1.6, sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false, fog:false});
@@ -790,14 +790,10 @@ if(SCENE_ID==='aurora'){
           gl_FragColor = vec4(c*a*1.7, a);
         }`});
     const m = new THREE.Mesh(geo, mat); m.position.set(0, y, z); m.rotation.x = lean; m.userData = {mat, drift:0.6 + Math.random()*0.6, w}; auroraSet.add(m); };
-  mk(1400, 220, 120, -420, 0x2bd97a, 0xff4fa0, 0.0, -0.18);   // 초록 → 핑크
-  mk(1100, 170, 150, -330, 0x44ff9a, 0xc24fb0, 2.1, -0.25);   // 초록 → 자주
-  mk(1600, 260, 190, -520, 0xff6aa8, 0xff2a4a, 4.0, -0.12);   // 핑크 → 빨강 (오로라 폭풍의 붉은 띠)
-  mk(900, 140, 210, -160, 0x5affb0, 0xff7fc8, 1.2, -0.55);    // 머리 위로 지나가는 띠
-  mk(1200, 150, 140, 260, 0xff8fd0, 0x9a4fe8, 3.3, 0.35);     // 오른쪽(육지) 하늘: 핑크 → 보라
-  mk(1700, 180, 210, -80, 0x3df08c, 0xff5fb0, 5.1, -Math.PI/2 + 0.12);   // 머리 위를 가로지르는 띠 2장 (온 하늘을 덮지 않게)
-  mk(1700, 200, 235, -235, 0x4cf59a, 0xf060c0, 3.9, -Math.PI/2 + 0.4);   // 누운 시야 한가운데(45도)를 지나는 띠
-  { const f = auroraSet.children[2].clone(); f.rotation.set(-0.15, Math.PI/2, 0); f.position.set(0, 170, -40); f.userData = {...auroraSet.children[2].userData, ox:520}; auroraSet.add(f); }   // 달리는 방향 앞 하늘을 가로지르는 띠
+  // 사진처럼 '색 머플러'가 하늘을 지나가는 모습: 긴 띠 두 장이 지평선 위를 가로지르고, 한 장이 머리 위를 지난다. 나머지 하늘은 별
+  mk(1700, 150, 150, -380, 0x2bd97a, 0xff4fa0, 0.0, -0.2);    // 주 띠: 초록 → 핑크
+  mk(1200, 110, 185, -300, 0x44ff9a, 0xc24fb0, 2.1, -0.28);   // 보조 띠: 초록 → 자주
+  mk(1700, 140, 230, -170, 0x3df08c, 0xff5fb0, 5.1, -Math.PI/2 + 0.42);   // 머리 위를 지나는 띠 (누우면 보인다)
 }
 function bareTreeGeo(){
   // 잎 없는 겨울나무: 줄기 + 가지 7 + 잔가지 (한 덩어리 지오메트리 → 인스턴스)
@@ -869,6 +865,18 @@ if(SALT){
   const mtM = new THREE.MeshStandardMaterial({color:0x6f87a0, roughness:1}); const mtM2 = new THREE.MeshStandardMaterial({color:0x8ea3b8, roughness:1});   // 안개에 묻혀 멀리 보이게
   for(const [hx, hw, hh, hz, m] of [[-300, 300, 11, -400, mtM],[20, 260, 9, -405, mtM],[330, 340, 13, -402, mtM],[650, 280, 10, -400, mtM],[-150, 420, 20, -410, mtM2],[480, 460, 23, -415, mtM2],[-250, 300, 10, 400, mtM],[150, 280, 8, 402, mtM],[520, 320, 11, 400, mtM],[150, 520, 30, 408, mtM2]]){ const o = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 12), m); o.scale.set(hw, hh, 40); o.position.set(hx, -3, hz); saltSet.add(o); }   // 지평선에 납작하게 깔린 먼 산
   const volcano = new THREE.Mesh(new THREE.ConeGeometry(170, 48, 24), new THREE.MeshStandardMaterial({color:0x7d8fa3, roughness:1})); volcano.position.set(380, 20, -410); saltSet.add(volcano); const cap = new THREE.Mesh(new THREE.ConeGeometry(50, 15, 24), new THREE.MeshStandardMaterial({color:0xe8edf2, roughness:1})); cap.position.set(380, 37, -410); saltSet.add(cap);   // 툰우파 화산
+}
+// 은하수: 하늘을 가로지르는 띠(반원통 안쪽에 그린 별구름). 밤에만 보이고 우유니 거울에 그대로 비친다
+let milkyWay = null;
+if(SALT){
+  const c = document.createElement('canvas'); c.width = 2048; c.height = 512; const g = c.getContext('2d'); g.fillStyle = 'rgba(0,0,0,0)'; g.clearRect(0,0,2048,512);
+  const band = (y0, w, a, col)=>{ for(let x=0;x<2048;x+=2){ const yy = y0 + Math.sin(x*0.004)*40 + Math.sin(x*0.013)*18; const grd = g.createLinearGradient(0, yy - w, 0, yy + w); grd.addColorStop(0, 'rgba(0,0,0,0)'); grd.addColorStop(0.5, col.replace('A', String(a))); grd.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = grd; g.fillRect(x, yy - w, 2, w*2); } };
+  band(256, 150, 0.35, 'rgba(190,200,255,A)'); band(240, 70, 0.45, 'rgba(255,240,220,A)'); band(300, 40, 0.3, 'rgba(255,200,190,A)');   // 푸른 외곽 + 밝은 중심 + 붉은 성운 기운
+  for(let i=0;i<260;i++){ const x = Math.random()*2048, y = 256 + Math.sin(x*0.004)*40 + (Math.random()-0.5)*140; const r = 10 + Math.random()*40; const grd = g.createRadialGradient(x, y, 0, x, y, r); grd.addColorStop(0, 'rgba(20,16,30,0.55)'); grd.addColorStop(1, 'rgba(20,16,30,0)'); g.fillStyle = grd; g.beginPath(); g.arc(x, y, r, 0, Math.PI*2); g.fill(); }   // 검은 먼지 띠
+  for(let i=0;i<9000;i++){ const x = Math.random()*2048; const y = 256 + Math.sin(x*0.004)*40 + (Math.random()-0.5)*(Math.random()*260); const v = 200 + Math.random()*55; g.fillStyle = `rgba(${v},${v},${255},${0.25 + Math.random()*0.75})`; const sz = Math.random() < 0.08 ? 2 : 1; g.fillRect(x, y, sz, sz); }   // 은하수 속 잔별
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const geo = new THREE.CylinderGeometry(395, 395, 230, 64, 1, true, 0, Math.PI); geo.rotateZ(Math.PI/2);   // x축 둘레의 반원통 → 왼쪽 지평선에서 머리 위를 지나 오른쪽 지평선까지
+  milkyWay = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0, side:THREE.BackSide, depthWrite:false, blending:THREE.AdditiveBlending, fog:false})); milkyWay.rotation.x = 0.35; milkyWay.rotation.y = 0.5; scene.add(milkyWay);
 }
 function makeDeckPosts(){
   if(SC.ground==='stonepath'){ const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({color:0x3a3d42, roughness:0.5, metalness:0.5}); for(let x=0;x<10;x+=2){ const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.2, 6), m); post.position.set(x, groundY(3.7) + 0.6, 0.6); g.add(post); } return g; }
@@ -3226,7 +3234,7 @@ function frame(){
   camera.position.lerp(camPos, 1 - Math.exp(-dt*3));
   const lookAt = camera.userData.look || (camera.userData.look = camLook.clone()); lookAt.lerp(camLook, 1 - Math.exp(-dt*3)); camera.lookAt(lookAt);
 
-  sky.position.set(camera.position.x, 0, camera.position.z); stars.position.copy(sky.position);
+  sky.position.set(camera.position.x, 0, camera.position.z); stars.position.copy(sky.position); if(milkyWay){ milkyWay.position.copy(sky.position); milkyWay.material.opacity = 0.9*THREE.MathUtils.smoothstep(nightMix, 0.5, 0.95); milkyWay.rotation.y = 0.5 + t*0.004; }
   moon.position.copy(skyUniforms.sunDir.value).multiplyScalar(-1).setY(Math.max(0.5, -skyUniforms.sunDir.value.y + 0.55)).normalize().multiplyScalar(380).add(sky.position);
   if(nightMix > 0.5){ _moonDir.copy(moon.position).sub(sky.position).normalize(); seaUniforms.sunDir.value = _moonDir; } else seaUniforms.sunDir.value = skyUniforms.sunDir.value;   // 밤엔 달빛 윤슬
   sea.position.x = state.x; seaUniforms.camX.value = state.x; seaUniforms.time.value = t;
