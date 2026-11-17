@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-238';
+window.__BUILD = '2026-11-17-239';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -815,7 +815,7 @@ function spruceGeo(){
 // 오로라 커튼: 하늘에 걸린 긴 띠 4장. 세로 줄무늬가 흐르고 접힘이 천천히 춤춘다 (더하기 혼합, 안개 영향 없음)
 const auroraSet = new THREE.Group(); auroraSet.visible = SCENE_ID==='aurora'; scene.add(auroraSet);
 if(SCENE_ID==='aurora'){
-  const mk = (w, h, y, z, cA, cB, phase, lean)=>{ const geo = new THREE.PlaneGeometry(w, h, 96, 6); const pos = geo.attributes.position; for(let i=0;i<pos.count;i++){ const x = pos.getX(i); pos.setZ(i, Math.sin(x*0.0045 + phase)*70 + Math.sin(x*0.013 + phase*2.0)*22); } geo.computeVertexNormals();
+  const mk = (w, h, y, z, cA, cB, phase, lean, rotY, ox)=>{ const geo = new THREE.PlaneGeometry(w, h, 96, 6); const pos = geo.attributes.position; for(let i=0;i<pos.count;i++){ const x = pos.getX(i); pos.setZ(i, Math.sin(x*0.0045 + phase)*70 + Math.sin(x*0.013 + phase*2.0)*22); } geo.computeVertexNormals();
     const mat = new THREE.ShaderMaterial({uniforms:{time:{value:0}, phase:{value:phase}, cA:{value:new THREE.Color(cA)}, cB:{value:new THREE.Color(cB)}}, transparent:true, depthWrite:false, side:THREE.DoubleSide, blending:THREE.AdditiveBlending, fog:false,
       vertexShader:`varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
       fragmentShader:`uniform float time, phase; uniform vec3 cA, cB; varying vec2 vUv;
@@ -836,11 +836,14 @@ if(SCENE_ID==='aurora'){
           a *= 1.2;
           gl_FragColor = vec4(c*a*1.7, a);
         }`});
-    const m = new THREE.Mesh(geo, mat); m.position.set(0, y, z); m.rotation.x = lean; m.userData = {mat, drift:0.6 + Math.random()*0.6, w}; auroraSet.add(m); };
+    const m = new THREE.Mesh(geo, mat); m.position.set(0, y, z); m.rotation.order = 'YXZ'; m.rotation.y = rotY || 0; m.rotation.x = lean; m.userData = {mat, drift:0.6 + Math.random()*0.6, w, ox:ox || 0}; auroraSet.add(m); };
   // 사진처럼 '색 머플러'가 하늘을 지나가는 모습: 긴 띠 두 장이 지평선 위를 가로지르고, 한 장이 머리 위를 지난다. 나머지 하늘은 별
   mk(1700, 210, 150, -380, 0x2bd97a, 0xff4fa0, 0.0, -0.2);    // 주 띠: 초록 → 핑크
   mk(1200, 160, 185, -300, 0x44ff9a, 0xc24fb0, 2.1, -0.28);   // 보조 띠: 초록 → 자주
   mk(1700, 200, 230, -170, 0x3df08c, 0xff5fb0, 5.1, -Math.PI/2 + 0.42);   // 머리 위를 지나는 띠 (누우면 보인다)
+  // 정면(달리는 방향) 하늘: 지평선 위로 크게 휘감는 커튼 두 장 — 뛰면서 바로 보인다. 러너보다 480 m·360 m 앞에서 z 방향으로 펼쳐져 늘 앞에 머문다
+  mk(1600, 240, 150, 2, 0x35e884, 0xc8ff5a, 3.3, -0.12, Math.PI/2, 480);   // 앞 큰 커튼: 초록 → 연두 (사진의 소용돌이 띠)
+  mk(1100, 170, 215, 2, 0x44ff9a, 0xff5fb0, 1.2, -0.3, Math.PI/2, 360);    // 앞 위쪽 띠: 초록 → 핑크
 }
 function bareTreeGeo(){
   // 잎 없는 겨울나무: 줄기 + 가지 7 + 잔가지 (한 덩어리 지오메트리 → 인스턴스)
