@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-248';
+window.__BUILD = '2026-11-17-249';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2061,7 +2061,7 @@ function makeGinkgo(){
 function leafCanopyTex(kind){ const _t = leafCanopyTexRaw(kind); _t.userData.shared = true; return _t; }
 function leafCanopyTexRaw(kind){
   const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); g.scale(2, 2);
-  const cols = kind==='ginkgo' ? ['#ffc400','#ffcf1a','#f5b800','#ffd83a','#e8ac00'] : kind==='blossom' ? ['#ffd6e3','#ffc8d9','#ffe9f0','#fff6f9','#fbbfd0'] : kind==='cherry' ? ['#fff1f5','#ffe6ee','#ffd9e4','#fff8fa','#ffc9d9','#ffbfd2'] : kind==='cherryDeep' ? ['#ffb8cd','#ffa9c3','#ff9dba','#ffc6d8','#f78fb0','#ffd2df'] : kind==='cluster' ? ['#fff3f7','#ffe8ef','#ffdde7','#fff9fb','#ffd0dd'] : kind==='clusterDeep' ? ['#ffb9ce','#ffa8c2','#ff9cb9','#ffc8da','#f98fb2'] : kind==='green' ? ['#4a9a52','#5fb064','#3f8a47','#6fc072','#56a35a'] : kind==='needle' ? ['#3f6f3c','#4a7f45','#365f34','#588f52','#2f5a30'] : kind==='bamboo' ? ['#8cc152','#a3d16a','#7bb043','#b5de7a','#6a9e3a'] : ['#d9432b','#e8632c','#f08a2e','#c63a2a','#f2a93b','#f4e04d','#f7ea6a','#e9d23a'];
+  const cols = kind==='ginkgo' ? ['#ffc400','#ffcf1a','#f5b800','#ffd83a','#e8ac00'] : kind==='blossom' ? ['#ffd6e3','#ffc8d9','#ffe9f0','#fff6f9','#fbbfd0'] : kind==='cherry' ? ['#fff1f5','#ffe6ee','#ffd9e4','#fff8fa','#ffc9d9','#ffbfd2'] : kind==='cherryDeep' ? ['#ffb8cd','#ffa9c3','#ff9dba','#ffc6d8','#f78fb0','#ffd2df'] : kind==='cluster' ? ['#fff3f7','#ffe8ef','#ffdde7','#fff9fb','#ffd0dd'] : kind==='clusterDeep' ? ['#ffb9ce','#ffa8c2','#ff9cb9','#ffc8da','#f98fb2'] : kind==='green' ? ['#4a9a52','#5fb064','#3f8a47','#6fc072','#56a35a'] : kind==='needle' ? ['#3f6f3c','#4a7f45','#365f34','#588f52','#2f5a30'] : kind==='bamboo' ? ['#8cc152','#a3d16a','#7bb043','#b5de7a','#6a9e3a'] : kind==='mapleRed' ? ['#e8232a','#ff2d2d','#d41a24','#ff4a3c','#c8151f','#f03a38'] : kind==='mapleOrange' ? ['#ff7a1a','#ff8c2a','#f26a12','#ffa040','#e85d0c','#ff9330'] : ['#d9432b','#e8632c','#f08a2e','#c63a2a','#f2a93b','#f4e04d','#f7ea6a','#e9d23a'];
   const N = kind==='ginkgo' ? 260 : (kind==='blossom' ? 320 : ((kind==='cherry' || kind==='cherryDeep') ? 2600 : ((kind==='cluster' || kind==='clusterDeep') ? 44 : 170)));
   for(let i=0;i<N;i++){ const x = 128 + (Math.random()-0.5)*220, y = 128 + (Math.random()-0.5)*220; if(Math.hypot(x-128, y-128) > ((kind==='cluster' || kind==='clusterDeep') ? 104 : 118)) continue; const r = (kind==='cherry' || kind==='cherryDeep') ? 2.4 + Math.random()*2.6 : ((kind==='cluster' || kind==='clusterDeep') ? 12 + Math.random()*9 : 9 + Math.random()*9), a = Math.random()*Math.PI*2; g.fillStyle = cols[Math.random()*cols.length|0]; g.globalAlpha = 0.95;
     g.save(); g.translate(x, y); g.rotate(a);
@@ -2140,7 +2140,7 @@ function leafTreeGeo(kind){
 function plantLeafTrees(group, kind, spots){
   // spots: [x, z, sx, sy, sz, rotY]
   if(!canopyTex[kind]) canopyTex[kind] = leafCanopyTex(kind);
-  plantLeafTrees.mats = plantLeafTrees.mats || {}; if(!plantLeafTrees.mats[kind]) plantLeafTrees.mats[kind] = {bark:new THREE.MeshStandardMaterial({color:kind==='ginkgo' ? 0x5a4a3a : 0x4a3a30, roughness:1}), leaf:new THREE.MeshStandardMaterial({map:canopyTex[kind], transparent:true, alphaTest:0.5, side:THREE.DoubleSide, roughness:1, emissive:kind==='ginkgo' ? 0x6a4e00 : 0x000000, emissiveIntensity:kind==='ginkgo' ? 0.7 : 0})};
+  plantLeafTrees.mats = plantLeafTrees.mats || {}; if(!plantLeafTrees.mats[kind]) plantLeafTrees.mats[kind] = {bark:new THREE.MeshStandardMaterial({color:kind==='ginkgo' ? 0x5a4a3a : 0x4a3a30, roughness:1}), leaf:new THREE.MeshStandardMaterial({map:canopyTex[kind], transparent:true, alphaTest:0.5, side:THREE.DoubleSide, roughness:1, emissive:kind==='ginkgo' ? 0x6a4e00 : (kind==='mapleRed' ? 0x5a0a08 : (kind==='mapleOrange' ? 0x5a2a00 : 0x000000)), emissiveIntensity:kind==='ginkgo' ? 0.7 : ((kind==='mapleRed' || kind==='mapleOrange') ? 0.5 : 0)})};
   const M = plantLeafTrees.mats[kind]; const V = 4; const d = new THREE.Object3D();
   for(let v=0; v<V; v++){ const mine = spots.filter((_, i)=>i%V===v); if(!mine.length) continue; const geo = leafTreeGeo(kind); const wood = new THREE.InstancedMesh(geo.wood, M.bark, mine.length); const leaf = new THREE.InstancedMesh(geo.leaf, M.leaf, mine.length);
     mine.forEach((sp, i)=>{ d.position.set(sp[0], 0, sp[1]); d.rotation.set(0, sp[5], 0); d.scale.set(sp[2], sp[3], sp[4]); d.updateMatrix(); wood.setMatrixAt(i, d.matrix); leaf.setMatrixAt(i, d.matrix); });
@@ -2566,9 +2566,10 @@ if(GUNG){
     for(const z of [0.2, 8.6]){ const curb = new THREE.Mesh(new THREE.BoxGeometry(1000, 0.22, 0.4), curbM); curb.position.set(500, 0.11, z); gungSet.add(curb); }
     const leafBedM = new THREE.MeshStandardMaterial({color:0xd04a2c, roughness:1, emissive:0x4a1408, emissiveIntensity:0.3});
     for(const [z, w] of [[-4.5, 9],[13, 9]]){ const bed = new THREE.Mesh(new THREE.PlaneGeometry(1000, w).rotateX(-Math.PI/2), leafBedM); bed.position.set(500, 0.02, z); gungSet.add(bed); }
-    { const Mp = [], G = []; for(let x=0; x<1000; x+=3.0+Math.random()*1.2){ for(const z of [-1.6 - Math.random()*1.2, 9.8 + Math.random()*1.2]){ const sxz = 1.3 + Math.random()*0.3; Mp.push([x + (Math.random()-0.5)*0.8, z, sxz, 1.5 + Math.random()*0.3, sxz, Math.random()*Math.PI]); } }   // 단풍 터널
-      for(let x=0; x<1000; x+=6+Math.random()*4){ for(const z of [-5.5 - Math.random()*5, 13.5 + Math.random()*5]){ const sc = 0.9 + Math.random()*0.3; (Math.random() < 0.85 ? Mp : G).push([x, z, sc, sc, sc, Math.random()*Math.PI]); } }   // 뒷줄(은행 조금)
-      plantLeafTrees(gungSet, 'maple', Mp); plantLeafTrees(gungSet, 'ginkgo', G); }
+    { const Mp = [], MR = [], MO = [], G = []; const pick = ()=>{ const r = Math.random(); return r < 0.4 ? Mp : (r < 0.72 ? MR : MO); };   // 섞인 단풍 40% · 온통 새빨간 나무 32% · 온통 주황 나무 28% (사진의 붉은 단풍처럼 나무 한 그루가 한 색)
+      for(let x=0; x<1000; x+=3.0+Math.random()*1.2){ for(const z of [-1.6 - Math.random()*1.2, 9.8 + Math.random()*1.2]){ const sxz = 1.3 + Math.random()*0.3; pick().push([x + (Math.random()-0.5)*0.8, z, sxz, 1.5 + Math.random()*0.3, sxz, Math.random()*Math.PI]); } }   // 단풍 터널
+      for(let x=0; x<1000; x+=6+Math.random()*4){ for(const z of [-5.5 - Math.random()*5, 13.5 + Math.random()*5]){ const sc = 0.9 + Math.random()*0.3; (Math.random() < 0.85 ? pick() : G).push([x, z, sc, sc, sc, Math.random()*Math.PI]); } }   // 뒷줄(은행 조금)
+      plantLeafTrees(gungSet, 'maple', Mp); plantLeafTrees(gungSet, 'mapleRed', MR); plantLeafTrees(gungSet, 'mapleOrange', MO); plantLeafTrees(gungSet, 'ginkgo', G); }
     const hillM3 = new THREE.MeshStandardMaterial({color:0xb3502f, roughness:1, fog:false});
     for(const [hx, hw, hh] of [[60, 240, 70],[380, 280, 95],[700, 260, 80],[1020, 240, 85]]){ const hill = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10), hillM3); hill.scale.set(hw, hh, 90); hill.position.set(hx, -24, -200); gungSet.add(hill); }   // 단풍으로 물든 산
   } else if(SCENE_ID==='forest'){
