@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-226';
+window.__BUILD = '2026-11-17-227';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -666,8 +666,8 @@ function sandTexture(){
     for(let i=0;i<200;i++){ g.fillStyle = 'rgba(70,55,45,0.4)'; g.beginPath(); g.ellipse(Math.random()*512, Math.random()*512, 1.5 + Math.random()*2, 1 + Math.random()*1.2, Math.random()*3, 0, Math.PI*2); g.fill(); }
   } else if(SC.ground==='stone' && SCENE_ID==='muhly'){
     // 제주 흙길(붉은 화산토) + 잔자갈
-    g.fillStyle = '#b89478'; g.fillRect(0,0,512,512);
-    for(let i=0;i<14000;i++){ const v = 150 + Math.random()*70; g.fillStyle = `rgba(${v+30},${v},${v-20},${0.15+Math.random()*0.3})`; g.fillRect(Math.random()*512, Math.random()*512, 1.5, 1.5); }
+    g.fillStyle = '#d8a2b7'; g.fillRect(0,0,512,512);   // 길 자리도 핑크뮬리 들판 (좁은 오솔길만 따로 깐다)
+    for(let i=0;i<16000;i++){ const v = 170 + Math.random()*60; g.fillStyle = `rgba(${v+50},${v-30},${v},${0.15+Math.random()*0.3})`; g.fillRect(Math.random()*512, Math.random()*512, 1.2, 3 + Math.random()*3); }
     for(let i=0;i<500;i++){ g.fillStyle = `rgba(${235+Math.random()*20},${150+Math.random()*40},${185+Math.random()*30},0.5)`; g.beginPath(); g.ellipse(Math.random()*512, Math.random()*512, 1 + Math.random()*2, 0.6 + Math.random(), Math.random()*3, 0, Math.PI*2); g.fill(); }   // 떨어진 분홍 이삭
     for(let i=0;i<120;i++){ g.fillStyle = 'rgba(90,75,66,0.3)'; g.beginPath(); g.ellipse(Math.random()*512, Math.random()*512, 1.5 + Math.random()*2.5, 1 + Math.random()*1.5, Math.random()*3, 0, Math.PI*2); g.fill(); }
   } else if(SC.ground==='stone' && SCENE_ID==='blossom'){
@@ -2326,10 +2326,12 @@ if(GUNG){
       shader.vertexShader = 'uniform float uTime; uniform float uGust;\n' + shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
         float ph = instanceMatrix[3].x*0.37 + instanceMatrix[3].z*0.23; float top = uv.y*uv.y;
         float sw = sin(uTime*1.3 + ph)*(0.35 + 0.65*uGust) + 0.5*sin(uTime*2.7 + ph*1.9)*uGust;
-        transformed.x += sw*0.22*top; transformed.z += sin(uTime*0.9 + ph*1.7)*0.1*top; transformed.y -= abs(sw)*0.05*top;`); };   // 포기 윗부분만 바람에 휘고, 돌풍이 불면 더 크게
+        transformed.x += sw*0.32*top; transformed.z += sin(uTime*0.9 + ph*1.7)*0.14*top; transformed.y -= abs(sw)*0.07*top;`); };   // 포기 윗부분만 바람에 휘고, 돌풍이 불면 더 크게
+    { const tc = document.createElement('canvas'); tc.width = 256; tc.height = 64; const tg = tc.getContext('2d'); tg.fillStyle = '#b48f74'; tg.fillRect(0,0,256,64); for(let i=0;i<3000;i++){ const v = 150 + Math.random()*70; tg.fillStyle = `rgba(${v+30},${v},${v-20},${0.2+Math.random()*0.3})`; tg.fillRect(Math.random()*256, Math.random()*64, 1.5, 1.5); } for(let i=0;i<160;i++){ tg.fillStyle = `rgba(${235+Math.random()*20},${150+Math.random()*40},${185+Math.random()*30},0.5)`; tg.beginPath(); tg.ellipse(Math.random()*256, Math.random()*64, 1 + Math.random()*2, 0.6 + Math.random(), Math.random()*3, 0, Math.PI*2); tg.fill(); } const grd = tg.createLinearGradient(0, 0, 0, 64); grd.addColorStop(0, 'rgba(216,162,183,1)'); grd.addColorStop(0.22, 'rgba(216,162,183,0)'); grd.addColorStop(0.78, 'rgba(216,162,183,0)'); grd.addColorStop(1, 'rgba(216,162,183,1)'); tg.fillStyle = grd; tg.fillRect(0,0,256,64);   // 가장자리는 들판 분홍으로 녹아든다
+      const ttex = new THREE.CanvasTexture(tc); ttex.wrapS = THREE.RepeatWrapping; ttex.repeat.set(250, 1); ttex.colorSpace = THREE.SRGBColorSpace; const trail = new THREE.Mesh(new THREE.PlaneGeometry(1000, 3.2).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({map:ttex, roughness:1})); trail.position.set(500, 0.03, 3.1); trail.receiveShadow = true; gungSet.add(trail); }   // 핑크뮬리 사이로 난 좁은 오솔길 (폭 3 m)
     const cardGeo = new THREE.PlaneGeometry(3.0, 2.3).translate(0, 1.05, 0); const spots = [];
-    for(let x=0; x<1000; x+=0.9){ for(const [z0, z1] of [[-0.2, -31],[9.2, 40]]){ const n = 2 + (Math.random()*2|0); for(let k=0;k<n;k++){ const u = Math.random(); if(u < 0.08 && Math.random() < 0.6) continue; spots.push([x + Math.random()*0.9, z0 + (z1 - z0)*u, u < 0.1 ? 0.55 + u*4 : 1]); } } }   // 길가는 성기고 낮게, 안쪽은 허리 높이 (벽처럼 보이지 않게)
-    for(let x=0; x<1000; x+=1.6+Math.random()*1.2){ spots.push([x, 0.1 + Math.random()*1.1, 0.5]); spots.push([x + 0.7, 7.8 + Math.random()*1.1, 0.5]); }   // 길 가장자리로 번진 낮은 포기
+    for(let x=0; x<1000; x+=0.6){ for(const [z0, z1] of [[-0.2, -31],[9.2, 40]]){ const n = 3 + (Math.random()*2|0); for(let k=0;k<n;k++){ const u = Math.random(); spots.push([x + Math.random()*0.6, z0 + (z1 - z0)*u, 1]); } } }   // 들판: 빼곡하게
+    for(let x=0; x<1000; x+=0.8){ for(const [z0, z1, sc] of [[-0.2, 1.3, 0.85],[5.0, 9.4, 0.9]]){ const n = 1 + (Math.random()*2|0); for(let k=0;k<n;k++) spots.push([x + Math.random()*0.8, z0 + (z1 - z0)*Math.random(), sc*(0.8 + Math.random()*0.4)]); } }   // 오솔길 양옆까지 핑크뮬리가 바짝 — 그 사이로 달린다
     for(let x=0; x<1000; x+=2.5){ spots.push([x + Math.random()*2, -31 - Math.random()*40, 1.6]); spots.push([x + Math.random()*2, 40 + Math.random()*40, 1.6]); }   // 먼 들판: 큰 카드 성기게, 지평선까지 분홍이 이어진다
     for(let k=0;k<2;k++){ const inst = new THREE.InstancedMesh(cardGeo, muhlyM, spots.length); const d = new THREE.Object3D(); spots.forEach((sp, i)=>{ d.position.set(sp[0], 0, sp[1]); d.rotation.set(0, k*Math.PI/2 + (Math.random()-0.5)*0.9, 0); const sc = (0.8 + Math.random()*0.7)*(sp[2] || 1); d.scale.set(sc, sc*(0.9 + Math.random()*0.4), sc); d.updateMatrix(); inst.setMatrixAt(i, d.matrix); }); inst.frustumCulled = false; gungSet.add(inst); muhlyInst.push(inst); }   // 두 장 교차 카드
     { const cyM = new THREE.MeshStandardMaterial({color:0x1f3d2a, roughness:1}); for(let x=0; x<1000; x+=7+Math.random()*9){ const h = 9 + Math.random()*6; const cy = new THREE.Mesh(new THREE.ConeGeometry(1.4 + Math.random()*0.6, h, 7), cyM); cy.position.set(x, h/2, -31 - Math.random()*4); gungSet.add(cy); } }   // 들판 끝 삼나무 줄 (사진 배경)
@@ -3079,7 +3081,7 @@ const PLACES = [
   {id:'busan', name:'부산 광안리', short:'부산 광안리', sub:'광안대교', scene:'busan', x:230, y:268, left:true, dy:4},
   {id:'jejucoast', name:'제주 해안길', short:'제주 해안', sub:'현무암 바다', scene:'jejucoast', x:68, y:392, left:true, dy:1},
   {id:'jeju', name:'제주 올레 숲길', short:'제주 숲길', sub:'곶자왈', scene:'jeju', x:96, y:398, dy:1},
-  {id:'muhly', name:'제주 핑크뮬리길', short:'제주 핑크뮬리', sub:'분홍 들판', scene:'muhly', x:118, y:388, dy:-6},
+  {id:'muhly', name:'제주 핑크뮬리길', short:'제주 핑크뮬리', sub:'분홍 들판', scene:'muhly', x:103, y:386, dy:-6},
 ];
 const DEVICE_ID = (()=>{ try{ let v = localStorage.getItem('haebyeon.dev'); if(!v){ v = Math.random().toString(36).slice(2,10) + Date.now().toString(36); localStorage.setItem('haebyeon.dev', v); } return v; }catch(e){ return 'anon'; } })();
 const votes = {counts:{}, mine:new Set()};
