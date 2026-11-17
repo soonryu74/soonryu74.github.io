@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-239';
+window.__BUILD = '2026-11-17-240';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -3501,8 +3501,8 @@ function frame(){
     }
     const wetness = THREE.MathUtils.clamp(1 - (state.lane - (tide + 0.6))/2.0, 0, 1);
     const stepNow = Math.floor(ph/Math.PI);
-    const inWater = state.lane < tide + 0.6 || !!state.inFountain; // 밀려온 파도선보다 바다 쪽 · 분수 광장 안
-    const depth = state.inFountain ? 0.15 : THREE.MathUtils.clamp((tide + 0.6 - state.lane)/2.2, 0, 1);
+    const inWater = SALT ? true : (state.lane < tide + 0.6 || !!state.inFountain); // 밀려온 파도선보다 바다 쪽 · 분수 광장 안 · 우유니는 어디나 얕은 물막 (파도·깊이 없음)
+    const depth = SALT ? 0.08 : (state.inFountain ? 0.15 : THREE.MathUtils.clamp((tide + 0.6 - state.lane)/2.2, 0, 1));
     if(stepNow !== lastStride && state.speed > 0.05){ lastStride = stepNow; state.lastStepSide *= -1; const fp = (()=>{ let best = null, by = Infinity; for(const sh of me.shoes){ sh.getWorldPosition(_fw); if(_fw.y < by){ by = _fw.y; best = _fw.clone(); } } return best; })();
       if(inWater) splash(fp ? fp.x : state.x, fp ? fp.z : state.lane, 0.4 + depth); else stamp(fp ? fp.x : state.x - 0.1, fp ? fp.z - state.lastStepSide*0.17 : state.lane, state.lastStepSide); step(inWater ? 1 : wetness, state.speed > WALK+0.3); }
     if(inWater && depth > 0.7 && !state.resting && !state.inFountain){ if(!state.deepWarned){ state.deepWarned = true; say('여기부턴 파도가 깊어요 · 모래 쪽으로', 2800, 'is-cat'); } state.laneTarget = Math.max(state.laneTarget, LANE_MIN + 0.9); }
