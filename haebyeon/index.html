@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-16-196';
+window.__BUILD = '2026-11-17-198';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -790,7 +790,11 @@ if(SCENE_ID==='aurora'){
   mk(1600, 260, 190, -520, 0x1fbf72, 0x5a2fb8, 4.0, -0.12);
   mk(900, 140, 210, -160, 0x5affb0, 0xd06bd8, 1.2, -0.55);   // 머리 위로 지나가는 띠
   mk(1200, 150, 140, 260, 0x36e08a, 0x8a4fd8, 3.3, 0.35);    // 오른쪽(육지) 하늘에도 한 장
-  mk(1300, 220, 230, -70, 0x3df08c, 0x9a5be0, 5.1, -1.1);   // 머리 바로 위를 덮는 띠 (누워서 보면 하늘을 가로지른다)
+  mk(1700, 260, 210, -80, 0x3df08c, 0x9a5be0, 5.1, -Math.PI/2 + 0.12);   // 머리 위 천장처럼 깔린 띠 3장: 누워서 보면 하늘을 가로질러 춤춘다
+  mk(1500, 220, 240, 30, 0x58ffb0, 0xd46be0, 2.6, -Math.PI/2 - 0.1);
+  mk(1400, 200, 190, -170, 0x2fd884, 0x7b48d8, 0.7, -Math.PI/2 + 0.3);
+  mk(1700, 280, 235, -235, 0x4cf59a, 0xa058e8, 3.9, -Math.PI/2 + 0.4);   // 누운 시야 한가운데(45도)를 지나는 큰 띠
+  mk(1500, 240, 165, -265, 0x33e08e, 0x6c42d0, 1.9, -Math.PI/2 + 0.55);
   { const f = auroraSet.children[2].clone(); f.rotation.set(-0.15, Math.PI/2, 0); f.position.set(0, 170, -40); f.userData = {...auroraSet.children[2].userData, ox:520}; auroraSet.add(f); }   // 달리는 방향 앞 하늘을 가로지르는 띠
 }
 function bareTreeGeo(){
@@ -866,7 +870,20 @@ function makeSkywalk(){
   for(const z of [-1.5, -4.5]){ for(const x of [-1.15, 1.15]){ const p = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.1, 6), steel); p.position.set(x, 2.1, z); g.add(p); } }
   return g;
 }
-let nextPosts = -20, nextSkywalk = 90; const bambooList = []; let nextXmas = 40, nextBigSnowman = 60;
+let nextPosts = -20, nextSkywalk = 90; const bambooList = []; let nextXmas = 40, nextBigSnowman = 60, nextTeepee = 60;
+// 옐로나이프 티피 캠프: 안에 불을 밝힌 삼각 천막 3~4동(캔버스 천, 꼭대기로 솟은 장대, 문 앞 모닥불). 쉬면 불빛 옆에서 몸을 녹인다
+function makeTeepeeCamp(){
+  const g = new THREE.Group(); const canvasM = new THREE.MeshStandardMaterial({color:0xf3e2c0, roughness:1, emissive:0xffa851, emissiveIntensity:0.9, side:THREE.DoubleSide}); const poleM = new THREE.MeshStandardMaterial({color:0x5a4634, roughness:1});
+  const n = 3 + (Math.random()*2|0);
+  for(let i=0;i<n;i++){ const t = new THREE.Group(); const r = 2.0 + Math.random()*0.6, h = 4.2 + Math.random()*1.2;
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(r, h, 14, 1, true, 0.35, Math.PI*2 - 0.7), canvasM); cone.position.y = h/2; t.add(cone);   // 앞쪽이 열린 문
+    for(let k=0;k<7;k++){ const a = k/7*Math.PI*2 + 0.2; const L = h + 1.6; const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.045, L, 4), poleM); pole.position.set(Math.cos(a)*r*0.5, L/2 - 0.1, Math.sin(a)*r*0.5); pole.lookAt(Math.cos(a + Math.PI)*0.4, L + 0.6, Math.sin(a + Math.PI)*0.4); pole.rotateX(Math.PI/2); t.add(pole); }
+    const inner = new THREE.Mesh(new THREE.ConeGeometry(r*0.9, h*0.9, 14, 1, true), new THREE.MeshBasicMaterial({color:0xffc070, side:THREE.BackSide, fog:false})); inner.position.y = h*0.45; t.add(inner);   // 안쪽 불빛
+    const fire = new THREE.PointLight(0xffa040, 5, 18, 2); fire.position.set(0, 1.2, r + 1.2); t.add(fire);
+    const ember = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 6), new THREE.MeshBasicMaterial({color:0xff8a30, fog:false})); ember.position.set(0, 0.25, r + 1.2); t.add(ember); const logs = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.1, 5), poleM); logs.rotation.z = Math.PI/2; logs.position.set(0, 0.12, r + 1.2); t.add(logs);
+    t.position.set(i*6.5 + (Math.random()-0.5)*1.5, 0, (i%2 ? 5 : 0) + Math.random()*1.5); t.rotation.y = Math.PI/2; g.add(t); }
+  g.userData = {kind:'teepee', len:n*6.5}; g.traverse(c=>{ if(c.isMesh) c.castShadow = true; }); return g;
+}
 // 눈길: 길가 큰 눈사람(장식) · 저 멀리서 다가오는 크리스마스 트리(반짝이는 전구·꼭대기 별)
 function makeBigSnowman(side){
   // 큰 눈사람: 눈 덩이 3단 + 석탄 눈·웃는 입·당근 코·단추, 나뭇가지 팔(벙어리장갑), 목도리, 중절모. 다가오는 러너 쪽을 본다
@@ -1355,7 +1372,7 @@ function netTick(){
   if(now - net.lastPresence > 12000){ net.lastPresence = now; net.ch.track({x:+state.x.toFixed(1), t:Date.now(), t0:state.todStart}).catch(()=>{}); }
 }
 /* ---------- 코스 바: 1 km 고리 위의 나·친구·랜드마크. 탭하면 그 지점으로 ---------- */
-const COURSE_ICON = {fountain:'💦', island:'🏝️', camper:'⛺', lighthouse:'🗼', rockbridge:'🌉', skywalk:'🔭', xmas:'🎄'};
+const COURSE_ICON = {fountain:'💦', island:'🏝️', camper:'⛺', lighthouse:'🗼', rockbridge:'🌉', skywalk:'🔭', xmas:'🎄', teepee:'⛺'};
 let courseLast = 0, courseEls = [];
 function courseTick(){
   const now = performance.now(); if(now - courseLast < 200) return; courseLast = now;
@@ -1379,7 +1396,7 @@ function courseJump(clientX){ const bar = $('coursebar'); const r = bar.getBound
   if(state.resting) leaveRest(); teleportTo(target); say('코스의 그 지점으로 왔어요', 1800); }
 $('coursebar').addEventListener('pointerdown', e=>{ e.preventDefault(); courseJump(e.clientX); });
 function teleportTo(x){ state.x = x; state.prevLane = state.lane; runner.position.x = x; buddyState.x = x - 1.2; buddyState.px = buddyState.x; camera.position.x = x - 6; if(camera.userData.look) camera.userData.look.x = x + 5;
-  for(const p of props){ scene.remove(p.obj); dispose(p.obj); } props.length = 0; genX = x - 30; nextXmas = x + 20; nextBigSnowman = x + 30; nextIsland = x + 60 + Math.random()*120; nextFountain = x + 80 + Math.random()*100; nextRockBridge = x + 100 + Math.random()*80; nextSkywalk = x + 60 + Math.random()*120; populateTo(x + 90);   /* 순간이동하면 랜드마크 예약도 새 위치 기준으로 */ foots.forEach(f=>{ f.visible = false; }); }
+  for(const p of props){ scene.remove(p.obj); dispose(p.obj); } props.length = 0; genX = x - 30; nextXmas = x + 20; nextBigSnowman = x + 30; nextTeepee = x + 40; nextIsland = x + 60 + Math.random()*120; nextFountain = x + 80 + Math.random()*100; nextRockBridge = x + 100 + Math.random()*80; nextSkywalk = x + 60 + Math.random()*120; populateTo(x + 90);   /* 순간이동하면 랜드마크 예약도 새 위치 기준으로 */ foots.forEach(f=>{ f.visible = false; }); }
 function setRoomUI(){ { const wl = $('welcome-live'); if(wl && !state.started){ if(net.status==='joined'){ const n = Math.max(0, net.count - 1); wl.textContent = n ? `지금 ${SC.name}에 ${n}명이 달리고 있어요 · 들어가면 바로 같이 뛰어요` : `지금은 비어 있어요 · 들어오면 다음 사람이 보여요`; } } }
   meLabel.visible = net.status==='joined' && net.count > 1; const r = $('room'); if(net.status==='joined'){ r.hidden = false; r.textContent = `${SC.name} · ${net.count}명 함께`; $('st-ppl').textContent = net.count; $('st-ppl-wrap').hidden = net.count < 2; } else { r.hidden = true; $('st-ppl-wrap').hidden = true; } }
 async function netJoin(room = 1){
@@ -2428,6 +2445,7 @@ function populateTo(limitX){
     }
     if(FH){
       if(SNOWFIELD){
+        if(SCENE_ID==='aurora' && x > nextTeepee){ nextTeepee = x + 280 + Math.random()*160; const o = makeTeepeeCamp(); const side = Math.random() < 0.6 ? 1 : -1; o.position.set(x + 30, side > 0 ? groundY(14) : 0, side > 0 ? 13 : -13); scene.add(o); props.push({obj:o, kind:'teepee'}); genX += 2; continue; }   // 길가 티피 캠프
         if(SCENE_ID==='snow' && x > nextXmas){ nextXmas = x + 420 + Math.random()*160; const o = makeXmasTree(); o.position.set(x + 340, 0.3, -9); scene.add(o); props.push({obj:o, kind:'xmas'}); genX += 2; continue; }   // 저 멀리(340 m 앞) 눈밭에 큰 트리가 보이고 점점 가까워진다
         if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.02, 2 + Math.random()*4); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
         else if(r < 0.28){ const o = makeSnowflake(); o.position.set(x + Math.random(), 0.02, 1.2 + Math.random()*5); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
@@ -2459,7 +2477,7 @@ function populateTo(limitX){
     else if(r < 0.74){ if(SCENE_ID==='jejucoast' || SCENE_ID==='ulsan') continue; const o = makeDuneBush(); o.position.set(x, 0.4 + Math.random()*1.2, 15 + Math.random()*9); scene.add(o); props.push({obj:o, kind:'bush'}); }
     else { if(SCENE_ID==='jejucoast' || SCENE_ID==='busan') continue; const o = makeGrass(); o.position.set(x, 0.3+Math.random()*1.2, 12 + Math.random()*8); scene.add(o); props.push({obj:o, kind:'grass'}); }
   }
-  for(let i=props.length-1;i>=0;i--){ const far = ['island','cafe','park','fountain','rockbridge','xmas'].includes(props[i].kind) ? 90 : 40; if(props[i].obj.position.x < state.x - far){ if(!props[i].fixed){ scene.remove(props[i].obj); dispose(props[i].obj); } props.splice(i,1); } }   /* fixed: 장면에 고정된 바위는 목록에서만 뺀다 */
+  for(let i=props.length-1;i>=0;i--){ const far = ['island','cafe','park','fountain','rockbridge','xmas','teepee'].includes(props[i].kind) ? 90 : 40; if(props[i].obj.position.x < state.x - far){ if(!props[i].fixed){ scene.remove(props[i].obj); dispose(props[i].obj); } props.splice(i,1); } }   /* fixed: 장면에 고정된 바위는 목록에서만 뺀다 */
 }
 
 /* ---------- 소리 (Web Audio, 파일 없음) ---------- */
@@ -2974,7 +2992,8 @@ function applyTod(t){
   const lh = THREE.MathUtils.smoothstep(nightMix, 0.2, 0.8); lighthouse.userData.beamM.opacity = 0.11*lh; lighthouse.userData.light.intensity = 60*lh;
   const glow = THREE.MathUtils.smoothstep(nightMix, 0.15, 0.7) * 1.6; for(const m of glowMats) m.emissiveIntensity = glow;
   const nl = THREE.MathUtils.smoothstep(nightMix, 0.1, 0.6); for(const L of nightLights) L.m.emissiveIntensity = L.base + L.night*nl;
-  for(const p of props){ if(p.kind!=='xmas') continue; const U = p.obj.userData; const boost = 1 + 1.2*nl; for(const L of U.lights){ L.m.emissiveIntensity = (0.5 + 1.3*Math.pow(0.5 + 0.5*Math.sin(t*L.sp + L.ph), 2))*boost; } U.star.material.emissiveIntensity = (1.8 + 0.8*Math.sin(t*2.3))*boost; U.star.rotation.y = t*0.6; U.glow.material.opacity = (0.5 + 0.3*Math.sin(t*2.3))*(0.6 + 0.4*nl); U.glow.scale.setScalar(7 + 3*nl + 1.5*Math.sin(t*2.3)); if(!p.hailed && Math.abs(p.obj.position.x - state.x) < 14){ p.hailed = true; say('트리 불빛이 반짝여요 · 잠깐 쉬어 가도 좋아요', 3200); } }   /* 트리 전구 반짝임(밤엔 더 밝게), 지나갈 때 한 마디 */
+  for(const p of props){ if(p.kind!=='xmas') continue; const U = p.obj.userData; const boost = 1 + 1.2*nl; for(const L of U.lights){ L.m.emissiveIntensity = (0.5 + 1.3*Math.pow(0.5 + 0.5*Math.sin(t*L.sp + L.ph), 2))*boost; } U.star.material.emissiveIntensity = (1.8 + 0.8*Math.sin(t*2.3))*boost; U.star.rotation.y = t*0.6; U.glow.material.opacity = (0.5 + 0.3*Math.sin(t*2.3))*(0.6 + 0.4*nl); U.glow.scale.setScalar(7 + 3*nl + 1.5*Math.sin(t*2.3)); if(!p.hailed && Math.abs(p.obj.position.x - state.x) < 14){ p.hailed = true; say('트리 불빛이 반짝여요 · 잠깐 쉬어 가도 좋아요', 3200); } }
+  for(const p of props){ if(p.kind!=='teepee') continue; const dx = state.x - p.obj.position.x; if(!p.hailed && dx > -10 && dx < p.obj.userData.len + 6){ p.hailed = true; say('티피 캠프예요 · 잠깐 쉬어가기를 누르면 불빛 옆에서 몸을 녹여요', 3600); } if(state.resting && !p.warmed && dx > -8 && dx < p.obj.userData.len + 8){ p.warmed = true; say('천막 안 불빛이 따뜻해요 · 오로라를 보며 쉬어요', 4000); } }   /* 트리 전구 반짝임(밤엔 더 밝게), 지나갈 때 한 마디 */
   const label = t<0.12?'새벽':t<0.3?'아침':t<0.55?'한낮':t<0.66?'오후':t<0.8?'노을':t<0.95?'밤':'새벽';
   if($('tod').textContent !== label) $('tod').textContent = label;
 }
@@ -3163,7 +3182,7 @@ function frame(){
   if(state.noteCam && (!state.resting || !sandNotes.includes(state.noteCam) || performance.now() - state.noteCamT > 60000)) state.noteCam = null;
   if(state.resting && state.noteCam){ const n = state.noteCam; camPos.set(state.x + 0.15, 3.4, state.lane + 2.3); camLook.set(state.x, 0.1, state.lane - 2.6); }   // 앉은 등 뒤 위에서 하이앵글로: 사람 너머 바닥 글씨와 파도   // 글씨 뒤 위에서 내려다본다 · 파도가 지우는 것까지 보인다
   else if(state.resting){
-    if(state.pose==='lie' && SCENE_ID==='aurora'){ camPos.set(state.x + 0.15, 0.85, state.lane + 0.7); camLook.set(state.x + 0.15, 0.85 + 9.4, state.lane + 0.7 - 6.3); }   /* 오로라길: 누우면 약 60도 위 오로라 (머리에 안 가리게) */
+    if(state.pose==='lie' && SCENE_ID==='aurora'){ camPos.set(state.x + 0.15, 0.85, state.lane + 0.7); camLook.set(state.x + 0.15, 0.85 + 7.0, state.lane + 0.7 - 7.5); }   /* 오로라길: 누우면 약 45도 위 — 지평선 커튼과 머리 위 띠가 한 화면에 */
     else if(state.pose==='lie' && SNOWFIELD){ camPos.set(state.x + 0.15, 0.8, state.lane + 0.6); camLook.set(state.x + 0.15, 0.8 + 3.2, state.lane + 0.6 - 13); }   /* 눈길: 머리맡에서 눈밭 건너 겨울나무·산·하늘이 트인 설경 (약 14도 위) */
     else if(state.pose==='lie' && FG){ camPos.set(state.x + 0.15, 0.85, state.lane + 0.7); camLook.set(state.x + 0.15, 0.85 + 9.4, state.lane + 0.7 - 6.3); }   /* 숲길: 누우면 약 60도 위 나무 지붕과 하늘, 떨어지는 잎 */
     else if(state.pose==='lie'){ camPos.set(state.x + 0.15, 0.9, state.lane + 1.2); camLook.set(state.x + 0.15, 0.15, state.lane - 4.5); }   // 머리를 바닥에 댄 눈높이: 발끝이 땅에 붙고 그 너머 수평선이 보인다   // 이마 바로 위에서: 모자 챙이 시야를 가리지 않게 챙 앞쪽에 둔다   // 머리맡에서 내 다리·옆에 누운 친구 너머 바다를 본다
