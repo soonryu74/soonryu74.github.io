@@ -5,7 +5,9 @@ import csv, math, os, copy, importlib.util
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "..")
 sp = importlib.util.spec_from_file_location("g7", os.path.join(HERE, "..", "..", "v7", "tools", "gen_v7.py")); g7 = importlib.util.module_from_spec(sp); sp.loader.exec_module(g7)
 V7 = {s["shot_id"]: s for s in g7.S}; CH = dict(g7.CH); STYLE = g7.STYLE; CAVE = g7.CAVE_LIGHT
-INTRO_SEC, CREDIT_SEC, PRICE, MIN_GEN, MAX_GEN = 20, 20, 0.37, 4, 15
+INTRO_SEC, CREDIT_SEC, PRICE = 20, 20, 0.39   # 공식 요금표(2026-11-17 화면 확인): Seedance 2.0 1080p $0.39/초
+ALLOWED = (4, 5, 6, 8, 10, 12, 15)                # 생성 화면에서 고를 수 있는 길이(초)
+genlen = lambda d: next(a for a in ALLOWED if a >= math.ceil(d) + (0 if math.ceil(d) in ALLOWED and d >= 8 else 1)) if d < 15 else 15
 NEG = g7.NEG + ", banners, posters, signs, printed letters on props, audience behind the speaker, hand touching cave wall, black bars"
 CH["H07"] = "Kim Hae-in at 7, a small Korean girl with a short bob, yellow raincoat, wearing her father's oversized white hard hat and oversized yellow rubber-coated work gloves"
 RAIN = "grey overcast rain, flat daylight"; LAKE = CAVE + " Still black water mirroring the beams."
@@ -175,7 +177,7 @@ def main():
         w = csv.writer(f); w.writerow(["shot_id","edit_sec","gen_sec_per_try","tries_assumed","gen_sec_total","usd_per_sec_ASSUMED","usd_est"]); ts = tu = 0
         for s in S:
             if s["ai_tool"] != "Seedance": continue
-            g = min(MAX_GEN, max(MIN_GEN, math.ceil(s["duration_sec"])+1)); gs = g*s["tries"]; u = round(gs*PRICE, 2); ts += gs; tu += u
+            g = genlen(s["duration_sec"]); gs = g*s["tries"]; u = round(gs*PRICE, 2); ts += gs; tu += u
             w.writerow([s["shot_id"], s["duration_sec"], g, s["tries"], gs, PRICE, u])
         w.writerow(["TOTAL_SEEDANCE","","","",ts,PRICE,round(tu,2)]); w.writerow(["CONTINGENCY_30PCT","","","","","",round(tu*0.3,2)])
     lines = {}
@@ -187,7 +189,7 @@ def main():
         for s in S:
             if s["ai_tool"] != "Seedance": continue
             refs = [REF[c] for c in s["continuity_id"].split(";") if c in REF]
-            g = min(MAX_GEN, max(MIN_GEN, math.ceil(s["duration_sec"])+1))
+            g = genlen(s["duration_sec"])
             f.write(f"\n### {s['shot_id']} · 편집 {s['duration_sec']}초 · 생성 {g}초 · {s['shot_type']}\n- 내용: {s['action']}\n- 첨부: {', '.join(refs) if refs else '없음'}\n"
                     + (f"- 대사(한국어 음성): {' / '.join(lines[s['shot_id']])}\n" if s['shot_id'] in lines and 'dialogue' in [k for (i,_,_,k,_,_,_) in SUBS if i==s['shot_id']] else "")
                     + f"```\n{STYLE} {s['prompt']} Camera: {s['camera']}. Lighting: {s['lighting']}\n```\n")

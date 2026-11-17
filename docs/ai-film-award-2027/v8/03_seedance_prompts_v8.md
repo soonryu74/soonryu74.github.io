@@ -24,7 +24,7 @@ text, letters, subtitles, watermark, logo, extra fingers, fused hands, deformed 
 Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow depth of field, muted palette of cave black, lantern orange, carbonate white and one accent of work-glove yellow, soft film grain, no on-screen text. Dreamlike shot, a vast snow-white mineral cave wall filling the frame, soft glowing haze, shallow focus drifting slowly, quiet and unreal. Camera: slow drift, soft focus. Lighting: soft white glow, no visible source
 ```
 
-### S1-02 · 편집 6초 · 생성 7초 · dream close
+### S1-02 · 편집 6초 · 생성 8초 · dream close
 - 내용: 너무 큰 노란 장갑을 낀 작은 손이 흰 쪽으로 뻗는다. 화면 밖 '해인아!'
 - 첨부: 해인 7세(신규), 장갑: 새것
 - 대사(한국어 음성): 동수(화면 밖): 해인아!
@@ -217,7 +217,7 @@ Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow
 Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow depth of field, muted palette of cave black, lantern orange, carbonate white and one accent of work-glove yellow, soft film grain, no on-screen text. Medium shot, a door opens and Kim Dong-su at 64, same man, grey cropped hair, weathered face, faded navy work jacket, old scratched white hard hat, avoids eye contact steps in, eyes lowered, says one short sentence without looking up. Camera: static medium. Lighting: dim interior, single window daylight, warm brown shadows
 ```
 
-### S5-07 · 편집 6초 · 생성 7초 · medium
+### S5-07 · 편집 6초 · 생성 8초 · medium
 - 내용: 허가서를 식탁에 놓고 말한다
 - 첨부: 해인(현재, 녹색 재킷)
 - 대사(한국어 음성): 해인: 내일이면 영영 닫혀요. 같이 가요.
@@ -246,7 +246,7 @@ Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow
 Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow depth of field, muted palette of cave black, lantern orange, carbonate white and one accent of work-glove yellow, soft film grain, no on-screen text. Wide shot, a small survey team in helmets gathered at a locked iron gate set into a low concrete structure in a Jeju field. Camera: static wide. Lighting: overcast daylight, cold air
 ```
 
-### S6-02 · 편집 6초 · 생성 7초 · close two-shot
+### S6-02 · 편집 6초 · 생성 8초 · close two-shot
 - 내용: 헤드랜턴을 고정하다 손끝이 이마에 닿자 둘 다 멈춘다
 - 첨부: 해인(현재, 녹색 재킷), 동수 64세, 안전모, 안전모+헤드랜턴
 ```
@@ -318,7 +318,7 @@ Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow
 Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow depth of field, muted palette of cave black, lantern orange, carbonate white and one accent of work-glove yellow, soft film grain, no on-screen text. Close-up, Kim Dong-su at 64, same man, grey cropped hair, weathered face, faded navy work jacket, old scratched white hard hat, avoids eye contact turns his head toward his daughter, opens his mouth to speak, then closes it and looks away. Camera: static close-up. Lighting: Lit only by two warm orange headlamps; pitch-black lava tube beyond the beams; wet basalt, white carbonate deposits catching the light; no ambient fill.
 ```
 
-### S8-01 · 편집 6초 · 생성 7초 · wide
+### S8-01 · 편집 6초 · 생성 8초 · wide
 - 내용: 검은 호수, 보트 위 부녀
 - 첨부: 해인(현재, 녹색 재킷), 동수 64세
 ```
@@ -530,7 +530,7 @@ Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow
 Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow depth of field, muted palette of cave black, lantern orange, carbonate white and one accent of work-glove yellow, soft film grain, no on-screen text. Static wide shot. Near-total darkness on a black underground lake; one tiny warm light far across the water gives only a faint rim on two seated silhouettes at opposite ends of a small inflatable boat, an old man in a hard hat on the left and a woman on the right, a wide empty space between them. They do not face each other; both look down at the water. Arms close to their own bodies; no arms or hands extend into the space between them. No faces visible, no hands visible. Full-frame 16:9, no black bars. Both figures almost completely still. Camera: static wide, same frame for all four. Lighting: distant single light, rim only
 ```
 
-### S10-07 · 편집 8초 · 생성 9초 · silhouette wide
+### S10-07 · 편집 8초 · 생성 8초 · silhouette wide
 - 내용: 해인: '그날, 뒷문에 계신 거 봤어요.' / '보고도… 모른다고 했어요.'
 - 첨부: 해인(현재, 녹색 재킷), 동수 64세, 안전모
 - 대사(한국어 음성): 해인: 그날, 뒷문에 계신 거 봤어요. / 해인: 보고도… 모른다고 했어요.
@@ -538,7 +538,7 @@ Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow
 Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow depth of field, muted palette of cave black, lantern orange, carbonate white and one accent of work-glove yellow, soft film grain, no on-screen text. Static wide shot. Near-total darkness on a black underground lake; one tiny warm light far across the water gives only a faint rim on two seated silhouettes at opposite ends of a small inflatable boat, an old man in a hard hat on the left and a woman on the right, a wide empty space between them. They do not face each other; both look down at the water. Arms close to their own bodies; no arms or hands extend into the space between them. No faces visible, no hands visible. Full-frame 16:9, no black bars. Both figures almost completely still. Camera: static wide, same frame for all four. Lighting: distant single light, rim only
 ```
 
-### S10-08 · 편집 6초 · 생성 7초 · silhouette wide
+### S10-08 · 편집 6초 · 생성 8초 · silhouette wide
 - 내용: 동수: '내가 안 갔어야 했다.' 해인: '아니요.' 실루엣 하나가 조금 기운다
 - 첨부: 해인(현재, 녹색 재킷), 동수 64세, 안전모
 - 대사(한국어 음성): 동수: 내가 안 갔어야 했다. / 해인: 아니요.
@@ -546,7 +546,7 @@ Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow
 Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow depth of field, muted palette of cave black, lantern orange, carbonate white and one accent of work-glove yellow, soft film grain, no on-screen text. Static wide shot. Near-total darkness on a black underground lake; one tiny warm light far across the water gives only a faint rim on two seated silhouettes at opposite ends of a small inflatable boat, an old man in a hard hat on the left and a woman on the right, a wide empty space between them. They do not face each other; both look down at the water. Arms close to their own bodies; no arms or hands extend into the space between them. No faces visible, no hands visible. Full-frame 16:9, no black bars. Both figures almost completely still. Camera: static wide, same frame for all four. Lighting: distant single light, rim only
 ```
 
-### S10-09 · 편집 6초 · 생성 7초 · close
+### S10-09 · 편집 6초 · 생성 8초 · close
 - 내용: 랜턴이 켜지면 해인의 손이 동수의 손 위에 있다
 - 첨부: 해인(현재, 녹색 재킷), 동수 64세
 ```
@@ -634,14 +634,14 @@ Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow
 Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow depth of field, muted palette of cave black, lantern orange, carbonate white and one accent of work-glove yellow, soft film grain, no on-screen text. Close-up, Kim Dong-su at 64, same man, grey cropped hair, weathered face, faded navy work jacket, old scratched white hard hat, avoids eye contact turns and holds eye contact without looking away, the faintest softening. Camera: static close-up. Lighting: low golden evening light, long shadows
 ```
 
-### S12-01 · 편집 8초 · 생성 9초 · detail
+### S12-01 · 편집 8초 · 생성 8초 · detail
 - 내용: 신발장: 왼쪽 장갑 옆에 오른쪽 장갑을 내려놓는다. 한 켤레. 어른 장갑이다
 - 첨부: 동수 64세, 장갑: 먼지 앉은 왼쪽, 장갑: 침전물 앉은 오른쪽
 ```
 Naturalistic live-action cinema, restrained emotion, 16:9, 1080p, 24fps, shallow depth of field, muted palette of cave black, lantern orange, carbonate white and one accent of work-glove yellow, soft film grain, no on-screen text. Detail shot on an old wooden shoe cabinet, an old man's hand places a mineral-crusted yellow right work glove next to a dusty faded yellow left work glove; the two lie side by side as a pair. Camera: static detail. Lighting: dim interior, single window daylight, warm brown shadows
 ```
 
-### S12-02 · 편집 8초 · 생성 9초 · detail
+### S12-02 · 편집 8초 · 생성 8초 · detail
 - 내용: 식탁, 밥그릇 둘. 김이 오른다. 사람은 없다
 - 첨부: 없음
 ```
