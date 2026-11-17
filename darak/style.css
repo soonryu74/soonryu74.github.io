@@ -897,3 +897,26 @@ html[data-season="aurora"] .sp-pop-who{color:#9ff3d4}
 
 /* 알림 켜기 창 */
 .push-pop .pp-help{background:rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;color:#fff}
+
+/* 공지류 창 (공지·알림 켜기·함께 기도해요): 계절 테마와 상관없이 밝은 크림색 바탕, 계절 색은 작은 글씨에만 */
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view){--nt-bg:#f7f4ec;--nt-ink:#1d2621;--nt-ink2:#3a433d;--nt-muted:#7a7d75;--nt-accent:var(--brand);--nt-card:#fff;--nt-line:#e6e0d2;--nt-foot:#fff}
+html[data-season="xmas"] .sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view){--nt-accent:#1e6b47}
+html[data-season="snowman"] .sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view){--nt-accent:#2a6fb0;--nt-bg:#f3f7fb}
+html[data-season="aurora"] .sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view){--nt-accent:#2b5fb3;--nt-bg:#f3f5fa}
+html[data-theme="night"] .sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view){--nt-bg:#202427;--nt-ink:#f1efe8;--nt-ink2:#d9d7cf;--nt-muted:#a3a59d;--nt-accent:#8fd3b0;--nt-card:#2a2f33;--nt-line:#363c40;--nt-foot:#191c1f}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) .sheet-body{background:var(--nt-bg) !important;color:var(--nt-ink);padding-top:28px}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) .sheet-kicker{color:var(--nt-accent);letter-spacing:.04em}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) .sheet-title{color:var(--nt-ink)}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) :is(.prose,.prose p,.prose li,.sheet-text,.desc){color:var(--nt-ink2) !important}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) .prose a{color:var(--nt-accent)}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) .prose-list li::before{background:var(--nt-accent)}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) .sheet-meta{color:var(--nt-muted) !important}
+.sheet-bg.push-pop .pp-help{background:var(--nt-card);color:var(--nt-ink);border:1px solid var(--nt-line)}
+.sheet-bg.shared-pop .sp-pop-item{border-bottom-color:var(--nt-line)}
+.sheet-bg.shared-pop .sp-pop-who{color:var(--nt-accent)}
+.sheet-bg.sp-view .pr-list > li{background:var(--nt-card) !important;border:1px solid var(--nt-line) !important}
+.sheet-bg.sp-view .pr-list .pr-name{color:var(--nt-accent) !important}
+.sheet-bg.sp-view .pr-list :is(.pr-text,.pr-text p){color:var(--nt-ink) !important}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) .sheet-foot{background:var(--nt-foot);border-top:1px solid var(--nt-line)}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) .sheet-foot button{color:var(--nt-muted)}
+.sheet-bg:is(.notice-sheet,.push-pop,.shared-pop,.sp-view) .sheet-foot button:last-child{color:var(--nt-ink);font-weight:700}
