@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-223';
+window.__BUILD = '2026-11-17-224';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2312,7 +2312,7 @@ if(GUNG){
   } else if(SCENE_ID==='muhly'){
     // 제주 핑크뮬리: 길 양쪽 허리 높이 분홍 구름 들판(인스턴스 수만 포기), 돌담 없이 낮은 현무암 경계, 멀리 한라산과 오름
     gungWall.visible = false;
-    const bedM = new THREE.MeshStandardMaterial({color:0xdca2b8, roughness:1}); for(const [z, w] of [[-16, 32],[25, 32]]){ const bed = new THREE.Mesh(new THREE.PlaneGeometry(1000, w).rotateX(-Math.PI/2), bedM); bed.position.set(500, 0.02, z); gungSet.add(bed); }   // 들판 바닥(분홍)
+    const bedM = new THREE.MeshStandardMaterial({color:0xdca2b8, roughness:1}); for(const [z, w] of [[-45, 90],[54, 90]]){ const bed = new THREE.Mesh(new THREE.PlaneGeometry(1000, w).rotateX(-Math.PI/2), bedM); bed.position.set(500, 0.02, z); gungSet.add(bed); }   // 들판 바닥(분홍): 길가부터 지평선까지 한 장, 한 색 (이음새 없음)
     const mc = document.createElement('canvas'); mc.width = 128; mc.height = 128; const mg = mc.getContext('2d');
     mc.width = 256; mc.height = 256;
     for(let i=0;i<14;i++){ const x = 70 + Math.random()*116, y = 90 + Math.random()*90, r = 46 + Math.random()*40; const grd = mg.createRadialGradient(x, y, 0, x, y, r); const c = [[250,160,195],[244,140,182],[252,176,205]][Math.random()*3|0]; grd.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},0.55)`); grd.addColorStop(0.6, `rgba(${c[0]},${c[1]},${c[2]},0.22)`); grd.addColorStop(1, `rgba(${c[0]},${c[1]},${c[2]},0)`); mg.fillStyle = grd; mg.beginPath(); mg.arc(x, y, r, 0, Math.PI*2); mg.fill(); }   // 바탕: 분홍 안개처럼 뭉친 덩어리 (사진의 솜구름 느낌)
@@ -2325,9 +2325,9 @@ if(GUNG){
     const cardGeo = new THREE.PlaneGeometry(3.0, 2.3).translate(0, 1.05, 0); const spots = [];
     for(let x=0; x<1000; x+=0.9){ for(const [z0, z1] of [[-0.2, -31],[9.2, 40]]){ const n = 2 + (Math.random()*2|0); for(let k=0;k<n;k++){ const u = Math.random(); if(u < 0.08 && Math.random() < 0.6) continue; spots.push([x + Math.random()*0.9, z0 + (z1 - z0)*u, u < 0.1 ? 0.55 + u*4 : 1]); } } }   // 길가는 성기고 낮게, 안쪽은 허리 높이 (벽처럼 보이지 않게)
     for(let x=0; x<1000; x+=1.6+Math.random()*1.2){ spots.push([x, 0.1 + Math.random()*1.1, 0.5]); spots.push([x + 0.7, 7.8 + Math.random()*1.1, 0.5]); }   // 길 가장자리로 번진 낮은 포기
+    for(let x=0; x<1000; x+=2.5){ spots.push([x + Math.random()*2, -31 - Math.random()*40, 1.6]); spots.push([x + Math.random()*2, 40 + Math.random()*40, 1.6]); }   // 먼 들판: 큰 카드 성기게, 지평선까지 분홍이 이어진다
     for(let k=0;k<2;k++){ const inst = new THREE.InstancedMesh(cardGeo, muhlyM, spots.length); const d = new THREE.Object3D(); spots.forEach((sp, i)=>{ d.position.set(sp[0], 0, sp[1]); d.rotation.set(0, k*Math.PI/2 + (Math.random()-0.5)*0.9, 0); const sc = (0.8 + Math.random()*0.7)*(sp[2] || 1); d.scale.set(sc, sc*(0.9 + Math.random()*0.4), sc); d.updateMatrix(); inst.setMatrixAt(i, d.matrix); }); inst.frustumCulled = false; gungSet.add(inst); muhlyInst.push(inst); }   // 두 장 교차 카드
-    const farM = new THREE.MeshStandardMaterial({color:0xe6b4c9, roughness:1}); { const cyM = new THREE.MeshStandardMaterial({color:0x1f3d2a, roughness:1}); for(let x=0; x<1000; x+=7+Math.random()*9){ const h = 9 + Math.random()*6; const cy = new THREE.Mesh(new THREE.ConeGeometry(1.4 + Math.random()*0.6, h, 7), cyM); cy.position.set(x, h/2, -31 - Math.random()*4); gungSet.add(cy); } }   // 들판 끝 삼나무 줄 (사진 배경)
-    for(const [z, w] of [[-45, 50],[54, 50]]){ const far = new THREE.Mesh(new THREE.PlaneGeometry(1000, w).rotateX(-Math.PI/2), farM); far.position.set(500, 0.3, z); gungSet.add(far); }   // 먼 들판은 분홍 면으로
+    { const cyM = new THREE.MeshStandardMaterial({color:0x1f3d2a, roughness:1}); for(let x=0; x<1000; x+=7+Math.random()*9){ const h = 9 + Math.random()*6; const cy = new THREE.Mesh(new THREE.ConeGeometry(1.4 + Math.random()*0.6, h, 7), cyM); cy.position.set(x, h/2, -31 - Math.random()*4); gungSet.add(cy); } }   // 들판 끝 삼나무 줄 (사진 배경)
     const oreumM = new THREE.MeshStandardMaterial({color:0x6f9a6a, roughness:1, fog:false});
     for(const [hx, hw, hh] of [[100, 160, 42],[420, 200, 52],[760, 170, 44],[1050, 190, 50]]){ const o = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10), oreumM); o.scale.set(hw, hh, 80); o.position.set(hx, -16, -230); gungSet.add(o); }
     const halla = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 14), new THREE.MeshStandardMaterial({color:0x5c7f8e, roughness:1, fog:false})); halla.scale.set(620, 150, 140); halla.position.set(500, -40, -420); gungSet.add(halla);   // 한라산
