@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-220';
+window.__BUILD = '2026-11-17-221';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -465,7 +465,7 @@ SCENES.blossom = {...SCENES.forest, todOffset:0.2, name:'하동 벚꽃길', eyeb
 SCENES.muhly = {...SCENES.forest, todOffset:0.5, name:'제주 핑크뮬리길', eyebrow:'JEJU PINK MUHLY', title:'제주 핑크뮬리길, 잠깐 달려요', shareText:'분홍 구름 같은 핑크뮬리 들판 사이를 달리는 온라인 가을길', cardTitle:'핑크뮬리길, 잠깐 달렸어요', chan:'muhly', collect:'분홍 이삭', bird:'jeju', sitMsg:'핑크뮬리 사이에 앉아요 · 한라산이 보여요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', windVol:0.12, rustleVol:0, soundMsg:'새소리와 바람에 흔들리는 핑크뮬리예요'};
 SCENES.maple = {...SCENES.forest, todOffset:0.2, name:'내장산 단풍길', eyebrow:'NAEJANG RUN', title:'내장산 단풍 터널, 잠깐 달려요', shareText:'새빨간 단풍 터널을 달리는 온라인 가을길', cardTitle:'단풍길, 잠깐 달렸어요', chan:'maple', collect:'단풍잎', sitMsg:'단풍 아래 벤치로 가요', sandMsg:'낙엽 위에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.meta = {...SCENES.forest, todOffset:0.16, name:'담양 메타세쿼이아길', eyebrow:'DAMYANG RUN', title:'담양 메타세쿼이아 가로수길, 잠깐 달려요', shareText:'연둣빛 메타세쿼이아 터널을 달리는 온라인 가로수길', cardTitle:'메타세쿼이아길, 잠깐 달렸어요', chan:'meta', collect:'솔방울', sitMsg:'가로수 아래 벤치로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', soundMsg:'새소리가 들리는 가로수길이에요'};
-SCENES.melb = {...SCENES.forest, todOffset:0.22, bird:'jeju', name:'멜버른 공원길', eyebrow:'MELBOURNE RUN', title:'멜버른 로열 보타닉 가든, 잠깐 달려요', shareText:'도심 스카이라인 아래 넓은 잔디와 호수를 달리는 온라인 공원길', cardTitle:'멜버른 공원길, 잠깐 달렸어요', chan:'melb', collect:'유칼립투스 잎', sitMsg:'호숫가 벤치로 가요', sandMsg:'잔디 옆 흙에 한 줄 남겨 보세요', soundMsg:'새소리와 잔디 냄새가 나는 공원이에요'};
+SCENES.melb = {...SCENES.forest, todOffset:0.22, bird:'jeju', name:'멜버른 공원길', eyebrow:'MELBOURNE RUN', title:'멜버른 로열 보타닉 가든, 잠깐 달려요', shareText:'도심 스카이라인 아래 넓은 잔디와 호수를 달리는 온라인 공원길', cardTitle:'멜버른 공원길, 잠깐 달렸어요', chan:'melb', collect:'유칼립투스 잎', sitMsg:'호숫가 벤치로 가요', sandMsg:'잔디 위에 한 줄 남겨 보세요 · 바람이 지워 줘요', soundMsg:'새소리와 잔디 냄새가 나는 공원이에요'};
 SCENES.steppe = {...SCENES.forest, todOffset:0.24, bird:'sparrow', name:'몽골 초원길', eyebrow:'MONGOLIA RUN', title:'몽골 끝없는 초원, 잠깐 달려요', shareText:'하늘과 초록 구릉만 있는 몽골 초원을 달리는 온라인 러닝', cardTitle:'몽골 초원길, 잠깐 달렸어요', chan:'steppe', collect:'들꽃', sitMsg:'게르 앞 풀밭에 앉아요', sandMsg:'초원 흙길에 한 줄 남겨 보세요', soundMsg:'바람과 종달새 소리뿐인 초원이에요'};
 const SC = SCENES[SCENE_ID];
 const CW = SCENE_ID==='cheorwon'; const SNOW = !!SC.snow; const SNOWFIELD = SC.ground==='snowfield'; const SALT = SC.ground==='salt';
@@ -650,9 +650,10 @@ function sandTexture(){
     for(let i=0;i<160;i++){ g.fillStyle = `rgba(${50+Math.random()*25},${50+Math.random()*25},${54+Math.random()*25},0.75)`; g.beginPath(); g.ellipse(Math.random()*512, Math.random()*512, 3 + Math.random()*5, 2 + Math.random()*4, Math.random()*3, 0, Math.PI*2); g.fill(); }
     for(let i=0;i<140;i++){ g.fillStyle = `rgba(${90+Math.random()*40},${130+Math.random()*50},${60+Math.random()*30},0.5)`; g.beginPath(); g.arc(Math.random()*512, Math.random()*512, 4 + Math.random()*9, 0, Math.PI*2); g.fill(); }
   } else if(SC.ground==='stone' && SCENE_ID==='melb'){
-    // 멜버른 공원: 회색 아스팔트 산책로 + 잔돌 알갱이
-    g.fillStyle = '#8d8d8a'; g.fillRect(0,0,512,512);
-    for(let i=0;i<24000;i++){ const v = 110 + Math.random()*70; g.fillStyle = `rgba(${v},${v},${v-3},${0.2+Math.random()*0.3})`; g.fillRect(Math.random()*512, Math.random()*512, 1.4, 1.4); }
+    // 멜버른 공원: 길 없이 잔디밭 자체를 달린다. 짧게 깎은 잔디 결 + 군데군데 클로버·마른 풀
+    g.fillStyle = '#7cbf49'; g.fillRect(0,0,512,512);
+    for(let i=0;i<30000;i++){ const v = 150 + Math.random()*70; g.fillStyle = `rgba(${v-60},${v+10},${v-90},${0.25+Math.random()*0.35})`; g.fillRect(Math.random()*512, Math.random()*512, 1.2, 2.5 + Math.random()*3); }
+    for(let i=0;i<400;i++){ g.fillStyle = `rgba(${170+Math.random()*40},${180+Math.random()*30},${90+Math.random()*30},0.35)`; g.beginPath(); g.ellipse(Math.random()*512, Math.random()*512, 3 + Math.random()*5, 1.5 + Math.random()*2, Math.random()*3, 0, Math.PI*2); g.fill(); }
   } else if(SC.ground==='stone' && SCENE_ID==='steppe'){
     // 몽골 초원: 바퀴 자국만 남은 풀 덮인 흙길
     g.fillStyle = '#8aa65a'; g.fillRect(0,0,512,512);
@@ -701,7 +702,7 @@ function sandTexture(){
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(60, 14); t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); return t;
 }
-const sandMat = new THREE.MeshStandardMaterial({map:sandTexture(), color:SC.ground==='grass' ? 0xf3f8e6 : (SC.ground==='snowfield' ? 0xffffff : (SC.ground==='olle' ? 0xeef5dc : ((SCENE_ID==='forest' || SCENE_ID==='maple') ? 0xffe9d8 : (SCENE_ID==='meta' ? 0xf0dcc8 : (SCENE_ID==='melb' ? 0xe4e4e2 : (SCENE_ID==='steppe' ? 0xdff0c8 : (SCENE_ID==='blossom' ? 0xffffff : (SCENE_ID==='jeju' ? 0xfff2e4 : ((SCENE_ID==='pine' || SCENE_ID==='bamboo') ? 0xf0e4d6 : (GUNG ? 0xe9e6e0 : 0xfff3dc)))))))))), roughness:1, metalness:0});
+const sandMat = new THREE.MeshStandardMaterial({map:sandTexture(), color:SC.ground==='grass' ? 0xf3f8e6 : (SC.ground==='snowfield' ? 0xffffff : (SC.ground==='olle' ? 0xeef5dc : ((SCENE_ID==='forest' || SCENE_ID==='maple') ? 0xffe9d8 : (SCENE_ID==='meta' ? 0xf0dcc8 : (SCENE_ID==='melb' ? 0xf4fae8 : (SCENE_ID==='steppe' ? 0xdff0c8 : (SCENE_ID==='blossom' ? 0xffffff : (SCENE_ID==='jeju' ? 0xfff2e4 : ((SCENE_ID==='pine' || SCENE_ID==='bamboo') ? 0xf0e4d6 : (GUNG ? 0xe9e6e0 : 0xfff3dc)))))))))), roughness:1, metalness:0});
 const sandGeo = new THREE.PlaneGeometry(520, 120, 130, 30);
 sandGeo.rotateX(-Math.PI/2); sandGeo.translate(0, 0, SHORE_Z + 56);
 { const pos = sandGeo.attributes.position; for(let i=0;i<pos.count;i++){ const z = pos.getZ(i), x = pos.getX(i); const dune = Math.max(0, (z-14)/22); const under = THREE.MathUtils.smoothstep(-z, 0, 12); pos.setY(i, GUNG ? 0 : (SNOWFIELD ? 1.3*THREE.MathUtils.smoothstep(z, 11, 19) + Math.sin(x*0.21)*Math.sin(z*0.17)*0.04 : (SC.ground==='grass' ? dune*0.9 : dune*dune*3.2 + Math.sin(x*0.07)*0.25*dune) - under*1.2)); } sandGeo.computeVertexNormals(); }
@@ -2223,7 +2224,7 @@ if(GUNG){
   if(SCENE_ID==='melb'){
     // 멜버른 로열 보타닉 가든: 넓게 굽이치는 잔디밭, 오른쪽에 검은 백조가 노니는 호수, 거목·야자·느릅나무, 피크닉 사람들, 멀리 도심 스카이라인
     gungWall.visible = false;
-    const lawnM = new THREE.MeshStandardMaterial({color:0x79bd45, roughness:1}); for(const [z, w] of [[-60, 118],[10.8, 3.6],[60, 92]]){ const gr = new THREE.Mesh(new THREE.PlaneGeometry(1000, w).rotateX(-Math.PI/2), lawnM); gr.position.set(500, 0.01, z); gungSet.add(gr); }
+    const lawnM = new THREE.MeshStandardMaterial({color:0x7cbf49, roughness:1}); for(const [z, w] of [[-60, 118],[60, 92]]){ const gr = new THREE.Mesh(new THREE.PlaneGeometry(1000, w).rotateX(-Math.PI/2), lawnM); gr.position.set(500, 0.01, z); gungSet.add(gr); }
     const moundM = new THREE.MeshStandardMaterial({color:0x7fc24b, roughness:1}); for(let x=0; x<1000; x+=90+Math.random()*60){ const o = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 10), moundM); o.scale.set(30 + Math.random()*30, 2.2 + Math.random()*2.5, 20 + Math.random()*20); o.position.set(x, -0.8, -40 - Math.random()*40); gungSet.add(o); }   // 굽이치는 잔디 언덕
     // 호수 (오른쪽): 잔잔한 짙은 청록 수면 + 작은 섬, 검은 백조
     const lakeM = new THREE.MeshStandardMaterial({color:0x3f6f72, roughness:0.08, metalness:0.55}); const lake = new THREE.Mesh(new THREE.PlaneGeometry(1000, 36).rotateX(-Math.PI/2), lakeM); lake.position.set(500, 0.03, 30); gungSet.add(lake);
@@ -2232,10 +2233,10 @@ if(GUNG){
     for(let x=30; x<1000; x+=70+Math.random()*60){ const sw = makeSwan(); sw.position.set(x, 0.0, 15 + Math.random()*22); sw.rotation.y = Math.random()*Math.PI*2; gungSet.add(sw); }
     const reedM = new THREE.MeshStandardMaterial({color:0x6a8f3a, roughness:1, side:THREE.DoubleSide}); for(let x=0; x<1000; x+=2.5){ if(Math.random() < 0.5) continue; const rd = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 1.4), reedM); rd.position.set(x, 0.7, 12.4 + Math.random()*1.2); rd.rotation.y = Math.random()*Math.PI; gungSet.add(rd); }
     // 나무: 왼쪽 잔디밭에 거목(무화과·느릅)과 야자가 드문드문, 길가엔 초록 활엽수
-    const bigs = []; for(let x=10; x<1000; x+=38+Math.random()*30) bigs.push([x, -7 - Math.random()*26, 1.3 + Math.random()*0.7, Math.random()*Math.PI*2]); plantInstanced(gungSet, makeBigFig, bigs, 3);
+    const bigs = []; for(let x=10; x<1000; x+=38+Math.random()*30) bigs.push([x, (Math.random() < 0.8 ? -10 - Math.random()*30 : 14 + Math.random()*3), 1.3 + Math.random()*0.7, Math.random()*Math.PI*2]); plantInstanced(gungSet, makeBigFig, bigs, 3);
     const palms = []; for(let x=25; x<1000; x+=90+Math.random()*70) palms.push([x, -6 - Math.random()*8, 1.1, Math.random()*Math.PI*2]); for(let x=55; x<1000; x+=120+Math.random()*60) palms.push([x, 11.2, 1.0, Math.random()*Math.PI*2]); plantInstanced(gungSet, makePalm, palms, 3);
-    const lt = []; for(let x=0; x<1000; x+=14+Math.random()*10){ lt.push([x, -2.5 - Math.random()*3, 1.8, 2.0 + Math.random()*0.6, 1.8, Math.random()*Math.PI*2]); if(Math.random() < 0.6) lt.push([x + 7, 10.5 + Math.random()*1.2, 1.6, 1.8 + Math.random()*0.5, 1.6, Math.random()*Math.PI*2]); } plantLeafTrees(gungSet, 'green', lt);
-    for(let x=20; x<1000; x+=45+Math.random()*50){ const st = makeSitter(); st.position.set(x, 0, -8 - Math.random()*20); gungSet.add(st); if(Math.random() < 0.5){ const st2 = makeSitter(); st2.position.set(x + 1.3, 0, st.position.z + 0.6); gungSet.add(st2); } }
+    const lt = []; for(let x=0; x<1000; x+=16+Math.random()*14){ lt.push([x, -7 - Math.random()*40, 1.7, 1.9 + Math.random()*0.7, 1.7, Math.random()*Math.PI*2]); if(Math.random() < 0.35) lt.push([x + 8, -4.5 - Math.random()*2, 1.5, 1.7 + Math.random()*0.4, 1.5, Math.random()*Math.PI*2]); } plantLeafTrees(gungSet, 'green', lt);   // 잔디밭 곳곳에 흩어진 나무 (달리는 띠는 비워 둔다)
+    for(let x=20; x<1000; x+=40+Math.random()*40){ const st = makeSitter(); st.position.set(x, 0, (Math.random() < 0.7 ? -6 - Math.random()*22 : 11 + Math.random()*1.5)); gungSet.add(st); if(Math.random() < 0.5){ const st2 = makeSitter(); st2.position.set(x + 1.3, 0, st.position.z + 0.6); gungSet.add(st2); } }
     for(let x=40; x<1000; x+=110){ const b = makeBench(); b.position.set(x, 0, 11.3); b.rotation.y = Math.PI; gungSet.add(b); }
     const bedM = new THREE.MeshStandardMaterial({color:0x5a3f2e, roughness:1}); for(let x=60; x<1000; x+=170){ const bed = new THREE.Mesh(new THREE.CircleGeometry(4, 18).rotateX(-Math.PI/2), bedM); bed.position.set(x, 0.02, -8); gungSet.add(bed); for(let i=0;i<40;i++){ const f = new THREE.Mesh(new THREE.SphereGeometry(0.16, 6, 5), new THREE.MeshStandardMaterial({color:[0xff5a7a, 0xffd43b, 0xff8c42, 0xb05cff][i%4], roughness:1})); const a = Math.random()*Math.PI*2, r = Math.random()*3.4; f.position.set(x + Math.cos(a)*r, 0.3, -8 + Math.sin(a)*r); gungSet.add(f); } }   // 꽃밭
     // 도심 스카이라인: 나무 위로 솟은 유리 빌딩들 (멀리, 푸르스름)
