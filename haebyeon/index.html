@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-225';
+window.__BUILD = '2026-11-17-226';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2463,7 +2463,7 @@ function updateRain(dt){
 const LEAF_N = FG ? ((SCENE_ID==='forest' || SCENE_ID==='blossom' || SCENE_ID==='maple') ? 260 : ((SCENE_ID==='muhly' || SCENE_ID==='meta' || SCENE_ID==='melb' || SCENE_ID==='steppe') ? 0 : 60)) : 0;
 let leafMesh = null, leafData = [];
 if(LEAF_N){
-  const lc = document.createElement('canvas'); lc.width = lc.height = 64; const lg = lc.getContext('2d'); lg.fillStyle = '#fff'; lg.translate(32, 36); if(SCENE_ID==='blossom'){ lg.beginPath(); lg.ellipse(0, -4, 13, 22, 0, 0, Math.PI*2); lg.fill(); lg.globalCompositeOperation = 'destination-out'; lg.beginPath(); lg.arc(0, -28, 6, 0, Math.PI*2); lg.fill(); lg.globalCompositeOperation = 'source-over'; } else { lg.beginPath(); lg.moveTo(0, 0); lg.arc(0, 0, 26, Math.PI*1.15, Math.PI*1.85); lg.closePath(); lg.fill(); }   /* 벚꽃잎: 끝이 살짝 갈라진 타원 */
+  const lc = document.createElement('canvas'); lc.width = lc.height = 64; const lg = lc.getContext('2d'); lg.fillStyle = '#fff'; lg.translate(32, 36); if(SCENE_ID==='blossom'){ lg.beginPath(); lg.ellipse(0, -4, 13, 22, 0, 0, Math.PI*2); lg.fill(); lg.globalCompositeOperation = 'destination-out'; lg.beginPath(); lg.arc(0, -28, 6, 0, Math.PI*2); lg.fill(); lg.globalCompositeOperation = 'source-over'; } else if(SCENE_ID==='maple'){ lg.beginPath(); for(let k=0;k<5;k++){ const a = -Math.PI/2 + (k - 2)*0.8; const tipR = k===2 ? 27 : (k===1 || k===3 ? 25 : 20); lg.lineTo(Math.cos(a - 0.4)*tipR*0.5, Math.sin(a - 0.4)*tipR*0.5); lg.lineTo(Math.cos(a - 0.16)*tipR*0.78, Math.sin(a - 0.16)*tipR*0.78); lg.lineTo(Math.cos(a)*tipR, Math.sin(a)*tipR); lg.lineTo(Math.cos(a + 0.16)*tipR*0.78, Math.sin(a + 0.16)*tipR*0.78); lg.lineTo(Math.cos(a + 0.4)*tipR*0.5, Math.sin(a + 0.4)*tipR*0.5); } lg.lineTo(0, 8); lg.lineTo(1.5, 22); lg.lineTo(-1.5, 22); lg.lineTo(0, 8); lg.closePath(); lg.fill(); } else { lg.beginPath(); lg.moveTo(0, 0); lg.arc(0, 0, 26, Math.PI*1.15, Math.PI*1.85); lg.closePath(); lg.fill(); }   /* 단풍잎: 다섯 갈래 뾰족한 별 모양 + 잎자루 / 벚꽃잎: 끝이 살짝 갈라진 타원 / 은행잎: 부채꼴 */
   const ltex = new THREE.CanvasTexture(lc);
   leafMesh = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.2, 0.2), new THREE.MeshBasicMaterial({map:ltex, transparent:true, alphaTest:0.5, side:THREE.DoubleSide}), LEAF_N);
   leafMesh.frustumCulled = false; scene.add(leafMesh);
