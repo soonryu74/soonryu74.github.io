@@ -706,7 +706,7 @@ window.CHURCH = (function () {
     if (u.hash) { if (location.hash === u.hash) window.dispatchEvent(new HashChangeEvent('hashchange')); else location.hash = u.hash; }
   });
   // 카카오톡 공유 (대화방 고르는 카톡 창) — 카카오 개발자 JavaScript 키(공개용, 비밀 아님)가 있으면 쓴다
-  var KAKAO_KEY = '';
+  var KAKAO_KEY = '8b09def2114415bc09a8fa7c1ce83d15';   // 카카오 JavaScript 키 (공개용)
   var kakaoLoading = null;
   function loadKakao() {
     if (!KAKAO_KEY) return Promise.reject(new Error('no key'));
@@ -721,6 +721,8 @@ window.CHURCH = (function () {
     });
     return kakaoLoading;
   }
+  // 누를 때 바로 열리도록 미리 불러 둔다 (휴대폰은 누른 직후가 아니면 카톡 창을 막을 수 있다)
+  if (KAKAO_KEY) window.addEventListener('load', function () { setTimeout(function () { loadKakao().catch(function () {}); }, 2500); });
   // 카톡 메시지는 200자까지: 첫 줄과 마지막 문단(목사님 글)은 살리고, 가운데 명단은 들어가는 만큼 + '외 n'
   function kakaoShort(text) {
     var lines = String(text).split('\n'), url = '';
