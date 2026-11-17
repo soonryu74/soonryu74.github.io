@@ -1027,7 +1027,7 @@ window.CHURCH = (function () {
     return out.map(function (x) { return x.replace(/ /g, '\u00a0'); }).join(' · ');   // 날짜 하나가 두 줄로 갈라지지 않게
   }
   // 교회마다 켠 기능 (church_church.features) — 예: member_dates(성도 날짜)는 방주교회부터
-  var DEFAULT_ON = { member_photos: true };   // 모든 교회 기본으로 켜는 기능 (교회 설정에 false면 끔)
+  var DEFAULT_ON = { member_photos: true, member_dates: true };   // 모든 교회 기본으로 켜는 기능 (교회 설정에 false면 끔)
   function has(feature) {
     var f = church && church.features || {};
     return feature in f ? !!f[feature] : !!(church && DEFAULT_ON[feature]);
