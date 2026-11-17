@@ -384,7 +384,7 @@ const db = p => p.evaluate(() => window.__DB());
 
   { const { c, p } = await ctx(b);
     await login(p, 'pastorla');
-    ok('다른 교회(기능 안 켬): 성도 명단 탭 없음', !(await p.isVisible('.tabs button[data-pane="people"]')));
+    ok('다른 교회도 기본으로 성도 명단 탭 있음', await p.isVisible('.tabs button[data-pane="people"]'));
     await c.close(); }
   { const { c, p } = await ctx(b);
     await login(p, 'mokjala');
