@@ -326,7 +326,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
     <button id="rest-fold" type="button" aria-label="메뉴 접기" style="width:100%;margin:-6px 0 -2px;padding:6px 0;font-size:13px;color:var(--ink-soft);border-bottom:1px solid var(--line)">▾ 메뉴 내리기 · 장면 보기</button>
     <p class="quote" id="rest-quote">파도는 서두르지 않아요.</p>
     <p>잠깐 쉬고 있어요 · <span id="rest-sec">0</span>초</p>
-    <form class="sandform" id="sandform" autocomplete="off"><input id="sandtext" type="text" maxlength="24" placeholder="모래에 한 줄 써 보세요 · 파도가 지워 줘요" aria-label="모래에 쓸 글"><button class="btn small" type="submit">쓰기</button></form>
+    <form class="sandform" id="sandform" autocomplete="off"><input id="sandtext" type="text" maxlength="24" placeholder="모래에 한 줄 써 보세요 · 파도가 지워 줘요" aria-label="모래에 쓸 글"><button class="btn small" type="submit">쓰기</button><button class="btn small" type="button" id="heartbtn" aria-label="하트 그리기" title="하트 그리기">♥</button></form>
     <div class="rest-actions">
       <button id="rest-run" class="btn small" type="button">다시 달리기</button>
       <button id="rest-sit" class="btn ghost small" type="button">앉기</button>
@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-242';
+window.__BUILD = '2026-11-17-243';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1016,7 +1016,28 @@ function stamp(x, z, side){ const m = foots[footIdx]; footIdx = (footIdx+1)%FOOT
 /* ---------- 모래에 쓴 글 ---------- */
 const sandNotes = [];
 function writeOnSand(text){ let done = false; const go = ()=>{ if(done) return; done = true; writeOnSandNow(text); }; if(document.fonts && document.fonts.load){ document.fonts.load('150px "Nanum Brush Script"', text).then(go, go); setTimeout(go, 2500); } else go(); }   // 구글폰트는 글자 범위별로 쪼개져 오므로, 쓸 글자를 넘겨서 해당 조각까지 받은 뒤 그린다
-function drawNoteCanvas(text, night){
+function drawHeartCanvas(night){
+  // 바닥에 하트: 모래엔 손가락으로 판 고랑 + 조개 몇 개, 낙엽 길엔 낙엽을 긁어모아 쌓은 하트(둘레는 바닥이 드러남), 눈엔 발로 다진 하트, 돌·잔디엔 분필 하트
+  const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); const leafy = ['forest','maple','blossom','meta'].includes(SCENE_ID);
+  const heart = (sc, cx, cy)=>{ g.beginPath(); for(let i=0;i<=120;i++){ const t = i/120*Math.PI*2; const x = 16*Math.pow(Math.sin(t), 3), y = -(13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t)); const px = cx + x*sc, py = cy + y*sc; i ? g.lineTo(px, py) : g.moveTo(px, py); } g.closePath(); };
+  const inHeart = (x, y, sc)=>{ heart(sc, 256, 236); return g.isPointInPath(x, y); };
+  if(leafy){
+    const ground = SCENE_ID==='maple' ? 'rgba(70,40,32,0.75)' : (SCENE_ID==='blossom' ? 'rgba(120,110,100,0.7)' : (SCENE_ID==='meta' ? 'rgba(110,80,60,0.75)' : 'rgba(60,52,48,0.75)'));
+    heart(15.5, 256, 236); g.fillStyle = ground; g.fill();   // 둘레: 낙엽을 긁어낸 맨바닥
+    const cols = SCENE_ID==='maple' ? ['#d9432b','#e8632c','#f08a2e','#c63a2a'] : (SCENE_ID==='blossom' ? ['#ffd6e3','#ffc8d9','#ffe9f0','#fbbfd0'] : ['#f4c431','#f7d24e','#e9b322','#ffd83a','#f0c040']);
+    for(let i=0;i<2600;i++){ const x = 40 + Math.random()*432, y = 30 + Math.random()*452; if(!inHeart(x, y, 12.4)) continue; const r = 5 + Math.random()*5; g.fillStyle = cols[Math.random()*cols.length|0]; g.save(); g.translate(x, y); g.rotate(Math.random()*Math.PI*2); g.beginPath(); if(SCENE_ID==='maple'){ for(let k=0;k<5;k++){ const a = k*Math.PI*2/5; g.lineTo(Math.cos(a)*r, Math.sin(a)*r); g.lineTo(Math.cos(a + 0.63)*r*0.45, Math.sin(a + 0.63)*r*0.45); } } else { g.moveTo(0, 0); g.arc(0, 0, r, Math.PI*1.15, Math.PI*1.85); } g.closePath(); g.fill(); g.restore(); }   // 하트 안: 낙엽 수북이
+    g.fillStyle = 'rgba(0,0,0,0.18)'; heart(12.6, 256, 240); g.lineWidth = 6; g.strokeStyle = 'rgba(0,0,0,0.2)'; g.stroke();   // 쌓인 가장자리 그늘
+  } else if(SNOWFIELD || SALT){
+    heart(13.5, 256, 236); g.lineWidth = 22; g.strokeStyle = night ? 'rgba(255,244,214,0.9)' : 'rgba(58,70,84,0.7)'; g.stroke(); heart(13.5, 256, 236); g.lineWidth = 8; g.strokeStyle = night ? 'rgba(255,255,255,0.9)' : 'rgba(150,170,195,0.8)'; g.stroke();
+  } else if(SC.ground==='sand'){
+    heart(13.5, 256, 236); g.lineWidth = 26; g.strokeStyle = night ? 'rgba(255,244,214,0.9)' : 'rgba(104,80,52,0.9)'; g.stroke(); heart(13.5, 256, 236); g.lineWidth = 9; g.strokeStyle = night ? 'rgba(255,255,255,0.7)' : 'rgba(150,120,85,0.9)'; g.stroke();   // 손가락 고랑: 가운데 더 짙게
+    for(let i=0;i<14;i++){ const t = i/14*Math.PI*2; const x = 256 + 16*Math.pow(Math.sin(t), 3)*13.5, y = 236 - (13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t))*13.5; g.fillStyle = ['#fff3e0','#f7dcc6','#ffe9cf'][i%3]; g.beginPath(); g.ellipse(x, y, 9, 7, Math.random()*3, 0, Math.PI*2); g.fill(); g.strokeStyle = 'rgba(120,90,70,0.5)'; g.lineWidth = 1.5; g.stroke(); }   // 고랑 위에 조개 장식
+  } else {
+    heart(13.5, 256, 236); g.shadowColor = 'rgba(40,30,20,0.55)'; g.shadowBlur = 10; g.lineWidth = 18; g.strokeStyle = night ? 'rgba(255,244,214,0.95)' : 'rgba(255,250,236,0.96)'; g.stroke();   // 분필
+  }
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; return tex;
+}
+function drawNoteCanvas(text, night){ if(text==='♥') return drawHeartCanvas(night);
   // 낮: 모래엔 갈색, 돌·잔디엔 흰 분필, 눈엔 진한 그늘색. 밤: 바닥이 어두워지니 모래·눈에서도 밝은 크림색 + 어두운 테두리로 (안 보이던 문제)
   const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const g = c.getContext('2d');
   if(night){ g.shadowColor = 'rgba(0,0,0,0.7)'; g.shadowBlur = 12; g.fillStyle = 'rgba(255,244,214,0.97)'; }
@@ -1028,7 +1049,7 @@ function drawNoteCanvas(text, night){
 }
 function writeOnSandNow(text){
   const tex = drawNoteCanvas(text, nightMix > 0.5), texDay = nightMix > 0.5 ? null : tex, texNight = nightMix > 0.5 ? tex : null;
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0.95, depthWrite:false}));
+  const heart = text==='♥'; const m = new THREE.Mesh(new THREE.PlaneGeometry(heart ? 2.8 : 4.2, heart ? 2.8 : 1.05).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0.95, depthWrite:false}));
   const nz = SC.ground==='grass' ? state.lane - 2.3 : (SCENE_ID==='gung' ? state.lane - 1.2 : ((SC.ground==='deck' || SC.ground==='stonepath') ? THREE.MathUtils.clamp(state.lane - 2.8, 1.5, 6.0) : state.lane - 2.8));   // 돌담길만 언덕 위라 바로 앞, 나머지는 머리에 안 가리게 2.8 m 앞   // 한강: 차선(z 4.0)에 걸치지 않는 트랙 바깥쪽   // 앉은 사람 앞 바닥 (해변: 밀물이 올라오면 지워짐 / 한강: 바람이 지움)   // 해변: 물가 가까이 → 다음 밀물에 지워진다 / 한강: 바로 앞 잔디, 바람이 지운다
   m.userData.age = 0; m.userData.text = text; m.userData.texDay = texDay; m.userData.texNight = texNight; m.userData.isNight = nightMix > 0.5; m.position.set(state.x, (SC.ground!=='sand' ? 0.06 : 0.03) + groundY(nz), nz); m.rotation.y = 0; /* 앉은 사람(등 뒤 카메라)에서 바로 읽힘 */ m.renderOrder = 1; scene.add(m); sandNotes.push(m);
   state.noteCam = m; state.noteCamT = performance.now();   // 글을 쓰면 잠시 글씨가 잘 보이는 앵글로
@@ -3173,6 +3194,7 @@ $('rest-lie').addEventListener('click', ()=>{ const cur = state.pendingPose || s
 $('rest-leave').addEventListener('click', endSession);
 $('restbtn').addEventListener('click', ()=>{ if(!state.started) return; setAutoRun(false); hold(false); enterRest(); say('잠깐 쉬어가요 · 바다를 바라봐요'); });
 $('rest-run').addEventListener('click', ()=>{ leaveRest(); setAutoRun(true); say('계속 달려요 · 멈추려면 버튼을 다시 눌러요', 2600); });
+$('heartbtn').addEventListener('click', ()=>{ if(state.pose==='sit' && !state.pendingPose) writeOnSand('♥'); else { state.pendingNote = '♥'; setPose('sit'); } $('rest').classList.add('is-mini'); say(['forest','maple','blossom','meta'].includes(SCENE_ID) ? '낙엽을 모아 하트를 만들었어요' : (SC.ground==='sand' ? '모래에 하트를 그렸어요 · 파도가 지워 줘요' : '바닥에 하트를 그렸어요 · 바람이 지워 줘요'), 3000); });
 $('sandform').addEventListener('submit', e=>{ e.preventDefault(); const v = $('sandtext').value.trim(); if(!v) return; if(state.pose==='sit' && !state.pendingPose) writeOnSand(v); else { state.pendingNote = v; setPose('sit'); } $('sandtext').value = ''; $('sandtext').blur(); $('rest').classList.add('is-mini'); say(SC.ground==='grass' ? '바람이 살살 지워 줄 거예요 · 잠깐 지켜봐요' : '파도가 밀려와 지워 줄 거예요 · 잠깐 지켜봐요', 3000); });
 $('rest-fold').addEventListener('click', ()=>$('rest').classList.add('is-mini'));
 $('rest-quote').addEventListener('click', ()=>$('rest').classList.add('is-mini'));
