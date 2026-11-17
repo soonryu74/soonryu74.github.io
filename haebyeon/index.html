@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-202';
+window.__BUILD = '2026-11-17-203';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -785,6 +785,7 @@ if(SCENE_ID==='aurora'){
           float a = curtain * (0.3 + 0.7*rays) * (0.45 + 0.55*fold) * smoothstep(0.0, 0.22, vUv.x) * smoothstep(1.0, 0.78, vUv.x);
           float pulse = 0.5 + 0.5*sin(time*0.17 + phase*1.3 + vUv.x*3.0);                                             // 폭풍: 색이 띠를 따라 천천히 밀려간다
           vec3 c = mix(cA, cB, smoothstep(0.08 - 0.06*pulse, 0.5 - 0.2*pulse, v)); c += vec3(0.9, 0.9, 1.0) * pow(rays, 3.0) * curtain * 0.5;   // 아랫단 색 → 윗단 색(핑크·보라·빨강), 줄기는 희게
+          a *= 1.45;   /* 번지게 하면서 줄어든 밝기 보충 */
           gl_FragColor = vec4(c*a*1.7, a);
         }`});
     const m = new THREE.Mesh(geo, mat); m.position.set(0, y, z); m.rotation.x = lean; m.userData = {mat, drift:0.6 + Math.random()*0.6, w}; auroraSet.add(m); };
