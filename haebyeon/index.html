@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-244';
+window.__BUILD = '2026-11-17-245';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -3533,7 +3533,7 @@ function frame(){
         U._needGround = !sitting && !lying;
         if(lying){ buddy.rotation.y = Math.PI/2; buddy.rotation.z = 0; }
         const faceZ = kind==='cat' && cat.mode==='wander' ? (cat.target < 0 ? Math.PI/2 : -Math.PI/2) : Math.PI/2;
-        if(U._needGround){ buddy.updateMatrixWorld(true); let minY = Infinity; for(const l of U.legs){ const paw = l.children[1] || l; paw.getWorldPosition(_fw); minY = Math.min(minY, _fw.y - (l.children[1] ? 0.05 : 0.08)); } if(isFinite(minY)) buddy.position.y += (air*0.03*k*gait) - minY; }
+        if(U._needGround){ buddy.updateMatrixWorld(true); let minY = Infinity; for(const l of U.legs){ const paw = l.children[1] || l; paw.getWorldPosition(_fw); minY = Math.min(minY, _fw.y - (l.children[1] ? 0.05 : 0.08)); } if(isFinite(minY)) buddy.position.y += (air*0.03*k*gait) - minY + Math.max(0, Math.sin(ph*2 + 0.5))*0.1*gait*gait; }   /* 달릴 땐 보폭마다 네 발이 땅에서 뜬다 (거울 바닥에서 발이 그림자에 붙어 보이던 것) */
         const heading = Math.atan2(-(buddyState.z - tz), 1);
         buddy.rotation.y = THREE.MathUtils.damp(buddy.rotation.y, lying ? Math.PI/2 : (sitting ? faceZ : THREE.MathUtils.clamp(heading, -0.6, 0.6)), 4, dt);
         U.legs.forEach((l,i)=>{
