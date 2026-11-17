@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-246';
+window.__BUILD = '2026-11-17-248';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -1215,7 +1215,7 @@ function makeDog(v){
   else if(v.tail==='pom'){ tail = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), fur); tail.position.set(-0.24, 0.5, 0); }
   else { tail = capsule(0.035, 0.16, fur); tail.position.set(-0.22, 0.46, 0); tail.rotation.z = 0.7; }
   g.add(tail);
-  const legs = []; [[0.14,-0.08],[0.14,0.08],[-0.14,-0.08],[-0.14,0.08]].forEach(([x,z])=>{ const l = new THREE.Group(); l.position.set(x, 0.3, z); const m = capsule(0.038, 0.18, fur); m.position.y = -0.13; l.add(m); const paw = new THREE.Mesh(new THREE.SphereGeometry(v.curly ? 0.075 : 0.05, 8, 6), fur); paw.position.y = v.curly ? -0.24 : -0.26; l.add(paw); g.add(l); legs.push(l); });
+  const legs = []; [[0.14,-0.08],[0.14,0.08],[-0.14,-0.08],[-0.14,0.08]].forEach(([x,z])=>{ const l = new THREE.Group(); l.position.set(x, 0.3, z); const m = capsule(0.038, 0.08, fur); m.position.y = -0.07; l.add(m); const knee = new THREE.Group(); knee.position.y = -0.13; l.add(knee); const m2 = capsule(0.034, 0.07, fur); m2.position.y = -0.06; knee.add(m2); const paw = new THREE.Mesh(new THREE.SphereGeometry(v.curly ? 0.075 : 0.05, 8, 6), fur); paw.position.y = v.curly ? -0.11 : -0.13; knee.add(paw); l.userData.knee = knee; l.userData.paw = paw; l.userData.front = x > 0; g.add(l); legs.push(l); });   // 어깨/엉덩이 관절 + 무릎 관절 (두 토막 다리)
   if(v.curly){
     // 푸들 테디베어 컷: 둥근 털 돔 머리, 늘어진 둥근 귀, 통통한 몸, 털 기둥 다리. (참고 이미지의 토이푸들)
     const furL = new THREE.MeshStandardMaterial({color:0xf3cfa8, roughness:1});
@@ -1226,7 +1226,7 @@ function makeDog(v){
     for(const z of [-0.2, 0.2]){ const ear = new THREE.Mesh(new THREE.SphereGeometry(0.1, 14, 10), fur); ear.scale.set(0.75, 1.35, 0.55); ear.position.set(-0.04, -0.06, z); headG.add(ear); ears.push(ear); }  // 늘어진 둥근 귀
     body.scale.set(1.15, 1.15, 1.15); chest.scale.setScalar(1.15);
     const rump = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 10), fur); rump.position.set(-0.16, 0.37, 0); g.add(rump);
-    for(const l of legs){ const col = l.children[0]; col.scale.set(1.9, 1.0, 1.9); const paw = l.children[1]; paw.scale.setScalar(1.3); }   // 털 기둥 다리
+    for(const l of legs){ const col = l.children[0]; col.scale.set(1.9, 1.0, 1.9); l.userData.knee.children[0].scale.set(1.9, 1.0, 1.9); l.userData.paw.scale.setScalar(1.3); }   // 털 기둥 다리
     muzzle.scale.set(0.9, 0.7, 0.9); muzzle.position.set(0.15, -0.07, 0);
   }
   const collarM = new THREE.MeshStandardMaterial({color:0x7fe3dc, roughness:0.6, emissive:0x7fe3dc, emissiveIntensity:0}); glowMats.push(collarM);
@@ -2352,7 +2352,7 @@ if(GUNG){
   const ridge = new THREE.Mesh(new THREE.BoxGeometry(520, 0.16, 0.5), new THREE.MeshStandardMaterial({color:0x26282d, roughness:1})); ridge.position.set(0, 2.92 + WH, 0.25); gungWall.add(ridge);
   const eave = new THREE.Mesh(new THREE.BoxGeometry(520, 0.08, 1.6), new THREE.MeshStandardMaterial({color:0xd9d2c4, roughness:1})); eave.position.set(0, 2.6 + WH, 0.25); gungWall.add(eave);
   gungWall.userData.wtex = wtex;
-  if(JB){ const wall2 = wall.clone(); wall2.position.z = 8.9; wall2.rotation.y = Math.PI; gungWall.add(wall2); }   /* 180도 돌려서 러너가 보는 면이 왼쪽 담과 같은 앞면이 되게 (뒷면은 무늬가 반대로 흘러 '버스 창밖'처럼 보였다) */
+  if(JB){ const wall2 = wall.clone(); wall2.position.z = 8.9; const wtex2 = wtex.clone(); wtex2.needsUpdate = true; wall2.material = new THREE.MeshStandardMaterial({map:wtex2, roughness:1}); gungWall.add(wall2); gungWall.userData.wtex2 = wtex2; }   /* 오른쪽 담은 상자의 뒷면이 보여 u 방향이 반대 → 무늬를 반대로 흘려야 앞으로 간다 (회전해도 같음) */   /* 180도 돌려서 러너가 보는 면이 왼쪽 담과 같은 앞면이 되게 (뒷면은 무늬가 반대로 흘러 '버스 창밖'처럼 보였다) */
   if(!JJ && !JB){ const gc = document.createElement('canvas'); gc.width = gc.height = 256; const gg = gc.getContext('2d'); gg.fillStyle = '#6f8f4e'; gg.fillRect(0,0,256,256); for(let i=0;i<9000;i++){ const v = 90 + Math.random()*70; gg.fillStyle = `rgba(${v-30},${v+15},${v-45},${0.25+Math.random()*0.3})`; gg.fillRect(Math.random()*256, Math.random()*256, 1.2, 2.4); }
     const gtex = new THREE.CanvasTexture(gc); gtex.wrapS = gtex.wrapT = THREE.RepeatWrapping; gtex.repeat.set(120, 3); gtex.colorSpace = THREE.SRGBColorSpace;
     const hillGeo = new THREE.PlaneGeometry(520, 9.2, 104, 24); hillGeo.rotateX(-Math.PI/2); hillGeo.translate(0, 0, 10.5);
@@ -2532,7 +2532,7 @@ if(GUNG){
       const ttex = new THREE.CanvasTexture(tc); ttex.wrapS = THREE.RepeatWrapping; ttex.repeat.set(250, 1); ttex.colorSpace = THREE.SRGBColorSpace; const trail = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1.2).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({map:ttex, roughness:1})); trail.position.set(500, 0.03, 2.2); trail.receiveShadow = true; gungSet.add(trail); }   // 핑크뮬리 사이로 난 한 사람 폭 오솔길 (1.2 m) — 사방이 핑크뮬리
     const cardGeo = new THREE.PlaneGeometry(3.0, 2.3).translate(0, 1.05, 0); const spots = [];
     for(let x=0; x<1000; x+=0.6){ for(const [z0, z1] of [[-0.2, -31],[9.2, 40]]){ const n = 3 + (Math.random()*2|0); for(let k=0;k<n;k++){ const u = Math.random(); spots.push([x + Math.random()*0.6, z0 + (z1 - z0)*u, 1]); } } }   // 들판: 빼곡하게
-    for(let x=0; x<1000; x+=0.8){ for(const [z0, z1, sc] of [[-0.2, 1.55, 0.85],[2.85, 9.4, 0.9]]){ const n = 1 + (Math.random()*2|0); for(let k=0;k<n;k++) spots.push([x + Math.random()*0.8, z0 + (z1 - z0)*Math.random(), sc*(0.8 + Math.random()*0.4)]); } }   // 오솔길 양옆까지 핑크뮬리가 바짝 — 그 사이로 달린다
+    for(let x=0; x<1000; x+=0.8){ for(const [z0, z1, sc] of [[-0.2, 1.55, 0.5],[2.85, 9.4, 0.5]]){ const n = 1 + (Math.random()*2|0); for(let k=0;k<n;k++){ const zz = z0 + (z1 - z0)*Math.random(); const nearT = Math.min(Math.abs(zz - 1.55), Math.abs(zz - 2.85)); spots.push([x + Math.random()*0.8, zz, sc*(0.8 + Math.random()*0.4)*(0.7 + 0.3*Math.min(1, nearT/3))]); } } }   // 오솔길 바로 옆은 무릎 높이, 멀어질수록 허리 높이 → 러너가 묻히지 않는다   // 오솔길 양옆까지 핑크뮬리가 바짝 — 그 사이로 달린다
     for(let x=0; x<1000; x+=2.5){ spots.push([x + Math.random()*2, -31 - Math.random()*40, 1.6]); spots.push([x + Math.random()*2, 40 + Math.random()*40, 1.6]); }   // 먼 들판: 큰 카드 성기게, 지평선까지 분홍이 이어진다
     for(let k=0;k<2;k++){ const inst = new THREE.InstancedMesh(cardGeo, muhlyM, spots.length); const d = new THREE.Object3D(); spots.forEach((sp, i)=>{ d.position.set(sp[0], 0, sp[1]); d.rotation.set(0, k*Math.PI/2 + (Math.random()-0.5)*0.9, 0); const sc = (0.8 + Math.random()*0.7)*(sp[2] || 1); d.scale.set(sc, sc*(0.9 + Math.random()*0.4), sc); d.updateMatrix(); inst.setMatrixAt(i, d.matrix); }); inst.frustumCulled = false; gungSet.add(inst); muhlyInst.push(inst); }   // 두 장 교차 카드
     { const cyM = new THREE.MeshStandardMaterial({color:0x1f3d2a, roughness:1}); for(let x=0; x<1000; x+=7+Math.random()*9){ const h = 9 + Math.random()*6; const cy = new THREE.Mesh(new THREE.ConeGeometry(1.4 + Math.random()*0.6, h, 7), cyM); cy.position.set(x, h/2, -31 - Math.random()*4); gungSet.add(cy); } }   // 들판 끝 삼나무 줄 (사진 배경)
@@ -3522,18 +3522,19 @@ function frame(){
         const air = Math.pow(Math.max(0, Math.sin(2*ph)), 2);
         const U = buddy.userData;
         const isCat = kind==='cat';
+        const susp = Math.pow(Math.max(0, Math.sin(ph + 0.9)), 2);   // 갤럽: 뒷다리가 차고 난 뒤 한 번 공중에 뜬다
         buddy.position.set(buddyState.x, lying ? -0.16 : air*0.03*k*gait, buddyState.z);
         const sitTiltGoal = (sitting && !lying) ? (isCat ? 0.42 : 0.55) : 0;   // 앉으면 엉덩이를 내리고 가슴을 세운다
         U._sitTilt = THREE.MathUtils.damp(U._sitTilt || 0, sitTiltGoal, 5, dt);
-        buddy.rotation.z = 0.04*Math.cos(ph)*k + U._sitTilt;
-        if(U.body){ U.body.scale.set(1 + 0.03*ext*k, 1, 1); }
+        buddy.rotation.z = (0.04*(1 - k) + 0.13*k)*Math.cos(ph)*gait + U._sitTilt;   // 달리면 등이 앞뒤로 크게 흔들린다 (뒷다리 모을 때 엉덩이 들림, 뻗을 때 가슴 들림)
+        if(U.body){ U.body.scale.set(1 + (0.03 + 0.07*k)*ext*gait, 1 - 0.03*ext*k, 1); }   // 척추: 뻗을 때 길어지고 모을 때 둥글게
         if(U.headG){ const hy = isCat ? 0.52 : 0.62, hx = isCat ? 0.2 : 0.3; U.headG.rotation.z = -buddy.rotation.z + Math.sin(ph*2)*0.04*gait - 0.08*k; U.headG.position.y = hy - 0.01*air*gait; U.headG.position.x = hx + 0.04*k; }
         if(U.ears){ U.ears.forEach((e,i)=>{ e.rotation.z = 0.2 + Math.sin(ph*2 + i*0.7)*0.18*gait - 0.3*k; }); }
         if(U.tongue){ U.tongue.visible = gait > 0.6 && !sitting; }
         U._needGround = !sitting && !lying;
         if(lying){ buddy.rotation.y = Math.PI/2; buddy.rotation.z = 0; }
         const faceZ = kind==='cat' && cat.mode==='wander' ? (cat.target < 0 ? Math.PI/2 : -Math.PI/2) : Math.PI/2;
-        if(U._needGround){ buddy.updateMatrixWorld(true); let minY = Infinity; for(const l of U.legs){ const paw = l.children[1] || l; paw.getWorldPosition(_fw); minY = Math.min(minY, _fw.y - (l.children[1] ? 0.05 : 0.08)); } if(isFinite(minY)) buddy.position.y += (air*0.03*k*gait) - minY + Math.max(0, Math.sin(ph*2 + 0.5))*0.1*gait*gait; }   /* 달릴 땐 보폭마다 네 발이 땅에서 뜬다 (거울 바닥에서 발이 그림자에 붙어 보이던 것) */
+        if(U._needGround){ buddy.updateMatrixWorld(true); let minY = Infinity; for(const l of U.legs){ const paw = l.userData.paw || l.children[1] || l; paw.getWorldPosition(_fw); minY = Math.min(minY, _fw.y - (l.children[1] ? 0.05 : 0.08)); } if(isFinite(minY)) buddy.position.y += (air*0.03*k*gait) - minY + susp*(0.04*(1 - k) + 0.11*k)*gait; }   /* 걸을 땐 살짝, 달릴 땐 한 보폭에 한 번 네 발이 뜬다 */
         const heading = Math.atan2(-(buddyState.z - tz), 1);
         buddy.rotation.y = THREE.MathUtils.damp(buddy.rotation.y, lying ? Math.PI/2 : (sitting ? faceZ : THREE.MathUtils.clamp(heading, -0.6, 0.6)), 4, dt);
         U.legs.forEach((l,i)=>{
@@ -3542,9 +3543,12 @@ function frame(){
           if(sitting){ l.rotation.z = i < 2 ? -U._sitTilt : 1.3; l.rotation.x = i < 2 ? 0 : (leftSide ? 1 : -1) * (isCat ? 1.0 : 0.95) * (U._sitTilt / (isCat ? 0.42 : 0.55)); return; }   // 앞다리는 곧게, 뒷다리는 앞으로 접고 양옆으로 벌려 발이 보이게
           l.rotation.x = THREE.MathUtils.damp(l.rotation.x, 0, 8, dt);
           const front = i < 2, left = (i % 2) === 0;
-          // 대각선 짝 트롯: 왼앞+오른뒤 / 오른앞+왼뒤. 네 다리 모두 같은 크기로 흔들린다
-          const phase = ph + ((front === left) ? 0 : Math.PI);
-          l.rotation.z = Math.sin(phase) * (0.5 + 0.3*k) * gait;
+          // 걷기: 대각선 짝 트롯(왼앞+오른뒤). 달리기: 갤럽 — 앞다리 둘이 거의 같이, 뒷다리 둘이 거의 같이, 앞·뒤는 반 박자 어긋남. k 로 섞는다
+          const trotOff = (front === left) ? 0 : Math.PI; const galOff = front ? (left ? 0 : 0.45) : (left ? Math.PI + 0.25 : Math.PI + 0.7);
+          const off = trotOff + (galOff - trotOff)*k; const phase = ph + off;
+          const amp = (0.45 + 0.4*k)*gait; l.rotation.z = Math.sin(phase)*amp + (front ? -0.1 : 0.12)*k*gait;   // 달릴 땐 앞다리는 앞으로, 뒷다리는 뒤로 더 뻗는다
+          if(l.userData.knee){ const swing = Math.max(0, Math.cos(phase));   // 다리를 앞으로 가져올 때(발이 뜬 구간) 무릎이 접힌다
+            l.userData.knee.rotation.z = (front ? -1 : 1)*swing*(0.5 + 0.9*k)*gait*(front ? 1 : 0.8) + (front ? 0 : -0.25*k*gait); }   // 앞다리는 뒤로 접히고(손목), 뒷다리는 앞으로 접힌다(무릎)
         });
         if(sitting && !lying){ restOnGround(buddy, 0.02); }
         if(kind==='dog'){ buddy.userData.tail.rotation.x = Math.sin(t*(lying ? 6 : 8))*(lying ? 0.9 : 0.55*(0.6 + 0.4*gait)); if(buddy.userData.tail.geometry.type==='CapsuleGeometry') buddy.userData.tail.rotation.z = 0.7 + 0.4*k; } else buddy.userData.tail.rotation.x = Math.sin(t*2.5)*0.5;
@@ -3677,7 +3681,7 @@ function frame(){
   if(bridge){ if(bridge.position.x < state.x - 60) bridge.position.x += 720; bridge.userData.glow.intensity = 40*nightMix; }
   if(embank.visible){ embank.position.x = state.x; embank.userData.ptex.offset.x = state.x/520*60; embank.userData.etex.offset.x = state.x/520*60; embank.userData.stex.offset.x = state.x/520*60; embank.userData.wtex.offset.x = state.x/520*120; }
   if(GUNG){ if(!gungSet2){ gungSet2 = gungSet.clone(); scene.add(gungSet2); } const seg = Math.floor((state.x + 100)/1000); gungSet.position.x = seg*1000; gungSet2.position.x = (seg + 1)*1000;   /* 러너 100 m 뒤부터 1.9 km 앞까지 항상 풍경이 있다 */
-    gungWall.position.x = state.x; gungWall.userData.wtex.offset.x = state.x/520*60; if(gungWall.userData.gtex) gungWall.userData.gtex.offset.x = state.x/520*120; gungLight.position.set(state.x + 1.2, 3.4, state.lane - 0.6); gungLight.intensity = 22*THREE.MathUtils.smoothstep(nightMix, 0.15, 0.7); }
+    gungWall.position.x = state.x; gungWall.userData.wtex.offset.x = state.x/520*60; if(gungWall.userData.wtex2) gungWall.userData.wtex2.offset.x = -state.x/520*60; if(gungWall.userData.gtex) gungWall.userData.gtex.offset.x = state.x/520*120; gungLight.position.set(state.x + 1.2, 3.4, state.lane - 0.6); gungLight.intensity = 22*THREE.MathUtils.smoothstep(nightMix, 0.15, 0.7); }
   for(const a of wildlife){ const u = a.userData; u.t -= dt;
     if(u.kind==='deer'){
       // 길은 절대 안 건넌다. 나무 사이에서 풀을 뜯고(graze), 사람이 지나가면 고개를 들어 동그란 눈으로 쳐다보고(look), 가끔 제자리 근처를 천천히 맴돈다(wander)
