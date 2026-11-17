@@ -428,7 +428,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-17-200';
+window.__BUILD = '2026-11-17-201';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -780,21 +780,22 @@ if(SCENE_ID==='aurora'){
           float fold = 0.5 + 0.5*sin(x*2.1 + time*0.22 + sin(x*0.7 + time*0.1)*1.5);                               // 접힘(밝은 주름)
           float lowEdge = 0.06 + 0.1*noise(vec2(x*2.5, time*0.08));                                                 // 물결치는 아랫단
           float v = clamp((vUv.y - lowEdge)/(1.0 - lowEdge), 0.0, 1.0);
-          float curtain = pow(1.0 - v, 1.7) * smoothstep(0.0, 0.05, vUv.y - lowEdge);
+          float curtain = pow(1.0 - v, 1.25) * smoothstep(0.0, 0.05, vUv.y - lowEdge);
           float a = curtain * (0.3 + 0.7*rays) * (0.45 + 0.55*fold) * smoothstep(0.0, 0.08, vUv.x) * smoothstep(1.0, 0.92, vUv.x);
-          vec3 c = mix(cA, cB, pow(v, 0.8)); c += vec3(0.7, 1.0, 0.8) * pow(rays, 3.0) * curtain * 0.6;            // 아래 초록 → 위 보라, 줄기는 희게
+          float pulse = 0.5 + 0.5*sin(time*0.17 + phase*1.3 + vUv.x*3.0);                                             // 폭풍: 색이 띠를 따라 천천히 밀려간다
+          vec3 c = mix(cA, cB, smoothstep(0.08 - 0.06*pulse, 0.5 - 0.2*pulse, v)); c += vec3(0.9, 0.9, 1.0) * pow(rays, 3.0) * curtain * 0.5;   // 아랫단 색 → 윗단 색(핑크·보라·빨강), 줄기는 희게
           gl_FragColor = vec4(c*a*1.7, a);
         }`});
     const m = new THREE.Mesh(geo, mat); m.position.set(0, y, z); m.rotation.x = lean; m.userData = {mat, drift:0.6 + Math.random()*0.6, w}; auroraSet.add(m); };
-  mk(1400, 220, 120, -420, 0x2bd97a, 0x7a3fd0, 0.0, -0.18);
-  mk(1100, 170, 150, -330, 0x44ff9a, 0xc24fb0, 2.1, -0.25);
-  mk(1600, 260, 190, -520, 0x1fbf72, 0x5a2fb8, 4.0, -0.12);
-  mk(900, 140, 210, -160, 0x5affb0, 0xd06bd8, 1.2, -0.55);   // 머리 위로 지나가는 띠
-  mk(1200, 150, 140, 260, 0x36e08a, 0x8a4fd8, 3.3, 0.35);    // 오른쪽(육지) 하늘에도 한 장
-  mk(1700, 260, 210, -80, 0x3df08c, 0x9a5be0, 5.1, -Math.PI/2 + 0.12);   // 머리 위 천장처럼 깔린 띠 3장: 누워서 보면 하늘을 가로질러 춤춘다
-  mk(1500, 220, 240, 30, 0x58ffb0, 0xd46be0, 2.6, -Math.PI/2 - 0.1);
+  mk(1400, 220, 120, -420, 0x2bd97a, 0xff4fa0, 0.0, -0.18);   // 초록 → 핑크
+  mk(1100, 170, 150, -330, 0x44ff9a, 0xc24fb0, 2.1, -0.25);   // 초록 → 자주
+  mk(1600, 260, 190, -520, 0xff6aa8, 0xff2a4a, 4.0, -0.12);   // 핑크 → 빨강 (오로라 폭풍의 붉은 띠)
+  mk(900, 140, 210, -160, 0x5affb0, 0xff7fc8, 1.2, -0.55);    // 머리 위로 지나가는 띠
+  mk(1200, 150, 140, 260, 0xff8fd0, 0x9a4fe8, 3.3, 0.35);     // 오른쪽(육지) 하늘: 핑크 → 보라
+  mk(1700, 260, 210, -80, 0x3df08c, 0xff5fb0, 5.1, -Math.PI/2 + 0.12);   // 머리 위 천장처럼 깔린 띠 3장: 누워서 보면 하늘을 가로질러 춤춘다
+  mk(1500, 220, 240, 30, 0xff7ab8, 0xff3f60, 2.6, -Math.PI/2 - 0.1);
   mk(1400, 200, 190, -170, 0x2fd884, 0x7b48d8, 0.7, -Math.PI/2 + 0.3);
-  mk(1700, 280, 235, -235, 0x4cf59a, 0xa058e8, 3.9, -Math.PI/2 + 0.4);   // 누운 시야 한가운데(45도)를 지나는 큰 띠
+  mk(1700, 280, 235, -235, 0x4cf59a, 0xf060c0, 3.9, -Math.PI/2 + 0.4);   // 누운 시야 한가운데(45도)를 지나는 큰 띠
   mk(1500, 240, 165, -265, 0x33e08e, 0x6c42d0, 1.9, -Math.PI/2 + 0.55);
   { const f = auroraSet.children[2].clone(); f.rotation.set(-0.15, Math.PI/2, 0); f.position.set(0, 170, -40); f.userData = {...auroraSet.children[2].userData, ox:520}; auroraSet.add(f); }   // 달리는 방향 앞 하늘을 가로지르는 띠
 }
@@ -3196,7 +3197,7 @@ function frame(){
     if(state.todMode==='auto'){ const clock = 0.12 + (SC.todOffset||0) + ((Date.now() - state.todStart)/1000)/1200;   // 이른 아침에서 시작, 20분에 하루. 같은 장소의 먼저 온 사람 시계에 맞춘다
       if(SCENE_ID==='aurora') state.todT = 0.905 + 0.03*(0.5 - 0.5*Math.cos(clock*Math.PI*2)); /* 오로라길: 늘 깊은 밤 */ else if(SC.night) state.todT = 0.80 + 0.14*(0.5 - 0.5*Math.cos(clock*Math.PI*2)); /* 돌담길: 깊은 밤 ↔ 저녁 노을 */ else state.todT = clock % 1; }
     applyTod(state.todT);
-    if(SCENE_ID==='aurora'){ hemi.intensity = Math.max(hemi.intensity, 0.5); hemi.color.setHex(0xc9e6d4); sun.intensity = Math.max(sun.intensity, 0.3); }   /* 오로라 빛이 눈밭에 초록빛으로 비친다 */
+    if(SCENE_ID==='aurora'){ hemi.intensity = Math.max(hemi.intensity, 0.5); hemi.color.setHex(0xd8dde6); sun.intensity = Math.max(sun.intensity, 0.3); }   /* 오로라 빛이 눈밭에 초록빛으로 비친다 */
 
     if(audio.on && audio.ctx){ audio.seaGain.gain.value = (+$('vol-sea').value/100) * (0.65 + 0.35*wetness) * SC.seaVol;
       if(SC.amb==='wind' && audio.windGain){ const vol = +$('vol-sea').value/100; const gp = (t % 9)/9, gust = Math.pow(Math.max(0, Math.sin(gp*Math.PI)), 3)*(0.6 + 0.4*Math.sin(t*0.07)); const lying = state.resting && state.pose==='lie' ? 1.25 : 1; audio.windBp.frequency.value = (SC.rustleHz < 1000 ? 600 : 340) + 180*gust; audio.rustleJit = THREE.MathUtils.damp(audio.rustleJit || 0.5, Math.random(), 2.5, dt); const soft = Math.pow(gust, 1.4); audio.windGain.gain.value = vol*SC.windVol*(0.015 + 0.07*soft)*lying; audio.rustleBp.frequency.value = SC.rustleHz; audio.rustleGain.gain.value = vol*SC.rustleVol*(0.002 + 0.018*soft*(0.6 + 0.4*audio.rustleJit))*lying; }   /* 멀리서 부드럽게: 돌풍일 때만 살짝 커지고, 떨림은 천천히 */   /* 낙엽 돌풍과 같은 9초 주기: 잎이 날릴 때 소리도 세진다 */ if(SCENE_ID==='niagara' && audio.rainGain && !state.rain) audio.rainGain.gain.value = 0.35*(+$('vol-sea').value/100); if(audio.ctx.currentTime > audio.nextGull){ gull(); audio.nextGull = audio.ctx.currentTime + ((SC.bird==='forest' || SC.bird==='jeju') ? 2.5 + Math.random()*5 : 9 + Math.random()*18); } }
