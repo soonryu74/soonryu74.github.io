@@ -431,7 +431,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-18-253';
+window.__BUILD = '2026-11-18-254';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -3425,7 +3425,7 @@ async function takePhoto(){
   const F = '"Noto Sans KR","Apple SD Gothic Neo",sans-serif'; const k = sw/1080;
   const d = new Date(); const cap = `${SC.name} · ${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} · ${(state.dist/1000).toFixed(2)} km`;
   g.font = `600 ${Math.round(34*k)}px ${F}`; g.textAlign = 'right'; g.fillStyle = 'rgba(0,0,0,.35)'; g.fillText(cap, sw - 40*k + 2, sh - 44*k + 2); g.fillStyle = '#fff'; g.fillText(cap, sw - 40*k, sh - 44*k);
-  g.font = `500 ${Math.round(24*k)}px ${F}`; g.fillStyle = 'rgba(255,255,255,.8)'; g.fillText(location.host + location.pathname, sw - 40*k, sh - 14*k);
+  g.font = `500 ${Math.round(24*k)}px ${F}`; g.fillStyle = 'rgba(255,255,255,.8)'; g.fillText('윤슬런 · ' + location.host + location.pathname + (SCENE_ID==='beach' ? '' : '?scene=' + SCENE_ID), sw - 40*k, sh - 14*k);   // 주소에 장면까지 (haebyeon 은 사이트 폴더 이름, 해변만 뜻하지 않음)
   const blob = await new Promise(res=>c.toBlob(res, 'image/jpeg', 0.92));
   const name = `${SC.name}-사진.jpg`; const file = new File([blob], name, {type:'image/jpeg'});
   // 찍은 사진을 바로 화면에 띄운다: 길게 눌러 갤러리에 저장(카톡·인스타 등 앱 안 브라우저에서 가장 확실), 공유·다운로드 버튼도 함께
