@@ -429,7 +429,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-18-251';
+window.__BUILD = '2026-11-18-252';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -774,7 +774,7 @@ if(SC.ground==='stonepath'){
   const cliffM = new THREE.MeshStandardMaterial({color:ST ? 0x7a5a44 : 0x5a564e, roughness:1}); const cliffFace = new THREE.Mesh(new THREE.BoxGeometry(520, DY + 1.0, 1.2), cliffM); cliffFace.position.set(0, (DY + 1.0)/2 - 1.5, -0.6); deckSet.add(cliffFace);   // 절벽면 (윗면을 잔디 둔덕보다 20 cm 낮게, z도 겹치지 않게 → 깜빡임 없음)
   const shelf = new THREE.Mesh(new THREE.BoxGeometry(520, 1.2, 6), cliffM); shelf.position.set(0, DY - 4.6, -4); shelf.visible = false; deckSet.add(shelf);   // 6 m 아래 선반(그 위로 강물이 흘러 폭포로)
   const railM = new THREE.MeshStandardMaterial({color:0x3a3d42, roughness:0.5, metalness:0.5});
-  if(ST){ const PT2 = plasterTex(); const wallM = new THREE.MeshStandardMaterial({map:PT2.map, bumpMap:PT2.bump, bumpScale:0.006, roughness:0.9, emissive:0xfff4e0, emissiveIntensity:0.08}); const w = new THREE.Mesh(new THREE.BoxGeometry(520, 1.0, 0.5), wallM); w.position.set(0, DY + 0.5, 0.55); deckSet.add(w); const cap = new THREE.Mesh(new THREE.BoxGeometry(520, 0.1, 0.7), wallM); cap.position.set(0, DY + 1.02, 0.55); deckSet.add(cap); const edge = new THREE.Mesh(new THREE.BoxGeometry(520, 0.06, 0.4), wallM); edge.position.set(0, DY + 0.03, 6.5); deckSet.add(edge); }   // 산토리니: 흰 회벽 난간 + 길 가장자리 흰 선
+  if(ST){ const PT2 = plasterTex(); const wallM = new THREE.MeshStandardMaterial({map:PT2.map, bumpMap:PT2.bump, bumpScale:0.006, roughness:0.9, emissive:0xffffff, emissiveIntensity:0.06}); const w = new THREE.Mesh(new THREE.BoxGeometry(520, 1.0, 0.5), wallM); w.position.set(0, DY + 0.5, 0.55); deckSet.add(w); const cap = new THREE.Mesh(new THREE.BoxGeometry(520, 0.1, 0.7), wallM); cap.position.set(0, DY + 1.02, 0.55); deckSet.add(cap); const edge = new THREE.Mesh(new THREE.BoxGeometry(520, 0.06, 0.4), wallM); edge.position.set(0, DY + 0.03, 6.5); deckSet.add(edge); }   // 산토리니: 흰 회벽 난간 + 길 가장자리 흰 선
   else for(const y of [DY + 0.55, DY + 1.05]){ const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 520, 6), railM); rail.rotation.z = Math.PI/2; rail.position.set(0, y, 0.6); deckSet.add(rail); }
   const bushM = new THREE.MeshStandardMaterial({color:0x3f7a3c, roughness:1}); if(!ST) for(let x=-260; x<260; x+=4+Math.random()*4){ const b = new THREE.Mesh(new THREE.SphereGeometry(0.6 + Math.random()*0.6, 7, 6), bushM); b.position.set(x, DY + 0.3, -0.2 + Math.random()*0.5); b.scale.y = 0.7; deckSet.add(b); }   // 난간 밖 절벽 가장자리 덤불
 }
@@ -1843,7 +1843,7 @@ if(FH){
   if(SCENE_ID==='santorini'){
     // 산토리니(이아~피라 칼데라 길): 길은 절벽 꼭대기 70 m. 왼쪽 발아래 짙푸른 칼데라 바다, 가운데 검은 화산섬(네아 카메니), 건너편 티라시아 절벽. 오른쪽 언덕을 따라 흰 집·파란 돔·종탑·풍차가 층층이, 부겐빌레아
     bank.visible = false; road.visible = false; const DY = 70;
-    const PT = plasterTex(); const whiteM = new THREE.MeshStandardMaterial({map:PT.map, bumpMap:PT.bump, bumpScale:0.006, color:0xffffff, roughness:0.9, emissive:0xfff4e0, emissiveIntensity:0.08}); PT.map.repeat.set(0.5, 0.5); const blueM = new THREE.MeshStandardMaterial({color:0x1f5fc4, roughness:0.6}); const darkM = new THREE.MeshStandardMaterial({color:0x3a3430, roughness:1}); const rockM = new THREE.MeshStandardMaterial({color:0x7a5a44, roughness:1});
+    const PT = plasterTex(); const whiteM = new THREE.MeshStandardMaterial({map:PT.map, bumpMap:PT.bump, bumpScale:0.006, color:0xffffff, roughness:0.9, emissive:0xffffff, emissiveIntensity:0.06}); PT.map.repeat.set(0.5, 0.5); const blueM = new THREE.MeshStandardMaterial({color:0x1f5fc4, roughness:0.6}); const darkM = new THREE.MeshStandardMaterial({color:0x3a3430, roughness:1}); const rockM = new THREE.MeshStandardMaterial({color:0x7a5a44, roughness:1});
     // 절벽 아래쪽: 붉은 화산암 절벽이 바다까지 (길 아래 70 m)
     const cliff = new THREE.Mesh(new THREE.BoxGeometry(1600, DY, 14), rockM); cliff.position.set(500, DY/2 - 1, -7.5); hangangSet.add(cliff);
     for(let x=-250; x<1250; x+=6+Math.random()*8){ const h = 3 + Math.random()*8, d = 2 + Math.random()*4; const b = new THREE.Mesh(new THREE.BoxGeometry(4 + Math.random()*6, h, d), new THREE.MeshStandardMaterial({color:[0x8a6a50, 0x6e5040, 0x9c7a5a][Math.random()*3|0], roughness:1})); b.position.set(x, Math.random()*(DY - 10), -14 - d/2); b.rotation.y = (Math.random()-0.5)*0.4; hangangSet.add(b); }   // 절벽면 요철·층
@@ -2181,10 +2181,10 @@ function makeLightShard(){ const g = new THREE.Group(); const m = new THREE.Mesh
 function plasterTex(){
   // 산토리니 회벽: 석회를 여러 번 바른 크림빛 벽. 미세한 얼룩, 붓 자국, 살짝 거친 요철 (범프)
   if(plasterTex.cache) return plasterTex.cache;
-  const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); g.fillStyle = '#f8f4ea'; g.fillRect(0,0,512,512);
-  for(let i=0;i<260;i++){ const x = Math.random()*512, y = Math.random()*512, r = 20 + Math.random()*70; const grd = g.createRadialGradient(x, y, 0, x, y, r); const v = Math.random() < 0.5 ? 'rgba(255,253,247,0.35)' : 'rgba(236,228,212,0.16)'; grd.addColorStop(0, v); grd.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = grd; g.fillRect(x - r, y - r, r*2, r*2); }   // 얼룩
-  for(let i=0;i<900;i++){ g.strokeStyle = `rgba(${238+Math.random()*17},${232+Math.random()*18},${216+Math.random()*20},${0.08+Math.random()*0.12})`; g.lineWidth = 2 + Math.random()*6; const x = Math.random()*512, y = Math.random()*512, a = (Math.random()-0.5)*0.6; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a)*(20 + Math.random()*60), y + Math.sin(a)*(20 + Math.random()*60)); g.stroke(); }   // 붓 자국
-  for(let i=0;i<3000;i++){ const v = 228 + Math.random()*27; g.fillStyle = `rgba(${v},${v-3},${v-10},${0.08+Math.random()*0.12})`; g.fillRect(Math.random()*512, Math.random()*512, 1.5, 1.5); }   // 거친 알갱이 (은은하게)
+  const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); g.fillStyle = '#fbfbfa'; g.fillRect(0,0,512,512);
+  for(let i=0;i<260;i++){ const x = Math.random()*512, y = Math.random()*512, r = 20 + Math.random()*70; const grd = g.createRadialGradient(x, y, 0, x, y, r); const v = Math.random() < 0.5 ? 'rgba(255,255,255,0.35)' : 'rgba(238,238,236,0.14)'; grd.addColorStop(0, v); grd.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = grd; g.fillRect(x - r, y - r, r*2, r*2); }   // 얼룩
+  for(let i=0;i<900;i++){ g.strokeStyle = `rgba(${240+Math.random()*15},${240+Math.random()*15},${238+Math.random()*15},${0.08+Math.random()*0.12})`; g.lineWidth = 2 + Math.random()*6; const x = Math.random()*512, y = Math.random()*512, a = (Math.random()-0.5)*0.6; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a)*(20 + Math.random()*60), y + Math.sin(a)*(20 + Math.random()*60)); g.stroke(); }   // 붓 자국
+  for(let i=0;i<3000;i++){ const v = 232 + Math.random()*23; g.fillStyle = `rgba(${v},${v},${v-2},${0.08+Math.random()*0.12})`; g.fillRect(Math.random()*512, Math.random()*512, 1.5, 1.5); }   // 거친 알갱이 (은은하게)
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.userData.shared = true;
   const bc = document.createElement('canvas'); bc.width = bc.height = 256; const bg = bc.getContext('2d'); bg.fillStyle = '#808080'; bg.fillRect(0,0,256,256); for(let i=0;i<5000;i++){ const v = 100 + Math.random()*110; bg.fillStyle = `rgba(${v},${v},${v},0.5)`; bg.fillRect(Math.random()*256, Math.random()*256, 1 + Math.random()*3, 1 + Math.random()*2); } const b = new THREE.CanvasTexture(bc); b.wrapS = b.wrapT = THREE.RepeatWrapping; b.userData.shared = true;
   plasterTex.cache = {map:t, bump:b}; return plasterTex.cache;
