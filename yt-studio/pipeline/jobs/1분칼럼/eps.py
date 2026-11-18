@@ -204,3 +204,34 @@ EPS += [
     "prompt": "a radio studio window at dusk with the city lights beyond and a microphone silhouette, calm, vertical"},
    OUTRO]},
 ]
+
+
+# ── 11/16 김재원 아나운서 편 2차 (9:16 쇼츠) — 방송 원본 음성 그대로 ──
+EPS += [
+ {"key": "1116", "cover_scene": 1, "audio": str(HERE / "1116_voice.m4a"), "start": 0.0, "end": 0, "speaker": "김재원 아나운서",
+  "rows": ["[사가일터선교 1분 칼럼]", "내 달란트는", "*내 것*이", "아닙니다"], "hand": "\"거저 받았으니 거저 주라, 마태복음 10:8\"",
+  "scenes": [
+   {"lines": ["[사가일터선교 1분 칼럼] 거저 받았으니 거저 주라", "FEBC 1분 칼럼, 사랑글로벌아카데미와 함께합니다."],
+    "prompt": "a classic broadcast studio microphone on a wooden desk in warm morning light, soft bokeh, radio station, still life, vertical composition"},
+   {"lines": ["안녕하십니까? 아나운서 김재원입니다.", "저는 30년 넘게 아나운서로 방송 일을 하며 살아왔습니다."],
+    "prompt": "an empty television news studio desk with a microphone and soft studio lights, a wall clock, calm warm tones, vertical"},
+   {"lines": ["그런데 방송 일을 오래 하면 할수록", "깨닫는 것이 한 가지 있습니다."],
+    "prompt": "old reel-to-reel tapes and a stack of broadcast scripts on a shelf in warm lamp light, still life, vertical"},
+   {"lines": ["제가 내는 이 목소리는, 제가 짓는 이 표정은,", "제가 건네는 위로의 말은", "제가 만든 것이 아니라는 것입니다."],
+    "prompt": "a vintage microphone in front of a softly glowing sound wave on a studio monitor, dark warm room, vertical"},
+   {"lines": ["여러분도 다르지 않으실 겁니다."],
+    "prompt": "a quiet open-plan office at sunrise with rows of empty desks, golden light through tall windows, vertical"},
+   {"lines": ["숫자에 밝은 것도, 사람 마음을 잘 헤아리는 것도,", "손끝이 야무진 것도"],
+    "prompt": "a calculator and ledger, a cup of tea for two, and neat sewing tools arranged on one wooden table, soft daylight, still life, vertical"},
+   {"lines": ["우리가 스스로 만든 능력이 아니라", "하나님이 맡겨 주신 것입니다."],
+    "prompt": "a small wooden box with a few old gold coins on a desk by a window, soft morning light, still life, vertical"},
+   {"lines": ["성경은 말씀합니다.", "너희가 거저 받았으니 거저 주라."],
+    "prompt": "an old leather bible lying open on a plain wooden table with a ribbon marker, soft daylight, vertical"},
+   {"lines": ["내 달란트가 내 것이 아니라는 것을 아는 사람은", "그것으로 나를 높이지 않습니다."],
+    "prompt": "a single lit candle on a low wooden table in a dim room, humble and quiet, vertical"},
+   {"lines": ["오늘 여러분의 일터에서 그 달란트로", "누군가를 살리고 세우십시오."],
+    "prompt": "a young sapling tied gently to a wooden support stake in a garden at sunrise, dew, vertical"},
+   {"lines": ["값없이 받았으니 값없이 흘려보내시기 바랍니다."],
+    "prompt": "a clear mountain stream flowing over stones through a green valley in morning light, vertical"},
+   OUTRO]},
+]
