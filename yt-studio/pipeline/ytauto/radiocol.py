@@ -454,7 +454,7 @@ def make_wide(ep: dict, work: Path, cfg: dict, fonts: dict, series_label: str = 
     shorts.finish(base, raw, ov, audio=str(voice), duck=False, fade=0.35, rise=14)  # 끝 효과음 없음, 자막은 서서히
     ci = ep.get("cover_scene", 0)  # 표지 사진: 편마다 다른 장면을 고른다 (첫 장면이 같은 편이 여럿이라)
     first = Path(sc[ci]["bg_h"]) if sc[ci].get("bg_h") else None
-    cov = cover(work / f"{ep['key']}_표지_가로.jpg", first, ep["rows"], fonts, series_label, top_right, (1920, 1080),
+    cov = cover(work / f"{ep['key']}_표지_가로.jpg", first, ep.get("rows_wide") or ep["rows"], fonts, series_label, top_right, (1920, 1080),
                 ep.get("hand", ""), ep.get("title_pt", 0))
     out = shorts.with_cover(raw, cov, work / f"{ep['key']}_가로.mp4")
     (work / "scenes_w.json").write_text(json.dumps(sc, ensure_ascii=False, indent=1), encoding="utf-8")
