@@ -431,7 +431,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-18-254';
+window.__BUILD = '2026-11-18-255';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -2553,7 +2553,7 @@ if(GUNG){
       const ttex = new THREE.CanvasTexture(tc); ttex.wrapS = THREE.RepeatWrapping; ttex.repeat.set(250, 1); ttex.colorSpace = THREE.SRGBColorSpace; const trail = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1.2).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({map:ttex, roughness:1})); trail.position.set(500, 0.03, 2.2); trail.receiveShadow = true; gungSet.add(trail); }   // 핑크뮬리 사이로 난 한 사람 폭 오솔길 (1.2 m) — 사방이 핑크뮬리
     const cardGeo = new THREE.PlaneGeometry(3.0, 2.3).translate(0, 1.05, 0); const spots = [];
     for(let x=0; x<1000; x+=0.6){ for(const [z0, z1] of [[-0.2, -31],[9.2, 40]]){ const n = 3 + (Math.random()*2|0); for(let k=0;k<n;k++){ const u = Math.random(); spots.push([x + Math.random()*0.6, z0 + (z1 - z0)*u, 1]); } } }   // 들판: 빼곡하게
-    for(let x=0; x<1000; x+=0.8){ for(const [z0, z1, sc] of [[-0.2, 1.55, 0.5],[2.85, 9.4, 0.5]]){ const n = 1 + (Math.random()*2|0); for(let k=0;k<n;k++){ const zz = z0 + (z1 - z0)*Math.random(); const nearT = Math.min(Math.abs(zz - 1.55), Math.abs(zz - 2.85)); spots.push([x + Math.random()*0.8, zz, sc*(0.8 + Math.random()*0.4)*(0.7 + 0.3*Math.min(1, nearT/3))]); } } }   // 오솔길 바로 옆은 무릎 높이, 멀어질수록 허리 높이 → 러너가 묻히지 않는다   // 오솔길 양옆까지 핑크뮬리가 바짝 — 그 사이로 달린다
+    for(let x=0; x<1000; x+=0.8){ for(const [z0, z1, sc] of [[-0.2, 1.55, 0.85],[2.85, 9.4, 0.85]]){ const n = 2 + (Math.random()*2|0); for(let k=0;k<n;k++){ const zz = z0 + (z1 - z0)*Math.random(); const nearT = Math.min(Math.abs(zz - 1.55), Math.abs(zz - 2.85)); spots.push([x + Math.random()*0.8, zz, sc*(0.85 + Math.random()*0.35)*(0.82 + 0.18*Math.min(1, nearT/2))]); } } }   // 오솔길 바로 옆은 허리 조금 아래, 조금만 떨어지면 허리 높이로 빼곡 (휑하지 않게)   // 오솔길 양옆까지 핑크뮬리가 바짝 — 그 사이로 달린다
     for(let x=0; x<1000; x+=2.5){ spots.push([x + Math.random()*2, -31 - Math.random()*40, 1.6]); spots.push([x + Math.random()*2, 40 + Math.random()*40, 1.6]); }   // 먼 들판: 큰 카드 성기게, 지평선까지 분홍이 이어진다
     for(let k=0;k<2;k++){ const inst = new THREE.InstancedMesh(cardGeo, muhlyM, spots.length); const d = new THREE.Object3D(); spots.forEach((sp, i)=>{ d.position.set(sp[0], 0, sp[1]); d.rotation.set(0, k*Math.PI/2 + (Math.random()-0.5)*0.9, 0); const sc = (0.8 + Math.random()*0.7)*(sp[2] || 1); d.scale.set(sc, sc*(0.9 + Math.random()*0.4), sc); d.updateMatrix(); inst.setMatrixAt(i, d.matrix); }); inst.frustumCulled = false; gungSet.add(inst); muhlyInst.push(inst); }   // 두 장 교차 카드
     { const cyM = new THREE.MeshStandardMaterial({color:0x1f3d2a, roughness:1}); for(let x=0; x<1000; x+=7+Math.random()*9){ const h = 9 + Math.random()*6; const cy = new THREE.Mesh(new THREE.ConeGeometry(1.4 + Math.random()*0.6, h, 7), cyM); cy.position.set(x, h/2, -31 - Math.random()*4); gungSet.add(cy); } }   // 들판 끝 삼나무 줄 (사진 배경)
