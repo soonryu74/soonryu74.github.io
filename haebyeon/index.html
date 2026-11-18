@@ -156,6 +156,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   .row-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
   .rec-badge{position:absolute;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;z-index:30}
   .rec-badge[hidden]{display:none}
+  .photodone{width:min(92vw,380px);padding:14px 14px 14px}.photodone img{display:block;width:100%;max-height:52vh;object-fit:contain;border-radius:12px;background:#000;margin:8px 0 10px;-webkit-touch-callout:default}.photodone p{margin:0 0 10px;font-size:14px}
   .rec-badge i{width:9px;height:9px;border-radius:50%;background:#ff4d4d;animation:breathe 1s ease-in-out infinite}
   #rec.is-rec{background:#ff6b6b;color:#fff}
   .letter small{display:block;font-size:11px;letter-spacing:2px;color:var(--mist);margin-bottom:10px}
@@ -316,6 +317,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <div id="breath" class="breath"><div class="breath-ring" id="breath-ring"></div><div class="breath-label" id="breath-label">들이쉬고</div></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div id="rec-badge" class="rec-badge" hidden><i></i><span id="rec-time">0:00</span></div>
+  <div id="photodone" class="letter photodone" role="dialog" aria-live="polite"><small>사진</small><img id="photo-img" alt="방금 찍은 사진"><p id="photodone-text">사진을 <b>길게 누르면</b> 갤러리에 저장돼요</p><div class="row-btns"><button class="btn small" id="photo-share" type="button">공유하기</button><button class="btn ghost small" id="photo-dl" type="button">다운로드</button><button class="btn ghost small" id="photo-close" type="button">닫기</button></div></div>
   <div id="recdone" class="letter" role="dialog" aria-live="polite"><small>녹화 완료</small><p id="recdone-text">세로 영상이 준비됐어요.<br>공유를 누르면 유튜브 쇼츠·인스타 릴스 앱으로 바로 보낼 수 있어요.</p><div class="row-btns"><button class="btn small" id="rec-share" type="button">공유하기</button><button class="btn ghost small" id="rec-save" type="button">저장</button><button class="btn ghost small" id="rec-close" type="button">닫기</button></div></div>
   <div id="letter" class="letter" role="dialog" aria-live="polite"><small id="letter-kind">유리병 속 편지</small><p id="letter-text"></p><button class="btn ghost small" id="letter-close" type="button">바다에 다시 띄우기</button></div>
 </div>
@@ -429,7 +431,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-18-252';
+window.__BUILD = '2026-11-18-253';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -3425,10 +3427,18 @@ async function takePhoto(){
   g.font = `600 ${Math.round(34*k)}px ${F}`; g.textAlign = 'right'; g.fillStyle = 'rgba(0,0,0,.35)'; g.fillText(cap, sw - 40*k + 2, sh - 44*k + 2); g.fillStyle = '#fff'; g.fillText(cap, sw - 40*k, sh - 44*k);
   g.font = `500 ${Math.round(24*k)}px ${F}`; g.fillStyle = 'rgba(255,255,255,.8)'; g.fillText(location.host + location.pathname, sw - 40*k, sh - 14*k);
   const blob = await new Promise(res=>c.toBlob(res, 'image/jpeg', 0.92));
-  const file = new File([blob], `${SC.name}-사진.jpg`, {type:'image/jpeg'});
-  try{ if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:SC.title}); say('사진을 보냈어요'); return; } }catch(e){ if(e && e.name==='AbortError'){ say('공유 창을 닫았어요'); return; } }
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000); say('사진을 저장했어요', 2600);
+  const name = `${SC.name}-사진.jpg`; const file = new File([blob], name, {type:'image/jpeg'});
+  // 찍은 사진을 바로 화면에 띄운다: 길게 눌러 갤러리에 저장(카톡·인스타 등 앱 안 브라우저에서 가장 확실), 공유·다운로드 버튼도 함께
+  photo.file = file; photo.url = c.toDataURL('image/jpeg', 0.92); $('photo-img').src = photo.url; $('photo-share').hidden = !(navigator.canShare && navigator.canShare({files:[file]}));
+  $('photodone-text').innerHTML = IN_APP ? '사진을 <b>길게 누르면</b> 갤러리에 저장돼요' : '사진을 <b>길게 누르면</b> 저장돼요 · 다운로드는 내 파일 › Download 폴더';
+  $('photodone').classList.add('is-on'); hold(false);
+  if(!IN_APP) photoDownload();   // 일반 브라우저는 바로 다운로드까지
 }
+const photo = {file:null, url:null};
+function photoDownload(){ if(!photo.file) return; const a = document.createElement('a'); a.href = photo.url; a.download = photo.file.name; document.body.appendChild(a); a.click(); a.remove(); say(IN_APP ? '다운로드했어요 · 내 파일 › Download 폴더' : '사진을 저장했어요 · Download 폴더', 3000); }
+$('photo-dl').addEventListener('click', photoDownload);
+$('photo-share').addEventListener('click', async ()=>{ try{ await navigator.share({files:[photo.file], title:SC.title}); say('사진을 보냈어요'); }catch(e){ if(!(e && e.name==='AbortError')) say('공유가 안 돼요 · 사진을 길게 눌러 저장해 보세요', 3000); } });
+$('photo-close').addEventListener('click', ()=>$('photodone').classList.remove('is-on'));
 $('rest-photo').addEventListener('click', ()=>{ $('rest').classList.add('is-mini'); setTimeout(takePhoto, 350); });
 $('end-share').addEventListener('click', shareCard);
 
