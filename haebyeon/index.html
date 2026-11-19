@@ -431,7 +431,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-19-259';
+window.__BUILD = '2026-11-19-260';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -452,7 +452,7 @@ SCENES.beach.todOffset = 0.02; SCENES.hangang.todOffset = 0.22;
 SCENES.busan = {...SCENES.beach, todOffset:0.42, name:'광안리', eyebrow:'BUSAN RUN', title:'부산 광안리, 잠깐 달려요', shareText:'광안대교 불빛 옆을 달리는 온라인 해변', cardTitle:'광안리, 잠깐 달렸어요', chan:'busan', deep:{value:0x2a7fa0}, shallow:0x7fd0d2};
 SCENES.ulsan = {...SCENES.beach, todOffset:0.12, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.3, name:'대왕암', eyebrow:'ULSAN RUN', title:'울산 대왕암, 잠깐 달려요', shareText:'해송 숲길과 바위섬 다리를 달리는 온라인 바닷길', cardTitle:'대왕암, 잠깐 달렸어요', chan:'ulsan', deep:{value:0x1f6f95}, shallow:0x7cc6cf, collect:'솔방울', sitMsg:'소나무 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.jejucoast = {...SCENES.beach, todOffset:0.3, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.25, name:'제주 해안', eyebrow:'JEJU COAST', title:'제주 해안길, 잠깐 달려요', shareText:'현무암 해안과 에메랄드 바다 옆을 달리는 온라인 올레길', cardTitle:'제주 해안길, 잠깐 달렸어요', chan:'jejucoast', deep:{value:0x2290a8}, shallow:0x9fe6dc, collect:'귤', bird:'jeju'};
-SCENES.dongbaek = {...SCENES.beach, todOffset:0.36, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.2, name:'부산 동백섬길', eyebrow:'DONGBAEK RUN', title:'해운대 동백섬 둘레길, 잠깐 달려요', shareText:'동백꽃과 해송 사이, 바위 해안을 따라 도는 해운대 동백섬 둘레길', cardTitle:'동백섬길, 잠깐 달렸어요', chan:'dongbaek', deep:{value:0x1f6f98}, shallow:0x7fc8d8, collect:'동백꽃', bird:'gull', sitMsg:'바다 쪽 데크 벤치로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', soundMsg:'파도와 갈매기 소리가 들려요'};
+SCENES.dongbaek = {...SCENES.beach, todOffset:0.36, ground:'olle', laneMin:1.8, laneMax:7.0, dryLane:5.0, tideAmp:0.2, name:'부산 동백섬길', eyebrow:'DONGBAEK RUN', title:'해운대 동백섬 둘레길, 잠깐 달려요', shareText:'동백꽃과 해송 사이, 바위 해안을 따라 도는 해운대 동백섬 둘레길', cardTitle:'동백섬길, 잠깐 달렸어요', chan:'dongbaek', deep:{value:0x1f6f98}, shallow:0x7fc8d8, collect:'동백꽃', bird:'gull', sitMsg:'바다 쪽 데크 벤치로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', soundMsg:'파도와 갈매기 소리가 들려요'};
 SCENES.chuncheon = {...SCENES.hangang, todOffset:0.08, ground:'deck', laneMin:1.4, dryLane:5.6, sitMsg:'난간 옆으로 가요 · 호수가 내려다보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 바람이 지워 줘요', name:'의암호', eyebrow:'CHUNCHEON RUN', title:'춘천 의암호, 잠깐 달려요', shareText:'안개 낀 호수와 산을 보며 달리는 온라인 호숫길', cardTitle:'의암호, 잠깐 달렸어요', chan:'chuncheon', deep:{value:0x3f7f8f}, shallow:0x8fc8c8, waveAmp:0.25, seaVol:0.3, collect:'단풍잎'};
 SCENES.cheorwon = {...SCENES.hangang, todOffset:0.2, ground:'deck', laneMin:1.4, dryLane:5.6, name:'주상절리길', eyebrow:'CHEORWON RUN', title:'철원 주상절리길, 잠깐 달려요', shareText:'한탄강 협곡 절벽에 매달린 잔도를 달리는 온라인 트레일', cardTitle:'주상절리길, 잠깐 달렸어요', chan:'cheorwon', deep:{value:0x1f7f82}, shallow:0x7fd0c4, waveAmp:0.35, seaVol:0.5, collect:'돌멩이', sitMsg:'난간 옆으로 가요 · 협곡이 내려다보여요', sandMsg:'잔도에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.niagara = {...SCENES.hangang, todOffset:0.15, ground:'stonepath', laneMin:1.6, dryLane:5.4, tideAmp:0, name:'나이아가라', eyebrow:'NIAGARA RUN', title:'나이아가라 폭포길, 잠깐 달려요', shareText:'물안개 속 나이아가라 폭포 옆 데크를 달리는 온라인 트레일', cardTitle:'나이아가라, 잠깐 달렸어요', chan:'niagara', deep:{value:0x1f6a7c}, shallow:0x7fc8c8, waveAmp:0.6, seaVol:1.0, bird:'gull', collect:'물방울', sitMsg:'난간 옆으로 가요 · 폭포가 보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 물안개가 지워 줘요', abroad:true, soundMsg:'폭포 소리가 들려요'};
@@ -1803,7 +1803,7 @@ if(SC.ground==='olle'){
     const woodM = new THREE.MeshStandardMaterial({color:0x7a5a3e, roughness:1}); for(const y of [0.5, 0.95]){ const rail = new THREE.Mesh(new THREE.BoxGeometry(1500, 0.07, 0.07), woodM); rail.position.set(500, y, 0.9); beachSet.add(rail); } for(let x=-200; x<1200; x+=2){ const p = new THREE.Mesh(new THREE.BoxGeometry(0.09, 1.05, 0.09), woodM); p.position.set(x, 0.52, 0.9); beachSet.add(p); }
     // 동백나무: 둥근 짙은 녹색 지붕 + 빨간 꽃 점점이 (인스턴스)
     const makeDongbaek = ()=>{ const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.14, 1.4, 6), new THREE.MeshStandardMaterial({color:0x5a4a3a, roughness:1})); trunk.position.y = 0.7; g.add(trunk); const leafM = new THREE.MeshStandardMaterial({color:0x1f4a2a, roughness:0.55}); for(let i=0;i<4;i++){ const c = new THREE.Mesh(new THREE.SphereGeometry(0.9 + Math.random()*0.4, 9, 7), leafM); c.position.set((Math.random()-0.5)*0.9, 1.9 + Math.random()*0.8, (Math.random()-0.5)*0.9); g.add(c); } const flM = new THREE.MeshStandardMaterial({color:0xd8283c, roughness:0.8}); for(let i=0;i<14;i++){ const a = Math.random()*Math.PI*2, e = Math.random()*Math.PI; const r = 1.25; const f = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 5), flM); f.position.set(Math.cos(a)*Math.sin(e)*r, 2.2 + Math.cos(e)*r*0.8, Math.sin(a)*Math.sin(e)*r); g.add(f); } return g; };
-    const DB = []; for(let x=-200; x<1200; x+=2.6+Math.random()*2){ DB.push([x, 7.6 + Math.random()*1.5, 0.9 + Math.random()*0.5, Math.random()*Math.PI*2]); if(Math.random() < 0.6) DB.push([x + 1.2, 10 + Math.random()*4, 1.0 + Math.random()*0.5, Math.random()*Math.PI*2]); if(Math.random() < 0.25) DB.push([x, 1.6 + Math.random()*0.6, 0.7, Math.random()*Math.PI*2]); } plantInstanced(beachSet, makeDongbaek, DB, 4);
+    const DB = []; for(let x=-200; x<1200; x+=2.6+Math.random()*2){ DB.push([x, 9.2 + Math.random()*1.5, 0.9 + Math.random()*0.5, Math.random()*Math.PI*2]); if(Math.random() < 0.6) DB.push([x + 1.2, 11.5 + Math.random()*4, 1.0 + Math.random()*0.5, Math.random()*Math.PI*2]); }   // 길(lane ≤ 7) 밖에만, 길 쪽엔 안 심는다 (통과 방지) plantInstanced(beachSet, makeDongbaek, DB, 4);
     const PN2 = []; for(let x=-200; x<1200; x+=6+Math.random()*7) PN2.push([x, 12 + Math.random()*14, 1.1 + Math.random()*0.5, Math.random()*Math.PI*2]); plantInstanced(beachSet, makeKuromatsu, PN2, 4);   // 해송
     const fallen = new THREE.MeshStandardMaterial({color:0xc83040, roughness:1}); for(let x=-200; x<1200; x+=1.5){ if(Math.random() < 0.4) continue; const f = new THREE.Mesh(new THREE.CircleGeometry(0.1, 7).rotateX(-Math.PI/2), fallen); f.position.set(x + Math.random(), 0.04, 1.6 + Math.random()*5.5); beachSet.add(f); }   // 길에 떨어진 동백꽃
     const hillM6 = new THREE.MeshStandardMaterial({color:0x2f5a38, roughness:1}); const hill = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10), hillM6); hill.scale.set(900, 60, 120); hill.position.set(500, -8, 90); beachSet.add(hill);   // 섬 가운데 솔숲 언덕
@@ -3025,7 +3025,7 @@ function populateTo(limitX){
     if(SCENE_ID==='ulsan' && x > nextRockBridge){ nextRockBridge = x + 320 + Math.random()*120; const o = makeRockBridge(); o.position.set(x + 40, 0, 0); scene.add(o); props.push({obj:o, kind:'rockbridge'}); genX += 2; continue; }
     if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.0, -0.4 + Math.random()*2.2); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
     else if(r < 0.46){ const o = makeShell(); o.position.set(x + Math.random(), 0.02, -0.8 + Math.random()*5.6); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
-    else if(r < 0.52){ if(SCENE_ID==='ulsan') continue; const o = makeDriftwood(); o.position.set(x, 0, 7 + Math.random()*4); o.rotation.y = Math.random()*Math.PI; scene.add(o); props.push({obj:o, kind:'wood'}); }
+    else if(r < 0.52){ if(SCENE_ID==='ulsan' || SCENE_ID==='dongbaek') continue; const o = makeDriftwood(); o.position.set(x, 0, 7 + Math.random()*4); o.rotation.y = Math.random()*Math.PI; scene.add(o); props.push({obj:o, kind:'wood'}); }
     else if(r < 0.57){ if(SCENE_ID==='ulsan' || SCENE_ID==='jejucoast' || SCENE_ID==='dongbaek') continue; const o = makeRock(); o.position.set(x, 0, -1 + Math.random()*2.5); scene.add(o); props.push({obj:o, kind:'rock'}); }
     else if(r < 0.74){ if(SCENE_ID==='jejucoast' || SCENE_ID==='ulsan' || SCENE_ID==='dongbaek') continue; const o = makeDuneBush(); o.position.set(x, 0.4 + Math.random()*1.2, 15 + Math.random()*9); scene.add(o); props.push({obj:o, kind:'bush'}); }
     else { if(SCENE_ID==='jejucoast' || SCENE_ID==='busan' || SCENE_ID==='dongbaek') continue; const o = makeGrass(); o.position.set(x, 0.3+Math.random()*1.2, 12 + Math.random()*8); scene.add(o); props.push({obj:o, kind:'grass'}); }
@@ -3660,15 +3660,15 @@ function frame(){
         buddy.position.set(buddyState.x, lying ? -0.16 : air*0.03*k*gait, buddyState.z);
         const sitTiltGoal = (sitting && !lying) ? (isCat ? 0.42 : 0.55) : 0;   // 앉으면 엉덩이를 내리고 가슴을 세운다
         U._sitTilt = THREE.MathUtils.damp(U._sitTilt || 0, sitTiltGoal, 5, dt);
-        buddy.rotation.z = (0.04*(1 - k) + 0.13*k)*Math.cos(ph)*gait + U._sitTilt;   // 달리면 등이 앞뒤로 크게 흔들린다 (뒷다리 모을 때 엉덩이 들림, 뻗을 때 가슴 들림)
-        if(U.body){ U.body.scale.set(1 + (0.03 + 0.07*k)*ext*gait, 1 - 0.03*ext*k, 1); }   // 척추: 뻗을 때 길어지고 모을 때 둥글게
+        buddy.rotation.z = (0.04*(1 - k) + 0.06*k)*Math.cos(ph)*gait + U._sitTilt;   // 달리면 등이 앞뒤로 크게 흔들린다 (뒷다리 모을 때 엉덩이 들림, 뻗을 때 가슴 들림)
+        if(U.body){ U.body.scale.set(1 + (0.03 + 0.03*k)*ext*gait, 1 - 0.015*ext*k, 1); }   // 척추: 뻗을 때 길어지고 모을 때 둥글게
         if(U.headG){ const hy = isCat ? 0.52 : 0.62, hx = isCat ? 0.2 : 0.3; U.headG.rotation.z = -buddy.rotation.z + Math.sin(ph*2)*0.04*gait - 0.08*k; U.headG.position.y = hy - 0.01*air*gait; U.headG.position.x = hx + 0.04*k; }
         if(U.ears){ U.ears.forEach((e,i)=>{ e.rotation.z = 0.2 + Math.sin(ph*2 + i*0.7)*0.18*gait - 0.3*k; }); }
         if(U.tongue){ U.tongue.visible = gait > 0.6 && !sitting; }
         U._needGround = !sitting && !lying;
         if(lying){ buddy.rotation.y = Math.PI/2; buddy.rotation.z = 0; }
         const faceZ = kind==='cat' && cat.mode==='wander' ? (cat.target < 0 ? Math.PI/2 : -Math.PI/2) : Math.PI/2;
-        if(U._needGround){ buddy.updateMatrixWorld(true); let minY = Infinity; for(const l of U.legs){ const paw = l.userData.paw || l.children[1] || l; paw.getWorldPosition(_fw); minY = Math.min(minY, _fw.y - (l.children[1] ? 0.05 : 0.08)); } if(isFinite(minY)) buddy.position.y += (air*0.03*k*gait) - minY + susp*(0.04*(1 - k) + 0.11*k)*gait; }   /* 걸을 땐 살짝, 달릴 땐 한 보폭에 한 번 네 발이 뜬다 */
+        if(U._needGround){ buddy.updateMatrixWorld(true); let minY = Infinity; for(const l of U.legs){ const paw = l.userData.paw || l.children[1] || l; paw.getWorldPosition(_fw); minY = Math.min(minY, _fw.y - (l.children[1] ? 0.05 : 0.08)); } if(isFinite(minY)) buddy.position.y += (air*0.03*k*gait) - minY + susp*(0.03*(1 - k) + 0.05*k)*gait; }   /* 걸을 땐 살짝, 달릴 땐 한 보폭에 한 번 네 발이 뜬다 */
         const heading = Math.atan2(-(buddyState.z - tz), 1);
         buddy.rotation.y = THREE.MathUtils.damp(buddy.rotation.y, lying ? Math.PI/2 : (sitting ? faceZ : THREE.MathUtils.clamp(heading, -0.6, 0.6)), 4, dt);
         U.legs.forEach((l,i)=>{
@@ -3678,11 +3678,11 @@ function frame(){
           l.rotation.x = THREE.MathUtils.damp(l.rotation.x, 0, 8, dt);
           const front = i < 2, left = (i % 2) === 0;
           // 걷기: 대각선 짝 트롯(왼앞+오른뒤). 달리기: 갤럽 — 앞다리 둘이 거의 같이, 뒷다리 둘이 거의 같이, 앞·뒤는 반 박자 어긋남. k 로 섞는다
-          const trotOff = (front === left) ? 0 : Math.PI; const galOff = front ? (left ? 0 : 0.45) : (left ? Math.PI + 0.25 : Math.PI + 0.7);
+          const trotOff = (front === left) ? 0 : Math.PI; const galOff = front ? (left ? 0 : 0.9) : (left ? Math.PI : Math.PI + 0.9);
           const off = trotOff + (galOff - trotOff)*k; const phase = ph + off;
-          const amp = (0.45 + 0.4*k)*gait; l.rotation.z = Math.sin(phase)*amp + (front ? -0.1 : 0.12)*k*gait;   // 달릴 땐 앞다리는 앞으로, 뒷다리는 뒤로 더 뻗는다
+          const amp = (0.45 + 0.15*k)*gait; l.rotation.z = Math.sin(phase)*amp + (front ? -0.05 : 0.06)*k*gait;   // 달릴 땐 앞다리는 앞으로, 뒷다리는 뒤로 더 뻗는다
           if(l.userData.knee){ const swing = Math.max(0, Math.cos(phase));   // 다리를 앞으로 가져올 때(발이 뜬 구간) 무릎이 접힌다
-            l.userData.knee.rotation.z = (front ? -1 : 1)*swing*(0.5 + 0.9*k)*gait*(front ? 1 : 0.8) + (front ? 0 : -0.25*k*gait); }   // 앞다리는 뒤로 접히고(손목), 뒷다리는 앞으로 접힌다(무릎)
+            l.userData.knee.rotation.z = (front ? -1 : 1)*swing*(0.45 + 0.35*k)*gait*(front ? 1 : 0.8) + (front ? 0 : -0.12*k*gait); }   // 앞다리는 뒤로 접히고(손목), 뒷다리는 앞으로 접힌다(무릎)
         });
         if(sitting && !lying){ restOnGround(buddy, 0.02); }
         if(kind==='dog'){ buddy.userData.tail.rotation.x = Math.sin(t*(lying ? 6 : 8))*(lying ? 0.9 : 0.55*(0.6 + 0.4*gait)); if(buddy.userData.tail.geometry.type==='CapsuleGeometry') buddy.userData.tail.rotation.z = 0.7 + 0.4*k; } else buddy.userData.tail.rotation.x = Math.sin(t*2.5)*0.5;
