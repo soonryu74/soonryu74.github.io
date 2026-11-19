@@ -431,7 +431,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-19-260';
+window.__BUILD = '2026-11-19-261';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -3678,7 +3678,7 @@ function frame(){
           l.rotation.x = THREE.MathUtils.damp(l.rotation.x, 0, 8, dt);
           const front = i < 2, left = (i % 2) === 0;
           // 걷기: 대각선 짝 트롯(왼앞+오른뒤). 달리기: 갤럽 — 앞다리 둘이 거의 같이, 뒷다리 둘이 거의 같이, 앞·뒤는 반 박자 어긋남. k 로 섞는다
-          const trotOff = (front === left) ? 0 : Math.PI; const galOff = front ? (left ? 0 : 0.9) : (left ? Math.PI : Math.PI + 0.9);
+          const walkOff = front ? (left ? Math.PI/2 : Math.PI*1.5) : (left ? 0 : Math.PI); const galOff = front ? (left ? 0 : 0.75) : (left ? Math.PI*0.8 : Math.PI*0.8 + 0.75); const trotOff = walkOff;   // 걷기: 4박자(왼뒤→왼앞→오른뒤→오른앞), 달리기: 네 발이 조금씩 어긋나는 회전 갤럽 — 어느 속도에서도 두 발이 똑같이 움직이지 않는다
           const off = trotOff + (galOff - trotOff)*k; const phase = ph + off;
           const amp = (0.45 + 0.15*k)*gait; l.rotation.z = Math.sin(phase)*amp + (front ? -0.05 : 0.06)*k*gait;   // 달릴 땐 앞다리는 앞으로, 뒷다리는 뒤로 더 뻗는다
           if(l.userData.knee){ const swing = Math.max(0, Math.cos(phase));   // 다리를 앞으로 가져올 때(발이 뜬 구간) 무릎이 접힌다
