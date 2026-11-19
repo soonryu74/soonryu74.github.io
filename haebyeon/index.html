@@ -431,7 +431,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <script>
 // 버전 확인: 서버의 최신 파일에 적힌 버전과 다르면 한 번 새로고침 (카카오톡·삼성 브라우저 캐시 대응)
-window.__BUILD = '2026-11-19-257';
+window.__BUILD = '2026-11-19-258';
 (async()=>{ try{ if(sessionStorage.getItem('haebyeon.reloaded')===window.__BUILD) return; const r = await fetch(location.pathname + '?nocache=' + Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/__BUILD = '([^']+)'/); if(m && m[1] !== window.__BUILD){ sessionStorage.setItem('haebyeon.reloaded', m[1]); location.reload(true); } }catch(e){} })();
 </script>
 <script type="module">
@@ -440,8 +440,8 @@ const SB_URL = 'https://dxhmprqfgigljgbstqrg.supabase.co', SB_KEY = 'sb_publisha
 const ROOM_CAP = 30, LOOP_LEN = 1000; // 방당 30명 · 해변은 1 km 로 이어져 다시 만난다
 
 /* ---------- 상수·상태 ---------- */
-const SCENE_ID = (()=>{ const v = new URL(location.href).searchParams.get('scene'); return ['hangang','gung','busan','ulsan','jeju','jejucoast','chuncheon','cheorwon','snow','jeonju','forest','pine','bamboo','niagara','blossom','aurora','uyuni','muhly','maple','meta','melb','steppe','tokyo','slot','birch','sydney','santorini','gyeongpo'].includes(v) ? v : 'beach'; })();
-const FAMILY = {beach:'beach', busan:'beach', ulsan:'beach', jejucoast:'beach', jeju:'gung', hangang:'hangang', sydney:'hangang', santorini:'hangang', gyeongpo:'hangang', chuncheon:'hangang', cheorwon:'hangang', snow:'hangang', aurora:'hangang', uyuni:'hangang', niagara:'hangang', gung:'gung', jeonju:'gung', forest:'gung', pine:'gung', bamboo:'gung', blossom:'gung', muhly:'gung', maple:'gung', meta:'gung', melb:'gung', steppe:'gung', tokyo:'gung', slot:'gung', birch:'gung'}[SCENE_ID];
+const SCENE_ID = (()=>{ const v = new URL(location.href).searchParams.get('scene'); return ['hangang','gung','busan','ulsan','jeju','jejucoast','chuncheon','cheorwon','snow','jeonju','forest','pine','bamboo','niagara','blossom','aurora','uyuni','muhly','maple','meta','melb','steppe','tokyo','slot','birch','sydney','santorini','gyeongpo','dongbaek'].includes(v) ? v : 'beach'; })();
+const FAMILY = {beach:'beach', busan:'beach', dongbaek:'beach', ulsan:'beach', jejucoast:'beach', jeju:'gung', hangang:'hangang', sydney:'hangang', santorini:'hangang', gyeongpo:'hangang', chuncheon:'hangang', cheorwon:'hangang', snow:'hangang', aurora:'hangang', uyuni:'hangang', niagara:'hangang', gung:'gung', jeonju:'gung', forest:'gung', pine:'gung', bamboo:'gung', blossom:'gung', muhly:'gung', maple:'gung', meta:'gung', melb:'gung', steppe:'gung', tokyo:'gung', slot:'gung', birch:'gung'}[SCENE_ID];
 const FB = FAMILY==='beach', FH = FAMILY==='hangang', FG = FAMILY==='gung';
 const SCENES = {
   beach:   {name:'해변', eyebrow:'BEACH RUN', title:'해변, 잠깐 달려요', laneMin:-2.6, dryLane:5.4, laneSea:'왼쪽', laneSand:'오른쪽', collect:'조개', shareText:'말없이 파도 옆을 달리는 온라인 해변', cardTitle:'해변, 잠깐 달렸어요', deep:{value:0x2d8fa8}, shallow:0x8fdcd6, waveAmp:1, foamAmt:1, tideAmp:1, seaVol:1, bird:'gull', chan:'beach', ground:'sand', sitMsg:'물에서 조금 떨어진 모래로 올라가요', sandMsg:'모래에 한 줄 써 보세요 · 파도가 지워 줘요'},
@@ -452,6 +452,7 @@ SCENES.beach.todOffset = 0.02; SCENES.hangang.todOffset = 0.22;
 SCENES.busan = {...SCENES.beach, todOffset:0.42, name:'광안리', eyebrow:'BUSAN RUN', title:'부산 광안리, 잠깐 달려요', shareText:'광안대교 불빛 옆을 달리는 온라인 해변', cardTitle:'광안리, 잠깐 달렸어요', chan:'busan', deep:{value:0x2a7fa0}, shallow:0x7fd0d2};
 SCENES.ulsan = {...SCENES.beach, todOffset:0.12, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.3, name:'대왕암', eyebrow:'ULSAN RUN', title:'울산 대왕암, 잠깐 달려요', shareText:'해송 숲길과 바위섬 다리를 달리는 온라인 바닷길', cardTitle:'대왕암, 잠깐 달렸어요', chan:'ulsan', deep:{value:0x1f6f95}, shallow:0x7cc6cf, collect:'솔방울', sitMsg:'소나무 아래 벤치 쪽으로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.jejucoast = {...SCENES.beach, todOffset:0.3, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.25, name:'제주 해안', eyebrow:'JEJU COAST', title:'제주 해안길, 잠깐 달려요', shareText:'현무암 해안과 에메랄드 바다 옆을 달리는 온라인 올레길', cardTitle:'제주 해안길, 잠깐 달렸어요', chan:'jejucoast', deep:{value:0x2290a8}, shallow:0x9fe6dc, collect:'귤', bird:'jeju'};
+SCENES.dongbaek = {...SCENES.beach, todOffset:0.36, ground:'olle', laneMin:1.8, dryLane:5.0, tideAmp:0.2, name:'부산 동백섬길', eyebrow:'DONGBAEK RUN', title:'해운대 동백섬 둘레길, 잠깐 달려요', shareText:'동백꽃과 해송 사이, 바위 해안을 따라 도는 해운대 동백섬 둘레길', cardTitle:'동백섬길, 잠깐 달렸어요', chan:'dongbaek', deep:{value:0x1f6f98}, shallow:0x7fc8d8, collect:'동백꽃', bird:'gull', sitMsg:'바다 쪽 데크 벤치로 가요', sandMsg:'흙길에 한 줄 남겨 보세요 · 바람이 지워 줘요', soundMsg:'파도와 갈매기 소리가 들려요'};
 SCENES.chuncheon = {...SCENES.hangang, todOffset:0.08, ground:'deck', laneMin:1.4, dryLane:5.6, sitMsg:'난간 옆으로 가요 · 호수가 내려다보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 바람이 지워 줘요', name:'의암호', eyebrow:'CHUNCHEON RUN', title:'춘천 의암호, 잠깐 달려요', shareText:'안개 낀 호수와 산을 보며 달리는 온라인 호숫길', cardTitle:'의암호, 잠깐 달렸어요', chan:'chuncheon', deep:{value:0x3f7f8f}, shallow:0x8fc8c8, waveAmp:0.25, seaVol:0.3, collect:'단풍잎'};
 SCENES.cheorwon = {...SCENES.hangang, todOffset:0.2, ground:'deck', laneMin:1.4, dryLane:5.6, name:'주상절리길', eyebrow:'CHEORWON RUN', title:'철원 주상절리길, 잠깐 달려요', shareText:'한탄강 협곡 절벽에 매달린 잔도를 달리는 온라인 트레일', cardTitle:'주상절리길, 잠깐 달렸어요', chan:'cheorwon', deep:{value:0x1f7f82}, shallow:0x7fd0c4, waveAmp:0.35, seaVol:0.5, collect:'돌멩이', sitMsg:'난간 옆으로 가요 · 협곡이 내려다보여요', sandMsg:'잔도에 한 줄 남겨 보세요 · 바람이 지워 줘요'};
 SCENES.niagara = {...SCENES.hangang, todOffset:0.15, ground:'stonepath', laneMin:1.6, dryLane:5.4, tideAmp:0, name:'나이아가라', eyebrow:'NIAGARA RUN', title:'나이아가라 폭포길, 잠깐 달려요', shareText:'물안개 속 나이아가라 폭포 옆 데크를 달리는 온라인 트레일', cardTitle:'나이아가라, 잠깐 달렸어요', chan:'niagara', deep:{value:0x1f6a7c}, shallow:0x7fc8c8, waveAmp:0.6, seaVol:1.0, bird:'gull', collect:'물방울', sitMsg:'난간 옆으로 가요 · 폭포가 보여요', sandMsg:'데크에 한 줄 남겨 보세요 · 물안개가 지워 줘요', abroad:true, soundMsg:'폭포 소리가 들려요'};
@@ -1700,7 +1701,7 @@ lighthouse.position.set(140, 0, -24); lighthouse.visible = SCENE_ID==='beach' ||
 
 /* ---------- 해변 변주: 광안리 · 대왕암 · 제주 올레 ---------- */
 const beachSet = new THREE.Group(); beachSet.visible = FB; scene.add(beachSet);
-if(SCENE_ID==='busan'){
+if(SCENE_ID==='busan' || SCENE_ID==='dongbaek'){
   // 광안대교: 흰 H형 주탑 2개, 두 탑 사이에 늘어진 주케이블과 수직 행어, 2층 트러스 상판. 밤엔 케이블 조명이 색을 바꾼다
   const white = new THREE.MeshStandardMaterial({color:0xbfc7d0, roughness:0.85, emissive:0x1b1f26, emissiveIntensity:0.18});   // 연회색(흰색이 아니라 콘크리트·강철 느낌)
   const g = new THREE.Group(); const L = 1400, zb = -125, TX = 230, TH = 92, DECK = 20, SIDE = 430;   // 주경간 460 m + 측경간 200 m(앵커 ±430), 그 밖은 교각 고가
@@ -1726,10 +1727,13 @@ if(SCENE_ID==='busan'){
   for(let x=-SIDE + 12; x<SIDE; x+=12){ const top = cableY(x); if(top < DECK + 10) continue; for(const dz of [-6, 6]){ const h = top - (DECK + 8); const hg = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, h, 4), cableM); hg.position.set(x, DECK + 8 + h/2, dz); g.add(hg); } }
   for(let x=-L/2; x<L/2; x+=14){ const b = new THREE.Mesh(new THREE.SphereGeometry(0.35, 6, 5), lampM); b.position.set(x, DECK + 8.2, 7.2); g.add(b); }
   g.position.set(0, 0, zb); beachSet.add(g); beachSet.userData.bridge = g;
+  if(SCENE_ID==='dongbaek'){ g.position.set(-700, 0, -260); g.scale.setScalar(0.8); }   // 동백섬에선 서쪽 멀리 바다 위에 걸쳐 보인다
+  if(SCENE_ID==='busan'){
   // 뒤쪽 마린시티·호텔 스카이라인 (해안 반대편, 모래 언덕 너머)
   const wc = document.createElement('canvas'); wc.width = 64; wc.height = 128; const wg = wc.getContext('2d'); wg.fillStyle = '#000'; wg.fillRect(0,0,64,128); for(let y=4;y<126;y+=8) for(let x=3;x<62;x+=9){ if(Math.random()<0.55){ wg.fillStyle = ['#ffe9b0','#fff4d6','#cfe6ff'][Math.random()*3|0]; wg.fillRect(x,y,6,5); } }
   const wtex = new THREE.CanvasTexture(wc); wtex.colorSpace = THREE.SRGBColorSpace; wtex.wrapS = wtex.wrapT = THREE.RepeatWrapping; wtex.repeat.set(2, 4);
   for(let x=-300; x<1300; x+=22+Math.random()*30){ const h = 40 + Math.random()*90, w = 14 + Math.random()*10; const m = new THREE.MeshStandardMaterial({color:[0xdfe6ee,0xe9edf2,0xd6dde6][Math.random()*3|0], roughness:1, emissive:0xffffff, emissiveMap:wtex, emissiveIntensity:0, fog:false}); nightLights.push({m, base:0, night:1.3}); const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, 14), m); b.position.set(x, h/2 + 2, 42 + Math.random()*16); beachSet.add(b); }
+  }
 }
 if(SCENE_ID==='ulsan'){
   // 대왕암: 황금빛 화강암 바위 해안(물가에 바짝) + 해송 숲 흙길. 300~400 m마다 바위섬으로 건너가는 파란 아치 다리 구간
@@ -1768,6 +1772,7 @@ if(SC.ground==='olle'){
   const ptex = new THREE.CanvasTexture(pc); ptex.wrapS = THREE.RepeatWrapping; ptex.repeat.set(60, 1); ptex.colorSpace = THREE.SRGBColorSpace;
   const path = new THREE.Mesh(new THREE.PlaneGeometry(520, 3.6).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({map:ptex, roughness:1})); path.position.set(0, 0.03, 3.4); path.receiveShadow = true; ollePath.add(path); ollePath.userData.ptex = ptex;
   // 제주: 현무암(검은 바위) 해안 + 검은 돌담 + 유채꽃밭 + 멀리 한라산
+  if(SCENE_ID==='jejucoast'){
   const basalt = new THREE.MeshStandardMaterial({color:0x1c1d20, roughness:1});
   const column = new THREE.MeshStandardMaterial({color:0x26272b, roughness:0.95, flatShading:true});
   for(let x=-200; x<1200; x+=40+Math.random()*50){ for(let k=0;k<7;k++){ const h = 1 + Math.random()*2.6; const c = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, h, 6), column); c.position.set(x + (k%4)*0.8 + Math.random()*0.3, h/2 - 0.5, -12 - (k/4|0)*0.8 - Math.random()*6); beachSet.add(c); } }
@@ -1782,6 +1787,29 @@ if(SC.ground==='olle'){
   const halla = new THREE.Mesh(new THREE.ConeGeometry(260, 95, 24), hallaM); halla.position.set(500, -10, 230); beachSet.add(halla);
   const postM = new THREE.MeshStandardMaterial({color:0x7a6a55}); const ribA = new THREE.MeshStandardMaterial({color:0x2f6fd6}); const ribB = new THREE.MeshStandardMaterial({color:0xff7a1a});
   for(let x=-150; x<1200; x+=45+Math.random()*30){ const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 1.4, 6), postM); post.position.set(x, 0.7, 11.6); beachSet.add(post); for(const [m, dy] of [[ribA, 1.3],[ribB, 1.15]]){ const rb = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.4, 0.04), m); rb.position.set(x + 0.08, dy - 0.2, 11.6); rb.rotation.z = -0.3; beachSet.add(rb); } }
+  }
+  if(SCENE_ID==='dongbaek'){
+    // 해운대 동백섬 둘레길: 길 왼쪽 회갈색 화강암 바위 해안(파도가 부서진다) + 나무 데크 난간, 양쪽에 동백나무(윤기 나는 짙은 잎, 빨간 꽃)와 해송. 누리마루(APEC 하우스), 인어공주 동상, 등대. 건너편 마린시티 고층빌딩, 멀리 광안대교, 오른쪽 뒤 해운대 해변
+    const graniteM = new THREE.MeshStandardMaterial({color:0x8d8578, roughness:1}); const graniteD = new THREE.MeshStandardMaterial({color:0x6e665a, roughness:1});
+    for(let x=-200; x<1200; x+=2.5+Math.random()*2.5){ const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.7 + Math.random()*1.6, 1), Math.random() < 0.5 ? graniteM : graniteD); r.scale.set(1.3, 0.55 + Math.random()*0.5, 1); r.position.set(x, -0.5, -1.5 - Math.random()*9); r.rotation.y = Math.random()*3; beachSet.add(r); }   // 바위 해안
+    for(let x=-200; x<1200; x+=25+Math.random()*40){ const n = 2 + (Math.random()*3|0); for(let i=0;i<n;i++){ const r = new THREE.Mesh(new THREE.DodecahedronGeometry(2.5 + Math.random()*3, 1), graniteD); r.scale.set(1.3, 0.6, 1.1); r.position.set(x + i*4, -1.2, -12 - Math.random()*10); beachSet.add(r); } }   // 바다 속 큰 바위
+    // 데크 난간 (길 왼쪽 가장자리)
+    const woodM = new THREE.MeshStandardMaterial({color:0x7a5a3e, roughness:1}); for(const y of [0.5, 0.95]){ const rail = new THREE.Mesh(new THREE.BoxGeometry(1500, 0.07, 0.07), woodM); rail.position.set(500, y, 0.9); beachSet.add(rail); } for(let x=-200; x<1200; x+=2){ const p = new THREE.Mesh(new THREE.BoxGeometry(0.09, 1.05, 0.09), woodM); p.position.set(x, 0.52, 0.9); beachSet.add(p); }
+    // 동백나무: 둥근 짙은 녹색 지붕 + 빨간 꽃 점점이 (인스턴스)
+    const makeDongbaek = ()=>{ const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.14, 1.4, 6), new THREE.MeshStandardMaterial({color:0x5a4a3a, roughness:1})); trunk.position.y = 0.7; g.add(trunk); const leafM = new THREE.MeshStandardMaterial({color:0x1f4a2a, roughness:0.55}); for(let i=0;i<4;i++){ const c = new THREE.Mesh(new THREE.SphereGeometry(0.9 + Math.random()*0.4, 9, 7), leafM); c.position.set((Math.random()-0.5)*0.9, 1.9 + Math.random()*0.8, (Math.random()-0.5)*0.9); g.add(c); } const flM = new THREE.MeshStandardMaterial({color:0xd8283c, roughness:0.8}); for(let i=0;i<14;i++){ const a = Math.random()*Math.PI*2, e = Math.random()*Math.PI; const r = 1.25; const f = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 5), flM); f.position.set(Math.cos(a)*Math.sin(e)*r, 2.2 + Math.cos(e)*r*0.8, Math.sin(a)*Math.sin(e)*r); g.add(f); } return g; };
+    const DB = []; for(let x=-200; x<1200; x+=2.6+Math.random()*2){ DB.push([x, 7.6 + Math.random()*1.5, 0.9 + Math.random()*0.5, Math.random()*Math.PI*2]); if(Math.random() < 0.6) DB.push([x + 1.2, 10 + Math.random()*4, 1.0 + Math.random()*0.5, Math.random()*Math.PI*2]); if(Math.random() < 0.25) DB.push([x, 1.6 + Math.random()*0.6, 0.7, Math.random()*Math.PI*2]); } plantInstanced(beachSet, makeDongbaek, DB, 4);
+    const PN2 = []; for(let x=-200; x<1200; x+=6+Math.random()*7) PN2.push([x, 12 + Math.random()*14, 1.1 + Math.random()*0.5, Math.random()*Math.PI*2]); plantInstanced(beachSet, makeKuromatsu, PN2, 4);   // 해송
+    const fallen = new THREE.MeshStandardMaterial({color:0xc83040, roughness:1}); for(let x=-200; x<1200; x+=1.5){ if(Math.random() < 0.4) continue; const f = new THREE.Mesh(new THREE.CircleGeometry(0.1, 7).rotateX(-Math.PI/2), fallen); f.position.set(x + Math.random(), 0.04, 1.6 + Math.random()*5.5); beachSet.add(f); }   // 길에 떨어진 동백꽃
+    const hillM6 = new THREE.MeshStandardMaterial({color:0x2f5a38, roughness:1}); const hill = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10), hillM6); hill.scale.set(900, 60, 120); hill.position.set(500, -8, 90); beachSet.add(hill);   // 섬 가운데 솔숲 언덕
+    // 누리마루 APEC 하우스: 둥근 유리 건물 + 넓은 처마 지붕 (코스 중간 바다 쪽 곶)
+    { const nx = 520, nz = -48; const cape = new THREE.Mesh(new THREE.CylinderGeometry(26, 30, 3, 20), graniteM); const neck = new THREE.Mesh(new THREE.BoxGeometry(14, 2.4, 30), graniteM); neck.position.set(nx, 0.3, -20); beachSet.add(neck); /* 길에서 바다 쪽으로 뻗은 곶 끝에 */ cape.position.set(nx, 0.5, nz); beachSet.add(cape); const glass = new THREE.Mesh(new THREE.CylinderGeometry(13, 13, 7, 24), new THREE.MeshStandardMaterial({color:0x8fb6c8, roughness:0.15, metalness:0.5, transparent:true, opacity:0.85})); glass.position.set(nx, 5.5, nz); beachSet.add(glass); const roof = new THREE.Mesh(new THREE.CylinderGeometry(18, 15, 1.6, 24), new THREE.MeshStandardMaterial({color:0x6c6f72, roughness:0.6})); roof.position.set(nx, 9.6, nz); beachSet.add(roof); for(let k=0;k<12;k++){ const a = k/12*Math.PI*2; const col = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 7, 8), new THREE.MeshStandardMaterial({color:0xe8e4dc})); col.position.set(nx + Math.cos(a)*15.5, 5.5, nz + Math.sin(a)*15.5); beachSet.add(col); } }
+    // 인어공주 동상: 바닷가 바위 위 청동 (x 250), 등대: 흰 탑 (x 800)
+    { const rk = new THREE.Mesh(new THREE.DodecahedronGeometry(2.4, 1), graniteD); rk.scale.set(1.3, 0.8, 1.1); rk.position.set(250, -0.4, -7); beachSet.add(rk); const bronze = new THREE.MeshStandardMaterial({color:0x4f6b5a, roughness:0.5, metalness:0.5}); const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 0.7, 6, 10), bronze); body.position.set(250, 2.0, -7); body.rotation.z = 0.35; beachSet.add(body); const tail = new THREE.Mesh(new THREE.CapsuleGeometry(0.18, 0.9, 6, 8), bronze); tail.position.set(249.3, 1.5, -7.2); tail.rotation.z = 1.3; beachSet.add(tail); const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 10, 8), bronze); head.position.set(250.3, 2.75, -7); beachSet.add(head); }
+    { const lh = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.8, 11, 14), new THREE.MeshStandardMaterial({color:0xf4f4f0, roughness:0.9})); lh.position.set(800, 5.5, -3); beachSet.add(lh); const top = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 1.6, 14), new THREE.MeshStandardMaterial({color:0xd84a3a})); top.position.set(800, 11.8, -3); beachSet.add(top); const lampM = new THREE.MeshStandardMaterial({color:0xfff2c2, emissive:0xffd27a, emissiveIntensity:0, fog:false}); nightLights.push({m:lampM, base:0.2, night:3}); const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.7, 10, 8), lampM); lamp.position.set(800, 12.9, -3); beachSet.add(lamp); }
+    // 건너편: 마린시티 초고층 (바다 건너 북쪽), 멀리 광안대교, 오른쪽 뒤 해운대 백사장·호텔
+    const twrM3 = new THREE.MeshStandardMaterial({color:0xaab8c8, roughness:0.3, metalness:0.4, fog:false, transparent:true, opacity:0.9}); for(let i=0;i<14;i++){ const w = 18 + Math.random()*14, h = 120 + Math.pow(Math.random(), 1.3)*180; const t = new THREE.Mesh(new THREE.BoxGeometry(w, h, w), twrM3); t.position.set(-250 + i*34 + Math.random()*10, h/2 - 2, -SEA_W + 30 - Math.random()*60); beachSet.add(t); }
+    const hotelM = new THREE.MeshStandardMaterial({color:0xe9e4da, roughness:0.8, fog:false}); for(let i=0;i<12;i++){ const w = 20 + Math.random()*16, h = 40 + Math.random()*90; const t = new THREE.Mesh(new THREE.BoxGeometry(w, h, w), hotelM); t.position.set(900 + i*36, h/2, -SEA_W + 60 - Math.random()*40); beachSet.add(t); } const sandBar = new THREE.Mesh(new THREE.BoxGeometry(600, 2, 60), new THREE.MeshStandardMaterial({color:0xf1e4c8, roughness:1})); sandBar.position.set(1180, 0.3, -SEA_W + 110); beachSet.add(sandBar);   // 해운대 백사장
+  }
 }
 // 한강: 다리 + 건너편 아파트 + 가로등 (밤에 불이 켜짐)
 const hangangSet = new THREE.Group(); hangangSet.visible = FH && !SNOWFIELD && !SALT; scene.add(hangangSet);
@@ -2923,7 +2951,7 @@ function populateTo(limitX){
       if(!['forest','jeju','pine','bamboo','blossom','muhly','maple','meta','melb','steppe','tokyo','slot','birch'].includes(SCENE_ID) && x > nextLantern){ nextLantern = x + 16; const o = makeLantern(); o.position.set(x, 0, 0.55); scene.add(o); props.push({obj:o, kind:'lantern', half:0.35}); }   /* 담장에 바짝 붙여 길을 막지 않게 */
       if(!['forest','jeju','pine','bamboo','blossom','muhly','maple','meta','melb','steppe','tokyo','slot','birch'].includes(SCENE_ID) && x > nextTree){ nextTree = x + 9 + Math.random()*4; const o = makeGinkgo(); o.position.set(x, 0, SCENE_ID==='jeonju' ? 9.5 + Math.random() : 14.5 + Math.random()*1.5); o.rotation.y = Math.random()*Math.PI; scene.add(o); props.push({obj:o, kind:'tree'}); }
       if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.02, 2 + Math.random()*4); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
-      else if(r < 0.42){ const o = SCENE_ID==='jeju' ? makeCamellia() : ((SCENE_ID==='pine' || SCENE_ID==='meta' || SCENE_ID==='tokyo') ? makePinecone() : (SCENE_ID==='slot' ? makeLightShard() : SCENE_ID==='birch' ? makeBirchBark() : (SCENE_ID==='blossom' ? makePetal() : (SCENE_ID==='muhly' ? makeMuhlySprig() : makeGinkgoLeaf())))); if(SCENE_ID==='bamboo'){ o.traverse(m=>{ if(m.isMesh && m.material.color) m.material = new THREE.MeshStandardMaterial({color:0x8cc152, roughness:1, side:THREE.DoubleSide}); }); o.scale.set(1.6, 1, 0.5); } o.position.set(x + Math.random(), 0, 1.6 + Math.random()*4.4); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
+      else if(r < 0.42){ const o = SCENE_ID==='jeju' ? makeCamellia() : ((SCENE_ID==='pine' || SCENE_ID==='meta' || SCENE_ID==='tokyo') ? makePinecone() : (SCENE_ID==='slot' ? makeLightShard() : SCENE_ID==='birch' ? makeBirchBark() : SCENE_ID==='dongbaek' ? makeCamellia() : (SCENE_ID==='blossom' ? makePetal() : (SCENE_ID==='muhly' ? makeMuhlySprig() : makeGinkgoLeaf())))); if(SCENE_ID==='bamboo'){ o.traverse(m=>{ if(m.isMesh && m.material.color) m.material = new THREE.MeshStandardMaterial({color:0x8cc152, roughness:1, side:THREE.DoubleSide}); }); o.scale.set(1.6, 1, 0.5); } o.position.set(x + Math.random(), 0, 1.6 + Math.random()*4.4); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
       else if(['jeju','pine','bamboo','blossom','muhly','meta','melb','steppe','tokyo','slot','birch'].includes(SCENE_ID) && r < 0.64){ }
       else if(r < 0.64){ const o = makeLeafPile(); o.position.set(x, 0, 1.4 + Math.random()*4.6); scene.add(o); props.push({obj:o, kind:'leaf'}); if(SCENE_ID==='forest' || SCENE_ID==='maple'){ const o2 = makeLeafPile(); o2.position.set(x + 1.5, 0, 0.5 + Math.random()*8); scene.add(o2); props.push({obj:o2, kind:'leaf'}); } }
       else if(['jeonju','forest','jeju','pine','bamboo','blossom','muhly','maple','meta','melb','steppe','tokyo','slot','birch'].includes(SCENE_ID) && r < 0.68){ const o = makeBench(); o.position.set(x, 0, 8.9); scene.add(o); props.push({obj:o, kind:'wood'}); }
@@ -2964,9 +2992,9 @@ function populateTo(limitX){
     if(sinceBottle > 28 && Math.random() < 0.12){ sinceBottle = 0; const o = makeBottle(); o.position.set(x, 0.0, -0.4 + Math.random()*2.2); scene.add(o); props.push({obj:o, kind:'bottle', taken:false}); }
     else if(r < 0.46){ const o = makeShell(); o.position.set(x + Math.random(), 0.02, -0.8 + Math.random()*5.6); scene.add(o); props.push({obj:o, kind:'shell', taken:false}); }
     else if(r < 0.52){ if(SCENE_ID==='ulsan') continue; const o = makeDriftwood(); o.position.set(x, 0, 7 + Math.random()*4); o.rotation.y = Math.random()*Math.PI; scene.add(o); props.push({obj:o, kind:'wood'}); }
-    else if(r < 0.57){ if(SCENE_ID==='ulsan' || SCENE_ID==='jejucoast') continue; const o = makeRock(); o.position.set(x, 0, -1 + Math.random()*2.5); scene.add(o); props.push({obj:o, kind:'rock'}); }
-    else if(r < 0.74){ if(SCENE_ID==='jejucoast' || SCENE_ID==='ulsan') continue; const o = makeDuneBush(); o.position.set(x, 0.4 + Math.random()*1.2, 15 + Math.random()*9); scene.add(o); props.push({obj:o, kind:'bush'}); }
-    else { if(SCENE_ID==='jejucoast' || SCENE_ID==='busan') continue; const o = makeGrass(); o.position.set(x, 0.3+Math.random()*1.2, 12 + Math.random()*8); scene.add(o); props.push({obj:o, kind:'grass'}); }
+    else if(r < 0.57){ if(SCENE_ID==='ulsan' || SCENE_ID==='jejucoast' || SCENE_ID==='dongbaek') continue; const o = makeRock(); o.position.set(x, 0, -1 + Math.random()*2.5); scene.add(o); props.push({obj:o, kind:'rock'}); }
+    else if(r < 0.74){ if(SCENE_ID==='jejucoast' || SCENE_ID==='ulsan' || SCENE_ID==='dongbaek') continue; const o = makeDuneBush(); o.position.set(x, 0.4 + Math.random()*1.2, 15 + Math.random()*9); scene.add(o); props.push({obj:o, kind:'bush'}); }
+    else { if(SCENE_ID==='jejucoast' || SCENE_ID==='busan' || SCENE_ID==='dongbaek') continue; const o = makeGrass(); o.position.set(x, 0.3+Math.random()*1.2, 12 + Math.random()*8); scene.add(o); props.push({obj:o, kind:'grass'}); }
   }
   for(let i=props.length-1;i>=0;i--){ const far = ['island','cafe','park','fountain','rockbridge','xmas','teepee'].includes(props[i].kind) ? 90 : 40; if(props[i].obj.position.x < state.x - far){ if(!props[i].fixed){ scene.remove(props[i].obj); dispose(props[i].obj); } props.splice(i,1); } }   /* fixed: 장면에 고정된 바위는 목록에서만 뺀다 */
 }
@@ -3369,6 +3397,7 @@ const PLACES = [
   {id:'blossom', name:'하동 십리벚꽃길', short:'하동 벚꽃길', sub:'섬진강 벚꽃 터널', scene:'blossom', x:156, y:262, left:true, dy:1},
   {id:'ulsan', name:'울산 대왕암', short:'울산 대왕암', sub:'바위섬 다리', scene:'ulsan', x:249, y:242, left:true, dy:1},
   {id:'busan', name:'부산 광안리', short:'부산 광안리', sub:'광안대교', scene:'busan', x:230, y:268, left:true, dy:4},
+  {id:'dongbaek', name:'부산 동백섬길', short:'해운대 동백섬', sub:'동백·바위 해안', scene:'dongbaek', x:246, y:258, dy:-4},
   {id:'jejucoast', name:'제주 해안길', short:'제주 해안', sub:'현무암 바다', scene:'jejucoast', x:68, y:392, left:true, dy:1},
   {id:'jeju', name:'제주 올레 숲길', short:'제주 숲길', sub:'곶자왈', scene:'jeju', x:96, y:398, dy:1},
   {id:'muhly', name:'제주 핑크뮬리길', short:'제주 핑크뮬리', sub:'분홍 들판', scene:'muhly', x:103, y:386, dy:-6},
