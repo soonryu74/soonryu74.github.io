@@ -10,10 +10,18 @@ import json, os, re, sys, datetime as dt
 KST = dt.timezone(dt.timedelta(hours=9))
 TODAY = dt.datetime.now(KST).date()
 
+MONTHS = {m: i + 1 for i, m in enumerate(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'])}
+
 def parse_date(s):
-    m = re.search(r'(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일', s or '')
-    if not m: return None
-    try: return dt.date(int(m[1]), int(m[2]), int(m[3]))
+    """'2026년 10월 30일'과 'October 30, 2026'(노션이 영어로 그릴 때) 둘 다 읽습니다."""
+    s = s or ''
+    m = re.search(r'(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일', s)
+    if m: y, mo, d = int(m[1]), int(m[2]), int(m[3])
+    else:
+        m = re.search(r'([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),\s*(\d{4})', s)
+        if not m or m[1].lower() not in MONTHS: return None
+        y, mo, d = int(m[3]), MONTHS[m[1].lower()], int(m[2])
+    try: return dt.date(y, mo, d)
     except ValueError: return None
 
 def prize_max(s):
