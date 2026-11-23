@@ -16,7 +16,7 @@
   canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
   canvas#gl.drag{cursor:grabbing}
   .chrome{transition:opacity .3s}
-  body.clean .chrome{display:none!important}
+  body.clean .chrome,body.clean #bar{display:none!important}
   #brand{position:fixed;left:20px;top:16px;line-height:1.2;text-shadow:0 1px 8px rgba(0,0,0,.6)}
   #brand b{display:block;font:600 22px/1 "Cormorant Garamond",serif;letter-spacing:.16em}
   #brand span{font-size:12px;opacity:.85}
@@ -40,6 +40,21 @@
   #bar{position:fixed;left:0;bottom:0;height:3px;background:var(--teal);width:0}
   #note{position:fixed;left:20px;top:70px;max-width:300px;font-size:11px;line-height:1.5;opacity:.7;
     text-shadow:0 1px 6px rgba(0,0,0,.7)}
+  #card{position:fixed;inset:0;display:grid;place-items:center;text-align:center;opacity:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(15,11,9,.74),rgba(15,11,9,.93));padding:24px}
+  #card>div{max-width:860px}
+  #card small{display:block;font:600 15px/1 "Cormorant Garamond",serif;letter-spacing:.34em;color:var(--teal);margin-bottom:26px}
+  #card img{display:none;width:118px;height:150px;object-fit:cover;object-position:50% 20%;border-radius:60px;margin:0 auto 22px;
+    border:1px solid rgba(239,231,214,.5);filter:sepia(.35)}
+  #card[data-kind=end] img{display:block}
+  #card h1{margin:0 0 22px;font:600 84px/1.05 "Cormorant Garamond","Noto Serif KR",serif;color:#fff7e6;letter-spacing:.01em}
+  #card:lang(ko) h1{font:700 56px/1.25 "Noto Serif KR",serif}
+  #card p{margin:0 auto;max-width:700px;font-size:21px;line-height:1.75;color:#e9e0cf;word-break:keep-all}
+  #cc{margin-top:30px;padding-top:22px;border-top:1px solid rgba(239,231,214,.22)}
+  #cc:empty{display:none}
+  #cc span{display:block;font:500 19px/1.75 "Cormorant Garamond",serif;letter-spacing:.06em;color:#d8ccb6}
+  #nav,#langs,#brand,#note{z-index:2}
+  @media (max-width:640px){#card h1{font-size:46px}#card:lang(ko) h1{font-size:34px}#card p{font-size:16px}#cc span{font-size:15px}#card img{width:84px;height:106px}}
   #load{position:fixed;inset:0;display:grid;place-items:center;background:var(--ink);z-index:9;
     font:600 20px "Cormorant Garamond",serif;letter-spacing:.3em;transition:opacity .5s}
   #load.done{opacity:0;pointer-events:none}
@@ -58,6 +73,7 @@
   <button data-l="ko">한국어</button><button data-l="en">English</button><button data-l="nl">Nederlands</button>
 </div>
 <div id="cap"><small id="capn"></small><h2 id="capt"></h2><p id="capb"></p></div>
+<div id="card"><div><small id="ck"></small><img src="img/kuyper-1905.jpg" alt="Abraham Kuyper, 1905"><h1 id="ct"></h1><p id="cb"></p><div id="cc"></div></div></div>
 <div id="nav" class="chrome">
   <button id="prev" aria-label="Previous">&#9664;</button>
   <button id="tour"></button>
@@ -78,60 +94,70 @@ const UI = {
       note:'Slepen: rondkijken · Klik op een object: ga erheen · ← →: vorige/volgende · H: verberg knoppen\nEen virtuele reconstructie op basis van de toelichting; de objecten kunnen afwijken van de echte.'}
 };
 
+const CREDITS = ['Erfgoedcentrum Abraham Kuyper, Maassluis · Gerda Verburg','Jan Peter Balkenende','Cor van Heuckelum · Beesd','Prof. Yong-Joon Choi','SaRang Church · Abraham Kuyper Institute, Seoul'];
 const STOPS = [
+ { id:'title', card:'title', kicker:'A LETTER OF THANKS · EEN DANKBRIEF · 감사의 편지', p:[-9,1.6,8.6], t:[4,2.6,0],
+   ko:['마아슬라위스에서 서울까지','1837년, 항구 마을 마아슬라위스에서 한 소년이 태어났습니다. 그로부터 두 세기 가까이 지난 지금, 8천 킬로미터 넘게 떨어진 서울의 한 길이 그의 이름으로 불립니다.'],
+   en:['From Maassluis to Seoul','In 1837, a boy was born in the harbour town of Maassluis. Almost two centuries later, more than eight thousand kilometres away, a street in Seoul carries his name.'],
+   nl:['Van Maassluis naar Seoul','In 1837 werd in het havenstadje Maassluis een jongen geboren. Bijna twee eeuwen later, meer dan achtduizend kilometer verderop, draagt een straat in Seoul zijn naam.'] },
  { id:'intro', p:[0,1.7,9.2], t:[0,2.5,0],
-   ko:['아브라함 카이퍼 전시홀','사랑의교회와 사랑글로벌아카데미 아브라함 카이퍼 연구소가 남타워 2층 웨스트 채플 입구에 마련한 전시홀입니다. 2024년 9월 8일 주일 오후 1시 30분, 얀 페터르 발케넨더 전 네덜란드 총리와 주한 네덜란드 대사가 함께한 가운데 문을 열었습니다.'],
-   en:['Abraham Kuyper Street Exhibition Hall','Opened on Sunday, 8 September 2024, at the entrance of the West Chapel on the 2nd floor of the South Tower of SaRang Church in Seoul — in the presence of former Dutch Prime Minister Jan Peter Balkenende and the Ambassador of the Netherlands to Korea.'],
-   nl:['Abraham Kuyper Street Expositiehal','Geopend op zondag 8 september 2024 bij de ingang van de West Chapel, op de tweede verdieping van de South Tower van de SaRang Church in Seoul — in aanwezigheid van oud-premier Jan Peter Balkenende en de Nederlandse ambassadeur in Korea.'] },
- { id:'sign', p:[-7.4,1.65,4.8], t:[-7.4,1.95,0],
-   ko:['카이퍼의 길, Kuyper Street','카이퍼 박사가 정치 활동과 말년을 보낸 헤이그의 도로명에서 이름을 가져왔습니다. 닫힌 방이 아니라 청소년과 대학생, 결혼식 하객이 오가는 길목에 놓인 전시홀입니다.'],
-   en:['Kuyper Street','The name comes from a street in The Hague, the city where Kuyper spent his political career and his final years. This is not a closed room but a passageway: teenagers, students and wedding guests walk through it every week.'],
-   nl:['Kuyper Street','De naam verwijst naar een straat in Den Haag, de stad waar Kuyper zijn politieke loopbaan en zijn laatste jaren doorbracht. Geen gesloten zaal, maar een doorgang waar elke week tieners, studenten en bruiloftsgasten langskomen.'] },
+   ko:['서울의 카이퍼 스트리트','사랑의교회 아브라함 카이퍼 전시홀입니다. 2024년 9월 8일, 얀 페터르 발케넨더 전 네덜란드 총리와 페이터르 판 데르 플리트 주한 네덜란드 대사가 함께한 가운데 문을 열었습니다.'],
+   en:['Kuyper Street, Seoul','This is the Abraham Kuyper Street Exhibition Hall of SaRang Church. It opened on 8 September 2024, in the presence of former Prime Minister Jan Peter Balkenende and Ambassador Peter van der Vliet.'],
+   nl:['Kuyper Street, Seoul','Dit is de Abraham Kuyper Street Expositiehal van de SaRang Church. De hal werd geopend op 8 september 2024, in aanwezigheid van oud-premier Jan Peter Balkenende en ambassadeur Peter van der Vliet.'] },
+ { id:'sign', p:[-6.6,1.65,5.2], t:[-6.6,1.9,0],
+   ko:['방이 아니라 길','이름은 헤이그의 카이퍼 박사 거리(Dr. Kuyperstraat)에서 가져왔습니다. 닫힌 방이 아니라 길목입니다. 매주 청소년과 대학생, 결혼식 하객이 이 길을 지나며 아브라함 카이퍼를 만납니다.'],
+   en:['A street, not a room','The name comes from the Dr. Kuyperstraat in The Hague. This is not a closed room but a passageway. Every week teenagers, students and wedding guests walk through it — and meet Abraham Kuyper on their way.'],
+   nl:['Een straat, geen zaal','De naam komt van de Dr. Kuyperstraat in Den Haag. Dit is geen gesloten zaal, maar een doorgang. Elke week lopen tieners, studenten en bruiloftsgasten erdoorheen — en ontmoeten onderweg Abraham Kuyper.'] },
  { id:'alcove', p:[0,1.65,5.4], t:[0,1.35,-2],
-   ko:['거리와 골목 모퉁이를 옮겨 오다','고향 마아슬라위스의 거리와 암스테르담 골목 모퉁이가 공간 컨셉입니다. 첫 목회지 베이스트 교회의 붉은 벽돌, 자유대학교 개교식이 열린 암스테르담 신교회, 담 광장의 박석을 재현했습니다. (공간 디자인: YiEUM Partners 안장원 대표)'],
-   en:['A Dutch street corner in Seoul','The space recalls the streets of Maassluis, Kuyper’s birthplace, and a street corner in Amsterdam: the red brick of his first church in Beesd, the Nieuwe Kerk where the Free University was opened, and the paving stones of Dam Square. (Design: Ahn Jang-won, YiEUM Partners)'],
-   nl:['Een Hollandse straathoek in Seoul','De ruimte verwijst naar de straten van Maassluis, Kuypers geboorteplaats, en een straathoek in Amsterdam: de rode baksteen van zijn eerste kerk in Beesd, de Nieuwe Kerk waar de Vrije Universiteit werd geopend, en de keien van de Dam. (Ontwerp: Ahn Jang-won, YiEUM Partners)'] },
+   ko:['정성으로 옮겨 온 네덜란드의 골목','붉은 벽돌은 첫 목회지 베이스트 교회를, 바닥의 박석은 암스테르담 담 광장을 떠올리게 합니다. 지구 반대편에 정성으로 옮겨 놓은 네덜란드의 한 모퉁이입니다.'],
+   en:['A Dutch street corner, rebuilt with care','The red brick recalls his first church in Beesd. The paving stones recall Dam Square in Amsterdam. A corner of the Netherlands, rebuilt with care on the other side of the world.'],
+   nl:['Een Hollandse straathoek, met zorg herbouwd','De rode baksteen herinnert aan zijn eerste kerk in Beesd. De keien herinneren aan de Dam in Amsterdam. Een hoekje Nederland, met zorg herbouwd aan de andere kant van de wereld.'] },
  { id:'p1', panel:1, meta:'1837 · MAASSLUIS', p:[-0.6,1.6,-1.2], t:[-4,1.25,-1.2],
-   ko:['탄생과 성장','경상남북도를 합친 크기의 저지대 나라 네덜란드, 그 남쪽 항구 마을 마아슬라위스에서 1837년에 태어나 자랐습니다. 작은 항구 마을의 소년이 하나님을 믿어 총리가 되었습니다.','작은 항구 마을의 소년'],
-   en:['Birth and Youth','Born in 1837 in Maassluis, a small harbour town in the south of the Netherlands. A boy from a harbour town who trusted God — and became prime minister.','A boy from a harbour town'],
-   nl:['Geboorte en jeugd','Geboren in 1837 in Maassluis, een kleine havenstad in het zuiden van Nederland. Een jongen uit een havenstadje die op God vertrouwde — en minister-president werd.','Een jongen uit een havenstad'] },
+   ko:['탄생과 성장','이야기는 여러분의 고장 마아슬라위스에서 시작됩니다. 작은 항구 마을의 소년이 하나님을 믿었고, 훗날 나라를 이끌게 됩니다.','작은 항구 마을의 소년'],
+   en:['Birth and Youth','The story begins where yours does: in Maassluis. A boy from a small harbour town who trusted God — and would one day lead his country.','A boy from a harbour town'],
+   nl:['Geboorte en jeugd','Het verhaal begint waar ook het uwe begint: in Maassluis. Een jongen uit een klein havenstadje die op God vertrouwde — en ooit zijn land zou leiden.','Een jongen uit een havenstad'] },
  { id:'p2', panel:2, meta:'1863 · BEESD', p:[-0.6,1.6,-2.9], t:[-4,1.25,-2.9],
-   ko:['목회 활동과 신학적 기여','무신론의 파도에 칼빈주의가 빛을 잃어 가던 때, 하나님의 절대주권 사상을 이어 영역주권을 주장했습니다. 칼빈주의가 신학에 그치지 않고 삶 전체의 체계임을 다시 밝혀 복음적 칼빈주의의 재부흥을 이끌었습니다.','삶 전체의 체계, 칼빈주의'],
-   en:['Ministry and Theology','When Calvinism was fading under the tide of unbelief, Kuyper carried the sovereignty of God forward into the idea of sphere sovereignty. He showed that Calvinism is not only a theology but a system for the whole of life, and led its revival.','Calvinism as a life-system'],
-   nl:['Predikant en theoloog','Toen het calvinisme verbleekte onder de golf van ongeloof, werkte Kuyper Gods soevereiniteit uit tot de soevereiniteit in eigen kring. Hij liet zien dat het calvinisme niet alleen een theologie is maar een levensbeschouwing voor het hele leven, en leidde de herleving ervan.','Calvinisme als levenssysteem'] },
+   ko:['목회 활동과 신학적 기여','베이스트에서 젊은 목사는 피체 발투스 같은 평범한 교인들의 굳건한 믿음에 감동했습니다. 칼빈주의는 신학에 그치지 않고 삶의 방식이라는, 평생을 붙든 확신을 그곳에서 얻었습니다.','베이스트가 가르쳐 준 것'],
+   en:['Ministry and Theology','In Beesd, the young minister was moved by the firm faith of ordinary villagers such as Pietje Baltus. There he found the conviction that carried his whole life: Calvinism is not only a theology, but a way of living.','What Beesd taught him'],
+   nl:['Predikant en theoloog','In Beesd werd de jonge dominee geraakt door het vaste geloof van gewone dorpelingen als Pietje Baltus. Daar vond hij de overtuiging die zijn hele leven droeg: het calvinisme is niet alleen een theologie, maar een manier van leven.','Wat Beesd hem leerde'] },
  { id:'p3', panel:3, meta:'1880 · VRIJE UNIVERSITEIT', p:[-2.3,1.6,-0.6], t:[-2.3,1.25,-4],
-   ko:['학교투쟁과 교육 개혁','성경을 가르치는 사립학교도 국가의 재정 지원을 받을 수 있도록 법제화하는 학교투쟁을 성공으로 이끌었습니다. 1880년에는 암스테르담에 자유대학교를 세웠습니다.','성경을 가르치는 학교의 자유'],
-   en:['The School Struggle','Kuyper led the school struggle that secured, by law, state funding for private schools teaching the Bible. In 1880 he founded the Free University in Amsterdam.','Freedom for schools with the Bible'],
-   nl:['De schoolstrijd','Kuyper leidde de schoolstrijd, waardoor bijzondere scholen met de Bijbel bij wet recht kregen op overheidsbekostiging. In 1880 stichtte hij de Vrije Universiteit in Amsterdam.','Vrijheid voor de school met de Bijbel'] },
+   ko:['학교투쟁과 교육 개혁','성경을 가르치는 학교의 자유를 위해 싸웠습니다. 그리고 1880년, 암스테르담 신교회에서 자유대학교의 문을 열었습니다.','성경을 가르치는 학교의 자유'],
+   en:['The School Struggle','He fought for the freedom of schools with the Bible. And in 1880, in the Nieuwe Kerk in Amsterdam, he opened the Free University.','Freedom for schools with the Bible'],
+   nl:['De schoolstrijd','Hij streed voor de vrijheid van de school met de Bijbel. En in 1880 opende hij, in de Nieuwe Kerk in Amsterdam, de Vrije Universiteit.','Vrijheid voor de school met de Bijbel'] },
  { id:'p4', panel:4, meta:'1901–1905 · DEN HAAG', p:[2.3,1.6,-0.6], t:[2.3,1.25,-4],
-   ko:['언론과 정치','기독교 세계관으로 4년간(1901–1905) 네덜란드 총리를 지냈고, 일간지와 주간지의 주필로 일하며 260여 권의 책을 펴냈습니다. 사람들은 그를 ‘열 개의 머리와 백 개의 손을 가진 사람’이라 불렀습니다.','열 개의 머리, 백 개의 손'],
-   en:['Press and Politics','He served as prime minister of the Netherlands for four years (1901–1905), edited a daily and a weekly newspaper, and published some 260 books. People called him a man with ten heads and a hundred hands.','Ten heads, a hundred hands'],
-   nl:['Journalistiek en politiek','Hij was vier jaar minister-president van Nederland (1901–1905), hoofdredacteur van een dagblad en een weekblad, en publiceerde zo’n 260 boeken. Men noemde hem een man met tien hoofden en honderd handen.','Tien hoofden, honderd handen'] },
+   ko:['언론과 정치','일간지 「더 스탄다르트」의 주필, 정당의 창립자, 1901년부터 1905년까지 총리, 260여 권의 저자. 사람들은 그에게 열 개의 머리와 백 개의 손이 있다고 했습니다.','열 개의 머리, 백 개의 손'],
+   en:['Press and Politics','Editor of De Standaard, founder of a political party, Prime Minister from 1901 to 1905, author of some 260 books. People said he had ten heads and a hundred hands.','Ten heads, a hundred hands'],
+   nl:['Journalistiek en politiek','Hoofdredacteur van De Standaard, oprichter van een politieke partij, minister-president van 1901 tot 1905, schrijver van zo’n 260 boeken. Men zei dat hij tien hoofden en honderd handen had.','Tien hoofden, honderd handen'] },
  { id:'p5', panel:5, meta:'1920 · DEN HAAG', p:[0.6,1.6,-2.9], t:[4,1.25,-2.9],
-   ko:['후기 활동','83세로 하나님의 품에 안길 때까지 기독교 세계관에 입각한 집필을 멈추지 않았습니다. 대작 『반혁명 국가학』도 말년에 집대성한 역작입니다. 한국어판은 2023년에 출간되어 300명의 국회의원실에 전달되었습니다.','끝까지 쓰다'],
-   en:['Later Years','He kept writing from a Christian worldview until he died at the age of 83. His great work, Antirevolutionaire Staatkunde, was completed in these last years. The Korean edition, published in 2023, was delivered to the offices of all 300 members of Korea’s National Assembly.','Writing to the end'],
-   nl:['Latere jaren','Tot zijn dood op 83-jarige leeftijd bleef hij schrijven vanuit een christelijke levensbeschouwing. Zijn grote werk, Antirevolutionaire Staatkunde, voltooide hij in deze laatste jaren. De Koreaanse vertaling verscheen in 2023 en werd bezorgd bij alle 300 leden van het Koreaanse parlement.','Schrijven tot het einde'] },
+   ko:['후기 활동','83세로 생을 마칠 때까지 펜을 놓지 않았습니다. 마지막 대작 『반혁명 국가학』은 한국어로 번역되어 300명의 국회의원실에 전달되었습니다.','끝까지 쓰다'],
+   en:['Later Years','He kept writing until the end, at the age of 83. His last great work, Antirevolutionaire Staatkunde, now exists in Korean — and was delivered to all 300 members of Korea’s National Assembly.','Writing to the end'],
+   nl:['Latere jaren','Hij bleef schrijven tot het einde, tot zijn 83e. Zijn laatste grote werk, Antirevolutionaire Staatkunde, bestaat nu in het Koreaans — en werd bezorgd bij alle 300 leden van het Koreaanse parlement.','Schrijven tot het einde'] },
  { id:'p6', panel:6, meta:'VANDAAG · TODAY', p:[0.6,1.6,-1.2], t:[4,1.25,-1.2],
-   ko:['사상과 영향','영역주권과 일반은총 사상은 철학과 신학을 넘어 정치·경제·사회 분야에서 지금도 영향을 미치고 있습니다. ‘21세기 카이퍼’로 불리는 발케넨더 전 총리는 그 사상을 이어 책임 있는 경제, 책임 있는 사회를 가르치고 있습니다.','영역주권과 일반은총'],
-   en:['Thought and Legacy','Sphere sovereignty and common grace still shape philosophy, theology, politics, economics and society. Former prime minister Balkenende, often called a Kuyper for the 21st century, carries this thought forward in his teaching on a responsible economy and a responsible society.','Sphere sovereignty, common grace'],
-   nl:['Gedachtegoed en invloed','Soevereiniteit in eigen kring en gemene gratie werken nog altijd door in filosofie, theologie, politiek, economie en samenleving. Oud-premier Balkenende, wel een Kuyper van de 21e eeuw genoemd, draagt dit gedachtegoed verder in zijn onderwijs over een verantwoorde economie en samenleving.','Soevereiniteit in eigen kring'] },
+   ko:['사상과 영향','영역주권, 그리고 일반은총. 네덜란드에서 태어난 이 사상을 지금 한국의 젊은이들이 배우고, 삶으로 살아 내려 합니다.','영역주권과 일반은총'],
+   en:['Thought and Legacy','Sphere sovereignty. Common grace. Ideas born in the Netherlands, which young Koreans now study — and try to live.','Sphere sovereignty, common grace'],
+   nl:['Gedachtegoed en invloed','Soevereiniteit in eigen kring. Gemene gratie. Gedachten die in Nederland zijn geboren, en die jonge Koreanen nu bestuderen — en proberen te leven.','Soevereiniteit in eigen kring'] },
  { id:'relics', p:[0,1.78,1.0], t:[0,0.95,-2],
-   ko:['마아슬라위스에서 온 유물','전시함의 유물 10점 가까이는 카이퍼의 고향 마아슬라위스의 아브라함 카이퍼 헤리티지 센터가 기증한 것입니다. 헤르다 페르뷔르흐 회장은 이 기증을 계기로 교류가 이어지기를 소망했습니다. 벽면의 사진은 첫 목회지 베이스트 교회의 꼬르 판 허위껄럼 장로가 보내 준 70여 점에서 골랐습니다.'],
-   en:['Gifts from Maassluis','Nearly ten artefacts in these cases were donated by the Abraham Kuyper Heritage Centre in Maassluis, Kuyper’s birthplace. Its chair, Gerda Verburg, expressed the hope that this gift would be the start of a lasting exchange. The photographs come from some 70 images shared by elder Cor van Heuckelum of the church in Beesd.'],
-   nl:['Geschenken uit Maassluis','Bijna tien voorwerpen in deze vitrines zijn geschonken door het Abraham Kuyper Heritage Centre in Maassluis, Kuypers geboorteplaats. Voorzitter Gerda Verburg sprak de hoop uit dat deze schenking het begin is van een blijvende uitwisseling. De foto’s komen uit zo’n 70 beelden van ouderling Cor van Heuckelum van de kerk in Beesd.'] },
+   ko:['마아슬라위스에서 온 선물','이 유물들은 마아슬라위스의 아브라함 카이퍼 헤리티지 센터에서 서울까지 먼 길을 왔습니다. 주일마다 다음 세대가 예배하러 가는 길에 이 앞을 지납니다. 감사한 마음으로 소중히 간직하겠습니다.'],
+   en:['Your gift, from Maassluis','These objects travelled from the Erfgoedcentrum Abraham Kuyper in Maassluis to Seoul. Every Sunday, young people pass them on their way to worship. We keep them with care, and with gratitude.'],
+   nl:['Uw geschenk, uit Maassluis','Deze voorwerpen reisden van het Erfgoedcentrum Abraham Kuyper in Maassluis naar Seoul. Elke zondag lopen jonge mensen erlangs, op weg naar de eredienst. Wij bewaren ze met zorg, en met dankbaarheid.'] },
  { id:'plaque', p:[5.4,1.6,3.1], t:[5.4,1.15,0],
-   ko:['발케넨더 전 총리의 동판','카이퍼 박사의 얼굴을 부조로 새긴 이 동판은 얀 페터르 발케넨더 전 총리가 소중히 간직하던 소장품입니다. 그는 이 동판을 기증하고, 헤리티지 센터의 유물 기증까지 직접 이어 주었습니다.'],
-   en:['The Bronze Relief','This bronze relief of Kuyper was a treasured personal possession of former prime minister Jan Peter Balkenende. He donated it to the hall — and personally asked the Heritage Centre for the artefacts displayed here.'],
-   nl:['Het bronzen reliëf','Dit bronzen reliëf van Kuyper was een dierbaar persoonlijk bezit van oud-premier Jan Peter Balkenende. Hij schonk het aan de hal — en vroeg zelf het Heritage Centre om de voorwerpen die hier te zien zijn.'] },
+   ko:['발케넨더 전 총리의 동판','얀 페터르 발케넨더 전 총리가 오랫동안 아껴 온 동판입니다. 그는 이 동판을 기증했고, 마아슬라위스에 직접 도움을 청해 주었습니다. 전시홀의 사진들은 베이스트 교회 꼬르 판 허위껄럼 장로가 보내 주었습니다.'],
+   en:['The bronze relief','For years this bronze relief was treasured by Jan Peter Balkenende. He gave it to this hall — and it was he who asked Maassluis on our behalf. The photographs in the hall were sent from Beesd by elder Cor van Heuckelum.'],
+   nl:['Het bronzen reliëf','Jarenlang koesterde Jan Peter Balkenende dit bronzen reliëf. Hij schonk het aan deze hal — en hij was het die namens ons bij Maassluis aanklopte. De foto’s in de hal zijn vanuit Beesd gestuurd door ouderling Cor van Heuckelum.'] },
  { id:'quote', p:[9.2,1.7,6.4], t:[9.2,2.35,0],
-   ko:['그리스도가 왕이 되게 하라','“인간 존재의 전 영역 중에 만물의 주권자이신 그리스도께서 ‘내 것이라’고 주장하지 않으시는 곳은 단 한 곳도 없다.” — 자유대학교 개교 연설, 1880년 10월 20일'],
-   en:['Let Christ be King!','“There is not a square inch in the whole domain of our human existence over which Christ, who is Sovereign over all, does not cry: ‘Mine!’” — Inaugural address at the Free University, 20 October 1880'],
-   nl:['Laat Christus Koning zijn!','“Geen duimbreed is er op heel ’t erf van ons menselijk leven, waarvan de Christus, die aller Soeverein is, niet roept: ‘Mijn!’” — Rede bij de opening van de Vrije Universiteit, 20 oktober 1880'] },
+   ko:['“내 것이라”','“인간 존재의 전 영역 중에 만물의 주권자이신 그리스도께서 ‘내 것이라’고 주장하지 않으시는 곳은 단 한 곳도 없다.” 1880년 암스테르담에서 울린 이 말이 오늘 서울의 벽에 새겨져 있습니다.'],
+   en:['“Mine!”','“There is not a square inch in the whole domain of our human existence over which Christ, who is Sovereign over all, does not cry: ‘Mine!’” He spoke these words in Amsterdam in 1880. Today they are written on a wall in Seoul.'],
+   nl:['“Mijn!”','“Geen duimbreed is er op heel ’t erf van ons menselijk leven, waarvan de Christus, die áller Souverein is, niet roept: ‘Mijn!’” Hij sprak deze woorden in 1880 in Amsterdam. Vandaag staan ze op een muur in Seoul.'] },
  { id:'finale', p:[-3.2,1.9,9.4], t:[1.6,2.5,0],
-   ko:['다음 세대여, 21세기 카이퍼로 일어나라','전시홀과 이어진 웨스트 채플에는 주일마다 중등부와 대학부가 모입니다. 이 길을 지나는 다음 세대가 삶의 모든 영역에서 그리스도를 왕으로 높이기를 기도합니다. 귀한 유물을 보내 주신 네덜란드의 벗들께 감사드립니다.'],
-   en:['Rise up, Kuypers of the 21st century','Every Sunday, teenagers and university students gather in the West Chapel beside this hall. We pray that the next generation walking this street will honour Christ as King in every sphere of life. To our friends in the Netherlands: thank you.'],
-   nl:['Sta op, Kuypers van de 21e eeuw','Elke zondag komen tieners en studenten samen in de West Chapel naast deze hal. Wij bidden dat de volgende generatie die door deze straat loopt, Christus als Koning eert op elk terrein van het leven. Aan onze vrienden in Nederland: hartelijk dank.'] }
+   ko:['다음 세대여, 21세기 카이퍼로 일어나라','이 길을 지나는 다음 세대에게 말합니다. 삶의 모든 영역에서 그리스도가 왕이 되시게 하라.'],
+   en:['Rise up, Kuypers of the 21st century','To the next generation who walk this street, we say: let Christ be King — in every sphere of life.'],
+   nl:['Sta op, Kuypers van de 21e eeuw','Tegen de volgende generatie die door deze straat loopt, zeggen wij: laat Christus Koning zijn — op elk terrein van het leven.'] },
+ { id:'end', card:'end', kicker:'SEOUL · MAASSLUIS · BEESD', hold:14, p:[0,1.9,9.9], t:[0,2.7,0],
+   ko:['감사합니다','마아슬라위스와 베이스트의 벗들께 감사드립니다. 보내 주신 선물이 서울에서 보금자리를 찾았습니다.'],
+   en:['Thank you','Thank you, Maassluis. Thank you, Beesd. Your gift has found a home in Seoul.'],
+   nl:['Dank u wel','Dank u wel, Maassluis. Dank u wel, Beesd. Uw geschenk heeft in Seoul een thuis gevonden.'] }
 ];
+const SI = id => STOPS.findIndex(s=>s.id===id);
 const N = STOPS.length;
 const KING = {ko:'그리스도가 왕이 되게 하라', en:'Abraham Kuyper · 1837–1920', nl:'Laat Christus Koning zijn'};
 
@@ -249,7 +275,7 @@ sun.castShadow=true; sun.shadow.mapSize.set(2048,2048); Object.assign(sun.shadow
 sun.shadow.bias=-.0006; scene.add(sun,sun.target);
 const spot=(x,y,z,tx,ty,tz,i,ang=.7)=>{ const s=new THREE.SpotLight('#ffe0b5',i,12,ang,.6,1.6); s.position.set(x,y,z); s.target.position.set(tx,ty,tz); scene.add(s,s.target); };
 spot(-2.2,3.1,-.6,-3.4,1.4,-3.2,15); spot(2.2,3.1,-.6,3.4,1.4,-3.2,15); spot(0,3.1,-.4,0,1.2,-2.6,20,.8);
-spot(5.4,3.6,1.6,5.4,1.6,0,9,.38); spot(-7.4,5,2.6,-7.4,2,0,30,.6); spot(9.2,5.4,2.8,9.2,2.6,0,34,.85);
+spot(5.4,3.6,1.6,5.4,1.6,0,9,.38); spot(-6.9,5,2.8,-6.9,2,0,32,.75); spot(9.2,5.4,2.8,9.2,2.6,0,34,.85);
 
 /* ───────── 글자가 들어가는 전시물 ───────── */
 const clickable=[]; const redraw=[];
@@ -280,18 +306,18 @@ STOPS.forEach((s,i)=>{ if(!s.panel) return; const [x,y,z,ry]=panelPos[s.panel]; 
   },x,y,z,ry); m.userData.stop=i; clickable.push(m); });
 
 // Kuyper Street 사인 (왼쪽 벽돌 벽)
-board(3.4,2.1,-7.4,2.15,.07,0);
+board(3.4,2.1,-7.9,2.15,.07,0);
 const sign=textured(3.4,2.1,1360,840,(c,W,H)=>{ c.fillStyle='#8fa5a3'; c.fillRect(0,0,W,H); c.textAlign='center';
   c.fillStyle='#f4f1ea'; c.font=`400 50px ${SANS}`; c.fillText({ko:'카이퍼의 길',en:'The Kuyper Way',nl:'De weg van Kuyper'}[lang],W/2,150);
   c.fillStyle='#4b3125'; c.font=`500 260px ${LATIN}`; c.letterSpacing='6px'; c.fillText('KUYPER',W/2,400); c.fillText('STREET',W/2,640); c.letterSpacing='0px';
-  c.fillStyle='#33302d'; c.font=`400 36px ${SANS}`; c.fillText('Abraham Kuyper Street Exhibition Hall',W/2,740); c.textAlign='left'; },-7.4,2.15,.075,0);
-sign.userData.stop=1; clickable.push(sign);
+  c.fillStyle='#33302d'; c.font=`400 36px ${SANS}`; c.fillText('Abraham Kuyper Street Exhibition Hall',W/2,740); c.textAlign='left'; },-7.9,2.15,.075,0);
+sign.userData.stop=SI('sign'); clickable.push(sign);
 
 // 벽돌 벽의 어록
 const quote=textured(7.2,2.7,2048,768,(c,W,H)=>{ c.textAlign='center'; c.fillStyle='#f3ead6'; c.font=`600 80px ${LATIN}`; c.letterSpacing='7px';
   ['THERE IS NOT A SQUARE INCH IN THE WHOLE','DOMAIN OF OUR HUMAN EXISTENCE OVER WHICH','CHRIST, WHO IS SOVEREIGN OVER ALL,','DOES NOT CRY: ‘MINE!’'].forEach((l,i)=>c.fillText(l,W/2,130+i*128));
   c.font=`500 46px ${LATIN}`; c.fillStyle='#e2d3b6'; c.fillText('ABRAHAM KUYPER · VRIJE UNIVERSITEIT · 20 OCTOBER 1880',W/2,690); c.letterSpacing='0px'; c.textAlign='left'; },9.2,2.6,.02,0,{basic:true});
-quote.userData.stop=11; clickable.push(quote);
+quote.userData.stop=SI('quote'); clickable.push(quote);
 
 // 니치 뒷벽 중앙: Let Christ be King!
 textured(3.0,1.2,1200,480,(c,W,H)=>{ c.textAlign='center'; c.fillStyle='#3a2a21'; c.font=`600 150px ${LATIN}`; c.fillText('Let Christ be King!',W/2,210);
@@ -301,18 +327,28 @@ textured(3.0,1.2,1200,480,(c,W,H)=>{ c.textAlign='center'; c.fillStyle='#3a2a21'
 const plaqueTex=new THREE.TextureLoader().load('img/plaque.png'); plaqueTex.colorSpace=THREE.SRGBColorSpace; plaqueTex.anisotropy=8;
 const edge=std({color:'#3b2a16',roughness:.5,metalness:.7});
 const plaque=new THREE.Mesh(new THREE.BoxGeometry(.84,1.0,.06),[edge,edge,edge,edge,std({map:plaqueTex,roughness:.45,metalness:.35}),edge]);
-plaque.position.set(5.4,1.78,.035); plaque.castShadow=true; plaque.userData.stop=10; scene.add(plaque); clickable.push(plaque);
+plaque.position.set(5.4,1.78,.035); plaque.castShadow=true; plaque.userData.stop=SI('plaque'); scene.add(plaque); clickable.push(plaque);
 board(.84,.24,5.4,1.06,.05,0);
 textured(.84,.24,840,240,(c,W,H)=>{ c.fillStyle='#efe7d6'; c.fillRect(0,0,W,H); c.fillStyle='#2b1f19'; c.textAlign='center';
   c.font=`700 46px ${lang==='ko'?SERIF:LATIN}`; c.fillText({ko:'아브라함 카이퍼 부조 동판',en:'Bronze relief of Abraham Kuyper',nl:'Bronzen reliëf van Abraham Kuyper'}[lang],W/2,96);
   c.fillStyle='#6a5a4d'; c.font=`400 34px ${SANS}`; c.fillText({ko:'기증: 얀 페터르 발케넨더 전 네덜란드 총리',en:'Gift of Jan Peter Balkenende',nl:'Schenking van Jan Peter Balkenende'}[lang],W/2,164); c.textAlign='left'; },5.4,1.06,.056,0);
 
+// 카이퍼 초상 (1905년 사진, 퍼블릭 도메인 · Wikimedia Commons)
+const portTex=new THREE.TextureLoader().load('img/kuyper-1905.jpg'); portTex.colorSpace=THREE.SRGBColorSpace; portTex.anisotropy=8;
+const frameM=std({color:'#2a1d14',roughness:.45,metalness:.3});
+const port=new THREE.Mesh(new THREE.BoxGeometry(.86,1.2,.07),[frameM,frameM,frameM,frameM,frameM,frameM]); port.position.set(-5.05,1.95,.04); port.castShadow=true; scene.add(port);
+const portImg=plane(.74,1.055,std({map:portTex,roughness:.8,emissive:'#ffffff',emissiveMap:portTex,emissiveIntensity:.1}),-5.05,1.95,.08); portImg.userData.stop=SI('sign'); clickable.push(portImg);
+board(.86,.2,-5.05,1.16,.05,0);
+textured(.86,.2,860,200,(c,W,H)=>{ c.fillStyle='#efe7d6'; c.fillRect(0,0,W,H); c.fillStyle='#2b1f19'; c.textAlign='center';
+  c.font=`700 52px ${LATIN}`; c.fillText('Abraham Kuyper',W/2,88); c.fillStyle='#6a5a4d'; c.font=`600 34px ${LATIN}`; c.letterSpacing='5px'; c.fillText('MAASSLUIS 1837 – DEN HAAG 1920',W/2,150); c.letterSpacing='0px'; c.textAlign='left'; },-5.05,1.16,.056,0);
+spot(-5.05,3.6,1.7,-5.05,1.9,0,9,.4);
+
 // 전시함 3개 (유물은 형상만 연출)
 const ped=std({color:'#262220',roughness:.55}), glass=std({color:'#dff0f2',transparent:true,opacity:.14,roughness:.05,depthWrite:false});
 const paper=std({color:'#e8dcc0',roughness:.9});
-[-1.5,0,1.5].forEach((x,i)=>{ const p=box(.64,.9,.64,ped,x,.45,-2); p.userData.stop=9; clickable.push(p);
+[-1.5,0,1.5].forEach((x,i)=>{ const p=box(.64,.9,.64,ped,x,.45,-2); p.userData.stop=SI('relics'); clickable.push(p);
   box(.56,.02,.56,std({color:'#6b5d4c',roughness:1}),x,.91,-2);
-  const g=new THREE.Mesh(new THREE.BoxGeometry(.62,.5,.62),glass); g.position.set(x,1.15,-2); g.userData.stop=9; scene.add(g); clickable.push(g);
+  const g=new THREE.Mesh(new THREE.BoxGeometry(.62,.5,.62),glass); g.position.set(x,1.15,-2); g.userData.stop=SI('relics'); scene.add(g); clickable.push(g);
   const e=new THREE.LineSegments(new THREE.EdgesGeometry(g.geometry),new THREE.LineBasicMaterial({color:'#cfd8d8'})); e.position.copy(g.position); scene.add(e);
   if(i===0){ box(.42,.02,.3,std({color:'#4a2f22',roughness:.7}),x,.935,-2);
     const l=box(.2,.025,.28,paper,x-.1,.965,-2); l.rotation.z=-.16; const r2=box(.2,.025,.28,paper,x+.1,.965,-2); r2.rotation.z=.16; }
@@ -327,14 +363,16 @@ const camP=V(STOPS[0].p), camT=V(STOPS[0].t);
 let idx=0, anim=null, touring=false, tourT0=0, capturing=false, yaw=0, pitch=0, capShown=-1;
 const posed=(i,u)=>{ const p=V(STOPS[i].p), t=V(STOPS[i].t); return {p:p.lerp(t,.05*u), t}; };
 const MOVE=2.8;
-function timeline(){ let t=0; return STOPS.map((s,i)=>{ const len=s[lang][1].length, d=Math.max(6, len/(lang==='ko'?14:23)+2), mv=i?MOVE:0;
+function timeline(){ let t=0; return STOPS.map((s,i)=>{ const len=s[lang][1].length, d=s.hold||Math.max(6.5, len/(lang==='ko'?11:17)+3), mv=i?MOVE:0;
   const seg={start:t,mv,d}; t+=mv+d; return seg; }); }
 function tourTotal(){ const tl=timeline(), l=tl[N-1]; return l.start+l.mv+l.d; }
-function setCaption(i,op){ const c=document.getElementById('cap');
-  if(i!==capShown){ capShown=i; const s=STOPS[i][lang];
-    document.getElementById('capn').textContent=String(i+1).padStart(2,'0')+' / '+N;
-    document.getElementById('capt').textContent=s[0]; document.getElementById('capb').textContent=s[1]; }
-  c.style.opacity=op; }
+const $=id=>document.getElementById(id);
+function setCaption(i,op){ const s=STOPS[i], card=!!s.card;
+  if(i!==capShown){ capShown=i; const x=s[lang];
+    if(card){ $('ck').textContent=s.kicker; $('ct').textContent=x[0]; $('cb').textContent=x[1]; $('card').dataset.kind=s.card; $('card').lang=lang;
+      $('cc').innerHTML=s.card==='end'?CREDITS.map(l=>'<span>'+l+'</span>').join(''):''; }
+    else { $('capn').textContent=String(i).padStart(2,'0')+' / '+String(N-2).padStart(2,'0'); $('capt').textContent=x[0]; $('capb').textContent=x[1]; } }
+  $('cap').style.opacity=card?0:op; $('card').style.opacity=card?op:0; }
 function seek(t){ const tl=timeline(); let i=N-1; for(let k=0;k<N;k++){ if(t<tl[k].start+tl[k].mv+tl[k].d){i=k;break;} }
   const s=tl[i], lt=Math.min(t-s.start, s.mv+s.d);
   if(lt<s.mv){ const a=posed(i-1,1), b=posed(i,0), u=ease(lt/s.mv); camP.lerpVectors(a.p,b.p,u); camT.lerpVectors(a.t,b.t,u);
@@ -350,11 +388,12 @@ function syncUI(){ const u=UI[lang]; document.documentElement.lang=lang;
   if(!touring) document.getElementById('bar').style.width=(100*idx/(N-1))+'%'; }
 function setLang(l){ lang=l; capShown=-1; redraw.forEach(f=>f()); setCaption(idx,1);
   if(touring){ const tl=timeline(); tourT0=performance.now()-tl[idx].start*1000-tl[idx].mv*1000; } syncUI(); }
-function toggleTour(){ if(touring){ goTo(idx); return; } touring=true; anim=null; yaw=pitch=0; tourT0=performance.now(); syncUI(); }
+const bgm=new Audio('audio/psalm134.mp3'); bgm.loop=true; bgm.volume=.6;
+function toggleTour(){ if(touring){ bgm.pause(); goTo(idx); return; } touring=true; anim=null; yaw=pitch=0; tourT0=performance.now(); bgm.currentTime=0; bgm.play().catch(()=>{}); syncUI(); }
 
 function render(){ camera.position.copy(camP); camera.lookAt(camT); camera.rotateOnWorldAxis(Y,yaw); camera.rotateX(pitch); renderer.render(scene,camera); }
 function frame(now){ requestAnimationFrame(frame); if(capturing) return;
-  if(touring){ const t=(now-tourT0)/1000; if(t>=tourTotal()){ touring=false; seek(tourTotal()); syncUI(); } else seek(t); }
+  if(touring){ const t=(now-tourT0)/1000; if(t>=tourTotal()){ touring=false; bgm.pause(); seek(tourTotal()); syncUI(); } else seek(t); }
   else if(anim){ const u=ease(Math.min(1,(now-anim.t0)/anim.dur)), b=posed(idx,0);
     camP.lerpVectors(anim.fp,b.p,u); camT.lerpVectors(anim.ft,b.t,u); yaw=anim.fy*(1-u); pitch=anim.fpt*(1-u); if(u>=1) anim=null; }
   render(); }
@@ -371,21 +410,21 @@ canvas.addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-
 canvas.addEventListener('pointerup',e=>{ canvas.classList.remove('drag'); if(down&&down.moved<5){
   ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1); ray.setFromCamera(ptr,camera);
   const hit=ray.intersectObjects(clickable)[0]; if(hit) goTo(hit.object.userData.stop); } down=null; });
-document.getElementById('prev').onclick=()=>goTo(idx-1); document.getElementById('next').onclick=()=>goTo(idx+1);
+document.getElementById('prev').onclick=()=>{bgm.pause();goTo(idx-1)}; document.getElementById('next').onclick=()=>{bgm.pause();goTo(idx+1)};
 document.getElementById('tour').onclick=toggleTour;
 document.querySelectorAll('#langs button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
 addEventListener('keydown',e=>{ if(e.key==='ArrowRight') goTo(idx+1); else if(e.key==='ArrowLeft') goTo(idx-1);
   else if(e.key===' '){ e.preventDefault(); toggleTour(); } else if(e.key.toLowerCase()==='h') document.body.classList.toggle('clean'); });
 
 /* ───────── 시작 ───────── */
-const all=STOPS.map(s=>['ko','en','nl'].map(l=>s[l].join(' ')).join(' ')).join(' ')+Object.values(KING).join(' ')+'카이퍼의 길 아브라함 부조 동판 기증: 얀 페터르 발케넨더 전 네덜란드 총리 0123456789';
+const all=STOPS.map(s=>['ko','en','nl'].map(l=>s[l].join(' ')).join(' ')).join(' ')+Object.values(KING).join(' ')+'카이퍼의 길 아브라함 부조 동판 기증: 얀 페터르 발케넨더 전 네덜란드 총리 0123456789 감사의 편지 A LETTER OF THANKS EEN DANKBRIEF '+CREDITS.join(' ');
 const fonts=['700 40px "Noto Serif KR"','500 40px "Noto Serif KR"','400 30px "Noto Sans KR"','500 40px "Cormorant Garamond"','600 40px "Cormorant Garamond"','700 40px "Cormorant Garamond"','italic 600 40px "Cormorant Garamond"'];
 await Promise.race([Promise.all(fonts.map(f=>document.fonts.load(f,all))).catch(()=>{}), new Promise(r=>setTimeout(r,6000))]);
 resize(); redraw.forEach(f=>f()); setCaption(0,1); syncUI(); render(); renderer.shadowMap.autoUpdate=false;
 document.getElementById('load').classList.add('done');
 requestAnimationFrame(frame);
 // 영상 추출용: 시간 t(초)의 투어 장면을 한 프레임 그린다
-window.__tour={ total:tourTotal, seek(t){ capturing=true; yaw=pitch=0; seek(t); render(); } };
+window.__tour={ total:tourTotal, marks:()=>timeline().map(s=>s.start+s.mv+2), seek(t){ capturing=true; yaw=pitch=0; seek(t); render(); } };
 window.__ready=true;
 </script>
 </body>
