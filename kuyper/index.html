@@ -541,7 +541,7 @@ resize(); redraw.forEach(f=>f()); setCaption(0,1); syncUI(); render(); renderer.
 document.getElementById('load').classList.add('done');
 requestAnimationFrame(frame);
 // 영상 추출용: 시간 t(초)의 투어 장면을 한 프레임 그린다
-window.__tour={ total:tourTotal, marks:()=>timeline().map(s=>s.start+s.mv+2), seek(t){ capturing=true; yaw=pitch=0; seek(t); const k=camP.toArray().concat(camT.toArray()).join(); if(!stillOn && k!==this.k){ this.k=k; render(); } } };
+window.__tour={ total:tourTotal, stops:()=>{ const tl=timeline(); return STOPS.map((s,i)=>({id:s.id,card:s.card||'',start:tl[i].start,mv:tl[i].mv,d:tl[i].d,h:s[lang][0],t:s[lang][1]})); }, marks:()=>timeline().map(s=>s.start+s.mv+2), seek(t){ capturing=true; yaw=pitch=0; seek(t); const k=camP.toArray().concat(camT.toArray()).join(); if(!stillOn && k!==this.k){ this.k=k; render(); } } };
 window.__ready=true;
 </script>
 </body>
