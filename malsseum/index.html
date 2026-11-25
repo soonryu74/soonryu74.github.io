@@ -135,12 +135,16 @@
 <dialog id="bulkDlg">
   <form method="dialog" id="bulkForm">
     <h2>여러 개 한꺼번에 넣기</h2>
-    <p class="hint">한 줄에 하나씩, <b>출처 | 내용</b> 모양으로 붙여 넣으세요. 출처가 없으면 내용만 써도 됩니다.</p>
+    <p class="hint">한 줄에 하나씩, <b>출처 | 내용</b> 모양으로 붙여 넣거나 파일을 고르세요. 출처가 없으면 내용만 써도 됩니다. 넣기 전에 아래 칸에서 고칠 수 있습니다.</p>
     <div class="chips radio" id="bulkKind">
       <label><input type="radio" name="bkind" value="verse" checked><i>성경 구절</i></label>
       <label><input type="radio" name="bkind" value="quote"><i>좋은 글귀</i></label>
       <label><input type="radio" name="bkind" value="prayer"><i>기도제목</i></label>
     </div>
+    <label class="btn filepick">파일에서 불러오기 (txt · csv)
+      <input type="file" id="bulkFile" accept=".txt,.csv,.tsv,.md,text/plain,text/csv">
+    </label>
+    <p class="hint" id="bulkInfo"></p>
     <textarea id="bulkText" rows="9" placeholder="시편 23:1 | (여기에 말씀 내용)&#10;빌립보서 4:13 | (여기에 말씀 내용)"></textarea>
     <div class="actions">
       <span class="grow"></span>
