@@ -173,17 +173,63 @@
     var t = st.items[i]; st.items[i] = st.items[j]; st.items[j] = t;
     save();
   };
-  $('bulkBtn').onclick = function () { $('bulkText').value = ''; $('bulkDlg').showModal(); };
+  $('bulkBtn').onclick = function () { $('bulkText').value = ''; $('bulkFile').value = ''; bulkCount(); $('bulkDlg').showModal(); };
+  function bulkCount() {
+    var n = $('bulkText').value.split(/\n+/).filter(function (l) { return l.trim(); }).length;
+    $('bulkInfo').textContent = n ? n + '줄을 넣을 준비가 됐습니다' : '';
+  }
+  $('bulkText').oninput = bulkCount;
+  // CSV 한 덩어리를 줄·칸으로 나눈다 (따옴표 안의 쉼표·줄바꿈을 지킨다)
+  function parseCsv(text, sep) {
+    var rows = [], row = [], cell = '', q = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+      else if (c === '"') q = true;
+      else if (c === sep) { row.push(cell); cell = ''; }
+      else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+      else if (c !== '\r') cell += c;
+    }
+    row.push(cell); rows.push(row);
+    return rows;
+  }
+  var one = function (s) { return String(s || '').replace(/\s+/g, ' ').trim(); };
+  function fileToLines(name, text) {
+    text = text.replace(/^\uFEFF/, '');
+    var isCsv = /\.csv$/i.test(name), isTsv = /\.tsv$/i.test(name) || (!isCsv && text.indexOf('\t') >= 0 && text.indexOf('|') < 0);
+    if (!isCsv && !isTsv) return text.replace(/\r/g, '').split(/\n+/).map(function (l) { return l.trim(); }).filter(Boolean);
+    var rows = parseCsv(text, isCsv ? ',' : '\t').map(function (r) { return r.map(one); }).filter(function (r) { return r.join(''); });
+    // 첫 줄이 제목 줄(출처, 내용 …)이면 뺀다
+    if (rows.length > 1 && /^(출처|장절|구절|제목|ref|reference|verse|번호|no\.?)$/i.test(rows[0][0])) rows.shift();
+    return rows.map(function (r) {
+      if (r.length === 1) return r[0];
+      if (r.length > 2 && /^\d+$/.test(r[0])) r = r.slice(1);          // 맨 앞 번호 칸은 버린다
+      return r[0] + ' | ' + r.slice(1).filter(Boolean).join(' ');
+    });
+  }
+  $('bulkFile').onchange = function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    if (f.size > 1024 * 1024) { toast('파일이 너무 큽니다 (1MB까지)'); this.value = ''; return; }
+    var rd = new FileReader();
+    rd.onload = function () {
+      var lines = fileToLines(f.name, String(rd.result || ''));
+      if (!lines.length) { toast('파일에서 글을 찾지 못했습니다'); return; }
+      $('bulkText').value = lines.join('\n'); bulkCount();
+    };
+    rd.onerror = function () { toast('파일을 읽지 못했습니다'); };
+    rd.readAsText(f, 'utf-8');
+  };
   $('bulkCancel').onclick = function () { $('bulkDlg').close(); };
   $('bulkForm').onsubmit = function () {
     var kind = kindOf('bkind'), n = 0;
     $('bulkText').value.split(/\n+/).forEach(function (line) {
       line = line.trim(); if (!line) return;
-      var p = line.indexOf('|'), ref = p >= 0 ? line.slice(0, p).trim() : '', text = (p >= 0 ? line.slice(p + 1) : line).trim();
+      var p = line.indexOf('|'); if (p < 0) p = line.indexOf('\t');
+      var ref = p >= 0 ? line.slice(0, p).trim() : '', text = (p >= 0 ? line.slice(p + 1) : line).trim();
       if (!text || st.items.length >= 500) return;
       st.items.push({ id: newId(), kind: kind, ref: ref.slice(0, 60), text: text.slice(0, 600) }); n++;
     });
-    if (n) { save(); toast(n + '개를 넣었습니다'); }
+    if (n) { save(); toast(n + '개를 넣었습니다' + (st.items.length >= 500 ? ' (목록은 500개까지입니다)' : '')); }
   };
 
   // ── 연결 코드 ──
