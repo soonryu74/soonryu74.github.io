@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>말씀 알림</title>
+<meta name="description" content="내가 정한 성경 구절·좋은 글귀·기도제목을 정한 간격으로 휴대폰 알림으로 받습니다.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#27443a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="말씀 알림">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>말씀 알림</h1>
+  <p class="sub">폰을 들여다보는 대신, 말씀이 먼저 찾아옵니다</p>
+</header>
+
+<main>
+  <!-- 지금 차례 -->
+  <section class="now" id="now" aria-live="polite">
+    <p class="now-label" id="nowLabel">다음에 올 글</p>
+    <p class="now-ref" id="nowRef"></p>
+    <p class="now-text" id="nowText">아래에서 글을 먼저 넣어 주세요.</p>
+    <p class="now-when" id="nowWhen"></p>
+  </section>
+
+  <!-- 알림 -->
+  <section class="card" id="pushCard">
+    <div class="row">
+      <div>
+        <h2>알림</h2>
+        <p class="hint" id="pushState">확인하는 중…</p>
+      </div>
+      <button class="btn primary" id="pushBtn" type="button" hidden>알림 켜기</button>
+    </div>
+    <div class="guide" id="iosGuide" hidden>
+      <strong>아이폰은 홈 화면에 추가해야 알림이 옵니다.</strong>
+      <ol>
+        <li>사파리 아래쪽 <b>공유 버튼(네모에 화살표)</b>을 누릅니다</li>
+        <li><b>홈 화면에 추가</b>를 누릅니다</li>
+        <li>홈 화면에 생긴 <b>말씀 알림</b>을 열고 [알림 켜기]를 누릅니다</li>
+      </ol>
+    </div>
+    <button class="btn ghost" id="testBtn" type="button" hidden>지금 한 번 보내 보기</button>
+  </section>
+
+  <!-- 설정 -->
+  <section class="card">
+    <h2>보내는 방법</h2>
+    <label class="field"><span>간격</span>
+      <select id="interval">
+        <option value="30">30분마다</option>
+        <option value="60">1시간마다</option>
+        <option value="120">2시간마다</option>
+        <option value="180">3시간마다</option>
+      </select>
+    </label>
+    <div class="field"><span>조용한 시간</span>
+      <div class="inline">
+        <select id="quietStart" aria-label="조용한 시간 시작"></select>
+        <em>부터</em>
+        <select id="quietEnd" aria-label="조용한 시간 끝"></select>
+        <em>까지 쉼</em>
+      </div>
+    </div>
+    <div class="field"><span>보낼 종류</span>
+      <div class="chips" id="kinds">
+        <label><input type="checkbox" value="verse"><i>성경 구절</i></label>
+        <label><input type="checkbox" value="quote"><i>좋은 글귀</i></label>
+        <label><input type="checkbox" value="prayer"><i>기도제목</i></label>
+      </div>
+    </div>
+    <label class="field switch"><span>알림 보내기</span>
+      <input type="checkbox" id="enabled"><b aria-hidden="true"></b>
+    </label>
+  </section>
+
+  <!-- 목록 -->
+  <section class="card">
+    <div class="row">
+      <h2>내 목록 <small id="count"></small></h2>
+      <button class="btn" id="addBtn" type="button">+ 글 넣기</button>
+    </div>
+    <p class="hint">위에서부터 순서대로 하나씩 보냅니다. 끝까지 가면 처음으로 돌아옵니다.</p>
+    <ol class="list" id="list"></ol>
+    <p class="empty" id="empty">아직 넣은 글이 없습니다. [+ 글 넣기]로 첫 구절을 넣어 보세요.</p>
+    <button class="btn ghost" id="bulkBtn" type="button">여러 개 한꺼번에 넣기</button>
+  </section>
+
+  <!-- 다른 기기 -->
+  <section class="card">
+    <h2>다른 기기에서도 쓰기</h2>
+    <p class="hint">이 코드를 다른 휴대폰에 넣으면 같은 목록으로 알림을 받습니다. 남에게 보여 주지 마세요.</p>
+    <div class="inline">
+      <code id="keyView">············</code>
+      <button class="btn" id="keyShow" type="button">코드 보기</button>
+      <button class="btn" id="keyEnter" type="button">코드 넣기</button>
+    </div>
+  </section>
+
+  <p class="foot" id="saveState"></p>
+</main>
+
+<!-- 글 넣기/고치기 -->
+<dialog id="editDlg">
+  <form method="dialog" id="editForm">
+    <h2 id="editTitle">글 넣기</h2>
+    <div class="chips radio" id="editKind">
+      <label><input type="radio" name="kind" value="verse" checked><i>성경 구절</i></label>
+      <label><input type="radio" name="kind" value="quote"><i>좋은 글귀</i></label>
+      <label><input type="radio" name="kind" value="prayer"><i>기도제목</i></label>
+    </div>
+    <label class="field col"><span id="refLabel">어디 말씀인가요 (예: 시편 23:1)</span>
+      <input id="editRef" maxlength="60" autocomplete="off">
+    </label>
+    <label class="field col"><span>내용</span>
+      <textarea id="editText" rows="5" maxlength="600" required></textarea>
+    </label>
+    <p class="hint" id="editLen"></p>
+    <div class="actions">
+      <button class="btn danger" id="editDel" type="button" hidden>지우기</button>
+      <span class="grow"></span>
+      <button class="btn" type="button" id="editCancel">닫기</button>
+      <button class="btn primary" type="submit">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 여러 개 넣기 -->
+<dialog id="bulkDlg">
+  <form method="dialog" id="bulkForm">
+    <h2>여러 개 한꺼번에 넣기</h2>
+    <p class="hint">한 줄에 하나씩, <b>출처 | 내용</b> 모양으로 붙여 넣으세요. 출처가 없으면 내용만 써도 됩니다.</p>
+    <div class="chips radio" id="bulkKind">
+      <label><input type="radio" name="bkind" value="verse" checked><i>성경 구절</i></label>
+      <label><input type="radio" name="bkind" value="quote"><i>좋은 글귀</i></label>
+      <label><input type="radio" name="bkind" value="prayer"><i>기도제목</i></label>
+    </div>
+    <textarea id="bulkText" rows="9" placeholder="시편 23:1 | (여기에 말씀 내용)&#10;빌립보서 4:13 | (여기에 말씀 내용)"></textarea>
+    <div class="actions">
+      <span class="grow"></span>
+      <button class="btn" type="button" id="bulkCancel">닫기</button>
+      <button class="btn primary" type="submit">넣기</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 코드 넣기 -->
+<dialog id="keyDlg">
+  <form method="dialog" id="keyForm">
+    <h2>연결 코드 넣기</h2>
+    <p class="hint">다른 기기의 [코드 보기]에 나온 코드를 넣으세요. 이 기기의 지금 목록은 그 기기의 목록으로 바뀝니다.</p>
+    <input id="keyInput" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+    <p class="hint err" id="keyErr"></p>
+    <div class="actions">
+      <span class="grow"></span>
+      <button class="btn" type="button" id="keyCancel">닫기</button>
+      <button class="btn primary" type="submit">연결</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>

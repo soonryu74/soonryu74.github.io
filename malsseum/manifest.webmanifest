@@ -1,0 +1,16 @@
+{
+  "name": "말씀 알림",
+  "short_name": "말씀 알림",
+  "description": "내가 정한 성경 구절·좋은 글귀·기도제목을 정한 간격으로 알려 줍니다",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f2e9",
+  "theme_color": "#27443a",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
