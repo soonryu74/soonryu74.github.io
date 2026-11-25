@@ -11,13 +11,15 @@
   // ── 상태 ──
   var st = load();
   function fresh() {
-    return { key: newKey(), items: [], kinds: ['verse', 'quote', 'prayer'], interval_min: 60, quiet_start: 22, quiet_end: 7,
-      enabled: true, cursor: 0, next_at: null, synced: false };
+    // 처음 여는 사람은 기본 72구절을 1시간마다 하나씩 받도록 채워 둔다
+    return { key: newKey(), items: defaults(), kinds: ['verse', 'quote', 'prayer'], interval_min: 60, quiet_start: 22, quiet_end: 7,
+      enabled: true, cursor: 0, next_at: null, synced: false, seeded: true };
   }
   function load() {
     try { var s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s && s.key) return s; } catch (e) {}
     var f = fresh(); keep(f); return f;
   }
+  function defaults() { return (window.MAL_DEFAULT || []).map(function (x) { return { id: x.id, kind: x.kind, ref: x.ref, text: x.text }; }); }
   function keep(s) { try { localStorage.setItem(LS, JSON.stringify(s || st)); } catch (e) {} }
   function newKey() {
     var abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', a = new Uint8Array(16), out = '';
@@ -91,6 +93,7 @@
     [].forEach.call($('kinds').querySelectorAll('input'), function (c) { c.checked = st.kinds.indexOf(c.value) >= 0; });
     $('count').textContent = st.items.length ? st.items.length + '개' : '';
     $('empty').hidden = st.items.length > 0;
+    renderSeed();
     $('list').innerHTML = st.items.map(function (it, i) {
       var off = st.kinds.indexOf(it.kind) < 0;
       return '<li class="item' + (off ? ' off' : '') + (cur && cur.id === it.id ? ' cur' : '') + '" data-id="' + esc(it.id) + '">' +
@@ -232,6 +235,24 @@
     if (n) { save(); toast(n + '개를 넣었습니다' + (st.items.length >= 500 ? ' (목록은 500개까지입니다)' : '')); }
   };
 
+  // ── 기본 72구절 ──
+  function addDefaults() {       // 아직 없는 것만 뒤에 붙인다
+    var have = {}; st.items.forEach(function (x) { have[x.id] = 1; });
+    var add = defaults().filter(function (x) { return !have[x.id]; }).slice(0, Math.max(0, 500 - st.items.length));
+    st.items = st.items.concat(add); st.seeded = true;
+    return add.length;
+  }
+  function renderSeed() {
+    var have = {}; st.items.forEach(function (x) { have[x.id] = 1; });
+    $('seedBtn').hidden = !defaults().some(function (x) { return !have[x.id]; });
+  }
+  $('seedBtn').onclick = function () {
+    var n = addDefaults(); save();
+    toast(n ? '기본 ' + n + '구절을 넣었습니다' : '이미 모두 들어 있습니다');
+  };
+  // 이 앱을 먼저 쓰던 기기: 목록이 비어 있으면 한 번만 기본 72구절을 채운다
+  function seedOnce() { if (!st.seeded && !st.items.length && addDefaults()) save(); else if (!st.seeded) { st.seeded = true; keep(); } }
+
   // ── 연결 코드 ──
   var shown = false;
   $('keyShow').onclick = function () {
@@ -329,6 +350,7 @@
         else if (st.items.length) push();              // 서버보다 이 기기가 새것(올리다 끊긴 경우)
         else { takeUser(r.user); render(); }
       }
+      seedOnce();
       $('saveState').textContent = '';
     } catch (e) { $('saveState').textContent = '인터넷에 닿지 않아 이 기기에 저장된 내용을 보여 드립니다'; }
   })();
