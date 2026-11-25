@@ -99,3 +99,8 @@ dialog::backdrop { background: rgba(20, 26, 23, .55); }
 .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 20px); transform: translate(-50%, 20px); background: var(--ink); color: var(--bg); padding: 11px 16px; border-radius: 12px; font-size: 14px; opacity: 0; pointer-events: none; transition: .2s; max-width: calc(100vw - 32px); text-align: center; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+.filepick { display: inline-flex; align-items: center; margin-top: 8px; position: relative; overflow: hidden; }
+.filepick input { position: absolute; inset: 0; opacity: 0; cursor: pointer; min-height: 0; padding: 0; border: 0; width: 100%; }
+.filepick:focus-within { outline: 2px solid var(--gold); outline-offset: 2px; }
+#bulkInfo:empty { display: none; }
+#bulkText { margin-top: 10px; }
