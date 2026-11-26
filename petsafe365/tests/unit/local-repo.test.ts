@@ -9,7 +9,7 @@ function kv(): KV {
 }
 const petValues = (owner: string) => ({
   owner_id: owner, species: "dog" as const, name: "콩이", birth_date: null, estimated_birth: false, sex: "unknown" as const, neutered: null,
-  weight_kg: 4, registration_status: "unknown" as const, insurance_status: "unknown" as const, indoor: true, deleted_at: null,
+  weight_kg: 4, registration_status: "unknown" as const, insurance_status: "unknown" as const, indoor: true, vet_phone: null, deleted_at: null,
 });
 
 describe("예시 모드 저장소", () => {

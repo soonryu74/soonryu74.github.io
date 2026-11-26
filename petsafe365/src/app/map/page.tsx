@@ -83,7 +83,6 @@ function MapScreen() {
       return;
     }
     setRegionError(null);
-    window.open(kakaoSearch(`${r} ${searchType.search}`), "_blank", "noopener,noreferrer");
   };
 
   const kw = keyword.trim().toLowerCase();
@@ -145,9 +144,16 @@ function MapScreen() {
             error={regionError}
             hint="위치 권한 없이도 찾을 수 있어요. 새 창에서 카카오맵이 열려요."
           />
-          <Button type="submit" variant="ghost">
-            카카오맵에서 {searchType.label} 찾기
-          </Button>
+          {/* 새 창 열기는 환경에 따라 막힐 수 있어, 지역을 적으면 실제 링크를 보여 준다. */}
+          {region.trim() ? (
+            <LinkButton href={kakaoSearch(`${region.trim()} ${searchType.search}`)} variant="ghost">
+              카카오맵에서 {searchType.label} 찾기
+            </LinkButton>
+          ) : (
+            <Button type="submit" variant="ghost">
+              카카오맵에서 {searchType.label} 찾기
+            </Button>
+          )}
         </form>
       </Card>
 

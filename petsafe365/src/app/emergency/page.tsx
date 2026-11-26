@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+import { usePets } from "@/lib/hooks";
 import { Button, Card, Field, LinkButton, Notice, PageHeader, TextareaField } from "@/components/ui";
 
 type Flag = { key: string; label: string; record: string[]; extraDoNot?: string[]; prepare?: string[] };
@@ -169,14 +170,7 @@ export default function EmergencyPage() {
         <LinkButton href="/map?type=animal_hospital" variant="danger" className="min-h-16 w-full text-lg">
           가까운 동물병원 찾기
         </LinkButton>
-        <Card className="flex flex-col gap-2 border-danger">
-          <p className="text-lg font-bold">다니는 동물병원에 바로 전화</p>
-          <p>휴대폰에 저장해 둔 병원 번호가 있으면 지금 바로 전화하세요.</p>
-          <p className="text-sm text-muted">저장된 병원 번호가 없으면 지도에서 찾아 전화하세요. 펫안심365는 확인되지 않은 전화번호를 보여 주지 않아요.</p>
-          <LinkButton href="/map?type=animal_hospital" variant="ghost" className="w-full">
-            지도에서 병원 찾아 전화하기
-          </LinkButton>
-        </Card>
+        <VetCall />
       </section>
 
       <PageHeader title="긴급 도움" description="지금 보이는 모습을 골라 주세요. 무엇을 하면 되는지만 알려 드려요." />
@@ -205,5 +199,31 @@ export default function EmergencyPage() {
         펫안심365는 진단하거나 약·치료를 알려 주지 않아요. 걱정되면 망설이지 말고 동물병원에 전화하세요. 24시간·응급 진료 여부는 병원에 직접 확인해 주세요.
       </Notice>
     </>
+  );
+}
+
+/** 보호자가 직접 적어 둔 병원 번호가 있으면 한 번에 전화한다. 없으면 지도로 안내한다. 확인되지 않은 번호는 보여 주지 않는다. */
+function VetCall() {
+  const { pets } = usePets();
+  const saved = pets.filter((p) => p.vet_phone);
+  return (
+    <Card className="flex flex-col gap-2 border-danger">
+      <p className="text-lg font-bold">다니는 동물병원에 바로 전화</p>
+      {saved.length > 0 ? (
+        saved.map((p) => (
+          <LinkButton key={p.id} href={`tel:${p.vet_phone!.replace(/[^0-9+]/g, "")}`} variant="danger" className="min-h-14 w-full text-lg">
+            {p.name} 병원에 전화 ({p.vet_phone})
+          </LinkButton>
+        ))
+      ) : (
+        <>
+          <p>휴대폰에 저장해 둔 병원 번호가 있으면 지금 바로 전화하세요.</p>
+          <p className="text-sm text-muted">우리 아이 정보에 병원 번호를 적어 두면 여기서 한 번에 전화할 수 있어요. 펫안심365는 확인되지 않은 전화번호를 보여 주지 않아요.</p>
+          <LinkButton href="/map?type=animal_hospital" variant="ghost" className="w-full">
+            지도에서 병원 찾아 전화하기
+          </LinkButton>
+        </>
+      )}
+    </Card>
   );
 }

@@ -15,6 +15,7 @@ export type PetFormValues = {
   sex: Pet["sex"];
   neutered: "yes" | "no" | "unknown";
   weight: string;
+  vet_phone: string;
   indoor: "yes" | "no" | "unknown";
   registration_status: Pet["registration_status"];
   insurance_status: Pet["insurance_status"];
@@ -28,6 +29,7 @@ export const EMPTY_PET_FORM: PetFormValues = {
   sex: "unknown",
   neutered: "unknown",
   weight: "",
+  vet_phone: "",
   indoor: "unknown",
   registration_status: "unknown",
   insurance_status: "unknown",
@@ -45,13 +47,14 @@ export function petToForm(pet: Pet): PetFormValues {
     sex: pet.sex,
     neutered: tri(pet.neutered),
     weight: pet.weight_kg === null ? "" : String(pet.weight_kg),
+    vet_phone: pet.vet_phone ?? "",
     indoor: tri(pet.indoor),
     registration_status: pet.registration_status,
     insurance_status: pet.insurance_status,
   };
 }
 
-export type PetFormErrors = Partial<Record<"species" | "name" | "birth_date" | "weight", string>>;
+export type PetFormErrors = Partial<Record<"species" | "name" | "birth_date" | "weight" | "vet_phone", string>>;
 
 /** 이벤트 핸들러에서만 부른다 (오늘 날짜와 비교한다). */
 export function validatePetForm(v: PetFormValues): PetFormErrors {
@@ -65,6 +68,7 @@ export function validatePetForm(v: PetFormValues): PetFormErrors {
     if (Number.isNaN(d.getTime())) errors.birth_date = "날짜를 다시 확인해 주세요.";
     else if (v.birth_date > toDateInput(new Date())) errors.birth_date = "오늘보다 뒤의 날짜는 고를 수 없어요.";
   }
+  if (v.vet_phone.trim() && !/^[0-9+\-() ]{7,20}$/.test(v.vet_phone.trim())) errors.vet_phone = "전화번호는 숫자와 - 만 써서 적어 주세요.";
   if (v.weight.trim()) {
     const w = Number(v.weight);
     if (!Number.isFinite(w) || w < 0.1 || w > 120) errors.weight = "체중은 0.1kg에서 120kg 사이로 적어 주세요.";
@@ -80,6 +84,7 @@ export function formToPet(v: PetFormValues): Omit<Insert<"pets">, "owner_id" | "
     estimated_birth: v.birth_date ? v.estimated_birth : false,
     sex: v.sex,
     neutered: untri(v.neutered),
+    vet_phone: v.vet_phone.trim() || null,
     weight_kg: v.weight.trim() ? Math.round(Number(v.weight) * 100) / 100 : null,
     registration_status: v.registration_status,
     insurance_status: v.insurance_status,
@@ -126,6 +131,7 @@ export function PetFormFields({ values, onChange, errors, idPrefix }: { values: 
         <option value="no">아니오</option>
       </SelectField>
       <Field id={id("weight")} label="체중 (kg)" optional type="number" inputMode="decimal" min={0.1} max={120} step={0.1} value={values.weight} onChange={(e) => onChange({ weight: e.target.value })} error={errors.weight} />
+      <Field id={id("vet_phone")} label="다니는 동물병원 전화번호" optional type="tel" inputMode="tel" autoComplete="off" value={values.vet_phone} onChange={(e) => onChange({ vet_phone: e.target.value })} error={errors.vet_phone} hint="적어 두면 긴급 도움 화면에서 한 번에 전화할 수 있어요." />
       <SelectField id={id("indoor")} label="주로 실내에서 지내나요?" optional value={values.indoor} onChange={(e) => onChange({ indoor: e.target.value as PetFormValues["indoor"] })}>
         <option value="unknown">모름</option>
         <option value="yes">네, 실내에서 지내요</option>

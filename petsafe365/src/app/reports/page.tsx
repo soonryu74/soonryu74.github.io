@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, LinkButton, Loading, Notice, PageHeader, TextareaField, formatDate } from "@/components/ui";
 import { useAsync, useSession } from "@/lib/hooks";
@@ -363,7 +364,7 @@ export default function ReportsPage() {
         </Card>
       ) : null}
 
-      <Notice>긴급한 동물 진료가 필요하면 <a className="font-semibold underline" href="/emergency">긴급 도움</a>을 열어 주세요.</Notice>
+      <Notice>긴급한 동물 진료가 필요하면 <Link className="font-semibold underline" href="/emergency">긴급 도움</Link>을 열어 주세요.</Notice>
     </>
   );
 }

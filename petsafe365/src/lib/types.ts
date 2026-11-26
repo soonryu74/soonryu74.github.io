@@ -25,6 +25,8 @@ export type Pet = Base & {
   registration_status: "registered" | "unregistered" | "unknown";
   insurance_status: "insured" | "uninsured" | "unknown";
   indoor: boolean | null;
+  /** 보호자가 직접 적은 다니는 동물병원 전화번호. 긴급 화면에서 한 번에 전화하는 데 쓴다. */
+  vet_phone: string | null;
   deleted_at: string | null;
 };
 

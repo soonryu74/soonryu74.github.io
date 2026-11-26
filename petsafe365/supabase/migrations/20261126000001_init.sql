@@ -60,6 +60,7 @@ create table public.pets (
   registration_status text not null default 'unknown' check (registration_status in ('registered','unregistered','unknown')),
   insurance_status text not null default 'unknown' check (insurance_status in ('insured','uninsured','unknown')),
   indoor boolean,
+  vet_phone text check (vet_phone is null or vet_phone ~ '^[0-9+\-() ]{7,20}$'),
   deleted_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

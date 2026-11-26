@@ -8,9 +8,9 @@ export default defineConfig({
   workers: 1,
   reporter: [["list"]],
   use: { baseURL: "http://localhost:3100", locale: "ko-KR" },
-  webServer: { command: "npx next start -p 3100", url: "http://localhost:3100", reuseExistingServer: true, timeout: 120_000 },
+  webServer: { command: "npx next start -p 3100", url: "http://localhost:3100", reuseExistingServer: false, timeout: 120_000 },
   projects: [
-    { name: "mobile-360", use: { ...devices["Desktop Chrome"], viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true } },
+    { name: "mobile-360", testIgnore: /nothing/, use: { ...devices["Desktop Chrome"], viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true } },
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } }, testMatch: /layout\.spec\.ts/ },
   ],
 });

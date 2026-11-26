@@ -2,10 +2,10 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { Badge, Button, Card, EmptyState, ErrorState, Field, Forbidden, LinkButton, Loading, LoginRequired, PageHeader, SelectField, formatDate } from "@/components/ui";
+import { Badge, Button, Card, ErrorState, Field, Forbidden, LinkButton, Loading, LoginRequired, PageHeader, SelectField, formatDate } from "@/components/ui";
 import { deletePetCascade } from "@/lib/domain";
 import { useAsync, useSession } from "@/lib/hooks";
-import { getRepo, validateFile } from "@/lib/repo";
+import { RepoError, getRepo, validateFile } from "@/lib/repo";
 import type { HealthEvent, Pet, PetCondition, PetDocument, SessionUser } from "@/lib/types";
 import { EVENT_LABEL, PetFormFields, SPECIES_LABEL, ageLabel, errorText, eventValue, formToPet, petToForm, validatePetForm, type PetFormErrors } from "../pet-shared";
 
@@ -34,6 +34,7 @@ function PetDetail({ petId, user }: { petId: string; user: SessionUser }) {
   }, [petId, user.id]);
 
   if (state.loading) return <Loading />;
+  if (state.error instanceof RepoError && (state.error.code === "forbidden" || state.error.code === "not_found")) return <Forbidden />;
   if (state.error) return <ErrorState onRetry={state.reload} />;
   if (!state.data) return <Forbidden />;
   const { pet, conditions, events, documents, now } = state.data;
@@ -41,7 +42,7 @@ function PetDetail({ petId, user }: { petId: string; user: SessionUser }) {
   return (
     <>
       <PageHeader title={pet.name} description={`${SPECIES_LABEL[pet.species]} · ${ageLabel(pet, now)}`} action={<LinkButton href="/pets" variant="ghost">목록으로</LinkButton>} />
-      <Profile key={pet.updated_at} pet={pet} onSaved={state.reload} />
+      <Profile pet={pet} onSaved={state.reload} />
       <Conditions pet={pet} conditions={conditions} onChanged={state.reload} />
       <Timeline events={events} />
       <Documents pet={pet} documents={documents} onChanged={state.reload} />
@@ -85,10 +86,11 @@ function Profile({ pet, onSaved }: { pet: Pet; onSaved: () => void }) {
     setMessage(null);
     try {
       await getRepo().update("pets", pet.id, formToPet(values));
-      // 저장이 끝나면 새 값으로 다시 불러오고, 이 폼은 새 내용으로 다시 만들어진다.
+      setMessage({ tone: "ok", text: "프로필을 저장했어요." });
       onSaved();
     } catch (err) {
       setMessage({ tone: "error", text: errorText(err) });
+    } finally {
       setBusy(false);
     }
   }
@@ -314,9 +316,14 @@ function Documents({ pet, documents, onChanged }: { pet: Pet; documents: PetDocu
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {links[d.id] ? (
-                    <LinkButton href={links[d.id]} external variant="ghost">
+                    <a
+                      href={links[d.id]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-12 items-center justify-center rounded-[14px] border border-line bg-card px-4 font-semibold text-brand underline hover:bg-tint"
+                    >
                       새 탭에서 열기
-                    </LinkButton>
+                    </a>
                   ) : (
                     <Button variant="ghost" disabled={busy} onClick={() => prepare(d)} aria-label={`${d.original_name} 열람 링크 만들기`}>
                       열람 링크 만들기
