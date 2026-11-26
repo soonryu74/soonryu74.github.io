@@ -114,9 +114,10 @@ async function push(sub: Sub, payload: unknown) {
   const req = webpush.generateRequestDetails(
     { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
     JSON.stringify(payload),
-    { vapidDetails: VAPID, TTL: 60 * 60 * 3, urgency: 'normal' },
+    { vapidDetails: VAPID, TTL: 60 * 60, urgency: 'high' },   // 휴대폰이 절전 중이어도 제시간에 깨워 보여 준다
   )
   const res = await fetch(req.endpoint, { method: req.method, headers: req.headers, body: req.body })
+  if (res.status < 200 || res.status >= 300) console.error('push status', res.status, new URL(sub.endpoint).host, (await res.text()).slice(0, 200))
   if (res.status === 404 || res.status === 410) await admin.from('mal_push').delete().eq('id', sub.id)   // 구독을 끊은 기기
   return res.status
 }
@@ -146,6 +147,7 @@ async function tick() {
     const r = await sendTo(u.id, payloadFor(list[u.cursor % list.length]))
     sent += r.sent
   }
+  if (data?.length) console.log('tick', JSON.stringify({ due: data.length, sent }))
   return { due: data?.length ?? 0, sent }
 }
 
