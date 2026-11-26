@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* 인디고(브랜드) + 메리골드(결제·강조 한 곳) + 청록(안전) + 적색(긴급 전용) */
+@theme {
+  --color-bg: #f3f4f8;
+  --color-card: #ffffff;
+  --color-ink: #171b36;
+  --color-muted: #5b6079;
+  --color-line: #d9dce8;
+  --color-tint: #e9ebf6;
+  --color-brand: #27308f;
+  --color-accent: #e8a013;
+  --color-safe: #0f766e;
+  --color-danger: #c2413b;
+  --color-warn: #b45309;
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --radius-card: 16px;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

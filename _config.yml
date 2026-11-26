@@ -28,3 +28,5 @@ exclude:
   - movesafe/playwright-report
   # 국민 곁에 ON: Streamlit 앱이라 Jekyll 사이트에서는 제외(Streamlit Cloud에서 별도 실행)
   - gov-care-on
+  # 펫안심365: Next.js 앱이라 Jekyll 사이트에서는 제외(Vercel 등에서 별도 실행)
+  - petsafe365
