@@ -291,7 +291,7 @@
   }
   async function renderPush() {
     var btn = $('pushBtn'), state = $('pushState'), test = $('testBtn');
-    btn.hidden = true; test.hidden = true; $('iosGuide').hidden = true;
+    btn.hidden = true; test.hidden = true; $('testState').hidden = true; $('iosGuide').hidden = true;
     if (!canPush) {
       if (isIOS && !standalone) { state.textContent = '아직 알림을 받을 수 없습니다.'; $('iosGuide').hidden = false; }
       else state.textContent = '이 브라우저는 알림을 받을 수 없습니다. 크롬이나 사파리(홈 화면 추가)로 열어 주세요.';
@@ -302,7 +302,7 @@
     btn.hidden = false;
     if (sub && Notification.permission === 'granted') {
       state.textContent = '이 기기로 알림을 받고 있습니다.';
-      btn.textContent = '알림 끄기'; btn.className = 'btn'; test.hidden = false;
+      btn.textContent = '알림 끄기'; btn.className = 'btn'; test.hidden = false; $('testState').hidden = false;
     } else {
       state.textContent = '이 기기는 아직 알림을 받지 않습니다.';
       btn.textContent = '알림 켜기'; btn.className = 'btn primary';
@@ -331,12 +331,15 @@
     this.disabled = false; renderPush();
   };
   $('testBtn').onclick = async function () {
-    this.disabled = true;
+    var out = $('testState'), t = new Date().toLocaleTimeString('ko-KR', { hour: 'numeric', minute: '2-digit' });
+    this.disabled = true; out.textContent = '보내는 중…';
     try {
       var sub = await currentSub();
       var r = await api({ action: 'test', endpoint: sub ? sub.endpoint : '' });
-      toast(r.sent ? '보냈습니다. 곧 알림이 옵니다' : '보내지 못했습니다. 알림을 껐다 다시 켜 주세요');
-    } catch (e) { toast(e.message); }
+      out.textContent = r.sent
+        ? t + '에 보냈습니다. 알림이 안 보이면 화면 위를 쓸어내려 알림창을 확인해 주세요. 무음·방해 금지 모드에서는 소리 없이 들어옵니다.'
+        : '보내지 못했습니다. [알림 끄기]를 눌렀다가 다시 [알림 켜기]를 눌러 주세요.';
+    } catch (e) { out.textContent = '보내지 못했습니다 — ' + e.message; }
     this.disabled = false;
   };
 

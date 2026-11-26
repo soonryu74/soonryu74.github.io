@@ -104,3 +104,5 @@ dialog::backdrop { background: rgba(20, 26, 23, .55); }
 .filepick:focus-within { outline: 2px solid var(--gold); outline-offset: 2px; }
 #bulkInfo:empty { display: none; }
 #bulkText { margin-top: 10px; }
+#testState:empty { display: none; }
+#testState { margin-top: 10px; }
