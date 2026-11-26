@@ -492,6 +492,8 @@ end $$;
 
 -- ---------- 권한 부여 ----------
 grant usage on schema public to anon, authenticated;
+-- Supabase 기본 권한을 걷어내고 공개 테이블만 다시 연다.
+revoke all on all tables in schema public from anon;
 grant select on public.care_task_templates, public.content_cards, public.content_versions, public.official_contacts,
   public.legal_documents, public.feature_flags, public.products, public.product_lots, public.facilities to anon;
 grant select, insert, update, delete on all tables in schema public to authenticated;
