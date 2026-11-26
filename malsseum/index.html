@@ -88,8 +88,9 @@
     </div>
     <p class="hint">위에서부터 순서대로 하나씩 보냅니다. 끝까지 가면 처음으로 돌아옵니다.</p>
     <ol class="list" id="list"></ol>
-    <p class="empty" id="empty">아직 넣은 글이 없습니다. [+ 글 넣기]로 첫 구절을 넣어 보세요.</p>
+    <p class="empty" id="empty">아직 넣은 글이 없습니다. [+ 글 넣기]로 넣거나 [기본 72구절 넣기]를 눌러 보세요.</p>
     <button class="btn ghost" id="bulkBtn" type="button">여러 개 한꺼번에 넣기</button>
+    <button class="btn ghost" id="seedBtn" type="button" hidden>기본 72구절 넣기</button>
   </section>
 
   <!-- 다른 기기 -->
@@ -170,6 +171,7 @@
 </dialog>
 
 <div class="toast" id="toast" role="status"></div>
+<script src="data/default72.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
