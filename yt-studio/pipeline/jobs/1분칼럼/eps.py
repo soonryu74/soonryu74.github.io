@@ -236,3 +236,34 @@ EPS += [
     "prompt": "a clear mountain stream flowing over stones through a green valley in morning light"},
    OUTRO]},
 ]
+
+
+# ── 11/23 김재원 아나운서 편 3차 (16:9) — 방송 원본 음성 그대로 ──
+EPS += [
+ {"key": "1123", "cover_scene": 4, "audio": str(HERE / "1123_voice.m4a"), "start": 0.0, "end": 0, "speaker": "김재원 아나운서",
+  "rows": ["[사가일터선교 1분 칼럼]", "부르심은", "*지나고 나서야* 보입니다"], "hand": "\"마음을 다하여 주께 하듯, 골로새서 3:23\"", "title_pt": 100,
+  "scenes": [
+   {"lines": ["[사가일터선교 1분 칼럼] 부르심은 지나고 나서야 보입니다", "FEBC 1분 칼럼, 사랑글로벌아카데미와 함께합니다."],
+    "prompt": "a classic broadcast studio microphone on a wooden desk in warm morning light, soft bokeh, radio station, still life"},
+   {"lines": ["안녕하십니까? 아나운서 김재원입니다.", "30년 6개월 동안 아나운서로 살아왔습니다."],
+    "prompt": "an empty television news studio desk with a microphone and soft studio lights, a wall clock, calm warm tones"},
+   {"lines": ["이 직업이 소명이라는 것을", "드라마틱하게 깨달은 순간은 제게 없었습니다."],
+    "prompt": "an ordinary office desk with a desk calendar, a mug and a stack of scripts in plain daylight, quiet everyday mood, still life"},
+   {"lines": ["하지만 회사를 떠나던 날,", "아쉬워하는 시청자들의 댓글과 전화를 받으며", "저는 비로소 알게 됐습니다."],
+    "prompt": "a cardboard box of personal belongings and a bouquet of flowers on an emptied office desk at dusk, a desk phone beside it, warm window light"},
+   {"lines": ["아, 하나님이 이 일터를 내게 주신 이유가", "여기 있었구나."],
+    "prompt": "golden sunset light pouring through the window of an empty broadcast studio onto a microphone, dust in the light beams"},
+   {"lines": ["여러분도 마찬가지일 수 있습니다.", "지금 일이 사명인지 확신이 없을 때가 있을 겁니다."],
+    "prompt": "a quiet open-plan office in the early morning fog light with rows of empty desks and one desk lamp on"},
+   {"lines": ["하지만 부르심은 대개", "그 자리를 지나고 나서야 보입니다."],
+    "prompt": "a winding mountain trail seen from a summit looking back over the valley it climbed through, sunrise, wide shot"},
+   {"lines": ["성경은 말씀합니다.", "무엇을 하든지 마음을 다하여 주께 하듯 하고", "사람에게 하듯 하지 말라."],
+    "prompt": "an old leather bible lying open on a plain wooden table with a ribbon marker, soft daylight"},
+   {"lines": ["지금은 몰라도 괜찮습니다."],
+    "prompt": "a small green seedling sprouting from dark rich soil, macro shot, morning light"},
+   {"lines": ["하지만 오늘 그 일터에서 마음을 다해 보십시오."],
+    "prompt": "a tidy workbench with well-used tools laid out carefully in warm morning light, still life"},
+   {"lines": ["그 이유는 반드시 나중에 보일 겁니다."],
+    "prompt": "a wide field of ripe golden wheat at sunrise under a clear sky, a path leading through it"},
+   OUTRO]},
+]
