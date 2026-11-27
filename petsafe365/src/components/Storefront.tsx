@@ -1,7 +1,8 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- 작은 정적 상품 사진이라 이미지 최적화를 쓰지 않는다 */
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { ToyArt } from "@/components/ToyArt";
+import { ProductImage } from "@/components/ProductImage";
 import { Button, ErrorState, Field, Loading, SelectField, formatWon } from "@/components/ui";
 import { useAsync } from "@/lib/hooks";
 import { getRepo } from "@/lib/repo";
@@ -46,9 +47,13 @@ function Hero() {
         </div>
         <div className="relative mx-auto aspect-square w-full max-w-sm">
           <div className="absolute inset-0 rounded-full bg-accent" aria-hidden="true" />
-          <div className="absolute inset-[9%] rounded-full bg-bg" aria-hidden="true" />
-          <ToyArt material="set" className="absolute inset-[14%] h-[72%] w-[72%] rotate-[-8deg] text-ink drop-shadow-xl" />
-          <span className="absolute right-0 top-6 rotate-[10deg] rounded-full bg-card px-4 py-2 text-sm font-bold text-brand shadow-lg">가죽 + 울, 번갈아</span>
+          <div className="absolute inset-[7%] rounded-full bg-white" aria-hidden="true" />
+          {/* 공급사 카탈로그의 실제 상품 사진 */}
+          <img src="/products/nlt-0039.jpg" alt="가죽 사자 장난감 사진" className="absolute left-[14%] top-[12%] w-[50%] rotate-[-8deg] mix-blend-multiply" />
+          <img src="/products/wlf-0024.jpg" alt="울 펠트 딸기 장난감 사진" className="absolute right-[10%] top-[18%] w-[34%] rotate-[10deg] mix-blend-multiply" />
+          <img src="/products/nlt-0042.jpg" alt="가죽 물고기 장난감 사진" className="absolute bottom-[12%] left-[12%] w-[44%] rotate-[6deg] mix-blend-multiply" />
+          <img src="/products/wlf-0021.jpg" alt="울 펠트 나뭇잎 장난감 사진" className="absolute bottom-[12%] right-[12%] w-[36%] rotate-[-6deg] mix-blend-multiply" />
+          <span className="absolute right-0 top-4 rotate-[10deg] rounded-full bg-card px-4 py-2 text-sm font-bold text-brand shadow-lg">가죽 14종 · 울 6종</span>
         </div>
       </div>
     </section>
@@ -56,9 +61,9 @@ function Hero() {
 }
 
 const MATERIALS = [
-  { material: "leather" as const, title: "가죽", feel: "질겅질겅", text: "물수록 손에 익는 가죽. 터그 놀이와 가져오기에 좋아요." },
-  { material: "wool_felt" as const, title: "울 펠트", feel: "폭신폭신", text: "입이 작은 아이도 물기 편한 부드러운 촉감이에요." },
-  { material: "set" as const, title: "번갈아 주기", feel: "새것처럼", text: "두 가지를 번갈아 주면 흥미가 오래가요." },
+  { image: "/products/nlt-0012.jpg", title: "가죽", feel: "질겅질겅", text: "물수록 손에 익는 가죽. 터그 놀이와 가져오기에 좋아요." },
+  { image: "/products/wlf-0029.jpg", title: "울 펠트", feel: "폭신폭신", text: "입이 작은 아이도 물기 편한 부드러운 촉감이에요." },
+  { image: "/products/nlt-0040.jpg", title: "번갈아 주기", feel: "새것처럼", text: "두 가지를 번갈아 주면 흥미가 오래가요." },
 ];
 
 function Materials() {
@@ -68,8 +73,8 @@ function Materials() {
       <ul className="grid gap-5 md:grid-cols-3">
         {MATERIALS.map((m) => (
           <li key={m.title} className="flex flex-col gap-3 rounded-[24px] bg-card p-6">
-            <div className="grid aspect-[4/3] place-items-center rounded-[18px] bg-tint">
-              <ToyArt material={m.material} className="h-3/4 w-3/4 text-ink" />
+            <div className="grid aspect-[4/3] place-items-center overflow-hidden rounded-[18px] bg-white">
+              <img src={m.image} alt="" className="h-full w-full object-contain mix-blend-multiply" loading="lazy" />
             </div>
             <p className="text-sm font-bold text-accent">{m.feel}</p>
             <h3 className="text-xl font-bold">{m.title}</h3>
@@ -82,31 +87,31 @@ function Materials() {
 }
 
 function Products() {
-  const state = useAsync<Product[]>(async () => (await getRepo().list("products")).filter((p) => p.status !== "draft"), []);
+  const state = useAsync<Product[]>(async () => (await getRepo().list("products", { order: { column: "id" } })).filter((p) => p.status !== "draft" && p.image_url).slice(0, 6), []);
   return (
     <section className="bg-card">
       <div className={`${WRAP} flex flex-col gap-8 py-14`}>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="text-3xl font-extrabold tracking-tight">놀이 친구들</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight">먼저 만나는 여섯 친구</h2>
           <Link href="/shop" className="font-semibold text-brand underline underline-offset-4">
-            전체 보기
+            20종 전체 보기
           </Link>
         </div>
         {state.loading ? <Loading /> : null}
         {state.error ? <ErrorState onRetry={state.reload} /> : null}
         {state.data && state.data.length === 0 ? <p className="text-muted">곧 첫 놀이 친구를 소개할게요.</p> : null}
-        <ul className="grid gap-6 md:grid-cols-3">
+        <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6">
           {(state.data ?? []).map((p) => (
             <li key={p.id}>
               <Link href={`/shop/${p.slug}`} className="group flex h-full flex-col gap-3 rounded-[24px] border border-line p-4 transition-shadow hover:shadow-xl">
-                <div className="grid aspect-square place-items-center rounded-[18px] bg-tint">
-                  <ToyArt material={p.material} className="h-3/4 w-3/4 text-ink transition-transform group-hover:scale-105" />
+                <div className="grid aspect-square place-items-center overflow-hidden rounded-[18px] bg-white">
+                  <ProductImage product={p} className="transition-transform group-hover:scale-105" />
                 </div>
                 <h3 className="text-lg font-bold">{p.name.replace(/^\[예시\]\s*/, "")}</h3>
                 <p className="text-muted">{p.summary}</p>
-                <p className="mt-auto flex items-baseline gap-2">
-                  <span className="text-2xl font-extrabold text-brand">{formatWon(p.price_krw)}</span>
-                  <span className="text-sm text-muted">{p.shipping_included ? "배송비 포함" : "배송비 별도"}</span>
+                <p className="mt-auto flex flex-col">
+                  <span className="whitespace-nowrap text-xl font-extrabold text-brand md:text-2xl">{formatWon(p.price_krw)}</span>
+                  <span className="text-sm text-muted">예정가 · {p.shipping_included ? "배송비 포함" : "배송비 별도"}</span>
                 </p>
                 {p.is_example ? <p className="text-sm text-warn">예시 상품이에요. 실제 판매 전이에요.</p> : null}
               </Link>

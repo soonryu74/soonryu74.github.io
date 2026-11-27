@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { AdSlot } from "@/components/AdSlot";
-import { ToyArt } from "@/components/ToyArt";
+import { ProductImage } from "@/components/ProductImage";
 import { Badge, Card, EmptyState, ErrorState, ExampleBadge, Loading, Notice, PageHeader, formatWon } from "@/components/ui";
 import { useAsync, usePets, useSession } from "@/lib/hooks";
 import { getRepo } from "@/lib/repo";
@@ -40,12 +40,12 @@ export default function ShopPage() {
       ) : !products.data || products.data.length === 0 ? (
         <EmptyState title="아직 보여 드릴 용품이 없어요" description="시험과 확인이 끝난 용품부터 차례로 올릴게요." />
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-3">
           {products.data.map((p) => (
             <Card as="li" key={p.id} className="flex flex-col gap-3">
               <Link href={`/shop/${p.slug}`} className="flex flex-col gap-3">
-                <div className="rounded-[12px] bg-tint p-6">
-                  <ToyArt material={p.material} />
+                <div className="grid aspect-square place-items-center rounded-[12px] bg-white p-3">
+                  <ProductImage product={p} />
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="min-w-0 break-keep text-lg font-bold">{p.name}</h2>

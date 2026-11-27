@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const ROUTES = ["/", "/login", "/emergency", "/map", "/health", "/health/zoonoses", "/health/zoonoses/rabies", "/reports", "/legal", "/legal/privacy", "/shop", "/shop/leather-bone", "/partner", "/more", "/today", "/pets", "/records", "/insurance", "/onboarding"];
+const ROUTES = ["/", "/login", "/emergency", "/map", "/health", "/health/zoonoses", "/health/zoonoses/rabies", "/reports", "/legal", "/legal/privacy", "/shop", "/shop/nlt-0012", "/partner", "/more", "/today", "/pets", "/records", "/insurance", "/onboarding"];
 
 test("모든 화면이 가로로 넘치지 않고 제목과 본문 영역을 갖는다", async ({ page }) => {
   const width = page.viewportSize()!.width;

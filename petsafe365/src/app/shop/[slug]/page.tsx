@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ToyArt } from "@/components/ToyArt";
+import { ProductImage } from "@/components/ProductImage";
 import { Badge, Button, Card, ErrorState, ExampleBadge, Forbidden, LinkButton, Loading, Notice, formatDate, formatWon } from "@/components/ui";
 import { getFlags } from "@/lib/domain";
 import { useAsync } from "@/lib/hooks";
@@ -89,8 +89,11 @@ export default function ProductPage() {
       {product.is_example ? <Notice tone="warn">예시 상품이에요. 실제 판매 상품이 아니에요.</Notice> : null}
 
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="flex items-center rounded-[16px] bg-tint p-8">
-          <ToyArt material={product.material} />
+        <div className="flex flex-col gap-2">
+          <div className="grid aspect-square place-items-center rounded-[16px] bg-white p-6">
+            <ProductImage product={product} />
+          </div>
+          {product.image_url ? <p className="text-sm text-muted">공급사 카탈로그 사진이에요. 입고되면 직접 찍은 사진과 크기 비교 사진으로 바꿀게요.</p> : null}
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
@@ -122,7 +125,7 @@ export default function ProductPage() {
             ) : (
               <>
                 <Button disabled>판매 준비 중</Button>
-                <p className="text-sm text-muted">아직 판매 전이에요. 시험과 통관 확인이 끝나면 열려요.</p>
+                <p className="text-sm text-muted">아직 판매 전이에요. 시험과 통관 확인이 끝나면 열려요. 표시 가격은 예정가예요.</p>
               </>
             )}
           </div>

@@ -21,8 +21,8 @@ test("꺼 둔 안전 앱 주소로 들어가면 닫혀 있다고 안내한다", 
 
 test("상품을 보고 상세로 들어갈 수 있고, 판매 전임을 숨기지 않는다", async ({ page }) => {
   await page.goto("/");
-  await page.locator('main a[href="/shop/leather-wool-set"]').first().click();
-  await page.waitForURL(/\/shop\/leather-wool-set$/);
+  await page.locator('main a[href="/shop/nlt-0039"]').first().click();
+  await page.waitForURL(/\/shop\/nlt-0039$/);
   await expect(page.getByRole("button", { name: "판매 준비 중" })).toBeDisabled();
 });
 

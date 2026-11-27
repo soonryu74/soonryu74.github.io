@@ -104,8 +104,10 @@ describe("용품·광고 원칙", () => {
     expect(featureFlags.map((f) => f.key).sort()).toEqual(["adsEnabled", "insuranceReferralEnabled", "partnerSubscriptionsEnabled", "paymentsEnabled", "preciseLocationStorageEnabled", "publicReviewsEnabled"]);
     expect(featureFlags.every((f) => f.enabled === false)).toBe(true);
   });
-  it("예시 상품·시설은 예시로 표시되고 시험 통과를 주장하지 않는다", () => {
-    expect(products.every((p) => p.is_example && p.name.startsWith("[예시]"))).toBe(true);
+  it("상품은 카탈로그 20종과 세트이고, 시험 통과를 주장하지 않는다", () => {
+    expect(products).toHaveLength(21);
+    expect(products.filter((p) => p.image_url).length).toBe(20);
+    expect(new Set(products.map((p) => p.slug)).size).toBe(21);
     expect(facilities.every((f) => f.is_example && f.name.startsWith("[예시]") && f.phone === null)).toBe(true);
     expect(productLots.every((l) => l.status === "pending" && l.results_json.length === 0)).toBe(true);
   });

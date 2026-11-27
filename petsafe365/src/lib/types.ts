@@ -263,6 +263,10 @@ export type FeatureFlag = Base & {
 
 export type Product = Base & {
   slug: string;
+  /** 공급사 상품코드 */
+  sku: string | null;
+  /** 상품 사진 경로. 없으면 그림 아이콘으로 대신한다. */
+  image_url: string | null;
   name: string;
   material: "leather" | "wool_felt" | "set";
   summary: string;

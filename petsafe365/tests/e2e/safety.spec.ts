@@ -66,7 +66,7 @@ test("용품·결제·광고: 홈에 상품이 없고, 결제는 잠겨 있고, 
   await page.goto("/");
   await expect(page.locator('main a[href^="/shop"]')).toHaveCount(0);
   await page.goto("/shop");
-  await expect(page.getByText("[예시] 가죽 본").first()).toBeVisible();
+  await expect(page.getByText("가죽 본", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("광고 영역")).toHaveCount(0);
   await page.goto("/shop/leather-wool-set");
   await expect(page.getByRole("button", { name: "판매 준비 중" })).toBeDisabled();

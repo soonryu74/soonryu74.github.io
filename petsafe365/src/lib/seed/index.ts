@@ -129,19 +129,55 @@ export const legalDocuments: LegalDocument[] = [
 const FLAG_KEYS: FeatureFlagKey[] = ["paymentsEnabled", "partnerSubscriptionsEnabled", "insuranceReferralEnabled", "preciseLocationStorageEnabled", "publicReviewsEnabled", "adsEnabled"];
 export const featureFlags: FeatureFlag[] = FLAG_KEYS.map((key, i) => ({ ...base(6, i + 1), key, enabled: false, approved_by: null, approved_at: null }));
 
-const product = (n: number, p: Pick<Product, "slug" | "name" | "material" | "summary" | "description" | "price_krw" | "shipping_included" | "size_cm" | "min_mouth" | "not_for">): Product => ({
-  ...base(7, n), origin_country: "인도", importer: null, external_url: null, status: "on_sale", is_example: true, ...p,
-});
+type Catalog = [sku: string, name: string, material: Product["material"], summary: string];
+// 공급사(Blue Sapphire Merchant) 카탈로그의 20종. 사진은 카탈로그 사진이고, 입고 전이라 크기·시험 결과는 비어 있다.
+// 앞의 6종은 사업계획 메모의 우선 심사 상품이다.
+const CATALOG: Catalog[] = [
+  ["NLT_0012", "가죽 본", "leather", "가장 단순한 뼈 모양. 가져오기 놀이의 기본"],
+  ["NLT_0039", "가죽 사자", "leather", "노란 갈기가 폭신한 사자 얼굴"],
+  ["NLT_0042", "가죽 물고기", "leather", "지느러미를 물고 당기기 좋은 물고기"],
+  ["WLF_0021", "울 리프", "wool_felt", "겹겹이 포갠 울 펠트 나뭇잎"],
+  ["WLF_0024", "울 딸기", "wool_felt", "선물하기 좋은 빨간 딸기"],
+  ["WLF_0029", "울 본 그린", "wool_felt", "입이 작은 아이도 물기 편한 초록 뼈"],
+  ["NLT_0006", "가죽 부츠", "leather", "끈 장식이 달린 작은 부츠"],
+  ["NLT_0021", "가죽 스타 로프", "leather", "로프 고리 안에 든 별"],
+  ["NLT_0023", "가죽 본 로프", "leather", "로프 손잡이가 달린 뼈"],
+  ["NLT_0028", "가죽 젖소", "leather", "길쭉한 몸의 젖소"],
+  ["NLT_0029", "가죽 악어", "leather", "점박이 무늬 악어"],
+  ["NLT_0040", "가죽 코끼리", "leather", "로프 꼬리가 달린 코끼리"],
+  ["NLT_0050", "가죽 여우", "leather", "로프 다리가 달린 여우"],
+  ["NLT_0051", "가죽 거북이", "leather", "알록달록한 등껍질 거북이"],
+  ["NLT_0058", "가죽 기린", "leather", "초록 점무늬 기린"],
+  ["NLT_0068", "가죽 하마", "leather", "로프 팔다리가 달린 하마"],
+  ["NLT_0070", "가죽 말", "leather", "파란 가죽 말"],
+  ["WLF_0009", "울 코끼리", "wool_felt", "눈을 감은 회색 코끼리"],
+  ["WLF_0017", "울 진저브레드", "wool_felt", "쿠키 모양 울 펠트 친구"],
+  ["WLF_0028", "울 본 핑크", "wool_felt", "입이 작은 아이도 물기 편한 분홍 뼈"],
+];
 const NOT_FOR = ["강하게 물어뜯는 아이", "조각을 삼키는 습관이 있는 아이", "혼자 오래 씹게 두는 용도"];
+const DESC: Record<Product["material"], string> = {
+  leather: "손으로 꿰맨 가죽 놀이 친구예요. 보호자와 함께 가져오기·가벼운 터그 놀이에 써요. 먹는 제품이 아니에요. 실밥이나 조각이 떨어지면 바로 회수해 주세요.",
+  wool_felt: "울 펠트로 만든 부드러운 놀이 친구예요. 가벼운 물기 놀이에 써요. 먹는 제품이 아니에요. 보풀이나 조각이 떨어지면 바로 회수해 주세요.",
+  set: "가죽 하나와 울 펠트 하나를 번갈아 주는 세트예요. 놀이 카드가 함께 들어 있어요. 먹는 제품이 아니에요.",
+};
+const slugOf = (sku: string) => sku.toLowerCase().replace("_", "-");
 
 export const products: Product[] = [
-  product(1, { slug: "leather-bone", name: "[예시] 가죽 본", material: "leather", summary: "손으로 꿰맨 가죽 놀이 친구", description: "보호자와 함께 가져오기·가벼운 터그 놀이에 씁니다. 먹는 제품이 아니에요. 실밥이나 조각이 떨어지면 바로 회수해 주세요.", price_krw: 15900, shipping_included: false, size_cm: "실측 전", min_mouth: "small", not_for: NOT_FOR }),
-  product(2, { slug: "wool-leaf", name: "[예시] 울 펠트 리프", material: "wool_felt", summary: "부드러운 울 펠트 놀이 친구", description: "입이 작은 아이의 가벼운 물기 놀이에 씁니다. 먹는 제품이 아니에요. 보풀이나 조각이 떨어지면 바로 회수해 주세요.", price_krw: 15900, shipping_included: false, size_cm: "실측 전", min_mouth: "small", not_for: NOT_FOR }),
-  product(3, { slug: "leather-wool-set", name: "[예시] 가죽 본 + 울 리프 세트", material: "set", summary: "가죽 하나, 울 하나. 번갈아 노는 2개 세트", description: "두 가지 촉감을 번갈아 주는 세트입니다. 놀이 카드가 함께 들어 있어요. 먹는 제품이 아니에요.", price_krw: 29800, shipping_included: true, size_cm: "실측 전", min_mouth: "small", not_for: NOT_FOR }),
+  ...CATALOG.map(([sku, name, material, summary], i): Product => ({
+    ...base(7, i + 10), slug: slugOf(sku), sku: `BSM_${sku}`, image_url: `/products/${slugOf(sku)}.jpg`, name, material, summary,
+    description: DESC[material], price_krw: 15900, shipping_included: false, size_cm: "입고 후 실측", min_mouth: "small", not_for: NOT_FOR,
+    origin_country: "인도", importer: null, external_url: null, status: "on_sale", is_example: false,
+  })),
+  {
+    ...base(7, 3), slug: "leather-wool-set", sku: null, image_url: null, name: "가죽 + 울 2개 세트", material: "set", summary: "가죽 하나, 울 하나. 번갈아 노는 2개 세트",
+    description: DESC.set, price_krw: 29800, shipping_included: true, size_cm: "입고 후 실측", min_mouth: "small", not_for: NOT_FOR,
+    origin_country: "인도", importer: null, external_url: null, status: "on_sale", is_example: false,
+  },
 ];
 
+// 시험 전이므로 모든 로트는 "대기" 상태다. 결과가 나오기 전에는 통과 표시를 하지 않는다.
 export const productLots: ProductLot[] = products.map((p, i) => ({
-  ...base(8, i + 1), product_id: p.id, lot_code: `EXAMPLE-${i + 1}`, tested_at: null, lab_name: null, results_json: [], report_document_url: null, status: "pending",
+  ...base(8, i + 10), product_id: p.id, lot_code: `PRE-${String(i + 1).padStart(2, "0")}`, tested_at: null, lab_name: null, results_json: [], report_document_url: null, status: "pending",
 }));
 
 const facility = (n: number, facility_type: string, name: string): Facility => ({
