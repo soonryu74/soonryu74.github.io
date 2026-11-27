@@ -1,0 +1,6 @@
+,task,Q1,Q2,Q3,Q4,Q5,Q5_over_Q1
+gradient boosting (lags of all 41 indicators),"T3 (on T1 test, all 10 targets)",2.878,2.942,3.007,2.976,3.652,1.27
+persistence (last value),"T3 (on T1 test, all 10 targets)",3.127,3.164,3.404,3.255,4.132,1.32
+mean (province-agnostic),T3 (on T2 LOPO),1.614,1.336,1.627,1.364,1.265,0.78
+ridge,T3 (on T2 LOPO),0.947,0.833,1.241,1.038,0.956,1.01
+gradient boosting,T3 (on T2 LOPO),0.856,0.963,1.357,0.941,1.037,1.21
