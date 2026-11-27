@@ -722,7 +722,7 @@ window.CHURCH = (function () {
     return kakaoLoading;
   }
   // 누를 때 바로 열리도록 미리 불러 둔다 (휴대폰은 누른 직후가 아니면 카톡 창을 막을 수 있다)
-  if (KAKAO_KEY) window.addEventListener('load', function () { setTimeout(function () { loadKakao().catch(function () {}); }, 2500); });
+  if (KAKAO_KEY && /KAKAOTALK/i.test(navigator.userAgent)) window.addEventListener('load', function () { setTimeout(function () { loadKakao().catch(function () {}); }, 2500); });
   // 카톡 메시지는 200자까지: 첫 줄과 마지막 문단(목사님 글)은 살리고, 가운데 명단은 들어가는 만큼 + '외 n'
   function kakaoShort(text) {
     var lines = String(text).split('\n'), url = '';
@@ -742,14 +742,15 @@ window.CHURCH = (function () {
   //   돌려주는 값: shared(보냄) · cancel(취소) · kakao(복사하고 카톡으로 넘어감) · copied(복사만) · manual(복사도 안 됨)
   async function toKakao(text) {
     var kakao = /KAKAOTALK/i.test(navigator.userAgent);
-    if (KAKAO_KEY) {
+    if (KAKAO_KEY && kakao) {   // 카톡 안에서 연 화면만 (크롬·컴퓨터에서 쓰면 카카오 로그인을 다시 하라고 나온다)
       try {
         var K = await loadKakao(), sh = kakaoShort(text), link = sh.url || churchLink(church || {});
         K.Share.sendDefault({ objectType: 'text', text: sh.text, link: { mobileWebUrl: link, webUrl: link }, buttonTitle: t('앱에서 보기') });
         return 'shared';
       } catch (e) {}
     }
-    if (navigator.share && !kakao) { try { await navigator.share({ text: text }); return 'shared'; } catch (e) { if (e && e.name === 'AbortError') return 'cancel'; } }
+    var phone = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));   // 컴퓨터는 복사 → PC 카톡에 붙여넣기
+    if (navigator.share && !kakao && phone) { try { await navigator.share({ text: text }); return 'shared'; } catch (e) { if (e && e.name === 'AbortError') return 'cancel'; } }
     var copied = false;
     try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
     if (!copied) { try { var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); copied = document.execCommand('copy'); ta.remove(); } catch (e) {} }
