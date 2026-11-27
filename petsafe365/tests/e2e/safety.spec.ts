@@ -13,7 +13,7 @@ test("긴급 도움: 로그인 없이 병원 찾기가 맨 위에 있고 진단�
 test("지도: 위치를 거부해도 지역 이름으로 찾을 수 있다", async ({ browser }) => {
   const context = await browser.newContext({ permissions: [], viewport: { width: 360, height: 740 } });
   const page = await context.newPage();
-  await page.goto("http://localhost:3100/map");
+  await page.goto("http://localhost:3101/map");
   // 버튼을 누르기 전에는 위치 권한을 요청하지 않는다
   await expect(page.getByRole("button", { name: "내 주변 찾기" })).toBeVisible();
   await page.getByRole("button", { name: "내 주변 찾기" }).click();

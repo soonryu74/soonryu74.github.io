@@ -73,8 +73,8 @@ export function createLocalRepo(kvInput?: KV): Repo {
   const canSee = (table: TableName, row: Stored, user: SessionUser | null) => {
     if (isPublic(table)) return true;
     if (!user) return false;
-    if (user.role === "admin" && ["audit_logs", "partner_inquiries", "facility_reports", "profiles"].includes(table)) return true;
-    if (table === "audit_logs") return false;
+    if (user.role === "admin" && ["audit_logs", "partner_inquiries", "facility_reports", "profiles", "waitlist"].includes(table)) return true;
+    if (table === "audit_logs" || table === "waitlist") return false;
     return row._owner === user.id;
   };
   const strip = <T>(row: Stored): T => {
@@ -83,6 +83,7 @@ export function createLocalRepo(kvInput?: KV): Repo {
     return copy as T;
   };
   const assertWrite = (table: TableName, user: SessionUser | null) => {
+    if (table === "waitlist") return; // 출시 알림은 로그인 없이 남길 수 있다
     if (isPublic(table)) {
       if (user?.role !== "admin" && !(user?.role === "reviewer" && table === "content_versions")) {
         throw new RepoError("관리자만 변경할 수 있어요.", "forbidden");

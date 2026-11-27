@@ -41,6 +41,13 @@ export function createSupabaseRepo(url: string, anonKey: string): Repo {
       return (data as Row<T> | null) ?? null;
     },
     async insert<T extends TableName>(table: T, values: Insert<T>) {
+      if (table === "waitlist") {
+        // 비로그인 사용자는 넣기만 하고 읽을 수 없으므로 결과 행을 돌려받지 않는다. 이미 신청한 이메일(23505)은 성공으로 본다.
+        const { error: e } = await client.from(table).insert(values as never);
+        if (e && e.code !== "23505") fail(e);
+        const now = new Date().toISOString();
+        return { ...(values as object), id: values.id ?? "", created_at: now, updated_at: now } as Row<T>;
+      }
       const { data, error } = await client.from(table).insert(values as never).select("*").single();
       if (error) fail(error);
       return data as Row<T>;

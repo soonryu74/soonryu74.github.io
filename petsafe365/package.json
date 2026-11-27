@@ -9,9 +9,10 @@
     "lint": "eslint src tests scripts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test --trace off",
+    "test:e2e": "npm run build && npm run build:safety && playwright test --trace off",
     "seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "build:safety": "node scripts/build-safety.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.2",

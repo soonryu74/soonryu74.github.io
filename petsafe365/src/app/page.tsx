@@ -1,4 +1,6 @@
 "use client";
+import { Storefront } from "@/components/Storefront";
+import { SAFETY_APP_ENABLED } from "@/lib/site";
 import Link from "next/link";
 import { PetSwitcher } from "@/components/PetSwitcher";
 import { Card, ErrorState, LinkButton, Loading } from "@/components/ui";
@@ -14,7 +16,7 @@ const SECTIONS = [
   { href: "/health/zoonoses", title: "건강·인수공통감염병", description: "사람과 동물이 함께 조심할 감염병을 알아봐요." },
 ];
 
-export default function HomePage() {
+function SafetyHome() {
   const { user, loading } = useSession();
   return (
     <>
@@ -121,4 +123,8 @@ function TodayPreview({ pet }: { pet: Pet }) {
       </LinkButton>
     </>
   );
+}
+
+export default function HomePage() {
+  return SAFETY_APP_ENABLED ? <SafetyHome /> : <Storefront />;
 }

@@ -6,6 +6,8 @@
 - 2026-11-26 확정 사항과 화면 개발 규칙: [`docs/dev-contract.md`](./docs/dev-contract.md)
 - 결정 기록: [`docs/decisions.md`](./docs/decisions.md)
 
+> **지금은 가게 모드입니다.** 2026-11-27 결정으로 안전 앱 기능(오늘 할 일, 긴급 도움, 지도, 신고 등)은 꺼 두었고 첫 화면은 용품 가게 '포우플레이 아틀리에'입니다. 다시 켜려면 환경변수 `NEXT_PUBLIC_SAFETY_APP=on` 을 넣고 빌드합니다.
+
 ## 바로 실행하기 (키 없이, 예시 모드)
 
 ```bash
@@ -54,7 +56,7 @@ npm run dev
 | `npm run lint` | 코드 규칙 검사 |
 | `npm run typecheck` | 타입 검사 |
 | `npm test` | 단위 + 통합 테스트 (권한 정책을 실제 PostgreSQL 엔진으로 검증) |
-| `npm run test:e2e` | Playwright 핵심 흐름 (예시 모드) |
+| `npm run test:e2e` | 가게 모드와 안전 앱 모드를 각각 빌드해 Playwright 로 확인 |
 | `npm run build` | 운영 빌드 |
 | `npm run seed` / `npm run seed -- --dry` | 초기 데이터 넣기 / 건수만 확인 |
 

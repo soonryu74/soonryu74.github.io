@@ -6,6 +6,7 @@ import { Badge, Card, EmptyState, ErrorState, ExampleBadge, Loading, Notice, Pag
 import { useAsync, usePets, useSession } from "@/lib/hooks";
 import { getRepo } from "@/lib/repo";
 import { fitFor } from "@/lib/rules";
+import { SAFETY_APP_ENABLED } from "@/lib/site";
 import type { Pet, Product } from "@/lib/types";
 
 function FitNote({ product, pet }: { product: Product; pet: Pet }) {
@@ -18,7 +19,7 @@ function FitNote({ product, pet }: { product: Product; pet: Pet }) {
       </p>
     );
   }
-  return <p className="text-sm text-muted">체중을 등록하면 크기 안내를 받을 수 있어요</p>;
+  return SAFETY_APP_ENABLED ? <p className="text-sm text-muted">체중을 등록하면 크기 안내를 받을 수 있어요</p> : null;
 }
 
 export default function ShopPage() {

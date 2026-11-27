@@ -1,4 +1,5 @@
 "use client";
+import { SAFETY_APP_ENABLED, isSafetyRoute } from "@/lib/site";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,7 +15,7 @@ const LINKS = [
   { href: "/reports", label: "분실·발견·신고", desc: "공식 연락처와 준비할 것" },
   { href: "/legal", label: "법무·신뢰센터", desc: "약관, 개인정보, 환불, 광고 원칙" },
   { href: "/partner", label: "파트너 안내", desc: "업체 프로필과 입점 문의" },
-];
+].filter((l) => SAFETY_APP_ENABLED || !isSafetyRoute(l.href));
 
 async function buildExport(user: SessionUser): Promise<string> {
   const repo = getRepo();

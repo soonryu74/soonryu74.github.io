@@ -298,6 +298,13 @@ export type Order = Base & {
   payment_ref: string | null;
 };
 
+/** 출시 알림 신청. 누구나 남길 수 있고 운영자만 읽는다. */
+export type WaitlistEntry = Base & {
+  email: string;
+  dog_size: "small" | "medium" | "large" | "unknown";
+  consent_at: string;
+};
+
 export type Tables = {
   profiles: Profile;
   pets: Pet;
@@ -323,6 +330,7 @@ export type Tables = {
   products: Product;
   product_lots: ProductLot;
   orders: Order;
+  waitlist: WaitlistEntry;
 };
 export type TableName = keyof Tables;
 export type Row<T extends TableName> = Tables[T];
