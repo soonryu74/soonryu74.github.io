@@ -1,0 +1,150 @@
+<title>펫안심365 둘러보기</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: 실제 화면 사진이 주인공. 글은 사진 옆 한두 줄. 마지막에 운영자가 할 일 세 가지. */
+:root{
+  --bg:#F3F4F8; --surface:#FFFFFF; --ink:#171B36; --muted:#5B6079; --line:#D9DCE8;
+  --indigo:#27308F; --on-indigo:#FFFFFF; --marigold:#E8A013; --teal:#0F766E; --danger:#C2413B; --tint:#E9EBF6;
+  --body:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10132A; --surface:#1A1E3D; --ink:#ECEEF8; --muted:#A3A8C2; --line:#2E335A;
+    --indigo:#8F9BFF; --on-indigo:#10132A; --marigold:#F2B53A; --teal:#3CC0B3; --danger:#F0766F; --tint:#222750; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10132A; --surface:#1A1E3D; --ink:#ECEEF8; --muted:#A3A8C2; --line:#2E335A;
+  --indigo:#8F9BFF; --on-indigo:#10132A; --marigold:#F2B53A; --teal:#3CC0B3; --danger:#F0766F; --tint:#222750; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.7;word-break:keep-all;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 64px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:64px}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.2;letter-spacing:-.02em;text-wrap:balance}
+h2{font-size:clamp(1.4rem,3.4vw,1.9rem);line-height:1.3;text-wrap:balance}
+h3{font-size:1.15rem;line-height:1.35}
+.kicker{font-size:.85rem;font-weight:600;letter-spacing:.08em;color:var(--indigo)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:32em}
+header{display:flex;flex-direction:column;gap:16px}
+mark{background:linear-gradient(transparent 62%,var(--marigold) 62%);color:inherit;padding:0 .1em}
+section{display:flex;flex-direction:column;gap:28px}
+.head{display:flex;flex-direction:column;gap:8px;max-width:36em}
+.screens{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:36px 28px}
+figure{margin:0;display:flex;flex-direction:column;gap:14px;min-width:0}
+.frame{border-radius:28px;border:8px solid var(--ink);overflow:hidden;background:var(--surface);box-shadow:0 22px 44px -26px var(--indigo);aspect-ratio:390/780;max-width:100%}
+.frame img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+figcaption{display:flex;flex-direction:column;gap:4px}
+figcaption span{color:var(--muted);font-size:.98rem}
+.note{font-size:.92rem;color:var(--muted)}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.step b.n{font-size:2rem;line-height:1;color:var(--indigo)}
+.step small{color:var(--muted);font-size:.92rem}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.col ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px}
+.yes{color:var(--teal)} .no{color:var(--danger)}
+.cta{background:var(--indigo);color:var(--on-indigo);border-radius:22px;padding:28px clamp(18px,4vw,36px);display:flex;flex-direction:column;gap:12px}
+.cta a{color:var(--on-indigo);font-weight:600}
+footer{font-size:.9rem;color:var(--muted);border-top:1px solid var(--line);padding-top:18px}
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="kicker">펫안심365 둘러보기</span>
+  <h1>오늘 할 일부터,<br><mark>위급한 순간까지</mark></h1>
+  <p class="lede">반려견·반려묘 보호자가 매일 여는 안전 앱이에요. 아래는 실제로 작동하는 화면을 그대로 찍은 사진입니다.</p>
+</header>
+
+<section>
+  <div class="head">
+    <h2>보호자가 보는 화면</h2>
+    <p class="note">예시 강아지 "콩이"를 등록해 찍었어요. 병원·상품 정보는 모두 예시입니다.</p>
+  </div>
+  <div class="screens">
+    <figure>
+      <div class="frame"><img src="tour/1-home.jpg" alt="홈 화면. 긴급 도움 버튼과 오늘 할 일 3개가 보인다"></div>
+      <figcaption><h3>1. 홈</h3><span>긴급 도움이 가장 위에 있고, 바로 아래에 오늘 챙길 일이 나와요. 상품은 홈에 두지 않아요.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="frame"><img src="tour/2-today.jpg" alt="오늘 할 일 화면. 완료와 미루기 버튼이 있다"></div>
+      <figcaption><h3>2. 오늘 할 일</h3><span>아이를 등록하면 할 일이 자동으로 생겨요. 완료하면 기록에 남고, 내일로 미룰 수도 있어요.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="frame"><img src="tour/3-emergency.jpg" alt="긴급 도움 화면. 병원 찾기와 전화 버튼이 있다"></div>
+      <figcaption><h3>3. 긴급 도움</h3><span>병원 찾기와 다니는 병원 전화가 한 번에 돼요. 진단이나 약 안내는 하지 않고, 지금 할 행동만 알려 줘요.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="frame"><img src="tour/4-reports.jpg" alt="신고 화면. 유기동물 발견 시 공식 연락처가 나온다"></div>
+      <figcaption><h3>4. 분실·발견·신고</h3><span>상황을 고르면 공식 신고 창구와 챙길 증거를 알려 줘요. 아무것도 공개 게시되지 않아요.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="frame"><img src="tour/5-zoonosis.jpg" alt="감염병 안내 화면"></div>
+      <figcaption><h3>5. 사람과 동물의 건강</h3><span>사람에게도 옮을 수 있는 병 4가지를 안내해요. 수의사가 검수한 글만 공개돼요.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="frame"><img src="tour/6-shop.jpg" alt="용품 목록 화면"></div>
+      <figcaption><h3>6. 용품</h3><span>손으로 만든 장난감을 파는 작은 가게예요. 우리 아이 입 크기에 맞는지 알려 줘요.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="frame"><img src="tour/7-product.jpg" alt="상품 상세 화면"></div>
+      <figcaption><h3>7. 상품 상세</h3><span>재료, 맞지 않는 아이, 시험 결과를 숨기지 않고 보여 줘요. 가짜 후기나 마감 임박 문구는 없어요.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="frame"><img src="tour/8-admin.jpg" alt="관리자 대시보드 화면"></div>
+      <figcaption><h3>8. 운영자 화면</h3><span>운영자만 들어가는 곳이에요. 처리할 신고와 검수할 글이 몇 건인지 한눈에 보여요.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <h2>운영자가 할 일은 세 가지예요</h2>
+    <p>코드를 쓰거나 고칠 필요는 없어요. 만들어 둔 것을 본인 계정에 옮겨 켜는 일이에요.</p>
+  </div>
+  <div class="three">
+    <div class="step"><b class="n">1</b><h3>계정 3개 만들기</h3><p>GitHub, Supabase, Vercel. 이메일로 가입하면 끝이에요.</p><small>약 15분 · 무료</small></div>
+    <div class="step"><b class="n">2</b><h3>복사해서 붙여 넣기</h3><p>안내서에 적힌 명령과 값을 그대로 복사해 붙여요.</p><small>약 1시간</small></div>
+    <div class="step"><b class="n">3</b><h3>버튼 누르기</h3><p>Deploy 버튼을 누르면 인터넷 주소가 생겨요.</p><small>약 10분</small></div>
+  </div>
+  <p class="note">처음이라 낯설 뿐 어렵지 않아요. 막히면 화면을 찍어 보내 주세요. 어디서 멈췄는지 보고 바로 알려 드릴 수 있어요.</p>
+</section>
+
+<section>
+  <div class="head"><h2>지금 되는 것과 아직 안 되는 것</h2></div>
+  <div class="two">
+    <div class="col">
+      <h3 class="yes">되는 것</h3>
+      <ul>
+        <li>이메일 로그인, 탈퇴</li>
+        <li>반려동물 여러 마리 등록</li>
+        <li>오늘 할 일과 건강 기록</li>
+        <li>긴급 도움, 신고 안내</li>
+        <li>보험 약관 메모와 확인</li>
+        <li>운영자 화면</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3 class="no">아직 안 되는 것</h3>
+      <ul>
+        <li>앱 안 결제 (사업자 신고와 결제 계약 뒤에 열어요)</li>
+        <li>지도에 실제 병원 표시</li>
+        <li>가족 초대, 알림</li>
+        <li>광고</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>자세한 순서는 인수인계서에 있어요</h2>
+  <p>단계별 명령과 확인 방법, 운영하면서 할 일, 출시 전 확인 목록을 담았어요.</p>
+  <p><a href="https://claude.ai/artifact/P3Z1cGoeZpy7xVozYyDqNV">펫안심365 운영 인수인계서 열기</a></p>
+</section>
+
+<footer>화면은 2026년 11월 27일 기준이며 예시 데이터로 찍었습니다. 화면 속 상품, 시설, 전화번호 02-000-0000은 실제가 아닙니다. 실제 화면 맨 위에는 "예시 모드" 안내 띠가 있는데, 사진에서는 가렸습니다.</footer>
+
+</div>
