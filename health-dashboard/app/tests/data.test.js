@@ -3,6 +3,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { INDICATORS, HC_POOL, SGG_ALL, natPool, nationalMedian, isSurvey, RBY, val } from "../src/data.js";
 import { assess, priorityFor, CANDIDATES, CORE } from "../src/lib/equity/index.js";
+import L from "../../data/tile_layout.json";
 
 const byId = (id) => INDICATORS.find((i) => i.id === id);
 
@@ -133,4 +134,24 @@ test("박탈 경사·집단 간 분산(공용 계산): 2025 비만율(표준화)
   assert.ok(b.n >= 228 && Math.abs(b.bgv - v) < 1e-9 && Math.abs(b.bgsd - Math.sqrt(v)) < 1e-9);
   const sd = areaBgv(ind, "std", 2025, "sido");
   assert.equal(sd.n, 17);
+});
+
+test("시군구 1칸 타일 지도: 조사 단위 258곳이 칸 하나씩, 칸 중복 없음, 17개 시도 칸, 섬은 떨어져 있다", () => {
+  const codes = Object.keys(L.units);
+  assert.deepEqual([...codes].sort(), HC_POOL.map((u) => u.c).sort());
+  const keys = Object.values(L.units).map((v) => v.join(","));
+  assert.equal(new Set(keys).size, 258);
+  for (const [c, r] of Object.values(L.units)) assert.ok(c >= 0 && c < L.cols && r >= 0 && r < L.rows);
+  assert.deepEqual(Object.keys(L.sido).sort(), INDICATORS.length ? [...new Set(HC_POOL.map((u) => (u.l === "sub" ? RBY.get(u.p).p : u.p)))].sort() : []);
+  assert.equal(new Set(Object.values(L.sido).map((v) => v.join(","))).size, 17);
+  // 제주 칸은 본토 칸과 이웃하지 않는다(odd-r 이웃)
+  const NB = [[[1, 0], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1]], [[1, 0], [1, 1], [0, 1], [-1, 0], [0, -1], [1, -1]]];
+  const at = new Map(Object.entries(L.units).map(([k, v]) => [v.join(","), k]));
+  for (const [k, [c, r]] of Object.entries(L.units)) {
+    if (!k.startsWith("016")) continue;
+    for (const [dc, dr] of NB[r & 1]) {
+      const nb = at.get(`${c + dc},${r + dr}`);
+      assert.ok(!nb || nb.startsWith("016"), `제주 ${k} 가 본토 ${nb} 와 붙어 있음`);
+    }
+  }
 });

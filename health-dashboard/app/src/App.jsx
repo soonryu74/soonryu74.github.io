@@ -6,6 +6,7 @@ import { IndicatorPicker, RegionPicker, YearControl, ItemToggle } from "./compon
 import Kpis from "./components/Kpis";
 import TrendChart from "./components/TrendChart";
 import ChoroplethMap from "./components/ChoroplethMap";
+import TileMap from "./components/TileMap";
 import RankPanel from "./components/RankPanel";
 import YearTable from "./components/YearTable";
 import GapBoxplot from "./components/GapBoxplot";
@@ -68,6 +69,7 @@ function readHash() {
       exclude: h.get("ex") !== "0",
     },
     en: h.get("en") === "1",   // 우선 검토 카드 영어 모드(국제 심사용, /solve 에서 들어옴)
+    ms: h.get("ms") === "tile" ? "tile" : "geo",   // 지도 모양: geo = 실제 경계, tile = 시군구 1칸 타일 지도
   };
 }
 
@@ -93,6 +95,7 @@ export default function App() {
   const [scope, setScope] = useState(init.scope);   // 비교 범위(지도·순위·격차·연도표 공통): sidoAll(17개 시도) | nation(전국 시군구) | sido(시도 내 시군구)
   // 지도 범위(CIAT 단계구분도와 동일): sidoAll = 전국 시도 · nation = 전국 시군구 · sido = 시도 내 시군구
   const [mapLabels, setMapLabels] = useState(true);
+  const [mapShape, setMapShape] = useState(init.ms);   // geo(실제 경계) | tile(시군구 1칸) — 2026-11-28
   const [view, setView] = useState(init.view);      // analysis | profile | compare
   // 「의견·문의」에 자동으로 붙일 「보고 있던 화면」 주소 — 문의 탭이 아닌 마지막 화면의 해시를 기억
   const [feedbackFrom, setFeedbackFrom] = useState(() => window.location.href);
@@ -118,7 +121,7 @@ export default function App() {
       ...(cmp.length ? { cmp: cmp.join(",") } : {}),
       w: typeof rankOpt.weights === "object" ? "custom" : rankOpt.weights, sm: String(rankOpt.smooth), lg: rankOpt.league, ex: rankOpt.exclude ? "1" : "0",
       ...(typeof rankOpt.weights === "object" ? { cw: DS.domains.map((d) => rankOpt.weights[d] ?? 0).join(",") } : {}),
-      ...(ncdInd ? { nind: ncdInd } : {}), ...(en ? { en: "1" } : {}) });
+      ...(ncdInd ? { nind: ncdInd } : {}), ...(en ? { en: "1" } : {}), ...(mapShape === "tile" ? { ms: "tile" } : {}) });
     // 방문 기록: 화면·지역·지표가 바뀌는 「이동」만 새 기록(push)으로 쌓고, 연도·값 유형·비교 범위 같은 세부 설정은 같은 기록을 고친다(replace).
     // 예전엔 모두 replace 라 브라우저 ← 가 사이트 밖(들어오기 전 페이지)으로 나갔다(2026-10-05 소유자 제보).
     const url = "#" + h.toString(), nav = `${view}|${sido}|${sgg || ""}|${ind.id}`, st = window.history.state;
@@ -127,7 +130,7 @@ export default function App() {
     else window.history.pushState({ hd: (st.hd || 0) + 1, nav }, "", url);
     navMounted.current = true;
     setHistDepth(window.history.state?.hd || 0);
-  }, [ind, item, sido, sgg, year, scope, view, cmp, rankOpt, ncdInd, en]);
+  }, [ind, item, sido, sgg, year, scope, view, cmp, rankOpt, ncdInd, en, mapShape]);
 
   // 주소창 해시가 바뀌면(링크 붙여넣기·뒤로/앞으로 가기) 화면 상태를 다시 읽는다
   useEffect(() => {
@@ -368,20 +371,28 @@ export default function App() {
               <div className="card span2 mapcard">
                 <div className="cardhead">
                   <div>
-                    <h3>{year}년 {ind.name} — {mapScopeName} 단계구분도<Cite ind={ind} k="geo" /></h3>
-                    <ExportButtons name={`${year}_${ind.name}_지도_${mapScopeName}`} />
-                    <div className="desc">7단계 분위({mapScopeName} 기준) · 지역을 누르면 선택 · ▶ 로 연도 애니메이션</div>
+                    <h3>{year}년 {ind.name} — {mapScopeName} 단계구분도{mapShape === "tile" ? " · 시군구 1칸" : ""}<Cite ind={ind} k="geo" /></h3>
+                    <ExportButtons name={`${year}_${ind.name}_${mapShape === "tile" ? "타일지도" : "지도"}_${mapScopeName}`} />
+                    <div className="desc">7단계 분위({mapScopeName} 기준) · 지역을 누르면 선택 · ▶ 로 연도 애니메이션{mapShape === "tile" ? " · 모든 지역을 같은 크기 칸 하나로(위치는 대략, 면적은 반영 안 함)" : ""}</div>
                   </div>
                 </div>
                 <div className="seg map-seg">
                   <span className="desc map-scope-note">범위: <b>{mapScopeName}</b> — 위 「비교 범위」에서 바꿉니다</span>
-                  <button className={`seg-btn ${mapLabels ? "on" : ""}`} style={{ marginLeft: "auto" }}
+                  <span className="seg map-shape" role="group" aria-label="지도 모양" style={{ marginLeft: "auto" }}>
+                    <button className={`seg-btn ${mapShape === "geo" ? "on" : ""}`} aria-pressed={mapShape === "geo"} onClick={() => setMapShape("geo")}
+                      title="실제 행정 경계 모양(면적이 큰 군 지역이 넓게 보임)">실제 경계</button>
+                    <button className={`seg-btn ${mapShape === "tile" ? "on" : ""}`} aria-pressed={mapShape === "tile"} onClick={() => setMapShape("tile")}
+                      title="모든 조사 단위(보건소)를 같은 크기 칸 하나로 — 서울·광역시 도심 구도 잘 보임">시군구 1칸</button>
+                  </span>
+                  <button className={`seg-btn ${mapLabels ? "on" : ""}`}
                     onClick={() => setMapLabels(!mapLabels)}
                     title={mapLabels ? "지도 위 지역명을 숨깁니다" : "지도 위에 지역명을 표시합니다"}>
                     🏷 지역명{mapLabels ? "" : " 꺼짐"}</button>
                 </div>
-                <ChoroplethMap ind={ind} item={item} year={year} sel={sel} scope={mapScope}
-                  showLabels={mapLabels} onSelect={selectRegion} setTip={setTip} />
+                {mapShape === "tile"
+                  ? <TileMap ind={ind} item={item} year={year} sel={sel} scope={mapScope} showLabels={mapLabels} onSelect={selectRegion} setTip={setTip} />
+                  : <ChoroplethMap ind={ind} item={item} year={year} sel={sel} scope={mapScope}
+                      showLabels={mapLabels} onSelect={selectRegion} setTip={setTip} />}
               </div>
 
               <div className="card span2 rmr-card">

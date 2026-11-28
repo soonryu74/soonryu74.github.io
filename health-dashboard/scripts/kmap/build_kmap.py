@@ -1,5 +1,8 @@
 #!/usr/bin/env python3.13
-"""육각형 건강 지도(map/) 자료 만들기 — usaciv(MIT, Andrej Karpathy) 의 화면 자료 규격(docs/DATA_CONTRACTS.md v2)에 맞춘
+"""육각형 건강 지형도 자료 만들기 — ※ 2026-11-28 소유자 결정으로 공개하지 않음(홍보 그림용). 화면 코드(map/)는 커밋 4bbd92bd 이력에만 있고
+저장소 트리에서는 뺐다(git show 4bbd92bd:health-dashboard/map/... 로 되살림). --out 은 공개 폴더가 아닌 곳(scratchpad)으로.
+
+원래 설명: 육각형 건강 지도(map/) 자료 만들기 — usaciv(MIT, Andrej Karpathy) 의 화면 자료 규격(docs/DATA_CONTRACTS.md v2)에 맞춘
 한국판 world / cities / states / nation / lenses / sources JSON.
 
 실행(python3.13: numpy · tifffile · imagecodecs · matplotlib 필요):

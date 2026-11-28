@@ -229,6 +229,13 @@ footer { font-size:14px; color:var(--muted); margin:18px 0 8px; line-height:1.6;
 .pctcell .bar { position:absolute; left:0; top:0; bottom:0; border-radius:4px; }
 .grid2 > .card, .kpis > .kpi, .mapwrap > * { min-width: 0; }
 .sido-hi { fill:none; stroke: var(--series-2); stroke-width:2.2; pointer-events:none; }
+/* 시군구 1칸 타일 지도(TileMap.jsx) */
+.poly.tile { stroke: var(--surface-1); stroke-width: 1; }
+.poly.tile.sel { stroke: var(--text-primary); stroke-width: 2.2; }
+.tile-border { fill:none; stroke: var(--text-primary); stroke-width: 1.6; stroke-linecap: round; pointer-events:none; opacity:.7; }
+.maplab.tilelab { font-weight:600; }
+.seg.map-shape { display:inline-flex; gap:0; }
+.tilemap { display:block; max-width:640px; margin:0 auto; }
 
 /* ===== 지역 비교 ===== */
 .viz-root { --cat-1:#2a78d6; --cat-2:#eb6834; --cat-3:#7a5cc4; --cat-4:#1a9e7a; --cat-5:#d4419a; --cat-6:#8c7300; }

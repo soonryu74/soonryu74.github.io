@@ -201,6 +201,29 @@ for (const [w, h] of VPS) {
   check(/① 범위 정하기/.test(who) && /⑤ 지식 전환/.test(who) && /성별·연령·소득·교육/.test(who), "자료원 탭: WHO 5단계 대응표·한계");
   await pg.close();
 }
+// 시군구 1칸 타일 지도(2026-11-28): 지도 카드 토글 → 조사 단위 258칸, 칸 클릭 → 지역 선택, 시도 범위 → 그 시도 조사 단위 수, 17개 시도 → 17칸, 390px 넘침 없음
+{
+  const pg = await b.newPage({ viewport: { width: 1400, height: 1000 } });
+  await pg.goto(`${BASE}/index.html#view=analysis&ind=DT_H_SM&item=std&sido=001&year=2025&scope=nation`, { waitUntil: "load" });
+  await pg.waitForSelector(".mapcard");
+  await pg.locator(".map-shape .seg-btn", { hasText: "시군구 1칸" }).click(); await pg.waitForTimeout(400);
+  check((await pg.locator(".mapcard path.tile").count()) === 258 && /ms=tile/.test(pg.url()), "타일 지도: 전국 258칸 · 주소에 ms=tile");
+  await pg.locator('.mapcard path.tile[data-code="00901"]').click(); await pg.waitForTimeout(500);
+  check(/sgg=00901/.test(pg.url()), "타일 지도: 강릉 칸을 누르면 강릉시 선택");
+  await pg.goto(`${BASE}/index.html#view=analysis&ind=DT_H_SM&item=std&sido=008&year=2025&scope=sido&ms=tile`, { waitUntil: "load" });
+  await pg.waitForSelector(".mapcard path.tile");
+  check((await pg.locator(".mapcard path.tile").count()) === 48, "타일 지도: 경기 범위 48칸(조사 단위)");
+  await pg.goto(`${BASE}/index.html#view=analysis&ind=K_MORT_SUI&item=std&sido=001&year=2025&scope=sidoAll&ms=tile`, { waitUntil: "load" });
+  await pg.waitForSelector(".mapcard path.tile");
+  check((await pg.locator(".mapcard path.tile").count()) === 17, "타일 지도: 전국 시도 17칸");
+  await pg.locator(".map-shape .seg-btn", { hasText: "실제 경계" }).click(); await pg.waitForTimeout(300);
+  check((await pg.locator(".mapcard path.tile").count()) === 0 && (await pg.locator(".mapcard path.poly").count()) === 17, "실제 경계로 되돌리면 기존 지도");
+  await pg.setViewportSize({ width: 390, height: 844 });
+  await pg.goto(`${BASE}/index.html#view=analysis&ind=DT_H_SM&item=std&sido=001&year=2025&scope=nation&ms=tile`, { waitUntil: "load" });
+  await pg.waitForSelector(".mapcard path.tile");
+  check(await pg.evaluate(() => document.documentElement.scrollWidth - innerWidth) <= 1, "타일 지도 390px 가로 넘침 없음");
+  await pg.close();
+}
 // 메인 공유·검색 기본값(카톡·네이버·구글 미리보기): 설명·canonical·OG·JSON-LD, 미리보기 그림 1200×630
 {
   const html = await (await fetch(`${BASE}/index.html`)).text();
