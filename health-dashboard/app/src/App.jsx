@@ -140,7 +140,7 @@ export default function App() {
       const h = readHash();
       setInd(h.ind); setItem(h.item); setSido(h.sido); setSgg(h.sgg);
       setYearSel(h.year); setScope(h.scope); setView(h.view); setCmp(h.cmp);
-      setRankOpt(h.rankOpt); setNcdInd(h.ncdInd); setEn(h.en); setPlaying(false);
+      setRankOpt(h.rankOpt); setNcdInd(h.ncdInd); setEn(h.en); setMapShape(h.ms); setPlaying(false);
       setHistDepth(window.history.state?.hd || 0);
       if (h.view !== lastView) window.scrollTo({ top: 0 });
       lastView = h.view;
